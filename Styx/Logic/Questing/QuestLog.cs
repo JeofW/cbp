@@ -8,6 +8,13 @@ using Styx.WoWInternals;
 
 namespace Styx.Logic.Questing
 {
+	public enum CompletedQuestCacheStatus
+	{
+		Unknown,
+		Valid,
+		RefreshFailed
+	}
+
 	/// <summary>
 	/// Provides access to the player's quest log.
 	/// Matches HB 4.3.4 API while using Lua for completed quests (more reliable than memory reads).
@@ -16,10 +23,18 @@ namespace Styx.Logic.Questing
 	{
 		// WoW 3.3.5a Quest Log Offsets
 		private const int OFFSET_COMPLETED_QUEST_LIST = 5005;  // Completed quest linked list head
+		private const int MaximumCompletedQuestNodes = 10000;
 
 		private static readonly List<uint> _completedQuestIds = new List<uint>();
 		private static DateTime _completedQuestCacheTime = DateTime.MinValue;
+		private static DateTime _completedQuestRefreshAttemptTime = DateTime.MinValue;
+		private static CompletedQuestCacheStatus _completedQuestCacheStatus = CompletedQuestCacheStatus.Unknown;
 		private static readonly TimeSpan CompletedQuestCacheDuration = TimeSpan.FromMinutes(1);
+
+		/// <summary>
+		/// Reports whether the completed-quest cache is backed by a successful live refresh.
+		/// </summary>
+		public CompletedQuestCacheStatus CompletedQuestCacheStatus => _completedQuestCacheStatus;
 
 		/// <summary>
 		/// Number of quests in the log.
@@ -210,7 +225,9 @@ namespace Styx.Logic.Questing
 		/// </summary>
 		private static bool ShouldRefreshCompletedQuestCache()
 		{
-			return _completedQuestIds.Count == 0 || DateTime.Now - _completedQuestCacheTime > CompletedQuestCacheDuration;
+			DateTime now = DateTime.Now;
+			return now - _completedQuestCacheTime > CompletedQuestCacheDuration
+				&& now - _completedQuestRefreshAttemptTime > CompletedQuestCacheDuration;
 		}
 
 		/// <summary>
@@ -219,6 +236,7 @@ namespace Styx.Logic.Questing
 		/// </summary>
 		private static bool TryRefreshCompletedQuestCache()
 		{
+			_completedQuestRefreshAttemptTime = DateTime.Now;
 			try
 			{
 				using (LuaEventWait questQueryWait = new LuaEventWait("QUEST_QUERY_COMPLETE"))
@@ -227,16 +245,22 @@ namespace Styx.Logic.Questing
 					if (!questQueryWait.Wait(5000))
 					{
 						Styx.Helpers.Logging.Write("[QuestLog] Timeout waiting for QUEST_QUERY_COMPLETE event");
+						_completedQuestCacheStatus = CompletedQuestCacheStatus.RefreshFailed;
 						return false;
 					}
 				}
 
-				PopulateCompletedQuestCacheFromMemory();
-				return true;
+				if (PopulateCompletedQuestCacheFromMemory())
+					return true;
+
+				Styx.Helpers.Logging.Write("[QuestLog] Failed to read completed quest cache");
+				_completedQuestCacheStatus = CompletedQuestCacheStatus.RefreshFailed;
+				return false;
 			}
 			catch (Exception ex)
 			{
 				Styx.Helpers.Logging.WriteException(ex);
+				_completedQuestCacheStatus = CompletedQuestCacheStatus.RefreshFailed;
 				return false;
 			}
 		}
@@ -245,35 +269,72 @@ namespace Styx.Logic.Questing
 		/// Reads completed quest IDs from the WoW memory linked list.
 		/// Structure: CompletedQuestNode { padding, next_ptr, quest_id }
 		/// </summary>
-		private static void PopulateCompletedQuestCacheFromMemory()
+		private static bool PopulateCompletedQuestCacheFromMemory()
 		{
 			Memory wow = ObjectManager.Wow;
 			if (wow == null)
-				return;
+				return false;
 
 			uint completedQuestListHead = StyxWoW.Offsets.GetOffsetByIndex(OFFSET_COMPLETED_QUEST_LIST);
 			if (completedQuestListHead == 0)
 			{
-				Styx.Helpers.Logging.Write("[QuestLog] COMPLETED_QUEST_LIST offset is 0");
-				return;
+				return false;
 			}
 
 			// Read the head pointer of the linked list
 			uint nodeAddress = wow.Read<uint>(completedQuestListHead);
+			if (!TryTraverseCompletedQuestNodes(nodeAddress, address =>
+			{
+				CompletedQuestNode node = wow.Read<CompletedQuestNode>(address);
+				return (node.Next, node.QuestId);
+			}, out List<uint> completedQuestIds))
+				return false;
 
 			_completedQuestIds.Clear();
-
-			// Traverse the linked list
-			while (nodeAddress != 0 && (nodeAddress & 1U) == 0U)
-			{
-				var node = wow.Read<CompletedQuestNode>(nodeAddress);
-				if (node.QuestId != 0)
-					_completedQuestIds.Add(node.QuestId);
-				nodeAddress = node.Next;
-			}
+			_completedQuestIds.AddRange(completedQuestIds);
 
 			_completedQuestCacheTime = DateTime.Now;
+			_completedQuestCacheStatus = CompletedQuestCacheStatus.Valid;
 			// Debug log removed - not in HB 4.3.4
+			return true;
+		}
+
+		/// <summary>
+		/// Traverses the 32-bit client's completed-quest linked list without allowing malformed memory to spin.
+		/// A valid pointer is a non-zero, DWORD-aligned address; null terminates a valid list.
+		/// </summary>
+		internal static bool TryTraverseCompletedQuestNodes(
+			uint headAddress,
+			Func<uint, (uint Next, uint QuestId)> readNode,
+			out List<uint> questIds)
+		{
+			questIds = new List<uint>();
+			if (headAddress == 0)
+				return true;
+
+			HashSet<uint> visitedAddresses = new HashSet<uint>();
+			HashSet<uint> seenQuestIds = new HashSet<uint>();
+			uint nodeAddress = headAddress;
+
+			for (int nodeCount = 0; nodeAddress != 0; nodeCount++)
+			{
+				if (nodeCount == MaximumCompletedQuestNodes || (nodeAddress & 3U) != 0U || !visitedAddresses.Add(nodeAddress))
+					return false;
+
+				try
+				{
+					(uint next, uint questId) = readNode(nodeAddress);
+					if (questId != 0 && seenQuestIds.Add(questId))
+						questIds.Add(questId);
+					nodeAddress = next;
+				}
+				catch (Exception)
+				{
+					return false;
+				}
+			}
+
+			return true;
 		}
 
 		/// <summary>

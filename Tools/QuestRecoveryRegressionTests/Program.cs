@@ -1,4 +1,5 @@
 using Styx.Logic.Questing.Recovery;
+using Styx.Logic.Questing;
 using Styx.Helpers;
 
 var now = new DateTime(2026, 9, 2, 12, 0, 0, DateTimeKind.Utc);
@@ -7,6 +8,11 @@ ResetDirectory(testRoot);
 
 try
 {
+    TestCompletedQuestTraversalStopsAtInvalidPointers();
+    TestCompletedQuestTraversalStopsAtRepeatedPointer();
+    TestCompletedQuestTraversalStopsAtReaderFailure();
+    TestCompletedQuestTraversalCapsAtTenThousandNodes();
+    TestCompletedQuestTraversalDeduplicatesQuestIds();
     RunPolicyRegressions(now);
     TestStoreRoundTripAndAtomicReplacement(Path.Combine(testRoot, "store"), now);
     TestCorruptStoreQuarantine(Path.Combine(testRoot, "corrupt"));
@@ -43,6 +49,94 @@ finally
     {
         Directory.Delete(testRoot, recursive: true);
     }
+}
+
+static void TestCompletedQuestTraversalStopsAtInvalidPointers()
+{
+    var nullReaderCalls = 0;
+    Assert(QuestLog.TryTraverseCompletedQuestNodes(0, address =>
+    {
+        nullReaderCalls++;
+        return (0U, 0U);
+    }, out var nullIds), "a null completed-quest head must be a valid empty traversal");
+    Assert(nullReaderCalls == 0 && nullIds.Count == 0,
+        "a null completed-quest head must not be read");
+
+    var oddReaderCalls = 0;
+    Assert(!QuestLog.TryTraverseCompletedQuestNodes(0x1001, address =>
+    {
+        oddReaderCalls++;
+        return (0U, 0U);
+    }, out _), "an odd completed-quest address must fail traversal");
+    Assert(oddReaderCalls == 0, "an odd completed-quest address must not be read");
+
+    var unalignedReaderCalls = 0;
+    Assert(!QuestLog.TryTraverseCompletedQuestNodes(0x1002, address =>
+    {
+        unalignedReaderCalls++;
+        return (0U, 0U);
+    }, out _), "a non-DWORD-aligned completed-quest address must fail traversal");
+    Assert(unalignedReaderCalls == 0,
+        "a non-DWORD-aligned completed-quest address must not be read in the 32-bit client model");
+}
+
+static void TestCompletedQuestTraversalStopsAtRepeatedPointer()
+{
+    var readerCalls = 0;
+    Assert(!QuestLog.TryTraverseCompletedQuestNodes(0x1000, address =>
+    {
+        readerCalls++;
+        return address == 0x1000 ? (0x1004U, 867U) : (0x1000U, 875U);
+    }, out var ids), "a repeated completed-quest node must fail traversal");
+    Assert(readerCalls == 2, "a repeated completed-quest node must stop before rereading the cycle");
+    Assert(ids.SequenceEqual(new uint[] { 867, 875 }),
+        "nodes read before a repeated pointer must retain their quest IDs");
+}
+
+static void TestCompletedQuestTraversalStopsAtReaderFailure()
+{
+    var readerCalls = 0;
+    Assert(!QuestLog.TryTraverseCompletedQuestNodes(0x1000, address =>
+    {
+        readerCalls++;
+        throw new InvalidOperationException("simulated memory read failure");
+    }, out var ids), "a completed-quest reader failure must fail traversal");
+    Assert(readerCalls == 1 && ids.Count == 0,
+        "a completed-quest reader failure must stop without retrying the same node");
+}
+
+static void TestCompletedQuestTraversalCapsAtTenThousandNodes()
+{
+    var readerCalls = 0;
+    Assert(QuestLog.TryTraverseCompletedQuestNodes(0x1000, address =>
+    {
+        readerCalls++;
+        return readerCalls == 10000 ? (0U, (uint)readerCalls) : (address + 4U, (uint)readerCalls);
+    }, out var cappedIds), "a completed-quest traversal ending at ten thousand nodes must succeed");
+    Assert(readerCalls == 10000 && cappedIds.Count == 10000,
+        "a completed-quest traversal must read no more than ten thousand nodes");
+
+    readerCalls = 0;
+    Assert(!QuestLog.TryTraverseCompletedQuestNodes(0x1000, address =>
+    {
+        readerCalls++;
+        return (address + 4U, (uint)readerCalls);
+    }, out _), "a completed-quest traversal exceeding ten thousand nodes must fail");
+    Assert(readerCalls == 10000,
+        "a completed-quest traversal exceeding the bound must stop after ten thousand reads");
+}
+
+static void TestCompletedQuestTraversalDeduplicatesQuestIds()
+{
+    Assert(QuestLog.TryTraverseCompletedQuestNodes(0x1000, address => address switch
+    {
+        0x1000 => (0x1004U, 867U),
+        0x1004 => (0x1008U, 867U),
+        0x1008 => (0U, 875U),
+        _ => throw new InvalidOperationException("unexpected completed-quest node")
+    }, out var ids), "a finite completed-quest traversal must succeed");
+    Assert(ids.SequenceEqual(new uint[] { 867, 875 }),
+        "a completed-quest traversal must return each non-zero quest ID once in encounter order");
 }
 
 static void RunPolicyRegressions(DateTime now)
