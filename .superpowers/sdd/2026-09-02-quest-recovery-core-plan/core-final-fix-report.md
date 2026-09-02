@@ -72,3 +72,37 @@ Result: `Build succeeded`, 3250 repository baseline warnings, 0 errors. A file-l
 ### Concern
 
 The no-client suites cover the pure selection/classification seams and production evaluation/executor policies, but cannot exercise live WoW frame transitions or memory-backed quest-log state. Before deployment, a disposable-character smoke test should verify one unique-title zero-ID dialog, one duplicate-title dialog, and an accepted-complete blocker while the historical cache refresh is unavailable. No push, deployment, or apphost launch was performed. Unrelated pre-existing vendor/grind working-tree files were neither edited for this fix nor staged.
+
+## Broad fix round 1 review fixes
+
+Base: `d0bc5b09a87300efeabf9a61056252555e4cd74a`
+
+### Outcome
+
+- Objective completion policy now defers every Unknown completion state, including the defensive `(Unknown, accepted)` combination, and therefore never skips an accepted objective on incoherent evidence.
+- `QuestCompletionSnapshot` captures `IsAccepted` and tri-state completion from one live `PlayerQuest` lookup. `ForcedBehaviorExecutor` consumes that single snapshot instead of reading acceptance and completion separately across a quest-log transition.
+- Every successful ownership release now carries the monotonic `AttemptGeneration` returned by `TryBeginAttempt`. The generation is persisted in recovery records and preserved by policy/manager copies and completed-record compaction. A stale or duplicate success with a non-current generation is rejected without state mutation or false success evidence.
+
+### Behavioral RED evidence
+
+- Before the policy fix, the focused recovery executable failed with `an accepted objective with an incoherent unknown completion snapshot must defer, never skip` because `ForObjective(Unknown, accepted: true)` returned `Skip`.
+- Before the snapshot API, the focused build failed with `CS0117: 'QuestLog' does not contain a definition for 'ResolveQuestCompletionSnapshot'`.
+- Before ownership generations, the focused build failed with `CS1061` because `QuestRecoveryDecision` and `QuestRecoveryRecord` had no `AttemptGeneration` contract. The wished-for A/B/C lifecycle could not compile.
+
+### Final GREEN evidence
+
+- `QuestRecoveryRegressionTests`: build succeeded with 0 errors; DLL printed `Quest recovery regression tests passed.` The new lifecycle proves A can succeed, B receives a newer generation, delayed duplicate A cannot release B or append success evidence, C remains denied, and valid B success enables a still-newer C. It also proves generation persistence and monotonicity after reload.
+- `QuestPickupPolicyRegressionTests`: build succeeded with 0 errors; DLL printed `Quest pickup policy regression tests passed.`
+- Full `CopilotBuddy.csproj` Release x86 Rebuild: `Build succeeded`, 3250 repository baseline warnings, 0 errors. The scoped file-log scan found no warnings in the seven changed production/test files. `CopilotBuddy.dll` remained PE machine `0x014C` (x86).
+- `git diff --check` was clean apart from informational line-ending notices. No apphost, push, or deployment was used.
+
+### Changed files
+
+- `Bots/Quest/Actions/ForcedBehaviorExecutor.cs`
+- `Bots/Quest/QuestOrder/QuestNodeCompletionPolicy.cs`
+- `Styx/Logic/Questing/QuestLog.cs`
+- `Styx/Logic/Questing/Recovery/QuestRecoveryManager.cs`
+- `Styx/Logic/Questing/Recovery/QuestRecoveryPolicy.cs`
+- `Styx/Logic/Questing/Recovery/QuestRecoveryTypes.cs`
+- `Tools/QuestRecoveryRegressionTests/Program.cs`
+- `.superpowers/sdd/2026-09-02-quest-recovery-core-plan/core-final-fix-report.md`

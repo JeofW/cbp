@@ -111,12 +111,17 @@ public sealed class QuestRecoveryManager
 
             var current = FindRecordCore(key) ?? QuestRecoveryRecord.Create(key);
             current = MaterializeLegacyRecordCore(current, key);
-            _records[current.Key] = Copy(current, state: QuestRecoveryState.Attempting);
+            long attemptGeneration = checked(current.AttemptGeneration + 1);
+            _records[current.Key] = Copy(
+                current,
+                state: QuestRecoveryState.Attempting,
+                attemptGeneration: attemptGeneration);
             _dirty = true;
             return new QuestRecoveryDecision
             {
                 State = QuestRecoveryState.Attempting,
                 MayAttempt = true,
+                AttemptGeneration = attemptGeneration,
                 ResetReason = decision.ResetReason,
                 Status = "Attempt ownership acquired."
             };
@@ -146,9 +151,18 @@ public sealed class QuestRecoveryManager
                 : current;
             QuestRecoveryRecord updated;
 
-            if (outcome.Kind == QuestAttemptOutcomeKind.Success &&
-                current.State is QuestRecoveryState.Attempting or QuestRecoveryState.HalfOpen)
+            if (outcome.Kind == QuestAttemptOutcomeKind.Success)
             {
+                if (current.State is not (QuestRecoveryState.Attempting or QuestRecoveryState.HalfOpen) ||
+                    outcome.AttemptGeneration != current.AttemptGeneration)
+                {
+                    return QuestRecoveryPolicy.Evaluate(
+                        current,
+                        normalizedContext,
+                        RollingFailureCountCore(),
+                        _clock.UtcNow);
+                }
+
                 updated = ApplySuccessfulAttempt(current);
             }
             else if (!outcome.IsFailureEpisode &&
@@ -514,7 +528,8 @@ public sealed class QuestRecoveryManager
                 {
                     Key = key,
                     State = QuestRecoveryState.Completed,
-                    RecoveryCycleId = nonManual.Max(record => record.RecoveryCycleId)
+                    RecoveryCycleId = nonManual.Max(record => record.RecoveryCycleId),
+                    AttemptGeneration = nonManual.Max(record => record.AttemptGeneration)
                 });
             }
             else
@@ -567,6 +582,7 @@ public sealed class QuestRecoveryManager
             State = QuestRecoveryState.Eligible,
             Reason = QuestFailureReason.None,
             RecoveryCycleId = current.RecoveryCycleId + 1,
+            AttemptGeneration = current.AttemptGeneration,
             LastProgressUtc = current.LastProgressUtc,
             ObjectiveCounts = current.ObjectiveCounts,
             Evidence = current.Evidence
@@ -703,7 +719,8 @@ public sealed class QuestRecoveryManager
         DateTime? lastProgressUtc = null,
         IReadOnlyList<int>? objectiveCounts = null,
         QuestRecoveryContext? failureContext = null,
-        IReadOnlyList<QuestRecoveryEvidence>? evidence = null)
+        IReadOnlyList<QuestRecoveryEvidence>? evidence = null,
+        long? attemptGeneration = null)
     {
         return new QuestRecoveryRecord
         {
@@ -716,6 +733,7 @@ public sealed class QuestRecoveryManager
             NextHalfOpenUtc = replaceNextHalfOpenUtc ? nextHalfOpenUtc : current.NextHalfOpenUtc,
             EpisodeCount = current.EpisodeCount,
             RecoveryCycleId = current.RecoveryCycleId,
+            AttemptGeneration = attemptGeneration ?? current.AttemptGeneration,
             AttemptCountInEpisode = current.AttemptCountInEpisode,
             DeathCountInEpisode = current.DeathCountInEpisode,
             LastProgressUtc = lastProgressUtc ?? current.LastProgressUtc,

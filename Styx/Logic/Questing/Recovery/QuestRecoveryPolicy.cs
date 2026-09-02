@@ -255,6 +255,7 @@ public static class QuestRecoveryPolicy
             NextHalfOpenUtc = replaceNextHalfOpenUtc ? nextHalfOpenUtc : current.NextHalfOpenUtc,
             EpisodeCount = episodeCount ?? current.EpisodeCount,
             RecoveryCycleId = recoveryCycleId ?? current.RecoveryCycleId,
+            AttemptGeneration = current.AttemptGeneration,
             AttemptCountInEpisode = attemptCountInEpisode ?? current.AttemptCountInEpisode,
             DeathCountInEpisode = deathCountInEpisode ?? current.DeathCountInEpisode,
             LastProgressUtc = lastProgressUtc ?? current.LastProgressUtc,

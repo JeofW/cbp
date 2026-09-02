@@ -22,6 +22,18 @@ namespace Styx.Logic.Questing
 		KnownComplete
 	}
 
+	public readonly struct QuestCompletionSnapshot
+	{
+		public QuestCompletionSnapshot(bool isAccepted, QuestCompletionState state)
+		{
+			IsAccepted = isAccepted;
+			State = state;
+		}
+
+		public bool IsAccepted { get; }
+		public QuestCompletionState State { get; }
+	}
+
 	/// <summary>
 	/// Provides access to the player's quest log.
 	/// Matches HB 4.3.4 API while using Lua for completed quests (more reliable than memory reads).
@@ -252,18 +264,39 @@ namespace Styx.Logic.Questing
 		/// </summary>
 		public QuestCompletionState GetQuestCompletionState(uint questId)
 		{
+			return GetQuestCompletionSnapshot(questId).State;
+		}
+
+		/// <summary>
+		/// Captures acceptance and completion from the same live quest-log lookup.
+		/// </summary>
+		public QuestCompletionSnapshot GetQuestCompletionSnapshot(uint questId)
+		{
 			PlayerQuest acceptedQuest = GetQuestById(questId);
 			if (acceptedQuest != null)
-				return acceptedQuest.IsCompleted
-					? QuestCompletionState.KnownComplete
-					: QuestCompletionState.KnownIncomplete;
+				return ResolveQuestCompletionSnapshot(
+					accepted: true,
+					acceptedCompleted: acceptedQuest.IsCompleted,
+					cacheValid: false,
+					cachedCompleted: false);
 
 			bool cacheValid = TryGetAuthoritativeCompletedQuests(out ReadOnlyCollection<uint> completedQuestIds);
-			return ResolveQuestCompletionState(
+			return ResolveQuestCompletionSnapshot(
 				accepted: false,
 				acceptedCompleted: false,
-				cacheValid,
-				completedQuestIds.Contains(questId));
+				cacheValid: cacheValid,
+				cachedCompleted: completedQuestIds.Contains(questId));
+		}
+
+		internal static QuestCompletionSnapshot ResolveQuestCompletionSnapshot(
+			bool accepted,
+			bool acceptedCompleted,
+			bool cacheValid,
+			bool cachedCompleted)
+		{
+			return new QuestCompletionSnapshot(
+				accepted,
+				ResolveQuestCompletionState(accepted, acceptedCompleted, cacheValid, cachedCompleted));
 		}
 
 		internal static QuestCompletionState ResolveQuestCompletionState(

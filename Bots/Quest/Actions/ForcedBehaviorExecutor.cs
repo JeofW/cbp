@@ -259,9 +259,8 @@ public class ForcedBehaviorExecutor : Composite
                 return QuestNodeCompletionAction.Execute;
         }
 
-        var questLog = ObjectManager.Me.QuestLog;
-        bool accepted = questLog.GetQuestById(questId) != null;
-        return policy(questLog.GetQuestCompletionState(questId), accepted);
+        QuestCompletionSnapshot snapshot = ObjectManager.Me.QuestLog.GetQuestCompletionSnapshot(questId);
+        return policy(snapshot.State, snapshot.IsAccepted);
     }
 
     private static ForcedQuestPickUp CreateQuestPickUp(PickUpNode pickUpNode)

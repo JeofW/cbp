@@ -52,6 +52,7 @@ try
     TestEvidenceCoalescingRespectsEpisode(Path.Combine(testRoot, "evidence-episodes"), now);
     TestConcurrentReportingAndAttemptOwnership(Path.Combine(testRoot, "concurrency"), now);
     TestSuccessfulAttemptReleasesOwnership(Path.Combine(testRoot, "success-release"), now);
+    TestStaleSuccessCannotReleaseNewOwner(Path.Combine(testRoot, "success-generation"), now);
     TestSuccessfulHalfOpenClearsEscalation(Path.Combine(testRoot, "success-half-open"), now);
     TestSuccessCannotReopenTerminalStates(Path.Combine(testRoot, "success-terminal"), now);
     Console.WriteLine("Quest recovery regression tests passed.");
@@ -71,6 +72,12 @@ finally
 
 static void TestQuestCompletionAuthorityIsTriState()
 {
+    var acceptedSnapshot = QuestLog.ResolveQuestCompletionSnapshot(
+        accepted: true, acceptedCompleted: false, cacheValid: false, cachedCompleted: true);
+    Assert(acceptedSnapshot.IsAccepted
+           && acceptedSnapshot.State == QuestCompletionState.KnownIncomplete,
+        "one accepted-quest snapshot must provide both acceptance and live incomplete authority without consulting failed cache data");
+
     Assert(QuestLog.ResolveQuestCompletionState(
                accepted: true, acceptedCompleted: true, cacheValid: false, cachedCompleted: false)
            == QuestCompletionState.KnownComplete,
@@ -170,6 +177,9 @@ static void TestCompletionDependentActionGatesDeferUnknown()
     Assert(QuestNodeCompletionPolicy.ForObjective(QuestCompletionState.Unknown, accepted: false)
            == QuestNodeCompletionAction.Defer,
         "objective nodes must defer rather than skip when completion is unknown");
+    Assert(QuestNodeCompletionPolicy.ForObjective(QuestCompletionState.Unknown, accepted: true)
+           == QuestNodeCompletionAction.Defer,
+        "an accepted objective with an incoherent unknown completion snapshot must defer, never skip");
     Assert(QuestNodeCompletionPolicy.ForPickup(QuestCompletionState.KnownComplete, accepted: false)
            == QuestNodeCompletionAction.Skip,
         "known-complete pickup work may be skipped");
@@ -1475,9 +1485,10 @@ static void TestSuccessfulAttemptReleasesOwnership(string settingsRoot, DateTime
     var key = QuestRecoveryKey.ForQuestStage(1200, QuestRecoveryStage.Pickup);
     manager.Configure(CreateEnvironment(settingsRoot, "Jeof", "Lordaeron"));
 
-    Assert(manager.TryBeginAttempt(key, Context()).MayAttempt,
+    var owner = manager.TryBeginAttempt(key, Context());
+    Assert(owner.MayAttempt,
         "the first attempt must acquire ownership");
-    var success = QuestAttemptOutcome.Success(key, "pickup accepted");
+    var success = QuestAttemptOutcome.Success(key, owner.AttemptGeneration, "pickup accepted");
     Assert(success.Kind == QuestAttemptOutcomeKind.Success && !success.IsFailureEpisode,
         "success must be explicitly distinguishable from failure, observation, and redirect outcomes");
     var released = manager.Report(success, Context());
@@ -1488,6 +1499,43 @@ static void TestSuccessfulAttemptReleasesOwnership(string settingsRoot, DateTime
     Parallel.For(0, decisions.Length, index => decisions[index] = manager.TryBeginAttempt(key, Context()));
     Assert(decisions.Count(decision => decision.MayAttempt) == 1,
         "after success exactly one later caller must acquire fresh ownership without a restart");
+}
+
+static void TestStaleSuccessCannotReleaseNewOwner(string settingsRoot, DateTime now)
+{
+    var manager = new QuestRecoveryManager(new FixedClock(now));
+    var key = QuestRecoveryKey.ForQuestStage(1204, QuestRecoveryStage.Pickup);
+    manager.Configure(CreateEnvironment(settingsRoot, "Jeof", "Lordaeron"));
+
+    var ownerA = manager.TryBeginAttempt(key, Context());
+    Assert(ownerA.MayAttempt && ownerA.AttemptGeneration > 0,
+        "attempt A must receive a nonzero ownership generation");
+    manager.Report(
+        QuestAttemptOutcome.Success(key, ownerA.AttemptGeneration, "A succeeded"),
+        Context());
+
+    var ownerB = manager.TryBeginAttempt(key, Context());
+    Assert(ownerB.MayAttempt && ownerB.AttemptGeneration > ownerA.AttemptGeneration,
+        "attempt B must receive a monotonically newer ownership generation");
+
+    var delayedA = manager.Report(
+        QuestAttemptOutcome.Success(key, ownerA.AttemptGeneration, "delayed duplicate A"),
+        Context());
+    Assert(delayedA.State == QuestRecoveryState.Attempting && !delayedA.MayAttempt,
+        "delayed success from A must not release active owner B");
+    var activeB = manager.GetEntries().Single();
+    Assert(activeB.AttemptGeneration == ownerB.AttemptGeneration
+           && activeB.Evidence.All(item => item.Text != "delayed duplicate A"),
+        "rejecting delayed A must preserve B's ownership generation without recording false success evidence");
+    Assert(!manager.TryBeginAttempt(key, Context()).MayAttempt,
+        "attempt C must remain denied while B owns the circuit");
+
+    manager.Report(
+        QuestAttemptOutcome.Success(key, ownerB.AttemptGeneration, "B succeeded"),
+        Context());
+    var ownerC = manager.TryBeginAttempt(key, Context());
+    Assert(ownerC.MayAttempt && ownerC.AttemptGeneration > ownerB.AttemptGeneration,
+        "valid B success must release ownership for a newer attempt C");
 }
 
 static void TestSuccessfulHalfOpenClearsEscalation(string settingsRoot, DateTime now)
@@ -1501,9 +1549,12 @@ static void TestSuccessfulHalfOpenClearsEscalation(string settingsRoot, DateTime
         Context());
     clock.UtcNow = now.AddMinutes(16);
     manager.RetryNow(key);
-    Assert(manager.TryBeginAttempt(key, Context()).State == QuestRecoveryState.Attempting,
+    var probeOwner = manager.TryBeginAttempt(key, Context());
+    Assert(probeOwner.State == QuestRecoveryState.Attempting,
         "a half-open probe must acquire attempt ownership");
-    manager.Report(QuestAttemptOutcome.Success(key, "probe succeeded"), Context());
+    manager.Report(
+        QuestAttemptOutcome.Success(key, probeOwner.AttemptGeneration, "probe succeeded"),
+        Context());
 
     var record = manager.GetEntries().Single();
     Assert(record.State == QuestRecoveryState.Eligible
@@ -1525,8 +1576,13 @@ static void TestSuccessfulHalfOpenClearsEscalation(string settingsRoot, DateTime
     Assert(persisted.State == QuestRecoveryState.Eligible
            && persisted.Reason == QuestFailureReason.None
            && persisted.CooldownUntilUtc == null
+           && persisted.AttemptGeneration == probeOwner.AttemptGeneration
            && persisted.Evidence.Any(item => item.Text == "probe succeeded"),
-        "a successful release must survive persistence and reload");
+        "a successful release and its last ownership generation must survive persistence and reload");
+    var reloadedOwner = reloaded.TryBeginAttempt(key, Context());
+    Assert(reloadedOwner.MayAttempt
+           && reloadedOwner.AttemptGeneration > probeOwner.AttemptGeneration,
+        "ownership generation must remain monotonic across persistence and reload");
 }
 
 static void TestSuccessCannotReopenTerminalStates(string settingsRoot, DateTime now)
@@ -1535,7 +1591,8 @@ static void TestSuccessCannotReopenTerminalStates(string settingsRoot, DateTime 
     var manualKey = QuestRecoveryKey.ForQuestStage(1202, QuestRecoveryStage.Pickup);
     manual.Configure(CreateEnvironment(Path.Combine(settingsRoot, "manual"), "Jeof", "Lordaeron"));
     manual.SetManualBlacklist(manualKey.QuestId, true);
-    var manualDecision = manual.Report(QuestAttemptOutcome.Success(manualKey, "must stay manual"), Context());
+    var manualDecision = manual.Report(
+        QuestAttemptOutcome.Success(manualKey, 1, "must stay manual"), Context());
     Assert(manualDecision.State == QuestRecoveryState.ManualBlacklist && !manualDecision.MayAttempt,
         "success must never reopen a manual blacklist");
 
@@ -1544,7 +1601,7 @@ static void TestSuccessCannotReopenTerminalStates(string settingsRoot, DateTime 
     completed.Configure(CreateEnvironment(Path.Combine(settingsRoot, "completed"), "Jeof", "Lordaeron"));
     completed.MarkCompleted(completedKey.QuestId);
     var completedDecision = completed.Report(
-        QuestAttemptOutcome.Success(completedKey, "must stay completed"), Context());
+        QuestAttemptOutcome.Success(completedKey, 1, "must stay completed"), Context());
     Assert(completedDecision.State == QuestRecoveryState.Completed && !completedDecision.MayAttempt,
         "success must never reopen a completed circuit");
 }

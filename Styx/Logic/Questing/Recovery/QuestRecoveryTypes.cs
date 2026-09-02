@@ -103,6 +103,7 @@ public sealed class QuestAttemptOutcome
 
     public QuestRecoveryKey Key { get; init; } = null!;
     public QuestAttemptOutcomeKind Kind { get; init; }
+    public long AttemptGeneration { get; init; }
     public QuestFailureReason Reason { get; init; }
     public bool IsFailureEpisode { get; init; }
     public string Evidence { get; init; } = "";
@@ -131,11 +132,17 @@ public sealed class QuestAttemptOutcome
         QuestFailureReason reason, string evidence) =>
         new() { Key = key ?? throw new ArgumentNullException(nameof(key)), Kind = QuestAttemptOutcomeKind.Redirect, Reason = reason, IsFailureEpisode = false, Evidence = evidence ?? "" };
 
-    public static QuestAttemptOutcome Success(QuestRecoveryKey key, string evidence) =>
+    public static QuestAttemptOutcome Success(
+        QuestRecoveryKey key,
+        long attemptGeneration,
+        string evidence) =>
         new()
         {
             Key = key ?? throw new ArgumentNullException(nameof(key)),
             Kind = QuestAttemptOutcomeKind.Success,
+            AttemptGeneration = attemptGeneration > 0
+                ? attemptGeneration
+                : throw new ArgumentOutOfRangeException(nameof(attemptGeneration)),
             Reason = QuestFailureReason.None,
             IsFailureEpisode = false,
             Evidence = evidence ?? ""
@@ -163,6 +170,7 @@ public sealed class QuestRecoveryDecision
 {
     public QuestRecoveryState State { get; init; }
     public bool MayAttempt { get; init; }
+    public long AttemptGeneration { get; init; }
     public DateTime? RetryUtc { get; init; }
     public string ResetReason { get; init; } = "";
     public string Status { get; init; } = "";
@@ -192,6 +200,7 @@ public sealed class QuestRecoveryRecord
     public DateTime? NextHalfOpenUtc { get; init; }
     public int EpisodeCount { get; init; }
     public long RecoveryCycleId { get; init; }
+    public long AttemptGeneration { get; init; }
     public int AttemptCountInEpisode { get; init; }
     public int DeathCountInEpisode { get; init; }
     public DateTime? LastProgressUtc { get; init; }
