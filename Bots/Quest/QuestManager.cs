@@ -25,7 +25,7 @@ public static class QuestManager
     private static readonly Random randomGenerator = new Random();
     private static readonly char[] alphaChars = "ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvxyz".ToCharArray();
 
-    [Obsolete("Use ObjectManager.Me.QuestLog.TryGetAuthoritativeCompletedQuests() instead.")]
+    [Obsolete("Use ObjectManager.Me.QuestLog.TryGetAuthoritativeCompletedQuests(out var ids) instead.")]
     public static List<uint> GetCompletedQuests()
     {
         return StyxWoW.Me.QuestLog.TryGetAuthoritativeCompletedQuests(out var completedQuestIds)

@@ -21,6 +21,7 @@ try
     TestCompletedQuestCacheDiscardsRefreshWhenIdentityChanges();
     TestQuestOrderDoesNotMutateWithoutAuthoritativeCompletion();
     TestQuestingCompletedQuestIdsAreSafeWithoutClient();
+    TestQuestManagerObsoleteGuidanceShowsCompilableTryCall();
     RunPolicyRegressions(now);
     TestStoreRoundTripAndAtomicReplacement(Path.Combine(testRoot, "store"), now);
     TestCorruptStoreQuarantine(Path.Combine(testRoot, "corrupt"));
@@ -257,6 +258,17 @@ static void TestQuestingCompletedQuestIdsAreSafeWithoutClient()
 #pragma warning restore CS0618
     Assert(completedQuestIds != null && completedQuestIds.Count == 0,
         "the legacy completed-quest API must return an empty copied set without a client authority");
+}
+
+static void TestQuestManagerObsoleteGuidanceShowsCompilableTryCall()
+{
+    var method = typeof(Bots.Quest.QuestManager).GetMethod(nameof(Bots.Quest.QuestManager.GetCompletedQuests));
+    var obsolete = method == null
+        ? null
+        : Attribute.GetCustomAttribute(method, typeof(ObsoleteAttribute)) as ObsoleteAttribute;
+
+    Assert(obsolete?.Message == "Use ObjectManager.Me.QuestLog.TryGetAuthoritativeCompletedQuests(out var ids) instead.",
+        "the QuestManager obsolete guidance must show the Try API's required out argument");
 }
 
 static void RunPolicyRegressions(DateTime now)
