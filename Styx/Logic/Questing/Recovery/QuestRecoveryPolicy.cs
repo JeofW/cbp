@@ -7,9 +7,11 @@ public static class QuestRecoveryPolicy
     public static QuestRecoveryRecord ApplyFailure(
         QuestRecoveryRecord current,
         QuestFailureReason reason,
-        DateTime nowUtc)
+        DateTime nowUtc,
+        QuestRecoveryContext context)
     {
         ArgumentNullException.ThrowIfNull(current);
+        ArgumentNullException.ThrowIfNull(context);
 
         if (current.State is QuestRecoveryState.ManualBlacklist or QuestRecoveryState.Completed)
         {
@@ -44,7 +46,8 @@ public static class QuestRecoveryPolicy
             replaceNextHalfOpenUtc: true,
             episodeCount: episodeCount,
             attemptCountInEpisode: attemptCount,
-            deathCountInEpisode: deathCount);
+            deathCountInEpisode: deathCount,
+            failureContext: context);
     }
 
     public static QuestRecoveryRecord ApplyProgress(
@@ -55,7 +58,17 @@ public static class QuestRecoveryPolicy
         ArgumentNullException.ThrowIfNull(current);
         ArgumentNullException.ThrowIfNull(objectiveCounts);
 
+        if (current.State is QuestRecoveryState.ManualBlacklist or QuestRecoveryState.Completed)
+        {
+            return Copy(current);
+        }
+
         var madeProgress = objectiveCounts.Select((count, index) => count > (index < current.ObjectiveCounts.Count ? current.ObjectiveCounts[index] : 0)).Any(progressed => progressed);
+        if (!madeProgress)
+        {
+            return Copy(current);
+        }
+
         var resetsEscalation = madeProgress &&
             (current.Key.Stage == QuestRecoveryStage.Objective || current.Reason == QuestFailureReason.RepeatedDeaths);
 
@@ -224,7 +237,8 @@ public static class QuestRecoveryPolicy
         int? attemptCountInEpisode = null,
         int? deathCountInEpisode = null,
         DateTime? lastProgressUtc = null,
-        IReadOnlyList<int>? objectiveCounts = null)
+        IReadOnlyList<int>? objectiveCounts = null,
+        QuestRecoveryContext? failureContext = null)
     {
         return new QuestRecoveryRecord
         {
@@ -240,11 +254,11 @@ public static class QuestRecoveryPolicy
             DeathCountInEpisode = deathCountInEpisode ?? current.DeathCountInEpisode,
             LastProgressUtc = lastProgressUtc ?? current.LastProgressUtc,
             ObjectiveCounts = objectiveCounts ?? current.ObjectiveCounts,
-            PlayerLevelAtFailure = current.PlayerLevelAtFailure,
-            EquipmentFingerprint = current.EquipmentFingerprint,
-            DatasetVersion = current.DatasetVersion,
-            CoreVersion = current.CoreVersion,
-            NavigationFingerprint = current.NavigationFingerprint,
+            PlayerLevelAtFailure = failureContext is null ? current.PlayerLevelAtFailure : failureContext.PlayerLevel,
+            EquipmentFingerprint = failureContext is null ? current.EquipmentFingerprint : failureContext.EquipmentFingerprint,
+            DatasetVersion = failureContext is null ? current.DatasetVersion : failureContext.DatasetVersion,
+            CoreVersion = failureContext is null ? current.CoreVersion : failureContext.CoreVersion,
+            NavigationFingerprint = failureContext is null ? current.NavigationFingerprint : failureContext.NavigationFingerprint,
             Evidence = current.Evidence
         };
     }
