@@ -40,10 +40,9 @@ namespace Styx.Logic.Questing
 		{
 			get
 			{
-				string identity = CaptureCompletedQuestCacheIdentity();
 				lock (CompletedQuestCacheLock)
 				{
-					EnsureCompletedQuestCacheIdentity(identity);
+					EnsureCompletedQuestCacheIdentity(CaptureCompletedQuestCacheIdentity());
 					return _completedQuestCacheStatus;
 				}
 			}
@@ -235,7 +234,7 @@ namespace Styx.Logic.Questing
 		public bool TryGetAuthoritativeCompletedQuests(out ReadOnlyCollection<uint> completedQuestIds)
 		{
 			return TryGetAuthoritativeCompletedQuestsForCacheIdentity(
-				CaptureCompletedQuestCacheIdentity(),
+				CaptureCompletedQuestCacheIdentity,
 				TryRefreshCompletedQuestCache,
 				out completedQuestIds);
 		}
@@ -247,20 +246,44 @@ namespace Styx.Logic.Questing
 			out ReadOnlyCollection<uint> completedQuestIds)
 		{
 			return TryGetAuthoritativeCompletedQuestsForCacheIdentity(
-				CreateCompletedQuestCacheIdentity(character, realm), refresh, out completedQuestIds);
+				() => CreateCompletedQuestCacheIdentity(character, realm), refresh, out completedQuestIds);
+		}
+
+		internal static bool TryGetAuthoritativeCompletedQuestsForIdentityProvider(
+			Func<(string Character, string Realm)> identityProvider,
+			Func<List<uint>> refresh,
+			out ReadOnlyCollection<uint> completedQuestIds)
+		{
+			return TryGetAuthoritativeCompletedQuestsForCacheIdentity(
+				() =>
+				{
+					(string character, string realm) = identityProvider();
+					return CreateCompletedQuestCacheIdentity(character, realm);
+				},
+				refresh,
+				out completedQuestIds);
 		}
 
 		private static bool TryGetAuthoritativeCompletedQuestsForCacheIdentity(
-			string identity,
+			Func<string> identityProvider,
 			Func<List<uint>> refresh,
 			out ReadOnlyCollection<uint> completedQuestIds)
 		{
 			lock (CompletedQuestCacheLock)
 			{
+				string identity = identityProvider();
 				EnsureCompletedQuestCacheIdentity(identity);
 				if (identity != null && ShouldRefreshCompletedQuestCache())
 				{
 					List<uint> refreshedQuestIds = refresh();
+					string refreshedIdentity = identityProvider();
+					if (!string.Equals(identity, refreshedIdentity, StringComparison.OrdinalIgnoreCase))
+					{
+						EnsureCompletedQuestCacheIdentity(refreshedIdentity);
+						completedQuestIds = CreateCompletedQuestSnapshot();
+						return false;
+					}
+
 					if (refreshedQuestIds == null)
 					{
 						_completedQuestCacheStatus = CompletedQuestCacheStatus.RefreshFailed;
@@ -440,9 +463,9 @@ namespace Styx.Logic.Questing
 		/// </summary>
 		public void AddCompletedQuest(uint questId)
 		{
-			string identity = CaptureCompletedQuestCacheIdentity();
 			lock (CompletedQuestCacheLock)
 			{
+				string identity = CaptureCompletedQuestCacheIdentity();
 				EnsureCompletedQuestCacheIdentity(identity);
 				if (identity != null && questId != 0 && !_completedQuestIds.Contains(questId))
 					_completedQuestIds.Add(questId);

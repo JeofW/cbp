@@ -1,5 +1,7 @@
 using Styx.Logic.Questing.Recovery;
 using Styx.Logic.Questing;
+using Styx.Logic.Profiles.Quest;
+using Bots.Quest.QuestOrder;
 using Styx.Helpers;
 
 var now = new DateTime(2026, 9, 2, 12, 0, 0, DateTimeKind.Utc);
@@ -16,6 +18,9 @@ try
     TestCompletedQuestCacheInvalidatesAcrossIdentityChanges();
     TestCompletedQuestCacheSnapshotsAreStable();
     TestCompletedQuestCacheSerializesConcurrentRefreshes();
+    TestCompletedQuestCacheDiscardsRefreshWhenIdentityChanges();
+    TestQuestOrderDoesNotMutateWithoutAuthoritativeCompletion();
+    TestQuestingCompletedQuestIdsAreSafeWithoutClient();
     RunPolicyRegressions(now);
     TestStoreRoundTripAndAtomicReplacement(Path.Combine(testRoot, "store"), now);
     TestCorruptStoreQuarantine(Path.Combine(testRoot, "corrupt"));
@@ -213,6 +218,45 @@ static void TestCompletedQuestCacheSerializesConcurrentRefreshes()
         "concurrent completed-quest readers must complete without deadlock");
     Assert(first.Result && second.Result && refreshCalls == 1,
         "concurrent completed-quest readers must share one refresh attempt");
+}
+
+static void TestCompletedQuestCacheDiscardsRefreshWhenIdentityChanges()
+{
+    var identityReads = 0;
+    Assert(!QuestLog.TryGetAuthoritativeCompletedQuestsForIdentityProvider(
+        () => ++identityReads == 1 ? ("Foxtrot", "Lordaeron") : ("Golf", "Lordaeron"),
+        () => new List<uint> { 867 },
+        out var completedQuestIds),
+        "a refresh that crosses an identity change must not be authoritative");
+    Assert(completedQuestIds.Count == 0,
+        "a refresh that crosses an identity change must discard the candidate IDs");
+    Assert(QuestLog.GetCompletedQuestCacheStatusForIdentity("Golf", "Lordaeron")
+        == CompletedQuestCacheStatus.Unknown,
+        "an identity change during refresh must leave the new identity unrefreshed");
+}
+
+static void TestQuestOrderDoesNotMutateWithoutAuthoritativeCompletion()
+{
+    var nodes = new OrderNodeCollection
+    {
+        new CheckpointNode(1),
+        new CheckpointNode(2)
+    };
+    var order = new QuestOrder(nodes);
+
+    Assert(!order.TryUpdateNodesWithAuthoritativeCompletedQuests(false, new HashSet<uint>(), 2),
+        "quest order must reject an unavailable completed-quest authority");
+    Assert(nodes.Count == 2 && nodes[0] is CheckpointNode && nodes[1] is CheckpointNode,
+        "quest order must not advance checkpoints when completion authority is unavailable");
+}
+
+static void TestQuestingCompletedQuestIdsAreSafeWithoutClient()
+{
+#pragma warning disable CS0618
+    var completedQuestIds = Questing.GetCompletedQuestIDs();
+#pragma warning restore CS0618
+    Assert(completedQuestIds != null && completedQuestIds.Count == 0,
+        "the legacy completed-quest API must return an empty copied set without a client authority");
 }
 
 static void RunPolicyRegressions(DateTime now)

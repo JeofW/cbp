@@ -110,15 +110,29 @@ namespace Bots.Quest.QuestOrder
             if (Nodes == null)
                 return;
 
-            if (!IgnoreCheckpoints)
-                SkipToCheckpoint(ObjectManager.Me?.LevelFraction ?? 0);
-
             var questLog = StyxWoW.Me?.QuestLog;
             if (questLog == null || !questLog.TryGetAuthoritativeCompletedQuests(out var completedQuestsList))
                 return;
 
-            var completedQuests = new HashSet<uint>(completedQuestsList);
+            TryUpdateNodesWithAuthoritativeCompletedQuests(
+                true,
+                new HashSet<uint>(completedQuestsList),
+                ObjectManager.Me?.LevelFraction ?? 0);
+        }
+
+        internal bool TryUpdateNodesWithAuthoritativeCompletedQuests(
+            bool hasAuthoritativeCompletedQuests,
+            HashSet<uint> completedQuests,
+            float level)
+        {
+            if (Nodes == null || !hasAuthoritativeCompletedQuests)
+                return false;
+
+            if (!IgnoreCheckpoints)
+                SkipToCheckpoint(level);
+
             RemoveCompletedNodes(completedQuests);
+            return true;
         }
 
         /// <summary>
