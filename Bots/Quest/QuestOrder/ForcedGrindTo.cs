@@ -20,6 +20,9 @@ namespace Bots.Quest.QuestOrder;
 
 public class ForcedGrindTo : ForcedBehavior
 {
+    private QuestConditionEvaluationState _conditionState = QuestConditionEvaluationState.False;
+    private bool _started;
+
     public ForcedGrindTo(GrindToNode node)
     {
         this.Node = node != null ? node : throw new ArgumentNullException(nameof(node));
@@ -34,7 +37,10 @@ public class ForcedGrindTo : ForcedBehavior
         get
         {
             if (this.Node.Condition != null)
-                return this.Node.Condition();
+            {
+                _conditionState = QuestConditionEvaluation.Evaluate(this.Node.Condition);
+                return _conditionState == QuestConditionEvaluationState.True;
+            }
             float fraction = ObjectManager.Me.LevelFraction;
             float target = this.Node.Level;
             bool done = fraction >= target;
@@ -44,8 +50,32 @@ public class ForcedGrindTo : ForcedBehavior
         }
     }
 
+    public override bool IsExecutionDeferred =>
+        this.Node.Condition != null && _conditionState == QuestConditionEvaluationState.Unknown;
+
     public override void OnStart()
     {
+        if (this.Node.Condition != null)
+        {
+            _conditionState = QuestConditionEvaluation.Evaluate(this.Node.Condition);
+            if (_conditionState == QuestConditionEvaluationState.Unknown)
+                return;
+        }
+
+        this.StartGrinding();
+    }
+
+    public override void OnTick()
+    {
+        if (!_started)
+            this.StartGrinding();
+    }
+
+    private void StartGrinding()
+    {
+        if (_started)
+            return;
+
         if ((Area)QuestState.Instance.CurrentGrindArea == (Area)null)
         {
             Logging.Write("Reached GrindTo (level: {0}) without a current grind area. Can't continue.", (object)this.Node.Level);
@@ -59,6 +89,8 @@ public class ForcedGrindTo : ForcedBehavior
             Logging.Write("[GrindTo] {0}, Target Level: {1}", (object)goalText, (object)this.Node.Level);
             TreeRoot.GoalText = goalText;
         }
+
+        _started = true;
     }
 
     private string GetGoalText()
@@ -70,6 +102,9 @@ public class ForcedGrindTo : ForcedBehavior
 
     public override void Dispose()
     {
+        if (!_started)
+            return;
+
         Targeting.Instance.IncludeTargetsFilter -= new IncludeTargetsFilterDelegate(LevelBot.LevelBotIncludeTargetsFilter);
         StyxWoW.AreaManager.SetArea((GrindArea)null);
     }

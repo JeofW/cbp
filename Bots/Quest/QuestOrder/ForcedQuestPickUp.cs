@@ -40,6 +40,8 @@ public class ForcedQuestPickUp : ForcedBehavior
     private long _interactionCycleId;
     private readonly QuestPickupMismatchTracker _mismatchTracker = new QuestPickupMismatchTracker();
     private IReadOnlyList<uint> _currentInteractionOfferedQuestIds = Array.Empty<uint>();
+    private bool _shownTitleUniquelyResolved;
+    private QuestCompletionState _completionState = QuestCompletionState.Unknown;
 
     public ForcedQuestPickUp(
         uint questId,
@@ -69,9 +71,8 @@ public class ForcedQuestPickUp : ForcedBehavior
             // 2) Quest is in the quest log (just accepted, ready for objectives)
             try
             {
-                // If quest is in completed cache, skip pickup
-                if (ObjectManager.Me.QuestLog.TryGetAuthoritativeCompletedQuests(out var completedQuests)
-                    && completedQuests.Contains(this.QuestId))
+                _completionState = ObjectManager.Me.QuestLog.GetQuestCompletionState(this.QuestId);
+                if (_completionState == QuestCompletionState.KnownComplete)
                     return true;
 
                 // If quest is in log, the PickUp behavior is done
@@ -83,10 +84,14 @@ public class ForcedQuestPickUp : ForcedBehavior
             }
             catch
             {
+                _completionState = QuestCompletionState.Unknown;
                 return false;
             }
         }
     }
+
+    public override bool IsExecutionDeferred =>
+        !PickupUnavailable && _completionState == QuestCompletionState.Unknown;
 
     public uint QuestId { get; private set; }
 
@@ -204,12 +209,14 @@ public class ForcedQuestPickUp : ForcedBehavior
 
     private void UseQuestItem(WoWItem item)
     {
+        _shownTitleUniquelyResolved = false;
         item.UseContainerItem();
         _interactionCycleId++;
     }
 
     private void InteractWithQuestGiver(WoWObject giver)
     {
+        _shownTitleUniquelyResolved = false;
         giver.Interact();
         _interactionCycleId++;
     }
@@ -218,6 +225,7 @@ public class ForcedQuestPickUp : ForcedBehavior
     {
         _handleQuestFrameAttempts = 0;
         _currentInteractionOfferedQuestIds = Array.Empty<uint>();
+        _shownTitleUniquelyResolved = false;
         if (!GossipFrame.Instance.IsVisible && !QuestFrame.Instance.IsVisible)
             return RunStatus.Success;
         GossipFrame.Instance.Close();
@@ -244,6 +252,7 @@ public class ForcedQuestPickUp : ForcedBehavior
         // SelectAvailableQuest(N) / SelectGossipAvailableQuest(N) — works for both frames.
         var gossipQuests = GossipFrame.Instance.AvailableQuests;
         var nativeQuests = QuestFrame.Instance.AvailableQuests;
+        _shownTitleUniquelyResolved = false;
         _currentInteractionOfferedQuestIds = gossipQuests
             .Select(quest => unchecked((uint)quest.Id))
             .Concat(nativeQuests)
@@ -270,24 +279,22 @@ public class ForcedQuestPickUp : ForcedBehavior
             // Fallback: match by Lua name from GetGossipAvailableQuests().
             // WotLK 3.3.5a returns 5 values per quest: title, level, isTrivial, isRepeatable, isLegendary.
             // The memory struct (GossipQuestEntry.Id) is unreliable in 3.3.5a — Lua is authoritative.
-            if (questIndex == -1 && luaDump != null && luaDump.Count >= 5)
+            if (luaDump != null && luaDump.Count >= 5)
             {
-                // Try to match our quest by name (works when profile locale = client locale)
                 const int valuesPerQuest = 5;
+                var titles = new List<string>();
                 for (int k = 0; k < luaDump.Count / valuesPerQuest; k++)
+                    titles.Add(luaDump[k * valuesPerQuest]);
+
+                if (QuestPickupDialogPolicy.TryFindUniqueExactTitleIndex(titles, this.QuestName, out int titleIndex))
                 {
-                    if (!string.IsNullOrWhiteSpace(this.QuestName)
-                        && string.Equals(
-                            (luaDump[k * valuesPerQuest] ?? "").Trim(),
-                            this.QuestName.Trim(),
-                            StringComparison.Ordinal))
+                    _shownTitleUniquelyResolved = true;
+                    if (questIndex == -1)
                     {
-                        questIndex = k;
-                        Logging.WriteDebug("[QuestPickUp] Found quest \"{0}\" via Lua name match at gossip index {1}.", this.QuestName, k);
-                        break;
+                        questIndex = titleIndex;
+                        Logging.WriteDebug("[QuestPickUp] Found unique quest \"{0}\" via Lua name match at gossip index {1}.", this.QuestName, titleIndex);
                     }
                 }
-
             }
         }
         else
@@ -354,12 +361,11 @@ public class ForcedQuestPickUp : ForcedBehavior
         bool continueVisible = ForcedQuestPickUp.QuestFrameCompleteButton.IsVisible;
         bool completeQuestVisible = ForcedQuestPickUp.QuestFrameCompleteQuestButton.IsVisible;
         int numChoices = Lua.GetReturnVal<int>("return GetNumQuestChoices()", 0U);
-        bool hasAuthoritativeCompletion = ObjectManager.Me.QuestLog.TryGetAuthoritativeCompletedQuests(
-            out var completedQuestIds);
-        CompletedQuestCacheStatus completionStatus = ObjectManager.Me.QuestLog.CompletedQuestCacheStatus;
-        bool shownQuestCompleted = hasAuthoritativeCompletion
-            && shownQuestId != 0
-            && completedQuestIds.Contains(shownQuestId);
+        QuestCompletionState shownQuestCompletion = shownQuestId == 0
+            ? QuestCompletionState.Unknown
+            : ObjectManager.Me.QuestLog.GetQuestCompletionState(shownQuestId);
+        bool shownQuestCompletionKnown = shownQuestCompletion != QuestCompletionState.Unknown;
+        bool shownQuestCompleted = shownQuestCompletion == QuestCompletionState.KnownComplete;
         var liveOfferedQuestIds = GossipFrame.Instance.AvailableQuests
             .Select(quest => unchecked((uint)quest.Id))
             .Concat(QuestFrame.Instance.AvailableQuests)
@@ -377,8 +383,9 @@ public class ForcedQuestPickUp : ForcedBehavior
             continueVisible,
             completeQuestVisible,
             numChoices > 0,
-            completionStatus,
-            shownQuestCompleted);
+            shownQuestCompletionKnown,
+            shownQuestCompleted,
+            _shownTitleUniquelyResolved);
         QuestPickupDialogExecutionPlan executionPlan = QuestPickupDialogExecutionPolicy.CreatePlan(
             decision,
             continueVisible,
@@ -387,7 +394,7 @@ public class ForcedQuestPickUp : ForcedBehavior
 
         Logging.WriteDebug("[QuestPickUp] HandleQuestFrame: Action={0}, ShownId={1}, TargetId={2}, Accept={3}, Continue={4}, Complete={5}, Completion={6}",
             decision.Action, shownQuestId, this.QuestId, acceptVisible, continueVisible,
-            completeQuestVisible, completionStatus);
+            completeQuestVisible, shownQuestCompletion);
 
         if (decision.Action == QuestPickupDialogAction.RejectMismatch)
         {

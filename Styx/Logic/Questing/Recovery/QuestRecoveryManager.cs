@@ -146,7 +146,12 @@ public sealed class QuestRecoveryManager
                 : current;
             QuestRecoveryRecord updated;
 
-            if (!outcome.IsFailureEpisode &&
+            if (outcome.Kind == QuestAttemptOutcomeKind.Success &&
+                current.State is QuestRecoveryState.Attempting or QuestRecoveryState.HalfOpen)
+            {
+                updated = ApplySuccessfulAttempt(current);
+            }
+            else if (!outcome.IsFailureEpisode &&
                 current.State == QuestRecoveryState.Quarantined &&
                 current.Reason == QuestFailureReason.LegacyUnknown &&
                 HasLiveQuestEvidence(outcome))
@@ -552,6 +557,20 @@ public sealed class QuestRecoveryManager
             .TakeLast(MaximumEvidenceRecords)
             .ToArray();
         return Copy(record, evidence: evidence);
+    }
+
+    private static QuestRecoveryRecord ApplySuccessfulAttempt(QuestRecoveryRecord current)
+    {
+        return new QuestRecoveryRecord
+        {
+            Key = current.Key,
+            State = QuestRecoveryState.Eligible,
+            Reason = QuestFailureReason.None,
+            RecoveryCycleId = current.RecoveryCycleId + 1,
+            LastProgressUtc = current.LastProgressUtc,
+            ObjectiveCounts = current.ObjectiveCounts,
+            Evidence = current.Evidence
+        };
     }
 
     private static bool HasLegacyResetEvidence(QuestRecoveryRecord record, QuestRecoveryContext context) =>

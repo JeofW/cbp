@@ -88,12 +88,21 @@ public sealed class QuestRecoveryKey : IEquatable<QuestRecoveryKey>
         QuestId, Stage, Scope, NpcEntry, MapId, Endpoint, ObjectiveIndex);
 }
 
+public enum QuestAttemptOutcomeKind
+{
+    Observation,
+    Failure,
+    Redirect,
+    Success
+}
+
 public sealed class QuestAttemptOutcome
 {
     private IReadOnlyList<uint> _offeredQuestIds = Array.Empty<uint>();
     private IReadOnlyList<int> _objectiveCounts = Array.Empty<int>();
 
     public QuestRecoveryKey Key { get; init; } = null!;
+    public QuestAttemptOutcomeKind Kind { get; init; }
     public QuestFailureReason Reason { get; init; }
     public bool IsFailureEpisode { get; init; }
     public string Evidence { get; init; } = "";
@@ -112,15 +121,25 @@ public sealed class QuestAttemptOutcome
 
     public static QuestAttemptOutcome Failure(QuestRecoveryKey key,
         QuestFailureReason reason, string evidence) =>
-        new() { Key = key ?? throw new ArgumentNullException(nameof(key)), Reason = reason, IsFailureEpisode = true, Evidence = evidence ?? "" };
+        new() { Key = key ?? throw new ArgumentNullException(nameof(key)), Kind = QuestAttemptOutcomeKind.Failure, Reason = reason, IsFailureEpisode = true, Evidence = evidence ?? "" };
 
     public static QuestAttemptOutcome Observation(QuestRecoveryKey key,
         QuestFailureReason reason, string evidence) =>
-        new() { Key = key ?? throw new ArgumentNullException(nameof(key)), Reason = reason, IsFailureEpisode = false, Evidence = evidence ?? "" };
+        new() { Key = key ?? throw new ArgumentNullException(nameof(key)), Kind = QuestAttemptOutcomeKind.Observation, Reason = reason, IsFailureEpisode = false, Evidence = evidence ?? "" };
 
     public static QuestAttemptOutcome Redirect(QuestRecoveryKey key,
         QuestFailureReason reason, string evidence) =>
-        new() { Key = key ?? throw new ArgumentNullException(nameof(key)), Reason = reason, IsFailureEpisode = false, Evidence = evidence ?? "" };
+        new() { Key = key ?? throw new ArgumentNullException(nameof(key)), Kind = QuestAttemptOutcomeKind.Redirect, Reason = reason, IsFailureEpisode = false, Evidence = evidence ?? "" };
+
+    public static QuestAttemptOutcome Success(QuestRecoveryKey key, string evidence) =>
+        new()
+        {
+            Key = key ?? throw new ArgumentNullException(nameof(key)),
+            Kind = QuestAttemptOutcomeKind.Success,
+            Reason = QuestFailureReason.None,
+            IsFailureEpisode = false,
+            Evidence = evidence ?? ""
+        };
 }
 
 public sealed class QuestRecoveryContext

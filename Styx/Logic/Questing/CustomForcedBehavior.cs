@@ -441,9 +441,12 @@ public abstract class CustomForcedBehavior
     PlayerQuest questById = StyxWoW.Me.QuestLog.GetQuestById((uint) questId);
     if (questInLogRequirement == CustomForcedBehavior.QuestInLogRequirement.InLog && questById == null || questInLogRequirement == CustomForcedBehavior.QuestInLogRequirement.NotInLog && questById != null)
       return false;
-    bool flag = questById != null && questById.IsCompleted;
-    if (!flag && ObjectManager.Me.QuestLog.TryGetAuthoritativeCompletedQuests(out var completedQuestIds))
-      flag = completedQuestIds.Contains((uint) questId);
+    bool flag = false;
+    if (questCompleteRequirement != CustomForcedBehavior.QuestCompleteRequirement.DontCare)
+    {
+      QuestCompletionState completion = StyxWoW.Me.QuestLog.GetQuestCompletionState((uint) questId);
+      flag = Styx.Logic.Profiles.Quest.QuestConditionEvaluation.ToBoolean(completion);
+    }
     return (questCompleteRequirement != CustomForcedBehavior.QuestCompleteRequirement.Complete || flag) && (questCompleteRequirement != CustomForcedBehavior.QuestCompleteRequirement.NotComplete || !flag);
   }
 

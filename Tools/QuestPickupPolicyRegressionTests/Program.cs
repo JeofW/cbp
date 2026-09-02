@@ -6,7 +6,9 @@ try
 {
     TestDecisionMatrix();
     TestZeroIdTitleAuthority();
+    TestTitleFallbackRequiresUniqueSelection();
     TestCompletionMustBeAuthoritative();
+    TestShownQuestCompletionUsesLiveOrCacheAuthority();
     TestDecisionSnapshotsMismatchEvidence();
     TestInteractionCyclesFormOneEpisode();
     TestWaitExecutionPlanHasNoEffects();
@@ -54,21 +56,67 @@ static void TestZeroIdTitleAuthority()
         "a nonzero shown ID must outrank a matching title");
     Assert(QuestPickupDialogPolicy.Decide(
         876, "", 0, "", 123, Array.Empty<uint>(), true, false, false, false,
-        CompletedQuestCacheStatus.Valid, false).Action == QuestPickupDialogAction.Wait,
+        shownQuestCompletionKnown: true, shownQuestCompleted: false,
+        shownTitleUniquelyResolved: false).Action == QuestPickupDialogAction.Wait,
         "an empty target name must disable title authority");
+    Assert(Decide(shown: 0, shownName: "A Final Blow", accept: true, titleUnique: false).Action
+           == QuestPickupDialogAction.RejectMismatch,
+        "a zero-ID title without uniqueness proof must never accept the target");
+}
+
+static void TestTitleFallbackRequiresUniqueSelection()
+{
+    Assert(QuestPickupDialogPolicy.TryFindUniqueExactTitleIndex(
+               new[] { "Raptor Thieves", "  A Final Blow  ", "Thwarting Kolkar Aggression" },
+               "A Final Blow",
+               out var uniqueIndex)
+           && uniqueIndex == 1,
+        "one exact trimmed title must select its gossip index and prove uniqueness");
+    Assert(!QuestPickupDialogPolicy.TryFindUniqueExactTitleIndex(
+               new[] { "A Final Blow", "  A Final Blow  ", "Raptor Thieves" },
+               "A Final Blow",
+               out var duplicateIndex)
+           && duplicateIndex == -1,
+        "duplicate exact localized titles must not select the first gossip entry");
+    Assert(!QuestPickupDialogPolicy.TryFindUniqueExactTitleIndex(
+               new[] { "A final blow" },
+               "A Final Blow",
+               out _),
+        "title selection must remain exact ordinal after trimming");
 }
 
 static void TestCompletionMustBeAuthoritative()
 {
     Assert(Decide(shown: 875, continueVisible: true, shownCompleted: true,
-        completionStatus: CompletedQuestCacheStatus.Unknown).Action == QuestPickupDialogAction.RejectMismatch,
+        shownCompletionKnown: false).Action == QuestPickupDialogAction.RejectMismatch,
         "unknown completion authority must not advance another quest");
     Assert(Decide(shown: 875, continueVisible: true, shownCompleted: true,
-        completionStatus: CompletedQuestCacheStatus.RefreshFailed).Action == QuestPickupDialogAction.RejectMismatch,
+        shownCompletionKnown: false).Action == QuestPickupDialogAction.RejectMismatch,
         "failed completion refresh must not advance another quest");
     Assert(Decide(shown: 875, rewardChoicesAvailable: true, shownCompleted: true).Action
         == QuestPickupDialogAction.AdvanceCompletedQuest,
         "an authoritative completed quest may advance through reward selection");
+}
+
+static void TestShownQuestCompletionUsesLiveOrCacheAuthority()
+{
+    Assert(Decide(shown: 875, continueVisible: true,
+               shownCompletionKnown: true, shownCompleted: true,
+               completionStatus: CompletedQuestCacheStatus.RefreshFailed).Action
+           == QuestPickupDialogAction.AdvanceCompletedQuest,
+        "a live accepted-complete quest must advance even when historical cache refresh failed");
+    Assert(Decide(shown: 875, continueVisible: true,
+               shownCompletionKnown: true, shownCompleted: false).Action
+           == QuestPickupDialogAction.RejectMismatch,
+        "an accepted-incomplete shown quest must not advance");
+    Assert(Decide(shown: 875, continueVisible: true,
+               shownCompletionKnown: true, shownCompleted: true).Action
+           == QuestPickupDialogAction.AdvanceCompletedQuest,
+        "a valid turned-in cache completion may advance a non-accepted shown quest");
+    Assert(Decide(shown: 875, continueVisible: true,
+               shownCompletionKnown: false, shownCompleted: false).Action
+           == QuestPickupDialogAction.RejectMismatch,
+        "unknown shown-quest completion must reject or wait safely");
 }
 
 static void TestDecisionSnapshotsMismatchEvidence()
@@ -258,11 +306,15 @@ static QuestPickupDialogDecision Decide(
     bool completeVisible = false,
     bool rewardChoicesAvailable = false,
     bool shownCompleted = false,
-    CompletedQuestCacheStatus completionStatus = CompletedQuestCacheStatus.Valid) =>
+    CompletedQuestCacheStatus completionStatus = CompletedQuestCacheStatus.Valid,
+    bool? shownCompletionKnown = null,
+    bool titleUnique = true) =>
     QuestPickupDialogPolicy.Decide(
         target, targetName, shown, shownName, 123, new uint[] { 867, 875 },
         accept, continueVisible, completeVisible, rewardChoicesAvailable,
-        completionStatus, shownCompleted);
+        shownCompletionKnown ?? completionStatus == CompletedQuestCacheStatus.Valid,
+        shownCompleted,
+        titleUnique);
 
 static void Assert(bool condition, string message)
 {

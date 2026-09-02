@@ -52,10 +52,13 @@ public class ForcedWhile : ForcedBehavior
         {
             if (!this.hasInitialized)
             {
-                bool flag;
+                bool flag = false;
+                bool completionUnknown = false;
                 try
                 {
-                    flag = this.whileNode.Condition();
+                    QuestConditionEvaluationState condition = QuestConditionEvaluation.Evaluate(this.whileNode.Condition);
+                    completionUnknown = condition == QuestConditionEvaluationState.Unknown;
+                    flag = condition == QuestConditionEvaluationState.True;
                 }
                 catch (Exception ex)
                 {
@@ -65,6 +68,11 @@ public class ForcedWhile : ForcedBehavior
                     Logging.Write(Color.Red, "CopilotBuddy stopped!");
                     Logging.WriteException(ex);
                     TreeRoot.Stop();
+                    yield break;
+                }
+                if (completionUnknown)
+                {
+                    yield return RunStatus.Running;
                     yield break;
                 }
                 if (!flag)

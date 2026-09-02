@@ -19,6 +19,8 @@ namespace Bots.Quest.QuestOrder;
 public class ForcedCodeBehavior : ForcedBehavior
 {
     private readonly CustomForcedBehavior customBehavior;
+    private QuestConditionEvaluationState _doneState = QuestConditionEvaluationState.False;
+    private bool _started;
 
     public ForcedCodeBehavior(CodeNode codeNode)
     {
@@ -68,16 +70,43 @@ public class ForcedCodeBehavior : ForcedBehavior
 
     protected override Composite CreateBehavior() => this.customBehavior.Branch;
 
-    public override bool IsDone => this.customBehavior.IsDone;
+    public override bool IsDone
+    {
+        get
+        {
+            _doneState = QuestConditionEvaluation.Evaluate(() => this.customBehavior.IsDone);
+            return _doneState == QuestConditionEvaluationState.True;
+        }
+    }
+
+    public override bool IsExecutionDeferred => _doneState == QuestConditionEvaluationState.Unknown;
 
     public override void OnStart()
     {
         ProfileBatchManager.EnsureCompiled();
-        Logging.Write("[Code] Executing custom behavior: {0}", (object)this.customBehavior.GetType().Name);
-        this.customBehavior.OnStart();
+        _doneState = QuestConditionEvaluation.Evaluate(() => this.customBehavior.IsDone);
+        if (_doneState == QuestConditionEvaluationState.Unknown)
+            return;
+
+        this.StartCustomBehavior();
     }
 
-    public override void OnTick() => this.customBehavior.OnTick();
+    public override void OnTick()
+    {
+        if (!_started)
+            this.StartCustomBehavior();
+        this.customBehavior.OnTick();
+    }
+
+    private void StartCustomBehavior()
+    {
+        if (_started)
+            return;
+
+        Logging.Write("[Code] Executing custom behavior: {0}", (object)this.customBehavior.GetType().Name);
+        this.customBehavior.OnStart();
+        _started = true;
+    }
 
     public override void Dispose() => this.customBehavior.Dispose();
 }

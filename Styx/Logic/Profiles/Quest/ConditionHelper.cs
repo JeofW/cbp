@@ -498,15 +498,10 @@ namespace Styx.Logic.Profiles.Quest
         public static bool IsQuestCompleted(uint questId)
         {
             var me = Styx.WoWInternals.ObjectManager.Me;
-            if (me == null) return false;
-            // Check if quest is in log with completed objectives (State B)
-            // This matches HB 4.3.4's ProfileHelperFunctionsBase.IsQuestCompleted()
-            PlayerQuest questById = me.QuestLog?.GetQuestById(questId);
-            if (questById != null) return questById.IsCompleted;
-            // Fall back to completed quests list (State C - already turned in)
-            return me.QuestLog != null
-                && me.QuestLog.TryGetAuthoritativeCompletedQuests(out var completedQuests)
-                && completedQuests.Contains(questId);
+            QuestCompletionState completion = QuestConditionEvaluation.ResolveCompletion(
+                questId,
+                () => me?.QuestLog?.GetQuestCompletionState(questId) ?? QuestCompletionState.Unknown);
+            return QuestConditionEvaluation.ToBoolean(completion);
         }
     }
     

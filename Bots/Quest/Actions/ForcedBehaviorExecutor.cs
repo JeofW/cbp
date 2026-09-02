@@ -46,6 +46,12 @@ public class ForcedBehaviorExecutor : Composite
         {
             if (this.Order.CurrentBehavior == null)
             {
+                if (GetQuestNodeCompletionAction(this.Order.CurrentNode) == QuestNodeCompletionAction.Defer)
+                {
+                    yield return RunStatus.Running;
+                    yield break;
+                }
+
                 try
                 {
                     this.Order.CurrentBehavior = this.CreateForcedBehavior(this.Order.CurrentNode);
@@ -78,6 +84,12 @@ public class ForcedBehaviorExecutor : Composite
                 this.Order.Advance();
                 if (this.Order.Nodes.Count > 0)
                 {
+                    if (GetQuestNodeCompletionAction(this.Order.CurrentNode) == QuestNodeCompletionAction.Defer)
+                    {
+                        yield return RunStatus.Running;
+                        yield break;
+                    }
+
                     try
                     {
                         this.Order.CurrentBehavior = this.CreateForcedBehavior(this.Order.CurrentNode);
@@ -106,6 +118,11 @@ public class ForcedBehaviorExecutor : Composite
                     yield return RunStatus.Failure;
                     yield break;
                 }
+            }
+            if (this.Order.CurrentBehavior.IsExecutionDeferred)
+            {
+                yield return RunStatus.Running;
+                yield break;
             }
             this.Order.CurrentBehavior.OnTick();
             // Guard against bot stop during execution — CurrentBehavior or Branch may be set to null
@@ -140,18 +157,20 @@ public class ForcedBehaviorExecutor : Composite
             case OrderNodeType.While:
                 return (ForcedBehavior)new ForcedWhile((WhileNode)orderNode);
             case OrderNodeType.PickUp:
+                if (GetQuestNodeCompletionAction(orderNode) == QuestNodeCompletionAction.Skip)
+                    return (ForcedBehavior)new ForcedNothing();
                 ForcedQuestPickUp pickUp = CreateQuestPickUp((PickUpNode)orderNode);
                 // If PickUp returns null (already completed or error), use ForcedNothing to skip
                 return pickUp != null ? (ForcedBehavior)pickUp : (ForcedBehavior)new ForcedNothing();
             case OrderNodeType.TurnIn:
+                if (GetQuestNodeCompletionAction(orderNode) == QuestNodeCompletionAction.Skip)
+                    return (ForcedBehavior)new ForcedNothing();
                 ForcedQuestTurnIn turnIn = CreateQuestTurnIn((TurnInNode)orderNode);
                 // If TurnIn returns null (already completed), use ForcedNothing to skip
                 return turnIn != null ? (ForcedBehavior)turnIn : (ForcedBehavior)new ForcedNothing();
             case OrderNodeType.Objective:
                 ObjectiveNode objectiveNode = (ObjectiveNode)orderNode;
-                // Check if quest is already completed before trying to create objective
-                if (ObjectManager.Me.QuestLog.TryGetAuthoritativeCompletedQuests(out var completedObjectiveQuests)
-                    && completedObjectiveQuests.Contains(objectiveNode.QuestId))
+                if (GetQuestNodeCompletionAction(orderNode) == QuestNodeCompletionAction.Skip)
                 {
                     Logging.WriteDebug("Quest {0} is already completed. Skipping Objective.", (object)objectiveNode.QuestId);
                     return (ForcedBehavior)new ForcedNothing();
@@ -218,6 +237,33 @@ public class ForcedBehaviorExecutor : Composite
         }
     }
 
+    private static QuestNodeCompletionAction GetQuestNodeCompletionAction(OrderNode orderNode)
+    {
+        uint questId;
+        Func<QuestCompletionState, bool, QuestNodeCompletionAction> policy;
+        switch (orderNode.Type)
+        {
+            case OrderNodeType.PickUp:
+                questId = ((PickUpNode)orderNode).QuestId;
+                policy = QuestNodeCompletionPolicy.ForPickup;
+                break;
+            case OrderNodeType.TurnIn:
+                questId = ((TurnInNode)orderNode).QuestId;
+                policy = QuestNodeCompletionPolicy.ForTurnIn;
+                break;
+            case OrderNodeType.Objective:
+                questId = ((ObjectiveNode)orderNode).QuestId;
+                policy = QuestNodeCompletionPolicy.ForObjective;
+                break;
+            default:
+                return QuestNodeCompletionAction.Execute;
+        }
+
+        var questLog = ObjectManager.Me.QuestLog;
+        bool accepted = questLog.GetQuestById(questId) != null;
+        return policy(questLog.GetQuestCompletionState(questId), accepted);
+    }
+
     private static ForcedQuestPickUp CreateQuestPickUp(PickUpNode pickUpNode)
     {
         WoWPoint giverLocation;
@@ -272,17 +318,6 @@ public class ForcedBehaviorExecutor : Composite
 
     private static ForcedQuestTurnIn CreateQuestTurnIn(TurnInNode turnInNode)
     {
-        // Check if quest is already completed (turned in previously)
-        // If so, return null - the caller will use ForcedNothing
-        if (ObjectManager.Me.QuestLog.TryGetAuthoritativeCompletedQuests(out var completedTurnInQuests)
-            && completedTurnInQuests.Contains(turnInNode.QuestId))
-        {
-            Logging.WriteDebug("Quest {0} (ID: {1}) is already completed. Skipping TurnIn.", 
-                (object)Utilities.GetObjectString((object)turnInNode.QuestName, "(null)"), 
-                (object)turnInNode.QuestId);
-            return (ForcedQuestTurnIn)null;
-        }
-        
         PlayerQuest questById = ObjectManager.Me.QuestLog.GetQuestById(turnInNode.QuestId);
         if (questById == null)
         {

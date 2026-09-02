@@ -20,6 +20,7 @@ public class ForcedIf : ForcedBehavior
 {
     private QuestOrder conditionalOrder;
     private Composite behaviorExecutor;
+    private bool conditionResolved;
 
     public ForcedIf(IfNode node)
     {
@@ -30,79 +31,131 @@ public class ForcedIf : ForcedBehavior
 
     protected override Composite CreateBehavior()
     {
-        Composite behavior = this.behaviorExecutor;
-        if ((object)behavior == null)
-            behavior = this.behaviorExecutor = (Composite)new ForcedBehaviorExecutor(this.conditionalOrder);
-        return behavior;
+        return this.behaviorExecutor ??= new ConditionalComposite(this);
     }
 
     public override void OnStart()
     {
         try
         {
-            if (this.IfNode.Condition())
-            {
-                Logging.WriteDiagnostic("[If] Condition is true, executing If body");
-                this.conditionalOrder = new QuestOrder(new OrderNodeCollection((IEnumerable<OrderNode>)this.IfNode.Body));
-            }
-            else
-            {
-                OrderNodeCollection matchingElseIfBody;
-                if (this.TryGetMatchingElseIf(out matchingElseIfBody))
-                {
-                    Logging.WriteDiagnostic("[ElseIf] Condition matched, executing ElseIf body");
-                    this.conditionalOrder = new QuestOrder(new OrderNodeCollection((IEnumerable<OrderNode>)matchingElseIfBody));
-                }
-                else if (this.IfNode.Else != null)
-                {
-                    Logging.WriteDiagnostic("[Else] No conditions matched, executing Else body");
-                    this.conditionalOrder = new QuestOrder(new OrderNodeCollection((IEnumerable<OrderNode>)this.IfNode.Else.Body));
-                }
-            }
+            this.TryInitializeConditionalOrder();
         }
         catch (Exception ex)
         {
-            Logging.Write(Color.Red, "Unable to evaluate compile condition in If tag. Please check your profile.");
-            Logging.Write(Color.Red, "CopilotBuddy stopped!");
-            Logging.WriteException(ex);
-            TreeRoot.Stop();
+            HandleConditionException(ex);
         }
-        if (this.conditionalOrder == null)
-            return;
-        this.conditionalOrder.IgnoreCheckpoints = QuestState.Instance.Order.IgnoreCheckpoints;
-        this.conditionalOrder.UpdateNodes();
     }
 
-    private bool TryGetMatchingElseIf(out OrderNodeCollection matchingBody)
+    private bool TryInitializeConditionalOrder()
     {
-        bool flag;
-        using (List<ElseIf>.Enumerator enumerator = this.IfNode.ElseIfs.GetEnumerator())
+        if (this.conditionResolved)
+            return true;
+
+        QuestConditionEvaluationState condition = QuestConditionEvaluation.Evaluate(this.IfNode.Condition);
+        if (condition == QuestConditionEvaluationState.Unknown)
+            return false;
+
+        OrderNodeCollection selectedBody = null;
+        if (condition == QuestConditionEvaluationState.True)
         {
-            ElseIf current;
-            do
-            {
-                if (enumerator.MoveNext())
-                    current = enumerator.Current;
-                else
-                    goto label_6;
-            }
-            while (!current.Condition());
-            matchingBody = current.Body;
-            flag = true;
-            goto label_7;
+            Logging.WriteDiagnostic("[If] Condition is true, executing If body");
+            selectedBody = this.IfNode.Body;
         }
-    label_6:
-        matchingBody = (OrderNodeCollection)null;
-        return false;
-    label_7:
-        return flag;
+        else
+        {
+            foreach (ElseIf elseIf in this.IfNode.ElseIfs)
+            {
+                QuestConditionEvaluationState elseIfCondition = QuestConditionEvaluation.Evaluate(elseIf.Condition);
+                if (elseIfCondition == QuestConditionEvaluationState.Unknown)
+                    return false;
+                if (elseIfCondition != QuestConditionEvaluationState.True)
+                    continue;
+
+                Logging.WriteDiagnostic("[ElseIf] Condition matched, executing ElseIf body");
+                selectedBody = elseIf.Body;
+                break;
+            }
+
+            if (selectedBody == null && this.IfNode.Else != null)
+            {
+                Logging.WriteDiagnostic("[Else] No conditions matched, executing Else body");
+                selectedBody = this.IfNode.Else.Body;
+            }
+        }
+
+        this.conditionResolved = true;
+        if (selectedBody == null)
+            return true;
+
+        this.conditionalOrder = new QuestOrder(new OrderNodeCollection((IEnumerable<OrderNode>)selectedBody))
+        {
+            IgnoreCheckpoints = QuestState.Instance.Order.IgnoreCheckpoints
+        };
+        this.conditionalOrder.UpdateNodes();
+        return true;
     }
 
     public override bool IsDone
     {
         get
         {
-            return this.conditionalOrder == null || this.conditionalOrder.Nodes == null || this.conditionalOrder.Nodes.Count <= 0;
+            return this.conditionResolved &&
+                   (this.conditionalOrder == null || this.conditionalOrder.Nodes == null || this.conditionalOrder.Nodes.Count <= 0);
+        }
+    }
+
+    private static void HandleConditionException(Exception ex)
+    {
+        Logging.Write(Color.Red, "Unable to evaluate compile condition in If tag. Please check your profile.");
+        Logging.Write(Color.Red, "CopilotBuddy stopped!");
+        Logging.WriteException(ex);
+        TreeRoot.Stop();
+    }
+
+    private sealed class ConditionalComposite : Composite
+    {
+        private readonly ForcedIf owner;
+        private ForcedBehaviorExecutor executor;
+
+        public ConditionalComposite(ForcedIf owner) => this.owner = owner;
+
+        protected override IEnumerable<RunStatus> Execute(object context)
+        {
+            if (!this.owner.conditionResolved)
+            {
+                bool initialized = false;
+                bool evaluationFailed = false;
+                try
+                {
+                    initialized = this.owner.TryInitializeConditionalOrder();
+                }
+                catch (Exception ex)
+                {
+                    HandleConditionException(ex);
+                    evaluationFailed = true;
+                }
+
+                if (evaluationFailed)
+                    yield break;
+                if (!initialized)
+                {
+                    yield return RunStatus.Running;
+                    yield break;
+                }
+            }
+
+            if (this.owner.conditionalOrder == null)
+            {
+                yield return RunStatus.Success;
+                yield break;
+            }
+
+            this.executor ??= new ForcedBehaviorExecutor(this.owner.conditionalOrder);
+            this.executor.Start(context);
+            while (this.executor.Tick(context) == RunStatus.Running)
+                yield return RunStatus.Running;
+            this.executor.Stop(context);
+            yield return this.executor.LastStatus ?? RunStatus.Failure;
         }
     }
 }

@@ -15,6 +15,13 @@ namespace Styx.Logic.Questing
 		RefreshFailed
 	}
 
+	public enum QuestCompletionState
+	{
+		Unknown,
+		KnownIncomplete,
+		KnownComplete
+	}
+
 	/// <summary>
 	/// Provides access to the player's quest log.
 	/// Matches HB 4.3.4 API while using Lua for completed quests (more reliable than memory reads).
@@ -237,6 +244,43 @@ namespace Styx.Logic.Questing
 				CaptureCompletedQuestCacheIdentity,
 				TryRefreshCompletedQuestCache,
 				out completedQuestIds);
+		}
+
+		/// <summary>
+		/// Gets completion using the accepted quest as live authority, or the
+		/// current identity's completed cache when the quest is not accepted.
+		/// </summary>
+		public QuestCompletionState GetQuestCompletionState(uint questId)
+		{
+			PlayerQuest acceptedQuest = GetQuestById(questId);
+			if (acceptedQuest != null)
+				return acceptedQuest.IsCompleted
+					? QuestCompletionState.KnownComplete
+					: QuestCompletionState.KnownIncomplete;
+
+			bool cacheValid = TryGetAuthoritativeCompletedQuests(out ReadOnlyCollection<uint> completedQuestIds);
+			return ResolveQuestCompletionState(
+				accepted: false,
+				acceptedCompleted: false,
+				cacheValid,
+				completedQuestIds.Contains(questId));
+		}
+
+		internal static QuestCompletionState ResolveQuestCompletionState(
+			bool accepted,
+			bool acceptedCompleted,
+			bool cacheValid,
+			bool cachedCompleted)
+		{
+			if (accepted)
+				return acceptedCompleted
+					? QuestCompletionState.KnownComplete
+					: QuestCompletionState.KnownIncomplete;
+			if (!cacheValid)
+				return QuestCompletionState.Unknown;
+			return cachedCompleted
+				? QuestCompletionState.KnownComplete
+				: QuestCompletionState.KnownIncomplete;
 		}
 
 		internal static bool TryGetAuthoritativeCompletedQuestsForIdentity(

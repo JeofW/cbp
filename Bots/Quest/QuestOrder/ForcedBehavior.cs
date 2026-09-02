@@ -40,6 +40,12 @@ namespace Bots.Quest.QuestOrder
         public abstract bool IsDone { get; }
 
         /// <summary>
+        /// Prevents the current behavior body from ticking while its completion
+        /// authority is temporarily unavailable.
+        /// </summary>
+        public virtual bool IsExecutionDeferred => false;
+
+        /// <summary>
         /// NavType for this behavior. null = auto-detect (Flightor.CanFly).
         /// Legion: ForcedBehavior.NavType (nullable).
         /// </summary>

@@ -22,6 +22,12 @@ try
     TestQuestOrderDoesNotMutateWithoutAuthoritativeCompletion();
     TestQuestingCompletedQuestIdsAreSafeWithoutClient();
     TestQuestManagerObsoleteGuidanceShowsCompilableTryCall();
+    TestQuestCompletionAuthorityIsTriState();
+    TestProfileCompletionExpressionsPreserveUnknown();
+    TestCompileBatchCompletionExpressionsPreserveUnknown();
+    TestCompletionEvaluationScopesNestAndRecoverFromExceptions();
+    TestForcedConditionBehaviorsDeferUnknown();
+    TestCompletionDependentActionGatesDeferUnknown();
     RunPolicyRegressions(now);
     TestStoreRoundTripAndAtomicReplacement(Path.Combine(testRoot, "store"), now);
     TestCorruptStoreQuarantine(Path.Combine(testRoot, "corrupt"));
@@ -45,6 +51,9 @@ try
     TestLegacyEvidenceWithoutSourceKeyIsUnknown(Path.Combine(testRoot, "evidence-legacy-source-key"), now);
     TestEvidenceCoalescingRespectsEpisode(Path.Combine(testRoot, "evidence-episodes"), now);
     TestConcurrentReportingAndAttemptOwnership(Path.Combine(testRoot, "concurrency"), now);
+    TestSuccessfulAttemptReleasesOwnership(Path.Combine(testRoot, "success-release"), now);
+    TestSuccessfulHalfOpenClearsEscalation(Path.Combine(testRoot, "success-half-open"), now);
+    TestSuccessCannotReopenTerminalStates(Path.Combine(testRoot, "success-terminal"), now);
     Console.WriteLine("Quest recovery regression tests passed.");
 }
 catch (Exception ex)
@@ -58,6 +67,172 @@ finally
     {
         Directory.Delete(testRoot, recursive: true);
     }
+}
+
+static void TestQuestCompletionAuthorityIsTriState()
+{
+    Assert(QuestLog.ResolveQuestCompletionState(
+               accepted: true, acceptedCompleted: true, cacheValid: false, cachedCompleted: false)
+           == QuestCompletionState.KnownComplete,
+        "an accepted completed quest must be authoritative even when the historical cache failed");
+    Assert(QuestLog.ResolveQuestCompletionState(
+               accepted: true, acceptedCompleted: false, cacheValid: false, cachedCompleted: true)
+           == QuestCompletionState.KnownIncomplete,
+        "an accepted incomplete quest must outrank historical completion data");
+    Assert(QuestLog.ResolveQuestCompletionState(
+               accepted: false, acceptedCompleted: false, cacheValid: true, cachedCompleted: true)
+           == QuestCompletionState.KnownComplete,
+        "a valid current-identity cache may prove a non-accepted quest complete");
+    Assert(QuestLog.ResolveQuestCompletionState(
+               accepted: false, acceptedCompleted: false, cacheValid: true, cachedCompleted: false)
+           == QuestCompletionState.KnownIncomplete,
+        "a valid current-identity cache may prove a non-accepted quest incomplete");
+    Assert(QuestLog.ResolveQuestCompletionState(
+               accepted: false, acceptedCompleted: false, cacheValid: false, cachedCompleted: false)
+           == QuestCompletionState.Unknown,
+        "a non-accepted quest with no valid current-identity cache must remain unknown");
+}
+
+static void TestProfileCompletionExpressionsPreserveUnknown()
+{
+    Assert(EvaluateProfileCondition("IsQuestCompleted(867)", QuestCompletionState.Unknown)
+           == QuestConditionEvaluationState.Unknown,
+        "a positive IsQuestCompleted profile expression must remain unknown");
+    Assert(EvaluateProfileCondition("!IsQuestCompleted(867)", QuestCompletionState.Unknown)
+           == QuestConditionEvaluationState.Unknown,
+        "negation must not collapse unknown completion into true");
+    Assert(EvaluateProfileCondition("(!IsQuestCompleted(867)) && (1 == 1)", QuestCompletionState.Unknown)
+           == QuestConditionEvaluationState.Unknown,
+        "a Roslyn combined expression must preserve unknown completion");
+
+    Assert(EvaluateProfileCondition("IsQuestCompleted(867)", QuestCompletionState.KnownComplete)
+           == QuestConditionEvaluationState.True,
+        "known-complete must satisfy a positive completion expression");
+    Assert(EvaluateProfileCondition("!IsQuestCompleted(867)", QuestCompletionState.KnownComplete)
+           == QuestConditionEvaluationState.False,
+        "known-complete must fail a negative completion expression");
+    Assert(EvaluateProfileCondition("(!IsQuestCompleted(867)) && (1 == 1)", QuestCompletionState.KnownIncomplete)
+           == QuestConditionEvaluationState.True,
+        "known-incomplete must satisfy a combined negative completion expression");
+}
+
+static void TestCompileBatchCompletionExpressionsPreserveUnknown()
+{
+    var batch = new CompileBatch();
+    var expression = DelayCompiledExpression.Condition("!IsQuestCompleted(867)");
+    batch.AddExpression(expression);
+    Assert(batch.Compile(), "the completion expression must compile through CompileBatch");
+
+    Assert(QuestConditionEvaluation.Evaluate(
+               expression.CallableExpression,
+               _ => QuestCompletionState.Unknown)
+           == QuestConditionEvaluationState.Unknown,
+        "CompileBatch negation must not turn unknown completion into true");
+    Assert(QuestConditionEvaluation.Evaluate(
+               expression.CallableExpression,
+               _ => QuestCompletionState.KnownIncomplete)
+           == QuestConditionEvaluationState.True,
+        "CompileBatch must retain known-incomplete behavior");
+}
+
+static void TestCompletionEvaluationScopesNestAndRecoverFromExceptions()
+{
+    var nested = QuestConditionEvaluation.Evaluate(
+        () =>
+        {
+            Assert(QuestConditionEvaluation.Evaluate(
+                       () => ProfileHelperFunctions.IsQuestCompleted(867),
+                       _ => QuestCompletionState.Unknown)
+                   == QuestConditionEvaluationState.Unknown,
+                "the nested evaluation must observe unknown completion");
+            return true;
+        },
+        _ => QuestCompletionState.KnownComplete);
+    Assert(nested == QuestConditionEvaluationState.Unknown,
+        "nested unknown completion must propagate to the enclosing condition evaluation");
+
+    AssertThrows<InvalidOperationException>(() => QuestConditionEvaluation.Evaluate(
+            () => throw new InvalidOperationException("scope probe"),
+            _ => QuestCompletionState.Unknown),
+        "condition exceptions must propagate after evaluation cleanup");
+    Assert(QuestConditionEvaluation.Evaluate(() => true) == QuestConditionEvaluationState.True,
+        "an exception must not leak unknown state into the next evaluation");
+}
+
+static void TestCompletionDependentActionGatesDeferUnknown()
+{
+    Assert(QuestNodeCompletionPolicy.ForPickup(QuestCompletionState.Unknown, accepted: false)
+           == QuestNodeCompletionAction.Defer,
+        "pickup must defer when neither live acceptance nor completion authority is available");
+    Assert(QuestNodeCompletionPolicy.ForTurnIn(QuestCompletionState.Unknown, accepted: false)
+           == QuestNodeCompletionAction.Defer,
+        "turn-in nodes must defer rather than skip when completion is unknown");
+    Assert(QuestNodeCompletionPolicy.ForObjective(QuestCompletionState.Unknown, accepted: false)
+           == QuestNodeCompletionAction.Defer,
+        "objective nodes must defer rather than skip when completion is unknown");
+    Assert(QuestNodeCompletionPolicy.ForPickup(QuestCompletionState.KnownComplete, accepted: false)
+           == QuestNodeCompletionAction.Skip,
+        "known-complete pickup work may be skipped");
+    Assert(QuestNodeCompletionPolicy.ForPickup(QuestCompletionState.KnownIncomplete, accepted: false)
+           == QuestNodeCompletionAction.Execute,
+        "known-incomplete pickup work may execute");
+    Assert(QuestNodeCompletionPolicy.ForTurnIn(QuestCompletionState.KnownIncomplete, accepted: false)
+           == QuestNodeCompletionAction.Skip,
+        "known-incomplete unaccepted turn-in work may be skipped");
+    Assert(QuestNodeCompletionPolicy.ForObjective(QuestCompletionState.KnownIncomplete, accepted: false)
+           == QuestNodeCompletionAction.Skip,
+        "known-incomplete unaccepted objective work may be skipped");
+    Assert(QuestNodeCompletionPolicy.ForTurnIn(QuestCompletionState.KnownIncomplete, accepted: true)
+           == QuestNodeCompletionAction.Execute,
+        "accepted turn-in work must execute using live quest-log authority");
+    Assert(QuestNodeCompletionPolicy.ForObjective(QuestCompletionState.KnownComplete, accepted: true)
+           == QuestNodeCompletionAction.Skip,
+        "an accepted completed quest must skip objective work but remain available for turn-in");
+}
+
+static void TestForcedConditionBehaviorsDeferUnknown()
+{
+    var positive = ConditionHelper.ParseConditionString("IsQuestCompleted(867)");
+    var negative = ConditionHelper.ParseConditionString("!IsQuestCompleted(867)");
+    Assert(positive != null && negative != null,
+        "forced behavior completion fixtures must compile");
+
+    var positiveIf = new ForcedIf(new IfNode(
+        positive!,
+        Array.Empty<OrderNode>(),
+        new Else(Array.Empty<OrderNode>())));
+    positiveIf.OnStart();
+    Assert(!positiveIf.IsDone,
+        "ForcedIf must remain pending instead of scheduling its else body for unknown positive completion");
+
+    var negativeIf = new ForcedIf(new IfNode(
+        negative!,
+        Array.Empty<OrderNode>(),
+        new Else(Array.Empty<OrderNode>())));
+    negativeIf.OnStart();
+    Assert(!negativeIf.IsDone,
+        "ForcedIf must remain pending instead of scheduling either branch for unknown negated completion");
+
+    var grind = new ForcedGrindTo(new GrindToNode(-1f, negative!));
+    grind.OnStart();
+    Assert(grind.IsExecutionDeferred && !grind.IsDone,
+        "ForcedGrindTo must defer initialization and keep the node running under unknown completion");
+
+    var loop = new ForcedWhile(new WhileNode(negative!, Array.Empty<OrderNode>()));
+    var context = new object();
+    loop.Branch.Start(context);
+    Assert(loop.Branch.Tick(context) == TreeSharp.RunStatus.Running && !loop.IsDone,
+        "ForcedWhile must keep running without scheduling or completing its body while completion is unknown");
+    loop.Branch.Stop(context);
+}
+
+static QuestConditionEvaluationState EvaluateProfileCondition(
+    string expression,
+    QuestCompletionState completionState)
+{
+    var condition = ConditionHelper.ParseConditionString(expression);
+    Assert(condition != null, $"profile condition '{expression}' must compile");
+    return QuestConditionEvaluation.Evaluate(condition!, _ => completionState);
 }
 
 static void TestCompletedQuestTraversalStopsAtInvalidPointers()
@@ -1292,6 +1467,86 @@ static void TestConcurrentReportingAndAttemptOwnership(string settingsRoot, Date
     Assert(repeatedFailure.EpisodeCount == 2 &&
            repeatedFailure.Evidence.Count(evidence => evidence.Text == "probe failed") == 2,
         "identical evidence from an actual new failure episode must append instead of coalescing");
+}
+
+static void TestSuccessfulAttemptReleasesOwnership(string settingsRoot, DateTime now)
+{
+    var manager = new QuestRecoveryManager(new FixedClock(now));
+    var key = QuestRecoveryKey.ForQuestStage(1200, QuestRecoveryStage.Pickup);
+    manager.Configure(CreateEnvironment(settingsRoot, "Jeof", "Lordaeron"));
+
+    Assert(manager.TryBeginAttempt(key, Context()).MayAttempt,
+        "the first attempt must acquire ownership");
+    var success = QuestAttemptOutcome.Success(key, "pickup accepted");
+    Assert(success.Kind == QuestAttemptOutcomeKind.Success && !success.IsFailureEpisode,
+        "success must be explicitly distinguishable from failure, observation, and redirect outcomes");
+    var released = manager.Report(success, Context());
+    Assert(released.State == QuestRecoveryState.Eligible && released.MayAttempt,
+        "a successful owned attempt must return the circuit to eligible");
+
+    var decisions = new QuestRecoveryDecision[128];
+    Parallel.For(0, decisions.Length, index => decisions[index] = manager.TryBeginAttempt(key, Context()));
+    Assert(decisions.Count(decision => decision.MayAttempt) == 1,
+        "after success exactly one later caller must acquire fresh ownership without a restart");
+}
+
+static void TestSuccessfulHalfOpenClearsEscalation(string settingsRoot, DateTime now)
+{
+    var clock = new FixedClock(now);
+    var manager = new QuestRecoveryManager(clock);
+    var key = QuestRecoveryKey.ForQuestStage(1201, QuestRecoveryStage.Pickup);
+    manager.Configure(CreateEnvironment(settingsRoot, "Jeof", "Lordaeron"));
+    manager.Report(
+        QuestAttemptOutcome.Failure(key, QuestFailureReason.PickupTargetNotOffered, "first failure"),
+        Context());
+    clock.UtcNow = now.AddMinutes(16);
+    manager.RetryNow(key);
+    Assert(manager.TryBeginAttempt(key, Context()).State == QuestRecoveryState.Attempting,
+        "a half-open probe must acquire attempt ownership");
+    manager.Report(QuestAttemptOutcome.Success(key, "probe succeeded"), Context());
+
+    var record = manager.GetEntries().Single();
+    Assert(record.State == QuestRecoveryState.Eligible
+           && record.Reason == QuestFailureReason.None
+           && record.EpisodeCount == 0
+           && record.AttemptCountInEpisode == 0
+           && record.CooldownUntilUtc == null
+           && record.NextHalfOpenUtc == null,
+        "successful probing must clear ownership, retry timers, and active escalation");
+    Assert(record.Evidence.Any(item => item.Text == "first failure")
+           && record.Evidence.Any(item => item.Text == "probe succeeded")
+           && record.Evidence.Count <= 10,
+        "success must retain bounded diagnostic evidence");
+
+    manager.Flush();
+    var reloaded = new QuestRecoveryManager(clock);
+    reloaded.Configure(CreateEnvironment(settingsRoot, "Jeof", "Lordaeron"));
+    var persisted = reloaded.GetEntries().Single();
+    Assert(persisted.State == QuestRecoveryState.Eligible
+           && persisted.Reason == QuestFailureReason.None
+           && persisted.CooldownUntilUtc == null
+           && persisted.Evidence.Any(item => item.Text == "probe succeeded"),
+        "a successful release must survive persistence and reload");
+}
+
+static void TestSuccessCannotReopenTerminalStates(string settingsRoot, DateTime now)
+{
+    var manual = new QuestRecoveryManager(new FixedClock(now));
+    var manualKey = QuestRecoveryKey.ForQuestStage(1202, QuestRecoveryStage.Pickup);
+    manual.Configure(CreateEnvironment(Path.Combine(settingsRoot, "manual"), "Jeof", "Lordaeron"));
+    manual.SetManualBlacklist(manualKey.QuestId, true);
+    var manualDecision = manual.Report(QuestAttemptOutcome.Success(manualKey, "must stay manual"), Context());
+    Assert(manualDecision.State == QuestRecoveryState.ManualBlacklist && !manualDecision.MayAttempt,
+        "success must never reopen a manual blacklist");
+
+    var completed = new QuestRecoveryManager(new FixedClock(now));
+    var completedKey = QuestRecoveryKey.ForQuestStage(1203, QuestRecoveryStage.TurnIn);
+    completed.Configure(CreateEnvironment(Path.Combine(settingsRoot, "completed"), "Jeof", "Lordaeron"));
+    completed.MarkCompleted(completedKey.QuestId);
+    var completedDecision = completed.Report(
+        QuestAttemptOutcome.Success(completedKey, "must stay completed"), Context());
+    Assert(completedDecision.State == QuestRecoveryState.Completed && !completedDecision.MayAttempt,
+        "success must never reopen a completed circuit");
 }
 
 static QuestRecoveryEnvironment CreateEnvironment(string settingsRoot, string character, string realm) =>

@@ -54,6 +54,36 @@ public sealed class QuestPickupDialogDecision
 
 public static class QuestPickupDialogPolicy
 {
+    public static bool TryFindUniqueExactTitleIndex(
+        IReadOnlyList<string>? titles,
+        string targetQuestName,
+        out int index)
+    {
+        index = -1;
+        string targetTitle = (targetQuestName ?? "").Trim();
+        if (targetTitle.Length == 0 || titles == null)
+            return false;
+
+        int matches = 0;
+        for (int candidateIndex = 0; candidateIndex < titles.Count; candidateIndex++)
+        {
+            if (!string.Equals(
+                    (titles[candidateIndex] ?? "").Trim(),
+                    targetTitle,
+                    StringComparison.Ordinal))
+                continue;
+
+            matches++;
+            index = candidateIndex;
+        }
+
+        if (matches == 1)
+            return true;
+
+        index = -1;
+        return false;
+    }
+
     public static QuestPickupDialogDecision Decide(
         uint targetQuestId,
         string targetQuestName,
@@ -68,12 +98,43 @@ public static class QuestPickupDialogPolicy
         CompletedQuestCacheStatus completionStatus,
         bool shownQuestCompleted)
     {
+        return Decide(
+            targetQuestId,
+            targetQuestName,
+            shownQuestId,
+            shownQuestName,
+            giverId,
+            offeredQuestIds,
+            acceptVisible,
+            continueVisible,
+            completeQuestVisible,
+            rewardChoicesAvailable,
+            completionStatus == CompletedQuestCacheStatus.Valid,
+            shownQuestCompleted,
+            shownTitleUniquelyResolved: false);
+    }
+
+    public static QuestPickupDialogDecision Decide(
+        uint targetQuestId,
+        string targetQuestName,
+        uint shownQuestId,
+        string shownQuestName,
+        uint giverId,
+        IReadOnlyList<uint> offeredQuestIds,
+        bool acceptVisible,
+        bool continueVisible,
+        bool completeQuestVisible,
+        bool rewardChoicesAvailable,
+        bool shownQuestCompletionKnown,
+        bool shownQuestCompleted,
+        bool shownTitleUniquelyResolved)
+    {
         uint[] offeredSnapshot = (offeredQuestIds ?? Array.Empty<uint>()).ToArray();
         string targetTitle = (targetQuestName ?? "").Trim();
         string shownTitle = (shownQuestName ?? "").Trim();
         bool targetIdentified = shownQuestId == targetQuestId && shownQuestId != 0;
 
-        if (shownQuestId == 0 && targetTitle.Length > 0)
+        if (shownQuestId == 0 && targetTitle.Length > 0 && shownTitleUniquelyResolved)
             targetIdentified = string.Equals(targetTitle, shownTitle, StringComparison.Ordinal);
 
         QuestPickupDialogAction action;
@@ -87,7 +148,7 @@ public static class QuestPickupDialogPolicy
             action = QuestPickupDialogAction.Wait;
         }
         else if (shownQuestId != 0
-                 && completionStatus == CompletedQuestCacheStatus.Valid
+                 && shownQuestCompletionKnown
                  && shownQuestCompleted
                  && (continueVisible || completeQuestVisible || rewardChoicesAvailable))
         {
@@ -100,15 +161,16 @@ public static class QuestPickupDialogPolicy
         }
 
         string evidence = string.Format(
-            "target={0}; shown={1}; giver={2}; offered=[{3}]; targetTitle='{4}'; shownTitle='{5}'; completion={6}; completed={7}; buttons=accept:{8},continue:{9},complete:{10},reward:{11}",
+            "target={0}; shown={1}; giver={2}; offered=[{3}]; targetTitle='{4}'; shownTitle='{5}'; completionKnown={6}; completed={7}; titleUnique={8}; buttons=accept:{9},continue:{10},complete:{11},reward:{12}",
             targetQuestId,
             shownQuestId,
             giverId,
             string.Join(",", offeredSnapshot),
             targetTitle,
             shownTitle,
-            completionStatus,
+            shownQuestCompletionKnown,
             shownQuestCompleted,
+            shownTitleUniquelyResolved,
             acceptVisible,
             continueVisible,
             completeQuestVisible,
@@ -141,6 +203,9 @@ public static class QuestPickupDialogPolicy
                 decision.TargetQuestId,
                 QuestRecoveryStage.Pickup,
                 decision.GiverId),
+            Kind = confirmedInteractionCycles >= 3
+                ? QuestAttemptOutcomeKind.Failure
+                : QuestAttemptOutcomeKind.Observation,
             Reason = QuestFailureReason.PickupWrongQuestShown,
             IsFailureEpisode = confirmedInteractionCycles >= 3,
             Evidence = decision.Evidence,
