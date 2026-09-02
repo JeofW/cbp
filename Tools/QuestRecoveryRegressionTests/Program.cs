@@ -13,6 +13,9 @@ try
     TestCompletedQuestTraversalStopsAtReaderFailure();
     TestCompletedQuestTraversalCapsAtTenThousandNodes();
     TestCompletedQuestTraversalDeduplicatesQuestIds();
+    TestCompletedQuestCacheInvalidatesAcrossIdentityChanges();
+    TestCompletedQuestCacheSnapshotsAreStable();
+    TestCompletedQuestCacheSerializesConcurrentRefreshes();
     RunPolicyRegressions(now);
     TestStoreRoundTripAndAtomicReplacement(Path.Combine(testRoot, "store"), now);
     TestCorruptStoreQuarantine(Path.Combine(testRoot, "corrupt"));
@@ -137,6 +140,79 @@ static void TestCompletedQuestTraversalDeduplicatesQuestIds()
     }, out var ids), "a finite completed-quest traversal must succeed");
     Assert(ids.SequenceEqual(new uint[] { 867, 875 }),
         "a completed-quest traversal must return each non-zero quest ID once in encounter order");
+}
+
+static void TestCompletedQuestCacheInvalidatesAcrossIdentityChanges()
+{
+    Assert(QuestLog.TryGetAuthoritativeCompletedQuestsForIdentity(
+        "Alpha", "Lordaeron", () => new List<uint> { 867 }, out var alphaIds),
+        "a successful completed-quest refresh must be authoritative for its identity");
+    Assert(alphaIds.SequenceEqual(new uint[] { 867 }),
+        "a successful completed-quest refresh must return its identity's IDs");
+
+    Assert(!QuestLog.TryGetAuthoritativeCompletedQuestsForIdentity(
+        "Bravo", "Lordaeron", () => null, out var bravoIds),
+        "a refresh failure for a new identity must not be authoritative");
+    Assert(bravoIds.Count == 0,
+        "a refresh failure for a new identity must not expose the previous identity's IDs");
+    Assert(QuestLog.GetCompletedQuestCacheStatusForIdentity("Bravo", "Lordaeron")
+        == CompletedQuestCacheStatus.RefreshFailed,
+        "a failed refresh must expose RefreshFailed for the current identity");
+    Assert(QuestLog.GetCompletedQuestCacheStatusForIdentity(null, "Lordaeron")
+        == CompletedQuestCacheStatus.Unknown,
+        "an unusable identity must clear completed-quest authority");
+}
+
+static void TestCompletedQuestCacheSnapshotsAreStable()
+{
+    Assert(QuestLog.TryGetAuthoritativeCompletedQuestsForIdentity(
+        "Charlie", "Lordaeron", () => new List<uint> { 875 }, out var firstSnapshot),
+        "a successful completed-quest refresh must provide a snapshot");
+    Assert(QuestLog.TryGetAuthoritativeCompletedQuestsForIdentity(
+        "Delta", "Lordaeron", () => new List<uint> { 876 }, out var secondSnapshot),
+        "a later identity's successful completed-quest refresh must be authoritative");
+    Assert(firstSnapshot.SequenceEqual(new uint[] { 875 }),
+        "a completed-quest snapshot must not change when the shared cache is replaced");
+    Assert(secondSnapshot.SequenceEqual(new uint[] { 876 }),
+        "a later completed-quest snapshot must contain only its own identity's IDs");
+}
+
+static void TestCompletedQuestCacheSerializesConcurrentRefreshes()
+{
+    var refreshCalls = 0;
+    var start = new ManualResetEventSlim(false);
+    var ready = new CountdownEvent(2);
+
+    Task<bool> first = Task.Run(() =>
+    {
+        ready.Signal();
+        start.Wait();
+        return QuestLog.TryGetAuthoritativeCompletedQuestsForIdentity(
+            "Echo", "Lordaeron", () =>
+            {
+                Interlocked.Increment(ref refreshCalls);
+                Thread.Sleep(100);
+                return new List<uint> { 867 };
+            }, out _);
+    });
+    Task<bool> second = Task.Run(() =>
+    {
+        ready.Signal();
+        start.Wait();
+        return QuestLog.TryGetAuthoritativeCompletedQuestsForIdentity(
+            "Echo", "Lordaeron", () =>
+            {
+                Interlocked.Increment(ref refreshCalls);
+                return new List<uint> { 875 };
+            }, out _);
+    });
+
+    Assert(ready.Wait(TimeSpan.FromSeconds(5)), "concurrent completed-quest readers must start together");
+    start.Set();
+    Assert(Task.WaitAll(new Task[] { first, second }, TimeSpan.FromSeconds(5)),
+        "concurrent completed-quest readers must complete without deadlock");
+    Assert(first.Result && second.Result && refreshCalls == 1,
+        "concurrent completed-quest readers must share one refresh attempt");
 }
 
 static void RunPolicyRegressions(DateTime now)

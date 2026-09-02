@@ -28,7 +28,9 @@ public static class QuestManager
     [Obsolete("Use ObjectManager.Me.QuestLog.GetCompletedQuests() instead.")]
     public static List<uint> GetCompletedQuests()
     {
-        return new List<uint>((IEnumerable<uint>)StyxWoW.Me.QuestLog.GetCompletedQuests());
+        return StyxWoW.Me.QuestLog.TryGetAuthoritativeCompletedQuests(out var completedQuestIds)
+            ? new List<uint>((IEnumerable<uint>)completedQuestIds)
+            : new List<uint>();
     }
 
     private static string GenerateRandomString(int minLength, int maxLength)

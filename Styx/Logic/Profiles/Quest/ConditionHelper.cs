@@ -504,8 +504,9 @@ namespace Styx.Logic.Profiles.Quest
             PlayerQuest questById = me.QuestLog?.GetQuestById(questId);
             if (questById != null) return questById.IsCompleted;
             // Fall back to completed quests list (State C - already turned in)
-            var completedQuests = me.QuestLog?.GetCompletedQuests();
-            return completedQuests?.Contains(questId) ?? false;
+            return me.QuestLog != null
+                && me.QuestLog.TryGetAuthoritativeCompletedQuests(out var completedQuests)
+                && completedQuests.Contains(questId);
         }
     }
     

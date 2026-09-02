@@ -25,16 +25,29 @@ namespace Styx.Logic.Questing
 		private const int OFFSET_COMPLETED_QUEST_LIST = 5005;  // Completed quest linked list head
 		private const int MaximumCompletedQuestNodes = 10000;
 
+		private static readonly object CompletedQuestCacheLock = new object();
 		private static readonly List<uint> _completedQuestIds = new List<uint>();
 		private static DateTime _completedQuestCacheTime = DateTime.MinValue;
 		private static DateTime _completedQuestRefreshAttemptTime = DateTime.MinValue;
 		private static CompletedQuestCacheStatus _completedQuestCacheStatus = CompletedQuestCacheStatus.Unknown;
+		private static string _completedQuestCacheIdentity;
 		private static readonly TimeSpan CompletedQuestCacheDuration = TimeSpan.FromMinutes(1);
 
 		/// <summary>
 		/// Reports whether the completed-quest cache is backed by a successful live refresh.
 		/// </summary>
-		public CompletedQuestCacheStatus CompletedQuestCacheStatus => _completedQuestCacheStatus;
+		public CompletedQuestCacheStatus CompletedQuestCacheStatus
+		{
+			get
+			{
+				string identity = CaptureCompletedQuestCacheIdentity();
+				lock (CompletedQuestCacheLock)
+				{
+					EnsureCompletedQuestCacheIdentity(identity);
+					return _completedQuestCacheStatus;
+				}
+			}
+		}
 
 		/// <summary>
 		/// Number of quests in the log.
@@ -212,12 +225,68 @@ namespace Styx.Logic.Questing
 		/// </summary>
 		public ReadOnlyCollection<uint> GetCompletedQuests()
 		{
-			if (ShouldRefreshCompletedQuestCache())
+			TryGetAuthoritativeCompletedQuests(out ReadOnlyCollection<uint> completedQuestIds);
+			return completedQuestIds;
+		}
+
+		/// <summary>
+		/// Gets completed quests only when the current character and realm have a valid live refresh.
+		/// </summary>
+		public bool TryGetAuthoritativeCompletedQuests(out ReadOnlyCollection<uint> completedQuestIds)
+		{
+			return TryGetAuthoritativeCompletedQuestsForCacheIdentity(
+				CaptureCompletedQuestCacheIdentity(),
+				TryRefreshCompletedQuestCache,
+				out completedQuestIds);
+		}
+
+		internal static bool TryGetAuthoritativeCompletedQuestsForIdentity(
+			string character,
+			string realm,
+			Func<List<uint>> refresh,
+			out ReadOnlyCollection<uint> completedQuestIds)
+		{
+			return TryGetAuthoritativeCompletedQuestsForCacheIdentity(
+				CreateCompletedQuestCacheIdentity(character, realm), refresh, out completedQuestIds);
+		}
+
+		private static bool TryGetAuthoritativeCompletedQuestsForCacheIdentity(
+			string identity,
+			Func<List<uint>> refresh,
+			out ReadOnlyCollection<uint> completedQuestIds)
+		{
+			lock (CompletedQuestCacheLock)
 			{
-				if (!TryRefreshCompletedQuestCache())
-					return _completedQuestIds.AsReadOnly();
+				EnsureCompletedQuestCacheIdentity(identity);
+				if (identity != null && ShouldRefreshCompletedQuestCache())
+				{
+					List<uint> refreshedQuestIds = refresh();
+					if (refreshedQuestIds == null)
+					{
+						_completedQuestCacheStatus = CompletedQuestCacheStatus.RefreshFailed;
+					}
+					else
+					{
+						_completedQuestIds.Clear();
+						_completedQuestIds.AddRange(refreshedQuestIds);
+						_completedQuestCacheTime = DateTime.Now;
+						_completedQuestCacheStatus = CompletedQuestCacheStatus.Valid;
+					}
+				}
+
+				completedQuestIds = CreateCompletedQuestSnapshot();
+				return identity != null && _completedQuestCacheStatus == CompletedQuestCacheStatus.Valid;
 			}
-			return _completedQuestIds.AsReadOnly();
+		}
+
+		internal static CompletedQuestCacheStatus GetCompletedQuestCacheStatusForIdentity(string character, string realm)
+		{
+			string identity = CreateCompletedQuestCacheIdentity(character, realm);
+			lock (CompletedQuestCacheLock)
+			{
+				EnsureCompletedQuestCacheIdentity(identity);
+				return _completedQuestCacheStatus;
+			}
 		}
 
 		/// <summary>
@@ -234,7 +303,7 @@ namespace Styx.Logic.Questing
 		/// Refreshes the completed quest cache using Lua QueryQuestsCompleted().
 		/// Waits for QUEST_QUERY_COMPLETE event, then reads memory.
 		/// </summary>
-		private static bool TryRefreshCompletedQuestCache()
+		private static List<uint> TryRefreshCompletedQuestCache()
 		{
 			_completedQuestRefreshAttemptTime = DateTime.Now;
 			try
@@ -245,23 +314,20 @@ namespace Styx.Logic.Questing
 					if (!questQueryWait.Wait(5000))
 					{
 						Styx.Helpers.Logging.Write("[QuestLog] Timeout waiting for QUEST_QUERY_COMPLETE event");
-						_completedQuestCacheStatus = CompletedQuestCacheStatus.RefreshFailed;
-						return false;
+						return null;
 					}
 				}
 
-				if (PopulateCompletedQuestCacheFromMemory())
-					return true;
+				if (TryPopulateCompletedQuestIdsFromMemory(out List<uint> completedQuestIds))
+					return completedQuestIds;
 
 				Styx.Helpers.Logging.Write("[QuestLog] Failed to read completed quest cache");
-				_completedQuestCacheStatus = CompletedQuestCacheStatus.RefreshFailed;
-				return false;
+				return null;
 			}
 			catch (Exception ex)
 			{
 				Styx.Helpers.Logging.WriteException(ex);
-				_completedQuestCacheStatus = CompletedQuestCacheStatus.RefreshFailed;
-				return false;
+				return null;
 			}
 		}
 
@@ -269,8 +335,9 @@ namespace Styx.Logic.Questing
 		/// Reads completed quest IDs from the WoW memory linked list.
 		/// Structure: CompletedQuestNode { padding, next_ptr, quest_id }
 		/// </summary>
-		private static bool PopulateCompletedQuestCacheFromMemory()
+		private static bool TryPopulateCompletedQuestIdsFromMemory(out List<uint> completedQuestIds)
 		{
+			completedQuestIds = new List<uint>();
 			Memory wow = ObjectManager.Wow;
 			if (wow == null)
 				return false;
@@ -287,16 +354,47 @@ namespace Styx.Logic.Questing
 			{
 				CompletedQuestNode node = wow.Read<CompletedQuestNode>(address);
 				return (node.Next, node.QuestId);
-			}, out List<uint> completedQuestIds))
+			}, out completedQuestIds))
 				return false;
-
-			_completedQuestIds.Clear();
-			_completedQuestIds.AddRange(completedQuestIds);
-
-			_completedQuestCacheTime = DateTime.Now;
-			_completedQuestCacheStatus = CompletedQuestCacheStatus.Valid;
-			// Debug log removed - not in HB 4.3.4
 			return true;
+		}
+
+		private static string CaptureCompletedQuestCacheIdentity()
+		{
+			try
+			{
+				var me = ObjectManager.Me;
+				return me == null ? null : CreateCompletedQuestCacheIdentity(me.Name, me.RealmName);
+			}
+			catch (Exception)
+			{
+				return null;
+			}
+		}
+
+		private static string CreateCompletedQuestCacheIdentity(string character, string realm)
+		{
+			if (string.IsNullOrWhiteSpace(character) || string.IsNullOrWhiteSpace(realm))
+				return null;
+
+			return character + "\u001f" + realm;
+		}
+
+		private static void EnsureCompletedQuestCacheIdentity(string identity)
+		{
+			if (identity != null && string.Equals(_completedQuestCacheIdentity, identity, StringComparison.OrdinalIgnoreCase))
+				return;
+
+			_completedQuestCacheIdentity = identity;
+			_completedQuestIds.Clear();
+			_completedQuestCacheTime = DateTime.MinValue;
+			_completedQuestRefreshAttemptTime = DateTime.MinValue;
+			_completedQuestCacheStatus = CompletedQuestCacheStatus.Unknown;
+		}
+
+		private static ReadOnlyCollection<uint> CreateCompletedQuestSnapshot()
+		{
+			return new ReadOnlyCollection<uint>(new List<uint>(_completedQuestIds));
 		}
 
 		/// <summary>
@@ -342,8 +440,13 @@ namespace Styx.Logic.Questing
 		/// </summary>
 		public void AddCompletedQuest(uint questId)
 		{
-			if (questId != 0 && !_completedQuestIds.Contains(questId))
-				_completedQuestIds.Add(questId);
+			string identity = CaptureCompletedQuestCacheIdentity();
+			lock (CompletedQuestCacheLock)
+			{
+				EnsureCompletedQuestCacheIdentity(identity);
+				if (identity != null && questId != 0 && !_completedQuestIds.Contains(questId))
+					_completedQuestIds.Add(questId);
+			}
 		}
 
 		/// <summary>

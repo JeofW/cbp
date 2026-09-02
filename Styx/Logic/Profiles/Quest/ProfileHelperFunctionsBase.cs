@@ -121,7 +121,10 @@ public class ProfileHelperFunctionsBase
     protected bool IsQuestCompleted(uint id)
     {
         PlayerQuest questById = this.Me.QuestLog.GetQuestById(id);
-        return questById != null ? questById.IsCompleted : StyxWoW.Me.QuestLog.GetCompletedQuests().Contains(id);
+        return questById != null
+            ? questById.IsCompleted
+            : StyxWoW.Me.QuestLog.TryGetAuthoritativeCompletedQuests(out var completedQuests)
+                && completedQuests.Contains(id);
     }
 
     protected bool HasFaction(int factionId)

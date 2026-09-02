@@ -63,7 +63,8 @@ public class ForcedQuestPickUp : ForcedBehavior
             try
             {
                 // If quest is in completed cache, skip pickup
-                if (ObjectManager.Me.QuestLog.GetCompletedQuests().Contains(this.QuestId))
+                if (ObjectManager.Me.QuestLog.TryGetAuthoritativeCompletedQuests(out var completedQuests)
+                    && completedQuests.Contains(this.QuestId))
                     return true;
 
                 // If quest is in log, the PickUp behavior is done

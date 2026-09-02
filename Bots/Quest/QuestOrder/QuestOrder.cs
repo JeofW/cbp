@@ -113,10 +113,11 @@ namespace Bots.Quest.QuestOrder
             if (!IgnoreCheckpoints)
                 SkipToCheckpoint(ObjectManager.Me?.LevelFraction ?? 0);
 
-            var completedQuestsList = StyxWoW.Me?.QuestLog?.GetCompletedQuests();
-            var completedQuests = completedQuestsList != null 
-                ? new HashSet<uint>(completedQuestsList) 
-                : new HashSet<uint>();
+            var questLog = StyxWoW.Me?.QuestLog;
+            if (questLog == null || !questLog.TryGetAuthoritativeCompletedQuests(out var completedQuestsList))
+                return;
+
+            var completedQuests = new HashSet<uint>(completedQuestsList);
             RemoveCompletedNodes(completedQuests);
         }
 

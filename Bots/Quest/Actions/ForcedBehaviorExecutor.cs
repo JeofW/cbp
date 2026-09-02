@@ -150,7 +150,8 @@ public class ForcedBehaviorExecutor : Composite
             case OrderNodeType.Objective:
                 ObjectiveNode objectiveNode = (ObjectiveNode)orderNode;
                 // Check if quest is already completed before trying to create objective
-                if (ObjectManager.Me.QuestLog.GetCompletedQuests().Contains(objectiveNode.QuestId))
+                if (ObjectManager.Me.QuestLog.TryGetAuthoritativeCompletedQuests(out var completedObjectiveQuests)
+                    && completedObjectiveQuests.Contains(objectiveNode.QuestId))
                 {
                     Logging.WriteDebug("Quest {0} is already completed. Skipping Objective.", (object)objectiveNode.QuestId);
                     return (ForcedBehavior)new ForcedNothing();
@@ -273,7 +274,8 @@ public class ForcedBehaviorExecutor : Composite
     {
         // Check if quest is already completed (turned in previously)
         // If so, return null - the caller will use ForcedNothing
-        if (ObjectManager.Me.QuestLog.GetCompletedQuests().Contains(turnInNode.QuestId))
+        if (ObjectManager.Me.QuestLog.TryGetAuthoritativeCompletedQuests(out var completedTurnInQuests)
+            && completedTurnInQuests.Contains(turnInNode.QuestId))
         {
             Logging.WriteDebug("Quest {0} (ID: {1}) is already completed. Skipping TurnIn.", 
                 (object)Utilities.GetObjectString((object)turnInNode.QuestName, "(null)"), 
