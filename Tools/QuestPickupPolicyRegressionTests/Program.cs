@@ -9,7 +9,11 @@ try
     TestCompletionMustBeAuthoritative();
     TestDecisionSnapshotsMismatchEvidence();
     TestInteractionCyclesFormOneEpisode();
-    TestMismatchCycleTrackingResetsOnSuccessAndChangedEvidence();
+    TestWaitExecutionPlanHasNoEffects();
+    TestRepeatedSameCyclePulsesDoNotIncrement();
+    TestThreeDistinctCyclesFormOneEpisode();
+    TestChangedEvidenceWithinAndAcrossCyclesResetsSequence();
+    TestSuccessfulDecisionResetsCycleLifecycle();
     Console.WriteLine("Quest pickup policy regression tests passed.");
 }
 catch (Exception ex)
@@ -104,29 +108,87 @@ static void TestInteractionCyclesFormOneEpisode()
         "the failure episode must retain the structured mismatch fields");
 }
 
-static void TestMismatchCycleTrackingResetsOnSuccessAndChangedEvidence()
+static void TestWaitExecutionPlanHasNoEffects()
+{
+    var plan = QuestPickupDialogExecutionPolicy.CreatePlan(
+        Decide(shown: 0, shownName: "", accept: true),
+        continueVisible: false,
+        completeVisible: false,
+        rewardChoicesAvailable: false);
+
+    Assert(plan.KeepRunning && plan.Command == QuestPickupDialogCommand.None,
+        "a loading Wait decision must keep running without a dialog command");
+    Assert(!plan.CloseFrame && !plan.Accept && !plan.Continue
+           && !plan.SelectReward && !plan.Complete,
+        "a loading Wait decision must not close, accept, continue, select a reward, or complete");
+}
+
+static void TestRepeatedSameCyclePulsesDoNotIncrement()
+{
+    var tracker = new QuestPickupMismatchTracker();
+    var mismatch867 = Decide(shown: 867, accept: true);
+    var first = tracker.Observe(mismatch867, interactionCycleId: 10);
+    var repeated = tracker.Observe(mismatch867, interactionCycleId: 10);
+
+    Assert(tracker.ConfirmedCycles == 1 && !repeated.IsFailureEpisode,
+        "repeated pulses in one interaction cycle must count once");
+    Assert(ReferenceEquals(first, repeated) && ReferenceEquals(tracker.LastOutcome, repeated),
+        "a repeated same-cycle pulse must preserve the existing structured outcome");
+}
+
+static void TestThreeDistinctCyclesFormOneEpisode()
+{
+    var tracker = new QuestPickupMismatchTracker();
+    var mismatch = Decide(shown: 867, accept: true);
+
+    var first = tracker.Observe(mismatch, interactionCycleId: 20);
+    var second = tracker.Observe(mismatch, interactionCycleId: 21);
+    var third = tracker.Observe(mismatch, interactionCycleId: 22);
+    var repeatedThird = tracker.Observe(mismatch, interactionCycleId: 22);
+
+    Assert(!first.IsFailureEpisode && !second.IsFailureEpisode && third.IsFailureEpisode,
+        "three distinct confirmed interaction cycles must form one failure episode");
+    Assert(tracker.ConfirmedCycles == 3 && tracker.PickupUnavailable,
+        "the third distinct mismatch cycle must make pickup unavailable");
+    Assert(ReferenceEquals(third, repeatedThird) && ReferenceEquals(tracker.LastOutcome, third),
+        "later pulses in the third cycle must not create another failure episode");
+}
+
+static void TestChangedEvidenceWithinAndAcrossCyclesResetsSequence()
 {
     var tracker = new QuestPickupMismatchTracker();
     var mismatch867 = Decide(shown: 867, accept: true);
     var mismatch875 = Decide(shown: 875, accept: true);
 
-    Assert(!tracker.Observe(mismatch867).IsFailureEpisode && tracker.ConfirmedCycles == 1,
-        "a first confirmed mismatch must begin one interaction cycle");
-    Assert(!tracker.Observe(mismatch867).IsFailureEpisode && tracker.ConfirmedCycles == 2,
-        "a repeated mismatch in a new interaction cycle must not yet form an episode");
-    Assert(!tracker.Observe(mismatch875).IsFailureEpisode && tracker.ConfirmedCycles == 1,
-        "changed mismatch evidence must start a new cycle sequence");
+    tracker.Observe(mismatch867, interactionCycleId: 30);
+    var changedWithinCycle = tracker.Observe(mismatch875, interactionCycleId: 30);
+    Assert(tracker.ConfirmedCycles == 1 && !changedWithinCycle.IsFailureEpisode,
+        "changed evidence within one cycle must reset to one without counting the cycle twice");
 
-    tracker.Observe(Decide(shown: 876, accept: true));
-    Assert(tracker.ConfirmedCycles == 0 && !tracker.PickupUnavailable,
-        "successful target evidence must reset mismatch cycle state");
+    tracker.Observe(mismatch875, interactionCycleId: 31);
+    Assert(tracker.ConfirmedCycles == 2,
+        "unchanged evidence in the next interaction cycle must increment the reset sequence");
 
-    tracker.Observe(mismatch867);
-    tracker.Observe(mismatch867);
-    var failedEpisode = tracker.Observe(mismatch867);
-    Assert(failedEpisode.IsFailureEpisode && tracker.PickupUnavailable
-           && ReferenceEquals(tracker.LastOutcome, failedEpisode),
-        "the third unchanged mismatch cycle must expose one unavailable failure outcome");
+    var changedAcrossCycles = tracker.Observe(mismatch867, interactionCycleId: 32);
+    Assert(tracker.ConfirmedCycles == 1 && !changedAcrossCycles.IsFailureEpisode,
+        "changed evidence across interaction cycles must reset to one");
+}
+
+static void TestSuccessfulDecisionResetsCycleLifecycle()
+{
+    var tracker = new QuestPickupMismatchTracker();
+    var mismatch = Decide(shown: 867, accept: true);
+
+    tracker.Observe(mismatch, interactionCycleId: 40);
+    tracker.Observe(mismatch, interactionCycleId: 41);
+    var resetResult = tracker.Observe(Decide(shown: 876, accept: true), interactionCycleId: 41);
+    Assert(resetResult == null && tracker.ConfirmedCycles == 0
+           && !tracker.PickupUnavailable && tracker.LastOutcome == null,
+        "a successful non-reject decision must clear mismatch outcome and availability state");
+
+    var restarted = tracker.Observe(mismatch, interactionCycleId: 42);
+    Assert(tracker.ConfirmedCycles == 1 && !restarted.IsFailureEpisode,
+        "a mismatch after success must begin a new cycle sequence");
 }
 
 static QuestPickupDialogDecision Decide(

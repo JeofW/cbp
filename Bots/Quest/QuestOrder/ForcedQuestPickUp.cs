@@ -37,6 +37,7 @@ public class ForcedQuestPickUp : ForcedBehavior
     private static readonly Frame QuestFrameCompleteButton = new Frame("QuestFrameCompleteButton");
     private int lastShownQuestId = -1;
     private int _handleQuestFrameAttempts;
+    private long _interactionCycleId;
     private readonly QuestPickupMismatchTracker _mismatchTracker = new QuestPickupMismatchTracker();
     private IReadOnlyList<uint> _currentInteractionOfferedQuestIds = Array.Empty<uint>();
 
@@ -157,7 +158,7 @@ public class ForcedQuestPickUp : ForcedBehavior
             {
                 (Composite)new DecoratorContinue((CanRunDecoratorDelegate)(context => context != null && context is WoWItem), (Composite)new Sequence(new Composite[3]
                 {
-                    (Composite)new TreeSharp.Action((ActionSucceedDelegate)(context => ((WoWItem)context).UseContainerItem())),
+                    (Composite)new TreeSharp.Action((ActionSucceedDelegate)(context => this.UseQuestItem((WoWItem)context))),
                     (Composite)new WaitContinue(5, new CanRunDecoratorDelegate(this.IsQuestFrameVisible), (Composite)new TreeSharp.Action((ActionDelegate)(context => this.HandleQuestFrame(context)))),
                     (Composite)new WaitContinue(2, (CanRunDecoratorDelegate)(context => false), (Composite)new ActionAlwaysSucceed())
                 }))
@@ -169,7 +170,7 @@ public class ForcedQuestPickUp : ForcedBehavior
                 (Composite)new ActionMoveStop(),
                 (Composite)new TreeSharp.Action((ActionDelegate)(context => this.CloseFrames(context))),
                 (Composite)new DecoratorContinue((CanRunDecoratorDelegate)(context => context is WoWUnit), (Composite)new TreeSharp.Action((ActionSucceedDelegate)(context => ((WoWUnit)context).Target()))),
-                (Composite)new TreeSharp.Action((ActionSucceedDelegate)(context => ((WoWObject)context).Interact())),
+                (Composite)new TreeSharp.Action((ActionSucceedDelegate)(context => this.InteractWithQuestGiver((WoWObject)context))),
                 (Composite)new ActionSleep(1500),
                 // DEBUG: log frame visibility after interact + sleep
                 (Composite)new TreeSharp.Action((ActionDelegate)(context =>
@@ -199,6 +200,18 @@ public class ForcedQuestPickUp : ForcedBehavior
     {
         BotPoi current = BotPoi.Current;
         return current.Type != PoiType.QuestPickUp || (int)current.Entry != (int)this.GiverId;
+    }
+
+    private void UseQuestItem(WoWItem item)
+    {
+        item.UseContainerItem();
+        _interactionCycleId++;
+    }
+
+    private void InteractWithQuestGiver(WoWObject giver)
+    {
+        giver.Interact();
+        _interactionCycleId++;
     }
 
     private RunStatus CloseFrames(object context)
@@ -366,6 +379,11 @@ public class ForcedQuestPickUp : ForcedBehavior
             numChoices > 0,
             completionStatus,
             shownQuestCompleted);
+        QuestPickupDialogExecutionPlan executionPlan = QuestPickupDialogExecutionPolicy.CreatePlan(
+            decision,
+            continueVisible,
+            completeQuestVisible,
+            numChoices > 0);
 
         Logging.WriteDebug("[QuestPickUp] HandleQuestFrame: Action={0}, ShownId={1}, TargetId={2}, Accept={3}, Continue={4}, Complete={5}, Completion={6}",
             decision.Action, shownQuestId, this.QuestId, acceptVisible, continueVisible,
@@ -373,7 +391,7 @@ public class ForcedQuestPickUp : ForcedBehavior
 
         if (decision.Action == QuestPickupDialogAction.RejectMismatch)
         {
-            LastOutcome = _mismatchTracker.Observe(decision);
+            LastOutcome = _mismatchTracker.Observe(decision, _interactionCycleId);
             PickupUnavailable = _mismatchTracker.PickupUnavailable;
             Logging.WriteDebug(
                 "[QuestPickUp] Rejected mismatched dialog (cycle {0}/3, unavailable={1}): {2}",
@@ -388,7 +406,13 @@ public class ForcedQuestPickUp : ForcedBehavior
 
         ResetMismatchTracking();
 
-        if (decision.Action == QuestPickupDialogAction.AcceptTarget)
+        if (executionPlan.Command == QuestPickupDialogCommand.None && executionPlan.KeepRunning)
+        {
+            Logging.WriteDebug("[QuestPickUp] Quest dialog identity or buttons are still loading — waiting.");
+            return RunStatus.Running;
+        }
+
+        if (executionPlan.Accept)
         {
             Logging.WriteDebug("[QuestPickUp] Target quest identity confirmed — accepting quest.");
             QuestFrame.Instance.AcceptQuest();
@@ -397,7 +421,7 @@ public class ForcedQuestPickUp : ForcedBehavior
             return RunStatus.Success;
         }
 
-        if (decision.Action == QuestPickupDialogAction.AdvanceCompletedQuest && continueVisible)
+        if (executionPlan.Continue)
         {
             Logging.WriteDebug("[QuestPickUp] Authoritatively completed quest {0} — clicking Continue.", shownQuestId);
             QuestFrame.Instance.ClickContinue();
@@ -405,9 +429,7 @@ public class ForcedQuestPickUp : ForcedBehavior
             return RunStatus.Running;
         }
 
-        if (decision.Action == QuestPickupDialogAction.AdvanceCompletedQuest
-            && numChoices > 0
-            && !completeQuestVisible)
+        if (executionPlan.SelectReward)
         {
             Logging.WriteDebug("[QuestPickUp] Authoritatively completed quest {0} has {1} reward choices — selecting first.", shownQuestId, numChoices);
             QuestFrame.Instance.SelectQuestReward(0);
@@ -415,7 +437,7 @@ public class ForcedQuestPickUp : ForcedBehavior
             return RunStatus.Running;
         }
 
-        if (decision.Action == QuestPickupDialogAction.AdvanceCompletedQuest && completeQuestVisible)
+        if (executionPlan.Complete)
         {
             Logging.WriteDebug("[QuestPickUp] Authoritatively completed quest {0} — completing turn-in.", shownQuestId);
             QuestFrame.Instance.CompleteQuest();

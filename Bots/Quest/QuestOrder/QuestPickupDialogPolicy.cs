@@ -14,6 +14,27 @@ public enum QuestPickupDialogAction
     RejectMismatch
 }
 
+public enum QuestPickupDialogCommand
+{
+    None,
+    CloseFrame,
+    Accept,
+    Continue,
+    SelectReward,
+    Complete
+}
+
+public sealed class QuestPickupDialogExecutionPlan
+{
+    public QuestPickupDialogCommand Command { get; init; }
+    public bool KeepRunning { get; init; }
+    public bool CloseFrame => Command == QuestPickupDialogCommand.CloseFrame;
+    public bool Accept => Command == QuestPickupDialogCommand.Accept;
+    public bool Continue => Command == QuestPickupDialogCommand.Continue;
+    public bool SelectReward => Command == QuestPickupDialogCommand.SelectReward;
+    public bool Complete => Command == QuestPickupDialogCommand.Complete;
+}
+
 public sealed class QuestPickupDialogDecision
 {
     private IReadOnlyList<uint> _offeredQuestIds = Array.Empty<uint>();
@@ -129,16 +150,57 @@ public static class QuestPickupDialogPolicy
     }
 }
 
+public static class QuestPickupDialogExecutionPolicy
+{
+    public static QuestPickupDialogExecutionPlan CreatePlan(
+        QuestPickupDialogDecision decision,
+        bool continueVisible,
+        bool completeVisible,
+        bool rewardChoicesAvailable)
+    {
+        if (decision == null)
+            throw new ArgumentNullException(nameof(decision));
+
+        if (decision.Action == QuestPickupDialogAction.Wait)
+            return new QuestPickupDialogExecutionPlan { KeepRunning = true };
+        if (decision.Action == QuestPickupDialogAction.RejectMismatch)
+            return new QuestPickupDialogExecutionPlan { Command = QuestPickupDialogCommand.CloseFrame };
+        if (decision.Action == QuestPickupDialogAction.AcceptTarget)
+            return new QuestPickupDialogExecutionPlan { Command = QuestPickupDialogCommand.Accept };
+        if (continueVisible)
+            return new QuestPickupDialogExecutionPlan
+            {
+                Command = QuestPickupDialogCommand.Continue,
+                KeepRunning = true
+            };
+        if (rewardChoicesAvailable && !completeVisible)
+            return new QuestPickupDialogExecutionPlan
+            {
+                Command = QuestPickupDialogCommand.SelectReward,
+                KeepRunning = true
+            };
+        if (completeVisible)
+            return new QuestPickupDialogExecutionPlan
+            {
+                Command = QuestPickupDialogCommand.Complete,
+                KeepRunning = true
+            };
+
+        return new QuestPickupDialogExecutionPlan { Command = QuestPickupDialogCommand.CloseFrame };
+    }
+}
+
 #nullable disable
 public sealed class QuestPickupMismatchTracker
 {
     private string _lastEvidence;
+    private long? _lastInteractionCycleId;
 
     public int ConfirmedCycles { get; private set; }
     public bool PickupUnavailable { get; private set; }
     public QuestAttemptOutcome LastOutcome { get; private set; }
 
-    public QuestAttemptOutcome Observe(QuestPickupDialogDecision decision)
+    public QuestAttemptOutcome Observe(QuestPickupDialogDecision decision, long interactionCycleId)
     {
         if (decision == null)
             throw new ArgumentNullException(nameof(decision));
@@ -148,16 +210,24 @@ public sealed class QuestPickupMismatchTracker
             return null;
         }
 
-        if (!string.Equals(_lastEvidence, decision.Evidence, StringComparison.Ordinal))
+        bool evidenceChanged = !string.Equals(_lastEvidence, decision.Evidence, StringComparison.Ordinal);
+        if (evidenceChanged)
         {
             ConfirmedCycles = 0;
             PickupUnavailable = false;
             _lastEvidence = decision.Evidence;
+            LastOutcome = null;
         }
+
+        if (!evidenceChanged
+            && _lastInteractionCycleId == interactionCycleId
+            && LastOutcome != null)
+            return LastOutcome;
 
         if (PickupUnavailable)
             return LastOutcome;
 
+        _lastInteractionCycleId = interactionCycleId;
         ConfirmedCycles++;
         LastOutcome = QuestPickupDialogPolicy.CreateMismatchOutcome(decision, ConfirmedCycles);
         PickupUnavailable = LastOutcome.IsFailureEpisode;
@@ -167,6 +237,7 @@ public sealed class QuestPickupMismatchTracker
     public void Reset()
     {
         _lastEvidence = null;
+        _lastInteractionCycleId = null;
         ConfirmedCycles = 0;
         PickupUnavailable = false;
         LastOutcome = null;
