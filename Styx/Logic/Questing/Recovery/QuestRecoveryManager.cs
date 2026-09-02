@@ -442,7 +442,8 @@ public sealed class QuestRecoveryManager
                         {
                             ObservedUtc = _clock.UtcNow,
                             Reason = QuestFailureReason.LegacyUnknown,
-                            Text = "Imported from quest_blacklist.txt."
+                            Text = "Imported from quest_blacklist.txt.",
+                            SourceKey = key
                         }
                     }
                 };
@@ -529,6 +530,7 @@ public sealed class QuestRecoveryManager
     {
         if (coalesce &&
             record.Evidence.Any(evidence =>
+                evidence.SourceKey?.Equals(record.Key) == true &&
                 evidence.RecoveryCycleId == record.RecoveryCycleId &&
                 evidence.EpisodeCount == record.EpisodeCount &&
                 evidence.Reason == reason &&
@@ -544,7 +546,8 @@ public sealed class QuestRecoveryManager
                 Reason = reason,
                 Text = text,
                 EpisodeCount = record.EpisodeCount,
-                RecoveryCycleId = record.RecoveryCycleId
+                RecoveryCycleId = record.RecoveryCycleId,
+                SourceKey = record.Key
             })
             .TakeLast(MaximumEvidenceRecords)
             .ToArray();

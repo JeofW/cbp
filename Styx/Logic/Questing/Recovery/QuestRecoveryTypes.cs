@@ -156,6 +156,7 @@ public sealed class QuestRecoveryEvidence
     public string Text { get; init; } = "";
     public int? EpisodeCount { get; init; }
     public long? RecoveryCycleId { get; init; }
+    public QuestRecoveryKey? SourceKey { get; init; }
 }
 
 public sealed class QuestRecoveryRecord

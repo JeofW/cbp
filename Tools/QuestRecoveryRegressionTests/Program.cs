@@ -24,9 +24,10 @@ try
     TestManagerRollingBudget(Path.Combine(testRoot, "rolling-budget"), now);
     TestLegacyMigrationIsIdempotent(Path.Combine(testRoot, "migration"), now);
     TestLegacyCrossStageMaterialization(Path.Combine(testRoot, "legacy-cross-stage"), now);
+    TestLegacyRekeyKeepsEvidenceSourcesDistinct(Path.Combine(testRoot, "legacy-evidence-source"), now);
     TestEvidenceCycleSeparatesFailureProgressReset(Path.Combine(testRoot, "evidence-cycle-reset"), now);
     TestEvidenceCycleAdvancesAtEpisodeZero(Path.Combine(testRoot, "evidence-cycle-zero"), now);
-    TestLegacyEvidenceWithoutMarkersIsUnknown(Path.Combine(testRoot, "evidence-legacy-markers"), now);
+    TestLegacyEvidenceWithoutSourceKeyIsUnknown(Path.Combine(testRoot, "evidence-legacy-source-key"), now);
     TestEvidenceCoalescingRespectsEpisode(Path.Combine(testRoot, "evidence-episodes"), now);
     TestConcurrentReportingAndAttemptOwnership(Path.Combine(testRoot, "concurrency"), now);
     Console.WriteLine("Quest recovery regression tests passed.");
@@ -214,7 +215,8 @@ static void TestStoreRoundTripAndAtomicReplacement(string root, DateTime now)
                         Reason = QuestFailureReason.EndpointUnreachable,
                         Text = "unreachable",
                         EpisodeCount = 3,
-                        RecoveryCycleId = 7
+                        RecoveryCycleId = 7,
+                        SourceKey = key
                     }
                 }
             }
@@ -248,8 +250,9 @@ static void TestStoreRoundTripAndAtomicReplacement(string root, DateTime now)
     Assert(loadedRecord.RecoveryCycleId == 7, "store must round-trip the recovery cycle identity");
     Assert(loadedRecord.Evidence.Single().Text == "unreachable" &&
            loadedRecord.Evidence.Single().EpisodeCount == 3 &&
-           loadedRecord.Evidence.Single().RecoveryCycleId == 7,
-        "store must round-trip evidence and its nullable identity markers");
+           loadedRecord.Evidence.Single().RecoveryCycleId == 7 &&
+           loadedRecord.Evidence.Single().SourceKey?.Equals(key) == true,
+        "store must round-trip evidence and its nullable identity markers, including the source key");
     Assert(!File.Exists(path + ".tmp"), "an atomic save must not leave its temporary file behind");
 }
 
@@ -497,6 +500,32 @@ static void TestLegacyCrossStageMaterialization(string settingsRoot, DateTime no
         "Navigation materialization must survive flush and reload");
     Assert(entries.Single(entry => entry.Key.QuestId == 876).Key.Equals(progressedKey),
         "Objective progress materialization must survive flush and reload");
+}
+
+static void TestLegacyRekeyKeepsEvidenceSourcesDistinct(string settingsRoot, DateTime now)
+{
+    var legacyDirectory = Path.Combine(settingsRoot, "WholesomeAutoQuest", "Jeof-Lordaeron");
+    Directory.CreateDirectory(legacyDirectory);
+    File.WriteAllText(Path.Combine(legacyDirectory, "quest_blacklist.txt"), "867");
+    var manager = new QuestRecoveryManager(new FixedClock(now));
+    manager.Configure(CreateEnvironment(settingsRoot, "Jeof", "Lordaeron"));
+
+    var pickupKey = QuestRecoveryKey.ForQuestStage(867, QuestRecoveryStage.Pickup);
+    manager.Report(
+        QuestAttemptOutcome.Observation(pickupKey, QuestFailureReason.NpcNotFoundInWorld, "same pulse"),
+        Context());
+
+    var objectiveKey = QuestRecoveryKey.ForObjective(867, 0);
+    manager.Report(
+        QuestAttemptOutcome.Observation(objectiveKey, QuestFailureReason.NpcNotFoundInWorld, "same pulse"),
+        Context());
+
+    var evidence = manager.GetEntries().Single().Evidence;
+    Assert(evidence.Count(item => item.Text == "same pulse") == 2,
+        "a Pickup observation must not coalesce with an identical Objective observation after legacy re-keying");
+    Assert(evidence.Where(item => item.Text == "same pulse").Select(item => item.SourceKey)
+            .SequenceEqual(new QuestRecoveryKey?[] { pickupKey, objectiveKey }),
+        "each new evidence sample must retain the containing record key that produced it");
 }
 
 static void TestPersistenceFailureCanRetry(string settingsRoot, DateTime now)
@@ -929,7 +958,7 @@ static void TestEvidenceCycleAdvancesAtEpisodeZero(string settingsRoot, DateTime
         "first observed objective progress must establish the first recovery cycle");
 }
 
-static void TestLegacyEvidenceWithoutMarkersIsUnknown(string settingsRoot, DateTime now)
+static void TestLegacyEvidenceWithoutSourceKeyIsUnknown(string settingsRoot, DateTime now)
 {
     var path = Path.Combine(settingsRoot, "QuestRecovery", "Jeof-Lordaeron", "quest-recovery.json");
     Directory.CreateDirectory(Path.GetDirectoryName(path)!);
@@ -951,7 +980,9 @@ static void TestLegacyEvidenceWithoutMarkersIsUnknown(string settingsRoot, DateT
                 {
                   "ObservedUtc": "2026-09-02T12:00:00Z",
                   "Reason": 10,
-                  "Text": "legacy pulse"
+                  "Text": "legacy pulse",
+                  "EpisodeCount": 0,
+                  "RecoveryCycleId": 0
                 }
               ]
             }
@@ -968,10 +999,11 @@ static void TestLegacyEvidenceWithoutMarkersIsUnknown(string settingsRoot, DateT
 
     var evidence = manager.GetEntries().Single().Evidence;
     Assert(evidence.Count(item => item.Text == "legacy pulse") == 2,
-        "schema-1 evidence without identity markers must be unknown and must not coalesce with a current sample");
-    Assert(evidence[0].EpisodeCount is null && evidence[0].RecoveryCycleId is null &&
-           evidence[1].EpisodeCount == 0 && evidence[1].RecoveryCycleId == 0,
-        "missing schema-1 evidence markers must deserialize as unknown while new samples are authoritative");
+        "schema-1 evidence without a source key must be unknown and must not coalesce with a current sample");
+    Assert(evidence[0].EpisodeCount == 0 && evidence[0].RecoveryCycleId == 0 && evidence[0].SourceKey is null &&
+           evidence[1].EpisodeCount == 0 && evidence[1].RecoveryCycleId == 0 &&
+           evidence[1].SourceKey?.Equals(key) == true,
+        "a missing schema-1 source key must deserialize as unknown while new samples are authoritative");
 }
 
 static void TestConcurrentReportingAndAttemptOwnership(string settingsRoot, DateTime now)
@@ -1001,8 +1033,9 @@ static void TestConcurrentReportingAndAttemptOwnership(string settingsRoot, Date
     observed = manager.GetEntries().Single();
     Assert(observed.Evidence.Count == 2 &&
            observed.Evidence.Select(evidence => evidence.Text).OrderBy(text => text)
-               .SequenceEqual(new[] { "different pulse", "same pulse" }),
-        "non-consecutive A,B,A observations must coalesce by reason and evidence within one stage episode");
+               .SequenceEqual(new[] { "different pulse", "same pulse" }) &&
+           observed.Evidence.All(evidence => evidence.SourceKey?.Equals(observedKey) == true),
+        "non-consecutive A,B,A observations must coalesce by key, cycle, episode, reason, and evidence");
     Parallel.For(0, 20, index =>
         manager.Report(
             QuestAttemptOutcome.Observation(observedKey, QuestFailureReason.NpcNotFoundInWorld, $"distinct-{index}"),
