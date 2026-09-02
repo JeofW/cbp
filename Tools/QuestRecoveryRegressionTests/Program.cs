@@ -1,4 +1,5 @@
 using Styx.Logic.Questing.Recovery;
+using Styx.Helpers;
 
 var now = new DateTime(2026, 9, 2, 12, 0, 0, DateTimeKind.Utc);
 var testRoot = Path.Combine(AppContext.BaseDirectory, "quest-recovery-test-data");
@@ -9,10 +10,18 @@ try
     RunPolicyRegressions(now);
     TestStoreRoundTripAndAtomicReplacement(Path.Combine(testRoot, "store"), now);
     TestCorruptStoreQuarantine(Path.Combine(testRoot, "corrupt"));
+    TestValidStoreIoFailureIsSurfaced(Path.Combine(testRoot, "store-io"));
+    TestUnsupportedSchemaIsPreserved(Path.Combine(testRoot, "unsupported-schema"));
     TestPersistenceAndIdentityIsolation(Path.Combine(testRoot, "manager"), now);
     TestPersistenceFailureCanRetry(Path.Combine(testRoot, "persistence-retry"), now);
+    TestIdentitySwitchRequiresSuccessfulFlush(Path.Combine(testRoot, "switch-flush"), now);
+    TestIdentitySwitchLoadIsTransactional(Path.Combine(testRoot, "switch-load"), now);
+    TestPersistedAttemptingRecoversOneProbe(Path.Combine(testRoot, "stale-attempt"), now);
+    TestCollisionSafeIdentityPaths(Path.Combine(testRoot, "identity-paths"), now);
+    TestProductionDiagnosticsReachBotLogger(Path.Combine(testRoot, "production-logging"));
     TestManagerRollingBudget(Path.Combine(testRoot, "rolling-budget"), now);
     TestLegacyMigrationIsIdempotent(Path.Combine(testRoot, "migration"), now);
+    TestLegacyCrossStageMaterialization(Path.Combine(testRoot, "legacy-cross-stage"), now);
     TestConcurrentReportingAndAttemptOwnership(Path.Combine(testRoot, "concurrency"), now);
     Console.WriteLine("Quest recovery regression tests passed.");
 }
@@ -248,6 +257,43 @@ static void TestCorruptStoreQuarantine(string root)
         "corrupt-store diagnostics must include the parse exception");
 }
 
+static void TestValidStoreIoFailureIsSurfaced(string root)
+{
+    Directory.CreateDirectory(root);
+    var path = Path.Combine(root, "quest-recovery.json");
+    var store = new QuestRecoveryStore(path);
+    store.Save(new QuestRecoveryDocument { CharacterName = "Jeof", RealmName = "Lordaeron" });
+
+    using (new FileStream(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None))
+    {
+        AssertThrows<IOException>(() => store.Load(),
+            "a sharing violation must be surfaced instead of producing empty overwriteable state");
+    }
+
+    Assert(File.Exists(path), "an I/O load failure must leave the valid live store in place");
+    Assert(Directory.GetFiles(root, "quest-recovery.corrupt-*.json").Length == 0,
+        "an I/O load failure must not mislabel valid data as malformed JSON");
+}
+
+static void TestUnsupportedSchemaIsPreserved(string root)
+{
+    Directory.CreateDirectory(root);
+    var path = Path.Combine(root, "quest-recovery.json");
+    var store = new QuestRecoveryStore(path);
+    store.Save(new QuestRecoveryDocument
+    {
+        SchemaVersion = 2,
+        CharacterName = "Jeof",
+        RealmName = "Lordaeron"
+    });
+
+    AssertThrows<NotSupportedException>(() => store.Load(),
+        "an unsupported quest recovery schema must be rejected explicitly");
+    Assert(File.Exists(path), "an unsupported-schema store must be preserved in place");
+    Assert(Directory.GetFiles(root, "quest-recovery.corrupt-*.json").Length == 0,
+        "an unsupported schema must not be quarantined as malformed JSON");
+}
+
 static void TestPersistenceAndIdentityIsolation(string settingsRoot, DateTime now)
 {
     var clock = new FixedClock(now);
@@ -374,6 +420,53 @@ static void TestLegacyMigrationIsIdempotent(string settingsRoot, DateTime now)
     Assert(reloaded.GetEntries().All(entry => entry.Key.QuestId != 999), "a migration marker must prevent later legacy re-import");
 }
 
+static void TestLegacyCrossStageMaterialization(string settingsRoot, DateTime now)
+{
+    var legacyDirectory = Path.Combine(settingsRoot, "WholesomeAutoQuest", "Jeof-Lordaeron");
+    Directory.CreateDirectory(legacyDirectory);
+    File.WriteAllText(Path.Combine(legacyDirectory, "quest_blacklist.txt"), "867,875,876");
+    var environment = CreateEnvironment(settingsRoot, "Jeof", "Lordaeron");
+    var manager = new QuestRecoveryManager(new FixedClock(now));
+    manager.Configure(environment);
+
+    var objectiveKey = QuestRecoveryKey.ForObjective(867, 0);
+    manager.Report(
+        QuestAttemptOutcome.Failure(objectiveKey, QuestFailureReason.RepeatedDeaths, "objective death"),
+        Context());
+    var objective = manager.GetEntries().Single(entry => entry.Key.QuestId == 867);
+    Assert(objective.Key.Equals(objectiveKey) && objective.CooldownUntilUtc == now.AddMinutes(30),
+        "cross-stage Report must re-key legacy control and apply Objective cooldown semantics");
+
+    var navigationKey = QuestRecoveryKey.ForQuestStage(875, QuestRecoveryStage.Navigation);
+    manager.Report(
+        QuestAttemptOutcome.Failure(navigationKey, QuestFailureReason.PathGenerationFailed, "no path"),
+        Context());
+    var navigation = manager.GetEntries().Single(entry => entry.Key.QuestId == 875);
+    Assert(navigation.Key.Equals(navigationKey) && navigation.CooldownUntilUtc == now.AddMinutes(30),
+        "cross-stage Report must re-key legacy control and apply Navigation cooldown semantics");
+
+    var progressedKey = QuestRecoveryKey.ForObjective(876, 1);
+    manager.ReportProgress(progressedKey, new[] { 0, 1 }, Context());
+    var progressed = manager.GetEntries().Single(entry => entry.Key.QuestId == 876);
+    Assert(progressed.Key.Equals(progressedKey) && progressed.State == QuestRecoveryState.Eligible,
+        "cross-stage progress must materialize an Objective record and apply Objective progress semantics");
+    Assert(manager.GetEntries().Select(entry => entry.Key).Distinct().Count() == manager.GetEntries().Count,
+        "legacy materialization must not retain duplicate embedded keys");
+
+    manager.Flush();
+    var reloaded = new QuestRecoveryManager(new FixedClock(now));
+    reloaded.Configure(environment);
+    var entries = reloaded.GetEntries();
+    Assert(entries.Count == 3 && entries.Select(entry => entry.Key).Distinct().Count() == entries.Count,
+        "cross-stage records must reload without duplicate embedded keys");
+    Assert(entries.Single(entry => entry.Key.QuestId == 867).Key.Equals(objectiveKey),
+        "Objective materialization must survive flush and reload");
+    Assert(entries.Single(entry => entry.Key.QuestId == 875).Key.Equals(navigationKey),
+        "Navigation materialization must survive flush and reload");
+    Assert(entries.Single(entry => entry.Key.QuestId == 876).Key.Equals(progressedKey),
+        "Objective progress materialization must survive flush and reload");
+}
+
 static void TestPersistenceFailureCanRetry(string settingsRoot, DateTime now)
 {
     Directory.CreateDirectory(Path.GetDirectoryName(settingsRoot)!);
@@ -405,6 +498,231 @@ static void TestPersistenceFailureCanRetry(string settingsRoot, DateTime now)
         "a later flush must retry and persist the retained decision");
 }
 
+static void TestIdentitySwitchRequiresSuccessfulFlush(string root, DateTime now)
+{
+    var oldRoot = Path.Combine(root, "old");
+    var newRoot = Path.Combine(root, "new");
+    Directory.CreateDirectory(oldRoot);
+    var oldEnvironment = CreateEnvironment(oldRoot, "Jeof", "Lordaeron");
+    var manager = new QuestRecoveryManager(new FixedClock(now));
+    var key = QuestRecoveryKey.ForQuestStage(867, QuestRecoveryStage.Pickup);
+    manager.Configure(oldEnvironment);
+    manager.Report(
+        QuestAttemptOutcome.Failure(key, QuestFailureReason.PickupTargetNotOffered, "not offered"),
+        Context());
+
+    Directory.Delete(oldRoot, recursive: true);
+    File.WriteAllText(oldRoot, "blocks dirty-state persistence");
+    AssertThrows<InvalidOperationException>(
+        () => manager.Configure(CreateEnvironment(newRoot, "Alt", "Lordaeron")),
+        "an identity switch must fail when the old dirty state cannot be persisted");
+    Assert(manager.GetEntries().Single().Key.Equals(key),
+        "a failed identity switch must retain the old in-memory records");
+
+    File.Delete(oldRoot);
+    Directory.CreateDirectory(oldRoot);
+    manager.Flush();
+    var reloaded = new QuestRecoveryManager(new FixedClock(now));
+    reloaded.Configure(oldEnvironment);
+    Assert(reloaded.GetEntries().Single().EpisodeCount == 1,
+        "a later Flush retry must persist dirty state retained after a failed identity switch");
+}
+
+static void TestIdentitySwitchLoadIsTransactional(string root, DateTime now)
+{
+    var oldRoot = Path.Combine(root, "old");
+    var newRoot = Path.Combine(root, "new");
+    var oldEnvironment = CreateEnvironment(oldRoot, "Jeof", "Lordaeron");
+    var newEnvironment = CreateEnvironment(newRoot, "Alt", "Lordaeron");
+    var manager = new QuestRecoveryManager(new FixedClock(now));
+    var firstKey = QuestRecoveryKey.ForQuestStage(867, QuestRecoveryStage.Pickup);
+    manager.Configure(oldEnvironment);
+    manager.Report(
+        QuestAttemptOutcome.Failure(firstKey, QuestFailureReason.PickupTargetNotOffered, "not offered"),
+        Context());
+    manager.Flush();
+
+    var newPath = Path.Combine(newRoot, "QuestRecovery", "Alt-Lordaeron", "quest-recovery.json");
+    new QuestRecoveryStore(newPath).Save(new QuestRecoveryDocument
+    {
+        CharacterName = "Alt",
+        RealmName = "Lordaeron"
+    });
+    using (new FileStream(newPath, FileMode.Open, FileAccess.ReadWrite, FileShare.None))
+    {
+        AssertThrows<IOException>(() => manager.Configure(newEnvironment),
+            "a candidate identity load failure must be surfaced");
+    }
+
+    var secondKey = QuestRecoveryKey.ForQuestStage(868, QuestRecoveryStage.Pickup);
+    manager.Report(
+        QuestAttemptOutcome.Failure(secondKey, QuestFailureReason.PickupTargetNotOffered, "not offered"),
+        Context());
+    manager.Flush();
+
+    var oldReload = new QuestRecoveryManager(new FixedClock(now));
+    oldReload.Configure(oldEnvironment);
+    Assert(oldReload.GetEntries().Select(entry => entry.Key.QuestId).OrderBy(id => id)
+            .SequenceEqual(new uint[] { 867, 868 }),
+        "a failed candidate load must leave the old environment, store, and records active");
+    var newReload = new QuestRecoveryManager(new FixedClock(now));
+    newReload.Configure(newEnvironment);
+    Assert(newReload.GetEntries().Count == 0,
+        "a failed candidate load must not overwrite the candidate identity with old records");
+}
+
+static void TestPersistedAttemptingRecoversOneProbe(string root, DateTime now)
+{
+    var environment = CreateEnvironment(root, "Jeof", "Lordaeron");
+    var path = Path.Combine(root, "QuestRecovery", "Jeof-Lordaeron", "quest-recovery.json");
+    var key = QuestRecoveryKey.ForQuestStage(867, QuestRecoveryStage.Pickup);
+    new QuestRecoveryStore(path).Save(new QuestRecoveryDocument
+    {
+        CharacterName = "Jeof",
+        RealmName = "Lordaeron",
+        Records = new[]
+        {
+            new QuestRecoveryRecord { Key = key, State = QuestRecoveryState.Attempting }
+        }
+    });
+
+    var manager = new QuestRecoveryManager(new FixedClock(now));
+    manager.Configure(environment);
+    Assert(manager.GetEntries().Single().State == QuestRecoveryState.HalfOpen,
+        "a persisted Attempting state must restart as a recoverable one-probe state");
+    manager.Flush();
+    Assert(new QuestRecoveryStore(path).Load().Records.Single().State == QuestRecoveryState.HalfOpen,
+        "normalizing stale attempt ownership must mark the manager dirty for persistence");
+
+    var decisions = new QuestRecoveryDecision[256];
+    Parallel.For(0, decisions.Length, index => decisions[index] = manager.TryBeginAttempt(key, Context()));
+    Assert(decisions.Count(decision => decision.MayAttempt) == 1,
+        "exactly one concurrent caller may acquire recovered stale-attempt ownership");
+
+    var budgetRoot = Path.Combine(root, "budget");
+    var budgetPath = Path.Combine(budgetRoot, "QuestRecovery", "Jeof-Lordaeron", "quest-recovery.json");
+    new QuestRecoveryStore(budgetPath).Save(new QuestRecoveryDocument
+    {
+        CharacterName = "Jeof",
+        RealmName = "Lordaeron",
+        RollingFailureUtc = Enumerable.Range(0, 6).Select(index => now.AddMinutes(-index)).ToArray(),
+        Records = new[]
+        {
+            new QuestRecoveryRecord { Key = key, State = QuestRecoveryState.Attempting }
+        }
+    });
+    var budgetManager = new QuestRecoveryManager(new FixedClock(now));
+    budgetManager.Configure(CreateEnvironment(budgetRoot, "Jeof", "Lordaeron"));
+    var denied = new QuestRecoveryDecision[32];
+    Parallel.For(0, denied.Length, index => denied[index] = budgetManager.TryBeginAttempt(key, Context()));
+    Assert(denied.All(decision => !decision.MayAttempt),
+        "stale-attempt recovery must still enforce the rolling-hour retry budget");
+}
+
+static void TestCollisionSafeIdentityPaths(string root, DateTime now)
+{
+    var first = new QuestRecoveryManager(new FixedClock(now));
+    first.Configure(CreateEnvironment(root, "A-B", "C"));
+    first.Report(
+        QuestAttemptOutcome.Failure(
+            QuestRecoveryKey.ForQuestStage(867, QuestRecoveryStage.Pickup),
+            QuestFailureReason.PickupTargetNotOffered,
+            "first identity"),
+        Context());
+    first.Flush();
+
+    var second = new QuestRecoveryManager(new FixedClock(now));
+    second.Configure(CreateEnvironment(root, "A", "B-C"));
+    second.Report(
+        QuestAttemptOutcome.Failure(
+            QuestRecoveryKey.ForQuestStage(875, QuestRecoveryStage.Pickup),
+            QuestFailureReason.PickupTargetNotOffered,
+            "second identity"),
+        Context());
+    second.Flush();
+
+    var identityRoot = Path.Combine(root, "QuestRecovery");
+    var directories = Directory.GetDirectories(identityRoot);
+    Assert(directories.Length == 2,
+        "separator-bearing character and realm names must not collide into one identity path");
+    var documents = directories
+        .Select(directory => new QuestRecoveryStore(Path.Combine(directory, "quest-recovery.json")).Load())
+        .ToArray();
+    Assert(documents.Any(document => document.CharacterName == "A-B" && document.RealmName == "C") &&
+           documents.Any(document => document.CharacterName == "A" && document.RealmName == "B-C"),
+        "identity documents must retain the raw character and realm names");
+
+    var hazardRoot = Path.Combine(root, "hazards");
+    var hazardIdentities = new[]
+    {
+        (Character: "A%B", Realm: "Realm"),
+        (Character: "A%0025B", Realm: "Realm"),
+        (Character: "A/B\u0001", Realm: "Realm"),
+        (Character: "CON", Realm: "Realm. "),
+        (Character: "CON", Realm: "Realm")
+    };
+    foreach (var identity in hazardIdentities)
+    {
+        var manager = new QuestRecoveryManager(new FixedClock(now));
+        manager.Configure(CreateEnvironment(hazardRoot, identity.Character, identity.Realm));
+        manager.Report(
+            QuestAttemptOutcome.Failure(
+                QuestRecoveryKey.ForQuestStage(900, QuestRecoveryStage.Pickup),
+                QuestFailureReason.PickupTargetNotOffered,
+                "hazard identity"),
+            Context());
+        manager.Flush();
+    }
+
+    Assert(Directory.GetDirectories(Path.Combine(hazardRoot, "QuestRecovery")).Length == hazardIdentities.Length,
+        "percent, invalid/control, trailing aliases, and reserved device names must map to distinct safe paths");
+
+    var ordinaryRoot = Path.Combine(root, "ordinary");
+    var ordinary = new QuestRecoveryManager(new FixedClock(now));
+    ordinary.Configure(CreateEnvironment(ordinaryRoot, "Jeof", "Lordaeron"));
+    ordinary.Report(
+        QuestAttemptOutcome.Failure(
+            QuestRecoveryKey.ForQuestStage(999, QuestRecoveryStage.Pickup),
+            QuestFailureReason.PickupTargetNotOffered,
+            "ordinary identity"),
+        Context());
+    ordinary.Flush();
+    Assert(File.Exists(Path.Combine(ordinaryRoot, "QuestRecovery", "Jeof-Lordaeron", "quest-recovery.json")),
+        "ordinary simple identities must retain the required Jeof-Lordaeron path");
+    var caseReload = new QuestRecoveryManager(new FixedClock(now));
+    caseReload.Configure(CreateEnvironment(ordinaryRoot, "JEOF", "lordaeron"));
+    Assert(caseReload.GetEntries().Single().Key.QuestId == 999,
+        "identity casing must follow Windows case-insensitive path semantics");
+}
+
+static void TestProductionDiagnosticsReachBotLogger(string root)
+{
+    var messages = new List<string>();
+    var previousFileLogging = Logging.FileLogging;
+    Action<LogLevel, string> handler = (_, message) => messages.Add(message);
+    Logging.FileLogging = false;
+    Logging.OnMessageLogged += handler;
+    try
+    {
+        QuestRecoveryManager.Instance.Configure(CreateEnvironment(root, "Logger", "Lordaeron"));
+        QuestRecoveryManager.Instance.Report(
+            QuestAttemptOutcome.Failure(
+                QuestRecoveryKey.ForQuestStage(1234, QuestRecoveryStage.Pickup),
+                QuestFailureReason.PickupTargetNotOffered,
+                "diagnostic probe"),
+            Context());
+    }
+    finally
+    {
+        Logging.OnMessageLogged -= handler;
+        Logging.FileLogging = previousFileLogging;
+    }
+
+    Assert(messages.Any(message => message.Contains("[QuestRecovery]", StringComparison.Ordinal) &&
+                                   message.Contains("quest=1234", StringComparison.Ordinal)),
+        "the production singleton must emit recovery transitions through the bot logger with a concise prefix");
+}
+
 static void TestManagerRollingBudget(string settingsRoot, DateTime now)
 {
     var manager = new QuestRecoveryManager(new FixedClock(now));
@@ -432,16 +750,24 @@ static void TestConcurrentReportingAndAttemptOwnership(string settingsRoot, Date
     manager.Configure(CreateEnvironment(settingsRoot, "Jeof", "Lordaeron"));
     var observedKey = QuestRecoveryKey.ForQuestStage(867, QuestRecoveryStage.Pickup);
 
-    Parallel.For(0, 1_000, index =>
+    Parallel.For(0, 1_000, _ =>
         manager.Report(
-            QuestAttemptOutcome.Observation(observedKey, QuestFailureReason.NpcNotFoundInWorld, $"sample-{index}"),
+            QuestAttemptOutcome.Observation(observedKey, QuestFailureReason.NpcNotFoundInWorld, "same pulse"),
             Context()));
 
     var observed = manager.GetEntries().Single();
     Assert(observed.EpisodeCount == 0, "timer observations must not create failure episodes");
     Assert(observed.Reason == QuestFailureReason.None,
         "timer observations must not replace the active episode's failure reason");
-    Assert(observed.Evidence.Count == 10, "concurrent evidence must be bounded to the ten newest records");
+    Assert(observed.Evidence.Count == 1,
+        "identical concurrent non-failure pulse evidence must coalesce into one record");
+    Parallel.For(0, 20, index =>
+        manager.Report(
+            QuestAttemptOutcome.Observation(observedKey, QuestFailureReason.NpcNotFoundInWorld, $"distinct-{index}"),
+            Context()));
+    observed = manager.GetEntries().Single();
+    Assert(observed.Evidence.Count == 10 && observed.Evidence.Select(evidence => evidence.Text).Distinct().Count() == 10,
+        "distinct concurrent evidence must append while remaining bounded to ten records");
 
     var attemptKey = QuestRecoveryKey.ForQuestStage(875, QuestRecoveryStage.Pickup);
     var decisions = new QuestRecoveryDecision[256];
@@ -457,6 +783,14 @@ static void TestConcurrentReportingAndAttemptOwnership(string settingsRoot, Date
         Context());
     Assert(manager.GetEntries().Single(entry => entry.Key.Equals(attemptKey)).EpisodeCount == 1,
         "failure by an attempt owner must count one episode");
+    clock.UtcNow = now.AddMinutes(16);
+    manager.Report(
+        QuestAttemptOutcome.Failure(attemptKey, QuestFailureReason.PickupTargetNotOffered, "probe failed"),
+        Context());
+    var repeatedFailure = manager.GetEntries().Single(entry => entry.Key.Equals(attemptKey));
+    Assert(repeatedFailure.EpisodeCount == 2 &&
+           repeatedFailure.Evidence.Count(evidence => evidence.Text == "probe failed") == 2,
+        "identical evidence from an actual new failure episode must append instead of coalescing");
 }
 
 static QuestRecoveryEnvironment CreateEnvironment(string settingsRoot, string character, string realm) =>
@@ -487,6 +821,21 @@ static void Assert(bool condition, string message)
     {
         throw new InvalidOperationException(message);
     }
+}
+
+static void AssertThrows<TException>(Action action, string message)
+    where TException : Exception
+{
+    try
+    {
+        action();
+    }
+    catch (TException)
+    {
+        return;
+    }
+
+    throw new InvalidOperationException(message);
 }
 
 static void AssertImmediateDataQuarantine(QuestFailureReason reason, DateTime now)

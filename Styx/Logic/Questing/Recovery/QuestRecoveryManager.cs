@@ -1,4 +1,7 @@
 using System.IO;
+using System.Globalization;
+using System.Text;
+using Styx.Helpers;
 
 namespace Styx.Logic.Questing.Recovery;
 
@@ -15,7 +18,8 @@ public sealed class QuestRecoveryManager
     private QuestRecoveryStore? _store;
     private bool _dirty;
 
-    public static QuestRecoveryManager Instance { get; } = new();
+    public static QuestRecoveryManager Instance { get; } =
+        new(log: message => Logging.WriteDiagnostic($"[QuestRecovery] {message}"));
 
     public QuestRecoveryManager(IQuestRecoveryClock? clock = null, Action<string>? log = null)
     {
@@ -36,29 +40,44 @@ public sealed class QuestRecoveryManager
                 return;
             }
 
-            FlushCore();
-            _environment = sanitized;
-            var identityDirectory = $"{sanitized.CharacterName}-{sanitized.RealmName}";
+            if (!FlushCore())
+            {
+                throw new InvalidOperationException(
+                    "Cannot switch quest recovery identity while the current state is not persisted.");
+            }
+
+            var identityDirectory =
+                $"{EncodePathComponent(sanitized.CharacterName)}-{EncodePathComponent(sanitized.RealmName)}";
             var storePath = Path.Combine(
                 sanitized.SettingsRoot,
                 "QuestRecovery",
                 identityDirectory,
                 "quest-recovery.json");
-            _store = new QuestRecoveryStore(storePath, _log);
+            var store = new QuestRecoveryStore(storePath, _log);
 
-            var document = _store.Load();
+            var document = store.Load();
             if (HasDifferentIdentity(document, sanitized))
             {
                 _log($"Quest recovery store identity mismatch at '{storePath}'; ignoring its records.");
                 document = new QuestRecoveryDocument();
             }
 
-            _records = document.Records
+            var recoveredStaleAttempt = document.Records.Any(record =>
+                record.State == QuestRecoveryState.Attempting);
+            var records = document.Records
                 .Where(record => record.Key is not null)
+                .Select(record => record.State == QuestRecoveryState.Attempting
+                    ? Copy(record, state: QuestRecoveryState.HalfOpen)
+                    : record)
                 .GroupBy(record => record.Key)
                 .ToDictionary(group => group.Key, group => group.Last());
-            _rollingFailureUtc = document.RollingFailureUtc.ToList();
-            _dirty = false;
+            var rollingFailureUtc = document.RollingFailureUtc.ToList();
+
+            _environment = sanitized;
+            _store = store;
+            _records = records;
+            _rollingFailureUtc = rollingFailureUtc;
+            _dirty = recoveredStaleAttempt;
             ImportLegacyCore(identityDirectory);
         }
     }
@@ -91,6 +110,7 @@ public sealed class QuestRecoveryManager
             }
 
             var current = FindRecordCore(key) ?? QuestRecoveryRecord.Create(key);
+            current = MaterializeLegacyRecordCore(current, key);
             _records[current.Key] = Copy(current, state: QuestRecoveryState.Attempting);
             _dirty = true;
             return new QuestRecoveryDecision
@@ -120,6 +140,7 @@ public sealed class QuestRecoveryManager
             }
 
             var current = FindRecordCore(outcome.Key) ?? QuestRecoveryRecord.Create(outcome.Key);
+            current = MaterializeLegacyRecordCore(current, outcome.Key);
             var policyInput = current.State == QuestRecoveryState.Attempting
                 ? Copy(current, state: QuestRecoveryState.Eligible)
                 : current;
@@ -151,7 +172,12 @@ public sealed class QuestRecoveryManager
                 updated = current;
             }
 
-            updated = WithEvidence(updated, outcome.Reason, outcome.Evidence, _clock.UtcNow);
+            updated = WithEvidence(
+                updated,
+                outcome.Reason,
+                outcome.Evidence,
+                _clock.UtcNow,
+                coalesce: !outcome.IsFailureEpisode);
             _records[current.Key] = updated;
             _dirty = true;
             LogTransition(current, updated);
@@ -187,6 +213,7 @@ public sealed class QuestRecoveryManager
             }
             else
             {
+                current = MaterializeLegacyRecordCore(current, key);
                 updated = QuestRecoveryPolicy.ApplyProgress(current, objectiveCounts, _clock.UtcNow);
             }
 
@@ -342,6 +369,19 @@ public sealed class QuestRecoveryManager
         ?? _records.Values.FirstOrDefault(record =>
             record.Key.QuestId == questId && record.State == QuestRecoveryState.Completed);
 
+    private QuestRecoveryRecord MaterializeLegacyRecordCore(
+        QuestRecoveryRecord current,
+        QuestRecoveryKey requestedKey)
+    {
+        if (current.Key.Equals(requestedKey) || current.Reason != QuestFailureReason.LegacyUnknown)
+        {
+            return current;
+        }
+
+        _records.Remove(current.Key);
+        return Copy(current, key: requestedKey);
+    }
+
     private int RollingFailureCountCore()
     {
         var windowStart = _clock.UtcNow.Subtract(RollingFailureWindow);
@@ -421,11 +461,11 @@ public sealed class QuestRecoveryManager
         }
     }
 
-    private void FlushCore()
+    private bool FlushCore()
     {
         if (!_dirty || _store is null || _environment is null)
         {
-            return;
+            return true;
         }
 
         var now = _clock.UtcNow;
@@ -445,10 +485,12 @@ public sealed class QuestRecoveryManager
             _store.Save(document);
             _records = compacted.ToDictionary(record => record.Key);
             _dirty = false;
+            return true;
         }
         catch (Exception ex)
         {
             _log($"Quest recovery persistence failed: {ex}");
+            return false;
         }
     }
 
@@ -477,8 +519,17 @@ public sealed class QuestRecoveryManager
         QuestRecoveryRecord record,
         QuestFailureReason reason,
         string text,
-        DateTime nowUtc)
+        DateTime nowUtc,
+        bool coalesce)
     {
+        if (coalesce &&
+            record.Evidence.LastOrDefault() is { } latest &&
+            latest.Reason == reason &&
+            string.Equals(latest.Text, text, StringComparison.Ordinal))
+        {
+            return record;
+        }
+
         var evidence = record.Evidence
             .Append(new QuestRecoveryEvidence { ObservedUtc = nowUtc, Reason = reason, Text = text })
             .TakeLast(MaximumEvidenceRecords)
@@ -499,30 +550,72 @@ public sealed class QuestRecoveryManager
 
     private static bool HasDifferentIdentity(QuestRecoveryDocument document, QuestRecoveryEnvironment environment) =>
         (!string.IsNullOrEmpty(document.CharacterName) &&
-         !string.Equals(document.CharacterName, environment.CharacterName, StringComparison.Ordinal)) ||
+         !string.Equals(document.CharacterName, environment.CharacterName, StringComparison.OrdinalIgnoreCase)) ||
         (!string.IsNullOrEmpty(document.RealmName) &&
-         !string.Equals(document.RealmName, environment.RealmName, StringComparison.Ordinal));
+         !string.Equals(document.RealmName, environment.RealmName, StringComparison.OrdinalIgnoreCase));
 
     private static QuestRecoveryEnvironment Sanitize(QuestRecoveryEnvironment environment) =>
         new(
             Path.GetFullPath(environment.SettingsRoot),
-            SanitizePathPart(environment.CharacterName),
-            SanitizePathPart(environment.RealmName),
+            environment.CharacterName,
+            environment.RealmName,
             environment.DatasetVersion,
             environment.CoreVersion,
             environment.NavigationFingerprint);
 
-    private static string SanitizePathPart(string value)
+    private static string EncodePathComponent(string value)
     {
+        if (value.Length == 0)
+        {
+            return "%EMPTY";
+        }
+
         var invalid = Path.GetInvalidFileNameChars().Concat(new[] { '/', '\\' }).ToHashSet();
-        var sanitized = new string(value.Select(character => invalid.Contains(character) ? '_' : character).ToArray()).Trim();
-        return sanitized.Length == 0 ? "unknown" : sanitized;
+        var trimmedLength = value.TrimEnd(' ', '.').Length;
+        var reservedDeviceName = IsReservedDeviceName(value);
+        var encoded = new StringBuilder(value.Length);
+        for (var index = 0; index < value.Length; index++)
+        {
+            var character = value[index];
+            var trailingAlias = index >= trimmedLength && (character is ' ' or '.');
+            if ((reservedDeviceName && index == 0) ||
+                character is '-' or '%' ||
+                char.IsControl(character) ||
+                invalid.Contains(character) ||
+                trailingAlias)
+            {
+                encoded.Append('%');
+                encoded.Append(((int)character).ToString("X4", CultureInfo.InvariantCulture));
+            }
+            else
+            {
+                encoded.Append(character);
+            }
+        }
+
+        return encoded.ToString();
+    }
+
+    private static bool IsReservedDeviceName(string value)
+    {
+        var trimmed = value.TrimEnd(' ', '.');
+        var dotIndex = trimmed.IndexOf('.');
+        var stem = dotIndex < 0 ? trimmed : trimmed[..dotIndex];
+        return stem.Equals("CON", StringComparison.OrdinalIgnoreCase) ||
+               stem.Equals("PRN", StringComparison.OrdinalIgnoreCase) ||
+               stem.Equals("AUX", StringComparison.OrdinalIgnoreCase) ||
+               stem.Equals("NUL", StringComparison.OrdinalIgnoreCase) ||
+               stem.Equals("CLOCK$", StringComparison.OrdinalIgnoreCase) ||
+               (stem.Length == 4 &&
+                (stem.StartsWith("COM", StringComparison.OrdinalIgnoreCase) ||
+                 stem.StartsWith("LPT", StringComparison.OrdinalIgnoreCase)) &&
+                stem[3] is >= '1' and <= '9');
     }
 
     private static bool IsSameStore(QuestRecoveryEnvironment first, QuestRecoveryEnvironment second) =>
         string.Equals(first.SettingsRoot, second.SettingsRoot, StringComparison.OrdinalIgnoreCase) &&
-        string.Equals(first.CharacterName, second.CharacterName, StringComparison.Ordinal) &&
-        string.Equals(first.RealmName, second.RealmName, StringComparison.Ordinal);
+        string.Equals(first.CharacterName, second.CharacterName, StringComparison.OrdinalIgnoreCase) &&
+        string.Equals(first.RealmName, second.RealmName, StringComparison.OrdinalIgnoreCase);
 
     private static QuestRecoveryEnvironment MergeRicherConfiguration(
         QuestRecoveryEnvironment current,
@@ -564,6 +657,7 @@ public sealed class QuestRecoveryManager
 
     private static QuestRecoveryRecord Copy(
         QuestRecoveryRecord current,
+        QuestRecoveryKey? key = null,
         QuestRecoveryState? state = null,
         QuestFailureReason? reason = null,
         DateTime? cooldownUntilUtc = null,
@@ -577,7 +671,7 @@ public sealed class QuestRecoveryManager
     {
         return new QuestRecoveryRecord
         {
-            Key = current.Key,
+            Key = key ?? current.Key,
             State = state ?? current.State,
             Reason = reason ?? current.Reason,
             FirstFailureUtc = current.FirstFailureUtc,

@@ -29,10 +29,17 @@ public sealed class QuestRecoveryStore
         try
         {
             using var stream = new FileStream(_filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
-            return JsonSerializer.Deserialize<QuestRecoveryDocument>(stream, JsonOptions)
+            var document = JsonSerializer.Deserialize<QuestRecoveryDocument>(stream, JsonOptions)
                 ?? throw new JsonException("The quest recovery document was empty.");
+            if (document.SchemaVersion != 1)
+            {
+                throw new NotSupportedException(
+                    $"Quest recovery schema version {document.SchemaVersion} is not supported.");
+            }
+
+            return document;
         }
-        catch (Exception ex)
+        catch (JsonException ex)
         {
             var directory = Path.GetDirectoryName(_filePath) ?? "";
             var quarantinePath = Path.Combine(
@@ -46,11 +53,16 @@ public sealed class QuestRecoveryStore
             catch (Exception quarantineException)
             {
                 _log($"Quest recovery store load failed: {ex}\nCorrupt-file quarantine failed: {quarantineException}");
-                return new QuestRecoveryDocument();
+                throw;
             }
 
             _log($"Quest recovery store load failed; moved corrupt data to '{quarantinePath}': {ex}");
             return new QuestRecoveryDocument();
+        }
+        catch (Exception ex)
+        {
+            _log($"Quest recovery store load failed; live data was left in place: {ex}");
+            throw;
         }
     }
 
