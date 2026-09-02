@@ -7,8 +7,8 @@ public static class QuestRecoveryPolicy
     public static QuestRecoveryRecord ApplyFailure(
         QuestRecoveryRecord current,
         QuestFailureReason reason,
-        DateTime nowUtc,
-        QuestRecoveryContext context)
+        QuestRecoveryContext context,
+        DateTime nowUtc)
     {
         ArgumentNullException.ThrowIfNull(current);
         ArgumentNullException.ThrowIfNull(context);
