@@ -154,7 +154,8 @@ public sealed class QuestRecoveryEvidence
     public DateTime ObservedUtc { get; init; }
     public QuestFailureReason Reason { get; init; }
     public string Text { get; init; } = "";
-    public int EpisodeCount { get; init; }
+    public int? EpisodeCount { get; init; }
+    public long? RecoveryCycleId { get; init; }
 }
 
 public sealed class QuestRecoveryRecord
@@ -170,6 +171,7 @@ public sealed class QuestRecoveryRecord
     public DateTime? CooldownUntilUtc { get; init; }
     public DateTime? NextHalfOpenUtc { get; init; }
     public int EpisodeCount { get; init; }
+    public long RecoveryCycleId { get; init; }
     public int AttemptCountInEpisode { get; init; }
     public int DeathCountInEpisode { get; init; }
     public DateTime? LastProgressUtc { get; init; }

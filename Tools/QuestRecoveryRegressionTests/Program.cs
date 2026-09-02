@@ -24,6 +24,9 @@ try
     TestManagerRollingBudget(Path.Combine(testRoot, "rolling-budget"), now);
     TestLegacyMigrationIsIdempotent(Path.Combine(testRoot, "migration"), now);
     TestLegacyCrossStageMaterialization(Path.Combine(testRoot, "legacy-cross-stage"), now);
+    TestEvidenceCycleSeparatesFailureProgressReset(Path.Combine(testRoot, "evidence-cycle-reset"), now);
+    TestEvidenceCycleAdvancesAtEpisodeZero(Path.Combine(testRoot, "evidence-cycle-zero"), now);
+    TestLegacyEvidenceWithoutMarkersIsUnknown(Path.Combine(testRoot, "evidence-legacy-markers"), now);
     TestEvidenceCoalescingRespectsEpisode(Path.Combine(testRoot, "evidence-episodes"), now);
     TestConcurrentReportingAndAttemptOwnership(Path.Combine(testRoot, "concurrency"), now);
     Console.WriteLine("Quest recovery regression tests passed.");
@@ -202,6 +205,7 @@ static void TestStoreRoundTripAndAtomicReplacement(string root, DateTime now)
                 DatasetVersion = "quest-data-v1",
                 CoreVersion = "core-v1",
                 NavigationFingerprint = "nav-v1",
+                RecoveryCycleId = 7,
                 Evidence = new[]
                 {
                     new QuestRecoveryEvidence
@@ -209,7 +213,8 @@ static void TestStoreRoundTripAndAtomicReplacement(string root, DateTime now)
                         ObservedUtc = now,
                         Reason = QuestFailureReason.EndpointUnreachable,
                         Text = "unreachable",
-                        EpisodeCount = 3
+                        EpisodeCount = 3,
+                        RecoveryCycleId = 7
                     }
                 }
             }
@@ -240,9 +245,11 @@ static void TestStoreRoundTripAndAtomicReplacement(string root, DateTime now)
         "store must round-trip combat context");
     Assert(loadedRecord.DatasetVersion == "quest-data-v1" && loadedRecord.CoreVersion == "core-v1" && loadedRecord.NavigationFingerprint == "nav-v1",
         "store must round-trip version context");
+    Assert(loadedRecord.RecoveryCycleId == 7, "store must round-trip the recovery cycle identity");
     Assert(loadedRecord.Evidence.Single().Text == "unreachable" &&
-           loadedRecord.Evidence.Single().EpisodeCount == 3,
-        "store must round-trip evidence and its episode marker");
+           loadedRecord.Evidence.Single().EpisodeCount == 3 &&
+           loadedRecord.Evidence.Single().RecoveryCycleId == 7,
+        "store must round-trip evidence and its nullable identity markers");
     Assert(!File.Exists(path + ".tmp"), "an atomic save must not leave its temporary file behind");
 }
 
@@ -851,6 +858,120 @@ static void TestEvidenceCoalescingRespectsEpisode(string settingsRoot, DateTime 
     Assert(persisted.EpisodeCount == 1 &&
            persisted.Evidence.Count(evidence => evidence.Text == "failed episode") == 1,
         "coalescing must not collapse or create actual failure episodes");
+}
+
+static void TestEvidenceCycleSeparatesFailureProgressReset(string settingsRoot, DateTime now)
+{
+    var manager = new QuestRecoveryManager(new FixedClock(now));
+    var key = QuestRecoveryKey.ForObjective(867, 0);
+    manager.Configure(CreateEnvironment(settingsRoot, "Jeof", "Lordaeron"));
+    manager.Report(
+        QuestAttemptOutcome.Observation(key, QuestFailureReason.NoObjectiveProgress, "pulse A"),
+        Context());
+    manager.Report(
+        QuestAttemptOutcome.Failure(key, QuestFailureReason.RepeatedDeaths, "failed episode"),
+        Context());
+    manager.ReportProgress(key, new[] { 1 }, Context());
+    manager.Report(
+        QuestAttemptOutcome.Observation(key, QuestFailureReason.NoObjectiveProgress, "pulse A"),
+        Context());
+
+    var record = manager.GetEntries().Single();
+    Assert(record.EpisodeCount == 0 &&
+           record.Evidence.Count(evidence => evidence.Text == "pulse A") == 2,
+        "observation A after failure and real progress reset must be distinct from the prior cycle's A");
+    Assert(record.RecoveryCycleId == 1 &&
+           record.Evidence.Where(evidence => evidence.Text == "pulse A")
+               .Select(evidence => evidence.RecoveryCycleId)
+               .SequenceEqual(new long?[] { 0, 1 }),
+        "a real progress reset must advance and stamp a new recovery cycle");
+    manager.Flush();
+    var reloaded = new QuestRecoveryManager(new FixedClock(now));
+    reloaded.Configure(CreateEnvironment(settingsRoot, "Jeof", "Lordaeron"));
+    Assert(reloaded.GetEntries().Single().RecoveryCycleId == 1 &&
+           reloaded.GetEntries().Single().Evidence.Last().RecoveryCycleId == 1,
+        "the recovery cycle identity must survive flush and reload");
+
+    reloaded.MarkCompleted(867);
+    reloaded.Flush();
+    var completedReload = new QuestRecoveryManager(new FixedClock(now));
+    completedReload.Configure(CreateEnvironment(settingsRoot, "Jeof", "Lordaeron"));
+    Assert(completedReload.GetEntries().Single().State == QuestRecoveryState.Completed &&
+           completedReload.GetEntries().Single().RecoveryCycleId == 1,
+        "completed-record compaction must preserve the latest recovery cycle identity");
+}
+
+static void TestEvidenceCycleAdvancesAtEpisodeZero(string settingsRoot, DateTime now)
+{
+    var manager = new QuestRecoveryManager(new FixedClock(now));
+    var key = QuestRecoveryKey.ForObjective(867, 0);
+    manager.Configure(CreateEnvironment(settingsRoot, "Jeof", "Lordaeron"));
+    manager.Report(
+        QuestAttemptOutcome.Observation(key, QuestFailureReason.NoObjectiveProgress, "pulse A"),
+        Context());
+    manager.ReportProgress(key, new[] { 1 }, Context());
+    var progressed = manager.GetEntries().Single();
+    manager.ReportProgress(key, new[] { 1 }, Context());
+    var unchanged = manager.GetEntries().Single();
+    manager.Report(
+        QuestAttemptOutcome.Observation(key, QuestFailureReason.NoObjectiveProgress, "pulse A"),
+        Context());
+
+    Assert(progressed.RecoveryCycleId == 1 && unchanged.RecoveryCycleId == 1,
+        "progress at episode zero must advance the cycle once and no-increase progress must not advance it");
+    Assert(manager.GetEntries().Single().Evidence.Count(evidence => evidence.Text == "pulse A") == 2,
+        "genuine objective progress at episode zero must begin a distinct evidence cycle");
+
+    var fresh = new QuestRecoveryManager(new FixedClock(now));
+    fresh.Configure(CreateEnvironment(Path.Combine(settingsRoot, "fresh"), "Jeof", "Lordaeron"));
+    fresh.ReportProgress(key, new[] { 1 }, Context());
+    Assert(fresh.GetEntries().Single().RecoveryCycleId == 1,
+        "first observed objective progress must establish the first recovery cycle");
+}
+
+static void TestLegacyEvidenceWithoutMarkersIsUnknown(string settingsRoot, DateTime now)
+{
+    var path = Path.Combine(settingsRoot, "QuestRecovery", "Jeof-Lordaeron", "quest-recovery.json");
+    Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+    File.WriteAllText(path,
+        """
+        {
+          "SchemaVersion": 1,
+          "CharacterName": "Jeof",
+          "RealmName": "Lordaeron",
+          "Records": [
+            {
+              "Key": {
+                "QuestId": 867,
+                "Stage": 2,
+                "Scope": 3,
+                "ObjectiveIndex": 0
+              },
+              "Evidence": [
+                {
+                  "ObservedUtc": "2026-09-02T12:00:00Z",
+                  "Reason": 10,
+                  "Text": "legacy pulse"
+                }
+              ]
+            }
+          ]
+        }
+        """);
+
+    var manager = new QuestRecoveryManager(new FixedClock(now));
+    var key = QuestRecoveryKey.ForObjective(867, 0);
+    manager.Configure(CreateEnvironment(settingsRoot, "Jeof", "Lordaeron"));
+    manager.Report(
+        QuestAttemptOutcome.Observation(key, QuestFailureReason.NoObjectiveProgress, "legacy pulse"),
+        Context());
+
+    var evidence = manager.GetEntries().Single().Evidence;
+    Assert(evidence.Count(item => item.Text == "legacy pulse") == 2,
+        "schema-1 evidence without identity markers must be unknown and must not coalesce with a current sample");
+    Assert(evidence[0].EpisodeCount is null && evidence[0].RecoveryCycleId is null &&
+           evidence[1].EpisodeCount == 0 && evidence[1].RecoveryCycleId == 0,
+        "missing schema-1 evidence markers must deserialize as unknown while new samples are authoritative");
 }
 
 static void TestConcurrentReportingAndAttemptOwnership(string settingsRoot, DateTime now)

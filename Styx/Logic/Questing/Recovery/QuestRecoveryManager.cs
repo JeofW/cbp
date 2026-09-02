@@ -206,10 +206,10 @@ public sealed class QuestRecoveryManager
             QuestRecoveryRecord updated;
             if (current is null)
             {
-                updated = Copy(
+                updated = QuestRecoveryPolicy.ApplyProgress(
                     QuestRecoveryRecord.Create(key),
-                    objectiveCounts: objectiveCounts,
-                    lastProgressUtc: _clock.UtcNow);
+                    objectiveCounts,
+                    _clock.UtcNow);
             }
             else
             {
@@ -504,7 +504,12 @@ public sealed class QuestRecoveryManager
             if (nonManual.Any(record => record.State == QuestRecoveryState.Completed))
             {
                 var key = QuestRecoveryKey.ForQuestStage(questGroup.Key, QuestRecoveryStage.TurnIn);
-                result.Add(new QuestRecoveryRecord { Key = key, State = QuestRecoveryState.Completed });
+                result.Add(new QuestRecoveryRecord
+                {
+                    Key = key,
+                    State = QuestRecoveryState.Completed,
+                    RecoveryCycleId = nonManual.Max(record => record.RecoveryCycleId)
+                });
             }
             else
             {
@@ -524,6 +529,7 @@ public sealed class QuestRecoveryManager
     {
         if (coalesce &&
             record.Evidence.Any(evidence =>
+                evidence.RecoveryCycleId == record.RecoveryCycleId &&
                 evidence.EpisodeCount == record.EpisodeCount &&
                 evidence.Reason == reason &&
                 string.Equals(evidence.Text, text, StringComparison.Ordinal)))
@@ -537,7 +543,8 @@ public sealed class QuestRecoveryManager
                 ObservedUtc = nowUtc,
                 Reason = reason,
                 Text = text,
-                EpisodeCount = record.EpisodeCount
+                EpisodeCount = record.EpisodeCount,
+                RecoveryCycleId = record.RecoveryCycleId
             })
             .TakeLast(MaximumEvidenceRecords)
             .ToArray();
@@ -686,6 +693,7 @@ public sealed class QuestRecoveryManager
             CooldownUntilUtc = replaceCooldownUntilUtc ? cooldownUntilUtc : current.CooldownUntilUtc,
             NextHalfOpenUtc = replaceNextHalfOpenUtc ? nextHalfOpenUtc : current.NextHalfOpenUtc,
             EpisodeCount = current.EpisodeCount,
+            RecoveryCycleId = current.RecoveryCycleId,
             AttemptCountInEpisode = current.AttemptCountInEpisode,
             DeathCountInEpisode = current.DeathCountInEpisode,
             LastProgressUtc = lastProgressUtc ?? current.LastProgressUtc,

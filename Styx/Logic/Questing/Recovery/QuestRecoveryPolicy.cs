@@ -80,6 +80,9 @@ public static class QuestRecoveryPolicy
             nextHalfOpenUtc: resetsEscalation ? null : current.NextHalfOpenUtc,
             replaceNextHalfOpenUtc: resetsEscalation,
             episodeCount: resetsEscalation ? 0 : current.EpisodeCount,
+            recoveryCycleId: resetsEscalation
+                ? checked(current.RecoveryCycleId + 1)
+                : current.RecoveryCycleId,
             attemptCountInEpisode: resetsEscalation ? 0 : current.AttemptCountInEpisode,
             deathCountInEpisode: resetsEscalation ? 0 : current.DeathCountInEpisode,
             lastProgressUtc: nowUtc,
@@ -234,6 +237,7 @@ public static class QuestRecoveryPolicy
         DateTime? nextHalfOpenUtc = null,
         bool replaceNextHalfOpenUtc = false,
         int? episodeCount = null,
+        long? recoveryCycleId = null,
         int? attemptCountInEpisode = null,
         int? deathCountInEpisode = null,
         DateTime? lastProgressUtc = null,
@@ -250,6 +254,7 @@ public static class QuestRecoveryPolicy
             CooldownUntilUtc = replaceCooldownUntilUtc ? cooldownUntilUtc : current.CooldownUntilUtc,
             NextHalfOpenUtc = replaceNextHalfOpenUtc ? nextHalfOpenUtc : current.NextHalfOpenUtc,
             EpisodeCount = episodeCount ?? current.EpisodeCount,
+            RecoveryCycleId = recoveryCycleId ?? current.RecoveryCycleId,
             AttemptCountInEpisode = attemptCountInEpisode ?? current.AttemptCountInEpisode,
             DeathCountInEpisode = deathCountInEpisode ?? current.DeathCountInEpisode,
             LastProgressUtc = lastProgressUtc ?? current.LastProgressUtc,
