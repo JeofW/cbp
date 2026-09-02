@@ -16,6 +16,7 @@ using Styx.Logic.Pathing;
 using Styx.Logic.POI;
 using Styx.Logic.Profiles.Quest;
 using Styx.Logic.Questing;
+using Styx.Logic.Questing.Recovery;
 using Styx.WoWInternals;
 using Styx.WoWInternals.WoWObjects;
 using System;
@@ -36,6 +37,8 @@ public class ForcedQuestPickUp : ForcedBehavior
     private static readonly Frame QuestFrameCompleteButton = new Frame("QuestFrameCompleteButton");
     private int lastShownQuestId = -1;
     private int _handleQuestFrameAttempts;
+    private readonly QuestPickupMismatchTracker _mismatchTracker = new QuestPickupMismatchTracker();
+    private IReadOnlyList<uint> _currentInteractionOfferedQuestIds = Array.Empty<uint>();
 
     public ForcedQuestPickUp(
         uint questId,
@@ -57,6 +60,9 @@ public class ForcedQuestPickUp : ForcedBehavior
     {
         get
         {
+            if (PickupUnavailable)
+                return true;
+
             // PickUp is done when:
             // 1) Quest is in completed quests cache (already turned in)
             // 2) Quest is in the quest log (just accepted, ready for objectives)
@@ -92,6 +98,10 @@ public class ForcedQuestPickUp : ForcedBehavior
     public WoWPoint GiverLocation { get; private set; }
 
     public QuestObjectType? GiverType { get; private set; }
+
+    public bool PickupUnavailable { get; private set; }
+
+    public QuestAttemptOutcome LastOutcome { get; private set; }
 
     public override void OnStart()
     {
@@ -148,7 +158,7 @@ public class ForcedQuestPickUp : ForcedBehavior
                 (Composite)new DecoratorContinue((CanRunDecoratorDelegate)(context => context != null && context is WoWItem), (Composite)new Sequence(new Composite[3]
                 {
                     (Composite)new TreeSharp.Action((ActionSucceedDelegate)(context => ((WoWItem)context).UseContainerItem())),
-                    (Composite)new WaitContinue(5, new CanRunDecoratorDelegate(this.IsQuestFrameVisible), (Composite)new TreeSharp.Action((ActionSucceedDelegate)(context => QuestFrame.Instance.AcceptQuest()))),
+                    (Composite)new WaitContinue(5, new CanRunDecoratorDelegate(this.IsQuestFrameVisible), (Composite)new TreeSharp.Action((ActionDelegate)(context => this.HandleQuestFrame(context)))),
                     (Composite)new WaitContinue(2, (CanRunDecoratorDelegate)(context => false), (Composite)new ActionAlwaysSucceed())
                 }))
             })),
@@ -194,6 +204,7 @@ public class ForcedQuestPickUp : ForcedBehavior
     private RunStatus CloseFrames(object context)
     {
         _handleQuestFrameAttempts = 0;
+        _currentInteractionOfferedQuestIds = Array.Empty<uint>();
         if (!GossipFrame.Instance.IsVisible && !QuestFrame.Instance.IsVisible)
             return RunStatus.Success;
         GossipFrame.Instance.Close();
@@ -220,6 +231,11 @@ public class ForcedQuestPickUp : ForcedBehavior
         // SelectAvailableQuest(N) / SelectGossipAvailableQuest(N) — works for both frames.
         var gossipQuests = GossipFrame.Instance.AvailableQuests;
         var nativeQuests = QuestFrame.Instance.AvailableQuests;
+        _currentInteractionOfferedQuestIds = gossipQuests
+            .Select(quest => unchecked((uint)quest.Id))
+            .Concat(nativeQuests)
+            .Distinct()
+            .ToArray();
         // WotLK 3.3.5a: GossipQuestEntry.Id from memory is unreliable (wrong struct layout).
         // GetGossipAvailableQuests() returns 5 values per quest: title, level, isTrivial, isRepeatable, isLegendary.
         List<string> luaDump = gossipQuests.Count > 0 ? Lua.GetReturnValues("return GetGossipAvailableQuests()") : null;
@@ -247,7 +263,11 @@ public class ForcedQuestPickUp : ForcedBehavior
                 const int valuesPerQuest = 5;
                 for (int k = 0; k < luaDump.Count / valuesPerQuest; k++)
                 {
-                    if (string.Equals(luaDump[k * valuesPerQuest], this.QuestName, StringComparison.OrdinalIgnoreCase))
+                    if (!string.IsNullOrWhiteSpace(this.QuestName)
+                        && string.Equals(
+                            (luaDump[k * valuesPerQuest] ?? "").Trim(),
+                            this.QuestName.Trim(),
+                            StringComparison.Ordinal))
                     {
                         questIndex = k;
                         Logging.WriteDebug("[QuestPickUp] Found quest \"{0}\" via Lua name match at gossip index {1}.", this.QuestName, k);
@@ -255,14 +275,6 @@ public class ForcedQuestPickUp : ForcedBehavior
                     }
                 }
 
-                // Last resort: if there is exactly ONE gossip quest available, select it.
-                // Safe assumption — if there's only one quest to accept and we're here to accept it, it's the right one.
-                if (questIndex == -1 && gossipQuests.Count == 1)
-                {
-                    questIndex = 0;
-                    Logging.WriteDebug("[QuestPickUp] Single gossip quest available — selecting index 0 (quest id={0}, lua name='{1}').",
-                        gossipQuests[0].Id, luaDump.Count >= 1 ? luaDump[0] : "?");
-                }
             }
         }
         else
@@ -324,52 +336,88 @@ public class ForcedQuestPickUp : ForcedBehavior
         }
 
         uint shownQuestId = QuestFrame.Instance.CurrentShownQuestId;
+        string shownQuestName = Lua.GetReturnVal<string>("return GetTitleText()", 0U) ?? "";
         bool acceptVisible = ForcedQuestPickUp.QuestFrameAcceptButton.IsVisible;
         bool continueVisible = ForcedQuestPickUp.QuestFrameCompleteButton.IsVisible;
         bool completeQuestVisible = ForcedQuestPickUp.QuestFrameCompleteQuestButton.IsVisible;
+        int numChoices = Lua.GetReturnVal<int>("return GetNumQuestChoices()", 0U);
+        bool hasAuthoritativeCompletion = ObjectManager.Me.QuestLog.TryGetAuthoritativeCompletedQuests(
+            out var completedQuestIds);
+        CompletedQuestCacheStatus completionStatus = ObjectManager.Me.QuestLog.CompletedQuestCacheStatus;
+        bool shownQuestCompleted = hasAuthoritativeCompletion
+            && shownQuestId != 0
+            && completedQuestIds.Contains(shownQuestId);
+        var liveOfferedQuestIds = GossipFrame.Instance.AvailableQuests
+            .Select(quest => unchecked((uint)quest.Id))
+            .Concat(QuestFrame.Instance.AvailableQuests)
+            .Concat(_currentInteractionOfferedQuestIds)
+            .Distinct()
+            .ToArray();
+        QuestPickupDialogDecision decision = QuestPickupDialogPolicy.Decide(
+            this.QuestId,
+            this.QuestName,
+            shownQuestId,
+            shownQuestName,
+            this.GiverId,
+            liveOfferedQuestIds,
+            acceptVisible,
+            continueVisible,
+            completeQuestVisible,
+            numChoices > 0,
+            completionStatus,
+            shownQuestCompleted);
 
-        Logging.WriteDebug("[QuestPickUp] HandleQuestFrame: ShownId={0}, TargetId={1}, Accept={2}, Continue={3}, Complete={4}",
-            shownQuestId, this.QuestId, acceptVisible, continueVisible, completeQuestVisible);
+        Logging.WriteDebug("[QuestPickUp] HandleQuestFrame: Action={0}, ShownId={1}, TargetId={2}, Accept={3}, Continue={4}, Complete={5}, Completion={6}",
+            decision.Action, shownQuestId, this.QuestId, acceptVisible, continueVisible,
+            completeQuestVisible, completionStatus);
 
-        // --- Accept our pickup quest ---
-        if (acceptVisible)
+        if (decision.Action == QuestPickupDialogAction.RejectMismatch)
         {
-            // AcceptButton is visible — this is a quest we can accept.
-            // Accept regardless of shownQuestId (memory read can return 0 for some quests).
-            Logging.WriteDebug("[QuestPickUp] AcceptButton visible — accepting quest.");
+            LastOutcome = _mismatchTracker.Observe(decision);
+            PickupUnavailable = _mismatchTracker.PickupUnavailable;
+            Logging.WriteDebug(
+                "[QuestPickUp] Rejected mismatched dialog (cycle {0}/3, unavailable={1}): {2}",
+                _mismatchTracker.ConfirmedCycles,
+                PickupUnavailable,
+                decision.Evidence);
+            QuestFrame.Instance.Close();
+            StyxWoW.Sleep(500);
+            _handleQuestFrameAttempts = 0;
+            return RunStatus.Success;
+        }
+
+        ResetMismatchTracking();
+
+        if (decision.Action == QuestPickupDialogAction.AcceptTarget)
+        {
+            Logging.WriteDebug("[QuestPickUp] Target quest identity confirmed — accepting quest.");
             QuestFrame.Instance.AcceptQuest();
             StyxWoW.Sleep(500);
             _handleQuestFrameAttempts = 0;
             return RunStatus.Success;
         }
 
-        // --- Handle turn-in quest that the NPC shows before our pickup ---
-        // The NPC has a completed quest to turn in first. WoW opens QuestFrame directly
-        // with that quest's completion dialog. We must finish it before the pickup shows.
-
-        // Step 1: "Continue" button → click it to advance to the reward/completion screen
-        if (continueVisible)
+        if (decision.Action == QuestPickupDialogAction.AdvanceCompletedQuest && continueVisible)
         {
-            Logging.WriteDebug("[QuestPickUp] Continue button visible (quest {0}) — clicking to advance.", shownQuestId);
+            Logging.WriteDebug("[QuestPickUp] Authoritatively completed quest {0} — clicking Continue.", shownQuestId);
             QuestFrame.Instance.ClickContinue();
             StyxWoW.Sleep(1000);
             return RunStatus.Running;
         }
 
-        // Step 2: Reward selection — if choices exist, pick the first one
-        int numChoices = Lua.GetReturnVal<int>("return GetNumQuestChoices()", 0U);
-        if (numChoices > 0 && !completeQuestVisible)
+        if (decision.Action == QuestPickupDialogAction.AdvanceCompletedQuest
+            && numChoices > 0
+            && !completeQuestVisible)
         {
-            Logging.WriteDebug("[QuestPickUp] {0} reward choices for turn-in quest {1} — selecting first.", numChoices, shownQuestId);
+            Logging.WriteDebug("[QuestPickUp] Authoritatively completed quest {0} has {1} reward choices — selecting first.", shownQuestId, numChoices);
             QuestFrame.Instance.SelectQuestReward(0);
             StyxWoW.Sleep(500);
             return RunStatus.Running;
         }
 
-        // Step 3: "Complete Quest" button → finish the turn-in
-        if (completeQuestVisible)
+        if (decision.Action == QuestPickupDialogAction.AdvanceCompletedQuest && completeQuestVisible)
         {
-            Logging.WriteDebug("[QuestPickUp] CompleteQuestButton visible (quest {0}) — completing turn-in.", shownQuestId);
+            Logging.WriteDebug("[QuestPickUp] Authoritatively completed quest {0} — completing turn-in.", shownQuestId);
             QuestFrame.Instance.CompleteQuest();
             StyxWoW.Sleep(500);
             return RunStatus.Running;
@@ -381,6 +429,13 @@ public class ForcedQuestPickUp : ForcedBehavior
         StyxWoW.Sleep(500);
         _handleQuestFrameAttempts = 0;
         return RunStatus.Success;
+    }
+
+    private void ResetMismatchTracking()
+    {
+        _mismatchTracker.Reset();
+        PickupUnavailable = false;
+        LastOutcome = null;
     }
 
     private bool IsCompleteQuestButtonVisible(object context)
