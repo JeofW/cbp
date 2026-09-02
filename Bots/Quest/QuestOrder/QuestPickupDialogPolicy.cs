@@ -204,6 +204,8 @@ public sealed class QuestPickupMismatchTracker
     {
         if (decision == null)
             throw new ArgumentNullException(nameof(decision));
+        if (decision.Action == QuestPickupDialogAction.Wait)
+            return LastOutcome;
         if (decision.Action != QuestPickupDialogAction.RejectMismatch)
         {
             Reset();

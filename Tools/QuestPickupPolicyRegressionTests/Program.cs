@@ -14,6 +14,9 @@ try
     TestThreeDistinctCyclesFormOneEpisode();
     TestChangedEvidenceWithinAndAcrossCyclesResetsSequence();
     TestSuccessfulDecisionResetsCycleLifecycle();
+    TestWaitPreservesMismatchLifecycleAcrossCycles();
+    TestWaitAfterUnavailablePreservesFailureOutcome();
+    TestAuthorizedAdvanceResetsMismatchLifecycle();
     Console.WriteLine("Quest pickup policy regression tests passed.");
 }
 catch (Exception ex)
@@ -189,6 +192,60 @@ static void TestSuccessfulDecisionResetsCycleLifecycle()
     var restarted = tracker.Observe(mismatch, interactionCycleId: 42);
     Assert(tracker.ConfirmedCycles == 1 && !restarted.IsFailureEpisode,
         "a mismatch after success must begin a new cycle sequence");
+}
+
+static void TestWaitPreservesMismatchLifecycleAcrossCycles()
+{
+    var tracker = new QuestPickupMismatchTracker();
+    var mismatch = Decide(shown: 867, accept: true);
+    var loading = Decide(shown: 0, shownName: "", accept: true);
+    var first = tracker.Observe(mismatch, interactionCycleId: 50);
+
+    var whileLoading = tracker.Observe(loading, interactionCycleId: 51);
+    Assert(tracker.ConfirmedCycles == 1 && ReferenceEquals(tracker.LastOutcome, first)
+           && ReferenceEquals(whileLoading, first) && !tracker.PickupUnavailable,
+        "a loading Wait in a later interaction cycle must preserve mismatch lifecycle state");
+
+    var second = tracker.Observe(mismatch, interactionCycleId: 52);
+    var third = tracker.Observe(mismatch, interactionCycleId: 53);
+    Assert(!second.IsFailureEpisode && third.IsFailureEpisode
+           && tracker.ConfirmedCycles == 3 && tracker.PickupUnavailable,
+        "three actual mismatch cycles must form one episode despite intervening Wait pulses");
+}
+
+static void TestWaitAfterUnavailablePreservesFailureOutcome()
+{
+    var tracker = new QuestPickupMismatchTracker();
+    var mismatch = Decide(shown: 867, accept: true);
+    tracker.Observe(mismatch, interactionCycleId: 60);
+    tracker.Observe(mismatch, interactionCycleId: 61);
+    var failed = tracker.Observe(mismatch, interactionCycleId: 62);
+
+    var afterFailureWait = tracker.Observe(
+        Decide(shown: 0, shownName: "", accept: true),
+        interactionCycleId: 63);
+    Assert(tracker.ConfirmedCycles == 3 && tracker.PickupUnavailable
+           && ReferenceEquals(tracker.LastOutcome, failed)
+           && ReferenceEquals(afterFailureWait, failed),
+        "Wait after pickup becomes unavailable must not silently clear its failure outcome");
+
+    tracker.Reset();
+    Assert(tracker.ConfirmedCycles == 0 && !tracker.PickupUnavailable && tracker.LastOutcome == null,
+        "an explicit lifecycle reset must clear an unavailable pickup outcome");
+}
+
+static void TestAuthorizedAdvanceResetsMismatchLifecycle()
+{
+    var tracker = new QuestPickupMismatchTracker();
+    tracker.Observe(Decide(shown: 867, accept: true), interactionCycleId: 70);
+    var advance = Decide(shown: 875, continueVisible: true, shownCompleted: true);
+
+    Assert(advance.Action == QuestPickupDialogAction.AdvanceCompletedQuest,
+        "the reset fixture must be an authorized completed-quest advance");
+    var result = tracker.Observe(advance, interactionCycleId: 71);
+    Assert(result == null && tracker.ConfirmedCycles == 0
+           && !tracker.PickupUnavailable && tracker.LastOutcome == null,
+        "an affirmative authorized advance must reset mismatch lifecycle state");
 }
 
 static QuestPickupDialogDecision Decide(

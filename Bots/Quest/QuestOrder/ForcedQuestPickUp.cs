@@ -404,13 +404,13 @@ public class ForcedQuestPickUp : ForcedBehavior
             return RunStatus.Success;
         }
 
-        ResetMismatchTracking();
-
         if (executionPlan.Command == QuestPickupDialogCommand.None && executionPlan.KeepRunning)
         {
             Logging.WriteDebug("[QuestPickUp] Quest dialog identity or buttons are still loading — waiting.");
             return RunStatus.Running;
         }
+
+        ResetMismatchTracking();
 
         if (executionPlan.Accept)
         {
