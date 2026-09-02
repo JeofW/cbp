@@ -21,11 +21,6 @@ public sealed class QuestRecoveryStore
 
     public QuestRecoveryDocument Load()
     {
-        if (!File.Exists(_filePath))
-        {
-            return new QuestRecoveryDocument();
-        }
-
         try
         {
             using var stream = new FileStream(_filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
@@ -38,6 +33,14 @@ public sealed class QuestRecoveryStore
             }
 
             return document;
+        }
+        catch (FileNotFoundException)
+        {
+            return new QuestRecoveryDocument();
+        }
+        catch (DirectoryNotFoundException)
+        {
+            return new QuestRecoveryDocument();
         }
         catch (JsonException ex)
         {

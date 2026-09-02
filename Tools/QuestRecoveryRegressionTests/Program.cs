@@ -10,6 +10,7 @@ try
     RunPolicyRegressions(now);
     TestStoreRoundTripAndAtomicReplacement(Path.Combine(testRoot, "store"), now);
     TestCorruptStoreQuarantine(Path.Combine(testRoot, "corrupt"));
+    TestStoreDirectOpenDistinguishesAbsenceAndAccess(Path.Combine(testRoot, "store-open"));
     TestValidStoreIoFailureIsSurfaced(Path.Combine(testRoot, "store-io"));
     TestUnsupportedSchemaIsPreserved(Path.Combine(testRoot, "unsupported-schema"));
     TestPersistenceAndIdentityIsolation(Path.Combine(testRoot, "manager"), now);
@@ -18,10 +19,12 @@ try
     TestIdentitySwitchLoadIsTransactional(Path.Combine(testRoot, "switch-load"), now);
     TestPersistedAttemptingRecoversOneProbe(Path.Combine(testRoot, "stale-attempt"), now);
     TestCollisionSafeIdentityPaths(Path.Combine(testRoot, "identity-paths"), now);
+    TestSuperscriptDeviceIdentityPaths(Path.Combine(testRoot, "superscript-paths"), now);
     TestProductionDiagnosticsReachBotLogger(Path.Combine(testRoot, "production-logging"));
     TestManagerRollingBudget(Path.Combine(testRoot, "rolling-budget"), now);
     TestLegacyMigrationIsIdempotent(Path.Combine(testRoot, "migration"), now);
     TestLegacyCrossStageMaterialization(Path.Combine(testRoot, "legacy-cross-stage"), now);
+    TestEvidenceCoalescingRespectsEpisode(Path.Combine(testRoot, "evidence-episodes"), now);
     TestConcurrentReportingAndAttemptOwnership(Path.Combine(testRoot, "concurrency"), now);
     Console.WriteLine("Quest recovery regression tests passed.");
 }
@@ -205,7 +208,8 @@ static void TestStoreRoundTripAndAtomicReplacement(string root, DateTime now)
                     {
                         ObservedUtc = now,
                         Reason = QuestFailureReason.EndpointUnreachable,
-                        Text = "unreachable"
+                        Text = "unreachable",
+                        EpisodeCount = 3
                     }
                 }
             }
@@ -236,7 +240,9 @@ static void TestStoreRoundTripAndAtomicReplacement(string root, DateTime now)
         "store must round-trip combat context");
     Assert(loadedRecord.DatasetVersion == "quest-data-v1" && loadedRecord.CoreVersion == "core-v1" && loadedRecord.NavigationFingerprint == "nav-v1",
         "store must round-trip version context");
-    Assert(loadedRecord.Evidence.Single().Text == "unreachable", "store must round-trip evidence");
+    Assert(loadedRecord.Evidence.Single().Text == "unreachable" &&
+           loadedRecord.Evidence.Single().EpisodeCount == 3,
+        "store must round-trip evidence and its episode marker");
     Assert(!File.Exists(path + ".tmp"), "an atomic save must not leave its temporary file behind");
 }
 
@@ -255,6 +261,25 @@ static void TestCorruptStoreQuarantine(string root)
         "the corrupt store must be quarantined with a timestamped name");
     Assert(messages.Count == 1 && messages[0].Contains("Json", StringComparison.OrdinalIgnoreCase),
         "corrupt-store diagnostics must include the parse exception");
+}
+
+static void TestStoreDirectOpenDistinguishesAbsenceAndAccess(string root)
+{
+    Directory.CreateDirectory(root);
+    var messages = new List<string>();
+    var missingFile = new QuestRecoveryStore(
+        Path.Combine(root, "quest-recovery.json"), messages.Add).Load();
+    var missingDirectory = new QuestRecoveryStore(
+        Path.Combine(root, "missing", "quest-recovery.json"), messages.Add).Load();
+    Assert(missingFile.Records.Count == 0 && missingDirectory.Records.Count == 0 && messages.Count == 0,
+        "directly opened missing files and directories must be treated as clean absence");
+
+    AssertThrows<UnauthorizedAccessException>(
+        () => new QuestRecoveryStore(root, messages.Add).Load(),
+        "a present directory opened as a store file must surface its access failure instead of looking absent");
+    Assert(messages.Any(message => message.Contains("live data was left in place", StringComparison.Ordinal)),
+        "a non-absence open failure must be logged while preserving the target");
+    Assert(Directory.Exists(root), "an access failure must not move or overwrite the live target");
 }
 
 static void TestValidStoreIoFailureIsSurfaced(string root)
@@ -723,6 +748,54 @@ static void TestProductionDiagnosticsReachBotLogger(string root)
         "the production singleton must emit recovery transitions through the bot logger with a concise prefix");
 }
 
+static void TestSuperscriptDeviceIdentityPaths(string root, DateTime now)
+{
+    var reservedIdentities = new[]
+    {
+        (Raw: "COM¹", Encoded: "%0043OM¹-Realm", Literal: "%0043OM¹"),
+        (Raw: "COM²", Encoded: "%0043OM²-Realm", Literal: "%0043OM²"),
+        (Raw: "COM³", Encoded: "%0043OM³-Realm", Literal: "%0043OM³"),
+        (Raw: "LPT¹", Encoded: "%004CPT¹-Realm", Literal: "%004CPT¹"),
+        (Raw: "LPT²", Encoded: "%004CPT²-Realm", Literal: "%004CPT²"),
+        (Raw: "LPT³", Encoded: "%004CPT³-Realm", Literal: "%004CPT³")
+    };
+
+    foreach (var identity in reservedIdentities)
+    {
+        var manager = new QuestRecoveryManager(new FixedClock(now));
+        manager.Configure(CreateEnvironment(root, identity.Raw, "Realm"));
+        manager.Report(
+            QuestAttemptOutcome.Failure(
+                QuestRecoveryKey.ForQuestStage(867, QuestRecoveryStage.Pickup),
+                QuestFailureReason.PickupTargetNotOffered,
+                identity.Raw),
+            Context());
+        manager.Flush();
+        Assert(File.Exists(Path.Combine(root, "QuestRecovery", identity.Encoded, "quest-recovery.json")),
+            $"the reserved device identity {identity.Raw} must be encoded to a safe file path");
+
+        var literalEscape = new QuestRecoveryManager(new FixedClock(now));
+        literalEscape.Configure(CreateEnvironment(root, identity.Literal, "Realm"));
+        literalEscape.Report(
+            QuestAttemptOutcome.Failure(
+                QuestRecoveryKey.ForQuestStage(875, QuestRecoveryStage.Pickup),
+                QuestFailureReason.PickupTargetNotOffered,
+                "literal escape"),
+            Context());
+        literalEscape.Flush();
+    }
+
+    var directories = Directory.GetDirectories(Path.Combine(root, "QuestRecovery"));
+    Assert(directories.Length == reservedIdentities.Length * 2,
+        "superscript device names and literal escape-like identities must not collide");
+    var rawNames = directories
+        .Select(directory => new QuestRecoveryStore(Path.Combine(directory, "quest-recovery.json")).Load().CharacterName)
+        .ToArray();
+    Assert(reservedIdentities.All(identity => rawNames.Contains(identity.Raw) &&
+                                                rawNames.Contains(identity.Literal)),
+        "superscript identity documents must preserve both raw device and literal escape-like names");
+}
+
 static void TestManagerRollingBudget(string settingsRoot, DateTime now)
 {
     var manager = new QuestRecoveryManager(new FixedClock(now));
@@ -743,6 +816,43 @@ static void TestManagerRollingBudget(string settingsRoot, DateTime now)
         "six manager-recorded episodes must exhaust the rolling-hour half-open budget");
 }
 
+static void TestEvidenceCoalescingRespectsEpisode(string settingsRoot, DateTime now)
+{
+    var clock = new FixedClock(now);
+    var environment = CreateEnvironment(settingsRoot, "Jeof", "Lordaeron");
+    var manager = new QuestRecoveryManager(clock);
+    var key = QuestRecoveryKey.ForQuestStage(867, QuestRecoveryStage.Pickup);
+    manager.Configure(environment);
+    manager.Report(
+        QuestAttemptOutcome.Observation(key, QuestFailureReason.NpcNotFoundInWorld, "pulse A"),
+        Context());
+    manager.Report(
+        QuestAttemptOutcome.Failure(key, QuestFailureReason.PickupTargetNotOffered, "failed episode"),
+        Context());
+    manager.Report(
+        QuestAttemptOutcome.Observation(key, QuestFailureReason.NpcNotFoundInWorld, "pulse A"),
+        Context());
+
+    Assert(manager.GetEntries().Single().Evidence.Count(evidence => evidence.Text == "pulse A") == 2,
+        "identical observations from different active episodes must remain distinct");
+
+    manager.Flush();
+    var reloaded = new QuestRecoveryManager(clock);
+    reloaded.Configure(environment);
+    reloaded.Report(
+        QuestAttemptOutcome.Observation(key, QuestFailureReason.NpcNotFoundInWorld, "pulse B"),
+        Context());
+    reloaded.Report(
+        QuestAttemptOutcome.Observation(key, QuestFailureReason.NpcNotFoundInWorld, "pulse A"),
+        Context());
+    var persisted = reloaded.GetEntries().Single();
+    Assert(persisted.Evidence.Count(evidence => evidence.Text == "pulse A") == 2,
+        "the persisted episode marker must coalesce non-consecutive evidence after reload");
+    Assert(persisted.EpisodeCount == 1 &&
+           persisted.Evidence.Count(evidence => evidence.Text == "failed episode") == 1,
+        "coalescing must not collapse or create actual failure episodes");
+}
+
 static void TestConcurrentReportingAndAttemptOwnership(string settingsRoot, DateTime now)
 {
     var clock = new FixedClock(now);
@@ -761,6 +871,17 @@ static void TestConcurrentReportingAndAttemptOwnership(string settingsRoot, Date
         "timer observations must not replace the active episode's failure reason");
     Assert(observed.Evidence.Count == 1,
         "identical concurrent non-failure pulse evidence must coalesce into one record");
+    manager.Report(
+        QuestAttemptOutcome.Observation(observedKey, QuestFailureReason.NpcNotFoundInWorld, "different pulse"),
+        Context());
+    manager.Report(
+        QuestAttemptOutcome.Observation(observedKey, QuestFailureReason.NpcNotFoundInWorld, "same pulse"),
+        Context());
+    observed = manager.GetEntries().Single();
+    Assert(observed.Evidence.Count == 2 &&
+           observed.Evidence.Select(evidence => evidence.Text).OrderBy(text => text)
+               .SequenceEqual(new[] { "different pulse", "same pulse" }),
+        "non-consecutive A,B,A observations must coalesce by reason and evidence within one stage episode");
     Parallel.For(0, 20, index =>
         manager.Report(
             QuestAttemptOutcome.Observation(observedKey, QuestFailureReason.NpcNotFoundInWorld, $"distinct-{index}"),

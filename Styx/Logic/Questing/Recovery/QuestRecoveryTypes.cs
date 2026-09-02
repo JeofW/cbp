@@ -154,6 +154,7 @@ public sealed class QuestRecoveryEvidence
     public DateTime ObservedUtc { get; init; }
     public QuestFailureReason Reason { get; init; }
     public string Text { get; init; } = "";
+    public int EpisodeCount { get; init; }
 }
 
 public sealed class QuestRecoveryRecord

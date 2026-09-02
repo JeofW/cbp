@@ -523,15 +523,22 @@ public sealed class QuestRecoveryManager
         bool coalesce)
     {
         if (coalesce &&
-            record.Evidence.LastOrDefault() is { } latest &&
-            latest.Reason == reason &&
-            string.Equals(latest.Text, text, StringComparison.Ordinal))
+            record.Evidence.Any(evidence =>
+                evidence.EpisodeCount == record.EpisodeCount &&
+                evidence.Reason == reason &&
+                string.Equals(evidence.Text, text, StringComparison.Ordinal)))
         {
             return record;
         }
 
         var evidence = record.Evidence
-            .Append(new QuestRecoveryEvidence { ObservedUtc = nowUtc, Reason = reason, Text = text })
+            .Append(new QuestRecoveryEvidence
+            {
+                ObservedUtc = nowUtc,
+                Reason = reason,
+                Text = text,
+                EpisodeCount = record.EpisodeCount
+            })
             .TakeLast(MaximumEvidenceRecords)
             .ToArray();
         return Copy(record, evidence: evidence);
@@ -609,7 +616,7 @@ public sealed class QuestRecoveryManager
                (stem.Length == 4 &&
                 (stem.StartsWith("COM", StringComparison.OrdinalIgnoreCase) ||
                  stem.StartsWith("LPT", StringComparison.OrdinalIgnoreCase)) &&
-                stem[3] is >= '1' and <= '9');
+                stem[3] is (>= '1' and <= '9') or '\u00B9' or '\u00B2' or '\u00B3');
     }
 
     private static bool IsSameStore(QuestRecoveryEnvironment first, QuestRecoveryEnvironment second) =>
