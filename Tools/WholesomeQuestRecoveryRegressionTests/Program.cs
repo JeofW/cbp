@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using Bots.Quest.QuestOrder;
 using Styx.Logic.Pathing;
+using Styx.Logic.POI;
 using Styx.Logic.Questing.Recovery;
 using WholesomeAQ;
 
@@ -42,6 +43,9 @@ try
     TestProductionActivationClaimsOnceAndCoalescesRebuild();
     TestEndpointSafetyAndReachabilityPrecedeDistanceAndCap();
     TestSchedulerFiltersKnownNavigationUnsafePointsBeforeCap();
+    TestLoadedSpawnsReceiveCachedLiveNavigationEnrichment();
+    TestConfirmedEndpointPrecedesUnknownFallback();
+    TestDeniedActivationClearsOnlyOwnedQuestPoi();
     Console.WriteLine("Wholesome scheduler recovery regression tests passed.");
 }
 
@@ -281,7 +285,7 @@ void TestEndpointSafetyAndReachabilityPrecedeDistanceAndCap()
            && selected.All(endpoint => endpoint.Key.Endpoint != "near-unsafe")
            && selected.All(endpoint => endpoint.Key.Endpoint != "near-unreachable")
            && selected.Any(endpoint => endpoint.Key.Endpoint == "near-low-a")
-           && selected.All(endpoint => endpoint.IsKnownReachable && endpoint.IsKnownSafe),
+           && selected.All(endpoint => endpoint.IsKnownReachable == true && endpoint.IsKnownSafe == true),
         "known unreachable endpoints must be filtered and safety must outrank distance before the distinct five-key cap");
 }
 
@@ -312,6 +316,146 @@ void TestSchedulerFiltersKnownNavigationUnsafePointsBeforeCap()
            && hotspots.All(point => point.X != 1)
            && hotspots.Any(point => point.X == 481),
         "the scheduler must remove known navigation-unsafe points before safety ordering and the five-key cap");
+}
+
+void TestLoadedSpawnsReceiveCachedLiveNavigationEnrichment()
+{
+    var path = Path.Combine(Path.GetTempPath(), $"wholesome-live-nav-{Guid.NewGuid():N}.json");
+    File.WriteAllText(path, """
+        {
+          "Quests": [{
+            "Id": 867,
+            "Name": "Loaded objective",
+            "MinLevel": 1,
+            "QuestLevel": 20,
+            "Objectives": [{ "Index": 0, "Type": "KillMob", "MobId": 2000, "KillCount": 1 }]
+          }],
+          "CreatureSpawns": {
+            "2000": [
+              { "Map": 1, "X": 1,   "Y": 1, "Z": 0 },
+              { "Map": 1, "X": 10,  "Y": 2, "Z": 0 },
+              { "Map": 1, "X": 81,  "Y": 1, "Z": 0 },
+              { "Map": 1, "X": 161, "Y": 1, "Z": 0 },
+              { "Map": 1, "X": 241, "Y": 1, "Z": 0 },
+              { "Map": 1, "X": 321, "Y": 1, "Z": 0 },
+              { "Map": 1, "X": 481, "Y": 1, "Z": 0 },
+              { "Map": 1, "X": 561, "Y": 1, "Z": 0 }
+            ]
+          }
+        }
+        """);
+
+    var previousProvider = Navigator.NavigationProvider;
+    var provider = new TestNavigationProvider(destination =>
+    {
+        if (destination.X >= 560)
+            throw new InvalidOperationException("provider unavailable");
+        if (destination.X >= 160 && destination.X < 400)
+            return null;
+        return destination.X + 10;
+    });
+    try
+    {
+        var loader = new DataLoader(path);
+        var db = loader.Load();
+        Assert(db != null && db.CreatureSpawns["2000"].All(point =>
+                point.IsKnownReachable == null && point.IsKnownSafe == null),
+            "unannotated loaded spawn records must remain unknown until live navigation enrichment");
+
+        Navigator.NavigationProvider = provider;
+        var enrichmentCalls = 0;
+        var result = QuestScheduler.MaterializeSchedule(
+            db!,
+            Snapshot(new[] { Accepted(867, completed: false) }, Array.Empty<uint>()),
+            _ => Eligible(),
+            10,
+            1000,
+            7,
+            navigationAssessment: point =>
+            {
+                enrichmentCalls++;
+                return QuestScheduler.AssessNavigation(
+                    point,
+                    new WoWPoint(0, 0, 0),
+                    location => location.X < 160);
+            });
+        var hotspots = result.Plan.Single(entry => entry.Quest.Id == 867).Hotspots;
+        var providerException = QuestScheduler.AssessNavigation(
+            new SpawnPoint { Map = 1, X = 561, Y = 1 },
+            new WoWPoint(0, 0, 0),
+            _ => false);
+
+        Assert(enrichmentCalls == 7,
+            "live enrichment must run once per distinct quantized cluster per scan, not once per spawn record or comparator call");
+        Assert(hotspots.Any(point => point.X == 481)
+               && hotspots.All(point => point.X >= 400),
+            "five nearer live-unsafe or unreachable clusters must not hide a farther confirmed safe and reachable cluster");
+        Assert(providerException.IsKnownReachable == null
+               && providerException.IsKnownSafe == null,
+            "a navigation-provider exception must remain unknown instead of being labeled safe or reachable");
+    }
+    finally
+    {
+        Navigator.NavigationProvider = previousProvider;
+        File.Delete(path);
+    }
+}
+
+void TestConfirmedEndpointPrecedesUnknownFallback()
+{
+    var endpoints = Enumerable.Range(1, 5)
+        .Select(index => new QuestEndpointCandidate
+        {
+            Key = QuestRecoveryKey.ForEndpoint(867, QuestRecoveryStage.Navigation, 1, $"unknown-{index}"),
+            Point = new SpawnPoint { Map = 1, X = index },
+            Distance = index,
+            IsKnownReachable = null,
+            IsKnownSafe = null,
+            SafetyScore = 100,
+            Recovery = Eligible()
+        })
+        .Append(new QuestEndpointCandidate
+        {
+            Key = QuestRecoveryKey.ForEndpoint(867, QuestRecoveryStage.Navigation, 1, "confirmed"),
+            Point = new SpawnPoint { Map = 1, X = 100 },
+            Distance = 100,
+            IsKnownReachable = true,
+            IsKnownSafe = true,
+            SafetyScore = 1,
+            Recovery = Eligible()
+        });
+
+    var selected = QuestSchedulingPolicy.Select(endpoints, maximum: 5);
+    Assert(selected.Count == 5
+           && selected[0].Key.Endpoint == "confirmed"
+           && selected.Count(endpoint => endpoint.Key.Endpoint.StartsWith("unknown-", StringComparison.Ordinal)) == 4,
+        "confirmed safe and reachable endpoints must precede unknown fallback endpoints before the five-key cap");
+}
+
+void TestDeniedActivationClearsOnlyOwnedQuestPoi()
+{
+    var location = new WoWPoint(20, 30, 0);
+    var behavior = new ForcedQuestPickUp(867, "Pickup", 1001, "Giver", location, null);
+    var key = QuestRecoveryKey.ForNpc(867, QuestRecoveryStage.Pickup, 1001);
+    var matching = new BotPoi(new Styx.Logic.Profiles.Quest.PickUpNode(
+        location, 1001, "Giver", null, 867, "Pickup"));
+    var clearCalls = 0;
+
+    Assert(WholesomeAutoQuest.TryClearDeniedRecoveryPoi(
+               behavior, key, behavior, matching, () => clearCalls++)
+           && clearCalls == 1,
+        "a denied exact pickup claim must clear its still-current matching quest POI");
+
+    var combat = new BotPoi(location, PoiType.Kill) { Entry = 1001 };
+    var vendor = new BotPoi(location, PoiType.Repair) { Entry = 1001 };
+    var staleEndpoint = new BotPoi(new WoWPoint(500, 500, 0), PoiType.QuestPickUp) { Entry = 1001 };
+    var staleBehavior = new ForcedQuestPickUp(867, "Pickup", 1001, "Giver", location, null);
+    Assert(!WholesomeAutoQuest.TryClearDeniedRecoveryPoi(behavior, key, behavior, combat, () => clearCalls++)
+           && !WholesomeAutoQuest.TryClearDeniedRecoveryPoi(behavior, key, behavior, vendor, () => clearCalls++)
+           && !WholesomeAutoQuest.TryClearDeniedRecoveryPoi(behavior, key, behavior, staleEndpoint, () => clearCalls++)
+           && !WholesomeAutoQuest.TryClearDeniedRecoveryPoi(behavior, key, staleBehavior, matching, () => clearCalls++)
+           && clearCalls == 1,
+        "denied claims must not clear combat, vendor, stale-endpoint, or no-longer-current behavior POIs");
 }
 
 void TestStagePriority()
@@ -957,4 +1101,26 @@ static void Assert(bool condition, string message)
     {
         throw new InvalidOperationException(message);
     }
+}
+
+sealed class TestNavigationProvider : NavigationProvider
+{
+    private readonly Func<WoWPoint, float?> _pathDistance;
+
+    public TestNavigationProvider(Func<WoWPoint, float?> pathDistance)
+    {
+        _pathDistance = pathDistance;
+    }
+
+    public override float PathPrecision { get; set; } = 2;
+
+    public override MoveResult MoveTo(WoWPoint location) => MoveResult.Moved;
+
+    public override WoWPoint[] GeneratePath(WoWPoint from, WoWPoint to) =>
+        _pathDistance(to).HasValue ? new[] { to } : Array.Empty<WoWPoint>();
+
+    public override bool AtLocation(WoWPoint point1, WoWPoint point2) => point1.Distance(point2) <= PathPrecision;
+
+    public override float? PathDistance(WoWPoint from, WoWPoint to, float maxDistance = float.MaxValue) =>
+        _pathDistance(to);
 }

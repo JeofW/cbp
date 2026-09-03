@@ -203,3 +203,74 @@ D:\World of Warcraft 3.3.5a\CB\Bots\WholesomeAutoQuest-master\WholesomeAutoQuest
 ```
 
 Forbidden scans found no automatic scheduler blacklist fields, file discovery, empty-profile loop, or tree restart. The only `TryBeginAttempt` call is in the production activation observer, and no reviewed production source contains fixture quest IDs. External changed files have no trailing whitespace; every rollback-backup file still matches its manifest. Unrelated vendor/grind changes remain untouched and unstaged. No push, deployment, live binary replacement, restore, or apphost execution occurred.
+
+## Review Round 2
+
+The remaining safety/reachability and lost-claim cleanup findings were reproduced in the production-linked regression project before changing runtime code.
+
+### RED Evidence
+
+The first corrected test compile failed only on the new production contracts:
+
+```text
+RED_EXIT=1
+error CS1739: MaterializeSchedule has no parameter named 'navigationAssessment'
+error CS0117: QuestScheduler has no definition for 'AssessNavigation'
+error CS0037: null cannot be assigned to the existing non-nullable safety/reachability flags
+error CS0117: WholesomeAutoQuest has no definition for 'TryClearDeniedRecoveryPoi'
+```
+
+This established that unannotated loaded records were still represented as confirmed good, materialization had no live navigation enrichment seam, and the linked production bot had no evidence-based POI ownership guard.
+
+### Live Navigation Enrichment
+
+`SpawnPoint` and `QuestEndpointCandidate` now represent safe/reachable as nullable facts: `false` is known bad, `true` is live-confirmed, and `null` is unknown. Unannotated JSON therefore remains unknown instead of silently becoming safe/reachable.
+
+Production scheduling supplies `AssessNavigation` for every scan. It checks the blackspot hazard signal, then calls `PathDistance` on the active navigation provider. A complete path confirms reachability and contributes a deterministic path-detour score; no path confirms unreachable. A missing provider remains unknown, and either hazard/provider exception returns unknown rather than confirmed safe. Dataset `false` hints remain authoritative exclusions, while positive dataset hints alone cannot manufacture live confirmation.
+
+Materialization caches this assessment by the same map/80-yard quantized cluster key used for endpoints. The loaded-data regression uses eight unannotated records in seven cells and observes exactly seven enrichment calls. Five nearer live-unsafe or unreachable cells are removed before the cap, so the farther confirmed safe/reachable cell is retained. A provider-exception cell remains unknown, and policy ranks confirmed safe/reachable endpoints before unknown fallback endpoints before applying the five-key cap. Pathfinding is not performed by the sort comparator.
+
+### Exact POI Ownership
+
+The real `WholesomeAutoQuest.ObserveRecoveryActivation` callback now passes the denied recovery key to `TryClearDeniedRecoveryPoi`. Cleanup requires the same behavior object to remain current, that behavior to still map to the denied exact key, and a quest-owned POI match:
+
+- pickup/turn-in nodes must match quest and NPC relation;
+- POIs without embedded quest identity must match the permitted quest POI type, NPC entry, and behavior endpoint proximity;
+- objective quest POIs must match quest ID, while objective hotspots must match the current objective location.
+
+Combat/Kill, vendor/repair/mail/trainer, unrelated, wrong-stage, and stale-endpoint POIs are never cleared by this adapter. The existing scheduler rebuild request remains coalesced. The linked regression proves an exact pickup POI is cleared once while combat, repair, stale-location, and replaced-behavior cases are left intact.
+
+### Review Round 2 Verification
+
+All commands used the bundled x86 `dotnet.exe`, `UseAppHost=false`, and direct DLL execution:
+
+```text
+Wholesome production-linked non-incremental build: 3,317 baseline warnings, 0 errors
+Changed-file scoped diagnostics: 0
+Wholesome scheduler recovery regression tests passed.
+Core recovery non-incremental build: 3,246 baseline warnings, 0 errors
+Quest recovery regression tests passed.
+Full Release x86 non-incremental build: 3,250 baseline warnings, 0 errors
+```
+
+Static/integrity results:
+
+```text
+TRAILING_WHITESPACE_MATCHES=0
+SCHEDULER_FORBIDDEN_MATCHES=0
+COMPARATOR_PATH_CALLS=0
+BOUNDED_PATH_CALL_SITES=1
+DENIED_CLEAR_SITES=1
+BACKUP_HASH_MISMATCHES=0
+```
+
+External runtime files changed by review round 2 and intentionally left local:
+
+```text
+D:\World of Warcraft 3.3.5a\CB\Bots\WholesomeAutoQuest-master\DataModels.cs
+D:\World of Warcraft 3.3.5a\CB\Bots\WholesomeAutoQuest-master\QuestSchedulingPolicy.cs
+D:\World of Warcraft 3.3.5a\CB\Bots\WholesomeAutoQuest-master\QuestScheduler.cs
+D:\World of Warcraft 3.3.5a\CB\Bots\WholesomeAutoQuest-master\WholesomeAutoQuest.cs
+```
+
+Only the production-linked regression source and this report are repo-local review-round changes. No core runtime change was needed. Unrelated vendor/grind dirt remains untouched and unstaged. No push, deployment, live binary replacement, restore, or apphost execution occurred.
