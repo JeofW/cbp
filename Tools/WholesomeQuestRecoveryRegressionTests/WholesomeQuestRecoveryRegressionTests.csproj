@@ -9,6 +9,10 @@
   <ItemGroup>
     <ProjectReference Include="..\..\CopilotBuddy.csproj" />
     <Compile Include="..\..\..\..\Bots\WholesomeAutoQuest-master\DataModels.cs" Link="DataModels.cs" />
+    <Compile Include="..\..\..\..\Bots\WholesomeAutoQuest-master\DataLoader.cs" Link="DataLoader.cs" />
+    <Compile Include="..\..\..\..\Bots\WholesomeAutoQuest-master\ProfileBuilder.cs" Link="ProfileBuilder.cs" />
+    <Compile Include="..\..\..\..\Bots\WholesomeAutoQuest-master\QuestScheduler.cs" Link="QuestScheduler.cs" />
     <Compile Include="..\..\..\..\Bots\WholesomeAutoQuest-master\QuestSchedulingPolicy.cs" Link="QuestSchedulingPolicy.cs" />
+    <Compile Include="..\..\..\..\Bots\WholesomeAutoQuest-master\WholesomeAQSettings.cs" Link="WholesomeAQSettings.cs" />
   </ItemGroup>
 </Project>

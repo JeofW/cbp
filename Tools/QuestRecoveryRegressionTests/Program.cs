@@ -23,6 +23,7 @@ try
     TestQuestingCompletedQuestIdsAreSafeWithoutClient();
     TestQuestManagerObsoleteGuidanceShowsCompilableTryCall();
     TestQuestCompletionAuthorityIsTriState();
+    TestEquipmentFingerprintPreservesSlotOrderAndDurabilityClass();
     TestProfileCompletionExpressionsPreserveUnknown();
     TestCompileBatchCompletionExpressionsPreserveUnknown();
     TestCompletionEvaluationScopesNestAndRecoverFromExceptions();
@@ -72,6 +73,36 @@ finally
     {
         Directory.Delete(testRoot, recursive: true);
     }
+}
+
+static void TestEquipmentFingerprintPreservesSlotOrderAndDurabilityClass()
+{
+    var slotOrdered = QuestRecoveryRuntime.CreateEquipmentFingerprint(new[]
+    {
+        (Entry: 500u, MaxDurability: 100.0, DurabilityPercent: 19.9),
+        (Entry: 100u, MaxDurability: 100.0, DurabilityPercent: 87.0),
+        (Entry: 300u, MaxDurability: 0.0, DurabilityPercent: 0.0)
+    });
+    var sameDurabilityClasses = QuestRecoveryRuntime.CreateEquipmentFingerprint(new[]
+    {
+        (Entry: 500u, MaxDurability: 100.0, DurabilityPercent: 1.0),
+        (Entry: 100u, MaxDurability: 100.0, DurabilityPercent: 20.0),
+        (Entry: 300u, MaxDurability: 0.0, DurabilityPercent: 99.0)
+    });
+    var differentSlotOrder = QuestRecoveryRuntime.CreateEquipmentFingerprint(new[]
+    {
+        (Entry: 100u, MaxDurability: 100.0, DurabilityPercent: 87.0),
+        (Entry: 500u, MaxDurability: 100.0, DurabilityPercent: 19.9),
+        (Entry: 300u, MaxDurability: 0.0, DurabilityPercent: 0.0)
+    });
+
+    Assert(slotOrdered == "500:critical|100:healthy|300:healthy",
+        "equipment fingerprints must preserve the equipped-slot enumeration order instead of sorting item entries");
+    Assert(slotOrdered == sameDurabilityClasses,
+        "equipment fingerprints must encode only whether repairable durability is below the critical threshold");
+    Assert(differentSlotOrder == "100:healthy|500:critical|300:healthy"
+           && differentSlotOrder != slotOrdered,
+        "changing equipment slot order must change the equipment fingerprint even when the same items remain equipped");
 }
 
 static void TestQuestCompletionAuthorityIsTriState()

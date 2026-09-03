@@ -32,12 +32,9 @@ public static class QuestRecoveryRuntime
         {
             try
             {
-                equipmentFingerprint = string.Join(
-                    "|",
-                    player.Inventory.Equipped.PhysicalItems
-                        .OrderBy(item => item.Entry)
-                        .Select(item =>
-                            $"{item.Entry}:{(item.MaxDurability > 0 && item.DurabilityPercent < CriticalDurabilityPercent ? "critical" : "healthy")}"));
+                equipmentFingerprint = CreateEquipmentFingerprint(
+                    player.Inventory.Equipped.PhysicalItems.Select(item =>
+                        (item.Entry, (double)item.MaxDurability, (double)item.DurabilityPercent)));
             }
             catch (Exception ex)
             {
@@ -51,5 +48,14 @@ public static class QuestRecoveryRuntime
             EquipmentFingerprint = equipmentFingerprint,
             ObjectiveCounts = objectiveCounts ?? Array.Empty<int>()
         };
+    }
+
+    internal static string CreateEquipmentFingerprint(
+        IEnumerable<(uint Entry, double MaxDurability, double DurabilityPercent)> equippedItems)
+    {
+        return string.Join(
+            "|",
+            equippedItems.Select(item =>
+                $"{item.Entry}:{(item.MaxDurability > 0 && item.DurabilityPercent < CriticalDurabilityPercent ? "critical" : "healthy")}"));
     }
 }
