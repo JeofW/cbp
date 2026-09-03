@@ -274,3 +274,59 @@ D:\World of Warcraft 3.3.5a\CB\Bots\WholesomeAutoQuest-master\WholesomeAutoQuest
 ```
 
 Only the production-linked regression source and this report are repo-local review-round changes. No core runtime change was needed. Unrelated vendor/grind dirt remains untouched and unstaged. No push, deployment, live binary replacement, restore, or apphost execution occurred.
+
+## Review Round 3
+
+The remaining POI ownership defect was reproduced against the linked production bot before the runtime predicate changed.
+
+### RED Evidence
+
+The regression constructs real `BotPoi(PickUpNode)` and `BotPoi(TurnInNode)` shapes. Each stale node retains the same quest and NPC IDs but points at an old alternate location. The corrected x86 regression DLL failed on the existing early-return behavior:
+
+```text
+System.InvalidOperationException: an embedded pickup node for the same quest and NPC at a stale alternate endpoint must not be cleared
+  at TestEmbeddedQuestPoiRequiresExactCurrentEndpoint
+```
+
+The same test also covers an embedded matching pickup, embedded matching and stale turn-in nodes, combat, repair, generic stale pickup, replaced behavior, and a coincident untagged objective hotspot.
+
+### Minimal Runtime Fix
+
+`WholesomeAutoQuest.IsOwnedRecoveryPoi` now requires embedded pickup and turn-in nodes to match all available evidence: exact still-current behavior/key/stage, quest ID, NPC ID, and stored node location within five yards of the live behavior endpoint. A stale alternate with the same quest/NPC no longer qualifies.
+
+Objective `PoiType.Quest` remains clearable only by matching quest ID. Generic `PoiType.Hotspot` has no quest/stage ownership identity in this platform, so the conservative behavior is now unconditional no-clear; coincident coordinates alone are not treated as proof. Combat/vendor/stale/replaced-behavior protections and the scheduler's one coalesced rebuild remain unchanged.
+
+### Review Round 3 Verification
+
+The x86 build output is under `bin\x86\Release`. During this review, direct execution was explicitly corrected to that platform-specific DLL path; the resulting run exercises all Task 1/2 and review-round regressions, including the round 2 live-navigation cases.
+
+```text
+Wholesome production-linked non-incremental x86 build: 3,317 baseline warnings, 0 errors
+Changed-file scoped diagnostics: 0
+DLL: Tools\WholesomeQuestRecoveryRegressionTests\bin\x86\Release\net10.0-windows7.0\WholesomeQuestRecoveryRegressionTests.dll
+Wholesome scheduler recovery regression tests passed.
+
+Core recovery non-incremental x86 build: 3,246 baseline warnings, 0 errors
+DLL: Tools\QuestRecoveryRegressionTests\bin\x86\Release\net10.0-windows7.0\QuestRecoveryRegressionTests.dll
+Quest recovery regression tests passed.
+
+Full Release x86 non-incremental UseAppHost=false build: 3,250 baseline warnings, 0 errors
+```
+
+Static and integrity results:
+
+```text
+TRAILING_WHITESPACE_MATCHES=0
+DENIED_CLEAR_SITES=1
+OBJECTIVE_HOTSPOT_CLEAR_MATCHES=0
+SCHEDULER_FORBIDDEN_MATCHES=0
+BACKUP_HASH_MISMATCHES=0
+```
+
+External runtime file changed by review round 3 and intentionally left local:
+
+```text
+D:\World of Warcraft 3.3.5a\CB\Bots\WholesomeAutoQuest-master\WholesomeAutoQuest.cs
+```
+
+Only the production-linked regression source and this report are repo-local review-round changes. Unrelated vendor/grind dirt remains untouched and unstaged. No push, deployment, live binary replacement, restore, or apphost execution occurred.

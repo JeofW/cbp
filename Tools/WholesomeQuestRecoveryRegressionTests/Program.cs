@@ -45,7 +45,8 @@ try
     TestSchedulerFiltersKnownNavigationUnsafePointsBeforeCap();
     TestLoadedSpawnsReceiveCachedLiveNavigationEnrichment();
     TestConfirmedEndpointPrecedesUnknownFallback();
-    TestDeniedActivationClearsOnlyOwnedQuestPoi();
+    TestEmbeddedQuestPoiRequiresExactCurrentEndpoint();
+    TestDeniedActivationLeavesUnownedPoiUntouched();
     Console.WriteLine("Wholesome scheduler recovery regression tests passed.");
 }
 
@@ -432,7 +433,46 @@ void TestConfirmedEndpointPrecedesUnknownFallback()
         "confirmed safe and reachable endpoints must precede unknown fallback endpoints before the five-key cap");
 }
 
-void TestDeniedActivationClearsOnlyOwnedQuestPoi()
+void TestEmbeddedQuestPoiRequiresExactCurrentEndpoint()
+{
+    var currentLocation = new WoWPoint(20, 30, 0);
+    var staleLocation = new WoWPoint(220, 330, 0);
+    var pickup = new ForcedQuestPickUp(867, "Pickup", 1001, "Giver", currentLocation, null);
+    var pickupKey = QuestRecoveryKey.ForNpc(867, QuestRecoveryStage.Pickup, 1001);
+    var matchingPickup = new BotPoi(new Styx.Logic.Profiles.Quest.PickUpNode(
+        currentLocation, 1001, "Giver", null, 867, "Pickup"));
+    var stalePickup = new BotPoi(new Styx.Logic.Profiles.Quest.PickUpNode(
+        staleLocation, 1001, "Giver", null, 867, "Pickup"));
+    var clearCalls = 0;
+
+    Assert(WholesomeAutoQuest.TryClearDeniedRecoveryPoi(
+               pickup, pickupKey, pickup, matchingPickup, () => clearCalls++)
+           && clearCalls == 1,
+        "a denied pickup claim must clear an embedded pickup node at the exact current endpoint");
+    Assert(!WholesomeAutoQuest.TryClearDeniedRecoveryPoi(
+               pickup, pickupKey, pickup, stalePickup, () => clearCalls++)
+           && stalePickup.AsPickUp != null
+           && clearCalls == 1,
+        "an embedded pickup node for the same quest and NPC at a stale alternate endpoint must not be cleared");
+
+    var turnIn = new ForcedQuestTurnIn(867, "Turn in", 1002, "Ender", currentLocation);
+    var turnInKey = QuestRecoveryKey.ForNpc(867, QuestRecoveryStage.TurnIn, 1002);
+    var matchingTurnIn = new BotPoi(new Styx.Logic.Profiles.Quest.TurnInNode(
+        currentLocation, 1002, "Ender", null, 867, "Turn in"));
+    var staleTurnIn = new BotPoi(new Styx.Logic.Profiles.Quest.TurnInNode(
+        staleLocation, 1002, "Ender", null, 867, "Turn in"));
+    Assert(WholesomeAutoQuest.TryClearDeniedRecoveryPoi(
+               turnIn, turnInKey, turnIn, matchingTurnIn, () => clearCalls++)
+           && clearCalls == 2,
+        "a denied turn-in claim must clear an embedded turn-in node at the exact current endpoint");
+    Assert(!WholesomeAutoQuest.TryClearDeniedRecoveryPoi(
+               turnIn, turnInKey, turnIn, staleTurnIn, () => clearCalls++)
+           && staleTurnIn.AsTurnIn != null
+           && clearCalls == 2,
+        "an embedded turn-in node for the same quest and NPC at a stale alternate endpoint must not be cleared");
+}
+
+void TestDeniedActivationLeavesUnownedPoiUntouched()
 {
     var location = new WoWPoint(20, 30, 0);
     var behavior = new ForcedQuestPickUp(867, "Pickup", 1001, "Giver", location, null);
@@ -440,11 +480,6 @@ void TestDeniedActivationClearsOnlyOwnedQuestPoi()
     var matching = new BotPoi(new Styx.Logic.Profiles.Quest.PickUpNode(
         location, 1001, "Giver", null, 867, "Pickup"));
     var clearCalls = 0;
-
-    Assert(WholesomeAutoQuest.TryClearDeniedRecoveryPoi(
-               behavior, key, behavior, matching, () => clearCalls++)
-           && clearCalls == 1,
-        "a denied exact pickup claim must clear its still-current matching quest POI");
 
     var combat = new BotPoi(location, PoiType.Kill) { Entry = 1001 };
     var vendor = new BotPoi(location, PoiType.Repair) { Entry = 1001 };
@@ -454,8 +489,16 @@ void TestDeniedActivationClearsOnlyOwnedQuestPoi()
            && !WholesomeAutoQuest.TryClearDeniedRecoveryPoi(behavior, key, behavior, vendor, () => clearCalls++)
            && !WholesomeAutoQuest.TryClearDeniedRecoveryPoi(behavior, key, behavior, staleEndpoint, () => clearCalls++)
            && !WholesomeAutoQuest.TryClearDeniedRecoveryPoi(behavior, key, staleBehavior, matching, () => clearCalls++)
-           && clearCalls == 1,
+           && clearCalls == 0,
         "denied claims must not clear combat, vendor, stale-endpoint, or no-longer-current behavior POIs");
+
+    var objective = new ForcedQuestObjective(TestQuestObjective.Create(867, location));
+    var objectiveKey = QuestRecoveryKey.ForQuestStage(867, QuestRecoveryStage.Objective);
+    var coincidentHotspot = new BotPoi(location, PoiType.Hotspot);
+    Assert(!WholesomeAutoQuest.TryClearDeniedRecoveryPoi(
+               objective, objectiveKey, objective, coincidentHotspot, () => clearCalls++)
+           && clearCalls == 0,
+        "an untagged generic objective hotspot must not be cleared even when it is coincident with the objective location");
 }
 
 void TestStagePriority()
@@ -1123,4 +1166,41 @@ sealed class TestNavigationProvider : NavigationProvider
 
     public override float? PathDistance(WoWPoint from, WoWPoint to, float maxDistance = float.MaxValue) =>
         _pathDistance(to);
+}
+
+sealed class TestQuestObjective : Bots.Quest.Objectives.QuestObjective
+{
+    private TestQuestObjective() : base(null!, null!, null!)
+    {
+    }
+
+    public WoWPoint Location { get; private set; }
+
+    public static TestQuestObjective Create(uint questId, WoWPoint location)
+    {
+        var objective = (TestQuestObjective)System.Runtime.CompilerServices.RuntimeHelpers
+            .GetUninitializedObject(typeof(TestQuestObjective));
+        var questField = typeof(Bots.Quest.Objectives.QuestObjective).GetField(
+            "<Quest>k__BackingField",
+            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+        questField!.SetValue(objective, new TestPlayerQuest(questId));
+        objective.Location = location;
+        return objective;
+    }
+
+    public override bool IsCompleted => false;
+
+    public override bool CanComplete => true;
+
+    public override TreeSharp.Composite CreateBranch() => null!;
+
+    public override WoWPoint GetObjectiveLocation() => Location;
+}
+
+sealed class TestPlayerQuest : Styx.Logic.Questing.PlayerQuest
+{
+    public TestPlayerQuest(uint questId)
+        : base(new Styx.WoWInternals.WoWCache.WoWCache.QuestCacheEntry { Id = questId })
+    {
+    }
 }
