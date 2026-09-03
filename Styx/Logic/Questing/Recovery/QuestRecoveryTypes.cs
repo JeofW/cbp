@@ -233,6 +233,7 @@ public sealed class QuestRecoveryDocument
     public int SchemaVersion { get; init; } = 1;
     public string CharacterName { get; init; } = "";
     public string RealmName { get; init; } = "";
+    public long LastAttemptGeneration { get; init; }
     public IReadOnlyList<DateTime> RollingFailureUtc
     {
         get => _rollingFailureUtc;

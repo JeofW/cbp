@@ -69,6 +69,32 @@ Result: `Build succeeded`, 3250 repository baseline warnings, 0 errors. A file-l
 - `Tools/QuestRecoveryRegressionTests/Program.cs`
 - `.superpowers/sdd/2026-09-02-quest-recovery-core-plan/core-final-fix-report.md`
 
+## Broad fix round 2 review fixes
+
+Base: `3a4c89f88dfc6cfd6b03c0a62d5d935dc4bf2279`
+
+### Outcome
+
+- Attempt generations now come from a manager-level high-water mark rather than `currentRecord + 1`. The high-water mark survives identity reconfiguration and record replacement/removal.
+- `LastAttemptGeneration` is persisted independently in the identity document and seeds the manager on load, so an empty record set cannot reset ownership IDs across reload.
+- Success is accepted only while the matching generation actively owns an `Attempting` record. HalfOpen is an invitation to acquire a new probe, not active ownership; delayed success from the failed pre-RetryNow attempt cannot close it.
+
+### Behavioral RED evidence
+
+- Identity-switch regression failed with `identity replacement must issue B an ownership generation newer than A`; both identities had reused generation 1.
+- Manual-blacklist replacement regression failed with `manual blacklist replacement must not reuse A's ownership generation for B`; removal of the manual record reset generation issuance.
+- RetryNow regression failed with `RetryNow must reject old A success until a new half-open probe acquires ownership`; the old A generation was accepted directly against HalfOpen.
+- Empty-store reload regression failed with `the ownership high-water mark must survive reload even when no record remains`; record-only persistence lost the issuance fence.
+
+### Final GREEN scope
+
+- The three required A/B stale-callback cases and the empty-store persistence case pass against the production manager. The prior normal A-success, B-acquire, delayed-A-rejected, valid-B-release sequence remains covered and passing.
+- Existing terminal-state and success persistence/reload tests remain in the focused recovery suite.
+- `QuestRecoveryRegressionTests` built with 0 errors and printed `Quest recovery regression tests passed.`; `QuestPickupPolicyRegressionTests` built with 0 errors and printed `Quest pickup policy regression tests passed.`
+- Full Release x86 Rebuild printed `Build succeeded`, 3250 repository baseline warnings, and 0 errors. Scoped file-log scanning found no warnings in `QuestRecoveryManager.cs` or `QuestRecoveryTypes.cs`; `CopilotBuddy.dll` remained PE machine `0x014C`.
+- `git diff --check` was clean apart from informational line-ending notices. No apphost, push, or deployment was used.
+- Scoped files: `QuestRecoveryManager.cs`, `QuestRecoveryTypes.cs`, `QuestRecoveryRegressionTests/Program.cs`, and this report.
+
 ### Concern
 
 The no-client suites cover the pure selection/classification seams and production evaluation/executor policies, but cannot exercise live WoW frame transitions or memory-backed quest-log state. Before deployment, a disposable-character smoke test should verify one unique-title zero-ID dialog, one duplicate-title dialog, and an accepted-complete blocker while the historical cache refresh is unavailable. No push, deployment, or apphost launch was performed. Unrelated pre-existing vendor/grind working-tree files were neither edited for this fix nor staged.

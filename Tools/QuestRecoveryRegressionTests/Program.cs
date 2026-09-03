@@ -53,6 +53,10 @@ try
     TestConcurrentReportingAndAttemptOwnership(Path.Combine(testRoot, "concurrency"), now);
     TestSuccessfulAttemptReleasesOwnership(Path.Combine(testRoot, "success-release"), now);
     TestStaleSuccessCannotReleaseNewOwner(Path.Combine(testRoot, "success-generation"), now);
+    TestRetryNowRejectsPriorOwnerSuccess(Path.Combine(testRoot, "success-retry-now"), now);
+    TestIdentitySwitchCannotReuseOwnership(Path.Combine(testRoot, "success-identity"), now);
+    TestManualBlacklistReplacementCannotReuseOwnership(Path.Combine(testRoot, "success-manual"), now);
+    TestOwnershipFenceSurvivesEmptyStoreReload(Path.Combine(testRoot, "success-empty-reload"), now);
     TestSuccessfulHalfOpenClearsEscalation(Path.Combine(testRoot, "success-half-open"), now);
     TestSuccessCannotReopenTerminalStates(Path.Combine(testRoot, "success-terminal"), now);
     Console.WriteLine("Quest recovery regression tests passed.");
@@ -1536,6 +1540,97 @@ static void TestStaleSuccessCannotReleaseNewOwner(string settingsRoot, DateTime 
     var ownerC = manager.TryBeginAttempt(key, Context());
     Assert(ownerC.MayAttempt && ownerC.AttemptGeneration > ownerB.AttemptGeneration,
         "valid B success must release ownership for a newer attempt C");
+}
+
+static void TestIdentitySwitchCannotReuseOwnership(string settingsRoot, DateTime now)
+{
+    var manager = new QuestRecoveryManager(new FixedClock(now));
+    var key = QuestRecoveryKey.ForQuestStage(1205, QuestRecoveryStage.Pickup);
+    manager.Configure(CreateEnvironment(settingsRoot, "First", "Lordaeron"));
+    var ownerA = manager.TryBeginAttempt(key, Context());
+
+    manager.Configure(CreateEnvironment(settingsRoot, "Second", "Lordaeron"));
+    var ownerB = manager.TryBeginAttempt(key, Context());
+    Assert(ownerA.MayAttempt && ownerB.MayAttempt
+           && ownerB.AttemptGeneration > ownerA.AttemptGeneration,
+        "identity replacement must issue B an ownership generation newer than A");
+
+    var delayedA = manager.Report(
+        QuestAttemptOutcome.Success(key, ownerA.AttemptGeneration, "old identity A"),
+        Context());
+    Assert(delayedA.State == QuestRecoveryState.Attempting && !delayedA.MayAttempt,
+        "success from identity A must not release the same quest key owned by identity B");
+    Assert(!manager.TryBeginAttempt(key, Context()).MayAttempt,
+        "identity B must retain ownership after delayed identity-A success");
+}
+
+static void TestManualBlacklistReplacementCannotReuseOwnership(string settingsRoot, DateTime now)
+{
+    var manager = new QuestRecoveryManager(new FixedClock(now));
+    var key = QuestRecoveryKey.ForQuestStage(1206, QuestRecoveryStage.Pickup);
+    manager.Configure(CreateEnvironment(settingsRoot, "Jeof", "Lordaeron"));
+    var ownerA = manager.TryBeginAttempt(key, Context());
+
+    manager.SetManualBlacklist(key.QuestId, true);
+    manager.SetManualBlacklist(key.QuestId, false);
+    var ownerB = manager.TryBeginAttempt(key, Context());
+    Assert(ownerA.MayAttempt && ownerB.MayAttempt
+           && ownerB.AttemptGeneration > ownerA.AttemptGeneration,
+        "manual blacklist replacement must not reuse A's ownership generation for B");
+
+    var delayedA = manager.Report(
+        QuestAttemptOutcome.Success(key, ownerA.AttemptGeneration, "pre-blacklist A"),
+        Context());
+    Assert(delayedA.State == QuestRecoveryState.Attempting && !delayedA.MayAttempt,
+        "pre-blacklist success A must not release post-clear owner B");
+    Assert(!manager.TryBeginAttempt(key, Context()).MayAttempt,
+        "post-clear owner B must remain active after delayed A success");
+}
+
+static void TestOwnershipFenceSurvivesEmptyStoreReload(string settingsRoot, DateTime now)
+{
+    var environment = CreateEnvironment(settingsRoot, "Jeof", "Lordaeron");
+    var key = QuestRecoveryKey.ForQuestStage(1208, QuestRecoveryStage.Pickup);
+    var manager = new QuestRecoveryManager(new FixedClock(now));
+    manager.Configure(environment);
+    var ownerA = manager.TryBeginAttempt(key, Context());
+    manager.SetManualBlacklist(key.QuestId, true);
+    manager.SetManualBlacklist(key.QuestId, false);
+    Assert(manager.GetEntries().Count == 0,
+        "the reload fixture must persist an empty record set after blacklist removal");
+    manager.Flush();
+
+    var reloaded = new QuestRecoveryManager(new FixedClock(now));
+    reloaded.Configure(environment);
+    var ownerB = reloaded.TryBeginAttempt(key, Context());
+    Assert(ownerB.MayAttempt && ownerB.AttemptGeneration > ownerA.AttemptGeneration,
+        "the ownership high-water mark must survive reload even when no record remains");
+}
+
+static void TestRetryNowRejectsPriorOwnerSuccess(string settingsRoot, DateTime now)
+{
+    var manager = new QuestRecoveryManager(new FixedClock(now));
+    var key = QuestRecoveryKey.ForQuestStage(1207, QuestRecoveryStage.Pickup);
+    manager.Configure(CreateEnvironment(settingsRoot, "Jeof", "Lordaeron"));
+    var ownerA = manager.TryBeginAttempt(key, Context());
+    manager.Report(
+        QuestAttemptOutcome.Failure(key, QuestFailureReason.PickupTargetNotOffered, "A failed"),
+        Context());
+    manager.RetryNow(key);
+
+    var delayedA = manager.Report(
+        QuestAttemptOutcome.Success(key, ownerA.AttemptGeneration, "late A after retry"),
+        Context());
+    var halfOpen = manager.GetEntries().Single();
+    Assert(delayedA.State == QuestRecoveryState.HalfOpen
+           && halfOpen.State == QuestRecoveryState.HalfOpen
+           && halfOpen.Reason == QuestFailureReason.PickupTargetNotOffered
+           && halfOpen.Evidence.All(item => item.Text != "late A after retry"),
+        "RetryNow must reject old A success until a new half-open probe acquires ownership");
+
+    var probeB = manager.TryBeginAttempt(key, Context());
+    Assert(probeB.MayAttempt && probeB.AttemptGeneration > ownerA.AttemptGeneration,
+        "the half-open probe must acquire a distinct ownership generation");
 }
 
 static void TestSuccessfulHalfOpenClearsEscalation(string settingsRoot, DateTime now)

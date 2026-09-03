@@ -16,6 +16,7 @@ public sealed class QuestRecoveryManager
     private List<DateTime> _rollingFailureUtc = new();
     private QuestRecoveryEnvironment? _environment;
     private QuestRecoveryStore? _store;
+    private long _lastAttemptGeneration;
     private bool _dirty;
 
     public static QuestRecoveryManager Instance { get; } =
@@ -72,11 +73,18 @@ public sealed class QuestRecoveryManager
                 .GroupBy(record => record.Key)
                 .ToDictionary(group => group.Key, group => group.Last());
             var rollingFailureUtc = document.RollingFailureUtc.ToList();
+            long loadedAttemptGeneration = records.Count == 0
+                ? 0
+                : records.Values.Max(record => record.AttemptGeneration);
+            loadedAttemptGeneration = Math.Max(
+                loadedAttemptGeneration,
+                document.LastAttemptGeneration);
 
             _environment = sanitized;
             _store = store;
             _records = records;
             _rollingFailureUtc = rollingFailureUtc;
+            _lastAttemptGeneration = Math.Max(_lastAttemptGeneration, loadedAttemptGeneration);
             _dirty = recoveredStaleAttempt;
             ImportLegacyCore(identityDirectory);
         }
@@ -111,7 +119,9 @@ public sealed class QuestRecoveryManager
 
             var current = FindRecordCore(key) ?? QuestRecoveryRecord.Create(key);
             current = MaterializeLegacyRecordCore(current, key);
-            long attemptGeneration = checked(current.AttemptGeneration + 1);
+            long attemptGeneration = checked(
+                Math.Max(_lastAttemptGeneration, current.AttemptGeneration) + 1);
+            _lastAttemptGeneration = attemptGeneration;
             _records[current.Key] = Copy(
                 current,
                 state: QuestRecoveryState.Attempting,
@@ -153,7 +163,7 @@ public sealed class QuestRecoveryManager
 
             if (outcome.Kind == QuestAttemptOutcomeKind.Success)
             {
-                if (current.State is not (QuestRecoveryState.Attempting or QuestRecoveryState.HalfOpen) ||
+                if (current.State != QuestRecoveryState.Attempting ||
                     outcome.AttemptGeneration != current.AttemptGeneration)
                 {
                     return QuestRecoveryPolicy.Evaluate(
@@ -496,6 +506,7 @@ public sealed class QuestRecoveryManager
             SchemaVersion = 1,
             CharacterName = _environment.CharacterName,
             RealmName = _environment.RealmName,
+            LastAttemptGeneration = _lastAttemptGeneration,
             RollingFailureUtc = _rollingFailureUtc.ToArray(),
             Records = compacted
         };
