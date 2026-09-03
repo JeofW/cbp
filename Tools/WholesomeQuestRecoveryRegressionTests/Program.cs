@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 using Bots.Quest.QuestOrder;
 using Styx.Logic.Pathing;
@@ -35,19 +37,21 @@ try
     TestEvaluationDoesNotClaimAndActivationUsesExactKey();
     TestEndpointFailureEscalatesOnlyAfterEveryKnownCluster();
     TestNavigationFingerprintIncludesProviderAndMeshStamp();
-    TestLegacyCallerUsesTemporaryNarrowCompatibilityAdapters();
+    TestProductionCallerNoLongerNeedsBlacklistCompatibilityAdapters();
     TestOrdinaryObjectiveEndpointPrecedesHalfOpenAlternative();
     TestOrdinaryRelationPrecedesHalfOpenAlternative();
     TestCompletedObjectivesDoNotConsumeEndpointBudget();
     TestUnavailableObjectiveCountsDoNotAdvanceWork();
     TestScanExpansionPrecedesFallbackAndResets();
     TestProductionActivationClaimsOnceAndCoalescesRebuild();
+    TestProgressReleaseAllowsSameBehaviorToClaimALaterGeneration();
     TestEndpointSafetyAndReachabilityPrecedeDistanceAndCap();
     TestSchedulerFiltersKnownNavigationUnsafePointsBeforeCap();
     TestLoadedSpawnsReceiveCachedLiveNavigationEnrichment();
     TestConfirmedEndpointPrecedesUnknownFallback();
     TestEmbeddedQuestPoiRequiresExactCurrentEndpoint();
     TestDeniedActivationLeavesUnownedPoiUntouched();
+    TestOutcomePoiCleanupUsesTheReportedFailureScope();
     TestGuardedProfilePreservesScheduleOrderAndLiveState();
     TestGuardedProfileUsesOnlyApprovedAlternativesAndHotspots();
     TestGuardedProfileOmitsEndpointlessObjectives();
@@ -55,6 +59,15 @@ try
     TestGameObjectItemCollectionRemainsCollectItemOverride();
     TestSchedulerReportsEveryEndpointlessObjectiveOmission();
     TestSchedulerDeduplicatesRelationRowsAndExactEndpoints();
+    TestRefreshGateCoalescesConcurrentRequestsAndStopsCallbacks();
+    TestLifecycleGateDoesNotGrowSubscriptionsAcrossRestarts();
+    TestProgressMonitorCountsOnlyActiveWorkAndCoalescesOneStall();
+    TestProgressMonitorScopesEndpointAndDeathFailures();
+    TestProductionWorkSnapshotExcludesNonWorkAndRequiresExactOwner();
+    TestAttemptOwnershipUsesTheExactGenerationToken();
+    TestCompletedOwnedStageRequestsRefreshBeforeQuestOrderRunsOut();
+    TestTimedIdleSuppressesOldQuestOrderUntilARebuildSelectsWork();
+    TestPickupOutcomeCoalescingStillReportsTheFailureEpisode();
     Console.WriteLine("Wholesome scheduler recovery regression tests passed.");
 }
 
@@ -64,7 +77,350 @@ catch (Exception ex)
     global::System.Environment.ExitCode = 1;
 }
 
-void TestLegacyCallerUsesTemporaryNarrowCompatibilityAdapters()
+void TestRefreshGateCoalescesConcurrentRequestsAndStopsCallbacks()
+{
+    var gate = new RefreshGate();
+    var accepted = 0;
+    Parallel.For(0, 100, _ =>
+    {
+        if (gate.TryRequest())
+            Interlocked.Increment(ref accepted);
+    });
+
+    Assert(accepted == 1 && gate.Begin(),
+        "100 concurrent refresh requests must produce one pending main-thread refresh");
+    gate.Complete();
+    Assert(gate.TryRequest() && gate.Begin(),
+        "completion must permit exactly one later refresh");
+    gate.Stop();
+    Assert(!gate.TryRequest() && !gate.Begin(),
+        "Stop must cancel pending work and prevent stale callbacks from refreshing or starting");
+    gate.Start();
+    Assert(gate.TryRequest() && gate.Begin(),
+        "a deliberate later bot start must reset the stopped refresh gate");
+}
+
+void TestLifecycleGateDoesNotGrowSubscriptionsAcrossRestarts()
+{
+    var gate = new RefreshGate();
+    var lifecycle = new WholesomeLifecycleGate(gate);
+    var active = 0;
+    var maximumActive = 0;
+    var subscriptions = 0;
+    var removals = 0;
+
+    for (var cycle = 0; cycle < 10; cycle++)
+    {
+        lifecycle.Start(() =>
+        {
+            subscriptions++;
+            active++;
+            maximumActive = Math.Max(maximumActive, active);
+        });
+        lifecycle.Start(() => throw new InvalidOperationException("duplicate subscription"));
+        lifecycle.Stop(() => { removals++; active--; });
+        lifecycle.Stop(() => throw new InvalidOperationException("duplicate removal"));
+    }
+
+    Assert(subscriptions == 10 && removals == 10 && active == 0 && maximumActive == 1,
+        "repeated start/stop cycles must own exactly one event subscription set");
+    Assert(lifecycle.IsStopped && !gate.TryRequest(),
+        "lifecycle Stop must leave an explicit stopped state and cancel refresh work");
+}
+
+void TestProgressMonitorCountsOnlyActiveWorkAndCoalescesOneStall()
+{
+    var clock = new TestRecoveryClock(utcNow);
+    var monitor = new WholesomeProgressMonitor(clock);
+    var key = QuestRecoveryKey.ForQuestStage(867, QuestRecoveryStage.Objective);
+    var clusterA = QuestRecoveryKey.ForEndpoint(867, QuestRecoveryStage.Navigation, 1, "cell:0:0");
+    var clusterB = QuestRecoveryKey.ForEndpoint(867, QuestRecoveryStage.Navigation, 1, "cell:1:0");
+    QuestProgressUpdate Accrue(QuestWorkSample sample, TimeSpan duration)
+    {
+        QuestProgressUpdate update = new();
+        for (var elapsed = TimeSpan.Zero; elapsed < duration; elapsed += TimeSpan.FromSeconds(2))
+        {
+            clock.Advance(TimeSpan.FromSeconds(2));
+            update = monitor.Sample(sample);
+        }
+        return update;
+    }
+
+    monitor.Sample(WorkSample(key, new[] { 0 }, clusterA, active: true));
+    Accrue(WorkSample(key, new[] { 0 }, clusterA, active: true), TimeSpan.FromMinutes(4));
+    clock.Advance(TimeSpan.FromHours(1));
+    monitor.Sample(WorkSample(key, new[] { 0 }, clusterA, active: false));
+    clock.Advance(TimeSpan.FromHours(1));
+    monitor.Sample(WorkSample(key, new[] { 0 }, clusterB, active: true));
+    var failed = Accrue(WorkSample(key, new[] { 0 }, clusterB, active: true), TimeSpan.FromMinutes(4));
+
+    Assert(failed.Outcomes.Count == 1
+           && failed.Outcomes[0].Reason == QuestFailureReason.NoObjectiveProgress
+           && failed.Outcomes[0].IsFailureEpisode,
+        "eight active work minutes across two clusters must create one no-progress failure episode while paused time is excluded");
+    var repeated = monitor.Sample(WorkSample(key, new[] { 0 }, clusterB, active: true));
+    Assert(repeated.Outcomes.Count == 1 && !repeated.Outcomes[0].IsFailureEpisode,
+        "repeated samples from the same continuous stall must remain non-episode observations");
+
+    var progressed = monitor.Sample(WorkSample(key, new[] { 1 }, clusterB, active: true));
+    Assert(progressed.MadeProgress && progressed.ObjectiveCounts.SequenceEqual(new[] { 1 }),
+        "an objective counter or item gain must report progress and reset stall/death escalation");
+
+    monitor.Reset();
+    monitor.Sample(WorkSample(key, new[] { 0 }, clusterA, active: true));
+    clock.Advance(TimeSpan.FromHours(1));
+    var afterMissingPulses = monitor.Sample(WorkSample(key, new[] { 0 }, clusterB, active: true));
+    Assert(afterMissingPulses.Outcomes.Count == 0,
+        "a long interval with no pulse samples must not be charged as active quest-work time");
+}
+
+void TestProgressMonitorScopesEndpointAndDeathFailures()
+{
+    var clock = new TestRecoveryClock(utcNow);
+    var monitor = new WholesomeProgressMonitor(clock);
+    var key = QuestRecoveryKey.ForQuestStage(867, QuestRecoveryStage.Objective);
+    var endpointA = QuestRecoveryKey.ForEndpoint(867, QuestRecoveryStage.Navigation, 1, "cell:0:0");
+    var endpointB = QuestRecoveryKey.ForEndpoint(867, QuestRecoveryStage.Navigation, 1, "cell:1:0");
+    var known = new[] { endpointA, endpointB };
+
+    var excludedProbe = monitor.Sample(WorkSample(
+        key, new[] { 0 }, endpointA, active: false,
+        endpointPathFailed: true, knownEndpoints: known,
+        allHotspotsUnavailable: true));
+    Assert(excludedProbe.Outcomes.Count == 0,
+        "path and hotspot probes captured outside active quest work must not create recovery failures");
+
+    var firstPath = monitor.Sample(WorkSample(
+        key, new[] { 0 }, endpointA, active: true,
+        endpointPathFailed: true, knownEndpoints: known));
+    Assert(firstPath.Outcomes.Count == 1
+           && firstPath.Outcomes[0].Key.Equals(endpointA)
+           && firstPath.Outcomes[0].Reason == QuestFailureReason.PathGenerationFailed
+           && firstPath.Outcomes[0].IsFailureEpisode,
+        "one failed path must cool only its exact endpoint");
+    var repeatedPath = monitor.Sample(WorkSample(
+        key, new[] { 0 }, endpointA, active: true,
+        endpointPathFailed: true, knownEndpoints: known));
+    Assert(repeatedPath.Outcomes.Count == 1 && !repeatedPath.Outcomes[0].IsFailureEpisode,
+        "the same endpoint-path stall must not become another failure episode");
+    var lastPath = monitor.Sample(WorkSample(
+        key, new[] { 0 }, endpointB, active: true,
+        endpointPathFailed: true, knownEndpoints: known));
+    Assert(lastPath.Outcomes.Any(outcome => outcome.Key.Equals(endpointB)
+                                            && outcome.Reason == QuestFailureReason.PathGenerationFailed)
+           && lastPath.Outcomes.Any(outcome => outcome.Key.Equals(key)
+                                               && outcome.Reason == QuestFailureReason.NoNavigableHotspot),
+        "stage failure is permitted only after every known generated hotspot cluster has failed");
+
+    monitor.Reset();
+    var emptyArea = monitor.Sample(WorkSample(
+        key, new[] { 0 }, endpointA, active: true,
+        allHotspotsUnavailable: true));
+    Assert(emptyArea.Outcomes.Count == 1
+           && emptyArea.Outcomes[0].Key.Equals(key)
+           && emptyArea.Outcomes[0].Reason == QuestFailureReason.NoNavigableHotspot
+           && emptyArea.Outcomes[0].IsFailureEpisode,
+        "an active generated area with no available hotspots must fail only the exact objective stage");
+
+    monitor.Reset();
+    var deathSample = WorkSample(key, new[] { 0 }, endpointA, active: false, deathAttributable: true);
+    Assert(monitor.RecordDeath(deathSample).Outcomes.Count == 0,
+        "the first attributable death must not end an episode");
+    clock.Advance(TimeSpan.FromMinutes(5));
+    Assert(monitor.RecordDeath(deathSample).Outcomes.Count == 0,
+        "the second attributable death must not end an episode");
+    clock.Advance(TimeSpan.FromMinutes(5));
+    var third = monitor.RecordDeath(deathSample);
+    Assert(third.Outcomes.Count == 1
+           && third.Outcomes[0].Key.Equals(key)
+           && third.Outcomes[0].Reason == QuestFailureReason.RepeatedDeaths
+           && third.Outcomes[0].IsFailureEpisode,
+        "the third attributable death inside 15 minutes must fail only the exact objective stage");
+    Assert(monitor.RecordDeath(deathSample).Outcomes.Single().IsFailureEpisode == false,
+        "additional deaths in the same no-progress episode must be observations");
+}
+
+void TestProductionWorkSnapshotExcludesNonWorkAndRequiresExactOwner()
+{
+    var objective = new ForcedQuestObjective(TestQuestObjective.Create(867, new WoWPoint(80, 0, 0)));
+    var exact = QuestRecoveryKey.ForQuestStage(867, QuestRecoveryStage.Objective);
+    var other = QuestRecoveryKey.ForQuestStage(876, QuestRecoveryStage.Objective);
+    var questPoi = new BotPoi(new WoWPoint(80, 0, 0), PoiType.Quest) { Entry = 867 };
+
+    QuestWorkSample Map(
+        QuestRecoveryKey owner,
+        PoiType poiType = PoiType.Quest,
+        bool inWorld = true,
+        bool dead = false,
+        bool ghost = false,
+        bool taxi = false,
+        bool transport = false,
+        bool resting = false,
+        bool paused = false,
+        bool combat = false,
+        bool questCombat = false) => WholesomeAutoQuest.CreateWorkSample(
+            objective,
+            owner,
+            poiType == PoiType.Quest ? questPoi : new BotPoi(new WoWPoint(80, 0, 0), poiType),
+            inWorld,
+            dead,
+            ghost,
+            taxi,
+            transport,
+            resting,
+            paused,
+            combat,
+            questCombat,
+            new[] { 0 },
+            exact,
+            new[] { exact },
+            endpointPathFailed: false,
+            allHotspotsUnavailable: false,
+            deathAttributable: true);
+
+    Assert(Map(exact).IsActiveWork,
+        "the production mapper must attribute active time to the exact objective behavior quest and stage");
+    Assert(!Map(other).IsActiveWork
+           && !Map(exact, PoiType.Buy).IsActiveWork
+           && !Map(exact, PoiType.Sell).IsActiveWork
+           && !Map(exact, PoiType.Repair).IsActiveWork
+           && !Map(exact, PoiType.Mail).IsActiveWork
+           && !Map(exact, PoiType.Train).IsActiveWork
+           && !Map(exact, inWorld: false).IsActiveWork
+           && !Map(exact, dead: true).IsActiveWork
+           && !Map(exact, ghost: true).IsActiveWork
+           && !Map(exact, taxi: true).IsActiveWork
+           && !Map(exact, transport: true).IsActiveWork
+           && !Map(exact, resting: true).IsActiveWork
+           && !Map(exact, paused: true).IsActiveWork
+           && !Map(exact, combat: true, questCombat: false).IsActiveWork,
+        "loading, death/ghost, taxi/transport, vendor/repair/mail/trainer, rest, pause, unrelated combat, and another quest must not accrue work time");
+    Assert(Map(exact, combat: true, questCombat: true).IsActiveWork,
+        "combat proven attributable to the exact objective may accrue active work time");
+}
+
+void TestAttemptOwnershipUsesTheExactGenerationToken()
+{
+    var ownership = new WholesomeAttemptOwnership();
+    var owner = new object();
+    var key = QuestRecoveryKey.ForQuestStage(867, QuestRecoveryStage.Objective);
+    ownership.Begin(owner, key, new QuestRecoveryDecision
+    {
+        State = QuestRecoveryState.Attempting,
+        MayAttempt = true,
+        AttemptGeneration = 42
+    });
+
+    Assert(!ownership.TryComplete(new object(), "stale behavior", out _),
+        "a replaced or unrelated behavior must not release another activation's ownership");
+    Assert(ownership.TryComplete(owner, "objective progressed", out var success)
+           && success.Kind == QuestAttemptOutcomeKind.Success
+           && success.Key.Equals(key)
+           && success.AttemptGeneration == 42,
+        "successful Wholesome outcomes must carry the exact generation returned by TryBeginAttempt");
+    Assert(!ownership.TryComplete(owner, "duplicate callback", out _),
+        "a duplicate completion callback must be rejected after ownership is released");
+}
+
+void TestProgressReleaseAllowsSameBehaviorToClaimALaterGeneration()
+{
+    var scheduler = new QuestScheduler(
+        new DataLoader(Path.Combine(Path.GetTempPath(), "missing-wholesome-data.json")),
+        new ProfileBuilder(Path.Combine(Path.GetTempPath(), "wholesome-progress-release.xml")),
+        new WholesomeAQSettings());
+    var behavior = new ForcedQuestObjective(TestQuestObjective.Create(867, new WoWPoint(80, 0, 0)));
+    var calls = 0;
+    QuestRecoveryDecision Begin(QuestRecoveryKey _) => new()
+    {
+        State = QuestRecoveryState.Attempting,
+        MayAttempt = true,
+        AttemptGeneration = ++calls
+    };
+
+    scheduler.ObserveActivation(behavior, Begin, _ => { }, () => { });
+    scheduler.ReleaseActivation(behavior);
+    scheduler.ObserveActivation(behavior, Begin, _ => { }, () => { });
+    Assert(calls == 2,
+        "objective progress must release the activation cache so the same live behavior can own a later exact attempt generation");
+}
+
+void TestCompletedOwnedStageRequestsRefreshBeforeQuestOrderRunsOut()
+{
+    var pickup = new ForcedQuestPickUp(867, "Pickup", 1001, "Giver", WoWPoint.Zero, null);
+    var pickupKey = QuestRecoveryKey.ForNpc(867, QuestRecoveryStage.Pickup, 1001);
+    var turnIn = new ForcedQuestTurnIn(867, "Turn in", 1002, "Ender", WoWPoint.Zero);
+    var turnInKey = QuestRecoveryKey.ForNpc(867, QuestRecoveryStage.TurnIn, 1002);
+    var objective = new ForcedQuestObjective(TestQuestObjective.Create(867, WoWPoint.Zero));
+    var objectiveKey = QuestRecoveryKey.ForQuestStage(867, QuestRecoveryStage.Objective);
+
+    Assert(WholesomeAutoQuest.IsCompletedOwnedStage(pickup, pickupKey, questAccepted: true, authoritativeCompleted: false, behaviorDone: true)
+           && !WholesomeAutoQuest.IsCompletedOwnedStage(pickup, pickupKey, questAccepted: false, authoritativeCompleted: false, behaviorDone: true)
+           && WholesomeAutoQuest.IsCompletedOwnedStage(turnIn, turnInKey, questAccepted: false, authoritativeCompleted: true, behaviorDone: true)
+           && WholesomeAutoQuest.IsCompletedOwnedStage(objective, objectiveKey, questAccepted: true, authoritativeCompleted: false, behaviorDone: true),
+        "a completed exact pickup, objective, or turn-in must queue its replacement profile before the current guarded order runs out");
+    Assert(!WholesomeAutoQuest.IsCompletedOwnedStage(pickup, objectiveKey, questAccepted: true, authoritativeCompleted: false, behaviorDone: true),
+        "stage completion must never be attributed through another quest-stage key");
+}
+
+void TestTimedIdleSuppressesOldQuestOrderUntilARebuildSelectsWork()
+{
+    var timedIdle = new QuestScheduleResult
+    {
+        FallbackMode = QuestFallbackMode.TimedIdle,
+        EarliestRetryUtc = utcNow.AddMinutes(10)
+    };
+    var expanding = new QuestScheduleResult { FallbackMode = QuestFallbackMode.None };
+    var selected = new QuestScheduleResult
+    {
+        Selected = new[] { Candidate(867, QuestWorkStage.Objective, 10, eligible: true) }
+    };
+
+    Assert(!WholesomeAutoQuest.ShouldExecuteQuestRoot(stopped: false, timedIdle)
+           && !WholesomeAutoQuest.ShouldExecuteQuestRoot(stopped: false, expanding)
+           && WholesomeAutoQuest.ShouldExecuteQuestRoot(stopped: false, selected)
+           && !WholesomeAutoQuest.ShouldExecuteQuestRoot(stopped: true, selected),
+        "no eligible work must suppress the stale generated quest order until a coalesced rebuild selects work");
+}
+
+void TestPickupOutcomeCoalescingStillReportsTheFailureEpisode()
+{
+    var key = QuestRecoveryKey.ForNpc(867, QuestRecoveryStage.Pickup, 1001);
+    var observation = QuestAttemptOutcome.Observation(
+        key, QuestFailureReason.PickupWrongQuestShown, "same dialog evidence");
+    var repeatedObservation = QuestAttemptOutcome.Observation(
+        key, QuestFailureReason.PickupWrongQuestShown, "same dialog evidence");
+    var failure = QuestAttemptOutcome.Failure(
+        key, QuestFailureReason.PickupWrongQuestShown, "same dialog evidence");
+
+    Assert(WholesomeAutoQuest.PickupOutcomeFingerprint(observation) ==
+           WholesomeAutoQuest.PickupOutcomeFingerprint(repeatedObservation),
+        "repeated samples of one pickup mismatch must coalesce");
+    Assert(WholesomeAutoQuest.PickupOutcomeFingerprint(observation) !=
+           WholesomeAutoQuest.PickupOutcomeFingerprint(failure),
+        "the third-cycle failure episode must not be hidden by an earlier observation with identical dialog evidence");
+}
+
+QuestWorkSample WorkSample(
+    QuestRecoveryKey key,
+    IReadOnlyList<int> counts,
+    QuestRecoveryKey cluster,
+    bool active,
+    bool endpointPathFailed = false,
+    IReadOnlyList<QuestRecoveryKey>? knownEndpoints = null,
+    bool allHotspotsUnavailable = false,
+    bool deathAttributable = false) => new()
+{
+    Key = key,
+    ObjectiveCounts = counts,
+    ClusterKey = cluster,
+    IsActiveWork = active,
+    EndpointPathFailed = endpointPathFailed,
+    KnownEndpointKeys = knownEndpoints ?? Array.Empty<QuestRecoveryKey>(),
+    AllHotspotsUnavailable = allHotspotsUnavailable,
+    DeathAttributable = deathAttributable
+};
+
+void TestProductionCallerNoLongerNeedsBlacklistCompatibilityAdapters()
 {
     var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
     var sync = typeof(QuestScheduler).GetMethod("SyncBlacklist", flags);
@@ -72,13 +428,8 @@ void TestLegacyCallerUsesTemporaryNarrowCompatibilityAdapters()
 
     Assert(typeof(WholesomeAutoQuest).Assembly == typeof(QuestScheduler).Assembly,
         "the production-linked regression must compile the actual bot caller with the scheduler");
-    Assert(sync != null && giver != null,
-        "the legacy caller must compile only through temporary scheduler compatibility adapters");
-    Assert(sync!.GetCustomAttributes(typeof(ObsoleteAttribute), inherit: false).Length == 1
-           && giver!.GetCustomAttributes(typeof(ObsoleteAttribute), inherit: false).Length == 1,
-        "temporary scheduler compatibility adapters must be explicitly obsolete for Task 4 removal");
-    Assert(!sync!.IsPublic && !giver!.IsPublic,
-        "compatibility adapters must not restore a public scheduler blacklist API");
+    Assert(sync == null && giver == null,
+        "Task 4 must remove temporary blacklist compatibility adapters after converting the real caller to scoped outcomes");
 }
 
 void TestOrdinaryObjectiveEndpointPrecedesHalfOpenAlternative()
@@ -507,6 +858,25 @@ void TestDeniedActivationLeavesUnownedPoiUntouched()
                objective, objectiveKey, objective, coincidentHotspot, () => clearCalls++)
            && clearCalls == 0,
         "an untagged generic objective hotspot must not be cleared even when it is coincident with the objective location");
+}
+
+void TestOutcomePoiCleanupUsesTheReportedFailureScope()
+{
+    var location = new WoWPoint(20, 30, 0);
+    var objective = new ForcedQuestObjective(TestQuestObjective.Create(867, location));
+    var stageKey = QuestRecoveryKey.ForQuestStage(867, QuestRecoveryStage.Objective);
+    var endpointKey = QuestRecoveryKey.ForEndpoint(867, QuestRecoveryStage.Navigation, 1, "cell:0:0");
+    var questPoi = new BotPoi(location, PoiType.Quest) { Entry = 867 };
+    var clears = 0;
+
+    Assert(!WholesomeAutoQuest.TryClearRecoveryOutcomePoi(
+               objective, endpointKey, objective, questPoi, () => clears++)
+           && clears == 0,
+        "an endpoint-only path failure must not clear a broader objective-stage POI");
+    Assert(WholesomeAutoQuest.TryClearRecoveryOutcomePoi(
+               objective, stageKey, objective, questPoi, () => clears++)
+           && clears == 1,
+        "an exact objective-stage failure may clear its proven quest-owned POI");
 }
 
 void TestStagePriority()
@@ -1568,6 +1938,18 @@ sealed class TestNavigationProvider : NavigationProvider
 
     public override float? PathDistance(WoWPoint from, WoWPoint to, float maxDistance = float.MaxValue) =>
         _pathDistance(to);
+}
+
+sealed class TestRecoveryClock : IQuestRecoveryClock
+{
+    public TestRecoveryClock(DateTime utcNow)
+    {
+        UtcNow = utcNow;
+    }
+
+    public DateTime UtcNow { get; private set; }
+
+    public void Advance(TimeSpan amount) => UtcNow = UtcNow.Add(amount);
 }
 
 sealed class TestQuestObjective : Bots.Quest.Objectives.QuestObjective
