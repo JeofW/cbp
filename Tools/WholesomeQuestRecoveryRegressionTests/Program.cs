@@ -61,6 +61,7 @@ try
     TestSchedulerDeduplicatesRelationRowsAndExactEndpoints();
     TestRefreshGateCoalescesConcurrentRequestsAndStopsCallbacks();
     TestLifecycleGateDoesNotGrowSubscriptionsAcrossRestarts();
+    TestStopAbandonsOwnedAttemptBeforeClearingLifecycleState();
     TestLifecycleResetDoesNotCarryPickupCyclesAcrossRestart();
     TestProgressMonitorCountsOnlyActiveWorkAndCoalescesOneStall();
     TestProgressMonitorScopesEndpointAndDeathFailures();
@@ -69,6 +70,7 @@ try
     TestDeathEventConsumesOnlyPreDeathOwnedQuestCombatSnapshot();
     TestAttemptOwnershipUsesTheExactGenerationToken();
     TestOwnedFailureBindsGenerationWithoutSyntheticSuccess();
+    TestFinalEndpointAndStageFailuresReportInOneOwnedSequence();
     TestCompletedOwnedStageRequestsRefreshBeforeQuestOrderRunsOut();
     TestTimedIdleSuppressesOldQuestOrderUntilARebuildSelectsWork();
     TestPickupOutcomeCoalescingStillReportsTheFailureEpisode();
@@ -92,7 +94,8 @@ void TestRefreshGateCoalescesConcurrentRequestsAndStopsCallbacks()
             Interlocked.Increment(ref accepted);
     });
 
-    Assert(accepted == 1 && gate.Begin(),
+    var firstLease = gate.Begin();
+    Assert(accepted == 1 && firstLease.HasValue,
         "100 concurrent refresh requests must produce one pending main-thread refresh");
     accepted = 0;
     Parallel.For(0, 100, _ =>
@@ -102,17 +105,27 @@ void TestRefreshGateCoalescesConcurrentRequestsAndStopsCallbacks()
     });
     Assert(accepted == 1,
         "requests arriving during a running refresh must coalesce into one follow-up latch");
-    gate.Complete();
-    Assert(gate.Begin(),
+    gate.Complete(firstLease.GetValueOrDefault());
+    var followupLease = gate.Begin();
+    Assert(followupLease.HasValue,
         "completion must promote the one running-state latch to a pending refresh");
     gate.TryRequest();
     gate.Stop();
-    gate.Complete();
-    Assert(!gate.TryRequest() && !gate.Begin(),
+    gate.Complete(followupLease.GetValueOrDefault());
+    Assert(!gate.TryRequest() && !gate.Begin().HasValue,
         "Stop must drop pending/rerun bits and win a race with a stale running callback's Complete");
     gate.Start();
-    Assert(gate.TryRequest() && gate.Begin(),
+    Assert(gate.TryRequest(), "a deliberate later bot start must accept one refresh request");
+    var restartedLease = gate.Begin();
+    Assert(restartedLease.HasValue,
         "a deliberate later bot start must reset the stopped refresh gate");
+    Assert(gate.TryRequest(), "the restarted run must record its own one-bit follow-up latch");
+    gate.Complete(followupLease.GetValueOrDefault());
+    Assert(!gate.Begin().HasValue,
+        "an old-epoch Complete after a restarted Begin must not alter the new running state or latch");
+    gate.Complete(restartedLease.GetValueOrDefault());
+    Assert(gate.Begin().HasValue,
+        "the matching restarted lease must promote exactly its own latched follow-up");
 }
 
 void TestLifecycleGateDoesNotGrowSubscriptionsAcrossRestarts()
@@ -156,14 +169,43 @@ void TestLifecycleResetDoesNotCarryPickupCyclesAcrossRestart()
         key, QuestFailureReason.PickupWrongQuestShown, "wrong quest");
     var failure = QuestAttemptOutcome.Failure(
         key, QuestFailureReason.PickupWrongQuestShown, "wrong quest");
-    monitor!.Observe(key, 12, 1, observation, active: true);
-    monitor.Observe(key, 12, 2, observation, active: true);
-    Assert(monitor.Observe(key, 12, 3, failure, active: true) == failure,
+    monitor!.Observe(key, 12, 1, Tagged(observation, 1), active: true);
+    monitor.Observe(key, 12, 2, Tagged(observation, 2), active: true);
+    var third = Tagged(failure, 3);
+    Assert(monitor.Observe(key, 12, 3, third, active: true) == third,
         "the lifecycle fixture must reach a reported pickup failure before restart");
 
     bot.ResetRecoveryLifecycleState();
-    Assert(monitor.Observe(key, 12, 4, failure, active: true) == null,
+    Assert(monitor.Observe(key, 12, 4, Tagged(failure, 4), active: true) == null,
         "Stop/Start reset must prevent the same pickup from inheriting target, generation, token, count, outcome, or reported state");
+}
+
+void TestStopAbandonsOwnedAttemptBeforeClearingLifecycleState()
+{
+    var ownership = new WholesomeAttemptOwnership();
+    var owner = new object();
+    var key = QuestRecoveryKey.ForQuestStage(866, QuestRecoveryStage.Objective);
+    ownership.Begin(owner, key, new QuestRecoveryDecision
+    {
+        State = QuestRecoveryState.Attempting,
+        MayAttempt = true,
+        AttemptGeneration = 41
+    });
+    var calls = new List<(QuestRecoveryKey Key, long Generation)>();
+
+    Assert(WholesomeAutoQuest.AbandonOwnedAttempt(
+               ownership,
+               (ownedKey, generation) =>
+               {
+                   calls.Add((ownedKey, generation));
+                   return ownership.TryGet(owner, out _, out var stillOwned) && stillOwned == generation;
+               })
+           && calls.Count == 1
+           && calls[0].Key.Equals(key)
+           && calls[0].Generation == 41,
+        "Stop must abandon the exact manager generation while local ownership is still available");
+    Assert(ownership.TryGet(owner, out _, out _),
+        "the neutral manager release must happen before Stop clears local lifecycle state");
 }
 
 void TestProgressMonitorCountsOnlyActiveWorkAndCoalescesOneStall()
@@ -515,6 +557,50 @@ void TestOwnedFailureBindsGenerationWithoutSyntheticSuccess()
         "production failure reporting must call the manager once while local ownership remains, then release locally");
 }
 
+void TestFinalEndpointAndStageFailuresReportInOneOwnedSequence()
+{
+    var ownership = new WholesomeAttemptOwnership();
+    var owner = new object();
+    var stage = QuestRecoveryKey.ForQuestStage(868, QuestRecoveryStage.Objective);
+    var endpoint = QuestRecoveryKey.ForEndpoint(868, QuestRecoveryStage.Navigation, 1, "cell:8:9");
+    ownership.Begin(owner, stage, new QuestRecoveryDecision
+    {
+        State = QuestRecoveryState.Attempting,
+        MayAttempt = true,
+        AttemptGeneration = 61
+    });
+    IReadOnlyList<QuestAttemptOutcome> reported = Array.Empty<QuestAttemptOutcome>();
+    bool ownedDuringBatch = false;
+
+    Assert(WholesomeAutoQuest.ReportOwnedFailures(
+               ownership,
+               owner,
+               new[]
+               {
+                   QuestAttemptOutcome.Failure(endpoint, QuestFailureReason.PathGenerationFailed, "endpoint failed"),
+                   QuestAttemptOutcome.Failure(stage, QuestFailureReason.NoNavigableHotspot, "stage exhausted")
+               },
+               bound =>
+               {
+                   reported = bound;
+                   ownedDuringBatch = ownership.TryGet(owner, out _, out var generation) && generation == 61;
+                   return new[]
+                   {
+                       new QuestRecoveryDecision { State = QuestRecoveryState.CoolingDown },
+                       new QuestRecoveryDecision { State = QuestRecoveryState.CoolingDown }
+                   };
+               },
+               out var decisions)
+           && ownedDuringBatch
+           && reported.Count == 2
+           && reported[0].Key.Equals(endpoint)
+           && reported[1].Key.Equals(stage)
+           && reported.All(item => item.AttemptKey?.Equals(stage) == true && item.AttemptGeneration == 61)
+           && decisions.Count == 2
+           && !ownership.TryGet(owner, out _, out _),
+        "the final endpoint failure must be applied first under stage ownership, followed by the stage failure that releases it");
+}
+
 void TestProgressReleaseAllowsSameBehaviorToClaimALaterGeneration()
 {
     var scheduler = new QuestScheduler(
@@ -641,23 +727,41 @@ void TestPickupRecoveryRequiresThreeDistinctActiveOwnedCycles()
            && !Active(key, poiType: PoiType.Repair),
         "pickup recovery evidence must require exact active ownership and exclude loading, cooling/denied, death, rest, pause, combat, other quests, and non-pickup work");
 
-    Assert(monitor.Observe(key, 7, interactionCycle: 1, observation, active: false) == null
-           && monitor.Observe(key, 7, interactionCycle: 2, failure, active: false) == null,
+    Assert(monitor.Observe(key, 7, interactionCycle: 1, Tagged(observation, 1), active: false) == null
+           && monitor.Observe(key, 7, interactionCycle: 2, Tagged(failure, 2), active: false) == null,
         "excluded pickup cycles must not count toward failure");
-    Assert(monitor.Observe(key, 7, interactionCycle: 3, observation, active: true) == observation
-           && monitor.Observe(key, 7, interactionCycle: 3, observation, active: true) == null,
-        "one real active interaction cycle may report one observation but duplicate pulses must not count");
-    Assert(monitor.Observe(key, 7, interactionCycle: 4, observation, active: true) == observation,
+    Assert(monitor.Observe(key, 7, interactionCycle: 3, Tagged(observation, 2), active: true) == null,
+        "a persisted observation from an earlier interaction must not consume the current cycle");
+    var cycle3 = Tagged(observation, 3);
+    Assert(monitor.Observe(key, 7, interactionCycle: 3, cycle3, active: true) == cycle3
+           && monitor.Observe(key, 7, interactionCycle: 3, cycle3, active: true) == null,
+        "one exact tagged active interaction result may report once but duplicate pulses must not count");
+    var cycle4 = Tagged(observation, 4);
+    Assert(monitor.Observe(key, 7, interactionCycle: 4, cycle4, active: true) == cycle4,
         "the second distinct active cycle must remain an observation");
-    Assert(monitor.Observe(key, 7, interactionCycle: 5, failure, active: true) == failure,
+    var cycle5 = Tagged(failure, 5);
+    Assert(monitor.Observe(key, 7, interactionCycle: 5, cycle5, active: true) == cycle5,
         "only the third distinct active interaction cycle may report pickup failure");
 
     monitor.Reset();
-    Assert(monitor.Observe(key, 7, interactionCycle: 6, failure, active: true) == null,
+    Assert(monitor.Observe(key, 7, interactionCycle: 6, Tagged(failure, 6), active: true) == null,
         "lifecycle reset must discard pickup target, generation, interaction token/count, and failure state");
     Assert(typeof(ForcedQuestPickUp).GetProperty("InteractionCycleId") != null,
         "production pickup behavior must expose its existing real interaction-cycle token read-only");
 }
+
+QuestAttemptOutcome Tagged(QuestAttemptOutcome outcome, long interactionCycleId) => new()
+{
+    Key = outcome.Key,
+    Kind = outcome.Kind,
+    Reason = outcome.Reason,
+    IsFailureEpisode = outcome.IsFailureEpisode,
+    Evidence = outcome.Evidence,
+    ObservedQuestId = outcome.ObservedQuestId,
+    OfferedQuestIds = outcome.OfferedQuestIds,
+    ObjectiveCounts = outcome.ObjectiveCounts,
+    InteractionCycleId = interactionCycleId
+};
 
 QuestWorkSample WorkSample(
     QuestRecoveryKey key,

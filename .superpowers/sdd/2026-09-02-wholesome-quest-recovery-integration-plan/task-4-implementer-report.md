@@ -204,3 +204,94 @@ External runtime review change:
 - `QuestScheduler.cs` remains at Task 4 SHA-256 `B621479733879722609AA7B1785BA29E9AF85D97D898B3D2A82C5DFE1FA0B921`.
 
 The rollback backup still verifies all seven manifest entries with zero mismatches. Unrelated vendor/grind working-tree changes remain untouched and excluded. No push, deployment, live replacement, backup mutation, or apphost execution occurred.
+
+## Review Round 2 Corrections
+
+All six round-two findings were implemented with production-linked tests before their corresponding production changes:
+
+- `QuestRecoveryManager.AbandonAttempt` neutrally releases only the exact current `Attempting` generation to `Eligible`. It adds no success, failure, evidence, or escalation. Wholesome `Stop` invokes this manager release while local ownership still exists, then clears local lifecycle state and flushes. Same-identity restart can immediately acquire a newer generation; a stale generation cannot release it.
+- `ForcedQuestPickUp` begins its interaction cycle and atomically clears the published result before calling the real giver/item interaction, which precedes the existing 1.5-second dialog wait. Outcomes carry `InteractionCycleId`, are published only for the still-current cycle, and `TryConsumeOutcome` removes them once. Wholesome no longer reads persistent `LastOutcome`; its monitor accepts only a result tagged for the exact current cycle, so a prior observation cannot burn a later result.
+- A positively loaded gossip/native offered list that excludes the target now produces a tagged `PickupTargetNotOffered` observation/failure through the same three-cycle tracker. Unknown, unloaded, empty-transition, or ambiguous evidence remains `Wait`.
+- Final path exhaustion is reported as an ordered generated-failure batch: subordinate endpoint `PathGenerationFailed` first while the stage owner remains `Attempting`, then stage `NoNavigableHotspot`, which releases the exact stage generation. Both endpoint and stage enter their scoped policy state; the endpoint is no longer demoted to an observation.
+- `RefreshGate.Begin` returns a lease containing lifecycle epoch and run identity. `Complete` requires that exact lease. `Stop` and `Start` advance the epoch, clear pending/rerun state, and an old completion arriving after a restarted `Begin` cannot alter the new running state or its one-bit latch.
+- Generated-failure authority is validated in both the public factory and manager. Exact-source generation, same-quest hierarchy, and target availability are required. Cross-quest and structurally unrelated targets are rejected, stale sources are inert, and a distinct target already `Attempting` under another generation is never overwritten. The permitted distinct relationship is objective-stage owner to same-quest navigation endpoint; manager-locked batches require subordinate failures first and the source-stage failure last.
+
+Round-two RED evidence:
+
+```text
+NEUTRAL_ABANDON_RED: CS1061, QuestRecoveryManager had no AbandonAttempt.
+STOP_ABANDON_RED: CS0117, WholesomeAutoQuest had no AbandonOwnedAttempt production seam.
+PICKUP_TAGGED_RESULT_RED: missing TryConsumeOutcome, InteractionCycleId, and offeredQuestListLoaded contract.
+PICKUP_LOADED_LIST_RED: linked test exited 1 because a positively loaded missing-target list still returned Wait/wrong reason.
+PICKUP_EXACT_TAG_RED: linked test exited 1 because an earlier observation was paired with and consumed a new cycle.
+GENERATED_FAILURE_AUTHORITY_RED: CS1061, manager had no ReportGeneratedFailures atomic contract.
+FINAL_ENDPOINT_STAGE_RED: CS0117, WholesomeAutoQuest had no ReportOwnedFailures ordered production path.
+REFRESH_EPOCH_RED: compile failed because Begin still returned bool and Complete accepted no lease.
+```
+
+Fresh sequential GREEN evidence:
+
+```text
+[QuestRecoveryCore]
+Build succeeded. 3246 Warning(s), 0 Error(s).
+Quest recovery regression tests passed.
+BUILD_EXIT=0 TEST_EXIT=0
+
+[QuestPickupCore]
+Build succeeded. 3246 Warning(s), 0 Error(s).
+Quest pickup policy regression tests passed.
+BUILD_EXIT=0 TEST_EXIT=0
+
+[Wholesome]
+BUILD_EXIT=0 TEST_EXIT=0 SCOPED_COMPILER_DIAGNOSTICS=0
+Wholesome scheduler recovery regression tests passed.
+
+[FullReleaseX86]
+Build succeeded. 3250 Warning(s), 0 Error(s).
+BUILD_EXIT=0
+```
+
+All builds used `D:\World of Warcraft 3.3.5a\CB\.dotnet-sdk\dotnet.exe`, `Platform=x86`, `UseAppHost=false`, `--no-restore`, `--no-incremental`, and direct test DLL execution.
+
+Round-two static/integrity evidence:
+
+```text
+PLAN_FORBIDDEN_SCAN:
+WholesomeAutoQuest.cs:682: forceStop: () => TreeRoot.Stop(),
+AUGMENTED_FORBIDDEN_SCAN_MATCHES=0
+TREE_ROOT_START_COUNT=0
+LEGACY_ADAPTER_COUNT=0
+PROFILE_LOAD_COUNT=1
+BASE_STOP_COUNT=1
+REPORT_PROGRESS_COUNT=1
+SUCCESS_FACTORY_COUNT=1
+PERSISTENT_PICKUP_OUTER_READ_COUNT=0
+TRY_CONSUME_PICKUP_COUNT=1
+NO_ARG_REFRESH_COMPLETE_COUNT=0
+BACKUP_HASH_MISMATCHES=0
+SCOPED_DIFF_CHECK_LINES=0
+WHOLESOME_APPHOST_EXISTS=False
+CORE_APPHOST_EXISTS=False
+PICKUP_APPHOST_EXISTS=False
+```
+
+The only plan-scan match is still the explicit user-clicked Settings `Force Stop` action. The augmented scan again covered restart timers, automatic blacklist writers/APIs, abandonment, arbitrary active-quest selection, level/grind file discovery, `TreeRoot.Start`, and removed pickup wall-clock/state fields.
+
+Repo-local round-two files:
+
+- `Bots/Quest/QuestOrder/ForcedQuestPickUp.cs`
+- `Bots/Quest/QuestOrder/QuestPickupDialogPolicy.cs`
+- `Styx/Logic/Questing/Recovery/QuestRecoveryManager.cs`
+- `Styx/Logic/Questing/Recovery/QuestRecoveryTypes.cs`
+- `Tools/QuestPickupPolicyRegressionTests/Program.cs`
+- `Tools/QuestRecoveryRegressionTests/Program.cs`
+- `Tools/WholesomeQuestRecoveryRegressionTests/Program.cs`
+- `.superpowers/sdd/2026-09-02-wholesome-quest-recovery-integration-plan/task-4-implementer-report.md`
+
+External runtime round-two state:
+
+- `D:\World of Warcraft 3.3.5a\CB\Bots\WholesomeAutoQuest-master\WholesomeAutoQuest.cs`
+  - SHA-256: `8342453B47508491D8DD7EB302152AF035E1F1150C3385A20757D3C7A867176C`
+- `QuestScheduler.cs` remains unchanged at SHA-256 `B621479733879722609AA7B1785BA29E9AF85D97D898B3D2A82C5DFE1FA0B921`.
+
+The rollback backup still has zero manifest mismatches. Existing unrelated vendor/grind dirt remains untouched and excluded. No push, deployment, live replacement, backup mutation, or apphost execution occurred.

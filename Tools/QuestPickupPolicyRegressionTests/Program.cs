@@ -1,6 +1,9 @@
 using Bots.Quest.QuestOrder;
+using Styx;
+using Styx.Logic.Pathing;
 using Styx.Logic.Questing;
 using Styx.Logic.Questing.Recovery;
+using Styx.WoWInternals.WoWObjects;
 
 try
 {
@@ -19,6 +22,8 @@ try
     TestWaitPreservesMismatchLifecycleAcrossCycles();
     TestWaitAfterUnavailablePreservesFailureOutcome();
     TestAuthorizedAdvanceResetsMismatchLifecycle();
+    TestOutcomeIsTaggedAndConsumedOnceByItsProducingInteraction();
+    TestLoadedOfferListMissingTargetIsNotUnavailableAmbiguity();
     Console.WriteLine("Quest pickup policy regression tests passed.");
 }
 catch (Exception ex)
@@ -294,6 +299,80 @@ static void TestAuthorizedAdvanceResetsMismatchLifecycle()
     Assert(result == null && tracker.ConfirmedCycles == 0
            && !tracker.PickupUnavailable && tracker.LastOutcome == null,
         "an affirmative authorized advance must reset mismatch lifecycle state");
+}
+
+static void TestOutcomeIsTaggedAndConsumedOnceByItsProducingInteraction()
+{
+    var pickup = new ForcedQuestPickUp(
+        876, "A Final Blow", 123, "Giver", WoWPoint.Zero, null);
+    var interact = typeof(ForcedQuestPickUp).GetMethod(
+        "InteractWithQuestGiver",
+        System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+    var record = typeof(ForcedQuestPickUp).GetMethod(
+        "RecordPickupDecision",
+        System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+    Assert(interact != null && record != null,
+        "the real interaction path must own explicit cycle-start and result-publication boundaries");
+
+    for (long expectedCycle = 1; expectedCycle <= 3; expectedCycle++)
+    {
+        try
+        {
+            interact!.Invoke(pickup, new object?[] { null });
+            throw new InvalidOperationException("the null-giver fixture must stop after the real cycle start");
+        }
+        catch (System.Reflection.TargetInvocationException ex) when (ex.InnerException is NullReferenceException)
+        {
+        }
+        Assert(pickup.InteractionCycleId == expectedCycle
+               && !pickup.TryConsumeOutcome(out _),
+            "the real giver interaction must clear prior output before the following 1.5-second dialog wait");
+        record!.Invoke(pickup, new object[] { Decide(shown: 867, accept: true) });
+        Assert(pickup.TryConsumeOutcome(out var result)
+               && result.InteractionCycleId == expectedCycle
+               && result.IsFailureEpisode == (expectedCycle == 3),
+            "the produced dialog result must be tagged with its exact interaction and fail only on cycle three");
+        Assert(!pickup.TryConsumeOutcome(out _),
+            "an outer pulse must consume a tagged pickup outcome at most once");
+    }
+}
+
+static void TestLoadedOfferListMissingTargetIsNotUnavailableAmbiguity()
+{
+    var loadedMissing = QuestPickupDialogPolicy.Decide(
+        876, "A Final Blow", 0, "", 123, new uint[] { 867, 875 },
+        acceptVisible: false,
+        continueVisible: false,
+        completeQuestVisible: false,
+        rewardChoicesAvailable: false,
+        shownQuestCompletionKnown: false,
+        shownQuestCompleted: false,
+        shownTitleUniquelyResolved: false,
+        offeredQuestListLoaded: true);
+    var unknown = QuestPickupDialogPolicy.Decide(
+        876, "A Final Blow", 0, "", 123, Array.Empty<uint>(),
+        acceptVisible: false,
+        continueVisible: false,
+        completeQuestVisible: false,
+        rewardChoicesAvailable: false,
+        shownQuestCompletionKnown: false,
+        shownQuestCompleted: false,
+        shownTitleUniquelyResolved: false,
+        offeredQuestListLoaded: false);
+
+    Assert(loadedMissing.Action == QuestPickupDialogAction.RejectMismatch
+           && loadedMissing.Reason == QuestFailureReason.PickupTargetNotOffered,
+        "a positively loaded gossip/native list missing the target must produce PickupTargetNotOffered");
+    Assert(unknown.Action == QuestPickupDialogAction.Wait
+           && unknown.Reason == QuestFailureReason.None,
+        "an unknown, unloaded, or ambiguous list must remain Wait");
+
+    var tracker = new QuestPickupMismatchTracker();
+    var outcome = tracker.Observe(loadedMissing, interactionCycleId: 91);
+    Assert(outcome.Reason == QuestFailureReason.PickupTargetNotOffered
+           && outcome.InteractionCycleId == 91
+           && outcome.OfferedQuestIds.SequenceEqual(new uint[] { 867, 875 }),
+        "the loaded-list result must use the same tagged structured outcome mechanism as a shown-quest mismatch");
 }
 
 static QuestPickupDialogDecision Decide(

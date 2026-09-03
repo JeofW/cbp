@@ -105,6 +105,7 @@ public sealed class QuestAttemptOutcome
     public QuestRecoveryKey? AttemptKey { get; init; }
     public QuestAttemptOutcomeKind Kind { get; init; }
     public long AttemptGeneration { get; init; }
+    public long InteractionCycleId { get; init; }
     public QuestFailureReason Reason { get; init; }
     public bool IsFailureEpisode { get; init; }
     public string Evidence { get; init; } = "";
@@ -130,11 +131,16 @@ public sealed class QuestAttemptOutcome
         QuestRecoveryKey attemptKey,
         long attemptGeneration,
         QuestFailureReason reason,
-        string evidence) =>
-        new()
+        string evidence)
+    {
+        ArgumentNullException.ThrowIfNull(key);
+        ArgumentNullException.ThrowIfNull(attemptKey);
+        if (!IsAuthorizedGeneratedFailureTarget(attemptKey, key))
+            throw new ArgumentException("The failure target is outside the attempt owner's quest hierarchy.", nameof(key));
+        return new()
         {
-            Key = key ?? throw new ArgumentNullException(nameof(key)),
-            AttemptKey = attemptKey ?? throw new ArgumentNullException(nameof(attemptKey)),
+            Key = key,
+            AttemptKey = attemptKey,
             Kind = QuestAttemptOutcomeKind.Failure,
             AttemptGeneration = attemptGeneration > 0
                 ? attemptGeneration
@@ -143,6 +149,18 @@ public sealed class QuestAttemptOutcome
             IsFailureEpisode = true,
             Evidence = evidence ?? ""
         };
+    }
+
+    internal static bool IsAuthorizedGeneratedFailureTarget(
+        QuestRecoveryKey attemptKey,
+        QuestRecoveryKey targetKey) =>
+        attemptKey != null && targetKey != null &&
+        (attemptKey.Equals(targetKey) ||
+         attemptKey.QuestId == targetKey.QuestId &&
+         attemptKey.Scope == QuestRecoveryScope.QuestStage &&
+         attemptKey.Stage == QuestRecoveryStage.Objective &&
+         targetKey.Scope == QuestRecoveryScope.Endpoint &&
+         targetKey.Stage == QuestRecoveryStage.Navigation);
 
     public static QuestAttemptOutcome Observation(QuestRecoveryKey key,
         QuestFailureReason reason, string evidence) =>

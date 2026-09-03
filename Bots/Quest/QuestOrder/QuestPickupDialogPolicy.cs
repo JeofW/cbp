@@ -127,7 +127,8 @@ public static class QuestPickupDialogPolicy
         bool rewardChoicesAvailable,
         bool shownQuestCompletionKnown,
         bool shownQuestCompleted,
-        bool shownTitleUniquelyResolved)
+        bool shownTitleUniquelyResolved,
+        bool offeredQuestListLoaded = false)
     {
         uint[] offeredSnapshot = (offeredQuestIds ?? Array.Empty<uint>()).ToArray();
         string targetTitle = (targetQuestName ?? "").Trim();
@@ -143,16 +144,21 @@ public static class QuestPickupDialogPolicy
         {
             action = acceptVisible ? QuestPickupDialogAction.AcceptTarget : QuestPickupDialogAction.Wait;
         }
-        else if (shownQuestId == 0 && shownTitle.Length == 0)
-        {
-            action = QuestPickupDialogAction.Wait;
-        }
         else if (shownQuestId != 0
                  && shownQuestCompletionKnown
                  && shownQuestCompleted
                  && (continueVisible || completeQuestVisible || rewardChoicesAvailable))
         {
             action = QuestPickupDialogAction.AdvanceCompletedQuest;
+        }
+        else if (offeredQuestListLoaded && !offeredSnapshot.Contains(targetQuestId))
+        {
+            action = QuestPickupDialogAction.RejectMismatch;
+            reason = QuestFailureReason.PickupTargetNotOffered;
+        }
+        else if (shownQuestId == 0 && shownTitle.Length == 0)
+        {
+            action = QuestPickupDialogAction.Wait;
         }
         else
         {
@@ -190,7 +196,8 @@ public static class QuestPickupDialogPolicy
 
     public static QuestAttemptOutcome CreateMismatchOutcome(
         QuestPickupDialogDecision decision,
-        int confirmedInteractionCycles)
+        int confirmedInteractionCycles,
+        long interactionCycleId = 0)
     {
         if (decision == null)
             throw new ArgumentNullException(nameof(decision));
@@ -206,11 +213,12 @@ public static class QuestPickupDialogPolicy
             Kind = confirmedInteractionCycles >= 3
                 ? QuestAttemptOutcomeKind.Failure
                 : QuestAttemptOutcomeKind.Observation,
-            Reason = QuestFailureReason.PickupWrongQuestShown,
+            Reason = decision.Reason,
             IsFailureEpisode = confirmedInteractionCycles >= 3,
             Evidence = decision.Evidence,
             ObservedQuestId = decision.ShownQuestId,
-            OfferedQuestIds = decision.OfferedQuestIds
+            OfferedQuestIds = decision.OfferedQuestIds,
+            InteractionCycleId = interactionCycleId
         };
     }
 }
@@ -296,7 +304,10 @@ public sealed class QuestPickupMismatchTracker
 
         _lastInteractionCycleId = interactionCycleId;
         ConfirmedCycles++;
-        LastOutcome = QuestPickupDialogPolicy.CreateMismatchOutcome(decision, ConfirmedCycles);
+        LastOutcome = QuestPickupDialogPolicy.CreateMismatchOutcome(
+            decision,
+            ConfirmedCycles,
+            interactionCycleId);
         PickupUnavailable = LastOutcome.IsFailureEpisode;
         return LastOutcome;
     }

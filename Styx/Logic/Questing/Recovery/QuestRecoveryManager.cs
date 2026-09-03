@@ -117,6 +117,28 @@ public sealed class QuestRecoveryManager
         }
     }
 
+    public bool AbandonAttempt(QuestRecoveryKey key, long attemptGeneration)
+    {
+        ArgumentNullException.ThrowIfNull(key);
+        if (attemptGeneration <= 0)
+            return false;
+
+        lock (_sync)
+        {
+            EnsureConfiguredCore();
+            if (!_records.TryGetValue(key, out var current) ||
+                current.State != QuestRecoveryState.Attempting ||
+                current.AttemptGeneration != attemptGeneration)
+                return false;
+
+            var released = Copy(current, state: QuestRecoveryState.Eligible);
+            _records[key] = released;
+            _dirty = true;
+            LogTransition(current, released);
+            return true;
+        }
+    }
+
     public QuestRecoveryDecision TryBeginAttempt(QuestRecoveryKey key, QuestRecoveryContext context)
     {
         ArgumentNullException.ThrowIfNull(key);
@@ -169,12 +191,17 @@ public sealed class QuestRecoveryManager
             if (generatedFailure)
             {
                 activeOwnerKey = outcome.AttemptKey ?? outcome.Key;
-                if (!_records.TryGetValue(activeOwnerKey, out activeOwner) ||
+                if (!QuestAttemptOutcome.IsAuthorizedGeneratedFailureTarget(activeOwnerKey, outcome.Key) ||
+                    !_records.TryGetValue(activeOwnerKey, out activeOwner) ||
                     activeOwner.State != QuestRecoveryState.Attempting ||
                     activeOwner.AttemptGeneration != outcome.AttemptGeneration)
                 {
-                    return EvaluateCore(outcome.Key, normalizedContext);
+                    return EvaluateCore(activeOwnerKey, normalizedContext);
                 }
+                if (!activeOwnerKey.Equals(outcome.Key) &&
+                    _records.TryGetValue(outcome.Key, out var targetOwner) &&
+                    targetOwner.State == QuestRecoveryState.Attempting)
+                    return EvaluateCore(activeOwnerKey, normalizedContext);
             }
 
             var terminal = FindQuestTerminalCore(outcome.Key.QuestId);
@@ -245,16 +272,55 @@ public sealed class QuestRecoveryManager
                 _clock.UtcNow,
                 coalesce: !outcome.IsFailureEpisode);
             _records[current.Key] = updated;
-            if (generatedFailure && activeOwnerKey is not null && activeOwner is not null &&
-                !activeOwnerKey.Equals(current.Key))
-            {
-                var releasedOwner = Copy(activeOwner, state: QuestRecoveryState.Eligible);
-                _records[activeOwnerKey] = releasedOwner;
-                LogTransition(activeOwner, releasedOwner);
-            }
             _dirty = true;
             LogTransition(current, updated);
             return QuestRecoveryPolicy.Evaluate(updated, normalizedContext, RollingFailureCountCore(), _clock.UtcNow);
+        }
+    }
+
+    public IReadOnlyList<QuestRecoveryDecision> ReportGeneratedFailures(
+        IReadOnlyList<QuestAttemptOutcome> outcomes,
+        QuestRecoveryContext context)
+    {
+        ArgumentNullException.ThrowIfNull(outcomes);
+        ArgumentNullException.ThrowIfNull(context);
+        if (outcomes.Count == 0)
+            throw new ArgumentException("At least one generated failure is required.", nameof(outcomes));
+
+        lock (_sync)
+        {
+            QuestAttemptOutcome final = outcomes[^1];
+            QuestRecoveryKey attemptKey = final.AttemptKey
+                ?? throw new ArgumentException("Generated failures require an attempt key.", nameof(outcomes));
+            long generation = final.AttemptGeneration;
+            if (generation <= 0 || !final.Key.Equals(attemptKey))
+                throw new ArgumentException("The final generated failure must target its source attempt.", nameof(outcomes));
+
+            for (int index = 0; index < outcomes.Count; index++)
+            {
+                QuestAttemptOutcome outcome = outcomes[index];
+                if (outcome == null || !outcome.IsFailureEpisode ||
+                    outcome.AttemptGeneration != generation ||
+                    !attemptKey.Equals(outcome.AttemptKey) ||
+                    !QuestAttemptOutcome.IsAuthorizedGeneratedFailureTarget(attemptKey, outcome.Key) ||
+                    index < outcomes.Count - 1 && outcome.Key.Equals(attemptKey))
+                    throw new ArgumentException("Generated failures must share one exact authorized owner.", nameof(outcomes));
+            }
+            if (!_records.TryGetValue(attemptKey, out var sourceOwner) ||
+                sourceOwner.State != QuestRecoveryState.Attempting ||
+                sourceOwner.AttemptGeneration != generation)
+                throw new InvalidOperationException("The generated-failure source is no longer the exact attempt owner.");
+            foreach (QuestAttemptOutcome outcome in outcomes.Take(outcomes.Count - 1))
+            {
+                if (_records.TryGetValue(outcome.Key, out var targetOwner) &&
+                    targetOwner.State == QuestRecoveryState.Attempting)
+                    throw new InvalidOperationException("A generated-failure target is owned by another attempt.");
+            }
+
+            var decisions = new List<QuestRecoveryDecision>(outcomes.Count);
+            foreach (QuestAttemptOutcome outcome in outcomes)
+                decisions.Add(Report(outcome, context));
+            return decisions;
         }
     }
 

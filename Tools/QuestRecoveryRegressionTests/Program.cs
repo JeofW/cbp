@@ -56,6 +56,8 @@ try
     TestStaleSuccessCannotReleaseNewOwner(Path.Combine(testRoot, "success-generation"), now);
     TestOwnedFailureRequiresExactGenerationAndReleasesAtomically(Path.Combine(testRoot, "failure-generation"), now);
     TestOwnedEndpointFailurePreservesStageHistory(Path.Combine(testRoot, "failure-endpoint-owner"), now);
+    TestGeneratedFailureAuthorityAndAtomicStageSequence(Path.Combine(testRoot, "failure-authority"), now);
+    TestNeutralAbandonReleasesOnlyExactAttemptGeneration(Path.Combine(testRoot, "neutral-abandon"), now);
     TestRetryNowRejectsPriorOwnerSuccess(Path.Combine(testRoot, "success-retry-now"), now);
     TestIdentitySwitchCannotReuseOwnership(Path.Combine(testRoot, "success-identity"), now);
     TestManualBlacklistReplacementCannotReuseOwnership(Path.Combine(testRoot, "success-manual"), now);
@@ -1673,16 +1675,169 @@ static void TestOwnedEndpointFailurePreservesStageHistory(string settingsRoot, D
 
     var stage = manager.GetEntries().Single(item => item.Key.Equals(stageKey));
     var endpoint = manager.GetEntries().Single(item => item.Key.Equals(endpointKey));
-    Assert(stage.State == QuestRecoveryState.Eligible
+    Assert(stage.State == QuestRecoveryState.Attempting
            && stage.EpisodeCount == 1
            && stage.Reason == QuestFailureReason.NoObjectiveProgress
            && stage.Evidence.Any(item => item.Text == "prior stage history")
            && stage.Evidence.All(item => item.Text != "endpoint-only failure"),
-        "releasing an objective owner for an endpoint failure must preserve broader stage history");
+        "a subordinate endpoint failure must preserve the active stage owner and its broader history");
     Assert(endpoint.State == QuestRecoveryState.CoolingDown
            && endpoint.EpisodeCount == 1
            && endpoint.Reason == QuestFailureReason.PathGenerationFailed,
         "the exact endpoint failure must receive endpoint policy without widening to the objective stage");
+
+    manager.Report(
+        QuestAttemptOutcome.Failure(
+            stageKey,
+            stageKey,
+            owner.AttemptGeneration,
+            QuestFailureReason.NoNavigableHotspot,
+            "stage exhausted"),
+        Context());
+    stage = manager.GetEntries().Single(item => item.Key.Equals(stageKey));
+    Assert(stage.State == QuestRecoveryState.CoolingDown
+           && stage.EpisodeCount == 2
+           && stage.Evidence.Any(item => item.Text == "prior stage history")
+           && stage.Evidence.Any(item => item.Text == "stage exhausted"),
+        "the later exact stage failure must release ownership without erasing prior objective history");
+}
+
+static void TestGeneratedFailureAuthorityAndAtomicStageSequence(string settingsRoot, DateTime now)
+{
+    var manager = new QuestRecoveryManager(new FixedClock(now));
+    manager.Configure(CreateEnvironment(settingsRoot, "Jeof", "Lordaeron"));
+    var source = QuestRecoveryKey.ForQuestStage(1213, QuestRecoveryStage.Objective);
+    var endpoint = QuestRecoveryKey.ForEndpoint(1213, QuestRecoveryStage.Navigation, 1, "cell:6:7");
+    var owner = manager.TryBeginAttempt(source, Context());
+
+    AssertThrows<ArgumentException>(
+        () => QuestAttemptOutcome.Failure(
+            QuestRecoveryKey.ForEndpoint(9999, QuestRecoveryStage.Navigation, 1, "cross"),
+            source,
+            owner.AttemptGeneration,
+            QuestFailureReason.PathGenerationFailed,
+            "cross quest"),
+        "public generated-failure construction must reject cross-quest authority");
+    AssertThrows<ArgumentException>(
+        () => QuestAttemptOutcome.Failure(
+            QuestRecoveryKey.ForNpc(1213, QuestRecoveryStage.Pickup, 99),
+            source,
+            owner.AttemptGeneration,
+            QuestFailureReason.PickupTargetNotOffered,
+            "unrelated scope"),
+        "public generated-failure construction must reject structurally unrelated keys");
+
+    var maliciousCrossQuest = new QuestAttemptOutcome
+    {
+        Key = QuestRecoveryKey.ForEndpoint(9999, QuestRecoveryStage.Navigation, 1, "cross"),
+        AttemptKey = source,
+        AttemptGeneration = owner.AttemptGeneration,
+        Kind = QuestAttemptOutcomeKind.Failure,
+        Reason = QuestFailureReason.PathGenerationFailed,
+        IsFailureEpisode = true,
+        Evidence = "bypassed factory"
+    };
+    Parallel.For(0, 64, _ => manager.Report(maliciousCrossQuest, Context()));
+    Assert(manager.OwnsAttempt(source, owner.AttemptGeneration)
+           && manager.GetEntries().All(item => item.Key.QuestId != 9999),
+        "manager Report must reject cross-quest generated failures even if a caller bypasses the factory");
+    var maliciousUnrelated = new QuestAttemptOutcome
+    {
+        Key = QuestRecoveryKey.ForNpc(1213, QuestRecoveryStage.Pickup, 99),
+        AttemptKey = source,
+        AttemptGeneration = owner.AttemptGeneration,
+        Kind = QuestAttemptOutcomeKind.Failure,
+        Reason = QuestFailureReason.PickupTargetNotOffered,
+        IsFailureEpisode = true,
+        Evidence = "bypassed unrelated factory"
+    };
+    Parallel.For(0, 64, _ => manager.Report(maliciousUnrelated, Context()));
+    Assert(manager.OwnsAttempt(source, owner.AttemptGeneration)
+           && manager.GetEntries().All(item => item.Key.Scope != QuestRecoveryScope.NpcRelation),
+        "manager Report must reject structurally unrelated generated targets under concurrency");
+
+    var independentlyOwnedTarget = manager.TryBeginAttempt(endpoint, Context());
+    Assert(independentlyOwnedTarget.MayAttempt, "the authority fixture requires an independently owned endpoint");
+    Parallel.For(0, 64, _ => manager.Report(
+        QuestAttemptOutcome.Failure(
+            endpoint,
+            source,
+            owner.AttemptGeneration,
+            QuestFailureReason.PathGenerationFailed,
+            "must not overwrite target owner"),
+        Context()));
+    Assert(manager.OwnsAttempt(source, owner.AttemptGeneration)
+           && manager.OwnsAttempt(endpoint, independentlyOwnedTarget.AttemptGeneration),
+        "a generated subordinate failure must never overwrite a target owned by another generation");
+
+    manager.AbandonAttempt(endpoint, independentlyOwnedTarget.AttemptGeneration);
+    manager.AbandonAttempt(source, owner.AttemptGeneration);
+    var newer = manager.TryBeginAttempt(source, Context());
+    Parallel.For(0, 64, _ => manager.Report(
+        QuestAttemptOutcome.Failure(
+            endpoint,
+            source,
+            owner.AttemptGeneration,
+            QuestFailureReason.PathGenerationFailed,
+            "stale source"),
+        Context()));
+    Assert(manager.OwnsAttempt(source, newer.AttemptGeneration)
+           && manager.GetEntries().Single(item => item.Key.Equals(endpoint)).EpisodeCount == 0,
+        "a stale source generation must not mutate an otherwise available subordinate target");
+
+    var decisions = manager.ReportGeneratedFailures(
+        new[]
+        {
+            QuestAttemptOutcome.Failure(
+                endpoint,
+                source,
+                newer.AttemptGeneration,
+                QuestFailureReason.PathGenerationFailed,
+                "final endpoint failed"),
+            QuestAttemptOutcome.Failure(
+                source,
+                source,
+                newer.AttemptGeneration,
+                QuestFailureReason.NoNavigableHotspot,
+                "all stage endpoints failed")
+        },
+        Context());
+    var endpointRecord = manager.GetEntries().Single(item => item.Key.Equals(endpoint));
+    var stageRecord = manager.GetEntries().Single(item => item.Key.Equals(source));
+    Assert(decisions.Count == 2
+           && endpointRecord.State == QuestRecoveryState.CoolingDown
+           && endpointRecord.EpisodeCount == 1
+           && stageRecord.State == QuestRecoveryState.CoolingDown
+           && stageRecord.EpisodeCount == 1
+           && !manager.OwnsAttempt(source, newer.AttemptGeneration),
+        "one atomic subordinate-then-stage sequence must cool both scopes and release the exact stage owner last");
+}
+
+static void TestNeutralAbandonReleasesOnlyExactAttemptGeneration(string settingsRoot, DateTime now)
+{
+    var manager = new QuestRecoveryManager(new FixedClock(now));
+    var key = QuestRecoveryKey.ForQuestStage(1212, QuestRecoveryStage.Objective);
+    manager.Configure(CreateEnvironment(settingsRoot, "Jeof", "Lordaeron"));
+
+    var ownerA = manager.TryBeginAttempt(key, Context());
+    Assert(manager.AbandonAttempt(key, ownerA.AttemptGeneration),
+        "an exact owner must be able to abandon an interrupted attempt neutrally");
+    var released = manager.GetEntries().Single();
+    Assert(released.State == QuestRecoveryState.Eligible
+           && released.EpisodeCount == 0
+           && released.Reason == QuestFailureReason.None
+           && released.Evidence.Count == 0,
+        "neutral abandon must not synthesize success, failure, evidence, or escalation");
+
+    var ownerB = manager.TryBeginAttempt(key, Context());
+    Assert(ownerB.MayAttempt && ownerB.AttemptGeneration > ownerA.AttemptGeneration,
+        "the same identity must reacquire immediately after a user Stop/Start abandon");
+    Assert(!manager.AbandonAttempt(key, ownerA.AttemptGeneration)
+           && manager.OwnsAttempt(key, ownerB.AttemptGeneration),
+        "a stale generation must not release a newer owner");
+    Assert(manager.AbandonAttempt(key, ownerB.AttemptGeneration)
+           && !manager.OwnsAttempt(key, ownerB.AttemptGeneration),
+        "the newer exact generation must remain independently releasable");
 }
 
 static void TestIdentitySwitchCannotReuseOwnership(string settingsRoot, DateTime now)

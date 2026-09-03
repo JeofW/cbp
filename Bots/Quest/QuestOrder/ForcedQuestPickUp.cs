@@ -38,6 +38,8 @@ public class ForcedQuestPickUp : ForcedBehavior
     private int lastShownQuestId = -1;
     private int _handleQuestFrameAttempts;
     private long _interactionCycleId;
+    private readonly object _outcomeSync = new object();
+    private QuestAttemptOutcome _lastOutcome;
     private readonly QuestPickupMismatchTracker _mismatchTracker = new QuestPickupMismatchTracker();
     private IReadOnlyList<uint> _currentInteractionOfferedQuestIds = Array.Empty<uint>();
     private bool _shownTitleUniquelyResolved;
@@ -107,9 +109,33 @@ public class ForcedQuestPickUp : ForcedBehavior
 
     public bool PickupUnavailable { get; private set; }
 
-    public QuestAttemptOutcome LastOutcome { get; private set; }
+    public QuestAttemptOutcome LastOutcome
+    {
+        get
+        {
+            lock (_outcomeSync)
+                return _lastOutcome;
+        }
+    }
 
-    public long InteractionCycleId => _interactionCycleId;
+    public long InteractionCycleId
+    {
+        get
+        {
+            lock (_outcomeSync)
+                return _interactionCycleId;
+        }
+    }
+
+    public bool TryConsumeOutcome(out QuestAttemptOutcome outcome)
+    {
+        lock (_outcomeSync)
+        {
+            outcome = _lastOutcome;
+            _lastOutcome = null;
+            return outcome != null && outcome.InteractionCycleId == _interactionCycleId;
+        }
+    }
 
     public override void OnStart()
     {
@@ -212,15 +238,24 @@ public class ForcedQuestPickUp : ForcedBehavior
     private void UseQuestItem(WoWItem item)
     {
         _shownTitleUniquelyResolved = false;
+        BeginInteractionCycle();
         item.UseContainerItem();
-        _interactionCycleId++;
     }
 
     private void InteractWithQuestGiver(WoWObject giver)
     {
         _shownTitleUniquelyResolved = false;
+        BeginInteractionCycle();
         giver.Interact();
-        _interactionCycleId++;
+    }
+
+    private void BeginInteractionCycle()
+    {
+        lock (_outcomeSync)
+        {
+            _interactionCycleId++;
+            _lastOutcome = null;
+        }
     }
 
     private RunStatus CloseFrames(object context)
@@ -317,6 +352,24 @@ public class ForcedQuestPickUp : ForcedBehavior
 
         if (questIndex == -1)
         {
+            bool positivelyLoaded = nativeQuests.Count > 0 ||
+                luaDump != null && luaDump.Count >= 5;
+            QuestPickupDialogDecision unavailable = QuestPickupDialogPolicy.Decide(
+                this.QuestId,
+                this.QuestName,
+                0,
+                "",
+                this.GiverId,
+                _currentInteractionOfferedQuestIds,
+                acceptVisible: false,
+                continueVisible: false,
+                completeQuestVisible: false,
+                rewardChoicesAvailable: false,
+                shownQuestCompletionKnown: false,
+                shownQuestCompleted: false,
+                shownTitleUniquelyResolved: false,
+                offeredQuestListLoaded: positivelyLoaded);
+            RecordPickupDecision(unavailable);
             Logging.WriteDebug("[QuestPickUp] Quest \"{0}\" (id={1}) not found in gossip or native quest list (gossip={2}, native={3}).",
                 this.QuestName, this.QuestId, gossipQuests.Count, nativeQuests.Count);
             return RunStatus.Failure;
@@ -400,8 +453,7 @@ public class ForcedQuestPickUp : ForcedBehavior
 
         if (decision.Action == QuestPickupDialogAction.RejectMismatch)
         {
-            LastOutcome = _mismatchTracker.Observe(decision, _interactionCycleId);
-            PickupUnavailable = _mismatchTracker.PickupUnavailable;
+            RecordPickupDecision(decision);
             Logging.WriteDebug(
                 "[QuestPickUp] Rejected mismatched dialog (cycle {0}/3, unavailable={1}): {2}",
                 _mismatchTracker.ConfirmedCycles,
@@ -466,7 +518,24 @@ public class ForcedQuestPickUp : ForcedBehavior
     {
         _mismatchTracker.Reset();
         PickupUnavailable = false;
-        LastOutcome = null;
+        lock (_outcomeSync)
+            _lastOutcome = null;
+    }
+
+    private void RecordPickupDecision(QuestPickupDialogDecision decision)
+    {
+        long cycle;
+        lock (_outcomeSync)
+            cycle = _interactionCycleId;
+        QuestAttemptOutcome outcome = _mismatchTracker.Observe(decision, cycle);
+        PickupUnavailable = _mismatchTracker.PickupUnavailable;
+        if (outcome == null || outcome.InteractionCycleId != cycle)
+            return;
+        lock (_outcomeSync)
+        {
+            if (_interactionCycleId == cycle)
+                _lastOutcome = outcome;
+        }
     }
 
     private bool IsCompleteQuestButtonVisible(object context)
