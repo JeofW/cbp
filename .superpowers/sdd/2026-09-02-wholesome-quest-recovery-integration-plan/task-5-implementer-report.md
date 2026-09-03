@@ -82,9 +82,9 @@ Repo-local files included in the Task 5 commit:
 
 External/local runtime files intentionally outside Git:
 
-- `SettingsForm.cs` — `14daf692a588784fe20af657e9a40dc82fa7b187664bf00e4bd9e6d90b0182cb`
+- `SettingsForm.cs` — `a6275aa618200966cbf0c9903ce300fea8888259663296c22674786e1aa22349`
 - `WholesomeAQSettings.cs` — `2daca32c77e1abee73232534d4b1761f6fad409cd2a41a494596690b07d270ed`
-- `WholesomeAutoQuest.cs` — `1e88dfe3843f350df3a5e4acb9f638ef8890932fe5eadb9e22b65987158b73ec`
+- `WholesomeAutoQuest.cs` — `7e639e921dbb384de0462561bb42aacea4214927c6f5ba950e2bc4831fa4914c`
 
 The other four post-change runtime hashes are:
 
@@ -93,7 +93,7 @@ The other four post-change runtime hashes are:
 - `ProfileBuilder.cs` — `12660b3fa91ebc4b963f4bc37c19935f17d8d8301a78ecd77878ffaccead0e13`
 - `QuestScheduler.cs` — `b621479733879722609aa7b1785ba29e9af85d97d898b3d2a82c5dfe1fa0b921`
 
-These seven hashes were recorded in `D:\World of Warcraft 3.3.5a\CB\Backups\quest-recovery-wholesome-20260903-080658\installed.sha256.txt`. That file hashes to `961CA5487B99C233DD08DE6E549BD0BA245AE6E771C5DF4B128411016FF46CD9`. The original `manifest.sha256.txt` still hashes to `C5787DD61F477ECB40D3366F1834B3CD61123806436BF96109B611855D106D56` and all seven original backup entries revalidated with zero mismatches.
+These seven hashes were recorded in `D:\World of Warcraft 3.3.5a\CB\Backups\quest-recovery-wholesome-20260903-080658\installed.sha256.txt`. That file hashes to `0E9841957954B4769A258206ED2D003A7EB37338316634DD899A86B0D4F256DE`. The original `manifest.sha256.txt` still hashes to `C5787DD61F477ECB40D3366F1834B3CD61123806436BF96109B611855D106D56` and all seven original backup entries revalidated with zero mismatches.
 
 ## Preservation and Concerns
 
@@ -101,3 +101,65 @@ These seven hashes were recorded in `D:\World of Warcraft 3.3.5a\CB\Backups\ques
 - Existing historical backup files were preserved. `installed.sha256.txt` is new, local-only, and does not replace the original manifest.
 - Vendor blacklist storage remains vendor-scoped and unchanged; the quest blacklist storage paths are removed.
 - No push, deploy, live replacement, bot launch, or apphost execution was performed.
+
+## Review Round 1 Corrections
+
+Both review findings were reproduced with production-linked regressions before their minimal production changes.
+
+- Recovery action availability is now quest-wide. If any same-quest record is `ManualBlacklist`, an automatic row retained after `Mark permanent` disables `Retry now` and duplicate `Mark permanent` while leaving `Clear exclusion` available. The form preserves the exact selected automatic row through refresh, so the action remains scoped and visible instead of silently targeting a stale/noncanonical record.
+- `QuestRecoveryManager.ClearExclusion` now removes the same-quest manual terminal and the selected automatic cooling/half-open/quarantined record within one manager lock. The prior `if (!removed)` condition no longer suppresses the selected automatic removal after the manual record is removed, and a selected manual key is not double-removed. Other same-quest stages, unrelated quests, and completed terminal records remain unchanged.
+- Configuration before first `Start` now uses the same idempotent `EnsureRecoveryConfigured` path as `Start`. It safely loads/reuses `DataLoader`, captures deterministic dataset/navigation fingerprints, constructs the current character/realm environment, and configures the manager before constructing `SettingsForm`. Repeated same-identity configuration retains the manager's existing richer-fingerprint merge rules.
+- The initializer does not start the bot lifecycle, add subscriptions, or queue a refresh. Missing live identity and initialization exceptions return an unavailable result and a meaningful log instead of throwing. The settings form displays that status, makes manual recovery input read-only, disables recovery actions, omits manager mutation on Save, and does not start its refresh timer while unavailable. UI action/save exceptions are contained and surfaced through the visible recovery status label and log.
+
+Review RED evidence:
+
+```text
+COMBINED_ACTION_RED: linked test exited 1 because a same-quest manual terminal left Retry now and duplicate Mark permanent enabled on the selected automatic row.
+PRESTART_CONFIGURATION_RED: build failed with CS1061 for missing WholesomeAutoQuest.EnsureRecoveryConfigured and CS1739 for missing recoveryAvailable SettingsForm parameters.
+```
+
+Fresh review GREEN evidence:
+
+```text
+[Wholesome external bot/UI + linked regressions]
+Build succeeded. 3261 Warning(s), 0 Error(s).
+Wholesome scheduler recovery regression tests passed.
+WHOLESOME_TEST_EXIT=0
+SCOPED_COMPILER_DIAGNOSTICS=0
+
+[QuestRecoveryCore]
+Build succeeded. 3246 Warning(s), 0 Error(s).
+Quest recovery regression tests passed.
+CORE_TEST_EXIT=0
+
+[QuestPickupCore]
+Build succeeded. 3246 Warning(s), 0 Error(s).
+Quest pickup policy regression tests passed.
+PICKUP_TEST_EXIT=0
+
+[FullReleaseX86]
+Build succeeded. 3250 Warning(s), 0 Error(s).
+FULL_BUILD_EXIT=0
+```
+
+The new UI/manager sequence test selects an actual automatic recovery-grid row, marks it permanent, verifies selection and button state, proves disabled retry cannot produce a half-open probe, then clears the manual terminal plus selected automatic record while retaining another same-quest stage, an unrelated quest, and `Completed`. The pre-Start test creates a real persisted store, invokes the production initializer on a new unconfigured manager, displays the persisted row, saves a manual-ID diff through the actual form, and verifies the lifecycle remains stopped with no queued refresh. A separate no-character/error test verifies read-only UI and contained/logged failures.
+
+Review static/integrity results remain:
+
+```text
+QUEST_BLACKLIST_STORAGE/TREE_ROOT_START_SCAN_EXIT=1 (zero matches)
+LEGACY_DIRECT_WRITER_SCAN_EXIT=1 (zero matches)
+WHOLESOME_APPHOST_EXISTS=False
+CORE_APPHOST_EXISTS=False
+PICKUP_APPHOST_EXISTS=False
+BACKUP_HASH_MISMATCHES=0
+INSTALLED_HASH_MISMATCHES=0
+TRAILING_WHITESPACE=0
+```
+
+Final review-round external hashes changed only for:
+
+- `SettingsForm.cs` — `a6275aa618200966cbf0c9903ce300fea8888259663296c22674786e1aa22349`
+- `WholesomeAutoQuest.cs` — `7e639e921dbb384de0462561bb42aacea4214927c6f5ba950e2bc4831fa4914c`
+
+The other five installed hashes are unchanged. `installed.sha256.txt` was updated to the final seven-file state; `manifest.sha256.txt` remains unchanged. No push, deploy, live replacement, bot launch, or apphost execution occurred.

@@ -87,6 +87,9 @@ try
     TestRecoveryActionsAreDisabledWithoutSelection();
     TestRecoveryGridRefreshesFromManagerSnapshotsOnItsUiThread();
     TestLegacyMigrationIsVisibleOnceAndNeverMutatesLegacyFiles();
+    TestCombinedAutomaticManualUiActionsRemainQuestWideAndScoped();
+    TestConfigurationBeforeStartLoadsPersistedRecoveryWithoutStartingLifecycle();
+    TestConfigurationWithoutCharacterIsReadOnlyAndContainsErrors();
     Console.WriteLine("Wholesome scheduler recovery regression tests passed.");
 }
 
@@ -396,6 +399,280 @@ void TestLegacyMigrationIsVisibleOnceAndNeverMutatesLegacyFiles()
         reloaded.Configure(environment);
         Assert(secondLogs.All(line => !line.StartsWith("Legacy migration:", StringComparison.Ordinal)),
             "the completed migration must never be logged again on later manager configuration");
+    }
+    finally
+    {
+        Directory.Delete(root, recursive: true);
+    }
+}
+
+void TestCombinedAutomaticManualUiActionsRemainQuestWideAndScoped()
+{
+    string root = Path.Combine(Path.GetTempPath(), $"wholesome-combined-actions-{Guid.NewGuid():N}");
+    Directory.CreateDirectory(root);
+    try
+    {
+        var manager = new QuestRecoveryManager(new TestRecoveryClock(utcNow));
+        manager.Configure(new QuestRecoveryEnvironment(root, "Jeof", "Lordaeron", "dataset", "core", "nav"));
+        var selectedKey = QuestRecoveryKey.ForQuestStage(3601, QuestRecoveryStage.Objective);
+        var sameQuestOtherStage = QuestRecoveryKey.ForQuestStage(3601, QuestRecoveryStage.TurnIn);
+        var unrelatedKey = QuestRecoveryKey.ForQuestStage(3602, QuestRecoveryStage.Pickup);
+        CreateCoolingRecord(manager, selectedKey, QuestFailureReason.NoObjectiveProgress);
+        CreateCoolingRecord(manager, sameQuestOtherStage, QuestFailureReason.TurnInTargetNotOffered);
+        CreateCoolingRecord(manager, unrelatedKey, QuestFailureReason.PickupTargetNotOffered);
+        manager.MarkCompleted(3603);
+
+        Exception? failure = null;
+        var finished = new ManualResetEventSlim();
+        var logs = new List<string>();
+        var thread = new Thread(() =>
+        {
+            try
+            {
+                using var form = new SettingsForm(new WholesomeAQSettings(), logs.Add, recoveryManager: manager);
+                form.Show();
+                System.Windows.Forms.Application.DoEvents();
+                var grid = (System.Windows.Forms.DataGridView)form.Controls.Find("recoveryGrid", true).Single();
+                var retry = (System.Windows.Forms.Button)form.Controls.Find("retryRecoveryButton", true).Single();
+                var permanent = (System.Windows.Forms.Button)form.Controls.Find("markPermanentButton", true).Single();
+                var clear = (System.Windows.Forms.Button)form.Controls.Find("clearExclusionButton", true).Single();
+                var selected = grid.Rows.Cast<System.Windows.Forms.DataGridViewRow>()
+                    .Single(row => row.Tag is RecoveryStatusRow status && status.Key.Equals(selectedKey));
+                selected.Selected = true;
+                System.Windows.Forms.Application.DoEvents();
+                Assert(retry.Enabled && permanent.Enabled && clear.Enabled,
+                    "an automatic exclusion row must initially expose retry, permanent, and clear actions");
+
+                permanent.PerformClick();
+                System.Windows.Forms.Application.DoEvents();
+                var afterMark = grid.SelectedRows.Cast<System.Windows.Forms.DataGridViewRow>()
+                    .Select(row => row.Tag as RecoveryStatusRow)
+                    .Single();
+                Assert(afterMark != null && afterMark.Key.Equals(selectedKey)
+                       && manager.GetEntries().Any(record => record.Key.QuestId == 3601
+                           && record.State == QuestRecoveryState.ManualBlacklist),
+                    "marking an automatic row permanent must retain a useful selection and install the canonical quest-wide manual terminal");
+                Assert(!retry.Enabled && !permanent.Enabled && clear.Enabled,
+                    "a same-quest manual terminal must disable retry/duplicate permanent actions even while the automatic row remains selected");
+                retry.PerformClick();
+                Assert(manager.GetEntries().Single(record => record.Key.Equals(selectedKey)).State == QuestRecoveryState.CoolingDown,
+                    "disabled Retry now must not silently turn the selected automatic exclusion into a half-open probe");
+
+                clear.PerformClick();
+                System.Windows.Forms.Application.DoEvents();
+                var remaining = manager.GetEntries();
+                Assert(remaining.All(record => record.Key.QuestId != 3601
+                           || record.State != QuestRecoveryState.ManualBlacklist)
+                       && remaining.All(record => !record.Key.Equals(selectedKey))
+                       && remaining.Any(record => record.Key.Equals(sameQuestOtherStage)
+                           && record.State == QuestRecoveryState.CoolingDown)
+                       && remaining.Any(record => record.Key.Equals(unrelatedKey)
+                           && record.State == QuestRecoveryState.CoolingDown)
+                       && remaining.Single(record => record.Key.QuestId == 3603).State == QuestRecoveryState.Completed,
+                    "Clear exclusion must atomically remove the quest-wide manual terminal and selected automatic row while preserving other stage, quest, and Completed records");
+            }
+            catch (Exception ex)
+            {
+                failure = ex;
+            }
+            finally
+            {
+                finished.Set();
+            }
+        });
+        thread.SetApartmentState(ApartmentState.STA);
+        thread.Start();
+        Assert(finished.Wait(TimeSpan.FromSeconds(10)), "the combined action UI regression must finish without deadlock");
+        thread.Join();
+        if (failure != null)
+            throw failure;
+    }
+    finally
+    {
+        Directory.Delete(root, recursive: true);
+    }
+}
+
+void CreateCoolingRecord(
+    QuestRecoveryManager manager,
+    QuestRecoveryKey key,
+    QuestFailureReason reason)
+{
+    var owner = manager.TryBeginAttempt(key, new QuestRecoveryContext());
+    manager.Report(
+        QuestAttemptOutcome.Failure(key, key, owner.AttemptGeneration, reason, "test failure"),
+        new QuestRecoveryContext());
+}
+
+void TestConfigurationBeforeStartLoadsPersistedRecoveryWithoutStartingLifecycle()
+{
+    string root = Path.Combine(Path.GetTempPath(), $"wholesome-prestart-{Guid.NewGuid():N}");
+    string dataPath = Path.Combine(root, "quest_data.json");
+    Directory.CreateDirectory(root);
+    File.WriteAllText(dataPath, "{\"Quests\":[]}");
+    var environment = new QuestRecoveryEnvironment(root, "Jeof", "Lordaeron", "old-dataset", "core", "old-nav");
+    try
+    {
+        var writer = new QuestRecoveryManager(new TestRecoveryClock(utcNow));
+        writer.Configure(environment);
+        writer.SetManualBlacklist(3701, true);
+        writer.Flush();
+
+        var manager = new QuestRecoveryManager(new TestRecoveryClock(utcNow));
+        var bot = new WholesomeAutoQuest();
+        var logs = new List<string>();
+        var result = bot.EnsureRecoveryConfigured(
+            manager,
+            new DataLoader(dataPath),
+            () => "deterministic-nav",
+            (dataset, navigation) => new QuestRecoveryEnvironment(
+                root, "Jeof", "Lordaeron", dataset, "core", navigation),
+            logs.Add);
+
+        Assert(result.IsAvailable && result.DataReady
+               && result.DatasetFingerprint != "unknown"
+               && manager.GetEntries().Single().State == QuestRecoveryState.ManualBlacklist,
+            "configuration before Start must load the deterministic data fingerprint and persisted recovery store");
+        var lifecycle = (WholesomeLifecycleGate)typeof(WholesomeAutoQuest)
+            .GetField("_lifecycle", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!
+            .GetValue(bot)!;
+        var refresh = (RefreshGate)typeof(WholesomeAutoQuest)
+            .GetField("_refreshGate", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!
+            .GetValue(bot)!;
+        Assert(lifecycle.IsStopped && !refresh.Begin().HasValue,
+            "opening configuration before Start must not start bot lifecycle handlers or queue a recovery refresh");
+
+        Exception? failure = null;
+        var finished = new ManualResetEventSlim();
+        var thread = new Thread(() =>
+        {
+            try
+            {
+                using var form = new SettingsForm(
+                    new WholesomeAQSettings(),
+                    logs.Add,
+                    recoveryManager: manager,
+                    recoveryAvailable: result.IsAvailable,
+                    recoveryUnavailableReason: result.Status);
+                form.Show();
+                System.Windows.Forms.Application.DoEvents();
+                var grid = (System.Windows.Forms.DataGridView)form.Controls.Find("recoveryGrid", true).Single();
+                var manual = (System.Windows.Forms.TextBox)form.Controls.Find("manualQuestIdsTextBox", true).Single();
+                Assert(grid.Rows.Count == 1 && manual.Text == "3701" && !manual.ReadOnly,
+                    "the pre-Start configuration form must display persisted rows and permit manual editing once configured");
+                manual.Text = "3701,3702";
+                var save = form.Controls.Cast<System.Windows.Forms.Control>()
+                    .OfType<System.Windows.Forms.Button>()
+                    .Single(button => button.Text == "Save");
+                save.PerformClick();
+                System.Windows.Forms.Application.DoEvents();
+            }
+            catch (Exception ex)
+            {
+                failure = ex;
+            }
+            finally
+            {
+                finished.Set();
+            }
+        });
+        thread.SetApartmentState(ApartmentState.STA);
+        thread.Start();
+        Assert(finished.Wait(TimeSpan.FromSeconds(10)), "the pre-Start configuration UI must finish without deadlock");
+        thread.Join();
+        if (failure != null)
+            throw failure;
+        Assert(manager.GetEntries()
+                .Where(record => record.State == QuestRecoveryState.ManualBlacklist)
+                .Select(record => record.Key.QuestId)
+                .OrderBy(id => id)
+                .SequenceEqual(new uint[] { 3701, 3702 })
+               && lifecycle.IsStopped && !refresh.Begin().HasValue,
+            "manual save must work before Start without changing bot lifecycle or timer state");
+    }
+    finally
+    {
+        Directory.Delete(root, recursive: true);
+    }
+}
+
+void TestConfigurationWithoutCharacterIsReadOnlyAndContainsErrors()
+{
+    string root = Path.Combine(Path.GetTempPath(), $"wholesome-no-character-{Guid.NewGuid():N}");
+    string dataPath = Path.Combine(root, "quest_data.json");
+    Directory.CreateDirectory(root);
+    File.WriteAllText(dataPath, "{\"Quests\":[]}");
+    try
+    {
+        var manager = new QuestRecoveryManager(new TestRecoveryClock(utcNow));
+        var bot = new WholesomeAutoQuest();
+        var logs = new List<string>();
+        var result = bot.EnsureRecoveryConfigured(
+            manager,
+            new DataLoader(dataPath),
+            () => "deterministic-nav",
+            (_, _) => null,
+            logs.Add);
+        Assert(!result.IsAvailable
+               && result.Status == "Quest recovery is unavailable until a character and realm are loaded."
+               && logs.Any(line => line.Contains(result.Status, StringComparison.Ordinal)),
+            "missing live identity must be contained and reported as an unavailable configuration state");
+
+        Exception? failure = null;
+        var finished = new ManualResetEventSlim();
+        var thread = new Thread(() =>
+        {
+            try
+            {
+                using var form = new SettingsForm(
+                    new WholesomeAQSettings(),
+                    logs.Add,
+                    recoveryManager: manager,
+                    recoveryAvailable: result.IsAvailable,
+                    recoveryUnavailableReason: result.Status);
+                form.Show();
+                System.Windows.Forms.Application.DoEvents();
+                var manual = (System.Windows.Forms.TextBox)form.Controls.Find("manualQuestIdsTextBox", true).Single();
+                var retry = (System.Windows.Forms.Button)form.Controls.Find("retryRecoveryButton", true).Single();
+                var permanent = (System.Windows.Forms.Button)form.Controls.Find("markPermanentButton", true).Single();
+                var clear = (System.Windows.Forms.Button)form.Controls.Find("clearExclusionButton", true).Single();
+                var unavailable = (System.Windows.Forms.Label)form.Controls.Find("recoveryAvailabilityLabel", true).Single();
+                Assert(manual.ReadOnly && !retry.Enabled && !permanent.Enabled && !clear.Enabled
+                       && unavailable.Text == result.Status,
+                    "without a live character, recovery controls must be visibly read-only/disabled rather than throwing");
+                var save = form.Controls.Cast<System.Windows.Forms.Control>()
+                    .OfType<System.Windows.Forms.Button>()
+                    .Single(button => button.Text == "Save");
+                save.PerformClick();
+                System.Windows.Forms.Application.DoEvents();
+            }
+            catch (Exception ex)
+            {
+                failure = ex;
+            }
+            finally
+            {
+                finished.Set();
+            }
+        });
+        thread.SetApartmentState(ApartmentState.STA);
+        thread.Start();
+        Assert(finished.Wait(TimeSpan.FromSeconds(10)), "the unavailable configuration UI must finish without deadlock");
+        thread.Join();
+        if (failure != null)
+            throw failure;
+        Assert(manager.GetEntries().Count == 0,
+            "saving ordinary bot settings while recovery is unavailable must not access or mutate an unconfigured manager");
+
+        var failingResult = bot.EnsureRecoveryConfigured(
+            manager,
+            new DataLoader(dataPath),
+            () => throw new IOException("navigation unavailable"),
+            (_, _) => throw new InvalidOperationException("identity unavailable"),
+            logs.Add);
+        Assert(!failingResult.IsAvailable
+               && logs.Any(line => line.Contains("identity unavailable", StringComparison.Ordinal)),
+            "configuration initialization exceptions must be contained and logged meaningfully for the user");
     }
     finally
     {

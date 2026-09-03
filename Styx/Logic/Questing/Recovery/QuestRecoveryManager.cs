@@ -506,6 +506,8 @@ public sealed class QuestRecoveryManager
                 return;
             }
 
+            bool selectedWasManual = _records.TryGetValue(key, out var selected) &&
+                selected.State == QuestRecoveryState.ManualBlacklist;
             bool removed = false;
             foreach (var pair in _records
                 .Where(pair => pair.Key.QuestId == key.QuestId &&
@@ -515,7 +517,7 @@ public sealed class QuestRecoveryManager
                 removed |= _records.Remove(pair.Key);
             }
 
-            if (!removed && _records.TryGetValue(key, out var current) &&
+            if (!selectedWasManual && _records.TryGetValue(key, out var current) &&
                 current.State is QuestRecoveryState.CoolingDown or
                     QuestRecoveryState.HalfOpen or
                     QuestRecoveryState.Quarantined)
