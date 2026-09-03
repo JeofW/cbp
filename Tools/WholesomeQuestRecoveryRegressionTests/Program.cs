@@ -81,6 +81,12 @@ try
     TestTimedIdleSuppressesOldQuestOrderUntilARebuildSelectsWork();
     TestPickupOutcomeCoalescingStillReportsTheFailureEpisode();
     TestPickupRecoveryRequiresThreeDistinctActiveOwnedCycles();
+    TestRecoveryStatusFormattingCoversStatesReasonsAndRetryConditions();
+    TestRecoveryActionsUseManagerSemanticsAndPreserveCompleted();
+    TestManualQuestIdEditorDiffsOnlyManualRecords();
+    TestRecoveryActionsAreDisabledWithoutSelection();
+    TestRecoveryGridRefreshesFromManagerSnapshotsOnItsUiThread();
+    TestLegacyMigrationIsVisibleOnceAndNeverMutatesLegacyFiles();
     Console.WriteLine("Wholesome scheduler recovery regression tests passed.");
 }
 
@@ -88,6 +94,313 @@ catch (Exception ex)
 {
     Console.Error.WriteLine(ex);
     global::System.Environment.ExitCode = 1;
+}
+
+void TestRecoveryStatusFormattingCoversStatesReasonsAndRetryConditions()
+{
+    var cooldown = utcNow.AddMinutes(15);
+    var halfOpen = utcNow.AddHours(6);
+    var records = new[]
+    {
+        RecoveryRecord(3001, QuestRecoveryState.Eligible, QuestFailureReason.None),
+        RecoveryRecord(3002, QuestRecoveryState.Attempting, QuestFailureReason.InteractionTimedOut),
+        RecoveryRecord(3003, QuestRecoveryState.CoolingDown, QuestFailureReason.NoObjectiveProgress, cooldownUntilUtc: cooldown),
+        RecoveryRecord(3004, QuestRecoveryState.HalfOpen, QuestFailureReason.EndpointUnreachable),
+        RecoveryRecord(3005, QuestRecoveryState.Quarantined, QuestFailureReason.LegacyUnknown, nextHalfOpenUtc: halfOpen),
+        RecoveryRecord(3006, QuestRecoveryState.ManualBlacklist, QuestFailureReason.UserExcluded),
+        RecoveryRecord(3007, QuestRecoveryState.Completed, QuestFailureReason.None)
+    };
+
+    var rows = RecoveryStatusFormatter.CreateRows(records);
+    Assert(rows.Count == records.Length,
+        "every recovery state must remain visible in the diagnostic snapshot");
+    foreach (var row in rows)
+    {
+        Assert(row.DisplayText.Contains($"quest={row.QuestId}", StringComparison.Ordinal)
+               && row.DisplayText.Contains($"stage={row.Stage}", StringComparison.Ordinal)
+               && row.DisplayText.Contains($"state={row.State}", StringComparison.Ordinal)
+               && row.DisplayText.Contains($"reason={row.Reason}", StringComparison.Ordinal)
+               && row.DisplayText.Contains($"episode={row.Episode}", StringComparison.Ordinal)
+               && row.DisplayText.Contains(row.RetryOrReset, StringComparison.Ordinal),
+            "each status row must include quest, stage, state, reason, episode, and its retry/reset condition");
+    }
+
+    Assert(rows.Single(row => row.QuestId == 3003).RetryOrReset == "cooldown until 2026-09-03T00:15:00.0000000Z",
+        "cooling rows must display the exact UTC cooldown expiry");
+    Assert(rows.Single(row => row.QuestId == 3005).RetryOrReset ==
+           "half-open after 2026-09-03T06:00:00.0000000Z; reset on live chain, level, dataset, or NPC evidence, or Retry now",
+        "legacy quarantine must name its time-based probe and explicit non-authorship reset trigger");
+    Assert(rows.Single(row => row.QuestId == 3007).RetryOrReset == "no reset (completed terminal)",
+        "completed rows must explain their terminal state");
+
+    var everyReason = Enum.GetValues<QuestFailureReason>()
+        .Select((reason, index) => RecoveryRecord((uint)(3100 + index), QuestRecoveryState.Quarantined, reason))
+        .ToArray();
+    var reasonRows = RecoveryStatusFormatter.CreateRows(everyReason);
+    Assert(reasonRows.Select(row => row.Reason).SequenceEqual(Enum.GetValues<QuestFailureReason>())
+           && reasonRows.All(row => row.DisplayText.Contains($"reason={row.Reason}", StringComparison.Ordinal))
+           && reasonRows.All(row => row.RetryOrReset.Contains("reset", StringComparison.OrdinalIgnoreCase)),
+        "all finite recovery reasons must be visible with an explicit reset condition");
+}
+
+void TestRecoveryActionsUseManagerSemanticsAndPreserveCompleted()
+{
+    string root = Path.Combine(Path.GetTempPath(), $"wholesome-actions-{Guid.NewGuid():N}");
+    Directory.CreateDirectory(root);
+    try
+    {
+        var clock = new TestRecoveryClock(utcNow);
+        var manager = new QuestRecoveryManager(clock);
+        manager.Configure(new QuestRecoveryEnvironment(root, "Jeof", "Lordaeron", "dataset", "core", "nav"));
+        var automaticKey = QuestRecoveryKey.ForQuestStage(3201, QuestRecoveryStage.Objective);
+        var owner = manager.TryBeginAttempt(automaticKey, new QuestRecoveryContext());
+        manager.Report(
+            QuestAttemptOutcome.Failure(
+                automaticKey,
+                automaticKey,
+                owner.AttemptGeneration,
+                QuestFailureReason.NoObjectiveProgress,
+                "stalled"),
+            new QuestRecoveryContext());
+        var logs = new List<string>();
+        var controller = new RecoverySettingsController(manager, logs.Add);
+
+        var automatic = controller.Refresh().Single(row => row.Key.Equals(automaticKey));
+        controller.RetryNow(automatic);
+        Assert(manager.GetEntries().Single(record => record.Key.Equals(automaticKey)).State == QuestRecoveryState.HalfOpen,
+            "Retry now must create half-open eligibility for the selected automatic exclusion");
+        var probe = manager.TryBeginAttempt(automaticKey, new QuestRecoveryContext());
+        Assert(probe.MayAttempt && probe.State == QuestRecoveryState.Attempting
+               && !manager.TryBeginAttempt(automaticKey, new QuestRecoveryContext()).MayAttempt,
+            "Retry now must permit exactly one owned half-open probe");
+        manager.AbandonAttempt(automaticKey, probe.AttemptGeneration);
+
+        automatic = controller.Refresh().Single(row => row.Key.Equals(automaticKey));
+        controller.MarkPermanent(automatic);
+        Assert(manager.GetEntries().Any(record => record.Key.QuestId == 3201
+               && record.State == QuestRecoveryState.ManualBlacklist
+               && record.Reason == QuestFailureReason.UserExcluded),
+            "Mark permanent must use the manager's ManualBlacklist state");
+        var manual = controller.Refresh().Single(row => row.QuestId == 3201
+            && row.State == QuestRecoveryState.ManualBlacklist);
+        controller.ClearExclusion(manual);
+        Assert(manager.GetEntries().All(record => record.Key.QuestId != 3201
+               || record.State != QuestRecoveryState.ManualBlacklist),
+            "Clear exclusion must remove a manual exclusion");
+
+        var secondKey = QuestRecoveryKey.ForQuestStage(3202, QuestRecoveryStage.Pickup);
+        var secondOwner = manager.TryBeginAttempt(secondKey, new QuestRecoveryContext());
+        manager.Report(
+            QuestAttemptOutcome.Failure(
+                secondKey,
+                secondKey,
+                secondOwner.AttemptGeneration,
+                QuestFailureReason.PickupTargetNotOffered,
+                "not offered"),
+            new QuestRecoveryContext());
+        controller.ClearExclusion(controller.Refresh().Single(row => row.Key.Equals(secondKey)));
+        Assert(manager.GetEntries().All(record => !record.Key.Equals(secondKey)),
+            "Clear exclusion must remove the selected automatic exclusion rather than creating a probe");
+
+        manager.MarkCompleted(3203);
+        var completed = controller.Refresh().Single(row => row.QuestId == 3203);
+        controller.RetryNow(completed);
+        controller.MarkPermanent(completed);
+        controller.ClearExclusion(completed);
+        Assert(manager.GetEntries().Single(record => record.Key.QuestId == 3203).State == QuestRecoveryState.Completed,
+            "retry, permanent, and clear UI actions must preserve Completed as terminal");
+        Assert(logs.Count == 7 && logs.All(line =>
+                   line.Contains("quest=", StringComparison.Ordinal)
+                   && line.Contains("stage=", StringComparison.Ordinal)
+                   && line.Contains("reason=", StringComparison.Ordinal)),
+            "every explicit recovery action, including a completed no-op, must be logged with quest, stage, and reason");
+    }
+    finally
+    {
+        Directory.Delete(root, recursive: true);
+    }
+}
+
+void TestManualQuestIdEditorDiffsOnlyManualRecords()
+{
+    string root = Path.Combine(Path.GetTempPath(), $"wholesome-manual-{Guid.NewGuid():N}");
+    Directory.CreateDirectory(root);
+    try
+    {
+        var manager = new QuestRecoveryManager(new TestRecoveryClock(utcNow));
+        manager.Configure(new QuestRecoveryEnvironment(root, "Jeof", "Lordaeron", "dataset", "core", "nav"));
+        manager.SetManualBlacklist(3301, true);
+        manager.SetManualBlacklist(3302, true);
+        var automaticKey = QuestRecoveryKey.ForQuestStage(3399, QuestRecoveryStage.Pickup);
+        var owner = manager.TryBeginAttempt(automaticKey, new QuestRecoveryContext());
+        manager.Report(
+            QuestAttemptOutcome.Failure(
+                automaticKey,
+                automaticKey,
+                owner.AttemptGeneration,
+                QuestFailureReason.PickupTargetNotOffered,
+                "automatic"),
+            new QuestRecoveryContext());
+
+        var controller = new RecoverySettingsController(manager, _ => { });
+        Assert(controller.ManualQuestIdsText() == "3301,3302",
+            "the manual textbox must be populated only from ManualBlacklist manager records");
+        controller.ApplyManualQuestIds("3302, 3303, invalid, 0, 3303");
+        var manualIds = manager.GetEntries()
+            .Where(record => record.State == QuestRecoveryState.ManualBlacklist)
+            .Select(record => record.Key.QuestId)
+            .OrderBy(id => id)
+            .ToArray();
+        Assert(manualIds.SequenceEqual(new uint[] { 3302, 3303 })
+               && manager.GetEntries().Any(record => record.Key.Equals(automaticKey)
+                   && record.State == QuestRecoveryState.CoolingDown),
+            "applying the manual textbox must diff added/removed manual records without changing automatic records");
+    }
+    finally
+    {
+        Directory.Delete(root, recursive: true);
+    }
+}
+
+void TestRecoveryActionsAreDisabledWithoutSelection()
+{
+    var none = RecoveryActionAvailability.For(null);
+    Assert(!none.CanRetryNow && !none.CanMarkPermanent && !none.CanClearExclusion,
+        "all recovery buttons must be disabled when no row is selected");
+    var completed = RecoveryActionAvailability.For(
+        RecoveryStatusFormatter.CreateRows(new[]
+        {
+            RecoveryRecord(3401, QuestRecoveryState.Completed, QuestFailureReason.None)
+        }).Single());
+    Assert(!completed.CanRetryNow && !completed.CanMarkPermanent && !completed.CanClearExclusion,
+        "completed terminal rows must not expose mutating recovery buttons");
+}
+
+void TestRecoveryGridRefreshesFromManagerSnapshotsOnItsUiThread()
+{
+    string root = Path.Combine(Path.GetTempPath(), $"wholesome-ui-{Guid.NewGuid():N}");
+    Directory.CreateDirectory(root);
+    try
+    {
+        var manager = new QuestRecoveryManager(new TestRecoveryClock(utcNow));
+        manager.Configure(new QuestRecoveryEnvironment(root, "Jeof", "Lordaeron", "dataset", "core", "nav"));
+        manager.SetManualBlacklist(3501, true);
+        Exception? failure = null;
+        var finished = new ManualResetEventSlim();
+        var thread = new Thread(() =>
+        {
+            try
+            {
+                using var form = new SettingsForm(new WholesomeAQSettings(), _ => { }, recoveryManager: manager);
+                form.CreateControl();
+                var grid = (System.Windows.Forms.DataGridView)form.Controls.Find("recoveryGrid", true).Single();
+                var retry = (System.Windows.Forms.Button)form.Controls.Find("retryRecoveryButton", true).Single();
+                var permanent = (System.Windows.Forms.Button)form.Controls.Find("markPermanentButton", true).Single();
+                var clear = (System.Windows.Forms.Button)form.Controls.Find("clearExclusionButton", true).Single();
+                Assert(grid.ReadOnly && grid.Rows.Count == 1,
+                    "the recovery grid must be read-only and initialized from a manager snapshot");
+                Assert(!retry.Enabled && !permanent.Enabled && !clear.Enabled,
+                    "the actual recovery buttons must start disabled with no selected row");
+
+                manager.SetManualBlacklist(3502, true);
+                var worker = new Thread(form.RefreshRecoveryEntries);
+                worker.Start();
+                while (worker.IsAlive)
+                {
+                    System.Windows.Forms.Application.DoEvents();
+                    Thread.Yield();
+                }
+                worker.Join();
+                System.Windows.Forms.Application.DoEvents();
+                Assert(grid.Rows.Count == 2,
+                    "a background refresh request must marshal the manager snapshot onto the form's UI thread");
+            }
+            catch (Exception ex)
+            {
+                failure = ex;
+            }
+            finally
+            {
+                finished.Set();
+            }
+        });
+        thread.SetApartmentState(ApartmentState.STA);
+        thread.Start();
+        Assert(finished.Wait(TimeSpan.FromSeconds(10)), "the recovery UI thread must finish without deadlock");
+        thread.Join();
+        if (failure != null)
+            throw failure;
+    }
+    finally
+    {
+        Directory.Delete(root, recursive: true);
+    }
+}
+
+QuestRecoveryRecord RecoveryRecord(
+    uint questId,
+    QuestRecoveryState state,
+    QuestFailureReason reason,
+    DateTime? cooldownUntilUtc = null,
+    DateTime? nextHalfOpenUtc = null) => new()
+{
+    Key = QuestRecoveryKey.ForQuestStage(questId, QuestRecoveryStage.Objective),
+    State = state,
+    Reason = reason,
+    EpisodeCount = 2,
+    CooldownUntilUtc = cooldownUntilUtc,
+    NextHalfOpenUtc = nextHalfOpenUtc
+};
+
+void TestLegacyMigrationIsVisibleOnceAndNeverMutatesLegacyFiles()
+{
+    string root = Path.Combine(Path.GetTempPath(), $"wholesome-legacy-{Guid.NewGuid():N}");
+    string legacyDirectory = Path.Combine(root, "WholesomeAutoQuest", "Jeof-Lordaeron");
+    string legacyPath = Path.Combine(legacyDirectory, "quest_blacklist.txt");
+    string backupPath = Path.Combine(legacyDirectory, "quest_blacklist.legacy.bak");
+    Directory.CreateDirectory(legacyDirectory);
+    File.WriteAllText(legacyPath, "867,875");
+    File.WriteAllText(backupPath, "historical backup must survive");
+    byte[] legacyBefore = File.ReadAllBytes(legacyPath);
+    byte[] backupBefore = File.ReadAllBytes(backupPath);
+    try
+    {
+        var firstLogs = new List<string>();
+        var manager = new QuestRecoveryManager(new TestRecoveryClock(utcNow), firstLogs.Add);
+        var environment = new QuestRecoveryEnvironment(root, "Jeof", "Lordaeron", "dataset", "core", "nav");
+        manager.Configure(environment);
+        var rows = RecoveryStatusFormatter.CreateRows(manager.GetEntries());
+        Assert(rows.Select(row => row.QuestId).SequenceEqual(new uint[] { 867, 875 })
+               && rows.All(row => row.State == QuestRecoveryState.Quarantined
+                   && row.Reason == QuestFailureReason.LegacyUnknown)
+               && rows.All(row => row.DisplayText.Contains("LegacyUnknown", StringComparison.Ordinal)
+                   && !row.DisplayText.Contains("user-authored", StringComparison.OrdinalIgnoreCase)),
+            "migrated IDs must be visibly labelled LegacyUnknown without claiming user authorship");
+
+        string expectedMigration = $"Legacy migration: backup='{backupPath}', imported=2.";
+        Assert(firstLogs.Count(line => line == expectedMigration) == 1,
+            "the first successful migration must log the exact backup path and imported count once");
+
+        var controller = new RecoverySettingsController(manager, _ => { });
+        controller.ClearExclusion(rows[0]);
+        controller.MarkPermanent(rows[1]);
+        manager.Flush();
+        Assert(File.Exists(legacyPath)
+               && File.ReadAllBytes(legacyPath).SequenceEqual(legacyBefore)
+               && File.Exists(backupPath)
+               && File.ReadAllBytes(backupPath).SequenceEqual(backupBefore),
+            "manual and automatic recovery actions must never write, delete, or overwrite legacy evidence files");
+
+        var secondLogs = new List<string>();
+        var reloaded = new QuestRecoveryManager(new TestRecoveryClock(utcNow), secondLogs.Add);
+        reloaded.Configure(environment);
+        Assert(secondLogs.All(line => !line.StartsWith("Legacy migration:", StringComparison.Ordinal)),
+            "the completed migration must never be logged again on later manager configuration");
+    }
+    finally
+    {
+        Directory.Delete(root, recursive: true);
+    }
 }
 
 void TestRefreshGateCoalescesConcurrentRequestsAndStopsCallbacks()

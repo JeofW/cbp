@@ -494,6 +494,39 @@ public sealed class QuestRecoveryManager
         }
     }
 
+    public void ClearExclusion(QuestRecoveryKey key)
+    {
+        ArgumentNullException.ThrowIfNull(key);
+
+        lock (_sync)
+        {
+            EnsureConfiguredCore();
+            if (FindQuestTerminalCore(key.QuestId) is { State: QuestRecoveryState.Completed })
+            {
+                return;
+            }
+
+            bool removed = false;
+            foreach (var pair in _records
+                .Where(pair => pair.Key.QuestId == key.QuestId &&
+                    pair.Value.State == QuestRecoveryState.ManualBlacklist)
+                .ToArray())
+            {
+                removed |= _records.Remove(pair.Key);
+            }
+
+            if (!removed && _records.TryGetValue(key, out var current) &&
+                current.State is QuestRecoveryState.CoolingDown or
+                    QuestRecoveryState.HalfOpen or
+                    QuestRecoveryState.Quarantined)
+            {
+                removed = _records.Remove(key);
+            }
+
+            _dirty |= removed;
+        }
+    }
+
     public IReadOnlyList<QuestRecoveryRecord> GetEntries()
     {
         lock (_sync)
@@ -606,6 +639,10 @@ public sealed class QuestRecoveryManager
         try
         {
             QuestRecoveryStore.BackupLegacyOnce(legacyPath);
+            var backupPath = Path.Combine(
+                Path.GetDirectoryName(legacyPath) ?? "",
+                "quest_blacklist.legacy.bak");
+            int importedCount = 0;
             foreach (var questId in QuestRecoveryStore.ReadLegacyIds(legacyPath))
             {
                 if (_records.Values.Any(record => record.Key.QuestId == questId))
@@ -633,6 +670,7 @@ public sealed class QuestRecoveryManager
                         }
                     }
                 };
+                importedCount++;
             }
 
             _dirty = true;
@@ -640,6 +678,7 @@ public sealed class QuestRecoveryManager
             if (!_dirty)
             {
                 File.WriteAllText(markerPath, "1");
+                _log($"Legacy migration: backup='{backupPath}', imported={importedCount}.");
             }
         }
         catch (Exception ex)
