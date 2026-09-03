@@ -54,6 +54,8 @@ try
     TestConcurrentReportingAndAttemptOwnership(Path.Combine(testRoot, "concurrency"), now);
     TestSuccessfulAttemptReleasesOwnership(Path.Combine(testRoot, "success-release"), now);
     TestStaleSuccessCannotReleaseNewOwner(Path.Combine(testRoot, "success-generation"), now);
+    TestOwnedFailureRequiresExactGenerationAndReleasesAtomically(Path.Combine(testRoot, "failure-generation"), now);
+    TestOwnedEndpointFailurePreservesStageHistory(Path.Combine(testRoot, "failure-endpoint-owner"), now);
     TestRetryNowRejectsPriorOwnerSuccess(Path.Combine(testRoot, "success-retry-now"), now);
     TestIdentitySwitchCannotReuseOwnership(Path.Combine(testRoot, "success-identity"), now);
     TestManualBlacklistReplacementCannotReuseOwnership(Path.Combine(testRoot, "success-manual"), now);
@@ -1499,14 +1501,28 @@ static void TestConcurrentReportingAndAttemptOwnership(string settingsRoot, Date
     Assert(manager.GetEntries().Count == 2 && manager.GetEntries().Single(entry => entry.Key.Equals(attemptKey)).State == QuestRecoveryState.Attempting,
         "attempt ownership must be represented by one synchronized record");
 
+    var firstOwner = decisions.Single(decision => decision.MayAttempt);
     manager.Report(
-        QuestAttemptOutcome.Failure(attemptKey, QuestFailureReason.PickupTargetNotOffered, "probe failed"),
+        QuestAttemptOutcome.Failure(
+            attemptKey,
+            attemptKey,
+            firstOwner.AttemptGeneration,
+            QuestFailureReason.PickupTargetNotOffered,
+            "probe failed"),
         Context());
     Assert(manager.GetEntries().Single(entry => entry.Key.Equals(attemptKey)).EpisodeCount == 1,
         "failure by an attempt owner must count one episode");
     clock.UtcNow = now.AddMinutes(16);
+    var secondOwner = manager.TryBeginAttempt(attemptKey, Context());
+    Assert(secondOwner.MayAttempt && secondOwner.AttemptGeneration > firstOwner.AttemptGeneration,
+        "a failure after cooldown must first acquire a fresh exact ownership generation");
     manager.Report(
-        QuestAttemptOutcome.Failure(attemptKey, QuestFailureReason.PickupTargetNotOffered, "probe failed"),
+        QuestAttemptOutcome.Failure(
+            attemptKey,
+            attemptKey,
+            secondOwner.AttemptGeneration,
+            QuestFailureReason.PickupTargetNotOffered,
+            "probe failed"),
         Context());
     var repeatedFailure = manager.GetEntries().Single(entry => entry.Key.Equals(attemptKey));
     Assert(repeatedFailure.EpisodeCount == 2 &&
@@ -1543,6 +1559,9 @@ static void TestStaleSuccessCannotReleaseNewOwner(string settingsRoot, DateTime 
     manager.Configure(CreateEnvironment(settingsRoot, "Jeof", "Lordaeron"));
 
     var ownerA = manager.TryBeginAttempt(key, Context());
+    Assert(manager.OwnsAttempt(key, ownerA.AttemptGeneration)
+           && !manager.OwnsAttempt(key, ownerA.AttemptGeneration + 1),
+        "the manager must expose exact Attempting-generation eligibility to production callers");
     Assert(ownerA.MayAttempt && ownerA.AttemptGeneration > 0,
         "attempt A must receive a nonzero ownership generation");
     manager.Report(
@@ -1571,6 +1590,99 @@ static void TestStaleSuccessCannotReleaseNewOwner(string settingsRoot, DateTime 
     var ownerC = manager.TryBeginAttempt(key, Context());
     Assert(ownerC.MayAttempt && ownerC.AttemptGeneration > ownerB.AttemptGeneration,
         "valid B success must release ownership for a newer attempt C");
+}
+
+static void TestOwnedFailureRequiresExactGenerationAndReleasesAtomically(string settingsRoot, DateTime now)
+{
+    var manager = new QuestRecoveryManager(new FixedClock(now));
+    var key = QuestRecoveryKey.ForQuestStage(1210, QuestRecoveryStage.Objective);
+    manager.Configure(CreateEnvironment(settingsRoot, "Jeof", "Lordaeron"));
+
+    var ownerA = manager.TryBeginAttempt(key, Context());
+    var stale = manager.Report(
+        QuestAttemptOutcome.Failure(
+            key,
+            key,
+            ownerA.AttemptGeneration + 1,
+            QuestFailureReason.NoObjectiveProgress,
+            "stale failure"),
+        Context());
+    Assert(stale.State == QuestRecoveryState.Attempting && !stale.MayAttempt,
+        "a stale generated failure must not release the exact active owner");
+    Assert(manager.GetEntries().Single().EpisodeCount == 0
+           && manager.GetEntries().Single().Evidence.All(item => item.Text != "stale failure"),
+        "a stale generated failure must not mutate escalation or evidence");
+
+    var failed = manager.Report(
+        QuestAttemptOutcome.Failure(
+            key,
+            key,
+            ownerA.AttemptGeneration,
+            QuestFailureReason.NoObjectiveProgress,
+            "owned failure"),
+        Context());
+    Assert(failed.State == QuestRecoveryState.CoolingDown && !failed.MayAttempt,
+        "an exact-generation failure must atomically apply policy and release Attempting ownership");
+    Assert(!manager.OwnsAttempt(key, ownerA.AttemptGeneration),
+        "the manager must stop recognizing the exact generation in the same failure transition");
+    var record = manager.GetEntries().Single();
+    Assert(record.EpisodeCount == 1
+           && record.AttemptGeneration == ownerA.AttemptGeneration
+           && record.Evidence.Any(item => item.Text == "owned failure"),
+        "a valid owned failure must retain its generation and diagnostic evidence");
+
+    manager.RetryNow(key);
+    var ownerB = manager.TryBeginAttempt(key, Context());
+    Assert(ownerB.MayAttempt && ownerB.AttemptGeneration > ownerA.AttemptGeneration,
+        "a later controlled probe must acquire a newer generation");
+    var delayedA = manager.Report(
+        QuestAttemptOutcome.Failure(
+            key,
+            key,
+            ownerA.AttemptGeneration,
+            QuestFailureReason.NoObjectiveProgress,
+            "delayed A failure"),
+        Context());
+    Assert(delayedA.State == QuestRecoveryState.Attempting && !delayedA.MayAttempt
+           && manager.GetEntries().Single().AttemptGeneration == ownerB.AttemptGeneration
+           && manager.GetEntries().Single().Evidence.All(item => item.Text != "delayed A failure"),
+        "a delayed failure from A must not affect newer owner B");
+}
+
+static void TestOwnedEndpointFailurePreservesStageHistory(string settingsRoot, DateTime now)
+{
+    var clock = new FixedClock(now);
+    var manager = new QuestRecoveryManager(clock);
+    var stageKey = QuestRecoveryKey.ForQuestStage(1211, QuestRecoveryStage.Objective);
+    var endpointKey = QuestRecoveryKey.ForEndpoint(1211, QuestRecoveryStage.Navigation, 1, "cell:4:5");
+    manager.Configure(CreateEnvironment(settingsRoot, "Jeof", "Lordaeron"));
+    manager.Report(
+        QuestAttemptOutcome.Failure(stageKey, QuestFailureReason.NoObjectiveProgress, "prior stage history"),
+        Context());
+    manager.RetryNow(stageKey);
+    var owner = manager.TryBeginAttempt(stageKey, Context());
+
+    manager.Report(
+        QuestAttemptOutcome.Failure(
+            endpointKey,
+            stageKey,
+            owner.AttemptGeneration,
+            QuestFailureReason.PathGenerationFailed,
+            "endpoint-only failure"),
+        Context());
+
+    var stage = manager.GetEntries().Single(item => item.Key.Equals(stageKey));
+    var endpoint = manager.GetEntries().Single(item => item.Key.Equals(endpointKey));
+    Assert(stage.State == QuestRecoveryState.Eligible
+           && stage.EpisodeCount == 1
+           && stage.Reason == QuestFailureReason.NoObjectiveProgress
+           && stage.Evidence.Any(item => item.Text == "prior stage history")
+           && stage.Evidence.All(item => item.Text != "endpoint-only failure"),
+        "releasing an objective owner for an endpoint failure must preserve broader stage history");
+    Assert(endpoint.State == QuestRecoveryState.CoolingDown
+           && endpoint.EpisodeCount == 1
+           && endpoint.Reason == QuestFailureReason.PathGenerationFailed,
+        "the exact endpoint failure must receive endpoint policy without widening to the objective stage");
 }
 
 static void TestIdentitySwitchCannotReuseOwnership(string settingsRoot, DateTime now)
@@ -1645,7 +1757,12 @@ static void TestRetryNowRejectsPriorOwnerSuccess(string settingsRoot, DateTime n
     manager.Configure(CreateEnvironment(settingsRoot, "Jeof", "Lordaeron"));
     var ownerA = manager.TryBeginAttempt(key, Context());
     manager.Report(
-        QuestAttemptOutcome.Failure(key, QuestFailureReason.PickupTargetNotOffered, "A failed"),
+        QuestAttemptOutcome.Failure(
+            key,
+            key,
+            ownerA.AttemptGeneration,
+            QuestFailureReason.PickupTargetNotOffered,
+            "A failed"),
         Context());
     manager.RetryNow(key);
 

@@ -116,3 +116,91 @@ No core source was changed for Task 4.
 - The visible Task 5 recovery diagnostics/actions remain deferred. The current manual-ID field is bridged to the core manager without adding new UI.
 - Existing unrelated vendor/grind working-tree changes remain untouched and are excluded from the commit.
 - No push, deployment, live binary replacement, backup mutation, or apphost execution occurred.
+
+## Review Round 1 Corrections
+
+All six review findings were corrected with production-linked regressions before the minimal production changes:
+
+- Failure reporting no longer synthesizes `Success`. `QuestAttemptOutcome` failures can carry an exact `AttemptKey` and `AttemptGeneration`; the manager rejects stale/ownerless failure callbacks against an active attempt, applies valid generated failure policy under the manager lock, and releases that exact ownership in the same transition. Endpoint failure releases the stage attempt while retaining the stage's earlier reason, episode count, and evidence.
+- `WholesomeProgressMonitor` now resets active time, clusters, failed endpoints, deaths, and episode flags when the attempt generation changes, even for the same quest-stage key. The regression drives three same-key attempts through real cooldown/HalfOpen acquisition and reaches third-episode quarantine without calling `Reset` between attempts.
+- Pickup mismatch evidence now requires exact local ownership, exact manager `Attempting` generation ownership, the exact pickup behavior/POI, and a non-excluded in-world snapshot. The former 60-second wall-clock path and all old pickup fields were removed. Only three distinct active `ForcedQuestPickUp.InteractionCycleId` cycles can emit a failure; excluded or duplicate cycles do not count.
+- Death attribution is captured before death from the exact objective behavior, exact manager/local generation, active-work snapshot, and quest-owned combat target. The death event consumes that snapshot once; proximity, unrelated combat, excluded/inactive state, owner/generation mismatch, and stale snapshots are rejected.
+- `RefreshGate` now has one coalesced rerun bit while running. Any number of running-state requests produce one follow-up pending refresh; `Stop` clears pending/rerun state and stale `Complete` callbacks cannot revive it.
+- `Start` and `Stop` share `ResetRecoveryLifecycleState`, which clears progress, pickup target/generation/interaction token/count/reported state, death capture, local ownership, and the progress sampling deadline. A restarted identical pickup cannot inherit an earlier cycle.
+
+The RED evidence observed for this review was:
+
+```text
+OWNED_FAILURE_RED: CS1501, no five-argument generated Failure overload.
+WHOLESOME_FAILURE_BIND_RED: missing TryBind/TryGet-generation/Release and ReportOwnedFailure.
+GENERATION_RESET_RED: QuestWorkSample had no AttemptGeneration.
+REFRESH_RERUN_RED: running-state request coalescing assertion exited 1.
+PICKUP_CYCLE_RED: missing WholesomePickupMonitor/active predicate and InteractionCycleId.
+DEATH_CAPTURE_RED: missing CombatOwnedByQuest and WholesomeDeathMonitor.
+LIFECYCLE_RESET_RED: CS1061, WholesomeAutoQuest had no ResetRecoveryLifecycleState.
+MANAGER_ELIGIBILITY_RED: CS1061, QuestRecoveryManager had no OwnsAttempt.
+PICKUP_MANAGER_ELIGIBILITY_RED: production pickup predicate lacked manager ownership input.
+```
+
+Fresh sequential GREEN evidence after the corrections:
+
+```text
+[Wholesome]
+Build succeeded. 3278 Warning(s), 0 Error(s).
+Wholesome scheduler recovery regression tests passed.
+BUILD_EXIT=0 TEST_EXIT=0 SCOPED_COMPILER_DIAGNOSTICS=0
+
+[QuestRecoveryCore]
+Build succeeded. 3246 Warning(s), 0 Error(s).
+Quest recovery regression tests passed.
+BUILD_EXIT=0 TEST_EXIT=0
+
+[QuestPickupCore]
+Build succeeded. 3246 Warning(s), 0 Error(s).
+Quest pickup policy regression tests passed.
+BUILD_EXIT=0 TEST_EXIT=0
+
+[FullReleaseX86]
+Build succeeded. 3250 Warning(s), 0 Error(s).
+BUILD_EXIT=0
+```
+
+Review verification used the bundled `D:\World of Warcraft 3.3.5a\CB\.dotnet-sdk\dotnet.exe`, direct test DLL execution, `Platform=x86`, and `UseAppHost=false`. One attempted parallel test-project build collided in the shared WPF intermediate directory; both projects were immediately rerun sequentially, producing the green results above.
+
+Review static/integrity results:
+
+```text
+PLAN_FORBIDDEN_SCAN:
+WholesomeAutoQuest.cs:664: forceStop: () => TreeRoot.Stop(),
+AUGMENTED_FORBIDDEN_SCAN_MATCHES=0
+TREE_ROOT_START_COUNT=0
+LEGACY_ADAPTER_COUNT=0
+PROFILE_LOAD_COUNT=1
+BASE_STOP_COUNT=1
+REPORT_PROGRESS_COUNT=1
+SUCCESS_FACTORY_COUNT=1
+BACKUP_HASH_MISMATCHES=0
+SCOPED_DIFF_CHECK_LINES=0
+WHOLESOME_APPHOST_EXISTS=False
+CORE_APPHOST_EXISTS=False
+PICKUP_APPHOST_EXISTS=False
+```
+
+The sole plan-scan match remains the explicit user-clicked Settings `Force Stop` action allowed by the plan. The augmented scan included restart timers, automatic blacklist APIs/writers, quest abandonment, arbitrary `ActiveQuestIds.First`, level/grind file discovery, `TreeRoot.Start`, and all removed pickup wall-clock/state fields.
+
+Additional repo-local files required by the review correction:
+
+- `Bots/Quest/QuestOrder/ForcedQuestPickUp.cs`
+- `Styx/Logic/Questing/Recovery/QuestRecoveryManager.cs`
+- `Styx/Logic/Questing/Recovery/QuestRecoveryTypes.cs`
+- `Tools/QuestRecoveryRegressionTests/Program.cs`
+- `Tools/WholesomeQuestRecoveryRegressionTests/Program.cs`
+- `.superpowers/sdd/2026-09-02-wholesome-quest-recovery-integration-plan/task-4-implementer-report.md`
+
+External runtime review change:
+
+- `D:\World of Warcraft 3.3.5a\CB\Bots\WholesomeAutoQuest-master\WholesomeAutoQuest.cs`
+  - SHA-256: `D56582964843651204A216E5A793BD3E2EA4420C57A88EDCF53CBA6A7B149A2C`
+- `QuestScheduler.cs` remains at Task 4 SHA-256 `B621479733879722609AA7B1785BA29E9AF85D97D898B3D2A82C5DFE1FA0B921`.
+
+The rollback backup still verifies all seven manifest entries with zero mismatches. Unrelated vendor/grind working-tree changes remain untouched and excluded. No push, deployment, live replacement, backup mutation, or apphost execution occurred.

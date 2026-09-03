@@ -102,6 +102,7 @@ public sealed class QuestAttemptOutcome
     private IReadOnlyList<int> _objectiveCounts = Array.Empty<int>();
 
     public QuestRecoveryKey Key { get; init; } = null!;
+    public QuestRecoveryKey? AttemptKey { get; init; }
     public QuestAttemptOutcomeKind Kind { get; init; }
     public long AttemptGeneration { get; init; }
     public QuestFailureReason Reason { get; init; }
@@ -124,6 +125,25 @@ public sealed class QuestAttemptOutcome
         QuestFailureReason reason, string evidence) =>
         new() { Key = key ?? throw new ArgumentNullException(nameof(key)), Kind = QuestAttemptOutcomeKind.Failure, Reason = reason, IsFailureEpisode = true, Evidence = evidence ?? "" };
 
+    public static QuestAttemptOutcome Failure(
+        QuestRecoveryKey key,
+        QuestRecoveryKey attemptKey,
+        long attemptGeneration,
+        QuestFailureReason reason,
+        string evidence) =>
+        new()
+        {
+            Key = key ?? throw new ArgumentNullException(nameof(key)),
+            AttemptKey = attemptKey ?? throw new ArgumentNullException(nameof(attemptKey)),
+            Kind = QuestAttemptOutcomeKind.Failure,
+            AttemptGeneration = attemptGeneration > 0
+                ? attemptGeneration
+                : throw new ArgumentOutOfRangeException(nameof(attemptGeneration)),
+            Reason = reason,
+            IsFailureEpisode = true,
+            Evidence = evidence ?? ""
+        };
+
     public static QuestAttemptOutcome Observation(QuestRecoveryKey key,
         QuestFailureReason reason, string evidence) =>
         new() { Key = key ?? throw new ArgumentNullException(nameof(key)), Kind = QuestAttemptOutcomeKind.Observation, Reason = reason, IsFailureEpisode = false, Evidence = evidence ?? "" };
@@ -139,6 +159,7 @@ public sealed class QuestAttemptOutcome
         new()
         {
             Key = key ?? throw new ArgumentNullException(nameof(key)),
+            AttemptKey = key,
             Kind = QuestAttemptOutcomeKind.Success,
             AttemptGeneration = attemptGeneration > 0
                 ? attemptGeneration

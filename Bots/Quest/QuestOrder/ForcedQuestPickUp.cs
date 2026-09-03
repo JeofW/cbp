@@ -109,6 +109,8 @@ public class ForcedQuestPickUp : ForcedBehavior
 
     public QuestAttemptOutcome LastOutcome { get; private set; }
 
+    public long InteractionCycleId => _interactionCycleId;
+
     public override void OnStart()
     {
         if (ObjectManager.Me.QuestLog.GetAllQuests().Count >= 25)

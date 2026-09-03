@@ -61,13 +61,18 @@ try
     TestSchedulerDeduplicatesRelationRowsAndExactEndpoints();
     TestRefreshGateCoalescesConcurrentRequestsAndStopsCallbacks();
     TestLifecycleGateDoesNotGrowSubscriptionsAcrossRestarts();
+    TestLifecycleResetDoesNotCarryPickupCyclesAcrossRestart();
     TestProgressMonitorCountsOnlyActiveWorkAndCoalescesOneStall();
     TestProgressMonitorScopesEndpointAndDeathFailures();
+    TestProgressMonitorResetsForEachSameKeyOwnershipGeneration();
     TestProductionWorkSnapshotExcludesNonWorkAndRequiresExactOwner();
+    TestDeathEventConsumesOnlyPreDeathOwnedQuestCombatSnapshot();
     TestAttemptOwnershipUsesTheExactGenerationToken();
+    TestOwnedFailureBindsGenerationWithoutSyntheticSuccess();
     TestCompletedOwnedStageRequestsRefreshBeforeQuestOrderRunsOut();
     TestTimedIdleSuppressesOldQuestOrderUntilARebuildSelectsWork();
     TestPickupOutcomeCoalescingStillReportsTheFailureEpisode();
+    TestPickupRecoveryRequiresThreeDistinctActiveOwnedCycles();
     Console.WriteLine("Wholesome scheduler recovery regression tests passed.");
 }
 
@@ -89,12 +94,22 @@ void TestRefreshGateCoalescesConcurrentRequestsAndStopsCallbacks()
 
     Assert(accepted == 1 && gate.Begin(),
         "100 concurrent refresh requests must produce one pending main-thread refresh");
+    accepted = 0;
+    Parallel.For(0, 100, _ =>
+    {
+        if (gate.TryRequest())
+            Interlocked.Increment(ref accepted);
+    });
+    Assert(accepted == 1,
+        "requests arriving during a running refresh must coalesce into one follow-up latch");
     gate.Complete();
-    Assert(gate.TryRequest() && gate.Begin(),
-        "completion must permit exactly one later refresh");
+    Assert(gate.Begin(),
+        "completion must promote the one running-state latch to a pending refresh");
+    gate.TryRequest();
     gate.Stop();
+    gate.Complete();
     Assert(!gate.TryRequest() && !gate.Begin(),
-        "Stop must cancel pending work and prevent stale callbacks from refreshing or starting");
+        "Stop must drop pending/rerun bits and win a race with a stale running callback's Complete");
     gate.Start();
     Assert(gate.TryRequest() && gate.Begin(),
         "a deliberate later bot start must reset the stopped refresh gate");
@@ -126,6 +141,29 @@ void TestLifecycleGateDoesNotGrowSubscriptionsAcrossRestarts()
         "repeated start/stop cycles must own exactly one event subscription set");
     Assert(lifecycle.IsStopped && !gate.TryRequest(),
         "lifecycle Stop must leave an explicit stopped state and cancel refresh work");
+}
+
+void TestLifecycleResetDoesNotCarryPickupCyclesAcrossRestart()
+{
+    var bot = new WholesomeAutoQuest();
+    var field = typeof(WholesomeAutoQuest).GetField(
+        "_pickupMonitor",
+        System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+    var monitor = (WholesomePickupMonitor?)field?.GetValue(bot);
+    Assert(monitor != null, "the production bot must own one pickup lifecycle tracker");
+    var key = QuestRecoveryKey.ForNpc(867, QuestRecoveryStage.Pickup, 1001);
+    var observation = QuestAttemptOutcome.Observation(
+        key, QuestFailureReason.PickupWrongQuestShown, "wrong quest");
+    var failure = QuestAttemptOutcome.Failure(
+        key, QuestFailureReason.PickupWrongQuestShown, "wrong quest");
+    monitor!.Observe(key, 12, 1, observation, active: true);
+    monitor.Observe(key, 12, 2, observation, active: true);
+    Assert(monitor.Observe(key, 12, 3, failure, active: true) == failure,
+        "the lifecycle fixture must reach a reported pickup failure before restart");
+
+    bot.ResetRecoveryLifecycleState();
+    Assert(monitor.Observe(key, 12, 4, failure, active: true) == null,
+        "Stop/Start reset must prevent the same pickup from inheriting target, generation, token, count, outcome, or reported state");
 }
 
 void TestProgressMonitorCountsOnlyActiveWorkAndCoalescesOneStall()
@@ -240,6 +278,55 @@ void TestProgressMonitorScopesEndpointAndDeathFailures()
         "additional deaths in the same no-progress episode must be observations");
 }
 
+void TestProgressMonitorResetsForEachSameKeyOwnershipGeneration()
+{
+    var root = Path.Combine(Path.GetTempPath(), "wholesome-generation-reset-" + Guid.NewGuid().ToString("N"));
+    try
+    {
+        var clock = new TestRecoveryClock(utcNow);
+        var manager = new QuestRecoveryManager(clock);
+        manager.Configure(new QuestRecoveryEnvironment(root, "Wholesome", "Realm", "data-v1", "core-v1", "nav-v1"));
+        var monitor = new WholesomeProgressMonitor(clock);
+        var key = QuestRecoveryKey.ForQuestStage(990, QuestRecoveryStage.Objective);
+
+        for (var expectedEpisode = 1; expectedEpisode <= 3; expectedEpisode++)
+        {
+            var owner = manager.TryBeginAttempt(key, new QuestRecoveryContext());
+            Assert(owner.MayAttempt && owner.State == QuestRecoveryState.Attempting,
+                "each elapsed cooldown must permit one same-key HalfOpen ownership generation");
+            var update = monitor.Sample(WorkSample(
+                key,
+                new[] { 0 },
+                cluster: null!,
+                active: true,
+                allHotspotsUnavailable: true,
+                attemptGeneration: owner.AttemptGeneration));
+            var failure = update.Outcomes.Single();
+            Assert(failure.IsFailureEpisode,
+                "a new ownership generation on the same key must begin a fresh monitor failure episode");
+            manager.Report(
+                QuestAttemptOutcome.Failure(
+                    failure.Key,
+                    key,
+                    owner.AttemptGeneration,
+                    failure.Reason,
+                    failure.Evidence),
+                new QuestRecoveryContext());
+            Assert(manager.GetEntries().Single().EpisodeCount == expectedEpisode,
+                "same-key HalfOpen failures must retain core escalation across fresh monitor generations");
+            clock.Advance(expectedEpisode == 1 ? TimeSpan.FromMinutes(31) : TimeSpan.FromMinutes(61));
+        }
+
+        Assert(manager.GetEntries().Single().State == QuestRecoveryState.Quarantined,
+            "the third exact-generation failure must quarantine without a manual monitor reset");
+    }
+    finally
+    {
+        if (Directory.Exists(root))
+            Directory.Delete(root, recursive: true);
+    }
+}
+
 void TestProductionWorkSnapshotExcludesNonWorkAndRequiresExactOwner()
 {
     var objective = new ForcedQuestObjective(TestQuestObjective.Create(867, new WoWPoint(80, 0, 0)));
@@ -297,6 +384,56 @@ void TestProductionWorkSnapshotExcludesNonWorkAndRequiresExactOwner()
         "loading, death/ghost, taxi/transport, vendor/repair/mail/trainer, rest, pause, unrelated combat, and another quest must not accrue work time");
     Assert(Map(exact, combat: true, questCombat: true).IsActiveWork,
         "combat proven attributable to the exact objective may accrue active work time");
+    Assert(Map(exact, combat: true, questCombat: true).CombatOwnedByQuest
+           && !Map(exact, combat: true, questCombat: false).CombatOwnedByQuest
+           && !Map(other, combat: true, questCombat: true).CombatOwnedByQuest,
+        "the production mapper must retain exact quest-combat ownership for pre-death attribution");
+}
+
+void TestDeathEventConsumesOnlyPreDeathOwnedQuestCombatSnapshot()
+{
+    var clock = new TestRecoveryClock(utcNow);
+    var monitor = new WholesomeDeathMonitor(clock);
+    var owner = new object();
+    var key = QuestRecoveryKey.ForQuestStage(867, QuestRecoveryStage.Objective);
+    var activeQuestCombat = WorkSample(
+        key,
+        new[] { 0 },
+        QuestRecoveryKey.ForEndpoint(867, QuestRecoveryStage.Navigation, 1, "cell:0:0"),
+        active: true,
+        combatOwnedByQuest: true,
+        attemptGeneration: 31);
+
+    monitor.Capture(owner, key, 31, activeQuestCombat);
+    Assert(monitor.TryRecordDeath(owner, key, 31, out var death)
+           && death.DeathAttributable
+           && death.Key.Equals(key)
+           && death.AttemptGeneration == 31,
+        "the death event must consume the exact pre-death active owned quest-combat snapshot after live POI state clears");
+    Assert(!monitor.TryRecordDeath(owner, key, 31, out _),
+        "one pre-death snapshot must count at most one death event");
+
+    monitor.Capture(owner, key, 31, WorkSample(
+        key, new[] { 0 }, cluster: null!, active: false,
+        combatOwnedByQuest: true, attemptGeneration: 31));
+    Assert(!monitor.TryRecordDeath(owner, key, 31, out _),
+        "loading, rest, pause, death, or any other inactive state must not count merely because the character is nearby");
+    monitor.Capture(owner, key, 31, WorkSample(
+        key, new[] { 0 }, cluster: null!, active: true,
+        combatOwnedByQuest: false, attemptGeneration: 31));
+    Assert(!monitor.TryRecordDeath(owner, key, 31, out _),
+        "unrelated combat must not count as an attributable death");
+
+    monitor.Capture(owner, key, 31, activeQuestCombat);
+    Assert(!monitor.TryRecordDeath(new object(), key, 31, out _),
+        "a replaced behavior must not consume another behavior's death attribution");
+    monitor.Capture(owner, key, 31, activeQuestCombat);
+    Assert(!monitor.TryRecordDeath(owner, key, 32, out _),
+        "a newer ownership generation must reject a stale pre-death snapshot");
+    monitor.Capture(owner, key, 31, activeQuestCombat);
+    clock.Advance(TimeSpan.FromSeconds(11));
+    Assert(!monitor.TryRecordDeath(owner, key, 31, out _),
+        "a stale nearby snapshot must not be treated as causal death evidence");
 }
 
 void TestAttemptOwnershipUsesTheExactGenerationToken()
@@ -320,6 +457,62 @@ void TestAttemptOwnershipUsesTheExactGenerationToken()
         "successful Wholesome outcomes must carry the exact generation returned by TryBeginAttempt");
     Assert(!ownership.TryComplete(owner, "duplicate callback", out _),
         "a duplicate completion callback must be rejected after ownership is released");
+}
+
+void TestOwnedFailureBindsGenerationWithoutSyntheticSuccess()
+{
+    var ownership = new WholesomeAttemptOwnership();
+    var owner = new object();
+    var stageKey = QuestRecoveryKey.ForQuestStage(867, QuestRecoveryStage.Objective);
+    var endpointKey = QuestRecoveryKey.ForEndpoint(867, QuestRecoveryStage.Navigation, 1, "cell:2:3");
+    ownership.Begin(owner, stageKey, new QuestRecoveryDecision
+    {
+        State = QuestRecoveryState.Attempting,
+        MayAttempt = true,
+        AttemptGeneration = 51
+    });
+    var endpointFailure = QuestAttemptOutcome.Failure(
+        endpointKey,
+        QuestFailureReason.PathGenerationFailed,
+        "no path to exact endpoint");
+
+    Assert(ownership.TryBind(owner, endpointFailure, out var bound)
+           && bound.Kind == QuestAttemptOutcomeKind.Failure
+           && bound.Key.Equals(endpointKey)
+           && bound.AttemptKey?.Equals(stageKey) == true
+           && bound.AttemptGeneration == 51,
+        "Wholesome must bind a failure directly to the exact active generation without emitting Success first");
+    Assert(ownership.TryGet(owner, out _, out var stillOwnedGeneration)
+           && stillOwnedGeneration == 51,
+        "local ownership must remain until the manager atomically reports the generated failure");
+    Assert(!ownership.Release(owner, 50)
+           && ownership.Release(owner, 51)
+           && !ownership.TryGet(owner, out _, out _),
+        "local ownership must be removed only by the matching generation after manager Report returns");
+
+    ownership.Begin(owner, stageKey, new QuestRecoveryDecision
+    {
+        State = QuestRecoveryState.Attempting,
+        MayAttempt = true,
+        AttemptGeneration = 52
+    });
+    var reports = new List<QuestAttemptOutcome>();
+    var ownedDuringReport = false;
+    Assert(WholesomeAutoQuest.ReportOwnedFailure(
+               ownership,
+               owner,
+               endpointFailure,
+               reported =>
+               {
+                   reports.Add(reported);
+                   ownedDuringReport = ownership.TryGet(owner, out _, out var generation) && generation == 52;
+                   return new QuestRecoveryDecision { State = QuestRecoveryState.CoolingDown };
+               })
+           && reports.Count == 1
+           && reports[0].Kind == QuestAttemptOutcomeKind.Failure
+           && ownedDuringReport
+           && !ownership.TryGet(owner, out _, out _),
+        "production failure reporting must call the manager once while local ownership remains, then release locally");
 }
 
 void TestProgressReleaseAllowsSameBehaviorToClaimALaterGeneration()
@@ -400,6 +593,72 @@ void TestPickupOutcomeCoalescingStillReportsTheFailureEpisode()
         "the third-cycle failure episode must not be hidden by an earlier observation with identical dialog evidence");
 }
 
+void TestPickupRecoveryRequiresThreeDistinctActiveOwnedCycles()
+{
+    var monitor = new WholesomePickupMonitor();
+    var pickup = new ForcedQuestPickUp(867, "Pickup", 1001, "Giver", new WoWPoint(20, 30, 0), null);
+    var key = QuestRecoveryKey.ForNpc(867, QuestRecoveryStage.Pickup, 1001);
+    var other = QuestRecoveryKey.ForNpc(876, QuestRecoveryStage.Pickup, 1002);
+    var poi = new BotPoi(new WoWPoint(20, 30, 0), PoiType.QuestPickUp) { Entry = 1001 };
+    var observation = QuestAttemptOutcome.Observation(
+        key, QuestFailureReason.PickupWrongQuestShown, "wrong quest dialog");
+    var failure = QuestAttemptOutcome.Failure(
+        key, QuestFailureReason.PickupWrongQuestShown, "wrong quest dialog");
+
+    bool Active(
+        QuestRecoveryKey owner,
+        long generation = 7,
+        bool managerOwnsAttempt = true,
+        bool inWorld = true,
+        bool dead = false,
+        bool resting = false,
+        bool paused = false,
+        bool combat = false,
+        PoiType poiType = PoiType.QuestPickUp) => WholesomeAutoQuest.IsPickupRecoveryActive(
+            pickup,
+            owner,
+            generation,
+            managerOwnsAttempt,
+            poiType == PoiType.QuestPickUp ? poi : new BotPoi(WoWPoint.Zero, poiType),
+            inWorld,
+            dead,
+            ghost: false,
+            onTaxi: false,
+            onTransport: false,
+            resting,
+            paused,
+            combat);
+
+    Assert(Active(key)
+           && !Active(other)
+           && !Active(key, generation: 0)
+           && !Active(key, managerOwnsAttempt: false)
+           && !Active(key, inWorld: false)
+           && !Active(key, dead: true)
+           && !Active(key, resting: true)
+           && !Active(key, paused: true)
+           && !Active(key, combat: true)
+           && !Active(key, poiType: PoiType.Repair),
+        "pickup recovery evidence must require exact active ownership and exclude loading, cooling/denied, death, rest, pause, combat, other quests, and non-pickup work");
+
+    Assert(monitor.Observe(key, 7, interactionCycle: 1, observation, active: false) == null
+           && monitor.Observe(key, 7, interactionCycle: 2, failure, active: false) == null,
+        "excluded pickup cycles must not count toward failure");
+    Assert(monitor.Observe(key, 7, interactionCycle: 3, observation, active: true) == observation
+           && monitor.Observe(key, 7, interactionCycle: 3, observation, active: true) == null,
+        "one real active interaction cycle may report one observation but duplicate pulses must not count");
+    Assert(monitor.Observe(key, 7, interactionCycle: 4, observation, active: true) == observation,
+        "the second distinct active cycle must remain an observation");
+    Assert(monitor.Observe(key, 7, interactionCycle: 5, failure, active: true) == failure,
+        "only the third distinct active interaction cycle may report pickup failure");
+
+    monitor.Reset();
+    Assert(monitor.Observe(key, 7, interactionCycle: 6, failure, active: true) == null,
+        "lifecycle reset must discard pickup target, generation, interaction token/count, and failure state");
+    Assert(typeof(ForcedQuestPickUp).GetProperty("InteractionCycleId") != null,
+        "production pickup behavior must expose its existing real interaction-cycle token read-only");
+}
+
 QuestWorkSample WorkSample(
     QuestRecoveryKey key,
     IReadOnlyList<int> counts,
@@ -408,16 +667,20 @@ QuestWorkSample WorkSample(
     bool endpointPathFailed = false,
     IReadOnlyList<QuestRecoveryKey>? knownEndpoints = null,
     bool allHotspotsUnavailable = false,
-    bool deathAttributable = false) => new()
+    bool deathAttributable = false,
+    bool combatOwnedByQuest = false,
+    long attemptGeneration = 1) => new()
 {
     Key = key,
+    AttemptGeneration = attemptGeneration,
     ObjectiveCounts = counts,
     ClusterKey = cluster,
     IsActiveWork = active,
     EndpointPathFailed = endpointPathFailed,
     KnownEndpointKeys = knownEndpoints ?? Array.Empty<QuestRecoveryKey>(),
     AllHotspotsUnavailable = allHotspotsUnavailable,
-    DeathAttributable = deathAttributable
+    DeathAttributable = deathAttributable,
+    CombatOwnedByQuest = combatOwnedByQuest
 };
 
 void TestProductionCallerNoLongerNeedsBlacklistCompatibilityAdapters()
