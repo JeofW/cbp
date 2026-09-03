@@ -9,6 +9,7 @@ try
     TestStageSpecificCooldown();
     TestEndpointCooldownIsolation();
     TestEndpointAttemptCap();
+    TestEndpointAttemptCapCountsDistinctRecoveryKeys();
     TestOrdinaryWorkPrecedesHalfOpenProbe();
     TestNoWorkReturnsEarliestRetry();
     TestCandidateTieBreakers();
@@ -76,6 +77,27 @@ void TestEndpointAttemptCap()
                "endpoint-1", "endpoint-2", "endpoint-3", "endpoint-4", "endpoint-5"
            }),
         "one scheduling episode must try no more than the five nearest eligible endpoints");
+}
+
+void TestEndpointAttemptCapCountsDistinctRecoveryKeys()
+{
+    var selected = QuestSchedulingPolicy.Select(new[]
+    {
+        Endpoint(867, "duplicate", distance: 1, eligible: true),
+        Endpoint(867, "duplicate", distance: 2, eligible: true),
+        Endpoint(867, "duplicate", distance: 3, eligible: true),
+        Endpoint(867, "duplicate", distance: 4, eligible: true),
+        Endpoint(867, "duplicate", distance: 5, eligible: true),
+        Endpoint(867, "alternative-a", distance: 6, eligible: true),
+        Endpoint(867, "alternative-b", distance: 7, eligible: true)
+    }, maximum: 5);
+
+    Assert(selected.Select(candidate => candidate.Key.Endpoint).SequenceEqual(new[]
+           {
+               "duplicate", "alternative-a", "alternative-b"
+           })
+           && selected.Select(candidate => candidate.Distance).SequenceEqual(new[] { 1d, 6d, 7d }),
+        "the endpoint cap must count exact recovery keys once and retain the first sorted row");
 }
 
 void TestOrdinaryWorkPrecedesHalfOpenProbe()

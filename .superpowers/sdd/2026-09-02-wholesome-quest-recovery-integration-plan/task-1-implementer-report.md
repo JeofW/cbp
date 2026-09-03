@@ -66,3 +66,39 @@ The directory contains the original `DataModels.cs`, `DataLoader.cs`, `QuestSche
 - Unrelated vendor/grind working-tree changes were not edited or staged.
 - The Wholesome runtime source directory is intentionally outside the `CopilotBuddy` Git worktree and is linked into the regression project. Therefore the local commit records the Task 1 regression project and this report; the runtime `DataModels.cs` and `QuestSchedulingPolicy.cs` changes remain at the prescribed workspace-root paths and are protected by the backup above.
 - Package vulnerability lookup emitted `NU1900` because NuGet was unreachable, and the repository emitted its accepted baseline compiler/package warnings. Neither produced a build error or a warning in newly added policy/DTO lines.
+
+## Review Round 1: Distinct Endpoint Attempts
+
+The endpoint selector previously applied its five-attempt cap to candidate rows. Duplicate rows carrying the same exact `QuestRecoveryKey` could therefore consume all five slots and hide genuine endpoint alternatives.
+
+### RED
+
+Added a production-linked regression with five sorted rows for one endpoint key followed by two distinct alternatives. The regression requires one result for the repeated key, retains its first sorted row, and preserves both alternatives.
+
+Direct DLL execution exited 1 with:
+
+```text
+System.InvalidOperationException: the endpoint cap must count exact recovery keys once and retain the first sorted row
+```
+
+### GREEN
+
+The endpoint pipeline now performs stable exact-key deduplication after existing eligibility filtering and deterministic sorting, before applying the caller limit and five-attempt hard cap. No other ordering or recovery behavior changed.
+
+Fresh non-incremental Release x86 build:
+
+```text
+BUILD_EXIT=0
+NEW_POLICY_WARNING_LINES=0
+NEW_DTO_WARNING_LINES=0
+3257 Warning(s)
+0 Error(s)
+```
+
+Direct DLL execution exited 0 with:
+
+```text
+Wholesome scheduling policy regression tests passed.
+```
+
+No push, deployment, apphost execution, backup mutation, or unrelated staging occurred. The one-line runtime policy fix remains in the external linked source at `D:/World of Warcraft 3.3.5a/CB/Bots/WholesomeAutoQuest-master/QuestSchedulingPolicy.cs`; this review commit records the linked regression and report update.
