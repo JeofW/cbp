@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Xml.Linq;
 using Bots.Quest.QuestOrder;
 using Styx.Logic.Pathing;
 using Styx.Logic.POI;
@@ -47,6 +48,9 @@ try
     TestConfirmedEndpointPrecedesUnknownFallback();
     TestEmbeddedQuestPoiRequiresExactCurrentEndpoint();
     TestDeniedActivationLeavesUnownedPoiUntouched();
+    TestGuardedProfilePreservesScheduleOrderAndLiveState();
+    TestGuardedProfileUsesOnlyApprovedAlternativesAndHotspots();
+    TestGuardedProfileOmitsEndpointlessObjectivesWithStatus();
     Console.WriteLine("Wholesome scheduler recovery regression tests passed.");
 }
 
@@ -992,6 +996,197 @@ void TestNavigationFingerprintIncludesProviderAndMeshStamp()
         Directory.Delete(directory);
     }
 }
+
+void TestGuardedProfilePreservesScheduleOrderAndLiveState()
+{
+    var db = ProfileDatabase();
+    var objective = db.Quests.Single(quest => quest.Id == 867);
+    var pickup = db.Quests.Single(quest => quest.Id == 876);
+    var turnIn = db.Quests.Single(quest => quest.Id == 868);
+    var plan = new QuestPlanEntry[]
+    {
+        new()
+        {
+            Quest = objective,
+            Stage = QuestWorkStage.Objective,
+            ObjectiveIndex = 0,
+            Hotspots = new[] { new SpawnPoint { Map = 1, X = 161, Y = 2, Z = 3 } }
+        },
+        new()
+        {
+            Quest = pickup,
+            Stage = QuestWorkStage.Pickup,
+            Giver = db.QuestGivers.Single(giver => giver.GiverId == 1002),
+            Hotspots = new[] { new SpawnPoint { Map = 1, X = 20, Y = 0, Z = 0 } }
+        },
+        new()
+        {
+            Quest = turnIn,
+            Stage = QuestWorkStage.TurnIn,
+            Ender = db.QuestEnders.Single(ender => ender.EnderId == 3002),
+            Hotspots = new[] { new SpawnPoint { Map = 1, X = 30, Y = 0, Z = 0 } }
+        }
+    };
+
+    string xml = BuildProfileFromPlan(new ProfileBuilder(), plan, db);
+    var document = XDocument.Parse(xml);
+    var groups = document.Root!.Element("QuestOrder")!.Elements("If").ToArray();
+
+    Assert(groups.Select(group => (string?)group.Elements().Single().Attribute("QuestId"))
+            .SequenceEqual(new[] { "867", "876", "868" }),
+        "accepted objective and turn-in work must retain reviewed schedule order instead of waiting behind pickups");
+    Assert((string?)groups[0].Attribute("Condition") == "HasQuest(867) && !IsQuestCompleted(867)"
+           && groups[0].Elements().Single().Name.LocalName == "Objective"
+           && (string?)groups[0].Elements().Single().Attribute("Index") == "0",
+        "objective work must use the exact accepted-incomplete live-state guard");
+    Assert((string?)groups[1].Attribute("Condition") == "!HasQuest(876) && !IsQuestCompleted(876)"
+           && groups[1].Elements().Single().Name.LocalName == "PickUp"
+           && (string?)groups[1].Elements().Single().Attribute("X") == "20",
+        "pickup work must use the exact not-accepted and not-completed live-state guard");
+    Assert((string?)groups[2].Attribute("Condition") == "HasQuest(868) && IsQuestCompleted(868)"
+           && groups[2].Elements().Single().Name.LocalName == "TurnIn"
+           && (string?)groups[2].Elements().Single().Attribute("TurnInId") == "3002"
+           && (string?)groups[2].Elements().Single().Attribute("X") == "30",
+        "turn-in work must use the exact accepted-complete live-state guard");
+    Assert(xml.Contains("HasQuest(867) &amp;&amp; !IsQuestCompleted(867)", StringComparison.Ordinal),
+        "guard conditions must be escaped by XML serialization");
+}
+
+void TestGuardedProfileUsesOnlyApprovedAlternativesAndHotspots()
+{
+    var db = ProfileDatabase();
+    var pickup = db.Quests.Single(quest => quest.Id == 876);
+    var objective = db.Quests.Single(quest => quest.Id == 867);
+    var approvedB = db.QuestGivers.Single(giver => giver.GiverId == 1002);
+    var approvedC = db.QuestGivers.Single(giver => giver.GiverId == 1003);
+    var plan = new QuestPlanEntry[]
+    {
+        new()
+        {
+            Quest = pickup,
+            Stage = QuestWorkStage.Pickup,
+            Giver = approvedB,
+            Hotspots = new[]
+            {
+                new SpawnPoint { Map = 1, X = 20, Y = 1, Z = 2 },
+                new SpawnPoint { Map = 1, X = 21, Y = 3, Z = 4 }
+            }
+        },
+        new()
+        {
+            Quest = pickup,
+            Stage = QuestWorkStage.Pickup,
+            Giver = approvedC,
+            Hotspots = new[] { new SpawnPoint { Map = 1, X = 30 } }
+        },
+        new()
+        {
+            Quest = objective,
+            Stage = QuestWorkStage.Objective,
+            ObjectiveIndex = 0,
+            Hotspots = new[]
+            {
+                new SpawnPoint { Map = 1, X = 161, Y = 2, Z = 3 },
+                new SpawnPoint { Map = 1, X = 241, Y = 4, Z = 5 }
+            }
+        }
+    };
+
+    var document = XDocument.Parse(BuildProfileFromPlan(new ProfileBuilder(), plan, db));
+    var pickups = document.Root!.Element("QuestOrder")!.Elements("If")
+        .SelectMany(group => group.Elements("PickUp"))
+        .ToArray();
+    var hotspots = document.Root!.Elements("Quest")
+        .Where(quest => (string?)quest.Attribute("Id") == "867")
+        .SelectMany(quest => quest.Elements("Objective"))
+        .SelectMany(node => node.Element("Hotspots")!.Elements("Hotspot"))
+        .Select(node => (string?)node.Attribute("X"))
+        .ToArray();
+
+    Assert(pickups.Select(node => (string?)node.Attribute("GiverId"))
+            .SequenceEqual(new[] { "1002", "1002", "1003" })
+           && pickups.Select(node => (string?)node.Attribute("X"))
+               .SequenceEqual(new[] { "20", "21", "30" }),
+        "the builder must preserve every distinct approved giver endpoint in deterministic plan order");
+    Assert(pickups.All(node => (string?)node.Attribute("GiverId") != "1001"),
+        "the builder must never fall back to a database-global cooled giver");
+    Assert(hotspots.SequenceEqual(new[] { "161", "241" }),
+        "objective definitions must contain only eligible plan hotspots in deterministic order");
+}
+
+void TestGuardedProfileOmitsEndpointlessObjectivesWithStatus()
+{
+    var db = ProfileDatabase();
+    var plan = new QuestPlanEntry[]
+    {
+        new()
+        {
+            Quest = db.Quests.Single(quest => quest.Id == 867),
+            Stage = QuestWorkStage.Objective,
+            ObjectiveIndex = 0,
+            Hotspots = Array.Empty<SpawnPoint>()
+        }
+    };
+    var builder = new ProfileBuilder();
+    var document = XDocument.Parse(BuildProfileFromPlan(builder, plan, db));
+    string status = builder.LastStatus;
+
+    Assert(!document.Descendants("Objective").Any(),
+        "an objective with no approved endpoint must be omitted instead of emitting empty hotspots");
+    Assert(status.Contains("excluded quest=867;stage=Objective;objective=0;reason=no-eligible-endpoints", StringComparison.Ordinal),
+        "endpointless objective omission must be exposed through the profile-build status contract");
+}
+
+string BuildProfileFromPlan(
+    ProfileBuilder builder,
+    IReadOnlyList<QuestPlanEntry> plan,
+    QuestDatabase db)
+{
+    return builder.BuildProfileXml(plan, db, "Test & Zone", "Tester", 20);
+}
+
+QuestDatabase ProfileDatabase() => new()
+{
+    Quests = new List<QuestEntry>
+    {
+        new()
+        {
+            Id = 867,
+            Name = "Accepted & ready",
+            Objectives =
+            {
+                new QuestObjective
+                {
+                    Index = 0,
+                    Type = ObjectiveType.KillMob,
+                    MobId = 2000,
+                    KillCount = 2
+                }
+            }
+        },
+        new() { Id = 876, Name = "New work" },
+        new() { Id = 868, Name = "Completed work" }
+    },
+    QuestGivers = new List<QuestGiverEntry>
+    {
+        new() { QuestId = 876, GiverId = 1001, GiverName = "Cooled giver" },
+        new() { QuestId = 876, GiverId = 1002, GiverName = "Approved giver B" },
+        new() { QuestId = 876, GiverId = 1003, GiverName = "Approved giver C" }
+    },
+    QuestEnders = new List<QuestEnderEntry>
+    {
+        new() { QuestId = 868, EnderId = 3001, EnderName = "Cooled ender" },
+        new() { QuestId = 868, EnderId = 3002, EnderName = "Approved ender" }
+    },
+    CreatureSpawns = new Dictionary<string, List<SpawnPoint>>
+    {
+        ["2000"] = new()
+        {
+            new() { Map = 1, X = 1, Y = 1, Z = 1 },
+            new() { Map = 1, X = 81, Y = 1, Z = 1 }
+        }
+    }
+};
 
 QuestDatabase SchedulerDatabase() => new()
 {
