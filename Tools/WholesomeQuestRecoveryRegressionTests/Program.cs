@@ -50,7 +50,11 @@ try
     TestDeniedActivationLeavesUnownedPoiUntouched();
     TestGuardedProfilePreservesScheduleOrderAndLiveState();
     TestGuardedProfileUsesOnlyApprovedAlternativesAndHotspots();
-    TestGuardedProfileOmitsEndpointlessObjectivesWithStatus();
+    TestGuardedProfileOmitsEndpointlessObjectives();
+    TestGameObjectOnlyObjectiveResolvesUseObjectOverride();
+    TestGameObjectItemCollectionRemainsCollectItemOverride();
+    TestSchedulerReportsEveryEndpointlessObjectiveOmission();
+    TestSchedulerDeduplicatesRelationRowsAndExactEndpoints();
     Console.WriteLine("Wholesome scheduler recovery regression tests passed.");
 }
 
@@ -1114,7 +1118,7 @@ void TestGuardedProfileUsesOnlyApprovedAlternativesAndHotspots()
         "objective definitions must contain only eligible plan hotspots in deterministic order");
 }
 
-void TestGuardedProfileOmitsEndpointlessObjectivesWithStatus()
+void TestGuardedProfileOmitsEndpointlessObjectives()
 {
     var db = ProfileDatabase();
     var plan = new QuestPlanEntry[]
@@ -1129,12 +1133,215 @@ void TestGuardedProfileOmitsEndpointlessObjectivesWithStatus()
     };
     var builder = new ProfileBuilder();
     var document = XDocument.Parse(BuildProfileFromPlan(builder, plan, db));
-    string status = builder.LastStatus;
 
     Assert(!document.Descendants("Objective").Any(),
         "an objective with no approved endpoint must be omitted instead of emitting empty hotspots");
-    Assert(status.Contains("excluded quest=867;stage=Objective;objective=0;reason=no-eligible-endpoints", StringComparison.Ordinal),
-        "endpointless objective omission must be exposed through the profile-build status contract");
+}
+
+void TestGameObjectOnlyObjectiveResolvesUseObjectOverride()
+{
+    var quest = new QuestEntry
+    {
+        Id = 498,
+        Name = "The Rescue",
+        Objectives =
+        {
+            new QuestObjective
+            {
+                Index = 0,
+                Type = ObjectiveType.CollectFromGameObject,
+                ItemId = 0,
+                GameObjectId = 1721,
+                GameObjectName = "Locked ball and chain",
+                CollectCount = 1
+            }
+        }
+    };
+    var plan = new[]
+    {
+        new QuestPlanEntry
+        {
+            Quest = quest,
+            Stage = QuestWorkStage.Objective,
+            ObjectiveIndex = 0,
+            Hotspots = new[] { new SpawnPoint { Map = 0, X = -1262, Y = -1211, Z = 38 } }
+        }
+    };
+
+    var document = XDocument.Parse(new ProfileBuilder().BuildProfileXml(
+        plan, new QuestDatabase(), "Hillsbrad", "Tester", 30));
+    XElement definition = document.Root!.Elements("Quest").Single();
+    XElement order = document.Root.Element("QuestOrder")!.Element("If")!.Element("Objective")!;
+    var resolved = Styx.Logic.Profiles.Quest.QuestInfo.FromXML(definition).FindUseGameObject(1721);
+
+    Assert((string?)definition.Element("Objective")!.Attribute("Type") == "UseObject"
+           && (string?)definition.Element("Objective")!.Attribute("ObjectId") == "1721"
+           && (string?)definition.Element("Objective")!.Attribute("UseCount") == "1",
+        "an ItemId-zero game-object objective must use the live UseObject override schema");
+    Assert((string?)order.Attribute("Type") == "UseObject"
+           && (string?)order.Attribute("ObjectId") == "1721"
+           && (string?)order.Attribute("UseCount") == "1",
+        "the guarded order node must resolve the live game-object objective by GameObjectId");
+    Assert(resolved?.OverridedHotspots?.Count == 1
+           && resolved.OverridedHotspots[0].X == -1262,
+        "UseGameObjectObjective resolution must receive only the scheduler-approved override hotspot");
+}
+
+void TestGameObjectItemCollectionRemainsCollectItemOverride()
+{
+    var quest = new QuestEntry
+    {
+        Id = 2950,
+        Name = "Nogg's Ring Redo",
+        Objectives =
+        {
+            new QuestObjective
+            {
+                Index = 1,
+                Type = ObjectiveType.CollectFromGameObject,
+                ItemId = 1206,
+                GameObjectId = 1736,
+                GameObjectName = "Shipment of Iron",
+                CollectCount = 1
+            }
+        }
+    };
+    var plan = new[]
+    {
+        new QuestPlanEntry
+        {
+            Quest = quest,
+            Stage = QuestWorkStage.Objective,
+            ObjectiveIndex = 1,
+            Hotspots = new[] { new SpawnPoint { Map = 1, X = 101, Y = 102, Z = 103 } }
+        }
+    };
+
+    var document = XDocument.Parse(new ProfileBuilder().BuildProfileXml(
+        plan, new QuestDatabase(), "Orgrimmar", "Tester", 35));
+    XElement definition = document.Root!.Elements("Quest").Single();
+    XElement order = document.Root.Element("QuestOrder")!.Element("If")!.Element("Objective")!;
+    var resolved = Styx.Logic.Profiles.Quest.QuestInfo.FromXML(definition).FindCollectItem(1206);
+
+    Assert((string?)definition.Element("Objective")!.Attribute("Type") == "CollectItem"
+           && (string?)definition.Element("Objective")!.Attribute("ItemId") == "1206"
+           && resolved?.OverridedCollectFrom?.ContainsGameObject(1736) == true,
+        "a game object that supplies an item must retain CollectItem override behavior");
+    Assert((string?)order.Attribute("Type") == "CollectItem"
+           && (string?)order.Attribute("ItemId") == "1206",
+        "the guarded order node must keep actual item collection keyed by ItemId");
+    Assert(resolved?.OverridedHotspots?.Count == 1
+           && resolved.OverridedHotspots[0].X == 101,
+        "item collection must still use only the scheduler-approved hotspot");
+}
+
+void TestSchedulerReportsEveryEndpointlessObjectiveOmission()
+{
+    var noKnownDb = SchedulerDatabase();
+    noKnownDb.CreatureSpawns.Remove("2000");
+    var noKnown = QuestScheduler.MaterializeSchedule(
+        noKnownDb,
+        Snapshot(new[] { Accepted(867, false) }, Array.Empty<uint>(), authoritative: false),
+        _ => Eligible(),
+        10,
+        500,
+        7);
+    Assert(noKnown.Status.Contains(
+            "excluded quest=867;stage=Objective;objective=0;reason=no-known-hotspots;retry=context-change",
+            StringComparison.Ordinal),
+        "an objective with no known in-range endpoint must report its exact scheduler omission");
+
+    var noAssessed = QuestScheduler.MaterializeSchedule(
+        SchedulerDatabase(),
+        Snapshot(new[] { Accepted(867, false) }, Array.Empty<uint>(), authoritative: false),
+        _ => Eligible(),
+        10,
+        500,
+        7,
+        navigationAssessment: _ => new SpawnNavigationAssessment { IsKnownReachable = false });
+    Assert(noAssessed.Status.Contains(
+            "excluded quest=867;stage=Objective;objective=0;reason=no-assessed-hotspots;retry=context-change",
+            StringComparison.Ordinal),
+        "an objective whose known endpoints all fail assessment must report that exact scheduler omission");
+
+    DateTime retry = utcNow.AddMinutes(10);
+    var noSelected = QuestScheduler.MaterializeSchedule(
+        SchedulerDatabase(),
+        Snapshot(new[] { Accepted(867, false) }, Array.Empty<uint>(), authoritative: false),
+        key => key.Scope == QuestRecoveryScope.Endpoint ? Cooling(retry) : Eligible(),
+        10,
+        500,
+        7);
+    Assert(noSelected.Status.Contains(
+            "excluded quest=867;stage=Objective;objective=0;reason=no-selected-hotspots;retry=2026-09-03T00:10:00.0000000Z",
+            StringComparison.Ordinal),
+        "an objective whose assessed endpoints are all recovery-excluded must report its exact retry");
+}
+
+void TestSchedulerDeduplicatesRelationRowsAndExactEndpoints()
+{
+    var db = SchedulerDatabase();
+    db.QuestGivers.Add(new QuestGiverEntry
+    {
+        QuestId = 876,
+        GiverId = 1002,
+        GiverName = "Duplicate giver row"
+    });
+    db.CreatureSpawns["1002"] = new List<SpawnPoint>
+    {
+        new() { Map = 1, X = 20, Y = 0, Z = 0 },
+        new() { Map = 1, X = 20, Y = 0, Z = 0 },
+        new() { Map = 1, X = 101, Y = 0, Z = 0 }
+    };
+    db.Quests.Add(new QuestEntry
+    {
+        Id = 868,
+        Name = "Completed work",
+        Objectives = { new QuestObjective { Index = 0, Type = ObjectiveType.TurnInOnly } }
+    });
+    db.QuestEnders.Add(new QuestEnderEntry
+    {
+        QuestId = 868,
+        EnderId = 3001,
+        EnderName = "Approved ender"
+    });
+    db.QuestEnders.Add(new QuestEnderEntry
+    {
+        QuestId = 868,
+        EnderId = 3001,
+        EnderName = "Duplicate ender row"
+    });
+    db.CreatureSpawns["3001"] = new List<SpawnPoint>
+    {
+        new() { Map = 1, X = 30, Y = 0, Z = 0 },
+        new() { Map = 1, X = 30, Y = 0, Z = 0 },
+        new() { Map = 1, X = 111, Y = 0, Z = 0 }
+    };
+
+    var result = QuestScheduler.MaterializeSchedule(
+        db,
+        Snapshot(new[] { Accepted(868, true) }, Array.Empty<uint>()),
+        _ => Eligible(),
+        10,
+        500,
+        7);
+    var giver = result.Plan.Where(entry => entry.Giver?.GiverId == 1002).ToArray();
+    var ender = result.Plan.Where(entry => entry.Ender?.EnderId == 3001).ToArray();
+
+    Assert(giver.Length == 1
+           && giver[0].Hotspots.Select(point => point.X).SequenceEqual(new[] { 20d, 101d }),
+        "duplicate giver rows and exact endpoints must collapse while genuine alternate spawns remain");
+    Assert(ender.Length == 1
+           && ender[0].Hotspots.Select(point => point.X).SequenceEqual(new[] { 30d, 111d }),
+        "duplicate ender rows and exact endpoints must collapse while genuine alternate spawns remain");
+
+    var profile = XDocument.Parse(new ProfileBuilder().BuildProfileXml(
+        result.Plan, db, "Test", "Tester", 20));
+    Assert(profile.Descendants("If").Count(group => group.Elements("PickUp")
+               .Any(node => (string?)node.Attribute("GiverId") == "1002")) == 1
+           && profile.Descendants("If").Count(group => group.Elements("TurnIn")
+               .Any(node => (string?)node.Attribute("TurnInId") == "3001")) == 1,
+        "deduplicated relations must emit one guarded group per genuine scheduler plan entry");
 }
 
 string BuildProfileFromPlan(

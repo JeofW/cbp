@@ -12,7 +12,7 @@ Each ordered plan entry emits one `If` group with the exact live-state condition
 
 Conditions, names, and all other XML content are constructed with LINQ to XML and `XAttribute`. Objective definitions contain only the entry-approved hotspots. Pickup and turn-in groups preserve each approved relation endpoint as an explicit `X/Y/Z` node in deterministic plan order. No global giver, ender, creature-spawn, or game-object-spawn fallback remains in `ProfileBuilder`.
 
-An objective or relation entry with no approved endpoint is omitted. `ProfileBuilder.LastStatus` records the exact exclusion, and the production caller appends that status to the existing `QuestScheduleResult.Status`/`QuestScheduler.LastStatus` contract. No empty `<Hotspots>` collection is emitted.
+An objective or relation entry with no approved endpoint is omitted. The scheduler records exact objective omissions in the existing `QuestScheduleResult.Status`/`QuestScheduler.LastStatus` contract before profile generation; the builder does not invent a second status. No empty `<Hotspots>` collection is emitted.
 
 Task 4 lifecycle behavior was deliberately not changed.
 
@@ -129,3 +129,124 @@ No core source changed for Task 3.
 - Multiple approved coordinates for one giver/ender remain inside that ordered entry's single guard. After one succeeds, the live-state guard suppresses later alternatives; failure reporting/rebuild ownership remains Task 4 work.
 - Existing unrelated vendor/grind working-tree changes remain untouched and will not be staged.
 - No push, deployment, live binary replacement, backup mutation, or apphost execution occurred.
+
+## Review Round 1
+
+Base commit: `51ec3eccce9fb75c6dad46611cf3e24c8272d5f5`.
+
+### Root-cause verification
+
+The live profile parser maps `Type="UseObject"` to `UseObjectObjectiveInfo`, keyed by `ObjectId` and `UseCount`. `UseGameObjectObjective` calls `QuestInfo.FindUseGameObject(gameObjectId)` and consumes `OverridedHotspots`; when that lookup fails, it falls back to client quest-step locations. Task 3 had serialized every `CollectFromGameObject` as `CollectItem`, so an `ItemId=0` objective created a mismatched `CollectItemObjectiveInfo` and could not supply the scheduler-approved hotspots to `UseGameObjectObjective`.
+
+The shipped aggregate data confirms the behavior is material:
+
+```text
+SHIPPED_ITEM_ZERO_GAMEOBJECT_OBJECTIVES=143
+SHIPPED_ITEM_POSITIVE_GAMEOBJECT_OBJECTIVES=634
+QUEST_498_ITEM_ZERO_GAMEOBJECT_OBJECTIVES=2
+QUEST_498_GAMEOBJECT_IDS=1721,1722
+```
+
+The scheduler also silently skipped three distinct objective conditions: no known in-range clusters, no clusters surviving navigation/safety assessment, and no endpoints surviving recovery selection. Finally, duplicate giver/ender rows were evaluated and materialized independently, while exact duplicate coordinates survived inside a quantized cluster.
+
+### Strict TDD evidence
+
+Game-object schema/resolution RED:
+
+```text
+Build succeeded.
+3302 Warning(s)
+0 Error(s)
+System.InvalidOperationException: an ItemId-zero game-object objective must use the live UseObject override schema
+TEST_EXIT=1
+```
+
+After the focused schema fix, the suite advanced to the scheduler-omission RED:
+
+```text
+Build succeeded.
+3302 Warning(s)
+0 Error(s)
+System.InvalidOperationException: an objective with no known in-range endpoint must report its exact scheduler omission
+TEST_EXIT=1
+```
+
+After the scheduler status fix, the suite advanced to the relation-identity RED:
+
+```text
+Build succeeded.
+3302 Warning(s)
+0 Error(s)
+System.InvalidOperationException: duplicate giver rows and exact endpoints must collapse while genuine alternate spawns remain
+TEST_EXIT=1
+```
+
+Review-round GREEN:
+
+```text
+Build succeeded.
+3302 Warning(s)
+0 Error(s)
+BUILD_EXIT=0 SCOPED_DIAGNOSTICS=0
+Wholesome scheduler recovery regression tests passed.
+TEST_EXIT=0
+```
+
+### Focused implementation
+
+- `CollectFromGameObject` with `ItemId == 0` now serializes both definition and guarded order nodes as `UseObject` with `ObjectId`/`UseCount`. The regression parses the real XML through `QuestInfo.FromXML`, resolves `FindUseGameObject(1721)`, and confirms the approved override hotspot.
+- `CollectFromGameObject` with `ItemId > 0` remains `CollectItem` with its `CollectFrom/GameObject` definition. The regression resolves `FindCollectItem(1206)`, verifies the game-object source, and checks the approved hotspot.
+- `QuestScheduler.MaterializeSchedule` now reports `no-known-hotspots`, `no-assessed-hotspots`, or `no-selected-hotspots` with quest ID, objective index, and retry/context-change. This extends the existing status contract instead of adding a parallel builder-owned status DTO.
+- Giver and ender relations are deterministically grouped by NPC entry within the already-separated quest/stage scheduling call. Exact duplicate map/X/Y/Z points are removed inside each quantized cluster; genuine alternate NPCs and coordinates remain ordered and available.
+- The old direct malformed-builder status assertion was removed. The builder retains defense-in-depth omission of endpointless nodes, while the diagnostic regression now runs through actual scheduler materialization.
+
+### Fresh review-round verification
+
+All builds used the bundled x86 `dotnet.exe`, `UseAppHost=false`, `--no-restore`, and direct DLL execution only.
+
+```text
+[Wholesome] BUILD_EXIT=0 SCOPED_DIAGNOSTICS=0
+Build succeeded.
+3302 Warning(s)
+0 Error(s)
+Wholesome scheduler recovery regression tests passed.
+[Wholesome] TEST_EXIT=0
+
+[QuestRecoveryCore] BUILD_EXIT=0
+Build succeeded.
+3246 Warning(s)
+0 Error(s)
+Quest recovery regression tests passed.
+[QuestRecoveryCore] TEST_EXIT=0
+
+[QuestPickupCore] BUILD_EXIT=0
+Build succeeded.
+3246 Warning(s)
+0 Error(s)
+Quest pickup policy regression tests passed.
+[QuestPickupCore] TEST_EXIT=0
+
+[FullReleaseX86] BUILD_EXIT=0
+Build succeeded.
+3250 Warning(s)
+0 Error(s)
+```
+
+Static/integrity results:
+
+```text
+BACKUP_HASH_MISMATCHES=0
+PROFILE_DATABASE_FALLBACK_MATCHES=0
+PROFILE_BUILDER_STATUS_MATCHES=0
+RAW_XML_BUILDER_MATCHES=0
+RAW_XML_LITERAL_MATCHES=0
+SCHEDULER_OMISSION_REASON_MATCHES=3
+DIFF_CHECK_EXIT=0
+```
+
+Review round 1 changes only the same two external runtime files:
+
+- `D:\World of Warcraft 3.3.5a\CB\Bots\WholesomeAutoQuest-master\ProfileBuilder.cs`
+- `D:\World of Warcraft 3.3.5a\CB\Bots\WholesomeAutoQuest-master\QuestScheduler.cs`
+
+Repo-local changes remain limited to the linked regression program and this report. `DataModels.cs` and core source did not require modification. Task 4 lifecycle work remains deferred. No push, deployment, live replacement, backup mutation, or apphost execution occurred.
