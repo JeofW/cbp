@@ -89,6 +89,8 @@ try
     TestLegacyMigrationIsVisibleOnceAndNeverMutatesLegacyFiles();
     TestCombinedAutomaticManualUiActionsRemainQuestWideAndScoped();
     TestConfigurationBeforeStartLoadsPersistedRecoveryWithoutStartingLifecycle();
+    TestPreStartConfigurationMutationsPersistAcrossFreshManagers();
+    TestRecoveryFlushFailureIsVisibleAndRetryable();
     TestConfigurationWithoutCharacterIsReadOnlyAndContainsErrors();
     Console.WriteLine("Wholesome scheduler recovery regression tests passed.");
 }
@@ -596,6 +598,248 @@ void TestConfigurationBeforeStartLoadsPersistedRecoveryWithoutStartingLifecycle(
     }
 }
 
+void TestPreStartConfigurationMutationsPersistAcrossFreshManagers()
+{
+    string root = Path.Combine(Path.GetTempPath(), $"wholesome-prestart-persistence-{Guid.NewGuid():N}");
+    string dataPath = Path.Combine(root, "quest_data.json");
+    Directory.CreateDirectory(root);
+    File.WriteAllText(dataPath, "{\"Quests\":[]}");
+    var environment = new QuestRecoveryEnvironment(root, "Jeof", "Lordaeron", "dataset", "core", "nav");
+    var retryKey = QuestRecoveryKey.ForQuestStage(3721, QuestRecoveryStage.Objective);
+    var permanentKey = QuestRecoveryKey.ForQuestStage(3722, QuestRecoveryStage.TurnIn);
+    var clearKey = QuestRecoveryKey.ForQuestStage(3723, QuestRecoveryStage.Pickup);
+    try
+    {
+        var seed = new QuestRecoveryManager(new TestRecoveryClock(utcNow));
+        seed.Configure(environment);
+        seed.SetManualBlacklist(3711, true);
+        seed.SetManualBlacklist(3712, true);
+        CreateCoolingRecord(seed, retryKey, QuestFailureReason.NoObjectiveProgress);
+        CreateCoolingRecord(seed, permanentKey, QuestFailureReason.TurnInTargetNotOffered);
+        CreateCoolingRecord(seed, clearKey, QuestFailureReason.PickupTargetNotOffered);
+        seed.MarkCompleted(3799);
+        seed.Flush();
+
+        (QuestRecoveryManager manager, WholesomeRecoveryConfigurationResult result) LoadFresh()
+        {
+            var manager = new QuestRecoveryManager(new TestRecoveryClock(utcNow));
+            var bot = new WholesomeAutoQuest();
+            var result = bot.EnsureRecoveryConfigured(
+                manager,
+                new DataLoader(dataPath),
+                () => "deterministic-nav",
+                (dataset, navigation) => new QuestRecoveryEnvironment(
+                    root, "Jeof", "Lordaeron", dataset, "core", navigation),
+                _ => { });
+            Assert(result.IsAvailable, "the production pre-Start configuration seam must configure the persisted store");
+            return (manager, result);
+        }
+
+        void UseForm(
+            QuestRecoveryManager manager,
+            WholesomeRecoveryConfigurationResult result,
+            Action<System.Windows.Forms.Form> mutate)
+        {
+            Exception? failure = null;
+            var finished = new ManualResetEventSlim();
+            var thread = new Thread(() =>
+            {
+                try
+                {
+                    using var form = new SettingsForm(
+                        new WholesomeAQSettings(),
+                        _ => { },
+                        recoveryManager: manager,
+                        recoveryAvailable: result.IsAvailable,
+                        recoveryUnavailableReason: result.Status);
+                    form.Show();
+                    System.Windows.Forms.Application.DoEvents();
+                    mutate(form);
+                    System.Windows.Forms.Application.DoEvents();
+                }
+                catch (Exception ex)
+                {
+                    failure = ex;
+                }
+                finally
+                {
+                    finished.Set();
+                }
+            });
+            thread.SetApartmentState(ApartmentState.STA);
+            thread.Start();
+            Assert(finished.Wait(TimeSpan.FromSeconds(10)),
+                "the pre-Start persistence UI regression must finish without deadlock");
+            thread.Join();
+            if (failure != null)
+                throw failure;
+        }
+
+        var loaded = LoadFresh();
+        UseForm(loaded.manager, loaded.result, form =>
+        {
+            var manual = (System.Windows.Forms.TextBox)form.Controls.Find("manualQuestIdsTextBox", true).Single();
+            manual.Text = "3712,3713";
+            form.Controls.Cast<System.Windows.Forms.Control>()
+                .OfType<System.Windows.Forms.Button>()
+                .Single(button => button.Text == "Save")
+                .PerformClick();
+        });
+
+        loaded = LoadFresh();
+        Assert(loaded.manager.GetEntries()
+                .Where(record => record.State == QuestRecoveryState.ManualBlacklist)
+                .Select(record => record.Key.QuestId)
+                .OrderBy(id => id)
+                .SequenceEqual(new uint[] { 3712, 3713 }),
+            "a pre-Start textbox Save containing both removal and addition must survive a fresh manager reload");
+        Assert(loaded.manager.GetEntries().Single(record => record.Key.QuestId == 3799).State == QuestRecoveryState.Completed,
+            "manual Save persistence must preserve Completed terminal records");
+
+        UseForm(loaded.manager, loaded.result, form =>
+        {
+            SelectRecoveryRow(form, retryKey);
+            ((System.Windows.Forms.Button)form.Controls.Find("retryRecoveryButton", true).Single()).PerformClick();
+        });
+        loaded = LoadFresh();
+        Assert(loaded.manager.GetEntries().Single(record => record.Key.Equals(retryKey)).State == QuestRecoveryState.HalfOpen,
+            "Retry now must persist its single half-open eligibility before Start");
+
+        UseForm(loaded.manager, loaded.result, form =>
+        {
+            SelectRecoveryRow(form, permanentKey);
+            ((System.Windows.Forms.Button)form.Controls.Find("markPermanentButton", true).Single()).PerformClick();
+        });
+        loaded = LoadFresh();
+        Assert(loaded.manager.GetEntries().Any(record => record.Key.QuestId == permanentKey.QuestId
+                   && record.State == QuestRecoveryState.ManualBlacklist)
+               && loaded.manager.GetEntries().Any(record => record.Key.Equals(permanentKey)
+                   && record.State == QuestRecoveryState.CoolingDown),
+            "Mark permanent must persist the quest-wide terminal while retaining the selected automatic record");
+
+        UseForm(loaded.manager, loaded.result, form =>
+        {
+            SelectRecoveryRow(form, permanentKey);
+            var retry = (System.Windows.Forms.Button)form.Controls.Find("retryRecoveryButton", true).Single();
+            var clear = (System.Windows.Forms.Button)form.Controls.Find("clearExclusionButton", true).Single();
+            Assert(!retry.Enabled && clear.Enabled,
+                "the reloaded automatic row must still expose quest-wide terminal action semantics");
+            clear.PerformClick();
+        });
+        loaded = LoadFresh();
+        Assert(loaded.manager.GetEntries().All(record => record.Key.QuestId != permanentKey.QuestId),
+            "Clear exclusion must persist removal of both the same-quest manual terminal and selected automatic record");
+
+        UseForm(loaded.manager, loaded.result, form =>
+        {
+            SelectRecoveryRow(form, clearKey);
+            ((System.Windows.Forms.Button)form.Controls.Find("clearExclusionButton", true).Single()).PerformClick();
+        });
+        loaded = LoadFresh();
+        Assert(loaded.manager.GetEntries().All(record => !record.Key.Equals(clearKey))
+               && loaded.manager.GetEntries().Single(record => record.Key.QuestId == 3799).State == QuestRecoveryState.Completed,
+            "an explicit automatic Clear must survive reload without changing Completed terminal state");
+    }
+    finally
+    {
+        Directory.Delete(root, recursive: true);
+    }
+}
+
+void SelectRecoveryRow(System.Windows.Forms.Form form, QuestRecoveryKey key)
+{
+    var grid = (System.Windows.Forms.DataGridView)form.Controls.Find("recoveryGrid", true).Single();
+    var row = grid.Rows.Cast<System.Windows.Forms.DataGridViewRow>()
+        .Single(candidate => candidate.Tag is RecoveryStatusRow status && status.Key.Equals(key));
+    grid.ClearSelection();
+    row.Selected = true;
+    System.Windows.Forms.Application.DoEvents();
+}
+
+void TestRecoveryFlushFailureIsVisibleAndRetryable()
+{
+    string root = Path.Combine(Path.GetTempPath(), $"wholesome-flush-failure-{Guid.NewGuid():N}");
+    string dataPath = Path.Combine(root, "quest_data.json");
+    string storePath = Path.Combine(root, "QuestRecovery", "Jeof-Lordaeron", "quest-recovery.json");
+    string temporaryPath = storePath + ".tmp";
+    Directory.CreateDirectory(root);
+    File.WriteAllText(dataPath, "{\"Quests\":[]}");
+    try
+    {
+        var logs = new List<string>();
+        var manager = new QuestRecoveryManager(new TestRecoveryClock(utcNow), logs.Add);
+        var bot = new WholesomeAutoQuest();
+        var result = bot.EnsureRecoveryConfigured(
+            manager,
+            new DataLoader(dataPath),
+            () => "deterministic-nav",
+            (dataset, navigation) => new QuestRecoveryEnvironment(
+                root, "Jeof", "Lordaeron", dataset, "core", navigation),
+            logs.Add);
+        Directory.CreateDirectory(Path.GetDirectoryName(temporaryPath)!);
+        Directory.CreateDirectory(temporaryPath);
+
+        Exception? failure = null;
+        var finished = new ManualResetEventSlim();
+        var thread = new Thread(() =>
+        {
+            try
+            {
+                using var form = new SettingsForm(
+                    new WholesomeAQSettings(),
+                    logs.Add,
+                    recoveryManager: manager,
+                    recoveryAvailable: result.IsAvailable,
+                    recoveryUnavailableReason: result.Status);
+                form.Show();
+                System.Windows.Forms.Application.DoEvents();
+                var manual = (System.Windows.Forms.TextBox)form.Controls.Find("manualQuestIdsTextBox", true).Single();
+                var status = (System.Windows.Forms.Label)form.Controls.Find("recoveryAvailabilityLabel", true).Single();
+                var save = form.Controls.Cast<System.Windows.Forms.Control>()
+                    .OfType<System.Windows.Forms.Button>()
+                    .Single(button => button.Text == "Save");
+                manual.Text = "3731";
+                save.PerformClick();
+                System.Windows.Forms.Application.DoEvents();
+                Assert(form.Visible
+                       && status.Text.Contains("not persisted", StringComparison.OrdinalIgnoreCase)
+                       && logs.Any(line => line.Contains("persistence failed", StringComparison.OrdinalIgnoreCase)),
+                    "a failed recovery Save flush must remain visibly open and must not claim persistence");
+
+                Directory.Delete(temporaryPath);
+                save.PerformClick();
+                System.Windows.Forms.Application.DoEvents();
+                Assert(!form.Visible,
+                    "retrying Save after the persistence target recovers must flush the manager's retained dirty state");
+            }
+            catch (Exception ex)
+            {
+                failure = ex;
+            }
+            finally
+            {
+                finished.Set();
+            }
+        });
+        thread.SetApartmentState(ApartmentState.STA);
+        thread.Start();
+        Assert(finished.Wait(TimeSpan.FromSeconds(10)), "the recovery flush failure UI regression must finish without deadlock");
+        thread.Join();
+        if (failure != null)
+            throw failure;
+
+        var reloaded = new QuestRecoveryManager(new TestRecoveryClock(utcNow));
+        reloaded.Configure(new QuestRecoveryEnvironment(
+            root, "Jeof", "Lordaeron", result.DatasetFingerprint, "core", result.NavigationFingerprint));
+        Assert(reloaded.GetEntries().Single(record => record.Key.QuestId == 3731).State == QuestRecoveryState.ManualBlacklist,
+            "a failed flush must keep state dirty so a later Save can persist it without another textbox diff");
+    }
+    finally
+    {
+        Directory.Delete(root, recursive: true);
+    }
+}
+
 void TestConfigurationWithoutCharacterIsReadOnlyAndContainsErrors()
 {
     string root = Path.Combine(Path.GetTempPath(), $"wholesome-no-character-{Guid.NewGuid():N}");
@@ -645,6 +889,8 @@ void TestConfigurationWithoutCharacterIsReadOnlyAndContainsErrors()
                     .Single(button => button.Text == "Save");
                 save.PerformClick();
                 System.Windows.Forms.Application.DoEvents();
+                Assert(logs.All(line => !line.StartsWith("Quest recovery settings save failed:", StringComparison.Ordinal)),
+                    "the missing-character read-only Save path must not attempt a recovery flush");
             }
             catch (Exception ex)
             {
@@ -663,7 +909,6 @@ void TestConfigurationWithoutCharacterIsReadOnlyAndContainsErrors()
             throw failure;
         Assert(manager.GetEntries().Count == 0,
             "saving ordinary bot settings while recovery is unavailable must not access or mutate an unconfigured manager");
-
         var failingResult = bot.EnsureRecoveryConfigured(
             manager,
             new DataLoader(dataPath),

@@ -163,3 +163,55 @@ Final review-round external hashes changed only for:
 - `WholesomeAutoQuest.cs` — `7e639e921dbb384de0462561bb42aacea4214927c6f5ba950e2bc4831fa4914c`
 
 The other five installed hashes are unchanged. `installed.sha256.txt` was updated to the final seven-file state; `manifest.sha256.txt` remains unchanged. No push, deploy, live replacement, bot launch, or apphost execution occurred.
+
+## Review Round 2 Persistence Correction
+
+The pre-`Start` settings UI now persists each successful explicit recovery mutation immediately. A manual textbox Save applies the complete added/removed set difference and performs one flush after the batch, rather than one write per quest ID. `Retry now`, `Mark permanent`, and `Clear exclusion` each flush after their successful manager mutation. Completed and unavailable/read-only paths remain non-mutating and do not flush.
+
+`QuestRecoveryManager.TryFlush()` exposes the existing `FlushCore()` success result while preserving the original `Flush()` API. A failed persistence write therefore keeps `_dirty` set under the existing manager contract. The settings controller converts that false result into a contained UI failure: action/Save errors are logged, the visible recovery status states that changes were not persisted, and Save leaves the form open. Retrying Save performs one flush even if the textbox has no further diff, allowing the retained dirty state to persist after the storage target recovers.
+
+Round 2 strict-TDD evidence:
+
+```text
+PRESTART_PERSISTENCE_RED: exited 1 at "a pre-Start textbox Save containing both removal and addition must survive a fresh manager reload".
+FLUSH_FAILURE_RED: exited 1 at "a failed recovery Save flush must remain visibly open and must not claim persistence".
+GREEN: Wholesome scheduler recovery regression tests passed.
+```
+
+The production-linked persistence test configures through the actual pre-`Start` `EnsureRecoveryConfigured` seam, drives the real WinForms textbox and action buttons, discards the active manager after each Save/Retry/Mark/Clear, and reloads the same temporary store into a fresh manager. It verifies the combined textbox add/remove result, `RetryNow` half-open state, manual terminal creation, combined manual-plus-selected-automatic clear, standalone automatic clear, and preservation of `Completed`. The failure regression blocks the JSON temporary path, verifies the form remains visibly retryable without a false persistence claim, restores the path, and proves a second no-diff Save persists the retained dirty state. The missing-character regression verifies the unavailable form does not enter the recovery Save/flush path.
+
+Fresh Round 2 verification:
+
+```text
+[Wholesome external bot/UI + linked regressions]
+Build succeeded. 3261 Warning(s), 0 Error(s).
+Wholesome scheduler recovery regression tests passed.
+SCOPED_COMPILER_DIAGNOSTICS=0
+
+[QuestRecoveryCore]
+Build succeeded. 3246 Warning(s), 0 Error(s).
+Quest recovery regression tests passed.
+
+[QuestPickupCore]
+Build succeeded. 3246 Warning(s), 0 Error(s).
+Quest pickup policy regression tests passed.
+
+[FullReleaseX86]
+Build succeeded. 3250 Warning(s), 0 Error(s).
+
+QUEST_BLACKLIST_STORAGE_SCAN_EXIT=1 (zero matches)
+TREE_ROOT_START_SCAN_EXIT=1 (zero matches)
+LEGACY_DIRECT_WRITER_SCAN_EXIT=1 (zero matches)
+WHOLESOME_APPHOST_EXISTS=False
+CORE_APPHOST_EXISTS=False
+PICKUP_APPHOST_EXISTS=False
+BACKUP_HASH_MISMATCHES=0
+INSTALLED_HASH_MISMATCHES=0
+TRAILING_WHITESPACE=0
+```
+
+Round 2 changes only one external runtime file:
+
+- `SettingsForm.cs` — `b0a8c42f5b5f56d604d4617c8137e2fab0ef7d0093edc7bf8dfe8b5e51da5d91`
+
+All other external hashes remain as listed above. The final seven-file `installed.sha256.txt` hashes to `B80854622FCA3B58E6024C2C5338AD0703242F446104A7F2310F321D9D217414`; the preserved original `manifest.sha256.txt` still hashes to `C5787DD61F477ECB40D3366F1834B3CD61123806436BF96109B611855D106D56`. No external deployment, live replacement, push, apphost generation, or bot launch was performed.

@@ -544,10 +544,15 @@ public sealed class QuestRecoveryManager
 
     public void Flush()
     {
+        TryFlush();
+    }
+
+    public bool TryFlush()
+    {
         lock (_sync)
         {
             EnsureConfiguredCore();
-            FlushCore();
+            return FlushCore();
         }
     }
 
