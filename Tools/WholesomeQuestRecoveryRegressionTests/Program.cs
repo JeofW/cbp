@@ -1,3 +1,9 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using Bots.Quest.QuestOrder;
+using Styx.Logic.Pathing;
 using Styx.Logic.Questing.Recovery;
 using WholesomeAQ;
 
@@ -27,12 +33,285 @@ try
     TestEvaluationDoesNotClaimAndActivationUsesExactKey();
     TestEndpointFailureEscalatesOnlyAfterEveryKnownCluster();
     TestNavigationFingerprintIncludesProviderAndMeshStamp();
+    TestLegacyCallerUsesTemporaryNarrowCompatibilityAdapters();
+    TestOrdinaryObjectiveEndpointPrecedesHalfOpenAlternative();
+    TestOrdinaryRelationPrecedesHalfOpenAlternative();
+    TestCompletedObjectivesDoNotConsumeEndpointBudget();
+    TestUnavailableObjectiveCountsDoNotAdvanceWork();
+    TestScanExpansionPrecedesFallbackAndResets();
+    TestProductionActivationClaimsOnceAndCoalescesRebuild();
+    TestEndpointSafetyAndReachabilityPrecedeDistanceAndCap();
+    TestSchedulerFiltersKnownNavigationUnsafePointsBeforeCap();
     Console.WriteLine("Wholesome scheduler recovery regression tests passed.");
 }
+
 catch (Exception ex)
 {
     Console.Error.WriteLine(ex);
     global::System.Environment.ExitCode = 1;
+}
+
+void TestLegacyCallerUsesTemporaryNarrowCompatibilityAdapters()
+{
+    var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+    var sync = typeof(QuestScheduler).GetMethod("SyncBlacklist", flags);
+    var giver = typeof(QuestScheduler).GetMethod("BlacklistQuestGiver", flags);
+
+    Assert(typeof(WholesomeAutoQuest).Assembly == typeof(QuestScheduler).Assembly,
+        "the production-linked regression must compile the actual bot caller with the scheduler");
+    Assert(sync != null && giver != null,
+        "the legacy caller must compile only through temporary scheduler compatibility adapters");
+    Assert(sync!.GetCustomAttributes(typeof(ObsoleteAttribute), inherit: false).Length == 1
+           && giver!.GetCustomAttributes(typeof(ObsoleteAttribute), inherit: false).Length == 1,
+        "temporary scheduler compatibility adapters must be explicitly obsolete for Task 4 removal");
+    Assert(!sync!.IsPublic && !giver!.IsPublic,
+        "compatibility adapters must not restore a public scheduler blacklist API");
+}
+
+void TestOrdinaryObjectiveEndpointPrecedesHalfOpenAlternative()
+{
+    var db = SchedulerDatabase();
+    var nearHalfOpen = QuestScheduler.EndpointKey(
+        867, QuestRecoveryStage.Navigation, new SpawnPoint { Map = 1, X = 1, Y = 1 });
+    var result = QuestScheduler.MaterializeSchedule(
+        db,
+        Snapshot(new[] { Accepted(867, completed: false) }, Array.Empty<uint>()),
+        key => key.Equals(nearHalfOpen) ? HalfOpen() : Eligible(),
+        10,
+        500,
+        7);
+
+    var selected = result.Selected.Single(candidate => candidate.QuestId == 867);
+    var objective = result.Plan.Single(entry => entry.Quest.Id == 867);
+    Assert(selected.Stage == QuestWorkStage.Objective,
+        "an ordinary objective endpoint must keep the whole quest ordinary when another endpoint is half-open");
+    Assert(objective.Hotspots.All(point => point.X >= 80),
+        "half-open objective endpoints may be retained only when the candidate has no ordinary endpoint path");
+}
+
+void TestOrdinaryRelationPrecedesHalfOpenAlternative()
+{
+    var db = SchedulerDatabase();
+    var result = QuestScheduler.MaterializeSchedule(
+        db,
+        Snapshot(Array.Empty<QuestSchedulerAcceptedQuest>(), Array.Empty<uint>()),
+        key => key.Scope == QuestRecoveryScope.NpcRelation && key.NpcEntry == 1001
+            ? HalfOpen()
+            : Eligible(),
+        10,
+        500,
+        7);
+
+    var selected = result.Selected.Single(candidate => candidate.QuestId == 876);
+    Assert(selected.Stage == QuestWorkStage.Pickup,
+        "an ordinary giver relation must keep pickup ordinary when another giver is half-open");
+    var giverPlan = result.Plan.Single(entry => entry.Giver?.GiverId == 1002);
+    Assert(result.Plan.All(entry => entry.Giver?.GiverId != 1001)
+           && giverPlan.Hotspots.Single().X == 20,
+        "a half-open giver may be retained only when no ordinary giver path exists for the candidate");
+}
+
+void TestCompletedObjectivesDoNotConsumeEndpointBudget()
+{
+    var db = SchedulerDatabase();
+    var quest = db.Quests.Single(entry => entry.Id == 867);
+    quest.Objectives.Add(new QuestObjective
+    {
+        Index = 1,
+        Type = ObjectiveType.KillMob,
+        MobId = 2002,
+        KillCount = 1
+    });
+    db.CreatureSpawns["2000"] = Enumerable.Range(0, 6)
+        .Select(index => new SpawnPoint { Map = 1, X = index * 80 + 1, Y = 1 })
+        .ToList();
+    db.CreatureSpawns["2002"] = new List<SpawnPoint>
+    {
+        new() { Map = 1, X = 501, Y = 41 }
+    };
+
+    var result = QuestScheduler.MaterializeSchedule(
+        db,
+        Snapshot(new[] { AcceptedWithCounts(867, 2, 0) }, Array.Empty<uint>()),
+        _ => Eligible(),
+        10,
+        1000,
+        7);
+
+    var objectivePlan = result.Plan.Where(entry => entry.Quest.Id == 867).ToArray();
+    Assert(objectivePlan.Length == 1
+           && objectivePlan[0].ObjectiveIndex == 1
+           && objectivePlan[0].Hotspots.Single().X == 501,
+        "completed objective clusters must be skipped before incomplete work consumes the five-key endpoint budget");
+}
+
+void TestUnavailableObjectiveCountsDoNotAdvanceWork()
+{
+    var result = QuestScheduler.MaterializeSchedule(
+        SchedulerDatabase(),
+        Snapshot(new[]
+        {
+            new QuestSchedulerAcceptedQuest
+            {
+                QuestId = 867,
+                IsCompleted = false,
+                ObjectiveCounts = Array.Empty<int>()
+            }
+        }, Array.Empty<uint>()),
+        _ => Eligible(),
+        10,
+        500,
+        7);
+
+    Assert(result.Plan.Any(entry => entry.Quest.Id == 867 && entry.ObjectiveIndex == 0),
+        "unavailable live objective counts must conservatively retain work instead of falsely advancing it");
+}
+
+void TestScanExpansionPrecedesFallbackAndResets()
+{
+    var settings = new WholesomeAQSettings
+    {
+        ScanStartDistance = 100,
+        ScanStep = 100,
+        ScanMaxDistance = 300
+    };
+    var scheduler = new QuestScheduler(
+        new DataLoader(Path.Combine(Path.GetTempPath(), "missing-wholesome-data.json")),
+        new ProfileBuilder(Path.Combine(Path.GetTempPath(), "wholesome-scan-expansion.xml")),
+        settings);
+    var noSelection = new QuestScheduleResult
+    {
+        FallbackMode = QuestFallbackMode.TimedIdle,
+        EarliestRetryUtc = utcNow.AddMinutes(5),
+        Status = "no work"
+    };
+
+    var first = scheduler.ApplyScanExpansionBeforeFallback(noSelection);
+    var firstThreshold = scheduler.ScanThreshold;
+    var second = scheduler.ApplyScanExpansionBeforeFallback(noSelection);
+    var secondThreshold = scheduler.ScanThreshold;
+    var atMaximum = scheduler.ApplyScanExpansionBeforeFallback(noSelection);
+    Assert(first.FallbackMode == QuestFallbackMode.None && firstThreshold == 200,
+        "the first empty scan must suppress fallback and advance by ScanStep");
+    Assert(second.FallbackMode == QuestFallbackMode.None && secondThreshold == 300,
+        "each pre-maximum empty scan must suppress fallback while expanding");
+    Assert(atMaximum.FallbackMode == QuestFallbackMode.TimedIdle
+           && atMaximum.EarliestRetryUtc == noSelection.EarliestRetryUtc,
+        "fallback is allowed only after a scan has already run at ScanMaxDistance");
+
+    var selected = new QuestScheduleResult
+    {
+        Selected = new[] { Candidate(867, QuestWorkStage.Objective, 10, eligible: true) }
+    };
+    scheduler.ApplyScanExpansionBeforeFallback(selected);
+    Assert(scheduler.ScanThreshold == settings.ScanStartDistance,
+        "successful selection must reset the scan threshold to its configured start");
+    scheduler.ApplyScanExpansionBeforeFallback(noSelection);
+    scheduler.Reset();
+    Assert(scheduler.ScanThreshold == settings.ScanStartDistance,
+        "scheduler lifecycle reset must also restore the configured start threshold");
+}
+
+void TestProductionActivationClaimsOnceAndCoalescesRebuild()
+{
+    var scheduler = new QuestScheduler(
+        new DataLoader(Path.Combine(Path.GetTempPath(), "missing-wholesome-data.json")),
+        new ProfileBuilder(Path.Combine(Path.GetTempPath(), "wholesome-activation.xml")),
+        new WholesomeAQSettings());
+    var pickup = new ForcedQuestPickUp(867, "Pickup", 1001, "Giver", WoWPoint.Zero, null);
+    var beginCalls = 0;
+    var rebuilds = 0;
+    var cleared = new List<QuestRecoveryKey>();
+    Func<QuestRecoveryKey, QuestRecoveryDecision> deny = key =>
+    {
+        beginCalls++;
+        Assert(key.Equals(QuestRecoveryKey.ForNpc(867, QuestRecoveryStage.Pickup, 1001)),
+            "the production activation path must claim the exact pickup relation key");
+        return Cooling(utcNow.AddMinutes(2));
+    };
+
+    scheduler.ObserveActivation(pickup, deny, cleared.Add, () => rebuilds++);
+    scheduler.ObserveActivation(pickup, deny, cleared.Add, () => rebuilds++);
+    Assert(beginCalls == 1 && cleared.Count == 1 && rebuilds == 1,
+        "one active behavior must claim once across repeated pulses and request one rebuild when denied");
+
+    var replacement = new ForcedQuestPickUp(867, "Pickup", 1001, "Giver", WoWPoint.Zero, null);
+    scheduler.ObserveActivation(replacement, deny, cleared.Add, () => rebuilds++);
+    Assert(beginCalls == 2 && cleared.Count == 2 && rebuilds == 1,
+        "a replacement activation may retry the exact claim while rebuild requests remain coalesced");
+
+    scheduler.ApplyScanExpansionBeforeFallback(new QuestScheduleResult());
+    var accepted = new ForcedQuestPickUp(876, "Pickup 2", 1002, "Giver 2", WoWPoint.Zero, null);
+    scheduler.ObserveActivation(
+        accepted,
+        key =>
+        {
+            beginCalls++;
+            return new QuestRecoveryDecision
+            {
+                State = QuestRecoveryState.Attempting,
+                MayAttempt = true,
+                AttemptGeneration = 1
+            };
+        },
+        cleared.Add,
+        () => rebuilds++);
+    scheduler.ObserveActivation(accepted, deny, cleared.Add, () => rebuilds++);
+    Assert(beginCalls == 3 && cleared.Count == 2 && rebuilds == 1,
+        "a won activation claim must not clear its POI, rebuild, or claim again on later pulses");
+}
+
+void TestEndpointSafetyAndReachabilityPrecedeDistanceAndCap()
+{
+    var endpoints = new[]
+    {
+        RankedEndpoint("near-unsafe", distance: 1, safety: 100, knownReachable: true, knownSafe: false),
+        RankedEndpoint("near-unreachable", distance: 2, safety: 100, knownReachable: false, knownSafe: true),
+        RankedEndpoint("near-low-a", distance: 3, safety: 1, knownReachable: true, knownSafe: true),
+        RankedEndpoint("near-low-b", distance: 4, safety: 1, knownReachable: true, knownSafe: true),
+        RankedEndpoint("near-low-c", distance: 5, safety: 1, knownReachable: true, knownSafe: true),
+        RankedEndpoint("near-low-d", distance: 6, safety: 1, knownReachable: true, knownSafe: true),
+        RankedEndpoint("near-low-e", distance: 7, safety: 1, knownReachable: true, knownSafe: true),
+        RankedEndpoint("far-safe", distance: 100, safety: 10, knownReachable: true, knownSafe: true)
+    };
+
+    var selected = QuestSchedulingPolicy.Select(endpoints, maximum: 5);
+    Assert(selected.Count == 5
+           && selected[0].Key.Endpoint == "far-safe"
+           && selected.All(endpoint => endpoint.Key.Endpoint != "near-unsafe")
+           && selected.All(endpoint => endpoint.Key.Endpoint != "near-unreachable")
+           && selected.Any(endpoint => endpoint.Key.Endpoint == "near-low-a")
+           && selected.All(endpoint => endpoint.IsKnownReachable && endpoint.IsKnownSafe),
+        "known unreachable endpoints must be filtered and safety must outrank distance before the distinct five-key cap");
+}
+
+void TestSchedulerFiltersKnownNavigationUnsafePointsBeforeCap()
+{
+    var db = SchedulerDatabase();
+    db.CreatureSpawns["2000"] = Enumerable.Range(0, 7)
+        .Select(index => new SpawnPoint
+        {
+            Map = 1,
+            X = index * 80 + 1,
+            Y = 1,
+            SafetyScore = index == 6 ? 10 : 1
+        })
+        .ToList();
+
+    var result = QuestScheduler.MaterializeSchedule(
+        db,
+        Snapshot(new[] { Accepted(867, completed: false) }, Array.Empty<uint>()),
+        _ => Eligible(),
+        10,
+        1000,
+        7,
+        isKnownUnsafe: point => point.X == 1);
+    var hotspots = result.Plan.Single(entry => entry.Quest.Id == 867).Hotspots;
+
+    Assert(hotspots.Count == 5
+           && hotspots.All(point => point.X != 1)
+           && hotspots.Any(point => point.X == 481),
+        "the scheduler must remove known navigation-unsafe points before safety ordering and the five-key cap");
 }
 
 void TestStagePriority()
@@ -589,6 +868,13 @@ QuestSchedulerAcceptedQuest Accepted(uint id, bool completed) => new()
     ObjectiveCounts = new[] { completed ? 1 : 0 }
 };
 
+QuestSchedulerAcceptedQuest AcceptedWithCounts(uint id, params int[] counts) => new()
+{
+    QuestId = id,
+    IsCompleted = false,
+    ObjectiveCounts = counts
+};
+
 QuestRecoveryDecision Eligible() => new()
 {
     State = QuestRecoveryState.Eligible,
@@ -602,6 +888,13 @@ QuestRecoveryDecision Cooling(DateTime retry) => new()
     MayAttempt = false,
     RetryUtc = retry,
     Status = "cooling down"
+};
+
+QuestRecoveryDecision HalfOpen() => new()
+{
+    State = QuestRecoveryState.HalfOpen,
+    MayAttempt = true,
+    Status = "half-open probe"
 };
 
 QuestWorkCandidate Candidate(
@@ -630,6 +923,22 @@ QuestEndpointCandidate Endpoint(uint questId, string endpoint, double distance, 
         Distance = distance,
         Recovery = Decision(QuestWorkStage.Objective, eligible)
     };
+
+QuestEndpointCandidate RankedEndpoint(
+    string endpoint,
+    double distance,
+    int safety,
+    bool knownReachable,
+    bool knownSafe) => new()
+{
+    Key = QuestRecoveryKey.ForEndpoint(867, QuestRecoveryStage.Navigation, 1, endpoint),
+    Point = new SpawnPoint { X = distance, Map = 1 },
+    Distance = distance,
+    SafetyScore = safety,
+    IsKnownReachable = knownReachable,
+    IsKnownSafe = knownSafe,
+    Recovery = Eligible()
+};
 
 QuestRecoveryDecision Decision(QuestWorkStage stage, bool eligible, DateTime? retryUtc = null) =>
     new()

@@ -106,7 +106,100 @@ Result: exit 0, 3,250 repository baseline warnings, 0 errors, and no warning lin
 
 - No push, deployment, live binary replacement, package restore, or x86 apphost execution was performed.
 - Unrelated vendor/grind worktree changes were preserved and are excluded from this task's staging.
-- `QuestScheduler.cs` no longer provides the legacy automatic blacklist methods. Updating the existing `WholesomeAutoQuest.cs` lifecycle caller belongs to Task 4, so building the whole external bot source as a standalone plugin remains a planned cross-task integration point.
+- `QuestScheduler.cs` no longer owns or writes legacy automatic blacklist state. Review round 1 restored only the temporary narrow compatibility adapter names described below; removing those caller seams remains Task 4 work.
 - `LastSchedule.Plan` now carries scoped alternate work, but the current legacy profile builder still receives a quest list. Rendering that plan is Task 3 and was deliberately not implemented here.
 - The external Task 1 `DataModels.cs` and `QuestSchedulingPolicy.cs` changes remain present. Task 2 changed only the two external files listed above.
 - NuGet vulnerability lookup can emit `NU1900` while the network source is unavailable; it did not cause a build failure.
+
+## Review Round 1
+
+Review fixes were implemented with production-linked regressions before each behavior change.
+
+### Compatibility Compile Contract
+
+The regression project now compiles the complete external Wholesome bot caller plus its UI/vendor dependencies, not only the scheduler subset.
+
+RED was a Release x86 build failure at the real caller boundary:
+
+```text
+WholesomeAutoQuest.cs(212,28): error CS1061: 'QuestScheduler' does not contain a definition for 'SyncBlacklist'
+WholesomeAutoQuest.cs(473,36): error CS1061: 'QuestScheduler' does not contain a definition for 'BlacklistQuestGiver'
+WholesomeAutoQuest.cs(474,184): error CS1061: 'ForcedQuestPickUp' does not contain a definition for 'PickupFailureReason'
+```
+
+`SyncBlacklist` is now an obsolete internal no-op, and `BlacklistQuestGiver` is an obsolete internal adapter that reports `PickupTargetNotOffered` against the exact pickup NPC-relation key using the last captured context. Neither adapter owns a set or writes a manual/global blacklist. The caller log now uses `LastOutcome.Evidence`. A reflection regression requires both adapters to remain non-public and obsolete until Task 4 removes the calls.
+
+### Ordinary Versus Half-Open Paths
+
+RED direct-DLL execution failed because a near half-open endpoint demoted the entire accepted objective candidate, causing ordinary pickup work to displace it. A second RED showed that same-cell ordinary giver B inherited half-open giver A's coordinates.
+
+Endpoint selection now separates ordinary and half-open pools. Any ordinary path wins; half-open paths are considered only when no ordinary path exists and are capped at one probe. Quest-level policy still gives all ordinary candidates precedence and applies its global one-probe budget. Relation plans now source hotspots from their selected relation instead of a shared endpoint-key coordinate cache.
+
+### Objective Progress
+
+RED direct-DLL execution reported:
+
+```text
+System.InvalidOperationException: completed objective clusters must be skipped before incomplete work consumes the five-key endpoint budget
+```
+
+Live descriptor counts are now captured per accepted quest in deterministic quest-ID order, stored in `QuestSchedulerAcceptedQuest.ObjectiveCounts`, and flattened into the same recovery context. A completed objective is skipped before scoped evaluation and clustering only when a present count reaches its declared required count. Missing counts conservatively retain objective work.
+
+### Scan Expansion
+
+The scan-expansion regression initially failed compilation with five `CS1061` errors for missing `ApplyScanExpansionBeforeFallback`.
+
+No-selection scans now advance by `ScanStep` up to `ScanMaxDistance` and suppress timed-idle or vetted fallback during expansion. Fallback is allowed only after a scan has run at the maximum radius. Successful selection and scheduler lifecycle reset restore `ScanStartDistance`.
+
+### Production Activation Ownership
+
+The activation regression initially failed compilation with five `CS1061` errors for missing `ObserveActivation`.
+
+The actual Wholesome `Pulse` path now observes `QuestOrder.Instance.CurrentBehavior`. Pickup/turn-in activation uses the exact NPC-relation key; objective activation uses the exact quest/objective-stage key. Behavior identity prevents pulse-repeat claims. A denied atomic claim clears the current behavior's POI and requests one coalesced rebuild; a won claim does neither.
+
+### Safety and Reachability Ordering
+
+Two compile REDs established the missing contract:
+
+```text
+error CS1061/CS0117: 'QuestEndpointCandidate' does not contain a definition for 'IsKnownReachable'/'SafetyScore'
+error CS1061/CS0117: 'QuestEndpointCandidate' does not contain a definition for 'IsKnownSafe'
+error CS1739: 'MaterializeSchedule' does not have a parameter named 'isKnownUnsafe'
+```
+
+Spawn and endpoint descriptors now distinguish known-safe, known-reachable, and safety score. Known unsafe/unreachable points are filtered before selection. Production also injects the existing cheap blackspot geometry check; no path generation occurs in materialization ordering or its comparator. Remaining candidates sort by safety descending, distance ascending, then stable recovery key before distinct-key cap five.
+
+### Review Verification
+
+Commands used the bundled x86 `dotnet.exe` and direct DLL execution only:
+
+```powershell
+& 'D:\World of Warcraft 3.3.5a\CB\.codex-source\.dotnet-x86\dotnet.exe' build 'Tools\WholesomeQuestRecoveryRegressionTests\WholesomeQuestRecoveryRegressionTests.csproj' -c Release --no-restore --nologo --verbosity:minimal --no-incremental
+& 'D:\World of Warcraft 3.3.5a\CB\.codex-source\.dotnet-x86\dotnet.exe' 'Tools\WholesomeQuestRecoveryRegressionTests\bin\Release\net10.0-windows7.0\WholesomeQuestRecoveryRegressionTests.dll'
+& 'D:\World of Warcraft 3.3.5a\CB\.codex-source\.dotnet-x86\dotnet.exe' build 'Tools\QuestRecoveryRegressionTests\QuestRecoveryRegressionTests.csproj' -c Release --no-restore --nologo --verbosity:minimal --no-incremental
+& 'D:\World of Warcraft 3.3.5a\CB\.codex-source\.dotnet-x86\dotnet.exe' 'Tools\QuestRecoveryRegressionTests\bin\Release\net10.0-windows7.0\QuestRecoveryRegressionTests.dll'
+& 'D:\World of Warcraft 3.3.5a\CB\.codex-source\.dotnet-x86\dotnet.exe' build 'CopilotBuddy.csproj' -c Release --no-restore --nologo --verbosity:minimal --no-incremental -p:Platform=x86 -p:UseAppHost=false
+```
+
+Results:
+
+```text
+Wholesome production-linked build: 0 errors
+Wholesome scheduler recovery regression tests passed.
+Core recovery build: 3,246 baseline warnings, 0 errors
+Quest recovery regression tests passed.
+Full Release x86 build: 3,250 baseline warnings, 0 errors
+```
+
+The expanded linked build exposes existing nullability warnings in untouched Wholesome UI/vendor/caller code. There are no warning/error lines in the changed scheduler, scheduling policy, loader, or regression program, and no new obsolete-call warnings because the two temporary call sites are narrowly suppressed.
+
+External runtime files changed by review round 1:
+
+```text
+D:\World of Warcraft 3.3.5a\CB\Bots\WholesomeAutoQuest-master\DataModels.cs
+D:\World of Warcraft 3.3.5a\CB\Bots\WholesomeAutoQuest-master\QuestSchedulingPolicy.cs
+D:\World of Warcraft 3.3.5a\CB\Bots\WholesomeAutoQuest-master\QuestScheduler.cs
+D:\World of Warcraft 3.3.5a\CB\Bots\WholesomeAutoQuest-master\WholesomeAutoQuest.cs
+```
+
+Forbidden scans found no automatic scheduler blacklist fields, file discovery, empty-profile loop, or tree restart. The only `TryBeginAttempt` call is in the production activation observer, and no reviewed production source contains fixture quest IDs. External changed files have no trailing whitespace; every rollback-backup file still matches its manifest. Unrelated vendor/grind changes remain untouched and unstaged. No push, deployment, live binary replacement, restore, or apphost execution occurred.
