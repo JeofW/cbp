@@ -374,11 +374,12 @@ public sealed class QuestRecoveryManager
         {
             EnsureConfiguredCore();
             var matching = _records.Values.Where(record => record.Key.QuestId == questId).ToArray();
-            foreach (var record in matching.Where(record => record.State != QuestRecoveryState.ManualBlacklist))
+            foreach (var record in matching)
             {
                 _records[record.Key] = Copy(
                     record,
                     state: QuestRecoveryState.Completed,
+                    reason: QuestFailureReason.None,
                     cooldownUntilUtc: null,
                     replaceCooldownUntilUtc: true,
                     nextHalfOpenUtc: null,
@@ -386,13 +387,26 @@ public sealed class QuestRecoveryManager
             }
 
             var completionKey = QuestRecoveryKey.ForQuestStage(questId, QuestRecoveryStage.TurnIn);
-            if (!_records.Values.Any(record => record.Key.QuestId == questId && record.State == QuestRecoveryState.Completed))
+            if (!_records.TryGetValue(completionKey, out var completion))
             {
                 _records[completionKey] = new QuestRecoveryRecord
                 {
                     Key = completionKey,
-                    State = QuestRecoveryState.Completed
+                    State = QuestRecoveryState.Completed,
+                    RecoveryCycleId = matching.Select(record => record.RecoveryCycleId).DefaultIfEmpty().Max(),
+                    AttemptGeneration = matching.Select(record => record.AttemptGeneration).DefaultIfEmpty().Max()
                 };
+            }
+            else if (completion.State != QuestRecoveryState.Completed)
+            {
+                _records[completionKey] = Copy(
+                    completion,
+                    state: QuestRecoveryState.Completed,
+                    reason: QuestFailureReason.None,
+                    cooldownUntilUtc: null,
+                    replaceCooldownUntilUtc: true,
+                    nextHalfOpenUtc: null,
+                    replaceNextHalfOpenUtc: true);
             }
 
             _dirty = true;
@@ -406,6 +420,10 @@ public sealed class QuestRecoveryManager
             EnsureConfiguredCore();
             if (blacklisted)
             {
+                if (_records.Values.Any(pair =>
+                        pair.Key.QuestId == questId && pair.State == QuestRecoveryState.Completed))
+                    return;
+
                 foreach (var pair in _records
                     .Where(pair => pair.Key.QuestId == questId && pair.Value.State == QuestRecoveryState.Attempting)
                     .ToArray())
@@ -445,26 +463,13 @@ public sealed class QuestRecoveryManager
                         pair.Value.State == QuestRecoveryState.ManualBlacklist)
                     .ToArray())
                 {
-                    if (IsSyntheticManualRecord(pair.Value))
-                        _records.Remove(pair.Key);
-                    else
-                        _records[pair.Key] = Copy(
-                            pair.Value,
-                            state: QuestRecoveryState.Eligible,
-                            reason: QuestFailureReason.None);
+                    _records.Remove(pair.Key);
                 }
             }
 
             _dirty = true;
         }
     }
-
-    private static bool IsSyntheticManualRecord(QuestRecoveryRecord record) =>
-        record.AttemptGeneration == 0 &&
-        record.EpisodeCount == 0 &&
-        record.AttemptCountInEpisode == 0 &&
-        record.DeathCountInEpisode == 0 &&
-        record.Evidence.Count == 0;
 
     public void RetryNow(QuestRecoveryKey key)
     {
@@ -546,9 +551,9 @@ public sealed class QuestRecoveryManager
 
     private QuestRecoveryRecord? FindQuestTerminalCore(uint questId) =>
         _records.Values.FirstOrDefault(record =>
-            record.Key.QuestId == questId && record.State == QuestRecoveryState.ManualBlacklist)
+            record.Key.QuestId == questId && record.State == QuestRecoveryState.Completed)
         ?? _records.Values.FirstOrDefault(record =>
-            record.Key.QuestId == questId && record.State == QuestRecoveryState.Completed);
+            record.Key.QuestId == questId && record.State == QuestRecoveryState.ManualBlacklist);
 
     private QuestRecoveryRecord MaterializeLegacyRecordCore(
         QuestRecoveryRecord current,
@@ -687,12 +692,19 @@ public sealed class QuestRecoveryManager
             if (nonManual.Any(record => record.State == QuestRecoveryState.Completed))
             {
                 var key = QuestRecoveryKey.ForQuestStage(questGroup.Key, QuestRecoveryStage.TurnIn);
+                var evidence = nonManual
+                    .Where(record => record.State == QuestRecoveryState.Completed)
+                    .SelectMany(record => record.Evidence)
+                    .OrderBy(item => item.ObservedUtc)
+                    .TakeLast(MaximumEvidenceRecords)
+                    .ToArray();
                 result.Add(new QuestRecoveryRecord
                 {
                     Key = key,
                     State = QuestRecoveryState.Completed,
                     RecoveryCycleId = nonManual.Max(record => record.RecoveryCycleId),
-                    AttemptGeneration = nonManual.Max(record => record.AttemptGeneration)
+                    AttemptGeneration = nonManual.Max(record => record.AttemptGeneration),
+                    Evidence = evidence
                 });
             }
             else

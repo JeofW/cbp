@@ -380,3 +380,85 @@ External runtime round-three state:
 - `QuestScheduler.cs` remains unchanged at SHA-256 `B621479733879722609AA7B1785BA29E9AF85D97D898B3D2A82C5DFE1FA0B921`.
 
 The rollback backup again verifies all seven manifest entries with zero mismatches. Existing unrelated vendor/grind working-tree changes remain untouched and excluded. No push, deployment, live replacement, backup mutation, or apphost execution occurred.
+
+## Review Round 4 Corrections
+
+All three round-four findings were reproduced through production-linked regressions before the corresponding production changes:
+
+- `ProcessProgressUpdate` now returns immediately when the atomic generated-failure batch rejects expected authority contention. The existing recovery path still neutrally abandons only the exact source generation, clears matching local ownership/activation, and queues one rebuild; rejected stage and endpoint failures can no longer fall through and be persisted as observations.
+- Refresh application is now an atomic lease-aware operation. `TryApply` validates the current running lease and executes the scheduler apply callback under the refresh synchronization boundary. The lifecycle gate shares that reentrant synchronization root, so `Stop`/`Start` cannot advance the lifecycle between authorization and the side effect; concurrent lifecycle transitions wait for an already-authorized apply, old leases remain fenced afterward, and callback reentrancy does not deadlock.
+- Completed is authoritative over manual blacklist state. `MarkCompleted` normalizes every same-quest record to `Completed`, clears failure reason/cooldowns, and always installs a canonical TurnIn sentinel carrying generation/cycle high-water marks. Manual enable/disable is redundant for completed quests, while disabling a real manual terminal removes only `ManualBlacklist` records. Completion compaction retains the bounded merged evidence set plus generation/cycle high-water marks on the canonical TurnIn sentinel.
+
+Round-four RED evidence:
+
+```text
+REFRESH_ATOMIC_APPLY_RED: CS1061, RefreshGate had no TryApply (build exit 1).
+REJECTED_PROCESS_FALLTHROUGH_RED: the actual ProcessProgressUpdate regression exited 1 because rejected generated failures were subsequently reported as observations.
+LIFECYCLE_REENTRANCY_RED: the apply callback/concurrent lifecycle Stop regression exited 1 because the initial separate-lock implementation deadlocked.
+COMPLETED_MANUAL_RED: the core regression exited 1 because MarkCompleted did not retain all same-quest completion evidence/high-water records or always add a canonical TurnIn sentinel.
+```
+
+Fresh sequential GREEN evidence:
+
+```text
+[QuestRecoveryCore]
+Build succeeded. 3246 Warning(s), 0 Error(s).
+Quest recovery regression tests passed.
+BUILD_EXIT=0 TEST_EXIT=0
+
+[QuestPickupCore]
+Build succeeded. 3246 Warning(s), 0 Error(s).
+Quest pickup policy regression tests passed.
+BUILD_EXIT=0 TEST_EXIT=0
+
+[Wholesome]
+Build succeeded. 3278 Warning(s), 0 Error(s).
+Wholesome scheduler recovery regression tests passed.
+BUILD_EXIT=0 TEST_EXIT=0
+
+[FullReleaseX86]
+Build succeeded. 3250 Warning(s), 0 Error(s).
+BUILD_EXIT=0
+```
+
+All builds used bundled `D:\World of Warcraft 3.3.5a\CB\.dotnet-sdk\dotnet.exe`, direct test DLL execution, `Platform=x86`, `UseAppHost=false`, `--no-restore`, and `--no-incremental`. The package-vulnerability audit warning remained the known network-unavailable warning; there were no compiler errors.
+
+Round-four static/integrity evidence:
+
+```text
+PLAN_FORBIDDEN_SCAN:
+WholesomeAutoQuest.cs:809: forceStop: () => TreeRoot.Stop(),
+AUGMENTED_FORBIDDEN_SCAN_MATCHES=0
+TREE_ROOT_START_COUNT=0
+LEGACY_ADAPTER_COUNT=0
+PROFILE_LOAD_COUNT=1
+BASE_STOP_COUNT=1
+REPORT_PROGRESS_COUNT=1
+SUCCESS_FACTORY_COUNT=1
+NO_ARG_REFRESH_COMPLETE_COUNT=0
+TRY_GENERATED_BATCH_COUNT=1
+TRY_APPLY_COUNT=2
+REJECTED_RECOVERY_COUNT=2
+BACKUP_HASH_MISMATCHES=0
+SCOPED_DIFF_CHECK_EXIT=0
+WHOLESOME_APPHOST_EXISTS=False
+CORE_APPHOST_EXISTS=False
+PICKUP_APPHOST_EXISTS=False
+```
+
+The only prescribed plan-scan match remains the explicitly user-clicked Settings `Force Stop`. The augmented scan covered restart timers, automatic blacklist writers, arbitrary active-quest selection, grind/level-file discovery, `TreeRoot.Start`, removed pickup wall-clock fields, and the superseded throwing generated-batch call.
+
+Repo-local round-four files:
+
+- `Styx/Logic/Questing/Recovery/QuestRecoveryManager.cs`
+- `Tools/QuestRecoveryRegressionTests/Program.cs`
+- `Tools/WholesomeQuestRecoveryRegressionTests/Program.cs`
+- `.superpowers/sdd/2026-09-02-wholesome-quest-recovery-integration-plan/task-4-implementer-report.md`
+
+External runtime round-four state:
+
+- `D:\World of Warcraft 3.3.5a\CB\Bots\WholesomeAutoQuest-master\WholesomeAutoQuest.cs`
+  - SHA-256: `AFF843D5A2D51916E352C1F9FEC446DB6B40E657D3A5CE4B329DFAAE10279D05`
+- `QuestScheduler.cs` remains unchanged at SHA-256 `B621479733879722609AA7B1785BA29E9AF85D97D898B3D2A82C5DFE1FA0B921`.
+
+The rollback backup still verifies all seven manifest entries with zero mismatches. Existing unrelated vendor/grind working-tree changes remain untouched and excluded. No push, deployment, live replacement, backup mutation, or apphost execution occurred.

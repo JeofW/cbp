@@ -62,6 +62,7 @@ try
     TestIdentitySwitchCannotReuseOwnership(Path.Combine(testRoot, "success-identity"), now);
     TestManualBlacklistReplacementCannotReuseOwnership(Path.Combine(testRoot, "success-manual"), now);
     TestManualBlacklistNormalizesEveryOwnedScope(Path.Combine(testRoot, "manual-owned-scopes"), now);
+    TestCompletedRecordsSurviveManualBlacklistToggleAndCompaction(Path.Combine(testRoot, "manual-completed"), now);
     TestOwnershipFenceSurvivesManualReleaseReload(Path.Combine(testRoot, "success-empty-reload"), now);
     TestSuccessfulHalfOpenClearsEscalation(Path.Combine(testRoot, "success-half-open"), now);
     TestSuccessCannotReopenTerminalStates(Path.Combine(testRoot, "success-terminal"), now);
@@ -2000,10 +2001,8 @@ static void TestOwnershipFenceSurvivesManualReleaseReload(string settingsRoot, D
     var ownerA = manager.TryBeginAttempt(key, Context());
     manager.SetManualBlacklist(key.QuestId, true);
     manager.SetManualBlacklist(key.QuestId, false);
-    Assert(manager.GetEntries().Count == 1
-           && manager.GetEntries().Single().State == QuestRecoveryState.Eligible
-           && manager.GetEntries().Single().AttemptGeneration == ownerA.AttemptGeneration,
-        "manual removal must retain the neutralized owner record and its generation fence");
+    Assert(manager.GetEntries().All(record => record.Key.QuestId != key.QuestId),
+        "manual removal must delete only actual manual records rather than reopening one as eligible");
     manager.Flush();
 
     var reloaded = new QuestRecoveryManager(new FixedClock(now));
@@ -2011,6 +2010,92 @@ static void TestOwnershipFenceSurvivesManualReleaseReload(string settingsRoot, D
     var ownerB = reloaded.TryBeginAttempt(key, Context());
     Assert(ownerB.MayAttempt && ownerB.AttemptGeneration > ownerA.AttemptGeneration,
         "the ownership high-water mark must survive reload even when no record remains");
+}
+
+static void TestCompletedRecordsSurviveManualBlacklistToggleAndCompaction(string settingsRoot, DateTime now)
+{
+    var environment = CreateEnvironment(settingsRoot, "Jeof", "Lordaeron");
+    var manager = new QuestRecoveryManager(new FixedClock(now));
+    var pickup = QuestRecoveryKey.ForQuestStage(1210, QuestRecoveryStage.Pickup);
+    var objective = QuestRecoveryKey.ForQuestStage(1210, QuestRecoveryStage.Objective);
+    var turnIn = QuestRecoveryKey.ForQuestStage(1210, QuestRecoveryStage.TurnIn);
+    manager.Configure(environment);
+
+    manager.Report(
+        QuestAttemptOutcome.Observation(pickup, QuestFailureReason.PickupTargetNotOffered, "pickup completion evidence"),
+        Context());
+    var pickupOwner = manager.TryBeginAttempt(pickup, Context());
+    manager.Report(
+        QuestAttemptOutcome.Success(pickup, pickupOwner.AttemptGeneration, "pickup completed"),
+        Context());
+    manager.Report(
+        QuestAttemptOutcome.Observation(objective, QuestFailureReason.NoObjectiveProgress, "objective completion evidence"),
+        Context());
+    var objectiveOwnerA = manager.TryBeginAttempt(objective, Context());
+    manager.Report(
+        QuestAttemptOutcome.Success(objective, objectiveOwnerA.AttemptGeneration, "objective progress one"),
+        Context());
+    var objectiveOwnerB = manager.TryBeginAttempt(objective, Context());
+    manager.Report(
+        QuestAttemptOutcome.Success(objective, objectiveOwnerB.AttemptGeneration, "objective progress two"),
+        Context());
+
+    manager.MarkCompleted(1210);
+    var completed = manager.GetEntries().Where(record => record.Key.QuestId == 1210).ToArray();
+    long expectedGeneration = completed.Max(record => record.AttemptGeneration);
+    long expectedCycle = completed.Max(record => record.RecoveryCycleId);
+    var expectedEvidence = completed.SelectMany(record => record.Evidence)
+        .Select(evidence => evidence.Text)
+        .OrderBy(text => text, StringComparer.Ordinal)
+        .ToArray();
+    Assert(completed.All(record => record.State == QuestRecoveryState.Completed)
+           && completed.Any(record => record.Key.Equals(turnIn))
+           && expectedGeneration == objectiveOwnerB.AttemptGeneration
+           && expectedCycle == 2
+           && expectedEvidence.Contains("pickup completion evidence")
+           && expectedEvidence.Contains("objective completion evidence"),
+        "MarkCompleted must retain same-quest completion evidence/high-water records and always install a canonical TurnIn sentinel");
+
+    manager.SetManualBlacklist(1210, true);
+    manager.SetManualBlacklist(1210, false);
+    var toggled = manager.GetEntries().Where(record => record.Key.QuestId == 1210).ToArray();
+    Assert(toggled.Length == completed.Length
+           && toggled.All(record => record.State == QuestRecoveryState.Completed)
+           && toggled.All(record => record.Reason != QuestFailureReason.UserExcluded)
+           && toggled.Max(record => record.AttemptGeneration) == expectedGeneration
+           && toggled.Max(record => record.RecoveryCycleId) == expectedCycle
+           && toggled.SelectMany(record => record.Evidence)
+               .Select(evidence => evidence.Text)
+               .OrderBy(text => text, StringComparer.Ordinal)
+               .SequenceEqual(expectedEvidence),
+        "manual blacklist true/false on a completed quest must be redundant and must neither overwrite nor reopen completion records");
+
+    manager.Flush();
+    var reloaded = new QuestRecoveryManager(new FixedClock(now));
+    reloaded.Configure(environment);
+    var compacted = reloaded.GetEntries().Where(record => record.Key.QuestId == 1210).ToArray();
+    Assert(compacted.Length == 1
+           && compacted[0].Key.Equals(turnIn)
+           && compacted[0].State == QuestRecoveryState.Completed
+           && compacted[0].AttemptGeneration == expectedGeneration
+           && compacted[0].RecoveryCycleId == expectedCycle
+           && compacted[0].Evidence.Any(evidence => evidence.Text == "pickup completion evidence")
+           && compacted[0].Evidence.Any(evidence => evidence.Text == "objective completion evidence"),
+        "completion compaction and reload must preserve the canonical TurnIn sentinel, evidence, and generation/cycle high-water marks");
+
+    reloaded.SetManualBlacklist(1210, true);
+    reloaded.SetManualBlacklist(1210, false);
+    reloaded.Flush();
+    var toggledReload = new QuestRecoveryManager(new FixedClock(now));
+    toggledReload.Configure(environment);
+    var durable = toggledReload.GetEntries().Single(record => record.Key.QuestId == 1210);
+    Assert(durable.Key.Equals(turnIn)
+           && durable.State == QuestRecoveryState.Completed
+           && durable.AttemptGeneration == expectedGeneration
+           && durable.RecoveryCycleId == expectedCycle
+           && durable.Evidence.Any(evidence => evidence.Text == "pickup completion evidence")
+           && durable.Evidence.Any(evidence => evidence.Text == "objective completion evidence"),
+        "manual toggles after reload must leave the durable compacted completion sentinel unchanged");
 }
 
 static void TestRetryNowRejectsPriorOwnerSuccess(string settingsRoot, DateTime now)

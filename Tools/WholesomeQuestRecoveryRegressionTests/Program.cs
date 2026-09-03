@@ -61,6 +61,7 @@ try
     TestSchedulerDeduplicatesRelationRowsAndExactEndpoints();
     TestRefreshGateCoalescesConcurrentRequestsAndStopsCallbacks();
     TestRefreshLeaseFencesTheEntireSchedulerRun();
+    TestRefreshApplyIsAtomicWithLifecycleTransitions();
     TestLifecycleGateDoesNotGrowSubscriptionsAcrossRestarts();
     TestLifecycleGateCannotSubscribeAfterConcurrentStop();
     TestStopAbandonsOwnedAttemptBeforeClearingLifecycleState();
@@ -75,6 +76,7 @@ try
     TestOwnedFailureBindsGenerationWithoutSyntheticSuccess();
     TestFinalEndpointAndStageFailuresReportInOneOwnedSequence();
     TestRejectedGeneratedBatchRecoversWithoutThrowingOrApplyingEpisode();
+    TestRejectedGeneratedBatchDoesNotFallThroughToObservations();
     TestCompletedOwnedStageRequestsRefreshBeforeQuestOrderRunsOut();
     TestTimedIdleSuppressesOldQuestOrderUntilARebuildSelectsWork();
     TestPickupOutcomeCoalescingStillReportsTheFailureEpisode();
@@ -265,6 +267,112 @@ void TestRefreshLeaseFencesTheEntireSchedulerRun()
         "Stop/Start during scan must fence profile apply and the old runAgain request");
     Assert(gate.TryRequest(),
         "the old runAgain path must not consume the restarted run's one-bit latch");
+}
+
+void TestRefreshApplyIsAtomicWithLifecycleTransitions()
+{
+    var gate = new RefreshGate();
+    Assert(gate.TryRequest(), "the apply-race fixture must queue a refresh");
+    var lease = gate.Begin();
+    Assert(lease.HasValue, "the apply-race fixture must begin a refresh");
+
+    var postScanReached = new ManualResetEventSlim();
+    var allowApplyAttempt = new ManualResetEventSlim();
+    var applies = 0;
+    var stoppedBeforeApply = Task.Run(() =>
+    {
+        postScanReached.Set();
+        allowApplyAttempt.Wait();
+        return gate.TryApply(lease.GetValueOrDefault(), () => Interlocked.Increment(ref applies));
+    });
+    Assert(postScanReached.Wait(TimeSpan.FromSeconds(5)),
+        "the apply-race fixture must reach the boundary after scan and before apply");
+    gate.Stop();
+    allowApplyAttempt.Set();
+    Assert(stoppedBeforeApply.Wait(TimeSpan.FromSeconds(5))
+           && !stoppedBeforeApply.Result
+           && applies == 0,
+        "Stop between scan and lease-aware apply must win without running the stale side effect");
+
+    gate.Start();
+    Assert(gate.TryRequest(), "restart must queue a fresh apply-race refresh");
+    var restartedLease = gate.Begin();
+    Assert(restartedLease.HasValue, "restart must begin a fresh apply-race refresh");
+    var applyEntered = new ManualResetEventSlim();
+    var releaseApply = new ManualResetEventSlim();
+    var stopStarted = new ManualResetEventSlim();
+    var startStarted = new ManualResetEventSlim();
+    var reentrantRequest = false;
+    var authorizedApply = Task.Run(() => gate.TryApply(
+        restartedLease.GetValueOrDefault(),
+        () =>
+        {
+            applyEntered.Set();
+            reentrantRequest = gate.TryRequest(restartedLease.GetValueOrDefault());
+            releaseApply.Wait();
+            Interlocked.Increment(ref applies);
+        }));
+    Assert(applyEntered.Wait(TimeSpan.FromSeconds(5)),
+        "the concurrent lifecycle fixture must enter the authorized apply action");
+    var stop = Task.Run(() =>
+    {
+        stopStarted.Set();
+        gate.Stop();
+    });
+    Assert(stopStarted.Wait(TimeSpan.FromSeconds(5)) && !stop.Wait(TimeSpan.FromMilliseconds(100)),
+        "Stop must wait for an already-authorized apply to finish before advancing the lifecycle epoch");
+    var start = Task.Run(() =>
+    {
+        startStarted.Set();
+        gate.Start();
+    });
+    Assert(startStarted.Wait(TimeSpan.FromSeconds(5)) && !start.Wait(TimeSpan.FromMilliseconds(100)),
+        "Start must share the same synchronization boundary as an already-authorized apply");
+    releaseApply.Set();
+    Assert(authorizedApply.Wait(TimeSpan.FromSeconds(5))
+           && stop.Wait(TimeSpan.FromSeconds(5))
+           && start.Wait(TimeSpan.FromSeconds(5))
+           && authorizedApply.Result
+           && reentrantRequest
+           && applies == 1
+           && !gate.TryApply(restartedLease.GetValueOrDefault(), () => Interlocked.Increment(ref applies)),
+        "authorized apply, reentrant gate calls, and concurrent Stop/Start must finish without deadlock or permit an old-lease side effect afterward");
+
+    var lifecycleGate = new RefreshGate();
+    var lifecycle = new WholesomeLifecycleGate(lifecycleGate);
+    Assert(lifecycle.Start(() => { }, () => { })
+           && lifecycleGate.TryRequest(),
+        "the lifecycle reentrancy fixture must start and queue a refresh");
+    var lifecycleLease = lifecycleGate.Begin();
+    Assert(lifecycleLease.HasValue,
+        "the lifecycle reentrancy fixture must begin a refresh");
+    var lifecycleApplyEntered = new ManualResetEventSlim();
+    var allowReentrantStop = new ManualResetEventSlim();
+    var concurrentStopStarted = new ManualResetEventSlim();
+    var lifecycleApply = Task.Run(() => lifecycleGate.TryApply(
+        lifecycleLease.GetValueOrDefault(),
+        () =>
+        {
+            lifecycleApplyEntered.Set();
+            allowReentrantStop.Wait();
+            lifecycle.Stop(() => { });
+        }));
+    Assert(lifecycleApplyEntered.Wait(TimeSpan.FromSeconds(5)),
+        "the lifecycle reentrancy fixture must enter the apply callback");
+    var concurrentLifecycleStop = Task.Run(() =>
+    {
+        concurrentStopStarted.Set();
+        lifecycle.Stop(() => { });
+    });
+    Assert(concurrentStopStarted.Wait(TimeSpan.FromSeconds(5))
+           && !concurrentLifecycleStop.Wait(TimeSpan.FromMilliseconds(100)),
+        "a concurrent lifecycle Stop must wait while apply remains authorized");
+    allowReentrantStop.Set();
+    Assert(lifecycleApply.Wait(TimeSpan.FromSeconds(5))
+           && concurrentLifecycleStop.Wait(TimeSpan.FromSeconds(5))
+           && lifecycleApply.Result
+           && lifecycle.IsStopped,
+        "a refresh apply callback that reenters lifecycle Stop must not deadlock with a concurrent Stop");
 }
 
 void TestLifecycleResetDoesNotCarryPickupCyclesAcrossRestart()
@@ -784,6 +892,89 @@ void TestRejectedGeneratedBatchRecoversWithoutThrowingOrApplyingEpisode()
     }
     finally
     {
+        if (Directory.Exists(root))
+            Directory.Delete(root, recursive: true);
+    }
+}
+
+void TestRejectedGeneratedBatchDoesNotFallThroughToObservations()
+{
+    var root = Path.Combine(Path.GetTempPath(), "wholesome-generated-processing-" + Guid.NewGuid().ToString("N"));
+    var manager = QuestRecoveryManager.Instance;
+    try
+    {
+        var environment = new QuestRecoveryEnvironment(
+            root,
+            "Wholesome",
+            "Processing",
+            "data-v1",
+            "core-v1",
+            "nav-v1");
+        manager.Configure(environment);
+        var stage = QuestRecoveryKey.ForQuestStage(872, QuestRecoveryStage.Objective);
+        var endpoint = QuestRecoveryKey.ForEndpoint(872, QuestRecoveryStage.Navigation, 1, "cell:11:12");
+        var source = manager.TryBeginAttempt(stage, new QuestRecoveryContext());
+        var target = manager.TryBeginAttempt(endpoint, new QuestRecoveryContext());
+        Assert(source.MayAttempt && target.MayAttempt,
+            "the production-processing fixture must own both the source and contended target independently");
+        manager.Flush();
+
+        var behavior = new ForcedQuestObjective(TestQuestObjective.Create(872, WoWPoint.Zero));
+        var bot = new WholesomeAutoQuest();
+        var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+        var ownership = (WholesomeAttemptOwnership?)typeof(WholesomeAutoQuest)
+            .GetField("_attemptOwnership", flags)?.GetValue(bot);
+        var gate = (RefreshGate?)typeof(WholesomeAutoQuest)
+            .GetField("_refreshGate", flags)?.GetValue(bot);
+        var stopped = typeof(WholesomeAutoQuest).GetField("_stopped", flags);
+        var process = typeof(WholesomeAutoQuest).GetMethod("ProcessProgressUpdate", flags);
+        Assert(ownership != null && gate != null && stopped != null && process != null,
+            "the regression must invoke the actual production ProcessProgressUpdate path");
+        ownership!.Begin(behavior, stage, source);
+        stopped!.SetValue(bot, false);
+        var sample = WorkSample(stage, new[] { 0 }, endpoint, active: true, attemptGeneration: source.AttemptGeneration);
+        var update = new QuestProgressUpdate
+        {
+            Outcomes = new[]
+            {
+                QuestAttemptOutcome.Failure(endpoint, QuestFailureReason.PathGenerationFailed, "rejected endpoint"),
+                QuestAttemptOutcome.Failure(stage, QuestFailureReason.NoNavigableHotspot, "rejected stage")
+            }
+        };
+
+        process!.Invoke(bot, new object[] { behavior, sample, update });
+
+        var sourceAfter = manager.GetEntries().Single(record => record.Key.Equals(stage));
+        var targetAfter = manager.GetEntries().Single(record => record.Key.Equals(endpoint));
+        Assert(sourceAfter.State == QuestRecoveryState.Eligible
+               && sourceAfter.AttemptGeneration == source.AttemptGeneration
+               && sourceAfter.EpisodeCount == 0
+               && sourceAfter.Evidence.Count == 0
+               && targetAfter.State == QuestRecoveryState.Attempting
+               && targetAfter.AttemptGeneration == target.AttemptGeneration
+               && targetAfter.EpisodeCount == 0
+               && targetAfter.Evidence.Count == 0
+               && !ownership.TryGet(behavior, out _, out _),
+            "a rejected generated batch must stop processing after neutral source release and must not report either failure as an observation");
+        var refreshLease = gate!.Begin();
+        Assert(refreshLease.HasValue && !gate.Begin().HasValue,
+            "a rejected production batch must queue exactly one rebuild");
+        gate.Complete(refreshLease.GetValueOrDefault());
+        manager.Flush();
+
+        var reloaded = new QuestRecoveryManager(new TestRecoveryClock(utcNow));
+        reloaded.Configure(environment);
+        var persistedSource = reloaded.GetEntries().Single(record => record.Key.Equals(stage));
+        var persistedTarget = reloaded.GetEntries().Single(record => record.Key.Equals(endpoint));
+        Assert(persistedSource.State == QuestRecoveryState.Eligible
+               && persistedSource.Evidence.Count == 0
+               && persistedTarget.State == QuestRecoveryState.HalfOpen
+               && persistedTarget.Evidence.Count == 0,
+            "rejected-batch persistence must contain only the neutral source clear and ordinary stale-attempt recovery, never rejected evidence");
+    }
+    finally
+    {
+        manager.Flush();
         if (Directory.Exists(root))
             Directory.Delete(root, recursive: true);
     }
