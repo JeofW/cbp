@@ -60,8 +60,11 @@ try
     TestSchedulerReportsEveryEndpointlessObjectiveOmission();
     TestSchedulerDeduplicatesRelationRowsAndExactEndpoints();
     TestRefreshGateCoalescesConcurrentRequestsAndStopsCallbacks();
+    TestRefreshLeaseFencesTheEntireSchedulerRun();
     TestLifecycleGateDoesNotGrowSubscriptionsAcrossRestarts();
+    TestLifecycleGateCannotSubscribeAfterConcurrentStop();
     TestStopAbandonsOwnedAttemptBeforeClearingLifecycleState();
+    TestManualExclusionClearsMatchingLocalOwnership();
     TestLifecycleResetDoesNotCarryPickupCyclesAcrossRestart();
     TestProgressMonitorCountsOnlyActiveWorkAndCoalescesOneStall();
     TestProgressMonitorScopesEndpointAndDeathFailures();
@@ -71,6 +74,7 @@ try
     TestAttemptOwnershipUsesTheExactGenerationToken();
     TestOwnedFailureBindsGenerationWithoutSyntheticSuccess();
     TestFinalEndpointAndStageFailuresReportInOneOwnedSequence();
+    TestRejectedGeneratedBatchRecoversWithoutThrowingOrApplyingEpisode();
     TestCompletedOwnedStageRequestsRefreshBeforeQuestOrderRunsOut();
     TestTimedIdleSuppressesOldQuestOrderUntilARebuildSelectsWork();
     TestPickupOutcomeCoalescingStillReportsTheFailureEpisode();
@@ -139,13 +143,17 @@ void TestLifecycleGateDoesNotGrowSubscriptionsAcrossRestarts()
 
     for (var cycle = 0; cycle < 10; cycle++)
     {
-        lifecycle.Start(() =>
-        {
-            subscriptions++;
-            active++;
-            maximumActive = Math.Max(maximumActive, active);
-        });
-        lifecycle.Start(() => throw new InvalidOperationException("duplicate subscription"));
+        lifecycle.Start(
+            () =>
+            {
+                subscriptions++;
+                active++;
+                maximumActive = Math.Max(maximumActive, active);
+            },
+            () => throw new InvalidOperationException("unexpected compensation"));
+        lifecycle.Start(
+            () => throw new InvalidOperationException("duplicate subscription"),
+            () => throw new InvalidOperationException("duplicate compensation"));
         lifecycle.Stop(() => { removals++; active--; });
         lifecycle.Stop(() => throw new InvalidOperationException("duplicate removal"));
     }
@@ -154,6 +162,109 @@ void TestLifecycleGateDoesNotGrowSubscriptionsAcrossRestarts()
         "repeated start/stop cycles must own exactly one event subscription set");
     Assert(lifecycle.IsStopped && !gate.TryRequest(),
         "lifecycle Stop must leave an explicit stopped state and cancel refresh work");
+}
+
+void TestLifecycleGateCannotSubscribeAfterConcurrentStop()
+{
+    for (var cycle = 0; cycle < 25; cycle++)
+    {
+        var lifecycle = new WholesomeLifecycleGate(new RefreshGate());
+        var subscriptionSync = new object();
+        var subscribeEntered = new ManualResetEventSlim();
+        var allowSubscribe = new ManualResetEventSlim();
+        var handlerInstalled = false;
+
+        var start = Task.Run(() => lifecycle.Start(
+            () =>
+            {
+                subscribeEntered.Set();
+                allowSubscribe.Wait();
+                lock (subscriptionSync)
+                    handlerInstalled = true;
+            },
+            () =>
+            {
+                lock (subscriptionSync)
+                    handlerInstalled = false;
+            }));
+        Assert(subscribeEntered.Wait(TimeSpan.FromSeconds(5)),
+            "the lifecycle race fixture must reach the in-flight subscription action");
+        var stop = Task.Run(() => lifecycle.Stop(() =>
+        {
+            lock (subscriptionSync)
+                handlerInstalled = false;
+        }));
+        Assert(stop.Wait(TimeSpan.FromSeconds(5)),
+            "Stop must not wait on or invoke callbacks while holding the lifecycle state lock");
+        allowSubscribe.Set();
+        Assert(start.Wait(TimeSpan.FromSeconds(5)),
+            "the in-flight Start must finish after its subscription action is released");
+        lock (subscriptionSync)
+            Assert(lifecycle.IsStopped && !handlerInstalled,
+                "an in-flight Start must compensate its stale subscription after concurrent Stop");
+    }
+
+    var startedLifecycle = new WholesomeLifecycleGate(new RefreshGate());
+    var subscriptions = 0;
+    Parallel.For(0, 100, _ => startedLifecycle.Start(
+        () => Interlocked.Increment(ref subscriptions),
+        () => Interlocked.Decrement(ref subscriptions)));
+    Assert(!startedLifecycle.IsStopped && subscriptions == 1,
+        "concurrent Start calls must finish with exactly one owned handler");
+    var removals = 0;
+    Parallel.For(0, 100, _ => startedLifecycle.Stop(() => Interlocked.Increment(ref removals)));
+    Assert(startedLifecycle.IsStopped && removals == 1,
+        "concurrent Stop calls must finish with zero handlers and exactly one removal");
+}
+
+void TestRefreshLeaseFencesTheEntireSchedulerRun()
+{
+    var gate = new RefreshGate();
+    Assert(gate.TryRequest(), "the fence fixture must queue an old refresh");
+    var oldLease = gate.Begin();
+    Assert(oldLease.HasValue, "the fence fixture must begin the old refresh");
+    gate.Stop();
+    gate.Start();
+    Assert(gate.TryRequest(), "restart must queue a new-epoch refresh");
+    var newLease = gate.Begin();
+    Assert(newLease.HasValue, "restart must begin the new-epoch refresh");
+
+    int scans = 0;
+    int applies = 0;
+    bool oldRunAgain = WholesomeAutoQuest.RunLeaseFencedRefresh(
+        gate,
+        oldLease.GetValueOrDefault(),
+        () => { scans++; return true; },
+        () => applies++);
+    Assert(!oldRunAgain && scans == 0 && applies == 0
+           && !gate.TryRequest(oldLease.GetValueOrDefault()),
+        "an old callback must not scan a newly assigned scheduler, apply a profile, or latch a new-epoch refresh");
+    Assert(gate.IsCurrent(newLease.GetValueOrDefault()),
+        "the rejected old callback must leave the new refresh lease unchanged");
+
+    gate.Complete(newLease.GetValueOrDefault());
+    Assert(gate.TryRequest(), "the post-scan fixture must queue a current refresh");
+    var scanningLease = gate.Begin();
+    RefreshLease restartedLease = default;
+    bool postScanRunAgain = WholesomeAutoQuest.RunLeaseFencedRefresh(
+        gate,
+        scanningLease.GetValueOrDefault(),
+        () =>
+        {
+            scans++;
+            gate.Stop();
+            gate.Start();
+            gate.TryRequest();
+            restartedLease = gate.Begin().GetValueOrDefault();
+            return true;
+        },
+        () => applies++);
+    Assert(!postScanRunAgain && scans == 1 && applies == 0
+           && gate.IsCurrent(restartedLease)
+           && !gate.TryRequest(scanningLease.GetValueOrDefault()),
+        "Stop/Start during scan must fence profile apply and the old runAgain request");
+    Assert(gate.TryRequest(),
+        "the old runAgain path must not consume the restarted run's one-bit latch");
 }
 
 void TestLifecycleResetDoesNotCarryPickupCyclesAcrossRestart()
@@ -580,15 +691,16 @@ void TestFinalEndpointAndStageFailuresReportInOneOwnedSequence()
                    QuestAttemptOutcome.Failure(endpoint, QuestFailureReason.PathGenerationFailed, "endpoint failed"),
                    QuestAttemptOutcome.Failure(stage, QuestFailureReason.NoNavigableHotspot, "stage exhausted")
                },
-               bound =>
+               (IReadOnlyList<QuestAttemptOutcome> bound, out IReadOnlyList<QuestRecoveryDecision> accepted) =>
                {
                    reported = bound;
                    ownedDuringBatch = ownership.TryGet(owner, out _, out var generation) && generation == 61;
-                   return new[]
+                   accepted = new[]
                    {
                        new QuestRecoveryDecision { State = QuestRecoveryState.CoolingDown },
                        new QuestRecoveryDecision { State = QuestRecoveryState.CoolingDown }
                    };
+                   return true;
                },
                out var decisions)
            && ownedDuringBatch
@@ -599,6 +711,110 @@ void TestFinalEndpointAndStageFailuresReportInOneOwnedSequence()
            && decisions.Count == 2
            && !ownership.TryGet(owner, out _, out _),
         "the final endpoint failure must be applied first under stage ownership, followed by the stage failure that releases it");
+}
+
+void TestRejectedGeneratedBatchRecoversWithoutThrowingOrApplyingEpisode()
+{
+    var root = Path.Combine(Path.GetTempPath(), "wholesome-generated-race-" + Guid.NewGuid().ToString("N"));
+    try
+    {
+        void RunRace(bool contendEndpoint)
+        {
+            var manager = new QuestRecoveryManager(new TestRecoveryClock(utcNow));
+            manager.Configure(new QuestRecoveryEnvironment(
+                Path.Combine(root, contendEndpoint ? "endpoint" : "stop"),
+                "Wholesome",
+                "Realm",
+                "data-v1",
+                "core-v1",
+                "nav-v1"));
+            var stage = QuestRecoveryKey.ForQuestStage(869, QuestRecoveryStage.Objective);
+            var endpoint = QuestRecoveryKey.ForEndpoint(869, QuestRecoveryStage.Navigation, 1, "cell:9:10");
+            var source = manager.TryBeginAttempt(stage, new QuestRecoveryContext());
+            if (contendEndpoint)
+                Assert(manager.TryBeginAttempt(endpoint, new QuestRecoveryContext()).MayAttempt,
+                    "the batch contention fixture must independently own its endpoint");
+
+            var ownership = new WholesomeAttemptOwnership();
+            var behavior = new object();
+            ownership.Begin(behavior, stage, source);
+            var outcomes = new[]
+            {
+                QuestAttemptOutcome.Failure(endpoint, QuestFailureReason.PathGenerationFailed, "endpoint failed"),
+                QuestAttemptOutcome.Failure(stage, QuestFailureReason.NoNavigableHotspot, "stage exhausted")
+            };
+            Assert(!WholesomeAutoQuest.ReportOwnedFailures(
+                       ownership,
+                       behavior,
+                       outcomes,
+                       (IReadOnlyList<QuestAttemptOutcome> bound, out IReadOnlyList<QuestRecoveryDecision> decisions) =>
+                       {
+                           if (!contendEndpoint)
+                               manager.AbandonAttempt(stage, source.AttemptGeneration);
+                           return manager.TryReportGeneratedFailures(bound, new QuestRecoveryContext(), out decisions);
+                       },
+                       out var rejected)
+                   && rejected.Count == 0
+                   && ownership.TryGet(behavior, out _, out var retainedGeneration)
+                   && retainedGeneration == source.AttemptGeneration,
+                "Stop or independently owned target contention must be a non-throwing rejection that retains local ownership for recovery");
+
+            var releases = 0;
+            var refreshes = 0;
+            Assert(WholesomeAutoQuest.RecoverRejectedOwnedFailures(
+                       ownership,
+                       behavior,
+                       (key, generation) => manager.AbandonAttempt(key, generation),
+                       () => releases++,
+                       () => refreshes++)
+                   && releases == 1
+                   && refreshes == 1
+                   && !ownership.TryGet(behavior, out _, out _)
+                   && !manager.OwnsAttempt(stage, source.AttemptGeneration),
+                "rejected production work must abandon the exact source, clear local activation, and request one rebuild");
+            Assert(manager.GetEntries().Where(record => record.Key.Equals(stage))
+                       .All(record => record.EpisodeCount == 0)
+                   && (!contendEndpoint || manager.GetEntries().Any(record =>
+                       record.Key.Equals(endpoint) && record.State == QuestRecoveryState.Attempting)),
+                "a rejected batch must not falsely apply an episode or overwrite the contended endpoint owner");
+        }
+
+        RunRace(contendEndpoint: false);
+        RunRace(contendEndpoint: true);
+    }
+    finally
+    {
+        if (Directory.Exists(root))
+            Directory.Delete(root, recursive: true);
+    }
+}
+
+void TestManualExclusionClearsMatchingLocalOwnership()
+{
+    var ownership = new WholesomeAttemptOwnership();
+    var behavior = new object();
+    var key = QuestRecoveryKey.ForQuestStage(870, QuestRecoveryStage.Pickup);
+    ownership.Begin(behavior, key, new QuestRecoveryDecision
+    {
+        State = QuestRecoveryState.Attempting,
+        MayAttempt = true,
+        AttemptGeneration = 71
+    });
+    object released = null!;
+    long retained = 0;
+    Assert(!WholesomeAutoQuest.ReleaseManuallyExcludedOwnership(
+               ownership,
+               871,
+               owner => released = owner)
+           && ownership.TryGet(behavior, out _, out retained) && retained == 71,
+        "manual exclusion for another quest must not clear the exact local owner");
+    Assert(WholesomeAutoQuest.ReleaseManuallyExcludedOwnership(
+               ownership,
+               870,
+               owner => released = owner)
+           && ReferenceEquals(released, behavior)
+           && !ownership.TryGet(behavior, out _, out _),
+        "installing a same-quest manual terminal must clear its stale local activation exactly once");
 }
 
 void TestProgressReleaseAllowsSameBehaviorToClaimALaterGeneration()

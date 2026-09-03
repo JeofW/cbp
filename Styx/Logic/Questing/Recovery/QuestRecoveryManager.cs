@@ -278,12 +278,14 @@ public sealed class QuestRecoveryManager
         }
     }
 
-    public IReadOnlyList<QuestRecoveryDecision> ReportGeneratedFailures(
+    public bool TryReportGeneratedFailures(
         IReadOnlyList<QuestAttemptOutcome> outcomes,
-        QuestRecoveryContext context)
+        QuestRecoveryContext context,
+        out IReadOnlyList<QuestRecoveryDecision> decisions)
     {
         ArgumentNullException.ThrowIfNull(outcomes);
         ArgumentNullException.ThrowIfNull(context);
+        decisions = Array.Empty<QuestRecoveryDecision>();
         if (outcomes.Count == 0)
             throw new ArgumentException("At least one generated failure is required.", nameof(outcomes));
 
@@ -309,18 +311,19 @@ public sealed class QuestRecoveryManager
             if (!_records.TryGetValue(attemptKey, out var sourceOwner) ||
                 sourceOwner.State != QuestRecoveryState.Attempting ||
                 sourceOwner.AttemptGeneration != generation)
-                throw new InvalidOperationException("The generated-failure source is no longer the exact attempt owner.");
+                return false;
             foreach (QuestAttemptOutcome outcome in outcomes.Take(outcomes.Count - 1))
             {
                 if (_records.TryGetValue(outcome.Key, out var targetOwner) &&
                     targetOwner.State == QuestRecoveryState.Attempting)
-                    throw new InvalidOperationException("A generated-failure target is owned by another attempt.");
+                    return false;
             }
 
-            var decisions = new List<QuestRecoveryDecision>(outcomes.Count);
+            var accepted = new List<QuestRecoveryDecision>(outcomes.Count);
             foreach (QuestAttemptOutcome outcome in outcomes)
-                decisions.Add(Report(outcome, context));
-            return decisions;
+                accepted.Add(Report(outcome, context));
+            decisions = accepted;
+            return true;
         }
     }
 
@@ -401,28 +404,67 @@ public sealed class QuestRecoveryManager
         lock (_sync)
         {
             EnsureConfiguredCore();
-            foreach (var key in _records
-                .Where(pair => pair.Key.QuestId == questId && pair.Value.State == QuestRecoveryState.ManualBlacklist)
-                .Select(pair => pair.Key)
-                .ToArray())
-            {
-                _records.Remove(key);
-            }
-
             if (blacklisted)
             {
-                var key = QuestRecoveryKey.ForQuestStage(questId, QuestRecoveryStage.Pickup);
-                _records[key] = new QuestRecoveryRecord
+                foreach (var pair in _records
+                    .Where(pair => pair.Key.QuestId == questId && pair.Value.State == QuestRecoveryState.Attempting)
+                    .ToArray())
                 {
-                    Key = key,
-                    State = QuestRecoveryState.ManualBlacklist,
-                    Reason = QuestFailureReason.UserExcluded
-                };
+                    _records[pair.Key] = Copy(pair.Value, state: QuestRecoveryState.Eligible);
+                }
+
+                var key = QuestRecoveryKey.ForQuestStage(questId, QuestRecoveryStage.Pickup);
+                var existing = _records.TryGetValue(key, out var current) ? current : null;
+                _records[key] = existing is null
+                    ? new QuestRecoveryRecord
+                    {
+                        Key = key,
+                        State = QuestRecoveryState.ManualBlacklist,
+                        Reason = QuestFailureReason.UserExcluded
+                    }
+                    : Copy(
+                        existing,
+                        state: QuestRecoveryState.ManualBlacklist,
+                        reason: QuestFailureReason.UserExcluded);
+                foreach (var pair in _records
+                    .Where(pair => pair.Key.QuestId == questId &&
+                        pair.Value.State == QuestRecoveryState.ManualBlacklist &&
+                        !pair.Key.Equals(key))
+                    .ToArray())
+                {
+                    _records[pair.Key] = Copy(
+                        pair.Value,
+                        state: QuestRecoveryState.Eligible,
+                        reason: QuestFailureReason.None);
+                }
+            }
+            else
+            {
+                foreach (var pair in _records
+                    .Where(pair => pair.Key.QuestId == questId &&
+                        pair.Value.State == QuestRecoveryState.ManualBlacklist)
+                    .ToArray())
+                {
+                    if (IsSyntheticManualRecord(pair.Value))
+                        _records.Remove(pair.Key);
+                    else
+                        _records[pair.Key] = Copy(
+                            pair.Value,
+                            state: QuestRecoveryState.Eligible,
+                            reason: QuestFailureReason.None);
+                }
             }
 
             _dirty = true;
         }
     }
+
+    private static bool IsSyntheticManualRecord(QuestRecoveryRecord record) =>
+        record.AttemptGeneration == 0 &&
+        record.EpisodeCount == 0 &&
+        record.AttemptCountInEpisode == 0 &&
+        record.DeathCountInEpisode == 0 &&
+        record.Evidence.Count == 0;
 
     public void RetryNow(QuestRecoveryKey key)
     {

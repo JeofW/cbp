@@ -295,3 +295,88 @@ External runtime round-two state:
 - `QuestScheduler.cs` remains unchanged at SHA-256 `B621479733879722609AA7B1785BA29E9AF85D97D898B3D2A82C5DFE1FA0B921`.
 
 The rollback backup still has zero manifest mismatches. Existing unrelated vendor/grind dirt remains untouched and excluded. No push, deployment, live replacement, backup mutation, or apphost execution occurred.
+
+## Review Round 3 Corrections
+
+All four round-three findings were implemented under production-linked RED tests before their minimal production changes:
+
+- A refresh lease now fences the full scheduler operation, not only completion. The callback captures its scheduler with the lease, validates before scanning and again before profile/status application, and may request `runAgain` only with that same lease. `Stop`/`Start` invalidates old work before scan, after scan, and before a follow-up can enter the new epoch.
+- `SetManualBlacklist` now neutrally normalizes every same-quest `Attempting` record under the manager lock before installing the quest-wide terminal. It retains each generation fence, evidence, and escalation history and persists those records. Removal retains non-synthetic history as eligible, removes only a synthetic manual record, and permits a newer exact owner. Wholesome also clears a matching local activation when a manual exclusion is installed.
+- Generated failure contention now uses `TryReportGeneratedFailures(..., out decisions)`. Stale source generations, user Stop/manual replacement, and separately owned targets return `false` without throwing or mutating the batch. Wholesome retains local ownership until the result is known; on rejection it neutrally abandons the exact source when still owned, clears the matching local activation, and requests one rebuild without marking a failure episode applied.
+- Lifecycle subscription state uses a synchronized epoch and two-phase transition. Callback actions run outside the state lock; an in-flight stale Start compensates its subscription after Stop, and new transitions wait for that compensation. Concurrent/repeated Start and Stop finish with exactly one handler while started and none while stopped.
+
+Round-three RED evidence:
+
+```text
+REFRESH_FULL_FENCE_RED: missing RunLeaseFencedRefresh, lease-aware TryRequest, and IsCurrent; build exit 1.
+MANUAL_NORMALIZE_RED: regression failed because same-quest objective ownership remained Attempting under a pickup manual terminal.
+MANUAL_REMOVE_IDEMPOTENCE_RED: regression failed because an idempotent removal also normalized a newly acquired owner; normalization was narrowed to terminal installation.
+GENERATED_TRY_RED: CS1061, QuestRecoveryManager had no TryReportGeneratedFailures (build exit 1).
+GENERATED_PRODUCTION_RED: ReportOwnedFailures still accepted a throwing Func and RecoverRejectedOwnedFailures was missing (build exit 1).
+LIFECYCLE_ATOMIC_RED: deterministic blocked-Start/concurrent-Stop regression ended stopped with a handler installed (test exit 1).
+MANUAL_LOCAL_OWNER_RED: ReleaseManuallyExcludedOwnership production seam was missing (build exit 1).
+```
+
+Fresh sequential GREEN evidence:
+
+```text
+[QuestRecoveryCore]
+Build succeeded. 3246 Warning(s), 0 Error(s).
+Quest recovery regression tests passed.
+BUILD_EXIT=0 TEST_EXIT=0
+
+[QuestPickupCore]
+Build succeeded. 3246 Warning(s), 0 Error(s).
+Quest pickup policy regression tests passed.
+BUILD_EXIT=0 TEST_EXIT=0
+
+[Wholesome]
+Build succeeded. 3278 Warning(s), 0 Error(s).
+Wholesome scheduler recovery regression tests passed.
+BUILD_EXIT=0 TEST_EXIT=0 SCOPED_COMPILER_DIAGNOSTICS=0
+
+[FullReleaseX86]
+Build succeeded. 3250 Warning(s), 0 Error(s).
+BUILD_EXIT=0
+```
+
+All builds used bundled `D:\World of Warcraft 3.3.5a\CB\.dotnet-sdk\dotnet.exe`, direct test DLL execution, `Platform=x86`, `UseAppHost=false`, `--no-restore`, and `--no-incremental`.
+
+Round-three static/integrity evidence:
+
+```text
+PLAN_FORBIDDEN_SCAN:
+WholesomeAutoQuest.cs:793: forceStop: () => TreeRoot.Stop(),
+AUGMENTED_FORBIDDEN_SCAN_MATCHES=0
+TREE_ROOT_START_COUNT=0
+LEGACY_ADAPTER_COUNT=0
+PROFILE_LOAD_COUNT=1
+BASE_STOP_COUNT=1
+REPORT_PROGRESS_COUNT=1
+SUCCESS_FACTORY_COUNT=1
+NO_ARG_REFRESH_COMPLETE_COUNT=0
+TRY_GENERATED_BATCH_COUNT=1
+REFRESH_LEASE_CHECK_COUNT=4
+BACKUP_HASH_MISMATCHES=0
+SCOPED_DIFF_CHECK_EXIT=0
+WHOLESOME_APPHOST_EXISTS=False
+CORE_APPHOST_EXISTS=False
+PICKUP_APPHOST_EXISTS=False
+```
+
+The only plan-scan match remains the explicit user-clicked Settings `Force Stop` action. The augmented scan covered restart timers, automatic blacklist writers, quest abandonment, arbitrary active-quest selection, grind/level-file discovery, `TreeRoot.Start`, removed pickup wall-clock fields, and the superseded throwing generated-batch production call.
+
+Repo-local round-three files:
+
+- `Styx/Logic/Questing/Recovery/QuestRecoveryManager.cs`
+- `Tools/QuestRecoveryRegressionTests/Program.cs`
+- `Tools/WholesomeQuestRecoveryRegressionTests/Program.cs`
+- `.superpowers/sdd/2026-09-02-wholesome-quest-recovery-integration-plan/task-4-implementer-report.md`
+
+External runtime round-three state:
+
+- `D:\World of Warcraft 3.3.5a\CB\Bots\WholesomeAutoQuest-master\WholesomeAutoQuest.cs`
+  - SHA-256: `DE94FA2BECA00540F9A9DED3A361A751FF7F4573F74E5091C64206A3011C533C`
+- `QuestScheduler.cs` remains unchanged at SHA-256 `B621479733879722609AA7B1785BA29E9AF85D97D898B3D2A82C5DFE1FA0B921`.
+
+The rollback backup again verifies all seven manifest entries with zero mismatches. Existing unrelated vendor/grind working-tree changes remain untouched and excluded. No push, deployment, live replacement, backup mutation, or apphost execution occurred.

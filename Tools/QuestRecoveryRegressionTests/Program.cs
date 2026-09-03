@@ -61,7 +61,8 @@ try
     TestRetryNowRejectsPriorOwnerSuccess(Path.Combine(testRoot, "success-retry-now"), now);
     TestIdentitySwitchCannotReuseOwnership(Path.Combine(testRoot, "success-identity"), now);
     TestManualBlacklistReplacementCannotReuseOwnership(Path.Combine(testRoot, "success-manual"), now);
-    TestOwnershipFenceSurvivesEmptyStoreReload(Path.Combine(testRoot, "success-empty-reload"), now);
+    TestManualBlacklistNormalizesEveryOwnedScope(Path.Combine(testRoot, "manual-owned-scopes"), now);
+    TestOwnershipFenceSurvivesManualReleaseReload(Path.Combine(testRoot, "success-empty-reload"), now);
     TestSuccessfulHalfOpenClearsEscalation(Path.Combine(testRoot, "success-half-open"), now);
     TestSuccessCannotReopenTerminalStates(Path.Combine(testRoot, "success-terminal"), now);
     Console.WriteLine("Quest recovery regression tests passed.");
@@ -1769,6 +1770,28 @@ static void TestGeneratedFailureAuthorityAndAtomicStageSequence(string settingsR
     Assert(manager.OwnsAttempt(source, owner.AttemptGeneration)
            && manager.OwnsAttempt(endpoint, independentlyOwnedTarget.AttemptGeneration),
         "a generated subordinate failure must never overwrite a target owned by another generation");
+    Assert(!manager.TryReportGeneratedFailures(
+               new[]
+               {
+                   QuestAttemptOutcome.Failure(
+                       endpoint,
+                       source,
+                       owner.AttemptGeneration,
+                       QuestFailureReason.PathGenerationFailed,
+                       "contended endpoint"),
+                   QuestAttemptOutcome.Failure(
+                       source,
+                       source,
+                       owner.AttemptGeneration,
+                       QuestFailureReason.NoNavigableHotspot,
+                       "contended stage")
+               },
+               Context(),
+               out var contendedDecisions)
+           && contendedDecisions.Count == 0
+           && manager.OwnsAttempt(source, owner.AttemptGeneration)
+           && manager.OwnsAttempt(endpoint, independentlyOwnedTarget.AttemptGeneration),
+        "an independently owned generated target must reject the batch without throwing or mutation");
 
     manager.AbandonAttempt(endpoint, independentlyOwnedTarget.AttemptGeneration);
     manager.AbandonAttempt(source, owner.AttemptGeneration);
@@ -1784,8 +1807,29 @@ static void TestGeneratedFailureAuthorityAndAtomicStageSequence(string settingsR
     Assert(manager.OwnsAttempt(source, newer.AttemptGeneration)
            && manager.GetEntries().Single(item => item.Key.Equals(endpoint)).EpisodeCount == 0,
         "a stale source generation must not mutate an otherwise available subordinate target");
+    Assert(!manager.TryReportGeneratedFailures(
+               new[]
+               {
+                   QuestAttemptOutcome.Failure(
+                       endpoint,
+                       source,
+                       owner.AttemptGeneration,
+                       QuestFailureReason.PathGenerationFailed,
+                       "stale endpoint batch"),
+                   QuestAttemptOutcome.Failure(
+                       source,
+                       source,
+                       owner.AttemptGeneration,
+                       QuestFailureReason.NoNavigableHotspot,
+                       "stale stage batch")
+               },
+               Context(),
+               out var staleDecisions)
+           && staleDecisions.Count == 0
+           && manager.OwnsAttempt(source, newer.AttemptGeneration),
+        "a stale generated source must reject the batch without throwing or releasing the newer owner");
 
-    var decisions = manager.ReportGeneratedFailures(
+    Assert(manager.TryReportGeneratedFailures(
         new[]
         {
             QuestAttemptOutcome.Failure(
@@ -1801,7 +1845,9 @@ static void TestGeneratedFailureAuthorityAndAtomicStageSequence(string settingsR
                 QuestFailureReason.NoNavigableHotspot,
                 "all stage endpoints failed")
         },
-        Context());
+        Context(),
+        out var decisions),
+        "the exact available generated batch must be accepted");
     var endpointRecord = manager.GetEntries().Single(item => item.Key.Equals(endpoint));
     var stageRecord = manager.GetEntries().Single(item => item.Key.Equals(source));
     Assert(decisions.Count == 2
@@ -1885,7 +1931,67 @@ static void TestManualBlacklistReplacementCannotReuseOwnership(string settingsRo
         "post-clear owner B must remain active after delayed A success");
 }
 
-static void TestOwnershipFenceSurvivesEmptyStoreReload(string settingsRoot, DateTime now)
+static void TestManualBlacklistNormalizesEveryOwnedScope(string settingsRoot, DateTime now)
+{
+    var environment = CreateEnvironment(settingsRoot, "Jeof", "Lordaeron");
+    var manager = new QuestRecoveryManager(new FixedClock(now));
+    var objective = QuestRecoveryKey.ForQuestStage(1209, QuestRecoveryStage.Objective);
+    var pickup = QuestRecoveryKey.ForQuestStage(1209, QuestRecoveryStage.Pickup);
+    manager.Configure(environment);
+    manager.Report(
+        QuestAttemptOutcome.Observation(objective, QuestFailureReason.NoObjectiveProgress, "objective history"),
+        Context());
+    var objectiveOwner = manager.TryBeginAttempt(objective, Context());
+    var pickupOwner = manager.TryBeginAttempt(pickup, Context());
+
+    manager.SetManualBlacklist(1209, true);
+    var blacklisted = manager.GetEntries().Where(item => item.Key.QuestId == 1209).ToArray();
+    Assert(blacklisted.All(item => item.State != QuestRecoveryState.Attempting)
+           && blacklisted.Count(item => item.State == QuestRecoveryState.ManualBlacklist) == 1
+           && blacklisted.Any(item => item.Key.Equals(objective)
+               && item.AttemptGeneration == objectiveOwner.AttemptGeneration
+               && item.Evidence.Any(evidence => evidence.Text == "objective history"))
+           && blacklisted.Any(item => item.Key.Equals(pickup)
+               && item.AttemptGeneration == pickupOwner.AttemptGeneration),
+        "manual exclusion must neutrally normalize every same-quest owner while preserving generations and evidence");
+    Assert(!manager.TryReportGeneratedFailures(
+               new[]
+               {
+                   QuestAttemptOutcome.Failure(
+                       objective,
+                       objective,
+                       objectiveOwner.AttemptGeneration,
+                       QuestFailureReason.NoNavigableHotspot,
+                       "manual terminal raced generated batch")
+               },
+               Context(),
+               out var terminalDecisions)
+           && terminalDecisions.Count == 0
+           && manager.GetEntries().Where(item => item.Key.QuestId == 1209)
+               .All(item => item.State != QuestRecoveryState.Attempting),
+        "a quest-wide terminal must reject a generated batch without leaving its source Attempting");
+    manager.Flush();
+
+    var reloaded = new QuestRecoveryManager(new FixedClock(now));
+    reloaded.Configure(environment);
+    Assert(reloaded.GetEntries().Where(item => item.Key.QuestId == 1209)
+            .All(item => item.State != QuestRecoveryState.Attempting),
+        "manual exclusion must persist without orphaned Attempting records");
+    reloaded.SetManualBlacklist(1209, false);
+    Assert(reloaded.GetEntries().Where(item => item.Key.QuestId == 1209)
+            .All(item => item.State is not (QuestRecoveryState.Attempting or QuestRecoveryState.ManualBlacklist)),
+        "removing manual exclusion must leave neither terminal nor orphaned owners");
+    var nextObjective = reloaded.TryBeginAttempt(objective, Context());
+    Assert(nextObjective.MayAttempt
+           && nextObjective.AttemptGeneration > objectiveOwner.AttemptGeneration
+           && nextObjective.AttemptGeneration > pickupOwner.AttemptGeneration,
+        "manual exclusion removal must permit a new exact owner above every prior generation");
+    reloaded.SetManualBlacklist(1209, false);
+    Assert(reloaded.OwnsAttempt(objective, nextObjective.AttemptGeneration),
+        "an idempotent manual removal must not abandon a newly acquired exact owner");
+}
+
+static void TestOwnershipFenceSurvivesManualReleaseReload(string settingsRoot, DateTime now)
 {
     var environment = CreateEnvironment(settingsRoot, "Jeof", "Lordaeron");
     var key = QuestRecoveryKey.ForQuestStage(1208, QuestRecoveryStage.Pickup);
@@ -1894,8 +2000,10 @@ static void TestOwnershipFenceSurvivesEmptyStoreReload(string settingsRoot, Date
     var ownerA = manager.TryBeginAttempt(key, Context());
     manager.SetManualBlacklist(key.QuestId, true);
     manager.SetManualBlacklist(key.QuestId, false);
-    Assert(manager.GetEntries().Count == 0,
-        "the reload fixture must persist an empty record set after blacklist removal");
+    Assert(manager.GetEntries().Count == 1
+           && manager.GetEntries().Single().State == QuestRecoveryState.Eligible
+           && manager.GetEntries().Single().AttemptGeneration == ownerA.AttemptGeneration,
+        "manual removal must retain the neutralized owner record and its generation fence");
     manager.Flush();
 
     var reloaded = new QuestRecoveryManager(new FixedClock(now));
