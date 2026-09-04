@@ -1,11 +1,19 @@
 namespace Styx.Logic.Questing.Recovery;
 
+public enum QuestPrerequisiteStatus
+{
+    Unknown,
+    Active,
+    NotActive
+}
+
 public sealed class QuestAbandonmentLiveSnapshot
 {
     public bool IsAccepted { get; init; }
     public bool IsCompleted { get; init; }
     public bool StateIsCertain { get; init; }
     public bool HasObjectiveProgress { get; init; }
+    public QuestPrerequisiteStatus PrerequisiteStatus { get; init; }
     public int FreeQuestLogSlots { get; init; }
 }
 
@@ -15,6 +23,7 @@ public sealed class QuestAbandonmentContext
     public bool IsCompleted { get; init; }
     public bool StateIsCertain { get; init; }
     public bool HasObjectiveProgress { get; init; }
+    public QuestPrerequisiteStatus PrerequisiteStatus { get; init; }
     public int FreeQuestLogSlots { get; init; }
     public QuestRecoveryState RecoveryState { get; init; }
     public QuestFailureReason Reason { get; init; }
@@ -40,6 +49,16 @@ public static class QuestAbandonmentPolicy
             return Denied("Automatic abandonment denied: accepted/completed/progress state is uncertain.");
         if (context.HasObjectiveProgress)
             return Denied("Automatic abandonment denied: quest has objective progress.");
+        if (context.PrerequisiteStatus == QuestPrerequisiteStatus.Unknown)
+        {
+            return Denied(
+                "Automatic abandonment denied: active prerequisite status is uncertain.");
+        }
+        if (context.PrerequisiteStatus == QuestPrerequisiteStatus.Active)
+        {
+            return Denied(
+                "Automatic abandonment denied: quest is an active prerequisite for the current guide or quest chain.");
+        }
         if (context.FreeQuestLogSlots < 0)
         {
             return Denied(

@@ -18,12 +18,18 @@ public static class QuestRecoveryPolicy
             return Copy(current);
         }
 
+        IReadOnlyList<int> historicalMaximum = MergeObjectiveCounts(
+            current.ObjectiveCounts,
+            context.ObjectiveCounts);
+
         if (reason == QuestFailureReason.TurnInQuestIncomplete)
         {
             return Copy(current, state: QuestRecoveryState.Eligible, reason: reason,
                 cooldownUntilUtc: null, replaceCooldownUntilUtc: true,
                 nextHalfOpenUtc: null, replaceNextHalfOpenUtc: true,
-                attemptCountInEpisode: 0);
+                attemptCountInEpisode: 0,
+                objectiveCounts: historicalMaximum,
+                failureContext: context);
         }
 
         var newEpisode = IsNewEpisode(current, nowUtc);
@@ -47,6 +53,7 @@ public static class QuestRecoveryPolicy
             episodeCount: episodeCount,
             attemptCountInEpisode: attemptCount,
             deathCountInEpisode: deathCount,
+            objectiveCounts: historicalMaximum,
             failureContext: context);
     }
 
@@ -63,7 +70,13 @@ public static class QuestRecoveryPolicy
             return Copy(current);
         }
 
-        var madeProgress = objectiveCounts.Select((count, index) => count > (index < current.ObjectiveCounts.Count ? current.ObjectiveCounts[index] : 0)).Any(progressed => progressed);
+        IReadOnlyList<int> historicalMaximum = MergeObjectiveCounts(
+            current.ObjectiveCounts,
+            objectiveCounts);
+        var madeProgress = historicalMaximum.Select((count, index) =>
+            count > (index < current.ObjectiveCounts.Count
+                ? current.ObjectiveCounts[index]
+                : 0)).Any(progressed => progressed);
         if (!madeProgress)
         {
             return Copy(current);
@@ -86,7 +99,19 @@ public static class QuestRecoveryPolicy
             attemptCountInEpisode: resetsEscalation ? 0 : current.AttemptCountInEpisode,
             deathCountInEpisode: resetsEscalation ? 0 : current.DeathCountInEpisode,
             lastProgressUtc: nowUtc,
-            objectiveCounts: objectiveCounts);
+            objectiveCounts: historicalMaximum);
+    }
+
+    private static IReadOnlyList<int> MergeObjectiveCounts(
+        IReadOnlyList<int> historical,
+        IReadOnlyList<int> current)
+    {
+        int countLength = Math.Max(historical.Count, current.Count);
+        return Enumerable.Range(0, countLength)
+            .Select(index => Math.Max(
+                index < historical.Count ? historical[index] : 0,
+                index < current.Count ? current[index] : 0))
+            .ToArray();
     }
 
     public static QuestRecoveryDecision Evaluate(

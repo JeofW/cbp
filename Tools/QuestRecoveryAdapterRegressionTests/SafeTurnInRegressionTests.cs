@@ -16,6 +16,7 @@ internal static class SafeTurnInRegressionTests
     {
         TestIncompleteRedirectReleasesExactOwner();
         TestDeniedClaimLeavesUnrelatedPoiAndAppliesSafePressurePolicy();
+        TestMissingOrActivePrerequisiteAuthorityRetainsQuest();
         TestAbandonmentGuardsDenyUncertainProgressCompletedAndManualCases();
         TestAtomicAbandonmentRecapturesCompletionAndProgress();
         TestThrowingAbandonmentExecutorFinishesAcceptedBatchOnce();
@@ -80,6 +81,7 @@ internal static class SafeTurnInRegressionTests
         {
             ClaimAllowed = false,
             ClaimState = QuestRecoveryState.Quarantined,
+            PrerequisiteStatus = QuestPrerequisiteStatus.NotActive,
             Snapshot = Snapshot(true, QuestCompletionState.KnownIncomplete, true, 2, 0, 0, 0, 0),
             RecoveryRecord = Record(QuestRecoveryState.Quarantined, QuestFailureReason.NoObjectiveProgress)
         };
@@ -89,6 +91,35 @@ internal static class SafeTurnInRegressionTests
                && pressured.AbandonQuestCount == 1
                && pressured.ClientMutationEvents.SequenceEqual(new[] { "persist", "abandon" }),
             "a certain accepted incomplete zero-progress automatic quarantine must persist before abandoning under two-slot pressure");
+    }
+
+    private static void TestMissingOrActivePrerequisiteAuthorityRetainsQuest()
+    {
+        foreach (QuestPrerequisiteStatus status in new[]
+        {
+            QuestPrerequisiteStatus.Unknown,
+            QuestPrerequisiteStatus.Active
+        })
+        {
+            var runtime = new FakeTurnInRuntime
+            {
+                ClaimAllowed = false,
+                ClaimState = QuestRecoveryState.Quarantined,
+                PrerequisiteStatus = status,
+                Snapshot = Snapshot(
+                    true, QuestCompletionState.KnownIncomplete, true, 2, 0, 0, 0, 0),
+                RecoveryRecord = Record(
+                    QuestRecoveryState.Quarantined, QuestFailureReason.NoObjectiveProgress)
+            };
+
+            NewBehavior(runtime).OnStart();
+
+            Assert(runtime.AbandonQuestCount == 0
+                   && runtime.ClientMutationEvents.Count == 0
+                   && runtime.LastAbandonmentDecision?.Reason.Contains(
+                       "prerequisite", StringComparison.OrdinalIgnoreCase) == true,
+                "SafeTurnIn must retain a quest when prerequisite authority is " + status);
+        }
     }
 
     private static void TestAbandonmentGuardsDenyUncertainProgressCompletedAndManualCases()
@@ -109,6 +140,7 @@ internal static class SafeTurnInRegressionTests
             {
                 ClaimAllowed = false,
                 ClaimState = item.Item2.State,
+                PrerequisiteStatus = QuestPrerequisiteStatus.NotActive,
                 Snapshot = item.Item1,
                 RecoveryRecord = item.Item2
             };
@@ -122,6 +154,7 @@ internal static class SafeTurnInRegressionTests
         {
             ClaimAllowed = false,
             ClaimState = QuestRecoveryState.Quarantined,
+            PrerequisiteStatus = QuestPrerequisiteStatus.NotActive,
             PersistAllowed = false,
             Snapshot = Snapshot(true, QuestCompletionState.KnownIncomplete, true, 2, 0, 0, 0, 0),
             RecoveryRecord = Record(QuestRecoveryState.Quarantined, QuestFailureReason.NoObjectiveProgress)
@@ -145,6 +178,7 @@ internal static class SafeTurnInRegressionTests
             {
                 ClaimAllowed = false,
                 ClaimState = QuestRecoveryState.Quarantined,
+                PrerequisiteStatus = QuestPrerequisiteStatus.NotActive,
                 RecoveryRecord = Record(
                     QuestRecoveryState.Quarantined, QuestFailureReason.NoObjectiveProgress)
             };
@@ -199,6 +233,7 @@ internal static class SafeTurnInRegressionTests
         var runtime = RuntimeWithOneLiveCandidate();
         runtime.RecoveryRecord = Record(
             QuestRecoveryState.Quarantined, QuestFailureReason.NoObjectiveProgress);
+        runtime.PrerequisiteStatus = QuestPrerequisiteStatus.NotActive;
         runtime.ThrowOnAutomaticAbandonment = true;
         var behavior = NewBehavior(runtime);
         behavior.OnStart();
@@ -534,6 +569,7 @@ internal static class SafeTurnInRegressionTests
                         IsCompleted = false,
                         StateIsCertain = true,
                         HasObjectiveProgress = false,
+                        PrerequisiteStatus = QuestPrerequisiteStatus.NotActive,
                         FreeQuestLogSlots = 2
                     });
 
@@ -621,6 +657,8 @@ internal static class SafeTurnInRegressionTests
         public bool AcceptBatch { get; set; } = true;
         public bool PersistAllowed { get; set; } = true;
         public bool ThrowOnAutomaticAbandonment { get; set; }
+        public QuestPrerequisiteStatus PrerequisiteStatus { get; set; } =
+            QuestPrerequisiteStatus.Unknown;
         public SafeTurnInQuestSnapshot Snapshot { get; set; } = Snapshot(true, QuestCompletionState.KnownComplete, true, 8);
         public Queue<SafeTurnInQuestSnapshot> Snapshots { get; } = new();
         public QuestRecoveryRecord RecoveryRecord { get; set; }
@@ -634,6 +672,7 @@ internal static class SafeTurnInRegressionTests
         public int SnapshotReadCount { get; private set; }
         public QuestRecoveryKey ClaimKey { get; private set; }
         public QuestRecoveryKey AbandonedKey { get; private set; }
+        public QuestAbandonmentDecision LastAbandonmentDecision { get; private set; }
         public long AbandonedGeneration { get; private set; }
         public IReadOnlyList<int> CapturedCounts { get; private set; } = Array.Empty<int>();
         public List<SafeTurnInEnderCandidate> LiveEnders { get; } = new();
@@ -684,6 +723,8 @@ internal static class SafeTurnInRegressionTests
             SnapshotReadCount++;
             return Snapshots.Count == 0 ? Snapshot : Snapshots.Dequeue();
         }
+        public override QuestPrerequisiteStatus GetPrerequisiteStatus(uint questId) =>
+            PrerequisiteStatus;
         public override IReadOnlyList<SafeTurnInEnderCandidate> FindLiveEnders(uint entry) => LiveEnders;
         public override SafeTurnInEnderCandidate FindDatabaseEnder(uint entry, string name) => DatabaseEnder;
         public override ISafeTurnInChild CreateChild(uint questId, string questName, SafeTurnInEnderCandidate candidate)
@@ -749,10 +790,12 @@ internal static class SafeTurnInRegressionTests
                     IsCompleted = live.IsCompleted,
                     StateIsCertain = live.StateIsCertain,
                     HasObjectiveProgress = live.HasObjectiveProgress,
+                    PrerequisiteStatus = live.PrerequisiteStatus,
                     FreeQuestLogSlots = live.FreeQuestLogSlots,
                     RecoveryState = RecoveryRecord?.State ?? QuestRecoveryState.Eligible,
                     Reason = RecoveryRecord?.Reason ?? QuestFailureReason.None
                 });
+            LastAbandonmentDecision = decision;
             if (!decision.MayAbandon)
                 return decision;
             ClientMutationEvents.Add("persist");

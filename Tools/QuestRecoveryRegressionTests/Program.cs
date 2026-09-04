@@ -31,10 +31,15 @@ try
     TestForcedConditionBehaviorsDeferUnknown();
     TestCompletionDependentActionGatesDeferUnknown();
     TestQuestAbandonmentInputGuards();
+    TestQuestAbandonmentPrerequisiteGuards();
     TestQuestAbandonmentSlotMatrix();
     TestQuestAbandonmentStateMatrix();
     TestQuestAbandonmentReasonMatrix();
     TestManagerAutomaticAbandonmentIsAtomic(Path.Combine(testRoot, "abandon-atomic"), now);
+    TestHistoricalProgressBlocksAbandonmentAcrossReload(
+        Path.Combine(testRoot, "abandon-history"), now);
+    TestProgressPersistsPerCounterMaximum(Path.Combine(testRoot, "progress-maximum"), now);
+    TestFailureContextPersistsPerCounterMaximum(Path.Combine(testRoot, "failure-progress-maximum"), now);
     TestQuestRelationParserUsesInvariantCulture();
     TestQuestRelationParserRetainsValidSiblings();
     TestQuestRelationParserRejectsZeroEntry();
@@ -127,6 +132,44 @@ static void TestQuestAbandonmentInputGuards()
     }
 }
 
+static void TestQuestAbandonmentPrerequisiteGuards()
+{
+    Assert(QuestPrerequisiteAuthority.Determine(
+               relationDataAvailable: false,
+               nextQuestId: 0,
+               nextQuestIsAccepted: false,
+               activeGuideContainsNextQuest: false) == QuestPrerequisiteStatus.Unknown
+           && QuestPrerequisiteAuthority.Determine(
+               relationDataAvailable: true,
+               nextQuestId: 456,
+               nextQuestIsAccepted: false,
+               activeGuideContainsNextQuest: true) == QuestPrerequisiteStatus.Active
+           && QuestPrerequisiteAuthority.Determine(
+               relationDataAvailable: true,
+               nextQuestId: 0,
+               nextQuestIsAccepted: false,
+               activeGuideContainsNextQuest: false) == QuestPrerequisiteStatus.NotActive,
+        "prerequisite authority must distinguish missing relation data, an active guide chain, and a proven terminal quest");
+
+    QuestAbandonmentDecision unknown = QuestAbandonmentPolicy.Evaluate(
+        AbandonmentContext(prerequisiteStatus: QuestPrerequisiteStatus.Unknown));
+    QuestAbandonmentDecision active = QuestAbandonmentPolicy.Evaluate(
+        AbandonmentContext(prerequisiteStatus: QuestPrerequisiteStatus.Active));
+    QuestAbandonmentDecision safe = QuestAbandonmentPolicy.Evaluate(
+        AbandonmentContext(prerequisiteStatus: QuestPrerequisiteStatus.NotActive));
+
+    Assert(!unknown.MayAbandon
+           && unknown.Reason ==
+               "Automatic abandonment denied: active prerequisite status is uncertain.",
+        "missing prerequisite authority must conservatively deny abandonment with a precise reason");
+    Assert(!active.MayAbandon
+           && active.Reason ==
+               "Automatic abandonment denied: quest is an active prerequisite for the current guide or quest chain.",
+        "an active prerequisite must deny abandonment with a precise reason");
+    Assert(safe.MayAbandon,
+        "certain proof that the quest is not an active prerequisite must preserve the guarded allow path");
+}
+
 static void TestManagerAutomaticAbandonmentIsAtomic(string settingsRoot, DateTime now)
 {
     var key = QuestRecoveryKey.ForQuestStage(1230, QuestRecoveryStage.TurnIn);
@@ -165,6 +208,7 @@ static void TestManagerAutomaticAbandonmentIsAtomic(string settingsRoot, DateTim
             IsCompleted = false,
             StateIsCertain = true,
             HasObjectiveProgress = false,
+            PrerequisiteStatus = QuestPrerequisiteStatus.NotActive,
             FreeQuestLogSlots = 2
         },
         () =>
@@ -200,6 +244,7 @@ static void TestManagerAutomaticAbandonmentIsAtomic(string settingsRoot, DateTim
             IsCompleted = true,
             StateIsCertain = true,
             HasObjectiveProgress = false,
+            PrerequisiteStatus = QuestPrerequisiteStatus.NotActive,
             FreeQuestLogSlots = 1
         },
         () => recaptureActions++);
@@ -211,6 +256,7 @@ static void TestManagerAutomaticAbandonmentIsAtomic(string settingsRoot, DateTim
             IsCompleted = false,
             StateIsCertain = true,
             HasObjectiveProgress = true,
+            PrerequisiteStatus = QuestPrerequisiteStatus.NotActive,
             FreeQuestLogSlots = 1
         },
         () => recaptureActions++);
@@ -381,8 +427,100 @@ static QuestAbandonmentLiveSnapshot SafeAbandonmentSnapshot() => new()
     IsCompleted = false,
     StateIsCertain = true,
     HasObjectiveProgress = false,
+    PrerequisiteStatus = QuestPrerequisiteStatus.NotActive,
     FreeQuestLogSlots = 2
 };
+
+static void TestHistoricalProgressBlocksAbandonmentAcrossReload(
+    string settingsRoot, DateTime now)
+{
+    QuestRecoveryKey objective = QuestRecoveryKey.ForObjective(1231, 0);
+    QuestRecoveryKey turnIn = QuestRecoveryKey.ForQuestStage(1231, QuestRecoveryStage.TurnIn);
+    string storePath = Path.Combine(
+        settingsRoot, "QuestRecovery", "Jeof-Lordaeron", "quest-recovery.json");
+    new QuestRecoveryStore(storePath).Save(new QuestRecoveryDocument
+    {
+        CharacterName = "Jeof",
+        RealmName = "Lordaeron",
+        Records = new[]
+        {
+            new QuestRecoveryRecord
+            {
+                Key = objective,
+                State = QuestRecoveryState.Eligible,
+                ObjectiveCounts = new[] { 0, 4 }
+            },
+            new QuestRecoveryRecord
+            {
+                Key = turnIn,
+                State = QuestRecoveryState.Quarantined,
+                Reason = QuestFailureReason.NoObjectiveProgress,
+                EpisodeCount = 3
+            }
+        }
+    });
+
+    var manager = new QuestRecoveryManager(new FixedClock(now));
+    manager.Configure(CreateEnvironment(settingsRoot, "Jeof", "Lordaeron"));
+    int actions = 0;
+    QuestAbandonmentDecision denied = manager.TryExecuteAutomaticAbandonment(
+        turnIn,
+        () => new QuestAbandonmentLiveSnapshot
+        {
+            IsAccepted = true,
+            IsCompleted = false,
+            StateIsCertain = true,
+            HasObjectiveProgress = false,
+            PrerequisiteStatus = QuestPrerequisiteStatus.NotActive,
+            FreeQuestLogSlots = 2
+        },
+        () => actions++);
+
+    Assert(!denied.MayAbandon
+           && denied.Reason == "Automatic abandonment denied: quest has objective progress."
+           && actions == 0,
+        "persisted progress on another exact key must survive reload and block quest-wide abandonment when live counters return to zero");
+}
+
+static void TestProgressPersistsPerCounterMaximum(string settingsRoot, DateTime now)
+{
+    QuestRecoveryKey key = QuestRecoveryKey.ForObjective(1232, 0);
+    var manager = new QuestRecoveryManager(new FixedClock(now));
+    manager.Configure(CreateEnvironment(settingsRoot, "Jeof", "Lordaeron"));
+    manager.ReportProgress(key, new[] { 5, 0 }, Context());
+    manager.ReportProgress(key, new[] { 0, 1 }, Context());
+    manager.Flush();
+
+    var reloaded = new QuestRecoveryManager(new FixedClock(now.AddMinutes(1)));
+    reloaded.Configure(CreateEnvironment(settingsRoot, "Jeof", "Lordaeron"));
+    Assert(reloaded.GetRecord(key)?.ObjectiveCounts.SequenceEqual(new[] { 5, 1 }) == true,
+        "progress persistence must retain the historical maximum of every objective/item counter across reload");
+}
+
+static void TestFailureContextPersistsPerCounterMaximum(string settingsRoot, DateTime now)
+{
+    QuestRecoveryKey key = QuestRecoveryKey.ForObjective(1233, 0);
+    var manager = new QuestRecoveryManager(new FixedClock(now));
+    manager.Configure(CreateEnvironment(settingsRoot, "Jeof", "Lordaeron"));
+    manager.ReportProgress(key, new[] { 5, 0 }, Context());
+    QuestRecoveryDecision retry = manager.TryBeginAttempt(key, Context());
+    Assert(retry.MayAttempt && retry.AttemptGeneration > 0,
+        "failure-context history setup must acquire the exact objective lease");
+    manager.Report(
+        QuestAttemptOutcome.Failure(
+            key,
+            key,
+            retry.AttemptGeneration,
+            QuestFailureReason.NoObjectiveProgress,
+            "consumed intermediate item"),
+        Context(objectiveCounts: new[] { 0, 2 }));
+    manager.Flush();
+
+    var reloaded = new QuestRecoveryManager(new FixedClock(now.AddMinutes(1)));
+    reloaded.Configure(CreateEnvironment(settingsRoot, "Jeof", "Lordaeron"));
+    Assert(reloaded.GetRecord(key)?.ObjectiveCounts.SequenceEqual(new[] { 5, 2 }) == true,
+        "failure snapshots must retain per-counter historical maxima when live required-item counters return to zero");
+}
 
 static void TestQuestAbandonmentSlotMatrix()
 {
@@ -489,6 +627,7 @@ static QuestAbandonmentContext AbandonmentContext(
     bool isCompleted = false,
     bool stateIsCertain = true,
     bool hasObjectiveProgress = false,
+    QuestPrerequisiteStatus prerequisiteStatus = QuestPrerequisiteStatus.NotActive,
     int freeQuestLogSlots = 2,
     QuestRecoveryState recoveryState = QuestRecoveryState.Quarantined,
     QuestFailureReason reason = QuestFailureReason.NoObjectiveProgress) => new()
@@ -497,6 +636,7 @@ static QuestAbandonmentContext AbandonmentContext(
     IsCompleted = isCompleted,
     StateIsCertain = stateIsCertain,
     HasObjectiveProgress = hasObjectiveProgress,
+    PrerequisiteStatus = prerequisiteStatus,
     FreeQuestLogSlots = freeQuestLogSlots,
     RecoveryState = recoveryState,
     Reason = reason
@@ -3505,9 +3645,12 @@ static void TestSuccessCannotReopenTerminalStates(string settingsRoot, DateTime 
 static QuestRecoveryEnvironment CreateEnvironment(string settingsRoot, string character, string realm) =>
     new(settingsRoot, character, realm, "quest-data-v1", "core-v1", "nav-v1");
 
-static QuestRecoveryContext Context(int playerLevel = 34) => new()
+static QuestRecoveryContext Context(
+    int playerLevel = 34,
+    IReadOnlyList<int>? objectiveCounts = null) => new()
 {
     PlayerLevel = playerLevel,
+    ObjectiveCounts = objectiveCounts ?? Array.Empty<int>(),
     EquipmentFingerprint = "100:healthy",
     DatasetVersion = "quest-data-v1",
     CoreVersion = "core-v1",

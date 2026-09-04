@@ -15,6 +15,7 @@ namespace Styx.Logic.AreaManagement
 	{
 		private static readonly Regex _numberRegex = new Regex("\\d+", RegexOptions.Compiled);
 
+		private readonly object _hotspotSync = new object();
 		private readonly Stopwatch _hotspotTimer = new Stopwatch();
 		private Hotspot _currentHotspot = (Hotspot)WoWPoint.Zero;
 		private Profile? _lastProfile;
@@ -72,19 +73,43 @@ namespace Styx.Logic.AreaManagement
 		{
 			get
 			{
-				try
+				lock (_hotspotSync)
 				{
-					UpdateCurrentHotspot();
+					try
+					{
+						UpdateCurrentHotspot();
+					}
+					catch (UserException ex)
+					{
+						Logging.Write(ex.Message);
+					}
+					catch (Exception ex)
+					{
+						Logging.WriteException(ex);
+					}
+					return _currentHotspot;
 				}
-				catch (UserException ex)
-				{
-					Logging.Write(ex.Message);
-				}
-				catch (Exception ex)
-				{
-					Logging.WriteException(ex);
-				}
-				return _currentHotspot;
+			}
+		}
+
+		public bool TryAdvanceCurrentHotspot(out Hotspot previous, out Hotspot current)
+		{
+			lock (_hotspotSync)
+			{
+				previous = _currentHotspot;
+				current = _currentHotspot;
+				if (CircledHotspots == null || CircledHotspots.Count < 2)
+					return false;
+
+				if ((WoWPoint)_currentHotspot == WoWPoint.Zero)
+					_currentHotspot = CircledHotspots.Dequeue();
+				previous = _currentHotspot;
+				_currentHotspot = CircledHotspots.Dequeue();
+				current = _currentHotspot;
+				LastHotSpot = previous;
+				_hotspotTimer.Reset();
+				return current != null && !ReferenceEquals(previous, current) &&
+					current.Position != previous.Position;
 			}
 		}
 

@@ -1,9 +1,14 @@
 using Styx;
+using Styx.Logic.AreaManagement;
+using Styx.Logic.Pathing;
 using Styx.Logic.POI;
 using Styx.Logic.Questing.Recovery;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using ZygorProfileRecovery;
 
@@ -18,6 +23,7 @@ internal static class ZygorRecoveryRegressionTests
         TestDeniedClaimYieldsWithoutClearingPoi();
         TestProgressUsesCoherentCountersAndResetsDeaths();
         TestThirdAttributableDeathReportsOneOwnedEpisode();
+        TestSecondDeathAdvancesRealGrindAreaExactlyOnce();
         TestDeathsOutsideWindowStartFreshEpisode();
         TestAcceptedAndStaleCleanupUseExactIdentity();
         TestNoProgressRequiresActiveTimeAndTwoClusters();
@@ -238,6 +244,63 @@ internal static class ZygorRecoveryRegressionTests
         plugin.OnDisable();
     }
 
+    private static void TestSecondDeathAdvancesRealGrindAreaExactlyOnce()
+    {
+        GrindArea area = CreateDetachedGrindArea();
+        var hotspots = new[]
+        {
+            new Hotspot(40, 40, 0),
+            new Hotspot(240, 40, 0),
+            new Hotspot(440, 40, 0)
+        };
+        foreach (Hotspot hotspot in hotspots)
+        {
+            area.Hotspots.Add(hotspot);
+            area.CircledHotspots.Enqueue(hotspot);
+        }
+        area.MobIDs.AddRange(new[] { 1001, 1002, 1003 });
+
+        var runtime = new FakeZygorRuntime
+        {
+            AlternateArea = area,
+            AlternateMapId = 1
+        };
+        object behavior = new();
+        runtime.Execution = Execution(
+            behavior,
+            876,
+            3,
+            new[] { 0 },
+            cluster: ZygorProfileRecovery.ZygorProfileRecovery.GetClusterIdentity(
+                runtime.AlternateMapId, hotspots[0].Position));
+        var plugin = new ZygorProfileRecoveryPlugin(runtime);
+        plugin.OnEnable();
+        plugin.Pulse();
+
+        Hotspot[] initialQueue = area.CircledHotspots.ToArray();
+        runtime.FireDeath();
+        Assert(area.CircledHotspots.SequenceEqual(initialQueue),
+            "the first attributable death must leave the real GrindArea hotspot order unchanged");
+
+        plugin.Pulse();
+        runtime.FireDeath();
+        plugin.Pulse();
+
+        Hotspot[] expectedQueue = initialQueue.Skip(2).Concat(initialQueue.Take(2)).ToArray();
+        Assert(runtime.AlternateClusterCount == 1
+               && ReferenceEquals(runtime.LastAlternatePrevious, hotspots[0])
+               && ReferenceEquals(runtime.LastAlternateCurrent, hotspots[1])
+               && area.CircledHotspots.SequenceEqual(expectedQueue),
+            "the second death must initialize and advance the real current hotspot once while preserving circular queue order");
+
+        AdvanceActive(plugin, runtime, TimeSpan.FromMinutes(8));
+        Assert(runtime.AlternateClusterCount == 1
+               && runtime.OwnedOutcomes.Count == 1
+               && runtime.OwnedOutcomes[0].Reason == QuestFailureReason.NoObjectiveProgress,
+            "the one real hotspot advance must expose a second cluster to no-progress logic without later circling or skipping again");
+        plugin.OnDisable();
+    }
+
     private static void TestAcceptedAndStaleCleanupUseExactIdentity()
     {
         var acceptedRuntime = new FakeZygorRuntime();
@@ -334,6 +397,7 @@ internal static class ZygorRecoveryRegressionTests
                 IsCompleted = false,
                 StateIsCertain = true,
                 HasObjectiveProgress = false,
+                PrerequisiteStatus = QuestPrerequisiteStatus.NotActive,
                 FreeQuestLogSlots = 2
             }
         };
@@ -358,6 +422,7 @@ internal static class ZygorRecoveryRegressionTests
                 IsCompleted = false,
                 StateIsCertain = true,
                 HasObjectiveProgress = false,
+                PrerequisiteStatus = QuestPrerequisiteStatus.NotActive,
                 FreeQuestLogSlots = 3
             }
         };
@@ -369,6 +434,28 @@ internal static class ZygorRecoveryRegressionTests
         FireThreeDeaths(plugin, runtime);
         Assert(runtime.AbandonmentCalls == 1 && runtime.ClientMutations.Count == 0,
             "a retained quest outside <=2-slot pressure must perform no abandon mutation");
+        plugin.OnDisable();
+
+        runtime = new FakeZygorRuntime
+        {
+            ReportState = QuestRecoveryState.Quarantined,
+            AbandonSnapshot = new QuestAbandonmentLiveSnapshot
+            {
+                IsAccepted = true,
+                IsCompleted = false,
+                StateIsCertain = true,
+                HasObjectiveProgress = false,
+                FreeQuestLogSlots = 2
+            }
+        };
+        behavior = new object();
+        runtime.Execution = Execution(behavior, 876, 0, new[] { 0 });
+        plugin = new ZygorProfileRecoveryPlugin(runtime);
+        plugin.OnEnable();
+        plugin.Pulse();
+        FireThreeDeaths(plugin, runtime);
+        Assert(runtime.AbandonmentCalls == 1 && runtime.ClientMutations.Count == 0,
+            "missing Zygor prerequisite authority must default to retaining the quest");
         plugin.OnDisable();
     }
 
@@ -395,6 +482,21 @@ internal static class ZygorRecoveryRegressionTests
                 runtime.Execution = runtime.Execution.WithActive(active);
             plugin.Pulse();
         }
+    }
+
+    private static GrindArea CreateDetachedGrindArea()
+    {
+        var area = (GrindArea)RuntimeHelpers.GetUninitializedObject(typeof(GrindArea));
+        BindingFlags fields = BindingFlags.Instance | BindingFlags.NonPublic;
+        typeof(GrindArea).GetField("_hotspotSync", fields).SetValue(area, new object());
+        typeof(GrindArea).GetField("_hotspotTimer", fields).SetValue(area, new Stopwatch());
+        typeof(GrindArea).GetField("_currentHotspot", fields)
+            .SetValue(area, (Hotspot)WoWPoint.Zero);
+        area.CircledHotspots = new Styx.Helpers.CircularQueue<Hotspot>();
+        area.Hotspots = new List<Hotspot>();
+        area.Factions = new List<int>();
+        area.MobIDs = new List<int>();
+        return area;
     }
 
     private static ZygorObjectiveExecution Execution(
@@ -434,6 +536,10 @@ internal static class ZygorRecoveryRegressionTests
         public object CurrentPoi { get; set; }
         public ZygorObjectiveExecution Execution { get; set; }
         public QuestAbandonmentLiveSnapshot AbandonSnapshot { get; set; }
+        public GrindArea AlternateArea { get; set; }
+        public int AlternateMapId { get; set; }
+        public Hotspot LastAlternatePrevious { get; private set; }
+        public Hotspot LastAlternateCurrent { get; private set; }
         public int EnsureCount { get; private set; }
         public int SubscribeCount { get; private set; }
         public int UnsubscribeCount { get; private set; }
@@ -509,6 +615,26 @@ internal static class ZygorRecoveryRegressionTests
         {
             if (!ReferenceEquals(CurrentBehavior ?? execution.Behavior, execution.Behavior))
                 return false;
+            if (AlternateArea != null)
+            {
+                if (!ZygorProfileRecovery.ZygorProfileRecovery.TryAdvanceAlternateCluster(
+                        AlternateArea,
+                        out Hotspot previous,
+                        out Hotspot current))
+                    return false;
+                LastAlternatePrevious = previous;
+                LastAlternateCurrent = current;
+                Execution = new ZygorObjectiveExecution(
+                    Execution.Behavior,
+                    Execution.Key,
+                    Execution.QuestName,
+                    Execution.Counts,
+                    Execution.OwnedPoi,
+                    ZygorProfileRecovery.ZygorProfileRecovery.GetClusterIdentity(
+                        AlternateMapId, current.Position),
+                    Execution.IsActiveWork,
+                    Execution.DeathAttributable);
+            }
             AlternateClusterCount++;
             return true;
         }
@@ -540,6 +666,7 @@ internal static class ZygorRecoveryRegressionTests
                 IsCompleted = live.IsCompleted,
                 StateIsCertain = live.StateIsCertain,
                 HasObjectiveProgress = live.HasObjectiveProgress,
+                PrerequisiteStatus = live.PrerequisiteStatus,
                 FreeQuestLogSlots = live.FreeQuestLogSlots,
                 RecoveryState = QuestRecoveryState.Quarantined,
                 Reason = QuestFailureReason.RepeatedDeaths

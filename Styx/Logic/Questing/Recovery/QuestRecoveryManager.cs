@@ -737,7 +737,9 @@ public sealed class QuestRecoveryManager
                     IsAccepted = live.IsAccepted,
                     IsCompleted = live.IsCompleted,
                     StateIsCertain = live.StateIsCertain,
-                    HasObjectiveProgress = live.HasObjectiveProgress,
+                    HasObjectiveProgress = live.HasObjectiveProgress ||
+                        HasHistoricalObjectiveProgressCore(key.QuestId),
+                    PrerequisiteStatus = live.PrerequisiteStatus,
                     FreeQuestLogSlots = live.FreeQuestLogSlots,
                     RecoveryState = current?.State ?? QuestRecoveryState.Eligible,
                     Reason = current?.Reason ?? QuestFailureReason.None
@@ -773,6 +775,13 @@ public sealed class QuestRecoveryManager
     public void Flush()
     {
         TryFlush();
+    }
+
+    private bool HasHistoricalObjectiveProgressCore(uint questId)
+    {
+        return _records.Values.Any(record =>
+            record.Key.QuestId == questId &&
+            record.ObjectiveCounts.Any(count => count > 0));
     }
 
     public bool TryFlush()

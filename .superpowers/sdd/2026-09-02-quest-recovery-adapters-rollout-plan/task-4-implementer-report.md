@@ -134,3 +134,84 @@ validation of Zygor objective-area and hotspot queue behavior; the production
 adapter compiles through the real linked harness, while lifecycle, concurrency,
 ownership generation, progress, death, stale cleanup, and abandonment boundaries
 are covered deterministically.
+
+## Review round 1
+
+The review findings were reproduced and closed with additional linked and core
+regressions.
+
+- `GrindArea.TryAdvanceCurrentHotspot` now changes the real private active
+  hotspot under one lock, updates `LastHotSpot`, and advances the circular queue
+  without dropping entries. The Zygor runtime calls that production method from
+  its coalesced normal-pulse alternate request and derives the cluster identity
+  from `CurrentHotSpot`, not the nearest point.
+- The real-`GrindArea` linked regression uses three spaced hotspots and three
+  targets. It proves the first attributable death leaves the queue alone, the
+  second advances A to B exactly once with the queue rotated to C/A/B, and eight
+  active minutes observe two cluster identities without another skip or wrap.
+- The shared abandonment snapshot/context now carries a tri-state prerequisite
+  result. Missing relation authority (`Unknown`) and a guide/accepted-chain match
+  (`Active`) deny with distinct reasons; only authoritative `NotActive` reaches
+  the remaining pressure/quarantine guards. Both installed adapters default
+  missing data to `Unknown`. Zygor and SafeTurnIn use the shared active
+  profile/quest-relation authority.
+- Recovery progress is an element-wise persisted maximum. Failure contexts also
+  merge their coherent objective/item vector into the authoritative record, and
+  the manager checks all exact records for the same quest while holding its
+  abandonment lock. Consumed required/intermediate items therefore cannot make
+  prior progress disappear across reload.
+
+### Round 1 TDD evidence
+
+- Prerequisite RED: the core and linked adapter builds failed because the
+  tri-state contract and adapter capture methods did not exist.
+- Hotspot RED: the linked test first failed because the alternate request did
+  not mutate the private current hotspot. The initial public-constructor test
+  setup also exposed the expected offline `StyxWoW` dependency; the corrected
+  harness creates a detached real `GrindArea` and invokes its production method.
+- Historical-progress RED: direct core execution exited 1 at `failure snapshots
+  must retain per-counter historical maxima when live required-item counters
+  return to zero`. After merging failure-context counters, the same direct DLL
+  passed.
+
+### Round 1 fresh verification
+
+All builds used `../.dotnet-x86/dotnet.exe`, Release, x86,
+`UseAppHost=false`, `--no-restore`, and `--no-incremental`, after cleaning each
+focused output tree.
+
+- Linked adapter: exit 0, 3,246 baseline warnings, 0 errors; direct DLL passed.
+- Core recovery: exit 0, 3,246 baseline warnings, 0 errors; direct DLL passed.
+- Wholesome integration: exit 0, 3,261 baseline warnings, 0 errors; direct DLL
+  passed.
+- Pickup policy: exit 0, 3,246 baseline warnings, 0 errors; direct DLL passed.
+- Full `CopilotBuddy.csproj`: exit 0, 3,250 baseline warnings, 0 errors.
+- All four focused output trees contain zero `.exe` apphosts.
+- Installed Zygor forbidden legacy writer/restart scan: zero hits. The only
+  Zygor `AbandonQuestById` remains the action delegate supplied to the manager's
+  locked compare-and-act API; SafeTurnIn follows the same boundary.
+- Scoped repository and external no-index whitespace checks emitted no
+  diagnostics.
+- The original backup manifest still matches all three entries. Manifest hash:
+  `24e67583721d535328ad8e82a7e445b68cfd8e19607cfcbe12a46532bd893c84`.
+
+Round 1 SHA-256 values:
+
+- Installed `ZygorProfileRecovery.cs`:
+  `4bbc54c97c541c481fdfe08b3a90eaa8c082d3b73def121cceb32e5f82467704`
+- Installed `SafeTurnIn.cs`:
+  `4b1995c6f495545d6180bb4addcedb5b72dc7d341a9e8894f2257d5b26a40a71`
+- Linked adapter regression DLL:
+  `5b9b9baed17ebc903cb0482b7b957d9a5dea7cba43d820bf1a307aa8053c2a7d`
+- Core recovery regression DLL:
+  `abea6a0ab96850f42960480290905a53bb12b2dcb4ac1bab73d22b7af5bec504`
+- Wholesome regression DLL:
+  `f58498ce8ce82d9ba0706ad4754e900c59a11bf0f485e34083374c394599fec0`
+- Pickup policy regression DLL:
+  `282fa9c09b101826ade283e4c783677ffb7fc5d6505062ecce536ef0ce27e5ae`
+
+No push, deployment, installed binary replacement, game/client launch, or live
+smoke was performed. The remaining concern is limited to deferred live-world
+validation of the active guide relation and GrindArea queue against the actual
+game client; both paths are covered through the real linked sources and
+production methods in deterministic offline regressions.
