@@ -56,3 +56,15 @@ A separate non-incremental build of `QuestRecoveryRegressionTests.csproj` also e
 - The broader design's active-prerequisite check and persist-before-client-action rule remain adapter responsibilities because they are not inputs or side effects of this pure Task 1 policy contract.
 
 Commit message: `feat: guard automatic quest abandonment`
+
+## Review round 1
+
+The policy now rejects negative free-slot counts, every defined state except exact `Quarantined`, undefined recovery states, and quarantine reasons that cannot represent automatic failure evidence. Its closed automatic-reason allowlist covers every current operational failure plus the automatic migration reason `LegacyUnknown`. It gives distinct diagnostics for invalid slot counts, known non-quarantined states, unknown states, missing reason, `TurnInQuestIncomplete` redirect, manual exclusion, and unknown/unsupported reasons.
+
+The regression matrix now covers free slots `-1,0,1,2,3`; all seven defined recovery states plus an undefined value; all sixteen valid automatic reasons; `None`, `TurnInQuestIncomplete`, `UserExcluded`, and an undefined reason. Parser boundaries now also cover negative and uint-overflow entries, surrounding whitespace, duplicate/order preservation, and null/empty input in addition to malformed and nonfinite coordinates.
+
+Review RED used the same no-apphost x86 regression command above. Result: exit 1 with `the -1-free-slot boundary must return its exact abandonment decision`, proving the prior policy admitted an invalid count.
+
+Review GREEN used the same command after the minimal policy change. Result: exit 0, `Quest recovery regression tests passed.`, and 0 warning lines in Task 1 `.cs` files. The parser passed its new boundary cases without a production edit.
+
+The fresh full non-incremental Release x86 build again exited 0 with 0 errors, 3,250 repository-baseline warnings, and 0 Task 1 source warning lines. No apphost, push, deployment, live binary change, or live execution was used.

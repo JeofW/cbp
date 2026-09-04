@@ -30,10 +30,16 @@ try
     TestCompletionEvaluationScopesNestAndRecoverFromExceptions();
     TestForcedConditionBehaviorsDeferUnknown();
     TestCompletionDependentActionGatesDeferUnknown();
-    TestQuestAbandonmentMatrix();
+    TestQuestAbandonmentInputGuards();
+    TestQuestAbandonmentSlotMatrix();
+    TestQuestAbandonmentStateMatrix();
+    TestQuestAbandonmentReasonMatrix();
     TestQuestRelationParserUsesInvariantCulture();
     TestQuestRelationParserRetainsValidSiblings();
     TestQuestRelationParserRejectsZeroEntry();
+    TestQuestRelationParserRejectsNegativeAndOverflowEntries();
+    TestQuestRelationParserTrimsAndPreservesDuplicatesInOrder();
+    TestQuestRelationParserHandlesNullAndEmptyInput();
     TestQuestRelationParserRejectsNonFiniteOrMalformedCoordinates();
     RunPolicyRegressions(now);
     TestStoreRoundTripAndAtomicReplacement(Path.Combine(testRoot, "store"), now);
@@ -87,83 +93,18 @@ finally
     }
 }
 
-static void TestQuestAbandonmentMatrix()
+static void TestQuestAbandonmentInputGuards()
 {
-    foreach (var freeSlots in new[] { 0, 1, 2 })
-    {
-        var allowed = QuestAbandonmentPolicy.Evaluate(new QuestAbandonmentContext
-        {
-            IsAccepted = true,
-            IsCompleted = false,
-            StateIsCertain = true,
-            HasObjectiveProgress = false,
-            FreeQuestLogSlots = freeSlots,
-            RecoveryState = QuestRecoveryState.Quarantined,
-            Reason = QuestFailureReason.NoObjectiveProgress
-        });
-        Assert(allowed.MayAbandon
-               && allowed.Reason == $"Automatic abandonment permitted: accepted, incomplete, certain, zero-progress quest is automatically quarantined with {freeSlots} free quest-log slots.",
-            $"an automatically quarantined zero-progress quest with {freeSlots} free slots must be abandonable");
-    }
-
     var denials = new (string Name, QuestAbandonmentContext Context, string Reason)[]
     {
-        ("not accepted", new QuestAbandonmentContext
-        {
-            IsAccepted = false, IsCompleted = false, StateIsCertain = true,
-            HasObjectiveProgress = false, FreeQuestLogSlots = 2,
-            RecoveryState = QuestRecoveryState.Quarantined,
-            Reason = QuestFailureReason.NoObjectiveProgress
-        }, "Automatic abandonment denied: quest is not accepted."),
-        ("completed", new QuestAbandonmentContext
-        {
-            IsAccepted = true, IsCompleted = true, StateIsCertain = true,
-            HasObjectiveProgress = false, FreeQuestLogSlots = 2,
-            RecoveryState = QuestRecoveryState.Quarantined,
-            Reason = QuestFailureReason.NoObjectiveProgress
-        }, "Automatic abandonment denied: quest is completed."),
-        ("uncertain", new QuestAbandonmentContext
-        {
-            IsAccepted = true, IsCompleted = false, StateIsCertain = false,
-            HasObjectiveProgress = false, FreeQuestLogSlots = 2,
-            RecoveryState = QuestRecoveryState.Quarantined,
-            Reason = QuestFailureReason.NoObjectiveProgress
-        }, "Automatic abandonment denied: accepted/completed/progress state is uncertain."),
-        ("progressed", new QuestAbandonmentContext
-        {
-            IsAccepted = true, IsCompleted = false, StateIsCertain = true,
-            HasObjectiveProgress = true, FreeQuestLogSlots = 2,
-            RecoveryState = QuestRecoveryState.Quarantined,
-            Reason = QuestFailureReason.NoObjectiveProgress
-        }, "Automatic abandonment denied: quest has objective progress."),
-        ("manual blacklist", new QuestAbandonmentContext
-        {
-            IsAccepted = true, IsCompleted = false, StateIsCertain = true,
-            HasObjectiveProgress = false, FreeQuestLogSlots = 2,
-            RecoveryState = QuestRecoveryState.ManualBlacklist,
-            Reason = QuestFailureReason.NoObjectiveProgress
-        }, "Automatic abandonment denied: quest is manually blacklisted."),
-        ("manual reason", new QuestAbandonmentContext
-        {
-            IsAccepted = true, IsCompleted = false, StateIsCertain = true,
-            HasObjectiveProgress = false, FreeQuestLogSlots = 2,
-            RecoveryState = QuestRecoveryState.Quarantined,
-            Reason = QuestFailureReason.UserExcluded
-        }, "Automatic abandonment denied: quest is manually blacklisted."),
-        ("cooling only", new QuestAbandonmentContext
-        {
-            IsAccepted = true, IsCompleted = false, StateIsCertain = true,
-            HasObjectiveProgress = false, FreeQuestLogSlots = 2,
-            RecoveryState = QuestRecoveryState.CoolingDown,
-            Reason = QuestFailureReason.NoObjectiveProgress
-        }, "Automatic abandonment denied: recovery state CoolingDown is not an automatic quarantine."),
-        ("three free slots", new QuestAbandonmentContext
-        {
-            IsAccepted = true, IsCompleted = false, StateIsCertain = true,
-            HasObjectiveProgress = false, FreeQuestLogSlots = 3,
-            RecoveryState = QuestRecoveryState.Quarantined,
-            Reason = QuestFailureReason.NoObjectiveProgress
-        }, "Automatic abandonment denied: quest log has 3 free slots; pressure requires 2 or fewer.")
+        ("not accepted", AbandonmentContext(isAccepted: false),
+            "Automatic abandonment denied: quest is not accepted."),
+        ("completed", AbandonmentContext(isCompleted: true),
+            "Automatic abandonment denied: quest is completed."),
+        ("uncertain", AbandonmentContext(stateIsCertain: false),
+            "Automatic abandonment denied: accepted/completed/progress state is uncertain."),
+        ("progressed", AbandonmentContext(hasObjectiveProgress: true),
+            "Automatic abandonment denied: quest has objective progress.")
     };
 
     foreach (var denial in denials)
@@ -173,6 +114,124 @@ static void TestQuestAbandonmentMatrix()
             $"{denial.Name} must deny automatic abandonment with its precise guard reason");
     }
 }
+
+static void TestQuestAbandonmentSlotMatrix()
+{
+    var cases = new (int FreeSlots, bool MayAbandon, string Reason)[]
+    {
+        (-1, false, "Automatic abandonment denied: free quest-log slot count -1 is invalid."),
+        (0, true, "Automatic abandonment permitted: accepted, incomplete, certain, zero-progress quest is automatically quarantined with 0 free quest-log slots."),
+        (1, true, "Automatic abandonment permitted: accepted, incomplete, certain, zero-progress quest is automatically quarantined with 1 free quest-log slots."),
+        (2, true, "Automatic abandonment permitted: accepted, incomplete, certain, zero-progress quest is automatically quarantined with 2 free quest-log slots."),
+        (3, false, "Automatic abandonment denied: quest log has 3 free slots; pressure requires 2 or fewer.")
+    };
+
+    foreach (var item in cases)
+    {
+        var decision = QuestAbandonmentPolicy.Evaluate(
+            AbandonmentContext(freeQuestLogSlots: item.FreeSlots));
+        Assert(decision.MayAbandon == item.MayAbandon && decision.Reason == item.Reason,
+            $"the {item.FreeSlots}-free-slot boundary must return its exact abandonment decision");
+    }
+}
+
+static void TestQuestAbandonmentStateMatrix()
+{
+    var cases = new (QuestRecoveryState State, bool MayAbandon, string Reason)[]
+    {
+        (QuestRecoveryState.Eligible, false,
+            "Automatic abandonment denied: recovery state Eligible is not Quarantined."),
+        (QuestRecoveryState.Attempting, false,
+            "Automatic abandonment denied: recovery state Attempting is not Quarantined."),
+        (QuestRecoveryState.CoolingDown, false,
+            "Automatic abandonment denied: recovery state CoolingDown is not Quarantined."),
+        (QuestRecoveryState.HalfOpen, false,
+            "Automatic abandonment denied: recovery state HalfOpen is not Quarantined."),
+        (QuestRecoveryState.Quarantined, true,
+            "Automatic abandonment permitted: accepted, incomplete, certain, zero-progress quest is automatically quarantined with 2 free quest-log slots."),
+        (QuestRecoveryState.ManualBlacklist, false,
+            "Automatic abandonment denied: quest is manually blacklisted."),
+        (QuestRecoveryState.Completed, false,
+            "Automatic abandonment denied: recovery state Completed is not Quarantined."),
+        ((QuestRecoveryState)999, false,
+            "Automatic abandonment denied: recovery state 999 is unknown.")
+    };
+
+    foreach (var item in cases)
+    {
+        var decision = QuestAbandonmentPolicy.Evaluate(
+            AbandonmentContext(recoveryState: item.State));
+        Assert(decision.MayAbandon == item.MayAbandon && decision.Reason == item.Reason,
+            $"recovery state {(int)item.State} must return its exact abandonment decision");
+    }
+}
+
+static void TestQuestAbandonmentReasonMatrix()
+{
+    var automaticReasons = new[]
+    {
+        QuestFailureReason.PickupTargetNotOffered,
+        QuestFailureReason.PickupWrongQuestShown,
+        QuestFailureReason.NpcNotFoundInWorld,
+        QuestFailureReason.NpcMissingFromDatabase,
+        QuestFailureReason.InteractionTimedOut,
+        QuestFailureReason.PathGenerationFailed,
+        QuestFailureReason.EndpointUnreachable,
+        QuestFailureReason.NoNavigableHotspot,
+        QuestFailureReason.NoObjectiveTargetsObserved,
+        QuestFailureReason.NoObjectiveProgress,
+        QuestFailureReason.RepeatedDeaths,
+        QuestFailureReason.TurnInTargetNotOffered,
+        QuestFailureReason.UnsupportedObjective,
+        QuestFailureReason.InvalidQuestData,
+        QuestFailureReason.InternalBehaviorError,
+        QuestFailureReason.LegacyUnknown
+    };
+
+    foreach (var reason in automaticReasons)
+    {
+        var decision = QuestAbandonmentPolicy.Evaluate(AbandonmentContext(reason: reason));
+        Assert(decision.MayAbandon,
+            $"automatic quarantine reason {reason} must remain eligible for guarded abandonment");
+    }
+
+    var denials = new (QuestFailureReason Reason, string Diagnostic)[]
+    {
+        (QuestFailureReason.None,
+            "Automatic abandonment denied: quarantine has no automatic failure reason."),
+        (QuestFailureReason.TurnInQuestIncomplete,
+            "Automatic abandonment denied: TurnInQuestIncomplete is a scheduler redirect, not a quarantine failure reason."),
+        (QuestFailureReason.UserExcluded,
+            "Automatic abandonment denied: quest is manually blacklisted."),
+        ((QuestFailureReason)999,
+            "Automatic abandonment denied: quarantine failure reason 999 is unknown or unsupported.")
+    };
+
+    foreach (var item in denials)
+    {
+        var decision = QuestAbandonmentPolicy.Evaluate(AbandonmentContext(reason: item.Reason));
+        Assert(!decision.MayAbandon && decision.Reason == item.Diagnostic,
+            $"quarantine reason {(int)item.Reason} must return its exact denial diagnostic");
+    }
+}
+
+static QuestAbandonmentContext AbandonmentContext(
+    bool isAccepted = true,
+    bool isCompleted = false,
+    bool stateIsCertain = true,
+    bool hasObjectiveProgress = false,
+    int freeQuestLogSlots = 2,
+    QuestRecoveryState recoveryState = QuestRecoveryState.Quarantined,
+    QuestFailureReason reason = QuestFailureReason.NoObjectiveProgress) => new()
+{
+    IsAccepted = isAccepted,
+    IsCompleted = isCompleted,
+    StateIsCertain = stateIsCertain,
+    HasObjectiveProgress = hasObjectiveProgress,
+    FreeQuestLogSlots = freeQuestLogSlots,
+    RecoveryState = recoveryState,
+    Reason = reason
+};
 
 static void TestQuestRelationParserUsesInvariantCulture()
 {
@@ -225,6 +284,42 @@ static void TestQuestRelationParserRejectsZeroEntry()
     Assert(parsed.Diagnostics.Count == 1
            && parsed.Diagnostics[0] == "Segment 1 ('0,1,2,3') rejected: entry must be a positive integer.",
         "entry zero must produce the deterministic positive-entry diagnostic");
+}
+
+static void TestQuestRelationParserRejectsNegativeAndOverflowEntries()
+{
+    var parsed = QuestRelationParser.Parse(
+        "-1,1,2,3;4294967296,4,5,6;3391,-483.0,-3104.0,92.0");
+
+    Assert(parsed.Relations.Count == 1 && parsed.Relations[0].Entry == 3391,
+        "negative and uint-overflow entries must be rejected without discarding a valid sibling");
+    Assert(parsed.Diagnostics.Count == 2
+           && parsed.Diagnostics[0] == "Segment 1 ('-1,1,2,3') rejected: entry must be a positive integer."
+           && parsed.Diagnostics[1] == "Segment 2 ('4294967296,4,5,6') rejected: entry must be a positive integer.",
+        "negative and overflow entries must produce ordered deterministic diagnostics");
+}
+
+static void TestQuestRelationParserTrimsAndPreservesDuplicatesInOrder()
+{
+    var parsed = QuestRelationParser.Parse(
+        " 3338 , -437.2 , -3192.1 , 91.6 ; 3338,-1,-2,-3 ; 3391,4,5,6 ");
+
+    Assert(parsed.Diagnostics.Count == 0 && parsed.Relations.Count == 3,
+        "trimmed valid segments, including duplicates, must parse without diagnostics");
+    Assert(parsed.Relations[0].Entry == 3338 && parsed.Relations[0].X == -437.2
+           && parsed.Relations[1].Entry == 3338 && parsed.Relations[1].X == -1
+           && parsed.Relations[2].Entry == 3391 && parsed.Relations[2].X == 4,
+        "relation order and duplicate entries must be preserved exactly");
+}
+
+static void TestQuestRelationParserHandlesNullAndEmptyInput()
+{
+    foreach (var input in new string?[] { null, "", "   " })
+    {
+        var parsed = QuestRelationParser.Parse(input);
+        Assert(parsed.Relations.Count == 0 && parsed.Diagnostics.Count == 0,
+            "null, empty, and whitespace-only relation input must return an empty result");
+    }
 }
 
 static void TestQuestRelationParserRejectsNonFiniteOrMalformedCoordinates()
