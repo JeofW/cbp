@@ -100,3 +100,34 @@ verification document is deliberately local at the plan-specified external path,
 whose parent workspace is not a Git repository. The ignored local SDD ledger was
 updated separately. Existing unrelated vendor/inventory changes remain untouched
 and unstaged. No push was performed.
+
+## Review round 1: typed and filtered empty-catch correction
+
+The original `catch\s*\{\s*\}` scan covered only untyped catches. A fresh runtime
+source scan used the broader multiline PCRE expression
+`catch\s*(?:\([^)]*\)\s*)?(?:when\s*\([^)]*\)\s*)?\{\s*\}` and exact scope/exclusions
+recorded in the verification document.
+
+The corrected checkout live-source count is 77 after excluding `Tools/**`
+regression harnesses. The five newly classified typed catches are
+`PartyBotSettings.cs:75,103`, `BlackspotManager.cs:147`, and
+`CustomForcedBehavior.cs:676,1115`. An all-checkout lexical scan also finds an
+intentional filtered regression-fixture catch at
+`QuestPickupPolicyRegressionTests/Program.cs:324`; it is not included in the
+runtime total.
+
+The raw external lexical count is 15, not 14. It consists of 14 ordinary catches
+plus one deliberately filtered Wholesome UI-disposal no-op at
+`SettingsForm.cs:529`. The four newly classified external typed catches are
+`Rarekiller.cs:359`, `TalentedSettings.cs:48`, `OffTheWall.cs:267`, and
+`SpellLocation.cs:40`. The Wholesome filtered catch suppresses only
+`InvalidOperationException` when the form is disposed or lacks a handle during
+`BeginInvoke`; it is benign teardown handling rather than a recovery failure
+boundary.
+
+There are still zero empty catches in the recovery manager, SafePickUp, SafeTurnIn,
+or Zygor. Wholesome contains zero unfiltered/unsafe empty catches and the one
+explicitly filtered UI teardown guard above. No code, runtime source, manifest,
+backup, or binary changed during this correction. Deployment, process inspection,
+client launch, cold-start verification, live smoke, push, and final live acceptance
+remain Deferred.
