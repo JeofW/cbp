@@ -229,6 +229,62 @@ public sealed class QuestRecoveryManager
         }
     }
 
+    public QuestRecoveryReportResult TryReportOwnedProgress(
+        QuestRecoveryKey key,
+        long attemptGeneration,
+        IReadOnlyList<int> previousObjectiveCounts,
+        IReadOnlyList<int> currentObjectiveCounts,
+        string evidence,
+        QuestRecoveryContext context)
+    {
+        ArgumentNullException.ThrowIfNull(key);
+        ArgumentNullException.ThrowIfNull(previousObjectiveCounts);
+        ArgumentNullException.ThrowIfNull(currentObjectiveCounts);
+        ArgumentNullException.ThrowIfNull(context);
+
+        lock (_sync)
+        {
+            EnsureConfiguredCore();
+            QuestRecoveryContext normalizedContext = NormalizeContext(context);
+            if (attemptGeneration <= 0 ||
+                !HasLiveIncrease(previousObjectiveCounts, currentObjectiveCounts) ||
+                FindQuestTerminalCore(key.QuestId) is not null ||
+                !_records.TryGetValue(key, out QuestRecoveryRecord? owner) ||
+                owner.State != QuestRecoveryState.Attempting ||
+                owner.AttemptGeneration != attemptGeneration)
+            {
+                return new QuestRecoveryReportResult
+                {
+                    Accepted = false,
+                    Decision = EvaluateCore(key, normalizedContext)
+                };
+            }
+
+            QuestRecoveryRecord updated = QuestRecoveryPolicy.ApplyOwnedProgress(
+                owner,
+                currentObjectiveCounts,
+                _clock.UtcNow);
+            updated = WithEvidence(
+                updated,
+                QuestFailureReason.None,
+                evidence ?? "",
+                _clock.UtcNow,
+                coalesce: true);
+            _records[key] = updated;
+            _dirty = true;
+            LogTransition(owner, updated);
+            return new QuestRecoveryReportResult
+            {
+                Accepted = true,
+                Decision = QuestRecoveryPolicy.Evaluate(
+                    updated,
+                    normalizedContext,
+                    RollingFailureCountCore(),
+                    _clock.UtcNow)
+            };
+        }
+    }
+
     private QuestRecoveryReportResult TryReportOwnedOutcomeCore(
         QuestAttemptOutcome outcome,
         QuestRecoveryContext context)
@@ -370,6 +426,14 @@ public sealed class QuestRecoveryManager
         outcome.Kind == QuestAttemptOutcomeKind.Success && !outcome.IsFailureEpisode ||
         outcome.Kind == QuestAttemptOutcomeKind.Failure && outcome.IsFailureEpisode ||
         IsOwnedIncompleteRedirect(outcome);
+
+    private static bool HasLiveIncrease(
+        IReadOnlyList<int> previousObjectiveCounts,
+        IReadOnlyList<int> currentObjectiveCounts) =>
+        currentObjectiveCounts.Select((count, index) =>
+            count > (index < previousObjectiveCounts.Count
+                ? previousObjectiveCounts[index]
+                : 0)).Any(increased => increased);
 
     public bool TryReportGeneratedFailures(
         IReadOnlyList<QuestAttemptOutcome> outcomes,

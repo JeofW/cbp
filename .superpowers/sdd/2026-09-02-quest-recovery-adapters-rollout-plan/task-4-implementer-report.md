@@ -215,3 +215,80 @@ smoke was performed. The remaining concern is limited to deferred live-world
 validation of the active guide relation and GrindArea queue against the actual
 game client; both paths are covered through the real linked sources and
 production methods in deterministic offline regressions.
+
+## Review round 2
+
+The owned-progress race was reproduced and closed with a new atomic manager
+boundary. `QuestRecoveryManager.TryReportOwnedProgress` now receives the exact
+key and generation plus the previous/current live vectors, evidence, and
+context. Under one manager lock it rejects a non-positive or stale generation,
+a non-`Attempting` exact record, quest-wide terminal control, or a vector with
+no live increase. Rejections do not mutate counters, evidence, or ownership.
+
+An accepted report merges current counters into the element-wise all-time
+maximum, records progress evidence/time, clears cooldown and episode escalation,
+increments the recovery cycle, and releases the exact owner to `Eligible`.
+This happens even when the current vector merely reacquires a value already in
+persisted history. The older unowned `ReportProgress` API and its callers retain
+their previous behavior.
+
+Zygor now reports its locally proven increase only through this owned API. It
+drops its generation only after `Accepted=true`. A rejection resets only the
+local death/no-progress episode; later exact-generation cleanup cannot release a
+newer manager owner or clear its POI.
+
+### Round 2 TDD evidence
+
+- Core RED: the focused build failed with five missing
+  `TryReportOwnedProgress` errors from tests covering historical-equal progress,
+  no increase, zero/stale generation, terminal state, and vector shrink.
+- Adapter RED: the linked build failed because the production runtime had no
+  owned-progress override.
+- GREEN: core and linked direct suites passed after the atomic manager boundary
+  and adapter call were implemented.
+- The real manager-backed linked lifecycle starts with persisted `[0,1]`, claims
+  an attempt at live `[0,0]`, accepts reacquired `[0,1]`, releases the lease,
+  claims the next generation, reloads with history/evidence intact, and denies
+  abandonment. A second linked test replaces owner A with B immediately before
+  reporting and proves stale A cannot release or mutate B or clear the reused
+  POI. Core coverage also proves `[5,1]` remains intact when live progress grows
+  one counter while a consumed-item slot shrinks out of the vector.
+
+### Round 2 fresh verification
+
+All builds used `../.dotnet-x86/dotnet.exe`, Release, x86,
+`UseAppHost=false`, `--no-restore`, and `--no-incremental`, after cleaning each
+focused output tree.
+
+- Linked adapter: exit 0, 3,246 baseline warnings, 0 errors; direct DLL passed.
+- Core recovery: exit 0, 3,246 baseline warnings, 0 errors; direct DLL passed.
+- Wholesome integration: exit 0, 3,261 baseline warnings, 0 errors; direct DLL
+  passed.
+- Pickup policy: exit 0, 3,246 baseline warnings, 0 errors; direct DLL passed.
+- Full `CopilotBuddy.csproj`: exit 0, 3,250 baseline warnings, 0 errors.
+- All four focused output trees contain zero `.exe` apphosts.
+- Installed Zygor forbidden legacy writer/restart scan: zero hits; unowned
+  `ReportProgress` call scan: zero hits. The sole `AbandonQuestById` remains the
+  manager-locked action delegate.
+- Scoped repository and external no-index whitespace checks emitted no
+  diagnostics.
+- The original backup manifest still matches all three entries. Manifest hash:
+  `24e67583721d535328ad8e82a7e445b68cfd8e19607cfcbe12a46532bd893c84`.
+
+Round 2 SHA-256 values:
+
+- Installed `ZygorProfileRecovery.cs`:
+  `ad021705e3afa0d56c4625c60285dc8378ba91389e99e2a91b205a47a84b745e`
+- Linked adapter regression DLL:
+  `658bba89fc0974cb6158ee345e7da5bb6271673feef562ddb5f75b4c6b638ed6`
+- Core recovery regression DLL:
+  `717475c4a13445921002b09648af1df9843f25cdfa5cb2e832d2dc8b4ba3515e`
+- Wholesome regression DLL:
+  `fad43845867d401f6af378f89b7d7f583de25f0671996bc7f100a6b0f36b3f98`
+- Pickup policy regression DLL:
+  `dc11951c18a9dfd590c45d440909d47471432a727e8be9de2fb985b332937746`
+
+No push, deployment, installed binary replacement, game/client launch, or live
+smoke was performed. The remaining concern remains deferred live-client
+validation; the reviewed ownership/historical-progress path is exercised by the
+real linked adapter and manager in deterministic offline tests.

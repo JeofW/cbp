@@ -102,6 +102,32 @@ public static class QuestRecoveryPolicy
             objectiveCounts: historicalMaximum);
     }
 
+    public static QuestRecoveryRecord ApplyOwnedProgress(
+        QuestRecoveryRecord current,
+        IReadOnlyList<int> objectiveCounts,
+        DateTime nowUtc)
+    {
+        ArgumentNullException.ThrowIfNull(current);
+        ArgumentNullException.ThrowIfNull(objectiveCounts);
+
+        if (current.State is QuestRecoveryState.ManualBlacklist or QuestRecoveryState.Completed)
+            return Copy(current);
+
+        return Copy(current,
+            state: QuestRecoveryState.Eligible,
+            reason: QuestFailureReason.None,
+            cooldownUntilUtc: null,
+            replaceCooldownUntilUtc: true,
+            nextHalfOpenUtc: null,
+            replaceNextHalfOpenUtc: true,
+            episodeCount: 0,
+            recoveryCycleId: checked(current.RecoveryCycleId + 1),
+            attemptCountInEpisode: 0,
+            deathCountInEpisode: 0,
+            lastProgressUtc: nowUtc,
+            objectiveCounts: MergeObjectiveCounts(current.ObjectiveCounts, objectiveCounts));
+    }
+
     private static IReadOnlyList<int> MergeObjectiveCounts(
         IReadOnlyList<int> historical,
         IReadOnlyList<int> current)

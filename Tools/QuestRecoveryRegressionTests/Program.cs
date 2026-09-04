@@ -40,6 +40,12 @@ try
         Path.Combine(testRoot, "abandon-history"), now);
     TestProgressPersistsPerCounterMaximum(Path.Combine(testRoot, "progress-maximum"), now);
     TestFailureContextPersistsPerCounterMaximum(Path.Combine(testRoot, "failure-progress-maximum"), now);
+    TestOwnedProgressReleasesHistoricalEqualAttempt(
+        Path.Combine(testRoot, "owned-progress-history"), now);
+    TestOwnedProgressRejectsUnprovenStaleAndTerminalReports(
+        Path.Combine(testRoot, "owned-progress-rejection"), now);
+    TestOwnedProgressPreservesConsumedItemHistory(
+        Path.Combine(testRoot, "owned-progress-consumed"), now);
     TestQuestRelationParserUsesInvariantCulture();
     TestQuestRelationParserRetainsValidSiblings();
     TestQuestRelationParserRejectsZeroEntry();
@@ -520,6 +526,184 @@ static void TestFailureContextPersistsPerCounterMaximum(string settingsRoot, Dat
     reloaded.Configure(CreateEnvironment(settingsRoot, "Jeof", "Lordaeron"));
     Assert(reloaded.GetRecord(key)?.ObjectiveCounts.SequenceEqual(new[] { 5, 2 }) == true,
         "failure snapshots must retain per-counter historical maxima when live required-item counters return to zero");
+}
+
+static void TestOwnedProgressReleasesHistoricalEqualAttempt(
+    string settingsRoot, DateTime now)
+{
+    QuestRecoveryKey objective = QuestRecoveryKey.ForObjective(1234, 1);
+    QuestRecoveryKey turnIn = QuestRecoveryKey.ForQuestStage(1234, QuestRecoveryStage.TurnIn);
+    string storePath = Path.Combine(
+        settingsRoot, "QuestRecovery", "Jeof-Lordaeron", "quest-recovery.json");
+    new QuestRecoveryStore(storePath).Save(new QuestRecoveryDocument
+    {
+        CharacterName = "Jeof",
+        RealmName = "Lordaeron",
+        Records = new[]
+        {
+            new QuestRecoveryRecord
+            {
+                Key = objective,
+                State = QuestRecoveryState.Eligible,
+                Reason = QuestFailureReason.RepeatedDeaths,
+                EpisodeCount = 2,
+                AttemptCountInEpisode = 2,
+                DeathCountInEpisode = 2,
+                RecoveryCycleId = 7,
+                ObjectiveCounts = new[] { 0, 1 }
+            },
+            new QuestRecoveryRecord
+            {
+                Key = turnIn,
+                State = QuestRecoveryState.Quarantined,
+                Reason = QuestFailureReason.NoObjectiveProgress,
+                EpisodeCount = 3
+            }
+        }
+    });
+
+    var manager = new QuestRecoveryManager(new FixedClock(now));
+    manager.Configure(CreateEnvironment(settingsRoot, "Jeof", "Lordaeron"));
+    QuestRecoveryDecision owner = manager.TryBeginAttempt(objective, Context());
+    QuestRecoveryReportResult accepted = manager.TryReportOwnedProgress(
+        objective,
+        owner.AttemptGeneration,
+        new[] { 0, 0 },
+        new[] { 0, 1 },
+        "required item reacquired during this owned attempt",
+        Context(objectiveCounts: new[] { 0, 1 }));
+
+    QuestRecoveryRecord progressed = manager.GetRecord(objective)!;
+    Assert(accepted.Accepted
+           && progressed.State == QuestRecoveryState.Eligible
+           && progressed.Reason == QuestFailureReason.None
+           && progressed.EpisodeCount == 0
+           && progressed.AttemptCountInEpisode == 0
+           && progressed.DeathCountInEpisode == 0
+           && progressed.RecoveryCycleId == 8
+           && progressed.LastProgressUtc == now
+           && progressed.ObjectiveCounts.SequenceEqual(new[] { 0, 1 })
+           && progressed.Evidence.Any(value =>
+               value.Text == "required item reacquired during this owned attempt"),
+        "owned live progress equal to an all-time maximum must release ownership, reset escalation, retain history, and persist evidence");
+
+    QuestRecoveryDecision next = manager.TryBeginAttempt(objective, Context());
+    Assert(next.MayAttempt && next.AttemptGeneration > owner.AttemptGeneration,
+        "accepted owned progress must release the exact lease so the next attempt can claim it");
+    manager.AbandonAttempt(objective, next.AttemptGeneration);
+    manager.Flush();
+
+    var reloaded = new QuestRecoveryManager(new FixedClock(now.AddMinutes(1)));
+    reloaded.Configure(CreateEnvironment(settingsRoot, "Jeof", "Lordaeron"));
+    int abandonActions = 0;
+    QuestAbandonmentDecision abandonment = reloaded.TryExecuteAutomaticAbandonment(
+        turnIn,
+        SafeAbandonmentSnapshot,
+        () => abandonActions++);
+    Assert(!abandonment.MayAbandon
+           && abandonment.Reason == "Automatic abandonment denied: quest has objective progress."
+           && abandonActions == 0
+           && reloaded.GetRecord(objective)?.ObjectiveCounts.SequenceEqual(new[] { 0, 1 }) == true
+           && reloaded.GetRecord(objective)?.Evidence.Any(value =>
+               value.Text == "required item reacquired during this owned attempt") == true,
+        "accepted owned progress must survive reload and continue blocking abandonment");
+}
+
+static void TestOwnedProgressRejectsUnprovenStaleAndTerminalReports(
+    string settingsRoot, DateTime now)
+{
+    QuestRecoveryKey key = QuestRecoveryKey.ForObjective(1235, 0);
+    var manager = new QuestRecoveryManager(new FixedClock(now));
+    manager.Configure(CreateEnvironment(settingsRoot, "Jeof", "Lordaeron"));
+    QuestRecoveryDecision ownerA = manager.TryBeginAttempt(key, Context());
+
+    QuestRecoveryReportResult unproven = manager.TryReportOwnedProgress(
+        key,
+        ownerA.AttemptGeneration,
+        new[] { 0, 1 },
+        new[] { 0, 1 },
+        "no live increase",
+        Context(objectiveCounts: new[] { 0, 1 }));
+    QuestRecoveryRecord afterUnproven = manager.GetRecord(key)!;
+    Assert(!unproven.Accepted
+           && afterUnproven.State == QuestRecoveryState.Attempting
+           && afterUnproven.AttemptGeneration == ownerA.AttemptGeneration
+           && afterUnproven.ObjectiveCounts.Count == 0
+           && afterUnproven.Evidence.Count == 0,
+        "a no-increase report must be rejected without releasing or mutating its owner");
+
+    QuestRecoveryReportResult nonPositive = manager.TryReportOwnedProgress(
+        key,
+        0,
+        new[] { 0, 0 },
+        new[] { 1, 0 },
+        "invalid zero generation",
+        Context(objectiveCounts: new[] { 1, 0 }));
+    QuestRecoveryRecord afterNonPositive = manager.GetRecord(key)!;
+    Assert(!nonPositive.Accepted
+           && afterNonPositive.State == QuestRecoveryState.Attempting
+           && afterNonPositive.AttemptGeneration == ownerA.AttemptGeneration
+           && afterNonPositive.ObjectiveCounts.Count == 0
+           && afterNonPositive.Evidence.Count == 0,
+        "a non-positive generation must reject proven counters with zero owner mutation");
+
+    Assert(manager.AbandonAttempt(key, ownerA.AttemptGeneration),
+        "stale owned-progress setup must release owner A explicitly");
+    QuestRecoveryDecision ownerB = manager.TryBeginAttempt(key, Context());
+    QuestRecoveryReportResult stale = manager.TryReportOwnedProgress(
+        key,
+        ownerA.AttemptGeneration,
+        new[] { 0, 0 },
+        new[] { 1, 0 },
+        "delayed owner A progress",
+        Context(objectiveCounts: new[] { 1, 0 }));
+    QuestRecoveryRecord afterStale = manager.GetRecord(key)!;
+    Assert(!stale.Accepted
+           && afterStale.State == QuestRecoveryState.Attempting
+           && afterStale.AttemptGeneration == ownerB.AttemptGeneration
+           && afterStale.ObjectiveCounts.Count == 0
+           && afterStale.Evidence.Count == 0,
+        "stale owner A progress must not release or mutate newer owner B");
+
+    manager.MarkCompleted(key.QuestId);
+    QuestRecoveryRecord terminalBefore = manager.GetRecord(key)!;
+    QuestRecoveryReportResult terminal = manager.TryReportOwnedProgress(
+        key,
+        ownerB.AttemptGeneration,
+        new[] { 0 },
+        new[] { 1 },
+        "late progress after completion",
+        Context(objectiveCounts: new[] { 1 }));
+    QuestRecoveryRecord terminalAfter = manager.GetRecord(key)!;
+    Assert(!terminal.Accepted
+           && terminalAfter.State == QuestRecoveryState.Completed
+           && terminalAfter.AttemptGeneration == terminalBefore.AttemptGeneration
+           && terminalAfter.ObjectiveCounts.SequenceEqual(terminalBefore.ObjectiveCounts)
+           && terminalAfter.Evidence.SequenceEqual(terminalBefore.Evidence),
+        "quest-wide terminal state must reject owned progress with zero record mutation");
+}
+
+static void TestOwnedProgressPreservesConsumedItemHistory(
+    string settingsRoot, DateTime now)
+{
+    QuestRecoveryKey key = QuestRecoveryKey.ForObjective(1236, 2);
+    var manager = new QuestRecoveryManager(new FixedClock(now));
+    manager.Configure(CreateEnvironment(settingsRoot, "Jeof", "Lordaeron"));
+    manager.ReportProgress(key, new[] { 5, 1 }, Context());
+    QuestRecoveryDecision owner = manager.TryBeginAttempt(key, Context());
+
+    QuestRecoveryReportResult accepted = manager.TryReportOwnedProgress(
+        key,
+        owner.AttemptGeneration,
+        new[] { 1, 1 },
+        new[] { 2 },
+        "first counter increased while required item was consumed",
+        Context(objectiveCounts: new[] { 2 }));
+
+    Assert(accepted.Accepted
+           && manager.GetRecord(key)?.State == QuestRecoveryState.Eligible
+           && manager.GetRecord(key)?.ObjectiveCounts.SequenceEqual(new[] { 5, 1 }) == true,
+        "a vector shrink with one proven live increase must release ownership without erasing any historical maximum");
 }
 
 static void TestQuestAbandonmentSlotMatrix()

@@ -6,6 +6,7 @@ using Styx.Logic.Questing.Recovery;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -22,6 +23,8 @@ internal static class ZygorRecoveryRegressionTests
         TestConcurrentLifecycleAndExactClaim();
         TestDeniedClaimYieldsWithoutClearingPoi();
         TestProgressUsesCoherentCountersAndResetsDeaths();
+        TestOwnedProgressReacquisitionUsesRealManager();
+        TestStaleOwnedProgressCannotReleaseNewerManagerOwner();
         TestThirdAttributableDeathReportsOneOwnedEpisode();
         TestSecondDeathAdvancesRealGrindAreaExactlyOnce();
         TestDeathsOutsideWindowStartFreshEpisode();
@@ -191,6 +194,133 @@ internal static class ZygorRecoveryRegressionTests
                && runtime.OwnedOutcomes[0].Reason == QuestFailureReason.RepeatedDeaths,
             "progress must reset the death episode so only three subsequent attributable deaths report failure");
         plugin.OnDisable();
+    }
+
+    private static void TestOwnedProgressReacquisitionUsesRealManager()
+    {
+        string settingsRoot = ResetTestDirectory("zygor-owned-progress-history");
+        QuestRecoveryKey objective = QuestRecoveryKey.ForObjective(877, 1);
+        QuestRecoveryKey turnIn = QuestRecoveryKey.ForQuestStage(877, QuestRecoveryStage.TurnIn);
+        string storePath = Path.Combine(
+            settingsRoot, "QuestRecovery", "Jeof-Lordaeron", "quest-recovery.json");
+        new QuestRecoveryStore(storePath).Save(new QuestRecoveryDocument
+        {
+            CharacterName = "Jeof",
+            RealmName = "Lordaeron",
+            Records = new[]
+            {
+                new QuestRecoveryRecord
+                {
+                    Key = objective,
+                    State = QuestRecoveryState.Eligible,
+                    ObjectiveCounts = new[] { 0, 1 }
+                },
+                new QuestRecoveryRecord
+                {
+                    Key = turnIn,
+                    State = QuestRecoveryState.Quarantined,
+                    Reason = QuestFailureReason.NoObjectiveProgress,
+                    EpisodeCount = 3
+                }
+            }
+        });
+        var clock = new MutableClock(new DateTime(2026, 9, 4, 12, 0, 0, DateTimeKind.Utc));
+        var manager = new QuestRecoveryManager(clock);
+        manager.Configure(new QuestRecoveryEnvironment(
+            settingsRoot, "Jeof", "Lordaeron", "quest-data-v1", "core-v1", "nav-v1"));
+        var runtime = new ManagerBackedZygorRuntime(manager, clock);
+        object behavior = new();
+        runtime.Execution = Execution(behavior, 877, 1, new[] { 0, 0 });
+        var plugin = new ZygorProfileRecoveryPlugin(runtime);
+
+        plugin.OnEnable();
+        plugin.Pulse();
+        long ownerA = runtime.ClaimGenerations.Single();
+        runtime.Execution = Execution(behavior, 877, 1, new[] { 0, 1 });
+        plugin.Pulse();
+        QuestRecoveryRecord progressed = manager.GetRecord(objective)!;
+        Assert(progressed.State == QuestRecoveryState.Eligible
+               && progressed.ObjectiveCounts.SequenceEqual(new[] { 0, 1 })
+               && progressed.Evidence.Any(value => value.Text.Contains(
+                   "locally observed", StringComparison.Ordinal)),
+            "the linked Zygor lifecycle must accept reacquired progress equal to persisted history and release owner A");
+
+        plugin.Pulse();
+        QuestRecoveryRecord ownerB = manager.GetRecord(objective)!;
+        Assert(runtime.ClaimGenerations.Count == 2
+               && runtime.ClaimGenerations[1] > ownerA
+               && ownerB.State == QuestRecoveryState.Attempting
+               && ownerB.AttemptGeneration == runtime.ClaimGenerations[1],
+            "accepted owned progress must allow the same live objective to acquire the next real manager generation");
+        plugin.OnDisable();
+        manager.Flush();
+
+        var reloaded = new QuestRecoveryManager(clock);
+        reloaded.Configure(new QuestRecoveryEnvironment(
+            settingsRoot, "Jeof", "Lordaeron", "quest-data-v1", "core-v1", "nav-v1"));
+        int actions = 0;
+        QuestAbandonmentDecision abandonment = reloaded.TryExecuteAutomaticAbandonment(
+            turnIn,
+            () => new QuestAbandonmentLiveSnapshot
+            {
+                IsAccepted = true,
+                IsCompleted = false,
+                StateIsCertain = true,
+                HasObjectiveProgress = false,
+                PrerequisiteStatus = QuestPrerequisiteStatus.NotActive,
+                FreeQuestLogSlots = 2
+            },
+            () => actions++);
+        Assert(!abandonment.MayAbandon
+               && abandonment.Reason == "Automatic abandonment denied: quest has objective progress."
+               && actions == 0
+               && reloaded.GetRecord(objective)?.ObjectiveCounts.SequenceEqual(new[] { 0, 1 }) == true,
+            "linked owned progress history must survive reload and keep automatic abandonment denied");
+    }
+
+    private static void TestStaleOwnedProgressCannotReleaseNewerManagerOwner()
+    {
+        string settingsRoot = ResetTestDirectory("zygor-owned-progress-stale");
+        QuestRecoveryKey key = QuestRecoveryKey.ForObjective(878, 0);
+        var clock = new MutableClock(new DateTime(2026, 9, 4, 12, 0, 0, DateTimeKind.Utc));
+        var manager = new QuestRecoveryManager(clock);
+        manager.Configure(new QuestRecoveryEnvironment(
+            settingsRoot, "Jeof", "Lordaeron", "quest-data-v1", "core-v1", "nav-v1"));
+        var runtime = new ManagerBackedZygorRuntime(manager, clock);
+        object behavior = new();
+        object poi = new();
+        runtime.CurrentBehavior = behavior;
+        runtime.CurrentPoi = poi;
+        runtime.Execution = Execution(behavior, 878, 0, new[] { 0 }, poi);
+        var plugin = new ZygorProfileRecoveryPlugin(runtime);
+        plugin.OnEnable();
+        plugin.Pulse();
+        long ownerA = runtime.ClaimGenerations.Single();
+        long ownerB = 0;
+        runtime.BeforeOwnedProgress = () =>
+        {
+            Assert(manager.AbandonAttempt(key, ownerA),
+                "stale race setup must release owner A inside the report boundary");
+            QuestRecoveryDecision replacement = manager.TryBeginAttempt(key, new QuestRecoveryContext());
+            Assert(replacement.MayAttempt, "stale race setup must acquire owner B");
+            ownerB = replacement.AttemptGeneration;
+        };
+        runtime.Execution = Execution(behavior, 878, 0, new[] { 1 }, poi);
+
+        plugin.Pulse();
+        QuestRecoveryRecord afterRace = manager.GetRecord(key)!;
+        Assert(runtime.OwnedProgressResults.Single().Accepted == false
+               && ownerB > ownerA
+               && afterRace.State == QuestRecoveryState.Attempting
+               && afterRace.AttemptGeneration == ownerB
+               && afterRace.ObjectiveCounts.Count == 0
+               && afterRace.Evidence.Count == 0
+               && ReferenceEquals(runtime.CurrentPoi, poi)
+               && runtime.ClearCount == 0,
+            "a stale linked progress report must not release owner B, persist A's counters, or clear a newer/reused POI");
+        plugin.OnDisable();
+        Assert(manager.OwnsAttempt(key, ownerB),
+            "disable cleanup for rejected owner A must not abandon owner B");
     }
 
     private static void TestThirdAttributableDeathReportsOneOwnedEpisode()
@@ -499,6 +629,15 @@ internal static class ZygorRecoveryRegressionTests
         return area;
     }
 
+    private static string ResetTestDirectory(string name)
+    {
+        string path = Path.Combine(AppContext.BaseDirectory, name);
+        if (Directory.Exists(path))
+            Directory.Delete(path, recursive: true);
+        Directory.CreateDirectory(path);
+        return path;
+    }
+
     private static ZygorObjectiveExecution Execution(
         object behavior,
         uint questId,
@@ -522,7 +661,7 @@ internal static class ZygorRecoveryRegressionTests
             throw new InvalidOperationException(message);
     }
 
-    private sealed class FakeZygorRuntime : ZygorRecoveryRuntime
+    private class FakeZygorRuntime : ZygorRecoveryRuntime
     {
         private BotEvents.Player.PlayerDiedDelegate _deathHandler;
 
@@ -551,6 +690,7 @@ internal static class ZygorRecoveryRegressionTests
         public List<QuestRecoveryKey> ClaimKeys { get; } = new();
         public List<IReadOnlyList<int>> CapturedCounts { get; } = new();
         public List<(QuestRecoveryKey key, IReadOnlyList<int> counts)> ProgressReports { get; } = new();
+        public List<QuestRecoveryReportResult> OwnedProgressResults { get; } = new();
         public List<QuestAttemptOutcome> OwnedOutcomes { get; } = new();
         public List<string> ClientMutations { get; } = new();
         public Action<QuestAttemptOutcome> OnOwnedOutcome { get; set; }
@@ -595,10 +735,23 @@ internal static class ZygorRecoveryRegressionTests
             AbandonAttemptCount++;
             return true;
         }
-        public override void ReportProgress(
+        public override QuestRecoveryReportResult TryReportOwnedProgress(
             QuestRecoveryKey key,
-            IReadOnlyList<int> counts,
-            QuestRecoveryContext context) => ProgressReports.Add((key, counts.ToArray()));
+            long attemptGeneration,
+            IReadOnlyList<int> previousCounts,
+            IReadOnlyList<int> currentCounts,
+            string evidence,
+            QuestRecoveryContext context)
+        {
+            ProgressReports.Add((key, currentCounts.ToArray()));
+            var result = new QuestRecoveryReportResult
+            {
+                Accepted = true,
+                Decision = new QuestRecoveryDecision { State = QuestRecoveryState.Eligible }
+            };
+            OwnedProgressResults.Add(result);
+            return result;
+        }
         public override QuestRecoveryReportResult TryReportOwnedOutcome(
             QuestAttemptOutcome outcome,
             QuestRecoveryContext context)
@@ -680,5 +833,67 @@ internal static class ZygorRecoveryRegressionTests
         }
         public override QuestAbandonmentLiveSnapshot CaptureAbandonmentSnapshot(uint questId) =>
             AbandonSnapshot ?? new QuestAbandonmentLiveSnapshot { FreeQuestLogSlots = 25 };
+    }
+
+    private sealed class ManagerBackedZygorRuntime : FakeZygorRuntime
+    {
+        private readonly QuestRecoveryManager _manager;
+        private readonly MutableClock _clock;
+
+        public ManagerBackedZygorRuntime(QuestRecoveryManager manager, MutableClock clock)
+        {
+            _manager = manager;
+            _clock = clock;
+        }
+
+        public Action BeforeOwnedProgress { get; set; }
+        public List<long> ClaimGenerations { get; } = new();
+        public override DateTime UtcNow => _clock.UtcNow;
+        public override void EnsureConfigured() { }
+        public override QuestRecoveryDecision TryBeginAttempt(
+            QuestRecoveryKey key, QuestRecoveryContext context)
+        {
+            QuestRecoveryDecision result = _manager.TryBeginAttempt(key, context);
+            if (result.MayAttempt)
+                ClaimGenerations.Add(result.AttemptGeneration);
+            return result;
+        }
+        public override bool OwnsAttempt(QuestRecoveryKey key, long generation) =>
+            _manager.OwnsAttempt(key, generation);
+        public override bool AbandonAttempt(QuestRecoveryKey key, long generation) =>
+            _manager.AbandonAttempt(key, generation);
+        public override QuestRecoveryReportResult TryReportOwnedProgress(
+            QuestRecoveryKey key,
+            long attemptGeneration,
+            IReadOnlyList<int> previousCounts,
+            IReadOnlyList<int> currentCounts,
+            string evidence,
+            QuestRecoveryContext context)
+        {
+            BeforeOwnedProgress?.Invoke();
+            BeforeOwnedProgress = null;
+            QuestRecoveryReportResult result = _manager.TryReportOwnedProgress(
+                key,
+                attemptGeneration,
+                previousCounts,
+                currentCounts,
+                evidence,
+                context);
+            OwnedProgressResults.Add(result);
+            return result;
+        }
+        public override QuestRecoveryReportResult TryReportOwnedOutcome(
+            QuestAttemptOutcome outcome, QuestRecoveryContext context) =>
+            _manager.TryReportOwnedOutcome(outcome, context);
+        public override QuestAbandonmentDecision TryExecuteAutomaticAbandonment(
+            QuestRecoveryKey key,
+            Func<QuestAbandonmentLiveSnapshot> recapture) =>
+            _manager.TryExecuteAutomaticAbandonment(key, recapture, () => { });
+    }
+
+    private sealed class MutableClock : IQuestRecoveryClock
+    {
+        public MutableClock(DateTime utcNow) => UtcNow = utcNow;
+        public DateTime UtcNow { get; set; }
     }
 }
