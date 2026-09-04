@@ -33,6 +33,7 @@ try
     TestQuestAbandonmentInputGuards();
     TestQuestAbandonmentPrerequisiteGuards();
     TestPrerequisiteAuthorityReverseScansDependencies();
+    TestPrerequisiteAuthorityTraversesCompleteGraphSafely();
     TestQuestAbandonmentSlotMatrix();
     TestQuestAbandonmentStateMatrix();
     TestQuestAbandonmentReasonMatrix();
@@ -103,6 +104,8 @@ try
     TestCompletedRecordsSurviveManualBlacklistToggleAndCompaction(Path.Combine(testRoot, "manual-completed"), now);
     TestMarkCompletedPreservesManualOverlay(Path.Combine(testRoot, "complete-overlay"), now);
     TestDeathResetRequiresDirectionalEquipmentImprovement(now);
+    TestDeathResetRecognizesEquippedReplacementAcrossReload(
+        Path.Combine(testRoot, "death-equipment-reload"), now);
     TestOwnershipFenceSurvivesManualReleaseReload(Path.Combine(testRoot, "success-empty-reload"), now);
     TestSuccessfulHalfOpenClearsEscalation(Path.Combine(testRoot, "success-half-open"), now);
     TestSuccessCannotReopenTerminalStates(Path.Combine(testRoot, "success-terminal"), now);
@@ -314,6 +317,64 @@ static void TestDeathResetRequiresDirectionalEquipmentImprovement(DateTime now)
         "legacy equipment fingerprints without comparable health data must migrate conservatively");
 }
 
+static void TestDeathResetRecognizesEquippedReplacementAcrossReload(string settingsRoot, DateTime now)
+{
+    var environment = CreateEnvironment(settingsRoot, "Jeof", "Lordaeron");
+    var key = QuestRecoveryKey.ForObjective(9804, 0);
+    var baseline = new QuestRecoveryContext
+    {
+        EquipmentFingerprint = "100:critical|200:healthy",
+        EquipmentHealthKnown = true,
+        CriticalEquipmentCount = 1,
+        EquipmentEntries = new uint[] { 100, 200 }
+    };
+    var clock = new FixedClock(now);
+    var manager = new QuestRecoveryManager(clock);
+    manager.Configure(environment);
+    for (int episode = 0; episode < 3; episode++)
+    {
+        QuestRecoveryDecision owner = manager.TryBeginAttempt(key, baseline);
+        Assert(owner.MayAttempt, "the death replacement fixture must own each bounded failure episode");
+        manager.TryReportOwnedOutcome(QuestAttemptOutcome.Failure(
+            key, key, owner.AttemptGeneration, QuestFailureReason.RepeatedDeaths,
+            $"death {episode + 1}"), baseline);
+        clock.UtcNow = clock.UtcNow.AddMinutes(61);
+    }
+    manager.Flush();
+
+    var reloaded = new QuestRecoveryManager(new FixedClock(clock.UtcNow));
+    reloaded.Configure(environment);
+    var replacement = new QuestRecoveryContext
+    {
+        EquipmentFingerprint = "300:critical|200:healthy",
+        EquipmentHealthKnown = true,
+        CriticalEquipmentCount = 1,
+        EquipmentEntries = new uint[] { 200, 300 }
+    };
+    Assert(reloaded.Evaluate(key, replacement).MayAttempt,
+        "replacing an equipped item must reopen one controlled death probe even when critical count is unchanged");
+
+    var degraded = new QuestRecoveryContext
+    {
+        EquipmentFingerprint = "100:critical|200:critical",
+        EquipmentHealthKnown = true,
+        CriticalEquipmentCount = 2,
+        EquipmentEntries = new uint[] { 100, 200 }
+    };
+    Assert(!reloaded.Evaluate(key, degraded).MayAttempt,
+        "the same equipped entries becoming more critical must not count as improvement");
+
+    var repaired = new QuestRecoveryContext
+    {
+        EquipmentFingerprint = "100:healthy|200:healthy",
+        EquipmentHealthKnown = true,
+        CriticalEquipmentCount = 0,
+        EquipmentEntries = new uint[] { 100, 200 }
+    };
+    Assert(reloaded.Evaluate(key, repaired).MayAttempt,
+        "repairing the same equipped entries must remain a material improvement");
+}
+
 static void TestQuestAbandonmentInputGuards()
 {
     var denials = new (string Name, QuestAbandonmentContext Context, string Reason)[]
@@ -411,6 +472,36 @@ static void TestPrerequisiteAuthorityReverseScansDependencies()
     Assert(QuestPrerequisiteAuthority.DetermineFromPublishedDependencies(
                867, Array.Empty<uint>()) == QuestPrerequisiteStatus.Unknown,
         "missing or invalidated dependency data must fail closed instead of proving no dependent");
+}
+
+static void TestPrerequisiteAuthorityTraversesCompleteGraphSafely()
+{
+    QuestPrerequisiteAuthority.ClearPublishedDependencyAuthority();
+    QuestPrerequisiteAuthority.PublishAuthoritativeDependencies(Array.Empty<QuestDependencyEvidence>());
+    Assert(QuestPrerequisiteAuthority.DetermineFromPublishedDependencies(
+               867, Array.Empty<uint>()) == QuestPrerequisiteStatus.Unknown,
+        "an empty dependency publication must not be treated as authoritative proof");
+
+    QuestPrerequisiteAuthority.PublishAuthoritativeDependencies(new[]
+    {
+        new QuestDependencyEvidence(875, 867, isActive: false, isAuthoritative: true),
+        new QuestDependencyEvidence(900, 875, isActive: false, isAuthoritative: true),
+        new QuestDependencyEvidence(867, 900, isActive: false, isAuthoritative: true)
+    });
+    Assert(QuestPrerequisiteAuthority.DetermineFromPublishedDependencies(
+               867, new uint[] { 900 }) == QuestPrerequisiteStatus.Active,
+        "a transitive active descendant must protect every ancestor, including through a cycle");
+    Assert(QuestPrerequisiteAuthority.DetermineFromPublishedDependencies(
+               867, new uint[] { 999999 }) == QuestPrerequisiteStatus.Unknown,
+        "an active quest absent from the published graph must fail closed");
+    Assert(QuestPrerequisiteAuthority.DetermineFromPublishedDependencies(
+               867, Array.Empty<uint>()) == QuestPrerequisiteStatus.NotActive,
+        "a finite cycle with no active descendant must terminate and prove no active prerequisite");
+
+    QuestPrerequisiteAuthority.ClearPublishedDependencyAuthority();
+    Assert(QuestPrerequisiteAuthority.DetermineFromPublishedDependencies(
+               867, new uint[] { 900 }) == QuestPrerequisiteStatus.Unknown,
+        "an unpublished graph must fail closed");
 }
 
 static void TestManagerAutomaticAbandonmentIsAtomic(string settingsRoot, DateTime now)

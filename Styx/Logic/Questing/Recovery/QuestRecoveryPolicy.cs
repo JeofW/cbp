@@ -248,7 +248,9 @@ public static class QuestRecoveryPolicy
         {
             return context.PlayerLevel > current.PlayerLevelAtFailure ||
                    current.EquipmentHealthKnown && context.EquipmentHealthKnown &&
-                   context.CriticalEquipmentCount < current.CriticalEquipmentCount
+                   (context.CriticalEquipmentCount < current.CriticalEquipmentCount ||
+                    context.CriticalEquipmentCount <= current.CriticalEquipmentCount &&
+                    HasComparableEquipmentReplacement(current.EquipmentEntries, context.EquipmentEntries))
                 ? "Combat capability changed."
                 : "";
         }
@@ -260,6 +262,15 @@ public static class QuestRecoveryPolicy
         !string.IsNullOrEmpty(previous) &&
         !string.IsNullOrEmpty(current) &&
         !string.Equals(previous, current, StringComparison.Ordinal);
+
+    private static bool HasComparableEquipmentReplacement(
+        IReadOnlyList<uint> previous,
+        IReadOnlyList<uint> current)
+    {
+        if (previous.Count == 0 || current.Count == 0)
+            return false;
+        return !previous.OrderBy(value => value).SequenceEqual(current.OrderBy(value => value));
+    }
 
     private static QuestRecoveryDecision HalfOpenDecision(int failuresInRollingHour, string resetReason) =>
         failuresInRollingHour >= 6
@@ -316,6 +327,7 @@ public static class QuestRecoveryPolicy
             EquipmentFingerprint = failureContext is null ? current.EquipmentFingerprint : failureContext.EquipmentFingerprint,
             EquipmentHealthKnown = failureContext is null ? current.EquipmentHealthKnown : failureContext.EquipmentHealthKnown,
             CriticalEquipmentCount = failureContext is null ? current.CriticalEquipmentCount : failureContext.CriticalEquipmentCount,
+            EquipmentEntries = failureContext is null ? current.EquipmentEntries : failureContext.EquipmentEntries,
             AbandonmentStatus = current.AbandonmentStatus,
             AbandonmentReason = current.AbandonmentReason,
             AbandonmentRequestedUtc = current.AbandonmentRequestedUtc,

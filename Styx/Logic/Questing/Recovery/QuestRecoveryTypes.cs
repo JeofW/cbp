@@ -205,11 +205,17 @@ public sealed class QuestAttemptOutcome
 public sealed class QuestRecoveryContext
 {
     private IReadOnlyList<int> _objectiveCounts = Array.Empty<int>();
+    private IReadOnlyList<uint> _equipmentEntries = Array.Empty<uint>();
 
     public int PlayerLevel { get; init; }
     public string EquipmentFingerprint { get; init; } = "";
     public bool EquipmentHealthKnown { get; init; }
     public int CriticalEquipmentCount { get; init; }
+    public IReadOnlyList<uint> EquipmentEntries
+    {
+        get => _equipmentEntries;
+        init => _equipmentEntries = RecoveryCollection.Copy(value);
+    }
     public string DatasetVersion { get; init; } = "unknown";
     public string CoreVersion { get; init; } = "unknown";
     public string NavigationFingerprint { get; init; } = "unknown";
@@ -250,6 +256,7 @@ public sealed class QuestRecoveryEvidence
 public sealed class QuestRecoveryRecord
 {
     private IReadOnlyList<int> _objectiveCounts = Array.Empty<int>();
+    private IReadOnlyList<uint> _equipmentEntries = Array.Empty<uint>();
     private IReadOnlyList<QuestRecoveryEvidence> _evidence = Array.Empty<QuestRecoveryEvidence>();
 
     public QuestRecoveryKey Key { get; init; } = null!;
@@ -275,6 +282,11 @@ public sealed class QuestRecoveryRecord
     public string EquipmentFingerprint { get; init; } = "";
     public bool EquipmentHealthKnown { get; init; }
     public int CriticalEquipmentCount { get; init; }
+    public IReadOnlyList<uint> EquipmentEntries
+    {
+        get => _equipmentEntries;
+        init => _equipmentEntries = RecoveryCollection.Copy(value);
+    }
     public QuestAbandonmentStatus AbandonmentStatus { get; init; }
     public string AbandonmentReason { get; init; } = "";
     public DateTime? AbandonmentRequestedUtc { get; init; }

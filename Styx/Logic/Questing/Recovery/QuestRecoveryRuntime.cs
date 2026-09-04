@@ -30,6 +30,7 @@ public static class QuestRecoveryRuntime
         var equipmentFingerprint = "";
         bool equipmentHealthKnown = false;
         int criticalEquipmentCount = 0;
+        IReadOnlyList<uint> equipmentEntries = Array.Empty<uint>();
         if (player is not null)
         {
             try
@@ -39,6 +40,7 @@ public static class QuestRecoveryRuntime
                      MaxDurability: (double)item.MaxDurability,
                      DurabilityPercent: (double)item.DurabilityPercent)).ToArray();
                 equipmentFingerprint = CreateEquipmentFingerprint(equipment);
+                equipmentEntries = equipment.Select(item => item.Entry).OrderBy(entry => entry).ToArray();
                 criticalEquipmentCount = equipment.Count(item =>
                     item.MaxDurability > 0 && item.DurabilityPercent < CriticalDurabilityPercent);
                 equipmentHealthKnown = equipment.Any(item => item.MaxDurability > 0);
@@ -55,6 +57,7 @@ public static class QuestRecoveryRuntime
             EquipmentFingerprint = equipmentFingerprint,
             EquipmentHealthKnown = equipmentHealthKnown,
             CriticalEquipmentCount = criticalEquipmentCount,
+            EquipmentEntries = equipmentEntries,
             ObjectiveCounts = objectiveCounts ?? Array.Empty<int>()
         };
     }

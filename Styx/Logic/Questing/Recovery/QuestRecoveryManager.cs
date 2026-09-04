@@ -967,6 +967,7 @@ public sealed class QuestRecoveryManager
             EquipmentFingerprint = context.EquipmentFingerprint,
             EquipmentHealthKnown = context.EquipmentHealthKnown,
             CriticalEquipmentCount = context.CriticalEquipmentCount,
+            EquipmentEntries = context.EquipmentEntries,
             DatasetVersion = Richer(context.DatasetVersion, environment.DatasetVersion),
             CoreVersion = Richer(context.CoreVersion, environment.CoreVersion),
             NavigationFingerprint = Richer(context.NavigationFingerprint, environment.NavigationFingerprint),
@@ -1313,6 +1314,7 @@ public sealed class QuestRecoveryManager
             EquipmentFingerprint = failureContext?.EquipmentFingerprint ?? current.EquipmentFingerprint,
             EquipmentHealthKnown = failureContext?.EquipmentHealthKnown ?? current.EquipmentHealthKnown,
             CriticalEquipmentCount = failureContext?.CriticalEquipmentCount ?? current.CriticalEquipmentCount,
+            EquipmentEntries = failureContext?.EquipmentEntries ?? current.EquipmentEntries,
             AbandonmentStatus = abandonmentStatus ?? current.AbandonmentStatus,
             AbandonmentReason = abandonmentReason ?? current.AbandonmentReason,
             AbandonmentRequestedUtc = replaceAbandonmentRequestedUtc

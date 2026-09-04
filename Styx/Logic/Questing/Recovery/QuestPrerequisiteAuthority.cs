@@ -27,12 +27,15 @@ public sealed class QuestDependencyEvidence
 
 public static class QuestPrerequisiteAuthority
 {
+    private const int MaximumDependencyTraversal = 4096;
     private static readonly object DependencySync = new();
     private static QuestDependencyEvidence[] _publishedDependencies = Array.Empty<QuestDependencyEvidence>();
+    private static uint[] _publishedQuestIds = Array.Empty<uint>();
     private static bool _publishedDependencyAuthority;
 
     public static void PublishAuthoritativeDependencies(
-        IEnumerable<QuestDependencyEvidence> dependencies)
+        IEnumerable<QuestDependencyEvidence> dependencies,
+        IEnumerable<uint>? knownQuestIds = null)
     {
         ArgumentNullException.ThrowIfNull(dependencies);
         QuestDependencyEvidence[] snapshot = dependencies
@@ -40,11 +43,20 @@ public static class QuestPrerequisiteAuthority
             .Select(item => new QuestDependencyEvidence(
                 item.QuestId, item.PrerequisiteQuestId, false, true))
             .DistinctBy(item => (item.QuestId, item.PrerequisiteQuestId))
+            .OrderBy(item => item.PrerequisiteQuestId)
+            .ThenBy(item => item.QuestId)
+            .ToArray();
+        uint[] known = (knownQuestIds ?? Array.Empty<uint>())
+            .Concat(snapshot.SelectMany(item => new[] { item.QuestId, item.PrerequisiteQuestId }))
+            .Where(id => id != 0)
+            .Distinct()
+            .OrderBy(id => id)
             .ToArray();
         lock (DependencySync)
         {
             _publishedDependencies = snapshot;
-            _publishedDependencyAuthority = true;
+            _publishedQuestIds = known;
+            _publishedDependencyAuthority = snapshot.Length > 0;
         }
     }
 
@@ -53,6 +65,7 @@ public static class QuestPrerequisiteAuthority
         lock (DependencySync)
         {
             _publishedDependencies = Array.Empty<QuestDependencyEvidence>();
+            _publishedQuestIds = Array.Empty<uint>();
             _publishedDependencyAuthority = false;
         }
     }
@@ -62,12 +75,19 @@ public static class QuestPrerequisiteAuthority
         IEnumerable<QuestDependencyEvidence> dependencies)
     {
         ArgumentNullException.ThrowIfNull(dependencies);
-        QuestDependencyEvidence[] active = dependencies.Where(item => item.IsActive).ToArray();
-        if (active.Any(item => item.IsAuthoritative && item.PrerequisiteQuestId == questId))
-            return QuestPrerequisiteStatus.Active;
-        return active.Any(item => !item.IsAuthoritative)
-            ? QuestPrerequisiteStatus.Unknown
-            : QuestPrerequisiteStatus.NotActive;
+        QuestDependencyEvidence[] snapshot = dependencies.Where(item => item is not null).ToArray();
+        if (snapshot.Any(item => item.IsActive && !item.IsAuthoritative))
+            return QuestPrerequisiteStatus.Unknown;
+        QuestDependencyEvidence[] authoritative = snapshot
+            .Where(item => item.IsAuthoritative && item.QuestId != 0 && item.PrerequisiteQuestId != 0)
+            .ToArray();
+        if (authoritative.Length == 0)
+            return QuestPrerequisiteStatus.Unknown;
+        return Traverse(
+            questId,
+            authoritative,
+            authoritative.Where(item => item.IsActive).Select(item => item.QuestId),
+            authoritative.SelectMany(item => new[] { item.QuestId, item.PrerequisiteQuestId }));
     }
 
     public static QuestPrerequisiteStatus DetermineFromPublishedDependencies(
@@ -76,22 +96,56 @@ public static class QuestPrerequisiteAuthority
     {
         ArgumentNullException.ThrowIfNull(activeQuestIds);
         QuestDependencyEvidence[] published;
+        uint[] knownQuestIds;
         bool publishedAuthority;
         lock (DependencySync)
         {
             published = _publishedDependencies;
+            knownQuestIds = _publishedQuestIds;
             publishedAuthority = _publishedDependencyAuthority;
         }
         if (!publishedAuthority)
             return QuestPrerequisiteStatus.Unknown;
-        var activeSet = new HashSet<uint>(activeQuestIds);
-        return DetermineFromDependencies(
-            questId,
-            published.Select(item => new QuestDependencyEvidence(
-                item.QuestId,
-                item.PrerequisiteQuestId,
-                activeSet.Contains(item.QuestId),
-                true)));
+        return Traverse(questId, published, activeQuestIds, knownQuestIds);
+    }
+
+    private static QuestPrerequisiteStatus Traverse(
+        uint questId,
+        IReadOnlyList<QuestDependencyEvidence> dependencies,
+        IEnumerable<uint> activeQuestIds,
+        IEnumerable<uint> knownQuestIds)
+    {
+        var active = new HashSet<uint>(activeQuestIds.Where(id => id != 0 && id != questId));
+        var known = new HashSet<uint>(knownQuestIds.Where(id => id != 0));
+        if (active.Any(id => !known.Contains(id)))
+            return QuestPrerequisiteStatus.Unknown;
+
+        var reverse = dependencies
+            .GroupBy(item => item.PrerequisiteQuestId)
+            .ToDictionary(
+                group => group.Key,
+                group => group.Select(item => item.QuestId).Distinct().OrderBy(id => id).ToArray());
+        var pending = new Queue<uint>();
+        var visited = new HashSet<uint> { questId };
+        pending.Enqueue(questId);
+        int traversed = 0;
+        while (pending.Count > 0)
+        {
+            uint prerequisite = pending.Dequeue();
+            if (!reverse.TryGetValue(prerequisite, out uint[]? dependents))
+                continue;
+            foreach (uint dependent in dependents)
+            {
+                if (++traversed > MaximumDependencyTraversal)
+                    return QuestPrerequisiteStatus.Unknown;
+                if (!visited.Add(dependent))
+                    continue;
+                if (active.Contains(dependent))
+                    return QuestPrerequisiteStatus.Active;
+                pending.Enqueue(dependent);
+            }
+        }
+        return QuestPrerequisiteStatus.NotActive;
     }
 
     public static QuestPrerequisiteStatus Determine(

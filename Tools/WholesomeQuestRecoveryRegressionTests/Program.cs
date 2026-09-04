@@ -60,6 +60,7 @@ try
     TestGameObjectItemCollectionRemainsCollectItemOverride();
     TestSchedulerReportsEveryEndpointlessObjectiveOmission();
     TestSchedulerOmissionsPersistImmediateRecoveryQuarantine();
+    TestSchedulerZeroRowsPersistWithoutRebuildChurn();
     TestSchedulerDeduplicatesRelationRowsAndExactEndpoints();
     TestRefreshGateCoalescesConcurrentRequestsAndStopsCallbacks();
     TestRefreshLeaseFencesTheEntireSchedulerRun();
@@ -71,6 +72,7 @@ try
     TestLifecycleResetDoesNotCarryPickupCyclesAcrossRestart();
     TestProgressMonitorCountsOnlyActiveWorkAndCoalescesOneStall();
     TestProgressMonitorRequestsAlternateAndFailsBoundedlyWithOneCluster();
+    TestProductionUnavailableAlternatePreservesAttemptUntilBoundedFailure();
     TestProgressMonitorScopesEndpointAndDeathFailures();
     TestProgressMonitorResetsForEachSameKeyOwnershipGeneration();
     TestProductionWorkSnapshotExcludesNonWorkAndRequiresExactOwner();
@@ -1784,6 +1786,73 @@ void TestProgressMonitorRequestsAlternateAndFailsBoundedlyWithOneCluster()
             outcome.Key.Equals(key) && outcome.Reason == QuestFailureReason.NoObjectiveProgress &&
             outcome.IsFailureEpisode),
         "one unavailable or unchanged cluster must still end in one bounded eight-minute failure episode");
+}
+
+void TestProductionUnavailableAlternatePreservesAttemptUntilBoundedFailure()
+{
+    var root = Path.Combine(Path.GetTempPath(), "wholesome-one-cluster-production-" + Guid.NewGuid().ToString("N"));
+    var manager = QuestRecoveryManager.Instance;
+    try
+    {
+        manager.Configure(new QuestRecoveryEnvironment(
+            root, "Wholesome", "OneCluster", "data-v1", "core-v1", "nav-v1"));
+        var clock = new TestRecoveryClock(utcNow);
+        var monitor = new WholesomeProgressMonitor(clock);
+        var key = QuestRecoveryKey.ForQuestStage(9868, QuestRecoveryStage.Objective);
+        var onlyCluster = QuestRecoveryKey.ForEndpoint(9868, QuestRecoveryStage.Navigation, 1, "cell:0:0");
+        QuestRecoveryDecision owner = manager.TryBeginAttempt(key, new QuestRecoveryContext());
+        var behavior = new ForcedQuestObjective(TestQuestObjective.Create(9868, WoWPoint.Zero));
+        var bot = new WholesomeAutoQuest();
+        var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+        var ownership = (WholesomeAttemptOwnership?)typeof(WholesomeAutoQuest)
+            .GetField("_attemptOwnership", flags)?.GetValue(bot);
+        var gate = (RefreshGate?)typeof(WholesomeAutoQuest)
+            .GetField("_refreshGate", flags)?.GetValue(bot);
+        var stopped = typeof(WholesomeAutoQuest).GetField("_stopped", flags);
+        var process = typeof(WholesomeAutoQuest).GetMethod("ProcessProgressUpdate", flags);
+        Assert(ownership != null && gate != null && stopped != null && process != null,
+            "the one-cluster regression must invoke production request handling");
+        ownership!.Begin(behavior, key, owner);
+        stopped!.SetValue(bot, false);
+
+        QuestWorkSample Sample() => WorkSample(
+            key, new[] { 0 }, onlyCluster, active: true, attemptGeneration: owner.AttemptGeneration);
+        monitor.Sample(Sample());
+        QuestProgressUpdate fourMinutes = new();
+        for (int second = 2; second <= 4 * 60; second += 2)
+        {
+            clock.Advance(TimeSpan.FromSeconds(2));
+            fourMinutes = monitor.Sample(Sample());
+        }
+        Assert(fourMinutes.RequestAlternateCluster,
+            "the live production attempt must ask for its alternate at four active minutes");
+        process!.Invoke(bot, new object[] { behavior, Sample(), fourMinutes });
+        Assert(!gate!.Begin().HasValue
+               && ownership.TryGet(behavior, out QuestRecoveryKey retainedKey, out long retainedGeneration)
+               && retainedKey.Equals(key) && retainedGeneration == owner.AttemptGeneration,
+            "an unavailable alternate must not queue a profile rebuild or replace the live attempt generation");
+
+        QuestProgressUpdate eightMinutes = new();
+        for (int second = 4 * 60 + 2; second <= 8 * 60; second += 2)
+        {
+            clock.Advance(TimeSpan.FromSeconds(2));
+            eightMinutes = monitor.Sample(Sample());
+        }
+        Assert(eightMinutes.Outcomes.Any(outcome => outcome.IsFailureEpisode && outcome.Key.Equals(key)),
+            "the same monitor attempt must reach its bounded failure at eight active minutes");
+        process.Invoke(bot, new object[] { behavior, Sample(), eightMinutes });
+        QuestRecoveryRecord failed = manager.GetEntries().Single(record => record.Key.Equals(key));
+        Assert(failed.EpisodeCount == 1
+               && failed.AttemptGeneration == owner.AttemptGeneration
+               && !ownership.TryGet(behavior, out _, out _),
+            "production handling must report and release the exact generation that requested the unavailable alternate");
+    }
+    finally
+    {
+        manager.Flush();
+        if (Directory.Exists(root))
+            Directory.Delete(root, recursive: true);
+    }
 }
 
 void TestProgressMonitorScopesEndpointAndDeathFailures()
@@ -3919,6 +3988,72 @@ void TestSchedulerOmissionsPersistImmediateRecoveryQuarantine()
         Assert(manager.GetRecord(QuestRecoveryKey.ForQuestStage(870, QuestRecoveryStage.Objective))?.Evidence
                 .Any(item => item.Text == "scheduler:accepted-quest-missing") == true,
             "an accepted quest missing from the database must persist a stable stage-level data quarantine");
+    }
+    finally
+    {
+        if (Directory.Exists(root))
+            Directory.Delete(root, recursive: true);
+    }
+}
+
+void TestSchedulerZeroRowsPersistWithoutRebuildChurn()
+{
+    var root = Path.Combine(Path.GetTempPath(), "wholesome-zero-rows-" + Guid.NewGuid().ToString("N"));
+    var environment = new QuestRecoveryEnvironment(root, "Wholesome", "ZeroRows", "data", "core", "nav");
+    QuestRecoveryContext context = new()
+    {
+        DatasetVersion = "data",
+        CoreVersion = "core",
+        NavigationFingerprint = "nav"
+    };
+    try
+    {
+        var db = new QuestDatabase();
+        db.Quests.Add(new QuestEntry { Id = 881, Name = "Objective rows missing", MinLevel = 1, QuestLevel = 20 });
+        db.Quests.Add(new QuestEntry { Id = 882, Name = "Ender rows missing", MinLevel = 1, QuestLevel = 20 });
+        var manager = new QuestRecoveryManager(new TestRecoveryClock(utcNow));
+        manager.Configure(environment);
+        void Build(QuestRecoveryManager current) => QuestScheduler.MaterializeSchedule(
+            db,
+            Snapshot(new[] { Accepted(881, false), Accepted(882, true) }, Array.Empty<uint>(), authoritative: false),
+            key => current.Evaluate(key, context), 10, 500, 7,
+            reportDataFailure: outcome => current.Report(outcome, context));
+
+        Build(manager);
+        var objectiveKey = QuestRecoveryKey.ForQuestStage(881, QuestRecoveryStage.Objective);
+        var turnInKey = QuestRecoveryKey.ForQuestStage(882, QuestRecoveryStage.TurnIn);
+        QuestRecoveryRecord objective = manager.GetEntries().Single(record => record.Key.Equals(objectiveKey));
+        QuestRecoveryRecord turnIn = manager.GetEntries().Single(record => record.Key.Equals(turnInKey));
+        Assert(objective.State == QuestRecoveryState.Quarantined
+               && objective.Reason == QuestFailureReason.InvalidQuestData
+               && objective.Evidence.Single().Text == "scheduler:no-objective-rows"
+               && turnIn.State == QuestRecoveryState.Quarantined
+               && turnIn.Reason == QuestFailureReason.InvalidQuestData
+               && turnIn.Evidence.Single().Text == "scheduler:no-ender-relations",
+            "accepted work with no objective or ender rows must become stable stage-level data quarantines");
+        manager.Flush();
+
+        var reloaded = new QuestRecoveryManager(new TestRecoveryClock(utcNow.AddMinutes(1)));
+        reloaded.Configure(environment);
+        Build(reloaded);
+        Assert(reloaded.GetRecord(objectiveKey)?.Evidence.Count == 1
+               && reloaded.GetRecord(turnInKey)?.Evidence.Count == 1,
+            "persisted zero-row quarantines must not churn duplicate evidence on scheduler rebuild");
+
+        reloaded.SetManualBlacklist(883, true);
+        reloaded.MarkCompleted(884);
+        db.Quests.Add(new QuestEntry { Id = 883, Name = "Manual zero objective" });
+        db.Quests.Add(new QuestEntry { Id = 884, Name = "Completed zero objective" });
+        QuestScheduler.MaterializeSchedule(
+            db,
+            Snapshot(new[] { Accepted(883, false), Accepted(884, false) }, Array.Empty<uint>(), authoritative: false),
+            key => reloaded.Evaluate(key, context), 10, 500, 7,
+            reportDataFailure: outcome => reloaded.Report(outcome, context));
+        Assert(!reloaded.GetEntries().Any(record =>
+                   record.Key.Equals(QuestRecoveryKey.ForQuestStage(883, QuestRecoveryStage.Objective)))
+               && !reloaded.GetEntries().Any(record =>
+                   record.Key.Equals(QuestRecoveryKey.ForQuestStage(884, QuestRecoveryStage.Objective))),
+            "manual and completed terminal precedence must suppress zero-row automatic quarantine reports");
     }
     finally
     {
