@@ -34,6 +34,7 @@ try
     TestQuestAbandonmentPrerequisiteGuards();
     TestPrerequisiteAuthorityReverseScansDependencies();
     TestPrerequisiteAuthorityTraversesCompleteGraphSafely();
+    TestPrerequisiteAuthorityHonorsTraversalBoundary();
     TestQuestAbandonmentSlotMatrix();
     TestQuestAbandonmentStateMatrix();
     TestQuestAbandonmentReasonMatrix();
@@ -354,6 +355,26 @@ static void TestDeathResetRecognizesEquippedReplacementAcrossReload(string setti
     Assert(reloaded.Evaluate(key, replacement).MayAttempt,
         "replacing an equipped item must reopen one controlled death probe even when critical count is unchanged");
 
+    var removed = new QuestRecoveryContext
+    {
+        EquipmentFingerprint = "100:critical",
+        EquipmentHealthKnown = true,
+        CriticalEquipmentCount = 1,
+        EquipmentEntries = new uint[] { 100 }
+    };
+    Assert(!reloaded.Evaluate(key, removed).MayAttempt,
+        "removing or unequipping an item must not masquerade as a capability improvement");
+
+    var added = new QuestRecoveryContext
+    {
+        EquipmentFingerprint = "100:critical|200:healthy|300:healthy",
+        EquipmentHealthKnown = true,
+        CriticalEquipmentCount = 1,
+        EquipmentEntries = new uint[] { 100, 200, 300 }
+    };
+    Assert(reloaded.Evaluate(key, added).MayAttempt,
+        "adding an equipped item without worsening critical damage must count as capability improvement");
+
     var degraded = new QuestRecoveryContext
     {
         EquipmentFingerprint = "100:critical|200:critical",
@@ -502,6 +523,36 @@ static void TestPrerequisiteAuthorityTraversesCompleteGraphSafely()
     Assert(QuestPrerequisiteAuthority.DetermineFromPublishedDependencies(
                867, new uint[] { 900 }) == QuestPrerequisiteStatus.Unknown,
         "an unpublished graph must fail closed");
+}
+
+static void TestPrerequisiteAuthorityHonorsTraversalBoundary()
+{
+    QuestPrerequisiteAuthority.PublishAuthoritativeDependencies(new[]
+    {
+        new QuestDependencyEvidence(2, 1, isActive: false, isAuthoritative: true)
+    });
+    Assert(QuestPrerequisiteAuthority.DetermineFromPublishedDependencies(
+               1, new uint[] { 2 }) == QuestPrerequisiteStatus.Active,
+        "a direct active dependent must remain detectable within the traversal bound");
+
+    QuestDependencyEvidence[] exactlyBounded = Enumerable.Range(1, 4096)
+        .Select(id => new QuestDependencyEvidence(
+            unchecked((uint)(id + 1)), unchecked((uint)id), false, true))
+        .ToArray();
+    QuestPrerequisiteAuthority.PublishAuthoritativeDependencies(exactlyBounded);
+    Assert(QuestPrerequisiteAuthority.DetermineFromPublishedDependencies(
+               1, new uint[] { 4097 }) == QuestPrerequisiteStatus.Active,
+        "a transitive active dependent at exactly 4,096 examined edges must remain authoritative");
+
+    QuestDependencyEvidence[] beyondBound = Enumerable.Range(1, 4097)
+        .Select(id => new QuestDependencyEvidence(
+            unchecked((uint)(id + 1)), unchecked((uint)id), false, true))
+        .ToArray();
+    QuestPrerequisiteAuthority.PublishAuthoritativeDependencies(beyondBound);
+    Assert(QuestPrerequisiteAuthority.DetermineFromPublishedDependencies(
+               1, new uint[] { 4098 }) == QuestPrerequisiteStatus.Unknown,
+        "a dependency requiring more than 4,096 examined edges must fail closed instead of guessing inactive");
+    QuestPrerequisiteAuthority.ClearPublishedDependencyAuthority();
 }
 
 static void TestManagerAutomaticAbandonmentIsAtomic(string settingsRoot, DateTime now)

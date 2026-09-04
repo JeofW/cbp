@@ -267,7 +267,7 @@ public static class QuestRecoveryPolicy
         IReadOnlyList<uint> previous,
         IReadOnlyList<uint> current)
     {
-        if (previous.Count == 0 || current.Count == 0)
+        if (previous.Count == 0 || current.Count < previous.Count)
             return false;
         return !previous.OrderBy(value => value).SequenceEqual(current.OrderBy(value => value));
     }
