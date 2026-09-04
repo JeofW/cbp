@@ -20,6 +20,7 @@ TestNaturalMismatchAdvancesToAlternateAndAlternateCanSucceed();
 TestInteractionCyclesSpanChildReplacementAndBeatTimeout();
 TestTerminalAndStaleCleanupUseExactPoiIdentity();
 SafeTurnInRegressionTests.Run();
+ZygorRecoveryRegressionTests.Run();
 
 Console.WriteLine("Quest recovery adapter regression tests passed.");
 
