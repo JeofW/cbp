@@ -415,6 +415,11 @@ public sealed class QuestRecoveryManager
 
     public void SetManualBlacklist(uint questId, bool blacklisted)
     {
+        TrySetManualBlacklist(questId, blacklisted);
+    }
+
+    public bool TrySetManualBlacklist(uint questId, bool blacklisted)
+    {
         lock (_sync)
         {
             EnsureConfiguredCore();
@@ -422,28 +427,39 @@ public sealed class QuestRecoveryManager
             {
                 if (_records.Values.Any(pair =>
                         pair.Key.QuestId == questId && pair.State == QuestRecoveryState.Completed))
-                    return;
+                    return false;
+
+                bool changed = false;
 
                 foreach (var pair in _records
                     .Where(pair => pair.Key.QuestId == questId && pair.Value.State == QuestRecoveryState.Attempting)
                     .ToArray())
                 {
                     _records[pair.Key] = Copy(pair.Value, state: QuestRecoveryState.Eligible);
+                    changed = true;
                 }
 
                 var key = QuestRecoveryKey.ForQuestStage(questId, QuestRecoveryStage.Pickup);
                 var existing = _records.TryGetValue(key, out var current) ? current : null;
-                _records[key] = existing is null
-                    ? new QuestRecoveryRecord
+                if (existing is null)
+                {
+                    _records[key] = new QuestRecoveryRecord
                     {
                         Key = key,
                         State = QuestRecoveryState.ManualBlacklist,
                         Reason = QuestFailureReason.UserExcluded
-                    }
-                    : Copy(
+                    };
+                    changed = true;
+                }
+                else if (existing.State != QuestRecoveryState.ManualBlacklist ||
+                         existing.Reason != QuestFailureReason.UserExcluded)
+                {
+                    _records[key] = Copy(
                         existing,
                         state: QuestRecoveryState.ManualBlacklist,
                         reason: QuestFailureReason.UserExcluded);
+                    changed = true;
+                }
                 foreach (var pair in _records
                     .Where(pair => pair.Key.QuestId == questId &&
                         pair.Value.State == QuestRecoveryState.ManualBlacklist &&
@@ -454,33 +470,44 @@ public sealed class QuestRecoveryManager
                         pair.Value,
                         state: QuestRecoveryState.Eligible,
                         reason: QuestFailureReason.None);
+                    changed = true;
                 }
-            }
-            else
-            {
-                foreach (var pair in _records
-                    .Where(pair => pair.Key.QuestId == questId &&
-                        pair.Value.State == QuestRecoveryState.ManualBlacklist)
-                    .ToArray())
-                {
-                    _records.Remove(pair.Key);
-                }
+
+                _dirty |= changed;
+                return changed;
             }
 
-            _dirty = true;
+            bool removed = false;
+            foreach (var pair in _records
+                .Where(pair => pair.Key.QuestId == questId &&
+                    pair.Value.State == QuestRecoveryState.ManualBlacklist)
+                .ToArray())
+            {
+                removed |= _records.Remove(pair.Key);
+            }
+
+            _dirty |= removed;
+            return removed;
         }
     }
 
     public void RetryNow(QuestRecoveryKey key)
+    {
+        TryRetryNow(key);
+    }
+
+    public bool TryRetryNow(QuestRecoveryKey key)
     {
         ArgumentNullException.ThrowIfNull(key);
 
         lock (_sync)
         {
             EnsureConfiguredCore();
-            if (FindQuestTerminalCore(key.QuestId) is not null || !_records.TryGetValue(key, out var current))
+            if (FindQuestTerminalCore(key.QuestId) is not null ||
+                !_records.TryGetValue(key, out var current) ||
+                current.State is not (QuestRecoveryState.CoolingDown or QuestRecoveryState.Quarantined))
             {
-                return;
+                return false;
             }
 
             _records[key] = Copy(
@@ -491,10 +518,16 @@ public sealed class QuestRecoveryManager
                 nextHalfOpenUtc: null,
                 replaceNextHalfOpenUtc: true);
             _dirty = true;
+            return true;
         }
     }
 
     public void ClearExclusion(QuestRecoveryKey key)
+    {
+        TryClearExclusion(key);
+    }
+
+    public bool TryClearExclusion(QuestRecoveryKey key)
     {
         ArgumentNullException.ThrowIfNull(key);
 
@@ -503,7 +536,7 @@ public sealed class QuestRecoveryManager
             EnsureConfiguredCore();
             if (FindQuestTerminalCore(key.QuestId) is { State: QuestRecoveryState.Completed })
             {
-                return;
+                return false;
             }
 
             bool selectedWasManual = _records.TryGetValue(key, out var selected) &&
@@ -526,6 +559,7 @@ public sealed class QuestRecoveryManager
             }
 
             _dirty |= removed;
+            return removed;
         }
     }
 

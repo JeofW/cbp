@@ -215,3 +215,57 @@ Round 2 changes only one external runtime file:
 - `SettingsForm.cs` — `b0a8c42f5b5f56d604d4617c8137e2fab0ef7d0093edc7bf8dfe8b5e51da5d91`
 
 All other external hashes remain as listed above. The final seven-file `installed.sha256.txt` hashes to `B80854622FCA3B58E6024C2C5338AD0703242F446104A7F2310F321D9D217414`; the preserved original `manifest.sha256.txt` still hashes to `C5787DD61F477ECB40D3366F1834B3CD61123806436BF96109B611855D106D56`. No external deployment, live replacement, push, apphost generation, or bot launch was performed.
+
+## Review Round 3 Stale-Action Correction
+
+The public `RetryNow`, `ClearExclusion`, and `SetManualBlacklist` methods remain source-compatible wrappers. New `TryRetryNow`, `TryClearExclusion`, and `TrySetManualBlacklist` variants return whether the manager actually changed state under its lock. Retry accepts only a current cooling/quarantined exclusion; missing rows, newer terminal/eligible/half-open state, and completed quests return false. Clear returns false when neither the selected exclusion nor a same-quest manual terminal can be removed. Manual toggles now report and dirty only real changes.
+
+`RecoverySettingsController` uses these mutation results before persistence. A stale or availability-raced Retry/Mark/Clear logs an explicit unavailable/no-change status, refreshes the grid, does not invoke the recovery-changed callback, and never enters `TryFlush`; unrelated dirty manager state therefore remains unpersisted. Successful actions retain Round 2 failure handling and execute exactly one flush transaction. A narrow injectable flush function defaults to `manager.TryFlush` and lets production-linked tests count the actual controller persistence boundary without replacing manager behavior.
+
+Round 3 strict-TDD evidence:
+
+```text
+STALE_ACTION_RED: exited 1 at "a stale action must report no change and refresh current status without signaling a mutation".
+COUNTING_FLUSH_RED: build failed with CS1729 because RecoverySettingsController lacked the counting persistence seam.
+GREEN: Wholesome scheduler recovery regression tests passed.
+```
+
+The real WinForms race regression selects cooling Retry/Clear rows, changes manager state after selection, adds unrelated dirty state, clicks the still-visible button, and proves zero callback, accurate no-change logging, status-grid refresh, no JSON write, no unrelated persistence, and preserved `Completed`. It also covers a same-quest manual-terminal availability race. The counting regression verifies zero flush attempts for stale Retry/Clear, raced Mark, and all Completed actions, and exactly one attempt for successful Retry/Clear/Mark. The existing unavailable-character form regression continues to prove its read-only Save path never attempts recovery persistence.
+
+Fresh Round 3 verification:
+
+```text
+[Wholesome external bot/UI + linked regressions]
+Build succeeded. 3261 Warning(s), 0 Error(s).
+Wholesome scheduler recovery regression tests passed.
+SCOPED_COMPILER_DIAGNOSTICS=0
+
+[QuestRecoveryCore]
+Build succeeded. 3246 Warning(s), 0 Error(s).
+Quest recovery regression tests passed.
+
+[QuestPickupCore]
+Build succeeded. 3246 Warning(s), 0 Error(s).
+Quest pickup policy regression tests passed.
+
+[FullReleaseX86]
+Build succeeded. 3250 Warning(s), 0 Error(s).
+
+QUEST_BLACKLIST_STORAGE_SCAN_EXIT=1 (zero matches)
+TREE_ROOT_START_SCAN_EXIT=1 (zero matches)
+TASK5_LEGACY_DIRECT_WRITER_SCAN_EXIT=1 (zero matches)
+WHOLESOME_APPHOST_EXISTS=False
+CORE_APPHOST_EXISTS=False
+PICKUP_APPHOST_EXISTS=False
+BACKUP_HASH_MISMATCHES=0
+INSTALLED_HASH_MISMATCHES=0
+TRAILING_WHITESPACE=0
+```
+
+Round 3 changes only one external runtime file:
+
+- `SettingsForm.cs` — `1457666c7061676f11c33352ed401d9c8d6d1092c1b8ad8c726ff2321fdd651b`
+
+The final seven-file `installed.sha256.txt` hashes to `4256988A2E6A7A7ED1DAED6A4835218C9F1557BDF7D6E00B90C7D162643AD630`; the original manifest remains `C5787DD61F477ECB40D3366F1834B3CD61123806436BF96109B611855D106D56` with zero backup mismatches.
+
+Per the review ruling, the separate legacy blacklist readers/writers in `Quest Behaviors/SafePickUp.cs`, `Quest Behaviors/SafeTurnIn.cs`, and `Plugins/ZygorProfileRecovery/ZygorProfileRecovery.cs` were inventoried but deliberately not edited here. They are deferred to Tasks 2–4 of the next approved adapters rollout plan and are outside Wholesome Task 5 scope. No push, deployment, live replacement, apphost, or bot launch occurred.

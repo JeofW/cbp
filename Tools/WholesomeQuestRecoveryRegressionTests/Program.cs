@@ -91,6 +91,8 @@ try
     TestConfigurationBeforeStartLoadsPersistedRecoveryWithoutStartingLifecycle();
     TestPreStartConfigurationMutationsPersistAcrossFreshManagers();
     TestRecoveryFlushFailureIsVisibleAndRetryable();
+    TestStaleRecoveryUiActionsRefreshWithoutPersistingDirtyState();
+    TestRecoveryActionFlushCountTracksActualMutations();
     TestConfigurationWithoutCharacterIsReadOnlyAndContainsErrors();
     Console.WriteLine("Wholesome scheduler recovery regression tests passed.");
 }
@@ -833,6 +835,225 @@ void TestRecoveryFlushFailureIsVisibleAndRetryable()
             root, "Jeof", "Lordaeron", result.DatasetFingerprint, "core", result.NavigationFingerprint));
         Assert(reloaded.GetEntries().Single(record => record.Key.QuestId == 3731).State == QuestRecoveryState.ManualBlacklist,
             "a failed flush must keep state dirty so a later Save can persist it without another textbox diff");
+    }
+    finally
+    {
+        Directory.Delete(root, recursive: true);
+    }
+}
+
+void TestStaleRecoveryUiActionsRefreshWithoutPersistingDirtyState()
+{
+    string root = Path.Combine(Path.GetTempPath(), $"wholesome-stale-actions-{Guid.NewGuid():N}");
+    Directory.CreateDirectory(root);
+    var environment = new QuestRecoveryEnvironment(root, "Jeof", "Lordaeron", "dataset", "core", "nav");
+    var retryKey = QuestRecoveryKey.ForQuestStage(3741, QuestRecoveryStage.Objective);
+    var clearKey = QuestRecoveryKey.ForQuestStage(3742, QuestRecoveryStage.TurnIn);
+    try
+    {
+        var seed = new QuestRecoveryManager(new TestRecoveryClock(utcNow));
+        seed.Configure(environment);
+        CreateCoolingRecord(seed, retryKey, QuestFailureReason.NoObjectiveProgress);
+        CreateCoolingRecord(seed, clearKey, QuestFailureReason.TurnInTargetNotOffered);
+        seed.MarkCompleted(3799);
+        seed.Flush();
+
+        void RunStaleAction(QuestRecoveryKey selectedKey, uint unrelatedQuestId, string buttonName, string actionName)
+        {
+            var manager = new QuestRecoveryManager(new TestRecoveryClock(utcNow));
+            manager.Configure(environment);
+            var logs = new List<string>();
+            int recoveryChanged = 0;
+            Exception? failure = null;
+            var finished = new ManualResetEventSlim();
+            var thread = new Thread(() =>
+            {
+                try
+                {
+                    using var form = new SettingsForm(
+                        new WholesomeAQSettings(),
+                        logs.Add,
+                        recoveryChanged: () => recoveryChanged++,
+                        recoveryManager: manager);
+                    form.Show();
+                    System.Windows.Forms.Application.DoEvents();
+                    SelectRecoveryRow(form, selectedKey);
+
+                    manager.ClearExclusion(selectedKey);
+                    manager.SetManualBlacklist(unrelatedQuestId, true);
+                    ((System.Windows.Forms.Button)form.Controls.Find(buttonName, true).Single()).PerformClick();
+                    System.Windows.Forms.Application.DoEvents();
+
+                    var grid = (System.Windows.Forms.DataGridView)form.Controls.Find("recoveryGrid", true).Single();
+                    Assert(recoveryChanged == 0
+                           && logs.Any(line => line.Contains($"{actionName} made no change", StringComparison.Ordinal))
+                           && grid.Rows.Cast<System.Windows.Forms.DataGridViewRow>()
+                               .All(row => row.Tag is not RecoveryStatusRow status || !status.Key.Equals(selectedKey)),
+                        "a stale action must report no change and refresh current status without signaling a mutation");
+                }
+                catch (Exception ex)
+                {
+                    failure = ex;
+                }
+                finally
+                {
+                    finished.Set();
+                }
+            });
+            thread.SetApartmentState(ApartmentState.STA);
+            thread.Start();
+            Assert(finished.Wait(TimeSpan.FromSeconds(10)), "the stale recovery action UI regression must finish without deadlock");
+            thread.Join();
+            if (failure != null)
+                throw failure;
+
+            var reloaded = new QuestRecoveryManager(new TestRecoveryClock(utcNow));
+            reloaded.Configure(environment);
+            Assert(reloaded.GetEntries().Any(record => record.Key.Equals(selectedKey))
+                   && reloaded.GetEntries().All(record => record.Key.QuestId != unrelatedQuestId)
+                   && reloaded.GetEntries().Single(record => record.Key.QuestId == 3799).State == QuestRecoveryState.Completed,
+                "a stale action must not flush its no-op or unrelated dirty state, and must preserve Completed");
+        }
+
+        RunStaleAction(retryKey, 3751, "retryRecoveryButton", "Retry now");
+        RunStaleAction(clearKey, 3752, "clearExclusionButton", "Clear exclusion");
+
+        var raced = new QuestRecoveryManager(new TestRecoveryClock(utcNow));
+        raced.Configure(environment);
+        var raceLogs = new List<string>();
+        int raceChanged = 0;
+        Exception? raceFailure = null;
+        var raceFinished = new ManualResetEventSlim();
+        var raceThread = new Thread(() =>
+        {
+            try
+            {
+                using var form = new SettingsForm(
+                    new WholesomeAQSettings(),
+                    raceLogs.Add,
+                    recoveryChanged: () => raceChanged++,
+                    recoveryManager: raced);
+                form.Show();
+                System.Windows.Forms.Application.DoEvents();
+                SelectRecoveryRow(form, retryKey);
+                raced.SetManualBlacklist(retryKey.QuestId, true);
+                ((System.Windows.Forms.Button)form.Controls.Find("retryRecoveryButton", true).Single()).PerformClick();
+                System.Windows.Forms.Application.DoEvents();
+                var retry = (System.Windows.Forms.Button)form.Controls.Find("retryRecoveryButton", true).Single();
+                Assert(raceChanged == 0
+                       && raceLogs.Any(line => line.Contains("Retry now unavailable", StringComparison.Ordinal))
+                       && !retry.Enabled,
+                    "an availability race must refresh to the current terminal state without flushing or signaling success");
+            }
+            catch (Exception ex)
+            {
+                raceFailure = ex;
+            }
+            finally
+            {
+                raceFinished.Set();
+            }
+        });
+        raceThread.SetApartmentState(ApartmentState.STA);
+        raceThread.Start();
+        Assert(raceFinished.Wait(TimeSpan.FromSeconds(10)), "the recovery availability race UI regression must finish without deadlock");
+        raceThread.Join();
+        if (raceFailure != null)
+            throw raceFailure;
+
+        var raceReloaded = new QuestRecoveryManager(new TestRecoveryClock(utcNow));
+        raceReloaded.Configure(environment);
+        Assert(raceReloaded.GetEntries().All(record => record.State != QuestRecoveryState.ManualBlacklist),
+            "an availability race no-op must not persist its dirty terminal change");
+    }
+    finally
+    {
+        Directory.Delete(root, recursive: true);
+    }
+}
+
+void TestRecoveryActionFlushCountTracksActualMutations()
+{
+    string root = Path.Combine(Path.GetTempPath(), $"wholesome-action-flush-count-{Guid.NewGuid():N}");
+    Directory.CreateDirectory(root);
+    var environment = new QuestRecoveryEnvironment(root, "Jeof", "Lordaeron", "dataset", "core", "nav");
+    var retryKey = QuestRecoveryKey.ForQuestStage(3761, QuestRecoveryStage.Objective);
+    var clearKey = QuestRecoveryKey.ForQuestStage(3762, QuestRecoveryStage.TurnIn);
+    var markKey = QuestRecoveryKey.ForQuestStage(3763, QuestRecoveryStage.Pickup);
+    try
+    {
+        var seed = new QuestRecoveryManager(new TestRecoveryClock(utcNow));
+        seed.Configure(environment);
+        CreateCoolingRecord(seed, retryKey, QuestFailureReason.NoObjectiveProgress);
+        CreateCoolingRecord(seed, clearKey, QuestFailureReason.TurnInTargetNotOffered);
+        CreateCoolingRecord(seed, markKey, QuestFailureReason.PickupTargetNotOffered);
+        seed.MarkCompleted(3799);
+        seed.Flush();
+
+        (QuestRecoveryManager manager, RecoverySettingsController controller, Func<int> flushCount) LoadCounting()
+        {
+            var manager = new QuestRecoveryManager(new TestRecoveryClock(utcNow));
+            manager.Configure(environment);
+            int count = 0;
+            var controller = new RecoverySettingsController(
+                manager,
+                _ => { },
+                () =>
+                {
+                    count++;
+                    return manager.TryFlush();
+                });
+            return (manager, controller, () => count);
+        }
+
+        var staleRetry = LoadCounting();
+        var staleRetryRow = staleRetry.controller.Refresh().Single(row => row.Key.Equals(retryKey));
+        staleRetry.manager.ClearExclusion(retryKey);
+        staleRetry.manager.SetManualBlacklist(3771, true);
+        Assert(!staleRetry.controller.RetryNow(staleRetryRow) && staleRetry.flushCount() == 0,
+            "a stale Retry now must perform zero flush attempts");
+        var afterStaleRetry = new QuestRecoveryManager(new TestRecoveryClock(utcNow));
+        afterStaleRetry.Configure(environment);
+        Assert(afterStaleRetry.GetEntries().Any(record => record.Key.Equals(retryKey))
+               && afterStaleRetry.GetEntries().All(record => record.Key.QuestId != 3771),
+            "a stale Retry now must leave unrelated dirty state unpersisted");
+
+        var successfulRetry = LoadCounting();
+        var retryRow = successfulRetry.controller.Refresh().Single(row => row.Key.Equals(retryKey));
+        Assert(successfulRetry.controller.RetryNow(retryRow) && successfulRetry.flushCount() == 1,
+            "a successful Retry now mutation must perform exactly one flush attempt");
+
+        var staleClear = LoadCounting();
+        var staleClearRow = staleClear.controller.Refresh().Single(row => row.Key.Equals(clearKey));
+        staleClear.manager.ClearExclusion(clearKey);
+        staleClear.manager.SetManualBlacklist(3772, true);
+        Assert(!staleClear.controller.ClearExclusion(staleClearRow) && staleClear.flushCount() == 0,
+            "a stale Clear exclusion must perform zero flush attempts");
+
+        var successfulClear = LoadCounting();
+        var clearRow = successfulClear.controller.Refresh().Single(row => row.Key.Equals(clearKey));
+        Assert(successfulClear.controller.ClearExclusion(clearRow) && successfulClear.flushCount() == 1,
+            "a successful Clear exclusion mutation must perform exactly one flush attempt");
+
+        var racedMark = LoadCounting();
+        var racedMarkRow = racedMark.controller.Refresh().Single(row => row.Key.Equals(markKey));
+        racedMark.manager.MarkCompleted(markKey.QuestId);
+        racedMark.manager.SetManualBlacklist(3773, true);
+        Assert(!racedMark.controller.MarkPermanent(racedMarkRow) && racedMark.flushCount() == 0,
+            "a Mark permanent availability race with Completed must perform zero flush attempts");
+
+        var successfulMark = LoadCounting();
+        var markRow = successfulMark.controller.Refresh().Single(row => row.Key.Equals(markKey));
+        Assert(successfulMark.controller.MarkPermanent(markRow) && successfulMark.flushCount() == 1,
+            "a successful Mark permanent mutation must perform exactly one flush attempt");
+
+        var completed = LoadCounting();
+        var completedRow = completed.controller.Refresh().Single(row => row.QuestId == 3799);
+        Assert(!completed.controller.RetryNow(completedRow)
+               && !completed.controller.MarkPermanent(completedRow)
+               && !completed.controller.ClearExclusion(completedRow)
+               && completed.flushCount() == 0,
+            "Completed recovery actions must remain terminal and perform zero flush attempts");
     }
     finally
     {
