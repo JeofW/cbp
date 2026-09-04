@@ -158,9 +158,14 @@ public sealed class QuestAttemptOutcome
         (attemptKey.Equals(targetKey) ||
          attemptKey.QuestId == targetKey.QuestId &&
          attemptKey.Scope == QuestRecoveryScope.QuestStage &&
-         attemptKey.Stage == QuestRecoveryStage.Objective &&
-         targetKey.Scope == QuestRecoveryScope.Endpoint &&
-         targetKey.Stage == QuestRecoveryStage.Navigation);
+         (attemptKey.Stage == QuestRecoveryStage.Objective &&
+          targetKey.Scope == QuestRecoveryScope.Endpoint &&
+          targetKey.Stage == QuestRecoveryStage.Navigation ||
+          attemptKey.Stage == QuestRecoveryStage.Pickup &&
+          (targetKey.Scope == QuestRecoveryScope.NpcRelation &&
+           targetKey.Stage == QuestRecoveryStage.Pickup ||
+           targetKey.Scope == QuestRecoveryScope.Endpoint &&
+           targetKey.Stage == QuestRecoveryStage.Navigation)));
 
     public static QuestAttemptOutcome Observation(QuestRecoveryKey key,
         QuestFailureReason reason, string evidence) =>

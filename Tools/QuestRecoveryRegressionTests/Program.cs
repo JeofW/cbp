@@ -69,6 +69,7 @@ try
     TestOwnedFailureRequiresExactGenerationAndReleasesAtomically(Path.Combine(testRoot, "failure-generation"), now);
     TestOwnedEndpointFailurePreservesStageHistory(Path.Combine(testRoot, "failure-endpoint-owner"), now);
     TestGeneratedFailureAuthorityAndAtomicStageSequence(Path.Combine(testRoot, "failure-authority"), now);
+    TestPickupAttemptAuthorizesNarrowAdapterFailures(Path.Combine(testRoot, "pickup-adapter-authority"), now);
     TestNeutralAbandonReleasesOnlyExactAttemptGeneration(Path.Combine(testRoot, "neutral-abandon"), now);
     TestRetryNowRejectsPriorOwnerSuccess(Path.Combine(testRoot, "success-retry-now"), now);
     TestIdentitySwitchCannotReuseOwnership(Path.Combine(testRoot, "success-identity"), now);
@@ -2114,6 +2115,51 @@ static void TestGeneratedFailureAuthorityAndAtomicStageSequence(string settingsR
            && stageRecord.EpisodeCount == 1
            && !manager.OwnsAttempt(source, newer.AttemptGeneration),
         "one atomic subordinate-then-stage sequence must cool both scopes and release the exact stage owner last");
+}
+
+static void TestPickupAttemptAuthorizesNarrowAdapterFailures(string settingsRoot, DateTime now)
+{
+    var manager = new QuestRecoveryManager(new FixedClock(now));
+    manager.Configure(CreateEnvironment(settingsRoot, "Jeof", "Lordaeron"));
+    var pickup = QuestRecoveryKey.ForQuestStage(876, QuestRecoveryStage.Pickup);
+    var relation = QuestRecoveryKey.ForNpc(876, QuestRecoveryStage.Pickup, 3338);
+    var endpoint = QuestRecoveryKey.ForEndpoint(876, QuestRecoveryStage.Navigation, 1, "3338:-437.2,-3192.1,91.6");
+    var owner = manager.TryBeginAttempt(pickup, Context());
+
+    var relationFailure = QuestAttemptOutcome.Failure(
+        relation,
+        pickup,
+        owner.AttemptGeneration,
+        QuestFailureReason.PickupWrongQuestShown,
+        "target=876; shown=867; giver=3338; offered=[867,875]");
+    manager.Report(relationFailure, Context());
+
+    Assert(manager.OwnsAttempt(pickup, owner.AttemptGeneration)
+           && manager.GetEntries().Single(item => item.Key.Equals(relation)).EpisodeCount == 1,
+        "an exact pickup-stage owner must authorize its same-quest pickup/NPC relation failure");
+
+    var endpointFailure = QuestAttemptOutcome.Failure(
+        endpoint,
+        pickup,
+        owner.AttemptGeneration,
+        QuestFailureReason.PathGenerationFailed,
+        "map=1; endpoint=3338:-437.2,-3192.1,91.6");
+    manager.Report(endpointFailure, Context());
+
+    Assert(manager.OwnsAttempt(pickup, owner.AttemptGeneration)
+           && manager.GetEntries().Single(item => item.Key.Equals(endpoint)).EpisodeCount == 1,
+        "an exact pickup-stage owner must authorize its same-quest navigation endpoint failure");
+
+    manager.Report(
+        QuestAttemptOutcome.Failure(
+            pickup,
+            pickup,
+            owner.AttemptGeneration,
+            QuestFailureReason.EndpointUnreachable,
+            "all pickup giver endpoints exhausted"),
+        Context());
+    Assert(!manager.OwnsAttempt(pickup, owner.AttemptGeneration),
+        "the exact pickup-stage terminal outcome must release adapter ownership");
 }
 
 static void TestNeutralAbandonReleasesOnlyExactAttemptGeneration(string settingsRoot, DateTime now)
