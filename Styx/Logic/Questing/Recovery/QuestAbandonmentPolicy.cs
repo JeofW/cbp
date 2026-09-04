@@ -1,5 +1,14 @@
 namespace Styx.Logic.Questing.Recovery;
 
+public sealed class QuestAbandonmentLiveSnapshot
+{
+    public bool IsAccepted { get; init; }
+    public bool IsCompleted { get; init; }
+    public bool StateIsCertain { get; init; }
+    public bool HasObjectiveProgress { get; init; }
+    public int FreeQuestLogSlots { get; init; }
+}
+
 public sealed class QuestAbandonmentContext
 {
     public bool IsAccepted { get; init; }

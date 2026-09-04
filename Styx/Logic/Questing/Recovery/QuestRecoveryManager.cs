@@ -183,8 +183,56 @@ public sealed class QuestRecoveryManager
 
         lock (_sync)
         {
+            if (IsOwnedIncompleteRedirect(outcome))
+                return TryReportOwnedRedirectCore(outcome, context).Decision;
             return ReportCore(outcome, context, countRollingFailure: true);
         }
+    }
+
+    public QuestRecoveryReportResult TryReportOwnedRedirect(
+        QuestAttemptOutcome outcome,
+        QuestRecoveryContext context)
+    {
+        ArgumentNullException.ThrowIfNull(outcome);
+        ArgumentNullException.ThrowIfNull(outcome.Key);
+        ArgumentNullException.ThrowIfNull(context);
+
+        lock (_sync)
+        {
+            return TryReportOwnedRedirectCore(outcome, context);
+        }
+    }
+
+    private QuestRecoveryReportResult TryReportOwnedRedirectCore(
+        QuestAttemptOutcome outcome,
+        QuestRecoveryContext context)
+    {
+        EnsureConfiguredCore();
+        var normalizedContext = NormalizeContext(context);
+        QuestRecoveryKey? attemptKey = outcome.AttemptKey;
+        if (!IsOwnedIncompleteRedirect(outcome) ||
+            attemptKey == null ||
+            !outcome.Key.Equals(attemptKey) ||
+            attemptKey.Stage != QuestRecoveryStage.TurnIn ||
+            attemptKey.Scope != QuestRecoveryScope.QuestStage ||
+            outcome.AttemptGeneration <= 0 ||
+            FindQuestTerminalCore(attemptKey.QuestId) is not null ||
+            !_records.TryGetValue(attemptKey, out var owner) ||
+            owner.State != QuestRecoveryState.Attempting ||
+            owner.AttemptGeneration != outcome.AttemptGeneration)
+        {
+            return new QuestRecoveryReportResult
+            {
+                Accepted = false,
+                Decision = EvaluateCore(outcome.Key, normalizedContext)
+            };
+        }
+
+        return new QuestRecoveryReportResult
+        {
+            Accepted = true,
+            Decision = ReportCore(outcome, context, countRollingFailure: true)
+        };
     }
 
     private QuestRecoveryDecision ReportCore(
@@ -197,8 +245,6 @@ public sealed class QuestRecoveryManager
             QuestRecoveryRecord? activeOwner = null;
             QuestRecoveryKey? activeOwnerKey = null;
             bool generatedFailure = outcome.IsFailureEpisode && outcome.AttemptGeneration > 0;
-            bool ownedIncompleteRedirect = outcome.Kind == QuestAttemptOutcomeKind.Redirect &&
-                outcome.Reason == QuestFailureReason.TurnInQuestIncomplete;
             if (generatedFailure)
             {
                 activeOwnerKey = outcome.AttemptKey ?? outcome.Key;
@@ -214,20 +260,6 @@ public sealed class QuestRecoveryManager
                     targetOwner.State == QuestRecoveryState.Attempting)
                     return EvaluateCore(activeOwnerKey, normalizedContext);
             }
-            else if (ownedIncompleteRedirect)
-            {
-                activeOwnerKey = outcome.AttemptKey;
-                if (activeOwnerKey == null ||
-                    activeOwnerKey.Stage != QuestRecoveryStage.TurnIn ||
-                    activeOwnerKey.Scope != QuestRecoveryScope.QuestStage ||
-                    !QuestAttemptOutcome.IsAuthorizedGeneratedFailureTarget(activeOwnerKey, outcome.Key) ||
-                    !_records.TryGetValue(activeOwnerKey, out activeOwner) ||
-                    activeOwner.State != QuestRecoveryState.Attempting ||
-                    activeOwner.AttemptGeneration != outcome.AttemptGeneration)
-                {
-                    return EvaluateCore(outcome.Key, normalizedContext);
-                }
-            }
 
             var terminal = FindQuestTerminalCore(outcome.Key.QuestId);
             if (terminal is not null)
@@ -235,9 +267,7 @@ public sealed class QuestRecoveryManager
                 return QuestRecoveryPolicy.Evaluate(terminal, normalizedContext, RollingFailureCountCore(), _clock.UtcNow);
             }
 
-            var current = ownedIncompleteRedirect
-                ? activeOwner!
-                : FindRecordCore(outcome.Key) ?? QuestRecoveryRecord.Create(outcome.Key);
+            var current = FindRecordCore(outcome.Key) ?? QuestRecoveryRecord.Create(outcome.Key);
             current = MaterializeLegacyRecordCore(current, outcome.Key);
             if (outcome.IsFailureEpisode && current.State == QuestRecoveryState.Attempting && !generatedFailure)
             {
@@ -303,6 +333,11 @@ public sealed class QuestRecoveryManager
             LogTransition(current, updated);
             return QuestRecoveryPolicy.Evaluate(updated, normalizedContext, RollingFailureCountCore(), _clock.UtcNow);
     }
+
+    private static bool IsOwnedIncompleteRedirect(QuestAttemptOutcome outcome) =>
+        outcome.Kind == QuestAttemptOutcomeKind.Redirect &&
+        outcome.Reason == QuestFailureReason.TurnInQuestIncomplete &&
+        !outcome.IsFailureEpisode;
 
     public bool TryReportGeneratedFailures(
         IReadOnlyList<QuestAttemptOutcome> outcomes,
@@ -498,16 +533,25 @@ public sealed class QuestRecoveryManager
                 changed = true;
             }
 
-            var key = QuestRecoveryKey.ForQuestStage(questId, QuestRecoveryStage.Pickup);
+            var key = QuestRecoveryKey.ForManualTerminal(questId);
             var existing = _records.TryGetValue(key, out var current) ? current : null;
             if (existing is null)
             {
-                _records[key] = new QuestRecoveryRecord
-                {
-                    Key = key,
-                    State = QuestRecoveryState.ManualBlacklist,
-                    Reason = QuestFailureReason.UserExcluded
-                };
+                var legacy = _records.Values.FirstOrDefault(record =>
+                    record.Key.QuestId == questId &&
+                    record.State == QuestRecoveryState.ManualBlacklist);
+                _records[key] = legacy is null
+                    ? new QuestRecoveryRecord
+                    {
+                        Key = key,
+                        State = QuestRecoveryState.ManualBlacklist,
+                        Reason = QuestFailureReason.UserExcluded
+                    }
+                    : Copy(
+                        legacy,
+                        key: key,
+                        state: QuestRecoveryState.ManualBlacklist,
+                        reason: QuestFailureReason.UserExcluded);
                 changed = true;
             }
             else if (existing.State != QuestRecoveryState.ManualBlacklist ||
@@ -525,10 +569,7 @@ public sealed class QuestRecoveryManager
                     !pair.Key.Equals(key))
                 .ToArray())
             {
-                _records[pair.Key] = Copy(
-                    pair.Value,
-                    state: QuestRecoveryState.Eligible,
-                    reason: QuestFailureReason.None);
+                _records.Remove(pair.Key);
                 changed = true;
             }
 
@@ -597,8 +638,9 @@ public sealed class QuestRecoveryManager
                 return false;
             }
 
-            bool selectedWasManual = _records.TryGetValue(key, out var selected) &&
-                selected.State == QuestRecoveryState.ManualBlacklist;
+            bool questWasManual = _records.Values.Any(record =>
+                record.Key.QuestId == key.QuestId &&
+                record.State == QuestRecoveryState.ManualBlacklist);
             bool removed = false;
             foreach (var pair in _records
                 .Where(pair => pair.Key.QuestId == key.QuestId &&
@@ -608,7 +650,7 @@ public sealed class QuestRecoveryManager
                 removed |= _records.Remove(pair.Key);
             }
 
-            if (!selectedWasManual && _records.TryGetValue(key, out var current) &&
+            if (!questWasManual && _records.TryGetValue(key, out var current) &&
                 current.State is QuestRecoveryState.CoolingDown or
                     QuestRecoveryState.HalfOpen or
                     QuestRecoveryState.Quarantined)
@@ -642,6 +684,48 @@ public sealed class QuestRecoveryManager
         {
             EnsureConfiguredCore();
             return FindRecordCore(key);
+        }
+    }
+
+    public QuestAbandonmentDecision TryExecuteAutomaticAbandonment(
+        QuestRecoveryKey key,
+        Func<QuestAbandonmentLiveSnapshot> recapture,
+        Action abandonAction)
+    {
+        ArgumentNullException.ThrowIfNull(key);
+        ArgumentNullException.ThrowIfNull(recapture);
+        ArgumentNullException.ThrowIfNull(abandonAction);
+
+        lock (_sync)
+        {
+            EnsureConfiguredCore();
+            QuestAbandonmentLiveSnapshot live = recapture()
+                ?? throw new InvalidOperationException("Live quest abandonment recapture returned no snapshot.");
+            QuestRecoveryRecord? current = FindRecordCore(key);
+            QuestAbandonmentDecision decision = QuestAbandonmentPolicy.Evaluate(
+                new QuestAbandonmentContext
+                {
+                    IsAccepted = live.IsAccepted,
+                    IsCompleted = live.IsCompleted,
+                    StateIsCertain = live.StateIsCertain,
+                    HasObjectiveProgress = live.HasObjectiveProgress,
+                    FreeQuestLogSlots = live.FreeQuestLogSlots,
+                    RecoveryState = current?.State ?? QuestRecoveryState.Eligible,
+                    Reason = current?.Reason ?? QuestFailureReason.None
+                });
+            if (!decision.MayAbandon)
+                return decision;
+            if (!FlushCore())
+            {
+                return new QuestAbandonmentDecision
+                {
+                    MayAbandon = false,
+                    Reason = "Automatic abandonment denied: recovery state could not be persisted."
+                };
+            }
+
+            abandonAction();
+            return decision;
         }
     }
 

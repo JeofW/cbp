@@ -16,6 +16,7 @@ internal static class SafeTurnInRegressionTests
         TestIncompleteRedirectReleasesExactOwner();
         TestDeniedClaimLeavesUnrelatedPoiAndAppliesSafePressurePolicy();
         TestAbandonmentGuardsDenyUncertainProgressCompletedAndManualCases();
+        TestAtomicAbandonmentRecapturesCompletionAndProgress();
         TestUnknownAuthorityPausesInitializationAndTimers();
         TestCandidateOrderingDedupAndCap();
         TestMissingEnderAndExhaustedEndpointsUseNarrowOwnedFailures();
@@ -126,6 +127,35 @@ internal static class SafeTurnInRegressionTests
         Assert(unpersisted.AbandonQuestCount == 0
                && unpersisted.ClientMutationEvents.SequenceEqual(new[] { "persist" }),
             "automatic abandonment must be withheld when recovery state cannot be persisted first");
+    }
+
+    private static void TestAtomicAbandonmentRecapturesCompletionAndProgress()
+    {
+        var recaptures = new[]
+        {
+            (Snapshot(true, QuestCompletionState.KnownComplete, true, 2, 0, 0, 0, 0), "completed"),
+            (Snapshot(true, QuestCompletionState.KnownIncomplete, true, 2, 1, 0, 0, 0), "progressed")
+        };
+        foreach (var item in recaptures)
+        {
+            var runtime = new FakeTurnInRuntime
+            {
+                ClaimAllowed = false,
+                ClaimState = QuestRecoveryState.Quarantined,
+                RecoveryRecord = Record(
+                    QuestRecoveryState.Quarantined, QuestFailureReason.NoObjectiveProgress)
+            };
+            runtime.Snapshots.Enqueue(
+                Snapshot(true, QuestCompletionState.KnownIncomplete, true, 2, 0, 0, 0, 0));
+            runtime.Snapshots.Enqueue(item.Item1);
+
+            NewBehavior(runtime).OnStart();
+
+            Assert(runtime.AbandonQuestCount == 0
+                   && runtime.SnapshotReadCount == 2
+                   && runtime.ClientMutationEvents.Count == 0,
+                "atomic abandonment must recapture and retain a newly " + item.Item2 + " quest");
+        }
     }
 
     private static void TestUnknownAuthorityPausesInitializationAndTimers()
@@ -274,26 +304,30 @@ internal static class SafeTurnInRegressionTests
         runtime.Children[0].OnTick = () => runtime.CurrentPoi = ownedPoi;
         behavior.TickForTesting();
 
-        var winner = TurnInPoi(876, 3338, new WoWPoint(2, 2, 0));
         runtime.Snapshot = Snapshot(true, QuestCompletionState.KnownIncomplete, true, 8);
-        runtime.ReportDecision = new QuestRecoveryDecision
+        runtime.RedirectAccepted = false;
+        runtime.RedirectDecision = new QuestRecoveryDecision
         {
             State = QuestRecoveryState.Attempting,
             MayAttempt = false,
             AttemptGeneration = 42,
             Status = "newer owner retained"
         };
-        runtime.OnReport = _ => runtime.CurrentPoi = winner;
+        runtime.OnReport = _ => runtime.CurrentPoi = ownedPoi;
         behavior.TickForTesting();
+        behavior.Dispose();
 
         QuestAttemptOutcome redirect = runtime.Reports.Last();
         Assert(behavior.IsDone
                && redirect.Kind == QuestAttemptOutcomeKind.Redirect
                && redirect.AttemptGeneration == 41
-               && ReferenceEquals(runtime.CurrentPoi, winner)
+               && ReferenceEquals(runtime.CurrentPoi, ownedPoi)
                && runtime.ClearCount == 0
-               && runtime.AbandonAttemptCount == 0,
-            "a delayed incomplete redirect rejected behind owner B must not clear B's replacement POI or release B");
+               && runtime.AbandonAttemptCount == 1
+               && runtime.AbandonedKey.Equals(
+                   QuestRecoveryKey.ForQuestStage(876, QuestRecoveryStage.TurnIn))
+               && runtime.AbandonedGeneration == 41,
+            "a rejected delayed redirect must retain local owner A until disposal's exact-generation neutral release without clearing B's reused POI object");
     }
 
     private static void TestSuccessStaleAndDisposeUseExactPoiAndGeneration()
@@ -387,21 +421,22 @@ internal static class SafeTurnInRegressionTests
             QuestRecoveryManager.Instance.Configure(new QuestRecoveryEnvironment(
                 settingsRoot, "Jeof", "Lordaeron", "quest-data-v1", "core-v1", "nav-v1"));
 
-            QuestRecoveryRecord selected = new ProductionSafeTurnInRuntime().GetRecoveryRecord(turnIn);
-            var runtime = new FakeTurnInRuntime
-            {
-                ClaimAllowed = false,
-                ClaimState = QuestRecoveryState.ManualBlacklist,
-                Snapshot = Snapshot(true, QuestCompletionState.KnownIncomplete, true, 2, 0, 0, 0, 0),
-                RecoveryRecord = selected
-            };
-            NewBehavior(runtime).OnStart();
+            QuestAbandonmentDecision selected = new ProductionSafeTurnInRuntime()
+                .TryExecuteAutomaticAbandonment(
+                    turnIn,
+                    () => new QuestAbandonmentLiveSnapshot
+                    {
+                        IsAccepted = true,
+                        IsCompleted = false,
+                        StateIsCertain = true,
+                        HasObjectiveProgress = false,
+                        FreeQuestLogSlots = 2
+                    });
 
-            Assert(selected != null
-                   && selected.State == QuestRecoveryState.ManualBlacklist
-                   && selected.Key.Equals(manualPickup)
-                   && runtime.AbandonQuestCount == 0
-                   && runtime.ClientMutationEvents.Count == 0,
+            Assert(!selected.MayAbandon
+                   && QuestRecoveryManager.Instance.GetRecord(turnIn)?.State ==
+                       QuestRecoveryState.ManualBlacklist
+                   && QuestRecoveryManager.Instance.GetRecord(turnIn)?.Key.Equals(manualPickup) == true,
                 "production SafeTurnIn must use quest-wide manual precedence and deny automatic abandonment under log pressure");
         }
         finally
@@ -482,6 +517,7 @@ internal static class SafeTurnInRegressionTests
         public bool AcceptBatch { get; set; } = true;
         public bool PersistAllowed { get; set; } = true;
         public SafeTurnInQuestSnapshot Snapshot { get; set; } = Snapshot(true, QuestCompletionState.KnownComplete, true, 8);
+        public Queue<SafeTurnInQuestSnapshot> Snapshots { get; } = new();
         public QuestRecoveryRecord RecoveryRecord { get; set; }
         public WoWPoint PlayerLocation { get; set; } = new(1000, 1000, 0);
         public int MapId { get; set; } = 1;
@@ -490,6 +526,7 @@ internal static class SafeTurnInRegressionTests
         public int ClearCount { get; private set; }
         public int AbandonAttemptCount { get; private set; }
         public int AbandonQuestCount { get; private set; }
+        public int SnapshotReadCount { get; private set; }
         public QuestRecoveryKey ClaimKey { get; private set; }
         public QuestRecoveryKey AbandonedKey { get; private set; }
         public long AbandonedGeneration { get; private set; }
@@ -504,6 +541,12 @@ internal static class SafeTurnInRegressionTests
         public System.Action OnBatch { get; set; }
         public System.Action<QuestAttemptOutcome> OnReport { get; set; }
         public QuestRecoveryDecision ReportDecision { get; set; } = new()
+        {
+            MayAttempt = true,
+            State = QuestRecoveryState.Eligible
+        };
+        public bool RedirectAccepted { get; set; } = true;
+        public QuestRecoveryDecision RedirectDecision { get; set; } = new()
         {
             MayAttempt = true,
             State = QuestRecoveryState.Eligible
@@ -530,7 +573,11 @@ internal static class SafeTurnInRegressionTests
                 Status = ClaimAllowed ? "owned" : "denied"
             };
         }
-        public override SafeTurnInQuestSnapshot GetQuestSnapshot(uint questId) => Snapshot;
+        public override SafeTurnInQuestSnapshot GetQuestSnapshot(uint questId)
+        {
+            SnapshotReadCount++;
+            return Snapshots.Count == 0 ? Snapshot : Snapshots.Dequeue();
+        }
         public override IReadOnlyList<SafeTurnInEnderCandidate> FindLiveEnders(uint entry) => LiveEnders;
         public override SafeTurnInEnderCandidate FindDatabaseEnder(uint entry, string name) => DatabaseEnder;
         public override ISafeTurnInChild CreateChild(uint questId, string questName, SafeTurnInEnderCandidate candidate)
@@ -546,6 +593,18 @@ internal static class SafeTurnInRegressionTests
             OnReport?.Invoke(outcome);
             return ReportDecision;
         }
+        public override QuestRecoveryReportResult TryReportOwnedRedirect(
+            QuestAttemptOutcome outcome,
+            QuestRecoveryContext context)
+        {
+            Reports.Add(outcome);
+            OnReport?.Invoke(outcome);
+            return new QuestRecoveryReportResult
+            {
+                Accepted = RedirectAccepted,
+                Decision = RedirectDecision
+            };
+        }
         public override bool TryReportGeneratedFailures(IReadOnlyList<QuestAttemptOutcome> outcomes, QuestRecoveryContext context, out IReadOnlyList<QuestRecoveryDecision> decisions)
         {
             Batches.Add(outcomes.ToArray());
@@ -560,16 +619,36 @@ internal static class SafeTurnInRegressionTests
             AbandonedKey = key;
             AbandonedGeneration = generation;
         }
-        public override QuestRecoveryRecord GetRecoveryRecord(QuestRecoveryKey key) => RecoveryRecord;
-        public override bool TryPersistRecoveryState()
+        public override QuestAbandonmentDecision TryExecuteAutomaticAbandonment(
+            QuestRecoveryKey key,
+            Func<QuestAbandonmentLiveSnapshot> recapture)
         {
+            QuestAbandonmentLiveSnapshot live = recapture();
+            QuestAbandonmentDecision decision = QuestAbandonmentPolicy.Evaluate(
+                new QuestAbandonmentContext
+                {
+                    IsAccepted = live.IsAccepted,
+                    IsCompleted = live.IsCompleted,
+                    StateIsCertain = live.StateIsCertain,
+                    HasObjectiveProgress = live.HasObjectiveProgress,
+                    FreeQuestLogSlots = live.FreeQuestLogSlots,
+                    RecoveryState = RecoveryRecord?.State ?? QuestRecoveryState.Eligible,
+                    Reason = RecoveryRecord?.Reason ?? QuestFailureReason.None
+                });
+            if (!decision.MayAbandon)
+                return decision;
             ClientMutationEvents.Add("persist");
-            return PersistAllowed;
-        }
-        public override void AbandonQuest(uint questId)
-        {
+            if (!PersistAllowed)
+            {
+                return new QuestAbandonmentDecision
+                {
+                    MayAbandon = false,
+                    Reason = "persistence failed"
+                };
+            }
             AbandonQuestCount++;
             ClientMutationEvents.Add("abandon");
+            return decision;
         }
         public override void ClearBotPoi(string reason)
         {

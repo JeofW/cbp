@@ -173,3 +173,83 @@ the selected manual terminal prevents both persistence and the runtime abandon s
 
 No push, deployment, binary replacement, client launch, or live smoke was performed.
 Live-world timing remains intentionally deferred.
+
+## Review round 2 fixes (2026-09-04)
+
+The recovery manager now exposes `TryReportOwnedRedirect` with a structured
+`Accepted` result. An incomplete turn-in redirect is accepted only when its key is
+exactly the attempt key, that key is a TurnIn quest-stage key, and the record is the
+current `Attempting` generation. Accepted redirects atomically return that owned
+record to `Eligible` and persist evidence without episode or rolling-window
+escalation. Stale generations, child relations, endpoints, and malformed scopes
+return `Accepted=false` with zero mutation. SafeTurnIn clears its exact POI and
+releases local ownership only on acceptance. A rejected delayed owner detaches its
+stale POI reference, retains its local generation until neutral disposal, and cannot
+clear a newer owner even when the newer owner reuses the identical POI object.
+
+Automatic quest abandonment is now one manager-locked compare-and-act operation.
+The manager freshly recaptures accepted/completed/certain/progress/slot state,
+re-resolves authoritative `Completed > ManualBlacklist > exact automatic` recovery
+state, re-evaluates `QuestAbandonmentPolicy`, successfully persists dirty recovery
+JSON, and invokes the supplied minimal client action before releasing the lock.
+Manual/completed terminal winners, newly completed or progressed live state, and
+persistence failure all suppress the action. SafeTurnIn no longer has an exact-first
+record lookup, separate flush, or separate abandon seam.
+
+Manual exclusion now uses a distinct persisted `QuestTerminal` key. Setting a
+manual terminal therefore leaves an existing canonical Pickup automatic record
+untouched, including its state, reason, timestamps, counters, objective snapshot,
+fingerprints, generation, and evidence. Both records survive reload and compaction;
+removing the terminal reveals the original automatic record exactly. Legacy files
+whose canonical Pickup record itself is `ManualBlacklist` remain authoritative and
+are migrated to the distinct terminal key when the exclusion is reapplied.
+
+### Round 2 TDD evidence
+
+- Redirect API RED: the core test build exited 1 with the expected `CS1061` errors
+  because `TryReportOwnedRedirect` did not exist.
+- Adapter seam RED: the production-linked test build failed before the structured
+  redirect seam existed. After the first implementation, the reused-object race
+  failed because the stale adapter cleared the identical replacement POI; the
+  tick-plus-dispose regression also failed until local owner A was retained for an
+  exact-generation neutral release.
+- Atomic abandonment RED: the core test build exited 1 with the expected missing
+  `QuestAbandonmentLiveSnapshot` and `TryExecuteAutomaticAbandonment` errors. The
+  linked adapter then failed to compile until its former lookup/flush/action sequence
+  was replaced by that manager API.
+- Manual preservation RED: the core build exited 1 with `CS0117` because the desired
+  `QuestRecoveryKey.ForManualTerminal` representation did not exist. The first green
+  run then exposed and corrected older exact-key expectations while preserving their
+  ownership-generation guarantees.
+
+Fresh final verification used the bundled SDK DLL, Release, x86,
+`UseAppHost=false`, `--no-restore`, and `--no-incremental`:
+
+- linked adapter regression: exit 0, `Quest recovery adapter regression tests passed.`
+- core recovery regression: exit 0, `Quest recovery regression tests passed.`
+- Wholesome integration regression: exit 0,
+  `Wholesome scheduler recovery regression tests passed.`
+- pickup policy regression: exit 0, `Quest pickup policy regression tests passed.`
+- full `CopilotBuddy.csproj`: exit 0, 3,250 repository-baseline warnings, 0 errors.
+
+All four focused output trees contain zero `.exe` apphosts. The external forbidden
+scan found zero legacy blacklist/file-I/O/`TreeRoot` restart/empty-catch hits. Its
+sole `AbandonQuestById` occurrence is the minimal action supplied to the locked
+manager API. Scoped repository `git diff --check` exited 0; the external no-index
+check emitted no whitespace diagnostics.
+
+Final SHA-256 values:
+
+- installed `SafeTurnIn.cs`:
+  `9801536870a3ace086d4c867dfc25d001cebc2a84bda66d80b49fd3e97c643f3`
+- linked adapter-test DLL:
+  `bb9541c26abd9f1628bc5d779ae0b3bf80acd0e3cf69d81b17e497340015cb49`
+
+The backup recheck verified all three manifest entries. Manifest SHA-256 remains
+`24e67583721d535328ad8e82a7e445b68cfd8e19607cfcbe12a46532bd893c84`;
+the original SafeTurnIn entry remains
+`547a93da5458bd9c6d12499804997e1d1be673bd220c645e6f293fc5342a80c2`.
+
+No push, deployment, installed binary replacement, client/process launch, or live
+smoke was performed. The remaining concern is intentionally deferred live-world
+validation of NPC/game-object interaction timing.

@@ -2,7 +2,7 @@ namespace Styx.Logic.Questing.Recovery;
 
 public enum QuestRecoveryStage { Pickup, Navigation, Objective, TurnIn }
 public enum QuestRecoveryState { Eligible, Attempting, CoolingDown, HalfOpen, Quarantined, ManualBlacklist, Completed }
-public enum QuestRecoveryScope { QuestStage, NpcRelation, Endpoint, Objective }
+public enum QuestRecoveryScope { QuestStage, NpcRelation, Endpoint, Objective, QuestTerminal }
 public enum QuestFailureReason
 {
     None, PickupTargetNotOffered, PickupWrongQuestShown, NpcNotFoundInWorld,
@@ -49,6 +49,9 @@ public sealed class QuestRecoveryKey : IEquatable<QuestRecoveryKey>
 
     public static QuestRecoveryKey ForQuestStage(uint questId, QuestRecoveryStage stage) =>
         new() { QuestId = questId, Stage = stage, Scope = QuestRecoveryScope.QuestStage };
+
+    public static QuestRecoveryKey ForManualTerminal(uint questId) =>
+        new() { QuestId = questId, Stage = QuestRecoveryStage.Pickup, Scope = QuestRecoveryScope.QuestTerminal };
 
     public static QuestRecoveryKey ForNpc(uint questId, QuestRecoveryStage stage, uint npcEntry) =>
         new() { QuestId = questId, Stage = stage, Scope = QuestRecoveryScope.NpcRelation, NpcEntry = npcEntry };
@@ -223,6 +226,12 @@ public sealed class QuestRecoveryDecision
     public DateTime? RetryUtc { get; init; }
     public string ResetReason { get; init; } = "";
     public string Status { get; init; } = "";
+}
+
+public sealed class QuestRecoveryReportResult
+{
+    public bool Accepted { get; init; }
+    public QuestRecoveryDecision Decision { get; init; } = new();
 }
 
 public sealed class QuestRecoveryEvidence

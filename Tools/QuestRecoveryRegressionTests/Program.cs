@@ -34,6 +34,7 @@ try
     TestQuestAbandonmentSlotMatrix();
     TestQuestAbandonmentStateMatrix();
     TestQuestAbandonmentReasonMatrix();
+    TestManagerAutomaticAbandonmentIsAtomic(Path.Combine(testRoot, "abandon-atomic"), now);
     TestQuestRelationParserUsesInvariantCulture();
     TestQuestRelationParserRetainsValidSiblings();
     TestQuestRelationParserRejectsZeroEntry();
@@ -78,6 +79,8 @@ try
     TestIdentitySwitchCannotReuseOwnership(Path.Combine(testRoot, "success-identity"), now);
     TestManualBlacklistReplacementCannotReuseOwnership(Path.Combine(testRoot, "success-manual"), now);
     TestManualBlacklistNormalizesEveryOwnedScope(Path.Combine(testRoot, "manual-owned-scopes"), now);
+    TestManualBlacklistPreservesCanonicalPickupAutomatic(Path.Combine(testRoot, "manual-pickup-preserve"), now);
+    TestLegacyCanonicalManualBlacklistMigrates(Path.Combine(testRoot, "legacy-manual-migrate"), now);
     TestQuestWideTerminalPrecedenceAndAutomaticRestoration(Path.Combine(testRoot, "terminal-precedence"), now);
     TestCompletedRecordsSurviveManualBlacklistToggleAndCompaction(Path.Combine(testRoot, "manual-completed"), now);
     TestOwnershipFenceSurvivesManualReleaseReload(Path.Combine(testRoot, "success-empty-reload"), now);
@@ -119,6 +122,250 @@ static void TestQuestAbandonmentInputGuards()
             $"{denial.Name} must deny automatic abandonment with its precise guard reason");
     }
 }
+
+static void TestManagerAutomaticAbandonmentIsAtomic(string settingsRoot, DateTime now)
+{
+    var key = QuestRecoveryKey.ForQuestStage(1230, QuestRecoveryStage.TurnIn);
+    string storePath = Path.Combine(
+        settingsRoot, "QuestRecovery", "Jeof-Lordaeron", "quest-recovery.json");
+    new QuestRecoveryStore(storePath).Save(new QuestRecoveryDocument
+    {
+        CharacterName = "Jeof",
+        RealmName = "Lordaeron",
+        Records = new[]
+        {
+            new QuestRecoveryRecord
+            {
+                Key = key,
+                State = QuestRecoveryState.Quarantined,
+                Reason = QuestFailureReason.NoObjectiveProgress,
+                EpisodeCount = 3,
+                AttemptGeneration = 41
+            }
+        }
+    });
+    var manager = new QuestRecoveryManager(new FixedClock(now));
+    manager.Configure(CreateEnvironment(settingsRoot, "Jeof", "Lordaeron"));
+    manager.Report(
+        QuestAttemptOutcome.Observation(key, QuestFailureReason.NoObjectiveProgress, "must be durable first"),
+        Context());
+
+    int abandonCount = 0;
+    bool persistenceObservedInsideAction = false;
+    QuestAbandonmentDecision allowed = manager.TryExecuteAutomaticAbandonment(
+        key,
+        () => new QuestAbandonmentLiveSnapshot
+        {
+            IsAccepted = true,
+            IsCompleted = false,
+            StateIsCertain = true,
+            HasObjectiveProgress = false,
+            FreeQuestLogSlots = 2
+        },
+        () =>
+        {
+            abandonCount++;
+            persistenceObservedInsideAction = new QuestRecoveryStore(storePath).Load()
+                .Records.Single(item => item.Key.Equals(key))
+                .Evidence.Any(item => item.Text == "must be durable first");
+        });
+    Assert(allowed.MayAbandon
+           && abandonCount == 1
+           && persistenceObservedInsideAction,
+        "automatic abandonment must persist current recovery state before invoking the action");
+
+    int recaptureActions = 0;
+    QuestAbandonmentDecision completed = manager.TryExecuteAutomaticAbandonment(
+        key,
+        () => new QuestAbandonmentLiveSnapshot
+        {
+            IsAccepted = true,
+            IsCompleted = true,
+            StateIsCertain = true,
+            HasObjectiveProgress = false,
+            FreeQuestLogSlots = 1
+        },
+        () => recaptureActions++);
+    QuestAbandonmentDecision progressed = manager.TryExecuteAutomaticAbandonment(
+        key,
+        () => new QuestAbandonmentLiveSnapshot
+        {
+            IsAccepted = true,
+            IsCompleted = false,
+            StateIsCertain = true,
+            HasObjectiveProgress = true,
+            FreeQuestLogSlots = 1
+        },
+        () => recaptureActions++);
+    Assert(!completed.MayAbandon
+           && !progressed.MayAbandon
+           && recaptureActions == 0,
+        "fresh completion or objective progress must cancel an earlier safe-looking abandonment state");
+
+    string manualRoot = Path.Combine(settingsRoot, "manual-wins");
+    string manualPath = Path.Combine(
+        manualRoot, "QuestRecovery", "Jeof-Lordaeron", "quest-recovery.json");
+    new QuestRecoveryStore(manualPath).Save(new QuestRecoveryDocument
+    {
+        CharacterName = "Jeof",
+        RealmName = "Lordaeron",
+        Records = new[]
+        {
+            new QuestRecoveryRecord
+            {
+                Key = key,
+                State = QuestRecoveryState.Quarantined,
+                Reason = QuestFailureReason.NoObjectiveProgress
+            }
+        }
+    });
+    var manualManager = new QuestRecoveryManager(new FixedClock(now));
+    manualManager.Configure(CreateEnvironment(manualRoot, "Jeof", "Lordaeron"));
+    int manualActions = 0;
+    using var manualRace = new Barrier(2);
+    using var manualWon = new ManualResetEventSlim();
+    Task manualWinner = Task.Run(() =>
+    {
+        manualRace.SignalAndWait();
+        manualManager.SetManualBlacklist(key.QuestId, true);
+        manualWon.Set();
+    });
+    Task<QuestAbandonmentDecision> manualAuthorization = Task.Run(() =>
+    {
+        manualRace.SignalAndWait();
+        manualWon.Wait();
+        return manualManager.TryExecuteAutomaticAbandonment(
+            key, SafeAbandonmentSnapshot, () => manualActions++);
+    });
+    manualWinner.GetAwaiter().GetResult();
+    QuestAbandonmentDecision manualDenied = manualAuthorization.GetAwaiter().GetResult();
+    Assert(!manualDenied.MayAbandon && manualActions == 0,
+        "a concurrent manual terminal that wins before authorization must suppress the abandon action");
+
+    string completedRoot = Path.Combine(settingsRoot, "completed-wins");
+    string completedPath = Path.Combine(
+        completedRoot, "QuestRecovery", "Jeof-Lordaeron", "quest-recovery.json");
+    new QuestRecoveryStore(completedPath).Save(new QuestRecoveryDocument
+    {
+        CharacterName = "Jeof",
+        RealmName = "Lordaeron",
+        Records = new[]
+        {
+            new QuestRecoveryRecord
+            {
+                Key = key,
+                State = QuestRecoveryState.Quarantined,
+                Reason = QuestFailureReason.NoObjectiveProgress
+            }
+        }
+    });
+    var completedManager = new QuestRecoveryManager(new FixedClock(now));
+    completedManager.Configure(CreateEnvironment(completedRoot, "Jeof", "Lordaeron"));
+    int completedActions = 0;
+    using var completedRace = new Barrier(2);
+    using var completedWon = new ManualResetEventSlim();
+    Task completedWinner = Task.Run(() =>
+    {
+        completedRace.SignalAndWait();
+        completedManager.MarkCompleted(key.QuestId);
+        completedWon.Set();
+    });
+    Task<QuestAbandonmentDecision> completedAuthorization = Task.Run(() =>
+    {
+        completedRace.SignalAndWait();
+        completedWon.Wait();
+        return completedManager.TryExecuteAutomaticAbandonment(
+            key, SafeAbandonmentSnapshot, () => completedActions++);
+    });
+    completedWinner.GetAwaiter().GetResult();
+    QuestAbandonmentDecision completedDenied = completedAuthorization.GetAwaiter().GetResult();
+    Assert(!completedDenied.MayAbandon && completedActions == 0,
+        "a concurrent completed terminal that wins before authorization must suppress the abandon action");
+
+    string serializedRoot = Path.Combine(settingsRoot, "serialized-race");
+    string serializedPath = Path.Combine(
+        serializedRoot, "QuestRecovery", "Jeof-Lordaeron", "quest-recovery.json");
+    new QuestRecoveryStore(serializedPath).Save(new QuestRecoveryDocument
+    {
+        CharacterName = "Jeof",
+        RealmName = "Lordaeron",
+        Records = new[]
+        {
+            new QuestRecoveryRecord
+            {
+                Key = key,
+                State = QuestRecoveryState.Quarantined,
+                Reason = QuestFailureReason.NoObjectiveProgress
+            }
+        }
+    });
+    var serializedManager = new QuestRecoveryManager(new FixedClock(now));
+    serializedManager.Configure(CreateEnvironment(serializedRoot, "Jeof", "Lordaeron"));
+    using var captureEntered = new ManualResetEventSlim();
+    using var releaseCapture = new ManualResetEventSlim();
+    using var manualStarted = new ManualResetEventSlim();
+    using var manualFinished = new ManualResetEventSlim();
+    int serializedActions = 0;
+    Task<QuestAbandonmentDecision> authorization = Task.Run(() =>
+        serializedManager.TryExecuteAutomaticAbandonment(
+            key,
+            () =>
+            {
+                captureEntered.Set();
+                releaseCapture.Wait();
+                return SafeAbandonmentSnapshot();
+            },
+            () => serializedActions++));
+    captureEntered.Wait();
+    Task manualWaiter = Task.Run(() =>
+    {
+        manualStarted.Set();
+        serializedManager.SetManualBlacklist(key.QuestId, true);
+        manualFinished.Set();
+    });
+    manualStarted.Wait();
+    Assert(!manualFinished.Wait(TimeSpan.FromMilliseconds(100)),
+        "terminal mutation must not enter while abandonment authorization owns the manager lock");
+    releaseCapture.Set();
+    QuestAbandonmentDecision serialized = authorization.GetAwaiter().GetResult();
+    manualWaiter.GetAwaiter().GetResult();
+    Assert(serialized.MayAbandon
+           && serializedActions == 1
+           && serializedManager.GetRecord(key)?.State == QuestRecoveryState.ManualBlacklist,
+        "authorization and terminal mutation must serialize so exactly the manager-lock winner acts first");
+
+    string brokenRoot = Path.Combine(settingsRoot, "broken-store");
+    Directory.CreateDirectory(Path.GetDirectoryName(brokenRoot)!);
+    File.WriteAllText(brokenRoot, "blocks recovery persistence");
+    var brokenClock = new FixedClock(now);
+    var brokenManager = new QuestRecoveryManager(brokenClock);
+    brokenManager.Configure(CreateEnvironment(brokenRoot, "Jeof", "Lordaeron"));
+    brokenManager.Report(
+        QuestAttemptOutcome.Failure(key, QuestFailureReason.NoObjectiveProgress, "failure one"),
+        Context());
+    brokenClock.UtcNow = now.AddMinutes(31);
+    brokenManager.Report(
+        QuestAttemptOutcome.Failure(key, QuestFailureReason.NoObjectiveProgress, "failure two"),
+        Context());
+    brokenClock.UtcNow = now.AddMinutes(92);
+    brokenManager.Report(
+        QuestAttemptOutcome.Failure(key, QuestFailureReason.NoObjectiveProgress, "failure three"),
+        Context());
+    int brokenActions = 0;
+    QuestAbandonmentDecision unpersisted = brokenManager.TryExecuteAutomaticAbandonment(
+        key, SafeAbandonmentSnapshot, () => brokenActions++);
+    Assert(!unpersisted.MayAbandon && brokenActions == 0,
+        "persistence failure must withhold the external abandon action");
+}
+
+static QuestAbandonmentLiveSnapshot SafeAbandonmentSnapshot() => new()
+{
+    IsAccepted = true,
+    IsCompleted = false,
+    StateIsCertain = true,
+    HasObjectiveProgress = false,
+    FreeQuestLogSlots = 2
+};
 
 static void TestQuestAbandonmentSlotMatrix()
 {
@@ -1916,7 +2163,7 @@ static void TestIncompleteRedirectRequiresExactGeneration(string settingsRoot, D
     manager.Configure(environment);
 
     var ownerA = manager.TryBeginAttempt(key, Context());
-    var stale = manager.Report(
+    var stale = manager.TryReportOwnedRedirect(
         new QuestAttemptOutcome
         {
             Key = key,
@@ -1929,14 +2176,15 @@ static void TestIncompleteRedirectRequiresExactGeneration(string settingsRoot, D
         },
         Context());
     var stillA = manager.GetEntries().Single();
-    Assert(stale.State == QuestRecoveryState.Attempting
-           && !stale.MayAttempt
+    Assert(!stale.Accepted
+           && stale.Decision.State == QuestRecoveryState.Attempting
+           && !stale.Decision.MayAttempt
            && stillA.AttemptGeneration == ownerA.AttemptGeneration
            && stillA.EpisodeCount == 0
            && stillA.Evidence.All(item => item.Text != "stale redirect"),
         "a stale incomplete redirect must not release or mutate the exact active owner");
 
-    var redirected = manager.Report(
+    var redirected = manager.TryReportOwnedRedirect(
         new QuestAttemptOutcome
         {
             Key = key,
@@ -1949,8 +2197,9 @@ static void TestIncompleteRedirectRequiresExactGeneration(string settingsRoot, D
         },
         Context());
     var releasedA = manager.GetEntries().Single();
-    Assert(redirected.State == QuestRecoveryState.Eligible
-           && redirected.MayAttempt
+    Assert(redirected.Accepted
+           && redirected.Decision.State == QuestRecoveryState.Eligible
+           && redirected.Decision.MayAttempt
            && releasedA.State == QuestRecoveryState.Eligible
            && releasedA.Reason == QuestFailureReason.TurnInQuestIncomplete
            && releasedA.AttemptGeneration == ownerA.AttemptGeneration
@@ -1969,7 +2218,7 @@ static void TestIncompleteRedirectRequiresExactGeneration(string settingsRoot, D
         "an accepted incomplete redirect must remain durable without becoming a failure episode");
 
     var ownerB = reloaded.TryBeginAttempt(key, Context());
-    var delayedA = reloaded.Report(
+    var delayedA = reloaded.TryReportOwnedRedirect(
         new QuestAttemptOutcome
         {
             Key = key,
@@ -1983,12 +2232,44 @@ static void TestIncompleteRedirectRequiresExactGeneration(string settingsRoot, D
         Context());
     var stillB = reloaded.GetEntries().Single();
     Assert(ownerB.AttemptGeneration > ownerA.AttemptGeneration
-           && delayedA.State == QuestRecoveryState.Attempting
-           && !delayedA.MayAttempt
+           && !delayedA.Accepted
+           && delayedA.Decision.State == QuestRecoveryState.Attempting
+           && !delayedA.Decision.MayAttempt
            && stillB.AttemptGeneration == ownerB.AttemptGeneration
            && stillB.Evidence.All(item => item.Text != "delayed A redirect")
            && reloaded.OwnsAttempt(key, ownerB.AttemptGeneration),
         "a delayed redirect from A must not mutate or release newly acquired owner B");
+
+    var childRedirects = new[]
+    {
+        new QuestAttemptOutcome
+        {
+            Key = QuestRecoveryKey.ForNpc(1220, QuestRecoveryStage.TurnIn, 3338),
+            AttemptKey = key,
+            AttemptGeneration = ownerB.AttemptGeneration,
+            Kind = QuestAttemptOutcomeKind.Redirect,
+            Reason = QuestFailureReason.TurnInQuestIncomplete,
+            IsFailureEpisode = false,
+            Evidence = "child relation redirect"
+        },
+        new QuestAttemptOutcome
+        {
+            Key = QuestRecoveryKey.ForEndpoint(
+                1220, QuestRecoveryStage.Navigation, 1, "cell:4:5"),
+            AttemptKey = key,
+            AttemptGeneration = ownerB.AttemptGeneration,
+            Kind = QuestAttemptOutcomeKind.Redirect,
+            Reason = QuestFailureReason.TurnInQuestIncomplete,
+            IsFailureEpisode = false,
+            Evidence = "child endpoint redirect"
+        }
+    };
+    Assert(childRedirects.All(outcome => !reloaded.TryReportOwnedRedirect(outcome, Context()).Accepted)
+           && reloaded.OwnsAttempt(key, ownerB.AttemptGeneration)
+           && reloaded.GetEntries().Where(item => item.Key.QuestId == 1220)
+               .SelectMany(item => item.Evidence)
+               .All(item => item.Text is not ("child relation redirect" or "child endpoint redirect")),
+        "owned redirects must reject structurally related child relation and endpoint keys because the redirect key must be exact");
 
     var malformedManager = new QuestRecoveryManager(new FixedClock(now));
     var malformedKey = QuestRecoveryKey.ForEndpoint(
@@ -1996,7 +2277,7 @@ static void TestIncompleteRedirectRequiresExactGeneration(string settingsRoot, D
     malformedManager.Configure(CreateEnvironment(
         Path.Combine(settingsRoot, "malformed-scope"), "Jeof", "Lordaeron"));
     var malformedOwner = malformedManager.TryBeginAttempt(malformedKey, Context());
-    var malformed = malformedManager.Report(
+    var malformed = malformedManager.TryReportOwnedRedirect(
         new QuestAttemptOutcome
         {
             Key = malformedKey,
@@ -2008,8 +2289,9 @@ static void TestIncompleteRedirectRequiresExactGeneration(string settingsRoot, D
             Evidence = "malformed endpoint owner"
         },
         Context());
-    Assert(malformed.State == QuestRecoveryState.Attempting
-           && !malformed.MayAttempt
+    Assert(!malformed.Accepted
+           && malformed.Decision.State == QuestRecoveryState.Attempting
+           && !malformed.Decision.MayAttempt
            && malformedManager.OwnsAttempt(malformedKey, malformedOwner.AttemptGeneration)
            && malformedManager.GetEntries().Single().Evidence.All(
                item => item.Text != "malformed endpoint owner"),
@@ -2516,6 +2798,181 @@ static void TestManualBlacklistNormalizesEveryOwnedScope(string settingsRoot, Da
         "an idempotent manual removal must not abandon a newly acquired exact owner");
 }
 
+static void TestManualBlacklistPreservesCanonicalPickupAutomatic(string settingsRoot, DateTime now)
+{
+    var environment = CreateEnvironment(settingsRoot, "Jeof", "Lordaeron");
+    var pickup = QuestRecoveryKey.ForQuestStage(1231, QuestRecoveryStage.Pickup);
+    var manualKey = QuestRecoveryKey.ForManualTerminal(1231);
+    string storePath = Path.Combine(
+        settingsRoot, "QuestRecovery", "Jeof-Lordaeron", "quest-recovery.json");
+    new QuestRecoveryStore(storePath).Save(new QuestRecoveryDocument
+    {
+        CharacterName = "Jeof",
+        RealmName = "Lordaeron",
+        LastAttemptGeneration = 41,
+        Records = new[]
+        {
+            new QuestRecoveryRecord
+            {
+                Key = pickup,
+                State = QuestRecoveryState.Quarantined,
+                Reason = QuestFailureReason.PickupTargetNotOffered,
+                FirstFailureUtc = now.AddHours(-3),
+                LastFailureUtc = now.AddHours(-1),
+                NextHalfOpenUtc = now.AddHours(5),
+                EpisodeCount = 3,
+                RecoveryCycleId = 7,
+                AttemptGeneration = 41,
+                AttemptCountInEpisode = 2,
+                DeathCountInEpisode = 1,
+                LastProgressUtc = now.AddDays(-1),
+                ObjectiveCounts = new[] { 2, 3 },
+                PlayerLevelAtFailure = 34,
+                EquipmentFingerprint = "100:healthy",
+                DatasetVersion = "quest-data-v1",
+                CoreVersion = "core-v1",
+                NavigationFingerprint = "nav-v1",
+                Evidence = new[]
+                {
+                    new QuestRecoveryEvidence
+                    {
+                        ObservedUtc = now.AddHours(-1),
+                        Reason = QuestFailureReason.PickupTargetNotOffered,
+                        Text = "preserve automatic pickup",
+                        EpisodeCount = 3,
+                        RecoveryCycleId = 7,
+                        SourceKey = pickup
+                    }
+                }
+            }
+        }
+    });
+
+    var manager = new QuestRecoveryManager(new FixedClock(now));
+    manager.Configure(environment);
+    Assert(manager.TrySetManualBlacklist(1231, true),
+        "setting a manual terminal must report a state change");
+    var marked = manager.GetEntries().Where(item => item.Key.QuestId == 1231).ToArray();
+    Assert(marked.Length == 2
+           && marked.Single(item => item.State == QuestRecoveryState.ManualBlacklist)
+               .Key.Equals(manualKey),
+        "manual exclusion must use a distinct persisted terminal key instead of overwriting canonical Pickup");
+    AssertPreservedAutomaticPickup(marked.Single(item => item.Key.Equals(pickup)), pickup, now);
+    manager.Flush();
+
+    var reloaded = new QuestRecoveryManager(new FixedClock(now));
+    reloaded.Configure(environment);
+    var reloadedEntries = reloaded.GetEntries().Where(item => item.Key.QuestId == 1231).ToArray();
+    Assert(reloadedEntries.Length == 2
+           && reloadedEntries.Any(item => item.Key.Equals(manualKey)
+               && item.State == QuestRecoveryState.ManualBlacklist),
+        "the distinct manual terminal and automatic Pickup record must both survive reload and compaction");
+    AssertPreservedAutomaticPickup(
+        reloadedEntries.Single(item => item.Key.Equals(pickup)), pickup, now);
+
+    Assert(reloaded.TryClearExclusion(pickup),
+        "clearing exclusion from the automatic UI row must remove the same-quest manual terminal");
+    var restored = reloaded.GetEntries().Where(item => item.Key.QuestId == 1231).ToArray();
+    Assert(restored.Length == 1 && restored[0].Key.Equals(pickup),
+        "manual removal must reveal exactly the original canonical Pickup record");
+    AssertPreservedAutomaticPickup(restored[0], pickup, now);
+    reloaded.Flush();
+
+    var restoredReload = new QuestRecoveryManager(new FixedClock(now));
+    restoredReload.Configure(environment);
+    QuestRecoveryRecord durable = restoredReload.GetEntries().Single(
+        item => item.Key.QuestId == 1231);
+    AssertPreservedAutomaticPickup(durable, pickup, now);
+}
+
+static void AssertPreservedAutomaticPickup(
+    QuestRecoveryRecord record,
+    QuestRecoveryKey pickup,
+    DateTime now)
+{
+    Assert(record.Key.Equals(pickup)
+           && record.State == QuestRecoveryState.Quarantined
+           && record.Reason == QuestFailureReason.PickupTargetNotOffered
+           && record.FirstFailureUtc == now.AddHours(-3)
+           && record.LastFailureUtc == now.AddHours(-1)
+           && record.NextHalfOpenUtc == now.AddHours(5)
+           && record.EpisodeCount == 3
+           && record.RecoveryCycleId == 7
+           && record.AttemptGeneration == 41
+           && record.AttemptCountInEpisode == 2
+           && record.DeathCountInEpisode == 1
+           && record.LastProgressUtc == now.AddDays(-1)
+           && record.ObjectiveCounts.SequenceEqual(new[] { 2, 3 })
+           && record.PlayerLevelAtFailure == 34
+           && record.EquipmentFingerprint == "100:healthy"
+           && record.DatasetVersion == "quest-data-v1"
+           && record.CoreVersion == "core-v1"
+           && record.NavigationFingerprint == "nav-v1"
+           && record.Evidence.Count == 1
+           && record.Evidence[0].Text == "preserve automatic pickup"
+           && record.Evidence[0].SourceKey?.Equals(pickup) == true,
+        "manual toggling must preserve the complete canonical Pickup automatic record exactly");
+}
+
+static void TestLegacyCanonicalManualBlacklistMigrates(string settingsRoot, DateTime now)
+{
+    var environment = CreateEnvironment(settingsRoot, "Jeof", "Lordaeron");
+    var legacyKey = QuestRecoveryKey.ForQuestStage(1232, QuestRecoveryStage.Pickup);
+    string storePath = Path.Combine(
+        settingsRoot, "QuestRecovery", "Jeof-Lordaeron", "quest-recovery.json");
+    new QuestRecoveryStore(storePath).Save(new QuestRecoveryDocument
+    {
+        CharacterName = "Jeof",
+        RealmName = "Lordaeron",
+        LastAttemptGeneration = 19,
+        Records = new[]
+        {
+            new QuestRecoveryRecord
+            {
+                Key = legacyKey,
+                State = QuestRecoveryState.ManualBlacklist,
+                Reason = QuestFailureReason.UserExcluded,
+                AttemptGeneration = 19,
+                Evidence = new[]
+                {
+                    new QuestRecoveryEvidence
+                    {
+                        ObservedUtc = now,
+                        Reason = QuestFailureReason.UserExcluded,
+                        Text = "legacy manual terminal",
+                        SourceKey = legacyKey
+                    }
+                }
+            }
+        }
+    });
+
+    var manager = new QuestRecoveryManager(new FixedClock(now));
+    manager.Configure(environment);
+    Assert(manager.Evaluate(
+            QuestRecoveryKey.ForQuestStage(1232, QuestRecoveryStage.TurnIn), Context()).State ==
+        QuestRecoveryState.ManualBlacklist,
+        "legacy canonical manual records must retain quest-wide terminal precedence");
+    Assert(manager.TrySetManualBlacklist(1232, true),
+        "reapplying a legacy manual exclusion must migrate it to the distinct terminal key");
+    var migrated = manager.GetEntries().Single(record => record.Key.QuestId == 1232);
+    Assert(migrated.Key.Equals(QuestRecoveryKey.ForManualTerminal(1232))
+           && migrated.State == QuestRecoveryState.ManualBlacklist
+           && migrated.AttemptGeneration == 19
+           && migrated.Evidence.Single().Text == "legacy manual terminal",
+        "legacy manual migration must retain its persisted recovery evidence and generation");
+    manager.Flush();
+
+    var reloaded = new QuestRecoveryManager(new FixedClock(now));
+    reloaded.Configure(environment);
+    Assert(reloaded.GetEntries().Single(record => record.Key.QuestId == 1232).Key.Equals(
+            QuestRecoveryKey.ForManualTerminal(1232)),
+        "the migrated manual terminal key must survive reload and compaction");
+    Assert(reloaded.TrySetManualBlacklist(1232, false)
+           && reloaded.GetEntries().All(record => record.Key.QuestId != 1232),
+        "removing a migrated legacy manual exclusion must remain supported");
+}
+
 static void TestQuestWideTerminalPrecedenceAndAutomaticRestoration(string settingsRoot, DateTime now)
 {
     var clock = new FixedClock(now);
@@ -2549,7 +3006,7 @@ static void TestQuestWideTerminalPrecedenceAndAutomaticRestoration(string settin
     QuestRecoveryRecord manual = manager.GetRecord(turnIn)
         ?? throw new InvalidOperationException("manual terminal record missing");
     Assert(manual.State == QuestRecoveryState.ManualBlacklist
-           && manual.Key.Equals(QuestRecoveryKey.ForQuestStage(1221, QuestRecoveryStage.Pickup))
+           && manual.Key.Equals(QuestRecoveryKey.ForManualTerminal(1221))
            && manager.Evaluate(turnIn, Context()).State == QuestRecoveryState.ManualBlacklist
            && manager.Evaluate(endpoint, Context()).State == QuestRecoveryState.ManualBlacklist,
         "a canonical pickup manual terminal must override every exact automatic scope for the quest");
@@ -2615,15 +3072,18 @@ static void TestOwnershipFenceSurvivesManualReleaseReload(string settingsRoot, D
     var ownerA = manager.TryBeginAttempt(key, Context());
     manager.SetManualBlacklist(key.QuestId, true);
     manager.SetManualBlacklist(key.QuestId, false);
-    Assert(manager.GetEntries().All(record => record.Key.QuestId != key.QuestId),
-        "manual removal must delete only actual manual records rather than reopening one as eligible");
+    var released = manager.GetEntries().Single(record => record.Key.QuestId == key.QuestId);
+    Assert(released.Key.Equals(key)
+           && released.State == QuestRecoveryState.Eligible
+           && released.AttemptGeneration == ownerA.AttemptGeneration,
+        "manual removal must preserve the released automatic record and its ownership generation");
     manager.Flush();
 
     var reloaded = new QuestRecoveryManager(new FixedClock(now));
     reloaded.Configure(environment);
     var ownerB = reloaded.TryBeginAttempt(key, Context());
     Assert(ownerB.MayAttempt && ownerB.AttemptGeneration > ownerA.AttemptGeneration,
-        "the ownership high-water mark must survive reload even when no record remains");
+        "the released automatic record and ownership high-water mark must survive reload");
 }
 
 static void TestCompletedRecordsSurviveManualBlacklistToggleAndCompaction(string settingsRoot, DateTime now)
