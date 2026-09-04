@@ -3,6 +3,7 @@ using Styx.Logic.Questing;
 using Styx.Logic.Profiles.Quest;
 using Bots.Quest.QuestOrder;
 using Styx.Helpers;
+using System.Globalization;
 
 var now = new DateTime(2026, 9, 2, 12, 0, 0, DateTimeKind.Utc);
 var testRoot = Path.Combine(AppContext.BaseDirectory, "quest-recovery-test-data");
@@ -29,6 +30,11 @@ try
     TestCompletionEvaluationScopesNestAndRecoverFromExceptions();
     TestForcedConditionBehaviorsDeferUnknown();
     TestCompletionDependentActionGatesDeferUnknown();
+    TestQuestAbandonmentMatrix();
+    TestQuestRelationParserUsesInvariantCulture();
+    TestQuestRelationParserRetainsValidSiblings();
+    TestQuestRelationParserRejectsZeroEntry();
+    TestQuestRelationParserRejectsNonFiniteOrMalformedCoordinates();
     RunPolicyRegressions(now);
     TestStoreRoundTripAndAtomicReplacement(Path.Combine(testRoot, "store"), now);
     TestCorruptStoreQuarantine(Path.Combine(testRoot, "corrupt"));
@@ -79,6 +85,161 @@ finally
     {
         Directory.Delete(testRoot, recursive: true);
     }
+}
+
+static void TestQuestAbandonmentMatrix()
+{
+    foreach (var freeSlots in new[] { 0, 1, 2 })
+    {
+        var allowed = QuestAbandonmentPolicy.Evaluate(new QuestAbandonmentContext
+        {
+            IsAccepted = true,
+            IsCompleted = false,
+            StateIsCertain = true,
+            HasObjectiveProgress = false,
+            FreeQuestLogSlots = freeSlots,
+            RecoveryState = QuestRecoveryState.Quarantined,
+            Reason = QuestFailureReason.NoObjectiveProgress
+        });
+        Assert(allowed.MayAbandon
+               && allowed.Reason == $"Automatic abandonment permitted: accepted, incomplete, certain, zero-progress quest is automatically quarantined with {freeSlots} free quest-log slots.",
+            $"an automatically quarantined zero-progress quest with {freeSlots} free slots must be abandonable");
+    }
+
+    var denials = new (string Name, QuestAbandonmentContext Context, string Reason)[]
+    {
+        ("not accepted", new QuestAbandonmentContext
+        {
+            IsAccepted = false, IsCompleted = false, StateIsCertain = true,
+            HasObjectiveProgress = false, FreeQuestLogSlots = 2,
+            RecoveryState = QuestRecoveryState.Quarantined,
+            Reason = QuestFailureReason.NoObjectiveProgress
+        }, "Automatic abandonment denied: quest is not accepted."),
+        ("completed", new QuestAbandonmentContext
+        {
+            IsAccepted = true, IsCompleted = true, StateIsCertain = true,
+            HasObjectiveProgress = false, FreeQuestLogSlots = 2,
+            RecoveryState = QuestRecoveryState.Quarantined,
+            Reason = QuestFailureReason.NoObjectiveProgress
+        }, "Automatic abandonment denied: quest is completed."),
+        ("uncertain", new QuestAbandonmentContext
+        {
+            IsAccepted = true, IsCompleted = false, StateIsCertain = false,
+            HasObjectiveProgress = false, FreeQuestLogSlots = 2,
+            RecoveryState = QuestRecoveryState.Quarantined,
+            Reason = QuestFailureReason.NoObjectiveProgress
+        }, "Automatic abandonment denied: accepted/completed/progress state is uncertain."),
+        ("progressed", new QuestAbandonmentContext
+        {
+            IsAccepted = true, IsCompleted = false, StateIsCertain = true,
+            HasObjectiveProgress = true, FreeQuestLogSlots = 2,
+            RecoveryState = QuestRecoveryState.Quarantined,
+            Reason = QuestFailureReason.NoObjectiveProgress
+        }, "Automatic abandonment denied: quest has objective progress."),
+        ("manual blacklist", new QuestAbandonmentContext
+        {
+            IsAccepted = true, IsCompleted = false, StateIsCertain = true,
+            HasObjectiveProgress = false, FreeQuestLogSlots = 2,
+            RecoveryState = QuestRecoveryState.ManualBlacklist,
+            Reason = QuestFailureReason.NoObjectiveProgress
+        }, "Automatic abandonment denied: quest is manually blacklisted."),
+        ("manual reason", new QuestAbandonmentContext
+        {
+            IsAccepted = true, IsCompleted = false, StateIsCertain = true,
+            HasObjectiveProgress = false, FreeQuestLogSlots = 2,
+            RecoveryState = QuestRecoveryState.Quarantined,
+            Reason = QuestFailureReason.UserExcluded
+        }, "Automatic abandonment denied: quest is manually blacklisted."),
+        ("cooling only", new QuestAbandonmentContext
+        {
+            IsAccepted = true, IsCompleted = false, StateIsCertain = true,
+            HasObjectiveProgress = false, FreeQuestLogSlots = 2,
+            RecoveryState = QuestRecoveryState.CoolingDown,
+            Reason = QuestFailureReason.NoObjectiveProgress
+        }, "Automatic abandonment denied: recovery state CoolingDown is not an automatic quarantine."),
+        ("three free slots", new QuestAbandonmentContext
+        {
+            IsAccepted = true, IsCompleted = false, StateIsCertain = true,
+            HasObjectiveProgress = false, FreeQuestLogSlots = 3,
+            RecoveryState = QuestRecoveryState.Quarantined,
+            Reason = QuestFailureReason.NoObjectiveProgress
+        }, "Automatic abandonment denied: quest log has 3 free slots; pressure requires 2 or fewer.")
+    };
+
+    foreach (var denial in denials)
+    {
+        var decision = QuestAbandonmentPolicy.Evaluate(denial.Context);
+        Assert(!decision.MayAbandon && decision.Reason == denial.Reason,
+            $"{denial.Name} must deny automatic abandonment with its precise guard reason");
+    }
+}
+
+static void TestQuestRelationParserUsesInvariantCulture()
+{
+    var previousCulture = CultureInfo.CurrentCulture;
+    try
+    {
+        CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("fr-FR");
+        var parsed = QuestRelationParser.Parse(
+            "3338,-437.2,-3192.1,91.6;3391,-483.0,-3104.0,92.0");
+
+        Assert(parsed.Relations.Count == 2 && parsed.Diagnostics.Count == 0,
+            "two invariant-culture relations must parse without diagnostics under a comma-decimal current culture");
+        Assert(parsed.Relations[0].Entry == 3338
+               && parsed.Relations[0].X == -437.2
+               && parsed.Relations[0].Y == -3192.1
+               && parsed.Relations[0].Z == 91.6,
+            "the first relation must preserve its literal entry and coordinates");
+        Assert(parsed.Relations[1].Entry == 3391
+               && parsed.Relations[1].X == -483.0
+               && parsed.Relations[1].Y == -3104.0
+               && parsed.Relations[1].Z == 92.0,
+            "the second relation must preserve its literal entry and coordinates");
+    }
+    finally
+    {
+        CultureInfo.CurrentCulture = previousCulture;
+    }
+}
+
+static void TestQuestRelationParserRetainsValidSiblings()
+{
+    var parsed = QuestRelationParser.Parse(
+        "3338,-437.2,-3192.1,91.6;not-a-relation;3391,-483.0,-3104.0,92.0");
+
+    Assert(parsed.Relations.Count == 2
+           && parsed.Relations[0].Entry == 3338
+           && parsed.Relations[1].Entry == 3391,
+        "one malformed segment must not discard either valid sibling");
+    Assert(parsed.Diagnostics.Count == 1
+           && parsed.Diagnostics[0] == "Segment 2 ('not-a-relation') rejected: expected entry,x,y,z.",
+        "a malformed segment must produce one deterministic diagnostic");
+}
+
+static void TestQuestRelationParserRejectsZeroEntry()
+{
+    var parsed = QuestRelationParser.Parse("0,1,2,3;3391,-483.0,-3104.0,92.0");
+
+    Assert(parsed.Relations.Count == 1 && parsed.Relations[0].Entry == 3391,
+        "entry zero must be rejected while a valid sibling survives");
+    Assert(parsed.Diagnostics.Count == 1
+           && parsed.Diagnostics[0] == "Segment 1 ('0,1,2,3') rejected: entry must be a positive integer.",
+        "entry zero must produce the deterministic positive-entry diagnostic");
+}
+
+static void TestQuestRelationParserRejectsNonFiniteOrMalformedCoordinates()
+{
+    var parsed = QuestRelationParser.Parse(
+        "4000,bad,1,2;4001,NaN,1,2;4002,1,Infinity,2;4003,1,2,-Infinity");
+
+    Assert(parsed.Relations.Count == 0,
+        "invalid or non-finite coordinates must never fabricate a relation at 0,0,0");
+    Assert(parsed.Diagnostics.Count == 4
+           && parsed.Diagnostics[0] == "Segment 1 ('4000,bad,1,2') rejected: coordinates must be finite invariant-culture numbers."
+           && parsed.Diagnostics[1] == "Segment 2 ('4001,NaN,1,2') rejected: coordinates must be finite invariant-culture numbers."
+           && parsed.Diagnostics[2] == "Segment 3 ('4002,1,Infinity,2') rejected: coordinates must be finite invariant-culture numbers."
+           && parsed.Diagnostics[3] == "Segment 4 ('4003,1,2,-Infinity') rejected: coordinates must be finite invariant-culture numbers.",
+        "coordinate rejections must preserve input order and deterministic diagnostics");
 }
 
 static void TestEquipmentFingerprintPreservesSlotOrderAndDurabilityClass()
