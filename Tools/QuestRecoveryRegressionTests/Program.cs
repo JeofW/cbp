@@ -67,6 +67,7 @@ try
     TestConcurrentReportingAndAttemptOwnership(Path.Combine(testRoot, "concurrency"), now);
     TestSuccessfulAttemptReleasesOwnership(Path.Combine(testRoot, "success-release"), now);
     TestStaleSuccessCannotReleaseNewOwner(Path.Combine(testRoot, "success-generation"), now);
+    TestIncompleteRedirectRequiresExactGeneration(Path.Combine(testRoot, "redirect-generation"), now);
     TestOwnedFailureRequiresExactGenerationAndReleasesAtomically(Path.Combine(testRoot, "failure-generation"), now);
     TestOwnedEndpointFailurePreservesStageHistory(Path.Combine(testRoot, "failure-endpoint-owner"), now);
     TestGeneratedFailureAuthorityAndAtomicStageSequence(Path.Combine(testRoot, "failure-authority"), now);
@@ -77,6 +78,7 @@ try
     TestIdentitySwitchCannotReuseOwnership(Path.Combine(testRoot, "success-identity"), now);
     TestManualBlacklistReplacementCannotReuseOwnership(Path.Combine(testRoot, "success-manual"), now);
     TestManualBlacklistNormalizesEveryOwnedScope(Path.Combine(testRoot, "manual-owned-scopes"), now);
+    TestQuestWideTerminalPrecedenceAndAutomaticRestoration(Path.Combine(testRoot, "terminal-precedence"), now);
     TestCompletedRecordsSurviveManualBlacklistToggleAndCompaction(Path.Combine(testRoot, "manual-completed"), now);
     TestOwnershipFenceSurvivesManualReleaseReload(Path.Combine(testRoot, "success-empty-reload"), now);
     TestSuccessfulHalfOpenClearsEscalation(Path.Combine(testRoot, "success-half-open"), now);
@@ -1906,6 +1908,114 @@ static void TestStaleSuccessCannotReleaseNewOwner(string settingsRoot, DateTime 
         "valid B success must release ownership for a newer attempt C");
 }
 
+static void TestIncompleteRedirectRequiresExactGeneration(string settingsRoot, DateTime now)
+{
+    var environment = CreateEnvironment(settingsRoot, "Jeof", "Lordaeron");
+    var manager = new QuestRecoveryManager(new FixedClock(now));
+    var key = QuestRecoveryKey.ForQuestStage(1220, QuestRecoveryStage.TurnIn);
+    manager.Configure(environment);
+
+    var ownerA = manager.TryBeginAttempt(key, Context());
+    var stale = manager.Report(
+        new QuestAttemptOutcome
+        {
+            Key = key,
+            AttemptKey = key,
+            AttemptGeneration = ownerA.AttemptGeneration + 1,
+            Kind = QuestAttemptOutcomeKind.Redirect,
+            Reason = QuestFailureReason.TurnInQuestIncomplete,
+            IsFailureEpisode = false,
+            Evidence = "stale redirect"
+        },
+        Context());
+    var stillA = manager.GetEntries().Single();
+    Assert(stale.State == QuestRecoveryState.Attempting
+           && !stale.MayAttempt
+           && stillA.AttemptGeneration == ownerA.AttemptGeneration
+           && stillA.EpisodeCount == 0
+           && stillA.Evidence.All(item => item.Text != "stale redirect"),
+        "a stale incomplete redirect must not release or mutate the exact active owner");
+
+    var redirected = manager.Report(
+        new QuestAttemptOutcome
+        {
+            Key = key,
+            AttemptKey = key,
+            AttemptGeneration = ownerA.AttemptGeneration,
+            Kind = QuestAttemptOutcomeKind.Redirect,
+            Reason = QuestFailureReason.TurnInQuestIncomplete,
+            IsFailureEpisode = false,
+            Evidence = "objectives remain incomplete"
+        },
+        Context());
+    var releasedA = manager.GetEntries().Single();
+    Assert(redirected.State == QuestRecoveryState.Eligible
+           && redirected.MayAttempt
+           && releasedA.State == QuestRecoveryState.Eligible
+           && releasedA.Reason == QuestFailureReason.TurnInQuestIncomplete
+           && releasedA.AttemptGeneration == ownerA.AttemptGeneration
+           && releasedA.EpisodeCount == 0
+           && releasedA.Evidence.Any(item => item.Text == "objectives remain incomplete")
+           && !manager.OwnsAttempt(key, ownerA.AttemptGeneration),
+        "the exact incomplete redirect must atomically release ownership and persist evidence without escalation");
+    manager.Flush();
+
+    var reloaded = new QuestRecoveryManager(new FixedClock(now));
+    reloaded.Configure(environment);
+    var persisted = reloaded.GetEntries().Single();
+    Assert(persisted.State == QuestRecoveryState.Eligible
+           && persisted.EpisodeCount == 0
+           && persisted.Evidence.Any(item => item.Text == "objectives remain incomplete"),
+        "an accepted incomplete redirect must remain durable without becoming a failure episode");
+
+    var ownerB = reloaded.TryBeginAttempt(key, Context());
+    var delayedA = reloaded.Report(
+        new QuestAttemptOutcome
+        {
+            Key = key,
+            AttemptKey = key,
+            AttemptGeneration = ownerA.AttemptGeneration,
+            Kind = QuestAttemptOutcomeKind.Redirect,
+            Reason = QuestFailureReason.TurnInQuestIncomplete,
+            IsFailureEpisode = false,
+            Evidence = "delayed A redirect"
+        },
+        Context());
+    var stillB = reloaded.GetEntries().Single();
+    Assert(ownerB.AttemptGeneration > ownerA.AttemptGeneration
+           && delayedA.State == QuestRecoveryState.Attempting
+           && !delayedA.MayAttempt
+           && stillB.AttemptGeneration == ownerB.AttemptGeneration
+           && stillB.Evidence.All(item => item.Text != "delayed A redirect")
+           && reloaded.OwnsAttempt(key, ownerB.AttemptGeneration),
+        "a delayed redirect from A must not mutate or release newly acquired owner B");
+
+    var malformedManager = new QuestRecoveryManager(new FixedClock(now));
+    var malformedKey = QuestRecoveryKey.ForEndpoint(
+        1223, QuestRecoveryStage.TurnIn, 1, "cell:1:2");
+    malformedManager.Configure(CreateEnvironment(
+        Path.Combine(settingsRoot, "malformed-scope"), "Jeof", "Lordaeron"));
+    var malformedOwner = malformedManager.TryBeginAttempt(malformedKey, Context());
+    var malformed = malformedManager.Report(
+        new QuestAttemptOutcome
+        {
+            Key = malformedKey,
+            AttemptKey = malformedKey,
+            AttemptGeneration = malformedOwner.AttemptGeneration,
+            Kind = QuestAttemptOutcomeKind.Redirect,
+            Reason = QuestFailureReason.TurnInQuestIncomplete,
+            IsFailureEpisode = false,
+            Evidence = "malformed endpoint owner"
+        },
+        Context());
+    Assert(malformed.State == QuestRecoveryState.Attempting
+           && !malformed.MayAttempt
+           && malformedManager.OwnsAttempt(malformedKey, malformedOwner.AttemptGeneration)
+           && malformedManager.GetEntries().Single().Evidence.All(
+               item => item.Text != "malformed endpoint owner"),
+        "an incomplete redirect must reject a non-quest-stage owner even when its stage enum is TurnIn");
+}
+
 static void TestOwnedFailureRequiresExactGenerationAndReleasesAtomically(string settingsRoot, DateTime now)
 {
     var manager = new QuestRecoveryManager(new FixedClock(now));
@@ -2404,6 +2514,96 @@ static void TestManualBlacklistNormalizesEveryOwnedScope(string settingsRoot, Da
     reloaded.SetManualBlacklist(1209, false);
     Assert(reloaded.OwnsAttempt(objective, nextObjective.AttemptGeneration),
         "an idempotent manual removal must not abandon a newly acquired exact owner");
+}
+
+static void TestQuestWideTerminalPrecedenceAndAutomaticRestoration(string settingsRoot, DateTime now)
+{
+    var clock = new FixedClock(now);
+    var manager = new QuestRecoveryManager(clock);
+    var turnIn = QuestRecoveryKey.ForQuestStage(1221, QuestRecoveryStage.TurnIn);
+    var endpoint = QuestRecoveryKey.ForEndpoint(1221, QuestRecoveryStage.Navigation, 1, "cell:4:5");
+    manager.Configure(CreateEnvironment(settingsRoot, "Jeof", "Lordaeron"));
+
+    manager.Report(
+        QuestAttemptOutcome.Failure(turnIn, QuestFailureReason.TurnInTargetNotOffered, "turn-in failure one"),
+        Context());
+    clock.UtcNow = now.AddMinutes(31);
+    manager.Report(
+        QuestAttemptOutcome.Failure(turnIn, QuestFailureReason.TurnInTargetNotOffered, "turn-in failure two"),
+        Context());
+    clock.UtcNow = now.AddMinutes(92);
+    manager.Report(
+        QuestAttemptOutcome.Failure(turnIn, QuestFailureReason.TurnInTargetNotOffered, "turn-in failure three"),
+        Context());
+    manager.Report(
+        QuestAttemptOutcome.Failure(endpoint, QuestFailureReason.PathGenerationFailed, "endpoint failure"),
+        Context());
+
+    Assert(manager.Evaluate(turnIn, Context()).State == QuestRecoveryState.Quarantined
+           && manager.Evaluate(endpoint, Context()).State == QuestRecoveryState.CoolingDown
+           && manager.GetRecord(turnIn)?.Key.Equals(turnIn) == true
+           && manager.GetRecord(endpoint)?.Key.Equals(endpoint) == true,
+        "without a quest-wide terminal, exact stage and endpoint automatic decisions must remain authoritative");
+
+    manager.SetManualBlacklist(1221, true);
+    QuestRecoveryRecord manual = manager.GetRecord(turnIn)
+        ?? throw new InvalidOperationException("manual terminal record missing");
+    Assert(manual.State == QuestRecoveryState.ManualBlacklist
+           && manual.Key.Equals(QuestRecoveryKey.ForQuestStage(1221, QuestRecoveryStage.Pickup))
+           && manager.Evaluate(turnIn, Context()).State == QuestRecoveryState.ManualBlacklist
+           && manager.Evaluate(endpoint, Context()).State == QuestRecoveryState.ManualBlacklist,
+        "a canonical pickup manual terminal must override every exact automatic scope for the quest");
+
+    manager.SetManualBlacklist(1221, false);
+    var restoredTurnIn = manager.GetRecord(turnIn);
+    var restoredEndpoint = manager.GetRecord(endpoint);
+    Assert(restoredTurnIn?.State == QuestRecoveryState.Quarantined
+           && restoredTurnIn.Key.Equals(turnIn)
+           && restoredTurnIn.Evidence.Any(item => item.Text == "turn-in failure three")
+           && restoredEndpoint?.State == QuestRecoveryState.CoolingDown
+           && restoredEndpoint.Key.Equals(endpoint)
+           && restoredEndpoint.Evidence.Any(item => item.Text == "endpoint failure")
+           && manager.GetEntries().Where(item => item.Key.QuestId == 1221)
+               .All(item => item.State != QuestRecoveryState.Attempting),
+        "removing the manual terminal must reveal preserved automatic records without orphaning ownership");
+
+    string completedRoot = Path.Combine(settingsRoot, "completed-wins");
+    string completedPath = Path.Combine(
+        completedRoot, "QuestRecovery", "Jeof-Lordaeron", "quest-recovery.json");
+    var completedTurnIn = QuestRecoveryKey.ForQuestStage(1222, QuestRecoveryStage.TurnIn);
+    var manualPickup = QuestRecoveryKey.ForQuestStage(1222, QuestRecoveryStage.Pickup);
+    var automaticEndpoint = QuestRecoveryKey.ForEndpoint(1222, QuestRecoveryStage.Navigation, 1, "cell:8:9");
+    new QuestRecoveryStore(completedPath).Save(new QuestRecoveryDocument
+    {
+        CharacterName = "Jeof",
+        RealmName = "Lordaeron",
+        Records = new[]
+        {
+            new QuestRecoveryRecord
+            {
+                Key = automaticEndpoint,
+                State = QuestRecoveryState.CoolingDown,
+                Reason = QuestFailureReason.PathGenerationFailed
+            },
+            new QuestRecoveryRecord
+            {
+                Key = manualPickup,
+                State = QuestRecoveryState.ManualBlacklist,
+                Reason = QuestFailureReason.UserExcluded
+            },
+            new QuestRecoveryRecord
+            {
+                Key = completedTurnIn,
+                State = QuestRecoveryState.Completed,
+                Reason = QuestFailureReason.None
+            }
+        }
+    });
+    var completedManager = new QuestRecoveryManager(new FixedClock(now));
+    completedManager.Configure(CreateEnvironment(completedRoot, "Jeof", "Lordaeron"));
+    Assert(completedManager.GetRecord(automaticEndpoint)?.State == QuestRecoveryState.Completed
+           && completedManager.Evaluate(automaticEndpoint, Context()).State == QuestRecoveryState.Completed,
+        "Completed must outrank ManualBlacklist and an exact automatic record when legacy records coexist");
 }
 
 static void TestOwnershipFenceSurvivesManualReleaseReload(string settingsRoot, DateTime now)

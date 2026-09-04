@@ -114,3 +114,62 @@ deferred live-world validation of NPC/game-object interaction timing; the real
 adapter and nested child compile through the linked harness, while lifecycle,
 concurrency, redirect, alternate, authority, persistence, and abandonment behavior
 is covered deterministically through the production seams.
+
+## Review round 1 fixes (2026-09-04)
+
+The incomplete redirect is now a generation-fenced terminal transition despite
+remaining a non-failure episode. `Report` accepts it only from an exact active
+TurnIn quest-stage owner, with an exact current generation and an authorized target.
+A valid redirect atomically returns the owned record to `Eligible`, records
+`TurnInQuestIncomplete` evidence, releases ownership, persists normally, and adds
+neither an episode nor a rolling failure. Stale, delayed, ownerless, or malformed
+scope redirects return the current authoritative decision without any record,
+evidence, escalation, ownership, or POI mutation.
+
+Quest-wide terminal lookup is now authoritative before exact automatic lookup.
+`Completed` wins first, followed by `ManualBlacklist`, then an exact stage/endpoint
+record, then legacy control fallback. The manager exposes that same selection via
+`GetRecord`, so `Evaluate`, attempt acquisition, reports, and consumers receive a
+consistent decision. Removing a canonical manual record reveals the preserved exact
+automatic turn-in and endpoint records rather than orphaning or rewriting them.
+
+`ProductionSafeTurnInRuntime.GetRecoveryRecord` now calls the manager's authoritative
+getter. A production-representation regression loads an automatic TurnIn quarantine
+beside a canonical Pickup manual blacklist, applies two-slot pressure, and proves
+the selected manual terminal prevents both persistence and the runtime abandon seam.
+
+### Round 1 TDD and verification evidence
+
+- Redirect RED: exit 1 at `a stale incomplete redirect must not release or mutate
+  the exact active owner`; the unfenced redirect changed A to `Eligible`.
+- Terminal precedence RED: compilation exited 1 with six expected `CS1061` errors
+  because the authoritative `QuestRecoveryManager.GetRecord` API did not exist.
+- Production representation RED: exit 1 at `production SafeTurnIn must use
+  quest-wide manual precedence`; the prior exact-first adapter lookup selected the
+  automatic quarantine.
+- Malformed-owner RED: exit 1 because an endpoint-scope key carrying a TurnIn stage
+  enum was accepted; the source fence now also requires `QuestStage` scope.
+- Linked adapter regression: exit 0,
+  `Quest recovery adapter regression tests passed.`
+- Core recovery regression: exit 0,
+  `Quest recovery regression tests passed.`
+- Wholesome integration regression: exit 0,
+  `Wholesome scheduler recovery regression tests passed.`
+- Pickup policy regression: exit 0,
+  `Quest pickup policy regression tests passed.`
+- Full non-incremental Release x86 build: exit 0, 3,250 baseline warnings,
+  0 errors.
+- All four focused output directories contain zero `.exe` apphosts. Static legacy,
+  file-I/O, empty-catch, and `TreeRoot` restart scans remain clean. The single client
+  abandon call remains behind the policy, authoritative terminal lookup, and
+  successful persistence gates.
+- Backup verification re-hashed all three original entries successfully. Manifest
+  SHA-256 remains
+  `24e67583721d535328ad8e82a7e445b68cfd8e19607cfcbe12a46532bd893c84`.
+- Final installed `SafeTurnIn.cs` SHA-256:
+  `bd904526a222426432e73083ec2c5ca04b70b74a684bf1772556fa4f4640463e`.
+- Final linked adapter-test DLL SHA-256:
+  `e1060c7af798b9e4780ad5f82d2cfaedc41c6f2fb49737a228b8576913944683`.
+
+No push, deployment, binary replacement, client launch, or live smoke was performed.
+Live-world timing remains intentionally deferred.

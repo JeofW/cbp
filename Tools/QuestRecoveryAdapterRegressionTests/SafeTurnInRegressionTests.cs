@@ -5,6 +5,7 @@ using Styx.Logic.Questing;
 using Styx.Logic.Questing.Recovery;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using TreeSharp;
 
@@ -20,7 +21,9 @@ internal static class SafeTurnInRegressionTests
         TestMissingEnderAndExhaustedEndpointsUseNarrowOwnedFailures();
         TestThreeRealCyclesSpanAlternatesAndFormOneEpisode();
         TestObservedCycleStillAdvancesWhenDialogArrivesOnNextPulse();
+        TestDelayedIncompleteRedirectPreservesConcurrentWinnerPoi();
         TestSuccessStaleAndDisposeUseExactPoiAndGeneration();
+        TestProductionRecoveryLookupHonorsQuestWideManualTerminal();
     }
 
     private static void TestIncompleteRedirectReleasesExactOwner()
@@ -262,6 +265,37 @@ internal static class SafeTurnInRegressionTests
             "a real cycle observed before its dialog result must still classify the mismatch and advance naturally");
     }
 
+    private static void TestDelayedIncompleteRedirectPreservesConcurrentWinnerPoi()
+    {
+        var runtime = RuntimeWithOneLiveCandidate();
+        var behavior = NewBehavior(runtime);
+        behavior.OnStart();
+        var ownedPoi = TurnInPoi(876, 3338, new WoWPoint(1, 1, 0));
+        runtime.Children[0].OnTick = () => runtime.CurrentPoi = ownedPoi;
+        behavior.TickForTesting();
+
+        var winner = TurnInPoi(876, 3338, new WoWPoint(2, 2, 0));
+        runtime.Snapshot = Snapshot(true, QuestCompletionState.KnownIncomplete, true, 8);
+        runtime.ReportDecision = new QuestRecoveryDecision
+        {
+            State = QuestRecoveryState.Attempting,
+            MayAttempt = false,
+            AttemptGeneration = 42,
+            Status = "newer owner retained"
+        };
+        runtime.OnReport = _ => runtime.CurrentPoi = winner;
+        behavior.TickForTesting();
+
+        QuestAttemptOutcome redirect = runtime.Reports.Last();
+        Assert(behavior.IsDone
+               && redirect.Kind == QuestAttemptOutcomeKind.Redirect
+               && redirect.AttemptGeneration == 41
+               && ReferenceEquals(runtime.CurrentPoi, winner)
+               && runtime.ClearCount == 0
+               && runtime.AbandonAttemptCount == 0,
+            "a delayed incomplete redirect rejected behind owner B must not clear B's replacement POI or release B");
+    }
+
     private static void TestSuccessStaleAndDisposeUseExactPoiAndGeneration()
     {
         var successRuntime = RuntimeWithOneLiveCandidate();
@@ -312,6 +346,69 @@ internal static class SafeTurnInRegressionTests
                && disposedRuntime.AbandonedGeneration == 41
                && disposedRuntime.Children[0].DisposeCount == 1,
             "neutral disposal must release the exact owner generation and exact POI without abandoning the quest");
+    }
+
+    private static void TestProductionRecoveryLookupHonorsQuestWideManualTerminal()
+    {
+        string settingsRoot = Path.Combine(
+            AppContext.BaseDirectory, "safe-turnin-terminal-precedence");
+        if (Directory.Exists(settingsRoot))
+            Directory.Delete(settingsRoot, recursive: true);
+
+        try
+        {
+            var turnIn = QuestRecoveryKey.ForQuestStage(876, QuestRecoveryStage.TurnIn);
+            var manualPickup = QuestRecoveryKey.ForQuestStage(876, QuestRecoveryStage.Pickup);
+            string storePath = Path.Combine(
+                settingsRoot, "QuestRecovery", "Jeof-Lordaeron", "quest-recovery.json");
+            new QuestRecoveryStore(storePath).Save(new QuestRecoveryDocument
+            {
+                CharacterName = "Jeof",
+                RealmName = "Lordaeron",
+                Records = new[]
+                {
+                    new QuestRecoveryRecord
+                    {
+                        Key = turnIn,
+                        State = QuestRecoveryState.Quarantined,
+                        Reason = QuestFailureReason.NoObjectiveProgress,
+                        EpisodeCount = 3,
+                        AttemptGeneration = 41
+                    },
+                    new QuestRecoveryRecord
+                    {
+                        Key = manualPickup,
+                        State = QuestRecoveryState.ManualBlacklist,
+                        Reason = QuestFailureReason.UserExcluded,
+                        AttemptGeneration = 40
+                    }
+                }
+            });
+            QuestRecoveryManager.Instance.Configure(new QuestRecoveryEnvironment(
+                settingsRoot, "Jeof", "Lordaeron", "quest-data-v1", "core-v1", "nav-v1"));
+
+            QuestRecoveryRecord selected = new ProductionSafeTurnInRuntime().GetRecoveryRecord(turnIn);
+            var runtime = new FakeTurnInRuntime
+            {
+                ClaimAllowed = false,
+                ClaimState = QuestRecoveryState.ManualBlacklist,
+                Snapshot = Snapshot(true, QuestCompletionState.KnownIncomplete, true, 2, 0, 0, 0, 0),
+                RecoveryRecord = selected
+            };
+            NewBehavior(runtime).OnStart();
+
+            Assert(selected != null
+                   && selected.State == QuestRecoveryState.ManualBlacklist
+                   && selected.Key.Equals(manualPickup)
+                   && runtime.AbandonQuestCount == 0
+                   && runtime.ClientMutationEvents.Count == 0,
+                "production SafeTurnIn must use quest-wide manual precedence and deny automatic abandonment under log pressure");
+        }
+        finally
+        {
+            if (Directory.Exists(settingsRoot))
+                Directory.Delete(settingsRoot, recursive: true);
+        }
     }
 
     private static FakeTurnInRuntime RuntimeWithOneLiveCandidate()
@@ -405,6 +502,12 @@ internal static class SafeTurnInRegressionTests
         public List<IReadOnlyList<QuestAttemptOutcome>> Batches { get; } = new();
         public List<string> ClientMutationEvents { get; } = new();
         public System.Action OnBatch { get; set; }
+        public System.Action<QuestAttemptOutcome> OnReport { get; set; }
+        public QuestRecoveryDecision ReportDecision { get; set; } = new()
+        {
+            MayAttempt = true,
+            State = QuestRecoveryState.Eligible
+        };
 
         public override DateTime UtcNow => Now;
         public override WoWPoint CurrentPlayerLocation => PlayerLocation;
@@ -440,7 +543,8 @@ internal static class SafeTurnInRegressionTests
         public override QuestRecoveryDecision Report(QuestAttemptOutcome outcome, QuestRecoveryContext context)
         {
             Reports.Add(outcome);
-            return new QuestRecoveryDecision { MayAttempt = true, State = QuestRecoveryState.Eligible };
+            OnReport?.Invoke(outcome);
+            return ReportDecision;
         }
         public override bool TryReportGeneratedFailures(IReadOnlyList<QuestAttemptOutcome> outcomes, QuestRecoveryContext context, out IReadOnlyList<QuestRecoveryDecision> decisions)
         {
