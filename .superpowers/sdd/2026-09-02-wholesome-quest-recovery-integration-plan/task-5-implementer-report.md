@@ -269,3 +269,55 @@ Round 3 changes only one external runtime file:
 The final seven-file `installed.sha256.txt` hashes to `4256988A2E6A7A7ED1DAED6A4835218C9F1557BDF7D6E00B90C7D162643AD630`; the original manifest remains `C5787DD61F477ECB40D3366F1834B3CD61123806436BF96109B611855D106D56` with zero backup mismatches.
 
 Per the review ruling, the separate legacy blacklist readers/writers in `Quest Behaviors/SafePickUp.cs`, `Quest Behaviors/SafeTurnIn.cs`, and `Plugins/ZygorProfileRecovery/ZygorProfileRecovery.cs` were inventoried but deliberately not edited here. They are deferred to Tasks 2–4 of the next approved adapters rollout plan and are outside Wholesome Task 5 scope. No push, deployment, live replacement, apphost, or bot launch occurred.
+
+## Review Round 4 Atomic Mark Correction
+
+`Mark permanent` now uses `QuestRecoveryManager.TrySetManualBlacklistIfCurrentAutomatic` instead of the explicit textbox API. Under the manager lock, the conditional operation requires the exact selected recovery key, an excluded automatic state (`CoolingDown`, `HalfOpen`, or `Quarantined`), the selected row's monotonic attempt generation, and no same-quest `Completed` or `ManualBlacklist` terminal. Only after all conditions still match does it install the existing quest-wide manual terminal. The original `TrySetManualBlacklist(uint, bool)` and void wrapper remain unchanged for explicit manual textbox semantics.
+
+Action availability now requires a current manager snapshot record with the same key, state, and attempt generation as the selected row. Missing, `Eligible`, `Completed`, manual, changed-state, and same-state/later-generation rows cannot fall back to stale row data. A false conditional result logs and refreshes without callback or flush; a true result retains exactly one flush.
+
+Round 4 strict-TDD evidence:
+
+```text
+CONDITIONAL_MARK_RED: build failed with CS1061 because QuestRecoveryManager lacked TrySetManualBlacklistIfCurrentAutomatic.
+ABA_MARK_RED: build failed with CS1061 because RecoveryStatusRow lacked the stable AttemptGeneration token.
+GREEN: Wholesome scheduler recovery regression tests passed.
+```
+
+Production-linked regressions select real cooling and quarantined rows and race them to removal, `Eligible`, `Completed`, and a different automatic state before clicking `Mark permanent`. Each stale path produces zero callback, zero manual mutation, and zero flush, then refreshes to the current manager snapshot. Counted controller coverage proves an unchanged quarantined row installs one quest-wide `ManualBlacklist` and attempts exactly one flush. A same-key, same-state ABA regression proves a later attempt generation is rejected. Existing combined clear, retry, persistence-failure, and `Completed` terminal tests remain green.
+
+Fresh Round 4 verification:
+
+```text
+[Wholesome external bot/UI + linked regressions]
+Build succeeded. 3261 Warning(s), 0 Error(s).
+Wholesome scheduler recovery regression tests passed.
+
+[QuestRecoveryCore]
+Build succeeded. 3246 Warning(s), 0 Error(s).
+Quest recovery regression tests passed.
+
+[QuestPickupCore]
+Build succeeded. 3246 Warning(s), 0 Error(s).
+Quest pickup policy regression tests passed.
+
+[FullReleaseX86]
+Build succeeded. 3250 Warning(s), 0 Error(s).
+
+QUEST_BLACKLIST_STORAGE_SCAN_EXIT=1 (zero matches)
+TREE_ROOT_START_SCAN_EXIT=1 (zero matches)
+TASK5_LEGACY_DIRECT_WRITER_SCAN_EXIT=1 (zero matches)
+WHOLESOME_APPHOST_EXISTS=False
+CORE_APPHOST_EXISTS=False
+PICKUP_APPHOST_EXISTS=False
+BACKUP_HASH_MISMATCHES=0
+INSTALLED_HASH_MISMATCHES=0
+TRAILING_WHITESPACE_SCAN_EXIT=1 (zero matches)
+DIFF_CHECK_EXIT=0
+```
+
+Round 4 changes only one external runtime file:
+
+- `SettingsForm.cs` — `72c9a14b09df4bef60dd74d7360edfa8899062d1d0b5e4bd77f76c18912afc8f`
+
+The final seven-file `installed.sha256.txt` hashes to `FB31439C6D3C4F998DC8B19CA8869DFF273F2F4D91C24AADD6AE1C5C3E2F43C5`; the preserved original `manifest.sha256.txt` remains `C5787DD61F477ECB40D3366F1834B3CD61123806436BF96109B611855D106D56` with zero mismatches. Existing unrelated vendor/grind worktree changes were not edited or staged. Adapters remain deferred. No push, deployment, live replacement, apphost generation, or bot launch occurred.

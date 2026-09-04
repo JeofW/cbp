@@ -93,6 +93,8 @@ try
     TestRecoveryFlushFailureIsVisibleAndRetryable();
     TestStaleRecoveryUiActionsRefreshWithoutPersistingDirtyState();
     TestRecoveryActionFlushCountTracksActualMutations();
+    TestMarkPermanentRequiresTheSelectedAutomaticState();
+    TestMarkPermanentUiRacesDoNotMutateOrFlush();
     TestConfigurationWithoutCharacterIsReadOnlyAndContainsErrors();
     Console.WriteLine("Wholesome scheduler recovery regression tests passed.");
 }
@@ -181,6 +183,7 @@ void TestRecoveryActionsUseManagerSemanticsAndPreserveCompleted()
                && !manager.TryBeginAttempt(automaticKey, new QuestRecoveryContext()).MayAttempt,
             "Retry now must permit exactly one owned half-open probe");
         manager.AbandonAttempt(automaticKey, probe.AttemptGeneration);
+        CreateCoolingRecord(manager, automaticKey, QuestFailureReason.NoObjectiveProgress);
 
         automatic = controller.Refresh().Single(row => row.Key.Equals(automaticKey));
         controller.MarkPermanent(automatic);
@@ -506,6 +509,19 @@ void CreateCoolingRecord(
     manager.Report(
         QuestAttemptOutcome.Failure(key, key, owner.AttemptGeneration, reason, "test failure"),
         new QuestRecoveryContext());
+}
+
+void CreateQuarantinedRecord(
+    QuestRecoveryManager manager,
+    TestRecoveryClock clock,
+    QuestRecoveryKey key,
+    QuestFailureReason reason)
+{
+    CreateCoolingRecord(manager, key, reason);
+    clock.Advance(TimeSpan.FromMinutes(31));
+    CreateCoolingRecord(manager, key, reason);
+    clock.Advance(TimeSpan.FromMinutes(61));
+    CreateCoolingRecord(manager, key, reason);
 }
 
 void TestConfigurationBeforeStartLoadsPersistedRecoveryWithoutStartingLifecycle()
@@ -886,7 +902,9 @@ void TestStaleRecoveryUiActionsRefreshWithoutPersistingDirtyState()
 
                     var grid = (System.Windows.Forms.DataGridView)form.Controls.Find("recoveryGrid", true).Single();
                     Assert(recoveryChanged == 0
-                           && logs.Any(line => line.Contains($"{actionName} made no change", StringComparison.Ordinal))
+                           && logs.Any(line => line.Contains(actionName, StringComparison.Ordinal)
+                               && (line.Contains("unavailable", StringComparison.Ordinal)
+                                   || line.Contains("made no change", StringComparison.Ordinal)))
                            && grid.Rows.Cast<System.Windows.Forms.DataGridViewRow>()
                                .All(row => row.Tag is not RecoveryStatusRow status || !status.Key.Equals(selectedKey)),
                         "a stale action must report no change and refresh current status without signaling a mutation");
@@ -1054,6 +1072,215 @@ void TestRecoveryActionFlushCountTracksActualMutations()
                && !completed.controller.ClearExclusion(completedRow)
                && completed.flushCount() == 0,
             "Completed recovery actions must remain terminal and perform zero flush attempts");
+    }
+    finally
+    {
+        Directory.Delete(root, recursive: true);
+    }
+}
+
+void TestMarkPermanentRequiresTheSelectedAutomaticState()
+{
+    string root = Path.Combine(Path.GetTempPath(), $"wholesome-conditional-mark-{Guid.NewGuid():N}");
+    Directory.CreateDirectory(root);
+    try
+    {
+        (QuestRecoveryManager manager, RecoverySettingsController controller, QuestRecoveryKey key, Func<int> flushCount)
+            CreateAutomatic(uint questId, QuestRecoveryState state = QuestRecoveryState.CoolingDown)
+        {
+            var clock = new TestRecoveryClock(utcNow);
+            var manager = new QuestRecoveryManager(clock);
+            manager.Configure(new QuestRecoveryEnvironment(root, $"Jeof-{questId}", "Lordaeron", "dataset", "core", "nav"));
+            var key = QuestRecoveryKey.ForQuestStage(questId, QuestRecoveryStage.Objective);
+            if (state == QuestRecoveryState.Quarantined)
+                CreateQuarantinedRecord(manager, clock, key, QuestFailureReason.NoObjectiveProgress);
+            else
+                CreateCoolingRecord(manager, key, QuestFailureReason.NoObjectiveProgress);
+            int count = 0;
+            var controller = new RecoverySettingsController(
+                manager,
+                _ => { },
+                () =>
+                {
+                    count++;
+                    return manager.TryFlush();
+                });
+            return (manager, controller, key, () => count);
+        }
+
+        var removed = CreateAutomatic(3781);
+        var removedRow = removed.controller.Refresh().Single(row => row.Key.Equals(removed.key));
+        removed.manager.ClearExclusion(removed.key);
+        Assert(!removed.controller.ActionsFor(removedRow).CanMarkPermanent
+               && !removed.controller.MarkPermanent(removedRow)
+               && removed.flushCount() == 0
+               && removed.manager.GetEntries().All(record => record.Key.QuestId != removed.key.QuestId),
+            "a selected automatic row removed before Mark permanent must be unavailable and perform no mutation or flush");
+
+        var eligible = CreateAutomatic(3782);
+        var eligibleRow = eligible.controller.Refresh().Single(row => row.Key.Equals(eligible.key));
+        eligible.manager.RetryNow(eligible.key);
+        var probe = eligible.manager.TryBeginAttempt(eligible.key, new QuestRecoveryContext());
+        eligible.manager.AbandonAttempt(eligible.key, probe.AttemptGeneration);
+        Assert(!eligible.controller.ActionsFor(eligibleRow).CanMarkPermanent
+               && !eligible.controller.MarkPermanent(eligibleRow)
+               && eligible.flushCount() == 0
+               && eligible.manager.GetEntries().Single(record => record.Key.Equals(eligible.key)).State == QuestRecoveryState.Eligible,
+            "a selected automatic row that becomes Eligible before Mark permanent must perform no mutation or flush");
+
+        var completed = CreateAutomatic(3783, QuestRecoveryState.Quarantined);
+        var completedRow = completed.controller.Refresh().Single(row => row.Key.Equals(completed.key));
+        completed.manager.MarkCompleted(completed.key.QuestId);
+        Assert(!completed.controller.ActionsFor(completedRow).CanMarkPermanent
+               && !completed.controller.MarkPermanent(completedRow)
+               && completed.flushCount() == 0
+               && completed.manager.GetEntries().All(record => record.State == QuestRecoveryState.Completed),
+            "a selected automatic row completed before Mark permanent must remain terminal with no flush");
+
+        var changed = CreateAutomatic(3784, QuestRecoveryState.Quarantined);
+        var changedRow = changed.controller.Refresh().Single(row => row.Key.Equals(changed.key));
+        changed.manager.RetryNow(changed.key);
+        Assert(!changed.controller.ActionsFor(changedRow).CanMarkPermanent
+               && !changed.controller.MarkPermanent(changedRow)
+               && changed.flushCount() == 0
+               && changed.manager.GetEntries().Single(record => record.Key.Equals(changed.key)).State == QuestRecoveryState.HalfOpen,
+            "a selected automatic row whose state changes before Mark permanent must perform no mutation or flush");
+
+        var unchanged = CreateAutomatic(3785, QuestRecoveryState.Quarantined);
+        var unchangedRow = unchanged.controller.Refresh().Single(row => row.Key.Equals(unchanged.key));
+        Assert(unchanged.controller.MarkPermanent(unchangedRow)
+               && unchanged.flushCount() == 1
+               && unchanged.manager.GetEntries().Count(record =>
+                   record.Key.QuestId == unchanged.key.QuestId &&
+                   record.State == QuestRecoveryState.ManualBlacklist) == 1,
+            "an unchanged selected automatic row must install one quest-wide manual terminal and flush exactly once");
+
+        var direct = CreateAutomatic(3786);
+        var directRow = direct.controller.Refresh().Single(row => row.Key.Equals(direct.key));
+        Assert(!direct.manager.TrySetManualBlacklistIfCurrentAutomatic(
+                   direct.key,
+                   QuestRecoveryState.Quarantined,
+                   directRow.AttemptGeneration)
+               && direct.manager.TrySetManualBlacklistIfCurrentAutomatic(
+                   direct.key,
+                   QuestRecoveryState.CoolingDown,
+                   directRow.AttemptGeneration)
+               && !direct.manager.TrySetManualBlacklistIfCurrentAutomatic(
+                   direct.key,
+                   QuestRecoveryState.CoolingDown,
+                   directRow.AttemptGeneration),
+            "the manager conditional API must atomically require the exact key, expected automatic state, and stable attempt generation");
+
+        var aba = CreateAutomatic(3791);
+        var abaRow = aba.controller.Refresh().Single(row => row.Key.Equals(aba.key));
+        aba.manager.RetryNow(aba.key);
+        var nextAttempt = aba.manager.TryBeginAttempt(aba.key, new QuestRecoveryContext());
+        aba.manager.Report(
+            QuestAttemptOutcome.Failure(
+                aba.key,
+                aba.key,
+                nextAttempt.AttemptGeneration,
+                QuestFailureReason.NoObjectiveProgress,
+                "same-state ABA"),
+            new QuestRecoveryContext());
+        Assert(aba.manager.GetEntries().Single(record => record.Key.Equals(aba.key)).State == abaRow.State
+               && !aba.manager.TrySetManualBlacklistIfCurrentAutomatic(
+                   aba.key,
+                   abaRow.State,
+                   abaRow.AttemptGeneration),
+            "a same-key automatic record that returns to the selected state in a later attempt generation must reject the stale row");
+    }
+    finally
+    {
+        Directory.Delete(root, recursive: true);
+    }
+}
+
+void TestMarkPermanentUiRacesDoNotMutateOrFlush()
+{
+    string root = Path.Combine(Path.GetTempPath(), $"wholesome-mark-ui-races-{Guid.NewGuid():N}");
+    Directory.CreateDirectory(root);
+    try
+    {
+        void Run(
+            uint questId,
+            QuestRecoveryState initialState,
+            Action<QuestRecoveryManager, QuestRecoveryKey> race,
+            QuestRecoveryState expectedStateAfter,
+            bool rowRemains)
+        {
+            var clock = new TestRecoveryClock(utcNow);
+            var manager = new QuestRecoveryManager(clock);
+            manager.Configure(new QuestRecoveryEnvironment(root, $"Jeof-{questId}", "Lordaeron", "dataset", "core", "nav"));
+            var key = QuestRecoveryKey.ForQuestStage(questId, QuestRecoveryStage.Objective);
+            if (initialState == QuestRecoveryState.Quarantined)
+                CreateQuarantinedRecord(manager, clock, key, QuestFailureReason.NoObjectiveProgress);
+            else
+                CreateCoolingRecord(manager, key, QuestFailureReason.NoObjectiveProgress);
+            manager.Flush();
+            int changed = 0;
+            var logs = new List<string>();
+            Exception? failure = null;
+            var finished = new ManualResetEventSlim();
+            var thread = new Thread(() =>
+            {
+                try
+                {
+                    using var form = new SettingsForm(
+                        new WholesomeAQSettings(),
+                        logs.Add,
+                        recoveryChanged: () => changed++,
+                        recoveryManager: manager);
+                    form.Show();
+                    System.Windows.Forms.Application.DoEvents();
+                    SelectRecoveryRow(form, key);
+                    var mark = (System.Windows.Forms.Button)form.Controls.Find("markPermanentButton", true).Single();
+                    Assert(mark.Enabled, "a current automatic exclusion must expose Mark permanent before the race");
+
+                    race(manager, key);
+                    mark.PerformClick();
+                    System.Windows.Forms.Application.DoEvents();
+
+                    var rows = ((System.Windows.Forms.DataGridView)form.Controls.Find("recoveryGrid", true).Single())
+                        .Rows.Cast<System.Windows.Forms.DataGridViewRow>()
+                        .Select(row => row.Tag as RecoveryStatusRow)
+                        .Where(row => row != null)
+                        .ToArray();
+                    Assert(changed == 0
+                           && logs.Any(line => line.Contains("Mark permanent", StringComparison.Ordinal)
+                               && (line.Contains("unavailable", StringComparison.Ordinal)
+                                   || line.Contains("made no change", StringComparison.Ordinal)))
+                           && rows.Any(row => row!.Key.Equals(key)) == rowRemains
+                           && manager.GetEntries().All(record => record.State != QuestRecoveryState.ManualBlacklist)
+                           && (!rowRemains || manager.GetEntries().Single(record => record.Key.Equals(key)).State == expectedStateAfter),
+                        "a stale Mark permanent click must refresh current rows without callback or manual mutation");
+                }
+                catch (Exception ex)
+                {
+                    failure = ex;
+                }
+                finally
+                {
+                    finished.Set();
+                }
+            });
+            thread.SetApartmentState(ApartmentState.STA);
+            thread.Start();
+            Assert(finished.Wait(TimeSpan.FromSeconds(10)), "the Mark permanent UI race must finish without deadlock");
+            thread.Join();
+            if (failure != null)
+                throw failure;
+        }
+
+        Run(3787, QuestRecoveryState.CoolingDown, (manager, key) => manager.ClearExclusion(key), QuestRecoveryState.Eligible, rowRemains: false);
+        Run(3788, QuestRecoveryState.CoolingDown, (manager, key) =>
+        {
+            manager.RetryNow(key);
+            var probe = manager.TryBeginAttempt(key, new QuestRecoveryContext());
+            manager.AbandonAttempt(key, probe.AttemptGeneration);
+        }, QuestRecoveryState.Eligible, rowRemains: true);
+        Run(3789, QuestRecoveryState.Quarantined, (manager, key) => manager.MarkCompleted(key.QuestId), QuestRecoveryState.Completed, rowRemains: true);
+        Run(3790, QuestRecoveryState.Quarantined, (manager, key) => manager.RetryNow(key), QuestRecoveryState.HalfOpen, rowRemains: true);
     }
     finally
     {

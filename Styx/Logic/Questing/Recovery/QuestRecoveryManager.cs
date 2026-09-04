@@ -423,72 +423,102 @@ public sealed class QuestRecoveryManager
         lock (_sync)
         {
             EnsureConfiguredCore();
-            if (blacklisted)
+            return TrySetManualBlacklistCore(questId, blacklisted);
+        }
+    }
+
+    public bool TrySetManualBlacklistIfCurrentAutomatic(
+        QuestRecoveryKey key,
+        QuestRecoveryState expectedState,
+        long expectedAttemptGeneration)
+    {
+        ArgumentNullException.ThrowIfNull(key);
+
+        lock (_sync)
+        {
+            EnsureConfiguredCore();
+            if (expectedState is not (QuestRecoveryState.CoolingDown or
+                    QuestRecoveryState.HalfOpen or
+                    QuestRecoveryState.Quarantined) ||
+                !_records.TryGetValue(key, out var current) ||
+                current.State != expectedState ||
+                current.AttemptGeneration != expectedAttemptGeneration ||
+                FindQuestTerminalCore(key.QuestId) is not null)
             {
-                if (_records.Values.Any(pair =>
-                        pair.Key.QuestId == questId && pair.State == QuestRecoveryState.Completed))
-                    return false;
-
-                bool changed = false;
-
-                foreach (var pair in _records
-                    .Where(pair => pair.Key.QuestId == questId && pair.Value.State == QuestRecoveryState.Attempting)
-                    .ToArray())
-                {
-                    _records[pair.Key] = Copy(pair.Value, state: QuestRecoveryState.Eligible);
-                    changed = true;
-                }
-
-                var key = QuestRecoveryKey.ForQuestStage(questId, QuestRecoveryStage.Pickup);
-                var existing = _records.TryGetValue(key, out var current) ? current : null;
-                if (existing is null)
-                {
-                    _records[key] = new QuestRecoveryRecord
-                    {
-                        Key = key,
-                        State = QuestRecoveryState.ManualBlacklist,
-                        Reason = QuestFailureReason.UserExcluded
-                    };
-                    changed = true;
-                }
-                else if (existing.State != QuestRecoveryState.ManualBlacklist ||
-                         existing.Reason != QuestFailureReason.UserExcluded)
-                {
-                    _records[key] = Copy(
-                        existing,
-                        state: QuestRecoveryState.ManualBlacklist,
-                        reason: QuestFailureReason.UserExcluded);
-                    changed = true;
-                }
-                foreach (var pair in _records
-                    .Where(pair => pair.Key.QuestId == questId &&
-                        pair.Value.State == QuestRecoveryState.ManualBlacklist &&
-                        !pair.Key.Equals(key))
-                    .ToArray())
-                {
-                    _records[pair.Key] = Copy(
-                        pair.Value,
-                        state: QuestRecoveryState.Eligible,
-                        reason: QuestFailureReason.None);
-                    changed = true;
-                }
-
-                _dirty |= changed;
-                return changed;
+                return false;
             }
 
-            bool removed = false;
+            return TrySetManualBlacklistCore(key.QuestId, true);
+        }
+    }
+
+    private bool TrySetManualBlacklistCore(uint questId, bool blacklisted)
+    {
+        if (blacklisted)
+        {
+            if (_records.Values.Any(pair =>
+                    pair.Key.QuestId == questId && pair.State == QuestRecoveryState.Completed))
+                return false;
+
+            bool changed = false;
+
             foreach (var pair in _records
-                .Where(pair => pair.Key.QuestId == questId &&
-                    pair.Value.State == QuestRecoveryState.ManualBlacklist)
+                .Where(pair => pair.Key.QuestId == questId && pair.Value.State == QuestRecoveryState.Attempting)
                 .ToArray())
             {
-                removed |= _records.Remove(pair.Key);
+                _records[pair.Key] = Copy(pair.Value, state: QuestRecoveryState.Eligible);
+                changed = true;
             }
 
-            _dirty |= removed;
-            return removed;
+            var key = QuestRecoveryKey.ForQuestStage(questId, QuestRecoveryStage.Pickup);
+            var existing = _records.TryGetValue(key, out var current) ? current : null;
+            if (existing is null)
+            {
+                _records[key] = new QuestRecoveryRecord
+                {
+                    Key = key,
+                    State = QuestRecoveryState.ManualBlacklist,
+                    Reason = QuestFailureReason.UserExcluded
+                };
+                changed = true;
+            }
+            else if (existing.State != QuestRecoveryState.ManualBlacklist ||
+                     existing.Reason != QuestFailureReason.UserExcluded)
+            {
+                _records[key] = Copy(
+                    existing,
+                    state: QuestRecoveryState.ManualBlacklist,
+                    reason: QuestFailureReason.UserExcluded);
+                changed = true;
+            }
+            foreach (var pair in _records
+                .Where(pair => pair.Key.QuestId == questId &&
+                    pair.Value.State == QuestRecoveryState.ManualBlacklist &&
+                    !pair.Key.Equals(key))
+                .ToArray())
+            {
+                _records[pair.Key] = Copy(
+                    pair.Value,
+                    state: QuestRecoveryState.Eligible,
+                    reason: QuestFailureReason.None);
+                changed = true;
+            }
+
+            _dirty |= changed;
+            return changed;
         }
+
+        bool removed = false;
+        foreach (var pair in _records
+            .Where(pair => pair.Key.QuestId == questId &&
+                pair.Value.State == QuestRecoveryState.ManualBlacklist)
+            .ToArray())
+        {
+            removed |= _records.Remove(pair.Key);
+        }
+
+        _dirty |= removed;
+        return removed;
     }
 
     public void RetryNow(QuestRecoveryKey key)
