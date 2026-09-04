@@ -59,9 +59,12 @@ generated `bin`/`obj` trees.
   policy, persists before action, and catches/logs action failure.
 - The remaining abandon calls are the API definition or explicit user/profile
   actions, not automatic recovery.
-- The exhaustive empty-catch inventory found 72 checkout and 10 external legacy
-  catches. All are classified in the verification document. There are zero empty
-  catches in the recovery manager, three adapters, or seven Wholesome files.
+- The final typed/filter-aware empty-catch inventory found 77 checkout runtime
+  catches, or 78 across the whole checkout when the intentional regression-fixture
+  catch is included. The external raw lexical total is 15: 14 ordinary catches plus
+  one narrowly filtered Wholesome disposed/no-handle UI teardown guard. All are
+  classified in the verification document. The recovery manager and three adapters
+  contain zero empty catches; Wholesome contains no unfiltered/unsafe empty catch.
 - Unrelated vendor/mail `TreeRoot.Stop` hits and the isolated user force-stop were
   explicitly separated from quest recovery.
 
@@ -131,3 +134,17 @@ explicitly filtered UI teardown guard above. No code, runtime source, manifest,
 backup, or binary changed during this correction. Deployment, process inspection,
 client launch, cold-start verification, live smoke, push, and final live acceptance
 remain Deferred.
+
+## Review round 2: remove stale current-summary totals
+
+The original summary bullet has been replaced with the final verified scope and
+totals: 77 checkout runtime catches, 78 all-checkout catches including the
+regression fixture, and 15 external raw lexical catches comprising 14 ordinary
+catches plus the filtered Wholesome UI teardown guard. This removes the remaining
+unqualified stale-total statement from the active implementer report.
+
+The ignored `task-5-review.diff` is retained as historical review input rather than
+regenerated. It now begins with an unmistakable pre-correction/superseded notice
+that gives the current totals and points readers to this report and the detailed
+verification document. Its embedded old diff remains unchanged as historical
+evidence only. No code or runtime artifact changed.
