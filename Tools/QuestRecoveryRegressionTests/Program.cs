@@ -262,7 +262,8 @@ static void TestDeathResetRequiresDirectionalEquipmentImprovement(DateTime now)
     {
         EquipmentFingerprint = "100:healthy|200:healthy",
         EquipmentHealthKnown = true,
-        CriticalEquipmentCount = 0
+        CriticalEquipmentCount = 0,
+        EquipmentEntries = new uint[] { 100, 200 }
     };
     QuestRecoveryRecord healthyFailure = QuestRecoveryPolicy.ApplyFailure(
         QuestRecoveryRecord.Create(key), QuestFailureReason.RepeatedDeaths, healthy, now);
@@ -287,7 +288,8 @@ static void TestDeathResetRequiresDirectionalEquipmentImprovement(DateTime now)
     {
         EquipmentFingerprint = "100:critical|200:healthy",
         EquipmentHealthKnown = true,
-        CriticalEquipmentCount = 1
+        CriticalEquipmentCount = 1,
+        EquipmentEntries = new uint[] { 100, 200 }
     };
     QuestRecoveryRecord criticalFailure = QuestRecoveryPolicy.ApplyFailure(
         QuestRecoveryRecord.Create(key), QuestFailureReason.RepeatedDeaths, critical, now);
@@ -299,6 +301,17 @@ static void TestDeathResetRequiresDirectionalEquipmentImprovement(DateTime now)
         criticalFailure, healthy, 0, now.AddHours(3));
     Assert(repaired.MayAttempt && repaired.State == QuestRecoveryState.HalfOpen,
         "critical-to-healthy equipment improvement may reopen one death-quarantine probe");
+
+    var removedCriticalItem = new QuestRecoveryContext
+    {
+        EquipmentFingerprint = "200:healthy",
+        EquipmentHealthKnown = true,
+        CriticalEquipmentCount = 0,
+        EquipmentEntries = new uint[] { 200 }
+    };
+    Assert(!QuestRecoveryPolicy.Evaluate(
+            criticalFailure, removedCriticalItem, 0, now.AddHours(3)).MayAttempt,
+        "unequipping the only critical item must not masquerade as an equipment repair");
 
     QuestRecoveryRecord legacy = new()
     {
@@ -364,6 +377,16 @@ static void TestDeathResetRecognizesEquippedReplacementAcrossReload(string setti
     };
     Assert(!reloaded.Evaluate(key, removed).MayAttempt,
         "removing or unequipping an item must not masquerade as a capability improvement");
+
+    var removedCriticalItem = new QuestRecoveryContext
+    {
+        EquipmentFingerprint = "200:healthy",
+        EquipmentHealthKnown = true,
+        CriticalEquipmentCount = 0,
+        EquipmentEntries = new uint[] { 200 }
+    };
+    Assert(!reloaded.Evaluate(key, removedCriticalItem).MayAttempt,
+        "unequipping the only critical item must not masquerade as an equipment repair");
 
     var added = new QuestRecoveryContext
     {

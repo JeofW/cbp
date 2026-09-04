@@ -248,9 +248,11 @@ public static class QuestRecoveryPolicy
         {
             return context.PlayerLevel > current.PlayerLevelAtFailure ||
                    current.EquipmentHealthKnown && context.EquipmentHealthKnown &&
-                   (context.CriticalEquipmentCount < current.CriticalEquipmentCount ||
-                    context.CriticalEquipmentCount <= current.CriticalEquipmentCount &&
-                    HasComparableEquipmentReplacement(current.EquipmentEntries, context.EquipmentEntries))
+                   HasComparableEquipmentImprovement(
+                       current.EquipmentEntries,
+                       context.EquipmentEntries,
+                       current.CriticalEquipmentCount,
+                       context.CriticalEquipmentCount)
                 ? "Combat capability changed."
                 : "";
         }
@@ -263,13 +265,18 @@ public static class QuestRecoveryPolicy
         !string.IsNullOrEmpty(current) &&
         !string.Equals(previous, current, StringComparison.Ordinal);
 
-    private static bool HasComparableEquipmentReplacement(
+    private static bool HasComparableEquipmentImprovement(
         IReadOnlyList<uint> previous,
-        IReadOnlyList<uint> current)
+        IReadOnlyList<uint> current,
+        int previousCriticalCount,
+        int currentCriticalCount)
     {
-        if (previous.Count == 0 || current.Count < previous.Count)
+        if (previous.Count == 0 || current.Count == 0 || current.Count < previous.Count)
             return false;
-        return !previous.OrderBy(value => value).SequenceEqual(current.OrderBy(value => value));
+
+        return currentCriticalCount < previousCriticalCount ||
+               currentCriticalCount <= previousCriticalCount &&
+               !previous.OrderBy(value => value).SequenceEqual(current.OrderBy(value => value));
     }
 
     private static QuestRecoveryDecision HalfOpenDecision(int failuresInRollingHour, string resetReason) =>
