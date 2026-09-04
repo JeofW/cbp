@@ -206,3 +206,56 @@ exhausts the six-per-hour budget.
 No push, deployment, binary replacement, client launch, or live smoke was
 performed. The only remaining concern is the intentionally deferred live-world
 verification of actual NPC/game-object interaction timing.
+
+## Review round 2 fix (2026-09-04)
+
+The remaining review finding was reproduced with a real linked behavior and no
+navigation or interaction timeout: a cycle-tagged primary-giver mismatch left the
+primary child active and never selected the known valid alternate. The cause was
+the nonterminal branch of `ProcessPickupOutcome`, which recorded the sample and
+returned without invoking candidate transition.
+
+For distinct outer cycles one and two, the adapter now stores terminal-form narrow
+evidence for the tried candidate and immediately invokes its existing candidate
+transition when another ordered, cell-distinct candidate is available. That
+transition clears only the exact owned POI, disposes the prior child, and creates
+the next child. It does not reset the shared outer interaction-cycle count. If no
+candidate remains, the current child may continue until the three-cycle boundary.
+On cycle three, one generated batch contains the accumulated tried-candidate
+relation facts plus the stage failure, so it still consumes one global rolling
+episode and releases the exact generation.
+
+The new regression also proves that a valid alternate can succeed: its coherent
+accepted snapshot reports exact-generation pickup-stage `Success`, clears its own
+POI, disposes cleanly, emits no generated failure batch, promotes none of the
+queued prior-candidate facts into episodes, and performs no neutral abandon.
+
+### Round 2 TDD and verification evidence
+
+- RED: exit 1 at `a natural primary mismatch must advance directly to the next
+  ordered alternate without a timeout`; only one child had been created.
+- Adapter regression GREEN: exit 0,
+  `Quest recovery adapter regression tests passed.`
+- Core recovery regression GREEN: exit 0,
+  `Quest recovery regression tests passed.`
+- Wholesome integration regression GREEN: exit 0,
+  `Wholesome scheduler recovery regression tests passed.`
+- Pickup policy regression GREEN: exit 0,
+  `Quest pickup policy regression tests passed.`
+- Full non-incremental Release x86 build: exit 0, 3,250 baseline warnings,
+  0 errors.
+- All four focused output directories contain zero `.exe` apphosts.
+- Static forbidden, empty-catch, and private file-API scans: 0 hits. Scoped
+  repository `git diff --check`: exit 0; the external no-index check emitted no
+  whitespace diagnostics.
+- Backup manifest verification remains clean at
+  `D:\World of Warcraft 3.3.5a\CB\Backups\quest-recovery-adapters-20260904-132002567`;
+  manifest SHA-256:
+  `24e67583721d535328ad8e82a7e445b68cfd8e19607cfcbe12a46532bd893c84`.
+- Final linked adapter-test DLL SHA-256:
+  `7d9f2d5ebbade5f1f66126440188b143b352685a0e88a4fff40d3512e2fc6c9d`.
+- Final installed `SafePickUp.cs` SHA-256:
+  `6e9b8e94fb26fd0e8532138c72a72ec0525a88c417d8012a59a99cd1afc9691c`.
+
+No push, deployment, binary replacement, client launch, or live smoke was
+performed. Live-world timing remains intentionally deferred.

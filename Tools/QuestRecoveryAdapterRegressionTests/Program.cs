@@ -15,6 +15,7 @@ TestDeniedClaimNeverClearsWinnerPoi();
 TestCandidateOrderingDedupAndCap();
 TestLiveGiverSurvivesMissingDatabase();
 TestUnknownCompletionAndDeferredChildPauseAllWork();
+TestNaturalMismatchAdvancesToAlternateAndAlternateCanSucceed();
 TestInteractionCyclesSpanChildReplacementAndBeatTimeout();
 TestTerminalAndStaleCleanupUseExactPoiIdentity();
 
@@ -143,21 +144,14 @@ static void TestInteractionCyclesSpanChildReplacementAndBeatTimeout()
     runtime.Now = runtime.Now.AddSeconds(10);
     first.Outcomes.Enqueue(Mismatch(876, 3338, 1));
     behavior.TickForTesting();
-    Assert(runtime.CreatedCandidates.Count == 1 && !behavior.IsDone,
-        "the first real mismatch must reset dialog silence and cannot switch candidates on the same tick");
-
-    runtime.PlayerLocation = new WoWPoint(1000, 1000, 0);
-    runtime.Now = runtime.Now.AddSeconds(31);
-    behavior.TickForTesting();
-    Assert(runtime.CreatedCandidates.Count == 2, "a bounded endpoint timeout must replace the first child");
+    Assert(runtime.CreatedCandidates.Count == 2 && !behavior.IsDone && runtime.Batches.Count == 0,
+        "the first real mismatch must beat an expired silence timer and deliberately advance to the next candidate");
 
     var second = runtime.Children[1];
     second.Outcomes.Enqueue(Mismatch(876, 3338, 1));
     behavior.TickForTesting();
-    runtime.Now = runtime.Now.AddSeconds(31);
-    behavior.TickForTesting();
     Assert(runtime.CreatedCandidates.Count == 3 && !behavior.IsDone,
-        "two real mismatch cycles across two children must remain below the shared boundary");
+        "two natural mismatch cycles across two children must advance without resetting the shared boundary");
 
     var third = runtime.Children[2];
     third.Outcomes.Enqueue(Mismatch(876, 3391, 1));
@@ -168,6 +162,58 @@ static void TestInteractionCyclesSpanChildReplacementAndBeatTimeout()
         "each real pre-terminal dialog result is retained as a non-episode sample");
     Assert(runtime.Batches[0].Last().Reason is QuestFailureReason.PickupTargetNotOffered,
         "the three-cycle boundary must report the literal pickup-unavailable reason");
+    Assert(runtime.Batches[0].Any(outcome => outcome.Key.NpcEntry == 3338)
+           && runtime.Batches[0].Any(outcome => outcome.Key.NpcEntry == 3391),
+        "the terminal batch must retain narrow relation evidence for the tried primary and alternate givers");
+}
+
+static void TestNaturalMismatchAdvancesToAlternateAndAlternateCanSucceed()
+{
+    var runtime = new FakeRuntime { PlayerLocation = new WoWPoint(1, 1, 0) };
+    runtime.LiveGivers.Add(new SafePickUpGiverCandidate(
+        3338, "primary", new WoWPoint(1, 1, 0), QuestObjectType.Npc, "live"));
+    var behavior = NewBehavior(runtime, "3391,161,1,0");
+    behavior.OnStart();
+
+    var primary = runtime.Children.Single();
+    var primaryPoi = PickupPoi(876, 3338, new WoWPoint(1, 1, 0));
+    primary.OnTick = () => runtime.CurrentPoi = primaryPoi;
+    behavior.TickForTesting();
+    primary.Outcomes.Enqueue(PickupDialogOutcome(
+        876, 3338, 1, QuestFailureReason.PickupWrongQuestShown, 867));
+    behavior.TickForTesting();
+
+    Assert(runtime.CreatedCandidates.Select(candidate => candidate.Entry)
+            .SequenceEqual(new uint[] { 3338, 3391 }),
+        "a natural primary mismatch must advance directly to the next ordered alternate without a timeout");
+    Assert(primary.DisposeCount == 1 && runtime.ClearCount == 1,
+        "natural candidate replacement must dispose the primary child and clear only its exact owned POI");
+
+    var alternate = runtime.Children[1];
+    var alternatePoi = PickupPoi(876, 3391, new WoWPoint(161, 1, 0));
+    alternate.OnTick = () => runtime.CurrentPoi = alternatePoi;
+    behavior.TickForTesting();
+    alternate.Outcomes.Enqueue(PickupDialogOutcome(
+        876, 3391, 1, QuestFailureReason.PickupTargetNotOffered, 0));
+    behavior.TickForTesting();
+    Assert(!behavior.IsDone && runtime.CreatedCandidates.Count == 2,
+        "the second distinct outer cycle may continue on the last alternate without resetting the shared count");
+
+    runtime.Completion = new QuestCompletionSnapshot(true, QuestCompletionState.KnownIncomplete);
+    behavior.TickForTesting();
+    behavior.Dispose();
+    QuestAttemptOutcome success = runtime.Reports.Last();
+    Assert(behavior.IsDone
+           && success.Kind == QuestAttemptOutcomeKind.Success
+           && success.Key.Equals(QuestRecoveryKey.ForQuestStage(876, QuestRecoveryStage.Pickup))
+           && success.AttemptGeneration == 41,
+        "a valid alternate pickup must close the exact stage generation with Success");
+    Assert(runtime.Batches.Count == 0
+           && runtime.Reports.Count(outcome => outcome.IsFailureEpisode) == 0
+           && runtime.AbandonCount == 0
+           && alternate.DisposeCount == 1
+           && runtime.ClearCount == 2,
+        "alternate success must discard queued prior-candidate failures as episodes and clean up without neutral abandon");
 }
 
 static void TestTerminalAndStaleCleanupUseExactPoiIdentity()
@@ -232,6 +278,23 @@ static QuestAttemptOutcome Mismatch(uint questId, uint giverId, long cycle) => n
     InteractionCycleId = cycle,
     Evidence = $"giver={giverId}; cycle={cycle}",
     OfferedQuestIds = Array.Empty<uint>()
+};
+
+static QuestAttemptOutcome PickupDialogOutcome(
+    uint questId,
+    uint giverId,
+    long cycle,
+    QuestFailureReason reason,
+    uint shownQuestId) => new()
+{
+    Key = QuestRecoveryKey.ForNpc(questId, QuestRecoveryStage.Pickup, giverId),
+    Kind = QuestAttemptOutcomeKind.Observation,
+    Reason = reason,
+    IsFailureEpisode = false,
+    InteractionCycleId = cycle,
+    Evidence = $"target={questId}; shown={shownQuestId}; giver={giverId}",
+    ObservedQuestId = shownQuestId,
+    OfferedQuestIds = shownQuestId == 0 ? Array.Empty<uint>() : new uint[] { shownQuestId }
 };
 
 static SafePickUp NewBehavior(FakeRuntime runtime, string alternates = "")
@@ -335,6 +398,7 @@ sealed class FakeChild : ISafePickUpChild
     public bool Done { get; set; }
     public bool ExecutionDeferred { get; set; }
     public int TickCount { get; private set; }
+    public int DisposeCount { get; private set; }
     public System.Action OnTick { get; set; }
     public bool IsDone => Done;
     public bool IsExecutionDeferred => ExecutionDeferred;
@@ -350,5 +414,5 @@ sealed class FakeChild : ISafePickUpChild
         outcome = Outcomes.Count == 0 ? null : Outcomes.Dequeue();
         return outcome != null;
     }
-    public void Dispose() { }
+    public void Dispose() => DisposeCount++;
 }
