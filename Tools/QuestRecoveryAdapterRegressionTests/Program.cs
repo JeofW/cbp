@@ -10,6 +10,7 @@ using System.Linq;
 using TreeSharp;
 
 TestOutcomeFactories();
+TestTurnInIncompleteRedirectFactory();
 TestEndpointQuantization();
 TestDeniedClaimNeverClearsWinnerPoi();
 TestCandidateOrderingDedupAndCap();
@@ -18,8 +19,19 @@ TestUnknownCompletionAndDeferredChildPauseAllWork();
 TestNaturalMismatchAdvancesToAlternateAndAlternateCanSucceed();
 TestInteractionCyclesSpanChildReplacementAndBeatTimeout();
 TestTerminalAndStaleCleanupUseExactPoiIdentity();
+SafeTurnInRegressionTests.Run();
 
 Console.WriteLine("Quest recovery adapter regression tests passed.");
+
+static void TestTurnInIncompleteRedirectFactory()
+{
+    QuestAttemptOutcome redirect = SafeTurnIn.CreateIncompleteRedirect(876);
+    Assert(redirect.Key.Equals(QuestRecoveryKey.ForQuestStage(876, QuestRecoveryStage.TurnIn))
+           && redirect.Kind == QuestAttemptOutcomeKind.Redirect
+           && redirect.Reason == QuestFailureReason.TurnInQuestIncomplete
+           && !redirect.IsFailureEpisode,
+        "an incomplete turn-in must redirect the exact turn-in stage without a failure episode");
+}
 
 static void TestOutcomeFactories()
 {

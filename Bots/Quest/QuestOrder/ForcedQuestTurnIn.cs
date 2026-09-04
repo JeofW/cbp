@@ -52,6 +52,8 @@ public class ForcedQuestTurnIn : ForcedBehavior
 
     public WoWPoint Location { get; private set; }
 
+    public long InteractionCycleId { get; private set; }
+
     // Dispose removed - we should NEVER abandon a quest we're trying to turn in!
     
     public override void OnStart()
@@ -180,6 +182,7 @@ public class ForcedQuestTurnIn : ForcedBehavior
             return RunStatus.Failure;
         }
         Logging.WriteDebug("[InteractWithNpc] Interacting...");
+        InteractionCycleId++;
         woWobject.Interact();
         StyxWoW.Sleep(300);
         return RunStatus.Running; 

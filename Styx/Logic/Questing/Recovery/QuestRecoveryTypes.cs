@@ -165,6 +165,11 @@ public sealed class QuestAttemptOutcome
           (targetKey.Scope == QuestRecoveryScope.NpcRelation &&
            targetKey.Stage == QuestRecoveryStage.Pickup ||
            targetKey.Scope == QuestRecoveryScope.Endpoint &&
+           targetKey.Stage == QuestRecoveryStage.Navigation) ||
+          attemptKey.Stage == QuestRecoveryStage.TurnIn &&
+          (targetKey.Scope == QuestRecoveryScope.NpcRelation &&
+           targetKey.Stage == QuestRecoveryStage.TurnIn ||
+           targetKey.Scope == QuestRecoveryScope.Endpoint &&
            targetKey.Stage == QuestRecoveryStage.Navigation)));
 
     public static QuestAttemptOutcome Observation(QuestRecoveryKey key,

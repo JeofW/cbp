@@ -71,6 +71,7 @@ try
     TestOwnedEndpointFailurePreservesStageHistory(Path.Combine(testRoot, "failure-endpoint-owner"), now);
     TestGeneratedFailureAuthorityAndAtomicStageSequence(Path.Combine(testRoot, "failure-authority"), now);
     TestPickupAttemptAuthorizesNarrowAdapterFailures(Path.Combine(testRoot, "pickup-adapter-authority"), now);
+    TestTurnInAttemptAuthorizesNarrowAdapterFailures(Path.Combine(testRoot, "turnin-adapter-authority"), now);
     TestNeutralAbandonReleasesOnlyExactAttemptGeneration(Path.Combine(testRoot, "neutral-abandon"), now);
     TestRetryNowRejectsPriorOwnerSuccess(Path.Combine(testRoot, "success-retry-now"), now);
     TestIdentitySwitchCannotReuseOwnership(Path.Combine(testRoot, "success-identity"), now);
@@ -2212,6 +2213,65 @@ static void TestPickupAttemptAuthorizesNarrowAdapterFailures(string settingsRoot
         Context());
     Assert(!manager.OwnsAttempt(pickup, owner.AttemptGeneration),
         "the exact pickup-stage terminal outcome must release adapter ownership");
+}
+
+static void TestTurnInAttemptAuthorizesNarrowAdapterFailures(string settingsRoot, DateTime now)
+{
+    var manager = new QuestRecoveryManager(new FixedClock(now));
+    manager.Configure(CreateEnvironment(settingsRoot, "Jeof", "Lordaeron"));
+    var turnIn = QuestRecoveryKey.ForQuestStage(876, QuestRecoveryStage.TurnIn);
+    var relation = QuestRecoveryKey.ForNpc(876, QuestRecoveryStage.TurnIn, 3338);
+    var endpoint = QuestRecoveryKey.ForEndpoint(876, QuestRecoveryStage.Navigation, 1, "cell:-6:-40");
+    var owner = manager.TryBeginAttempt(turnIn, Context());
+
+    manager.Report(
+        QuestAttemptOutcome.Failure(
+            relation,
+            turnIn,
+            owner.AttemptGeneration,
+            QuestFailureReason.TurnInTargetNotOffered,
+            "target=876; shown=867; ender=3338"),
+        Context());
+    manager.Report(
+        QuestAttemptOutcome.Failure(
+            endpoint,
+            turnIn,
+            owner.AttemptGeneration,
+            QuestFailureReason.PathGenerationFailed,
+            "map=1; endpoint=cell:-6:-40"),
+        Context());
+
+    Assert(manager.OwnsAttempt(turnIn, owner.AttemptGeneration)
+           && manager.GetEntries().Single(item => item.Key.Equals(relation)).EpisodeCount == 1
+           && manager.GetEntries().Single(item => item.Key.Equals(endpoint)).EpisodeCount == 1,
+        "an exact turn-in owner must authorize same-quest turn-in relations and navigation endpoints");
+    AssertThrows<ArgumentException>(
+        () => QuestAttemptOutcome.Failure(
+            QuestRecoveryKey.ForNpc(876, QuestRecoveryStage.Pickup, 3338),
+            turnIn,
+            owner.AttemptGeneration,
+            QuestFailureReason.PickupTargetNotOffered,
+            "wrong relation stage"),
+        "a turn-in owner must reject pickup relation failures");
+    AssertThrows<ArgumentException>(
+        () => QuestAttemptOutcome.Failure(
+            QuestRecoveryKey.ForEndpoint(876, QuestRecoveryStage.Objective, 1, "cell:-6:-40"),
+            turnIn,
+            owner.AttemptGeneration,
+            QuestFailureReason.PathGenerationFailed,
+            "wrong endpoint stage"),
+        "a turn-in owner must reject non-navigation endpoint failures");
+
+    manager.Report(
+        QuestAttemptOutcome.Failure(
+            turnIn,
+            turnIn,
+            owner.AttemptGeneration,
+            QuestFailureReason.EndpointUnreachable,
+            "all turn-in ender endpoints exhausted"),
+        Context());
+    Assert(!manager.OwnsAttempt(turnIn, owner.AttemptGeneration),
+        "the exact turn-in stage terminal outcome must release adapter ownership");
 }
 
 static void TestNeutralAbandonReleasesOnlyExactAttemptGeneration(string settingsRoot, DateTime now)
