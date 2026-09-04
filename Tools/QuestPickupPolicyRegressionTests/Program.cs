@@ -1,5 +1,6 @@
 using Bots.Quest.QuestOrder;
 using Styx;
+using Styx.Logic;
 using Styx.Logic.Pathing;
 using Styx.Logic.Questing;
 using Styx.Logic.Questing.Recovery;
@@ -24,6 +25,7 @@ try
     TestAuthorizedAdvanceResetsMismatchLifecycle();
     TestOutcomeIsTaggedAndConsumedOnceByItsProducingInteraction();
     TestLoadedOfferListMissingTargetIsNotUnavailableAmbiguity();
+    TestGrindSafetyCompatibilitySurface();
     Console.WriteLine("Quest pickup policy regression tests passed.");
 }
 catch (Exception ex)
@@ -373,6 +375,40 @@ static void TestLoadedOfferListMissingTargetIsNotUnavailableAmbiguity()
            && outcome.InteractionCycleId == 91
            && outcome.OfferedQuestIds.SequenceEqual(new uint[] { 867, 875 }),
         "the loaded-list result must use the same tagged structured outcome mechanism as a shown-quest mismatch");
+}
+
+static void TestGrindSafetyCompatibilitySurface()
+{
+    Assert(GrindSafetyPolicy.ShouldAbortFleeingChase(
+               isFleeing: true,
+               taggedByMe: true,
+               isTargetingMeOrPet: false,
+               distance: 8.01f,
+               isInsideAvoidedPack: true),
+        "a tagged fleeing target beyond eight yards may be abandoned inside an avoided pack");
+    Assert(!GrindSafetyPolicy.ShouldAbortFleeingChase(true, true, true, 20f, true)
+           && !GrindSafetyPolicy.ShouldAbortFleeingChase(true, true, false, 8f, true)
+           && !GrindSafetyPolicy.ShouldAbortFleeingChase(true, true, false, 20f, false),
+        "active threats, nearby targets, and targets outside the avoided pack must not abort the chase");
+
+    Assert(GrindSafetyPolicy.CanLoot(playerCombat: false, petCombat: false)
+           && !GrindSafetyPolicy.CanLoot(playerCombat: true, petCombat: false)
+           && !GrindSafetyPolicy.CanLoot(playerCombat: false, petCombat: true),
+        "looting must require both player and pet to be out of combat");
+    Assert(GrindSafetyPolicy.ShouldUseInstancePortal(true, true, true)
+           && !GrindSafetyPolicy.ShouldUseInstancePortal(true, false, true),
+        "instance-portal recovery must require every authority input");
+    Assert(GrindSafetyPolicy.IsHostileSafeForResurrection(25f, 5f)
+           && !GrindSafetyPolicy.IsHostileSafeForResurrection(24.99f, 5f)
+           && GrindSafetyPolicy.IsHostileSafeForResurrection(35f, 30f),
+        "resurrection safety must respect the larger of 25 yards or combat reach plus five");
+    Assert(GrindSafetyPolicy.ShouldRetrieveCorpse(false, true)
+           && !GrindSafetyPolicy.ShouldRetrieveCorpse(true, false),
+        "corpse retrieval must follow its authoritative eligibility input");
+    Assert(GrindSafetyPolicy.ShouldCreateAvoidanceBlackspot(11f, 10f)
+           && !GrindSafetyPolicy.ShouldCreateAvoidanceBlackspot(10f, 10f)
+           && GrindSafetyPolicy.ShouldCreateAvoidanceBlackspot(1f, -5f),
+        "avoidance blackspots must be separated by more than the nonnegative radius");
 }
 
 static QuestPickupDialogDecision Decide(
