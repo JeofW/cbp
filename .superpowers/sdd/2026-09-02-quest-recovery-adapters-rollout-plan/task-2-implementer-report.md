@@ -133,3 +133,76 @@ sources contain no trailing whitespace.
 - Live world interaction was intentionally not exercised. Candidate switching and
   dynamic nested-branch dispatch are compiled through the real linked adapter, while
   actual NPC/game-object behavior remains for the later authorized live smoke phase.
+
+## Review round 1 fixes (2026-09-04)
+
+All seven review findings were reproduced before the fixes. The linked adapter
+harness now constructs, starts, ticks, and disposes real `SafePickUp` instances
+through narrow runtime and child seams; production still delegates those seams to
+the real quest log, object manager, NPC database, `ForcedQuestPickUp`, POI, and
+recovery manager.
+
+The adapter now owns a POI only when a child replaces the prior POI with a pickup
+POI whose reference and quest/giver/location metadata exactly match the active
+candidate. Denied claims do not clear any POI. Candidate replacement, terminal
+cleanup, stale rejection, and neutral disposal clear only that exact object, so a
+same-quest winner replacement is preserved. Neutral disposal still abandons only
+the exact attempt generation and never abandons the quest.
+
+One outer pickup episode now spans every child replacement. Candidate discovery is
+ordered live matching object, primary database location, then strict-parser
+alternates; it deduplicates by the scheduler-compatible map plus 80-yard cell key
+and caps the episode at five endpoints. Navigation keys persist as
+`map + cell:floor(x/80):floor(y/80)`. Real cycle-tagged mismatch outcomes are
+deduplicated per child/cycle and counted in one shared boundary; the third total
+cycle ends the episode while all three samples remain non-episode observations.
+Consumed dialog results reset the silence timer and return from that tick before a
+timeout can replace the child.
+
+Completion checks use one coherent `QuestCompletionSnapshot`. Unknown authority,
+including `ForcedQuestPickUp.IsExecutionDeferred`, pauses navigation/dialog timers
+and suppresses child ticks, interactions, and negative reports until authority
+returns. Narrow timeout/endpoint failures are accumulated and submitted with the
+terminal pickup-stage failure in one atomic generated batch.
+
+The core generated-batch path now suppresses per-record rolling-budget additions,
+applies every accepted local failure, and appends exactly one global rolling
+episode for the accepted outer batch. Validation and ownership checks still occur
+before any mutation. A new budget regression proves three two-record batches plus
+two independent failures consume five episodes, while the next independent failure
+exhausts the six-per-hour budget.
+
+### Round 1 TDD and verification evidence
+
+- Core RED: exit 1 at
+  `three two-record generated batches plus two failures must consume five, not
+  eight, rolling episodes`.
+- Linked adapter RED: compilation failed with the expected missing
+  `SafePickUpRuntime`, `ISafePickUpChild`, and `SafePickUpGiverCandidate` seams.
+- Adapter regression GREEN: exit 0,
+  `Quest recovery adapter regression tests passed.`
+- Core recovery regression GREEN: exit 0,
+  `Quest recovery regression tests passed.`
+- Wholesome integration regression GREEN: exit 0,
+  `Wholesome scheduler recovery regression tests passed.`
+- Pickup policy regression GREEN: exit 0,
+  `Quest pickup policy regression tests passed.`
+- Full non-incremental Release x86 build: exit 0, 3,250 baseline warnings,
+  0 errors.
+- All four focused output directories contain zero `.exe` apphosts. Direct adapter
+  DLL execution passed; SHA-256:
+  `3c5f3d10b9d1bb8318b0da11ef5d820078dde51bfc5525cb51e29148b80b5be6`.
+- Static forbidden scan for legacy blacklist/path/read/write/abandon APIs,
+  `System.IO`, `TreeRoot.Stop`, and `TreeRoot.Start`: 0 hits. Empty-catch and private
+  file-API scans: 0 hits. Scoped repository `git diff --check`: exit 0; external
+  no-index check emitted no whitespace diagnostics.
+- Original backup manifest was re-read and every entry re-hashed successfully at
+  `D:\World of Warcraft 3.3.5a\CB\Backups\quest-recovery-adapters-20260904-132002567`.
+  The manifest SHA-256 remains
+  `24e67583721d535328ad8e82a7e445b68cfd8e19607cfcbe12a46532bd893c84`.
+- Final installed `SafePickUp.cs` SHA-256:
+  `67f2e326b8aee41d7f6e60b7d3f2b70123d38190b9dcff85f097e0c1c117fb43`.
+
+No push, deployment, binary replacement, client launch, or live smoke was
+performed. The only remaining concern is the intentionally deferred live-world
+verification of actual NPC/game-object interaction timing.

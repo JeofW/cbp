@@ -183,6 +183,15 @@ public sealed class QuestRecoveryManager
 
         lock (_sync)
         {
+            return ReportCore(outcome, context, countRollingFailure: true);
+        }
+    }
+
+    private QuestRecoveryDecision ReportCore(
+        QuestAttemptOutcome outcome,
+        QuestRecoveryContext context,
+        bool countRollingFailure)
+    {
             EnsureConfiguredCore();
             var normalizedContext = NormalizeContext(context);
             QuestRecoveryRecord? activeOwner = null;
@@ -255,7 +264,7 @@ public sealed class QuestRecoveryManager
             else if (outcome.IsFailureEpisode || outcome.Reason == QuestFailureReason.TurnInQuestIncomplete)
             {
                 updated = QuestRecoveryPolicy.ApplyFailure(policyInput, outcome.Reason, normalizedContext, _clock.UtcNow);
-                if (outcome.IsFailureEpisode && updated.EpisodeCount > current.EpisodeCount)
+                if (countRollingFailure && outcome.IsFailureEpisode && updated.EpisodeCount > current.EpisodeCount)
                 {
                     _rollingFailureUtc.Add(_clock.UtcNow);
                 }
@@ -275,7 +284,6 @@ public sealed class QuestRecoveryManager
             _dirty = true;
             LogTransition(current, updated);
             return QuestRecoveryPolicy.Evaluate(updated, normalizedContext, RollingFailureCountCore(), _clock.UtcNow);
-        }
     }
 
     public bool TryReportGeneratedFailures(
@@ -319,9 +327,11 @@ public sealed class QuestRecoveryManager
                     return false;
             }
 
+            _rollingFailureUtc.Add(_clock.UtcNow);
+            _dirty = true;
             var accepted = new List<QuestRecoveryDecision>(outcomes.Count);
             foreach (QuestAttemptOutcome outcome in outcomes)
-                accepted.Add(Report(outcome, context));
+                accepted.Add(ReportCore(outcome, context, countRollingFailure: false));
             decisions = accepted;
             return true;
         }

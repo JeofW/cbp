@@ -56,6 +56,7 @@ try
     TestSuperscriptDeviceIdentityPaths(Path.Combine(testRoot, "superscript-paths"), now);
     TestProductionDiagnosticsReachBotLogger(Path.Combine(testRoot, "production-logging"));
     TestManagerRollingBudget(Path.Combine(testRoot, "rolling-budget"), now);
+    TestGeneratedFailureBatchCountsOneRollingEpisode(Path.Combine(testRoot, "generated-batch-budget"), now);
     TestLegacyMigrationIsIdempotent(Path.Combine(testRoot, "migration"), now);
     TestLegacyCrossStageMaterialization(Path.Combine(testRoot, "legacy-cross-stage"), now);
     TestLegacyRekeyKeepsEvidenceSourcesDistinct(Path.Combine(testRoot, "legacy-evidence-source"), now);
@@ -1559,6 +1560,57 @@ static void TestManagerRollingBudget(string settingsRoot, DateTime now)
     manager.RetryNow(probeKey);
     Assert(!manager.Evaluate(probeKey, Context()).MayAttempt,
         "six manager-recorded episodes must exhaust the rolling-hour half-open budget");
+}
+
+static void TestGeneratedFailureBatchCountsOneRollingEpisode(string settingsRoot, DateTime now)
+{
+    var manager = new QuestRecoveryManager(new FixedClock(now));
+    manager.Configure(CreateEnvironment(settingsRoot, "Jeof", "Lordaeron"));
+
+    for (uint questId = 1100; questId < 1103; questId++)
+    {
+        var stage = QuestRecoveryKey.ForQuestStage(questId, QuestRecoveryStage.Pickup);
+        var relation = QuestRecoveryKey.ForNpc(questId, QuestRecoveryStage.Pickup, 3000 + questId);
+        var owner = manager.TryBeginAttempt(stage, Context());
+        Assert(owner.MayAttempt, "the generated-batch fixture must acquire its source attempt");
+        Assert(manager.TryReportGeneratedFailures(
+            new[]
+            {
+                QuestAttemptOutcome.Failure(
+                    relation, stage, owner.AttemptGeneration,
+                    QuestFailureReason.PickupTargetNotOffered, "relation exhausted"),
+                QuestAttemptOutcome.Failure(
+                    stage, stage, owner.AttemptGeneration,
+                    QuestFailureReason.PickupTargetNotOffered, "stage exhausted")
+            },
+            Context(),
+            out var decisions) && decisions.Count == 2,
+            "one generated failure batch must apply both record-local failures");
+    }
+
+    for (uint questId = 1200; questId < 1202; questId++)
+    {
+        manager.Report(
+            QuestAttemptOutcome.Failure(
+                QuestRecoveryKey.ForQuestStage(questId, QuestRecoveryStage.Pickup),
+                QuestFailureReason.PickupTargetNotOffered,
+                "independent episode"),
+            Context());
+    }
+
+    var probe = QuestRecoveryKey.ForQuestStage(1100, QuestRecoveryStage.Pickup);
+    manager.RetryNow(probe);
+    Assert(manager.Evaluate(probe, Context()).MayAttempt,
+        "three two-record generated batches plus two failures must consume five, not eight, rolling episodes");
+
+    manager.Report(
+        QuestAttemptOutcome.Failure(
+            QuestRecoveryKey.ForQuestStage(1202, QuestRecoveryStage.Pickup),
+            QuestFailureReason.PickupTargetNotOffered,
+            "sixth independent episode"),
+        Context());
+    Assert(!manager.Evaluate(probe, Context()).MayAttempt,
+        "the sixth outer failure episode must exhaust the rolling-hour budget");
 }
 
 static void TestEvidenceCoalescingRespectsEpisode(string settingsRoot, DateTime now)
