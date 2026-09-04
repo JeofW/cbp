@@ -327,3 +327,55 @@ the original SafeTurnIn entry remains
 No push, deployment, installed binary replacement, client/process launch, or live
 smoke was performed. The remaining concern is intentionally deferred live-world
 validation of NPC/game-object interaction timing.
+
+## Review round 4 fixes (2026-09-04)
+
+`TryReportOwnedRedirect` now has its own closed input boundary. It delegates to the
+general owned-terminal path only for an exact `Redirect` carrying
+`TurnInQuestIncomplete` with `IsFailureEpisode=false`; success, observation,
+failure-flagged redirect, every failure outcome/reason, and every other redirect
+reason return `Accepted=false`. The existing shared ownership checks continue to
+require exact `Key == AttemptKey`, a current positive generation, and a TurnIn
+quest-stage owner. `TryReportOwnedOutcome` remains the general success/failure API,
+and SafeTurnIn behavior and its external source are unchanged.
+
+The focused core misuse matrix uses a fresh real manager per case. It verifies that
+each rejected misuse preserves the `Attempting` state, exact generation, ownership,
+episode count, and evidence. After first persisting the owned fixture, it replaces
+the settings root with a file; a clean rejection still makes `TryFlush` succeed by
+short-circuiting, while any hidden dirty-state mutation would attempt persistence
+and fail. This directly covers the zero-dirty-change requirement in addition to the
+observable record checks.
+
+### Round 4 TDD and verification evidence
+
+- RED: the core regression reported every exact-current `Success` and all 19
+  `Failure` reason variants as incorrectly accepted through
+  `TryReportOwnedRedirect`, including `None` and `TurnInQuestIncomplete`.
+- GREEN: the same core regression passes after the single redirect-shape boundary
+  was added. The existing owned-terminal regression also passes, proving success
+  and failure remain accepted through `TryReportOwnedOutcome`.
+- Fresh non-incremental Release x86 focused builds, with `UseAppHost=false` and
+  `--no-restore`: adapter 3,246 baseline warnings/0 errors; core 3,246/0;
+  Wholesome 3,261/0; pickup 3,246/0.
+- Direct DLL execution: adapter, core, Wholesome, and pickup each exited 0 with
+  their expected regression-suite pass message.
+- Full `CopilotBuddy.csproj` non-incremental Release x86 build: exit 0,
+  3,250 repository-baseline warnings, 0 errors.
+- All four focused output trees contain zero `.exe` apphosts. The external
+  SafeTurnIn forbidden scan found zero legacy blacklist/file-I/O/`TreeRoot`
+  restart/empty-catch hits; its sole `AbandonQuestById` remains the manager-supplied
+  action.
+- External `SafeTurnIn.cs` SHA-256 remains unchanged at
+  `15ec373ee5519b96efda6316c3ca6481b38dad91a1d8599c31f75a1ae9fd3fb8`.
+- Linked adapter-test DLL SHA-256 remains
+  `734c3c3e64f6dfa0a20949f17cdcb4f39d7c0290f83284fc60a1ee0dfc111889`;
+  core regression DLL SHA-256 is
+  `02c766e8fb285575df97614ca0a12765f5ef3d4d74a11e04622f9f7c96ab9785`.
+- The backup recheck matched all three manifest entries. Manifest SHA-256 remains
+  `24e67583721d535328ad8e82a7e445b68cfd8e19607cfcbe12a46532bd893c84`;
+  the original SafeTurnIn entry remains
+  `547a93da5458bd9c6d12499804997e1d1be673bd220c645e6f293fc5342a80c2`.
+
+No external source change, push, deployment, binary replacement, app/client launch,
+or live smoke was performed. Live-world timing remains intentionally deferred.

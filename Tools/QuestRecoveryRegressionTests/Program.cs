@@ -69,6 +69,8 @@ try
     TestSuccessfulAttemptReleasesOwnership(Path.Combine(testRoot, "success-release"), now);
     TestStaleSuccessCannotReleaseNewOwner(Path.Combine(testRoot, "success-generation"), now);
     TestIncompleteRedirectRequiresExactGeneration(Path.Combine(testRoot, "redirect-generation"), now);
+    TestOwnedRedirectApiRejectsNonRedirectOutcomesWithoutMutation(
+        Path.Combine(testRoot, "redirect-api-misuse"), now);
     TestOwnedTerminalOutcomesRequireExactCurrentGeneration(Path.Combine(testRoot, "terminal-generation"), now);
     TestOwnedFailureRequiresExactGenerationAndReleasesAtomically(Path.Combine(testRoot, "failure-generation"), now);
     TestOwnedEndpointFailurePreservesStageHistory(Path.Combine(testRoot, "failure-endpoint-owner"), now);
@@ -2370,6 +2372,97 @@ static void TestOwnedTerminalOutcomesRequireExactCurrentGeneration(string settin
            && successManager.GetEntries().Single().Evidence.Any(
                item => item.Text == "exact current success"),
         "an exact current owned success must be accepted and release its generation");
+}
+
+static void TestOwnedRedirectApiRejectsNonRedirectOutcomesWithoutMutation(
+    string settingsRoot,
+    DateTime now)
+{
+    var cases = new List<(string Name, Func<QuestRecoveryKey, long, QuestAttemptOutcome> Create)>
+    {
+        ("success", (key, generation) =>
+            QuestAttemptOutcome.Success(key, generation, "redirect API success misuse")),
+        ("observation", (key, generation) => new QuestAttemptOutcome
+        {
+            Key = key,
+            AttemptKey = key,
+            AttemptGeneration = generation,
+            Kind = QuestAttemptOutcomeKind.Observation,
+            Reason = QuestFailureReason.TurnInQuestIncomplete,
+            IsFailureEpisode = false,
+            Evidence = "redirect API observation misuse"
+        }),
+        ("redirect-marked-as-failure", (key, generation) => new QuestAttemptOutcome
+        {
+            Key = key,
+            AttemptKey = key,
+            AttemptGeneration = generation,
+            Kind = QuestAttemptOutcomeKind.Redirect,
+            Reason = QuestFailureReason.TurnInQuestIncomplete,
+            IsFailureEpisode = true,
+            Evidence = "redirect API failure-flag misuse"
+        })
+    };
+    foreach (QuestFailureReason reason in Enum.GetValues<QuestFailureReason>())
+    {
+        cases.Add(($"failure-{reason}", (key, generation) => new QuestAttemptOutcome
+        {
+            Key = key,
+            AttemptKey = key,
+            AttemptGeneration = generation,
+            Kind = QuestAttemptOutcomeKind.Failure,
+            Reason = reason,
+            IsFailureEpisode = true,
+            Evidence = $"redirect API failure misuse: {reason}"
+        }));
+        if (reason != QuestFailureReason.TurnInQuestIncomplete)
+        {
+            cases.Add(($"redirect-reason-{reason}", (key, generation) => new QuestAttemptOutcome
+            {
+                Key = key,
+                AttemptKey = key,
+                AttemptGeneration = generation,
+                Kind = QuestAttemptOutcomeKind.Redirect,
+                Reason = reason,
+                IsFailureEpisode = false,
+                Evidence = $"redirect API reason misuse: {reason}"
+            }));
+        }
+    }
+
+    var failures = new List<string>();
+    for (int index = 0; index < cases.Count; index++)
+    {
+        var misuse = cases[index];
+        string caseRoot = Path.Combine(settingsRoot, $"case-{index}");
+        var key = QuestRecoveryKey.ForQuestStage(1237, QuestRecoveryStage.TurnIn);
+        var manager = new QuestRecoveryManager(new FixedClock(now));
+        manager.Configure(CreateEnvironment(caseRoot, "Jeof", "Lordaeron"));
+        QuestRecoveryDecision owner = manager.TryBeginAttempt(key, Context());
+        manager.Flush();
+
+        Directory.Delete(caseRoot, recursive: true);
+        File.WriteAllText(caseRoot, "blocks unexpected dirty-state persistence");
+
+        QuestAttemptOutcome outcome = misuse.Create(key, owner.AttemptGeneration);
+        QuestRecoveryReportResult result = manager.TryReportOwnedRedirect(outcome, Context());
+        QuestRecoveryRecord record = manager.GetEntries().Single();
+        bool remainedClean = manager.TryFlush();
+        if (result.Accepted ||
+            record.State != QuestRecoveryState.Attempting ||
+            record.AttemptGeneration != owner.AttemptGeneration ||
+            record.EpisodeCount != 0 ||
+            record.Evidence.Any(item => item.Text == outcome.Evidence) ||
+            !manager.OwnsAttempt(key, owner.AttemptGeneration) ||
+            !remainedClean)
+        {
+            failures.Add(misuse.Name);
+        }
+    }
+
+    Assert(failures.Count == 0,
+        "the redirect-specific API must reject every success, failure, None reason, and malformed redirect " +
+        $"without record, evidence, ownership, or dirty-state mutation; failed: {string.Join(", ", failures)}");
 }
 
 static void TestOwnedFailureRequiresExactGenerationAndReleasesAtomically(string settingsRoot, DateTime now)

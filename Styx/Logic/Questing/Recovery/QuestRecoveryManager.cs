@@ -216,6 +216,15 @@ public sealed class QuestRecoveryManager
 
         lock (_sync)
         {
+            if (!IsOwnedIncompleteRedirect(outcome))
+            {
+                EnsureConfiguredCore();
+                return new QuestRecoveryReportResult
+                {
+                    Accepted = false,
+                    Decision = EvaluateCore(outcome.Key, NormalizeContext(context))
+                };
+            }
             return TryReportOwnedOutcomeCore(outcome, context);
         }
     }
