@@ -253,3 +253,77 @@ the original SafeTurnIn entry remains
 No push, deployment, installed binary replacement, client/process launch, or live
 smoke was performed. The remaining concern is intentionally deferred live-world
 validation of NPC/game-object interaction timing.
+
+## Review round 3 fixes (2026-09-04)
+
+All SafeTurnIn terminal cleanup is now acceptance-fenced. The manager exposes
+`TryReportOwnedOutcome`, which accepts success, exact stage failure, or the existing
+incomplete redirect only for the exact key in the current `Attempting` generation.
+SafeTurnIn uses the structured result for stage failures and successes. Generated
+failure batches continue to use their existing atomic boolean result. A rejected
+batch, stage failure, success, or redirect detaches the stale adapter's local POI
+reference, marks the behavior done, and retains the old local generation only until
+neutral disposal; it cannot clear or mutate a newer owner even when that owner
+reuses the identical `BotPoi` instance. Accepted reports alone release local
+ownership and clear the exact installed POI.
+
+The two manual-removal contracts are now deliberately distinct. Direct
+`TrySetManualBlacklist(questId, false)` removes only the distinct manual overlay and
+reveals the preserved automatic Pickup record. Wholesome's one-click combined
+`TryClearExclusion(selectedAutomaticKey)` atomically removes the same-quest overlay
+and that selected automatic exclusion while retaining other stages, other quests,
+and Completed records. The restored production SettingsForm regression was built
+and executed directly.
+
+Destructive abandonment action exceptions are contained at both boundaries. After
+successful persistence, the manager catches an exception from the supplied client
+action, emits its diagnostic through the configured logger, and returns a structured
+`MayAbandon=false` result containing the failure. `ReportExhausted` also uses
+structured `try/catch/finally` cleanup so an unexpected runtime-seam exception is
+logged, the accepted terminal lifecycle is finalized once, and later ticks cannot
+repeat the batch or destructive attempt.
+
+### Round 3 TDD evidence
+
+- Owned-terminal API RED: core compilation exited 1 with four expected `CS1061`
+  errors because `TryReportOwnedOutcome` did not exist; the linked adapter build
+  independently exited 1 with `CS0115` because its desired runtime override had no
+  production seam.
+- Combined Clear RED: the core executable exited 1 at `one-click Clear must remove
+  both overlay and selected automatic only`; the overlay was removed but the chosen
+  automatic record remained.
+- Destructive-action RED: the core executable exited 1 when
+  `InvalidOperationException: abandon executor boom` escaped
+  `TryExecuteAutomaticAbandonment`. With the production ReportExhausted cleanup
+  temporarily at its pre-fix form, the linked executable separately exited 1 with
+  the same exception escaping `SafeTurnIn.TickForTesting`.
+
+Fresh final verification used the bundled SDK DLL, Release, x86,
+`UseAppHost=false`, `--no-restore`, and `--no-incremental`:
+
+- linked adapter regression: exit 0, `Quest recovery adapter regression tests passed.`
+- core recovery regression: exit 0, `Quest recovery regression tests passed.`
+- Wholesome integration regression direct DLL: exit 0,
+  `Wholesome scheduler recovery regression tests passed.`
+- pickup policy regression direct DLL: exit 0,
+  `Quest pickup policy regression tests passed.`
+- full `CopilotBuddy.csproj`: exit 0, 3,250 repository-baseline warnings, 0 errors.
+
+All four focused output trees contain zero `.exe` apphosts. The external forbidden
+scan found zero legacy blacklist/file-I/O/`TreeRoot` restart/empty-catch hits; its
+sole `AbandonQuestById` occurrence remains the minimal manager-supplied action.
+Final SHA-256 values:
+
+- installed `SafeTurnIn.cs`:
+  `15ec373ee5519b96efda6316c3ca6481b38dad91a1d8599c31f75a1ae9fd3fb8`
+- linked adapter-test DLL:
+  `734c3c3e64f6dfa0a20949f17cdcb4f39d7c0290f83284fc60a1ee0dfc111889`
+
+The backup recheck verified all three manifest entries. Manifest SHA-256 remains
+`24e67583721d535328ad8e82a7e445b68cfd8e19607cfcbe12a46532bd893c84`;
+the original SafeTurnIn entry remains
+`547a93da5458bd9c6d12499804997e1d1be673bd220c645e6f293fc5342a80c2`.
+
+No push, deployment, installed binary replacement, client/process launch, or live
+smoke was performed. The remaining concern is intentionally deferred live-world
+validation of NPC/game-object interaction timing.

@@ -69,6 +69,7 @@ try
     TestSuccessfulAttemptReleasesOwnership(Path.Combine(testRoot, "success-release"), now);
     TestStaleSuccessCannotReleaseNewOwner(Path.Combine(testRoot, "success-generation"), now);
     TestIncompleteRedirectRequiresExactGeneration(Path.Combine(testRoot, "redirect-generation"), now);
+    TestOwnedTerminalOutcomesRequireExactCurrentGeneration(Path.Combine(testRoot, "terminal-generation"), now);
     TestOwnedFailureRequiresExactGenerationAndReleasesAtomically(Path.Combine(testRoot, "failure-generation"), now);
     TestOwnedEndpointFailurePreservesStageHistory(Path.Combine(testRoot, "failure-endpoint-owner"), now);
     TestGeneratedFailureAuthorityAndAtomicStageSequence(Path.Combine(testRoot, "failure-authority"), now);
@@ -80,6 +81,7 @@ try
     TestManualBlacklistReplacementCannotReuseOwnership(Path.Combine(testRoot, "success-manual"), now);
     TestManualBlacklistNormalizesEveryOwnedScope(Path.Combine(testRoot, "manual-owned-scopes"), now);
     TestManualBlacklistPreservesCanonicalPickupAutomatic(Path.Combine(testRoot, "manual-pickup-preserve"), now);
+    TestClearExclusionCombinesOverlayAndSelectedAutomatic(Path.Combine(testRoot, "combined-clear"), now);
     TestLegacyCanonicalManualBlacklistMigrates(Path.Combine(testRoot, "legacy-manual-migrate"), now);
     TestQuestWideTerminalPrecedenceAndAutomaticRestoration(Path.Combine(testRoot, "terminal-precedence"), now);
     TestCompletedRecordsSurviveManualBlacklistToggleAndCompaction(Path.Combine(testRoot, "manual-completed"), now);
@@ -144,7 +146,8 @@ static void TestManagerAutomaticAbandonmentIsAtomic(string settingsRoot, DateTim
             }
         }
     });
-    var manager = new QuestRecoveryManager(new FixedClock(now));
+    var diagnostics = new List<string>();
+    var manager = new QuestRecoveryManager(new FixedClock(now), diagnostics.Add);
     manager.Configure(CreateEnvironment(settingsRoot, "Jeof", "Lordaeron"));
     manager.Report(
         QuestAttemptOutcome.Observation(key, QuestFailureReason.NoObjectiveProgress, "must be durable first"),
@@ -173,6 +176,18 @@ static void TestManagerAutomaticAbandonmentIsAtomic(string settingsRoot, DateTim
            && abandonCount == 1
            && persistenceObservedInsideAction,
         "automatic abandonment must persist current recovery state before invoking the action");
+
+    QuestAbandonmentDecision actionFailure = manager.TryExecuteAutomaticAbandonment(
+        key,
+        SafeAbandonmentSnapshot,
+        () => throw new InvalidOperationException("abandon executor boom"));
+    Assert(!actionFailure.MayAbandon
+           && actionFailure.Reason.Contains("abandon executor boom", StringComparison.Ordinal)
+           && diagnostics.Any(message =>
+               message.Contains("automatic abandonment action failed", StringComparison.OrdinalIgnoreCase)
+               && message.Contains("InvalidOperationException", StringComparison.Ordinal)
+               && message.Contains("abandon executor boom", StringComparison.Ordinal)),
+        "an abandon executor exception must return a structured denial and emit diagnostics instead of escaping the manager");
 
     int recaptureActions = 0;
     QuestAbandonmentDecision completed = manager.TryExecuteAutomaticAbandonment(
@@ -2298,6 +2313,65 @@ static void TestIncompleteRedirectRequiresExactGeneration(string settingsRoot, D
         "an incomplete redirect must reject a non-quest-stage owner even when its stage enum is TurnIn");
 }
 
+static void TestOwnedTerminalOutcomesRequireExactCurrentGeneration(string settingsRoot, DateTime now)
+{
+    var environment = CreateEnvironment(settingsRoot, "Jeof", "Lordaeron");
+    var key = QuestRecoveryKey.ForQuestStage(1233, QuestRecoveryStage.TurnIn);
+    var manager = new QuestRecoveryManager(new FixedClock(now));
+    manager.Configure(environment);
+    var ownerA = manager.TryBeginAttempt(key, Context());
+    manager.AbandonAttempt(key, ownerA.AttemptGeneration);
+    var ownerB = manager.TryBeginAttempt(key, Context());
+
+    QuestRecoveryReportResult staleSuccess = manager.TryReportOwnedOutcome(
+        QuestAttemptOutcome.Success(key, ownerA.AttemptGeneration, "delayed owner A success"),
+        Context());
+    QuestRecoveryReportResult childFailure = manager.TryReportOwnedOutcome(
+        QuestAttemptOutcome.Failure(
+            QuestRecoveryKey.ForNpc(1233, QuestRecoveryStage.TurnIn, 3338),
+            key,
+            ownerB.AttemptGeneration,
+            QuestFailureReason.TurnInTargetNotOffered,
+            "child terminal mismatch"),
+        Context());
+    QuestRecoveryRecord stillB = manager.GetEntries().Single();
+    Assert(!staleSuccess.Accepted
+           && !childFailure.Accepted
+           && stillB.State == QuestRecoveryState.Attempting
+           && stillB.AttemptGeneration == ownerB.AttemptGeneration
+           && stillB.Evidence.All(item => item.Text is not (
+               "delayed owner A success" or "child terminal mismatch")),
+        "owned terminal reports must reject stale generations and non-exact child keys with zero mutation");
+
+    QuestRecoveryReportResult acceptedFailure = manager.TryReportOwnedOutcome(
+        QuestAttemptOutcome.Failure(
+            key,
+            key,
+            ownerB.AttemptGeneration,
+            QuestFailureReason.InteractionTimedOut,
+            "exact current failure"),
+        Context());
+    QuestRecoveryRecord failed = manager.GetEntries().Single();
+    Assert(acceptedFailure.Accepted
+           && failed.State == QuestRecoveryState.CoolingDown
+           && failed.AttemptGeneration == ownerB.AttemptGeneration
+           && failed.Evidence.Any(item => item.Text == "exact current failure"),
+        "an exact current owned stage failure must be accepted and release its generation");
+
+    var successManager = new QuestRecoveryManager(new FixedClock(now));
+    successManager.Configure(CreateEnvironment(
+        Path.Combine(settingsRoot, "success"), "Jeof", "Lordaeron"));
+    var successOwner = successManager.TryBeginAttempt(key, Context());
+    QuestRecoveryReportResult acceptedSuccess = successManager.TryReportOwnedOutcome(
+        QuestAttemptOutcome.Success(key, successOwner.AttemptGeneration, "exact current success"),
+        Context());
+    Assert(acceptedSuccess.Accepted
+           && successManager.GetEntries().Single().State == QuestRecoveryState.Eligible
+           && successManager.GetEntries().Single().Evidence.Any(
+               item => item.Text == "exact current success"),
+        "an exact current owned success must be accepted and release its generation");
+}
+
 static void TestOwnedFailureRequiresExactGenerationAndReleasesAtomically(string settingsRoot, DateTime now)
 {
     var manager = new QuestRecoveryManager(new FixedClock(now));
@@ -2870,11 +2944,11 @@ static void TestManualBlacklistPreservesCanonicalPickupAutomatic(string settings
     AssertPreservedAutomaticPickup(
         reloadedEntries.Single(item => item.Key.Equals(pickup)), pickup, now);
 
-    Assert(reloaded.TryClearExclusion(pickup),
-        "clearing exclusion from the automatic UI row must remove the same-quest manual terminal");
+    Assert(reloaded.TrySetManualBlacklist(1231, false),
+        "direct manual removal must remove the same-quest manual terminal");
     var restored = reloaded.GetEntries().Where(item => item.Key.QuestId == 1231).ToArray();
     Assert(restored.Length == 1 && restored[0].Key.Equals(pickup),
-        "manual removal must reveal exactly the original canonical Pickup record");
+        "direct manual removal must reveal exactly the original canonical Pickup record");
     AssertPreservedAutomaticPickup(restored[0], pickup, now);
     reloaded.Flush();
 
@@ -2883,6 +2957,70 @@ static void TestManualBlacklistPreservesCanonicalPickupAutomatic(string settings
     QuestRecoveryRecord durable = restoredReload.GetEntries().Single(
         item => item.Key.QuestId == 1231);
     AssertPreservedAutomaticPickup(durable, pickup, now);
+}
+
+static void TestClearExclusionCombinesOverlayAndSelectedAutomatic(
+    string settingsRoot,
+    DateTime now)
+{
+    var selected = QuestRecoveryKey.ForQuestStage(1234, QuestRecoveryStage.Pickup);
+    var sameQuestOtherStage = QuestRecoveryKey.ForQuestStage(1234, QuestRecoveryStage.TurnIn);
+    var otherQuest = QuestRecoveryKey.ForQuestStage(1235, QuestRecoveryStage.Pickup);
+    var completed = QuestRecoveryKey.ForQuestStage(1236, QuestRecoveryStage.TurnIn);
+    string storePath = Path.Combine(
+        settingsRoot, "QuestRecovery", "Jeof-Lordaeron", "quest-recovery.json");
+    new QuestRecoveryStore(storePath).Save(new QuestRecoveryDocument
+    {
+        CharacterName = "Jeof",
+        RealmName = "Lordaeron",
+        Records = new[]
+        {
+            new QuestRecoveryRecord
+            {
+                Key = selected,
+                State = QuestRecoveryState.Quarantined,
+                Reason = QuestFailureReason.PickupTargetNotOffered,
+                AttemptGeneration = 11
+            },
+            new QuestRecoveryRecord
+            {
+                Key = sameQuestOtherStage,
+                State = QuestRecoveryState.CoolingDown,
+                Reason = QuestFailureReason.TurnInTargetNotOffered,
+                AttemptGeneration = 12
+            },
+            new QuestRecoveryRecord
+            {
+                Key = otherQuest,
+                State = QuestRecoveryState.CoolingDown,
+                Reason = QuestFailureReason.PickupTargetNotOffered,
+                AttemptGeneration = 13
+            },
+            new QuestRecoveryRecord
+            {
+                Key = completed,
+                State = QuestRecoveryState.Completed,
+                AttemptGeneration = 14
+            }
+        }
+    });
+
+    var manager = new QuestRecoveryManager(new FixedClock(now));
+    manager.Configure(CreateEnvironment(settingsRoot, "Jeof", "Lordaeron"));
+    Assert(manager.TrySetManualBlacklist(1234, true),
+        "the combined-clear fixture must install its distinct manual overlay");
+    Assert(manager.TryClearExclusion(selected),
+        "one-click Clear must report removal of the overlay and selected automatic exclusion");
+    QuestRecoveryRecord[] remaining = manager.GetEntries().ToArray();
+    Assert(remaining.All(record => record.State != QuestRecoveryState.ManualBlacklist)
+           && remaining.All(record => !record.Key.Equals(selected))
+           && remaining.Any(record => record.Key.Equals(sameQuestOtherStage)
+               && record.State == QuestRecoveryState.CoolingDown)
+           && remaining.Any(record => record.Key.Equals(otherQuest)
+               && record.State == QuestRecoveryState.CoolingDown)
+           && remaining.Any(record => record.Key.Equals(completed)
+               && record.State == QuestRecoveryState.Completed),
+        "one-click Clear must remove both overlay and selected automatic only, preserving other stages, quests, and Completed");
 }
 
 static void AssertPreservedAutomaticPickup(

@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using TreeSharp;
 
 internal static class SafeTurnInRegressionTests
@@ -17,12 +18,14 @@ internal static class SafeTurnInRegressionTests
         TestDeniedClaimLeavesUnrelatedPoiAndAppliesSafePressurePolicy();
         TestAbandonmentGuardsDenyUncertainProgressCompletedAndManualCases();
         TestAtomicAbandonmentRecapturesCompletionAndProgress();
+        TestThrowingAbandonmentExecutorFinishesAcceptedBatchOnce();
         TestUnknownAuthorityPausesInitializationAndTimers();
         TestCandidateOrderingDedupAndCap();
         TestMissingEnderAndExhaustedEndpointsUseNarrowOwnedFailures();
         TestThreeRealCyclesSpanAlternatesAndFormOneEpisode();
         TestObservedCycleStillAdvancesWhenDialogArrivesOnNextPulse();
         TestDelayedIncompleteRedirectPreservesConcurrentWinnerPoi();
+        TestRejectedTerminalReportsPreserveReusedWinnerPoi();
         TestSuccessStaleAndDisposeUseExactPoiAndGeneration();
         TestProductionRecoveryLookupHonorsQuestWideManualTerminal();
     }
@@ -189,6 +192,39 @@ internal static class SafeTurnInRegressionTests
         behavior.TickForTesting();
         Assert(child.TickCount == ticksBeforeDeferral + 1 && runtime.Batches.Count == 0,
             "resuming authority must restore the time budget instead of expiring it");
+    }
+
+    private static void TestThrowingAbandonmentExecutorFinishesAcceptedBatchOnce()
+    {
+        var runtime = RuntimeWithOneLiveCandidate();
+        runtime.RecoveryRecord = Record(
+            QuestRecoveryState.Quarantined, QuestFailureReason.NoObjectiveProgress);
+        runtime.ThrowOnAutomaticAbandonment = true;
+        var behavior = NewBehavior(runtime);
+        behavior.OnStart();
+        var ownedPoi = TurnInPoi(876, 3338, new WoWPoint(1, 1, 0));
+        runtime.Children[0].OnTick = () => runtime.CurrentPoi = ownedPoi;
+        behavior.TickForTesting();
+        runtime.OnBatch = () =>
+        {
+            runtime.CurrentPoi = ownedPoi;
+            runtime.Snapshot = Snapshot(
+                true, QuestCompletionState.KnownIncomplete, true, 2, 0, 0, 0, 0);
+        };
+        runtime.Children[0].Outcomes.Enqueue(Dialog(1, 867));
+        runtime.Children[0].Outcomes.Enqueue(Dialog(2, 867));
+        runtime.Children[0].Outcomes.Enqueue(Dialog(3, 867));
+        behavior.TickForTesting();
+        behavior.TickForTesting();
+        behavior.TickForTesting();
+        behavior.TickForTesting();
+
+        Assert(behavior.IsDone
+               && runtime.Batches.Count == 1
+               && runtime.ClientMutationEvents.SequenceEqual(new[] { "persist", "abandon" })
+               && runtime.ClearCount == 1
+               && runtime.AbandonAttemptCount == 0,
+            "a throwing abandonment executor after an accepted batch must be contained, finish once, and clear only its proven owned POI");
     }
 
     private static void TestCandidateOrderingDedupAndCap()
@@ -382,6 +418,74 @@ internal static class SafeTurnInRegressionTests
             "neutral disposal must release the exact owner generation and exact POI without abandoning the quest");
     }
 
+    private static void TestRejectedTerminalReportsPreserveReusedWinnerPoi()
+    {
+        var batchRuntime = RuntimeWithOneLiveCandidate();
+        var batch = NewBehavior(batchRuntime);
+        batch.OnStart();
+        var batchPoi = TurnInPoi(876, 3338, new WoWPoint(1, 1, 0));
+        batchRuntime.Children[0].OnTick = () => batchRuntime.CurrentPoi = batchPoi;
+        batch.TickForTesting();
+        batchRuntime.AcceptBatch = false;
+        batchRuntime.OnBatch = () => batchRuntime.CurrentPoi = batchPoi;
+        batchRuntime.Children[0].Outcomes.Enqueue(Dialog(1, 867));
+        batchRuntime.Children[0].Outcomes.Enqueue(Dialog(2, 867));
+        batchRuntime.Children[0].Outcomes.Enqueue(Dialog(3, 867));
+        batch.TickForTesting();
+        batch.TickForTesting();
+        batch.TickForTesting();
+        batch.Dispose();
+        Assert(batch.IsDone
+               && ReferenceEquals(batchRuntime.CurrentPoi, batchPoi)
+               && batchRuntime.ClearCount == 0
+               && batchRuntime.AbandonAttemptCount == 1
+               && batchRuntime.AbandonedGeneration == 41,
+            "a rejected generated batch must not clear B's reused POI and must neutrally dispose stale owner A");
+
+        var failureRuntime = RuntimeWithOneLiveCandidate();
+        var failure = NewBehavior(failureRuntime);
+        failure.OnStart();
+        var failurePoi = TurnInPoi(876, 3338, new WoWPoint(1, 1, 0));
+        failureRuntime.Children[0].OnTick = () => failureRuntime.CurrentPoi = failurePoi;
+        failure.TickForTesting();
+        failureRuntime.OwnedOutcomeAccepted = false;
+        failureRuntime.OnReport = _ => failureRuntime.CurrentPoi = failurePoi;
+        InvokeStageFailure(failure, "delayed owner A stage failure");
+        failure.Dispose();
+        Assert(failure.IsDone
+               && ReferenceEquals(failureRuntime.CurrentPoi, failurePoi)
+               && failureRuntime.ClearCount == 0
+               && failureRuntime.AbandonAttemptCount == 1
+               && failureRuntime.AbandonedGeneration == 41,
+            "a rejected stage failure must not clear B's reused POI and must neutrally dispose stale owner A");
+
+        var successRuntime = RuntimeWithOneLiveCandidate();
+        var success = NewBehavior(successRuntime);
+        success.OnStart();
+        var successPoi = TurnInPoi(876, 3338, new WoWPoint(1, 1, 0));
+        successRuntime.Children[0].OnTick = () => successRuntime.CurrentPoi = successPoi;
+        success.TickForTesting();
+        successRuntime.OwnedOutcomeAccepted = false;
+        successRuntime.OnReport = _ => successRuntime.CurrentPoi = successPoi;
+        successRuntime.Snapshot = Snapshot(false, QuestCompletionState.KnownComplete, true, 8);
+        success.TickForTesting();
+        success.Dispose();
+        Assert(success.IsDone
+               && ReferenceEquals(successRuntime.CurrentPoi, successPoi)
+               && successRuntime.ClearCount == 0
+               && successRuntime.AbandonAttemptCount == 1
+               && successRuntime.AbandonedGeneration == 41,
+            "a rejected success must not clear B's reused POI and must neutrally dispose stale owner A");
+    }
+
+    private static void InvokeStageFailure(SafeTurnIn behavior, string evidence)
+    {
+        MethodInfo method = typeof(SafeTurnIn).GetMethod(
+            "ReportStageFailure", BindingFlags.Instance | BindingFlags.NonPublic)
+            ?? throw new InvalidOperationException("SafeTurnIn.ReportStageFailure was not found.");
+        method.Invoke(behavior, new object[] { QuestFailureReason.InternalBehaviorError, evidence });
+    }
+
     private static void TestProductionRecoveryLookupHonorsQuestWideManualTerminal()
     {
         string settingsRoot = Path.Combine(
@@ -516,6 +620,7 @@ internal static class SafeTurnInRegressionTests
         public QuestRecoveryState ClaimState { get; set; } = QuestRecoveryState.Attempting;
         public bool AcceptBatch { get; set; } = true;
         public bool PersistAllowed { get; set; } = true;
+        public bool ThrowOnAutomaticAbandonment { get; set; }
         public SafeTurnInQuestSnapshot Snapshot { get; set; } = Snapshot(true, QuestCompletionState.KnownComplete, true, 8);
         public Queue<SafeTurnInQuestSnapshot> Snapshots { get; } = new();
         public QuestRecoveryRecord RecoveryRecord { get; set; }
@@ -546,6 +651,7 @@ internal static class SafeTurnInRegressionTests
             State = QuestRecoveryState.Eligible
         };
         public bool RedirectAccepted { get; set; } = true;
+        public bool OwnedOutcomeAccepted { get; set; } = true;
         public QuestRecoveryDecision RedirectDecision { get; set; } = new()
         {
             MayAttempt = true,
@@ -605,6 +711,18 @@ internal static class SafeTurnInRegressionTests
                 Decision = RedirectDecision
             };
         }
+        public override QuestRecoveryReportResult TryReportOwnedOutcome(
+            QuestAttemptOutcome outcome,
+            QuestRecoveryContext context)
+        {
+            Reports.Add(outcome);
+            OnReport?.Invoke(outcome);
+            return new QuestRecoveryReportResult
+            {
+                Accepted = OwnedOutcomeAccepted,
+                Decision = ReportDecision
+            };
+        }
         public override bool TryReportGeneratedFailures(IReadOnlyList<QuestAttemptOutcome> outcomes, QuestRecoveryContext context, out IReadOnlyList<QuestRecoveryDecision> decisions)
         {
             Batches.Add(outcomes.ToArray());
@@ -646,8 +764,10 @@ internal static class SafeTurnInRegressionTests
                     Reason = "persistence failed"
                 };
             }
-            AbandonQuestCount++;
             ClientMutationEvents.Add("abandon");
+            if (ThrowOnAutomaticAbandonment)
+                throw new InvalidOperationException("abandon executor boom");
+            AbandonQuestCount++;
             return decision;
         }
         public override void ClearBotPoi(string reason)

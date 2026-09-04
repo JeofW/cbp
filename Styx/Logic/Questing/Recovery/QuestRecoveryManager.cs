@@ -183,9 +183,26 @@ public sealed class QuestRecoveryManager
 
         lock (_sync)
         {
-            if (IsOwnedIncompleteRedirect(outcome))
-                return TryReportOwnedRedirectCore(outcome, context).Decision;
+            if (IsOwnedTerminalOutcome(outcome) &&
+                outcome.AttemptKey is not null &&
+                outcome.Key.Equals(outcome.AttemptKey) &&
+                outcome.AttemptGeneration > 0)
+                return TryReportOwnedOutcomeCore(outcome, context).Decision;
             return ReportCore(outcome, context, countRollingFailure: true);
+        }
+    }
+
+    public QuestRecoveryReportResult TryReportOwnedOutcome(
+        QuestAttemptOutcome outcome,
+        QuestRecoveryContext context)
+    {
+        ArgumentNullException.ThrowIfNull(outcome);
+        ArgumentNullException.ThrowIfNull(outcome.Key);
+        ArgumentNullException.ThrowIfNull(context);
+
+        lock (_sync)
+        {
+            return TryReportOwnedOutcomeCore(outcome, context);
         }
     }
 
@@ -199,22 +216,23 @@ public sealed class QuestRecoveryManager
 
         lock (_sync)
         {
-            return TryReportOwnedRedirectCore(outcome, context);
+            return TryReportOwnedOutcomeCore(outcome, context);
         }
     }
 
-    private QuestRecoveryReportResult TryReportOwnedRedirectCore(
+    private QuestRecoveryReportResult TryReportOwnedOutcomeCore(
         QuestAttemptOutcome outcome,
         QuestRecoveryContext context)
     {
         EnsureConfiguredCore();
         var normalizedContext = NormalizeContext(context);
         QuestRecoveryKey? attemptKey = outcome.AttemptKey;
-        if (!IsOwnedIncompleteRedirect(outcome) ||
+        if (!IsOwnedTerminalOutcome(outcome) ||
             attemptKey == null ||
             !outcome.Key.Equals(attemptKey) ||
-            attemptKey.Stage != QuestRecoveryStage.TurnIn ||
-            attemptKey.Scope != QuestRecoveryScope.QuestStage ||
+            IsOwnedIncompleteRedirect(outcome) &&
+                (attemptKey.Stage != QuestRecoveryStage.TurnIn ||
+                 attemptKey.Scope != QuestRecoveryScope.QuestStage) ||
             outcome.AttemptGeneration <= 0 ||
             FindQuestTerminalCore(attemptKey.QuestId) is not null ||
             !_records.TryGetValue(attemptKey, out var owner) ||
@@ -338,6 +356,11 @@ public sealed class QuestRecoveryManager
         outcome.Kind == QuestAttemptOutcomeKind.Redirect &&
         outcome.Reason == QuestFailureReason.TurnInQuestIncomplete &&
         !outcome.IsFailureEpisode;
+
+    private static bool IsOwnedTerminalOutcome(QuestAttemptOutcome outcome) =>
+        outcome.Kind == QuestAttemptOutcomeKind.Success && !outcome.IsFailureEpisode ||
+        outcome.Kind == QuestAttemptOutcomeKind.Failure && outcome.IsFailureEpisode ||
+        IsOwnedIncompleteRedirect(outcome);
 
     public bool TryReportGeneratedFailures(
         IReadOnlyList<QuestAttemptOutcome> outcomes,
@@ -638,9 +661,6 @@ public sealed class QuestRecoveryManager
                 return false;
             }
 
-            bool questWasManual = _records.Values.Any(record =>
-                record.Key.QuestId == key.QuestId &&
-                record.State == QuestRecoveryState.ManualBlacklist);
             bool removed = false;
             foreach (var pair in _records
                 .Where(pair => pair.Key.QuestId == key.QuestId &&
@@ -650,7 +670,7 @@ public sealed class QuestRecoveryManager
                 removed |= _records.Remove(pair.Key);
             }
 
-            if (!questWasManual && _records.TryGetValue(key, out var current) &&
+            if (_records.TryGetValue(key, out var current) &&
                 current.State is QuestRecoveryState.CoolingDown or
                     QuestRecoveryState.HalfOpen or
                     QuestRecoveryState.Quarantined)
@@ -724,8 +744,20 @@ public sealed class QuestRecoveryManager
                 };
             }
 
-            abandonAction();
-            return decision;
+            try
+            {
+                abandonAction();
+                return decision;
+            }
+            catch (Exception ex)
+            {
+                _log($"Quest recovery automatic abandonment action failed for quest {key.QuestId}: {ex}");
+                return new QuestAbandonmentDecision
+                {
+                    MayAbandon = false,
+                    Reason = $"Automatic abandonment failed: abandon action threw {ex.GetType().Name}: {ex.Message}"
+                };
+            }
         }
     }
 
