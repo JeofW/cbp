@@ -15,6 +15,7 @@ public sealed class QuestAbandonmentLiveSnapshot
     public bool HasObjectiveProgress { get; init; }
     public QuestPrerequisiteStatus PrerequisiteStatus { get; init; }
     public int FreeQuestLogSlots { get; init; }
+    public QuestRecoveryContext RecoveryContext { get; init; } = new();
 }
 
 public sealed class QuestAbandonmentContext

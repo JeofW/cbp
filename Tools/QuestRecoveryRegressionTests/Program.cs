@@ -32,10 +32,13 @@ try
     TestCompletionDependentActionGatesDeferUnknown();
     TestQuestAbandonmentInputGuards();
     TestQuestAbandonmentPrerequisiteGuards();
+    TestPrerequisiteAuthorityReverseScansDependencies();
     TestQuestAbandonmentSlotMatrix();
     TestQuestAbandonmentStateMatrix();
     TestQuestAbandonmentReasonMatrix();
     TestManagerAutomaticAbandonmentIsAtomic(Path.Combine(testRoot, "abandon-atomic"), now);
+    TestAutomaticAbandonmentRejectsContextResetAndPersistsIntent(
+        Path.Combine(testRoot, "abandon-intent"), now);
     TestHistoricalProgressBlocksAbandonmentAcrossReload(
         Path.Combine(testRoot, "abandon-history"), now);
     TestProgressPersistsPerCounterMaximum(Path.Combine(testRoot, "progress-maximum"), now);
@@ -98,6 +101,8 @@ try
     TestLegacyCanonicalManualBlacklistMigrates(Path.Combine(testRoot, "legacy-manual-migrate"), now);
     TestQuestWideTerminalPrecedenceAndAutomaticRestoration(Path.Combine(testRoot, "terminal-precedence"), now);
     TestCompletedRecordsSurviveManualBlacklistToggleAndCompaction(Path.Combine(testRoot, "manual-completed"), now);
+    TestMarkCompletedPreservesManualOverlay(Path.Combine(testRoot, "complete-overlay"), now);
+    TestDeathResetRequiresDirectionalEquipmentImprovement(now);
     TestOwnershipFenceSurvivesManualReleaseReload(Path.Combine(testRoot, "success-empty-reload"), now);
     TestSuccessfulHalfOpenClearsEscalation(Path.Combine(testRoot, "success-half-open"), now);
     TestSuccessCannotReopenTerminalStates(Path.Combine(testRoot, "success-terminal"), now);
@@ -114,6 +119,199 @@ finally
     {
         Directory.Delete(testRoot, recursive: true);
     }
+}
+
+static void TestAutomaticAbandonmentRejectsContextResetAndPersistsIntent(
+    string settingsRoot,
+    DateTime now)
+{
+    var clock = new FixedClock(now);
+    var environment = CreateEnvironment(settingsRoot, "Jeof", "Lordaeron");
+    var manager = new QuestRecoveryManager(clock);
+    var key = QuestRecoveryKey.ForQuestStage(9801, QuestRecoveryStage.Objective);
+    manager.Configure(environment);
+    QuestRecoveryDecision owner = manager.TryBeginAttempt(key, Context());
+    Assert(owner.MayAttempt, "fixture must acquire the abandonment failure episode");
+    manager.TryReportOwnedOutcome(
+        QuestAttemptOutcome.Failure(
+            key, key, owner.AttemptGeneration,
+            QuestFailureReason.InvalidQuestData, "invalid objective data"),
+        Context());
+
+    int resetActions = 0;
+    QuestAbandonmentDecision resetDenied = manager.TryExecuteAutomaticAbandonment(
+        key,
+        () => new QuestAbandonmentLiveSnapshot
+        {
+            IsAccepted = true,
+            StateIsCertain = true,
+            PrerequisiteStatus = QuestPrerequisiteStatus.NotActive,
+            FreeQuestLogSlots = 1,
+            RecoveryContext = new QuestRecoveryContext
+            {
+                PlayerLevel = 34,
+                EquipmentFingerprint = "100:healthy",
+                EquipmentHealthKnown = true,
+                CriticalEquipmentCount = 0,
+                DatasetVersion = "quest-data-v2",
+                CoreVersion = "core-v1",
+                NavigationFingerprint = "nav-v1"
+            }
+        },
+        () => resetActions++);
+    Assert(!resetDenied.MayAbandon && resetActions == 0,
+        "a relevant context reset must reopen a probe instead of abandoning stale quarantine evidence");
+
+    QuestAbandonmentDecision allowed = manager.TryExecuteAutomaticAbandonment(
+        key,
+        () => new QuestAbandonmentLiveSnapshot
+        {
+            IsAccepted = true,
+            StateIsCertain = true,
+            PrerequisiteStatus = QuestPrerequisiteStatus.NotActive,
+            FreeQuestLogSlots = 1,
+            RecoveryContext = Context()
+        },
+        () => { });
+    Assert(allowed.MayAbandon, "unchanged authoritative quarantine may abandon under pressure");
+
+    var reloaded = new QuestRecoveryManager(clock);
+    reloaded.Configure(environment);
+    QuestRecoveryRecord record = reloaded.GetEntries().Single(item => item.Key.Equals(key));
+    Assert(record.AbandonmentStatus == QuestAbandonmentStatus.Succeeded
+           && record.AbandonmentReason.Contains("Automatic abandonment permitted", StringComparison.Ordinal),
+        "the abandonment intent and terminal success must be durable across a fresh manager reload");
+
+    string budgetRoot = settingsRoot + "-budget";
+    var budgetEnvironment = CreateEnvironment(budgetRoot, "Jeof", "Lordaeron");
+    string budgetPath = Path.Combine(
+        budgetRoot, "QuestRecovery", "Jeof-Lordaeron", "quest-recovery.json");
+    new QuestRecoveryStore(budgetPath).Save(new QuestRecoveryDocument
+    {
+        CharacterName = "Jeof",
+        RealmName = "Lordaeron",
+        RollingFailureUtc = Enumerable.Range(0, 6)
+            .Select(index => now.AddMinutes(-index - 1)).ToArray(),
+        Records = new[]
+        {
+            new QuestRecoveryRecord
+            {
+                Key = key,
+                State = QuestRecoveryState.Quarantined,
+                Reason = QuestFailureReason.InvalidQuestData,
+                DatasetVersion = "quest-data-v1",
+                CoreVersion = "core-v1",
+                NavigationFingerprint = "nav-v1"
+            }
+        }
+    });
+    var budgetManager = new QuestRecoveryManager(clock);
+    budgetManager.Configure(budgetEnvironment);
+    int budgetActions = 0;
+    QuestAbandonmentDecision budgetDenied = budgetManager.TryExecuteAutomaticAbandonment(
+        key,
+        () => new QuestAbandonmentLiveSnapshot
+        {
+            IsAccepted = true,
+            StateIsCertain = true,
+            PrerequisiteStatus = QuestPrerequisiteStatus.NotActive,
+            FreeQuestLogSlots = 1,
+            RecoveryContext = new QuestRecoveryContext
+            {
+                DatasetVersion = "quest-data-v2",
+                CoreVersion = "core-v1",
+                NavigationFingerprint = "nav-v1"
+            }
+        },
+        () => budgetActions++);
+    Assert(!budgetDenied.MayAbandon && budgetActions == 0,
+        "a context reset whose half-open probe is denied by the rolling budget must retain the quest");
+}
+
+static void TestMarkCompletedPreservesManualOverlay(string settingsRoot, DateTime now)
+{
+    var environment = CreateEnvironment(settingsRoot, "Jeof", "Lordaeron");
+    var manager = new QuestRecoveryManager(new FixedClock(now));
+    manager.Configure(environment);
+    var objective = QuestRecoveryKey.ForObjective(9802, 0);
+    manager.Report(
+        QuestAttemptOutcome.Failure(objective, QuestFailureReason.InvalidQuestData, "bad data"),
+        Context());
+    manager.SetManualBlacklist(9802, true);
+    manager.MarkCompleted(9802);
+    manager.Flush();
+
+    var reloaded = new QuestRecoveryManager(new FixedClock(now));
+    reloaded.Configure(environment);
+    QuestRecoveryRecord[] records = reloaded.GetEntries().Where(item => item.Key.QuestId == 9802).ToArray();
+    Assert(records.Any(item => item.State == QuestRecoveryState.ManualBlacklist)
+           && records.Any(item => item.State == QuestRecoveryState.Completed)
+           && records.Where(item => item.State != QuestRecoveryState.ManualBlacklist)
+               .All(item => item.State == QuestRecoveryState.Completed),
+        "completion must preserve the manual overlay while completing every non-manual record");
+}
+
+static void TestDeathResetRequiresDirectionalEquipmentImprovement(DateTime now)
+{
+    var key = QuestRecoveryKey.ForObjective(9803, 0);
+    var healthy = new QuestRecoveryContext
+    {
+        EquipmentFingerprint = "100:healthy|200:healthy",
+        EquipmentHealthKnown = true,
+        CriticalEquipmentCount = 0
+    };
+    QuestRecoveryRecord healthyFailure = QuestRecoveryPolicy.ApplyFailure(
+        QuestRecoveryRecord.Create(key), QuestFailureReason.RepeatedDeaths, healthy, now);
+    healthyFailure = QuestRecoveryPolicy.ApplyFailure(healthyFailure,
+        QuestFailureReason.RepeatedDeaths, healthy, now.AddHours(1));
+    healthyFailure = QuestRecoveryPolicy.ApplyFailure(healthyFailure,
+        QuestFailureReason.RepeatedDeaths, healthy, now.AddHours(2));
+    QuestRecoveryDecision degraded = QuestRecoveryPolicy.Evaluate(
+        healthyFailure,
+        new QuestRecoveryContext
+        {
+            EquipmentFingerprint = "100:critical|200:healthy",
+            EquipmentHealthKnown = true,
+            CriticalEquipmentCount = 1
+        },
+        0,
+        now.AddHours(3));
+    Assert(!degraded.MayAttempt,
+        "healthy-to-critical equipment change must not reopen a death quarantine");
+
+    var critical = new QuestRecoveryContext
+    {
+        EquipmentFingerprint = "100:critical|200:healthy",
+        EquipmentHealthKnown = true,
+        CriticalEquipmentCount = 1
+    };
+    QuestRecoveryRecord criticalFailure = QuestRecoveryPolicy.ApplyFailure(
+        QuestRecoveryRecord.Create(key), QuestFailureReason.RepeatedDeaths, critical, now);
+    criticalFailure = QuestRecoveryPolicy.ApplyFailure(criticalFailure,
+        QuestFailureReason.RepeatedDeaths, critical, now.AddHours(1));
+    criticalFailure = QuestRecoveryPolicy.ApplyFailure(criticalFailure,
+        QuestFailureReason.RepeatedDeaths, critical, now.AddHours(2));
+    QuestRecoveryDecision repaired = QuestRecoveryPolicy.Evaluate(
+        criticalFailure, healthy, 0, now.AddHours(3));
+    Assert(repaired.MayAttempt && repaired.State == QuestRecoveryState.HalfOpen,
+        "critical-to-healthy equipment improvement may reopen one death-quarantine probe");
+
+    QuestRecoveryRecord legacy = new()
+    {
+        Key = criticalFailure.Key,
+        State = criticalFailure.State,
+        Reason = criticalFailure.Reason,
+        FirstFailureUtc = criticalFailure.FirstFailureUtc,
+        LastFailureUtc = criticalFailure.LastFailureUtc,
+        NextHalfOpenUtc = criticalFailure.NextHalfOpenUtc,
+        EpisodeCount = criticalFailure.EpisodeCount,
+        PlayerLevelAtFailure = criticalFailure.PlayerLevelAtFailure,
+        EquipmentFingerprint = criticalFailure.EquipmentFingerprint,
+        EquipmentHealthKnown = false,
+        CriticalEquipmentCount = 0
+    };
+    Assert(!QuestRecoveryPolicy.Evaluate(legacy, healthy, 0, now.AddHours(3)).MayAttempt,
+        "legacy equipment fingerprints without comparable health data must migrate conservatively");
 }
 
 static void TestQuestAbandonmentInputGuards()
@@ -174,6 +372,45 @@ static void TestQuestAbandonmentPrerequisiteGuards()
         "an active prerequisite must deny abandonment with a precise reason");
     Assert(safe.MayAbandon,
         "certain proof that the quest is not an active prerequisite must preserve the guarded allow path");
+}
+
+static void TestPrerequisiteAuthorityReverseScansDependencies()
+{
+    Assert(QuestPrerequisiteAuthority.DetermineFromDependencies(
+            867,
+            new[]
+            {
+                new QuestDependencyEvidence(875, 867, isActive: true, isAuthoritative: true)
+            }) == QuestPrerequisiteStatus.Active,
+        "an active dependent must protect its prerequisite even when the prerequisite advertises NextQuestId=0");
+    Assert(QuestPrerequisiteAuthority.DetermineFromDependencies(
+            867,
+            new[]
+            {
+                new QuestDependencyEvidence(875, 0, isActive: true, isAuthoritative: false)
+            }) == QuestPrerequisiteStatus.Unknown,
+        "unknown active profile/database dependency data must fail closed");
+    Assert(QuestPrerequisiteAuthority.DetermineFromDependencies(
+            867,
+            new[]
+            {
+                new QuestDependencyEvidence(875, 900, isActive: false, isAuthoritative: true)
+            }) == QuestPrerequisiteStatus.NotActive,
+        "complete authoritative reverse dependency information may prove no active dependent");
+
+    QuestPrerequisiteAuthority.PublishAuthoritativeDependencies(new[]
+    {
+        new QuestDependencyEvidence(875, 867, isActive: false, isAuthoritative: true)
+    });
+    Assert(QuestPrerequisiteAuthority.DetermineFromPublishedDependencies(
+               867, new uint[] { 875 }) == QuestPrerequisiteStatus.Active
+           && QuestPrerequisiteAuthority.DetermineFromPublishedDependencies(
+               867, Array.Empty<uint>()) == QuestPrerequisiteStatus.NotActive,
+        "the published database graph must reverse-scan current active quest IDs and protect a NextQuestId=0 ancestor");
+    QuestPrerequisiteAuthority.ClearPublishedDependencyAuthority();
+    Assert(QuestPrerequisiteAuthority.DetermineFromPublishedDependencies(
+               867, Array.Empty<uint>()) == QuestPrerequisiteStatus.Unknown,
+        "missing or invalidated dependency data must fail closed instead of proving no dependent");
 }
 
 static void TestManagerAutomaticAbandonmentIsAtomic(string settingsRoot, DateTime now)
@@ -240,6 +477,12 @@ static void TestManagerAutomaticAbandonmentIsAtomic(string settingsRoot, DateTim
                && message.Contains("InvalidOperationException", StringComparison.Ordinal)
                && message.Contains("abandon executor boom", StringComparison.Ordinal)),
         "an abandon executor exception must return a structured denial and emit diagnostics instead of escaping the manager");
+    var failureReload = new QuestRecoveryManager(new FixedClock(now));
+    failureReload.Configure(CreateEnvironment(settingsRoot, "Jeof", "Lordaeron"));
+    Assert(failureReload.GetRecord(key)?.AbandonmentStatus == QuestAbandonmentStatus.Failed
+           && failureReload.GetRecord(key)?.AbandonmentReason.Contains(
+               "abandon executor boom", StringComparison.Ordinal) == true,
+        "a failed client abandonment action must persist its explicit terminal failure reason");
 
     int recaptureActions = 0;
     QuestAbandonmentDecision completed = manager.TryExecuteAutomaticAbandonment(

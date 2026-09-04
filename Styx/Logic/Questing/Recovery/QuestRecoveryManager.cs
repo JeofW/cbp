@@ -535,6 +535,8 @@ public sealed class QuestRecoveryManager
             var matching = _records.Values.Where(record => record.Key.QuestId == questId).ToArray();
             foreach (var record in matching)
             {
+                if (record.State == QuestRecoveryState.ManualBlacklist)
+                    continue;
                 _records[record.Key] = Copy(
                     record,
                     state: QuestRecoveryState.Completed,
@@ -794,7 +796,26 @@ public sealed class QuestRecoveryManager
             EnsureConfiguredCore();
             QuestAbandonmentLiveSnapshot live = recapture()
                 ?? throw new InvalidOperationException("Live quest abandonment recapture returned no snapshot.");
-            QuestRecoveryRecord? current = FindRecordCore(key);
+            if (!_records.TryGetValue(key, out QuestRecoveryRecord? current) ||
+                current.State != QuestRecoveryState.Quarantined)
+            {
+                return new QuestAbandonmentDecision
+                {
+                    MayAbandon = false,
+                    Reason = "Automatic abandonment denied: the exact recovery record is no longer quarantined."
+                };
+            }
+            QuestRecoveryDecision currentDecision = EvaluateCore(
+                key,
+                NormalizeContext(live.RecoveryContext));
+            if (currentDecision.State != QuestRecoveryState.Quarantined || currentDecision.MayAttempt)
+            {
+                return new QuestAbandonmentDecision
+                {
+                    MayAbandon = false,
+                    Reason = "Automatic abandonment denied: current context reopens or supersedes the quarantine."
+                };
+            }
             QuestAbandonmentDecision decision = QuestAbandonmentPolicy.Evaluate(
                 new QuestAbandonmentContext
                 {
@@ -810,6 +831,13 @@ public sealed class QuestRecoveryManager
                 });
             if (!decision.MayAbandon)
                 return decision;
+            _records[key] = Copy(
+                current,
+                abandonmentStatus: QuestAbandonmentStatus.IntentPersisted,
+                abandonmentReason: decision.Reason,
+                abandonmentRequestedUtc: _clock.UtcNow,
+                replaceAbandonmentRequestedUtc: true);
+            _dirty = true;
             if (!FlushCore())
             {
                 return new QuestAbandonmentDecision
@@ -822,11 +850,25 @@ public sealed class QuestRecoveryManager
             try
             {
                 abandonAction();
+                _records[key] = Copy(
+                    _records[key],
+                    abandonmentStatus: QuestAbandonmentStatus.Succeeded,
+                    abandonmentReason: decision.Reason);
+                _dirty = true;
+                if (!FlushCore())
+                    _log($"Quest recovery abandonment success could not be persisted for quest {key.QuestId}; it will retry later.");
                 return decision;
             }
             catch (Exception ex)
             {
                 _log($"Quest recovery automatic abandonment action failed for quest {key.QuestId}: {ex}");
+                _records[key] = Copy(
+                    _records[key],
+                    abandonmentStatus: QuestAbandonmentStatus.Failed,
+                    abandonmentReason: $"{decision.Reason} Action failed: {ex.GetType().Name}: {ex.Message}");
+                _dirty = true;
+                if (!FlushCore())
+                    _log($"Quest recovery abandonment failure could not be persisted for quest {key.QuestId}; it will retry later.");
                 return new QuestAbandonmentDecision
                 {
                     MayAbandon = false,
@@ -923,6 +965,8 @@ public sealed class QuestRecoveryManager
         {
             PlayerLevel = context.PlayerLevel,
             EquipmentFingerprint = context.EquipmentFingerprint,
+            EquipmentHealthKnown = context.EquipmentHealthKnown,
+            CriticalEquipmentCount = context.CriticalEquipmentCount,
             DatasetVersion = Richer(context.DatasetVersion, environment.DatasetVersion),
             CoreVersion = Richer(context.CoreVersion, environment.CoreVersion),
             NavigationFingerprint = Richer(context.NavigationFingerprint, environment.NavigationFingerprint),
@@ -1243,7 +1287,11 @@ public sealed class QuestRecoveryManager
         IReadOnlyList<int>? objectiveCounts = null,
         QuestRecoveryContext? failureContext = null,
         IReadOnlyList<QuestRecoveryEvidence>? evidence = null,
-        long? attemptGeneration = null)
+        long? attemptGeneration = null,
+        QuestAbandonmentStatus? abandonmentStatus = null,
+        string? abandonmentReason = null,
+        DateTime? abandonmentRequestedUtc = null,
+        bool replaceAbandonmentRequestedUtc = false)
     {
         return new QuestRecoveryRecord
         {
@@ -1263,6 +1311,13 @@ public sealed class QuestRecoveryManager
             ObjectiveCounts = objectiveCounts ?? current.ObjectiveCounts,
             PlayerLevelAtFailure = failureContext?.PlayerLevel ?? current.PlayerLevelAtFailure,
             EquipmentFingerprint = failureContext?.EquipmentFingerprint ?? current.EquipmentFingerprint,
+            EquipmentHealthKnown = failureContext?.EquipmentHealthKnown ?? current.EquipmentHealthKnown,
+            CriticalEquipmentCount = failureContext?.CriticalEquipmentCount ?? current.CriticalEquipmentCount,
+            AbandonmentStatus = abandonmentStatus ?? current.AbandonmentStatus,
+            AbandonmentReason = abandonmentReason ?? current.AbandonmentReason,
+            AbandonmentRequestedUtc = replaceAbandonmentRequestedUtc
+                ? abandonmentRequestedUtc
+                : current.AbandonmentRequestedUtc,
             DatasetVersion = failureContext?.DatasetVersion ?? current.DatasetVersion,
             CoreVersion = failureContext?.CoreVersion ?? current.CoreVersion,
             NavigationFingerprint = failureContext?.NavigationFingerprint ?? current.NavigationFingerprint,

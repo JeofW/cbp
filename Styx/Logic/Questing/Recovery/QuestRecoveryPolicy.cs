@@ -247,7 +247,8 @@ public static class QuestRecoveryPolicy
         if (current.Reason == QuestFailureReason.RepeatedDeaths)
         {
             return context.PlayerLevel > current.PlayerLevelAtFailure ||
-                   (!string.IsNullOrEmpty(current.EquipmentFingerprint) && Different(current.EquipmentFingerprint, context.EquipmentFingerprint))
+                   current.EquipmentHealthKnown && context.EquipmentHealthKnown &&
+                   context.CriticalEquipmentCount < current.CriticalEquipmentCount
                 ? "Combat capability changed."
                 : "";
         }
@@ -313,6 +314,11 @@ public static class QuestRecoveryPolicy
             ObjectiveCounts = objectiveCounts ?? current.ObjectiveCounts,
             PlayerLevelAtFailure = failureContext is null ? current.PlayerLevelAtFailure : failureContext.PlayerLevel,
             EquipmentFingerprint = failureContext is null ? current.EquipmentFingerprint : failureContext.EquipmentFingerprint,
+            EquipmentHealthKnown = failureContext is null ? current.EquipmentHealthKnown : failureContext.EquipmentHealthKnown,
+            CriticalEquipmentCount = failureContext is null ? current.CriticalEquipmentCount : failureContext.CriticalEquipmentCount,
+            AbandonmentStatus = current.AbandonmentStatus,
+            AbandonmentReason = current.AbandonmentReason,
+            AbandonmentRequestedUtc = current.AbandonmentRequestedUtc,
             DatasetVersion = failureContext is null ? current.DatasetVersion : failureContext.DatasetVersion,
             CoreVersion = failureContext is null ? current.CoreVersion : failureContext.CoreVersion,
             NavigationFingerprint = failureContext is null ? current.NavigationFingerprint : failureContext.NavigationFingerprint,

@@ -22,6 +22,7 @@ internal static class ZygorRecoveryRegressionTests
         TestPoiAttributionRejectsUnrelatedWork();
         TestConcurrentLifecycleAndExactClaim();
         TestDeniedClaimYieldsWithoutClearingPoi();
+        TestDeniedClaimReevaluatesAtRetryOrContextChange();
         TestProgressUsesCoherentCountersAndResetsDeaths();
         TestOwnedProgressReacquisitionUsesRealManager();
         TestStaleOwnedProgressCannotReleaseNewerManagerOwner();
@@ -29,8 +30,9 @@ internal static class ZygorRecoveryRegressionTests
         TestSecondDeathAdvancesRealGrindAreaExactlyOnce();
         TestDeathsOutsideWindowStartFreshEpisode();
         TestAcceptedAndStaleCleanupUseExactIdentity();
-        TestNoProgressRequiresActiveTimeAndTwoClusters();
+        TestNoProgressIsBoundedWhenAlternateClusterFails();
         TestAutomaticAbandonmentRemainsPolicyLocked();
+        TestTerminalOutcomePersistsAcrossFreshManagerReload();
     }
 
     private static void TestDeathClassificationBoundary()
@@ -157,10 +159,84 @@ internal static class ZygorRecoveryRegressionTests
         plugin.Pulse();
         plugin.Pulse();
 
-        Assert(runtime.ClaimKeys.Count == 1 && runtime.ContinueCount == 0,
-            "a denied exact claim must become passive for that activation and yield to its existing owner");
+        Assert(runtime.ClaimKeys.Count == 1 && runtime.ContinueCount == 1,
+            "a denied exact claim must yield the exact behavior once instead of pinning it forever");
         Assert(runtime.ClearCount == 0 && ReferenceEquals(runtime.CurrentPoi, unrelatedPoi),
             "a denied claim must never clear an unrelated POI");
+        plugin.OnDisable();
+
+        runtime = new FakeZygorRuntime { ClaimAllowed = false };
+        behavior = new object();
+        object exactPoi = new();
+        object winnerBehavior = new();
+        runtime.CurrentBehavior = behavior;
+        runtime.CurrentPoi = exactPoi;
+        runtime.Execution = Execution(behavior, 876, 0, new[] { 0 }, exactPoi);
+        plugin = new ZygorProfileRecoveryPlugin(runtime);
+        plugin.OnEnable();
+        plugin.Pulse();
+        runtime.CurrentBehavior = winnerBehavior;
+        runtime.Execution = Execution(winnerBehavior, 876, 0, new[] { 0 }, exactPoi);
+        plugin.Pulse();
+        Assert(runtime.ClearCount == 0 && ReferenceEquals(runtime.CurrentPoi, exactPoi),
+            "a delayed denied-claim yield must be behavior-fenced and preserve a newer owner's reused POI");
+        plugin.OnDisable();
+
+        runtime = new FakeZygorRuntime { ClaimAllowed = false };
+        behavior = new object();
+        runtime.CurrentBehavior = behavior;
+        runtime.Execution = Execution(behavior, 876, 0, new[] { 0 });
+        plugin = new ZygorProfileRecoveryPlugin(runtime);
+        plugin.OnEnable();
+        plugin.Pulse();
+        runtime.BotRunning = false;
+        plugin.Pulse();
+        Assert(runtime.ContinueCount == 0,
+            "a queued denied-claim yield must not run while the bot or resilient profile policy is inactive");
+        plugin.OnDisable();
+    }
+
+    private static void TestDeniedClaimReevaluatesAtRetryOrContextChange()
+    {
+        var runtime = new FakeZygorRuntime
+        {
+            ClaimAllowed = false,
+            ContinueAllowed = false
+        };
+        object behavior = new();
+        runtime.DeniedRetryUtc = runtime.Now.AddMinutes(2);
+        runtime.Execution = Execution(behavior, 876, 0, new[] { 0 }, cluster: "cluster-a");
+        var plugin = new ZygorProfileRecoveryPlugin(runtime);
+        plugin.OnEnable();
+
+        plugin.Pulse();
+        plugin.Pulse();
+        Assert(runtime.ClaimKeys.Count == 1,
+            "a denied activation must not retry before the manager retry window while context is unchanged");
+
+        runtime.ClaimAllowed = true;
+        runtime.Execution = Execution(behavior, 876, 0, new[] { 0 }, cluster: "cluster-b");
+        plugin.Pulse();
+        Assert(runtime.ClaimKeys.Count == 2,
+            "a changed behavior context must re-evaluate the exact claim without waiting for the old retry window");
+        plugin.OnDisable();
+
+        runtime = new FakeZygorRuntime
+        {
+            ClaimAllowed = false,
+            ContinueAllowed = false
+        };
+        behavior = new object();
+        runtime.DeniedRetryUtc = runtime.Now.AddMinutes(2);
+        runtime.Execution = Execution(behavior, 876, 0, new[] { 0 }, cluster: "cluster-a");
+        plugin = new ZygorProfileRecoveryPlugin(runtime);
+        plugin.OnEnable();
+        plugin.Pulse();
+        runtime.Now = runtime.DeniedRetryUtc.Value;
+        runtime.ClaimAllowed = true;
+        plugin.Pulse();
+        Assert(runtime.ClaimKeys.Count == 2,
+            "a due manager retry window must re-observe and reclaim the still-current exact behavior");
         plugin.OnDisable();
     }
 
@@ -253,7 +329,6 @@ internal static class ZygorRecoveryRegressionTests
                && ownerB.AttemptGeneration == runtime.ClaimGenerations[1],
             "accepted owned progress must allow the same live objective to acquire the next real manager generation");
         plugin.OnDisable();
-        manager.Flush();
 
         var reloaded = new QuestRecoveryManager(clock);
         reloaded.Configure(new QuestRecoveryEnvironment(
@@ -488,9 +563,9 @@ internal static class ZygorRecoveryRegressionTests
         rejected.OnDisable();
     }
 
-    private static void TestNoProgressRequiresActiveTimeAndTwoClusters()
+    private static void TestNoProgressIsBoundedWhenAlternateClusterFails()
     {
-        var runtime = new FakeZygorRuntime();
+        var runtime = new FakeZygorRuntime { AlternateRequestAllowed = false };
         object behavior = new();
         runtime.Execution = Execution(behavior, 876, 1, new[] { 0 }, cluster: "cluster-a");
         var plugin = new ZygorProfileRecoveryPlugin(runtime);
@@ -502,17 +577,17 @@ internal static class ZygorRecoveryRegressionTests
         Assert(runtime.AlternateClusterCount == 1 && runtime.OwnedOutcomes.Count == 0,
             "four active minutes must request one alternate cluster without ending the episode");
 
-        runtime.Execution = Execution(behavior, 876, 1, new[] { 0 }, cluster: "cluster-b", active: false);
+        runtime.Execution = Execution(behavior, 876, 1, new[] { 0 }, cluster: "cluster-a", active: false);
         AdvanceActive(plugin, runtime, TimeSpan.FromMinutes(3), active: false);
         Assert(runtime.OwnedOutcomes.Count == 0,
             "vendor/rest/pause or other inactive time must not advance the no-progress clock");
 
-        runtime.Execution = Execution(behavior, 876, 1, new[] { 0 }, cluster: "cluster-b");
+        runtime.Execution = Execution(behavior, 876, 1, new[] { 0 }, cluster: "cluster-a");
         plugin.Pulse();
         AdvanceActive(plugin, runtime, TimeSpan.FromMinutes(4));
         Assert(runtime.OwnedOutcomes.Count == 1
                && runtime.OwnedOutcomes[0].Reason == QuestFailureReason.NoObjectiveProgress,
-            "eight active minutes across two clusters must report one owned no-progress episode");
+            "eight active minutes must report one owned no-progress episode even when only one cluster exists and rotation fails");
         plugin.OnDisable();
     }
 
@@ -587,6 +662,31 @@ internal static class ZygorRecoveryRegressionTests
         Assert(runtime.AbandonmentCalls == 1 && runtime.ClientMutations.Count == 0,
             "missing Zygor prerequisite authority must default to retaining the quest");
         plugin.OnDisable();
+    }
+
+    private static void TestTerminalOutcomePersistsAcrossFreshManagerReload()
+    {
+        string settingsRoot = ResetTestDirectory("zygor-terminal-reload");
+        var environment = new QuestRecoveryEnvironment(
+            settingsRoot, "Jeof", "Lordaeron", "quest-data-v1", "core-v1", "nav-v1");
+        var clock = new MutableClock(new DateTime(2026, 9, 4, 12, 0, 0, DateTimeKind.Utc));
+        var manager = new QuestRecoveryManager(clock);
+        manager.Configure(environment);
+        var runtime = new ManagerBackedZygorRuntime(manager, clock);
+        object behavior = new();
+        var key = QuestRecoveryKey.ForObjective(879, 0);
+        runtime.Execution = Execution(behavior, key.QuestId, key.ObjectiveIndex, new[] { 0 });
+        var plugin = new ZygorProfileRecoveryPlugin(runtime);
+        plugin.OnEnable();
+        plugin.Pulse();
+        FireThreeDeaths(plugin, runtime);
+        plugin.OnDisable();
+
+        var reloaded = new QuestRecoveryManager(clock);
+        reloaded.Configure(environment);
+        QuestRecoveryRecord record = reloaded.GetRecord(key);
+        Assert(record != null && record.Reason == QuestFailureReason.RepeatedDeaths,
+            "a fresh manager must observe Zygor's accepted terminal objective outcome after adapter return");
     }
 
     private static void FireThreeDeaths(ZygorProfileRecoveryPlugin plugin, FakeZygorRuntime runtime)
@@ -667,6 +767,9 @@ internal static class ZygorRecoveryRegressionTests
 
         public DateTime Now { get; set; } = new(2026, 9, 4, 12, 0, 0, DateTimeKind.Utc);
         public bool ClaimAllowed { get; set; } = true;
+        public bool ContinueAllowed { get; set; } = true;
+        public bool AlternateRequestAllowed { get; set; } = true;
+        public DateTime? DeniedRetryUtc { get; set; }
         public bool OwnedOutcomeAccepted { get; set; } = true;
         public QuestRecoveryState ReportState { get; set; } = QuestRecoveryState.CoolingDown;
         public bool ResilientProfileLoaded { get; set; } = true;
@@ -687,6 +790,7 @@ internal static class ZygorRecoveryRegressionTests
         public int ContinueCount { get; private set; }
         public int ClearCount { get; private set; }
         public int AbandonmentCalls { get; private set; }
+        public int FlushCount { get; private set; }
         public List<QuestRecoveryKey> ClaimKeys { get; } = new();
         public List<IReadOnlyList<int>> CapturedCounts { get; } = new();
         public List<(QuestRecoveryKey key, IReadOnlyList<int> counts)> ProgressReports { get; } = new();
@@ -725,7 +829,8 @@ internal static class ZygorRecoveryRegressionTests
             {
                 MayAttempt = ClaimAllowed,
                 State = ClaimAllowed ? QuestRecoveryState.Attempting : QuestRecoveryState.CoolingDown,
-                AttemptGeneration = ClaimAllowed ? 41 : 0
+                AttemptGeneration = ClaimAllowed ? 41 : 0,
+                RetryUtc = ClaimAllowed ? null : DeniedRetryUtc
             };
         }
         public override bool OwnsAttempt(QuestRecoveryKey key, long generation) =>
@@ -789,7 +894,7 @@ internal static class ZygorRecoveryRegressionTests
                     Execution.DeathAttributable);
             }
             AlternateClusterCount++;
-            return true;
+            return AlternateRequestAllowed;
         }
         public override bool ContinueObjective(
             ZygorObjectiveExecution execution,
@@ -797,6 +902,8 @@ internal static class ZygorRecoveryRegressionTests
             string reason)
         {
             if (CurrentBehavior != null && !ReferenceEquals(CurrentBehavior, execution.Behavior))
+                return false;
+            if (!ContinueAllowed)
                 return false;
             ContinueCount++;
             if (capturedPoi != null && ReferenceEquals(CurrentPoi, capturedPoi))
@@ -833,6 +940,11 @@ internal static class ZygorRecoveryRegressionTests
         }
         public override QuestAbandonmentLiveSnapshot CaptureAbandonmentSnapshot(uint questId) =>
             AbandonSnapshot ?? new QuestAbandonmentLiveSnapshot { FreeQuestLogSlots = 25 };
+        public override bool TryFlush()
+        {
+            FlushCount++;
+            return true;
+        }
     }
 
     private sealed class ManagerBackedZygorRuntime : FakeZygorRuntime
@@ -889,6 +1001,7 @@ internal static class ZygorRecoveryRegressionTests
             QuestRecoveryKey key,
             Func<QuestAbandonmentLiveSnapshot> recapture) =>
             _manager.TryExecuteAutomaticAbandonment(key, recapture, () => { });
+        public override bool TryFlush() => _manager.TryFlush();
     }
 
     private sealed class MutableClock : IQuestRecoveryClock

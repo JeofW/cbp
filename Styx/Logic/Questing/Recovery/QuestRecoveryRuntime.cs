@@ -28,13 +28,20 @@ public static class QuestRecoveryRuntime
     {
         var player = global::Styx.StyxWoW.Me;
         var equipmentFingerprint = "";
+        bool equipmentHealthKnown = false;
+        int criticalEquipmentCount = 0;
         if (player is not null)
         {
             try
             {
-                equipmentFingerprint = CreateEquipmentFingerprint(
-                    player.Inventory.Equipped.PhysicalItems.Select(item =>
-                        (item.Entry, (double)item.MaxDurability, (double)item.DurabilityPercent)));
+                var equipment = player.Inventory.Equipped.PhysicalItems.Select(item =>
+                    (Entry: item.Entry,
+                     MaxDurability: (double)item.MaxDurability,
+                     DurabilityPercent: (double)item.DurabilityPercent)).ToArray();
+                equipmentFingerprint = CreateEquipmentFingerprint(equipment);
+                criticalEquipmentCount = equipment.Count(item =>
+                    item.MaxDurability > 0 && item.DurabilityPercent < CriticalDurabilityPercent);
+                equipmentHealthKnown = equipment.Any(item => item.MaxDurability > 0);
             }
             catch (Exception ex)
             {
@@ -46,6 +53,8 @@ public static class QuestRecoveryRuntime
         {
             PlayerLevel = player?.Level ?? 0,
             EquipmentFingerprint = equipmentFingerprint,
+            EquipmentHealthKnown = equipmentHealthKnown,
+            CriticalEquipmentCount = criticalEquipmentCount,
             ObjectiveCounts = objectiveCounts ?? Array.Empty<int>()
         };
     }

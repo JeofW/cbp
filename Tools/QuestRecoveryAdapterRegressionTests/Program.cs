@@ -6,6 +6,7 @@ using Styx.Logic.Questing;
 using Styx.Logic.Questing.Recovery;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using TreeSharp;
 
@@ -14,11 +15,13 @@ TestTurnInIncompleteRedirectFactory();
 TestEndpointQuantization();
 TestDeniedClaimNeverClearsWinnerPoi();
 TestCandidateOrderingDedupAndCap();
+TestAllMatchingLiveGiversBecomeBoundedAlternates();
 TestLiveGiverSurvivesMissingDatabase();
 TestUnknownCompletionAndDeferredChildPauseAllWork();
 TestNaturalMismatchAdvancesToAlternateAndAlternateCanSucceed();
 TestInteractionCyclesSpanChildReplacementAndBeatTimeout();
 TestTerminalAndStaleCleanupUseExactPoiIdentity();
+TestSafePickUpTerminalPersistsAcrossFreshManagerReload();
 SafeTurnInRegressionTests.Run();
 ZygorRecoveryRegressionTests.Run();
 
@@ -111,6 +114,23 @@ static void TestLiveGiverSurvivesMissingDatabase()
     behavior.OnStart();
     Assert(!behavior.IsDone && runtime.CreatedCandidates.Count == 1 && runtime.Batches.Count == 0,
         "a live matching object must remain usable when the local NPC database is missing");
+}
+
+static void TestAllMatchingLiveGiversBecomeBoundedAlternates()
+{
+    var runtime = new FakeRuntime();
+    runtime.LiveGivers.Add(new SafePickUpGiverCandidate(
+        3338, "live-a", new WoWPoint(1, 1, 0), QuestObjectType.Npc, "live"));
+    runtime.LiveGivers.Add(new SafePickUpGiverCandidate(
+        3338, "live-b", new WoWPoint(161, 1, 0), QuestObjectType.Npc, "live"));
+    var behavior = NewBehavior(runtime);
+    behavior.OnStart();
+    runtime.Now = runtime.Now.AddSeconds(31);
+    behavior.TickForTesting();
+
+    Assert(runtime.CreatedCandidates.Select(candidate => candidate.Name)
+            .SequenceEqual(new[] { "live-a", "live-b" }),
+        "all distinct matching live giver spawns must be bounded alternates instead of pinning to the first unreachable spawn");
 }
 
 static void TestUnknownCompletionAndDeferredChildPauseAllWork()
@@ -225,7 +245,8 @@ static void TestNaturalMismatchAdvancesToAlternateAndAlternateCanSucceed()
            && runtime.Reports.Count(outcome => outcome.IsFailureEpisode) == 0
            && runtime.AbandonCount == 0
            && alternate.DisposeCount == 1
-           && runtime.ClearCount == 2,
+           && runtime.ClearCount == 2
+           && runtime.FlushCount > 0,
         "alternate success must discard queued prior-candidate failures as episodes and clean up without neutral abandon");
 }
 
@@ -267,7 +288,8 @@ static void TestTerminalAndStaleCleanupUseExactPoiIdentity()
     accepted.TickForTesting();
     accepted.TickForTesting();
     accepted.Dispose();
-    Assert(accepted.IsDone && runtimeAccepted.ClearCount == 1 && runtimeAccepted.AbandonCount == 0,
+    Assert(accepted.IsDone && runtimeAccepted.ClearCount == 1 && runtimeAccepted.AbandonCount == 0
+           && runtimeAccepted.FlushCount > 0,
         "an accepted terminal outcome must clear its exact installed POI and release ownership without neutral abandon");
 
     var runtime2 = new FakeRuntime();
@@ -278,8 +300,32 @@ static void TestTerminalAndStaleCleanupUseExactPoiIdentity()
     runtime2.Children[0].OnTick = () => runtime2.CurrentPoi = ownedPoi;
     behavior2.TickForTesting();
     behavior2.Dispose();
-    Assert(runtime2.ClearCount == 1 && runtime2.CurrentPoi.Type == PoiType.None && runtime2.AbandonCount == 1,
+    Assert(runtime2.ClearCount == 1 && runtime2.CurrentPoi.Type == PoiType.None && runtime2.AbandonCount == 1
+           && runtime2.FlushCount > 0,
         "neutral disposal must clear only its exact installed POI and release only its exact attempt");
+}
+
+static void TestSafePickUpTerminalPersistsAcrossFreshManagerReload()
+{
+    string root = Path.Combine(AppContext.BaseDirectory, "pickup-terminal-reload");
+    if (Directory.Exists(root))
+        Directory.Delete(root, recursive: true);
+    var environment = new QuestRecoveryEnvironment(
+        root, "Jeof", "Lordaeron", "quest-data-v1", "core-v1", "nav-v1");
+    var manager = new QuestRecoveryManager(new AdapterTestClock());
+    manager.Configure(environment);
+    var runtime = new ManagerBackedPickupRuntime(manager);
+    var behavior = NewBehavior(runtime);
+    behavior.OnStart();
+    Assert(behavior.IsDone && runtime.FlushCount > 0,
+        "SafePickUp must flush an accepted terminal missing-giver outcome without waiting for another tick");
+
+    var reloaded = new QuestRecoveryManager(new AdapterTestClock());
+    reloaded.Configure(environment);
+    QuestRecoveryRecord record = reloaded.GetRecord(
+        QuestRecoveryKey.ForQuestStage(876, QuestRecoveryStage.Pickup));
+    Assert(record != null && record.Reason == QuestFailureReason.NpcMissingFromDatabase,
+        "a fresh manager must observe SafePickUp's terminal stage outcome after adapter return");
 }
 
 static QuestAttemptOutcome Mismatch(uint questId, uint giverId, long cycle) => new()
@@ -336,7 +382,7 @@ static void Assert(bool condition, string message)
         throw new InvalidOperationException(message);
 }
 
-sealed class FakeRuntime : SafePickUpRuntime
+class FakeRuntime : SafePickUpRuntime
 {
     public DateTime Now { get; set; } = new(2026, 9, 4, 12, 0, 0, DateTimeKind.Utc);
     public bool ClaimAllowed { get; set; } = true;
@@ -348,6 +394,7 @@ sealed class FakeRuntime : SafePickUpRuntime
     public BotPoi CurrentPoi { get; set; } = new(PoiType.None);
     public int ClearCount { get; private set; }
     public int AbandonCount { get; private set; }
+    public int FlushCount { get; private set; }
     public List<SafePickUpGiverCandidate> LiveGivers { get; } = new();
     public SafePickUpGiverCandidate DatabaseGiver { get; set; }
     public List<SafePickUpGiverCandidate> CreatedCandidates { get; } = new();
@@ -398,11 +445,53 @@ sealed class FakeRuntime : SafePickUpRuntime
     }
     public override bool OwnsAttempt(QuestRecoveryKey key, long generation) => ClaimAllowed && Batches.Count == 0;
     public override void AbandonAttempt(QuestRecoveryKey key, long generation) => AbandonCount++;
+    public override bool TryFlush()
+    {
+        FlushCount++;
+        return true;
+    }
     public override void ClearBotPoi(string reason)
     {
         ClearCount++;
         CurrentPoi = new BotPoi(PoiType.None);
     }
+}
+
+sealed class ManagerBackedPickupRuntime : FakeRuntime
+{
+    private readonly QuestRecoveryManager _manager;
+
+    public ManagerBackedPickupRuntime(QuestRecoveryManager manager) => _manager = manager;
+    public override QuestRecoveryDecision TryBeginAttempt(
+        QuestRecoveryKey key, QuestRecoveryContext context) => _manager.TryBeginAttempt(key, context);
+    public override QuestRecoveryDecision Report(
+        QuestAttemptOutcome outcome, QuestRecoveryContext context)
+    {
+        Reports.Add(outcome);
+        return _manager.Report(outcome, context);
+    }
+    public override bool TryReportGeneratedFailures(
+        IReadOnlyList<QuestAttemptOutcome> outcomes,
+        QuestRecoveryContext context,
+        out IReadOnlyList<QuestRecoveryDecision> decisions)
+    {
+        Batches.Add(outcomes.ToArray());
+        return _manager.TryReportGeneratedFailures(outcomes, context, out decisions);
+    }
+    public override bool OwnsAttempt(QuestRecoveryKey key, long generation) =>
+        _manager.OwnsAttempt(key, generation);
+    public override void AbandonAttempt(QuestRecoveryKey key, long generation) =>
+        _manager.AbandonAttempt(key, generation);
+    public override bool TryFlush()
+    {
+        base.TryFlush();
+        return _manager.TryFlush();
+    }
+}
+
+sealed class AdapterTestClock : IQuestRecoveryClock
+{
+    public DateTime UtcNow => new(2026, 9, 4, 12, 0, 0, DateTimeKind.Utc);
 }
 
 sealed class FakeChild : ISafePickUpChild

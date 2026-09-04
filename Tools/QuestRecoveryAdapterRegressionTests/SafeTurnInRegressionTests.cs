@@ -22,6 +22,7 @@ internal static class SafeTurnInRegressionTests
         TestThrowingAbandonmentExecutorFinishesAcceptedBatchOnce();
         TestUnknownAuthorityPausesInitializationAndTimers();
         TestCandidateOrderingDedupAndCap();
+        TestAllMatchingLiveEndersBecomeBoundedAlternates();
         TestMissingEnderAndExhaustedEndpointsUseNarrowOwnedFailures();
         TestThreeRealCyclesSpanAlternatesAndFormOneEpisode();
         TestObservedCycleStillAdvancesWhenDialogArrivesOnNextPulse();
@@ -29,6 +30,7 @@ internal static class SafeTurnInRegressionTests
         TestRejectedTerminalReportsPreserveReusedWinnerPoi();
         TestSuccessStaleAndDisposeUseExactPoiAndGeneration();
         TestProductionRecoveryLookupHonorsQuestWideManualTerminal();
+        TestTerminalOutcomePersistsAcrossFreshManagerReload();
     }
 
     private static void TestIncompleteRedirectReleasesExactOwner()
@@ -53,8 +55,27 @@ internal static class SafeTurnInRegressionTests
                && !redirect.IsFailureEpisode
                && runtime.Batches.Count == 0
                && runtime.AbandonAttemptCount == 0
-               && runtime.AbandonQuestCount == 0,
+               && runtime.AbandonQuestCount == 0
+               && runtime.FlushCount > 0,
             "the real incomplete branch must redirect and release the exact turn-in owner without failure or abandonment");
+    }
+
+    private static void TestAllMatchingLiveEndersBecomeBoundedAlternates()
+    {
+        var runtime = new FakeTurnInRuntime
+        {
+            Snapshot = Snapshot(true, QuestCompletionState.KnownComplete, true, 8)
+        };
+        runtime.LiveEnders.Add(Candidate(3338, 1, 1, "live-a"));
+        runtime.LiveEnders.Add(Candidate(3338, 161, 1, "live-b"));
+        var behavior = NewBehavior(runtime);
+        behavior.OnStart();
+        runtime.Now = runtime.Now.AddSeconds(31);
+        behavior.TickForTesting();
+
+        Assert(runtime.CreatedCandidates.Select(candidate => candidate.Source)
+                .SequenceEqual(new[] { "live-a", "live-b" }),
+            "all distinct matching live ender spawns must be bounded alternates instead of pinning to the first unreachable spawn");
     }
 
     private static void TestDeniedClaimLeavesUnrelatedPoiAndAppliesSafePressurePolicy()
@@ -417,7 +438,8 @@ internal static class SafeTurnInRegressionTests
                && completed.Key.Equals(QuestRecoveryKey.ForQuestStage(876, QuestRecoveryStage.TurnIn))
                && completed.AttemptGeneration == 41
                && successRuntime.ClearCount == 1
-               && successRuntime.AbandonAttemptCount == 0,
+               && successRuntime.AbandonAttemptCount == 0
+               && successRuntime.FlushCount > 0,
             "confirmed turn-in must report exact-generation success and clear only its exact POI");
 
         var staleRuntime = RuntimeWithOneLiveCandidate();
@@ -449,7 +471,8 @@ internal static class SafeTurnInRegressionTests
                && disposedRuntime.AbandonAttemptCount == 1
                && disposedRuntime.AbandonedKey.Equals(QuestRecoveryKey.ForQuestStage(876, QuestRecoveryStage.TurnIn))
                && disposedRuntime.AbandonedGeneration == 41
-               && disposedRuntime.Children[0].DisposeCount == 1,
+               && disposedRuntime.Children[0].DisposeCount == 1
+               && disposedRuntime.FlushCount > 0,
             "neutral disposal must release the exact owner generation and exact POI without abandoning the quest");
     }
 
@@ -586,6 +609,32 @@ internal static class SafeTurnInRegressionTests
         }
     }
 
+    private static void TestTerminalOutcomePersistsAcrossFreshManagerReload()
+    {
+        string root = Path.Combine(AppContext.BaseDirectory, "turnin-terminal-reload");
+        if (Directory.Exists(root))
+            Directory.Delete(root, recursive: true);
+        var environment = new QuestRecoveryEnvironment(
+            root, "Jeof", "Lordaeron", "quest-data-v1", "core-v1", "nav-v1");
+        var manager = new QuestRecoveryManager(new AdapterTestClock());
+        manager.Configure(environment);
+        var runtime = new ManagerBackedTurnInRuntime(manager)
+        {
+            Snapshot = Snapshot(true, QuestCompletionState.KnownComplete, true, 8)
+        };
+        var behavior = NewBehavior(runtime);
+        behavior.OnStart();
+        Assert(behavior.IsDone && runtime.FlushCount > 0,
+            "SafeTurnIn must flush an accepted terminal missing-ender outcome before returning");
+
+        var reloaded = new QuestRecoveryManager(new AdapterTestClock());
+        reloaded.Configure(environment);
+        QuestRecoveryRecord record = reloaded.GetRecord(
+            QuestRecoveryKey.ForQuestStage(876, QuestRecoveryStage.TurnIn));
+        Assert(record != null && record.Reason == QuestFailureReason.NpcMissingFromDatabase,
+            "a fresh manager must observe SafeTurnIn's terminal stage outcome after adapter return");
+    }
+
     private static FakeTurnInRuntime RuntimeWithOneLiveCandidate()
     {
         var runtime = new FakeTurnInRuntime { Snapshot = Snapshot(true, QuestCompletionState.KnownComplete, true, 8) };
@@ -649,7 +698,7 @@ internal static class SafeTurnInRegressionTests
             throw new InvalidOperationException(message);
     }
 
-    private sealed class FakeTurnInRuntime : SafeTurnInRuntime
+    private class FakeTurnInRuntime : SafeTurnInRuntime
     {
         public DateTime Now { get; set; } = new(2026, 9, 4, 12, 0, 0, DateTimeKind.Utc);
         public bool ClaimAllowed { get; set; } = true;
@@ -669,6 +718,7 @@ internal static class SafeTurnInRegressionTests
         public int ClearCount { get; private set; }
         public int AbandonAttemptCount { get; private set; }
         public int AbandonQuestCount { get; private set; }
+        public int FlushCount { get; private set; }
         public int SnapshotReadCount { get; private set; }
         public QuestRecoveryKey ClaimKey { get; private set; }
         public QuestRecoveryKey AbandonedKey { get; private set; }
@@ -778,6 +828,11 @@ internal static class SafeTurnInRegressionTests
             AbandonedKey = key;
             AbandonedGeneration = generation;
         }
+        public override bool TryFlush()
+        {
+            FlushCount++;
+            return true;
+        }
         public override QuestAbandonmentDecision TryExecuteAutomaticAbandonment(
             QuestRecoveryKey key,
             Func<QuestAbandonmentLiveSnapshot> recapture)
@@ -817,6 +872,42 @@ internal static class SafeTurnInRegressionTests
         {
             ClearCount++;
             CurrentPoi = new BotPoi(PoiType.None);
+        }
+    }
+
+    private sealed class ManagerBackedTurnInRuntime : FakeTurnInRuntime
+    {
+        private readonly QuestRecoveryManager _manager;
+
+        public ManagerBackedTurnInRuntime(QuestRecoveryManager manager) => _manager = manager;
+        public override QuestRecoveryDecision TryBeginAttempt(
+            QuestRecoveryKey key, QuestRecoveryContext context) => _manager.TryBeginAttempt(key, context);
+        public override QuestRecoveryReportResult TryReportOwnedOutcome(
+            QuestAttemptOutcome outcome, QuestRecoveryContext context) =>
+            _manager.TryReportOwnedOutcome(outcome, context);
+        public override QuestRecoveryReportResult TryReportOwnedRedirect(
+            QuestAttemptOutcome outcome, QuestRecoveryContext context) =>
+            _manager.TryReportOwnedRedirect(outcome, context);
+        public override bool TryReportGeneratedFailures(
+            IReadOnlyList<QuestAttemptOutcome> outcomes,
+            QuestRecoveryContext context,
+            out IReadOnlyList<QuestRecoveryDecision> decisions)
+        {
+            Batches.Add(outcomes.ToArray());
+            return _manager.TryReportGeneratedFailures(outcomes, context, out decisions);
+        }
+        public override bool OwnsAttempt(QuestRecoveryKey key, long generation) =>
+            _manager.OwnsAttempt(key, generation);
+        public override void AbandonAttempt(QuestRecoveryKey key, long generation) =>
+            _manager.AbandonAttempt(key, generation);
+        public override QuestAbandonmentDecision TryExecuteAutomaticAbandonment(
+            QuestRecoveryKey key,
+            Func<QuestAbandonmentLiveSnapshot> recapture) =>
+            _manager.TryExecuteAutomaticAbandonment(key, recapture, () => { });
+        public override bool TryFlush()
+        {
+            base.TryFlush();
+            return _manager.TryFlush();
         }
     }
 

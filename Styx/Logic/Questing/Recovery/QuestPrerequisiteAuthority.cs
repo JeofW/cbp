@@ -5,8 +5,95 @@ using Styx.Logic.Questing;
 
 namespace Styx.Logic.Questing.Recovery;
 
+public sealed class QuestDependencyEvidence
+{
+    public QuestDependencyEvidence(
+        uint questId,
+        uint prerequisiteQuestId,
+        bool isActive,
+        bool isAuthoritative)
+    {
+        QuestId = questId;
+        PrerequisiteQuestId = prerequisiteQuestId;
+        IsActive = isActive;
+        IsAuthoritative = isAuthoritative;
+    }
+
+    public uint QuestId { get; }
+    public uint PrerequisiteQuestId { get; }
+    public bool IsActive { get; }
+    public bool IsAuthoritative { get; }
+}
+
 public static class QuestPrerequisiteAuthority
 {
+    private static readonly object DependencySync = new();
+    private static QuestDependencyEvidence[] _publishedDependencies = Array.Empty<QuestDependencyEvidence>();
+    private static bool _publishedDependencyAuthority;
+
+    public static void PublishAuthoritativeDependencies(
+        IEnumerable<QuestDependencyEvidence> dependencies)
+    {
+        ArgumentNullException.ThrowIfNull(dependencies);
+        QuestDependencyEvidence[] snapshot = dependencies
+            .Where(item => item is not null && item.QuestId != 0 && item.PrerequisiteQuestId != 0)
+            .Select(item => new QuestDependencyEvidence(
+                item.QuestId, item.PrerequisiteQuestId, false, true))
+            .DistinctBy(item => (item.QuestId, item.PrerequisiteQuestId))
+            .ToArray();
+        lock (DependencySync)
+        {
+            _publishedDependencies = snapshot;
+            _publishedDependencyAuthority = true;
+        }
+    }
+
+    public static void ClearPublishedDependencyAuthority()
+    {
+        lock (DependencySync)
+        {
+            _publishedDependencies = Array.Empty<QuestDependencyEvidence>();
+            _publishedDependencyAuthority = false;
+        }
+    }
+
+    public static QuestPrerequisiteStatus DetermineFromDependencies(
+        uint questId,
+        IEnumerable<QuestDependencyEvidence> dependencies)
+    {
+        ArgumentNullException.ThrowIfNull(dependencies);
+        QuestDependencyEvidence[] active = dependencies.Where(item => item.IsActive).ToArray();
+        if (active.Any(item => item.IsAuthoritative && item.PrerequisiteQuestId == questId))
+            return QuestPrerequisiteStatus.Active;
+        return active.Any(item => !item.IsAuthoritative)
+            ? QuestPrerequisiteStatus.Unknown
+            : QuestPrerequisiteStatus.NotActive;
+    }
+
+    public static QuestPrerequisiteStatus DetermineFromPublishedDependencies(
+        uint questId,
+        IEnumerable<uint> activeQuestIds)
+    {
+        ArgumentNullException.ThrowIfNull(activeQuestIds);
+        QuestDependencyEvidence[] published;
+        bool publishedAuthority;
+        lock (DependencySync)
+        {
+            published = _publishedDependencies;
+            publishedAuthority = _publishedDependencyAuthority;
+        }
+        if (!publishedAuthority)
+            return QuestPrerequisiteStatus.Unknown;
+        var activeSet = new HashSet<uint>(activeQuestIds);
+        return DetermineFromDependencies(
+            questId,
+            published.Select(item => new QuestDependencyEvidence(
+                item.QuestId,
+                item.PrerequisiteQuestId,
+                activeSet.Contains(item.QuestId),
+                true)));
+    }
+
     public static QuestPrerequisiteStatus Determine(
         bool relationDataAvailable,
         uint nextQuestId,
@@ -29,41 +116,22 @@ public static class QuestPrerequisiteAuthority
 
         try
         {
-            uint nextQuestId = quest.NextQuestId;
-            if (nextQuestId == 0)
-            {
-                return Determine(
-                    relationDataAvailable: true,
-                    nextQuestId,
-                    nextQuestIsAccepted: false,
-                    activeGuideContainsNextQuest: false);
-            }
-
             if (StyxWoW.Me is null || string.IsNullOrEmpty(ProfileManager.XmlLocation))
                 return QuestPrerequisiteStatus.Unknown;
             Profile? profile = ProfileManager.CurrentProfile;
             if (profile is null)
                 return QuestPrerequisiteStatus.Unknown;
 
-            bool activeGuideContainsNextQuest = profile.FindQuest(nextQuestId) is not null ||
-                ContainsQuest(profile.QuestOrder, nextQuestId);
-            QuestCompletionSnapshot completion =
-                StyxWoW.Me.QuestLog.GetQuestCompletionSnapshot(nextQuestId);
-            if (activeGuideContainsNextQuest || completion.IsAccepted)
-            {
-                return Determine(
-                    relationDataAvailable: true,
-                    nextQuestId,
-                    completion.IsAccepted,
-                    activeGuideContainsNextQuest);
-            }
-            if (completion.State == QuestCompletionState.Unknown)
-                return QuestPrerequisiteStatus.Unknown;
-            return Determine(
-                relationDataAvailable: true,
-                nextQuestId,
-                nextQuestIsAccepted: false,
-                activeGuideContainsNextQuest: false);
+            var activeIds = profile.Quests.Select(item => item.ID)
+                .Concat(GetQuestIds(profile.QuestOrder))
+                .Concat(StyxWoW.Me.QuestLog.GetAllQuests().Select(item => item.Id))
+                .Where(id => id != 0 && id != quest.Id)
+                .Distinct()
+                .ToArray();
+            if (quest.NextQuestId != 0 && activeIds.Contains(quest.NextQuestId))
+                return QuestPrerequisiteStatus.Active;
+
+            return DetermineFromPublishedDependencies(quest.Id, activeIds);
         }
         catch (Exception)
         {
@@ -71,16 +139,19 @@ public static class QuestPrerequisiteAuthority
         }
     }
 
-    private static bool ContainsQuest(IEnumerable<OrderNode> nodes, uint questId)
+    private static IEnumerable<uint> GetQuestIds(IEnumerable<OrderNode> nodes)
     {
         foreach (OrderNode node in nodes ?? Enumerable.Empty<OrderNode>())
         {
-            if (GetQuestId(node) == questId)
-                return true;
-            if (node is INodeContainer container && ContainsQuest(container.GetNodes(), questId))
-                return true;
+            uint id = GetQuestId(node);
+            if (id != 0)
+                yield return id;
+            if (node is INodeContainer container)
+            {
+                foreach (uint child in GetQuestIds(container.GetNodes()))
+                    yield return child;
+            }
         }
-        return false;
     }
 
     private static uint GetQuestId(OrderNode node)

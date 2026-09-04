@@ -25,6 +25,7 @@ try
     TestCandidateTieBreakers();
     TestValidatedGrindFallbackRequiresVettedPath();
     TestDatasetFingerprintIsDeterministic();
+    TestDataLoaderPublishesAndInvalidatesDependencyAuthority();
     TestSchedulerRetainsEligibleAlternatesAndReportsExactExclusions();
     TestSchedulerFallbackUsesOnlyCallerVettedPath();
     TestUnknownCompletionAuthorityDefersNegativePickupPaths();
@@ -58,6 +59,7 @@ try
     TestGameObjectOnlyObjectiveResolvesUseObjectOverride();
     TestGameObjectItemCollectionRemainsCollectItemOverride();
     TestSchedulerReportsEveryEndpointlessObjectiveOmission();
+    TestSchedulerOmissionsPersistImmediateRecoveryQuarantine();
     TestSchedulerDeduplicatesRelationRowsAndExactEndpoints();
     TestRefreshGateCoalescesConcurrentRequestsAndStopsCallbacks();
     TestRefreshLeaseFencesTheEntireSchedulerRun();
@@ -68,11 +70,13 @@ try
     TestManualExclusionClearsMatchingLocalOwnership();
     TestLifecycleResetDoesNotCarryPickupCyclesAcrossRestart();
     TestProgressMonitorCountsOnlyActiveWorkAndCoalescesOneStall();
+    TestProgressMonitorRequestsAlternateAndFailsBoundedlyWithOneCluster();
     TestProgressMonitorScopesEndpointAndDeathFailures();
     TestProgressMonitorResetsForEachSameKeyOwnershipGeneration();
     TestProductionWorkSnapshotExcludesNonWorkAndRequiresExactOwner();
     TestDeathEventConsumesOnlyPreDeathOwnedQuestCombatSnapshot();
     TestAttemptOwnershipUsesTheExactGenerationToken();
+    TestBehaviorTransitionFinalizesExactPriorGeneration();
     TestOwnedFailureBindsGenerationWithoutSyntheticSuccess();
     TestFinalEndpointAndStageFailuresReportInOneOwnedSequence();
     TestRejectedGeneratedBatchRecoversWithoutThrowingOrApplyingEpisode();
@@ -1756,6 +1760,32 @@ void TestProgressMonitorCountsOnlyActiveWorkAndCoalescesOneStall()
         "a long interval with no pulse samples must not be charged as active quest-work time");
 }
 
+void TestProgressMonitorRequestsAlternateAndFailsBoundedlyWithOneCluster()
+{
+    var clock = new TestRecoveryClock(utcNow);
+    var monitor = new WholesomeProgressMonitor(clock);
+    var key = QuestRecoveryKey.ForQuestStage(9867, QuestRecoveryStage.Objective);
+    var onlyCluster = QuestRecoveryKey.ForEndpoint(
+        9867, QuestRecoveryStage.Navigation, 1, "cell:0:0");
+    monitor.Sample(WorkSample(key, new[] { 0 }, onlyCluster, active: true));
+
+    QuestProgressUpdate update = new();
+    bool requestedAlternate = false;
+    for (int second = 2; second <= 8 * 60; second += 2)
+    {
+        clock.Advance(TimeSpan.FromSeconds(2));
+        update = monitor.Sample(WorkSample(key, new[] { 0 }, onlyCluster, active: true));
+        requestedAlternate |= update.RequestAlternateCluster;
+    }
+
+    Assert(requestedAlternate,
+        "production monitor output must request one alternate target cluster after four active minutes");
+    Assert(update.Outcomes.Any(outcome =>
+            outcome.Key.Equals(key) && outcome.Reason == QuestFailureReason.NoObjectiveProgress &&
+            outcome.IsFailureEpisode),
+        "one unavailable or unchanged cluster must still end in one bounded eight-minute failure episode");
+}
+
 void TestProgressMonitorScopesEndpointAndDeathFailures()
 {
     var clock = new TestRecoveryClock(utcNow);
@@ -2001,6 +2031,56 @@ void TestAttemptOwnershipUsesTheExactGenerationToken()
         "successful Wholesome outcomes must carry the exact generation returned by TryBeginAttempt");
     Assert(!ownership.TryComplete(owner, "duplicate callback", out _),
         "a duplicate completion callback must be rejected after ownership is released");
+}
+
+void TestBehaviorTransitionFinalizesExactPriorGeneration()
+{
+    var root = Path.Combine(Path.GetTempPath(), "wholesome-transition-" + Guid.NewGuid().ToString("N"));
+    try
+    {
+        var manager = new QuestRecoveryManager(new TestRecoveryClock(utcNow));
+        manager.Configure(new QuestRecoveryEnvironment(root, "Wholesome", "Realm", "data", "core", "nav"));
+        var local = new WholesomeAttemptOwnership();
+        var ownerA = new object();
+        var ownerB = new object();
+        var key = QuestRecoveryKey.ForQuestStage(9868, QuestRecoveryStage.Objective);
+        QuestRecoveryDecision claimA = manager.TryBeginAttempt(key, new QuestRecoveryContext());
+        local.Begin(ownerA, key, claimA);
+
+        Assert(WholesomeAutoQuest.FinalizeChangedOwner(
+                   local, ownerB,
+                   (ownedKey, generation) => manager.AbandonAttempt(ownedKey, generation))
+               && !manager.OwnsAttempt(key, claimA.AttemptGeneration),
+            "a real behavior transition must finalize the exact prior manager generation before replacement");
+
+        QuestRecoveryDecision claimB = manager.TryBeginAttempt(key, new QuestRecoveryContext());
+        local.Begin(ownerB, key, claimB);
+        Assert(!WholesomeAutoQuest.FinalizeChangedOwner(
+                   local, ownerB,
+                   (ownedKey, generation) => manager.AbandonAttempt(ownedKey, generation))
+               && manager.OwnsAttempt(key, claimB.AttemptGeneration),
+            "an unchanged owner and stale transition callback must not release the newer generation");
+
+        var staleLocal = new WholesomeAttemptOwnership();
+        var staleOwner = new object();
+        var replacementBehavior = new object();
+        var staleKey = QuestRecoveryKey.ForObjective(9869, 0);
+        QuestRecoveryDecision staleClaim = manager.TryBeginAttempt(staleKey, new QuestRecoveryContext());
+        staleLocal.Begin(staleOwner, staleKey, staleClaim);
+        Assert(manager.AbandonAttempt(staleKey, staleClaim.AttemptGeneration),
+            "stale transition fixture must release owner A before acquiring owner B");
+        QuestRecoveryDecision replacement = manager.TryBeginAttempt(staleKey, new QuestRecoveryContext());
+        Assert(!WholesomeAutoQuest.FinalizeChangedOwner(
+                   staleLocal, replacementBehavior,
+                   (ownedKey, generation) => manager.AbandonAttempt(ownedKey, generation))
+               && manager.OwnsAttempt(staleKey, replacement.AttemptGeneration),
+            "a delayed behavior-transition finalizer must release only its stale local token and preserve manager owner B");
+    }
+    finally
+    {
+        if (Directory.Exists(root))
+            Directory.Delete(root, recursive: true);
+    }
 }
 
 void TestOwnedFailureBindsGenerationWithoutSyntheticSuccess()
@@ -3102,6 +3182,32 @@ void TestDatasetFingerprintIsDeterministic()
     }
 }
 
+void TestDataLoaderPublishesAndInvalidatesDependencyAuthority()
+{
+    var directory = Path.Combine(Path.GetTempPath(), $"wholesome-dependencies-{Guid.NewGuid():N}");
+    Directory.CreateDirectory(directory);
+    try
+    {
+        string path = Path.Combine(directory, "quest_data.json");
+        File.WriteAllText(path,
+            "{\"Quests\":[{\"Id\":867,\"Name\":\"Ancestor\"},{\"Id\":875,\"Name\":\"Dependent\",\"PrevQuestID\":867}]," +
+            "\"QuestGivers\":[],\"QuestEnders\":[],\"CreatureSpawns\":{},\"GameObjectSpawns\":{}}");
+        Assert(new DataLoader(path).Load() != null
+               && QuestPrerequisiteAuthority.DetermineFromPublishedDependencies(
+                   867, new uint[] { 875 }) == QuestPrerequisiteStatus.Active,
+            "the real data loader must publish reverse prerequisite authority for active dependents");
+
+        Assert(new DataLoader(Path.Combine(directory, "missing.json")).Load() == null
+               && QuestPrerequisiteAuthority.DetermineFromPublishedDependencies(
+                   867, new uint[] { 875 }) == QuestPrerequisiteStatus.Unknown,
+            "a missing database must invalidate published authority and fail closed");
+    }
+    finally
+    {
+        Directory.Delete(directory, recursive: true);
+    }
+}
+
 void TestSchedulerRetainsEligibleAlternatesAndReportsExactExclusions()
 {
     var giverRetry = utcNow.AddMinutes(15);
@@ -3703,6 +3809,122 @@ void TestSchedulerReportsEveryEndpointlessObjectiveOmission()
             "excluded quest=867;stage=Objective;objective=0;reason=no-selected-hotspots;retry=2026-09-03T00:10:00.0000000Z",
             StringComparison.Ordinal),
         "an objective whose assessed endpoints are all recovery-excluded must report its exact retry");
+}
+
+void TestSchedulerOmissionsPersistImmediateRecoveryQuarantine()
+{
+    var root = Path.Combine(Path.GetTempPath(), "wholesome-omission-" + Guid.NewGuid().ToString("N"));
+    try
+    {
+        var manager = new QuestRecoveryManager(new TestRecoveryClock(utcNow));
+        manager.Configure(new QuestRecoveryEnvironment(root, "Wholesome", "Realm", "data", "core", "nav"));
+        var db = SchedulerDatabase();
+        db.CreatureSpawns.Remove("2000");
+        QuestRecoveryContext context = new()
+        {
+            DatasetVersion = "data",
+            CoreVersion = "core",
+            NavigationFingerprint = "nav"
+        };
+        QuestScheduler.MaterializeSchedule(
+            db,
+            Snapshot(new[] { Accepted(867, false) }, Array.Empty<uint>(), authoritative: false),
+            key => manager.Evaluate(key, context),
+            10,
+            500,
+            7,
+            reportDataFailure: outcome => manager.Report(outcome, context));
+
+        QuestRecoveryRecord record = manager.GetEntries().Single(item =>
+            item.Key.Equals(QuestRecoveryKey.ForObjective(867, 0)));
+        Assert(record.State == QuestRecoveryState.Quarantined
+               && record.Reason == QuestFailureReason.InvalidQuestData
+               && record.Evidence.Single().Text == "scheduler:no-known-hotspots",
+            "an endpointless objective omission must become a stable manager-backed data quarantine");
+
+        int evidenceCount = record.Evidence.Count;
+        QuestScheduler.MaterializeSchedule(
+            db,
+            Snapshot(new[] { Accepted(867, false) }, Array.Empty<uint>(), authoritative: false),
+            key => manager.Evaluate(key, context),
+            10,
+            500,
+            7,
+            reportDataFailure: outcome => manager.Report(outcome, context));
+        Assert(manager.GetEntries().Single(item => item.Key.Equals(record.Key)).Evidence.Count == evidenceCount,
+            "a persisted data quarantine must prevent the same omission from reappearing on every rebuild");
+
+        var unsupportedDb = SchedulerDatabase();
+        unsupportedDb.Quests.Add(new QuestEntry
+        {
+            Id = 868,
+            Name = "Unsupported objective",
+            MinLevel = 1,
+            QuestLevel = 20,
+            Objectives = { new QuestObjective { Index = 0, Type = ObjectiveType.KillMob, MobId = 0, KillCount = 1 } }
+        });
+        QuestScheduler.MaterializeSchedule(
+            unsupportedDb,
+            Snapshot(new[] { Accepted(868, false) }, Array.Empty<uint>(), authoritative: false),
+            key => manager.Evaluate(key, context), 10, 500, 7,
+            reportDataFailure: outcome => manager.Report(outcome, context));
+        Assert(manager.GetRecord(QuestRecoveryKey.ForObjective(868, 0))?.Reason ==
+               QuestFailureReason.UnsupportedObjective,
+            "an unsupported objective must persist immediate core/data quarantine instead of silently rebuilding");
+
+        var relationDb = SchedulerDatabase();
+        relationDb.Quests.Add(new QuestEntry
+        {
+            Id = 869,
+            Name = "Missing ender",
+            MinLevel = 1,
+            QuestLevel = 20,
+            Objectives = { new QuestObjective { Index = 0, Type = ObjectiveType.TurnInOnly } }
+        });
+        relationDb.QuestEnders.Add(new QuestEnderEntry { QuestId = 869, EnderId = 5000 });
+        QuestScheduler.MaterializeSchedule(
+            relationDb,
+            Snapshot(new[] { Accepted(869, true) }, Array.Empty<uint>(), authoritative: false),
+            key => manager.Evaluate(key, context), 10, 500, 7,
+            reportDataFailure: outcome => manager.Report(outcome, context));
+        Assert(manager.GetRecord(QuestRecoveryKey.ForNpc(869, QuestRecoveryStage.TurnIn, 5000))?.Evidence
+                .Any(item => item.Text == "scheduler:no-relation-spawns") == true,
+            "a missing relation spawn must persist its canonical narrow data failure");
+
+        var assessedDb = SchedulerDatabase();
+        assessedDb.Quests.Add(new QuestEntry
+        {
+            Id = 871,
+            Name = "Unassessed objective",
+            MinLevel = 1,
+            QuestLevel = 20,
+            Objectives = { new QuestObjective { Index = 0, Type = ObjectiveType.KillMob, MobId = 2002, KillCount = 1 } }
+        });
+        assessedDb.CreatureSpawns["2002"] = new() { new SpawnPoint { Map = 1, X = 2, Y = 2 } };
+        QuestScheduler.MaterializeSchedule(
+            assessedDb,
+            Snapshot(new[] { Accepted(871, false) }, Array.Empty<uint>(), authoritative: false),
+            key => manager.Evaluate(key, context), 10, 500, 7,
+            navigationAssessment: _ => new SpawnNavigationAssessment { IsKnownReachable = false },
+            reportDataFailure: outcome => manager.Report(outcome, context));
+        Assert(manager.GetRecord(QuestRecoveryKey.ForObjective(871, 0))?.Evidence
+                .Any(item => item.Text == "scheduler:no-assessed-hotspots") == true,
+            "an objective with no assessed navigable hotspot must persist its canonical data failure");
+
+        QuestScheduler.MaterializeSchedule(
+            SchedulerDatabase(),
+            Snapshot(new[] { Accepted(870, false) }, Array.Empty<uint>(), authoritative: false),
+            key => manager.Evaluate(key, context), 10, 500, 7,
+            reportDataFailure: outcome => manager.Report(outcome, context));
+        Assert(manager.GetRecord(QuestRecoveryKey.ForQuestStage(870, QuestRecoveryStage.Objective))?.Evidence
+                .Any(item => item.Text == "scheduler:accepted-quest-missing") == true,
+            "an accepted quest missing from the database must persist a stable stage-level data quarantine");
+    }
+    finally
+    {
+        if (Directory.Exists(root))
+            Directory.Delete(root, recursive: true);
+    }
 }
 
 void TestSchedulerDeduplicatesRelationRowsAndExactEndpoints()

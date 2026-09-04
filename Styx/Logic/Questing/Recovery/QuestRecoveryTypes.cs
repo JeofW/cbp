@@ -3,6 +3,7 @@ namespace Styx.Logic.Questing.Recovery;
 public enum QuestRecoveryStage { Pickup, Navigation, Objective, TurnIn }
 public enum QuestRecoveryState { Eligible, Attempting, CoolingDown, HalfOpen, Quarantined, ManualBlacklist, Completed }
 public enum QuestRecoveryScope { QuestStage, NpcRelation, Endpoint, Objective, QuestTerminal }
+public enum QuestAbandonmentStatus { None, IntentPersisted, Succeeded, Failed }
 public enum QuestFailureReason
 {
     None, PickupTargetNotOffered, PickupWrongQuestShown, NpcNotFoundInWorld,
@@ -207,6 +208,8 @@ public sealed class QuestRecoveryContext
 
     public int PlayerLevel { get; init; }
     public string EquipmentFingerprint { get; init; } = "";
+    public bool EquipmentHealthKnown { get; init; }
+    public int CriticalEquipmentCount { get; init; }
     public string DatasetVersion { get; init; } = "unknown";
     public string CoreVersion { get; init; } = "unknown";
     public string NavigationFingerprint { get; init; } = "unknown";
@@ -270,6 +273,11 @@ public sealed class QuestRecoveryRecord
 
     public int PlayerLevelAtFailure { get; init; }
     public string EquipmentFingerprint { get; init; } = "";
+    public bool EquipmentHealthKnown { get; init; }
+    public int CriticalEquipmentCount { get; init; }
+    public QuestAbandonmentStatus AbandonmentStatus { get; init; }
+    public string AbandonmentReason { get; init; } = "";
+    public DateTime? AbandonmentRequestedUtc { get; init; }
     public string DatasetVersion { get; init; } = "unknown";
     public string CoreVersion { get; init; } = "unknown";
     public string NavigationFingerprint { get; init; } = "unknown";
