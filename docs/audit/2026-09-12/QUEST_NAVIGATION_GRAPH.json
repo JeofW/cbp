@@ -1,0 +1,43 @@
+{
+  "schema": "copilotbuddy-audit-continuation/v1",
+  "directed": true,
+  "scope": "Q03 overlay; not the complete codebase graph",
+  "baseline_commit": "498257b58cb93470ce2c940bbdaab98b908a20d7",
+  "repair_commit": "b09ad350a7f283f06b75dd340b6091338c5e2927",
+  "sources": {
+    "before": {"path": "runtime-snapshot/Bots/WholesomeAutoQuest-master/QuestScheduler.cs", "git_blob": "5dff11d368d2a458030004c9026d5d15495872fd"},
+    "after": {"path": "runtime-snapshot/Bots/WholesomeAutoQuest-master/QuestScheduler.cs", "git_blob": "8193398e7a16a51126388131e72a8bdd1e963e5b", "sha256": "a2d9bb2cf0e916febb3ff1f019e40ad4953b9c050c3c07f9237030e8013e1cc0"},
+    "red": {"run_id": 34695244750, "artifact_id": 10298468016, "sha256": "47aa12abd232002edf1996c2a8699b3fff36683a13179cd4458efb267e343a73", "new_cases": 13, "failed_cases": 10},
+    "green": {"run_id": 34696245169, "artifact_id": 10299071323, "sha256": "d0a74f8be12402603d400196c8bd4963764fe856a85f95a68f892bf49673a182", "new_cases": 13, "failed_cases": 0, "suite_entries_passed": 6, "game_attached": false}
+  },
+  "nodes": [
+    {"id": "objective", "kind": "function", "name": "AddObjectiveWork", "source": "after", "lines": [519, 662]},
+    {"id": "relation", "kind": "function", "name": "AddRelationWork", "source": "after", "lines": [664, 790]},
+    {"id": "assessment", "kind": "function", "name": "AssessClusters", "source": "after", "lines": [890, 929]},
+    {"id": "cache", "kind": "function", "name": "CreateCachedNavigationAssessment", "source": "after", "lines": [981, 1048]},
+    {"id": "coarse-key", "kind": "budget", "name": "80-yard XY retry/query cell", "source": "after", "lines": [349, 360]},
+    {"id": "metadata", "kind": "data", "name": "Current record safety, reachability and score"},
+    {"id": "veto", "kind": "predicate", "name": "Per-point known-unsafe query"},
+    {"id": "native-probe", "kind": "boundary", "name": "At most one new native query per cell per scan"},
+    {"id": "published-plan", "kind": "output", "name": "Approved objective/pickup/turn-in hotspots"},
+    {"id": "old-poisoning", "kind": "reproduced-failure", "name": "Representative evidence leaks to other points or records"},
+    {"id": "regression", "kind": "test-evidence", "name": "13 targeted scenarios and existing suites", "source": "green"},
+    {"id": "repair", "kind": "change", "name": "b09ad350a7f283f06b75dd340b6091338c5e2927"},
+    {"id": "grod-incident", "kind": "historical-symptom", "name": "Captured Grod/Mesa route failure; separate geometry evidence required"}
+  ],
+  "edges": [
+    {"from": "coarse-key", "to": "old-poisoning", "relation": "incorrectly-owned-evidence-before", "classification": "reproduced", "confidence": "high", "evidence": ["before:949-998", "red"]},
+    {"from": "objective", "to": "assessment", "relation": "calls-for-all-in-range-points", "classification": "extracted", "confidence": "high", "evidence": ["after:591"]},
+    {"from": "relation", "to": "assessment", "relation": "calls-for-all-in-range-points", "classification": "extracted", "confidence": "high", "evidence": ["after:732"]},
+    {"from": "assessment", "to": "cache", "relation": "uses-per-point-assessor", "classification": "extracted", "confidence": "high", "evidence": ["after:890-929"]},
+    {"from": "metadata", "to": "cache", "relation": "vetoes-or-scores-current-record", "classification": "extracted", "confidence": "high", "evidence": ["after:981-1048", "green"]},
+    {"from": "veto", "to": "cache", "relation": "checks-current-point-before-cache-result", "classification": "extracted", "confidence": "high", "evidence": ["after:981-1048", "green"]},
+    {"from": "coarse-key", "to": "native-probe", "relation": "limits-query-count-not-spatial-proof", "classification": "extracted", "confidence": "high", "evidence": ["after:1018-1033", "green"]},
+    {"from": "native-probe", "to": "cache", "relation": "stores-raw-evidence-for-exact-map-xyz", "classification": "extracted", "confidence": "high", "evidence": ["after:1017-1048"]},
+    {"from": "assessment", "to": "published-plan", "relation": "filters-each-point-before-grouping", "classification": "extracted", "confidence": "high", "evidence": ["after:656", "after:784", "green"]},
+    {"from": "old-poisoning", "to": "repair", "relation": "fixed-by-for-reproduced-contract", "classification": "verified", "confidence": "high-within-fixtures", "evidence": ["red", "green"]},
+    {"from": "repair", "to": "regression", "relation": "verified-by", "classification": "verified", "confidence": "high-within-fixtures", "evidence": ["green"]},
+    {"from": "old-poisoning", "to": "grod-incident", "relation": "possible-contributor-not-established", "classification": "inferred-unverified", "confidence": "unresolved", "falsification": "Replay exact incident with deployed source, origin/destination floor identity, mesh assets and transport observations; reject this cause if no cross-point reuse occurred."}
+  ],
+  "open_gates": ["floor-aware persistent recovery scope", "validated Mesa landing and support geometry", "route approach/wait/ride/onward cost", "native wall-clock bounds", "live end-to-end quest acceptance", "independent review"]
+}
