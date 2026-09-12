@@ -13,7 +13,7 @@ jobs:
     steps:
       - name: Download pinned public parser wheels without running repository code
         run: |
-          python -m pip download --only-binary=:all: --no-deps --platform manylinux2014_x86_64 --python-version 311 --implementation cp --abi cp311 --dest "$RUNNER_TEMP/audit-wheels" tree-sitter==0.25.2 tree-sitter-c-sharp==0.23.1
+          python -m pip download --only-binary=:all: --no-deps --platform manylinux2014_x86_64 --python-version 313 --implementation cp --abi cp313 --dest "$RUNNER_TEMP/audit-wheels" tree-sitter==0.25.2 tree-sitter-c-sharp==0.23.1
           cd "$RUNNER_TEMP/audit-wheels"
           sha256sum *.whl > SHA256SUMS
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
