@@ -1,0 +1,83 @@
+# Temporary exact-source preflight. Removed after verified blob promotion.
+name: Audit native boundary preflight
+on:
+  push:
+    branches: ['audit/next-12-native-contract-20260912']
+    paths: ['Tools/Audit/native-contract.patch', '.github/workflows/audit-native-contract-preflight.yml']
+permissions:
+  contents: read
+jobs:
+  boundary:
+    if: github.repository == 'JeofW/CopilotBuddy-private' && github.event.repository.private == true && github.actor == 'JeofW'
+    runs-on: windows-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write # Store verified blobs only; no commits or refs.
+    env:
+      GIT_CONFIG_COUNT: '2'
+      GIT_CONFIG_KEY_0: core.longpaths
+      GIT_CONFIG_VALUE_0: 'true'
+      GIT_CONFIG_KEY_1: core.autocrlf
+      GIT_CONFIG_VALUE_1: 'false'
+      GIT_LFS_SKIP_SMUDGE: '1'
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+          lfs: false
+      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9
+        with:
+          dotnet-version: '10.0.x'
+      - name: Execute actual native failure and timing regressions on exact patch
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $out = Join-Path $env:RUNNER_TEMP 'native-contract-preflight'
+          New-Item -ItemType Directory -Force $out | Out-Null
+          git rev-parse HEAD | Out-File (Join-Path $out 'commit.txt')
+          $before = @{'Tripper/Navigation/Navigator.cs'='24b569aff94534d1da861008630e0237dcd695c9';'Tripper/Navigation/PathFindResult.cs'='ce0c8f652289c56adcb8a039492f384be368b025';'Tripper/Navigation/PathFindStep.cs'='559297e0e3ac971167b1c5b69565f7f195a2e7b0'}
+          foreach ($path in $before.Keys) { if ((git hash-object -- $path) -ne $before[$path]) { throw 'Unexpected original source' } }
+          git apply --check --whitespace=error Tools/Audit/native-contract.patch
+          if ($LASTEXITCODE -ne 0) { throw 'Patch preimage mismatch' }
+          git apply --whitespace=error Tools/Audit/native-contract.patch
+          if ($LASTEXITCODE -ne 0) { throw 'Patch application failed' }
+          $installer = Join-Path (Split-Path $env:RUNNER_WORKSPACE) '_actions/actions/setup-dotnet/67a3573c9a986a3f9c594539f4ab511d57bb3ce9/externals/install-dotnet.ps1'
+          $destination = Join-Path $env:RUNNER_TEMP 'dotnet-x86'
+          foreach ($framework in @('dotnet','windowsdesktop')) {
+            & pwsh -NoProfile -File $installer -Channel '10.0' -Runtime $framework -Architecture x86 -InstallDir $destination -NoPath *> (Join-Path $out "install-$framework.txt")
+            if ($LASTEXITCODE -ne 0) { throw 'Runtime install failed' }
+          }
+          foreach ($name in @('NativeContractRegressionTests','QuestRecoveryRegressionTests')) {
+            dotnet build "Tools/$name/$name.csproj" -c Release -p:Platform=x86 -v quiet *> (Join-Path $out "$name-build.txt")
+            if ($LASTEXITCODE -ne 0) { throw 'Regression project did not compile' }
+            $dlls = @(Get-ChildItem "Tools/$name/bin" -Filter "$name.dll" -Recurse | Where-Object { $_.FullName -notmatch '[\\/](ref|refint)[\\/]' })
+            if ($dlls.Count -ne 1) { throw 'Unexpected executable count' }
+            & (Join-Path $destination 'dotnet.exe') $dlls[0].FullName *> (Join-Path $out "$name-run.txt")
+            if ($LASTEXITCODE -ne 0) { throw 'Actual regression failed' }
+          }
+          git diff --check
+          if ($LASTEXITCODE -ne 0 -or @(git diff --name-only).Count -ne 3) { throw 'Unexpected source diff' }
+          @{native_contract=$true;existing_core=$true;game_attached=$false;mesh_downloaded=$false} | ConvertTo-Json | Out-File (Join-Path $out 'result.json')
+      - name: Stage the three verified source blobs
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $expected = @{'Tripper/Navigation/Navigator.cs'='21d95680deacef4bff28e06c252742dbe357d42e';'Tripper/Navigation/PathFindResult.cs'='2633951087cfd1e7459d7a9a7b374469572c1505';'Tripper/Navigation/PathFindStep.cs'='6bfbf678b75b3781e91795ba590b2cd81227ca33'}
+          $records = @()
+          foreach ($path in $expected.Keys) {
+            if ((git hash-object -- $path) -ne $expected[$path]) { throw 'Source changed during tests' }
+            $body = @{encoding='base64';content=[Convert]::ToBase64String([IO.File]::ReadAllBytes((Join-Path $PWD $path)))} | ConvertTo-Json -Compress
+            $response = Invoke-RestMethod -Method Post -Uri 'https://api.github.com/repos/JeofW/CopilotBuddy-private/git/blobs' -Headers @{Authorization="Bearer $env:GH_TOKEN";Accept='application/vnd.github+json'} -ContentType 'application/json' -Body $body
+            if ($response.sha -ne $expected[$path]) { throw 'Uploaded blob mismatch' }
+            $records += @{path=$path;sha=$response.sha}
+          }
+          $records | ConvertTo-Json | Out-File (Join-Path $env:RUNNER_TEMP 'native-contract-preflight/verified-blobs.json')
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: native-contract-preflight-${{ github.sha }}
+          path: ${{ runner.temp }}/native-contract-preflight/
+          retention-days: 7
+          if-no-files-found: error
