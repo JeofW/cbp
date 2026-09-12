@@ -78,8 +78,27 @@ namespace Styx.WoWInternals
 			{
 				lock (_sync)
 				{
-					_entries.RemoveAll(entry => entry.Direction == direction);
-					_entries.Add(new Entry { Direction = direction, StopTime = stopTime });
+					CancelCore(direction);
+					if (direction != MovementDirection.None)
+						_entries.Add(new Entry { Direction = direction, StopTime = stopTime });
+				}
+			}
+
+
+			// A direction can be renewed independently of the rest of an older mask.
+			internal void Cancel(MovementDirection direction)
+			{
+				lock (_sync)
+					CancelCore(direction);
+			}
+
+			private void CancelCore(MovementDirection direction)
+			{
+				for (int i = _entries.Count - 1; i >= 0; i--)
+				{
+					_entries[i].Direction &= ~direction;
+					if (_entries[i].Direction == MovementDirection.None)
+						_entries.RemoveAt(i);
 				}
 			}
 
@@ -272,6 +291,9 @@ namespace Styx.WoWInternals
 
 		public static void MoveStop()
 		{
+			_timedMovements.Cancel((MovementDirection)uint.MaxValue);
+			if (ObjectManager.Wow == null && ObjectManager.Me == null)
+				return;
 			WoWUnit? activeMover = ActiveMover ?? ObjectManager.Me;
 			if ((activeMover == null || !activeMover.MovementInfo.IsMoving)
 				&& ClickToMoveInfo.Type == ClickToMoveType.None
@@ -302,7 +324,10 @@ namespace Styx.WoWInternals
 
 		public static void StopMovement(MovementDirection direction)
 		{
-			StyxWoW.ResetAfk();
+			_timedMovements.Cancel(direction);
+			// A stop/cleanup may arrive after the client memory has detached.
+			if (ObjectManager.Wow != null)
+				StyxWoW.ResetAfk();
 
 			// Native for all directions except JumpAscend (matches HB 4.3.4/6.2.3 smethod_1).
 			var nativeDirs = direction & ~MovementDirection.JumpAscend;
@@ -545,6 +570,7 @@ namespace Styx.WoWInternals
 
 		public static void Move(MovementDirection direction)
 		{
+			_timedMovements.Cancel(direction);
 			if (ActiveInputControl.Flags.HasFlag(direction))
 				return;
 
@@ -553,12 +579,23 @@ namespace Styx.WoWInternals
 
 		public static void Move(MovementDirection direction, TimeSpan duration)
 		{
+			if (duration < TimeSpan.Zero)
+				throw new ArgumentOutOfRangeException(nameof(duration));
+			if (duration == TimeSpan.Zero)
+			{
+				MoveStop(direction);
+				return;
+			}
+
+			// Validate overflow before dispatch; never start without a representable stop.
+			DateTime stopTime = DateTime.UtcNow + duration;
 			Move(direction, true);
-			_timedMovements.Schedule(direction, DateTime.UtcNow + duration);
+			_timedMovements.Schedule(direction, stopTime);
 		}
 
 		public static void Move(MovementDirection direction, bool start)
 		{
+			_timedMovements.Cancel(direction);
 			if (!start)
 			{
 				MoveStop(direction);
@@ -568,7 +605,9 @@ namespace Styx.WoWInternals
 			// Do NOT guard on ActiveInputControl.Flags.HasFlag — start commands are idempotent
 			// and skipping them when the flag read is stale would block movement silently.
 
-			StyxWoW.ResetAfk();
+			// A stop/cleanup may arrive after the client memory has detached.
+			if (ObjectManager.Wow != null)
+				StyxWoW.ResetAfk();
 
 			// Native for all directions except JumpAscend (matches HB 4.3.4/6.2.3 smethod_1).
 			// Writes directly to CGInputControl.m_flags — no Lua round-trip, no "key stuck" glitch.
