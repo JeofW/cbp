@@ -30,6 +30,7 @@ recovery, and maintainability.
   `runtime-snapshot/Data/`, and the configuration files directly under
   `runtime-snapshot/`
 - Captured execution evidence: `runtime-logs/`
+- Complete generated navigation dataset: `mmaps/` (stored with Git LFS)
 - Packaged build: `output.zip`
 
 ## Suggested audit focus
@@ -54,8 +55,10 @@ prompt so the reviewer receives the latest priorities. Keep durable facts,
 reproduction steps, and accepted findings in this file or a linked issue so
 future audits do not depend on one chat history.
 
-## Deliberately excluded
+## Large artifacts
 
-- `mmaps/`: multi-gigabyte generated navigation tiles
+- `mmaps/` is the complete installed navigation dataset. Its `.mmap` and
+  `.mmtile` binaries are tracked with Git LFS; run `git lfs pull` when a local
+  audit requires tile contents rather than pointer metadata.
 - local SDK/tool caches and build intermediates
 - duplicate backup trees

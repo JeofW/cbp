@@ -1,0 +1,2 @@
+mmaps/*.mmap filter=lfs diff=lfs merge=lfs -text
+mmaps/*.mmtile filter=lfs diff=lfs merge=lfs -text

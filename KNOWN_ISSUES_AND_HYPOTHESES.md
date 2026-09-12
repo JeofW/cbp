@@ -99,7 +99,7 @@ These must be re-counted, deduplicated into incidents, clustered by session/map/
 16. Route smoothing may optimize geometric length while ignoring turn angle, character acceleration, CTM arrival radius, corridor width, or human-looking continuity.
 17. Final NPC/object approach exemptions may prevent needed collision handling near large models, walls, counters, or vertically separated targets.
 18. Door, bridge, zeppelin, boat, tram, elevator, and portal transitions may each implement unrelated timing/attachment semantics instead of one off-mesh-transition contract.
-19. Missing `mmaps` in the repository prevents a complete mesh-data audit; code must emit tile/polygon evidence that can be captured from the live installation without committing multi-gigabyte assets.
+19. The complete `mmaps` dataset is stored through Git LFS. The audit must verify that LFS objects were actually pulled before inspecting tile contents, identify the exact map/tile set used by each incident, and still capture runtime polygon/query evidence that static binaries alone cannot reveal.
 20. Profiles with explicit `UseTransport` behavior may work while automatically selected vendors/POIs do not, revealing a split between scripted and generic vertical navigation.
 
 ## Investigation hypotheses: questing, POIs, and recovery
