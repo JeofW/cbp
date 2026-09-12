@@ -1,0 +1,45 @@
+name: Audit build boundaries
+on:
+  push:
+    branches: ['audit/02-build-isolation-20260912']
+    paths: ['CopilotBuddy.csproj', '.github/workflows/audit-build-boundaries.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  evaluated-inputs:
+    if: github.repository == 'JeofW/CopilotBuddy-private' && github.event.repository.private == true
+    runs-on: windows-latest
+    timeout-minutes: 10
+    env:
+      GIT_CONFIG_COUNT: '1'
+      GIT_CONFIG_KEY_0: core.longpaths
+      GIT_CONFIG_VALUE_0: 'true'
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9
+        with:
+          dotnet-version: '10.0.x'
+      - name: Assert actual MSBuild item boundaries
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $output = dotnet msbuild CopilotBuddy.csproj '-getItem:Compile,Page,EmbeddedResource,Content,None'
+          if ($LASTEXITCODE -ne 0) { throw 'MSBuild item evaluation failed' }
+          $items = ($output | Out-String | ConvertFrom-Json).Items
+          $violations = @()
+          foreach ($group in $items.PSObject.Properties) {
+            foreach ($item in $group.Value) {
+              if ($item.Identity -match '^(runtime-snapshot|runtime-logs)[\\/]') {
+                $violations += "$($group.Name): $($item.Identity)"
+              }
+            }
+          }
+          if ($violations.Count -gt 0) {
+            $violations | Select-Object -First 10 | ForEach-Object { Write-Host $_ }
+            throw "Captured runtime evidence leaked into $($violations.Count) evaluated host items"
+          }
+          if (@($items.Compile).Count -lt 500) { throw 'Host compile census unexpectedly small; exclusion may be too broad' }
+          Write-Host "PASS: $(@($items.Compile).Count) host compile items; no captured runtime source or logs in evaluated default items."

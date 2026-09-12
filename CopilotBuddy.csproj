@@ -12,6 +12,9 @@
     <StartupObject>CopilotBuddy.UI.App</StartupObject>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <!-- Captured extensions and logs are audit evidence, not host source/resources.
+         Exclude at SDK discovery time so WPF Page and other default items are covered too. -->
+    <DefaultItemExcludes>$(DefaultItemExcludes);runtime-snapshot\**;runtime-logs\**</DefaultItemExcludes>
     <!-- Application icon (barre des tâches + exe) -->
     <ApplicationIcon>Resources\bender.ico</ApplicationIcon>
     <!-- FileVersion = right-click Properties → Details. AssemblyVersion intentionally omitted (BAML crash on .NET 10) -->

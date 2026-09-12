@@ -1,0 +1,41 @@
+name: Private evidence audit
+
+on:
+  push:
+    branches: ['audit/01-evidence-baseline-20260912']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: evidence-audit-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  corpus:
+    # Captured logs must never be published by a public fork of this workflow.
+    if: github.repository == 'JeofW/CopilotBuddy-private' && github.event.repository.private == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Archive the exact tracked baseline (no credentials or working-tree files)
+        shell: bash
+        run: |
+          set -euo pipefail
+          git rev-parse HEAD > "$RUNNER_TEMP/audit-commit.txt"
+          git archive --format=zip --output="$RUNNER_TEMP/audit-corpus.zip" HEAD
+          sha256sum "$RUNNER_TEMP/audit-corpus.zip" > "$RUNNER_TEMP/audit-corpus.sha256"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: private-audit-corpus-${{ github.sha }}
+          path: |
+            ${{ runner.temp }}/audit-corpus.zip
+            ${{ runner.temp }}/audit-commit.txt
+            ${{ runner.temp }}/audit-corpus.sha256
+          retention-days: 1
+          compression-level: 0
+          if-no-files-found: error
