@@ -42,15 +42,15 @@ internal static class RoutineBoundaryRegressionTests
         object? no = Bind(predicate, nameof(Reject));
         object? movement = Bind(predicate, nameof(Movement));
         Composite CastName(string? name, object? selector, object? requirements, object? check = null) =>
-            (Composite)spell.GetMethod("Cast", new[] { typeof(string), predicate, select, predicate })!
-                .Invoke(null, new[] { (object?)name, check ?? movement, selector, requirements })!;
+            ProbePredicate(spell.GetMethod("Cast", new[] { typeof(string), predicate, select, predicate })!,
+                new[] { (object?)name, check ?? movement, selector, requirements });
         Composite CastId(int id, object? selector, object? requirements) =>
-            (Composite)spell.GetMethod("Cast", new[] { typeof(int), select, predicate })!.Invoke(null, new[] { (object)id, selector, requirements })!;
+            ProbePredicate(spell.GetMethod("Cast", new[] { typeof(int), select, predicate })!, new[] { (object)id, selector, requirements });
         Composite BuffName(object? selector) =>
-            (Composite)spell.GetMethod("Buff", new[] { typeof(string), typeof(bool), select, predicate, typeof(string[]) })!
-                .Invoke(null, new[] { (object)"Power Word: Fortitude", false, selector, yes, new[] { "Power Word: Fortitude" } })!;
+            ProbePredicate(spell.GetMethod("Buff", new[] { typeof(string), typeof(bool), select, predicate, typeof(string[]) })!,
+                new[] { (object)"Power Word: Fortitude", false, selector, yes, new[] { "Power Word: Fortitude" } });
         Composite BuffId(object? selector) =>
-            (Composite)spell.GetMethod("Buff", new[] { typeof(int), select, predicate })!.Invoke(null, new[] { (object)1243, selector, yes })!;
+            ProbePredicate(spell.GetMethod("Buff", new[] { typeof(int), select, predicate })!, new[] { (object)1243, selector, yes });
         var tests = new List<(string Name, TestAction Run)>
         {
             ("name cast rejects absent target before dependent requirements", () => { FailQuietly(CastName("Smite",none,yes)); Check(_predicates==0 && _selections==1,"requirements must not run without the selected target"); }),
@@ -81,10 +81,30 @@ internal static class RoutineBoundaryRegressionTests
                 failures.Add(test.Name+": "+error.Message); Console.Error.WriteLine("FAIL routine boundary: "+failures[^1]);
             }
         }
-        Console.WriteLine($"Routine boundary scenarios: {tests.Count-failures.Count}/{tests.Count}; actual compiled helper/delay code; no game attached.");
+        Console.WriteLine($"Routine boundary scenarios: {tests.Count-failures.Count}/{tests.Count}; actual compiled predicate/delay code; no game attached.");
         if(failures.Count!=0) throw new InvalidOperationException(string.Join(Environment.NewLine,failures));
     }
 
+    // Full name-Cast construction eagerly reads client latency in the unrelated
+    // dismount child. Isolate the actual outer predicate referenced by factory IL,
+    // binding its real captured parameters, without replacing predicate logic.
+    // This proves the input boundary, not complete client-bound cast composition.
+    private static Composite ProbePredicate(MethodInfo factory, object?[] arguments)
+    {
+        MethodInfo condition=CalledMethods(factory).OfType<MethodInfo>().First(method =>
+            method.ReturnType==typeof(bool) && method.GetParameters().Length==1
+            && method.GetParameters()[0].ParameterType==typeof(object)
+            && method.DeclaringType?.GetField("onUnit",BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic)!=null);
+        object owner=RuntimeHelpers.GetUninitializedObject(condition.DeclaringType!);
+        ParameterInfo[] parameters=factory.GetParameters();
+        for(int i=0;i<parameters.Length;i++)
+        {
+            FieldInfo? captured=condition.DeclaringType!.GetField(parameters[i].Name!,BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic);
+            captured?.SetValue(owner,arguments[i]);
+        }
+        var runner=(CanRunDecoratorDelegate)condition.CreateDelegate(typeof(CanRunDecoratorDelegate),owner);
+        return new Decorator(runner,new TreeSharp.Action(_=>RunStatus.Success));
+    }
     private static WoWUnit NoTarget(object _) { _selections++; return null!; }
     private static WoWUnit Unit(object _) { _selections++; return new WoWUnit(0); }
     private static bool Requirement(object _) { _predicates++; return true; }
@@ -104,9 +124,6 @@ internal static class RoutineBoundaryRegressionTests
         finally { composite.Stop(null!); Logging.OnLogMessage-=listener; Logging.FileLogging=old; }
     }
 
-    // Inspect stable factory IL to find the exact delay component it references,
-    // rather than relying on compiler-generated lambda names or constructing the
-    // unrelated client-dependent rotation. Execute that actual component below.
     private static Composite DelayReferencedBy(Type shadow,string factory)
     {
         var references=CalledMethods(shadow.GetMethod(factory)!).ToArray();
