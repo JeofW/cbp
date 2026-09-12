@@ -116,10 +116,13 @@ namespace Styx.Logic.Pathing
 			{
 				case ElevatorTransitStage.Approach:
 				case ElevatorTransitStage.Boarding:
-					if (isFalling || !hasGroundSupport || attachedToDifferentTransport)
+					if (isFalling || !hasGroundSupport || attachedToDifferentTransport || !boardingPathSafe)
+					{
+						// Boarding is a continuing authorization, not a one-time permission.
+						// Lost safety evidence also invalidates the previous stable-dock dwell.
+						ResetDockCandidate();
 						return Decision(ElevatorTransitAction.Wait);
-					if (_stage == ElevatorTransitStage.Approach && !boardingPathSafe)
-						return Decision(ElevatorTransitAction.Wait);
+					}
 
 					if (_stage == ElevatorTransitStage.Approach
 					    && (playerLocation.Distance2D(WaitPoint) > LandingDistanceTolerance
