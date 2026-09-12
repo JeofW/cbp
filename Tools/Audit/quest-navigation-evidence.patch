@@ -1,5 +1,5 @@
 diff --git a/Tools/WholesomeQuestRecoveryRegressionTests/Program.cs b/Tools/WholesomeQuestRecoveryRegressionTests/Program.cs
-index 5ac055d..03adf7a 100644
+index 5ac055d..5e66a8c 100644
 --- a/Tools/WholesomeQuestRecoveryRegressionTests/Program.cs
 +++ b/Tools/WholesomeQuestRecoveryRegressionTests/Program.cs
 @@ -3276,6 +3276,9 @@ void TestLoadedSpawnsReceiveCachedLiveNavigationEnrichment()
@@ -23,6 +23,38 @@ index 5ac055d..03adf7a 100644
          Assert(hotspots.Any(point => point.X == 481)
                 && hotspots.All(point => point.X >= 400),
              "five nearer live-unsafe or unreachable clusters must not hide a farther confirmed safe and reachable cluster");
+@@ -4342,8 +4345,16 @@ void TestSchedulerReportsEveryEndpointlessObjectiveOmission()
+             StringComparison.Ordinal),
+         "an objective with no known in-range endpoint must report its exact scheduler omission");
+ 
++    // Every destination in this fixture must actually receive a probe. Nearby
++    // unprobed alternatives are covered separately and must remain unknown.
++    var fullyProbedDb = SchedulerDatabase();
++    fullyProbedDb.CreatureSpawns["2000"] = new()
++    {
++        new SpawnPoint { Map = 1, X = 1, Y = 1 },
++        new SpawnPoint { Map = 1, X = 161, Y = 1 }
++    };
+     var noAssessed = QuestScheduler.MaterializeSchedule(
+-        SchedulerDatabase(),
++        fullyProbedDb,
+         Snapshot(new[] { Accepted(867, false) }, Array.Empty<uint>(), authoritative: false),
+         _ => Eligible(),
+         10,
+@@ -4410,6 +4421,13 @@ void TestDistantRelationsRemainEligibleAfterScanExpansion()
+ void TestNavigationRejectionDoesNotQuarantineQuestData()
+ {
+     var db = SchedulerDatabase();
++    // One destination per query-budget cell: all endpoints are really assessed,
++    // rather than treating an unprobed neighbor as an already rejected path.
++    db.CreatureSpawns["2000"] = new()
++    {
++        new SpawnPoint { Map = 1, X = 1, Y = 1 },
++        new SpawnPoint { Map = 1, X = 161, Y = 1 }
++    };
+     var failures = new List<QuestAttemptOutcome>();
+     var snapshot = Snapshot(new[] { Accepted(867, false) }, Array.Empty<uint>(), authoritative: false);
+     var blocked = QuestScheduler.MaterializeSchedule(db, snapshot, _ => Eligible(), 10, 500, 7,
 diff --git a/runtime-snapshot/Bots/WholesomeAutoQuest-master/QuestScheduler.cs b/runtime-snapshot/Bots/WholesomeAutoQuest-master/QuestScheduler.cs
 index 5dff11d..8193398 100644
 --- a/runtime-snapshot/Bots/WholesomeAutoQuest-master/QuestScheduler.cs

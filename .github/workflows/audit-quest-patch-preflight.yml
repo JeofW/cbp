@@ -40,7 +40,7 @@ jobs:
           }
           $after = @{
             'runtime-snapshot/Bots/WholesomeAutoQuest-master/QuestScheduler.cs' = '8193398e7a16a51126388131e72a8bdd1e963e5b'
-            'Tools/WholesomeQuestRecoveryRegressionTests/Program.cs' = '03adf7a6b4f07b9d5a69b2fc2080fa7300ed8e7c'
+            'Tools/WholesomeQuestRecoveryRegressionTests/Program.cs' = '5e66a8c7148c6c9f3cbd8f79dab76a49ce40ff39'
           }
           foreach ($path in $before.Keys) {
             if ((git hash-object -- $path) -ne $before[$path]) { throw "Unexpected preimage: $path" }
@@ -89,7 +89,7 @@ jobs:
           $out = Join-Path $env:RUNNER_TEMP 'quest-patch-preflight'
           $expected = @{
             'runtime-snapshot/Bots/WholesomeAutoQuest-master/QuestScheduler.cs' = '8193398e7a16a51126388131e72a8bdd1e963e5b'
-            'Tools/WholesomeQuestRecoveryRegressionTests/Program.cs' = '03adf7a6b4f07b9d5a69b2fc2080fa7300ed8e7c'
+            'Tools/WholesomeQuestRecoveryRegressionTests/Program.cs' = '5e66a8c7148c6c9f3cbd8f79dab76a49ce40ff39'
           }
           $records = @()
           foreach ($path in ($expected.Keys | Sort-Object)) {
