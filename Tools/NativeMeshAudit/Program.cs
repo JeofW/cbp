@@ -53,7 +53,6 @@ try
     };
     foreach (var route in routes)
     {
-        // The first request in the process is cold; later first requests may share tiles.
         for (int repeat = 0; repeat < 4; repeat++)
         {
             int tileStart = tiles.Count;
@@ -90,7 +89,11 @@ try
     Save("nearest-polygons.json", nearest);
     Save("result.json", new { game_attached = false, native_calls = samples.Count, paths_produced = pathsProduced,
         asset_compatibility_demonstrated = pathsProduced > 0, live_route_acceptance = false });
-    if (pathsProduced == 0) throw new InvalidOperationException("No path was produced. Loader/DLL/mesh compatibility is NOT established.");
+    if (pathsProduced == 0)
+    {
+        LoaderDiagnostics.Run(navigator,root,output);
+        throw new InvalidOperationException("No path was produced under the host contract. Inspect separately labeled loader/filter controls; do not infer mesh corruption.");
+    }
     return 0;
 }
 catch (Exception error)
