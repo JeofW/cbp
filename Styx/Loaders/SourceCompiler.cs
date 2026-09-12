@@ -50,7 +50,8 @@ namespace Styx.Loaders
             // Add all currently loaded assemblies as references
             foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
             {
-                AddReference(assembly.Location);
+                if (ShouldReferenceLoadedAssemblyLocation(assembly.Location))
+                    AddReference(assembly.Location);
             }
 
             // Try to add common WPF / Windows Forms integration assemblies if available
@@ -125,6 +126,25 @@ namespace Styx.Loaders
             if (!string.IsNullOrEmpty(assembly) && !Options.ReferencedAssemblies.Contains(assembly))
             {
                 Options.ReferencedAssemblies.Add(assembly);
+            }
+        }
+
+        internal static bool ShouldReferenceLoadedAssemblyLocation(string location)
+        {
+            if (string.IsNullOrWhiteSpace(location))
+                return false;
+
+            try
+            {
+                string fullLocation = Path.GetFullPath(location);
+                string tempRoot = Path.GetFullPath(Path.GetTempPath())
+                    .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
+                    + Path.DirectorySeparatorChar;
+                return !fullLocation.StartsWith(tempRoot, StringComparison.OrdinalIgnoreCase);
+            }
+            catch
+            {
+                return false;
             }
         }
 

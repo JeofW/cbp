@@ -49,7 +49,10 @@ public class QuestBot : BotBase
             LevelBot.CreateCombatBehavior(),
             LevelBot.CreateLootBehavior(),
             QuestBot.CreateTargetingBehavior(),
-            (Composite)LevelBot.CreateVendorBehavior(),
+            (Composite)new Decorator(
+                context => ShouldRunServiceBehavior(
+                    QuestState.Instance.Order.CurrentBehavior?.SuppressServiceBehavior == true),
+                LevelBot.CreateVendorBehavior()),
             (Composite)CreateQuestOrderBehavior(),
             (Composite)LevelBot.CreateRoamBehavior()
         });
@@ -93,7 +96,8 @@ public class QuestBot : BotBase
         // so that profile AvoidMobs / MobIDs / level range / critter / player-pet filtering
         // is honored (previously the bot pathed through chain-of-mobs to reach an AvoidMob).
         Targeting.Instance.IncludeTargetsFilter += new IncludeTargetsFilterDelegate(LevelBot.LevelBotIncludeTargetsFilter);
-        QuestState.Instance.Order.OnNoMoreNodes += new EventHandler<EventArgs>(OnNoMoreNodes);
+        QuestState.Instance.Order.OnNoMoreNodes -= OnNoMoreNodes;
+        QuestState.Instance.Order.OnNoMoreNodes += OnNoMoreNodes;
         if (StyxSettings.Instance.ProfileDebuggingMode && !CheckQuestBehaviors(ProfileManager.CurrentOuterProfile))
             throw new HonorbuddyUnableToStartException("Could not construct all quest behaviors.");
         ProfileBatchManager.Reset();
@@ -140,7 +144,7 @@ public class QuestBot : BotBase
         return flag;
     }
 
-    private static void OnNoMoreNodes(object sender, EventArgs e)
+    protected virtual void OnNoMoreNodes(object sender, EventArgs e)
     {
         Logging.Write(Color.Red, "Nothing more to do. Stopping bot.");
         TreeRoot.Stop();
@@ -148,6 +152,7 @@ public class QuestBot : BotBase
 
     public override void Stop()
     {
+        QuestState.Instance.Order.OnNoMoreNodes -= OnNoMoreNodes;
         if (QuestState.Instance.Order.CurrentBehavior != null)
         {
             QuestState.Instance.Order.CurrentBehavior.Dispose();
@@ -169,30 +174,18 @@ public class QuestBot : BotBase
         // - Only when not in combat
         // - If we find a valid CurrentTarget within 5s, set a Kill POI for it
         //
-        // HB 6.2.3 fix: guard against ALL non-combat POI types, not just Kill.
-        // Without this, TargetingBehavior fires freely when POI=Train (Train≠Kill), finds a
-        // path-aggro mob via stale ObjectList, sets Kill POI → VendorBehavior on the same
-        // PrioritySelector restart resets it back to Train → oscillation loop.
+        // Guard active travel and service work from opportunistic path pulls. If a mob
+        // actually removes the mount, the higher-priority combat behavior still takes over.
 
         CanRunDecoratorDelegate isMoving = context => StyxWoW.Me.IsMoving;
         CanRunDecoratorDelegate notInCombat = context => !StyxWoW.Me.Combat;
         CanRunDecoratorDelegate hasTarget = context => StyxWoW.Me.CurrentTarget != null;
         RetrieveBotPoiDelegate buildKillPoi = context => new BotPoi(StyxWoW.Me.CurrentTarget, PoiType.Kill);
 
-        // Block targeting whenever there's already a meaningful POI in flight.
-        // Matches the vendor-run guard in QuestIncludeTargetsFilter.
-        PoiType[] nonCombatPoiTypes = new[]
-        {
-            PoiType.Kill,
-            PoiType.Sell,
-            PoiType.Repair,
-            PoiType.Train,
-            PoiType.Buy,
-            PoiType.Mail,
-        };
-
         return (Composite)new Decorator(isMoving,
-            (Composite)new DecoratorIsNotPoiType(nonCombatPoiTypes,
+            (Composite)new Decorator(
+                context => !ShouldSuppressOpportunisticTargeting(
+                    BotPoi.Current.Type, StyxWoW.Me.Mounted),
             (Composite)new Decorator(notInCombat,
             (Composite)new DecoratorNeedToFindTarget(
                 (Composite)new Sequence(new Composite[]
@@ -209,6 +202,33 @@ public class QuestBot : BotBase
             (Composite)new ForcedBehaviorExecutor(QuestState.Instance.Order),
             (Composite)new ActionAlwaysSucceed()
         });
+    }
+
+    internal static bool ShouldSuppressOpportunisticTargeting(PoiType poiType)
+    {
+        return ShouldSuppressOpportunisticTargeting(poiType, mounted: false);
+    }
+
+    internal static bool ShouldRunServiceBehavior(bool exclusiveForcedBehaviorActive)
+    {
+        return !exclusiveForcedBehaviorActive;
+    }
+
+    internal static bool ShouldSuppressOpportunisticTargeting(PoiType poiType, bool mounted)
+    {
+        // Mounted quest travel is transit, not a pull phase. If a mob actually
+        // catches and dismounts the player, the normal combat branch takes over.
+        if (mounted)
+            return true;
+
+        return poiType == PoiType.Kill ||
+               poiType == PoiType.QuestPickUp ||
+               poiType == PoiType.QuestTurnIn ||
+               poiType == PoiType.Sell ||
+               poiType == PoiType.Repair ||
+               poiType == PoiType.Train ||
+               poiType == PoiType.Buy ||
+               poiType == PoiType.Mail;
     }
 
     public static void QuestIncludeTargetsFilter(

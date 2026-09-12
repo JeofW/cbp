@@ -120,6 +120,14 @@ namespace Styx.Logic.Pathing
         /// True if ground navigation is faster than mounting and flying to <paramref name="destination"/>.
         /// Ported from HB 6.2.3 Flightor.smethod_9.
         /// </summary>
+        internal static bool ShouldAttemptGroundMount(
+            bool canFly,
+            bool mounted,
+            bool mountPolicyAllows)
+        {
+            return !canFly && !mounted && mountPolicyAllows;
+        }
+
         private static bool ShouldWalk(WoWPoint destination)
         {
             if (StyxWoW.Me.HasAura("Sea Legs")) return false;
@@ -194,9 +202,11 @@ namespace Styx.Logic.Pathing
             {
                 // In no-fly zones (e.g. Eastern Kingdoms in WotLK), attempt a ground mount
                 // for faster patrol before falling back to on-foot navigation.
-                // ShouldWalk returns true here because !CanFly, not because distance is short,
-                // so mounting is appropriate.  Mount.MountUp() is a no-op when cooldown is active.
-                if (!CanFly && !StyxWoW.Me.Mounted)
+                // Reuse the shared distance policy so nearby loot and quest targets stay on foot.
+                if (ShouldAttemptGroundMount(
+                        CanFly,
+                        StyxWoW.Me.Mounted,
+                        Mount.ShouldMount(destination)))
                     Mount.MountUp();
                 Navigator.MoveTo(destination);
                 return;

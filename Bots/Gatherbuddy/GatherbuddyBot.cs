@@ -783,11 +783,10 @@ namespace Bots.Gatherbuddy
                             }
                         })
                     ),
-                    // Sell items - only if MerchantFrame is visible.
+                    // The atomic sale step verifies MerchantFrame inside the same Lua call.
                     new Action(ctx =>
                     {
-                        if (!MerchantFrame.Instance.IsVisible) return;
-                        Vendors.SellAllItems();
+                        return Vendors.SellAllItemsStep() ? RunStatus.Success : RunStatus.Running;
                     }),
                     new Action(ctx => { StyxWoW.SleepForLagDuration(); return RunStatus.Success; }),
                     // Repair if enabled and frame still open.
@@ -1150,18 +1149,17 @@ namespace Bots.Gatherbuddy
                     new PrioritySelector(new ContextChangeHandler(
                             ctx => _currentNode != null ? (object)_currentNode.Location : WoWPoint.Zero),
                         new Decorator(
-                            ctx => ctx is WoWPoint pt &&
-                                   Navigator.CanNavigateFully(StyxWoW.Me.Location, pt),
+                            ctx => ctx is WoWPoint && StyxWoW.Me.IsSwimming,
                             new Action(ctx =>
                             {
-                                Navigator.MoveTo((WoWPoint)ctx);
+                                WoWMovement.ClickToMove((WoWPoint)ctx);
                                 return RunStatus.Success;
                             })
                         ),
                         new Action(ctx =>
                         {
                             if (ctx is WoWPoint pt)
-                                WoWMovement.ClickToMove(pt);
+                                Navigator.MoveTo(pt);
                             return RunStatus.Success;
                         })
                     )
@@ -1446,13 +1444,13 @@ namespace Bots.Gatherbuddy
                     continue;
                 }
 
-                // NoNinja: skip any node another mounted player is clearly heading toward.
-                if (GatherbuddySettings.Instance.NoNinja && Flightor.MountHelper.Mounted)
+                if (GatherbuddySettings.Instance.NoNinja && (StyxWoW.Me.Mounted || Flightor.MountHelper.Mounted))
                 {
                     bool playerNearby = ObjectManager.GetObjectsOfType<WoWPlayer>()
-                        .Any(p => !p.IsMe && p.IsAlive && p.Location.DistanceSqr(nodePos) < 15f * 15f);
+                        .Any(p => !p.IsMe && p.Location.DistanceSqr(nodePos) < 100f);
                     if (playerNearby)
                     {
+                        Logging.WriteDebug("[GB Filter] Removing \"{0}\" from loot list. Ninja attempt avoided", go.Name);
                         Blacklist.Add(go.Guid, TimeSpan.FromSeconds(5));
                         list.RemoveAt(i);
                         continue;

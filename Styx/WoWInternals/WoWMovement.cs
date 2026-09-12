@@ -63,13 +63,45 @@ namespace Styx.WoWInternals
 
 		#region FEAT-01: Timed movement queue
 
-		private class TimedMovementEntry
+		internal sealed class TimedMovementSchedule
 		{
-			public MovementDirection Direction;
-			public DateTime StopTime;
+			private sealed class Entry
+			{
+				internal MovementDirection Direction;
+				internal DateTime StopTime;
+			}
+
+			private readonly object _sync = new object();
+			private readonly List<Entry> _entries = new List<Entry>();
+
+			internal void Schedule(MovementDirection direction, DateTime stopTime)
+			{
+				lock (_sync)
+				{
+					_entries.RemoveAll(entry => entry.Direction == direction);
+					_entries.Add(new Entry { Direction = direction, StopTime = stopTime });
+				}
+			}
+
+			internal MovementDirection TakeExpired(DateTime now)
+			{
+				MovementDirection expired = MovementDirection.None;
+				lock (_sync)
+				{
+					for (int i = _entries.Count - 1; i >= 0; i--)
+					{
+						if (_entries[i].StopTime > now)
+							continue;
+
+						expired |= _entries[i].Direction;
+						_entries.RemoveAt(i);
+					}
+				}
+				return expired;
+			}
 		}
 
-		private static readonly List<TimedMovementEntry> _timedMovements = new List<TimedMovementEntry>();
+		private static readonly TimedMovementSchedule _timedMovements = new TimedMovementSchedule();
 
 		public sealed class MovementEventArgs : EventArgs
 		{
@@ -96,22 +128,10 @@ namespace Styx.WoWInternals
 		/// </summary>
 		public static void Pulse()
 		{
-			if (_timedMovements.Count == 0)
-				return;
-
-			DateTime now = DateTime.Now;
-			MovementDirection expired = MovementDirection.None;
-			for (int i = _timedMovements.Count - 1; i >= 0; i--)
-			{
-				if (_timedMovements[i].StopTime <= now)
-				{
-					Logging.WriteDebug("Flushing timed movement. Direction: {0}", _timedMovements[i].Direction);
-					expired |= _timedMovements[i].Direction;
-					_timedMovements.RemoveAt(i);
-				}
-			}
+			MovementDirection expired = _timedMovements.TakeExpired(DateTime.UtcNow);
 			if (expired != MovementDirection.None)
 			{
+				Logging.WriteDebug("Flushing timed movement. Direction: {0}", expired);
 				MoveStop(expired);
 			}
 		}
@@ -534,8 +554,7 @@ namespace Styx.WoWInternals
 		public static void Move(MovementDirection direction, TimeSpan duration)
 		{
 			Move(direction, true);
-			StyxWoW.Sleep(duration);
-			Move(direction, false);
+			_timedMovements.Schedule(direction, DateTime.UtcNow + duration);
 		}
 
 		public static void Move(MovementDirection direction, bool start)

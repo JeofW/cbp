@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
+using System.Linq;
 using Styx.Combat.CombatRoutine;
 using Styx.Logic.Pathing;
 using Styx.WoWInternals;
@@ -26,7 +27,7 @@ namespace Styx.Database
         private static SQLiteCommand _getNearestTrainerCmd;
 
         // SELECT * FROM npcs WHERE map = @map AND (flag & @flags) != 0 
-        // ORDER BY VECTORDISTANCE(x, y, z, @x, @y, @z) LIMIT 10
+        // Read in distance order until an eligible, reachable NPC is found.
         private static SQLiteCommand _getNearestNpcCmd;
 
         private static bool _initialized = false;
@@ -59,12 +60,25 @@ namespace Styx.Database
                 "SELECT * FROM npcs WHERE map = @MAP_ID AND trainer_class = @TRAINER_CLASS AND level >= @LEVEL ORDER BY VECTORDISTANCE(x,y,z,@X,@Y,@Z) ASC");
 
             _getNearestNpcCmd = Connection.CreateCommand(
-                "SELECT * FROM npcs WHERE map = @MAP_ID AND flag & @FLAG ORDER BY VECTORDISTANCE(x,y,z,@X,@Y,@Z) ASC LIMIT 25");
+                "SELECT * FROM npcs WHERE map = @MAP_ID AND flag & @FLAG ORDER BY VECTORDISTANCE(x,y,z,@X,@Y,@Z) ASC");
         }
 
         #endregion
 
         #region Public Methods
+
+        internal static int GetFactionPreference(WoWUnitReaction reaction)
+        {
+            return reaction >= WoWUnitReaction.Friendly ? 1 : 0;
+        }
+
+        internal static IEnumerable<NpcResult> OrderByFactionPreference(
+            IEnumerable<NpcResult> candidates,
+            Func<NpcResult, WoWUnitReaction> relationSelector)
+        {
+            return candidates.OrderByDescending(
+                candidate => GetFactionPreference(relationSelector(candidate)));
+        }
 
         /// <summary>
         /// Gets an NPC by name.
@@ -112,6 +126,12 @@ namespace Styx.Database
         /// <returns>The nearest trainer, or null if not found.</returns>
         public static NpcResult GetNearestTrainer(WoWFaction myFaction, uint mapId, WoWPoint searchLocation, WoWClass searchClass)
         {
+            return GetNearestTrainer(myFaction, mapId, searchLocation, searchClass, null);
+        }
+
+        private static NpcResult GetNearestTrainer(WoWFaction myFaction, uint mapId,
+            WoWPoint searchLocation, WoWClass searchClass, Func<NpcResult, bool> extraConditions)
+        {
             EnsureInitialized();
             if (_getNearestTrainerCmd == null) return null;
 
@@ -128,23 +148,35 @@ namespace Styx.Database
 
             if (reader == null) return null;
 
+            var candidates = new List<NpcResult>();
             while (reader.Read())
             {
                 NpcResult result = new NpcResult(reader);
-                if ((result.NpcFlags & 32U) != 0U && myFaction.RelationTo(new WoWFaction(result.Faction)) >= WoWUnitReaction.Neutral)
+                if (Styx.Logic.Profiles.VendorSafetyPolicy.IsRejected(result.Entry) ||
+                    (extraConditions != null && !extraConditions(result)))
+                    continue;
+                WoWUnitReaction reaction = myFaction.RelationTo(new WoWFaction(result.Faction));
+                if ((result.NpcFlags & 32U) != 0U && reaction >= WoWUnitReaction.Neutral)
                 {
-                    if (_trainerNavCache.TryGetValue(result, out bool cached))
-                    {
-                        if (!cached) continue;
-                    }
-                    else
-                    {
-                        bool canNav = Navigator.CanNavigateFully(location, result.Location);
-                        _trainerNavCache.Add(result, canNav);
-                        if (!canNav) continue;
-                    }
-                    return result;
+                    candidates.Add(result);
                 }
+            }
+
+            foreach (NpcResult result in OrderByFactionPreference(
+                         candidates,
+                         candidate => myFaction.RelationTo(new WoWFaction(candidate.Faction))))
+            {
+                if (_trainerNavCache.TryGetValue(result, out bool cached))
+                {
+                    if (!cached) continue;
+                }
+                else
+                {
+                    bool canNav = Navigator.CanNavigateFully(location, result.Location);
+                    _trainerNavCache.Add(result, canNav);
+                    if (!canNav) continue;
+                }
+                return result;
             }
             return null;
         }
@@ -157,7 +189,12 @@ namespace Styx.Database
         /// <param name="searchLocation">The search location.</param>
         /// <param name="npcFlags">The NPC flags to search for.</param>
         /// <returns>The nearest NPC, or null if not found.</returns>
-        public static NpcResult GetNearestNpc(WoWFaction myFaction, uint mapId, WoWPoint searchLocation, UnitNPCFlags npcFlags)
+        public static NpcResult GetNearestNpc(
+            WoWFaction myFaction,
+            uint mapId,
+            WoWPoint searchLocation,
+            UnitNPCFlags npcFlags,
+            Func<NpcResult, bool> extraConditions = null)
         {
             EnsureInitialized();
             if (_getNearestNpcCmd == null) return null;
@@ -167,7 +204,7 @@ namespace Styx.Database
             // If looking for class trainer, use specialized query
             if ((npcFlags & UnitNPCFlags.ClassTrainer) != UnitNPCFlags.None)
             {
-                return GetNearestTrainer(myFaction, mapId, searchLocation, myClass);
+                return GetNearestTrainer(myFaction, mapId, searchLocation, myClass, extraConditions);
             }
 
             using var reader = Connection.ExecuteReader(_getNearestNpcCmd,
@@ -181,6 +218,7 @@ namespace Styx.Database
 
             WoWPoint location = StyxWoW.Me.Location;
 
+            var candidates = new List<NpcResult>();
             while (reader.Read())
             {
                 NpcResult result = new NpcResult(reader);
@@ -190,21 +228,31 @@ namespace Styx.Database
                     continue;
                 
                 // Check if class trainer matches our class (if applicable) and faction is friendly
+                WoWUnitReaction reaction = myFaction.RelationTo(new WoWFaction(result.Faction));
                 if (((npcFlags & UnitNPCFlags.ClassTrainer) == UnitNPCFlags.None || result.TrainerClass == (int)myClass) &&
-                    myFaction.RelationTo(new WoWFaction(result.Faction)) >= WoWUnitReaction.Neutral)
+                    reaction >= WoWUnitReaction.Neutral)
                 {
-                    if (_npcNavCache.TryGetValue(result, out bool cached))
-                    {
-                        if (!cached) continue;
-                    }
-                    else
-                    {
-                        bool canNav = Navigator.CanNavigateFully(location, result.Location);
-                        _npcNavCache.Add(result, canNav);
-                        if (!canNav) continue;
-                    }
-                    return result;
+                    if (extraConditions != null && !extraConditions(result))
+                        continue;
+                    candidates.Add(result);
                 }
+            }
+
+            foreach (NpcResult result in OrderByFactionPreference(
+                         candidates,
+                         candidate => myFaction.RelationTo(new WoWFaction(candidate.Faction))))
+            {
+                if (_npcNavCache.TryGetValue(result, out bool cached))
+                {
+                    if (!cached) continue;
+                }
+                else
+                {
+                    bool canNav = Navigator.CanNavigateFully(location, result.Location);
+                    _npcNavCache.Add(result, canNav);
+                    if (!canNav) continue;
+                }
+                return result;
             }
             return null;
         }

@@ -58,6 +58,81 @@ namespace Styx.Logic.Inventory.Frames.Merchant
             if (qualities == ItemQuality.None)
                 return;
 
+            BuildSaleFilters(
+                qualities, nameExceptions, idExceptions,
+                out string exceptions, out string qualityCondition);
+
+            Lua.DoString(string.Format(
+                "if not MerchantFrame or not MerchantFrame:IsShown() then return end " +
+                "{0}for b=0,4 do for s=1,GetContainerNumSlots(b) do " +
+                "local itemLink=GetContainerItemLink(b,s) if itemLink then " +
+                "local name,_,quality=GetItemInfo(itemLink) " +
+                "if name and quality~=nil then local id=tonumber(string.match(itemLink,'item:(%d+)')) " +
+                "name=string.lower(name) if {1} then local skip=false " +
+                "if itemExceptions then for i=1,#itemExceptions do " +
+                "if (itemExceptions[i].i and id==itemExceptions[i].i) or " +
+                "(itemExceptions[i].n and name==itemExceptions[i].n) then skip=true break end end end " +
+                "if not skip then local _,_,locked=GetContainerItemInfo(b,s) " +
+                "if not locked then UseContainerItem(b,s) end end end end end end end",
+                exceptions, qualityCondition));
+        }
+
+        /// <summary>
+        /// Sells at most one eligible stack. Return values: 0 = queue empty,
+        /// 1 = sale submitted, 2 = eligible stack is temporarily locked.
+        /// </summary>
+        public int SellNextItemQualities(ItemQuality qualities, IEnumerable<string> nameExceptions, IEnumerable<uint> idExceptions)
+        {
+            if (qualities == ItemQuality.None)
+                return 0;
+
+            List<string> values = Lua.GetReturnValues(
+                BuildSellNextItemLua(qualities, nameExceptions, idExceptions));
+            return TryParseSellStepResult(values, out int result) ? result : -1;
+        }
+
+        internal static bool TryParseSellStepResult(IReadOnlyList<string> values, out int result)
+        {
+            result = -1;
+            return values != null &&
+                   values.Count >= 2 &&
+                   string.Equals(values[0], "ok", StringComparison.Ordinal) &&
+                   int.TryParse(values[1], out result);
+        }
+
+        internal static string BuildSellNextItemLua(ItemQuality qualities, IEnumerable<string> nameExceptions, IEnumerable<uint> idExceptions)
+        {
+            if (qualities == ItemQuality.None)
+                return "return 'ok',0";
+
+            BuildSaleFilters(
+                qualities, nameExceptions, idExceptions,
+                out string exceptions, out string qualityCondition);
+
+            return string.Format(
+                "if not MerchantFrame or not MerchantFrame:IsShown() then return 'ok',3 end " +
+                "{0}for b=0,4 do for s=1,GetContainerNumSlots(b) do " +
+                "local itemLink=GetContainerItemLink(b,s) if itemLink then " +
+                "local name,_,quality=GetItemInfo(itemLink) " +
+                "if not name or quality==nil then return 'ok',2 end " +
+                "local id=tonumber(string.match(itemLink,'item:(%d+)')) name=string.lower(name) " +
+                "if {1} then local skip=false if itemExceptions then for i=1,#itemExceptions do " +
+                "if (itemExceptions[i].i and id==itemExceptions[i].i) or " +
+                "(itemExceptions[i].n and name==itemExceptions[i].n) then skip=true break end end end " +
+                "if not skip then local _,_,locked=GetContainerItemInfo(b,s) " +
+                "if locked then return 'ok',2 end UseContainerItem(b,s) return 'ok',1 end end end end end " +
+                "return 'ok',0",
+                exceptions, qualityCondition);
+        }
+
+        private static void BuildSaleFilters(
+            ItemQuality qualities,
+            IEnumerable<string> nameExceptions,
+            IEnumerable<uint> idExceptions,
+            out string exceptions,
+            out string qualityCondition)
+        {
+
             List<string> qualityConditions = new List<string>();
             if ((qualities & ItemQuality.Poor) != ItemQuality.None)
                 qualityConditions.Add("quality == 0");
@@ -77,6 +152,7 @@ namespace Styx.Logic.Inventory.Frames.Merchant
                 qualityBuilder.Append(" or " + qualityConditions[i]);
             }
             qualityBuilder.Append(")");
+            qualityCondition = qualityBuilder.ToString();
 
             StringBuilder exceptionsBuilder = new StringBuilder();
             if (nameExceptions != null || idExceptions != null)
@@ -119,13 +195,7 @@ namespace Styx.Logic.Inventory.Frames.Merchant
                 }
                 exceptionsBuilder.Append("}");
             }
-
-            string lua = string.Format(
-                "{0}for b=0,4 do for s=1,GetContainerNumSlots(b) do local itemLink = GetContainerItemLink(b, s) if itemLink then local _, _, _, _, id, _, _, _, _, _, _, _, _, name = string.find(itemLink, \"|?c?f?f?(%x*)|?H?([^:]*):?(%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%d*)|?h?%[?([^%[%]]*)%]?|?h?|?r?\") id = tonumber(id) name = string.lower(name) local _, _, quality = GetItemInfo(itemLink) if {1} then local skip = false if itemExceptions then for i=1, #itemExceptions do if (itemExceptions[i].i and id == itemExceptions[i].i) or (itemExceptions[i].n and name == itemExceptions[i].n) then skip = true break end end end if not skip then UseContainerItem(b, s) end end end end end",
-                exceptionsBuilder + " ",
-                qualityBuilder);
-
-            Lua.DoString(lua);
+            exceptions = exceptionsBuilder + " ";
         }
 
         public void Close()
@@ -149,6 +219,12 @@ namespace Styx.Logic.Inventory.Frames.Merchant
                 return ObjectManager.Wow.Read<int>(12559344U);
             }
         }
+
+        /// <summary>
+        /// Merchant item count reported by the client API. This is authoritative for
+        /// WotLK because the native merchant-array layout differs between HB ports.
+        /// </summary>
+        public int LuaMerchantNumItems => Lua.GetReturnVal<int>("return GetMerchantNumItems()", 0U);
 
         private static bool CanAfford(int stack, WoWItem item)
         {
@@ -304,7 +380,7 @@ namespace Styx.Logic.Inventory.Frames.Merchant
         {
             try
             {
-                return GetBestConsumableFromVendor("Drink");
+                return GetBestDrinkCandidateFromVendor()?.MerchantIndex ?? -1;
             }
             catch (Exception)
             {
@@ -320,7 +396,7 @@ namespace Styx.Logic.Inventory.Frames.Merchant
         {
             try
             {
-                return GetBestConsumableFromVendor("Food");
+                return GetBestFoodCandidateFromVendor()?.MerchantIndex ?? -1;
             }
             catch (Exception)
             {
@@ -329,41 +405,166 @@ namespace Styx.Logic.Inventory.Frames.Merchant
         }
 
         /// <summary>
-        /// Gets the best consumable of a specific type from a vendor.
+        /// Gets the best drink using the player's maximum mana as the useful capacity.
         /// </summary>
-        private int GetBestConsumableFromVendor(string consumableType)
+        public ConsumableCandidate GetBestDrinkCandidateFromVendor()
         {
-            int bestIndex = -1;
-            int bestLevel = -1;
-            int playerLevel = StyxWoW.Me?.Level ?? 1;
+            return GetBestConsumableFromVendor(
+                ConsumableKind.Drink,
+                StyxWoW.Me?.MaxMana ?? 0);
+        }
 
-            foreach (var item in GetAllMerchantItems())
+        /// <summary>
+        /// Gets the best food using the player's maximum health as the useful capacity.
+        /// </summary>
+        public ConsumableCandidate GetBestFoodCandidateFromVendor()
+        {
+            return GetBestConsumableFromVendor(
+                ConsumableKind.Food,
+                StyxWoW.Me?.MaxHealth ?? 0);
+        }
+
+        /// <summary>
+        /// Buys a catalog candidate without reading the unreliable native merchant array.
+        /// </summary>
+        public bool BuyConsumable(ConsumableCandidate candidate, int amount)
+        {
+            if (candidate == null || candidate.MerchantIndex <= 0 || amount <= 0)
+                return false;
+
+            if ((ulong)amount * candidate.BuyPrice > StyxWoW.Me.Coinage)
             {
-                if (item.ItemInfo == null)
-                    continue;
+                Logging.Write("Not enough money to buy {0}x {1}", amount, candidate.Name);
+                return false;
+            }
 
-                // Check if item has the spell effect (Food/Drink)
-                int[] spellIds = item.ItemInfo.SpellId;
-                if (spellIds == null || spellIds.Length == 0 || spellIds[0] == 0)
-                    continue;
+            Lua.DoString("BuyMerchantItem(" + candidate.MerchantIndex + "," + amount + ")");
+            return true;
+        }
 
-                WoWSpell spell = WoWSpell.FromId(spellIds[0]);
-                if (spell == null || spell.Name != consumableType)
-                    continue;
+        private ConsumableCandidate GetBestConsumableFromVendor(ConsumableKind kind, int capacity)
+        {
+            return ConsumableVendorPolicy.SelectBest(
+                GetConsumableCandidatesFromVendor(),
+                kind,
+                StyxWoW.Me?.Level ?? 1,
+                capacity);
+        }
 
-                // Check if player can use this item (level check)
-                if (item.ItemInfo.RequiredLevel > playerLevel)
-                    continue;
+        private List<ConsumableCandidate> GetConsumableCandidatesFromVendor()
+        {
+            var candidates = new List<ConsumableCandidate>();
+            int itemCount = LuaMerchantNumItems;
 
-                // Find highest level item that player can use
-                if (item.ItemInfo.RequiredLevel > bestLevel)
+            for (int merchantIndex = 1; merchantIndex <= itemCount; merchantIndex++)
+            {
+                try
                 {
-                    bestLevel = item.ItemInfo.RequiredLevel;
-                    bestIndex = item.Index;
+                    List<string> values = Lua.GetReturnValues(BuildMerchantScanLua(merchantIndex));
+                    if (values == null || values.Count < 4)
+                        continue;
+
+                    uint itemId = ConsumableVendorPolicy.ParseItemId(values[0]);
+                    if (itemId == 0)
+                        continue;
+
+                    string name = values[1] ?? string.Empty;
+                    ulong.TryParse(values[2], out ulong buyPrice);
+                    ConsumableTooltipInfo tooltipInfo = ConsumableVendorPolicy.ParseTooltip(values[3]);
+
+                    ItemInfo itemInfo = ItemInfo.FromId(itemId);
+                    int requiredLevel = itemInfo?.RequiredLevel ?? 0;
+                    if (tooltipInfo.Kind == ConsumableKind.None && itemInfo != null)
+                        tooltipInfo = GetConsumableInfoFromItemInfo(itemInfo);
+
+                    if (!ConsumableVendorPolicy.ShouldProtectFromSale(tooltipInfo.Kind))
+                        continue;
+
+                    candidates.Add(new ConsumableCandidate(
+                        merchantIndex,
+                        itemId,
+                        name,
+                        requiredLevel,
+                        tooltipInfo.HealthRestored,
+                        tooltipInfo.ManaRestored,
+                        buyPrice,
+                        tooltipInfo.Kind));
+                }
+                catch (Exception ex)
+                {
+                    Logging.WriteDebug("Could not inspect merchant item {0}: {1}", merchantIndex, ex.Message);
                 }
             }
 
-            return bestIndex;
+            return candidates;
+        }
+
+        private static string BuildMerchantScanLua(int merchantIndex)
+        {
+            return string.Format(
+                "local i={0} " +
+                "local link=GetMerchantItemLink(i) or '' " +
+                "local name,_,price=GetMerchantItemInfo(i) " +
+                "if not CopilotBuddyMerchantScanTooltip then " +
+                "CopilotBuddyMerchantScanTooltip=CreateFrame('GameTooltip','CopilotBuddyMerchantScanTooltip',UIParent,'GameTooltipTemplate') " +
+                "CopilotBuddyMerchantScanTooltip:SetOwner(UIParent,'ANCHOR_NONE') end " +
+                "local tip=CopilotBuddyMerchantScanTooltip tip:ClearLines() tip:SetMerchantItem(i) " +
+                "local lines={{}} for n=1,tip:NumLines() do " +
+                "local region=_G[tip:GetName()..'TextLeft'..n] " +
+                "if region then local text=region:GetText() if text then table.insert(lines,text) end end end " +
+                "return link,name or '',tostring(price or 0),table.concat(lines,' ')",
+                merchantIndex);
+        }
+
+        private static ConsumableTooltipInfo GetConsumableInfoFromItemInfo(ItemInfo itemInfo)
+        {
+            ConsumableKind kind = ConsumableKind.None;
+            int healthRestored = 0;
+            int manaRestored = 0;
+
+            foreach (int spellId in itemInfo.SpellId ?? Array.Empty<int>())
+            {
+                if (spellId == 0)
+                    continue;
+
+                WoWSpell spell = WoWSpell.FromId(spellId);
+                if (spell == null)
+                    continue;
+
+                if (spell.Name == "Food" || spell.Name == "Refreshment")
+                {
+                    kind |= ConsumableKind.Food;
+                    healthRestored = Math.Max(
+                        healthRestored,
+                        GetPeriodicRestoration(spell, WoWApplyAuraType.PeriodicHeal));
+                }
+
+                if (spell.Name == "Drink" || spell.Name == "Refreshment")
+                {
+                    kind |= ConsumableKind.Drink;
+                    manaRestored = Math.Max(
+                        manaRestored,
+                        GetPeriodicRestoration(spell, WoWApplyAuraType.PeriodicEnergize));
+                }
+            }
+
+            return new ConsumableTooltipInfo(kind, healthRestored, manaRestored);
+        }
+
+        private static int GetPeriodicRestoration(WoWSpell spell, WoWApplyAuraType auraType)
+        {
+            int total = 0;
+            foreach (SpellEffect effect in spell.SpellEffects)
+            {
+                if (effect == null || effect.AuraType != auraType)
+                    continue;
+
+                int ticks = effect.Amplitude > 0 && spell.BaseDuration > 0
+                    ? Math.Max(1, spell.BaseDuration / (int)effect.Amplitude)
+                    : 1;
+                total = Math.Max(total, (Math.Abs(effect.BasePoints) + 1) * ticks);
+            }
+            return total;
         }
 
         /// <summary>

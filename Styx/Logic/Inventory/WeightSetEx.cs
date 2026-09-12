@@ -109,24 +109,30 @@ public class WeightSetEx : IDisposable
     {
       if (WeightSetEx._loadedWeightSets == null)
         WeightSetEx.LoadWeightSets();
+      // ACTIVE_TALENT_GROUP_CHANGED invalidates this cache. Re-querying all four
+      // talent values here made every AutoEquip pulse synchronously stall movement.
       if (WeightSetEx._cachedWeightSet != null)
         return WeightSetEx._cachedWeightSet;
-
       WoWClass playerClass = StyxWoW.Me.Class;
-      // HB 3.3.5a requires groupIndex parameter for GetTalentTabInfo to return correct pointsSpent
-      // Without it, the function returns 0 for all tabs, defaulting to spec=1 (Balance for Druid)
+      // WotLK returns pointsSpent as the third value (zero-based index 2).
+      // The active talent-group argument is still required for dual-spec characters.
       int groupIndex = Lua.GetReturnVal<int>("return GetActiveTalentGroup()", 0U);
       List<int> talentPoints = new List<int>((IEnumerable<int>) new int[3]
       {
-        Lua.GetReturnVal<int>($"return GetTalentTabInfo(1, false, false, {groupIndex})", 4U),
-        Lua.GetReturnVal<int>($"return GetTalentTabInfo(2, false, false, {groupIndex})", 4U),
-        Lua.GetReturnVal<int>($"return GetTalentTabInfo(3, false, false, {groupIndex})", 4U)
+        Lua.GetReturnVal<int>($"return GetTalentTabInfo(1, false, false, {groupIndex})", 2U),
+        Lua.GetReturnVal<int>($"return GetTalentTabInfo(2, false, false, {groupIndex})", 2U),
+        Lua.GetReturnVal<int>($"return GetTalentTabInfo(3, false, false, {groupIndex})", 2U)
       });
-      int specIndex = talentPoints.IndexOf(talentPoints.Max()) + 1;
+      int? specIndex = TalentWeightSetPolicy.SelectSpecialization(talentPoints);
+      if (!specIndex.HasValue)
+      {
+        Logging.WriteDebug("[WeightSet] Talent data is not available yet; deferring weight-set selection");
+        return null;
+      }
 
       // Find weight set matching class and spec
       WeightSetEx._cachedWeightSet = WeightSetEx._loadedWeightSets.FirstOrDefault<WeightSetEx>(
-        ws => ws.Class == playerClass && ws.Specialization == specIndex);
+        ws => ws.Class == playerClass && ws.Specialization == specIndex.Value);
 
       if (WeightSetEx._cachedWeightSet == null)
       {

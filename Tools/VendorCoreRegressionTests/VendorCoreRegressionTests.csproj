@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0-windows7.0</TargetFramework>
+    <PlatformTarget>x86</PlatformTarget>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\CopilotBuddy.csproj" />
+    <Compile Include="..\..\..\..\Plugins\VendorRecovery\VendorRecovery.cs" Link="VendorRecovery.cs" />
+  </ItemGroup>
+</Project>

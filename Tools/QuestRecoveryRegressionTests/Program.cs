@@ -2,8 +2,21 @@ using Styx.Logic.Questing.Recovery;
 using Styx.Logic.Questing;
 using Styx.Logic.Profiles.Quest;
 using Bots.Quest.QuestOrder;
+using Bots.Quest.Actions;
 using Styx.Helpers;
+using Styx.Logic.Inventory;
+using Styx.Logic.Pathing;
+using Styx.Logic.POI;
+using Styx.WoWInternals;
+using Styx.WoWInternals.WoWObjects;
 using System.Globalization;
+
+if (args.Contains("--routine-compatibility"))
+{
+    try { RoutineCompilationRegression.Run(); }
+    catch (Exception ex) { Console.Error.WriteLine(ex.Message); Environment.ExitCode = 1; }
+    return;
+}
 
 var now = new DateTime(2026, 9, 2, 12, 0, 0, DateTimeKind.Utc);
 var testRoot = Path.Combine(AppContext.BaseDirectory, "quest-recovery-test-data");
@@ -11,18 +24,43 @@ ResetDirectory(testRoot);
 
 try
 {
+    var resolver = typeof(ForcedBehaviorExecutor).GetMethod("ResolveQuestObjectiveIndex",
+        System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
+    Assert(resolver != null, "objective resolution must validate explicit item identity before trusting an index");
+    var eggObjectives = new List<Quest.QuestObjective>
+    {
+        new(0, 5058, 12, null, Quest.QuestObjectiveType.CollectItem),
+        new(1, 5059, 1, null, Quest.QuestObjectiveType.CollectItem)
+    };
+    int ResolveEgg(string xml) => (int)resolver!.Invoke(null, new object[] {
+        ObjectiveNode.FromXml(System.Xml.Linq.XElement.Parse(xml)), eggObjectives })!;
+    Assert(ResolveEgg("<Objective QuestId='868' Type='CollectItem' ItemId='5058' Index='1'/>") == 0,
+        "Egg Hunt must select twelve eggs, not the already-carried Digging Claw");
+    Assert(ResolveEgg("<Objective QuestId='868' Type='CollectItem' ItemId='9999' Index='1'/>") == -1,
+        "an unknown explicit item must not silently select a different objective");
+    Assert(ResolveEgg("<Objective QuestId='868' Type='CollectItem' Index='1'/>") == 1,
+        "legacy index-only objectives must remain supported");
+    UpstreamMergeRegression.Run();
     TestCompletedQuestTraversalStopsAtInvalidPointers();
     TestCompletedQuestTraversalStopsAtRepeatedPointer();
     TestCompletedQuestTraversalStopsAtReaderFailure();
     TestCompletedQuestTraversalCapsAtTenThousandNodes();
     TestCompletedQuestTraversalDeduplicatesQuestIds();
+    TestCompletedQuestLuaChunksParseDeterministically();
     TestCompletedQuestCacheInvalidatesAcrossIdentityChanges();
     TestCompletedQuestCacheSnapshotsAreStable();
     TestCompletedQuestCacheSerializesConcurrentRefreshes();
     TestCompletedQuestCacheDiscardsRefreshWhenIdentityChanges();
     TestQuestOrderDoesNotMutateWithoutAuthoritativeCompletion();
+    TestProfileManagerPublishesSameMetadataReplacement();
     TestQuestingCompletedQuestIdsAreSafeWithoutClient();
     TestQuestManagerObsoleteGuidanceShowsCompilableTryCall();
+    TestStuckDetectionUsesActualMovementSpeedAndDisplacement();
+    TestMeshNavigatorPulseDoesNotStreamTiles();
+    TestQuestTravelSuppressesOpportunisticTargeting();
+    TestExclusiveForcedBehaviorSuppressesServicePreemption();
+    TestTrainerTravelRequiresEfficientRoute();
+    TestQuestTurnInDoesNotPreemptCombatPoi();
     TestQuestCompletionAuthorityIsTriState();
     TestEquipmentFingerprintPreservesSlotOrderAndDurabilityClass();
     TestProfileCompletionExpressionsPreserveUnknown();
@@ -1476,8 +1514,8 @@ static void TestCompletionDependentActionGatesDeferUnknown()
            == QuestNodeCompletionAction.Defer,
         "objective nodes must defer rather than skip when completion is unknown");
     Assert(QuestNodeCompletionPolicy.ForObjective(QuestCompletionState.Unknown, accepted: true)
-           == QuestNodeCompletionAction.Defer,
-        "an accepted objective with an incoherent unknown completion snapshot must defer, never skip");
+           == QuestNodeCompletionAction.Execute,
+        "an accepted objective must execute from live quest-log authority when the historical completion cache is unavailable");
     Assert(QuestNodeCompletionPolicy.ForPickup(QuestCompletionState.KnownComplete, accepted: false)
            == QuestNodeCompletionAction.Skip,
         "known-complete pickup work may be skipped");
@@ -1498,6 +1536,43 @@ static void TestCompletionDependentActionGatesDeferUnknown()
         "an accepted completed quest must skip objective work but remain available for turn-in");
 }
 
+static void TestProfileManagerPublishesSameMetadataReplacement()
+{
+    var managerType = typeof(Styx.Logic.Profiles.ProfileManager);
+    var currentField = managerType.GetField(
+        "_currentProfile",
+        System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)!;
+    var setter = managerType.GetProperty(
+        "CurrentProfile",
+        System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public)!
+        .GetSetMethod(nonPublic: true)!;
+    object? original = currentField.GetValue(null);
+    var first = new Styx.Logic.Profiles.Profile { Name = "Same profile", MinLevel = 1, MaxLevel = 80 };
+    var replacement = new Styx.Logic.Profiles.Profile { Name = "Same profile", MinLevel = 1, MaxLevel = 80 };
+    var replacementEvents = 0;
+
+    void OnLoaded(Styx.BotEvents.Profile.NewProfileLoadedEventArgs args)
+    {
+        if (ReferenceEquals(args.OldProfile, first) && ReferenceEquals(args.NewProfile, replacement))
+            replacementEvents++;
+    }
+
+    Styx.BotEvents.Profile.OnNewProfileLoaded += OnLoaded;
+    try
+    {
+        setter.Invoke(null, new object?[] { first });
+        setter.Invoke(null, new object?[] { replacement });
+    }
+    finally
+    {
+        Styx.BotEvents.Profile.OnNewProfileLoaded -= OnLoaded;
+        currentField.SetValue(null, original);
+    }
+
+    Assert(replacementEvents == 1,
+        "a newly parsed profile must publish a reload event even when its name and level range match the prior profile");
+}
+
 static void TestForcedConditionBehaviorsDeferUnknown()
 {
     var positive = ConditionHelper.ParseConditionString("IsQuestCompleted(867)");
@@ -1512,6 +1587,12 @@ static void TestForcedConditionBehaviorsDeferUnknown()
     positiveIf.OnStart();
     Assert(!positiveIf.IsDone,
         "ForcedIf must remain pending instead of scheduling its else body for unknown positive completion");
+    var ifContext = new object();
+    positiveIf.Branch.Start(ifContext);
+    Assert(positiveIf.Branch.Tick(ifContext) == TreeSharp.RunStatus.Running &&
+           positiveIf.Branch.Tick(ifContext) == TreeSharp.RunStatus.Running,
+        "ForcedIf must remain a valid running iterator across repeated unknown-completion ticks");
+    positiveIf.Branch.Stop(ifContext);
 
     var negativeIf = new ForcedIf(new IfNode(
         negative!,
@@ -1529,9 +1610,21 @@ static void TestForcedConditionBehaviorsDeferUnknown()
     var loop = new ForcedWhile(new WhileNode(negative!, Array.Empty<OrderNode>()));
     var context = new object();
     loop.Branch.Start(context);
-    Assert(loop.Branch.Tick(context) == TreeSharp.RunStatus.Running && !loop.IsDone,
-        "ForcedWhile must keep running without scheduling or completing its body while completion is unknown");
+    Assert(loop.Branch.Tick(context) == TreeSharp.RunStatus.Running &&
+           loop.Branch.Tick(context) == TreeSharp.RunStatus.Running && !loop.IsDone,
+        "ForcedWhile must keep a valid running iterator without scheduling or completing its body while completion is unknown");
     loop.Branch.Stop(context);
+
+    var deferredOrder = new QuestOrder(new OrderNodeCollection(new OrderNode[]
+    {
+        new GrindToNode(-1f, negative!)
+    }));
+    var executor = new ForcedBehaviorExecutor(deferredOrder);
+    executor.Start(context);
+    Assert(executor.Tick(context) == TreeSharp.RunStatus.Running &&
+           executor.Tick(context) == TreeSharp.RunStatus.Running,
+        "ForcedBehaviorExecutor must remain a valid running iterator while its behavior is deferred");
+    executor.Stop(context);
 }
 
 static QuestConditionEvaluationState EvaluateProfileCondition(
@@ -1629,6 +1722,20 @@ static void TestCompletedQuestTraversalDeduplicatesQuestIds()
     }, out var ids), "a finite completed-quest traversal must succeed");
     Assert(ids.SequenceEqual(new uint[] { 867, 875 }),
         "a completed-quest traversal must return each non-zero quest ID once in encounter order");
+}
+
+static void TestCompletedQuestLuaChunksParseDeterministically()
+{
+    Assert(QuestLog.TryParseCompletedQuestIdChunks(
+            new[] { "1,2,2,", "4921,99999," },
+            out var parsed)
+           && parsed.SequenceEqual(new uint[] { 1, 2, 4921, 99999 }),
+        "Lua completed-quest chunks must parse, deduplicate, and preserve deterministic numeric order");
+    Assert(QuestLog.TryParseCompletedQuestIdChunks(new[] { "" }, out var empty)
+           && empty.Count == 0,
+        "an authoritative empty Lua completed-quest table must remain distinguishable from a failed Lua call");
+    Assert(!QuestLog.TryParseCompletedQuestIdChunks(new[] { "1,not-a-quest," }, out _),
+        "malformed Lua completed-quest output must not become authoritative");
 }
 
 static void TestCompletedQuestCacheInvalidatesAcrossIdentityChanges()
@@ -2543,7 +2650,8 @@ static void TestSuperscriptDeviceIdentityPaths(string root, DateTime now)
 
 static void TestManagerRollingBudget(string settingsRoot, DateTime now)
 {
-    var manager = new QuestRecoveryManager(new FixedClock(now));
+    var clock = new FixedClock(now);
+    var manager = new QuestRecoveryManager(clock);
     manager.Configure(CreateEnvironment(settingsRoot, "Jeof", "Lordaeron"));
     for (uint questId = 1000; questId < 1006; questId++)
     {
@@ -2559,6 +2667,18 @@ static void TestManagerRollingBudget(string settingsRoot, DateTime now)
     manager.RetryNow(probeKey);
     Assert(!manager.Evaluate(probeKey, Context()).MayAttempt,
         "six manager-recorded episodes must exhaust the rolling-hour half-open budget");
+    Assert(manager.Evaluate(probeKey, Context()).RetryUtc == now.AddHours(1),
+        "budget exhaustion must expose its expiry so the scheduler can wake without a context change");
+    clock.UtcNow = now.AddMinutes(1);
+    manager.Report(QuestAttemptOutcome.Failure(
+        QuestRecoveryKey.ForQuestStage(1006, QuestRecoveryStage.Pickup),
+        QuestFailureReason.PickupTargetNotOffered, "seventh episode"), Context());
+    clock.UtcNow = now.AddHours(1).AddTicks(-1);
+    Assert(!manager.Evaluate(probeKey, Context()).MayAttempt,
+        "the rolling budget must remain blocked before enough episodes expire");
+    clock.UtcNow = now.AddHours(1);
+    Assert(manager.Evaluate(probeKey, Context()).MayAttempt,
+        "the timed probe must become available at the advertised budget expiry");
 }
 
 static void TestGeneratedFailureBatchCountsOneRollingEpisode(string settingsRoot, DateTime now)
@@ -4236,6 +4356,143 @@ static void TestSuccessCannotReopenTerminalStates(string settingsRoot, DateTime 
 
 static QuestRecoveryEnvironment CreateEnvironment(string settingsRoot, string character, string realm) =>
     new(settingsRoot, character, realm, "quest-data-v1", "core-v1", "nav-v1");
+
+static void TestStuckDetectionUsesActualMovementSpeedAndDisplacement()
+{
+    Assert(!DefaultStuckHandler.HasInsufficientProgress(
+               currentSpeed: 0f,
+               fallbackSpeed: 7f,
+               elapsed: TimeSpan.FromSeconds(1),
+               actualDistance: 0f),
+        "a naturally completed CTM stop must not be classified as obstructed from fallback run speed");
+    Assert(DefaultStuckHandler.HasInsufficientProgress(
+               currentSpeed: 7f,
+               fallbackSpeed: 7f,
+               elapsed: TimeSpan.FromSeconds(1),
+               actualDistance: 0.25f),
+        "a moving player that makes materially less direct progress than expected must be classified as stuck");
+    Assert(!DefaultStuckHandler.HasInsufficientProgress(
+               currentSpeed: 7f,
+               fallbackSpeed: 7f,
+               elapsed: TimeSpan.FromSeconds(1),
+               actualDistance: 5f),
+        "normal direct movement progress must not trigger unstick recovery");
+}
+
+static void TestMeshNavigatorPulseDoesNotStreamTiles()
+{
+    var navigatorField = typeof(Navigator).GetField(
+        "_navigator",
+        System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)
+        ?? throw new InvalidOperationException("Navigator backing field was not found");
+    var pulseMethod = typeof(MeshNavigator).GetMethod(
+        "OnPulse",
+        System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+        ?? throw new InvalidOperationException("MeshNavigator pulse handler was not found");
+    var originalPlayer = ObjectManager.Me;
+    var originalNavigator = navigatorField.GetValue(null);
+
+    try
+    {
+        navigatorField.SetValue(null, null);
+        ObjectManager.Me = new LocalPlayer(0);
+
+        pulseMethod.Invoke(new MeshNavigator(), new object[] { new object(), EventArgs.Empty });
+
+        Assert(navigatorField.GetValue(null) == null,
+            "a routine movement pulse must not initialize or synchronously stream the native navigator");
+    }
+    finally
+    {
+        navigatorField.SetValue(null, originalNavigator);
+        ObjectManager.Me = originalPlayer;
+    }
+}
+
+static void TestQuestTravelSuppressesOpportunisticTargeting()
+{
+    Assert(Bots.Quest.QuestBot.ShouldSuppressOpportunisticTargeting(PoiType.QuestPickUp),
+        "mounted travel to a quest pickup must not stop for an unengaged path mob");
+    Assert(Bots.Quest.QuestBot.ShouldSuppressOpportunisticTargeting(PoiType.QuestTurnIn),
+        "mounted travel to a quest turn-in must not stop for an unengaged path mob");
+    Assert(Bots.Quest.QuestBot.ShouldSuppressOpportunisticTargeting(PoiType.Kill),
+        "an existing kill POI must not be replaced by opportunistic targeting");
+    Assert(Bots.Quest.QuestBot.ShouldSuppressOpportunisticTargeting(PoiType.Sell),
+        "service travel must retain its existing opportunistic-targeting suppression");
+    Assert(!Bots.Quest.QuestBot.ShouldSuppressOpportunisticTargeting(PoiType.Hotspot),
+        "objective hotspot targeting must retain normal combat targeting");
+    Assert(Bots.Quest.QuestBot.ShouldSuppressOpportunisticTargeting(PoiType.None, mounted: true),
+        "mounted quest travel with no POI must outrun unengaged mobs instead of pulling them");
+    Assert(Bots.Quest.QuestBot.ShouldSuppressOpportunisticTargeting(PoiType.Hotspot, mounted: true),
+        "mounted hotspot travel must outrun unengaged mobs instead of pulling them");
+    Assert(!Bots.Quest.QuestBot.ShouldSuppressOpportunisticTargeting(PoiType.Hotspot, mounted: false),
+        "unmounted hotspot work must still be allowed to acquire its quest targets");
+}
+
+static void TestExclusiveForcedBehaviorSuppressesServicePreemption()
+{
+    Assert(!Bots.Quest.QuestBot.ShouldRunServiceBehavior(exclusiveForcedBehaviorActive: true),
+        "an active transport behavior must not be preempted by flight-master or trainer service work");
+    Assert(Bots.Quest.QuestBot.ShouldRunServiceBehavior(exclusiveForcedBehaviorActive: false),
+        "ordinary quest work must retain normal service behavior");
+}
+
+static void TestTrainerTravelRequiresEfficientRoute()
+{
+    Assert(Bots.Grind.LevelBot.ShouldVisitTrainer(600f, hasKnownFlightConnection: false),
+        "nearby trainers should remain reachable by ordinary ground navigation");
+    Assert(Bots.Grind.LevelBot.ShouldVisitTrainer(3000f, hasKnownFlightConnection: true),
+        "a known flight connection should permit a distant trainer visit");
+    Assert(!Bots.Grind.LevelBot.ShouldVisitTrainer(3000f, hasKnownFlightConnection: false),
+        "automatic training must not start a cross-zone blind ground-mount trip");
+}
+
+static void TestQuestTurnInDoesNotPreemptCombatPoi()
+{
+    var originalPoi = BotPoi.Current;
+    var cachedWeightSetField = typeof(WeightSetEx).GetField(
+        "_cachedWeightSet",
+        System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)
+        ?? throw new InvalidOperationException("WeightSetEx cache field was not found");
+    var loadedWeightSetsField = typeof(WeightSetEx).GetField(
+        "_loadedWeightSets",
+        System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)
+        ?? throw new InvalidOperationException("WeightSetEx loaded field was not found");
+    var originalCachedWeightSet = cachedWeightSetField.GetValue(null);
+    var originalLoadedWeightSets = loadedWeightSetsField.GetValue(null);
+
+    try
+    {
+        var weightSet = (WeightSetEx)System.Runtime.CompilerServices.RuntimeHelpers
+            .GetUninitializedObject(typeof(WeightSetEx));
+        loadedWeightSetsField.SetValue(null, new[] { weightSet });
+        cachedWeightSetField.SetValue(null, weightSet);
+        BotPoi.Current = new BotPoi(new WoWPoint(12.7f, -701.35f, -19.13f), PoiType.Kill);
+        var turnIn = new ForcedQuestTurnIn(
+            6548,
+            "Avenge My Village",
+            11857,
+            "Makaba Flathoof",
+            new WoWPoint(-263f, -943f, 12.44f));
+
+        var context = new object();
+        turnIn.Branch.Start(context);
+        for (var tick = 0; tick < 3; tick++)
+        {
+            turnIn.Branch.Tick(context);
+        }
+        turnIn.Branch.Stop(context);
+
+        Assert(BotPoi.Current.Type == PoiType.Kill,
+            "quest turn-in must yield to an active combat POI instead of causing Kill/TurnIn oscillation");
+    }
+    finally
+    {
+        BotPoi.Current = originalPoi;
+        cachedWeightSetField.SetValue(null, originalCachedWeightSet);
+        loadedWeightSetsField.SetValue(null, originalLoadedWeightSets);
+    }
+}
 
 static QuestRecoveryContext Context(
     int playerLevel = 34,

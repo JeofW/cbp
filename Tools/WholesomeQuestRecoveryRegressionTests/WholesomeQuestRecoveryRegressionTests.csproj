@@ -16,6 +16,7 @@
     <Compile Include="..\..\..\..\Bots\WholesomeAutoQuest-master\SettingsForm.cs" Link="SettingsForm.cs" />
     <Compile Include="..\..\..\..\Bots\WholesomeAutoQuest-master\VendorDataLoader.cs" Link="VendorDataLoader.cs" />
     <Compile Include="..\..\..\..\Bots\WholesomeAutoQuest-master\WholesomeAQSettings.cs" Link="WholesomeAQSettings.cs" />
+    <Compile Include="..\..\..\..\Bots\WholesomeAutoQuest-master\WholesomeRestPolicy.cs" Link="WholesomeRestPolicy.cs" />
     <Compile Include="..\..\..\..\Bots\WholesomeAutoQuest-master\WholesomeAutoQuest.cs" Link="WholesomeAutoQuest.cs" />
   </ItemGroup>
 </Project>

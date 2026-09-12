@@ -38,18 +38,20 @@ public class ForcedBehaviorExecutor : Composite
 
     protected override IEnumerable<RunStatus> Execute(object context)
     {
-        if (this.Order.CurrentNode == null)
+        while (true)
         {
-            yield return RunStatus.Failure;
-        }
-        else
-        {
+            if (this.Order.CurrentNode == null)
+            {
+                yield return RunStatus.Failure;
+                yield break;
+            }
+
             if (this.Order.CurrentBehavior == null)
             {
                 if (GetQuestNodeCompletionAction(this.Order.CurrentNode) == QuestNodeCompletionAction.Defer)
                 {
                     yield return RunStatus.Running;
-                    yield break;
+                    continue;
                 }
 
                 try
@@ -87,7 +89,7 @@ public class ForcedBehaviorExecutor : Composite
                     if (GetQuestNodeCompletionAction(this.Order.CurrentNode) == QuestNodeCompletionAction.Defer)
                     {
                         yield return RunStatus.Running;
-                        yield break;
+                        break;
                     }
 
                     try
@@ -119,10 +121,12 @@ public class ForcedBehaviorExecutor : Composite
                     yield break;
                 }
             }
+            if (this.Order.CurrentBehavior == null)
+                continue;
             if (this.Order.CurrentBehavior.IsExecutionDeferred)
             {
                 yield return RunStatus.Running;
-                yield break;
+                continue;
             }
             this.Order.CurrentBehavior.OnTick();
             // Guard against bot stop during execution — CurrentBehavior or Branch may be set to null
@@ -143,6 +147,7 @@ public class ForcedBehaviorExecutor : Composite
             }
             this.Order.CurrentBehavior.Branch.Stop(context);
             yield return (RunStatus)((int?)this.Order.CurrentBehavior?.Branch?.LastStatus ?? 0);
+            yield break;
         }
     }
 
@@ -366,6 +371,21 @@ public class ForcedBehaviorExecutor : Composite
         return (ForcedQuestTurnIn)null;
     }
 
+    internal static int ResolveQuestObjectiveIndex(ObjectiveNode node,
+        IReadOnlyList<Styx.Logic.Questing.Quest.QuestObjective> objectives)
+    {
+        // Generated dataset rows can describe alternative sources for one item.
+        // Their row index need not equal the live quest's objective index.
+        int index = node.ObjectiveIndex;
+        if (index >= 0 && index < objectives.Count &&
+            (node.ObjectiveId == 0 || objectives[index].ID == node.ObjectiveId))
+            return index;
+        if (node.ObjectiveId != 0)
+            for (int i = 0; i < objectives.Count; i++)
+                if (objectives[i].ID == node.ObjectiveId)
+                    return i;
+        return -1;
+    }
     private static Bots.Quest.Objectives.QuestObjective CreateQuestObjective(ObjectiveNode objectiveNode)
     {
         // Check if quest is in log
@@ -388,27 +408,9 @@ public class ForcedBehaviorExecutor : Composite
         Styx.Logic.Questing.Quest.QuestObjective? nullable = new Styx.Logic.Questing.Quest.QuestObjective?();
         int objectiveIndex = 0;
         
-        // Try to find objective by Index first (if specified in XML), then by ID
-        if (objectiveNode.ObjectiveIndex >= 0 && objectiveNode.ObjectiveIndex < objectives.Count)
-        {
-            // Direct index lookup (fastest and most reliable in WotLK)
-            nullable = new Styx.Logic.Questing.Quest.QuestObjective?(objectives[objectiveNode.ObjectiveIndex]);
-            objectiveIndex = objectiveNode.ObjectiveIndex;
-        }
-        else
-        {
-            // Fallback: search by ID (mob/item/object ID from XML)
-            for (int index = 0; index < objectives.Count; ++index)
-            {
-                if ((long)objectives[index].ID == (long)objectiveNode.ObjectiveId)
-                {
-                    nullable = new Styx.Logic.Questing.Quest.QuestObjective?(objectives[index]);
-                    objectiveIndex = index;
-                    break;
-                }
-            }
-        }
-        
+        objectiveIndex = ResolveQuestObjectiveIndex(objectiveNode, objectives);
+        if (objectiveIndex >= 0)
+            nullable = objectives[objectiveIndex];
         if (!nullable.HasValue)
         {
             Logging.Write("Could not find objective with ID {0} or Index {1} in quest {2}.", 

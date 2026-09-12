@@ -51,7 +51,7 @@ public class ForcedIf : ForcedBehavior
         if (this.conditionResolved)
             return true;
 
-        QuestConditionEvaluationState condition = QuestConditionEvaluation.Evaluate(this.IfNode.Condition);
+        QuestConditionEvaluationState condition = QuestConditionEvaluation.Evaluate(this.IfNode.Condition.CallableExpression);
         if (condition == QuestConditionEvaluationState.Unknown)
             return false;
 
@@ -65,7 +65,7 @@ public class ForcedIf : ForcedBehavior
         {
             foreach (ElseIf elseIf in this.IfNode.ElseIfs)
             {
-                QuestConditionEvaluationState elseIfCondition = QuestConditionEvaluation.Evaluate(elseIf.Condition);
+                QuestConditionEvaluationState elseIfCondition = QuestConditionEvaluation.Evaluate(elseIf.Condition.CallableExpression);
                 if (elseIfCondition == QuestConditionEvaluationState.Unknown)
                     return false;
                 if (elseIfCondition != QuestConditionEvaluationState.True)
@@ -121,7 +121,7 @@ public class ForcedIf : ForcedBehavior
 
         protected override IEnumerable<RunStatus> Execute(object context)
         {
-            if (!this.owner.conditionResolved)
+            while (!this.owner.conditionResolved)
             {
                 bool initialized = false;
                 bool evaluationFailed = false;
@@ -136,11 +136,13 @@ public class ForcedIf : ForcedBehavior
                 }
 
                 if (evaluationFailed)
+                {
+                    yield return RunStatus.Failure;
                     yield break;
+                }
                 if (!initialized)
                 {
                     yield return RunStatus.Running;
-                    yield break;
                 }
             }
 

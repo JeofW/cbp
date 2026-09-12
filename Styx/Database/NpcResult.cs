@@ -9,7 +9,7 @@ namespace Styx.Database
     /// <summary>
     /// Represents an NPC result from the SQLite database.
     /// </summary>
-    public class NpcResult
+    public class NpcResult : System.IEquatable<NpcResult>
     {
         /// <summary>
         /// Creates an NpcResult from a SQLiteDataReader (HB API).
@@ -104,5 +104,19 @@ namespace Styx.Database
                 return myTemplate.GetReactionTowards(npcTemplate) < WoWUnitReaction.Neutral;
             }
         }
+
+        public bool Equals(NpcResult other)
+        {
+            return other != null &&
+                   Entry == other.Entry &&
+                   MapId == other.MapId &&
+                   X.Equals(other.X) &&
+                   Y.Equals(other.Y) &&
+                   Z.Equals(other.Z);
+        }
+
+        public override bool Equals(object obj) => Equals(obj as NpcResult);
+
+        public override int GetHashCode() => System.HashCode.Combine(Entry, MapId, X, Y, Z);
     }
 }

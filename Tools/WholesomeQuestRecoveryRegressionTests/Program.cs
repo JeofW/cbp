@@ -15,6 +15,14 @@ var utcNow = new DateTime(2026, 9, 3, 0, 0, 0, DateTimeKind.Utc);
 
 try
 {
+    TestVendorBlacklistReachesCoreSelection();
+    TestGeneratedOrderExhaustionQueuesRefresh();
+    TestAlternativeItemSourcesUseCarriedQuantity();
+    TestDistantRelationsRemainEligibleAfterScanExpansion();
+    TestNavigationRejectionDoesNotQuarantineQuestData();
+    TestNavigationRetryDoesNotInterruptOtherQuestWork();
+    TestPartialMeshPathAllowsBoundedExecutionProbe();
+    TestProductionEndpointRotationRetainsOwnershipUntilExhaustion();
     TestStagePriority();
     TestStageSpecificCooldown();
     TestEndpointCooldownIsolation();
@@ -25,8 +33,11 @@ try
     TestCandidateTieBreakers();
     TestValidatedGrindFallbackRequiresVettedPath();
     TestDatasetFingerprintIsDeterministic();
+    TestExhaustedCompositeDiagnosticNamesItsType();
+    TestDefaultDataLoaderFindsInstalledMasterFolder();
     TestDataLoaderPublishesAndInvalidatesDependencyAuthority();
     TestSchedulerRetainsEligibleAlternatesAndReportsExactExclusions();
+    TestFullQuestLogSchedulesExistingWorkWithoutNewPickups();
     TestSchedulerFallbackUsesOnlyCallerVettedPath();
     TestUnknownCompletionAuthorityDefersNegativePickupPaths();
     TestAuthoritativeCompletionsAreMarkedBeforeEvaluation();
@@ -44,6 +55,8 @@ try
     TestCompletedObjectivesDoNotConsumeEndpointBudget();
     TestUnavailableObjectiveCountsDoNotAdvanceWork();
     TestScanExpansionPrecedesFallbackAndResets();
+    TestOutOfRangeObjectiveWaitsForScanExpansionWithoutQuarantine();
+    TestCompletedBehaviorDoesNotReclaimRecoveryActivation();
     TestProductionActivationClaimsOnceAndCoalescesRebuild();
     TestProgressReleaseAllowsSameBehaviorToClaimALaterGeneration();
     TestEndpointSafetyAndReachabilityPrecedeDistanceAndCap();
@@ -53,6 +66,8 @@ try
     TestEmbeddedQuestPoiRequiresExactCurrentEndpoint();
     TestDeniedActivationLeavesUnownedPoiUntouched();
     TestOutcomePoiCleanupUsesTheReportedFailureScope();
+    TestEndpointFailureKeepsActiveAttemptForAlternate();
+    TestFreewindObjectivesUseMesaLiftBeforeDescending();
     TestGuardedProfilePreservesScheduleOrderAndLiveState();
     TestGuardedProfileUsesOnlyApprovedAlternativesAndHotspots();
     TestGuardedProfileOmitsEndpointlessObjectives();
@@ -70,6 +85,7 @@ try
     TestStopAbandonsOwnedAttemptBeforeClearingLifecycleState();
     TestManualExclusionClearsMatchingLocalOwnership();
     TestLifecycleResetDoesNotCarryPickupCyclesAcrossRestart();
+    TestLiveEndpointFailureUsesExistingNavigatorState();
     TestProgressMonitorCountsOnlyActiveWorkAndCoalescesOneStall();
     TestProgressMonitorRequestsAlternateAndFailsBoundedlyWithOneCluster();
     TestProductionUnavailableAlternatePreservesAttemptUntilBoundedFailure();
@@ -84,9 +100,11 @@ try
     TestRejectedGeneratedBatchRecoversWithoutThrowingOrApplyingEpisode();
     TestRejectedGeneratedBatchDoesNotFallThroughToObservations();
     TestCompletedOwnedStageRequestsRefreshBeforeQuestOrderRunsOut();
+    TestTimedIdleInterruptsRunningQuestRoot();
     TestTimedIdleSuppressesOldQuestOrderUntilARebuildSelectsWork();
     TestPickupOutcomeCoalescingStillReportsTheFailureEpisode();
     TestPickupRecoveryRequiresThreeDistinctActiveOwnedCycles();
+    TestFailedPickupTravelIsRecognizedForRecovery();
     TestRecoveryStatusFormattingCoversStatesReasonsAndRetryConditions();
     TestRecoveryActionsUseManagerSemanticsAndPreserveCompleted();
     TestManualQuestIdEditorDiffsOnlyManualRecords();
@@ -109,6 +127,53 @@ catch (Exception ex)
 {
     Console.Error.WriteLine(ex);
     global::System.Environment.ExitCode = 1;
+}
+
+void TestVendorBlacklistReachesCoreSelection()
+{
+    string path = Path.Combine(Path.GetTempPath(), "vendor-blacklist-" + Guid.NewGuid() + ".txt");
+    var flags = System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance;
+    var bot = new WholesomeAutoQuest();
+    typeof(WholesomeAutoQuest).GetField("_vendorBlacklistPath", flags)!.SetValue(bot, path);
+    try
+    {
+        File.WriteAllText(path, "990001");
+        typeof(WholesomeAutoQuest).GetMethod("LoadVendorBlacklist", flags)!.Invoke(bot, null);
+        Assert(Styx.Logic.Profiles.VendorSafetyPolicy.IsRejected(990001),
+            "loading Wholesome's saved blacklist must also exclude automatic core vendors");
+        var settings = (WholesomeAQSettings)typeof(WholesomeAutoQuest).GetField("_settings", flags)!.GetValue(bot)!;
+        settings.BlacklistedVendors.Add(990002);
+        typeof(WholesomeAutoQuest).GetMethod("SaveVendorBlacklist", flags)!.Invoke(bot, null);
+        Assert(Styx.Logic.Profiles.VendorSafetyPolicy.IsRejected(990002) && File.ReadAllText(path).Contains("990002"),
+            "a newly failed endpoint must update core selection and the saved blacklist together");
+    }
+    finally { File.Delete(path); }
+}
+
+void TestExhaustedCompositeDiagnosticNamesItsType()
+{
+    string? diagnostic = null;
+    void Capture(Styx.Helpers.LogLevel _, string message)
+    {
+        if (message.Contains("Iterator completed unexpectedly", StringComparison.Ordinal))
+            diagnostic = message;
+    }
+
+    Styx.Helpers.Logging.OnMessageLogged += Capture;
+    try
+    {
+        var composite = new EmptyIteratorComposite();
+        composite.Start(new object());
+        Assert(composite.Tick(new object()) == TreeSharp.RunStatus.Failure,
+            "an exhausted behavior-tree iterator must fail safely");
+    }
+    finally
+    {
+        Styx.Helpers.Logging.OnMessageLogged -= Capture;
+    }
+
+    Assert(diagnostic != null && diagnostic.Contains(nameof(EmptyIteratorComposite), StringComparison.Ordinal),
+        "the exhausted-iterator diagnostic must identify the composite type");
 }
 
 void TestRecoveryStatusFormattingCoversStatesReasonsAndRetryConditions()
@@ -528,6 +593,48 @@ void CreateQuarantinedRecord(
     CreateCoolingRecord(manager, key, reason);
     clock.Advance(TimeSpan.FromMinutes(61));
     CreateCoolingRecord(manager, key, reason);
+}
+
+void TestAlternativeItemSourcesUseCarriedQuantity()
+{
+    var objective = new QuestObjective { Index = 1, Type = ObjectiveType.CollectFromGameObject,
+        ItemId = 5058, GameObjectId = 3685, CollectCount = 12 };
+    var policy = typeof(QuestScheduler).GetMethod("IsObjectiveComplete",
+        System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)!;
+    bool Complete(int unrelatedCount, long eggs)
+    {
+        var counts = new[] { 0, unrelatedCount };
+        object[] args = policy.GetParameters().Length == 2
+            ? new object[] { objective, counts }
+            : new object[] { objective, counts, new Dictionary<int, long> { [5058] = eggs } };
+        return (bool)policy.Invoke(null, args)!;
+    }
+    Assert(Complete(1, 12), "all twelve eggs must complete the mound source even when the claw counter is one");
+    Assert(!Complete(99, 11), "an unrelated completed counter must not skip missing eggs");
+    Assert(!Complete(99, 0), "a missing collection item must remain eligible");
+}
+
+void TestGeneratedOrderExhaustionQueuesRefresh()
+{
+    var bot = new WholesomeAutoQuest();
+    var flags = System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance;
+    var gate = (RefreshGate)typeof(WholesomeAutoQuest).GetField("_refreshGate", flags)!.GetValue(bot)!;
+    var stopped = typeof(WholesomeAutoQuest).GetField("_stopped", flags)!;
+    var handler = typeof(Bots.Quest.QuestBot).GetMethod("OnNoMoreNodes",
+        flags | System.Reflection.BindingFlags.Static)!;
+    void Exhaust() => handler.Invoke(handler.IsStatic ? null : bot, new object[] { null!, EventArgs.Empty });
+
+    gate.Start();
+    stopped.SetValue(bot, false);
+    Exhaust();
+    Exhaust();
+    var lease = gate.Begin();
+    Assert(lease.HasValue, "a generated profile finishing must queue a scheduler refresh instead of stopping");
+    gate.Complete(lease!.Value);
+    Assert(!gate.Begin().HasValue, "duplicate exhaustion notifications must coalesce into one rebuild");
+    stopped.SetValue(bot, true);
+    Exhaust();
+    Assert(!gate.Begin().HasValue, "exhaustion after stop must not restart the scheduler");
 }
 
 void TestConfigurationBeforeStartLoadsPersistedRecoveryWithoutStartingLifecycle()
@@ -1762,6 +1869,182 @@ void TestProgressMonitorCountsOnlyActiveWorkAndCoalescesOneStall()
         "a long interval with no pulse samples must not be charged as active quest-work time");
 }
 
+void TestLiveEndpointFailureUsesExistingNavigatorState()
+{
+    var player = new WoWPoint(0, 0, 0);
+    var endpoint = new WoWPoint(100, 0, 0);
+
+    Assert(!WholesomeAutoQuest.HasFailedActiveEndpoint(
+               inCombat: false,
+               PoiType.None,
+               player,
+               endpoint,
+               navigatorDestination: endpoint,
+               hasActivePath: false,
+               pathPrecision: 2f),
+        "an empty or exhausted path without a failed MoveTo result is not evidence of a navigation failure");
+    Assert(!WholesomeAutoQuest.HasFailedActiveEndpoint(
+               inCombat: false,
+               PoiType.None,
+               player,
+               endpoint,
+               navigatorDestination: endpoint,
+               hasActivePath: true,
+               pathPrecision: 2f),
+        "an active path must not be replaced by a second synchronous reachability probe");
+    Assert(!WholesomeAutoQuest.HasFailedActiveEndpoint(
+               inCombat: false,
+               PoiType.None,
+               new WoWPoint(99, 0, 0),
+               endpoint,
+               navigatorDestination: endpoint,
+               hasActivePath: false,
+               pathPrecision: 2f),
+        "arrival inside path precision must not be mistaken for a path failure");
+    Assert(!WholesomeAutoQuest.HasFailedActiveEndpoint(
+               inCombat: false,
+               PoiType.Kill,
+               player,
+               endpoint,
+               navigatorDestination: endpoint,
+               hasActivePath: false,
+               pathPrecision: 2f),
+        "combat POI navigation must not be attributed to the objective hotspot");
+    Assert(!WholesomeAutoQuest.HasFailedActiveEndpoint(
+               inCombat: false,
+               PoiType.None,
+               player,
+               endpoint,
+               navigatorDestination: new WoWPoint(40, 0, 0),
+               hasActivePath: false,
+               pathPrecision: 2f),
+        "a stale navigator destination must not be attributed to the current hotspot");
+    Assert(WholesomeAutoQuest.HasFailedActiveEndpoint(false, PoiType.None, player, endpoint,
+        endpoint, false, 2f, MoveResult.Failed, utcNow, utcNow),
+        "a fresh failed MoveTo for this endpoint must be attributed without another path query");
+    Assert(WholesomeAutoQuest.HasFailedActiveEndpoint(false, PoiType.QuestPickUp, player, endpoint,
+        endpoint, false, 2f, MoveResult.Failed, utcNow, utcNow),
+        "a stale pickup POI from the previous stage must not hide a failed objective route");
+    foreach (MoveResult result in new[] { MoveResult.Moved, MoveResult.PathGenerated, MoveResult.UnstuckAttempt, MoveResult.ReachedDestination })
+        Assert(!WholesomeAutoQuest.HasFailedActiveEndpoint(false, PoiType.None, player, endpoint,
+            endpoint, false, 2f, result, utcNow, utcNow),
+            "successful, throttled or recovery movement must never be reported as endpoint failure");
+    Assert(!WholesomeAutoQuest.HasFailedActiveEndpoint(false, PoiType.None, player, endpoint,
+        endpoint, false, 2f, MoveResult.PathGenerationFailed, utcNow.AddSeconds(-6), utcNow),
+        "an old failure snapshot must not poison a later objective");
+    Assert(!WholesomeAutoQuest.HasFailedActiveEndpoint(false, PoiType.None, player, endpoint,
+        new WoWPoint(40, 0, 0), false, 2f, MoveResult.PathGenerationFailed, utcNow, utcNow),
+        "an explicit failed result for another destination must stay unrelated");
+
+}
+
+void TestFreewindObjectivesUseMesaLiftBeforeDescending()
+{
+    var quest = new QuestEntry
+    {
+        Id = 4841,
+        Name = "Pacify the Centaur",
+        Objectives =
+        {
+            new QuestObjective
+            {
+                Index = 0,
+                Type = ObjectiveType.KillMob,
+                MobId = 4096,
+                KillCount = 12
+            }
+        }
+    };
+    var plan = new[]
+    {
+        new QuestPlanEntry
+        {
+            Quest = quest,
+            Stage = QuestWorkStage.Objective,
+            ObjectiveIndex = 0,
+            Hotspots = new[]
+            {
+                new SpawnPoint { Map = 1, X = -5251.34, Y = -2438.90, Z = -40.90 }
+            }
+        }
+    };
+
+    var document = XDocument.Parse(new ProfileBuilder().BuildProfileXml(
+        plan, new QuestDatabase(), "Thousand Needles", "Tester", 25));
+    XElement objectiveGuard = document.Root!.Element("QuestOrder")!.Elements("If")
+        .Single(group => group.Element("Objective") != null);
+    XElement liftGuard = objectiveGuard.Element("If")!;
+    XElement lift = liftGuard.Element("CustomBehavior")!;
+
+    Assert((string?)liftGuard.Attribute("Condition") ==
+               "Me.MapId == 1 && Me.Z > 40 && Me.X > -5500 && Me.X < -5300 && Me.Y > -2600 && Me.Y < -2350"
+           && (string?)lift.Attribute("File") == "UseTransport"
+           && (string?)lift.Attribute("TransportId") == "11899"
+           && (string?)lift.Attribute("ApproachAtX") == "-5425.65"
+           && (string?)lift.Attribute("ApproachAtY") == "-2448.40"
+           && (string?)lift.Attribute("ApproachAtZ") == "89.28"
+           && (string?)lift.Attribute("TransportStartX") == "-5382.5"
+           && (string?)lift.Attribute("TransportStartY") == "-2489.42"
+           && (string?)lift.Attribute("TransportEndX") == "-5382.5"
+           && (string?)lift.Attribute("TransportEndY") == "-2489.42"
+           && (string?)lift.Attribute("TransportEndZ") == "-40.5284"
+           && (string?)lift.Attribute("GetOffX") == "-5375.26"
+           && (string?)lift.Attribute("GetOffY") == "-2489.24"
+           && (string?)lift.Attribute("GetOffZ") == "-40.56239"
+           && objectiveGuard.Elements().Last().Name.LocalName == "Objective",
+        "a lower Freewind objective must ride the mesa lift before ordinary objective navigation starts");
+    var loadedProfile = new Styx.Logic.Profiles.Profile(document.Root, null);
+    loadedProfile.CodeComposition.AddProfile(loadedProfile);
+    Assert(loadedProfile.QuestOrder.Count == 1 && loadedProfile.CodeComposition.Batch.Compile(),
+        "the generated nested lift guard must load and compile through the production profile parser");
+
+    var ordinaryPlan = new[]
+    {
+        new QuestPlanEntry
+        {
+            Quest = quest,
+            Stage = QuestWorkStage.Objective,
+            ObjectiveIndex = 0,
+            Hotspots = new[] { new SpawnPoint { Map = 1, X = 161, Y = 2, Z = 3 } }
+        }
+    };
+    var ordinary = XDocument.Parse(new ProfileBuilder().BuildProfileXml(
+        ordinaryPlan, new QuestDatabase(), "The Barrens", "Tester", 25));
+    Assert(!ordinary.Descendants("CustomBehavior").Any(),
+        "ordinary objective routes must not receive the Freewind-specific lift step");
+}
+
+void TestFailedPickupTravelIsRecognizedForRecovery()
+{
+    var player = new WoWPoint(-5479.55f, -2394.70f, 56.72f);
+    var giver = new WoWPoint(-5401.73f, -2410.17f, 89.28f);
+
+    Assert(WholesomeAutoQuest.HasFailedPickupTravel(
+            inCombat: false,
+            PoiType.QuestPickUp,
+            player,
+            giver,
+            navigatorDestination: giver,
+            hasActivePath: false,
+            pathPrecision: 2f,
+            MoveResult.Failed,
+            utcNow,
+            utcNow),
+        "a fresh exhausted partial path to the active quest giver must end the owned pickup attempt");
+    Assert(!WholesomeAutoQuest.HasFailedPickupTravel(
+            inCombat: false,
+            PoiType.QuestPickUp,
+            player,
+            giver,
+            navigatorDestination: giver,
+            hasActivePath: true,
+            pathPrecision: 2f,
+            MoveResult.Moved,
+            utcNow,
+            utcNow),
+        "active pickup movement must not be abandoned while the navigator still has a route");
+}
+
 void TestProgressMonitorRequestsAlternateAndFailsBoundedlyWithOneCluster()
 {
     var clock = new TestRecoveryClock(utcNow);
@@ -1874,6 +2157,8 @@ void TestProgressMonitorScopesEndpointAndDeathFailures()
     var firstPath = monitor.Sample(WorkSample(
         key, new[] { 0 }, endpointA, active: true,
         endpointPathFailed: true, knownEndpoints: known));
+    Assert(firstPath.RequestAlternateCluster,
+        "a failed endpoint must immediately advance to a remaining endpoint");
     Assert(firstPath.Outcomes.Count == 1
            && firstPath.Outcomes[0].Key.Equals(endpointA)
            && firstPath.Outcomes[0].Reason == QuestFailureReason.PathGenerationFailed
@@ -2480,6 +2765,31 @@ void TestCompletedOwnedStageRequestsRefreshBeforeQuestOrderRunsOut()
         "stage completion must never be attributed through another quest-stage key");
 }
 
+void TestTimedIdleInterruptsRunningQuestRoot()
+{
+    var bot = new WholesomeAutoQuest();
+    var scheduler = new QuestScheduler(new DataLoader(), new ProfileBuilder(), new WholesomeAQSettings());
+    var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+    typeof(WholesomeAutoQuest).GetField("_stopped", flags)!.SetValue(bot, false);
+    typeof(WholesomeAutoQuest).GetField("_scheduler", flags)!.SetValue(bot, scheduler);
+    var scheduleField = typeof(QuestScheduler).GetField("<LastSchedule>k__BackingField", flags)!;
+    scheduleField.SetValue(scheduler, new QuestScheduleResult
+    {
+        Selected = new[] { Candidate(867, QuestWorkStage.Objective, 10, eligible: true) }
+    });
+    var root = (TreeSharp.GroupComposite)bot.Root;
+    var child = new StallRunningChild();
+    root.Children[0] = child;
+    var context = new object();
+    root.Start(context);
+    Assert(root.Tick(context) == TreeSharp.RunStatus.Running && child.Ticks == 1,
+        "selected quest work must start normally");
+    scheduleField.SetValue(scheduler, new QuestScheduleResult { FallbackMode = QuestFallbackMode.TimedIdle });
+    Assert(root.Tick(context) == TreeSharp.RunStatus.Failure && child.Ticks == 1 && child.Stops > 0,
+        "idle schedule must interrupt an already-running quest tree before its next movement tick");
+    root.Stop(context);
+}
+
 void TestTimedIdleSuppressesOldQuestOrderUntilARebuildSelectsWork()
 {
     var timedIdle = new QuestScheduleResult
@@ -2831,6 +3141,35 @@ void TestProductionActivationClaimsOnceAndCoalescesRebuild()
         "a won activation claim must not clear its POI, rebuild, or claim again on later pulses");
 }
 
+void TestCompletedBehaviorDoesNotReclaimRecoveryActivation()
+{
+    var scheduler = new QuestScheduler(
+        new DataLoader(Path.Combine(Path.GetTempPath(), "missing-wholesome-data.json")),
+        new ProfileBuilder(Path.Combine(Path.GetTempPath(), "wholesome-completed-activation.xml")),
+        new WholesomeAQSettings());
+    var completed = new ForcedQuestObjective(
+        TestQuestObjective.Create(867, WoWPoint.Zero, isCompleted: true));
+    var beginCalls = 0;
+
+    scheduler.ObserveActivation(
+        completed,
+        _ =>
+        {
+            beginCalls++;
+            return new QuestRecoveryDecision
+            {
+                State = QuestRecoveryState.Attempting,
+                MayAttempt = true,
+                AttemptGeneration = beginCalls
+            };
+        },
+        _ => { },
+        () => { });
+
+    Assert(beginCalls == 0,
+        "a completed behavior awaiting profile replacement must not reclaim recovery ownership on every pulse");
+}
+
 void TestEndpointSafetyAndReachabilityPrecedeDistanceAndCap()
 {
     var endpoints = new[]
@@ -3085,6 +3424,109 @@ void TestOutcomePoiCleanupUsesTheReportedFailureScope()
         "an exact objective-stage failure may clear its proven quest-owned POI");
 }
 
+void TestEndpointFailureKeepsActiveAttemptForAlternate()
+{
+    var endpointFailure = new QuestAttemptOutcome
+    {
+        Key = QuestRecoveryKey.ForEndpoint(1087, QuestRecoveryStage.Navigation, 1, "cell:0:0"),
+        Kind = QuestAttemptOutcomeKind.Failure,
+        Reason = QuestFailureReason.PathGenerationFailed,
+        IsFailureEpisode = true
+    };
+    var repeatedObservation = new QuestAttemptOutcome
+    {
+        Key = endpointFailure.Key,
+        Kind = QuestAttemptOutcomeKind.Observation,
+        Reason = endpointFailure.Reason,
+        IsFailureEpisode = false
+    };
+
+    Assert(!WholesomeAutoQuest.RequiresSchedulerRefresh(endpointFailure),
+        "an endpoint failure must rotate within its owned attempt instead of rebuilding into its own Attempting exclusion");
+    Assert(!WholesomeAutoQuest.RequiresSchedulerRefresh(repeatedObservation),
+        "repeated cooldown observations must not churn scheduler rebuilds");
+}
+
+void TestPartialMeshPathAllowsBoundedExecutionProbe()
+{
+    var origin = new WoWPoint(2452.2065f, 1277.4861f, 290.795f);
+    var target = new WoWPoint(2506.69f, 1496.79f, 263.053f);
+    var path = new Tripper.Navigation.PathFindResult();
+    typeof(Tripper.Navigation.PathFindResult).GetProperty("Status")!.SetValue(path, new Tripper.Navigation.Status(0x40000040));
+    typeof(Tripper.Navigation.PathFindResult).GetProperty("Points")!.SetValue(path, new[]
+    {
+        new System.Numerics.Vector3(origin.X, origin.Y, origin.Z),
+        new System.Numerics.Vector3(2451.818f, 1278.485f, 290.979f)
+    });
+    typeof(Tripper.Navigation.PathFindResult).GetProperty("IsPartialPath")!.SetValue(path, true);
+    var partial = QuestScheduler.AssessMeshNavigation(path, origin, target);
+    Assert(partial.IsKnownSafe == true && partial.IsKnownReachable == null,
+        "the recorded start-island partial path must permit a bounded execution probe instead of excluding every quest");
+    typeof(Tripper.Navigation.PathFindResult).GetProperty("Status")!.SetValue(path, Tripper.Navigation.Status.Failure);
+    Assert(QuestScheduler.AssessMeshNavigation(path, origin, target).IsKnownReachable == false,
+        "an actual failed path query must remain excluded");
+    typeof(Tripper.Navigation.PathFindResult).GetProperty("Status")!.SetValue(path, Tripper.Navigation.Status.Success);
+    typeof(Tripper.Navigation.PathFindResult).GetProperty("IsPartialPath")!.SetValue(path, false);
+    Assert(QuestScheduler.AssessMeshNavigation(path, origin, target).IsKnownReachable == true,
+        "a complete path must remain preferred as reachable");
+}
+
+void TestProductionEndpointRotationRetainsOwnershipUntilExhaustion()
+{
+    var root = Path.Combine(Path.GetTempPath(), "wholesome-path-rotation-" + Guid.NewGuid().ToString("N"));
+    var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+    var manager = QuestRecoveryManager.Instance;
+    try
+    {
+        manager.Configure(new QuestRecoveryEnvironment(root, "Wholesome", "Rotation", "data-v1", "core-v1", "nav-v1"));
+        var key = QuestRecoveryKey.ForQuestStage(1087, QuestRecoveryStage.Objective);
+        var a = QuestRecoveryKey.ForEndpoint(1087, QuestRecoveryStage.Navigation, 1, "cell:30:18");
+        var b = QuestRecoveryKey.ForEndpoint(1087, QuestRecoveryStage.Navigation, 1, "cell:31:18");
+        var owner = manager.TryBeginAttempt(key, new QuestRecoveryContext());
+        var behavior = new ForcedQuestObjective(TestQuestObjective.Create(1087, WoWPoint.Zero));
+        var bot = new WholesomeAutoQuest();
+        // Exercise the real hotspot rotation without initializing the live WoW singleton.
+        var areaType = typeof(Styx.Logic.AreaManagement.GrindArea);
+        var area = (Styx.Logic.AreaManagement.GrindArea)System.Runtime.CompilerServices.RuntimeHelpers.GetUninitializedObject(areaType);
+        Styx.Logic.AreaManagement.Hotspot first = new WoWPoint(2400, 1440, 260);
+        Styx.Logic.AreaManagement.Hotspot second = new WoWPoint(2480, 1440, 260);
+        areaType.GetField("_hotspotSync", flags)!.SetValue(area, new object());
+        areaType.GetField("_hotspotTimer", flags)!.SetValue(area, new System.Diagnostics.Stopwatch());
+        areaType.GetField("_currentHotspot", flags)!.SetValue(area, first);
+        area.Hotspots = new List<Styx.Logic.AreaManagement.Hotspot> { first, second };
+        area.CircledHotspots = new Styx.Helpers.CircularQueue<Styx.Logic.AreaManagement.Hotspot>();
+        area.CircledHotspots.Enqueue(second);
+        area.CircledHotspots.Enqueue(first);
+        typeof(WholesomeAutoQuest).GetField("_activeGrindArea", flags)!.SetValue(bot,
+            (Func<Styx.Logic.AreaManagement.GrindArea>)(() => area));
+        var ownership = (WholesomeAttemptOwnership)typeof(WholesomeAutoQuest).GetField("_attemptOwnership", flags)!.GetValue(bot)!;
+        var gate = (RefreshGate)typeof(WholesomeAutoQuest).GetField("_refreshGate", flags)!.GetValue(bot)!;
+        typeof(WholesomeAutoQuest).GetField("_stopped", flags)!.SetValue(bot, false);
+        var process = typeof(WholesomeAutoQuest).GetMethod("ProcessProgressUpdate", flags)!;
+        ownership.Begin(behavior, key, owner);
+        var monitor = new WholesomeProgressMonitor(new TestRecoveryClock(utcNow));
+        QuestWorkSample Sample(QuestRecoveryKey endpoint) => WorkSample(key, new[] { 0 }, endpoint,
+            active: true, endpointPathFailed: true, knownEndpoints: new[] { a, b }, attemptGeneration: owner.AttemptGeneration);
+        var initial = Sample(a);
+        var firstUpdate = monitor.Sample(initial);
+        process.Invoke(bot, new object[] { behavior, initial, firstUpdate });
+        Assert(ReferenceEquals(areaType.GetField("_currentHotspot", flags)!.GetValue(area), second),
+            "the production failure handler must advance the real grind area to the next hotspot");
+        Assert(firstUpdate.RequestAlternateCluster &&
+            manager.OwnsAttempt(key, owner.AttemptGeneration) && !gate.Begin().HasValue,
+            "first endpoint failure must request rotation without releasing its owner or rebuilding into self-exclusion");
+        var final = Sample(b);
+        process.Invoke(bot, new object[] { behavior, final, monitor.Sample(final) });
+        Assert(!manager.OwnsAttempt(key, owner.AttemptGeneration) && !ownership.TryGet(behavior, out _) && gate.Begin().HasValue,
+            "only exhausted endpoints must release the owned stage and request one scheduler rebuild");
+    }
+    finally
+    {
+        manager.Flush();
+        if (Directory.Exists(root)) Directory.Delete(root, true);
+    }
+}
+
 void TestStagePriority()
 {
     var result = QuestSchedulingPolicy.Select(new[]
@@ -3251,6 +3693,35 @@ void TestDatasetFingerprintIsDeterministic()
     }
 }
 
+void TestDefaultDataLoaderFindsInstalledMasterFolder()
+{
+    string botDirectory = Path.Combine(
+        AppContext.BaseDirectory,
+        "Bots",
+        "WholesomeAutoQuest-master");
+    string dataDirectory = Path.Combine(botDirectory, "quest_data");
+    string dataPath = Path.Combine(dataDirectory, "quest_data.json");
+    Directory.CreateDirectory(dataDirectory);
+
+    try
+    {
+        File.WriteAllText(dataPath,
+            "{\"Quests\":[],\"QuestGivers\":[],\"QuestEnders\":[],\"CreatureSpawns\":{},\"GameObjectSpawns\":{}}");
+
+        Assert(new DataLoader().Load() != null,
+            "the default loader must find quest data in the installed WholesomeAutoQuest-master folder");
+    }
+    finally
+    {
+        if (File.Exists(dataPath))
+            File.Delete(dataPath);
+        if (Directory.Exists(dataDirectory))
+            Directory.Delete(dataDirectory);
+        if (Directory.Exists(botDirectory))
+            Directory.Delete(botDirectory);
+    }
+}
+
 void TestDataLoaderPublishesAndInvalidatesDependencyAuthority()
 {
     var directory = Path.Combine(Path.GetTempPath(), $"wholesome-dependencies-{Guid.NewGuid():N}");
@@ -3315,6 +3786,26 @@ void TestSchedulerRetainsEligibleAlternatesAndReportsExactExclusions()
     Assert(result.Status.Contains("scope=NpcRelation;npc=1001;retry=2026-09-03T00:15:00.0000000Z", StringComparison.Ordinal)
            && result.Status.Contains($"scope=Endpoint;endpoint={cooledCluster.Endpoint};retry=2026-09-03T00:10:00.0000000Z", StringComparison.Ordinal),
         "the schedule status must identify each exact excluded scope and retry time");
+}
+
+void TestFullQuestLogSchedulesExistingWorkWithoutNewPickups()
+{
+    var result = QuestScheduler.MaterializeSchedule(
+        SchedulerDatabase(),
+        Snapshot(
+            accepted: new[] { Accepted(867, completed: false) },
+            completed: Array.Empty<uint>(),
+            questLogCapacity: 1),
+        _ => Eligible(),
+        maximum: 10,
+        scanThreshold: 500,
+        minQuestLevelOffset: 7);
+
+    Assert(result.Selected.Count > 0
+           && result.Selected.All(candidate => candidate.Stage != QuestWorkStage.Pickup),
+        "a full quest log must retain accepted quest work while excluding every new pickup");
+    Assert(result.Status.Contains("quest-log-full", StringComparison.Ordinal),
+        "the scheduler must explain that pickups were deferred because the quest log is full");
 }
 
 void TestSchedulerFallbackUsesOnlyCallerVettedPath()
@@ -3641,21 +4132,19 @@ void TestGuardedProfilePreservesScheduleOrderAndLiveState()
     Assert(groups.Select(group => (string?)group.Elements().Single().Attribute("QuestId"))
             .SequenceEqual(new[] { "867", "876", "868" }),
         "accepted objective and turn-in work must retain reviewed schedule order instead of waiting behind pickups");
-    Assert((string?)groups[0].Attribute("Condition") == "HasQuest(867) && !IsQuestCompleted(867)"
+    Assert((string?)groups[0].Attribute("Condition") == "HasQuest(867)"
            && groups[0].Elements().Single().Name.LocalName == "Objective"
            && (string?)groups[0].Elements().Single().Attribute("Index") == "0",
-        "objective work must use the exact accepted-incomplete live-state guard");
+        "objective work must use live quest-log acceptance without depending on the historical completion cache");
     Assert((string?)groups[1].Attribute("Condition") == "!HasQuest(876) && !IsQuestCompleted(876)"
            && groups[1].Elements().Single().Name.LocalName == "PickUp"
            && (string?)groups[1].Elements().Single().Attribute("X") == "20",
         "pickup work must use the exact not-accepted and not-completed live-state guard");
-    Assert((string?)groups[2].Attribute("Condition") == "HasQuest(868) && IsQuestCompleted(868)"
+    Assert((string?)groups[2].Attribute("Condition") == "HasQuest(868)"
            && groups[2].Elements().Single().Name.LocalName == "TurnIn"
            && (string?)groups[2].Elements().Single().Attribute("TurnInId") == "3002"
            && (string?)groups[2].Elements().Single().Attribute("X") == "30",
-        "turn-in work must use the exact accepted-complete live-state guard");
-    Assert(xml.Contains("HasQuest(867) &amp;&amp; !IsQuestCompleted(867)", StringComparison.Ordinal),
-        "guard conditions must be escaped by XML serialization");
+        "turn-in work must use live quest-log acceptance without depending on the historical completion cache");
 }
 
 void TestGuardedProfileUsesOnlyApprovedAlternativesAndHotspots()
@@ -3880,6 +4369,119 @@ void TestSchedulerReportsEveryEndpointlessObjectiveOmission()
         "an objective whose assessed endpoints are all recovery-excluded must report its exact retry");
 }
 
+void TestNavigationRetryDoesNotInterruptOtherQuestWork()
+{
+    var db = SchedulerDatabase();
+    db.CreatureSpawns["2000"] = new() { new SpawnPoint { Map = 1, X = 600, Y = 0 } };
+    var result = QuestScheduler.MaterializeSchedule(db,
+        Snapshot(new[] { Accepted(867, false) }, Array.Empty<uint>()), _ => Eligible(), 10, 1000, 7,
+        navigationAssessment: point => new SpawnNavigationAssessment
+        {
+            IsKnownReachable = point.X < 100,
+            IsKnownSafe = true
+        });
+    Assert(result.Selected.Any(candidate => candidate.QuestId == 876) && !result.EarliestRetryUtc.HasValue,
+        "a blocked path must not force profile reloads while another eligible quest is progressing");
+}
+
+void TestDistantRelationsRemainEligibleAfterScanExpansion()
+{
+    foreach (bool turnIn in new[] { false, true })
+    {
+        var db = SchedulerDatabase();
+        db.Quests.RemoveAll(quest => quest.Id != 876);
+        db.QuestGivers.RemoveAll(giver => giver.GiverId == 1002);
+        db.QuestEnders.Add(new QuestEnderEntry { QuestId = 876, EnderId = 1001 });
+        db.CreatureSpawns["1001"] = new() { new SpawnPoint { Map = 1, X = 600, Y = 0 } };
+        var snapshot = Snapshot(turnIn ? new[] { Accepted(876, true) } : Array.Empty<QuestSchedulerAcceptedQuest>(),
+            Array.Empty<uint>());
+        var failures = new List<QuestAttemptOutcome>();
+        var narrow = QuestScheduler.MaterializeSchedule(db, snapshot, _ => Eligible(), 10, 250, 7,
+            reportDataFailure: failures.Add);
+        Assert(narrow.Selected.Count == 0 && failures.Count == 0,
+            "a distant pickup or turn-in NPC must not become invalid quest data before scan expansion");
+        var expanded = QuestScheduler.MaterializeSchedule(db, snapshot, _ => Eligible(), 10, 750, 7,
+            reportDataFailure: failures.Add);
+        Assert(expanded.Selected.Any(candidate => candidate.QuestId == 876) && failures.Count == 0,
+            "scan expansion must select the known distant relation without recovery reset");
+    }
+}
+
+void TestNavigationRejectionDoesNotQuarantineQuestData()
+{
+    var db = SchedulerDatabase();
+    var failures = new List<QuestAttemptOutcome>();
+    var snapshot = Snapshot(new[] { Accepted(867, false) }, Array.Empty<uint>(), authoritative: false);
+    var blocked = QuestScheduler.MaterializeSchedule(db, snapshot, _ => Eligible(), 10, 500, 7,
+        navigationAssessment: _ => new SpawnNavigationAssessment { IsKnownReachable = false },
+        reportDataFailure: failures.Add);
+    Assert(blocked.Selected.Count == 0 && failures.Count == 0,
+        "a rejected path must stay excluded without poisoning valid objective data for six hours");
+    Assert(blocked.EarliestRetryUtc.HasValue && blocked.EarliestRetryUtc <= utcNow.AddMinutes(1),
+        "navigation-only exclusion must schedule a bounded rescan without player movement");
+    var recovered = QuestScheduler.MaterializeSchedule(db, snapshot, _ => Eligible(), 10, 500, 7,
+        navigationAssessment: _ => new SpawnNavigationAssessment { IsKnownReachable = true, IsKnownSafe = true },
+        reportDataFailure: failures.Add);
+    Assert(recovered.Selected.Any(candidate => candidate.QuestId == 867),
+        "a later successful path assessment must make the same objective selectable");
+}
+
+void TestOutOfRangeObjectiveWaitsForScanExpansionWithoutQuarantine()
+{
+    string root = Path.Combine(Path.GetTempPath(), "wholesome-scan-radius-" + Guid.NewGuid().ToString("N"));
+    try
+    {
+        var manager = new QuestRecoveryManager(new TestRecoveryClock(utcNow));
+        manager.Configure(new QuestRecoveryEnvironment(root, "Wholesome", "Realm", "data", "core", "nav"));
+        var context = new QuestRecoveryContext
+        {
+            DatasetVersion = "data",
+            CoreVersion = "core",
+            NavigationFingerprint = "nav"
+        };
+        var db = SchedulerDatabase();
+        db.CreatureSpawns["2000"] = new()
+        {
+            new SpawnPoint { Map = 1, X = 600, Y = 0 }
+        };
+        var snapshot = Snapshot(
+            new[] { Accepted(867, false) },
+            Array.Empty<uint>(),
+            authoritative: false);
+
+        QuestScheduleResult narrow = QuestScheduler.MaterializeSchedule(
+            db,
+            snapshot,
+            key => manager.Evaluate(key, context),
+            10,
+            250,
+            7,
+            reportDataFailure: outcome => manager.Report(outcome, context));
+
+        Assert(narrow.Selected.Count == 0
+               && manager.GetRecord(QuestRecoveryKey.ForObjective(867, 0)) == null
+               && narrow.Status.Contains("reason=outside-scan-radius", StringComparison.Ordinal),
+            "a known objective outside the current scan radius must wait for expansion without data quarantine");
+
+        QuestScheduleResult expanded = QuestScheduler.MaterializeSchedule(
+            db,
+            snapshot,
+            key => manager.Evaluate(key, context),
+            10,
+            750,
+            7,
+            reportDataFailure: outcome => manager.Report(outcome, context));
+
+        Assert(expanded.Selected.Any(candidate => candidate.QuestId == 867),
+            "the same objective must become selectable after the scan radius reaches its known hotspot");
+    }
+    finally
+    {
+        if (Directory.Exists(root))
+            Directory.Delete(root, recursive: true);
+    }
+}
+
 void TestSchedulerOmissionsPersistImmediateRecoveryQuarantine()
 {
     var root = Path.Combine(Path.GetTempPath(), "wholesome-omission-" + Guid.NewGuid().ToString("N"));
@@ -3976,9 +4578,8 @@ void TestSchedulerOmissionsPersistImmediateRecoveryQuarantine()
             key => manager.Evaluate(key, context), 10, 500, 7,
             navigationAssessment: _ => new SpawnNavigationAssessment { IsKnownReachable = false },
             reportDataFailure: outcome => manager.Report(outcome, context));
-        Assert(manager.GetRecord(QuestRecoveryKey.ForObjective(871, 0))?.Evidence
-                .Any(item => item.Text == "scheduler:no-assessed-hotspots") == true,
-            "an objective with no assessed navigable hotspot must persist its canonical data failure");
+        Assert(manager.GetRecord(QuestRecoveryKey.ForObjective(871, 0)) == null,
+            "a navigation assessment must not persist a quest-data failure");
 
         QuestScheduler.MaterializeSchedule(
             SchedulerDatabase(),
@@ -4221,7 +4822,8 @@ QuestDatabase SchedulerDatabase() => new()
 QuestSchedulerSnapshot Snapshot(
     IReadOnlyList<QuestSchedulerAcceptedQuest> accepted,
     IReadOnlyCollection<uint> completed,
-    bool authoritative = true) => new()
+    bool authoritative = true,
+    int questLogCapacity = 25) => new()
 {
     UtcNow = utcNow,
     PlayerLevel = 20,
@@ -4231,7 +4833,8 @@ QuestSchedulerSnapshot Snapshot(
     Y = 0,
     HasAuthoritativeCompletions = authoritative,
     CompletedQuestIds = completed,
-    AcceptedQuests = accepted
+    AcceptedQuests = accepted,
+    QuestLogCapacity = questLogCapacity
 };
 
 QuestSchedulerAcceptedQuest Accepted(uint id, bool completed) => new()
@@ -4373,8 +4976,9 @@ sealed class TestQuestObjective : Bots.Quest.Objectives.QuestObjective
     }
 
     public WoWPoint Location { get; private set; }
+    public bool Completed { get; private set; }
 
-    public static TestQuestObjective Create(uint questId, WoWPoint location)
+    public static TestQuestObjective Create(uint questId, WoWPoint location, bool isCompleted = false)
     {
         var objective = (TestQuestObjective)System.Runtime.CompilerServices.RuntimeHelpers
             .GetUninitializedObject(typeof(TestQuestObjective));
@@ -4383,10 +4987,11 @@ sealed class TestQuestObjective : Bots.Quest.Objectives.QuestObjective
             System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
         questField!.SetValue(objective, new TestPlayerQuest(questId));
         objective.Location = location;
+        objective.Completed = isCompleted;
         return objective;
     }
 
-    public override bool IsCompleted => false;
+    public override bool IsCompleted => Completed;
 
     public override bool CanComplete => true;
 
@@ -4401,4 +5006,23 @@ sealed class TestPlayerQuest : Styx.Logic.Questing.PlayerQuest
         : base(new Styx.WoWInternals.WoWCache.WoWCache.QuestCacheEntry { Id = questId })
     {
     }
+}
+
+sealed class EmptyIteratorComposite : TreeSharp.Composite
+{
+    protected override IEnumerable<TreeSharp.RunStatus> Execute(object context)
+    {
+        yield break;
+    }
+}
+
+sealed class StallRunningChild : TreeSharp.Composite
+{
+    public int Ticks { get; private set; }
+    public int Stops { get; private set; }
+    protected override IEnumerable<TreeSharp.RunStatus> Execute(object context)
+    {
+        while (true) { Ticks++; yield return TreeSharp.RunStatus.Running; }
+    }
+    public override void Stop(object context) { Stops++; base.Stop(context); }
 }

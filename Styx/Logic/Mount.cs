@@ -146,7 +146,6 @@ namespace Styx.Logic
 				{
 					var mount = groundMounts[_random.Next(0, groundMounts.Count)];
 					CharacterSettings.Instance.MountName = mount.CreatureSpellId.ToString();
-					Logging.WriteDebug("Auto-detected random ground mount: {0}", mount.Name);
 				}
 
 				var flyingMounts = MountHelper.FlyingMounts;
@@ -154,7 +153,6 @@ namespace Styx.Logic
 				{
 					var mount = flyingMounts[_random.Next(0, flyingMounts.Count)];
 					CharacterSettings.Instance.FlyingMountName = mount.CreatureSpellId.ToString();
-					Logging.WriteDebug("Auto-detected random flying mount: {0}", mount.Name);
 				}
 			}
 			else
@@ -263,6 +261,13 @@ namespace Styx.Logic
 			if (!CanMount())
 				return false;
 
+			WoWPoint destination = _currentDestinationRetriever?.Invoke() ?? WoWPoint.Empty;
+			if (!AllowMountAttempt(canFly, effectiveMountName, destination))
+			{
+				Logging.WriteDebug("Mount-up request cancelled before casting");
+				return false;
+			}
+
 			WoWMovement.MoveStop();
 			Logging.Write("Mounting: {0}{1}", effectiveMountName, canFly ? " [flying]" : "");
 			StyxWoW.Sleep(200);
@@ -270,6 +275,30 @@ namespace Styx.Logic
 			DoMount();
 			_mountTimer.Reset();
 			return true;
+		}
+
+		internal static bool AllowMountAttempt(bool isFlying, string mountName, WoWPoint destination)
+		{
+			var args = new MountUpEventArgs(isFlying, mountName ?? string.Empty)
+			{
+				Destination = destination
+			};
+			EventHandler<MountUpEventArgs>? handler = OnMountUp;
+			if (handler == null)
+				return true;
+
+			foreach (Delegate subscriber in handler.GetInvocationList())
+			{
+				try
+				{
+					subscriber.DynamicInvoke(null, args);
+				}
+				catch (Exception ex)
+				{
+					Logging.WriteException(ex);
+				}
+			}
+			return !args.Cancel;
 		}
 
 		private static void DoMount()
@@ -299,19 +328,18 @@ namespace Styx.Logic
 				}
 			}
 
+			string lastError = me.LastRedErrorMessage;
 			Lua.DoString(string.Format("CallCompanion('MOUNT', {0})", GetMountIndex(mountName)));
 
 			int startTime = Environment.TickCount;
-			string lastError = me.LastRedErrorMessage;
 
 			while (!me.Mounted && Environment.TickCount - startTime < 6500)
 			{
 				if (me.Combat)
 					break;
 
-				if (!string.IsNullOrEmpty(lastError) && me.LastRedErrorMessage != lastError)
+				if (lastError != "You can't mount here." && me.LastRedErrorMessage == "You can't mount here.")
 				{
-					Logging.Write("You can't mount here.");
 					AddCantMountSpot(me.Location);
 					break;
 				}
@@ -604,21 +632,7 @@ namespace Styx.Logic
 
 			bool isMounted = me.Mounted;
 
-			if (isMounted && !_wasMounted)
-			{
-				// Just mounted — fire event and check Cancel flag (HB 6.2.3 pattern)
-				var args = new MountUpEventArgs(me.IsFlying, "Mount");
-				args.Destination = _currentDestinationRetriever?.Invoke() ?? WoWPoint.Empty;
-				OnMountUp?.Invoke(null, args);
-				if (args.Cancel)
-				{
-					Logging.WriteDebug("Mount-up cancelled by event handler");
-					Dismount("cancelled by event handler");
-					_wasMounted = false;
-					return;
-				}
-			}
-			else if (!isMounted && _wasMounted)
+			if (!isMounted && _wasMounted)
 			{
 				// Just dismounted
 				RaiseOnDismount(string.Empty);

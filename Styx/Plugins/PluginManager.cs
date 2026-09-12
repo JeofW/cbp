@@ -2,6 +2,7 @@
 using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -32,6 +33,10 @@ namespace Styx.Plugins
         /// Gets all loaded plugins.
         /// </summary>
         public static List<PluginContainer> Plugins { get; private set; }
+        private static readonly Dictionary<string, DateTime> SlowPluginLogTimes =
+            new Dictionary<string, DateTime>(StringComparer.Ordinal);
+        private static readonly HashSet<string> UnavailableEnabledPlugins =
+            new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// Gets the path to the Plugins directory.
@@ -52,16 +57,42 @@ namespace Styx.Plugins
             {
                 if (Plugins[i].Enabled)
                 {
+                    PluginContainer container = Plugins[i];
+                    var timer = Stopwatch.StartNew();
                     try
                     {
-                        Plugins[i].Plugin.Pulse();
+                        container.Plugin.Pulse();
                     }
                     catch (Exception ex)
                     {
                         Logging.WriteException(ex);
                     }
+                    finally
+                    {
+                        timer.Stop();
+                        string pluginName = container.Plugin.Name ?? container.Plugin.GetType().Name;
+                        SlowPluginLogTimes.TryGetValue(pluginName, out DateTime previousLogUtc);
+                        DateTime nowUtc = DateTime.UtcNow;
+                        if (ShouldLogSlowPluginPulse(timer.ElapsedMilliseconds, nowUtc, previousLogUtc))
+                        {
+                            SlowPluginLogTimes[pluginName] = nowUtc;
+                            Logging.WriteDiagnostic(
+                                "[Pulse] Slow plugin: name={0} elapsed={1}ms",
+                                pluginName,
+                                timer.ElapsedMilliseconds);
+                        }
+                    }
                 }
             }
+        }
+
+        internal static bool ShouldLogSlowPluginPulse(
+            long elapsedMilliseconds,
+            DateTime nowUtc,
+            DateTime previousLogUtc)
+        {
+            return elapsedMilliseconds >= 20
+                && nowUtc - previousLogUtc >= TimeSpan.FromSeconds(10);
         }
 
         /// <summary>
@@ -94,6 +125,8 @@ namespace Styx.Plugins
                 var enabledPluginNames = Plugins
                     .Where(p => p.Enabled)
                     .Select(p => p.Name)
+                    .Concat(UnavailableEnabledPlugins)
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
                     .ToArray();
                 
                 Helpers.CharacterSettings.Instance.EnabledPlugins = enabledPluginNames;
@@ -126,7 +159,12 @@ namespace Styx.Plugins
             try
             {
                 IsBuildingPlugins = true;
-                Plugins.Clear();
+                List<PluginContainer> previousPlugins = Plugins.ToList();
+                var replacementPlugins = new List<PluginContainer>();
+                var requestedEnabled = new HashSet<string>(
+                    defaultEnabled ?? Array.Empty<string>(),
+                    StringComparer.OrdinalIgnoreCase);
+                bool hadLoadErrors = false;
 
                 // Force garbage collection to release old plugin assemblies
                 GC.Collect();
@@ -140,14 +178,14 @@ namespace Styx.Plugins
                         if (!type.IsAbstract && typeof(HBPlugin).IsAssignableFrom(type))
                         {
                             HBPlugin plugin = (HBPlugin)Activator.CreateInstance(type);
-                            bool enableByDefault = defaultEnabled != null && defaultEnabled.Contains(plugin.Name);
-                            Plugins.Add(new PluginContainer(plugin, enableByDefault));
+                            replacementPlugins.Add(new PluginContainer(plugin, false));
                         }
                     }
                 }
-                catch (Exception ex)
-                {
-                    Logging.WriteException(ex);
+                    catch (Exception ex)
+                    {
+                        hadLoadErrors = true;
+                        Logging.WriteException(ex);
                 }
 
                 string pluginsPath = Path.Combine(
@@ -178,20 +216,53 @@ namespace Styx.Plugins
                         List<HBPlugin> loadedPlugins = CompileAndLoadFrom(files[i]);
                         foreach (HBPlugin plugin in loadedPlugins)
                         {
-                            bool enableByDefault = defaultEnabled != null && defaultEnabled.Contains(plugin.Name);
-                            var container = new PluginContainer(plugin, enableByDefault);
-                            Plugins.Add(container);
+                            replacementPlugins.Add(new PluginContainer(plugin, false));
                         }
                     }
                     catch (CompilerErrorsException ex)
                     {
+                        hadLoadErrors = true;
                         Logging.Write("Plugin from {0} could not be compiled. Compiler errors:", files[i]);
                         Logging.Write(ex.ToString());
                     }
                     catch (Exception ex)
                     {
+                        hadLoadErrors = true;
                         Logging.Write("Error loading plugin: {0}", files[i]);
                         Logging.WriteException(ex);
+                    }
+                }
+
+                if (hadLoadErrors && previousPlugins.Count > 0)
+                {
+                    foreach (PluginContainer replacement in replacementPlugins)
+                    {
+                        try { replacement.Plugin.Dispose(); } catch { }
+                    }
+                    Logging.Write("Plugin refresh failed; keeping the previous {0} loaded plugins.", previousPlugins.Count);
+                    throw new InvalidOperationException("One or more plugins failed to compile or load; the previous plugin set was preserved.");
+                }
+
+                foreach (PluginContainer previous in previousPlugins)
+                {
+                    if (previous.Enabled)
+                        previous.Enabled = false;
+                }
+
+                Plugins = replacementPlugins;
+                foreach (PluginContainer container in Plugins)
+                {
+                    if (requestedEnabled.Contains(container.Name))
+                        container.Enabled = true;
+                }
+
+                UnavailableEnabledPlugins.Clear();
+                if (hadLoadErrors)
+                {
+                    foreach (string requestedName in requestedEnabled)
+                    {
+                        if (!Plugins.Any(p => string.Equals(p.Name, requestedName, StringComparison.OrdinalIgnoreCase)))
+                            UnavailableEnabledPlugins.Add(requestedName);
                     }
                 }
 
@@ -203,7 +274,9 @@ namespace Styx.Plugins
                 }
                 else
                 {
-                    Logging.Write("Plugins refreshed successfully.");
+                    Logging.Write(hadLoadErrors
+                        ? "Plugins loaded with errors; unavailable enabled plugins were preserved in settings."
+                        : "Plugins refreshed successfully.");
                 }
             }
             finally

@@ -53,6 +53,12 @@ namespace Styx.Logic.Profiles.Quest
         /// <summary>True if the owning CompileBatch compiled successfully and this expression is callable.</summary>
         public bool IsCompiled => CompiledExpression != null;
 
+        // Preserve delegate-based construction for local recovery integrations.
+        internal static DelayCompiledExpression<Func<bool>> FromDelegate(Func<bool> condition)
+        {
+            return new DelayCompiledExpression<Func<bool>>("() => false") { CompiledExpression = condition };
+        }
+
         public static DelayCompiledExpression<Func<bool>> Condition(string conditionString)
         {
             if (string.IsNullOrWhiteSpace(conditionString))

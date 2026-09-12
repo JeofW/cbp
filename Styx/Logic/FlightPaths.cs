@@ -169,6 +169,19 @@ namespace Styx.Logic
         }
 
         /// <summary>
+        /// Returns whether the cached taxi network contains a usable connection toward a destination.
+        /// This is a read-only route check for service-travel decisions.
+        /// </summary>
+        public static bool HasKnownConnection(WoWPoint from, WoWPoint to)
+        {
+            if (!CanTakeFlightPaths || StyxWoW.Me == null)
+                return false;
+
+            FindClosestFlightNodes(from, to, out XmlFlightNode startNode, out XmlFlightNode endNode);
+            return startNode?.MasterEntry != 0U && endNode != null;
+        }
+
+        /// <summary>
         /// Take flight path if possible
         /// </summary>
         public static void TakeFlightPath()

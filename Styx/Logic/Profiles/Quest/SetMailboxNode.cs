@@ -9,7 +9,12 @@ namespace Styx.Logic.Profiles.Quest
     public class SetMailboxNode : OrderNode
     {
         public SetMailboxNode(List<Mailbox> mailboxes)
-            : base(OrderNodeType.SetMailbox)
+            : this(mailboxes, null)
+        {
+        }
+
+        private SetMailboxNode(List<Mailbox> mailboxes, XElement element)
+            : base(OrderNodeType.SetMailbox, element)
         {
             this.Mailboxes = mailboxes;
         }
@@ -45,7 +50,7 @@ namespace Styx.Logic.Profiles.Quest
                 {
                     throw new ProfileException("Could not parse SetMailbox node", ex);
                 }
-                return new SetMailboxNode(mailbox);
+                return new SetMailboxNode(new List<Mailbox> { mailbox }, element);
             }
 
             // Multiple mailboxes
@@ -62,7 +67,7 @@ namespace Styx.Logic.Profiles.Quest
                     throw new ProfileException("Could not parse SetMailbox node", ex);
                 }
             }
-            return new SetMailboxNode(mailboxes);
+            return new SetMailboxNode(mailboxes, element);
         }
 
         public override string ToString()

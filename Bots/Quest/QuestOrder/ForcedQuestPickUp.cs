@@ -139,16 +139,22 @@ public class ForcedQuestPickUp : ForcedBehavior
 
     public override void OnStart()
     {
-        if (ObjectManager.Me.QuestLog.GetAllQuests().Count >= 25)
+        int questCount = ObjectManager.Me.QuestLog.GetAllQuests().Count;
+        if (!CanStartPickup(questCount, 25))
         {
-            Logging.Write(Color.Red, "You do not have any space in your quest log.");
-            Logging.Write(Color.Red, "CopilotBuddy stopped!");
-            TreeRoot.Stop();
+            PickupUnavailable = true;
+            Logging.Write(Color.Orange,
+                "Quest log is full ({0}/25); deferring pickup of {1} without stopping the bot.",
+                questCount, this.QuestName);
+            return;
         }
         string goalText = this.GetGoalText();
         Logging.Write("[PickUp] {0}", (object)goalText);
         TreeRoot.GoalText = goalText;
     }
+
+    public static bool CanStartPickup(int questCount, int questLogCapacity) =>
+        questLogCapacity > 0 && questCount < questLogCapacity;
 
     private string GetGoalText()
     {
@@ -337,9 +343,6 @@ public class ForcedQuestPickUp : ForcedBehavior
         else
         {
             // Native multi-quest frame (QuestTitleButton1/2/etc.) — no GossipFrame open.
-            if (nativeQuests.Count <= 0)
-                return RunStatus.Success;
-
             for (int j = 0; j < nativeQuests.Count; j++)
             {
                 if (nativeQuests[j] == this.QuestId)
@@ -354,6 +357,14 @@ public class ForcedQuestPickUp : ForcedBehavior
         {
             bool positivelyLoaded = nativeQuests.Count > 0 ||
                 luaDump != null && luaDump.Count >= 5;
+            // An open gossip dialog can legitimately offer no quests. Confirm
+            // that through Lua so it enters bounded recovery instead of success.
+            if (!positivelyLoaded && GossipFrame.Instance.IsVisible)
+            {
+                var countValues = Lua.GetReturnValues("return GetNumGossipAvailableQuests()");
+                positivelyLoaded = countValues != null && countValues.Count > 0 &&
+                    int.TryParse(countValues[0], out int offeredCount) && offeredCount == 0;
+            }
             QuestPickupDialogDecision unavailable = QuestPickupDialogPolicy.Decide(
                 this.QuestId,
                 this.QuestName,

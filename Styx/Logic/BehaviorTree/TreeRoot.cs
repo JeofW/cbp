@@ -94,6 +94,11 @@ namespace Styx.Logic.BehaviorTree
 		/// <summary>HB 6.2.3: true when State == Paused.</summary>
 		public static bool IsPaused => State == TreeRootState.Paused;
 
+		internal static bool IsSlowBotRootTick(long elapsedMilliseconds)
+		{
+			return elapsedMilliseconds >= 100;
+		}
+
 		/// <summary>HB 6.2.3: Transition Running → Paused.</summary>
 		public static void Pause()
 		{
@@ -485,7 +490,22 @@ namespace Styx.Logic.BehaviorTree
 			{
 				Current.Root.Start(null);
 			}
-			if (!SafeAction(() => Current!.Root.Tick(null), "BotBase.Root.Tick", false))
+			var rootTickStopwatch = Stopwatch.StartNew();
+			bool rootTickSucceeded = SafeAction(
+				() => Current!.Root.Tick(null),
+				"BotBase.Root.Tick",
+				false);
+			rootTickStopwatch.Stop();
+			if (IsSlowBotRootTick(rootTickStopwatch.ElapsedMilliseconds))
+			{
+				Logging.WriteDiagnostic(
+					"[Pulse] Slow bot root: {0}ms bot={1} poi={2} combat={3}",
+					rootTickStopwatch.ElapsedMilliseconds,
+					Current?.Name ?? "none",
+					BotPoi.Current.Type,
+					StyxWoW.Me?.Combat == true);
+			}
+			if (!rootTickSucceeded)
 			{
 				BotPoi.Clear("Exception in Root.Tick");
 				Current.Root.Stop(null);

@@ -46,6 +46,12 @@ namespace Bots.Quest.QuestOrder
         public virtual bool IsExecutionDeferred => false;
 
         /// <summary>
+        /// True when service work (trainer, vendor, flight-path discovery) must wait
+        /// until this forced behavior finishes.
+        /// </summary>
+        public virtual bool SuppressServiceBehavior => false;
+
+        /// <summary>
         /// NavType for this behavior. null = auto-detect (Flightor.CanFly).
         /// Legion: ForcedBehavior.NavType (nullable).
         /// </summary>

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices;
 using GreenMagic;
@@ -24,6 +25,13 @@ namespace Styx.Logic.Combat
 
 		private static int _lastKnownSpellCount;
 		private static readonly Dictionary<string, WoWSpell> _knownSpells = new Dictionary<string, WoWSpell>(StringComparer.OrdinalIgnoreCase);
+		private static readonly object _cooldownSync = new object();
+		private static readonly Dictionary<int, long> _cooldownReadyAtTicks = new Dictionary<int, long>();
+		private static readonly Dictionary<int, long> _castVerificationUntilTicks = new Dictionary<int, long>();
+		private static readonly Dictionary<int, long> _readinessProbeNotBeforeTicks = new Dictionary<int, long>();
+		private const int CastAttemptVerificationDelayMs = 250;
+		private const int UnavailableProbeBackoffMs = 250;
+		private const int FailedProbeBackoffMs = 500;
 
 		public static Dictionary<string, WoWSpell> KnownSpells => _knownSpells;
 
@@ -211,44 +219,177 @@ namespace Styx.Logic.Combat
 		/// Node layout (HB 4.3.4 Struct78): +0x04=Next, +0x08=SpellId,
 		/// +0x10=StartTime, +0x14=SpellCooldown, +0x2C=GCDDuration.
 		/// </summary>
+		internal static TimeSpan CalculateCooldownRemaining(
+			uint startTime,
+			uint spellCooldown,
+			uint globalCooldown,
+			long currentTime)
+		{
+			uint effectiveDuration = Math.Max(spellCooldown, globalCooldown);
+			long remaining = (long)startTime + effectiveDuration - currentTime;
+			return remaining > 0 ? TimeSpan.FromMilliseconds(remaining) : TimeSpan.Zero;
+		}
+
+		internal static TimeSpan CalculateTrackedCooldownRemaining(long currentTicks, long readyAtTicks)
+		{
+			long remaining = readyAtTicks - currentTicks;
+			return remaining > 0 ? TimeSpan.FromMilliseconds(remaining) : TimeSpan.Zero;
+		}
+
+		internal static bool IsCooldownReady(
+			double availabilitySeconds,
+			uint lagToleranceMs,
+			bool accountForLagTolerance)
+		{
+			if (availabilitySeconds < 0)
+				return false;
+
+			double toleranceMs = accountForLagTolerance ? lagToleranceMs : 0U;
+			return availabilitySeconds * 1000.0 <= toleranceMs;
+		}
+
+		internal static bool IsTrackedCooldownBlocking(
+			TimeSpan remaining,
+			uint lagToleranceMs,
+			bool accountForLagTolerance,
+			bool isCastVerification)
+		{
+			double toleranceMs = accountForLagTolerance && !isCastVerification
+				? lagToleranceMs
+				: 0U;
+			return remaining.TotalMilliseconds > toleranceMs;
+		}
+
+		internal static bool TryParseAvailability(
+			IReadOnlyList<string> values,
+			out double availabilitySeconds)
+		{
+			availabilitySeconds = -1;
+			return values != null &&
+			       values.Count >= 2 &&
+			       string.Equals(values[0], "ok", StringComparison.Ordinal) &&
+			       double.TryParse(
+				       values[1], NumberStyles.Float, CultureInfo.InvariantCulture,
+				       out availabilitySeconds);
+		}
+
+		private static TimeSpan GetTrackedCooldownTimeLeft(
+			Dictionary<int, long> deadlines,
+			int spellId,
+			long currentTicks)
+		{
+			lock (_cooldownSync)
+			{
+				if (!deadlines.TryGetValue(spellId, out long readyAtTicks))
+					return TimeSpan.Zero;
+
+				TimeSpan remaining = CalculateTrackedCooldownRemaining(currentTicks, readyAtTicks);
+				if (remaining <= TimeSpan.Zero)
+					deadlines.Remove(spellId);
+				return remaining;
+			}
+		}
+
+		private static void TrackCooldown(int spellId, TimeSpan duration, long currentTicks)
+		{
+			if (duration <= TimeSpan.Zero)
+				return;
+
+			TrackDeadline(_cooldownReadyAtTicks, spellId, duration, currentTicks);
+		}
+
+		private static void TrackDeadline(
+			Dictionary<int, long> deadlines,
+			int spellId,
+			TimeSpan duration,
+			long currentTicks)
+		{
+			long deadline = currentTicks + (long)Math.Ceiling(duration.TotalMilliseconds);
+			lock (_cooldownSync)
+				deadlines[spellId] = deadline;
+		}
+
+		private static bool IsSpellAvailable(
+			WoWSpell spell,
+			uint lagToleranceMs,
+			bool accountForLagTolerance)
+		{
+			long currentTicks = Environment.TickCount64;
+			TimeSpan verification = GetTrackedCooldownTimeLeft(
+				_castVerificationUntilTicks, spell.Id, currentTicks);
+			if (IsTrackedCooldownBlocking(
+				verification, lagToleranceMs, accountForLagTolerance, true))
+				return false;
+
+			TimeSpan tracked = GetTrackedCooldownTimeLeft(
+				_cooldownReadyAtTicks, spell.Id, currentTicks);
+			if (IsTrackedCooldownBlocking(
+				tracked, lagToleranceMs, accountForLagTolerance, false))
+				return false;
+
+			TimeSpan probeBackoff = GetTrackedCooldownTimeLeft(
+				_readinessProbeNotBeforeTicks, spell.Id, currentTicks);
+			if (probeBackoff > TimeSpan.Zero)
+				return false;
+
+			// One localized client query replaces the former cooldown-list walk plus
+			// separate IsUsableSpell call. The explicit marker distinguishes a genuine
+			// ready value (zero) from Lua.GetReturnValues' empty failure result.
+			List<string> values = Lua.GetReturnValues(string.Format(
+				"local n=GetSpellInfo({0}); if not n then return 'ok',-1 end " +
+				"local s,d,e=GetSpellCooldown(n); if not s or not d or e==0 then return 'ok',-1 end " +
+				"local left=s+d-GetTime(); if left>0 then return 'ok',left end " +
+				"local usable=IsUsableSpell(n); if not usable then return 'ok',-1 end return 'ok',0",
+				spell.Id));
+
+			if (!TryParseAvailability(values, out double availabilitySeconds))
+			{
+				TrackDeadline(
+					_readinessProbeNotBeforeTicks, spell.Id,
+					TimeSpan.FromMilliseconds(FailedProbeBackoffMs), currentTicks);
+				return false;
+			}
+
+			if (availabilitySeconds > 0)
+				TrackCooldown(spell.Id, TimeSpan.FromSeconds(availabilitySeconds), currentTicks);
+			else if (availabilitySeconds < 0)
+				TrackDeadline(
+					_readinessProbeNotBeforeTicks, spell.Id,
+					TimeSpan.FromMilliseconds(UnavailableProbeBackoffMs), currentTicks);
+
+			return IsCooldownReady(
+				availabilitySeconds, lagToleranceMs, accountForLagTolerance);
+		}
+
 		public static TimeSpan GetSpellCooldownTimeLeft(int spellId)
 		{
-			try
-			{
-				Memory? memory = ObjectManager.Wow;
-				if (memory == null) return TimeSpan.Zero;
+			long currentTicks = Environment.TickCount64;
+			TimeSpan verification = GetTrackedCooldownTimeLeft(
+				_castVerificationUntilTicks, spellId, currentTicks);
+			if (verification > TimeSpan.Zero)
+				return verification;
 
-				long frequency;
-				long counter;
-				QueryPerformanceFrequency(out frequency);
-				QueryPerformanceCounter(out counter);
-				long currentTime = counter * 1000L / frequency;
+			TimeSpan tracked = GetTrackedCooldownTimeLeft(
+				_cooldownReadyAtTicks, spellId, currentTicks);
+			if (tracked > TimeSpan.Zero)
+				return tracked;
 
-				uint nodePtr = memory.Read<uint>(CooldownListBase);
+			WoWSpell? spell = _knownSpells.Values.FirstOrDefault(candidate => candidate.Id == spellId);
+			if (spell == null)
+				return TimeSpan.MaxValue;
 
-				while (nodePtr != 0U && (nodePtr & 1U) == 0U)
-				{
-					uint nodeSpellId = memory.Read<uint>(nodePtr + 0x08U);
-					if (nodeSpellId == (uint)spellId)
-					{
-						uint startTime = memory.Read<uint>(nodePtr + 0x10U);
-						uint spellCd = memory.Read<uint>(nodePtr + 0x14U);
-						uint gcdDuration = memory.Read<uint>(nodePtr + 0x2CU);
-						uint effectiveDuration = spellCd > gcdDuration ? spellCd : gcdDuration;
-						long remaining = (long)(startTime + effectiveDuration) - currentTime;
-						if (remaining > 0)
-							return TimeSpan.FromMilliseconds(remaining);
-						return TimeSpan.Zero;
-					}
-					nodePtr = memory.Read<uint>(nodePtr + 0x04U);
-				}
+			List<string> values = Lua.GetReturnValues(string.Format(
+				"local n=GetSpellInfo({0}); if not n then return 'ok',-1 end " +
+				"local s,d=GetSpellCooldown(n); if not s or not d then return 'ok',-1 end " +
+				"local left=s+d-GetTime(); if left>0 then return 'ok',left end return 'ok',0",
+				spell.Id));
+			if (!TryParseAvailability(values, out double availabilitySeconds) ||
+			    availabilitySeconds < 0)
+				return TimeSpan.MaxValue;
 
-				return TimeSpan.Zero; // not in list = not on cooldown
-			}
-			catch
-			{
-				return TimeSpan.Zero;
-			}
+			TimeSpan observed = TimeSpan.FromSeconds(availabilitySeconds);
+			TrackCooldown(spellId, observed, currentTicks);
+			return observed;
 		}
 
 		public static bool IsCurrentSpell(int spellId)
@@ -326,11 +467,7 @@ namespace Styx.Logic.Combat
 			if (spell == null)
 				return false;
 
-			// Check if spell is on cooldown
-			if (spell.Cooldown)
-				return false;
-
-			return true;
+			return IsSpellAvailable(spell, 0U, false);
 		}
 
 		// HB 4.3.4 compatibility wrappers
@@ -365,8 +502,8 @@ namespace Styx.Logic.Combat
 
 		/// <summary>
 		/// HB 4.3.4 SpellManager.cs line 166: CanCast with full validation.
-		/// Ported exactly from HB 4.3.4 — uses spell.CooldownTimeLeft with lag
-		/// tolerance, checks IsCasting, movement, range, and power.
+		/// Uses an authoritative, deadline-cached client cooldown query with lag
+		/// tolerance and checks IsCasting, movement, range, and power.
 		/// </summary>
 		public static bool CanCast(string spellName, WoWUnit target, bool checkRange = true, bool checkMovement = false)
 		{
@@ -395,7 +532,8 @@ namespace Styx.Logic.Combat
 
 		/// <summary>
 		/// HB 4.3.4 SpellManager.cs line 166-222: CanCast with accountForLagTolerance.
-		/// Ported exactly from the decompiled source.
+		/// Preserves the original range/casting semantics while using the WotLK
+		/// client API for reliable spell-specific cooldown state.
 		/// </summary>
 		public static bool CanCast(WoWSpell spell, WoWUnit target, bool checkRange, bool checkMovement, bool accountForLagTolerance)
 		{
@@ -432,27 +570,15 @@ namespace Styx.Logic.Combat
 				uint lag = StyxWoW.WoWClient.Latency * 2U;
 				if (me.IsCasting)
 				{
-					// Block cast while casting, with lag-tolerance near cast end.
-					if (me.CurrentCastTimeLeft.TotalMilliseconds > lag || spell.CooldownTimeLeft.TotalMilliseconds > lag)
-						return false;
-					// WotLK safety net: UnitCastingInfo (Lua) may lag behind memory after
-					// CastSpellById injection — IsCasting=true from memory but both Lua
-					// checks returned 0. Block to prevent cast spam.
-					// (HB handled this naturally via WaitForCast() in all combat trees;
-					//  here we guard at the CanCast level for robustness.)
 					return false;
 				}
-				else if (spell.CooldownTimeLeft.TotalMilliseconds > lag)
-					return false;
-				else
-					return spell.CanCast;
+
+				return IsSpellAvailable(spell, lag, true);
 			}
 			// HB 4.3.4: Non-lag-tolerance path
 			else if (!me.IsCasting)
 			{
-				if (!spell.Cooldown)
-					return spell.CanCast;
-				return false;
+				return IsSpellAvailable(spell, 0U, false);
 			}
 			else
 			{
@@ -718,6 +844,12 @@ namespace Styx.Logic.Combat
 					executor.AddLine("retn");
 					executor.Execute();
 				}
+
+				// The client cooldown can arrive a frame after the native call. Hold this
+				// spell briefly, then let the authoritative probe cache its real deadline.
+				long verificationUntil = Environment.TickCount64 + CastAttemptVerificationDelayMs;
+				lock (_cooldownSync)
+					_castVerificationUntilTicks[spellId] = verificationUntil;
 			}
 			catch (Exception ex)
 			{

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading;
 using System.Windows.Media;
 using Styx.CommonBot;
 using Styx.Helpers;
@@ -14,7 +13,7 @@ namespace Styx.Logic.Pathing
 {
     /// <summary>
     /// Handles stuck detection and recovery for WoW 3.3.5a.
-    /// Stuck detection: HB 6.2.3 Class469 — 500ms Stopwatch + Navigator.PathDistance + movement-stop reset.
+    /// Stuck detection: 500ms Stopwatch + direct movement progress + movement-stop reset.
     /// Unstick sequence: Dismount → Jump(1x, LOS-gated) → StrafeFwdL → StrafeFwdR → Dismount2 → StrafeL → StrafeR → Blackspot+Reverse
     /// </summary>
     internal class DefaultStuckHandler : StuckHandler
@@ -26,6 +25,7 @@ namespace Styx.Logic.Pathing
         private readonly WaitTimer _mountUpBlockTimer = new WaitTimer(TimeSpan.FromSeconds(10.0));
         // HB 6.2.3 Class469: Stopwatch replaces the 2-second WaitTimer.
         private readonly Stopwatch _stopwatch = new Stopwatch();
+        private readonly MovementProgressTracker _progressTracker = new MovementProgressTracker(2);
 
         private WoWPoint _lastCheckLocation = WoWPoint.Empty;
         private WoWPoint _lastUnstickLocation = WoWPoint.Empty;
@@ -79,6 +79,7 @@ namespace Styx.Logic.Pathing
             {
                 _stopwatch.Restart();
                 _lastCheckLocation = WoWPoint.Empty;
+                _progressTracker.Reset();
             }
         }
 
@@ -98,6 +99,14 @@ namespace Styx.Logic.Pathing
             if (activeMover == null || !activeMover.IsMe)
                 return false;
 
+            if (!ShouldEvaluateMovementSample(activeMover.IsMoving, me.IsSwimming, me.IsFalling))
+            {
+                _stopwatch.Restart();
+                _lastCheckLocation = WoWPoint.Empty;
+                _progressTracker.Reset();
+                return false;
+            }
+
             // HB 6.2.3 Class469.IsStuck(): 500ms minimum interval.
             if (_stopwatch.ElapsedMilliseconds < 500L)
                 return false;
@@ -105,12 +114,17 @@ namespace Styx.Logic.Pathing
             WoWPoint currentLocation = activeMover.Location;
             if (_lastCheckLocation != WoWPoint.Empty)
             {
-                float expectedDist = GetExpectedDistance(activeMover, _stopwatch.Elapsed);
-                float? pathDist = Navigator.PathDistance(_lastCheckLocation, currentLocation, expectedDist);
-                // HB 6.2.3 Class469: only evaluate stuck when PathDistance is available.
-                // Null typically means partial/off-mesh path; treating that as zero causes
-                // false stuck detections during normal looting/micro-adjust movement.
-                if (pathDist.HasValue && pathDist.Value < expectedDist)
+                float currentSpeed = activeMover.MovementInfo.CurrentSpeed;
+                float fallbackSpeed = activeMover.MovementInfo.RunSpeed;
+                float actualDistance = _lastCheckLocation.Distance(currentLocation);
+                bool insufficientProgress = HasInsufficientProgress(
+                        currentSpeed,
+                        fallbackSpeed,
+                        _stopwatch.Elapsed,
+                        actualDistance);
+                _stopwatch.Restart();
+                _lastCheckLocation = currentLocation;
+                if (_progressTracker.Observe(insufficientProgress))
                 {
                     Logging.WriteVerbose(Colors.Red,
                         "We are stuck! (TPS: {0:F1}, Latency: {1}, loc: {2})!",
@@ -118,9 +132,10 @@ namespace Styx.Logic.Pathing
                         StyxWoW.WoWClient.Latency,
                         currentLocation);
                     LogNearestGameObject();
-                    _lastCheckLocation = currentLocation;
                     return true;
                 }
+
+                return false;
             }
 
             _stopwatch.Restart();
@@ -128,14 +143,31 @@ namespace Styx.Logic.Pathing
             return false;
         }
 
-        // HB 6.2.3 Class469.method_3: expected travel distance over elapsed time.
-        // WotLK: MovementInfo has SwimSpeed (offset 0xA4) and RunSpeed (offset 0x94).
-        // IsSwimming is a flag on WoWUnit (movement flag 0x200000 at offset 0xA30).
-        private static float GetExpectedDistance(WoWUnit unit, TimeSpan elapsed)
+        internal static bool ShouldEvaluateMovementSample(bool isMoving, bool swimming, bool falling)
         {
-            var mi = unit.MovementInfo;
-            float speed = mi.CurrentSpeed;
-            return speed * (float)elapsed.TotalSeconds * 0.6f;
+            return isMoving && !swimming && !falling;
+        }
+
+        internal static bool HasInsufficientProgress(
+            float currentSpeed,
+            float fallbackSpeed,
+            TimeSpan elapsed,
+            float actualDistance)
+        {
+            if (elapsed <= TimeSpan.Zero)
+                return false;
+
+            // CurrentSpeed is the only reliable signal that movement is still active.
+            // RunSpeed is a capability value and remains non-zero after CTM naturally
+            // reaches a short waypoint, so using it here turns normal arrivals into
+            // false stuck detections.
+            _ = fallbackSpeed;
+            float effectiveSpeed = currentSpeed;
+            if (effectiveSpeed <= 0f)
+                return false;
+
+            float expectedDistance = effectiveSpeed * (float)elapsed.TotalSeconds * 0.6f;
+            return actualDistance < expectedDistance;
         }
 
         public override void Unstick()
@@ -182,10 +214,9 @@ namespace Styx.Logic.Pathing
                 if (GameWorld.IsInLineOfSight(src, fwd))
                 {
                     Logging.WriteVerbose("Trying jump");
-                    WoWMovement.Move(WoWMovement.MovementDirection.Forward | WoWMovement.MovementDirection.JumpAscend);
-                    StyxWoW.Sleep(100);
-                    WoWMovement.MoveStop(WoWMovement.MovementDirection.Forward | WoWMovement.MovementDirection.JumpAscend);
-                    StyxWoW.Sleep(200);
+                    WoWMovement.Move(
+                        WoWMovement.MovementDirection.Forward | WoWMovement.MovementDirection.JumpAscend,
+                        TimeSpan.FromMilliseconds(100));
                 }
                 _triedJump = true;
             }
@@ -231,6 +262,7 @@ namespace Styx.Logic.Pathing
         {
             _stopwatch.Restart();
             _lastCheckLocation = WoWPoint.Empty;
+            _progressTracker.Reset();
             ResetUnstickAttempts();
         }
 
@@ -246,10 +278,7 @@ namespace Styx.Logic.Pathing
 
         private void MoveInDirection(WoWMovement.MovementDirection direction, int milliseconds)
         {
-            WoWMovement.Move(direction);
-            StyxWoW.Sleep(milliseconds);
-            WoWMovement.MoveStop(direction);
-            StyxWoW.Sleep(200);
+            WoWMovement.Move(direction, TimeSpan.FromMilliseconds(milliseconds));
         }
 
         private void AddBlackspotAndReverse(int milliseconds)
@@ -261,11 +290,9 @@ namespace Styx.Logic.Pathing
             Logging.WriteVerbose("Adding blackspot at current location and backing off for {0}ms", milliseconds);
             BlackspotManager.AddBlackspot(me.Location, 5f, 3f, "StuckHandler");
             WoWMovement.MoveStop();
-            StyxWoW.Sleep(100);
-            WoWMovement.Move(WoWMovement.MovementDirection.Backwards);
-            StyxWoW.Sleep(milliseconds);
-            WoWMovement.MoveStop();
-            StyxWoW.Sleep(200);
+            WoWMovement.Move(
+                WoWMovement.MovementDirection.Backwards,
+                TimeSpan.FromMilliseconds(milliseconds));
 
             Logging.WriteDebug("[STUCK] Clearing path to regenerate around blackspot.");
             Navigator.Clear();

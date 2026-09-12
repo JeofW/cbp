@@ -94,6 +94,8 @@ namespace Styx.Logic.Pathing
 
 		// HB 6.2.3: stored fallback precision used when there is no NavigationProvider.
 		private static float _defaultPathPrecision = 2f;
+		private static int _batchedTileLogCount;
+		private static int _isBatchingTileLogs;
 
 		// HB 6.2.3 Navigator.PathPrecision delegates to NavigationProvider.PathPrecision.
 		// Falls back to a stored default when the provider is not yet initialized.
@@ -109,6 +111,27 @@ namespace Styx.Logic.Pathing
 		}
 		public static int LoadTilesAroundRadius { get; set; } = 1;
 		public static float FlyingMountHeight { get; set; } = 25f;
+
+		internal static void BeginTileLogBatch()
+		{
+			Interlocked.Exchange(ref _batchedTileLogCount, 0);
+			Volatile.Write(ref _isBatchingTileLogs, 1);
+		}
+
+		internal static bool ShouldLogTileLoad()
+		{
+			if (Volatile.Read(ref _isBatchingTileLogs) == 0)
+				return true;
+
+			Interlocked.Increment(ref _batchedTileLogCount);
+			return false;
+		}
+
+		internal static int EndTileLogBatch()
+		{
+			Volatile.Write(ref _isBatchingTileLogs, 0);
+			return Interlocked.Exchange(ref _batchedTileLogCount, 0);
+		}
 
 		/// <summary>
 		/// Gets or sets the player mover used for movement control.
@@ -380,7 +403,8 @@ namespace Styx.Logic.Pathing
 		/// </summary>
 		private static void OnTileLoaded(object? sender, TripperNav.TileLoadedEventArgs e)
 		{
-			Logging.Write("Loading {0}_{1}_{2}", e.MapId, e.TileX, e.TileY);
+			if (ShouldLogTileLoad())
+				Logging.Write("Loading {0}_{1}_{2}", e.MapId, e.TileX, e.TileY);
 		}
 
 		private static void OnBotStart(EventArgs args)

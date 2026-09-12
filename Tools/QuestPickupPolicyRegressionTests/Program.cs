@@ -25,6 +25,8 @@ try
     TestAuthorizedAdvanceResetsMismatchLifecycle();
     TestOutcomeIsTaggedAndConsumedOnceByItsProducingInteraction();
     TestLoadedOfferListMissingTargetIsNotUnavailableAmbiguity();
+    TestEmptyGossipStopsAfterThreeInteractions();
+    TestFullQuestLogDefersPickup();
     TestGrindSafetyCompatibilitySurface();
     Console.WriteLine("Quest pickup policy regression tests passed.");
 }
@@ -32,6 +34,31 @@ catch (Exception ex)
 {
     Console.Error.WriteLine(ex);
     global::System.Environment.ExitCode = 1;
+}
+
+static void TestEmptyGossipStopsAfterThreeInteractions()
+{
+    var decision = QuestPickupDialogPolicy.Decide(
+        6383, "", 0, "", 12696, Array.Empty<uint>(),
+        false, false, false, false, false, false, false,
+        offeredQuestListLoaded: true);
+    var tracker = new QuestPickupMismatchTracker();
+    for (long cycle = 1; cycle <= 3; cycle++)
+    {
+        var outcome = tracker.Observe(decision, cycle);
+        Assert(outcome.Reason == QuestFailureReason.PickupTargetNotOffered,
+            "confirmed empty gossip must report target not offered");
+        Assert(tracker.PickupUnavailable == (cycle == 3),
+            "empty gossip must stop after three distinct interactions");
+    }
+}
+
+static void TestFullQuestLogDefersPickup()
+{
+    Assert(!ForcedQuestPickUp.CanStartPickup(25, 25),
+        "a full quest log must defer the next pickup without starting its behavior");
+    Assert(ForcedQuestPickUp.CanStartPickup(24, 25),
+        "one available quest slot must still allow a pickup");
 }
 
 static void TestDecisionMatrix()

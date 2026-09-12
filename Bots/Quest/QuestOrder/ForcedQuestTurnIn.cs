@@ -74,11 +74,12 @@ public class ForcedQuestTurnIn : ForcedBehavior
     protected override Composite CreateBehavior()
     {
         // HB 4.3.4 behavior tree structure with 9 elements in the interaction sequence
-        return (Composite)new DecoratorIsNotPoiType((IEnumerable<PoiType>)new PoiType[3]
+        return (Composite)new DecoratorIsNotPoiType((IEnumerable<PoiType>)new PoiType[4]
         {
             PoiType.Harvest,
             PoiType.Skin,
-            PoiType.Loot
+            PoiType.Loot,
+            PoiType.Kill
         }, (Composite)new PrioritySelector((ContextChangeHandler)(context => (object)null), new Composite[3]
         {
             (Composite)new Decorator(new CanRunDecoratorDelegate(this.ShouldSetPoi), (Composite)new ActionSetPoi(true, (RetrieveBotPoiDelegate)(context => new BotPoi(PoiType.QuestTurnIn)

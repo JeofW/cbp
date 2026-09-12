@@ -58,12 +58,23 @@ namespace Bots.Grind
         private static int _lootFailCount;
 
         // Death tracking  
-        private static int _deathCount;
-        private static readonly WaitTimer _deathTimer = new WaitTimer(new TimeSpan(0, 3, 0));
+        private static readonly CorpseRecoveryState _corpseRecovery = new();
+        private static bool _deathEventsAttached;
+        private static WoWPoint _graveyardPoint;
+        private static WoWPoint _dangerousCorpse;
+        private static uint? _recoveryMap;
+        private static bool _wasGhost;
+        private static bool _waitingForHealerRecovery;
+        private static DateTime _healerStartedUtc;
+        private static DateTime _healerResurrectedUtc;
+        private static DateTime _nextSafePointSearchUtc;
+        private static readonly List<Blackspot> _corpseBlackspots = new();
         private static Stopwatch _corpseWaitStopwatch = new Stopwatch();
         private static bool _diedIndoors;
+        private static bool _diedInInstance;
         private static readonly WaitTimer _releaseTimer = WaitTimer.FiveSeconds;
         private static WaitTimer _repairCostTimer = new WaitTimer(TimeSpan.FromMinutes(3.0));
+        private static readonly WaitTimer _trainerRouteLogTimer = new WaitTimer(TimeSpan.FromSeconds(30.0));
         private static ulong _lastRepairCost;
 
         // Root behavior cache
@@ -271,7 +282,24 @@ namespace Bots.Grind
         /// </summary>
         public static PrioritySelector CreateDeathBehavior()
         {
+            if (!_deathEventsAttached)
+            {
+                BotEvents.OnBotStopped += ResetCorpseRecovery;
+                _deathEventsAttached = true;
+            }
             return new PrioritySelector(
+                new TreeSharp.Action(ctx => ObserveCorpseRecovery()),
+                new Decorator(
+                    ctx => StyxWoW.Me.IsAlive && !StyxWoW.Me.IsGhost &&
+                           !StyxWoW.Me.Combat &&
+                           ((CharacterSettings.Instance.RessAtSpiritHealers && StyxWoW.Me.HasAura("Resurrection Sickness")) ||
+                            (_waitingForHealerRecovery && DateTime.UtcNow - _healerResurrectedUtc < TimeSpan.FromSeconds(5))),
+                    new TreeSharp.Action(ctx =>
+                    {
+                        TreeRoot.StatusText = "Waiting for Resurrection Sickness";
+                        WoWMovement.MoveStop();
+                    })
+                ),
                 // Dead - need to release
                 new Decorator(
                     ctx => StyxWoW.Me.IsDead,
@@ -287,9 +315,16 @@ namespace Bots.Grind
                     ctx => ShouldUseSpiritHealer && StyxWoW.Me.IsGhost,
                     CreateSpiritHealerBehavior()
                 ),
+                new Decorator(
+                    ctx => !Battlegrounds.IsInsideBattleground && GrindSafetyPolicy.ShouldUseInstancePortal(
+                        _diedInInstance || StyxWoW.Me.IsInInstance, StyxWoW.Me.IsGhost,
+                        StyxWoW.Me.InstanceCorpseLocation != WoWPoint.Empty),
+                    new TreeSharp.Action(ctx => Navigator.MoveTo(StyxWoW.Me.InstanceCorpseLocation))
+                ),
                 // Ghost - can't navigate to corpse, use spirit healer
                 new DecoratorIsNotPoiType(PoiType.Corpse, new Decorator(
                     ctx => CharacterSettings.Instance.RessAtSpiritHealers &&
+                           !_diedInInstance && !StyxWoW.Me.IsInInstance && !Battlegrounds.IsInsideBattleground &&
                            StyxWoW.Me.IsGhost &&
                            StyxWoW.Me.CorpsePoint != WoWPoint.Empty &&
                            StyxWoW.Me.Location.DistanceSqr(StyxWoW.Me.CorpsePoint) > 40.0 &&
@@ -297,7 +332,7 @@ namespace Bots.Grind
                     new Sequence(
                         new TreeSharp.Action(ctx => Logging.Write("Corpse point has no mesh. MapId: {0} Location: {1}", StyxWoW.Me.MapId, StyxWoW.Me.CorpsePoint)),
                         new TreeSharp.Action(ctx => Logging.Write("Can't navigate to our corpse. Trying the spirit healer instead! DEBUG: {0}", StyxWoW.Me.CorpsePoint)),
-                        new TreeSharp.Action(ctx => ShouldUseSpiritHealer = true)
+                        new TreeSharp.Action(ctx => BeginSpiritHealerRecovery("corpse is unreachable"))
                     )
                 )),
                 // Ghost - far from corpse, need to move
@@ -331,46 +366,153 @@ namespace Bots.Grind
 
         public static bool ShouldUseSpiritHealer { get; set; }
 
+        private static void ResetCorpseRecovery(EventArgs args)
+        {
+            if (_corpseBlackspots.Count > 0) BlackspotManager.RemoveBlackspots(_corpseBlackspots);
+            _corpseBlackspots.Clear();
+            _corpseRecovery.Reset();
+            _recoveryMap = null;
+            _wasGhost = false;
+            _diedInInstance = false;
+            _waitingForHealerRecovery = false;
+            ShouldUseSpiritHealer = false;
+            _graveyardPoint = _dangerousCorpse = WoWPoint.Empty;
+            _healerStartedUtc = _healerResurrectedUtc = _nextSafePointSearchUtc = DateTime.MinValue;
+            _corpseWaitStopwatch.Reset();
+        }
+
+        private static RunStatus ObserveCorpseRecovery()
+        {
+            var me = StyxWoW.Me;
+            if (me == null) return RunStatus.Failure;
+            bool alive = me.IsAlive && !me.IsGhost;
+            if (_recoveryMap != me.MapId)
+            {
+                BlackspotManager.RemoveBlackspots(_corpseBlackspots);
+                _corpseBlackspots.Clear();
+                _graveyardPoint = WoWPoint.Empty;
+                _dangerousCorpse = WoWPoint.Empty;
+                _wasGhost = false;
+                _waitingForHealerRecovery = false;
+                ShouldUseSpiritHealer = false;
+                _recoveryMap = me.MapId;
+            }
+            _corpseRecovery.Observe(alive, me.MapId, me.Location, DateTime.UtcNow);
+            if (ShouldUseSpiritHealer && _healerStartedUtc == DateTime.MinValue)
+                _healerStartedUtc = DateTime.UtcNow;
+            if (me.IsGhost && !_wasGhost)
+            {
+                // On release we are at the graveyard. If starting mid-run, only
+                // remember a location when the healer is actually visible.
+                var healer = ObjectManager.CachedUnits.FirstOrDefault(u => u.IsValid && u.IsSpiritHealer);
+                if (healer != null) _graveyardPoint = healer.Location;
+                else if (me.Location.Distance(me.CorpsePoint) > 100f) _graveyardPoint = me.Location;
+            }
+            _wasGhost = me.IsGhost;
+            if (alive)
+            {
+                _diedInInstance = false;
+                _corpseWaitStopwatch.Reset();
+                if (ShouldUseSpiritHealer)
+                {
+                    // Do not clear recovery until the server confirms resurrection.
+                    ShouldUseSpiritHealer = false;
+                    _waitingForHealerRecovery = true;
+                    _healerResurrectedUtc = DateTime.UtcNow;
+                    if (_dangerousCorpse != WoWPoint.Empty &&
+                        !_corpseBlackspots.Any(b => b.Location.Distance(_dangerousCorpse) < 40f))
+                    {
+                        var spot = new Blackspot(_dangerousCorpse, 45f, 30f);
+                        _corpseBlackspots.Add(spot);
+                        BlackspotManager.AddBlackspots(new[] { spot });
+                    }
+                    BotPoi.Clear("Spirit healer resurrection confirmed; recalculate destination and route");
+                    Flightor.Clear();
+                    Logging.Write("[CorpseRecovery] Resurrected at spirit healer. Avoiding the death area and recalculating the next service route after recovery.");
+                }
+                if (_waitingForHealerRecovery && !me.HasAura("Resurrection Sickness") &&
+                    DateTime.UtcNow - _healerResurrectedUtc >= TimeSpan.FromSeconds(5))
+                    _waitingForHealerRecovery = false;
+                if (BotPoi.Current.Type == PoiType.Corpse)
+                    BotPoi.Clear("Corpse resurrection confirmed");
+            }
+            else if (!ShouldUseSpiritHealer && CorpseRecoveryState.ShouldUseHealer(
+                CharacterSettings.Instance.RessAtSpiritHealers, _diedInInstance || me.IsInInstance,
+                Battlegrounds.IsInsideBattleground, _corpseRecovery.RepeatedDeath, false))
+            {
+                BeginSpiritHealerRecovery("died again near the resurrection point within two minutes");
+            }
+            return RunStatus.Failure;
+        }
+
+        private static void BeginSpiritHealerRecovery(string reason)
+        {
+            if (ShouldUseSpiritHealer) return;
+            ShouldUseSpiritHealer = true;
+            _healerStartedUtc = DateTime.UtcNow;
+            _dangerousCorpse = StyxWoW.Me.IsGhost ? StyxWoW.Me.CorpsePoint : StyxWoW.Me.Location;
+            _corpseWaitStopwatch.Reset();
+            BotPoi.Clear("Switching from unsafe corpse recovery to spirit healer");
+            Flightor.Clear();
+            Logging.Write("[CorpseRecovery] Using existing spirit healer recovery: {0}.", reason);
+        }
+
+        private static RunStatus ReturnToSpiritHealer()
+        {
+            if (_graveyardPoint == WoWPoint.Empty || StyxWoW.Me.Location.Distance(_graveyardPoint) < 10f)
+            {
+                var healer = Styx.Database.Query.GetNearestNpc(StyxWoW.Me.MapId,
+                    StyxWoW.Me.Location, UnitNPCFlags.Spirithealer);
+                if (healer != null) _graveyardPoint = healer.Location;
+            }
+            if (_graveyardPoint == WoWPoint.Empty ||
+                DateTime.UtcNow - _healerStartedUtc > TimeSpan.FromMinutes(5))
+            {
+                TreeRoot.Stop("Cannot reach a spirit healer. Unsafe corpse resurrection remains blocked.");
+                return RunStatus.Success;
+            }
+            TreeRoot.StatusText = "Returning to graveyard spirit healer";
+            Navigator.MoveTo(_graveyardPoint);
+            return RunStatus.Success;
+        }
+
         private static Composite CreateSpiritHealerBehavior()
         {
             return new PrioritySelector(
                 ctx => ObjectManager.CachedUnits
-                    .FirstOrDefault(u => u.IsSpiritHealer),
+                    .Where(u => u.IsValid && u.IsSpiritHealer)
+                    .OrderBy(u => u.DistanceSqr).FirstOrDefault(),
+                new Decorator(ctx => DateTime.UtcNow - _healerStartedUtc > TimeSpan.FromMinutes(5),
+                    new TreeSharp.Action(ctx => TreeRoot.Stop("Spirit healer recovery timed out; unsafe corpse resurrection remains blocked."))),
+                new Decorator(ctx => ctx == null,
+                    new TreeSharp.Action(ctx => ReturnToSpiritHealer())),
                 // Move to spirit healer
                 new Decorator(
-                    ctx => ctx != null && ((WoWObject)ctx).DistanceSqr > 16.0,
+                    ctx => ctx != null && !((WoWObject)ctx).WithinInteractRange,
                     new TreeSharp.Action(ctx => { Navigator.MoveTo(((WoWObject)ctx).Location); })
                 ),
                 // Interact with spirit healer
                 new Decorator(
-                    ctx => ctx != null && ((WoWObject)ctx).DistanceSqr < 16.0,
+                    ctx => ctx != null && ((WoWObject)ctx).WithinInteractRange,
                     new Sequence(
                         new TreeSharp.Action(ctx => ((WoWObject)ctx).Interact()),
                         new Wait(5,
                             ctx => Lua.GetReturnVal<bool>("return StaticPopup1:IsVisible() or GossipFrame:IsVisible()", 0),
                             new Sequence(
                                 // GossipFrame path: select Healer gossip option (decorator skips if frame absent)
-                                new DecoratorFrameIsVisible<GossipFrame>(
+                                new DecoratorContinue(ctx => GossipFrame.Instance.IsVisible,
                                     new TreeSharp.Action(ctx =>
                                     {
                                         var entry = GossipFrame.Instance.GossipOptionEntries
                                             .FirstOrDefault(e => e.Type == GossipEntry.GossipEntryType.Healer);
                                         if (entry.Type == GossipEntry.GossipEntryType.Healer)
                                             GossipFrame.Instance.SelectGossipOption(entry.Index);
-                                        else if (GossipFrame.Instance.GossipOptionEntries?.Count > 0)
-                                            GossipFrame.Instance.SelectGossipOption(0);
                                     })
                                 ),
-                                // StaticPopup1 path: click the "Resurrect" button
-                                new TreeSharp.Action(ctx => Lua.DoString("if StaticPopup1 and StaticPopup1:IsVisible() then StaticPopup1Button1:Click() else AcceptResurrect() end")),
-                                // HB 4.3.4 smethod_80 — reset state regardless of which path triggered
-                                new TreeSharp.Action(ctx =>
-                                {
-                                    SleepForLag();
-                                    Lua.DoString("AcceptXPLoss()");
-                                    ShouldUseSpiritHealer = false;
-                                    _deathCount = 0;
-                                })
+                                new WaitContinue(1, ctx => false, new ActionAlwaysSucceed()),
+                                new TreeSharp.Action(ctx => Lua.DoString("AcceptXPLoss()")),
+                                new WaitContinue(5, ctx => StyxWoW.Me.IsAlive && !StyxWoW.Me.IsGhost,
+                                    new ActionAlwaysSucceed())
                             )
                         )
                     )
@@ -380,77 +522,34 @@ namespace Bots.Grind
 
         private static Composite CreateCorpseRetrievalBehavior()
         {
-            return new Sequence(
-                // Set POI to corpse if not already
-                new DecoratorContinue(
-                    ctx => BotPoi.Current.Type != PoiType.Corpse,
-                    new ActionSetPoi(ctx => new BotPoi(FindSafeResPoint(), PoiType.Corpse))
-                ),
-                new DecoratorIsPoiType(PoiType.Corpse, new Sequence(
-                    // If we're alive now (not ghost), clear POI
-                    new DecoratorContinue(
-                        ctx => StyxWoW.Me.IsAlive && !StyxWoW.Me.IsGhost,
-                        new Sequence(
-                            new TreeSharp.Action(ctx => _corpseWaitStopwatch.Reset()),
-                            new ActionClearPoi("Resurrected"),
-                            new ActionAlwaysFail()
-                        )
-                    ),
-                    // Start stopwatch if not running
-                    new DecoratorContinue(
-                        ctx => !_corpseWaitStopwatch.IsRunning,
-                        new TreeSharp.Action(ctx => _corpseWaitStopwatch.Start())
-                    ),
-                    // If POI is at corpse point exactly, grab corpse immediately
-                    new DecoratorContinue(
-                        ctx => BotPoi.Current.Type == PoiType.Corpse && 
-                               BotPoi.Current.Location == StyxWoW.Me.CorpsePoint,
-                        new Sequence(
-                            new ActionSetActivity("Safespot is invalid. Grabbing corpse..."),
-                            new TreeSharp.Action(ctx => GrabCorpse()),
-                            new TreeSharp.Action(ctx => _corpseWaitStopwatch.Reset()),
-                            new ActionClearPoi("Grabbed our corpse.")
-                        )
-                    ),
-                    // Safe res timer expired (40 seconds)
-                    new DecoratorContinue(
-                        ctx => _corpseWaitStopwatch.Elapsed.Seconds > 40,
-                        new Sequence(
-                            new ActionSetActivity("SafeRes timer expired - Grabbing our corpse where we are."),
-                            new TreeSharp.Action(ctx => GrabCorpse()),
-                            new TreeSharp.Action(ctx => _corpseWaitStopwatch.Reset()),
-                            new WaitContinue(5, ctx => StyxWoW.Me.IsAlive, null),
-                            new ActionClearPoi("Res timer expired. Grabbed our corpse.")
-                        )
-                    ),
-                    // Near safe spot - grab corpse
-                    new Sequence(
-                        new DecoratorContinue(
-                            ctx => _corpseWaitStopwatch.Elapsed.Seconds < 40 && IsNearCurrentPoi(),
-                            new Sequence(
-                                new ActionSetActivity("Grabbing corpse"),
-                                new TreeSharp.Action(ctx => GrabCorpse()),
-                                new TreeSharp.Action(ctx => _corpseWaitStopwatch.Reset()),
-                                new WaitContinue(5, ctx => StyxWoW.Me.IsAlive, null),
-                                new ActionClearPoi("Grabbed corpse at safe spot")
-                            )
-                        )
-                    )
-                )),
-                // Instance corpse - move to portal
-                new DecoratorContinue(
-                    ctx => StyxWoW.Me.InstanceCorpseLocation != WoWPoint.Empty,
-                    new Sequence(
-                        new ActionSetActivity("Moving to instance portal, since we died inside."),
-                        new NavigationAction(ctx => StyxWoW.Me.InstanceCorpseLocation)
-                    )
-                ),
-                // Move to POI
-                new Decorator(
-                    ctx => BotPoi.Current.Location != WoWPoint.Zero,
-                    new ActionMoveToPoi()
-                )
-            );
+            // Yield every pulse so a healer request or resurrection is observed
+            // before any further corpse movement or retrieval attempt.
+            return new TreeSharp.Action(ctx =>
+            {
+                var me = StyxWoW.Me;
+                if (!me.IsGhost || ShouldUseSpiritHealer) return RunStatus.Success;
+                if (!_corpseWaitStopwatch.IsRunning) _corpseWaitStopwatch.Start();
+                if (BotPoi.Current.Type != PoiType.Corpse)
+                {
+                    if (DateTime.UtcNow < _nextSafePointSearchUtc) return RunStatus.Success;
+                    _nextSafePointSearchUtc = DateTime.UtcNow.AddSeconds(5);
+                    var safePoint = FindSafeResPoint();
+                    if (safePoint == WoWPoint.Empty)
+                    {
+                        if (CorpseRecoveryState.ShouldUseHealer(CharacterSettings.Instance.RessAtSpiritHealers,
+                            _diedInInstance || me.IsInInstance, Battlegrounds.IsInsideBattleground, false, true))
+                            BeginSpiritHealerRecovery("no safe resurrection point around the corpse");
+                        else
+                            TreeRoot.StatusText = "No safe resurrection point; remaining a ghost";
+                        return RunStatus.Success;
+                    }
+                    BotPoi.Current = new BotPoi(safePoint, PoiType.Corpse);
+                }
+                if (_corpseWaitStopwatch.Elapsed.TotalSeconds >= 40 || IsNearCurrentPoi())
+                    return GrabCorpse();
+                Navigator.MoveTo(BotPoi.Current.Location);
+                return RunStatus.Success;
+            });
         }
 
         private static bool IsNearCurrentPoi()
@@ -462,35 +561,31 @@ namespace Bots.Grind
 
         /// <summary>
         /// HB 4.3.4 smethod_6 — Attempt to retrieve corpse.
-        /// Returns Running while waiting for recovery delay, Success after RetrieveCorpse().
+        /// Yields each pulse so recovery decisions and server state are rechecked.
         /// </summary>
         private static RunStatus GrabCorpse()
         {
+            var me = StyxWoW.Me;
+            bool safe = IsResPointSafe(me.Location, ObjectManager.CachedUnits);
+            if (!safe)
+            {
+                if (_corpseWaitStopwatch.Elapsed.TotalSeconds >= 40 &&
+                    CorpseRecoveryState.ShouldUseHealer(CharacterSettings.Instance.RessAtSpiritHealers,
+                        _diedInInstance || me.IsInInstance, Battlegrounds.IsInsideBattleground, false, true))
+                    BeginSpiritHealerRecovery("safe-resurrection wait expired with hostiles still nearby");
+                else
+                    BotPoi.Clear("Hostiles moved near the resurrection point; search again");
+                return RunStatus.Success;
+            }
             if (Lua.GetReturnVal<int>("return GetCorpseRecoveryDelay()", 0) != 0)
             {
-                Logging.Write("Waiting for corpse recovery delay to expire.");
-                return RunStatus.Running;
+                TreeRoot.StatusText = "Waiting for corpse recovery delay to expire";
+                return RunStatus.Success;
             }
-
+            if (!CorpseRecoveryState.CanRetrieve(me.IsGhost, safe, ShouldUseSpiritHealer, true))
+                return RunStatus.Success;
             Logging.Write("Clicking corpse popup...");
             Lua.DoString("RetrieveCorpse()");
-
-            if (CharacterSettings.Instance.RessAtSpiritHealers && !Battlegrounds.IsInsideBattleground)
-            {
-                if (!_deathTimer.IsFinished)
-                {
-                    ++_deathCount;
-                    Logging.Write("Corpse possibly being camped. Camp count: {0}/3", _deathCount);
-                }
-                _deathTimer.Reset();
-                if (_deathCount >= 3)
-                {
-                    Logging.Write("Corpse camp protection tripped. Attempting to resurrect at a spirit healer.");
-                    ShouldUseSpiritHealer = true;
-                    _deathCount = 0;
-                }
-            }
-
             return RunStatus.Success;
         }
 
@@ -500,10 +595,13 @@ namespace Bots.Grind
                 return;
 
             _releaseTimer.Reset();
+            _corpseWaitStopwatch.Reset();
+            _nextSafePointSearchUtc = DateTime.MinValue;
             GameStats.Died();
             Navigator.Clear();
             Logging.Write("I died.");
             _diedIndoors = StyxWoW.Me.IsIndoors;
+            _diedInInstance = StyxWoW.Me.IsInInstance;
             Lua.DoString("RepopMe()");
         }
 
@@ -547,10 +645,10 @@ namespace Bots.Grind
             WoWPoint originalCorpse = StyxWoW.Me.CorpsePoint;
 
             // Gather hostile NPC positions
-            List<WoWPoint> hostilePositions = ObjectManager.GetObjectsOfType<WoWUnit>(true, false)
-                .Where(u => !u.Dead && u.IsHostile)
-                .Select(u => u.Location)
+            var hostiles = ObjectManager.GetObjectsOfType<WoWUnit>(true, false)
+                .Where(u => u.IsValid && !u.Dead && u.IsHostile)
                 .ToList();
+            var hostilePositions = hostiles.Select(u => u.Location).ToList();
 
             Logging.Write("There are {0} hostile mobs near our corpse.", hostilePositions.Count);
 
@@ -559,7 +657,8 @@ namespace Bots.Grind
             WoWPoint myLocation = StyxWoW.Me.Location;
 
             // If corpse hasn't moved significantly and no hostiles within 25yd, use original point directly
-            if (corpsePoint.Distance2D(originalCorpse) < 39f && IsPointSafeFromHostiles(originalCorpse, hostilePositions))
+            if (corpsePoint.Distance2D(originalCorpse) < 39f && IsResPointSafe(originalCorpse, hostiles) &&
+                Navigator.CanNavigateFully(myLocation, originalCorpse))
                 return originalCorpse;
 
             // Build raycast lines from corpse outward
@@ -579,7 +678,7 @@ namespace Bots.Grind
             // MassTraceLine for LOS — points that hit geometry are blocked
             GameWorld.MassTraceLine(traceLines.ToArray(), GameWorld.CGWorldFrameHitFlags.HitTestLOS, out bool[] hitResults);
 
-            WoWPoint bestPoint = corpsePoint;
+            WoWPoint bestPoint = WoWPoint.Empty;
             float bestDistance = 0f;
 
             for (int i = 0; i < traceLines.Count; i++)
@@ -589,6 +688,8 @@ namespace Bots.Grind
                     continue;
 
                 WoWPoint candidate = traceLines[i].End;
+                // A point must actually be safe, not merely less dangerous than the corpse.
+                if (!IsResPointSafe(candidate, hostiles)) continue;
 
                 // Validate path to candidate
                 WoWPoint[]? path = Navigator.GeneratePath(myLocation, candidate);
@@ -598,14 +699,15 @@ namespace Bots.Grind
                 // Check path endpoint is close to candidate (within PathPrecision + Z tolerance)
                 WoWPoint pathEnd = path[path.Length - 1];
                 if (pathEnd.Distance2DSqr(candidate) > Navigator.PathPrecision * Navigator.PathPrecision ||
-                    Math.Abs(pathEnd.Z - candidate.Z) >= 3f)
+                    Math.Abs(pathEnd.Z - candidate.Z) >= 3f ||
+                    pathEnd.Distance(corpsePoint) >= 39f || !IsResPointSafe(pathEnd, hostiles))
                     continue;
 
                 // Score: distance from nearest hostile (higher = safer)
                 float distFromHostile = GetDistanceToNearestHostile(candidate, hostilePositions);
                 if (distFromHostile > bestDistance)
                 {
-                    bestPoint = candidate;
+                    bestPoint = pathEnd;
                     bestDistance = distFromHostile;
                 }
             }
@@ -616,10 +718,10 @@ namespace Bots.Grind
         /// <summary>
         /// HB 4.3.4 Class635.smethod_3 — Check if no hostile is within 25 yards of a point.
         /// </summary>
-        private static bool IsPointSafeFromHostiles(WoWPoint point, IEnumerable<WoWPoint> hostilePositions)
+        private static bool IsResPointSafe(WoWPoint point, IEnumerable<WoWUnit> units)
         {
-            // 625f = 25 * 25 (25 yard radius check)
-            return !hostilePositions.Any(h => h.DistanceSqr(point) < 625f);
+            return units.Where(u => u.IsValid && !u.Dead && u.IsHostile).All(u =>
+                GrindSafetyPolicy.IsHostileSafeForResurrection(point.Distance(u.Location), u.MyAggroRange));
         }
 
         /// <summary>
@@ -651,16 +753,6 @@ namespace Bots.Grind
             if (!_lootEventsAttached)
             {
                 Lua.Events.AttachEvent("CHAT_MSG_LOOT", OnLootEvent);
-                BotEvents.Player.OnMobKilled += args =>
-                {
-                    if (!CharacterSettings.Instance.LootMobs ||
-                        RaFHelper.Leader != null ||
-                        Battlegrounds.IsInsideBattleground ||
-                        StyxWoW.Me.IsInInstance ||
-                        Targeting.GetAggroOnMeWithin(StyxWoW.Me.Location, 30f) != 0)
-                        return;
-                    StyxWoW.Sleep(1500);
-                };
                 _lootEventsAttached = true;
             }
 
@@ -795,8 +887,7 @@ namespace Bots.Grind
                                         _lastLootPoiType = BotPoi.Current.Type;
                                         _lastLootGuid = BotPoi.Current.Guid;
                                     }),
-                                    new ActionClearPoi("Waiting for loot flag"),
-                                    new TreeSharp.Action(ctx => SleepForLag())
+                                    new ActionClearPoi("Waiting for loot flag")
                                 ),
                                 // Fallback - check if we can still loot
                                 new TreeSharp.Action(ctx =>
@@ -911,6 +1002,10 @@ namespace Bots.Grind
                 // Handle vendor POI types
                 new DecoratorIsPoiType(new[] { PoiType.Sell, PoiType.Repair, PoiType.Mail, PoiType.Buy, PoiType.Train, PoiType.Fly },
                     new PrioritySelector(
+                        new Decorator(
+                            ctx => VendorManager.RejectInvalidCurrentVendor(),
+                            new ActionClearPoi("Unsafe or invalid service NPC; selecting an alternative")
+                        ),
                         // Move to vendor
                         new Decorator(
                             ctx => BotPoi.Current.Location.Distance(StyxWoW.Me.Location) > 5.0,
@@ -931,7 +1026,7 @@ namespace Bots.Grind
                                         new DecoratorContinue(
                                             ctx => BotPoi.Current.AsVendor != null,
                                             new TreeSharp.Action(ctx => 
-                                                ProfileManager.CurrentProfile.VendorManager.Blacklist.Add(BotPoi.Current.AsVendor))
+                                                VendorManager.RejectVendor((int)BotPoi.Current.Entry, "service NPC was not found"))
                                         ),
                                         new ActionClearPoi("Vendor/mailbox was blacklisted")
                                     )
@@ -988,8 +1083,8 @@ namespace Bots.Grind
                                                 new Sequence(
                                                     new ActionDebugString("Selling items"),
                                                     new ActionSetActivity("Selling Items"),
-                                                    new TreeSharp.Action(ctx => Vendors.SellAllItems()),
-                                                    new ActionSleep(2000),
+                                                    new TreeSharp.Action(ctx =>
+                                                        Vendors.SellAllItemsStep() ? RunStatus.Success : RunStatus.Running),
                                                     new DecoratorContinue(
                                                         ctx => StyxWoW.Me.FreeBagSlots < 2,
                                                         new Sequence(
@@ -1057,6 +1152,12 @@ namespace Bots.Grind
                                         )),
                                         // Buy
                                         new DecoratorIsPoiType(PoiType.Buy, new Sequence(
+                                            // The merchant frame can become visible before its item list is
+                                            // populated. Give the WotLK client time to receive the catalog.
+                                            new Wait(3,
+                                                ctx => MerchantFrame.Instance.IsVisible &&
+                                                       MerchantFrame.Instance.LuaMerchantNumItems > 0,
+                                                new ActionIdle()),
                                             new ActionDebugString("Buying items"),
                                             new ActionSetActivity("Buying Items"),
                                             new TreeSharp.Action(ctx => Vendors.BuyItems()),
@@ -1118,10 +1219,15 @@ namespace Bots.Grind
         private static bool NeedToSell()
         {
             if (StyxWoW.Me == null) return false;
+            bool needsSellRun = Vendors.ForceSell ||
+                                StyxWoW.Me.FreeNormalBagSlots <= ProfileManager.CurrentProfile.MinFreeBagSlots;
+            if (!needsSellRun)
+                return false;
+
             // HB 4.3.4 smethod_11 — no FindVendorsAutomatically check
             if (ProfileManager.CurrentProfile?.VendorManager?.GetClosestVendor(Vendor.VendorType.Sell) == null)
                 return false;
-            return Vendors.ForceSell || StyxWoW.Me.FreeNormalBagSlots <= ProfileManager.CurrentProfile.MinFreeBagSlots;
+            return true;
         }
 
         private static bool NeedToTrain()
@@ -1129,9 +1235,33 @@ namespace Bots.Grind
             // HB 4.3.4 smethod_12
             if (!CharacterSettings.Instance.TrainNewSkills && !Vendors.ForceTrainer)
                 return false;
-            if (ProfileManager.CurrentProfile?.VendorManager?.GetClosestVendor(Vendor.VendorType.Train) == null)
+            if (!Vendors.ForceTrainer && !Vendors.NeedClassTraining)
                 return false;
-            return Vendors.ForceTrainer || Vendors.NeedClassTraining;
+            var trainer = ProfileManager.CurrentProfile?.VendorManager?.GetClosestVendor(Vendor.VendorType.Train);
+            if (trainer == null || StyxWoW.Me == null)
+                return false;
+
+            float distance = StyxWoW.Me.Location.Distance(trainer.Location);
+            bool hasKnownFlightConnection = FlightPaths.HasKnownConnection(StyxWoW.Me.Location, trainer.Location);
+            if (!ShouldVisitTrainer(distance, hasKnownFlightConnection))
+            {
+                if (_trainerRouteLogTimer.IsFinished)
+                {
+                    Logging.WriteDebug(
+                        "Deferring trainer '{0}' ({1:F0} yards): no efficient flight route is known.",
+                        trainer.Name,
+                        distance);
+                    _trainerRouteLogTimer.Reset();
+                }
+                return false;
+            }
+            return true;
+        }
+
+        internal static bool ShouldVisitTrainer(float distance, bool hasKnownFlightConnection)
+        {
+            const float MaximumAutomaticGroundTrainerDistance = 1200f;
+            return distance <= MaximumAutomaticGroundTrainerDistance || hasKnownFlightConnection;
         }
 
         private static bool NeedToRepair()
@@ -1139,8 +1269,6 @@ namespace Bots.Grind
             if (StyxWoW.Me == null) return false;
             // HB 4.3.4 smethod_13 — no FindVendorsAutomatically check
             if (Vendors.RepairDisabled)
-                return false;
-            if (ProfileManager.CurrentProfile?.VendorManager?.GetClosestVendor(Vendor.VendorType.Repair) == null)
                 return false;
 
             // HB 4.3.4: update repair cost periodically
@@ -1165,7 +1293,13 @@ namespace Bots.Grind
                 return false;
             }
 
-            return Vendors.ForceRepair || StyxWoW.Me.LowestDurabilityPercent <= ProfileManager.CurrentProfile.MinDurability;
+            bool needsRepairRun = Vendors.ForceRepair ||
+                                  StyxWoW.Me.LowestDurabilityPercent <= ProfileManager.CurrentProfile.MinDurability;
+            if (!needsRepairRun)
+                return false;
+
+            return ProfileManager.CurrentProfile?.VendorManager?
+                .GetClosestVendor(Vendor.VendorType.Repair) != null;
         }
 
         /// <summary>
@@ -1189,24 +1323,30 @@ namespace Bots.Grind
             if (Vendors.ForceBuy)
                 return true;
 
+            // Check inventory need before automatic vendor discovery. Database discovery can
+            // path-test many NPCs, so it must not run on every ordinary combat/movement pulse.
+            bool usesMana = StyxWoW.Me.PowerType == WoWPowerType.Mana || StyxWoW.Me.Class == WoWClass.Druid;
+            bool needsDrink = usesMana && Consumable.GetBestDrink(false) == null &&
+                              CharacterSettings.Instance.DrinkAmount > 0;
+            bool needsFood = Consumable.GetBestFood(false) == null && CharacterSettings.Instance.FoodAmount > 0;
+            if (!needsDrink && !needsFood)
+                return false;
+
             // HB 4.3.4: Check if food vendor exists (from profile or NPC database)
             var foodVendor = ProfileManager.CurrentProfile?.VendorManager?.GetClosestVendor(Vendor.VendorType.Food);
             if (foodVendor == null)
                 return false;
 
-            // HB 4.3.4: Check if need drink (mana users only)
-            bool usesMana = StyxWoW.Me.PowerType == WoWPowerType.Mana || StyxWoW.Me.Class == WoWClass.Druid;
-            if (usesMana && Consumable.GetBestDrink(false) == null && CharacterSettings.Instance.DrinkAmount > 0)
+            if (needsDrink)
             {
-                Logging.WriteDebug("[NeedToBuy] Need drink: DrinkAmount={0}, Vendor={1}", 
+                Logging.WriteDebug("[NeedToBuy] Need drink: DrinkAmount={0}, Vendor={1}",
                     CharacterSettings.Instance.DrinkAmount, foodVendor.Name);
                 return true;
             }
-            
-            // HB 4.3.4: Check if need food
-            if (Consumable.GetBestFood(false) == null && CharacterSettings.Instance.FoodAmount > 0)
+
+            if (needsFood)
             {
-                Logging.WriteDebug("[NeedToBuy] Need food: FoodAmount={0}, Vendor={1}", 
+                Logging.WriteDebug("[NeedToBuy] Need food: FoodAmount={0}, Vendor={1}",
                     CharacterSettings.Instance.FoodAmount, foodVendor.Name);
                 return true;
             }

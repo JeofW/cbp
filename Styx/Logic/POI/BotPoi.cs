@@ -35,6 +35,11 @@ namespace Styx.Logic.POI
 
 		private static void OnPlayerDied()
 		{
+			// Record the service destination before corpse recovery clears it.
+			// Never attribute ordinary quest/combat deaths to an old service trip.
+			if (VendorSafetyPolicy.IsService(_current.Type))
+				VendorManager.RejectVendor((int)_current.Entry,
+					"died during service trip to " + _current.Name);
 			Clear();
 		}
 

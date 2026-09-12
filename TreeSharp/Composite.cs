@@ -40,7 +40,8 @@ namespace TreeSharp
             try
             {
                 if (!_enumerator.MoveNext())
-                    throw new ApplicationException("Iterator completed unexpectedly - did Execute() yield all status values correctly?");
+                    throw new ApplicationException(
+                        $"Iterator completed unexpectedly in {GetType().FullName} - did Execute() yield all status values correctly?");
 
                 LastStatus = _enumerator.Current;
             }

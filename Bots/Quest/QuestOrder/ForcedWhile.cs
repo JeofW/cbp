@@ -53,27 +53,37 @@ public class ForcedWhile : ForcedBehavior
             if (!this.hasInitialized)
             {
                 bool flag = false;
-                bool completionUnknown = false;
-                try
+                while (true)
                 {
-                    QuestConditionEvaluationState condition = QuestConditionEvaluation.Evaluate(this.whileNode.Condition);
-                    completionUnknown = condition == QuestConditionEvaluationState.Unknown;
-                    flag = condition == QuestConditionEvaluationState.True;
-                }
-                catch (Exception ex)
-                {
-                    if (ex is ThreadAbortException)
-                        throw;
-                    Logging.Write(Color.Red, "Unable to evaluate compile condition in While tag. Please check your profile.");
-                    Logging.Write(Color.Red, "CopilotBuddy stopped!");
-                    Logging.WriteException(ex);
-                    TreeRoot.Stop();
-                    yield break;
-                }
-                if (completionUnknown)
-                {
-                    yield return RunStatus.Running;
-                    yield break;
+                    bool completionUnknown = false;
+                    bool evaluationFailed = false;
+                    try
+                    {
+                        QuestConditionEvaluationState condition = QuestConditionEvaluation.Evaluate(this.whileNode.Condition.CallableExpression);
+                        completionUnknown = condition == QuestConditionEvaluationState.Unknown;
+                        flag = condition == QuestConditionEvaluationState.True;
+                    }
+                    catch (Exception ex)
+                    {
+                        if (ex is ThreadAbortException)
+                            throw;
+                        Logging.Write(Color.Red, "Unable to evaluate compile condition in While tag. Please check your profile.");
+                        Logging.Write(Color.Red, "CopilotBuddy stopped!");
+                        Logging.WriteException(ex);
+                        TreeRoot.Stop();
+                        evaluationFailed = true;
+                    }
+                    if (evaluationFailed)
+                    {
+                        yield return RunStatus.Failure;
+                        yield break;
+                    }
+                    if (completionUnknown)
+                    {
+                        yield return RunStatus.Running;
+                        continue;
+                    }
+                    break;
                 }
                 if (!flag)
                 {

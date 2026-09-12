@@ -13,7 +13,7 @@ namespace Styx.Logic.Profiles.Quest
         public IfNode(Func<bool> condition, IEnumerable<OrderNode> body)
             : base(OrderNodeType.If)
         {
-            this.Condition = condition ?? throw new ArgumentNullException(nameof(condition));
+            this.Condition = DelayCompiledExpression.FromDelegate(condition ?? throw new ArgumentNullException(nameof(condition)));
             this.Body = body != null ? new OrderNodeCollection(body) : new OrderNodeCollection();
             this.ElseIfs = new List<ElseIf>();
         }
@@ -36,7 +36,41 @@ namespace Styx.Logic.Profiles.Quest
         {
         }
 
-        public Func<bool> Condition { get; private set; }
+
+        public IfNode(string conditionText, IEnumerable<OrderNode> body, XElement element)
+            : base(OrderNodeType.If, element)
+        {
+            if (string.IsNullOrEmpty(conditionText))
+                throw new ArgumentException("condition cannot be null or empty", nameof(conditionText));
+
+            this.ConditionText = conditionText;
+            this.Condition = DelayCompiledExpression.Condition(conditionText);
+            this.Body = body != null ? new OrderNodeCollection(body) : new OrderNodeCollection();
+            this.ElseIfs = new List<ElseIf>();
+        }
+
+        public IfNode(string conditionText, IEnumerable<OrderNode> body, IEnumerable<ElseIf> elseIfs, XElement element)
+            : this(conditionText, body, element)
+        {
+            if (elseIfs != null)
+                this.ElseIfs.AddRange(elseIfs);
+        }
+
+        public IfNode(string conditionText, IEnumerable<OrderNode> body, IEnumerable<ElseIf> elseIfs, Else @else, XElement element)
+            : this(conditionText, body, elseIfs, element)
+        {
+            this.Else = @else;
+        }
+
+        public IfNode(string conditionText, IEnumerable<OrderNode> body, Else @else, XElement element)
+            : this(conditionText, body, null, @else, element)
+        {
+        }
+
+        public string ConditionText { get; private set; }
+
+        [CompileExpression]
+        public DelayCompiledExpression<Func<bool>> Condition { get; private set; }
 
         public OrderNodeCollection Body { get; private set; }
 
@@ -50,13 +84,9 @@ namespace Styx.Logic.Profiles.Quest
             if (condAttr == null)
                 throw new ProfileMissingAttributeException("condition", element);
 
-            Func<bool> condition = ConditionHelper.ParseConditionString(condAttr.Value);
-            if (condition == null)
-                throw new ProfileException($"Could not parse If Condition code: {condAttr.Value}");
-
             // Parse ElseIf nodes
             List<ElseIf> elseIfList = new List<ElseIf>();
-            foreach (XElement elseIfElem in element.Elements().Where(e => 
+            foreach (XElement elseIfElem in element.Elements().Where(e =>
                 e.Name.ToString().Equals("elseif", StringComparison.OrdinalIgnoreCase)))
             {
                 elseIfList.Add(ElseIf.FromXml(elseIfElem));
@@ -64,7 +94,7 @@ namespace Styx.Logic.Profiles.Quest
 
             // Parse Else node
             Else @else = null;
-            XElement elseElem = element.Elements().FirstOrDefault(e => 
+            XElement elseElem = element.Elements().FirstOrDefault(e =>
                 e.Name.ToString().Equals("else", StringComparison.OrdinalIgnoreCase));
             if (elseElem != null)
                 @else = Else.FromXml(elseElem);
@@ -89,7 +119,7 @@ namespace Styx.Logic.Profiles.Quest
                 }
             }
 
-            return new IfNode(condition, body, elseIfList, @else);
+            return new IfNode(condAttr.Value, body, elseIfList, @else, element);
         }
 
         public IEnumerable<OrderNode> GetNodes()

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Runtime.InteropServices;
 using GreenMagic;
 using Styx.WoWInternals;
@@ -421,7 +422,15 @@ namespace Styx.Logic.Questing
 				if (TryPopulateCompletedQuestIdsFromMemory(out List<uint> completedQuestIds))
 					return completedQuestIds;
 
-				Styx.Helpers.Logging.Write("[QuestLog] Failed to read completed quest cache");
+				if (TryPopulateCompletedQuestIdsFromLua(out completedQuestIds))
+				{
+					Styx.Helpers.Logging.WriteDiagnostic(
+						"[QuestLog] Loaded {0} completed quests from Lua fallback",
+						completedQuestIds.Count);
+					return completedQuestIds;
+				}
+
+				Styx.Helpers.Logging.Write("[QuestLog] Failed to read completed quest cache from memory and Lua");
 				return null;
 			}
 			catch (Exception ex)
@@ -456,6 +465,50 @@ namespace Styx.Logic.Questing
 				return (node.Next, node.QuestId);
 			}, out completedQuestIds))
 				return false;
+			return true;
+		}
+
+		private static bool TryPopulateCompletedQuestIdsFromLua(out List<uint> completedQuestIds)
+		{
+			const string script =
+				"local quests,ids,chunks,part={},{},{},'';" +
+				"GetQuestsCompleted(quests);" +
+				"for id,done in pairs(quests) do if done then table.insert(ids,id) end end;" +
+				"table.sort(ids);" +
+				"for i=1,#ids do local token=tostring(ids[i])..',';" +
+				"if #part+#token>200 then table.insert(chunks,part);part=token else part=part..token end end;" +
+				"table.insert(chunks,part);return unpack(chunks)";
+
+			List<string> chunks = Lua.GetReturnValues(script, "CopilotBuddy.CompletedQuests.lua");
+			return TryParseCompletedQuestIdChunks(chunks, out completedQuestIds);
+		}
+
+		internal static bool TryParseCompletedQuestIdChunks(
+			IEnumerable<string> chunks,
+			out List<uint> completedQuestIds)
+		{
+			completedQuestIds = new List<uint>();
+			if (chunks == null)
+				return false;
+
+			bool receivedChunk = false;
+			var ids = new SortedSet<uint>();
+			foreach (string chunk in chunks)
+			{
+				if (chunk == null)
+					return false;
+				receivedChunk = true;
+				foreach (string token in chunk.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+				{
+					if (!uint.TryParse(token, NumberStyles.None, CultureInfo.InvariantCulture, out uint questId) || questId == 0)
+						return false;
+					ids.Add(questId);
+				}
+			}
+
+			if (!receivedChunk)
+				return false;
+			completedQuestIds.AddRange(ids);
 			return true;
 		}
 

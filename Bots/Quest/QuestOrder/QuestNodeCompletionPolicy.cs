@@ -31,10 +31,12 @@ internal static class QuestNodeCompletionPolicy
 
     public static QuestNodeCompletionAction ForObjective(QuestCompletionState completion, bool accepted)
     {
+        if (accepted)
+            return completion == QuestCompletionState.KnownComplete
+                ? QuestNodeCompletionAction.Skip
+                : QuestNodeCompletionAction.Execute;
         if (completion == QuestCompletionState.Unknown)
             return QuestNodeCompletionAction.Defer;
-        if (accepted && completion == QuestCompletionState.KnownIncomplete)
-            return QuestNodeCompletionAction.Execute;
         return QuestNodeCompletionAction.Skip;
     }
 }

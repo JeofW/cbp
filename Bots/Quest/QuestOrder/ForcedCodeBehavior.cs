@@ -81,6 +81,9 @@ public class ForcedCodeBehavior : ForcedBehavior
 
     public override bool IsExecutionDeferred => _doneState == QuestConditionEvaluationState.Unknown;
 
+    public override bool SuppressServiceBehavior =>
+        string.Equals(customBehavior.GetType().Name, "UseTransport", StringComparison.Ordinal);
+
     public override void OnStart()
     {
         ProfileBatchManager.EnsureCompiled();

@@ -38,7 +38,7 @@ public class ForcedGrindTo : ForcedBehavior
         {
             if (this.Node.Condition != null)
             {
-                _conditionState = QuestConditionEvaluation.Evaluate(this.Node.Condition);
+                _conditionState = QuestConditionEvaluation.Evaluate(this.Node.Condition.CallableExpression);
                 return _conditionState == QuestConditionEvaluationState.True;
             }
             float fraction = ObjectManager.Me.LevelFraction;
@@ -57,7 +57,7 @@ public class ForcedGrindTo : ForcedBehavior
     {
         if (this.Node.Condition != null)
         {
-            _conditionState = QuestConditionEvaluation.Evaluate(this.Node.Condition);
+            _conditionState = QuestConditionEvaluation.Evaluate(this.Node.Condition.CallableExpression);
             if (_conditionState == QuestConditionEvaluationState.Unknown)
                 return;
         }

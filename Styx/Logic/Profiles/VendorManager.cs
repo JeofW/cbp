@@ -7,6 +7,7 @@ using Styx.Combat.CombatRoutine;
 using Styx.Database;
 using Styx.Helpers;
 using Styx.Logic.Pathing;
+using Styx.Logic.Profiles.Quest;
 using Styx.WoWInternals;
 
 namespace Styx.Logic.Profiles
@@ -72,7 +73,7 @@ namespace Styx.Logic.Profiles
                 // Filter blacklisted vendors at query time instead of mutating _filteredVendors,
                 // so vendors that are later un-blacklisted remain available.
                 return (Lookup<Vendor.VendorType, Vendor>)_filteredVendors
-                    .Where(v => !Blacklist.Contains(v))
+                    .Where(v => !IsBlacklisted(v) && IsUsable(v))
                     .ToLookup(v => v.Type);
             }
         }
@@ -81,6 +82,29 @@ namespace Styx.Logic.Profiles
         /// Gets the blacklisted vendors.
         /// </summary>
         public HashSet<Vendor> Blacklist { get; private set; }
+
+        public bool IsBlacklisted(Vendor vendor) => VendorSafetyPolicy.IsRejected(vendor.Entry) ||
+            Blacklist.Any(failed => failed.Entry == vendor.Entry);
+
+        public static void RejectVendor(int entry, string reason)
+        {
+            if (VendorSafetyPolicy.Reject(entry))
+                Logging.Write("[VendorSafety] Skipping NPC {0} for this session: {1}. Trying the next suitable NPC.", entry, reason);
+        }
+
+        /// <summary>Validate newly visible NPCs before moving closer or interacting.</summary>
+        public static bool RejectInvalidCurrentVendor()
+        {
+            var poi = Styx.Logic.POI.BotPoi.Current;
+            if (!VendorSafetyPolicy.IsService(poi.Type)) return false;
+            if (VendorSafetyPolicy.IsRejected((int)poi.Entry)) return true;
+            var unit = poi.AsUnit;
+            if (unit == null || !unit.IsValid) return false;
+            if (!VendorSafetyPolicy.IsInvalidServiceNpc(poi.Type, unit.Dead, unit.IsHostile,
+                    unit.IsVendor, unit.IsRepairMerchant, unit.IsTrainer || unit.IsAnyTrainer)) return false;
+            RejectVendor((int)poi.Entry, poi.Name + " is dead, hostile, or lacks the requested service");
+            return true;
+        }
 
         /// <summary>
         /// Gets the closest vendor of any type.
@@ -91,6 +115,17 @@ namespace Styx.Logic.Profiles
         }
 
         /// <summary>
+        /// A vendor with no UsableWhen is always usable, otherwise its condition decides.
+        /// HB 6.2.3 VendorManager.smethod_0 folds this into the same predicate as the blacklist.
+        /// </summary>
+        private static bool IsUsable(Vendor vendor)
+        {
+            // Unknown quest completion must defer eligibility, including negated checks.
+            return vendor.UsableWhen == null ||
+                QuestConditionEvaluation.Evaluate(vendor.UsableWhen.CallableExpression) == QuestConditionEvaluationState.True;
+        }
+
+        /// <summary>
         /// Gets the closest vendor of a specific type.
         /// For Sell type, also accepts Repair and Ammo vendors (they can all buy items).
         /// </summary>
@@ -98,42 +133,14 @@ namespace Styx.Logic.Profiles
         {
             try
             {
-                List<Vendor> source = null;
-
-                // Use forced vendors if available
-                if (ForcedVendors != null && ForcedVendors.Count > 0)
+                WoWClass playerClass = StyxWoW.Me?.Class ?? WoWClass.None;
+                var source = GetEligibleVendors(type, playerClass).ToList();
+                if (source.Count == 0)
                 {
-                    source = ForcedVendors.Where(v => MatchesVendorType(v, type)).ToList();
-                }
-                else
-                {
-                    if (type != Vendor.VendorType.Unknown)
-                    {
-                        // For Sell type, also accept Repair and Ammo vendors (like HB 6.2.3)
-                        if (type == Vendor.VendorType.Sell)
-                        {
-                            source = AllVendors?.Where(v => 
-                                v.Type == Vendor.VendorType.Sell || 
-                                v.Type == Vendor.VendorType.Repair ||
-                                v.Type == Vendor.VendorType.Ammo).ToList();
-                        }
-                        else if (Vendors != null)
-                        {
-                            source = Vendors.Contains(type) ? Vendors[type].ToList() : null;
-                        }
-                    }
-                    else
-                    {
-                        source = AllVendors;
-                    }
-                }
-
-                if (source == null || source.Count == 0)
-                {
-                    // Only fall back to Data.bin if FindVendorsAutomatically is enabled
-                    // AND the profile has no vendors defined at all
-                    if (Styx.Helpers.CharacterSettings.Instance.FindVendorsAutomatically && 
-                        (AllVendors == null || AllVendors.Count == 0))
+                    // Retry exhausted service candidates, but preserve explicit profile guards
+                    // and forced-vendor precedence when automatic discovery is enabled.
+                    if (Styx.Helpers.CharacterSettings.Instance.FindVendorsAutomatically &&
+                        CanUseAutomaticFallback(type, playerClass))
                     {
                         try
                         {
@@ -141,7 +148,12 @@ namespace Styx.Logic.Profiles
                                 StyxWoW.Me.FactionTemplate.Faction,
                                 StyxWoW.Me.MapId,
                                 StyxWoW.Me.Location,
-                                type.AsNpcFlag());
+                                type.AsNpcFlag(),
+                                npc => !IsBlacklisted(new Vendor(
+                                    npc.Entry,
+                                    npc.Name,
+                                    type,
+                                    npc.Location)));
                             if (nearestNpc != null)
                             {
                                 return new Vendor(nearestNpc.Entry, nearestNpc.Name, type, nearestNpc.Location);
@@ -156,30 +168,48 @@ namespace Styx.Logic.Profiles
                 }
 
                 WoWPoint location = ObjectManager.Me.Location;
-                WoWClass playerClass = StyxWoW.Me.Class;
-
-                if (type == Vendor.VendorType.Train)
-                {
-                    var vendor = source
-                        .Where(v => v.TrainClass == playerClass)
-                        .OrderBy(v => location.Distance(v.Location))
-                        .FirstOrDefault();
-                    return vendor;
-                }
-                else
-                {
-                    var vendor = source
-                        .Where(v => !Blacklist.Contains(v))
-                        .OrderBy(v => location.Distance(v.Location))
-                        .FirstOrDefault();
-                    return vendor;
-                }
+                WoWFaction playerFaction = StyxWoW.Me?.FactionTemplate?.Faction;
+                return source
+                    .OrderByDescending(v => GetProfileVendorFactionPreference(v, playerFaction))
+                    .ThenBy(v => location.Distance(v.Location))
+                    .FirstOrDefault();
             }
             catch (Exception ex)
             {
                 Logging.WriteException(ex);
                 return null;
             }
+        }
+
+        private static int GetProfileVendorFactionPreference(Vendor vendor, WoWFaction playerFaction)
+        {
+            if (vendor == null || playerFaction == null || vendor.Entry <= 0)
+                return 0;
+
+            NpcResult npc = NpcQueries.GetNpcById((uint)vendor.Entry);
+            if (npc == null || npc.Faction == 0)
+                return 0;
+
+            return NpcQueries.GetFactionPreference(
+                playerFaction.RelationTo(new WoWFaction(npc.Faction)));
+        }
+
+        public IEnumerable<Vendor> GetEligibleVendors(Vendor.VendorType type, WoWClass playerClass)
+        {
+            var source = ForcedVendors != null && ForcedVendors.Count > 0 ? ForcedVendors : AllVendors;
+            return (source ?? Enumerable.Empty<Vendor>()).Where(v =>
+                MatchesVendorType(v, type) &&
+                (type != Vendor.VendorType.Train || v.TrainClass == playerClass) &&
+                !IsBlacklisted(v) && IsUsable(v));
+        }
+
+        private bool CanUseAutomaticFallback(Vendor.VendorType type, WoWClass playerClass)
+        {
+            if (ForcedVendors != null && ForcedVendors.Count > 0) return false;
+            return AllVendors == null || AllVendors.Count == 0 || AllVendors.Any(v =>
+                MatchesVendorType(v, type) &&
+                (type != Vendor.VendorType.Train || v.TrainClass == playerClass) &&
+                IsBlacklisted(v) && IsUsable(v));
         }
 
         /// <summary>

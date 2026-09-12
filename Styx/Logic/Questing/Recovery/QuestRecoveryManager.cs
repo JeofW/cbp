@@ -910,6 +910,7 @@ public sealed class QuestRecoveryManager
                 {
                     State = QuestRecoveryState.HalfOpen,
                     MayAttempt = false,
+                    RetryUtc = RollingBudgetRetryUtcCore(),
                     Status = "Rolling-hour retry budget exhausted."
                 }
                 : new QuestRecoveryDecision
@@ -921,7 +922,30 @@ public sealed class QuestRecoveryManager
                 };
         }
 
-        return QuestRecoveryPolicy.Evaluate(current, context, RollingFailureCountCore(), _clock.UtcNow);
+        var decision = QuestRecoveryPolicy.Evaluate(current, context, RollingFailureCountCore(), _clock.UtcNow);
+        if (decision.State == QuestRecoveryState.HalfOpen && !decision.MayAttempt)
+        {
+            return new QuestRecoveryDecision
+            {
+                State = decision.State,
+                MayAttempt = false,
+                AttemptGeneration = decision.AttemptGeneration,
+                RetryUtc = RollingBudgetRetryUtcCore(),
+                ResetReason = decision.ResetReason,
+                Status = decision.Status
+            };
+        }
+        return decision;
+    }
+
+    private DateTime? RollingBudgetRetryUtcCore()
+    {
+        DateTime now = _clock.UtcNow;
+        var failures = _rollingFailureUtc
+            .Where(timestamp => timestamp > now.Subtract(RollingFailureWindow) && timestamp <= now)
+            .OrderBy(timestamp => timestamp).ToArray();
+        // A probe needs fewer than six live episodes, not merely the oldest expiry.
+        return failures.Length >= 6 ? failures[failures.Length - 6].Add(RollingFailureWindow) : null;
     }
 
     private QuestRecoveryRecord? FindRecordCore(QuestRecoveryKey key) =>

@@ -9,7 +9,12 @@ namespace Styx.Logic.Profiles.Quest
     public class SetVendorNode : OrderNode
     {
         public SetVendorNode(List<Vendor> vendors)
-            : base(OrderNodeType.SetVendor)
+            : this(vendors, null)
+        {
+        }
+
+        private SetVendorNode(List<Vendor> vendors, XElement element)
+            : base(OrderNodeType.SetVendor, element)
         {
             this.Vendors = vendors;
         }
@@ -45,7 +50,7 @@ namespace Styx.Logic.Profiles.Quest
                 {
                     throw new ProfileException("Could not parse SetVendor node", ex);
                 }
-                return new SetVendorNode(vendor);
+                return new SetVendorNode(new List<Vendor> { vendor }, element);
             }
 
             // Multiple vendors
@@ -62,7 +67,7 @@ namespace Styx.Logic.Profiles.Quest
                     throw new ProfileException("Could not parse SetVendor node", ex);
                 }
             }
-            return new SetVendorNode(vendors);
+            return new SetVendorNode(vendors, element);
         }
 
         public override string ToString()
