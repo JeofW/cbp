@@ -67,6 +67,9 @@ namespace Styx.Logic.Pathing
 			if (selectedTransportGuid == 0UL)
 				throw new ArgumentOutOfRangeException(nameof(selectedTransportGuid));
 
+			if (!IsFinite(startDock) || !IsFinite(endDock) || !IsFinite(waitPoint) || !IsFinite(exitPoint))
+				throw new ArgumentException("Elevator docks and landings must have finite coordinates.");
+
 			SelectedTransportGuid = selectedTransportGuid;
 			SelectedTransportEntry = selectedTransportEntry;
 			StartDock = startDock;
@@ -98,8 +101,33 @@ namespace Styx.Logic.Pathing
 			bool boardingPathSafe,
 			bool exitPathSafe)
 		{
+			// Compatibility for existing pure callers whose permission covers both legs.
+			return Observe(observedAtUtc, playerLocation, liveTransportLocation, liveLocationAvailable,
+				attachedTransportGuid, isFalling, hasGroundSupport, boardingPathSafe, boardingPathSafe, exitPathSafe);
+		}
+
+		internal ElevatorTransitDecision Observe(
+			DateTime observedAtUtc,
+			WoWPoint playerLocation,
+			WoWPoint liveTransportLocation,
+			bool liveLocationAvailable,
+			ulong attachedTransportGuid,
+			bool isFalling,
+			bool hasGroundSupport,
+			bool approachPathSafe,
+			bool boardingPathSafe,
+			bool exitPathSafe)
+		{
 			if (!_active)
 				throw new InvalidOperationException("Elevator transit has not begun.");
+
+			// Empty is deliberately allowed when no live platform observation exists.
+			// NaN comparisons must never authorize movement or preserve dock confirmation.
+			if (!IsFinite(playerLocation) || (liveLocationAvailable && !IsFinite(liveTransportLocation)))
+			{
+				ResetDockCandidate();
+				return Decision(ElevatorTransitAction.Wait);
+			}
 
 			bool attachedToSelected = attachedTransportGuid == SelectedTransportGuid;
 			bool attachedToDifferentTransport = attachedTransportGuid != 0UL && !attachedToSelected;
@@ -116,7 +144,7 @@ namespace Styx.Logic.Pathing
 			{
 				case ElevatorTransitStage.Approach:
 				case ElevatorTransitStage.Boarding:
-					if (isFalling || !hasGroundSupport || attachedToDifferentTransport || !boardingPathSafe)
+					if (isFalling || !hasGroundSupport || attachedToDifferentTransport)
 					{
 						// Boarding is a continuing authorization, not a one-time permission.
 						// Lost safety evidence also invalidates the previous stable-dock dwell.
@@ -130,7 +158,9 @@ namespace Styx.Logic.Pathing
 					{
 						_stage = ElevatorTransitStage.Approach;
 						ResetDockCandidate();
-						return Decision(ElevatorTransitAction.MoveToWait, WaitPoint);
+						return approachPathSafe
+							? Decision(ElevatorTransitAction.MoveToWait, WaitPoint)
+							: Decision(ElevatorTransitAction.Wait);
 					}
 
 					if (!liveLocationAvailable || liveTransportLocation.Distance(StartDock) > DockDistanceTolerance)
@@ -138,11 +168,18 @@ namespace Styx.Logic.Pathing
 						bool wasBoarding = _stage == ElevatorTransitStage.Boarding;
 						_stage = ElevatorTransitStage.Approach;
 						ResetDockCandidate();
-						return wasBoarding && boardingPathSafe
+						return wasBoarding && approachPathSafe
 							? Decision(ElevatorTransitAction.MoveToWait, WaitPoint)
 							: Decision(ElevatorTransitAction.Wait);
 					}
 
+					// Permission must describe the actual segment to the live platform,
+					// not the different approach segment to the waiting point.
+					if (!boardingPathSafe)
+					{
+						ResetDockCandidate();
+						return Decision(ElevatorTransitAction.Wait);
+					}
 					if (!HasStableDockObservation(liveTransportLocation, observedAtUtc))
 						return Decision(ElevatorTransitAction.Wait);
 					_stage = ElevatorTransitStage.Boarding;
@@ -194,6 +231,9 @@ namespace Styx.Logic.Pathing
 					return Decision(ElevatorTransitAction.Wait);
 			}
 		}
+
+		private static bool IsFinite(WoWPoint point) =>
+			float.IsFinite(point.X) && float.IsFinite(point.Y) && float.IsFinite(point.Z);
 
 		private bool HasStableDockObservation(WoWPoint liveTransportLocation, DateTime observedAtUtc)
 		{
