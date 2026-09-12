@@ -1,0 +1,237 @@
+[10:16:28.516] [N] CopilotBuddy v1.6.6 started. Original HonorBuddy by Apoc, raphus, highvoltz, bobby53, xanathos, chinajade. Ported to WotLK 3.3.5a by Likon69.
+[10:16:28.908] [N] Searching for WoW process...
+[10:16:29.037] [N] Please wait a few seconds while CopilotBuddy initializes.
+[10:16:29.037] [D] Using WoW with process ID 42120
+[10:16:29.037] [D] Platform: x86
+[10:16:29.037] [D] Executable Path: D:\World of Warcraft 3.3.5a\CB\
+[10:16:29.068] [D] [ObjectManager] WoW build 12340 detected - OK
+[10:16:29.070] [D] [ObjectManager] D3DDevicePtr = 0x00C5DF88
+[10:16:29.070] [D] [ObjectManager] devicePtrAddr = 0x0530CBD0
+[10:16:29.070] [D] [ObjectManager] device = 0x0A4F4D40 (at 0x0531054C)
+[10:16:29.070] [D] [ObjectManager] vtablePtr = 0x0A4F7C9C
+[10:16:29.070] [D] [ObjectManager] endSceneAddr = 0x643348F0 (at 0x0A4F7D44)
+[10:16:29.070] [D] [ObjectManager] D3D: Device=0x0A4F4D40, VTable=0x0A4F7C9C, EndScene=0x643348F0
+[10:16:29.070] [D] [ObjectManager] Creating ExecutorRand...
+[10:16:29.114] [D] [ObjectManager] ExecutorRand created, IsInitialized = True
+[10:16:29.114] [D] [ObjectManager] EndScene hook succeeded
+[10:16:29.119] [D] [ObjectManager] Initialized successfully
+[10:16:29.121] [N] Attached to WoW with ID 42120
+[10:16:29.123] [N] Character is a level 29 BloodElf Paladin
+[10:16:29.124] [N] Current zone is Thousand Needles
+[10:16:29.135] [D] [Settings] Loaded settings for character: Jeof
+[10:16:29.135] [N] Initializing Combat Routines...
+[10:16:29.139] [D] Looking for routines in: D:\World of Warcraft 3.3.5a\CB\Routines
+[10:16:29.139] [D] Compiling Singular wotlk
+[10:16:31.602] [N] Loaded routine: Singular Wotlk for class Paladin
+[10:16:31.602] [N] Loaded 1 combat routine(s)
+[10:16:31.610] [N] Chose Singular Wotlk as your combat class.
+[10:16:31.610] [N] Confirmed Paladin as your class.
+[10:16:31.611] [N] [Singular] Starting Singular v2.0.0.0
+[10:16:31.611] [N] [Singular] Determining talent spec.
+[10:16:32.302] [D] [Singular-DEBUG] [Talents] Best Tree: 18
+[10:16:32.302] [N] [Singular] Current spec is  Retribution Paladin
+[10:16:32.312] [D] [WoWDb] Loaded 237 DBC tables
+[10:16:32.312] [D] [WoWDb]   Key=235 (0x000000EB) Rows=1893
+[10:16:32.312] [D] [WoWDb]   Key=236 (0x000000EC) Rows=7655
+[10:16:32.312] [D] [WoWDb]   Key=237 (0x000000ED) Rows=86
+[10:16:32.312] [D] [WoWDb]   Key=238 (0x000000EE) Rows=506
+[10:16:32.312] [D] [WoWDb]   Key=239 (0x000000EF) Rows=291
+[10:16:32.312] [D] [WoWDb] Lock DBC lookup: FOUND (rows=388)
+[10:16:32.312] [D] [WoWDb] ClientDb.Lock enum value = 356 (0x00000164)
+[10:16:32.313] [D] [Singular-DEBUG] Creating Combat behavior.
+[10:16:32.314] [N] [Singular] Building method list
+[10:16:32.315] [N] [Singular] Added 459 methods
+[10:16:32.317] [D] [Singular-DEBUG] CreateRetributionPaladinNormalPullAndCombat is a match!
+[10:16:32.317] [N] [Singular]  Using CreateRetributionPaladinNormalPullAndCombat for Retribution Paladin - Combat (Priority: 0)
+[10:16:32.329] [D] [Singular-DEBUG] Creating Pull behavior.
+[10:16:32.329] [D] [Singular-DEBUG] CreateRetributionPaladinNormalPullAndCombat is a match!
+[10:16:32.329] [N] [Singular]  Using CreateRetributionPaladinNormalPullAndCombat for Retribution Paladin - Pull (Priority: 0)
+[10:16:32.331] [D] [Singular-DEBUG] Creating Rest behavior.
+[10:16:32.332] [D] [Singular-DEBUG] CreateRetributionPaladinRest is a match!
+[10:16:32.332] [N] [Singular]  Using CreateRetributionPaladinRest for Retribution Paladin - Rest (Priority: 0)
+[10:16:32.334] [D] [Singular-DEBUG] Creating CombatBuffs behavior.
+[10:16:32.335] [D] [Singular-DEBUG] Creating Heal behavior.
+[10:16:32.336] [D] [Singular-DEBUG] CreateRetributionPaladinHeal is a match!
+[10:16:32.336] [N] [Singular]  Using CreateRetributionPaladinHeal for Retribution Paladin - Heal (Priority: 0)
+[10:16:32.336] [D] [Singular-DEBUG] CreateRetributionPaladinNormalPullAndCombat is a match!
+[10:16:32.336] [N] [Singular]  Using CreateRetributionPaladinNormalPullAndCombat for Retribution Paladin - Heal (Priority: 0)
+[10:16:32.337] [D] [Singular-DEBUG] Creating PullBuffs behavior.
+[10:16:32.338] [D] [Singular-DEBUG] Creating PreCombatBuffs behavior.
+[10:16:32.339] [D] [Singular-DEBUG] CreatePaladinPreCombatBuffs is a match!
+[10:16:32.339] [N] [Singular]  Using CreatePaladinPreCombatBuffs for Retribution Paladin - PreCombatBuffs (Priority: 0)
+[10:16:32.342] [N] [Singular] Behaviors created!
+[10:16:32.365] [D] [Singular-DEBUG] Attached combat log
+[10:16:32.366] [D] Routine initialized successfully
+[10:16:32.367] [D] Loading built-in bots from assembly: CopilotBuddy
+[10:16:32.389] [D] Found bot type: PartyBot.DiscoBot
+[10:16:32.390] [N] New bot added: Party Bot
+[10:16:32.390] [D] Loaded built-in bot: Party Bot
+[10:16:32.390] [D] Found bot type: Bots.Quest.QuestBot
+[10:16:32.390] [N] New bot added: Questing
+[10:16:32.390] [D] Loaded built-in bot: Questing
+[10:16:32.390] [D] Found bot type: Bots.Grind.LevelBot
+[10:16:32.390] [N] New bot added: Grind
+[10:16:32.390] [D] Loaded built-in bot: Grind
+[10:16:32.390] [D] Found bot type: Bots.Gatherbuddy.GatherbuddyBot
+[10:16:32.390] [N] New bot added: GatherBuddy
+[10:16:32.390] [D] Loaded built-in bot: GatherBuddy
+[10:16:32.390] [D] Found bot type: Bots.DungeonBuddy.DungeonBuddy
+[10:16:32.391] [N] New bot added: DungeonBuddy
+[10:16:32.391] [D] Loaded built-in bot: DungeonBuddy
+[10:16:32.391] [D] Found bot type: Bots.BGBuddy.BGBuddy
+[10:16:32.391] [N] New bot added: BGBuddy
+[10:16:32.391] [D] Loaded built-in bot: BGBuddy
+[10:16:32.391] [D] Built-in bot loading complete. 6 bots loaded.
+[10:16:32.395] [N] Loading bots from: D:\World of Warcraft 3.3.5a\CB\Bots
+[10:16:32.404] [N] Found 123 source files
+[10:16:32.416] [N] Found 0 dll files
+[10:16:32.416] [N] Compiling: CombatBot.cs
+[10:16:32.607] [N] Compiled successfully: CombatBot.cs
+[10:16:32.607] [N] Compiling directory: Auto Angler 2/ (23 files)
+[10:16:32.919] [N] Compiled successfully: Auto Angler 2/
+[10:16:32.919] [N] Compiling directory: LazyRaider/ (4 files)
+[10:16:33.176] [N] Compiled successfully: LazyRaider/
+[10:16:33.176] [N] Compiling directory: ProfessionBuddy/ (52 files)
+[10:16:33.991] [N] Compiled successfully: ProfessionBuddy/
+[10:16:33.991] [N] Compiling directory: Templar/ (27 files)
+[10:16:34.412] [N] Compiled successfully: Templar/
+[10:16:34.412] [N] Compiling directory: Tyrael/ (5 files)
+[10:16:34.606] [N] Compiled successfully: Tyrael/
+[10:16:34.607] [N] Compiling directory: WholesomeAutoQuest-master/ (11 files)
+[10:16:35.218] [N] Compiled successfully: WholesomeAutoQuest-master/
+[10:16:35.218] [N] ClassCollection contains 7 compiled bots
+[10:16:35.218] [N] Adding bot: Combat Bot
+[10:16:35.218] [N] New bot added: Combat Bot
+[10:16:35.218] [N] Adding bot: AutoAngler
+[10:16:35.218] [N] New bot added: AutoAngler
+[10:16:35.218] [N] Adding bot: LazyRaider
+[10:16:35.218] [N] New bot added: LazyRaider
+[10:16:35.218] [N] Adding bot: ProfessionBuddy
+[10:16:35.218] [N] New bot added: ProfessionBuddy
+[10:16:35.218] [N] Adding bot: Templar
+[10:16:35.218] [N] New bot added: Templar
+[10:16:35.218] [N] Adding bot: Tyrael
+[10:16:35.218] [N] New bot added: Tyrael
+[10:16:35.218] [N] Adding bot: Wholesome Auto Quest
+[10:16:35.218] [N] New bot added: Wholesome Auto Quest
+[10:16:35.218] [N] Bot loading complete. 13 bots loaded.
+[10:16:35.218] [N] Initializing Plugins...
+[10:16:36.955] [N] [DeathStallRecovery] Enabled. The bot will stop if corpse recovery makes no movement progress for 60 seconds.
+[10:16:37.901] [D] Rarekiller: Loading config file: D:\World of Warcraft 3.3.5a\CB\Plugins\RareKiller\config\Rarekiller.config
+[10:16:37.901] [D] Root element is missing.
+[10:16:37.901] [N] Rarekiller: Continuing with Default Config Values
+[10:16:37.903] [D] Rarekiller: Loading config file: D:\World of Warcraft 3.3.5a\CB\Plugins\RareKiller\config\Rarekiller.config
+[10:16:37.903] [D] Root element is missing.
+[10:16:37.903] [N] Rarekiller: Continuing with Default Config Values
+[10:16:37.903] [N] Rare Mob Killer - Version 3.3 Loaded.
+[10:16:37.903] [N] Rarekiller Part Tamer: I'm no Hunter. Deactivate the Tamer Part
+[10:16:38.518] [N] [VendorRecovery] Enabled. Failed Sell/Repair vendors will be skipped after 35 seconds at the NPC.
+[10:16:38.727] [N] Plugin loading complete. 16 plugins loaded.
+[10:16:38.727] [N] Plugins refreshed successfully.
+[10:16:38.732] [N] Changing current bot to: Combat Bot
+[10:17:05.022] [D] [Settings] Saved all settings
+[10:17:05.022] [N] Starting the bot.
+[10:17:05.024] [N] Currently Using BotBase : Combat Bot
+[10:17:05.025] [N] Character is a level 29 BloodElf Paladin
+[10:17:05.026] [N] Current zone is Thousand Needles
+[10:17:05.027] [D] Loading profile from D:\World of Warcraft 3.3.5a\CB\Bots\WholesomeAutoQuest\WHOLESOME_AUTOQUESTER.xml
+[10:17:05.090] [D] [CompileBatch] Compiling 1 entries...
+[10:17:05.201] [D] [CompileBatch] Compiled successfully.
+[10:17:05.205] [N] Profile loaded: WholesomeAQ - Thousand Needles
+[10:17:05.206] [D] Selected sub-profile: WholesomeAQ - Thousand Needles (L1-80)
+[10:17:05.229] [N] [SpellDb] Loaded 49816 spells from Spells.bin
+[10:17:05.277] [D] Setting CVars: autoSelfCast=1, autoLootDefault=1
+[10:17:05.344] [D] Cleared POI
+[10:17:05.352] [D] Refresh() called. LastCount=0, CurrentCount=34
+[10:17:05.352] [N] Building spell book
+[10:17:05.354] [D] Found 34 spells from LocalPlayer.KnownSpells
+[10:17:05.354] [N] Adding Arcane Affinity
+[10:17:05.354] [N] Adding Arcane Torrent
+[10:17:05.355] [N] Adding Auto Attack
+[10:17:05.356] [N] Adding Block
+[10:17:05.356] [N] Adding Dodge
+[10:17:05.357] [N] Adding Magic Resistance
+[10:17:05.358] [N] Adding Parry
+[10:17:05.358] [N] Adding Blessing of Wisdom
+[10:17:05.359] [N] Adding Concentration Aura
+[10:17:05.360] [N] Adding Consecration
+[10:17:05.360] [N] Adding Exorcism
+[10:17:05.361] [N] Adding Flash of Light
+[10:17:05.362] [N] Adding Holy Light
+[10:17:05.362] [N] Adding Lay on Hands
+[10:17:05.363] [N] Adding Purify
+[10:17:05.364] [N] Adding Seal of Righteousness
+[10:17:05.364] [N] Adding Sense Undead
+[10:17:05.365] [N] Adding Turn Evil
+[10:17:05.366] [N] Adding Blessing of Kings
+[10:17:05.366] [N] Adding Devotion Aura
+[10:17:05.367] [N] Adding Divine Protection
+[10:17:05.368] [N] Adding Hammer of Justice
+[10:17:05.368] [N] Adding Hand of Freedom
+[10:17:05.369] [N] Adding Hand of Protection
+[10:17:05.370] [N] Adding Hand of Reckoning
+[10:17:05.380] [N] Adding Hand of Salvation
+[10:17:05.382] [N] Adding Righteous Defense
+[10:17:05.382] [N] Adding Righteous Fury
+[10:17:05.383] [N] Adding Seal of Justice
+[10:17:05.384] [N] Adding Blessing of Might
+[10:17:05.384] [N] Adding Judgement of Light
+[10:17:05.385] [N] Adding Judgement of Wisdom
+[10:17:05.386] [N] Adding Retribution Aura
+[10:17:05.386] [N] Adding Seal of Command
+[10:17:05.387] [N] Spell book built
+[10:17:05.388] [D] [SpellManager] Initialize — subscribed to BotEvents.OnBotStart
+[10:17:05.691] [D] [WeightSet] Talent data is not available yet; deferring weight-set selection
+[10:17:05.691] [D] [AutoEquip]: No weight set was found for your character.
+Ensure that the 'Data\Weight Sets\' folder exists and has valid weight sets.
+[10:17:05.692] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=164ms
+[10:17:05.722] [D] [Talented] SelectMajorTalentTree called but not needed in WotLK 3.3.5a
+[10:17:05.736] [D] [Pulse] Slow plugin: name=Talented elapsed=43ms
+[10:17:05.789] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=53ms
+[10:17:05.804] [D] [Pulse] Slow shared pulse: total=387ms movement=0 objects=1 lua=26 info=0 loot=12 targeting=64 events=1 plugins=264 routine=14
+[10:17:15.634] [D] [WeightSet] Talent data is not available yet; deferring weight-set selection
+[10:17:15.634] [D] [AutoEquip]: No weight set was found for your character.
+Ensure that the 'Data\Weight Sets\' folder exists and has valid weight sets.
+[10:17:19.079] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=37ms
+[10:17:23.409] [N] Plugin settings saved.
+[10:17:25.767] [D] [WeightSet] Talent data is not available yet; deferring weight-set selection
+[10:17:25.767] [D] [AutoEquip]: No weight set was found for your character.
+Ensure that the 'Data\Weight Sets\' folder exists and has valid weight sets.
+[10:17:25.767] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=156ms
+[10:17:25.835] [D] [Pulse] Slow shared pulse: total=267ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=41 events=0 plugins=224 routine=0
+[10:17:29.144] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=57ms
+[10:17:35.839] [D] [WeightSet] Talent data is not available yet; deferring weight-set selection
+[10:17:35.839] [D] [AutoEquip]: No weight set was found for your character.
+Ensure that the 'Data\Weight Sets\' folder exists and has valid weight sets.
+[10:17:35.839] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=158ms
+[10:17:35.905] [D] [Pulse] Slow shared pulse: total=267ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=39 events=0 plugins=225 routine=0
+[10:17:39.147] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=55ms
+[10:17:45.780] [D] [WeightSet] Talent data is not available yet; deferring weight-set selection
+[10:17:45.780] [D] [AutoEquip]: No weight set was found for your character.
+Ensure that the 'Data\Weight Sets\' folder exists and has valid weight sets.
+[10:17:49.201] [D] [WeightSet] Talent data is not available yet; deferring weight-set selection
+[10:17:49.201] [D] [AutoEquip]: No weight set was found for your character.
+Ensure that the 'Data\Weight Sets\' folder exists and has valid weight sets.
+[10:17:53.369] [D] [WeightSet] Talent data is not available yet; deferring weight-set selection
+[10:17:53.369] [D] [AutoEquip]: No weight set was found for your character.
+Ensure that the 'Data\Weight Sets\' folder exists and has valid weight sets.
+[10:17:55.840] [D] [WeightSet] Talent data is not available yet; deferring weight-set selection
+[10:17:55.840] [D] [AutoEquip]: No weight set was found for your character.
+Ensure that the 'Data\Weight Sets\' folder exists and has valid weight sets.
+[10:17:55.840] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=34ms
+[10:18:05.925] [D] [WeightSet] Talent data is not available yet; deferring weight-set selection
+[10:18:05.925] [D] [AutoEquip]: No weight set was found for your character.
+Ensure that the 'Data\Weight Sets\' folder exists and has valid weight sets.
+[10:18:05.925] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=31ms
+[10:18:13.086] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=53ms
+[10:18:14.489] [N] Bot stopping! Reason: Main window is closing
+[10:18:14.491] [D] Exception in GetReturnValues: Thread was interrupted from a waiting state.
+[10:18:14.495] [D] Cleared POI
+[10:18:14.496] [D] Worker thread exited cleanly
+[10:18:14.547] [N] Plugin 'AutoEquip2' disabled.
+[10:18:14.694] [N] Plugin 'Death Stall Recovery' disabled.
+[10:18:14.695] [N] Plugin 'DrinkPotions' disabled.
+[10:18:14.696] [N] Plugin 'Talented' disabled.
+[10:18:14.698] [N] Plugin 'Tidy Bags 3 Reloaded' disabled.
+[10:18:14.699] [N] Plugin 'Vendor Recovery' disabled.
+[10:18:14.702] [D] [Settings] Saved all settings

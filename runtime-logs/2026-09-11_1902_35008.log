@@ -1,0 +1,257 @@
+[19:02:09.355] [N] CopilotBuddy v1.6.6 started. Original HonorBuddy by Apoc, raphus, highvoltz, bobby53, xanathos, chinajade. Ported to WotLK 3.3.5a by Likon69.
+[19:02:09.730] [N] Searching for WoW process...
+[19:02:09.855] [N] Please wait a few seconds while CopilotBuddy initializes.
+[19:02:09.855] [D] Using WoW with process ID 37940
+[19:02:09.855] [D] Platform: x86
+[19:02:09.855] [D] Executable Path: D:\World of Warcraft 3.3.5a\CB\
+[19:02:09.884] [D] [ObjectManager] WoW build 12340 detected - OK
+[19:02:09.886] [D] [ObjectManager] D3DDevicePtr = 0x00C5DF88
+[19:02:09.886] [D] [ObjectManager] devicePtrAddr = 0x0532CBD0
+[19:02:09.886] [D] [ObjectManager] device = 0x0A4FC900 (at 0x0533054C)
+[19:02:09.886] [D] [ObjectManager] vtablePtr = 0x0A4FF85C
+[19:02:09.886] [D] [ObjectManager] endSceneAddr = 0x643348F0 (at 0x0A4FF904)
+[19:02:09.886] [D] [ObjectManager] D3D: Device=0x0A4FC900, VTable=0x0A4FF85C, EndScene=0x643348F0
+[19:02:09.886] [D] [ObjectManager] Creating ExecutorRand...
+[19:02:09.929] [D] [ObjectManager] ExecutorRand created, IsInitialized = True
+[19:02:09.929] [D] [ObjectManager] EndScene hook succeeded
+[19:02:09.934] [D] [ObjectManager] Initialized successfully
+[19:02:09.935] [N] Attached to WoW with ID 37940
+[19:02:09.937] [N] Character is a level 31 BloodElf Paladin
+[19:02:09.938] [N] Current zone is Thousand Needles
+[19:02:09.977] [D] [Settings] Loaded settings for character: Jeof
+[19:02:09.977] [N] Initializing Combat Routines...
+[19:02:09.980] [D] Looking for routines in: D:\World of Warcraft 3.3.5a\CB\Routines
+[19:02:09.981] [D] Compiling Singular wotlk
+[19:02:12.437] [N] Loaded routine: Singular Wotlk for class Paladin
+[19:02:12.437] [N] Loaded 1 combat routine(s)
+[19:02:12.444] [N] Chose Singular Wotlk as your combat class.
+[19:02:12.445] [N] Confirmed Paladin as your class.
+[19:02:12.445] [N] [Singular] Starting Singular v2.0.0.0
+[19:02:12.445] [N] [Singular] Determining talent spec.
+[19:02:13.047] [D] [Singular-DEBUG] [Talents] Best Tree: 19
+[19:02:13.047] [N] [Singular] Current spec is  Retribution Paladin
+[19:02:13.057] [D] [WoWDb] Loaded 237 DBC tables
+[19:02:13.058] [D] [WoWDb]   Key=235 (0x000000EB) Rows=1893
+[19:02:13.058] [D] [WoWDb]   Key=236 (0x000000EC) Rows=7655
+[19:02:13.058] [D] [WoWDb]   Key=237 (0x000000ED) Rows=86
+[19:02:13.058] [D] [WoWDb]   Key=238 (0x000000EE) Rows=506
+[19:02:13.058] [D] [WoWDb]   Key=239 (0x000000EF) Rows=291
+[19:02:13.058] [D] [WoWDb] Lock DBC lookup: FOUND (rows=388)
+[19:02:13.058] [D] [WoWDb] ClientDb.Lock enum value = 356 (0x00000164)
+[19:02:13.059] [D] [Singular-DEBUG] Creating Combat behavior.
+[19:02:13.060] [N] [Singular] Building method list
+[19:02:13.061] [N] [Singular] Added 459 methods
+[19:02:13.063] [D] [Singular-DEBUG] CreateRetributionPaladinNormalPullAndCombat is a match!
+[19:02:13.063] [N] [Singular]  Using CreateRetributionPaladinNormalPullAndCombat for Retribution Paladin - Combat (Priority: 0)
+[19:02:13.074] [D] [Singular-DEBUG] Creating Pull behavior.
+[19:02:13.075] [D] [Singular-DEBUG] CreateRetributionPaladinNormalPullAndCombat is a match!
+[19:02:13.075] [N] [Singular]  Using CreateRetributionPaladinNormalPullAndCombat for Retribution Paladin - Pull (Priority: 0)
+[19:02:13.077] [D] [Singular-DEBUG] Creating Rest behavior.
+[19:02:13.078] [D] [Singular-DEBUG] CreateRetributionPaladinRest is a match!
+[19:02:13.078] [N] [Singular]  Using CreateRetributionPaladinRest for Retribution Paladin - Rest (Priority: 0)
+[19:02:13.080] [D] [Singular-DEBUG] Creating CombatBuffs behavior.
+[19:02:13.081] [D] [Singular-DEBUG] Creating Heal behavior.
+[19:02:13.082] [D] [Singular-DEBUG] CreateRetributionPaladinHeal is a match!
+[19:02:13.082] [N] [Singular]  Using CreateRetributionPaladinHeal for Retribution Paladin - Heal (Priority: 0)
+[19:02:13.082] [D] [Singular-DEBUG] CreateRetributionPaladinNormalPullAndCombat is a match!
+[19:02:13.082] [N] [Singular]  Using CreateRetributionPaladinNormalPullAndCombat for Retribution Paladin - Heal (Priority: 0)
+[19:02:13.088] [D] [Singular-DEBUG] Creating PullBuffs behavior.
+[19:02:13.090] [D] [Singular-DEBUG] Creating PreCombatBuffs behavior.
+[19:02:13.090] [D] [Singular-DEBUG] CreatePaladinPreCombatBuffs is a match!
+[19:02:13.090] [N] [Singular]  Using CreatePaladinPreCombatBuffs for Retribution Paladin - PreCombatBuffs (Priority: 0)
+[19:02:13.094] [N] [Singular] Behaviors created!
+[19:02:13.111] [D] [Singular-DEBUG] Attached combat log
+[19:02:13.111] [D] Routine initialized successfully
+[19:02:13.113] [D] Loading built-in bots from assembly: CopilotBuddy
+[19:02:13.135] [D] Found bot type: PartyBot.DiscoBot
+[19:02:13.135] [N] New bot added: Party Bot
+[19:02:13.135] [D] Loaded built-in bot: Party Bot
+[19:02:13.135] [D] Found bot type: Bots.Quest.QuestBot
+[19:02:13.135] [N] New bot added: Questing
+[19:02:13.135] [D] Loaded built-in bot: Questing
+[19:02:13.135] [D] Found bot type: Bots.Grind.LevelBot
+[19:02:13.135] [N] New bot added: Grind
+[19:02:13.135] [D] Loaded built-in bot: Grind
+[19:02:13.135] [D] Found bot type: Bots.Gatherbuddy.GatherbuddyBot
+[19:02:13.135] [N] New bot added: GatherBuddy
+[19:02:13.135] [D] Loaded built-in bot: GatherBuddy
+[19:02:13.135] [D] Found bot type: Bots.DungeonBuddy.DungeonBuddy
+[19:02:13.136] [N] New bot added: DungeonBuddy
+[19:02:13.136] [D] Loaded built-in bot: DungeonBuddy
+[19:02:13.136] [D] Found bot type: Bots.BGBuddy.BGBuddy
+[19:02:13.137] [N] New bot added: BGBuddy
+[19:02:13.137] [D] Loaded built-in bot: BGBuddy
+[19:02:13.137] [D] Built-in bot loading complete. 6 bots loaded.
+[19:02:13.140] [N] Loading bots from: D:\World of Warcraft 3.3.5a\CB\Bots
+[19:02:13.147] [N] Found 123 source files
+[19:02:13.153] [N] Found 0 dll files
+[19:02:13.154] [N] Compiling: CombatBot.cs
+[19:02:13.309] [N] Compiled successfully: CombatBot.cs
+[19:02:13.309] [N] Compiling directory: Auto Angler 2/ (23 files)
+[19:02:13.610] [N] Compiled successfully: Auto Angler 2/
+[19:02:13.610] [N] Compiling directory: LazyRaider/ (4 files)
+[19:02:13.856] [N] Compiled successfully: LazyRaider/
+[19:02:13.856] [N] Compiling directory: ProfessionBuddy/ (52 files)
+[19:02:14.634] [N] Compiled successfully: ProfessionBuddy/
+[19:02:14.634] [N] Compiling directory: Templar/ (27 files)
+[19:02:15.026] [N] Compiled successfully: Templar/
+[19:02:15.026] [N] Compiling directory: Tyrael/ (5 files)
+[19:02:15.211] [N] Compiled successfully: Tyrael/
+[19:02:15.211] [N] Compiling directory: WholesomeAutoQuest-master/ (11 files)
+[19:02:15.869] [N] Compiled successfully: WholesomeAutoQuest-master/
+[19:02:15.869] [N] ClassCollection contains 7 compiled bots
+[19:02:15.869] [N] Adding bot: Combat Bot
+[19:02:15.869] [N] New bot added: Combat Bot
+[19:02:15.869] [N] Adding bot: AutoAngler
+[19:02:15.869] [N] New bot added: AutoAngler
+[19:02:15.869] [N] Adding bot: LazyRaider
+[19:02:15.869] [N] New bot added: LazyRaider
+[19:02:15.869] [N] Adding bot: ProfessionBuddy
+[19:02:15.869] [N] New bot added: ProfessionBuddy
+[19:02:15.869] [N] Adding bot: Templar
+[19:02:15.869] [N] New bot added: Templar
+[19:02:15.869] [N] Adding bot: Tyrael
+[19:02:15.869] [N] New bot added: Tyrael
+[19:02:15.869] [N] Adding bot: Wholesome Auto Quest
+[19:02:15.869] [N] New bot added: Wholesome Auto Quest
+[19:02:15.869] [N] Bot loading complete. 13 bots loaded.
+[19:02:15.869] [N] Initializing Plugins...
+[19:02:17.561] [N] [DeathStallRecovery] Enabled. The bot will stop if corpse recovery makes no movement progress for 60 seconds.
+[19:02:18.464] [D] Rarekiller: Loading config file: D:\World of Warcraft 3.3.5a\CB\Plugins\RareKiller\config\Rarekiller.config
+[19:02:18.465] [D] Root element is missing.
+[19:02:18.465] [N] Rarekiller: Continuing with Default Config Values
+[19:02:18.466] [D] Rarekiller: Loading config file: D:\World of Warcraft 3.3.5a\CB\Plugins\RareKiller\config\Rarekiller.config
+[19:02:18.466] [D] Root element is missing.
+[19:02:18.466] [N] Rarekiller: Continuing with Default Config Values
+[19:02:18.466] [N] Rare Mob Killer - Version 3.3 Loaded.
+[19:02:18.466] [N] Rarekiller Part Tamer: I'm no Hunter. Deactivate the Tamer Part
+[19:02:19.085] [N] [VendorRecovery] Enabled. Failed Sell/Repair vendors will be skipped after 35 seconds at the NPC.
+[19:02:19.254] [N] Plugin loading complete. 16 plugins loaded.
+[19:02:19.254] [N] Plugins refreshed successfully.
+[19:02:19.259] [N] Changing current bot to: Wholesome Auto Quest
+[19:02:20.297] [D] [Settings] Saved all settings
+[19:02:20.297] [N] Starting the bot.
+[19:02:20.299] [N] Currently Using BotBase : Wholesome Auto Quest
+[19:02:20.300] [N] Character is a level 31 BloodElf Paladin
+[19:02:20.301] [N] Current zone is Thousand Needles
+[19:02:20.303] [D] Loading profile from D:\World of Warcraft 3.3.5a\CB\Bots\WholesomeAutoQuest\WHOLESOME_AUTOQUESTER.xml
+[19:02:20.458] [D] [QuestBehaviorHelper] Initialized with 264 assembly references
+[19:02:20.458] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\UseTransport.cs
+[19:02:20.491] [D] [CompileBatch] Compiling 2 entries...
+[19:02:20.614] [D] [CompileBatch] Compiled successfully.
+[19:02:20.617] [N] Profile loaded: WholesomeAQ - Thousand Needles
+[19:02:20.619] [D] Selected sub-profile: WholesomeAQ - Thousand Needles (L1-80)
+[19:02:20.811] [D] [WholesomeAQ] Navigation fingerprint unknown: provider or mesh-root stamp unavailable.
+[19:02:20.926] [N] [VendorSafety] Skipping NPC 10380 for this session: Wholesome saved vendor blacklist. Trying the next suitable NPC.
+[19:02:20.928] [N] [VendorSafety] Skipping NPC 3392 for this session: Wholesome saved vendor blacklist. Trying the next suitable NPC.
+[19:02:20.929] [N] [VendorSafety] Skipping NPC 5848 for this session: Wholesome saved vendor blacklist. Trying the next suitable NPC.
+[19:02:20.931] [N] [Wholesome Auto Quest] Loaded 3 blacklisted vendors
+[19:02:21.361] [D] [QuestLog] Loaded 79 completed quests from Lua fallback
+[19:02:21.395] [D] [ProfileBatchManager] Batch reset for new profile session.
+[19:02:21.395] [N] [Wholesome Auto Quest] Class Paladin → PullDistance set to 24
+[19:02:21.397] [N] [Wholesome Auto Quest] Initial scheduler build.
+[19:02:22.135] [N] Loaded 0 global blackspots
+[19:02:22.160] [D] Loading profile from D:\World of Warcraft 3.3.5a\CB\Bots\WholesomeAutoQuest\WHOLESOME_AUTOQUESTER.xml
+[19:02:22.161] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\UseTransport.cs
+[19:02:22.162] [D] [CompileBatch] Compiling 2 entries...
+[19:02:22.291] [D] [CompileBatch] Compiled successfully.
+[19:02:22.291] [N] Profile loaded: WholesomeAQ - Thousand Needles
+[19:02:22.326] [D] Selected sub-profile: WholesomeAQ - Thousand Needles (L1-80)
+[19:02:22.326] [N] [Wholesome Auto Quest] Profile refreshed - Selected 1 quest work candidate(s). selected quest=4841;stage=Objective;state=Eligible. quest-log-full=25/25; deferred new pickups while retaining accepted quest work. excluded quest=1062;stage=TurnIn;npc=4049;reason=outside-scan-radius;retry=context-change excluded quest=1069;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=1087;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=1093;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T15:43:31.1900709Z;state=Quarantined. excluded quest=4841;stage=Objective;objective=1;reason=outside-scan-radius;retry=context-change. excluded quest=4841;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=4921;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=5147;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T15:43:31.2300998Z;state=Quarantined. excluded quest=6382;stage=TurnIn;npc=12696;reason=outside-scan-radius;retry=context-change excluded quest=6393;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T15:43:31.2303856Z;state=Quarantined. excluded quest=6441;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T15:43:31.2304940Z;state=Quarantined. excluded quest=6461;stage=TurnIn;npc=12816;reason=outside-scan-radius;retry=context-change excluded quest=6543;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T15:43:31.2307164Z;state=Quarantined. excluded quest=846;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T12:58:16.6033605Z;state=Quarantined. excluded quest=846;stage=Objective;scope=Objective;objective=1;retry=2026-09-11T12:58:16.6078334Z;state=Quarantined. excluded quest=846;stage=Objective;scope=Objective;objective=2;retry=2026-09-11T12:58:16.6079054Z;state=Quarantined. excluded quest=8487;stage=TurnIn;npc=15402;reason=outside-scan-radius;retry=context-change excluded quest=867;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T12:58:16.6097297Z;state=Quarantined. excluded quest=868;stage=TurnIn;npc=3428;reason=outside-scan-radius;retry=context-change excluded quest=879;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T12:58:16.6158450Z;state=Quarantined. excluded quest=879;stage=Objective;scope=Objective;objective=1;retry=2026-09-11T12:58:16.6158941Z;state=Quarantined. excluded quest=879;stage=Objective;scope=Objective;objective=2;retry=2026-09-11T14:28:36.5856962Z;state=Quarantined. excluded quest=8889;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=8889;stage=Objective;objective=1;reason=outside-scan-radius;retry=context-change. excluded quest=8889;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=893;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T14:28:36.5895113Z;state=Quarantined. excluded quest=893;stage=Objective;scope=Objective;objective=1;retry=2026-09-11T14:28:36.5895743Z;state=Quarantined. excluded quest=893;stage=Objective;scope=Objective;objective=2;retry=2026-09-11T14:28:36.5896148Z;state=Quarantined. excluded quest=896;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T14:28:36.5896844Z;state=Quarantined. excluded quest=9067;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T15:43:31.2311999Z;state=Quarantined. excluded quest=9157;stage=TurnIn;npc=16201;reason=outside-scan-radius;retry=context-change excluded quest=9431;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T16:58:09.4694637Z;state=Quarantined.
+[19:02:22.329] [N] [Wholesome Auto Quest] Started with quest data loaded.
+[19:02:22.376] [N] [SpellDb] Loaded 49816 spells from Spells.bin
+[19:02:22.427] [D] Setting CVars: autoSelfCast=1, autoLootDefault=1
+[19:02:22.495] [D] Cleared POI
+[19:02:22.503] [D] Refresh() called. LastCount=0, CurrentCount=34
+[19:02:22.503] [N] Building spell book
+[19:02:22.505] [D] Found 34 spells from LocalPlayer.KnownSpells
+[19:02:22.505] [N] Adding Arcane Affinity
+[19:02:22.507] [N] Adding Arcane Torrent
+[19:02:22.508] [N] Adding Auto Attack
+[19:02:22.509] [N] Adding Block
+[19:02:22.522] [N] Adding Dodge
+[19:02:22.523] [N] Adding Magic Resistance
+[19:02:22.525] [N] Adding Parry
+[19:02:22.526] [N] Adding Blessing of Wisdom
+[19:02:22.527] [N] Adding Concentration Aura
+[19:02:22.529] [N] Adding Consecration
+[19:02:22.530] [N] Adding Exorcism
+[19:02:22.532] [N] Adding Flash of Light
+[19:02:22.533] [N] Adding Holy Light
+[19:02:22.534] [N] Adding Lay on Hands
+[19:02:22.536] [N] Adding Purify
+[19:02:22.537] [N] Adding Seal of Righteousness
+[19:02:22.538] [N] Adding Sense Undead
+[19:02:22.540] [N] Adding Turn Evil
+[19:02:22.541] [N] Adding Blessing of Kings
+[19:02:22.543] [N] Adding Devotion Aura
+[19:02:22.544] [N] Adding Divine Protection
+[19:02:22.545] [N] Adding Hammer of Justice
+[19:02:22.547] [N] Adding Hand of Freedom
+[19:02:22.548] [N] Adding Hand of Protection
+[19:02:22.550] [N] Adding Hand of Reckoning
+[19:02:22.551] [N] Adding Hand of Salvation
+[19:02:22.553] [N] Adding Righteous Defense
+[19:02:22.554] [N] Adding Righteous Fury
+[19:02:22.555] [N] Adding Seal of Justice
+[19:02:22.557] [N] Adding Blessing of Might
+[19:02:22.558] [N] Adding Judgement of Light
+[19:02:22.560] [N] Adding Judgement of Wisdom
+[19:02:22.561] [N] Adding Retribution Aura
+[19:02:22.563] [N] Adding Seal of Command
+[19:02:22.565] [N] Spell book built
+[19:02:22.566] [D] [SpellManager] Initialize — subscribed to BotEvents.OnBotStart
+[19:02:22.843] [D] [WeightSet] Selected weight set: Paladin-Retribution
+[19:02:23.008] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=326ms
+[19:02:23.042] [D] [Talented] SelectMajorTalentTree called but not needed in WotLK 3.3.5a
+[19:02:23.065] [D] [Pulse] Slow plugin: name=Talented elapsed=56ms
+[19:02:23.109] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=43ms
+[19:02:23.115] [D] [Pulse] Slow shared pulse: total=515ms movement=0 objects=1 lua=0 info=0 loot=16 targeting=59 events=1 plugins=429 routine=5
+[19:02:23.918] [N] [Singular] Casting Blessing of Kings on Myself
+[19:02:23.919] [D] Spell_C::CastSpell(20217, 0, 0x6000000007EAB80, 0)
+[19:02:23.952] [D] [Pulse] Slow bot root: 237ms bot=Wholesome Auto Quest poi=None combat=False
+[19:02:24.923] [D] [Blackspot] Area cost initialized: area 17 = 60x
+[19:02:24.929] [D] [Nav] Loaded 9 mesh tiles for one path query
+[19:02:24.933] [D] [If] Condition is true, executing If body
+[19:02:24.963] [D] [If] Condition is true, executing If body
+[19:02:25.001] [N] [QuestBehavior] Compiling: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\UseTransport.cs
+[19:02:25.254] [N] [QuestBehavior] Successfully compiled: UseTransport.cs
+[19:02:25.265] [N] [Code] Executing custom behavior: UseTransport
+[19:02:25.267] [D] Goal: UseTransport: Freewind Post lower level
+[19:02:25.268] [D] Activity: Moving to wait location
+[19:02:25.299] [D] [UseTransport-v217(debug) @line 24]: Approaching wait location: player=(-5449.37, -2412.86, 89.35); wait2D=98.88; waitZ=0.28; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -1.75); anchor=(-5382.50, -2489.42, -40.53); startDistance=90.77; type=Transport; state=1; animation=100; observedAway=False; dockStableMs=0; onTransport=False; selectedGuid=1FC000000000006E; attachedGuid=0; usedTransport=False; falling=False; groundSupport=True; exitDockConfirmed=False; detachedExitAuthorized=False; exitTarget=(-5371.50, -2489.15, -40.56); exit2D=109.01
+[19:02:25.700] [N] Mounting: 34769
+[19:02:28.180] [D] [Pulse] Slow bot root: 3522ms bot=Wholesome Auto Quest poi=None combat=False
+[19:02:29.115] [D] [UseTransport-v217(debug) @line 24]: Approaching wait location: player=(-5442.92, -2420.00, 89.73); wait2D=89.26; waitZ=0.66; pathPrecision=1.81; transport=live=(-5382.50, -2489.42, 67.56); anchor=(-5382.50, -2489.42, -40.53); startDistance=21.47; type=Transport; state=1; animation=100; observedAway=False; dockStableMs=0; onTransport=False; selectedGuid=1FC000000000006E; attachedGuid=0; usedTransport=False; falling=False; groundSupport=True; exitDockConfirmed=False; detachedExitAuthorized=False; exitTarget=(-5371.50, -2489.15, -40.56); exit2D=99.41
+[19:02:29.251] [D] [Pulse] Slow bot root: 305ms bot=Wholesome Auto Quest poi=None combat=False
+[19:02:30.227] [D] [Pulse] Slow bot root: 265ms bot=Wholesome Auto Quest poi=None combat=False
+[19:02:31.197] [D] [Pulse] Slow bot root: 268ms bot=Wholesome Auto Quest poi=None combat=False
+[19:02:32.167] [D] [Pulse] Slow bot root: 269ms bot=Wholesome Auto Quest poi=None combat=False
+[19:02:33.042] [D] [UseTransport-v217(debug) @line 24]: Approaching wait location: player=(-5421.87, -2442.12, 89.28); wait2D=58.75; waitZ=0.21; pathPrecision=1.81; transport=live=(-5382.50, -2489.42, 89.03); anchor=(-5382.50, -2489.42, -40.53); startDistance=0.00; type=Transport; state=1; animation=100; observedAway=False; dockStableMs=0; onTransport=False; selectedGuid=1FC000000000006E; attachedGuid=0; usedTransport=False; falling=False; groundSupport=True; exitDockConfirmed=False; detachedExitAuthorized=False; exitTarget=(-5371.50, -2489.15, -40.56); exit2D=68.90
+[19:02:33.178] [D] [Pulse] Slow bot root: 303ms bot=Wholesome Auto Quest poi=None combat=False
+[19:02:33.345] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=128ms
+[19:02:33.412] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=65ms
+[19:02:33.413] [D] [Pulse] Slow shared pulse: total=234ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=37 events=0 plugins=195 routine=0
+[19:02:34.283] [D] [Pulse] Slow bot root: 267ms bot=Wholesome Auto Quest poi=None combat=False
+[19:02:35.186] [N] Blacklisting Nyse for 5 minutes because we can't navigate to it.
+[19:02:35.186] [D] Blacklisting F1300010DD0B9A95 for 00:05:00
+[19:02:35.220] [D] [Pulse] Slow bot root: 202ms bot=Wholesome Auto Quest poi=None combat=False
+[19:02:36.090] [D] [UseTransport-v217(debug) @line 24]: Approaching wait location: player=(-5396.73, -2468.63, 56.95); wait2D=22.34; waitZ=32.12; pathPrecision=1.79; transport=live=(-5382.50, -2489.42, 89.03); anchor=(-5382.50, -2489.42, -40.53); startDistance=0.00; type=Transport; state=1; animation=100; observedAway=False; dockStableMs=0; onTransport=False; selectedGuid=1FC000000000006E; attachedGuid=0; usedTransport=False; falling=True; groundSupport=False; exitDockConfirmed=False; detachedExitAuthorized=False; exitTarget=(-5371.50, -2489.15, -40.56); exit2D=32.51
+[19:02:36.157] [D] [Pulse] Slow bot root: 232ms bot=Wholesome Auto Quest poi=None combat=False
+[19:02:37.029] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[19:02:37.905] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[19:02:38.680] [D] Activity: Releasing from corpse
+[19:02:38.680] [N] I died.
+[19:02:38.746] [D] [Pulse] Slow bot root: 133ms bot=Wholesome Auto Quest poi=None combat=False
+[19:02:38.784] [D] Cleared POI
+[19:02:38.784] [N] [DeathStallRecovery] Death detected at (-5382.44, -2486.86, -45.53); monitoring corpse-recovery movement.
+[19:02:39.264] [D] [Pulse] Slow bot root: 114ms bot=Wholesome Auto Quest poi=None combat=False
+[19:02:39.583] [D] Activity: Moving to corpse
+[19:02:39.819] [D] [Pulse] Slow bot root: 435ms bot=Wholesome Auto Quest poi=None combat=False
+[19:02:39.870] [N] Stopping the bot!
+[19:02:39.870] [N] Bot stopping! Reason: User request
+[19:02:39.871] [D] Exception in GetReturnValues: Thread was interrupted from a waiting state.
+[19:02:40.591] [D] [Pulse] Slow bot root: 398ms bot=Wholesome Auto Quest poi=None combat=False
+[19:02:40.627] [D] Cleared POI
+[19:02:40.628] [D] Worker thread exited cleanly
+[19:03:19.633] [D] [Settings] Saved all settings

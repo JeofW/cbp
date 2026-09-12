@@ -1,0 +1,1173 @@
+[09:19:46.606] [N] CopilotBuddy v1.6.6 started. Original HonorBuddy by Apoc, raphus, highvoltz, bobby53, xanathos, chinajade. Ported to WotLK 3.3.5a by Likon69.
+[09:19:46.950] [N] Searching for WoW process...
+[09:19:47.057] [N] Please wait a few seconds while CopilotBuddy initializes.
+[09:19:47.057] [D] Using WoW with process ID 25700
+[09:19:47.057] [D] Platform: x86
+[09:19:47.057] [D] Executable Path: D:\World of Warcraft 3.3.5a\CB\
+[09:19:47.080] [D] [ObjectManager] WoW build 12340 detected - OK
+[09:19:47.082] [D] [ObjectManager] D3DDevicePtr = 0x00C5DF88
+[09:19:47.082] [D] [ObjectManager] devicePtrAddr = 0x052FCBD0
+[09:19:47.082] [D] [ObjectManager] device = 0x0A4EFE60 (at 0x0530054C)
+[09:19:47.082] [D] [ObjectManager] vtablePtr = 0x0A4F2DBC
+[09:19:47.082] [D] [ObjectManager] endSceneAddr = 0x643348F0 (at 0x0A4F2E64)
+[09:19:47.082] [D] [ObjectManager] D3D: Device=0x0A4EFE60, VTable=0x0A4F2DBC, EndScene=0x643348F0
+[09:19:47.082] [D] [ObjectManager] Creating ExecutorRand...
+[09:19:47.125] [D] [ObjectManager] ExecutorRand created, IsInitialized = True
+[09:19:47.125] [D] [ObjectManager] EndScene hook succeeded
+[09:19:47.130] [D] [ObjectManager] Initialized successfully
+[09:19:47.131] [N] Attached to WoW with ID 25700
+[09:19:47.133] [N] Character is a level 25 BloodElf Paladin
+[09:19:47.134] [N] Current zone is Stonetalon Mountains
+[09:19:47.175] [D] [Settings] Loaded settings for character: Jeof
+[09:19:47.176] [N] Initializing Combat Routines...
+[09:19:47.179] [D] Looking for routines in: D:\World of Warcraft 3.3.5a\CB\Routines
+[09:19:47.180] [D] Compiling Singular wotlk
+[09:19:49.506] [N] Loaded routine: Singular Wotlk for class Paladin
+[09:19:49.506] [N] Loaded 1 combat routine(s)
+[09:19:49.522] [N] Chose Singular Wotlk as your combat class.
+[09:19:49.522] [N] Confirmed Paladin as your class.
+[09:19:49.523] [N] [Singular] Starting Singular v2.0.0.0
+[09:19:49.523] [N] [Singular] Determining talent spec.
+[09:19:52.636] [D] [Singular-DEBUG] [Talents] Best Tree: 16
+[09:19:52.637] [N] [Singular] Current spec is  Retribution Paladin
+[09:19:52.646] [D] [WoWDb] Loaded 237 DBC tables
+[09:19:52.647] [D] [WoWDb]   Key=235 (0x000000EB) Rows=1893
+[09:19:52.647] [D] [WoWDb]   Key=236 (0x000000EC) Rows=7655
+[09:19:52.647] [D] [WoWDb]   Key=237 (0x000000ED) Rows=86
+[09:19:52.647] [D] [WoWDb]   Key=238 (0x000000EE) Rows=506
+[09:19:52.647] [D] [WoWDb]   Key=239 (0x000000EF) Rows=291
+[09:19:52.647] [D] [WoWDb] Lock DBC lookup: FOUND (rows=388)
+[09:19:52.647] [D] [WoWDb] ClientDb.Lock enum value = 356 (0x00000164)
+[09:19:52.648] [D] [Singular-DEBUG] Creating Combat behavior.
+[09:19:52.649] [N] [Singular] Building method list
+[09:19:52.649] [N] [Singular] Added 450 methods
+[09:19:52.651] [D] [Singular-DEBUG] CreateRetributionPaladinNormalPullAndCombat is a match!
+[09:19:52.652] [N] [Singular]  Using CreateRetributionPaladinNormalPullAndCombat for Retribution Paladin - Combat (Priority: 0)
+[09:19:52.662] [D] [Singular-DEBUG] Creating Pull behavior.
+[09:19:52.663] [D] [Singular-DEBUG] CreateRetributionPaladinNormalPullAndCombat is a match!
+[09:19:52.663] [N] [Singular]  Using CreateRetributionPaladinNormalPullAndCombat for Retribution Paladin - Pull (Priority: 0)
+[09:19:52.664] [D] [Singular-DEBUG] Creating Rest behavior.
+[09:19:52.665] [D] [Singular-DEBUG] CreateRetributionPaladinRest is a match!
+[09:19:52.665] [N] [Singular]  Using CreateRetributionPaladinRest for Retribution Paladin - Rest (Priority: 0)
+[09:19:52.667] [D] [Singular-DEBUG] Creating CombatBuffs behavior.
+[09:19:52.668] [D] [Singular-DEBUG] Creating Heal behavior.
+[09:19:52.669] [D] [Singular-DEBUG] CreateRetributionPaladinHeal is a match!
+[09:19:52.669] [N] [Singular]  Using CreateRetributionPaladinHeal for Retribution Paladin - Heal (Priority: 0)
+[09:19:52.669] [D] [Singular-DEBUG] CreateRetributionPaladinNormalPullAndCombat is a match!
+[09:19:52.669] [N] [Singular]  Using CreateRetributionPaladinNormalPullAndCombat for Retribution Paladin - Heal (Priority: 0)
+[09:19:52.675] [D] [Singular-DEBUG] Creating PullBuffs behavior.
+[09:19:52.676] [D] [Singular-DEBUG] Creating PreCombatBuffs behavior.
+[09:19:52.677] [D] [Singular-DEBUG] CreatePaladinPreCombatBuffs is a match!
+[09:19:52.677] [N] [Singular]  Using CreatePaladinPreCombatBuffs for Retribution Paladin - PreCombatBuffs (Priority: 0)
+[09:19:52.681] [N] [Singular] Behaviors created!
+[09:19:52.767] [D] [Singular-DEBUG] Attached combat log
+[09:19:52.767] [D] Routine initialized successfully
+[09:19:52.769] [D] Loading built-in bots from assembly: CopilotBuddy
+[09:19:52.790] [D] Found bot type: PartyBot.DiscoBot
+[09:19:52.790] [N] New bot added: Party Bot
+[09:19:52.790] [D] Loaded built-in bot: Party Bot
+[09:19:52.790] [D] Found bot type: Bots.Quest.QuestBot
+[09:19:52.790] [N] New bot added: Questing
+[09:19:52.790] [D] Loaded built-in bot: Questing
+[09:19:52.790] [D] Found bot type: Bots.Grind.LevelBot
+[09:19:52.790] [N] New bot added: Grind
+[09:19:52.790] [D] Loaded built-in bot: Grind
+[09:19:52.790] [D] Found bot type: Bots.Gatherbuddy.GatherbuddyBot
+[09:19:52.791] [N] New bot added: GatherBuddy
+[09:19:52.791] [D] Loaded built-in bot: GatherBuddy
+[09:19:52.791] [D] Found bot type: Bots.DungeonBuddy.DungeonBuddy
+[09:19:52.792] [N] New bot added: DungeonBuddy
+[09:19:52.792] [D] Loaded built-in bot: DungeonBuddy
+[09:19:52.792] [D] Found bot type: Bots.BGBuddy.BGBuddy
+[09:19:52.792] [N] New bot added: BGBuddy
+[09:19:52.792] [D] Loaded built-in bot: BGBuddy
+[09:19:52.792] [D] Built-in bot loading complete. 6 bots loaded.
+[09:19:52.795] [N] Loading bots from: D:\World of Warcraft 3.3.5a\CB\Bots
+[09:19:52.802] [N] Found 122 source files
+[09:19:52.808] [N] Found 0 dll files
+[09:19:52.809] [N] Compiling: CombatBot.cs
+[09:19:52.964] [N] Compiled successfully: CombatBot.cs
+[09:19:52.964] [N] Compiling directory: Auto Angler 2/ (23 files)
+[09:19:53.245] [N] Compiled successfully: Auto Angler 2/
+[09:19:53.245] [N] Compiling directory: LazyRaider/ (4 files)
+[09:19:53.473] [N] Compiled successfully: LazyRaider/
+[09:19:53.473] [N] Compiling directory: ProfessionBuddy/ (52 files)
+[09:19:54.274] [N] Compiled successfully: ProfessionBuddy/
+[09:19:54.274] [N] Compiling directory: Templar/ (27 files)
+[09:19:54.653] [N] Compiled successfully: Templar/
+[09:19:54.653] [N] Compiling directory: Tyrael/ (5 files)
+[09:19:54.831] [N] Compiled successfully: Tyrael/
+[09:19:54.831] [N] Compiling directory: WholesomeAutoQuest-master/ (10 files)
+[09:19:55.445] [N] Compiled successfully: WholesomeAutoQuest-master/
+[09:19:55.445] [N] ClassCollection contains 7 compiled bots
+[09:19:55.445] [N] Adding bot: Combat Bot
+[09:19:55.445] [N] New bot added: Combat Bot
+[09:19:55.445] [N] Adding bot: AutoAngler
+[09:19:55.445] [N] New bot added: AutoAngler
+[09:19:55.445] [N] Adding bot: LazyRaider
+[09:19:55.445] [N] New bot added: LazyRaider
+[09:19:55.445] [N] Adding bot: ProfessionBuddy
+[09:19:55.445] [N] New bot added: ProfessionBuddy
+[09:19:55.445] [N] Adding bot: Templar
+[09:19:55.445] [N] New bot added: Templar
+[09:19:55.446] [N] Adding bot: Tyrael
+[09:19:55.446] [N] New bot added: Tyrael
+[09:19:55.446] [N] Adding bot: Wholesome Auto Quest
+[09:19:55.446] [N] New bot added: Wholesome Auto Quest
+[09:19:55.446] [N] Bot loading complete. 13 bots loaded.
+[09:19:55.446] [N] Initializing Plugins...
+[09:19:56.145] [D] [WeightSet] Selected weight set: Paladin-Holy
+[09:19:57.208] [N] [DeathStallRecovery] Enabled. The bot will stop if corpse recovery makes no movement progress for 60 seconds.
+[09:19:58.109] [D] Rarekiller: Loading config file: D:\World of Warcraft 3.3.5a\CB\Plugins\RareKiller\config\Rarekiller.config
+[09:19:58.109] [D] Root element is missing.
+[09:19:58.109] [N] Rarekiller: Continuing with Default Config Values
+[09:19:58.111] [D] Rarekiller: Loading config file: D:\World of Warcraft 3.3.5a\CB\Plugins\RareKiller\config\Rarekiller.config
+[09:19:58.111] [D] Root element is missing.
+[09:19:58.111] [N] Rarekiller: Continuing with Default Config Values
+[09:19:58.111] [N] Rare Mob Killer - Version 3.3 Loaded.
+[09:19:58.111] [N] Rarekiller Part Tamer: I'm no Hunter. Deactivate the Tamer Part
+[09:19:58.682] [N] [VendorRecovery] Enabled. Failed Sell/Repair vendors will be skipped after 35 seconds at the NPC.
+[09:19:58.864] [N] Plugin loading complete. 16 plugins loaded.
+[09:19:58.864] [N] Plugins refreshed successfully.
+[09:19:58.868] [N] Changing current bot to: Wholesome Auto Quest
+[09:20:41.624] [D] [Settings] Saved all settings
+[09:20:41.624] [N] Starting the bot.
+[09:20:41.625] [N] Currently Using BotBase : Wholesome Auto Quest
+[09:20:41.625] [N] Character is a level 25 BloodElf Paladin
+[09:20:41.626] [N] Current zone is Stonetalon Mountains
+[09:20:41.627] [D] Loading profile from D:\World of Warcraft 3.3.5a\CB\Bots\WholesomeAutoQuest\WHOLESOME_AUTOQUESTER.xml
+[09:20:41.670] [N] Profile loaded: WholesomeAQ - The Barrens
+[09:20:41.671] [D] Selected sub-profile: WholesomeAQ - The Barrens (L1-80)
+[09:20:41.859] [D] [WholesomeAQ] Navigation fingerprint unknown: provider or mesh-root stamp unavailable.
+[09:20:42.454] [D] [QuestLog] Loaded 66 completed quests from Lua fallback
+[09:20:42.487] [D] [ProfileBatchManager] Batch reset for new profile session.
+[09:20:42.488] [N] [Wholesome Auto Quest] Class Paladin → PullDistance set to 24
+[09:20:42.489] [N] [Wholesome Auto Quest] Initial scheduler build.
+[09:20:42.907] [D] [WholesomeAQ] Quest chain correction: ancestor=1062; descendant=1063.
+[09:20:42.907] [D] [WholesomeAQ] Quest chain correction: ancestor=1062; descendant=1068.
+[09:20:42.909] [D] [WholesomeAQ] Quest chain correction: ancestor=6548; descendant=6629.
+[09:20:42.949] [N] Loaded 0 global blackspots
+[09:20:42.986] [D] Loading profile from D:\World of Warcraft 3.3.5a\CB\Bots\WholesomeAutoQuest\WHOLESOME_AUTOQUESTER.xml
+[09:20:42.991] [N] Profile loaded: WholesomeAQ - Stonetalon Mountains
+[09:20:43.019] [D] Selected sub-profile: WholesomeAQ - Stonetalon Mountains (L1-80)
+[09:20:43.019] [N] [Wholesome Auto Quest] Profile refreshed - Selected 1 quest work candidate(s). selected quest=6548;stage=AncestorCorrection;state=Eligible. excluded quest=104;stage=Pickup;npc=392;reason=outside-scan-radius;retry=context-change excluded quest=1062;stage=AncestorCorrection;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=1069;stage=Pickup;npc=3446;reason=outside-scan-radius;retry=context-change excluded quest=1087;stage=Pickup;npc=4198;reason=outside-scan-radius;retry=context-change excluded quest=1093;stage=Pickup;npc=4201;reason=outside-scan-radius;retry=context-change excluded quest=11127;stage=Pickup;scope=QuestStage;retry=2026-09-05T06:10:20.8287986Z;state=Quarantined. excluded quest=118;stage=Pickup;npc=415;reason=outside-scan-radius;retry=context-change excluded quest=1195;stage=Pickup;npc=4721;reason=outside-scan-radius;retry=context-change excluded quest=14106;stage=Pickup;scope=QuestStage;retry=2026-09-05T06:10:20.8250193Z;state=Quarantined. excluded quest=1483;stage=Pickup;npc=3442;reason=outside-scan-radius;retry=context-change excluded quest=152;stage=Pickup;npc=392;reason=outside-scan-radius;retry=context-change excluded quest=2098;stage=Pickup;npc=6667;reason=outside-scan-radius;retry=context-change excluded quest=216;stage=Pickup;npc=12757;reason=outside-scan-radius;retry=context-change excluded quest=235;stage=Pickup;npc=10880;reason=outside-scan-radius;retry=context-change excluded quest=3281;stage=TurnIn;npc=3464;reason=outside-scan-radius;retry=context-change excluded quest=4542;stage=Pickup;npc=10079;reason=outside-scan-radius;retry=context-change excluded quest=470;stage=Pickup;npc=2111;reason=outside-scan-radius;retry=context-change excluded quest=472;stage=Pickup;npc=2097;reason=outside-scan-radius;retry=context-change excluded quest=4740;stage=Pickup;npc=175320;reason=outside-scan-radius;retry=context-change excluded quest=4921;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=493;stage=Pickup;npc=1937;reason=outside-scan-radius;retry=context-change excluded quest=494;stage=Pickup;npc=2214;reason=outside-scan-radius;retry=context-change excluded quest=496;stage=Pickup;npc=2216;reason=outside-scan-radius;retry=context-change excluded quest=498;stage=Pickup;npc=2229;reason=outside-scan-radius;retry=context-change excluded quest=501;stage=Pickup;npc=2216;reason=outside-scan-radius;retry=context-change excluded quest=516;stage=Pickup;npc=2121;reason=outside-scan-radius;retry=context-change excluded quest=527;stage=Pickup;npc=2215;reason=outside-scan-radius;retry=context-change excluded quest=546;stage=Pickup;npc=2418;reason=outside-scan-radius;retry=context-change excluded quest=549;stage=Pickup;npc=1763;reason=outside-scan-radius;retry=context-change excluded quest=6301;stage=Pickup;npc=11864;reason=outside-scan-radius;retry=context-change excluded quest=6382;stage=Pickup;npc=3387;reason=outside-scan-radius;retry=context-change excluded quest=6383;stage=Pickup;npc=12696;reason=outside-scan-radius;retry=context-change excluded quest=6393;stage=Pickup;npc=11862;reason=outside-scan-radius;retry=context-change excluded quest=6442;stage=Pickup;npc=12719;reason=outside-scan-radius;retry=context-change excluded quest=6461;stage=Pickup;npc=12816;reason=outside-scan-radius;retry=context-change excluded quest=6462;stage=Pickup;npc=12721;reason=outside-scan-radius;retry=context-change excluded quest=6503;stage=Pickup;npc=12867;reason=outside-scan-radius;retry=context-change excluded quest=6541;stage=Pickup;npc=3429;reason=outside-scan-radius;retry=context-change excluded quest=6542;stage=Pickup;npc=11821;reason=outside-scan-radius;retry=context-change excluded quest=6543;stage=Pickup;npc=8582;reason=outside-scan-radius;retry=context-change excluded quest=742;stage=Pickup;npc=10881;reason=outside-scan-radius;retry=context-change excluded quest=747;stage=Objective;scope=Objective;objective=0;retry=2026-09-05T06:10:20.8040908Z;state=Quarantined. excluded quest=747;stage=Objective;scope=Objective;objective=1;retry=2026-09-05T06:10:20.8116023Z;state=Quarantined. excluded quest=7790;stage=Pickup;scope=QuestStage;retry=2026-09-05T06:10:20.8249148Z;state=Quarantined. excluded quest=843;stage=Pickup;npc=3341;reason=outside-scan-radius;retry=context-change excluded quest=8487;stage=TurnIn;npc=15402;reason=outside-scan-radius;retry=context-change excluded quest=851;stage=Pickup;npc=3389;reason=outside-scan-radius;retry=context-change excluded quest=858;stage=Pickup;npc=3439;reason=outside-scan-radius;retry=context-change excluded quest=865;stage=Pickup;npc=3446;reason=outside-scan-radius;retry=context-change excluded quest=867;stage=Objective;scope=Objective;objective=0;retry=2026-09-05T06:10:20.8137024Z;state=Quarantined. excluded quest=868;stage=Pickup;npc=3428;reason=outside-scan-radius;retry=context-change excluded quest=878;stage=Pickup;npc=3430;reason=outside-scan-radius;retry=context-change excluded quest=8889;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=8889;stage=Objective;objective=1;reason=outside-scan-radius;retry=context-change. excluded quest=8889;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;objective=1;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;scope=Objective;objective=3;retry=2026-09-05T06:10:20.8169213Z;state=Quarantined. excluded quest=893;stage=Pickup;npc=3433;reason=outside-scan-radius;retry=context-change excluded quest=894;stage=TurnIn;npc=4141;reason=outside-scan-radius;retry=context-change excluded quest=896;stage=Objective;scope=Objective;objective=0;retry=2026-09-05T06:10:20.8197153Z;state=Quarantined. excluded quest=9067;stage=Objective;scope=Objective;objective=0;retry=2026-09-05T07:12:52.3802265Z;state=Quarantined. excluded quest=9151;stage=Pickup;npc=16199;reason=outside-scan-radius;retry=context-change excluded quest=9157;stage=TurnIn;npc=16201;reason=outside-scan-radius;retry=context-change excluded quest=9214;stage=Pickup;npc=16220;reason=outside-scan-radius;retry=context-change excluded quest=9218;stage=Pickup;npc=16205;reason=outside-scan-radius;retry=context-change excluded quest=9275;stage=Pickup;npc=16464;reason=outside-scan-radius;retry=context-change excluded quest=9276;stage=Pickup;npc=16463;reason=outside-scan-radius;retry=context-change excluded quest=9281;stage=Pickup;npc=16480;reason=outside-scan-radius;retry=context-change excluded quest=9388;stage=Pickup;scope=QuestStage;retry=2026-09-05T06:10:20.8314367Z;state=Quarantined. excluded quest=9389;stage=Pickup;scope=QuestStage;retry=2026-09-05T06:10:20.8315248Z;state=Quarantined. excluded quest=9425;stage=Pickup;npc=16287;reason=outside-scan-radius;retry=context-change excluded quest=9428;stage=Pickup;npc=17098;reason=outside-scan-radius;retry=context-change excluded quest=959;stage=Pickup;npc=3665;reason=outside-scan-radius;retry=context-change excluded quest=962;stage=Pickup;npc=3419;reason=outside-scan-radius;retry=context-change excluded quest=965;stage=Pickup;npc=3657;reason=outside-scan-radius;retry=context-change excluded quest=9749;stage=Pickup;scope=QuestStage;retry=2026-09-05T06:10:20.8275214Z;state=Quarantined.
+[09:20:43.021] [N] [Wholesome Auto Quest] Started with quest data loaded.
+[09:20:43.070] [N] [SpellDb] Loaded 49816 spells from Spells.bin
+[09:20:43.120] [D] Setting CVars: autoSelfCast=1, autoLootDefault=1
+[09:20:43.187] [D] Cleared POI
+[09:20:43.196] [D] Refresh() called. LastCount=0, CurrentCount=33
+[09:20:43.196] [N] Building spell book
+[09:20:43.196] [D] Found 33 spells from LocalPlayer.KnownSpells
+[09:20:43.197] [N] Adding Arcane Affinity
+[09:20:43.197] [N] Adding Arcane Torrent
+[09:20:43.197] [N] Adding Auto Attack
+[09:20:43.197] [N] Adding Block
+[09:20:43.198] [N] Adding Dodge
+[09:20:43.198] [N] Adding Magic Resistance
+[09:20:43.198] [N] Adding Parry
+[09:20:43.199] [N] Adding Blessing of Wisdom
+[09:20:43.199] [N] Adding Concentration Aura
+[09:20:43.199] [N] Adding Consecration
+[09:20:43.200] [N] Adding Exorcism
+[09:20:43.205] [N] Adding Flash of Light
+[09:20:43.206] [N] Adding Holy Light
+[09:20:43.206] [N] Adding Lay on Hands
+[09:20:43.206] [N] Adding Purify
+[09:20:43.206] [N] Adding Seal of Righteousness
+[09:20:43.207] [N] Adding Sense Undead
+[09:20:43.207] [N] Adding Turn Evil
+[09:20:43.207] [N] Adding Blessing of Kings
+[09:20:43.208] [N] Adding Devotion Aura
+[09:20:43.208] [N] Adding Divine Protection
+[09:20:43.208] [N] Adding Hammer of Justice
+[09:20:43.209] [N] Adding Hand of Freedom
+[09:20:43.209] [N] Adding Hand of Protection
+[09:20:43.209] [N] Adding Hand of Reckoning
+[09:20:43.214] [N] Adding Righteous Defense
+[09:20:43.214] [N] Adding Righteous Fury
+[09:20:43.215] [N] Adding Seal of Justice
+[09:20:43.215] [N] Adding Blessing of Might
+[09:20:43.215] [N] Adding Judgement of Light
+[09:20:43.216] [N] Adding Judgement of Wisdom
+[09:20:43.216] [N] Adding Retribution Aura
+[09:20:43.217] [N] Adding Seal of Command
+[09:20:43.217] [N] Spell book built
+[09:20:43.218] [D] [SpellManager] Initialize — subscribed to BotEvents.OnBotStart
+[09:20:43.723] [D] [Talented] SelectMajorTalentTree called but not needed in WotLK 3.3.5a
+[09:20:43.801] [N] Loading 1_31_32
+[09:20:43.803] [N] Loading 1_31_33
+[09:20:43.805] [N] Loading 1_31_34
+[09:20:43.807] [N] Loading 1_32_32
+[09:20:43.809] [N] Loading 1_32_33
+[09:20:43.810] [N] Loading 1_32_34
+[09:20:43.811] [N] Loading 1_33_32
+[09:20:43.812] [N] Loading 1_33_33
+[09:20:43.814] [N] Loading 1_33_34
+[09:20:44.296] [N] [Singular] Casting Blessing of Kings on Myself
+[09:20:44.296] [D] Spell_C::CastSpell(20217, 0, 0x6000000007EAB80, 0)
+[09:20:44.899] [N] [Singular] Casting Seal of Righteousness on Myself
+[09:20:44.899] [D] Spell_C::CastSpell(21084, 0, 0x6000000007EAB80, 0)
+[09:20:45.429] [N] [Database] Data.bin loaded successfully
+[09:20:45.448] [N] Loading 1_31_31
+[09:20:45.450] [N] Loading 1_32_31
+[09:20:45.451] [N] Loading 1_33_31
+[09:20:45.454] [D] [Blackspot] Area cost initialized: area 17 = 60x
+[09:20:45.466] [N] Loading 1_32_35
+[09:20:45.467] [N] Loading 1_32_36
+[09:20:45.469] [N] Loading 1_33_35
+[09:20:45.471] [N] Loading 1_33_36
+[09:20:45.473] [N] Loading 1_34_34
+[09:20:45.474] [N] Loading 1_34_35
+[09:20:45.475] [N] Loading 1_34_36
+[09:20:45.503] [N] Loading 1_33_30
+[09:20:45.505] [N] Loading 1_34_30
+[09:20:45.507] [N] Loading 1_34_31
+[09:20:45.509] [N] Loading 1_34_32
+[09:20:45.511] [N] Loading 1_35_30
+[09:20:45.512] [N] Loading 1_35_31
+[09:20:45.513] [N] Loading 1_35_32
+[09:20:46.425] [N] Loading 1_31_35
+[09:20:46.425] [N] Loading 1_32_30
+[09:20:46.425] [N] Loading 1_31_30
+[09:20:46.425] [N] Loading 1_30_31
+[09:20:46.425] [N] Loading 1_30_34
+[09:20:46.425] [N] Loading 1_30_30
+[09:20:46.425] [N] Loading 1_30_35
+[09:20:46.425] [N] Loading 1_31_36
+[09:20:46.425] [N] Loading 1_35_34
+[09:20:46.425] [N] Loading 1_30_33
+[09:20:46.425] [N] Loading 1_35_35
+[09:20:46.425] [N] Loading 1_30_32
+[09:20:46.425] [N] Loading 1_30_36
+[09:20:46.425] [N] Loading 1_29_31
+[09:20:46.425] [N] Loading 1_35_36
+[09:20:46.425] [N] Loading 1_29_30
+[09:20:46.425] [N] Loading 1_29_34
+[09:20:46.425] [N] Loading 1_32_37
+[09:20:46.425] [N] Loading 1_29_32
+[09:20:46.425] [N] Loading 1_33_37
+[09:20:46.425] [N] Loading 1_36_35
+[09:20:46.425] [N] Loading 1_34_37
+[09:20:46.425] [N] Loading 1_29_35
+[09:20:46.425] [N] Loading 1_31_37
+[09:20:46.425] [N] Loading 1_36_34
+[09:20:46.425] [N] Loading 1_30_29
+[09:20:46.425] [N] Loading 1_36_36
+[09:20:46.425] [N] Loading 1_29_29
+[09:20:46.425] [N] Loading 1_35_37
+[09:20:46.425] [N] Loading 1_29_36
+[09:20:46.425] [N] Loading 1_29_33
+[09:20:46.425] [N] Loading 1_30_37
+[09:20:46.425] [N] Loading 1_28_31
+[09:20:46.425] [N] Loading 1_36_33
+[09:20:46.425] [N] Loading 1_31_29
+[09:20:46.425] [N] Loading 1_33_38
+[09:20:46.425] [N] Loading 1_28_32
+[09:20:46.425] [N] Loading 1_37_35
+[09:20:46.425] [N] Loading 1_35_33
+[09:20:46.425] [N] Loading 1_32_38
+[09:20:46.425] [N] Loading 1_37_34
+[09:20:46.425] [N] Loading 1_28_30
+[09:20:46.425] [N] Loading 1_37_33
+[09:20:46.425] [N] Loading 1_31_38
+[09:20:46.425] [N] Loading 1_36_37
+[09:20:46.425] [N] Loading 1_34_38
+[09:20:46.425] [N] Loading 1_36_32
+[09:20:46.425] [N] Loading 1_37_36
+[09:20:46.425] [N] Loading 1_34_33
+[09:20:46.425] [N] Loading 1_29_37
+[09:20:46.425] [N] Loading 1_28_33
+[09:20:46.425] [N] Loading 1_28_29
+[09:20:46.425] [N] Loading 1_30_28
+[09:20:46.425] [N] Loading 1_37_32
+[09:20:46.425] [N] Loading 1_31_28
+[09:20:46.425] [N] Loading 1_35_38
+[09:20:46.425] [N] Loading 1_28_36
+[09:20:46.425] [N] Loading 1_28_35
+[09:20:46.425] [N] Loading 1_30_38
+[09:20:46.425] [N] Loading 1_36_31
+[09:20:46.425] [N] Loading 1_29_28
+[09:20:46.425] [N] Loading 1_33_39
+[09:20:46.425] [N] Loading 1_38_35
+[09:20:46.425] [N] Loading 1_34_39
+[09:20:46.425] [N] Loading 1_37_31
+[09:20:46.425] [N] Loading 1_32_39
+[09:20:46.425] [N] Loading 1_37_37
+[09:20:46.425] [N] Loading 1_28_37
+[09:20:46.425] [N] Loading 1_38_36
+[09:20:46.425] [N] Loading 1_31_39
+[09:20:46.425] [N] Loading 1_36_38
+[09:20:46.425] [N] Loading 1_28_34
+[09:20:46.425] [N] Loading 1_29_38
+[09:20:46.425] [N] Loading 1_27_30
+[09:20:46.425] [N] Loading 1_32_28
+[09:20:46.425] [N] Loading 1_38_34
+[09:20:46.425] [N] Loading 1_32_29
+[09:20:46.425] [N] Loading 1_27_29
+[09:20:46.425] [N] Loading 1_27_36
+[09:20:46.425] [N] Loading 1_27_35
+[09:20:46.425] [N] Loading 1_36_30
+[09:20:46.425] [N] Loading 1_30_39
+[09:20:46.425] [N] Loading 1_31_27
+[09:20:46.425] [N] Loading 1_33_29
+[09:20:46.425] [N] Loading 1_33_28
+[09:20:46.425] [N] Loading 1_35_39
+[09:20:46.425] [N] Loading 1_27_33
+[09:20:46.425] [N] Loading 1_39_35
+[09:20:46.425] [N] Loading 1_27_34
+[09:20:46.425] [N] Loading 1_27_32
+[09:20:46.425] [N] Loading 1_38_37
+[09:20:46.425] [N] Loading 1_27_37
+[09:20:46.425] [N] Loading 1_39_36
+[09:20:46.425] [N] Loading 1_28_38
+[09:20:46.425] [N] Loading 1_38_31
+[09:20:46.426] [N] Loading 1_31_40
+[09:20:46.426] [N] Loading 1_32_27
+[09:20:46.426] [N] Loading 1_36_39
+[09:20:46.426] [N] Loading 1_29_39
+[09:20:46.426] [N] Loading 1_34_29
+[09:20:46.426] [N] Loading 1_39_34
+[09:20:46.426] [N] Loading 1_38_32
+[09:20:46.426] [N] Loading 1_32_40
+[09:20:46.426] [N] Loading 1_34_28
+[09:20:46.426] [N] Loading 1_33_27
+[09:20:46.426] [N] Loading 1_30_40
+[09:20:46.426] [N] Loading 1_34_40
+[09:20:46.426] [N] Loading 1_26_35
+[09:20:46.426] [N] Loading 1_26_34
+[09:20:46.426] [N] Loading 1_33_40
+[09:20:46.426] [N] Loading 1_26_29
+[09:20:46.426] [N] Loading 1_39_37
+[09:20:46.426] [N] Loading 1_27_28
+[09:20:46.426] [N] Loading 1_35_40
+[09:20:46.426] [N] Loading 1_27_31
+[09:20:46.426] [N] Loading 1_40_35
+[09:20:46.426] [N] Loading 1_26_33
+[09:20:46.426] [N] Loading 1_26_36
+[09:20:46.426] [N] Loading 1_37_38
+[09:20:46.426] [N] Loading 1_27_38
+[09:20:46.426] [N] Loading 1_35_29
+[09:20:46.426] [N] Loading 1_34_27
+[09:20:46.426] [N] Loading 1_28_39
+[09:20:46.426] [N] Loading 1_28_28
+[09:20:46.426] [N] Loading 1_40_36
+[09:20:46.426] [N] Loading 1_35_28
+[09:20:46.426] [N] Loading 1_26_37
+[09:20:46.426] [N] Loading 1_31_41
+[09:20:46.426] [N] Loading 1_38_33
+[09:20:46.426] [N] Loading 1_26_32
+[09:20:46.426] [N] Loading 1_26_30
+[09:20:46.426] [N] Loading 1_26_28
+[09:20:46.426] [N] Loading 1_29_40
+[09:20:46.426] [N] Loading 1_37_39
+[09:20:46.426] [N] Loading 1_32_41
+[09:20:46.426] [N] Loading 1_32_26
+[09:20:46.426] [N] Loading 1_33_26
+[09:20:46.426] [N] Loading 1_30_41
+[09:20:46.426] [N] Loading 1_36_40
+[09:20:46.426] [N] Loading 1_26_31
+[09:20:46.426] [N] Loading 1_40_34
+[09:20:46.426] [N] Loading 1_38_38
+[09:20:46.426] [N] Loading 1_25_35
+[09:20:46.426] [N] Loading 1_35_27
+[09:20:46.426] [N] Loading 1_26_38
+[09:20:46.426] [N] Loading 1_39_38
+[09:20:46.426] [N] Loading 1_33_41
+[09:20:46.426] [N] Loading 1_36_29
+[09:20:46.426] [N] Loading 1_40_37
+[09:20:46.426] [N] Loading 1_41_35
+[09:20:46.426] [N] Loading 1_25_34
+[09:20:46.426] [N] Loading 1_36_28
+[09:20:46.426] [N] Loading 1_34_26
+[09:20:46.426] [N] Loading 1_27_39
+[09:20:46.426] [N] Loading 1_37_40
+[09:20:46.426] [N] Loading 1_41_36
+[09:20:46.426] [N] Loading 1_25_33
+[09:20:46.426] [N] Loading 1_31_26
+[09:20:46.426] [N] Loading 1_38_39
+[09:20:46.426] [N] Loading 1_35_26
+[09:20:46.426] [N] Loading 1_28_40
+[09:20:46.426] [N] Loading 1_31_42
+[09:20:46.426] [N] Loading 1_29_41
+[09:20:46.426] [N] Loading 1_35_41
+[09:20:46.426] [N] Loading 1_27_27
+[09:20:46.426] [N] Loading 1_25_32
+[09:20:46.426] [N] Loading 1_34_41
+[09:20:46.426] [N] Loading 1_32_42
+[09:20:46.426] [N] Loading 1_25_31
+[09:20:46.426] [N] Loading 1_36_27
+[09:20:46.426] [N] Loading 1_40_38
+[09:20:46.426] [N] Loading 1_24_34
+[09:20:46.426] [N] Loading 1_25_37
+[09:20:46.426] [N] Loading 1_24_35
+[09:20:46.426] [N] Loading 1_26_39
+[09:20:46.426] [N] Loading 1_25_38
+[09:20:46.426] [N] Loading 1_30_42
+[09:20:46.426] [N] Loading 1_39_39
+[09:20:46.426] [N] Loading 1_33_42
+[09:20:46.426] [N] Loading 1_36_26
+[09:20:46.426] [N] Loading 1_28_41
+[09:20:46.426] [N] Loading 1_38_40
+[09:20:46.426] [N] Loading 1_41_37
+[09:20:46.426] [N] Loading 1_36_41
+[09:20:46.426] [N] Loading 1_33_25
+[09:20:46.426] [N] Loading 1_32_25
+[09:20:46.426] [N] Loading 1_29_42
+[09:20:46.426] [N] Loading 1_24_33
+[09:20:46.426] [N] Loading 1_25_30
+[09:20:46.426] [N] Loading 1_30_27
+[09:20:46.426] [N] Loading 1_41_38
+[09:20:46.426] [N] Loading 1_34_42
+[09:20:46.426] [N] Loading 1_25_39
+[09:20:46.426] [N] Loading 1_27_40
+[09:20:46.426] [N] Loading 1_40_39
+[09:20:46.426] [N] Loading 1_37_27
+[09:20:46.426] [N] Loading 1_24_32
+[09:20:46.426] [N] Loading 1_39_40
+[09:20:46.426] [N] Loading 1_31_25
+[09:20:46.426] [N] Loading 1_35_25
+[09:20:46.426] [N] Loading 1_30_26
+[09:20:46.426] [N] Loading 1_37_41
+[09:20:46.426] [N] Loading 1_26_40
+[09:20:46.426] [N] Loading 1_37_28
+[09:20:46.426] [N] Loading 1_23_34
+[09:20:46.426] [N] Loading 1_23_33
+[09:20:46.426] [N] Loading 1_34_25
+[09:20:46.426] [N] Loading 1_24_31
+[09:20:46.426] [N] Loading 1_41_34
+[09:20:46.426] [N] Loading 1_27_41
+[09:20:46.426] [N] Loading 1_24_30
+[09:20:46.426] [N] Loading 1_31_43
+[09:20:46.426] [N] Loading 1_36_25
+[09:20:46.426] [N] Loading 1_35_42
+[09:20:46.426] [N] Loading 1_42_35
+[09:20:46.426] [N] Loading 1_37_29
+[09:20:46.426] [N] Loading 1_32_43
+[09:20:46.426] [N] Loading 1_41_39
+[09:20:46.426] [N] Loading 1_28_42
+[09:20:46.426] [N] Loading 1_42_34
+[09:20:46.426] [N] Loading 1_37_26
+[09:20:46.426] [N] Loading 1_25_40
+[09:20:46.426] [N] Loading 1_38_41
+[09:20:46.426] [N] Loading 1_33_43
+[09:20:46.426] [N] Loading 1_23_32
+[09:20:46.426] [N] Loading 1_25_29
+[09:20:46.426] [N] Loading 1_38_27
+[09:20:46.426] [N] Loading 1_30_43
+[09:20:46.426] [N] Loading 1_40_33
+[09:20:46.426] [N] Loading 1_39_41
+[09:20:46.426] [N] Loading 1_38_28
+[09:20:46.426] [N] Loading 1_41_33
+[09:20:46.426] [N] Loading 1_30_25
+[09:20:46.426] [N] Loading 1_39_33
+[09:20:46.426] [N] Loading 1_34_43
+[09:20:46.426] [N] Loading 1_42_36
+[09:20:46.426] [N] Loading 1_36_42
+[09:20:46.426] [N] Loading 1_40_40
+[09:20:46.426] [N] Loading 1_24_29
+[09:20:46.426] [N] Loading 1_22_33
+[09:20:46.426] [N] Loading 1_26_41
+[09:20:46.426] [N] Loading 1_33_24
+[09:20:46.426] [N] Loading 1_29_27
+[09:20:46.426] [N] Loading 1_38_26
+[09:20:46.426] [N] Loading 1_23_31
+[09:20:46.426] [N] Loading 1_29_43
+[09:20:46.426] [N] Loading 1_39_32
+[09:20:46.426] [N] Loading 1_40_32
+[09:20:46.426] [N] Loading 1_24_39
+[09:20:46.426] [N] Loading 1_24_40
+[09:20:46.426] [N] Loading 1_22_32
+[09:20:46.426] [N] Loading 1_29_26
+[09:20:46.426] [N] Loading 1_25_41
+[09:20:46.426] [N] Loading 1_35_24
+[09:20:46.426] [N] Loading 1_27_42
+[09:20:46.426] [N] Loading 1_34_24
+[09:20:46.426] [N] Loading 1_35_43
+[09:20:46.426] [N] Loading 1_23_30
+[09:20:46.426] [N] Loading 1_39_28
+[09:20:46.426] [N] Loading 1_39_27
+[09:20:46.426] [N] Loading 1_40_41
+[09:20:46.426] [N] Loading 1_37_42
+[09:20:46.426] [N] Loading 1_39_31
+[09:20:46.426] [N] Loading 1_42_37
+[09:20:46.426] [N] Loading 1_40_31
+[09:20:46.426] [N] Loading 1_36_24
+[09:20:46.426] [N] Loading 1_25_28
+[09:20:46.426] [N] Loading 1_23_29
+[09:20:46.426] [N] Loading 1_37_25
+[09:20:46.426] [N] Loading 1_28_43
+[09:20:46.426] [N] Loading 1_43_36
+[09:20:46.426] [N] Loading 1_41_32
+[09:20:46.426] [N] Loading 1_31_44
+[09:20:46.426] [N] Loading 1_21_33
+[09:20:46.426] [N] Loading 1_24_41
+[09:20:46.426] [N] Loading 1_32_44
+[09:20:46.426] [N] Loading 1_26_42
+[09:20:46.426] [N] Loading 1_29_25
+[09:20:46.426] [N] Loading 1_21_32
+[09:20:46.426] [N] Loading 1_24_28
+[09:20:46.426] [N] Loading 1_38_42
+[09:20:46.426] [N] Loading 1_22_31
+[09:20:46.426] [N] Loading 1_39_29
+[09:20:46.426] [N] Loading 1_33_44
+[09:20:46.426] [N] Loading 1_30_44
+[09:20:46.426] [N] Loading 1_39_42
+[09:20:46.426] [N] Loading 1_39_30
+[09:20:46.426] [N] Loading 1_40_30
+[09:20:46.426] [N] Loading 1_41_31
+[09:20:46.426] [N] Loading 1_22_34
+[09:20:46.426] [N] Loading 1_21_34
+[09:20:46.426] [N] Loading 1_34_44
+[09:20:46.426] [N] Loading 1_40_28
+[09:20:46.426] [N] Loading 1_25_42
+[09:20:46.426] [N] Loading 1_22_30
+[09:20:46.426] [N] Loading 1_36_43
+[09:20:46.426] [N] Loading 1_40_27
+[09:20:46.426] [N] Loading 1_28_27
+[09:20:46.426] [N] Loading 1_37_24
+[09:20:46.426] [N] Loading 1_42_38
+[09:20:46.459] [D] Compiling expression 'HasQuest(6548)'
+[09:20:46.470] [D] [If] Condition is true, executing If body
+[09:20:46.561] [N] [Objective] Goal: Kill Grimtotem Ruffian x 8
+[09:20:46.561] [D] Goal: Goal: Kill Grimtotem Ruffian x 8
+[09:20:46.562] [D] [GrindObjective] Using profile hotspots (3 points) for mob 11910
+[09:20:46.815] [N] Mounting: 35022
+[09:20:48.929] [D] Activity: Moving to hotspot
+[09:20:50.679] [N] Loading 1_23_28
+[09:20:56.757] [D] [Singular-DEBUG] Switched targets!
+[09:20:56.758] [D] [Singular-DEBUG] Melee Distance: 6.8833337
+[09:20:56.758] [D] [Singular-DEBUG] Health: 100
+[09:20:56.758] [D] [Singular-DEBUG] Level: 14
+[09:21:00.671] [D] Dismount for attacker.
+[09:21:00.671] [D] Stop and dismount. Reason: Near destination
+[09:21:00.704] [V] We are stuck! (TPS: 0.5, Latency: 0, loc: (-144.98, -641.89, 0.79))!
+[09:21:06.326] [N] [Singular] Casting Exorcism on Grimtotem Mercenary
+[09:21:06.326] [D] Spell_C::CastSpell(879, 0, 0xF130002E87074A6C, 0)
+[09:21:20.232] [D] [MeshNavigator] Skipped 2 path nodes
+[09:21:20.940] [D] [MeshNavigator] Skipped 2 path nodes
+[09:21:24.952] [N] [Singular] Casting Seal of Righteousness on Myself
+[09:21:24.952] [D] Spell_C::CastSpell(21084, 0, 0x6000000007EAB80, 0)
+[09:21:26.709] [D] [QuestRecovery] quest=6548, stage=Objective, old=Attempting, new=Eligible, reason=None, episode=0, attempt=0, retry=
+[09:21:27.079] [D] Changed POI to: Type: Loot, Name: Grimtotem Mercenary, Guid: F130002E87074A6C, Entry: 11911, Location: (-169.66, -665.19, 1.19)
+[09:21:27.589] [D] [Interact] Interacting with object at 0x2EA31C48
+[09:21:27.622] [D] [Interact] Done interacting with object at 0x2EA31C48
+[09:21:28.226] [D] [Singular-DEBUG] Switched targets!
+[09:21:28.226] [D] [Singular-DEBUG] Melee Distance: 6.8833337
+[09:21:28.226] [D] [Singular-DEBUG] Health: 0
+[09:21:28.226] [D] [Singular-DEBUG] Level: 14
+[09:21:28.596] [N] Looting Grimtotem Mercenary Guid 0xF130002E87074A6C
+[09:21:28.697] [D] Cleared POI - Reason Waiting for loot flag
+[09:21:28.697] [D] Cleared POI
+[09:21:37.367] [N] Mounting: 35022
+[09:21:43.838] [V] We are stuck! (TPS: 0.0, Latency: 0, loc: (-145.26, -642.34, 0.82))!
+[09:21:44.474] [D] [QuestLog] Loaded 66 completed quests from Lua fallback
+[09:21:46.244] [N] Loading 1_31_30
+[09:21:46.244] [N] Loading 1_31_35
+[09:21:46.244] [N] Loading 1_30_34
+[09:21:46.244] [N] Loading 1_30_35
+[09:21:46.244] [N] Loading 1_31_36
+[09:21:46.244] [N] Loading 1_35_34
+[09:21:46.244] [N] Loading 1_30_32
+[09:21:46.244] [N] Loading 1_35_35
+[09:21:46.244] [N] Loading 1_29_31
+[09:21:46.244] [N] Loading 1_29_30
+[09:21:46.244] [N] Loading 1_30_36
+[09:21:46.244] [N] Loading 1_29_32
+[09:21:46.244] [N] Loading 1_35_36
+[09:21:46.244] [N] Loading 1_29_34
+[09:21:46.244] [N] Loading 1_32_37
+[09:21:46.244] [N] Loading 1_33_37
+[09:21:46.244] [N] Loading 1_30_29
+[09:21:46.244] [N] Loading 1_29_35
+[09:21:46.244] [N] Loading 1_34_37
+[09:21:46.244] [N] Loading 1_36_35
+[09:21:46.244] [N] Loading 1_31_37
+[09:21:46.244] [N] Loading 1_29_29
+[09:21:46.244] [N] Loading 1_36_34
+[09:21:46.244] [N] Loading 1_28_31
+[09:21:46.244] [N] Loading 1_36_36
+[09:21:46.244] [N] Loading 1_31_29
+[09:21:46.244] [N] Loading 1_28_32
+[09:21:46.244] [N] Loading 1_29_36
+[09:21:46.244] [N] Loading 1_35_37
+[09:21:46.244] [N] Loading 1_30_37
+[09:21:46.244] [N] Loading 1_28_30
+[09:21:46.244] [N] Loading 1_33_38
+[09:21:46.244] [N] Loading 1_32_38
+[09:21:46.244] [N] Loading 1_37_35
+[09:21:46.244] [N] Loading 1_28_33
+[09:21:46.244] [N] Loading 1_37_34
+[09:21:46.244] [N] Loading 1_31_38
+[09:21:46.244] [N] Loading 1_28_29
+[09:21:46.244] [N] Loading 1_30_28
+[09:21:46.244] [N] Loading 1_34_38
+[09:21:46.244] [N] Loading 1_31_28
+[09:21:46.244] [N] Loading 1_36_37
+[09:21:46.244] [N] Loading 1_29_37
+[09:21:46.244] [N] Loading 1_37_36
+[09:21:46.244] [N] Loading 1_28_36
+[09:21:46.244] [N] Loading 1_29_28
+[09:21:46.244] [N] Loading 1_28_35
+[09:21:46.244] [N] Loading 1_35_38
+[09:21:46.244] [N] Loading 1_30_38
+[09:21:46.244] [N] Loading 1_27_30
+[09:21:46.244] [N] Loading 1_33_39
+[09:21:46.244] [N] Loading 1_32_28
+[09:21:46.244] [N] Loading 1_34_39
+[09:21:46.244] [N] Loading 1_32_39
+[09:21:46.244] [N] Loading 1_28_37
+[09:21:46.244] [N] Loading 1_37_37
+[09:21:46.244] [N] Loading 1_38_35
+[09:21:46.244] [N] Loading 1_28_34
+[09:21:46.244] [N] Loading 1_32_29
+[09:21:46.244] [N] Loading 1_31_39
+[09:21:46.244] [N] Loading 1_29_38
+[09:21:46.244] [N] Loading 1_27_29
+[09:21:46.244] [N] Loading 1_36_38
+[09:21:46.244] [N] Loading 1_38_36
+[09:21:46.244] [N] Loading 1_31_27
+[09:21:46.244] [N] Loading 1_27_33
+[09:21:46.244] [N] Loading 1_33_29
+[09:21:46.244] [N] Loading 1_38_34
+[09:21:46.244] [N] Loading 1_27_36
+[09:21:46.244] [N] Loading 1_27_35
+[09:21:46.244] [N] Loading 1_33_28
+[09:21:46.244] [N] Loading 1_30_39
+[09:21:46.244] [N] Loading 1_27_32
+[09:21:46.244] [N] Loading 1_36_30
+[09:21:46.244] [N] Loading 1_35_39
+[09:21:46.244] [N] Loading 1_27_34
+[09:21:46.244] [N] Loading 1_27_37
+[09:21:46.244] [N] Loading 1_39_35
+[09:21:46.244] [N] Loading 1_38_37
+[09:21:46.899] [N] Loading 1_32_27
+[09:21:46.899] [N] Loading 1_34_29
+[09:21:46.899] [N] Loading 1_28_38
+[09:21:46.899] [N] Loading 1_33_27
+[09:21:46.899] [N] Loading 1_34_28
+[09:21:46.899] [N] Loading 1_39_36
+[09:21:46.899] [N] Loading 1_31_40
+[09:21:46.899] [N] Loading 1_29_39
+[09:21:46.899] [N] Loading 1_38_31
+[09:21:46.899] [N] Loading 1_36_39
+[09:21:46.899] [N] Loading 1_32_40
+[09:21:46.899] [N] Loading 1_26_29
+[09:21:46.899] [N] Loading 1_27_28
+[09:21:46.900] [N] Loading 1_27_31
+[09:21:46.900] [N] Loading 1_39_34
+[09:21:46.900] [N] Loading 1_38_32
+[09:21:46.900] [N] Loading 1_30_40
+[09:21:46.900] [N] Loading 1_26_35
+[09:21:46.900] [N] Loading 1_26_34
+[09:21:46.900] [N] Loading 1_34_40
+[09:21:46.900] [N] Loading 1_28_28
+[09:21:46.900] [N] Loading 1_33_40
+[09:21:46.900] [N] Loading 1_26_33
+[09:21:46.900] [N] Loading 1_35_29
+[09:21:46.900] [N] Loading 1_34_27
+[09:21:46.900] [N] Loading 1_26_32
+[09:21:46.900] [N] Loading 1_26_30
+[09:21:46.900] [N] Loading 1_35_40
+[09:21:46.900] [N] Loading 1_35_28
+[09:21:46.900] [N] Loading 1_26_36
+[09:21:46.900] [N] Loading 1_39_37
+[09:21:46.900] [N] Loading 1_26_28
+[09:21:46.900] [N] Loading 1_27_38
+[09:21:46.900] [N] Loading 1_28_39
+[09:21:46.900] [N] Loading 1_40_35
+[09:21:46.900] [N] Loading 1_37_38
+[09:21:46.900] [N] Loading 1_26_37
+[09:21:46.900] [N] Loading 1_31_41
+[09:21:46.900] [N] Loading 1_32_26
+[09:21:46.900] [N] Loading 1_33_26
+[09:21:46.900] [N] Loading 1_40_36
+[09:21:46.900] [N] Loading 1_29_40
+[09:21:46.900] [N] Loading 1_26_31
+[09:21:46.900] [N] Loading 1_38_33
+[09:21:46.900] [N] Loading 1_32_41
+[09:21:46.900] [N] Loading 1_30_41
+[09:21:46.900] [N] Loading 1_37_39
+[09:21:46.900] [N] Loading 1_35_27
+[09:21:46.900] [N] Loading 1_25_35
+[09:21:46.900] [N] Loading 1_36_40
+[09:21:46.900] [N] Loading 1_36_29
+[09:21:46.900] [N] Loading 1_26_38
+[09:21:46.900] [N] Loading 1_38_38
+[09:21:46.900] [N] Loading 1_40_34
+[09:21:46.900] [N] Loading 1_36_28
+[09:21:46.900] [N] Loading 1_25_34
+[09:21:46.900] [N] Loading 1_33_41
+[09:21:46.900] [N] Loading 1_34_26
+[09:21:46.900] [N] Loading 1_39_38
+[09:21:46.900] [N] Loading 1_31_26
+[09:21:46.900] [N] Loading 1_40_37
+[09:21:46.900] [N] Loading 1_25_33
+[09:21:46.900] [N] Loading 1_41_35
+[09:21:46.900] [N] Loading 1_25_32
+[09:21:46.900] [N] Loading 1_27_27
+[09:21:46.900] [N] Loading 1_27_39
+[09:21:46.900] [N] Loading 1_35_26
+[09:21:46.900] [N] Loading 1_25_31
+[09:21:46.900] [N] Loading 1_37_40
+[09:21:46.900] [N] Loading 1_28_40
+[09:21:46.900] [N] Loading 1_36_27
+[09:21:46.900] [N] Loading 1_41_36
+[09:21:46.900] [N] Loading 1_29_41
+[09:21:46.900] [N] Loading 1_31_42
+[09:21:46.900] [N] Loading 1_35_41
+[09:21:46.900] [N] Loading 1_32_42
+[09:21:46.900] [N] Loading 1_38_39
+[09:21:46.900] [N] Loading 1_34_41
+[09:21:46.900] [N] Loading 1_24_34
+[09:21:46.900] [N] Loading 1_40_38
+[09:21:46.900] [N] Loading 1_25_37
+[09:21:46.900] [N] Loading 1_24_35
+[09:21:46.900] [N] Loading 1_26_39
+[09:21:46.900] [N] Loading 1_25_38
+[09:21:46.900] [N] Loading 1_36_26
+[09:21:46.900] [N] Loading 1_30_42
+[09:21:46.900] [N] Loading 1_33_25
+[09:21:46.900] [N] Loading 1_32_25
+[09:21:46.900] [N] Loading 1_25_30
+[09:21:46.900] [N] Loading 1_33_42
+[09:21:46.900] [N] Loading 1_28_41
+[09:21:46.900] [N] Loading 1_39_39
+[09:21:46.900] [N] Loading 1_30_27
+[09:21:46.900] [N] Loading 1_38_40
+[09:21:46.900] [N] Loading 1_36_41
+[09:21:46.900] [N] Loading 1_41_37
+[09:21:46.900] [N] Loading 1_24_33
+[09:21:46.900] [N] Loading 1_29_42
+[09:21:46.900] [N] Loading 1_24_32
+[09:21:46.900] [N] Loading 1_37_27
+[09:21:46.900] [N] Loading 1_25_39
+[09:21:46.900] [N] Loading 1_30_26
+[09:21:46.900] [N] Loading 1_31_25
+[09:21:46.900] [N] Loading 1_27_40
+[09:21:46.900] [N] Loading 1_34_42
+[09:21:46.900] [N] Loading 1_35_25
+[09:21:46.900] [N] Loading 1_41_38
+[09:21:46.900] [N] Loading 1_40_39
+[09:21:46.900] [N] Loading 1_24_31
+[09:21:46.900] [N] Loading 1_37_28
+[09:21:46.900] [N] Loading 1_34_25
+[09:21:46.900] [N] Loading 1_26_40
+[09:21:46.900] [N] Loading 1_23_34
+[09:21:46.900] [N] Loading 1_39_40
+[09:21:46.900] [N] Loading 1_23_33
+[09:21:46.900] [N] Loading 1_37_41
+[09:21:46.900] [N] Loading 1_24_30
+[09:21:46.900] [N] Loading 1_36_25
+[09:21:46.900] [N] Loading 1_27_41
+[09:21:46.900] [N] Loading 1_37_29
+[09:21:46.900] [N] Loading 1_41_34
+[09:21:46.900] [N] Loading 1_25_29
+[09:21:46.900] [N] Loading 1_31_43
+[09:21:46.900] [N] Loading 1_37_26
+[09:21:46.900] [N] Loading 1_35_42
+[09:21:46.900] [N] Loading 1_32_43
+[09:21:46.900] [N] Loading 1_28_42
+[09:21:46.900] [N] Loading 1_38_27
+[09:21:46.900] [N] Loading 1_42_35
+[09:21:46.900] [N] Loading 1_25_40
+[09:21:46.900] [N] Loading 1_30_25
+[09:21:46.900] [N] Loading 1_41_39
+[09:21:46.900] [N] Loading 1_23_32
+[09:21:46.900] [N] Loading 1_38_28
+[09:21:46.900] [N] Loading 1_33_43
+[09:21:46.900] [N] Loading 1_42_34
+[09:21:46.900] [N] Loading 1_30_43
+[09:21:46.900] [N] Loading 1_38_41
+[09:21:46.900] [N] Loading 1_39_41
+[09:21:46.900] [N] Loading 1_40_33
+[09:21:46.900] [N] Loading 1_41_33
+[09:21:47.331] [N] Loading 1_24_29
+[09:21:47.331] [N] Loading 1_34_43
+[09:21:47.331] [N] Loading 1_36_42
+[09:21:47.331] [N] Loading 1_39_33
+[09:21:47.331] [N] Loading 1_42_36
+[09:21:47.331] [N] Loading 1_40_40
+[09:21:47.331] [N] Loading 1_23_31
+[09:21:47.331] [N] Loading 1_29_27
+[09:21:47.331] [N] Loading 1_33_24
+[09:21:47.331] [N] Loading 1_26_41
+[09:21:47.331] [N] Loading 1_38_26
+[09:21:47.331] [N] Loading 1_22_33
+[09:21:47.331] [N] Loading 1_29_43
+[09:21:47.331] [N] Loading 1_39_32
+[09:21:47.331] [N] Loading 1_40_32
+[09:21:47.331] [N] Loading 1_24_39
+[09:21:47.331] [N] Loading 1_29_26
+[09:21:47.331] [N] Loading 1_23_30
+[09:21:47.331] [N] Loading 1_24_40
+[09:21:47.331] [N] Loading 1_34_24
+[09:21:47.331] [N] Loading 1_35_24
+[09:21:47.331] [N] Loading 1_22_32
+[09:21:47.331] [N] Loading 1_25_41
+[09:21:47.331] [N] Loading 1_27_42
+[09:21:47.331] [N] Loading 1_39_28
+[09:21:47.331] [N] Loading 1_39_27
+[09:21:47.331] [N] Loading 1_35_43
+[09:21:47.331] [N] Loading 1_23_29
+[09:21:47.331] [N] Loading 1_40_41
+[09:21:47.331] [N] Loading 1_25_28
+[09:21:47.331] [N] Loading 1_37_42
+[09:21:47.331] [N] Loading 1_36_24
+[09:21:47.331] [N] Loading 1_42_37
+[09:21:47.331] [N] Loading 1_39_31
+[09:21:47.331] [N] Loading 1_37_25
+[09:21:47.331] [N] Loading 1_40_31
+[09:21:47.331] [N] Loading 1_28_43
+[09:21:47.331] [N] Loading 1_31_44
+[09:21:47.331] [N] Loading 1_43_36
+[09:21:47.331] [N] Loading 1_22_31
+[09:21:47.331] [N] Loading 1_24_28
+[09:21:47.331] [N] Loading 1_29_25
+[09:21:47.331] [N] Loading 1_24_41
+[09:21:47.331] [N] Loading 1_32_44
+[09:21:47.331] [N] Loading 1_26_42
+[09:21:47.331] [N] Loading 1_21_33
+[09:21:47.331] [N] Loading 1_41_32
+[09:21:47.331] [N] Loading 1_39_29
+[09:21:47.331] [N] Loading 1_38_42
+[09:21:47.331] [N] Loading 1_21_32
+[09:21:47.331] [N] Loading 1_33_44
+[09:21:47.331] [N] Loading 1_30_44
+[09:21:47.331] [N] Loading 1_39_42
+[09:21:47.331] [N] Loading 1_22_30
+[09:21:47.331] [N] Loading 1_40_28
+[09:21:47.331] [N] Loading 1_28_27
+[09:21:47.331] [N] Loading 1_39_30
+[09:21:47.331] [N] Loading 1_40_27
+[09:21:47.331] [N] Loading 1_34_44
+[09:21:47.331] [N] Loading 1_22_34
+[09:21:47.331] [N] Loading 1_25_42
+[09:21:47.331] [N] Loading 1_36_43
+[09:21:47.331] [N] Loading 1_41_31
+[09:21:47.331] [N] Loading 1_21_34
+[09:21:47.331] [N] Loading 1_40_30
+[09:21:47.331] [N] Loading 1_37_24
+[09:21:49.150] [V] We are stuck! (TPS: 0.2, Latency: 0, loc: (-145.26, -642.34, 0.82))!
+[09:21:49.183] [V] Trying jump
+[09:21:50.982] [N] Loading 1_23_28
+[09:21:54.256] [V] We are stuck! (TPS: 0.0, Latency: 0, loc: (-138.80, -636.77, 1.45))!
+[09:21:54.256] [V] Trying strafe forward left for 1000ms
+[09:22:03.797] [V] We are stuck! (TPS: 0.0, Latency: 0, loc: (-137.96, -625.54, 3.62))!
+[09:22:12.596] [V] We are stuck! (TPS: 0.0, Latency: 0, loc: (-137.96, -625.54, 3.62))!
+[09:22:12.628] [V] Trying jump
+[09:22:14.558] [N] Loading 1_32_30
+[09:22:19.128] [N] Loading 1_28_26
+[09:22:20.699] [N] Loading 1_30_30
+[09:22:21.710] [V] We are stuck! (TPS: 0.0, Latency: 0, loc: (-126.36, -615.55, -3.09))!
+[09:22:24.975] [N] Loading 1_30_31
+[09:22:30.381] [V] We are stuck! (TPS: 0.0, Latency: 0, loc: (-126.36, -615.55, -3.09))!
+[09:22:30.414] [V] Trying jump
+[09:22:34.077] [N] Loading 1_30_33
+[09:22:34.077] [N] Loading 1_29_33
+[09:22:39.547] [V] We are stuck! (TPS: 0.0, Latency: 0, loc: (-120.93, -610.87, -1.87))!
+[09:22:39.547] [V] Trying strafe forward left for 600ms
+[09:22:46.335] [N] Loading 1_31_30
+[09:22:46.335] [N] Loading 1_31_35
+[09:22:46.335] [N] Loading 1_30_34
+[09:22:46.335] [N] Loading 1_30_35
+[09:22:46.335] [N] Loading 1_31_36
+[09:22:46.335] [N] Loading 1_30_32
+[09:22:46.335] [N] Loading 1_35_34
+[09:22:46.335] [N] Loading 1_29_31
+[09:22:46.335] [N] Loading 1_29_30
+[09:22:46.335] [N] Loading 1_29_32
+[09:22:46.335] [N] Loading 1_30_36
+[09:22:46.335] [N] Loading 1_35_36
+[09:22:46.335] [N] Loading 1_29_34
+[09:22:46.335] [N] Loading 1_32_37
+[09:22:46.335] [N] Loading 1_30_29
+[09:22:46.335] [N] Loading 1_33_37
+[09:22:46.335] [N] Loading 1_29_35
+[09:22:46.335] [N] Loading 1_29_29
+[09:22:46.335] [N] Loading 1_36_35
+[09:22:46.335] [N] Loading 1_34_37
+[09:22:46.335] [N] Loading 1_31_37
+[09:22:46.335] [N] Loading 1_36_34
+[09:22:46.335] [N] Loading 1_28_31
+[09:22:46.335] [N] Loading 1_31_29
+[09:22:46.335] [N] Loading 1_28_32
+[09:22:46.335] [N] Loading 1_36_36
+[09:22:46.335] [N] Loading 1_28_30
+[09:22:46.335] [N] Loading 1_29_36
+[09:22:46.335] [N] Loading 1_35_37
+[09:22:46.335] [N] Loading 1_30_37
+[09:22:46.335] [N] Loading 1_33_38
+[09:22:46.335] [N] Loading 1_28_33
+[09:22:46.335] [N] Loading 1_37_35
+[09:22:46.335] [N] Loading 1_32_38
+[09:22:46.335] [N] Loading 1_28_29
+[09:22:46.335] [N] Loading 1_30_28
+[09:22:46.335] [N] Loading 1_37_34
+[09:22:46.335] [N] Loading 1_31_28
+[09:22:46.335] [N] Loading 1_31_38
+[09:22:46.335] [N] Loading 1_34_38
+[09:22:46.335] [N] Loading 1_36_37
+[09:22:46.335] [N] Loading 1_37_36
+[09:22:46.335] [N] Loading 1_29_37
+[09:22:46.335] [N] Loading 1_29_28
+[09:22:46.335] [N] Loading 1_28_36
+[09:22:46.335] [N] Loading 1_35_38
+[09:22:46.335] [N] Loading 1_28_35
+[09:22:46.335] [N] Loading 1_30_38
+[09:22:46.335] [N] Loading 1_27_30
+[09:22:46.335] [N] Loading 1_32_28
+[09:22:46.335] [N] Loading 1_33_39
+[09:22:46.728] [N] Loading 1_32_29
+[09:22:46.728] [N] Loading 1_34_39
+[09:22:46.728] [N] Loading 1_32_39
+[09:22:46.728] [N] Loading 1_27_29
+[09:22:46.728] [N] Loading 1_38_35
+[09:22:46.728] [N] Loading 1_28_37
+[09:22:46.728] [N] Loading 1_37_37
+[09:22:46.728] [N] Loading 1_28_34
+[09:22:46.728] [N] Loading 1_31_39
+[09:22:46.728] [N] Loading 1_29_38
+[09:22:46.728] [N] Loading 1_38_36
+[09:22:46.728] [N] Loading 1_36_38
+[09:22:46.728] [N] Loading 1_31_27
+[09:22:46.728] [N] Loading 1_33_29
+[09:22:46.728] [N] Loading 1_27_33
+[09:22:46.728] [N] Loading 1_33_28
+[09:22:46.728] [N] Loading 1_38_34
+[09:22:46.728] [N] Loading 1_27_32
+[09:22:46.728] [N] Loading 1_27_36
+[09:22:46.728] [N] Loading 1_27_35
+[09:22:46.728] [N] Loading 1_30_39
+[09:22:46.728] [N] Loading 1_36_30
+[09:22:46.728] [N] Loading 1_27_34
+[09:22:46.728] [N] Loading 1_35_39
+[09:22:46.728] [N] Loading 1_39_35
+[09:22:46.728] [N] Loading 1_27_37
+[09:22:46.728] [N] Loading 1_38_37
+[09:22:47.309] [N] Loading 1_32_27
+[09:22:47.309] [N] Loading 1_34_29
+[09:22:47.309] [N] Loading 1_33_27
+[09:22:47.309] [N] Loading 1_34_28
+[09:22:47.309] [N] Loading 1_28_38
+[09:22:47.309] [N] Loading 1_39_36
+[09:22:47.309] [N] Loading 1_31_40
+[09:22:47.309] [N] Loading 1_29_39
+[09:22:47.309] [N] Loading 1_38_31
+[09:22:47.309] [N] Loading 1_36_39
+[09:22:47.309] [N] Loading 1_26_29
+[09:22:47.309] [N] Loading 1_27_28
+[09:22:47.309] [N] Loading 1_27_31
+[09:22:47.309] [N] Loading 1_32_40
+[09:22:47.309] [N] Loading 1_39_34
+[09:22:47.309] [N] Loading 1_38_32
+[09:22:47.309] [N] Loading 1_30_40
+[09:22:47.309] [N] Loading 1_28_28
+[09:22:47.309] [N] Loading 1_35_29
+[09:22:47.309] [N] Loading 1_26_35
+[09:22:47.309] [N] Loading 1_34_27
+[09:22:47.309] [N] Loading 1_34_40
+[09:22:47.309] [N] Loading 1_26_34
+[09:22:47.309] [N] Loading 1_26_33
+[09:22:47.309] [N] Loading 1_35_28
+[09:22:47.309] [N] Loading 1_26_32
+[09:22:47.309] [N] Loading 1_33_40
+[09:22:47.309] [N] Loading 1_26_30
+[09:22:47.309] [N] Loading 1_26_28
+[09:22:47.309] [N] Loading 1_39_37
+[09:22:47.309] [N] Loading 1_35_40
+[09:22:47.309] [N] Loading 1_26_36
+[09:22:47.309] [N] Loading 1_27_38
+[09:22:47.309] [N] Loading 1_40_35
+[09:22:47.309] [N] Loading 1_37_38
+[09:22:47.309] [N] Loading 1_32_26
+[09:22:47.309] [N] Loading 1_33_26
+[09:22:47.309] [N] Loading 1_28_39
+[09:22:47.309] [N] Loading 1_26_37
+[09:22:47.309] [N] Loading 1_40_36
+[09:22:47.309] [N] Loading 1_31_41
+[09:22:47.309] [N] Loading 1_26_31
+[09:22:47.309] [N] Loading 1_38_33
+[09:22:47.309] [N] Loading 1_29_40
+[09:22:47.309] [N] Loading 1_35_27
+[09:22:47.309] [N] Loading 1_32_41
+[09:22:47.309] [N] Loading 1_37_39
+[09:22:47.309] [N] Loading 1_30_41
+[09:22:47.309] [N] Loading 1_36_29
+[09:22:47.309] [N] Loading 1_36_28
+[09:22:47.309] [N] Loading 1_36_40
+[09:22:47.309] [N] Loading 1_25_35
+[09:22:47.309] [N] Loading 1_34_26
+[09:22:47.309] [N] Loading 1_26_38
+[09:22:47.309] [N] Loading 1_38_38
+[09:22:47.309] [N] Loading 1_40_34
+[09:22:47.309] [N] Loading 1_31_26
+[09:22:47.309] [N] Loading 1_33_41
+[09:22:47.309] [N] Loading 1_25_34
+[09:22:47.309] [N] Loading 1_25_33
+[09:22:47.309] [N] Loading 1_39_38
+[09:22:47.309] [N] Loading 1_40_37
+[09:22:47.309] [N] Loading 1_25_32
+[09:22:47.309] [N] Loading 1_27_27
+[09:22:47.309] [N] Loading 1_41_35
+[09:22:47.309] [N] Loading 1_35_26
+[09:22:47.309] [N] Loading 1_25_31
+[09:22:47.309] [N] Loading 1_27_39
+[09:22:47.309] [N] Loading 1_36_27
+[09:22:47.309] [N] Loading 1_37_40
+[09:22:47.309] [N] Loading 1_41_36
+[09:22:47.309] [N] Loading 1_28_40
+[09:22:47.309] [N] Loading 1_29_41
+[09:22:47.309] [N] Loading 1_31_42
+[09:22:47.309] [N] Loading 1_35_41
+[09:22:47.309] [N] Loading 1_38_39
+[09:22:47.309] [N] Loading 1_32_42
+[09:22:47.309] [N] Loading 1_34_41
+[09:22:47.309] [N] Loading 1_40_38
+[09:22:47.309] [N] Loading 1_36_26
+[09:22:47.309] [N] Loading 1_24_34
+[09:22:47.309] [N] Loading 1_25_37
+[09:22:47.309] [N] Loading 1_24_35
+[09:22:47.309] [N] Loading 1_26_39
+[09:22:47.309] [N] Loading 1_33_25
+[09:22:47.309] [N] Loading 1_25_38
+[09:22:47.309] [N] Loading 1_32_25
+[09:22:47.309] [N] Loading 1_25_30
+[09:22:47.309] [N] Loading 1_30_42
+[09:22:47.309] [N] Loading 1_30_27
+[09:22:47.309] [N] Loading 1_33_42
+[09:22:47.309] [N] Loading 1_39_39
+[09:22:47.309] [N] Loading 1_28_41
+[09:22:47.309] [N] Loading 1_38_40
+[09:22:47.309] [N] Loading 1_36_41
+[09:22:47.309] [N] Loading 1_41_37
+[09:22:47.309] [N] Loading 1_37_27
+[09:22:47.309] [N] Loading 1_24_32
+[09:22:47.309] [N] Loading 1_31_25
+[09:22:47.309] [N] Loading 1_24_33
+[09:22:47.309] [N] Loading 1_29_42
+[09:22:47.309] [N] Loading 1_30_26
+[09:22:47.309] [N] Loading 1_25_39
+[09:22:47.309] [N] Loading 1_27_40
+[09:22:47.309] [N] Loading 1_34_42
+[09:22:47.811] [N] Loading 1_35_25
+[09:22:47.811] [N] Loading 1_37_28
+[09:22:47.811] [N] Loading 1_41_38
+[09:22:47.811] [N] Loading 1_24_31
+[09:22:47.811] [N] Loading 1_34_25
+[09:22:47.811] [N] Loading 1_40_39
+[09:22:47.811] [N] Loading 1_24_30
+[09:22:47.811] [N] Loading 1_39_40
+[09:22:47.811] [N] Loading 1_26_40
+[09:22:47.811] [N] Loading 1_23_34
+[09:22:47.811] [N] Loading 1_23_33
+[09:22:47.811] [N] Loading 1_37_41
+[09:22:47.811] [N] Loading 1_36_25
+[09:22:47.811] [N] Loading 1_37_29
+[09:22:47.811] [N] Loading 1_37_26
+[09:22:47.811] [N] Loading 1_25_29
+[09:22:47.811] [N] Loading 1_27_41
+[09:22:47.811] [N] Loading 1_41_34
+[09:22:47.811] [N] Loading 1_38_27
+[09:22:47.811] [N] Loading 1_31_43
+[09:22:47.811] [N] Loading 1_38_28
+[09:22:47.811] [N] Loading 1_35_42
+[09:22:47.811] [N] Loading 1_30_25
+[09:22:47.811] [N] Loading 1_32_43
+[09:22:47.811] [N] Loading 1_28_42
+[09:22:47.811] [N] Loading 1_42_35
+[09:22:47.811] [N] Loading 1_41_39
+[09:22:47.811] [N] Loading 1_25_40
+[09:22:47.811] [N] Loading 1_24_29
+[09:22:47.811] [N] Loading 1_23_32
+[09:22:47.811] [N] Loading 1_42_34
+[09:22:47.811] [N] Loading 1_33_43
+[09:22:47.811] [N] Loading 1_38_41
+[09:22:47.811] [N] Loading 1_30_43
+[09:22:47.811] [N] Loading 1_33_24
+[09:22:47.811] [N] Loading 1_29_27
+[09:22:47.811] [N] Loading 1_40_33
+[09:22:47.811] [N] Loading 1_23_31
+[09:22:47.811] [N] Loading 1_39_41
+[09:22:47.811] [N] Loading 1_41_33
+[09:22:47.811] [N] Loading 1_38_26
+[09:22:47.811] [N] Loading 1_34_43
+[09:22:47.811] [N] Loading 1_39_33
+[09:22:47.811] [N] Loading 1_36_42
+[09:22:47.811] [N] Loading 1_42_36
+[09:22:47.811] [N] Loading 1_40_40
+[09:22:47.811] [N] Loading 1_22_33
+[09:22:47.811] [N] Loading 1_26_41
+[09:22:47.811] [N] Loading 1_29_26
+[09:22:47.811] [N] Loading 1_34_24
+[09:22:47.811] [N] Loading 1_35_24
+[09:22:47.811] [N] Loading 1_23_30
+[09:22:47.811] [N] Loading 1_29_43
+[09:22:47.811] [N] Loading 1_39_28
+[09:22:47.811] [N] Loading 1_39_32
+[09:22:47.811] [N] Loading 1_39_27
+[09:22:47.811] [N] Loading 1_40_32
+[09:22:47.811] [N] Loading 1_24_39
+[09:22:47.811] [N] Loading 1_25_28
+[09:22:47.811] [N] Loading 1_23_29
+[09:22:47.811] [N] Loading 1_22_32
+[09:22:47.811] [N] Loading 1_24_40
+[09:22:47.811] [N] Loading 1_36_24
+[09:22:47.811] [N] Loading 1_25_41
+[09:22:47.811] [N] Loading 1_27_42
+[09:22:47.811] [N] Loading 1_37_25
+[09:22:47.811] [N] Loading 1_35_43
+[09:22:47.811] [N] Loading 1_40_41
+[09:22:47.811] [N] Loading 1_37_42
+[09:22:47.811] [N] Loading 1_29_25
+[09:22:47.811] [N] Loading 1_39_31
+[09:22:47.811] [N] Loading 1_42_37
+[09:22:47.811] [N] Loading 1_24_28
+[09:22:47.811] [N] Loading 1_22_31
+[09:22:47.811] [N] Loading 1_40_31
+[09:22:47.811] [N] Loading 1_28_43
+[09:22:47.811] [N] Loading 1_39_29
+[09:22:47.811] [N] Loading 1_43_36
+[09:22:47.811] [N] Loading 1_21_33
+[09:22:47.811] [N] Loading 1_31_44
+[09:22:47.811] [N] Loading 1_24_41
+[09:22:47.811] [N] Loading 1_41_32
+[09:22:47.811] [N] Loading 1_26_42
+[09:22:47.811] [N] Loading 1_32_44
+[09:22:47.811] [N] Loading 1_22_30
+[09:22:47.811] [N] Loading 1_21_32
+[09:22:47.811] [N] Loading 1_28_27
+[09:22:47.811] [N] Loading 1_40_28
+[09:22:47.811] [N] Loading 1_40_27
+[09:22:47.811] [N] Loading 1_38_42
+[09:22:47.811] [N] Loading 1_33_44
+[09:22:47.811] [N] Loading 1_30_44
+[09:22:47.811] [N] Loading 1_39_42
+[09:22:47.811] [N] Loading 1_39_30
+[09:22:48.137] [N] Loading 1_37_24
+[09:22:48.137] [N] Loading 1_22_34
+[09:22:48.137] [N] Loading 1_21_34
+[09:22:48.137] [N] Loading 1_40_30
+[09:22:48.137] [N] Loading 1_41_31
+[09:22:48.137] [N] Loading 1_34_44
+[09:22:48.137] [N] Loading 1_25_42
+[09:22:48.137] [N] Loading 1_36_43
+[09:22:49.687] [D] Generating new path because we are not on the old path anymore!
+[09:22:49.688] [V] We are stuck! (TPS: 0.0, Latency: 0, loc: (-120.40, -603.74, 0.80))!
+[09:22:49.688] [V] Trying strafe forward right for 1000ms
+[09:22:51.706] [D] [QuestLog] Loaded 66 completed quests from Lua fallback
+[09:22:52.410] [N] Loading 1_23_28
+[09:22:54.479] [N] Loading 1_33_35
+[09:22:54.479] [N] Loading 1_34_35
+[09:22:54.479] [N] Loading 1_33_36
+[09:22:54.479] [N] Loading 1_34_36
+[09:22:59.827] [D] Generating new path because we are not on the old path anymore!
+[09:22:59.828] [V] We are stuck! (TPS: 0.0, Latency: 0, loc: (-109.11, -604.58, -2.32))!
+[09:23:03.148] [N] Stopping the bot!
+[09:23:03.149] [N] Bot stopping! Reason: User request
+[09:23:08.414] [D] Exception in GetReturnValues: Thread was interrupted from a waiting state.
+[09:23:08.414] [V] We are stuck! (TPS: 0.0, Latency: 0, loc: (-109.11, -604.58, -2.32))!
+[09:23:08.436] [V] Trying jump
+[09:23:08.876] [D] [QuestRecovery] quest=6548, stage=Objective, old=Attempting, new=Eligible, reason=None, episode=0, attempt=0, retry=
+[09:23:08.911] [D] Cleared POI
+[09:23:08.913] [D] Worker thread exited cleanly
+[09:25:33.915] [D] [Settings] Saved all settings

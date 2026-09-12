@@ -1,0 +1,1076 @@
+[15:35:16.590] [N] CopilotBuddy v1.6.6 started. Original HonorBuddy by Apoc, raphus, highvoltz, bobby53, xanathos, chinajade. Ported to WotLK 3.3.5a by Likon69.
+[15:35:16.999] [N] Searching for WoW process...
+[15:35:17.209] [N] Please wait a few seconds while CopilotBuddy initializes.
+[15:35:17.209] [D] Using WoW with process ID 25700
+[15:35:17.209] [D] Platform: x86
+[15:35:17.209] [D] Executable Path: D:\World of Warcraft 3.3.5a\CB\
+[15:35:17.234] [D] [ObjectManager] WoW build 12340 detected - OK
+[15:35:17.236] [D] [ObjectManager] D3DDevicePtr = 0x00C5DF88
+[15:35:17.236] [D] [ObjectManager] devicePtrAddr = 0x052FCBD0
+[15:35:17.236] [D] [ObjectManager] device = 0x0A4EFE60 (at 0x0530054C)
+[15:35:17.236] [D] [ObjectManager] vtablePtr = 0x0A4F2DBC
+[15:35:17.236] [D] [ObjectManager] endSceneAddr = 0x643348F0 (at 0x0A4F2E64)
+[15:35:17.236] [D] [ObjectManager] D3D: Device=0x0A4EFE60, VTable=0x0A4F2DBC, EndScene=0x643348F0
+[15:35:17.236] [D] [ObjectManager] Creating ExecutorRand...
+[15:35:17.287] [D] [ObjectManager] ExecutorRand created, IsInitialized = True
+[15:35:17.288] [D] [ObjectManager] EndScene hook succeeded
+[15:35:17.293] [D] [ObjectManager] Initialized successfully
+[15:35:17.294] [N] Attached to WoW with ID 25700
+[15:35:17.295] [N] Character is a level 25 BloodElf Paladin
+[15:35:17.296] [N] Current zone is Stonetalon Mountains
+[15:35:17.326] [D] [Settings] Loaded settings for character: Jeof
+[15:35:17.326] [N] Initializing Combat Routines...
+[15:35:17.330] [D] Looking for routines in: D:\World of Warcraft 3.3.5a\CB\Routines
+[15:35:17.331] [D] Compiling Singular wotlk
+[15:35:20.873] [N] Loaded routine: Singular Wotlk for class Paladin
+[15:35:20.873] [N] Loaded 1 combat routine(s)
+[15:35:20.881] [N] Chose Singular Wotlk as your combat class.
+[15:35:20.881] [N] Confirmed Paladin as your class.
+[15:35:20.882] [N] [Singular] Starting Singular v2.0.0.0
+[15:35:20.882] [N] [Singular] Determining talent spec.
+[15:35:21.469] [D] [Singular-DEBUG] [Talents] Best Tree: 16
+[15:35:21.469] [N] [Singular] Current spec is  Retribution Paladin
+[15:35:21.479] [D] [WoWDb] Loaded 237 DBC tables
+[15:35:21.479] [D] [WoWDb]   Key=235 (0x000000EB) Rows=1893
+[15:35:21.479] [D] [WoWDb]   Key=236 (0x000000EC) Rows=7655
+[15:35:21.479] [D] [WoWDb]   Key=237 (0x000000ED) Rows=86
+[15:35:21.479] [D] [WoWDb]   Key=238 (0x000000EE) Rows=506
+[15:35:21.479] [D] [WoWDb]   Key=239 (0x000000EF) Rows=291
+[15:35:21.479] [D] [WoWDb] Lock DBC lookup: FOUND (rows=388)
+[15:35:21.479] [D] [WoWDb] ClientDb.Lock enum value = 356 (0x00000164)
+[15:35:21.480] [D] [Singular-DEBUG] Creating Combat behavior.
+[15:35:21.481] [N] [Singular] Building method list
+[15:35:21.482] [N] [Singular] Added 450 methods
+[15:35:21.484] [D] [Singular-DEBUG] CreateRetributionPaladinNormalPullAndCombat is a match!
+[15:35:21.484] [N] [Singular]  Using CreateRetributionPaladinNormalPullAndCombat for Retribution Paladin - Combat (Priority: 0)
+[15:35:21.495] [D] [Singular-DEBUG] Creating Pull behavior.
+[15:35:21.496] [D] [Singular-DEBUG] CreateRetributionPaladinNormalPullAndCombat is a match!
+[15:35:21.496] [N] [Singular]  Using CreateRetributionPaladinNormalPullAndCombat for Retribution Paladin - Pull (Priority: 0)
+[15:35:21.497] [D] [Singular-DEBUG] Creating Rest behavior.
+[15:35:21.498] [D] [Singular-DEBUG] CreateRetributionPaladinRest is a match!
+[15:35:21.498] [N] [Singular]  Using CreateRetributionPaladinRest for Retribution Paladin - Rest (Priority: 0)
+[15:35:21.500] [D] [Singular-DEBUG] Creating CombatBuffs behavior.
+[15:35:21.501] [D] [Singular-DEBUG] Creating Heal behavior.
+[15:35:21.501] [D] [Singular-DEBUG] CreateRetributionPaladinHeal is a match!
+[15:35:21.501] [N] [Singular]  Using CreateRetributionPaladinHeal for Retribution Paladin - Heal (Priority: 0)
+[15:35:21.502] [D] [Singular-DEBUG] CreateRetributionPaladinNormalPullAndCombat is a match!
+[15:35:21.502] [N] [Singular]  Using CreateRetributionPaladinNormalPullAndCombat for Retribution Paladin - Heal (Priority: 0)
+[15:35:21.503] [D] [Singular-DEBUG] Creating PullBuffs behavior.
+[15:35:21.504] [D] [Singular-DEBUG] Creating PreCombatBuffs behavior.
+[15:35:21.504] [D] [Singular-DEBUG] CreatePaladinPreCombatBuffs is a match!
+[15:35:21.504] [N] [Singular]  Using CreatePaladinPreCombatBuffs for Retribution Paladin - PreCombatBuffs (Priority: 0)
+[15:35:21.508] [N] [Singular] Behaviors created!
+[15:35:21.524] [D] [Singular-DEBUG] Attached combat log
+[15:35:21.524] [D] Routine initialized successfully
+[15:35:21.525] [D] Loading built-in bots from assembly: CopilotBuddy
+[15:35:21.550] [D] Found bot type: PartyBot.DiscoBot
+[15:35:21.550] [N] New bot added: Party Bot
+[15:35:21.550] [D] Loaded built-in bot: Party Bot
+[15:35:21.550] [D] Found bot type: Bots.Quest.QuestBot
+[15:35:21.550] [N] New bot added: Questing
+[15:35:21.550] [D] Loaded built-in bot: Questing
+[15:35:21.550] [D] Found bot type: Bots.Grind.LevelBot
+[15:35:21.550] [N] New bot added: Grind
+[15:35:21.550] [D] Loaded built-in bot: Grind
+[15:35:21.550] [D] Found bot type: Bots.Gatherbuddy.GatherbuddyBot
+[15:35:21.550] [N] New bot added: GatherBuddy
+[15:35:21.550] [D] Loaded built-in bot: GatherBuddy
+[15:35:21.550] [D] Found bot type: Bots.DungeonBuddy.DungeonBuddy
+[15:35:21.552] [N] New bot added: DungeonBuddy
+[15:35:21.552] [D] Loaded built-in bot: DungeonBuddy
+[15:35:21.552] [D] Found bot type: Bots.BGBuddy.BGBuddy
+[15:35:21.552] [N] New bot added: BGBuddy
+[15:35:21.552] [D] Loaded built-in bot: BGBuddy
+[15:35:21.552] [D] Built-in bot loading complete. 6 bots loaded.
+[15:35:21.556] [N] Loading bots from: D:\World of Warcraft 3.3.5a\CB\Bots
+[15:35:21.568] [N] Found 123 source files
+[15:35:21.575] [N] Found 0 dll files
+[15:35:21.575] [N] Compiling: CombatBot.cs
+[15:35:21.758] [N] Compiled successfully: CombatBot.cs
+[15:35:21.758] [N] Compiling directory: Auto Angler 2/ (23 files)
+[15:35:22.272] [N] Compiled successfully: Auto Angler 2/
+[15:35:22.272] [N] Compiling directory: LazyRaider/ (4 files)
+[15:35:22.556] [N] Compiled successfully: LazyRaider/
+[15:35:22.556] [N] Compiling directory: ProfessionBuddy/ (52 files)
+[15:35:23.651] [N] Compiled successfully: ProfessionBuddy/
+[15:35:23.652] [N] Compiling directory: Templar/ (27 files)
+[15:35:24.207] [N] Compiled successfully: Templar/
+[15:35:24.207] [N] Compiling directory: Tyrael/ (5 files)
+[15:35:24.413] [N] Compiled successfully: Tyrael/
+[15:35:24.413] [N] Compiling directory: WholesomeAutoQuest-master/ (11 files)
+[15:35:24.953] [N] Compiled successfully: WholesomeAutoQuest-master/
+[15:35:24.953] [N] ClassCollection contains 7 compiled bots
+[15:35:24.953] [N] Adding bot: Combat Bot
+[15:35:24.953] [N] New bot added: Combat Bot
+[15:35:24.953] [N] Adding bot: AutoAngler
+[15:35:24.953] [N] New bot added: AutoAngler
+[15:35:24.953] [N] Adding bot: LazyRaider
+[15:35:24.953] [N] New bot added: LazyRaider
+[15:35:24.953] [N] Adding bot: ProfessionBuddy
+[15:35:24.953] [N] New bot added: ProfessionBuddy
+[15:35:24.953] [N] Adding bot: Templar
+[15:35:24.953] [N] New bot added: Templar
+[15:35:24.953] [N] Adding bot: Tyrael
+[15:35:24.953] [N] New bot added: Tyrael
+[15:35:24.953] [N] Adding bot: Wholesome Auto Quest
+[15:35:24.953] [N] New bot added: Wholesome Auto Quest
+[15:35:24.953] [N] Bot loading complete. 13 bots loaded.
+[15:35:24.953] [N] Initializing Plugins...
+[15:35:25.846] [D] [WeightSet] Selected weight set: Paladin-Holy
+[15:35:27.436] [N] [DeathStallRecovery] Enabled. The bot will stop if corpse recovery makes no movement progress for 60 seconds.
+[15:35:28.625] [D] Rarekiller: Loading config file: D:\World of Warcraft 3.3.5a\CB\Plugins\RareKiller\config\Rarekiller.config
+[15:35:28.626] [D] Root element is missing.
+[15:35:28.626] [N] Rarekiller: Continuing with Default Config Values
+[15:35:28.627] [D] Rarekiller: Loading config file: D:\World of Warcraft 3.3.5a\CB\Plugins\RareKiller\config\Rarekiller.config
+[15:35:28.627] [D] Root element is missing.
+[15:35:28.627] [N] Rarekiller: Continuing with Default Config Values
+[15:35:28.627] [N] Rare Mob Killer - Version 3.3 Loaded.
+[15:35:28.627] [N] Rarekiller Part Tamer: I'm no Hunter. Deactivate the Tamer Part
+[15:35:29.340] [N] [VendorRecovery] Enabled. Failed Sell/Repair vendors will be skipped after 35 seconds at the NPC.
+[15:35:29.537] [N] Plugin loading complete. 16 plugins loaded.
+[15:35:29.537] [N] Plugins refreshed successfully.
+[15:35:29.541] [N] Changing current bot to: Wholesome Auto Quest
+[15:35:40.478] [D] [Settings] Saved all settings
+[15:35:40.478] [N] Starting the bot.
+[15:35:40.479] [N] Currently Using BotBase : Wholesome Auto Quest
+[15:35:40.479] [N] Character is a level 25 BloodElf Paladin
+[15:35:40.480] [N] Current zone is Stonetalon Mountains
+[15:35:40.481] [D] Loading profile from D:\World of Warcraft 3.3.5a\CB\Bots\WholesomeAutoQuest\WHOLESOME_AUTOQUESTER.xml
+[15:35:40.531] [N] Profile loaded: WholesomeAQ - The Barrens
+[15:35:40.532] [D] Selected sub-profile: WholesomeAQ - The Barrens (L1-80)
+[15:35:40.717] [D] [WholesomeAQ] Navigation fingerprint unknown: provider or mesh-root stamp unavailable.
+[15:35:41.315] [D] [QuestLog] Loaded 68 completed quests from Lua fallback
+[15:35:41.349] [D] [ProfileBatchManager] Batch reset for new profile session.
+[15:35:41.350] [N] [Wholesome Auto Quest] Class Paladin → PullDistance set to 24
+[15:35:41.351] [N] [Wholesome Auto Quest] Initial scheduler build.
+[15:35:41.814] [N] Loaded 0 global blackspots
+[15:35:41.846] [D] Loading profile from D:\World of Warcraft 3.3.5a\CB\Bots\WholesomeAutoQuest\WHOLESOME_AUTOQUESTER.xml
+[15:35:41.851] [N] Profile loaded: WholesomeAQ - Stonetalon Mountains
+[15:35:41.883] [D] Selected sub-profile: WholesomeAQ - Stonetalon Mountains (L1-80)
+[15:35:41.883] [N] [Wholesome Auto Quest] Profile refreshed - Selected 1 quest work candidate(s). selected quest=6461;stage=Objective;state=Eligible. excluded quest=104;stage=Pickup;npc=392;reason=outside-scan-radius;retry=context-change excluded quest=1062;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=1069;stage=Pickup;npc=3446;reason=outside-scan-radius;retry=context-change excluded quest=1087;stage=Pickup;npc=4198;reason=outside-scan-radius;retry=context-change excluded quest=1093;stage=Pickup;npc=4201;reason=outside-scan-radius;retry=context-change excluded quest=11127;stage=Pickup;scope=QuestStage;retry=context-change;state=HalfOpen. excluded quest=118;stage=Pickup;npc=415;reason=outside-scan-radius;retry=context-change excluded quest=1195;stage=Pickup;npc=4721;reason=outside-scan-radius;retry=context-change excluded quest=14106;stage=Pickup;scope=QuestStage;retry=context-change;state=HalfOpen. excluded quest=1483;stage=Pickup;npc=3442;reason=outside-scan-radius;retry=context-change excluded quest=152;stage=Pickup;npc=392;reason=outside-scan-radius;retry=context-change excluded quest=2098;stage=Pickup;npc=6667;reason=outside-scan-radius;retry=context-change excluded quest=216;stage=Pickup;npc=12757;reason=outside-scan-radius;retry=context-change excluded quest=235;stage=Pickup;npc=10880;reason=outside-scan-radius;retry=context-change excluded quest=3281;stage=TurnIn;npc=3464;reason=outside-scan-radius;retry=context-change excluded quest=4542;stage=Pickup;npc=10079;reason=outside-scan-radius;retry=context-change excluded quest=470;stage=Pickup;npc=2111;reason=outside-scan-radius;retry=context-change excluded quest=472;stage=Pickup;npc=2097;reason=outside-scan-radius;retry=context-change excluded quest=4740;stage=Pickup;npc=175320;reason=outside-scan-radius;retry=context-change excluded quest=4921;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=493;stage=Pickup;npc=1937;reason=outside-scan-radius;retry=context-change excluded quest=494;stage=Pickup;npc=2214;reason=outside-scan-radius;retry=context-change excluded quest=496;stage=Pickup;npc=2216;reason=outside-scan-radius;retry=context-change excluded quest=498;stage=Pickup;npc=2229;reason=outside-scan-radius;retry=context-change excluded quest=501;stage=Pickup;npc=2216;reason=outside-scan-radius;retry=context-change excluded quest=516;stage=Pickup;npc=2121;reason=outside-scan-radius;retry=context-change excluded quest=527;stage=Pickup;npc=2215;reason=outside-scan-radius;retry=context-change excluded quest=546;stage=Pickup;npc=2418;reason=outside-scan-radius;retry=context-change excluded quest=549;stage=Pickup;npc=1763;reason=outside-scan-radius;retry=context-change excluded quest=6301;stage=Pickup;npc=11864;reason=outside-scan-radius;retry=context-change excluded quest=6382;stage=Pickup;npc=3387;reason=outside-scan-radius;retry=context-change excluded quest=6383;stage=Pickup;npc=12696;reason=outside-scan-radius;retry=context-change excluded quest=6393;stage=Pickup;npc=11862;reason=outside-scan-radius;retry=context-change excluded quest=6442;stage=Pickup;npc=12719;reason=outside-scan-radius;retry=context-change excluded quest=6461;stage=Objective;objective=1;reason=outside-scan-radius;retry=context-change. excluded quest=6462;stage=Pickup;npc=12721;reason=outside-scan-radius;retry=context-change excluded quest=6503;stage=Pickup;npc=12867;reason=outside-scan-radius;retry=context-change excluded quest=6541;stage=Pickup;npc=3429;reason=outside-scan-radius;retry=context-change excluded quest=6542;stage=TurnIn;npc=8582;reason=outside-scan-radius;retry=context-change excluded quest=6543;stage=Pickup;npc=8582;reason=outside-scan-radius;retry=context-change excluded quest=742;stage=Pickup;npc=10881;reason=outside-scan-radius;retry=context-change excluded quest=747;stage=Objective;objective=0;reason=no-known-hotspots;retry=context-change. excluded quest=747;stage=Objective;objective=1;reason=no-known-hotspots;retry=context-change. excluded quest=7790;stage=Pickup;scope=QuestStage;retry=context-change;state=HalfOpen. excluded quest=843;stage=Pickup;npc=3341;reason=outside-scan-radius;retry=context-change excluded quest=8487;stage=TurnIn;scope=QuestStage;retry=context-change;state=HalfOpen. excluded quest=851;stage=Pickup;scope=QuestStage;retry=context-change;state=HalfOpen. excluded quest=858;stage=Pickup;npc=3439;reason=outside-scan-radius;retry=context-change excluded quest=865;stage=Pickup;scope=QuestStage;retry=context-change;state=HalfOpen. excluded quest=867;stage=Objective;objective=0;reason=no-known-hotspots;retry=context-change. excluded quest=868;stage=Pickup;npc=3428;reason=outside-scan-radius;retry=context-change excluded quest=878;stage=Pickup;npc=3430;reason=outside-scan-radius;retry=context-change excluded quest=8889;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=8889;stage=Objective;objective=1;reason=outside-scan-radius;retry=context-change. excluded quest=8889;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;objective=1;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;objective=3;reason=no-known-hotspots;retry=context-change. excluded quest=893;stage=Pickup;npc=3433;reason=outside-scan-radius;retry=context-change excluded quest=894;stage=TurnIn;npc=4141;reason=outside-scan-radius;retry=context-change excluded quest=896;stage=Objective;objective=0;reason=no-known-hotspots;retry=context-change. excluded quest=9067;stage=Objective;scope=Objective;objective=0;retry=context-change;state=HalfOpen. excluded quest=9151;stage=Pickup;npc=16199;reason=outside-scan-radius;retry=context-change excluded quest=9157;stage=TurnIn;scope=QuestStage;retry=context-change;state=HalfOpen. excluded quest=9214;stage=Pickup;npc=16220;reason=outside-scan-radius;retry=context-change excluded quest=9218;stage=Pickup;npc=16205;reason=outside-scan-radius;retry=context-change excluded quest=9275;stage=Pickup;npc=16464;reason=outside-scan-radius;retry=context-change excluded quest=9276;stage=Pickup;npc=16463;reason=outside-scan-radius;retry=context-change excluded quest=9281;stage=Pickup;npc=16480;reason=outside-scan-radius;retry=context-change excluded quest=9388;stage=Pickup;scope=QuestStage;retry=context-change;state=HalfOpen. excluded quest=9389;stage=Pickup;scope=QuestStage;retry=context-change;state=HalfOpen. excluded quest=9425;stage=Pickup;npc=16287;reason=outside-scan-radius;retry=context-change excluded quest=9428;stage=Pickup;npc=17098;reason=outside-scan-radius;retry=context-change excluded quest=959;stage=Pickup;npc=3665;reason=outside-scan-radius;retry=context-change excluded quest=962;stage=Pickup;npc=3419;reason=outside-scan-radius;retry=context-change excluded quest=965;stage=Pickup;npc=3657;reason=outside-scan-radius;retry=context-change excluded quest=9749;stage=Pickup;scope=QuestStage;retry=context-change;state=HalfOpen.
+[15:35:41.885] [N] [Wholesome Auto Quest] Started with quest data loaded.
+[15:35:41.941] [N] [SpellDb] Loaded 49816 spells from Spells.bin
+[15:35:41.983] [D] Setting CVars: autoSelfCast=1, autoLootDefault=1
+[15:35:42.050] [D] Cleared POI
+[15:35:42.058] [D] Refresh() called. LastCount=0, CurrentCount=33
+[15:35:42.058] [N] Building spell book
+[15:35:42.059] [D] Found 33 spells from LocalPlayer.KnownSpells
+[15:35:42.059] [N] Adding Arcane Affinity
+[15:35:42.059] [N] Adding Arcane Torrent
+[15:35:42.059] [N] Adding Auto Attack
+[15:35:42.069] [N] Adding Block
+[15:35:42.070] [N] Adding Dodge
+[15:35:42.070] [N] Adding Magic Resistance
+[15:35:42.071] [N] Adding Parry
+[15:35:42.071] [N] Adding Blessing of Wisdom
+[15:35:42.071] [N] Adding Concentration Aura
+[15:35:42.072] [N] Adding Consecration
+[15:35:42.072] [N] Adding Exorcism
+[15:35:42.072] [N] Adding Flash of Light
+[15:35:42.072] [N] Adding Holy Light
+[15:35:42.073] [N] Adding Lay on Hands
+[15:35:42.073] [N] Adding Purify
+[15:35:42.073] [N] Adding Seal of Righteousness
+[15:35:42.074] [N] Adding Sense Undead
+[15:35:42.074] [N] Adding Turn Evil
+[15:35:42.074] [N] Adding Blessing of Kings
+[15:35:42.075] [N] Adding Devotion Aura
+[15:35:42.075] [N] Adding Divine Protection
+[15:35:42.075] [N] Adding Hammer of Justice
+[15:35:42.076] [N] Adding Hand of Freedom
+[15:35:42.076] [N] Adding Hand of Protection
+[15:35:42.076] [N] Adding Hand of Reckoning
+[15:35:42.077] [N] Adding Righteous Defense
+[15:35:42.077] [N] Adding Righteous Fury
+[15:35:42.077] [N] Adding Seal of Justice
+[15:35:42.078] [N] Adding Blessing of Might
+[15:35:42.078] [N] Adding Judgement of Light
+[15:35:42.078] [N] Adding Judgement of Wisdom
+[15:35:42.079] [N] Adding Retribution Aura
+[15:35:42.079] [N] Adding Seal of Command
+[15:35:42.080] [N] Spell book built
+[15:35:42.080] [D] [SpellManager] Initialize — subscribed to BotEvents.OnBotStart
+[15:35:42.834] [D] [Talented] SelectMajorTalentTree called but not needed in WotLK 3.3.5a
+[15:35:43.341] [N] [Singular] Casting Blessing of Kings on Myself
+[15:35:43.341] [D] Spell_C::CastSpell(20217, 0, 0x6000000007EAB80, 0)
+[15:35:43.374] [D] [Pulse] Slow bot root: 135ms bot=Wholesome Auto Quest poi=None combat=False
+[15:35:43.911] [N] [Singular] Casting Seal of Righteousness on Myself
+[15:35:43.911] [D] Spell_C::CastSpell(21084, 0, 0x6000000007EAB80, 0)
+[15:35:43.945] [D] [Pulse] Slow bot root: 136ms bot=Wholesome Auto Quest poi=None combat=False
+[15:35:44.464] [D] Compiling expression 'HasQuest(6461)'
+[15:35:44.474] [D] [If] Condition is true, executing If body
+[15:35:44.565] [N] [Objective] Goal: Kill Deepmoss Creeper x 10
+[15:35:44.565] [D] Goal: Goal: Kill Deepmoss Creeper x 10
+[15:35:44.566] [D] [GrindObjective] Using profile hotspots (3 points) for mob 4005
+[15:35:44.821] [N] Mounting: 35022
+[15:35:46.957] [D] Activity: Moving to hotspot
+[15:35:47.085] [D] [Blackspot] Area cost initialized: area 17 = 60x
+[15:35:47.090] [D] [Nav] Loaded 14 mesh tiles for one path query
+[15:35:47.109] [D] [Pulse] Slow bot root: 2727ms bot=Wholesome Auto Quest poi=None combat=False
+[15:35:49.405] [D] Activity: Setting Deepmoss Creeper at 21.6 yards as your target
+[15:35:49.405] [D] Dismounting for combat.
+[15:35:49.406] [D] Stop and dismount. Reason: Combat
+[15:35:49.530] [D] [Pulse] Slow bot root: 270ms bot=Wholesome Auto Quest poi=None combat=False
+[15:35:50.002] [D] Changed POI to: Type: Kill, Name: Deepmoss Creeper, Guid: F130000FA507F0A8, Entry: 4005, Location: (29.53, -112.18, 20.78)
+[15:35:50.100] [D] [Singular-DEBUG] Switched targets!
+[15:35:50.100] [D] [Singular-DEBUG] Melee Distance: 5
+[15:35:50.100] [D] [Singular-DEBUG] Health: 100
+[15:35:50.100] [D] [Singular-DEBUG] Level: 16
+[15:35:50.536] [N] [Singular] Casting Seal of Righteousness on Myself
+[15:35:50.536] [D] Spell_C::CastSpell(21084, 0, 0x6000000007EAB80, 0)
+[15:35:50.570] [D] [Pulse] Slow bot root: 102ms bot=Wholesome Auto Quest poi=Kill combat=False
+[15:35:51.119] [D] Activity: Moving towards Deepmoss Creeper
+[15:35:51.247] [D] [Pulse] Slow bot root: 202ms bot=Wholesome Auto Quest poi=Kill combat=False
+[15:35:52.131] [D] [Pulse] Slow bot root: 412ms bot=Wholesome Auto Quest poi=Kill combat=False
+[15:35:53.166] [D] [Pulse] Slow bot root: 300ms bot=Wholesome Auto Quest poi=Kill combat=False
+[15:35:53.905] [D] [Pulse] Slow bot root: 265ms bot=Wholesome Auto Quest poi=Kill combat=False
+[15:35:54.548] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:35:54.548] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0A8, 0)
+[15:35:54.583] [D] [Pulse] Slow bot root: 203ms bot=Wholesome Auto Quest poi=Kill combat=False
+[15:35:55.184] [D] [Pulse] Slow bot root: 130ms bot=Wholesome Auto Quest poi=Kill combat=True
+[15:35:56.262] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:35:56.262] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0A8, 0)
+[15:35:56.297] [D] [Pulse] Slow bot root: 136ms bot=Wholesome Auto Quest poi=Kill combat=True
+[15:35:56.871] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:35:56.871] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0A8, 0)
+[15:35:56.904] [D] [Pulse] Slow bot root: 135ms bot=Wholesome Auto Quest poi=Kill combat=True
+[15:35:57.476] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:35:57.476] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0A8, 0)
+[15:35:57.509] [D] [Pulse] Slow bot root: 134ms bot=Wholesome Auto Quest poi=Kill combat=True
+[15:35:58.112] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:35:58.112] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0A8, 0)
+[15:35:58.146] [D] [Pulse] Slow bot root: 134ms bot=Wholesome Auto Quest poi=Kill combat=True
+[15:35:58.719] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:35:58.720] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0A8, 0)
+[15:35:58.755] [D] [Pulse] Slow bot root: 138ms bot=Wholesome Auto Quest poi=Kill combat=False
+[15:35:59.219] [D] Cleared POI - Reason POI is dead from Combat
+[15:35:59.219] [D] Cleared POI
+[15:35:59.323] [D] [QuestRecovery] quest=6461, stage=Objective, old=Attempting, new=Eligible, reason=None, episode=0, attempt=0, retry=
+[15:35:59.695] [D] Changed POI to: Type: Loot, Name: Deepmoss Creeper, Guid: F130000FA507F0A8, Entry: 4005, Location: (34.05, -107.08, 20.51)
+[15:36:00.193] [D] [Interact] Interacting with object at 0x2ED5B778
+[15:36:00.226] [D] [Interact] Done interacting with object at 0x2ED5B778
+[15:36:01.202] [N] Looting Deepmoss Creeper Guid 0xF130000FA507F0A8
+[15:36:01.303] [D] Cleared POI - Reason Waiting for loot flag
+[15:36:01.303] [D] Cleared POI
+[15:36:01.335] [D] [Pulse] Slow bot root: 133ms bot=Wholesome Auto Quest poi=None combat=False
+[15:36:02.628] [N] [Database] Data.bin loaded successfully
+[15:36:02.660] [D] [Nav] Loaded 1 mesh tiles for one path query
+[15:36:02.664] [D] Changed POI to: Type: Sell, Name: Denni'ka, Guid: 0, Entry: 3411, Location: (-188.42, -347.65, 8.87)
+[15:36:02.664] [D] [Pulse] Slow bot root: 109ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:36:03.500] [N] Moving to Type: Sell, Name: Denni'ka, Guid: 0, Entry: 3411, Location: (-188.42, -347.65, 8.87)
+[15:36:03.870] [D] [MeshNavigator] Skipped 2 path nodes
+[15:36:03.902] [D] [Pulse] Slow bot root: 436ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:36:04.810] [D] [Pulse] Slow bot root: 402ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:36:05.718] [D] [Pulse] Slow bot root: 404ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:36:06.625] [D] [Pulse] Slow bot root: 403ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:36:07.531] [D] [Pulse] Slow bot root: 406ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:36:08.438] [D] [Pulse] Slow bot root: 402ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:36:09.002] [N] Mounting: 34769
+[15:36:11.036] [D] [Pulse] Slow bot root: 2115ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:36:24.710] [N] Moving to Type: Sell, Name: Denni'ka, Guid: 0, Entry: 3411, Location: (-188.42, -347.65, 8.79)
+[15:36:38.275] [D] Dismount for interaction.
+[15:36:38.275] [D] Stop and dismount. Reason: Near destination
+[15:36:38.391] [D] Dismount for interaction.
+[15:36:38.391] [D] Stop and dismount. Reason: Combat
+[15:36:38.499] [D] Dismount for interaction.
+[15:36:38.499] [D] Stop and dismount. Reason: Combat
+[15:36:39.427] [D] [Interact] Interacting with object at 0x2ED32D78
+[15:36:39.428] [D] [Interact] Done interacting with object at 0x2ED32D78
+[15:36:39.458] [D] [Pulse] Slow bot root: 181ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:36:39.482] [N] [VendorRecovery] Reached Denni'ka (3411); waiting for the merchant window.
+[15:36:40.326] [D] [Pulse] Slow bot root: 546ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:36:40.441] [D] Selling items
+[15:36:40.441] [D] Activity: Selling Items
+[15:36:43.039] [D] Cleared POI - Reason POI is not Mail
+[15:36:43.039] [D] Cleared POI
+[15:36:43.093] [N] Mounting: 34769
+[15:36:45.123] [D] Activity: Moving to hotspot
+[15:36:45.133] [D] [Pulse] Slow bot root: 4715ms bot=Wholesome Auto Quest poi=None combat=False
+[15:36:45.568] [D] [QuestLog] Loaded 68 completed quests from Lua fallback
+[15:37:23.583] [N] Loading 1_30_30
+[15:37:34.819] [D] Activity: Setting Deepmoss Creeper at 23.6 yards as your target
+[15:37:34.819] [D] Dismounting for combat.
+[15:37:34.819] [D] Stop and dismount. Reason: Combat
+[15:37:35.117] [D] [Singular-DEBUG] Switched targets!
+[15:37:35.117] [D] [Singular-DEBUG] Melee Distance: 5
+[15:37:35.117] [D] [Singular-DEBUG] Health: 100
+[15:37:35.117] [D] [Singular-DEBUG] Level: 16
+[15:37:35.183] [D] Changed POI to: Type: Kill, Name: Deepmoss Creeper, Guid: F130000FA5078990, Entry: 4005, Location: (-89.93, 52.91, 49.09)
+[15:37:35.304] [N] [Singular] Casting Exorcism on Deepmoss Creeper
+[15:37:35.304] [D] Spell_C::CastSpell(879, 0, 0xF130000FA5078990, 0)
+[15:37:37.279] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:37:37.279] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5078990, 0)
+[15:37:41.915] [D] Cleared POI - Reason POI is dead from Combat
+[15:37:41.915] [D] Cleared POI
+[15:37:42.006] [D] Changed POI to: Type: Loot, Name: Deepmoss Creeper, Guid: F130000FA5078990, Entry: 4005, Location: (-87.71, 55.67, 48.98)
+[15:37:42.091] [D] [LB] DNTFT -> S
+[15:37:42.091] [D] [Interact] Interacting with object at 0x2ED61D08
+[15:37:42.096] [D] [Interact] Done interacting with object at 0x2ED61D08
+[15:37:42.542] [N] Looting Deepmoss Creeper Guid 0xF130000FA5078990
+[15:37:42.559] [D] Cleared POI - Reason Waiting for loot flag
+[15:37:42.559] [D] Cleared POI
+[15:37:42.719] [D] Changed POI to: Type: Loot, Name: Deepmoss Creeper, Guid: F130000FA5078990, Entry: 4005, Location: (-87.71, 55.67, 48.98)
+[15:37:42.853] [D] [QuestRecovery] quest=6461, stage=Objective, old=Attempting, new=Eligible, reason=None, episode=0, attempt=0, retry=
+[15:37:42.927] [D] [LB] DNTFT -> S
+[15:37:42.927] [D] Cleared POI - Reason Already looted
+[15:37:42.927] [D] Cleared POI
+[15:37:43.330] [D] [Singular-DEBUG] Switched targets!
+[15:37:43.331] [D] [Singular-DEBUG] Melee Distance: 5
+[15:37:43.331] [D] [Singular-DEBUG] Health: 100
+[15:37:43.331] [D] [Singular-DEBUG] Level: 16
+[15:37:43.397] [D] Changed POI to: Type: Kill, Name: Deepmoss Creeper, Guid: F130000FA507E97E, Entry: 4005, Location: (-89.83, 64.72, 49.19)
+[15:37:43.523] [N] [Singular] Casting Exorcism on Deepmoss Creeper
+[15:37:43.523] [D] Spell_C::CastSpell(879, 0, 0xF130000FA507E97E, 0)
+[15:37:45.594] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:37:45.594] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507E97E, 0)
+[15:37:45.917] [D] [QuestLog] Loaded 68 completed quests from Lua fallback
+[15:37:46.009] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:37:46.009] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507E97E, 0)
+[15:37:46.129] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:37:46.129] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507E97E, 0)
+[15:37:46.245] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:37:46.246] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507E97E, 0)
+[15:37:46.353] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:37:46.354] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507E97E, 0)
+[15:37:46.463] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:37:46.463] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507E97E, 0)
+[15:37:46.572] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:37:46.572] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507E97E, 0)
+[15:37:46.681] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:37:46.681] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507E97E, 0)
+[15:37:46.790] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:37:46.791] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507E97E, 0)
+[15:37:46.900] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:37:46.900] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507E97E, 0)
+[15:37:47.009] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:37:47.009] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507E97E, 0)
+[15:37:47.118] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:37:47.118] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507E97E, 0)
+[15:37:47.227] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:37:47.227] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507E97E, 0)
+[15:37:47.336] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:37:47.336] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507E97E, 0)
+[15:37:47.452] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:37:47.452] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507E97E, 0)
+[15:37:47.561] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:37:47.561] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507E97E, 0)
+[15:37:47.670] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:37:47.671] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507E97E, 0)
+[15:37:47.779] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:37:47.780] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507E97E, 0)
+[15:37:47.889] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:37:47.889] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507E97E, 0)
+[15:37:47.998] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:37:47.998] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507E97E, 0)
+[15:37:48.107] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:37:48.107] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507E97E, 0)
+[15:37:48.217] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:37:48.217] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507E97E, 0)
+[15:37:48.326] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:37:48.326] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507E97E, 0)
+[15:37:48.435] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:37:48.435] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507E97E, 0)
+[15:37:48.544] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:37:48.544] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507E97E, 0)
+[15:37:48.654] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:37:48.654] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507E97E, 0)
+[15:37:48.763] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:37:48.763] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507E97E, 0)
+[15:37:48.872] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:37:48.872] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507E97E, 0)
+[15:37:48.981] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:37:48.981] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507E97E, 0)
+[15:37:49.091] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:37:49.091] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507E97E, 0)
+[15:37:49.201] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:37:49.201] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507E97E, 0)
+[15:37:49.309] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:37:49.309] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507E97E, 0)
+[15:37:49.418] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:37:49.418] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507E97E, 0)
+[15:37:49.527] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:37:49.527] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507E97E, 0)
+[15:37:49.637] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:37:49.637] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507E97E, 0)
+[15:37:49.746] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:37:49.746] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507E97E, 0)
+[15:37:49.856] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:37:49.856] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507E97E, 0)
+[15:37:49.964] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:37:49.964] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507E97E, 0)
+[15:37:50.074] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:37:50.074] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507E97E, 0)
+[15:37:50.183] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:37:50.183] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507E97E, 0)
+[15:37:50.292] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:37:50.292] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507E97E, 0)
+[15:37:50.401] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:37:50.401] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507E97E, 0)
+[15:37:50.511] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:37:50.511] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507E97E, 0)
+[15:37:50.620] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:37:50.620] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507E97E, 0)
+[15:37:50.729] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:37:50.729] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507E97E, 0)
+[15:37:50.844] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:37:50.844] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507E97E, 0)
+[15:37:50.954] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:37:50.954] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507E97E, 0)
+[15:37:51.063] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:37:51.063] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507E97E, 0)
+[15:37:51.172] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:37:51.172] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507E97E, 0)
+[15:37:51.281] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:37:51.281] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507E97E, 0)
+[15:37:51.390] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:37:51.390] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507E97E, 0)
+[15:37:51.493] [D] Cleared POI - Reason POI is dead from Combat
+[15:37:51.493] [D] Cleared POI
+[15:37:51.585] [D] Changed POI to: Type: Loot, Name: Deepmoss Creeper, Guid: F130000FA507E97E, Entry: 4005, Location: (-93.85, 63.14, 49.32)
+[15:37:51.670] [D] [Interact] Interacting with object at 0x2ED29F48
+[15:37:51.676] [D] [Interact] Done interacting with object at 0x2ED29F48
+[15:37:52.113] [N] Looting Deepmoss Creeper Guid 0xF130000FA507E97E
+[15:37:52.131] [D] Cleared POI - Reason Waiting for loot flag
+[15:37:52.131] [D] Cleared POI
+[15:37:52.271] [D] Changed POI to: Type: Loot, Name: Deepmoss Creeper, Guid: F130000FA507E97E, Entry: 4005, Location: (-93.85, 63.14, 49.32)
+[15:37:52.400] [D] [Singular-DEBUG] Switched targets!
+[15:37:52.400] [D] [Singular-DEBUG] Melee Distance: 5
+[15:37:52.400] [D] [Singular-DEBUG] Health: 0
+[15:37:52.400] [D] [Singular-DEBUG] Level: 16
+[15:37:52.465] [D] Cleared POI - Reason Already looted
+[15:37:52.465] [D] Cleared POI
+[15:37:52.568] [D] Activity: Moving to hotspot
+[15:37:53.200] [D] [QuestRecovery] quest=6461, stage=Objective, old=Attempting, new=Eligible, reason=None, episode=0, attempt=0, retry=
+[15:38:01.548] [N] Mounting: 35022
+[15:38:03.623] [D] [Pulse] Slow bot root: 2135ms bot=Wholesome Auto Quest poi=None combat=False
+[15:38:13.638] [D] Activity: Setting Deepmoss Creeper at 22.6 yards as your target
+[15:38:13.638] [D] Dismounting for combat.
+[15:38:13.638] [D] Stop and dismount. Reason: Combat
+[15:38:13.916] [D] Changed POI to: Type: Kill, Name: Deepmoss Creeper, Guid: F130000FA507F0F0, Entry: 4005, Location: (63.93, -47.95, 23.08)
+[15:38:13.936] [D] [Singular-DEBUG] Switched targets!
+[15:38:13.936] [D] [Singular-DEBUG] Melee Distance: 5
+[15:38:13.936] [D] [Singular-DEBUG] Health: 100
+[15:38:13.936] [D] [Singular-DEBUG] Level: 16
+[15:38:14.038] [N] [Singular] Casting Exorcism on Deepmoss Creeper
+[15:38:14.038] [D] Spell_C::CastSpell(879, 0, 0xF130000FA507F0F0, 0)
+[15:38:15.458] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:38:15.458] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0F0, 0)
+[15:38:17.012] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:38:17.012] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0F0, 0)
+[15:38:17.121] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:38:17.121] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0F0, 0)
+[15:38:17.230] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:38:17.230] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0F0, 0)
+[15:38:17.339] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:38:17.339] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0F0, 0)
+[15:38:17.454] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:38:17.455] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0F0, 0)
+[15:38:17.564] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:38:17.564] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0F0, 0)
+[15:38:17.674] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:38:17.674] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0F0, 0)
+[15:38:17.788] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:38:17.788] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0F0, 0)
+[15:38:17.898] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:38:17.898] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0F0, 0)
+[15:38:18.007] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:38:18.007] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0F0, 0)
+[15:38:18.116] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:38:18.116] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0F0, 0)
+[15:38:18.225] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:38:18.225] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0F0, 0)
+[15:38:18.335] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:38:18.335] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0F0, 0)
+[15:38:18.443] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:38:18.443] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0F0, 0)
+[15:38:18.553] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:38:18.553] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0F0, 0)
+[15:38:18.662] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:38:18.662] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0F0, 0)
+[15:38:18.772] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:38:18.772] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0F0, 0)
+[15:38:18.880] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:38:18.881] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0F0, 0)
+[15:38:18.990] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:38:18.990] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0F0, 0)
+[15:38:19.099] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:38:19.099] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0F0, 0)
+[15:38:19.208] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:38:19.208] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0F0, 0)
+[15:38:19.318] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:38:19.318] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0F0, 0)
+[15:38:19.427] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:38:19.427] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0F0, 0)
+[15:38:19.536] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:38:19.536] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0F0, 0)
+[15:38:19.645] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:38:19.645] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0F0, 0)
+[15:38:19.755] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:38:19.755] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0F0, 0)
+[15:38:19.864] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:38:19.864] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0F0, 0)
+[15:38:19.973] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:38:19.973] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0F0, 0)
+[15:38:20.082] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:38:20.082] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0F0, 0)
+[15:38:20.192] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:38:20.192] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0F0, 0)
+[15:38:20.301] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:38:20.301] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0F0, 0)
+[15:38:20.416] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:38:20.416] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0F0, 0)
+[15:38:20.526] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:38:20.526] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0F0, 0)
+[15:38:20.635] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:38:20.635] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0F0, 0)
+[15:38:20.744] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:38:20.744] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0F0, 0)
+[15:38:20.853] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:38:20.853] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0F0, 0)
+[15:38:20.962] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:38:20.962] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0F0, 0)
+[15:38:21.072] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:38:21.072] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0F0, 0)
+[15:38:21.187] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:38:21.187] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0F0, 0)
+[15:38:21.296] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:38:21.296] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0F0, 0)
+[15:38:21.405] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:38:21.405] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0F0, 0)
+[15:38:21.515] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:38:21.515] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0F0, 0)
+[15:38:21.624] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:38:21.624] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0F0, 0)
+[15:38:21.733] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:38:21.733] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0F0, 0)
+[15:38:21.842] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:38:21.842] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0F0, 0)
+[15:38:21.952] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:38:21.952] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0F0, 0)
+[15:38:22.061] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:38:22.061] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0F0, 0)
+[15:38:22.170] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:38:22.170] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0F0, 0)
+[15:38:22.279] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:38:22.279] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0F0, 0)
+[15:38:22.390] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:38:22.390] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0F0, 0)
+[15:38:22.497] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:38:22.497] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0F0, 0)
+[15:38:22.607] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:38:22.607] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0F0, 0)
+[15:38:22.716] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:38:22.716] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0F0, 0)
+[15:38:22.826] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:38:22.826] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0F0, 0)
+[15:38:22.935] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:38:22.935] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0F0, 0)
+[15:38:23.044] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:38:23.044] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0F0, 0)
+[15:38:23.153] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:38:23.153] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0F0, 0)
+[15:38:23.263] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:38:23.263] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0F0, 0)
+[15:38:23.372] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:38:23.372] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA507F0F0, 0)
+[15:38:23.468] [D] Cleared POI - Reason POI is dead from Combat
+[15:38:23.469] [D] Cleared POI
+[15:38:23.560] [D] Changed POI to: Type: Loot, Name: Deepmoss Creeper, Guid: F130000FA507F0F0, Entry: 4005, Location: (59.28, -46.89, 23.66)
+[15:38:23.645] [D] [Interact] Interacting with object at 0x2ED5A328
+[15:38:23.651] [D] [Interact] Done interacting with object at 0x2ED5A328
+[15:38:24.082] [N] Looting Deepmoss Creeper Guid 0xF130000FA507F0F0
+[15:38:24.100] [D] Cleared POI - Reason Waiting for loot flag
+[15:38:24.100] [D] Cleared POI
+[15:38:24.240] [D] Changed POI to: Type: Loot, Name: Deepmoss Creeper, Guid: F130000FA507F0F0, Entry: 4005, Location: (59.28, -46.89, 23.66)
+[15:38:24.300] [D] [Singular-DEBUG] Switched targets!
+[15:38:24.300] [D] [Singular-DEBUG] Melee Distance: 5
+[15:38:24.300] [D] [Singular-DEBUG] Health: 0
+[15:38:24.300] [D] [Singular-DEBUG] Level: 16
+[15:38:24.395] [D] Cleared POI - Reason Already looted
+[15:38:24.395] [D] Cleared POI
+[15:38:24.412] [D] [QuestRecovery] quest=6461, stage=Objective, old=Attempting, new=Eligible, reason=None, episode=0, attempt=0, retry=
+[15:38:24.488] [D] Activity: Moving to hotspot
+[15:38:35.862] [N] Mounting: 34769
+[15:38:37.914] [D] [Pulse] Slow bot root: 2100ms bot=Wholesome Auto Quest poi=None combat=False
+[15:38:40.311] [D] [Pulse] Slow bot root: 102ms bot=Wholesome Auto Quest poi=None combat=False
+[15:38:40.883] [D] [Pulse] Slow bot root: 100ms bot=Wholesome Auto Quest poi=None combat=False
+[15:38:42.028] [D] [Pulse] Slow bot root: 103ms bot=Wholesome Auto Quest poi=None combat=False
+[15:38:42.599] [D] [Pulse] Slow bot root: 101ms bot=Wholesome Auto Quest poi=None combat=False
+[15:38:43.738] [D] [Pulse] Slow bot root: 100ms bot=Wholesome Auto Quest poi=None combat=False
+[15:38:44.888] [D] [Pulse] Slow bot root: 136ms bot=Wholesome Auto Quest poi=None combat=False
+[15:38:46.026] [D] [Pulse] Slow bot root: 100ms bot=Wholesome Auto Quest poi=None combat=False
+[15:38:46.868] [D] [QuestLog] Loaded 68 completed quests from Lua fallback
+[15:38:47.341] [D] [Pulse] Slow bot root: 104ms bot=Wholesome Auto Quest poi=None combat=False
+[15:38:50.127] [D] [Pulse] Slow bot root: 102ms bot=Wholesome Auto Quest poi=None combat=False
+[15:38:51.773] [D] [Pulse] Slow bot root: 101ms bot=Wholesome Auto Quest poi=None combat=False
+[15:38:53.954] [D] [Pulse] Slow bot root: 100ms bot=Wholesome Auto Quest poi=None combat=False
+[15:38:54.558] [D] [Pulse] Slow bot root: 102ms bot=Wholesome Auto Quest poi=None combat=False
+[15:38:59.152] [D] [Pulse] Slow bot root: 100ms bot=Wholesome Auto Quest poi=None combat=False
+[15:39:01.370] [D] [Pulse] Slow bot root: 101ms bot=Wholesome Auto Quest poi=None combat=False
+[15:39:08.760] [D] [Pulse] Slow bot root: 100ms bot=Wholesome Auto Quest poi=None combat=False
+[15:39:09.870] [D] [Pulse] Slow bot root: 102ms bot=Wholesome Auto Quest poi=None combat=False
+[15:39:11.019] [D] [Pulse] Slow bot root: 102ms bot=Wholesome Auto Quest poi=None combat=False
+[15:39:13.744] [D] [Pulse] Slow bot root: 101ms bot=Wholesome Auto Quest poi=None combat=False
+[15:39:14.318] [D] [Pulse] Slow bot root: 101ms bot=Wholesome Auto Quest poi=None combat=False
+[15:39:14.891] [D] [Pulse] Slow bot root: 102ms bot=Wholesome Auto Quest poi=None combat=False
+[15:39:19.032] [D] [Pulse] Slow bot root: 102ms bot=Wholesome Auto Quest poi=None combat=False
+[15:39:26.119] [D] [Pulse] Slow bot root: 101ms bot=Wholesome Auto Quest poi=None combat=False
+[15:39:28.042] [D] [Pulse] Slow bot root: 101ms bot=Wholesome Auto Quest poi=None combat=False
+[15:39:28.615] [D] [Pulse] Slow bot root: 100ms bot=Wholesome Auto Quest poi=None combat=False
+[15:39:29.186] [D] [Pulse] Slow bot root: 101ms bot=Wholesome Auto Quest poi=None combat=False
+[15:39:29.760] [D] [Pulse] Slow bot root: 101ms bot=Wholesome Auto Quest poi=None combat=False
+[15:39:32.005] [D] [Pulse] Slow bot root: 100ms bot=Wholesome Auto Quest poi=None combat=False
+[15:39:33.117] [D] [Pulse] Slow bot root: 100ms bot=Wholesome Auto Quest poi=None combat=False
+[15:39:33.689] [D] [Pulse] Slow bot root: 101ms bot=Wholesome Auto Quest poi=None combat=False
+[15:39:34.262] [D] [Pulse] Slow bot root: 100ms bot=Wholesome Auto Quest poi=None combat=False
+[15:39:34.837] [D] [Pulse] Slow bot root: 102ms bot=Wholesome Auto Quest poi=None combat=False
+[15:39:37.862] [D] [Pulse] Slow bot root: 100ms bot=Wholesome Auto Quest poi=None combat=False
+[15:39:39.512] [D] [Pulse] Slow bot root: 101ms bot=Wholesome Auto Quest poi=None combat=False
+[15:39:41.733] [D] [Pulse] Slow bot root: 100ms bot=Wholesome Auto Quest poi=None combat=False
+[15:39:42.305] [D] [Pulse] Slow bot root: 102ms bot=Wholesome Auto Quest poi=None combat=False
+[15:39:47.213] [D] [Pulse] Slow bot root: 100ms bot=Wholesome Auto Quest poi=None combat=False
+[15:39:48.089] [D] [QuestLog] Loaded 68 completed quests from Lua fallback
+[15:39:49.631] [D] [Pulse] Slow bot root: 101ms bot=Wholesome Auto Quest poi=None combat=False
+[15:39:51.819] [D] [Pulse] Slow bot root: 101ms bot=Wholesome Auto Quest poi=None combat=False
+[15:39:56.729] [D] [Pulse] Slow bot root: 102ms bot=Wholesome Auto Quest poi=None combat=False
+[15:39:58.139] [D] [Pulse] Slow bot root: 100ms bot=Wholesome Auto Quest poi=None combat=False
+[15:39:58.713] [D] [Pulse] Slow bot root: 104ms bot=Wholesome Auto Quest poi=None combat=False
+[15:40:00.346] [D] [Pulse] Slow bot root: 101ms bot=Wholesome Auto Quest poi=None combat=False
+[15:40:01.452] [D] [Pulse] Slow bot root: 100ms bot=Wholesome Auto Quest poi=None combat=False
+[15:40:02.026] [D] [Pulse] Slow bot root: 101ms bot=Wholesome Auto Quest poi=None combat=False
+[15:40:02.599] [D] [Pulse] Slow bot root: 101ms bot=Wholesome Auto Quest poi=None combat=False
+[15:40:06.437] [D] [Pulse] Slow bot root: 101ms bot=Wholesome Auto Quest poi=None combat=False
+[15:40:13.808] [D] [Pulse] Slow bot root: 100ms bot=Wholesome Auto Quest poi=None combat=False
+[15:40:15.493] [D] [Pulse] Slow bot root: 100ms bot=Wholesome Auto Quest poi=None combat=False
+[15:40:16.636] [D] [Pulse] Slow bot root: 101ms bot=Wholesome Auto Quest poi=None combat=False
+[15:40:17.777] [D] [Pulse] Slow bot root: 101ms bot=Wholesome Auto Quest poi=None combat=False
+[15:40:18.653] [D] [Pulse] Slow bot root: 100ms bot=Wholesome Auto Quest poi=None combat=False
+[15:40:21.476] [D] [Pulse] Slow bot root: 101ms bot=Wholesome Auto Quest poi=None combat=False
+[15:40:22.048] [D] [Pulse] Slow bot root: 101ms bot=Wholesome Auto Quest poi=None combat=False
+[15:40:22.619] [D] [Pulse] Slow bot root: 100ms bot=Wholesome Auto Quest poi=None combat=False
+[15:40:25.372] [D] [Pulse] Slow bot root: 101ms bot=Wholesome Auto Quest poi=None combat=False
+[15:40:27.585] [D] [Pulse] Slow bot root: 127ms bot=Wholesome Auto Quest poi=None combat=False
+[15:40:48.503] [D] [QuestLog] Loaded 68 completed quests from Lua fallback
+[15:41:00.592] [D] Activity: Setting Deepmoss Creeper at 15.2 yards as your target
+[15:41:00.592] [D] Dismounting for combat.
+[15:41:00.592] [D] Stop and dismount. Reason: Combat
+[15:41:00.871] [D] Changed POI to: Type: Kill, Name: Deepmoss Creeper, Guid: F130000FA5082449, Entry: 4005, Location: (29.84, -113.17, 20.69)
+[15:41:00.889] [D] [Singular-DEBUG] Switched targets!
+[15:41:00.889] [D] [Singular-DEBUG] Melee Distance: 5
+[15:41:00.889] [D] [Singular-DEBUG] Health: 100
+[15:41:00.889] [D] [Singular-DEBUG] Level: 17
+[15:41:01.101] [N] [Singular] Casting Exorcism on Deepmoss Creeper
+[15:41:01.101] [D] Spell_C::CastSpell(879, 0, 0xF130000FA5082449, 0)
+[15:41:02.515] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:41:02.515] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082449, 0)
+[15:41:04.075] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:41:04.075] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082449, 0)
+[15:41:04.185] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:41:04.185] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082449, 0)
+[15:41:04.294] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:41:04.294] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082449, 0)
+[15:41:04.403] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:41:04.403] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082449, 0)
+[15:41:04.512] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:41:04.512] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082449, 0)
+[15:41:04.622] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:41:04.622] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082449, 0)
+[15:41:04.737] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:41:04.737] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082449, 0)
+[15:41:04.846] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:41:04.846] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082449, 0)
+[15:41:04.955] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:41:04.955] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082449, 0)
+[15:41:05.064] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:41:05.064] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082449, 0)
+[15:41:05.174] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:41:05.174] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082449, 0)
+[15:41:05.283] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:41:05.283] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082449, 0)
+[15:41:05.393] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:41:05.393] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082449, 0)
+[15:41:05.507] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:41:05.507] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082449, 0)
+[15:41:05.617] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:41:05.617] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082449, 0)
+[15:41:05.726] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:41:05.726] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082449, 0)
+[15:41:05.836] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:41:05.836] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082449, 0)
+[15:41:05.944] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:41:05.944] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082449, 0)
+[15:41:06.057] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:41:06.057] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082449, 0)
+[15:41:06.163] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:41:06.163] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082449, 0)
+[15:41:06.272] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:41:06.272] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082449, 0)
+[15:41:06.382] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:41:06.382] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082449, 0)
+[15:41:06.490] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:41:06.490] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082449, 0)
+[15:41:06.600] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:41:06.600] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082449, 0)
+[15:41:06.709] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:41:06.709] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082449, 0)
+[15:41:06.819] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:41:06.819] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082449, 0)
+[15:41:06.940] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:41:06.940] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082449, 0)
+[15:41:07.049] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:41:07.049] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082449, 0)
+[15:41:07.158] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:41:07.158] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082449, 0)
+[15:41:07.267] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:41:07.268] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082449, 0)
+[15:41:07.378] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:41:07.379] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082449, 0)
+[15:41:07.486] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:41:07.486] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082449, 0)
+[15:41:07.595] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:41:07.595] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082449, 0)
+[15:41:07.704] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:41:07.705] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082449, 0)
+[15:41:07.814] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:41:07.814] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082449, 0)
+[15:41:07.923] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:41:07.923] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082449, 0)
+[15:41:08.032] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:41:08.032] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082449, 0)
+[15:41:08.141] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:41:08.141] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082449, 0)
+[15:41:08.251] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:41:08.251] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082449, 0)
+[15:41:08.360] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:41:08.360] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082449, 0)
+[15:41:08.469] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:41:08.469] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082449, 0)
+[15:41:08.579] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:41:08.580] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082449, 0)
+[15:41:08.688] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:41:08.688] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082449, 0)
+[15:41:08.797] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:41:08.797] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082449, 0)
+[15:41:08.907] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:41:08.907] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082449, 0)
+[15:41:09.015] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:41:09.015] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082449, 0)
+[15:41:09.124] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:41:09.125] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082449, 0)
+[15:41:09.233] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:41:09.234] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082449, 0)
+[15:41:09.343] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:41:09.343] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082449, 0)
+[15:41:09.452] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:41:09.452] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082449, 0)
+[15:41:09.561] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:41:09.561] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082449, 0)
+[15:41:09.671] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:41:09.671] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082449, 0)
+[15:41:09.792] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:41:09.792] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082449, 0)
+[15:41:09.901] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:41:09.901] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082449, 0)
+[15:41:10.011] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:41:10.011] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082449, 0)
+[15:41:10.120] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:41:10.120] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082449, 0)
+[15:41:10.229] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:41:10.229] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082449, 0)
+[15:41:10.338] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:41:10.339] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082449, 0)
+[15:41:10.447] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:41:10.447] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082449, 0)
+[15:41:10.557] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:41:10.557] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082449, 0)
+[15:41:10.654] [D] Cleared POI - Reason POI is dead from Combat
+[15:41:10.654] [D] Cleared POI
+[15:41:10.746] [D] Changed POI to: Type: Loot, Name: Deepmoss Creeper, Guid: F130000FA5082449, Entry: 4005, Location: (25.09, -114.91, 21.03)
+[15:41:10.830] [D] [Interact] Interacting with object at 0x2ED61D08
+[15:41:10.840] [D] [Interact] Done interacting with object at 0x2ED61D08
+[15:41:11.267] [N] Looting Deepmoss Creeper Guid 0xF130000FA5082449
+[15:41:11.285] [D] Cleared POI - Reason Waiting for loot flag
+[15:41:11.285] [D] Cleared POI
+[15:41:11.426] [D] Changed POI to: Type: Loot, Name: Deepmoss Creeper, Guid: F130000FA5082449, Entry: 4005, Location: (25.09, -114.91, 21.03)
+[15:41:11.553] [D] [Singular-DEBUG] Switched targets!
+[15:41:11.553] [D] [Singular-DEBUG] Melee Distance: 5
+[15:41:11.553] [D] [Singular-DEBUG] Health: 0
+[15:41:11.553] [D] [Singular-DEBUG] Level: 17
+[15:41:11.625] [D] Cleared POI - Reason Already looted
+[15:41:11.625] [D] Cleared POI
+[15:41:11.746] [D] Activity: Moving to hotspot
+[15:41:12.385] [D] [QuestRecovery] quest=6461, stage=Objective, old=Attempting, new=Eligible, reason=None, episode=0, attempt=0, retry=
+[15:41:20.726] [N] Mounting: 34769
+[15:41:22.798] [D] [Pulse] Slow bot root: 2192ms bot=Wholesome Auto Quest poi=None combat=False
+[15:41:48.871] [D] [QuestLog] Loaded 68 completed quests from Lua fallback
+[15:42:28.923] [D] [Pulse] Slow bot root: 101ms bot=Wholesome Auto Quest poi=None combat=False
+[15:42:30.551] [D] [Pulse] Slow bot root: 101ms bot=Wholesome Auto Quest poi=None combat=False
+[15:42:31.154] [D] [Pulse] Slow bot root: 100ms bot=Wholesome Auto Quest poi=None combat=False
+[15:42:33.879] [D] [Pulse] Slow bot root: 101ms bot=Wholesome Auto Quest poi=None combat=False
+[15:42:34.453] [D] [Pulse] Slow bot root: 101ms bot=Wholesome Auto Quest poi=None combat=False
+[15:42:38.851] [D] [Pulse] Slow bot root: 101ms bot=Wholesome Auto Quest poi=None combat=False
+[15:42:46.188] [D] [Pulse] Slow bot root: 101ms bot=Wholesome Auto Quest poi=None combat=False
+[15:42:47.869] [D] [Pulse] Slow bot root: 104ms bot=Wholesome Auto Quest poi=None combat=False
+[15:42:48.435] [D] [Pulse] Slow bot root: 100ms bot=Wholesome Auto Quest poi=None combat=False
+[15:42:49.571] [D] [QuestLog] Loaded 68 completed quests from Lua fallback
+[15:42:50.039] [D] [Pulse] Slow bot root: 101ms bot=Wholesome Auto Quest poi=None combat=False
+[15:43:05.973] [D] Activity: Setting Deepmoss Creeper at 23.7 yards as your target
+[15:43:05.974] [D] Dismounting for combat.
+[15:43:05.974] [D] Stop and dismount. Reason: Combat
+[15:43:06.252] [D] Changed POI to: Type: Kill, Name: Deepmoss Creeper, Guid: F130000FA5082520, Entry: 4005, Location: (-87.25, 51.48, 49.19)
+[15:43:06.272] [D] [Singular-DEBUG] Switched targets!
+[15:43:06.272] [D] [Singular-DEBUG] Melee Distance: 5
+[15:43:06.272] [D] [Singular-DEBUG] Health: 100
+[15:43:06.272] [D] [Singular-DEBUG] Level: 17
+[15:43:06.374] [N] [Singular] Casting Exorcism on Deepmoss Creeper
+[15:43:06.374] [D] Spell_C::CastSpell(879, 0, 0xF130000FA5082520, 0)
+[15:43:08.450] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:43:08.450] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082520, 0)
+[15:43:16.477] [D] Cleared POI - Reason POI is dead from Combat
+[15:43:16.477] [D] Cleared POI
+[15:43:16.573] [D] Changed POI to: Type: Loot, Name: Deepmoss Creeper, Guid: F130000FA5082520, Entry: 4005, Location: (-87.25, 51.48, 49.19)
+[15:43:16.658] [D] [Interact] Interacting with object at 0x2ED78AA8
+[15:43:16.664] [D] [Interact] Done interacting with object at 0x2ED78AA8
+[15:43:17.101] [N] Looting Deepmoss Creeper Guid 0xF130000FA5082520
+[15:43:17.119] [D] Cleared POI - Reason Waiting for loot flag
+[15:43:17.119] [D] Cleared POI
+[15:43:17.259] [D] Changed POI to: Type: Loot, Name: Deepmoss Creeper, Guid: F130000FA5082520, Entry: 4005, Location: (-87.25, 51.48, 49.19)
+[15:43:17.362] [D] [Singular-DEBUG] Switched targets!
+[15:43:17.362] [D] [Singular-DEBUG] Melee Distance: 5
+[15:43:17.362] [D] [Singular-DEBUG] Health: 0
+[15:43:17.362] [D] [Singular-DEBUG] Level: 17
+[15:43:17.453] [D] Cleared POI - Reason Already looted
+[15:43:17.453] [D] Cleared POI
+[15:43:17.557] [D] Activity: Moving to hotspot
+[15:43:17.842] [D] [QuestRecovery] quest=6461, stage=Objective, old=Attempting, new=Eligible, reason=None, episode=0, attempt=0, retry=
+[15:43:18.377] [D] Activity: Moving towards Deepmoss Creeper
+[15:43:20.161] [D] Activity: Setting Deepmoss Creeper at 23.9 yards as your target
+[15:43:20.464] [D] Changed POI to: Type: Kill, Name: Deepmoss Creeper, Guid: F130000FA5082539, Entry: 4005, Location: (-119.23, 72.68, 49.34)
+[15:43:20.507] [D] [Singular-DEBUG] Switched targets!
+[15:43:20.507] [D] [Singular-DEBUG] Melee Distance: 5
+[15:43:20.507] [D] [Singular-DEBUG] Health: 100
+[15:43:20.507] [D] [Singular-DEBUG] Level: 16
+[15:43:23.252] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:43:23.252] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082539, 0)
+[15:43:23.367] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:43:23.367] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082539, 0)
+[15:43:23.488] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:43:23.488] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082539, 0)
+[15:43:23.598] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:43:23.598] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082539, 0)
+[15:43:23.707] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:43:23.707] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082539, 0)
+[15:43:23.816] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:43:23.816] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082539, 0)
+[15:43:23.925] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:43:23.925] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082539, 0)
+[15:43:24.035] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:43:24.035] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082539, 0)
+[15:43:24.144] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:43:24.144] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082539, 0)
+[15:43:24.254] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:43:24.254] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082539, 0)
+[15:43:24.362] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:43:24.362] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082539, 0)
+[15:43:24.472] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:43:24.472] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082539, 0)
+[15:43:24.580] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:43:24.581] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082539, 0)
+[15:43:24.690] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:43:24.690] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082539, 0)
+[15:43:24.799] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:43:24.799] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082539, 0)
+[15:43:24.914] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:43:24.914] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082539, 0)
+[15:43:25.024] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:43:25.024] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082539, 0)
+[15:43:25.133] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:43:25.133] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082539, 0)
+[15:43:25.242] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:43:25.242] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082539, 0)
+[15:43:25.352] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:43:25.352] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082539, 0)
+[15:43:25.461] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:43:25.461] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082539, 0)
+[15:43:25.570] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:43:25.570] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082539, 0)
+[15:43:25.679] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:43:25.679] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082539, 0)
+[15:43:25.788] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:43:25.788] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082539, 0)
+[15:43:25.898] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:43:25.898] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082539, 0)
+[15:43:26.007] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:43:26.007] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082539, 0)
+[15:43:26.116] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:43:26.116] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082539, 0)
+[15:43:26.225] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:43:26.225] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082539, 0)
+[15:43:26.334] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:43:26.334] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082539, 0)
+[15:43:26.444] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:43:26.444] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082539, 0)
+[15:43:26.554] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:43:26.554] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082539, 0)
+[15:43:26.669] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:43:26.669] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082539, 0)
+[15:43:26.777] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:43:26.777] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082539, 0)
+[15:43:26.888] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:43:26.888] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082539, 0)
+[15:43:27.003] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:43:27.003] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082539, 0)
+[15:43:27.118] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:43:27.118] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082539, 0)
+[15:43:27.228] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:43:27.228] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082539, 0)
+[15:43:27.337] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:43:27.337] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082539, 0)
+[15:43:27.446] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:43:27.446] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082539, 0)
+[15:43:27.556] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:43:27.556] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082539, 0)
+[15:43:27.665] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:43:27.665] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082539, 0)
+[15:43:27.774] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:43:27.774] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082539, 0)
+[15:43:27.884] [N] [Singular] Casting Judgement of Light on Deepmoss Creeper
+[15:43:27.884] [D] Spell_C::CastSpell(20271, 0, 0xF130000FA5082539, 0)
+[15:43:27.982] [D] Cleared POI - Reason POI is dead from Combat
+[15:43:27.982] [D] Cleared POI
+[15:43:28.006] [D] [QuestRecovery] quest=6461, stage=Objective, old=Attempting, new=Eligible, reason=None, episode=0, attempt=0, retry=
+[15:43:28.006] [N] [Wholesome Auto Quest] Quest 6461 Objective completed; queuing one scheduler rebuild.
+[15:43:28.091] [D] Activity: No eligible quest work; idle until 2026-09-05T13:35:41.7775857Z. excluded quest=104;stage=Pickup;npc=392;reason=outside-scan-radius;retry=context-change excluded quest=1062;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=1069;stage=Pickup;npc=3446;reason=outside-scan-radius;retry=context-change excluded quest=1087;stage=Pickup;npc=4198;reason=outside-scan-radius;retry=context-change excluded quest=1093;stage=Pickup;npc=4201;reason=outside-scan-radius;retry=context-change excluded quest=11127;stage=Pickup;scope=QuestStage;retry=context-change;state=HalfOpen. excluded quest=118;stage=Pickup;npc=415;reason=outside-scan-radius;retry=context-change excluded quest=1195;stage=Pickup;npc=4721;reason=outside-scan-radius;retry=context-change excluded quest=14106;stage=Pickup;scope=QuestStage;retry=context-change;state=HalfOpen. excluded quest=1483;stage=Pickup;npc=3442;reason=outside-scan-radius;retry=context-change excluded quest=152;stage=Pickup;npc=392;reason=outside-scan-radius;retry=context-change excluded quest=2098;stage=Pickup;npc=6667;reason=outside-scan-radius;retry=context-change excluded quest=216;stage=Pickup;npc=12757;reason=outside-scan-radius;retry=context-change excluded quest=235;stage=Pickup;npc=10880;reason=outside-scan-radius;retry=context-change excluded quest=3281;stage=TurnIn;npc=3464;reason=outside-scan-radius;retry=context-change excluded quest=4542;stage=Pickup;npc=10079;reason=outside-scan-radius;retry=context-change excluded quest=470;stage=Pickup;npc=2111;reason=outside-scan-radius;retry=context-change excluded quest=472;stage=Pickup;npc=2097;reason=outside-scan-radius;retry=context-change excluded quest=4740;stage=Pickup;npc=175320;reason=outside-scan-radius;retry=context-change excluded quest=4921;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=493;stage=Pickup;npc=1937;reason=outside-scan-radius;retry=context-change excluded quest=494;stage=Pickup;npc=2214;reason=outside-scan-radius;retry=context-change excluded quest=496;stage=Pickup;npc=2216;reason=outside-scan-radius;retry=context-change excluded quest=498;stage=Pickup;npc=2229;reason=outside-scan-radius;retry=context-change excluded quest=501;stage=Pickup;npc=2216;reason=outside-scan-radius;retry=context-change excluded quest=516;stage=Pickup;npc=2121;reason=outside-scan-radius;retry=context-change excluded quest=527;stage=Pickup;npc=2215;reason=outside-scan-radius;retry=context-change excluded quest=546;stage=Pickup;npc=2418;reason=outside-scan-radius;retry=context-change excluded quest=549;stage=Pickup;npc=1763;reason=outside-scan-radius;retry=context-change excluded quest=6301;stage=Pickup;npc=11864;reason=outside-scan-radius;retry=context-change excluded quest=6382;stage=Pickup;npc=3387;reason=outside-scan-radius;retry=context-change excluded quest=6383;stage=Pickup;npc=12696;reason=outside-scan-radius;retry=context-change excluded quest=6393;stage=Pickup;npc=11862;reason=outside-scan-radius;retry=context-change excluded quest=6442;stage=Pickup;npc=12719;reason=outside-scan-radius;retry=context-change excluded quest=6461;stage=Objective;objective=1;reason=outside-scan-radius;retry=context-change. excluded quest=6462;stage=Pickup;npc=12721;reason=outside-scan-radius;retry=context-change excluded quest=6503;stage=Pickup;npc=12867;reason=outside-scan-radius;retry=context-change excluded quest=6541;stage=Pickup;npc=3429;reason=outside-scan-radius;retry=context-change excluded quest=6542;stage=TurnIn;npc=8582;reason=outside-scan-radius;retry=context-change excluded quest=6543;stage=Pickup;npc=8582;reason=outside-scan-radius;retry=context-change excluded quest=742;stage=Pickup;npc=10881;reason=outside-scan-radius;retry=context-change excluded quest=747;stage=Objective;scope=Objective;objective=0;retry=2026-09-05T13:35:41.7775857Z;state=Quarantined. excluded quest=747;stage=Objective;scope=Objective;objective=1;retry=2026-09-05T13:35:41.7821400Z;state=Quarantined. excluded quest=7790;stage=Pickup;scope=QuestStage;retry=context-change;state=HalfOpen. excluded quest=843;stage=Pickup;npc=3341;reason=outside-scan-radius;retry=context-change excluded quest=8487;stage=TurnIn;scope=QuestStage;retry=context-change;state=HalfOpen. excluded quest=851;stage=Pickup;scope=QuestStage;retry=context-change;state=HalfOpen. excluded quest=858;stage=Pickup;npc=3439;reason=outside-scan-radius;retry=context-change excluded quest=865;stage=Pickup;scope=QuestStage;retry=context-change;state=HalfOpen. excluded quest=867;stage=Objective;scope=Objective;objective=0;retry=2026-09-05T13:35:41.7839343Z;state=Quarantined. excluded quest=868;stage=Pickup;npc=3428;reason=outside-scan-radius;retry=context-change excluded quest=878;stage=Pickup;npc=3430;reason=outside-scan-radius;retry=context-change excluded quest=8889;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=8889;stage=Objective;objective=1;reason=outside-scan-radius;retry=context-change. excluded quest=8889;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;objective=1;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;scope=Objective;objective=3;retry=2026-09-05T13:35:41.7870386Z;state=Quarantined. excluded quest=893;stage=Pickup;npc=3433;reason=outside-scan-radius;retry=context-change excluded quest=894;stage=TurnIn;npc=4141;reason=outside-scan-radius;retry=context-change excluded quest=896;stage=Objective;scope=Objective;objective=0;retry=2026-09-05T13:35:41.7899307Z;state=Quarantined. excluded quest=9067;stage=Objective;scope=Objective;objective=0;retry=context-change;state=HalfOpen. excluded quest=9151;stage=Pickup;npc=16199;reason=outside-scan-radius;retry=context-change excluded quest=9157;stage=TurnIn;scope=QuestStage;retry=context-change;state=HalfOpen. excluded quest=9214;stage=Pickup;npc=16220;reason=outside-scan-radius;retry=context-change excluded quest=9218;stage=Pickup;npc=16205;reason=outside-scan-radius;retry=context-change excluded quest=9275;stage=Pickup;npc=16464;reason=outside-scan-radius;retry=context-change excluded quest=9276;stage=Pickup;npc=16463;reason=outside-scan-radius;retry=context-change excluded quest=9281;stage=Pickup;npc=16480;reason=outside-scan-radius;retry=context-change excluded quest=9388;stage=Pickup;scope=QuestStage;retry=context-change;state=HalfOpen. excluded quest=9389;stage=Pickup;scope=QuestStage;retry=context-change;state=HalfOpen. excluded quest=9425;stage=Pickup;npc=16287;reason=outside-scan-radius;retry=context-change excluded quest=9428;stage=Pickup;npc=17098;reason=outside-scan-radius;retry=context-change excluded quest=959;stage=Pickup;npc=3665;reason=outside-scan-radius;retry=context-change excluded quest=962;stage=Pickup;npc=3419;reason=outside-scan-radius;retry=context-change excluded quest=965;stage=Pickup;npc=3657;reason=outside-scan-radius;retry=context-change excluded quest=9749;stage=Pickup;scope=QuestStage;retry=context-change;state=HalfOpen. Expanding scan radius from 250 to 500 yards before fallback.
+[15:43:28.253] [D] Activity: No eligible quest work; idle until 2026-09-05T13:35:41.7775857Z. excluded quest=104;stage=Pickup;npc=392;reason=outside-scan-radius;retry=context-change excluded quest=1062;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=1069;stage=Pickup;npc=3446;reason=outside-scan-radius;retry=context-change excluded quest=1087;stage=Pickup;npc=4198;reason=outside-scan-radius;retry=context-change excluded quest=1093;stage=Pickup;npc=4201;reason=outside-scan-radius;retry=context-change excluded quest=11127;stage=Pickup;scope=QuestStage;retry=context-change;state=HalfOpen. excluded quest=118;stage=Pickup;npc=415;reason=outside-scan-radius;retry=context-change excluded quest=1195;stage=Pickup;npc=4721;reason=outside-scan-radius;retry=context-change excluded quest=14106;stage=Pickup;scope=QuestStage;retry=context-change;state=HalfOpen. excluded quest=1483;stage=Pickup;npc=3442;reason=outside-scan-radius;retry=context-change excluded quest=152;stage=Pickup;npc=392;reason=outside-scan-radius;retry=context-change excluded quest=2098;stage=Pickup;npc=6667;reason=outside-scan-radius;retry=context-change excluded quest=216;stage=Pickup;npc=12757;reason=outside-scan-radius;retry=context-change excluded quest=235;stage=Pickup;npc=10880;reason=outside-scan-radius;retry=context-change excluded quest=3281;stage=TurnIn;npc=3464;reason=outside-scan-radius;retry=context-change excluded quest=4542;stage=Pickup;npc=10079;reason=outside-scan-radius;retry=context-change excluded quest=470;stage=Pickup;npc=2111;reason=outside-scan-radius;retry=context-change excluded quest=472;stage=Pickup;npc=2097;reason=outside-scan-radius;retry=context-change excluded quest=4740;stage=Pickup;npc=175320;reason=outside-scan-radius;retry=context-change excluded quest=4921;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=493;stage=Pickup;npc=1937;reason=outside-scan-radius;retry=context-change excluded quest=494;stage=Pickup;npc=2214;reason=outside-scan-radius;retry=context-change excluded quest=496;stage=Pickup;npc=2216;reason=outside-scan-radius;retry=context-change excluded quest=498;stage=Pickup;npc=2229;reason=outside-scan-radius;retry=context-change excluded quest=501;stage=Pickup;npc=2216;reason=outside-scan-radius;retry=context-change excluded quest=516;stage=Pickup;npc=2121;reason=outside-scan-radius;retry=context-change excluded quest=527;stage=Pickup;npc=2215;reason=outside-scan-radius;retry=context-change excluded quest=546;stage=Pickup;npc=2418;reason=outside-scan-radius;retry=context-change excluded quest=549;stage=Pickup;npc=1763;reason=outside-scan-radius;retry=context-change excluded quest=6301;stage=Pickup;npc=11864;reason=outside-scan-radius;retry=context-change excluded quest=6382;stage=Pickup;npc=3387;reason=outside-scan-radius;retry=context-change excluded quest=6383;stage=Pickup;npc=12696;reason=outside-scan-radius;retry=context-change excluded quest=6393;stage=Pickup;npc=11862;reason=outside-scan-radius;retry=context-change excluded quest=6442;stage=Pickup;npc=12719;reason=outside-scan-radius;retry=context-change excluded quest=6461;stage=Objective;objective=1;reason=outside-scan-radius;retry=context-change. excluded quest=6462;stage=Pickup;npc=12721;reason=outside-scan-radius;retry=context-change excluded quest=6503;stage=Pickup;npc=12867;reason=outside-scan-radius;retry=context-change excluded quest=6541;stage=Pickup;npc=3429;reason=outside-scan-radius;retry=context-change excluded quest=6542;stage=TurnIn;npc=8582;reason=outside-scan-radius;retry=context-change excluded quest=6543;stage=Pickup;npc=8582;reason=outside-scan-radius;retry=context-change excluded quest=742;stage=Pickup;npc=10881;reason=outside-scan-radius;retry=context-change excluded quest=747;stage=Objective;scope=Objective;objective=0;retry=2026-09-05T13:35:41.7775857Z;state=Quarantined. excluded quest=747;stage=Objective;scope=Objective;objective=1;retry=2026-09-05T13:35:41.7821400Z;state=Quarantined. excluded quest=7790;stage=Pickup;scope=QuestStage;retry=context-change;state=HalfOpen. excluded quest=843;stage=Pickup;npc=3341;reason=outside-scan-radius;retry=context-change excluded quest=8487;stage=TurnIn;scope=QuestStage;retry=context-change;state=HalfOpen. excluded quest=851;stage=Pickup;scope=QuestStage;retry=context-change;state=HalfOpen. excluded quest=858;stage=Pickup;npc=3439;reason=outside-scan-radius;retry=context-change excluded quest=865;stage=Pickup;scope=QuestStage;retry=context-change;state=HalfOpen. excluded quest=867;stage=Objective;scope=Objective;objective=0;retry=2026-09-05T13:35:41.7839343Z;state=Quarantined. excluded quest=868;stage=Pickup;npc=3428;reason=outside-scan-radius;retry=context-change excluded quest=878;stage=Pickup;npc=3430;reason=outside-scan-radius;retry=context-change excluded quest=8889;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=8889;stage=Objective;objective=1;reason=outside-scan-radius;retry=context-change. excluded quest=8889;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;objective=1;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;scope=Objective;objective=3;retry=2026-09-05T13:35:41.7870386Z;state=Quarantined. excluded quest=893;stage=Pickup;npc=3433;reason=outside-scan-radius;retry=context-change excluded quest=894;stage=TurnIn;npc=4141;reason=outside-scan-radius;retry=context-change excluded quest=896;stage=Objective;scope=Objective;objective=0;retry=2026-09-05T13:35:41.7899307Z;state=Quarantined. excluded quest=9067;stage=Objective;scope=Objective;objective=0;retry=context-change;state=HalfOpen. excluded quest=9151;stage=Pickup;npc=16199;reason=outside-scan-radius;retry=context-change excluded quest=9157;stage=TurnIn;scope=QuestStage;retry=context-change;state=HalfOpen. excluded quest=9214;stage=Pickup;npc=16220;reason=outside-scan-radius;retry=context-change excluded quest=9218;stage=Pickup;npc=16205;reason=outside-scan-radius;retry=context-change excluded quest=9275;stage=Pickup;npc=16464;reason=outside-scan-radius;retry=context-change excluded quest=9276;stage=Pickup;npc=16463;reason=outside-scan-radius;retry=context-change excluded quest=9281;stage=Pickup;npc=16480;reason=outside-scan-radius;retry=context-change excluded quest=9388;stage=Pickup;scope=QuestStage;retry=context-change;state=HalfOpen. excluded quest=9389;stage=Pickup;scope=QuestStage;retry=context-change;state=HalfOpen. excluded quest=9425;stage=Pickup;npc=16287;reason=outside-scan-radius;retry=context-change excluded quest=9428;stage=Pickup;npc=17098;reason=outside-scan-radius;retry=context-change excluded quest=959;stage=Pickup;npc=3665;reason=outside-scan-radius;retry=context-change excluded quest=962;stage=Pickup;npc=3419;reason=outside-scan-radius;retry=context-change excluded quest=965;stage=Pickup;npc=3657;reason=outside-scan-radius;retry=context-change excluded quest=9749;stage=Pickup;scope=QuestStage;retry=context-change;state=HalfOpen. Expanding scan radius from 500 to 750 yards before fallback.
+[15:43:28.410] [D] Activity: No eligible quest work; idle until 2026-09-05T13:35:41.7775857Z. excluded quest=104;stage=Pickup;npc=392;reason=outside-scan-radius;retry=context-change excluded quest=1062;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=1069;stage=Pickup;npc=3446;reason=outside-scan-radius;retry=context-change excluded quest=1087;stage=Pickup;npc=4198;reason=outside-scan-radius;retry=context-change excluded quest=1093;stage=Pickup;npc=4201;reason=outside-scan-radius;retry=context-change excluded quest=11127;stage=Pickup;scope=QuestStage;retry=context-change;state=HalfOpen. excluded quest=118;stage=Pickup;npc=415;reason=outside-scan-radius;retry=context-change excluded quest=1195;stage=Pickup;npc=4721;reason=outside-scan-radius;retry=context-change excluded quest=14106;stage=Pickup;scope=QuestStage;retry=context-change;state=HalfOpen. excluded quest=1483;stage=Pickup;npc=3442;reason=outside-scan-radius;retry=context-change excluded quest=152;stage=Pickup;npc=392;reason=outside-scan-radius;retry=context-change excluded quest=2098;stage=Pickup;npc=6667;reason=outside-scan-radius;retry=context-change excluded quest=216;stage=Pickup;npc=12757;reason=outside-scan-radius;retry=context-change excluded quest=235;stage=Pickup;npc=10880;reason=outside-scan-radius;retry=context-change excluded quest=3281;stage=TurnIn;npc=3464;reason=outside-scan-radius;retry=context-change excluded quest=4542;stage=Pickup;npc=10079;reason=outside-scan-radius;retry=context-change excluded quest=470;stage=Pickup;npc=2111;reason=outside-scan-radius;retry=context-change excluded quest=472;stage=Pickup;npc=2097;reason=outside-scan-radius;retry=context-change excluded quest=4740;stage=Pickup;npc=175320;reason=outside-scan-radius;retry=context-change excluded quest=4921;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=493;stage=Pickup;npc=1937;reason=outside-scan-radius;retry=context-change excluded quest=494;stage=Pickup;npc=2214;reason=outside-scan-radius;retry=context-change excluded quest=496;stage=Pickup;npc=2216;reason=outside-scan-radius;retry=context-change excluded quest=498;stage=Pickup;npc=2229;reason=outside-scan-radius;retry=context-change excluded quest=501;stage=Pickup;npc=2216;reason=outside-scan-radius;retry=context-change excluded quest=516;stage=Pickup;npc=2121;reason=outside-scan-radius;retry=context-change excluded quest=527;stage=Pickup;npc=2215;reason=outside-scan-radius;retry=context-change excluded quest=546;stage=Pickup;npc=2418;reason=outside-scan-radius;retry=context-change excluded quest=549;stage=Pickup;npc=1763;reason=outside-scan-radius;retry=context-change excluded quest=6301;stage=Pickup;npc=11864;reason=outside-scan-radius;retry=context-change excluded quest=6382;stage=Pickup;npc=3387;reason=outside-scan-radius;retry=context-change excluded quest=6383;stage=Pickup;npc=12696;reason=outside-scan-radius;retry=context-change excluded quest=6393;stage=Pickup;npc=11862;reason=outside-scan-radius;retry=context-change excluded quest=6442;stage=Pickup;npc=12719;reason=outside-scan-radius;retry=context-change excluded quest=6461;stage=Objective;objective=1;reason=outside-scan-radius;retry=context-change. excluded quest=6462;stage=Pickup;npc=12721;reason=outside-scan-radius;retry=context-change excluded quest=6503;stage=Pickup;npc=12867;reason=outside-scan-radius;retry=context-change excluded quest=6541;stage=Pickup;npc=3429;reason=outside-scan-radius;retry=context-change excluded quest=6542;stage=TurnIn;npc=8582;reason=outside-scan-radius;retry=context-change excluded quest=6543;stage=Pickup;npc=8582;reason=outside-scan-radius;retry=context-change excluded quest=742;stage=Pickup;npc=10881;reason=outside-scan-radius;retry=context-change excluded quest=747;stage=Objective;scope=Objective;objective=0;retry=2026-09-05T13:35:41.7775857Z;state=Quarantined. excluded quest=747;stage=Objective;scope=Objective;objective=1;retry=2026-09-05T13:35:41.7821400Z;state=Quarantined. excluded quest=7790;stage=Pickup;scope=QuestStage;retry=context-change;state=HalfOpen. excluded quest=843;stage=Pickup;npc=3341;reason=outside-scan-radius;retry=context-change excluded quest=8487;stage=TurnIn;scope=QuestStage;retry=context-change;state=HalfOpen. excluded quest=851;stage=Pickup;scope=QuestStage;retry=context-change;state=HalfOpen. excluded quest=858;stage=Pickup;npc=3439;reason=outside-scan-radius;retry=context-change excluded quest=865;stage=Pickup;scope=QuestStage;retry=context-change;state=HalfOpen. excluded quest=867;stage=Objective;scope=Objective;objective=0;retry=2026-09-05T13:35:41.7839343Z;state=Quarantined. excluded quest=868;stage=Pickup;npc=3428;reason=outside-scan-radius;retry=context-change excluded quest=878;stage=Pickup;npc=3430;reason=outside-scan-radius;retry=context-change excluded quest=8889;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=8889;stage=Objective;objective=1;reason=outside-scan-radius;retry=context-change. excluded quest=8889;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;objective=1;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;scope=Objective;objective=3;retry=2026-09-05T13:35:41.7870386Z;state=Quarantined. excluded quest=893;stage=Pickup;npc=3433;reason=outside-scan-radius;retry=context-change excluded quest=894;stage=TurnIn;npc=4141;reason=outside-scan-radius;retry=context-change excluded quest=896;stage=Objective;scope=Objective;objective=0;retry=2026-09-05T13:35:41.7899307Z;state=Quarantined. excluded quest=9067;stage=Objective;scope=Objective;objective=0;retry=context-change;state=HalfOpen. excluded quest=9151;stage=Pickup;npc=16199;reason=outside-scan-radius;retry=context-change excluded quest=9157;stage=TurnIn;scope=QuestStage;retry=context-change;state=HalfOpen. excluded quest=9214;stage=Pickup;npc=16220;reason=outside-scan-radius;retry=context-change excluded quest=9218;stage=Pickup;npc=16205;reason=outside-scan-radius;retry=context-change excluded quest=9275;stage=Pickup;npc=16464;reason=outside-scan-radius;retry=context-change excluded quest=9276;stage=Pickup;npc=16463;reason=outside-scan-radius;retry=context-change excluded quest=9281;stage=Pickup;npc=16480;reason=outside-scan-radius;retry=context-change excluded quest=9388;stage=Pickup;scope=QuestStage;retry=context-change;state=HalfOpen. excluded quest=9389;stage=Pickup;scope=QuestStage;retry=context-change;state=HalfOpen. excluded quest=9425;stage=Pickup;npc=16287;reason=outside-scan-radius;retry=context-change excluded quest=9428;stage=Pickup;npc=17098;reason=outside-scan-radius;retry=context-change excluded quest=959;stage=Pickup;npc=3665;reason=outside-scan-radius;retry=context-change excluded quest=962;stage=Pickup;npc=3419;reason=outside-scan-radius;retry=context-change excluded quest=965;stage=Pickup;npc=3657;reason=outside-scan-radius;retry=context-change excluded quest=9749;stage=Pickup;scope=QuestStage;retry=context-change;state=HalfOpen. Expanding scan radius from 750 to 1000 yards before fallback.
+[15:43:28.561] [D] [WholesomeAQ] Quest chain correction: ancestor=1062; descendant=1064.
+[15:43:28.561] [D] [WholesomeAQ] Quest chain correction: ancestor=1062; descendant=1065.
+[15:43:28.595] [D] [Nav] Loaded 3 mesh tiles for one path query
+[15:43:28.617] [D] [Nav] Loaded 3 mesh tiles for one path query
+[15:43:28.627] [D] [Nav] Loaded 1 mesh tiles for one path query
+[15:43:31.240] [D] [Nav] Loaded 311 mesh tiles for one path query
+[15:43:31.240] [D] [Nav] Slow path generation: 2607ms map=1 from=(-121.63, 76.91, 49.48) to=(-995.38, 278.55, 111.99) status=Success
+[15:43:31.244] [D] Loading profile from D:\World of Warcraft 3.3.5a\CB\Bots\WholesomeAutoQuest\WHOLESOME_AUTOQUESTER.xml
+[15:43:31.250] [N] Profile loaded: WholesomeAQ - Stonetalon Mountains
+[15:43:31.255] [D] Selected sub-profile: WholesomeAQ - Stonetalon Mountains (L1-80)
+[15:43:31.255] [N] [Wholesome Auto Quest] Profile refreshed - Selected 1 quest work candidate(s). selected quest=6461;stage=Objective;state=Eligible. excluded quest=104;stage=Pickup;npc=392;reason=outside-scan-radius;retry=context-change excluded quest=1062;stage=AncestorCorrection;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=1069;stage=Pickup;npc=3446;reason=outside-scan-radius;retry=context-change excluded quest=1087;stage=Pickup;npc=4198;reason=outside-scan-radius;retry=context-change excluded quest=1093;stage=Pickup;npc=4201;reason=outside-scan-radius;retry=context-change excluded quest=11127;stage=Pickup;scope=QuestStage;retry=context-change;state=HalfOpen. excluded quest=118;stage=Pickup;npc=415;reason=outside-scan-radius;retry=context-change excluded quest=1195;stage=Pickup;npc=4721;reason=outside-scan-radius;retry=context-change excluded quest=14106;stage=Pickup;scope=QuestStage;retry=context-change;state=HalfOpen. excluded quest=1483;stage=Pickup;npc=3442;reason=outside-scan-radius;retry=context-change excluded quest=152;stage=Pickup;npc=392;reason=outside-scan-radius;retry=context-change excluded quest=2098;stage=Pickup;npc=6667;reason=outside-scan-radius;retry=context-change excluded quest=216;stage=Pickup;npc=12757;reason=outside-scan-radius;retry=context-change excluded quest=235;stage=Pickup;npc=10880;reason=outside-scan-radius;retry=context-change excluded quest=3281;stage=TurnIn;npc=3464;reason=outside-scan-radius;retry=context-change excluded quest=4542;stage=Pickup;npc=10079;reason=outside-scan-radius;retry=context-change excluded quest=470;stage=Pickup;npc=2111;reason=outside-scan-radius;retry=context-change excluded quest=472;stage=Pickup;npc=2097;reason=outside-scan-radius;retry=context-change excluded quest=4740;stage=Pickup;npc=175320;reason=outside-scan-radius;retry=context-change excluded quest=4921;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=493;stage=Pickup;npc=1937;reason=outside-scan-radius;retry=context-change excluded quest=494;stage=Pickup;npc=2214;reason=outside-scan-radius;retry=context-change excluded quest=496;stage=Pickup;npc=2216;reason=outside-scan-radius;retry=context-change excluded quest=498;stage=Pickup;npc=2229;reason=outside-scan-radius;retry=context-change excluded quest=501;stage=Pickup;npc=2216;reason=outside-scan-radius;retry=context-change excluded quest=516;stage=Pickup;npc=2121;reason=outside-scan-radius;retry=context-change excluded quest=527;stage=Pickup;npc=2215;reason=outside-scan-radius;retry=context-change excluded quest=546;stage=Pickup;npc=2418;reason=outside-scan-radius;retry=context-change excluded quest=549;stage=Pickup;npc=1763;reason=outside-scan-radius;retry=context-change excluded quest=6301;stage=Pickup;npc=11864;reason=outside-scan-radius;retry=context-change excluded quest=6382;stage=Pickup;npc=3387;reason=outside-scan-radius;retry=context-change excluded quest=6383;stage=Pickup;npc=12696;reason=outside-scan-radius;retry=context-change excluded quest=6393;stage=Pickup;npc=11862;reason=outside-scan-radius;retry=context-change excluded quest=6442;stage=Pickup;npc=12719;reason=outside-scan-radius;retry=context-change excluded quest=6462;stage=Pickup;npc=12721;reason=outside-scan-radius;retry=context-change excluded quest=6503;stage=Pickup;npc=12867;reason=outside-scan-radius;retry=context-change excluded quest=6541;stage=Pickup;npc=3429;reason=outside-scan-radius;retry=context-change excluded quest=6542;stage=TurnIn;npc=8582;reason=outside-scan-radius;retry=context-change excluded quest=6543;stage=Pickup;npc=8582;reason=outside-scan-radius;retry=context-change excluded quest=742;stage=Pickup;npc=10881;reason=outside-scan-radius;retry=context-change excluded quest=747;stage=Objective;scope=Objective;objective=0;retry=2026-09-05T13:35:41.7775857Z;state=Quarantined. excluded quest=747;stage=Objective;scope=Objective;objective=1;retry=2026-09-05T13:35:41.7821400Z;state=Quarantined. excluded quest=7790;stage=Pickup;scope=QuestStage;retry=context-change;state=HalfOpen. excluded quest=843;stage=Pickup;npc=3341;reason=outside-scan-radius;retry=context-change excluded quest=8487;stage=TurnIn;scope=QuestStage;retry=context-change;state=HalfOpen. excluded quest=851;stage=Pickup;scope=QuestStage;retry=context-change;state=HalfOpen. excluded quest=858;stage=Pickup;npc=3439;reason=outside-scan-radius;retry=context-change excluded quest=865;stage=Pickup;scope=QuestStage;retry=context-change;state=HalfOpen. excluded quest=867;stage=Objective;scope=Objective;objective=0;retry=2026-09-05T13:35:41.7839343Z;state=Quarantined. excluded quest=868;stage=Pickup;npc=3428;reason=outside-scan-radius;retry=context-change excluded quest=878;stage=Pickup;npc=3430;reason=outside-scan-radius;retry=context-change excluded quest=8889;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=8889;stage=Objective;objective=1;reason=outside-scan-radius;retry=context-change. excluded quest=8889;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;objective=1;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;scope=Objective;objective=3;retry=2026-09-05T13:35:41.7870386Z;state=Quarantined. excluded quest=893;stage=Pickup;npc=3433;reason=outside-scan-radius;retry=context-change excluded quest=894;stage=TurnIn;npc=4141;reason=outside-scan-radius;retry=context-change excluded quest=896;stage=Objective;scope=Objective;objective=0;retry=2026-09-05T13:35:41.7899307Z;state=Quarantined. excluded quest=9067;stage=Objective;scope=Objective;objective=0;retry=context-change;state=HalfOpen. excluded quest=9151;stage=Pickup;npc=16199;reason=outside-scan-radius;retry=context-change excluded quest=9157;stage=TurnIn;scope=QuestStage;retry=context-change;state=HalfOpen. excluded quest=9214;stage=Pickup;npc=16220;reason=outside-scan-radius;retry=context-change excluded quest=9218;stage=Pickup;npc=16205;reason=outside-scan-radius;retry=context-change excluded quest=9275;stage=Pickup;npc=16464;reason=outside-scan-radius;retry=context-change excluded quest=9276;stage=Pickup;npc=16463;reason=outside-scan-radius;retry=context-change excluded quest=9281;stage=Pickup;npc=16480;reason=outside-scan-radius;retry=context-change excluded quest=9388;stage=Pickup;scope=QuestStage;retry=context-change;state=HalfOpen. excluded quest=9389;stage=Pickup;scope=QuestStage;retry=context-change;state=HalfOpen. excluded quest=9425;stage=Pickup;npc=16287;reason=outside-scan-radius;retry=context-change excluded quest=9428;stage=Pickup;npc=17098;reason=outside-scan-radius;retry=context-change excluded quest=959;stage=Pickup;npc=3665;reason=outside-scan-radius;retry=context-change excluded quest=962;stage=Pickup;scope=NpcRelation;npc=3419;retry=2026-09-05T07:43:58.5584017Z;state=CoolingDown. excluded quest=965;stage=Pickup;npc=3657;reason=outside-scan-radius;retry=context-change excluded quest=9749;stage=Pickup;scope=QuestStage;retry=context-change;state=HalfOpen.
+[15:43:31.321] [D] Changed POI to: Type: Loot, Name: Deepmoss Creeper, Guid: F130000FA5082539, Entry: 4005, Location: (-123.11, 79.36, 49.50)
+[15:43:31.448] [D] [Interact] Interacting with object at 0x2ED56638
+[15:43:31.454] [D] [Interact] Done interacting with object at 0x2ED56638
+[15:43:31.872] [N] Looting Deepmoss Creeper Guid 0xF130000FA5082539
+[15:43:31.887] [D] Cleared POI - Reason Waiting for loot flag
+[15:43:31.887] [D] Cleared POI
+[15:43:32.020] [D] Changed POI to: Type: Loot, Name: Deepmoss Creeper, Guid: F130000FA5082539, Entry: 4005, Location: (-123.11, 79.36, 49.50)
+[15:43:32.122] [D] [Singular-DEBUG] Switched targets!
+[15:43:32.122] [D] [Singular-DEBUG] Melee Distance: 5
+[15:43:32.122] [D] [Singular-DEBUG] Health: 0
+[15:43:32.122] [D] [Singular-DEBUG] Level: 16
+[15:43:32.183] [D] Cleared POI - Reason Already looted
+[15:43:32.183] [D] Cleared POI
+[15:43:32.273] [D] Changed POI to: Type: Sell, Name: Denni'ka, Guid: 0, Entry: 3411, Location: (-188.42, -347.65, 8.87)
+[15:43:32.359] [N] Moving to Type: Sell, Name: Denni'ka, Guid: 0, Entry: 3411, Location: (-188.42, -347.65, 8.87)
+[15:43:38.090] [N] Mounting: 34769
+[15:43:40.117] [D] [Pulse] Slow bot root: 2105ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:43:48.837] [D] [Pulse] Slow bot root: 101ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:43:49.441] [D] [Pulse] Slow bot root: 134ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:43:50.015] [D] [Pulse] Slow bot root: 100ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:43:51.159] [D] [Pulse] Slow bot root: 101ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:43:51.726] [D] [Pulse] Slow bot root: 100ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:43:52.565] [D] [Pulse] Slow bot root: 100ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:43:53.173] [D] [Pulse] Slow bot root: 101ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:43:53.745] [D] [Pulse] Slow bot root: 101ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:43:54.315] [D] [Pulse] Slow bot root: 101ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:43:54.922] [D] [Pulse] Slow bot root: 133ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:43:55.495] [D] [Pulse] Slow bot root: 102ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:43:56.069] [D] [Pulse] Slow bot root: 102ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:43:56.640] [D] [Pulse] Slow bot root: 100ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:43:57.216] [D] [Pulse] Slow bot root: 101ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:43:57.823] [D] [Pulse] Slow bot root: 135ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:43:58.428] [D] [Pulse] Slow bot root: 102ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:43:59.031] [D] [Pulse] Slow bot root: 132ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:43:59.633] [D] [Pulse] Slow bot root: 132ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:44:00.207] [D] [Pulse] Slow bot root: 101ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:44:00.776] [D] [Pulse] Slow bot root: 101ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:44:01.347] [D] [Pulse] Slow bot root: 100ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:44:01.922] [D] [Pulse] Slow bot root: 101ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:44:02.760] [D] [Pulse] Slow bot root: 101ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:44:03.336] [D] [Pulse] Slow bot root: 102ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:44:03.938] [D] [Pulse] Slow bot root: 100ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:44:05.084] [D] [Pulse] Slow bot root: 100ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:44:05.691] [D] [Pulse] Slow bot root: 134ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:44:06.258] [D] [Pulse] Slow bot root: 100ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:44:06.829] [D] [Pulse] Slow bot root: 100ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:44:08.005] [D] [Pulse] Slow bot root: 135ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:44:08.580] [D] [Pulse] Slow bot root: 102ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:44:09.186] [D] [Pulse] Slow bot root: 101ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:44:09.758] [D] [Pulse] Slow bot root: 101ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:44:10.367] [D] [Pulse] Slow bot root: 134ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:44:11.510] [D] [Pulse] Slow bot root: 101ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:44:12.920] [D] [Pulse] Slow bot root: 102ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:44:13.492] [D] [Pulse] Slow bot root: 101ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:44:14.064] [D] [Pulse] Slow bot root: 100ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:44:14.704] [D] [Pulse] Slow bot root: 135ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:44:15.308] [D] [Pulse] Slow bot root: 133ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:44:15.879] [D] [Pulse] Slow bot root: 100ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:44:16.451] [D] [Pulse] Slow bot root: 100ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:44:17.023] [D] [Pulse] Slow bot root: 102ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:44:17.631] [D] [Pulse] Slow bot root: 136ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:44:18.204] [D] [Pulse] Slow bot root: 101ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:44:18.810] [D] [Pulse] Slow bot root: 134ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:44:19.420] [D] [Pulse] Slow bot root: 103ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:44:19.954] [N] Moving to Type: Sell, Name: Denni'ka, Guid: 0, Entry: 3411, Location: (-188.42, -347.65, 8.79)
+[15:44:20.056] [D] [Pulse] Slow bot root: 135ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:44:20.665] [D] [Pulse] Slow bot root: 134ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:44:21.270] [D] [Pulse] Slow bot root: 132ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:44:21.844] [D] [Pulse] Slow bot root: 101ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:44:22.446] [D] [Pulse] Slow bot root: 134ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:44:23.285] [D] [Pulse] Slow bot root: 100ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:44:23.854] [D] [Pulse] Slow bot root: 100ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:44:24.459] [D] [Pulse] Slow bot root: 134ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:44:25.095] [D] [Pulse] Slow bot root: 132ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:44:25.664] [D] [Pulse] Slow bot root: 100ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:44:26.234] [D] [Pulse] Slow bot root: 100ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:44:26.804] [D] [Pulse] Slow bot root: 102ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:44:27.374] [D] [Pulse] Slow bot root: 101ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:44:27.975] [D] [Pulse] Slow bot root: 133ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:44:28.548] [D] [Pulse] Slow bot root: 100ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:44:29.121] [D] [Pulse] Slow bot root: 101ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:44:29.723] [D] [Pulse] Slow bot root: 124ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:44:30.326] [D] [Pulse] Slow bot root: 100ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:44:30.899] [D] [Pulse] Slow bot root: 100ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:44:32.038] [D] [Pulse] Slow bot root: 102ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:44:32.642] [D] [Pulse] Slow bot root: 133ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:44:33.515] [D] [Pulse] Slow bot root: 134ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:44:34.119] [D] [Pulse] Slow bot root: 133ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:44:34.582] [D] Dismount for interaction.
+[15:44:34.582] [D] Stop and dismount. Reason: Combat
+[15:44:34.717] [D] [Pulse] Slow bot root: 134ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:44:35.490] [D] [Pulse] Slow bot root: 302ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:44:36.402] [D] [Interact] Interacting with object at 0x2ED3BBA8
+[15:44:36.425] [D] [Interact] Done interacting with object at 0x2ED3BBA8
+[15:44:36.594] [D] [Pulse] Slow bot root: 603ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:44:36.729] [N] [VendorRecovery] Reached Denni'ka (3411); waiting for the merchant window.
+[15:44:37.766] [D] [Pulse] Slow bot root: 703ms bot=Wholesome Auto Quest poi=Sell combat=False
+[15:44:38.405] [D] Selling items
+[15:44:38.405] [D] Activity: Selling Items
+[15:44:40.448] [D] Cleared POI - Reason POI is not Mail
+[15:44:40.448] [D] Cleared POI
+[15:44:40.491] [D] [If] Condition is true, executing If body
+[15:44:40.927] [D] [QuestLog] Loaded 68 completed quests from Lua fallback
+[15:44:41.027] [N] [Objective] Goal: Kill Deepmoss Venomspitter x 7
+[15:44:41.027] [D] Goal: Goal: Kill Deepmoss Venomspitter x 7
+[15:44:41.027] [D] [GrindObjective] Using profile hotspots (8 points) for mob 4007
+[15:44:41.263] [N] Mounting: 34769
+[15:44:41.563] [N] Stopping the bot!
+[15:44:41.565] [N] Bot stopping! Reason: User request
+[15:44:41.577] [D] Exception in DoString: Thread was interrupted from a waiting state. StackTrace:   at System.Threading.WaitHandle.<WaitOneCore>g____PInvoke|0_0(IntPtr __waitHandle_native, Int32 __millisecondsTimeout_native, Int32 __useTrivialWaits_native)
+   at System.Threading.WaitHandle.<WaitOneCore>g____PInvoke|0_0(IntPtr __waitHandle_native, Int32 __millisecondsTimeout_native, Int32 __useTrivialWaits_native)
+   at GreenMagic.ExecutorRand.WaitForInjection(Int32 timeout)
+   at GreenMagic.ExecutorRand.SharedExecuteLogicEnd(Int32 timeout)
+   at GreenMagic.ExecutorRand.Execute()
+   at System.Runtime.ExceptionServices.InternalCalls.<RhpSfiNext>g____PInvoke|1_0(StackFrameIterator* __pThis_native, UInt32* __uExCollideClauseIdx_native, Boolean* __fUnwoundReversePInvoke_native, Boolean* __fIsExceptionIntercepted_native)
+   at Styx.WoWInternals.Lua.DoString(String lua, String luaFile, UInt32 pState)
+[15:44:43.409] [D] Activity: Moving to hotspot
+[15:44:43.538] [D] [Pulse] Slow bot root: 5267ms bot=Wholesome Auto Quest poi=None combat=False
+[15:44:43.574] [D] Cleared POI
+[15:44:43.576] [D] Worker thread exited cleanly

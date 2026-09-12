@@ -1,0 +1,1002 @@
+[15:37:58.401] [N] CopilotBuddy v1.6.6 started. Original HonorBuddy by Apoc, raphus, highvoltz, bobby53, xanathos, chinajade. Ported to WotLK 3.3.5a by Likon69.
+[15:37:58.770] [N] Searching for WoW process...
+[15:37:58.887] [N] Please wait a few seconds while CopilotBuddy initializes.
+[15:37:58.887] [D] Using WoW with process ID 14972
+[15:37:58.887] [D] Platform: x86
+[15:37:58.887] [D] Executable Path: D:\World of Warcraft 3.3.5a\CB\
+[15:37:58.914] [D] [ObjectManager] WoW build 12340 detected - OK
+[15:37:58.916] [D] [ObjectManager] D3DDevicePtr = 0x00C5DF88
+[15:37:58.917] [D] [ObjectManager] devicePtrAddr = 0x052FCBD0
+[15:37:58.917] [D] [ObjectManager] device = 0x0A4F5E00 (at 0x0530054C)
+[15:37:58.917] [D] [ObjectManager] vtablePtr = 0x0A4F8D5C
+[15:37:58.917] [D] [ObjectManager] endSceneAddr = 0x643348F0 (at 0x0A4F8E04)
+[15:37:58.917] [D] [ObjectManager] D3D: Device=0x0A4F5E00, VTable=0x0A4F8D5C, EndScene=0x643348F0
+[15:37:58.917] [D] [ObjectManager] Creating ExecutorRand...
+[15:37:58.959] [D] [ObjectManager] ExecutorRand created, IsInitialized = True
+[15:37:58.959] [D] [ObjectManager] EndScene hook succeeded
+[15:37:58.964] [D] [ObjectManager] Initialized successfully
+[15:37:58.965] [N] Attached to WoW with ID 14972
+[15:37:58.967] [N] Character is a level 26 BloodElf Paladin
+[15:37:58.968] [N] Current zone is The Barrens
+[15:37:59.000] [D] [Settings] Loaded settings for character: Jeof
+[15:37:59.001] [N] Initializing Combat Routines...
+[15:37:59.004] [D] Looking for routines in: D:\World of Warcraft 3.3.5a\CB\Routines
+[15:37:59.005] [D] Compiling Singular wotlk
+[15:38:01.357] [N] Loaded routine: Singular Wotlk for class Paladin
+[15:38:01.357] [N] Loaded 1 combat routine(s)
+[15:38:01.364] [N] Chose Singular Wotlk as your combat class.
+[15:38:01.364] [N] Confirmed Paladin as your class.
+[15:38:01.365] [N] [Singular] Starting Singular v2.0.0.0
+[15:38:01.365] [N] [Singular] Determining talent spec.
+[15:38:04.482] [D] [Singular-DEBUG] [Talents] Best Tree: 16
+[15:38:04.483] [N] [Singular] Current spec is  Retribution Paladin
+[15:38:04.493] [D] [WoWDb] Loaded 237 DBC tables
+[15:38:04.493] [D] [WoWDb]   Key=235 (0x000000EB) Rows=1893
+[15:38:04.493] [D] [WoWDb]   Key=236 (0x000000EC) Rows=7655
+[15:38:04.493] [D] [WoWDb]   Key=237 (0x000000ED) Rows=86
+[15:38:04.493] [D] [WoWDb]   Key=238 (0x000000EE) Rows=506
+[15:38:04.493] [D] [WoWDb]   Key=239 (0x000000EF) Rows=291
+[15:38:04.493] [D] [WoWDb] Lock DBC lookup: FOUND (rows=388)
+[15:38:04.494] [D] [WoWDb] ClientDb.Lock enum value = 356 (0x00000164)
+[15:38:04.495] [D] [Singular-DEBUG] Creating Combat behavior.
+[15:38:04.496] [N] [Singular] Building method list
+[15:38:04.496] [N] [Singular] Added 450 methods
+[15:38:04.499] [D] [Singular-DEBUG] CreateRetributionPaladinNormalPullAndCombat is a match!
+[15:38:04.499] [N] [Singular]  Using CreateRetributionPaladinNormalPullAndCombat for Retribution Paladin - Combat (Priority: 0)
+[15:38:04.510] [D] [Singular-DEBUG] Creating Pull behavior.
+[15:38:04.511] [D] [Singular-DEBUG] CreateRetributionPaladinNormalPullAndCombat is a match!
+[15:38:04.511] [N] [Singular]  Using CreateRetributionPaladinNormalPullAndCombat for Retribution Paladin - Pull (Priority: 0)
+[15:38:04.512] [D] [Singular-DEBUG] Creating Rest behavior.
+[15:38:04.513] [D] [Singular-DEBUG] CreateRetributionPaladinRest is a match!
+[15:38:04.513] [N] [Singular]  Using CreateRetributionPaladinRest for Retribution Paladin - Rest (Priority: 0)
+[15:38:04.516] [D] [Singular-DEBUG] Creating CombatBuffs behavior.
+[15:38:04.517] [D] [Singular-DEBUG] Creating Heal behavior.
+[15:38:04.518] [D] [Singular-DEBUG] CreateRetributionPaladinHeal is a match!
+[15:38:04.518] [N] [Singular]  Using CreateRetributionPaladinHeal for Retribution Paladin - Heal (Priority: 0)
+[15:38:04.518] [D] [Singular-DEBUG] CreateRetributionPaladinNormalPullAndCombat is a match!
+[15:38:04.518] [N] [Singular]  Using CreateRetributionPaladinNormalPullAndCombat for Retribution Paladin - Heal (Priority: 0)
+[15:38:04.519] [D] [Singular-DEBUG] Creating PullBuffs behavior.
+[15:38:04.520] [D] [Singular-DEBUG] Creating PreCombatBuffs behavior.
+[15:38:04.521] [D] [Singular-DEBUG] CreatePaladinPreCombatBuffs is a match!
+[15:38:04.521] [N] [Singular]  Using CreatePaladinPreCombatBuffs for Retribution Paladin - PreCombatBuffs (Priority: 0)
+[15:38:04.524] [N] [Singular] Behaviors created!
+[15:38:04.611] [D] [Singular-DEBUG] Attached combat log
+[15:38:04.612] [D] Routine initialized successfully
+[15:38:04.613] [D] Loading built-in bots from assembly: CopilotBuddy
+[15:38:04.635] [D] Found bot type: PartyBot.DiscoBot
+[15:38:04.636] [N] New bot added: Party Bot
+[15:38:04.636] [D] Loaded built-in bot: Party Bot
+[15:38:04.636] [D] Found bot type: Bots.Quest.QuestBot
+[15:38:04.636] [N] New bot added: Questing
+[15:38:04.636] [D] Loaded built-in bot: Questing
+[15:38:04.636] [D] Found bot type: Bots.Grind.LevelBot
+[15:38:04.636] [N] New bot added: Grind
+[15:38:04.636] [D] Loaded built-in bot: Grind
+[15:38:04.636] [D] Found bot type: Bots.Gatherbuddy.GatherbuddyBot
+[15:38:04.636] [N] New bot added: GatherBuddy
+[15:38:04.636] [D] Loaded built-in bot: GatherBuddy
+[15:38:04.636] [D] Found bot type: Bots.DungeonBuddy.DungeonBuddy
+[15:38:04.637] [N] New bot added: DungeonBuddy
+[15:38:04.637] [D] Loaded built-in bot: DungeonBuddy
+[15:38:04.637] [D] Found bot type: Bots.BGBuddy.BGBuddy
+[15:38:04.637] [N] New bot added: BGBuddy
+[15:38:04.637] [D] Loaded built-in bot: BGBuddy
+[15:38:04.637] [D] Built-in bot loading complete. 6 bots loaded.
+[15:38:04.641] [N] Loading bots from: D:\World of Warcraft 3.3.5a\CB\Bots
+[15:38:04.650] [N] Found 123 source files
+[15:38:04.657] [N] Found 0 dll files
+[15:38:04.658] [N] Compiling: CombatBot.cs
+[15:38:04.832] [N] Compiled successfully: CombatBot.cs
+[15:38:04.832] [N] Compiling directory: Auto Angler 2/ (23 files)
+[15:38:05.117] [N] Compiled successfully: Auto Angler 2/
+[15:38:05.117] [N] Compiling directory: LazyRaider/ (4 files)
+[15:38:05.367] [N] Compiled successfully: LazyRaider/
+[15:38:05.367] [N] Compiling directory: ProfessionBuddy/ (52 files)
+[15:38:06.129] [N] Compiled successfully: ProfessionBuddy/
+[15:38:06.129] [N] Compiling directory: Templar/ (27 files)
+[15:38:06.538] [N] Compiled successfully: Templar/
+[15:38:06.538] [N] Compiling directory: Tyrael/ (5 files)
+[15:38:06.712] [N] Compiled successfully: Tyrael/
+[15:38:06.712] [N] Compiling directory: WholesomeAutoQuest-master/ (11 files)
+[15:38:07.315] [N] Compiled successfully: WholesomeAutoQuest-master/
+[15:38:07.315] [N] ClassCollection contains 7 compiled bots
+[15:38:07.315] [N] Adding bot: Combat Bot
+[15:38:07.315] [N] New bot added: Combat Bot
+[15:38:07.315] [N] Adding bot: AutoAngler
+[15:38:07.315] [N] New bot added: AutoAngler
+[15:38:07.315] [N] Adding bot: LazyRaider
+[15:38:07.315] [N] New bot added: LazyRaider
+[15:38:07.315] [N] Adding bot: ProfessionBuddy
+[15:38:07.315] [N] New bot added: ProfessionBuddy
+[15:38:07.315] [N] Adding bot: Templar
+[15:38:07.315] [N] New bot added: Templar
+[15:38:07.315] [N] Adding bot: Tyrael
+[15:38:07.315] [N] New bot added: Tyrael
+[15:38:07.315] [N] Adding bot: Wholesome Auto Quest
+[15:38:07.315] [N] New bot added: Wholesome Auto Quest
+[15:38:07.315] [N] Bot loading complete. 13 bots loaded.
+[15:38:07.315] [N] Initializing Plugins...
+[15:38:07.989] [D] [WeightSet] Selected weight set: Paladin-Holy
+[15:38:09.212] [N] [DeathStallRecovery] Enabled. The bot will stop if corpse recovery makes no movement progress for 60 seconds.
+[15:38:10.074] [D] Rarekiller: Loading config file: D:\World of Warcraft 3.3.5a\CB\Plugins\RareKiller\config\Rarekiller.config
+[15:38:10.074] [D] Root element is missing.
+[15:38:10.074] [N] Rarekiller: Continuing with Default Config Values
+[15:38:10.075] [D] Rarekiller: Loading config file: D:\World of Warcraft 3.3.5a\CB\Plugins\RareKiller\config\Rarekiller.config
+[15:38:10.075] [D] Root element is missing.
+[15:38:10.075] [N] Rarekiller: Continuing with Default Config Values
+[15:38:10.075] [N] Rare Mob Killer - Version 3.3 Loaded.
+[15:38:10.075] [N] Rarekiller Part Tamer: I'm no Hunter. Deactivate the Tamer Part
+[15:38:10.605] [N] [VendorRecovery] Enabled. Failed Sell/Repair vendors will be skipped after 35 seconds at the NPC.
+[15:38:10.786] [N] Plugin loading complete. 16 plugins loaded.
+[15:38:10.786] [N] Plugins refreshed successfully.
+[15:38:10.791] [N] Changing current bot to: Wholesome Auto Quest
+[15:38:12.551] [D] [Settings] Saved all settings
+[15:38:12.552] [N] Starting the bot.
+[15:38:12.553] [N] Currently Using BotBase : Wholesome Auto Quest
+[15:38:12.554] [N] Character is a level 26 BloodElf Paladin
+[15:38:12.555] [N] Current zone is The Barrens
+[15:38:12.557] [D] Loading profile from D:\World of Warcraft 3.3.5a\CB\Bots\WholesomeAutoQuest\WHOLESOME_AUTOQUESTER.xml
+[15:38:12.624] [D] [CompileBatch] Compiling 1 entries...
+[15:38:12.723] [D] [CompileBatch] Compiled successfully.
+[15:38:12.726] [N] Profile loaded: WholesomeAQ - The Barrens
+[15:38:12.728] [D] Selected sub-profile: WholesomeAQ - The Barrens (L1-80)
+[15:38:12.992] [D] [WholesomeAQ] Navigation fingerprint unknown: provider or mesh-root stamp unavailable.
+[15:38:13.116] [N] [Wholesome Auto Quest] Loaded 1 blacklisted vendors
+[15:38:13.555] [D] [QuestLog] Loaded 73 completed quests from Lua fallback
+[15:38:13.583] [D] [ProfileBatchManager] Batch reset for new profile session.
+[15:38:13.584] [N] [Wholesome Auto Quest] Class Paladin → PullDistance set to 24
+[15:38:13.585] [N] [Wholesome Auto Quest] Initial scheduler build.
+[15:38:14.279] [N] Loaded 0 global blackspots
+[15:38:14.314] [D] Loading profile from D:\World of Warcraft 3.3.5a\CB\Bots\WholesomeAutoQuest\WHOLESOME_AUTOQUESTER.xml
+[15:38:14.316] [D] [CompileBatch] Compiling 1 entries...
+[15:38:14.407] [D] [CompileBatch] Compiled successfully.
+[15:38:14.407] [N] Profile loaded: WholesomeAQ - The Barrens
+[15:38:14.419] [D] Selected sub-profile: WholesomeAQ - The Barrens (L1-80)
+[15:38:14.420] [N] [Wholesome Auto Quest] Profile refreshed - Selected 1 quest work candidate(s). selected quest=878;stage=Objective;state=Eligible. excluded quest=104;stage=Pickup;npc=392;reason=outside-scan-radius;retry=context-change excluded quest=1058;stage=Pickup;npc=3995;reason=outside-scan-radius;retry=context-change excluded quest=1062;stage=TurnIn;npc=4049;reason=outside-scan-radius;retry=context-change excluded quest=1069;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=1087;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=1093;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T07:46:16.3919433Z;state=HalfOpen. excluded quest=11127;stage=Pickup;scope=QuestStage;retry=2026-09-08T08:11:46.7206406Z;state=Quarantined. excluded quest=1195;stage=Pickup;npc=4721;reason=outside-scan-radius;retry=context-change excluded quest=14106;stage=Pickup;scope=QuestStage;retry=2026-09-08T07:46:16.3919433Z;state=HalfOpen. excluded quest=1483;stage=Pickup;scope=NpcRelation;npc=3442;retry=2026-09-08T07:46:16.3919433Z;state=HalfOpen. excluded quest=152;stage=Pickup;npc=392;reason=outside-scan-radius;retry=context-change excluded quest=2098;stage=Pickup;npc=6667;reason=outside-scan-radius;retry=context-change excluded quest=216;stage=Pickup;npc=12757;reason=outside-scan-radius;retry=context-change excluded quest=235;stage=Pickup;npc=10880;reason=outside-scan-radius;retry=context-change excluded quest=4542;stage=Pickup;npc=10079;reason=outside-scan-radius;retry=context-change excluded quest=470;stage=Pickup;npc=2111;reason=outside-scan-radius;retry=context-change excluded quest=472;stage=Pickup;npc=2097;reason=outside-scan-radius;retry=context-change excluded quest=4821;stage=Pickup;npc=10539;reason=outside-scan-radius;retry=context-change excluded quest=4921;stage=Objective;scope=QuestStage;retry=2026-09-08T07:46:16.3919433Z;state=HalfOpen. excluded quest=493;stage=Pickup;npc=1937;reason=outside-scan-radius;retry=context-change excluded quest=494;stage=Pickup;npc=2214;reason=outside-scan-radius;retry=context-change excluded quest=496;stage=Pickup;npc=2216;reason=outside-scan-radius;retry=context-change excluded quest=498;stage=Pickup;npc=2229;reason=outside-scan-radius;retry=context-change excluded quest=501;stage=Pickup;npc=2216;reason=outside-scan-radius;retry=context-change excluded quest=516;stage=Pickup;npc=2121;reason=outside-scan-radius;retry=context-change excluded quest=527;stage=Pickup;npc=2215;reason=outside-scan-radius;retry=context-change excluded quest=546;stage=Pickup;npc=2418;reason=outside-scan-radius;retry=context-change excluded quest=549;stage=Pickup;npc=1763;reason=outside-scan-radius;retry=context-change excluded quest=6282;stage=Pickup;npc=11860;reason=outside-scan-radius;retry=context-change excluded quest=6381;stage=Pickup;npc=11864;reason=outside-scan-radius;retry=context-change excluded quest=6382;stage=TurnIn;npc=12696;reason=outside-scan-radius;retry=context-change excluded quest=6383;stage=Pickup;scope=NpcRelation;npc=12696;retry=2026-09-08T07:46:16.3919433Z;state=HalfOpen. excluded quest=6393;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T07:46:16.3919433Z;state=HalfOpen. excluded quest=6441;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T11:53:44.3110653Z;state=Quarantined. excluded quest=6442;stage=Pickup;npc=12719;reason=outside-scan-radius;retry=context-change excluded quest=6461;stage=TurnIn;npc=12816;reason=outside-scan-radius;retry=context-change excluded quest=6462;stage=Pickup;npc=12721;reason=outside-scan-radius;retry=context-change excluded quest=6541;stage=Pickup;scope=NpcRelation;npc=3429;retry=2026-09-08T07:46:16.3919433Z;state=HalfOpen. excluded quest=6543;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T11:57:53.5602004Z;state=Quarantined. excluded quest=742;stage=Pickup;npc=10881;reason=outside-scan-radius;retry=context-change excluded quest=747;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T13:06:01.2335671Z;state=Quarantined. excluded quest=747;stage=Objective;scope=Objective;objective=1;retry=2026-09-08T13:30:35.1661766Z;state=Quarantined. excluded quest=7790;stage=Pickup;scope=QuestStage;retry=2026-09-08T07:46:16.3919433Z;state=HalfOpen. excluded quest=843;stage=Pickup;npc=3341;reason=outside-scan-radius;retry=context-change excluded quest=8487;stage=TurnIn;scope=QuestStage;retry=2026-09-08T07:46:16.3919433Z;state=HalfOpen. excluded quest=867;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T07:46:16.3919433Z;state=HalfOpen. excluded quest=868;stage=Objective;objective=1;reason=outside-scan-radius;retry=context-change. excluded quest=868;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T12:02:33.6094572Z;state=Quarantined. excluded quest=878;stage=Objective;objective=2;reason=no-selected-hotspots;retry=context-change. excluded quest=8889;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=8889;stage=Objective;objective=1;reason=outside-scan-radius;retry=context-change. excluded quest=8889;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;scope=QuestStage;retry=2026-09-08T07:46:16.3919433Z;state=HalfOpen. excluded quest=893;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T12:48:05.9519603Z;state=Quarantined. excluded quest=893;stage=Objective;scope=Objective;objective=1;retry=2026-09-08T12:48:05.9520521Z;state=Quarantined. excluded quest=893;stage=Objective;scope=Objective;objective=2;retry=2026-09-08T12:48:05.9520844Z;state=Quarantined. excluded quest=896;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T07:46:16.3919433Z;state=HalfOpen. excluded quest=9067;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T07:46:16.3919433Z;state=HalfOpen. excluded quest=9151;stage=Pickup;npc=16199;reason=outside-scan-radius;retry=context-change excluded quest=9157;stage=TurnIn;scope=QuestStage;retry=2026-09-08T07:46:16.3919433Z;state=HalfOpen. excluded quest=9275;stage=Pickup;npc=16464;reason=outside-scan-radius;retry=context-change excluded quest=9388;stage=Pickup;scope=QuestStage;retry=2026-09-08T08:11:46.7260419Z;state=Quarantined. excluded quest=9389;stage=Pickup;scope=QuestStage;retry=2026-09-08T08:11:46.7261207Z;state=Quarantined. excluded quest=9425;stage=Pickup;npc=16287;reason=outside-scan-radius;retry=context-change excluded quest=9428;stage=Pickup;npc=17098;reason=outside-scan-radius;retry=context-change excluded quest=9749;stage=Pickup;scope=QuestStage;retry=2026-09-08T07:46:16.3919433Z;state=HalfOpen.
+[15:38:14.422] [N] [Wholesome Auto Quest] Started with quest data loaded.
+[15:38:14.478] [N] [SpellDb] Loaded 49816 spells from Spells.bin
+[15:38:14.521] [D] Setting CVars: autoSelfCast=1, autoLootDefault=1
+[15:38:14.587] [D] Cleared POI
+[15:38:14.596] [D] Refresh() called. LastCount=0, CurrentCount=34
+[15:38:14.596] [N] Building spell book
+[15:38:14.597] [D] Found 34 spells from LocalPlayer.KnownSpells
+[15:38:14.597] [N] Adding Arcane Affinity
+[15:38:14.599] [N] Adding Arcane Torrent
+[15:38:14.600] [N] Adding Auto Attack
+[15:38:14.601] [N] Adding Block
+[15:38:14.603] [N] Adding Dodge
+[15:38:14.604] [N] Adding Magic Resistance
+[15:38:14.605] [N] Adding Parry
+[15:38:14.606] [N] Adding Blessing of Wisdom
+[15:38:14.608] [N] Adding Concentration Aura
+[15:38:14.609] [N] Adding Consecration
+[15:38:14.610] [N] Adding Exorcism
+[15:38:14.612] [N] Adding Flash of Light
+[15:38:14.613] [N] Adding Holy Light
+[15:38:14.614] [N] Adding Lay on Hands
+[15:38:14.615] [N] Adding Purify
+[15:38:14.617] [N] Adding Seal of Righteousness
+[15:38:14.618] [N] Adding Sense Undead
+[15:38:14.619] [N] Adding Turn Evil
+[15:38:14.621] [N] Adding Blessing of Kings
+[15:38:14.622] [N] Adding Devotion Aura
+[15:38:14.623] [N] Adding Divine Protection
+[15:38:14.625] [N] Adding Hammer of Justice
+[15:38:14.626] [N] Adding Hand of Freedom
+[15:38:14.627] [N] Adding Hand of Protection
+[15:38:14.629] [N] Adding Hand of Reckoning
+[15:38:14.630] [N] Adding Hand of Salvation
+[15:38:14.632] [N] Adding Righteous Defense
+[15:38:14.633] [N] Adding Righteous Fury
+[15:38:14.634] [N] Adding Seal of Justice
+[15:38:14.636] [N] Adding Blessing of Might
+[15:38:14.637] [N] Adding Judgement of Light
+[15:38:14.638] [N] Adding Judgement of Wisdom
+[15:38:14.640] [N] Adding Retribution Aura
+[15:38:14.641] [N] Adding Seal of Command
+[15:38:14.643] [N] Spell book built
+[15:38:14.644] [D] [SpellManager] Initialize — subscribed to BotEvents.OnBotStart
+[15:38:14.942] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=171ms
+[15:38:14.975] [D] [Talented] SelectMajorTalentTree called but not needed in WotLK 3.3.5a
+[15:38:14.988] [D] [Pulse] Slow plugin: name=Talented elapsed=44ms
+[15:38:15.041] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=52ms
+[15:38:15.046] [D] [Pulse] Slow shared pulse: total=388ms movement=0 objects=1 lua=0 info=0 loot=27 targeting=78 events=2 plugins=271 routine=5
+[15:38:15.649] [D] Changed POI to: Type: Loot, Name: Bristleback Thornweaver, Guid: F130000CBD16015A, Entry: 3261, Location: (-1918.05, -1737.59, 95.29)
+[15:38:16.346] [D] [Interact] Interacting with object at 0x33F8CAC8
+[15:38:16.376] [D] [Interact] Done interacting with object at 0x33F8CAC8
+[15:38:17.983] [N] Looting Bristleback Thornweaver Guid 0xF130000CBD16015A
+[15:38:18.083] [D] Cleared POI - Reason Waiting for loot flag
+[15:38:18.084] [D] Cleared POI
+[15:38:18.116] [D] [Pulse] Slow bot root: 132ms bot=Wholesome Auto Quest poi=None combat=False
+[15:38:18.823] [D] Changed POI to: Type: Loot, Name: Bristleback Hunter, Guid: F130000CBA160111, Entry: 3258, Location: (-1922.50, -1744.24, 93.94)
+[15:38:19.558] [D] [Interact] Interacting with object at 0x33F5DB38
+[15:38:19.592] [D] [Interact] Done interacting with object at 0x33F5DB38
+[15:38:21.073] [N] Looting Bristleback Hunter Guid 0xF130000CBA160111
+[15:38:21.174] [D] Cleared POI - Reason Waiting for loot flag
+[15:38:21.174] [D] Cleared POI
+[15:38:21.208] [D] [Pulse] Slow bot root: 134ms bot=Wholesome Auto Quest poi=None combat=False
+[15:38:21.908] [D] Changed POI to: Type: Loot, Name: Bristleback Thornweaver, Guid: F130000CBD16013E, Entry: 3261, Location: (-1940.43, -1759.43, 100.26)
+[15:38:22.610] [N] Moving to Type: Loot, Name: Bristleback Thornweaver, Guid: F130000CBD16013E, Entry: 3261, Location: (-1940.43, -1759.43, 100.26)
+[15:38:22.901] [D] [Blackspot] Area cost initialized: area 17 = 60x
+[15:38:22.906] [D] [Nav] Loaded 9 mesh tiles for one path query
+[15:38:22.978] [D] [Pulse] Slow bot root: 402ms bot=Wholesome Auto Quest poi=Loot combat=False
+[15:38:23.953] [D] [Pulse] Slow bot root: 303ms bot=Wholesome Auto Quest poi=Loot combat=False
+[15:38:24.958] [D] [Pulse] Slow bot root: 303ms bot=Wholesome Auto Quest poi=Loot combat=False
+[15:38:25.128] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=128ms
+[15:38:25.197] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=67ms
+[15:38:25.197] [D] [Pulse] Slow shared pulse: total=238ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=39 events=0 plugins=196 routine=0
+[15:38:26.065] [D] [Pulse] Slow bot root: 302ms bot=Wholesome Auto Quest poi=Loot combat=False
+[15:38:27.033] [D] [Pulse] Slow bot root: 298ms bot=Wholesome Auto Quest poi=Loot combat=False
+[15:38:27.945] [D] [Interact] Interacting with object at 0x33F66968
+[15:38:27.970] [D] [Interact] Done interacting with object at 0x33F66968
+[15:38:28.002] [D] [Pulse] Slow bot root: 302ms bot=Wholesome Auto Quest poi=Loot combat=False
+[15:38:29.580] [N] Looting Bristleback Thornweaver Guid 0xF130000CBD16013E
+[15:38:29.681] [D] Cleared POI - Reason Waiting for loot flag
+[15:38:29.681] [D] Cleared POI
+[15:38:29.715] [D] [Pulse] Slow bot root: 134ms bot=Wholesome Auto Quest poi=None combat=False
+[15:38:30.505] [D] [If] Condition is true, executing If body
+[15:38:30.599] [N] [Objective] Goal: Kill Bristleback Thornweaver x 12
+[15:38:30.599] [D] Goal: Goal: Kill Bristleback Thornweaver x 12
+[15:38:30.599] [D] [GrindObjective] Using profile hotspots (9 points) for mob 3261
+[15:38:30.651] [D] Activity: Moving to hotspot
+[15:38:30.818] [D] [Pulse] Slow bot root: 399ms bot=Wholesome Auto Quest poi=None combat=False
+[15:38:31.752] [D] [Pulse] Slow bot root: 234ms bot=Wholesome Auto Quest poi=None combat=False
+[15:38:32.696] [D] [Pulse] Slow bot root: 236ms bot=Wholesome Auto Quest poi=None combat=False
+[15:38:33.632] [D] [Pulse] Slow bot root: 232ms bot=Wholesome Auto Quest poi=None combat=False
+[15:38:34.564] [D] [Pulse] Slow bot root: 230ms bot=Wholesome Auto Quest poi=None combat=False
+[15:38:35.500] [D] [Pulse] Slow bot root: 235ms bot=Wholesome Auto Quest poi=None combat=False
+[15:38:35.702] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=125ms
+[15:38:35.770] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=65ms
+[15:38:35.770] [D] [Pulse] Slow shared pulse: total=269ms movement=0 objects=0 lua=33 info=0 loot=1 targeting=41 events=0 plugins=193 routine=0
+[15:38:36.408] [D] Activity: Moving towards Bristleback Thornweaver
+[15:38:36.572] [D] [Pulse] Slow bot root: 200ms bot=Wholesome Auto Quest poi=None combat=False
+[15:38:37.342] [D] Activity: Setting Bristleback Hunter at 23.2 yards as your target
+[15:38:38.046] [D] Changed POI to: Type: Kill, Name: Bristleback Hunter, Guid: F130000CBA15C323, Entry: 3258, Location: (-1892.77, -1746.77, 96.57)
+[15:38:38.145] [D] [Singular-DEBUG] Switched targets!
+[15:38:38.145] [D] [Singular-DEBUG] Melee Distance: 5
+[15:38:38.145] [D] [Singular-DEBUG] Health: 100
+[15:38:38.145] [D] [Singular-DEBUG] Level: 17
+[15:38:39.112] [N] [Singular] Casting Exorcism on Bristleback Hunter
+[15:38:39.113] [D] Spell_C::CastSpell(879, 0, 0xF130000CBA15C323, 0)
+[15:38:39.147] [D] [Pulse] Slow bot root: 399ms bot=Wholesome Auto Quest poi=Kill combat=False
+[15:38:40.183] [D] [Pulse] Slow bot root: 335ms bot=Wholesome Auto Quest poi=Kill combat=False
+[15:38:41.188] [D] [Pulse] Slow bot root: 300ms bot=Wholesome Auto Quest poi=Kill combat=False
+[15:38:42.295] [D] [Pulse] Slow bot root: 371ms bot=Wholesome Auto Quest poi=Kill combat=False
+[15:38:43.263] [N] [Singular] Casting Exorcism on Bristleback Hunter
+[15:38:43.263] [D] Spell_C::CastSpell(879, 0, 0xF130000CBA15C323, 0)
+[15:38:43.298] [D] [Pulse] Slow bot root: 299ms bot=Wholesome Auto Quest poi=Kill combat=False
+[15:38:45.804] [D] [Pulse] Slow bot root: 268ms bot=Wholesome Auto Quest poi=Kill combat=True
+[15:38:45.904] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=57ms
+[15:38:46.640] [N] [Singular] Casting Judgement of Light on Bristleback Hunter
+[15:38:46.640] [D] Spell_C::CastSpell(20271, 0, 0xF130000CBA15C323, 0)
+[15:38:46.674] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=Kill combat=True
+[15:38:47.609] [D] [Pulse] Slow bot root: 200ms bot=Wholesome Auto Quest poi=Kill combat=True
+[15:38:48.444] [D] [Pulse] Slow bot root: 134ms bot=Wholesome Auto Quest poi=Kill combat=True
+[15:38:52.858] [D] Cleared POI - Reason POI is dead from Combat
+[15:38:52.858] [D] Cleared POI
+[15:38:53.598] [D] Changed POI to: Type: Loot, Name: Bristleback Hunter, Guid: F130000CBA15C323, Entry: 3258, Location: (-1893.16, -1748.01, 95.53)
+[15:38:54.331] [D] [Interact] Interacting with object at 0x33ED6AF8
+[15:38:54.364] [D] [Interact] Done interacting with object at 0x33ED6AF8
+[15:38:55.417] [D] [Pulse] Slow shared pulse: total=316ms movement=0 objects=0 lua=214 info=0 loot=1 targeting=41 events=0 plugins=58 routine=0
+[15:38:56.029] [N] Looting Bristleback Hunter Guid 0xF130000CBA15C323
+[15:38:56.124] [D] Cleared POI - Reason Waiting for loot flag
+[15:38:56.124] [D] Cleared POI
+[15:38:56.159] [D] [Pulse] Slow bot root: 129ms bot=Wholesome Auto Quest poi=None combat=False
+[15:38:56.324] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=124ms
+[15:38:56.395] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=69ms
+[15:38:57.035] [D] Activity: Moving towards Bristleback Thornweaver
+[15:38:57.136] [D] [MeshNavigator] Skipped 2 path nodes
+[15:38:57.203] [D] [Pulse] Slow bot root: 203ms bot=Wholesome Auto Quest poi=None combat=False
+[15:38:58.104] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[15:38:58.973] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[15:38:59.776] [D] Activity: Setting Bristleback Thornweaver at 17.9 yards as your target
+[15:39:00.476] [D] Changed POI to: Type: Kill, Name: Bristleback Thornweaver, Guid: F130000CBD164BE6, Entry: 3261, Location: (-1874.82, -1777.83, 92.12)
+[15:39:00.576] [D] [Singular-DEBUG] Switched targets!
+[15:39:00.576] [D] [Singular-DEBUG] Melee Distance: 5
+[15:39:00.576] [D] [Singular-DEBUG] Health: 100
+[15:39:00.576] [D] [Singular-DEBUG] Level: 18
+[15:39:01.376] [N] [Singular] Casting Judgement of Light on Bristleback Thornweaver
+[15:39:01.377] [D] Spell_C::CastSpell(20271, 0, 0xF130000CBD164BE6, 0)
+[15:39:01.412] [D] [Pulse] Slow bot root: 236ms bot=Wholesome Auto Quest poi=Kill combat=False
+[15:39:02.253] [D] [Pulse] Slow bot root: 136ms bot=Wholesome Auto Quest poi=Kill combat=True
+[15:39:03.125] [N] [Singular] Casting Exorcism on Bristleback Thornweaver
+[15:39:03.125] [D] Spell_C::CastSpell(879, 0, 0xF130000CBD164BE6, 0)
+[15:39:03.158] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=Kill combat=True
+[15:39:06.962] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=55ms
+[15:39:09.141] [D] Cleared POI - Reason POI is dead from Combat
+[15:39:09.141] [D] Cleared POI
+[15:39:09.884] [D] Changed POI to: Type: Loot, Name: Bristleback Thornweaver, Guid: F130000CBD164BE6, Entry: 3261, Location: (-1874.82, -1777.83, 92.12)
+[15:39:09.996] [D] [QuestRecovery] quest=878, stage=Objective, old=Attempting, new=Eligible, reason=None, episode=0, attempt=0, retry=
+[15:39:10.584] [D] [Interact] Interacting with object at 0x33F0C018
+[15:39:10.617] [D] [Interact] Done interacting with object at 0x33F0C018
+[15:39:11.687] [D] [Pulse] Slow shared pulse: total=336ms movement=0 objects=0 lua=201 info=0 loot=1 targeting=66 events=0 plugins=66 routine=0
+[15:39:12.303] [N] Looting Bristleback Thornweaver Guid 0xF130000CBD164BE6
+[15:39:12.399] [D] Cleared POI - Reason Waiting for loot flag
+[15:39:12.399] [D] Cleared POI
+[15:39:12.432] [D] [Pulse] Slow bot root: 128ms bot=Wholesome Auto Quest poi=None combat=False
+[15:39:13.234] [D] Activity: Moving to hotspot
+[15:39:13.369] [D] [Pulse] Slow bot root: 235ms bot=Wholesome Auto Quest poi=None combat=False
+[15:39:14.371] [D] [Pulse] Slow bot root: 268ms bot=Wholesome Auto Quest poi=None combat=False
+[15:39:14.907] [D] [QuestLog] Loaded 73 completed quests from Lua fallback
+[15:39:15.749] [D] [Pulse] Slow bot root: 241ms bot=Wholesome Auto Quest poi=None combat=False
+[15:39:16.677] [D] [Pulse] Slow bot root: 233ms bot=Wholesome Auto Quest poi=None combat=False
+[15:39:17.615] [D] [Pulse] Slow bot root: 234ms bot=Wholesome Auto Quest poi=None combat=False
+[15:39:17.784] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=126ms
+[15:39:17.852] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=66ms
+[15:39:18.686] [D] [Pulse] Slow bot root: 233ms bot=Wholesome Auto Quest poi=None combat=False
+[15:39:19.662] [D] [Pulse] Slow bot root: 238ms bot=Wholesome Auto Quest poi=None combat=False
+[15:39:20.597] [D] [Pulse] Slow bot root: 232ms bot=Wholesome Auto Quest poi=None combat=False
+[15:39:21.535] [D] [Pulse] Slow bot root: 234ms bot=Wholesome Auto Quest poi=None combat=False
+[15:39:22.439] [D] [Pulse] Slow bot root: 198ms bot=Wholesome Auto Quest poi=None combat=False
+[15:39:23.352] [D] [Pulse] Slow bot root: 204ms bot=Wholesome Auto Quest poi=None combat=False
+[15:39:24.084] [D] Activity: Moving towards Bristleback Thornweaver
+[15:39:24.248] [D] [Pulse] Slow bot root: 197ms bot=Wholesome Auto Quest poi=None combat=False
+[15:39:25.154] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[15:39:26.057] [D] [Pulse] Slow bot root: 202ms bot=Wholesome Auto Quest poi=None combat=False
+[15:39:26.796] [D] Blacklisting F130000CBD160064 for 00:10:00
+[15:39:26.827] [N] MoveToTarget: Could not generate path to target Bristleback Thornweaver, blacklisting.
+[15:39:27.629] [D] Activity: Moving to hotspot
+[15:39:27.798] [D] [Pulse] Slow bot root: 270ms bot=Wholesome Auto Quest poi=None combat=False
+[15:39:27.967] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=125ms
+[15:39:28.035] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=67ms
+[15:39:28.035] [D] [Pulse] Slow shared pulse: total=237ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=41 events=0 plugins=193 routine=0
+[15:39:28.869] [D] [Pulse] Slow bot root: 232ms bot=Wholesome Auto Quest poi=None combat=False
+[15:39:29.813] [D] [Pulse] Slow bot root: 235ms bot=Wholesome Auto Quest poi=None combat=False
+[15:39:30.650] [D] Activity: Setting Bristleback Hunter at 14.8 yards as your target
+[15:39:31.354] [D] Changed POI to: Type: Kill, Name: Bristleback Hunter, Guid: F130000CBA1636E7, Entry: 3258, Location: (-1863.39, -1896.42, 95.43)
+[15:39:31.455] [D] [Singular-DEBUG] Switched targets!
+[15:39:31.456] [D] [Singular-DEBUG] Melee Distance: 5
+[15:39:31.456] [D] [Singular-DEBUG] Health: 59.32642487046632
+[15:39:31.456] [D] [Singular-DEBUG] Level: 17
+[15:39:32.322] [N] [Singular] Casting Exorcism on Bristleback Hunter
+[15:39:32.322] [D] Spell_C::CastSpell(879, 0, 0xF130000CBA1636E7, 0)
+[15:39:32.355] [D] [Pulse] Slow bot root: 300ms bot=Wholesome Auto Quest poi=Kill combat=False
+[15:39:33.089] [D] Activity: Moving towards Bristleback Hunter
+[15:39:33.189] [D] [Pulse] Slow bot root: 134ms bot=Wholesome Auto Quest poi=Kill combat=False
+[15:39:34.021] [D] [Pulse] Slow bot root: 132ms bot=Wholesome Auto Quest poi=Kill combat=False
+[15:39:35.052] [D] [Pulse] Slow bot root: 333ms bot=Wholesome Auto Quest poi=Kill combat=True
+[15:39:35.988] [D] [MeshNavigator] Skipped 2 path nodes
+[15:39:36.055] [D] [Pulse] Slow bot root: 267ms bot=Wholesome Auto Quest poi=Kill combat=True
+[15:39:36.055] [N] [Singular] Mob is evading. Blacklisting it!
+[15:39:36.056] [D] Blacklisting F130000CBA1636E7 for 00:30:00
+[15:39:36.088] [D] Cleared POI - Reason Blacklisting evading mob
+[15:39:36.089] [D] Cleared POI
+[15:39:37.026] [D] Activity: Moving to hotspot
+[15:39:37.193] [D] [Pulse] Slow bot root: 260ms bot=Wholesome Auto Quest poi=None combat=False
+[15:39:38.130] [D] [Pulse] Slow bot root: 233ms bot=Wholesome Auto Quest poi=None combat=False
+[15:39:38.300] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=129ms
+[15:39:38.367] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=65ms
+[15:39:38.367] [D] [Pulse] Slow shared pulse: total=236ms movement=0 objects=0 lua=0 info=0 loot=0 targeting=38 events=0 plugins=196 routine=0
+[15:39:39.235] [D] [Pulse] Slow bot root: 264ms bot=Wholesome Auto Quest poi=None combat=False
+[15:39:40.183] [D] [Pulse] Slow bot root: 235ms bot=Wholesome Auto Quest poi=None combat=False
+[15:39:40.957] [D] Activity: Moving towards Bristleback Thornweaver
+[15:39:41.123] [D] [Pulse] Slow bot root: 201ms bot=Wholesome Auto Quest poi=None combat=False
+[15:39:41.889] [D] Activity: Setting Bristleback Hunter at 15.8 yards as your target
+[15:39:42.590] [D] Changed POI to: Type: Kill, Name: Bristleback Hunter, Guid: F130000CBA160075, Entry: 3258, Location: (-1861.89, -1931.53, 94.24)
+[15:39:42.690] [D] [Singular-DEBUG] Switched targets!
+[15:39:42.690] [D] [Singular-DEBUG] Melee Distance: 5
+[15:39:42.690] [D] [Singular-DEBUG] Health: 100
+[15:39:42.690] [D] [Singular-DEBUG] Level: 18
+[15:39:43.658] [D] [Pulse] Slow bot root: 366ms bot=Wholesome Auto Quest poi=Kill combat=False
+[15:39:44.492] [D] [Pulse] Slow bot root: 131ms bot=Wholesome Auto Quest poi=Kill combat=False
+[15:39:45.523] [D] [Pulse] Slow bot root: 333ms bot=Wholesome Auto Quest poi=Kill combat=False
+[15:39:46.587] [D] [Pulse] Slow bot root: 333ms bot=Wholesome Auto Quest poi=Kill combat=False
+[15:39:47.620] [D] [Pulse] Slow bot root: 331ms bot=Wholesome Auto Quest poi=Kill combat=False
+[15:39:48.496] [N] [Singular] Casting Judgement of Light on Bristleback Hunter
+[15:39:48.496] [D] Spell_C::CastSpell(20271, 0, 0xF130000CBA160075, 0)
+[15:39:48.530] [D] [Pulse] Slow bot root: 202ms bot=Wholesome Auto Quest poi=Kill combat=False
+[15:39:48.697] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=125ms
+[15:39:48.764] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=64ms
+[15:39:48.764] [D] [Pulse] Slow shared pulse: total=233ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=39 events=0 plugins=192 routine=0
+[15:39:49.469] [D] [Pulse] Slow bot root: 104ms bot=Wholesome Auto Quest poi=Kill combat=True
+[15:39:50.266] [N] [Singular] Casting Exorcism on Bristleback Hunter
+[15:39:50.266] [D] Spell_C::CastSpell(879, 0, 0xF130000CBA160075, 0)
+[15:39:50.300] [D] [Pulse] Slow bot root: 133ms bot=Wholesome Auto Quest poi=Kill combat=True
+[15:39:57.101] [N] [Singular] Casting Judgement of Light on Bristleback Hunter
+[15:39:57.101] [D] Spell_C::CastSpell(20271, 0, 0xF130000CBA160075, 0)
+[15:39:57.135] [D] [Pulse] Slow bot root: 133ms bot=Wholesome Auto Quest poi=Kill combat=True
+[15:39:58.777] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=59ms
+[15:39:59.582] [D] [Pulse] Slow bot root: 202ms bot=Wholesome Auto Quest poi=Kill combat=True
+[15:40:00.521] [D] [Pulse] Slow bot root: 232ms bot=Wholesome Auto Quest poi=Kill combat=True
+[15:40:01.462] [D] [Pulse] Slow bot root: 202ms bot=Wholesome Auto Quest poi=Kill combat=True
+[15:40:02.332] [D] [Pulse] Slow bot root: 131ms bot=Wholesome Auto Quest poi=Kill combat=True
+[15:40:03.034] [D] Cleared POI - Reason POI is dead from Combat
+[15:40:03.034] [D] Cleared POI
+[15:40:03.906] [D] [Singular-DEBUG] Switched targets!
+[15:40:03.906] [D] [Singular-DEBUG] Melee Distance: 5
+[15:40:03.906] [D] [Singular-DEBUG] Health: 100
+[15:40:03.906] [D] [Singular-DEBUG] Level: 18
+[15:40:04.772] [D] [Pulse] Slow bot root: 267ms bot=Wholesome Auto Quest poi=None combat=True
+[15:40:05.707] [D] [Pulse] Slow bot root: 233ms bot=Wholesome Auto Quest poi=None combat=True
+[15:40:06.642] [D] [Pulse] Slow bot root: 233ms bot=Wholesome Auto Quest poi=None combat=True
+[15:40:07.644] [D] [Pulse] Slow bot root: 270ms bot=Wholesome Auto Quest poi=None combat=True
+[15:40:08.480] [N] [Singular] Casting Judgement of Light on Bristleback Thornweaver
+[15:40:08.480] [D] Spell_C::CastSpell(20271, 0, 0xF130000CBD160064, 0)
+[15:40:08.514] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=True
+[15:40:09.448] [D] [Pulse] Slow bot root: 231ms bot=Wholesome Auto Quest poi=None combat=True
+[15:40:09.549] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=60ms
+[15:40:10.250] [N] [Singular] Casting Exorcism on Bristleback Thornweaver
+[15:40:10.250] [D] Spell_C::CastSpell(879, 0, 0xF130000CBD160064, 0)
+[15:40:10.284] [D] [Pulse] Slow bot root: 134ms bot=Wholesome Auto Quest poi=None combat=True
+[15:40:13.509] [D] [Pulse] Slow bot root: 1017ms bot=Wholesome Auto Quest poi=None combat=True
+[15:40:13.595] [D] [QuestRecovery] quest=878, stage=Objective, old=Attempting, new=Eligible, reason=None, episode=0, attempt=0, retry=
+[15:40:14.968] [D] Changed POI to: Type: Loot, Name: Bristleback Hunter, Guid: F130000CBA160075, Entry: 3258, Location: (-1877.23, -1917.95, 95.96)
+[15:40:15.538] [D] [QuestLog] Loaded 73 completed quests from Lua fallback
+[15:40:16.173] [N] Moving to Type: Loot, Name: Bristleback Hunter, Guid: F130000CBA160075, Entry: 3258, Location: (-1877.23, -1917.95, 95.96)
+[15:40:16.476] [D] [Pulse] Slow bot root: 337ms bot=Wholesome Auto Quest poi=Loot combat=False
+[15:40:17.479] [D] [Pulse] Slow bot root: 303ms bot=Wholesome Auto Quest poi=Loot combat=False
+[15:40:18.525] [D] [Pulse] Slow bot root: 302ms bot=Wholesome Auto Quest poi=Loot combat=False
+[15:40:19.494] [D] [Pulse] Slow bot root: 267ms bot=Wholesome Auto Quest poi=Loot combat=False
+[15:40:19.662] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=128ms
+[15:40:19.730] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=66ms
+[15:40:19.730] [D] [Pulse] Slow shared pulse: total=235ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=38 events=0 plugins=195 routine=0
+[15:40:20.365] [D] [Interact] Interacting with object at 0x33F04638
+[15:40:20.397] [D] [Interact] Done interacting with object at 0x33F04638
+[15:40:20.431] [D] [Pulse] Slow bot root: 100ms bot=Wholesome Auto Quest poi=Loot combat=False
+[15:40:22.045] [N] Looting Bristleback Hunter Guid 0xF130000CBA160075
+[15:40:22.138] [D] Cleared POI - Reason Waiting for loot flag
+[15:40:22.138] [D] Cleared POI
+[15:40:22.171] [D] [Pulse] Slow bot root: 126ms bot=Wholesome Auto Quest poi=None combat=False
+[15:40:22.904] [D] Activity: Moving towards Bristleback Thornweaver
+[15:40:23.072] [D] [Pulse] Slow bot root: 201ms bot=Wholesome Auto Quest poi=None combat=False
+[15:40:23.904] [D] Activity: Moving to hotspot
+[15:40:24.071] [D] [Pulse] Slow bot root: 265ms bot=Wholesome Auto Quest poi=None combat=False
+[15:40:25.010] [D] [Pulse] Slow bot root: 234ms bot=Wholesome Auto Quest poi=None combat=False
+[15:40:25.948] [D] [Pulse] Slow bot root: 235ms bot=Wholesome Auto Quest poi=None combat=False
+[15:40:26.882] [D] [Pulse] Slow bot root: 233ms bot=Wholesome Auto Quest poi=None combat=False
+[15:40:27.783] [D] [Pulse] Slow bot root: 202ms bot=Wholesome Auto Quest poi=None combat=False
+[15:40:28.754] [D] [Pulse] Slow bot root: 266ms bot=Wholesome Auto Quest poi=None combat=False
+[15:40:29.721] [D] [Pulse] Slow bot root: 236ms bot=Wholesome Auto Quest poi=None combat=False
+[15:40:29.888] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=126ms
+[15:40:29.954] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=65ms
+[15:40:29.954] [D] [Pulse] Slow shared pulse: total=233ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=38 events=0 plugins=193 routine=0
+[15:40:30.790] [D] [Pulse] Slow bot root: 232ms bot=Wholesome Auto Quest poi=None combat=False
+[15:40:31.765] [D] [Pulse] Slow bot root: 236ms bot=Wholesome Auto Quest poi=None combat=False
+[15:40:32.699] [D] [Pulse] Slow bot root: 234ms bot=Wholesome Auto Quest poi=None combat=False
+[15:40:33.643] [D] [Pulse] Slow bot root: 235ms bot=Wholesome Auto Quest poi=None combat=False
+[15:40:34.617] [D] [Pulse] Slow bot root: 268ms bot=Wholesome Auto Quest poi=None combat=False
+[15:40:35.588] [D] [Pulse] Slow bot root: 236ms bot=Wholesome Auto Quest poi=None combat=False
+[15:40:36.527] [D] [Pulse] Slow bot root: 234ms bot=Wholesome Auto Quest poi=None combat=False
+[15:40:37.459] [D] [Pulse] Slow bot root: 232ms bot=Wholesome Auto Quest poi=None combat=False
+[15:40:38.395] [D] [Pulse] Slow bot root: 232ms bot=Wholesome Auto Quest poi=None combat=False
+[15:40:39.329] [D] [Pulse] Slow bot root: 234ms bot=Wholesome Auto Quest poi=None combat=False
+[15:40:40.265] [D] [Pulse] Slow bot root: 232ms bot=Wholesome Auto Quest poi=None combat=False
+[15:40:40.466] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=127ms
+[15:40:40.531] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=63ms
+[15:40:40.531] [D] [Pulse] Slow shared pulse: total=266ms movement=0 objects=0 lua=33 info=0 loot=1 targeting=38 events=0 plugins=192 routine=0
+[15:40:41.374] [D] [Pulse] Slow bot root: 235ms bot=Wholesome Auto Quest poi=None combat=False
+[15:40:42.270] [D] [Pulse] Slow bot root: 200ms bot=Wholesome Auto Quest poi=None combat=False
+[15:40:43.170] [D] [Pulse] Slow bot root: 199ms bot=Wholesome Auto Quest poi=None combat=False
+[15:40:44.142] [D] [Pulse] Slow bot root: 268ms bot=Wholesome Auto Quest poi=None combat=False
+[15:40:45.072] [D] [Pulse] Slow bot root: 231ms bot=Wholesome Auto Quest poi=None combat=False
+[15:40:46.008] [D] [Pulse] Slow bot root: 234ms bot=Wholesome Auto Quest poi=None combat=False
+[15:40:46.975] [D] [Pulse] Slow bot root: 233ms bot=Wholesome Auto Quest poi=None combat=False
+[15:40:47.945] [N] Mounting: 34769
+[15:40:50.157] [D] [Pulse] Slow bot root: 2478ms bot=Wholesome Auto Quest poi=None combat=False
+[15:40:50.992] [D] [Pulse] Slow bot root: 134ms bot=Wholesome Auto Quest poi=None combat=False
+[15:40:51.161] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=128ms
+[15:40:51.227] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=64ms
+[15:40:51.227] [D] [Pulse] Slow shared pulse: total=234ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=38 events=0 plugins=194 routine=0
+[15:40:51.931] [D] [Pulse] Slow bot root: 101ms bot=Wholesome Auto Quest poi=None combat=False
+[15:40:52.799] [D] [Pulse] Slow bot root: 134ms bot=Wholesome Auto Quest poi=None combat=False
+[15:40:53.636] [D] [Pulse] Slow bot root: 133ms bot=Wholesome Auto Quest poi=None combat=False
+[15:40:54.472] [D] [Pulse] Slow bot root: 132ms bot=Wholesome Auto Quest poi=None combat=False
+[15:40:56.075] [D] [Pulse] Slow bot root: 100ms bot=Wholesome Auto Quest poi=None combat=False
+[15:40:56.875] [D] [Pulse] Slow bot root: 100ms bot=Wholesome Auto Quest poi=None combat=False
+[15:40:57.677] [D] [Pulse] Slow bot root: 101ms bot=Wholesome Auto Quest poi=None combat=False
+[15:40:58.509] [D] [Pulse] Slow bot root: 100ms bot=Wholesome Auto Quest poi=None combat=False
+[15:40:59.313] [D] [Pulse] Slow bot root: 100ms bot=Wholesome Auto Quest poi=None combat=False
+[15:41:00.111] [D] [Pulse] Slow bot root: 100ms bot=Wholesome Auto Quest poi=None combat=False
+[15:41:01.911] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=125ms
+[15:41:01.979] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=66ms
+[15:41:01.979] [D] [Pulse] Slow shared pulse: total=234ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=39 events=0 plugins=193 routine=0
+[15:41:02.680] [D] [Pulse] Slow bot root: 100ms bot=Wholesome Auto Quest poi=None combat=False
+[15:41:03.481] [D] [Nav] Ground movement made no progress for 3s despite repeated commands: from=(-1905.09, -1869.15, 91.77) waypoint=(-1905.22, -1868.95, 91.86) destination=(-1934.51, -1761.29, 95.32) moving=False speed=0.0 ctm=None. Trying validated detour, then stuck recovery.
+[15:41:03.582] [D] [Nav] Following validated local detour: map=1 from=(-1905.09, -1869.15, 91.77) landing=(-1905.62, -1867.22, 91.97) destination=(-1934.51, -1761.29, 95.32)
+[15:41:03.617] [D] [Pulse] Slow bot root: 204ms bot=Wholesome Auto Quest poi=None combat=False
+[15:41:04.447] [D] [Pulse] Slow bot root: 131ms bot=Wholesome Auto Quest poi=None combat=False
+[15:41:06.055] [D] [Pulse] Slow bot root: 100ms bot=Wholesome Auto Quest poi=None combat=False
+[15:41:08.461] [D] [Pulse] Slow bot root: 100ms bot=Wholesome Auto Quest poi=None combat=False
+[15:41:09.302] [D] [Pulse] Slow bot root: 102ms bot=Wholesome Auto Quest poi=None combat=False
+[15:41:10.106] [D] [Pulse] Slow bot root: 102ms bot=Wholesome Auto Quest poi=None combat=False
+[15:41:10.906] [D] [Pulse] Slow bot root: 100ms bot=Wholesome Auto Quest poi=None combat=False
+[15:41:12.510] [D] [Pulse] Slow bot root: 100ms bot=Wholesome Auto Quest poi=None combat=False
+[15:41:12.677] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=125ms
+[15:41:12.742] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=64ms
+[15:41:12.742] [D] [Pulse] Slow shared pulse: total=231ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=38 events=0 plugins=191 routine=0
+[15:41:13.476] [D] [Pulse] Slow bot root: 133ms bot=Wholesome Auto Quest poi=None combat=False
+[15:41:15.110] [D] [Pulse] Slow bot root: 134ms bot=Wholesome Auto Quest poi=None combat=False
+[15:41:15.915] [D] [Pulse] Slow bot root: 100ms bot=Wholesome Auto Quest poi=None combat=False
+[15:41:16.487] [D] [QuestLog] Loaded 73 completed quests from Lua fallback
+[15:41:17.194] [D] [Pulse] Slow bot root: 102ms bot=Wholesome Auto Quest poi=None combat=False
+[15:41:17.994] [D] [Pulse] Slow bot root: 100ms bot=Wholesome Auto Quest poi=None combat=False
+[15:41:18.825] [D] [Pulse] Slow bot root: 133ms bot=Wholesome Auto Quest poi=None combat=False
+[15:41:19.661] [D] [Pulse] Slow bot root: 100ms bot=Wholesome Auto Quest poi=None combat=False
+[15:41:20.494] [D] [Pulse] Slow bot root: 131ms bot=Wholesome Auto Quest poi=None combat=False
+[15:41:21.296] [D] [Pulse] Slow bot root: 100ms bot=Wholesome Auto Quest poi=None combat=False
+[15:41:22.133] [D] [Pulse] Slow bot root: 133ms bot=Wholesome Auto Quest poi=None combat=False
+[15:41:22.936] [D] [Pulse] Slow bot root: 100ms bot=Wholesome Auto Quest poi=None combat=False
+[15:41:23.101] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=125ms
+[15:41:23.167] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=64ms
+[15:41:23.167] [D] [Pulse] Slow shared pulse: total=231ms movement=0 objects=0 lua=0 info=0 loot=0 targeting=38 events=0 plugins=191 routine=0
+[15:41:25.501] [D] [Pulse] Slow bot root: 132ms bot=Wholesome Auto Quest poi=None combat=False
+[15:41:26.302] [D] [Pulse] Slow bot root: 100ms bot=Wholesome Auto Quest poi=None combat=False
+[15:41:27.101] [D] [Pulse] Slow bot root: 100ms bot=Wholesome Auto Quest poi=None combat=False
+[15:41:27.905] [D] [Pulse] Slow bot root: 101ms bot=Wholesome Auto Quest poi=None combat=False
+[15:41:29.509] [D] [Pulse] Slow bot root: 100ms bot=Wholesome Auto Quest poi=None combat=False
+[15:41:33.149] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=24ms
+[15:41:38.665] [D] [Nav] Ground movement made no progress for 3s despite repeated commands: from=(-1866.08, -1882.13, 94.33) waypoint=(-1866.97, -1904.24, 96.66) destination=(-1867.68, -1914.83, 96.16) moving=False speed=0.0 ctm=None. Trying validated detour, then stuck recovery.
+[15:41:38.719] [D] [Nav] Following validated local detour: map=1 from=(-1866.08, -1882.13, 94.33) landing=(-1864.11, -1881.98, 94.59) destination=(-1867.68, -1914.83, 96.16)
+[15:41:42.992] [D] [Nav] Ground movement made no progress for 3s despite repeated commands: from=(-1865.96, -1882.13, 94.34) waypoint=(-1866.22, -1888.20, 95.04) destination=(-1867.68, -1914.83, 96.16) moving=False speed=0.0 ctm=None. Trying validated detour, then stuck recovery.
+[15:41:42.992] [D] [Nav] No supported, clear local detour found; advancing stuck recovery.
+[15:41:42.999] [V] Trying dismount
+[15:41:42.999] [D] Stop and dismount. Reason: Stuck Handler
+[15:41:43.199] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=25ms
+[15:41:43.335] [N] [Singular] Casting Blessing of Kings on Myself
+[15:41:43.335] [D] Spell_C::CastSpell(20217, 0, 0x6000000007EAB80, 0)
+[15:41:53.297] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=22ms
+[15:42:03.465] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=22ms
+[15:42:10.947] [N] Mounting: 34769
+[15:42:13.024] [D] [Pulse] Slow bot root: 2121ms bot=Wholesome Auto Quest poi=None combat=False
+[15:42:13.501] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=24ms
+[15:42:16.962] [D] [QuestLog] Loaded 73 completed quests from Lua fallback
+[15:42:23.648] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=23ms
+[15:42:28.935] [D] Activity: Setting Bristleback Thornweaver at 23.8 yards as your target
+[15:42:28.935] [D] Dismounting for combat.
+[15:42:28.935] [D] Stop and dismount. Reason: Combat
+[15:42:29.250] [D] [Singular-DEBUG] Switched targets!
+[15:42:29.250] [D] [Singular-DEBUG] Melee Distance: 5
+[15:42:29.250] [D] [Singular-DEBUG] Health: 100
+[15:42:29.250] [D] [Singular-DEBUG] Level: 19
+[15:42:29.359] [D] Changed POI to: Type: Kill, Name: Bristleback Thornweaver, Guid: F130000CBD164E52, Entry: 3261, Location: (-1934.51, -1761.29, 94.90)
+[15:42:29.547] [N] [Singular] Casting Exorcism on Bristleback Thornweaver
+[15:42:29.547] [D] Spell_C::CastSpell(879, 0, 0xF130000CBD164E52, 0)
+[15:42:31.876] [N] [Singular] Casting Judgement of Light on Bristleback Thornweaver
+[15:42:31.877] [D] Spell_C::CastSpell(20271, 0, 0xF130000CBD164E52, 0)
+[15:42:33.511] [N] [Singular] Casting Exorcism on Bristleback Thornweaver
+[15:42:33.511] [D] Spell_C::CastSpell(879, 0, 0xF130000CBD164E52, 0)
+[15:42:39.754] [D] Cleared POI - Reason POI is dead from Combat
+[15:42:39.754] [D] Cleared POI
+[15:42:39.888] [N] [Singular] Currect target is invalid. Switching to Bristleback Hunter!
+[15:42:40.186] [D] [Singular-DEBUG] Switched targets!
+[15:42:40.186] [D] [Singular-DEBUG] Melee Distance: 5
+[15:42:40.186] [D] [Singular-DEBUG] Health: 100
+[15:42:40.186] [D] [Singular-DEBUG] Level: 18
+[15:42:40.186] [D] [QuestRecovery] quest=878, stage=Objective, old=Attempting, new=Eligible, reason=None, episode=0, attempt=0, retry=
+[15:42:42.414] [N] [Singular] Casting Judgement of Light on Bristleback Hunter
+[15:42:42.414] [D] Spell_C::CastSpell(20271, 0, 0xF130000CBA164E94, 0)
+[15:42:50.545] [D] Changed POI to: Type: Loot, Name: Bristleback Thornweaver, Guid: F130000CBD164E52, Entry: 3261, Location: (-1919.07, -1766.41, 93.18)
+[15:42:50.678] [N] Moving to Type: Loot, Name: Bristleback Thornweaver, Guid: F130000CBD164E52, Entry: 3261, Location: (-1919.07, -1766.41, 93.18)
+[15:42:54.333] [N] [Singular] Casting Exorcism on Bristleback Hunter
+[15:42:54.333] [D] Spell_C::CastSpell(879, 0, 0xF130000CBA164E94, 0)
+[15:42:56.555] [N] [Singular] Casting Judgement of Light on Bristleback Hunter
+[15:42:56.555] [D] Spell_C::CastSpell(20271, 0, 0xF130000CBA164E94, 0)
+[15:42:57.081] [N] [Singular] Currect target is invalid. Switching to Bristleback Hunter!
+[15:42:57.379] [D] [Singular-DEBUG] Switched targets!
+[15:42:57.379] [D] [Singular-DEBUG] Melee Distance: 5
+[15:42:57.379] [D] [Singular-DEBUG] Health: 100
+[15:42:57.379] [D] [Singular-DEBUG] Level: 18
+[15:43:01.610] [D] [Interact] Interacting with object at 0x33ED56A8
+[15:43:01.615] [D] [Interact] Done interacting with object at 0x33ED56A8
+[15:43:01.621] [D] [Pulse] Slow bot root: 140ms bot=Wholesome Auto Quest poi=Loot combat=False
+[15:43:02.070] [N] Looting Bristleback Thornweaver Guid 0xF130000CBD164E52
+[15:43:02.089] [D] Cleared POI - Reason Waiting for loot flag
+[15:43:02.089] [D] Cleared POI
+[15:43:02.258] [D] Changed POI to: Type: Loot, Name: Bristleback Thornweaver, Guid: F130000CBD164E52, Entry: 3261, Location: (-1919.07, -1766.41, 93.18)
+[15:43:02.283] [D] [Singular-DEBUG] Switched targets!
+[15:43:02.283] [D] [Singular-DEBUG] Melee Distance: 5
+[15:43:02.283] [D] [Singular-DEBUG] Health: 0
+[15:43:02.283] [D] [Singular-DEBUG] Level: 19
+[15:43:02.392] [D] Cleared POI - Reason Already looted
+[15:43:02.392] [D] Cleared POI
+[15:43:02.531] [D] Changed POI to: Type: Loot, Name: Bristleback Hunter, Guid: F130000CBA164E94, Entry: 3258, Location: (-1912.90, -1747.96, 92.30)
+[15:43:02.665] [N] Moving to Type: Loot, Name: Bristleback Hunter, Guid: F130000CBA164E94, Entry: 3258, Location: (-1912.90, -1747.96, 92.30)
+[15:43:03.860] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=22ms
+[15:43:05.720] [D] [Interact] Interacting with object at 0x33F09778
+[15:43:05.723] [D] [Interact] Done interacting with object at 0x33F09778
+[15:43:05.729] [D] [Pulse] Slow bot root: 127ms bot=Wholesome Auto Quest poi=Loot combat=False
+[15:43:06.291] [N] Looting Bristleback Hunter Guid 0xF130000CBA164E94
+[15:43:06.307] [D] Cleared POI - Reason Waiting for loot flag
+[15:43:06.307] [D] Cleared POI
+[15:43:06.373] [D] [Singular-DEBUG] Switched targets!
+[15:43:06.373] [D] [Singular-DEBUG] Melee Distance: 5
+[15:43:06.373] [D] [Singular-DEBUG] Health: 0
+[15:43:06.373] [D] [Singular-DEBUG] Level: 18
+[15:43:06.488] [D] Changed POI to: Type: Loot, Name: Bristleback Hunter, Guid: F130000CBA164E94, Entry: 3258, Location: (-1912.90, -1747.96, 92.30)
+[15:43:06.621] [D] Cleared POI - Reason Already looted
+[15:43:06.621] [D] Cleared POI
+[15:43:06.773] [D] Activity: Moving to hotspot
+[15:43:13.902] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=23ms
+[15:43:17.307] [D] [QuestLog] Loaded 73 completed quests from Lua fallback
+[15:43:23.967] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=23ms
+[15:43:29.252] [D] Activity: Setting Bristleback Hunter at 18.0 yards as your target
+[15:43:29.651] [D] Changed POI to: Type: Kill, Name: Bristleback Hunter, Guid: F130000CBA164F05, Entry: 3258, Location: (-1856.97, -1835.31, 91.68)
+[15:43:29.676] [D] [Singular-DEBUG] Switched targets!
+[15:43:29.676] [D] [Singular-DEBUG] Melee Distance: 5
+[15:43:29.676] [D] [Singular-DEBUG] Health: 100
+[15:43:29.676] [D] [Singular-DEBUG] Level: 17
+[15:43:33.407] [N] [Singular] Casting Judgement of Light on Bristleback Hunter
+[15:43:33.408] [D] Spell_C::CastSpell(20271, 0, 0xF130000CBA164F05, 0)
+[15:43:35.037] [N] [Singular] Casting Exorcism on Bristleback Hunter
+[15:43:35.037] [D] Spell_C::CastSpell(879, 0, 0xF130000CBA164F05, 0)
+[15:43:40.959] [D] Cleared POI - Reason POI is dead from Combat
+[15:43:40.959] [D] Cleared POI
+[15:43:41.102] [D] Changed POI to: Type: Loot, Name: Bristleback Hunter, Guid: F130000CBA164F05, Entry: 3258, Location: (-1893.03, -1854.87, 91.67)
+[15:43:41.129] [D] [Singular-DEBUG] Switched targets!
+[15:43:41.129] [D] [Singular-DEBUG] Melee Distance: 5
+[15:43:41.129] [D] [Singular-DEBUG] Health: 100
+[15:43:41.129] [D] [Singular-DEBUG] Level: 17
+[15:43:41.243] [D] [Interact] Interacting with object at 0x33F0C018
+[15:43:41.249] [D] [Interact] Done interacting with object at 0x33F0C018
+[15:43:41.810] [N] Looting Bristleback Hunter Guid 0xF130000CBA164F05
+[15:43:41.845] [D] Cleared POI - Reason Waiting for loot flag
+[15:43:41.845] [D] Cleared POI
+[15:43:41.914] [D] [Singular-DEBUG] Switched targets!
+[15:43:41.914] [D] [Singular-DEBUG] Melee Distance: 5
+[15:43:41.914] [D] [Singular-DEBUG] Health: 0
+[15:43:41.914] [D] [Singular-DEBUG] Level: 17
+[15:43:42.029] [D] Changed POI to: Type: Loot, Name: Bristleback Hunter, Guid: F130000CBA164F05, Entry: 3258, Location: (-1893.03, -1854.87, 91.67)
+[15:43:42.169] [D] Cleared POI - Reason Already looted
+[15:43:42.169] [D] Cleared POI
+[15:43:42.324] [D] Activity: Moving to hotspot
+[15:43:43.852] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=53ms
+[15:43:44.036] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=21ms
+[15:43:47.755] [D] Activity: Moving towards Bristleback Thornweaver
+[15:43:53.671] [D] [MeshNavigator] Skipped 2 path nodes
+[15:43:53.982] [D] Activity: Setting Bristleback Thornweaver at 23.6 yards as your target
+[15:43:54.151] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=23ms
+[15:43:54.272] [D] Changed POI to: Type: Kill, Name: Bristleback Thornweaver, Guid: F130000CBD164FE1, Entry: 3261, Location: (-1877.32, -1775.62, 92.04)
+[15:43:54.296] [D] [Singular-DEBUG] Switched targets!
+[15:43:54.297] [D] [Singular-DEBUG] Melee Distance: 5
+[15:43:54.297] [D] [Singular-DEBUG] Health: 100
+[15:43:54.297] [D] [Singular-DEBUG] Level: 19
+[15:43:55.807] [N] [Singular] Casting Judgement of Light on Bristleback Thornweaver
+[15:43:55.807] [D] Spell_C::CastSpell(20271, 0, 0xF130000CBD164FE1, 0)
+[15:43:57.434] [N] [Singular] Casting Exorcism on Bristleback Thornweaver
+[15:43:57.434] [D] Spell_C::CastSpell(879, 0, 0xF130000CBD164FE1, 0)
+[15:44:03.244] [D] Cleared POI - Reason POI is dead from Combat
+[15:44:03.245] [D] Cleared POI
+[15:44:03.269] [D] [QuestRecovery] quest=878, stage=Objective, old=Attempting, new=Eligible, reason=None, episode=0, attempt=0, retry=
+[15:44:03.378] [D] Changed POI to: Type: Loot, Name: Bristleback Thornweaver, Guid: F130000CBD164FE1, Entry: 3261, Location: (-1881.75, -1788.74, 94.23)
+[15:44:03.509] [D] [Interact] Interacting with object at 0x33EEAFF8
+[15:44:03.515] [D] [Interact] Done interacting with object at 0x33EEAFF8
+[15:44:03.921] [N] Looting Bristleback Thornweaver Guid 0xF130000CBD164FE1
+[15:44:03.940] [D] Cleared POI - Reason Waiting for loot flag
+[15:44:03.940] [D] Cleared POI
+[15:44:04.110] [D] Changed POI to: Type: Loot, Name: Bristleback Thornweaver, Guid: F130000CBD164FE1, Entry: 3261, Location: (-1881.75, -1788.74, 94.23)
+[15:44:04.135] [D] [Singular-DEBUG] Switched targets!
+[15:44:04.135] [D] [Singular-DEBUG] Melee Distance: 5
+[15:44:04.135] [D] [Singular-DEBUG] Health: 0
+[15:44:04.135] [D] [Singular-DEBUG] Level: 19
+[15:44:04.244] [D] Cleared POI - Reason Already looted
+[15:44:04.244] [D] Cleared POI
+[15:44:04.280] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=24ms
+[15:44:04.443] [D] Activity: Moving to hotspot
+[15:44:04.627] [D] Activity: Setting Bristleback Hunter at 11.5 yards as your target
+[15:44:05.068] [D] Changed POI to: Type: Kill, Name: Bristleback Hunter, Guid: F130000CBA164779, Entry: 3258, Location: (-1885.56, -1795.77, 94.87)
+[15:44:05.093] [D] [Singular-DEBUG] Switched targets!
+[15:44:05.093] [D] [Singular-DEBUG] Melee Distance: 5
+[15:44:05.093] [D] [Singular-DEBUG] Health: 100
+[15:44:05.093] [D] [Singular-DEBUG] Level: 17
+[15:44:05.239] [N] [Singular] Casting Judgement of Light on Bristleback Hunter
+[15:44:05.239] [D] Spell_C::CastSpell(20271, 0, 0xF130000CBA164779, 0)
+[15:44:05.416] [D] [MeshNavigator] Skipped 2 path nodes
+[15:44:10.081] [D] Cleared POI - Reason POI is dead from Combat
+[15:44:10.081] [D] Cleared POI
+[15:44:10.222] [D] Changed POI to: Type: Loot, Name: Bristleback Hunter, Guid: F130000CBA164779, Entry: 3258, Location: (-1885.56, -1795.77, 94.87)
+[15:44:10.355] [D] [Interact] Interacting with object at 0x33F46D98
+[15:44:10.360] [D] [Interact] Done interacting with object at 0x33F46D98
+[15:44:10.777] [N] Looting Bristleback Hunter Guid 0xF130000CBA164779
+[15:44:10.794] [D] Cleared POI - Reason Waiting for loot flag
+[15:44:10.794] [D] Cleared POI
+[15:44:10.957] [D] Changed POI to: Type: Loot, Name: Bristleback Hunter, Guid: F130000CBA164779, Entry: 3258, Location: (-1885.56, -1795.77, 94.87)
+[15:44:11.065] [D] [Singular-DEBUG] Switched targets!
+[15:44:11.065] [D] [Singular-DEBUG] Melee Distance: 5
+[15:44:11.066] [D] [Singular-DEBUG] Health: 0
+[15:44:11.066] [D] [Singular-DEBUG] Level: 17
+[15:44:11.179] [D] Cleared POI - Reason Already looted
+[15:44:11.180] [D] Cleared POI
+[15:44:11.344] [D] Activity: Moving to hotspot
+[15:44:14.379] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=29ms
+[15:44:17.759] [D] [QuestLog] Loaded 73 completed quests from Lua fallback
+[15:44:20.120] [D] Activity: Setting Bristleback Thornweaver at 23.8 yards as your target
+[15:44:20.520] [D] Changed POI to: Type: Kill, Name: Bristleback Thornweaver, Guid: F130000CBD164F83, Entry: 3261, Location: (-1891.42, -1871.44, 91.76)
+[15:44:20.546] [D] [Singular-DEBUG] Switched targets!
+[15:44:20.546] [D] [Singular-DEBUG] Melee Distance: 5
+[15:44:20.546] [D] [Singular-DEBUG] Health: 100
+[15:44:20.546] [D] [Singular-DEBUG] Level: 19
+[15:44:23.588] [N] [Singular] Casting Judgement of Light on Bristleback Thornweaver
+[15:44:23.588] [D] Spell_C::CastSpell(20271, 0, 0xF130000CBD164F83, 0)
+[15:44:25.256] [N] [Singular] Casting Exorcism on Bristleback Thornweaver
+[15:44:25.256] [D] Spell_C::CastSpell(879, 0, 0xF130000CBD164F83, 0)
+[15:44:31.037] [N] [Singular] Casting Hand of Freedom on Myself
+[15:44:31.037] [D] Spell_C::CastSpell(1044, 0, 0x6000000007EAB80, 0)
+[15:44:31.183] [D] Cleared POI - Reason POI is dead from Combat
+[15:44:31.183] [D] Cleared POI
+[15:44:31.319] [N] [Singular] Currect target is invalid. Switching to Bristleback Hunter!
+[15:44:31.754] [D] [Singular-DEBUG] Switched targets!
+[15:44:31.754] [D] [Singular-DEBUG] Melee Distance: 5
+[15:44:31.754] [D] [Singular-DEBUG] Health: 100
+[15:44:31.754] [D] [Singular-DEBUG] Level: 18
+[15:44:31.958] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=26ms
+[15:44:32.498] [D] [QuestRecovery] quest=878, stage=Objective, old=Attempting, new=Eligible, reason=None, episode=0, attempt=0, retry=
+[15:44:32.624] [N] [Singular] Casting Judgement of Light on Bristleback Hunter
+[15:44:32.624] [D] Spell_C::CastSpell(20271, 0, 0xF130000CBA164F67, 0)
+[15:44:40.938] [N] [Singular] Casting Judgement of Light on Bristleback Hunter
+[15:44:40.938] [D] Spell_C::CastSpell(20271, 0, 0xF130000CBA164F67, 0)
+[15:44:41.817] [D] [Singular-DEBUG] Switched targets!
+[15:44:41.817] [D] [Singular-DEBUG] Melee Distance: 5
+[15:44:41.817] [D] [Singular-DEBUG] Health: 100
+[15:44:41.817] [D] [Singular-DEBUG] Level: 18
+[15:44:41.928] [N] [Singular] Current target is not the best target. Switching to Bristleback Thornweaver!
+[15:44:42.236] [D] [Singular-DEBUG] Switched targets!
+[15:44:42.236] [D] [Singular-DEBUG] Melee Distance: 5
+[15:44:42.236] [D] [Singular-DEBUG] Health: 100
+[15:44:42.236] [D] [Singular-DEBUG] Level: 19
+[15:44:43.036] [D] Changed POI to: Type: Loot, Name: Bristleback Hunter, Guid: F130000CBA164F67, Entry: 3258, Location: (-1888.58, -1881.26, 92.29)
+[15:44:43.174] [D] [LB] DNTFT -> S
+[15:44:43.293] [D] [Interact] Interacting with object at 0x33EF29D8
+[15:44:43.295] [D] [Interact] Done interacting with object at 0x33EF29D8
+[15:44:43.300] [D] [Pulse] Slow bot root: 126ms bot=Wholesome Auto Quest poi=Loot combat=False
+[15:44:43.860] [N] Looting Bristleback Hunter Guid 0xF130000CBA164F67
+[15:44:43.882] [D] Cleared POI - Reason Waiting for loot flag
+[15:44:43.882] [D] Cleared POI
+[15:44:43.962] [D] [Singular-DEBUG] Switched targets!
+[15:44:43.962] [D] [Singular-DEBUG] Melee Distance: 5
+[15:44:43.962] [D] [Singular-DEBUG] Health: 0
+[15:44:43.962] [D] [Singular-DEBUG] Level: 18
+[15:44:44.080] [D] Changed POI to: Type: Loot, Name: Bristleback Hunter, Guid: F130000CBA164F67, Entry: 3258, Location: (-1888.58, -1881.26, 92.29)
+[15:44:44.214] [D] Cleared POI - Reason Already looted
+[15:44:44.214] [D] Cleared POI
+[15:44:44.353] [D] Changed POI to: Type: Loot, Name: Bristleback Thornweaver, Guid: F130000CBD164F83, Entry: 3261, Location: (-1895.30, -1877.09, 91.83)
+[15:44:44.488] [N] Moving to Type: Loot, Name: Bristleback Thornweaver, Guid: F130000CBD164F83, Entry: 3261, Location: (-1895.30, -1877.09, 91.83)
+[15:44:44.812] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=59ms
+[15:44:44.833] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=20ms
+[15:44:45.648] [D] [Interact] Interacting with object at 0x33ED6AF8
+[15:44:45.652] [D] [Interact] Done interacting with object at 0x33ED6AF8
+[15:44:45.657] [D] [Pulse] Slow bot root: 142ms bot=Wholesome Auto Quest poi=Loot combat=False
+[15:44:46.097] [N] Looting Bristleback Thornweaver Guid 0xF130000CBD164F83
+[15:44:46.117] [D] Cleared POI - Reason Waiting for loot flag
+[15:44:46.117] [D] Cleared POI
+[15:44:46.287] [D] Changed POI to: Type: Loot, Name: Bristleback Thornweaver, Guid: F130000CBD164F83, Entry: 3261, Location: (-1895.30, -1877.09, 91.83)
+[15:44:46.315] [D] [Singular-DEBUG] Switched targets!
+[15:44:46.315] [D] [Singular-DEBUG] Melee Distance: 5
+[15:44:46.315] [D] [Singular-DEBUG] Health: 0
+[15:44:46.315] [D] [Singular-DEBUG] Level: 19
+[15:44:46.429] [D] Cleared POI - Reason Already looted
+[15:44:46.429] [D] Cleared POI
+[15:44:46.588] [D] Activity: Moving to hotspot
+[15:44:46.928] [D] Activity: Setting Bristleback Hunter at 23.2 yards as your target
+[15:44:47.333] [D] Changed POI to: Type: Kill, Name: Bristleback Hunter, Guid: F130000CBA164FB8, Entry: 3258, Location: (-1873.52, -1896.15, 94.75)
+[15:44:47.360] [D] [Singular-DEBUG] Switched targets!
+[15:44:47.360] [D] [Singular-DEBUG] Melee Distance: 5
+[15:44:47.360] [D] [Singular-DEBUG] Health: 100
+[15:44:47.360] [D] [Singular-DEBUG] Level: 18
+[15:44:49.341] [N] [Singular] Casting Judgement of Light on Bristleback Hunter
+[15:44:49.342] [D] Spell_C::CastSpell(20271, 0, 0xF130000CBA164FB8, 0)
+[15:44:50.884] [N] [Singular] Casting Exorcism on Bristleback Hunter
+[15:44:50.884] [D] Spell_C::CastSpell(879, 0, 0xF130000CBA164FB8, 0)
+[15:44:56.808] [D] Cleared POI - Reason POI is dead from Combat
+[15:44:56.808] [D] Cleared POI
+[15:44:56.946] [D] Changed POI to: Type: Loot, Name: Bristleback Hunter, Guid: F130000CBA164FB8, Entry: 3258, Location: (-1873.52, -1896.15, 94.75)
+[15:44:57.079] [D] [LB] DNTFT -> S
+[15:44:57.079] [D] [Interact] Interacting with object at 0x33EF1588
+[15:44:57.085] [D] [Interact] Done interacting with object at 0x33EF1588
+[15:44:57.625] [N] Looting Bristleback Hunter Guid 0xF130000CBA164FB8
+[15:44:57.643] [D] Cleared POI - Reason Waiting for loot flag
+[15:44:57.643] [D] Cleared POI
+[15:44:57.705] [D] [Singular-DEBUG] Switched targets!
+[15:44:57.705] [D] [Singular-DEBUG] Melee Distance: 5
+[15:44:57.705] [D] [Singular-DEBUG] Health: 0
+[15:44:57.705] [D] [Singular-DEBUG] Level: 18
+[15:44:57.820] [D] Changed POI to: Type: Loot, Name: Bristleback Hunter, Guid: F130000CBA164FB8, Entry: 3258, Location: (-1873.52, -1896.15, 94.75)
+[15:44:57.960] [D] [LB] DNTFT -> S
+[15:44:57.961] [D] Cleared POI - Reason Already looted
+[15:44:57.961] [D] Cleared POI
+[15:44:58.530] [D] Changed POI to: Type: Kill, Name: Bristleback Thornweaver, Guid: F130000CBD164FD9, Entry: 3261, Location: (-1867.68, -1914.83, 96.04)
+[15:44:58.554] [D] [Singular-DEBUG] Switched targets!
+[15:44:58.554] [D] [Singular-DEBUG] Melee Distance: 5
+[15:44:58.554] [D] [Singular-DEBUG] Health: 100
+[15:44:58.554] [D] [Singular-DEBUG] Level: 19
+[15:45:00.837] [N] [Singular] Casting Judgement of Light on Bristleback Thornweaver
+[15:45:00.838] [D] Spell_C::CastSpell(20271, 0, 0xF130000CBD164FD9, 0)
+[15:45:05.206] [N] [Singular] Casting Hammer of Justice on Bristleback Thornweaver
+[15:45:05.206] [D] Spell_C::CastSpell(5588, 0, 0xF130000CBD164FD9, 0)
+[15:45:08.270] [N] [Singular] Casting Exorcism on Bristleback Thornweaver
+[15:45:08.270] [D] Spell_C::CastSpell(879, 0, 0xF130000CBD164FD9, 0)
+[15:45:10.140] [N] [Singular] Casting Judgement of Light on Bristleback Thornweaver
+[15:45:10.140] [D] Spell_C::CastSpell(20271, 0, 0xF130000CBD164FD9, 0)
+[15:45:10.298] [D] Cleared POI - Reason POI is dead from Combat
+[15:45:10.298] [D] Cleared POI
+[15:45:10.807] [N] [Singular] Current target is not the best target. Switching to Bristleback Thornweaver!
+[15:45:10.838] [D] [Singular-DEBUG] Switched targets!
+[15:45:10.838] [D] [Singular-DEBUG] Melee Distance: 5
+[15:45:10.838] [D] [Singular-DEBUG] Health: 100
+[15:45:10.838] [D] [Singular-DEBUG] Level: 18
+[15:45:11.149] [D] [Singular-DEBUG] Switched targets!
+[15:45:11.149] [D] [Singular-DEBUG] Melee Distance: 5
+[15:45:11.149] [D] [Singular-DEBUG] Health: 100
+[15:45:11.149] [D] [Singular-DEBUG] Level: 18
+[15:45:12.064] [D] [QuestRecovery] quest=878, stage=Objective, old=Attempting, new=Eligible, reason=None, episode=0, attempt=0, retry=
+[15:45:13.073] [D] Changed POI to: Type: Loot, Name: Bristleback Thornweaver, Guid: F130000CBD164FD9, Entry: 3261, Location: (-1867.68, -1914.83, 96.04)
+[15:45:13.219] [D] [LB] DNTFT -> S
+[15:45:13.225] [D] [LB] SetTarget Finished. Waiting.
+[15:45:13.225] [D] [LB] Finished waiting, we got a target.
+[15:45:13.225] [D] Changed POI to: Type: Kill, Name: Bristleback Thornweaver, Guid: F130000CBD165077, Entry: 3261, Location: (-1855.38, -1939.93, 92.82)
+[15:45:13.363] [D] Current POI is not the best pull target. Changing.
+[15:45:13.363] [D] Changed POI to: Type: Kill, Name: Bristleback Hunter, Guid: F130000CBA165069, Entry: 3258, Location: (-1861.89, -1931.53, 94.24)
+[15:45:13.508] [N] [Singular] Current target is not the best target. Switching to Bristleback Hunter!
+[15:45:13.551] [D] [Singular-DEBUG] Switched targets!
+[15:45:13.551] [D] [Singular-DEBUG] Melee Distance: 5
+[15:45:13.551] [D] [Singular-DEBUG] Health: 100
+[15:45:13.551] [D] [Singular-DEBUG] Level: 18
+[15:45:13.690] [N] [Singular] Casting Judgement of Light on Bristleback Hunter
+[15:45:13.690] [D] Spell_C::CastSpell(20271, 0, 0xF130000CBA165069, 0)
+[15:45:18.147] [D] [QuestLog] Loaded 73 completed quests from Lua fallback
+[15:45:20.858] [D] Cleared POI - Reason POI is dead from Combat
+[15:45:20.858] [D] Cleared POI
+[15:45:20.991] [N] [Singular] Currect target is invalid. Switching to Bristleback Thornweaver!
+[15:45:21.429] [D] [Singular-DEBUG] Switched targets!
+[15:45:21.429] [D] [Singular-DEBUG] Melee Distance: 5
+[15:45:21.429] [D] [Singular-DEBUG] Health: 100
+[15:45:21.429] [D] [Singular-DEBUG] Level: 18
+[15:45:22.101] [N] [Singular] Casting Judgement of Light on Bristleback Thornweaver
+[15:45:22.101] [D] Spell_C::CastSpell(20271, 0, 0xF130000CBD165077, 0)
+[15:45:25.234] [N] [Singular] Casting Exorcism on Bristleback Thornweaver
+[15:45:25.234] [D] Spell_C::CastSpell(879, 0, 0xF130000CBD165077, 0)
+[15:45:30.405] [N] [Singular] Casting Judgement of Light on Bristleback Thornweaver
+[15:45:30.405] [D] Spell_C::CastSpell(20271, 0, 0xF130000CBD165077, 0)
+[15:45:30.567] [N] Drinking Melon Juice
+[15:45:31.011] [D] [QuestRecovery] quest=878, stage=Objective, old=Attempting, new=Eligible, reason=None, episode=0, attempt=0, retry=
+[15:45:33.555] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=42ms
+[15:45:35.225] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=29ms
+[15:45:43.045] [D] Changed POI to: Type: Loot, Name: Bristleback Thornweaver, Guid: F130000CBD165077, Entry: 3261, Location: (-1855.38, -1939.93, 92.82)
+[15:45:43.184] [D] [Interact] Interacting with object at 0x33F14E48
+[15:45:43.190] [D] [Interact] Done interacting with object at 0x33F14E48
+[15:45:43.739] [N] Looting Bristleback Thornweaver Guid 0xF130000CBD165077
+[15:45:43.764] [D] Cleared POI - Reason Waiting for loot flag
+[15:45:43.764] [D] Cleared POI
+[15:45:43.840] [D] [Singular-DEBUG] Switched targets!
+[15:45:43.840] [D] [Singular-DEBUG] Melee Distance: 5
+[15:45:43.840] [D] [Singular-DEBUG] Health: 0
+[15:45:43.840] [D] [Singular-DEBUG] Level: 18
+[15:45:43.963] [D] Changed POI to: Type: Loot, Name: Bristleback Thornweaver, Guid: F130000CBD165077, Entry: 3261, Location: (-1855.38, -1939.93, 92.82)
+[15:45:44.095] [D] Cleared POI - Reason Already looted
+[15:45:44.095] [D] Cleared POI
+[15:45:44.235] [D] Changed POI to: Type: Loot, Name: Bristleback Hunter, Guid: F130000CBA165069, Entry: 3258, Location: (-1861.89, -1931.53, 94.24)
+[15:45:44.369] [N] Moving to Type: Loot, Name: Bristleback Hunter, Guid: F130000CBA165069, Entry: 3258, Location: (-1861.89, -1931.53, 94.24)
+[15:45:44.927] [D] [Interact] Interacting with object at 0x33ECC878
+[15:45:44.933] [D] [Interact] Done interacting with object at 0x33ECC878
+[15:45:44.938] [D] [Pulse] Slow bot root: 149ms bot=Wholesome Auto Quest poi=Loot combat=False
+[15:45:45.244] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=27ms
+[15:45:45.632] [N] Looting Bristleback Hunter Guid 0xF130000CBA165069
+[15:45:45.651] [D] Cleared POI - Reason Waiting for loot flag
+[15:45:45.651] [D] Cleared POI
+[15:45:45.826] [D] Changed POI to: Type: Loot, Name: Bristleback Hunter, Guid: F130000CBA165069, Entry: 3258, Location: (-1861.89, -1931.53, 94.24)
+[15:45:45.898] [D] [Singular-DEBUG] Switched targets!
+[15:45:45.898] [D] [Singular-DEBUG] Melee Distance: 5
+[15:45:45.898] [D] [Singular-DEBUG] Health: 0
+[15:45:45.898] [D] [Singular-DEBUG] Level: 18
+[15:45:46.007] [D] Cleared POI - Reason Already looted
+[15:45:46.007] [D] Cleared POI
+[15:45:46.149] [D] Changed POI to: Type: Loot, Name: Bristleback Thornweaver, Guid: F130000CBD164FD9, Entry: 3261, Location: (-1867.68, -1914.83, 96.04)
+[15:45:46.283] [N] Moving to Type: Loot, Name: Bristleback Thornweaver, Guid: F130000CBD164FD9, Entry: 3261, Location: (-1867.68, -1914.83, 96.04)
+[15:45:48.851] [D] [Interact] Interacting with object at 0x33F06ED8
+[15:45:48.853] [D] [Interact] Done interacting with object at 0x33F06ED8
+[15:45:48.860] [D] [Pulse] Slow bot root: 138ms bot=Wholesome Auto Quest poi=Loot combat=False
+[15:45:49.267] [N] Looting Bristleback Thornweaver Guid 0xF130000CBD164FD9
+[15:45:49.286] [D] Cleared POI - Reason Waiting for loot flag
+[15:45:49.286] [D] Cleared POI
+[15:45:49.454] [D] Changed POI to: Type: Loot, Name: Bristleback Thornweaver, Guid: F130000CBD164FD9, Entry: 3261, Location: (-1867.68, -1914.83, 96.04)
+[15:45:49.502] [D] [Singular-DEBUG] Switched targets!
+[15:45:49.502] [D] [Singular-DEBUG] Melee Distance: 5
+[15:45:49.502] [D] [Singular-DEBUG] Health: 0
+[15:45:49.502] [D] [Singular-DEBUG] Level: 19
+[15:45:49.612] [D] Cleared POI - Reason Already looted
+[15:45:49.612] [D] Cleared POI
+[15:45:49.764] [D] Activity: Moving to hotspot
+[15:45:50.257] [D] Activity: Moving towards Bristleback Thornweaver
+[15:45:52.664] [D] Activity: Setting Bristleback Thornweaver at 23.8 yards as your target
+[15:45:53.068] [D] Changed POI to: Type: Kill, Name: Bristleback Thornweaver, Guid: F130000CBD165087, Entry: 3261, Location: (-1880.83, -1950.90, 95.58)
+[15:45:53.092] [D] [Singular-DEBUG] Switched targets!
+[15:45:53.092] [D] [Singular-DEBUG] Melee Distance: 5
+[15:45:53.092] [D] [Singular-DEBUG] Health: 100
+[15:45:53.092] [D] [Singular-DEBUG] Level: 19
+[15:45:53.253] [N] [Singular] Casting Exorcism on Bristleback Thornweaver
+[15:45:53.253] [D] Spell_C::CastSpell(879, 0, 0xF130000CBD165087, 0)
+[15:45:55.258] [N] [Singular] Casting Judgement of Light on Bristleback Thornweaver
+[15:45:55.258] [D] Spell_C::CastSpell(20271, 0, 0xF130000CBD165087, 0)
+[15:45:55.307] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=29ms
+[15:45:56.787] [N] [Singular] Casting Exorcism on Bristleback Thornweaver
+[15:45:56.787] [D] Spell_C::CastSpell(879, 0, 0xF130000CBD165087, 0)
+[15:45:59.700] [N] [Singular] Casting Arcane Torrent on Bristleback Thornweaver
+[15:45:59.700] [D] Spell_C::CastSpell(28730, 0, 0xF130000CBD165087, 0)
+[15:46:02.648] [D] [QuestRecovery] quest=878, stage=Objective, old=Attempting, new=Eligible, reason=None, episode=0, attempt=0, retry=
+[15:46:02.648] [N] [Wholesome Auto Quest] Quest 878 Objective completed; queuing one scheduler rebuild.
+[15:46:02.777] [D] Activity: No eligible quest work; idle until 2026-09-08T07:46:16.3919433Z. excluded quest=104;stage=Pickup;npc=392;reason=outside-scan-radius;retry=context-change excluded quest=1058;stage=Pickup;npc=3995;reason=outside-scan-radius;retry=context-change excluded quest=1062;stage=TurnIn;npc=4049;reason=outside-scan-radius;retry=context-change excluded quest=1069;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=1087;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=1093;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T07:46:16.3919433Z;state=HalfOpen. excluded quest=11127;stage=Pickup;scope=QuestStage;retry=2026-09-08T08:11:46.7206406Z;state=Quarantined. excluded quest=1195;stage=Pickup;npc=4721;reason=outside-scan-radius;retry=context-change excluded quest=14106;stage=Pickup;scope=QuestStage;retry=2026-09-08T07:46:16.3919433Z;state=HalfOpen. excluded quest=1483;stage=Pickup;scope=NpcRelation;npc=3442;retry=2026-09-08T07:46:16.3919433Z;state=HalfOpen. excluded quest=152;stage=Pickup;npc=392;reason=outside-scan-radius;retry=context-change excluded quest=2098;stage=Pickup;npc=6667;reason=outside-scan-radius;retry=context-change excluded quest=216;stage=Pickup;npc=12757;reason=outside-scan-radius;retry=context-change excluded quest=235;stage=Pickup;npc=10880;reason=outside-scan-radius;retry=context-change excluded quest=4542;stage=Pickup;npc=10079;reason=outside-scan-radius;retry=context-change excluded quest=470;stage=Pickup;npc=2111;reason=outside-scan-radius;retry=context-change excluded quest=472;stage=Pickup;npc=2097;reason=outside-scan-radius;retry=context-change excluded quest=4821;stage=Pickup;npc=10539;reason=outside-scan-radius;retry=context-change excluded quest=4921;stage=Objective;scope=QuestStage;retry=2026-09-08T07:46:16.3919433Z;state=HalfOpen. excluded quest=493;stage=Pickup;npc=1937;reason=outside-scan-radius;retry=context-change excluded quest=494;stage=Pickup;npc=2214;reason=outside-scan-radius;retry=context-change excluded quest=496;stage=Pickup;npc=2216;reason=outside-scan-radius;retry=context-change excluded quest=498;stage=Pickup;npc=2229;reason=outside-scan-radius;retry=context-change excluded quest=501;stage=Pickup;npc=2216;reason=outside-scan-radius;retry=context-change excluded quest=516;stage=Pickup;npc=2121;reason=outside-scan-radius;retry=context-change excluded quest=527;stage=Pickup;npc=2215;reason=outside-scan-radius;retry=context-change excluded quest=546;stage=Pickup;npc=2418;reason=outside-scan-radius;retry=context-change excluded quest=549;stage=Pickup;npc=1763;reason=outside-scan-radius;retry=context-change excluded quest=6282;stage=Pickup;npc=11860;reason=outside-scan-radius;retry=context-change excluded quest=6381;stage=Pickup;npc=11864;reason=outside-scan-radius;retry=context-change excluded quest=6382;stage=TurnIn;npc=12696;reason=outside-scan-radius;retry=context-change excluded quest=6383;stage=Pickup;scope=NpcRelation;npc=12696;retry=2026-09-08T07:46:16.3919433Z;state=HalfOpen. excluded quest=6393;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T07:46:16.3919433Z;state=HalfOpen. excluded quest=6441;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T11:53:44.3110653Z;state=Quarantined. excluded quest=6442;stage=Pickup;npc=12719;reason=outside-scan-radius;retry=context-change excluded quest=6461;stage=TurnIn;npc=12816;reason=outside-scan-radius;retry=context-change excluded quest=6462;stage=Pickup;npc=12721;reason=outside-scan-radius;retry=context-change excluded quest=6541;stage=Pickup;scope=NpcRelation;npc=3429;retry=2026-09-08T07:46:16.3919433Z;state=HalfOpen. excluded quest=6543;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T11:57:53.5602004Z;state=Quarantined. excluded quest=742;stage=Pickup;npc=10881;reason=outside-scan-radius;retry=context-change excluded quest=747;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T13:06:01.2335671Z;state=Quarantined. excluded quest=747;stage=Objective;scope=Objective;objective=1;retry=2026-09-08T13:30:35.1661766Z;state=Quarantined. excluded quest=7790;stage=Pickup;scope=QuestStage;retry=2026-09-08T07:46:16.3919433Z;state=HalfOpen. excluded quest=843;stage=Pickup;npc=3341;reason=outside-scan-radius;retry=context-change excluded quest=8487;stage=TurnIn;scope=QuestStage;retry=2026-09-08T07:46:16.3919433Z;state=HalfOpen. excluded quest=867;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T07:46:16.3919433Z;state=HalfOpen. excluded quest=868;stage=Objective;objective=1;reason=outside-scan-radius;retry=context-change. excluded quest=868;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T12:02:33.6094572Z;state=Quarantined. excluded quest=878;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=8889;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=8889;stage=Objective;objective=1;reason=outside-scan-radius;retry=context-change. excluded quest=8889;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;scope=QuestStage;retry=2026-09-08T07:46:16.3919433Z;state=HalfOpen. excluded quest=893;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T12:48:05.9519603Z;state=Quarantined. excluded quest=893;stage=Objective;scope=Objective;objective=1;retry=2026-09-08T12:48:05.9520521Z;state=Quarantined. excluded quest=893;stage=Objective;scope=Objective;objective=2;retry=2026-09-08T12:48:05.9520844Z;state=Quarantined. excluded quest=896;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T07:46:16.3919433Z;state=HalfOpen. excluded quest=9067;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T07:46:16.3919433Z;state=HalfOpen. excluded quest=9151;stage=Pickup;npc=16199;reason=outside-scan-radius;retry=context-change excluded quest=9157;stage=TurnIn;scope=QuestStage;retry=2026-09-08T07:46:16.3919433Z;state=HalfOpen. excluded quest=9275;stage=Pickup;npc=16464;reason=outside-scan-radius;retry=context-change excluded quest=9388;stage=Pickup;scope=QuestStage;retry=2026-09-08T08:11:46.7260419Z;state=Quarantined. excluded quest=9389;stage=Pickup;scope=QuestStage;retry=2026-09-08T08:11:46.7261207Z;state=Quarantined. excluded quest=9425;stage=Pickup;npc=16287;reason=outside-scan-radius;retry=context-change excluded quest=9428;stage=Pickup;npc=17098;reason=outside-scan-radius;retry=context-change excluded quest=9749;stage=Pickup;scope=QuestStage;retry=2026-09-08T07:46:16.3919433Z;state=HalfOpen. Expanding scan radius from 250 to 500 yards before fallback.
+[15:46:03.034] [D] [Nav] Loaded 3 mesh tiles for one path query
+[15:46:03.040] [D] Loading profile from D:\World of Warcraft 3.3.5a\CB\Bots\WholesomeAutoQuest\WHOLESOME_AUTOQUESTER.xml
+[15:46:03.047] [D] [CompileBatch] Compiling 1 entries...
+[15:46:03.115] [D] [CompileBatch] Compiled successfully.
+[15:46:03.115] [N] Profile loaded: WholesomeAQ - The Barrens
+[15:46:03.117] [D] Selected sub-profile: WholesomeAQ - The Barrens (L1-80)
+[15:46:03.117] [N] [Wholesome Auto Quest] Profile refreshed - Selected 1 quest work candidate(s). selected quest=878;stage=Objective;state=Eligible. excluded quest=104;stage=Pickup;npc=392;reason=outside-scan-radius;retry=context-change excluded quest=1058;stage=Pickup;npc=3995;reason=outside-scan-radius;retry=context-change excluded quest=1062;stage=TurnIn;npc=4049;reason=outside-scan-radius;retry=context-change excluded quest=1069;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=1087;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=1093;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T07:46:16.3919433Z;state=HalfOpen. excluded quest=11127;stage=Pickup;scope=QuestStage;retry=2026-09-08T08:11:46.7206406Z;state=Quarantined. excluded quest=1195;stage=Pickup;npc=4721;reason=outside-scan-radius;retry=context-change excluded quest=14106;stage=Pickup;scope=QuestStage;retry=2026-09-08T07:46:16.3919433Z;state=HalfOpen. excluded quest=1483;stage=Pickup;scope=NpcRelation;npc=3442;retry=2026-09-08T07:46:16.3919433Z;state=HalfOpen. excluded quest=152;stage=Pickup;npc=392;reason=outside-scan-radius;retry=context-change excluded quest=2098;stage=Pickup;npc=6667;reason=outside-scan-radius;retry=context-change excluded quest=216;stage=Pickup;npc=12757;reason=outside-scan-radius;retry=context-change excluded quest=235;stage=Pickup;npc=10880;reason=outside-scan-radius;retry=context-change excluded quest=4542;stage=Pickup;npc=10079;reason=outside-scan-radius;retry=context-change excluded quest=470;stage=Pickup;npc=2111;reason=outside-scan-radius;retry=context-change excluded quest=472;stage=Pickup;npc=2097;reason=outside-scan-radius;retry=context-change excluded quest=4821;stage=Pickup;npc=10539;reason=outside-scan-radius;retry=context-change excluded quest=4921;stage=Objective;scope=QuestStage;retry=2026-09-08T07:46:16.3919433Z;state=HalfOpen. excluded quest=493;stage=Pickup;npc=1937;reason=outside-scan-radius;retry=context-change excluded quest=494;stage=Pickup;npc=2214;reason=outside-scan-radius;retry=context-change excluded quest=496;stage=Pickup;npc=2216;reason=outside-scan-radius;retry=context-change excluded quest=498;stage=Pickup;npc=2229;reason=outside-scan-radius;retry=context-change excluded quest=501;stage=Pickup;npc=2216;reason=outside-scan-radius;retry=context-change excluded quest=516;stage=Pickup;npc=2121;reason=outside-scan-radius;retry=context-change excluded quest=527;stage=Pickup;npc=2215;reason=outside-scan-radius;retry=context-change excluded quest=546;stage=Pickup;npc=2418;reason=outside-scan-radius;retry=context-change excluded quest=549;stage=Pickup;npc=1763;reason=outside-scan-radius;retry=context-change excluded quest=6282;stage=Pickup;npc=11860;reason=outside-scan-radius;retry=context-change excluded quest=6381;stage=Pickup;npc=11864;reason=outside-scan-radius;retry=context-change excluded quest=6382;stage=TurnIn;npc=12696;reason=outside-scan-radius;retry=context-change excluded quest=6383;stage=Pickup;scope=NpcRelation;npc=12696;retry=2026-09-08T07:46:16.3919433Z;state=HalfOpen. excluded quest=6393;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T07:46:16.3919433Z;state=HalfOpen. excluded quest=6441;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T11:53:44.3110653Z;state=Quarantined. excluded quest=6442;stage=Pickup;npc=12719;reason=outside-scan-radius;retry=context-change excluded quest=6461;stage=TurnIn;npc=12816;reason=outside-scan-radius;retry=context-change excluded quest=6462;stage=Pickup;npc=12721;reason=outside-scan-radius;retry=context-change excluded quest=6541;stage=Pickup;scope=NpcRelation;npc=3429;retry=2026-09-08T07:46:16.3919433Z;state=HalfOpen. excluded quest=6543;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T11:57:53.5602004Z;state=Quarantined. excluded quest=742;stage=Pickup;npc=10881;reason=outside-scan-radius;retry=context-change excluded quest=747;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T13:06:01.2335671Z;state=Quarantined. excluded quest=747;stage=Objective;scope=Objective;objective=1;retry=2026-09-08T13:30:35.1661766Z;state=Quarantined. excluded quest=7790;stage=Pickup;scope=QuestStage;retry=2026-09-08T07:46:16.3919433Z;state=HalfOpen. excluded quest=843;stage=Pickup;npc=3341;reason=outside-scan-radius;retry=context-change excluded quest=8487;stage=TurnIn;scope=QuestStage;retry=2026-09-08T07:46:16.3919433Z;state=HalfOpen. excluded quest=867;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T07:46:16.3919433Z;state=HalfOpen. excluded quest=868;stage=Objective;objective=1;reason=outside-scan-radius;retry=context-change. excluded quest=868;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T12:02:33.6094572Z;state=Quarantined. excluded quest=8889;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=8889;stage=Objective;objective=1;reason=outside-scan-radius;retry=context-change. excluded quest=8889;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;scope=QuestStage;retry=2026-09-08T07:46:16.3919433Z;state=HalfOpen. excluded quest=893;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T12:48:05.9519603Z;state=Quarantined. excluded quest=893;stage=Objective;scope=Objective;objective=1;retry=2026-09-08T12:48:05.9520521Z;state=Quarantined. excluded quest=893;stage=Objective;scope=Objective;objective=2;retry=2026-09-08T12:48:05.9520844Z;state=Quarantined. excluded quest=896;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T07:46:16.3919433Z;state=HalfOpen. excluded quest=9067;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T07:46:16.3919433Z;state=HalfOpen. excluded quest=9151;stage=Pickup;npc=16199;reason=outside-scan-radius;retry=context-change excluded quest=9157;stage=TurnIn;scope=QuestStage;retry=2026-09-08T07:46:16.3919433Z;state=HalfOpen. excluded quest=9275;stage=Pickup;npc=16464;reason=outside-scan-radius;retry=context-change excluded quest=9388;stage=Pickup;scope=QuestStage;retry=2026-09-08T08:11:46.7260419Z;state=Quarantined. excluded quest=9389;stage=Pickup;scope=QuestStage;retry=2026-09-08T08:11:46.7261207Z;state=Quarantined. excluded quest=9425;stage=Pickup;npc=16287;reason=outside-scan-radius;retry=context-change excluded quest=9428;stage=Pickup;npc=17098;reason=outside-scan-radius;retry=context-change excluded quest=9749;stage=Pickup;scope=QuestStage;retry=2026-09-08T07:46:16.3919433Z;state=HalfOpen.
+[15:46:03.220] [D] Cleared POI - Reason POI is dead from Combat
+[15:46:03.220] [D] Cleared POI
+[15:46:03.360] [D] Changed POI to: Type: Loot, Name: Bristleback Thornweaver, Guid: F130000CBD165087, Entry: 3261, Location: (-1879.90, -1950.51, 95.51)
+[15:46:03.488] [D] [Interact] Interacting with object at 0x33EF66C8
+[15:46:03.504] [D] [Interact] Done interacting with object at 0x33EF66C8
+[15:46:03.558] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=21ms
+[15:46:03.942] [N] Looting Bristleback Thornweaver Guid 0xF130000CBD165087
+[15:46:03.961] [D] Cleared POI - Reason Waiting for loot flag
+[15:46:03.961] [D] Cleared POI
+[15:46:04.139] [D] Changed POI to: Type: Loot, Name: Bristleback Thornweaver, Guid: F130000CBD165087, Entry: 3261, Location: (-1879.90, -1950.51, 95.51)
+[15:46:04.189] [D] [Singular-DEBUG] Switched targets!
+[15:46:04.189] [D] [Singular-DEBUG] Melee Distance: 5
+[15:46:04.189] [D] [Singular-DEBUG] Health: 0
+[15:46:04.189] [D] [Singular-DEBUG] Level: 19
+[15:46:04.293] [D] Cleared POI - Reason Already looted
+[15:46:04.293] [D] Cleared POI
+[15:46:04.427] [D] [If] Condition is true, executing If body
+[15:46:04.444] [N] [Objective] Goal: Kill Bristleback Geomancer x 12
+[15:46:04.444] [D] Goal: Goal: Kill Bristleback Geomancer x 12
+[15:46:04.444] [D] [GrindObjective] Using profile hotspots (8 points) for mob 3263
+[15:46:04.474] [D] Activity: Moving to hotspot
+[15:46:05.391] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=30ms
+[15:46:09.093] [D] Activity: Setting Bristleback Hunter at 9.4 yards as your target
+[15:46:09.499] [D] Changed POI to: Type: Kill, Name: Bristleback Hunter, Guid: F130000CBA1650D7, Entry: 3258, Location: (-1880.05, -1908.88, 95.05)
+[15:46:09.523] [D] [Singular-DEBUG] Switched targets!
+[15:46:09.523] [D] [Singular-DEBUG] Melee Distance: 5
+[15:46:09.523] [D] [Singular-DEBUG] Health: 100
+[15:46:09.523] [D] [Singular-DEBUG] Level: 17
+[15:46:09.675] [N] [Singular] Casting Judgement of Light on Bristleback Hunter
+[15:46:09.675] [D] Spell_C::CastSpell(20271, 0, 0xF130000CBA1650D7, 0)
+[15:46:14.229] [N] [Singular] Casting Exorcism on Bristleback Hunter
+[15:46:14.229] [D] Spell_C::CastSpell(879, 0, 0xF130000CBA1650D7, 0)
+[15:46:16.072] [D] Cleared POI - Reason POI is dead from Combat
+[15:46:16.072] [D] Cleared POI
+[15:46:16.211] [D] Changed POI to: Type: Loot, Name: Bristleback Hunter, Guid: F130000CBA1650D7, Entry: 3258, Location: (-1864.88, -1907.09, 97.69)
+[15:46:16.345] [N] Moving to Type: Loot, Name: Bristleback Hunter, Guid: F130000CBA1650D7, Entry: 3258, Location: (-1864.88, -1907.09, 97.69)
+[15:46:16.424] [N] [Wholesome Auto Quest] Quest recovery retry is due; queuing one scheduler rebuild.
+[15:46:17.722] [D] [Interact] Interacting with object at 0x33ED2E08
+[15:46:17.725] [D] [Interact] Done interacting with object at 0x33ED2E08
+[15:46:17.731] [D] [Pulse] Slow bot root: 133ms bot=Wholesome Auto Quest poi=Loot combat=True
+[15:46:18.125] [N] Looting Bristleback Hunter Guid 0xF130000CBA1650D7
+[15:46:18.144] [D] Cleared POI - Reason Waiting for loot flag
+[15:46:18.144] [D] Cleared POI
+[15:46:18.501] [D] [QuestLog] Loaded 73 completed quests from Lua fallback
+[15:46:18.609] [D] Changed POI to: Type: Loot, Name: Bristleback Hunter, Guid: F130000CBA1650D7, Entry: 3258, Location: (-1864.88, -1907.09, 97.69)
+[15:46:18.736] [D] Cleared POI - Reason Already looted
+[15:46:18.736] [D] Cleared POI
+[15:46:18.888] [D] Activity: Moving to hotspot
+[15:46:19.093] [D] Activity: No eligible quest work; idle until 2026-09-08T07:48:05.9519688Z. excluded quest=104;stage=Pickup;npc=392;reason=outside-scan-radius;retry=context-change excluded quest=1058;stage=Pickup;npc=3995;reason=outside-scan-radius;retry=context-change excluded quest=1062;stage=TurnIn;npc=4049;reason=outside-scan-radius;retry=context-change excluded quest=1069;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=1087;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=1093;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=11127;stage=Pickup;scope=QuestStage;retry=2026-09-08T08:11:46.7206406Z;state=Quarantined. excluded quest=1195;stage=Pickup;npc=4721;reason=outside-scan-radius;retry=context-change excluded quest=14106;stage=Pickup;scope=QuestStage;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=1483;stage=Pickup;scope=NpcRelation;npc=3442;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=152;stage=Pickup;npc=392;reason=outside-scan-radius;retry=context-change excluded quest=2098;stage=Pickup;npc=6667;reason=outside-scan-radius;retry=context-change excluded quest=216;stage=Pickup;npc=12757;reason=outside-scan-radius;retry=context-change excluded quest=235;stage=Pickup;npc=10880;reason=outside-scan-radius;retry=context-change excluded quest=4542;stage=Pickup;npc=10079;reason=outside-scan-radius;retry=context-change excluded quest=470;stage=Pickup;npc=2111;reason=outside-scan-radius;retry=context-change excluded quest=472;stage=Pickup;npc=2097;reason=outside-scan-radius;retry=context-change excluded quest=4821;stage=Pickup;npc=10539;reason=outside-scan-radius;retry=context-change excluded quest=4921;stage=Objective;scope=QuestStage;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=493;stage=Pickup;npc=1937;reason=outside-scan-radius;retry=context-change excluded quest=494;stage=Pickup;npc=2214;reason=outside-scan-radius;retry=context-change excluded quest=496;stage=Pickup;npc=2216;reason=outside-scan-radius;retry=context-change excluded quest=498;stage=Pickup;npc=2229;reason=outside-scan-radius;retry=context-change excluded quest=501;stage=Pickup;npc=2216;reason=outside-scan-radius;retry=context-change excluded quest=516;stage=Pickup;npc=2121;reason=outside-scan-radius;retry=context-change excluded quest=527;stage=Pickup;npc=2215;reason=outside-scan-radius;retry=context-change excluded quest=546;stage=Pickup;npc=2418;reason=outside-scan-radius;retry=context-change excluded quest=549;stage=Pickup;npc=1763;reason=outside-scan-radius;retry=context-change excluded quest=6282;stage=Pickup;npc=11860;reason=outside-scan-radius;retry=context-change excluded quest=6381;stage=Pickup;npc=11864;reason=outside-scan-radius;retry=context-change excluded quest=6382;stage=TurnIn;npc=12696;reason=outside-scan-radius;retry=context-change excluded quest=6383;stage=Pickup;scope=NpcRelation;npc=12696;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=6393;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=6441;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T11:53:44.3110653Z;state=Quarantined. excluded quest=6442;stage=Pickup;npc=12719;reason=outside-scan-radius;retry=context-change excluded quest=6461;stage=TurnIn;npc=12816;reason=outside-scan-radius;retry=context-change excluded quest=6462;stage=Pickup;npc=12721;reason=outside-scan-radius;retry=context-change excluded quest=6541;stage=Pickup;scope=NpcRelation;npc=3429;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=6543;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T11:57:53.5602004Z;state=Quarantined. excluded quest=742;stage=Pickup;npc=10881;reason=outside-scan-radius;retry=context-change excluded quest=747;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T13:06:01.2335671Z;state=Quarantined. excluded quest=747;stage=Objective;scope=Objective;objective=1;retry=2026-09-08T13:30:35.1661766Z;state=Quarantined. excluded quest=7790;stage=Pickup;scope=QuestStage;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=843;stage=Pickup;npc=3341;reason=outside-scan-radius;retry=context-change excluded quest=8487;stage=TurnIn;scope=QuestStage;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=867;stage=Objective;objective=0;reason=no-known-hotspots;retry=context-change. excluded quest=868;stage=Objective;objective=1;reason=outside-scan-radius;retry=context-change. excluded quest=868;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T12:02:33.6094572Z;state=Quarantined. excluded quest=878;stage=Objective;scope=QuestStage;retry=context-change;state=Attempting. excluded quest=8889;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=8889;stage=Objective;objective=1;reason=outside-scan-radius;retry=context-change. excluded quest=8889;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;scope=QuestStage;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=893;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T12:48:05.9519603Z;state=Quarantined. excluded quest=893;stage=Objective;scope=Objective;objective=1;retry=2026-09-08T12:48:05.9520521Z;state=Quarantined. excluded quest=893;stage=Objective;scope=Objective;objective=2;retry=2026-09-08T12:48:05.9520844Z;state=Quarantined. excluded quest=896;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=9067;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=9151;stage=Pickup;npc=16199;reason=outside-scan-radius;retry=context-change excluded quest=9157;stage=TurnIn;scope=QuestStage;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=9275;stage=Pickup;npc=16464;reason=outside-scan-radius;retry=context-change excluded quest=9388;stage=Pickup;scope=QuestStage;retry=2026-09-08T08:11:46.7260419Z;state=Quarantined. excluded quest=9389;stage=Pickup;scope=QuestStage;retry=2026-09-08T08:11:46.7261207Z;state=Quarantined. excluded quest=9425;stage=Pickup;npc=16287;reason=outside-scan-radius;retry=context-change excluded quest=9428;stage=Pickup;npc=17098;reason=outside-scan-radius;retry=context-change excluded quest=9749;stage=Pickup;scope=QuestStage;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. Expanding scan radius from 250 to 500 yards before fallback.
+[15:46:19.344] [D] Activity: No eligible quest work; idle until 2026-09-08T07:48:05.9519688Z. excluded quest=104;stage=Pickup;npc=392;reason=outside-scan-radius;retry=context-change excluded quest=1058;stage=Pickup;npc=3995;reason=outside-scan-radius;retry=context-change excluded quest=1062;stage=TurnIn;npc=4049;reason=outside-scan-radius;retry=context-change excluded quest=1069;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=1087;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=1093;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=11127;stage=Pickup;scope=QuestStage;retry=2026-09-08T08:11:46.7206406Z;state=Quarantined. excluded quest=1195;stage=Pickup;npc=4721;reason=outside-scan-radius;retry=context-change excluded quest=14106;stage=Pickup;scope=QuestStage;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=1483;stage=Pickup;scope=NpcRelation;npc=3442;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=152;stage=Pickup;npc=392;reason=outside-scan-radius;retry=context-change excluded quest=2098;stage=Pickup;npc=6667;reason=outside-scan-radius;retry=context-change excluded quest=216;stage=Pickup;npc=12757;reason=outside-scan-radius;retry=context-change excluded quest=235;stage=Pickup;npc=10880;reason=outside-scan-radius;retry=context-change excluded quest=4542;stage=Pickup;npc=10079;reason=outside-scan-radius;retry=context-change excluded quest=470;stage=Pickup;npc=2111;reason=outside-scan-radius;retry=context-change excluded quest=472;stage=Pickup;npc=2097;reason=outside-scan-radius;retry=context-change excluded quest=4821;stage=Pickup;npc=10539;reason=outside-scan-radius;retry=context-change excluded quest=4921;stage=Objective;scope=QuestStage;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=493;stage=Pickup;npc=1937;reason=outside-scan-radius;retry=context-change excluded quest=494;stage=Pickup;npc=2214;reason=outside-scan-radius;retry=context-change excluded quest=496;stage=Pickup;npc=2216;reason=outside-scan-radius;retry=context-change excluded quest=498;stage=Pickup;npc=2229;reason=outside-scan-radius;retry=context-change excluded quest=501;stage=Pickup;npc=2216;reason=outside-scan-radius;retry=context-change excluded quest=516;stage=Pickup;npc=2121;reason=outside-scan-radius;retry=context-change excluded quest=527;stage=Pickup;npc=2215;reason=outside-scan-radius;retry=context-change excluded quest=546;stage=Pickup;npc=2418;reason=outside-scan-radius;retry=context-change excluded quest=549;stage=Pickup;npc=1763;reason=outside-scan-radius;retry=context-change excluded quest=6282;stage=Pickup;npc=11860;reason=outside-scan-radius;retry=context-change excluded quest=6381;stage=Pickup;npc=11864;reason=outside-scan-radius;retry=context-change excluded quest=6382;stage=TurnIn;npc=12696;reason=outside-scan-radius;retry=context-change excluded quest=6383;stage=Pickup;scope=NpcRelation;npc=12696;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=6393;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=6441;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T11:53:44.3110653Z;state=Quarantined. excluded quest=6442;stage=Pickup;npc=12719;reason=outside-scan-radius;retry=context-change excluded quest=6461;stage=TurnIn;npc=12816;reason=outside-scan-radius;retry=context-change excluded quest=6462;stage=Pickup;npc=12721;reason=outside-scan-radius;retry=context-change excluded quest=6541;stage=Pickup;scope=NpcRelation;npc=3429;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=6543;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T11:57:53.5602004Z;state=Quarantined. excluded quest=742;stage=Pickup;npc=10881;reason=outside-scan-radius;retry=context-change excluded quest=747;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T13:06:01.2335671Z;state=Quarantined. excluded quest=747;stage=Objective;scope=Objective;objective=1;retry=2026-09-08T13:30:35.1661766Z;state=Quarantined. excluded quest=7790;stage=Pickup;scope=QuestStage;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=843;stage=Pickup;npc=3341;reason=outside-scan-radius;retry=context-change excluded quest=8487;stage=TurnIn;scope=QuestStage;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=867;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T13:46:19.0888015Z;state=Quarantined. excluded quest=868;stage=Objective;objective=1;reason=outside-scan-radius;retry=context-change. excluded quest=868;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T12:02:33.6094572Z;state=Quarantined. excluded quest=878;stage=Objective;scope=QuestStage;retry=context-change;state=Attempting. excluded quest=8889;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=8889;stage=Objective;objective=1;reason=outside-scan-radius;retry=context-change. excluded quest=8889;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;scope=QuestStage;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=893;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T12:48:05.9519603Z;state=Quarantined. excluded quest=893;stage=Objective;scope=Objective;objective=1;retry=2026-09-08T12:48:05.9520521Z;state=Quarantined. excluded quest=893;stage=Objective;scope=Objective;objective=2;retry=2026-09-08T12:48:05.9520844Z;state=Quarantined. excluded quest=896;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=9067;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=9151;stage=Pickup;npc=16199;reason=outside-scan-radius;retry=context-change excluded quest=9157;stage=TurnIn;scope=QuestStage;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=9275;stage=Pickup;npc=16464;reason=outside-scan-radius;retry=context-change excluded quest=9388;stage=Pickup;scope=QuestStage;retry=2026-09-08T08:11:46.7260419Z;state=Quarantined. excluded quest=9389;stage=Pickup;scope=QuestStage;retry=2026-09-08T08:11:46.7261207Z;state=Quarantined. excluded quest=9425;stage=Pickup;npc=16287;reason=outside-scan-radius;retry=context-change excluded quest=9428;stage=Pickup;npc=17098;reason=outside-scan-radius;retry=context-change excluded quest=9749;stage=Pickup;scope=QuestStage;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. Expanding scan radius from 500 to 750 yards before fallback.
+[15:46:19.594] [D] [WholesomeAQ] Quest chain correction: ancestor=878; descendant=879.
+[15:46:19.594] [D] [WholesomeAQ] Quest chain correction: ancestor=878; descendant=906.
+[15:46:19.595] [D] [WholesomeAQ] Quest chain correction: ancestor=878; descendant=5052.
+[15:46:19.599] [D] Activity: No eligible quest work; idle until 2026-09-08T07:48:05.9519688Z. excluded quest=104;stage=Pickup;npc=392;reason=outside-scan-radius;retry=context-change excluded quest=1058;stage=Pickup;npc=3995;reason=outside-scan-radius;retry=context-change excluded quest=1062;stage=TurnIn;npc=4049;reason=outside-scan-radius;retry=context-change excluded quest=1069;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=1087;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=1093;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=11127;stage=Pickup;scope=QuestStage;retry=2026-09-08T08:11:46.7206406Z;state=Quarantined. excluded quest=1195;stage=Pickup;npc=4721;reason=outside-scan-radius;retry=context-change excluded quest=14106;stage=Pickup;scope=QuestStage;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=1483;stage=Pickup;scope=NpcRelation;npc=3442;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=152;stage=Pickup;npc=392;reason=outside-scan-radius;retry=context-change excluded quest=2098;stage=Pickup;npc=6667;reason=outside-scan-radius;retry=context-change excluded quest=216;stage=Pickup;npc=12757;reason=outside-scan-radius;retry=context-change excluded quest=235;stage=Pickup;npc=10880;reason=outside-scan-radius;retry=context-change excluded quest=4542;stage=Pickup;npc=10079;reason=outside-scan-radius;retry=context-change excluded quest=470;stage=Pickup;npc=2111;reason=outside-scan-radius;retry=context-change excluded quest=472;stage=Pickup;npc=2097;reason=outside-scan-radius;retry=context-change excluded quest=4821;stage=Pickup;npc=10539;reason=outside-scan-radius;retry=context-change excluded quest=4921;stage=Objective;scope=QuestStage;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=493;stage=Pickup;npc=1937;reason=outside-scan-radius;retry=context-change excluded quest=494;stage=Pickup;npc=2214;reason=outside-scan-radius;retry=context-change excluded quest=496;stage=Pickup;npc=2216;reason=outside-scan-radius;retry=context-change excluded quest=498;stage=Pickup;npc=2229;reason=outside-scan-radius;retry=context-change excluded quest=501;stage=Pickup;npc=2216;reason=outside-scan-radius;retry=context-change excluded quest=516;stage=Pickup;npc=2121;reason=outside-scan-radius;retry=context-change excluded quest=527;stage=Pickup;npc=2215;reason=outside-scan-radius;retry=context-change excluded quest=546;stage=Pickup;npc=2418;reason=outside-scan-radius;retry=context-change excluded quest=549;stage=Pickup;npc=1763;reason=outside-scan-radius;retry=context-change excluded quest=6282;stage=Pickup;npc=11860;reason=outside-scan-radius;retry=context-change excluded quest=6381;stage=Pickup;npc=11864;reason=outside-scan-radius;retry=context-change excluded quest=6382;stage=TurnIn;npc=12696;reason=outside-scan-radius;retry=context-change excluded quest=6383;stage=Pickup;scope=NpcRelation;npc=12696;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=6393;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=6441;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T11:53:44.3110653Z;state=Quarantined. excluded quest=6442;stage=Pickup;npc=12719;reason=outside-scan-radius;retry=context-change excluded quest=6461;stage=TurnIn;npc=12816;reason=outside-scan-radius;retry=context-change excluded quest=6462;stage=Pickup;npc=12721;reason=outside-scan-radius;retry=context-change excluded quest=6541;stage=Pickup;scope=NpcRelation;npc=3429;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=6543;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T11:57:53.5602004Z;state=Quarantined. excluded quest=742;stage=Pickup;npc=10881;reason=outside-scan-radius;retry=context-change excluded quest=747;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T13:06:01.2335671Z;state=Quarantined. excluded quest=747;stage=Objective;scope=Objective;objective=1;retry=2026-09-08T13:30:35.1661766Z;state=Quarantined. excluded quest=7790;stage=Pickup;scope=QuestStage;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=843;stage=Pickup;npc=3341;reason=outside-scan-radius;retry=context-change excluded quest=8487;stage=TurnIn;scope=QuestStage;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=867;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T13:46:19.0888015Z;state=Quarantined. excluded quest=868;stage=Objective;objective=1;reason=outside-scan-radius;retry=context-change. excluded quest=868;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T12:02:33.6094572Z;state=Quarantined. excluded quest=878;stage=AncestorCorrection;scope=QuestStage;retry=context-change;state=Attempting. excluded quest=8889;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=8889;stage=Objective;objective=1;reason=outside-scan-radius;retry=context-change. excluded quest=8889;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;scope=QuestStage;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=893;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T12:48:05.9519603Z;state=Quarantined. excluded quest=893;stage=Objective;scope=Objective;objective=1;retry=2026-09-08T12:48:05.9520521Z;state=Quarantined. excluded quest=893;stage=Objective;scope=Objective;objective=2;retry=2026-09-08T12:48:05.9520844Z;state=Quarantined. excluded quest=896;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=9067;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=9151;stage=Pickup;npc=16199;reason=outside-scan-radius;retry=context-change excluded quest=9157;stage=TurnIn;scope=QuestStage;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=9275;stage=Pickup;npc=16464;reason=outside-scan-radius;retry=context-change excluded quest=9388;stage=Pickup;scope=QuestStage;retry=2026-09-08T08:11:46.7260419Z;state=Quarantined. excluded quest=9389;stage=Pickup;scope=QuestStage;retry=2026-09-08T08:11:46.7261207Z;state=Quarantined. excluded quest=9425;stage=Pickup;npc=16287;reason=outside-scan-radius;retry=context-change excluded quest=9428;stage=Pickup;npc=17098;reason=outside-scan-radius;retry=context-change excluded quest=9749;stage=Pickup;scope=QuestStage;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. Expanding scan radius from 750 to 1000 yards before fallback.
+[15:46:19.844] [D] [WholesomeAQ] Quest chain correction: ancestor=878; descendant=879.
+[15:46:19.844] [D] [WholesomeAQ] Quest chain correction: ancestor=878; descendant=906.
+[15:46:19.845] [D] [WholesomeAQ] Quest chain correction: ancestor=878; descendant=5052.
+[15:46:19.849] [D] Activity: No eligible quest work; idle until 2026-09-08T07:48:05.9519688Z. excluded quest=104;stage=Pickup;npc=392;reason=outside-scan-radius;retry=context-change excluded quest=1058;stage=Pickup;npc=3995;reason=outside-scan-radius;retry=context-change excluded quest=1062;stage=TurnIn;npc=4049;reason=outside-scan-radius;retry=context-change excluded quest=1069;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=1087;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=1093;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=11127;stage=Pickup;scope=QuestStage;retry=2026-09-08T08:11:46.7206406Z;state=Quarantined. excluded quest=1195;stage=Pickup;npc=4721;reason=outside-scan-radius;retry=context-change excluded quest=14106;stage=Pickup;scope=QuestStage;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=1483;stage=Pickup;scope=NpcRelation;npc=3442;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=152;stage=Pickup;npc=392;reason=outside-scan-radius;retry=context-change excluded quest=2098;stage=Pickup;npc=6667;reason=outside-scan-radius;retry=context-change excluded quest=216;stage=Pickup;npc=12757;reason=outside-scan-radius;retry=context-change excluded quest=235;stage=Pickup;npc=10880;reason=outside-scan-radius;retry=context-change excluded quest=4542;stage=Pickup;npc=10079;reason=outside-scan-radius;retry=context-change excluded quest=470;stage=Pickup;npc=2111;reason=outside-scan-radius;retry=context-change excluded quest=472;stage=Pickup;npc=2097;reason=outside-scan-radius;retry=context-change excluded quest=4821;stage=Pickup;npc=10539;reason=outside-scan-radius;retry=context-change excluded quest=4921;stage=Objective;scope=QuestStage;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=493;stage=Pickup;npc=1937;reason=outside-scan-radius;retry=context-change excluded quest=494;stage=Pickup;npc=2214;reason=outside-scan-radius;retry=context-change excluded quest=496;stage=Pickup;npc=2216;reason=outside-scan-radius;retry=context-change excluded quest=498;stage=Pickup;npc=2229;reason=outside-scan-radius;retry=context-change excluded quest=501;stage=Pickup;npc=2216;reason=outside-scan-radius;retry=context-change excluded quest=516;stage=Pickup;npc=2121;reason=outside-scan-radius;retry=context-change excluded quest=527;stage=Pickup;npc=2215;reason=outside-scan-radius;retry=context-change excluded quest=546;stage=Pickup;npc=2418;reason=outside-scan-radius;retry=context-change excluded quest=549;stage=Pickup;npc=1763;reason=outside-scan-radius;retry=context-change excluded quest=6282;stage=Pickup;npc=11860;reason=outside-scan-radius;retry=context-change excluded quest=6381;stage=Pickup;npc=11864;reason=outside-scan-radius;retry=context-change excluded quest=6382;stage=TurnIn;npc=12696;reason=outside-scan-radius;retry=context-change excluded quest=6383;stage=Pickup;scope=NpcRelation;npc=12696;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=6393;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=6441;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T11:53:44.3110653Z;state=Quarantined. excluded quest=6442;stage=Pickup;npc=12719;reason=outside-scan-radius;retry=context-change excluded quest=6461;stage=TurnIn;npc=12816;reason=outside-scan-radius;retry=context-change excluded quest=6462;stage=Pickup;npc=12721;reason=outside-scan-radius;retry=context-change excluded quest=6541;stage=Pickup;scope=NpcRelation;npc=3429;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=6543;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T11:57:53.5602004Z;state=Quarantined. excluded quest=742;stage=Pickup;npc=10881;reason=outside-scan-radius;retry=context-change excluded quest=747;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T13:06:01.2335671Z;state=Quarantined. excluded quest=747;stage=Objective;scope=Objective;objective=1;retry=2026-09-08T13:30:35.1661766Z;state=Quarantined. excluded quest=7790;stage=Pickup;scope=QuestStage;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=843;stage=Pickup;npc=3341;reason=outside-scan-radius;retry=context-change excluded quest=8487;stage=TurnIn;scope=QuestStage;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=867;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T13:46:19.0888015Z;state=Quarantined. excluded quest=868;stage=Objective;objective=1;reason=outside-scan-radius;retry=context-change. excluded quest=868;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T12:02:33.6094572Z;state=Quarantined. excluded quest=878;stage=AncestorCorrection;scope=QuestStage;retry=context-change;state=Attempting. excluded quest=8889;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=8889;stage=Objective;objective=1;reason=outside-scan-radius;retry=context-change. excluded quest=8889;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;scope=QuestStage;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=893;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T12:48:05.9519603Z;state=Quarantined. excluded quest=893;stage=Objective;scope=Objective;objective=1;retry=2026-09-08T12:48:05.9520521Z;state=Quarantined. excluded quest=893;stage=Objective;scope=Objective;objective=2;retry=2026-09-08T12:48:05.9520844Z;state=Quarantined. excluded quest=896;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=9067;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=9151;stage=Pickup;npc=16199;reason=outside-scan-radius;retry=context-change excluded quest=9157;stage=TurnIn;scope=QuestStage;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=9275;stage=Pickup;npc=16464;reason=outside-scan-radius;retry=context-change excluded quest=9388;stage=Pickup;scope=QuestStage;retry=2026-09-08T08:11:46.7260419Z;state=Quarantined. excluded quest=9389;stage=Pickup;scope=QuestStage;retry=2026-09-08T08:11:46.7261207Z;state=Quarantined. excluded quest=9425;stage=Pickup;npc=16287;reason=outside-scan-radius;retry=context-change excluded quest=9428;stage=Pickup;npc=17098;reason=outside-scan-radius;retry=context-change excluded quest=9749;stage=Pickup;scope=QuestStage;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. Expanding scan radius from 1000 to 1250 yards before fallback.
+[15:46:20.097] [D] [WholesomeAQ] Quest chain correction: ancestor=878; descendant=879.
+[15:46:20.097] [D] [WholesomeAQ] Quest chain correction: ancestor=878; descendant=906.
+[15:46:20.098] [D] [WholesomeAQ] Quest chain correction: ancestor=878; descendant=5052.
+[15:46:20.109] [D] [Nav] Loaded 6 mesh tiles for one path query
+[15:46:20.113] [D] Loading profile from D:\World of Warcraft 3.3.5a\CB\Bots\WholesomeAutoQuest\WHOLESOME_AUTOQUESTER.xml
+[15:46:20.124] [D] [CompileBatch] Compiling 1 entries...
+[15:46:20.193] [D] [CompileBatch] Compiled successfully.
+[15:46:20.193] [N] Profile loaded: WholesomeAQ - The Barrens
+[15:46:20.193] [D] Selected sub-profile: WholesomeAQ - The Barrens (L1-80)
+[15:46:20.193] [N] [Wholesome Auto Quest] Profile refreshed - Selected 1 quest work candidate(s). selected quest=868;stage=Objective;state=Eligible. excluded quest=104;stage=Pickup;npc=392;reason=outside-scan-radius;retry=context-change excluded quest=1058;stage=Pickup;npc=3995;reason=outside-scan-radius;retry=context-change excluded quest=1062;stage=TurnIn;npc=4049;reason=outside-scan-radius;retry=context-change excluded quest=1069;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=1087;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=1093;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=11127;stage=Pickup;scope=QuestStage;retry=2026-09-08T08:11:46.7206406Z;state=Quarantined. excluded quest=1195;stage=Pickup;npc=4721;reason=outside-scan-radius;retry=context-change excluded quest=14106;stage=Pickup;scope=QuestStage;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=1483;stage=Pickup;scope=NpcRelation;npc=3442;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=152;stage=Pickup;npc=392;reason=outside-scan-radius;retry=context-change excluded quest=2098;stage=Pickup;npc=6667;reason=outside-scan-radius;retry=context-change excluded quest=216;stage=Pickup;npc=12757;reason=outside-scan-radius;retry=context-change excluded quest=235;stage=Pickup;npc=10880;reason=outside-scan-radius;retry=context-change excluded quest=4542;stage=Pickup;npc=10079;reason=outside-scan-radius;retry=context-change excluded quest=470;stage=Pickup;npc=2111;reason=outside-scan-radius;retry=context-change excluded quest=472;stage=Pickup;npc=2097;reason=outside-scan-radius;retry=context-change excluded quest=4821;stage=Pickup;npc=10539;reason=outside-scan-radius;retry=context-change excluded quest=4921;stage=Objective;scope=QuestStage;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=493;stage=Pickup;npc=1937;reason=outside-scan-radius;retry=context-change excluded quest=494;stage=Pickup;npc=2214;reason=outside-scan-radius;retry=context-change excluded quest=496;stage=Pickup;npc=2216;reason=outside-scan-radius;retry=context-change excluded quest=498;stage=Pickup;npc=2229;reason=outside-scan-radius;retry=context-change excluded quest=501;stage=Pickup;npc=2216;reason=outside-scan-radius;retry=context-change excluded quest=516;stage=Pickup;npc=2121;reason=outside-scan-radius;retry=context-change excluded quest=527;stage=Pickup;npc=2215;reason=outside-scan-radius;retry=context-change excluded quest=546;stage=Pickup;npc=2418;reason=outside-scan-radius;retry=context-change excluded quest=549;stage=Pickup;npc=1763;reason=outside-scan-radius;retry=context-change excluded quest=6282;stage=Pickup;npc=11860;reason=outside-scan-radius;retry=context-change excluded quest=6381;stage=Pickup;npc=11864;reason=outside-scan-radius;retry=context-change excluded quest=6382;stage=TurnIn;npc=12696;reason=outside-scan-radius;retry=context-change excluded quest=6383;stage=Pickup;scope=NpcRelation;npc=12696;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=6393;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=6441;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T11:53:44.3110653Z;state=Quarantined. excluded quest=6442;stage=Pickup;npc=12719;reason=outside-scan-radius;retry=context-change excluded quest=6461;stage=TurnIn;npc=12816;reason=outside-scan-radius;retry=context-change excluded quest=6462;stage=Pickup;npc=12721;reason=outside-scan-radius;retry=context-change excluded quest=6541;stage=Pickup;scope=NpcRelation;npc=3429;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=6543;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T11:57:53.5602004Z;state=Quarantined. excluded quest=742;stage=Pickup;npc=10881;reason=outside-scan-radius;retry=context-change excluded quest=747;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T13:06:01.2335671Z;state=Quarantined. excluded quest=747;stage=Objective;scope=Objective;objective=1;retry=2026-09-08T13:30:35.1661766Z;state=Quarantined. excluded quest=7790;stage=Pickup;scope=QuestStage;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=843;stage=Pickup;npc=3341;reason=outside-scan-radius;retry=context-change excluded quest=8487;stage=TurnIn;scope=QuestStage;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=867;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T13:46:19.0888015Z;state=Quarantined. excluded quest=868;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T12:02:33.6094572Z;state=Quarantined. excluded quest=878;stage=AncestorCorrection;scope=QuestStage;retry=context-change;state=Attempting. excluded quest=8889;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=8889;stage=Objective;objective=1;reason=outside-scan-radius;retry=context-change. excluded quest=8889;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;scope=QuestStage;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=893;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T12:48:05.9519603Z;state=Quarantined. excluded quest=893;stage=Objective;scope=Objective;objective=1;retry=2026-09-08T12:48:05.9520521Z;state=Quarantined. excluded quest=893;stage=Objective;scope=Objective;objective=2;retry=2026-09-08T12:48:05.9520844Z;state=Quarantined. excluded quest=896;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=9067;stage=Objective;scope=Objective;objective=0;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=9151;stage=Pickup;npc=16199;reason=outside-scan-radius;retry=context-change excluded quest=9157;stage=TurnIn;scope=QuestStage;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen. excluded quest=9275;stage=Pickup;npc=16464;reason=outside-scan-radius;retry=context-change excluded quest=9388;stage=Pickup;scope=QuestStage;retry=2026-09-08T08:11:46.7260419Z;state=Quarantined. excluded quest=9389;stage=Pickup;scope=QuestStage;retry=2026-09-08T08:11:46.7261207Z;state=Quarantined. excluded quest=9425;stage=Pickup;npc=16287;reason=outside-scan-radius;retry=context-change excluded quest=9428;stage=Pickup;npc=17098;reason=outside-scan-radius;retry=context-change excluded quest=9749;stage=Pickup;scope=QuestStage;retry=2026-09-08T07:48:05.9519688Z;state=HalfOpen.
+[15:46:20.303] [D] [If] Condition is true, executing If body
+[15:46:20.579] [N] [Objective] Goal: Collect Digging Claw x 1
+[15:46:20.579] [D] Goal: Goal: Collect Digging Claw x 1
+[15:46:20.581] [D] [FBE] Advancing past [ForcedQuestObjective Objective: [CollectItemObjective ItemID: 5059, Count: 1]] (IsDone=true), remaining nodes: 1
+[15:46:20.582] [D] [Pulse] Slow bot root: 286ms bot=Wholesome Auto Quest poi=None combat=False
+[15:46:20.606] [D] [QuestRecovery] quest=878, stage=Objective, old=Attempting, new=Eligible, reason=None, episode=0, attempt=0, retry=
+[15:46:20.717] [D] [FBE] Advancing past Bots.Quest.QuestOrder.ForcedIf (IsDone=true), remaining nodes: 1
+[15:46:20.717] [N] Nothing more to do. Stopping bot.
+[15:46:20.717] [N] Bot stopping! Reason: User request
+[15:46:20.759] [D] Cleared POI
+[15:46:20.761] [D] Worker thread exited cleanly

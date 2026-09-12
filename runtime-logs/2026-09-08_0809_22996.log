@@ -1,0 +1,133 @@
+[08:09:48.165] [N] CopilotBuddy v1.6.6 started. Original HonorBuddy by Apoc, raphus, highvoltz, bobby53, xanathos, chinajade. Ported to WotLK 3.3.5a by Likon69.
+[08:09:48.520] [N] Searching for WoW process...
+[08:09:48.670] [N] Please wait a few seconds while CopilotBuddy initializes.
+[08:09:48.670] [D] Using WoW with process ID 14972
+[08:09:48.670] [D] Platform: x86
+[08:09:48.670] [D] Executable Path: D:\World of Warcraft 3.3.5a\CB\
+[08:09:48.701] [D] [ObjectManager] WoW build 12340 detected - OK
+[08:09:48.704] [D] [ObjectManager] D3DDevicePtr = 0x00C5DF88
+[08:09:48.704] [D] [ObjectManager] devicePtrAddr = 0x052FCBD0
+[08:09:48.704] [D] [ObjectManager] device = 0x0A4F5E00 (at 0x0530054C)
+[08:09:48.704] [D] [ObjectManager] vtablePtr = 0x0A4F8D5C
+[08:09:48.704] [D] [ObjectManager] endSceneAddr = 0x643348F0 (at 0x0A4F8E04)
+[08:09:48.704] [D] [ObjectManager] D3D: Device=0x0A4F5E00, VTable=0x0A4F8D5C, EndScene=0x643348F0
+[08:09:48.704] [D] [ObjectManager] Creating ExecutorRand...
+[08:09:48.765] [D] [ObjectManager] ExecutorRand created, IsInitialized = True
+[08:09:48.765] [D] [ObjectManager] EndScene hook succeeded
+[08:09:48.770] [D] [ObjectManager] Initialized successfully
+[08:09:48.771] [N] Attached to WoW with ID 14972
+[08:09:48.773] [N] Character is a level 25 BloodElf Paladin
+[08:09:48.774] [N] Current zone is Stonetalon Mountains
+[08:09:48.823] [D] [Settings] Loaded settings for character: Jeof
+[08:09:48.823] [N] Initializing Combat Routines...
+[08:09:48.830] [D] Looking for routines in: D:\World of Warcraft 3.3.5a\CB\Routines
+[08:09:48.832] [D] Compiling Singular wotlk
+[08:09:51.376] [N] Loaded routine: Singular Wotlk for class Paladin
+[08:09:51.376] [N] Loaded 1 combat routine(s)
+[08:09:51.392] [N] Chose Singular Wotlk as your combat class.
+[08:09:51.392] [N] Confirmed Paladin as your class.
+[08:09:51.393] [N] [Singular] Starting Singular v2.0.0.0
+[08:09:51.393] [N] [Singular] Determining talent spec.
+[08:09:54.493] [D] [Singular-DEBUG] [Talents] Best Tree: 16
+[08:09:54.493] [N] [Singular] Current spec is  Retribution Paladin
+[08:09:54.503] [D] [WoWDb] Loaded 237 DBC tables
+[08:09:54.504] [D] [WoWDb]   Key=235 (0x000000EB) Rows=1893
+[08:09:54.504] [D] [WoWDb]   Key=236 (0x000000EC) Rows=7655
+[08:09:54.504] [D] [WoWDb]   Key=237 (0x000000ED) Rows=86
+[08:09:54.504] [D] [WoWDb]   Key=238 (0x000000EE) Rows=506
+[08:09:54.504] [D] [WoWDb]   Key=239 (0x000000EF) Rows=291
+[08:09:54.504] [D] [WoWDb] Lock DBC lookup: FOUND (rows=388)
+[08:09:54.504] [D] [WoWDb] ClientDb.Lock enum value = 356 (0x00000164)
+[08:09:54.505] [D] [Singular-DEBUG] Creating Combat behavior.
+[08:09:54.506] [N] [Singular] Building method list
+[08:09:54.507] [N] [Singular] Added 450 methods
+[08:09:54.509] [D] [Singular-DEBUG] CreateRetributionPaladinNormalPullAndCombat is a match!
+[08:09:54.509] [N] [Singular]  Using CreateRetributionPaladinNormalPullAndCombat for Retribution Paladin - Combat (Priority: 0)
+[08:09:54.520] [D] [Singular-DEBUG] Creating Pull behavior.
+[08:09:54.521] [D] [Singular-DEBUG] CreateRetributionPaladinNormalPullAndCombat is a match!
+[08:09:54.521] [N] [Singular]  Using CreateRetributionPaladinNormalPullAndCombat for Retribution Paladin - Pull (Priority: 0)
+[08:09:54.523] [D] [Singular-DEBUG] Creating Rest behavior.
+[08:09:54.523] [D] [Singular-DEBUG] CreateRetributionPaladinRest is a match!
+[08:09:54.523] [N] [Singular]  Using CreateRetributionPaladinRest for Retribution Paladin - Rest (Priority: 0)
+[08:09:54.525] [D] [Singular-DEBUG] Creating CombatBuffs behavior.
+[08:09:54.527] [D] [Singular-DEBUG] Creating Heal behavior.
+[08:09:54.527] [D] [Singular-DEBUG] CreateRetributionPaladinHeal is a match!
+[08:09:54.527] [N] [Singular]  Using CreateRetributionPaladinHeal for Retribution Paladin - Heal (Priority: 0)
+[08:09:54.528] [D] [Singular-DEBUG] CreateRetributionPaladinNormalPullAndCombat is a match!
+[08:09:54.528] [N] [Singular]  Using CreateRetributionPaladinNormalPullAndCombat for Retribution Paladin - Heal (Priority: 0)
+[08:09:54.529] [D] [Singular-DEBUG] Creating PullBuffs behavior.
+[08:09:54.530] [D] [Singular-DEBUG] Creating PreCombatBuffs behavior.
+[08:09:54.531] [D] [Singular-DEBUG] CreatePaladinPreCombatBuffs is a match!
+[08:09:54.531] [N] [Singular]  Using CreatePaladinPreCombatBuffs for Retribution Paladin - PreCombatBuffs (Priority: 0)
+[08:09:54.534] [N] [Singular] Behaviors created!
+[08:09:54.607] [D] [Singular-DEBUG] Attached combat log
+[08:09:54.608] [D] Routine initialized successfully
+[08:09:54.609] [D] Loading built-in bots from assembly: CopilotBuddy
+[08:09:54.630] [D] Found bot type: PartyBot.DiscoBot
+[08:09:54.630] [N] New bot added: Party Bot
+[08:09:54.630] [D] Loaded built-in bot: Party Bot
+[08:09:54.630] [D] Found bot type: Bots.Quest.QuestBot
+[08:09:54.630] [N] New bot added: Questing
+[08:09:54.630] [D] Loaded built-in bot: Questing
+[08:09:54.630] [D] Found bot type: Bots.Grind.LevelBot
+[08:09:54.630] [N] New bot added: Grind
+[08:09:54.630] [D] Loaded built-in bot: Grind
+[08:09:54.630] [D] Found bot type: Bots.Gatherbuddy.GatherbuddyBot
+[08:09:54.631] [N] New bot added: GatherBuddy
+[08:09:54.631] [D] Loaded built-in bot: GatherBuddy
+[08:09:54.631] [D] Found bot type: Bots.DungeonBuddy.DungeonBuddy
+[08:09:54.632] [N] New bot added: DungeonBuddy
+[08:09:54.632] [D] Loaded built-in bot: DungeonBuddy
+[08:09:54.632] [D] Found bot type: Bots.BGBuddy.BGBuddy
+[08:09:54.632] [N] New bot added: BGBuddy
+[08:09:54.632] [D] Loaded built-in bot: BGBuddy
+[08:09:54.632] [D] Built-in bot loading complete. 6 bots loaded.
+[08:09:54.636] [N] Loading bots from: D:\World of Warcraft 3.3.5a\CB\Bots
+[08:09:54.644] [N] Found 123 source files
+[08:09:54.656] [N] Found 0 dll files
+[08:09:54.657] [N] Compiling: CombatBot.cs
+[08:09:54.828] [N] Compiled successfully: CombatBot.cs
+[08:09:54.828] [N] Compiling directory: Auto Angler 2/ (23 files)
+[08:09:55.105] [N] Compiled successfully: Auto Angler 2/
+[08:09:55.105] [N] Compiling directory: LazyRaider/ (4 files)
+[08:09:55.330] [N] Compiled successfully: LazyRaider/
+[08:09:55.330] [N] Compiling directory: ProfessionBuddy/ (52 files)
+[08:09:56.178] [N] Compiled successfully: ProfessionBuddy/
+[08:09:56.178] [N] Compiling directory: Templar/ (27 files)
+[08:09:56.580] [N] Compiled successfully: Templar/
+[08:09:56.580] [N] Compiling directory: Tyrael/ (5 files)
+[08:09:56.762] [N] Compiled successfully: Tyrael/
+[08:09:56.762] [N] Compiling directory: WholesomeAutoQuest-master/ (11 files)
+[08:09:57.336] [N] Compiled successfully: WholesomeAutoQuest-master/
+[08:09:57.336] [N] ClassCollection contains 7 compiled bots
+[08:09:57.336] [N] Adding bot: Combat Bot
+[08:09:57.337] [N] New bot added: Combat Bot
+[08:09:57.337] [N] Adding bot: AutoAngler
+[08:09:57.337] [N] New bot added: AutoAngler
+[08:09:57.337] [N] Adding bot: LazyRaider
+[08:09:57.337] [N] New bot added: LazyRaider
+[08:09:57.337] [N] Adding bot: ProfessionBuddy
+[08:09:57.337] [N] New bot added: ProfessionBuddy
+[08:09:57.337] [N] Adding bot: Templar
+[08:09:57.337] [N] New bot added: Templar
+[08:09:57.337] [N] Adding bot: Tyrael
+[08:09:57.337] [N] New bot added: Tyrael
+[08:09:57.337] [N] Adding bot: Wholesome Auto Quest
+[08:09:57.337] [N] New bot added: Wholesome Auto Quest
+[08:09:57.337] [N] Bot loading complete. 13 bots loaded.
+[08:09:57.337] [N] Initializing Plugins...
+[08:09:58.258] [D] [WeightSet] Selected weight set: Paladin-Holy
+[08:09:59.806] [N] [DeathStallRecovery] Enabled. The bot will stop if corpse recovery makes no movement progress for 60 seconds.
+[08:10:01.056] [D] Rarekiller: Loading config file: D:\World of Warcraft 3.3.5a\CB\Plugins\RareKiller\config\Rarekiller.config
+[08:10:01.056] [D] Root element is missing.
+[08:10:01.056] [N] Rarekiller: Continuing with Default Config Values
+[08:10:01.058] [D] Rarekiller: Loading config file: D:\World of Warcraft 3.3.5a\CB\Plugins\RareKiller\config\Rarekiller.config
+[08:10:01.058] [D] Root element is missing.
+[08:10:01.058] [N] Rarekiller: Continuing with Default Config Values
+[08:10:01.058] [N] Rare Mob Killer - Version 3.3 Loaded.
+[08:10:01.058] [N] Rarekiller Part Tamer: I'm no Hunter. Deactivate the Tamer Part
+[08:10:01.710] [N] [VendorRecovery] Enabled. Failed Sell/Repair vendors will be skipped after 35 seconds at the NPC.
+[08:10:01.891] [N] Plugin loading complete. 16 plugins loaded.
+[08:10:01.891] [N] Plugins refreshed successfully.
+[08:10:01.894] [N] Changing current bot to: Wholesome Auto Quest
+[08:10:15.614] [D] [Settings] Saved all settings

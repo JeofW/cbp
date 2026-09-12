@@ -1,0 +1,1791 @@
+[16:42:05.471] [N] CopilotBuddy v1.6.6 started. Original HonorBuddy by Apoc, raphus, highvoltz, bobby53, xanathos, chinajade. Ported to WotLK 3.3.5a by Likon69.
+[16:42:05.882] [N] Searching for WoW process...
+[16:42:06.044] [N] Please wait a few seconds while CopilotBuddy initializes.
+[16:42:06.044] [D] Using WoW with process ID 3804
+[16:42:06.044] [D] Platform: x86
+[16:42:06.044] [D] Executable Path: D:\World of Warcraft 3.3.5a\CB\
+[16:42:06.075] [D] [ObjectManager] WoW build 12340 detected - OK
+[16:42:06.077] [D] [ObjectManager] D3DDevicePtr = 0x00C5DF88
+[16:42:06.077] [D] [ObjectManager] devicePtrAddr = 0x0533CBD0
+[16:42:06.077] [D] [ObjectManager] device = 0x0A4FA140 (at 0x0534054C)
+[16:42:06.077] [D] [ObjectManager] vtablePtr = 0x0A4FD09C
+[16:42:06.077] [D] [ObjectManager] endSceneAddr = 0x643348F0 (at 0x0A4FD144)
+[16:42:06.077] [D] [ObjectManager] D3D: Device=0x0A4FA140, VTable=0x0A4FD09C, EndScene=0x643348F0
+[16:42:06.077] [D] [ObjectManager] Creating ExecutorRand...
+[16:42:06.120] [D] [ObjectManager] ExecutorRand created, IsInitialized = True
+[16:42:06.121] [D] [ObjectManager] EndScene hook succeeded
+[16:42:06.126] [D] [ObjectManager] Initialized successfully
+[16:42:06.127] [N] Attached to WoW with ID 3804
+[16:42:06.129] [N] Character is a level 32 BloodElf Paladin
+[16:42:06.129] [N] Current zone is Scarlet Monastery
+[16:42:06.142] [D] [Settings] Loaded settings for character: Jeof
+[16:42:06.143] [N] Initializing Combat Routines...
+[16:42:06.146] [D] Looking for routines in: D:\World of Warcraft 3.3.5a\CB\Routines
+[16:42:06.147] [D] Compiling Singular wotlk
+[16:42:08.616] [N] Loaded routine: Singular Wotlk for class Paladin
+[16:42:08.616] [N] Loaded 1 combat routine(s)
+[16:42:08.623] [N] Chose Singular Wotlk as your combat class.
+[16:42:08.623] [N] Confirmed Paladin as your class.
+[16:42:08.624] [N] [Singular] Starting Singular v2.0.0.0
+[16:42:08.624] [N] [Singular] Determining talent spec.
+[16:42:09.299] [D] [Singular-DEBUG] [Talents] Best Tree: 20
+[16:42:09.300] [N] [Singular] Current spec is  Retribution Paladin
+[16:42:09.310] [D] [WoWDb] Loaded 237 DBC tables
+[16:42:09.310] [D] [WoWDb]   Key=235 (0x000000EB) Rows=1893
+[16:42:09.310] [D] [WoWDb]   Key=236 (0x000000EC) Rows=7655
+[16:42:09.310] [D] [WoWDb]   Key=237 (0x000000ED) Rows=86
+[16:42:09.310] [D] [WoWDb]   Key=238 (0x000000EE) Rows=506
+[16:42:09.310] [D] [WoWDb]   Key=239 (0x000000EF) Rows=291
+[16:42:09.310] [D] [WoWDb] Lock DBC lookup: FOUND (rows=388)
+[16:42:09.310] [D] [WoWDb] ClientDb.Lock enum value = 356 (0x00000164)
+[16:42:09.311] [D] [Singular-DEBUG] Creating Combat behavior.
+[16:42:09.312] [N] [Singular] Building method list
+[16:42:09.313] [N] [Singular] Added 459 methods
+[16:42:09.315] [D] [Singular-DEBUG] CreateRetributionPaladinInstancePullAndCombat is a match!
+[16:42:09.316] [N] [Singular]  Using CreateRetributionPaladinInstancePullAndCombat for Retribution Paladin - Combat (Priority: 0)
+[16:42:09.327] [D] [Singular-DEBUG] Creating Pull behavior.
+[16:42:09.328] [D] [Singular-DEBUG] CreateRetributionPaladinInstancePullAndCombat is a match!
+[16:42:09.328] [N] [Singular]  Using CreateRetributionPaladinInstancePullAndCombat for Retribution Paladin - Pull (Priority: 0)
+[16:42:09.329] [D] [Singular-DEBUG] Creating Rest behavior.
+[16:42:09.330] [D] [Singular-DEBUG] CreateRetributionPaladinRest is a match!
+[16:42:09.330] [N] [Singular]  Using CreateRetributionPaladinRest for Retribution Paladin - Rest (Priority: 0)
+[16:42:09.332] [D] [Singular-DEBUG] Creating CombatBuffs behavior.
+[16:42:09.333] [D] [Singular-DEBUG] Creating Heal behavior.
+[16:42:09.334] [D] [Singular-DEBUG] CreateRetributionPaladinHeal is a match!
+[16:42:09.334] [N] [Singular]  Using CreateRetributionPaladinHeal for Retribution Paladin - Heal (Priority: 0)
+[16:42:09.335] [D] [Singular-DEBUG] Creating PullBuffs behavior.
+[16:42:09.336] [D] [Singular-DEBUG] Creating PreCombatBuffs behavior.
+[16:42:09.337] [D] [Singular-DEBUG] CreatePaladinPreCombatBuffs is a match!
+[16:42:09.337] [N] [Singular]  Using CreatePaladinPreCombatBuffs for Retribution Paladin - PreCombatBuffs (Priority: 0)
+[16:42:09.341] [N] [Singular] Behaviors created!
+[16:42:09.363] [D] [Singular-DEBUG] Attached combat log
+[16:42:09.363] [D] Routine initialized successfully
+[16:42:09.365] [D] Loading built-in bots from assembly: CopilotBuddy
+[16:42:09.387] [D] Found bot type: PartyBot.DiscoBot
+[16:42:09.387] [N] New bot added: Party Bot
+[16:42:09.387] [D] Loaded built-in bot: Party Bot
+[16:42:09.387] [D] Found bot type: Bots.Quest.QuestBot
+[16:42:09.387] [N] New bot added: Questing
+[16:42:09.387] [D] Loaded built-in bot: Questing
+[16:42:09.387] [D] Found bot type: Bots.Grind.LevelBot
+[16:42:09.387] [N] New bot added: Grind
+[16:42:09.387] [D] Loaded built-in bot: Grind
+[16:42:09.387] [D] Found bot type: Bots.Gatherbuddy.GatherbuddyBot
+[16:42:09.387] [N] New bot added: GatherBuddy
+[16:42:09.387] [D] Loaded built-in bot: GatherBuddy
+[16:42:09.387] [D] Found bot type: Bots.DungeonBuddy.DungeonBuddy
+[16:42:09.388] [N] New bot added: DungeonBuddy
+[16:42:09.388] [D] Loaded built-in bot: DungeonBuddy
+[16:42:09.388] [D] Found bot type: Bots.BGBuddy.BGBuddy
+[16:42:09.389] [N] New bot added: BGBuddy
+[16:42:09.389] [D] Loaded built-in bot: BGBuddy
+[16:42:09.389] [D] Built-in bot loading complete. 6 bots loaded.
+[16:42:09.392] [N] Loading bots from: D:\World of Warcraft 3.3.5a\CB\Bots
+[16:42:09.406] [N] Found 123 source files
+[16:42:09.413] [N] Found 0 dll files
+[16:42:09.413] [N] Compiling: CombatBot.cs
+[16:42:09.569] [N] Compiled successfully: CombatBot.cs
+[16:42:09.569] [N] Compiling directory: Auto Angler 2/ (23 files)
+[16:42:09.862] [N] Compiled successfully: Auto Angler 2/
+[16:42:09.862] [N] Compiling directory: LazyRaider/ (4 files)
+[16:42:10.123] [N] Compiled successfully: LazyRaider/
+[16:42:10.123] [N] Compiling directory: ProfessionBuddy/ (52 files)
+[16:42:10.920] [N] Compiled successfully: ProfessionBuddy/
+[16:42:10.920] [N] Compiling directory: Templar/ (27 files)
+[16:42:11.322] [N] Compiled successfully: Templar/
+[16:42:11.322] [N] Compiling directory: Tyrael/ (5 files)
+[16:42:11.496] [N] Compiled successfully: Tyrael/
+[16:42:11.496] [N] Compiling directory: WholesomeAutoQuest-master/ (11 files)
+[16:42:12.089] [N] Compiled successfully: WholesomeAutoQuest-master/
+[16:42:12.089] [N] ClassCollection contains 7 compiled bots
+[16:42:12.089] [N] Adding bot: Combat Bot
+[16:42:12.089] [N] New bot added: Combat Bot
+[16:42:12.089] [N] Adding bot: AutoAngler
+[16:42:12.089] [N] New bot added: AutoAngler
+[16:42:12.089] [N] Adding bot: LazyRaider
+[16:42:12.089] [N] New bot added: LazyRaider
+[16:42:12.089] [N] Adding bot: ProfessionBuddy
+[16:42:12.089] [N] New bot added: ProfessionBuddy
+[16:42:12.089] [N] Adding bot: Templar
+[16:42:12.089] [N] New bot added: Templar
+[16:42:12.089] [N] Adding bot: Tyrael
+[16:42:12.089] [N] New bot added: Tyrael
+[16:42:12.089] [N] Adding bot: Wholesome Auto Quest
+[16:42:12.089] [N] New bot added: Wholesome Auto Quest
+[16:42:12.089] [N] Bot loading complete. 13 bots loaded.
+[16:42:12.089] [N] Initializing Plugins...
+[16:42:14.676] [D] Rarekiller: Loading config file: D:\World of Warcraft 3.3.5a\CB\Plugins\RareKiller\config\Rarekiller.config
+[16:42:14.676] [D] Root element is missing.
+[16:42:14.676] [N] Rarekiller: Continuing with Default Config Values
+[16:42:14.678] [D] Rarekiller: Loading config file: D:\World of Warcraft 3.3.5a\CB\Plugins\RareKiller\config\Rarekiller.config
+[16:42:14.678] [D] Root element is missing.
+[16:42:14.678] [N] Rarekiller: Continuing with Default Config Values
+[16:42:14.678] [N] Rare Mob Killer - Version 3.3 Loaded.
+[16:42:14.678] [N] Rarekiller Part Tamer: I'm no Hunter. Deactivate the Tamer Part
+[16:42:15.440] [N] Plugin loading complete. 16 plugins loaded.
+[16:42:15.440] [N] Plugins refreshed successfully.
+[16:42:15.442] [N] Changing current bot to: Combat Bot
+[16:42:17.249] [D] [Settings] Saved all settings
+[16:42:17.250] [N] Starting the bot.
+[16:42:17.251] [N] Currently Using BotBase : Combat Bot
+[16:42:17.253] [N] Character is a level 32 BloodElf Paladin
+[16:42:17.255] [N] Current zone is Scarlet Monastery
+[16:42:17.256] [D] Loading profile from D:\World of Warcraft 3.3.5a\CB\Default Profiles\Questing-profiles-master\Auto-Loader.xml
+[16:42:17.395] [D] [QuestBehaviorHelper] Initialized with 264 assembly references
+[16:42:17.395] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\UserSettings.cs
+[16:42:17.395] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\Message.cs
+[16:42:17.397] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.408] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.409] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.409] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.409] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.410] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.410] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.410] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.411] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.411] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.411] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.412] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.412] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.412] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.412] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.413] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.413] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.413] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.414] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.414] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.414] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.414] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.415] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.415] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.415] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.415] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.416] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.416] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.416] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.417] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.417] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.417] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.417] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.418] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.418] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.418] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.418] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.419] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.419] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.419] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.420] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.420] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.420] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.420] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.421] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.421] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.421] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.421] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.422] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.422] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.422] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.423] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.423] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.423] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.423] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.424] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.424] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.424] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.425] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.425] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.425] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.425] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.426] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.426] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.426] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.426] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.427] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.427] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.427] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.428] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.428] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.429] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.429] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.429] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.429] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.430] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.430] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.430] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.430] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.431] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.431] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.431] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.432] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.432] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.432] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.432] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.433] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.433] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.433] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.433] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.434] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.434] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.434] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.434] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.435] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.435] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.435] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.436] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.436] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.436] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.436] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.437] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.437] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.437] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.437] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.438] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.438] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.438] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.439] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.439] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.439] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.439] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.440] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.440] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.440] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.440] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.441] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.441] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.441] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.442] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.442] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.442] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.442] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.443] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.443] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.443] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.443] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.444] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.444] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.444] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.444] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.445] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.445] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\LoadProfile.cs
+[16:42:17.446] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\UserDialog.cs
+[16:42:17.466] [D] [CompileBatch] Compiling 137 entries...
+[16:42:17.712] [D] [CompileBatch] Compiled successfully.
+[16:42:17.716] [N] Profile loaded: Auto-Loader
+[16:42:17.718] [D] Selected sub-profile: Auto-Loader (L1-81)
+[16:42:17.758] [N] [SpellDb] Loaded 49816 spells from Spells.bin
+[16:42:17.772] [D] Setting CVars: autoSelfCast=1, autoLootDefault=1
+[16:42:17.797] [D] Cleared POI
+[16:42:17.805] [D] Refresh() called. LastCount=0, CurrentCount=39
+[16:42:17.805] [N] Building spell book
+[16:42:17.807] [D] Found 39 spells from LocalPlayer.KnownSpells
+[16:42:17.807] [N] Adding Arcane Affinity
+[16:42:17.809] [N] Adding Arcane Torrent
+[16:42:17.811] [N] Adding Auto Attack
+[16:42:17.812] [N] Adding Block
+[16:42:17.814] [N] Adding Dodge
+[16:42:17.815] [N] Adding Magic Resistance
+[16:42:17.817] [N] Adding Parry
+[16:42:17.819] [N] Adding Blessing of Wisdom
+[16:42:17.820] [N] Adding Concentration Aura
+[16:42:17.822] [N] Adding Consecration
+[16:42:17.823] [N] Adding Exorcism
+[16:42:17.825] [N] Adding Flash of Light
+[16:42:17.827] [N] Adding Holy Light
+[16:42:17.828] [N] Adding Lay on Hands
+[16:42:17.830] [N] Adding Purify
+[16:42:17.831] [N] Adding Seal of Light
+[16:42:17.833] [N] Adding Seal of Righteousness
+[16:42:17.835] [N] Adding Sense Undead
+[16:42:17.836] [N] Adding Turn Evil
+[16:42:17.838] [N] Adding Blessing of Kings
+[16:42:17.840] [N] Adding Devotion Aura
+[16:42:17.841] [N] Adding Divine Intervention
+[16:42:17.843] [N] Adding Divine Protection
+[16:42:17.845] [N] Adding Frost Resistance Aura
+[16:42:17.846] [N] Adding Hammer of Justice
+[16:42:17.848] [N] Adding Hand of Freedom
+[16:42:17.850] [N] Adding Hand of Protection
+[16:42:17.851] [N] Adding Hand of Reckoning
+[16:42:17.853] [N] Adding Hand of Salvation
+[16:42:17.855] [N] Adding Righteous Defense
+[16:42:17.857] [N] Adding Righteous Fury
+[16:42:17.858] [N] Adding Seal of Justice
+[16:42:17.860] [N] Adding Shadow Resistance Aura
+[16:42:17.862] [N] Adding Blessing of Might
+[16:42:17.863] [N] Adding Judgement of Justice
+[16:42:17.865] [N] Adding Judgement of Light
+[16:42:17.867] [N] Adding Judgement of Wisdom
+[16:42:17.869] [N] Adding Retribution Aura
+[16:42:17.871] [N] Adding Seal of Command
+[16:42:17.873] [N] Spell book built
+[16:42:17.875] [D] [SpellManager] Initialize — subscribed to BotEvents.OnBotStart
+[16:42:18.079] [D] [WeightSet] Selected weight set: Paladin-Retribution
+[16:42:18.209] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=196ms
+[16:42:18.216] [D] [Pulse] Slow shared pulse: total=310ms movement=0 objects=1 lua=12 info=1 loot=12 targeting=76 events=1 plugins=197 routine=6
+[16:42:18.298] [N] [Singular] Casting Blessing of Might on Myself
+[16:42:18.299] [D] Spell_C::CastSpell(19836, 0, 0x6000000007EAB80, 0)
+[16:42:20.399] [N] [Singular] Casting Blessing of Might on Warrior
+[16:42:20.399] [D] Spell_C::CastSpell(19836, 0, 0x6000000007F7529, 0)
+[16:42:21.213] [N] [Singular] Currect target is invalid. Switching to Scarlet Sentry!
+[16:42:21.225] [D] [Pulse] Slow bot root: 507ms bot=Combat Bot poi=None combat=True
+[16:42:21.498] [D] [Singular-DEBUG] Switched targets!
+[16:42:21.498] [D] [Singular-DEBUG] Melee Distance: 5
+[16:42:21.498] [D] [Singular-DEBUG] Health: 89.91436726926736
+[16:42:21.498] [D] [Singular-DEBUG] Level: 30
+[16:42:21.958] [N] Loaded 0 global blackspots
+[16:42:21.959] [D] [Blackspot] Area cost initialized: area 17 = 60x
+[16:42:21.966] [D] [Nav] Loaded 9 mesh tiles for one path query
+[16:42:21.999] [D] [Pulse] Slow bot root: 401ms bot=Combat Bot poi=None combat=True
+[16:42:22.355] [D] [Pulse] Slow bot root: 326ms bot=Combat Bot poi=None combat=True
+[16:42:22.737] [D] [Pulse] Slow bot root: 350ms bot=Combat Bot poi=None combat=True
+[16:42:23.052] [D] [Pulse] Slow bot root: 282ms bot=Combat Bot poi=None combat=True
+[16:42:23.350] [N] [Singular] Casting Judgement of Light on Scarlet Sentry
+[16:42:23.350] [D] Spell_C::CastSpell(20271, 0, 0xF1300010BB00003B, 0)
+[16:42:23.358] [D] [Pulse] Slow bot root: 265ms bot=Combat Bot poi=None combat=True
+[16:42:23.741] [D] [Pulse] Slow bot root: 353ms bot=Combat Bot poi=None combat=True
+[16:42:24.110] [D] [Pulse] Slow bot root: 337ms bot=Combat Bot poi=None combat=True
+[16:42:24.465] [D] [Pulse] Slow bot root: 329ms bot=Combat Bot poi=None combat=True
+[16:42:24.829] [D] [Pulse] Slow bot root: 335ms bot=Combat Bot poi=None combat=True
+[16:42:25.007] [N] [Singular] Casting Exorcism on Scarlet Sentry
+[16:42:25.007] [D] Spell_C::CastSpell(5614, 0, 0xF1300010BB00003B, 0)
+[16:42:25.019] [D] [Pulse] Slow bot root: 161ms bot=Combat Bot poi=None combat=True
+[16:42:25.376] [D] [Pulse] Slow bot root: 329ms bot=Combat Bot poi=None combat=True
+[16:42:25.739] [D] [Pulse] Slow bot root: 334ms bot=Combat Bot poi=None combat=True
+[16:42:26.105] [D] [Pulse] Slow bot root: 335ms bot=Combat Bot poi=None combat=True
+[16:42:26.458] [D] [Pulse] Slow bot root: 325ms bot=Combat Bot poi=None combat=True
+[16:42:26.816] [D] [Pulse] Slow bot root: 333ms bot=Combat Bot poi=None combat=True
+[16:42:27.147] [D] [Pulse] Slow bot root: 305ms bot=Combat Bot poi=None combat=True
+[16:42:27.461] [D] [Pulse] Slow bot root: 294ms bot=Combat Bot poi=None combat=True
+[16:42:27.537] [N] [Singular] Currect target is invalid. Switching to Scarlet Sentry!
+[16:42:27.834] [D] [Singular-DEBUG] Switched targets!
+[16:42:27.834] [D] [Singular-DEBUG] Melee Distance: 5
+[16:42:27.835] [D] [Singular-DEBUG] Health: 55.66127497621313
+[16:42:27.835] [D] [Singular-DEBUG] Level: 30
+[16:42:28.241] [D] [Pulse] Slow bot root: 313ms bot=Combat Bot poi=None combat=True
+[16:42:28.685] [D] [Pulse] Slow bot root: 402ms bot=Combat Bot poi=None combat=True
+[16:42:29.088] [D] [Pulse] Slow bot root: 346ms bot=Combat Bot poi=None combat=False
+[16:42:29.354] [N] [Singular] Casting Blessing of Might on Druid
+[16:42:29.354] [D] Spell_C::CastSpell(19836, 0, 0x6000000007F7519, 0)
+[16:42:29.389] [D] [Pulse] Slow bot root: 249ms bot=Combat Bot poi=None combat=True
+[16:42:29.744] [D] [Pulse] Slow bot root: 303ms bot=Combat Bot poi=None combat=True
+[16:42:30.086] [D] [Pulse] Slow bot root: 314ms bot=Combat Bot poi=None combat=True
+[16:42:30.459] [D] [Pulse] Slow bot root: 316ms bot=Combat Bot poi=None combat=True
+[16:42:30.834] [D] [Pulse] Slow bot root: 323ms bot=Combat Bot poi=None combat=True
+[16:42:31.185] [D] [Pulse] Slow bot root: 310ms bot=Combat Bot poi=None combat=True
+[16:42:31.519] [D] [Pulse] Slow bot root: 311ms bot=Combat Bot poi=None combat=True
+[16:42:31.828] [N] [Singular] Casting Judgement of Light on Scarlet Sentry
+[16:42:31.828] [D] Spell_C::CastSpell(20271, 0, 0xF1300010BB00003A, 0)
+[16:42:31.862] [D] [Pulse] Slow bot root: 322ms bot=Combat Bot poi=None combat=True
+[16:42:32.249] [D] [Pulse] Slow bot root: 334ms bot=Combat Bot poi=None combat=True
+[16:42:32.603] [D] [Pulse] Slow bot root: 301ms bot=Combat Bot poi=None combat=True
+[16:42:32.854] [D] [Pulse] Slow bot root: 219ms bot=Combat Bot poi=None combat=True
+[16:42:33.086] [D] [Pulse] Slow bot root: 184ms bot=Combat Bot poi=None combat=True
+[16:42:33.321] [D] [Pulse] Slow bot root: 187ms bot=Combat Bot poi=None combat=True
+[16:42:33.588] [D] [Pulse] Slow bot root: 186ms bot=Combat Bot poi=None combat=True
+[16:42:33.821] [D] [Pulse] Slow bot root: 188ms bot=Combat Bot poi=None combat=True
+[16:42:34.053] [D] [Pulse] Slow bot root: 185ms bot=Combat Bot poi=None combat=True
+[16:42:34.289] [D] [Pulse] Slow bot root: 187ms bot=Combat Bot poi=None combat=True
+[16:42:34.527] [D] [Pulse] Slow bot root: 188ms bot=Combat Bot poi=None combat=True
+[16:42:34.762] [D] [Pulse] Slow bot root: 187ms bot=Combat Bot poi=None combat=True
+[16:42:34.996] [D] [Pulse] Slow bot root: 188ms bot=Combat Bot poi=None combat=True
+[16:42:35.235] [D] [Pulse] Slow bot root: 193ms bot=Combat Bot poi=None combat=False
+[16:42:35.527] [N] [Singular] Casting Blessing of Might on Mage
+[16:42:35.527] [D] Spell_C::CastSpell(19836, 0, 0x6000000007E1ACD, 0)
+[16:42:35.561] [D] [Pulse] Slow bot root: 281ms bot=Combat Bot poi=None combat=False
+[16:42:35.728] [D] [Pulse] Slow bot root: 100ms bot=Combat Bot poi=None combat=False
+[16:42:37.695] [D] [Pulse] Slow bot root: 185ms bot=Combat Bot poi=None combat=False
+[16:42:37.929] [D] [Pulse] Slow bot root: 185ms bot=Combat Bot poi=None combat=False
+[16:42:38.173] [D] [Pulse] Slow bot root: 193ms bot=Combat Bot poi=None combat=False
+[16:42:38.407] [D] [Pulse] Slow bot root: 183ms bot=Combat Bot poi=None combat=False
+[16:42:38.674] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=183ms
+[16:42:38.674] [D] [Pulse] Slow shared pulse: total=266ms movement=0 objects=0 lua=32 info=0 loot=1 targeting=48 events=0 plugins=183 routine=0
+[16:42:38.871] [D] [Pulse] Slow bot root: 196ms bot=Combat Bot poi=None combat=False
+[16:42:39.103] [D] [Pulse] Slow bot root: 181ms bot=Combat Bot poi=None combat=False
+[16:42:39.337] [D] [Pulse] Slow bot root: 181ms bot=Combat Bot poi=None combat=False
+[16:42:39.571] [D] [Pulse] Slow bot root: 182ms bot=Combat Bot poi=None combat=False
+[16:42:41.243] [D] [Pulse] Slow bot root: 183ms bot=Combat Bot poi=None combat=False
+[16:42:41.475] [D] [Pulse] Slow bot root: 180ms bot=Combat Bot poi=None combat=False
+[16:42:41.710] [D] [Pulse] Slow bot root: 184ms bot=Combat Bot poi=None combat=False
+[16:42:41.948] [D] [Pulse] Slow bot root: 185ms bot=Combat Bot poi=None combat=False
+[16:42:42.182] [D] [Pulse] Slow bot root: 185ms bot=Combat Bot poi=None combat=False
+[16:42:42.416] [D] [Pulse] Slow bot root: 183ms bot=Combat Bot poi=None combat=False
+[16:42:42.649] [D] [Pulse] Slow bot root: 183ms bot=Combat Bot poi=None combat=False
+[16:42:42.885] [D] [Pulse] Slow bot root: 180ms bot=Combat Bot poi=None combat=False
+[16:42:43.120] [D] [Pulse] Slow bot root: 185ms bot=Combat Bot poi=None combat=False
+[16:42:43.354] [D] [Pulse] Slow bot root: 184ms bot=Combat Bot poi=None combat=False
+[16:42:43.586] [D] [Pulse] Slow bot root: 182ms bot=Combat Bot poi=None combat=False
+[16:42:43.853] [D] [Pulse] Slow bot root: 183ms bot=Combat Bot poi=None combat=False
+[16:42:44.087] [D] [Pulse] Slow bot root: 185ms bot=Combat Bot poi=None combat=False
+[16:42:44.319] [D] [Pulse] Slow bot root: 182ms bot=Combat Bot poi=None combat=False
+[16:42:44.557] [D] [Pulse] Slow bot root: 188ms bot=Combat Bot poi=None combat=False
+[16:42:44.791] [D] [Pulse] Slow bot root: 183ms bot=Combat Bot poi=None combat=False
+[16:42:45.021] [D] [Pulse] Slow bot root: 177ms bot=Combat Bot poi=None combat=False
+[16:42:45.255] [D] [Pulse] Slow bot root: 184ms bot=Combat Bot poi=None combat=False
+[16:42:45.492] [D] [Pulse] Slow bot root: 187ms bot=Combat Bot poi=None combat=False
+[16:42:45.727] [D] [Pulse] Slow bot root: 185ms bot=Combat Bot poi=None combat=False
+[16:42:45.963] [D] [Pulse] Slow bot root: 187ms bot=Combat Bot poi=None combat=False
+[16:42:46.196] [D] [Pulse] Slow bot root: 183ms bot=Combat Bot poi=None combat=False
+[16:42:46.433] [D] [Pulse] Slow bot root: 185ms bot=Combat Bot poi=None combat=False
+[16:42:46.666] [D] [Pulse] Slow bot root: 183ms bot=Combat Bot poi=None combat=False
+[16:42:46.901] [D] [Pulse] Slow bot root: 185ms bot=Combat Bot poi=None combat=False
+[16:42:47.136] [D] [Pulse] Slow bot root: 184ms bot=Combat Bot poi=None combat=False
+[16:42:47.371] [D] [Pulse] Slow bot root: 185ms bot=Combat Bot poi=None combat=False
+[16:42:47.605] [D] [Pulse] Slow bot root: 185ms bot=Combat Bot poi=None combat=False
+[16:42:47.841] [D] [Pulse] Slow bot root: 186ms bot=Combat Bot poi=None combat=False
+[16:42:48.077] [D] [Pulse] Slow bot root: 185ms bot=Combat Bot poi=None combat=False
+[16:42:48.307] [D] [Pulse] Slow bot root: 181ms bot=Combat Bot poi=None combat=False
+[16:42:48.544] [D] [Pulse] Slow bot root: 185ms bot=Combat Bot poi=None combat=False
+[16:42:48.781] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=188ms
+[16:42:48.781] [D] [Pulse] Slow shared pulse: total=237ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=46 events=0 plugins=188 routine=0
+[16:42:48.982] [D] [Pulse] Slow bot root: 201ms bot=Combat Bot poi=None combat=False
+[16:42:49.253] [D] [Pulse] Slow bot root: 187ms bot=Combat Bot poi=None combat=False
+[16:42:49.489] [D] [Pulse] Slow bot root: 186ms bot=Combat Bot poi=None combat=False
+[16:42:49.722] [D] [Pulse] Slow bot root: 183ms bot=Combat Bot poi=None combat=False
+[16:42:49.960] [D] [Pulse] Slow bot root: 188ms bot=Combat Bot poi=None combat=False
+[16:42:50.194] [D] [Pulse] Slow bot root: 185ms bot=Combat Bot poi=None combat=False
+[16:42:50.430] [D] [Pulse] Slow bot root: 186ms bot=Combat Bot poi=None combat=False
+[16:42:50.664] [D] [Pulse] Slow bot root: 186ms bot=Combat Bot poi=None combat=False
+[16:42:50.898] [D] [Pulse] Slow bot root: 186ms bot=Combat Bot poi=None combat=False
+[16:42:51.132] [D] [Pulse] Slow bot root: 181ms bot=Combat Bot poi=None combat=False
+[16:42:51.366] [D] [Pulse] Slow bot root: 183ms bot=Combat Bot poi=None combat=False
+[16:42:51.603] [D] [Pulse] Slow bot root: 187ms bot=Combat Bot poi=None combat=False
+[16:42:51.837] [D] [Pulse] Slow bot root: 182ms bot=Combat Bot poi=None combat=False
+[16:42:52.071] [D] [Pulse] Slow bot root: 181ms bot=Combat Bot poi=None combat=False
+[16:42:52.303] [D] [Pulse] Slow bot root: 181ms bot=Combat Bot poi=None combat=False
+[16:42:52.536] [D] [Pulse] Slow bot root: 182ms bot=Combat Bot poi=None combat=False
+[16:42:52.772] [D] [Pulse] Slow bot root: 185ms bot=Combat Bot poi=None combat=False
+[16:42:53.005] [D] [Pulse] Slow bot root: 179ms bot=Combat Bot poi=None combat=False
+[16:42:53.238] [D] [Pulse] Slow bot root: 181ms bot=Combat Bot poi=None combat=False
+[16:42:53.473] [D] [Pulse] Slow bot root: 183ms bot=Combat Bot poi=None combat=False
+[16:42:53.708] [D] [Pulse] Slow bot root: 185ms bot=Combat Bot poi=None combat=False
+[16:42:53.942] [D] [Pulse] Slow bot root: 186ms bot=Combat Bot poi=None combat=False
+[16:42:54.176] [D] [Pulse] Slow bot root: 185ms bot=Combat Bot poi=None combat=False
+[16:42:54.359] [D] [Pulse] Slow bot root: 100ms bot=Combat Bot poi=None combat=False
+[16:42:57.713] [D] [Singular-DEBUG] Switched targets!
+[16:42:57.713] [D] [Singular-DEBUG] Melee Distance: 5.9433336
+[16:42:57.713] [D] [Singular-DEBUG] Health: 79.61605584642234
+[16:42:57.713] [D] [Singular-DEBUG] Level: 30
+[16:42:57.921] [N] [Singular] Casting Exorcism on Scarlet Torturer
+[16:42:57.922] [D] Spell_C::CastSpell(5614, 0, 0xF1300010D2000041, 0)
+[16:42:57.932] [D] [Pulse] Slow bot root: 218ms bot=Combat Bot poi=None combat=True
+[16:42:58.305] [D] [Pulse] Slow bot root: 341ms bot=Combat Bot poi=None combat=True
+[16:42:58.688] [D] [Pulse] Slow bot root: 349ms bot=Combat Bot poi=None combat=True
+[16:42:59.073] [D] [Pulse] Slow bot root: 352ms bot=Combat Bot poi=None combat=True
+[16:42:59.467] [D] [Pulse] Slow bot root: 343ms bot=Combat Bot poi=None combat=True
+[16:42:59.835] [N] [Singular] Casting Judgement of Light on Scarlet Torturer
+[16:42:59.835] [D] Spell_C::CastSpell(20271, 0, 0xF1300010D2000041, 0)
+[16:42:59.869] [D] [Pulse] Slow bot root: 346ms bot=Combat Bot poi=None combat=True
+[16:43:00.303] [D] [Pulse] Slow bot root: 380ms bot=Combat Bot poi=None combat=True
+[16:43:00.709] [D] [Pulse] Slow bot root: 351ms bot=Combat Bot poi=None combat=True
+[16:43:01.111] [D] [Pulse] Slow bot root: 352ms bot=Combat Bot poi=None combat=True
+[16:43:01.542] [N] [Singular] Casting Consecration on Scarlet Torturer
+[16:43:01.542] [D] Spell_C::CastSpell(20116, 0, 0xF1300010D2000041, 0)
+[16:43:01.576] [D] [Pulse] Slow bot root: 415ms bot=Combat Bot poi=None combat=True
+[16:43:02.013] [D] [Pulse] Slow bot root: 381ms bot=Combat Bot poi=None combat=True
+[16:43:02.421] [D] [Pulse] Slow bot root: 352ms bot=Combat Bot poi=None combat=True
+[16:43:02.814] [D] [Pulse] Slow bot root: 348ms bot=Combat Bot poi=None combat=True
+[16:43:03.212] [D] [Pulse] Slow bot root: 346ms bot=Combat Bot poi=None combat=True
+[16:43:03.612] [D] [Pulse] Slow bot root: 344ms bot=Combat Bot poi=None combat=True
+[16:43:03.981] [D] [Pulse] Slow bot root: 343ms bot=Combat Bot poi=None combat=True
+[16:43:04.381] [D] [Pulse] Slow bot root: 344ms bot=Combat Bot poi=None combat=True
+[16:43:04.788] [D] [Pulse] Slow bot root: 350ms bot=Combat Bot poi=None combat=True
+[16:43:05.225] [D] [Pulse] Slow bot root: 355ms bot=Combat Bot poi=None combat=True
+[16:43:05.623] [D] [Pulse] Slow bot root: 353ms bot=Combat Bot poi=None combat=True
+[16:43:06.045] [D] [Pulse] Slow bot root: 363ms bot=Combat Bot poi=None combat=True
+[16:43:06.413] [D] [Pulse] Slow bot root: 344ms bot=Combat Bot poi=None combat=True
+[16:43:07.021] [D] [Pulse] Slow bot root: 378ms bot=Combat Bot poi=None combat=True
+[16:43:07.381] [D] [Pulse] Slow bot root: 336ms bot=Combat Bot poi=None combat=True
+[16:43:07.749] [D] [Pulse] Slow bot root: 336ms bot=Combat Bot poi=None combat=True
+[16:43:07.785] [N] [Singular] Currect target is invalid. Switching to Scarlet Torturer!
+[16:43:08.117] [D] [Singular-DEBUG] Switched targets!
+[16:43:08.117] [D] [Singular-DEBUG] Melee Distance: 5.9433336
+[16:43:08.117] [D] [Singular-DEBUG] Health: 18.88307155322862
+[16:43:08.117] [D] [Singular-DEBUG] Level: 30
+[16:43:08.797] [N] [Singular] Casting Judgement of Light on Scarlet Torturer
+[16:43:08.797] [D] Spell_C::CastSpell(20271, 0, 0xF1300010D2000040, 0)
+[16:43:08.830] [D] [Pulse] Slow bot root: 414ms bot=Combat Bot poi=None combat=True
+[16:43:09.240] [D] [Pulse] Slow bot root: 357ms bot=Combat Bot poi=None combat=True
+[16:43:09.658] [D] [Pulse] Slow bot root: 374ms bot=Combat Bot poi=None combat=True
+[16:43:10.102] [D] [Pulse] Slow bot root: 416ms bot=Combat Bot poi=None combat=True
+[16:43:10.188] [D] [Singular-DEBUG] Switched targets!
+[16:43:10.188] [D] [Singular-DEBUG] Melee Distance: 5
+[16:43:10.188] [D] [Singular-DEBUG] Health: 38.204108681245856
+[16:43:10.188] [D] [Singular-DEBUG] Level: 31
+[16:43:10.670] [N] [Singular] Casting Consecration on Scarlet Torturer
+[16:43:10.670] [D] Spell_C::CastSpell(20116, 0, 0xF1300010D200003C, 0)
+[16:43:10.705] [D] [Pulse] Slow bot root: 417ms bot=Combat Bot poi=None combat=True
+[16:43:11.102] [D] [Pulse] Slow bot root: 346ms bot=Combat Bot poi=None combat=True
+[16:43:11.471] [D] [Pulse] Slow bot root: 315ms bot=Combat Bot poi=None combat=True
+[16:43:11.844] [D] [Pulse] Slow bot root: 322ms bot=Combat Bot poi=None combat=True
+[16:43:12.221] [D] [Pulse] Slow bot root: 329ms bot=Combat Bot poi=None combat=True
+[16:43:12.573] [D] [Pulse] Slow bot root: 318ms bot=Combat Bot poi=None combat=True
+[16:43:12.939] [D] [Pulse] Slow bot root: 316ms bot=Combat Bot poi=None combat=True
+[16:43:13.309] [D] [Pulse] Slow bot root: 318ms bot=Combat Bot poi=None combat=True
+[16:43:13.679] [D] [Pulse] Slow bot root: 321ms bot=Combat Bot poi=None combat=True
+[16:43:14.047] [D] [Pulse] Slow bot root: 323ms bot=Combat Bot poi=None combat=True
+[16:43:14.414] [D] [Pulse] Slow bot root: 318ms bot=Combat Bot poi=None combat=True
+[16:43:14.783] [D] [Pulse] Slow bot root: 317ms bot=Combat Bot poi=None combat=True
+[16:43:14.989] [N] [Singular] Casting Exorcism on Scarlet Torturer
+[16:43:14.989] [D] Spell_C::CastSpell(5614, 0, 0xF1300010D200003C, 0)
+[16:43:15.019] [D] [Pulse] Slow bot root: 215ms bot=Combat Bot poi=None combat=True
+[16:43:15.379] [D] [Pulse] Slow bot root: 308ms bot=Combat Bot poi=None combat=True
+[16:43:15.972] [D] [Pulse] Slow bot root: 334ms bot=Combat Bot poi=None combat=True
+[16:43:16.243] [D] [Pulse] Slow bot root: 240ms bot=Combat Bot poi=None combat=True
+[16:43:16.510] [D] [Pulse] Slow bot root: 240ms bot=Combat Bot poi=None combat=True
+[16:43:16.782] [D] [Pulse] Slow bot root: 243ms bot=Combat Bot poi=None combat=True
+[16:43:17.260] [D] [Pulse] Slow bot root: 455ms bot=Combat Bot poi=None combat=True
+[16:43:17.599] [N] [Singular] Casting Judgement of Light on Scarlet Torturer
+[16:43:17.600] [D] Spell_C::CastSpell(20271, 0, 0xF1300010D200003C, 0)
+[16:43:17.631] [D] [Pulse] Slow bot root: 322ms bot=Combat Bot poi=None combat=True
+[16:43:17.992] [D] [Pulse] Slow bot root: 311ms bot=Combat Bot poi=None combat=True
+[16:43:18.115] [N] [Singular] Currect target is invalid. Switching to Scarlet Scryer!
+[16:43:18.445] [D] [Singular-DEBUG] Switched targets!
+[16:43:18.446] [D] [Singular-DEBUG] Melee Distance: 5
+[16:43:18.446] [D] [Singular-DEBUG] Health: 21.647058823529413
+[16:43:18.446] [D] [Singular-DEBUG] Level: 31
+[16:43:19.030] [D] [Pulse] Slow bot root: 485ms bot=Combat Bot poi=None combat=True
+[16:43:19.498] [D] [Pulse] Slow bot root: 418ms bot=Combat Bot poi=None combat=True
+[16:43:19.875] [D] [Pulse] Slow bot root: 326ms bot=Combat Bot poi=None combat=True
+[16:43:20.240] [D] [Pulse] Slow bot root: 320ms bot=Combat Bot poi=None combat=True
+[16:43:20.611] [D] [Pulse] Slow bot root: 325ms bot=Combat Bot poi=None combat=True
+[16:43:20.979] [D] [Pulse] Slow bot root: 287ms bot=Combat Bot poi=None combat=True
+[16:43:21.444] [D] [Pulse] Slow bot root: 417ms bot=Combat Bot poi=None combat=True
+[16:43:21.921] [D] [Pulse] Slow bot root: 426ms bot=Combat Bot poi=None combat=True
+[16:43:22.518] [D] [Pulse] Slow bot root: 547ms bot=Combat Bot poi=None combat=True
+[16:43:23.125] [D] [Pulse] Slow bot root: 505ms bot=Combat Bot poi=None combat=True
+[16:43:23.466] [D] [Pulse] Slow bot root: 291ms bot=Combat Bot poi=None combat=True
+[16:43:23.796] [D] [Pulse] Slow bot root: 300ms bot=Combat Bot poi=None combat=True
+[16:43:23.827] [N] [Singular] Currect target is invalid. Switching to Scarlet Torturer!
+[16:43:24.163] [D] [Singular-DEBUG] Switched targets!
+[16:43:24.163] [D] [Singular-DEBUG] Melee Distance: 5.9433336
+[16:43:24.163] [D] [Singular-DEBUG] Health: 2.485089463220676
+[16:43:24.163] [D] [Singular-DEBUG] Level: 31
+[16:43:24.770] [D] [Pulse] Slow bot root: 344ms bot=Combat Bot poi=None combat=False
+[16:43:26.093] [D] [Pulse] Slow bot root: 126ms bot=Combat Bot poi=None combat=False
+[16:43:26.325] [D] [Pulse] Slow bot root: 184ms bot=Combat Bot poi=None combat=False
+[16:43:26.560] [D] [Pulse] Slow bot root: 185ms bot=Combat Bot poi=None combat=False
+[16:43:26.793] [D] [Pulse] Slow bot root: 187ms bot=Combat Bot poi=None combat=False
+[16:43:27.028] [D] [Pulse] Slow bot root: 187ms bot=Combat Bot poi=None combat=False
+[16:43:27.268] [D] [Pulse] Slow bot root: 192ms bot=Combat Bot poi=None combat=False
+[16:43:27.498] [D] [Pulse] Slow bot root: 187ms bot=Combat Bot poi=None combat=False
+[16:43:27.730] [D] [Pulse] Slow bot root: 184ms bot=Combat Bot poi=None combat=False
+[16:43:28.001] [D] [Pulse] Slow bot root: 173ms bot=Combat Bot poi=None combat=False
+[16:43:28.234] [D] [Pulse] Slow bot root: 184ms bot=Combat Bot poi=None combat=False
+[16:43:28.471] [D] [Pulse] Slow bot root: 189ms bot=Combat Bot poi=None combat=False
+[16:43:28.705] [D] [Pulse] Slow bot root: 186ms bot=Combat Bot poi=None combat=False
+[16:43:28.937] [D] [Pulse] Slow bot root: 185ms bot=Combat Bot poi=None combat=False
+[16:43:29.167] [D] [Pulse] Slow bot root: 183ms bot=Combat Bot poi=None combat=False
+[16:43:29.400] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=185ms
+[16:43:29.401] [D] [Pulse] Slow shared pulse: total=233ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=46 events=0 plugins=185 routine=0
+[16:43:29.603] [D] [Pulse] Slow bot root: 202ms bot=Combat Bot poi=None combat=False
+[16:43:29.838] [D] [Pulse] Slow bot root: 187ms bot=Combat Bot poi=None combat=False
+[16:43:30.071] [D] [Pulse] Slow bot root: 186ms bot=Combat Bot poi=None combat=False
+[16:43:30.309] [D] [Pulse] Slow bot root: 190ms bot=Combat Bot poi=None combat=False
+[16:43:30.574] [D] [Pulse] Slow bot root: 202ms bot=Combat Bot poi=None combat=False
+[16:43:30.807] [D] [Pulse] Slow bot root: 184ms bot=Combat Bot poi=None combat=False
+[16:43:31.075] [D] [Pulse] Slow bot root: 184ms bot=Combat Bot poi=None combat=False
+[16:43:31.309] [D] [Pulse] Slow bot root: 184ms bot=Combat Bot poi=None combat=False
+[16:43:31.545] [D] [Pulse] Slow bot root: 187ms bot=Combat Bot poi=None combat=False
+[16:43:31.777] [D] [Pulse] Slow bot root: 183ms bot=Combat Bot poi=None combat=False
+[16:43:32.012] [D] [Pulse] Slow bot root: 185ms bot=Combat Bot poi=None combat=False
+[16:43:32.248] [D] [Pulse] Slow bot root: 186ms bot=Combat Bot poi=None combat=False
+[16:43:32.483] [D] [Pulse] Slow bot root: 186ms bot=Combat Bot poi=None combat=False
+[16:43:32.715] [D] [Pulse] Slow bot root: 179ms bot=Combat Bot poi=None combat=False
+[16:43:32.947] [D] [Pulse] Slow bot root: 182ms bot=Combat Bot poi=None combat=False
+[16:43:33.182] [D] [Pulse] Slow bot root: 186ms bot=Combat Bot poi=None combat=False
+[16:43:33.416] [D] [Pulse] Slow bot root: 184ms bot=Combat Bot poi=None combat=False
+[16:43:33.646] [D] [Pulse] Slow bot root: 182ms bot=Combat Bot poi=None combat=False
+[16:43:33.795] [D] [Pulse] Slow bot root: 102ms bot=Combat Bot poi=None combat=False
+[16:43:37.913] [N] [Singular] Currect target is invalid. Switching to Interrogator Vishas!
+[16:43:38.196] [D] [Singular-DEBUG] Switched targets!
+[16:43:38.196] [D] [Singular-DEBUG] Melee Distance: 5
+[16:43:38.196] [D] [Singular-DEBUG] Health: 99.60585585585585
+[16:43:38.196] [D] [Singular-DEBUG] Level: 32
+[16:43:38.459] [N] [Singular] Casting Exorcism on Interrogator Vishas
+[16:43:38.459] [D] Spell_C::CastSpell(5614, 0, 0xF130000F8F00002F, 0)
+[16:43:38.468] [D] [Pulse] Slow bot root: 174ms bot=Combat Bot poi=None combat=True
+[16:43:38.753] [D] [Pulse] Slow bot root: 257ms bot=Combat Bot poi=None combat=True
+[16:43:39.130] [D] [Pulse] Slow bot root: 348ms bot=Combat Bot poi=None combat=True
+[16:43:39.301] [N] [Singular] Casting Exorcism on Interrogator Vishas
+[16:43:39.301] [D] Spell_C::CastSpell(5614, 0, 0xF130000F8F00002F, 0)
+[16:43:39.311] [D] [Pulse] Slow bot root: 153ms bot=Combat Bot poi=None combat=True
+[16:43:39.663] [D] [Pulse] Slow bot root: 324ms bot=Combat Bot poi=None combat=True
+[16:43:40.014] [D] [Pulse] Slow bot root: 325ms bot=Combat Bot poi=None combat=True
+[16:43:40.361] [D] [Pulse] Slow bot root: 322ms bot=Combat Bot poi=None combat=True
+[16:43:40.714] [D] [Pulse] Slow bot root: 331ms bot=Combat Bot poi=None combat=True
+[16:43:41.060] [D] [Pulse] Slow bot root: 324ms bot=Combat Bot poi=None combat=True
+[16:43:41.359] [N] [Singular] Casting Judgement of Light on Interrogator Vishas
+[16:43:41.359] [D] Spell_C::CastSpell(20271, 0, 0xF130000F8F00002F, 0)
+[16:43:41.366] [D] [Pulse] Slow bot root: 280ms bot=Combat Bot poi=None combat=True
+[16:43:41.727] [D] [Pulse] Slow bot root: 330ms bot=Combat Bot poi=None combat=True
+[16:43:42.073] [D] [Pulse] Slow bot root: 325ms bot=Combat Bot poi=None combat=True
+[16:43:42.446] [D] [Pulse] Slow bot root: 352ms bot=Combat Bot poi=None combat=True
+[16:43:42.832] [D] [Pulse] Slow bot root: 359ms bot=Combat Bot poi=None combat=True
+[16:43:43.213] [D] [Pulse] Slow bot root: 358ms bot=Combat Bot poi=None combat=True
+[16:43:43.602] [D] [Pulse] Slow bot root: 365ms bot=Combat Bot poi=None combat=True
+[16:43:43.994] [D] [Pulse] Slow bot root: 370ms bot=Combat Bot poi=None combat=True
+[16:43:44.402] [D] [Pulse] Slow bot root: 361ms bot=Combat Bot poi=None combat=True
+[16:43:44.806] [D] [Pulse] Slow bot root: 363ms bot=Combat Bot poi=None combat=True
+[16:43:45.204] [D] [Pulse] Slow bot root: 357ms bot=Combat Bot poi=None combat=True
+[16:43:45.616] [D] [Pulse] Slow bot root: 364ms bot=Combat Bot poi=None combat=True
+[16:43:46.010] [D] [Pulse] Slow bot root: 359ms bot=Combat Bot poi=None combat=True
+[16:43:46.416] [D] [Pulse] Slow bot root: 363ms bot=Combat Bot poi=None combat=True
+[16:43:46.848] [D] [Pulse] Slow bot root: 364ms bot=Combat Bot poi=None combat=True
+[16:43:47.254] [D] [Pulse] Slow bot root: 366ms bot=Combat Bot poi=None combat=True
+[16:43:47.658] [D] [Pulse] Slow bot root: 367ms bot=Combat Bot poi=None combat=True
+[16:43:48.052] [D] [Pulse] Slow bot root: 363ms bot=Combat Bot poi=None combat=True
+[16:43:48.461] [D] [Pulse] Slow bot root: 371ms bot=Combat Bot poi=None combat=True
+[16:43:48.862] [D] [Pulse] Slow bot root: 368ms bot=Combat Bot poi=None combat=True
+[16:43:49.261] [D] [Pulse] Slow bot root: 366ms bot=Combat Bot poi=None combat=True
+[16:43:49.662] [D] [Pulse] Slow bot root: 371ms bot=Combat Bot poi=None combat=True
+[16:43:50.041] [N] [Singular] Casting Judgement of Light on Interrogator Vishas
+[16:43:50.041] [D] Spell_C::CastSpell(20271, 0, 0xF130000F8F00002F, 0)
+[16:43:50.075] [D] [Pulse] Slow bot root: 378ms bot=Combat Bot poi=None combat=True
+[16:43:50.524] [D] [Pulse] Slow bot root: 397ms bot=Combat Bot poi=None combat=True
+[16:43:50.939] [D] [Pulse] Slow bot root: 378ms bot=Combat Bot poi=None combat=True
+[16:43:51.345] [D] [Pulse] Slow bot root: 381ms bot=Combat Bot poi=None combat=True
+[16:43:51.779] [D] [Pulse] Slow bot root: 378ms bot=Combat Bot poi=None combat=True
+[16:43:52.245] [D] [Pulse] Slow bot root: 381ms bot=Combat Bot poi=None combat=True
+[16:43:52.676] [D] [Pulse] Slow bot root: 381ms bot=Combat Bot poi=None combat=True
+[16:43:53.108] [D] [Pulse] Slow bot root: 382ms bot=Combat Bot poi=None combat=True
+[16:43:53.546] [D] [Pulse] Slow bot root: 385ms bot=Combat Bot poi=None combat=True
+[16:43:53.984] [D] [Pulse] Slow bot root: 382ms bot=Combat Bot poi=None combat=True
+[16:43:54.418] [D] [Pulse] Slow bot root: 384ms bot=Combat Bot poi=None combat=True
+[16:43:54.860] [D] [Pulse] Slow bot root: 389ms bot=Combat Bot poi=None combat=True
+[16:43:55.285] [D] [Pulse] Slow bot root: 383ms bot=Combat Bot poi=None combat=True
+[16:43:55.685] [D] [Pulse] Slow bot root: 381ms bot=Combat Bot poi=None combat=True
+[16:43:56.084] [D] [Pulse] Slow bot root: 377ms bot=Combat Bot poi=None combat=True
+[16:43:56.362] [N] [Singular] Casting Exorcism on Interrogator Vishas
+[16:43:56.362] [D] Spell_C::CastSpell(5614, 0, 0xF130000F8F00002F, 0)
+[16:43:56.396] [D] [Pulse] Slow bot root: 285ms bot=Combat Bot poi=None combat=True
+[16:43:56.825] [D] [Pulse] Slow bot root: 380ms bot=Combat Bot poi=None combat=True
+[16:43:57.264] [D] [Pulse] Slow bot root: 380ms bot=Combat Bot poi=None combat=True
+[16:43:57.695] [D] [Pulse] Slow bot root: 381ms bot=Combat Bot poi=None combat=True
+[16:43:58.133] [D] [Pulse] Slow bot root: 391ms bot=Combat Bot poi=None combat=True
+[16:43:58.564] [N] [Singular] Casting Judgement of Light on Interrogator Vishas
+[16:43:58.564] [D] Spell_C::CastSpell(20271, 0, 0xF130000F8F00002F, 0)
+[16:43:58.597] [D] [Pulse] Slow bot root: 416ms bot=Combat Bot poi=None combat=True
+[16:43:59.040] [D] [Pulse] Slow bot root: 389ms bot=Combat Bot poi=None combat=True
+[16:43:59.414] [D] [Pulse] Slow bot root: 332ms bot=Combat Bot poi=None combat=True
+[16:43:59.693] [D] [Pulse] Slow bot root: 243ms bot=Combat Bot poi=None combat=True
+[16:43:59.950] [D] [Pulse] Slow bot root: 230ms bot=Combat Bot poi=None combat=True
+[16:44:00.219] [D] [Pulse] Slow bot root: 232ms bot=Combat Bot poi=None combat=True
+[16:44:00.482] [D] [Pulse] Slow bot root: 230ms bot=Combat Bot poi=None combat=True
+[16:44:00.483] [N] [AutoEquip]: Loot roll in progress
+[16:44:00.602] [N] [AutoEquip]: Equipped item in slot:SecondaryHandSlot scored -1 while loot-roll item scored:103.67646
+[16:44:00.636] [N] [AutoEquip]: Rolling Greed
+[16:44:00.718] [D] [Pulse] Slow shared pulse: total=235ms movement=0 objects=0 lua=188 info=0 loot=1 targeting=45 events=0 plugins=0 routine=0
+[16:44:00.950] [D] [Pulse] Slow bot root: 232ms bot=Combat Bot poi=None combat=True
+[16:44:01.248] [D] [Pulse] Slow bot root: 229ms bot=Combat Bot poi=None combat=False
+[16:44:01.506] [N] [Singular] Casting Blessing of Kings on Warlock
+[16:44:01.506] [D] Spell_C::CastSpell(20217, 0, 0x6000000007F7824, 0)
+[16:44:01.540] [D] [Pulse] Slow bot root: 250ms bot=Combat Bot poi=None combat=False
+[16:44:01.707] [D] [Pulse] Slow bot root: 119ms bot=Combat Bot poi=None combat=False
+[16:44:01.875] [D] [Pulse] Slow bot root: 119ms bot=Combat Bot poi=None combat=False
+[16:44:02.078] [D] [Pulse] Slow bot root: 119ms bot=Combat Bot poi=None combat=False
+[16:44:02.242] [D] [Pulse] Slow bot root: 120ms bot=Combat Bot poi=None combat=False
+[16:44:02.409] [D] [Pulse] Slow bot root: 119ms bot=Combat Bot poi=None combat=False
+[16:44:02.575] [D] [Pulse] Slow bot root: 119ms bot=Combat Bot poi=None combat=False
+[16:44:02.742] [D] [Pulse] Slow bot root: 118ms bot=Combat Bot poi=None combat=False
+[16:44:02.910] [D] [Pulse] Slow bot root: 119ms bot=Combat Bot poi=None combat=False
+[16:44:03.076] [D] [Pulse] Slow bot root: 119ms bot=Combat Bot poi=None combat=False
+[16:44:03.243] [D] [Pulse] Slow bot root: 119ms bot=Combat Bot poi=None combat=False
+[16:44:03.410] [D] [Pulse] Slow bot root: 119ms bot=Combat Bot poi=None combat=False
+[16:44:03.576] [D] [Pulse] Slow bot root: 118ms bot=Combat Bot poi=None combat=False
+[16:44:03.878] [D] [Pulse] Slow bot root: 255ms bot=Combat Bot poi=None combat=False
+[16:44:04.205] [D] [Pulse] Slow bot root: 277ms bot=Combat Bot poi=None combat=False
+[16:44:04.507] [D] [Pulse] Slow bot root: 254ms bot=Combat Bot poi=None combat=False
+[16:44:04.807] [D] [Pulse] Slow bot root: 252ms bot=Combat Bot poi=None combat=False
+[16:44:05.111] [D] [Pulse] Slow bot root: 255ms bot=Combat Bot poi=None combat=False
+[16:44:05.414] [D] [Pulse] Slow bot root: 255ms bot=Combat Bot poi=None combat=False
+[16:44:05.715] [D] [Pulse] Slow bot root: 253ms bot=Combat Bot poi=None combat=False
+[16:44:06.052] [D] [Pulse] Slow bot root: 269ms bot=Combat Bot poi=None combat=False
+[16:44:06.353] [D] [Pulse] Slow bot root: 252ms bot=Combat Bot poi=None combat=False
+[16:44:06.653] [D] [Pulse] Slow bot root: 252ms bot=Combat Bot poi=None combat=False
+[16:44:06.953] [D] [Pulse] Slow bot root: 253ms bot=Combat Bot poi=None combat=False
+[16:44:07.288] [D] [Pulse] Slow bot root: 253ms bot=Combat Bot poi=None combat=False
+[16:44:07.591] [D] [Pulse] Slow bot root: 255ms bot=Combat Bot poi=None combat=False
+[16:44:07.893] [D] [Pulse] Slow bot root: 253ms bot=Combat Bot poi=None combat=False
+[16:44:08.192] [D] [Pulse] Slow bot root: 252ms bot=Combat Bot poi=None combat=False
+[16:44:08.497] [D] [Pulse] Slow bot root: 255ms bot=Combat Bot poi=None combat=False
+[16:44:08.798] [D] [Pulse] Slow bot root: 252ms bot=Combat Bot poi=None combat=False
+[16:44:09.102] [D] [Pulse] Slow bot root: 256ms bot=Combat Bot poi=None combat=False
+[16:44:09.403] [D] [Pulse] Slow bot root: 252ms bot=Combat Bot poi=None combat=False
+[16:44:09.704] [D] [Pulse] Slow bot root: 253ms bot=Combat Bot poi=None combat=False
+[16:44:09.936] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=185ms
+[16:44:10.201] [D] [Pulse] Slow bot root: 264ms bot=Combat Bot poi=None combat=False
+[16:44:10.504] [D] [Pulse] Slow bot root: 255ms bot=Combat Bot poi=None combat=False
+[16:44:10.806] [D] [Pulse] Slow bot root: 253ms bot=Combat Bot poi=None combat=False
+[16:44:11.105] [D] [Pulse] Slow bot root: 252ms bot=Combat Bot poi=None combat=False
+[16:44:11.406] [D] [Pulse] Slow bot root: 251ms bot=Combat Bot poi=None combat=False
+[16:44:11.706] [D] [Pulse] Slow bot root: 252ms bot=Combat Bot poi=None combat=False
+[16:44:12.007] [D] [Pulse] Slow bot root: 254ms bot=Combat Bot poi=None combat=False
+[16:44:12.344] [D] [Pulse] Slow bot root: 255ms bot=Combat Bot poi=None combat=False
+[16:44:12.642] [D] [Pulse] Slow bot root: 251ms bot=Combat Bot poi=None combat=False
+[16:44:12.944] [D] [Pulse] Slow bot root: 253ms bot=Combat Bot poi=None combat=False
+[16:44:13.247] [D] [Pulse] Slow bot root: 255ms bot=Combat Bot poi=None combat=False
+[16:44:13.548] [D] [Pulse] Slow bot root: 253ms bot=Combat Bot poi=None combat=False
+[16:44:13.915] [N] [Singular] Casting Seal of Righteousness on Myself
+[16:44:13.915] [D] Spell_C::CastSpell(21084, 0, 0x6000000007EAB80, 0)
+[16:44:13.950] [D] [Pulse] Slow bot root: 353ms bot=Combat Bot poi=None combat=False
+[16:44:14.251] [D] [Pulse] Slow bot root: 249ms bot=Combat Bot poi=None combat=False
+[16:44:14.552] [D] [Pulse] Slow bot root: 252ms bot=Combat Bot poi=None combat=False
+[16:44:14.854] [D] [Pulse] Slow bot root: 252ms bot=Combat Bot poi=None combat=False
+[16:44:15.152] [D] [Pulse] Slow bot root: 250ms bot=Combat Bot poi=None combat=False
+[16:44:15.454] [D] [Pulse] Slow bot root: 252ms bot=Combat Bot poi=None combat=False
+[16:44:15.757] [D] [Pulse] Slow bot root: 254ms bot=Combat Bot poi=None combat=False
+[16:44:16.058] [D] [Pulse] Slow bot root: 252ms bot=Combat Bot poi=None combat=False
+[16:44:16.359] [D] [Pulse] Slow bot root: 251ms bot=Combat Bot poi=None combat=False
+[16:44:16.658] [D] [Pulse] Slow bot root: 251ms bot=Combat Bot poi=None combat=False
+[16:44:16.960] [D] [Pulse] Slow bot root: 252ms bot=Combat Bot poi=None combat=False
+[16:44:17.262] [D] [Pulse] Slow bot root: 254ms bot=Combat Bot poi=None combat=False
+[16:44:17.593] [D] [Pulse] Slow bot root: 250ms bot=Combat Bot poi=None combat=False
+[16:44:17.893] [D] [Pulse] Slow bot root: 249ms bot=Combat Bot poi=None combat=False
+[16:44:18.063] [D] [Pulse] Slow bot root: 122ms bot=Combat Bot poi=None combat=False
+[16:44:24.897] [D] [Singular-DEBUG] Switched targets!
+[16:44:24.897] [D] [Singular-DEBUG] Melee Distance: 5
+[16:44:24.897] [D] [Singular-DEBUG] Health: 95.26176275679258
+[16:44:24.897] [D] [Singular-DEBUG] Level: 31
+[16:44:25.210] [N] [Singular] Casting Exorcism on Scarlet Torturer
+[16:44:25.210] [D] Spell_C::CastSpell(5614, 0, 0xF1300010D2000083, 0)
+[16:44:25.225] [D] [Pulse] Slow bot root: 327ms bot=Combat Bot poi=None combat=True
+[16:44:25.748] [D] [Pulse] Slow bot root: 489ms bot=Combat Bot poi=None combat=True
+[16:44:26.243] [D] [Pulse] Slow bot root: 468ms bot=Combat Bot poi=None combat=True
+[16:44:26.730] [D] [Pulse] Slow bot root: 465ms bot=Combat Bot poi=None combat=True
+[16:44:27.133] [N] [Singular] Casting Judgement of Light on Scarlet Torturer
+[16:44:27.133] [D] Spell_C::CastSpell(20271, 0, 0xF1300010D2000083, 0)
+[16:44:27.139] [D] [Pulse] Slow bot root: 382ms bot=Combat Bot poi=None combat=True
+[16:44:27.675] [D] [MeshNavigator] Skipped 2 path nodes
+[16:44:27.741] [D] [Pulse] Slow bot root: 577ms bot=Combat Bot poi=None combat=True
+[16:44:28.403] [D] [Pulse] Slow bot root: 573ms bot=Combat Bot poi=None combat=True
+[16:44:28.928] [D] [Pulse] Slow bot root: 470ms bot=Combat Bot poi=None combat=True
+[16:44:29.432] [D] [Pulse] Slow bot root: 471ms bot=Combat Bot poi=None combat=True
+[16:44:29.933] [D] [Pulse] Slow bot root: 470ms bot=Combat Bot poi=None combat=True
+[16:44:30.433] [D] [Pulse] Slow bot root: 470ms bot=Combat Bot poi=None combat=True
+[16:44:30.939] [D] [Pulse] Slow bot root: 471ms bot=Combat Bot poi=None combat=True
+[16:44:31.427] [D] [Pulse] Slow bot root: 455ms bot=Combat Bot poi=None combat=True
+[16:44:31.941] [D] [Pulse] Slow bot root: 471ms bot=Combat Bot poi=None combat=True
+[16:44:32.452] [D] [Pulse] Slow bot root: 481ms bot=Combat Bot poi=None combat=True
+[16:44:32.988] [D] [Pulse] Slow bot root: 485ms bot=Combat Bot poi=None combat=True
+[16:44:33.706] [D] [Pulse] Slow bot root: 631ms bot=Combat Bot poi=None combat=True
+[16:44:34.502] [D] [Pulse] Slow bot root: 727ms bot=Combat Bot poi=None combat=True
+[16:44:35.393] [D] [Pulse] Slow bot root: 655ms bot=Combat Bot poi=None combat=True
+[16:44:35.993] [N] [Singular] Casting Judgement of Light on Scarlet Torturer
+[16:44:35.994] [D] Spell_C::CastSpell(20271, 0, 0xF1300010D2000083, 0)
+[16:44:36.025] [D] [Pulse] Slow bot root: 581ms bot=Combat Bot poi=None combat=True
+[16:44:36.880] [D] [Pulse] Slow bot root: 772ms bot=Combat Bot poi=None combat=True
+[16:44:37.515] [D] [Pulse] Slow bot root: 579ms bot=Combat Bot poi=None combat=True
+[16:44:38.070] [D] [Pulse] Slow bot root: 503ms bot=Combat Bot poi=None combat=True
+[16:44:38.485] [N] [Singular] Currect target is invalid. Switching to Scarlet Torturer!
+[16:44:38.498] [D] [Pulse] Slow bot root: 361ms bot=Combat Bot poi=None combat=True
+[16:44:38.871] [D] [Singular-DEBUG] Switched targets!
+[16:44:38.871] [D] [Singular-DEBUG] Melee Distance: 5.9433336
+[16:44:38.871] [D] [Singular-DEBUG] Health: 5.165794066317627
+[16:44:38.871] [D] [Singular-DEBUG] Level: 30
+[16:44:39.397] [D] [Pulse] Slow bot root: 447ms bot=Combat Bot poi=None combat=False
+[16:44:40.448] [D] [Pulse] Slow bot root: 439ms bot=Combat Bot poi=None combat=False
+[16:44:41.552] [D] [Pulse] Slow bot root: 245ms bot=Combat Bot poi=None combat=False
+[16:44:41.853] [D] [Pulse] Slow bot root: 252ms bot=Combat Bot poi=None combat=False
+[16:44:42.171] [D] [Pulse] Slow bot root: 270ms bot=Combat Bot poi=None combat=False
+[16:44:42.473] [D] [Pulse] Slow bot root: 255ms bot=Combat Bot poi=None combat=False
+[16:44:42.774] [D] [Pulse] Slow bot root: 253ms bot=Combat Bot poi=None combat=False
+[16:44:43.074] [D] [Pulse] Slow bot root: 252ms bot=Combat Bot poi=None combat=False
+[16:44:43.421] [D] [Pulse] Slow bot root: 266ms bot=Combat Bot poi=None combat=False
+[16:44:43.723] [D] [Pulse] Slow bot root: 253ms bot=Combat Bot poi=None combat=False
+[16:44:44.024] [D] [Pulse] Slow bot root: 253ms bot=Combat Bot poi=None combat=False
+[16:44:44.326] [D] [Pulse] Slow bot root: 255ms bot=Combat Bot poi=None combat=False
+[16:44:44.626] [D] [Pulse] Slow bot root: 255ms bot=Combat Bot poi=None combat=False
+[16:44:44.927] [D] [Pulse] Slow bot root: 254ms bot=Combat Bot poi=None combat=False
+[16:44:45.225] [D] [Pulse] Slow bot root: 251ms bot=Combat Bot poi=None combat=False
+[16:44:45.525] [D] [Pulse] Slow bot root: 253ms bot=Combat Bot poi=None combat=False
+[16:44:45.825] [D] [Pulse] Slow bot root: 252ms bot=Combat Bot poi=None combat=False
+[16:44:46.128] [D] [Pulse] Slow bot root: 253ms bot=Combat Bot poi=None combat=False
+[16:44:46.428] [D] [Pulse] Slow bot root: 253ms bot=Combat Bot poi=None combat=False
+[16:44:46.730] [D] [Pulse] Slow bot root: 255ms bot=Combat Bot poi=None combat=False
+[16:44:47.031] [D] [Pulse] Slow bot root: 252ms bot=Combat Bot poi=None combat=False
+[16:44:47.329] [D] [Pulse] Slow bot root: 250ms bot=Combat Bot poi=None combat=False
+[16:44:47.631] [D] [Pulse] Slow bot root: 248ms bot=Combat Bot poi=None combat=False
+[16:44:47.933] [D] [Pulse] Slow bot root: 254ms bot=Combat Bot poi=None combat=False
+[16:44:48.233] [D] [Pulse] Slow bot root: 252ms bot=Combat Bot poi=None combat=False
+[16:44:48.567] [D] [Pulse] Slow bot root: 251ms bot=Combat Bot poi=None combat=False
+[16:44:48.866] [D] [Pulse] Slow bot root: 251ms bot=Combat Bot poi=None combat=False
+[16:44:49.169] [D] [Pulse] Slow bot root: 255ms bot=Combat Bot poi=None combat=False
+[16:44:49.470] [D] [Pulse] Slow bot root: 252ms bot=Combat Bot poi=None combat=False
+[16:44:49.770] [D] [Pulse] Slow bot root: 251ms bot=Combat Bot poi=None combat=False
+[16:44:50.070] [D] [Pulse] Slow bot root: 249ms bot=Combat Bot poi=None combat=False
+[16:44:50.304] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=185ms
+[16:44:50.304] [D] [Pulse] Slow shared pulse: total=234ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=46 events=0 plugins=185 routine=0
+[16:44:50.568] [D] [Pulse] Slow bot root: 263ms bot=Combat Bot poi=None combat=False
+[16:44:50.788] [D] [Pulse] Slow bot root: 172ms bot=Combat Bot poi=None combat=False
+[16:44:54.226] [D] [Singular-DEBUG] Switched targets!
+[16:44:54.226] [D] [Singular-DEBUG] Melee Distance: 3.5
+[16:44:54.226] [D] [Singular-DEBUG] Health: 94.1025641025641
+[16:44:54.226] [D] [Singular-DEBUG] Level: 29
+[16:44:56.564] [D] [Singular-DEBUG] Switched targets!
+[16:44:56.565] [D] [Singular-DEBUG] Melee Distance: 5
+[16:44:56.565] [D] [Singular-DEBUG] Health: 35.88162762022195
+[16:44:56.565] [D] [Singular-DEBUG] Level: 30
+[16:44:57.100] [N] [Singular] Casting Exorcism on Scarlet Scryer
+[16:44:57.100] [D] Spell_C::CastSpell(5614, 0, 0xF1300010C500007F, 0)
+[16:44:57.112] [D] [Pulse] Slow bot root: 316ms bot=Combat Bot poi=None combat=True
+[16:44:57.625] [D] [Pulse] Slow bot root: 488ms bot=Combat Bot poi=None combat=True
+[16:44:58.138] [D] [Pulse] Slow bot root: 485ms bot=Combat Bot poi=None combat=True
+[16:44:58.657] [D] [Pulse] Slow bot root: 495ms bot=Combat Bot poi=None combat=True
+[16:44:59.085] [N] [Singular] Casting Judgement of Light on Scarlet Scryer
+[16:44:59.085] [D] Spell_C::CastSpell(20271, 0, 0xF1300010C500007F, 0)
+[16:44:59.092] [D] [Pulse] Slow bot root: 408ms bot=Combat Bot poi=None combat=True
+[16:44:59.583] [D] [Pulse] Slow bot root: 465ms bot=Combat Bot poi=None combat=True
+[16:44:59.979] [D] [Pulse] Slow bot root: 370ms bot=Combat Bot poi=None combat=True
+[16:45:00.274] [D] [Pulse] Slow bot root: 276ms bot=Combat Bot poi=None combat=True
+[16:45:00.570] [D] [Pulse] Slow bot root: 275ms bot=Combat Bot poi=None combat=True
+[16:45:00.855] [D] [Pulse] Slow bot root: 269ms bot=Combat Bot poi=None combat=True
+[16:45:01.141] [D] [Pulse] Slow bot root: 270ms bot=Combat Bot poi=None combat=False
+[16:45:01.142] [N] [AutoEquip]: Loot roll in progress
+[16:45:01.166] [N] [AutoEquip]: Equipped item in slot:FeetSlot scored 4.806 while loot-roll item scored:0.0030000003
+[16:45:01.166] [N] [AutoEquip]: Rolling Greed
+[16:45:10.399] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=36ms
+[16:45:17.812] [N] [Singular] Casting Exorcism on Scarlet Scryer
+[16:45:17.812] [D] Spell_C::CastSpell(5614, 0, 0xF1300010C5000042, 0)
+[16:45:17.822] [D] [Pulse] Slow bot root: 285ms bot=Combat Bot poi=None combat=True
+[16:45:17.853] [D] [Singular-DEBUG] Switched targets!
+[16:45:17.853] [D] [Singular-DEBUG] Melee Distance: 5
+[16:45:17.853] [D] [Singular-DEBUG] Health: 95.80764488286067
+[16:45:17.853] [D] [Singular-DEBUG] Level: 30
+[16:45:18.294] [D] [Pulse] Slow bot root: 440ms bot=Combat Bot poi=None combat=True
+[16:45:18.769] [D] [Pulse] Slow bot root: 449ms bot=Combat Bot poi=None combat=True
+[16:45:19.325] [D] [Pulse] Slow bot root: 479ms bot=Combat Bot poi=None combat=True
+[16:45:19.825] [N] [Singular] Casting Judgement of Light on Scarlet Scryer
+[16:45:19.825] [D] Spell_C::CastSpell(20271, 0, 0xF1300010C5000042, 0)
+[16:45:19.859] [D] [Pulse] Slow bot root: 481ms bot=Combat Bot poi=None combat=True
+[16:45:20.459] [D] [Pulse] Slow bot root: 545ms bot=Combat Bot poi=None combat=True
+[16:45:20.982] [D] [Pulse] Slow bot root: 499ms bot=Combat Bot poi=None combat=True
+[16:45:21.474] [D] [Pulse] Slow bot root: 458ms bot=Combat Bot poi=None combat=True
+[16:45:21.981] [D] [Pulse] Slow bot root: 463ms bot=Combat Bot poi=None combat=True
+[16:45:22.478] [D] [Pulse] Slow bot root: 460ms bot=Combat Bot poi=None combat=True
+[16:45:22.974] [D] [Pulse] Slow bot root: 456ms bot=Combat Bot poi=None combat=True
+[16:45:23.477] [D] [Pulse] Slow bot root: 455ms bot=Combat Bot poi=None combat=True
+[16:45:23.979] [D] [Pulse] Slow bot root: 460ms bot=Combat Bot poi=None combat=True
+[16:45:24.524] [D] [Pulse] Slow bot root: 470ms bot=Combat Bot poi=None combat=True
+[16:45:25.025] [D] [Pulse] Slow bot root: 469ms bot=Combat Bot poi=None combat=True
+[16:45:25.517] [D] [Pulse] Slow bot root: 461ms bot=Combat Bot poi=None combat=True
+[16:45:26.051] [D] [Pulse] Slow bot root: 497ms bot=Combat Bot poi=None combat=True
+[16:45:26.580] [D] [Pulse] Slow bot root: 493ms bot=Combat Bot poi=None combat=True
+[16:45:27.119] [D] [Pulse] Slow bot root: 490ms bot=Combat Bot poi=None combat=True
+[16:45:27.653] [D] [Pulse] Slow bot root: 493ms bot=Combat Bot poi=None combat=True
+[16:45:28.193] [D] [Pulse] Slow bot root: 498ms bot=Combat Bot poi=None combat=True
+[16:45:28.678] [N] [Singular] Casting Judgement of Light on Scarlet Scryer
+[16:45:28.678] [D] Spell_C::CastSpell(20271, 0, 0xF1300010C5000042, 0)
+[16:45:28.712] [D] [Pulse] Slow bot root: 479ms bot=Combat Bot poi=None combat=True
+[16:45:29.270] [D] [Pulse] Slow bot root: 500ms bot=Combat Bot poi=None combat=True
+[16:45:29.788] [D] [Pulse] Slow bot root: 455ms bot=Combat Bot poi=None combat=True
+[16:45:30.296] [D] [Pulse] Slow bot root: 452ms bot=Combat Bot poi=None combat=True
+[16:45:30.948] [D] [Pulse] Slow bot root: 612ms bot=Combat Bot poi=None combat=True
+[16:45:31.552] [D] [Pulse] Slow bot root: 549ms bot=Combat Bot poi=None combat=True
+[16:45:32.081] [D] [Pulse] Slow bot root: 475ms bot=Combat Bot poi=None combat=True
+[16:45:32.112] [N] [Singular] Currect target is invalid. Switching to Scarlet Scryer!
+[16:45:32.476] [D] [Singular-DEBUG] Switched targets!
+[16:45:32.476] [D] [Singular-DEBUG] Melee Distance: 5
+[16:45:32.476] [D] [Singular-DEBUG] Health: 22.235922729140977
+[16:45:32.476] [D] [Singular-DEBUG] Level: 30
+[16:45:33.318] [D] [Pulse] Slow bot root: 539ms bot=Combat Bot poi=None combat=True
+[16:45:33.817] [D] [Pulse] Slow bot root: 466ms bot=Combat Bot poi=None combat=True
+[16:45:34.214] [D] [Pulse] Slow bot root: 367ms bot=Combat Bot poi=None combat=False
+[16:45:34.498] [D] [Pulse] Slow bot root: 247ms bot=Combat Bot poi=None combat=False
+[16:45:34.832] [D] [Pulse] Slow bot root: 251ms bot=Combat Bot poi=None combat=False
+[16:45:35.129] [D] [Pulse] Slow bot root: 249ms bot=Combat Bot poi=None combat=False
+[16:45:35.429] [D] [Pulse] Slow bot root: 252ms bot=Combat Bot poi=None combat=False
+[16:45:35.728] [D] [Pulse] Slow bot root: 251ms bot=Combat Bot poi=None combat=False
+[16:45:36.027] [D] [Pulse] Slow bot root: 250ms bot=Combat Bot poi=None combat=False
+[16:45:36.331] [D] [Pulse] Slow bot root: 256ms bot=Combat Bot poi=None combat=False
+[16:45:36.665] [D] [Pulse] Slow bot root: 268ms bot=Combat Bot poi=None combat=False
+[16:45:36.982] [D] [Pulse] Slow bot root: 269ms bot=Combat Bot poi=None combat=False
+[16:45:37.282] [D] [Pulse] Slow bot root: 251ms bot=Combat Bot poi=None combat=False
+[16:45:37.582] [D] [Pulse] Slow bot root: 253ms bot=Combat Bot poi=None combat=False
+[16:45:37.882] [D] [Pulse] Slow bot root: 251ms bot=Combat Bot poi=None combat=False
+[16:45:38.183] [D] [Pulse] Slow bot root: 251ms bot=Combat Bot poi=None combat=False
+[16:45:38.484] [D] [Pulse] Slow bot root: 254ms bot=Combat Bot poi=None combat=False
+[16:45:38.852] [D] [Pulse] Slow bot root: 317ms bot=Combat Bot poi=None combat=False
+[16:45:39.152] [D] [Pulse] Slow bot root: 250ms bot=Combat Bot poi=None combat=False
+[16:45:39.450] [D] [Pulse] Slow bot root: 249ms bot=Combat Bot poi=None combat=False
+[16:45:39.749] [D] [Pulse] Slow bot root: 248ms bot=Combat Bot poi=None combat=False
+[16:45:40.086] [D] [Pulse] Slow bot root: 254ms bot=Combat Bot poi=None combat=False
+[16:45:40.387] [D] [Pulse] Slow bot root: 251ms bot=Combat Bot poi=None combat=False
+[16:45:40.688] [D] [Pulse] Slow bot root: 252ms bot=Combat Bot poi=None combat=False
+[16:45:40.993] [D] [Pulse] Slow bot root: 255ms bot=Combat Bot poi=None combat=False
+[16:45:41.223] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=185ms
+[16:45:41.224] [D] [Pulse] Slow shared pulse: total=230ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=42 events=0 plugins=185 routine=0
+[16:45:41.457] [D] [Pulse] Slow bot root: 233ms bot=Combat Bot poi=None combat=False
+[16:45:41.687] [D] [Pulse] Slow bot root: 182ms bot=Combat Bot poi=None combat=False
+[16:45:41.922] [D] [Pulse] Slow bot root: 185ms bot=Combat Bot poi=None combat=False
+[16:45:42.124] [D] [Pulse] Slow bot root: 153ms bot=Combat Bot poi=None combat=False
+[16:45:42.290] [D] [Pulse] Slow bot root: 118ms bot=Combat Bot poi=None combat=False
+[16:45:42.459] [D] [Pulse] Slow bot root: 119ms bot=Combat Bot poi=None combat=False
+[16:45:42.625] [D] [Pulse] Slow bot root: 116ms bot=Combat Bot poi=None combat=False
+[16:45:42.792] [D] [Pulse] Slow bot root: 117ms bot=Combat Bot poi=None combat=False
+[16:45:42.957] [D] [Pulse] Slow bot root: 116ms bot=Combat Bot poi=None combat=False
+[16:45:59.413] [D] [Singular-DEBUG] Switched targets!
+[16:45:59.413] [D] [Singular-DEBUG] Melee Distance: 5
+[16:45:59.413] [D] [Singular-DEBUG] Health: 68.19085487077535
+[16:45:59.413] [D] [Singular-DEBUG] Level: 31
+[16:45:59.707] [N] [Singular] Casting Exorcism on Unfettered Spirit
+[16:45:59.707] [D] Spell_C::CastSpell(5614, 0, 0xF1300010D4000055, 0)
+[16:45:59.717] [D] [Pulse] Slow bot root: 303ms bot=Combat Bot poi=None combat=True
+[16:46:00.273] [D] [Pulse] Slow bot root: 509ms bot=Combat Bot poi=None combat=True
+[16:46:00.837] [D] [Pulse] Slow bot root: 514ms bot=Combat Bot poi=None combat=True
+[16:46:01.404] [D] [Pulse] Slow bot root: 522ms bot=Combat Bot poi=None combat=True
+[16:46:01.848] [N] [Singular] Casting Judgement of Light on Unfettered Spirit
+[16:46:01.848] [D] Spell_C::CastSpell(20271, 0, 0xF1300010D4000055, 0)
+[16:46:01.860] [D] [Pulse] Slow bot root: 415ms bot=Combat Bot poi=None combat=True
+[16:46:01.974] [N] [Singular] Currect target is invalid. Switching to Unfettered Spirit!
+[16:46:02.196] [D] [Singular-DEBUG] Switched targets!
+[16:46:02.196] [D] [Singular-DEBUG] Melee Distance: 5
+[16:46:02.196] [D] [Singular-DEBUG] Health: 0
+[16:46:02.196] [D] [Singular-DEBUG] Level: 31
+[16:46:02.281] [D] [Singular-DEBUG] Switched targets!
+[16:46:02.281] [D] [Singular-DEBUG] Melee Distance: 5
+[16:46:02.281] [D] [Singular-DEBUG] Health: 23.061630218687874
+[16:46:02.282] [D] [Singular-DEBUG] Level: 31
+[16:46:02.804] [N] [Singular] Casting Judgement of Light on Unfettered Spirit
+[16:46:02.804] [D] Spell_C::CastSpell(20271, 0, 0xF1300010D4000056, 0)
+[16:46:02.813] [D] [Pulse] Slow bot root: 439ms bot=Combat Bot poi=None combat=True
+[16:46:03.403] [D] [Pulse] Slow bot root: 546ms bot=Combat Bot poi=None combat=True
+[16:46:03.464] [N] [Singular] Currect target is invalid. Switching to Unfettered Spirit!
+[16:46:03.779] [D] [Singular-DEBUG] Switched targets!
+[16:46:03.779] [D] [Singular-DEBUG] Melee Distance: 5
+[16:46:03.779] [D] [Singular-DEBUG] Health: 87.74869109947645
+[16:46:03.779] [D] [Singular-DEBUG] Level: 30
+[16:46:04.324] [D] [Pulse] Slow bot root: 465ms bot=Combat Bot poi=None combat=True
+[16:46:04.902] [N] [Singular] Casting Consecration on Unfettered Spirit
+[16:46:04.902] [D] Spell_C::CastSpell(20116, 0, 0xF1300010D400006D, 0)
+[16:46:04.914] [D] [Pulse] Slow bot root: 545ms bot=Combat Bot poi=None combat=True
+[16:46:05.502] [D] [Pulse] Slow bot root: 545ms bot=Combat Bot poi=None combat=True
+[16:46:06.098] [D] [Pulse] Slow bot root: 542ms bot=Combat Bot poi=None combat=True
+[16:46:06.674] [D] [Pulse] Slow bot root: 535ms bot=Combat Bot poi=None combat=True
+[16:46:07.263] [D] [Pulse] Slow bot root: 541ms bot=Combat Bot poi=None combat=True
+[16:46:08.174] [D] [Pulse] Slow bot root: 864ms bot=Combat Bot poi=None combat=True
+[16:46:08.886] [D] [Pulse] Slow bot root: 662ms bot=Combat Bot poi=None combat=True
+[16:46:09.481] [D] [Pulse] Slow bot root: 547ms bot=Combat Bot poi=None combat=True
+[16:46:10.528] [D] [Pulse] Slow bot root: 997ms bot=Combat Bot poi=None combat=True
+[16:46:10.589] [N] [Singular] Currect target is invalid. Switching to Unfettered Spirit!
+[16:46:10.914] [D] [Singular-DEBUG] Switched targets!
+[16:46:10.914] [D] [Singular-DEBUG] Melee Distance: 5
+[16:46:10.914] [D] [Singular-DEBUG] Health: 29.12524850894632
+[16:46:10.914] [D] [Singular-DEBUG] Level: 31
+[16:46:11.420] [N] [Singular] Casting Judgement of Light on Unfettered Spirit
+[16:46:11.420] [D] Spell_C::CastSpell(20271, 0, 0xF1300010D400006C, 0)
+[16:46:11.429] [D] [Pulse] Slow bot root: 427ms bot=Combat Bot poi=None combat=True
+[16:46:11.477] [N] [Singular] Currect target is invalid. Switching to Unfettered Spirit!
+[16:46:11.819] [D] [Singular-DEBUG] Switched targets!
+[16:46:11.819] [D] [Singular-DEBUG] Melee Distance: 5
+[16:46:11.819] [D] [Singular-DEBUG] Health: 4.3737574552683895
+[16:46:11.819] [D] [Singular-DEBUG] Level: 31
+[16:46:11.917] [N] [Singular] Currect target is invalid. Switching to Haunting Phantasm!
+[16:46:12.261] [D] [Singular-DEBUG] Switched targets!
+[16:46:12.261] [D] [Singular-DEBUG] Melee Distance: 5
+[16:46:12.261] [D] [Singular-DEBUG] Health: 45.06295559973493
+[16:46:12.261] [D] [Singular-DEBUG] Level: 31
+[16:46:12.846] [D] [Pulse] Slow bot root: 493ms bot=Combat Bot poi=None combat=True
+[16:46:13.368] [D] [Pulse] Slow bot root: 483ms bot=Combat Bot poi=None combat=True
+[16:46:13.879] [D] [Pulse] Slow bot root: 473ms bot=Combat Bot poi=None combat=True
+[16:46:14.396] [D] [Pulse] Slow bot root: 480ms bot=Combat Bot poi=None combat=True
+[16:46:14.914] [D] [Pulse] Slow bot root: 479ms bot=Combat Bot poi=None combat=True
+[16:46:15.434] [D] [Pulse] Slow bot root: 480ms bot=Combat Bot poi=None combat=True
+[16:46:15.960] [D] [Pulse] Slow bot root: 490ms bot=Combat Bot poi=None combat=True
+[16:46:16.526] [D] [Pulse] Slow bot root: 514ms bot=Combat Bot poi=None combat=True
+[16:46:17.062] [D] [Pulse] Slow bot root: 494ms bot=Combat Bot poi=None combat=True
+[16:46:17.594] [D] [Pulse] Slow bot root: 496ms bot=Combat Bot poi=None combat=False
+[16:46:20.628] [D] [Pulse] Slow bot root: 114ms bot=Combat Bot poi=None combat=False
+[16:46:21.562] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=48ms
+[16:46:24.588] [D] [Singular-DEBUG] Switched targets!
+[16:46:24.589] [D] [Singular-DEBUG] Melee Distance: 5
+[16:46:24.589] [D] [Singular-DEBUG] Health: 60.80185553346587
+[16:46:24.589] [D] [Singular-DEBUG] Level: 31
+[16:46:24.792] [N] [Singular] Casting Exorcism on Illusionary Phantasm
+[16:46:24.792] [D] Spell_C::CastSpell(5614, 0, 0xF13000195D00008A, 0)
+[16:46:24.804] [D] [Pulse] Slow bot root: 215ms bot=Combat Bot poi=None combat=True
+[16:46:25.313] [D] [Pulse] Slow bot root: 463ms bot=Combat Bot poi=None combat=True
+[16:46:25.807] [D] [Pulse] Slow bot root: 458ms bot=Combat Bot poi=None combat=True
+[16:46:26.293] [D] [Pulse] Slow bot root: 449ms bot=Combat Bot poi=None combat=True
+[16:46:26.793] [D] [Pulse] Slow bot root: 462ms bot=Combat Bot poi=None combat=True
+[16:46:27.296] [D] [Pulse] Slow bot root: 460ms bot=Combat Bot poi=None combat=True
+[16:46:27.793] [D] [Pulse] Slow bot root: 459ms bot=Combat Bot poi=None combat=True
+[16:46:28.288] [D] [Pulse] Slow bot root: 463ms bot=Combat Bot poi=None combat=True
+[16:46:28.782] [D] [Pulse] Slow bot root: 456ms bot=Combat Bot poi=None combat=True
+[16:46:29.273] [D] [Pulse] Slow bot root: 460ms bot=Combat Bot poi=None combat=True
+[16:46:29.760] [D] [Pulse] Slow bot root: 453ms bot=Combat Bot poi=None combat=True
+[16:46:30.256] [D] [Pulse] Slow bot root: 458ms bot=Combat Bot poi=None combat=True
+[16:46:30.762] [D] [Pulse] Slow bot root: 472ms bot=Combat Bot poi=None combat=False
+[16:46:31.593] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=62ms
+[16:46:33.570] [D] [Pulse] Slow bot root: 124ms bot=Combat Bot poi=None combat=False
+[16:46:41.697] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=56ms
+[16:46:42.201] [N] [Singular] Casting Exorcism on Anguished Dead
+[16:46:42.201] [D] Spell_C::CastSpell(5614, 0, 0xF13000191A000072, 0)
+[16:46:42.211] [D] [Pulse] Slow bot root: 291ms bot=Combat Bot poi=None combat=True
+[16:46:42.256] [D] [Singular-DEBUG] Switched targets!
+[16:46:42.256] [D] [Singular-DEBUG] Melee Distance: 5
+[16:46:42.256] [D] [Singular-DEBUG] Health: 92.61100066269053
+[16:46:42.256] [D] [Singular-DEBUG] Level: 31
+[16:46:42.752] [D] [Pulse] Slow bot root: 495ms bot=Combat Bot poi=None combat=True
+[16:46:43.304] [D] [Pulse] Slow bot root: 502ms bot=Combat Bot poi=None combat=True
+[16:46:43.857] [D] [Pulse] Slow bot root: 511ms bot=Combat Bot poi=None combat=True
+[16:46:44.495] [D] [Pulse] Slow bot root: 578ms bot=Combat Bot poi=None combat=True
+[16:46:45.139] [D] [Pulse] Slow bot root: 573ms bot=Combat Bot poi=None combat=True
+[16:46:45.764] [D] [Pulse] Slow bot root: 543ms bot=Combat Bot poi=None combat=True
+[16:46:46.342] [D] [Pulse] Slow bot root: 507ms bot=Combat Bot poi=None combat=True
+[16:46:46.987] [D] [Pulse] Slow bot root: 573ms bot=Combat Bot poi=None combat=True
+[16:46:47.668] [D] [Pulse] Slow bot root: 579ms bot=Combat Bot poi=None combat=True
+[16:46:48.280] [D] [Pulse] Slow bot root: 539ms bot=Combat Bot poi=None combat=True
+[16:46:48.959] [D] [Pulse] Slow bot root: 606ms bot=Combat Bot poi=None combat=True
+[16:46:49.637] [D] [Pulse] Slow bot root: 607ms bot=Combat Bot poi=None combat=True
+[16:46:50.216] [D] [Pulse] Slow bot root: 508ms bot=Combat Bot poi=None combat=True
+[16:46:50.826] [D] [Pulse] Slow bot root: 538ms bot=Combat Bot poi=None combat=True
+[16:46:51.437] [D] [Pulse] Slow bot root: 541ms bot=Combat Bot poi=None combat=True
+[16:46:52.039] [D] [Pulse] Slow bot root: 536ms bot=Combat Bot poi=None combat=True
+[16:46:52.679] [D] [Pulse] Slow bot root: 538ms bot=Combat Bot poi=None combat=True
+[16:46:53.220] [N] [Singular] Casting Judgement of Light on Anguished Dead
+[16:46:53.220] [D] Spell_C::CastSpell(20271, 0, 0xF13000191A000072, 0)
+[16:46:53.253] [D] [Pulse] Slow bot root: 505ms bot=Combat Bot poi=None combat=True
+[16:46:53.862] [D] [Pulse] Slow bot root: 541ms bot=Combat Bot poi=None combat=True
+[16:46:54.405] [D] [Pulse] Slow bot root: 469ms bot=Combat Bot poi=None combat=True
+[16:46:54.969] [D] [Pulse] Slow bot root: 489ms bot=Combat Bot poi=None combat=True
+[16:46:55.495] [D] [Pulse] Slow bot root: 476ms bot=Combat Bot poi=None combat=False
+[16:46:55.790] [D] [Pulse] Slow bot root: 236ms bot=Combat Bot poi=None combat=False
+[16:46:56.092] [D] [Pulse] Slow bot root: 240ms bot=Combat Bot poi=None combat=False
+[16:46:56.392] [D] [Pulse] Slow bot root: 239ms bot=Combat Bot poi=None combat=False
+[16:46:56.692] [D] [Pulse] Slow bot root: 240ms bot=Combat Bot poi=None combat=False
+[16:46:56.996] [D] [Pulse] Slow bot root: 244ms bot=Combat Bot poi=None combat=False
+[16:46:57.293] [D] [Pulse] Slow bot root: 238ms bot=Combat Bot poi=None combat=False
+[16:46:57.628] [D] [Pulse] Slow bot root: 242ms bot=Combat Bot poi=None combat=False
+[16:46:57.930] [D] [Pulse] Slow bot root: 239ms bot=Combat Bot poi=None combat=False
+[16:46:58.230] [D] [Pulse] Slow bot root: 237ms bot=Combat Bot poi=None combat=False
+[16:46:58.549] [D] [Pulse] Slow bot root: 258ms bot=Combat Bot poi=None combat=False
+[16:46:58.852] [D] [Pulse] Slow bot root: 238ms bot=Combat Bot poi=None combat=False
+[16:46:59.154] [D] [Pulse] Slow bot root: 240ms bot=Combat Bot poi=None combat=False
+[16:46:59.453] [D] [Pulse] Slow bot root: 238ms bot=Combat Bot poi=None combat=False
+[16:46:59.754] [D] [Pulse] Slow bot root: 240ms bot=Combat Bot poi=None combat=False
+[16:47:00.054] [D] [Pulse] Slow bot root: 238ms bot=Combat Bot poi=None combat=False
+[16:47:00.354] [D] [Pulse] Slow bot root: 240ms bot=Combat Bot poi=None combat=False
+[16:47:00.659] [D] [Pulse] Slow bot root: 242ms bot=Combat Bot poi=None combat=False
+[16:47:00.958] [D] [Pulse] Slow bot root: 237ms bot=Combat Bot poi=None combat=False
+[16:47:01.261] [D] [Pulse] Slow bot root: 239ms bot=Combat Bot poi=None combat=False
+[16:47:01.565] [D] [Pulse] Slow bot root: 241ms bot=Combat Bot poi=None combat=False
+[16:47:01.865] [D] [Pulse] Slow bot root: 237ms bot=Combat Bot poi=None combat=False
+[16:47:02.167] [D] [Pulse] Slow bot root: 241ms bot=Combat Bot poi=None combat=False
+[16:47:02.402] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=173ms
+[16:47:02.403] [D] [Pulse] Slow shared pulse: total=235ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=59 events=0 plugins=173 routine=0
+[16:47:02.669] [D] [Pulse] Slow bot root: 266ms bot=Combat Bot poi=None combat=False
+[16:47:03.004] [D] [Pulse] Slow bot root: 238ms bot=Combat Bot poi=None combat=False
+[16:47:03.306] [D] [Pulse] Slow bot root: 243ms bot=Combat Bot poi=None combat=False
+[16:47:03.607] [D] [Pulse] Slow bot root: 240ms bot=Combat Bot poi=None combat=False
+[16:47:03.906] [D] [Pulse] Slow bot root: 237ms bot=Combat Bot poi=None combat=False
+[16:47:04.209] [D] [Pulse] Slow bot root: 241ms bot=Combat Bot poi=None combat=False
+[16:47:04.509] [D] [Pulse] Slow bot root: 242ms bot=Combat Bot poi=None combat=False
+[16:47:04.808] [D] [Pulse] Slow bot root: 237ms bot=Combat Bot poi=None combat=False
+[16:47:05.108] [D] [Pulse] Slow bot root: 241ms bot=Combat Bot poi=None combat=False
+[16:47:05.406] [D] [Pulse] Slow bot root: 238ms bot=Combat Bot poi=None combat=False
+[16:47:05.708] [D] [Pulse] Slow bot root: 244ms bot=Combat Bot poi=None combat=False
+[16:47:06.008] [D] [Pulse] Slow bot root: 241ms bot=Combat Bot poi=None combat=False
+[16:47:06.311] [D] [Pulse] Slow bot root: 241ms bot=Combat Bot poi=None combat=False
+[16:47:06.610] [D] [Pulse] Slow bot root: 239ms bot=Combat Bot poi=None combat=False
+[16:47:06.910] [D] [Pulse] Slow bot root: 238ms bot=Combat Bot poi=None combat=False
+[16:47:07.177] [D] [Pulse] Slow bot root: 201ms bot=Combat Bot poi=None combat=False
+[16:47:07.414] [D] [Pulse] Slow bot root: 176ms bot=Combat Bot poi=None combat=False
+[16:47:07.648] [D] [Pulse] Slow bot root: 173ms bot=Combat Bot poi=None combat=False
+[16:47:07.880] [D] [Pulse] Slow bot root: 172ms bot=Combat Bot poi=None combat=False
+[16:47:08.147] [D] [Pulse] Slow bot root: 177ms bot=Combat Bot poi=None combat=False
+[16:47:08.380] [D] [Pulse] Slow bot root: 173ms bot=Combat Bot poi=None combat=False
+[16:47:08.614] [D] [Pulse] Slow bot root: 174ms bot=Combat Bot poi=None combat=False
+[16:47:08.849] [D] [Pulse] Slow bot root: 173ms bot=Combat Bot poi=None combat=False
+[16:47:09.086] [D] [Pulse] Slow bot root: 176ms bot=Combat Bot poi=None combat=False
+[16:47:09.317] [D] [Pulse] Slow bot root: 172ms bot=Combat Bot poi=None combat=False
+[16:47:09.551] [D] [Pulse] Slow bot root: 175ms bot=Combat Bot poi=None combat=False
+[16:47:09.784] [D] [Pulse] Slow bot root: 174ms bot=Combat Bot poi=None combat=False
+[16:47:10.017] [D] [Pulse] Slow bot root: 172ms bot=Combat Bot poi=None combat=False
+[16:47:10.255] [D] [Pulse] Slow bot root: 173ms bot=Combat Bot poi=None combat=False
+[16:47:10.489] [D] [Pulse] Slow bot root: 172ms bot=Combat Bot poi=None combat=False
+[16:47:10.729] [D] [Pulse] Slow bot root: 177ms bot=Combat Bot poi=None combat=False
+[16:47:18.919] [D] [Pulse] Slow bot root: 127ms bot=Combat Bot poi=None combat=False
+[16:47:18.972] [D] [Singular-DEBUG] Switched targets!
+[16:47:18.972] [D] [Singular-DEBUG] Melee Distance: 3.5
+[16:47:18.972] [D] [Singular-DEBUG] Health: 88.9207258834766
+[16:47:18.972] [D] [Singular-DEBUG] Level: 29
+[16:47:20.005] [D] [Singular-DEBUG] Switched targets!
+[16:47:20.005] [D] [Singular-DEBUG] Melee Distance: 5
+[16:47:20.005] [D] [Singular-DEBUG] Health: 92.84294234592446
+[16:47:20.005] [D] [Singular-DEBUG] Level: 31
+[16:47:20.288] [N] [Singular] Casting Exorcism on Anguished Dead
+[16:47:20.288] [D] Spell_C::CastSpell(5614, 0, 0xF13000191A000071, 0)
+[16:47:20.301] [D] [Pulse] Slow bot root: 295ms bot=Combat Bot poi=None combat=True
+[16:47:20.872] [D] [Pulse] Slow bot root: 505ms bot=Combat Bot poi=None combat=True
+[16:47:21.445] [D] [Pulse] Slow bot root: 513ms bot=Combat Bot poi=None combat=True
+[16:47:22.007] [D] [Pulse] Slow bot root: 499ms bot=Combat Bot poi=None combat=True
+[16:47:22.449] [N] [Singular] Casting Judgement of Light on Anguished Dead
+[16:47:22.449] [D] Spell_C::CastSpell(20271, 0, 0xF13000191A000071, 0)
+[16:47:22.460] [D] [Pulse] Slow bot root: 399ms bot=Combat Bot poi=None combat=True
+[16:47:23.057] [D] [Pulse] Slow bot root: 536ms bot=Combat Bot poi=None combat=True
+[16:47:23.654] [D] [Pulse] Slow bot root: 520ms bot=Combat Bot poi=None combat=True
+[16:47:24.253] [D] [Pulse] Slow bot root: 533ms bot=Combat Bot poi=None combat=True
+[16:47:24.835] [D] [Pulse] Slow bot root: 521ms bot=Combat Bot poi=None combat=True
+[16:47:25.399] [D] [Pulse] Slow bot root: 504ms bot=Combat Bot poi=None combat=True
+[16:47:25.960] [D] [Pulse] Slow bot root: 502ms bot=Combat Bot poi=None combat=True
+[16:47:26.535] [D] [Pulse] Slow bot root: 498ms bot=Combat Bot poi=None combat=True
+[16:47:27.088] [D] [Pulse] Slow bot root: 492ms bot=Combat Bot poi=None combat=True
+[16:47:27.641] [D] [Pulse] Slow bot root: 500ms bot=Combat Bot poi=None combat=True
+[16:47:28.193] [D] [Pulse] Slow bot root: 496ms bot=Combat Bot poi=None combat=True
+[16:47:28.753] [D] [Pulse] Slow bot root: 500ms bot=Combat Bot poi=None combat=True
+[16:47:29.314] [D] [Pulse] Slow bot root: 504ms bot=Combat Bot poi=None combat=True
+[16:47:29.902] [D] [Pulse] Slow bot root: 527ms bot=Combat Bot poi=None combat=True
+[16:47:30.466] [D] [Pulse] Slow bot root: 507ms bot=Combat Bot poi=None combat=True
+[16:47:31.030] [D] [Pulse] Slow bot root: 510ms bot=Combat Bot poi=None combat=True
+[16:47:31.583] [D] [Pulse] Slow bot root: 497ms bot=Combat Bot poi=None combat=True
+[16:47:32.116] [D] [Pulse] Slow bot root: 479ms bot=Combat Bot poi=None combat=True
+[16:47:32.641] [D] [Pulse] Slow bot root: 473ms bot=Combat Bot poi=None combat=False
+[16:47:32.731] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=41ms
+[16:47:35.758] [D] [Pulse] Slow bot root: 134ms bot=Combat Bot poi=None combat=False
+[16:47:36.057] [D] [Singular-DEBUG] Switched targets!
+[16:47:36.057] [D] [Singular-DEBUG] Melee Distance: 5
+[16:47:36.057] [D] [Singular-DEBUG] Health: 29.821073558648113
+[16:47:36.057] [D] [Singular-DEBUG] Level: 31
+[16:47:36.393] [N] [Singular] Casting Judgement of Light on Anguished Dead
+[16:47:36.393] [D] Spell_C::CastSpell(20271, 0, 0xF13000191A000074, 0)
+[16:47:36.404] [D] [Pulse] Slow bot root: 346ms bot=Combat Bot poi=None combat=True
+[16:47:36.873] [D] [Pulse] Slow bot root: 418ms bot=Combat Bot poi=None combat=True
+[16:47:37.327] [D] [Pulse] Slow bot root: 407ms bot=Combat Bot poi=None combat=True
+[16:47:37.792] [D] [Pulse] Slow bot root: 413ms bot=Combat Bot poi=None combat=True
+[16:47:38.286] [D] [Pulse] Slow bot root: 436ms bot=Combat Bot poi=None combat=True
+[16:47:38.827] [D] [Pulse] Slow bot root: 431ms bot=Combat Bot poi=None combat=True
+[16:47:39.095] [D] [Pulse] Slow bot root: 221ms bot=Combat Bot poi=None combat=True
+[16:47:39.376] [D] [Pulse] Slow bot root: 224ms bot=Combat Bot poi=None combat=True
+[16:47:39.648] [D] [Pulse] Slow bot root: 223ms bot=Combat Bot poi=None combat=True
+[16:47:39.648] [N] [AutoEquip]: Loot roll in progress
+[16:47:39.731] [N] [AutoEquip]: Equipped item in slot:MainHandSlot scored 92.76316 while loot-roll item scored:112.202545
+[16:47:39.731] [N] [AutoEquip]: New item did not contain our primary stat of:Strength so we are not rolling need.
+[16:47:39.731] [N] [AutoEquip]: Rolling Greed
+[16:47:40.057] [D] [Pulse] Slow bot root: 221ms bot=Combat Bot poi=None combat=True
+[16:47:40.057] [N] [AutoEquip]: Loot roll in progress
+[16:47:40.175] [N] [AutoEquip]: Equipped item in slot:WristSlot scored 3.2 while loot-roll item scored:3.045
+[16:47:40.175] [N] [AutoEquip]: Rolling Greed
+[16:47:40.276] [D] [Pulse] Slow shared pulse: total=218ms movement=0 objects=0 lua=151 info=0 loot=1 targeting=65 events=0 plugins=0 routine=0
+[16:47:40.497] [D] [Pulse] Slow bot root: 221ms bot=Combat Bot poi=None combat=True
+[16:47:40.770] [D] [Pulse] Slow bot root: 220ms bot=Combat Bot poi=None combat=True
+[16:47:41.048] [D] [Pulse] Slow bot root: 222ms bot=Combat Bot poi=None combat=True
+[16:47:41.378] [D] [Pulse] Slow bot root: 266ms bot=Combat Bot poi=None combat=False
+[16:47:41.668] [D] [Pulse] Slow bot root: 240ms bot=Combat Bot poi=None combat=False
+[16:47:41.976] [D] [Pulse] Slow bot root: 239ms bot=Combat Bot poi=None combat=False
+[16:47:42.288] [D] [Pulse] Slow bot root: 244ms bot=Combat Bot poi=None combat=False
+[16:47:42.468] [D] [Pulse] Slow bot root: 113ms bot=Combat Bot poi=None combat=False
+[16:47:42.836] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=57ms
+[16:47:43.855] [N] [AutoEquip]: Loot roll in progress
+[16:47:43.903] [N] [AutoEquip]: Equipped item in slot:BackSlot scored 1.0676666 while loot-roll item scored:0
+[16:47:43.903] [N] [AutoEquip]: Rolling Greed
+[16:47:46.499] [N] [AutoEquip]: Equipping TwoHandWeapon "Stonecutter Claymore" instead of "The Black Knight" - it scored 112.202545 while the old scored 92.76316
+[16:47:52.883] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=68ms
+[16:48:02.930] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=91ms
+[16:48:03.042] [D] [Pulse] Slow bot root: 110ms bot=Combat Bot poi=None combat=False
+[16:48:04.290] [D] [Singular-DEBUG] Switched targets!
+[16:48:04.290] [D] [Singular-DEBUG] Melee Distance: 3.5
+[16:48:04.290] [D] [Singular-DEBUG] Health: 100
+[16:48:04.290] [D] [Singular-DEBUG] Level: 29
+[16:48:05.269] [N] [Singular] Casting Exorcism on Anguished Dead
+[16:48:05.269] [D] Spell_C::CastSpell(5614, 0, 0xF13000191A000079, 0)
+[16:48:05.280] [D] [Pulse] Slow bot root: 277ms bot=Combat Bot poi=None combat=True
+[16:48:05.327] [D] [Singular-DEBUG] Switched targets!
+[16:48:05.327] [D] [Singular-DEBUG] Melee Distance: 5
+[16:48:05.327] [D] [Singular-DEBUG] Health: 90.29158383035123
+[16:48:05.327] [D] [Singular-DEBUG] Level: 31
+[16:48:05.632] [N] [Singular] Casting Judgement of Light on Anguished Dead
+[16:48:05.632] [D] Spell_C::CastSpell(20271, 0, 0xF13000191A000079, 0)
+[16:48:05.643] [D] [Pulse] Slow bot root: 315ms bot=Combat Bot poi=None combat=True
+[16:48:06.110] [D] [Pulse] Slow bot root: 426ms bot=Combat Bot poi=None combat=True
+[16:48:06.542] [D] [Pulse] Slow bot root: 390ms bot=Combat Bot poi=None combat=True
+[16:48:06.947] [D] [Pulse] Slow bot root: 358ms bot=Combat Bot poi=None combat=True
+[16:48:07.372] [D] [Pulse] Slow bot root: 378ms bot=Combat Bot poi=None combat=True
+[16:48:07.622] [D] [Pulse] Slow bot root: 100ms bot=Combat Bot poi=None combat=True
+[16:48:08.164] [D] [Pulse] Slow bot root: 374ms bot=Combat Bot poi=None combat=True
+[16:48:08.610] [D] [Pulse] Slow bot root: 404ms bot=Combat Bot poi=None combat=True
+[16:48:08.838] [N] [Singular] Casting Exorcism on Anguished Dead
+[16:48:08.838] [D] Spell_C::CastSpell(5614, 0, 0xF13000191A000079, 0)
+[16:48:08.847] [D] [Pulse] Slow bot root: 177ms bot=Combat Bot poi=None combat=True
+[16:48:09.266] [D] [Pulse] Slow bot root: 373ms bot=Combat Bot poi=None combat=True
+[16:48:09.692] [D] [Pulse] Slow bot root: 383ms bot=Combat Bot poi=None combat=True
+[16:48:10.145] [D] [Pulse] Slow bot root: 402ms bot=Combat Bot poi=None combat=True
+[16:48:10.620] [D] [Pulse] Slow bot root: 404ms bot=Combat Bot poi=None combat=True
+[16:48:11.084] [D] [Pulse] Slow bot root: 389ms bot=Combat Bot poi=None combat=True
+[16:48:11.577] [D] [Pulse] Slow bot root: 435ms bot=Combat Bot poi=None combat=True
+[16:48:12.074] [D] [Pulse] Slow bot root: 415ms bot=Combat Bot poi=None combat=True
+[16:48:12.550] [D] [Pulse] Slow bot root: 416ms bot=Combat Bot poi=None combat=True
+[16:48:13.019] [D] [Pulse] Slow bot root: 410ms bot=Combat Bot poi=None combat=True
+[16:48:13.495] [D] [Pulse] Slow bot root: 414ms bot=Combat Bot poi=None combat=True
+[16:48:13.967] [D] [Pulse] Slow bot root: 410ms bot=Combat Bot poi=None combat=True
+[16:48:14.490] [D] [Pulse] Slow bot root: 423ms bot=Combat Bot poi=None combat=True
+[16:48:14.961] [D] [Pulse] Slow bot root: 424ms bot=Combat Bot poi=None combat=True
+[16:48:15.440] [D] [Pulse] Slow bot root: 429ms bot=Combat Bot poi=None combat=True
+[16:48:15.950] [D] [Pulse] Slow bot root: 465ms bot=Combat Bot poi=None combat=True
+[16:48:16.398] [D] [Pulse] Slow bot root: 402ms bot=Combat Bot poi=None combat=True
+[16:48:16.874] [D] [Pulse] Slow bot root: 434ms bot=Combat Bot poi=None combat=True
+[16:48:17.424] [D] [Pulse] Slow bot root: 506ms bot=Combat Bot poi=None combat=True
+[16:48:17.972] [D] [Pulse] Slow bot root: 475ms bot=Combat Bot poi=None combat=True
+[16:48:18.543] [D] [Pulse] Slow bot root: 501ms bot=Combat Bot poi=None combat=True
+[16:48:19.092] [D] [Pulse] Slow bot root: 475ms bot=Combat Bot poi=None combat=True
+[16:48:19.706] [D] [Pulse] Slow bot root: 505ms bot=Combat Bot poi=None combat=True
+[16:48:20.282] [D] [Pulse] Slow bot root: 505ms bot=Combat Bot poi=None combat=True
+[16:48:20.796] [N] [Singular] Casting Judgement of Light on Anguished Dead
+[16:48:20.796] [D] Spell_C::CastSpell(20271, 0, 0xF13000191A000079, 0)
+[16:48:20.830] [D] [Pulse] Slow bot root: 475ms bot=Combat Bot poi=None combat=True
+[16:48:21.483] [D] [Pulse] Slow bot root: 579ms bot=Combat Bot poi=None combat=True
+[16:48:22.061] [D] [Pulse] Slow bot root: 501ms bot=Combat Bot poi=None combat=True
+[16:48:22.613] [D] [Pulse] Slow bot root: 505ms bot=Combat Bot poi=None combat=True
+[16:48:23.189] [D] [Pulse] Slow bot root: 503ms bot=Combat Bot poi=None combat=True
+[16:48:23.737] [D] [Pulse] Slow bot root: 474ms bot=Combat Bot poi=None combat=True
+[16:48:24.329] [D] [Pulse] Slow bot root: 516ms bot=Combat Bot poi=None combat=True
+[16:48:24.909] [D] [Pulse] Slow bot root: 473ms bot=Combat Bot poi=None combat=True
+[16:48:25.494] [D] [Pulse] Slow bot root: 513ms bot=Combat Bot poi=None combat=False
+[16:48:25.791] [D] [Pulse] Slow bot root: 242ms bot=Combat Bot poi=None combat=False
+[16:48:26.090] [D] [Pulse] Slow bot root: 239ms bot=Combat Bot poi=None combat=False
+[16:48:26.389] [D] [Pulse] Slow bot root: 239ms bot=Combat Bot poi=None combat=False
+[16:48:26.689] [D] [Pulse] Slow bot root: 239ms bot=Combat Bot poi=None combat=False
+[16:48:26.989] [D] [Pulse] Slow bot root: 238ms bot=Combat Bot poi=None combat=False
+[16:48:27.289] [D] [Pulse] Slow bot root: 238ms bot=Combat Bot poi=None combat=False
+[16:48:27.592] [D] [Pulse] Slow bot root: 242ms bot=Combat Bot poi=None combat=False
+[16:48:27.892] [D] [Pulse] Slow bot root: 239ms bot=Combat Bot poi=None combat=False
+[16:48:28.195] [D] [Pulse] Slow bot root: 243ms bot=Combat Bot poi=None combat=False
+[16:48:28.523] [D] [Pulse] Slow bot root: 264ms bot=Combat Bot poi=None combat=False
+[16:48:28.820] [D] [Pulse] Slow bot root: 237ms bot=Combat Bot poi=None combat=False
+[16:48:29.117] [D] [Pulse] Slow bot root: 237ms bot=Combat Bot poi=None combat=False
+[16:48:29.420] [D] [Pulse] Slow bot root: 241ms bot=Combat Bot poi=None combat=False
+[16:48:29.753] [D] [Pulse] Slow bot root: 241ms bot=Combat Bot poi=None combat=False
+[16:48:30.052] [D] [Pulse] Slow bot root: 236ms bot=Combat Bot poi=None combat=False
+[16:48:30.354] [D] [Pulse] Slow bot root: 239ms bot=Combat Bot poi=None combat=False
+[16:48:30.656] [D] [Pulse] Slow bot root: 241ms bot=Combat Bot poi=None combat=False
+[16:48:30.957] [D] [Pulse] Slow bot root: 240ms bot=Combat Bot poi=None combat=False
+[16:48:31.257] [D] [Pulse] Slow bot root: 242ms bot=Combat Bot poi=None combat=False
+[16:48:31.558] [D] [Pulse] Slow bot root: 239ms bot=Combat Bot poi=None combat=False
+[16:48:31.860] [D] [Pulse] Slow bot root: 238ms bot=Combat Bot poi=None combat=False
+[16:48:32.175] [D] [Pulse] Slow bot root: 251ms bot=Combat Bot poi=None combat=False
+[16:48:32.464] [D] [Pulse] Slow bot root: 242ms bot=Combat Bot poi=None combat=False
+[16:48:32.767] [D] [Pulse] Slow bot root: 242ms bot=Combat Bot poi=None combat=False
+[16:48:33.070] [D] [Pulse] Slow bot root: 242ms bot=Combat Bot poi=None combat=False
+[16:48:33.367] [D] [Pulse] Slow bot root: 237ms bot=Combat Bot poi=None combat=False
+[16:48:33.668] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=241ms
+[16:48:33.669] [D] [Pulse] Slow shared pulse: total=301ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=58 events=0 plugins=241 routine=0
+[16:48:33.936] [D] [Pulse] Slow bot root: 267ms bot=Combat Bot poi=None combat=False
+[16:48:34.237] [D] [Pulse] Slow bot root: 241ms bot=Combat Bot poi=None combat=False
+[16:48:34.537] [D] [Pulse] Slow bot root: 239ms bot=Combat Bot poi=None combat=False
+[16:48:34.870] [D] [Pulse] Slow bot root: 239ms bot=Combat Bot poi=None combat=False
+[16:48:35.174] [D] [Pulse] Slow bot root: 245ms bot=Combat Bot poi=None combat=False
+[16:48:35.468] [D] [Pulse] Slow bot root: 238ms bot=Combat Bot poi=None combat=False
+[16:48:35.768] [D] [Pulse] Slow bot root: 240ms bot=Combat Bot poi=None combat=False
+[16:48:36.069] [D] [Pulse] Slow bot root: 238ms bot=Combat Bot poi=None combat=False
+[16:48:36.372] [D] [Pulse] Slow bot root: 243ms bot=Combat Bot poi=None combat=False
+[16:48:36.676] [D] [Pulse] Slow bot root: 245ms bot=Combat Bot poi=None combat=False
+[16:48:36.978] [D] [Pulse] Slow bot root: 238ms bot=Combat Bot poi=None combat=False
+[16:48:37.278] [D] [Pulse] Slow bot root: 238ms bot=Combat Bot poi=None combat=False
+[16:48:37.580] [D] [Pulse] Slow bot root: 238ms bot=Combat Bot poi=None combat=False
+[16:48:37.917] [D] [Pulse] Slow bot root: 268ms bot=Combat Bot poi=None combat=False
+[16:48:38.218] [D] [Pulse] Slow bot root: 240ms bot=Combat Bot poi=None combat=False
+[16:48:38.520] [D] [Pulse] Slow bot root: 238ms bot=Combat Bot poi=None combat=False
+[16:48:38.823] [D] [Pulse] Slow bot root: 243ms bot=Combat Bot poi=None combat=False
+[16:48:39.122] [D] [Pulse] Slow bot root: 242ms bot=Combat Bot poi=None combat=False
+[16:48:39.423] [D] [Pulse] Slow bot root: 241ms bot=Combat Bot poi=None combat=False
+[16:48:39.727] [D] [Pulse] Slow bot root: 243ms bot=Combat Bot poi=None combat=False
+[16:48:40.064] [D] [Pulse] Slow bot root: 243ms bot=Combat Bot poi=None combat=False
+[16:48:40.362] [D] [Pulse] Slow bot root: 240ms bot=Combat Bot poi=None combat=False
+[16:48:40.665] [D] [Pulse] Slow bot root: 242ms bot=Combat Bot poi=None combat=False
+[16:48:40.966] [D] [Pulse] Slow bot root: 239ms bot=Combat Bot poi=None combat=False
+[16:48:41.265] [D] [Pulse] Slow bot root: 236ms bot=Combat Bot poi=None combat=False
+[16:48:41.567] [D] [Pulse] Slow bot root: 239ms bot=Combat Bot poi=None combat=False
+[16:48:41.873] [D] [Pulse] Slow bot root: 246ms bot=Combat Bot poi=None combat=False
+[16:48:42.169] [D] [Pulse] Slow bot root: 240ms bot=Combat Bot poi=None combat=False
+[16:48:42.469] [D] [Pulse] Slow bot root: 240ms bot=Combat Bot poi=None combat=False
+[16:48:42.769] [D] [Pulse] Slow bot root: 238ms bot=Combat Bot poi=None combat=False
+[16:48:43.073] [D] [Pulse] Slow bot root: 239ms bot=Combat Bot poi=None combat=False
+[16:48:43.377] [D] [Pulse] Slow bot root: 239ms bot=Combat Bot poi=None combat=False
+[16:48:43.689] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=249ms
+[16:48:43.689] [D] [Pulse] Slow shared pulse: total=311ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=60 events=0 plugins=249 routine=0
+[16:48:43.802] [D] [Pulse] Slow bot root: 113ms bot=Combat Bot poi=None combat=False
+[16:48:46.178] [D] [Singular-DEBUG] Switched targets!
+[16:48:46.178] [D] [Singular-DEBUG] Melee Distance: 5
+[16:48:46.178] [D] [Singular-DEBUG] Health: 0
+[16:48:46.178] [D] [Singular-DEBUG] Level: 31
+[16:48:46.641] [D] [Singular-DEBUG] Switched targets!
+[16:48:46.641] [D] [Singular-DEBUG] Melee Distance: 3.5
+[16:48:46.641] [D] [Singular-DEBUG] Health: 90.18659295093296
+[16:48:46.641] [D] [Singular-DEBUG] Level: 30
+[16:48:47.510] [D] [Pulse] Slow bot root: 239ms bot=Combat Bot poi=None combat=False
+[16:48:47.813] [D] [Pulse] Slow bot root: 239ms bot=Combat Bot poi=None combat=False
+[16:48:48.115] [D] [Pulse] Slow bot root: 242ms bot=Combat Bot poi=None combat=False
+[16:48:48.419] [D] [Pulse] Slow bot root: 242ms bot=Combat Bot poi=None combat=False
+[16:48:48.718] [D] [Pulse] Slow bot root: 238ms bot=Combat Bot poi=None combat=False
+[16:48:49.021] [D] [Pulse] Slow bot root: 239ms bot=Combat Bot poi=None combat=False
+[16:48:49.321] [D] [Pulse] Slow bot root: 240ms bot=Combat Bot poi=None combat=False
+[16:48:49.621] [D] [Pulse] Slow bot root: 239ms bot=Combat Bot poi=None combat=False
+[16:48:49.920] [D] [Pulse] Slow bot root: 237ms bot=Combat Bot poi=None combat=False
+[16:48:50.255] [D] [Pulse] Slow bot root: 241ms bot=Combat Bot poi=None combat=False
+[16:48:50.556] [D] [Pulse] Slow bot root: 240ms bot=Combat Bot poi=None combat=False
+[16:48:50.857] [D] [Pulse] Slow bot root: 239ms bot=Combat Bot poi=None combat=False
+[16:48:51.166] [D] [Pulse] Slow bot root: 247ms bot=Combat Bot poi=None combat=False
+[16:48:51.468] [D] [Pulse] Slow bot root: 241ms bot=Combat Bot poi=None combat=False
+[16:48:51.768] [D] [Pulse] Slow bot root: 238ms bot=Combat Bot poi=None combat=False
+[16:48:52.069] [D] [Pulse] Slow bot root: 239ms bot=Combat Bot poi=None combat=False
+[16:48:52.369] [D] [Pulse] Slow bot root: 240ms bot=Combat Bot poi=None combat=False
+[16:48:52.670] [D] [Pulse] Slow bot root: 238ms bot=Combat Bot poi=None combat=False
+[16:48:52.969] [D] [Pulse] Slow bot root: 238ms bot=Combat Bot poi=None combat=False
+[16:48:53.272] [D] [Pulse] Slow bot root: 239ms bot=Combat Bot poi=None combat=False
+[16:48:53.574] [D] [Pulse] Slow bot root: 240ms bot=Combat Bot poi=None combat=False
+[16:48:53.877] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=241ms
+[16:48:53.878] [D] [Pulse] Slow shared pulse: total=303ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=60 events=0 plugins=241 routine=0
+[16:48:54.144] [D] [Pulse] Slow bot root: 266ms bot=Combat Bot poi=None combat=False
+[16:48:54.450] [D] [Pulse] Slow bot root: 245ms bot=Combat Bot poi=None combat=False
+[16:48:54.745] [D] [Pulse] Slow bot root: 239ms bot=Combat Bot poi=None combat=False
+[16:48:55.051] [D] [Pulse] Slow bot root: 237ms bot=Combat Bot poi=None combat=False
+[16:48:55.384] [D] [Pulse] Slow bot root: 240ms bot=Combat Bot poi=None combat=False
+[16:48:55.690] [D] [Pulse] Slow bot root: 244ms bot=Combat Bot poi=None combat=False
+[16:48:55.690] [N] [AutoEquip]: Loot roll in progress
+[16:48:55.826] [N] [AutoEquip]: Equipped item in slot:HeadSlot scored 6.409 while loot-roll item scored:0.060000002
+[16:48:55.826] [N] [AutoEquip]: New item did not contain our primary stat of:Strength so we are not rolling need.
+[16:48:55.826] [N] [AutoEquip]: Rolling Greed
+[16:48:56.164] [D] [Pulse] Slow bot root: 241ms bot=Combat Bot poi=None combat=False
+[16:48:56.466] [D] [Pulse] Slow bot root: 242ms bot=Combat Bot poi=None combat=False
+[16:48:56.764] [D] [Pulse] Slow bot root: 240ms bot=Combat Bot poi=None combat=False
+[16:48:57.077] [D] [Pulse] Slow bot root: 237ms bot=Combat Bot poi=None combat=False
+[16:48:57.383] [D] [Pulse] Slow bot root: 237ms bot=Combat Bot poi=None combat=False
+[16:48:57.686] [D] [Pulse] Slow bot root: 240ms bot=Combat Bot poi=None combat=False
+[16:48:57.988] [D] [Pulse] Slow bot root: 241ms bot=Combat Bot poi=None combat=False
+[16:48:58.285] [D] [Pulse] Slow bot root: 238ms bot=Combat Bot poi=None combat=False
+[16:48:58.588] [D] [Pulse] Slow bot root: 242ms bot=Combat Bot poi=None combat=False
+[16:48:58.891] [D] [Pulse] Slow bot root: 237ms bot=Combat Bot poi=None combat=False
+[16:48:59.192] [D] [Pulse] Slow bot root: 237ms bot=Combat Bot poi=None combat=False
+[16:48:59.494] [D] [Pulse] Slow bot root: 241ms bot=Combat Bot poi=None combat=False
+[16:48:59.796] [D] [Pulse] Slow bot root: 242ms bot=Combat Bot poi=None combat=False
+[16:49:00.099] [D] [Pulse] Slow bot root: 242ms bot=Combat Bot poi=None combat=False
+[16:49:00.435] [D] [Pulse] Slow bot root: 240ms bot=Combat Bot poi=None combat=False
+[16:49:00.782] [D] [Pulse] Slow bot root: 281ms bot=Combat Bot poi=None combat=False
+[16:49:01.084] [D] [Pulse] Slow bot root: 237ms bot=Combat Bot poi=None combat=False
+[16:49:01.386] [D] [Pulse] Slow bot root: 237ms bot=Combat Bot poi=None combat=False
+[16:49:01.686] [D] [Pulse] Slow bot root: 236ms bot=Combat Bot poi=None combat=False
+[16:49:01.987] [D] [Pulse] Slow bot root: 237ms bot=Combat Bot poi=None combat=False
+[16:49:02.292] [D] [Pulse] Slow bot root: 239ms bot=Combat Bot poi=None combat=False
+[16:49:02.591] [D] [Pulse] Slow bot root: 239ms bot=Combat Bot poi=None combat=False
+[16:49:02.891] [D] [Pulse] Slow bot root: 239ms bot=Combat Bot poi=None combat=False
+[16:49:03.191] [D] [Pulse] Slow bot root: 238ms bot=Combat Bot poi=None combat=False
+[16:49:03.493] [D] [Pulse] Slow bot root: 240ms bot=Combat Bot poi=None combat=False
+[16:49:03.796] [D] [Pulse] Slow bot root: 241ms bot=Combat Bot poi=None combat=False
+[16:49:04.095] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=238ms
+[16:49:04.095] [D] [Pulse] Slow shared pulse: total=299ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=58 events=0 plugins=238 routine=0
+[16:49:04.360] [D] [Pulse] Slow bot root: 264ms bot=Combat Bot poi=None combat=False
+[16:49:04.661] [D] [Pulse] Slow bot root: 242ms bot=Combat Bot poi=None combat=False
+[16:49:04.962] [D] [Pulse] Slow bot root: 239ms bot=Combat Bot poi=None combat=False
+[16:49:05.263] [D] [Pulse] Slow bot root: 238ms bot=Combat Bot poi=None combat=False
+[16:49:05.600] [D] [Pulse] Slow bot root: 243ms bot=Combat Bot poi=None combat=False
+[16:49:05.902] [D] [Pulse] Slow bot root: 238ms bot=Combat Bot poi=None combat=False
+[16:49:06.202] [D] [Pulse] Slow bot root: 238ms bot=Combat Bot poi=None combat=False
+[16:49:06.504] [D] [Pulse] Slow bot root: 239ms bot=Combat Bot poi=None combat=False
+[16:49:06.804] [D] [Pulse] Slow bot root: 238ms bot=Combat Bot poi=None combat=False
+[16:49:07.105] [D] [Pulse] Slow bot root: 238ms bot=Combat Bot poi=None combat=False
+[16:49:07.403] [D] [Pulse] Slow bot root: 237ms bot=Combat Bot poi=None combat=False
+[16:49:07.707] [D] [Pulse] Slow bot root: 241ms bot=Combat Bot poi=None combat=False
+[16:49:08.041] [D] [Pulse] Slow bot root: 264ms bot=Combat Bot poi=None combat=False
+[16:49:08.340] [D] [Pulse] Slow bot root: 238ms bot=Combat Bot poi=None combat=False
+[16:49:08.643] [D] [Pulse] Slow bot root: 241ms bot=Combat Bot poi=None combat=False
+[16:49:08.943] [D] [Pulse] Slow bot root: 236ms bot=Combat Bot poi=None combat=False
+[16:49:09.249] [D] [Pulse] Slow bot root: 240ms bot=Combat Bot poi=None combat=False
+[16:49:09.551] [D] [Pulse] Slow bot root: 238ms bot=Combat Bot poi=None combat=False
+[16:49:11.459] [D] [Singular-DEBUG] Switched targets!
+[16:49:11.460] [D] [Singular-DEBUG] Melee Distance: 5
+[16:49:11.460] [D] [Singular-DEBUG] Health: 38.36978131212724
+[16:49:11.460] [D] [Singular-DEBUG] Level: 31
+[16:49:11.820] [N] [Singular] Casting Exorcism on Illusionary Phantasm
+[16:49:11.820] [D] Spell_C::CastSpell(5614, 0, 0xF13000195D00008C, 0)
+[16:49:11.830] [D] [Pulse] Slow bot root: 252ms bot=Combat Bot poi=None combat=True
+[16:49:12.249] [D] [Pulse] Slow bot root: 375ms bot=Combat Bot poi=None combat=True
+[16:49:12.711] [D] [Pulse] Slow bot root: 398ms bot=Combat Bot poi=None combat=True
+[16:49:13.152] [D] [Pulse] Slow bot root: 401ms bot=Combat Bot poi=None combat=True
+[16:49:13.580] [D] [Pulse] Slow bot root: 392ms bot=Combat Bot poi=None combat=True
+[16:49:13.969] [N] [Singular] Casting Judgement of Light on Illusionary Phantasm
+[16:49:13.969] [D] Spell_C::CastSpell(20271, 0, 0xF13000195D00008C, 0)
+[16:49:14.003] [D] [Pulse] Slow bot root: 374ms bot=Combat Bot poi=None combat=True
+[16:49:14.473] [D] [Pulse] Slow bot root: 404ms bot=Combat Bot poi=None combat=True
+[16:49:14.946] [D] [Pulse] Slow bot root: 403ms bot=Combat Bot poi=None combat=True
+[16:49:15.340] [D] [Pulse] Slow bot root: 357ms bot=Combat Bot poi=None combat=True
+[16:49:15.829] [D] [Pulse] Slow bot root: 409ms bot=Combat Bot poi=None combat=True
+[16:49:16.296] [D] [Pulse] Slow bot root: 404ms bot=Combat Bot poi=None combat=True
+[16:49:16.770] [D] [Pulse] Slow bot root: 407ms bot=Combat Bot poi=None combat=True
+[16:49:17.249] [D] [Pulse] Slow bot root: 408ms bot=Combat Bot poi=None combat=True
+[16:49:17.553] [D] [Pulse] Slow bot root: 241ms bot=Combat Bot poi=None combat=False
+[16:49:17.857] [D] [Pulse] Slow bot root: 245ms bot=Combat Bot poi=None combat=False
+[16:49:18.160] [D] [Pulse] Slow bot root: 242ms bot=Combat Bot poi=None combat=False
+[16:49:18.460] [D] [Pulse] Slow bot root: 242ms bot=Combat Bot poi=None combat=False
+[16:49:18.761] [D] [Pulse] Slow bot root: 241ms bot=Combat Bot poi=None combat=False
+[16:49:19.062] [D] [Pulse] Slow bot root: 242ms bot=Combat Bot poi=None combat=False
+[16:49:19.365] [D] [Pulse] Slow bot root: 243ms bot=Combat Bot poi=None combat=False
+[16:49:19.665] [D] [Pulse] Slow bot root: 240ms bot=Combat Bot poi=None combat=False
+[16:49:19.964] [D] [Pulse] Slow bot root: 239ms bot=Combat Bot poi=None combat=False
+[16:49:20.264] [D] [Pulse] Slow bot root: 239ms bot=Combat Bot poi=None combat=False
+[16:49:20.611] [D] [Pulse] Slow bot root: 238ms bot=Combat Bot poi=None combat=False
+[16:49:20.950] [D] [Pulse] Slow bot root: 243ms bot=Combat Bot poi=None combat=False
+[16:49:21.249] [D] [Pulse] Slow bot root: 238ms bot=Combat Bot poi=None combat=False
+[16:49:21.549] [D] [Pulse] Slow bot root: 239ms bot=Combat Bot poi=None combat=False
+[16:49:21.851] [D] [Pulse] Slow bot root: 242ms bot=Combat Bot poi=None combat=False
+[16:49:22.153] [D] [Pulse] Slow bot root: 242ms bot=Combat Bot poi=None combat=False
+[16:49:22.456] [D] [Pulse] Slow bot root: 240ms bot=Combat Bot poi=None combat=False
+[16:49:22.759] [D] [Pulse] Slow bot root: 239ms bot=Combat Bot poi=None combat=False
+[16:49:23.061] [D] [Pulse] Slow bot root: 241ms bot=Combat Bot poi=None combat=False
+[16:49:23.365] [D] [Pulse] Slow bot root: 244ms bot=Combat Bot poi=None combat=False
+[16:49:23.668] [D] [Pulse] Slow bot root: 243ms bot=Combat Bot poi=None combat=False
+[16:49:23.963] [D] [Pulse] Slow shared pulse: total=294ms movement=0 objects=0 lua=235 info=0 loot=1 targeting=57 events=0 plugins=0 routine=0
+[16:49:24.206] [D] [Pulse] Slow bot root: 242ms bot=Combat Bot poi=None combat=False
+[16:49:24.506] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=241ms
+[16:49:24.774] [D] [Pulse] Slow bot root: 267ms bot=Combat Bot poi=None combat=False
+[16:49:25.076] [D] [Pulse] Slow bot root: 243ms bot=Combat Bot poi=None combat=False
+[16:49:25.378] [D] [Pulse] Slow bot root: 241ms bot=Combat Bot poi=None combat=False
+[16:49:25.680] [D] [Pulse] Slow bot root: 240ms bot=Combat Bot poi=None combat=False
+[16:49:26.025] [D] [Pulse] Slow bot root: 251ms bot=Combat Bot poi=None combat=False
+[16:49:29.164] [D] [Pulse] Slow bot root: 106ms bot=Combat Bot poi=None combat=False
+[16:49:29.365] [D] [Pulse] Slow bot root: 152ms bot=Combat Bot poi=None combat=False
+[16:49:29.522] [D] [Pulse] Slow bot root: 120ms bot=Combat Bot poi=None combat=False
+[16:49:29.678] [D] [Pulse] Slow bot root: 114ms bot=Combat Bot poi=None combat=False
+[16:49:31.131] [D] [Pulse] Slow bot root: 148ms bot=Combat Bot poi=None combat=False
+[16:49:31.375] [D] [Pulse] Slow bot root: 125ms bot=Combat Bot poi=None combat=False
+[16:49:31.571] [D] [Pulse] Slow bot root: 115ms bot=Combat Bot poi=None combat=False
+[16:49:32.280] [D] [Pulse] Slow bot root: 100ms bot=Combat Bot poi=None combat=False
+[16:49:33.552] [N] [Singular] Casting Exorcism on Unfettered Spirit
+[16:49:33.553] [D] Spell_C::CastSpell(5614, 0, 0xF1300010D4000045, 0)
+[16:49:33.564] [D] [Pulse] Slow bot root: 250ms bot=Combat Bot poi=None combat=True
+[16:49:33.601] [D] [Singular-DEBUG] Switched targets!
+[16:49:33.601] [D] [Singular-DEBUG] Melee Distance: 5
+[16:49:33.601] [D] [Singular-DEBUG] Health: 73.85685884691848
+[16:49:33.601] [D] [Singular-DEBUG] Level: 31
+[16:49:33.968] [D] [Pulse] Slow bot root: 366ms bot=Combat Bot poi=None combat=True
+[16:49:34.370] [D] [Pulse] Slow bot root: 365ms bot=Combat Bot poi=None combat=True
+[16:49:34.790] [D] [Pulse] Slow bot root: 384ms bot=Combat Bot poi=None combat=True
+[16:49:35.231] [D] [Pulse] Slow bot root: 382ms bot=Combat Bot poi=None combat=True
+[16:49:35.625] [N] [Singular] Casting Judgement of Light on Unfettered Spirit
+[16:49:35.625] [D] Spell_C::CastSpell(20271, 0, 0xF1300010D4000045, 0)
+[16:49:35.660] [D] [Pulse] Slow bot root: 375ms bot=Combat Bot poi=None combat=True
+[16:49:36.096] [D] [Pulse] Slow bot root: 375ms bot=Combat Bot poi=None combat=True
+[16:49:36.567] [D] [Pulse] Slow bot root: 377ms bot=Combat Bot poi=None combat=True
+[16:49:37.003] [D] [Pulse] Slow bot root: 377ms bot=Combat Bot poi=None combat=True
+[16:49:37.411] [D] [Pulse] Slow bot root: 356ms bot=Combat Bot poi=None combat=True
+[16:49:37.464] [N] [Singular] Currect target is invalid. Switching to Anguished Dead!
+[16:49:37.828] [D] [Singular-DEBUG] Switched targets!
+[16:49:37.828] [D] [Singular-DEBUG] Melee Distance: 5
+[16:49:37.828] [D] [Singular-DEBUG] Health: 86.18290258449304
+[16:49:37.828] [D] [Singular-DEBUG] Level: 31
+[16:49:38.340] [D] [Pulse] Slow bot root: 443ms bot=Combat Bot poi=None combat=True
+[16:49:38.809] [D] [Pulse] Slow bot root: 406ms bot=Combat Bot poi=None combat=True
+[16:49:39.251] [D] [Pulse] Slow bot root: 375ms bot=Combat Bot poi=None combat=True
+[16:49:39.720] [D] [Pulse] Slow bot root: 406ms bot=Combat Bot poi=None combat=True
+[16:49:40.169] [D] [Pulse] Slow bot root: 387ms bot=Combat Bot poi=None combat=True
+[16:49:40.604] [D] [Pulse] Slow bot root: 373ms bot=Combat Bot poi=None combat=True
+[16:49:41.072] [D] [Pulse] Slow bot root: 404ms bot=Combat Bot poi=None combat=True
+[16:49:41.546] [D] [Pulse] Slow bot root: 410ms bot=Combat Bot poi=None combat=True
+[16:49:42.045] [D] [Pulse] Slow bot root: 405ms bot=Combat Bot poi=None combat=True
+[16:49:42.480] [D] [Pulse] Slow bot root: 377ms bot=Combat Bot poi=None combat=True
+[16:49:42.916] [D] [Pulse] Slow bot root: 377ms bot=Combat Bot poi=None combat=True
+[16:49:43.350] [D] [Pulse] Slow bot root: 373ms bot=Combat Bot poi=None combat=True
+[16:49:43.786] [D] [Pulse] Slow bot root: 377ms bot=Combat Bot poi=None combat=True
+[16:49:44.152] [N] [Singular] Casting Judgement of Light on Anguished Dead
+[16:49:44.152] [D] Spell_C::CastSpell(20271, 0, 0xF13000191A000070, 0)
+[16:49:44.186] [D] [Pulse] Slow bot root: 340ms bot=Combat Bot poi=None combat=True
+[16:49:44.624] [D] [Pulse] Slow bot root: 379ms bot=Combat Bot poi=None combat=True
+[16:49:45.023] [D] [Pulse] Slow bot root: 339ms bot=Combat Bot poi=None combat=True
+[16:49:45.389] [D] [Pulse] Slow bot root: 338ms bot=Combat Bot poi=None combat=True
+[16:49:45.761] [D] [Pulse] Slow bot root: 341ms bot=Combat Bot poi=None combat=True
+[16:49:46.163] [D] [Pulse] Slow bot root: 345ms bot=Combat Bot poi=None combat=True
+[16:49:46.529] [D] [Pulse] Slow bot root: 308ms bot=Combat Bot poi=None combat=True
+[16:49:46.898] [D] [Pulse] Slow bot root: 312ms bot=Combat Bot poi=None combat=True
+[16:49:47.296] [D] [Pulse] Slow bot root: 309ms bot=Combat Bot poi=None combat=True
+[16:49:47.667] [D] [Pulse] Slow bot root: 312ms bot=Combat Bot poi=None combat=True
+[16:49:48.038] [D] [Pulse] Slow bot root: 311ms bot=Combat Bot poi=None combat=True
+[16:49:48.406] [D] [Pulse] Slow bot root: 311ms bot=Combat Bot poi=None combat=True
+[16:49:48.808] [D] [Pulse] Slow bot root: 341ms bot=Combat Bot poi=None combat=True
+[16:49:49.176] [D] [Pulse] Slow bot root: 310ms bot=Combat Bot poi=None combat=True
+[16:49:49.548] [D] [Pulse] Slow bot root: 311ms bot=Combat Bot poi=None combat=True
+[16:49:49.917] [D] [Pulse] Slow bot root: 310ms bot=Combat Bot poi=None combat=True
+[16:49:50.288] [D] [Pulse] Slow bot root: 312ms bot=Combat Bot poi=None combat=True
+[16:49:50.523] [N] [Singular] Casting Exorcism on Anguished Dead
+[16:49:50.523] [D] Spell_C::CastSpell(5614, 0, 0xF13000191A000070, 0)
+[16:49:50.556] [D] [Pulse] Slow bot root: 210ms bot=Combat Bot poi=None combat=True
+[16:49:50.926] [D] [Pulse] Slow bot root: 311ms bot=Combat Bot poi=None combat=True
+[16:49:51.318] [D] [Pulse] Slow bot root: 331ms bot=Combat Bot poi=None combat=True
+[16:49:51.652] [D] [Pulse] Slow bot root: 294ms bot=Combat Bot poi=None combat=True
+[16:49:51.980] [D] [Pulse] Slow bot root: 295ms bot=Combat Bot poi=None combat=True
+[16:49:52.342] [D] [Pulse] Slow bot root: 293ms bot=Combat Bot poi=None combat=True
+[16:49:52.758] [D] [Pulse] Slow bot root: 374ms bot=Combat Bot poi=None combat=True
+[16:49:52.791] [N] [Singular] Currect target is invalid. Switching to Unfettered Spirit!
+[16:49:53.122] [D] [Singular-DEBUG] Switched targets!
+[16:49:53.122] [D] [Singular-DEBUG] Melee Distance: 5
+[16:49:53.122] [D] [Singular-DEBUG] Health: 8.69109947643979
+[16:49:53.122] [D] [Singular-DEBUG] Level: 30
+[16:49:53.638] [D] [MeshNavigator] Skipped 2 path nodes
+[16:49:53.705] [D] [Pulse] Slow bot root: 480ms bot=Combat Bot poi=None combat=True
+[16:49:54.100] [D] [Pulse] Slow bot root: 338ms bot=Combat Bot poi=None combat=True
+[16:49:54.132] [D] [Singular-DEBUG] Switched targets!
+[16:49:54.132] [D] [Singular-DEBUG] Melee Distance: 5
+[16:49:54.132] [D] [Singular-DEBUG] Health: 45.62624254473161
+[16:49:54.132] [D] [Singular-DEBUG] Level: 31
+[16:49:54.517] [D] [Pulse] Slow bot root: 384ms bot=Combat Bot poi=None combat=True
+[16:49:54.913] [D] [Pulse] Slow bot root: 340ms bot=Combat Bot poi=None combat=True
+[16:49:55.248] [D] [Pulse] Slow bot root: 305ms bot=Combat Bot poi=None combat=False
+[16:49:55.854] [D] [Pulse] Slow bot root: 577ms bot=Combat Bot poi=None combat=True
+[16:49:56.186] [D] [Pulse] Slow bot root: 302ms bot=Combat Bot poi=None combat=True
+[16:49:56.522] [D] [Pulse] Slow bot root: 301ms bot=Combat Bot poi=None combat=True
+[16:49:56.860] [D] [Pulse] Slow bot root: 306ms bot=Combat Bot poi=None combat=True
+[16:49:57.194] [D] [Pulse] Slow bot root: 304ms bot=Combat Bot poi=None combat=True
+[16:49:57.562] [D] [Pulse] Slow bot root: 305ms bot=Combat Bot poi=None combat=True
+[16:49:57.896] [D] [Pulse] Slow bot root: 303ms bot=Combat Bot poi=None combat=True
+[16:49:58.217] [D] [Pulse] Slow bot root: 289ms bot=Combat Bot poi=None combat=True
+[16:49:58.553] [D] [Pulse] Slow bot root: 306ms bot=Combat Bot poi=None combat=True
+[16:49:58.921] [D] [Pulse] Slow bot root: 338ms bot=Combat Bot poi=None combat=True
+[16:49:59.285] [D] [Pulse] Slow bot root: 334ms bot=Combat Bot poi=None combat=True
+[16:49:59.653] [D] [Pulse] Slow bot root: 337ms bot=Combat Bot poi=None combat=True
+[16:49:59.959] [N] [Singular] Casting Judgement of Light on Anguished Dead
+[16:49:59.959] [D] Spell_C::CastSpell(20271, 0, 0xF13000191A000078, 0)
+[16:49:59.992] [D] [Pulse] Slow bot root: 311ms bot=Combat Bot poi=None combat=True
+[16:50:00.354] [D] [Pulse] Slow bot root: 305ms bot=Combat Bot poi=None combat=True
+[16:50:00.678] [D] [Pulse] Slow bot root: 295ms bot=Combat Bot poi=None combat=True
+[16:50:00.999] [D] [Pulse] Slow bot root: 283ms bot=Combat Bot poi=None combat=True
+[16:50:01.343] [D] [Pulse] Slow bot root: 289ms bot=Combat Bot poi=None combat=True
+[16:50:01.661] [D] [Pulse] Slow bot root: 278ms bot=Combat Bot poi=None combat=True
+[16:50:01.890] [D] [Pulse] Slow bot root: 175ms bot=Combat Bot poi=None combat=True
+[16:50:02.084] [D] [Pulse] Slow bot root: 170ms bot=Combat Bot poi=None combat=True
+[16:50:02.281] [D] [Pulse] Slow bot root: 167ms bot=Combat Bot poi=None combat=True
+[16:50:02.518] [D] [Pulse] Slow bot root: 171ms bot=Combat Bot poi=None combat=True
+[16:50:02.724] [D] [Pulse] Slow bot root: 175ms bot=Combat Bot poi=None combat=True
+[16:50:02.938] [D] [Pulse] Slow bot root: 188ms bot=Combat Bot poi=None combat=True
+[16:50:03.153] [D] [Pulse] Slow bot root: 173ms bot=Combat Bot poi=None combat=False
+[16:50:03.435] [D] [Pulse] Slow bot root: 253ms bot=Combat Bot poi=None combat=False
+[16:50:03.734] [D] [Pulse] Slow bot root: 244ms bot=Combat Bot poi=None combat=False
+[16:50:04.039] [D] [Pulse] Slow bot root: 249ms bot=Combat Bot poi=None combat=False
+[16:50:04.343] [D] [Pulse] Slow bot root: 251ms bot=Combat Bot poi=None combat=False
+[16:50:04.645] [D] [Pulse] Slow bot root: 249ms bot=Combat Bot poi=None combat=False
+[16:50:04.946] [D] [Pulse] Slow bot root: 249ms bot=Combat Bot poi=None combat=False
+[16:50:05.250] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=252ms
+[16:50:05.251] [D] [Pulse] Slow shared pulse: total=304ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=50 events=0 plugins=252 routine=0
+[16:50:05.518] [D] [Pulse] Slow bot root: 267ms bot=Combat Bot poi=None combat=False
+[16:50:05.818] [D] [Pulse] Slow bot root: 249ms bot=Combat Bot poi=None combat=False
+[16:50:06.135] [D] [Pulse] Slow bot root: 263ms bot=Combat Bot poi=None combat=False
+[16:50:06.436] [D] [Pulse] Slow bot root: 251ms bot=Combat Bot poi=None combat=False
+[16:50:06.735] [D] [Pulse] Slow bot root: 247ms bot=Combat Bot poi=None combat=False
+[16:50:07.034] [D] [Pulse] Slow bot root: 248ms bot=Combat Bot poi=None combat=False
+[16:50:07.338] [D] [Pulse] Slow bot root: 252ms bot=Combat Bot poi=None combat=False
+[16:50:07.672] [D] [Pulse] Slow bot root: 245ms bot=Combat Bot poi=None combat=False
+[16:50:07.975] [D] [Pulse] Slow bot root: 251ms bot=Combat Bot poi=None combat=False
+[16:50:08.313] [D] [Pulse] Slow bot root: 268ms bot=Combat Bot poi=None combat=False
+[16:50:08.448] [D] [Pulse] Slow bot root: 102ms bot=Combat Bot poi=None combat=False
+[16:50:09.152] [D] [Pulse] Slow bot root: 248ms bot=Combat Bot poi=None combat=False
+[16:50:09.456] [D] [Pulse] Slow bot root: 248ms bot=Combat Bot poi=None combat=False
+[16:50:09.756] [D] [Pulse] Slow bot root: 245ms bot=Combat Bot poi=None combat=False
+[16:50:10.061] [D] [Pulse] Slow bot root: 251ms bot=Combat Bot poi=None combat=False
+[16:50:10.365] [D] [Pulse] Slow bot root: 250ms bot=Combat Bot poi=None combat=False
+[16:50:10.665] [D] [Pulse] Slow bot root: 244ms bot=Combat Bot poi=None combat=False
+[16:50:10.965] [D] [Pulse] Slow bot root: 248ms bot=Combat Bot poi=None combat=False
+[16:50:11.267] [D] [Pulse] Slow bot root: 249ms bot=Combat Bot poi=None combat=False
+[16:50:11.422] [D] [Pulse] Slow bot root: 100ms bot=Combat Bot poi=None combat=False
+[16:50:14.726] [D] [Singular-DEBUG] Switched targets!
+[16:50:14.726] [D] [Singular-DEBUG] Melee Distance: 3.5
+[16:50:14.726] [D] [Singular-DEBUG] Health: 83.43589743589743
+[16:50:14.726] [D] [Singular-DEBUG] Level: 29
+[16:50:16.972] [N] [AutoEquip]: Loot roll in progress
+[16:50:17.019] [N] [AutoEquip]: Equipped item in slot:HandsSlot scored 12 while loot-roll item scored:0.0016666668
+[16:50:17.019] [N] [AutoEquip]: New item did not contain our primary stat of:Strength so we are not rolling need.
+[16:50:17.019] [N] [AutoEquip]: Rolling Greed
+[16:50:25.206] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=74ms
+[16:50:26.588] [N] [Singular] Currect target is invalid. Switching to Bloodmage Thalnos!
+[16:50:26.910] [D] [Singular-DEBUG] Switched targets!
+[16:50:26.911] [D] [Singular-DEBUG] Melee Distance: 5
+[16:50:26.911] [D] [Singular-DEBUG] Health: 94.28490990990991
+[16:50:26.911] [D] [Singular-DEBUG] Level: 32
+[16:50:27.285] [D] [Pulse] Slow bot root: 287ms bot=Combat Bot poi=None combat=True
+[16:50:27.599] [D] [Pulse] Slow bot root: 282ms bot=Combat Bot poi=None combat=True
+[16:50:27.932] [D] [Pulse] Slow bot root: 286ms bot=Combat Bot poi=None combat=True
+[16:50:28.182] [N] [Singular] Casting Judgement of Light on Bloodmage Thalnos
+[16:50:28.182] [D] Spell_C::CastSpell(20271, 0, 0xF1300011BF00006F, 0)
+[16:50:28.193] [D] [Pulse] Slow bot root: 226ms bot=Combat Bot poi=None combat=True
+[16:50:28.473] [D] [Pulse] Slow bot root: 251ms bot=Combat Bot poi=None combat=True
+[16:50:28.751] [D] [Pulse] Slow bot root: 247ms bot=Combat Bot poi=None combat=True
+[16:50:29.074] [D] [Pulse] Slow bot root: 294ms bot=Combat Bot poi=None combat=True
+[16:50:29.373] [D] [Pulse] Slow bot root: 265ms bot=Combat Bot poi=None combat=True
+[16:50:29.676] [D] [Pulse] Slow bot root: 272ms bot=Combat Bot poi=None combat=True
+[16:50:29.820] [N] [Singular] Casting Exorcism on Bloodmage Thalnos
+[16:50:29.820] [D] Spell_C::CastSpell(5614, 0, 0xF1300011BF00006F, 0)
+[16:50:29.832] [D] [Pulse] Slow bot root: 130ms bot=Combat Bot poi=None combat=True
+[16:50:30.136] [D] [Pulse] Slow bot root: 270ms bot=Combat Bot poi=None combat=True
+[16:50:30.425] [D] [Pulse] Slow bot root: 258ms bot=Combat Bot poi=None combat=True
+[16:50:30.717] [D] [Pulse] Slow bot root: 269ms bot=Combat Bot poi=None combat=True
+[16:50:31.018] [D] [Pulse] Slow bot root: 267ms bot=Combat Bot poi=None combat=True
+[16:50:31.332] [D] [Pulse] Slow bot root: 288ms bot=Combat Bot poi=None combat=True
+[16:50:31.644] [D] [Pulse] Slow bot root: 281ms bot=Combat Bot poi=None combat=True
+[16:50:31.958] [D] [Pulse] Slow bot root: 289ms bot=Combat Bot poi=None combat=True
+[16:50:32.294] [D] [Pulse] Slow bot root: 307ms bot=Combat Bot poi=None combat=True
+[16:50:32.627] [D] [Pulse] Slow bot root: 302ms bot=Combat Bot poi=None combat=True
+[16:50:32.996] [D] [Pulse] Slow bot root: 310ms bot=Combat Bot poi=None combat=True
+[16:50:33.329] [D] [Pulse] Slow bot root: 308ms bot=Combat Bot poi=None combat=True
+[16:50:33.659] [D] [Pulse] Slow bot root: 304ms bot=Combat Bot poi=None combat=True
+[16:50:33.992] [D] [Pulse] Slow bot root: 301ms bot=Combat Bot poi=None combat=True
+[16:50:34.334] [D] [Pulse] Slow bot root: 310ms bot=Combat Bot poi=None combat=True
+[16:50:34.693] [D] [Pulse] Slow bot root: 304ms bot=Combat Bot poi=None combat=True
+[16:50:35.021] [D] [Pulse] Slow bot root: 301ms bot=Combat Bot poi=None combat=True
+[16:50:35.357] [D] [Pulse] Slow bot root: 301ms bot=Combat Bot poi=None combat=True
+[16:50:35.696] [D] [Pulse] Slow bot root: 303ms bot=Combat Bot poi=None combat=True
+[16:50:36.030] [D] [Pulse] Slow bot root: 300ms bot=Combat Bot poi=None combat=True
+[16:50:36.328] [D] [Pulse] Slow bot root: 265ms bot=Combat Bot poi=None combat=True
+[16:50:36.629] [D] [Pulse] Slow bot root: 270ms bot=Combat Bot poi=None combat=True
+[16:50:36.931] [D] [Pulse] Slow bot root: 267ms bot=Combat Bot poi=None combat=True
+[16:50:37.235] [D] [Pulse] Slow bot root: 271ms bot=Combat Bot poi=None combat=True
+[16:50:37.534] [D] [Pulse] Slow bot root: 265ms bot=Combat Bot poi=None combat=True
+[16:50:37.870] [D] [Pulse] Slow bot root: 299ms bot=Combat Bot poi=None combat=True
+[16:50:38.205] [D] [Pulse] Slow bot root: 267ms bot=Combat Bot poi=None combat=True
+[16:50:38.536] [D] [Pulse] Slow bot root: 286ms bot=Combat Bot poi=None combat=True
+[16:50:38.874] [D] [Pulse] Slow bot root: 304ms bot=Combat Bot poi=None combat=True
+[16:50:39.183] [D] [Pulse] Slow bot root: 274ms bot=Combat Bot poi=None combat=True
+[16:50:39.511] [D] [Pulse] Slow bot root: 298ms bot=Combat Bot poi=None combat=True
+[16:50:39.875] [D] [Pulse] Slow bot root: 331ms bot=Combat Bot poi=None combat=True
+[16:50:40.240] [D] [Pulse] Slow bot root: 324ms bot=Combat Bot poi=None combat=True
+[16:50:40.583] [D] [Pulse] Slow bot root: 306ms bot=Combat Bot poi=None combat=True
+[16:50:40.915] [D] [Pulse] Slow bot root: 298ms bot=Combat Bot poi=None combat=True
+[16:50:41.264] [D] [Pulse] Slow bot root: 310ms bot=Combat Bot poi=None combat=True
+[16:50:41.595] [D] [Pulse] Slow bot root: 300ms bot=Combat Bot poi=None combat=True
+[16:50:41.931] [D] [Pulse] Slow bot root: 302ms bot=Combat Bot poi=None combat=True
+[16:50:42.300] [D] [Pulse] Slow bot root: 336ms bot=Combat Bot poi=None combat=True
+[16:50:42.645] [N] [Singular] Casting Judgement of Light on Bloodmage Thalnos
+[16:50:42.645] [D] Spell_C::CastSpell(20271, 0, 0xF1300011BF00006F, 0)
+[16:50:42.678] [D] [Pulse] Slow bot root: 343ms bot=Combat Bot poi=None combat=True
+[16:50:43.037] [D] [Pulse] Slow bot root: 302ms bot=Combat Bot poi=None combat=True
+[16:50:43.407] [D] [Pulse] Slow bot root: 301ms bot=Combat Bot poi=None combat=True
+[16:50:43.747] [D] [Pulse] Slow bot root: 305ms bot=Combat Bot poi=None combat=True
+[16:50:44.082] [D] [Pulse] Slow bot root: 310ms bot=Combat Bot poi=None combat=True
+[16:50:44.444] [D] [Pulse] Slow bot root: 304ms bot=Combat Bot poi=None combat=True
+[16:50:44.776] [D] [Pulse] Slow bot root: 302ms bot=Combat Bot poi=None combat=True
+[16:50:45.111] [D] [Pulse] Slow bot root: 300ms bot=Combat Bot poi=None combat=True
+[16:50:45.420] [D] [Pulse] Slow bot root: 271ms bot=Combat Bot poi=None combat=True
+[16:50:45.718] [D] [Pulse] Slow bot root: 271ms bot=Combat Bot poi=None combat=True
+[16:50:46.018] [D] [Pulse] Slow bot root: 271ms bot=Combat Bot poi=None combat=True
+[16:50:46.315] [D] [Pulse] Slow bot root: 267ms bot=Combat Bot poi=None combat=True
+[16:50:46.620] [D] [Pulse] Slow bot root: 271ms bot=Combat Bot poi=None combat=True
+[16:50:46.949] [D] [Pulse] Slow bot root: 300ms bot=Combat Bot poi=None combat=True
+[16:50:47.278] [D] [Pulse] Slow bot root: 299ms bot=Combat Bot poi=None combat=True
+[16:50:47.577] [D] [Pulse] Slow bot root: 262ms bot=Combat Bot poi=None combat=True
+[16:50:47.877] [D] [Pulse] Slow bot root: 263ms bot=Combat Bot poi=None combat=True
+[16:50:48.210] [D] [Pulse] Slow bot root: 297ms bot=Combat Bot poi=None combat=True
+[16:50:48.582] [D] [Pulse] Slow bot root: 300ms bot=Combat Bot poi=None combat=True
+[16:50:48.914] [D] [Pulse] Slow bot root: 298ms bot=Combat Bot poi=None combat=True
+[16:50:49.214] [D] [Pulse] Slow bot root: 264ms bot=Combat Bot poi=None combat=True
+[16:50:49.515] [D] [Pulse] Slow bot root: 262ms bot=Combat Bot poi=None combat=True
+[16:50:49.852] [D] [Pulse] Slow bot root: 298ms bot=Combat Bot poi=None combat=True
+[16:50:50.154] [D] [Pulse] Slow bot root: 262ms bot=Combat Bot poi=None combat=True
+[16:50:50.462] [D] [Pulse] Slow bot root: 268ms bot=Combat Bot poi=None combat=True
+[16:50:50.792] [D] [Pulse] Slow bot root: 297ms bot=Combat Bot poi=None combat=True
+[16:50:51.128] [D] [Pulse] Slow bot root: 300ms bot=Combat Bot poi=None combat=True
+[16:50:51.425] [D] [Pulse] Slow bot root: 262ms bot=Combat Bot poi=None combat=True
+[16:50:51.724] [D] [Pulse] Slow bot root: 264ms bot=Combat Bot poi=None combat=True
+[16:50:52.060] [D] [Pulse] Slow bot root: 297ms bot=Combat Bot poi=None combat=True
+[16:50:52.362] [D] [Pulse] Slow bot root: 264ms bot=Combat Bot poi=None combat=True
+[16:50:52.668] [D] [Pulse] Slow bot root: 269ms bot=Combat Bot poi=None combat=True
+[16:50:52.969] [D] [Pulse] Slow bot root: 268ms bot=Combat Bot poi=None combat=True
+[16:50:53.302] [D] [Pulse] Slow bot root: 294ms bot=Combat Bot poi=None combat=True
+[16:50:53.516] [N] [Singular] Casting Hammer of Justice on Bloodmage Thalnos
+[16:50:53.516] [D] Spell_C::CastSpell(5588, 0, 0xF1300011BF00006F, 0)
+[16:50:53.549] [D] [Pulse] Slow bot root: 177ms bot=Combat Bot poi=None combat=False
+[16:50:56.752] [D] [Singular-DEBUG] [Talents] Best Tree: 20
+[16:50:56.854] [N] We leveled up! Checking if we need to switch profiles.
+[16:50:56.854] [D] Selected sub-profile: Auto-Loader (L1-81)
+[16:50:57.124] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=269ms
+[16:50:57.124] [D] [Pulse] Slow shared pulse: total=3574ms movement=0 objects=0 lua=3202 info=0 loot=1 targeting=49 events=50 plugins=269 routine=0
+[16:50:57.391] [D] [Pulse] Slow bot root: 267ms bot=Combat Bot poi=None combat=False
+[16:50:57.392] [N] [AutoEquip]: Loot roll in progress
+[16:50:57.525] [N] [AutoEquip]: Equipped item in slot:ShoulderSlot scored 2.4050002 while loot-roll item scored:1.3333334
+[16:50:57.526] [N] [AutoEquip]: New item did not contain our primary stat of:Strength so we are not rolling need.
+[16:50:57.526] [N] [AutoEquip]: Rolling Greed
+[16:50:57.861] [D] [Pulse] Slow bot root: 246ms bot=Combat Bot poi=None combat=False
+[16:50:58.201] [D] [Pulse] Slow bot root: 254ms bot=Combat Bot poi=None combat=False
+[16:50:58.504] [D] [Pulse] Slow bot root: 251ms bot=Combat Bot poi=None combat=False
+[16:50:58.835] [D] [Pulse] Slow bot root: 246ms bot=Combat Bot poi=None combat=False
+[16:50:59.135] [D] [Pulse] Slow bot root: 245ms bot=Combat Bot poi=None combat=False
+[16:50:59.434] [D] [Pulse] Slow bot root: 246ms bot=Combat Bot poi=None combat=False
+[16:50:59.734] [D] [Pulse] Slow bot root: 248ms bot=Combat Bot poi=None combat=False
+[16:51:00.033] [D] [Pulse] Slow bot root: 245ms bot=Combat Bot poi=None combat=False
+[16:51:00.329] [D] [Pulse] Slow bot root: 244ms bot=Combat Bot poi=None combat=False
+[16:51:00.630] [D] [Pulse] Slow bot root: 248ms bot=Combat Bot poi=None combat=False
+[16:51:00.931] [D] [Pulse] Slow bot root: 248ms bot=Combat Bot poi=None combat=False
+[16:51:01.232] [D] [Pulse] Slow bot root: 247ms bot=Combat Bot poi=None combat=False
+[16:51:01.532] [D] [Pulse] Slow bot root: 247ms bot=Combat Bot poi=None combat=False
+[16:51:01.731] [D] [Pulse] Slow bot root: 148ms bot=Combat Bot poi=None combat=False
+[16:51:03.216] [D] [Pulse] Slow bot root: 103ms bot=Combat Bot poi=None combat=False
+[16:51:04.827] [D] [Pulse] Slow bot root: 111ms bot=Combat Bot poi=None combat=False
+[16:51:05.025] [D] [Pulse] Slow bot root: 128ms bot=Combat Bot poi=None combat=False
+[16:51:05.199] [D] [Pulse] Slow bot root: 131ms bot=Combat Bot poi=None combat=False
+[16:51:05.369] [D] [Pulse] Slow bot root: 102ms bot=Combat Bot poi=None combat=False
+[16:51:06.638] [D] [Pulse] Slow bot root: 192ms bot=Combat Bot poi=None combat=False
+[16:51:14.330] [N] Not in game
+[16:51:14.421] [N] Not in game
+[16:51:14.512] [N] Not in game
+[16:51:14.604] [N] Not in game
+[16:51:14.682] [N] Not in game
+[16:51:14.774] [N] Not in game
+[16:51:14.866] [N] Not in game
+[16:51:14.958] [N] Not in game
+[16:51:15.109] [N] [Singular] Context changed. New context: Normal. Rebuilding behaviors.
+[16:51:15.109] [D] [Singular-DEBUG] Creating Combat behavior.
+[16:51:15.110] [D] [Singular-DEBUG] CreateRetributionPaladinNormalPullAndCombat is a match!
+[16:51:15.110] [N] [Singular]  Using CreateRetributionPaladinNormalPullAndCombat for Retribution Paladin - Combat (Priority: 0)
+[16:51:15.112] [D] [Singular-DEBUG] Creating Pull behavior.
+[16:51:15.112] [D] [Singular-DEBUG] CreateRetributionPaladinNormalPullAndCombat is a match!
+[16:51:15.112] [N] [Singular]  Using CreateRetributionPaladinNormalPullAndCombat for Retribution Paladin - Pull (Priority: 0)
+[16:51:15.113] [D] [Singular-DEBUG] Creating Rest behavior.
+[16:51:15.114] [D] [Singular-DEBUG] CreateRetributionPaladinRest is a match!
+[16:51:15.114] [N] [Singular]  Using CreateRetributionPaladinRest for Retribution Paladin - Rest (Priority: 0)
+[16:51:15.115] [D] [Singular-DEBUG] Creating CombatBuffs behavior.
+[16:51:15.115] [D] [Singular-DEBUG] Creating Heal behavior.
+[16:51:15.116] [D] [Singular-DEBUG] CreateRetributionPaladinHeal is a match!
+[16:51:15.116] [N] [Singular]  Using CreateRetributionPaladinHeal for Retribution Paladin - Heal (Priority: 0)
+[16:51:15.116] [D] [Singular-DEBUG] CreateRetributionPaladinNormalPullAndCombat is a match!
+[16:51:15.116] [N] [Singular]  Using CreateRetributionPaladinNormalPullAndCombat for Retribution Paladin - Heal (Priority: 0)
+[16:51:15.117] [D] [Singular-DEBUG] Creating PullBuffs behavior.
+[16:51:15.118] [D] [Singular-DEBUG] Creating PreCombatBuffs behavior.
+[16:51:15.119] [D] [Singular-DEBUG] CreatePaladinPreCombatBuffs is a match!
+[16:51:15.119] [N] [Singular]  Using CreatePaladinPreCombatBuffs for Retribution Paladin - PreCombatBuffs (Priority: 0)
+[16:51:17.042] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=87ms
+[16:51:27.293] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=258ms
+[16:51:27.294] [D] [Pulse] Slow shared pulse: total=292ms movement=0 objects=0 lua=0 info=0 loot=0 targeting=31 events=0 plugins=258 routine=0
+[16:51:37.351] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=259ms
+[16:51:37.351] [D] [Pulse] Slow shared pulse: total=291ms movement=0 objects=0 lua=0 info=0 loot=0 targeting=30 events=0 plugins=259 routine=0
+[16:51:47.400] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=259ms
+[16:51:47.400] [D] [Pulse] Slow shared pulse: total=286ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=25 events=0 plugins=259 routine=0
+[16:51:57.465] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=261ms
+[16:51:57.465] [D] [Pulse] Slow shared pulse: total=300ms movement=0 objects=0 lua=0 info=0 loot=0 targeting=37 events=0 plugins=261 routine=0
+[16:52:07.541] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=258ms
+[16:52:07.541] [D] [Pulse] Slow shared pulse: total=294ms movement=0 objects=0 lua=0 info=0 loot=0 targeting=35 events=0 plugins=258 routine=0
+[16:52:17.595] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=258ms
+[16:52:17.595] [D] [Pulse] Slow shared pulse: total=276ms movement=0 objects=0 lua=0 info=0 loot=0 targeting=16 events=0 plugins=259 routine=0
+[16:52:27.628] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=259ms
+[16:52:27.628] [D] [Pulse] Slow shared pulse: total=271ms movement=0 objects=0 lua=0 info=0 loot=0 targeting=10 events=0 plugins=259 routine=0
+[16:52:37.655] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=261ms
+[16:52:37.655] [D] [Pulse] Slow shared pulse: total=274ms movement=0 objects=0 lua=0 info=0 loot=0 targeting=11 events=0 plugins=261 routine=0
+[16:52:47.700] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=262ms
+[16:52:47.700] [D] [Pulse] Slow shared pulse: total=301ms movement=0 objects=0 lua=0 info=0 loot=0 targeting=37 events=0 plugins=262 routine=0
+[16:52:57.759] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=260ms
+[16:52:57.759] [D] [Pulse] Slow shared pulse: total=289ms movement=0 objects=0 lua=0 info=0 loot=0 targeting=27 events=0 plugins=260 routine=0
+[16:53:07.788] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=260ms
+[16:53:07.788] [D] [Pulse] Slow shared pulse: total=276ms movement=0 objects=0 lua=0 info=0 loot=0 targeting=13 events=0 plugins=261 routine=0
+[16:53:17.877] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=256ms
+[16:53:17.877] [D] [Pulse] Slow shared pulse: total=289ms movement=0 objects=0 lua=0 info=0 loot=0 targeting=31 events=0 plugins=256 routine=0
+[16:53:27.882] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=257ms
+[16:53:27.882] [D] [Pulse] Slow shared pulse: total=277ms movement=0 objects=0 lua=0 info=0 loot=0 targeting=19 events=0 plugins=257 routine=0
+[16:53:37.945] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=261ms
+[16:53:37.945] [D] [Pulse] Slow shared pulse: total=299ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=35 events=0 plugins=261 routine=0
+[16:53:48.035] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=291ms
+[16:53:48.036] [D] [Pulse] Slow shared pulse: total=322ms movement=0 objects=0 lua=0 info=0 loot=0 targeting=29 events=0 plugins=291 routine=0
+[16:53:58.084] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=259ms
+[16:53:58.084] [D] [Pulse] Slow shared pulse: total=298ms movement=0 objects=0 lua=0 info=0 loot=0 targeting=37 events=0 plugins=259 routine=0
+[16:54:08.086] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=256ms
+[16:54:08.086] [D] [Pulse] Slow shared pulse: total=290ms movement=0 objects=0 lua=0 info=0 loot=0 targeting=32 events=0 plugins=256 routine=0
+[16:54:18.134] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=261ms
+[16:54:18.134] [D] [Pulse] Slow shared pulse: total=293ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=30 events=0 plugins=261 routine=0
+[16:54:28.180] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=257ms
+[16:54:28.180] [D] [Pulse] Slow shared pulse: total=277ms movement=0 objects=0 lua=0 info=0 loot=0 targeting=17 events=0 plugins=257 routine=0
+[16:54:31.915] [N] Bot stopping! Reason: Main window is closing
+[16:54:31.917] [D] [TreeRoot] Worker thread interrupted by Stop() — stopping cleanly.
+[16:54:31.917] [D] Cleared POI
+[16:54:31.919] [D] Worker thread exited cleanly
+[16:54:32.131] [D] [Settings] Saved all settings

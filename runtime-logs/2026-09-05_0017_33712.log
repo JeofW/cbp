@@ -1,0 +1,241 @@
+[00:17:51.345] [N] CopilotBuddy v1.6.5 started. Original HonorBuddy by Apoc, raphus, highvoltz, bobby53, xanathos, chinajade. Ported to WotLK 3.3.5a by Likon69.
+[00:17:51.753] [N] Searching for WoW process...
+[00:17:51.865] [N] Please wait a few seconds while CopilotBuddy initializes.
+[00:17:51.866] [D] Using WoW with process ID 25700
+[00:17:51.866] [D] Platform: x86
+[00:17:51.866] [D] Executable Path: D:\World of Warcraft 3.3.5a\CB\
+[00:17:51.890] [D] [ObjectManager] WoW build 12340 detected - OK
+[00:17:51.893] [D] [ObjectManager] D3DDevicePtr = 0x00C5DF88
+[00:17:51.893] [D] [ObjectManager] devicePtrAddr = 0x052FCBD0
+[00:17:51.893] [D] [ObjectManager] device = 0x0A4EFE60 (at 0x0530054C)
+[00:17:51.893] [D] [ObjectManager] vtablePtr = 0x0A4F2DBC
+[00:17:51.893] [D] [ObjectManager] endSceneAddr = 0x643348F0 (at 0x0A4F2E64)
+[00:17:51.893] [D] [ObjectManager] D3D: Device=0x0A4EFE60, VTable=0x0A4F2DBC, EndScene=0x643348F0
+[00:17:51.893] [D] [ObjectManager] Creating ExecutorRand...
+[00:17:51.939] [D] [ObjectManager] ExecutorRand created, IsInitialized = True
+[00:17:51.939] [D] [ObjectManager] EndScene hook succeeded
+[00:17:51.945] [D] [ObjectManager] Initialized successfully
+[00:17:51.946] [N] Attached to WoW with ID 25700
+[00:17:51.948] [N] Character is a level 25 BloodElf Paladin
+[00:17:51.949] [N] Current zone is The Barrens
+[00:17:51.989] [D] [Settings] Loaded settings for character: Jeof
+[00:17:51.989] [N] Initializing Combat Routines...
+[00:17:51.993] [D] Looking for routines in: D:\World of Warcraft 3.3.5a\CB\Routines
+[00:17:51.993] [D] Compiling Singular wotlk
+[00:17:54.183] [N] Could not compile routine from: Singular wotlk
+[00:17:54.184] [N] File: Rest.cs Line: 70 Error: The name 'LiquidEnvironment' does not exist in the current context
+File: Rest.cs Line: 86 Error: The name 'LiquidEnvironment' does not exist in the current context
+
+[00:17:54.184] [N] Loaded 0 combat routine(s)
+[00:17:54.191] [N] Could not find a routine fitting for your class. Please make sure you have a proper combat class routine in your Routines folder, and restart CopilotBuddy. Using default.
+[00:17:54.193] [D] Loading built-in bots from assembly: CopilotBuddy
+[00:17:54.217] [D] Found bot type: PartyBot.DiscoBot
+[00:17:54.217] [N] New bot added: Party Bot
+[00:17:54.217] [D] Loaded built-in bot: Party Bot
+[00:17:54.217] [D] Found bot type: Bots.Quest.QuestBot
+[00:17:54.217] [N] New bot added: Questing
+[00:17:54.217] [D] Loaded built-in bot: Questing
+[00:17:54.217] [D] Found bot type: Bots.Grind.LevelBot
+[00:17:54.218] [N] New bot added: Grind
+[00:17:54.218] [D] Loaded built-in bot: Grind
+[00:17:54.218] [D] Found bot type: Bots.Gatherbuddy.GatherbuddyBot
+[00:17:54.218] [N] New bot added: GatherBuddy
+[00:17:54.218] [D] Loaded built-in bot: GatherBuddy
+[00:17:54.218] [D] Found bot type: Bots.DungeonBuddy.DungeonBuddy
+[00:17:54.219] [N] New bot added: DungeonBuddy
+[00:17:54.219] [D] Loaded built-in bot: DungeonBuddy
+[00:17:54.219] [D] Found bot type: Bots.BGBuddy.BGBuddy
+[00:17:54.219] [N] New bot added: BGBuddy
+[00:17:54.219] [D] Loaded built-in bot: BGBuddy
+[00:17:54.219] [D] Built-in bot loading complete. 6 bots loaded.
+[00:17:54.223] [N] Loading bots from: D:\World of Warcraft 3.3.5a\CB\Bots
+[00:17:54.230] [N] Found 122 source files
+[00:17:54.236] [N] Found 0 dll files
+[00:17:54.237] [N] Compiling: CombatBot.cs
+[00:17:54.595] [N] Compiled successfully: CombatBot.cs
+[00:17:54.595] [N] Compiling directory: Auto Angler 2/ (23 files)
+[00:17:54.803] [N] Compiled successfully: Auto Angler 2/
+[00:17:54.803] [N] Compiling directory: LazyRaider/ (4 files)
+[00:17:55.016] [N] Compiled successfully: LazyRaider/
+[00:17:55.016] [N] Compiling directory: ProfessionBuddy/ (52 files)
+[00:17:55.648] [N] Compiled successfully: ProfessionBuddy/
+[00:17:55.648] [N] Compiling directory: Templar/ (27 files)
+[00:17:55.929] [N] Compiled successfully: Templar/
+[00:17:55.930] [N] Compiling directory: Tyrael/ (5 files)
+[00:17:56.069] [N] Compiled successfully: Tyrael/
+[00:17:56.069] [N] Compiling directory: WholesomeAutoQuest-master/ (10 files)
+[00:17:56.542] [N] Compiled successfully: WholesomeAutoQuest-master/
+[00:17:56.542] [N] ClassCollection contains 7 compiled bots
+[00:17:56.542] [N] Adding bot: Combat Bot
+[00:17:56.542] [N] New bot added: Combat Bot
+[00:17:56.542] [N] Adding bot: AutoAngler
+[00:17:56.542] [N] New bot added: AutoAngler
+[00:17:56.542] [N] Adding bot: LazyRaider
+[00:17:56.542] [N] New bot added: LazyRaider
+[00:17:56.542] [N] Adding bot: ProfessionBuddy
+[00:17:56.542] [N] New bot added: ProfessionBuddy
+[00:17:56.542] [N] Adding bot: Templar
+[00:17:56.542] [N] New bot added: Templar
+[00:17:56.542] [N] Adding bot: Tyrael
+[00:17:56.542] [N] New bot added: Tyrael
+[00:17:56.542] [N] Adding bot: Wholesome Auto Quest
+[00:17:56.542] [N] New bot added: Wholesome Auto Quest
+[00:17:56.542] [N] Bot loading complete. 13 bots loaded.
+[00:17:56.542] [N] Initializing Plugins...
+[00:17:57.324] [D] [WeightSet] Selected weight set: Paladin-Holy
+[00:17:58.521] [N] [DeathStallRecovery] Enabled. The bot will stop if corpse recovery makes no movement progress for 60 seconds.
+[00:17:59.602] [D] Rarekiller: Loading config file: D:\World of Warcraft 3.3.5a\CB\Plugins\RareKiller\config\Rarekiller.config
+[00:17:59.603] [D] Root element is missing.
+[00:17:59.603] [N] Rarekiller: Continuing with Default Config Values
+[00:17:59.604] [D] Rarekiller: Loading config file: D:\World of Warcraft 3.3.5a\CB\Plugins\RareKiller\config\Rarekiller.config
+[00:17:59.604] [D] Root element is missing.
+[00:17:59.604] [N] Rarekiller: Continuing with Default Config Values
+[00:17:59.604] [N] Rare Mob Killer - Version 3.3 Loaded.
+[00:17:59.604] [N] Rarekiller Part Tamer: I'm no Hunter. Deactivate the Tamer Part
+[00:18:00.268] [N] [VendorRecovery] Enabled. Failed Sell/Repair vendors will be skipped after 35 seconds at the NPC.
+[00:18:00.453] [N] Plugin loading complete. 16 plugins loaded.
+[00:18:00.453] [N] Plugins refreshed successfully.
+[00:18:00.456] [N] Changing current bot to: Wholesome Auto Quest
+[00:18:00.466] [N] Auto-select botbase from /botname: Wholesome Auto Quest
+[00:18:00.467] [N] Changing current bot to: Wholesome Auto Quest
+[00:18:00.471] [D] [Settings] Saved all settings
+[00:18:00.471] [N] Starting the bot.
+[00:18:00.472] [N] Currently Using BotBase : Wholesome Auto Quest
+[00:18:00.472] [N] Character is a level 25 BloodElf Paladin
+[00:18:00.473] [N] Current zone is The Barrens
+[00:18:00.483] [D] [WoWDb] Loaded 237 DBC tables
+[00:18:00.483] [D] [WoWDb]   Key=235 (0x000000EB) Rows=1893
+[00:18:00.483] [D] [WoWDb]   Key=236 (0x000000EC) Rows=7655
+[00:18:00.483] [D] [WoWDb]   Key=237 (0x000000ED) Rows=86
+[00:18:00.483] [D] [WoWDb]   Key=238 (0x000000EE) Rows=506
+[00:18:00.483] [D] [WoWDb]   Key=239 (0x000000EF) Rows=291
+[00:18:00.483] [D] [WoWDb] Lock DBC lookup: FOUND (rows=388)
+[00:18:00.483] [D] [WoWDb] ClientDb.Lock enum value = 356 (0x00000164)
+[00:18:00.484] [D] Loading profile from D:\World of Warcraft 3.3.5a\CB\Bots\WholesomeAutoQuest-master\WHOLESOME_AUTOQUESTER.xml
+[00:18:00.536] [N] Profile loaded: WholesomeAQ - The Barrens
+[00:18:00.536] [D] Selected sub-profile: WholesomeAQ - The Barrens (L1-80)
+[00:18:00.741] [D] [WholesomeAQ] Navigation fingerprint unknown: provider or mesh-root stamp unavailable.
+[00:18:01.296] [N] [QuestLog] Failed to read completed quest cache
+[00:18:01.330] [D] [ProfileBatchManager] Batch reset for new profile session.
+[00:18:01.331] [N] [Wholesome Auto Quest] Class Paladin → PullDistance set to 24
+[00:18:01.332] [N] [Wholesome Auto Quest] Initial scheduler build.
+[00:18:01.792] [D] [QuestRecovery] quest=747, stage=Objective, old=Eligible, new=Quarantined, reason=InvalidQuestData, episode=1, attempt=1, retry=4/9/2026 10:18:01 PM
+[00:18:01.793] [D] [QuestRecovery] quest=747, stage=Objective, old=Eligible, new=Quarantined, reason=InvalidQuestData, episode=1, attempt=1, retry=4/9/2026 10:18:01 PM
+[00:18:01.795] [D] [QuestRecovery] quest=867, stage=Objective, old=Quarantined, new=Quarantined, reason=InvalidQuestData, episode=1, attempt=1, retry=4/9/2026 10:18:01 PM
+[00:18:01.799] [D] [QuestRecovery] quest=891, stage=Objective, old=Eligible, new=Quarantined, reason=InvalidQuestData, episode=1, attempt=1, retry=4/9/2026 10:18:01 PM
+[00:18:01.803] [D] [QuestRecovery] quest=894, stage=TurnIn, old=Eligible, new=Quarantined, reason=InvalidQuestData, episode=1, attempt=1, retry=4/9/2026 10:18:01 PM
+[00:18:01.803] [D] [QuestRecovery] quest=896, stage=Objective, old=Eligible, new=Quarantined, reason=InvalidQuestData, episode=1, attempt=1, retry=4/9/2026 10:18:01 PM
+[00:18:01.803] [D] [QuestRecovery] quest=899, stage=Objective, old=Eligible, new=Quarantined, reason=InvalidQuestData, episode=1, attempt=1, retry=4/9/2026 10:18:01 PM
+[00:18:01.811] [D] Activity: No eligible quest work; waiting for recovery context to change. completion-authority=unknown; deferred new pickup and prerequisite-negative scheduling. excluded quest=1062;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=3281;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=4921;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=6548;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=6548;stage=Objective;objective=1;reason=outside-scan-radius;retry=context-change. excluded quest=747;stage=Objective;objective=0;reason=no-known-hotspots;retry=context-change. excluded quest=747;stage=Objective;objective=1;reason=no-known-hotspots;retry=context-change. excluded quest=8487;stage=TurnIn;scope=QuestStage;retry=context-change;state=HalfOpen. excluded quest=867;stage=Objective;objective=0;reason=no-known-hotspots;retry=context-change. excluded quest=8889;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=8889;stage=Objective;objective=1;reason=outside-scan-radius;retry=context-change. excluded quest=8889;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;objective=1;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;objective=3;reason=no-known-hotspots;retry=context-change. excluded quest=896;stage=Objective;objective=0;reason=no-known-hotspots;retry=context-change. excluded quest=9067;stage=Objective;scope=QuestStage;retry=context-change;state=HalfOpen. excluded quest=9157;stage=TurnIn;scope=QuestStage;retry=context-change;state=HalfOpen. Expanding scan radius from 250 to 500 yards before fallback.
+[00:18:01.812] [N] [Wholesome Auto Quest] Started with quest data loaded.
+[00:18:01.862] [N] [SpellDb] Loaded 49816 spells from Spells.bin
+[00:18:01.898] [D] Setting CVars: autoSelfCast=1, autoLootDefault=1
+[00:18:01.965] [D] Cleared POI
+[00:18:01.973] [D] Refresh() called. LastCount=0, CurrentCount=33
+[00:18:01.973] [N] Building spell book
+[00:18:01.974] [D] Found 33 spells from LocalPlayer.KnownSpells
+[00:18:01.974] [N] Adding Arcane Affinity
+[00:18:01.974] [N] Adding Arcane Torrent
+[00:18:01.975] [N] Adding Auto Attack
+[00:18:01.975] [N] Adding Block
+[00:18:01.976] [N] Adding Dodge
+[00:18:01.976] [N] Adding Magic Resistance
+[00:18:01.977] [N] Adding Parry
+[00:18:01.977] [N] Adding Blessing of Wisdom
+[00:18:01.978] [N] Adding Concentration Aura
+[00:18:01.978] [N] Adding Consecration
+[00:18:01.979] [N] Adding Exorcism
+[00:18:01.979] [N] Adding Flash of Light
+[00:18:01.980] [N] Adding Holy Light
+[00:18:01.980] [N] Adding Lay on Hands
+[00:18:01.981] [N] Adding Purify
+[00:18:01.982] [N] Adding Seal of Righteousness
+[00:18:01.982] [N] Adding Sense Undead
+[00:18:01.983] [N] Adding Turn Evil
+[00:18:01.984] [N] Adding Blessing of Kings
+[00:18:01.984] [N] Adding Devotion Aura
+[00:18:01.985] [N] Adding Divine Protection
+[00:18:01.986] [N] Adding Hammer of Justice
+[00:18:01.986] [N] Adding Hand of Freedom
+[00:18:01.987] [N] Adding Hand of Protection
+[00:18:01.987] [N] Adding Hand of Reckoning
+[00:18:01.988] [N] Adding Righteous Defense
+[00:18:01.989] [N] Adding Righteous Fury
+[00:18:01.989] [N] Adding Seal of Justice
+[00:18:01.990] [N] Adding Blessing of Might
+[00:18:01.990] [N] Adding Judgement of Light
+[00:18:01.991] [N] Adding Judgement of Wisdom
+[00:18:01.992] [N] Adding Retribution Aura
+[00:18:01.992] [N] Adding Seal of Command
+[00:18:01.993] [N] Spell book built
+[00:18:01.994] [D] [SpellManager] Initialize — subscribed to BotEvents.OnBotStart
+[00:18:02.184] [D] [Talented] SelectMajorTalentTree called but not needed in WotLK 3.3.5a
+[00:18:02.208] [N] Loading 1_31_35
+[00:18:02.210] [N] Loading 1_31_36
+[00:18:02.211] [N] Loading 1_31_37
+[00:18:02.212] [N] Loading 1_32_35
+[00:18:02.213] [N] Loading 1_32_36
+[00:18:02.214] [N] Loading 1_32_37
+[00:18:02.216] [N] Loading 1_33_35
+[00:18:02.219] [N] Loading 1_33_36
+[00:18:02.220] [N] Loading 1_33_37
+[00:18:02.236] [D] Activity: No eligible quest work; idle until 2026-09-04T22:18:01.7848260Z. completion-authority=unknown; deferred new pickup and prerequisite-negative scheduling. excluded quest=1062;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=3281;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=4921;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=6548;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=6548;stage=Objective;objective=1;reason=outside-scan-radius;retry=context-change. excluded quest=747;stage=Objective;scope=Objective;objective=0;retry=2026-09-04T22:18:01.7848260Z;state=Quarantined. excluded quest=747;stage=Objective;scope=Objective;objective=1;retry=2026-09-04T22:18:01.7933759Z;state=Quarantined. excluded quest=8487;stage=TurnIn;scope=QuestStage;retry=context-change;state=HalfOpen. excluded quest=867;stage=Objective;scope=Objective;objective=0;retry=2026-09-04T22:18:01.7956918Z;state=Quarantined. excluded quest=8889;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=8889;stage=Objective;objective=1;reason=outside-scan-radius;retry=context-change. excluded quest=8889;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;objective=1;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;scope=Objective;objective=3;retry=2026-09-04T22:18:01.7996183Z;state=Quarantined. excluded quest=894;stage=TurnIn;scope=NpcRelation;npc=4141;retry=2026-09-04T22:18:01.8029677Z;state=Quarantined. excluded quest=896;stage=Objective;scope=Objective;objective=0;retry=2026-09-04T22:18:01.8031282Z;state=Quarantined. excluded quest=9067;stage=Objective;scope=QuestStage;retry=context-change;state=HalfOpen. excluded quest=9157;stage=TurnIn;scope=QuestStage;retry=context-change;state=HalfOpen. Expanding scan radius from 500 to 750 yards before fallback.
+[00:18:02.261] [D] Activity: No eligible quest work; idle until 2026-09-04T22:18:01.7848260Z. completion-authority=unknown; deferred new pickup and prerequisite-negative scheduling. excluded quest=1062;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=3281;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=4921;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=6548;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=6548;stage=Objective;objective=1;reason=outside-scan-radius;retry=context-change. excluded quest=747;stage=Objective;scope=Objective;objective=0;retry=2026-09-04T22:18:01.7848260Z;state=Quarantined. excluded quest=747;stage=Objective;scope=Objective;objective=1;retry=2026-09-04T22:18:01.7933759Z;state=Quarantined. excluded quest=8487;stage=TurnIn;scope=QuestStage;retry=context-change;state=HalfOpen. excluded quest=867;stage=Objective;scope=Objective;objective=0;retry=2026-09-04T22:18:01.7956918Z;state=Quarantined. excluded quest=8889;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=8889;stage=Objective;objective=1;reason=outside-scan-radius;retry=context-change. excluded quest=8889;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;objective=1;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;scope=Objective;objective=3;retry=2026-09-04T22:18:01.7996183Z;state=Quarantined. excluded quest=894;stage=TurnIn;scope=NpcRelation;npc=4141;retry=2026-09-04T22:18:01.8029677Z;state=Quarantined. excluded quest=896;stage=Objective;scope=Objective;objective=0;retry=2026-09-04T22:18:01.8031282Z;state=Quarantined. excluded quest=9067;stage=Objective;scope=QuestStage;retry=context-change;state=HalfOpen. excluded quest=9157;stage=TurnIn;scope=QuestStage;retry=context-change;state=HalfOpen. Expanding scan radius from 750 to 1000 yards before fallback.
+[00:18:02.358] [D] Activity: No eligible quest work; idle until 2026-09-04T22:18:01.7848260Z. completion-authority=unknown; deferred new pickup and prerequisite-negative scheduling. excluded quest=1062;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=3281;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=4921;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=6548;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=6548;stage=Objective;objective=1;reason=outside-scan-radius;retry=context-change. excluded quest=747;stage=Objective;scope=Objective;objective=0;retry=2026-09-04T22:18:01.7848260Z;state=Quarantined. excluded quest=747;stage=Objective;scope=Objective;objective=1;retry=2026-09-04T22:18:01.7933759Z;state=Quarantined. excluded quest=8487;stage=TurnIn;scope=QuestStage;retry=context-change;state=HalfOpen. excluded quest=867;stage=Objective;scope=Objective;objective=0;retry=2026-09-04T22:18:01.7956918Z;state=Quarantined. excluded quest=8889;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=8889;stage=Objective;objective=1;reason=outside-scan-radius;retry=context-change. excluded quest=8889;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;objective=1;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;scope=Objective;objective=3;retry=2026-09-04T22:18:01.7996183Z;state=Quarantined. excluded quest=894;stage=TurnIn;scope=NpcRelation;npc=4141;retry=2026-09-04T22:18:01.8029677Z;state=Quarantined. excluded quest=896;stage=Objective;scope=Objective;objective=0;retry=2026-09-04T22:18:01.8031282Z;state=Quarantined. excluded quest=9067;stage=Objective;scope=QuestStage;retry=context-change;state=HalfOpen. excluded quest=9157;stage=TurnIn;scope=QuestStage;retry=context-change;state=HalfOpen. Expanding scan radius from 1000 to 1250 yards before fallback.
+[00:18:02.466] [D] Activity: No eligible quest work; idle until 2026-09-04T22:18:01.7848260Z. completion-authority=unknown; deferred new pickup and prerequisite-negative scheduling. excluded quest=1062;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=3281;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=4921;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=6548;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=6548;stage=Objective;objective=1;reason=outside-scan-radius;retry=context-change. excluded quest=747;stage=Objective;scope=Objective;objective=0;retry=2026-09-04T22:18:01.7848260Z;state=Quarantined. excluded quest=747;stage=Objective;scope=Objective;objective=1;retry=2026-09-04T22:18:01.7933759Z;state=Quarantined. excluded quest=8487;stage=TurnIn;scope=QuestStage;retry=context-change;state=HalfOpen. excluded quest=867;stage=Objective;scope=Objective;objective=0;retry=2026-09-04T22:18:01.7956918Z;state=Quarantined. excluded quest=8889;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=8889;stage=Objective;objective=1;reason=outside-scan-radius;retry=context-change. excluded quest=8889;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;objective=1;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;scope=Objective;objective=3;retry=2026-09-04T22:18:01.7996183Z;state=Quarantined. excluded quest=894;stage=TurnIn;scope=NpcRelation;npc=4141;retry=2026-09-04T22:18:01.8029677Z;state=Quarantined. excluded quest=896;stage=Objective;scope=Objective;objective=0;retry=2026-09-04T22:18:01.8031282Z;state=Quarantined. excluded quest=9067;stage=Objective;scope=QuestStage;retry=context-change;state=HalfOpen. excluded quest=9157;stage=TurnIn;scope=QuestStage;retry=context-change;state=HalfOpen. Expanding scan radius from 1250 to 1500 yards before fallback.
+[00:18:02.545] [N] Loaded 0 global blackspots
+[00:18:02.548] [N] Loading 1_34_35
+[00:18:02.550] [N] Loading 1_34_36
+[00:18:02.552] [N] Loading 1_34_37
+[00:18:02.553] [N] Loading 1_35_35
+[00:18:02.553] [N] Loading 1_35_36
+[00:18:02.555] [N] Loading 1_35_37
+[00:18:02.556] [N] Loading 1_36_35
+[00:18:02.557] [N] Loading 1_36_36
+[00:18:02.559] [N] Loading 1_36_37
+[00:18:02.561] [D] [Blackspot] Area cost initialized: area 17 = 60x
+[00:18:02.572] [N] Loading 1_33_38
+[00:18:02.572] [N] Loading 1_34_38
+[00:18:02.590] [D] Loading profile from D:\World of Warcraft 3.3.5a\CB\Bots\WholesomeAutoQuest\WHOLESOME_AUTOQUESTER.xml
+[00:18:02.593] [D] Selected sub-profile: WholesomeAQ - The Barrens (L1-80)
+[00:18:02.593] [N] [Wholesome Auto Quest] Profile refreshed - Selected 1 quest work candidate(s). selected quest=4921;stage=Objective;state=Eligible. completion-authority=unknown; deferred new pickup and prerequisite-negative scheduling. excluded quest=1062;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=3281;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=6548;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=6548;stage=Objective;objective=1;reason=outside-scan-radius;retry=context-change. excluded quest=747;stage=Objective;scope=Objective;objective=0;retry=2026-09-04T22:18:01.7848260Z;state=Quarantined. excluded quest=747;stage=Objective;scope=Objective;objective=1;retry=2026-09-04T22:18:01.7933759Z;state=Quarantined. excluded quest=8487;stage=TurnIn;scope=QuestStage;retry=context-change;state=HalfOpen. excluded quest=867;stage=Objective;scope=Objective;objective=0;retry=2026-09-04T22:18:01.7956918Z;state=Quarantined. excluded quest=8889;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=8889;stage=Objective;objective=1;reason=outside-scan-radius;retry=context-change. excluded quest=8889;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;objective=1;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;scope=Objective;objective=3;retry=2026-09-04T22:18:01.7996183Z;state=Quarantined. excluded quest=894;stage=TurnIn;scope=NpcRelation;npc=4141;retry=2026-09-04T22:18:01.8029677Z;state=Quarantined. excluded quest=896;stage=Objective;scope=Objective;objective=0;retry=2026-09-04T22:18:01.8031282Z;state=Quarantined. excluded quest=9067;stage=Objective;scope=QuestStage;retry=context-change;state=HalfOpen. excluded quest=9157;stage=TurnIn;scope=QuestStage;retry=context-change;state=HalfOpen.
+[00:18:02.632] [N] [Database] Data.bin loaded successfully
+[00:18:02.653] [N] Loading 1_31_38
+[00:18:02.655] [N] Loading 1_32_38
+[00:18:02.666] [N] Loading 1_32_39
+[00:18:02.669] [N] Loading 1_32_40
+[00:18:02.672] [N] Loading 1_33_39
+[00:18:02.675] [N] Loading 1_33_40
+[00:18:02.677] [N] Loading 1_34_39
+[00:18:02.679] [N] Loading 1_34_40
+[00:18:02.771] [N] Loading 1_31_39
+[00:18:02.771] [N] Loading 1_30_37
+[00:18:02.771] [N] Loading 1_30_36
+[00:18:02.771] [N] Loading 1_30_38
+[00:18:02.771] [N] Loading 1_35_38
+[00:18:02.771] [N] Loading 1_35_39
+[00:18:02.771] [N] Loading 1_30_39
+[00:18:02.771] [N] Loading 1_31_40
+[00:18:02.771] [N] Loading 1_32_34
+[00:18:02.771] [N] Loading 1_33_34
+[00:18:02.771] [N] Loading 1_30_40
+[00:18:02.771] [N] Loading 1_31_34
+[00:18:02.771] [N] Loading 1_30_35
+[00:18:02.771] [N] Loading 1_35_40
+[00:18:02.771] [N] Loading 1_29_37
+[00:18:02.771] [N] Loading 1_29_36
+[00:18:02.771] [N] Loading 1_36_38
+[00:18:02.771] [N] Loading 1_31_41
+[00:18:02.771] [N] Loading 1_34_34
+[00:18:02.771] [N] Loading 1_32_41
+[00:18:02.771] [N] Loading 1_29_38
+[00:18:02.771] [N] Loading 1_29_39
+[00:18:02.771] [N] Loading 1_30_41
+[00:18:02.771] [N] Loading 1_33_41
+[00:18:02.771] [N] Loading 1_29_35
+[00:18:02.771] [N] Loading 1_36_39
+[00:18:02.771] [N] Loading 1_30_34
+[00:18:32.294] [N] [Wholesome Auto Quest] Bot running but not moving for 30s
+[00:19:01.264] [N] [QuestLog] Failed to read completed quest cache
+[00:20:01.319] [N] [QuestLog] Failed to read completed quest cache
+[00:21:01.353] [N] [QuestLog] Failed to read completed quest cache

@@ -1,0 +1,2344 @@
+[18:34:02.053] [N] CopilotBuddy v1.6.6 started. Original HonorBuddy by Apoc, raphus, highvoltz, bobby53, xanathos, chinajade. Ported to WotLK 3.3.5a by Likon69.
+[18:34:02.426] [N] Searching for WoW process...
+[18:34:02.555] [N] Please wait a few seconds while CopilotBuddy initializes.
+[18:34:02.555] [D] Using WoW with process ID 37940
+[18:34:02.555] [D] Platform: x86
+[18:34:02.555] [D] Executable Path: D:\World of Warcraft 3.3.5a\CB\
+[18:34:02.590] [D] [ObjectManager] WoW build 12340 detected - OK
+[18:34:02.592] [D] [ObjectManager] D3DDevicePtr = 0x00C5DF88
+[18:34:02.592] [D] [ObjectManager] devicePtrAddr = 0x0532CBD0
+[18:34:02.592] [D] [ObjectManager] device = 0x0A4FC900 (at 0x0533054C)
+[18:34:02.592] [D] [ObjectManager] vtablePtr = 0x0A4FF85C
+[18:34:02.592] [D] [ObjectManager] endSceneAddr = 0x643348F0 (at 0x0A4FF904)
+[18:34:02.592] [D] [ObjectManager] D3D: Device=0x0A4FC900, VTable=0x0A4FF85C, EndScene=0x643348F0
+[18:34:02.592] [D] [ObjectManager] Creating ExecutorRand...
+[18:34:02.638] [D] [ObjectManager] ExecutorRand created, IsInitialized = True
+[18:34:02.638] [D] [ObjectManager] EndScene hook succeeded
+[18:34:02.643] [D] [ObjectManager] Initialized successfully
+[18:34:02.647] [N] Attached to WoW with ID 37940
+[18:34:02.649] [N] Character is a level 30 BloodElf Paladin
+[18:34:02.650] [N] Current zone is Thousand Needles
+[18:34:02.691] [D] [Settings] Loaded settings for character: Jeof
+[18:34:02.691] [N] Initializing Combat Routines...
+[18:34:02.694] [D] Looking for routines in: D:\World of Warcraft 3.3.5a\CB\Routines
+[18:34:02.695] [D] Compiling Singular wotlk
+[18:34:05.122] [N] Loaded routine: Singular Wotlk for class Paladin
+[18:34:05.122] [N] Loaded 1 combat routine(s)
+[18:34:05.130] [N] Chose Singular Wotlk as your combat class.
+[18:34:05.130] [N] Confirmed Paladin as your class.
+[18:34:05.130] [N] [Singular] Starting Singular v2.0.0.0
+[18:34:05.130] [N] [Singular] Determining talent spec.
+[18:34:08.238] [D] [Singular-DEBUG] [Talents] Best Tree: 18
+[18:34:08.238] [N] [Singular] Current spec is  Retribution Paladin
+[18:34:08.248] [D] [WoWDb] Loaded 237 DBC tables
+[18:34:08.248] [D] [WoWDb]   Key=235 (0x000000EB) Rows=1893
+[18:34:08.248] [D] [WoWDb]   Key=236 (0x000000EC) Rows=7655
+[18:34:08.248] [D] [WoWDb]   Key=237 (0x000000ED) Rows=86
+[18:34:08.248] [D] [WoWDb]   Key=238 (0x000000EE) Rows=506
+[18:34:08.248] [D] [WoWDb]   Key=239 (0x000000EF) Rows=291
+[18:34:08.248] [D] [WoWDb] Lock DBC lookup: FOUND (rows=388)
+[18:34:08.248] [D] [WoWDb] ClientDb.Lock enum value = 356 (0x00000164)
+[18:34:08.250] [D] [Singular-DEBUG] Creating Combat behavior.
+[18:34:08.251] [N] [Singular] Building method list
+[18:34:08.251] [N] [Singular] Added 459 methods
+[18:34:08.253] [D] [Singular-DEBUG] CreateRetributionPaladinNormalPullAndCombat is a match!
+[18:34:08.254] [N] [Singular]  Using CreateRetributionPaladinNormalPullAndCombat for Retribution Paladin - Combat (Priority: 0)
+[18:34:08.265] [D] [Singular-DEBUG] Creating Pull behavior.
+[18:34:08.266] [D] [Singular-DEBUG] CreateRetributionPaladinNormalPullAndCombat is a match!
+[18:34:08.266] [N] [Singular]  Using CreateRetributionPaladinNormalPullAndCombat for Retribution Paladin - Pull (Priority: 0)
+[18:34:08.267] [D] [Singular-DEBUG] Creating Rest behavior.
+[18:34:08.268] [D] [Singular-DEBUG] CreateRetributionPaladinRest is a match!
+[18:34:08.268] [N] [Singular]  Using CreateRetributionPaladinRest for Retribution Paladin - Rest (Priority: 0)
+[18:34:08.270] [D] [Singular-DEBUG] Creating CombatBuffs behavior.
+[18:34:08.271] [D] [Singular-DEBUG] Creating Heal behavior.
+[18:34:08.272] [D] [Singular-DEBUG] CreateRetributionPaladinHeal is a match!
+[18:34:08.272] [N] [Singular]  Using CreateRetributionPaladinHeal for Retribution Paladin - Heal (Priority: 0)
+[18:34:08.272] [D] [Singular-DEBUG] CreateRetributionPaladinNormalPullAndCombat is a match!
+[18:34:08.272] [N] [Singular]  Using CreateRetributionPaladinNormalPullAndCombat for Retribution Paladin - Heal (Priority: 0)
+[18:34:08.273] [D] [Singular-DEBUG] Creating PullBuffs behavior.
+[18:34:08.274] [D] [Singular-DEBUG] Creating PreCombatBuffs behavior.
+[18:34:08.275] [D] [Singular-DEBUG] CreatePaladinPreCombatBuffs is a match!
+[18:34:08.275] [N] [Singular]  Using CreatePaladinPreCombatBuffs for Retribution Paladin - PreCombatBuffs (Priority: 0)
+[18:34:08.279] [N] [Singular] Behaviors created!
+[18:34:08.366] [D] [Singular-DEBUG] Attached combat log
+[18:34:08.367] [D] Routine initialized successfully
+[18:34:08.368] [D] Loading built-in bots from assembly: CopilotBuddy
+[18:34:08.390] [D] Found bot type: PartyBot.DiscoBot
+[18:34:08.390] [N] New bot added: Party Bot
+[18:34:08.390] [D] Loaded built-in bot: Party Bot
+[18:34:08.390] [D] Found bot type: Bots.Quest.QuestBot
+[18:34:08.391] [N] New bot added: Questing
+[18:34:08.391] [D] Loaded built-in bot: Questing
+[18:34:08.391] [D] Found bot type: Bots.Grind.LevelBot
+[18:34:08.391] [N] New bot added: Grind
+[18:34:08.391] [D] Loaded built-in bot: Grind
+[18:34:08.391] [D] Found bot type: Bots.Gatherbuddy.GatherbuddyBot
+[18:34:08.391] [N] New bot added: GatherBuddy
+[18:34:08.391] [D] Loaded built-in bot: GatherBuddy
+[18:34:08.391] [D] Found bot type: Bots.DungeonBuddy.DungeonBuddy
+[18:34:08.392] [N] New bot added: DungeonBuddy
+[18:34:08.392] [D] Loaded built-in bot: DungeonBuddy
+[18:34:08.392] [D] Found bot type: Bots.BGBuddy.BGBuddy
+[18:34:08.392] [N] New bot added: BGBuddy
+[18:34:08.392] [D] Loaded built-in bot: BGBuddy
+[18:34:08.392] [D] Built-in bot loading complete. 6 bots loaded.
+[18:34:08.396] [N] Loading bots from: D:\World of Warcraft 3.3.5a\CB\Bots
+[18:34:08.405] [N] Found 123 source files
+[18:34:08.415] [N] Found 0 dll files
+[18:34:08.415] [N] Compiling: CombatBot.cs
+[18:34:08.578] [N] Compiled successfully: CombatBot.cs
+[18:34:08.578] [N] Compiling directory: Auto Angler 2/ (23 files)
+[18:34:08.873] [N] Compiled successfully: Auto Angler 2/
+[18:34:08.874] [N] Compiling directory: LazyRaider/ (4 files)
+[18:34:09.110] [N] Compiled successfully: LazyRaider/
+[18:34:09.110] [N] Compiling directory: ProfessionBuddy/ (52 files)
+[18:34:09.870] [N] Compiled successfully: ProfessionBuddy/
+[18:34:09.870] [N] Compiling directory: Templar/ (27 files)
+[18:34:10.280] [N] Compiled successfully: Templar/
+[18:34:10.280] [N] Compiling directory: Tyrael/ (5 files)
+[18:34:10.458] [N] Compiled successfully: Tyrael/
+[18:34:10.458] [N] Compiling directory: WholesomeAutoQuest-master/ (11 files)
+[18:34:11.073] [N] Compiled successfully: WholesomeAutoQuest-master/
+[18:34:11.073] [N] ClassCollection contains 7 compiled bots
+[18:34:11.073] [N] Adding bot: Combat Bot
+[18:34:11.073] [N] New bot added: Combat Bot
+[18:34:11.074] [N] Adding bot: AutoAngler
+[18:34:11.074] [N] New bot added: AutoAngler
+[18:34:11.074] [N] Adding bot: LazyRaider
+[18:34:11.074] [N] New bot added: LazyRaider
+[18:34:11.074] [N] Adding bot: ProfessionBuddy
+[18:34:11.074] [N] New bot added: ProfessionBuddy
+[18:34:11.074] [N] Adding bot: Templar
+[18:34:11.074] [N] New bot added: Templar
+[18:34:11.074] [N] Adding bot: Tyrael
+[18:34:11.074] [N] New bot added: Tyrael
+[18:34:11.074] [N] Adding bot: Wholesome Auto Quest
+[18:34:11.074] [N] New bot added: Wholesome Auto Quest
+[18:34:11.074] [N] Bot loading complete. 13 bots loaded.
+[18:34:11.074] [N] Initializing Plugins...
+[18:34:12.908] [N] [DeathStallRecovery] Enabled. The bot will stop if corpse recovery makes no movement progress for 60 seconds.
+[18:34:13.790] [D] Rarekiller: Loading config file: D:\World of Warcraft 3.3.5a\CB\Plugins\RareKiller\config\Rarekiller.config
+[18:34:13.792] [D] Root element is missing.
+[18:34:13.792] [N] Rarekiller: Continuing with Default Config Values
+[18:34:13.793] [D] Rarekiller: Loading config file: D:\World of Warcraft 3.3.5a\CB\Plugins\RareKiller\config\Rarekiller.config
+[18:34:13.793] [D] Root element is missing.
+[18:34:13.793] [N] Rarekiller: Continuing with Default Config Values
+[18:34:13.794] [N] Rare Mob Killer - Version 3.3 Loaded.
+[18:34:13.794] [N] Rarekiller Part Tamer: I'm no Hunter. Deactivate the Tamer Part
+[18:34:14.393] [N] [VendorRecovery] Enabled. Failed Sell/Repair vendors will be skipped after 35 seconds at the NPC.
+[18:34:14.574] [N] Plugin loading complete. 16 plugins loaded.
+[18:34:14.574] [N] Plugins refreshed successfully.
+[18:34:14.578] [N] Changing current bot to: Wholesome Auto Quest
+[18:34:15.674] [D] [Settings] Saved all settings
+[18:34:15.675] [N] Starting the bot.
+[18:34:15.676] [N] Currently Using BotBase : Wholesome Auto Quest
+[18:34:15.677] [N] Character is a level 30 BloodElf Paladin
+[18:34:15.678] [N] Current zone is Thousand Needles
+[18:34:15.679] [D] Loading profile from D:\World of Warcraft 3.3.5a\CB\Bots\WholesomeAutoQuest\WHOLESOME_AUTOQUESTER.xml
+[18:34:15.822] [D] [QuestBehaviorHelper] Initialized with 264 assembly references
+[18:34:15.822] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\UseTransport.cs
+[18:34:15.834] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\UseTransport.cs
+[18:34:15.835] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\UseTransport.cs
+[18:34:15.855] [D] [CompileBatch] Compiling 6 entries...
+[18:34:15.969] [D] [CompileBatch] Compiled successfully.
+[18:34:15.972] [N] Profile loaded: WholesomeAQ - Thousand Needles
+[18:34:15.974] [D] Selected sub-profile: WholesomeAQ - Thousand Needles (L1-80)
+[18:34:16.200] [D] [WholesomeAQ] Navigation fingerprint unknown: provider or mesh-root stamp unavailable.
+[18:34:16.324] [N] [VendorSafety] Skipping NPC 10380 for this session: Wholesome saved vendor blacklist. Trying the next suitable NPC.
+[18:34:16.326] [N] [VendorSafety] Skipping NPC 3392 for this session: Wholesome saved vendor blacklist. Trying the next suitable NPC.
+[18:34:16.327] [N] [VendorSafety] Skipping NPC 5848 for this session: Wholesome saved vendor blacklist. Trying the next suitable NPC.
+[18:34:16.328] [N] [Wholesome Auto Quest] Loaded 3 blacklisted vendors
+[18:34:16.791] [D] [QuestLog] Loaded 79 completed quests from Lua fallback
+[18:34:16.826] [D] [ProfileBatchManager] Batch reset for new profile session.
+[18:34:16.827] [N] [Wholesome Auto Quest] Class Paladin → PullDistance set to 24
+[18:34:16.828] [N] [Wholesome Auto Quest] Initial scheduler build.
+[18:34:17.561] [N] Loaded 0 global blackspots
+[18:34:17.588] [D] Loading profile from D:\World of Warcraft 3.3.5a\CB\Bots\WholesomeAutoQuest\WHOLESOME_AUTOQUESTER.xml
+[18:34:17.596] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\UseTransport.cs
+[18:34:17.597] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\UseTransport.cs
+[18:34:17.597] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\UseTransport.cs
+[18:34:17.598] [D] [CompileBatch] Compiling 6 entries...
+[18:34:17.738] [D] [CompileBatch] Compiled successfully.
+[18:34:17.738] [N] Profile loaded: WholesomeAQ - Thousand Needles
+[18:34:17.758] [D] Selected sub-profile: WholesomeAQ - Thousand Needles (L1-80)
+[18:34:17.758] [N] [Wholesome Auto Quest] Profile refreshed - Selected 1 quest work candidate(s). selected quest=4841;stage=Objective;state=Eligible. quest-log-full=25/25; deferred new pickups while retaining accepted quest work. excluded quest=1062;stage=TurnIn;npc=4049;reason=outside-scan-radius;retry=context-change excluded quest=1069;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=1087;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=1093;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T15:43:31.1900709Z;state=Quarantined. excluded quest=4921;stage=Objective;scope=QuestStage;retry=2026-09-11T10:43:31.1922933Z;state=HalfOpen. excluded quest=5147;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T15:43:31.2300998Z;state=Quarantined. excluded quest=6382;stage=TurnIn;npc=12696;reason=outside-scan-radius;retry=context-change excluded quest=6393;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T15:43:31.2303856Z;state=Quarantined. excluded quest=6441;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T15:43:31.2304940Z;state=Quarantined. excluded quest=6461;stage=TurnIn;npc=12816;reason=outside-scan-radius;retry=context-change excluded quest=6543;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T15:43:31.2307164Z;state=Quarantined. excluded quest=846;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T12:58:16.6033605Z;state=Quarantined. excluded quest=846;stage=Objective;scope=Objective;objective=1;retry=2026-09-11T12:58:16.6078334Z;state=Quarantined. excluded quest=846;stage=Objective;scope=Objective;objective=2;retry=2026-09-11T12:58:16.6079054Z;state=Quarantined. excluded quest=8487;stage=TurnIn;scope=QuestStage;retry=2026-09-11T10:43:31.1922933Z;state=HalfOpen. excluded quest=867;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T12:58:16.6097297Z;state=Quarantined. excluded quest=868;stage=TurnIn;npc=3428;reason=outside-scan-radius;retry=context-change excluded quest=879;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T12:58:16.6158450Z;state=Quarantined. excluded quest=879;stage=Objective;scope=Objective;objective=1;retry=2026-09-11T12:58:16.6158941Z;state=Quarantined. excluded quest=879;stage=Objective;scope=Objective;objective=2;retry=2026-09-11T14:28:36.5856962Z;state=Quarantined. excluded quest=8889;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=8889;stage=Objective;objective=1;reason=outside-scan-radius;retry=context-change. excluded quest=8889;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;scope=QuestStage;retry=2026-09-11T10:43:31.1922933Z;state=HalfOpen. excluded quest=893;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T14:28:36.5895113Z;state=Quarantined. excluded quest=893;stage=Objective;scope=Objective;objective=1;retry=2026-09-11T14:28:36.5895743Z;state=Quarantined. excluded quest=893;stage=Objective;scope=Objective;objective=2;retry=2026-09-11T14:28:36.5896148Z;state=Quarantined. excluded quest=896;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T14:28:36.5896844Z;state=Quarantined. excluded quest=9067;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T15:43:31.2311999Z;state=Quarantined. excluded quest=9157;stage=TurnIn;scope=QuestStage;retry=2026-09-11T10:43:31.1922933Z;state=HalfOpen. excluded quest=9431;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T10:43:31.1922933Z;state=HalfOpen.
+[18:34:17.760] [N] [Wholesome Auto Quest] Started with quest data loaded.
+[18:34:17.808] [N] [SpellDb] Loaded 49816 spells from Spells.bin
+[18:34:17.858] [D] Setting CVars: autoSelfCast=1, autoLootDefault=1
+[18:34:17.926] [D] Cleared POI
+[18:34:17.934] [D] Refresh() called. LastCount=0, CurrentCount=34
+[18:34:17.934] [N] Building spell book
+[18:34:17.936] [D] Found 34 spells from LocalPlayer.KnownSpells
+[18:34:17.936] [N] Adding Arcane Affinity
+[18:34:17.937] [N] Adding Arcane Torrent
+[18:34:17.938] [N] Adding Auto Attack
+[18:34:17.939] [N] Adding Block
+[18:34:17.940] [N] Adding Dodge
+[18:34:17.941] [N] Adding Magic Resistance
+[18:34:17.942] [N] Adding Parry
+[18:34:17.943] [N] Adding Blessing of Wisdom
+[18:34:17.944] [N] Adding Concentration Aura
+[18:34:17.945] [N] Adding Consecration
+[18:34:17.946] [N] Adding Exorcism
+[18:34:17.947] [N] Adding Flash of Light
+[18:34:17.948] [N] Adding Holy Light
+[18:34:17.949] [N] Adding Lay on Hands
+[18:34:17.950] [N] Adding Purify
+[18:34:17.951] [N] Adding Seal of Righteousness
+[18:34:17.952] [N] Adding Sense Undead
+[18:34:17.961] [N] Adding Turn Evil
+[18:34:17.962] [N] Adding Blessing of Kings
+[18:34:17.963] [N] Adding Devotion Aura
+[18:34:17.964] [N] Adding Divine Protection
+[18:34:17.966] [N] Adding Hammer of Justice
+[18:34:17.967] [N] Adding Hand of Freedom
+[18:34:17.968] [N] Adding Hand of Protection
+[18:34:17.969] [N] Adding Hand of Reckoning
+[18:34:17.970] [N] Adding Hand of Salvation
+[18:34:17.971] [N] Adding Righteous Defense
+[18:34:17.972] [N] Adding Righteous Fury
+[18:34:17.974] [N] Adding Seal of Justice
+[18:34:17.975] [N] Adding Blessing of Might
+[18:34:17.976] [N] Adding Judgement of Light
+[18:34:17.977] [N] Adding Judgement of Wisdom
+[18:34:17.979] [N] Adding Retribution Aura
+[18:34:17.986] [N] Adding Seal of Command
+[18:34:17.987] [N] Spell book built
+[18:34:17.989] [D] [SpellManager] Initialize — subscribed to BotEvents.OnBotStart
+[18:34:18.271] [D] [WeightSet] Selected weight set: Paladin-Retribution
+[18:34:19.242] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=1142ms
+[18:34:19.275] [D] [Talented] SelectMajorTalentTree called but not needed in WotLK 3.3.5a
+[18:34:19.296] [D] [Pulse] Slow plugin: name=Talented elapsed=54ms
+[18:34:19.342] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=45ms
+[18:34:19.349] [D] [Pulse] Slow shared pulse: total=1317ms movement=0 objects=0 lua=0 info=0 loot=16 targeting=47 events=1 plugins=1244 routine=5
+[18:34:20.149] [N] [Singular] Casting Blessing of Kings on Myself
+[18:34:20.149] [D] Spell_C::CastSpell(20217, 0, 0x6000000007EAB80, 0)
+[18:34:20.183] [D] [Pulse] Slow bot root: 236ms bot=Wholesome Auto Quest poi=None combat=False
+[18:34:21.159] [N] [Database] Data.bin loaded successfully
+[18:34:21.198] [D] [Blackspot] Area cost initialized: area 17 = 60x
+[18:34:22.274] [D] [Nav] Loaded 401 mesh tiles for one path query
+[18:34:22.275] [D] [Nav] Slow path generation: 1096ms map=1 from=(-5363.09, -2365.81, -37.33) to=(-5453.35, -2408.38, 89.36) status=Success
+[18:34:22.298] [D] Changed POI to: Type: Repair, Name: Razbo Rustgear, Guid: 0, Entry: 23571, Location: (-4603.66, -3210.94, 35.01)
+[18:34:22.298] [D] [Pulse] Slow bot root: 1410ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:34:22.435] [D] [Pulse] Slow plugin: name=Vendor Recovery elapsed=32ms
+[18:34:23.204] [N] [Singular] Casting Seal of Righteousness on Myself
+[18:34:23.204] [D] Spell_C::CastSpell(21084, 0, 0x6000000007EAB80, 0)
+[18:34:23.237] [D] [Pulse] Slow bot root: 202ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:34:24.109] [N] Moving to Type: Repair, Name: Razbo Rustgear, Guid: 0, Entry: 23571, Location: (-4603.66, -3210.94, 35.01)
+[18:34:24.443] [N] Mounting: 34769
+[18:34:26.749] [D] [Pulse] Slow bot root: 2776ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:34:27.821] [D] [Pulse] Slow bot root: 334ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:34:28.859] [D] [Pulse] Slow bot root: 269ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:34:29.364] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=466ms
+[18:34:29.428] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=62ms
+[18:34:29.462] [D] [Pulse] Slow shared pulse: total=603ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=36 events=0 plugins=563 routine=0
+[18:34:30.332] [D] [Pulse] Slow bot root: 268ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:34:31.306] [D] [Pulse] Slow bot root: 232ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:34:32.275] [D] [Pulse] Slow bot root: 235ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:34:33.244] [D] [Pulse] Slow bot root: 203ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:34:33.411] [D] [Pulse] Slow plugin: name=Vendor Recovery elapsed=34ms
+[18:34:34.244] [D] [Pulse] Slow bot root: 230ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:34:35.218] [D] [Pulse] Slow bot root: 232ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:34:36.191] [D] [Pulse] Slow bot root: 237ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:34:37.165] [D] [Pulse] Slow bot root: 233ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:34:38.138] [D] [Pulse] Slow bot root: 235ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:34:39.145] [D] [Pulse] Slow bot root: 267ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:34:39.683] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=468ms
+[18:34:39.747] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=63ms
+[18:34:39.780] [D] [Pulse] Slow shared pulse: total=635ms movement=0 objects=0 lua=33 info=0 loot=0 targeting=35 events=0 plugins=566 routine=0
+[18:34:40.615] [D] [Pulse] Slow bot root: 234ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:34:41.588] [D] [Pulse] Slow bot root: 236ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:34:42.564] [D] [Pulse] Slow bot root: 236ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:34:43.540] [D] [Pulse] Slow bot root: 235ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:34:43.674] [D] [Pulse] Slow plugin: name=Vendor Recovery elapsed=33ms
+[18:34:44.545] [D] [Pulse] Slow bot root: 266ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:34:45.554] [D] [Pulse] Slow bot root: 237ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:34:46.523] [D] [Pulse] Slow bot root: 232ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:34:47.493] [D] [Pulse] Slow bot root: 231ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:34:48.465] [D] [Pulse] Slow bot root: 234ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:34:49.437] [D] [Pulse] Slow bot root: 236ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:34:49.940] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=465ms
+[18:34:50.006] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=65ms
+[18:34:50.040] [D] [Pulse] Slow shared pulse: total=603ms movement=0 objects=0 lua=0 info=0 loot=0 targeting=36 events=0 plugins=565 routine=0
+[18:34:50.900] [D] [Pulse] Slow bot root: 251ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:34:51.889] [D] [Pulse] Slow bot root: 232ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:34:52.858] [D] [Pulse] Slow bot root: 233ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:34:53.864] [D] [Pulse] Slow bot root: 268ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:34:53.999] [D] [Pulse] Slow plugin: name=Vendor Recovery elapsed=34ms
+[18:34:54.843] [D] [Pulse] Slow bot root: 235ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:34:55.815] [D] [Pulse] Slow bot root: 234ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:34:56.781] [D] [Pulse] Slow bot root: 233ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:34:57.788] [D] [Pulse] Slow bot root: 233ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:34:58.766] [D] [Pulse] Slow bot root: 237ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:34:59.737] [D] [Pulse] Slow bot root: 232ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:35:00.242] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=468ms
+[18:35:00.306] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=63ms
+[18:35:00.340] [D] [Pulse] Slow shared pulse: total=602ms movement=0 objects=0 lua=0 info=0 loot=0 targeting=34 events=0 plugins=567 routine=0
+[18:35:01.177] [D] [Pulse] Slow bot root: 234ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:35:02.152] [D] [Pulse] Slow bot root: 234ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:35:03.160] [D] [Pulse] Slow bot root: 234ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:35:04.169] [D] [Pulse] Slow bot root: 234ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:35:04.301] [D] [Pulse] Slow plugin: name=Vendor Recovery elapsed=32ms
+[18:35:05.141] [D] [Pulse] Slow bot root: 234ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:35:06.111] [D] [Pulse] Slow bot root: 235ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:35:07.083] [D] [Pulse] Slow bot root: 235ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:35:08.061] [D] [Pulse] Slow bot root: 233ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:35:09.030] [D] [Nav] Ground movement made no progress for 3s despite repeated commands: from=(-5229.13, -1962.88, -62.48) waypoint=(-5229.04, -1962.54, -59.67) destination=(-4603.66, -3210.94, 35.01) moving=False speed=0.0 ctm=None. Trying validated detour, then stuck recovery.
+[18:35:09.131] [D] [Nav] Following validated local detour: map=1 from=(-5229.13, -1962.88, -62.48) landing=(-5228.23, -1964.67, -62.24) destination=(-4603.66, -3210.94, 35.01)
+[18:35:09.164] [D] [Pulse] Slow bot root: 336ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:35:10.120] [D] [MeshNavigator] Skipped 2 path nodes
+[18:35:10.203] [D] [Pulse] Slow bot root: 303ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:35:10.707] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=467ms
+[18:35:10.771] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=63ms
+[18:35:10.805] [D] [Pulse] Slow shared pulse: total=602ms movement=0 objects=0 lua=0 info=0 loot=0 targeting=35 events=0 plugins=566 routine=0
+[18:35:11.641] [D] [Pulse] Slow bot root: 235ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:35:12.612] [D] [Pulse] Slow bot root: 232ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:35:13.588] [D] [Pulse] Slow bot root: 234ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:35:14.592] [D] [Pulse] Slow bot root: 234ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:35:14.725] [D] [Pulse] Slow plugin: name=Vendor Recovery elapsed=32ms
+[18:35:15.568] [D] [Pulse] Slow bot root: 238ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:35:16.541] [D] [Pulse] Slow bot root: 235ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:35:17.514] [D] [Pulse] Slow bot root: 233ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:35:18.499] [D] [Pulse] Slow bot root: 234ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:35:19.474] [D] [Pulse] Slow bot root: 235ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:35:20.476] [D] [Pulse] Slow bot root: 230ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:35:20.983] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=468ms
+[18:35:21.049] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=65ms
+[18:35:21.083] [D] [Pulse] Slow shared pulse: total=606ms movement=0 objects=0 lua=0 info=0 loot=0 targeting=37 events=0 plugins=567 routine=0
+[18:35:21.912] [D] [Pulse] Slow bot root: 231ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:35:22.887] [D] [Pulse] Slow bot root: 234ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:35:23.865] [D] [Pulse] Slow bot root: 235ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:35:24.843] [D] [Pulse] Slow bot root: 235ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:35:25.012] [D] [Pulse] Slow plugin: name=Vendor Recovery elapsed=33ms
+[18:35:25.880] [D] [Pulse] Slow bot root: 268ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:35:26.851] [D] [Pulse] Slow bot root: 234ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:35:27.861] [D] [Pulse] Slow bot root: 269ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:35:28.935] [N] Loading 1_42_38
+[18:35:28.935] [N] Loading 1_41_33
+[18:35:28.935] [N] Loading 1_40_33
+[18:35:28.935] [N] Loading 1_39_36
+[18:35:28.935] [N] Loading 1_39_35
+[18:35:28.935] [N] Loading 1_43_38
+[18:35:28.935] [N] Loading 1_39_34
+[18:35:28.935] [N] Loading 1_39_33
+[18:35:28.935] [N] Loading 1_42_39
+[18:35:28.935] [N] Loading 1_43_39
+[18:35:28.935] [N] Loading 1_38_35
+[18:35:28.935] [N] Loading 1_40_32
+[18:35:28.935] [N] Loading 1_38_36
+[18:35:28.935] [N] Loading 1_39_32
+[18:35:28.935] [N] Loading 1_38_37
+[18:35:28.935] [N] Loading 1_42_40
+[18:35:28.935] [N] Loading 1_44_38
+[18:35:28.935] [N] Loading 1_38_34
+[18:35:28.935] [N] Loading 1_44_39
+[18:35:28.935] [N] Loading 1_43_40
+[18:35:28.935] [N] Loading 1_37_35
+[18:35:28.935] [N] Loading 1_37_36
+[18:35:28.935] [N] Loading 1_44_37
+[18:35:28.935] [N] Loading 1_41_32
+[18:35:28.935] [N] Loading 1_38_38
+[18:35:28.935] [N] Loading 1_40_31
+[18:35:28.935] [N] Loading 1_39_31
+[18:35:28.935] [N] Loading 1_37_37
+[18:35:29.019] [D] [Pulse] Slow bot root: 419ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:35:29.986] [D] [Pulse] Slow bot root: 233ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:35:30.991] [D] [Pulse] Slow bot root: 234ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:35:31.495] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=467ms
+[18:35:31.560] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=64ms
+[18:35:31.595] [D] [Pulse] Slow shared pulse: total=603ms movement=0 objects=0 lua=0 info=0 loot=0 targeting=35 events=0 plugins=567 routine=0
+[18:35:32.464] [D] [Pulse] Slow bot root: 268ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:35:33.472] [D] [Pulse] Slow bot root: 270ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:35:34.444] [D] [Pulse] Slow bot root: 200ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:35:35.452] [D] [Pulse] Slow bot root: 269ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:35:35.621] [D] [Pulse] Slow plugin: name=Vendor Recovery elapsed=34ms
+[18:35:36.491] [D] [Pulse] Slow bot root: 266ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:35:37.469] [D] [Pulse] Slow bot root: 236ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:35:38.479] [D] [Pulse] Slow bot root: 268ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:35:39.419] [D] [Pulse] Slow bot root: 201ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:35:40.426] [D] [Pulse] Slow bot root: 267ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:35:41.402] [D] [Pulse] Slow bot root: 236ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:35:41.940] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=468ms
+[18:35:42.004] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=62ms
+[18:35:42.039] [D] [Pulse] Slow shared pulse: total=636ms movement=0 objects=0 lua=32 info=0 loot=1 targeting=36 events=0 plugins=567 routine=0
+[18:35:42.837] [D] [Pulse] Slow bot root: 198ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:35:43.800] [D] [Pulse] Slow bot root: 232ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:35:44.761] [N] Loading 1_43_36
+[18:35:44.761] [N] Loading 1_43_37
+[18:35:44.773] [D] [Pulse] Slow bot root: 234ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:35:45.741] [D] [Pulse] Slow bot root: 235ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:35:45.876] [D] [Pulse] Slow plugin: name=Vendor Recovery elapsed=33ms
+[18:35:46.708] [D] [Pulse] Slow bot root: 232ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:35:47.682] [D] [Nav] Ground movement made no progress for 3s despite repeated commands: from=(-5031.02, -1843.88, -24.19) waypoint=(-5030.80, -1844.23, -23.91) destination=(-4603.66, -3210.94, 35.01) moving=False speed=0.0 ctm=None. Trying validated detour, then stuck recovery.
+[18:35:47.783] [D] [Nav] Following validated local detour: map=1 from=(-5031.02, -1843.88, -24.19) landing=(-5030.42, -1845.79, -22.32) destination=(-4603.66, -3210.94, 35.01)
+[18:35:47.817] [D] [Pulse] Slow bot root: 336ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:35:48.773] [D] [Nav] Loaded 1 mesh tiles for one path query
+[18:35:48.856] [D] [Pulse] Slow bot root: 304ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:35:49.824] [D] [Pulse] Slow bot root: 233ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:35:50.797] [D] [Pulse] Slow bot root: 233ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:35:51.807] [D] [Pulse] Slow bot root: 272ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:35:52.347] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=469ms
+[18:35:52.411] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=61ms
+[18:35:52.444] [D] [Pulse] Slow shared pulse: total=637ms movement=0 objects=0 lua=31 info=0 loot=0 targeting=37 events=0 plugins=566 routine=0
+[18:35:53.316] [D] [Pulse] Slow bot root: 268ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:35:54.290] [D] [Pulse] Slow bot root: 234ms bot=Wholesome Auto Quest poi=Repair combat=True
+[18:35:54.423] [D] [Singular-DEBUG] Switched targets!
+[18:35:54.423] [D] [Singular-DEBUG] Melee Distance: 6.5833335
+[18:35:54.424] [D] [Singular-DEBUG] Health: 98.61878453038673
+[18:35:54.424] [D] [Singular-DEBUG] Level: 27
+[18:35:55.164] [D] Dismount for attacker.
+[18:35:55.164] [D] Stop and dismount. Reason: Combat
+[18:35:55.200] [D] [Pulse] Slow bot root: 173ms bot=Wholesome Auto Quest poi=Repair combat=True
+[18:35:56.141] [D] [Pulse] Slow bot root: 202ms bot=Wholesome Auto Quest poi=Repair combat=True
+[18:35:56.278] [D] [Pulse] Slow plugin: name=Vendor Recovery elapsed=34ms
+[18:35:57.191] [N] [Singular] Casting Hand of Freedom on Myself
+[18:35:57.191] [D] Spell_C::CastSpell(1044, 0, 0x6000000007EAB80, 0)
+[18:35:57.223] [D] [Pulse] Slow bot root: 337ms bot=Wholesome Auto Quest poi=Repair combat=True
+[18:35:58.299] [D] [Pulse] Slow bot root: 306ms bot=Wholesome Auto Quest poi=Repair combat=True
+[18:35:59.293] [N] [Singular] Casting Judgement of Light on Grimtotem Stomper
+[18:35:59.293] [D] Spell_C::CastSpell(20271, 0, 0xF130002A070CCF8A, 0)
+[18:35:59.325] [D] [Pulse] Slow bot root: 287ms bot=Wholesome Auto Quest poi=Repair combat=True
+[18:36:00.303] [D] [Pulse] Slow bot root: 237ms bot=Wholesome Auto Quest poi=Repair combat=True
+[18:36:01.268] [N] [Singular] Casting Exorcism on Grimtotem Stomper
+[18:36:01.268] [D] Spell_C::CastSpell(879, 0, 0xF130002A070CCF8A, 0)
+[18:36:01.301] [D] [Pulse] Slow bot root: 266ms bot=Wholesome Auto Quest poi=Repair combat=True
+[18:36:02.208] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=Repair combat=True
+[18:36:03.117] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=Repair combat=True
+[18:36:03.249] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=60ms
+[18:36:04.069] [D] [Pulse] Slow bot root: 176ms bot=Wholesome Auto Quest poi=Repair combat=True
+[18:36:05.035] [D] [Pulse] Slow bot root: 204ms bot=Wholesome Auto Quest poi=Repair combat=True
+[18:36:05.945] [D] [Pulse] Slow bot root: 178ms bot=Wholesome Auto Quest poi=Repair combat=True
+[18:36:06.852] [D] [Pulse] Slow bot root: 180ms bot=Wholesome Auto Quest poi=Repair combat=True
+[18:36:06.975] [D] [Pulse] Slow plugin: name=Vendor Recovery elapsed=34ms
+[18:36:07.852] [N] [Singular] Casting Judgement of Light on Grimtotem Stomper
+[18:36:07.852] [D] Spell_C::CastSpell(20271, 0, 0xF130002A070CCF8A, 0)
+[18:36:07.885] [D] [Pulse] Slow bot root: 304ms bot=Wholesome Auto Quest poi=Repair combat=True
+[18:36:08.861] [D] [Pulse] Slow bot root: 237ms bot=Wholesome Auto Quest poi=Repair combat=True
+[18:36:09.813] [D] [Pulse] Slow bot root: 179ms bot=Wholesome Auto Quest poi=Repair combat=True
+[18:36:12.025] [D] [Pulse] Slow bot root: 1484ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:36:13.324] [D] [Pulse] Slow bot root: 571ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:36:13.829] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=466ms
+[18:36:13.894] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=64ms
+[18:36:13.928] [D] [Pulse] Slow shared pulse: total=603ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=36 events=0 plugins=565 routine=0
+[18:36:15.116] [D] [Pulse] Slow bot root: 570ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:36:16.425] [D] [Pulse] Slow bot root: 537ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:36:17.699] [D] [Pulse] Slow bot root: 538ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:36:17.834] [D] [Pulse] Slow plugin: name=Vendor Recovery elapsed=31ms
+[18:36:18.971] [D] [Pulse] Slow bot root: 531ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:36:20.245] [D] [Pulse] Slow bot root: 536ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:36:21.545] [D] [Pulse] Slow bot root: 533ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:36:22.820] [N] Mounting: 35022
+[18:36:25.032] [D] [Pulse] Slow bot root: 2749ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:36:25.537] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=467ms
+[18:36:25.603] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=64ms
+[18:36:25.638] [D] [Pulse] Slow shared pulse: total=605ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=36 events=0 plugins=568 routine=0
+[18:36:26.505] [D] [Pulse] Slow bot root: 265ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:36:27.544] [D] [Pulse] Slow bot root: 267ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:36:28.548] [D] [Pulse] Slow bot root: 267ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:36:28.681] [D] [Pulse] Slow plugin: name=Vendor Recovery elapsed=30ms
+[18:36:29.519] [D] [Pulse] Slow bot root: 232ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:36:30.491] [D] [Pulse] Slow bot root: 235ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:36:31.467] [D] [Pulse] Slow bot root: 235ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:36:32.444] [D] [Pulse] Slow bot root: 236ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:36:33.451] [D] [Pulse] Slow bot root: 233ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:36:34.391] [D] [Nav] Ground movement made no progress for 3s despite repeated commands: from=(-4903.52, -1867.35, 34.84) waypoint=(-4903.24, -1867.10, 37.81) destination=(-4603.66, -3210.94, 35.01) moving=False speed=0.0 ctm=None. Trying validated detour, then stuck recovery.
+[18:36:34.446] [D] [Nav] Loaded 20 mesh tiles for one path query
+[18:36:34.661] [D] [Nav] Following validated local detour: map=1 from=(-4903.52, -1867.35, 34.84) landing=(-4902.05, -1866.00, 36.24) destination=(-4603.66, -3210.94, 35.01)
+[18:36:34.694] [D] [Pulse] Slow bot root: 502ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:36:35.765] [D] [Pulse] Slow bot root: 299ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:36:36.268] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=465ms
+[18:36:36.333] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=63ms
+[18:36:36.367] [D] [Pulse] Slow shared pulse: total=601ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=35 events=0 plugins=564 routine=0
+[18:36:37.207] [D] [Pulse] Slow bot root: 235ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:36:38.218] [D] [Pulse] Slow bot root: 271ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:36:39.120] [D] Dismount for attacker.
+[18:36:39.120] [D] Stop and dismount. Reason: Combat
+[18:36:39.153] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=Repair combat=True
+[18:36:39.288] [D] [Pulse] Slow plugin: name=Vendor Recovery elapsed=33ms
+[18:36:40.226] [N] [Singular] Casting Judgement of Light on Grimtotem Geomancer
+[18:36:40.226] [D] Spell_C::CastSpell(20271, 0, 0xF130002A080CCF05, 0)
+[18:36:40.259] [D] [Pulse] Slow bot root: 370ms bot=Wholesome Auto Quest poi=Repair combat=True
+[18:36:40.392] [D] [Singular-DEBUG] Switched targets!
+[18:36:40.393] [D] [Singular-DEBUG] Melee Distance: 6.5833335
+[18:36:40.393] [D] [Singular-DEBUG] Health: 100
+[18:36:40.393] [D] [Singular-DEBUG] Level: 27
+[18:36:41.269] [D] [Pulse] Slow bot root: 272ms bot=Wholesome Auto Quest poi=Repair combat=True
+[18:36:42.235] [N] [Singular] Casting Exorcism on Grimtotem Geomancer
+[18:36:42.235] [D] Spell_C::CastSpell(879, 0, 0xF130002A080CCF05, 0)
+[18:36:42.268] [D] [Pulse] Slow bot root: 267ms bot=Wholesome Auto Quest poi=Repair combat=True
+[18:36:43.178] [D] [Pulse] Slow bot root: 170ms bot=Wholesome Auto Quest poi=Repair combat=True
+[18:36:44.085] [D] [Pulse] Slow bot root: 170ms bot=Wholesome Auto Quest poi=Repair combat=True
+[18:36:45.034] [D] [Pulse] Slow bot root: 179ms bot=Wholesome Auto Quest poi=Repair combat=True
+[18:36:45.966] [D] [Pulse] Slow bot root: 201ms bot=Wholesome Auto Quest poi=Repair combat=True
+[18:36:46.875] [D] [Pulse] Slow bot root: 175ms bot=Wholesome Auto Quest poi=Repair combat=True
+[18:36:46.964] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=60ms
+[18:36:47.933] [D] [Pulse] Slow bot root: 332ms bot=Wholesome Auto Quest poi=Repair combat=True
+[18:36:49.192] [N] Loading 1_42_37
+[18:36:49.192] [N] Loading 1_43_36
+[18:36:49.192] [N] Loading 1_43_37
+[18:36:49.307] [D] [Pulse] Slow bot root: 636ms bot=Wholesome Auto Quest poi=Repair combat=True
+[18:36:49.474] [D] [Pulse] Slow plugin: name=Vendor Recovery elapsed=33ms
+[18:36:50.647] [D] [Pulse] Slow bot root: 571ms bot=Wholesome Auto Quest poi=Repair combat=True
+[18:36:51.818] [N] Mounting: 35022
+[18:36:54.033] [D] [Pulse] Slow bot root: 2648ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:36:55.063] [D] [Pulse] Slow bot root: 271ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:36:56.105] [D] [Pulse] Slow bot root: 268ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:36:56.611] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=470ms
+[18:36:56.708] [D] [Pulse] Slow shared pulse: total=603ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=34 events=0 plugins=567 routine=0
+[18:37:04.438] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=63ms
+[18:37:04.470] [D] [Pulse] Slow plugin: name=Vendor Recovery elapsed=32ms
+[18:37:05.342] [D] [Pulse] Slow bot root: 270ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:37:06.411] [D] [Pulse] Slow bot root: 269ms bot=Wholesome Auto Quest poi=Repair combat=True
+[18:37:06.560] [D] [Singular-DEBUG] Switched targets!
+[18:37:06.560] [D] [Singular-DEBUG] Melee Distance: 6.5833335
+[18:37:06.560] [D] [Singular-DEBUG] Health: 100
+[18:37:06.560] [D] [Singular-DEBUG] Level: 25
+[18:37:14.883] [D] Dismount for attacker.
+[18:37:14.883] [D] Stop and dismount. Reason: Combat
+[18:37:15.066] [D] Dismount for attacker.
+[18:37:15.066] [D] Stop and dismount. Reason: Combat
+[18:37:15.527] [D] [Pulse] Slow bot root: 116ms bot=Wholesome Auto Quest poi=Repair combat=True
+[18:37:16.012] [D] [Pulse] Slow bot root: 115ms bot=Wholesome Auto Quest poi=Repair combat=True
+[18:37:16.274] [D] [Pulse] Slow bot root: 110ms bot=Wholesome Auto Quest poi=Repair combat=True
+[18:37:16.837] [D] [Pulse] Slow bot root: 108ms bot=Wholesome Auto Quest poi=Repair combat=True
+[18:37:17.122] [D] [Pulse] Slow bot root: 101ms bot=Wholesome Auto Quest poi=Repair combat=True
+[18:37:17.633] [D] [Pulse] Slow bot root: 108ms bot=Wholesome Auto Quest poi=Repair combat=True
+[18:37:18.840] [D] [Pulse] Slow bot root: 118ms bot=Wholesome Auto Quest poi=Repair combat=True
+[18:37:19.107] [D] [Pulse] Slow bot root: 102ms bot=Wholesome Auto Quest poi=Repair combat=True
+[18:37:20.011] [N] [Singular] Casting Judgement of Light on Grimtotem Geomancer
+[18:37:20.011] [D] Spell_C::CastSpell(20271, 0, 0xF130002A080CCE14, 0)
+[18:37:21.638] [N] [Singular] Casting Exorcism on Grimtotem Geomancer
+[18:37:21.638] [D] Spell_C::CastSpell(879, 0, 0xF130002A080CCE14, 0)
+[18:37:24.872] [N] [Singular] Casting Divine Protection on Myself
+[18:37:24.872] [D] Spell_C::CastSpell(498, 0, 0x6000000007EAB80, 0)
+[18:37:26.912] [N] [Singular] Casting Hand of Freedom on Myself
+[18:37:26.912] [D] Spell_C::CastSpell(1044, 0, 0x6000000007EAB80, 0)
+[18:37:28.647] [N] [Singular] Currect target is invalid. Switching to Grimtotem Stomper!
+[18:37:28.657] [D] [Pulse] Slow bot root: 149ms bot=Wholesome Auto Quest poi=Repair combat=True
+[18:37:28.980] [D] [Singular-DEBUG] Switched targets!
+[18:37:28.980] [D] [Singular-DEBUG] Melee Distance: 6.5833335
+[18:37:28.980] [D] [Singular-DEBUG] Health: 94.15204678362574
+[18:37:28.980] [D] [Singular-DEBUG] Level: 26
+[18:37:29.314] [N] [Singular] Casting Judgement of Light on Grimtotem Stomper
+[18:37:29.315] [D] Spell_C::CastSpell(20271, 0, 0xF130002A070CCCEC, 0)
+[18:37:30.971] [N] [Singular] Casting Holy Light on Myself
+[18:37:30.971] [D] Spell_C::CastSpell(1026, 0, 0x6000000007EAB80, 0)
+[18:37:37.768] [N] [Singular] Casting Judgement of Light on Grimtotem Stomper
+[18:37:37.769] [D] Spell_C::CastSpell(20271, 0, 0xF130002A070CCCEC, 0)
+[18:37:39.444] [N] [Singular] Casting Exorcism on Grimtotem Stomper
+[18:37:39.444] [D] Spell_C::CastSpell(879, 0, 0xF130002A070CCCEC, 0)
+[18:37:45.124] [N] [Singular] Currect target is invalid. Switching to Grimtotem Geomancer!
+[18:37:45.458] [D] [Singular-DEBUG] Switched targets!
+[18:37:45.458] [D] [Singular-DEBUG] Melee Distance: 6.8833337
+[18:37:45.458] [D] [Singular-DEBUG] Health: 100
+[18:37:45.458] [D] [Singular-DEBUG] Level: 25
+[18:37:46.905] [D] [Pulse] Slow bot root: 109ms bot=Wholesome Auto Quest poi=Repair combat=True
+[18:37:47.203] [D] [Pulse] Slow bot root: 106ms bot=Wholesome Auto Quest poi=Repair combat=True
+[18:37:47.492] [D] [Pulse] Slow bot root: 100ms bot=Wholesome Auto Quest poi=Repair combat=True
+[18:37:47.773] [D] [Pulse] Slow bot root: 109ms bot=Wholesome Auto Quest poi=Repair combat=True
+[18:37:48.858] [D] [Pulse] Slow bot root: 100ms bot=Wholesome Auto Quest poi=Repair combat=True
+[18:37:50.308] [N] [Singular] Casting Judgement of Light on Grimtotem Geomancer
+[18:37:50.308] [D] Spell_C::CastSpell(20271, 0, 0xF130002A080CCD9F, 0)
+[18:37:54.531] [N] [Singular] Casting Holy Light on Myself
+[18:37:54.532] [D] Spell_C::CastSpell(1026, 0, 0x6000000007EAB80, 0)
+[18:37:58.070] [N] [Singular] Casting Exorcism on Grimtotem Geomancer
+[18:37:58.070] [D] Spell_C::CastSpell(879, 0, 0xF130002A080CCD9F, 0)
+[18:38:00.011] [N] [Singular] Casting Judgement of Light on Grimtotem Geomancer
+[18:38:00.011] [D] Spell_C::CastSpell(20271, 0, 0xF130002A080CCD9F, 0)
+[18:38:03.696] [N] [Singular] Casting Hammer of Justice on Grimtotem Geomancer
+[18:38:03.696] [D] Spell_C::CastSpell(5588, 0, 0xF130002A080CCD9F, 0)
+[18:38:04.293] [N] Loading 1_42_37
+[18:38:04.293] [N] Loading 1_38_35
+[18:38:04.293] [N] Loading 1_38_36
+[18:38:04.293] [N] Loading 1_43_36
+[18:38:04.293] [N] Loading 1_41_33
+[18:38:04.293] [N] Loading 1_40_33
+[18:38:04.293] [N] Loading 1_42_38
+[18:38:04.293] [N] Loading 1_38_37
+[18:38:04.293] [N] Loading 1_38_34
+[18:38:04.293] [N] Loading 1_43_37
+[18:38:04.293] [N] Loading 1_39_33
+[18:38:04.293] [N] Loading 1_37_35
+[18:38:04.293] [N] Loading 1_43_38
+[18:38:04.293] [N] Loading 1_37_36
+[18:38:04.293] [N] Loading 1_38_38
+[18:38:04.294] [N] Loading 1_37_37
+[18:38:04.294] [N] Loading 1_42_39
+[18:38:04.333] [D] [Pulse] Slow bot root: 194ms bot=Wholesome Auto Quest poi=Repair combat=True
+[18:38:04.594] [D] [Pulse] Slow bot root: 115ms bot=Wholesome Auto Quest poi=Repair combat=True
+[18:38:04.866] [D] [Pulse] Slow bot root: 121ms bot=Wholesome Auto Quest poi=Repair combat=True
+[18:38:05.128] [D] [Pulse] Slow bot root: 103ms bot=Wholesome Auto Quest poi=Repair combat=True
+[18:38:05.383] [D] [Pulse] Slow bot root: 104ms bot=Wholesome Auto Quest poi=Repair combat=True
+[18:38:05.638] [D] [Pulse] Slow bot root: 103ms bot=Wholesome Auto Quest poi=Repair combat=True
+[18:38:05.674] [N] Facing wrong way, rotating
+[18:38:05.904] [D] [Pulse] Slow bot root: 114ms bot=Wholesome Auto Quest poi=Repair combat=True
+[18:38:06.159] [D] [Pulse] Slow bot root: 115ms bot=Wholesome Auto Quest poi=Repair combat=True
+[18:38:06.652] [D] [Pulse] Slow bot root: 104ms bot=Wholesome Auto Quest poi=Repair combat=True
+[18:38:06.911] [D] [Pulse] Slow bot root: 107ms bot=Wholesome Auto Quest poi=Repair combat=True
+[18:38:07.185] [D] [Pulse] Slow bot root: 108ms bot=Wholesome Auto Quest poi=Repair combat=True
+[18:38:07.452] [D] [Pulse] Slow bot root: 120ms bot=Wholesome Auto Quest poi=Repair combat=True
+[18:38:07.937] [D] [Pulse] Slow bot root: 102ms bot=Wholesome Auto Quest poi=Repair combat=True
+[18:38:09.108] [N] [Singular] Casting Judgement of Light on Grimtotem Geomancer
+[18:38:09.108] [D] Spell_C::CastSpell(20271, 0, 0xF130002A080CCD9F, 0)
+[18:38:09.491] [N] [Singular] Currect target is invalid. Switching to Grimtotem Stomper!
+[18:38:09.861] [D] [Singular-DEBUG] Switched targets!
+[18:38:09.861] [D] [Singular-DEBUG] Melee Distance: 6.5833335
+[18:38:09.861] [D] [Singular-DEBUG] Health: 98.61878453038673
+[18:38:09.861] [D] [Singular-DEBUG] Level: 27
+[18:38:13.757] [N] [Singular] Casting Holy Light on Myself
+[18:38:13.757] [D] Spell_C::CastSpell(1026, 0, 0x6000000007EAB80, 0)
+[18:38:17.757] [N] [Singular] Casting Judgement of Light on Grimtotem Stomper
+[18:38:17.757] [D] Spell_C::CastSpell(20271, 0, 0xF130002A070CCCE0, 0)
+[18:38:19.353] [N] [Singular] Casting Exorcism on Grimtotem Stomper
+[18:38:19.353] [D] Spell_C::CastSpell(879, 0, 0xF130002A070CCCE0, 0)
+[18:38:27.200] [N] [Singular] Currect target is invalid. Switching to Grimtotem Geomancer!
+[18:38:27.208] [D] [Pulse] Slow bot root: 111ms bot=Wholesome Auto Quest poi=Repair combat=True
+[18:38:27.558] [D] [Singular-DEBUG] Switched targets!
+[18:38:27.558] [D] [Singular-DEBUG] Melee Distance: 6.8833337
+[18:38:27.558] [D] [Singular-DEBUG] Health: 100
+[18:38:27.558] [D] [Singular-DEBUG] Level: 27
+[18:38:27.704] [N] [Singular] Casting Holy Light on Myself
+[18:38:27.704] [D] Spell_C::CastSpell(1026, 0, 0x6000000007EAB80, 0)
+[18:38:31.284] [N] [Singular] Casting Holy Light on Myself
+[18:38:31.284] [D] Spell_C::CastSpell(1026, 0, 0x6000000007EAB80, 0)
+[18:38:34.342] [D] [Pulse] Slow bot root: 107ms bot=Wholesome Auto Quest poi=Repair combat=True
+[18:38:35.288] [N] [Singular] Casting Judgement of Light on Grimtotem Geomancer
+[18:38:35.288] [D] Spell_C::CastSpell(20271, 0, 0xF130002A080CCD02, 0)
+[18:38:36.965] [N] [Singular] Casting Flash of Light on Myself
+[18:38:36.965] [D] Spell_C::CastSpell(19939, 0, 0x6000000007EAB80, 0)
+[18:38:52.058] [N] [Singular] Casting Judgement of Light on Grimtotem Geomancer
+[18:38:52.058] [D] Spell_C::CastSpell(20271, 0, 0xF130002A080CCD02, 0)
+[18:38:52.472] [N] [Singular] Currect target is invalid. Switching to Grimtotem Geomancer!
+[18:38:52.823] [D] [Singular-DEBUG] Switched targets!
+[18:38:52.823] [D] [Singular-DEBUG] Melee Distance: 6.5833335
+[18:38:52.823] [D] [Singular-DEBUG] Health: 90.46104928457869
+[18:38:52.823] [D] [Singular-DEBUG] Level: 26
+[18:38:53.455] [N] Facing wrong way, rotating
+[18:39:03.498] [N] Facing wrong way, rotating
+[18:39:06.610] [N] Mounting: 35022
+[18:39:08.735] [N] Loading 1_39_36
+[18:39:08.735] [N] Loading 1_39_35
+[18:39:08.735] [N] Loading 1_42_37
+[18:39:08.735] [N] Loading 1_38_35
+[18:39:08.735] [N] Loading 1_38_36
+[18:39:08.735] [N] Loading 1_39_34
+[18:39:08.735] [N] Loading 1_43_36
+[18:39:08.735] [N] Loading 1_41_33
+[18:39:08.735] [N] Loading 1_40_33
+[18:39:08.735] [N] Loading 1_42_38
+[18:39:08.735] [N] Loading 1_38_37
+[18:39:08.735] [N] Loading 1_38_34
+[18:39:08.736] [N] Loading 1_37_35
+[18:39:08.736] [N] Loading 1_43_37
+[18:39:08.736] [N] Loading 1_39_33
+[18:39:08.736] [N] Loading 1_37_36
+[18:39:08.736] [N] Loading 1_43_38
+[18:39:08.736] [N] Loading 1_38_38
+[18:39:08.736] [N] Loading 1_37_37
+[18:39:08.773] [D] [Pulse] Slow bot root: 2246ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:39:08.902] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=109ms
+[18:39:08.930] [N] Eating Stormwind Brie
+[18:39:08.944] [N] Drinking Sweet Nectar
+[18:39:08.979] [N] [Wholesome Auto Quest] Rest: HP=10% MP=3% — paused (ate) (drank)
+[18:39:09.385] [D] [Pulse] Slow bot root: 120ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:39:09.522] [N] Stopping the bot!
+[18:39:09.524] [N] Bot stopping! Reason: User request
+[18:39:09.526] [D] Exception in GetReturnValues: Thread was interrupted from a waiting state.
+[18:39:09.838] [D] [Pulse] Slow bot root: 428ms bot=Wholesome Auto Quest poi=Repair combat=False
+[18:39:09.872] [D] Cleared POI
+[18:39:09.874] [D] Worker thread exited cleanly
+[18:39:26.574] [N] Changing current bot to: Combat Bot
+[18:40:30.263] [D] [Settings] Saved all settings
+[18:40:30.263] [N] Starting the bot.
+[18:40:30.264] [N] Currently Using BotBase : Combat Bot
+[18:40:30.265] [N] Character is a level 0 0 None
+[18:40:30.266] [N] Current zone is Scarlet Monastery
+[18:40:30.267] [D] Loading profile from D:\World of Warcraft 3.3.5a\CB\Bots\WholesomeAutoQuest\WHOLESOME_AUTOQUESTER.xml
+[18:40:30.267] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\UseTransport.cs
+[18:40:30.268] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\UseTransport.cs
+[18:40:30.268] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\UseTransport.cs
+[18:40:30.269] [D] [CompileBatch] Compiling 6 entries...
+[18:40:30.368] [D] [CompileBatch] Compiled successfully.
+[18:40:30.368] [N] Profile loaded: WholesomeAQ - Thousand Needles
+[18:40:30.555] [N] [AutoEquip]: Loot roll in progress
+[18:40:30.564] [N] [AutoEquip]: Equipped item in slot:SecondaryHandSlot scored -1 while loot-roll item scored:109.212494
+[18:40:30.567] [N] [AutoEquip]: Rolling Greed
+[18:40:30.796] [D] [QuestLog] Loaded 79 completed quests from Lua fallback
+[18:40:30.829] [D] Selected sub-profile: WholesomeAQ - Thousand Needles (L1-80)
+[18:40:30.896] [D] Setting CVars: autoSelfCast=1, autoLootDefault=1
+[18:40:30.965] [D] Cleared POI
+[18:40:30.965] [D] Refresh() called. LastCount=0, CurrentCount=34
+[18:40:30.965] [N] Building spell book
+[18:40:30.966] [D] Found 34 spells from LocalPlayer.KnownSpells
+[18:40:30.966] [N] Adding Arcane Affinity
+[18:40:30.967] [N] Adding Arcane Torrent
+[18:40:30.968] [N] Adding Auto Attack
+[18:40:30.969] [N] Adding Block
+[18:40:30.970] [N] Adding Dodge
+[18:40:30.971] [N] Adding Magic Resistance
+[18:40:30.972] [N] Adding Parry
+[18:40:30.973] [N] Adding Blessing of Wisdom
+[18:40:30.974] [N] Adding Concentration Aura
+[18:40:30.975] [N] Adding Consecration
+[18:40:30.981] [N] Adding Exorcism
+[18:40:30.982] [N] Adding Flash of Light
+[18:40:30.983] [N] Adding Holy Light
+[18:40:30.984] [N] Adding Lay on Hands
+[18:40:30.985] [N] Adding Purify
+[18:40:30.986] [N] Adding Seal of Righteousness
+[18:40:30.987] [N] Adding Sense Undead
+[18:40:30.987] [N] Adding Turn Evil
+[18:40:30.988] [N] Adding Blessing of Kings
+[18:40:30.989] [N] Adding Devotion Aura
+[18:40:30.990] [N] Adding Divine Protection
+[18:40:30.991] [N] Adding Hammer of Justice
+[18:40:30.992] [N] Adding Hand of Freedom
+[18:40:30.993] [N] Adding Hand of Protection
+[18:40:30.994] [N] Adding Hand of Reckoning
+[18:40:30.995] [N] Adding Hand of Salvation
+[18:40:30.996] [N] Adding Righteous Defense
+[18:40:30.997] [N] Adding Righteous Fury
+[18:40:30.997] [N] Adding Seal of Justice
+[18:40:30.998] [N] Adding Blessing of Might
+[18:40:30.999] [N] Adding Judgement of Light
+[18:40:31.000] [N] Adding Judgement of Wisdom
+[18:40:31.001] [N] Adding Retribution Aura
+[18:40:31.002] [N] Adding Seal of Command
+[18:40:31.003] [N] Spell book built
+[18:40:31.004] [D] [SpellManager] Initialize — subscribed to BotEvents.OnBotStart
+[18:40:31.004] [D] Default area costs set (Road=1.0, Ground=1.66)
+[18:40:31.004] [D] Faction filter set: Horde (excluding Alliance paths)
+[18:40:31.006] [D] Refresh() called. LastCount=0, CurrentCount=34
+[18:40:31.006] [N] Building spell book
+[18:40:31.007] [D] Found 34 spells from LocalPlayer.KnownSpells
+[18:40:31.007] [N] Adding Arcane Affinity
+[18:40:31.008] [N] Adding Arcane Torrent
+[18:40:31.009] [N] Adding Auto Attack
+[18:40:31.010] [N] Adding Block
+[18:40:31.011] [N] Adding Dodge
+[18:40:31.012] [N] Adding Magic Resistance
+[18:40:31.013] [N] Adding Parry
+[18:40:31.014] [N] Adding Blessing of Wisdom
+[18:40:31.015] [N] Adding Concentration Aura
+[18:40:31.016] [N] Adding Consecration
+[18:40:31.017] [N] Adding Exorcism
+[18:40:31.019] [N] Adding Flash of Light
+[18:40:31.020] [N] Adding Holy Light
+[18:40:31.021] [N] Adding Lay on Hands
+[18:40:31.022] [N] Adding Purify
+[18:40:31.023] [N] Adding Seal of Righteousness
+[18:40:31.024] [N] Adding Sense Undead
+[18:40:31.025] [N] Adding Turn Evil
+[18:40:31.026] [N] Adding Blessing of Kings
+[18:40:31.027] [N] Adding Devotion Aura
+[18:40:31.028] [N] Adding Divine Protection
+[18:40:31.028] [N] Adding Hammer of Justice
+[18:40:31.029] [N] Adding Hand of Freedom
+[18:40:31.030] [N] Adding Hand of Protection
+[18:40:31.031] [N] Adding Hand of Reckoning
+[18:40:31.032] [N] Adding Hand of Salvation
+[18:40:31.033] [N] Adding Righteous Defense
+[18:40:31.034] [N] Adding Righteous Fury
+[18:40:31.035] [N] Adding Seal of Justice
+[18:40:31.036] [N] Adding Blessing of Might
+[18:40:31.037] [N] Adding Judgement of Light
+[18:40:31.038] [N] Adding Judgement of Wisdom
+[18:40:31.039] [N] Adding Retribution Aura
+[18:40:31.040] [N] Adding Seal of Command
+[18:40:31.041] [N] Spell book built
+[18:40:31.042] [D] [SpellManager] Subscribed to LEARNED_SPELL_IN_TAB, ACTIVE_TALENT_GROUP_CHANGED
+[18:40:31.099] [N] [Singular] Context changed. New context: Instances. Rebuilding behaviors.
+[18:40:31.099] [D] [Singular-DEBUG] Creating Combat behavior.
+[18:40:31.100] [D] [Singular-DEBUG] CreateRetributionPaladinInstancePullAndCombat is a match!
+[18:40:31.100] [N] [Singular]  Using CreateRetributionPaladinInstancePullAndCombat for Retribution Paladin - Combat (Priority: 0)
+[18:40:31.101] [D] [Singular-DEBUG] Creating Pull behavior.
+[18:40:31.102] [D] [Singular-DEBUG] CreateRetributionPaladinInstancePullAndCombat is a match!
+[18:40:31.102] [N] [Singular]  Using CreateRetributionPaladinInstancePullAndCombat for Retribution Paladin - Pull (Priority: 0)
+[18:40:31.103] [D] [Singular-DEBUG] Creating Rest behavior.
+[18:40:31.104] [D] [Singular-DEBUG] CreateRetributionPaladinRest is a match!
+[18:40:31.104] [N] [Singular]  Using CreateRetributionPaladinRest for Retribution Paladin - Rest (Priority: 0)
+[18:40:31.104] [D] [Singular-DEBUG] Creating CombatBuffs behavior.
+[18:40:31.105] [D] [Singular-DEBUG] Creating Heal behavior.
+[18:40:31.106] [D] [Singular-DEBUG] CreateRetributionPaladinHeal is a match!
+[18:40:31.106] [N] [Singular]  Using CreateRetributionPaladinHeal for Retribution Paladin - Heal (Priority: 0)
+[18:40:31.106] [D] [Singular-DEBUG] Creating PullBuffs behavior.
+[18:40:31.107] [D] [Singular-DEBUG] Creating PreCombatBuffs behavior.
+[18:40:31.108] [D] [Singular-DEBUG] CreatePaladinPreCombatBuffs is a match!
+[18:40:31.108] [N] [Singular]  Using CreatePaladinPreCombatBuffs for Retribution Paladin - PreCombatBuffs (Priority: 0)
+[18:40:31.568] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=458ms
+[18:40:31.634] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=65ms
+[18:40:31.635] [D] [Pulse] Slow shared pulse: total=591ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=54 events=10 plugins=525 routine=0
+[18:40:31.935] [N] [Singular] Casting Blessing of Might on Paladin
+[18:40:31.935] [D] Spell_C::CastSpell(19835, 0, 0x60000000070F484, 0)
+[18:40:31.968] [D] [Pulse] Slow bot root: 301ms bot=Combat Bot poi=None combat=False
+[18:40:31.969] [N] [AutoEquip]: Loot roll in progress
+[18:40:32.103] [N] [AutoEquip]: Equipped item in slot:ShoulderSlot scored 0 while loot-roll item scored:2.4050002
+[18:40:32.137] [N] [AutoEquip]: Slayer's Shoulderguards scored 2.4050002 while your equiped item only scored 0 - Rolling Need
+[18:40:32.406] [D] [Pulse] Slow bot root: 132ms bot=Combat Bot poi=None combat=False
+[18:40:32.640] [D] [Pulse] Slow bot root: 135ms bot=Combat Bot poi=None combat=False
+[18:40:32.876] [D] [Pulse] Slow bot root: 135ms bot=Combat Bot poi=None combat=False
+[18:40:33.113] [D] [Pulse] Slow bot root: 136ms bot=Combat Bot poi=None combat=False
+[18:40:33.344] [D] [Pulse] Slow bot root: 133ms bot=Combat Bot poi=None combat=False
+[18:40:33.580] [D] [Pulse] Slow bot root: 134ms bot=Combat Bot poi=None combat=False
+[18:40:33.816] [D] [Pulse] Slow bot root: 134ms bot=Combat Bot poi=None combat=False
+[18:40:34.185] [N] [Singular] Casting Blessing of Might on Druid
+[18:40:34.185] [D] Spell_C::CastSpell(19835, 0, 0x6000000007F5467, 0)
+[18:40:34.219] [D] [Pulse] Slow bot root: 303ms bot=Combat Bot poi=None combat=False
+[18:40:34.453] [D] [Pulse] Slow bot root: 132ms bot=Combat Bot poi=None combat=False
+[18:40:34.687] [D] [Pulse] Slow bot root: 133ms bot=Combat Bot poi=None combat=False
+[18:40:34.920] [D] [Pulse] Slow bot root: 131ms bot=Combat Bot poi=None combat=False
+[18:40:35.156] [D] [Pulse] Slow bot root: 133ms bot=Combat Bot poi=None combat=False
+[18:40:35.388] [D] [Pulse] Slow bot root: 131ms bot=Combat Bot poi=None combat=False
+[18:40:35.623] [D] [Pulse] Slow bot root: 134ms bot=Combat Bot poi=None combat=False
+[18:40:35.887] [D] [Pulse] Slow bot root: 132ms bot=Combat Bot poi=None combat=False
+[18:40:36.121] [D] [Pulse] Slow bot root: 132ms bot=Combat Bot poi=None combat=False
+[18:40:36.525] [N] [Singular] Casting Blessing of Might on Shaman
+[18:40:36.525] [D] Spell_C::CastSpell(19835, 0, 0x6000000007EF51E, 0)
+[18:40:36.557] [D] [Pulse] Slow bot root: 333ms bot=Combat Bot poi=None combat=False
+[18:40:36.793] [D] [Pulse] Slow bot root: 135ms bot=Combat Bot poi=None combat=False
+[18:40:37.026] [D] [Pulse] Slow bot root: 133ms bot=Combat Bot poi=None combat=False
+[18:40:37.263] [D] [Pulse] Slow bot root: 135ms bot=Combat Bot poi=None combat=False
+[18:40:37.494] [D] [Pulse] Slow bot root: 132ms bot=Combat Bot poi=None combat=False
+[18:40:37.729] [D] [Pulse] Slow bot root: 130ms bot=Combat Bot poi=None combat=False
+[18:40:37.966] [D] [Pulse] Slow bot root: 136ms bot=Combat Bot poi=None combat=False
+[18:40:38.203] [D] [Pulse] Slow bot root: 135ms bot=Combat Bot poi=None combat=False
+[18:40:38.435] [D] [Pulse] Slow bot root: 133ms bot=Combat Bot poi=None combat=False
+[18:40:38.872] [N] [Singular] Casting Blessing of Might on Hunter
+[18:40:38.872] [D] Spell_C::CastSpell(19835, 0, 0x6000000007F6F6C, 0)
+[18:40:38.906] [D] [Pulse] Slow bot root: 367ms bot=Combat Bot poi=None combat=False
+[18:40:39.141] [D] [Pulse] Slow bot root: 134ms bot=Combat Bot poi=None combat=False
+[18:40:39.377] [D] [Pulse] Slow bot root: 130ms bot=Combat Bot poi=None combat=False
+[18:40:39.948] [N] [AutoEquip]: Equipping Shoulder "Slayer's Shoulderguards" instead of "Defender Spaulders" - it scored 2.4050002 while the old scored 0
+[18:40:40.216] [D] [Pulse] Slow bot root: 133ms bot=Combat Bot poi=None combat=False
+[18:40:40.448] [D] [Pulse] Slow bot root: 132ms bot=Combat Bot poi=None combat=False
+[18:40:41.284] [D] [Pulse] Slow bot root: 269ms bot=Combat Bot poi=None combat=False
+[18:40:41.857] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=496ms
+[18:40:41.922] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=64ms
+[18:40:41.922] [D] [Pulse] Slow shared pulse: total=638ms movement=0 objects=0 lua=33 info=0 loot=1 targeting=42 events=0 plugins=561 routine=0
+[18:40:42.189] [D] [Pulse] Slow bot root: 266ms bot=Combat Bot poi=None combat=False
+[18:40:42.456] [N] [Singular] Casting Blessing of Might on Myself
+[18:40:42.456] [D] Spell_C::CastSpell(19835, 0, 0x6000000007EAB80, 0)
+[18:40:42.489] [D] [Pulse] Slow bot root: 198ms bot=Combat Bot poi=None combat=False
+[18:40:42.723] [D] [Pulse] Slow bot root: 133ms bot=Combat Bot poi=None combat=False
+[18:40:42.723] [N] [AutoEquip]: Loot roll in progress
+[18:40:42.824] [N] [AutoEquip]: Rolling Greed
+[18:40:42.859] [N] [AutoEquip]: Loot roll in progress
+[18:40:42.959] [N] [AutoEquip]: Equipped item in slot:SecondaryHandSlot scored -1 while loot-roll item scored:76.645065
+[18:40:42.959] [N] [AutoEquip]: New item did not contain our primary stat of:Strength so we are not rolling need.
+[18:40:42.959] [N] [AutoEquip]: Rolling Greed
+[18:40:43.229] [D] [Pulse] Slow bot root: 133ms bot=Combat Bot poi=None combat=False
+[18:40:43.465] [D] [Pulse] Slow bot root: 134ms bot=Combat Bot poi=None combat=False
+[18:40:43.701] [D] [Pulse] Slow bot root: 134ms bot=Combat Bot poi=None combat=False
+[18:40:43.936] [D] [Pulse] Slow bot root: 134ms bot=Combat Bot poi=None combat=False
+[18:40:44.169] [D] [Pulse] Slow bot root: 133ms bot=Combat Bot poi=None combat=False
+[18:40:44.403] [D] [Pulse] Slow bot root: 133ms bot=Combat Bot poi=None combat=False
+[18:40:44.770] [D] [Pulse] Slow bot root: 263ms bot=Combat Bot poi=None combat=False
+[18:40:45.136] [D] [Pulse] Slow bot root: 267ms bot=Combat Bot poi=None combat=False
+[18:40:45.505] [D] [Pulse] Slow bot root: 269ms bot=Combat Bot poi=None combat=False
+[18:40:45.876] [D] [Pulse] Slow bot root: 268ms bot=Combat Bot poi=None combat=False
+[18:40:46.245] [D] [Pulse] Slow bot root: 266ms bot=Combat Bot poi=None combat=False
+[18:40:46.614] [D] [Pulse] Slow bot root: 268ms bot=Combat Bot poi=None combat=False
+[18:40:47.022] [D] [Pulse] Slow bot root: 272ms bot=Combat Bot poi=None combat=False
+[18:40:47.392] [D] [Pulse] Slow bot root: 267ms bot=Combat Bot poi=None combat=False
+[18:40:47.762] [D] [Pulse] Slow bot root: 267ms bot=Combat Bot poi=None combat=False
+[18:40:56.681] [N] [Singular] Casting Exorcism on Scarlet Torturer
+[18:40:56.682] [D] Spell_C::CastSpell(879, 0, 0xF1300010D200007F, 0)
+[18:40:56.694] [D] [Pulse] Slow bot root: 322ms bot=Combat Bot poi=None combat=True
+[18:40:56.749] [D] [Singular-DEBUG] Switched targets!
+[18:40:56.749] [D] [Singular-DEBUG] Melee Distance: 5
+[18:40:56.749] [D] [Singular-DEBUG] Health: 73.39297548045063
+[18:40:56.749] [D] [Singular-DEBUG] Level: 31
+[18:40:57.356] [D] [Pulse] Slow bot root: 606ms bot=Combat Bot poi=None combat=True
+[18:40:57.952] [D] [Pulse] Slow bot root: 558ms bot=Combat Bot poi=None combat=True
+[18:40:58.534] [D] [Pulse] Slow bot root: 546ms bot=Combat Bot poi=None combat=True
+[18:40:59.008] [N] [Singular] Casting Judgement of Light on Scarlet Torturer
+[18:40:59.008] [D] Spell_C::CastSpell(20271, 0, 0xF1300010D200007F, 0)
+[18:40:59.014] [D] [Pulse] Slow bot root: 444ms bot=Combat Bot poi=None combat=True
+[18:40:59.586] [D] [Pulse] Slow bot root: 529ms bot=Combat Bot poi=None combat=True
+[18:41:00.162] [D] [Pulse] Slow bot root: 540ms bot=Combat Bot poi=None combat=True
+[18:41:00.747] [D] [Pulse] Slow bot root: 549ms bot=Combat Bot poi=None combat=True
+[18:41:01.328] [D] [Pulse] Slow bot root: 539ms bot=Combat Bot poi=None combat=True
+[18:41:01.925] [D] [Pulse] Slow bot root: 553ms bot=Combat Bot poi=None combat=True
+[18:41:02.525] [D] [Pulse] Slow bot root: 547ms bot=Combat Bot poi=None combat=True
+[18:41:03.111] [D] [Pulse] Slow bot root: 542ms bot=Combat Bot poi=None combat=True
+[18:41:03.698] [D] [Pulse] Slow bot root: 546ms bot=Combat Bot poi=None combat=True
+[18:41:04.291] [D] [Pulse] Slow bot root: 558ms bot=Combat Bot poi=None combat=True
+[18:41:04.885] [D] [Pulse] Slow bot root: 561ms bot=Combat Bot poi=None combat=False
+[18:41:05.712] [D] [Pulse] Slow bot root: 121ms bot=Combat Bot poi=None combat=False
+[18:41:07.637] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=51ms
+[18:41:12.160] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=142ms
+[18:41:17.510] [D] [Pulse] Slow bot root: 104ms bot=Combat Bot poi=None combat=False
+[18:41:18.791] [N] [Singular] Casting Exorcism on Scarlet Torturer
+[18:41:18.791] [D] Spell_C::CastSpell(879, 0, 0xF1300010D2000042, 0)
+[18:41:18.797] [D] [Pulse] Slow bot root: 322ms bot=Combat Bot poi=None combat=True
+[18:41:18.839] [D] [Singular-DEBUG] Switched targets!
+[18:41:18.839] [D] [Singular-DEBUG] Melee Distance: 5.9433336
+[18:41:18.839] [D] [Singular-DEBUG] Health: 59.476474486414844
+[18:41:18.839] [D] [Singular-DEBUG] Level: 31
+[18:41:19.411] [D] [Pulse] Slow bot root: 571ms bot=Combat Bot poi=None combat=True
+[18:41:20.027] [D] [Pulse] Slow bot root: 578ms bot=Combat Bot poi=None combat=True
+[18:41:20.637] [D] [Pulse] Slow bot root: 566ms bot=Combat Bot poi=None combat=True
+[18:41:21.137] [N] [Singular] Casting Judgement of Light on Scarlet Torturer
+[18:41:21.137] [D] Spell_C::CastSpell(20271, 0, 0xF1300010D2000042, 0)
+[18:41:21.149] [D] [Pulse] Slow bot root: 473ms bot=Combat Bot poi=None combat=True
+[18:41:21.775] [D] [Pulse] Slow bot root: 589ms bot=Combat Bot poi=None combat=True
+[18:41:22.397] [D] [Pulse] Slow bot root: 585ms bot=Combat Bot poi=None combat=True
+[18:41:23.013] [D] [Pulse] Slow bot root: 570ms bot=Combat Bot poi=None combat=True
+[18:41:23.626] [D] [Pulse] Slow bot root: 576ms bot=Combat Bot poi=None combat=True
+[18:41:24.172] [D] [Nav] Loaded 9 mesh tiles for one path query
+[18:41:24.190] [D] [Pulse] Slow bot root: 526ms bot=Combat Bot poi=None combat=True
+[18:41:24.809] [D] [Pulse] Slow bot root: 574ms bot=Combat Bot poi=None combat=True
+[18:41:25.294] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_16(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[18:41:25.294] [D] [Pulse] Slow bot root: 454ms bot=Combat Bot poi=None combat=True
+[18:41:25.866] [N] [Singular] Currect target is invalid. Switching to Scarlet Torturer!
+[18:41:25.879] [D] [Pulse] Slow bot root: 554ms bot=Combat Bot poi=None combat=True
+[18:41:26.175] [D] [Singular-DEBUG] Switched targets!
+[18:41:26.175] [D] [Singular-DEBUG] Melee Distance: 5
+[18:41:26.175] [D] [Singular-DEBUG] Health: 10.855148342059337
+[18:41:26.175] [D] [Singular-DEBUG] Level: 30
+[18:41:26.789] [D] [Pulse] Slow bot root: 522ms bot=Combat Bot poi=None combat=False
+[18:41:28.028] [N] [AutoEquip]: Loot roll in progress
+[18:41:28.052] [N] [AutoEquip]: Equipped item in slot:ChestSlot scored 4.803 while loot-roll item scored:0
+[18:41:28.052] [N] [AutoEquip]: New item did not contain our primary stat of:Strength so we are not rolling need.
+[18:41:28.052] [N] [AutoEquip]: Rolling Greed
+[18:41:29.803] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=52ms
+[18:41:30.807] [D] [Pulse] Slow bot root: 154ms bot=Combat Bot poi=None combat=False
+[18:41:32.580] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=108ms
+[18:41:37.254] [D] [Pulse] Slow bot root: 101ms bot=Combat Bot poi=None combat=False
+[18:41:39.823] [D] [Pulse] Slow bot root: 116ms bot=Combat Bot poi=None combat=False
+[18:41:41.298] [D] [Singular-DEBUG] Switched targets!
+[18:41:41.298] [D] [Singular-DEBUG] Melee Distance: 5
+[18:41:41.298] [D] [Singular-DEBUG] Health: 62.458581842279656
+[18:41:41.298] [D] [Singular-DEBUG] Level: 31
+[18:41:41.560] [N] [Singular] Casting Exorcism on Haunting Phantasm
+[18:41:41.560] [D] Spell_C::CastSpell(879, 0, 0xF13000191B00006B, 0)
+[18:41:41.569] [D] [Pulse] Slow bot root: 270ms bot=Combat Bot poi=None combat=True
+[18:41:42.281] [D] [Pulse] Slow bot root: 659ms bot=Combat Bot poi=None combat=True
+[18:41:42.970] [D] [Pulse] Slow bot root: 632ms bot=Combat Bot poi=None combat=True
+[18:41:43.525] [N] [Singular] Casting Judgement of Light on Haunting Phantasm
+[18:41:43.525] [D] Spell_C::CastSpell(20271, 0, 0xF13000191B00006B, 0)
+[18:41:43.538] [D] [Pulse] Slow bot root: 508ms bot=Combat Bot poi=None combat=True
+[18:41:44.272] [D] [Pulse] Slow bot root: 680ms bot=Combat Bot poi=None combat=True
+[18:41:44.987] [D] [Pulse] Slow bot root: 665ms bot=Combat Bot poi=None combat=True
+[18:41:45.711] [N] [Singular] Casting Consecration on Haunting Phantasm
+[18:41:45.711] [D] Spell_C::CastSpell(26573, 0, 0xF13000191B00006B, 0)
+[18:41:45.724] [D] [Pulse] Slow bot root: 684ms bot=Combat Bot poi=None combat=True
+[18:41:46.464] [D] [Pulse] Slow bot root: 673ms bot=Combat Bot poi=None combat=True
+[18:41:47.039] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_16(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[18:41:47.039] [D] [Pulse] Slow bot root: 524ms bot=Combat Bot poi=None combat=True
+[18:41:47.187] [N] [Singular] Currect target is invalid. Switching to Unfettered Spirit!
+[18:41:47.196] [D] [Pulse] Slow bot root: 110ms bot=Combat Bot poi=None combat=True
+[18:41:47.520] [D] [Singular-DEBUG] Switched targets!
+[18:41:47.520] [D] [Singular-DEBUG] Melee Distance: 5
+[18:41:47.520] [D] [Singular-DEBUG] Health: 23.979057591623036
+[18:41:47.520] [D] [Singular-DEBUG] Level: 30
+[18:41:48.275] [D] [Pulse] Slow bot root: 657ms bot=Combat Bot poi=None combat=True
+[18:41:48.336] [N] [Singular] Currect target is invalid. Switching to Unfettered Spirit!
+[18:41:48.600] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=37ms
+[18:41:48.701] [D] [Singular-DEBUG] Switched targets!
+[18:41:48.701] [D] [Singular-DEBUG] Melee Distance: 5
+[18:41:48.701] [D] [Singular-DEBUG] Health: 0
+[18:41:48.701] [D] [Singular-DEBUG] Level: 30
+[18:41:48.836] [N] [Singular] Currect target is invalid. Switching to Illusionary Phantasm!
+[18:41:49.170] [D] [Singular-DEBUG] Switched targets!
+[18:41:49.170] [D] [Singular-DEBUG] Melee Distance: 5
+[18:41:49.170] [D] [Singular-DEBUG] Health: 83.03512259774685
+[18:41:49.170] [D] [Singular-DEBUG] Level: 31
+[18:41:50.144] [D] [Pulse] Slow bot root: 703ms bot=Combat Bot poi=None combat=True
+[18:41:50.869] [D] [Pulse] Slow bot root: 627ms bot=Combat Bot poi=None combat=True
+[18:41:51.554] [D] [Pulse] Slow bot root: 607ms bot=Combat Bot poi=None combat=True
+[18:41:52.183] [N] [Singular] Casting Judgement of Light on Illusionary Phantasm
+[18:41:52.183] [D] Spell_C::CastSpell(20271, 0, 0xF13000195D000092, 0)
+[18:41:52.217] [D] [Pulse] Slow bot root: 569ms bot=Combat Bot poi=None combat=True
+[18:41:52.945] [D] [Pulse] Slow bot root: 628ms bot=Combat Bot poi=None combat=True
+[18:41:53.640] [D] [Pulse] Slow bot root: 617ms bot=Combat Bot poi=None combat=True
+[18:41:54.384] [D] [Pulse] Slow bot root: 623ms bot=Combat Bot poi=None combat=True
+[18:41:55.080] [D] [Pulse] Slow bot root: 617ms bot=Combat Bot poi=None combat=True
+[18:41:55.802] [D] [Pulse] Slow bot root: 633ms bot=Combat Bot poi=None combat=True
+[18:41:56.485] [D] [Pulse] Slow bot root: 612ms bot=Combat Bot poi=None combat=True
+[18:41:57.182] [D] [Pulse] Slow bot root: 608ms bot=Combat Bot poi=None combat=True
+[18:41:57.883] [D] [Pulse] Slow bot root: 608ms bot=Combat Bot poi=None combat=True
+[18:41:58.578] [D] [Pulse] Slow bot root: 603ms bot=Combat Bot poi=None combat=True
+[18:41:58.676] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=42ms
+[18:41:58.978] [N] [Singular] Casting Exorcism on Illusionary Phantasm
+[18:41:58.978] [D] Spell_C::CastSpell(879, 0, 0xF13000195D000092, 0)
+[18:41:59.012] [D] [Pulse] Slow bot root: 335ms bot=Combat Bot poi=None combat=True
+[18:41:59.746] [D] [Pulse] Slow bot root: 601ms bot=Combat Bot poi=None combat=True
+[18:42:00.449] [D] [Pulse] Slow bot root: 603ms bot=Combat Bot poi=None combat=True
+[18:42:01.084] [N] [Singular] Casting Judgement of Light on Illusionary Phantasm
+[18:42:01.084] [D] Spell_C::CastSpell(20271, 0, 0xF13000195D000092, 0)
+[18:42:01.121] [D] [Pulse] Slow bot root: 570ms bot=Combat Bot poi=None combat=True
+[18:42:01.753] [N] [Singular] Casting Judgement of Light on Illusionary Phantasm
+[18:42:01.753] [D] Spell_C::CastSpell(20271, 0, 0xF13000195D000092, 0)
+[18:42:01.788] [D] [Pulse] Slow bot root: 570ms bot=Combat Bot poi=None combat=True
+[18:42:01.888] [D] [Singular-DEBUG] Switched targets!
+[18:42:01.888] [D] [Singular-DEBUG] Melee Distance: 5
+[18:42:01.888] [D] [Singular-DEBUG] Health: 0
+[18:42:01.888] [D] [Singular-DEBUG] Level: 31
+[18:42:02.460] [N] [Singular] Casting Judgement of Light on Illusionary Phantasm
+[18:42:02.460] [D] Spell_C::CastSpell(20271, 0, 0xF13000195D000092, 0)
+[18:42:02.495] [D] [Pulse] Slow bot root: 605ms bot=Combat Bot poi=None combat=True
+[18:42:03.197] [N] [Singular] Casting Judgement of Light on Illusionary Phantasm
+[18:42:03.197] [D] Spell_C::CastSpell(20271, 0, 0xF13000195D000092, 0)
+[18:42:03.231] [D] [Pulse] Slow bot root: 603ms bot=Combat Bot poi=None combat=True
+[18:42:03.904] [N] [Singular] Casting Judgement of Light on Illusionary Phantasm
+[18:42:03.904] [D] Spell_C::CastSpell(20271, 0, 0xF13000195D000092, 0)
+[18:42:03.934] [D] [Pulse] Slow bot root: 603ms bot=Combat Bot poi=None combat=False
+[18:42:04.472] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=487ms
+[18:42:04.537] [D] [Pulse] Slow shared pulse: total=602ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=48 events=0 plugins=552 routine=0
+[18:42:04.809] [D] [Pulse] Slow bot root: 272ms bot=Combat Bot poi=None combat=False
+[18:42:05.140] [D] [Pulse] Slow bot root: 107ms bot=Combat Bot poi=None combat=False
+[18:42:08.599] [D] [Pulse] Slow bot root: 119ms bot=Combat Bot poi=None combat=False
+[18:42:10.522] [D] [Singular-DEBUG] Switched targets!
+[18:42:10.522] [D] [Singular-DEBUG] Melee Distance: 5
+[18:42:10.522] [D] [Singular-DEBUG] Health: 20
+[18:42:10.522] [D] [Singular-DEBUG] Level: 30
+[18:42:10.985] [N] [Singular] Casting Judgement of Light on Unfettered Spirit
+[18:42:10.985] [D] Spell_C::CastSpell(20271, 0, 0xF1300010D4000055, 0)
+[18:42:10.999] [D] [Pulse] Slow bot root: 476ms bot=Combat Bot poi=None combat=False
+[18:42:11.287] [D] [Singular-DEBUG] Switched targets!
+[18:42:11.287] [D] [Singular-DEBUG] Melee Distance: 5
+[18:42:11.287] [D] [Singular-DEBUG] Health: 0
+[18:42:11.287] [D] [Singular-DEBUG] Level: 30
+[18:42:12.867] [D] [Singular-DEBUG] Switched targets!
+[18:42:12.867] [D] [Singular-DEBUG] Melee Distance: 5
+[18:42:12.867] [D] [Singular-DEBUG] Health: 3.769633507853403
+[18:42:12.867] [D] [Singular-DEBUG] Level: 30
+[18:42:13.207] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_14(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[18:42:13.314] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_16(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[18:42:13.314] [D] [Pulse] Slow bot root: 446ms bot=Combat Bot poi=None combat=False
+[18:42:13.839] [D] [Pulse] Slow bot root: 109ms bot=Combat Bot poi=None combat=False
+[18:42:15.938] [D] [Pulse] Slow bot root: 113ms bot=Combat Bot poi=None combat=False
+[18:42:23.069] [N] [Singular] Casting Exorcism on Unfettered Spirit
+[18:42:23.069] [D] Spell_C::CastSpell(879, 0, 0xF1300010D4000065, 0)
+[18:42:23.076] [D] [Pulse] Slow bot root: 321ms bot=Combat Bot poi=None combat=True
+[18:42:23.129] [D] [Singular-DEBUG] Switched targets!
+[18:42:23.129] [D] [Singular-DEBUG] Melee Distance: 5
+[18:42:23.129] [D] [Singular-DEBUG] Health: 43.66492146596859
+[18:42:23.129] [D] [Singular-DEBUG] Level: 30
+[18:42:23.679] [D] [Pulse] Slow bot root: 548ms bot=Combat Bot poi=None combat=True
+[18:42:24.292] [D] [Pulse] Slow bot root: 559ms bot=Combat Bot poi=None combat=True
+[18:42:24.928] [D] [Pulse] Slow bot root: 576ms bot=Combat Bot poi=None combat=True
+[18:42:25.438] [N] [Singular] Casting Judgement of Light on Unfettered Spirit
+[18:42:25.438] [D] Spell_C::CastSpell(20271, 0, 0xF1300010D4000065, 0)
+[18:42:25.452] [D] [Pulse] Slow bot root: 473ms bot=Combat Bot poi=None combat=True
+[18:42:26.072] [D] [Pulse] Slow bot root: 554ms bot=Combat Bot poi=None combat=True
+[18:42:26.128] [N] [Singular] Currect target is invalid. Switching to Anguished Dead!
+[18:42:26.448] [D] [Singular-DEBUG] Switched targets!
+[18:42:26.448] [D] [Singular-DEBUG] Melee Distance: 5
+[18:42:26.448] [D] [Singular-DEBUG] Health: 77.79986746189529
+[18:42:26.448] [D] [Singular-DEBUG] Level: 31
+[18:42:27.115] [D] [Pulse] Slow bot root: 568ms bot=Combat Bot poi=None combat=True
+[18:42:27.710] [D] [Pulse] Slow bot root: 545ms bot=Combat Bot poi=None combat=True
+[18:42:28.297] [D] [Pulse] Slow bot root: 544ms bot=Combat Bot poi=None combat=True
+[18:42:28.877] [D] [Pulse] Slow bot root: 541ms bot=Combat Bot poi=None combat=True
+[18:42:29.461] [D] [Pulse] Slow bot root: 543ms bot=Combat Bot poi=None combat=True
+[18:42:30.057] [D] [Pulse] Slow bot root: 555ms bot=Combat Bot poi=None combat=True
+[18:42:30.661] [D] [Pulse] Slow bot root: 559ms bot=Combat Bot poi=None combat=True
+[18:42:31.272] [D] [Pulse] Slow bot root: 558ms bot=Combat Bot poi=None combat=True
+[18:42:31.872] [D] [Pulse] Slow bot root: 551ms bot=Combat Bot poi=None combat=True
+[18:42:32.473] [D] [Pulse] Slow bot root: 556ms bot=Combat Bot poi=None combat=True
+[18:42:33.066] [D] [Pulse] Slow bot root: 550ms bot=Combat Bot poi=None combat=True
+[18:42:33.661] [D] [Pulse] Slow bot root: 546ms bot=Combat Bot poi=None combat=False
+[18:42:34.500] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=121ms
+[18:42:36.693] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=59ms
+[18:42:44.538] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=132ms
+[18:42:44.792] [D] [Singular-DEBUG] Switched targets!
+[18:42:44.793] [D] [Singular-DEBUG] Melee Distance: 5
+[18:42:44.793] [D] [Singular-DEBUG] Health: 33.69781312127237
+[18:42:44.793] [D] [Singular-DEBUG] Level: 31
+[18:42:45.313] [N] [Singular] Casting Exorcism on Unfettered Spirit
+[18:42:45.313] [D] Spell_C::CastSpell(879, 0, 0xF1300010D4000063, 0)
+[18:42:45.320] [D] [Pulse] Slow bot root: 309ms bot=Combat Bot poi=None combat=True
+[18:42:45.918] [D] [Pulse] Slow bot root: 549ms bot=Combat Bot poi=None combat=True
+[18:42:46.523] [D] [Pulse] Slow bot root: 555ms bot=Combat Bot poi=None combat=False
+[18:42:49.096] [D] [Pulse] Slow bot root: 106ms bot=Combat Bot poi=None combat=False
+[18:42:49.442] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=54ms
+[18:42:49.792] [D] [Pulse] Slow bot root: 241ms bot=Combat Bot poi=None combat=False
+[18:42:50.158] [D] [Pulse] Slow bot root: 265ms bot=Combat Bot poi=None combat=False
+[18:42:50.529] [D] [Pulse] Slow bot root: 268ms bot=Combat Bot poi=None combat=False
+[18:42:50.898] [D] [Pulse] Slow bot root: 268ms bot=Combat Bot poi=None combat=False
+[18:42:51.267] [D] [Pulse] Slow bot root: 268ms bot=Combat Bot poi=None combat=False
+[18:42:51.670] [D] [Pulse] Slow bot root: 268ms bot=Combat Bot poi=None combat=False
+[18:42:52.037] [D] [Pulse] Slow bot root: 268ms bot=Combat Bot poi=None combat=False
+[18:42:52.405] [D] [Pulse] Slow bot root: 267ms bot=Combat Bot poi=None combat=False
+[18:42:52.769] [D] [Pulse] Slow bot root: 266ms bot=Combat Bot poi=None combat=False
+[18:42:53.140] [D] [Pulse] Slow bot root: 271ms bot=Combat Bot poi=None combat=False
+[18:42:53.510] [D] [Pulse] Slow bot root: 268ms bot=Combat Bot poi=None combat=False
+[18:42:53.877] [D] [Pulse] Slow bot root: 265ms bot=Combat Bot poi=None combat=False
+[18:42:54.249] [D] [Pulse] Slow bot root: 268ms bot=Combat Bot poi=None combat=False
+[18:42:54.617] [D] [Pulse] Slow bot root: 266ms bot=Combat Bot poi=None combat=False
+[18:42:55.158] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=486ms
+[18:42:55.223] [D] [Pulse] Slow shared pulse: total=605ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=52 events=0 plugins=551 routine=0
+[18:42:55.501] [D] [Pulse] Slow bot root: 278ms bot=Combat Bot poi=None combat=False
+[18:42:55.860] [D] [Pulse] Slow bot root: 266ms bot=Combat Bot poi=None combat=False
+[18:42:56.230] [D] [Pulse] Slow bot root: 267ms bot=Combat Bot poi=None combat=False
+[18:42:56.598] [D] [Pulse] Slow bot root: 268ms bot=Combat Bot poi=None combat=False
+[18:42:57.006] [D] [Pulse] Slow bot root: 274ms bot=Combat Bot poi=None combat=False
+[18:42:57.366] [D] [Pulse] Slow bot root: 265ms bot=Combat Bot poi=None combat=False
+[18:42:57.734] [D] [Pulse] Slow bot root: 265ms bot=Combat Bot poi=None combat=False
+[18:42:58.104] [D] [Pulse] Slow bot root: 268ms bot=Combat Bot poi=None combat=False
+[18:42:58.473] [D] [Pulse] Slow bot root: 268ms bot=Combat Bot poi=None combat=False
+[18:42:58.840] [D] [Pulse] Slow bot root: 268ms bot=Combat Bot poi=None combat=False
+[18:42:59.207] [D] [Pulse] Slow bot root: 268ms bot=Combat Bot poi=None combat=False
+[18:42:59.579] [D] [Pulse] Slow bot root: 271ms bot=Combat Bot poi=None combat=False
+[18:42:59.678] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=45ms
+[18:42:59.945] [D] [Pulse] Slow bot root: 266ms bot=Combat Bot poi=None combat=False
+[18:43:00.311] [D] [Pulse] Slow bot root: 265ms bot=Combat Bot poi=None combat=False
+[18:43:00.685] [D] [Pulse] Slow bot root: 276ms bot=Combat Bot poi=None combat=False
+[18:43:03.487] [N] [AutoEquip]: Loot roll in progress
+[18:43:03.511] [N] [AutoEquip]: Rolling Greed
+[18:43:03.946] [D] [Pulse] Slow bot root: 265ms bot=Combat Bot poi=None combat=False
+[18:43:04.314] [D] [Pulse] Slow bot root: 267ms bot=Combat Bot poi=None combat=False
+[18:43:04.682] [D] [Pulse] Slow bot root: 269ms bot=Combat Bot poi=None combat=False
+[18:43:05.219] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=485ms
+[18:43:05.284] [D] [Pulse] Slow shared pulse: total=601ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=49 events=0 plugins=550 routine=0
+[18:43:05.552] [D] [Pulse] Slow bot root: 267ms bot=Combat Bot poi=None combat=False
+[18:43:05.917] [D] [Pulse] Slow bot root: 264ms bot=Combat Bot poi=None combat=False
+[18:43:06.291] [D] [Pulse] Slow bot root: 273ms bot=Combat Bot poi=None combat=False
+[18:43:06.665] [D] [Pulse] Slow bot root: 268ms bot=Combat Bot poi=None combat=False
+[18:43:07.067] [D] [Pulse] Slow bot root: 267ms bot=Combat Bot poi=None combat=False
+[18:43:07.437] [D] [Pulse] Slow bot root: 269ms bot=Combat Bot poi=None combat=False
+[18:43:07.806] [D] [Pulse] Slow bot root: 268ms bot=Combat Bot poi=None combat=False
+[18:43:08.173] [D] [Pulse] Slow bot root: 267ms bot=Combat Bot poi=None combat=False
+[18:43:08.541] [D] [Pulse] Slow bot root: 268ms bot=Combat Bot poi=None combat=False
+[18:43:08.911] [D] [Pulse] Slow bot root: 270ms bot=Combat Bot poi=None combat=False
+[18:43:09.280] [D] [Pulse] Slow bot root: 268ms bot=Combat Bot poi=None combat=False
+[18:43:09.648] [D] [Pulse] Slow bot root: 268ms bot=Combat Bot poi=None combat=False
+[18:43:09.747] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=42ms
+[18:43:10.014] [D] [Pulse] Slow bot root: 266ms bot=Combat Bot poi=None combat=False
+[18:43:10.385] [D] [Pulse] Slow bot root: 268ms bot=Combat Bot poi=None combat=False
+[18:43:10.752] [D] [Pulse] Slow bot root: 265ms bot=Combat Bot poi=None combat=False
+[18:43:11.121] [D] [Pulse] Slow bot root: 269ms bot=Combat Bot poi=None combat=False
+[18:43:11.487] [D] [Pulse] Slow bot root: 267ms bot=Combat Bot poi=None combat=False
+[18:43:11.853] [D] [Pulse] Slow bot root: 265ms bot=Combat Bot poi=None combat=False
+[18:43:12.256] [D] [Pulse] Slow bot root: 268ms bot=Combat Bot poi=None combat=False
+[18:43:12.623] [D] [Pulse] Slow bot root: 266ms bot=Combat Bot poi=None combat=False
+[18:43:12.992] [D] [Pulse] Slow bot root: 268ms bot=Combat Bot poi=None combat=False
+[18:43:13.360] [D] [Pulse] Slow bot root: 265ms bot=Combat Bot poi=None combat=False
+[18:43:13.729] [D] [Pulse] Slow bot root: 268ms bot=Combat Bot poi=None combat=False
+[18:43:14.095] [D] [Pulse] Slow bot root: 266ms bot=Combat Bot poi=None combat=False
+[18:43:14.462] [D] [Pulse] Slow bot root: 268ms bot=Combat Bot poi=None combat=False
+[18:43:14.831] [D] [Pulse] Slow bot root: 268ms bot=Combat Bot poi=None combat=False
+[18:43:15.372] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=485ms
+[18:43:15.436] [D] [Pulse] Slow shared pulse: total=605ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=53 events=0 plugins=549 routine=0
+[18:43:15.702] [D] [Pulse] Slow bot root: 265ms bot=Combat Bot poi=None combat=False
+[18:43:16.071] [D] [Pulse] Slow bot root: 268ms bot=Combat Bot poi=None combat=False
+[18:43:16.440] [D] [Pulse] Slow bot root: 270ms bot=Combat Bot poi=None combat=False
+[18:43:16.806] [D] [Pulse] Slow bot root: 268ms bot=Combat Bot poi=None combat=False
+[18:43:17.178] [D] [Pulse] Slow bot root: 270ms bot=Combat Bot poi=None combat=False
+[18:43:17.579] [D] [Pulse] Slow bot root: 268ms bot=Combat Bot poi=None combat=False
+[18:43:17.949] [D] [Pulse] Slow bot root: 268ms bot=Combat Bot poi=None combat=False
+[18:43:18.198] [D] [Pulse] Slow bot root: 149ms bot=Combat Bot poi=None combat=False
+[18:43:22.265] [D] [Pulse] Slow bot root: 121ms bot=Combat Bot poi=None combat=False
+[18:43:24.374] [N] [AutoEquip]: Loot roll in progress
+[18:43:24.398] [N] [AutoEquip]: Equipped item in slot:LegsSlot scored 5.607 while loot-roll item scored:0
+[18:43:24.398] [N] [AutoEquip]: New item did not contain our primary stat of:Strength so we are not rolling need.
+[18:43:24.398] [N] [AutoEquip]: Rolling Greed
+[18:43:24.570] [D] [Singular-DEBUG] Switched targets!
+[18:43:24.570] [D] [Singular-DEBUG] Melee Distance: 5
+[18:43:24.570] [D] [Singular-DEBUG] Health: 0
+[18:43:24.570] [D] [Singular-DEBUG] Level: 31
+[18:43:28.481] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=20ms
+[18:43:35.103] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=134ms
+[18:43:37.788] [N] [Singular] Casting Exorcism on Haunting Phantasm
+[18:43:37.789] [D] Spell_C::CastSpell(879, 0, 0xF13000191B000084, 0)
+[18:43:37.801] [D] [Pulse] Slow bot root: 285ms bot=Combat Bot poi=None combat=True
+[18:43:37.849] [D] [Singular-DEBUG] Switched targets!
+[18:43:37.849] [D] [Singular-DEBUG] Melee Distance: 5
+[18:43:37.849] [D] [Singular-DEBUG] Health: 74.28760768721007
+[18:43:37.849] [D] [Singular-DEBUG] Level: 31
+[18:43:38.333] [D] [Pulse] Slow bot root: 483ms bot=Combat Bot poi=None combat=True
+[18:43:38.861] [D] [Pulse] Slow bot root: 479ms bot=Combat Bot poi=None combat=True
+[18:43:39.381] [D] [Pulse] Slow bot root: 478ms bot=Combat Bot poi=None combat=True
+[18:43:39.469] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=37ms
+[18:43:39.934] [N] [Singular] Casting Judgement of Light on Haunting Phantasm
+[18:43:39.935] [D] Spell_C::CastSpell(20271, 0, 0xF13000191B000084, 0)
+[18:43:39.970] [D] [Pulse] Slow bot root: 500ms bot=Combat Bot poi=None combat=True
+[18:43:40.611] [D] [Pulse] Slow bot root: 539ms bot=Combat Bot poi=None combat=True
+[18:43:41.232] [D] [Pulse] Slow bot root: 524ms bot=Combat Bot poi=None combat=True
+[18:43:41.824] [D] [Pulse] Slow bot root: 515ms bot=Combat Bot poi=None combat=True
+[18:43:42.428] [D] [Pulse] Slow bot root: 516ms bot=Combat Bot poi=None combat=True
+[18:43:43.036] [D] [Pulse] Slow bot root: 523ms bot=Combat Bot poi=None combat=True
+[18:43:43.685] [D] [Pulse] Slow bot root: 535ms bot=Combat Bot poi=None combat=True
+[18:43:44.346] [D] [Pulse] Slow bot root: 560ms bot=Combat Bot poi=None combat=True
+[18:43:44.872] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_16(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[18:43:44.872] [D] [Pulse] Slow bot root: 447ms bot=Combat Bot poi=None combat=False
+[18:43:45.225] [D] [Pulse] Slow bot root: 267ms bot=Combat Bot poi=None combat=False
+[18:43:45.765] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=487ms
+[18:43:45.829] [D] [Pulse] Slow shared pulse: total=604ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=51 events=0 plugins=550 routine=0
+[18:43:46.096] [D] [Pulse] Slow bot root: 266ms bot=Combat Bot poi=None combat=False
+[18:43:46.467] [D] [Pulse] Slow bot root: 269ms bot=Combat Bot poi=None combat=False
+[18:43:46.839] [D] [Pulse] Slow bot root: 270ms bot=Combat Bot poi=None combat=False
+[18:43:47.119] [D] [Pulse] Slow bot root: 180ms bot=Combat Bot poi=None combat=False
+[18:43:47.629] [D] [Pulse] Slow bot root: 125ms bot=Combat Bot poi=None combat=False
+[18:43:51.753] [D] [Singular-DEBUG] Switched targets!
+[18:43:51.753] [D] [Singular-DEBUG] Melee Distance: 5
+[18:43:51.753] [D] [Singular-DEBUG] Health: 94.69847581179589
+[18:43:51.754] [D] [Singular-DEBUG] Level: 31
+[18:43:52.285] [N] [Singular] Casting Judgement of Light on Haunting Phantasm
+[18:43:52.285] [D] Spell_C::CastSpell(20271, 0, 0xF13000191B00007C, 0)
+[18:43:52.298] [D] [Pulse] Slow bot root: 431ms bot=Combat Bot poi=None combat=True
+[18:43:52.887] [D] [Pulse] Slow bot root: 533ms bot=Combat Bot poi=None combat=True
+[18:43:53.532] [D] [Pulse] Slow bot root: 508ms bot=Combat Bot poi=None combat=True
+[18:43:54.107] [N] [Singular] Casting Consecration on Haunting Phantasm
+[18:43:54.107] [D] Spell_C::CastSpell(26573, 0, 0xF13000191B00007C, 0)
+[18:43:54.113] [D] [Pulse] Slow bot root: 527ms bot=Combat Bot poi=None combat=True
+[18:43:54.684] [D] [Pulse] Slow bot root: 522ms bot=Combat Bot poi=None combat=True
+[18:43:55.264] [D] [Pulse] Slow bot root: 529ms bot=Combat Bot poi=None combat=True
+[18:43:55.850] [D] [Pulse] Slow bot root: 533ms bot=Combat Bot poi=None combat=True
+[18:43:55.930] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=36ms
+[18:43:56.232] [N] [Singular] Casting Exorcism on Haunting Phantasm
+[18:43:56.233] [D] Spell_C::CastSpell(879, 0, 0xF13000191B00007C, 0)
+[18:43:56.266] [D] [Pulse] Slow bot root: 335ms bot=Combat Bot poi=None combat=True
+[18:43:56.951] [D] [Pulse] Slow bot root: 579ms bot=Combat Bot poi=None combat=True
+[18:43:57.622] [D] [Pulse] Slow bot root: 578ms bot=Combat Bot poi=None combat=True
+[18:43:58.290] [D] [Pulse] Slow bot root: 580ms bot=Combat Bot poi=None combat=True
+[18:43:58.957] [D] [Pulse] Slow bot root: 581ms bot=Combat Bot poi=None combat=True
+[18:43:59.644] [D] [Pulse] Slow bot root: 563ms bot=Combat Bot poi=None combat=True
+[18:44:00.316] [D] [Pulse] Slow bot root: 568ms bot=Combat Bot poi=None combat=True
+[18:44:00.891] [N] [Singular] Casting Judgement of Light on Haunting Phantasm
+[18:44:00.892] [D] Spell_C::CastSpell(20271, 0, 0xF13000191B00007C, 0)
+[18:44:00.927] [D] [Pulse] Slow bot root: 533ms bot=Combat Bot poi=None combat=True
+[18:44:01.595] [D] [Pulse] Slow bot root: 565ms bot=Combat Bot poi=None combat=True
+[18:44:02.243] [D] [Pulse] Slow bot root: 547ms bot=Combat Bot poi=None combat=True
+[18:44:02.868] [N] [Singular] Casting Consecration on Haunting Phantasm
+[18:44:02.868] [D] Spell_C::CastSpell(26573, 0, 0xF13000191B00007C, 0)
+[18:44:02.901] [D] [Pulse] Slow bot root: 567ms bot=Combat Bot poi=None combat=True
+[18:44:03.537] [D] [Pulse] Slow bot root: 534ms bot=Combat Bot poi=None combat=True
+[18:44:04.097] [D] [Pulse] Slow bot root: 476ms bot=Combat Bot poi=None combat=True
+[18:44:04.154] [N] [Singular] Currect target is invalid. Switching to Illusionary Phantasm!
+[18:44:04.469] [D] [Singular-DEBUG] Switched targets!
+[18:44:04.469] [D] [Singular-DEBUG] Melee Distance: 5
+[18:44:04.469] [D] [Singular-DEBUG] Health: 62.92246520874752
+[18:44:04.469] [D] [Singular-DEBUG] Level: 31
+[18:44:05.150] [D] [Pulse] Slow bot root: 491ms bot=Combat Bot poi=None combat=True
+[18:44:05.670] [D] [Pulse] Slow bot root: 477ms bot=Combat Bot poi=None combat=True
+[18:44:06.174] [D] [Pulse] Slow bot root: 460ms bot=Combat Bot poi=None combat=True
+[18:44:06.688] [D] [Pulse] Slow bot root: 463ms bot=Combat Bot poi=None combat=True
+[18:44:07.192] [D] [Pulse] Slow bot root: 462ms bot=Combat Bot poi=None combat=True
+[18:44:07.700] [D] [Pulse] Slow bot root: 461ms bot=Combat Bot poi=None combat=True
+[18:44:08.212] [D] [Pulse] Slow bot root: 464ms bot=Combat Bot poi=None combat=True
+[18:44:08.727] [D] [Pulse] Slow bot root: 468ms bot=Combat Bot poi=None combat=True
+[18:44:09.219] [D] [Pulse] Slow bot root: 452ms bot=Combat Bot poi=None combat=True
+[18:44:09.634] [N] [Singular] Casting Judgement of Light on Illusionary Phantasm
+[18:44:09.635] [D] Spell_C::CastSpell(20271, 0, 0xF13000195D000096, 0)
+[18:44:09.642] [D] [Pulse] Slow bot root: 377ms bot=Combat Bot poi=None combat=True
+[18:44:10.159] [D] [Pulse] Slow bot root: 469ms bot=Combat Bot poi=None combat=True
+[18:44:10.656] [D] [Pulse] Slow bot root: 449ms bot=Combat Bot poi=None combat=True
+[18:44:11.159] [D] [Pulse] Slow bot root: 461ms bot=Combat Bot poi=None combat=True
+[18:44:11.469] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_14(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[18:44:11.554] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_16(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[18:44:11.554] [D] [Pulse] Slow bot root: 353ms bot=Combat Bot poi=None combat=False
+[18:44:14.621] [D] [Pulse] Slow bot root: 110ms bot=Combat Bot poi=None combat=False
+[18:44:15.959] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=139ms
+[18:44:15.982] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=21ms
+[18:44:16.193] [D] [Pulse] Slow bot root: 103ms bot=Combat Bot poi=None combat=False
+[18:44:18.685] [D] [Singular-DEBUG] Switched targets!
+[18:44:18.685] [D] [Singular-DEBUG] Melee Distance: 5
+[18:44:18.685] [D] [Singular-DEBUG] Health: 73.35984095427435
+[18:44:18.685] [D] [Singular-DEBUG] Level: 31
+[18:44:18.874] [N] [Singular] Casting Exorcism on Unfettered Spirit
+[18:44:18.874] [D] Spell_C::CastSpell(879, 0, 0xF1300010D4000047, 0)
+[18:44:18.886] [D] [Pulse] Slow bot root: 200ms bot=Combat Bot poi=None combat=True
+[18:44:19.384] [D] [Pulse] Slow bot root: 442ms bot=Combat Bot poi=None combat=True
+[18:44:19.880] [D] [Pulse] Slow bot root: 437ms bot=Combat Bot poi=None combat=True
+[18:44:20.407] [D] [Pulse] Slow bot root: 478ms bot=Combat Bot poi=None combat=True
+[18:44:20.853] [N] [Singular] Casting Judgement of Light on Unfettered Spirit
+[18:44:20.853] [D] Spell_C::CastSpell(20271, 0, 0xF1300010D4000047, 0)
+[18:44:20.864] [D] [Pulse] Slow bot root: 399ms bot=Combat Bot poi=None combat=True
+[18:44:21.420] [D] [Pulse] Slow bot root: 499ms bot=Combat Bot poi=None combat=True
+[18:44:21.958] [D] [Pulse] Slow bot root: 484ms bot=Combat Bot poi=None combat=True
+[18:44:22.366] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_16(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[18:44:22.366] [D] [Pulse] Slow bot root: 363ms bot=Combat Bot poi=None combat=True
+[18:44:22.424] [N] [Singular] Currect target is invalid. Switching to Unfettered Spirit!
+[18:44:22.753] [D] [Singular-DEBUG] Switched targets!
+[18:44:22.753] [D] [Singular-DEBUG] Melee Distance: 5
+[18:44:22.753] [D] [Singular-DEBUG] Health: 48.210735586481114
+[18:44:22.753] [D] [Singular-DEBUG] Level: 31
+[18:44:23.318] [N] [Singular] Casting Consecration on Unfettered Spirit
+[18:44:23.318] [D] Spell_C::CastSpell(26573, 0, 0xF1300010D400005D, 0)
+[18:44:23.331] [D] [Pulse] Slow bot root: 496ms bot=Combat Bot poi=None combat=True
+[18:44:23.847] [D] [Pulse] Slow bot root: 472ms bot=Combat Bot poi=None combat=True
+[18:44:24.363] [D] [Pulse] Slow bot root: 466ms bot=Combat Bot poi=None combat=True
+[18:44:24.868] [D] [Pulse] Slow bot root: 456ms bot=Combat Bot poi=None combat=True
+[18:44:25.376] [D] [Pulse] Slow bot root: 457ms bot=Combat Bot poi=None combat=True
+[18:44:25.878] [D] [Pulse] Slow bot root: 454ms bot=Combat Bot poi=None combat=True
+[18:44:26.377] [D] [Pulse] Slow bot root: 454ms bot=Combat Bot poi=None combat=True
+[18:44:26.878] [D] [Pulse] Slow bot root: 458ms bot=Combat Bot poi=None combat=True
+[18:44:26.923] [N] [Singular] Currect target is invalid. Switching to Unfettered Spirit!
+[18:44:27.269] [D] [Singular-DEBUG] Switched targets!
+[18:44:27.270] [D] [Singular-DEBUG] Melee Distance: 5
+[18:44:27.270] [D] [Singular-DEBUG] Health: 23.769633507853403
+[18:44:27.270] [D] [Singular-DEBUG] Level: 30
+[18:44:27.790] [D] [Pulse] Slow bot root: 435ms bot=Combat Bot poi=None combat=True
+[18:44:28.270] [D] [Pulse] Slow bot root: 433ms bot=Combat Bot poi=None combat=True
+[18:44:28.755] [D] [Pulse] Slow bot root: 437ms bot=Combat Bot poi=None combat=True
+[18:44:29.160] [N] [Singular] Casting Judgement of Light on Anguished Dead
+[18:44:29.160] [D] Spell_C::CastSpell(20271, 0, 0xF13000191A000070, 0)
+[18:44:29.172] [D] [Pulse] Slow bot root: 370ms bot=Combat Bot poi=None combat=False
+[18:44:29.931] [D] [Singular-DEBUG] [Talents] Best Tree: 18
+[18:44:29.938] [D] [Talented] SelectMajorTalentTree called but not needed in WotLK 3.3.5a
+[18:44:29.992] [N] We leveled up! Checking if we need to switch profiles.
+[18:44:29.992] [D] Selected sub-profile: WholesomeAQ - Thousand Needles (L1-80)
+[18:44:30.010] [D] [Singular-DEBUG] Switched targets!
+[18:44:30.010] [D] [Singular-DEBUG] Melee Distance: 5
+[18:44:30.010] [D] [Singular-DEBUG] Health: 0
+[18:44:30.010] [D] [Singular-DEBUG] Level: 31
+[18:44:30.010] [D] [Pulse] Slow shared pulse: total=837ms movement=0 objects=0 lua=779 info=0 loot=1 targeting=22 events=16 plugins=17 routine=0
+[18:44:31.200] [D] [Singular-DEBUG] [Talents] Best Tree: 19
+[18:44:31.207] [D] [Talented] SelectMajorTalentTree called but not needed in WotLK 3.3.5a
+[18:44:31.341] [N] [AutoEquip]: Loot roll in progress
+[18:44:31.367] [N] [AutoEquip]: Rolling Greed
+[18:44:32.213] [D] [Pulse] Slow bot root: 116ms bot=Combat Bot poi=None combat=False
+[18:44:36.082] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=125ms
+[18:44:42.685] [D] [Pulse] Slow bot root: 119ms bot=Combat Bot poi=None combat=False
+[18:44:42.728] [D] [Singular-DEBUG] Switched targets!
+[18:44:42.728] [D] [Singular-DEBUG] Melee Distance: 5
+[18:44:42.728] [D] [Singular-DEBUG] Health: 88.03843605036448
+[18:44:42.728] [D] [Singular-DEBUG] Level: 31
+[18:44:42.903] [N] [Singular] Casting Exorcism on Anguished Dead
+[18:44:42.903] [D] Spell_C::CastSpell(879, 0, 0xF13000191A000078, 0)
+[18:44:42.910] [D] [Pulse] Slow bot root: 181ms bot=Combat Bot poi=None combat=True
+[18:44:43.340] [D] [Pulse] Slow bot root: 382ms bot=Combat Bot poi=None combat=True
+[18:44:43.757] [D] [Pulse] Slow bot root: 381ms bot=Combat Bot poi=None combat=True
+[18:44:44.177] [D] [Pulse] Slow bot root: 380ms bot=Combat Bot poi=None combat=True
+[18:44:44.600] [D] [Pulse] Slow bot root: 379ms bot=Combat Bot poi=None combat=True
+[18:44:44.954] [N] [Singular] Casting Judgement of Light on Anguished Dead
+[18:44:44.954] [D] Spell_C::CastSpell(20271, 0, 0xF13000191A000078, 0)
+[18:44:44.961] [D] [Pulse] Slow bot root: 322ms bot=Combat Bot poi=None combat=True
+[18:44:45.393] [D] [Pulse] Slow bot root: 383ms bot=Combat Bot poi=None combat=True
+[18:44:45.836] [D] [Pulse] Slow bot root: 389ms bot=Combat Bot poi=None combat=True
+[18:44:46.254] [D] [Pulse] Slow bot root: 380ms bot=Combat Bot poi=None combat=True
+[18:44:46.678] [D] [Pulse] Slow bot root: 380ms bot=Combat Bot poi=None combat=True
+[18:44:47.121] [D] [Pulse] Slow bot root: 400ms bot=Combat Bot poi=None combat=True
+[18:44:47.565] [D] [Pulse] Slow bot root: 400ms bot=Combat Bot poi=None combat=True
+[18:44:48.002] [D] [Pulse] Slow bot root: 395ms bot=Combat Bot poi=None combat=True
+[18:44:48.437] [D] [Pulse] Slow bot root: 386ms bot=Combat Bot poi=None combat=True
+[18:44:48.875] [D] [Pulse] Slow bot root: 398ms bot=Combat Bot poi=None combat=True
+[18:44:49.325] [N] [Singular] Casting Consecration on Anguished Dead
+[18:44:49.325] [D] Spell_C::CastSpell(26573, 0, 0xF13000191A000078, 0)
+[18:44:49.336] [D] [Pulse] Slow bot root: 412ms bot=Combat Bot poi=None combat=True
+[18:44:49.787] [D] [Pulse] Slow bot root: 402ms bot=Combat Bot poi=None combat=True
+[18:44:50.234] [D] [Pulse] Slow bot root: 396ms bot=Combat Bot poi=None combat=True
+[18:44:50.662] [D] [Pulse] Slow bot root: 378ms bot=Combat Bot poi=None combat=True
+[18:44:50.721] [N] [Singular] Currect target is invalid. Switching to Unfettered Spirit!
+[18:44:51.041] [D] [Singular-DEBUG] Switched targets!
+[18:44:51.041] [D] [Singular-DEBUG] Melee Distance: 5
+[18:44:51.041] [D] [Singular-DEBUG] Health: 66.99801192842942
+[18:44:51.041] [D] [Singular-DEBUG] Level: 31
+[18:44:51.543] [D] [Pulse] Slow bot root: 420ms bot=Combat Bot poi=None combat=True
+[18:44:51.999] [D] [Pulse] Slow bot root: 414ms bot=Combat Bot poi=None combat=True
+[18:44:52.058] [N] [Singular] Casting Hand of Freedom on Myself
+[18:44:52.058] [D] Spell_C::CastSpell(1044, 0, 0x6000000007EAB80, 0)
+[18:44:52.558] [D] [Pulse] Slow bot root: 422ms bot=Combat Bot poi=None combat=True
+[18:44:53.041] [D] [Pulse] Slow bot root: 441ms bot=Combat Bot poi=None combat=True
+[18:44:53.507] [D] [Pulse] Slow bot root: 422ms bot=Combat Bot poi=None combat=True
+[18:44:53.873] [N] [Singular] Casting Judgement of Light on Unfettered Spirit
+[18:44:53.873] [D] Spell_C::CastSpell(20271, 0, 0xF1300010D400005A, 0)
+[18:44:53.880] [D] [Pulse] Slow bot root: 333ms bot=Combat Bot poi=None combat=True
+[18:44:54.349] [D] [Pulse] Slow bot root: 420ms bot=Combat Bot poi=None combat=True
+[18:44:54.823] [D] [Pulse] Slow bot root: 420ms bot=Combat Bot poi=None combat=True
+[18:44:55.288] [D] [Pulse] Slow bot root: 415ms bot=Combat Bot poi=None combat=True
+[18:44:55.744] [D] [Pulse] Slow bot root: 414ms bot=Combat Bot poi=None combat=True
+[18:44:56.224] [D] [Pulse] Slow bot root: 432ms bot=Combat Bot poi=None combat=True
+[18:44:56.684] [D] [Pulse] Slow bot root: 419ms bot=Combat Bot poi=None combat=True
+[18:44:57.152] [D] [Pulse] Slow bot root: 420ms bot=Combat Bot poi=None combat=True
+[18:44:57.579] [D] [Pulse] Slow bot root: 386ms bot=Combat Bot poi=None combat=True
+[18:44:58.013] [N] [Singular] Casting Consecration on Unfettered Spirit
+[18:44:58.013] [D] Spell_C::CastSpell(26573, 0, 0xF1300010D400005A, 0)
+[18:44:58.026] [D] [Pulse] Slow bot root: 407ms bot=Combat Bot poi=None combat=True
+[18:44:58.468] [D] [Pulse] Slow bot root: 400ms bot=Combat Bot poi=None combat=True
+[18:44:58.880] [D] [Pulse] Slow bot root: 363ms bot=Combat Bot poi=None combat=True
+[18:44:58.934] [N] [Singular] Currect target is invalid. Switching to Unfettered Spirit!
+[18:44:59.267] [D] [Singular-DEBUG] Switched targets!
+[18:44:59.267] [D] [Singular-DEBUG] Melee Distance: 5
+[18:44:59.267] [D] [Singular-DEBUG] Health: 12.565445026178011
+[18:44:59.267] [D] [Singular-DEBUG] Level: 30
+[18:44:59.747] [D] [Pulse] Slow bot root: 391ms bot=Combat Bot poi=None combat=True
+[18:44:59.954] [N] [Singular] Casting Exorcism on Unfettered Spirit
+[18:44:59.954] [D] Spell_C::CastSpell(879, 0, 0xF1300010D400005F, 0)
+[18:44:59.969] [D] [Pulse] Slow bot root: 182ms bot=Combat Bot poi=None combat=True
+[18:45:00.351] [D] [Pulse] Slow bot root: 347ms bot=Combat Bot poi=None combat=False
+[18:45:01.107] [N] [AutoEquip]: Loot roll in progress
+[18:45:01.136] [N] [AutoEquip]: Equipped item in slot:HandsSlot scored 12 while loot-roll item scored:0
+[18:45:01.136] [N] [AutoEquip]: Rolling Greed
+[18:45:03.404] [D] [Pulse] Slow bot root: 101ms bot=Combat Bot poi=None combat=False
+[18:45:04.340] [D] [Pulse] Slow bot root: 261ms bot=Combat Bot poi=None combat=False
+[18:45:04.442] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=48ms
+[18:45:04.708] [D] [Pulse] Slow bot root: 266ms bot=Combat Bot poi=None combat=False
+[18:45:05.080] [D] [Pulse] Slow bot root: 270ms bot=Combat Bot poi=None combat=False
+[18:45:06.892] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=126ms
+[18:45:10.098] [N] [Singular] Currect target is invalid. Switching to Unfettered Spirit!
+[18:45:10.389] [D] [Singular-DEBUG] Switched targets!
+[18:45:10.389] [D] [Singular-DEBUG] Melee Distance: 5
+[18:45:10.389] [D] [Singular-DEBUG] Health: 74.65968586387434
+[18:45:10.389] [D] [Singular-DEBUG] Level: 30
+[18:45:10.753] [N] [Singular] Casting Exorcism on Unfettered Spirit
+[18:45:10.753] [D] Spell_C::CastSpell(879, 0, 0xF1300010D4000058, 0)
+[18:45:10.760] [D] [Pulse] Slow bot root: 180ms bot=Combat Bot poi=None combat=True
+[18:45:11.068] [D] [Pulse] Slow bot root: 270ms bot=Combat Bot poi=None combat=True
+[18:45:11.385] [D] [Pulse] Slow bot root: 272ms bot=Combat Bot poi=None combat=True
+[18:45:11.691] [D] [Pulse] Slow bot root: 269ms bot=Combat Bot poi=None combat=True
+[18:45:12.036] [D] [Pulse] Slow bot root: 311ms bot=Combat Bot poi=None combat=True
+[18:45:12.077] [D] [Singular-DEBUG] Switched targets!
+[18:45:12.077] [D] [Singular-DEBUG] Melee Distance: 5
+[18:45:12.077] [D] [Singular-DEBUG] Health: 100
+[18:45:12.077] [D] [Singular-DEBUG] Level: 32
+[18:45:12.417] [D] [Pulse] Slow bot root: 339ms bot=Combat Bot poi=None combat=True
+[18:45:12.756] [N] [Singular] Casting Judgement of Light on Bloodmage Thalnos
+[18:45:12.756] [D] Spell_C::CastSpell(20271, 0, 0xF1300011BF00006F, 0)
+[18:45:12.762] [D] [Pulse] Slow bot root: 305ms bot=Combat Bot poi=None combat=True
+[18:45:13.128] [D] [Pulse] Slow bot root: 327ms bot=Combat Bot poi=None combat=True
+[18:45:13.545] [D] [Pulse] Slow bot root: 375ms bot=Combat Bot poi=None combat=True
+[18:45:13.924] [D] [Pulse] Slow bot root: 341ms bot=Combat Bot poi=None combat=True
+[18:45:14.304] [D] [Pulse] Slow bot root: 343ms bot=Combat Bot poi=None combat=True
+[18:45:14.492] [N] [Singular] Casting Exorcism on Bloodmage Thalnos
+[18:45:14.492] [D] Spell_C::CastSpell(879, 0, 0xF1300011BF00006F, 0)
+[18:45:14.499] [D] [Pulse] Slow bot root: 158ms bot=Combat Bot poi=None combat=True
+[18:45:14.876] [D] [Pulse] Slow bot root: 340ms bot=Combat Bot poi=None combat=True
+[18:45:15.251] [D] [Pulse] Slow bot root: 340ms bot=Combat Bot poi=None combat=True
+[18:45:15.636] [D] [Pulse] Slow bot root: 341ms bot=Combat Bot poi=None combat=True
+[18:45:16.028] [D] [Pulse] Slow bot root: 351ms bot=Combat Bot poi=None combat=True
+[18:45:16.420] [D] [Pulse] Slow bot root: 349ms bot=Combat Bot poi=None combat=True
+[18:45:16.856] [D] [Pulse] Slow bot root: 376ms bot=Combat Bot poi=None combat=True
+[18:45:16.857] [D] [Singular-DEBUG] Bloodmage Thalnos is immune to Physical spell school
+[18:45:17.238] [D] [Pulse] Slow bot root: 345ms bot=Combat Bot poi=None combat=True
+[18:45:17.630] [D] [Pulse] Slow bot root: 348ms bot=Combat Bot poi=None combat=True
+[18:45:18.007] [D] [Pulse] Slow bot root: 344ms bot=Combat Bot poi=None combat=True
+[18:45:18.393] [D] [Pulse] Slow bot root: 341ms bot=Combat Bot poi=None combat=True
+[18:45:18.780] [D] [Pulse] Slow bot root: 346ms bot=Combat Bot poi=None combat=True
+[18:45:19.170] [D] [Pulse] Slow bot root: 346ms bot=Combat Bot poi=None combat=True
+[18:45:19.562] [D] [Pulse] Slow bot root: 355ms bot=Combat Bot poi=None combat=True
+[18:45:19.965] [D] [Pulse] Slow bot root: 359ms bot=Combat Bot poi=None combat=True
+[18:45:20.374] [D] [Pulse] Slow bot root: 366ms bot=Combat Bot poi=None combat=True
+[18:45:20.792] [D] [Pulse] Slow bot root: 373ms bot=Combat Bot poi=None combat=True
+[18:45:21.141] [N] [Singular] Casting Judgement of Light on Bloodmage Thalnos
+[18:45:21.141] [D] Spell_C::CastSpell(20271, 0, 0xF1300011BF00006F, 0)
+[18:45:21.147] [D] [Pulse] Slow bot root: 315ms bot=Combat Bot poi=None combat=True
+[18:45:21.566] [D] [Pulse] Slow bot root: 376ms bot=Combat Bot poi=None combat=True
+[18:45:22.002] [D] [Pulse] Slow bot root: 380ms bot=Combat Bot poi=None combat=True
+[18:45:22.422] [D] [Pulse] Slow bot root: 380ms bot=Combat Bot poi=None combat=True
+[18:45:22.846] [D] [Pulse] Slow bot root: 381ms bot=Combat Bot poi=None combat=True
+[18:45:23.295] [D] [Pulse] Slow bot root: 405ms bot=Combat Bot poi=None combat=True
+[18:45:23.736] [D] [Pulse] Slow bot root: 390ms bot=Combat Bot poi=None combat=True
+[18:45:24.165] [D] [Pulse] Slow bot root: 389ms bot=Combat Bot poi=None combat=True
+[18:45:24.596] [D] [Pulse] Slow bot root: 389ms bot=Combat Bot poi=None combat=True
+[18:45:25.024] [D] [Pulse] Slow bot root: 386ms bot=Combat Bot poi=None combat=True
+[18:45:25.448] [D] [Pulse] Slow bot root: 386ms bot=Combat Bot poi=None combat=True
+[18:45:25.881] [D] [Pulse] Slow bot root: 393ms bot=Combat Bot poi=None combat=True
+[18:45:26.343] [D] [Pulse] Slow bot root: 419ms bot=Combat Bot poi=None combat=True
+[18:45:26.797] [D] [Pulse] Slow bot root: 410ms bot=Combat Bot poi=None combat=True
+[18:45:27.237] [D] [Pulse] Slow bot root: 396ms bot=Combat Bot poi=None combat=True
+[18:45:27.669] [D] [Pulse] Slow bot root: 392ms bot=Combat Bot poi=None combat=True
+[18:45:28.102] [D] [Pulse] Slow bot root: 394ms bot=Combat Bot poi=None combat=True
+[18:45:28.515] [D] [Pulse] Slow bot root: 376ms bot=Combat Bot poi=None combat=False
+[18:45:28.673] [N] [TidyBags 3]: Using Satchel of Helpful Goods we have 1
+[18:45:28.680] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=25ms
+[18:45:29.633] [D] [Pulse] Slow shared pulse: total=383ms movement=0 objects=0 lua=348 info=0 loot=1 targeting=22 events=0 plugins=10 routine=0
+[18:45:29.858] [N] [AutoEquip]: Loot roll in progress
+[18:45:29.890] [N] [AutoEquip]: Equipped item in slot:SecondaryHandSlot scored -1 while loot-roll item scored:1.08
+[18:45:29.900] [N] [AutoEquip]: Rolling Greed
+[18:45:31.480] [D] [Pulse] Slow bot root: 127ms bot=Combat Bot poi=None combat=False
+[18:45:37.457] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=145ms
+[18:45:41.276] [D] System.OutOfMemoryException: Insufficient memory to continue the execution of the program.
+   at Styx.WoWInternals.WoWObjects.WoWUnit.GetAllAuras()
+   at Styx.WoWInternals.WoWObjects.WoWUnit.HasAura(String name)
+   at Singular.Helpers.Spell.<>c__DisplayClass38_1.<Buff>b__5(String b)
+   at System.Linq.Enumerable.All[TSource](IEnumerable`1 source, Func`2 predicate)
+   at Singular.Helpers.Spell.<>c__DisplayClass38_0.<Buff>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[18:45:41.276] [D] System.OutOfMemoryException: Insufficient memory to continue the execution of the program.
+   at Styx.WoWInternals.WoWObjects.WoWUnit.GetAllAuras()
+   at Styx.WoWInternals.WoWObjects.WoWUnit.HasAura(String name)
+   at Singular.Helpers.Spell.<>c__DisplayClass38_1.<Buff>b__5(String b)
+   at System.Linq.Enumerable.All[TSource](IEnumerable`1 source, Func`2 predicate)
+   at Singular.Helpers.Spell.<>c__DisplayClass38_0.<Buff>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[18:45:41.276] [D] System.OutOfMemoryException: Insufficient memory to continue the execution of the program.
+   at Styx.WoWInternals.WoWObjects.WoWUnit.GetAllAuras()
+   at Styx.WoWInternals.WoWObjects.WoWUnit.HasAura(String name)
+   at Singular.Helpers.Spell.<>c__DisplayClass38_1.<Buff>b__5(String b)
+   at System.Linq.Enumerable.All[TSource](IEnumerable`1 source, Func`2 predicate)
+   at Singular.Helpers.Spell.<>c__DisplayClass38_0.<Buff>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[18:45:41.276] [D] [Pulse] Slow bot root: 300ms bot=Combat Bot poi=None combat=False
+[18:45:41.276] [N] Not in game
+[18:45:41.366] [N] Not in game
+[18:45:41.456] [N] Not in game
+[18:45:41.535] [N] Not in game
+[18:45:41.676] [N] [Singular] Context changed. New context: Normal. Rebuilding behaviors.
+[18:45:41.676] [D] [Singular-DEBUG] Creating Combat behavior.
+[18:45:41.677] [D] [Singular-DEBUG] CreateRetributionPaladinNormalPullAndCombat is a match!
+[18:45:41.677] [N] [Singular]  Using CreateRetributionPaladinNormalPullAndCombat for Retribution Paladin - Combat (Priority: 0)
+[18:45:41.678] [D] [Singular-DEBUG] Creating Pull behavior.
+[18:45:41.679] [D] [Singular-DEBUG] CreateRetributionPaladinNormalPullAndCombat is a match!
+[18:45:41.679] [N] [Singular]  Using CreateRetributionPaladinNormalPullAndCombat for Retribution Paladin - Pull (Priority: 0)
+[18:45:41.680] [D] [Singular-DEBUG] Creating Rest behavior.
+[18:45:41.682] [D] [Singular-DEBUG] CreateRetributionPaladinRest is a match!
+[18:45:41.682] [N] [Singular]  Using CreateRetributionPaladinRest for Retribution Paladin - Rest (Priority: 0)
+[18:45:41.682] [D] [Singular-DEBUG] Creating CombatBuffs behavior.
+[18:45:41.683] [D] [Singular-DEBUG] Creating Heal behavior.
+[18:45:41.684] [D] [Singular-DEBUG] CreateRetributionPaladinHeal is a match!
+[18:45:41.684] [N] [Singular]  Using CreateRetributionPaladinHeal for Retribution Paladin - Heal (Priority: 0)
+[18:45:41.684] [D] [Singular-DEBUG] CreateRetributionPaladinNormalPullAndCombat is a match!
+[18:45:41.684] [N] [Singular]  Using CreateRetributionPaladinNormalPullAndCombat for Retribution Paladin - Heal (Priority: 0)
+[18:45:41.685] [D] [Singular-DEBUG] Creating PullBuffs behavior.
+[18:45:41.687] [D] [Singular-DEBUG] Creating PreCombatBuffs behavior.
+[18:45:41.687] [D] [Singular-DEBUG] CreatePaladinPreCombatBuffs is a match!
+[18:45:41.687] [N] [Singular]  Using CreatePaladinPreCombatBuffs for Retribution Paladin - PreCombatBuffs (Priority: 0)
+[18:45:41.747] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=57ms
+[18:45:43.598] [N] [Singular] Currect target is invalid. Switching to Grimtotem Geomancer!
+[18:45:43.837] [D] [Singular-DEBUG] Switched targets!
+[18:45:43.837] [D] [Singular-DEBUG] Melee Distance: 6.8833337
+[18:45:43.837] [D] [Singular-DEBUG] Health: 100
+[18:45:43.837] [D] [Singular-DEBUG] Level: 27
+[18:45:43.983] [N] [Singular] Casting Judgement of Light on Grimtotem Geomancer
+[18:45:43.983] [D] Spell_C::CastSpell(20271, 0, 0xF130002A080CDCCD, 0)
+[18:45:45.496] [N] [Singular] Casting Consecration on Grimtotem Geomancer
+[18:45:45.496] [D] Spell_C::CastSpell(26573, 0, 0xF130002A080CDCCD, 0)
+[18:45:47.105] [N] [Singular] Casting Exorcism on Grimtotem Geomancer
+[18:45:47.106] [D] Spell_C::CastSpell(879, 0, 0xF130002A080CDCCD, 0)
+[18:45:50.799] [D] [Nav] Loaded 9 mesh tiles for one path query
+[18:45:52.647] [N] [Singular] Currect target is invalid. Switching to Grimtotem Geomancer!
+[18:45:52.658] [D] [Pulse] Slow bot root: 405ms bot=Combat Bot poi=None combat=True
+[18:45:52.690] [D] [Singular-DEBUG] Switched targets!
+[18:45:52.690] [D] [Singular-DEBUG] Melee Distance: 6.8833337
+[18:45:52.690] [D] [Singular-DEBUG] Health: 73.09941520467837
+[18:45:52.690] [D] [Singular-DEBUG] Level: 26
+[18:45:52.962] [D] [Singular-DEBUG] Switched targets!
+[18:45:52.962] [D] [Singular-DEBUG] Melee Distance: 6.5833335
+[18:45:52.962] [D] [Singular-DEBUG] Health: 70.11128775834658
+[18:45:52.962] [D] [Singular-DEBUG] Level: 26
+[18:45:53.175] [N] [Singular] Casting Divine Protection on Myself
+[18:45:53.176] [D] Spell_C::CastSpell(498, 0, 0x6000000007EAB80, 0)
+[18:45:53.249] [N] [Singular] Casting Judgement of Light on Grimtotem Geomancer
+[18:45:53.249] [D] Spell_C::CastSpell(20271, 0, 0xF130002A080CDD06, 0)
+[18:45:54.845] [N] [Singular] Casting Consecration on Grimtotem Geomancer
+[18:45:54.845] [D] Spell_C::CastSpell(26573, 0, 0xF130002A080CDD06, 0)
+[18:45:56.440] [N] [Singular] Casting Hand of Freedom on Myself
+[18:45:56.440] [D] Spell_C::CastSpell(1044, 0, 0x6000000007EAB80, 0)
+[18:45:58.230] [N] [Singular] Currect target is invalid. Switching to Grimtotem Stomper!
+[18:45:58.577] [D] [Singular-DEBUG] Switched targets!
+[18:45:58.577] [D] [Singular-DEBUG] Melee Distance: 6.8833337
+[18:45:58.577] [D] [Singular-DEBUG] Health: 54.09356725146199
+[18:45:58.577] [D] [Singular-DEBUG] Level: 26
+[18:45:59.637] [N] [Singular] Casting Hammer of Justice on Grimtotem Stomper
+[18:45:59.637] [D] Spell_C::CastSpell(5588, 0, 0xF130002A070CDC16, 0)
+[18:46:01.555] [N] [Singular] Casting Judgement of Light on Grimtotem Stomper
+[18:46:01.555] [D] Spell_C::CastSpell(20271, 0, 0xF130002A070CDC16, 0)
+[18:46:04.447] [N] [Singular] Currect target is invalid. Switching to Grimtotem Stomper!
+[18:46:04.815] [D] [Singular-DEBUG] Switched targets!
+[18:46:04.815] [D] [Singular-DEBUG] Melee Distance: 6.8833337
+[18:46:04.815] [D] [Singular-DEBUG] Health: 46.96132596685083
+[18:46:04.815] [D] [Singular-DEBUG] Level: 27
+[18:46:04.954] [N] [Singular] Casting Exorcism on Grimtotem Stomper
+[18:46:04.954] [D] Spell_C::CastSpell(879, 0, 0xF130002A070CDC7A, 0)
+[18:46:09.888] [N] [Singular] Casting Judgement of Light on Grimtotem Stomper
+[18:46:09.888] [D] Spell_C::CastSpell(20271, 0, 0xF130002A070CDC7A, 0)
+[18:46:11.411] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=20ms
+[18:46:13.160] [N] Stopping the bot!
+[18:46:13.162] [N] Bot stopping! Reason: User request
+[18:46:13.163] [D] Exception in GetReturnValues: Thread was interrupted from a waiting state.
+[18:46:13.212] [D] Cleared POI
+[18:46:13.212] [D] Worker thread exited cleanly
+[18:46:53.164] [D] [Settings] Saved all settings
+[18:46:53.165] [N] Starting the bot.
+[18:46:53.167] [N] Currently Using BotBase : Combat Bot
+[18:46:53.168] [N] Character is a level 31 BloodElf Paladin
+[18:46:53.170] [N] Current zone is Thousand Needles
+[18:46:53.170] [D] Loading profile from D:\World of Warcraft 3.3.5a\CB\Bots\WholesomeAutoQuest\WHOLESOME_AUTOQUESTER.xml
+[18:46:53.170] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\UseTransport.cs
+[18:46:53.171] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\UseTransport.cs
+[18:46:53.172] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\UseTransport.cs
+[18:46:53.172] [D] [CompileBatch] Compiling 6 entries...
+[18:46:53.264] [D] [CompileBatch] Compiled successfully.
+[18:46:53.264] [N] Profile loaded: WholesomeAQ - Thousand Needles
+[18:46:53.683] [D] [QuestLog] Loaded 79 completed quests from Lua fallback
+[18:46:53.717] [D] Selected sub-profile: WholesomeAQ - Thousand Needles (L1-80)
+[18:46:53.784] [D] Setting CVars: autoSelfCast=1, autoLootDefault=1
+[18:46:53.852] [D] Cleared POI
+[18:46:53.852] [D] Refresh() called. LastCount=0, CurrentCount=34
+[18:46:53.852] [N] Building spell book
+[18:46:53.854] [D] Found 34 spells from LocalPlayer.KnownSpells
+[18:46:53.854] [N] Adding Arcane Affinity
+[18:46:53.856] [N] Adding Arcane Torrent
+[18:46:53.857] [N] Adding Auto Attack
+[18:46:53.859] [N] Adding Block
+[18:46:53.860] [N] Adding Dodge
+[18:46:53.862] [N] Adding Magic Resistance
+[18:46:53.872] [N] Adding Parry
+[18:46:53.873] [N] Adding Blessing of Wisdom
+[18:46:53.875] [N] Adding Concentration Aura
+[18:46:53.876] [N] Adding Consecration
+[18:46:53.878] [N] Adding Exorcism
+[18:46:53.879] [N] Adding Flash of Light
+[18:46:53.881] [N] Adding Holy Light
+[18:46:53.882] [N] Adding Lay on Hands
+[18:46:53.884] [N] Adding Purify
+[18:46:53.885] [N] Adding Seal of Righteousness
+[18:46:53.887] [N] Adding Sense Undead
+[18:46:53.888] [N] Adding Turn Evil
+[18:46:53.889] [N] Adding Blessing of Kings
+[18:46:53.891] [N] Adding Devotion Aura
+[18:46:53.892] [N] Adding Divine Protection
+[18:46:53.894] [N] Adding Hammer of Justice
+[18:46:53.895] [N] Adding Hand of Freedom
+[18:46:53.897] [N] Adding Hand of Protection
+[18:46:53.898] [N] Adding Hand of Reckoning
+[18:46:53.900] [N] Adding Hand of Salvation
+[18:46:53.901] [N] Adding Righteous Defense
+[18:46:53.903] [N] Adding Righteous Fury
+[18:46:53.904] [N] Adding Seal of Justice
+[18:46:53.906] [N] Adding Blessing of Might
+[18:46:53.907] [N] Adding Judgement of Light
+[18:46:53.909] [N] Adding Judgement of Wisdom
+[18:46:53.910] [N] Adding Retribution Aura
+[18:46:53.912] [N] Adding Seal of Command
+[18:46:53.913] [N] Spell book built
+[18:46:53.919] [D] [SpellManager] Initialize — subscribed to BotEvents.OnBotStart
+[18:46:53.919] [D] Default area costs set (Road=1.0, Ground=1.66)
+[18:46:53.919] [D] Faction filter set: Horde (excluding Alliance paths)
+[18:46:53.919] [D] Refresh() called. LastCount=0, CurrentCount=34
+[18:46:53.919] [N] Building spell book
+[18:46:53.921] [D] Found 34 spells from LocalPlayer.KnownSpells
+[18:46:53.921] [N] Adding Arcane Affinity
+[18:46:53.923] [N] Adding Arcane Torrent
+[18:46:53.924] [N] Adding Auto Attack
+[18:46:53.926] [N] Adding Block
+[18:46:53.927] [N] Adding Dodge
+[18:46:53.929] [N] Adding Magic Resistance
+[18:46:53.930] [N] Adding Parry
+[18:46:53.932] [N] Adding Blessing of Wisdom
+[18:46:53.933] [N] Adding Concentration Aura
+[18:46:53.935] [N] Adding Consecration
+[18:46:53.936] [N] Adding Exorcism
+[18:46:53.938] [N] Adding Flash of Light
+[18:46:53.939] [N] Adding Holy Light
+[18:46:53.941] [N] Adding Lay on Hands
+[18:46:53.942] [N] Adding Purify
+[18:46:53.944] [N] Adding Seal of Righteousness
+[18:46:53.945] [N] Adding Sense Undead
+[18:46:53.947] [N] Adding Turn Evil
+[18:46:53.948] [N] Adding Blessing of Kings
+[18:46:53.950] [N] Adding Devotion Aura
+[18:46:53.951] [N] Adding Divine Protection
+[18:46:53.953] [N] Adding Hammer of Justice
+[18:46:53.954] [N] Adding Hand of Freedom
+[18:46:53.957] [N] Adding Hand of Protection
+[18:46:53.959] [N] Adding Hand of Reckoning
+[18:46:53.960] [N] Adding Hand of Salvation
+[18:46:53.962] [N] Adding Righteous Defense
+[18:46:53.963] [N] Adding Righteous Fury
+[18:46:53.965] [N] Adding Seal of Justice
+[18:46:53.966] [N] Adding Blessing of Might
+[18:46:53.968] [N] Adding Judgement of Light
+[18:46:53.969] [N] Adding Judgement of Wisdom
+[18:46:53.971] [N] Adding Retribution Aura
+[18:46:53.972] [N] Adding Seal of Command
+[18:46:53.974] [N] Spell book built
+[18:46:53.976] [D] [SpellManager] Subscribed to LEARNED_SPELL_IN_TAB, ACTIVE_TALENT_GROUP_CHANGED
+[18:46:53.976] [D] Refresh() called. LastCount=0, CurrentCount=34
+[18:46:53.976] [N] Building spell book
+[18:46:53.978] [D] Found 34 spells from LocalPlayer.KnownSpells
+[18:46:53.978] [N] Adding Arcane Affinity
+[18:46:53.980] [N] Adding Arcane Torrent
+[18:46:53.981] [N] Adding Auto Attack
+[18:46:53.983] [N] Adding Block
+[18:46:53.984] [N] Adding Dodge
+[18:46:53.986] [N] Adding Magic Resistance
+[18:46:53.987] [N] Adding Parry
+[18:46:53.989] [N] Adding Blessing of Wisdom
+[18:46:53.990] [N] Adding Concentration Aura
+[18:46:53.992] [N] Adding Consecration
+[18:46:53.994] [N] Adding Exorcism
+[18:46:53.996] [N] Adding Flash of Light
+[18:46:53.997] [N] Adding Holy Light
+[18:46:53.999] [N] Adding Lay on Hands
+[18:46:54.000] [N] Adding Purify
+[18:46:54.002] [N] Adding Seal of Righteousness
+[18:46:54.003] [N] Adding Sense Undead
+[18:46:54.005] [N] Adding Turn Evil
+[18:46:54.006] [N] Adding Blessing of Kings
+[18:46:54.008] [N] Adding Devotion Aura
+[18:46:54.009] [N] Adding Divine Protection
+[18:46:54.011] [N] Adding Hammer of Justice
+[18:46:54.013] [N] Adding Hand of Freedom
+[18:46:54.014] [N] Adding Hand of Protection
+[18:46:54.016] [N] Adding Hand of Reckoning
+[18:46:54.017] [N] Adding Hand of Salvation
+[18:46:54.019] [N] Adding Righteous Defense
+[18:46:54.020] [N] Adding Righteous Fury
+[18:46:54.022] [N] Adding Seal of Justice
+[18:46:54.023] [N] Adding Blessing of Might
+[18:46:54.025] [N] Adding Judgement of Light
+[18:46:54.026] [N] Adding Judgement of Wisdom
+[18:46:54.028] [N] Adding Retribution Aura
+[18:46:54.030] [N] Adding Seal of Command
+[18:46:54.032] [N] Spell book built
+[18:46:54.033] [D] [SpellManager] Subscribed to LEARNED_SPELL_IN_TAB, ACTIVE_TALENT_GROUP_CHANGED
+[18:46:54.630] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=572ms
+[18:46:54.693] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=61ms
+[18:46:54.693] [D] [Pulse] Slow shared pulse: total=659ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=22 events=0 plugins=635 routine=0
+[18:46:59.090] [D] [Singular-DEBUG] Switched targets!
+[18:46:59.090] [D] [Singular-DEBUG] Melee Distance: 6.8833337
+[18:46:59.090] [D] [Singular-DEBUG] Health: 100
+[18:46:59.090] [D] [Singular-DEBUG] Level: 27
+[18:46:59.916] [N] [Singular] Casting Judgement of Light on Grimtotem Geomancer
+[18:46:59.916] [D] Spell_C::CastSpell(20271, 0, 0xF130002A080CDC48, 0)
+[18:47:01.518] [N] [Singular] Casting Exorcism on Grimtotem Geomancer
+[18:47:01.518] [D] Spell_C::CastSpell(879, 0, 0xF130002A080CDC48, 0)
+[18:47:04.749] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=20ms
+[18:47:08.319] [N] [Singular] Casting Judgement of Light on Grimtotem Geomancer
+[18:47:08.319] [D] Spell_C::CastSpell(20271, 0, 0xF130002A080CDC48, 0)
+[18:47:11.799] [D] [Singular-DEBUG] Switched targets!
+[18:47:11.799] [D] [Singular-DEBUG] Melee Distance: 6.8833337
+[18:47:11.799] [D] [Singular-DEBUG] Health: 0
+[18:47:11.799] [D] [Singular-DEBUG] Level: 27
+[18:47:14.341] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=157ms
+[18:47:21.488] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=22ms
+[18:47:24.377] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=137ms
+[18:47:31.575] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=41ms
+[18:47:34.450] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=162ms
+[18:47:38.267] [N] [Singular] Currect target is invalid. Switching to Grimtotem Geomancer!
+[18:47:38.618] [D] [Singular-DEBUG] Switched targets!
+[18:47:38.618] [D] [Singular-DEBUG] Melee Distance: 6.5833335
+[18:47:38.618] [D] [Singular-DEBUG] Health: 100
+[18:47:38.618] [D] [Singular-DEBUG] Level: 27
+[18:47:38.744] [N] [Singular] Casting Judgement of Light on Grimtotem Geomancer
+[18:47:38.744] [D] Spell_C::CastSpell(20271, 0, 0xF130002A080CDB8C, 0)
+[18:47:40.258] [N] [Singular] Casting Exorcism on Grimtotem Geomancer
+[18:47:40.258] [D] Spell_C::CastSpell(879, 0, 0xF130002A080CDB8C, 0)
+[18:47:41.717] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=20ms
+[18:47:54.519] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=124ms
+[18:47:57.935] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=21ms
+[18:48:12.883] [N] [Singular] Currect target is invalid. Switching to Grimtotem Stomper!
+[18:48:13.234] [D] [Singular-DEBUG] Switched targets!
+[18:48:13.234] [D] [Singular-DEBUG] Melee Distance: 6.8833337
+[18:48:13.234] [D] [Singular-DEBUG] Health: 100
+[18:48:13.234] [D] [Singular-DEBUG] Level: 26
+[18:48:13.367] [N] [Singular] Casting Judgement of Light on Grimtotem Stomper
+[18:48:13.368] [D] Spell_C::CastSpell(20271, 0, 0xF130002A070CDB11, 0)
+[18:48:14.945] [N] [Singular] Casting Exorcism on Grimtotem Stomper
+[18:48:14.945] [D] Spell_C::CastSpell(879, 0, 0xF130002A070CDB11, 0)
+[18:48:21.020] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=21ms
+[18:48:24.616] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=160ms
+[18:48:34.626] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=108ms
+[18:48:44.712] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=124ms
+[18:48:47.444] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=20ms
+[18:48:54.795] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=122ms
+[18:49:07.025] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=21ms
+[18:49:14.824] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=104ms
+[18:49:24.862] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=109ms
+[18:49:34.917] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=113ms
+[18:49:44.991] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=106ms
+[18:49:55.053] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=109ms
+[18:50:05.085] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=108ms
+[18:50:14.048] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=62ms
+[18:50:15.600] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=569ms
+[18:50:15.664] [D] [Pulse] Slow shared pulse: total=706ms movement=0 objects=0 lua=33 info=0 loot=0 targeting=39 events=0 plugins=633 routine=0
+[18:50:24.060] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=63ms
+[18:50:25.644] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=573ms
+[18:50:25.709] [D] [Pulse] Slow shared pulse: total=709ms movement=0 objects=0 lua=33 info=0 loot=0 targeting=36 events=0 plugins=638 routine=0
+[18:50:34.091] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=62ms
+[18:50:35.734] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=565ms
+[18:50:35.800] [D] [Pulse] Slow shared pulse: total=701ms movement=0 objects=0 lua=33 info=0 loot=0 targeting=35 events=0 plugins=631 routine=0
+[18:50:44.092] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=64ms
+[18:50:54.190] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=60ms
+[18:50:55.870] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=570ms
+[18:50:55.935] [D] [Pulse] Slow shared pulse: total=704ms movement=0 objects=0 lua=32 info=0 loot=0 targeting=36 events=0 plugins=635 routine=0
+[18:51:01.098] [N] [Singular] Currect target is invalid. Switching to Needles Cougar!
+[18:51:01.138] [D] [Pulse] Slow bot root: 641ms bot=Combat Bot poi=None combat=True
+[18:51:01.436] [D] [Singular-DEBUG] Switched targets!
+[18:51:01.436] [D] [Singular-DEBUG] Melee Distance: 5
+[18:51:01.436] [D] [Singular-DEBUG] Health: 98.81093935790726
+[18:51:01.436] [D] [Singular-DEBUG] Level: 27
+[18:51:01.668] [D] Stop and dismount... Reason: Casting spell
+[18:51:01.768] [D] [Pulse] Slow bot root: 232ms bot=Combat Bot poi=None combat=True
+[18:51:01.970] [N] [Singular] Casting Judgement of Light on Needles Cougar
+[18:51:01.970] [D] Spell_C::CastSpell(20271, 0, 0xF13000101C0C3512, 0)
+[18:51:02.441] [N] [Singular] Casting Exorcism on Needles Cougar
+[18:51:02.441] [D] Spell_C::CastSpell(879, 0, 0xF13000101C0C3512, 0)
+[18:51:02.473] [D] [Pulse] Slow bot root: 200ms bot=Combat Bot poi=None combat=True
+[18:51:04.310] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=61ms
+[18:51:05.509] [N] [Singular] Casting Exorcism on Needles Cougar
+[18:51:05.509] [D] Spell_C::CastSpell(879, 0, 0xF13000101C0C3512, 0)
+[18:51:10.340] [N] [Singular] Casting Judgement of Light on Needles Cougar
+[18:51:10.340] [D] Spell_C::CastSpell(20271, 0, 0xF13000101C0C3512, 0)
+[18:51:15.707] [N] [Singular] Casting Blessing of Might on Myself
+[18:51:15.707] [D] Spell_C::CastSpell(19835, 0, 0x6000000007EAB80, 0)
+[18:51:15.800] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=20ms
+[18:51:18.698] [D] [Singular-DEBUG] Switched targets!
+[18:51:18.699] [D] [Singular-DEBUG] Melee Distance: 5
+[18:51:18.699] [D] [Singular-DEBUG] Health: 100
+[18:51:18.699] [D] [Singular-DEBUG] Level: 27
+[18:51:18.756] [D] [Nav] Loaded 3 mesh tiles for one path query
+[18:51:18.842] [N] [Singular] Casting Judgement of Light on Pesterhide Hyena
+[18:51:18.842] [D] Spell_C::CastSpell(20271, 0, 0xF1300010980C350D, 0)
+[18:51:19.617] [D] [Pulse] Slow bot root: 132ms bot=Combat Bot poi=None combat=True
+[18:51:23.108] [N] [Singular] Casting Exorcism on Pesterhide Hyena
+[18:51:23.108] [D] Spell_C::CastSpell(879, 0, 0xF1300010980C350D, 0)
+[18:51:23.142] [D] [Pulse] Slow bot root: 134ms bot=Combat Bot poi=None combat=True
+[18:51:25.894] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=62ms
+[18:51:27.227] [N] [Singular] Casting Judgement of Light on Pesterhide Hyena
+[18:51:27.227] [D] Spell_C::CastSpell(20271, 0, 0xF1300010980C350D, 0)
+[18:51:27.261] [D] [Pulse] Slow bot root: 132ms bot=Combat Bot poi=None combat=True
+[18:51:35.550] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=120ms
+[18:51:36.637] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=22ms
+[18:51:37.898] [N] [Singular] Currect target is invalid. Switching to Gravelsnout Kobold!
+[18:51:38.243] [D] [Singular-DEBUG] Switched targets!
+[18:51:38.243] [D] [Singular-DEBUG] Melee Distance: 5
+[18:51:38.243] [D] [Singular-DEBUG] Health: 100
+[18:51:38.243] [D] [Singular-DEBUG] Level: 27
+[18:51:38.382] [N] [Singular] Casting Judgement of Light on Gravelsnout Kobold
+[18:51:38.383] [D] Spell_C::CastSpell(20271, 0, 0xF13000100F0C3521, 0)
+[18:51:40.515] [N] [Singular] Casting Exorcism on Gravelsnout Kobold
+[18:51:40.515] [D] Spell_C::CastSpell(879, 0, 0xF13000100F0C3521, 0)
+[18:51:40.548] [D] [Pulse] Slow bot root: 131ms bot=Combat Bot poi=None combat=True
+[18:51:46.646] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=64ms
+[18:51:46.744] [N] [Singular] Casting Judgement of Light on Gravelsnout Kobold
+[18:51:46.744] [D] Spell_C::CastSpell(20271, 0, 0xF13000100F0C3521, 0)
+[18:51:46.777] [D] [Pulse] Slow bot root: 130ms bot=Combat Bot poi=None combat=True
+[18:51:55.253] [N] [Singular] Casting Judgement of Light on Gravelsnout Kobold
+[18:51:55.253] [D] Spell_C::CastSpell(20271, 0, 0xF13000100F0C3521, 0)
+[18:51:55.286] [D] [Pulse] Slow bot root: 133ms bot=Combat Bot poi=None combat=True
+[18:51:55.588] [D] [Pulse] Slow bot root: 202ms bot=Combat Bot poi=None combat=True
+[18:51:55.856] [D] [Pulse] Slow bot root: 166ms bot=Combat Bot poi=None combat=True
+[18:51:56.191] [D] [Pulse] Slow bot root: 202ms bot=Combat Bot poi=None combat=True
+[18:51:56.425] [D] [Pulse] Slow bot root: 133ms bot=Combat Bot poi=None combat=True
+[18:51:56.660] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=62ms
+[18:51:56.997] [D] [Pulse] Slow bot root: 336ms bot=Combat Bot poi=None combat=True
+[18:52:05.809] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=138ms
+[18:52:07.433] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=20ms
+[18:52:07.434] [N] [Singular] Currect target is invalid. Switching to Pesterhide Hyena!
+[18:52:07.799] [D] [Singular-DEBUG] Switched targets!
+[18:52:07.799] [D] [Singular-DEBUG] Melee Distance: 5
+[18:52:07.799] [D] [Singular-DEBUG] Health: 100
+[18:52:07.799] [D] [Singular-DEBUG] Level: 27
+[18:52:07.991] [D] Stop and dismount... Reason: Casting spell
+[18:52:08.222] [N] [Singular] Casting Judgement of Light on Pesterhide Hyena
+[18:52:08.222] [D] Spell_C::CastSpell(20271, 0, 0xF1300010980CAA9B, 0)
+[18:52:09.794] [N] [Singular] Casting Exorcism on Pesterhide Hyena
+[18:52:09.794] [D] Spell_C::CastSpell(879, 0, 0xF1300010980CAA9B, 0)
+[18:52:16.608] [N] [Singular] Casting Judgement of Light on Pesterhide Hyena
+[18:52:16.608] [D] Spell_C::CastSpell(20271, 0, 0xF1300010980CAA9B, 0)
+[18:52:16.641] [D] [Pulse] Slow bot root: 133ms bot=Combat Bot poi=None combat=True
+[18:52:17.444] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=60ms
+[18:52:26.347] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=567ms
+[18:52:26.411] [D] [Pulse] Slow shared pulse: total=667ms movement=0 objects=0 lua=0 info=0 loot=0 targeting=34 events=0 plugins=631 routine=0
+[18:52:27.445] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=62ms
+[18:52:36.454] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=605ms
+[18:52:36.502] [D] [Pulse] Slow shared pulse: total=689ms movement=0 objects=0 lua=0 info=0 loot=0 targeting=35 events=0 plugins=653 routine=0
+[18:52:37.472] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=62ms
+[18:52:46.517] [D] [Pulse] Slow shared pulse: total=669ms movement=0 objects=0 lua=0 info=0 loot=0 targeting=33 events=0 plugins=634 routine=0
+[18:52:47.560] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=63ms
+[18:52:56.524] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=566ms
+[18:52:56.588] [D] [Pulse] Slow shared pulse: total=666ms movement=0 objects=0 lua=0 info=0 loot=0 targeting=35 events=0 plugins=630 routine=0
+[18:52:57.628] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=62ms
+[18:53:06.626] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=568ms
+[18:53:06.691] [D] [Pulse] Slow shared pulse: total=670ms movement=0 objects=0 lua=0 info=0 loot=0 targeting=35 events=0 plugins=633 routine=0
+[18:53:07.630] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=63ms
+[18:53:16.715] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=570ms
+[18:53:16.780] [D] [Pulse] Slow shared pulse: total=670ms movement=0 objects=0 lua=0 info=0 loot=0 targeting=34 events=0 plugins=635 routine=0
+[18:53:17.722] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=62ms
+[18:53:26.728] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=570ms
+[18:53:26.794] [D] [Pulse] Slow shared pulse: total=674ms movement=0 objects=0 lua=0 info=0 loot=0 targeting=35 events=0 plugins=637 routine=0
+[18:53:27.728] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=61ms
+[18:53:36.807] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=569ms
+[18:53:36.872] [D] [Pulse] Slow shared pulse: total=671ms movement=0 objects=0 lua=0 info=0 loot=0 targeting=35 events=0 plugins=634 routine=0
+[18:53:37.808] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=61ms
+[18:53:46.878] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=573ms
+[18:53:46.943] [D] [Pulse] Slow shared pulse: total=673ms movement=0 objects=0 lua=0 info=0 loot=0 targeting=34 events=0 plugins=637 routine=0
+[18:53:47.882] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=61ms
+[18:53:57.292] [N] [Singular] Currect target is invalid. Switching to Pesterhide Hyena!
+[18:53:57.613] [D] [Singular-DEBUG] Switched targets!
+[18:53:57.613] [D] [Singular-DEBUG] Melee Distance: 5
+[18:53:57.613] [D] [Singular-DEBUG] Health: 100
+[18:53:57.613] [D] [Singular-DEBUG] Level: 27
+[18:53:58.095] [D] Stop and dismount... Reason: Casting spell
+[18:53:58.337] [N] [Singular] Casting Judgement of Light on Pesterhide Hyena
+[18:53:58.338] [D] Spell_C::CastSpell(20271, 0, 0xF1300010980A3DA4, 0)
+[18:53:59.927] [N] [Singular] Casting Hand of Freedom on Myself
+[18:53:59.927] [D] Spell_C::CastSpell(1044, 0, 0x6000000007EAB80, 0)
+[18:54:01.480] [N] [Singular] Casting Exorcism on Pesterhide Hyena
+[18:54:01.480] [D] Spell_C::CastSpell(879, 0, 0xF1300010980A3DA4, 0)
+[18:54:06.709] [N] [Singular] Casting Judgement of Light on Pesterhide Hyena
+[18:54:06.709] [D] Spell_C::CastSpell(20271, 0, 0xF1300010980A3DA4, 0)
+[18:54:16.505] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=118ms
+[18:54:16.567] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=36ms
+[18:54:16.596] [N] Stopping the bot!
+[18:54:16.598] [N] Bot stopping! Reason: User request
+[18:54:16.600] [D] Exception in GetReturnValues: Thread was interrupted from a waiting state.
+[18:54:17.304] [D] [Pulse] Slow shared pulse: total=709ms movement=0 objects=0 lua=0 info=0 loot=0 targeting=639 events=0 plugins=67 routine=0
+[18:54:17.304] [D] Cleared POI
+[18:54:17.304] [D] Worker thread exited cleanly
+[18:54:38.927] [D] [Settings] Saved all settings
+[18:54:38.927] [N] Starting the bot.
+[18:54:38.930] [N] Currently Using BotBase : Combat Bot
+[18:54:38.932] [N] Character is a level 31 BloodElf Paladin
+[18:54:38.934] [N] Current zone is Thousand Needles
+[18:54:38.935] [D] Loading profile from D:\World of Warcraft 3.3.5a\CB\Bots\WholesomeAutoQuest\WHOLESOME_AUTOQUESTER.xml
+[18:54:38.935] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\UseTransport.cs
+[18:54:38.935] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\UseTransport.cs
+[18:54:38.936] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\UseTransport.cs
+[18:54:38.937] [D] [CompileBatch] Compiling 6 entries...
+[18:54:39.027] [D] [CompileBatch] Compiled successfully.
+[18:54:39.027] [N] Profile loaded: WholesomeAQ - Thousand Needles
+[18:54:39.488] [D] [QuestLog] Loaded 79 completed quests from Lua fallback
+[18:54:39.520] [D] Selected sub-profile: WholesomeAQ - Thousand Needles (L1-80)
+[18:54:39.588] [D] Setting CVars: autoSelfCast=1, autoLootDefault=1
+[18:54:39.655] [D] Cleared POI
+[18:54:39.655] [D] Refresh() called. LastCount=0, CurrentCount=34
+[18:54:39.655] [N] Building spell book
+[18:54:39.658] [D] Found 34 spells from LocalPlayer.KnownSpells
+[18:54:39.658] [N] Adding Arcane Affinity
+[18:54:39.660] [N] Adding Arcane Torrent
+[18:54:39.662] [N] Adding Auto Attack
+[18:54:39.664] [N] Adding Block
+[18:54:39.666] [N] Adding Dodge
+[18:54:39.668] [N] Adding Magic Resistance
+[18:54:39.670] [N] Adding Parry
+[18:54:39.672] [N] Adding Blessing of Wisdom
+[18:54:39.674] [N] Adding Concentration Aura
+[18:54:39.677] [N] Adding Consecration
+[18:54:39.679] [N] Adding Exorcism
+[18:54:39.681] [N] Adding Flash of Light
+[18:54:39.683] [N] Adding Holy Light
+[18:54:39.685] [N] Adding Lay on Hands
+[18:54:39.687] [N] Adding Purify
+[18:54:39.689] [N] Adding Seal of Righteousness
+[18:54:39.691] [N] Adding Sense Undead
+[18:54:39.693] [N] Adding Turn Evil
+[18:54:39.695] [N] Adding Blessing of Kings
+[18:54:39.697] [N] Adding Devotion Aura
+[18:54:39.699] [N] Adding Divine Protection
+[18:54:39.701] [N] Adding Hammer of Justice
+[18:54:39.703] [N] Adding Hand of Freedom
+[18:54:39.705] [N] Adding Hand of Protection
+[18:54:39.711] [N] Adding Hand of Reckoning
+[18:54:39.714] [N] Adding Hand of Salvation
+[18:54:39.716] [N] Adding Righteous Defense
+[18:54:39.718] [N] Adding Righteous Fury
+[18:54:39.720] [N] Adding Seal of Justice
+[18:54:39.722] [N] Adding Blessing of Might
+[18:54:39.724] [N] Adding Judgement of Light
+[18:54:39.726] [N] Adding Judgement of Wisdom
+[18:54:39.728] [N] Adding Retribution Aura
+[18:54:39.730] [N] Adding Seal of Command
+[18:54:39.732] [N] Spell book built
+[18:54:39.734] [D] [SpellManager] Initialize — subscribed to BotEvents.OnBotStart
+[18:54:39.734] [D] Default area costs set (Road=1.0, Ground=1.66)
+[18:54:39.734] [D] Faction filter set: Horde (excluding Alliance paths)
+[18:54:39.734] [D] Refresh() called. LastCount=0, CurrentCount=34
+[18:54:39.734] [N] Building spell book
+[18:54:39.737] [D] Found 34 spells from LocalPlayer.KnownSpells
+[18:54:39.737] [N] Adding Arcane Affinity
+[18:54:39.739] [N] Adding Arcane Torrent
+[18:54:39.741] [N] Adding Auto Attack
+[18:54:39.743] [N] Adding Block
+[18:54:39.745] [N] Adding Dodge
+[18:54:39.747] [N] Adding Magic Resistance
+[18:54:39.749] [N] Adding Parry
+[18:54:39.752] [N] Adding Blessing of Wisdom
+[18:54:39.754] [N] Adding Concentration Aura
+[18:54:39.756] [N] Adding Consecration
+[18:54:39.758] [N] Adding Exorcism
+[18:54:39.760] [N] Adding Flash of Light
+[18:54:39.761] [N] Adding Holy Light
+[18:54:39.763] [N] Adding Lay on Hands
+[18:54:39.765] [N] Adding Purify
+[18:54:39.767] [N] Adding Seal of Righteousness
+[18:54:39.769] [N] Adding Sense Undead
+[18:54:39.771] [N] Adding Turn Evil
+[18:54:39.773] [N] Adding Blessing of Kings
+[18:54:39.775] [N] Adding Devotion Aura
+[18:54:39.777] [N] Adding Divine Protection
+[18:54:39.779] [N] Adding Hammer of Justice
+[18:54:39.781] [N] Adding Hand of Freedom
+[18:54:39.783] [N] Adding Hand of Protection
+[18:54:39.785] [N] Adding Hand of Reckoning
+[18:54:39.787] [N] Adding Hand of Salvation
+[18:54:39.789] [N] Adding Righteous Defense
+[18:54:39.792] [N] Adding Righteous Fury
+[18:54:39.794] [N] Adding Seal of Justice
+[18:54:39.796] [N] Adding Blessing of Might
+[18:54:39.798] [N] Adding Judgement of Light
+[18:54:39.800] [N] Adding Judgement of Wisdom
+[18:54:39.802] [N] Adding Retribution Aura
+[18:54:39.804] [N] Adding Seal of Command
+[18:54:39.806] [N] Spell book built
+[18:54:39.809] [D] [SpellManager] Subscribed to LEARNED_SPELL_IN_TAB, ACTIVE_TALENT_GROUP_CHANGED
+[18:54:39.809] [D] Refresh() called. LastCount=0, CurrentCount=34
+[18:54:39.809] [N] Building spell book
+[18:54:39.811] [D] Found 34 spells from LocalPlayer.KnownSpells
+[18:54:39.811] [N] Adding Arcane Affinity
+[18:54:39.813] [N] Adding Arcane Torrent
+[18:54:39.815] [N] Adding Auto Attack
+[18:54:39.817] [N] Adding Block
+[18:54:39.820] [N] Adding Dodge
+[18:54:39.822] [N] Adding Magic Resistance
+[18:54:39.824] [N] Adding Parry
+[18:54:39.826] [N] Adding Blessing of Wisdom
+[18:54:39.828] [N] Adding Concentration Aura
+[18:54:39.830] [N] Adding Consecration
+[18:54:39.833] [N] Adding Exorcism
+[18:54:39.835] [N] Adding Flash of Light
+[18:54:39.837] [N] Adding Holy Light
+[18:54:39.839] [N] Adding Lay on Hands
+[18:54:39.841] [N] Adding Purify
+[18:54:39.843] [N] Adding Seal of Righteousness
+[18:54:39.845] [N] Adding Sense Undead
+[18:54:39.847] [N] Adding Turn Evil
+[18:54:39.849] [N] Adding Blessing of Kings
+[18:54:39.851] [N] Adding Devotion Aura
+[18:54:39.853] [N] Adding Divine Protection
+[18:54:39.855] [N] Adding Hammer of Justice
+[18:54:39.857] [N] Adding Hand of Freedom
+[18:54:39.859] [N] Adding Hand of Protection
+[18:54:39.861] [N] Adding Hand of Reckoning
+[18:54:39.864] [N] Adding Hand of Salvation
+[18:54:39.866] [N] Adding Righteous Defense
+[18:54:39.868] [N] Adding Righteous Fury
+[18:54:39.870] [N] Adding Seal of Justice
+[18:54:39.872] [N] Adding Blessing of Might
+[18:54:39.875] [N] Adding Judgement of Light
+[18:54:39.877] [N] Adding Judgement of Wisdom
+[18:54:39.879] [N] Adding Retribution Aura
+[18:54:39.881] [N] Adding Seal of Command
+[18:54:39.884] [N] Spell book built
+[18:54:39.886] [D] [SpellManager] Subscribed to LEARNED_SPELL_IN_TAB, ACTIVE_TALENT_GROUP_CHANGED
+[18:54:39.886] [D] Refresh() called. LastCount=0, CurrentCount=34
+[18:54:39.886] [N] Building spell book
+[18:54:39.888] [D] Found 34 spells from LocalPlayer.KnownSpells
+[18:54:39.888] [N] Adding Arcane Affinity
+[18:54:39.891] [N] Adding Arcane Torrent
+[18:54:39.893] [N] Adding Auto Attack
+[18:54:39.895] [N] Adding Block
+[18:54:39.897] [N] Adding Dodge
+[18:54:39.899] [N] Adding Magic Resistance
+[18:54:39.901] [N] Adding Parry
+[18:54:39.903] [N] Adding Blessing of Wisdom
+[18:54:39.905] [N] Adding Concentration Aura
+[18:54:39.907] [N] Adding Consecration
+[18:54:39.910] [N] Adding Exorcism
+[18:54:39.912] [N] Adding Flash of Light
+[18:54:39.915] [N] Adding Holy Light
+[18:54:39.917] [N] Adding Lay on Hands
+[18:54:39.919] [N] Adding Purify
+[18:54:39.921] [N] Adding Seal of Righteousness
+[18:54:39.924] [N] Adding Sense Undead
+[18:54:39.926] [N] Adding Turn Evil
+[18:54:39.928] [N] Adding Blessing of Kings
+[18:54:39.930] [N] Adding Devotion Aura
+[18:54:39.932] [N] Adding Divine Protection
+[18:54:39.934] [N] Adding Hammer of Justice
+[18:54:39.937] [N] Adding Hand of Freedom
+[18:54:39.939] [N] Adding Hand of Protection
+[18:54:39.941] [N] Adding Hand of Reckoning
+[18:54:39.943] [N] Adding Hand of Salvation
+[18:54:39.945] [N] Adding Righteous Defense
+[18:54:39.948] [N] Adding Righteous Fury
+[18:54:39.950] [N] Adding Seal of Justice
+[18:54:39.952] [N] Adding Blessing of Might
+[18:54:39.954] [N] Adding Judgement of Light
+[18:54:39.956] [N] Adding Judgement of Wisdom
+[18:54:39.958] [N] Adding Retribution Aura
+[18:54:39.961] [N] Adding Seal of Command
+[18:54:39.963] [N] Spell book built
+[18:54:39.965] [D] [SpellManager] Subscribed to LEARNED_SPELL_IN_TAB, ACTIVE_TALENT_GROUP_CHANGED
+[18:54:40.055] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=56ms
+[18:54:40.088] [N] [Singular] Currect target is invalid. Switching to Pesterhide Hyena!
+[18:54:40.426] [D] [Singular-DEBUG] Switched targets!
+[18:54:40.426] [D] [Singular-DEBUG] Melee Distance: 5
+[18:54:40.426] [D] [Singular-DEBUG] Health: 96.42857142857143
+[18:54:40.426] [D] [Singular-DEBUG] Level: 27
+[18:54:40.823] [N] [Singular] Casting Hand of Freedom on Myself
+[18:54:40.823] [D] Spell_C::CastSpell(1044, 0, 0x6000000007EAB80, 0)
+[18:54:40.857] [D] [Pulse] Slow bot root: 168ms bot=Combat Bot poi=None combat=True
+[18:54:41.061] [D] [Pulse] Slow bot root: 103ms bot=Combat Bot poi=None combat=True
+[18:54:42.465] [N] [Singular] Casting Judgement of Light on Pesterhide Hyena
+[18:54:42.466] [D] Spell_C::CastSpell(20271, 0, 0xF1300010980CC03F, 0)
+[18:54:42.499] [D] [Pulse] Slow bot root: 134ms bot=Combat Bot poi=None combat=True
+[18:54:44.111] [N] [Singular] Casting Exorcism on Pesterhide Hyena
+[18:54:44.111] [D] Spell_C::CastSpell(879, 0, 0xF1300010980CC03F, 0)
+[18:54:44.145] [D] [Pulse] Slow bot root: 132ms bot=Combat Bot poi=None combat=True
+[18:54:49.507] [N] [Singular] Casting Divine Protection on Myself
+[18:54:49.507] [D] Spell_C::CastSpell(498, 0, 0x6000000007EAB80, 0)
+[18:54:49.541] [D] [Pulse] Slow bot root: 101ms bot=Combat Bot poi=None combat=True
+[18:54:50.179] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=58ms
+[18:54:50.813] [N] [Singular] Casting Judgement of Light on Pesterhide Hyena
+[18:54:50.813] [D] Spell_C::CastSpell(20271, 0, 0xF1300010980CC03F, 0)
+[18:54:50.847] [D] [Pulse] Slow bot root: 133ms bot=Combat Bot poi=None combat=True
+[18:54:56.069] [N] Stopping the bot!
+[18:54:56.072] [N] Bot stopping! Reason: User request
+[18:54:56.075] [D] Exception in GetReturnValues: Thread was interrupted from a waiting state.
+[18:54:56.106] [D] Cleared POI
+[18:54:56.106] [D] Worker thread exited cleanly
+[18:55:37.259] [D] [Settings] Saved all settings
+[18:55:37.259] [N] Starting the bot.
+[18:55:37.262] [N] Currently Using BotBase : Combat Bot
+[18:55:37.264] [N] Character is a level 31 BloodElf Paladin
+[18:55:37.267] [N] Current zone is Thousand Needles
+[18:55:37.267] [D] Loading profile from D:\World of Warcraft 3.3.5a\CB\Bots\WholesomeAutoQuest\WHOLESOME_AUTOQUESTER.xml
+[18:55:37.267] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\UseTransport.cs
+[18:55:37.268] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\UseTransport.cs
+[18:55:37.268] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\UseTransport.cs
+[18:55:37.269] [D] [CompileBatch] Compiling 6 entries...
+[18:55:37.355] [D] [CompileBatch] Compiled successfully.
+[18:55:37.355] [N] Profile loaded: WholesomeAQ - Thousand Needles
+[18:55:37.361] [D] Selected sub-profile: WholesomeAQ - Thousand Needles (L1-80)
+[18:55:37.427] [D] Setting CVars: autoSelfCast=1, autoLootDefault=1
+[18:55:37.493] [D] Cleared POI
+[18:55:37.493] [D] Refresh() called. LastCount=0, CurrentCount=34
+[18:55:37.493] [N] Building spell book
+[18:55:37.496] [D] Found 34 spells from LocalPlayer.KnownSpells
+[18:55:37.496] [N] Adding Arcane Affinity
+[18:55:37.498] [N] Adding Arcane Torrent
+[18:55:37.500] [N] Adding Auto Attack
+[18:55:37.502] [N] Adding Block
+[18:55:37.504] [N] Adding Dodge
+[18:55:37.507] [N] Adding Magic Resistance
+[18:55:37.509] [N] Adding Parry
+[18:55:37.511] [N] Adding Blessing of Wisdom
+[18:55:37.513] [N] Adding Concentration Aura
+[18:55:37.515] [N] Adding Consecration
+[18:55:37.518] [N] Adding Exorcism
+[18:55:37.520] [N] Adding Flash of Light
+[18:55:37.530] [N] Adding Holy Light
+[18:55:37.533] [N] Adding Lay on Hands
+[18:55:37.535] [N] Adding Purify
+[18:55:37.538] [N] Adding Seal of Righteousness
+[18:55:37.540] [N] Adding Sense Undead
+[18:55:37.542] [N] Adding Turn Evil
+[18:55:37.544] [N] Adding Blessing of Kings
+[18:55:37.546] [N] Adding Devotion Aura
+[18:55:37.549] [N] Adding Divine Protection
+[18:55:37.551] [N] Adding Hammer of Justice
+[18:55:37.553] [N] Adding Hand of Freedom
+[18:55:37.555] [N] Adding Hand of Protection
+[18:55:37.558] [N] Adding Hand of Reckoning
+[18:55:37.560] [N] Adding Hand of Salvation
+[18:55:37.562] [N] Adding Righteous Defense
+[18:55:37.564] [N] Adding Righteous Fury
+[18:55:37.566] [N] Adding Seal of Justice
+[18:55:37.569] [N] Adding Blessing of Might
+[18:55:37.571] [N] Adding Judgement of Light
+[18:55:37.573] [N] Adding Judgement of Wisdom
+[18:55:37.575] [N] Adding Retribution Aura
+[18:55:37.578] [N] Adding Seal of Command
+[18:55:37.580] [N] Spell book built
+[18:55:37.582] [D] [SpellManager] Initialize — subscribed to BotEvents.OnBotStart
+[18:55:37.582] [D] Default area costs set (Road=1.0, Ground=1.66)
+[18:55:37.582] [D] Faction filter set: Horde (excluding Alliance paths)
+[18:55:37.583] [D] Refresh() called. LastCount=0, CurrentCount=34
+[18:55:37.583] [N] Building spell book
+[18:55:37.585] [D] Found 34 spells from LocalPlayer.KnownSpells
+[18:55:37.585] [N] Adding Arcane Affinity
+[18:55:37.588] [N] Adding Arcane Torrent
+[18:55:37.590] [N] Adding Auto Attack
+[18:55:37.592] [N] Adding Block
+[18:55:37.595] [N] Adding Dodge
+[18:55:37.597] [N] Adding Magic Resistance
+[18:55:37.599] [N] Adding Parry
+[18:55:37.601] [N] Adding Blessing of Wisdom
+[18:55:37.603] [N] Adding Concentration Aura
+[18:55:37.606] [N] Adding Consecration
+[18:55:37.608] [N] Adding Exorcism
+[18:55:37.610] [N] Adding Flash of Light
+[18:55:37.612] [N] Adding Holy Light
+[18:55:37.615] [N] Adding Lay on Hands
+[18:55:37.617] [N] Adding Purify
+[18:55:37.619] [N] Adding Seal of Righteousness
+[18:55:37.622] [N] Adding Sense Undead
+[18:55:37.624] [N] Adding Turn Evil
+[18:55:37.626] [N] Adding Blessing of Kings
+[18:55:37.629] [N] Adding Devotion Aura
+[18:55:37.631] [N] Adding Divine Protection
+[18:55:37.633] [N] Adding Hammer of Justice
+[18:55:37.636] [N] Adding Hand of Freedom
+[18:55:37.638] [N] Adding Hand of Protection
+[18:55:37.640] [N] Adding Hand of Reckoning
+[18:55:37.642] [N] Adding Hand of Salvation
+[18:55:37.645] [N] Adding Righteous Defense
+[18:55:37.651] [N] Adding Righteous Fury
+[18:55:37.654] [N] Adding Seal of Justice
+[18:55:37.656] [N] Adding Blessing of Might
+[18:55:37.659] [N] Adding Judgement of Light
+[18:55:37.661] [N] Adding Judgement of Wisdom
+[18:55:37.663] [N] Adding Retribution Aura
+[18:55:37.666] [N] Adding Seal of Command
+[18:55:37.668] [N] Spell book built
+[18:55:37.671] [D] [SpellManager] Subscribed to LEARNED_SPELL_IN_TAB, ACTIVE_TALENT_GROUP_CHANGED
+[18:55:37.671] [D] Refresh() called. LastCount=0, CurrentCount=34
+[18:55:37.671] [N] Building spell book
+[18:55:37.674] [D] Found 34 spells from LocalPlayer.KnownSpells
+[18:55:37.674] [N] Adding Arcane Affinity
+[18:55:37.676] [N] Adding Arcane Torrent
+[18:55:37.678] [N] Adding Auto Attack
+[18:55:37.681] [N] Adding Block
+[18:55:37.683] [N] Adding Dodge
+[18:55:37.685] [N] Adding Magic Resistance
+[18:55:37.688] [N] Adding Parry
+[18:55:37.690] [N] Adding Blessing of Wisdom
+[18:55:37.692] [N] Adding Concentration Aura
+[18:55:37.695] [N] Adding Consecration
+[18:55:37.697] [N] Adding Exorcism
+[18:55:37.699] [N] Adding Flash of Light
+[18:55:37.702] [N] Adding Holy Light
+[18:55:37.704] [N] Adding Lay on Hands
+[18:55:37.706] [N] Adding Purify
+[18:55:37.709] [N] Adding Seal of Righteousness
+[18:55:37.711] [N] Adding Sense Undead
+[18:55:37.713] [N] Adding Turn Evil
+[18:55:37.716] [N] Adding Blessing of Kings
+[18:55:37.718] [N] Adding Devotion Aura
+[18:55:37.721] [N] Adding Divine Protection
+[18:55:37.723] [N] Adding Hammer of Justice
+[18:55:37.725] [N] Adding Hand of Freedom
+[18:55:37.727] [N] Adding Hand of Protection
+[18:55:37.730] [N] Adding Hand of Reckoning
+[18:55:37.732] [N] Adding Hand of Salvation
+[18:55:37.734] [N] Adding Righteous Defense
+[18:55:37.737] [N] Adding Righteous Fury
+[18:55:37.739] [N] Adding Seal of Justice
+[18:55:37.741] [N] Adding Blessing of Might
+[18:55:37.744] [N] Adding Judgement of Light
+[18:55:37.746] [N] Adding Judgement of Wisdom
+[18:55:37.748] [N] Adding Retribution Aura
+[18:55:37.752] [N] Adding Seal of Command
+[18:55:37.754] [N] Spell book built
+[18:55:37.757] [D] [SpellManager] Subscribed to LEARNED_SPELL_IN_TAB, ACTIVE_TALENT_GROUP_CHANGED
+[18:55:37.758] [D] Refresh() called. LastCount=0, CurrentCount=34
+[18:55:37.758] [N] Building spell book
+[18:55:37.761] [D] Found 34 spells from LocalPlayer.KnownSpells
+[18:55:37.761] [N] Adding Arcane Affinity
+[18:55:37.763] [N] Adding Arcane Torrent
+[18:55:37.766] [N] Adding Auto Attack
+[18:55:37.768] [N] Adding Block
+[18:55:37.770] [N] Adding Dodge
+[18:55:37.773] [N] Adding Magic Resistance
+[18:55:37.775] [N] Adding Parry
+[18:55:37.795] [N] Adding Blessing of Wisdom
+[18:55:37.799] [N] Adding Concentration Aura
+[18:55:37.801] [N] Adding Consecration
+[18:55:37.804] [N] Adding Exorcism
+[18:55:37.806] [N] Adding Flash of Light
+[18:55:37.808] [N] Adding Holy Light
+[18:55:37.810] [N] Adding Lay on Hands
+[18:55:37.813] [N] Adding Purify
+[18:55:37.815] [N] Adding Seal of Righteousness
+[18:55:37.818] [N] Adding Sense Undead
+[18:55:37.820] [N] Adding Turn Evil
+[18:55:37.823] [N] Adding Blessing of Kings
+[18:55:37.826] [N] Adding Devotion Aura
+[18:55:37.828] [N] Adding Divine Protection
+[18:55:37.830] [N] Adding Hammer of Justice
+[18:55:37.833] [N] Adding Hand of Freedom
+[18:55:37.835] [N] Adding Hand of Protection
+[18:55:37.837] [N] Adding Hand of Reckoning
+[18:55:37.839] [N] Adding Hand of Salvation
+[18:55:37.842] [N] Adding Righteous Defense
+[18:55:37.844] [N] Adding Righteous Fury
+[18:55:37.846] [N] Adding Seal of Justice
+[18:55:37.848] [N] Adding Blessing of Might
+[18:55:37.851] [N] Adding Judgement of Light
+[18:55:37.853] [N] Adding Judgement of Wisdom
+[18:55:37.855] [N] Adding Retribution Aura
+[18:55:37.857] [N] Adding Seal of Command
+[18:55:37.860] [N] Spell book built
+[18:55:37.862] [D] [SpellManager] Subscribed to LEARNED_SPELL_IN_TAB, ACTIVE_TALENT_GROUP_CHANGED
+[18:55:37.862] [D] Refresh() called. LastCount=0, CurrentCount=34
+[18:55:37.862] [N] Building spell book
+[18:55:37.866] [D] Found 34 spells from LocalPlayer.KnownSpells
+[18:55:37.866] [N] Adding Arcane Affinity
+[18:55:37.868] [N] Adding Arcane Torrent
+[18:55:37.871] [N] Adding Auto Attack
+[18:55:37.873] [N] Adding Block
+[18:55:37.875] [N] Adding Dodge
+[18:55:37.877] [N] Adding Magic Resistance
+[18:55:37.880] [N] Adding Parry
+[18:55:37.882] [N] Adding Blessing of Wisdom
+[18:55:37.884] [N] Adding Concentration Aura
+[18:55:37.887] [N] Adding Consecration
+[18:55:37.889] [N] Adding Exorcism
+[18:55:37.892] [N] Adding Flash of Light
+[18:55:37.894] [N] Adding Holy Light
+[18:55:37.896] [N] Adding Lay on Hands
+[18:55:37.899] [N] Adding Purify
+[18:55:37.901] [N] Adding Seal of Righteousness
+[18:55:37.903] [N] Adding Sense Undead
+[18:55:37.906] [N] Adding Turn Evil
+[18:55:37.908] [N] Adding Blessing of Kings
+[18:55:37.911] [N] Adding Devotion Aura
+[18:55:37.913] [N] Adding Divine Protection
+[18:55:37.915] [N] Adding Hammer of Justice
+[18:55:37.918] [N] Adding Hand of Freedom
+[18:55:37.920] [N] Adding Hand of Protection
+[18:55:37.923] [N] Adding Hand of Reckoning
+[18:55:37.925] [N] Adding Hand of Salvation
+[18:55:37.927] [N] Adding Righteous Defense
+[18:55:37.930] [N] Adding Righteous Fury
+[18:55:37.932] [N] Adding Seal of Justice
+[18:55:37.935] [N] Adding Blessing of Might
+[18:55:37.937] [N] Adding Judgement of Light
+[18:55:37.940] [N] Adding Judgement of Wisdom
+[18:55:37.942] [N] Adding Retribution Aura
+[18:55:37.944] [N] Adding Seal of Command
+[18:55:37.947] [N] Spell book built
+[18:55:37.950] [D] [SpellManager] Subscribed to LEARNED_SPELL_IN_TAB, ACTIVE_TALENT_GROUP_CHANGED
+[18:55:38.451] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=418ms
+[18:55:38.472] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=20ms
+[18:55:38.472] [D] [Pulse] Slow shared pulse: total=522ms movement=0 objects=0 lua=14 info=0 loot=0 targeting=66 events=0 plugins=439 routine=0
+[18:55:42.510] [D] [Singular-DEBUG] Switched targets!
+[18:55:42.510] [D] [Singular-DEBUG] Melee Distance: 3.5
+[18:55:42.510] [D] [Singular-DEBUG] Health: 100
+[18:55:42.510] [D] [Singular-DEBUG] Level: 25
+[18:55:42.989] [N] [Singular] Casting Judgement of Light on Paladin
+[18:55:42.990] [D] Spell_C::CastSpell(20271, 0, 0x6000000007F210A, 0)
+[18:55:43.085] [D] [Nav] Loaded 3 mesh tiles for one path query
+[18:55:44.537] [N] [Singular] Casting Exorcism on Paladin
+[18:55:44.537] [D] Spell_C::CastSpell(879, 0, 0x6000000007F210A, 0)
+[18:55:51.280] [N] [Singular] Casting Judgement of Light on Paladin
+[18:55:51.280] [D] Spell_C::CastSpell(20271, 0, 0x6000000007F210A, 0)
+[18:55:58.715] [N] Stopping the bot!
+[18:55:58.718] [N] Bot stopping! Reason: User request
+[18:55:58.721] [D] Exception in GetReturnValues: Thread was interrupted from a waiting state.
+[18:55:58.721] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=52ms
+[18:55:58.769] [D] Cleared POI
+[18:55:58.769] [D] Worker thread exited cleanly
+[18:56:27.714] [D] [Settings] Saved all settings

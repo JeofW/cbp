@@ -1,0 +1,537 @@
+[15:27:29.373] [N] CopilotBuddy v1.6.6 started. Original HonorBuddy by Apoc, raphus, highvoltz, bobby53, xanathos, chinajade. Ported to WotLK 3.3.5a by Likon69.
+[15:27:29.779] [N] Searching for WoW process...
+[15:27:29.949] [N] Please wait a few seconds while CopilotBuddy initializes.
+[15:27:29.950] [D] Using WoW with process ID 37940
+[15:27:29.950] [D] Platform: x86
+[15:27:29.950] [D] Executable Path: D:\World of Warcraft 3.3.5a\CB\
+[15:27:29.980] [D] [ObjectManager] WoW build 12340 detected - OK
+[15:27:29.982] [D] [ObjectManager] D3DDevicePtr = 0x00C5DF88
+[15:27:29.983] [D] [ObjectManager] devicePtrAddr = 0x0532CBD0
+[15:27:29.983] [D] [ObjectManager] device = 0x0A4FC900 (at 0x0533054C)
+[15:27:29.983] [D] [ObjectManager] vtablePtr = 0x0A4FF85C
+[15:27:29.983] [D] [ObjectManager] endSceneAddr = 0x643348F0 (at 0x0A4FF904)
+[15:27:29.983] [D] [ObjectManager] D3D: Device=0x0A4FC900, VTable=0x0A4FF85C, EndScene=0x643348F0
+[15:27:29.983] [D] [ObjectManager] Creating ExecutorRand...
+[15:27:30.028] [D] [ObjectManager] ExecutorRand created, IsInitialized = True
+[15:27:30.028] [D] [ObjectManager] EndScene hook succeeded
+[15:27:30.033] [D] [ObjectManager] Initialized successfully
+[15:27:30.034] [N] Attached to WoW with ID 37940
+[15:27:30.036] [N] Character is a level 30 BloodElf Paladin
+[15:27:30.037] [N] Current zone is Thousand Needles
+[15:27:30.059] [D] [Settings] Loaded settings for character: Jeof
+[15:27:30.059] [N] Initializing Combat Routines...
+[15:27:30.062] [D] Looking for routines in: D:\World of Warcraft 3.3.5a\CB\Routines
+[15:27:30.063] [D] Compiling Singular wotlk
+[15:27:32.464] [N] Loaded routine: Singular Wotlk for class Paladin
+[15:27:32.464] [N] Loaded 1 combat routine(s)
+[15:27:32.471] [N] Chose Singular Wotlk as your combat class.
+[15:27:32.471] [N] Confirmed Paladin as your class.
+[15:27:32.472] [N] [Singular] Starting Singular v2.0.0.0
+[15:27:32.472] [N] [Singular] Determining talent spec.
+[15:27:33.059] [D] [Singular-DEBUG] [Talents] Best Tree: 18
+[15:27:33.059] [N] [Singular] Current spec is  Retribution Paladin
+[15:27:33.070] [D] [WoWDb] Loaded 237 DBC tables
+[15:27:33.070] [D] [WoWDb]   Key=235 (0x000000EB) Rows=1893
+[15:27:33.070] [D] [WoWDb]   Key=236 (0x000000EC) Rows=7655
+[15:27:33.070] [D] [WoWDb]   Key=237 (0x000000ED) Rows=86
+[15:27:33.070] [D] [WoWDb]   Key=238 (0x000000EE) Rows=506
+[15:27:33.070] [D] [WoWDb]   Key=239 (0x000000EF) Rows=291
+[15:27:33.070] [D] [WoWDb] Lock DBC lookup: FOUND (rows=388)
+[15:27:33.070] [D] [WoWDb] ClientDb.Lock enum value = 356 (0x00000164)
+[15:27:33.071] [D] [Singular-DEBUG] Creating Combat behavior.
+[15:27:33.072] [N] [Singular] Building method list
+[15:27:33.073] [N] [Singular] Added 459 methods
+[15:27:33.075] [D] [Singular-DEBUG] CreateRetributionPaladinNormalPullAndCombat is a match!
+[15:27:33.075] [N] [Singular]  Using CreateRetributionPaladinNormalPullAndCombat for Retribution Paladin - Combat (Priority: 0)
+[15:27:33.094] [D] [Singular-DEBUG] Creating Pull behavior.
+[15:27:33.095] [D] [Singular-DEBUG] CreateRetributionPaladinNormalPullAndCombat is a match!
+[15:27:33.095] [N] [Singular]  Using CreateRetributionPaladinNormalPullAndCombat for Retribution Paladin - Pull (Priority: 0)
+[15:27:33.097] [D] [Singular-DEBUG] Creating Rest behavior.
+[15:27:33.097] [D] [Singular-DEBUG] CreateRetributionPaladinRest is a match!
+[15:27:33.097] [N] [Singular]  Using CreateRetributionPaladinRest for Retribution Paladin - Rest (Priority: 0)
+[15:27:33.100] [D] [Singular-DEBUG] Creating CombatBuffs behavior.
+[15:27:33.101] [D] [Singular-DEBUG] Creating Heal behavior.
+[15:27:33.102] [D] [Singular-DEBUG] CreateRetributionPaladinHeal is a match!
+[15:27:33.102] [N] [Singular]  Using CreateRetributionPaladinHeal for Retribution Paladin - Heal (Priority: 0)
+[15:27:33.102] [D] [Singular-DEBUG] CreateRetributionPaladinNormalPullAndCombat is a match!
+[15:27:33.102] [N] [Singular]  Using CreateRetributionPaladinNormalPullAndCombat for Retribution Paladin - Heal (Priority: 0)
+[15:27:33.103] [D] [Singular-DEBUG] Creating PullBuffs behavior.
+[15:27:33.104] [D] [Singular-DEBUG] Creating PreCombatBuffs behavior.
+[15:27:33.105] [D] [Singular-DEBUG] CreatePaladinPreCombatBuffs is a match!
+[15:27:33.105] [N] [Singular]  Using CreatePaladinPreCombatBuffs for Retribution Paladin - PreCombatBuffs (Priority: 0)
+[15:27:33.109] [N] [Singular] Behaviors created!
+[15:27:33.122] [D] [Singular-DEBUG] Attached combat log
+[15:27:33.122] [D] Routine initialized successfully
+[15:27:33.124] [D] Loading built-in bots from assembly: CopilotBuddy
+[15:27:33.148] [D] Found bot type: PartyBot.DiscoBot
+[15:27:33.148] [N] New bot added: Party Bot
+[15:27:33.148] [D] Loaded built-in bot: Party Bot
+[15:27:33.148] [D] Found bot type: Bots.Quest.QuestBot
+[15:27:33.148] [N] New bot added: Questing
+[15:27:33.148] [D] Loaded built-in bot: Questing
+[15:27:33.148] [D] Found bot type: Bots.Grind.LevelBot
+[15:27:33.148] [N] New bot added: Grind
+[15:27:33.148] [D] Loaded built-in bot: Grind
+[15:27:33.148] [D] Found bot type: Bots.Gatherbuddy.GatherbuddyBot
+[15:27:33.149] [N] New bot added: GatherBuddy
+[15:27:33.149] [D] Loaded built-in bot: GatherBuddy
+[15:27:33.149] [D] Found bot type: Bots.DungeonBuddy.DungeonBuddy
+[15:27:33.150] [N] New bot added: DungeonBuddy
+[15:27:33.150] [D] Loaded built-in bot: DungeonBuddy
+[15:27:33.150] [D] Found bot type: Bots.BGBuddy.BGBuddy
+[15:27:33.150] [N] New bot added: BGBuddy
+[15:27:33.150] [D] Loaded built-in bot: BGBuddy
+[15:27:33.150] [D] Built-in bot loading complete. 6 bots loaded.
+[15:27:33.154] [N] Loading bots from: D:\World of Warcraft 3.3.5a\CB\Bots
+[15:27:33.163] [N] Found 123 source files
+[15:27:33.170] [N] Found 0 dll files
+[15:27:33.170] [N] Compiling: CombatBot.cs
+[15:27:33.346] [N] Compiled successfully: CombatBot.cs
+[15:27:33.346] [N] Compiling directory: Auto Angler 2/ (23 files)
+[15:27:33.618] [N] Compiled successfully: Auto Angler 2/
+[15:27:33.618] [N] Compiling directory: LazyRaider/ (4 files)
+[15:27:33.888] [N] Compiled successfully: LazyRaider/
+[15:27:33.888] [N] Compiling directory: ProfessionBuddy/ (52 files)
+[15:27:34.724] [N] Compiled successfully: ProfessionBuddy/
+[15:27:34.724] [N] Compiling directory: Templar/ (27 files)
+[15:27:35.130] [N] Compiled successfully: Templar/
+[15:27:35.130] [N] Compiling directory: Tyrael/ (5 files)
+[15:27:35.312] [N] Compiled successfully: Tyrael/
+[15:27:35.312] [N] Compiling directory: WholesomeAutoQuest-master/ (11 files)
+[15:27:35.949] [N] Compiled successfully: WholesomeAutoQuest-master/
+[15:27:35.949] [N] ClassCollection contains 7 compiled bots
+[15:27:35.949] [N] Adding bot: Combat Bot
+[15:27:35.949] [N] New bot added: Combat Bot
+[15:27:35.949] [N] Adding bot: AutoAngler
+[15:27:35.949] [N] New bot added: AutoAngler
+[15:27:35.949] [N] Adding bot: LazyRaider
+[15:27:35.949] [N] New bot added: LazyRaider
+[15:27:35.949] [N] Adding bot: ProfessionBuddy
+[15:27:35.949] [N] New bot added: ProfessionBuddy
+[15:27:35.949] [N] Adding bot: Templar
+[15:27:35.949] [N] New bot added: Templar
+[15:27:35.949] [N] Adding bot: Tyrael
+[15:27:35.949] [N] New bot added: Tyrael
+[15:27:35.949] [N] Adding bot: Wholesome Auto Quest
+[15:27:35.949] [N] New bot added: Wholesome Auto Quest
+[15:27:35.949] [N] Bot loading complete. 13 bots loaded.
+[15:27:35.949] [N] Initializing Plugins...
+[15:27:37.619] [N] [DeathStallRecovery] Enabled. The bot will stop if corpse recovery makes no movement progress for 60 seconds.
+[15:27:38.529] [D] Rarekiller: Loading config file: D:\World of Warcraft 3.3.5a\CB\Plugins\RareKiller\config\Rarekiller.config
+[15:27:38.530] [D] Root element is missing.
+[15:27:38.530] [N] Rarekiller: Continuing with Default Config Values
+[15:27:38.531] [D] Rarekiller: Loading config file: D:\World of Warcraft 3.3.5a\CB\Plugins\RareKiller\config\Rarekiller.config
+[15:27:38.531] [D] Root element is missing.
+[15:27:38.531] [N] Rarekiller: Continuing with Default Config Values
+[15:27:38.531] [N] Rare Mob Killer - Version 3.3 Loaded.
+[15:27:38.531] [N] Rarekiller Part Tamer: I'm no Hunter. Deactivate the Tamer Part
+[15:27:39.130] [N] [VendorRecovery] Enabled. Failed Sell/Repair vendors will be skipped after 35 seconds at the NPC.
+[15:27:39.311] [N] Plugin loading complete. 16 plugins loaded.
+[15:27:39.311] [N] Plugins refreshed successfully.
+[15:27:39.313] [N] Changing current bot to: Wholesome Auto Quest
+[15:27:41.666] [D] [Settings] Saved all settings
+[15:27:41.667] [N] Starting the bot.
+[15:27:41.668] [N] Currently Using BotBase : Wholesome Auto Quest
+[15:27:41.670] [N] Character is a level 30 BloodElf Paladin
+[15:27:41.672] [N] Current zone is Thousand Needles
+[15:27:41.673] [D] Loading profile from D:\World of Warcraft 3.3.5a\CB\Bots\WholesomeAutoQuest\WHOLESOME_AUTOQUESTER.xml
+[15:27:41.887] [D] [QuestBehaviorHelper] Initialized with 264 assembly references
+[15:27:41.887] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\UseTransport.cs
+[15:27:41.900] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\UseTransport.cs
+[15:27:41.920] [D] [CompileBatch] Compiling 4 entries...
+[15:27:42.081] [D] [CompileBatch] Compiled successfully.
+[15:27:42.084] [N] Profile loaded: WholesomeAQ - Thousand Needles
+[15:27:42.085] [D] Selected sub-profile: WholesomeAQ - Thousand Needles (L1-80)
+[15:27:42.305] [D] [WholesomeAQ] Navigation fingerprint unknown: provider or mesh-root stamp unavailable.
+[15:27:42.415] [N] [VendorSafety] Skipping NPC 10380 for this session: Wholesome saved vendor blacklist. Trying the next suitable NPC.
+[15:27:42.417] [N] [VendorSafety] Skipping NPC 3392 for this session: Wholesome saved vendor blacklist. Trying the next suitable NPC.
+[15:27:42.419] [N] [VendorSafety] Skipping NPC 5848 for this session: Wholesome saved vendor blacklist. Trying the next suitable NPC.
+[15:27:42.420] [N] [Wholesome Auto Quest] Loaded 3 blacklisted vendors
+[15:27:42.912] [D] [QuestLog] Loaded 79 completed quests from Lua fallback
+[15:27:42.947] [D] [ProfileBatchManager] Batch reset for new profile session.
+[15:27:42.947] [N] [Wholesome Auto Quest] Class Paladin → PullDistance set to 24
+[15:27:42.949] [N] [Wholesome Auto Quest] Initial scheduler build.
+[15:27:43.694] [N] Loaded 0 global blackspots
+[15:27:43.719] [D] Loading profile from D:\World of Warcraft 3.3.5a\CB\Bots\WholesomeAutoQuest\WHOLESOME_AUTOQUESTER.xml
+[15:27:43.719] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\UseTransport.cs
+[15:27:43.720] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\UseTransport.cs
+[15:27:43.721] [D] [CompileBatch] Compiling 4 entries...
+[15:27:43.844] [D] [CompileBatch] Compiled successfully.
+[15:27:43.844] [N] Profile loaded: WholesomeAQ - Thousand Needles
+[15:27:43.880] [D] Selected sub-profile: WholesomeAQ - Thousand Needles (L1-80)
+[15:27:43.880] [N] [Wholesome Auto Quest] Profile refreshed - Selected 1 quest work candidate(s). selected quest=4841;stage=Objective;state=Eligible. quest-log-full=25/25; deferred new pickups while retaining accepted quest work. excluded quest=1062;stage=TurnIn;npc=4049;reason=outside-scan-radius;retry=context-change excluded quest=1069;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=1087;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=1093;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T07:58:16.6056183Z;state=HalfOpen. excluded quest=4841;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=4921;stage=Objective;scope=QuestStage;retry=2026-09-11T07:58:16.6056183Z;state=HalfOpen. excluded quest=5147;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T07:58:16.6056183Z;state=HalfOpen. excluded quest=6382;stage=TurnIn;npc=12696;reason=outside-scan-radius;retry=context-change excluded quest=6393;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T07:58:16.6056183Z;state=HalfOpen. excluded quest=6441;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T07:58:16.6056183Z;state=HalfOpen. excluded quest=6461;stage=TurnIn;npc=12816;reason=outside-scan-radius;retry=context-change excluded quest=6543;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T07:58:16.6056183Z;state=HalfOpen. excluded quest=846;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T12:58:16.6033605Z;state=Quarantined. excluded quest=846;stage=Objective;scope=Objective;objective=1;retry=2026-09-11T12:58:16.6078334Z;state=Quarantined. excluded quest=846;stage=Objective;scope=Objective;objective=2;retry=2026-09-11T12:58:16.6079054Z;state=Quarantined. excluded quest=8487;stage=TurnIn;scope=QuestStage;retry=2026-09-11T07:58:16.6056183Z;state=HalfOpen. excluded quest=867;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T12:58:16.6097297Z;state=Quarantined. excluded quest=868;stage=TurnIn;npc=3428;reason=outside-scan-radius;retry=context-change excluded quest=879;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T12:58:16.6158450Z;state=Quarantined. excluded quest=879;stage=Objective;scope=Objective;objective=1;retry=2026-09-11T12:58:16.6158941Z;state=Quarantined. excluded quest=879;stage=Objective;scope=Objective;objective=2;retry=2026-09-11T07:58:16.6056183Z;state=HalfOpen. excluded quest=8889;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=8889;stage=Objective;objective=1;reason=outside-scan-radius;retry=context-change. excluded quest=8889;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;scope=QuestStage;retry=2026-09-11T07:58:16.6056183Z;state=HalfOpen. excluded quest=893;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T07:58:16.6056183Z;state=HalfOpen. excluded quest=893;stage=Objective;scope=Objective;objective=1;retry=2026-09-11T07:58:16.6056183Z;state=HalfOpen. excluded quest=893;stage=Objective;scope=Objective;objective=2;retry=2026-09-11T07:58:16.6056183Z;state=HalfOpen. excluded quest=896;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T07:58:16.6056183Z;state=HalfOpen. excluded quest=9067;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T07:58:16.6056183Z;state=HalfOpen. excluded quest=9157;stage=TurnIn;scope=QuestStage;retry=2026-09-11T07:58:16.6056183Z;state=HalfOpen. excluded quest=9431;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T07:58:16.6056183Z;state=HalfOpen.
+[15:27:43.883] [N] [Wholesome Auto Quest] Started with quest data loaded.
+[15:27:43.940] [N] [SpellDb] Loaded 49816 spells from Spells.bin
+[15:27:43.980] [D] Setting CVars: autoSelfCast=1, autoLootDefault=1
+[15:27:44.047] [D] Cleared POI
+[15:27:44.055] [D] Refresh() called. LastCount=0, CurrentCount=34
+[15:27:44.055] [N] Building spell book
+[15:27:44.057] [D] Found 34 spells from LocalPlayer.KnownSpells
+[15:27:44.057] [N] Adding Arcane Affinity
+[15:27:44.059] [N] Adding Arcane Torrent
+[15:27:44.060] [N] Adding Auto Attack
+[15:27:44.062] [N] Adding Block
+[15:27:44.063] [N] Adding Dodge
+[15:27:44.065] [N] Adding Magic Resistance
+[15:27:44.066] [N] Adding Parry
+[15:27:44.067] [N] Adding Blessing of Wisdom
+[15:27:44.069] [N] Adding Concentration Aura
+[15:27:44.070] [N] Adding Consecration
+[15:27:44.072] [N] Adding Exorcism
+[15:27:44.073] [N] Adding Flash of Light
+[15:27:44.075] [N] Adding Holy Light
+[15:27:44.076] [N] Adding Lay on Hands
+[15:27:44.078] [N] Adding Purify
+[15:27:44.080] [N] Adding Seal of Righteousness
+[15:27:44.081] [N] Adding Sense Undead
+[15:27:44.083] [N] Adding Turn Evil
+[15:27:44.084] [N] Adding Blessing of Kings
+[15:27:44.086] [N] Adding Devotion Aura
+[15:27:44.087] [N] Adding Divine Protection
+[15:27:44.089] [N] Adding Hammer of Justice
+[15:27:44.090] [N] Adding Hand of Freedom
+[15:27:44.092] [N] Adding Hand of Protection
+[15:27:44.094] [N] Adding Hand of Reckoning
+[15:27:44.095] [N] Adding Hand of Salvation
+[15:27:44.097] [N] Adding Righteous Defense
+[15:27:44.105] [N] Adding Righteous Fury
+[15:27:44.106] [N] Adding Seal of Justice
+[15:27:44.108] [N] Adding Blessing of Might
+[15:27:44.110] [N] Adding Judgement of Light
+[15:27:44.111] [N] Adding Judgement of Wisdom
+[15:27:44.113] [N] Adding Retribution Aura
+[15:27:44.114] [N] Adding Seal of Command
+[15:27:44.116] [N] Spell book built
+[15:27:44.118] [D] [SpellManager] Initialize — subscribed to BotEvents.OnBotStart
+[15:27:44.396] [D] [WeightSet] Selected weight set: Paladin-Retribution
+[15:27:45.306] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=1073ms
+[15:27:45.337] [D] [Talented] SelectMajorTalentTree called but not needed in WotLK 3.3.5a
+[15:27:45.359] [D] [Pulse] Slow plugin: name=Talented elapsed=53ms
+[15:27:45.402] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=42ms
+[15:27:45.409] [D] [Pulse] Slow shared pulse: total=1256ms movement=0 objects=0 lua=0 info=0 loot=18 targeting=56 events=1 plugins=1171 routine=6
+[15:27:46.210] [N] [Singular] Casting Blessing of Kings on Myself
+[15:27:46.211] [D] Spell_C::CastSpell(20217, 0, 0x6000000007EAB80, 0)
+[15:27:46.255] [D] [Pulse] Slow bot root: 249ms bot=Wholesome Auto Quest poi=None combat=False
+[15:27:47.228] [D] [Blackspot] Area cost initialized: area 17 = 60x
+[15:27:47.241] [D] [Nav] Loaded 9 mesh tiles for one path query
+[15:27:47.246] [D] [If] Condition is true, executing If body
+[15:27:47.269] [D] [If] Condition is true, executing If body
+[15:27:47.306] [N] [QuestBehavior] Compiling: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\UseTransport.cs
+[15:27:47.467] [N] [QuestBehavior] Successfully compiled: UseTransport.cs
+[15:27:47.478] [N] [Code] Executing custom behavior: UseTransport
+[15:27:47.480] [D] Goal: UseTransport: Freewind Post lower level
+[15:27:47.481] [D] Activity: Moving to wait location
+[15:27:47.873] [N] Mounting: 35022
+[15:27:50.005] [D] [MeshNavigator] Skipped 2 path nodes
+[15:27:50.053] [D] [Pulse] Slow bot root: 3087ms bot=Wholesome Auto Quest poi=None combat=False
+[15:27:50.957] [D] [MeshNavigator] Skipped 2 path nodes
+[15:27:50.992] [D] [Pulse] Slow bot root: 204ms bot=Wholesome Auto Quest poi=None combat=False
+[15:27:51.901] [D] [Pulse] Slow bot root: 201ms bot=Wholesome Auto Quest poi=None combat=False
+[15:27:52.801] [D] [Pulse] Slow bot root: 199ms bot=Wholesome Auto Quest poi=None combat=False
+[15:27:53.743] [D] [Pulse] Slow bot root: 235ms bot=Wholesome Auto Quest poi=None combat=False
+[15:27:54.681] [D] [Pulse] Slow bot root: 233ms bot=Wholesome Auto Quest poi=None combat=False
+[15:27:56.021] [D] [Pulse] Slow bot root: 202ms bot=Wholesome Auto Quest poi=None combat=False
+[15:27:56.157] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=60ms
+[15:27:57.000] [D] [Pulse] Slow bot root: 237ms bot=Wholesome Auto Quest poi=None combat=False
+[15:27:57.907] [D] [Pulse] Slow bot root: 202ms bot=Wholesome Auto Quest poi=None combat=False
+[15:27:58.813] [D] [Pulse] Slow bot root: 202ms bot=Wholesome Auto Quest poi=None combat=False
+[15:27:59.715] [D] [Pulse] Slow bot root: 199ms bot=Wholesome Auto Quest poi=None combat=False
+[15:28:00.628] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[15:28:01.503] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[15:28:02.410] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[15:28:03.283] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[15:28:04.151] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[15:28:05.023] [D] [Pulse] Slow bot root: 170ms bot=Wholesome Auto Quest poi=None combat=False
+[15:28:05.495] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=434ms
+[15:28:05.564] [D] [Pulse] Slow shared pulse: total=540ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=35 events=0 plugins=503 routine=0
+[15:28:06.333] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[15:28:06.432] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=60ms
+[15:28:07.203] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[15:28:08.109] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[15:28:09.020] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[15:28:09.896] [D] [Pulse] Slow bot root: 170ms bot=Wholesome Auto Quest poi=None combat=False
+[15:28:10.771] [D] [Pulse] Slow bot root: 170ms bot=Wholesome Auto Quest poi=None combat=False
+[15:28:11.640] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[15:28:12.511] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[15:28:13.419] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[15:28:14.290] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[15:28:15.160] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[15:28:15.633] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=434ms
+[15:28:15.699] [D] [Pulse] Slow shared pulse: total=539ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=37 events=0 plugins=500 routine=0
+[15:28:16.470] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[15:28:16.569] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=60ms
+[15:28:17.344] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[15:28:18.212] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[15:28:19.118] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[15:28:19.988] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[15:28:20.862] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[15:28:21.730] [D] [Pulse] Slow bot root: 165ms bot=Wholesome Auto Quest poi=None combat=False
+[15:28:22.596] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[15:28:23.467] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[15:28:24.372] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[15:28:25.238] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[15:28:25.708] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=428ms
+[15:28:25.773] [D] [Pulse] Slow shared pulse: total=534ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=39 events=0 plugins=493 routine=0
+[15:28:26.547] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[15:28:26.648] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=60ms
+[15:28:27.420] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[15:28:28.289] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[15:28:29.158] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[15:28:30.060] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[15:28:30.966] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[15:28:31.837] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[15:28:32.008] [N] [Wholesome Auto Quest] Bot running but not moving for 30s
+[15:28:32.783] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[15:28:33.717] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[15:28:34.656] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[15:28:35.629] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[15:28:36.096] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=427ms
+[15:28:36.161] [D] [Pulse] Slow shared pulse: total=531ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=38 events=0 plugins=491 routine=0
+[15:28:36.997] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[15:28:37.098] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=61ms
+[15:28:37.931] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[15:28:38.872] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[15:28:39.807] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[15:28:40.782] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[15:28:41.724] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[15:28:42.659] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[15:28:43.596] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[15:28:44.530] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[15:28:45.470] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[15:28:46.443] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[15:28:46.912] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=430ms
+[15:28:46.977] [D] [Pulse] Slow shared pulse: total=533ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=36 events=0 plugins=496 routine=0
+[15:28:47.812] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[15:28:47.913] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=61ms
+[15:28:48.756] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[15:28:49.690] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[15:28:50.628] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[15:28:51.601] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[15:28:52.535] [D] [Pulse] Slow bot root: 165ms bot=Wholesome Auto Quest poi=None combat=False
+[15:28:53.472] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[15:28:54.412] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[15:28:55.381] [D] [Pulse] Slow bot root: 195ms bot=Wholesome Auto Quest poi=None combat=False
+[15:28:56.324] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[15:28:57.294] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[15:28:57.765] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=433ms
+[15:28:57.831] [D] [Pulse] Slow shared pulse: total=537ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=35 events=0 plugins=499 routine=0
+[15:28:58.669] [D] [Pulse] Slow bot root: 165ms bot=Wholesome Auto Quest poi=None combat=False
+[15:28:58.769] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=61ms
+[15:28:59.612] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[15:29:00.551] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[15:29:01.526] [D] [Pulse] Slow bot root: 170ms bot=Wholesome Auto Quest poi=None combat=False
+[15:29:02.493] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[15:29:03.424] [D] [Pulse] Slow bot root: 165ms bot=Wholesome Auto Quest poi=None combat=False
+[15:29:04.358] [D] [Pulse] Slow bot root: 165ms bot=Wholesome Auto Quest poi=None combat=False
+[15:29:05.297] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[15:29:06.232] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[15:29:07.167] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[15:29:08.144] [D] [Pulse] Slow bot root: 170ms bot=Wholesome Auto Quest poi=None combat=False
+[15:29:08.613] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=431ms
+[15:29:08.679] [D] [Pulse] Slow shared pulse: total=535ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=35 events=0 plugins=497 routine=0
+[15:29:09.516] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[15:29:09.616] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=59ms
+[15:29:10.451] [D] [Pulse] Slow bot root: 165ms bot=Wholesome Auto Quest poi=None combat=False
+[15:29:11.390] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[15:29:12.329] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[15:29:13.314] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[15:29:14.251] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[15:29:15.191] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[15:29:16.128] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[15:29:17.062] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[15:29:18.002] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[15:29:18.977] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[15:29:19.446] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=432ms
+[15:29:19.510] [D] [Pulse] Slow shared pulse: total=533ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=35 events=0 plugins=496 routine=0
+[15:29:20.354] [D] [Pulse] Slow bot root: 170ms bot=Wholesome Auto Quest poi=None combat=False
+[15:29:20.452] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=59ms
+[15:29:21.287] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[15:29:22.222] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[15:29:23.158] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[15:29:24.133] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[15:29:25.071] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[15:29:26.013] [D] [Pulse] Slow bot root: 170ms bot=Wholesome Auto Quest poi=None combat=False
+[15:29:26.949] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[15:29:27.891] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[15:29:28.827] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[15:29:29.797] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[15:29:30.266] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=431ms
+[15:29:30.331] [D] [Pulse] Slow shared pulse: total=533ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=36 events=0 plugins=495 routine=0
+[15:29:31.167] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[15:29:31.267] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=60ms
+[15:29:32.137] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[15:29:33.075] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[15:29:34.008] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[15:29:34.984] [D] [Pulse] Slow bot root: 170ms bot=Wholesome Auto Quest poi=None combat=False
+[15:29:35.926] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[15:29:36.865] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[15:29:37.797] [D] [Pulse] Slow bot root: 165ms bot=Wholesome Auto Quest poi=None combat=False
+[15:29:38.738] [D] [Pulse] Slow bot root: 170ms bot=Wholesome Auto Quest poi=None combat=False
+[15:29:39.674] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[15:29:40.661] [D] [Pulse] Slow bot root: 186ms bot=Wholesome Auto Quest poi=None combat=False
+[15:29:41.131] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=431ms
+[15:29:41.198] [D] [Pulse] Slow shared pulse: total=537ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=36 events=0 plugins=498 routine=0
+[15:29:42.036] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[15:29:42.135] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=59ms
+[15:29:42.968] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[15:29:43.903] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[15:29:44.838] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[15:29:45.812] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[15:29:46.746] [D] [Pulse] Slow bot root: 165ms bot=Wholesome Auto Quest poi=None combat=False
+[15:29:47.684] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[15:29:48.614] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[15:29:49.551] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[15:29:50.494] [D] [Pulse] Slow bot root: 170ms bot=Wholesome Auto Quest poi=None combat=False
+[15:29:51.461] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[15:29:51.933] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=434ms
+[15:29:51.998] [D] [Pulse] Slow shared pulse: total=537ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=35 events=0 plugins=499 routine=0
+[15:29:52.840] [D] [Pulse] Slow bot root: 170ms bot=Wholesome Auto Quest poi=None combat=False
+[15:29:52.937] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=56ms
+[15:29:53.774] [D] [Pulse] Slow bot root: 165ms bot=Wholesome Auto Quest poi=None combat=False
+[15:29:54.709] [D] [Pulse] Slow bot root: 170ms bot=Wholesome Auto Quest poi=None combat=False
+[15:29:55.650] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[15:29:56.621] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[15:29:57.556] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[15:29:58.493] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[15:29:59.433] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[15:30:00.365] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[15:30:01.308] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[15:30:02.314] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[15:30:02.788] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=432ms
+[15:30:02.853] [D] [Pulse] Slow shared pulse: total=538ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=39 events=0 plugins=497 routine=0
+[15:30:03.690] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[15:30:03.791] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=62ms
+[15:30:04.626] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[15:30:05.568] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[15:30:06.501] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[15:30:07.472] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[15:30:08.409] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[15:30:09.346] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[15:30:10.286] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[15:30:11.222] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[15:30:12.156] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[15:30:13.130] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[15:30:13.601] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=433ms
+[15:30:13.666] [D] [Pulse] Slow shared pulse: total=536ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=36 events=0 plugins=498 routine=0
+[15:30:14.503] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[15:30:14.604] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=61ms
+[15:30:15.439] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[15:30:16.374] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[15:30:17.310] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[15:30:18.283] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[15:30:19.218] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[15:30:20.158] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[15:30:21.095] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[15:30:22.035] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[15:30:22.967] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[15:30:23.935] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[15:30:24.404] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=431ms
+[15:30:24.470] [D] [Pulse] Slow shared pulse: total=534ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=36 events=0 plugins=496 routine=0
+[15:30:25.313] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[15:30:25.413] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=59ms
+[15:30:26.248] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[15:30:27.186] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[15:30:28.125] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[15:30:29.094] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[15:30:30.034] [D] [Pulse] Slow bot root: 170ms bot=Wholesome Auto Quest poi=None combat=False
+[15:30:30.974] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[15:30:31.913] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[15:30:32.887] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[15:30:33.829] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[15:30:34.800] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[15:30:35.271] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=432ms
+[15:30:35.336] [D] [Pulse] Slow shared pulse: total=536ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=37 events=0 plugins=497 routine=0
+[15:30:36.177] [D] [Pulse] Slow bot root: 171ms bot=Wholesome Auto Quest poi=None combat=False
+[15:30:36.277] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=58ms
+[15:30:37.113] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[15:30:38.051] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[15:30:38.993] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[15:30:39.958] [D] [Pulse] Slow bot root: 165ms bot=Wholesome Auto Quest poi=None combat=False
+[15:30:40.896] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[15:30:41.837] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[15:30:42.775] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[15:30:43.711] [D] [Pulse] Slow bot root: 165ms bot=Wholesome Auto Quest poi=None combat=False
+[15:30:44.650] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[15:30:45.621] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[15:30:46.094] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=434ms
+[15:30:46.159] [D] [Pulse] Slow shared pulse: total=537ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=36 events=0 plugins=498 routine=0
+[15:30:46.998] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[15:30:47.098] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=59ms
+[15:30:47.976] [D] [Pulse] Slow bot root: 202ms bot=Wholesome Auto Quest poi=None combat=False
+[15:30:48.915] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[15:30:49.852] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[15:30:50.827] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[15:30:51.763] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[15:30:52.701] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[15:30:53.642] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[15:30:54.580] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[15:30:55.517] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[15:30:56.483] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[15:30:56.950] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=429ms
+[15:30:57.014] [D] [Pulse] Slow shared pulse: total=530ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=35 events=0 plugins=492 routine=0
+[15:30:57.858] [D] [Pulse] Slow bot root: 170ms bot=Wholesome Auto Quest poi=None combat=False
+[15:30:57.958] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=59ms
+[15:30:58.795] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[15:30:59.732] [D] [Pulse] Slow bot root: 170ms bot=Wholesome Auto Quest poi=None combat=False
+[15:31:00.668] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[15:31:01.641] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[15:31:02.578] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[15:31:03.547] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[15:31:04.479] [D] [Pulse] Slow bot root: 164ms bot=Wholesome Auto Quest poi=None combat=False
+[15:31:05.416] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[15:31:06.352] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[15:31:07.327] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[15:31:07.797] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=432ms
+[15:31:07.861] [D] [Pulse] Slow shared pulse: total=533ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=35 events=0 plugins=496 routine=0
+[15:31:08.699] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[15:31:08.798] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=59ms
+[15:31:09.631] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[15:31:10.596] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[15:31:11.532] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[15:31:12.503] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[15:31:13.439] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[15:31:14.377] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[15:31:15.318] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[15:31:16.262] [D] [Pulse] Slow bot root: 171ms bot=Wholesome Auto Quest poi=None combat=False
+[15:31:17.196] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[15:31:18.163] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[15:31:18.634] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=432ms
+[15:31:18.699] [D] [Pulse] Slow shared pulse: total=536ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=36 events=0 plugins=498 routine=0
+[15:31:19.539] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[15:31:19.640] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=59ms
+[15:31:20.474] [D] [Pulse] Slow bot root: 165ms bot=Wholesome Auto Quest poi=None combat=False
+[15:31:21.414] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[15:31:22.355] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[15:31:23.325] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[15:31:24.263] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[15:31:25.202] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[15:31:26.140] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[15:31:27.077] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[15:31:28.014] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[15:31:28.983] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[15:31:29.454] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=433ms
+[15:31:29.521] [D] [Pulse] Slow shared pulse: total=537ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=35 events=0 plugins=499 routine=0
+[15:31:30.356] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[15:31:30.457] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=62ms
+[15:31:31.297] [D] [Pulse] Slow bot root: 170ms bot=Wholesome Auto Quest poi=None combat=False
+[15:31:49.390] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=93ms
+[15:31:55.657] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=25ms
+[15:31:57.698] [D] [Pulse] Slow bot root: 165ms bot=Wholesome Auto Quest poi=None combat=False
+[15:31:58.636] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[15:31:59.608] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[15:32:00.078] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=431ms
+[15:32:00.142] [D] [Pulse] Slow shared pulse: total=534ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=36 events=0 plugins=495 routine=0
+[15:32:00.982] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[15:32:01.916] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[15:32:03.911] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[15:32:04.892] [D] [Pulse] Slow bot root: 178ms bot=Wholesome Auto Quest poi=None combat=False
+[15:32:05.833] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[15:32:05.934] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=61ms
+[15:32:06.770] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[15:32:07.707] [D] [Pulse] Slow bot root: 163ms bot=Wholesome Auto Quest poi=None combat=False
+[15:32:08.543] [N] Bot stopping! Reason: Main window is closing
+[15:32:08.545] [D] Exception in GetReturnValues: Thread was interrupted from a waiting state.
+[15:32:08.612] [D] [Pulse] Slow bot root: 133ms bot=Wholesome Auto Quest poi=None combat=False
+[15:32:08.652] [D] Cleared POI
+[15:32:08.654] [D] Worker thread exited cleanly
+[15:32:08.815] [D] [Settings] Saved all settings

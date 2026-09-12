@@ -1,0 +1,1158 @@
+[17:43:08.432] [N] CopilotBuddy v1.6.6 started. Original HonorBuddy by Apoc, raphus, highvoltz, bobby53, xanathos, chinajade. Ported to WotLK 3.3.5a by Likon69.
+[17:43:08.800] [N] Searching for WoW process...
+[17:43:08.928] [N] Please wait a few seconds while CopilotBuddy initializes.
+[17:43:08.929] [D] Using WoW with process ID 37940
+[17:43:08.929] [D] Platform: x86
+[17:43:08.929] [D] Executable Path: D:\World of Warcraft 3.3.5a\CB\
+[17:43:08.960] [D] [ObjectManager] WoW build 12340 detected - OK
+[17:43:08.962] [D] [ObjectManager] D3DDevicePtr = 0x00C5DF88
+[17:43:08.962] [D] [ObjectManager] devicePtrAddr = 0x0532CBD0
+[17:43:08.962] [D] [ObjectManager] device = 0x0A4FC900 (at 0x0533054C)
+[17:43:08.962] [D] [ObjectManager] vtablePtr = 0x0A4FF85C
+[17:43:08.962] [D] [ObjectManager] endSceneAddr = 0x643348F0 (at 0x0A4FF904)
+[17:43:08.962] [D] [ObjectManager] D3D: Device=0x0A4FC900, VTable=0x0A4FF85C, EndScene=0x643348F0
+[17:43:08.962] [D] [ObjectManager] Creating ExecutorRand...
+[17:43:09.005] [D] [ObjectManager] ExecutorRand created, IsInitialized = True
+[17:43:09.005] [D] [ObjectManager] EndScene hook succeeded
+[17:43:09.010] [D] [ObjectManager] Initialized successfully
+[17:43:09.013] [N] Attached to WoW with ID 37940
+[17:43:09.015] [N] Character is a level 30 BloodElf Paladin
+[17:43:09.016] [N] Current zone is Thousand Needles
+[17:43:09.034] [D] [Settings] Loaded settings for character: Jeof
+[17:43:09.034] [N] Initializing Combat Routines...
+[17:43:09.037] [D] Looking for routines in: D:\World of Warcraft 3.3.5a\CB\Routines
+[17:43:09.038] [D] Compiling Singular wotlk
+[17:43:11.501] [N] Loaded routine: Singular Wotlk for class Paladin
+[17:43:11.501] [N] Loaded 1 combat routine(s)
+[17:43:11.508] [N] Chose Singular Wotlk as your combat class.
+[17:43:11.508] [N] Confirmed Paladin as your class.
+[17:43:11.509] [N] [Singular] Starting Singular v2.0.0.0
+[17:43:11.509] [N] [Singular] Determining talent spec.
+[17:43:12.108] [D] [Singular-DEBUG] [Talents] Best Tree: 18
+[17:43:12.108] [N] [Singular] Current spec is  Retribution Paladin
+[17:43:12.118] [D] [WoWDb] Loaded 237 DBC tables
+[17:43:12.118] [D] [WoWDb]   Key=235 (0x000000EB) Rows=1893
+[17:43:12.118] [D] [WoWDb]   Key=236 (0x000000EC) Rows=7655
+[17:43:12.118] [D] [WoWDb]   Key=237 (0x000000ED) Rows=86
+[17:43:12.118] [D] [WoWDb]   Key=238 (0x000000EE) Rows=506
+[17:43:12.118] [D] [WoWDb]   Key=239 (0x000000EF) Rows=291
+[17:43:12.118] [D] [WoWDb] Lock DBC lookup: FOUND (rows=388)
+[17:43:12.118] [D] [WoWDb] ClientDb.Lock enum value = 356 (0x00000164)
+[17:43:12.120] [D] [Singular-DEBUG] Creating Combat behavior.
+[17:43:12.121] [N] [Singular] Building method list
+[17:43:12.128] [N] [Singular] Added 459 methods
+[17:43:12.130] [D] [Singular-DEBUG] CreateRetributionPaladinNormalPullAndCombat is a match!
+[17:43:12.130] [N] [Singular]  Using CreateRetributionPaladinNormalPullAndCombat for Retribution Paladin - Combat (Priority: 0)
+[17:43:12.142] [D] [Singular-DEBUG] Creating Pull behavior.
+[17:43:12.143] [D] [Singular-DEBUG] CreateRetributionPaladinNormalPullAndCombat is a match!
+[17:43:12.143] [N] [Singular]  Using CreateRetributionPaladinNormalPullAndCombat for Retribution Paladin - Pull (Priority: 0)
+[17:43:12.144] [D] [Singular-DEBUG] Creating Rest behavior.
+[17:43:12.145] [D] [Singular-DEBUG] CreateRetributionPaladinRest is a match!
+[17:43:12.145] [N] [Singular]  Using CreateRetributionPaladinRest for Retribution Paladin - Rest (Priority: 0)
+[17:43:12.147] [D] [Singular-DEBUG] Creating CombatBuffs behavior.
+[17:43:12.149] [D] [Singular-DEBUG] Creating Heal behavior.
+[17:43:12.150] [D] [Singular-DEBUG] CreateRetributionPaladinHeal is a match!
+[17:43:12.150] [N] [Singular]  Using CreateRetributionPaladinHeal for Retribution Paladin - Heal (Priority: 0)
+[17:43:12.150] [D] [Singular-DEBUG] CreateRetributionPaladinNormalPullAndCombat is a match!
+[17:43:12.150] [N] [Singular]  Using CreateRetributionPaladinNormalPullAndCombat for Retribution Paladin - Heal (Priority: 0)
+[17:43:12.151] [D] [Singular-DEBUG] Creating PullBuffs behavior.
+[17:43:12.153] [D] [Singular-DEBUG] Creating PreCombatBuffs behavior.
+[17:43:12.154] [D] [Singular-DEBUG] CreatePaladinPreCombatBuffs is a match!
+[17:43:12.154] [N] [Singular]  Using CreatePaladinPreCombatBuffs for Retribution Paladin - PreCombatBuffs (Priority: 0)
+[17:43:12.158] [N] [Singular] Behaviors created!
+[17:43:12.171] [D] [Singular-DEBUG] Attached combat log
+[17:43:12.171] [D] Routine initialized successfully
+[17:43:12.172] [D] Loading built-in bots from assembly: CopilotBuddy
+[17:43:12.196] [D] Found bot type: PartyBot.DiscoBot
+[17:43:12.196] [N] New bot added: Party Bot
+[17:43:12.196] [D] Loaded built-in bot: Party Bot
+[17:43:12.196] [D] Found bot type: Bots.Quest.QuestBot
+[17:43:12.196] [N] New bot added: Questing
+[17:43:12.196] [D] Loaded built-in bot: Questing
+[17:43:12.196] [D] Found bot type: Bots.Grind.LevelBot
+[17:43:12.196] [N] New bot added: Grind
+[17:43:12.196] [D] Loaded built-in bot: Grind
+[17:43:12.196] [D] Found bot type: Bots.Gatherbuddy.GatherbuddyBot
+[17:43:12.196] [N] New bot added: GatherBuddy
+[17:43:12.196] [D] Loaded built-in bot: GatherBuddy
+[17:43:12.196] [D] Found bot type: Bots.DungeonBuddy.DungeonBuddy
+[17:43:12.197] [N] New bot added: DungeonBuddy
+[17:43:12.197] [D] Loaded built-in bot: DungeonBuddy
+[17:43:12.197] [D] Found bot type: Bots.BGBuddy.BGBuddy
+[17:43:12.197] [N] New bot added: BGBuddy
+[17:43:12.197] [D] Loaded built-in bot: BGBuddy
+[17:43:12.197] [D] Built-in bot loading complete. 6 bots loaded.
+[17:43:12.201] [N] Loading bots from: D:\World of Warcraft 3.3.5a\CB\Bots
+[17:43:12.208] [N] Found 123 source files
+[17:43:12.215] [N] Found 0 dll files
+[17:43:12.215] [N] Compiling: CombatBot.cs
+[17:43:12.389] [N] Compiled successfully: CombatBot.cs
+[17:43:12.389] [N] Compiling directory: Auto Angler 2/ (23 files)
+[17:43:12.676] [N] Compiled successfully: Auto Angler 2/
+[17:43:12.676] [N] Compiling directory: LazyRaider/ (4 files)
+[17:43:12.923] [N] Compiled successfully: LazyRaider/
+[17:43:12.923] [N] Compiling directory: ProfessionBuddy/ (52 files)
+[17:43:13.763] [N] Compiled successfully: ProfessionBuddy/
+[17:43:13.764] [N] Compiling directory: Templar/ (27 files)
+[17:43:14.188] [N] Compiled successfully: Templar/
+[17:43:14.188] [N] Compiling directory: Tyrael/ (5 files)
+[17:43:14.369] [N] Compiled successfully: Tyrael/
+[17:43:14.369] [N] Compiling directory: WholesomeAutoQuest-master/ (11 files)
+[17:43:14.970] [N] Compiled successfully: WholesomeAutoQuest-master/
+[17:43:14.970] [N] ClassCollection contains 7 compiled bots
+[17:43:14.970] [N] Adding bot: Combat Bot
+[17:43:14.970] [N] New bot added: Combat Bot
+[17:43:14.970] [N] Adding bot: AutoAngler
+[17:43:14.970] [N] New bot added: AutoAngler
+[17:43:14.970] [N] Adding bot: LazyRaider
+[17:43:14.970] [N] New bot added: LazyRaider
+[17:43:14.970] [N] Adding bot: ProfessionBuddy
+[17:43:14.970] [N] New bot added: ProfessionBuddy
+[17:43:14.971] [N] Adding bot: Templar
+[17:43:14.971] [N] New bot added: Templar
+[17:43:14.971] [N] Adding bot: Tyrael
+[17:43:14.971] [N] New bot added: Tyrael
+[17:43:14.971] [N] Adding bot: Wholesome Auto Quest
+[17:43:14.971] [N] New bot added: Wholesome Auto Quest
+[17:43:14.971] [N] Bot loading complete. 13 bots loaded.
+[17:43:14.971] [N] Initializing Plugins...
+[17:43:16.657] [N] [DeathStallRecovery] Enabled. The bot will stop if corpse recovery makes no movement progress for 60 seconds.
+[17:43:17.649] [D] Rarekiller: Loading config file: D:\World of Warcraft 3.3.5a\CB\Plugins\RareKiller\config\Rarekiller.config
+[17:43:17.649] [D] Root element is missing.
+[17:43:17.649] [N] Rarekiller: Continuing with Default Config Values
+[17:43:17.650] [D] Rarekiller: Loading config file: D:\World of Warcraft 3.3.5a\CB\Plugins\RareKiller\config\Rarekiller.config
+[17:43:17.651] [D] Root element is missing.
+[17:43:17.651] [N] Rarekiller: Continuing with Default Config Values
+[17:43:17.651] [N] Rare Mob Killer - Version 3.3 Loaded.
+[17:43:17.651] [N] Rarekiller Part Tamer: I'm no Hunter. Deactivate the Tamer Part
+[17:43:18.221] [N] [VendorRecovery] Enabled. Failed Sell/Repair vendors will be skipped after 35 seconds at the NPC.
+[17:43:18.379] [N] Plugin loading complete. 16 plugins loaded.
+[17:43:18.379] [N] Plugins refreshed successfully.
+[17:43:18.383] [N] Changing current bot to: Combat Bot
+[17:43:27.788] [N] Changing current bot to: Wholesome Auto Quest
+[17:43:29.354] [D] [Settings] Saved all settings
+[17:43:29.354] [N] Starting the bot.
+[17:43:29.354] [N] Currently Using BotBase : Wholesome Auto Quest
+[17:43:29.355] [N] Character is a level 30 BloodElf Paladin
+[17:43:29.355] [N] Current zone is Thousand Needles
+[17:43:29.357] [D] Loading profile from D:\World of Warcraft 3.3.5a\CB\Bots\WholesomeAutoQuest\WHOLESOME_AUTOQUESTER.xml
+[17:43:29.495] [D] [QuestBehaviorHelper] Initialized with 264 assembly references
+[17:43:29.495] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\UseTransport.cs
+[17:43:29.508] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\UseTransport.cs
+[17:43:29.508] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\UseTransport.cs
+[17:43:29.529] [D] [CompileBatch] Compiling 6 entries...
+[17:43:29.673] [D] [CompileBatch] Compiled successfully.
+[17:43:29.677] [N] Profile loaded: WholesomeAQ - Thousand Needles
+[17:43:29.678] [D] Selected sub-profile: WholesomeAQ - Thousand Needles (L1-80)
+[17:43:29.896] [D] [WholesomeAQ] Navigation fingerprint unknown: provider or mesh-root stamp unavailable.
+[17:43:30.012] [N] [VendorSafety] Skipping NPC 10380 for this session: Wholesome saved vendor blacklist. Trying the next suitable NPC.
+[17:43:30.013] [N] [VendorSafety] Skipping NPC 3392 for this session: Wholesome saved vendor blacklist. Trying the next suitable NPC.
+[17:43:30.013] [N] [VendorSafety] Skipping NPC 5848 for this session: Wholesome saved vendor blacklist. Trying the next suitable NPC.
+[17:43:30.014] [N] [Wholesome Auto Quest] Loaded 3 blacklisted vendors
+[17:43:30.446] [D] [QuestLog] Loaded 79 completed quests from Lua fallback
+[17:43:30.480] [D] [ProfileBatchManager] Batch reset for new profile session.
+[17:43:30.481] [N] [Wholesome Auto Quest] Class Paladin → PullDistance set to 24
+[17:43:30.481] [N] [Wholesome Auto Quest] Initial scheduler build.
+[17:43:31.217] [N] Loaded 0 global blackspots
+[17:43:31.248] [D] Loading profile from D:\World of Warcraft 3.3.5a\CB\Bots\WholesomeAutoQuest\WHOLESOME_AUTOQUESTER.xml
+[17:43:31.254] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\UseTransport.cs
+[17:43:31.254] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\UseTransport.cs
+[17:43:31.255] [D] [CompileBatch] Compiling 4 entries...
+[17:43:31.370] [D] [CompileBatch] Compiled successfully.
+[17:43:31.370] [N] Profile loaded: WholesomeAQ - Thousand Needles
+[17:43:31.380] [D] Selected sub-profile: WholesomeAQ - Thousand Needles (L1-80)
+[17:43:31.380] [N] [Wholesome Auto Quest] Profile refreshed - Selected 1 quest work candidate(s). selected quest=4841;stage=Objective;state=Eligible. quest-log-full=25/25; deferred new pickups while retaining accepted quest work. excluded quest=1062;stage=TurnIn;npc=4049;reason=outside-scan-radius;retry=context-change excluded quest=1069;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=1087;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=1093;stage=Objective;objective=0;reason=no-known-hotspots;retry=context-change. excluded quest=4841;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=4921;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=5147;stage=Objective;objective=0;reason=no-known-hotspots;retry=context-change. excluded quest=6382;stage=TurnIn;npc=12696;reason=outside-scan-radius;retry=context-change excluded quest=6393;stage=Objective;objective=0;reason=no-known-hotspots;retry=context-change. excluded quest=6441;stage=Objective;objective=0;reason=no-known-hotspots;retry=context-change. excluded quest=6461;stage=TurnIn;npc=12816;reason=outside-scan-radius;retry=context-change excluded quest=6543;stage=Objective;objective=0;reason=no-known-hotspots;retry=context-change. excluded quest=846;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T12:58:16.6033605Z;state=Quarantined. excluded quest=846;stage=Objective;scope=Objective;objective=1;retry=2026-09-11T12:58:16.6078334Z;state=Quarantined. excluded quest=846;stage=Objective;scope=Objective;objective=2;retry=2026-09-11T12:58:16.6079054Z;state=Quarantined. excluded quest=8487;stage=TurnIn;npc=15402;reason=outside-scan-radius;retry=context-change excluded quest=867;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T12:58:16.6097297Z;state=Quarantined. excluded quest=868;stage=TurnIn;npc=3428;reason=outside-scan-radius;retry=context-change excluded quest=879;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T12:58:16.6158450Z;state=Quarantined. excluded quest=879;stage=Objective;scope=Objective;objective=1;retry=2026-09-11T12:58:16.6158941Z;state=Quarantined. excluded quest=879;stage=Objective;scope=Objective;objective=2;retry=2026-09-11T14:28:36.5856962Z;state=Quarantined. excluded quest=8889;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=8889;stage=Objective;objective=1;reason=outside-scan-radius;retry=context-change. excluded quest=8889;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=893;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T14:28:36.5895113Z;state=Quarantined. excluded quest=893;stage=Objective;scope=Objective;objective=1;retry=2026-09-11T14:28:36.5895743Z;state=Quarantined. excluded quest=893;stage=Objective;scope=Objective;objective=2;retry=2026-09-11T14:28:36.5896148Z;state=Quarantined. excluded quest=896;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T14:28:36.5896844Z;state=Quarantined. excluded quest=9067;stage=Objective;objective=0;reason=no-known-hotspots;retry=context-change. excluded quest=9157;stage=TurnIn;scope=QuestStage;retry=2026-09-11T10:43:31.1922933Z;state=HalfOpen. excluded quest=9431;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T10:43:31.1922933Z;state=HalfOpen.
+[17:43:31.391] [N] [Wholesome Auto Quest] Started with quest data loaded.
+[17:43:31.431] [N] [SpellDb] Loaded 49816 spells from Spells.bin
+[17:43:31.483] [D] Setting CVars: autoSelfCast=1, autoLootDefault=1
+[17:43:31.549] [D] Cleared POI
+[17:43:31.557] [D] Refresh() called. LastCount=0, CurrentCount=34
+[17:43:31.557] [N] Building spell book
+[17:43:31.558] [D] Found 34 spells from LocalPlayer.KnownSpells
+[17:43:31.558] [N] Adding Arcane Affinity
+[17:43:31.558] [N] Adding Arcane Torrent
+[17:43:31.559] [N] Adding Auto Attack
+[17:43:31.559] [N] Adding Block
+[17:43:31.560] [N] Adding Dodge
+[17:43:31.560] [N] Adding Magic Resistance
+[17:43:31.560] [N] Adding Parry
+[17:43:31.561] [N] Adding Blessing of Wisdom
+[17:43:31.561] [N] Adding Concentration Aura
+[17:43:31.562] [N] Adding Consecration
+[17:43:31.562] [N] Adding Exorcism
+[17:43:31.562] [N] Adding Flash of Light
+[17:43:31.563] [N] Adding Holy Light
+[17:43:31.563] [N] Adding Lay on Hands
+[17:43:31.564] [N] Adding Purify
+[17:43:31.564] [N] Adding Seal of Righteousness
+[17:43:31.564] [N] Adding Sense Undead
+[17:43:31.565] [N] Adding Turn Evil
+[17:43:31.565] [N] Adding Blessing of Kings
+[17:43:31.566] [N] Adding Devotion Aura
+[17:43:31.566] [N] Adding Divine Protection
+[17:43:31.566] [N] Adding Hammer of Justice
+[17:43:31.567] [N] Adding Hand of Freedom
+[17:43:31.567] [N] Adding Hand of Protection
+[17:43:31.568] [N] Adding Hand of Reckoning
+[17:43:31.574] [N] Adding Hand of Salvation
+[17:43:31.575] [N] Adding Righteous Defense
+[17:43:31.575] [N] Adding Righteous Fury
+[17:43:31.576] [N] Adding Seal of Justice
+[17:43:31.576] [N] Adding Blessing of Might
+[17:43:31.576] [N] Adding Judgement of Light
+[17:43:31.577] [N] Adding Judgement of Wisdom
+[17:43:31.577] [N] Adding Retribution Aura
+[17:43:31.578] [N] Adding Seal of Command
+[17:43:31.578] [N] Spell book built
+[17:43:31.579] [D] [SpellManager] Initialize — subscribed to BotEvents.OnBotStart
+[17:43:31.861] [D] [WeightSet] Selected weight set: Paladin-Retribution
+[17:43:32.829] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=1131ms
+[17:43:32.861] [D] [Talented] SelectMajorTalentTree called but not needed in WotLK 3.3.5a
+[17:43:32.882] [D] [Pulse] Slow plugin: name=Talented elapsed=52ms
+[17:43:32.928] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=45ms
+[17:43:32.934] [D] [Pulse] Slow shared pulse: total=1314ms movement=0 objects=1 lua=1 info=0 loot=16 targeting=54 events=1 plugins=1232 routine=5
+[17:43:33.733] [N] [Singular] Casting Blessing of Kings on Myself
+[17:43:33.734] [D] Spell_C::CastSpell(20217, 0, 0x6000000007EAB80, 0)
+[17:43:33.767] [D] [Pulse] Slow bot root: 234ms bot=Wholesome Auto Quest poi=None combat=False
+[17:43:34.732] [D] [Blackspot] Area cost initialized: area 17 = 60x
+[17:43:34.738] [D] [Nav] Loaded 9 mesh tiles for one path query
+[17:43:34.742] [D] [If] Condition is true, executing If body
+[17:43:34.771] [D] [If] Condition is true, executing If body
+[17:43:34.809] [N] [QuestBehavior] Compiling: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\UseTransport.cs
+[17:43:34.958] [N] [QuestBehavior] Successfully compiled: UseTransport.cs
+[17:43:34.969] [N] [Code] Executing custom behavior: UseTransport
+[17:43:34.971] [D] Goal: UseTransport: Freewind Post lower level
+[17:43:34.972] [D] Activity: Moving to wait location
+[17:43:34.978] [D] [UseTransport-v217(debug) @line 29]: Approaching wait location: player=(-5455.06, -2451.68, 89.43); wait2D=79.57; waitZ=0.36; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 89.03); anchor=(-5382.50, -2489.42, -40.53); startDistance=0.00; type=Transport; state=1; animation=100; observedAway=False; dockStableMs=0; onTransport=False; usedTransport=False
+[17:43:35.378] [N] Mounting: 35022
+[17:43:37.590] [D] [Pulse] Slow bot root: 3121ms bot=Wholesome Auto Quest poi=None combat=False
+[17:43:38.462] [D] [UseTransport-v217(debug) @line 29]: Approaching wait location: player=(-5445.83, -2452.82, 89.43); wait2D=70.85; waitZ=0.37; pathPrecision=1.68; transport=live=(-5382.50, -2489.42, 84.04); anchor=(-5382.50, -2489.42, -40.53); startDistance=4.98; type=Transport; state=1; animation=100; observedAway=False; dockStableMs=0; onTransport=False; usedTransport=False
+[17:43:38.560] [D] [Pulse] Slow bot root: 232ms bot=Wholesome Auto Quest poi=None combat=False
+[17:43:39.561] [D] [Pulse] Slow bot root: 267ms bot=Wholesome Auto Quest poi=None combat=False
+[17:43:40.533] [D] [Pulse] Slow bot root: 266ms bot=Wholesome Auto Quest poi=None combat=False
+[17:43:41.505] [D] [Pulse] Slow bot root: 268ms bot=Wholesome Auto Quest poi=None combat=False
+[17:43:42.343] [D] [UseTransport-v217(debug) @line 29]: Approaching wait location: player=(-5423.23, -2460.76, 88.68); wait2D=47.36; waitZ=0.39; pathPrecision=1.68; transport=live=(-5382.50, -2489.42, 16.06); anchor=(-5382.50, -2489.42, -40.53); startDistance=72.97; type=Transport; state=1; animation=100; observedAway=False; dockStableMs=0; onTransport=False; usedTransport=False
+[17:43:42.478] [D] [Pulse] Slow bot root: 270ms bot=Wholesome Auto Quest poi=None combat=False
+[17:43:42.980] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=463ms
+[17:43:43.045] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=64ms
+[17:43:43.046] [D] [Pulse] Slow shared pulse: total=567ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=36 events=0 plugins=529 routine=0
+[17:43:43.920] [D] [Pulse] Slow bot root: 269ms bot=Wholesome Auto Quest poi=None combat=False
+[17:43:44.824] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:43:45.660] [D] [UseTransport-v217(debug) @line 29]: Approaching wait location: player=(-5405.62, -2469.56, 88.94); wait2D=27.90; waitZ=0.13; pathPrecision=1.68; transport=live=(-5382.50, -2489.42, -36.61); anchor=(-5382.50, -2489.42, -40.53); startDistance=125.63; type=Transport; state=1; animation=100; observedAway=False; dockStableMs=0; onTransport=False; usedTransport=False
+[17:43:45.758] [D] [Pulse] Slow bot root: 235ms bot=Wholesome Auto Quest poi=None combat=False
+[17:43:46.696] [D] [Pulse] Slow bot root: 234ms bot=Wholesome Auto Quest poi=None combat=False
+[17:43:47.602] [D] [Pulse] Slow bot root: 201ms bot=Wholesome Auto Quest poi=None combat=False
+[17:43:48.438] [D] Activity: Waiting for transport
+[17:43:48.438] [D] [Pulse] Slow bot root: 135ms bot=Wholesome Auto Quest poi=None combat=False
+[17:43:49.275] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5385.55, -2484.70, 88.94); wait2D=2.80; waitZ=0.13; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -40.53); anchor=(-5382.50, -2489.42, -40.53); startDistance=129.55; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=False
+[17:43:49.275] [D] [Pulse] Slow bot root: 135ms bot=Wholesome Auto Quest poi=None combat=False
+[17:43:50.148] [D] [Pulse] Slow bot root: 136ms bot=Wholesome Auto Quest poi=None combat=False
+[17:43:50.983] [D] [Pulse] Slow bot root: 135ms bot=Wholesome Auto Quest poi=None combat=False
+[17:43:51.823] [D] [Pulse] Slow bot root: 136ms bot=Wholesome Auto Quest poi=None combat=False
+[17:43:52.662] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5385.55, -2484.70, 88.94); wait2D=2.80; waitZ=0.13; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -39.64); anchor=(-5382.50, -2489.42, -40.53); startDistance=128.67; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=False
+[17:43:52.662] [D] [Pulse] Slow bot root: 136ms bot=Wholesome Auto Quest poi=None combat=False
+[17:43:53.167] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=467ms
+[17:43:53.232] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=63ms
+[17:43:53.232] [D] [Pulse] Slow shared pulse: total=569ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=35 events=0 plugins=532 routine=0
+[17:43:53.967] [D] [Pulse] Slow bot root: 136ms bot=Wholesome Auto Quest poi=None combat=False
+[17:43:54.808] [D] [Pulse] Slow bot root: 135ms bot=Wholesome Auto Quest poi=None combat=False
+[17:43:55.678] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5385.55, -2484.70, 88.94); wait2D=2.80; waitZ=0.13; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 0.72); anchor=(-5382.50, -2489.42, -40.53); startDistance=88.30; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=False
+[17:43:55.678] [D] [Pulse] Slow bot root: 136ms bot=Wholesome Auto Quest poi=None combat=False
+[17:43:56.518] [D] [Pulse] Slow bot root: 135ms bot=Wholesome Auto Quest poi=None combat=False
+[17:43:57.354] [D] [Pulse] Slow bot root: 135ms bot=Wholesome Auto Quest poi=None combat=False
+[17:43:58.194] [D] [Pulse] Slow bot root: 135ms bot=Wholesome Auto Quest poi=None combat=False
+[17:43:59.035] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5385.55, -2484.70, 88.94); wait2D=2.80; waitZ=0.13; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 61.71); anchor=(-5382.50, -2489.42, -40.53); startDistance=27.32; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=False
+[17:43:59.035] [D] [Pulse] Slow bot root: 135ms bot=Wholesome Auto Quest poi=None combat=False
+[17:43:59.877] [D] [Pulse] Slow bot root: 136ms bot=Wholesome Auto Quest poi=None combat=False
+[17:44:00.749] [D] [Pulse] Slow bot root: 135ms bot=Wholesome Auto Quest poi=None combat=False
+[17:44:01.588] [D] [Pulse] Slow bot root: 136ms bot=Wholesome Auto Quest poi=None combat=False
+[17:44:02.432] [D] Activity: Confirming transport is docked
+[17:44:02.432] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5385.55, -2484.70, 88.94); wait2D=2.80; waitZ=0.13; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 89.03); anchor=(-5382.50, -2489.42, -40.53); startDistance=0.00; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=False
+[17:44:02.432] [D] [Pulse] Slow bot root: 137ms bot=Wholesome Auto Quest poi=None combat=False
+[17:44:03.284] [D] Activity: Moving inside transport
+[17:44:03.302] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:44:03.809] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=466ms
+[17:44:03.874] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=64ms
+[17:44:03.874] [D] [Pulse] Slow shared pulse: total=572ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=37 events=0 plugins=532 routine=0
+[17:44:04.614] [D] Activity: Waiting for the end location
+[17:44:04.615] [D] [Pulse] Slow bot root: 136ms bot=Wholesome Auto Quest poi=None combat=False
+[17:44:05.451] [D] Activity: Waiting for transport to reach the end location
+[17:44:05.451] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5382.90, -2488.78, 89.07); wait2D=2.18; waitZ=0.00; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 89.03); anchor=(-5382.50, -2489.42, -40.53); startDistance=0.00; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=True; usedTransport=True
+[17:44:05.451] [D] [Pulse] Slow bot root: 137ms bot=Wholesome Auto Quest poi=None combat=False
+[17:44:06.330] [D] [Pulse] Slow bot root: 137ms bot=Wholesome Auto Quest poi=None combat=False
+[17:44:07.165] [D] [Pulse] Slow bot root: 134ms bot=Wholesome Auto Quest poi=None combat=False
+[17:44:08.005] [D] [Pulse] Slow bot root: 136ms bot=Wholesome Auto Quest poi=None combat=False
+[17:44:08.840] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5382.90, -2488.78, 81.06); wait2D=2.18; waitZ=8.00; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 81.02); anchor=(-5382.50, -2489.42, -40.53); startDistance=8.00; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=True; usedTransport=True
+[17:44:08.840] [D] [Pulse] Slow bot root: 133ms bot=Wholesome Auto Quest poi=None combat=False
+[17:44:09.713] [D] [Pulse] Slow bot root: 134ms bot=Wholesome Auto Quest poi=None combat=False
+[17:44:10.551] [D] [Pulse] Slow bot root: 133ms bot=Wholesome Auto Quest poi=None combat=False
+[17:44:11.419] [D] [Pulse] Slow bot root: 134ms bot=Wholesome Auto Quest poi=None combat=False
+[17:44:12.255] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5382.90, -2488.78, 17.71); wait2D=2.18; waitZ=71.35; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 17.67); anchor=(-5382.50, -2489.42, -40.53); startDistance=71.35; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=True; usedTransport=True
+[17:44:12.255] [D] [Pulse] Slow bot root: 134ms bot=Wholesome Auto Quest poi=None combat=False
+[17:44:13.093] [D] [Pulse] Slow bot root: 134ms bot=Wholesome Auto Quest poi=None combat=False
+[17:44:13.933] [D] [Pulse] Slow bot root: 134ms bot=Wholesome Auto Quest poi=None combat=False
+[17:44:14.437] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=466ms
+[17:44:14.501] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=62ms
+[17:44:14.501] [D] [Pulse] Slow shared pulse: total=568ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=35 events=0 plugins=531 routine=0
+[17:44:15.239] [D] [Pulse] Slow bot root: 135ms bot=Wholesome Auto Quest poi=None combat=False
+[17:44:16.074] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5382.90, -2488.78, -38.73); wait2D=2.18; waitZ=127.80; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -38.77); anchor=(-5382.50, -2489.42, -40.53); startDistance=127.80; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=True; usedTransport=True
+[17:44:16.075] [D] [Pulse] Slow bot root: 134ms bot=Wholesome Auto Quest poi=None combat=False
+[17:44:16.950] [D] Activity: Confirming transport is stopped at the end location
+[17:44:16.950] [D] [Pulse] Slow bot root: 136ms bot=Wholesome Auto Quest poi=None combat=False
+[17:44:17.788] [D] [Pulse] Slow bot root: 133ms bot=Wholesome Auto Quest poi=None combat=False
+[17:44:18.628] [D] Activity: Moving out of transport
+[17:44:18.659] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:44:19.534] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.94, -2489.24, -40.56); wait2D=8.09; waitZ=129.63; pathPrecision=1.68; transport=live=(-5382.50, -2489.42, -40.53); anchor=(-5382.50, -2489.42, -40.53); startDistance=129.55; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=True; usedTransport=True
+[17:44:19.534] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:44:20.412] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:44:21.285] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:44:22.160] [D] Activity: Confirming transport is stopped at the end location
+[17:44:22.160] [D] [Pulse] Slow bot root: 135ms bot=Wholesome Auto Quest poi=None combat=False
+[17:44:22.995] [D] Activity: Waiting for transport to reach the end location
+[17:44:22.995] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -38.92); wait2D=8.57; waitZ=127.99; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -38.89); anchor=(-5382.50, -2489.42, -40.53); startDistance=127.91; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=True; usedTransport=True
+[17:44:22.995] [D] [Pulse] Slow bot root: 136ms bot=Wholesome Auto Quest poi=None combat=False
+[17:44:23.855] [D] [Pulse] Slow bot root: 159ms bot=Wholesome Auto Quest poi=None combat=False
+[17:44:24.668] [D] [Pulse] Slow bot root: 133ms bot=Wholesome Auto Quest poi=None combat=False
+[17:44:25.169] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=465ms
+[17:44:25.234] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=63ms
+[17:44:25.234] [D] [Pulse] Slow shared pulse: total=565ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=33 events=0 plugins=529 routine=0
+[17:44:25.970] [D] [Pulse] Slow bot root: 134ms bot=Wholesome Auto Quest poi=None combat=False
+[17:44:26.807] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, 21.19); wait2D=8.57; waitZ=67.87; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 21.23); anchor=(-5382.50, -2489.42, -40.53); startDistance=67.80; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=True; usedTransport=True
+[17:44:26.807] [D] [Pulse] Slow bot root: 135ms bot=Wholesome Auto Quest poi=None combat=False
+[17:44:27.675] [D] [Pulse] Slow bot root: 134ms bot=Wholesome Auto Quest poi=None combat=False
+[17:44:28.513] [D] [Pulse] Slow bot root: 134ms bot=Wholesome Auto Quest poi=None combat=False
+[17:44:29.354] [D] [Pulse] Slow bot root: 135ms bot=Wholesome Auto Quest poi=None combat=False
+[17:44:29.940] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, 78.09); wait2D=8.57; waitZ=10.97; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 78.13); anchor=(-5382.50, -2489.42, -40.53); startDistance=10.90; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=True; usedTransport=True
+[17:44:32.976] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, 88.99); wait2D=8.57; waitZ=0.07; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 89.03); anchor=(-5382.50, -2489.42, -40.53); startDistance=0.00; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=True; usedTransport=True
+[17:44:36.041] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, 88.99); wait2D=8.57; waitZ=0.07; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 89.03); anchor=(-5382.50, -2489.42, -40.53); startDistance=0.00; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=True; usedTransport=True
+[17:44:39.179] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, 74.70); wait2D=8.57; waitZ=14.36; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 74.74); anchor=(-5382.50, -2489.42, -40.53); startDistance=14.29; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=True; usedTransport=True
+[17:44:42.293] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, 16.95); wait2D=8.57; waitZ=72.11; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 16.99); anchor=(-5382.50, -2489.42, -40.53); startDistance=72.04; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=True; usedTransport=True
+[17:44:45.078] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=83ms
+[17:44:45.381] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -34.85); wait2D=8.57; waitZ=123.92; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -34.82); anchor=(-5382.50, -2489.42, -40.53); startDistance=123.84; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=True; usedTransport=True
+[17:44:46.777] [D] Activity: Confirming transport is stopped at the end location
+[17:44:48.168] [D] [Nav] Loaded 391 mesh tiles for one path query
+[17:44:48.168] [D] [Nav] Slow path generation: 1087ms map=1 from=(-5375.43, -2489.24, -40.56) to=(-5407.12, -2419.61, 89.63) status=Success
+[17:44:48.172] [N] Blacklisting Nyse for 5 minutes because we can't navigate to it.
+[17:44:48.172] [D] Blacklisting F1300010DD0B9A95 for 00:05:00
+[17:44:48.178] [D] Activity: Waiting for a safe transport exit
+[17:44:48.178] [D] [Pulse] Slow bot root: 1123ms bot=Wholesome Auto Quest poi=None combat=False
+[17:44:48.512] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -40.53); anchor=(-5382.50, -2489.42, -40.53); startDistance=129.55; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:44:51.688] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -40.53); anchor=(-5382.50, -2489.42, -40.53); startDistance=129.55; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:44:54.702] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -16.97); anchor=(-5382.50, -2489.42, -40.53); startDistance=105.99; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:44:55.167] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=106ms
+[17:44:57.809] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 39.46); anchor=(-5382.50, -2489.42, -40.53); startDistance=49.57; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:45:00.750] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:45:00.851] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=62ms
+[17:45:01.626] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 88.26); anchor=(-5382.50, -2489.42, -40.53); startDistance=0.76; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:45:01.626] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:45:02.496] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:45:03.369] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:45:04.277] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:45:05.149] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 89.03); anchor=(-5382.50, -2489.42, -40.53); startDistance=0.00; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:45:05.149] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:45:05.658] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=471ms
+[17:45:05.723] [D] [Pulse] Slow shared pulse: total=573ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=35 events=0 plugins=535 routine=0
+[17:45:06.496] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:45:07.371] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:45:08.240] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 85.47); anchor=(-5382.50, -2489.42, -40.53); startDistance=3.55; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:45:08.240] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[17:45:09.110] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:45:10.051] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:45:10.923] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:45:11.022] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=61ms
+[17:45:11.794] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 26.22); anchor=(-5382.50, -2489.42, -40.53); startDistance=62.80; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:45:11.794] [D] [Pulse] Slow bot root: 170ms bot=Wholesome Auto Quest poi=None combat=False
+[17:45:12.668] [D] [Pulse] Slow bot root: 170ms bot=Wholesome Auto Quest poi=None combat=False
+[17:45:13.543] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:45:14.416] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[17:45:15.329] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -34.49); anchor=(-5382.50, -2489.42, -40.53); startDistance=123.52; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:45:15.329] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:45:15.832] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=466ms
+[17:45:15.896] [D] [Pulse] Slow shared pulse: total=567ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=35 events=0 plugins=530 routine=0
+[17:45:16.668] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:45:17.567] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:45:17.736] [N] [Wholesome Auto Quest] Bot running but not moving for 31s
+[17:45:18.505] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -40.53); anchor=(-5382.50, -2489.42, -40.53); startDistance=129.55; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:45:18.505] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:45:19.444] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:45:20.416] [D] [Pulse] Slow bot root: 165ms bot=Wholesome Auto Quest poi=None combat=False
+[17:45:21.354] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:45:21.454] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=61ms
+[17:45:22.293] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -40.13); anchor=(-5382.50, -2489.42, -40.53); startDistance=129.16; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:45:22.293] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[17:45:23.231] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[17:45:24.172] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:45:25.113] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:45:26.085] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 8.15); anchor=(-5382.50, -2489.42, -40.53); startDistance=80.88; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:45:26.085] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:45:26.587] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=465ms
+[17:45:26.651] [D] [Pulse] Slow shared pulse: total=566ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=34 events=0 plugins=529 routine=0
+[17:45:27.489] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:45:28.427] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:45:29.369] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 67.77); anchor=(-5382.50, -2489.42, -40.53); startDistance=21.25; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:45:29.369] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[17:45:30.306] [D] [Pulse] Slow bot root: 165ms bot=Wholesome Auto Quest poi=None combat=False
+[17:45:31.273] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:45:32.215] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:45:32.315] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=61ms
+[17:45:33.155] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 89.03); anchor=(-5382.50, -2489.42, -40.53); startDistance=0.00; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:45:33.155] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:45:34.088] [D] [Pulse] Slow bot root: 165ms bot=Wholesome Auto Quest poi=None combat=False
+[17:45:35.030] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:45:35.963] [D] [Pulse] Slow bot root: 165ms bot=Wholesome Auto Quest poi=None combat=False
+[17:45:36.935] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 89.03); anchor=(-5382.50, -2489.42, -40.53); startDistance=0.00; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:45:36.935] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:45:37.438] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=464ms
+[17:45:37.503] [D] [Pulse] Slow shared pulse: total=567ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=35 events=0 plugins=529 routine=0
+[17:45:38.340] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:45:39.279] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:45:40.255] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 54.76); anchor=(-5382.50, -2489.42, -40.53); startDistance=34.26; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:45:40.255] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:45:41.193] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:45:42.170] [D] [Pulse] Slow bot root: 170ms bot=Wholesome Auto Quest poi=None combat=False
+[17:45:43.111] [D] [Pulse] Slow bot root: 170ms bot=Wholesome Auto Quest poi=None combat=False
+[17:45:43.210] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=61ms
+[17:45:44.048] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -15.56); anchor=(-5382.50, -2489.42, -40.53); startDistance=104.59; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:45:44.048] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:45:44.986] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:45:45.923] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:45:46.865] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:45:47.842] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -40.53); anchor=(-5382.50, -2489.42, -40.53); startDistance=129.55; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:45:47.842] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[17:45:48.346] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=467ms
+[17:45:48.411] [D] [Pulse] Slow shared pulse: total=569ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=34 events=0 plugins=532 routine=0
+[17:45:49.246] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:45:50.180] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:45:51.121] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -40.53); anchor=(-5382.50, -2489.42, -40.53); startDistance=129.55; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:45:51.121] [D] [Pulse] Slow bot root: 165ms bot=Wholesome Auto Quest poi=None combat=False
+[17:45:52.057] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:45:53.033] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:45:53.970] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:45:54.070] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=61ms
+[17:45:54.902] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -13.35); anchor=(-5382.50, -2489.42, -40.53); startDistance=102.38; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:45:54.902] [D] [Pulse] Slow bot root: 165ms bot=Wholesome Auto Quest poi=None combat=False
+[17:45:55.839] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:45:56.783] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:45:57.725] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:45:58.698] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 55.59); anchor=(-5382.50, -2489.42, -40.53); startDistance=33.44; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:45:58.698] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[17:45:59.235] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=469ms
+[17:45:59.301] [D] [Pulse] Slow shared pulse: total=602ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=65 events=0 plugins=534 routine=0
+[17:46:00.142] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[17:46:01.079] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:46:02.020] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 89.03); anchor=(-5382.50, -2489.42, -40.53); startDistance=0.00; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:46:02.020] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[17:46:02.952] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:46:03.924] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:46:04.863] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:46:04.963] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=62ms
+[17:46:05.801] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 89.03); anchor=(-5382.50, -2489.42, -40.53); startDistance=0.00; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:46:05.801] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:46:06.736] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:46:07.675] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:46:08.613] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:46:09.587] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 67.17); anchor=(-5382.50, -2489.42, -40.53); startDistance=21.86; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:46:09.587] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:46:10.090] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=465ms
+[17:46:10.160] [D] [Pulse] Slow shared pulse: total=573ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=35 events=0 plugins=535 routine=0
+[17:46:11.028] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:46:11.965] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[17:46:12.903] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 5.65); anchor=(-5382.50, -2489.42, -40.53); startDistance=83.37; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:46:12.903] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:46:13.843] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:46:14.812] [D] [Pulse] Slow bot root: 165ms bot=Wholesome Auto Quest poi=None combat=False
+[17:46:15.746] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:46:15.848] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=62ms
+[17:46:16.684] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -39.93); anchor=(-5382.50, -2489.42, -40.53); startDistance=128.96; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:46:16.684] [D] [Pulse] Slow bot root: 165ms bot=Wholesome Auto Quest poi=None combat=False
+[17:46:17.618] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:46:18.552] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:46:19.491] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:46:20.463] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -40.53); anchor=(-5382.50, -2489.42, -40.53); startDistance=129.55; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:46:20.463] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:46:20.966] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=465ms
+[17:46:21.030] [D] [Pulse] Slow shared pulse: total=567ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=36 events=0 plugins=528 routine=0
+[17:46:21.866] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:46:22.803] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:46:23.743] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -34.40); anchor=(-5382.50, -2489.42, -40.53); startDistance=123.43; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:46:23.743] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:46:24.676] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:46:25.647] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:46:26.581] [D] [Pulse] Slow bot root: 165ms bot=Wholesome Auto Quest poi=None combat=False
+[17:46:26.681] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=62ms
+[17:46:27.521] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 34.21); anchor=(-5382.50, -2489.42, -40.53); startDistance=54.81; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:46:27.521] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:46:28.460] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:46:29.397] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:46:30.330] [D] [Pulse] Slow bot root: 164ms bot=Wholesome Auto Quest poi=None combat=False
+[17:46:31.294] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 87.58); anchor=(-5382.50, -2489.42, -40.53); startDistance=1.44; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:46:31.294] [D] [Pulse] Slow bot root: 165ms bot=Wholesome Auto Quest poi=None combat=False
+[17:46:31.801] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=469ms
+[17:46:31.866] [D] [Pulse] Slow shared pulse: total=572ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=35 events=0 plugins=535 routine=0
+[17:46:32.703] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:46:33.642] [D] [Pulse] Slow bot root: 164ms bot=Wholesome Auto Quest poi=None combat=False
+[17:46:34.577] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 89.03); anchor=(-5382.50, -2489.42, -40.53); startDistance=0.00; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:46:34.577] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:46:35.547] [D] [Pulse] Slow bot root: 198ms bot=Wholesome Auto Quest poi=None combat=False
+[17:46:36.521] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[17:46:37.460] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:46:37.561] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=61ms
+[17:46:38.402] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 84.41); anchor=(-5382.50, -2489.42, -40.53); startDistance=4.61; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:46:38.402] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:46:39.338] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:46:40.282] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:46:41.260] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[17:46:42.233] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 18.08); anchor=(-5382.50, -2489.42, -40.53); startDistance=70.95; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:46:42.233] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:46:42.739] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=468ms
+[17:46:42.804] [D] [Pulse] Slow shared pulse: total=570ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=35 events=0 plugins=532 routine=0
+[17:46:43.644] [D] [Pulse] Slow bot root: 170ms bot=Wholesome Auto Quest poi=None combat=False
+[17:46:44.577] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:46:45.515] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -35.68); anchor=(-5382.50, -2489.42, -40.53); startDistance=124.70; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:46:45.515] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[17:46:46.455] [D] [Pulse] Slow bot root: 163ms bot=Wholesome Auto Quest poi=None combat=False
+[17:46:47.427] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:46:48.363] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:46:48.464] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=62ms
+[17:46:49.301] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -40.53); anchor=(-5382.50, -2489.42, -40.53); startDistance=129.55; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:46:49.301] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[17:46:50.239] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:46:51.173] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:46:52.115] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[17:46:53.089] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -38.45); anchor=(-5382.50, -2489.42, -40.53); startDistance=127.48; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:46:53.090] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:46:53.592] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=464ms
+[17:46:53.656] [D] [Pulse] Slow shared pulse: total=566ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=36 events=0 plugins=528 routine=0
+[17:46:54.494] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:46:55.435] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:46:56.369] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 13.29); anchor=(-5382.50, -2489.42, -40.53); startDistance=75.74; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:46:56.369] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:46:57.306] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:46:58.280] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[17:46:59.221] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[17:46:59.322] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=61ms
+[17:47:00.163] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 81.41); anchor=(-5382.50, -2489.42, -40.53); startDistance=7.61; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:47:00.163] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:47:01.105] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:47:02.039] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:47:02.975] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:47:03.945] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 89.03); anchor=(-5382.50, -2489.42, -40.53); startDistance=0.00; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:47:03.945] [D] [Pulse] Slow bot root: 165ms bot=Wholesome Auto Quest poi=None combat=False
+[17:47:04.449] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=466ms
+[17:47:04.514] [D] [Pulse] Slow shared pulse: total=568ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=34 events=0 plugins=531 routine=0
+[17:47:05.350] [D] [Pulse] Slow bot root: 165ms bot=Wholesome Auto Quest poi=None combat=False
+[17:47:06.286] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:47:07.225] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 88.58); anchor=(-5382.50, -2489.42, -40.53); startDistance=0.44; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:47:07.225] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[17:47:08.161] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:47:09.128] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:47:10.069] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:47:10.169] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=61ms
+[17:47:11.008] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 40.82); anchor=(-5382.50, -2489.42, -40.53); startDistance=48.21; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:47:11.008] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:47:11.978] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:47:12.914] [D] [Pulse] Slow bot root: 165ms bot=Wholesome Auto Quest poi=None combat=False
+[17:47:13.853] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:47:14.823] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -29.93); anchor=(-5382.50, -2489.42, -40.53); startDistance=118.96; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:47:14.823] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:47:15.329] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=469ms
+[17:47:15.393] [D] [Pulse] Slow shared pulse: total=570ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=34 events=0 plugins=533 routine=0
+[17:47:16.231] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:47:17.167] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:47:18.102] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -40.53); anchor=(-5382.50, -2489.42, -40.53); startDistance=129.55; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:47:18.102] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:47:19.058] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:47:20.034] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:47:20.973] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:47:21.074] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=62ms
+[17:47:21.915] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -40.53); anchor=(-5382.50, -2489.42, -40.53); startDistance=129.55; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:47:21.915] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:47:22.853] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:47:23.790] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:47:24.724] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:47:25.697] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 1.07); anchor=(-5382.50, -2489.42, -40.53); startDistance=87.96; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:47:25.697] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:47:26.201] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=468ms
+[17:47:26.266] [D] [Pulse] Slow shared pulse: total=569ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=34 events=0 plugins=533 routine=0
+[17:47:27.099] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:47:28.033] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:47:28.972] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 60.56); anchor=(-5382.50, -2489.42, -40.53); startDistance=28.46; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:47:28.972] [D] [Pulse] Slow bot root: 170ms bot=Wholesome Auto Quest poi=None combat=False
+[17:47:29.913] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:47:30.885] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:47:31.821] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:47:31.922] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=60ms
+[17:47:32.757] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 89.03); anchor=(-5382.50, -2489.42, -40.53); startDistance=0.00; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:47:32.757] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:47:33.694] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:47:34.636] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[17:47:35.579] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:47:36.550] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 89.03); anchor=(-5382.50, -2489.42, -40.53); startDistance=0.00; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:47:36.550] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:47:37.053] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=465ms
+[17:47:37.118] [D] [Pulse] Slow shared pulse: total=568ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=35 events=0 plugins=530 routine=0
+[17:47:37.958] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:47:38.896] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:47:39.838] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 62.51); anchor=(-5382.50, -2489.42, -40.53); startDistance=26.51; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:47:39.838] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[17:47:40.772] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:47:41.748] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[17:47:42.717] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:47:42.816] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=61ms
+[17:47:43.655] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -8.27); anchor=(-5382.50, -2489.42, -40.53); startDistance=97.30; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:47:43.655] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:47:44.597] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[17:47:45.536] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:47:46.475] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:47:47.446] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -40.53); anchor=(-5382.50, -2489.42, -40.53); startDistance=129.55; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:47:47.446] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:47:47.952] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=469ms
+[17:47:48.019] [D] [Pulse] Slow shared pulse: total=572ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=35 events=0 plugins=535 routine=0
+[17:47:48.859] [D] [Pulse] Slow bot root: 165ms bot=Wholesome Auto Quest poi=None combat=False
+[17:47:49.793] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:47:50.735] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -40.53); anchor=(-5382.50, -2489.42, -40.53); startDistance=129.55; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:47:50.735] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:47:51.672] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:47:52.642] [D] [Pulse] Slow bot root: 165ms bot=Wholesome Auto Quest poi=None combat=False
+[17:47:53.574] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:47:53.674] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=62ms
+[17:47:54.519] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -20.33); anchor=(-5382.50, -2489.42, -40.53); startDistance=109.35; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:47:54.519] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:47:55.461] [D] [Pulse] Slow bot root: 165ms bot=Wholesome Auto Quest poi=None combat=False
+[17:47:56.396] [D] [Pulse] Slow bot root: 165ms bot=Wholesome Auto Quest poi=None combat=False
+[17:47:57.337] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:47:58.311] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 48.54); anchor=(-5382.50, -2489.42, -40.53); startDistance=40.48; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:47:58.311] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:47:58.818] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=468ms
+[17:47:58.883] [D] [Pulse] Slow shared pulse: total=571ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=36 events=0 plugins=533 routine=0
+[17:47:59.722] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:48:00.662] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:48:01.599] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 88.21); anchor=(-5382.50, -2489.42, -40.53); startDistance=0.82; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:48:01.599] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:48:02.540] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[17:48:03.511] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:48:04.444] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:48:04.544] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=62ms
+[17:48:05.383] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 89.03); anchor=(-5382.50, -2489.42, -40.53); startDistance=0.00; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:48:05.383] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:48:06.322] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:48:07.262] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:48:08.201] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:48:09.172] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 74.86); anchor=(-5382.50, -2489.42, -40.53); startDistance=14.16; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:48:09.172] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:48:09.671] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=462ms
+[17:48:09.737] [D] [Pulse] Slow shared pulse: total=564ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=35 events=0 plugins=527 routine=0
+[17:48:10.587] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:48:11.526] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:48:12.460] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 13.89); anchor=(-5382.50, -2489.42, -40.53); startDistance=75.14; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:48:12.460] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:48:13.431] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:48:14.409] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:48:15.348] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:48:15.448] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=61ms
+[17:48:16.281] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -39.16); anchor=(-5382.50, -2489.42, -40.53); startDistance=128.19; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:48:16.281] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:48:17.220] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:48:18.157] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:48:19.090] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:48:20.057] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -40.53); anchor=(-5382.50, -2489.42, -40.53); startDistance=129.55; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:48:20.057] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:48:20.561] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=466ms
+[17:48:20.626] [D] [Pulse] Slow shared pulse: total=568ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=34 events=0 plugins=532 routine=0
+[17:48:21.464] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:48:22.404] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:48:23.345] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -37.29); anchor=(-5382.50, -2489.42, -40.53); startDistance=126.32; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:48:23.345] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:48:24.282] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:48:25.255] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:48:26.198] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:48:26.299] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=62ms
+[17:48:27.133] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 27.15); anchor=(-5382.50, -2489.42, -40.53); startDistance=61.88; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:48:27.133] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:48:28.070] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:48:29.007] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:48:29.950] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[17:48:30.927] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 86.23); anchor=(-5382.50, -2489.42, -40.53); startDistance=2.79; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:48:30.927] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[17:48:31.429] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=465ms
+[17:48:31.494] [D] [Pulse] Slow shared pulse: total=567ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=34 events=0 plugins=531 routine=0
+[17:48:32.335] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:48:33.272] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:48:34.211] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 89.03); anchor=(-5382.50, -2489.42, -40.53); startDistance=0.00; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:48:34.211] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:48:35.151] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:48:36.118] [D] [Pulse] Slow bot root: 164ms bot=Wholesome Auto Quest poi=None combat=False
+[17:48:37.060] [D] [Pulse] Slow bot root: 170ms bot=Wholesome Auto Quest poi=None combat=False
+[17:48:37.161] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=62ms
+[17:48:38.000] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 87.07); anchor=(-5382.50, -2489.42, -40.53); startDistance=1.96; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:48:38.000] [D] [Pulse] Slow bot root: 165ms bot=Wholesome Auto Quest poi=None combat=False
+[17:48:38.939] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:48:39.882] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[17:48:40.819] [D] [Pulse] Slow bot root: 165ms bot=Wholesome Auto Quest poi=None combat=False
+[17:48:41.788] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 26.37); anchor=(-5382.50, -2489.42, -40.53); startDistance=62.66; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:48:41.788] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:48:42.294] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=469ms
+[17:48:42.358] [D] [Pulse] Slow shared pulse: total=569ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=34 events=0 plugins=533 routine=0
+[17:48:43.197] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:48:44.172] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:48:45.108] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -33.06); anchor=(-5382.50, -2489.42, -40.53); startDistance=122.09; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:48:45.108] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:48:46.048] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:48:47.020] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:48:47.956] [D] [Pulse] Slow bot root: 165ms bot=Wholesome Auto Quest poi=None combat=False
+[17:48:48.058] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=63ms
+[17:48:48.898] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -40.53); anchor=(-5382.50, -2489.42, -40.53); startDistance=129.55; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:48:48.898] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[17:48:49.839] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:48:50.780] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:48:51.717] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:48:52.689] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -39.61); anchor=(-5382.50, -2489.42, -40.53); startDistance=128.63; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:48:52.689] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[17:48:53.193] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=468ms
+[17:48:53.260] [D] [Pulse] Slow shared pulse: total=571ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=34 events=0 plugins=534 routine=0
+[17:48:54.105] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:48:55.043] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:48:55.981] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 6.21); anchor=(-5382.50, -2489.42, -40.53); startDistance=82.82; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:48:55.981] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:48:56.920] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:48:57.887] [D] [Pulse] Slow bot root: 164ms bot=Wholesome Auto Quest poi=None combat=False
+[17:48:58.824] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:48:58.924] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=61ms
+[17:48:59.766] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 74.97); anchor=(-5382.50, -2489.42, -40.53); startDistance=14.06; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:48:59.766] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:49:00.703] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:49:01.641] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:49:02.579] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:49:03.555] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 89.03); anchor=(-5382.50, -2489.42, -40.53); startDistance=0.00; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:49:03.555] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:49:04.060] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=467ms
+[17:49:04.126] [D] [Pulse] Slow shared pulse: total=570ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=35 events=0 plugins=533 routine=0
+[17:49:04.961] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:49:05.900] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:49:06.836] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 89.03); anchor=(-5382.50, -2489.42, -40.53); startDistance=0.00; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:49:06.836] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:49:07.775] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:49:08.749] [D] [Pulse] Slow bot root: 170ms bot=Wholesome Auto Quest poi=None combat=False
+[17:49:09.690] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:49:09.789] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=61ms
+[17:49:10.626] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 47.92); anchor=(-5382.50, -2489.42, -40.53); startDistance=41.11; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:49:10.626] [D] [Pulse] Slow bot root: 165ms bot=Wholesome Auto Quest poi=None combat=False
+[17:49:11.562] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:49:12.500] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:49:13.439] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:49:14.460] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -23.20); anchor=(-5382.50, -2489.42, -40.53); startDistance=112.23; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:49:14.460] [D] [Pulse] Slow bot root: 181ms bot=Wholesome Auto Quest poi=None combat=False
+[17:49:14.965] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=464ms
+[17:49:15.030] [D] [Pulse] Slow shared pulse: total=569ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=38 events=0 plugins=529 routine=0
+[17:49:15.865] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:49:16.805] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:49:17.745] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -40.53); anchor=(-5382.50, -2489.42, -40.53); startDistance=129.55; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:49:17.745] [D] [Pulse] Slow bot root: 170ms bot=Wholesome Auto Quest poi=None combat=False
+[17:49:18.678] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:49:19.651] [D] [Pulse] Slow bot root: 165ms bot=Wholesome Auto Quest poi=None combat=False
+[17:49:20.593] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:49:20.693] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=63ms
+[17:49:21.532] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -40.53); anchor=(-5382.50, -2489.42, -40.53); startDistance=129.55; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:49:21.532] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:49:22.474] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:49:23.410] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:49:24.347] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:49:25.321] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -5.76); anchor=(-5382.50, -2489.42, -40.53); startDistance=94.79; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:49:25.321] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:49:25.828] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=470ms
+[17:49:25.893] [D] [Pulse] Slow shared pulse: total=571ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=35 events=0 plugins=535 routine=0
+[17:49:26.732] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:49:27.672] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:49:28.610] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 53.93); anchor=(-5382.50, -2489.42, -40.53); startDistance=35.09; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:49:28.610] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:49:29.549] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:49:30.521] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:49:31.458] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:49:31.558] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=61ms
+[17:49:32.401] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 89.03); anchor=(-5382.50, -2489.42, -40.53); startDistance=0.00; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:49:32.401] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[17:49:33.340] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[17:49:34.284] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:49:35.225] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:49:36.228] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 89.03); anchor=(-5382.50, -2489.42, -40.53); startDistance=0.00; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:49:36.228] [D] [Pulse] Slow bot root: 203ms bot=Wholesome Auto Quest poi=None combat=False
+[17:49:36.732] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=466ms
+[17:49:36.796] [D] [Pulse] Slow shared pulse: total=568ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=35 events=0 plugins=531 routine=0
+[17:49:37.635] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:49:38.570] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:49:39.505] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 68.71); anchor=(-5382.50, -2489.42, -40.53); startDistance=20.32; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:49:39.506] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:49:40.445] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:49:41.414] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:49:42.353] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:49:42.452] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=61ms
+[17:49:43.292] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -1.50); anchor=(-5382.50, -2489.42, -40.53); startDistance=90.53; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:49:43.292] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:49:44.229] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:49:45.208] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[17:49:46.146] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:49:47.116] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -40.53); anchor=(-5382.50, -2489.42, -40.53); startDistance=129.55; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:49:47.116] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:49:47.621] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=468ms
+[17:49:47.687] [D] [Pulse] Slow shared pulse: total=570ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=35 events=0 plugins=533 routine=0
+[17:49:49.644] [D] [Nav] Loaded 391 mesh tiles for one path query
+[17:49:49.644] [D] [Nav] Slow path generation: 1151ms map=1 from=(-5375.43, -2489.24, -40.56) to=(-5407.12, -2419.61, 89.63) status=Success
+[17:49:49.644] [N] Blacklisting Nyse for 5 minutes because we can't navigate to it.
+[17:49:49.644] [D] Blacklisting F1300010DD0B9A95 for 00:05:00
+[17:49:49.665] [D] [Pulse] Slow bot root: 1306ms bot=Wholesome Auto Quest poi=None combat=False
+[17:49:50.604] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -40.53); anchor=(-5382.50, -2489.42, -40.53); startDistance=129.55; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:49:50.604] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:49:51.540] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[17:49:52.512] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[17:49:52.613] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=60ms
+[17:49:53.453] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:49:54.391] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -22.69); anchor=(-5382.50, -2489.42, -40.53); startDistance=111.71; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:49:54.391] [D] [Pulse] Slow bot root: 165ms bot=Wholesome Auto Quest poi=None combat=False
+[17:49:55.327] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:49:56.264] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:49:57.200] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:49:57.736] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=465ms
+[17:49:57.800] [D] [Pulse] Slow shared pulse: total=600ms movement=0 objects=0 lua=32 info=0 loot=1 targeting=36 events=0 plugins=530 routine=0
+[17:49:58.634] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 54.39); anchor=(-5382.50, -2489.42, -40.53); startDistance=34.64; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:49:58.635] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:49:59.566] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:50:00.497] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:50:01.437] [D] [Pulse] Slow bot root: 165ms bot=Wholesome Auto Quest poi=None combat=False
+[17:50:02.372] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 89.03); anchor=(-5382.50, -2489.42, -40.53); startDistance=0.00; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:50:02.372] [D] [Pulse] Slow bot root: 164ms bot=Wholesome Auto Quest poi=None combat=False
+[17:50:03.338] [D] [Pulse] Slow bot root: 165ms bot=Wholesome Auto Quest poi=None combat=False
+[17:50:03.437] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=60ms
+[17:50:04.275] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:50:05.217] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:50:06.150] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 89.03); anchor=(-5382.50, -2489.42, -40.53); startDistance=0.00; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:50:06.150] [D] [Pulse] Slow bot root: 165ms bot=Wholesome Auto Quest poi=None combat=False
+[17:50:07.088] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[17:50:08.027] [D] [Pulse] Slow bot root: 164ms bot=Wholesome Auto Quest poi=None combat=False
+[17:50:08.564] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=465ms
+[17:50:08.629] [D] [Pulse] Slow shared pulse: total=602ms movement=0 objects=0 lua=32 info=0 loot=1 targeting=37 events=0 plugins=530 routine=0
+[17:50:09.471] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 69.34); anchor=(-5382.50, -2489.42, -40.53); startDistance=19.69; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:50:09.471] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:50:10.410] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:50:11.348] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:50:12.287] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[17:50:13.225] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -0.28); anchor=(-5382.50, -2489.42, -40.53); startDistance=89.31; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:50:13.225] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:50:14.199] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[17:50:14.297] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=61ms
+[17:50:15.134] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:50:16.107] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:50:17.044] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -40.53); anchor=(-5382.50, -2489.42, -40.53); startDistance=129.55; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:50:17.044] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:50:17.980] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:50:18.919] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:50:19.453] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=464ms
+[17:50:19.518] [D] [Pulse] Slow shared pulse: total=599ms movement=0 objects=0 lua=33 info=0 loot=1 targeting=35 events=0 plugins=529 routine=0
+[17:50:20.356] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -40.53); anchor=(-5382.50, -2489.42, -40.53); startDistance=129.55; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:50:20.356] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:50:21.293] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:50:22.231] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:50:23.166] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:50:24.107] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -27.83); anchor=(-5382.50, -2489.42, -40.53); startDistance=116.85; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:50:24.107] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[17:50:25.083] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:50:25.184] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=63ms
+[17:50:26.021] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[17:50:26.958] [D] [Pulse] Slow bot root: 165ms bot=Wholesome Auto Quest poi=None combat=False
+[17:50:27.897] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 41.00); anchor=(-5382.50, -2489.42, -40.53); startDistance=48.02; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:50:27.897] [D] [Pulse] Slow bot root: 165ms bot=Wholesome Auto Quest poi=None combat=False
+[17:50:28.830] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:50:29.767] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:50:30.304] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=466ms
+[17:50:30.370] [D] [Pulse] Slow shared pulse: total=602ms movement=0 objects=0 lua=32 info=0 loot=1 targeting=36 events=0 plugins=532 routine=0
+[17:50:31.211] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 87.41); anchor=(-5382.50, -2489.42, -40.53); startDistance=1.62; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:50:31.211] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[17:50:32.146] [D] [Pulse] Slow bot root: 165ms bot=Wholesome Auto Quest poi=None combat=False
+[17:50:33.085] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:50:34.020] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:50:34.964] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 89.03); anchor=(-5382.50, -2489.42, -40.53); startDistance=0.00; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:50:34.964] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:50:35.932] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:50:36.032] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=61ms
+[17:50:36.888] [D] [Pulse] Slow bot root: 183ms bot=Wholesome Auto Quest poi=None combat=False
+[17:50:37.828] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[17:50:38.769] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 82.01); anchor=(-5382.50, -2489.42, -40.53); startDistance=7.02; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:50:38.769] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[17:50:39.704] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:50:40.641] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:50:41.177] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=464ms
+[17:50:41.243] [D] [Pulse] Slow shared pulse: total=601ms movement=0 objects=0 lua=33 info=0 loot=1 targeting=35 events=0 plugins=530 routine=0
+[17:50:42.082] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 20.94); anchor=(-5382.50, -2489.42, -40.53); startDistance=68.09; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:50:42.082] [D] [Pulse] Slow bot root: 170ms bot=Wholesome Auto Quest poi=None combat=False
+[17:50:43.026] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[17:50:43.967] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:50:44.900] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:50:45.838] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -37.73); anchor=(-5382.50, -2489.42, -40.53); startDistance=126.76; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:50:45.838] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:50:46.848] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:50:46.949] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=61ms
+[17:50:47.782] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:50:48.717] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:50:49.658] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -40.53); anchor=(-5382.50, -2489.42, -40.53); startDistance=129.55; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:50:49.658] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:50:50.600] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:50:51.543] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:50:52.078] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=462ms
+[17:50:52.144] [D] [Pulse] Slow shared pulse: total=601ms movement=0 objects=0 lua=33 info=0 loot=1 targeting=37 events=0 plugins=529 routine=0
+[17:50:52.983] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -38.95); anchor=(-5382.50, -2489.42, -40.53); startDistance=127.97; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:50:52.983] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:50:53.920] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:50:54.862] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:50:55.804] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:50:56.741] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 19.99); anchor=(-5382.50, -2489.42, -40.53); startDistance=69.03; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:50:56.741] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:50:57.707] [D] [Pulse] Slow bot root: 165ms bot=Wholesome Auto Quest poi=None combat=False
+[17:50:57.808] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=62ms
+[17:50:58.644] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:50:59.584] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:51:00.522] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 83.66); anchor=(-5382.50, -2489.42, -40.53); startDistance=5.36; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:51:00.522] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:51:01.457] [D] [Pulse] Slow bot root: 165ms bot=Wholesome Auto Quest poi=None combat=False
+[17:51:02.394] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:51:02.934] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=469ms
+[17:51:02.999] [D] [Pulse] Slow shared pulse: total=604ms movement=0 objects=0 lua=32 info=0 loot=1 targeting=36 events=0 plugins=534 routine=0
+[17:51:03.837] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 89.03); anchor=(-5382.50, -2489.42, -40.53); startDistance=0.00; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:51:03.837] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:51:04.776] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:51:05.718] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:51:06.653] [D] [Pulse] Slow bot root: 165ms bot=Wholesome Auto Quest poi=None combat=False
+[17:51:07.589] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 87.88); anchor=(-5382.50, -2489.42, -40.53); startDistance=1.15; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:51:07.589] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:51:08.562] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:51:08.664] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=63ms
+[17:51:09.498] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:51:10.433] [D] [Pulse] Slow bot root: 165ms bot=Wholesome Auto Quest poi=None combat=False
+[17:51:11.375] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 34.05); anchor=(-5382.50, -2489.42, -40.53); startDistance=54.98; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:51:11.375] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:51:12.310] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:51:13.245] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:51:13.786] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=468ms
+[17:51:13.850] [D] [Pulse] Slow shared pulse: total=604ms movement=0 objects=0 lua=33 info=0 loot=1 targeting=36 events=0 plugins=532 routine=0
+[17:51:14.682] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -27.28); anchor=(-5382.50, -2489.42, -40.53); startDistance=116.31; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:51:14.682] [D] [Pulse] Slow bot root: 165ms bot=Wholesome Auto Quest poi=None combat=False
+[17:51:15.625] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[17:51:16.566] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:51:17.538] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:51:18.479] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -40.53); anchor=(-5382.50, -2489.42, -40.53); startDistance=129.55; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:51:18.479] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:51:19.452] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:51:19.554] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=62ms
+[17:51:20.390] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:51:21.329] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:51:22.269] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -40.17); anchor=(-5382.50, -2489.42, -40.53); startDistance=129.19; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:51:22.269] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[17:51:23.213] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:51:24.158] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:51:24.696] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=468ms
+[17:51:24.762] [D] [Pulse] Slow shared pulse: total=604ms movement=0 objects=0 lua=32 info=0 loot=1 targeting=35 events=0 plugins=533 routine=0
+[17:51:25.595] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -0.80); anchor=(-5382.50, -2489.42, -40.53); startDistance=89.83; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:51:25.595] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:51:26.534] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:51:27.471] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:51:28.411] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:51:29.366] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 67.66); anchor=(-5382.50, -2489.42, -40.53); startDistance=21.36; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:51:29.366] [D] [Pulse] Slow bot root: 184ms bot=Wholesome Auto Quest poi=None combat=False
+[17:51:30.336] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:51:30.438] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=63ms
+[17:51:31.272] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:51:32.213] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[17:51:33.150] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 89.03); anchor=(-5382.50, -2489.42, -40.53); startDistance=0.00; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:51:33.150] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:51:34.086] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:51:35.027] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:51:35.566] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=469ms
+[17:51:35.631] [D] [Pulse] Slow shared pulse: total=604ms movement=0 objects=0 lua=33 info=0 loot=1 targeting=35 events=0 plugins=534 routine=0
+[17:51:36.471] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 89.03); anchor=(-5382.50, -2489.42, -40.53); startDistance=0.00; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:51:36.471] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:51:37.416] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[17:51:38.353] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:51:39.293] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:51:40.234] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 55.23); anchor=(-5382.50, -2489.42, -40.53); startDistance=33.80; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:51:40.234] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:51:41.202] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:51:41.302] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=61ms
+[17:51:42.137] [D] [Pulse] Slow bot root: 165ms bot=Wholesome Auto Quest poi=None combat=False
+[17:51:43.079] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:51:44.019] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -14.97); anchor=(-5382.50, -2489.42, -40.53); startDistance=103.99; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:51:44.019] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:51:44.955] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:51:45.891] [D] [Pulse] Slow bot root: 165ms bot=Wholesome Auto Quest poi=None combat=False
+[17:51:46.431] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=468ms
+[17:51:46.495] [D] [Pulse] Slow shared pulse: total=604ms movement=0 objects=0 lua=33 info=0 loot=1 targeting=36 events=0 plugins=532 routine=0
+[17:51:47.338] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -40.53); anchor=(-5382.50, -2489.42, -40.53); startDistance=129.55; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:51:47.338] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[17:51:48.307] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:51:49.247] [D] [Pulse] Slow bot root: 170ms bot=Wholesome Auto Quest poi=None combat=False
+[17:51:50.185] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[17:51:51.129] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -40.53); anchor=(-5382.50, -2489.42, -40.53); startDistance=129.55; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:51:51.129] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[17:51:52.099] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:51:52.199] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=60ms
+[17:51:53.036] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:51:53.975] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:51:54.909] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -13.28); anchor=(-5382.50, -2489.42, -40.53); startDistance=102.31; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:51:54.909] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:51:55.851] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[17:51:56.789] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:51:57.328] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=466ms
+[17:51:57.393] [D] [Pulse] Slow shared pulse: total=604ms movement=0 objects=0 lua=33 info=0 loot=1 targeting=36 events=0 plugins=532 routine=0
+[17:51:58.235] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 47.12); anchor=(-5382.50, -2489.42, -40.53); startDistance=41.90; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:51:58.235] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:51:59.177] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[17:52:00.119] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:52:01.059] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[17:52:01.993] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 89.01); anchor=(-5382.50, -2489.42, -40.53); startDistance=0.02; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:52:01.993] [D] [Pulse] Slow bot root: 165ms bot=Wholesome Auto Quest poi=None combat=False
+[17:52:02.965] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:52:03.065] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=61ms
+[17:52:03.906] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[17:52:04.843] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:52:05.779] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 89.03); anchor=(-5382.50, -2489.42, -40.53); startDistance=0.00; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:52:05.779] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:52:06.713] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:52:07.646] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:52:08.186] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=467ms
+[17:52:08.251] [D] [Pulse] Slow shared pulse: total=604ms movement=0 objects=0 lua=34 info=0 loot=1 targeting=37 events=0 plugins=531 routine=0
+[17:52:09.093] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 76.39); anchor=(-5382.50, -2489.42, -40.53); startDistance=12.64; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:52:09.093] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:52:10.030] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:52:10.971] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:52:11.912] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:52:12.850] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 6.69); anchor=(-5382.50, -2489.42, -40.53); startDistance=82.33; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:52:12.850] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:52:13.821] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:52:13.922] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=62ms
+[17:52:14.762] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:52:15.697] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:52:16.637] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -39.83); anchor=(-5382.50, -2489.42, -40.53); startDistance=128.86; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:52:16.637] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:52:17.576] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:52:18.547] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:52:19.085] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=468ms
+[17:52:19.152] [D] [Pulse] Slow shared pulse: total=604ms movement=0 objects=0 lua=32 info=0 loot=1 targeting=35 events=0 plugins=535 routine=0
+[17:52:19.989] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -40.53); anchor=(-5382.50, -2489.42, -40.53); startDistance=129.55; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:52:19.989] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:52:20.929] [D] [Pulse] Slow bot root: 165ms bot=Wholesome Auto Quest poi=None combat=False
+[17:52:21.866] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:52:22.808] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:52:23.749] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -34.37); anchor=(-5382.50, -2489.42, -40.53); startDistance=123.39; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:52:23.749] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[17:52:24.718] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:52:24.818] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=61ms
+[17:52:25.658] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:52:26.599] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:52:27.542] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 34.50); anchor=(-5382.50, -2489.42, -40.53); startDistance=54.52; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:52:27.542] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[17:52:28.475] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:52:29.414] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[17:52:29.953] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=467ms
+[17:52:30.018] [D] [Pulse] Slow shared pulse: total=603ms movement=0 objects=0 lua=33 info=0 loot=1 targeting=36 events=0 plugins=531 routine=0
+[17:52:30.855] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 85.76); anchor=(-5382.50, -2489.42, -40.53); startDistance=3.26; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:52:30.855] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:52:31.793] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:52:32.731] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:52:33.664] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:52:34.606] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 89.03); anchor=(-5382.50, -2489.42, -40.53); startDistance=0.00; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:52:34.606] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:52:35.579] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:52:35.680] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=60ms
+[17:52:36.548] [D] [Pulse] Slow bot root: 202ms bot=Wholesome Auto Quest poi=None combat=False
+[17:52:37.491] [D] [Pulse] Slow bot root: 170ms bot=Wholesome Auto Quest poi=None combat=False
+[17:52:38.430] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 84.25); anchor=(-5382.50, -2489.42, -40.53); startDistance=4.78; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:52:38.430] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:52:39.370] [D] [Pulse] Slow bot root: 170ms bot=Wholesome Auto Quest poi=None combat=False
+[17:52:40.309] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:52:40.846] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=467ms
+[17:52:40.912] [D] [Pulse] Slow shared pulse: total=603ms movement=0 objects=0 lua=32 info=0 loot=1 targeting=35 events=0 plugins=533 routine=0
+[17:52:41.754] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 27.04); anchor=(-5382.50, -2489.42, -40.53); startDistance=61.99; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:52:41.754] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:52:42.691] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:52:43.626] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:52:44.560] [D] [Pulse] Slow bot root: 165ms bot=Wholesome Auto Quest poi=None combat=False
+[17:52:45.498] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -35.56); anchor=(-5382.50, -2489.42, -40.53); startDistance=124.58; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:52:45.499] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:52:46.478] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:52:46.579] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=63ms
+[17:52:47.419] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:52:48.355] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:52:49.323] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -40.53); anchor=(-5382.50, -2489.42, -40.53); startDistance=129.55; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:52:49.323] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:52:50.262] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:52:51.201] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:52:51.741] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=468ms
+[17:52:51.804] [D] [Pulse] Slow shared pulse: total=603ms movement=0 objects=0 lua=32 info=0 loot=1 targeting=37 events=0 plugins=532 routine=0
+[17:52:52.642] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -39.67); anchor=(-5382.50, -2489.42, -40.53); startDistance=128.70; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:52:52.642] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:52:53.581] [D] [Pulse] Slow bot root: 165ms bot=Wholesome Auto Quest poi=None combat=False
+[17:52:54.523] [D] [Pulse] Slow bot root: 175ms bot=Wholesome Auto Quest poi=None combat=False
+[17:52:55.451] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:52:56.390] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 13.60); anchor=(-5382.50, -2489.42, -40.53); startDistance=75.43; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:52:56.390] [D] [Pulse] Slow bot root: 170ms bot=Wholesome Auto Quest poi=None combat=False
+[17:52:57.363] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:52:57.464] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=62ms
+[17:52:58.304] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:52:59.243] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:53:00.185] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 81.53); anchor=(-5382.50, -2489.42, -40.53); startDistance=7.50; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:53:00.185] [D] [Pulse] Slow bot root: 170ms bot=Wholesome Auto Quest poi=None combat=False
+[17:53:01.122] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:53:02.060] [D] [Pulse] Slow bot root: 155ms bot=Wholesome Auto Quest poi=None combat=False
+[17:53:02.599] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=468ms
+[17:53:02.665] [D] [Pulse] Slow shared pulse: total=605ms movement=0 objects=0 lua=33 info=0 loot=1 targeting=36 events=0 plugins=533 routine=0
+[17:53:03.506] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 89.03); anchor=(-5382.50, -2489.42, -40.53); startDistance=0.00; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:53:03.506] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:53:04.446] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:53:05.376] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:53:06.317] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[17:53:07.258] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 88.52); anchor=(-5382.50, -2489.42, -40.53); startDistance=0.50; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:53:07.258] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:53:08.234] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[17:53:08.336] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=62ms
+[17:53:09.178] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:53:10.117] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:53:11.054] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 40.04); anchor=(-5382.50, -2489.42, -40.53); startDistance=48.99; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:53:11.054] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:53:11.990] [D] [Pulse] Slow bot root: 165ms bot=Wholesome Auto Quest poi=None combat=False
+[17:53:12.927] [D] [Pulse] Slow bot root: 165ms bot=Wholesome Auto Quest poi=None combat=False
+[17:53:13.465] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=467ms
+[17:53:13.528] [D] [Pulse] Slow shared pulse: total=601ms movement=0 objects=0 lua=32 info=0 loot=1 targeting=35 events=0 plugins=531 routine=0
+[17:53:14.363] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -21.35); anchor=(-5382.50, -2489.42, -40.53); startDistance=110.37; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:53:14.363] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:53:15.299] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:53:16.238] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:53:17.176] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:53:18.115] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -40.53); anchor=(-5382.50, -2489.42, -40.53); startDistance=129.55; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:53:18.115] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:53:19.087] [D] [Pulse] Slow bot root: 165ms bot=Wholesome Auto Quest poi=None combat=False
+[17:53:19.186] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=61ms
+[17:53:20.051] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:53:20.990] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:53:21.933] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -40.53); anchor=(-5382.50, -2489.42, -40.53); startDistance=129.55; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:53:21.933] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:53:22.870] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:53:23.811] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:53:24.350] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=468ms
+[17:53:24.414] [D] [Pulse] Slow shared pulse: total=602ms movement=0 objects=0 lua=32 info=0 loot=1 targeting=36 events=0 plugins=532 routine=0
+[17:53:25.253] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -7.05); anchor=(-5382.50, -2489.42, -40.53); startDistance=96.08; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:53:25.253] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=None combat=False
+[17:53:26.186] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:53:27.124] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:53:28.065] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:53:29.002] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 61.04); anchor=(-5382.50, -2489.42, -40.53); startDistance=27.99; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:53:29.002] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[17:53:29.975] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[17:53:30.074] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=60ms
+[17:53:30.912] [D] [Pulse] Slow bot root: 165ms bot=Wholesome Auto Quest poi=None combat=False
+[17:53:31.846] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:53:32.789] [D] [UseTransport-v217(debug) @line 29]: Waiting for transport: player=(-5375.43, -2489.24, -40.56); wait2D=8.57; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 89.03); anchor=(-5382.50, -2489.42, -40.53); startDistance=0.00; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; usedTransport=True
+[17:53:32.789] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:53:33.729] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[17:53:33.745] [N] Bot stopping! Reason: Main window is closing
+[17:53:33.746] [D] Exception in GetReturnValues: Thread was interrupted from a waiting state.
+[17:53:34.231] [D] [Pulse] Slow bot root: 164ms bot=Wholesome Auto Quest poi=None combat=False
+[17:53:34.274] [D] Cleared POI
+[17:53:34.276] [D] Worker thread exited cleanly
+[17:53:34.466] [D] [Settings] Saved all settings

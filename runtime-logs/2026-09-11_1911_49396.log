@@ -1,0 +1,814 @@
+[19:11:41.852] [N] CopilotBuddy v1.6.6 started. Original HonorBuddy by Apoc, raphus, highvoltz, bobby53, xanathos, chinajade. Ported to WotLK 3.3.5a by Likon69.
+[19:11:42.304] [N] Searching for WoW process...
+[19:11:42.449] [N] Please wait a few seconds while CopilotBuddy initializes.
+[19:11:42.450] [D] Using WoW with process ID 37940
+[19:11:42.450] [D] Platform: x86
+[19:11:42.450] [D] Executable Path: D:\World of Warcraft 3.3.5a\CB\
+[19:11:42.483] [D] [ObjectManager] WoW build 12340 detected - OK
+[19:11:42.485] [D] [ObjectManager] D3DDevicePtr = 0x00C5DF88
+[19:11:42.486] [D] [ObjectManager] devicePtrAddr = 0x0532CBD0
+[19:11:42.486] [D] [ObjectManager] device = 0x0A4FC900 (at 0x0533054C)
+[19:11:42.486] [D] [ObjectManager] vtablePtr = 0x0A4FF85C
+[19:11:42.486] [D] [ObjectManager] endSceneAddr = 0x643348F0 (at 0x0A4FF904)
+[19:11:42.486] [D] [ObjectManager] D3D: Device=0x0A4FC900, VTable=0x0A4FF85C, EndScene=0x643348F0
+[19:11:42.486] [D] [ObjectManager] Creating ExecutorRand...
+[19:11:42.531] [D] [ObjectManager] ExecutorRand created, IsInitialized = True
+[19:11:42.531] [D] [ObjectManager] EndScene hook succeeded
+[19:11:42.536] [D] [ObjectManager] Initialized successfully
+[19:11:42.539] [N] Attached to WoW with ID 37940
+[19:11:42.541] [N] Character is a level 31 BloodElf Paladin
+[19:11:42.542] [N] Current zone is Thousand Needles
+[19:11:42.566] [D] [Settings] Loaded settings for character: Jeof
+[19:11:42.566] [N] Initializing Combat Routines...
+[19:11:42.570] [D] Looking for routines in: D:\World of Warcraft 3.3.5a\CB\Routines
+[19:11:42.571] [D] Compiling Singular wotlk
+[19:11:45.261] [N] Loaded routine: Singular Wotlk for class Paladin
+[19:11:45.262] [N] Loaded 1 combat routine(s)
+[19:11:45.270] [N] Chose Singular Wotlk as your combat class.
+[19:11:45.270] [N] Confirmed Paladin as your class.
+[19:11:45.271] [N] [Singular] Starting Singular v2.0.0.0
+[19:11:45.271] [N] [Singular] Determining talent spec.
+[19:11:46.146] [D] [Singular-DEBUG] [Talents] Best Tree: 19
+[19:11:46.147] [N] [Singular] Current spec is  Retribution Paladin
+[19:11:46.158] [D] [WoWDb] Loaded 237 DBC tables
+[19:11:46.158] [D] [WoWDb]   Key=235 (0x000000EB) Rows=1893
+[19:11:46.158] [D] [WoWDb]   Key=236 (0x000000EC) Rows=7655
+[19:11:46.158] [D] [WoWDb]   Key=237 (0x000000ED) Rows=86
+[19:11:46.158] [D] [WoWDb]   Key=238 (0x000000EE) Rows=506
+[19:11:46.158] [D] [WoWDb]   Key=239 (0x000000EF) Rows=291
+[19:11:46.158] [D] [WoWDb] Lock DBC lookup: FOUND (rows=388)
+[19:11:46.158] [D] [WoWDb] ClientDb.Lock enum value = 356 (0x00000164)
+[19:11:46.159] [D] [Singular-DEBUG] Creating Combat behavior.
+[19:11:46.160] [N] [Singular] Building method list
+[19:11:46.161] [N] [Singular] Added 459 methods
+[19:11:46.163] [D] [Singular-DEBUG] CreateRetributionPaladinNormalPullAndCombat is a match!
+[19:11:46.163] [N] [Singular]  Using CreateRetributionPaladinNormalPullAndCombat for Retribution Paladin - Combat (Priority: 0)
+[19:11:46.176] [D] [Singular-DEBUG] Creating Pull behavior.
+[19:11:46.177] [D] [Singular-DEBUG] CreateRetributionPaladinNormalPullAndCombat is a match!
+[19:11:46.177] [N] [Singular]  Using CreateRetributionPaladinNormalPullAndCombat for Retribution Paladin - Pull (Priority: 0)
+[19:11:46.179] [D] [Singular-DEBUG] Creating Rest behavior.
+[19:11:46.179] [D] [Singular-DEBUG] CreateRetributionPaladinRest is a match!
+[19:11:46.179] [N] [Singular]  Using CreateRetributionPaladinRest for Retribution Paladin - Rest (Priority: 0)
+[19:11:46.182] [D] [Singular-DEBUG] Creating CombatBuffs behavior.
+[19:11:46.183] [D] [Singular-DEBUG] Creating Heal behavior.
+[19:11:46.184] [D] [Singular-DEBUG] CreateRetributionPaladinHeal is a match!
+[19:11:46.184] [N] [Singular]  Using CreateRetributionPaladinHeal for Retribution Paladin - Heal (Priority: 0)
+[19:11:46.184] [D] [Singular-DEBUG] CreateRetributionPaladinNormalPullAndCombat is a match!
+[19:11:46.184] [N] [Singular]  Using CreateRetributionPaladinNormalPullAndCombat for Retribution Paladin - Heal (Priority: 0)
+[19:11:46.185] [D] [Singular-DEBUG] Creating PullBuffs behavior.
+[19:11:46.186] [D] [Singular-DEBUG] Creating PreCombatBuffs behavior.
+[19:11:46.187] [D] [Singular-DEBUG] CreatePaladinPreCombatBuffs is a match!
+[19:11:46.187] [N] [Singular]  Using CreatePaladinPreCombatBuffs for Retribution Paladin - PreCombatBuffs (Priority: 0)
+[19:11:46.191] [N] [Singular] Behaviors created!
+[19:11:46.221] [D] [Singular-DEBUG] Attached combat log
+[19:11:46.221] [D] Routine initialized successfully
+[19:11:46.223] [D] Loading built-in bots from assembly: CopilotBuddy
+[19:11:46.249] [D] Found bot type: PartyBot.DiscoBot
+[19:11:46.250] [N] New bot added: Party Bot
+[19:11:46.250] [D] Loaded built-in bot: Party Bot
+[19:11:46.250] [D] Found bot type: Bots.Quest.QuestBot
+[19:11:46.250] [N] New bot added: Questing
+[19:11:46.250] [D] Loaded built-in bot: Questing
+[19:11:46.250] [D] Found bot type: Bots.Grind.LevelBot
+[19:11:46.250] [N] New bot added: Grind
+[19:11:46.250] [D] Loaded built-in bot: Grind
+[19:11:46.250] [D] Found bot type: Bots.Gatherbuddy.GatherbuddyBot
+[19:11:46.250] [N] New bot added: GatherBuddy
+[19:11:46.250] [D] Loaded built-in bot: GatherBuddy
+[19:11:46.250] [D] Found bot type: Bots.DungeonBuddy.DungeonBuddy
+[19:11:46.252] [N] New bot added: DungeonBuddy
+[19:11:46.252] [D] Loaded built-in bot: DungeonBuddy
+[19:11:46.252] [D] Found bot type: Bots.BGBuddy.BGBuddy
+[19:11:46.252] [N] New bot added: BGBuddy
+[19:11:46.252] [D] Loaded built-in bot: BGBuddy
+[19:11:46.252] [D] Built-in bot loading complete. 6 bots loaded.
+[19:11:46.256] [N] Loading bots from: D:\World of Warcraft 3.3.5a\CB\Bots
+[19:11:46.263] [N] Found 123 source files
+[19:11:46.270] [N] Found 0 dll files
+[19:11:46.270] [N] Compiling: CombatBot.cs
+[19:11:46.450] [N] Compiled successfully: CombatBot.cs
+[19:11:46.450] [N] Compiling directory: Auto Angler 2/ (23 files)
+[19:11:46.752] [N] Compiled successfully: Auto Angler 2/
+[19:11:46.752] [N] Compiling directory: LazyRaider/ (4 files)
+[19:11:47.018] [N] Compiled successfully: LazyRaider/
+[19:11:47.018] [N] Compiling directory: ProfessionBuddy/ (52 files)
+[19:11:47.874] [N] Compiled successfully: ProfessionBuddy/
+[19:11:47.874] [N] Compiling directory: Templar/ (27 files)
+[19:11:48.291] [N] Compiled successfully: Templar/
+[19:11:48.291] [N] Compiling directory: Tyrael/ (5 files)
+[19:11:48.497] [N] Compiled successfully: Tyrael/
+[19:11:48.497] [N] Compiling directory: WholesomeAutoQuest-master/ (11 files)
+[19:11:49.124] [N] Compiled successfully: WholesomeAutoQuest-master/
+[19:11:49.124] [N] ClassCollection contains 7 compiled bots
+[19:11:49.124] [N] Adding bot: Combat Bot
+[19:11:49.124] [N] New bot added: Combat Bot
+[19:11:49.124] [N] Adding bot: AutoAngler
+[19:11:49.124] [N] New bot added: AutoAngler
+[19:11:49.124] [N] Adding bot: LazyRaider
+[19:11:49.124] [N] New bot added: LazyRaider
+[19:11:49.124] [N] Adding bot: ProfessionBuddy
+[19:11:49.124] [N] New bot added: ProfessionBuddy
+[19:11:49.124] [N] Adding bot: Templar
+[19:11:49.124] [N] New bot added: Templar
+[19:11:49.124] [N] Adding bot: Tyrael
+[19:11:49.124] [N] New bot added: Tyrael
+[19:11:49.124] [N] Adding bot: Wholesome Auto Quest
+[19:11:49.124] [N] New bot added: Wholesome Auto Quest
+[19:11:49.124] [N] Bot loading complete. 13 bots loaded.
+[19:11:49.124] [N] Initializing Plugins...
+[19:11:50.945] [N] [DeathStallRecovery] Enabled. The bot will stop if corpse recovery makes no movement progress for 60 seconds.
+[19:11:51.934] [D] Rarekiller: Loading config file: D:\World of Warcraft 3.3.5a\CB\Plugins\RareKiller\config\Rarekiller.config
+[19:11:51.934] [D] Root element is missing.
+[19:11:51.934] [N] Rarekiller: Continuing with Default Config Values
+[19:11:51.936] [D] Rarekiller: Loading config file: D:\World of Warcraft 3.3.5a\CB\Plugins\RareKiller\config\Rarekiller.config
+[19:11:51.936] [D] Root element is missing.
+[19:11:51.936] [N] Rarekiller: Continuing with Default Config Values
+[19:11:51.936] [N] Rare Mob Killer - Version 3.3 Loaded.
+[19:11:51.936] [N] Rarekiller Part Tamer: I'm no Hunter. Deactivate the Tamer Part
+[19:11:52.521] [N] [VendorRecovery] Enabled. Failed Sell/Repair vendors will be skipped after 35 seconds at the NPC.
+[19:11:52.704] [N] Plugin loading complete. 16 plugins loaded.
+[19:11:52.704] [N] Plugins refreshed successfully.
+[19:11:52.709] [N] Changing current bot to: Wholesome Auto Quest
+[19:11:55.115] [D] [Settings] Saved all settings
+[19:11:55.115] [N] Starting the bot.
+[19:11:55.117] [N] Currently Using BotBase : Wholesome Auto Quest
+[19:11:55.119] [N] Character is a level 31 BloodElf Paladin
+[19:11:55.120] [N] Current zone is Thousand Needles
+[19:11:55.122] [D] Loading profile from D:\World of Warcraft 3.3.5a\CB\Bots\WholesomeAutoQuest\WHOLESOME_AUTOQUESTER.xml
+[19:11:55.276] [D] [QuestBehaviorHelper] Initialized with 264 assembly references
+[19:11:55.276] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\UseTransport.cs
+[19:11:55.310] [D] [CompileBatch] Compiling 2 entries...
+[19:11:55.466] [D] [CompileBatch] Compiled successfully.
+[19:11:55.470] [N] Profile loaded: WholesomeAQ - Thousand Needles
+[19:11:55.471] [D] Selected sub-profile: WholesomeAQ - Thousand Needles (L1-80)
+[19:11:55.699] [D] [WholesomeAQ] Navigation fingerprint unknown: provider or mesh-root stamp unavailable.
+[19:11:55.839] [N] [VendorSafety] Skipping NPC 10380 for this session: Wholesome saved vendor blacklist. Trying the next suitable NPC.
+[19:11:55.841] [N] [VendorSafety] Skipping NPC 3392 for this session: Wholesome saved vendor blacklist. Trying the next suitable NPC.
+[19:11:55.843] [N] [VendorSafety] Skipping NPC 5848 for this session: Wholesome saved vendor blacklist. Trying the next suitable NPC.
+[19:11:55.845] [N] [Wholesome Auto Quest] Loaded 3 blacklisted vendors
+[19:11:56.329] [D] [QuestLog] Loaded 79 completed quests from Lua fallback
+[19:11:56.363] [D] [ProfileBatchManager] Batch reset for new profile session.
+[19:11:56.364] [N] [Wholesome Auto Quest] Class Paladin → PullDistance set to 24
+[19:11:56.365] [N] [Wholesome Auto Quest] Initial scheduler build.
+[19:11:57.091] [N] Loaded 0 global blackspots
+[19:11:57.117] [D] Loading profile from D:\World of Warcraft 3.3.5a\CB\Bots\WholesomeAutoQuest\WHOLESOME_AUTOQUESTER.xml
+[19:11:57.124] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\UseTransport.cs
+[19:11:57.125] [D] [CompileBatch] Compiling 2 entries...
+[19:11:57.249] [D] [CompileBatch] Compiled successfully.
+[19:11:57.249] [N] Profile loaded: WholesomeAQ - Thousand Needles
+[19:11:57.253] [D] Selected sub-profile: WholesomeAQ - Thousand Needles (L1-80)
+[19:11:57.253] [N] [Wholesome Auto Quest] Profile refreshed - Selected 1 quest work candidate(s). selected quest=4841;stage=Objective;state=Eligible. quest-log-full=25/25; deferred new pickups while retaining accepted quest work. excluded quest=1062;stage=TurnIn;npc=4049;reason=outside-scan-radius;retry=context-change excluded quest=1069;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=1087;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=1093;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T15:43:31.1900709Z;state=Quarantined. excluded quest=4841;stage=Objective;objective=1;reason=outside-scan-radius;retry=context-change. excluded quest=4841;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=4921;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=5147;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T15:43:31.2300998Z;state=Quarantined. excluded quest=6382;stage=TurnIn;npc=12696;reason=outside-scan-radius;retry=context-change excluded quest=6393;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T15:43:31.2303856Z;state=Quarantined. excluded quest=6441;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T15:43:31.2304940Z;state=Quarantined. excluded quest=6461;stage=TurnIn;npc=12816;reason=outside-scan-radius;retry=context-change excluded quest=6543;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T15:43:31.2307164Z;state=Quarantined. excluded quest=846;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T12:58:16.6033605Z;state=Quarantined. excluded quest=846;stage=Objective;scope=Objective;objective=1;retry=2026-09-11T12:58:16.6078334Z;state=Quarantined. excluded quest=846;stage=Objective;scope=Objective;objective=2;retry=2026-09-11T12:58:16.6079054Z;state=Quarantined. excluded quest=8487;stage=TurnIn;npc=15402;reason=outside-scan-radius;retry=context-change excluded quest=867;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T12:58:16.6097297Z;state=Quarantined. excluded quest=868;stage=TurnIn;npc=3428;reason=outside-scan-radius;retry=context-change excluded quest=879;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T12:58:16.6158450Z;state=Quarantined. excluded quest=879;stage=Objective;scope=Objective;objective=1;retry=2026-09-11T12:58:16.6158941Z;state=Quarantined. excluded quest=879;stage=Objective;scope=Objective;objective=2;retry=2026-09-11T14:28:36.5856962Z;state=Quarantined. excluded quest=8889;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=8889;stage=Objective;objective=1;reason=outside-scan-radius;retry=context-change. excluded quest=8889;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=893;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T14:28:36.5895113Z;state=Quarantined. excluded quest=893;stage=Objective;scope=Objective;objective=1;retry=2026-09-11T14:28:36.5895743Z;state=Quarantined. excluded quest=893;stage=Objective;scope=Objective;objective=2;retry=2026-09-11T14:28:36.5896148Z;state=Quarantined. excluded quest=896;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T14:28:36.5896844Z;state=Quarantined. excluded quest=9067;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T15:43:31.2311999Z;state=Quarantined. excluded quest=9157;stage=TurnIn;npc=16201;reason=outside-scan-radius;retry=context-change excluded quest=9431;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T16:58:09.4694637Z;state=Quarantined.
+[19:11:57.257] [N] [Wholesome Auto Quest] Started with quest data loaded.
+[19:11:57.314] [N] [SpellDb] Loaded 49816 spells from Spells.bin
+[19:11:57.353] [D] Setting CVars: autoSelfCast=1, autoLootDefault=1
+[19:11:57.419] [D] Cleared POI
+[19:11:57.427] [D] Refresh() called. LastCount=0, CurrentCount=34
+[19:11:57.427] [N] Building spell book
+[19:11:57.430] [D] Found 34 spells from LocalPlayer.KnownSpells
+[19:11:57.430] [N] Adding Arcane Affinity
+[19:11:57.431] [N] Adding Arcane Torrent
+[19:11:57.433] [N] Adding Auto Attack
+[19:11:57.435] [N] Adding Block
+[19:11:57.436] [N] Adding Dodge
+[19:11:57.438] [N] Adding Magic Resistance
+[19:11:57.439] [N] Adding Parry
+[19:11:57.441] [N] Adding Blessing of Wisdom
+[19:11:57.442] [N] Adding Concentration Aura
+[19:11:57.444] [N] Adding Consecration
+[19:11:57.445] [N] Adding Exorcism
+[19:11:57.447] [N] Adding Flash of Light
+[19:11:57.449] [N] Adding Holy Light
+[19:11:57.450] [N] Adding Lay on Hands
+[19:11:57.452] [N] Adding Purify
+[19:11:57.453] [N] Adding Seal of Righteousness
+[19:11:57.455] [N] Adding Sense Undead
+[19:11:57.457] [N] Adding Turn Evil
+[19:11:57.458] [N] Adding Blessing of Kings
+[19:11:57.460] [N] Adding Devotion Aura
+[19:11:57.461] [N] Adding Divine Protection
+[19:11:57.463] [N] Adding Hammer of Justice
+[19:11:57.465] [N] Adding Hand of Freedom
+[19:11:57.467] [N] Adding Hand of Protection
+[19:11:57.469] [N] Adding Hand of Reckoning
+[19:11:57.470] [N] Adding Hand of Salvation
+[19:11:57.472] [N] Adding Righteous Defense
+[19:11:57.474] [N] Adding Righteous Fury
+[19:11:57.476] [N] Adding Seal of Justice
+[19:11:57.477] [N] Adding Blessing of Might
+[19:11:57.479] [N] Adding Judgement of Light
+[19:11:57.481] [N] Adding Judgement of Wisdom
+[19:11:57.482] [N] Adding Retribution Aura
+[19:11:57.484] [N] Adding Seal of Command
+[19:11:57.486] [N] Spell book built
+[19:11:57.488] [D] [SpellManager] Initialize — subscribed to BotEvents.OnBotStart
+[19:11:57.777] [D] [WeightSet] Selected weight set: Paladin-Retribution
+[19:11:57.939] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=321ms
+[19:11:57.973] [D] [Talented] SelectMajorTalentTree called but not needed in WotLK 3.3.5a
+[19:11:57.988] [D] [Pulse] Slow plugin: name=Talented elapsed=48ms
+[19:11:58.038] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=50ms
+[19:11:58.045] [D] [Pulse] Slow shared pulse: total=521ms movement=0 objects=1 lua=0 info=0 loot=17 targeting=70 events=1 plugins=422 routine=6
+[19:11:58.834] [N] [Singular] Casting Blessing of Kings on Myself
+[19:11:58.835] [D] Spell_C::CastSpell(20217, 0, 0x6000000007EAB80, 0)
+[19:11:58.867] [D] [Pulse] Slow bot root: 232ms bot=Wholesome Auto Quest poi=None combat=False
+[19:11:59.767] [N] [Singular] Casting Seal of Righteousness on Myself
+[19:11:59.767] [D] Spell_C::CastSpell(21084, 0, 0x6000000007EAB80, 0)
+[19:11:59.800] [D] [Pulse] Slow bot root: 232ms bot=Wholesome Auto Quest poi=None combat=False
+[19:12:00.701] [D] [Blackspot] Area cost initialized: area 17 = 60x
+[19:12:00.706] [D] [Nav] Loaded 9 mesh tiles for one path query
+[19:12:00.711] [D] [If] Condition is true, executing If body
+[19:12:00.737] [D] [If] Condition is true, executing If body
+[19:12:00.776] [N] [QuestBehavior] Compiling: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\UseTransport.cs
+[19:12:01.053] [N] [QuestBehavior] Successfully compiled: UseTransport.cs
+[19:12:01.066] [N] [Code] Executing custom behavior: UseTransport
+[19:12:01.068] [D] Goal: UseTransport: Freewind Post lower level
+[19:12:01.069] [D] Activity: Moving to wait location
+[19:12:01.105] [D] [UseTransport-v217(debug) @line 24]: Approaching wait location: player=(-5453.22, -2409.61, 89.28); wait2D=103.87; waitZ=0.22; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 87.68); anchor=(-5382.50, -2489.42, -40.53); startDistance=1.34; type=Transport; state=1; animation=100; observedAway=False; dockStableMs=0; onTransport=False; selectedGuid=1FC000000000006E; attachedGuid=0; usedTransport=False; falling=False; groundSupport=True; exitDockConfirmed=False; detachedExitAuthorized=False; exitTarget=(-5371.50, -2489.15, -40.56); exit2D=114.03
+[19:12:01.302] [D] [Pulse] Slow bot root: 799ms bot=Wholesome Auto Quest poi=None combat=False
+[19:12:02.332] [D] [Pulse] Slow bot root: 299ms bot=Wholesome Auto Quest poi=None combat=False
+[19:12:03.197] [N] [Singular] Casting Seal of Righteousness on Myself
+[19:12:03.197] [D] Spell_C::CastSpell(21084, 0, 0x6000000007EAB80, 0)
+[19:12:03.231] [D] [Pulse] Slow bot root: 201ms bot=Wholesome Auto Quest poi=None combat=False
+[19:12:04.229] [D] [Pulse] Slow bot root: 299ms bot=Wholesome Auto Quest poi=None combat=False
+[19:12:05.096] [D] [UseTransport-v217(debug) @line 24]: Approaching wait location: player=(-5440.10, -2433.44, 89.37); wait2D=77.64; waitZ=0.31; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 89.03); anchor=(-5382.50, -2489.42, -40.53); startDistance=0.00; type=Transport; state=1; animation=100; observedAway=False; dockStableMs=0; onTransport=False; selectedGuid=1FC000000000006E; attachedGuid=0; usedTransport=False; falling=False; groundSupport=True; exitDockConfirmed=False; detachedExitAuthorized=False; exitTarget=(-5371.50, -2489.15, -40.56); exit2D=88.37
+[19:12:05.232] [D] [Pulse] Slow bot root: 303ms bot=Wholesome Auto Quest poi=None combat=False
+[19:12:06.198] [D] [Pulse] Slow bot root: 265ms bot=Wholesome Auto Quest poi=None combat=False
+[19:12:07.161] [D] [Pulse] Slow bot root: 265ms bot=Wholesome Auto Quest poi=None combat=False
+[19:12:08.160] [D] [Pulse] Slow bot root: 267ms bot=Wholesome Auto Quest poi=None combat=False
+[19:12:08.328] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=128ms
+[19:12:08.396] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=65ms
+[19:12:08.396] [D] [Pulse] Slow shared pulse: total=235ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=37 events=0 plugins=196 routine=0
+[19:12:09.162] [D] [UseTransport-v217(debug) @line 24]: Approaching wait location: player=(-5434.34, -2442.01, 89.53); wait2D=67.61; waitZ=0.47; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 70.60); anchor=(-5382.50, -2489.42, -40.53); startDistance=18.43; type=Transport; state=1; animation=100; observedAway=False; dockStableMs=0; onTransport=False; selectedGuid=1FC000000000006E; attachedGuid=0; usedTransport=False; falling=False; groundSupport=True; exitDockConfirmed=False; detachedExitAuthorized=False; exitTarget=(-5371.50, -2489.15, -40.56); exit2D=78.55
+[19:12:09.295] [D] [Pulse] Slow bot root: 300ms bot=Wholesome Auto Quest poi=None combat=False
+[19:12:10.230] [D] [Nav] Ground movement made no progress for 3s despite repeated commands: from=(-5434.34, -2442.01, 89.53) waypoint=(-5434.13, -2442.31, 89.42) destination=(-5425.65, -2448.40, 89.28) moving=False speed=0.0 ctm=None. Trying validated detour, then stuck recovery.
+[19:12:10.329] [D] [Nav] Following validated local detour: map=1 from=(-5434.34, -2442.01, 89.53) landing=(-5432.73, -2443.20, 89.55) destination=(-5425.65, -2448.40, 89.28)
+[19:12:10.363] [D] [Pulse] Slow bot root: 367ms bot=Wholesome Auto Quest poi=None combat=False
+[19:12:11.362] [D] [Pulse] Slow bot root: 299ms bot=Wholesome Auto Quest poi=None combat=False
+[19:12:12.226] [D] [UseTransport-v217(debug) @line 24]: Approaching wait location: player=(-5428.09, -2446.61, 89.28); wait2D=59.88; waitZ=0.21; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 13.78); anchor=(-5382.50, -2489.42, -40.53); startDistance=75.25; type=Transport; state=1; animation=100; observedAway=False; dockStableMs=0; onTransport=False; selectedGuid=1FC000000000006E; attachedGuid=0; usedTransport=False; falling=False; groundSupport=True; exitDockConfirmed=False; detachedExitAuthorized=False; exitTarget=(-5371.50, -2489.15, -40.56); exit2D=70.79
+[19:12:12.426] [D] [Pulse] Slow bot root: 365ms bot=Wholesome Auto Quest poi=None combat=False
+[19:12:13.424] [D] [Pulse] Slow bot root: 233ms bot=Wholesome Auto Quest poi=None combat=False
+[19:12:14.424] [D] [Pulse] Slow bot root: 301ms bot=Wholesome Auto Quest poi=None combat=False
+[19:12:15.292] [D] [UseTransport-v217(debug) @line 24]: Approaching wait location: player=(-5410.74, -2461.98, 88.94); wait2D=36.71; waitZ=0.13; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -35.79); anchor=(-5382.50, -2489.42, -40.53); startDistance=124.81; type=Transport; state=1; animation=100; observedAway=False; dockStableMs=0; onTransport=False; selectedGuid=1FC000000000006E; attachedGuid=0; usedTransport=False; falling=False; groundSupport=True; exitDockConfirmed=False; detachedExitAuthorized=False; exitTarget=(-5371.50, -2489.15, -40.56); exit2D=47.72
+[19:12:15.457] [D] [Pulse] Slow bot root: 332ms bot=Wholesome Auto Quest poi=None combat=False
+[19:12:16.451] [D] [Pulse] Slow bot root: 299ms bot=Wholesome Auto Quest poi=None combat=False
+[19:12:17.453] [D] [Pulse] Slow bot root: 299ms bot=Wholesome Auto Quest poi=None combat=False
+[19:12:18.350] [D] [UseTransport-v217(debug) @line 24]: Approaching wait location: player=(-5393.54, -2477.44, 88.94); wait2D=13.58; waitZ=0.13; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -40.53); anchor=(-5382.50, -2489.42, -40.53); startDistance=129.55; type=Transport; state=1; animation=100; observedAway=False; dockStableMs=0; onTransport=False; selectedGuid=1FC000000000006E; attachedGuid=0; usedTransport=False; falling=False; groundSupport=True; exitDockConfirmed=False; detachedExitAuthorized=False; exitTarget=(-5371.50, -2489.15, -40.56); exit2D=24.95
+[19:12:18.516] [D] [Pulse] Slow bot root: 333ms bot=Wholesome Auto Quest poi=None combat=False
+[19:12:18.682] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=127ms
+[19:12:18.748] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=65ms
+[19:12:18.749] [D] [Pulse] Slow shared pulse: total=231ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=36 events=0 plugins=194 routine=0
+[19:12:19.614] [D] [Pulse] Slow bot root: 266ms bot=Wholesome Auto Quest poi=None combat=False
+[19:12:20.451] [D] Activity: Waiting for transport
+[19:12:20.451] [D] [Pulse] Slow bot root: 136ms bot=Wholesome Auto Quest poi=None combat=False
+[19:12:21.284] [D] [Pulse] Slow bot root: 136ms bot=Wholesome Auto Quest poi=None combat=False
+[19:12:22.147] [D] [UseTransport-v217(debug) @line 24]: Waiting for transport: player=(-5385.31, -2484.84, 88.94); wait2D=2.53; waitZ=0.13; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -40.01); anchor=(-5382.50, -2489.42, -40.53); startDistance=129.03; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; selectedGuid=1FC000000000006E; attachedGuid=0; usedTransport=False; falling=False; groundSupport=True; exitDockConfirmed=False; detachedExitAuthorized=False; exitTarget=(-5371.50, -2489.15, -40.56); exit2D=14.46
+[19:12:22.147] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[19:12:22.981] [D] [Pulse] Slow bot root: 134ms bot=Wholesome Auto Quest poi=None combat=False
+[19:12:23.845] [D] [Pulse] Slow bot root: 133ms bot=Wholesome Auto Quest poi=None combat=False
+[19:12:24.680] [D] [Pulse] Slow bot root: 133ms bot=Wholesome Auto Quest poi=None combat=False
+[19:12:25.544] [D] [UseTransport-v217(debug) @line 24]: Waiting for transport: player=(-5385.31, -2484.84, 88.94); wait2D=2.53; waitZ=0.13; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 2.61); anchor=(-5382.50, -2489.42, -40.53); startDistance=86.42; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; selectedGuid=1FC000000000006E; attachedGuid=0; usedTransport=False; falling=False; groundSupport=True; exitDockConfirmed=False; detachedExitAuthorized=False; exitTarget=(-5371.50, -2489.15, -40.56); exit2D=14.46
+[19:12:25.544] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=False
+[19:12:26.378] [D] [Pulse] Slow bot root: 137ms bot=Wholesome Auto Quest poi=None combat=False
+[19:12:27.209] [D] [Pulse] Slow bot root: 134ms bot=Wholesome Auto Quest poi=None combat=False
+[19:12:28.040] [D] [Pulse] Slow bot root: 135ms bot=Wholesome Auto Quest poi=None combat=False
+[19:12:28.935] [D] [UseTransport-v217(debug) @line 24]: Waiting for transport: player=(-5385.31, -2484.84, 88.94); wait2D=2.53; waitZ=0.13; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 64.25); anchor=(-5382.50, -2489.42, -40.53); startDistance=24.78; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; selectedGuid=1FC000000000006E; attachedGuid=0; usedTransport=False; falling=False; groundSupport=True; exitDockConfirmed=False; detachedExitAuthorized=False; exitTarget=(-5371.50, -2489.15, -40.56); exit2D=14.46
+[19:12:28.935] [D] [Pulse] Slow bot root: 165ms bot=Wholesome Auto Quest poi=None combat=False
+[19:12:29.101] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=127ms
+[19:12:29.168] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=65ms
+[19:12:29.168] [D] [Pulse] Slow shared pulse: total=233ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=37 events=0 plugins=194 routine=0
+[19:12:29.899] [D] [Pulse] Slow bot root: 133ms bot=Wholesome Auto Quest poi=None combat=False
+[19:12:30.732] [D] [Pulse] Slow bot root: 134ms bot=Wholesome Auto Quest poi=None combat=False
+[19:12:31.564] [D] Activity: Confirming transport is docked
+[19:12:31.564] [D] [Pulse] Slow bot root: 134ms bot=Wholesome Auto Quest poi=None combat=False
+[19:12:32.429] [D] [UseTransport-v217(debug) @line 24]: Waiting for transport: player=(-5385.31, -2484.84, 88.94); wait2D=2.53; waitZ=0.13; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 89.03); anchor=(-5382.50, -2489.42, -40.53); startDistance=0.00; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; selectedGuid=1FC000000000006E; attachedGuid=0; usedTransport=False; falling=False; groundSupport=True; exitDockConfirmed=False; detachedExitAuthorized=False; exitTarget=(-5371.50, -2489.15, -40.56); exit2D=14.46
+[19:12:32.430] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[19:12:33.263] [D] Activity: Moving inside transport
+[19:12:33.295] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[19:12:34.159] [D] Activity: Waiting for the end location
+[19:12:34.159] [D] [Pulse] Slow bot root: 133ms bot=Wholesome Auto Quest poi=None combat=False
+[19:12:34.990] [D] Activity: Waiting for transport to reach the end location
+[19:12:34.990] [D] [Pulse] Slow bot root: 134ms bot=Wholesome Auto Quest poi=None combat=False
+[19:12:35.822] [D] [UseTransport-v217(debug) @line 24]: Waiting for transport: player=(-5382.68, -2489.11, 89.07); wait2D=2.57; waitZ=0.00; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 89.03); anchor=(-5382.50, -2489.42, -40.53); startDistance=0.00; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=True; selectedGuid=1FC000000000006E; attachedGuid=1FC000000000006E; usedTransport=True; falling=False; groundSupport=True; exitDockConfirmed=False; detachedExitAuthorized=False; exitTarget=(-5371.50, -2489.15, -40.56); exit2D=11.18
+[19:12:35.822] [D] [Pulse] Slow bot root: 134ms bot=Wholesome Auto Quest poi=None combat=False
+[19:12:36.655] [D] [Pulse] Slow bot root: 134ms bot=Wholesome Auto Quest poi=None combat=False
+[19:12:37.486] [D] [Pulse] Slow bot root: 132ms bot=Wholesome Auto Quest poi=None combat=False
+[19:12:38.317] [D] [Pulse] Slow bot root: 134ms bot=Wholesome Auto Quest poi=None combat=False
+[19:12:39.182] [D] [UseTransport-v217(debug) @line 24]: Waiting for transport: player=(-5382.68, -2489.11, 69.66); wait2D=2.57; waitZ=19.41; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 69.62); anchor=(-5382.50, -2489.42, -40.53); startDistance=19.41; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=True; selectedGuid=1FC000000000006E; attachedGuid=1FC000000000006E; usedTransport=True; falling=False; groundSupport=True; exitDockConfirmed=False; detachedExitAuthorized=False; exitTarget=(-5371.50, -2489.15, -40.56); exit2D=11.18
+[19:12:39.183] [D] [Pulse] Slow bot root: 134ms bot=Wholesome Auto Quest poi=None combat=False
+[19:12:39.349] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=128ms
+[19:12:39.415] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=64ms
+[19:12:39.415] [D] [Pulse] Slow shared pulse: total=232ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=36 events=0 plugins=194 routine=0
+[19:12:40.148] [D] [Pulse] Slow bot root: 133ms bot=Wholesome Auto Quest poi=None combat=False
+[19:12:40.982] [D] [Pulse] Slow bot root: 134ms bot=Wholesome Auto Quest poi=None combat=False
+[19:12:41.815] [D] [Pulse] Slow bot root: 133ms bot=Wholesome Auto Quest poi=None combat=False
+[19:12:42.644] [D] [UseTransport-v217(debug) @line 24]: Waiting for transport: player=(-5382.68, -2489.11, 5.47); wait2D=2.57; waitZ=83.59; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, 5.43); anchor=(-5382.50, -2489.42, -40.53); startDistance=83.59; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=True; selectedGuid=1FC000000000006E; attachedGuid=1FC000000000006E; usedTransport=True; falling=False; groundSupport=True; exitDockConfirmed=False; detachedExitAuthorized=False; exitTarget=(-5371.50, -2489.15, -40.56); exit2D=11.18
+[19:12:42.644] [D] [Pulse] Slow bot root: 134ms bot=Wholesome Auto Quest poi=None combat=False
+[19:12:43.507] [D] [Pulse] Slow bot root: 132ms bot=Wholesome Auto Quest poi=None combat=False
+[19:12:44.373] [D] [Pulse] Slow bot root: 133ms bot=Wholesome Auto Quest poi=None combat=False
+[19:12:45.206] [D] [Pulse] Slow bot root: 134ms bot=Wholesome Auto Quest poi=None combat=False
+[19:12:46.035] [D] [UseTransport-v217(debug) @line 24]: Waiting for transport: player=(-5382.68, -2489.11, -39.17); wait2D=2.57; waitZ=128.24; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -39.21); anchor=(-5382.50, -2489.42, -40.53); startDistance=128.24; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=True; selectedGuid=1FC000000000006E; attachedGuid=1FC000000000006E; usedTransport=True; falling=False; groundSupport=True; exitDockConfirmed=False; detachedExitAuthorized=False; exitTarget=(-5371.50, -2489.15, -40.56); exit2D=11.18
+[19:12:46.035] [D] [Pulse] Slow bot root: 134ms bot=Wholesome Auto Quest poi=None combat=False
+[19:12:46.867] [D] Activity: Confirming transport is stopped at the end location
+[19:12:46.867] [D] [Pulse] Slow bot root: 134ms bot=Wholesome Auto Quest poi=None combat=False
+[19:12:47.699] [D] Activity: Moving out of transport
+[19:12:47.732] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=False
+[19:12:48.599] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=None combat=False
+[19:12:50.647] [D] [Nav] Loaded 391 mesh tiles for one path query
+[19:12:50.647] [D] [Nav] Slow path generation: 1182ms map=1 from=(-5371.98, -2489.16, -40.56) to=(-5407.12, -2419.61, 89.63) status=Success
+[19:12:50.669] [N] Blacklisting Nyse for 5 minutes because we can't navigate to it.
+[19:12:50.670] [D] Blacklisting F1300010DD0B9A95 for 00:05:00
+[19:12:50.703] [D] Activity: Transport complete
+[19:12:50.736] [D] [UseTransport-v217(debug) @line 24]: Waiting for transport: player=(-5371.98, -2489.16, -40.56); wait2D=11.89; waitZ=129.63; pathPrecision=1.50; transport=live=(-5382.50, -2489.42, -40.53); anchor=(-5382.50, -2489.42, -40.53); startDistance=129.55; type=Transport; state=1; animation=100; observedAway=True; dockStableMs=0; onTransport=False; selectedGuid=1FC000000000006E; attachedGuid=0; usedTransport=True; falling=False; groundSupport=True; exitDockConfirmed=True; detachedExitAuthorized=True; exitTarget=(-5371.50, -2489.15, -40.56); exit2D=0.48
+[19:12:50.736] [D] [Pulse] Slow bot root: 1406ms bot=Wholesome Auto Quest poi=None combat=False
+[19:12:50.902] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=128ms
+[19:12:50.968] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=65ms
+[19:12:50.968] [D] [Pulse] Slow shared pulse: total=232ms movement=0 objects=3 lua=0 info=0 loot=1 targeting=32 events=0 plugins=195 routine=0
+[19:12:51.703] [D] [FBE] Advancing past Bots.Quest.QuestOrder.ForcedCodeBehavior (IsDone=true), remaining nodes: 1
+[19:12:51.705] [D] [Pulse] Slow bot root: 137ms bot=Wholesome Auto Quest poi=None combat=False
+[19:12:52.537] [D] [FBE] Advancing past Bots.Quest.QuestOrder.ForcedIf (IsDone=true), remaining nodes: 2
+[19:12:52.617] [N] [Objective] Goal: Kill Galak Scout x 12
+[19:12:52.617] [D] Goal: Goal: Kill Galak Scout x 12
+[19:12:52.617] [D] [GrindObjective] Using profile hotspots (3 points) for mob 4094
+[19:12:52.867] [N] Mounting: 34769
+[19:12:55.171] [D] Activity: Moving to hotspot
+[19:12:55.302] [D] [Pulse] Slow bot root: 2900ms bot=Wholesome Auto Quest poi=None combat=False
+[19:12:56.233] [D] [Pulse] Slow bot root: 198ms bot=Wholesome Auto Quest poi=None combat=False
+[19:12:57.167] [D] [Pulse] Slow bot root: 233ms bot=Wholesome Auto Quest poi=None combat=False
+[19:12:58.065] [D] [Pulse] Slow bot root: 198ms bot=Wholesome Auto Quest poi=None combat=False
+[19:12:58.966] [D] [Pulse] Slow bot root: 201ms bot=Wholesome Auto Quest poi=None combat=False
+[19:12:59.899] [D] [Pulse] Slow bot root: 199ms bot=Wholesome Auto Quest poi=None combat=False
+[19:13:00.797] [D] [Pulse] Slow bot root: 199ms bot=Wholesome Auto Quest poi=None combat=False
+[19:13:00.999] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=129ms
+[19:13:01.064] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=63ms
+[19:13:01.064] [D] [Pulse] Slow shared pulse: total=266ms movement=0 objects=0 lua=33 info=0 loot=1 targeting=36 events=0 plugins=194 routine=0
+[19:13:01.862] [D] [Pulse] Slow bot root: 199ms bot=Wholesome Auto Quest poi=None combat=False
+[19:13:02.761] [D] [Pulse] Slow bot root: 197ms bot=Wholesome Auto Quest poi=None combat=False
+[19:13:03.662] [D] [Pulse] Slow bot root: 200ms bot=Wholesome Auto Quest poi=None combat=False
+[19:13:04.561] [D] [Pulse] Slow bot root: 198ms bot=Wholesome Auto Quest poi=None combat=False
+[19:13:05.460] [D] [Pulse] Slow bot root: 199ms bot=Wholesome Auto Quest poi=None combat=False
+[19:13:06.328] [D] [Nav] Ground movement made no progress for 3s despite repeated commands: from=(-5345.50, -2484.83, -46.68) waypoint=(-5345.57, -2484.89, -46.44) destination=(-5251.34, -2438.90, -40.90) moving=False speed=0.0 ctm=None. Trying validated detour, then stuck recovery.
+[19:13:06.426] [D] [Nav] Following validated local detour: map=1 from=(-5345.50, -2484.83, -46.68) landing=(-5343.71, -2483.95, -46.19) destination=(-5251.34, -2438.90, -40.90)
+[19:13:06.461] [D] [Pulse] Slow bot root: 303ms bot=Wholesome Auto Quest poi=None combat=False
+[19:13:07.483] [D] [Pulse] Slow bot root: 297ms bot=Wholesome Auto Quest poi=None combat=False
+[19:13:08.452] [D] [Pulse] Slow bot root: 269ms bot=Wholesome Auto Quest poi=None combat=False
+[19:13:09.351] [D] [Pulse] Slow bot root: 199ms bot=Wholesome Auto Quest poi=None combat=False
+[19:13:10.247] [D] [Pulse] Slow bot root: 198ms bot=Wholesome Auto Quest poi=None combat=False
+[19:13:11.146] [D] [Pulse] Slow bot root: 199ms bot=Wholesome Auto Quest poi=None combat=False
+[19:13:11.311] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=126ms
+[19:13:11.378] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=65ms
+[19:13:11.379] [D] [Pulse] Slow shared pulse: total=232ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=36 events=0 plugins=193 routine=0
+[19:13:12.177] [D] [Pulse] Slow bot root: 200ms bot=Wholesome Auto Quest poi=None combat=False
+[19:13:13.140] [D] [Pulse] Slow bot root: 231ms bot=Wholesome Auto Quest poi=None combat=False
+[19:13:14.073] [D] [Pulse] Slow bot root: 203ms bot=Wholesome Auto Quest poi=None combat=False
+[19:13:14.968] [D] [Pulse] Slow bot root: 199ms bot=Wholesome Auto Quest poi=None combat=False
+[19:13:15.863] [D] [Pulse] Slow bot root: 198ms bot=Wholesome Auto Quest poi=None combat=False
+[19:13:16.799] [D] Activity: Setting Galak Scout at 16.4 yards as your target
+[19:13:16.799] [D] Dismounting for combat.
+[19:13:16.799] [D] Stop and dismount. Reason: Combat
+[19:13:16.831] [D] [Pulse] Slow bot root: 268ms bot=Wholesome Auto Quest poi=None combat=False
+[19:13:17.528] [D] Changed POI to: Type: Kill, Name: Galak Scout, Guid: F130000FFE0CC813, Entry: 4094, Location: (-5253.16, -2439.28, -41.37)
+[19:13:17.660] [D] [Singular-DEBUG] Switched targets!
+[19:13:17.660] [D] [Singular-DEBUG] Melee Distance: 5
+[19:13:17.660] [D] [Singular-DEBUG] Health: 100
+[19:13:17.660] [D] [Singular-DEBUG] Level: 25
+[19:13:18.693] [N] [Singular] Casting Exorcism on Galak Scout
+[19:13:18.693] [D] Spell_C::CastSpell(879, 0, 0xF130000FFE0CC813, 0)
+[19:13:18.725] [D] [Pulse] Slow bot root: 465ms bot=Wholesome Auto Quest poi=Kill combat=False
+[19:13:19.629] [D] [Pulse] Slow bot root: 200ms bot=Wholesome Auto Quest poi=Kill combat=False
+[19:13:20.528] [D] [Pulse] Slow bot root: 200ms bot=Wholesome Auto Quest poi=Kill combat=False
+[19:13:21.691] [D] [Pulse] Slow bot root: 464ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:13:21.789] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=57ms
+[19:13:22.620] [N] [Singular] Casting Judgement of Light on Galak Scout
+[19:13:22.620] [D] Spell_C::CastSpell(20271, 0, 0xF130000FFE0CC813, 0)
+[19:13:22.653] [D] [Pulse] Slow bot root: 265ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:13:23.686] [D] [Pulse] Slow bot root: 302ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:13:24.563] [D] [Pulse] Slow bot root: 178ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:13:25.427] [D] [Pulse] Slow bot root: 176ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:13:26.297] [D] [Pulse] Slow bot root: 177ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:13:27.163] [D] [Pulse] Slow bot root: 181ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:13:28.030] [D] [Pulse] Slow bot root: 181ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:13:28.931] [D] [Pulse] Slow bot root: 181ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:13:29.794] [D] [Pulse] Slow bot root: 179ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:13:30.813] [D] [Pulse] Slow bot root: 333ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:13:31.740] [N] [Singular] Casting Judgement of Light on Galak Scout
+[19:13:31.741] [D] Spell_C::CastSpell(20271, 0, 0xF130000FFE0CC813, 0)
+[19:13:31.777] [D] [Pulse] Slow bot root: 269ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:13:31.874] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=55ms
+[19:13:32.604] [D] Cleared POI - Reason POI is dead from Combat
+[19:13:32.604] [D] Cleared POI
+[19:13:32.604] [D] [Pulse] Slow bot root: 133ms bot=Wholesome Auto Quest poi=None combat=True
+[19:13:34.390] [D] [Pulse] Slow bot root: 1083ms bot=Wholesome Auto Quest poi=None combat=False
+[19:13:35.296] [D] Activity: Moving to hotspot
+[19:13:35.462] [D] [Pulse] Slow bot root: 365ms bot=Wholesome Auto Quest poi=None combat=False
+[19:13:35.561] [D] [Singular-DEBUG] Switched targets!
+[19:13:35.561] [D] [Singular-DEBUG] Melee Distance: 5
+[19:13:35.561] [D] [Singular-DEBUG] Health: 100
+[19:13:35.561] [D] [Singular-DEBUG] Level: 24
+[19:13:36.297] [D] Activity: Moving towards Galak Scout
+[19:13:36.494] [D] [Pulse] Slow bot root: 331ms bot=Wholesome Auto Quest poi=None combat=False
+[19:13:37.508] [D] [Pulse] Slow bot root: 299ms bot=Wholesome Auto Quest poi=None combat=False
+[19:13:38.341] [D] Activity: Setting Galak Scout at 17.7 yards as your target
+[19:13:38.341] [D] Changed POI to: Type: Kill, Name: Galak Scout, Guid: F130000FFE0CC737, Entry: 4094, Location: (-5223.06, -2449.97, -47.37)
+[19:13:38.341] [D] [Pulse] Slow bot root: 135ms bot=Wholesome Auto Quest poi=Kill combat=False
+[19:13:39.433] [D] [Pulse] Slow bot root: 397ms bot=Wholesome Auto Quest poi=Kill combat=False
+[19:13:40.393] [N] [Singular] Casting Judgement of Light on Galak Scout
+[19:13:40.393] [D] Spell_C::CastSpell(20271, 0, 0xF130000FFE0CC737, 0)
+[19:13:40.427] [D] [Pulse] Slow bot root: 265ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:13:41.362] [D] [Pulse] Slow bot root: 235ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:13:42.290] [N] [Singular] Casting Exorcism on Galak Scout
+[19:13:42.290] [D] Spell_C::CastSpell(879, 0, 0xF130000FFE0CC737, 0)
+[19:13:42.325] [D] [Pulse] Slow bot root: 266ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:13:42.422] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=51ms
+[19:13:43.188] [D] [Pulse] Slow bot root: 168ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:13:44.087] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:13:44.957] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:13:45.889] [D] [Pulse] Slow bot root: 201ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:13:46.764] [D] [Pulse] Slow bot root: 178ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:13:47.627] [D] [Pulse] Slow bot root: 179ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:13:48.513] [D] [Pulse] Slow bot root: 199ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:13:49.447] [N] [Singular] Casting Judgement of Light on Galak Scout
+[19:13:49.448] [D] Spell_C::CastSpell(20271, 0, 0xF130000FFE0CC737, 0)
+[19:13:49.482] [D] [Pulse] Slow bot root: 266ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:13:50.321] [D] Cleared POI - Reason POI is dead from Combat
+[19:13:50.321] [D] Cleared POI
+[19:13:50.321] [D] [Pulse] Slow bot root: 137ms bot=Wholesome Auto Quest poi=None combat=True
+[19:13:51.585] [D] [Pulse] Slow bot root: 534ms bot=Wholesome Auto Quest poi=None combat=True
+[19:13:51.684] [D] [Singular-DEBUG] Switched targets!
+[19:13:51.684] [D] [Singular-DEBUG] Melee Distance: 5
+[19:13:51.684] [D] [Singular-DEBUG] Health: 100
+[19:13:51.684] [D] [Singular-DEBUG] Level: 24
+[19:13:52.554] [D] [Pulse] Slow bot root: 270ms bot=Wholesome Auto Quest poi=None combat=True
+[19:13:52.651] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=54ms
+[19:13:53.427] [D] [Pulse] Slow bot root: 177ms bot=Wholesome Auto Quest poi=None combat=True
+[19:13:54.294] [D] [Pulse] Slow bot root: 179ms bot=Wholesome Auto Quest poi=None combat=True
+[19:13:55.157] [D] [Pulse] Slow bot root: 177ms bot=Wholesome Auto Quest poi=None combat=True
+[19:13:56.024] [D] [Pulse] Slow bot root: 178ms bot=Wholesome Auto Quest poi=None combat=True
+[19:13:56.924] [D] [Pulse] Slow bot root: 177ms bot=Wholesome Auto Quest poi=None combat=True
+[19:13:57.850] [N] [Singular] Casting Judgement of Light on Galak Scout
+[19:13:57.850] [D] Spell_C::CastSpell(20271, 0, 0xF130000FFE0CC794, 0)
+[19:13:57.882] [D] [Pulse] Slow bot root: 266ms bot=Wholesome Auto Quest poi=None combat=True
+[19:13:58.787] [D] [Pulse] Slow bot root: 205ms bot=Wholesome Auto Quest poi=None combat=True
+[19:13:59.660] [D] [Pulse] Slow bot root: 176ms bot=Wholesome Auto Quest poi=None combat=True
+[19:14:00.580] [N] [Singular] Casting Exorcism on Galak Scout
+[19:14:00.580] [D] Spell_C::CastSpell(879, 0, 0xF130000FFE0CC794, 0)
+[19:14:00.614] [D] [Pulse] Slow bot root: 265ms bot=Wholesome Auto Quest poi=None combat=True
+[19:14:01.479] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=True
+[19:14:02.373] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=None combat=True
+[19:14:03.408] [D] [Pulse] Slow bot root: 333ms bot=Wholesome Auto Quest poi=None combat=True
+[19:14:03.507] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=53ms
+[19:14:04.480] [D] [Pulse] Slow bot root: 378ms bot=Wholesome Auto Quest poi=None combat=False
+[19:14:05.300] [D] Activity: Moving towards Galak Scout
+[19:14:05.506] [D] [Pulse] Slow bot root: 336ms bot=Wholesome Auto Quest poi=None combat=False
+[19:14:06.365] [D] Activity: Setting Galak Wrangler at 14.1 yards as your target
+[19:14:06.365] [D] [Pulse] Slow bot root: 165ms bot=Wholesome Auto Quest poi=None combat=False
+[19:14:07.060] [D] Changed POI to: Type: Kill, Name: Galak Wrangler, Guid: F130000FFD0CC6C4, Entry: 4093, Location: (-5195.05, -2463.22, -51.51)
+[19:14:07.193] [D] [Singular-DEBUG] Switched targets!
+[19:14:07.193] [D] [Singular-DEBUG] Melee Distance: 5
+[19:14:07.193] [D] [Singular-DEBUG] Health: 100
+[19:14:07.193] [D] [Singular-DEBUG] Level: 26
+[19:14:08.275] [D] [Pulse] Slow bot root: 465ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:14:09.236] [N] [Singular] Casting Judgement of Light on Galak Wrangler
+[19:14:09.236] [D] Spell_C::CastSpell(20271, 0, 0xF130000FFD0CC6C4, 0)
+[19:14:09.271] [D] [Pulse] Slow bot root: 299ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:14:10.334] [D] [Pulse] Slow bot root: 366ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:14:11.362] [D] [Pulse] Slow bot root: 331ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:14:12.291] [N] [Singular] Casting Hand of Freedom on Myself
+[19:14:12.291] [D] Spell_C::CastSpell(1044, 0, 0x6000000007EAB80, 0)
+[19:14:12.324] [D] [Pulse] Slow bot root: 263ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:14:13.234] [D] [Pulse] Slow bot root: 176ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:14:14.135] [D] [Pulse] Slow bot root: 178ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:14:14.222] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=53ms
+[19:14:15.002] [D] [Pulse] Slow bot root: 179ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:14:15.865] [D] [Pulse] Slow bot root: 176ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:14:16.732] [D] [Pulse] Slow bot root: 180ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:14:17.650] [N] [Singular] Casting Judgement of Light on Galak Wrangler
+[19:14:17.650] [D] Spell_C::CastSpell(20271, 0, 0xF130000FFD0CC6C4, 0)
+[19:14:17.684] [D] [Pulse] Slow bot root: 265ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:14:18.657] [D] [Pulse] Slow bot root: 239ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:14:19.581] [N] [Singular] Casting Exorcism on Galak Wrangler
+[19:14:19.581] [D] Spell_C::CastSpell(879, 0, 0xF130000FFD0CC6C4, 0)
+[19:14:19.616] [D] [Pulse] Slow bot root: 265ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:14:20.480] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:14:21.348] [D] [Pulse] Slow bot root: 166ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:14:22.312] [N] [Singular] Casting Divine Protection on Myself
+[19:14:22.312] [D] Spell_C::CastSpell(498, 0, 0x6000000007EAB80, 0)
+[19:14:22.345] [D] [Pulse] Slow bot root: 297ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:14:23.444] [D] [Pulse] Slow bot root: 397ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:14:24.471] [D] [Pulse] Slow bot root: 296ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:14:24.571] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=54ms
+[19:14:25.441] [D] [Pulse] Slow bot root: 266ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:14:26.271] [D] Cleared POI - Reason POI is dead from Combat
+[19:14:26.271] [D] Cleared POI
+[19:14:26.271] [D] [Pulse] Slow bot root: 133ms bot=Wholesome Auto Quest poi=None combat=True
+[19:14:27.176] [D] [Pulse] Slow bot root: 196ms bot=Wholesome Auto Quest poi=None combat=True
+[19:14:27.274] [D] [Singular-DEBUG] Switched targets!
+[19:14:27.274] [D] [Singular-DEBUG] Melee Distance: 5
+[19:14:27.274] [D] [Singular-DEBUG] Health: 100
+[19:14:27.274] [D] [Singular-DEBUG] Level: 26
+[19:14:28.335] [D] [Pulse] Slow bot root: 462ms bot=Wholesome Auto Quest poi=None combat=True
+[19:14:29.265] [N] [Singular] Casting Judgement of Light on Galak Wrangler
+[19:14:29.265] [D] Spell_C::CastSpell(20271, 0, 0xF130000FFD0CC6E5, 0)
+[19:14:29.298] [D] [Pulse] Slow bot root: 265ms bot=Wholesome Auto Quest poi=None combat=True
+[19:14:30.327] [D] [Pulse] Slow bot root: 297ms bot=Wholesome Auto Quest poi=None combat=True
+[19:14:31.204] [D] [Pulse] Slow bot root: 175ms bot=Wholesome Auto Quest poi=None combat=True
+[19:14:32.071] [D] [Pulse] Slow bot root: 181ms bot=Wholesome Auto Quest poi=None combat=True
+[19:14:32.935] [D] [Pulse] Slow bot root: 176ms bot=Wholesome Auto Quest poi=None combat=True
+[19:14:33.802] [D] [Pulse] Slow bot root: 179ms bot=Wholesome Auto Quest poi=None combat=True
+[19:14:34.702] [D] [Pulse] Slow bot root: 211ms bot=Wholesome Auto Quest poi=None combat=True
+[19:14:34.822] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=54ms
+[19:14:35.595] [D] [Pulse] Slow bot root: 175ms bot=Wholesome Auto Quest poi=None combat=True
+[19:14:36.458] [D] [Pulse] Slow bot root: 178ms bot=Wholesome Auto Quest poi=None combat=True
+[19:14:37.378] [N] [Singular] Casting Exorcism on Galak Wrangler
+[19:14:37.378] [D] Spell_C::CastSpell(879, 0, 0xF130000FFD0CC6E5, 0)
+[19:14:37.412] [D] [Pulse] Slow bot root: 266ms bot=Wholesome Auto Quest poi=None combat=True
+[19:14:38.280] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=True
+[19:14:39.143] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=None combat=True
+[19:14:40.109] [N] [Singular] Casting Judgement of Light on Galak Wrangler
+[19:14:40.109] [D] Spell_C::CastSpell(20271, 0, 0xF130000FFD0CC6E5, 0)
+[19:14:40.143] [D] [Pulse] Slow bot root: 299ms bot=Wholesome Auto Quest poi=None combat=True
+[19:14:41.303] [D] [Pulse] Slow bot root: 419ms bot=Wholesome Auto Quest poi=None combat=True
+[19:14:42.122] [D] Activity: Moving towards Galak Scout
+[19:14:42.314] [D] [Pulse] Slow bot root: 326ms bot=Wholesome Auto Quest poi=None combat=False
+[19:14:42.414] [D] [Singular-DEBUG] Switched targets!
+[19:14:42.414] [D] [Singular-DEBUG] Melee Distance: 5
+[19:14:42.414] [D] [Singular-DEBUG] Health: 100
+[19:14:42.414] [D] [Singular-DEBUG] Level: 24
+[19:14:43.282] [D] [Pulse] Slow bot root: 267ms bot=Wholesome Auto Quest poi=None combat=False
+[19:14:44.145] [D] Activity: Setting Galak Scout at 17.5 yards as your target
+[19:14:44.145] [D] Changed POI to: Type: Kill, Name: Galak Scout, Guid: F130000FFE0CC852, Entry: 4094, Location: (-5146.73, -2458.02, -52.03)
+[19:14:44.145] [D] [Pulse] Slow bot root: 132ms bot=Wholesome Auto Quest poi=Kill combat=False
+[19:14:45.228] [D] [Pulse] Slow bot root: 386ms bot=Wholesome Auto Quest poi=Kill combat=False
+[19:14:45.426] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=118ms
+[19:14:45.492] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=64ms
+[19:14:45.492] [D] [Pulse] Slow shared pulse: total=264ms movement=0 objects=0 lua=32 info=0 loot=1 targeting=44 events=0 plugins=184 routine=0
+[19:14:46.297] [D] [Pulse] Slow bot root: 204ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:14:47.171] [D] [Pulse] Slow bot root: 178ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:14:48.036] [D] [Pulse] Slow bot root: 178ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:14:48.953] [N] [Singular] Casting Judgement of Light on Galak Scout
+[19:14:48.953] [D] Spell_C::CastSpell(20271, 0, 0xF130000FFE0CC852, 0)
+[19:14:48.987] [D] [Pulse] Slow bot root: 268ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:14:49.890] [D] [Pulse] Slow bot root: 204ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:14:50.763] [D] [Pulse] Slow bot root: 177ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:14:51.665] [D] [Pulse] Slow bot root: 181ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:14:52.530] [D] [Pulse] Slow bot root: 180ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:14:53.461] [D] [Pulse] Slow bot root: 181ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:14:54.380] [N] [Singular] Casting Exorcism on Galak Scout
+[19:14:54.380] [D] Spell_C::CastSpell(879, 0, 0xF130000FFE0CC852, 0)
+[19:14:54.414] [D] [Pulse] Slow bot root: 266ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:14:55.281] [D] [Pulse] Slow bot root: 169ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:14:56.142] [D] [Pulse] Slow bot root: 164ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:14:56.278] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=53ms
+[19:14:57.007] [D] Cleared POI - Reason POI is dead from Combat
+[19:14:57.007] [D] Cleared POI
+[19:14:57.007] [D] [Pulse] Slow bot root: 132ms bot=Wholesome Auto Quest poi=None combat=True
+[19:14:58.184] [D] [Pulse] Slow bot root: 479ms bot=Wholesome Auto Quest poi=None combat=False
+[19:14:59.005] [D] Activity: Moving towards Galak Scout
+[19:14:59.202] [D] [Pulse] Slow bot root: 333ms bot=Wholesome Auto Quest poi=None combat=False
+[19:14:59.576] [N] [Wholesome Auto Quest] Manual quest exclusions changed; queuing one scheduler rebuild.
+[19:15:00.101] [D] Activity: Setting Galak Scout at 22.3 yards as your target
+[19:15:00.101] [D] [Pulse] Slow bot root: 164ms bot=Wholesome Auto Quest poi=None combat=False
+[19:15:01.282] [D] [QuestLog] Loaded 79 completed quests from Lua fallback
+[19:15:01.326] [D] Loading profile from D:\World of Warcraft 3.3.5a\CB\Bots\WholesomeAutoQuest\WHOLESOME_AUTOQUESTER.xml
+[19:15:01.333] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\UseTransport.cs
+[19:15:01.334] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\UseTransport.cs
+[19:15:01.334] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\UseTransport.cs
+[19:15:01.336] [D] [CompileBatch] Compiling 6 entries...
+[19:15:01.438] [D] [CompileBatch] Compiled successfully.
+[19:15:01.438] [N] Profile loaded: WholesomeAQ - Thousand Needles
+[19:15:01.449] [D] Selected sub-profile: WholesomeAQ - Thousand Needles (L1-80)
+[19:15:01.449] [N] [Wholesome Auto Quest] Profile refreshed - Selected 1 quest work candidate(s). selected quest=4841;stage=Objective;state=Eligible. quest-log-full=25/25; deferred new pickups while retaining accepted quest work. excluded quest=1062;stage=TurnIn;npc=4049;reason=outside-scan-radius;retry=context-change excluded quest=1069;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=1087;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=1093;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T15:43:31.1900709Z;state=Quarantined. excluded quest=4921;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=5147;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T15:43:31.2300998Z;state=Quarantined. excluded quest=6382;stage=TurnIn;npc=12696;reason=outside-scan-radius;retry=context-change excluded quest=6393;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T15:43:31.2303856Z;state=Quarantined. excluded quest=6441;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T15:43:31.2304940Z;state=Quarantined. excluded quest=6461;stage=TurnIn;npc=12816;reason=outside-scan-radius;retry=context-change excluded quest=6543;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T15:43:31.2307164Z;state=Quarantined. excluded quest=846;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T12:58:16.6033605Z;state=Quarantined. excluded quest=846;stage=Objective;scope=Objective;objective=1;retry=2026-09-11T12:58:16.6078334Z;state=Quarantined. excluded quest=846;stage=Objective;scope=Objective;objective=2;retry=2026-09-11T12:58:16.6079054Z;state=Quarantined. excluded quest=8487;stage=TurnIn;npc=15402;reason=outside-scan-radius;retry=context-change excluded quest=867;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T12:58:16.6097297Z;state=Quarantined. excluded quest=868;stage=TurnIn;npc=3428;reason=outside-scan-radius;retry=context-change excluded quest=879;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T12:58:16.6158450Z;state=Quarantined. excluded quest=879;stage=Objective;scope=Objective;objective=1;retry=2026-09-11T12:58:16.6158941Z;state=Quarantined. excluded quest=879;stage=Objective;scope=Objective;objective=2;retry=2026-09-11T14:28:36.5856962Z;state=Quarantined. excluded quest=8889;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=8889;stage=Objective;objective=1;reason=outside-scan-radius;retry=context-change. excluded quest=8889;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=893;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T14:28:36.5895113Z;state=Quarantined. excluded quest=893;stage=Objective;scope=Objective;objective=1;retry=2026-09-11T14:28:36.5895743Z;state=Quarantined. excluded quest=893;stage=Objective;scope=Objective;objective=2;retry=2026-09-11T14:28:36.5896148Z;state=Quarantined. excluded quest=896;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T14:28:36.5896844Z;state=Quarantined. excluded quest=9067;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T15:43:31.2311999Z;state=Quarantined. excluded quest=9157;stage=TurnIn;npc=16201;reason=outside-scan-radius;retry=context-change excluded quest=9431;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T16:58:09.4694637Z;state=Quarantined.
+[19:15:02.080] [D] Changed POI to: Type: Kill, Name: Galak Scout, Guid: F130000FFE0C08CF, Entry: 4094, Location: (-5134.59, -2432.02, -52.44)
+[19:15:02.180] [D] [Singular-DEBUG] Switched targets!
+[19:15:02.180] [D] [Singular-DEBUG] Melee Distance: 5
+[19:15:02.180] [D] [Singular-DEBUG] Health: 100
+[19:15:02.180] [D] [Singular-DEBUG] Level: 24
+[19:15:03.078] [N] [Singular] Casting Judgement of Light on Galak Scout
+[19:15:03.078] [D] Spell_C::CastSpell(20271, 0, 0xF130000FFE0C08CF, 0)
+[19:15:03.112] [D] [Pulse] Slow bot root: 299ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:15:04.082] [D] [Pulse] Slow bot root: 239ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:15:04.991] [D] [Pulse] Slow bot root: 179ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:15:05.888] [D] [Pulse] Slow bot root: 180ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:15:06.786] [D] [Pulse] Slow bot root: 177ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:15:06.906] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=52ms
+[19:15:07.719] [D] [Pulse] Slow bot root: 182ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:15:08.625] [D] [Pulse] Slow bot root: 183ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:15:09.521] [D] [Pulse] Slow bot root: 179ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:15:10.417] [D] [Pulse] Slow bot root: 179ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:15:11.374] [N] [Singular] Casting Exorcism on Galak Scout
+[19:15:11.374] [D] Spell_C::CastSpell(879, 0, 0xF130000FFE0C08CF, 0)
+[19:15:11.408] [D] [Pulse] Slow bot root: 268ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:15:11.972] [N] Plugin 'DrinkPotions' enabled.
+[19:15:12.306] [D] [Pulse] Slow bot root: 167ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:15:13.341] [N] [Singular] Casting Judgement of Light on Galak Scout
+[19:15:13.342] [D] Spell_C::CastSpell(20271, 0, 0xF130000FFE0C08CF, 0)
+[19:15:13.372] [N] Plugin settings saved.
+[19:15:13.376] [D] [Pulse] Slow bot root: 303ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:15:14.279] [D] Cleared POI - Reason POI is dead from Combat
+[19:15:14.279] [D] Cleared POI
+[19:15:14.279] [D] [Pulse] Slow bot root: 132ms bot=Wholesome Auto Quest poi=None combat=True
+[19:15:14.377] [D] [Singular-DEBUG] Switched targets!
+[19:15:14.377] [D] [Singular-DEBUG] Melee Distance: 5
+[19:15:14.377] [D] [Singular-DEBUG] Health: 100
+[19:15:14.377] [D] [Singular-DEBUG] Level: 25
+[19:15:15.171] [D] [If] Condition is true, executing If body
+[19:15:15.202] [D] [FBE] Advancing past Bots.Quest.QuestOrder.ForcedIf (IsDone=true), remaining nodes: 2
+[19:15:15.269] [N] [Objective] Goal: Kill Galak Scout x 12
+[19:15:15.269] [D] Goal: Goal: Kill Galak Scout x 12
+[19:15:15.269] [D] [GrindObjective] Using profile hotspots (7 points) for mob 4094
+[19:15:15.335] [D] Activity: Moving to hotspot
+[19:15:15.534] [D] [Pulse] Slow bot root: 528ms bot=Wholesome Auto Quest poi=None combat=True
+[19:15:16.666] [D] [Pulse] Slow bot root: 366ms bot=Wholesome Auto Quest poi=None combat=False
+[19:15:16.832] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=121ms
+[19:15:16.898] [D] [Pulse] Slow shared pulse: total=232ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=42 events=0 plugins=187 routine=0
+[19:15:17.527] [N] Stopping the bot!
+[19:15:17.528] [N] Bot stopping! Reason: User request
+[19:15:17.529] [D] Exception in GetReturnValues: Thread was interrupted from a waiting state.
+[19:15:17.856] [D] [Pulse] Slow bot root: 326ms bot=Wholesome Auto Quest poi=None combat=False
+[19:15:17.859] [D] [QuestRecovery] quest=4841, stage=Objective, old=Attempting, new=Eligible, reason=None, episode=0, attempt=0, retry=
+[19:15:17.870] [D] Cleared POI
+[19:15:17.872] [D] Worker thread exited cleanly
+[19:15:20.695] [D] [Settings] Saved all settings
+[19:15:20.695] [N] Starting the bot.
+[19:15:20.696] [N] Currently Using BotBase : Wholesome Auto Quest
+[19:15:20.697] [N] Character is a level 31 BloodElf Paladin
+[19:15:20.698] [N] Current zone is Thousand Needles
+[19:15:20.698] [D] Loading profile from D:\World of Warcraft 3.3.5a\CB\Bots\WholesomeAutoQuest\WHOLESOME_AUTOQUESTER.xml
+[19:15:20.698] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\UseTransport.cs
+[19:15:20.699] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\UseTransport.cs
+[19:15:20.700] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\UseTransport.cs
+[19:15:20.700] [D] [CompileBatch] Compiling 6 entries...
+[19:15:20.790] [D] [CompileBatch] Compiled successfully.
+[19:15:20.790] [N] Profile loaded: WholesomeAQ - Thousand Needles
+[19:15:20.824] [D] Selected sub-profile: WholesomeAQ - Thousand Needles (L1-80)
+[19:15:20.890] [N] [Wholesome Auto Quest] Loaded 3 blacklisted vendors
+[19:15:20.924] [D] [ProfileBatchManager] Batch reset for new profile session.
+[19:15:20.924] [N] [Wholesome Auto Quest] Class Paladin → PullDistance set to 24
+[19:15:20.925] [N] [Wholesome Auto Quest] Initial scheduler build.
+[19:15:21.596] [D] Loading profile from D:\World of Warcraft 3.3.5a\CB\Bots\WholesomeAutoQuest\WHOLESOME_AUTOQUESTER.xml
+[19:15:21.597] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\UseTransport.cs
+[19:15:21.598] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\UseTransport.cs
+[19:15:21.598] [D] [QuestBehavior] Found file behavior: D:\World of Warcraft 3.3.5a\CB\Quest Behaviors\UseTransport.cs
+[19:15:21.599] [D] [CompileBatch] Compiling 6 entries...
+[19:15:21.699] [D] [CompileBatch] Compiled successfully.
+[19:15:21.699] [N] Profile loaded: WholesomeAQ - Thousand Needles
+[19:15:21.723] [D] Selected sub-profile: WholesomeAQ - Thousand Needles (L1-80)
+[19:15:21.723] [N] [Wholesome Auto Quest] Profile refreshed - Selected 1 quest work candidate(s). selected quest=4841;stage=Objective;state=Eligible. quest-log-full=25/25; deferred new pickups while retaining accepted quest work. excluded quest=1062;stage=TurnIn;npc=4049;reason=outside-scan-radius;retry=context-change excluded quest=1069;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=1087;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=1093;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T15:43:31.1900709Z;state=Quarantined. excluded quest=4921;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=5147;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T15:43:31.2300998Z;state=Quarantined. excluded quest=6382;stage=TurnIn;npc=12696;reason=outside-scan-radius;retry=context-change excluded quest=6393;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T15:43:31.2303856Z;state=Quarantined. excluded quest=6441;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T15:43:31.2304940Z;state=Quarantined. excluded quest=6461;stage=TurnIn;npc=12816;reason=outside-scan-radius;retry=context-change excluded quest=6543;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T15:43:31.2307164Z;state=Quarantined. excluded quest=846;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T12:58:16.6033605Z;state=Quarantined. excluded quest=846;stage=Objective;scope=Objective;objective=1;retry=2026-09-11T12:58:16.6078334Z;state=Quarantined. excluded quest=846;stage=Objective;scope=Objective;objective=2;retry=2026-09-11T12:58:16.6079054Z;state=Quarantined. excluded quest=8487;stage=TurnIn;npc=15402;reason=outside-scan-radius;retry=context-change excluded quest=867;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T12:58:16.6097297Z;state=Quarantined. excluded quest=868;stage=TurnIn;npc=3428;reason=outside-scan-radius;retry=context-change excluded quest=879;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T12:58:16.6158450Z;state=Quarantined. excluded quest=879;stage=Objective;scope=Objective;objective=1;retry=2026-09-11T12:58:16.6158941Z;state=Quarantined. excluded quest=879;stage=Objective;scope=Objective;objective=2;retry=2026-09-11T14:28:36.5856962Z;state=Quarantined. excluded quest=8889;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=8889;stage=Objective;objective=1;reason=outside-scan-radius;retry=context-change. excluded quest=8889;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;objective=0;reason=outside-scan-radius;retry=context-change. excluded quest=891;stage=Objective;objective=2;reason=outside-scan-radius;retry=context-change. excluded quest=893;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T14:28:36.5895113Z;state=Quarantined. excluded quest=893;stage=Objective;scope=Objective;objective=1;retry=2026-09-11T14:28:36.5895743Z;state=Quarantined. excluded quest=893;stage=Objective;scope=Objective;objective=2;retry=2026-09-11T14:28:36.5896148Z;state=Quarantined. excluded quest=896;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T14:28:36.5896844Z;state=Quarantined. excluded quest=9067;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T15:43:31.2311999Z;state=Quarantined. excluded quest=9157;stage=TurnIn;npc=16201;reason=outside-scan-radius;retry=context-change excluded quest=9431;stage=Objective;scope=Objective;objective=0;retry=2026-09-11T16:58:09.4694637Z;state=Quarantined.
+[19:15:21.724] [N] [Wholesome Auto Quest] Started with quest data loaded.
+[19:15:21.790] [D] Setting CVars: autoSelfCast=1, autoLootDefault=1
+[19:15:21.857] [D] Cleared POI
+[19:15:21.857] [D] Refresh() called. LastCount=0, CurrentCount=34
+[19:15:21.857] [N] Building spell book
+[19:15:21.858] [D] Found 34 spells from LocalPlayer.KnownSpells
+[19:15:21.858] [N] Adding Arcane Affinity
+[19:15:21.859] [N] Adding Arcane Torrent
+[19:15:21.860] [N] Adding Auto Attack
+[19:15:21.861] [N] Adding Block
+[19:15:21.862] [N] Adding Dodge
+[19:15:21.863] [N] Adding Magic Resistance
+[19:15:21.864] [N] Adding Parry
+[19:15:21.873] [N] Adding Blessing of Wisdom
+[19:15:21.874] [N] Adding Concentration Aura
+[19:15:21.875] [N] Adding Consecration
+[19:15:21.876] [N] Adding Exorcism
+[19:15:21.877] [N] Adding Flash of Light
+[19:15:21.878] [N] Adding Holy Light
+[19:15:21.879] [N] Adding Lay on Hands
+[19:15:21.880] [N] Adding Purify
+[19:15:21.881] [N] Adding Seal of Righteousness
+[19:15:21.882] [N] Adding Sense Undead
+[19:15:21.883] [N] Adding Turn Evil
+[19:15:21.884] [N] Adding Blessing of Kings
+[19:15:21.885] [N] Adding Devotion Aura
+[19:15:21.886] [N] Adding Divine Protection
+[19:15:21.887] [N] Adding Hammer of Justice
+[19:15:21.888] [N] Adding Hand of Freedom
+[19:15:21.888] [N] Adding Hand of Protection
+[19:15:21.889] [N] Adding Hand of Reckoning
+[19:15:21.890] [N] Adding Hand of Salvation
+[19:15:21.891] [N] Adding Righteous Defense
+[19:15:21.892] [N] Adding Righteous Fury
+[19:15:21.893] [N] Adding Seal of Justice
+[19:15:21.894] [N] Adding Blessing of Might
+[19:15:21.895] [N] Adding Judgement of Light
+[19:15:21.896] [N] Adding Judgement of Wisdom
+[19:15:21.897] [N] Adding Retribution Aura
+[19:15:21.898] [N] Adding Seal of Command
+[19:15:21.899] [N] Spell book built
+[19:15:21.900] [D] [SpellManager] Initialize — subscribed to BotEvents.OnBotStart
+[19:15:21.900] [D] Default area costs set (Road=1.0, Ground=1.66)
+[19:15:21.900] [D] Faction filter set: Horde (excluding Alliance paths)
+[19:15:21.902] [D] Refresh() called. LastCount=0, CurrentCount=34
+[19:15:21.902] [N] Building spell book
+[19:15:21.903] [D] Found 34 spells from LocalPlayer.KnownSpells
+[19:15:21.903] [N] Adding Arcane Affinity
+[19:15:21.904] [N] Adding Arcane Torrent
+[19:15:21.905] [N] Adding Auto Attack
+[19:15:21.906] [N] Adding Block
+[19:15:21.907] [N] Adding Dodge
+[19:15:21.908] [N] Adding Magic Resistance
+[19:15:21.909] [N] Adding Parry
+[19:15:21.910] [N] Adding Blessing of Wisdom
+[19:15:21.915] [N] Adding Concentration Aura
+[19:15:21.916] [N] Adding Consecration
+[19:15:21.917] [N] Adding Exorcism
+[19:15:21.918] [N] Adding Flash of Light
+[19:15:21.919] [N] Adding Holy Light
+[19:15:21.920] [N] Adding Lay on Hands
+[19:15:21.921] [N] Adding Purify
+[19:15:21.923] [N] Adding Seal of Righteousness
+[19:15:21.924] [N] Adding Sense Undead
+[19:15:21.925] [N] Adding Turn Evil
+[19:15:21.926] [N] Adding Blessing of Kings
+[19:15:21.927] [N] Adding Devotion Aura
+[19:15:21.928] [N] Adding Divine Protection
+[19:15:21.929] [N] Adding Hammer of Justice
+[19:15:21.930] [N] Adding Hand of Freedom
+[19:15:21.931] [N] Adding Hand of Protection
+[19:15:21.931] [N] Adding Hand of Reckoning
+[19:15:21.932] [N] Adding Hand of Salvation
+[19:15:21.933] [N] Adding Righteous Defense
+[19:15:21.934] [N] Adding Righteous Fury
+[19:15:21.935] [N] Adding Seal of Justice
+[19:15:21.936] [N] Adding Blessing of Might
+[19:15:21.937] [N] Adding Judgement of Light
+[19:15:21.938] [N] Adding Judgement of Wisdom
+[19:15:21.940] [N] Adding Retribution Aura
+[19:15:21.941] [N] Adding Seal of Command
+[19:15:21.942] [N] Spell book built
+[19:15:21.944] [D] [SpellManager] Subscribed to LEARNED_SPELL_IN_TAB, ACTIVE_TALENT_GROUP_CHANGED
+[19:15:22.063] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=58ms
+[19:15:22.859] [D] [If] Condition is true, executing If body
+[19:15:22.891] [D] [FBE] Advancing past Bots.Quest.QuestOrder.ForcedIf (IsDone=true), remaining nodes: 2
+[19:15:22.957] [N] [Objective] Goal: Kill Galak Scout x 12
+[19:15:22.957] [D] Goal: Goal: Kill Galak Scout x 12
+[19:15:22.957] [D] [GrindObjective] Using profile hotspots (7 points) for mob 4094
+[19:15:23.189] [D] [Pulse] Slow bot root: 463ms bot=Wholesome Auto Quest poi=None combat=False
+[19:15:23.290] [D] [QuestRecovery] quest=4841, stage=Objective, old=Attempting, new=Eligible, reason=None, episode=0, attempt=0, retry=
+[19:15:24.087] [D] Activity: Moving towards Galak Scout
+[19:15:24.285] [D] [Pulse] Slow bot root: 331ms bot=Wholesome Auto Quest poi=None combat=False
+[19:15:25.217] [D] Activity: Setting Galak Wrangler at 22.5 yards as your target
+[19:15:25.217] [D] [Pulse] Slow bot root: 165ms bot=Wholesome Auto Quest poi=None combat=False
+[19:15:25.984] [D] Changed POI to: Type: Kill, Name: Galak Wrangler, Guid: F130000FFD0C84DD, Entry: 4093, Location: (-5149.53, -2480.29, -51.63)
+[19:15:26.081] [D] [Singular-DEBUG] Switched targets!
+[19:15:26.081] [D] [Singular-DEBUG] Melee Distance: 5
+[19:15:26.081] [D] [Singular-DEBUG] Health: 100
+[19:15:26.081] [D] [Singular-DEBUG] Level: 26
+[19:15:27.317] [D] [Pulse] Slow bot root: 571ms bot=Wholesome Auto Quest poi=Kill combat=False
+[19:15:27.510] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=121ms
+[19:15:27.576] [D] [Pulse] Slow shared pulse: total=259ms movement=0 objects=0 lua=26 info=0 loot=1 targeting=42 events=0 plugins=187 routine=0
+[19:15:28.575] [N] [Singular] Casting Exorcism on Galak Wrangler
+[19:15:28.575] [D] Spell_C::CastSpell(879, 0, 0xF130000FFD0C84DD, 0)
+[19:15:28.607] [D] [Pulse] Slow bot root: 364ms bot=Wholesome Auto Quest poi=Kill combat=False
+[19:15:29.571] [D] [Pulse] Slow bot root: 197ms bot=Wholesome Auto Quest poi=Kill combat=False
+[19:15:30.838] [D] [Pulse] Slow bot root: 467ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:15:32.040] [D] [Pulse] Slow bot root: 429ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:15:32.139] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=54ms
+[19:15:33.208] [D] [Pulse] Slow bot root: 401ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:15:34.239] [N] [Singular] Casting Judgement of Light on Galak Wrangler
+[19:15:34.240] [D] Spell_C::CastSpell(20271, 0, 0xF130000FFD0C84DD, 0)
+[19:15:34.274] [D] [Pulse] Slow bot root: 269ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:15:35.407] [D] [Pulse] Slow bot root: 368ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:15:36.506] [D] [Pulse] Slow bot root: 331ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:15:37.451] [D] [Pulse] Slow bot root: 180ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:15:38.382] [D] [Pulse] Slow bot root: 176ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:15:39.350] [D] [Pulse] Slow bot root: 180ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:15:39.685] [N] Plugin settings saved.
+[19:15:40.286] [D] [Pulse] Slow bot root: 181ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:15:41.221] [D] [Pulse] Slow bot root: 181ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:15:42.153] [D] [Pulse] Slow bot root: 179ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:15:42.240] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=54ms
+[19:15:43.141] [N] [Singular] Casting Judgement of Light on Galak Wrangler
+[19:15:43.141] [D] Spell_C::CastSpell(20271, 0, 0xF130000FFD0C84DD, 0)
+[19:15:43.176] [D] [Pulse] Slow bot root: 268ms bot=Wholesome Auto Quest poi=Kill combat=True
+[19:15:44.068] [D] Cleared POI - Reason POI is dead from Combat
+[19:15:44.068] [D] Cleared POI
+[19:15:44.068] [D] [Pulse] Slow bot root: 132ms bot=Wholesome Auto Quest poi=None combat=True
+[19:15:45.110] [D] [Pulse] Slow bot root: 208ms bot=Wholesome Auto Quest poi=None combat=True
+[19:15:45.204] [D] [QuestRecovery] quest=4841, stage=Objective, old=Attempting, new=Eligible, reason=None, episode=0, attempt=0, retry=
+[19:15:46.045] [D] [Pulse] Slow bot root: 211ms bot=Wholesome Auto Quest poi=None combat=True
+[19:15:46.934] [D] Activity: Moving towards Galak Scout
+[19:15:47.131] [D] [Pulse] Slow bot root: 332ms bot=Wholesome Auto Quest poi=None combat=False
+[19:15:47.761] [N] Stopping the bot!
+[19:15:47.763] [N] Bot stopping! Reason: User request
+[19:15:47.765] [D] Exception in CGQuestLog__IsQuestCompleted: Thread was interrupted from a waiting state.
+[19:15:47.998] [D] Activity: Moving towards Galak Windchaser
+[19:15:48.155] [D] [Pulse] Slow bot root: 295ms bot=Wholesome Auto Quest poi=None combat=False
+[19:15:48.155] [D] [QuestRecovery] quest=4841, stage=Objective, old=Attempting, new=Eligible, reason=None, episode=0, attempt=0, retry=
+[19:15:48.177] [D] Cleared POI
+[19:15:48.177] [D] Worker thread exited cleanly
+[19:18:59.085] [N] Plugin settings saved.
+[19:22:47.071] [N] Plugin 'AutoEquip2' disabled.
+[19:22:47.074] [N] Plugin 'AutoEquip2' disabled.
+[19:22:47.075] [N] Plugin 'AutoEquip2' disabled.
+[19:22:47.217] [N] Plugin 'Death Stall Recovery' disabled.
+[19:22:47.220] [N] Plugin 'Death Stall Recovery' disabled.
+[19:22:47.222] [N] Plugin 'Death Stall Recovery' disabled.
+[19:22:47.224] [N] Plugin 'DrinkPotions' disabled.
+[19:22:47.226] [N] Plugin 'DrinkPotions' disabled.
+[19:22:47.228] [N] Plugin 'DrinkPotions' disabled.
+[19:22:47.229] [N] Plugin 'Talented' disabled.
+[19:22:47.231] [N] Plugin 'Talented' disabled.
+[19:22:47.233] [N] Plugin 'Tidy Bags 3 Reloaded' disabled.
+[19:22:47.235] [N] Plugin 'Tidy Bags 3 Reloaded' disabled.
+[19:22:47.236] [N] Plugin 'Vendor Recovery' disabled.
+[19:22:47.238] [N] Plugin 'Vendor Recovery' disabled.
+[19:22:47.253] [D] [Settings] Saved all settings

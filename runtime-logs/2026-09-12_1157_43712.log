@@ -1,0 +1,1701 @@
+[11:57:20.709] [N] CopilotBuddy v1.6.6 started. Original HonorBuddy by Apoc, raphus, highvoltz, bobby53, xanathos, chinajade. Ported to WotLK 3.3.5a by Likon69.
+[11:57:21.085] [N] Searching for WoW process...
+[11:57:21.226] [N] Please wait a few seconds while CopilotBuddy initializes.
+[11:57:21.226] [D] Using WoW with process ID 3804
+[11:57:21.226] [D] Platform: x86
+[11:57:21.226] [D] Executable Path: D:\World of Warcraft 3.3.5a\CB\
+[11:57:21.258] [D] [ObjectManager] WoW build 12340 detected - OK
+[11:57:21.260] [D] [ObjectManager] D3DDevicePtr = 0x00C5DF88
+[11:57:21.261] [D] [ObjectManager] devicePtrAddr = 0x0533CBD0
+[11:57:21.261] [D] [ObjectManager] device = 0x0A4FA140 (at 0x0534054C)
+[11:57:21.261] [D] [ObjectManager] vtablePtr = 0x0A4FD09C
+[11:57:21.261] [D] [ObjectManager] endSceneAddr = 0x643348F0 (at 0x0A4FD144)
+[11:57:21.261] [D] [ObjectManager] D3D: Device=0x0A4FA140, VTable=0x0A4FD09C, EndScene=0x643348F0
+[11:57:21.261] [D] [ObjectManager] Creating ExecutorRand...
+[11:57:21.303] [D] [ObjectManager] ExecutorRand created, IsInitialized = True
+[11:57:21.303] [D] [ObjectManager] EndScene hook succeeded
+[11:57:21.308] [D] [ObjectManager] Initialized successfully
+[11:57:21.309] [N] Attached to WoW with ID 3804
+[11:57:21.311] [N] Character is a level 31 BloodElf Paladin
+[11:57:21.313] [N] Current zone is Scarlet Monastery
+[11:57:21.336] [D] [Settings] Loaded settings for character: Jeof
+[11:57:21.336] [N] Initializing Combat Routines...
+[11:57:21.339] [D] Looking for routines in: D:\World of Warcraft 3.3.5a\CB\Routines
+[11:57:21.340] [D] Compiling Singular wotlk
+[11:57:23.835] [N] Loaded routine: Singular Wotlk for class Paladin
+[11:57:23.835] [N] Loaded 1 combat routine(s)
+[11:57:23.842] [N] Chose Singular Wotlk as your combat class.
+[11:57:23.842] [N] Confirmed Paladin as your class.
+[11:57:23.843] [N] [Singular] Starting Singular v2.0.0.0
+[11:57:23.843] [N] [Singular] Determining talent spec.
+[11:57:24.910] [D] [Singular-DEBUG] [Talents] Best Tree: 19
+[11:57:24.910] [N] [Singular] Current spec is  Retribution Paladin
+[11:57:24.920] [D] [WoWDb] Loaded 237 DBC tables
+[11:57:24.921] [D] [WoWDb]   Key=235 (0x000000EB) Rows=1893
+[11:57:24.921] [D] [WoWDb]   Key=236 (0x000000EC) Rows=7655
+[11:57:24.921] [D] [WoWDb]   Key=237 (0x000000ED) Rows=86
+[11:57:24.921] [D] [WoWDb]   Key=238 (0x000000EE) Rows=506
+[11:57:24.921] [D] [WoWDb]   Key=239 (0x000000EF) Rows=291
+[11:57:24.921] [D] [WoWDb] Lock DBC lookup: FOUND (rows=388)
+[11:57:24.921] [D] [WoWDb] ClientDb.Lock enum value = 356 (0x00000164)
+[11:57:24.922] [D] [Singular-DEBUG] Creating Combat behavior.
+[11:57:24.923] [N] [Singular] Building method list
+[11:57:24.924] [N] [Singular] Added 459 methods
+[11:57:24.926] [D] [Singular-DEBUG] CreateRetributionPaladinInstancePullAndCombat is a match!
+[11:57:24.926] [N] [Singular]  Using CreateRetributionPaladinInstancePullAndCombat for Retribution Paladin - Combat (Priority: 0)
+[11:57:24.937] [D] [Singular-DEBUG] Creating Pull behavior.
+[11:57:24.938] [D] [Singular-DEBUG] CreateRetributionPaladinInstancePullAndCombat is a match!
+[11:57:24.938] [N] [Singular]  Using CreateRetributionPaladinInstancePullAndCombat for Retribution Paladin - Pull (Priority: 0)
+[11:57:24.939] [D] [Singular-DEBUG] Creating Rest behavior.
+[11:57:24.940] [D] [Singular-DEBUG] CreateRetributionPaladinRest is a match!
+[11:57:24.940] [N] [Singular]  Using CreateRetributionPaladinRest for Retribution Paladin - Rest (Priority: 0)
+[11:57:24.942] [D] [Singular-DEBUG] Creating CombatBuffs behavior.
+[11:57:24.943] [D] [Singular-DEBUG] Creating Heal behavior.
+[11:57:24.944] [D] [Singular-DEBUG] CreateRetributionPaladinHeal is a match!
+[11:57:24.944] [N] [Singular]  Using CreateRetributionPaladinHeal for Retribution Paladin - Heal (Priority: 0)
+[11:57:24.944] [D] [Singular-DEBUG] Creating PullBuffs behavior.
+[11:57:24.945] [D] [Singular-DEBUG] Creating PreCombatBuffs behavior.
+[11:57:24.946] [D] [Singular-DEBUG] CreatePaladinPreCombatBuffs is a match!
+[11:57:24.946] [N] [Singular]  Using CreatePaladinPreCombatBuffs for Retribution Paladin - PreCombatBuffs (Priority: 0)
+[11:57:24.950] [N] [Singular] Behaviors created!
+[11:57:24.986] [D] [Singular-DEBUG] Attached combat log
+[11:57:24.986] [D] Routine initialized successfully
+[11:57:24.988] [D] Loading built-in bots from assembly: CopilotBuddy
+[11:57:25.010] [D] Found bot type: PartyBot.DiscoBot
+[11:57:25.010] [N] New bot added: Party Bot
+[11:57:25.010] [D] Loaded built-in bot: Party Bot
+[11:57:25.010] [D] Found bot type: Bots.Quest.QuestBot
+[11:57:25.010] [N] New bot added: Questing
+[11:57:25.010] [D] Loaded built-in bot: Questing
+[11:57:25.010] [D] Found bot type: Bots.Grind.LevelBot
+[11:57:25.010] [N] New bot added: Grind
+[11:57:25.010] [D] Loaded built-in bot: Grind
+[11:57:25.010] [D] Found bot type: Bots.Gatherbuddy.GatherbuddyBot
+[11:57:25.010] [N] New bot added: GatherBuddy
+[11:57:25.010] [D] Loaded built-in bot: GatherBuddy
+[11:57:25.010] [D] Found bot type: Bots.DungeonBuddy.DungeonBuddy
+[11:57:25.011] [N] New bot added: DungeonBuddy
+[11:57:25.011] [D] Loaded built-in bot: DungeonBuddy
+[11:57:25.011] [D] Found bot type: Bots.BGBuddy.BGBuddy
+[11:57:25.012] [N] New bot added: BGBuddy
+[11:57:25.012] [D] Loaded built-in bot: BGBuddy
+[11:57:25.012] [D] Built-in bot loading complete. 6 bots loaded.
+[11:57:25.016] [N] Loading bots from: D:\World of Warcraft 3.3.5a\CB\Bots
+[11:57:25.025] [N] Found 123 source files
+[11:57:25.032] [N] Found 0 dll files
+[11:57:25.032] [N] Compiling: CombatBot.cs
+[11:57:25.206] [N] Compiled successfully: CombatBot.cs
+[11:57:25.207] [N] Compiling directory: Auto Angler 2/ (23 files)
+[11:57:25.513] [N] Compiled successfully: Auto Angler 2/
+[11:57:25.513] [N] Compiling directory: LazyRaider/ (4 files)
+[11:57:25.761] [N] Compiled successfully: LazyRaider/
+[11:57:25.761] [N] Compiling directory: ProfessionBuddy/ (52 files)
+[11:57:26.592] [N] Compiled successfully: ProfessionBuddy/
+[11:57:26.592] [N] Compiling directory: Templar/ (27 files)
+[11:57:27.008] [N] Compiled successfully: Templar/
+[11:57:27.008] [N] Compiling directory: Tyrael/ (5 files)
+[11:57:27.198] [N] Compiled successfully: Tyrael/
+[11:57:27.198] [N] Compiling directory: WholesomeAutoQuest-master/ (11 files)
+[11:57:27.795] [N] Compiled successfully: WholesomeAutoQuest-master/
+[11:57:27.795] [N] ClassCollection contains 7 compiled bots
+[11:57:27.795] [N] Adding bot: Combat Bot
+[11:57:27.795] [N] New bot added: Combat Bot
+[11:57:27.795] [N] Adding bot: AutoAngler
+[11:57:27.795] [N] New bot added: AutoAngler
+[11:57:27.795] [N] Adding bot: LazyRaider
+[11:57:27.795] [N] New bot added: LazyRaider
+[11:57:27.795] [N] Adding bot: ProfessionBuddy
+[11:57:27.795] [N] New bot added: ProfessionBuddy
+[11:57:27.795] [N] Adding bot: Templar
+[11:57:27.795] [N] New bot added: Templar
+[11:57:27.795] [N] Adding bot: Tyrael
+[11:57:27.795] [N] New bot added: Tyrael
+[11:57:27.795] [N] Adding bot: Wholesome Auto Quest
+[11:57:27.795] [N] New bot added: Wholesome Auto Quest
+[11:57:27.795] [N] Bot loading complete. 13 bots loaded.
+[11:57:27.795] [N] Initializing Plugins...
+[11:57:29.354] [N] [DeathStallRecovery] Enabled. The bot will stop if corpse recovery makes no movement progress for 60 seconds.
+[11:57:30.276] [D] Rarekiller: Loading config file: D:\World of Warcraft 3.3.5a\CB\Plugins\RareKiller\config\Rarekiller.config
+[11:57:30.276] [D] Root element is missing.
+[11:57:30.276] [N] Rarekiller: Continuing with Default Config Values
+[11:57:30.277] [D] Rarekiller: Loading config file: D:\World of Warcraft 3.3.5a\CB\Plugins\RareKiller\config\Rarekiller.config
+[11:57:30.277] [D] Root element is missing.
+[11:57:30.277] [N] Rarekiller: Continuing with Default Config Values
+[11:57:30.278] [N] Rare Mob Killer - Version 3.3 Loaded.
+[11:57:30.278] [N] Rarekiller Part Tamer: I'm no Hunter. Deactivate the Tamer Part
+[11:57:30.886] [N] [VendorRecovery] Enabled. Failed Sell/Repair vendors will be skipped after 35 seconds at the NPC.
+[11:57:31.061] [N] Plugin loading complete. 16 plugins loaded.
+[11:57:31.061] [N] Plugins refreshed successfully.
+[11:57:31.065] [N] Changing current bot to: Wholesome Auto Quest
+[11:57:34.980] [N] Changing current bot to: Combat Bot
+[11:57:36.547] [D] [Settings] Saved all settings
+[11:57:36.548] [N] Starting the bot.
+[11:57:36.548] [N] Currently Using BotBase : Combat Bot
+[11:57:36.548] [N] Character is a level 31 BloodElf Paladin
+[11:57:36.549] [N] Current zone is Scarlet Monastery
+[11:57:36.550] [D] Loading profile from D:\World of Warcraft 3.3.5a\CB\Bots\WholesomeAutoQuest\WHOLESOME_AUTOQUESTER.xml
+[11:57:36.620] [D] [CompileBatch] Compiling 1 entries...
+[11:57:36.718] [D] [CompileBatch] Compiled successfully.
+[11:57:36.721] [N] Profile loaded: WholesomeAQ - Thousand Needles
+[11:57:36.722] [D] Selected sub-profile: WholesomeAQ - Thousand Needles (L1-80)
+[11:57:36.745] [N] [SpellDb] Loaded 49816 spells from Spells.bin
+[11:57:36.782] [D] Setting CVars: autoSelfCast=1, autoLootDefault=1
+[11:57:36.849] [D] Cleared POI
+[11:57:36.857] [D] Refresh() called. LastCount=0, CurrentCount=34
+[11:57:36.857] [N] Building spell book
+[11:57:36.858] [D] Found 34 spells from LocalPlayer.KnownSpells
+[11:57:36.858] [N] Adding Arcane Affinity
+[11:57:36.858] [N] Adding Arcane Torrent
+[11:57:36.859] [N] Adding Auto Attack
+[11:57:36.859] [N] Adding Block
+[11:57:36.859] [N] Adding Dodge
+[11:57:36.860] [N] Adding Magic Resistance
+[11:57:36.860] [N] Adding Parry
+[11:57:36.860] [N] Adding Blessing of Wisdom
+[11:57:36.861] [N] Adding Concentration Aura
+[11:57:36.861] [N] Adding Consecration
+[11:57:36.861] [N] Adding Exorcism
+[11:57:36.872] [N] Adding Flash of Light
+[11:57:36.873] [N] Adding Holy Light
+[11:57:36.873] [N] Adding Lay on Hands
+[11:57:36.874] [N] Adding Purify
+[11:57:36.874] [N] Adding Seal of Righteousness
+[11:57:36.874] [N] Adding Sense Undead
+[11:57:36.875] [N] Adding Turn Evil
+[11:57:36.875] [N] Adding Blessing of Kings
+[11:57:36.875] [N] Adding Devotion Aura
+[11:57:36.876] [N] Adding Divine Protection
+[11:57:36.876] [N] Adding Hammer of Justice
+[11:57:36.876] [N] Adding Hand of Freedom
+[11:57:36.877] [N] Adding Hand of Protection
+[11:57:36.877] [N] Adding Hand of Reckoning
+[11:57:36.877] [N] Adding Hand of Salvation
+[11:57:36.878] [N] Adding Righteous Defense
+[11:57:36.878] [N] Adding Righteous Fury
+[11:57:36.878] [N] Adding Seal of Justice
+[11:57:36.879] [N] Adding Blessing of Might
+[11:57:36.879] [N] Adding Judgement of Light
+[11:57:36.879] [N] Adding Judgement of Wisdom
+[11:57:36.880] [N] Adding Retribution Aura
+[11:57:36.880] [N] Adding Seal of Command
+[11:57:36.881] [N] Spell book built
+[11:57:36.881] [D] [SpellManager] Initialize — subscribed to BotEvents.OnBotStart
+[11:57:37.232] [D] [WeightSet] Selected weight set: Paladin-Retribution
+[11:57:37.700] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=632ms
+[11:57:37.721] [D] [Talented] SelectMajorTalentTree called but not needed in WotLK 3.3.5a
+[11:57:37.744] [D] [Pulse] Slow plugin: name=Talented elapsed=43ms
+[11:57:37.765] [D] [Pulse] Slow shared pulse: total=845ms movement=0 objects=1 lua=25 info=0 loot=11 targeting=104 events=1 plugins=693 routine=6
+[11:57:47.231] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=21ms
+[11:57:57.455] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=294ms
+[11:57:57.522] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=65ms
+[11:57:57.522] [D] [Pulse] Slow shared pulse: total=404ms movement=0 objects=0 lua=0 info=0 loot=0 targeting=42 events=0 plugins=360 routine=0
+[11:58:12.480] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=49ms
+[11:58:17.293] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=89ms
+[11:58:19.490] [N] [Singular] Casting Holy Light on Myself
+[11:58:19.490] [D] Spell_C::CastSpell(1026, 0, 0x6000000007EAB80, 0)
+[11:58:22.462] [N] [Singular] Casting Blessing of Kings on Myself
+[11:58:22.462] [D] Spell_C::CastSpell(20217, 0, 0x6000000007EAB80, 0)
+[11:58:24.031] [N] [Singular] Casting Blessing of Might on Hunter
+[11:58:24.031] [D] Spell_C::CastSpell(19835, 0, 0x6000000007F069B, 0)
+[11:58:25.635] [N] [Singular] Casting Seal of Righteousness on Myself
+[11:58:25.635] [D] Spell_C::CastSpell(21084, 0, 0x6000000007EAB80, 0)
+[11:58:27.152] [N] [Singular] Casting Blessing of Kings on Priest
+[11:58:27.152] [D] Spell_C::CastSpell(20217, 0, 0x6000000007E3659, 0)
+[11:58:29.229] [N] [Singular] Casting Blessing of Kings on Warlock
+[11:58:29.229] [D] Spell_C::CastSpell(20217, 0, 0x6000000007F6344, 0)
+[11:58:33.806] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=21ms
+[11:58:34.467] [N] [Singular] Casting Blessing of Kings on Paladin
+[11:58:34.467] [D] Spell_C::CastSpell(20217, 0, 0x6000000007F3CE2, 0)
+[11:58:37.298] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=75ms
+[11:58:43.890] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=50ms
+[11:58:47.527] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=286ms
+[11:58:47.592] [D] [Pulse] Slow shared pulse: total=398ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=44 events=0 plugins=351 routine=0
+[11:58:53.913] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=52ms
+[11:58:57.586] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=277ms
+[11:58:57.653] [D] [Pulse] Slow shared pulse: total=398ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=53 events=0 plugins=343 routine=0
+[11:59:05.604] [D] [Singular-DEBUG] Switched targets!
+[11:59:05.604] [D] [Singular-DEBUG] Melee Distance: 3.5
+[11:59:05.604] [D] [Singular-DEBUG] Health: 95.68
+[11:59:05.604] [D] [Singular-DEBUG] Level: 31
+[11:59:08.150] [D] [Singular-DEBUG] Switched targets!
+[11:59:08.150] [D] [Singular-DEBUG] Melee Distance: 5
+[11:59:08.150] [D] [Singular-DEBUG] Health: 93.42375667899712
+[11:59:08.150] [D] [Singular-DEBUG] Level: 30
+[11:59:08.752] [N] [Singular] Casting Exorcism on Scarlet Scryer
+[11:59:08.752] [D] Spell_C::CastSpell(879, 0, 0xF1300010C500003F, 0)
+[11:59:08.764] [D] [Pulse] Slow bot root: 359ms bot=Combat Bot poi=None combat=True
+[11:59:09.405] [D] [Pulse] Slow bot root: 590ms bot=Combat Bot poi=None combat=True
+[11:59:09.987] [D] [Pulse] Slow bot root: 543ms bot=Combat Bot poi=None combat=True
+[11:59:10.580] [D] [Pulse] Slow bot root: 554ms bot=Combat Bot poi=None combat=True
+[11:59:11.070] [N] [Singular] Casting Judgement of Light on Scarlet Scryer
+[11:59:11.070] [D] Spell_C::CastSpell(20271, 0, 0xF1300010C500003F, 0)
+[11:59:11.077] [D] [Pulse] Slow bot root: 454ms bot=Combat Bot poi=None combat=True
+[11:59:11.684] [D] [Pulse] Slow bot root: 564ms bot=Combat Bot poi=None combat=True
+[11:59:12.277] [D] [Pulse] Slow bot root: 551ms bot=Combat Bot poi=None combat=True
+[11:59:12.871] [D] [Pulse] Slow bot root: 550ms bot=Combat Bot poi=None combat=True
+[11:59:13.456] [D] [Pulse] Slow bot root: 546ms bot=Combat Bot poi=None combat=True
+[11:59:14.052] [D] [Pulse] Slow bot root: 551ms bot=Combat Bot poi=None combat=True
+[11:59:14.650] [D] [Pulse] Slow bot root: 556ms bot=Combat Bot poi=None combat=True
+[11:59:15.238] [D] [Pulse] Slow bot root: 543ms bot=Combat Bot poi=None combat=True
+[11:59:15.783] [N] Loaded 0 global blackspots
+[11:59:15.784] [D] [Blackspot] Area cost initialized: area 17 = 60x
+[11:59:15.789] [D] [Nav] Loaded 9 mesh tiles for one path query
+[11:59:15.808] [D] [Pulse] Slow bot root: 529ms bot=Combat Bot poi=None combat=True
+[11:59:16.357] [D] [Pulse] Slow bot root: 500ms bot=Combat Bot poi=None combat=True
+[11:59:16.875] [D] [Pulse] Slow bot root: 474ms bot=Combat Bot poi=None combat=True
+[11:59:17.402] [D] [Pulse] Slow bot root: 487ms bot=Combat Bot poi=None combat=True
+[11:59:17.884] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_16(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[11:59:17.884] [D] [Pulse] Slow bot root: 437ms bot=Combat Bot poi=None combat=False
+[11:59:17.969] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=61ms
+[11:59:20.582] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=44ms
+[11:59:21.822] [D] [Singular-DEBUG] Switched targets!
+[11:59:21.822] [D] [Singular-DEBUG] Melee Distance: 5
+[11:59:21.822] [D] [Singular-DEBUG] Health: 37.525688450472664
+[11:59:21.822] [D] [Singular-DEBUG] Level: 30
+[11:59:22.260] [N] [Singular] Casting Judgement of Light on Scarlet Scryer
+[11:59:22.260] [D] Spell_C::CastSpell(20271, 0, 0xF1300010C5000041, 0)
+[11:59:22.274] [D] [Pulse] Slow bot root: 450ms bot=Combat Bot poi=None combat=True
+[11:59:22.858] [D] [Pulse] Slow bot root: 537ms bot=Combat Bot poi=None combat=True
+[11:59:23.436] [D] [Pulse] Slow bot root: 536ms bot=Combat Bot poi=None combat=True
+[11:59:24.035] [D] [Pulse] Slow bot root: 553ms bot=Combat Bot poi=None combat=True
+[11:59:24.604] [D] [Pulse] Slow bot root: 528ms bot=Combat Bot poi=None combat=True
+[11:59:25.133] [D] [Pulse] Slow bot root: 483ms bot=Combat Bot poi=None combat=True
+[11:59:25.593] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_16(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[11:59:25.593] [D] [Pulse] Slow bot root: 415ms bot=Combat Bot poi=None combat=True
+[11:59:26.084] [N] [Singular] Currect target is invalid. Switching to Scarlet Scryer!
+[11:59:26.096] [D] [Pulse] Slow bot root: 458ms bot=Combat Bot poi=None combat=True
+[11:59:26.392] [D] [Singular-DEBUG] Switched targets!
+[11:59:26.392] [D] [Singular-DEBUG] Melee Distance: 5
+[11:59:26.392] [D] [Singular-DEBUG] Health: 71.18783394985614
+[11:59:26.392] [D] [Singular-DEBUG] Level: 30
+[11:59:26.799] [N] [Singular] Casting Exorcism on Scarlet Scryer
+[11:59:26.799] [D] Spell_C::CastSpell(879, 0, 0xF1300010C5000040, 0)
+[11:59:26.810] [D] [Pulse] Slow bot root: 264ms bot=Combat Bot poi=None combat=True
+[11:59:27.402] [D] [Pulse] Slow bot root: 541ms bot=Combat Bot poi=None combat=True
+[11:59:27.979] [D] [Pulse] Slow bot root: 537ms bot=Combat Bot poi=None combat=True
+[11:59:28.572] [D] [Pulse] Slow bot root: 547ms bot=Combat Bot poi=None combat=True
+[11:59:29.148] [D] [Pulse] Slow bot root: 530ms bot=Combat Bot poi=None combat=True
+[11:59:29.718] [D] [Pulse] Slow bot root: 529ms bot=Combat Bot poi=None combat=True
+[11:59:30.295] [D] [Pulse] Slow bot root: 528ms bot=Combat Bot poi=None combat=True
+[11:59:30.762] [N] [Singular] Casting Judgement of Light on Scarlet Scryer
+[11:59:30.762] [D] Spell_C::CastSpell(20271, 0, 0xF1300010C5000040, 0)
+[11:59:30.768] [D] [Pulse] Slow bot root: 432ms bot=Combat Bot poi=None combat=True
+[11:59:31.342] [D] [Pulse] Slow bot root: 525ms bot=Combat Bot poi=None combat=True
+[11:59:31.912] [D] [Pulse] Slow bot root: 524ms bot=Combat Bot poi=None combat=True
+[11:59:32.487] [D] [Pulse] Slow bot root: 529ms bot=Combat Bot poi=None combat=True
+[11:59:33.056] [D] [Pulse] Slow bot root: 534ms bot=Combat Bot poi=None combat=True
+[11:59:33.609] [D] [Pulse] Slow bot root: 516ms bot=Combat Bot poi=None combat=True
+[11:59:34.144] [D] [Pulse] Slow bot root: 485ms bot=Combat Bot poi=None combat=True
+[11:59:34.649] [D] [Pulse] Slow bot root: 467ms bot=Combat Bot poi=None combat=True
+[11:59:35.237] [D] [Pulse] Slow bot root: 536ms bot=Combat Bot poi=None combat=True
+[11:59:35.812] [D] [Pulse] Slow bot root: 530ms bot=Combat Bot poi=None combat=False
+[11:59:38.140] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=80ms
+[11:59:38.645] [D] [Pulse] Slow bot root: 126ms bot=Combat Bot poi=None combat=False
+[11:59:39.944] [N] [AutoEquip]: Loot roll in progress
+[11:59:39.974] [N] [AutoEquip]: Equipped item in slot:HeadSlot scored -1 while loot-roll item scored:6.409
+[11:59:39.991] [N] [AutoEquip]: Wicked Chain Helmet scored 6.409 while your equiped item only scored -1 - Rolling Need
+[11:59:42.516] [N] [Singular] Casting Judgement of Light on Scarlet Scryer
+[11:59:42.516] [D] Spell_C::CastSpell(20271, 0, 0xF1300010C500003C, 0)
+[11:59:42.523] [D] [Pulse] Slow bot root: 517ms bot=Combat Bot poi=None combat=True
+[11:59:42.571] [D] [Singular-DEBUG] Switched targets!
+[11:59:42.572] [D] [Singular-DEBUG] Melee Distance: 5
+[11:59:42.572] [D] [Singular-DEBUG] Health: 56.59679408138101
+[11:59:42.572] [D] [Singular-DEBUG] Level: 30
+[11:59:43.105] [D] [Pulse] Slow bot root: 532ms bot=Combat Bot poi=None combat=True
+[11:59:43.656] [D] [Pulse] Slow bot root: 514ms bot=Combat Bot poi=None combat=True
+[11:59:44.222] [N] [Singular] Casting Consecration on Scarlet Scryer
+[11:59:44.222] [D] Spell_C::CastSpell(26573, 0, 0xF1300010C500003C, 0)
+[11:59:44.229] [D] [Pulse] Slow bot root: 533ms bot=Combat Bot poi=None combat=True
+[11:59:44.796] [D] [Pulse] Slow bot root: 524ms bot=Combat Bot poi=None combat=True
+[11:59:45.346] [D] [Pulse] Slow bot root: 504ms bot=Combat Bot poi=None combat=True
+[11:59:45.914] [D] [Pulse] Slow bot root: 518ms bot=Combat Bot poi=None combat=True
+[11:59:46.171] [N] [Singular] Casting Exorcism on Scarlet Scryer
+[11:59:46.171] [D] Spell_C::CastSpell(879, 0, 0xF1300010C500003C, 0)
+[11:59:46.177] [D] [Pulse] Slow bot root: 221ms bot=Combat Bot poi=None combat=True
+[11:59:46.725] [D] [Pulse] Slow bot root: 503ms bot=Combat Bot poi=None combat=True
+[11:59:47.169] [D] [Pulse] Slow bot root: 407ms bot=Combat Bot poi=None combat=True
+[11:59:47.617] [D] [Pulse] Slow bot root: 410ms bot=Combat Bot poi=None combat=True
+[11:59:48.145] [D] [Pulse] Slow bot root: 481ms bot=Combat Bot poi=None combat=True
+[11:59:48.650] [D] [Pulse] Slow bot root: 461ms bot=Combat Bot poi=None combat=True
+[11:59:49.136] [D] [Pulse] Slow bot root: 446ms bot=Combat Bot poi=None combat=True
+[11:59:49.718] [D] [Pulse] Slow bot root: 542ms bot=Combat Bot poi=None combat=True
+[11:59:50.197] [D] [Pulse] Slow bot root: 441ms bot=Combat Bot poi=None combat=True
+[11:59:50.248] [N] [Singular] Currect target is invalid. Switching to Scarlet Torturer!
+[11:59:50.582] [D] [Singular-DEBUG] Switched targets!
+[11:59:50.582] [D] [Singular-DEBUG] Melee Distance: 5.9433336
+[11:59:50.582] [D] [Singular-DEBUG] Health: 68.41186736474694
+[11:59:50.582] [D] [Singular-DEBUG] Level: 30
+[11:59:51.097] [N] [Singular] Casting Judgement of Light on Scarlet Torturer
+[11:59:51.097] [D] Spell_C::CastSpell(20271, 0, 0xF1300010D2000083, 0)
+[11:59:51.102] [D] [Pulse] Slow bot root: 422ms bot=Combat Bot poi=None combat=True
+[11:59:51.827] [D] [Pulse] Slow bot root: 503ms bot=Combat Bot poi=None combat=True
+[11:59:52.367] [D] [Pulse] Slow bot root: 505ms bot=Combat Bot poi=None combat=True
+[11:59:52.903] [D] [Pulse] Slow bot root: 501ms bot=Combat Bot poi=None combat=True
+[11:59:53.442] [D] [Pulse] Slow bot root: 500ms bot=Combat Bot poi=None combat=True
+[11:59:53.984] [D] [Pulse] Slow bot root: 506ms bot=Combat Bot poi=None combat=True
+[11:59:54.531] [D] [Pulse] Slow bot root: 511ms bot=Combat Bot poi=None combat=True
+[11:59:55.074] [D] [Pulse] Slow bot root: 506ms bot=Combat Bot poi=None combat=True
+[11:59:55.633] [D] [Pulse] Slow bot root: 525ms bot=Combat Bot poi=None combat=True
+[11:59:56.192] [D] [Pulse] Slow bot root: 510ms bot=Combat Bot poi=None combat=True
+[11:59:56.692] [D] [Pulse] Slow bot root: 455ms bot=Combat Bot poi=None combat=True
+[11:59:57.261] [D] [Pulse] Slow bot root: 531ms bot=Combat Bot poi=None combat=True
+[11:59:57.708] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_16(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[11:59:57.708] [D] [Pulse] Slow bot root: 405ms bot=Combat Bot poi=None combat=False
+[11:59:58.297] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=84ms
+[12:00:00.431] [D] [Pulse] Slow bot root: 113ms bot=Combat Bot poi=None combat=False
+[12:00:08.321] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=57ms
+[12:00:12.644] [N] [AutoEquip]: Equipping Head "Wicked Chain Helmet" into empty slot HeadSlot
+[12:00:14.918] [N] [Singular] Currect target is invalid. Switching to Interrogator Vishas!
+[12:00:15.202] [D] [Singular-DEBUG] Switched targets!
+[12:00:15.202] [D] [Singular-DEBUG] Melee Distance: 5
+[12:00:15.202] [D] [Singular-DEBUG] Health: 100
+[12:00:15.202] [D] [Singular-DEBUG] Level: 32
+[12:00:15.721] [D] [Pulse] Slow bot root: 441ms bot=Combat Bot poi=None combat=True
+[12:00:16.203] [D] [Pulse] Slow bot root: 444ms bot=Combat Bot poi=None combat=True
+[12:00:16.713] [D] [Pulse] Slow bot root: 461ms bot=Combat Bot poi=None combat=True
+[12:00:17.131] [N] [Singular] Casting Judgement of Light on Interrogator Vishas
+[12:00:17.131] [D] Spell_C::CastSpell(20271, 0, 0xF130000F8F00002F, 0)
+[12:00:17.137] [D] [Pulse] Slow bot root: 383ms bot=Combat Bot poi=None combat=True
+[12:00:17.648] [D] [Pulse] Slow bot root: 460ms bot=Combat Bot poi=None combat=True
+[12:00:18.148] [D] [Pulse] Slow bot root: 458ms bot=Combat Bot poi=None combat=True
+[12:00:18.642] [D] [Pulse] Slow bot root: 451ms bot=Combat Bot poi=None combat=True
+[12:00:18.879] [N] [Singular] Casting Exorcism on Interrogator Vishas
+[12:00:18.879] [D] Spell_C::CastSpell(879, 0, 0xF130000F8F00002F, 0)
+[12:00:18.887] [D] [Pulse] Slow bot root: 205ms bot=Combat Bot poi=None combat=True
+[12:00:19.582] [D] [Pulse] Slow bot root: 647ms bot=Combat Bot poi=None combat=True
+[12:00:20.271] [D] [Pulse] Slow bot root: 649ms bot=Combat Bot poi=None combat=True
+[12:00:20.956] [D] [Pulse] Slow bot root: 641ms bot=Combat Bot poi=None combat=True
+[12:00:21.653] [D] [Pulse] Slow bot root: 653ms bot=Combat Bot poi=None combat=True
+[12:00:22.350] [D] [Pulse] Slow bot root: 635ms bot=Combat Bot poi=None combat=True
+[12:00:23.024] [D] [Pulse] Slow bot root: 635ms bot=Combat Bot poi=None combat=True
+[12:00:23.711] [D] [Pulse] Slow bot root: 638ms bot=Combat Bot poi=None combat=True
+[12:00:24.399] [D] [Pulse] Slow bot root: 636ms bot=Combat Bot poi=None combat=True
+[12:00:25.091] [D] [Pulse] Slow bot root: 640ms bot=Combat Bot poi=None combat=True
+[12:00:25.649] [N] [Singular] Casting Judgement of Light on Interrogator Vishas
+[12:00:25.649] [D] Spell_C::CastSpell(20271, 0, 0xF130000F8F00002F, 0)
+[12:00:25.658] [D] [Pulse] Slow bot root: 524ms bot=Combat Bot poi=None combat=True
+[12:00:26.352] [D] [Pulse] Slow bot root: 651ms bot=Combat Bot poi=None combat=True
+[12:00:27.032] [D] [Pulse] Slow bot root: 640ms bot=Combat Bot poi=None combat=True
+[12:00:27.730] [D] [Pulse] Slow bot root: 651ms bot=Combat Bot poi=None combat=True
+[12:00:28.422] [D] [Pulse] Slow bot root: 651ms bot=Combat Bot poi=None combat=True
+[12:00:29.130] [D] [Pulse] Slow bot root: 667ms bot=Combat Bot poi=None combat=True
+[12:00:29.849] [D] [Pulse] Slow bot root: 669ms bot=Combat Bot poi=None combat=True
+[12:00:30.570] [D] [Pulse] Slow bot root: 678ms bot=Combat Bot poi=None combat=True
+[12:00:31.278] [D] [Pulse] Slow bot root: 667ms bot=Combat Bot poi=None combat=True
+[12:00:32.008] [D] [Pulse] Slow bot root: 674ms bot=Combat Bot poi=None combat=True
+[12:00:32.716] [D] [Pulse] Slow bot root: 664ms bot=Combat Bot poi=None combat=True
+[12:00:33.423] [D] [Pulse] Slow bot root: 660ms bot=Combat Bot poi=None combat=True
+[12:00:34.001] [N] [Singular] Casting Judgement of Light on Interrogator Vishas
+[12:00:34.001] [D] Spell_C::CastSpell(20271, 0, 0xF130000F8F00002F, 0)
+[12:00:34.013] [D] [Pulse] Slow bot root: 546ms bot=Combat Bot poi=None combat=True
+[12:00:34.731] [D] [Pulse] Slow bot root: 669ms bot=Combat Bot poi=None combat=True
+[12:00:35.449] [D] [Pulse] Slow bot root: 672ms bot=Combat Bot poi=None combat=True
+[12:00:36.084] [D] [Pulse] Slow bot root: 585ms bot=Combat Bot poi=None combat=True
+[12:00:36.807] [D] [Pulse] Slow bot root: 673ms bot=Combat Bot poi=None combat=True
+[12:00:37.138] [N] [Singular] Casting Exorcism on Interrogator Vishas
+[12:00:37.138] [D] Spell_C::CastSpell(879, 0, 0xF130000F8F00002F, 0)
+[12:00:37.151] [D] [Pulse] Slow bot root: 295ms bot=Combat Bot poi=None combat=True
+[12:00:37.885] [D] [Pulse] Slow bot root: 685ms bot=Combat Bot poi=None combat=True
+[12:00:38.616] [D] [Pulse] Slow bot root: 680ms bot=Combat Bot poi=None combat=True
+[12:00:39.351] [D] [Pulse] Slow bot root: 691ms bot=Combat Bot poi=None combat=True
+[12:00:40.114] [D] [Pulse] Slow bot root: 719ms bot=Combat Bot poi=None combat=True
+[12:00:40.845] [D] [Pulse] Slow bot root: 686ms bot=Combat Bot poi=None combat=True
+[12:00:41.310] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.Helpers.Unit.IsBoss(WoWUnit unit)
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_7(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:41.310] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_12(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:41.441] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_14(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:41.573] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_16(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:41.573] [D] [Pulse] Slow bot root: 689ms bot=Combat Bot poi=None combat=True
+[12:00:41.873] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.Helpers.Unit.IsBoss(WoWUnit unit)
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_7(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:41.873] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_12(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:42.001] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_14(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:42.129] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_16(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:42.129] [D] [Pulse] Slow bot root: 520ms bot=Combat Bot poi=None combat=True
+[12:00:42.129] [N] [AutoEquip]: Loot roll in progress
+[12:00:42.166] [N] [AutoEquip]: Equipped item in slot:SecondaryHandSlot scored -1 while loot-roll item scored:103.67646
+[12:00:42.180] [N] [AutoEquip]: Rolling Greed
+[12:00:42.510] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.Helpers.Unit.IsBoss(WoWUnit unit)
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_7(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:42.511] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_12(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:42.641] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_14(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:42.772] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_16(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:42.773] [D] [Pulse] Slow bot root: 533ms bot=Combat Bot poi=None combat=True
+[12:00:43.086] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.Helpers.Unit.IsBoss(WoWUnit unit)
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_7(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:43.086] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_12(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:43.219] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_14(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:43.348] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_16(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:43.348] [D] [Pulse] Slow bot root: 532ms bot=Combat Bot poi=None combat=True
+[12:00:43.672] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.Helpers.Unit.IsBoss(WoWUnit unit)
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_7(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:43.672] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_12(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:43.802] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_14(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:43.932] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_16(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:43.932] [D] [Pulse] Slow bot root: 528ms bot=Combat Bot poi=None combat=True
+[12:00:44.257] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.Helpers.Unit.IsBoss(WoWUnit unit)
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_7(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:44.258] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_12(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:44.389] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_14(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:44.522] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_16(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:44.522] [D] [Pulse] Slow bot root: 545ms bot=Combat Bot poi=None combat=True
+[12:00:44.838] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.Helpers.Unit.IsBoss(WoWUnit unit)
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_7(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:44.838] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_12(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:44.971] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_14(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:45.101] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_16(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:45.101] [D] [Pulse] Slow bot root: 535ms bot=Combat Bot poi=None combat=True
+[12:00:45.411] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.Helpers.Unit.IsBoss(WoWUnit unit)
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_7(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:45.411] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_12(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:45.545] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_14(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:45.684] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_16(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:45.684] [D] [Pulse] Slow bot root: 546ms bot=Combat Bot poi=None combat=True
+[12:00:45.996] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.Helpers.Unit.IsBoss(WoWUnit unit)
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_7(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:45.996] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_12(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:46.128] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_14(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:46.259] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_16(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:46.259] [D] [Pulse] Slow bot root: 532ms bot=Combat Bot poi=None combat=True
+[12:00:46.567] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.Helpers.Unit.IsBoss(WoWUnit unit)
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_7(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:46.568] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_12(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:46.696] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_14(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:46.825] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_16(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:46.825] [D] [Pulse] Slow bot root: 521ms bot=Combat Bot poi=None combat=True
+[12:00:47.125] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.Helpers.Unit.IsBoss(WoWUnit unit)
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_7(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:47.125] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_12(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:47.252] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_14(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:47.384] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_16(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:47.384] [D] [Pulse] Slow bot root: 519ms bot=Combat Bot poi=None combat=True
+[12:00:47.456] [N] [Singular] Casting Divine Protection on Myself
+[12:00:47.456] [D] Spell_C::CastSpell(498, 0, 0x6000000007EAB80, 0)
+[12:00:47.786] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.Helpers.Unit.IsBoss(WoWUnit unit)
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_7(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:47.787] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_12(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:47.922] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_14(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:48.058] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_16(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:48.058] [D] [Pulse] Slow bot root: 544ms bot=Combat Bot poi=None combat=True
+[12:00:48.382] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.Helpers.Unit.IsBoss(WoWUnit unit)
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_7(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:48.382] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_12(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:48.518] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_14(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:48.650] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_16(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:48.650] [D] [Pulse] Slow bot root: 544ms bot=Combat Bot poi=None combat=True
+[12:00:48.975] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.Helpers.Unit.IsBoss(WoWUnit unit)
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_7(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:48.975] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_12(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:49.108] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_14(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:49.243] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_16(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:49.243] [D] [Pulse] Slow bot root: 543ms bot=Combat Bot poi=None combat=True
+[12:00:49.555] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.Helpers.Unit.IsBoss(WoWUnit unit)
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_7(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:49.555] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_12(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:49.689] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_14(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:49.825] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_16(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:49.825] [D] [Pulse] Slow bot root: 543ms bot=Combat Bot poi=None combat=True
+[12:00:50.148] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.Helpers.Unit.IsBoss(WoWUnit unit)
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_7(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:50.149] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_12(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:50.287] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_14(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:50.422] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_16(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:00:50.422] [D] [Pulse] Slow bot root: 551ms bot=Combat Bot poi=None combat=True
+[12:00:50.470] [N] [Singular] Currect target is invalid. Switching to Scarlet Torturer!
+[12:00:50.794] [D] [Singular-DEBUG] Switched targets!
+[12:00:50.794] [D] [Singular-DEBUG] Melee Distance: 5
+[12:00:50.795] [D] [Singular-DEBUG] Health: 15.241882041086813
+[12:00:50.795] [D] [Singular-DEBUG] Level: 31
+[12:00:51.889] [D] [Pulse] Slow bot root: 100ms bot=Combat Bot poi=None combat=True
+[12:00:54.433] [D] [Pulse] Slow bot root: 632ms bot=Combat Bot poi=None combat=True
+[12:00:57.491] [D] [Pulse] Slow bot root: 646ms bot=Combat Bot poi=None combat=True
+[12:00:58.164] [D] [Pulse] Slow bot root: 617ms bot=Combat Bot poi=None combat=True
+[12:00:58.827] [N] [Singular] Casting Judgement of Light on Scarlet Torturer
+[12:00:58.828] [D] Spell_C::CastSpell(20271, 0, 0xF1300010D2000042, 0)
+[12:00:58.833] [D] [Pulse] Slow bot root: 616ms bot=Combat Bot poi=None combat=True
+[12:00:59.653] [D] [Pulse] Slow bot root: 770ms bot=Combat Bot poi=None combat=True
+[12:01:00.456] [N] [Singular] Casting Consecration on Scarlet Torturer
+[12:01:00.456] [D] Spell_C::CastSpell(26573, 0, 0xF1300010D2000042, 0)
+[12:01:00.471] [D] [Pulse] Slow bot root: 767ms bot=Combat Bot poi=None combat=True
+[12:01:01.249] [D] [Pulse] Slow bot root: 724ms bot=Combat Bot poi=None combat=True
+[12:01:02.007] [D] [Pulse] Slow bot root: 714ms bot=Combat Bot poi=None combat=True
+[12:01:02.059] [N] [Singular] Currect target is invalid. Switching to Scarlet Torturer!
+[12:01:02.368] [D] [Singular-DEBUG] Switched targets!
+[12:01:02.369] [D] [Singular-DEBUG] Melee Distance: 5
+[12:01:02.369] [D] [Singular-DEBUG] Health: 52.460732984293195
+[12:01:02.369] [D] [Singular-DEBUG] Level: 30
+[12:01:02.760] [N] [Singular] Casting Exorcism on Scarlet Torturer
+[12:01:02.760] [D] Spell_C::CastSpell(879, 0, 0xF1300010D200007F, 0)
+[12:01:02.766] [D] [Pulse] Slow bot root: 301ms bot=Combat Bot poi=None combat=True
+[12:01:03.500] [D] [Pulse] Slow bot root: 691ms bot=Combat Bot poi=None combat=True
+[12:01:04.240] [D] [Pulse] Slow bot root: 686ms bot=Combat Bot poi=None combat=True
+[12:01:04.983] [D] [Pulse] Slow bot root: 697ms bot=Combat Bot poi=None combat=True
+[12:01:05.731] [D] [Pulse] Slow bot root: 699ms bot=Combat Bot poi=None combat=True
+[12:01:06.479] [D] [Pulse] Slow bot root: 700ms bot=Combat Bot poi=None combat=True
+[12:01:07.211] [D] [Pulse] Slow bot root: 690ms bot=Combat Bot poi=None combat=True
+[12:01:07.902] [N] [Singular] Casting Judgement of Light on Scarlet Torturer
+[12:01:07.902] [D] Spell_C::CastSpell(20271, 0, 0xF1300010D200007F, 0)
+[12:01:07.910] [D] [Pulse] Slow bot root: 570ms bot=Combat Bot poi=None combat=True
+[12:01:08.647] [D] [Pulse] Slow bot root: 690ms bot=Combat Bot poi=None combat=True
+[12:01:09.230] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_16(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:01:09.230] [D] [Pulse] Slow bot root: 542ms bot=Combat Bot poi=None combat=True
+[12:01:09.300] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=43ms
+[12:01:09.307] [N] [Singular] Currect target is invalid. Switching to Scarlet Torturer!
+[12:01:09.669] [D] [Singular-DEBUG] Switched targets!
+[12:01:09.669] [D] [Singular-DEBUG] Melee Distance: 5.9433336
+[12:01:09.669] [D] [Singular-DEBUG] Health: 31.544068919814446
+[12:01:09.669] [D] [Singular-DEBUG] Level: 31
+[12:01:10.680] [D] [Pulse] Slow bot root: 744ms bot=Combat Bot poi=None combat=True
+[12:01:11.466] [D] [Pulse] Slow bot root: 692ms bot=Combat Bot poi=None combat=True
+[12:01:12.237] [D] [Pulse] Slow bot root: 695ms bot=Combat Bot poi=None combat=True
+[12:01:12.999] [D] [Pulse] Slow bot root: 687ms bot=Combat Bot poi=None combat=True
+[12:01:13.798] [D] [Pulse] Slow bot root: 719ms bot=Combat Bot poi=None combat=True
+[12:01:14.567] [D] [Pulse] Slow bot root: 684ms bot=Combat Bot poi=None combat=True
+[12:01:15.360] [D] [Pulse] Slow bot root: 673ms bot=Combat Bot poi=None combat=True
+[12:01:16.176] [D] [Pulse] Slow bot root: 715ms bot=Combat Bot poi=None combat=True
+[12:01:16.270] [N] [Singular] Currect target is invalid. Switching to Scarlet Scryer!
+[12:01:16.597] [D] [Singular-DEBUG] Switched targets!
+[12:01:16.597] [D] [Singular-DEBUG] Melee Distance: 5
+[12:01:16.597] [D] [Singular-DEBUG] Health: 21.57829839704069
+[12:01:16.597] [D] [Singular-DEBUG] Level: 30
+[12:01:17.565] [N] [Singular] Casting Judgement of Light on Scarlet Scryer
+[12:01:17.565] [D] Spell_C::CastSpell(20271, 0, 0xF1300010C5000043, 0)
+[12:01:17.601] [D] [Pulse] Slow bot root: 735ms bot=Combat Bot poi=None combat=True
+[12:01:18.501] [D] [Pulse] Slow bot root: 797ms bot=Combat Bot poi=None combat=True
+[12:01:19.259] [D] [Pulse] Slow bot root: 657ms bot=Combat Bot poi=None combat=True
+[12:01:19.336] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=46ms
+[12:01:19.668] [N] [Singular] Casting Exorcism on Scarlet Scryer
+[12:01:19.668] [D] Spell_C::CastSpell(879, 0, 0xF1300010C5000043, 0)
+[12:01:19.701] [D] [Pulse] Slow bot root: 363ms bot=Combat Bot poi=None combat=True
+[12:01:20.376] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_16(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:01:20.376] [D] [Pulse] Slow bot root: 541ms bot=Combat Bot poi=None combat=False
+[12:01:20.732] [D] [Pulse] Slow bot root: 265ms bot=Combat Bot poi=None combat=False
+[12:01:21.070] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=288ms
+[12:01:21.137] [D] [Pulse] Slow shared pulse: total=404ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=47 events=0 plugins=355 routine=0
+[12:01:21.404] [D] [Pulse] Slow bot root: 266ms bot=Combat Bot poi=None combat=False
+[12:01:21.773] [D] [Pulse] Slow bot root: 268ms bot=Combat Bot poi=None combat=False
+[12:01:22.174] [D] [Pulse] Slow bot root: 268ms bot=Combat Bot poi=None combat=False
+[12:01:22.542] [D] [Pulse] Slow bot root: 267ms bot=Combat Bot poi=None combat=False
+[12:01:22.911] [D] [Pulse] Slow bot root: 267ms bot=Combat Bot poi=None combat=False
+[12:01:23.161] [D] [Pulse] Slow bot root: 173ms bot=Combat Bot poi=None combat=False
+[12:01:23.305] [D] [Pulse] Slow bot root: 102ms bot=Combat Bot poi=None combat=False
+[12:01:23.458] [D] [Pulse] Slow bot root: 107ms bot=Combat Bot poi=None combat=False
+[12:01:40.768] [D] [Singular-DEBUG] Switched targets!
+[12:01:40.768] [D] [Singular-DEBUG] Melee Distance: 5
+[12:01:40.768] [D] [Singular-DEBUG] Health: 95.0960901259112
+[12:01:40.768] [D] [Singular-DEBUG] Level: 31
+[12:01:40.964] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=80ms
+[12:01:41.588] [N] [Singular] Casting Exorcism on Haunting Phantasm
+[12:01:41.588] [D] Spell_C::CastSpell(879, 0, 0xF13000191B00006B, 0)
+[12:01:41.598] [D] [Pulse] Slow bot root: 370ms bot=Combat Bot poi=None combat=True
+[12:01:42.340] [D] [Pulse] Slow bot root: 676ms bot=Combat Bot poi=None combat=True
+[12:01:43.078] [D] [Pulse] Slow bot root: 675ms bot=Combat Bot poi=None combat=True
+[12:01:43.701] [N] [Singular] Casting Judgement of Light on Haunting Phantasm
+[12:01:43.701] [D] Spell_C::CastSpell(20271, 0, 0xF13000191B00006B, 0)
+[12:01:43.714] [D] [Pulse] Slow bot root: 570ms bot=Combat Bot poi=None combat=True
+[12:01:44.467] [D] [Pulse] Slow bot root: 680ms bot=Combat Bot poi=None combat=True
+[12:01:45.208] [D] [Pulse] Slow bot root: 673ms bot=Combat Bot poi=None combat=True
+[12:01:45.960] [D] [Pulse] Slow bot root: 679ms bot=Combat Bot poi=None combat=True
+[12:01:46.703] [D] [Pulse] Slow bot root: 675ms bot=Combat Bot poi=None combat=True
+[12:01:47.455] [D] [Pulse] Slow bot root: 686ms bot=Combat Bot poi=None combat=True
+[12:01:48.208] [D] [Pulse] Slow bot root: 672ms bot=Combat Bot poi=None combat=True
+[12:01:48.955] [D] [Pulse] Slow bot root: 677ms bot=Combat Bot poi=None combat=True
+[12:01:49.716] [D] [Pulse] Slow bot root: 692ms bot=Combat Bot poi=None combat=True
+[12:01:50.478] [D] [Pulse] Slow bot root: 696ms bot=Combat Bot poi=None combat=True
+[12:01:51.248] [D] [Pulse] Slow bot root: 695ms bot=Combat Bot poi=None combat=True
+[12:01:52.030] [D] [Pulse] Slow bot root: 705ms bot=Combat Bot poi=None combat=True
+[12:01:52.688] [N] [Singular] Casting Judgement of Light on Haunting Phantasm
+[12:01:52.688] [D] Spell_C::CastSpell(20271, 0, 0xF13000191B00006B, 0)
+[12:01:52.702] [D] [Pulse] Slow bot root: 591ms bot=Combat Bot poi=None combat=True
+[12:01:53.334] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_16(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:01:53.334] [D] [Pulse] Slow bot root: 562ms bot=Combat Bot poi=None combat=True
+[12:01:53.503] [N] [Singular] Currect target is invalid. Switching to Illusionary Phantasm!
+[12:01:53.515] [D] [Pulse] Slow bot root: 111ms bot=Combat Bot poi=None combat=True
+[12:01:53.854] [D] [Singular-DEBUG] Switched targets!
+[12:01:53.855] [D] [Singular-DEBUG] Melee Distance: 5
+[12:01:53.855] [D] [Singular-DEBUG] Health: 98.70775347912524
+[12:01:53.855] [D] [Singular-DEBUG] Level: 31
+[12:01:54.714] [D] [Pulse] Slow bot root: 683ms bot=Combat Bot poi=None combat=True
+[12:01:55.366] [N] [Singular] Casting Judgement of Light on Illusionary Phantasm
+[12:01:55.366] [D] Spell_C::CastSpell(20271, 0, 0xF13000195D00008B, 0)
+[12:01:55.377] [D] [Pulse] Slow bot root: 591ms bot=Combat Bot poi=None combat=True
+[12:01:56.160] [D] [Pulse] Slow bot root: 717ms bot=Combat Bot poi=None combat=True
+[12:01:56.938] [D] [Pulse] Slow bot root: 709ms bot=Combat Bot poi=None combat=True
+[12:01:57.709] [D] [Pulse] Slow bot root: 708ms bot=Combat Bot poi=None combat=True
+[12:01:58.477] [D] [Pulse] Slow bot root: 699ms bot=Combat Bot poi=None combat=True
+[12:01:58.849] [N] [Singular] Casting Exorcism on Illusionary Phantasm
+[12:01:58.849] [D] Spell_C::CastSpell(879, 0, 0xF13000195D00008B, 0)
+[12:01:58.855] [D] [Pulse] Slow bot root: 309ms bot=Combat Bot poi=None combat=True
+[12:01:59.645] [D] [Pulse] Slow bot root: 726ms bot=Combat Bot poi=None combat=True
+[12:02:00.421] [D] [Pulse] Slow bot root: 709ms bot=Combat Bot poi=None combat=True
+[12:02:01.219] [D] [Pulse] Slow bot root: 706ms bot=Combat Bot poi=None combat=True
+[12:02:01.999] [D] [Pulse] Slow bot root: 711ms bot=Combat Bot poi=None combat=True
+[12:02:02.760] [D] [Pulse] Slow bot root: 696ms bot=Combat Bot poi=None combat=True
+[12:02:03.518] [D] [Pulse] Slow bot root: 694ms bot=Combat Bot poi=None combat=True
+[12:02:04.151] [N] [Singular] Casting Judgement of Light on Illusionary Phantasm
+[12:02:04.152] [D] Spell_C::CastSpell(20271, 0, 0xF13000195D00008B, 0)
+[12:02:04.158] [D] [Pulse] Slow bot root: 570ms bot=Combat Bot poi=None combat=True
+[12:02:04.947] [D] [Pulse] Slow bot root: 726ms bot=Combat Bot poi=None combat=True
+[12:02:05.731] [D] [Pulse] Slow bot root: 714ms bot=Combat Bot poi=None combat=True
+[12:02:06.506] [D] [Pulse] Slow bot root: 706ms bot=Combat Bot poi=None combat=True
+[12:02:06.595] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=20ms
+[12:02:07.292] [D] [Pulse] Slow bot root: 696ms bot=Combat Bot poi=None combat=True
+[12:02:08.022] [D] [Pulse] Slow bot root: 671ms bot=Combat Bot poi=None combat=True
+[12:02:08.744] [D] [Pulse] Slow bot root: 658ms bot=Combat Bot poi=None combat=True
+[12:02:09.085] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.Helpers.Unit.IsBoss(WoWUnit unit)
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_7(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:02:09.085] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_12(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:02:09.215] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_14(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:02:09.344] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_16(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:02:09.344] [D] [Pulse] Slow bot root: 538ms bot=Combat Bot poi=None combat=True
+[12:02:09.682] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.Helpers.Unit.IsBoss(WoWUnit unit)
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_7(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:02:09.682] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_12(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:02:09.812] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_14(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:02:09.940] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_16(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:02:09.940] [D] [Pulse] Slow bot root: 536ms bot=Combat Bot poi=None combat=True
+[12:02:10.314] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.Helpers.Unit.IsBoss(WoWUnit unit)
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_7(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:02:10.314] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_12(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:02:10.441] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_14(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:02:10.570] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_16(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:02:10.570] [D] [Pulse] Slow bot root: 542ms bot=Combat Bot poi=None combat=True
+[12:02:10.960] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.Helpers.Unit.IsBoss(WoWUnit unit)
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_7(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:02:10.960] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_12(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:02:11.086] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_14(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:02:11.211] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_16(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:02:11.211] [D] [Pulse] Slow bot root: 540ms bot=Combat Bot poi=None combat=True
+[12:02:11.323] [N] [Singular] Currect target is invalid. Switching to Unfettered Spirit!
+[12:02:11.710] [D] [Singular-DEBUG] Switched targets!
+[12:02:11.710] [D] [Singular-DEBUG] Melee Distance: 5
+[12:02:11.710] [D] [Singular-DEBUG] Health: 76.24254473161034
+[12:02:11.710] [D] [Singular-DEBUG] Level: 31
+[12:02:12.872] [D] [Pulse] Slow bot root: 868ms bot=Combat Bot poi=None combat=True
+[12:02:13.522] [N] [Singular] Casting Judgement of Light on Unfettered Spirit
+[12:02:13.522] [D] Spell_C::CastSpell(20271, 0, 0xF1300010D400006E, 0)
+[12:02:13.535] [D] [Pulse] Slow bot root: 548ms bot=Combat Bot poi=None combat=True
+[12:02:14.271] [D] [Pulse] Slow bot root: 668ms bot=Combat Bot poi=None combat=True
+[12:02:14.972] [D] [Pulse] Slow bot root: 638ms bot=Combat Bot poi=None combat=True
+[12:02:15.730] [D] [Pulse] Slow bot root: 666ms bot=Combat Bot poi=None combat=True
+[12:02:16.173] [N] [Singular] Casting Exorcism on Unfettered Spirit
+[12:02:16.173] [D] Spell_C::CastSpell(879, 0, 0xF1300010D400006E, 0)
+[12:02:16.209] [D] [Pulse] Slow bot root: 366ms bot=Combat Bot poi=None combat=True
+[12:02:16.977] [D] [Pulse] Slow bot root: 657ms bot=Combat Bot poi=None combat=True
+[12:02:17.099] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=36ms
+[12:02:17.777] [D] [Pulse] Slow bot root: 677ms bot=Combat Bot poi=None combat=True
+[12:02:18.159] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.Helpers.Unit.IsBoss(WoWUnit unit)
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_7(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:02:18.159] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_12(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:02:18.283] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_14(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:02:18.405] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_16(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:02:18.405] [D] [Pulse] Slow bot root: 532ms bot=Combat Bot poi=None combat=True
+[12:02:18.796] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.Helpers.Unit.IsBoss(WoWUnit unit)
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_7(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:02:18.796] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_12(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:02:18.920] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_14(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:02:19.046] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_16(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:02:19.046] [D] [Pulse] Slow bot root: 536ms bot=Combat Bot poi=None combat=True
+[12:02:19.407] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.Helpers.Unit.IsBoss(WoWUnit unit)
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_7(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:02:19.407] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_12(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:02:19.531] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_14(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:02:19.651] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_16(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:02:19.651] [D] [Pulse] Slow bot root: 525ms bot=Combat Bot poi=None combat=False
+[12:02:19.862] [D] [Pulse] Slow bot root: 132ms bot=Combat Bot poi=None combat=False
+[12:02:19.863] [N] [AutoEquip]: Loot roll in progress
+[12:02:19.962] [N] [AutoEquip]: Rolling Greed
+[12:02:20.073] [D] [Pulse] Slow shared pulse: total=210ms movement=0 objects=0 lua=130 info=0 loot=1 targeting=63 events=0 plugins=13 routine=0
+[12:02:23.027] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=79ms
+[12:02:30.282] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=21ms
+[12:02:30.282] [D] [Singular-DEBUG] Switched targets!
+[12:02:30.282] [D] [Singular-DEBUG] Melee Distance: 5
+[12:02:30.282] [D] [Singular-DEBUG] Health: 50.99403578528827
+[12:02:30.282] [D] [Singular-DEBUG] Level: 31
+[12:02:30.968] [N] [Singular] Casting Exorcism on Anguished Dead
+[12:02:30.968] [D] Spell_C::CastSpell(879, 0, 0xF13000191A000072, 0)
+[12:02:30.977] [D] [Pulse] Slow bot root: 268ms bot=Combat Bot poi=None combat=True
+[12:02:31.637] [D] [Pulse] Slow bot root: 601ms bot=Combat Bot poi=None combat=True
+[12:02:32.286] [D] [Pulse] Slow bot root: 602ms bot=Combat Bot poi=None combat=True
+[12:02:32.842] [N] [Singular] Casting Judgement of Light on Anguished Dead
+[12:02:32.842] [D] Spell_C::CastSpell(20271, 0, 0xF13000191A000072, 0)
+[12:02:32.850] [D] [Pulse] Slow bot root: 503ms bot=Combat Bot poi=None combat=True
+[12:02:33.523] [D] [Pulse] Slow bot root: 613ms bot=Combat Bot poi=None combat=True
+[12:02:34.193] [D] [Pulse] Slow bot root: 614ms bot=Combat Bot poi=None combat=True
+[12:02:34.881] [D] [Pulse] Slow bot root: 631ms bot=Combat Bot poi=None combat=True
+[12:02:35.198] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.Helpers.Unit.IsBoss(WoWUnit unit)
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_7(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:02:35.198] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_12(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:02:35.513] [D] [Pulse] Slow bot root: 580ms bot=Combat Bot poi=None combat=True
+[12:02:35.564] [D] [Singular-DEBUG] Switched targets!
+[12:02:35.564] [D] [Singular-DEBUG] Melee Distance: 5
+[12:02:35.564] [D] [Singular-DEBUG] Health: 100
+[12:02:35.564] [D] [Singular-DEBUG] Level: 31
+[12:02:38.123] [N] [Singular] Currect target is invalid. Switching to Azshir the Sleepless!
+[12:02:38.468] [D] [Singular-DEBUG] Switched targets!
+[12:02:38.468] [D] [Singular-DEBUG] Melee Distance: 5.8433332
+[12:02:38.468] [D] [Singular-DEBUG] Health: 100
+[12:02:38.468] [D] [Singular-DEBUG] Level: 32
+[12:02:39.104] [D] [Pulse] Slow bot root: 551ms bot=Combat Bot poi=None combat=True
+[12:02:39.723] [D] [Pulse] Slow bot root: 560ms bot=Combat Bot poi=None combat=True
+[12:02:40.428] [D] [Pulse] Slow bot root: 643ms bot=Combat Bot poi=None combat=True
+[12:02:41.108] [D] [Pulse] Slow bot root: 618ms bot=Combat Bot poi=None combat=True
+[12:02:41.674] [N] [Singular] Casting Judgement of Light on Azshir the Sleepless
+[12:02:41.674] [D] Spell_C::CastSpell(20271, 0, 0xF13000195A000088, 0)
+[12:02:41.683] [D] [Pulse] Slow bot root: 514ms bot=Combat Bot poi=None combat=True
+[12:02:42.444] [D] [Pulse] Slow bot root: 692ms bot=Combat Bot poi=None combat=True
+[12:02:43.247] [N] [Singular] Casting Consecration on Azshir the Sleepless
+[12:02:43.247] [D] Spell_C::CastSpell(26573, 0, 0xF13000195A000088, 0)
+[12:02:43.255] [D] [Pulse] Slow bot root: 662ms bot=Combat Bot poi=None combat=True
+[12:02:43.700] [N] Stopping the bot!
+[12:02:43.701] [N] Bot stopping! Reason: User request
+[12:02:44.007] [D] Exception in GetReturnValues: Thread was interrupted from a waiting state.
+[12:02:44.008] [D] [Pulse] Slow bot root: 687ms bot=Combat Bot poi=None combat=True
+[12:02:44.008] [D] Cleared POI
+[12:02:44.011] [D] Worker thread exited cleanly
+[12:02:54.372] [D] [Settings] Saved all settings
+[12:02:54.373] [N] Starting the bot.
+[12:02:54.374] [N] Currently Using BotBase : Combat Bot
+[12:02:54.374] [N] Character is a level 31 BloodElf Paladin
+[12:02:54.375] [N] Current zone is Scarlet Monastery
+[12:02:54.375] [D] Loading profile from D:\World of Warcraft 3.3.5a\CB\Bots\WholesomeAutoQuest\WHOLESOME_AUTOQUESTER.xml
+[12:02:54.376] [D] [CompileBatch] Compiling 1 entries...
+[12:02:54.447] [D] [CompileBatch] Compiled successfully.
+[12:02:54.447] [N] Profile loaded: WholesomeAQ - Thousand Needles
+[12:02:54.448] [D] Selected sub-profile: WholesomeAQ - Thousand Needles (L1-80)
+[12:02:54.489] [D] Setting CVars: autoSelfCast=1, autoLootDefault=1
+[12:02:54.556] [D] Cleared POI
+[12:02:54.556] [D] Refresh() called. LastCount=0, CurrentCount=34
+[12:02:54.556] [N] Building spell book
+[12:02:54.560] [D] Found 34 spells from LocalPlayer.KnownSpells
+[12:02:54.560] [N] Adding Arcane Affinity
+[12:02:54.560] [N] Adding Arcane Torrent
+[12:02:54.561] [N] Adding Auto Attack
+[12:02:54.561] [N] Adding Block
+[12:02:54.562] [N] Adding Dodge
+[12:02:54.562] [N] Adding Magic Resistance
+[12:02:54.563] [N] Adding Parry
+[12:02:54.564] [N] Adding Blessing of Wisdom
+[12:02:54.564] [N] Adding Concentration Aura
+[12:02:54.565] [N] Adding Consecration
+[12:02:54.565] [N] Adding Exorcism
+[12:02:54.566] [N] Adding Flash of Light
+[12:02:54.566] [N] Adding Holy Light
+[12:02:54.567] [N] Adding Lay on Hands
+[12:02:54.568] [N] Adding Purify
+[12:02:54.568] [N] Adding Seal of Righteousness
+[12:02:54.569] [N] Adding Sense Undead
+[12:02:54.569] [N] Adding Turn Evil
+[12:02:54.570] [N] Adding Blessing of Kings
+[12:02:54.570] [N] Adding Devotion Aura
+[12:02:54.571] [N] Adding Divine Protection
+[12:02:54.571] [N] Adding Hammer of Justice
+[12:02:54.572] [N] Adding Hand of Freedom
+[12:02:54.572] [N] Adding Hand of Protection
+[12:02:54.573] [N] Adding Hand of Reckoning
+[12:02:54.573] [N] Adding Hand of Salvation
+[12:02:54.574] [N] Adding Righteous Defense
+[12:02:54.574] [N] Adding Righteous Fury
+[12:02:54.575] [N] Adding Seal of Justice
+[12:02:54.576] [N] Adding Blessing of Might
+[12:02:54.576] [N] Adding Judgement of Light
+[12:02:54.577] [N] Adding Judgement of Wisdom
+[12:02:54.577] [N] Adding Retribution Aura
+[12:02:54.578] [N] Adding Seal of Command
+[12:02:54.579] [N] Spell book built
+[12:02:54.579] [D] [SpellManager] Initialize — subscribed to BotEvents.OnBotStart
+[12:02:54.579] [D] Default area costs set (Road=1.0, Ground=1.66)
+[12:02:54.579] [D] Faction filter set: Horde (excluding Alliance paths)
+[12:02:54.582] [D] Refresh() called. LastCount=0, CurrentCount=34
+[12:02:54.582] [N] Building spell book
+[12:02:54.583] [D] Found 34 spells from LocalPlayer.KnownSpells
+[12:02:54.583] [N] Adding Arcane Affinity
+[12:02:54.583] [N] Adding Arcane Torrent
+[12:02:54.584] [N] Adding Auto Attack
+[12:02:54.584] [N] Adding Block
+[12:02:54.585] [N] Adding Dodge
+[12:02:54.585] [N] Adding Magic Resistance
+[12:02:54.586] [N] Adding Parry
+[12:02:54.587] [N] Adding Blessing of Wisdom
+[12:02:54.587] [N] Adding Concentration Aura
+[12:02:54.588] [N] Adding Consecration
+[12:02:54.588] [N] Adding Exorcism
+[12:02:54.589] [N] Adding Flash of Light
+[12:02:54.589] [N] Adding Holy Light
+[12:02:54.590] [N] Adding Lay on Hands
+[12:02:54.590] [N] Adding Purify
+[12:02:54.591] [N] Adding Seal of Righteousness
+[12:02:54.592] [N] Adding Sense Undead
+[12:02:54.592] [N] Adding Turn Evil
+[12:02:54.593] [N] Adding Blessing of Kings
+[12:02:54.594] [N] Adding Devotion Aura
+[12:02:54.594] [N] Adding Divine Protection
+[12:02:54.595] [N] Adding Hammer of Justice
+[12:02:54.595] [N] Adding Hand of Freedom
+[12:02:54.596] [N] Adding Hand of Protection
+[12:02:54.596] [N] Adding Hand of Reckoning
+[12:02:54.597] [N] Adding Hand of Salvation
+[12:02:54.598] [N] Adding Righteous Defense
+[12:02:54.603] [N] Adding Righteous Fury
+[12:02:54.604] [N] Adding Seal of Justice
+[12:02:54.605] [N] Adding Blessing of Might
+[12:02:54.606] [N] Adding Judgement of Light
+[12:02:54.606] [N] Adding Judgement of Wisdom
+[12:02:54.607] [N] Adding Retribution Aura
+[12:02:54.608] [N] Adding Seal of Command
+[12:02:54.609] [N] Spell book built
+[12:02:54.609] [D] [SpellManager] Subscribed to LEARNED_SPELL_IN_TAB, ACTIVE_TALENT_GROUP_CHANGED
+[12:02:54.737] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=36ms
+[12:02:54.775] [N] [Singular] Currect target is invalid. Switching to Anguished Dead!
+[12:02:55.127] [D] [Singular-DEBUG] Switched targets!
+[12:02:55.127] [D] [Singular-DEBUG] Melee Distance: 5
+[12:02:55.127] [D] [Singular-DEBUG] Health: 41.58383035122598
+[12:02:55.127] [D] [Singular-DEBUG] Level: 31
+[12:02:55.339] [N] [Singular] Casting Hand of Freedom on Myself
+[12:02:55.339] [D] Spell_C::CastSpell(1044, 0, 0x6000000007EAB80, 0)
+[12:02:55.371] [D] [Pulse] Slow bot root: 133ms bot=Combat Bot poi=None combat=True
+[12:02:56.353] [D] [Pulse] Slow bot root: 867ms bot=Combat Bot poi=None combat=True
+[12:02:57.265] [D] [Pulse] Slow bot root: 798ms bot=Combat Bot poi=None combat=True
+[12:02:57.942] [N] [Singular] Casting Judgement of Light on Anguished Dead
+[12:02:57.942] [D] Spell_C::CastSpell(20271, 0, 0xF13000191A000074, 0)
+[12:02:57.976] [D] [Pulse] Slow bot root: 599ms bot=Combat Bot poi=None combat=True
+[12:02:58.857] [D] [Pulse] Slow bot root: 765ms bot=Combat Bot poi=None combat=True
+[12:02:59.707] [N] [Singular] Casting Consecration on Anguished Dead
+[12:02:59.707] [D] Spell_C::CastSpell(26573, 0, 0xF13000191A000074, 0)
+[12:02:59.739] [D] [Pulse] Slow bot root: 768ms bot=Combat Bot poi=None combat=True
+[12:03:00.590] [D] [Pulse] Slow bot root: 705ms bot=Combat Bot poi=None combat=True
+[12:03:00.711] [N] [Singular] Currect target is invalid. Switching to Azshir the Sleepless!
+[12:03:01.056] [D] [Singular-DEBUG] Switched targets!
+[12:03:01.056] [D] [Singular-DEBUG] Melee Distance: 5.8433332
+[12:03:01.056] [D] [Singular-DEBUG] Health: 60.172672672672675
+[12:03:01.056] [D] [Singular-DEBUG] Level: 32
+[12:03:01.568] [N] [Singular] Casting Exorcism on Azshir the Sleepless
+[12:03:01.568] [D] Spell_C::CastSpell(879, 0, 0xF13000195A000088, 0)
+[12:03:01.600] [D] [Pulse] Slow bot root: 433ms bot=Combat Bot poi=None combat=True
+[12:03:02.426] [D] [Pulse] Slow bot root: 716ms bot=Combat Bot poi=None combat=True
+[12:03:03.238] [D] [Pulse] Slow bot root: 718ms bot=Combat Bot poi=None combat=True
+[12:03:04.066] [D] [Pulse] Slow bot root: 733ms bot=Combat Bot poi=None combat=True
+[12:03:04.833] [D] [Pulse] Slow bot root: 686ms bot=Combat Bot poi=None combat=True
+[12:03:04.955] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=37ms
+[12:03:05.644] [D] [Pulse] Slow bot root: 688ms bot=Combat Bot poi=None combat=True
+[12:03:06.408] [D] [Pulse] Slow bot root: 669ms bot=Combat Bot poi=None combat=True
+[12:03:07.077] [N] [Singular] Casting Judgement of Light on Azshir the Sleepless
+[12:03:07.077] [D] Spell_C::CastSpell(20271, 0, 0xF13000195A000088, 0)
+[12:03:07.111] [D] [Pulse] Slow bot root: 601ms bot=Combat Bot poi=None combat=True
+[12:03:07.899] [D] [Pulse] Slow bot root: 681ms bot=Combat Bot poi=None combat=True
+[12:03:08.654] [D] [Pulse] Slow bot root: 667ms bot=Combat Bot poi=None combat=True
+[12:03:09.426] [D] [Pulse] Slow bot root: 667ms bot=Combat Bot poi=None combat=True
+[12:03:10.167] [D] [Pulse] Slow bot root: 634ms bot=Combat Bot poi=None combat=True
+[12:03:11.005] [D] [Pulse] Slow bot root: 703ms bot=Combat Bot poi=None combat=True
+[12:03:11.816] [D] [Pulse] Slow bot root: 708ms bot=Combat Bot poi=None combat=True
+[12:03:12.514] [D] [Pulse] Slow bot root: 599ms bot=Combat Bot poi=None combat=True
+[12:03:13.200] [D] [Pulse] Slow bot root: 583ms bot=Combat Bot poi=None combat=True
+[12:03:13.867] [D] [Pulse] Slow bot root: 584ms bot=Combat Bot poi=None combat=True
+[12:03:14.523] [D] [Pulse] Slow bot root: 570ms bot=Combat Bot poi=None combat=True
+[12:03:15.192] [D] [Pulse] Slow bot root: 573ms bot=Combat Bot poi=None combat=True
+[12:03:15.316] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=37ms
+[12:03:15.486] [N] [Singular] Casting Hammer of Justice on Azshir the Sleepless
+[12:03:15.486] [D] Spell_C::CastSpell(5588, 0, 0xF13000195A000088, 0)
+[12:03:15.518] [D] [Pulse] Slow bot root: 201ms bot=Combat Bot poi=None combat=True
+[12:03:15.762] [N] [Singular] Casting Arcane Torrent on Azshir the Sleepless
+[12:03:15.762] [D] Spell_C::CastSpell(28730, 0, 0xF13000195A000088, 0)
+[12:03:15.785] [D] [Pulse] Slow bot root: 164ms bot=Combat Bot poi=None combat=True
+[12:03:15.889] [N] [Singular] Currect target is invalid. Switching to Unfettered Spirit!
+[12:03:16.221] [D] [Singular-DEBUG] Switched targets!
+[12:03:16.221] [D] [Singular-DEBUG] Melee Distance: 5
+[12:03:16.221] [D] [Singular-DEBUG] Health: 29.92047713717694
+[12:03:16.221] [D] [Singular-DEBUG] Level: 31
+[12:03:16.858] [N] [Singular] Casting Judgement of Light on Unfettered Spirit
+[12:03:16.859] [D] Spell_C::CastSpell(20271, 0, 0xF1300010D4000068, 0)
+[12:03:16.892] [D] [Pulse] Slow bot root: 569ms bot=Combat Bot poi=None combat=True
+[12:03:17.570] [D] [Pulse] Slow bot root: 577ms bot=Combat Bot poi=None combat=True
+[12:03:18.216] [D] [Pulse] Slow bot root: 554ms bot=Combat Bot poi=None combat=True
+[12:03:18.563] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.Helpers.Unit.IsBoss(WoWUnit unit)
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_7(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:03:18.564] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_12(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:03:18.991] [D] [Pulse] Slow bot root: 698ms bot=Combat Bot poi=None combat=True
+[12:03:19.093] [D] [Singular-DEBUG] Switched targets!
+[12:03:19.093] [D] [Singular-DEBUG] Melee Distance: 5
+[12:03:19.093] [D] [Singular-DEBUG] Health: 100
+[12:03:19.093] [D] [Singular-DEBUG] Level: 31
+[12:03:19.807] [N] [AutoEquip]: Loot roll in progress
+[12:03:19.901] [N] [AutoEquip]: Equipped item in slot:LegsSlot scored 5.607 while loot-roll item scored:0.60233337
+[12:03:19.901] [N] [AutoEquip]: Rolling Greed
+[12:03:20.038] [D] [Pulse] Slow shared pulse: total=231ms movement=0 objects=0 lua=128 info=0 loot=1 targeting=56 events=0 plugins=43 routine=0
+[12:03:20.303] [D] [Pulse] Slow bot root: 264ms bot=Combat Bot poi=None combat=False
+[12:03:20.701] [D] [Pulse] Slow bot root: 265ms bot=Combat Bot poi=None combat=False
+[12:03:21.102] [D] [Pulse] Slow bot root: 267ms bot=Combat Bot poi=None combat=False
+[12:03:21.472] [D] [Pulse] Slow bot root: 266ms bot=Combat Bot poi=None combat=False
+[12:03:21.841] [D] [Pulse] Slow bot root: 269ms bot=Combat Bot poi=None combat=False
+[12:03:22.126] [D] [Pulse] Slow bot root: 170ms bot=Combat Bot poi=None combat=False
+[12:03:22.863] [D] [Pulse] Slow bot root: 112ms bot=Combat Bot poi=None combat=False
+[12:03:25.371] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=73ms
+[12:03:35.409] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=82ms
+[12:03:41.883] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=22ms
+[12:03:45.467] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=81ms
+[12:03:55.541] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=78ms
+[12:03:57.868] [D] [Singular-DEBUG] Switched targets!
+[12:03:57.868] [D] [Singular-DEBUG] Melee Distance: 5
+[12:03:57.868] [D] [Singular-DEBUG] Health: 17.528164347249835
+[12:03:57.868] [D] [Singular-DEBUG] Level: 31
+[12:03:58.136] [N] [Singular] Casting Exorcism on Anguished Dead
+[12:03:58.136] [D] Spell_C::CastSpell(879, 0, 0xF13000191A000076, 0)
+[12:03:58.144] [D] [Pulse] Slow bot root: 275ms bot=Combat Bot poi=None combat=True
+[12:03:58.733] [D] [Pulse] Slow bot root: 509ms bot=Combat Bot poi=None combat=True
+[12:03:59.311] [D] [Pulse] Slow bot root: 511ms bot=Combat Bot poi=None combat=True
+[12:03:59.892] [D] [Pulse] Slow bot root: 519ms bot=Combat Bot poi=None combat=True
+[12:04:00.276] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_14(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:04:00.373] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_16(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:04:00.374] [D] [Pulse] Slow bot root: 414ms bot=Combat Bot poi=None combat=True
+[12:04:00.448] [N] [Singular] Currect target is invalid. Switching to Anguished Dead!
+[12:04:00.771] [D] [Singular-DEBUG] Switched targets!
+[12:04:00.771] [D] [Singular-DEBUG] Melee Distance: 5
+[12:04:00.771] [D] [Singular-DEBUG] Health: 100
+[12:04:00.771] [D] [Singular-DEBUG] Level: 31
+[12:04:01.349] [D] [Pulse] Slow bot root: 504ms bot=Combat Bot poi=None combat=True
+[12:04:04.923] [D] [Pulse] Slow bot root: 112ms bot=Combat Bot poi=None combat=False
+[12:04:05.237] [D] [Pulse] Slow bot root: 114ms bot=Combat Bot poi=None combat=False
+[12:04:05.622] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=76ms
+[12:04:07.273] [N] [Singular] Casting Judgement of Light on Anguished Dead
+[12:04:07.273] [D] Spell_C::CastSpell(20271, 0, 0xF13000191A000079, 0)
+[12:04:07.286] [D] [Pulse] Slow bot root: 466ms bot=Combat Bot poi=None combat=True
+[12:04:07.856] [D] [Pulse] Slow bot root: 501ms bot=Combat Bot poi=None combat=True
+[12:04:08.417] [D] [Pulse] Slow bot root: 497ms bot=Combat Bot poi=None combat=True
+[12:04:09.096] [N] [Singular] Casting Consecration on Anguished Dead
+[12:04:09.096] [D] Spell_C::CastSpell(26573, 0, 0xF13000191A000079, 0)
+[12:04:09.107] [D] [Pulse] Slow bot root: 620ms bot=Combat Bot poi=None combat=True
+[12:04:09.781] [D] [Pulse] Slow bot root: 612ms bot=Combat Bot poi=None combat=True
+[12:04:10.454] [D] [Pulse] Slow bot root: 612ms bot=Combat Bot poi=None combat=True
+[12:04:11.118] [D] [Pulse] Slow bot root: 597ms bot=Combat Bot poi=None combat=True
+[12:04:11.754] [D] [Pulse] Slow bot root: 576ms bot=Combat Bot poi=None combat=True
+[12:04:12.399] [D] [Pulse] Slow bot root: 580ms bot=Combat Bot poi=None combat=True
+[12:04:13.030] [D] [Pulse] Slow bot root: 576ms bot=Combat Bot poi=None combat=True
+[12:04:13.568] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_16(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:04:13.568] [D] [Pulse] Slow bot root: 478ms bot=Combat Bot poi=None combat=True
+[12:04:13.653] [N] [Singular] Currect target is invalid. Switching to Illusionary Phantasm!
+[12:04:13.982] [D] [Singular-DEBUG] Switched targets!
+[12:04:13.982] [D] [Singular-DEBUG] Melee Distance: 5
+[12:04:13.982] [D] [Singular-DEBUG] Health: 82.23989396951623
+[12:04:13.982] [D] [Singular-DEBUG] Level: 31
+[12:04:14.641] [D] [Pulse] Slow bot root: 569ms bot=Combat Bot poi=None combat=True
+[12:04:14.724] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=37ms
+[12:04:15.027] [N] [Singular] Casting Exorcism on Illusionary Phantasm
+[12:04:15.027] [D] Spell_C::CastSpell(879, 0, 0xF13000195D00008C, 0)
+[12:04:15.060] [D] [Pulse] Slow bot root: 335ms bot=Combat Bot poi=None combat=True
+[12:04:15.764] [D] [Pulse] Slow bot root: 586ms bot=Combat Bot poi=None combat=True
+[12:04:16.418] [D] [Pulse] Slow bot root: 568ms bot=Combat Bot poi=None combat=True
+[12:04:16.979] [N] [Singular] Casting Judgement of Light on Illusionary Phantasm
+[12:04:16.979] [D] Spell_C::CastSpell(20271, 0, 0xF13000195D00008C, 0)
+[12:04:17.013] [D] [Pulse] Slow bot root: 500ms bot=Combat Bot poi=None combat=True
+[12:04:17.760] [D] [Pulse] Slow bot root: 603ms bot=Combat Bot poi=None combat=True
+[12:04:18.461] [D] [Pulse] Slow bot root: 592ms bot=Combat Bot poi=None combat=True
+[12:04:19.063] [D] [Pulse] Slow bot root: 545ms bot=Combat Bot poi=None combat=True
+[12:04:19.639] [D] [Pulse] Slow bot root: 521ms bot=Combat Bot poi=None combat=True
+[12:04:20.222] [D] [Pulse] Slow bot root: 531ms bot=Combat Bot poi=None combat=True
+[12:04:20.807] [D] [Pulse] Slow bot root: 529ms bot=Combat Bot poi=None combat=True
+[12:04:21.406] [D] [Pulse] Slow bot root: 536ms bot=Combat Bot poi=None combat=True
+[12:04:22.005] [D] [Pulse] Slow bot root: 542ms bot=Combat Bot poi=None combat=True
+[12:04:22.678] [D] [Pulse] Slow bot root: 566ms bot=Combat Bot poi=None combat=True
+[12:04:23.352] [D] [Pulse] Slow bot root: 536ms bot=Combat Bot poi=None combat=True
+[12:04:23.994] [N] [Singular] Casting Consecration on Illusionary Phantasm
+[12:04:23.994] [D] Spell_C::CastSpell(26573, 0, 0xF13000195D00008C, 0)
+[12:04:24.027] [D] [Pulse] Slow bot root: 568ms bot=Combat Bot poi=None combat=True
+[12:04:24.663] [D] [Pulse] Slow bot root: 529ms bot=Combat Bot poi=None combat=True
+[12:04:24.770] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=38ms
+[12:04:25.297] [D] [Pulse] Slow bot root: 525ms bot=Combat Bot poi=None combat=True
+[12:04:25.968] [D] [Pulse] Slow bot root: 553ms bot=Combat Bot poi=None combat=True
+[12:04:26.615] [D] [Pulse] Slow bot root: 558ms bot=Combat Bot poi=None combat=True
+[12:04:27.267] [D] [Pulse] Slow bot root: 563ms bot=Combat Bot poi=None combat=True
+[12:04:27.910] [D] [Pulse] Slow bot root: 560ms bot=Combat Bot poi=None combat=True
+[12:04:28.585] [D] [Pulse] Slow bot root: 548ms bot=Combat Bot poi=None combat=True
+[12:04:29.242] [D] [Pulse] Slow bot root: 555ms bot=Combat Bot poi=None combat=True
+[12:04:29.823] [D] [Pulse] Slow bot root: 525ms bot=Combat Bot poi=None combat=True
+[12:04:30.251] [D] System.NullReferenceException: Object reference not set to an instance of an object.
+   at Singular.ClassSpecific.Paladin.Retribution.<>c.<CreateRetributionPaladinInstancePullAndCombat>b__4_16(Object ret)
+   at Singular.Helpers.Spell.<>c__DisplayClass18_0.<Cast>b__0(Object ret)
+   at TreeSharp.Decorator.Execute(Object context)+MoveNext()
+   at TreeSharp.Composite.Tick(Object context)
+[12:04:30.251] [D] [Pulse] Slow bot root: 370ms bot=Combat Bot poi=None combat=True
+[12:04:30.308] [N] [Singular] Currect target is invalid. Switching to Anguished Dead!
+[12:04:30.474] [D] [Singular-DEBUG] Switched targets!
+[12:04:30.474] [D] [Singular-DEBUG] Melee Distance: 5
+[12:04:30.474] [D] [Singular-DEBUG] Health: 39.927104042412196
+[12:04:30.474] [D] [Singular-DEBUG] Level: 31
+[12:04:30.589] [N] [Singular] Casting Hammer of Justice on Anguished Dead
+[12:04:30.589] [D] Spell_C::CastSpell(5588, 0, 0xF13000191A000084, 0)
+[12:04:31.103] [D] [Pulse] Slow bot root: 459ms bot=Combat Bot poi=None combat=True
+[12:04:31.613] [D] [Pulse] Slow bot root: 460ms bot=Combat Bot poi=None combat=True
+[12:04:32.125] [D] [Pulse] Slow bot root: 451ms bot=Combat Bot poi=None combat=True
+[12:04:32.630] [D] [Pulse] Slow bot root: 457ms bot=Combat Bot poi=None combat=True
+[12:04:33.135] [D] [Pulse] Slow bot root: 451ms bot=Combat Bot poi=None combat=True
+[12:04:33.643] [D] [Pulse] Slow bot root: 456ms bot=Combat Bot poi=None combat=True
+[12:04:34.137] [D] [Pulse] Slow bot root: 450ms bot=Combat Bot poi=None combat=True
+[12:04:34.634] [D] [Pulse] Slow bot root: 450ms bot=Combat Bot poi=None combat=True
+[12:04:35.138] [D] [Pulse] Slow bot root: 455ms bot=Combat Bot poi=None combat=True
+[12:04:35.639] [D] [Pulse] Slow bot root: 455ms bot=Combat Bot poi=None combat=True
+[12:04:36.154] [D] [Pulse] Slow bot root: 464ms bot=Combat Bot poi=None combat=True
+[12:04:36.661] [D] [Pulse] Slow bot root: 459ms bot=Combat Bot poi=None combat=True
+[12:04:37.154] [D] [Pulse] Slow bot root: 445ms bot=Combat Bot poi=None combat=True
+[12:04:37.659] [D] [Pulse] Slow bot root: 450ms bot=Combat Bot poi=None combat=True
+[12:04:38.182] [D] [Pulse] Slow bot root: 475ms bot=Combat Bot poi=None combat=True
+[12:04:38.678] [D] [Pulse] Slow bot root: 446ms bot=Combat Bot poi=None combat=True
+[12:04:39.184] [D] [Pulse] Slow bot root: 454ms bot=Combat Bot poi=None combat=True
+[12:04:39.681] [D] [Pulse] Slow bot root: 452ms bot=Combat Bot poi=None combat=True
+[12:04:40.163] [D] [Pulse] Slow bot root: 442ms bot=Combat Bot poi=None combat=True
+[12:04:40.672] [D] [Pulse] Slow bot root: 460ms bot=Combat Bot poi=None combat=True
+[12:04:41.156] [D] [Pulse] Slow bot root: 440ms bot=Combat Bot poi=None combat=True
+[12:04:41.635] [D] [Pulse] Slow bot root: 440ms bot=Combat Bot poi=None combat=True
+[12:04:42.032] [N] [Singular] Casting Judgement of Light on Anguished Dead
+[12:04:42.032] [D] Spell_C::CastSpell(20271, 0, 0xF13000191A000084, 0)
+[12:04:42.040] [D] [Pulse] Slow bot root: 359ms bot=Combat Bot poi=None combat=True
+[12:04:42.444] [N] [Singular] Casting Judgement of Light on Anguished Dead
+[12:04:42.444] [D] Spell_C::CastSpell(20271, 0, 0xF13000191A000084, 0)
+[12:04:42.455] [D] [Pulse] Slow bot root: 368ms bot=Combat Bot poi=None combat=False
+[12:04:42.857] [D] [Singular-DEBUG] Switched targets!
+[12:04:42.857] [D] [Singular-DEBUG] Melee Distance: 5
+[12:04:42.858] [D] [Singular-DEBUG] Health: 0
+[12:04:42.858] [D] [Singular-DEBUG] Level: 31
+[12:04:44.382] [N] [AutoEquip]: Loot roll in progress
+[12:04:44.421] [N] [AutoEquip]: Equipped item in slot:WaistSlot scored 1.602 while loot-roll item scored:1.123
+[12:04:44.421] [N] [AutoEquip]: New item did not contain our primary stat of:Strength so we are not rolling need.
+[12:04:44.421] [N] [AutoEquip]: Rolling Greed
+[12:04:45.219] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=51ms
+[12:04:46.344] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=71ms
+[12:04:56.391] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=84ms
+[12:04:56.415] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=22ms
+[12:05:06.416] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=93ms
+[12:05:06.438] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=20ms
+[12:05:16.486] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=82ms
+[12:05:26.553] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=79ms
+[12:05:31.721] [D] [Pulse] Slow bot root: 104ms bot=Combat Bot poi=None combat=False
+[12:05:36.447] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=28ms
+[12:05:36.623] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=88ms
+[12:05:44.273] [N] [Singular] Casting Exorcism on Unfettered Spirit
+[12:05:44.273] [D] Spell_C::CastSpell(879, 0, 0xF1300010D400005E, 0)
+[12:05:44.283] [D] [Pulse] Slow bot root: 280ms bot=Combat Bot poi=None combat=True
+[12:05:44.352] [D] [Singular-DEBUG] Switched targets!
+[12:05:44.352] [D] [Singular-DEBUG] Melee Distance: 5
+[12:05:44.352] [D] [Singular-DEBUG] Health: 47.713717693836976
+[12:05:44.352] [D] [Singular-DEBUG] Level: 31
+[12:05:44.846] [D] [Pulse] Slow bot root: 493ms bot=Combat Bot poi=None combat=True
+[12:05:45.381] [D] [Pulse] Slow bot root: 482ms bot=Combat Bot poi=None combat=True
+[12:05:45.925] [D] [Pulse] Slow bot root: 485ms bot=Combat Bot poi=None combat=True
+[12:05:46.347] [N] [Singular] Casting Judgement of Light on Unfettered Spirit
+[12:05:46.347] [D] Spell_C::CastSpell(20271, 0, 0xF1300010D400005E, 0)
+[12:05:46.358] [D] [Pulse] Slow bot root: 373ms bot=Combat Bot poi=None combat=True
+[12:05:46.903] [D] [Pulse] Slow bot root: 485ms bot=Combat Bot poi=None combat=True
+[12:05:46.972] [N] [Singular] Currect target is invalid. Switching to Unfettered Spirit!
+[12:05:47.298] [D] [Singular-DEBUG] Switched targets!
+[12:05:47.298] [D] [Singular-DEBUG] Melee Distance: 5
+[12:05:47.298] [D] [Singular-DEBUG] Health: 38.07157057654076
+[12:05:47.298] [D] [Singular-DEBUG] Level: 31
+[12:05:47.959] [N] [Singular] Casting Consecration on Unfettered Spirit
+[12:05:47.959] [D] Spell_C::CastSpell(26573, 0, 0xF1300010D400005D, 0)
+[12:05:47.968] [D] [Pulse] Slow bot root: 495ms bot=Combat Bot poi=None combat=True
+[12:05:48.494] [D] [Pulse] Slow bot root: 471ms bot=Combat Bot poi=None combat=True
+[12:05:49.014] [D] [Pulse] Slow bot root: 457ms bot=Combat Bot poi=None combat=True
+[12:05:49.544] [D] [Pulse] Slow bot root: 460ms bot=Combat Bot poi=None combat=True
+[12:05:50.058] [D] [Pulse] Slow bot root: 458ms bot=Combat Bot poi=None combat=True
+[12:05:50.130] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=28ms
+[12:05:50.141] [N] [Singular] Currect target is invalid. Switching to Unfettered Spirit!
+[12:05:50.462] [D] [Singular-DEBUG] Switched targets!
+[12:05:50.462] [D] [Singular-DEBUG] Melee Distance: 5
+[12:05:50.462] [D] [Singular-DEBUG] Health: 22.198952879581153
+[12:05:50.462] [D] [Singular-DEBUG] Level: 30
+[12:05:51.062] [D] [Pulse] Slow bot root: 436ms bot=Combat Bot poi=None combat=True
+[12:05:51.538] [D] [Pulse] Slow bot root: 422ms bot=Combat Bot poi=None combat=True
+[12:05:51.997] [D] [Pulse] Slow bot root: 398ms bot=Combat Bot poi=None combat=True
+[12:05:52.448] [D] [Pulse] Slow bot root: 401ms bot=Combat Bot poi=None combat=True
+[12:05:52.884] [D] [Pulse] Slow bot root: 387ms bot=Combat Bot poi=None combat=True
+[12:05:52.940] [N] [Singular] Currect target is invalid. Switching to Anguished Dead!
+[12:05:53.266] [D] [Singular-DEBUG] Switched targets!
+[12:05:53.266] [D] [Singular-DEBUG] Melee Distance: 5
+[12:05:53.266] [D] [Singular-DEBUG] Health: 67.56129887342611
+[12:05:53.266] [D] [Singular-DEBUG] Level: 31
+[12:05:53.708] [D] [Pulse] Slow bot root: 357ms bot=Combat Bot poi=None combat=True
+[12:05:54.086] [D] [Pulse] Slow bot root: 338ms bot=Combat Bot poi=None combat=True
+[12:05:54.477] [D] [Pulse] Slow bot root: 336ms bot=Combat Bot poi=None combat=True
+[12:05:54.802] [N] [Singular] Casting Judgement of Light on Anguished Dead
+[12:05:54.802] [D] Spell_C::CastSpell(20271, 0, 0xF13000191A000078, 0)
+[12:05:54.809] [D] [Pulse] Slow bot root: 293ms bot=Combat Bot poi=None combat=True
+[12:05:55.210] [D] [Pulse] Slow bot root: 352ms bot=Combat Bot poi=None combat=True
+[12:05:55.592] [D] [Pulse] Slow bot root: 340ms bot=Combat Bot poi=None combat=True
+[12:05:55.984] [D] [Pulse] Slow bot root: 343ms bot=Combat Bot poi=None combat=True
+[12:05:56.376] [D] [Pulse] Slow bot root: 341ms bot=Combat Bot poi=None combat=True
+[12:05:56.761] [D] [Pulse] Slow bot root: 342ms bot=Combat Bot poi=None combat=True
+[12:05:57.155] [D] [Pulse] Slow bot root: 345ms bot=Combat Bot poi=None combat=True
+[12:05:57.532] [D] [Pulse] Slow bot root: 330ms bot=Combat Bot poi=None combat=True
+[12:05:57.910] [D] [Pulse] Slow bot root: 329ms bot=Combat Bot poi=None combat=True
+[12:05:58.314] [D] [Pulse] Slow bot root: 355ms bot=Combat Bot poi=None combat=True
+[12:05:58.695] [D] [Pulse] Slow bot root: 333ms bot=Combat Bot poi=None combat=True
+[12:05:59.068] [D] [Pulse] Slow bot root: 326ms bot=Combat Bot poi=None combat=False
+[12:06:01.971] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=46ms
+[12:06:07.282] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=90ms
+[12:06:10.899] [N] [Singular] Currect target is invalid. Switching to Bloodmage Thalnos!
+[12:06:11.258] [D] [Singular-DEBUG] Switched targets!
+[12:06:11.259] [D] [Singular-DEBUG] Melee Distance: 5
+[12:06:11.259] [D] [Singular-DEBUG] Health: 86.12049549549549
+[12:06:11.259] [D] [Singular-DEBUG] Level: 32
+[12:06:11.705] [D] [Pulse] Slow bot root: 357ms bot=Combat Bot poi=None combat=True
+[12:06:12.065] [D] [Pulse] Slow bot root: 313ms bot=Combat Bot poi=None combat=True
+[12:06:12.458] [D] [Pulse] Slow bot root: 346ms bot=Combat Bot poi=None combat=True
+[12:06:12.833] [D] [Pulse] Slow bot root: 330ms bot=Combat Bot poi=None combat=True
+[12:06:13.204] [D] [Pulse] Slow bot root: 322ms bot=Combat Bot poi=None combat=True
+[12:06:13.525] [N] [Singular] Casting Judgement of Light on Bloodmage Thalnos
+[12:06:13.526] [D] Spell_C::CastSpell(20271, 0, 0xF1300011BF00006F, 0)
+[12:06:13.534] [D] [Pulse] Slow bot root: 286ms bot=Combat Bot poi=None combat=True
+[12:06:13.901] [D] [Pulse] Slow bot root: 320ms bot=Combat Bot poi=None combat=True
+[12:06:14.315] [D] [Pulse] Slow bot root: 371ms bot=Combat Bot poi=None combat=True
+[12:06:14.722] [D] [Pulse] Slow bot root: 346ms bot=Combat Bot poi=None combat=True
+[12:06:15.101] [D] [Pulse] Slow bot root: 337ms bot=Combat Bot poi=None combat=True
+[12:06:15.304] [N] [Singular] Casting Exorcism on Bloodmage Thalnos
+[12:06:15.304] [D] Spell_C::CastSpell(879, 0, 0xF1300011BF00006F, 0)
+[12:06:15.316] [D] [Pulse] Slow bot root: 171ms bot=Combat Bot poi=None combat=True
+[12:06:15.713] [D] [Pulse] Slow bot root: 348ms bot=Combat Bot poi=None combat=True
+[12:06:15.714] [D] [Singular-DEBUG] Bloodmage Thalnos is immune to Holy spell school
+[12:06:16.100] [D] [Pulse] Slow bot root: 333ms bot=Combat Bot poi=None combat=True
+[12:06:16.483] [D] [Pulse] Slow bot root: 333ms bot=Combat Bot poi=None combat=True
+[12:06:16.847] [D] [Pulse] Slow bot root: 329ms bot=Combat Bot poi=None combat=True
+[12:06:17.215] [D] [Pulse] Slow bot root: 327ms bot=Combat Bot poi=None combat=True
+[12:06:17.606] [D] [Pulse] Slow bot root: 341ms bot=Combat Bot poi=None combat=True
+[12:06:17.976] [D] [Pulse] Slow bot root: 328ms bot=Combat Bot poi=None combat=True
+[12:06:18.353] [D] [Pulse] Slow bot root: 338ms bot=Combat Bot poi=None combat=True
+[12:06:18.725] [D] [Pulse] Slow bot root: 328ms bot=Combat Bot poi=None combat=True
+[12:06:19.105] [D] [Pulse] Slow bot root: 339ms bot=Combat Bot poi=None combat=True
+[12:06:19.482] [D] [Pulse] Slow bot root: 335ms bot=Combat Bot poi=None combat=True
+[12:06:19.872] [D] [Pulse] Slow bot root: 341ms bot=Combat Bot poi=None combat=True
+[12:06:20.255] [D] [Pulse] Slow bot root: 343ms bot=Combat Bot poi=None combat=True
+[12:06:20.662] [D] [Pulse] Slow bot root: 351ms bot=Combat Bot poi=None combat=True
+[12:06:21.058] [D] [Pulse] Slow bot root: 349ms bot=Combat Bot poi=None combat=True
+[12:06:21.448] [D] [Pulse] Slow bot root: 345ms bot=Combat Bot poi=None combat=True
+[12:06:21.838] [D] [Pulse] Slow bot root: 345ms bot=Combat Bot poi=None combat=True
+[12:06:22.214] [N] [Singular] Casting Judgement of Light on Bloodmage Thalnos
+[12:06:22.214] [D] Spell_C::CastSpell(20271, 0, 0xF1300011BF00006F, 0)
+[12:06:22.248] [D] [Pulse] Slow bot root: 365ms bot=Combat Bot poi=None combat=True
+[12:06:22.349] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=38ms
+[12:06:22.754] [D] [Pulse] Slow bot root: 403ms bot=Combat Bot poi=None combat=True
+[12:06:23.245] [D] [Pulse] Slow bot root: 394ms bot=Combat Bot poi=None combat=True
+[12:06:23.713] [D] [Pulse] Slow bot root: 392ms bot=Combat Bot poi=None combat=True
+[12:06:24.185] [D] [Pulse] Slow bot root: 398ms bot=Combat Bot poi=None combat=True
+[12:06:24.653] [D] [Pulse] Slow bot root: 397ms bot=Combat Bot poi=None combat=True
+[12:06:25.154] [D] [Pulse] Slow bot root: 394ms bot=Combat Bot poi=None combat=True
+[12:06:25.604] [D] [Pulse] Slow bot root: 363ms bot=Combat Bot poi=None combat=True
+[12:06:26.109] [D] [Pulse] Slow bot root: 397ms bot=Combat Bot poi=None combat=True
+[12:06:26.623] [D] [Pulse] Slow bot root: 413ms bot=Combat Bot poi=None combat=True
+[12:06:27.135] [D] [Pulse] Slow bot root: 418ms bot=Combat Bot poi=None combat=True
+[12:06:27.633] [D] [Pulse] Slow bot root: 411ms bot=Combat Bot poi=None combat=True
+[12:06:28.100] [D] [Pulse] Slow bot root: 376ms bot=Combat Bot poi=None combat=False
+[12:06:28.490] [N] [TidyBags 3]: Using Satchel of Helpful Goods we have 1
+[12:06:28.525] [D] [Pulse] Slow shared pulse: total=424ms movement=0 objects=0 lua=257 info=0 loot=1 targeting=50 events=0 plugins=115 routine=0
+[12:06:28.791] [D] [Pulse] Slow bot root: 265ms bot=Combat Bot poi=None combat=False
+[12:06:29.156] [D] [Pulse] Slow bot root: 262ms bot=Combat Bot poi=None combat=False
+[12:06:29.156] [N] [AutoEquip]: Loot roll in progress
+[12:06:29.288] [N] [AutoEquip]: Equipped item in slot:ShoulderSlot scored 2.4050002 while loot-roll item scored:1.3333334
+[12:06:29.288] [N] [AutoEquip]: New item did not contain our primary stat of:Strength so we are not rolling need.
+[12:06:29.288] [N] [AutoEquip]: Rolling Greed
+[12:06:30.622] [D] [Pulse] Slow bot root: 265ms bot=Combat Bot poi=None combat=False
+[12:06:31.035] [D] [Pulse] Slow bot root: 278ms bot=Combat Bot poi=None combat=False
+[12:06:31.435] [D] [Pulse] Slow bot root: 266ms bot=Combat Bot poi=None combat=False
+[12:06:31.803] [D] [Pulse] Slow bot root: 268ms bot=Combat Bot poi=None combat=False
+[12:06:32.319] [D] [Pulse] Slow bot root: 414ms bot=Combat Bot poi=None combat=False
+[12:06:32.420] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=46ms
+[12:06:32.687] [D] [Pulse] Slow bot root: 267ms bot=Combat Bot poi=None combat=False
+[12:06:33.058] [D] [Pulse] Slow bot root: 269ms bot=Combat Bot poi=None combat=False
+[12:06:33.423] [D] [Pulse] Slow bot root: 264ms bot=Combat Bot poi=None combat=False
+[12:06:33.786] [D] [Pulse] Slow bot root: 265ms bot=Combat Bot poi=None combat=False
+[12:06:34.121] [D] [Pulse] Slow bot root: 233ms bot=Combat Bot poi=None combat=False
+[12:06:34.418] [D] [Pulse] Slow bot root: 198ms bot=Combat Bot poi=None combat=False
+[12:06:34.720] [D] [Pulse] Slow bot root: 199ms bot=Combat Bot poi=None combat=False
+[12:06:35.020] [D] [Pulse] Slow bot root: 199ms bot=Combat Bot poi=None combat=False
+[12:06:35.324] [D] [Pulse] Slow bot root: 200ms bot=Combat Bot poi=None combat=False
+[12:06:35.619] [D] [Pulse] Slow bot root: 200ms bot=Combat Bot poi=None combat=False
+[12:06:35.838] [D] [Pulse] Slow bot root: 114ms bot=Combat Bot poi=None combat=False
+[12:06:37.807] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=87ms
+[12:06:43.183] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=219ms
+[12:06:43.184] [D] [Pulse] Slow shared pulse: total=250ms movement=0 objects=0 lua=0 info=0 loot=1 targeting=27 events=0 plugins=220 routine=0
+[12:06:43.184] [N] Not in game
+[12:06:43.184] [N] Not in game
+[12:06:43.263] [N] Not in game
+[12:06:43.343] [N] Not in game
+[12:06:43.421] [N] Not in game
+[12:06:43.541] [N] [Singular] Context changed. New context: Normal. Rebuilding behaviors.
+[12:06:43.541] [D] [Singular-DEBUG] Creating Combat behavior.
+[12:06:43.542] [D] [Singular-DEBUG] CreateRetributionPaladinNormalPullAndCombat is a match!
+[12:06:43.542] [N] [Singular]  Using CreateRetributionPaladinNormalPullAndCombat for Retribution Paladin - Combat (Priority: 0)
+[12:06:43.543] [D] [Singular-DEBUG] Creating Pull behavior.
+[12:06:43.544] [D] [Singular-DEBUG] CreateRetributionPaladinNormalPullAndCombat is a match!
+[12:06:43.544] [N] [Singular]  Using CreateRetributionPaladinNormalPullAndCombat for Retribution Paladin - Pull (Priority: 0)
+[12:06:43.545] [D] [Singular-DEBUG] Creating Rest behavior.
+[12:06:43.546] [D] [Singular-DEBUG] CreateRetributionPaladinRest is a match!
+[12:06:43.546] [N] [Singular]  Using CreateRetributionPaladinRest for Retribution Paladin - Rest (Priority: 0)
+[12:06:43.547] [D] [Singular-DEBUG] Creating CombatBuffs behavior.
+[12:06:43.548] [D] [Singular-DEBUG] Creating Heal behavior.
+[12:06:43.549] [D] [Singular-DEBUG] CreateRetributionPaladinHeal is a match!
+[12:06:43.549] [N] [Singular]  Using CreateRetributionPaladinHeal for Retribution Paladin - Heal (Priority: 0)
+[12:06:43.549] [D] [Singular-DEBUG] CreateRetributionPaladinNormalPullAndCombat is a match!
+[12:06:43.549] [N] [Singular]  Using CreateRetributionPaladinNormalPullAndCombat for Retribution Paladin - Heal (Priority: 0)
+[12:06:43.550] [D] [Singular-DEBUG] Creating PullBuffs behavior.
+[12:06:43.551] [D] [Singular-DEBUG] Creating PreCombatBuffs behavior.
+[12:06:43.552] [D] [Singular-DEBUG] CreatePaladinPreCombatBuffs is a match!
+[12:06:43.552] [N] [Singular]  Using CreatePaladinPreCombatBuffs for Retribution Paladin - PreCombatBuffs (Priority: 0)
+[12:06:47.846] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=71ms
+[12:06:51.937] [N] [AutoEquip]: Equipping Shoulder "Slayer's Shoulderguards" instead of "Bloodmage Mantle" - it scored 2.4050002 while the old scored 1.3333334
+[12:06:57.902] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=67ms
+[12:07:00.366] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=24ms
+[12:07:08.290] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=368ms
+[12:07:08.355] [D] [Pulse] Slow shared pulse: total=466ms movement=0 objects=0 lua=0 info=0 loot=0 targeting=33 events=0 plugins=433 routine=0
+[12:07:10.458] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=65ms
+[12:07:18.365] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=367ms
+[12:07:18.431] [D] [Pulse] Slow shared pulse: total=468ms movement=0 objects=0 lua=0 info=0 loot=0 targeting=34 events=0 plugins=433 routine=0
+[12:07:20.542] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=63ms
+[12:07:28.378] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=369ms
+[12:07:28.444] [D] [Pulse] Slow shared pulse: total=469ms movement=0 objects=0 lua=0 info=0 loot=0 targeting=33 events=0 plugins=435 routine=0
+[12:07:30.553] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=65ms
+[12:07:38.447] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=367ms
+[12:07:38.514] [D] [Pulse] Slow shared pulse: total=468ms movement=0 objects=0 lua=0 info=0 loot=0 targeting=33 events=0 plugins=434 routine=0
+[12:07:40.617] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=63ms
+[12:07:48.513] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=366ms
+[12:07:48.578] [D] [Pulse] Slow shared pulse: total=465ms movement=0 objects=0 lua=0 info=0 loot=0 targeting=34 events=0 plugins=430 routine=0
+[12:07:50.685] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=64ms
+[12:07:58.516] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=368ms
+[12:07:58.580] [D] [Pulse] Slow shared pulse: total=466ms movement=0 objects=0 lua=0 info=0 loot=0 targeting=33 events=0 plugins=433 routine=0
+[12:08:00.781] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=63ms
+[12:08:08.548] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=363ms
+[12:08:08.614] [D] [Pulse] Slow shared pulse: total=463ms movement=0 objects=0 lua=0 info=0 loot=0 targeting=33 events=0 plugins=428 routine=0
+[12:08:10.820] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=65ms
+[12:08:18.613] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=367ms
+[12:08:18.678] [D] [Pulse] Slow shared pulse: total=467ms movement=0 objects=0 lua=0 info=0 loot=0 targeting=34 events=0 plugins=432 routine=0
+[12:08:20.889] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=62ms
+[12:08:23.365] [N] [Singular] Casting Blessing of Kings on Myself
+[12:08:23.365] [D] Spell_C::CastSpell(20217, 0, 0x6000000007EAB80, 0)
+[12:08:28.690] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=369ms
+[12:08:28.756] [D] [Pulse] Slow shared pulse: total=470ms movement=0 objects=0 lua=0 info=0 loot=0 targeting=34 events=0 plugins=435 routine=0
+[12:08:30.962] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=65ms
+[12:08:38.745] [D] [Pulse] Slow plugin: name=AutoEquip2 elapsed=368ms
+[12:08:38.810] [D] [Pulse] Slow shared pulse: total=466ms movement=0 objects=0 lua=0 info=0 loot=0 targeting=33 events=0 plugins=433 routine=0
+[12:08:41.019] [D] [Pulse] Slow plugin: name=Tidy Bags 3 Reloaded elapsed=65ms
+[12:08:45.403] [N] Bot stopping! Reason: Main window is closing
+[12:08:45.404] [D] [TreeRoot] Worker thread interrupted by Stop() — stopping cleanly.
+[12:08:45.404] [D] Cleared POI
+[12:08:45.404] [D] Worker thread exited cleanly
+[12:08:45.543] [D] [Settings] Saved all settings
