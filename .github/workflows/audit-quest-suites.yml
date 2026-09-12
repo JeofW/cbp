@@ -22,22 +22,28 @@ jobs:
       - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9
         with:
           dotnet-version: '10.0.x'
-      - name: Install the x86 desktop runtime for the real x86 host dependency
+      - name: Install and verify x86 runtime frameworks
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
+          $out = Join-Path $env:RUNNER_TEMP 'quest-suite-results'
+          New-Item -ItemType Directory -Force $out | Out-Null
           $installer = Join-Path (Split-Path $env:RUNNER_WORKSPACE) '_actions/actions/setup-dotnet/67a3573c9a986a3f9c594539f4ab511d57bb3ce9/externals/install-dotnet.ps1'
-          & $installer -Channel '10.0' -Runtime windowsdesktop -Architecture x86 -InstallDir (Join-Path $env:RUNNER_TEMP 'dotnet-x86')
-          if ($LASTEXITCODE -ne 0) { throw 'x86 desktop runtime installation failed' }
+          $destination = Join-Path $env:RUNNER_TEMP 'dotnet-x86'
+          foreach ($framework in @('dotnet', 'windowsdesktop')) {
+            & pwsh -NoProfile -File $installer -Channel '10.0' -Runtime $framework -Architecture x86 -InstallDir $destination -NoPath *> (Join-Path $out "install-$framework.txt")
+            if ($LASTEXITCODE -ne 0) { throw "x86 $framework installation failed" }
+          }
+          & (Join-Path $destination 'dotnet.exe') --list-runtimes *> (Join-Path $out 'x86-runtimes.txt')
+          if ($LASTEXITCODE -ne 0) { throw 'Installed x86 runtime host did not execute' }
+          if (-not (Select-String -Path (Join-Path $out 'x86-runtimes.txt') -Pattern 'Microsoft.WindowsDesktop.App 10\.')) { throw 'x86 desktop framework missing' }
       - name: Build and run all five checked-in quest and vendor suites
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Continue'
           $out = Join-Path $env:RUNNER_TEMP 'quest-suite-results'
-          New-Item -ItemType Directory -Force $out | Out-Null
           git rev-parse HEAD | Out-File (Join-Path $out 'commit.txt')
           $runtime = Join-Path $env:RUNNER_TEMP 'dotnet-x86/dotnet.exe'
-          & $runtime --list-runtimes *> (Join-Path $out 'x86-runtimes.txt')
           $results = @()
           foreach ($name in @('QuestRecoveryRegressionTests', 'WholesomeQuestRecoveryRegressionTests', 'QuestRecoveryAdapterRegressionTests', 'QuestPickupPolicyRegressionTests', 'VendorCoreRegressionTests')) {
             $project = "Tools/$name/$name.csproj"
