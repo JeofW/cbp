@@ -1,0 +1,56 @@
+name: Audit native result and timing contract
+on:
+  push:
+    branches: ['audit/next-12-native-contract-20260912']
+    paths: ['**.cs', '**.csproj', '.github/workflows/audit-native-contract.yml']
+permissions:
+  contents: read
+jobs:
+  actual-native-boundary:
+    if: github.repository == 'JeofW/CopilotBuddy-private' && github.event.repository.private == true
+    runs-on: windows-latest
+    timeout-minutes: 15
+    env:
+      GIT_CONFIG_COUNT: '2'
+      GIT_CONFIG_KEY_0: core.longpaths
+      GIT_CONFIG_VALUE_0: 'true'
+      GIT_CONFIG_KEY_1: core.autocrlf
+      GIT_CONFIG_VALUE_1: 'false'
+      GIT_LFS_SKIP_SMUDGE: '1'
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+          lfs: false
+      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9
+        with:
+          dotnet-version: '10.0.x'
+      - name: Execute actual native boundary without mesh downloads
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $out = Join-Path $env:RUNNER_TEMP 'native-contract'
+          New-Item -ItemType Directory -Force $out | Out-Null
+          git rev-parse HEAD | Out-File (Join-Path $out 'commit.txt')
+          $installer = Join-Path (Split-Path $env:RUNNER_WORKSPACE) '_actions/actions/setup-dotnet/67a3573c9a986a3f9c594539f4ab511d57bb3ce9/externals/install-dotnet.ps1'
+          $destination = Join-Path $env:RUNNER_TEMP 'dotnet-x86'
+          foreach ($framework in @('dotnet','windowsdesktop')) {
+            & pwsh -NoProfile -File $installer -Channel '10.0' -Runtime $framework -Architecture x86 -InstallDir $destination -NoPath *> (Join-Path $out "install-$framework.txt")
+            if ($LASTEXITCODE -ne 0) { throw 'Runtime install failed' }
+          }
+          dotnet build Tools/NativeContractRegressionTests/NativeContractRegressionTests.csproj -c Release -p:Platform=x86 -v quiet *> (Join-Path $out 'build.txt')
+          if ($LASTEXITCODE -ne 0) { throw 'Contract tests must compile before evaluating behavior' }
+          $dlls = @(Get-ChildItem Tools/NativeContractRegressionTests/bin -Filter NativeContractRegressionTests.dll -Recurse | Where-Object { $_.FullName -notmatch '[\\/](ref|refint)[\\/]' })
+          if ($dlls.Count -ne 1) { throw 'Unexpected regression executable count' }
+          & (Join-Path $destination 'dotnet.exe') $dlls[0].FullName *> (Join-Path $out 'run.txt')
+          $exitCode = $LASTEXITCODE
+          Get-Content (Join-Path $out 'run.txt') | Write-Host
+          @{exit_code=$exitCode;game_attached=$false;mesh_downloaded=$false} | ConvertTo-Json | Out-File (Join-Path $out 'result.json')
+          exit $exitCode
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: native-contract-${{ github.sha }}
+          path: ${{ runner.temp }}/native-contract/
+          retention-days: 7
+          if-no-files-found: error
