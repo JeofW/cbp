@@ -9,6 +9,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\CopilotBuddy.csproj" />
-    <Compile Include="..\..\..\..\Plugins\VendorRecovery\VendorRecovery.cs" Link="VendorRecovery.cs" />
+    <Compile Include="..\..\runtime-snapshot\Plugins\VendorRecovery\VendorRecovery.cs" Link="VendorRecovery.cs" />
   </ItemGroup>
 </Project>
