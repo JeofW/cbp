@@ -8,6 +8,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
+    <Compile Include="CorridorBoundaryRegressionTests.cs" />
     <Compile Include="../../Styx/Logic/Pathing/ElevatorTransitController.cs" Link="Production/ElevatorTransitController.cs" />
     <Compile Include="../../Styx/Logic/Pathing/WoWPoint.cs" Link="Production/WoWPoint.cs" />
     <Compile Include="../../Styx/Helpers/IRangeAble.cs" Link="Production/IRangeAble.cs" />
