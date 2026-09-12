@@ -1,0 +1,370 @@
+{
+  "ZoneId": 220,
+  "ZoneName": "Zone_220",
+  "SubzoneIds": [],
+  "Boundary": null,
+  "Quests": [
+    {
+      "Id": 747,
+      "Name": "The Hunt Begins",
+      "QuestLevel": 2,
+      "MinLevel": 1,
+      "AllowableRaces": 690,
+      "Flags": 8,
+      "QuestSortID": 220,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 2955,
+          "ItemId": 4739,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 7,
+          "Index": 0
+        },
+        {
+          "Type": "CollectItem",
+          "MobId": 2955,
+          "ItemId": 4740,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 7,
+          "Index": 1
+        }
+      ]
+    },
+    {
+      "Id": 750,
+      "Name": "The Hunt Continues",
+      "QuestLevel": 3,
+      "MinLevel": 1,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 220,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 747,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        747
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 2961,
+          "ItemId": 4742,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 10,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 752,
+      "Name": "A Humble Task",
+      "QuestLevel": 2,
+      "MinLevel": 1,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 220,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 753,
+      "Name": "A Humble Task",
+      "QuestLevel": 3,
+      "MinLevel": 1,
+      "AllowableRaces": 0,
+      "Flags": 0,
+      "QuestSortID": 220,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 752,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        752
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 4755,
+          "GameObjectId": 2907,
+          "GameObjectName": "Water Pitcher",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 755,
+      "Name": "Rites of the Earthmother",
+      "QuestLevel": 3,
+      "MinLevel": 1,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 220,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 753,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        753
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 757,
+      "Name": "Rite of Strength",
+      "QuestLevel": 4,
+      "MinLevel": 1,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 220,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 755,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        755
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 2952,
+          "ItemId": 4770,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 8,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 763,
+      "Name": "Rites of the Earthmother",
+      "QuestLevel": 5,
+      "MinLevel": 1,
+      "AllowableRaces": 0,
+      "Flags": 0,
+      "QuestSortID": 220,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 757,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 4783,
+      "PreviousQuestsIds": [
+        757
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 780,
+      "Name": "The Battleboars",
+      "QuestLevel": 4,
+      "MinLevel": 1,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 220,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 750,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        750
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 2954,
+          "ItemId": 4848,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 8,
+          "Index": 0
+        },
+        {
+          "Type": "CollectItem",
+          "MobId": 2954,
+          "ItemId": 4849,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 8,
+          "Index": 1
+        }
+      ]
+    },
+    {
+      "Id": 1656,
+      "Name": "A Task Unfinished",
+      "QuestLevel": 5,
+      "MinLevel": 1,
+      "AllowableRaces": 0,
+      "Flags": 0,
+      "QuestSortID": 220,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 7626,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 3376,
+      "Name": "Break Sharptusk!",
+      "QuestLevel": 5,
+      "MinLevel": 3,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 220,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 8554,
+          "ItemId": 10459,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 24857,
+      "Name": "Attack on Camp Narache",
+      "QuestLevel": 4,
+      "MinLevel": 1,
+      "AllowableRaces": 690,
+      "Flags": 0,
+      "QuestSortID": 220,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 4850,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    }
+  ]
+}

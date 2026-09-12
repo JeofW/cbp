@@ -1,0 +1,1114 @@
+{
+  "ZoneId": 3703,
+  "ZoneName": "Zone_3703",
+  "SubzoneIds": [],
+  "Boundary": null,
+  "Quests": [
+    {
+      "Id": 9829,
+      "Name": "Khadgar",
+      "QuestLevel": 70,
+      "MinLevel": 68,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 3703,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 9826,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        9826
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 9837,
+      "Name": "Return to Khadgar",
+      "QuestLevel": 70,
+      "MinLevel": 68,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 3703,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 9836,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        9836,
+        10737
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 9979,
+      "Name": "Wind Trader Lathrai",
+      "QuestLevel": 63,
+      "MinLevel": 62,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 3703,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 9978,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        9978,
+        9978
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 10017,
+      "Name": "Strained Supplies",
+      "QuestLevel": 64,
+      "MinLevel": 62,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 3703,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 18466,
+          "ItemId": 25802,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 8,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 10021,
+      "Name": "Restoring the Light",
+      "QuestLevel": 64,
+      "MinLevel": 62,
+      "AllowableRaces": 0,
+      "Flags": 128,
+      "QuestSortID": 3703,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 25817,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 182563,
+          "GameObjectName": "Northern Altar",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        },
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 182565,
+          "GameObjectName": "Eastern Altar",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 1
+        },
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 182566,
+          "GameObjectName": "Western Altar",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 2
+        }
+      ]
+    },
+    {
+      "Id": 10024,
+      "Name": "Voren'thal's Visions",
+      "QuestLevel": 65,
+      "MinLevel": 62,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 3703,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 18461,
+          "ItemId": 25744,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 8,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 10280,
+      "Name": "Special Delivery to Shattrath City",
+      "QuestLevel": 70,
+      "MinLevel": 67,
+      "AllowableRaces": 0,
+      "Flags": 128,
+      "QuestSortID": 3703,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 10276,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 29106,
+      "PreviousQuestsIds": [
+        10276
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 10325,
+      "Name": "Marks of Kil'jaeden",
+      "QuestLevel": 65,
+      "MinLevel": 62,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 3703,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 16944,
+          "ItemId": 29425,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 10,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 10412,
+      "Name": "Firewing Signets",
+      "QuestLevel": 65,
+      "MinLevel": 62,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 3703,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 16769,
+          "ItemId": 29426,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 10,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 10416,
+      "Name": "Synthesis of Power",
+      "QuestLevel": 70,
+      "MinLevel": 64,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 3703,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 16769,
+          "ItemId": 29739,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 10420,
+      "Name": "A Cleansing Light",
+      "QuestLevel": 70,
+      "MinLevel": 64,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 3703,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 21249,
+          "ItemId": 29740,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 10509,
+      "Name": "Bound for Glory",
+      "QuestLevel": 70,
+      "MinLevel": 67,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 3703,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 10508,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        10508
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 10551,
+      "Name": "Allegiance to the Aldor",
+      "QuestLevel": 65,
+      "MinLevel": 60,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 3703,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 10211,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 10551,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        10211
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 10552,
+      "Name": "Allegiance to the Scryers",
+      "QuestLevel": 65,
+      "MinLevel": 60,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 3703,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 10211,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 10551,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        10211
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 10553,
+      "Name": "Voren'thal the Seer",
+      "QuestLevel": 65,
+      "MinLevel": 60,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 3703,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 10552,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        10552
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 10554,
+      "Name": "Ishanah",
+      "QuestLevel": 65,
+      "MinLevel": 60,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 3703,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 10551,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        10551
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 10653,
+      "Name": "Marks of Sargeras",
+      "QuestLevel": 70,
+      "MinLevel": 68,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 3703,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 16943,
+          "ItemId": 30809,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 10,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 10656,
+      "Name": "Sunfury Signets",
+      "QuestLevel": 70,
+      "MinLevel": 68,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 3703,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 21089,
+          "ItemId": 30810,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 10,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 10826,
+      "Name": "Marks of Sargeras",
+      "QuestLevel": 70,
+      "MinLevel": 68,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 3703,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 16943,
+          "ItemId": 30809,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 10,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 10883,
+      "Name": "The Tempest Key",
+      "QuestLevel": 70,
+      "MinLevel": 70,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 3703,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 10588,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        10588
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 10948,
+      "Name": "The Hostage Soul",
+      "QuestLevel": 70,
+      "MinLevel": 70,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 3703,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 10947,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        10947
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 10984,
+      "Name": "Speak with the Ogre",
+      "QuestLevel": 70,
+      "MinLevel": 70,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 3703,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 11038,
+      "Name": "Assist Exarch Orelis",
+      "QuestLevel": 67,
+      "MinLevel": 67,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 3703,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 11039,
+      "Name": "Report to Spymaster Thalodien",
+      "QuestLevel": 67,
+      "MinLevel": 67,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 3703,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 11045,
+      "Name": "Zorus the Judicator",
+      "QuestLevel": 67,
+      "MinLevel": 67,
+      "AllowableRaces": 1101,
+      "Flags": 136,
+      "QuestSortID": 3703,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 11046,
+      "Name": "Chief Apothecary Hildagard",
+      "QuestLevel": 67,
+      "MinLevel": 67,
+      "AllowableRaces": 690,
+      "Flags": 136,
+      "QuestSortID": 3703,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 11109,
+      "Name": "Jorus the Cobalt Netherwing Drake",
+      "QuestLevel": 70,
+      "MinLevel": 70,
+      "AllowableRaces": 0,
+      "Flags": 128,
+      "QuestSortID": 3703,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 11108,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 11109,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        11108
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 11110,
+      "Name": "Malfas the Purple Netherwing Drake",
+      "QuestLevel": 70,
+      "MinLevel": 70,
+      "AllowableRaces": 0,
+      "Flags": 128,
+      "QuestSortID": 3703,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 11108,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 11109,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        11108
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 11111,
+      "Name": "Onyxien the Onyx Netherwing Drake",
+      "QuestLevel": 70,
+      "MinLevel": 70,
+      "AllowableRaces": 0,
+      "Flags": 128,
+      "QuestSortID": 3703,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 11108,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 11109,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        11108
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 11112,
+      "Name": "Suraku the Azure Netherwing Drake",
+      "QuestLevel": 70,
+      "MinLevel": 70,
+      "AllowableRaces": 0,
+      "Flags": 128,
+      "QuestSortID": 3703,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 11108,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 11109,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        11108
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 11113,
+      "Name": "Voranaku the Violet Netherwing Drake",
+      "QuestLevel": 70,
+      "MinLevel": 70,
+      "AllowableRaces": 0,
+      "Flags": 128,
+      "QuestSortID": 3703,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 11108,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 11109,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        11108
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 11114,
+      "Name": "Zoya the Veridian Netherwing Drake",
+      "QuestLevel": 70,
+      "MinLevel": 70,
+      "AllowableRaces": 0,
+      "Flags": 128,
+      "QuestSortID": 3703,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 11108,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 11109,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        11108
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 11451,
+      "Name": "Alicia's Poem",
+      "QuestLevel": 70,
+      "MinLevel": 60,
+      "AllowableRaces": 0,
+      "Flags": 128,
+      "QuestSortID": 3703,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 34089,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 11380,
+          "ItemId": 34089,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 11517,
+      "Name": "Report to Nasuun",
+      "QuestLevel": 70,
+      "MinLevel": 70,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 3703,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 11534,
+      "Name": "Report to Nasuun",
+      "QuestLevel": 70,
+      "MinLevel": 70,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 3703,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    }
+  ]
+}

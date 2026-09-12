@@ -1,0 +1,228 @@
+{
+  "ZoneId": 3557,
+  "ZoneName": "Zone_3557",
+  "SubzoneIds": [],
+  "Boundary": null,
+  "Quests": [
+    {
+      "Id": 7792,
+      "Name": "A Donation of Wool",
+      "QuestLevel": 60,
+      "MinLevel": 12,
+      "AllowableRaces": 1101,
+      "Flags": 0,
+      "QuestSortID": 3557,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 64,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 3,
+          "ItemId": 2592,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 60,
+          "Index": 0
+        },
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 2592,
+          "GameObjectId": 2971,
+          "GameObjectName": "The Barrens",
+          "KillCount": 0,
+          "CollectCount": 60,
+          "Index": 1
+        }
+      ]
+    },
+    {
+      "Id": 7798,
+      "Name": "A Donation of Silk",
+      "QuestLevel": 60,
+      "MinLevel": 26,
+      "AllowableRaces": 1101,
+      "Flags": 0,
+      "QuestSortID": 3557,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 64,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 10758,
+          "ItemId": 4306,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 60,
+          "Index": 0
+        },
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 4306,
+          "GameObjectId": 2177,
+          "GameObjectName": "The Finest Thread",
+          "KillCount": 0,
+          "CollectCount": 60,
+          "Index": 1
+        }
+      ]
+    },
+    {
+      "Id": 10356,
+      "Name": "A Donation of Mageweave",
+      "QuestLevel": 60,
+      "MinLevel": 40,
+      "AllowableRaces": 1101,
+      "Flags": 0,
+      "QuestSortID": 3557,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 64,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 17115,
+          "ItemId": 4338,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 60,
+          "Index": 0
+        },
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 4338,
+          "GameObjectId": 2177,
+          "GameObjectName": "The Finest Thread",
+          "KillCount": 0,
+          "CollectCount": 60,
+          "Index": 1
+        }
+      ]
+    },
+    {
+      "Id": 10357,
+      "Name": "A Donation of Runecloth",
+      "QuestLevel": 60,
+      "MinLevel": 50,
+      "AllowableRaces": 1101,
+      "Flags": 0,
+      "QuestSortID": 3557,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 64,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 7939,
+          "ItemId": 14047,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 60,
+          "Index": 0
+        },
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 14047,
+          "GameObjectId": 17259,
+          "GameObjectName": "Wooden Chair",
+          "KillCount": 0,
+          "CollectCount": 60,
+          "Index": 1
+        }
+      ]
+    },
+    {
+      "Id": 10373,
+      "Name": "A Call to Arms: The Plaguelands!",
+      "QuestLevel": 50,
+      "MinLevel": 50,
+      "AllowableRaces": 1101,
+      "Flags": 8,
+      "QuestSortID": 3557,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 10520,
+      "Name": "Assisting Arch Druid Staghelm",
+      "QuestLevel": 50,
+      "MinLevel": 47,
+      "AllowableRaces": 1101,
+      "Flags": 8,
+      "QuestSortID": 3557,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    }
+  ]
+}

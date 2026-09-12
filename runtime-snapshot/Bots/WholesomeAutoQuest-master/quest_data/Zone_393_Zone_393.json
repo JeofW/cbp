@@ -1,0 +1,40 @@
+{
+  "ZoneId": 393,
+  "ZoneName": "Zone_393",
+  "SubzoneIds": [],
+  "Boundary": null,
+  "Quests": [
+    {
+      "Id": 25445,
+      "Name": "Zalazane's Fall",
+      "QuestLevel": 78,
+      "MinLevel": 0,
+      "AllowableRaces": 0,
+      "Flags": 192,
+      "QuestSortID": 393,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 25495,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        25495
+      ],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 40428,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 1,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    }
+  ]
+}

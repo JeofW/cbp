@@ -1,0 +1,70 @@
+{
+  "ZoneId": 3688,
+  "ZoneName": "Zone_3688",
+  "SubzoneIds": [],
+  "Boundary": null,
+  "Quests": [
+    {
+      "Id": 10227,
+      "Name": "I See Dead Draenei",
+      "QuestLevel": 67,
+      "MinLevel": 64,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 3688,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 10228,
+      "Name": "Ezekiel",
+      "QuestLevel": 67,
+      "MinLevel": 64,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 3688,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 10227,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        10227
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    }
+  ]
+}

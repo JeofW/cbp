@@ -1,0 +1,893 @@
+{
+  "ZoneId": 12,
+  "ZoneName": "Zone_12",
+  "SubzoneIds": [],
+  "Boundary": null,
+  "Quests": [
+    {
+      "Id": 11,
+      "Name": "Riverpaw Gnoll Bounty",
+      "QuestLevel": 10,
+      "MinLevel": 6,
+      "AllowableRaces": 1101,
+      "Flags": 8,
+      "QuestSortID": 12,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 239,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        239
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 97,
+          "ItemId": 782,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 8,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 35,
+      "Name": "Further Concerns",
+      "QuestLevel": 10,
+      "MinLevel": 7,
+      "AllowableRaces": 1101,
+      "Flags": 8,
+      "QuestSortID": 12,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 40,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        40
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 37,
+      "Name": "Find the Lost Guards",
+      "QuestLevel": 10,
+      "MinLevel": 7,
+      "AllowableRaces": 1101,
+      "Flags": 8,
+      "QuestSortID": 12,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 35,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        35
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 39,
+      "Name": "Deliver Thomas' Report",
+      "QuestLevel": 10,
+      "MinLevel": 7,
+      "AllowableRaces": 1101,
+      "Flags": 8,
+      "QuestSortID": 12,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 71,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        71
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 45,
+      "Name": "Discover Rolf's Fate",
+      "QuestLevel": 10,
+      "MinLevel": 7,
+      "AllowableRaces": 1101,
+      "Flags": 8,
+      "QuestSortID": 12,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 37,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        37
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 46,
+      "Name": "Bounty on Murlocs",
+      "QuestLevel": 10,
+      "MinLevel": 7,
+      "AllowableRaces": 1101,
+      "Flags": 8,
+      "QuestSortID": 12,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 46,
+          "ItemId": 780,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 8,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 47,
+      "Name": "Gold Dust Exchange",
+      "QuestLevel": 7,
+      "MinLevel": 4,
+      "AllowableRaces": 1101,
+      "Flags": 8,
+      "QuestSortID": 12,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 40,
+          "ItemId": 773,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 10,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 52,
+      "Name": "Protect the Frontier",
+      "QuestLevel": 10,
+      "MinLevel": 7,
+      "AllowableRaces": 1101,
+      "Flags": 8,
+      "QuestSortID": 12,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 118,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 8,
+          "CollectCount": 0,
+          "Index": 0
+        },
+        {
+          "Type": "KillMob",
+          "MobId": 822,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 5,
+          "CollectCount": 0,
+          "Index": 1
+        }
+      ]
+    },
+    {
+      "Id": 59,
+      "Name": "Cloth and Leather Armor",
+      "QuestLevel": 10,
+      "MinLevel": 7,
+      "AllowableRaces": 1101,
+      "Flags": 0,
+      "QuestSortID": 12,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 39,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 748,
+      "PreviousQuestsIds": [
+        39
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 60,
+      "Name": "Kobold Candles",
+      "QuestLevel": 7,
+      "MinLevel": 3,
+      "AllowableRaces": 1101,
+      "Flags": 8,
+      "QuestSortID": 12,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 40,
+          "ItemId": 772,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 8,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 61,
+      "Name": "Shipment to Stormwind",
+      "QuestLevel": 7,
+      "MinLevel": 3,
+      "AllowableRaces": 1101,
+      "Flags": 0,
+      "QuestSortID": 12,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 60,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 957,
+      "PreviousQuestsIds": [
+        60
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 71,
+      "Name": "Report to Thomas",
+      "QuestLevel": 10,
+      "MinLevel": 7,
+      "AllowableRaces": 1101,
+      "Flags": 0,
+      "QuestSortID": 12,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 45,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 735,
+      "PreviousQuestsIds": [
+        45
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 46,
+          "ItemId": 735,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 83,
+      "Name": "Red Linen Goods",
+      "QuestLevel": 9,
+      "MinLevel": 4,
+      "AllowableRaces": 1101,
+      "Flags": 8,
+      "QuestSortID": 12,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 116,
+          "ItemId": 1019,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 6,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 84,
+      "Name": "Back to Billy",
+      "QuestLevel": 6,
+      "MinLevel": 5,
+      "AllowableRaces": 1101,
+      "Flags": 0,
+      "QuestSortID": 12,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 86,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 962,
+      "PreviousQuestsIds": [
+        86
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 85,
+      "Name": "Lost Necklace",
+      "QuestLevel": 6,
+      "MinLevel": 5,
+      "AllowableRaces": 1101,
+      "Flags": 8,
+      "QuestSortID": 12,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 86,
+      "Name": "Pie for Billy",
+      "QuestLevel": 6,
+      "MinLevel": 5,
+      "AllowableRaces": 1101,
+      "Flags": 8,
+      "QuestSortID": 12,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 85,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        85
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 113,
+          "ItemId": 769,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 4,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 87,
+      "Name": "Goldtooth",
+      "QuestLevel": 8,
+      "MinLevel": 5,
+      "AllowableRaces": 1101,
+      "Flags": 8,
+      "QuestSortID": 12,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 84,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        84
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 327,
+          "ItemId": 981,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 88,
+      "Name": "Princess Must Die!",
+      "QuestLevel": 9,
+      "MinLevel": 6,
+      "AllowableRaces": 1101,
+      "Flags": 8,
+      "QuestSortID": 12,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 330,
+          "ItemId": 1006,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 106,
+      "Name": "Young Lovers",
+      "QuestLevel": 6,
+      "MinLevel": 5,
+      "AllowableRaces": 1101,
+      "Flags": 0,
+      "QuestSortID": 12,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 1208,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 107,
+      "Name": "Note to William",
+      "QuestLevel": 6,
+      "MinLevel": 5,
+      "AllowableRaces": 1101,
+      "Flags": 0,
+      "QuestSortID": 12,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 111,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 1252,
+      "PreviousQuestsIds": [
+        111
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 109,
+      "Name": "Report to Gryan Stoutmantle",
+      "QuestLevel": 10,
+      "MinLevel": 9,
+      "AllowableRaces": 1101,
+      "Flags": 8,
+      "QuestSortID": 12,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 111,
+      "Name": "Speak with Gramma",
+      "QuestLevel": 6,
+      "MinLevel": 5,
+      "AllowableRaces": 1101,
+      "Flags": 8,
+      "QuestSortID": 12,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 106,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        106
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 112,
+      "Name": "Collecting Kelp",
+      "QuestLevel": 7,
+      "MinLevel": 5,
+      "AllowableRaces": 1101,
+      "Flags": 8,
+      "QuestSortID": 12,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 107,
+      "NextQuestID": 114,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        107
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 285,
+          "ItemId": 1256,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 4,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 114,
+      "Name": "The Escape",
+      "QuestLevel": 7,
+      "MinLevel": 5,
+      "AllowableRaces": 1101,
+      "Flags": 0,
+      "QuestSortID": 12,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 112,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 1257,
+      "PreviousQuestsIds": [
+        112,
+        112
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 147,
+      "Name": "Manhunt",
+      "QuestLevel": 10,
+      "MinLevel": 7,
+      "AllowableRaces": 1101,
+      "Flags": 8,
+      "QuestSortID": 12,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 123,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        123
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 473,
+          "ItemId": 2239,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 239,
+      "Name": "Westbrook Garrison Needs Help!",
+      "QuestLevel": 10,
+      "MinLevel": 6,
+      "AllowableRaces": 1101,
+      "Flags": 8,
+      "QuestSortID": 12,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 76,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        76
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 2158,
+      "Name": "Rest and Relaxation",
+      "QuestLevel": 5,
+      "MinLevel": 1,
+      "AllowableRaces": 1101,
+      "Flags": 524296,
+      "QuestSortID": 12,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 5545,
+      "Name": "A Bundle of Trouble",
+      "QuestLevel": 9,
+      "MinLevel": 5,
+      "AllowableRaces": 1101,
+      "Flags": 8,
+      "QuestSortID": 12,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 13872,
+          "GameObjectId": 176793,
+          "GameObjectName": "Bundle of Wood",
+          "KillCount": 0,
+          "CollectCount": 8,
+          "Index": 0
+        }
+      ]
+    }
+  ]
+}

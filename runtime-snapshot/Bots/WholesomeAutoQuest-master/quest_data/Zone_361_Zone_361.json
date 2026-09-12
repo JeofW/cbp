@@ -1,0 +1,958 @@
+{
+  "ZoneId": 361,
+  "ZoneName": "Zone_361",
+  "SubzoneIds": [],
+  "Boundary": null,
+  "Quests": [
+    {
+      "Id": 4101,
+      "Name": "Cleansing Felwood",
+      "QuestLevel": 55,
+      "MinLevel": 48,
+      "AllowableRaces": 1101,
+      "Flags": 8,
+      "QuestSortID": 361,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 7100,
+          "ItemId": 11503,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 15,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 4102,
+      "Name": "Cleansing Felwood",
+      "QuestLevel": 55,
+      "MinLevel": 48,
+      "AllowableRaces": 690,
+      "Flags": 8,
+      "QuestSortID": 361,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 7100,
+          "ItemId": 11503,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 15,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 4103,
+      "Name": "Salve via Hunting",
+      "QuestLevel": 55,
+      "MinLevel": 48,
+      "AllowableRaces": 1101,
+      "Flags": 8,
+      "QuestSortID": 361,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 4101,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        4101
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 8956,
+          "ItemId": 11515,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 6,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 4421,
+      "Name": "The Corruption of the Jadefire",
+      "QuestLevel": 54,
+      "MinLevel": 49,
+      "AllowableRaces": 1101,
+      "Flags": 8,
+      "QuestSortID": 361,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 7109,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 11,
+          "CollectCount": 0,
+          "Index": 0
+        },
+        {
+          "Type": "KillMob",
+          "MobId": 7110,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 9,
+          "CollectCount": 0,
+          "Index": 1
+        },
+        {
+          "Type": "KillMob",
+          "MobId": 7106,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 9,
+          "CollectCount": 0,
+          "Index": 2
+        },
+        {
+          "Type": "KillMob",
+          "MobId": 9454,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 1,
+          "CollectCount": 0,
+          "Index": 3
+        }
+      ]
+    },
+    {
+      "Id": 4441,
+      "Name": "Felbound Ancients",
+      "QuestLevel": 54,
+      "MinLevel": 49,
+      "AllowableRaces": 1101,
+      "Flags": 0,
+      "QuestSortID": 361,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 939,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 11682,
+      "PreviousQuestsIds": [
+        939
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 4442,
+      "Name": "Purified!",
+      "QuestLevel": 54,
+      "MinLevel": 49,
+      "AllowableRaces": 1101,
+      "Flags": 8,
+      "QuestSortID": 361,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 4441,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        4441
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 4505,
+      "Name": "Well of Corruption",
+      "QuestLevel": 54,
+      "MinLevel": 49,
+      "AllowableRaces": 690,
+      "Flags": 0,
+      "QuestSortID": 361,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 12566,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 4521,
+      "Name": "Wild Guardians",
+      "QuestLevel": 56,
+      "MinLevel": 52,
+      "AllowableRaces": 690,
+      "Flags": 8,
+      "QuestSortID": 361,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 7451,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 15,
+          "CollectCount": 0,
+          "Index": 0
+        },
+        {
+          "Type": "KillMob",
+          "MobId": 7450,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 15,
+          "CollectCount": 0,
+          "Index": 1
+        }
+      ]
+    },
+    {
+      "Id": 4721,
+      "Name": "Wild Guardians",
+      "QuestLevel": 59,
+      "MinLevel": 52,
+      "AllowableRaces": 690,
+      "Flags": 8,
+      "QuestSortID": 361,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 4741,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        4741
+      ],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 7454,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 10,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 4741,
+      "Name": "Wild Guardians",
+      "QuestLevel": 58,
+      "MinLevel": 52,
+      "AllowableRaces": 690,
+      "Flags": 8,
+      "QuestSortID": 361,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 4521,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        4521
+      ],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 7453,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 13,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 4906,
+      "Name": "Further Corruption",
+      "QuestLevel": 54,
+      "MinLevel": 49,
+      "AllowableRaces": 1101,
+      "Flags": 8,
+      "QuestSortID": 361,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 4421,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        4421
+      ],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 7111,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 8,
+          "CollectCount": 0,
+          "Index": 0
+        },
+        {
+          "Type": "KillMob",
+          "MobId": 7108,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 8,
+          "CollectCount": 0,
+          "Index": 1
+        },
+        {
+          "Type": "KillMob",
+          "MobId": 7107,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 8,
+          "CollectCount": 0,
+          "Index": 2
+        },
+        {
+          "Type": "KillMob",
+          "MobId": 10648,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 1,
+          "CollectCount": 0,
+          "Index": 3
+        }
+      ]
+    },
+    {
+      "Id": 5155,
+      "Name": "Forces of Jaedenar",
+      "QuestLevel": 51,
+      "MinLevel": 48,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 361,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 7125,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 4,
+          "CollectCount": 0,
+          "Index": 0
+        },
+        {
+          "Type": "KillMob",
+          "MobId": 7113,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 4,
+          "CollectCount": 0,
+          "Index": 1
+        },
+        {
+          "Type": "KillMob",
+          "MobId": 7115,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 6,
+          "CollectCount": 0,
+          "Index": 2
+        },
+        {
+          "Type": "KillMob",
+          "MobId": 7112,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 6,
+          "CollectCount": 0,
+          "Index": 3
+        }
+      ]
+    },
+    {
+      "Id": 5157,
+      "Name": "Collection of the Corrupt Water",
+      "QuestLevel": 52,
+      "MinLevel": 48,
+      "AllowableRaces": 0,
+      "Flags": 0,
+      "QuestSortID": 361,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 5155,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 12922,
+      "PreviousQuestsIds": [
+        5155
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 5158,
+      "Name": "Seeking Spiritual Aid",
+      "QuestLevel": 52,
+      "MinLevel": 48,
+      "AllowableRaces": 0,
+      "Flags": 0,
+      "QuestSortID": 361,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 5157,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 12907,
+      "PreviousQuestsIds": [
+        5157
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 5159,
+      "Name": "Cleansed Water Returns to Felwood",
+      "QuestLevel": 54,
+      "MinLevel": 48,
+      "AllowableRaces": 0,
+      "Flags": 0,
+      "QuestSortID": 361,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 5158,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 12906,
+      "PreviousQuestsIds": [
+        5158
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 5165,
+      "Name": "Dousing the Flames of Protection",
+      "QuestLevel": 55,
+      "MinLevel": 48,
+      "AllowableRaces": 0,
+      "Flags": 0,
+      "QuestSortID": 361,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 5159,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 32,
+      "StartItem": 12906,
+      "PreviousQuestsIds": [
+        5159
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 176158,
+          "GameObjectName": "Brazier of Pain",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        },
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 176159,
+          "GameObjectName": "Brazier of Malice",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 1
+        },
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 176160,
+          "GameObjectName": "Brazier of Suffering",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 2
+        },
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 176161,
+          "GameObjectName": "Brazier of Hatred",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 3
+        }
+      ]
+    },
+    {
+      "Id": 5204,
+      "Name": "Retribution of the Light",
+      "QuestLevel": 57,
+      "MinLevel": 49,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 361,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 5203,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        5203
+      ],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 9518,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 1,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 5242,
+      "Name": "A Final Blow",
+      "QuestLevel": 58,
+      "MinLevel": 48,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 361,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 5165,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        5165
+      ],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 9861,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 1,
+          "CollectCount": 0,
+          "Index": 0
+        },
+        {
+          "Type": "KillMob",
+          "MobId": 9860,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 1,
+          "CollectCount": 0,
+          "Index": 1
+        },
+        {
+          "Type": "CollectItem",
+          "MobId": 9517,
+          "ItemId": 13207,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 2
+        }
+      ]
+    },
+    {
+      "Id": 5249,
+      "Name": "To Winterspring!",
+      "QuestLevel": 56,
+      "MinLevel": 53,
+      "AllowableRaces": 1101,
+      "Flags": 8,
+      "QuestSortID": 361,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 5385,
+      "Name": "The Remains of Trey Lightforge",
+      "QuestLevel": 57,
+      "MinLevel": 49,
+      "AllowableRaces": 0,
+      "Flags": 0,
+      "QuestSortID": 361,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 5204,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 13562,
+      "PreviousQuestsIds": [
+        5204
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 5882,
+      "Name": "Salve via Hunting",
+      "QuestLevel": 55,
+      "MinLevel": 48,
+      "AllowableRaces": 690,
+      "Flags": 8,
+      "QuestSortID": 361,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 4102,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        4102
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 8956,
+          "ItemId": 11515,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 6,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 6162,
+      "Name": "A Husband's Last Battle",
+      "QuestLevel": 51,
+      "MinLevel": 46,
+      "AllowableRaces": 690,
+      "Flags": 8,
+      "QuestSortID": 361,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 9464,
+          "ItemId": 15879,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 8460,
+      "Name": "Timbermaw Ally",
+      "QuestLevel": 48,
+      "MinLevel": 45,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 361,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 7153,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 6,
+          "CollectCount": 0,
+          "Index": 0
+        },
+        {
+          "Type": "KillMob",
+          "MobId": 7155,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 6,
+          "CollectCount": 0,
+          "Index": 1
+        },
+        {
+          "Type": "KillMob",
+          "MobId": 7154,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 6,
+          "CollectCount": 0,
+          "Index": 2
+        }
+      ]
+    },
+    {
+      "Id": 8462,
+      "Name": "Speak to Nafien",
+      "QuestLevel": 55,
+      "MinLevel": 45,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 361,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 8460,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        8460
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 8465,
+      "Name": "Speak to Salfa",
+      "QuestLevel": 55,
+      "MinLevel": 45,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 361,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    }
+  ]
+}

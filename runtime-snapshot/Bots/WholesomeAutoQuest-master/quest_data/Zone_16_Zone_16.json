@@ -1,0 +1,819 @@
+{
+  "ZoneId": 16,
+  "ZoneName": "Zone_16",
+  "SubzoneIds": [],
+  "Boundary": null,
+  "Quests": [
+    {
+      "Id": 3383,
+      "Name": "<UNUSED>",
+      "QuestLevel": 55,
+      "MinLevel": 48,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 16,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 8394,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 1,
+          "CollectCount": 0,
+          "Index": 0
+        },
+        {
+          "Type": "KillMob",
+          "MobId": 8387,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 1,
+          "CollectCount": 0,
+          "Index": 1
+        },
+        {
+          "Type": "KillMob",
+          "MobId": 8389,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 1,
+          "CollectCount": 0,
+          "Index": 2
+        },
+        {
+          "Type": "KillMob",
+          "MobId": 8388,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 1,
+          "CollectCount": 0,
+          "Index": 3
+        }
+      ]
+    },
+    {
+      "Id": 3508,
+      "Name": "Breaking the Ward",
+      "QuestLevel": 58,
+      "MinLevel": 45,
+      "AllowableRaces": 0,
+      "Flags": 0,
+      "QuestSortID": 16,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 3141,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        3141
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 3509,
+      "Name": "The Name of the Beast",
+      "QuestLevel": 58,
+      "MinLevel": 45,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 16,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 3508,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        3508
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 3510,
+      "Name": "The Name of the Beast",
+      "QuestLevel": 58,
+      "MinLevel": 45,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 16,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 3509,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        3509
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 6140,
+          "ItemId": 10599,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        },
+        {
+          "Type": "CollectItem",
+          "MobId": 6140,
+          "ItemId": 10598,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 1
+        },
+        {
+          "Type": "CollectItem",
+          "MobId": 6140,
+          "ItemId": 10600,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 2
+        }
+      ]
+    },
+    {
+      "Id": 3511,
+      "Name": "The Name of the Beast",
+      "QuestLevel": 58,
+      "MinLevel": 45,
+      "AllowableRaces": 0,
+      "Flags": 0,
+      "QuestSortID": 16,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 3510,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 10610,
+      "PreviousQuestsIds": [
+        3510
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 3517,
+      "Name": "Stealing Knowledge",
+      "QuestLevel": 52,
+      "MinLevel": 45,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 16,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 10538,
+          "GameObjectId": 148516,
+          "GameObjectName": "Tablet of Beth'Amara",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        },
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 10539,
+          "GameObjectId": 148513,
+          "GameObjectName": "Tablet of Jin'yael",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 1
+        },
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 10540,
+          "GameObjectId": 148514,
+          "GameObjectName": "Tablet of Markri",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 2
+        },
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 10541,
+          "GameObjectId": 148515,
+          "GameObjectName": "Tablet of Sael'hai",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 3
+        }
+      ]
+    },
+    {
+      "Id": 3518,
+      "Name": "Delivery to Magatha",
+      "QuestLevel": 52,
+      "MinLevel": 45,
+      "AllowableRaces": 0,
+      "Flags": 0,
+      "QuestSortID": 16,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 3517,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 10538,
+      "PreviousQuestsIds": [
+        3517
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 10538,
+          "GameObjectId": 148516,
+          "GameObjectName": "Tablet of Beth'Amara",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 3541,
+      "Name": "Delivery to Jes'rimon",
+      "QuestLevel": 52,
+      "MinLevel": 45,
+      "AllowableRaces": 0,
+      "Flags": 0,
+      "QuestSortID": 16,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 3517,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 10539,
+      "PreviousQuestsIds": [
+        3517
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 10539,
+          "GameObjectId": 148513,
+          "GameObjectName": "Tablet of Jin'yael",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 3542,
+      "Name": "Delivery to Andron Gant",
+      "QuestLevel": 52,
+      "MinLevel": 45,
+      "AllowableRaces": 0,
+      "Flags": 0,
+      "QuestSortID": 16,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 3517,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 10540,
+      "PreviousQuestsIds": [
+        3517
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 10540,
+          "GameObjectId": 148514,
+          "GameObjectName": "Tablet of Markri",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 3561,
+      "Name": "Delivery to Archmage Xylem",
+      "QuestLevel": 52,
+      "MinLevel": 45,
+      "AllowableRaces": 0,
+      "Flags": 0,
+      "QuestSortID": 16,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 3517,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 10541,
+      "PreviousQuestsIds": [
+        3517
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 10541,
+          "GameObjectId": 148515,
+          "GameObjectName": "Tablet of Sael'hai",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 3562,
+      "Name": "Magatha's Payment to Jediga",
+      "QuestLevel": 52,
+      "MinLevel": 45,
+      "AllowableRaces": 690,
+      "Flags": 0,
+      "QuestSortID": 16,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 3518,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 10678,
+      "PreviousQuestsIds": [
+        3518
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 3563,
+      "Name": "Jes'rimon's Payment to Jediga",
+      "QuestLevel": 52,
+      "MinLevel": 45,
+      "AllowableRaces": 0,
+      "Flags": 0,
+      "QuestSortID": 16,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 3541,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 10680,
+      "PreviousQuestsIds": [
+        3541
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 3564,
+      "Name": "Andron's Payment to Jediga",
+      "QuestLevel": 52,
+      "MinLevel": 45,
+      "AllowableRaces": 0,
+      "Flags": 0,
+      "QuestSortID": 16,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 3542,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 10679,
+      "PreviousQuestsIds": [
+        3542
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 3565,
+      "Name": "Xylem's Payment to Jediga",
+      "QuestLevel": 52,
+      "MinLevel": 45,
+      "AllowableRaces": 0,
+      "Flags": 0,
+      "QuestSortID": 16,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 3561,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 10681,
+      "PreviousQuestsIds": [
+        3561
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 3601,
+      "Name": "Kim'jael Indeed!",
+      "QuestLevel": 53,
+      "MinLevel": 47,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 16,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 10717,
+          "GameObjectId": 153123,
+          "GameObjectName": "Kim'jael's Equipment",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        },
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 10715,
+          "GameObjectId": 153123,
+          "GameObjectName": "Kim'jael's Equipment",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 1
+        },
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 10722,
+          "GameObjectId": 153123,
+          "GameObjectName": "Kim'jael's Equipment",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 2
+        },
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 10718,
+          "GameObjectId": 153123,
+          "GameObjectName": "Kim'jael's Equipment",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 3
+        }
+      ]
+    },
+    {
+      "Id": 3621,
+      "Name": "The Formation of Felbane",
+      "QuestLevel": 58,
+      "MinLevel": 45,
+      "AllowableRaces": 0,
+      "Flags": 0,
+      "QuestSortID": 16,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 3602,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 10738,
+      "PreviousQuestsIds": [
+        3602
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 5534,
+      "Name": "Kim'jael's \"Missing\" Equipment",
+      "QuestLevel": 53,
+      "MinLevel": 47,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 16,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 3601,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        3601
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 7885,
+          "ItemId": 13815,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 5535,
+      "Name": "Spiritual Unrest",
+      "QuestLevel": 47,
+      "MinLevel": 45,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 16,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 6116,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 6,
+          "CollectCount": 0,
+          "Index": 0
+        },
+        {
+          "Type": "KillMob",
+          "MobId": 6117,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 6,
+          "CollectCount": 0,
+          "Index": 1
+        }
+      ]
+    },
+    {
+      "Id": 5536,
+      "Name": "A Land Filled with Hatred",
+      "QuestLevel": 47,
+      "MinLevel": 45,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 16,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 6125,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 6,
+          "CollectCount": 0,
+          "Index": 0
+        },
+        {
+          "Type": "KillMob",
+          "MobId": 6126,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 2,
+          "CollectCount": 0,
+          "Index": 1
+        },
+        {
+          "Type": "KillMob",
+          "MobId": 6127,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 2,
+          "CollectCount": 0,
+          "Index": 2
+        }
+      ]
+    },
+    {
+      "Id": 6805,
+      "Name": "Stormers and Rumblers",
+      "QuestLevel": 57,
+      "MinLevel": 55,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 16,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 11744,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 15,
+          "CollectCount": 0,
+          "Index": 0
+        },
+        {
+          "Type": "KillMob",
+          "MobId": 11746,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 15,
+          "CollectCount": 0,
+          "Index": 1
+        }
+      ]
+    },
+    {
+      "Id": 7486,
+      "Name": "A Hero's Reward",
+      "QuestLevel": 60,
+      "MinLevel": 55,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 16,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 6824,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        6824,
+        6824
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    }
+  ]
+}

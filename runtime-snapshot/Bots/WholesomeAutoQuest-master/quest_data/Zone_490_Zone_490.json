@@ -1,0 +1,1374 @@
+{
+  "ZoneId": 490,
+  "ZoneName": "Zone_490",
+  "SubzoneIds": [],
+  "Boundary": null,
+  "Quests": [
+    {
+      "Id": 974,
+      "Name": "Finding the Source",
+      "QuestLevel": 55,
+      "MinLevel": 51,
+      "AllowableRaces": 0,
+      "Flags": 0,
+      "QuestSortID": 490,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 32,
+      "StartItem": 12472,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 10541,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 1,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 980,
+      "Name": "The New Springs",
+      "QuestLevel": 55,
+      "MinLevel": 51,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 490,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 974,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        974
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 3844,
+      "Name": "It's a Secret to Everybody",
+      "QuestLevel": 52,
+      "MinLevel": 47,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 490,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 3845,
+      "Name": "It's a Secret to Everybody",
+      "QuestLevel": 52,
+      "MinLevel": 47,
+      "AllowableRaces": 0,
+      "Flags": 0,
+      "QuestSortID": 490,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 3844,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 11107,
+      "PreviousQuestsIds": [
+        3844
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 3881,
+      "Name": "Expedition Salvation",
+      "QuestLevel": 53,
+      "MinLevel": 48,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 490,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 11113,
+          "GameObjectId": 3881,
+          "GameObjectName": "Blazing Fire",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        },
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 11112,
+          "GameObjectId": 161521,
+          "GameObjectName": "Research Equipment",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 1
+        }
+      ]
+    },
+    {
+      "Id": 3882,
+      "Name": "Roll the Bones",
+      "QuestLevel": 51,
+      "MinLevel": 49,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 490,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 9162,
+          "ItemId": 11114,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 8,
+          "Index": 0
+        },
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 11114,
+          "GameObjectId": 161527,
+          "GameObjectName": "Dinosaur Bone",
+          "KillCount": 0,
+          "CollectCount": 8,
+          "Index": 1
+        }
+      ]
+    },
+    {
+      "Id": 3883,
+      "Name": "Alien Ecology",
+      "QuestLevel": 52,
+      "MinLevel": 48,
+      "AllowableRaces": 0,
+      "Flags": 0,
+      "QuestSortID": 490,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 11132,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 3908,
+      "Name": "It's a Secret to Everybody",
+      "QuestLevel": 52,
+      "MinLevel": 47,
+      "AllowableRaces": 0,
+      "Flags": 0,
+      "QuestSortID": 490,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 3845,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 11133,
+      "PreviousQuestsIds": [
+        3845
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 3909,
+      "Name": "The Videre Elixir",
+      "QuestLevel": 52,
+      "MinLevel": 47,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 490,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 3908,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        3908
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 3912,
+      "Name": "Meet at the Grave",
+      "QuestLevel": 52,
+      "MinLevel": 47,
+      "AllowableRaces": 0,
+      "Flags": 0,
+      "QuestSortID": 490,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 3909,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 11136,
+      "PreviousQuestsIds": [
+        3909
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 3913,
+      "Name": "A Grave Situation",
+      "QuestLevel": 52,
+      "MinLevel": 47,
+      "AllowableRaces": 0,
+      "Flags": 0,
+      "QuestSortID": 490,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 3912,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 11136,
+      "PreviousQuestsIds": [
+        3912
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 3914,
+      "Name": "Linken's Sword",
+      "QuestLevel": 52,
+      "MinLevel": 47,
+      "AllowableRaces": 0,
+      "Flags": 0,
+      "QuestSortID": 490,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 3913,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 11162,
+      "PreviousQuestsIds": [
+        3913
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 3941,
+      "Name": "A Gnome's Assistance",
+      "QuestLevel": 52,
+      "MinLevel": 47,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 490,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 3914,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        3914
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 3942,
+      "Name": "Linken's Memory",
+      "QuestLevel": 54,
+      "MinLevel": 47,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 490,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 3941,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        3941
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 3961,
+      "Name": "Linken's Adventure",
+      "QuestLevel": 54,
+      "MinLevel": 47,
+      "AllowableRaces": 0,
+      "Flags": 0,
+      "QuestSortID": 490,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 4005,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 11522,
+      "PreviousQuestsIds": [
+        4005
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 4005,
+      "Name": "Aquementas",
+      "QuestLevel": 54,
+      "MinLevel": 47,
+      "AllowableRaces": 0,
+      "Flags": 0,
+      "QuestSortID": 490,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 4084,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 11617,
+      "PreviousQuestsIds": [
+        4084
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 14339,
+          "ItemId": 11172,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 11,
+          "Index": 0
+        },
+        {
+          "Type": "CollectItem",
+          "MobId": 7138,
+          "ItemId": 11173,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 1
+        }
+      ]
+    },
+    {
+      "Id": 4084,
+      "Name": "Silver Heart",
+      "QuestLevel": 54,
+      "MinLevel": 47,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 490,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 3942,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        3942
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 14339,
+          "ItemId": 11172,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 11,
+          "Index": 0
+        },
+        {
+          "Type": "CollectItem",
+          "MobId": 7138,
+          "ItemId": 11173,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 1
+        }
+      ]
+    },
+    {
+      "Id": 4141,
+      "Name": "Muigin and Larion",
+      "QuestLevel": 52,
+      "MinLevel": 47,
+      "AllowableRaces": 1101,
+      "Flags": 8,
+      "QuestSortID": 490,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 6509,
+          "ItemId": 11316,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 15,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 4142,
+      "Name": "A Visit to Gregan",
+      "QuestLevel": 52,
+      "MinLevel": 47,
+      "AllowableRaces": 1101,
+      "Flags": 0,
+      "QuestSortID": 490,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 4141,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 11316,
+      "PreviousQuestsIds": [
+        4141
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 6509,
+          "ItemId": 11316,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 4144,
+      "Name": "Bloodpetal Sprouts",
+      "QuestLevel": 53,
+      "MinLevel": 47,
+      "AllowableRaces": 1101,
+      "Flags": 8,
+      "QuestSortID": 490,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 4143,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        4143
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 4145,
+      "Name": "Larion and Muigin",
+      "QuestLevel": 52,
+      "MinLevel": 47,
+      "AllowableRaces": 690,
+      "Flags": 8,
+      "QuestSortID": 490,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 6509,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 5,
+          "CollectCount": 0,
+          "Index": 0
+        },
+        {
+          "Type": "KillMob",
+          "MobId": 6512,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 5,
+          "CollectCount": 0,
+          "Index": 1
+        },
+        {
+          "Type": "KillMob",
+          "MobId": 6510,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 5,
+          "CollectCount": 0,
+          "Index": 2
+        },
+        {
+          "Type": "KillMob",
+          "MobId": 6511,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 5,
+          "CollectCount": 0,
+          "Index": 3
+        }
+      ]
+    },
+    {
+      "Id": 4147,
+      "Name": "Marvon's Workshop",
+      "QuestLevel": 52,
+      "MinLevel": 47,
+      "AllowableRaces": 690,
+      "Flags": 8,
+      "QuestSortID": 490,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 4145,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        4145
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 4243,
+      "Name": "Chasing A-Me 01",
+      "QuestLevel": 53,
+      "MinLevel": 48,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 490,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 4244,
+      "Name": "Chasing A-Me 01",
+      "QuestLevel": 53,
+      "MinLevel": 48,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 490,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 4243,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        4243
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 8447,
+          "ItemId": 10561,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 4284,
+      "Name": "Crystals of Power",
+      "QuestLevel": 53,
+      "MinLevel": 47,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 490,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 6498,
+          "ItemId": 11186,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 7,
+          "Index": 0
+        },
+        {
+          "Type": "CollectItem",
+          "MobId": 9162,
+          "ItemId": 11188,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 7,
+          "Index": 1
+        },
+        {
+          "Type": "CollectItem",
+          "MobId": 9162,
+          "ItemId": 11185,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 7,
+          "Index": 2
+        },
+        {
+          "Type": "CollectItem",
+          "MobId": 6498,
+          "ItemId": 11184,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 7,
+          "Index": 3
+        }
+      ]
+    },
+    {
+      "Id": 4289,
+      "Name": "The Apes of Un'Goro",
+      "QuestLevel": 55,
+      "MinLevel": 47,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 490,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 6514,
+          "ItemId": 11478,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 2,
+          "Index": 0
+        },
+        {
+          "Type": "CollectItem",
+          "MobId": 6513,
+          "ItemId": 11479,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 2,
+          "Index": 1
+        },
+        {
+          "Type": "CollectItem",
+          "MobId": 6516,
+          "ItemId": 11480,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 2,
+          "Index": 2
+        }
+      ]
+    },
+    {
+      "Id": 4290,
+      "Name": "The Fare of Lar'korwi",
+      "QuestLevel": 53,
+      "MinLevel": 48,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 490,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 11504,
+          "GameObjectId": 166863,
+          "GameObjectName": "Fresh Threshadon Carcass",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 4291,
+      "Name": "The Scent of Lar'korwi",
+      "QuestLevel": 53,
+      "MinLevel": 48,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 490,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 4290,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        4290
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 9683,
+          "ItemId": 11509,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 2,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 4292,
+      "Name": "The Bait for Lar'korwi",
+      "QuestLevel": 56,
+      "MinLevel": 48,
+      "AllowableRaces": 0,
+      "Flags": 0,
+      "QuestSortID": 490,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 4291,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 11568,
+      "PreviousQuestsIds": [
+        4291
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 9684,
+          "ItemId": 11510,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 4301,
+      "Name": "The Mighty U'cha",
+      "QuestLevel": 55,
+      "MinLevel": 50,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 490,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 4289,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        4289
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 9622,
+          "ItemId": 11476,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 4492,
+      "Name": "Lost!",
+      "QuestLevel": 55,
+      "MinLevel": 50,
+      "AllowableRaces": 0,
+      "Flags": 0,
+      "QuestSortID": 490,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 15722,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 4501,
+      "Name": "Beware of Pterrordax",
+      "QuestLevel": 55,
+      "MinLevel": 47,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 490,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 9167,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 10,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 4502,
+      "Name": "Volcanic Activity",
+      "QuestLevel": 55,
+      "MinLevel": 49,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 490,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 6520,
+          "ItemId": 11829,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 9,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 4503,
+      "Name": "Shizzle's Flyer",
+      "QuestLevel": 51,
+      "MinLevel": 49,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 490,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 9162,
+          "ItemId": 11830,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 8,
+          "Index": 0
+        },
+        {
+          "Type": "CollectItem",
+          "MobId": 9165,
+          "ItemId": 11831,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 8,
+          "Index": 1
+        }
+      ]
+    },
+    {
+      "Id": 12547,
+      "Name": "The Activation Rune",
+      "QuestLevel": 78,
+      "MinLevel": 77,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 490,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12548,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        12548
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 28601,
+          "ItemId": 38708,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 13850,
+      "Name": "Toxic Tolerance",
+      "QuestLevel": 53,
+      "MinLevel": 48,
+      "AllowableRaces": 690,
+      "Flags": 8,
+      "QuestSortID": 490,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 13887,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 34157,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 20,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 13887,
+      "Name": "Venomhide Eggs",
+      "QuestLevel": 53,
+      "MinLevel": 48,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 490,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 13850,
+      "NextQuestID": 13906,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        13850,
+        13850
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 46364,
+          "GameObjectId": 195022,
+          "GameObjectName": "Venomhide Egg",
+          "KillCount": 0,
+          "CollectCount": 4,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 13906,
+      "Name": "They Grow Up So Fast",
+      "QuestLevel": 53,
+      "MinLevel": 48,
+      "AllowableRaces": 0,
+      "Flags": 0,
+      "QuestSortID": 490,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 13887,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 46362,
+      "PreviousQuestsIds": [
+        13887,
+        13887
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 7939,
+          "ItemId": 14047,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 20,
+          "Index": 0
+        },
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 14047,
+          "GameObjectId": 17259,
+          "GameObjectName": "Wooden Chair",
+          "KillCount": 0,
+          "CollectCount": 20,
+          "Index": 1
+        }
+      ]
+    },
+    {
+      "Id": 13908,
+      "Name": "Gearing Up To Ride",
+      "QuestLevel": 53,
+      "MinLevel": 48,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 490,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 7939,
+          "ItemId": 14047,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 20,
+          "Index": 0
+        },
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 14047,
+          "GameObjectId": 17259,
+          "GameObjectName": "Wooden Chair",
+          "KillCount": 0,
+          "CollectCount": 20,
+          "Index": 1
+        }
+      ]
+    }
+  ]
+}

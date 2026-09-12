@@ -1,0 +1,40 @@
+{
+  "ZoneId": 1417,
+  "ZoneName": "Zone_1417",
+  "SubzoneIds": [],
+  "Boundary": null,
+  "Quests": [
+    {
+      "Id": 8733,
+      "Name": "Eranikus, Tyrant of the Dream",
+      "QuestLevel": 60,
+      "MinLevel": 60,
+      "AllowableRaces": 0,
+      "Flags": 64,
+      "QuestSortID": 1417,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 8555,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        8555
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    }
+  ]
+}

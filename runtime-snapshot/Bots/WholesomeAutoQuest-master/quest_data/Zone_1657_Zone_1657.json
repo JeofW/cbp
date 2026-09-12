@@ -1,0 +1,635 @@
+{
+  "ZoneId": 1657,
+  "ZoneName": "Zone_1657",
+  "SubzoneIds": [],
+  "Boundary": null,
+  "Quests": [
+    {
+      "Id": 730,
+      "Name": "Trouble In Darkshore?",
+      "QuestLevel": 14,
+      "MinLevel": 14,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 1657,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 952,
+      "Name": "Grove of the Ancients",
+      "QuestLevel": 11,
+      "MinLevel": 6,
+      "AllowableRaces": 0,
+      "Flags": 0,
+      "QuestSortID": 1657,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 940,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 5390,
+      "PreviousQuestsIds": [
+        940
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 1047,
+      "Name": "The New Frontier",
+      "QuestLevel": 55,
+      "MinLevel": 54,
+      "AllowableRaces": 1101,
+      "Flags": 8,
+      "QuestSortID": 1657,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 6761,
+      "ExclusiveGroup": 1015,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 2518,
+      "Name": "Tears of the Moon",
+      "QuestLevel": 12,
+      "MinLevel": 5,
+      "AllowableRaces": 1101,
+      "Flags": 8,
+      "QuestSortID": 1657,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 2519,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        2519
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 7319,
+          "ItemId": 8344,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 2519,
+      "Name": "The Temple of the Moon",
+      "QuestLevel": 10,
+      "MinLevel": 5,
+      "AllowableRaces": 1101,
+      "Flags": 8,
+      "QuestSortID": 1657,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 3763,
+      "Name": "Assisting Arch Druid Staghelm",
+      "QuestLevel": 50,
+      "MinLevel": 47,
+      "AllowableRaces": 1101,
+      "Flags": 8,
+      "QuestSortID": 1657,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 3764,
+      "Name": "Un'Goro Soil",
+      "QuestLevel": 50,
+      "MinLevel": 47,
+      "AllowableRaces": 1101,
+      "Flags": 8,
+      "QuestSortID": 1657,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 9162,
+          "ItemId": 11018,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 20,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 3781,
+      "Name": "Morrowgrain Research",
+      "QuestLevel": 50,
+      "MinLevel": 47,
+      "AllowableRaces": 1101,
+      "Flags": 0,
+      "QuestSortID": 1657,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 3764,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 11103,
+      "PreviousQuestsIds": [
+        3764
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 4493,
+      "Name": "March of the Silithid",
+      "QuestLevel": 53,
+      "MinLevel": 50,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 1657,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 4496,
+      "ExclusiveGroup": 4493,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        162,
+        4267
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 4510,
+      "Name": "Calm Before the Storm",
+      "QuestLevel": 54,
+      "MinLevel": 50,
+      "AllowableRaces": 1101,
+      "Flags": 0,
+      "QuestSortID": 1657,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 4508,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 11843,
+      "PreviousQuestsIds": [
+        4508
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 5091,
+      "Name": "A Call to Arms: The Plaguelands!",
+      "QuestLevel": 50,
+      "MinLevel": 50,
+      "AllowableRaces": 1101,
+      "Flags": 8,
+      "QuestSortID": 1657,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 6344,
+      "Name": "Nessa Shadowsong",
+      "QuestLevel": 10,
+      "MinLevel": 10,
+      "AllowableRaces": 8,
+      "Flags": 8,
+      "QuestSortID": 1657,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 6761,
+      "Name": "The New Frontier",
+      "QuestLevel": 55,
+      "MinLevel": 54,
+      "AllowableRaces": 1101,
+      "Flags": 8,
+      "QuestSortID": 1657,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        1015,
+        1019,
+        1047
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 6762,
+      "Name": "Rabine Saturna",
+      "QuestLevel": 55,
+      "MinLevel": 54,
+      "AllowableRaces": 1101,
+      "Flags": 8,
+      "QuestSortID": 1657,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 6761,
+      "NextQuestID": 1124,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        6761
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 7799,
+      "Name": "A Donation of Mageweave",
+      "QuestLevel": 60,
+      "MinLevel": 40,
+      "AllowableRaces": 1101,
+      "Flags": 0,
+      "QuestSortID": 1657,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 64,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 17115,
+          "ItemId": 4338,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 60,
+          "Index": 0
+        },
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 4338,
+          "GameObjectId": 2177,
+          "GameObjectName": "The Finest Thread",
+          "KillCount": 0,
+          "CollectCount": 60,
+          "Index": 1
+        }
+      ]
+    },
+    {
+      "Id": 7800,
+      "Name": "A Donation of Runecloth",
+      "QuestLevel": 60,
+      "MinLevel": 50,
+      "AllowableRaces": 1101,
+      "Flags": 0,
+      "QuestSortID": 1657,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 64,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 7939,
+          "ItemId": 14047,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 60,
+          "Index": 0
+        },
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 14047,
+          "GameObjectId": 17259,
+          "GameObjectName": "Wooden Chair",
+          "KillCount": 0,
+          "CollectCount": 60,
+          "Index": 1
+        }
+      ]
+    },
+    {
+      "Id": 10352,
+      "Name": "A Donation of Wool",
+      "QuestLevel": 60,
+      "MinLevel": 12,
+      "AllowableRaces": 1101,
+      "Flags": 0,
+      "QuestSortID": 1657,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 64,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 3,
+          "ItemId": 2592,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 60,
+          "Index": 0
+        },
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 2592,
+          "GameObjectId": 2971,
+          "GameObjectName": "The Barrens",
+          "KillCount": 0,
+          "CollectCount": 60,
+          "Index": 1
+        }
+      ]
+    },
+    {
+      "Id": 10354,
+      "Name": "A Donation of Silk",
+      "QuestLevel": 60,
+      "MinLevel": 26,
+      "AllowableRaces": 1101,
+      "Flags": 0,
+      "QuestSortID": 1657,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 64,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 10758,
+          "ItemId": 4306,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 60,
+          "Index": 0
+        },
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 4306,
+          "GameObjectId": 2177,
+          "GameObjectName": "The Finest Thread",
+          "KillCount": 0,
+          "CollectCount": 60,
+          "Index": 1
+        }
+      ]
+    },
+    {
+      "Id": 14409,
+      "Name": "A Cautious Return",
+      "QuestLevel": 73,
+      "MinLevel": 71,
+      "AllowableRaces": 0,
+      "Flags": 0,
+      "QuestSortID": 1657,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 49335,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    }
+  ]
+}

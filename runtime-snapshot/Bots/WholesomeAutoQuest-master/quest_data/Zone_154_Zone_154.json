@@ -1,0 +1,392 @@
+{
+  "ZoneId": 154,
+  "ZoneName": "Zone_154",
+  "SubzoneIds": [],
+  "Boundary": null,
+  "Quests": [
+    {
+      "Id": 8,
+      "Name": "A Rogue's Deal",
+      "QuestLevel": 5,
+      "MinLevel": 1,
+      "AllowableRaces": 690,
+      "Flags": 524288,
+      "QuestSortID": 154,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 7628,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 363,
+      "Name": "Rude Awakening",
+      "QuestLevel": 1,
+      "MinLevel": 1,
+      "AllowableRaces": 16,
+      "Flags": 524296,
+      "QuestSortID": 154,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 364,
+      "Name": "The Mindless Ones",
+      "QuestLevel": 2,
+      "MinLevel": 1,
+      "AllowableRaces": 690,
+      "Flags": 524296,
+      "QuestSortID": 154,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 1501,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 5,
+          "CollectCount": 0,
+          "Index": 0
+        },
+        {
+          "Type": "KillMob",
+          "MobId": 1502,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 5,
+          "CollectCount": 0,
+          "Index": 1
+        }
+      ]
+    },
+    {
+      "Id": 376,
+      "Name": "The Damned",
+      "QuestLevel": 2,
+      "MinLevel": 2,
+      "AllowableRaces": 690,
+      "Flags": 524296,
+      "QuestSortID": 154,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 1508,
+          "ItemId": 3265,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 6,
+          "Index": 0
+        },
+        {
+          "Type": "CollectItem",
+          "MobId": 1512,
+          "ItemId": 3264,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 6,
+          "Index": 1
+        }
+      ]
+    },
+    {
+      "Id": 380,
+      "Name": "Night Web's Hollow",
+      "QuestLevel": 4,
+      "MinLevel": 2,
+      "AllowableRaces": 690,
+      "Flags": 524296,
+      "QuestSortID": 154,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 376,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        376
+      ],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 1504,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 8,
+          "CollectCount": 0,
+          "Index": 0
+        },
+        {
+          "Type": "KillMob",
+          "MobId": 1505,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 5,
+          "CollectCount": 0,
+          "Index": 1
+        }
+      ]
+    },
+    {
+      "Id": 381,
+      "Name": "The Scarlet Crusade",
+      "QuestLevel": 4,
+      "MinLevel": 2,
+      "AllowableRaces": 690,
+      "Flags": 524296,
+      "QuestSortID": 154,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 380,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        380
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 1506,
+          "ItemId": 3266,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 12,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 382,
+      "Name": "The Red Messenger",
+      "QuestLevel": 5,
+      "MinLevel": 2,
+      "AllowableRaces": 690,
+      "Flags": 524296,
+      "QuestSortID": 154,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 381,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        381
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 1667,
+          "ItemId": 2885,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 383,
+      "Name": "Vital Intelligence",
+      "QuestLevel": 5,
+      "MinLevel": 2,
+      "AllowableRaces": 690,
+      "Flags": 524288,
+      "QuestSortID": 154,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 382,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 2885,
+      "PreviousQuestsIds": [
+        382
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 1667,
+          "ItemId": 2885,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 3901,
+      "Name": "Rattling the Rattlecages",
+      "QuestLevel": 3,
+      "MinLevel": 1,
+      "AllowableRaces": 690,
+      "Flags": 524296,
+      "QuestSortID": 154,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 364,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        364
+      ],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 1890,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 8,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 3902,
+      "Name": "Scavenging Deathknell",
+      "QuestLevel": 3,
+      "MinLevel": 2,
+      "AllowableRaces": 690,
+      "Flags": 524296,
+      "QuestSortID": 154,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 376,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        376
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 11127,
+          "GameObjectId": 164662,
+          "GameObjectName": "Equipment Boxes",
+          "KillCount": 0,
+          "CollectCount": 6,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 6395,
+      "Name": "Marla's Last Wish",
+      "QuestLevel": 5,
+      "MinLevel": 3,
+      "AllowableRaces": 690,
+      "Flags": 524296,
+      "QuestSortID": 154,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 376,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 36,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        376
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 178090,
+          "GameObjectName": "Marla's Grave",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        },
+        {
+          "Type": "CollectItem",
+          "MobId": 1919,
+          "ItemId": 16333,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 1
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1006 @@
+{
+  "ZoneId": 141,
+  "ZoneName": "Zone_141",
+  "SubzoneIds": [],
+  "Boundary": null,
+  "Quests": [
+    {
+      "Id": 475,
+      "Name": "A Troubling Breeze",
+      "QuestLevel": 6,
+      "MinLevel": 4,
+      "AllowableRaces": 1101,
+      "Flags": 8,
+      "QuestSortID": 141,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 476,
+      "Name": "Gnarlpine Corruption",
+      "QuestLevel": 6,
+      "MinLevel": 4,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 141,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 475,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        475
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 483,
+      "Name": "The Relics of Wakening",
+      "QuestLevel": 9,
+      "MinLevel": 4,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 141,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 476,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        476
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 3405,
+          "GameObjectId": 2740,
+          "GameObjectName": "Chest of the Raven Claw",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        },
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 3406,
+          "GameObjectId": 2739,
+          "GameObjectName": "Chest of the Black Feather",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 1
+        },
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 3407,
+          "GameObjectId": 2741,
+          "GameObjectName": "Chest of the Sky",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 2
+        },
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 3408,
+          "GameObjectId": 2742,
+          "GameObjectName": "Chest of Nesting",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 3
+        }
+      ]
+    },
+    {
+      "Id": 486,
+      "Name": "Ursal the Mauler",
+      "QuestLevel": 12,
+      "MinLevel": 4,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 141,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 483,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        483
+      ],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 2039,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 1,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 487,
+      "Name": "The Road to Darnassus",
+      "QuestLevel": 8,
+      "MinLevel": 5,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 141,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 2152,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 6,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 488,
+      "Name": "Zenn's Bidding",
+      "QuestLevel": 5,
+      "MinLevel": 4,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 141,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 14430,
+          "ItemId": 3409,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 3,
+          "Index": 0
+        },
+        {
+          "Type": "CollectItem",
+          "MobId": 1995,
+          "ItemId": 3411,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 3,
+          "Index": 1
+        },
+        {
+          "Type": "CollectItem",
+          "MobId": 1998,
+          "ItemId": 3412,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 3,
+          "Index": 2
+        }
+      ]
+    },
+    {
+      "Id": 489,
+      "Name": "Seek Redemption!",
+      "QuestLevel": 7,
+      "MinLevel": 4,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 141,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 488,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        488
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 3418,
+          "GameObjectId": 1701,
+          "GameObjectName": "Shadowfang Keep",
+          "KillCount": 0,
+          "CollectCount": 3,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 918,
+      "Name": "Timberling Seeds",
+      "QuestLevel": 7,
+      "MinLevel": 4,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 141,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 997,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        997
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 2022,
+          "ItemId": 5168,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 8,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 919,
+      "Name": "Timberling Sprouts",
+      "QuestLevel": 7,
+      "MinLevel": 4,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 141,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 5169,
+          "GameObjectId": 2712,
+          "GameObjectName": "Calcified Elven Gem",
+          "KillCount": 0,
+          "CollectCount": 12,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 922,
+      "Name": "Rellian Greenspyre",
+      "QuestLevel": 7,
+      "MinLevel": 4,
+      "AllowableRaces": 0,
+      "Flags": 0,
+      "QuestSortID": 141,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 918,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 5168,
+      "PreviousQuestsIds": [
+        918
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 2022,
+          "ItemId": 5168,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 923,
+      "Name": "Tumors",
+      "QuestLevel": 9,
+      "MinLevel": 4,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 141,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 922,
+      "NextQuestID": 2498,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        922
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 2027,
+          "ItemId": 5170,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 5,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 929,
+      "Name": "Crown of the Earth",
+      "QuestLevel": 5,
+      "MinLevel": 1,
+      "AllowableRaces": 0,
+      "Flags": 0,
+      "QuestSortID": 141,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 928,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 5619,
+      "PreviousQuestsIds": [
+        928
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 930,
+      "Name": "The Glowing Fruit",
+      "QuestLevel": 10,
+      "MinLevel": 4,
+      "AllowableRaces": 1101,
+      "Flags": 0,
+      "QuestSortID": 141,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 5189,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 931,
+      "Name": "The Shimmering Frond",
+      "QuestLevel": 10,
+      "MinLevel": 4,
+      "AllowableRaces": 1101,
+      "Flags": 0,
+      "QuestSortID": 141,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 5190,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 932,
+      "Name": "Twisted Hatred",
+      "QuestLevel": 7,
+      "MinLevel": 4,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 141,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 2038,
+          "ItemId": 5221,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 933,
+      "Name": "Crown of the Earth",
+      "QuestLevel": 9,
+      "MinLevel": 1,
+      "AllowableRaces": 0,
+      "Flags": 0,
+      "QuestSortID": 141,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 929,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 5621,
+      "PreviousQuestsIds": [
+        929
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 935,
+      "Name": "Crown of the Earth",
+      "QuestLevel": 11,
+      "MinLevel": 1,
+      "AllowableRaces": 0,
+      "Flags": 0,
+      "QuestSortID": 141,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 7383,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 5188,
+      "PreviousQuestsIds": [
+        7383
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 937,
+      "Name": "The Enchanted Glade",
+      "QuestLevel": 11,
+      "MinLevel": 6,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 141,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 940,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 2015,
+          "ItemId": 5204,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 6,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 940,
+      "Name": "Teldrassil",
+      "QuestLevel": 11,
+      "MinLevel": 6,
+      "AllowableRaces": 0,
+      "Flags": 0,
+      "QuestSortID": 141,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 937,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 5219,
+      "PreviousQuestsIds": [
+        937,
+        937
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 941,
+      "Name": "Planting the Heart",
+      "QuestLevel": 12,
+      "MinLevel": 9,
+      "AllowableRaces": 1101,
+      "Flags": 0,
+      "QuestSortID": 141,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 927,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 5217,
+      "PreviousQuestsIds": [
+        927
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 997,
+      "Name": "Denalan's Earth",
+      "QuestLevel": 5,
+      "MinLevel": 4,
+      "AllowableRaces": 0,
+      "Flags": 0,
+      "QuestSortID": 141,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 5391,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 2159,
+      "Name": "Dolanaar Delivery",
+      "QuestLevel": 5,
+      "MinLevel": 1,
+      "AllowableRaces": 1101,
+      "Flags": 0,
+      "QuestSortID": 141,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 7627,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 2399,
+      "Name": "The Sprouted Fronds",
+      "QuestLevel": 10,
+      "MinLevel": 4,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 141,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 931,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        931
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 2438,
+      "Name": "The Emerald Dreamcatcher",
+      "QuestLevel": 6,
+      "MinLevel": 1,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 141,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 8048,
+          "GameObjectId": 126158,
+          "GameObjectName": "Tallonkai's Dresser",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 2459,
+      "Name": "Ferocitas the Dream Eater",
+      "QuestLevel": 8,
+      "MinLevel": 1,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 141,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 2438,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        2438
+      ],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 7235,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 7,
+          "CollectCount": 0,
+          "Index": 0
+        },
+        {
+          "Type": "CollectItem",
+          "MobId": 7234,
+          "ItemId": 8049,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 1
+        }
+      ]
+    },
+    {
+      "Id": 2498,
+      "Name": "Return to Denalan",
+      "QuestLevel": 9,
+      "MinLevel": 4,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 141,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 923,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        923,
+        923
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 2499,
+      "Name": "Oakenscowl",
+      "QuestLevel": 9,
+      "MinLevel": 4,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 141,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 2498,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        2498
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 2166,
+          "ItemId": 8136,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 2541,
+      "Name": "The Sleeping Druid",
+      "QuestLevel": 8,
+      "MinLevel": 3,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 141,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 2009,
+          "ItemId": 8363,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 7383,
+      "Name": "Crown of the Earth",
+      "QuestLevel": 11,
+      "MinLevel": 1,
+      "AllowableRaces": 0,
+      "Flags": 0,
+      "QuestSortID": 141,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 933,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 18152,
+      "PreviousQuestsIds": [
+        933
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 8734,
+      "Name": "Tyrande and Remulos",
+      "QuestLevel": 60,
+      "MinLevel": 60,
+      "AllowableRaces": 0,
+      "Flags": 64,
+      "QuestSortID": 141,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 8733,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        8733
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    }
+  ]
+}

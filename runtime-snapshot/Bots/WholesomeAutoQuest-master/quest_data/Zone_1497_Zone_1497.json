@@ -1,0 +1,893 @@
+{
+  "ZoneId": 1497,
+  "ZoneName": "Zone_1497",
+  "SubzoneIds": [],
+  "Boundary": null,
+  "Quests": [
+    {
+      "Id": 232,
+      "Name": "Errand for Apothecary Zinge",
+      "QuestLevel": 45,
+      "MinLevel": 38,
+      "AllowableRaces": 690,
+      "Flags": 0,
+      "QuestSortID": 1497,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 8525,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 238,
+      "Name": "Errand for Apothecary Zinge",
+      "QuestLevel": 45,
+      "MinLevel": 38,
+      "AllowableRaces": 690,
+      "Flags": 0,
+      "QuestSortID": 1497,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 232,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 8523,
+      "PreviousQuestsIds": [
+        232
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 357,
+      "Name": "The Lich's Identity",
+      "QuestLevel": 8,
+      "MinLevel": 5,
+      "AllowableRaces": 690,
+      "Flags": 8,
+      "QuestSortID": 1497,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 405,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        405
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 2833,
+          "GameObjectId": 1684,
+          "GameObjectName": "Blacksmith's Anvil",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 495,
+      "Name": "The Crown of Will",
+      "QuestLevel": 39,
+      "MinLevel": 34,
+      "AllowableRaces": 690,
+      "Flags": 8,
+      "QuestSortID": 1497,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 864,
+      "Name": "Return to Apothecary Zinge",
+      "QuestLevel": 46,
+      "MinLevel": 38,
+      "AllowableRaces": 690,
+      "Flags": 0,
+      "QuestSortID": 1497,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 654,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 8527,
+      "PreviousQuestsIds": [
+        654
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 1004,
+      "Name": "The New Frontier",
+      "QuestLevel": 55,
+      "MinLevel": 54,
+      "AllowableRaces": 690,
+      "Flags": 8,
+      "QuestSortID": 1497,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 1123,
+      "ExclusiveGroup": 1000,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 1164,
+      "Name": "To Steal From Thieves",
+      "QuestLevel": 36,
+      "MinLevel": 27,
+      "AllowableRaces": 690,
+      "Flags": 8,
+      "QuestSortID": 1497,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 4480,
+          "ItemId": 5830,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        },
+        {
+          "Type": "CollectItem",
+          "MobId": 4481,
+          "ItemId": 5832,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 1
+        },
+        {
+          "Type": "CollectItem",
+          "MobId": 4479,
+          "ItemId": 5831,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 2
+        }
+      ]
+    },
+    {
+      "Id": 1358,
+      "Name": "Sample for Helbrim",
+      "QuestLevel": 15,
+      "MinLevel": 10,
+      "AllowableRaces": 0,
+      "Flags": 0,
+      "QuestSortID": 1497,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 1359,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 6016,
+      "PreviousQuestsIds": [
+        1359
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 1359,
+      "Name": "Zinge's Delivery",
+      "QuestLevel": 15,
+      "MinLevel": 10,
+      "AllowableRaces": 0,
+      "Flags": 0,
+      "QuestSortID": 1497,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 3221,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 10283,
+      "PreviousQuestsIds": [
+        3221
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 2995,
+      "Name": "Lines of Communication",
+      "QuestLevel": 47,
+      "MinLevel": 42,
+      "AllowableRaces": 690,
+      "Flags": 8,
+      "QuestSortID": 1497,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 144071,
+          "GameObjectName": "Highvale Records",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        },
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 144072,
+          "GameObjectName": "Highvale Notes",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 1
+        },
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 144073,
+          "GameObjectName": "Highvale Report",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 2
+        }
+      ]
+    },
+    {
+      "Id": 3568,
+      "Name": "Seeping Corruption",
+      "QuestLevel": 52,
+      "MinLevel": 45,
+      "AllowableRaces": 690,
+      "Flags": 0,
+      "QuestSortID": 1497,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 10695,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 3569,
+      "Name": "Seeping Corruption",
+      "QuestLevel": 52,
+      "MinLevel": 45,
+      "AllowableRaces": 690,
+      "Flags": 0,
+      "QuestSortID": 1497,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 3568,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 10712,
+      "PreviousQuestsIds": [
+        3568
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 3570,
+      "Name": "Seeping Corruption",
+      "QuestLevel": 52,
+      "MinLevel": 45,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 1497,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 3569,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        3569
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 3784,
+      "Name": "Assisting Arch Druid Runetotem",
+      "QuestLevel": 50,
+      "MinLevel": 47,
+      "AllowableRaces": 690,
+      "Flags": 8,
+      "QuestSortID": 1497,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 4293,
+      "Name": "A Sample of Slime...",
+      "QuestLevel": 52,
+      "MinLevel": 48,
+      "AllowableRaces": 690,
+      "Flags": 8,
+      "QuestSortID": 1497,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 4642,
+      "ExclusiveGroup": -4293,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 7086,
+          "ItemId": 12230,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 15,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 4294,
+      "Name": "... and a Batch of Ooze",
+      "QuestLevel": 56,
+      "MinLevel": 48,
+      "AllowableRaces": 690,
+      "Flags": 8,
+      "QuestSortID": 1497,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 4642,
+      "ExclusiveGroup": -4293,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 6556,
+          "ItemId": 12235,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 15,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 4642,
+      "Name": "Melding of Influences",
+      "QuestLevel": 55,
+      "MinLevel": 48,
+      "AllowableRaces": 690,
+      "Flags": 0,
+      "QuestSortID": 1497,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 12288,
+      "PreviousQuestsIds": [
+        4293,
+        4294
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 9621,
+          "ItemId": 12291,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 5049,
+      "Name": "The Jeremiah Blues",
+      "QuestLevel": 52,
+      "MinLevel": 50,
+      "AllowableRaces": 690,
+      "Flags": 0,
+      "QuestSortID": 1497,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 5023,
+      "NextQuestID": 5050,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 12724,
+      "PreviousQuestsIds": [
+        5023
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 5961,
+      "Name": "The Champion of the Banshee Queen",
+      "QuestLevel": 56,
+      "MinLevel": 54,
+      "AllowableRaces": 690,
+      "Flags": 8,
+      "QuestSortID": 1497,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 7813,
+      "Name": "A Donation of Wool",
+      "QuestLevel": 60,
+      "MinLevel": 12,
+      "AllowableRaces": 690,
+      "Flags": 0,
+      "QuestSortID": 1497,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 64,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 3,
+          "ItemId": 2592,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 60,
+          "Index": 0
+        },
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 2592,
+          "GameObjectId": 2971,
+          "GameObjectName": "The Barrens",
+          "KillCount": 0,
+          "CollectCount": 60,
+          "Index": 1
+        }
+      ]
+    },
+    {
+      "Id": 7814,
+      "Name": "A Donation of Silk",
+      "QuestLevel": 60,
+      "MinLevel": 26,
+      "AllowableRaces": 690,
+      "Flags": 0,
+      "QuestSortID": 1497,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 64,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 10758,
+          "ItemId": 4306,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 60,
+          "Index": 0
+        },
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 4306,
+          "GameObjectId": 2177,
+          "GameObjectName": "The Finest Thread",
+          "KillCount": 0,
+          "CollectCount": 60,
+          "Index": 1
+        }
+      ]
+    },
+    {
+      "Id": 7817,
+      "Name": "A Donation of Mageweave",
+      "QuestLevel": 60,
+      "MinLevel": 40,
+      "AllowableRaces": 690,
+      "Flags": 0,
+      "QuestSortID": 1497,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 64,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 17115,
+          "ItemId": 4338,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 60,
+          "Index": 0
+        },
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 4338,
+          "GameObjectId": 2177,
+          "GameObjectName": "The Finest Thread",
+          "KillCount": 0,
+          "CollectCount": 60,
+          "Index": 1
+        }
+      ]
+    },
+    {
+      "Id": 7818,
+      "Name": "A Donation of Runecloth",
+      "QuestLevel": 60,
+      "MinLevel": 50,
+      "AllowableRaces": 690,
+      "Flags": 0,
+      "QuestSortID": 1497,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 64,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 7939,
+          "ItemId": 14047,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 60,
+          "Index": 0
+        },
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 14047,
+          "GameObjectId": 17259,
+          "GameObjectName": "Wooden Chair",
+          "KillCount": 0,
+          "CollectCount": 60,
+          "Index": 1
+        }
+      ]
+    },
+    {
+      "Id": 9180,
+      "Name": "Journey to Undercity",
+      "QuestLevel": 15,
+      "MinLevel": 15,
+      "AllowableRaces": 690,
+      "Flags": 128,
+      "QuestSortID": 1497,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 9175,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 22627,
+      "PreviousQuestsIds": [
+        9175
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 9621,
+      "Name": "Envoy to the Horde",
+      "QuestLevel": 21,
+      "MinLevel": 15,
+      "AllowableRaces": 512,
+      "Flags": 128,
+      "QuestSortID": 1497,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 9328,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 23929,
+      "PreviousQuestsIds": [
+        9328
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 9812,
+      "Name": "Envoy to the Horde",
+      "QuestLevel": 21,
+      "MinLevel": 15,
+      "AllowableRaces": 178,
+      "Flags": 128,
+      "QuestSortID": 1497,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 9811,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 23929,
+      "PreviousQuestsIds": [
+        9811
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    }
+  ]
+}

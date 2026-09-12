@@ -19,6 +19,8 @@ recovery, and maintainability.
 - Core application source: repository root, `Styx/`, `Bots/`, `TreeSharp/`,
   `Tripper/`, and `UI/`
 - Regression harnesses: `Tools/`
+- Installed bot bases, including Wholesome Auto Quester:
+  `runtime-snapshot/Bots/`
 - Installed plugins and routines: `runtime-snapshot/Plugins/` and
   `runtime-snapshot/Routines/`
 - Profiles and scripted behaviors: `runtime-snapshot/Default Profiles/`,
@@ -57,4 +59,3 @@ future audits do not depend on one chat history.
 - `mmaps/`: multi-gigabyte generated navigation tiles
 - local SDK/tool caches and build intermediates
 - duplicate backup trees
-

@@ -1,0 +1,40 @@
+{
+  "ZoneId": 3428,
+  "ZoneName": "Zone_3428",
+  "SubzoneIds": [],
+  "Boundary": null,
+  "Quests": [
+    {
+      "Id": 8802,
+      "Name": "The Savior of Kalimdor",
+      "QuestLevel": 60,
+      "MinLevel": 60,
+      "AllowableRaces": 0,
+      "Flags": 64,
+      "QuestSortID": 3428,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 8801,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 21221,
+      "PreviousQuestsIds": [
+        8801
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 15727,
+          "ItemId": 21221,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        }
+      ]
+    }
+  ]
+}

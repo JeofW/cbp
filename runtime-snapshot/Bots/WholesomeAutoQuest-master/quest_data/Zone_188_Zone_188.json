@@ -1,0 +1,469 @@
+{
+  "ZoneId": 188,
+  "ZoneName": "Zone_188",
+  "SubzoneIds": [],
+  "Boundary": null,
+  "Quests": [
+    {
+      "Id": 456,
+      "Name": "The Balance of Nature",
+      "QuestLevel": 2,
+      "MinLevel": 1,
+      "AllowableRaces": 0,
+      "Flags": 524296,
+      "QuestSortID": 188,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 457,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 2031,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 4,
+          "CollectCount": 0,
+          "Index": 0
+        },
+        {
+          "Type": "KillMob",
+          "MobId": 1984,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 4,
+          "CollectCount": 0,
+          "Index": 1
+        }
+      ]
+    },
+    {
+      "Id": 457,
+      "Name": "The Balance of Nature",
+      "QuestLevel": 3,
+      "MinLevel": 1,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 188,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 456,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        456,
+        456
+      ],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 2032,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 5,
+          "CollectCount": 0,
+          "Index": 0
+        },
+        {
+          "Type": "KillMob",
+          "MobId": 1985,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 5,
+          "CollectCount": 0,
+          "Index": 1
+        }
+      ]
+    },
+    {
+      "Id": 458,
+      "Name": "The Woodland Protector",
+      "QuestLevel": 1,
+      "MinLevel": 1,
+      "AllowableRaces": 0,
+      "Flags": 524296,
+      "QuestSortID": 188,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 459,
+      "Name": "The Woodland Protector",
+      "QuestLevel": 3,
+      "MinLevel": 1,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 188,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 458,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        458
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 1988,
+          "ItemId": 3297,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 8,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 916,
+      "Name": "Webwood Venom",
+      "QuestLevel": 4,
+      "MinLevel": 3,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 188,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 1986,
+          "ItemId": 5166,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 10,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 917,
+      "Name": "Webwood Egg",
+      "QuestLevel": 5,
+      "MinLevel": 1,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 188,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 916,
+      "NextQuestID": 920,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        916
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 5167,
+          "GameObjectId": 2691,
+          "GameObjectName": "Stone of East Binding",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 920,
+      "Name": "Tenaron's Summons",
+      "QuestLevel": 5,
+      "MinLevel": 1,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 188,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 917,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        917,
+        917
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 921,
+      "Name": "Crown of the Earth",
+      "QuestLevel": 5,
+      "MinLevel": 1,
+      "AllowableRaces": 0,
+      "Flags": 0,
+      "QuestSortID": 188,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 920,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 5185,
+      "PreviousQuestsIds": [
+        920
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 928,
+      "Name": "Crown of the Earth",
+      "QuestLevel": 5,
+      "MinLevel": 1,
+      "AllowableRaces": 0,
+      "Flags": 0,
+      "QuestSortID": 188,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 921,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 5186,
+      "PreviousQuestsIds": [
+        921
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 3519,
+      "Name": "A Friend in Need",
+      "QuestLevel": 4,
+      "MinLevel": 2,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 188,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 4495,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        4495,
+        4495
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 3521,
+      "Name": "Iverron's Antidote",
+      "QuestLevel": 4,
+      "MinLevel": 2,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 188,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 3519,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        3519
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 1988,
+          "ItemId": 10639,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 7,
+          "Index": 0
+        },
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 10639,
+          "GameObjectId": 152094,
+          "GameObjectName": "Hyacinth Mushroom",
+          "KillCount": 0,
+          "CollectCount": 7,
+          "Index": 1
+        },
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 10641,
+          "GameObjectId": 152095,
+          "GameObjectName": "Moonpetal Lily",
+          "KillCount": 0,
+          "CollectCount": 4,
+          "Index": 2
+        },
+        {
+          "Type": "CollectItem",
+          "MobId": 1986,
+          "ItemId": 10640,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 3
+        }
+      ]
+    },
+    {
+      "Id": 3522,
+      "Name": "Iverron's Antidote",
+      "QuestLevel": 4,
+      "MinLevel": 2,
+      "AllowableRaces": 0,
+      "Flags": 0,
+      "QuestSortID": 188,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 3521,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 10642,
+      "PreviousQuestsIds": [
+        3521
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 4495,
+      "Name": "A Good Friend",
+      "QuestLevel": 4,
+      "MinLevel": 2,
+      "AllowableRaces": 0,
+      "Flags": 524296,
+      "QuestSortID": 188,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 3519,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    }
+  ]
+}

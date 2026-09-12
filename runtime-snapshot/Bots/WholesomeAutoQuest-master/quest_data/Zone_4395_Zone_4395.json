@@ -1,0 +1,202 @@
+{
+  "ZoneId": 4395,
+  "ZoneName": "Zone_4395",
+  "SubzoneIds": [],
+  "Boundary": null,
+  "Quests": [
+    {
+      "Id": 12790,
+      "Name": "Learning to Leave and Return: the Magical Way",
+      "QuestLevel": 74,
+      "MinLevel": 68,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 4395,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 191229,
+          "GameObjectName": "Teleport to Violet Stand Crystal",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        },
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 191230,
+          "GameObjectName": "Teleport to Dalaran Crystal",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 1
+        }
+      ]
+    },
+    {
+      "Id": 12791,
+      "Name": "The Magical Kingdom of Dalaran",
+      "QuestLevel": 74,
+      "MinLevel": 74,
+      "AllowableRaces": 690,
+      "Flags": 128,
+      "QuestSortID": 4395,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 12796,
+      "SpecialFlags": 0,
+      "StartItem": 39740,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12794,
+      "Name": "The Magical Kingdom of Dalaran",
+      "QuestLevel": 74,
+      "MinLevel": 74,
+      "AllowableRaces": 1101,
+      "Flags": 128,
+      "QuestSortID": 4395,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 12796,
+      "SpecialFlags": 0,
+      "StartItem": 39740,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12796,
+      "Name": "The Magical Kingdom of Dalaran",
+      "QuestLevel": 74,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 128,
+      "QuestSortID": 4395,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 12796,
+      "SpecialFlags": 0,
+      "StartItem": 39740,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 14457,
+      "Name": "The Sunreaver Plan",
+      "QuestLevel": 80,
+      "MinLevel": 80,
+      "AllowableRaces": 1101,
+      "Flags": 136,
+      "QuestSortID": 4395,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 14444,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        14444
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 36776,
+          "ItemId": 49536,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 24557,
+      "Name": "The Silver Covenant's Scheme",
+      "QuestLevel": 80,
+      "MinLevel": 80,
+      "AllowableRaces": 690,
+      "Flags": 136,
+      "QuestSortID": 4395,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 24555,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        24555
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 36774,
+          "ItemId": 49872,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        }
+      ]
+    }
+  ]
+}

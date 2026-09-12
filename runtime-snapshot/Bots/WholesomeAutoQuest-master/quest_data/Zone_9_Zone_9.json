@@ -1,0 +1,430 @@
+{
+  "ZoneId": 9,
+  "ZoneName": "Zone_9",
+  "SubzoneIds": [],
+  "Boundary": null,
+  "Quests": [
+    {
+      "Id": 6,
+      "Name": "Bounty on Garrick Padfoot",
+      "QuestLevel": 5,
+      "MinLevel": 2,
+      "AllowableRaces": 1101,
+      "Flags": 524296,
+      "QuestSortID": 9,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 18,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        18
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 103,
+          "ItemId": 182,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 7,
+      "Name": "Kobold Camp Cleanup",
+      "QuestLevel": 2,
+      "MinLevel": 1,
+      "AllowableRaces": 1101,
+      "Flags": 524296,
+      "QuestSortID": 9,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 783,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        783
+      ],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 6,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 8,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 15,
+      "Name": "Investigate Echo Ridge",
+      "QuestLevel": 3,
+      "MinLevel": 1,
+      "AllowableRaces": 1101,
+      "Flags": 524296,
+      "QuestSortID": 9,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 7,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        7
+      ],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 257,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 8,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 18,
+      "Name": "Brotherhood of Thieves",
+      "QuestLevel": 4,
+      "MinLevel": 2,
+      "AllowableRaces": 1101,
+      "Flags": 524296,
+      "QuestSortID": 9,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 783,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        783
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 38,
+          "ItemId": 752,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 8,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 21,
+      "Name": "Skirmish at Echo Ridge",
+      "QuestLevel": 5,
+      "MinLevel": 1,
+      "AllowableRaces": 1101,
+      "Flags": 524296,
+      "QuestSortID": 9,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 15,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        15
+      ],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 80,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 8,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 33,
+      "Name": "Wolves Across the Border",
+      "QuestLevel": 2,
+      "MinLevel": 1,
+      "AllowableRaces": 1101,
+      "Flags": 524296,
+      "QuestSortID": 9,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 5261,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        5261
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 69,
+          "ItemId": 50432,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 8,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 54,
+      "Name": "Report to Goldshire",
+      "QuestLevel": 5,
+      "MinLevel": 1,
+      "AllowableRaces": 1101,
+      "Flags": 524288,
+      "QuestSortID": 9,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 21,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 745,
+      "PreviousQuestsIds": [
+        21
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 783,
+      "Name": "A Threat Within",
+      "QuestLevel": 1,
+      "MinLevel": 1,
+      "AllowableRaces": 1101,
+      "Flags": 524296,
+      "QuestSortID": 9,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 3903,
+      "Name": "Milly Osworth",
+      "QuestLevel": 4,
+      "MinLevel": 2,
+      "AllowableRaces": 1101,
+      "Flags": 524296,
+      "QuestSortID": 9,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 33,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        33
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 3904,
+      "Name": "Milly's Harvest",
+      "QuestLevel": 4,
+      "MinLevel": 2,
+      "AllowableRaces": 1101,
+      "Flags": 524296,
+      "QuestSortID": 9,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 3903,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        3903
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 11119,
+          "GameObjectId": 161557,
+          "GameObjectName": "Milly's Harvest",
+          "KillCount": 0,
+          "CollectCount": 8,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 3905,
+      "Name": "Grape Manifest",
+      "QuestLevel": 4,
+      "MinLevel": 2,
+      "AllowableRaces": 1101,
+      "Flags": 524288,
+      "QuestSortID": 9,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 3904,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 11125,
+      "PreviousQuestsIds": [
+        3904
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 5261,
+      "Name": "Eagan Peltskinner",
+      "QuestLevel": 2,
+      "MinLevel": 1,
+      "AllowableRaces": 1101,
+      "Flags": 8,
+      "QuestSortID": 9,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 783,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        783
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 14032,
+      "Name": "Kobold Camp Cleanup",
+      "QuestLevel": 2,
+      "MinLevel": 1,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 9,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 6,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 10,
+          "CollectCount": 0,
+          "Index": 0
+        },
+        {
+          "Type": "KillMob",
+          "MobId": 46,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 10,
+          "CollectCount": 0,
+          "Index": 1
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,63 @@
+
+<HBProfile>
+  <Name>WholesomeAQ - The Barrens</Name>
+  <MinLevel>1</MinLevel>
+  <MaxLevel>80</MaxLevel>
+  <MinDurability>0.2</MinDurability>
+  <MinFreeBagSlots>2</MinFreeBagSlots>
+  <AvoidMobs />
+  <Blackspots />
+  <Mailboxes />
+  <Vendors>
+    <Vendor Name="Hraq" Entry="3477" Type="Repair" X="-343.921" Y="-2558.13" Z="97.9411" />
+    <Vendor Name="Nargal Deatheye" Entry="3479" Type="Repair" X="-356.996" Y="-2568.86" Z="95.8708" />
+    <Vendor Name="Ironzar" Entry="3491" Type="Repair" X="-919.616" Y="-3683.76" Z="8.23924" />
+    <Vendor Name="Innkeeper Boorand Plainswind" Entry="3934" Type="Food" X="-407.123" Y="-2645.22" Z="96.3063" />
+    <Vendor Name="Zargh" Entry="3489" Type="Food" X="-403.68" Y="-2709.34" Z="97.7294" />
+    <Vendor Name="Moorane Hearthgrain" Entry="3480" Type="Food" X="-451.129" Y="-2684.29" Z="95.7333" />
+    <Vendor Name="Ging" Entry="50033" Type="Train" X="-397.021" Y="-2640.79" Z="96.3062" TrainClass="Warrior" />
+    <Vendor Name="Frang" Entry="3153" Type="Train" X="-639.344" Y="-4230.19" Z="38.5605" TrainClass="Warrior" />
+  </Vendors>
+  <Quest Id="903" Name="Prowlers of the Barrens">
+    <Objective Type="CollectItem" ItemId="5096" CollectCount="7">
+      <Hotspots />
+    </Objective>
+  </Quest>
+  <Quest Id="876" Name="Serena Bloodfeather">
+    <Objective Type="CollectItem" ItemId="5067" CollectCount="1">
+      <Hotspots />
+    </Objective>
+  </Quest>
+  <Quest Id="3281" Name="Stolen Silver">
+    <Objective Type="CollectItem" ItemId="5061" CollectCount="1">
+      <CollectFrom>
+        <GameObject Name="Stolen Silver" Id="147557" />
+      </CollectFrom>
+      <Hotspots>
+        <Hotspot X="-2027.09" Y="-3258" Z="92.0934" />
+      </Hotspots>
+    </Objective>
+  </Quest>
+  <Quest Id="4921" Name="Lost in Battle">
+    <Objective Type="KillMob" MobId="10668" KillCount="1">
+      <Hotspots>
+        <Hotspot X="-1787.19" Y="-2375.77" Z="91.7681" />
+      </Hotspots>
+    </Objective>
+  </Quest>
+  <Quest Id="6541" Name="Report to Kadrak" />
+  <QuestOrder>
+    <TurnIn QuestName="Prowlers of the Barrens" QuestId="903" TurnInName="Sergra Darkthorn" TurnInId="3338" />
+    <PickUp QuestName="Serena Bloodfeather" QuestId="876" GiverName="Darsok Swiftdagger" GiverId="3449" />
+    <PickUp QuestName="Stolen Silver" QuestId="3281" GiverName="Gazrog" GiverId="3464" />
+    <PickUp QuestName="Lost in Battle" QuestId="4921" GiverName="Mankrik" GiverId="3432" />
+    <PickUp QuestName="Report to Kadrak" QuestId="6541" GiverName="Thork" GiverId="3429" />
+    <Objective QuestName="Serena Bloodfeather" QuestId="876" Type="CollectItem" ItemId="5067" CollectCount="1" MobId="3452" />
+    <Objective QuestName="Stolen Silver" QuestId="3281" Type="CollectItem" ItemId="5061" CollectCount="1" />
+    <Objective QuestName="Lost in Battle" QuestId="4921" Type="KillMob" MobId="10668" KillCount="1" />
+    <TurnIn QuestName="Serena Bloodfeather" QuestId="876" TurnInName="Darsok Swiftdagger" TurnInId="3449" />
+    <TurnIn QuestName="Stolen Silver" QuestId="3281" TurnInName="Gazrog" TurnInId="3464" />
+    <TurnIn QuestName="Lost in Battle" QuestId="4921" TurnInName="Mankrik" TurnInId="3432" />
+    <TurnIn QuestName="Report to Kadrak" QuestId="6541" TurnInName="Kadrak" TurnInId="8582" />
+  </QuestOrder>
+</HBProfile>

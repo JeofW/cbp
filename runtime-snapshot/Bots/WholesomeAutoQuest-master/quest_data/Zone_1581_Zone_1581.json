@@ -1,0 +1,68 @@
+{
+  "ZoneId": 1581,
+  "ZoneName": "Zone_1581",
+  "SubzoneIds": [],
+  "Boundary": null,
+  "Quests": [
+    {
+      "Id": 167,
+      "Name": "Oh Brother. . .",
+      "QuestLevel": 20,
+      "MinLevel": 15,
+      "AllowableRaces": 1101,
+      "Flags": 8,
+      "QuestSortID": 1581,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 626,
+          "ItemId": 1875,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 168,
+      "Name": "Collecting Memories",
+      "QuestLevel": 18,
+      "MinLevel": 14,
+      "AllowableRaces": 1101,
+      "Flags": 8,
+      "QuestSortID": 1581,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 623,
+          "ItemId": 1894,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 4,
+          "Index": 0
+        }
+      ]
+    }
+  ]
+}

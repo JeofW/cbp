@@ -1,0 +1,38 @@
+{
+  "ZoneId": 3896,
+  "ZoneName": "Zone_3896",
+  "SubzoneIds": [],
+  "Boundary": null,
+  "Quests": [
+    {
+      "Id": 12911,
+      "Name": "Kill Credit Test",
+      "QuestLevel": 80,
+      "MinLevel": 1,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 3896,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 29902,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 1,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    }
+  ]
+}

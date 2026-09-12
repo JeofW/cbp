@@ -1,0 +1,336 @@
+{
+  "ZoneId": 1517,
+  "ZoneName": "Zone_1517",
+  "SubzoneIds": [],
+  "Boundary": null,
+  "Quests": [
+    {
+      "Id": 17,
+      "Name": "Uldaman Reagent Run",
+      "QuestLevel": 42,
+      "MinLevel": 38,
+      "AllowableRaces": 1101,
+      "Flags": 8,
+      "QuestSortID": 1517,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 2500,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        2500
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 8047,
+          "GameObjectId": 126049,
+          "GameObjectName": "Magenta Cap Clusters",
+          "KillCount": 0,
+          "CollectCount": 12,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 704,
+      "Name": "Agmond's Fate",
+      "QuestLevel": 38,
+      "MinLevel": 30,
+      "AllowableRaces": 1101,
+      "Flags": 8,
+      "QuestSortID": 1517,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 739,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        739
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 4610,
+          "GameObjectId": 2743,
+          "GameObjectName": "Carved Stone Urn",
+          "KillCount": 0,
+          "CollectCount": 4,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 709,
+      "Name": "Solution to Doom",
+      "QuestLevel": 40,
+      "MinLevel": 30,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 1517,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 4631,
+          "GameObjectId": 126260,
+          "GameObjectName": "Ancient Chest",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 1360,
+      "Name": "Reclaimed Treasures",
+      "QuestLevel": 43,
+      "MinLevel": 33,
+      "AllowableRaces": 1101,
+      "Flags": 8,
+      "QuestSortID": 1517,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 8027,
+          "GameObjectId": 124389,
+          "GameObjectName": "Krom Stoutarm's Chest",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 2202,
+      "Name": "Uldaman Reagent Run",
+      "QuestLevel": 42,
+      "MinLevel": 36,
+      "AllowableRaces": 690,
+      "Flags": 8,
+      "QuestSortID": 1517,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 2258,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        2258
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 8047,
+          "GameObjectId": 126049,
+          "GameObjectName": "Magenta Cap Clusters",
+          "KillCount": 0,
+          "CollectCount": 12,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 2279,
+      "Name": "The Platinum Discs",
+      "QuestLevel": 47,
+      "MinLevel": 40,
+      "AllowableRaces": 1101,
+      "Flags": 0,
+      "QuestSortID": 1517,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 2278,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 6064,
+      "PreviousQuestsIds": [
+        2278
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 2342,
+      "Name": "Reclaimed Treasures",
+      "QuestLevel": 43,
+      "MinLevel": 33,
+      "AllowableRaces": 690,
+      "Flags": 8,
+      "QuestSortID": 1517,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 8026,
+          "GameObjectId": 124388,
+          "GameObjectName": "Garrett Family Chest",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 2418,
+      "Name": "Power Stones",
+      "QuestLevel": 36,
+      "MinLevel": 30,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 1517,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 7030,
+          "ItemId": 8009,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 8,
+          "Index": 0
+        },
+        {
+          "Type": "CollectItem",
+          "MobId": 7030,
+          "ItemId": 8052,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 8,
+          "Index": 1
+        }
+      ]
+    },
+    {
+      "Id": 3375,
+      "Name": "Replacement Phial",
+      "QuestLevel": 42,
+      "MinLevel": 37,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 1517,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 775,
+          "ItemId": 3827,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        },
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 3827,
+          "GameObjectId": 2177,
+          "GameObjectName": "The Finest Thread",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 1
+        },
+        {
+          "Type": "CollectItem",
+          "MobId": 14460,
+          "ItemId": 3857,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 2
+        },
+        {
+          "Type": "CollectItem",
+          "MobId": 28557,
+          "ItemId": 1708,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 3
+        },
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 1708,
+          "GameObjectId": 1618,
+          "GameObjectName": "Peacebloom",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 4
+        }
+      ]
+    }
+  ]
+}

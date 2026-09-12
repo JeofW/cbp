@@ -1,0 +1,200 @@
+{
+  "ZoneId": 3487,
+  "ZoneName": "Zone_3487",
+  "SubzoneIds": [],
+  "Boundary": null,
+  "Quests": [
+    {
+      "Id": 9627,
+      "Name": "Allegiance to the Horde",
+      "QuestLevel": 21,
+      "MinLevel": 15,
+      "AllowableRaces": 512,
+      "Flags": 136,
+      "QuestSortID": 3487,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 9626,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        9626
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 10359,
+      "Name": "A Donation of Wool",
+      "QuestLevel": 60,
+      "MinLevel": 12,
+      "AllowableRaces": 690,
+      "Flags": 0,
+      "QuestSortID": 3487,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 64,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 3,
+          "ItemId": 2592,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 60,
+          "Index": 0
+        },
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 2592,
+          "GameObjectId": 2971,
+          "GameObjectName": "The Barrens",
+          "KillCount": 0,
+          "CollectCount": 60,
+          "Index": 1
+        }
+      ]
+    },
+    {
+      "Id": 10360,
+      "Name": "A Donation of Silk",
+      "QuestLevel": 60,
+      "MinLevel": 26,
+      "AllowableRaces": 690,
+      "Flags": 0,
+      "QuestSortID": 3487,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 64,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 10758,
+          "ItemId": 4306,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 60,
+          "Index": 0
+        },
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 4306,
+          "GameObjectId": 2177,
+          "GameObjectName": "The Finest Thread",
+          "KillCount": 0,
+          "CollectCount": 60,
+          "Index": 1
+        }
+      ]
+    },
+    {
+      "Id": 10361,
+      "Name": "A Donation of Mageweave",
+      "QuestLevel": 60,
+      "MinLevel": 40,
+      "AllowableRaces": 690,
+      "Flags": 0,
+      "QuestSortID": 3487,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 64,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 17115,
+          "ItemId": 4338,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 60,
+          "Index": 0
+        },
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 4338,
+          "GameObjectId": 2177,
+          "GameObjectName": "The Finest Thread",
+          "KillCount": 0,
+          "CollectCount": 60,
+          "Index": 1
+        }
+      ]
+    },
+    {
+      "Id": 10362,
+      "Name": "A Donation of Runecloth",
+      "QuestLevel": 60,
+      "MinLevel": 50,
+      "AllowableRaces": 690,
+      "Flags": 0,
+      "QuestSortID": 3487,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 64,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 7939,
+          "ItemId": 14047,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 60,
+          "Index": 0
+        },
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 14047,
+          "GameObjectId": 17259,
+          "GameObjectName": "Wooden Chair",
+          "KillCount": 0,
+          "CollectCount": 60,
+          "Index": 1
+        }
+      ]
+    }
+  ]
+}

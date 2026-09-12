@@ -1,0 +1,402 @@
+{
+  "ZoneId": 36,
+  "ZoneName": "Zone_36",
+  "SubzoneIds": [],
+  "Boundary": null,
+  "Quests": [
+    {
+      "Id": 500,
+      "Name": "Crushridge Bounty",
+      "QuestLevel": 36,
+      "MinLevel": 30,
+      "AllowableRaces": 1101,
+      "Flags": 8,
+      "QuestSortID": 36,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 2252,
+          "ItemId": 2843,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 9,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 504,
+      "Name": "Crushridge Warmongers",
+      "QuestLevel": 40,
+      "MinLevel": 30,
+      "AllowableRaces": 1101,
+      "Flags": 8,
+      "QuestSortID": 36,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 500,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        500
+      ],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 2287,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 10,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 505,
+      "Name": "Syndicate Assassins",
+      "QuestLevel": 33,
+      "MinLevel": 26,
+      "AllowableRaces": 1101,
+      "Flags": 8,
+      "QuestSortID": 36,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 2240,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 12,
+          "CollectCount": 0,
+          "Index": 0
+        },
+        {
+          "Type": "KillMob",
+          "MobId": 2241,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 8,
+          "CollectCount": 0,
+          "Index": 1
+        }
+      ]
+    },
+    {
+      "Id": 510,
+      "Name": "Foreboding Plans",
+      "QuestLevel": 34,
+      "MinLevel": 26,
+      "AllowableRaces": 1101,
+      "Flags": 0,
+      "QuestSortID": 36,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 3718,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 511,
+      "Name": "Encrypted Letter",
+      "QuestLevel": 34,
+      "MinLevel": 30,
+      "AllowableRaces": 1101,
+      "Flags": 0,
+      "QuestSortID": 36,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 3521,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 512,
+      "Name": "Noble Deaths",
+      "QuestLevel": 36,
+      "MinLevel": 26,
+      "AllowableRaces": 1101,
+      "Flags": 8,
+      "QuestSortID": 36,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 510,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        510
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 2242,
+          "ItemId": 3505,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 7,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 514,
+      "Name": "Letter to Stormpike",
+      "QuestLevel": 34,
+      "MinLevel": 30,
+      "AllowableRaces": 1101,
+      "Flags": 0,
+      "QuestSortID": 36,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 511,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 3521,
+      "PreviousQuestsIds": [
+        511
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 523,
+      "Name": "Baron's Demise",
+      "QuestLevel": 40,
+      "MinLevel": 30,
+      "AllowableRaces": 1101,
+      "Flags": 8,
+      "QuestSortID": 36,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 522,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        522
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 2306,
+          "ItemId": 3626,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 525,
+      "Name": "Further Mysteries",
+      "QuestLevel": 34,
+      "MinLevel": 30,
+      "AllowableRaces": 1101,
+      "Flags": 0,
+      "QuestSortID": 36,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 514,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 3518,
+      "PreviousQuestsIds": [
+        514
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 535,
+      "Name": "Valik",
+      "QuestLevel": 34,
+      "MinLevel": 29,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 36,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 2440,
+          "ItemId": 3703,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 537,
+      "Name": "Dark Council",
+      "QuestLevel": 40,
+      "MinLevel": 30,
+      "AllowableRaces": 1101,
+      "Flags": 8,
+      "QuestSortID": 36,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 525,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        525
+      ],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 2318,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 4,
+          "CollectCount": 0,
+          "Index": 0
+        },
+        {
+          "Type": "CollectItem",
+          "MobId": 2320,
+          "ItemId": 3672,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 1
+        }
+      ]
+    },
+    {
+      "Id": 554,
+      "Name": "Stormpike's Deciphering",
+      "QuestLevel": 40,
+      "MinLevel": 28,
+      "AllowableRaces": 1101,
+      "Flags": 0,
+      "QuestSortID": 36,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 551,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 3706,
+      "PreviousQuestsIds": [
+        551
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 3706,
+          "GameObjectId": 1570,
+          "GameObjectName": "Kharanos",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        }
+      ]
+    }
+  ]
+}

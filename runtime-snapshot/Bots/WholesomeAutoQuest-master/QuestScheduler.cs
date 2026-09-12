@@ -1,0 +1,1215 @@
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading;
+using Bots.Quest.QuestOrder;
+using Styx.Helpers;
+using Styx.Logic.Pathing;
+using Styx.Logic.Questing;
+using Styx.Logic.Questing.Recovery;
+using Styx.WoWInternals;
+using Styx.WoWInternals.WoWObjects;
+
+#nullable disable
+
+namespace WholesomeAQ
+{
+    public sealed class QuestSchedulerAcceptedQuest
+    {
+        public uint QuestId { get; init; }
+        public bool IsCompleted { get; init; }
+        public IReadOnlyList<int> ObjectiveCounts { get; init; } = Array.Empty<int>();
+    }
+
+    public sealed class QuestSchedulerSnapshot
+    {
+        public DateTime UtcNow { get; init; }
+        public int PlayerLevel { get; init; }
+        public int PlayerRaceId { get; init; }
+        public int MapId { get; init; }
+        public double X { get; init; }
+        public double Y { get; init; }
+        public bool HasAuthoritativeCompletions { get; init; }
+        public IReadOnlyCollection<uint> CompletedQuestIds { get; init; } = Array.Empty<uint>();
+        public IReadOnlyList<QuestSchedulerAcceptedQuest> AcceptedQuests { get; init; } = Array.Empty<QuestSchedulerAcceptedQuest>();
+        public int QuestLogCapacity { get; init; } = 25;
+        public IReadOnlyDictionary<int, long> CarriedItemCounts { get; init; }
+    }
+
+    public class QuestScheduler
+    {
+        private const double EndpointCellSize = 80.0;
+        private const string NavigationAssessmentRetry = "navigation-assessment-retry";
+        private readonly DataLoader _dataLoader;
+        private readonly ProfileBuilder _profileBuilder;
+        private readonly WholesomeAQSettings _settings;
+        private int _scanThreshold;
+        private DateTime _lastScan = DateTime.MinValue;
+        private QuestRecoveryContext _lastRecoveryContext;
+        private ForcedBehavior _lastActivation;
+        private QuestRecoveryKey _lastActivationKey;
+        private bool _rebuildRequested;
+        private static int _unknownNavigationFingerprintLogged;
+        private static readonly TimeSpan ScanCooldown = TimeSpan.FromSeconds(10);
+
+        public int ScanThreshold => _scanThreshold;
+        public string CurrentProfilePath { get; private set; }
+        public int LastQuestCount { get; private set; }
+        public string LastStatus { get; private set; }
+        public HashSet<int> ActiveQuestIds { get; private set; }
+        public List<VendorEntry> CurrentVendors { get; set; }
+        public QuestScheduleResult LastSchedule { get; private set; } = new QuestScheduleResult();
+        public DateTime? EarliestRetryUtc => LastSchedule?.EarliestRetryUtc;
+
+        public QuestScheduler(DataLoader dataLoader, ProfileBuilder profileBuilder, WholesomeAQSettings settings)
+        {
+            _dataLoader = dataLoader ?? throw new ArgumentNullException(nameof(dataLoader));
+            _profileBuilder = profileBuilder ?? throw new ArgumentNullException(nameof(profileBuilder));
+            _settings = settings ?? throw new ArgumentNullException(nameof(settings));
+            _scanThreshold = settings.ScanStartDistance;
+        }
+
+        public bool NeedNewScan() => DateTime.Now - _lastScan >= ScanCooldown;
+
+        public bool ScanAndBuildProfile(LocalPlayer me) => ScanAndRefresh(me);
+
+        public bool BuildForLogQuests(LocalPlayer me) => ScanAndRefresh(me);
+
+        public bool ScanAndRefresh(LocalPlayer me, string validatedGrindProfilePath = null)
+        {
+            if (me == null)
+                throw new ArgumentNullException(nameof(me));
+
+            _lastScan = DateTime.Now;
+            QuestDatabase db = _dataLoader.Database;
+            if (db == null)
+            {
+                LastStatus = "No quest data loaded";
+                LastSchedule = new QuestScheduleResult
+                {
+                    FallbackMode = QuestFallbackMode.TimedIdle,
+                    Status = LastStatus
+                };
+                return false;
+            }
+
+            QuestRecoveryRuntime.EnsureConfigured(
+                _dataLoader.DatasetFingerprint,
+                NavigationProviderFingerprint());
+            var accepted = me.QuestLog.GetAllQuests()
+                .OrderBy(quest => quest.Id)
+                .Select(quest => new QuestSchedulerAcceptedQuest
+                {
+                    QuestId = quest.Id,
+                    IsCompleted = quest.IsCompleted,
+                    ObjectiveCounts = ReadObjectiveCounts(quest)
+                })
+                .ToArray();
+            QuestRecoveryContext context = QuestRecoveryRuntime.Capture(
+                accepted.SelectMany(quest => quest.ObjectiveCounts).ToArray());
+            _lastRecoveryContext = context;
+
+            bool authoritative = me.QuestLog.TryGetAuthoritativeCompletedQuests(out var completed);
+            var snapshot = new QuestSchedulerSnapshot
+            {
+                UtcNow = DateTime.UtcNow,
+                PlayerLevel = me.Level,
+                PlayerRaceId = (int)me.Race,
+                MapId = (int)me.MapId,
+                X = me.Location.X,
+                Y = me.Location.Y,
+                HasAuthoritativeCompletions = authoritative,
+                CompletedQuestIds = authoritative ? completed : Array.Empty<uint>(),
+                AcceptedQuests = accepted,
+                CarriedItemCounts = me.CarriedItems.GroupBy(item => (int)item.Entry)
+                    .ToDictionary(group => group.Key, group => group.Sum(item => (long)item.StackCount))
+            };
+
+            LastSchedule = ApplyScanExpansionBeforeFallback(MaterializeSchedule(
+                db,
+                snapshot,
+                key => QuestRecoveryManager.Instance.Evaluate(key, context),
+                _settings.MaxQuestsPerProfile,
+                _scanThreshold,
+                _settings.MinQuestLevelOffset,
+                validatedGrindProfilePath,
+                QuestRecoveryManager.Instance.MarkCompleted,
+                message => Logging.WriteDiagnostic($"[WholesomeAQ] {message}"),
+                navigationAssessment: point => AssessNavigation(point, me.Location),
+                reportDataFailure: outcome => QuestRecoveryManager.Instance.Report(outcome, context)));
+            LastStatus = LastSchedule.Status;
+            LastQuestCount = LastSchedule.Selected.Count;
+            ActiveQuestIds = new HashSet<int>(LastSchedule.Selected.Select(candidate => (int)candidate.QuestId));
+
+            if (LastSchedule.Selected.Count == 0)
+            {
+                CurrentProfilePath = LastSchedule.FallbackMode == QuestFallbackMode.ValidatedGrind
+                    ? LastSchedule.ValidatedGrindProfilePath
+                    : null;
+                return LastSchedule.FallbackMode == QuestFallbackMode.ValidatedGrind;
+            }
+
+            _scanThreshold = _settings.ScanStartDistance;
+            string xml = _profileBuilder.BuildProfileXml(
+                LastSchedule.Plan, db, me.ZoneText, me.Name, me.Level, CurrentVendors);
+            CurrentProfilePath = _profileBuilder.WriteProfile(xml);
+            return true;
+        }
+
+        internal QuestScheduleResult ApplyScanExpansionBeforeFallback(QuestScheduleResult result)
+        {
+            if (result == null)
+                throw new ArgumentNullException(nameof(result));
+            _rebuildRequested = false;
+            if (result.Selected.Count > 0)
+            {
+                _scanThreshold = _settings.ScanStartDistance;
+                return result;
+            }
+            if (_scanThreshold >= _settings.ScanMaxDistance)
+                return result;
+
+            int previous = _scanThreshold;
+            _scanThreshold = Math.Min(
+                _settings.ScanMaxDistance,
+                _scanThreshold + Math.Max(1, _settings.ScanStep));
+            return new QuestScheduleResult
+            {
+                Selected = result.Selected,
+                Plan = result.Plan,
+                EarliestRetryUtc = result.EarliestRetryUtc,
+                FallbackMode = QuestFallbackMode.None,
+                Status = $"{result.Status} Expanding scan radius from {previous} to {_scanThreshold} yards before fallback."
+            };
+        }
+
+        public static QuestScheduleResult MaterializeSchedule(
+            QuestDatabase db,
+            QuestSchedulerSnapshot snapshot,
+            Func<QuestRecoveryKey, QuestRecoveryDecision> evaluate,
+            int maximum,
+            int scanThreshold,
+            int minQuestLevelOffset,
+            string validatedGrindProfilePath = null,
+            Action<uint> markCompleted = null,
+            Action<string> log = null,
+            Func<SpawnPoint, bool> isKnownUnsafe = null,
+            Func<SpawnPoint, SpawnNavigationAssessment> navigationAssessment = null,
+            Action<QuestAttemptOutcome> reportDataFailure = null)
+        {
+            if (db == null) throw new ArgumentNullException(nameof(db));
+            if (snapshot == null) throw new ArgumentNullException(nameof(snapshot));
+            if (evaluate == null) throw new ArgumentNullException(nameof(evaluate));
+
+            var completed = new HashSet<uint>(snapshot.CompletedQuestIds ?? Array.Empty<uint>());
+            if (snapshot.HasAuthoritativeCompletions && markCompleted != null)
+            {
+                foreach (uint questId in completed.OrderBy(id => id))
+                    markCompleted(questId);
+            }
+
+            var accepted = (snapshot.AcceptedQuests ?? Array.Empty<QuestSchedulerAcceptedQuest>())
+                .GroupBy(quest => quest.QuestId)
+                .ToDictionary(group => group.Key, group => group.Last());
+            int questLogCapacity = Math.Max(1, snapshot.QuestLogCapacity);
+            bool questLogFull = accepted.Count >= questLogCapacity;
+            var quests = db.Quests.ToDictionary(quest => (uint)quest.Id);
+            var candidates = new List<QuestWorkCandidate>();
+            var candidatePlans = new Dictionary<QuestWorkCandidate, IReadOnlyList<QuestPlanEntry>>();
+            var exclusions = new List<string>();
+            var correctionAncestors = new HashSet<uint>();
+            Func<SpawnPoint, SpawnNavigationAssessment> assessNavigation =
+                CreateCachedNavigationAssessment(navigationAssessment, isKnownUnsafe);
+
+            if (snapshot.HasAuthoritativeCompletions && !questLogFull)
+            {
+                int minimumLevel = Math.Max(1, snapshot.PlayerLevel - minQuestLevelOffset);
+                foreach (QuestEntry descendant in db.Quests.OrderBy(quest => quest.Id))
+                {
+                    if (accepted.ContainsKey((uint)descendant.Id) || completed.Contains((uint)descendant.Id))
+                        continue;
+                    if (!CanRequestPickup(descendant, db, snapshot, scanThreshold, minimumLevel))
+                        continue;
+                    uint ancestor = FindAcceptedIncompleteAncestor(descendant, quests, accepted, completed);
+                    if (ancestor == 0)
+                        continue;
+                    correctionAncestors.Add(ancestor);
+                    log?.Invoke($"Quest chain correction: ancestor={ancestor}; descendant={descendant.Id}.");
+                }
+            }
+
+            foreach (QuestSchedulerAcceptedQuest acceptedQuest in accepted.Values.OrderBy(quest => quest.QuestId))
+            {
+                if (!quests.TryGetValue(acceptedQuest.QuestId, out QuestEntry quest))
+                {
+                    var missingKey = QuestRecoveryKey.ForQuestStage(
+                        acceptedQuest.QuestId,
+                        acceptedQuest.IsCompleted ? QuestRecoveryStage.TurnIn : QuestRecoveryStage.Objective);
+                    QuestRecoveryDecision missingDecision = evaluate(missingKey);
+                    if (missingDecision.MayAttempt)
+                        ReportDataOmission(missingKey, QuestFailureReason.InvalidQuestData,
+                            "scheduler:accepted-quest-missing", reportDataFailure);
+                    continue;
+                }
+                if (acceptedQuest.IsCompleted)
+                {
+                    AddRelationWork(
+                        quest, QuestWorkStage.TurnIn, QuestRecoveryStage.TurnIn,
+                        db.QuestEnders.Where(ender => ender.QuestId == quest.Id)
+                            .Select(ender => new Relation(ender.EnderId, ender: ender)),
+                        db, snapshot, evaluate, candidates, candidatePlans, exclusions, scanThreshold,
+                        assessNavigation, reportDataFailure);
+                }
+                else
+                {
+                    AddObjectiveWork(
+                        quest,
+                        correctionAncestors.Contains(acceptedQuest.QuestId)
+                            ? QuestWorkStage.AncestorCorrection
+                            : QuestWorkStage.Objective,
+                        acceptedQuest.ObjectiveCounts,
+                        db, snapshot, evaluate, candidates, candidatePlans, exclusions, scanThreshold,
+                        assessNavigation, reportDataFailure);
+                }
+            }
+
+            if (snapshot.HasAuthoritativeCompletions && !questLogFull)
+            {
+                int minimumLevel = Math.Max(1, snapshot.PlayerLevel - minQuestLevelOffset);
+                foreach (QuestEntry quest in db.Quests.OrderBy(quest => quest.QuestLevel).ThenBy(quest => quest.Id))
+                {
+                    uint questId = (uint)quest.Id;
+                    if (accepted.ContainsKey(questId) || completed.Contains(questId))
+                        continue;
+                    if (snapshot.PlayerLevel < quest.MinLevel ||
+                        (quest.QuestLevel > 0 && (quest.QuestLevel < minimumLevel || quest.QuestLevel > snapshot.PlayerLevel)) ||
+                        !RaceAllowed(quest.AllowableRaces, snapshot.PlayerRaceId) ||
+                        !Supported(quest))
+                        continue;
+
+                    uint ancestor = FindAcceptedIncompleteAncestor(quest, quests, accepted, completed);
+                    if (ancestor != 0 || !PrerequisitesComplete(quest, completed))
+                        continue;
+
+                    AddRelationWork(
+                        quest, QuestWorkStage.Pickup, QuestRecoveryStage.Pickup,
+                        db.QuestGivers.Where(giver => giver.QuestId == quest.Id)
+                            .Select(giver => new Relation(giver.GiverId, giver: giver)),
+                        db, snapshot, evaluate, candidates, candidatePlans, exclusions, scanThreshold,
+                        assessNavigation, reportDataFailure);
+                }
+            }
+
+            QuestScheduleResult selected = QuestSchedulingPolicy.Select(
+                candidates, maximum, snapshot.UtcNow, validatedGrindProfilePath);
+            // Navigation-only retries wake an idle scheduler, never replace active quest work.
+            DateTime? retryUtc = selected.Selected.Count == 0
+                ? selected.EarliestRetryUtc
+                : candidates.Where(candidate => candidate.Recovery.Status != NavigationAssessmentRetry)
+                    .Select(candidate => candidate.Recovery.RetryUtc)
+                    .Where(value => value.HasValue)
+                    .OrderBy(value => value)
+                    .FirstOrDefault();
+            var selectedPlan = selected.Selected
+                .SelectMany(candidate => candidatePlans.TryGetValue(candidate, out var plan)
+                    ? plan
+                    : Array.Empty<QuestPlanEntry>())
+                .ToArray();
+            string status = selected.Status;
+            if (selected.Selected.Count > 0)
+            {
+                status += " " + string.Join(" ", selected.Selected.Select(candidate =>
+                    $"selected quest={candidate.QuestId};stage={candidate.Stage};state={candidate.Recovery.State}."));
+            }
+            if (!snapshot.HasAuthoritativeCompletions)
+                status += " completion-authority=unknown; deferred new pickup and prerequisite-negative scheduling.";
+            if (questLogFull)
+                status += $" quest-log-full={accepted.Count}/{questLogCapacity}; deferred new pickups while retaining accepted quest work.";
+            if (exclusions.Count > 0)
+                status += " " + string.Join(" ", exclusions.OrderBy(value => value, StringComparer.Ordinal));
+
+            return new QuestScheduleResult
+            {
+                Selected = selected.Selected,
+                Plan = selectedPlan,
+                EarliestRetryUtc = retryUtc,
+                FallbackMode = selected.FallbackMode,
+                ValidatedGrindProfilePath = selected.ValidatedGrindProfilePath,
+                Status = status
+            };
+        }
+
+        public static QuestRecoveryKey EndpointKey(
+            uint questId,
+            QuestRecoveryStage stage,
+            SpawnPoint point)
+        {
+            if (point == null) throw new ArgumentNullException(nameof(point));
+            int cellX = (int)Math.Floor(point.X / EndpointCellSize);
+            int cellY = (int)Math.Floor(point.Y / EndpointCellSize);
+            return QuestRecoveryKey.ForEndpoint(
+                questId, stage, point.Map,
+                $"cell:{cellX.ToString(CultureInfo.InvariantCulture)}:{cellY.ToString(CultureInfo.InvariantCulture)}");
+        }
+
+        public static QuestRecoveryDecision BeginActivation(
+            QuestRecoveryKey exactKey,
+            Func<QuestRecoveryKey, QuestRecoveryDecision> tryBeginAttempt,
+            Action<QuestRecoveryKey> clearStagePoi,
+            Action requestRebuild)
+        {
+            if (exactKey == null) throw new ArgumentNullException(nameof(exactKey));
+            if (tryBeginAttempt == null) throw new ArgumentNullException(nameof(tryBeginAttempt));
+            QuestRecoveryDecision decision = tryBeginAttempt(exactKey);
+            if (!decision.MayAttempt)
+            {
+                clearStagePoi?.Invoke(exactKey);
+                requestRebuild?.Invoke();
+            }
+            return decision;
+        }
+
+        internal QuestRecoveryDecision ObserveActivation(
+            ForcedBehavior behavior,
+            Action<QuestRecoveryKey> clearStagePoi,
+            Action requestRebuild)
+        {
+            if (_lastRecoveryContext == null)
+                return null;
+            return ObserveActivation(
+                behavior,
+                key => QuestRecoveryManager.Instance.TryBeginAttempt(key, _lastRecoveryContext),
+                clearStagePoi,
+                requestRebuild);
+        }
+
+        internal QuestRecoveryDecision ObserveActivation(
+            ForcedBehavior behavior,
+            Func<QuestRecoveryKey, QuestRecoveryDecision> tryBeginAttempt,
+            Action<QuestRecoveryKey> clearStagePoi,
+            Action requestRebuild)
+        {
+            try
+            {
+                if (behavior?.IsDone == true)
+                    return null;
+            }
+            catch
+            {
+                // Preserve the prior activation path when completion cannot be read authoritatively.
+            }
+
+            QuestRecoveryKey exactKey = ActivationKey(behavior);
+            if (exactKey == null)
+            {
+                _lastActivation = null;
+                _lastActivationKey = null;
+                return null;
+            }
+            if (ReferenceEquals(behavior, _lastActivation) && exactKey.Equals(_lastActivationKey))
+                return null;
+
+            _lastActivation = behavior;
+            _lastActivationKey = exactKey;
+            return BeginActivation(
+                exactKey,
+                tryBeginAttempt,
+                clearStagePoi,
+                () =>
+                {
+                    if (_rebuildRequested)
+                        return;
+                    _rebuildRequested = true;
+                    requestRebuild?.Invoke();
+                });
+        }
+
+        internal void ReleaseActivation(ForcedBehavior behavior)
+        {
+            if (!ReferenceEquals(behavior, _lastActivation))
+                return;
+            _lastActivation = null;
+            _lastActivationKey = null;
+        }
+
+        internal static QuestRecoveryKey ActivationKey(ForcedBehavior behavior)
+        {
+            if (behavior is ForcedQuestPickUp pickup)
+                return QuestRecoveryKey.ForNpc(pickup.QuestId, QuestRecoveryStage.Pickup, pickup.GiverId);
+            if (behavior is ForcedQuestTurnIn turnIn)
+                return QuestRecoveryKey.ForNpc(turnIn.QuestId, QuestRecoveryStage.TurnIn, turnIn.NpcId);
+            if (behavior is ForcedQuestObjective objective && objective.Objective?.Quest != null)
+                return QuestRecoveryKey.ForQuestStage(objective.Objective.Quest.Id, QuestRecoveryStage.Objective);
+            return null;
+        }
+
+        public static void ReportEndpointUnreachable(
+            QuestRecoveryKey failedEndpoint,
+            QuestRecoveryStage questStage,
+            IReadOnlyCollection<QuestRecoveryKey> knownEndpoints,
+            IReadOnlyCollection<QuestRecoveryKey> alreadyTriedOrExcluded,
+            Action<QuestAttemptOutcome> report)
+        {
+            if (failedEndpoint == null) throw new ArgumentNullException(nameof(failedEndpoint));
+            if (failedEndpoint.Scope != QuestRecoveryScope.Endpoint)
+                throw new ArgumentException("The failed key must identify one endpoint.", nameof(failedEndpoint));
+            if (knownEndpoints == null) throw new ArgumentNullException(nameof(knownEndpoints));
+            if (alreadyTriedOrExcluded == null) throw new ArgumentNullException(nameof(alreadyTriedOrExcluded));
+            if (report == null) throw new ArgumentNullException(nameof(report));
+
+            report(QuestAttemptOutcome.Failure(
+                failedEndpoint,
+                QuestFailureReason.EndpointUnreachable,
+                "The selected endpoint was unreachable."));
+            var exhausted = new HashSet<QuestRecoveryKey>(alreadyTriedOrExcluded) { failedEndpoint };
+            if (knownEndpoints.Count > 0 && knownEndpoints.All(exhausted.Contains))
+            {
+                report(QuestAttemptOutcome.Failure(
+                    QuestRecoveryKey.ForQuestStage(failedEndpoint.QuestId, questStage),
+                    QuestFailureReason.NoNavigableHotspot,
+                    "All known endpoint clusters were excluded or tried."));
+            }
+        }
+
+        internal static string CreateNavigationProviderFingerprint(Type providerType, string meshRoot)
+        {
+            if (providerType == null || string.IsNullOrWhiteSpace(meshRoot) || !Directory.Exists(meshRoot))
+                return "unknown";
+            string version = providerType.Assembly.GetName().Version?.ToString();
+            if (string.IsNullOrWhiteSpace(providerType.FullName) || string.IsNullOrWhiteSpace(version))
+                return "unknown";
+            long meshStamp = Directory.GetLastWriteTimeUtc(meshRoot).Ticks;
+            string value = $"{providerType.FullName}|{version}|{Path.GetFullPath(meshRoot)}|{meshStamp}";
+            return Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(value))).ToLowerInvariant();
+        }
+
+        internal static string NavigationProviderFingerprint()
+        {
+            try
+            {
+                string fingerprint = CreateNavigationProviderFingerprint(
+                    Navigator.NavigationProvider?.GetType(),
+                    Path.Combine(Logging.ApplicationPath, "mmaps"));
+                if (fingerprint != "unknown")
+                    return fingerprint;
+            }
+            catch (Exception ex)
+            {
+                LogUnknownNavigationFingerprintOnce(ex.Message);
+                return "unknown";
+            }
+
+            LogUnknownNavigationFingerprintOnce("provider or mesh-root stamp unavailable");
+            return "unknown";
+        }
+
+        private static void LogUnknownNavigationFingerprintOnce(string reason)
+        {
+            if (Interlocked.Exchange(ref _unknownNavigationFingerprintLogged, 1) == 0)
+                Logging.WriteDiagnostic($"[WholesomeAQ] Navigation fingerprint unknown: {reason}.");
+        }
+
+        private static void AddObjectiveWork(
+            QuestEntry quest,
+            QuestWorkStage workStage,
+            IReadOnlyList<int> objectiveCounts,
+            QuestDatabase db,
+            QuestSchedulerSnapshot snapshot,
+            Func<QuestRecoveryKey, QuestRecoveryDecision> evaluate,
+            List<QuestWorkCandidate> candidates,
+            Dictionary<QuestWorkCandidate, IReadOnlyList<QuestPlanEntry>> candidatePlans,
+            List<string> exclusions,
+            int scanThreshold,
+            Func<SpawnPoint, SpawnNavigationAssessment> assessNavigation,
+            Action<QuestAttemptOutcome> reportDataFailure)
+        {
+            var stageKey = QuestRecoveryKey.ForQuestStage((uint)quest.Id, QuestRecoveryStage.Objective);
+            QuestRecoveryDecision stageDecision = evaluate(stageKey);
+            if (!stageDecision.MayAttempt)
+            {
+                AddBlockedCandidate(quest, workStage, stageDecision, candidates, exclusions, stageKey);
+                return;
+            }
+            if (quest.Objectives.Count == 0)
+            {
+                ReportDataOmission(stageKey, QuestFailureReason.InvalidQuestData,
+                    "scheduler:no-objective-rows", reportDataFailure);
+                return;
+            }
+
+            var objectiveWork = new List<(QuestObjective Objective, QuestRecoveryDecision Decision,
+                IReadOnlyList<KeyValuePair<QuestRecoveryKey, IReadOnlyList<SpawnPoint>>> Clusters,
+                IReadOnlyList<QuestEndpointCandidate> Endpoints)>();
+            var allEndpoints = new List<QuestEndpointCandidate>();
+            foreach (QuestObjective objective in quest.Objectives.OrderBy(value => value.Index))
+            {
+                if (!Supported(objective))
+                {
+                    var unsupportedKey = QuestRecoveryKey.ForObjective((uint)quest.Id, objective.Index);
+                    QuestRecoveryDecision unsupportedDecision = evaluate(unsupportedKey);
+                    if (unsupportedDecision.MayAttempt)
+                        ReportDataOmission(unsupportedKey, QuestFailureReason.UnsupportedObjective,
+                            "scheduler:unsupported-objective", reportDataFailure);
+                    continue;
+                }
+                if (IsObjectiveComplete(objective, objectiveCounts, snapshot.CarriedItemCounts))
+                    continue;
+                var objectiveKey = QuestRecoveryKey.ForObjective((uint)quest.Id, objective.Index);
+                QuestRecoveryDecision objectiveDecision = evaluate(objectiveKey);
+                if (!objectiveDecision.MayAttempt)
+                {
+                    AddBlockedCandidate(quest, workStage, objectiveDecision, candidates, exclusions, objectiveKey);
+                    continue;
+                }
+
+                SpawnPoint[] knownSpawns = GetObjectiveSpawns(objective, db).ToArray();
+                if (knownSpawns.Length == 0)
+                {
+                    ReportDataOmission(objectiveKey, QuestFailureReason.InvalidQuestData,
+                        "scheduler:no-known-hotspots", reportDataFailure);
+                    AddObjectiveOmission(
+                        quest, workStage, objective.Index, "no-known-hotspots", null, exclusions);
+                    continue;
+                }
+
+                var knownClusters = Cluster(knownSpawns
+                    .Where(point => InRange(point, snapshot, scanThreshold)));
+                if (knownClusters.Count == 0)
+                {
+                    AddObjectiveOmission(
+                        quest, workStage, objective.Index, "outside-scan-radius", null, exclusions);
+                    continue;
+                }
+
+                var assessedClusters = knownClusters
+                    .Select(cluster => (Cluster: cluster, Assessment: assessNavigation(cluster.Value[0])))
+                    .Where(value => value.Assessment.IsKnownReachable != false
+                                    && value.Assessment.IsKnownSafe != false)
+                    .ToArray();
+                if (assessedClusters.Length == 0)
+                {
+                    AddNavigationRetry(quest, workStage, objectiveKey, snapshot, candidates, exclusions);
+                    AddObjectiveOmission(
+                        quest, workStage, objective.Index, "no-assessed-hotspots", null, exclusions);
+                    continue;
+                }
+                var clusters = assessedClusters.Select(value => value.Cluster).ToArray();
+                var endpoints = assessedClusters.Select(value =>
+                {
+                    var cluster = value.Cluster;
+                    QuestRecoveryKey key = EndpointKey((uint)quest.Id, QuestRecoveryStage.Navigation, cluster.Value[0]);
+                    QuestRecoveryDecision decision = evaluate(key);
+                    if (!decision.MayAttempt)
+                        AddBlockedCandidate(quest, workStage, decision, candidates, exclusions, key);
+                    return new QuestEndpointCandidate
+                    {
+                        Key = key,
+                        Point = cluster.Value[0],
+                        Distance = cluster.Value.Min(point => Distance(point, snapshot)),
+                        IsKnownReachable = value.Assessment.IsKnownReachable,
+                        IsKnownSafe = value.Assessment.IsKnownSafe,
+                        SafetyScore = value.Assessment.SafetyScore,
+                        RequiresHalfOpen = stageDecision.State == QuestRecoveryState.HalfOpen ||
+                                           objectiveDecision.State == QuestRecoveryState.HalfOpen ||
+                                           decision.State == QuestRecoveryState.HalfOpen,
+                        Recovery = decision
+                    };
+                }).ToArray();
+                allEndpoints.AddRange(endpoints);
+                objectiveWork.Add((objective, objectiveDecision, clusters, endpoints));
+            }
+
+            var selectedEndpoints = QuestSchedulingPolicy.Select(allEndpoints, maximum: 5);
+            var selectedKeys = new HashSet<QuestRecoveryKey>(selectedEndpoints.Select(endpoint => endpoint.Key));
+            var plan = new List<QuestPlanEntry>();
+            bool requiresHalfOpen = selectedEndpoints.Any(endpoint => endpoint.RequiresHalfOpen);
+            bool selectedOrdinary = selectedEndpoints.Any(endpoint => !endpoint.RequiresHalfOpen);
+            foreach (var work in objectiveWork)
+            {
+                if (selectedOrdinary && work.Decision.State == QuestRecoveryState.HalfOpen)
+                    continue;
+                var hotspots = work.Clusters
+                    .Where(cluster => selectedKeys.Contains(
+                        EndpointKey((uint)quest.Id, QuestRecoveryStage.Navigation, cluster.Value[0])))
+                    .SelectMany(cluster => cluster.Value)
+                    .ToArray();
+                if (hotspots.Length == 0)
+                {
+                    DateTime? retryUtc = work.Endpoints
+                        .Select(endpoint => endpoint.Recovery.RetryUtc)
+                        .Where(value => value.HasValue)
+                        .OrderBy(value => value)
+                        .FirstOrDefault();
+                    AddObjectiveOmission(
+                        quest, workStage, work.Objective.Index,
+                        "no-selected-hotspots", retryUtc, exclusions);
+                    continue;
+                }
+                plan.Add(new QuestPlanEntry
+                {
+                    Quest = quest,
+                    Stage = workStage,
+                    ObjectiveIndex = work.Objective.Index,
+                    Hotspots = hotspots
+                });
+            }
+
+            if (plan.Count > 0)
+                AddEligibleCandidate(quest, workStage, stageDecision, plan, requiresHalfOpen, snapshot, candidates, candidatePlans);
+        }
+
+        private static void AddRelationWork(
+            QuestEntry quest,
+            QuestWorkStage workStage,
+            QuestRecoveryStage recoveryStage,
+            IEnumerable<Relation> relations,
+            QuestDatabase db,
+            QuestSchedulerSnapshot snapshot,
+            Func<QuestRecoveryKey, QuestRecoveryDecision> evaluate,
+            List<QuestWorkCandidate> candidates,
+            Dictionary<QuestWorkCandidate, IReadOnlyList<QuestPlanEntry>> candidatePlans,
+            List<string> exclusions,
+            int scanThreshold,
+            Func<SpawnPoint, SpawnNavigationAssessment> assessNavigation,
+            Action<QuestAttemptOutcome> reportDataFailure)
+        {
+            var stageKey = QuestRecoveryKey.ForQuestStage((uint)quest.Id, recoveryStage);
+            QuestRecoveryDecision stageDecision = evaluate(stageKey);
+            if (!stageDecision.MayAttempt)
+            {
+                AddBlockedCandidate(quest, workStage, stageDecision, candidates, exclusions, stageKey);
+                return;
+            }
+
+            var eligibleRelations = new List<(Relation Relation, QuestRecoveryDecision Decision, IReadOnlyList<SpawnPoint> Spawns)>();
+            var allEndpoints = new List<QuestEndpointCandidate>();
+            var distinctRelations = relations
+                .OrderBy(value => value.Entry)
+                .ThenBy(value => value.DisplayName, StringComparer.Ordinal)
+                .GroupBy(value => value.Entry)
+                .Select(group => group.First())
+                .ToArray();
+            if (distinctRelations.Length == 0)
+            {
+                ReportDataOmission(
+                    stageKey,
+                    QuestFailureReason.InvalidQuestData,
+                    recoveryStage == QuestRecoveryStage.TurnIn
+                        ? "scheduler:no-ender-relations"
+                        : "scheduler:no-giver-relations",
+                    reportDataFailure);
+                return;
+            }
+            foreach (Relation relation in distinctRelations)
+            {
+                var relationKey = QuestRecoveryKey.ForNpc((uint)quest.Id, recoveryStage, (uint)relation.Entry);
+                QuestRecoveryDecision relationDecision = evaluate(relationKey);
+                if (!relationDecision.MayAttempt)
+                {
+                    AddBlockedCandidate(quest, workStage, relationDecision, candidates, exclusions, relationKey);
+                    continue;
+                }
+
+                SpawnPoint[] knownSpawns = GetRelationSpawns(relation.Entry, db).ToArray();
+                if (knownSpawns.Length == 0)
+                {
+                    ReportDataOmission(relationKey, QuestFailureReason.InvalidQuestData,
+                        "scheduler:no-relation-spawns", reportDataFailure);
+                    continue;
+                }
+
+                var knownClusters = Cluster(knownSpawns
+                    .Where(point => InRange(point, snapshot, scanThreshold)));
+                if (knownClusters.Count == 0)
+                {
+                    exclusions.Add($"excluded quest={quest.Id};stage={workStage};npc={relation.Entry};reason=outside-scan-radius;retry=context-change");
+                    continue;
+                }
+
+                var assessedClusters = knownClusters
+                    .Select(cluster => (Cluster: cluster, Assessment: assessNavigation(cluster.Value[0])))
+                    .Where(value => value.Assessment.IsKnownReachable != false
+                                    && value.Assessment.IsKnownSafe != false)
+                    .ToArray();
+                var spawns = assessedClusters.SelectMany(value => value.Cluster.Value).ToArray();
+                if (spawns.Length == 0)
+                {
+                    AddNavigationRetry(quest, workStage, relationKey, snapshot, candidates, exclusions);
+                    continue;
+                }
+                eligibleRelations.Add((relation, relationDecision, spawns));
+                foreach (var value in assessedClusters)
+                {
+                    var cluster = value.Cluster;
+                    QuestRecoveryKey key = EndpointKey((uint)quest.Id, QuestRecoveryStage.Navigation, cluster.Value[0]);
+                    QuestRecoveryDecision endpointDecision = evaluate(key);
+                    if (!endpointDecision.MayAttempt)
+                        AddBlockedCandidate(quest, workStage, endpointDecision, candidates, exclusions, key);
+                    allEndpoints.Add(new QuestEndpointCandidate
+                    {
+                        Key = key,
+                        Point = cluster.Value[0],
+                        Distance = cluster.Value.Min(point => Distance(point, snapshot)),
+                        IsKnownReachable = value.Assessment.IsKnownReachable,
+                        IsKnownSafe = value.Assessment.IsKnownSafe,
+                        SafetyScore = value.Assessment.SafetyScore,
+                        RequiresHalfOpen = stageDecision.State == QuestRecoveryState.HalfOpen ||
+                                           relationDecision.State == QuestRecoveryState.HalfOpen ||
+                                           endpointDecision.State == QuestRecoveryState.HalfOpen,
+                        Recovery = endpointDecision
+                    });
+                }
+            }
+
+            var selectedEndpoints = QuestSchedulingPolicy.Select(allEndpoints, maximum: 5);
+            var selectedKeys = new HashSet<QuestRecoveryKey>(selectedEndpoints.Select(endpoint => endpoint.Key));
+            var plan = new List<QuestPlanEntry>();
+            bool requiresHalfOpen = selectedEndpoints.Any(endpoint => endpoint.RequiresHalfOpen);
+            bool selectedOrdinary = selectedEndpoints.Any(endpoint => !endpoint.RequiresHalfOpen);
+            foreach (var eligible in eligibleRelations)
+            {
+                if (selectedOrdinary && eligible.Decision.State == QuestRecoveryState.HalfOpen)
+                    continue;
+                var relationClusters = Cluster(eligible.Spawns)
+                    .Where(cluster => selectedKeys.Contains(
+                        EndpointKey((uint)quest.Id, QuestRecoveryStage.Navigation, cluster.Value[0])))
+                    .ToArray();
+                if (relationClusters.Length == 0)
+                    continue;
+                plan.Add(new QuestPlanEntry
+                {
+                    Quest = quest,
+                    Stage = workStage,
+                    Giver = eligible.Relation.Giver,
+                    Ender = eligible.Relation.Ender,
+                    Hotspots = relationClusters.SelectMany(cluster => cluster.Value).ToArray()
+                });
+            }
+
+            if (plan.Count > 0)
+                AddEligibleCandidate(quest, workStage, stageDecision, plan, requiresHalfOpen, snapshot, candidates, candidatePlans);
+        }
+
+        private static void AddEligibleCandidate(
+            QuestEntry quest,
+            QuestWorkStage workStage,
+            QuestRecoveryDecision recovery,
+            IReadOnlyList<QuestPlanEntry> plan,
+            bool halfOpen,
+            QuestSchedulerSnapshot snapshot,
+            List<QuestWorkCandidate> candidates,
+            Dictionary<QuestWorkCandidate, IReadOnlyList<QuestPlanEntry>> candidatePlans)
+        {
+            double distance = plan.SelectMany(entry => entry.Hotspots)
+                .Select(point => Distance(point, snapshot))
+                .DefaultIfEmpty(double.MaxValue)
+                .Min();
+            var candidate = new QuestWorkCandidate
+            {
+                QuestId = (uint)quest.Id,
+                Stage = halfOpen ? QuestWorkStage.HalfOpen : workStage,
+                Distance = distance,
+                ChainValue = quest.NextQuestID > 0 ? 1 : 0,
+                SafetyScore = 0,
+                Recovery = recovery
+            };
+            candidates.Add(candidate);
+            candidatePlans[candidate] = plan;
+        }
+
+        private static void AddNavigationRetry(
+            QuestEntry quest,
+            QuestWorkStage workStage,
+            QuestRecoveryKey key,
+            QuestSchedulerSnapshot snapshot,
+            List<QuestWorkCandidate> candidates,
+            List<string> exclusions)
+        {
+            // A path or safety assessment describes this scan, not the validity of quest data.
+            // Keep the endpoint excluded, but recheck without persisting a six-hour quarantine.
+            AddBlockedCandidate(quest, workStage, new QuestRecoveryDecision
+            {
+                State = QuestRecoveryState.CoolingDown,
+                MayAttempt = false,
+                Status = NavigationAssessmentRetry,
+                RetryUtc = snapshot.UtcNow.AddSeconds(30)
+            }, candidates, exclusions, key);
+        }
+
+        private static void AddBlockedCandidate(
+            QuestEntry quest,
+            QuestWorkStage workStage,
+            QuestRecoveryDecision decision,
+            List<QuestWorkCandidate> candidates,
+            List<string> exclusions,
+            QuestRecoveryKey key)
+        {
+            candidates.Add(new QuestWorkCandidate
+            {
+                QuestId = (uint)quest.Id,
+                Stage = workStage,
+                Distance = double.MaxValue,
+                Recovery = decision
+            });
+            exclusions.Add($"excluded quest={quest.Id};stage={workStage};{FormatKey(key)};retry={FormatRetry(decision.RetryUtc)};state={decision.State}.");
+        }
+
+        private static string FormatKey(QuestRecoveryKey key)
+        {
+            string value = $"scope={key.Scope}";
+            if (key.Scope == QuestRecoveryScope.NpcRelation)
+                value += $";npc={key.NpcEntry}";
+            else if (key.Scope == QuestRecoveryScope.Endpoint)
+                value += $";endpoint={key.Endpoint}";
+            else if (key.Scope == QuestRecoveryScope.Objective)
+                value += $";objective={key.ObjectiveIndex}";
+            return value;
+        }
+
+        private static string FormatRetry(DateTime? retryUtc) =>
+            retryUtc.HasValue ? retryUtc.Value.ToUniversalTime().ToString("O", CultureInfo.InvariantCulture) : "context-change";
+
+        private static void AddObjectiveOmission(
+            QuestEntry quest,
+            QuestWorkStage stage,
+            int objectiveIndex,
+            string reason,
+            DateTime? retryUtc,
+            List<string> exclusions) =>
+            exclusions.Add(
+                $"excluded quest={quest.Id};stage={stage};objective={objectiveIndex};reason={reason};retry={FormatRetry(retryUtc)}.");
+
+        private static void ReportDataOmission(
+            QuestRecoveryKey key,
+            QuestFailureReason reason,
+            string evidence,
+            Action<QuestAttemptOutcome> reportDataFailure)
+        {
+            reportDataFailure?.Invoke(QuestAttemptOutcome.Failure(key, reason, evidence));
+        }
+
+        private static IReadOnlyList<KeyValuePair<QuestRecoveryKey, IReadOnlyList<SpawnPoint>>> Cluster(
+            IEnumerable<SpawnPoint> points) =>
+            points
+                .GroupBy(point => EndpointKey(0, QuestRecoveryStage.Navigation, point))
+                .OrderBy(group => group.Key.MapId)
+                .ThenBy(group => group.Key.Endpoint, StringComparer.Ordinal)
+                .Select(group => new KeyValuePair<QuestRecoveryKey, IReadOnlyList<SpawnPoint>>(
+                    group.Key, group
+                        .OrderBy(point => point.X)
+                        .ThenBy(point => point.Y)
+                        .ThenBy(point => point.Z)
+                        .DistinctBy(point => (point.Map, point.X, point.Y, point.Z))
+                        .ToArray()))
+                .ToArray();
+
+        private static IEnumerable<SpawnPoint> GetObjectiveSpawns(QuestObjective objective, QuestDatabase db)
+        {
+            string key;
+            Dictionary<string, List<SpawnPoint>> source;
+            if (objective.Type == ObjectiveType.CollectFromGameObject)
+            {
+                key = objective.GameObjectId.ToString(CultureInfo.InvariantCulture);
+                source = db.GameObjectSpawns;
+            }
+            else
+            {
+                key = objective.MobId.ToString(CultureInfo.InvariantCulture);
+                source = db.CreatureSpawns;
+            }
+            return source.TryGetValue(key, out List<SpawnPoint> points)
+                ? points
+                : Enumerable.Empty<SpawnPoint>();
+        }
+
+        private static IEnumerable<SpawnPoint> GetRelationSpawns(int entry, QuestDatabase db)
+        {
+            string key = entry.ToString(CultureInfo.InvariantCulture);
+            if (db.CreatureSpawns.TryGetValue(key, out List<SpawnPoint> creatures))
+                return creatures;
+            if (db.GameObjectSpawns.TryGetValue(key, out List<SpawnPoint> objects))
+                return objects;
+            return Enumerable.Empty<SpawnPoint>();
+        }
+
+        private static bool InRange(SpawnPoint point, QuestSchedulerSnapshot snapshot, int scanThreshold) =>
+            point.Map == snapshot.MapId && Distance(point, snapshot) <= scanThreshold;
+
+        private static double Distance(SpawnPoint point, QuestSchedulerSnapshot snapshot)
+        {
+            double x = point.X - snapshot.X;
+            double y = point.Y - snapshot.Y;
+            return Math.Sqrt(x * x + y * y);
+        }
+
+        private static Func<SpawnPoint, SpawnNavigationAssessment> CreateCachedNavigationAssessment(
+            Func<SpawnPoint, SpawnNavigationAssessment> navigationAssessment,
+            Func<SpawnPoint, bool> isKnownUnsafe)
+        {
+            var cache = new Dictionary<QuestRecoveryKey, SpawnNavigationAssessment>();
+            return point =>
+            {
+                QuestRecoveryKey clusterKey = EndpointKey(0, QuestRecoveryStage.Navigation, point);
+                if (cache.TryGetValue(clusterKey, out SpawnNavigationAssessment cached))
+                    return cached;
+
+                SpawnNavigationAssessment live = null;
+                try
+                {
+                    live = navigationAssessment?.Invoke(point);
+                }
+                catch
+                {
+                    live = null;
+                }
+
+                bool? knownSafe = live?.IsKnownSafe;
+                bool? knownReachable = live?.IsKnownReachable;
+                if (point.IsKnownSafe == false)
+                    knownSafe = false;
+                if (point.IsKnownReachable == false)
+                    knownReachable = false;
+                if (isKnownUnsafe != null)
+                {
+                    try
+                    {
+                        if (isKnownUnsafe(point))
+                            knownSafe = false;
+                    }
+                    catch
+                    {
+                        knownSafe = null;
+                    }
+                }
+
+                var result = new SpawnNavigationAssessment
+                {
+                    IsKnownSafe = knownSafe,
+                    IsKnownReachable = knownReachable,
+                    SafetyScore = point.SafetyScore + (live?.SafetyScore ?? 0)
+                };
+                cache[clusterKey] = result;
+                return result;
+            };
+        }
+
+        internal static SpawnNavigationAssessment AssessNavigation(
+            SpawnPoint point,
+            WoWPoint origin,
+            Func<WoWPoint, bool> isKnownUnsafe = null)
+        {
+            if (point == null)
+                throw new ArgumentNullException(nameof(point));
+            var destination = new WoWPoint((float)point.X, (float)point.Y, (float)point.Z);
+            bool unsafePoint;
+            try
+            {
+                unsafePoint = isKnownUnsafe != null
+                    ? isKnownUnsafe(destination)
+                    : BlackspotManager.IsBlackspotted(destination);
+            }
+            catch
+            {
+                return new SpawnNavigationAssessment();
+            }
+            if (unsafePoint)
+                return new SpawnNavigationAssessment { IsKnownSafe = false };
+
+            NavigationProvider provider = Navigator.NavigationProvider;
+            if (provider == null)
+                return new SpawnNavigationAssessment { IsKnownSafe = true };
+            try
+            {
+                if (provider is MeshNavigator mesh)
+                    return AssessMeshNavigation(mesh.FindPath(origin, destination), origin, destination);
+                float? pathDistance = provider.PathDistance(origin, destination);
+                if (!pathDistance.HasValue)
+                {
+                    return new SpawnNavigationAssessment
+                    {
+                        IsKnownSafe = true,
+                        IsKnownReachable = false
+                    };
+                }
+
+                double detour = Math.Max(0, pathDistance.Value - origin.Distance(destination));
+                return new SpawnNavigationAssessment
+                {
+                    IsKnownSafe = true,
+                    IsKnownReachable = true,
+                    SafetyScore = (int)Math.Max(-100000, 1000 - Math.Min(101000, Math.Round(detour)))
+                };
+            }
+            catch
+            {
+                return new SpawnNavigationAssessment();
+            }
+        }
+
+        internal static SpawnNavigationAssessment AssessMeshNavigation(
+            Tripper.Navigation.PathFindResult path, WoWPoint origin, WoWPoint destination)
+        {
+            if (path == null || !path.Succeeded || path.Points == null || path.Points.Length == 0)
+                return new SpawnNavigationAssessment { IsKnownSafe = true, IsKnownReachable = false };
+            // A partial path establishes only that the current mesh query cannot reach the
+            // endpoint. Execution can still recover a small disconnected start patch using
+            // validated ground movement. Let that bounded attempt establish reachability.
+            if (path.IsPartialPath)
+                return new SpawnNavigationAssessment { IsKnownSafe = true };
+
+            var start = new System.Numerics.Vector3(origin.X, origin.Y, origin.Z);
+            var end = new System.Numerics.Vector3(destination.X, destination.Y, destination.Z);
+            double distance = System.Numerics.Vector3.Distance(start, path.Points[0]) +
+                System.Numerics.Vector3.Distance(path.Points[path.Points.Length - 1], end);
+            for (int index = 1; index < path.Points.Length; index++)
+                distance += System.Numerics.Vector3.Distance(path.Points[index - 1], path.Points[index]);
+            double detour = Math.Max(0, distance - origin.Distance(destination));
+            return new SpawnNavigationAssessment
+            {
+                IsKnownSafe = true,
+                IsKnownReachable = true,
+                SafetyScore = (int)Math.Max(-100000, 1000 - Math.Min(101000, Math.Round(detour)))
+            };
+        }
+
+        private static bool Supported(QuestEntry quest) =>
+            quest.Objectives.Count > 0 && quest.Objectives.All(Supported);
+
+        private static bool Supported(QuestObjective objective) =>
+            (objective.Type == ObjectiveType.KillMob && objective.MobId > 0) ||
+            (objective.Type == ObjectiveType.CollectItem && objective.ItemId > 0 && objective.MobId > 0) ||
+            (objective.Type == ObjectiveType.CollectFromGameObject && objective.GameObjectId > 0) ||
+            objective.Type == ObjectiveType.TurnInOnly;
+
+        private static bool IsObjectiveComplete(
+            QuestObjective objective,
+            IReadOnlyList<int> objectiveCounts,
+            IReadOnlyDictionary<int, long> carriedItemCounts)
+        {
+            // Match CollectItemObjective's completion rule for every source of the item.
+            // Dataset alternative-source indexes are not live quest counter indexes.
+            if (carriedItemCounts != null && objective.ItemId > 0 &&
+                (objective.Type == ObjectiveType.CollectItem || objective.Type == ObjectiveType.CollectFromGameObject))
+                return objective.CollectCount > 0 &&
+                    carriedItemCounts.TryGetValue(objective.ItemId, out long count) && count >= objective.CollectCount;
+            if (objectiveCounts == null || objective.Index < 0 || objective.Index >= objectiveCounts.Count)
+                return false;
+            int required = objective.Type == ObjectiveType.KillMob
+                ? objective.KillCount
+                : objective.Type == ObjectiveType.CollectItem || objective.Type == ObjectiveType.CollectFromGameObject
+                    ? objective.CollectCount
+                    : 0;
+            return required > 0 && objectiveCounts[objective.Index] >= required;
+        }
+
+        private static bool RaceAllowed(int allowableRaces, int raceId) =>
+            allowableRaces == 0 || allowableRaces == -1 ||
+            (raceId > 0 && (allowableRaces & (1 << (raceId - 1))) != 0);
+
+        private static bool CanRequestPickup(
+            QuestEntry quest,
+            QuestDatabase db,
+            QuestSchedulerSnapshot snapshot,
+            int scanThreshold,
+            int minimumLevel) =>
+            snapshot.PlayerLevel >= quest.MinLevel &&
+            (quest.QuestLevel <= 0 ||
+             (quest.QuestLevel >= minimumLevel && quest.QuestLevel <= snapshot.PlayerLevel)) &&
+            RaceAllowed(quest.AllowableRaces, snapshot.PlayerRaceId) &&
+            Supported(quest) &&
+            db.QuestGivers
+                .Where(giver => giver.QuestId == quest.Id)
+                .SelectMany(giver => GetRelationSpawns(giver.GiverId, db))
+                .Any(point => InRange(point, snapshot, scanThreshold));
+
+        private static bool PrerequisitesComplete(QuestEntry quest, HashSet<uint> completed)
+        {
+            if (quest.PrevQuestID > 0 && !completed.Contains((uint)quest.PrevQuestID))
+                return false;
+            return quest.PreviousQuestsIds.All(id => id <= 0 || completed.Contains((uint)id));
+        }
+
+        private static uint FindAcceptedIncompleteAncestor(
+            QuestEntry quest,
+            IReadOnlyDictionary<uint, QuestEntry> quests,
+            IReadOnlyDictionary<uint, QuestSchedulerAcceptedQuest> accepted,
+            HashSet<uint> completed)
+        {
+            var pending = new Queue<uint>();
+            var seen = new HashSet<uint>();
+            foreach (int id in DirectPrerequisites(quest))
+                if (id > 0) pending.Enqueue((uint)id);
+
+            while (pending.Count > 0)
+            {
+                uint id = pending.Dequeue();
+                if (!seen.Add(id) || completed.Contains(id))
+                    continue;
+                if (accepted.TryGetValue(id, out var live) && !live.IsCompleted)
+                    return id;
+                if (quests.TryGetValue(id, out QuestEntry ancestor))
+                {
+                    foreach (int previous in DirectPrerequisites(ancestor))
+                        if (previous > 0) pending.Enqueue((uint)previous);
+                }
+            }
+            return 0;
+        }
+
+        private static IEnumerable<int> DirectPrerequisites(QuestEntry quest)
+        {
+            if (quest.PrevQuestID > 0)
+                yield return quest.PrevQuestID;
+            foreach (int id in quest.PreviousQuestsIds.OrderBy(id => id))
+                yield return id;
+        }
+
+        private static IReadOnlyList<int> ReadObjectiveCounts(PlayerQuest quest)
+        {
+            try
+            {
+                if (quest.GetData(out QuestDescriptorData data) && data.ObjectivesDone != null)
+                    return data.ObjectivesDone.Select(value => (int)value).ToArray();
+            }
+            catch (Exception ex)
+            {
+                Logging.WriteDiagnostic($"[WholesomeAQ] Objective count capture failed for quest {quest.Id}: {ex.Message}");
+            }
+            return Array.Empty<int>();
+        }
+
+        public void Reset()
+        {
+            _scanThreshold = _settings.ScanStartDistance;
+            ActiveQuestIds = null;
+            CurrentProfilePath = null;
+            LastSchedule = new QuestScheduleResult();
+            LastStatus = null;
+            LastQuestCount = 0;
+            _lastScan = DateTime.MinValue;
+            _lastRecoveryContext = null;
+            _lastActivation = null;
+            _lastActivationKey = null;
+            _rebuildRequested = false;
+        }
+
+        private sealed class Relation
+        {
+            public Relation(int entry, QuestGiverEntry giver = null, QuestEnderEntry ender = null)
+            {
+                Entry = entry;
+                Giver = giver;
+                Ender = ender;
+            }
+
+            public int Entry { get; }
+            public QuestGiverEntry Giver { get; }
+            public QuestEnderEntry Ender { get; }
+            public string DisplayName => Giver?.GiverName ?? Ender?.EnderName ?? "";
+        }
+    }
+}

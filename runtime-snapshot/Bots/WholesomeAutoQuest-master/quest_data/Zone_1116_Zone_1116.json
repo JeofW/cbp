@@ -1,0 +1,70 @@
+{
+  "ZoneId": 1116,
+  "ZoneName": "Zone_1116",
+  "SubzoneIds": [],
+  "Boundary": null,
+  "Quests": [
+    {
+      "Id": 3788,
+      "Name": "Jonespyre's Request",
+      "QuestLevel": 50,
+      "MinLevel": 47,
+      "AllowableRaces": 1101,
+      "Flags": 8,
+      "QuestSortID": 1116,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 3791,
+      "Name": "The Mystery of Morrowgrain",
+      "QuestLevel": 50,
+      "MinLevel": 47,
+      "AllowableRaces": 1101,
+      "Flags": 0,
+      "QuestSortID": 1116,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 3785,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 11020,
+      "PreviousQuestsIds": [
+        3785
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    }
+  ]
+}

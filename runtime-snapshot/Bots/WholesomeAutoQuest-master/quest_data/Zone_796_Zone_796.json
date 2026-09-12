@@ -1,0 +1,40 @@
+{
+  "ZoneId": 796,
+  "ZoneName": "Zone_796",
+  "SubzoneIds": [],
+  "Boundary": null,
+  "Quests": [
+    {
+      "Id": 1113,
+      "Name": "Hearts of Zeal",
+      "QuestLevel": 33,
+      "MinLevel": 30,
+      "AllowableRaces": 690,
+      "Flags": 8,
+      "QuestSortID": 796,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 1109,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        1109
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 6487,
+          "ItemId": 5805,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 20,
+          "Index": 0
+        }
+      ]
+    }
+  ]
+}

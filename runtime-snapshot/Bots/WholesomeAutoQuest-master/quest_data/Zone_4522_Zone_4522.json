@@ -1,0 +1,72 @@
+{
+  "ZoneId": 4522,
+  "ZoneName": "Zone_4522",
+  "SubzoneIds": [],
+  "Boundary": null,
+  "Quests": [
+    {
+      "Id": 13259,
+      "Name": "Establishing Superiority",
+      "QuestLevel": 80,
+      "MinLevel": 77,
+      "AllowableRaces": 690,
+      "Flags": 136,
+      "QuestSortID": 4522,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 13258,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        13258
+      ],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 31413,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 10,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 13387,
+      "Name": "Securing the Perimeter",
+      "QuestLevel": 80,
+      "MinLevel": 77,
+      "AllowableRaces": 1101,
+      "Flags": 136,
+      "QuestSortID": 4522,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 13386,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        13386
+      ],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 31411,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 10,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    }
+  ]
+}

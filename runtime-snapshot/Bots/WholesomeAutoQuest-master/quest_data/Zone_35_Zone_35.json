@@ -1,0 +1,42 @@
+{
+  "ZoneId": 35,
+  "ZoneName": "Zone_35",
+  "SubzoneIds": [],
+  "Boundary": null,
+  "Quests": [
+    {
+      "Id": 3721,
+      "Name": "An OOX of Your Own",
+      "QuestLevel": 50,
+      "MinLevel": 40,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 35,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        648,
+        836,
+        2767
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    }
+  ]
+}

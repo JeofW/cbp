@@ -1,0 +1,18 @@
+
+<HBProfile>
+  <Name>WholesomeAQ - Thousand Needles</Name>
+  <MinLevel>1</MinLevel>
+  <MaxLevel>80</MaxLevel>
+  <MinDurability>0.2</MinDurability>
+  <MinFreeBagSlots>2</MinFreeBagSlots>
+  <AvoidMobs />
+  <Blackspots />
+  <Mailboxes />
+  <Vendors />
+  <Quest Id="4841" Name="Pacify the Centaur" />
+  <QuestOrder>
+    <If Condition="HasQuest(4841)">
+      <TurnIn QuestName="Pacify the Centaur" QuestId="4841" TurnInName="Cliffwatcher Longhorn" TurnInId="10537" X="-5454.95" Y="-2442.79" Z="90.2987" />
+    </If>
+  </QuestOrder>
+</HBProfile>

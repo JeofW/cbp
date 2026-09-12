@@ -1,0 +1,600 @@
+{
+  "ZoneId": 4024,
+  "ZoneName": "Zone_4024",
+  "SubzoneIds": [],
+  "Boundary": null,
+  "Quests": [
+    {
+      "Id": 11900,
+      "Name": "Reading the Meters",
+      "QuestLevel": 71,
+      "MinLevel": 69,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 4024,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 188100,
+          "GameObjectName": "Coldarra Geological Monitor",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        },
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 188101,
+          "GameObjectName": "Coldarra Geological Monitor",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 1
+        },
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 188102,
+          "GameObjectName": "Coldarra Geological Monitor",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 2
+        },
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 188103,
+          "GameObjectName": "Coldarra Geological Monitor",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 3
+        }
+      ]
+    },
+    {
+      "Id": 11910,
+      "Name": "Secrets of the Ancients",
+      "QuestLevel": 71,
+      "MinLevel": 69,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 4024,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 25709,
+          "ItemId": 35483,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 3,
+          "Index": 0
+        },
+        {
+          "Type": "CollectItem",
+          "MobId": 25707,
+          "ItemId": 35484,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 3,
+          "Index": 1
+        }
+      ]
+    },
+    {
+      "Id": 11912,
+      "Name": "Nuts for Berries",
+      "QuestLevel": 71,
+      "MinLevel": 69,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 4024,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 25707,
+          "ItemId": 35492,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 10,
+          "Index": 0
+        },
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 35492,
+          "GameObjectId": 188113,
+          "GameObjectName": "Frostberry Bush",
+          "KillCount": 0,
+          "CollectCount": 10,
+          "Index": 1
+        }
+      ]
+    },
+    {
+      "Id": 11914,
+      "Name": "Keep the Secret Safe",
+      "QuestLevel": 71,
+      "MinLevel": 69,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 4024,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 11912,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        11912
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 25721,
+          "ItemId": 35493,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 5,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 11918,
+      "Name": "Basic Training",
+      "QuestLevel": 71,
+      "MinLevel": 69,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 4024,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 25722,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 10,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 11919,
+      "Name": "Drake Hunt",
+      "QuestLevel": 71,
+      "MinLevel": 69,
+      "AllowableRaces": 0,
+      "Flags": 128,
+      "QuestSortID": 4024,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 11936,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 35506,
+      "PreviousQuestsIds": [
+        11936
+      ],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 26175,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 1,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 11931,
+      "Name": "Cracking the Code",
+      "QuestLevel": 71,
+      "MinLevel": 69,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 4024,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 11919,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        11919
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 25719,
+          "ItemId": 35629,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 3,
+          "Index": 0
+        },
+        {
+          "Type": "CollectItem",
+          "MobId": 25720,
+          "ItemId": 35628,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 1
+        }
+      ]
+    },
+    {
+      "Id": 11936,
+      "Name": "Hatching a Plan",
+      "QuestLevel": 71,
+      "MinLevel": 69,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 4024,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 11918,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        11918
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 188133,
+          "GameObjectName": "Blue Dragon Egg",
+          "KillCount": 0,
+          "CollectCount": 5,
+          "Index": 0
+        },
+        {
+          "Type": "CollectItem",
+          "MobId": 25728,
+          "ItemId": 35586,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 5,
+          "Index": 1
+        }
+      ]
+    },
+    {
+      "Id": 11943,
+      "Name": "The Cell",
+      "QuestLevel": 71,
+      "MinLevel": 69,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 4024,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 11941,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        11941
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 25712,
+          "ItemId": 35669,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        },
+        {
+          "Type": "CollectItem",
+          "MobId": 25716,
+          "ItemId": 35668,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 1
+        }
+      ]
+    },
+    {
+      "Id": 11946,
+      "Name": "Keristrasza",
+      "QuestLevel": 71,
+      "MinLevel": 69,
+      "AllowableRaces": 0,
+      "Flags": 128,
+      "QuestSortID": 4024,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 11943,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        11943
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 11951,
+      "Name": "Bait and Switch",
+      "QuestLevel": 71,
+      "MinLevel": 69,
+      "AllowableRaces": 0,
+      "Flags": 128,
+      "QuestSortID": 4024,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 11946,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        11946
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 25718,
+          "ItemId": 35685,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 10,
+          "Index": 0
+        },
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 35685,
+          "GameObjectId": 188140,
+          "GameObjectName": "Crystallized Mana",
+          "KillCount": 0,
+          "CollectCount": 10,
+          "Index": 1
+        }
+      ]
+    },
+    {
+      "Id": 11957,
+      "Name": "Saragosa's End",
+      "QuestLevel": 71,
+      "MinLevel": 69,
+      "AllowableRaces": 0,
+      "Flags": 128,
+      "QuestSortID": 4024,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 11951,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 35690,
+      "PreviousQuestsIds": [
+        11951
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 26231,
+          "ItemId": 35709,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 11967,
+      "Name": "Mustering the Reds",
+      "QuestLevel": 71,
+      "MinLevel": 69,
+      "AllowableRaces": 0,
+      "Flags": 128,
+      "QuestSortID": 4024,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 11957,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        11957
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 11969,
+      "Name": "Springing the Trap",
+      "QuestLevel": 71,
+      "MinLevel": 69,
+      "AllowableRaces": 0,
+      "Flags": 128,
+      "QuestSortID": 4024,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 11967,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 44950,
+      "PreviousQuestsIds": [
+        11967
+      ],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 26237,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 1,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 13412,
+      "Name": "Corastrasza",
+      "QuestLevel": 80,
+      "MinLevel": 80,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 4024,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 13413,
+      "Name": "Aces High!",
+      "QuestLevel": 80,
+      "MinLevel": 80,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 4024,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 13412,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        13412
+      ],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 32534,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 5,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    }
+  ]
+}

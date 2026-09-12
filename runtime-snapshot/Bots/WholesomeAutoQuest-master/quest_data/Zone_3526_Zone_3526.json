@@ -1,0 +1,574 @@
+{
+  "ZoneId": 3526,
+  "ZoneName": "Zone_3526",
+  "SubzoneIds": [],
+  "Boundary": null,
+  "Quests": [
+    {
+      "Id": 9279,
+      "Name": "You Survived!",
+      "QuestLevel": 1,
+      "MinLevel": 1,
+      "AllowableRaces": 1024,
+      "Flags": 524424,
+      "QuestSortID": 3526,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 9280,
+      "Name": "Replenishing the Healing Crystals",
+      "QuestLevel": 1,
+      "MinLevel": 1,
+      "AllowableRaces": 1024,
+      "Flags": 524424,
+      "QuestSortID": 3526,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 9279,
+      "NextQuestID": 9409,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        9279
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 16520,
+          "ItemId": 22889,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 8,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 9283,
+      "Name": "Rescue the Survivors!",
+      "QuestLevel": 2,
+      "MinLevel": 1,
+      "AllowableRaces": 1024,
+      "Flags": 524416,
+      "QuestSortID": 3526,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 9409,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        9409
+      ],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 16483,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 1,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 9293,
+      "Name": "What Must Be Done...",
+      "QuestLevel": 2,
+      "MinLevel": 1,
+      "AllowableRaces": 1101,
+      "Flags": 524424,
+      "QuestSortID": 3526,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 10302,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        10302
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 16517,
+          "ItemId": 22934,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 10,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 9294,
+      "Name": "Healing the Lake",
+      "QuestLevel": 3,
+      "MinLevel": 1,
+      "AllowableRaces": 1101,
+      "Flags": 524416,
+      "QuestSortID": 3526,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 9293,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 36,
+      "StartItem": 22955,
+      "PreviousQuestsIds": [
+        9293
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 181433,
+          "GameObjectName": "Irradiated Power Crystal",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 9303,
+      "Name": "Inoculation",
+      "QuestLevel": 4,
+      "MinLevel": 2,
+      "AllowableRaces": 1101,
+      "Flags": 524416,
+      "QuestSortID": 3526,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 22962,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 16534,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 6,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 9305,
+      "Name": "Spare Parts",
+      "QuestLevel": 4,
+      "MinLevel": 2,
+      "AllowableRaces": 1101,
+      "Flags": 524424,
+      "QuestSortID": 3526,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 22978,
+          "GameObjectId": 181283,
+          "GameObjectName": "Emitter Spare Part",
+          "KillCount": 0,
+          "CollectCount": 4,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 9307,
+      "Name": "<DEPRECATED>Compassion",
+      "QuestLevel": 4,
+      "MinLevel": 2,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 3526,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 16537,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 14,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 9309,
+      "Name": "The Missing Scout",
+      "QuestLevel": 5,
+      "MinLevel": 2,
+      "AllowableRaces": 1101,
+      "Flags": 524424,
+      "QuestSortID": 3526,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 9303,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        9303
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 9311,
+      "Name": "Blood Elf Spy",
+      "QuestLevel": 5,
+      "MinLevel": 2,
+      "AllowableRaces": 1101,
+      "Flags": 524424,
+      "QuestSortID": 3526,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 10303,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        10303
+      ],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 16522,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 1,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 9312,
+      "Name": "The Emitter",
+      "QuestLevel": 5,
+      "MinLevel": 3,
+      "AllowableRaces": 1101,
+      "Flags": 524424,
+      "QuestSortID": 3526,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 9311,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        9311
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 9369,
+      "Name": "Replenishing the Healing Crystals",
+      "QuestLevel": 1,
+      "MinLevel": 1,
+      "AllowableRaces": 77,
+      "Flags": 136,
+      "QuestSortID": 3526,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 9409,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 16520,
+          "ItemId": 22889,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 8,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 9371,
+      "Name": "Botanist Taerix",
+      "QuestLevel": 2,
+      "MinLevel": 1,
+      "AllowableRaces": 1101,
+      "Flags": 136,
+      "QuestSortID": 3526,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 9409,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        9409
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 9409,
+      "Name": "Urgent Delivery!",
+      "QuestLevel": 2,
+      "MinLevel": 1,
+      "AllowableRaces": 0,
+      "Flags": 524416,
+      "QuestSortID": 3526,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 9280,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 23568,
+      "PreviousQuestsIds": [
+        9280,
+        9369,
+        9280
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 9799,
+      "Name": "Botanical Legwork",
+      "QuestLevel": 3,
+      "MinLevel": 1,
+      "AllowableRaces": 1101,
+      "Flags": 524424,
+      "QuestSortID": 3526,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 10302,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        10302
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 24416,
+          "GameObjectId": 182127,
+          "GameObjectName": "Corrupted Flower",
+          "KillCount": 0,
+          "CollectCount": 3,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 10302,
+      "Name": "Volatile Mutations",
+      "QuestLevel": 2,
+      "MinLevel": 1,
+      "AllowableRaces": 1101,
+      "Flags": 524424,
+      "QuestSortID": 3526,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 16516,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 8,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 10303,
+      "Name": "The Blood Elves",
+      "QuestLevel": 4,
+      "MinLevel": 1,
+      "AllowableRaces": 1101,
+      "Flags": 524424,
+      "QuestSortID": 3526,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 9309,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        9309
+      ],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 16521,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 10,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 10304,
+      "Name": "Vindicator Aldar",
+      "QuestLevel": 4,
+      "MinLevel": 1,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 3526,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 9294,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 4,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        9294
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    }
+  ]
+}

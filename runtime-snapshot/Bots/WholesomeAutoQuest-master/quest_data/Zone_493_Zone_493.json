@@ -1,0 +1,167 @@
+{
+  "ZoneId": 493,
+  "ZoneName": "Zone_493",
+  "SubzoneIds": [],
+  "Boundary": null,
+  "Quests": [
+    {
+      "Id": 1124,
+      "Name": "Wasteland",
+      "QuestLevel": 55,
+      "MinLevel": 54,
+      "AllowableRaces": 0,
+      "Flags": 0,
+      "QuestSortID": 493,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 17355,
+      "PreviousQuestsIds": [
+        1123,
+        6762
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 1185,
+      "Name": "Under the Chitin Was...",
+      "QuestLevel": 57,
+      "MinLevel": 54,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 493,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 6845,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        6845
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 5527,
+      "Name": "A Reliquary of Purity",
+      "QuestLevel": 60,
+      "MinLevel": 56,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 493,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 22201,
+          "GameObjectId": 179565,
+          "GameObjectName": "Dusty Reliquary",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 6845,
+      "Name": "Uncovering Past Secrets",
+      "QuestLevel": 57,
+      "MinLevel": 54,
+      "AllowableRaces": 0,
+      "Flags": 8,
+      "QuestSortID": 493,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 6844,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        6844
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 8741,
+      "Name": "The Champion Returns",
+      "QuestLevel": 60,
+      "MinLevel": 60,
+      "AllowableRaces": 0,
+      "Flags": 64,
+      "QuestSortID": 493,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 8736,
+      "NextQuestID": 8742,
+      "ExclusiveGroup": -8729,
+      "SpecialFlags": 0,
+      "StartItem": 21139,
+      "PreviousQuestsIds": [
+        8736
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    }
+  ]
+}

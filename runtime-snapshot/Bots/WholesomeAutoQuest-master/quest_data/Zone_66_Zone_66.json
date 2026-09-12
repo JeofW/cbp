@@ -1,0 +1,3405 @@
+{
+  "ZoneId": 66,
+  "ZoneName": "Zone_66",
+  "SubzoneIds": [],
+  "Boundary": null,
+  "Quests": [
+    {
+      "Id": 12503,
+      "Name": "Defend the Stand",
+      "QuestLevel": 76,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 12596,
+      "ExclusiveGroup": -12503,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 28022,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 10,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12504,
+      "Name": "Argent Crusade, We Are Leaving!",
+      "QuestLevel": 76,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12505,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        12505
+      ],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 28041,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 10,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12505,
+      "Name": "New Orders for Sergeant Stackhammer",
+      "QuestLevel": 76,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 128,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12740,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 38319,
+      "PreviousQuestsIds": [
+        12740
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12508,
+      "Name": "Mopping Up",
+      "QuestLevel": 76,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12505,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        12505
+      ],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 28036,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 10,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12510,
+      "Name": "Precious Elemental Fluids",
+      "QuestLevel": 76,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12507,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        12507
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 28118,
+          "ItemId": 38325,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 3,
+          "Index": 0
+        },
+        {
+          "Type": "CollectItem",
+          "MobId": 16570,
+          "ItemId": 38323,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 3,
+          "Index": 1
+        }
+      ]
+    },
+    {
+      "Id": 12512,
+      "Name": "Leave No One Behind",
+      "QuestLevel": 76,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 128,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 38330,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 28136,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 1,
+          "CollectCount": 0,
+          "Index": 0
+        },
+        {
+          "Type": "KillMob",
+          "MobId": 28142,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 1,
+          "CollectCount": 0,
+          "Index": 1
+        },
+        {
+          "Type": "KillMob",
+          "MobId": 28148,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 1,
+          "CollectCount": 0,
+          "Index": 2
+        }
+      ]
+    },
+    {
+      "Id": 12514,
+      "Name": "Mushroom Mixer",
+      "QuestLevel": 76,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12510,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        12510
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 28145,
+          "ItemId": 38326,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 10,
+          "Index": 0
+        },
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 38326,
+          "GameObjectId": 190399,
+          "GameObjectName": "Muddlecap Fungus",
+          "KillCount": 0,
+          "CollectCount": 10,
+          "Index": 1
+        }
+      ]
+    },
+    {
+      "Id": 12516,
+      "Name": "Too Much of a Good Thing",
+      "QuestLevel": 76,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 128,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12514,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 38332,
+      "PreviousQuestsIds": [
+        12514
+      ],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 28151,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 1,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12527,
+      "Name": "Gluttonous Lurkers",
+      "QuestLevel": 76,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12552,
+      "Name": "Death to the Necromagi",
+      "QuestLevel": 76,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12598,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        12598
+      ],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 28257,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 8,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12553,
+      "Name": "Skimmer Spinnerets",
+      "QuestLevel": 76,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12598,
+      "NextQuestID": 12583,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        12598
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 28258,
+          "ItemId": 38514,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 5,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12555,
+      "Name": "A Tangled Skein",
+      "QuestLevel": 76,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 128,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 38515,
+      "PreviousQuestsIds": [
+        12583
+      ],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 28289,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 5,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12557,
+      "Name": "Lab Work",
+      "QuestLevel": 76,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": -12596,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 28293,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 1,
+          "CollectCount": 0,
+          "Index": 0
+        },
+        {
+          "Type": "KillMob",
+          "MobId": 28294,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 1,
+          "CollectCount": 0,
+          "Index": 1
+        },
+        {
+          "Type": "KillMob",
+          "MobId": 28295,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 1,
+          "CollectCount": 0,
+          "Index": 2
+        },
+        {
+          "Type": "KillMob",
+          "MobId": 28296,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 1,
+          "CollectCount": 0,
+          "Index": 3
+        }
+      ]
+    },
+    {
+      "Id": 12562,
+      "Name": "The Drakkari Do Not Need Water Elementals!",
+      "QuestLevel": 76,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 28303,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 10,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12565,
+      "Name": "The Blessing of Zim'Abwa",
+      "QuestLevel": 76,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 28022,
+          "ItemId": 38551,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 10,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12583,
+      "Name": "Crashed Sprayer",
+      "QuestLevel": 76,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 12555,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        12553
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 38560,
+          "GameObjectId": 190537,
+          "GameObjectName": "Crashed Plague Sprayer",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12584,
+      "Name": "Pure Evil",
+      "QuestLevel": 76,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12552,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        12552
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 38562,
+          "GameObjectId": 190540,
+          "GameObjectName": "Chunk of Saronite",
+          "KillCount": 0,
+          "CollectCount": 10,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12596,
+      "Name": "Pa'Troll",
+      "QuestLevel": 76,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 128,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        12503,
+        12740
+      ],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 28042,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 1,
+          "CollectCount": 0,
+          "Index": 0
+        },
+        {
+          "Type": "KillMob",
+          "MobId": 28044,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 1,
+          "CollectCount": 0,
+          "Index": 1
+        },
+        {
+          "Type": "KillMob",
+          "MobId": 28043,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 1,
+          "CollectCount": 0,
+          "Index": 2
+        },
+        {
+          "Type": "KillMob",
+          "MobId": 28205,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 1,
+          "CollectCount": 0,
+          "Index": 3
+        }
+      ]
+    },
+    {
+      "Id": 12597,
+      "Name": "Something for the Pain",
+      "QuestLevel": 76,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 128,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": -12596,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 38552,
+          "GameObjectId": 190534,
+          "GameObjectName": "Mature Water-Poppy",
+          "KillCount": 0,
+          "CollectCount": 5,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12598,
+      "Name": "Throwing Down",
+      "QuestLevel": 76,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 128,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": -12596,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 38574,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 28352,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 5,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12599,
+      "Name": "Creature Comforts",
+      "QuestLevel": 76,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 128,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": -12596,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 38563,
+          "GameObjectId": 190541,
+          "GameObjectName": "Dead Thornwood",
+          "KillCount": 0,
+          "CollectCount": 20,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12606,
+      "Name": "Cocooned!",
+      "QuestLevel": 76,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12598,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        12598
+      ],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 28415,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 3,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12609,
+      "Name": "Stocking the Shelves",
+      "QuestLevel": 76,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12799,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        12799
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 28221,
+          "ItemId": 38610,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 7,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12610,
+      "Name": "Clipping Their Wings",
+      "QuestLevel": 76,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12799,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        12799
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 28233,
+          "ItemId": 38620,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 7,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12615,
+      "Name": "The Blessing of Zim'Torga",
+      "QuestLevel": 77,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12516,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        12516
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 28022,
+          "ItemId": 38551,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 10,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12622,
+      "Name": "The Leaders at Jin'Alai",
+      "QuestLevel": 77,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12623,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        12623
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 38637,
+          "GameObjectId": 190614,
+          "GameObjectName": "Treasure of Kutube'sa",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        },
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 38639,
+          "GameObjectId": 190613,
+          "GameObjectName": "Treasure of Gawanil",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 1
+        },
+        {
+          "Type": "CollectItem",
+          "MobId": 28388,
+          "ItemId": 38638,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 2
+        },
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 38638,
+          "GameObjectId": 24729,
+          "GameObjectName": "Bonfire",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 3
+        }
+      ]
+    },
+    {
+      "Id": 12623,
+      "Name": "To the Witch Doctor",
+      "QuestLevel": 77,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12516,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        12516
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12627,
+      "Name": "Breaking Through Jin'Alai",
+      "QuestLevel": 77,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12623,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        12623
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 190618,
+          "GameObjectName": "Blue Cauldron",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        },
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 190630,
+          "GameObjectName": "Green Cauldron",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 1
+        },
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 190619,
+          "GameObjectName": "Purple Cauldron",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 2
+        },
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 190620,
+          "GameObjectName": "Red Cauldron",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 3
+        }
+      ]
+    },
+    {
+      "Id": 12628,
+      "Name": "To Speak With Har'koa",
+      "QuestLevel": 77,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12627,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        12627
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12629,
+      "Name": "You Can Run, But You Can't Hide",
+      "QuestLevel": 75,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12637,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        12637
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 28564,
+          "ItemId": 38686,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 5,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12630,
+      "Name": "Kickin' Nass and Takin' Manes",
+      "QuestLevel": 75,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 128,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12884,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 38659,
+      "PreviousQuestsIds": [
+        12884
+      ],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 28523,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 10,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12632,
+      "Name": "But First My Offspring",
+      "QuestLevel": 77,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 128,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12628,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 38676,
+      "PreviousQuestsIds": [
+        12628
+      ],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 28526,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 7,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12635,
+      "Name": "Relics of the Snow Leopard Goddess",
+      "QuestLevel": 77,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 28402,
+          "ItemId": 38677,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 10,
+          "Index": 0
+        },
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 38677,
+          "GameObjectId": 190633,
+          "GameObjectName": "Har'koan Relic",
+          "KillCount": 0,
+          "CollectCount": 10,
+          "Index": 1
+        }
+      ]
+    },
+    {
+      "Id": 12637,
+      "Name": "Near Miss",
+      "QuestLevel": 75,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 128,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12631,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 38678,
+      "PreviousQuestsIds": [
+        12631
+      ],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 28532,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 1,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12638,
+      "Name": "Close Call",
+      "QuestLevel": 75,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 128,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12633,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 38680,
+      "PreviousQuestsIds": [
+        12633
+      ],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 28532,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 1,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12639,
+      "Name": "The Frozen Earth",
+      "QuestLevel": 77,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12622,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        12622
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 28411,
+          "ItemId": 38681,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 7,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12640,
+      "Name": "Sealing the Rifts",
+      "QuestLevel": 77,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12622,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        12622
+      ],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 28452,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 7,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12642,
+      "Name": "Spirit of Rhunok",
+      "QuestLevel": 77,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12632,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        12632
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12643,
+      "Name": "Silver Lining",
+      "QuestLevel": 75,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 128,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12638,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        12638
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 28564,
+          "ItemId": 38686,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 5,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12646,
+      "Name": "My Prophet, My Enemy",
+      "QuestLevel": 77,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12642,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        12642
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 28442,
+          "ItemId": 38695,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12647,
+      "Name": "An End to the Suffering",
+      "QuestLevel": 77,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12646,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        12646
+      ],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 28416,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 1,
+          "CollectCount": 0,
+          "Index": 0
+        },
+        {
+          "Type": "CollectItem",
+          "MobId": 28575,
+          "ItemId": 38696,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 1
+        }
+      ]
+    },
+    {
+      "Id": 12648,
+      "Name": "Dressing Down",
+      "QuestLevel": 75,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 128,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12629,
+      "NextQuestID": 12661,
+      "ExclusiveGroup": 12648,
+      "SpecialFlags": 0,
+      "StartItem": 38699,
+      "PreviousQuestsIds": [
+        12629
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12649,
+      "Name": "Suit Up!",
+      "QuestLevel": 75,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 128,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12643,
+      "NextQuestID": 12661,
+      "ExclusiveGroup": 12648,
+      "SpecialFlags": 0,
+      "StartItem": 38699,
+      "PreviousQuestsIds": [
+        12643
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12650,
+      "Name": "Plundering Their Own",
+      "QuestLevel": 77,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12635,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        12635
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 28417,
+          "ItemId": 38700,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 7,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12652,
+      "Name": "Feedin' Da Goolz",
+      "QuestLevel": 75,
+      "MinLevel": 74,
+      "AllowableRaces": 1791,
+      "Flags": 128,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 38701,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 28591,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 10,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12653,
+      "Name": "Back to Har'koa",
+      "QuestLevel": 77,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12647,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        12647
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12655,
+      "Name": "The Blessing of Zim'Rhuk",
+      "QuestLevel": 77,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12632,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        12632
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 28022,
+          "ItemId": 38551,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 10,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12659,
+      "Name": "Scalps!",
+      "QuestLevel": 77,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 128,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12640,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 38731,
+      "PreviousQuestsIds": [
+        12640
+      ],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 28622,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 10,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12661,
+      "Name": "Infiltrating Voltarus",
+      "QuestLevel": 75,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 128,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 41390,
+      "PreviousQuestsIds": [
+        12648,
+        12649
+      ],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 28738,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 1,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12662,
+      "Name": "Bringing Down Heb'Jin",
+      "QuestLevel": 77,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 128,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12640,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 39041,
+      "PreviousQuestsIds": [
+        12640
+      ],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 28636,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 1,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12663,
+      "Name": "Reunited",
+      "QuestLevel": 75,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 128,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12649,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 12663,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        12238,
+        12649
+      ],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 28663,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 1,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12664,
+      "Name": "Dark Horizon",
+      "QuestLevel": 75,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 128,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12648,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 12663,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        12648
+      ],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 28663,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 1,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12666,
+      "Name": "Preparations for the Underworld",
+      "QuestLevel": 77,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12665,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        12665
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 28402,
+          "ItemId": 39150,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 8,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12667,
+      "Name": "Seek the Wind Serpent Goddess",
+      "QuestLevel": 77,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12666,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        12666
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12668,
+      "Name": "Foundation for Revenge",
+      "QuestLevel": 77,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 128,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12672,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        12672
+      ],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 28713,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 12,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12669,
+      "Name": "So Far, So Bad",
+      "QuestLevel": 75,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 128,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12661,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 32,
+      "StartItem": 39154,
+      "PreviousQuestsIds": [
+        12661
+      ],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 28631,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 1,
+          "CollectCount": 0,
+          "Index": 0
+        },
+        {
+          "Type": "KillMob",
+          "MobId": 28739,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 5,
+          "CollectCount": 0,
+          "Index": 1
+        }
+      ]
+    },
+    {
+      "Id": 12672,
+      "Name": "Setting the Stage",
+      "QuestLevel": 77,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12667,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        12667
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 39156,
+          "GameObjectId": 190717,
+          "GameObjectName": "Underworld Power Fragment",
+          "KillCount": 0,
+          "CollectCount": 10,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12673,
+      "Name": "It Rolls Downhill",
+      "QuestLevel": 75,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 128,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": -12669,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 39157,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 28740,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 7,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12674,
+      "Name": "Hell Hath a Fury",
+      "QuestLevel": 77,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 128,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12668,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 39158,
+      "PreviousQuestsIds": [
+        12668
+      ],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 28753,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 1,
+          "CollectCount": 0,
+          "Index": 0
+        },
+        {
+          "Type": "KillMob",
+          "MobId": 28755,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 1,
+          "CollectCount": 0,
+          "Index": 1
+        },
+        {
+          "Type": "KillMob",
+          "MobId": 28757,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 1,
+          "CollectCount": 0,
+          "Index": 2
+        }
+      ]
+    },
+    {
+      "Id": 12675,
+      "Name": "One Last Thing",
+      "QuestLevel": 77,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 128,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12674,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 39166,
+      "PreviousQuestsIds": [
+        12674
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12676,
+      "Name": "Sabotage",
+      "QuestLevel": 75,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 128,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12677,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 39165,
+      "PreviousQuestsIds": [
+        12677
+      ],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 28777,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 5,
+          "CollectCount": 0,
+          "Index": 0
+        },
+        {
+          "Type": "KillMob",
+          "MobId": 28786,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 1,
+          "CollectCount": 0,
+          "Index": 1
+        },
+        {
+          "Type": "KillMob",
+          "MobId": 28928,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 1,
+          "CollectCount": 0,
+          "Index": 2
+        }
+      ]
+    },
+    {
+      "Id": 12677,
+      "Name": "Hazardous Materials",
+      "QuestLevel": 75,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 128,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12669,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        12669
+      ],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 28762,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 1,
+          "CollectCount": 0,
+          "Index": 0
+        },
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 39159,
+          "GameObjectId": 190720,
+          "GameObjectName": "Harvested Blight Crystal",
+          "KillCount": 0,
+          "CollectCount": 5,
+          "Index": 1
+        }
+      ]
+    },
+    {
+      "Id": 12684,
+      "Name": "Blood of a Dead God",
+      "QuestLevel": 77,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12675,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        12675
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 28779,
+          "ItemId": 39167,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 7,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12685,
+      "Name": "You Reap What You Sow",
+      "QuestLevel": 77,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 128,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12684,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 39187,
+      "PreviousQuestsIds": [
+        12684
+      ],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 28795,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 1,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12686,
+      "Name": "Zero Tolerance",
+      "QuestLevel": 75,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 128,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": -12677,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 39206,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 28793,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 1,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12690,
+      "Name": "Fuel for the Fire",
+      "QuestLevel": 75,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 128,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": -12676,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 39238,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 29099,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 60,
+          "CollectCount": 0,
+          "Index": 0
+        },
+        {
+          "Type": "KillMob",
+          "MobId": 28873,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 3,
+          "CollectCount": 0,
+          "Index": 1
+        }
+      ]
+    },
+    {
+      "Id": 12707,
+      "Name": "Wooly Justice",
+      "QuestLevel": 77,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 128,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12685,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 39268,
+      "PreviousQuestsIds": [
+        12685
+      ],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 28876,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 12,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12708,
+      "Name": "Enchanted Tiki Warriors",
+      "QuestLevel": 77,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12685,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        12685
+      ],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 28882,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 12,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12709,
+      "Name": "Hexed Caches",
+      "QuestLevel": 77,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12685,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        12685
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 28882,
+          "ItemId": 39301,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 12,
+          "Index": 0
+        },
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 39301,
+          "GameObjectId": 190836,
+          "GameObjectName": "Zol'Maz Stronghold Cache",
+          "KillCount": 0,
+          "CollectCount": 12,
+          "Index": 1
+        },
+        {
+          "Type": "CollectItem",
+          "MobId": 28882,
+          "ItemId": 39305,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 3,
+          "Index": 2
+        }
+      ]
+    },
+    {
+      "Id": 12710,
+      "Name": "Disclosure",
+      "QuestLevel": 75,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 128,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12690,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 39319,
+      "PreviousQuestsIds": [
+        12690
+      ],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 28929,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 1,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12712,
+      "Name": "The Key of Warlord Zol'Maz",
+      "QuestLevel": 77,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12685,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        12685
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 28902,
+          "ItemId": 39318,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        },
+        {
+          "Type": "CollectItem",
+          "MobId": 28918,
+          "ItemId": 39315,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 1
+        },
+        {
+          "Type": "CollectItem",
+          "MobId": 28916,
+          "ItemId": 39316,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 2
+        },
+        {
+          "Type": "CollectItem",
+          "MobId": 28917,
+          "ItemId": 39313,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 3
+        }
+      ]
+    },
+    {
+      "Id": 12713,
+      "Name": "Betrayal",
+      "QuestLevel": 76,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 128,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12676,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 39664,
+      "PreviousQuestsIds": [
+        12676
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 40425,
+          "GameObjectId": 191458,
+          "GameObjectName": "Drakuru's Skull",
+          "KillCount": 0,
+          "CollectCount": 1,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12740,
+      "Name": "Parachutes for the Argent Crusade",
+      "QuestLevel": 76,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 128,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 12596,
+      "ExclusiveGroup": -12503,
+      "SpecialFlags": 0,
+      "StartItem": 39615,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 29060,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 10,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12789,
+      "Name": "Into the Breach!",
+      "QuestLevel": 75,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12545,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 12789,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        12545
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12792,
+      "Name": "First Things First",
+      "QuestLevel": 75,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 12789,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12793,
+      "Name": "Smoke on the Horizon",
+      "QuestLevel": 75,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 12789,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12795,
+      "Name": "Taking a Stand",
+      "QuestLevel": 75,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12630,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        12630
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12799,
+      "Name": "Siphoning the Spirits",
+      "QuestLevel": 75,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 29129,
+          "ItemId": 40066,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 5,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12859,
+      "Name": "This Just In: Fire Still Hot!",
+      "QuestLevel": 75,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 128,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 32,
+      "StartItem": 41131,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 29692,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 15,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12861,
+      "Name": "Trolls Is Gone Crazy!",
+      "QuestLevel": 75,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 29686,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 8,
+          "CollectCount": 0,
+          "Index": 0
+        },
+        {
+          "Type": "CollectItem",
+          "MobId": 29654,
+          "ItemId": 41161,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 8,
+          "Index": 1
+        }
+      ]
+    },
+    {
+      "Id": 12883,
+      "Name": "Orders From Drakuru",
+      "QuestLevel": 75,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 128,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12902,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 41262,
+      "PreviousQuestsIds": [
+        12902
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12884,
+      "Name": "The Ebon Watch",
+      "QuestLevel": 75,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 128,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12883,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 41262,
+      "PreviousQuestsIds": [
+        12883
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12894,
+      "Name": "Crusader Forward Camp",
+      "QuestLevel": 75,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12883,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        12883
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12901,
+      "Name": "Making Something Out Of Nothing",
+      "QuestLevel": 76,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12894,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        12894
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 29452,
+          "ItemId": 41399,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 10,
+          "Index": 0
+        },
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 41399,
+          "GameObjectId": 191780,
+          "GameObjectName": "Scourge Scrap Metal",
+          "KillCount": 0,
+          "CollectCount": 10,
+          "Index": 1
+        }
+      ]
+    },
+    {
+      "Id": 12902,
+      "Name": "In Search Of Answers",
+      "QuestLevel": 75,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12903,
+      "Name": "That's What Friends Are For...",
+      "QuestLevel": 76,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12894,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        12894
+      ],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 29468,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 1,
+          "CollectCount": 0,
+          "Index": 0
+        },
+        {
+          "Type": "KillMob",
+          "MobId": 29455,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 1,
+          "CollectCount": 0,
+          "Index": 1
+        },
+        {
+          "Type": "KillMob",
+          "MobId": 29454,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 1,
+          "CollectCount": 0,
+          "Index": 2
+        }
+      ]
+    },
+    {
+      "Id": 12904,
+      "Name": "Light Won't Grant Me Vengeance",
+      "QuestLevel": 76,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12894,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        12894
+      ],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 29882,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 15,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12912,
+      "Name": "A Great Storm Approaches",
+      "QuestLevel": 76,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12894,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        12894
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12914,
+      "Name": "Gymer's Salvation",
+      "QuestLevel": 76,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12912,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        12912
+      ],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 29646,
+          "ItemId": 41504,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 6,
+          "Index": 0
+        },
+        {
+          "Type": "CollectItem",
+          "MobId": 29436,
+          "ItemId": 41503,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 6,
+          "Index": 1
+        }
+      ]
+    },
+    {
+      "Id": 12916,
+      "Name": "Our Only Hope",
+      "QuestLevel": 76,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 128,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12914,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 41507,
+      "PreviousQuestsIds": [
+        12914
+      ],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 29928,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 1,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 12919,
+      "Name": "The Storm King's Vengeance",
+      "QuestLevel": 76,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12916,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        12916
+      ],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 29943,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 100,
+          "CollectCount": 0,
+          "Index": 0
+        },
+        {
+          "Type": "KillMob",
+          "MobId": 29872,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 1,
+          "CollectCount": 0,
+          "Index": 1
+        },
+        {
+          "Type": "KillMob",
+          "MobId": 29895,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 1,
+          "CollectCount": 0,
+          "Index": 2
+        },
+        {
+          "Type": "KillMob",
+          "MobId": 29821,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 1,
+          "CollectCount": 0,
+          "Index": 3
+        }
+      ]
+    },
+    {
+      "Id": 13097,
+      "Name": "Unfinished Business",
+      "QuestLevel": 78,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12730,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [
+        12730
+      ],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 13099,
+      "Name": "Just Checkin'",
+      "QuestLevel": 78,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "TurnInOnly",
+          "MobId": 0,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 0,
+          "Index": 0
+        }
+      ]
+    },
+    {
+      "Id": 13549,
+      "Name": "Tails Up",
+      "QuestLevel": 77,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 12635,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 44890,
+      "PreviousQuestsIds": [
+        12635
+      ],
+      "Objectives": [
+        {
+          "Type": "KillMob",
+          "MobId": 33005,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 3,
+          "CollectCount": 0,
+          "Index": 0
+        },
+        {
+          "Type": "KillMob",
+          "MobId": 33006,
+          "ItemId": 0,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 3,
+          "CollectCount": 0,
+          "Index": 1
+        }
+      ]
+    },
+    {
+      "Id": 13556,
+      "Name": "Eggs for Dubra'Jin",
+      "QuestLevel": 77,
+      "MinLevel": 74,
+      "AllowableRaces": 0,
+      "Flags": 136,
+      "QuestSortID": 66,
+      "QuestInfoID": 0,
+      "RequiredFactionId1": 0,
+      "RequiredFactionId2": 0,
+      "PrevQuestID": 0,
+      "NextQuestID": 0,
+      "ExclusiveGroup": 0,
+      "SpecialFlags": 0,
+      "StartItem": 0,
+      "PreviousQuestsIds": [],
+      "Objectives": [
+        {
+          "Type": "CollectItem",
+          "MobId": 26852,
+          "ItemId": 44921,
+          "GameObjectId": 0,
+          "GameObjectName": "",
+          "KillCount": 0,
+          "CollectCount": 12,
+          "Index": 0
+        },
+        {
+          "Type": "CollectFromGameObject",
+          "MobId": 0,
+          "ItemId": 44921,
+          "GameObjectId": 194126,
+          "GameObjectName": "Gundrak Raptor Egg",
+          "KillCount": 0,
+          "CollectCount": 12,
+          "Index": 1
+        }
+      ]
+    }
+  ]
+}
