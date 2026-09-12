@@ -1,0 +1,21 @@
+<HBProfile>
+  <Name>Test Quest</Name>
+
+  <MinLevel>1</MinLevel>
+  <MaxLevel>9999999</MaxLevel>
+
+  <MinDurability>0</MinDurability>
+  <MinFreeBagSlots>2</MinFreeBagSlots>
+
+  <AvoidMobs />
+  <Blackspots />
+  <Mailboxes />
+
+  <QuestOrder>
+
+  
+    <TurnIn QuestName="Find the Lost Guards" QuestId="37" TurnInName="A half-eaten body" TurnInId="55" X="-9335.764" Y="-986.4834" Z="67.69179" />
+
+
+  </QuestOrder>
+</HBProfile>

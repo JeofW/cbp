@@ -1,0 +1,530 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+	<Name>[QO-N-M][Solstice][58-90][riding-skill-training]</Name>
+   
+	<MinLevel>58</MinLevel>
+	<MaxLevel>101</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	
+	<MailGrey>False</MailGrey>
+	<MailWhite>True</MailWhite>
+	<MailGreen>False</MailGreen>
+	<MailBlue>False</MailBlue>
+	<MailPurple>True</MailPurple>
+   
+	<SellGrey>True</SellGrey>
+	<SellWhite>True</SellWhite>
+	<SellGreen>True</SellGreen>
+	<SellBlue>True</SellBlue>
+	<SellPurple>False</SellPurple>
+
+	<AvoidMobs>
+	</AvoidMobs>
+	
+	<Blackspots>
+		<Blackspot X="-8830.189" Y="616.5771" Z="94.05379" Radius="1" />
+	</Blackspots>
+
+	<Mailboxes>
+	</Mailboxes>
+ 
+	<Vendors>
+	</Vendors>
+	
+	<ProtectedItems>	
+	</ProtectedItems>
+
+	<Factions></Factions>
+	
+	<QuestOrder>
+
+		<!-- UserSettings -->
+			<CustomBehavior File="UserSettings"
+							FindMountAutomatically="True"
+							GroundMountFarmingMode="False"
+							HarvestHerbs="False"
+							HarvestMinerals="False"
+							KillBetweenHotspots="True"
+							LogoutForInactivity="False"
+							LogoutInactivityUseForceQuit="False"
+							LootMobs="True"
+							LootRadius="35"
+							MountName=""
+							NinjaSkin="False"
+							RessAtSpiritHealers="False"
+							SkinMobs="False"
+							UseMount="True" 
+							UseRandomMount="False" />
+	
+		<!-- If our level is 60-90 -->
+		<If Condition="Me.Level &gt;= 60 &amp;&amp; Me.Level &lt; 90">
+
+			<!-- Profile message - Movement procedures initialized -->			
+			<CustomBehavior File="Message" 
+							Text="Movement procedures initialized." 
+							LogColor="Fuchsia" />
+
+			<!-- If we are Alliance -->
+			<If Condition="Me.IsAlliance">
+			
+				<!-- If we are in Northrend -->
+				<If Condition="Me.MapId == 571">
+				
+					<CustomBehavior File="Message" 
+									Text="We are in Northrend." 
+									LogColor="Cyan" />
+
+					<!-- Profile message - Flying to Dalaran -->
+					<CustomBehavior File="Message" 
+									Text="Flying to Dalaran." 
+									LogColor="Cyan" />
+				
+					<!-- Fly to - last hilltop before Dalaran -->
+					<CustomBehavior File="FlyTo" 
+									X="6285.581" Y="396.274" Z="692.8207" />
+
+					<!-- CTM to - hover point in Dalaran -->
+					<CustomBehavior File="MyCTM" 
+									X="5815.257" Y="607.0639" Z="811.6552" />	
+
+					<!-- CTM to - Dalaran riding trainer -->
+					<CustomBehavior File="MyCTM" 
+									X="5812.728" Y="461.4962" Z="658.7665" />
+
+					<!-- Custom behavior - ForcedDismount -->				
+					<CustomBehavior File="ForcedDismount" />
+
+				</If>	<!-- If we are in Northrend -->
+				
+				
+				<!-- ******************************************************************* -->
+				
+				
+				<!-- If we are in Botanica -->
+				<If Condition="Me.MapId == 553">
+				
+					<!-- Profile message - Botanica detected. Exiting the instance --> 
+					<CustomBehavior File="Message" 
+									Text="Botanica detected. Exiting the instance."
+									LogColor="Fuchsia" />
+
+					<!-- Move to the zone in location -->
+					<MoveTo X="40.5531" Y="-28.7947" Z="-1.11728" />
+					
+					<!-- Go through the portal -->
+					<CustomBehavior File="Misc\InInstance" 
+									X="50.22644" Y="-38.28931" Z="-1.098699" />
+					
+					<!-- Move to - zone out location -->
+					<MoveTo X="3409.85" Y="1486.26" Z="182.837" />
+					
+				</If>	<!-- If we are in Botanica -->
+				
+				<!-- If we are in Outland -->
+				<If Condition="Me.MapId == 530">
+				
+					<!-- If we are below level 68 -->
+					<If Condition="Me.Level &lt; 68">
+				
+						<!-- Profile message - We are in Outland -->
+						<CustomBehavior File="Message" 
+										Text="We are in Outland." 
+										LogColor="Cyan" />
+										
+						<!-- Profile message - Moving to Shattrath portals -->				
+						<CustomBehavior File="Message" 
+										Text="Moving to Shattrath portals." 
+										LogColor="Cyan" />				
+										
+						<!-- Move to Shattrath -->
+						<MoveTo X="-1837.23" Y="5301.9" Z="-12.43" />
+						
+						<!-- Alliance -->
+						<If Condition="Me.IsAlliance">
+						
+							<!-- Profile message - We are Alliance -->
+							<CustomBehavior File="Message" 
+											Text="We are Alliance." 
+											LogColor="Cyan" />
+											
+							<!-- Profile message - Moving to Shattrath portals -->				
+							<CustomBehavior File="Message" 
+											Text="Moving to Shattrath portals." 
+											LogColor="Cyan" />		
+										
+							<!-- Portal to Stormwind -->
+							<MoveTo X="-1892.733" Y="5390.708" Z="-12.42776" />
+							
+							<!-- Interact with Stormwind portal -->
+							<CustomBehavior File="InteractWith" 
+											MobId="183325" 
+											ObjectType="Gameobject" 
+											Range="55.1" 
+											NumOfTimes="1"
+											WaitTime="10000" 
+											X="-1894.18921" Y="5387.93945" Z="-12.4282484" />
+							
+							<!-- Else we are Horde -->
+							<Else Condition="Me.IsHorde">
+							
+								<!-- Profile message - We are Horde -->
+								<CustomBehavior File="Message" 
+												Text="We are Horde." 
+												LogColor="Cyan" />
+											
+								<!-- Profile message - Moving to the Orgrimmar portal -->			
+								<CustomBehavior File="Message" 
+												Text="Moving to the Orgrimmar portal." 
+												LogColor="Cyan" />	
+							
+								<!-- Portal to Orgrimmar -->
+								<MoveTo X="-1897.926" Y="5395.339" Z="-12.42868" />
+								
+								<!-- Interact with Orgrimmar portal -->
+								<CustomBehavior File="InteractWith" 
+												MobId="183323" 
+												ObjectType="Gameobject" 
+												Range="55.1" 
+												NumOfTimes="1"
+												WaitTime="10000" 
+												X="-1899.44971" Y="5393.01" Z="-12.4283171" />
+												
+							</Else>	<!-- Else we are Horde -->
+							
+						</If> <!-- Alliance -->
+					
+					</If>	<!-- If we are below level 68 -->
+
+					<!-- If we are level 68+ -->
+					<If Condition="Me.Level &gt;= 68">
+				
+						<!-- Profile message - We are in Outland -->
+						<CustomBehavior File="Message" 
+										Text="We are in Outland." 
+										LogColor="Cyan" />
+										
+						<!-- Profile message - Moving to Shattrath portals -->				
+						<CustomBehavior File="Message" 
+										Text="Moving to Shattrath portals." 
+										LogColor="Cyan" />				
+										
+						<!-- Move to Shattrath -->
+						<MoveTo X="-1837.23" Y="5301.9" Z="-12.43" />
+
+						<!-- If we are Alliance -->
+						<If Condition="Me.IsAlliance">
+						
+							<!-- Profile message - We are Alliance -->
+							<CustomBehavior File="Message" 
+											Text="We are Alliance." 
+											LogColor="Cyan" />
+											
+							<!-- Profile message - Moving to Shattrath portals -->				
+							<CustomBehavior File="Message" 
+											Text="Moving to Shattrath portals." 
+											LogColor="Cyan" />		
+										
+							<!-- Portal to Stormwind -->
+							<CustomBehavior File="FlyTo" 
+											X="-1892.733" Y="5390.708" Z="-12.42776" />
+							
+							<!-- Interact with Stormwind portal -->
+							<CustomBehavior File="InteractWith" 
+											MobId="183325" 
+											ObjectType="Gameobject" 
+											Range="55.1" 
+											NumOfTimes="1"
+											WaitTime="10000" 
+											X="-1894.18921" Y="5387.93945" Z="-12.4282484" />
+							
+							<!-- Else we are Horde -->
+							<Else Condition="Me.IsHorde">
+							
+								<!-- Profile message - We are Horde -->
+								<CustomBehavior File="Message" 
+												Text="We are Horde." 
+												LogColor="Cyan" />
+											
+								<!-- Profile message - Moving to the Orgrimmar portal -->			
+								<CustomBehavior File="Message" 
+												Text="Moving to the Orgrimmar portal." 
+												LogColor="Cyan" />	
+							
+								<!-- Portal to Orgrimmar -->
+								<CustomBehavior File="FlyTo" 
+												X="-1897.926" Y="5395.339" Z="-12.42868" />
+								
+								<!-- Interact with Orgrimmar portal -->
+								<CustomBehavior File="InteractWith" 
+												MobId="183323" 
+												ObjectType="Gameobject" 
+												Range="55.1" 
+												NumOfTimes="1"
+												WaitTime="10000" 
+												X="-1899.44971" Y="5393.01" Z="-12.4283171" />
+												
+							</Else>	<!-- Else we are Horde -->
+							
+						</If> 	<!-- If we are Alliance -->
+					
+					</If>	<!-- If we are level 68+ -->
+					
+				</If>	<!-- If we are in Outland -->
+				
+				
+				<!-- ******************************************************************* -->
+				
+				
+				<!-- If we are in Kalimdor -->
+				<If Condition="Me.MapId == 1">
+				
+					<CustomBehavior File="Message" 
+									Text="We are in Kalimdor." 
+									LogColor="Cyan" />
+
+						
+						
+				</If>	<!-- If we are in Kalimdor -->
+				
+				
+				<!-- ******************************************************************* -->
+				
+				
+				<!-- If we are in Eastern Kingdoms, but not in Stormwind -->
+				<If Condition="Me.MapId == 0">
+				
+					<CustomBehavior File="Message" 
+									Text="We are in Eastern Kingdoms, but not in Stormwind." 
+									LogColor="Cyan" />
+									
+					<!-- Profile message - Moving to the Stormwind riding trainer -->
+					<CustomBehavior File="Message" 
+									Text="Moving to the Stormwind riding trainer."
+									LogColor="Orange" />
+					
+					<!-- Move to - Stormwind riding trainer -->
+					<MoveTo X="-8841.06" Y="489.656" Z="109.607" />					
+	
+				</If>	<!-- If we are in Eastern Kingdoms, but not in Stormwind -->
+
+			</If>	<!-- If we are Alliance -->
+
+			
+			<!-- ************************************************************ Horde ********************************************************************** -->
+			
+			
+			<!-- If we are Horde -->
+			<If Condition="Me.IsHorde">
+			
+				<!-- If we are in Northrend -->
+				<If Condition="Me.MapId == 571">
+				
+					<CustomBehavior File="Message" 
+									Text="We are in Northrend." 
+									LogColor="Cyan" />
+
+					<!-- Profile message - Flying to Dalaran -->
+					<CustomBehavior File="Message" 
+									Text="Flying to Dalaran." 
+									LogColor="Cyan" />
+				
+					<!-- Fly to - last hilltop before Dalaran -->
+					<CustomBehavior File="FlyTo" 
+									X="6285.581" Y="396.274" Z="692.8207" />
+
+					<!-- CTM to - hover point in Dalaran -->
+					<CustomBehavior File="MyCTM" 
+									X="5815.257" Y="607.0639" Z="811.6552" />	
+
+					<!-- CTM to - Dalaran riding trainer -->
+					<CustomBehavior File="MyCTM" 
+									X="5812.728" Y="461.4962" Z="658.7665" />
+
+					<!-- Custom behavior - ForcedDismount -->				
+					<CustomBehavior File="ForcedDismount" />
+
+				</If>	<!-- If we are in Northrend -->
+				
+				
+				<!-- ******************************************************************* -->
+				
+				
+				<!-- If we are in Botanica -->
+				<If Condition="Me.MapId == 553">
+				
+					<!-- Profile message - Botanica detected. Exiting the instance --> 
+					<CustomBehavior File="Message" 
+									Text="Botanica detected. Exiting the instance."
+									LogColor="Fuchsia" />
+
+					<!-- Move to the zone in location -->
+					<MoveTo X="40.5531" Y="-28.7947" Z="-1.11728" />
+					
+					<!-- Go through the portal -->
+					<CustomBehavior File="Misc\InInstance" 
+									X="50.22644" Y="-38.28931" Z="-1.098699" />
+					
+					<!-- Move to - zone out location -->
+					<MoveTo X="3409.85" Y="1486.26" Z="182.837" />
+					
+				</If>	<!-- If we are in Botanica -->
+				
+				<!-- If we are in Outland -->
+				<If Condition="Me.MapId == 530">
+				
+					<!-- Profile message - We are in Outland -->
+					<CustomBehavior File="Message" 
+									Text="We are in Outland." 
+									LogColor="Cyan" />
+									
+					<!-- Profile message - Moving to Shattrath portals -->				
+					<CustomBehavior File="Message" 
+									Text="Moving to Shattrath portals." 
+									LogColor="Cyan" />				
+									
+					<!-- Move to Shattrath -->
+					<MoveTo X="-1837.23" Y="5301.9" Z="-12.43" />
+
+					<!-- Alliance -->
+					<If Condition="Me.IsAlliance">
+					
+						<!-- Profile message - We are Alliance -->
+						<CustomBehavior File="Message" 
+										Text="We are Alliance." 
+										LogColor="Cyan" />
+										
+						<!-- Profile message - Moving to Shattrath portals -->				
+						<CustomBehavior File="Message" 
+										Text="Moving to Shattrath portals." 
+										LogColor="Cyan" />		
+									
+						<!-- Portal to Stormwind -->
+						<CustomBehavior File="FlyTo" 
+										X="-1892.733" Y="5390.708" Z="-12.42776" />
+						
+						<!-- Interact with Stormwind portal -->
+						<CustomBehavior File="InteractWith" 
+										MobId="183325" 
+										ObjectType="Gameobject" 
+										Range="55.1" 
+										NumOfTimes="1"
+										WaitTime="10000" 
+										X="-1894.18921" Y="5387.93945" Z="-12.4282484" />
+						
+						<!-- Else we are Horde -->
+						<Else Condition="Me.IsHorde">
+						
+							<!-- Profile message - We are Horde -->
+							<CustomBehavior File="Message" 
+											Text="We are Horde." 
+											LogColor="Cyan" />
+										
+							<!-- Profile message - Moving to the Orgrimmar portal -->			
+							<CustomBehavior File="Message" 
+											Text="Moving to the Orgrimmar portal." 
+											LogColor="Cyan" />	
+						
+							<!-- Portal to Orgrimmar -->
+							<CustomBehavior File="FlyTo" 
+											X="-1897.926" Y="5395.339" Z="-12.42868" />
+							
+							<!-- Interact with Orgrimmar portal -->
+							<CustomBehavior File="InteractWith" 
+											MobId="183323" 
+											ObjectType="Gameobject" 
+											Range="55.1" 
+											NumOfTimes="1"
+											WaitTime="10000" 
+											X="-1899.44971" Y="5393.01" Z="-12.4283171" />
+											
+						</Else>	<!-- Else we are Horde -->
+						
+					</If> <!-- Alliance -->
+					
+				</If>	<!-- If we are in Outland -->
+				
+				
+				<!-- ******************************************************************* -->
+				
+				
+				<!-- If we are in Eastern Kingdoms -->
+				<If Condition="Me.MapId == 0">
+				
+					<CustomBehavior File="Message" 
+									Text="We are in Eastern Kingdoms." 
+									LogColor="Cyan" />
+									
+					<!-- Move to - Undercity zeppelin -->				
+					<MoveTo X="2066.09" Y="288.9603" Z="97.03149" />				
+	
+					<!-- Forced dismount -->		
+					<CustomBehavior File="ForcedDismount" />
+
+					<!-- Custom behavior - UseTransport - move to Orgrimmar -->
+					<CustomBehavior File="UseTransport" 
+									TransportId="164871" 
+									WaitAtX="2066.09" 
+									WaitAtY="288.9603" 
+									WaitAtZ="97.03149"								
+									TransportStartX="2062.376" 
+									TransportStartY="292.998" 
+									TransportStartZ="114.973"								
+									StandOnX="2068.133" 
+									StandOnY="295.2583" 
+									StandOnZ="97.24683"
+									TransportEndX="1833.509" 
+									TransportEndY="-4391.543" 
+									TransportEndZ="152.7679"	
+									GetOffX="1847.108" 
+									GetOffY="-4397.473" 
+									GetOffZ="135.2055" />	
+								
+					<!-- Run to the center of the deck -->
+					<MoveTo X="1847.108" Y="-4397.473" Z="135.2055" />				
+
+					<!-- Move to riding trainer -->
+					<MoveTo X="1802.374" Y="-4368.528" Z="102.6684" />	
+						
+				</If>	<!-- If we are in Eastern Kingdoms -->
+				
+				
+				<!-- ******************************************************************* -->
+				
+				
+				<!-- If we are in Kalimdor, but not in Orgrimmar -->
+				<If Condition="Me.MapId == 571">
+				
+					<CustomBehavior File="Message" 
+									Text="We are in Kalimdor, but not in Orgrimmar." 
+									LogColor="Cyan" />
+
+						
+						
+				</If>	<!-- If we are in Kalimdor, but not in Orgrimmar -->
+				
+			</If>	<!-- If we are Horde -->
+			
+				
+			<!-- ******************************************************************* -->
+				
+				
+			<!-- If we are in Stormwind or Orgrimmar or Dalaran -->
+			<If Condition="Me.ZoneId == 1519 || Me.ZoneId == 1637 || Me.ZoneId == 4395">
+			
+				<!-- Profile message - We are in Stormwind, Orgrimmar or Dalaran -->
+				<CustomBehavior File="Message" 
+									Text="We are in Stormwind, Orgrimmar or Dalaran."  
+									LogColor="Orange" />
+				
+				<!-- Custom behavior - LoadProfile - Vendors\[QO-N][Solstice][58-90][riding-skill-training] -->
+				<CustomBehavior File="LoadProfile" 
+										ProfileName="Vendors\[QO-N][Solstice][58-90][riding-skill-training]" />
+										
+			</If>	<!-- If we are in Stormwind or Orgrimmar -->
+	
+		</If>	<!-- If our level is 60-90 -->			
+
+	</QuestOrder>
+	
+</HBProfile>

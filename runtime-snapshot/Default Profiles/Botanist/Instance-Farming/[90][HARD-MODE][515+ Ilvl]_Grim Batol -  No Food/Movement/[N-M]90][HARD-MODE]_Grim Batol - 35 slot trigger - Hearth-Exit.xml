@@ -1,0 +1,296 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+	<Name>[N-M]90][HARD-MODE]_Grim Batol - 35 slot trigger - Hearth-Exit</Name>
+   
+	<MinLevel>1</MinLevel>
+	<MaxLevel>101</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	
+	<MailGrey>True</MailGrey>
+	<MailWhite>False</MailWhite>
+	<MailGreen>False</MailGreen>
+	<MailBlue>False</MailBlue>
+	<MailPurple>False</MailPurple>
+   
+	<SellGrey>False</SellGrey>
+	<SellWhite>False</SellWhite>
+	<SellGreen>False</SellGreen>
+	<SellBlue>False</SellBlue>
+	<SellPurple>False</SellPurple>
+   
+	<TargetElites>True</TargetElites>
+	
+	<AvoidMobs>		
+		<Mob Name="Summon Enabler Stalker" Entry="53488" />
+	</AvoidMobs>
+	
+	<Blackspots>
+
+	</Blackspots>
+
+	<Mailboxes>
+	</Mailboxes>
+ 
+	<Vendors>
+	</Vendors>
+	
+	<ProtectedItems>
+	</ProtectedItems>
+
+	<Factions></Factions>
+	
+	<QuestOrder>
+		<ClearVendor />
+		<ClearMailbox />
+
+
+		<If Condition="Me.Level &gt;= 80">
+		
+		<!-- UserSettings -->
+		<CustomBehavior File="UserSettings"
+						FindMountAutomatically="True"
+						GroundMountFarmingMode="False"
+						HarvestHerbs="False"
+						HarvestMinerals="False"
+						KillBetweenHotspots="True"
+						LogoutForInactivity="False"
+						LogoutInactivityUseForceQuit="False"
+						LootMobs="True"
+						LootRadius="25"
+						MountName=""
+						NinjaSkin="False"
+						RessAtSpiritHealers="False"
+						SkinMobs="False"
+						UseMount="True" 
+						UseRandomMount="False" />	
+
+			<!-- If we are in Kalimdor -->
+			<If Condition="Me.MapId == 1">
+			
+				<!-- Profile message - We are in Kalimdor -->
+				<CustomBehavior File="Message" 
+								Text="We are in Kalimdor." 
+								LogColor="Cyan" />
+											
+				<!-- If we are Alliance -->					
+				<If Condition="Me.IsAlliance">					
+							
+									
+		
+				</If>	<!-- If we are Alliance -->					
+	
+				<!-- If we are Horde -->						
+				<If Condition="Me.IsHorde">					
+		
+					<!-- Fly to - Orgrimmar to Undercity hover point -->
+					<CustomBehavior File="FlyTo"
+									X="1854.599" Y="-4404.583" Z="169.8815" />
+									
+					<!-- Land on the deck -->
+					<CustomBehavior File="MyCTM"
+									X="1844.287" Y="-4395.305" Z="135.2319" />				
+							
+					<!-- Forced dismount -->		
+					<CustomBehavior File="ForcedDismount" />						
+											
+					<CustomBehavior File="UseTransport" 
+						TransportId="164871" 
+						WaitAtX="1840.016" 
+						WaitAtY="-4391.266" 
+						WaitAtZ="135.2319"								
+						TransportStartX="1833.50867" 
+						TransportStartY="-4391.54346" 
+						TransportStartZ="152.767868"								
+						StandOnX="1834.315" 
+						StandOnY="-4385.276" 
+						StandOnZ="135.0402"
+						TransportEndX="2062.376" 
+						TransportEndY="292.998047" 
+						TransportEndZ="114.972954"	
+						GetOffX="2066.645" 
+						GetOffY="285.7304" 
+						GetOffZ="97.03136" />	
+		
+				</If>	<!-- If we are Horde -->					
+
+			</If>	<!-- If we are in Kalimdor -->				
+							
+			<!-- If we are in Eastern Kingdoms -->
+			<If Condition="Me.MapId == 0">
+			
+				<!-- Profile message - We are in Eastern Kingdoms -->
+				<CustomBehavior File="Message" 
+								Text="We are in Eastern Kingdoms." 
+								LogColor="Cyan" />
+								
+				<!-- If our hearthstone is set to Thundermar or Bloodgulch -->
+				<If Condition="Me.HearthstoneAreaId == 5142 || Me.HearthstoneAreaId == 5138">
+				
+					<!-- Profile message - Our Hearthstone/Innkeepers Daughter has been set to Thundermar or Bloodgulch -->
+					<CustomBehavior File="Message" 
+									Text="Our Hearthstone/Innkeepers Daughter has been set to Thundermar or Bloodgulch." 
+									LogColor="Orange" />
+						
+					<!-- Else our hearthstone is not set to Thundermar or Bloodgulch -->
+					<Else>
+					
+						<!-- Profile message - Our Hearthstone/Innkeepers Daughter has not been set to Thundermar or Bloodgulch -->
+						<CustomBehavior File="Message" 
+										Text="Our Hearthstone/Innkeepers Daughter has not been set to Thundermar or Bloodgulch." 
+										LogColor="Orange" />
+											
+						<!-- If we are Alliance -->					
+						<If Condition="Me.IsAlliance">					
+									
+							<!-- Profile message - Flying to Thundermar -->
+							<CustomBehavior File="Message" 
+												Text="Flying to Thundermar." 
+												LogColor="Orange" />
+									
+							<!-- Fly to the Thundermar hover point -->
+							<CustomBehavior File="FlyTo" 
+											X="-3213.797" Y="-5007.835" Z="173.0237" />
+
+							<!-- Fly to - doorway of the inn -->
+							<CustomBehavior File="FlyTo" 
+											X="-3207.829" Y="-5040.259" Z="120.3623" />
+							
+							<!-- Custom behavior - ForcedDismount -->
+							<CustomBehavior File="ForcedDismount" />
+
+							<!-- Move to - inside the inn -->
+							<MoveTo X="-3223.967" Y="-5047.798" Z="120.6222" />
+							
+							<!-- Profile message - Setting our Hearthstone -->
+							<CustomBehavior File="Message" 
+											Text="Setting our Hearthstone." 
+											LogColor="Cyan" />
+
+							<!-- Custom behavior - SetHearthstone -->				
+							<CustomBehavior File="SetHearthstone" 
+											MobId="49591" 
+											X="-3226.321" Y="-5048.929" Z="120.63" />
+
+							<!-- Move to - outside of the inn -->
+							<MoveTo X="-3207.829" Y="-5040.259" Z="120.3623" />
+							
+							<!-- Fly to the Thundermar hover point -->
+							<CustomBehavior File="FlyTo" 
+											X="-3213.797" Y="-5007.835" Z="173.0237" />
+							
+							<!-- Profile message - We are in Thundermar -->
+							<CustomBehavior File="Message" 
+											Text="We are in Thundermar." 
+											LogColor="Cyan" />				
+				
+						</If>	<!-- If we are Alliance -->					
+			
+						<!-- If we are Horde -->						
+						<If Condition="Me.IsHorde">					
+				
+							<!-- Profile message - Flying to Bloodgulch -->
+							<CustomBehavior File="Message" 
+												Text="Flying to Bloodgulch." 
+												LogColor="Orange" />
+									
+							<!-- Fly to - Bloodgulch hover point -->
+							<CustomBehavior File="FlyTo" 
+											X="-3672.317" Y="-5320.684" Z="76.85636" />
+
+							<!-- Fly to - doorway of the inn -->
+							<CustomBehavior File="FlyTo" 
+											X="-3670.999" Y="-5278.533" Z="41.82238" />
+							
+							<!-- Custom behavior - ForcedDismount -->
+							<CustomBehavior File="ForcedDismount" />
+
+							<!-- Move to - inside the inn -->
+							<MoveTo X="-3664.993" Y="-5252.952" Z="42.13909" />
+							
+							<!-- Profile message - Setting our Hearthstone -->
+							<CustomBehavior File="Message" 
+											Text="Setting our Hearthstone." 
+											LogColor="Cyan" />
+
+							<!-- Custom behavior - SetHearthstone -->				
+							<CustomBehavior File="SetHearthstone" 
+											MobId="49762" 
+											X="-3663.24" Y="-5246.885" Z="42.13836" />
+
+							<!-- Move to - outside of the inn -->
+							<MoveTo X="-3670.999" Y="-5278.533" Z="41.82238" />
+							
+							<!-- Fly to - Bloodgulch hover point -->
+							<CustomBehavior File="FlyTo" 
+											X="-3670.999" Y="-5278.533" Z="41.82238" />
+							
+							<!-- Profile message - We are in Bloodgulch -->
+							<CustomBehavior File="Message" 
+											Text="We are in Bloodgulch." 
+											LogColor="Cyan" />
+				
+						</If>	<!-- If we are Horde -->					
+
+					</Else>		<!-- Else our hearthstone is not set to Thundermar or Bloodgulch -->
+					
+				</If>	<!-- If our hearthstone is set to Thundermar or Bloodgulch -->	
+				
+			</If>	<!-- If we are in Eastern Kingdoms -->			
+
+			<!-- Profile message - Waiting 3 seconds - Bag and durability check -->
+			<CustomBehavior File="Message" 
+							Text="Waiting 3 seconds - Bag and durability check."  
+							LogColor="Orange" />
+			
+			<!-- Wait timer - wait 3 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="3000" />
+			
+			<!-- If we have less then 35 empty bag slots or our durability is less than 30% -->
+			<If Condition="(Me.FreeBagSlots &lt;= 35) || (Me.LowestDurabilityPercent &lt;= 0.3)" >
+										
+				<!-- Load profile - [QO-N][Solstice][58-90][repair-mail] -->
+				<CustomBehavior File="LoadProfile" 
+								ProfileName="Vendors\[QO-N][90-Flying]_botanist_grim-batol_[repair-mail]" />
+
+			</If>	<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+			
+			<!-- Profile message - All checks complete -->
+			<CustomBehavior File="Message" 
+							Text="All checks complete."  
+							LogColor="Orange" />
+
+			<!-- Profile message - Flying to Grim Batol -->
+			<CustomBehavior File="Message" 
+							Text="Flying to Grim Batol."  
+							LogColor="Orange" />
+
+			<!-- Fly to - Flying to Grim Batol hover point -->
+			<CustomBehavior File="FlyTo" 
+							X="-4157.121" Y="-3510.482" Z="344.3152" />
+		
+			<!-- CTM to - land outside Grim Batol -->
+			<CustomBehavior File="MyCTM" 
+							X="-4058.4" Y="-3450.03" Z="281.0914" />
+			
+			<!-- Custom behavior - ForcedDismount -->
+			<CustomBehavior File="ForcedDismount" />
+							
+			<!-- Move to - Flying to Grim Batol instance box -->
+			<MoveTo X="-4058.4" Y="-3450.03" Z="281.0914" />
+			
+			<!-- If we are in the Grim Batol instance box -->
+			<If Condition="Me.X &lt; -4051.118 &amp;&amp; Me.X &gt; -4088.162 &amp;&amp; Me.Y &lt; -3439.181 &amp;&amp; Me.Y &gt; -3462.127 " >
+				
+				<!-- Load profile - [QO-N][90-Flying]_botanist_grim-batol -->
+				<CustomBehavior File="LoadProfile" 
+								ProfileName="..\[N][90][HARD-MODE]_Grim Batol - 35 slot trigger - Hearth-Exit" />
+								
+			</If> 	<!-- If we are in the Grim Batol instance box -->	
+			
+		</If> <!-- Booster -->
+		
+	</QuestOrder>
+	
+</HBProfile>

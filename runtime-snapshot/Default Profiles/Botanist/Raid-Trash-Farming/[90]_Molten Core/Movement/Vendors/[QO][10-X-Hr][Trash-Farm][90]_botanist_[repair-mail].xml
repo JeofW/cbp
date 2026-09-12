@@ -1,0 +1,114 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+	<Name>[QO][10-X-Hr][Trash-Farm][90]_botanist_[repair-mail]</Name>
+   
+	<MinLevel>1</MinLevel>
+	<MaxLevel>91</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	
+	<MailGrey>False</MailGrey>
+	<MailWhite>True</MailWhite>
+	<MailGreen>False</MailGreen>
+	<MailBlue>False</MailBlue>
+	<MailPurple>False</MailPurple>
+   
+	<SellGrey>True</SellGrey>
+	<SellWhite>False</SellWhite>
+	<SellGreen>True</SellGreen>
+	<SellBlue>True</SellBlue>
+	<SellPurple>True</SellPurple>
+
+	<AvoidMobs></AvoidMobs>
+	
+	<Blackspots></Blackspots>
+
+	<Mailboxes></Mailboxes>
+ 
+	<Vendors></Vendors>
+	
+	<ProtectedItems>
+		<Item name="Blood of the Mountain" entry="11382" />
+		<Item name="Alcor's Sunrazor" entry="14555" />
+		<Item name="Giantstalker's Belt" entry="16851" />
+		<Item name="Belt of Might" entry="16864" />
+		<Item name="Lawbringer Belt" entry="16858" />
+		<Item name="Girdle of Prophecy" entry="16817" />
+		<Item name="Cenarion Bracers" entry="16830" />
+		<Item name="Giantstalker's Bracers" entry="16850" />
+		<Item name="Nightslayer Bracelets" entry="16825" />
+		<Item name="Earthfury Bracers" entry="16840" />
+		<Item name="Arcanist Bindings" entry="16799" />
+		<Item name="Vambraces of Prophecy" entry="16819" />
+		<Item name="Lawbringer Bracers" entry="16857" />
+		<Item name="Mass of McGowan" entry="13006" />
+		<Item name="Heartseeking Crossbow" entry="13040" />
+		<Item name="Sapphiron's Scale Boots" entry="13070" />
+		<Item name="Staff of Hale Magefire" entry="13000" />
+		<Item name="Book of Glyph Mastery" entry="45912" />
+	</ProtectedItems>
+
+	<Factions></Factions>
+	
+	<QuestOrder>
+
+		<CustomBehavior File="UserSettings" 
+						UseMount="True" 
+						LootMobs="True" 
+						KillBetweenHotspots="True" 
+						HarvestHerbs="False" 
+						HarvestMinerals="False" 
+						LogoutForInactivity="True" />
+		
+		<!-- If our free bags slots is less than 15 or our gear's lowest durability is less than 30 % -->		
+		<If Condition="(Me.FreeBagSlots &lt;= 15) || (Me.LowestDurabilityPercent &lt;= 0.3)" > 
+		
+			<SetVendor>
+				<Vendors>
+					<Vendor Name="Fergus Gravelsmash" Entry="47937" Type="Repair" X="-7093.68" Y="-1268.31" Z="270.4855" />
+				</Vendors>
+			</SetVendor>
+			
+			<SetMailbox>
+				<Mailboxes>
+					<Mailbox X="-7112.199" Y="-1200.707" Z="306.9417" />
+				</Mailboxes>
+			</SetMailbox>
+	
+			<!-- CustomBehavior - ForceSetVendor -->
+			<CustomBehavior File="ForceSetVendor" 
+							DoMail="True" 
+							DoRepair="True" 
+							DoSell="True" 
+							DoTrain="False" />
+			
+		</If>	<!-- If our free bags slots is less than 15 or our gear's lowest durability is less than 30 % -->
+								
+		<!-- If our free bags slots is greater than 15 and our gear's lowest durability is greater than 30 % -->
+		<If Condition="(Me.FreeBagSlots &gt;= 15) &amp;&amp; (Me.LowestDurabilityPercent &gt;= 0.3)" > 
+			
+			<!-- Custom behavior - LoadProfile - [QO-N][10-X-Hr][Trash-Farm][90]_botanist_molten-core -->
+			<CustomBehavior File="LoadProfile" 
+							ProfileName="..\..\[QO-N][10-X-Hr][Trash-Farm][90]_botanist_molten-core" />
+			
+			<!-- Else our free bags slots is less than 15 or our gear's lowest durability is less than 30 % -->
+			<Else>
+			
+				<!-- CustomBehavior - Message - Our bags have less than 15 empty bag slots and we have already vendored /nMake sure you have set a mail recipient /nClear some room in you bags -->
+				<CustomBehavior File="Message" 
+								Text="Our bags have less than 15 empty bag slots and we have already vendored /nMake sure you have set a mail recipient /nClear some room in you bags /n Then restart the bot." 
+								LogColor="Gold" />
+								
+				<!-- CustomBehavior - UserSettings - StopBot -->				
+				<CustomBehavior File="UserSettings" 
+								StopBot="true" />
+				
+			</Else>	<!-- Else our free bags slots is less than 15 or our gear's lowest durability is less than 30 % -->
+			
+		</If>	<!-- If our free bags slots is less than 15 or our gear's lowest durability is less than 30 % -->
+		
+	</QuestOrder>
+
+
+</HBProfile>
+

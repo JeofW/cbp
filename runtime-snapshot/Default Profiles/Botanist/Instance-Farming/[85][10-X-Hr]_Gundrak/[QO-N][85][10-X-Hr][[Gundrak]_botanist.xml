@@ -1,0 +1,659 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+	<Name>[QO-N][85][10-X-Hr][[Gundrak]_botanist</Name>
+   
+	<MinLevel>1</MinLevel>
+	<MaxLevel>101</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	<TargetingDistance>10</TargetingDistance>
+	
+	<MailGrey>False</MailGrey>
+	<MailWhite>False</MailWhite>
+	<MailGreen>True</MailGreen>
+	<MailBlue>False</MailBlue>
+	<MailPurple>False</MailPurple>
+   
+	<SellGrey>True</SellGrey>
+	<SellWhite>True</SellWhite>
+	<SellGreen>False</SellGreen>
+	<SellBlue>True</SellBlue>
+	<SellPurple>False</SellPurple>
+   
+	<TargetElites>True</TargetElites>
+	
+	<AvoidMobs>		 
+		<Mob Name="Summon Enabler Stalker" Entry="53488" />
+	</AvoidMobs>
+	
+	<Blackspots>
+	</Blackspots>
+
+	<QuestOrder>
+
+		<!-- Level Check -->
+		<If Condition="Me.Level &gt;= 85">
+		
+		 	<!-- UserSettings -->
+			<CustomBehavior File="UserSettings"
+							MountDistance="25"
+							FindMountAutomatically="True"
+							GroundMountFarmingMode="False"
+							HarvestHerbs="False"
+							HarvestMinerals="False"
+							KillBetweenHotspots="True"
+							LogoutForInactivity="False"
+							LogoutInactivityUseForceQuit="False"
+							LootMobs="True"
+							LootRadius="65"
+							MountName=""
+							NinjaSkin="False"
+							RessAtSpiritHealers="False"
+							SkinMobs="False"
+							UseMount="True" 
+							UseRandomMount="False" />
+						
+			<!-- Infinite loop -->
+			<While Condition="true" >	
+
+				<!-- If we are inside Gundrak -->
+				<If Condition="Me.MapId == 604">
+				
+					<!-- Profile message - Gundrak detected. Running out -->
+					<CustomBehavior File="Message" 
+									Text="Gundrak detected, running out."
+									LogColor="Chartreuse" />
+						
+					<!-- Move to - zone in location -->
+					<MoveTo X="1880.74" Y="853.76" Z="176.696" />
+
+					<!-- Profile message - Waiting 3 seconds - Bag and durability check -->
+					<CustomBehavior File="Message" 
+									Text="Waiting 3 seconds - Bag and durability check."  
+									LogColor="Orange" />
+					
+					<!-- Wait timer - wait 1 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="1000" />
+					
+					<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+					<If Condition="(Me.FreeBagSlots &lt;= 25) || (Me.LowestDurabilityPercent &lt;= 0.3)" >
+												
+						<!-- Load profile - [QO-N][85][10-X-Hr][[Gundrak]_[repair-mail] -->
+						<CustomBehavior File="LoadProfile" 
+										ProfileName="Movement\Vendors\[QO-N][85][10-X-Hr][[Gundrak]_[repair-mail]" />
+
+					</If>	<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+
+					<!-- Profile message - Waiting 3 seconds - Food check - Sweet Potato Bread -->
+					<CustomBehavior File="Message" 
+									Text="Waiting 3 seconds - Food check - Sweet Potato Bread."  
+									LogColor="Orange" />
+					
+					<!-- Wait timer - wait 1 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="1000" />
+					
+					<!-- If we don't have Sweet Potato Bread -->
+					<If Condition="!HasItem(35950)">
+
+						<!-- Load profile - [QO-N][85][10-X-Hr][[Gundrak]_[repair-mail] -->
+						<CustomBehavior File="LoadProfile" 
+										ProfileName="Movement\Vendors\[QO-N][85][10-X-Hr][[Gundrak]_[repair-mail]" />
+			
+					</If>	<!-- If we don't have Sweet Potato Bread -->
+					
+					<!-- Profile message - All checks complete -->
+					<CustomBehavior File="Message" 
+									Text="All checks complete."  
+									LogColor="Orange" />
+
+					<!-- Custom behavior - Misc/InInstance - exit the instance-->
+					<CustomBehavior File="Misc\InInstance" 
+									X="1900.536" Y="815.8542" Z="176.637" />
+					
+					<!-- Move to - zone out location -->
+					<MoveTo X="6717.32" Y="-4645.55" Z="450.017" />
+					
+				</If>	<!-- If we are inside Gundrak -->
+
+				<!-- If we are not in the Gundrak box, load the movement profile -->
+				<If Condition="Me.X &lt; 6650 || Me.X &gt; 6750 || Me.Y &lt; -4700 || Me.Y &gt; -4600" >
+					
+					<!-- Custom behavior - LoadProfile -[QO-N-M][85][10-X-Hr][[Gundrak]_botanist -->
+					<CustomBehavior File="LoadProfile" 
+									ProfileName="Movement\[QO-N-M][85][10-X-Hr][[Gundrak]_botanist" />
+					
+				</If>	<!-- If we are not in the Gundrak instance box, load the movement profile -->
+				
+				<!-- If we are in the Gundrak instance box -->
+				<If Condition="Me.X &gt; 6650 &amp;&amp; Me.X &lt; 6750 &amp;&amp; Me.Y &gt; -4700 &amp;&amp; Me.Y &lt; -4600" >
+
+					<!-- If our Hearthstone/Innkeepers Daughter is set at The Argent Stand -->
+					<If Condition="(Me.HearthstoneAreaId == 4275)">
+				
+						<!-- CustomBehavior - message - Our Hearthstone has been set to The Argent Stand -->
+						<CustomBehavior File="Message" 
+										Text="Our Hearthstone has been set to The Argent Stand." 
+										LogColor="Cyan" />
+				
+						<!-- Else our hearthstone is not set to The Argent Stand -->
+						<Else>
+						
+							<!-- CustomBehavior - message - Our Hearthstone has not been set to The Argent Stand -->
+						<CustomBehavior File="Message" 
+										Text="Our Hearthstone has not been set to The Argent Stand." 
+										LogColor="Cyan" />
+										
+						<!-- Load profile - [QO-N][85][10-X-Hr][[Gundrak]_[hearthstone] -->
+						<CustomBehavior File="LoadProfile" 
+										ProfileName="Movement\Vendors\Hearthstone\[QO-N][85][10-X-Hr][[Gundrak]_[hearthstone]" />				
+
+						</Else>	<!-- Else our hearthstone is not set to The Argent Stand -->
+				
+					</If>	<!-- If our hearthstone is set to The Argent Stand -->
+
+					<!-- Profile message - Portal detected nearby -->
+					<CustomBehavior File="Message" 
+									Text="Portal detected nearby."
+									LogColor="Orange" />	
+			
+					<!-- Profile message - Resetting the instance -->
+					<CustomBehavior File="Message" 
+									Text="Resetting the instance." 
+									LogColor="Orange" />
+					
+					<!-- Reset the instance -->
+					<CustomBehavior File="RunMacro" 
+									Macro="/script ResetInstances()" />	
+									
+					<!-- Set the dungeon difficulty to normal -->				
+					<CustomBehavior File="RunMacro" 
+									Macro="/script SetDungeonDifficultyID(1);" />
+					
+					<!-- Profile message - The instance has been reset -->
+					<CustomBehavior File="Message" 
+									Text="The instance has been reset." 
+									LogColor="Orange" />
+							
+					<!-- While we are not in Gundrak -->
+					<While Condition="Me.MapId != 604">
+					
+						<!-- Move to - zone out location -->
+						<MoveTo X="6717.32" Y="-4645.55" Z="450.017" />
+
+						<!-- Move to - attempt to enter the instance -->
+						<CustomBehavior File="Misc\InInstance" 
+										X="6690.202" Y="-4670.903" Z="441.5623" />
+										
+						<!-- Profile message - Waiting for the dungeon to load -->				
+						<CustomBehavior File="Message" 
+										Text="Waiting for the dungeon to load." 
+										LogColor="Chartreuse" />
+									
+						<!-- Wait timer - wait 12 seconds -->		
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="12000" />
+										
+						<!-- If we are not in Gundrak, we're locked out -->
+						<If Condition="Me.MapId != 604">
+						
+							<!-- Profile message - We are locked out. Waiting and trying again -->
+							<CustomBehavior File="Message" 
+											Text="We didn't enter the portal, trying again in 12 seconds." 
+											LogColor="Orange" />
+			
+						</If>	<!-- If we are not in Gundrak, we're locked out -->
+						
+					</While>	<!-- While we are not in Gundrak -->
+					
+				</If>	<!-- If we are in the Gundrak instance box -->
+				
+				<!-- If we are inside Gundrak -->
+				<If Condition="Me.MapId == 604">
+					
+					<!-- If our guild => 11 -->
+					<If Condition="StyxWoW.Me.GuildLevel &gt;= 11" >				
+									
+						<!--  CustomBehavior - Message - Our guild is level 11 or greater -->
+						<CustomBehavior File="Message" 
+										Text="Our guild is level 11 or greater."
+										LogColor="Gold" />			
+
+						<!-- If we have friendly reputation with our guild -->				
+						<If Condition="GetFactionReputation(1168) &gt; 3000">		
+								
+							<!--  CustomBehavior - Message - We have friendly or greater reputation with our guild -->
+							<CustomBehavior File="Message" 
+											Text="We have friendly or greater reputation with our guild."
+											LogColor="Gold" />	
+								
+							<!-- If we have > 1000 gold -->
+							<If Condition="(Me.Gold &gt;= 1000)" >
+								
+								<!--  CustomBehavior - Message - We have over 1000 gold in our bags -->
+								<CustomBehavior File="Message" 
+												Text="We have over 1000 gold in our bags."
+												LogColor="Gold" />
+								
+								<!-- Load profile - [QO-N][85][10-X-Hr][[Gundrak]_[mobile-banking]_botanist -->
+								<CustomBehavior File="LoadProfile" 
+												ProfileName="Movement\Vendors\MobileBanking\[QO-N][85][10-X-Hr][[Gundrak]_[mobile-banking]_botanist" />
+												
+								<!-- Else we have < 1000 gold -->				
+								<Else>
+								
+									<!--  CustomBehavior - Message - We have over 1000 gold in our bags -->
+									<CustomBehavior File="Message" 
+													Text="We have less than 1000 gold in our bags."
+													LogColor="Cyan" />
+													
+								</Else>		<!-- Else we have < 1000 gold -->
+								
+							</If>	<!-- If we have < 1000 gold -->	
+							
+							<!-- Else we have less than 1000 gold in our bags -->			
+							<Else>
+							
+								<!--  CustomBehavior - Message - We we don't have friendly reputation with our guild -->
+								<CustomBehavior File="Message" 
+												Text="We we don't have friendly reputation with our guild."
+												LogColor="Cyan" />
+												
+							</Else>		<!-- Else we don't have friendly reputation with our guild -->
+							
+						</If>	<!-- If we have friendly reputation with our guild -->				
+										
+						<!-- Else our guild < 11 -->			
+						<Else>
+						
+							<!--  CustomBehavior - Message - Our guild is less than level 11 -->
+							<CustomBehavior File="Message" 
+											Text="Our guild is less than level 11."
+											LogColor="Cyan" />
+											
+						</Else>		<!-- Else our guild < 11 -->				
+										
+					</If>	<!-- If our guild => 11 -->
+					
+					<!--Profile message	- Deleting unwanted items from our bags -->				
+					<CustomBehavior File="Message" 
+									Text="Deleting unwanted items from our bags." 
+									LogColor="Orange" />
+
+					<!-- Honeymint Tea, Salted Venison, Scroll of Stamina VII, Scroll of Agility VII, Scroll of Strength VII, Rhino Meat, Chilled Meat -->
+					<CustomBehavior File="DeleteItems" 
+									Ids="33445,33454,37093,43463,43465,43012,43013" />
+
+					<!-- Instance timer -->
+					<CustomBehavior File="Misc\InstanceTimer" 
+									Timer="Start" />							
+								
+					<!-- Turn on autolooting -->
+					<CustomBehavior File="RunMacro" 
+									Macro="/script SetCVar('AutoLootDefault', 1)" 
+									NumOfTimes="1" 
+									WaitTime="1000" />
+										
+					<!-- CustomBehavior - Message - Opening our bags to view our inventory -->
+					<CustomBehavior File="Message" 
+									Text="Opening our bags to view our inventory." 
+									LogColor="Plum" />
+								
+					<!-- CustomBehavior - RunMacro - /script OpenAllBags() -->
+					<CustomBehavior File="RunMacro" 
+									Macro="/script OpenAllBags()" />					
+										
+					<!-- Profile message - Gundrak initialized -->			
+					<CustomBehavior File="Message" 
+									Text="Gundrak initialized."  
+									LogColor="Orange" />
+					
+					
+					<!-- ****************************************************** Gundrak ********************************************************************** -->
+					
+					<!-- If we are DeathKnight-->
+					<If Condition="(Me.Class == WoWClass.DeathKnight)">
+					
+						<!-- CustomBehavior - message - We are a Death Knight \nCasting Horn of Winter -->
+						<CustomBehavior File="Message" 
+										Text="We are a Death Knight \nCasting Horn of Winter."  
+										LogColor="Orange" />
+										
+						<!-- CustomBehavior - RunMacro - Horn of Winter -->						
+						<CustomBehavior File="RunMacro"
+										NumOfTimes="1"
+										Macro="/cast Horn of Winter" />				
+										
+					</If>	<!-- If we are DeathKnight-->
+					
+					<!-- Move to - top of the ramp  -->
+					<MoveTo X="1855.32" Y="867.3681" Z="176.6818" />
+					
+					<!-- CustomBehavior MyCTM - jump off the ramp -->
+					<CustomBehavior File="MyCTM" 
+									X="1836.203" Y="848.5698" Z="126.1743" />
+					
+					<!-- Move to - door exiting the water  -->
+					<MoveTo X="1824.851" Y="852.1788" Z="129.2859" />
+
+					<!-- Profile message - Disabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Disabling combat." 
+										LogColor="Gold" />
+					
+					<!-- DisableBehavior - Combat -->
+					<DisableBehavior Name="Combat" />
+
+					<!-- Move to - grp near the bottom of the ramp  -->
+					<MoveTo X="1797.611" Y="855.9513" Z="129.1909" /> 
+
+					<!-- Move to - Drakkari Inciter  -->
+					<MoveTo X="1777.842" Y="850.575" Z="123.1927" />
+					
+					<!-- Move to - Drakkari Medicine Man  -->
+					<MoveTo X="1747.658" Y="858.0026" Z="129.1911" />
+					
+					<!-- Move to - Moorabi -->
+					<MoveTo X="1772.471" Y="809.537" Z="129.2166" />
+
+					<!-- CustomBehavior -  message - Enabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Enabling combat." 
+										LogColor="Gold" />
+
+					<!-- enable combat -->
+					<EnableBehavior Name="Combat" />
+					
+					<!-- Wait timer - wait 5 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="5000" />
+				
+					<!-- Move to - Moorabi -->
+					<MoveTo X="1772.471" Y="809.537" Z="129.2166" />
+				
+					<!-- Wait timer - wait 1 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="1000" />
+									
+					<!-- Interact with 1st obelisk -->
+					<CustomBehavior File="InteractWith" 
+									MobId="192519" 
+									ObjectType="Gameobject" 
+									NumOfTimes="1"  
+									X="1772.122" Y="809.2382" Z="129.2173" />
+									
+									
+					<!-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -->
+					
+					
+					<!-- Move to - door after Moorabi -->
+					<MoveTo X="1731.335" Y="851.6614" Z="129.1967" />
+					
+					<!-- Profile message - Disabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Disabling combat." 
+										LogColor="Gold" />
+					
+					<!-- DisableBehavior - Combat -->
+					<DisableBehavior Name="Combat" />
+					
+					<!-- Move to - end of path -->
+					<MoveTo X="1705.145" Y="847.6376" Z="129.4783" />
+					
+					<!-- Move to - right side of path -->
+					<MoveTo X="1703.55" Y="890.1484" Z="133.4612" />
+					
+					<!-- Move to - Drakkari God Hunter -->
+					<MoveTo X="1664.677" Y="870.9516" Z="138.0595" />
+					
+					<!-- Move to - right side of path -->
+					<MoveTo X="1630.622" Y="901.5901" Z="145.341" />
+					
+					<!-- Move to - Drakkari Medicine Man -->
+					<MoveTo X="1586.371" Y="881.5842" Z="151.5599" />
+					
+					<!-- Move to - Drakkari Fire Weaver -->
+					<MoveTo X="1570.884" Y="837.2479" Z="153.7627" />
+					
+					<!-- CustomBehavior -  message - Enabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Enabling combat." 
+										LogColor="Gold" />
+
+					<!-- enable combat -->
+					<EnableBehavior Name="Combat" />
+					
+					<!-- Wait timer - wait 5 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="5000" />
+				
+					<!-- Move to - Drakkari Fire Weaver -->
+					<MoveTo X="1570.884" Y="837.2479" Z="153.7627" />
+				
+					<!-- Wait timer - wait 1 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="1000" />
+					
+					
+					<!-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -->
+					
+					
+					<!-- Move to - door before Drakkari Colossus -->
+					<MoveTo X="1625.088" Y="791.9446" Z="143.1108" />
+					
+					<!-- Profile message - Disabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Disabling combat." 
+										LogColor="Gold" />
+					
+					<!-- DisableBehavior - Combat -->
+					<DisableBehavior Name="Combat" />
+					
+					<!-- Move to - Drakkari Golem -->
+					<MoveTo X="1576.464" Y="718.9174" Z="143.0686" />
+					
+					<!-- Move to - Drakkari Colossus -->
+					<MoveTo X="1672.963" Y="743.488" Z="142.7861" />
+					
+					<!-- CustomBehavior -  message - Enabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Enabling combat." 
+										LogColor="Gold" />
+
+					<!-- enable combat -->
+					<EnableBehavior Name="Combat" />
+					
+					<!-- Wait timer - wait 1 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="1000" />
+				
+					<!-- Move to - Drakkari Colossus -->
+					<MoveTo X="1672.963" Y="743.488" Z="142.7861" />
+				
+					<!-- Wait timer - wait 5 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="5000" />
+					
+					<!-- Move to - second obelisk -->
+					<MoveTo X="1696.16" Y="750.5549" Z="142.7728" />
+					
+					<!-- Interact with second obelisk -->
+					<CustomBehavior File="InteractWith" 
+									MobId="192520" 
+									ObjectType="Gameobject" 
+									NumOfTimes="1"  
+									X="1688.547" Y="743.5333" Z="142.7832"  />
+					
+					
+					<!-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -->
+					
+					
+					<!-- Move to - door after Drakkari Colossus -->
+					<MoveTo X="1625.311" Y="710.1172" Z="142.7825" />
+					
+					<!-- DisableBehavior - Combat -->
+					<DisableBehavior Name="Combat" />
+					
+					<!-- Move to - Spitting Cobra -->
+					<MoveTo X="1627.03" Y="680.1276" Z="136.1797" />
+					
+					<!-- Move to - Spitting Cobra -->
+					<MoveTo X="1641.575" Y="652.5396" Z="125.0157" />
+					
+					<!-- Move to - Spitting Cobra -->
+					<MoveTo X="1678.676" Y="630.7374" Z="124.0692" />
+					
+					<!-- Move to - Spitting Cobra -->
+					<MoveTo X="1777.99" Y="609.4097" Z="124.4685" />
+					
+					<!-- Move to - Spitting Cobra -->
+					<MoveTo X="1803.31" Y="631.5223" Z="129.0232" />
+
+					<!-- Move to - Slad'ran -->
+					<MoveTo X="1775.129" Y="674.9809" Z="129.2167" />
+					
+					<!-- CustomBehavior -  message - Enabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Enabling combat." 
+										LogColor="Gold" />
+
+					<!-- enable combat -->
+					<EnableBehavior Name="Combat" />
+					
+					<!-- Wait timer - wait 5 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="5000" />
+				
+					<!-- Move to - Slad'ran -->
+					<MoveTo X="1775.129" Y="674.9809" Z="129.2167" />
+				
+					<!-- Wait timer - wait 1 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="1000" />
+					
+					<!-- Interact with third obelisk -->
+					<CustomBehavior File="InteractWith" 
+									MobId="192518" 
+									ObjectType="Gameobject" 
+									NumOfTimes="1"  
+									X="1775.231" Y="674.2245" Z="129.2172" />
+					
+					
+					<!-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -->
+					
+					
+					<!-- Move to - jump location -->				
+					<MoveTo X="1789.561" Y="682.4285" Z="129.2167" />
+					
+					<!-- Profile message - Disabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Disabling combat." 
+										LogColor="Gold" />
+					
+					<!-- DisableBehavior - Combat -->
+					<DisableBehavior Name="Combat" />
+					
+					<!--CustomBehavior MyCTM - under the bridge -->
+					<CustomBehavior File="MyCTM"
+									X="1756.929" Y="741.9795" Z="108.4639" />
+					
+					<!--CustomBehavior MyCTM - around the bridge -->
+					<CustomBehavior File="MyCTM"
+									X="1756.494" Y="765.5088" Z="108.4282" />
+					
+					<!--CustomBehavior MyCTM - on to the skulls -->
+					<CustomBehavior File="MyCTM"
+									X="1734.564" Y="762.0445" Z="111.4571" />
+
+					<!-- Move to - bottom of the turnstyle -->				
+					<MoveTo X="1744.814" Y="743.5084" Z="118.7656" />
+
+					<!-- Move to - move across the turnstyle -->
+					<MoveTo X="1817.451" Y="743.8315" Z="119.5354" />
+
+					<!-- Move to - top of the stairs  -->
+					<MoveTo X="1845.93" Y="743.3076" Z="136.0011" />		
+
+					<!-- MoveTo to - 1st rhino -->
+					<MoveTo X="1876.422" Y="727.1338" Z="135.9296" />
+					
+					<!-- MoveTo to - 2nd rhino -->
+					<MoveTo X="1880.895" Y="753.4171" Z="136.0907" />
+
+					<!-- Move to - Gal'darah -->
+					<MoveTo X="1914.748" Y="743.6536" Z="136.4952" />
+						
+					<!-- Profile message - Enabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Enabling combat." 
+										LogColor="Gold" />
+					
+					<!-- EnableBehavior - Combat -->	
+					<EnableBehavior Name="Combat" />
+					
+					<!-- Wait timer - wait 5 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="5000" />
+					
+					<!-- Move to - Gal'darah -->
+					<MoveTo X="1914.748" Y="743.6536" Z="136.4952" />
+					
+					<!-- Wait timer - wait 1 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="1000" />
+					
+					
+					<!-- XXXXXXXXX EXIT XXXXXXX -->
+
+					
+					<!-- Move to -  exit after Gal'darah -->
+					<MoveTo X="1972.546" Y="834.9451" Z="135.2546" />
+					
+					<!-- CustomBehavior - Misc\InstanceTimer - 6 minutes and 40 seconds -->
+					<CustomBehavior File="Misc\InstanceTimer" 
+									Timer="Check" 
+									WaitTime="5000" />
+
+					<!-- If we don't have Sweet Potato Bread -->
+					<If Condition="!HasItem(35950)">
+
+						<!-- Load profile - [QO-N][85][10-X-Hr][[Gundrak]_[repair-mail] -->
+						<CustomBehavior File="LoadProfile" 
+										ProfileName="Movement\Vendors\[QO-N][85][10-X-Hr][[Gundrak]_[repair-mail]" />
+			
+					</If>	<!-- If we don't have Sweet Potato Bread -->
+					
+					<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+					<If Condition="(Me.FreeBagSlots &lt;= 25) || (Me.LowestDurabilityPercent &lt;= 0.3)" >
+												
+						<!-- Load profile - [QO-N][85][10-X-Hr][[Gundrak]_[repair-mail] -->
+						<CustomBehavior File="LoadProfile" 
+										ProfileName="Movement\Vendors\[QO-N][85][10-X-Hr][[Gundrak]_[repair-mail]" />
+
+					</If>	<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+				
+				</If>	<!-- If we are inside Gundrak -->
+				
+				<!-- If we are in the Gundrak -->
+				<If Condition="Me.MapId == 604" >	
+
+					<!-- Move to - alternate exit after Gal'darah -->
+					<MoveTo X="1972.546" Y="834.9451" Z="135.2546" /> 
+					
+					<!-- Go through the portal -->
+					<CustomBehavior File="Misc\InInstance" 
+									X="1983.075" Y="842.8951" Z="135.2106" />
+
+					<!-- Move to - zone out location -->
+					<MoveTo X="6717.32" Y="-4645.55" Z="450.017" />		
+
+				</If>	<!-- If we are inside Gundrak -->		
+				
+			</While> <!-- Infinite loop -->
+		
+		</If>	<!-- Level Check -->
+		
+	</QuestOrder>
+	
+</HBProfile>

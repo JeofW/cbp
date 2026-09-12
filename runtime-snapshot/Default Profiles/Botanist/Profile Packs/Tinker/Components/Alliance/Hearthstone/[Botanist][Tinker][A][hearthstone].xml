@@ -1,0 +1,180 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+<Name>[Botanist][Tinker][A][hearthstone]</Name>
+
+<MinLevel>1</MinLevel>
+<MaxLevel>151</MaxLevel>
+
+<MinDurability>-1</MinDurability>
+<MinFreeBagSlots>-1</MinFreeBagSlots>
+<TargetingDistance>45</TargetingDistance>
+
+<MailGrey>False</MailGrey>
+<MailWhite>False</MailWhite>
+<MailGreen>False</MailGreen>
+<MailBlue>False</MailBlue>
+<MailPurple>False</MailPurple>
+
+<SellGrey>False</SellGrey>
+<SellWhite>False</SellWhite>
+<SellGreen>False</SellGreen>
+<SellBlue>False</SellBlue>
+<SellPurple>False</SellPurple>
+
+<AvoidMobs>		 
+</AvoidMobs>
+
+<Blackspots>
+</Blackspots>
+
+<Mailboxes>
+</Mailboxes>
+
+<Vendors>
+</Vendors>
+
+<ProtectedItems>	
+</ProtectedItems>
+
+	<QuestOrder>
+	
+		<!-- UserSettings -->
+			<CustomBehavior File="UserSettings"
+							FindMountAutomatically="True"
+							GroundMountFarmingMode="False"
+							HarvestHerbs="False"
+							HarvestMinerals="False"
+							KillBetweenHotspots="False"
+							LogoutForInactivity="True"
+							LogoutInactivityUseForceQuit="True"
+							LootMobs="False"
+							LootRadius="1"
+							MountName=""
+							NinjaSkin="False"
+							RessAtSpiritHealers="False"
+							SkinMobs="False"
+							UseMount="True" 
+							UseRandomMount="False" />
+			
+		<!-- If our level => 5 and < 10 -->				
+		<If Condition="Me.Level &gt;= 5 &amp;&amp; Me.Level &lt; 10" >
+	
+			<!-- If our hearthstone is set at Golshire -->
+			<If Condition="(Me.HearthstoneAreaId == 5637)" >
+	
+				<!-- CustomBehavior - Message - Our Hearthstone has already been set at Goldshire -->
+				<CustomBehavior File="Message" 
+								Text="Our Hearthstone has already been set at Goldshire." 
+								LogColor="Plum" />
+								
+				<!-- CustomBehavior - WaitTimer - 1 second delay -->
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="1000" />
+
+				<!--  CustomBehavior - LoadProfile - [Botanist][Tinker][A-6][classic] -->				
+				<CustomBehavior File="LoadProfile" 
+								ProfileName="..\[Botanist][Tinker][A-6][classic]" />
+	
+				<!-- Else our hearthstone is not set at Golshire-->
+				<Else>
+				
+					<!-- CustomBehavior - Message -  We have not set out Hearthstone in Goldshire. Navigating to the innkeep -->
+					<CustomBehavior File="Message" 
+										Text="We have not set out Hearthstone in Goldshire. Navigating to the innkeep." 
+										LogColor="Plum" />				
+			
+					<!-- Move to - Goldshire - innkeep -->	
+					<MoveTo X="-9464.979" Y="15.39141" Z="56.96179" />
+					
+					<!-- CustomBehavior - Message - We have arrived at the Goldshire inkeep -->
+					<CustomBehavior File="Message" 
+									Text="We have arrived at the Goldshire inkeep." 
+									LogColor="Plum" />
+
+					<!-- CustomBehavior - SetHearthstone - Goldshire -->				
+					<CustomBehavior File="SetHearthstone" 
+									MobId="295"  
+									X="-9462.663" Y="16.19151" Z="56.96266" />
+					
+					<!-- Move to - Goldshire - inn exit -->	
+					<MoveTo X="-9459.325" Y="60.87368" Z="55.844" />
+					
+					<!--  CustomBehavior - LoadProfile - [Botanist][Tinker][A-6][classic] -->				
+					<CustomBehavior File="LoadProfile" 
+									ProfileName="..\[Botanist][Tinker][A-6][classic]" />
+
+				</Else>	<!-- Else our hearthstone is not set at Golshire-->
+
+			</If>	<!-- If our hearthstone is set at Golshire-->
+
+		</If>	<!-- If our level => 5 and < 10 -->
+			
+
+
+
+
+
+		<!-- If our level => 10 and < 15 -->				
+		<If Condition="Me.Level &gt;= 10 &amp;&amp; Me.Level &lt; 15" >
+	
+			<!-- If our hearthstone is set at Sentinel Hill -->
+			<If Condition="(Me.HearthstoneAreaId == 108)" >
+	
+				<!-- CustomBehavior - Message - Our Hearthstone has already been set at Sentinel Hill -->
+				<CustomBehavior File="Message" 
+								Text="Our Hearthstone has already been set at Sentinel Hill." 
+								LogColor="Plum" />
+								
+				<!-- CustomBehavior - WaitTimer - 1 second delay -->
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="1000" />
+
+				<!--  CustomBehavior - LoadProfile - [Botanist][Tinker][A-6][classic] -->				
+				<CustomBehavior File="LoadProfile" 
+								ProfileName="..\[Botanist][Tinker][A-6][classic]" />
+	
+				<!-- Else our hearthstone is not set at Sentinel Hill-->
+				<Else>
+				
+					<!-- CustomBehavior - Message -  We have not set out Hearthstone in Sentinel Hill. Navigating to the innkeep -->
+					<CustomBehavior File="Message" 
+										Text="We have not set out Hearthstone in Sentinel Hill. Navigating to the innkeep." 
+										LogColor="Plum" />				
+			
+					<!-- Move to - Sentinel Hill - innkeep -->	
+					<MoveTo X="-10652.18" Y="1168.035" Z="34.52104" />
+					
+					<!-- CustomBehavior - Message - We have arrived at the Sentinel Hill inkeep -->
+					<CustomBehavior File="Message" 
+									Text="We have arrived at the Sentinel Hill inkeep." 
+									LogColor="Plum" />
+
+					<!-- CustomBehavior - SetHearthstone - Sentinel Hill -->				
+					<CustomBehavior File="SetHearthstone" 
+									MobId="8931"  
+									X="-10653.28" Y="1166.431" Z="34.50465" />
+					
+					<!-- Move to - Sentinel Hill - inn exit -->	
+					<MoveTo X="-10631.07" Y="1150.092" Z="33.80303" />
+					
+					<!--  CustomBehavior - LoadProfile - [Botanist][Tinker][A-6][classic] -->				
+					<CustomBehavior File="LoadProfile" 
+									ProfileName="..\[Botanist][Tinker][A-6][classic]" />
+
+				</Else>	<!-- Else our hearthstone is not set at Golshire-->
+
+			</If>	<!-- If our hearthstone is set at Golshire-->
+
+		</If>	<!-- If our level => 10 and < 15 -->
+
+
+
+
+
+
+
+
+
+			
+	</QuestOrder>
+
+</HBProfile>

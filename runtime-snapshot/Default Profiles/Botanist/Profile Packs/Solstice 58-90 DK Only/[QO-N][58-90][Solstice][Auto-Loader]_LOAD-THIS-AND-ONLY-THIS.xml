@@ -1,0 +1,307 @@
+<HBProfile creator="Botanist" version="1.0">
+	<Name>[QO-N][58-90][Solstice][Auto-Loader]_LOAD-THIS-AND-ONLY-THIS</Name>
+   
+	<MinLevel>1</MinLevel>
+	<MaxLevel>101</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	
+	<MailGrey>False</MailGrey>
+	<MailWhite>False</MailWhite>
+	<MailGreen>False</MailGreen>
+	<MailBlue>False</MailBlue>
+	<MailPurple>False</MailPurple>
+   
+	<SellGrey>False</SellGrey>
+	<SellWhite>False</SellWhite>
+	<SellGreen>False</SellGreen>
+	<SellBlue>False</SellBlue>
+	<SellPurple>False</SellPurple>
+
+	<AvoidMobs>
+	</AvoidMobs>
+	
+	<Blackspots>
+	</Blackspots>
+
+	<Mailboxes>
+	</Mailboxes>
+ 
+	<Vendors>
+	</Vendors>
+
+	<Factions></Factions>
+	
+	<ProtectedItems>
+		
+	</ProtectedItems>
+
+	<QuestOrder>
+				
+		<!-- UserSettings -->
+		<CustomBehavior File="UserSettings"
+						FindMountAutomatically="True"
+						GroundMountFarmingMode="False"
+						HarvestHerbs="False"
+						HarvestMinerals="False"
+						KillBetweenHotspots="True"
+						LogoutForInactivity="False"
+						LogoutInactivityUseForceQuit="False"
+						LootMobs="True"
+						LootRadius="35"
+						MountName=""
+						NinjaSkin="False"
+						RessAtSpiritHealers="False"
+						SkinMobs="False"
+						UseMount="True" 
+						UseRandomMount="False" />		
+				
+		<!-- If our level is 60-90 -->
+		<If Condition="Me.Level &gt;= 60 &amp;&amp; Me.Level &lt; 90">
+			
+			<!-- Wait timer - wait 5 seconds - aggro -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+			
+			<!-- If our weapon has been Runeforged with Rune of Spellshattering -->
+			<If Condition="Me.HasAura(53362)" >
+
+					<!-- Profile message - Our weapon has been Rune-forged -->
+					<CustomBehavior File="Message" 
+									Text="Our weapon has been Runeforged with Rune of Spellshattering."  
+									LogColor="Orange" />
+			
+			</If>	<!-- If our weapon has been Runeforged with Rune of Spellshattering -->
+
+			<!-- If our level is > 60 and < 90 -->
+			<If Condition="Me.Level &gt;= 60 &amp;&amp; Me.Level &lt; 90">
+			
+				<!-- If our riding skill is less than 225 -->
+				<If Condition="Me.GetSkill(Styx.SkillLine.Riding).CurrentValue &lt; 225">
+				
+					<!-- If we have gold -->
+					<If Condition="(Me.Gold &gt;= 250)" >
+			
+						<!-- Custom behavior - LoadProfile - [QO-N-M][Solstice][58-90][riding-skill-training] -->
+						<CustomBehavior File="LoadProfile" 
+										ProfileName="Components\Movement\[QO-N-M][Solstice][58-90][riding-skill-training]" />
+			
+						<!-- Else - We don't have 500 gold to train Cold weather Flying -->
+						<Else>
+						
+							<!-- Profile message - Moving to the riding trainer --> 
+							<CustomBehavior File="Message" 
+											Text="We don't have 250 gold to train Expert Riding." 
+											LogColor="Red" />
+						
+						</Else>	<!-- Else - We don't have 500 gold to train Cold weather Flying -->
+			
+					</If>	<!-- If we have gold -->
+			
+					<!-- Else our riding skill is => 225 -->
+					<Else>
+					
+						<!-- Profile message - We have learned Expert Riding --> 
+						<CustomBehavior File="Message" 
+										Text="We have learned Expert Riding." 
+										LogColor="Orange" />
+					
+					</Else>
+			
+				</If>	<!-- If our riding skill is less than 225 -->
+		
+			</If>	<!-- If our level is > 60 and < 90 -->
+
+			<!-- If our level is => 68 -->
+			<If Condition="Me.Level &gt;= 68 &amp;&amp; Me.Level &lt; 90">
+			
+				<!-- If we have a Flight Master's License -->
+				<If Condition="HasSpell(90267)" >
+				
+					<!-- Profile message - We have a Flight Master's License --> 
+					<CustomBehavior File="Message" 
+									Text="We have a Flight Master's License." 
+									LogColor="Orange" />
+					
+					<!-- Else we e have not purchased a Flight Master's License -->
+					<Else>
+					
+						<!-- Profile message - We have not purchased a Flight Master's License --> 
+						<CustomBehavior File="Message" 
+										Text="We have not purchased a Flight Master's License." 
+										LogColor="Orange" />
+
+						<!-- If we have 250 gold-->
+						<If Condition="(Me.Gold &gt;= 250)" >
+				
+							<!-- Custom behavior - LoadProfile - [QO-N-M][Solstice][58-90][riding-skill-training] -->
+							<CustomBehavior File="LoadProfile"  
+											ProfileName="Components\Movement\[QO-N-M][Solstice][58-90][riding-skill-training]" />
+
+						</If>	<!-- If we have 250 gold-->				
+										
+						<!-- If we don't have gold -->
+						<If Condition="(Me.Gold &gt;= 250)" >
+				
+							<!-- Profile message - We don't have 250 gold to purchased a Flight Master's License. Restart the profile with at least 250 gold or purchased a Flight Master's License --> 
+							<CustomBehavior File="Message" 
+											Text="We don't have 250 gold to purchased a Flight Master's License. Restart the profile with at least 250 gold or purchased a Flight Master's License." 
+											LogColor="Orange" />
+															
+						</If>	<!-- If we have gold -->				
+			
+					</Else>		<!-- Else we e have not purchased a Flight Master's License -->
+					
+				</If>	<!-- If we don't have Cold Weather Flying -->
+		
+			</If>	<!-- If our level is => 78 -->
+
+			<!-- If our level is => 68 -->
+			<If Condition="Me.Level &gt;= 68 &amp;&amp; Me.Level &lt; 90">
+			
+				<!-- If we have Cold Weather Flying -->
+				<If Condition="HasSpell(54197)" >
+				
+					<!-- Profile message - We have learned Cold Weather Flying--> 
+					<CustomBehavior File="Message" 
+									Text="We have learned Cold Weather Flying." 
+									LogColor="Orange" />
+					
+					<!-- Else we have not learned Cold Weather Flying -->
+					<Else>
+					
+						<!-- Profile message - We have not learned Cold Weather Flying --> 
+						<CustomBehavior File="Message" 
+										Text="We have not learned Cold Weather Flying." 
+										LogColor="Orange" />
+
+						<!-- If we have 500 gold-->
+						<If Condition="(Me.Gold &gt;= 500)" >
+				
+							<!-- Custom behavior - LoadProfile - [QO-N-M][Solstice][58-90][riding-skill-training] -->
+							<CustomBehavior File="LoadProfile"  
+											ProfileName="Components\Movement\[QO-N-M][Solstice][58-90][riding-skill-training]" />
+				
+
+						</If>	<!-- If we have 500 gold-->				
+										
+						<!-- If we don't have gold -->
+						<If Condition="(Me.Gold &gt;= 500)" >
+				
+							<!-- Profile message - We don't have 500 gold to purchase Cold Weather Flying. Restart the profile with at least 500 gold or purchase Cold Weather Flying --> 
+							<CustomBehavior File="Message" 
+											Text="We don't have 500 gold to purchase Cold Weather Flying. Restart the profile with at least 500 gold or purchase Cold Weather Flying." 
+											LogColor="Orange" />
+											
+							<!-- Profile message - Stopping the bot !!! --> 
+							<CustomBehavior File="Message" 
+											Text="Stopping the bot !!!." 
+											LogColor="Red" />
+
+							<!-- Custom behavior - StopBot --> 				
+							<CustomBehavior File="UserSettings" 
+											StopBot="true" />				
+											
+						</If>	<!-- If we have gold -->				
+			
+					</Else>	<!-- Else we have not learned Cold Weather Flying -->
+					
+				</If>	<!-- If we don't have Cold Weather Flying -->
+		
+			</If>	<!-- If our level is => 68 -->
+		
+		</If>	<!-- If our level is 60-90 -->
+
+		<!-- If our level is 88-91 -->
+		<If Condition="Me.Level &gt;= 88 &amp;&amp; Me.Level &lt; 91">
+			<CustomBehavior File="LoadProfile" 
+									ProfileName="Components\[QO-N][Solstice][88-90]_lost-city-of-the-tol'vir" />
+		</If>
+
+		<!-- If our level is 87-88 -->
+		<If Condition="Me.Level &gt;= 87 &amp;&amp; Me.Level &lt; 88">
+			<CustomBehavior File="LoadProfile" 
+									ProfileName="Components\[QO-N][Solstice][87-88]_blackrock-caverns" />
+		</If>
+
+		<!-- If our level is 86-87 -->
+		<If Condition="Me.Level &gt;= 86 &amp;&amp; Me.Level &lt; 87">
+			<CustomBehavior File="LoadProfile" 
+									ProfileName="Components\[QO-N][Solstice][86-87]_halls-of-lightning" />
+		</If>
+
+		<!-- If our level is 84-86 -->
+		<If Condition="Me.Level &gt;= 84 &amp;&amp; Me.Level &lt; 86">
+			<CustomBehavior File="LoadProfile" 
+									ProfileName="Components\[QO-N][Solstice][84-86]_gundrak" />
+		</If>
+
+		<!-- If our level is 82-84 -->
+		<If Condition="Me.Level &gt;= 82 &amp;&amp; Me.Level &lt; 84">
+			<CustomBehavior File="LoadProfile" 
+							ProfileName="Components\[QO-N][Solstice][82-84]_drak'tharon-keep" />
+		</If>
+		
+		<!-- If our level is 80-82 -->
+		<If Condition="Me.Level &gt;= 80 &amp;&amp; Me.Level &lt; 82">
+			<CustomBehavior File="LoadProfile" 
+							ProfileName="Components\[QO-N][Solstice][80-82]_ahn'kahet-the-old-kingdom" />
+		</If>
+		
+		<!-- If our level is 79-80 -->
+		<If Condition="Me.Level &gt;= 79 &amp;&amp; Me.Level &lt; 80">
+			<CustomBehavior File="LoadProfile" 
+							ProfileName="Components\[QO-N][Solstice][79-80]_the-nexus" />
+		</If>
+		
+		<!-- If our level is 78-79 -->
+		<If Condition="Me.Level &gt;= 78 &amp;&amp; Me.Level &lt; 79">
+			<CustomBehavior File="LoadProfile" 
+							ProfileName="Components\[QO-N][Solstice][78-79]_utgarde-keep" />
+		</If>
+		
+		<!-- If our level is 76-78 -->
+		<If Condition="Me.Level &gt;= 76 &amp;&amp; Me.Level &lt; 78">
+			<CustomBehavior File="LoadProfile" 
+							ProfileName="Components\[QO-N][Solstice][76-78]_botanica" />
+		</If>
+		
+		<!-- If our level is 74-76 -->
+		<If Condition="Me.Level &gt;= 74 &amp;&amp; Me.Level &lt; 76">
+			<CustomBehavior File="LoadProfile" 
+							ProfileName="Components\[QO-N][Solstice][74-76]_sethekk-halls" />
+		</If>
+		
+		<!-- If our level is 72-74 -->
+		<If Condition="Me.Level &gt;= 72 &amp;&amp; Me.Level &lt; 74">
+			<CustomBehavior File="LoadProfile" 
+									ProfileName="Components\[QO-N][Solstice][72-74]_auchenai-crypts" />
+		</If>
+		
+		<!-- If our level is 70-72 -->
+		<If Condition="Me.Level &gt;= 70 &amp;&amp; Me.Level &lt; 72">
+			<CustomBehavior File="LoadProfile" 
+									ProfileName="Components\[QO-N][Solstice][70-72]_mana-tombs" />
+		</If>
+		
+		<!-- If our level is 67-70 -->
+		<If Condition="Me.Level &gt;= 67 &amp;&amp; Me.Level &lt; 70">
+			<CustomBehavior File="LoadProfile" 
+									ProfileName="Components\[QO-N][Solstice][67-70]_hellfire-ramparts" />
+		</If>
+		
+		<!-- If our level is 62-67 -->
+		<If Condition="Me.Level &gt;= 62 &amp;&amp; Me.Level &lt; 67">
+			<CustomBehavior File="LoadProfile" 
+									ProfileName="Components\[QO-N][Solstice][62-67]_blackrock-spire" />
+		</If>
+		
+		<!-- If our level is 58-62 -->
+		<If Condition="Me.Level &gt;= 58 &amp;&amp; Me.Level &lt; 62">
+			<CustomBehavior File="LoadProfile" 
+									ProfileName="Components\[QO-N][Solstice][58-62]_grind" />
+		</If>
+				
+	</QuestOrder>
+</HBProfile>	

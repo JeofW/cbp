@@ -1,0 +1,579 @@
+﻿<HBProfile creator="Botanist and Wigglez" version="1.0">
+	<Name>[QO-N][73-75]_gundrak</Name>
+   
+	<MinLevel>1</MinLevel>
+	<MaxLevel>101</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	
+	<MailGrey>False</MailGrey>
+	<MailWhite>False</MailWhite>
+	<MailGreen>False</MailGreen>
+	<MailBlue>False</MailBlue>
+	<MailPurple>False</MailPurple>
+   
+	<SellGrey>True</SellGrey>
+	<SellWhite>False</SellWhite>
+	<SellGreen>False</SellGreen>
+	<SellBlue>False</SellBlue>
+	<SellPurple>False</SellPurple>
+
+	<AvoidMobs>		
+		<Mob Name="Summon Enabler Stalker" Entry="53488" />
+		<Mob Name="Drakkari Guardian" Entry="26620" />
+		<Mob Name="Drakkari Frenzy" Entry="29834"  />
+	</AvoidMobs>
+	
+	<Blackspots>
+		<Blackspot X="5777.278" Y="-3553.803" Z="387.186" Radius="12.4357" />
+	</Blackspots>
+
+	<Mailboxes>
+	</Mailboxes>
+ 
+	<Vendors>
+	</Vendors>
+	
+	<ProtectedItems>
+	</ProtectedItems>
+
+	<Factions>16</Factions>
+	
+	<QuestOrder>
+
+
+		<!-- *******************************************************  Booster ************************************************************** -->
+		<If Condition="Me.Level &gt;= 90">
+			<CustomBehavior File="Message" 
+							Text="We are a booster." 
+							LogColor="Fuchsia" />
+		
+			<!-- Booster UserSettings -->
+			<CustomBehavior File="UserSettings"
+							FindMountAutomatically="True"
+							GroundMountFarmingMode="False"
+							HarvestHerbs="False"
+							HarvestMinerals="False"
+							KillBetweenHotspots="True"
+							LogoutForInactivity="False"
+							LogoutInactivityUseForceQuit="False"
+							LootMobs="True"
+							LootRadius="35"
+							MountName=""
+							NinjaSkin="False"
+							RessAtSpiritHealers="False"
+							SkinMobs="False"
+							UseMount="True" 
+							UseRandomMount="False" />
+						
+			<!-- Infinite loop -->
+			<While Condition="true" >	
+				<!-- Gundrak -->
+				<If Condition="Me.ZoneId == 4416">
+					<CustomBehavior File="Message" 
+									Text="Gundrak detected. Running out."
+									LogColor="Fuchsia" />
+						
+					<!-- Make our way to the exit -->
+					<RunTo X="1887.432" Y="839.571" Z="176.6754" />
+
+					<!-- Go through the portal -->
+					<CustomBehavior File="Misc\InInstance" X="1900.536" Y="815.8542" Z="176.637" />
+					
+					<!-- Make sure we run to the right spot outside the potral -->
+					<RunTo X="6717.32" Y="-4645.55" Z="450.017" />
+				</If> <!-- GD -->
+				
+				<!-- If we are not in the box, load the movement profile -->
+				<If Condition="Me.X &lt; 6650 || Me.X &gt; 6750 || Me.Y &lt; -4700 || Me.Y &gt; -4600" >
+					<CustomBehavior File="Message" 
+									Text="Distance from portal is not within our proximity, initializing movement to get there."
+									LogColor="Fuchsia" />	
+									
+					<CustomBehavior File="LoadProfile" 
+									ProfileName="Movement\[QO-N-M][73-75]_gundrak" />
+				</If> <!-- Not in box -->
+				
+				<!-- If we are in the box -->
+				<If Condition="Me.X &gt; 6650 &amp;&amp; Me.X &lt; 6750 &amp;&amp; Me.Y &gt; -4700 &amp;&amp; Me.Y &lt; -4600" >
+					<CustomBehavior File="Message" 
+									Text="Portal detected nearby."
+									LogColor="Fuchsia" />	
+						
+					<!-- If we didn't enter the instance, wait 20 seconds then attempt to enter again -->
+					<While Condition="Me.ZoneId != 4416">
+						<!-- Make sure we run to the right spot outside the potral -->
+						<RunTo X="6717.32" Y="-4645.55" Z="450.017" />
+
+						<!-- Run back in the portal -->
+						<CustomBehavior File="Misc\InInstance" X="6690.202" Y="-4670.903" Z="441.5623" />
+										
+						<CustomBehavior File="Message" 
+										Text="Waiting for the dungeon to load." 
+										LogColor="Fuchsia" />
+									
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000"
+										VariantTime="20000" />
+										
+						<!-- If we still aren't in, we're locked out -->
+						<If Condition="Me.ZoneId != 4416">
+							<CustomBehavior File="Message" 
+											Text="We are locked out. Waiting and trying again." 
+											LogColor="Fuchsia" />
+						</If> <!-- Locked -->
+					</While> <!-- While we aren't in the instance -->
+				</If> <!-- In box -->
+				
+				<!-- If we are inside and have checked our reset -->
+				<If Condition="Me.ZoneId == 4416">
+					<!-- Entrance -->
+					<RunTo X="1880.74" Y="853.76" Z="176.696" />
+					
+					<!-- Run macro to pass on loot -->
+					<CustomBehavior File="RunMacro"
+									Macro="/run SetOptOutOfLoot(1)" />
+									
+					<!-- Run to quest giver -->
+					<RunTo X="1858.118" Y="835.4113" Z="176.6812" />
+				
+					<!-- Begin the instance once all party members are within range  -->
+					<CustomBehavior File="Misc\LoadProfileOn" 
+									CheckRange="1" />
+									
+					<CustomBehavior File="WaitTimer"
+									WaitTime="5000" />
+									
+					<CustomBehavior File="Message" 
+									Text="Gundrak initialized."  
+									LogColor="Fuchsia" />
+				
+					<!-- Run to the ledge and jump off -->
+					<RunTo X="1853.866" Y="852.3528" Z="175.8627" />
+					
+					<CustomBehavior File="MyCTM" X="1835.455" Y="850.0269" Z="126.3348" />
+					<CustomBehavior File="MyCTM" X="1839.684" Y="861.1832" Z="126.4267" />
+					<CustomBehavior File="MyCTM" X="1830.611" Y="861.0634" Z="128.5763" />
+
+					<!-- At doorway -->
+					<RunTo X="1825.048" Y="852.1369" Z="129.2877" />
+					
+					<!-- Pull mobs around Moorabi -->
+					<RunTo X="1798.344" Y="847.0183" Z="129.1968" />
+					<RunTo X="1797.455" Y="856.2925" Z="129.1909" />
+					<RunTo X="1773.845" Y="852.2606" Z="123.3098" />
+					<RunTo X="1747.521" Y="858.1993" Z="129.191" />
+					<RunTo X="1747.491" Y="849.5912" Z="129.197" />
+						
+					<!-- Center of Moorabi room -->
+					<RunTo X="1772.659" Y="850.7392" Z="123.1927" />
+					
+					<!-- Kill Moorabi -->
+					<CustomBehavior File="GetOutOfGroundEffectAndAuras" 
+									EventCompleteWhen="SpecificMobsDead" 
+									EventCompleteDeadMobId="29305"
+									EventX="1772.471" EventY="809.537" EventZ="129.2166"
+									MoveOutOfGroundEffectAuraId1="111111"
+									MoveAwayFromMobCastingSpellId1="111111"
+									MoveAwayFromMobWithAuraId1="111111">
+						<Safespots>
+							<Hotspot X="1772.471" Y="809.537" Z="129.2166" />
+						</Safespots>
+					</CustomBehavior>
+					
+					<!-- Interact with first obelisk -->
+					<CustomBehavior File="InteractWith" 
+									MobId="192519" 
+									ObjectType="Gameobject" 
+									Range="4.75" 
+									NumOfTimes="1"  
+									X="1772.321" Y="807.6896" Z="129.2165" />
+					
+					<!-- Get ready to pull big packs at door -->
+					<RunTo X="1740.698" Y="852.2436" Z="129.1967" />
+					
+					<!-- Pull up to second boss -->
+					<CustomBehavior File="RunLikeHell" 
+									UseCTM="false" 
+									NumOfTimes="1" 
+									AllowCombat="false">
+						<Hotspot X="1705.25" Y="842.8112" Z="129.4524" />
+						<Hotspot X="1704.805" Y="877.4604" Z="130.615" />
+						<Hotspot X="1689.014" Y="894.2205" Z="133.3537" />
+						<Hotspot X="1664.195" Y="886.1106" Z="139.0516" />
+						<Hotspot X="1665.208" Y="865.5336" Z="137.5853" />
+						<Hotspot X="1644.678" Y="889.4501" Z="142.2682" />
+						<Hotspot X="1631.151" Y="899.5261" Z="145.182" />
+						<Hotspot X="1602.488" Y="883.1555" Z="149.0445" />
+						<Hotspot X="1583.111" Y="882.5538" Z="152.09" />
+						<Hotspot X="1575.125" Y="831.4033" Z="153.0277" />
+						<Hotspot X="1597.505" Y="807.1804" Z="147.3468" />
+						<Hotspot X="1625.338" Y="793.8346" Z="143.2576" />
+						<!-- center of room -->
+						<Hotspot X="1625.464" Y="743.6151" Z="142.7861" />
+						
+						<!-- go pick up mobs in L -->
+						<Hotspot X="1615.076" Y="726.7632" Z="142.7879" />
+						<Hotspot X="1577.816" Y="725.7277" Z="142.7831" />
+						<Hotspot X="1576.669" Y="717.7441" Z="143.375" />
+						<Hotspot X="1575.699" Y="726.1974" Z="142.7835" />
+						<Hotspot X="1619.902" Y="728.5766" Z="142.7861" />
+
+						<!-- center of room -->
+						<Hotspot X="1625.464" Y="743.6151" Z="142.7861" />
+					</CustomBehavior>
+					<RunTo X="1625.464" Y="743.6151" Z="142.7861" />
+					
+					<!-- Kill Drakkari Colossus (Drakkari Elemental) -->
+					<CustomBehavior File="GetOutOfGroundEffectAndAuras" 
+									EventCompleteWhen="SpecificMobsDead" 
+									EventCompleteDeadMobId="29573"
+									EventX="1671.787" EventY="743.7188" EventZ="142.786"
+									MoveOutOfGroundEffectAuraId1="111111"
+									MoveAwayFromMobCastingSpellId1="111111"
+									MoveAwayFromMobWithAuraId1="111111">
+						<Safespots>
+							<Hotspot X="1671.787" Y="743.7188" Z="142.786" />
+						</Safespots>
+					</CustomBehavior>
+					
+					<!-- Interact with second obelisk -->
+					<CustomBehavior File="InteractWith" 
+									MobId="192520" 
+									ObjectType="Gameobject" 
+									Range="4.75" 
+									NumOfTimes="1"  
+									X="1690.178" Y="743.5302" Z="142.78" />
+								
+					<!-- Get ready to pull big packs at door -->			
+					<RunTo X="1625.135" Y="716.2487" Z="142.7837" />
+									
+					<CustomBehavior File="RunLikeHell" 
+									UseCTM="false" 
+									NumOfTimes="1" 
+									AllowCombat="false">
+						<Hotspot X="1630.932" Y="685.3253" Z="138.9426" />
+						<Hotspot X="1634.6" Y="677.7352" Z="134.1913" />
+						<Hotspot X="1624.179" Y="674.3912" Z="133.7701" />
+						<Hotspot X="1634.952" Y="659.4938" Z="126.9767" />
+						<Hotspot X="1641.33" Y="645.3513" Z="125.9901" />
+						<Hotspot X="1652.68" Y="654.407" Z="126.3323" />
+						<Hotspot X="1665.239" Y="650.7458" Z="126.4302" />
+						<Hotspot X="1673.18" Y="641.0413" Z="126.9308" />
+						<Hotspot X="1670.659" Y="627.7252" Z="127.759" />
+						<Hotspot X="1659.168" Y="624.3502" Z="127.5599" />
+						<Hotspot X="1650.637" Y="630.8888" Z="127.9086" />
+						<Hotspot X="1642.164" Y="641.1916" Z="126.3864" />
+						<Hotspot X="1643.208" Y="650.902" Z="125.7805" />
+						<Hotspot X="1690.497" Y="639.1329" Z="127.0117" />
+						<Hotspot X="1690.008" Y="630.5492" Z="127.0885" />
+						<Hotspot X="1697.423" Y="632.7921" Z="128.9328" />
+						<Hotspot X="1762.599" Y="633.3079" Z="124.6006" />
+						<Hotspot X="1774.713" Y="646.4276" Z="124.602" />
+						<Hotspot X="1787.833" Y="634.2883" Z="124.5363" />
+						<Hotspot X="1786.307" Y="621.6215" Z="124.4717" />
+						<Hotspot X="1774.679" Y="609.2748" Z="124.4649" />
+						<Hotspot X="1764.522" Y="617.2899" Z="124.4724" />
+						<Hotspot X="1761.921" Y="634.6663" Z="124.5049" />
+						<Hotspot X="1805.139" Y="633.4857" Z="129.1291" />
+						<Hotspot X="1774.923" Y="641.9166" Z="124.2862" />
+					</CustomBehavior>
+					<RunTo X="1774.923" Y="641.9166" Z="124.2862" />
+					
+					<!-- Kill Slad'ran -->
+					<CustomBehavior File="GetOutOfGroundEffectAndAuras" 
+									EventCompleteWhen="SpecificMobsDead" 
+									EventCompleteDeadMobId="29304"
+									EventX="1775.378" EventY="674.5065" EventZ="129.2172"
+									MoveOutOfGroundEffectAuraId1="111111"
+									MoveAwayFromMobCastingSpellId1="111111"
+									MoveAwayFromMobWithAuraId1="111111">
+						<Safespots>
+							<Hotspot X="1775.378" Y="674.5065" Z="129.2172" />
+						</Safespots>
+					</CustomBehavior>
+					
+					<!-- Interact with third obelisk -->
+					<CustomBehavior File="InteractWith" 
+									MobId="192518" 
+									ObjectType="Gameobject" 
+									Range="4.75" 
+									NumOfTimes="1"  
+									X="1775.357" Y="676.8625" Z="129.2172" />
+									
+					<!-- Move to the turnstyle -->				
+					<Runto X="1717.515" Y="743.3685" Z="130.7676" />
+					
+					<CustomBehavior File="RunLikeHell" 
+									UseCTM="false" 
+									NumOfTimes="1" 
+									AllowCombat="false">
+						<Hotspot X="1750.882" Y="743.5035" Z="118.9347" />
+						<Hotspot X="1806.905" Y="743.6661" Z="119.3348" />
+						<Hotspot X="1849.824" Y="743.6684" Z="135.9358" />
+						<Hotspot X="1882.505" Y="757.6721" Z="135.9596" />
+						<Hotspot X="1880.931" Y="728.1627" Z="135.9296" />
+						<Hotspot X="1869.424" Y="744.0046" Z="136.4093" />
+					</CustomBehavior>
+					<RunTo X="1869.424" Y="744.0046" Z="136.4093" />
+					
+					<!-- Forces kill of Gal'darah  -->
+					<CustomBehavior File="GetOutOfGroundEffectAndAuras" 
+									EventCompleteWhen="SpecificMobsDead" 
+									EventCompleteDeadMobId="29306"
+									EventX="1914.748" EventY="743.6536" EventZ="136.4952"
+									MoveOutOfGroundEffectAuraId1="111111"
+									MoveAwayFromMobCastingSpellId1="111111"
+									MoveAwayFromMobWithAuraId1="111111">
+						<Safespots>
+							<Hotspot X="1914.748" Y="743.6536" Z="136.4952" />
+						</Safespots>
+					</CustomBehavior>
+					
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="5000" />
+					
+					<!-- If we are high enough to go to the next instance, do so -->
+					<CustomBehavior File="Misc\LoadProfileOn" 
+									MinLevel="75" 
+									ProfileName="[QO-N][75-77]_halls-of-lightning.xml"  />
+				</If> <!-- GD -->
+				
+				<!-- Gundrak -->
+				<If Condition="Me.ZoneId == 4416">
+					<CustomBehavior File="Message" 
+									Text="Gundrak detected. Running out to reset."
+									LogColor="Fuchsia" />
+						
+					<!-- Make our way to the exit -->
+					<RunTo X="1969.795" Y="833.3107" Z="135.2538" />
+
+					<!-- Go through the portal -->
+					<CustomBehavior File="Misc\InInstance" X="1995.536" Y="845.8542" Z="135.2352" />
+					
+					<!-- Make sure we run to the right spot outside the potral -->
+					<RunTo X="6717.32" Y="-4645.55" Z="450.017" />
+				</If> <!-- GD -->
+				
+				<!-- If we are in the box -->
+				<If Condition="Me.X &gt; 6650 &amp;&amp; Me.X &lt; 6750 &amp;&amp; Me.Y &gt; -4700 &amp;&amp; Me.Y &lt; -4600" >
+					<!-- First reset isn't enough to get a fresh instance if toons are still inside -->
+					<CustomBehavior File="Message" 
+									Text="Resetting instance, 1 of 2." 
+									LogColor="Fuchsia" />
+					
+					<CustomBehavior File="RunMacro" Macro="/script ResetInstances()" />
+					<CustomBehavior File="RunMacro" Macro="/script SetDungeonDifficultyID(1)" />
+					
+					<!-- Allow for an Honorbuddy pulse -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="200" />
+					
+					<!-- The second reset confirms we are safe to enter the instance -->
+					<CustomBehavior File="Message" 
+									Text="Resetting instance, 2 of 2." 
+									LogColor="Fuchsia" />
+					<CustomBehavior File="RunMacro" Macro="/script ResetInstances()" />
+					<CustomBehavior File="RunMacro" Macro="/script SetDungeonDifficultyID(1)" />
+					
+					<CustomBehavior File="Message" 
+									Text="Instance reset." 
+									LogColor="Fuchsia" />
+				</If> <!-- In box -->
+			</While> <!-- Infinite loop -->
+		</If> <!-- Booster -->	
+		
+		<!-- *******************************************************  RAF Toons ************************************************************** -->
+		<If Condition="Me.Level &lt;= 85">
+			<CustomBehavior File="Message" 
+							Text="We are a RAF." 
+							LogColor="Fuchsia" />
+							
+			<If Condition="Me.IsAlliance">
+				<If Condition="Me.HearthstoneAreaId != 5148">
+					<CustomBehavior File="Message" 
+									Text="Our Hearthstone isn't set in the Trade District in Stormwind. Stopping profile." 
+									LogColor="Fuchsia" />
+									
+					<CustomBehavior File="UserSettings" 
+										StopBot="true" />
+				</If>
+				
+				<ElseIf Condition="Me.IsHorde">
+					<If Condition="Me.HearthstoneAreaId != 5170">
+						<CustomBehavior File="Message" 
+										Text="Our Hearthstone isn't set in the Valley of Strength in Orgrimmar. Stopping profile." 
+										LogColor="Fuchsia" />
+										
+						<CustomBehavior File="UserSettings" 
+										StopBot="true" />
+					</If>
+				</ElseIf>
+			</If>
+
+			<!-- RAF UserSettings -->
+			<CustomBehavior File="UserSettings"
+							GroundMountFarmingMode="False"
+							HarvestHerbs="False"
+							HarvestMinerals="False"
+							KillBetweenHotspots="True"
+							LogoutForInactivity="False"
+							LogoutInactivityUseForceQuit="False"
+							LootMobs="True"
+							LootRadius="15"
+							MountName=""
+							NinjaSkin="False"
+							RessAtSpiritHealers="False"
+							SkinMobs="False"
+							UseMount="True" 
+							UseRandomMount="False" />
+		
+			<!-- Infinite loop -->
+			<While Condition="true" >	
+				<!-- Gundrak -->
+				<If Condition="Me.ZoneId == 4416">
+					<CustomBehavior File="Message" 
+									Text="Gundrak detected. Running out."
+									LogColor="Fuchsia" />
+						
+					<!-- Make our way to the exit -->
+					<RunTo X="1887.432" Y="839.571" Z="176.6754" />
+
+					<!-- Go through the portal -->
+					<CustomBehavior File="Misc\InInstance" X="1900.536" Y="815.8542" Z="176.637" />
+					
+					<!-- Make sure we run to the right spot outside the potral -->
+					<RunTo X="6717.32" Y="-4645.55" Z="450.017" />
+				</If> <!-- GD -->
+				
+				<!-- If we are not in the box, load the movement profile -->
+				<If Condition="Me.X &lt; 6650 || Me.X &gt; 6750 || Me.Y &lt; -4700 || Me.Y &gt; -4600" >
+					<CustomBehavior File="Message" 
+									Text="Distance from portal is not within our proximity, initializing movement to get there."
+									LogColor="Fuchsia" />	
+									
+					<CustomBehavior File="LoadProfile" 
+									ProfileName="Movement\[QO-N-M][73-75]_gundrak" />
+				</If> <!-- Not in box -->
+				
+				<!-- If we are in the box -->
+				<If Condition="Me.X &gt; 6650 &amp;&amp; Me.X &lt; 6750 &amp;&amp; Me.Y &gt; -4700 &amp;&amp; Me.Y &lt; -4600" >
+					<CustomBehavior File="Message" 
+									Text="Portal detected nearby."
+									LogColor="Fuchsia" />	
+						
+					<!-- If we didn't enter the instance, wait 20 seconds then attempt to enter again -->
+					<While Condition="Me.ZoneId != 4416">
+						<!-- Make sure we run to the right spot outside the potral -->
+						<RunTo X="6717.32" Y="-4645.55" Z="450.017" />
+
+						<!-- Run back in the portal -->
+						<CustomBehavior File="Misc\InInstance" X="6690.202" Y="-4670.903" Z="441.5623" />
+										
+						<CustomBehavior File="Message" 
+										Text="Waiting for the dungeon to load." 
+										LogColor="Fuchsia" />
+									
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000"
+										VariantTime="20000" />
+										
+						<!-- If we still aren't in, we're locked out -->
+						<If Condition="Me.ZoneId != 4416">
+							<CustomBehavior File="Message" 
+											Text="We are locked out. Waiting and trying again." 
+											LogColor="Fuchsia" />
+						</If> <!-- Locked -->
+					</While> <!-- While we aren't in the instance -->
+				</If> <!-- In box -->
+				
+				<!-- If we are inside and have checked our reset -->
+				<If Condition="Me.ZoneId == 4416">
+					<CustomBehavior File="Message" 
+									Text="Avoiding instance lock from this point, do not touch." 
+									LogColor="Yellow" />	
+				
+					<!-- Entrance -->
+					<RunTo X="1880.74" Y="853.76" Z="176.696" />
+				
+					<!-- Disable combat -->
+					<DisableBehavior Name="Combat" />
+					
+					<!-- Run to quest giver -->
+					<RunTo X="1858.118" Y="835.4113" Z="176.6812" />
+
+					<!-- Begin the instance once all party members are within range  -->
+					<CustomBehavior File="Misc\LoadProfileOn" 
+									CheckRange="2" />
+									
+					<CustomBehavior File="Misc\InstanceTimer" Timer="Start" /> 
+									
+					<CustomBehavior File="Message" 
+									Text="Gundrak initialized."  
+									LogColor="Fuchsia" />
+									
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="20000" />
+												
+					<!-- Forces raf to stay put until Moorabi is dead -->
+					<CustomBehavior File="GetOutOfGroundEffectAndAuras" 
+									EventCompleteWhen="SpecificMobsDead" 
+									EventCompleteDeadMobId="29305"
+									EventX="1858.118" EventY="835.4113" EventZ="176.6812"
+									MoveOutOfGroundEffectAuraId1="111111"
+									MoveAwayFromMobCastingSpellId1="111111"
+									MoveAwayFromMobWithAuraId1="111111">
+						<Safespots>
+							<Hotspot X="1858.118" Y="835.4113" Z="176.6812" />
+						</Safespots>
+					</CustomBehavior>
+										
+					<!-- Run near altar -->
+					<RunTo X="1780.311" Y="803.9604" Z="129.2174" />
+
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="20000" />
+
+					<!-- Forces raf to stay put until Gal'darah is dead --> 
+					<CustomBehavior File="GetOutOfGroundEffectAndAuras" 
+									EventCompleteWhen="SpecificMobsDead" 
+									EventCompleteDeadMobId="29306"
+									EventX="1772.281" EventY="800.1653" EventZ="129.2174"
+									MoveOutOfGroundEffectAuraId1="111111"
+									MoveAwayFromMobCastingSpellId1="111111"
+									MoveAwayFromMobWithAuraId1="111111">
+						<Safespots>
+							<Hotspot X="1772.281" Y="800.1653" Z="129.2174" />
+						</Safespots>
+					</CustomBehavior>				
+									
+					<!-- If we are high enough to go to the next instance, do so -->
+					<CustomBehavior File="Misc\LoadProfileOn" 
+									MinLevel="75" 
+									ProfileName="[QO-N][75-77]_halls-of-lightning.xml"  />
+		  
+				</If> <!-- GD -->
+				
+				<!-- Gundrak -->
+				<If Condition="Me.ZoneId == 4416">
+					<CustomBehavior File="Message" 
+									Text="Gundrak detected. Running out."
+									LogColor="Fuchsia" />
+						
+					<!-- Make our way to the exit -->
+					<RunTo X="1887.432" Y="839.571" Z="176.6754" />
+
+					<!-- enableable combat -->
+					<EnableBehavior Name="Combat" />
+					
+					<!-- Go through the portal -->
+					<CustomBehavior File="Misc\InInstance" X="1900.536" Y="815.8542" Z="176.637" />
+					
+					<!-- Make sure we run to the right spot outside the potral -->
+					<RunTo X="6717.32" Y="-4645.55" Z="450.017" />
+				</If> <!-- GD -->
+			</While> <!-- Infinite loop -->
+		</If> <!-- RAF -->
+	</QuestOrder>
+</HBProfile>

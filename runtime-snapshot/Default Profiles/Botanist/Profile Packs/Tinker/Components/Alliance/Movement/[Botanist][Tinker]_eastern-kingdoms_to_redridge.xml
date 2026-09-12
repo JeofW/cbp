@@ -1,0 +1,92 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+<Name>[Botanist][Tinker]_eastern-kingdoms_to_stormwind</Name>
+
+<MinLevel>1</MinLevel>
+<MaxLevel>151</MaxLevel>
+
+<MinDurability>-1</MinDurability>
+<MinFreeBagSlots>-1</MinFreeBagSlots>
+<TargetingDistance>45</TargetingDistance>
+
+<MailGrey>False</MailGrey>
+<MailWhite>False</MailWhite>
+<MailGreen>False</MailGreen>
+<MailBlue>False</MailBlue>
+<MailPurple>False</MailPurple>
+
+<SellGrey>False</SellGrey>
+<SellWhite>False</SellWhite>
+<SellGreen>False</SellGreen>
+<SellBlue>False</SellBlue>
+<SellPurple>False</SellPurple>
+
+<AvoidMobs>		 
+</AvoidMobs>
+
+<Blackspots>
+</Blackspots>
+
+<Mailboxes>
+</Mailboxes>
+
+<Vendors>
+</Vendors>
+
+<ProtectedItems>	
+
+	<QuestOrder>
+	
+		<!-- UserSettings -->
+		<CustomBehavior File="UserSettings"
+						FindMountAutomatically="True"
+						GroundMountFarmingMode="False"
+						HarvestHerbs="False"
+						HarvestMinerals="False"
+						KillBetweenHotspots="False"
+						LogoutForInactivity="True"
+						LogoutInactivityUseForceQuit="True"
+						LootMobs="False"
+						LootRadius="1"
+						MountName=""
+						NinjaSkin="False"
+						RessAtSpiritHealers="False"
+						SkinMobs="False"
+						UseMount="True" 
+						UseRandomMount="False" />
+		
+		<!-- Profile message - Movement procedures initiated -->
+		<CustomBehavior File="Message" 
+						Text="Movement procedures initiated." 
+						LogColor="Gold" />
+
+		<!-- If we are in Eastern Kindoms -->
+		<If Condition="Me.MapId == 0">				
+
+			<!-- Profile message - We are in Eastern Kindoms. Navigating to the Lakeshire flight master -->
+			<CustomBehavior File="Message" 
+							Text="We are in Eastern Kindoms. Navigating to the Lakeshire flight master." 
+							LogColor="Plum" />				
+	
+			<!-- Move to - Lakeshire flight master -->	
+			<MoveTo X="-9434.867" Y="-2237.955" Z="69.18333" />
+		
+		</If>	<!-- If we are in Eastern Kindoms -->
+
+		<!-- If we are in Redridge Mountains -->
+		<If Condition="Me.ZoneId == 44"> 
+		
+			<!-- CustomBehavior - Message - We are in Redridge Mountains -->
+			<CustomBehavior File="Message" 
+							Text="We are in Redridge Mountains." 
+							LogColor="Plum" />		
+							
+			<!--  CustomBehavior - LoadProfile - [Botanist][Tinker][A-5][profession-check] -->				
+			<CustomBehavior File="LoadProfile" 
+							ProfileName="..\[Botanist][Tinker][A-5][profession-check]" />
+				
+		</If>	<!-- If we are in Northshire Valley -->
+
+	</QuestOrder>
+
+</HBProfile>
+

@@ -1,0 +1,816 @@
+﻿<HBProfile creator="Botanist and Wigglez" version="1.0">
+	<Name>[QO-N][42-48]_blackrock-depths</Name>
+   
+	<MinLevel>1</MinLevel>
+	<MaxLevel>101</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	
+	<MailGrey>False</MailGrey>
+	<MailWhite>False</MailWhite>
+	<MailGreen>False</MailGreen>
+	<MailBlue>False</MailBlue>
+	<MailPurple>False</MailPurple>
+   
+	<SellGrey>False</SellGrey>
+	<SellWhite>False</SellWhite>
+	<SellGreen>False</SellGreen>
+	<SellBlue>False</SellBlue>
+	<SellPurple>False</SellPurple>
+
+	<AvoidMobs>	
+		<Mob Name="Summon Enabler Stalker" Entry="53488" />
+	</AvoidMobs>
+	
+	<Blackspots>
+	</Blackspots>
+
+	<Mailboxes>
+	</Mailboxes>
+ 
+	<Vendors>
+	</Vendors>
+	
+	<ProtectedItems>
+	</ProtectedItems>
+
+	<Factions>
+	</Factions>
+	
+	<QuestOrder>
+
+
+		
+		<!-- *******************************************************  Booster ************************************************************** -->
+		<If Condition="Me.Level &gt;= 85">
+			<CustomBehavior File="Message" 
+							Text="We are a booster." 
+							LogColor="Fuchsia" />
+		
+			<!-- Booster UserSettings -->
+			<CustomBehavior File="UserSettings"
+							FindMountAutomatically="True"
+							GroundMountFarmingMode="False"
+							HarvestHerbs="False"
+							HarvestMinerals="False"
+							KillBetweenHotspots="True"
+							LogoutForInactivity="False"
+							LogoutInactivityUseForceQuit="False"
+							LootMobs="True"
+							LootRadius="35"
+							MountName=""
+							NinjaSkin="False"
+							RessAtSpiritHealers="False"
+							SkinMobs="False"
+							UseMount="True" 
+							UseRandomMount="False" />
+							
+			<!-- Infinite loop -->
+			<While Condition="true" >
+				<!-- If we are inside Razorfen Downs -->
+				<If Condition="Me.MapId == 129">
+					<If Condition="Me.HearthstoneAreaId == 4010" >
+						<CustomBehavior File="Message" 
+										Text="Our Innkeeper is set at Mudsprocket." 
+										LogColor="Cyan" />
+										
+						<!-- Have hearthstone -->
+						<If Condition="HasItem(6948)">
+							<CustomBehavior File="Message" 
+											Text="Using Hearthstone." 
+											LogColor="Lime" />
+											
+							<CustomBehavior File="Misc\RunLua" 
+											Lua="UseItemByName(6948)" 
+											WaitTime="1000" />
+											
+							<CustomBehavior File="WaitTimer" 
+											WaitTime="20000" />
+						</If> <!-- Have hearthstone -->
+					
+						<!-- Have Innkeeper's Daughter -->
+						<If Condition="HasItem(64488)">
+							<CustomBehavior File="Message" 
+											Text="Using Innkeeper's Daughter." 
+											LogColor="Lime" />
+												
+							<CustomBehavior File="Misc\RunLua" 
+											Lua="UseItemByName(64488)" 
+											WaitTime="1000" />
+								
+							<CustomBehavior File="WaitTimer" 
+											WaitTime="20000" />
+						</If> <!-- Have Innkeeper's Daughter -->
+					</If> <!-- Hearth check -->
+				</If> <!-- RFD -->
+				
+				<!-- If we are inside Blackrock Depths -->
+				<If Condition="Me.ZoneId == 1584">
+					<CustomBehavior File="Message" 
+									Text="Blackrock Depths detected. Running out."
+									LogColor="Fuchsia" />
+					
+					<RunTo X="460.6402" Y="15.41037" Z="-71.11736" />
+					
+					<!-- Go through the portal -->
+					<CustomBehavior File="Misc\InInstance" X="456.6543" Y="46.70397" Z="-69.00373" />	
+					
+					<!-- Make sure we run to the right spot outside the portal -->
+					<RunTo X="-7178.41" Y="-922.152" Z="166.092" />	
+				</If> <!-- BRD -->
+			
+				<!-- If we are not in the box, load the movement profile -->
+				<If Condition="Me.X &lt; -7200 || Me.X &gt; -7000 || Me.Y &gt; -900 || Me.Y &lt; -1000" >
+					<CustomBehavior File="Message" 
+									Text="Distance from portal is not within our proximity, initializing movement to get there."
+									LogColor="Fuchsia" />	
+									
+					<CustomBehavior File="LoadProfile" 
+									ProfileName="Movement\[QO-N-M][42-48]_blackrock-depths" />
+				</If> <!-- Not in box -->
+				
+				<!-- If we are in the box -->
+				<If Condition="Me.X &gt; -7200 &amp;&amp; Me.X &lt; -7000 &amp;&amp; Me.Y &lt; -900 &amp;&amp; Me.Y &gt; -1000" >
+					<CustomBehavior File="Message" 
+									Text="Portal detected nearby."
+									LogColor="Fuchsia" />	
+						
+					<!-- If we didn't enter the instance, wait 20 seconds then attempt to enter again -->
+					<While Condition="Me.ZoneId != 1584">
+						<!-- Make sure we run to the right spot outside the portal -->
+						<RunTo X="-7178.41" Y="-922.152" Z="166.092" />
+
+						<!-- Run back in the Blackrock Depths portal -->
+						<CustomBehavior File="Misc\InInstance" X="-7179.068" Y="-937.434" Z="166.4007" />
+										
+						<CustomBehavior File="Message" 
+										Text="Waiting for the dungeon to load." 
+										LogColor="Fuchsia" />
+									
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000" 
+										VariantTime="20000" />	
+										
+						<!-- If we still aren't in, we're locked out -->
+						<If Condition="Me.ZoneId != 1584">
+							<CustomBehavior File="Message" 
+											Text="We are locked out. Waiting and trying again." 
+											LogColor="Fuchsia" />
+						</If> <!-- Locked -->
+					</While> <!-- While we aren't in the instance -->
+				</If> <!-- In box -->
+				
+				<!-- If we are inside Blackrock Depths and have checked our reset -->
+				<If Condition="Me.ZoneId == 1584">
+				
+					<!-- Run macro to pass on loot -->
+					<CustomBehavior File="RunMacro"
+									Macro="/run SetOptOutOfLoot(1)" />
+				
+					<!-- Entrance -->
+					<RunTo X="456.929" Y="34.0923" Z="-69.56168" />
+				
+					<!-- Go to quest givers -->
+					<RunTo X="459.7507" Y="18.36356" Z="-70.99839" />
+					
+					<!-- Begin the instance once all party members are within range  -->
+					<CustomBehavior File="Misc\LoadProfileOn" 
+									CheckRange="1" />
+									
+					<CustomBehavior File="WaitTimer"
+									WaitTime="5000" />
+									
+					<CustomBehavior File="Message" 
+									Text="Blackrock Depths initialized."  
+									LogColor="Fuchsia" />
+									
+					<!-- Run to first Shadowforge Gate -->
+					<RunTo X="493.8814" Y="14.29045" Z="-70.35346" />
+									
+					<!-- First Shadowforge Gate interact -->
+					<CustomBehavior File="InteractWith"
+									ObjectType="GameObject"
+									MobId="170559"
+									NumOfTimes="1"
+									X="496.3966"
+									Y="16.012654"
+									Z="-70.47108" />	
+									
+					<!-- Run through the gate -->
+					<RunTo X="525.9897" Y="19.44355" Z="-71.12934" />
+					
+					<!-- Make sure we kill the fire elemental for the RAFs -->
+					<CustomBehavior File="TargetAndMoveToMob" 
+									MobId="8910" 
+									MoveWithinMaxRangeOfMob="1" 
+									WaitForNpcs="false"
+									X="564.9453" Y="21.04286" Z="-70.8724" />		
+									
+					<!-- Run to second Shadowforge Gate -->	
+					<RunTo X="567.6488" Y="-7.285117" Z="-70.21188" />
+					
+					<!-- Second Shadowforge Gate interact -->
+					<CustomBehavior File="InteractWith"
+									ObjectType="GameObject"
+									MobId="170560"
+									NumOfTimes="1"
+									X="569.58905"
+									Y="-9.361542"
+									Z="-70.25659" />
+									
+					<!-- Run to East Garrison Door -->
+					<RunTo X="559.0313" Y="-50.95553" Z="-60.35724" />	
+					
+					<!-- East Garrison Door interact -->
+					<CustomBehavior File="InteractWith"
+									ObjectType="GameObject"
+									MobId="170570"
+									NumOfTimes="1"
+									X="560.5311"
+									Y="-51.815918"
+									Z="-60.09396" />
+									
+					<!-- Center room, stationary packs -->
+					<RunTo X="526.5709" Y="-67.32627" Z="-62.24083" />
+					<RunTo X="522.2906" Y="-85.4993" Z="-62.6965" />
+					<RunTo X="499.3938" Y="-57.3469" Z="-62.82627" />
+					<RunTo X="473.639" Y="-88.82966" Z="-62.90174" />
+					<RunTo X="494.6596" Y="-112.5997" Z="-62.60861" />
+					
+					<!-- Patrols -->
+					<RunTo X="532.9995" Y="-85.06393" Z="-62.81886" />
+					<RunTo X="518.8388" Y="-67.63451" Z="-61.99384" />
+					<RunTo X="494.6599" Y="-63.30883" Z="-62.55383" />
+					<RunTo X="475.3806" Y="-71.42777" Z="-62.79891" />
+					<RunTo X="470.1118" Y="-96.46066" Z="-62.13537" />
+					<RunTo X="476.3301" Y="-118.6087" Z="-62.43579" />
+					<RunTo X="498.7592" Y="-136.85" Z="-62.60973" />
+					<RunTo X="518.5743" Y="-125.5924" Z="-63.58913" />
+					<RunTo X="532.9451" Y="-93.92294" Z="-63.54447" />
+					
+					<!-- Right hook -->
+					<RunTo X="448.8988" Y="-90.33096" Z="-62.15781" />
+					<RunTo X="384.3812" Y="-80.75917" Z="-64.23878" />
+					<RunTo X="350.1492" Y="-57.07825" Z="-68.1971" />
+					<RunTo X="287.2493" Y="-89.97955" Z="-76.34485" />
+					<RunTo X="267.0504" Y="-145.6444" Z="-72.41335" />
+					<RunTo X="282.6295" Y="-154.113" Z="-70.80672" />
+					
+					<!-- Back entrance to High Interrogator Gerstahn -->
+					<RunTo X="310.9393" Y="-147.1715" Z="-70.38614" />
+					
+					<!-- Kill the rest of the center -->
+					<RunTo X="352.3756" Y="-135.7201" Z="-64.94896" />
+					<RunTo X="342.9639" Y="-118.5076" Z="-64.94896" />
+					<RunTo X="360.6467" Y="-161.0725" Z="-64.94896" />
+					<RunTo X="391.4769" Y="-150.9228" Z="-64.94896" />
+					<RunTo X="375.785" Y="-107.969" Z="-64.94896" />
+					<RunTo X="399.5462" Y="-114.817" Z="-65.20261" />
+					<RunTo X="430.6685" Y="-114.8596" Z="-65.39617" />
+					
+					<!-- Go back to the back entrance -->
+					<RunTo X="294.9045" Y="-151.1263" Z="-70.38615" />
+					
+					<!-- Left hook -->
+					<RunTo X="299.6518" Y="-179.3518" Z="-76.23363" />
+					<RunTo X="321.7363" Y="-212.2232" Z="-78.1144" />
+					<RunTo X="378.1828" Y="-194.3269" Z="-70.08171" />
+					<RunTo X="408.3735" Y="-199.9434" Z="-65.46931" />
+					<RunTo X="459.6252" Y="-137.7082" Z="-63.76792" />
+					
+					<!-- Kill entrance pack -->
+					<RunTo X="479.266" Y="-20.73322" Z="-67.44911" />
+					
+					<CustomBehavior File="Message" 
+									Text="Tagging RAFs."  
+									LogColor="Fuchsia" />
+									
+					<!-- Tag RAFs -->
+					<RunTo X="459.7507" Y="18.36356" Z="-70.99839" />
+					
+					<CustomBehavior File="WaitTimer"
+									WaitTime="5000" />
+
+					<!-- Donut -->
+					<CustomBehavior File="RunLikeHell"
+									UseCTM="false" 
+									NumOfTimes="1" 
+									AllowCombat="false">
+						<Hotspot X="539.0351" Y="-59.95527" Z="-64.2752" />
+						<Hotspot X="520.8766" Y="-103.3126" Z="-62.04773" />
+						<Hotspot X="511.8366" Y="-155.055" Z="-61.87626" />
+						<Hotspot X="510.672" Y="-200.3727" Z="-59.73907" />
+						<Hotspot X="526.3023" Y="-238.6001" Z="-65.69132" />
+						<Hotspot X="552.9243" Y="-247.2363" Z="-70.40305" />
+						<Hotspot X="553.0953" Y="-274.1719" Z="-74.9611" />
+						<Hotspot X="565.2842" Y="-274.7608" Z="-77.55147" />
+						<Hotspot X="586.4305" Y="-286.9704" Z="-82.48162" />
+						<Hotspot X="622.8581" Y="-275.2118" Z="-84.08021" />
+						<Hotspot X="629.861" Y="-248.4214" Z="-83.33035" />
+						<Hotspot X="604.6564" Y="-206.2612" Z="-84.49329" />
+					
+						<Hotspot X="589.0123" Y="-204.2517" Z="-84.50504" />
+						<Hotspot X="580.1689" Y="-195.6367" Z="-84.5002" />
+						<Hotspot X="579.8951" Y="-184.2558" Z="-84.49363" />
+						<Hotspot X="588.6642" Y="-173.3685" Z="-84.49236" />
+						<Hotspot X="602.3775" Y="-174.4969" Z="-84.48676" />
+						<Hotspot X="613.9845" Y="-186.4424" Z="-84.48966" />
+						<Hotspot X="610.6603" Y="-198.2625" Z="-84.49107" />
+						<Hotspot X="604.0921" Y="-205.3536" Z="-84.49249" />
+						
+					<!-- Finish off Houndmaster Grebmar pack -->
+					</CustomBehavior>
+					<RunTo X="604.0921" Y="-205.3536" Z="-84.49249" />
+					
+					<CustomBehavior File="RunLikeHell"
+									UseCTM="false" 
+									NumOfTimes="1" 
+									AllowCombat="false">
+									
+						<Hotspot X="628.329" Y="-242.3702" Z="-82.62179" />
+						<Hotspot X="653.6199" Y="-228.0844" Z="-83.4034" />
+						<Hotspot X="658.7303" Y="-213.2384" Z="-79.53812" />
+						<Hotspot X="649.2936" Y="-190.6228" Z="-75.55617" />
+						<Hotspot X="660.0658" Y="-154.5429" Z="-73.24752" />
+						<Hotspot X="632.9573" Y="-156.3395" Z="-70.85728" />
+						<Hotspot X="622.8439" Y="-137.6846" Z="-71.92506" />
+						<Hotspot X="591.1796" Y="-136.6806" Z="-69.07051" />
+						<Hotspot X="570.4862" Y="-124.2935" Z="-64.34743" />
+						<Hotspot X="549.6426" Y="-114.1092" Z="-62.50364" />
+						<Hotspot X="533.7692" Y="-100.6518" Z="-62.86634" />
+						<Hotspot X="533.3003" Y="-66.81458" Z="-63.8751" />
+						<Hotspot X="555.6561" Y="-49.23442" Z="-61.14175" />
+						<Hotspot X="533.2636" Y="-63.16593" Z="-63.72065" />
+						<Hotspot X="510.6129" Y="-155.2167" Z="-61.99552" />
+						<Hotspot X="510.4762" Y="-201.1214" Z="-59.7831" />
+						<Hotspot X="523.4948" Y="-235.5042" Z="-64.5694" />
+						<Hotspot X="539.1305" Y="-252.3451" Z="-68.44965" />
+						<Hotspot X="554.0667" Y="-248.1706" Z="-70.53553" />
+						<Hotspot X="552.5211" Y="-273.4404" Z="-74.6787" />
+						<Hotspot X="572.5226" Y="-273.556" Z="-78.83792" />
+						<Hotspot X="586.2935" Y="-286.7101" Z="-82.45854" />
+						<Hotspot X="614.9174" Y="-269.3904" Z="-83.72425" />
+						<Hotspot X="630.6162" Y="-268.6298" Z="-83.7055" />
+						<Hotspot X="625.5593" Y="-240.2639" Z="-82.20126" />
+						<Hotspot X="606.1663" Y="-207.9106" Z="-84.49355" />
+						<Hotspot X="579.9269" Y="-199.809" Z="-84.50372" />
+						<Hotspot X="580.8856" Y="-182.4861" Z="-84.49249" />
+						<Hotspot X="594.1187" Y="-171.9711" Z="-84.4898" />
+						<Hotspot X="607.9315" Y="-177.054" Z="-84.48686" />
+						<Hotspot X="613.965" Y="-189.2292" Z="-84.4911" />
+						<Hotspot X="606.8814" Y="-208.6694" Z="-84.4911" />
+						<Hotspot X="628.1288" Y="-242.8158" Z="-82.67986" />
+						<Hotspot X="652.4855" Y="-228.6592" Z="-83.57729" />
+						<Hotspot X="657.4119" Y="-208.5712" Z="-78.53829" />
+						<Hotspot X="649.0322" Y="-191.3482" Z="-75.67615" />
+						<Hotspot X="659.8104" Y="-154.7927" Z="-73.2226" />
+						<Hotspot X="632.309" Y="-155.7974" Z="-70.87258" />
+						<Hotspot X="618.3513" Y="-138.1297" Z="-71.38631" />
+						<Hotspot X="590.5549" Y="-136.4479" Z="-68.98683" />
+						<Hotspot X="549.6733" Y="-114.4567" Z="-62.57896" />
+						<Hotspot X="534.3677" Y="-103.3084" Z="-62.42358" />
+						<Hotspot X="530.5764" Y="-64.14811" Z="-63.44035" />
+						<Hotspot X="555.7045" Y="-48.59655" Z="-61.21175" /> <!-- east garrison door -->
+						<Hotspot X="566.8921" Y="-55.73849" Z="-60.01726" />
+						<Hotspot X="574.0748" Y="-62.1089" Z="-60.0128" />
+						<Hotspot X="594.6556" Y="-62.65452" Z="-52.074" />
+						<Hotspot X="567.8458" Y="-75.40205" Z="-45.46772" />
+						<Hotspot X="561.7878" Y="-81.18443" Z="-45.02097" />
+						<Hotspot X="561.5225" Y="-89.88145" Z="-45.02097" />
+						<Hotspot X="574.5624" Y="-90.32357" Z="-45.02097" />
+						<Hotspot X="574.5885" Y="-98.02382" Z="-45.02097" />
+						<Hotspot X="571.7825" Y="-100.1522" Z="-45.02097" />
+						<Hotspot X="595.4473" Y="-85.18913" Z="-45.45853" />
+						<Hotspot X="610.8698" Y="-99.43507" Z="-45.88231" />
+						<Hotspot X="630.6678" Y="-78.88888" Z="-45.77442" />
+						<Hotspot X="630.9442" Y="-107.6576" Z="-46.03644" />
+						<Hotspot X="625.6125" Y="-117.0683" Z="-46.13017" />
+						<Hotspot X="670.4365" Y="-141.8819" Z="-46.23371" />
+						<Hotspot X="681.0413" Y="-145.5933" Z="-46.23371" />
+						<Hotspot X="689.3929" Y="-138.1237" Z="-46.23371" />
+					</CustomBehavior>	<!-- Finish off locked door pack -->
+					<RunTo X="682.5198" Y="-144.2282" Z="-46.23371" />
+					
+					
+					<!-- Arena -->
+					<CustomBehavior File="RunLikeHell"
+									UseCTM="false" 
+									NumOfTimes="1" 
+									AllowCombat="false">
+						<Hotspot X="682.5198" Y="-144.2282" Z="-46.23371" />
+						<Hotspot X="654.0659" Y="-130.6733" Z="-46.23371" />
+						<Hotspot X="629.1316" Y="-118.3349" Z="-46.1991" />
+						<Hotspot X="625.6754" Y="-96.44822" Z="-46.02853" />
+						<Hotspot X="592.6453" Y="-83.28976" Z="-45.46144" />
+						<Hotspot X="595.7533" Y="-104.4607" Z="-45.42724" />
+						<Hotspot X="595.3831" Y="-138.3364" Z="-38.38119" />
+						<Hotspot X="573.4749" Y="-147.3599" Z="-38.36773" />
+						<Hotspot X="555.1815" Y="-166.2875" Z="-38.36167" />
+						<Hotspot X="548.5145" Y="-192.2901" Z="-38.36777" />
+						<Hotspot X="555.6589" Y="-213.4169" Z="-38.36174" />
+						<Hotspot X="594.2563" Y="-241.0651" Z="-38.37479" />
+						<Hotspot X="595.8569" Y="-284.8343" Z="-43.1027" />
+						<Hotspot X="569.9801" Y="-284.0144" Z="-43.1027" />
+						<Hotspot X="529.1785" Y="-242.8778" Z="-43.1027" />
+						<Hotspot X="572.7361" Y="-282.1404" Z="-43.1027" />
+						<Hotspot X="632.7214" Y="-283.3489" Z="-43.11469" />
+						<!-- Finish off Pyromancer Loregrain pack -->
+					</CustomBehavior>
+					<RunTo X="632.7214" Y="-283.3489" Z="-43.11469" />
+					
+					<CustomBehavior File="RunLikeHell"
+									UseCTM="false" 
+									NumOfTimes="1" 
+									AllowCombat="false">
+						<Hotspot X="659.5992" Y="-282.7059" Z="-43.22147" />
+						<Hotspot X="717.3533" Y="-277.5533" Z="-42.87345" />
+						<Hotspot X="758.0701" Y="-273.6329" Z="-42.85842" />
+						<Hotspot X="778.6473" Y="-294.1214" Z="-43.31498" />
+						<Hotspot X="771.3277" Y="-308.427" Z="-43.3014" />
+						<Hotspot X="778.3099" Y="-297.4773" Z="-43.30112" />
+						<Hotspot X="791.1711" Y="-304.0927" Z="-43.29699" />
+						<Hotspot X="804.6016" Y="-292.0924" Z="-43.29567" />
+						<Hotspot X="817.8156" Y="-300.8523" Z="-43.29493" />
+						<Hotspot X="798.228" Y="-287.6603" Z="-43.29493" />
+						<Hotspot X="797.9945" Y="-263.5792" Z="-43.22767" />
+						<Hotspot X="772.7047" Y="-248.1876" Z="-43.32303" />
+						<Hotspot X="795.8902" Y="-222.2281" Z="-43.28966" />
+						<Hotspot X="813.212" Y="-228.4434" Z="-43.31231" />
+						<Hotspot X="855.1268" Y="-252.5015" Z="-49.98361" />
+						<Hotspot X="855.7031" Y="-300.4923" Z="-50.13016" />
+						<Hotspot X="859.8555" Y="-306.657" Z="-50.03643" />
+						<Hotspot X="847.6877" Y="-317.2115" Z="-50.28577" />
+						<Hotspot X="832.5779" Y="-319.1588" Z="-50.28051" />
+						<Hotspot X="841.588" Y="-329.537" Z="-50.66381" />
+						<Hotspot X="852.6741" Y="-312.4742" Z="-50.26073" />
+						<Hotspot X="864.3793" Y="-303.1603" Z="-49.93518" />
+						<Hotspot X="886.3738" Y="-312.4656" Z="-49.93518" />
+						<Hotspot X="910.2341" Y="-306.7625" Z="-49.93207" />
+						<Hotspot X="897.2357" Y="-323.8705" Z="-49.99732" />
+						<Hotspot X="896.1741" Y="-347.5917" Z="-49.93729" />
+						<Hotspot X="900.0529" Y="-381.5512" Z="-49.92515" />
+						<Hotspot X="906.5641" Y="-397.9121" Z="-48.7386" />
+						<Hotspot X="932.5712" Y="-424.6787" Z="-55.68908" />
+						<Hotspot X="959.9576" Y="-391.5952" Z="-60.83766" />
+						<Hotspot X="985.0086" Y="-377.6517" Z="-66.28851" />
+						<Hotspot X="984.3024" Y="-361.8476" Z="-65.80608" />
+						<Hotspot X="967.3582" Y="-339.1064" Z="-71.46785" />
+						<Hotspot X="949.1301" Y="-326.9621" Z="-71.7604" />
+						<Hotspot X="932.8165" Y="-311.5895" Z="-71.7604" />
+						<Hotspot X="907.7335" Y="-286.6625" Z="-71.8312" />
+						<Hotspot X="899.8346" Y="-279.0172" Z="-71.87449" />
+						<Hotspot X="889.3471" Y="-278.9496" Z="-71.90011" />
+						<Hotspot X="887.9587" Y="-266.5036" Z="-71.86227" />
+						<Hotspot X="874.0937" Y="-253.188" Z="-71.80222" />
+						<Hotspot X="864.4185" Y="-250.2412" Z="-71.75756" />
+						<Hotspot X="830.9477" Y="-227.9011" Z="-72.05952" />
+						<Hotspot X="802.3489" Y="-207.1179" Z="-72.83314" />
+						<Hotspot X="790.9261" Y="-171.0572" Z="-73.83243" />
+						<Hotspot X="775.9881" Y="-163.3236" Z="-73.39613" />
+						<Hotspot X="768.0562" Y="-173.1055" Z="-73.42426" />
+						
+						<Hotspot X="755.4637" Y="-170.5758" Z="-73.44707" />
+						<Hotspot X="727.8513" Y="-147.878" Z="-72.29369" />
+						<Hotspot X="767.3282" Y="-113.6997" Z="-72.78786" />
+						<Hotspot X="754.5887" Y="-136.3561" Z="-72.67804" />
+						
+						<!-- Finish off Lord Incendius pack -->
+					</CustomBehavior>	
+					<RunTo X="754.5887" Y="-136.3561" Z="-72.67804" />
+					
+					<CustomBehavior File="RunLikeHell" 
+									UseCTM="false"
+									NumOfTimes="1" 
+									AllowCombat="false">	
+						<Hotspot X="720.3083" Y="-108.5936" Z="-71.72482" />
+						<Hotspot X="714.2939" Y="-88.58155" Z="-71.43625" />
+						<Hotspot X="737.4691" Y="-58.04246" Z="-71.84791" />
+						<Hotspot X="695.8055" Y="-84.91915" Z="-71.26344" />
+						<Hotspot X="685.4597" Y="-126.6364" Z="-72.00064" />
+						<Hotspot X="640.3857" Y="-51.68305" Z="-73.86496" />
+						<Hotspot X="668.8066" Y="-29.59497" Z="-73.31515" />
+						<Hotspot X="628.6197" Y="-24.06425" Z="-73.24424" />
+						<Hotspot X="634.506" Y="29.92278" Z="-73.72443" />
+						<Hotspot X="634.1764" Y="49.98139" Z="-73.28513" />
+						<Hotspot X="648.3173" Y="63.97729" Z="-73.87029" />
+						<Hotspot X="672.1208" Y="99.30302" Z="-73.87029" />
+						<Hotspot X="685.754" Y="126.432" Z="-73.87029" />
+						<Hotspot X="695.7462" Y="142.4943" Z="-72.25327" />
+						<Hotspot X="739.2987" Y="164.6419" Z="-72.27426" />
+						<Hotspot X="701.0818" Y="181.6918" Z="-72.09285" />
+						<Hotspot X="660.4855" Y="193.5487" Z="-72.14869" />
+						<Hotspot X="676.1663" Y="162.0455" Z="-72.78451" />
+						<Hotspot X="668.2418" Y="139.1792" Z="-73.3139" />
+						<Hotspot X="651.009" Y="148.2071" Z="-73.87095" />
+						<Hotspot X="637.49" Y="126.1004" Z="-73.87095" />
+						<Hotspot X="614.4135" Y="89.35307" Z="-73.87061" />
+						<Hotspot X="617.1122" Y="60.50677" Z="-73.24368" />
+						<Hotspot X="597.6805" Y="25.8686" Z="-72.84167" />
+						<Hotspot X="618.9174" Y="2.075266" Z="-73.24271" />
+						
+						<!-- Finish off Bael'gar pack -->
+					</CustomBehavior>
+					<RunTo X="618.9174" Y="2.075266" Z="-73.24271" />
+					
+					<CustomBehavior File="Message" 
+									Text="Tagging RAFs." 
+									LogColor="Fuchsia" />
+									
+					<!-- Tag rafs -->
+					<RunTo X="570.6876" Y="-32.68422" Z="-62.68099" />
+					
+					<!-- If we are high enough to go to the next instance, do so -->
+					<CustomBehavior File="Misc\LoadProfileOn" 
+									MinLevel="48" 
+									ProfileName="[QO-N][48-60]_blackrock-spire.xml"  />
+									
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="5000" />
+					
+					<RunTo X="567.4936" Y="-10.46224" Z="-70.13719" />
+					<RunTo X="541.0748" Y="5.988479" Z="-69.68866" />
+					<RunTo X="496.5298" Y="14.01889" Z="-70.13716" />	
+				</If> <!-- BRD -->
+				
+				<!-- If we are inside Blackrock Depths -->
+				<If Condition="Me.ZoneId == 1584">
+					<CustomBehavior File="Message" 
+									Text="Blackrock Depths detected. Running out to reset."
+									LogColor="Fuchsia" />
+					
+					<RunTo X="460.6402" Y="15.41037" Z="-71.11736" />
+					
+					<!-- Go through the portal -->
+					<CustomBehavior File="Misc\InInstance" X="456.6543" Y="46.70397" Z="-69.00373" />	
+					
+					<!-- Make sure we run to the right spot outside the portal -->
+					<RunTo X="-7178.41" Y="-922.152" Z="166.092" />	
+				</If> <!-- BRD -->
+				
+				<!-- If we are in the box -->
+				<If Condition="Me.X &gt; -7200 &amp;&amp; Me.X &lt; -7000 &amp;&amp; Me.Y &lt; -900 &amp;&amp; Me.Y &gt; -1000" >
+					
+					<!-- First reset isn't enough to get a fresh instance if toons are still inside -->
+					<CustomBehavior File="Message" 
+									Text="Resetting instance, 1 of 2." 
+									LogColor="Fuchsia" />
+					
+					<CustomBehavior File="RunMacro" Macro="/script ResetInstances()" />
+					<CustomBehavior File="RunMacro" Macro="/script SetDungeonDifficultyID(1)" />
+					
+					<!-- Allow for an Honorbuddy pulse -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="200" />
+					
+					<!-- The second reset confirms we are safe to enter the instance -->
+					<CustomBehavior File="Message" 
+									Text="Resetting instance, 2 of 2." 
+									LogColor="Fuchsia" />
+					<CustomBehavior File="RunMacro" Macro="/script ResetInstances()" />
+					<CustomBehavior File="RunMacro" Macro="/script SetDungeonDifficultyID(1)" />
+					
+					<CustomBehavior File="Message" 
+									Text="Instance reset." 
+									LogColor="Fuchsia" />
+				</If> <!-- In box -->
+			</While> <!-- Infinite loop -->
+		</If> <!-- Booster -->
+		
+				
+		<!-- *******************************************************  RAF Toons ************************************************************** -->
+		<If Condition="Me.Level &lt;= 84">
+			<CustomBehavior File="Message" 
+							Text="We are a RAF." 
+							LogColor="Fuchsia" />
+							
+			<If Condition="Me.IsAlliance">
+				<If Condition="Me.HearthstoneAreaId != 5148">
+					<CustomBehavior File="Message" 
+									Text="Our Hearthstone isn't set in the Trade District in Stormwind. Stopping profile." 
+									LogColor="Lime" />
+									
+					<CustomBehavior File="UserSettings" 
+										StopBot="true" />
+				</If>
+				
+				<ElseIf Condition="Me.IsHorde">
+					<If Condition="Me.HearthstoneAreaId != 5170">
+						<CustomBehavior File="Message" 
+										Text="Our Hearthstone isn't set in the Valley of Strength in Orgrimmar. Stopping profile." 
+										LogColor="Lime" />
+										
+						<CustomBehavior File="UserSettings" 
+										StopBot="true" />
+					</If>
+				</ElseIf>
+			</If>
+
+			<!-- RAF UserSettings -->
+			<CustomBehavior File="UserSettings"
+							GroundMountFarmingMode="False"
+							HarvestHerbs="False"
+							HarvestMinerals="False"
+							KillBetweenHotspots="True"
+							LogoutForInactivity="False"
+							LogoutInactivityUseForceQuit="False"
+							LootMobs="True"
+							LootRadius="15"
+							MountName=""
+							NinjaSkin="False"
+							RessAtSpiritHealers="False"
+							SkinMobs="False"
+							UseMount="True" 
+							UseRandomMount="False" />
+		
+			<!-- Infinite loop -->
+			<While Condition="true" >	
+				<!-- RFD -->
+				<If Condition="Me.MapId == 129">
+					<If Condition="(Me.HearthstoneAreaId == 5148) || (Me.HearthstoneAreaId == 5170)" >
+						<CustomBehavior File="Message" 
+										Text="Our Innkeeper is set at Stormwind City or Orgrimmar." 
+										LogColor="Cyan" />
+										
+						<!-- Have hearthstone -->
+						<If Condition="HasItem(6948)">
+							<CustomBehavior File="Message" 
+											Text="Using Hearthstone." 
+											LogColor="Lime" />
+											
+							<CustomBehavior File="Misc\RunLua" 
+											Lua="UseItemByName(6948)" 
+											WaitTime="1000" />
+											
+							<CustomBehavior File="WaitTimer" 
+											WaitTime="20000" />
+						</If> <!-- Have hearthstone -->
+					
+						<!-- Have Innkeeper's Daughter -->
+						<If Condition="HasItem(64488)">
+							<CustomBehavior File="Message" 
+											Text="Using Innkeeper's Daughter." 
+											LogColor="Lime" />
+												
+							<CustomBehavior File="Misc\RunLua" 
+											Lua="UseItemByName(64488)" 
+											WaitTime="1000" />
+								
+							<CustomBehavior File="WaitTimer" 
+											WaitTime="20000" />
+						</If> <!-- Have Innkeeper's Daughter -->
+					</If> <!-- Hearth check -->
+				</If> <!-- RFD -->
+				
+				<!-- If we are inside Blackrock Depths -->
+				<If Condition="Me.ZoneId == 1584">
+					<CustomBehavior File="Message" 
+									Text="Blackrock Depths detected. Running out."
+									LogColor="Fuchsia" />
+					
+					<RunTo X="460.6402" Y="15.41037" Z="-71.11736" />
+					
+					<!-- Go through the portal -->
+					<CustomBehavior File="Misc\InInstance" X="456.6543" Y="46.70397" Z="-69.00373" />		
+					
+					<!-- Make sure we run to the right spot outside the portal -->
+					<RunTo X="-7178.41" Y="-922.152" Z="166.092" />	
+				</If> <!-- BRD -->
+			
+				<!-- If we are not in the box, load the movement profile -->
+				<If Condition="Me.X &lt; -7200 || Me.X &gt; -7000 || Me.Y &gt; -900 || Me.Y &lt; -1000" >
+					<CustomBehavior File="Message" 
+									Text="Distance from portal is not within our proximity, initializing movement to get there."
+									LogColor="Fuchsia" />	
+									
+					<CustomBehavior File="LoadProfile" 
+									ProfileName="Movement\[QO-N-M][42-48]_blackrock-depths" />
+				</If> <!-- Not in box -->
+				
+				
+				
+				<!-- If we are in the box -->
+				<If Condition="Me.X &gt; -7200 &amp;&amp; Me.X &lt; -7000 &amp;&amp; Me.Y &lt; -900 &amp;&amp; Me.Y &gt; -1000" >
+					<CustomBehavior File="Message" 
+									Text="Portal detected nearby."
+									LogColor="Fuchsia" />	
+						
+					<!-- If we didn't enter the instance, wait 20 seconds then attempt to enter again -->
+					<While Condition="Me.ZoneId != 1584">
+						<!-- Make sure we run to the right spot outside the portal -->
+						<RunTo X="-7178.41" Y="-922.152" Z="166.092" />
+
+						<!-- Run back in the Blackrock Depths portal -->
+						<CustomBehavior File="Misc\InInstance" X="-7179.068" Y="-937.434" Z="166.4007" />
+										
+						<CustomBehavior File="Message" 
+										Text="Waiting for the dungeon to load." 
+										LogColor="Fuchsia" />
+									
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000" 
+										VariantTime="20000" />	
+										
+						<!-- If we still aren't in, we're locked out -->
+						<If Condition="Me.ZoneId != 1584">
+							<CustomBehavior File="Message" 
+											Text="We are locked out. Waiting and trying again." 
+											LogColor="Fuchsia" />
+						</If> <!-- Locked -->
+					</While> <!-- While we aren't in the instance -->
+				</If> <!-- In box -->
+				
+				<!-- If we are inside Blackrock Depths and have checked our reset -->
+				<If Condition="Me.ZoneId == 1584">
+					<CustomBehavior File="Message" 
+									Text="Avoiding instance lock from this point, do not touch." 
+									LogColor="Yellow" />	
+				
+					<!-- Entrance -->
+					<RunTo X="456.929" Y="34.0923" Z="-69.56172" />
+				
+					<!-- Disable combat -->
+					<DisableBehavior Name="Combat" />
+					
+					<!-- Go to quest givers -->
+					<RunTo X="459.7507" Y="18.36356" Z="-70.99839" />
+					
+					<!-- Begin the instance once all party members are within range  -->
+					<CustomBehavior File="Misc\LoadProfileOn" 
+									CheckRange="2" />
+									
+					<CustomBehavior File="Misc\InstanceTimer" Timer="Start" /> 
+									
+					<CustomBehavior File="Message" 
+									Text="Blackrock Depths initialized."  
+									LogColor="Fuchsia" />
+													
+					<CustomBehavior File="WaitTimer"
+									WaitTime="30000" />
+							
+					<CustomBehavior File="Misc\LoadProfileOn" 
+									CheckRange="5" />
+									
+					<!-- Wait so the main can get away from us -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="60000" />
+									
+					<CustomBehavior File="Message" 
+									Text="Moving to next safespot." 
+									LogColor="Fuchsia" />	
+
+					<!-- Run through the gates -->
+					<RunTo X="496.5298" Y="14.01889" Z="-70.13716" />
+					<RunTo X="541.0748" Y="5.988479" Z="-69.68866" />
+					
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="240000" />
+					
+					<!-- Run through the second gates -->
+					<RunTo X="567.4936" Y="-10.46224" Z="-70.13719" />
+					
+					<!-- Safespot -->
+					<RunTo X="570.6876" Y="-32.68422" Z="-62.68099" />
+					
+					<!-- When the booster tags us again, we can move forward -->
+					<CustomBehavior File="Misc\LoadProfileOn" 
+									CheckRange="5" />
+									
+					<!-- If we are high enough to go to the next instance, do so -->
+					<CustomBehavior File="Misc\LoadProfileOn" 
+									MinLevel="48" 
+									ProfileName="[QO-N][48-60]_blackrock-spire.xml"  />
+									
+					
+					<!-- Wait so the main can get away from us -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="30000" />  
+									
+					<RunTo X="567.4936" Y="-10.46224" Z="-70.13719" />
+					<RunTo X="541.0748" Y="5.988479" Z="-69.68866" />
+					<RunTo X="496.5298" Y="14.01889" Z="-70.13716" />	
+				</If> <!-- BRD -->
+				
+				<!-- If we are inside Blackrock Depths -->
+				<If Condition="Me.ZoneId == 1584">
+					<CustomBehavior File="Message" 
+									Text="Blackrock Depths detected. Running out."
+									LogColor="Fuchsia" />
+					
+					<RunTo X="460.6402" Y="15.41037" Z="-71.11736" />
+					
+					<!-- enable combat -->
+					<EnableBehavior Name="Combat" />
+					
+					<!-- Go through the portal -->
+					<CustomBehavior File="Misc\InInstance" X="456.6543" Y="46.70397" Z="-69.00373" />	
+					
+					<!-- Make sure we run to the right spot outside the portal -->
+					<RunTo X="-7178.41" Y="-922.152" Z="166.092" />	
+					
+				</If> <!-- BRD -->
+			</While> <!-- Infinite loop -->
+		</If> <!-- RAF -->
+	</QuestOrder>
+</HBProfile>
+

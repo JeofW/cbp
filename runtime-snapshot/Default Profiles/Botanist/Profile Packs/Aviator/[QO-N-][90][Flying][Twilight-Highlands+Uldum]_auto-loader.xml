@@ -1,0 +1,80 @@
+<HBProfile creator="Botanist" version="1.0">
+	<Name>[QO-N-][90][Flying][Twilight-Highlands+Uldum]_auto-loader</Name>
+   
+	<MinLevel>60</MinLevel>
+	<MaxLevel>101</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	
+	<MailGrey>False</MailGrey>
+	<MailWhite>False</MailWhite>
+	<MailGreen>False</MailGreen>
+	<MailBlue>False</MailBlue>
+	<MailPurple>False</MailPurple>
+   
+	<SellGrey>False</SellGrey>
+	<SellWhite>False</SellWhite>
+	<SellGreen>False</SellGreen>
+	<SellBlue>False</SellBlue>
+	<SellPurple>False</SellPurple>
+
+	<AvoidMobs>
+	</AvoidMobs>
+	
+	<Blackspots>
+	</Blackspots>
+
+	<Mailboxes>
+	</Mailboxes>
+ 
+	<Vendors>
+	</Vendors>
+
+	<Factions></Factions>
+	
+	<ProtectedItems>
+		
+	</ProtectedItems>
+
+	<QuestOrder>
+				
+		<!-- UserSettings -->
+		<CustomBehavior File="UserSettings"
+						FindMountAutomatically="True"
+						GroundMountFarmingMode="False"
+						HarvestHerbs="False"
+						HarvestMinerals="False"
+						KillBetweenHotspots="True"
+						LogoutForInactivity="False"
+						LogoutInactivityUseForceQuit="False"
+						LootMobs="True"
+						LootRadius="35"
+						MountName=""
+						NinjaSkin="False"
+						RessAtSpiritHealers="False"
+						SkinMobs="False"
+						UseMount="True" 
+						UseRandomMount="False" />	
+
+		<!-- Profile message - This portion has not been added yet -->
+		<CustomBehavior File="Message" 
+						Text="This portion has not been added yet."  
+						LogColor="Orange" />
+	
+		<!-- Wait timer - wait 3 seconds - delay -->
+		<CustomBehavior File="WaitTimer" 
+						WaitTime="3000" />
+						
+		<!-- Profile message - Stopping the bot -->
+		<CustomBehavior File="Message" 
+						Text="Stopping the bot."  
+						LogColor="Red" />				
+						
+		<!-- Custom behavior - Usersettings - StopBot -->				
+		<CustomBehavior File="UserSettings" 
+						StopBot="true" />
+	
+	</QuestOrder>
+	
+</HBProfile>	

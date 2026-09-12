@@ -1,0 +1,620 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+	<Name>[QO-N][85-Flying]_botanist_lost-city-of-the-tol'vir</Name>
+   
+	<MinLevel>1</MinLevel>
+	<MaxLevel>101</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	<TargetingDistance>25</TargetingDistance>
+	
+	
+	<MailGrey>False</MailGrey>
+	<MailWhite>False</MailWhite>
+	<MailGreen>False</MailGreen>
+	<MailBlue>False</MailBlue>
+	<MailPurple>False</MailPurple>
+   
+	<SellGrey>True</SellGrey>
+	<SellWhite>True</SellWhite>
+	<SellGreen>True</SellGreen>
+	<SellBlue>True</SellBlue>
+	<SellPurple>False</SellPurple>
+   
+	<TargetElites>True</TargetElites>
+	
+	<AvoidMobs>		 
+		<Mob Name="Summon Enabler Stalker" Entry="53488" />
+		<Mob Name="General Husam" Entry="44577" />
+	</AvoidMobs>
+	
+	<Blackspots>
+
+	</Blackspots>
+
+	<Mailboxes>
+	</Mailboxes>
+ 
+	<Vendors>
+	</Vendors>
+	
+	<ProtectedItems>
+	</ProtectedItems>
+
+	<Factions></Factions>
+	
+	<QuestOrder>
+		<ClearVendor />
+		<ClearMailbox />
+
+
+		<If Condition="Me.Level &gt;= 84">
+		
+		 	<!-- UserSettings -->
+			<CustomBehavior File="UserSettings"
+							FindMountAutomatically="True"
+							GroundMountFarmingMode="False"
+							HarvestHerbs="False"
+							HarvestMinerals="False"
+							KillBetweenHotspots="True"
+							LogoutForInactivity="False"
+							LogoutInactivityUseForceQuit="False"
+							LootMobs="True"
+							LootRadius="25"
+							MountName=""
+							NinjaSkin="False"
+							PullDistance="25"
+							RessAtSpiritHealers="False"
+							SkinMobs="False"
+							UseMount="True" 
+							UseRandomMount="False" />
+						
+			<!-- Infinite loop -->
+			<While Condition="true" >	
+			
+				<!-- If we are inside Lost City of the Tol'vir -->
+				<If Condition="Me.MapId == 755">
+				
+					<!-- Profile message - The Lost City of the Tol'vir detected. Running out -->
+					<CustomBehavior File="Message" 
+									Text="The Lost City of the Tol'vir detected. Running out."
+									LogColor="Cyan" />
+						
+					<!-- Move to - zone in location -->
+					<MoveTo X="-10700.4" Y="-1312.69" Z="17.6029" />
+					
+					<!-- Profile message - Waiting 3 seconds - Bag and durability check -->
+					<CustomBehavior File="Message" 
+									Text="Waiting 3 seconds - Bag and durability check."  
+									LogColor="Plum" />
+					
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+					<If Condition="(Me.FreeBagSlots &lt;= 25) || (Me.LowestDurabilityPercent &lt;= 0.3)" >
+												
+						<!-- Load profile - [QO-N][85-Flying]_botanist_lost-city-of-the-tol'virll_[repair-mail] -->
+						<CustomBehavior File="LoadProfile" 
+										ProfileName="Movement\Vendors\[QO-N][85-Flying]_botanist_lost-city-of-the-tol'virll_[repair-mail]" />
+
+					</If>	<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+
+					<!-- Profile message - Waiting 3 seconds - Food check - Pine Nut Bread -->
+					<CustomBehavior File="Message" 
+									Text="Waiting 3 seconds - Food check - Pine Nut Bread."  
+									LogColor="Plum" />
+					
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					<!-- If we don't have Pine Nut Bread -->
+					<If Condition="!HasItem(58260)">
+
+						<!-- Load profile - [QO-N][85-Flying]_botanist_lost-city-of-the-tol'virll_[repair-mail] -->
+						<CustomBehavior File="LoadProfile" 
+										ProfileName="Movement\Vendors\[QO-N][85-Flying]_botanist_lost-city-of-the-tol'virll_[repair-mail]" />
+			
+					</If>	<!-- If we don't have Pine Nut Bread -->
+					
+					<!-- Profile message - All checks complete -->
+					<CustomBehavior File="Message" 
+									Text="All checks complete."  
+									LogColor="Plum" />
+
+					<!-- Custom behavior - Misc/InInstance - exit the instance-->
+					<CustomBehavior File="Misc\InInstance" 
+									X="-10684.97" Y="-1307.447" Z="17.64349" />
+					
+					<!-- Wait timer - wait 15 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="15000" />
+					
+					<!-- Move to - zone out location -->
+					<MoveTo X="-10679.7" Y="-1307.1" Z="17.3427" />
+					
+				</If>	<!-- If we are inside Lost City of the Tol'vir -->
+				
+				<!-- If we are not in the Lost City of the Tol'vir instance box, load the movement profile -->
+				<If Condition="Me.Y &lt; -1320.377 || Me.Y &gt; -1291.219 || Me.X &gt; -10658.9 || Me.X &lt; -10684.36" >
+					
+					<!-- Custom behavior - LoadProfile - Movement\[QO-N-M][85-Flying]_botanist_lost-city-of-the-tol'virl -->
+					<CustomBehavior File="LoadProfile" 
+									ProfileName="Movement\[QO-N-M][85-Flying]_botanist_lost-city-of-the-tol'virl" />
+					
+				</If>	<!-- If we are not in the Lost City of the Tol'vir instance box, load the movement profile -->
+				
+				<!-- If we are in the Lost City of the Tol'vir instance box -->
+				<If Condition="Me.Y &gt; -1320.377 &amp;&amp; Me.Y &lt; -1291.219 &amp;&amp; Me.X &lt; -10658.9 &amp;&amp; Me.X &gt; -10684.36" >
+				
+					<!-- Profile message - Portal detected nearby -->
+					<CustomBehavior File="Message" 
+									Text="Portal detected nearby."
+									LogColor="Cyan" />	
+			
+					<!-- Profile message - Resetting the instance -->
+					<CustomBehavior File="Message" 
+									Text="Resetting the instance." 
+									LogColor="Plum" />
+					
+					<!-- Reset the instance -->
+					<CustomBehavior File="RunMacro" 
+									Macro="/script ResetInstances()" />	
+									
+					<!-- Set the dungeon difficulty to normal -->				
+					<CustomBehavior File="RunMacro" 
+									Macro="/script SetDungeonDifficultyID(1);" />
+					
+					<!-- Profile message - The instance has been reset -->
+					<CustomBehavior File="Message" 
+									Text="The instance has been reset." 
+									LogColor="Cyan" />
+							
+					<!-- While we are not in Lost City of the Tol'vir -->
+					<While Condition="Me.MapId != 755">
+					
+						<!-- Move to - zone out location -->
+						<MoveTo X="-10679.7" Y="-1307.1" Z="17.3427" />
+
+						<!-- Attempt to re-enter the portal -->
+						<CustomBehavior File="Misc\InInstance" 
+										X="-10689.38" Y="-1310.281" Z="18.14027" /> 
+										
+						<!-- Profile message - Waiting for the dungeon to load -->				
+						<CustomBehavior File="Message" 
+										Text="Waiting for the dungeon to load." 
+										LogColor="Cyan" />
+									
+						<!-- Wait timer - wait 10 seconds -->		
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="10000"/>			
+									
+						<!-- If we are not in Lost City of the Tol'vir, we're locked out -->
+						<If Condition="Me.MapId != 755">
+						
+							<!-- Profile message - We are locked out. Waiting and trying again -->
+							<CustomBehavior File="Message" 
+											Text="We are locked out. Waiting and trying again." 
+											LogColor="Cyan" />
+											
+							<!-- Wait timer - wait 20-40 seconds -->		
+							<CustomBehavior File="WaitTimer" 
+											WaitTime="20000"
+											VariantTime="20000" />				
+											
+						</If>	<!-- If we are not in Lost City of the Tol'vir, we're locked out -->
+						
+					</While>	<!-- While we are not in Lost City of the Tol'vir -->
+					
+				</If>	<!-- If we are in the Lost City of the Tol'vir instance box -->
+				
+				<!-- If we are inside Lost City of the Tol'vir -->
+				<If Condition="Me.MapId == 755">
+											
+					<!--Profile message	- Deleting unwanted items from our bags -->				
+					<CustomBehavior File="Message" 
+									Text="Deleting unwanted items from our bags." 
+									LogColor="Plum" />
+
+					<!-- Morning Glory Dew -->
+					<CustomBehavior File="DeleteItems" 
+									Ids="8766" />
+									
+					<!-- Major Mana Potion -->				
+					<CustomBehavior File="DeleteItems" 
+									Ids="13444" />	
+									
+					<!-- Libram of Voracity -->										
+					<CustomBehavior File="DeleteItems" 
+									Ids="11737" />
+									
+					<!-- Libram of Resilience -->
+					<CustomBehavior File="DeleteItems" 
+									Ids="11736" />	
+									
+					<!-- Roasted Quail -->
+					<CustomBehavior File="DeleteItems" 
+									Ids="8952" />	
+									
+					<!-- Superior Mana Potion -->
+					<CustomBehavior File="DeleteItems" 
+									Ids="22256" />	
+									
+					<!-- Mana Potion -->
+					<CustomBehavior File="DeleteItems" 
+									Ids="26480" />
+									
+					<!-- Light Feather -->
+					<CustomBehavior File="DeleteItems" 
+									Ids="17056" />
+									
+					<!-- Dark Iron Bullet -->
+					<CustomBehavior File="DeleteItems" 
+									Ids="62916" />	
+									
+					<!-- Mag'har Grainbread -->
+					<CustomBehavior File="DeleteItems" 
+									Ids="27855" />
+									
+					<!-- Homemade Cherry Pie -->
+					<CustomBehavior File="DeleteItems" 
+									Ids="8950" />
+									
+					<!-- Smoked Talbuk Venison -->
+					<CustomBehavior File="DeleteItems" 
+									Ids="27854" />		
+							
+					<!-- Instance timer -->
+					<CustomBehavior File="Misc\InstanceTimer" 
+									Timer="Start" />							
+								
+					<!-- Turn on autolooting -->
+					<CustomBehavior File="RunMacro" 
+									Macro="/script SetCVar('AutoLootDefault', 1)" 
+									NumOfTimes="1" 
+									WaitTime="1000" />
+
+					<!-- Profile message - Lost City of the Tol'vir initialized -->			
+					<CustomBehavior File="Message" 
+									Text="Lost City of the Tol'vir initialized."  
+									LogColor="Cyan" />
+									
+									
+					<!-- ****************************************************** Lost City of the Tol'vir ********************************************************************** -->
+									
+				
+					<!-- @@@@@@@@@@@@@@@@@@@@ 1st pull @@@@@@@@@@@@@@@@@@@@ -->
+													   
+					
+					<!-- Move to - 1st group right of the entrance -->
+					<MoveTo X="-10735.5" Y="-1284.2" Z="15.35391" />
+					
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+													   
+													   
+													   
+					<!-- @@@@@@@@@@@@@@@@@@@@ 2nd pull @@@@@@@@@@@@@@@@@@@@ -->
+													   
+					
+					<!-- Move to - 2nd group right of the entrance -->
+					<MoveTo X="-10788" Y="-1291.09" Z="15.3538" />
+					
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />								   
+													   
+											
+											
+					<!-- @@@@@@@@@@@@@@@@@@@@ 3rd pull @@@@@@@@@@@@@@@@@@@@ -->
+													   
+					
+					
+					<!-- Move to - 3rd group right -->
+					<MoveTo X="-10839.04" Y="-1299.378" Z="15.35322" />
+					
+					<!-- Profile message - Waiting 30 seconds to be sure we aggro the patrol -->			
+					<CustomBehavior File="Message" 
+									Text="Waiting 30 seconds to be sure we aggro the patrol."  
+									LogColor="Cyan" />
+
+					<!-- Wait timer - wait 30 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="30000" />								   
+													   
+													   
+													   
+					<!-- @@@@@@@@@@@@@@@@@@@@ 4th pull @@@@@@@@@@@@@@@@@@@@ -->
+													   
+					
+					
+					<!-- Move to - 4th group right -->
+					<MoveTo X="-10868.49" Y="-1318.174" Z="15.35322" />
+					
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />								   
+											
+											
+													   
+					<!-- @@@@@@@@@@@@@@@@@@@@ 5th pull @@@@@@@@@@@@@@@@@@@@ -->
+													   
+					
+					
+					<!-- Move to - 5th group -->
+					<MoveTo X="-10901.37" Y="-1342.044" Z="15.35395" />
+					
+					<!-- Move to - 5th group -->
+					<MoveTo X="-10897.11" Y="-1394.413" Z="15.35395" />
+					
+					<!-- Profile message - Disabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Disabling combat." 
+										LogColor="Gold" />				
+									
+					<!-- DisableBehavior - Combat -->
+					<DisableBehavior Name="Combat" />
+
+					<!-- Move to - 5th group -->
+					<MoveTo X="-10855.1" Y="-1410.81" Z="15.35347" />
+					
+					<!-- Move to - 1st bridge -->
+					<MoveTo X="-10866.01" Y="-1454.577" Z="16.86907" />
+					
+					<!-- Profile message - Enabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Enabling combat." 
+										LogColor="Gold" />				
+									
+					<!-- EnableBehavior - Combat -->				
+					<EnableBehavior Name="Combat" />
+					
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />								   
+													   
+													   
+													   
+					<!-- @@@@@@@@@@@@@@@@@@@@ 6th pull @@@@@@@@@@@@@@@@@@@@ -->
+													   
+					
+					
+					<!-- Move to - 6th group - Trappers Enclave -->
+					<MoveTo X="-10894.05" Y="-1497.732" Z="6.675102" />
+	
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />								   
+													   
+											
+											
+					<!-- @@@@@@@@@@@@@@@@@@@@ 7th pull @@@@@@@@@@@@@@@@@@@@ -->
+													   
+					
+					
+					<!-- Move to - 7th group - Pygmy Firebreather -->
+					<MoveTo X="-10951.78" Y="-1499.65" Z="6.676582" />
+	
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />									   
+												
+												
+													   
+					<!-- @@@@@@@@@@@@@@@@@@@@ 8th pull @@@@@@@@@@@@@@@@@@@@ -->
+													   
+					
+					
+					<!-- Move to - 8th group - Trappers Enclave -->
+					<MoveTo X="-10948.74" Y="-1497.965" Z="6.67698" />
+	
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />								   
+													   
+													   
+													   
+					<!-- @@@@@@@@@@@@@@@@@@@@ 9th pull @@@@@@@@@@@@@@@@@@@@ -->
+													   
+					
+					
+					<!-- Move to - 9th group - Trappers Enclave -->
+					<MoveTo X="-11011.3" Y="-1475.51" Z="6.677498" />
+	
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />								   
+													   
+													   
+													   
+					<!-- @@@@@@@@@@@@@@@@@@@@ 10th pull @@@@@@@@@@@@@@@@@@@@ -->
+													   
+					
+					
+					<!-- Move to - 10th group - Trappers Enclave -->
+					<MoveTo X="-11071.9" Y="-1483.46" Z="6.677498" />
+	
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />								   
+													   
+													   
+													   
+					<!-- @@@@@@@@@@@@@@@@@@@@ 11th pull @@@@@@@@@@@@@@@@@@@@ -->
+													   
+					
+					
+					<!-- Move to - 11th group - Trappers Enclave -->
+					<MoveTo X="-11043.73" Y="-1510.089" Z="6.797394" />
+	
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />								   
+													   
+													   
+													   
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+													   
+					
+					
+					<!-- Move to - 12th group - Trappers Enclave -->
+					<MoveTo X="-11099.9" Y="-1539.96" Z="6.678889" />
+	
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />		
+
+									
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+													   
+					
+					
+					<!-- Move to - 13th group - Terrace of the Augurs -->
+					<MoveTo X="-11120.48" Y="-1405.849" Z="10.80721" />
+	
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />				
+									
+	
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+													   
+					
+					<!-- Move to - 14th group - Terrace of the Augurs -->
+					<MoveTo X="-11156" Y="-1385.36" Z="10.8068" />
+	
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />				
+									
+									
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+													   
+					
+					<!-- Move to - 14th group - Terrace of the Augurs -->
+					<MoveTo X="-11100.1" Y="-1360.74" Z="10.80748" />
+	
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />				
+									
+									
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+													   
+					
+					<!-- Move to - 15th group - Terrace of the Augurs -->
+					<MoveTo X="-11014.6" Y="-1365.94" Z="10.80799" />
+	
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />				
+	
+	
+					<!-- @@@@@@@@@@@@@@@@@@@@ Exiting @@@@@@@@@@@@@@@@@@@@ -->
+													   
+					
+					<!-- Move to - tigers - right of the exit -->
+					<MoveTo X="-10723.7" Y="-1351.58" Z="15.3538" />
+	
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+
+	
+					<!-- @@@@@@@@@@@@@@@@@@@@ Exit @@@@@@@@@@@@@@@@@@@@ -->				
+									
+									
+					<!-- Move to - zone in location -->
+					<MoveTo X="-10700.4" Y="-1312.69" Z="17.6029" />				
+									
+					<!-- Profile message - Waiting 3 seconds - Bag and durability check -->
+					<CustomBehavior File="Message" 
+									Text="Waiting 3 seconds - Bag and durability check."  
+									LogColor="Plum" />
+					
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+					<If Condition="(Me.FreeBagSlots &lt;= 25) || (Me.LowestDurabilityPercent &lt;= 0.3)" >
+												
+						<!-- Load profile - [QO-N][85-Flying]_botanist_lost-city-of-the-tol'virll_[repair-mail] -->
+						<CustomBehavior File="LoadProfile" 
+										ProfileName="Movement\Vendors\[QO-N][85-Flying]_botanist_lost-city-of-the-tol'virll_[repair-mail]" />
+
+					</If>	<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+
+					<!-- Profile message - Waiting 3 seconds - Food check - Pine Nut Bread -->
+					<CustomBehavior File="Message" 
+									Text="Waiting 3 seconds - Food check - Pine Nut Bread."  
+									LogColor="Plum" />
+					
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					<!-- If we don't have Pine Nut Bread -->
+					<If Condition="!HasItem(58260)">
+
+						<!-- Load profile - [QO-N][85-Flying]_botanist_lost-city-of-the-tol'virll_[repair-mail] -->
+						<CustomBehavior File="LoadProfile" 
+										ProfileName="Movement\Vendors\[QO-N][85-Flying]_botanist_lost-city-of-the-tol'virll_[repair-mail]" />
+			
+					</If>	<!-- If we don't have Pine Nut Bread -->
+					
+					<!-- Profile message - All checks complete -->
+					<CustomBehavior File="Message" 
+									Text="All checks complete."  
+									LogColor="Plum" />
+								
+				</If> <!-- Lost City of the Tol'vir -->	
+					
+				<!-- If we don't need to vendor -->
+				<If Condition="Me.MapId == 755">	
+
+					<!-- Profile message - We have more than 25 empty bag slots. Our gear is above 30% durability and we have Clefthoof Ribs -->
+					<CustomBehavior File="Message" 
+									Text="We have more than 25 empty bag slots. Our gear is above 30% durability and we have Clefthoof Ribs."
+									LogColor="Plum" />
+				
+					<!-- Instance timer check if we didn't repair -->
+					<CustomBehavior File="Misc\InstanceTimer" 
+									Timer="Check" />
+
+					<!-- The Lost City of the Tol'vir detected. Running out -->
+					<CustomBehavior File="Message" 
+									Text="The Lost City of the Tol'vir detected. Running out."
+									LogColor="Cyan" />
+						
+					<!-- Move to - zone in location -->
+					<MoveTo X="-10700.4" Y="-1312.69" Z="17.6029" />
+					
+					<!-- Profile message - All checks complete -->
+					<CustomBehavior File="Message" 
+									Text="All checks complete."  
+									LogColor="Plum" />
+
+					<!-- Custom behavior - Misc/InInstance - exit the instance-->
+					<CustomBehavior File="Misc\InInstance" 
+									X="-10684.97" Y="-1307.447" Z="17.64349" />
+					
+					<!-- Wait timer - wait 15 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="15000" />
+					
+					<!-- Move to - zone out location -->
+					<MoveTo X="-10679.7" Y="-1307.1" Z="17.3427" />
+					
+				</If>	<!-- If we don't need to vendor -->	
+						
+			</While> <!-- Infinite loop -->
+			
+		</If> <!-- I am level 85 -->	
+		
+	</QuestOrder>
+	
+</HBProfile>

@@ -1,0 +1,3269 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+	<Name>[QO-N][Solstice][58-90][repair-mail]</Name>
+   
+	<MinLevel>1</MinLevel>
+	<MaxLevel>101</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	
+	<MailGrey>False</MailGrey>
+	<MailWhite>True</MailWhite>
+	<MailGreen>False</MailGreen>
+	<MailBlue>False</MailBlue>
+	<MailPurple>True</MailPurple>
+   
+	<SellGrey>True</SellGrey>
+	<SellWhite>False</SellWhite>
+	<SellGreen>True</SellGreen>
+	<SellBlue>True</SellBlue>
+	<SellPurple>False</SellPurple>
+
+	<AvoidMobs>
+	</AvoidMobs>
+	
+	<Blackspots>
+		<Blackspot X="-8830.189" Y="616.5771" Z="94.05379" Radius="3" />
+		<Blackspot X="-7118.695" Y="-1225.898" Z="290.2605" Radius="1" />
+		<Blackspot X="1091.256" Y="-166.446" Z="-65.30894" Radius="1" />
+	</Blackspots>
+
+	<Mailboxes>
+	</Mailboxes>
+ 
+	<Vendors>
+	</Vendors>
+	
+	<ProtectedItems>	
+	</ProtectedItems>
+
+	<Factions></Factions>
+	
+	<QuestOrder>
+
+		<!-- UserSettings -->
+		<CustomBehavior File="UserSettings"
+						FindMountAutomatically="True"
+						GroundMountFarmingMode="False"
+						HarvestHerbs="False"
+						HarvestMinerals="False"
+						KillBetweenHotspots="True"
+						LogoutForInactivity="False"
+						LogoutInactivityUseForceQuit="False"
+						LootMobs="True"
+						LootRadius="35"
+						MountName=""
+						NinjaSkin="False"
+						RessAtSpiritHealers="False"
+						SkinMobs="False"
+						UseMount="True" 
+						UseRandomMount="False" />
+
+		<!-- If our level is 88-91 -->
+		<If Condition="Me.Level &gt;= 88 &amp;&amp; Me.Level &lt; 91">
+			
+			<!-- Profile message - Our durability is less than 30% or we have less than 25 empty bag slots remaining -->
+			<CustomBehavior File="Message" 
+							Text="Our durability is less than 30% or we have less than 25 empty bag slots remaining." 
+							LogColor="Fuchsia" />
+								
+			<!-- If we are in Lost City of the Tol'vir -->
+			<If Condition="Me.ZoneId == 5396">	
+				
+				<!-- If our hearthstone/innkeepers daughter is set to Iron Summit -->
+				<If Condition="Me.HearthstoneAreaId == 5466" >
+				
+					<!-- Profile message - We are in the Lost City of the Tol'vir, using our Hearthstone/Innkeeper's Daughter -->
+					<CustomBehavior File="Message" 
+									Text="We are in the Lost City of the Tol'vir, using our Hearthstone/Innkeeper's Daughter." 
+									LogColor="Cyan" />
+								
+					<!-- If we have a Hearthstone -->
+					<If Condition="HasItem(6948)">
+					
+						<!-- Profile message - Using our Hearthstone -->
+						<CustomBehavior File="Message" 
+										Text="Using our Hearthstone." 
+										LogColor="Fuchsia" />
+										
+						<!-- Custom behavior - Misc\RunLua -->				
+						<CustomBehavior File="Misc\RunLua" 
+										Lua="UseItemByName(6948)" 
+										WaitTime="1000" />
+										
+						<!-- Wait timer - wait 20 seconds - delay -->				
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000" />
+										
+					</If>	<!-- If we have a Hearthstone -->
+				
+					<!-- If we have a Innkeeper's Daughter -->
+					<If Condition="HasItem(64488)">
+					
+						<!-- Profile message - Using our Innkeeper's Daughter -->
+						<CustomBehavior File="Message" 
+										Text="Using our Innkeeper's Daughter." 
+										LogColor="Fuchsia" />
+											
+						<!-- Custom behavior - Misc\RunLua -->					
+						<CustomBehavior File="Misc\RunLua" 
+										Lua="UseItemByName(64488)" 
+										WaitTime="1000" />
+							
+						<!-- Wait timer - wait 20 seconds - delay -->	
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000" />
+										
+					</If>	<!-- If we have a Innkeeper's Daughter -->
+				
+				</If>	<!-- If our hearthstone is set here, use it -->
+				
+			</If>	<!-- If we are in Lost City of the Tol'vir -->
+		
+			<!-- If we are still in in Lost City of the Tol'vir, exit the instance -->
+			<If Condition="Me.ZoneId == 5396">	
+			
+				<!-- Profile message - Our Hearthstone/Innkeeper's Daughter didn't work. Moving to the exit -->
+				<CustomBehavior File="Message" 
+								Text="Our Hearthstone/Innkeeper's Daughter didn't work. Moving to the exit."
+								LogColor="Fuchsia" />
+				
+				<!-- Move to - zone in location -->
+				<MoveTo X="-10700.4" Y="-1312.69" Z="17.6029" />
+				
+				<!-- Go through the portal -->
+				<CustomBehavior File="Misc\InInstance" 
+								X="-10687.2" Y="-1309.713" Z="17.66455" />	
+				
+				<!-- Move to the zone out location -->
+				<MoveTo X="-10679.7" Y="-1307.1" Z="17.34235" />	
+				
+			</If>	<!-- If we are still in Blackrock Depths, exit the instance -->
+
+			<!-- If we are in Uldum -->
+			<If Condition="Me.ZoneId == 5034">
+
+				<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+				<If Condition="(Me.FreeBagSlots &lt;= 25) || (Me.LowestDurabilityPercent &lt;= 0.3)" >
+
+					<!-- If we are Alliance -->
+					<If Condition="Me.IsAlliance">
+					
+						<!-- Fly to - Ramkahen hover point -->
+						<CustomBehavior File="FlyTo" 
+										X="-9475.864" Y="-963.2589" Z="152.8976" />
+
+						<!-- Fly to - Blacksmith Abasi - repair vendor -->
+						<CustomBehavior File="MyCTM" 
+										X="-9409.589" Y="-904.8812" Z="112.5402" />
+								
+						<!-- Custom behavior - ForcedDismount -->
+						<CustomBehavior File="ForcedDismount" />
+						
+						<!-- Move to - Blacksmith Abasi - repair vendor -->
+						<MoveTo X="-9409.589" Y="-904.8812" Z="112.5402" />
+						
+						<!-- Profile message - Our durability is less than 30%, or our bags have less than 25 empty slots left -->
+						<CustomBehavior File="Message" 
+										Text="Our durability is less than 30%, or our bags have less than 25 empty slots left."
+										LogColor="Cyan" />
+										
+						<!-- Repair vendor -->
+						<SetVendor>
+							<Vendors>
+								<!-- Ramkahen  -->
+								<Vendor Name="Blacksmith Abasi" 
+										Entry="48617" 
+										Type="Repair" 
+										X="-9404.68" Y="-906.438" Z="112.5408" />
+							</Vendors>
+						</SetVendor>
+						<SetMailbox>
+							<Mailboxes>
+								<Mailbox X="-9416.835" Y="-933.4434" Z="112.5406" />
+							</Mailboxes>
+						</SetMailbox>
+									
+						<!-- Vendor conditions -->
+						<CustomBehavior File="ForceSetVendor" 
+										DoMail="True" 
+										DoRepair="True" 
+										DoSell="True" 
+										DoTrain="False" />		
+						
+					</If>	<!-- If we are Alliance -->
+				
+					<!-- If we are Horde -->
+					<If Condition="Me.IsHorde">
+					
+						<!-- Fly to - Ramkahen hover point -->
+						<CustomBehavior File="FlyTo" 
+										X="-9475.864" Y="-963.2589" Z="152.8976" />
+
+						<!-- Fly to - Blacksmith Abasi - repair vendor -->
+						<CustomBehavior File="MyCTM" 
+										X="-9409.589" Y="-904.8812" Z="112.5402" />
+								
+						<!-- Custom behavior - ForcedDismount -->
+						<CustomBehavior File="ForcedDismount" />
+						
+						<!-- Move to - Blacksmith Abasi - repair vendor -->
+						<MoveTo X="-9409.589" Y="-904.8812" Z="112.5402" />
+						
+						<!-- Profile message - Our durability is less than 30%, or our bags have less than 25 empty slots left -->
+						<CustomBehavior File="Message" 
+										Text="Our durability is less than 30%, or our bags have less than 25 empty slots left."
+										LogColor="Cyan" />
+										
+						<!-- Repair vendor -->
+						<SetVendor>
+							<Vendors>
+								<!-- Ramkahen  -->
+								<Vendor Name="Blacksmith Abasi" 
+										Entry="48617" 
+										Type="Repair" 
+										X="-9404.68" Y="-906.438" Z="112.5408" />
+							</Vendors>
+						</SetVendor>
+						<SetMailbox>
+							<Mailboxes>
+								<Mailbox X="-9416.835" Y="-933.4434" Z="112.5406" />
+							</Mailboxes>
+						</SetMailbox>
+									
+						<!-- Vendor conditions -->
+						<CustomBehavior File="ForceSetVendor" 
+										DoMail="True" 
+										DoRepair="True" 
+										DoSell="True" 
+										DoTrain="False" />	
+						
+					</If>	<!-- If we are Horde -->
+					
+				</If>	<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+			
+			</If>	<!-- If we are in Uldum -->			
+
+			<!-- If we have more than 25 empty bag slots and our durability is greater than 30% -->
+			<If Condition="(Me.FreeBagSlots &gt; 25) &amp;&amp; (Me.LowestDurabilityPercent &gt;= 0.3)" >
+			
+				<!-- Load profile - [QO-N][Solstice][58-90][food] -->
+				<CustomBehavior File="LoadProfile" 
+										ProfileName="[QO-N][Solstice][58-90][food]" />
+										
+			</If>	<!-- If we have more than 25 empty bag slots and our durability is greater than 30% -->	
+			
+		</If>
+
+		
+		<!-- *******************************************    level is 87-88 ******************************************************* -->
+		
+		
+		<!-- If our level is 87-88 -->
+		<If Condition="Me.Level &gt;= 87 &amp;&amp; Me.Level &lt; 101">
+			
+			<!-- Profile message - Our durability is less than 30% or we have less than 25 empty bag slots remaining -->
+			<CustomBehavior File="Message" 
+							Text="Our durability is less than 30% or we have less than 25 empty bag slots remaining." 
+							LogColor="Fuchsia" />
+								
+			<!-- If we are inside Blackrock Caverns -->
+			<If Condition="Me.ZoneId == 4926">
+				
+				<!-- If our hearthstone is set to Iron Summit -->
+				<If Condition="Me.HearthstoneAreaId == 5628" >
+				
+					<!-- Profile message - We are in Blackrock Caverns, using our Hearthstone/Innkeeper's Daughter -->
+					<CustomBehavior File="Message" 
+									Text="We are in Blackrock Depths, using our Hearthstone/Innkeeper's Daughter." 
+									LogColor="Cyan" />
+								
+					<!-- If we have a Hearthstone -->
+					<If Condition="HasItem(6948)">
+					
+						<!-- Profile message - Using our Hearthstone -->
+						<CustomBehavior File="Message" 
+										Text="Using our Hearthstone." 
+										LogColor="Fuchsia" />
+										
+						<!-- Custom behavior - Misc\RunLua -->				
+						<CustomBehavior File="Misc\RunLua" 
+										Lua="UseItemByName(6948)" 
+										WaitTime="1000" />
+										
+						<!-- Wait timer - wait 20 seconds - delay -->				
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000" />
+										
+					</If>	<!-- If we have a Hearthstone -->
+				
+					<!-- If we have a Innkeeper's Daughter -->
+					<If Condition="HasItem(64488)">
+					
+						<!-- Profile message - Using our Innkeeper's Daughter -->
+						<CustomBehavior File="Message" 
+										Text="Using our Innkeeper's Daughter." 
+										LogColor="Fuchsia" />
+											
+						<!-- Custom behavior - Misc\RunLua -->					
+						<CustomBehavior File="Misc\RunLua" 
+										Lua="UseItemByName(64488)" 
+										WaitTime="1000" />
+							
+						<!-- Wait timer - wait 20 seconds - delay -->	
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000" />
+										
+					</If>	<!-- If we have a Innkeeper's Daughter -->
+				
+				</If>	<!-- If our hearthstone is set here, use it -->
+				
+			</If>	<!-- If we are in Blackrock Depths -->
+		
+			<!-- If we are in Blackrock Caverns -->
+			<If Condition="Me.ZoneId == 4926">
+			
+				<!-- Profile message - Blackrock Caverns detected. Running out -->
+				<CustomBehavior File="Message" 
+								Text="Blackrock Caverns detected. Running out."
+								LogColor="Fuchsia" />
+					
+				<!-- Move to - zone in location -->
+				<MoveTo X="209.903" Y="1133.02" Z="205.569" />
+				
+				<!-- Go through the portal -->
+				<CustomBehavior File="Misc\InInstance" 
+								X="215.7276" Y="1150.736" Z="206.7795" />
+				
+				<!-- Move to - zone out location -->
+				<MoveTo X="-7571.14" Y="-1324.96" Z="245.538" />
+				
+			</If>	<!-- If we are in Blackrock Caverns -->
+
+			<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+			<If Condition="(Me.FreeBagSlots &lt;= 25) || (Me.LowestDurabilityPercent &lt;= 0.3)" >
+
+				<!-- Repair vendor -->
+				<SetVendor>
+					<Vendors>
+						<!-- Iron Summit -->
+						<Vendor Name="Fergus Gravelsmash" 
+								Entry="47937" 
+								Type="Repair" 
+								X="-7093.68" Y="-1268.31" Z="270.4849" />
+					</Vendors>
+				</SetVendor>
+		
+				<!-- Mailbox -->
+				<SetMailbox>
+					<Mailboxes>
+						<!-- Iron Summit -->
+						<Mailbox X="-7112.428" Y="-1201.948" Z="306.7885" />
+					</Mailboxes>
+				</SetMailbox>
+							
+				<!-- Vendor conditions -->
+				<CustomBehavior File="ForceSetVendor" 
+								DoMail="True" 
+								DoRepair="True" 
+								DoSell="True" 
+								DoTrain="False" />			
+				
+			</If>	<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+
+			<!-- If we have more than 25 empty bag slots and our durability is greater than 30% -->
+			<If Condition="(Me.FreeBagSlots &gt; 25) &amp;&amp; (Me.LowestDurabilityPercent &gt;= 0.3)" >
+			
+				<!-- Load profile - [QO-N][Solstice][58-90][food] -->
+				<CustomBehavior File="LoadProfile" 
+										ProfileName="[QO-N][Solstice][58-90][food]" />
+
+			</If>	<!-- If we have more than 25 empty bag slots and our durability is greater than 30% -->
+			
+		</If>	<!-- If our level is 87-88 -->
+		
+		
+		<!-- *******************************************    level is 86-87 ******************************************************* -->
+		
+		
+		<!-- If our level is 86-87 -->
+		<If Condition="Me.Level &gt;= 86 &amp;&amp; Me.Level &lt; 87">
+		
+			<!-- Profile message - Our durability is less than 30% or we have less than 25 empty bag slots remaining -->
+			<CustomBehavior File="Message" 
+							Text="Our durability is less than 30% or we have less than 25 empty bag slots remaining." 
+							LogColor="Fuchsia" />
+								
+			<!-- If we are in Halls of Lightning -->
+			<If Condition="Me.ZoneId == 4272">	
+				
+				<!-- If our Hearthstone/Innkeepers Daughter is set at Bouldercrag's Refuge -->				
+				<If Condition="Me.HearthstoneAreaId == 4484">
+				
+					<!-- Profile message - We are in Blackrock Depths, using our Hearthstone/Innkeeper's Daughter -->
+					<CustomBehavior File="Message" 
+									Text="We are in Blackrock Depths, using our Hearthstone/Innkeeper's Daughter." 
+									LogColor="Cyan" />
+								
+					<!-- If we have a Hearthstone -->
+					<If Condition="HasItem(6948)">
+					
+						<!-- Profile message - Using our Hearthstone -->
+						<CustomBehavior File="Message" 
+										Text="Using our Hearthstone." 
+										LogColor="Fuchsia" />
+										
+						<!-- Custom behavior - Misc\RunLua -->				
+						<CustomBehavior File="Misc\RunLua" 
+										Lua="UseItemByName(6948)" 
+										WaitTime="1000" />
+										
+						<!-- Wait timer - wait 20 seconds - delay -->				
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000" />
+										
+					</If>	<!-- If we have a Hearthstone -->
+				
+					<!-- If we have a Innkeeper's Daughter -->
+					<If Condition="HasItem(64488)">
+					
+						<!-- Profile message - Using our Innkeeper's Daughter -->
+						<CustomBehavior File="Message" 
+										Text="Using our Innkeeper's Daughter." 
+										LogColor="Fuchsia" />
+											
+						<!-- Custom behavior - Misc\RunLua -->					
+						<CustomBehavior File="Misc\RunLua" 
+										Lua="UseItemByName(64488)" 
+										WaitTime="1000" />
+							
+						<!-- Wait timer - wait 20 seconds - delay -->	
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000" />
+										
+					</If>	<!-- If we have a Innkeeper's Daughter -->
+				
+				</If>	<!-- If our hearthstone is set here, use it -->
+				
+			</If>	<!-- If we are in Halls of Lightning -->
+		
+			<!-- If we are still in Halls of Lightning, exit the instance -->
+			<If Condition="Me.ZoneId == 4272">
+			
+				<!-- Profile message - Our Hearthstone/Innkeeper's Daughter didn't work. Moving to the exit -->
+				<CustomBehavior File="Message" 
+								Text="Our Hearthstone/Innkeeper's Daughter didn't work. Moving to the exit."
+								LogColor="Fuchsia" />
+
+				<!-- Move to - zone in location -->
+				<MoveTo X="1331.41" Y="241.904" Z="52.5046" />
+				
+				<!-- Go through the portal -->
+				<CustomBehavior File="Misc\InInstance" 
+								X="1333.524" Y="290.7161" Z="52.81057" />	
+				
+				<!-- Move to - zone out location -->
+				<MoveTo X="9175.68" Y="-1378.8" Z="1103.57" />
+						
+			</If>	<!-- If we are still in Halls of Lightning, exit the instance -->
+
+			<!-- If we are in Northrend -->
+			<If Condition="Me.MapId == 571">
+			
+				<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+				<If Condition="(Me.FreeBagSlots &lt;= 25) || (Me.LowestDurabilityPercent &lt;= 0.3)" >
+				
+					<!-- If we are Alliance -->
+					<If Condition="Me.IsAlliance">
+					
+						<!-- Fly to - Bouldercrag's Refuge hover point -->
+						<CustomBehavior File="FlyTo" 
+										X="8471.806" Y="-301.3479" Z="976.4656" />
+
+						<!-- Front doorway of the inn -->
+						<CustomBehavior File="FlyTo" 
+										X="8446.114" Y="-333.7011" Z="906.6091" />
+						
+						<!-- Custom behavior - ForcedDismount -->
+						<CustomBehavior File="ForcedDismount" />
+						
+						<!-- Move to - inside the inn -->
+						<MoveTo X="8388.318" Y="-388.8239" Z="903.1187" />
+						
+						<!-- Profile message - Our durability is less than 30%, or our bags have less than 25 empty slots left -->
+						<CustomBehavior File="Message" 
+										Text="Our durability is less than 30%, or our bags have less than 25 empty slots left."
+										LogColor="Cyan" />				
+					
+						<!-- Bouldercrag's Refuge -->					
+						<SetVendor>
+							<Vendors>
+								<Vendor Name="Dargum Hammerdeep" 
+										Entry="29964" 
+										Type="Repair" 
+										X="8383.45" Y="-390.166" Z="903.1187" />
+							</Vendors>
+						</SetVendor>
+
+						<SetMailbox>
+							<Mailboxes>
+								<Mailbox X="8443.507" Y="-326.9859" Z="906.608" />
+							</Mailboxes>
+						</SetMailbox>	
+						
+						<!-- Vendor conditions -->
+						<CustomBehavior File="ForceSetVendor" 
+										DoMail="True" 
+										DoRepair="True" 
+										DoSell="True" 
+										DoTrain="False" />
+						
+					</If>	<!-- If we are Alliance -->
+
+					<!-- If we are Horde -->
+					<If Condition="Me.IsHorde">
+					
+						<!-- Fly to - Bouldercrag's Refuge hover point -->
+						<CustomBehavior File="FlyTo" 
+										X="8471.806" Y="-301.3479" Z="976.4656" />
+
+						<!-- Front doorway of the inn -->
+						<CustomBehavior File="FlyTo" 
+										X="8446.114" Y="-333.7011" Z="906.6091" />
+						
+						<!-- Custom behavior - ForcedDismount -->
+						<CustomBehavior File="ForcedDismount" />
+						
+						<!-- Move to - inside the inn -->
+						<MoveTo X="8388.318" Y="-388.8239" Z="903.1187" />
+						
+						<!-- Profile message - Our durability is less than 30%, or our bags have less than 25 empty slots left -->
+						<CustomBehavior File="Message" 
+										Text="Our durability is less than 30%, or our bags have less than 25 empty slots left."
+										LogColor="Cyan" />
+										
+						<!-- Bouldercrag's Refuge -->					
+						<SetVendor>
+							<Vendors>
+								<Vendor Name="Dargum Hammerdeep" 
+										Entry="29964" 
+										Type="Repair" 
+										X="8383.45" Y="-390.166" Z="903.1187" />
+							</Vendors>
+						</SetVendor>
+
+						<SetMailbox>
+							<Mailboxes>
+								<Mailbox X="8443.507" Y="-326.9859" Z="906.608" />
+							</Mailboxes>
+						</SetMailbox>
+						
+						<!-- Vendor conditions -->
+						<CustomBehavior File="ForceSetVendor" 
+										DoMail="True" 
+										DoRepair="True" 
+										DoSell="True" 
+										DoTrain="False" />
+						
+					</If>	<!-- If we are Horde -->
+
+					<!-- We are done repairing -->
+					<If Condition="(Me.FreeBagSlots &gt; 25) &amp;&amp; (Me.LowestDurabilityPercent &gt;= 0.3)" >
+					
+						<!-- Profile message - Repairing complete -->
+						<CustomBehavior File="Message" 
+										Text="Repairing complete." 
+										LogColor="Cyan" />
+										
+					</If>	<!-- We are done repairing -->
+					
+					<!-- If we are Alliance -->
+					<If Condition="Me.IsAlliance">
+					
+						<!-- Fly to - Bouldercrag's Refuge hover point -->
+						<CustomBehavior File="FlyTo" 
+										X="8471.806" Y="-301.3479" Z="976.4656" />
+						
+					</If>	<!-- If we are Alliance -->
+					
+					<!-- If we are Horde -->
+					<If Condition="Me.IsHorde">
+					
+						<!-- Fly to - Bouldercrag's Refuge hover point -->
+						<CustomBehavior File="FlyTo" 
+										X="8471.806" Y="-301.3479" Z="976.4656" />
+						
+					</If>	<!-- If we are Horde -->
+					
+				</If> <!-- Repairing -->
+				
+			</If>	<!-- If we are in Northrend -->
+			
+			<!-- If we have more than 25 empty bag slots and our durability is greater than 30% -->
+			<If Condition="(Me.FreeBagSlots &gt; 25) &amp;&amp; (Me.LowestDurabilityPercent &gt;= 0.3)" >
+			
+				<!-- Load profile - [QO-N][Solstice][58-90][food] -->
+				<CustomBehavior File="LoadProfile" 
+										ProfileName="[QO-N][Solstice][58-90][food]" />
+										
+			</If>		
+		</If>
+
+		
+		<!-- *******************************************    level is 84-86 ******************************************************* -->
+		
+		
+		<!-- If our level is 84-86 -->
+		<If Condition="Me.Level &gt;= 84 &amp;&amp; Me.Level &lt; 86">
+		
+			<!-- Profile message - Our durability is less than 30% or we have less than 25 empty bag slots remaining -->
+			<CustomBehavior File="Message" 
+							Text="Our durability is less than 30% or we have less than 25 empty bag slots remaining." 
+							LogColor="Fuchsia" />
+								
+	
+			<!-- If we are inside Gundrak -->
+			<If Condition="Me.ZoneId == 4416">
+				
+				<!-- If our Hearthstone/Innkeepers Daughter is set at The Argent Stand -->
+				<If Condition="(Me.HearthstoneAreaId == 4275)">
+				
+					<!-- Profile message - We are in Gundrak, using our Hearthstone/Innkeeper's Daughter -->
+					<CustomBehavior File="Message" 
+									Text="We are in Gundrak, using our Hearthstone/Innkeeper's Daughter." 
+									LogColor="Cyan" />
+								
+					<!-- If we have a Hearthstone -->
+					<If Condition="HasItem(6948)">
+					
+						<!-- Profile message - Using our Hearthstone -->
+						<CustomBehavior File="Message" 
+										Text="Using our Hearthstone." 
+										LogColor="Fuchsia" />
+										
+						<!-- Custom behavior - Misc\RunLua -->				
+						<CustomBehavior File="Misc\RunLua" 
+										Lua="UseItemByName(6948)" 
+										WaitTime="1000" />
+										
+						<!-- Wait timer - wait 20 seconds - delay -->				
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000" />
+										
+					</If>	<!-- If we have a Hearthstone -->
+				
+					<!-- If we have a Innkeeper's Daughter -->
+					<If Condition="HasItem(64488)">
+					
+						<!-- Profile message - Using our Innkeeper's Daughter -->
+						<CustomBehavior File="Message" 
+										Text="Using our Innkeeper's Daughter." 
+										LogColor="Fuchsia" />
+											
+						<!-- Custom behavior - Misc\RunLua -->					
+						<CustomBehavior File="Misc\RunLua" 
+										Lua="UseItemByName(64488)" 
+										WaitTime="1000" />
+							
+						<!-- Wait timer - wait 20 seconds - delay -->	
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000" />
+										
+					</If>	<!-- If we have a Innkeeper's Daughter -->
+				
+				</If>	<!-- If our hearthstone is set here, use it -->
+				
+			</If>	<!-- If we are inside Gundrak -->
+		
+			<!-- If we are still in Gundrak, exit the instance -->
+			<If Condition="Me.ZoneId == 4416">
+			
+				<!-- Profile message - Our Hearthstone/Innkeeper's Daughter didn't work. Moving to the exit -->
+				<CustomBehavior File="Message" 
+								Text="Our Hearthstone/Innkeeper's Daughter didn't work. Moving to the exit."
+								LogColor="Fuchsia" />
+					
+					<!-- Move to - zone in location -->
+					<MoveTo X="1887.432" Y="839.571" Z="176.6754" />
+
+					<!-- Go through the portal -->
+					<CustomBehavior File="Misc\InInstance" 
+									X="1900.536" Y="815.8542" Z="176.637" />
+					
+					<!-- Move to - zone out location -->
+					<MoveTo X="6717.32" Y="-4645.55" Z="450.017" />		
+					
+					<!-- Move to - flying mount location -->
+					
+			</If>	<!-- If we are inside Gundrak -->
+
+			<!-- If we are in Northrend -->
+			<If Condition="Me.MapId == 571">
+
+				<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+				<If Condition="(Me.FreeBagSlots &lt;= 25) || (Me.LowestDurabilityPercent &lt;= 0.3)" >
+				
+					<!-- If we are Alliance -->
+					<If Condition="Me.IsAlliance">
+					
+						<!-- Fly to - The Argent Stand hover point -->
+						<CustomBehavior File="FlyTo" 
+										X="5382.631" Y="-2629.626" Z="354.096" />
+						
+						<!-- CTM to - ally repair vendor -->
+						<CustomBehavior File="MyCTM" 
+											X="5405.251" Y="-2657.311" Z="303.9556" />
+						
+						<!-- Custom behavior - ForcedDismount -->
+						<CustomBehavior File="ForcedDismount" />
+						
+						<!-- Profile message - Our durability is less than 30%, or our bags have less than 25 empty slots left -->
+						<CustomBehavior File="Message" 
+										Text="Our durability is less than 30%, or our bags have less than 25 empty slots left."
+										LogColor="Cyan" />
+										
+						<!-- The Argent Stand -->					
+						<SetVendor>
+							<Vendors>
+								<Vendor Name="Arlen Brighthammer" 
+										Entry="28796" 
+										Type="Repair" 
+										X="5410.7" Y="-2658.249" Z="303.9539" />
+							</Vendors>
+						</SetVendor>
+
+						<SetMailbox>
+							<Mailboxes>
+								<Mailbox X="5412.528" Y="-2623.317" Z="306.1588" />
+							</Mailboxes>
+						</SetMailbox>	
+
+						<!-- Vendor conditions -->
+						<CustomBehavior File="ForceSetVendor" 
+										DoMail="True" 
+										DoRepair="True" 
+										DoSell="True" 
+										DoTrain="False" />
+						
+					</If>	<!-- If we are Alliance -->
+
+					<!-- If we are Horde -->
+					<If Condition="Me.IsHorde">
+					
+						<!-- Fly to - The Argent Stand hover point -->
+						<CustomBehavior File="FlyTo" 
+										X="5382.631" Y="-2629.626" Z="354.096" />
+						
+						<!-- CTM to - ally repair vendor -->
+						<CustomBehavior File="MyCTM" 
+											X="5405.251" Y="-2657.311" Z="303.9556" />
+						
+						<!-- Custom behavior - ForcedDismount -->
+						<CustomBehavior File="ForcedDismount" />
+						
+						<!-- Profile message - Our durability is less than 30%, or our bags have less than 25 empty slots left -->
+						<CustomBehavior File="Message" 
+										Text="Our durability is less than 30%, or our bags have less than 25 empty slots left."
+										LogColor="Cyan" />
+										
+						<!-- The Argent Stand -->					
+						<SetVendor>
+							<Vendors>
+								<Vendor Name="Arlen Brighthammer" 
+										Entry="28796" 
+										Type="Repair" 
+										X="5410.7" Y="-2658.249" Z="303.9539" />
+							</Vendors>
+						</SetVendor>
+
+						<SetMailbox>
+							<Mailboxes>
+								<Mailbox X="5412.528" Y="-2623.317" Z="306.1588" />
+							</Mailboxes>
+						</SetMailbox>
+
+						<!-- Vendor conditions -->
+						<CustomBehavior File="ForceSetVendor" 
+										DoMail="True" 
+										DoRepair="True" 
+										DoSell="True" 
+										DoTrain="False" />
+						
+					</If>	<!-- If we are Horde -->
+					
+					<!-- We are done repairing -->
+					<If Condition="(Me.FreeBagSlots &gt; 25) &amp;&amp; (Me.LowestDurabilityPercent &gt;= 0.3)" >
+					
+						<!-- Profile message - Repairing complete -->
+						<CustomBehavior File="Message" 
+										Text="Repairing complete." 
+										LogColor="Cyan" />
+										
+					</If>	<!-- We are done repairing -->
+					
+					<!-- If we are Alliance -->
+					<If Condition="Me.IsAlliance">
+					
+						<!-- Fly to - The Argent Stand hover point -->
+						<CustomBehavior File="FlyTo" 
+										X="5382.631" Y="-2629.626" Z="354.096" />
+						
+					</If>	<!-- If we are Alliance -->
+					
+					<!-- If we are Horde -->
+					<If Condition="Me.IsHorde">
+					
+						<!-- Fly to - The Argent Stand hover point -->
+						<CustomBehavior File="FlyTo" 
+										X="5382.631" Y="-2629.626" Z="354.096" />
+						
+					</If>	<!-- If we are Horde -->
+					
+				</If> <!-- Repairing -->
+
+				<!-- If we have more than 25 empty bag slots and our durability is greater than 30% -->
+				<If Condition="(Me.FreeBagSlots &gt; 25) &amp;&amp; (Me.LowestDurabilityPercent &gt;= 0.3)" >
+				
+					<!-- Load profile - [QO-N][Solstice][58-90][food] -->
+					<CustomBehavior File="LoadProfile" 
+											ProfileName="[QO-N][Solstice][58-90][food]" />
+											
+				</If>	<!-- If we have more than 25 empty bag slots and our durability is greater than 30% -->		
+				
+			</If>	<!-- If we are in Northrend -->
+			
+		</If> 	<!-- If our level is 84-86 -->					
+				
+
+		<!-- *******************************************    level is 82-84 ******************************************************* -->
+		
+		
+		<!-- If our level is 82-84 -->
+		<If Condition="Me.Level &gt;= 82 &amp;&amp; Me.Level &lt; 84">
+		
+			<!-- Profile message - Our durability is less than 30% or we have less than 25 empty bag slots remaining -->
+			<CustomBehavior File="Message" 
+							Text="Our durability is less than 30% or we have less than 25 empty bag slots remaining." 
+							LogColor="Fuchsia" />
+								
+			<!-- If we are in Utgarde Keep exit the instance -->
+			<If Condition="Me.MapId == 574">
+			
+				<!-- Make our way to the exit -->
+				<MoveTo X="155.1128" Y="-86.14938" Z="12.55292" />
+
+				<!-- Go through the portal -->
+				<CustomBehavior File="Misc\InInstance" X="125.1626" Y="-87.67013" Z="12.55168" />
+				
+				<!-- Move to - zone out location -->
+				<MoveTo X="1221.63" Y="-4864.75" Z="41.2481" />
+				
+				<!-- Move to - outside Utgarde Keep -->
+				<MoveTo X="1221.63" Y="-4864.75" Z="41.2481" />
+				
+			</If>	<!-- If we are in Utgarde Keep, exit the instance -->					
+								
+			<!-- If we are inside Drak'Tharon Keep -->
+			<If Condition="Me.ZoneId == 4196">
+				
+				<!-- If our Hearthstone/Innkeepers Daughter is set at The Argent Stand -->
+				<If Condition="(Me.HearthstoneAreaId == 4275)">
+				
+					<!-- Profile message - We are in Drak'Tharon Keep, using our Hearthstone/Innkeeper's Daughter -->
+					<CustomBehavior File="Message" 
+									Text="We are in Drak'Tharon Keep, using our Hearthstone/Innkeeper's Daughter." 
+									LogColor="Cyan" />
+								
+					<!-- If we have a Hearthstone -->
+					<If Condition="HasItem(6948)">
+					
+						<!-- Profile message - Using our Hearthstone -->
+						<CustomBehavior File="Message" 
+										Text="Using our Hearthstone." 
+										LogColor="Fuchsia" />
+										
+						<!-- Custom behavior - Misc\RunLua -->				
+						<CustomBehavior File="Misc\RunLua" 
+										Lua="UseItemByName(6948)" 
+										WaitTime="1000" />
+										
+						<!-- Wait timer - wait 20 seconds - delay -->				
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000" />
+										
+					</If>	<!-- If we have a Hearthstone -->
+				
+					<!-- If we have a Innkeeper's Daughter -->
+					<If Condition="HasItem(64488)">
+					
+						<!-- Profile message - Using our Innkeeper's Daughter -->
+						<CustomBehavior File="Message" 
+										Text="Using our Innkeeper's Daughter." 
+										LogColor="Fuchsia" />
+											
+						<!-- Custom behavior - Misc\RunLua -->					
+						<CustomBehavior File="Misc\RunLua" 
+										Lua="UseItemByName(64488)" 
+										WaitTime="1000" />
+							
+						<!-- Wait timer - wait 20 seconds - delay -->	
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000" />
+										
+					</If>	<!-- If we have a Innkeeper's Daughter -->
+				
+				</If>	<!-- If our hearthstone is set here, use it -->
+				
+			</If>	<!-- If we are inside Drak'Tharon Keep -->
+		
+			<!-- If we are still in Drak'Tharon Keep, exit the instance -->
+			<If Condition="Me.ZoneId == 4196">
+			
+				<!-- Profile message - Drak'Tharon Keep detected, exiting the instance -->
+				<CustomBehavior File="Message" 
+								Text="Our Hearthstone/Innkeepers Daughter didn't work. Moving to the Argent Stand."
+								LogColor="Fuchsia" />
+					
+				<!-- Make our way to the exit -->
+				<MoveTo X="-517.15" Y="-489.201" Z="11.01775" />
+				
+				<!-- Go through the portal -->
+				<CustomBehavior File="Misc\InInstance" 
+								X="-518.2795" Y="-460.8023" Z="10.98073" />
+				
+				<!-- Move to - zone out location -->
+				<MoveTo X="4774.44" Y="-2030.03" Z="229.38" />	
+				
+				<!-- Move to - base of the northern ramp -->
+				<MoveTo X="4789.506" Y="-2044.945" Z="229.4409" />
+				
+				<!-- Move to - top of the northern ramp -->
+				<MoveTo X="4824.082" Y="-2045.761" Z="250.1382" />
+				
+				<!-- Move to - flying mount location - NW corner-->
+				<MoveTo X="4879.953" Y="-2032.887" Z="250.0568" />
+				
+				<!-- Custom behavior - Forced Dismount -->				
+				<CustomBehavior File="ForcedMount"
+								MountType="Flying" />
+
+				<!-- Fly outside of Drak'tharon Keep - hover point -->
+				<CustomBehavior File="MyCTM" 
+								X="5069.032" Y="-2051.748" Z="416.996" />
+
+			</If>	<!-- If we are inside Drak'Tharon Keep -->
+
+			<!-- If we are in Northrend -->
+			<If Condition="Me.MapId == 571">
+
+				<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+				<If Condition="(Me.FreeBagSlots &lt;= 25) || (Me.LowestDurabilityPercent &lt;= 0.3)" >
+				
+					<!-- If we are Alliance -->
+					<If Condition="Me.IsAlliance">
+					
+						<!-- Fly to - The Argent Stand hover point -->
+						<CustomBehavior File="FlyTo" 
+										X="5382.631" Y="-2629.626" Z="354.096" />
+						
+						<!-- CTM to - ally repair vendor -->
+						<CustomBehavior File="MyCTM" 
+											X="5405.251" Y="-2657.311" Z="303.9556" />
+						
+						<!-- Custom behavior - ForcedDismount -->
+						<CustomBehavior File="ForcedDismount" />
+						
+						<!-- Profile message - Our durability is less than 30%, or our bags have less than 25 empty slots left -->
+						<CustomBehavior File="Message" 
+										Text="Our durability is less than 30%, or our bags have less than 25 empty slots left."
+										LogColor="Cyan" />
+										
+						<!-- The Argent Stand -->					
+						<SetVendor>
+							<Vendors>
+								<Vendor Name="Arlen Brighthammer" 
+										Entry="28796" 
+										Type="Repair" 
+										X="5410.7" Y="-2658.249" Z="303.9539" />
+							</Vendors>
+						</SetVendor>
+
+						<SetMailbox>
+							<Mailboxes>
+								<Mailbox X="5412.528" Y="-2623.317" Z="306.1588" />
+							</Mailboxes>
+						</SetMailbox>	
+
+						<!-- Vendor conditions -->
+						<CustomBehavior File="ForceSetVendor" 
+										DoMail="True" 
+										DoRepair="True" 
+										DoSell="True" 
+										DoTrain="False" />
+						
+					</If>	<!-- If we are Alliance -->
+
+					<!-- If we are Horde -->
+					<If Condition="Me.IsHorde">
+					
+						<!-- Fly to - The Argent Stand hover point -->
+						<CustomBehavior File="FlyTo" 
+										X="5382.631" Y="-2629.626" Z="354.096" />
+						
+						<!-- CTM to - ally repair vendor -->
+						<CustomBehavior File="MyCTM" 
+											X="5405.251" Y="-2657.311" Z="303.9556" />
+						
+						<!-- Custom behavior - ForcedDismount -->
+						<CustomBehavior File="ForcedDismount" />
+						
+						<!-- Profile message - Our durability is less than 30%, or our bags have less than 25 empty slots left -->
+						<CustomBehavior File="Message" 
+										Text="Our durability is less than 30%, or our bags have less than 25 empty slots left."
+										LogColor="Cyan" />
+										
+						<!-- The Argent Stand -->					
+						<SetVendor>
+							<Vendors>
+								<Vendor Name="Arlen Brighthammer" 
+										Entry="28796" 
+										Type="Repair" 
+										X="5410.7" Y="-2658.249" Z="303.9539" />
+							</Vendors>
+						</SetVendor>
+
+						<SetMailbox>
+							<Mailboxes>
+								<Mailbox X="5412.528" Y="-2623.317" Z="306.1588" />
+							</Mailboxes>
+						</SetMailbox>
+						
+						<!-- Vendor conditions -->
+						<CustomBehavior File="ForceSetVendor" 
+										DoMail="True" 
+										DoRepair="True" 
+										DoSell="True" 
+										DoTrain="False" />
+						
+					</If>	<!-- If we are Horde -->
+
+					<!-- We are done repairing -->
+					<If Condition="(Me.FreeBagSlots &gt; 25) &amp;&amp; (Me.LowestDurabilityPercent &gt;= 0.3)" >
+					
+						<!-- Profile message - Repairing complete -->
+						<CustomBehavior File="Message" 
+										Text="Repairing complete." 
+										LogColor="Cyan" />
+										
+					</If>	<!-- We are done repairing -->
+					
+					<!-- If we are Alliance -->
+					<If Condition="Me.IsAlliance">
+					
+						<!-- Fly to - The Argent Stand hover point -->
+						<CustomBehavior File="FlyTo" 
+										X="5382.631" Y="-2629.626" Z="354.096" />
+						
+					</If>	<!-- If we are Alliance -->
+					
+					<!-- If we are Horde -->
+					<If Condition="Me.IsHorde">
+					
+						<!-- Fly to - The Argent Stand hover point -->
+						<CustomBehavior File="FlyTo" 
+										X="5382.631" Y="-2629.626" Z="354.096" />
+						
+					</If>	<!-- If we are Horde -->
+					
+				</If> <!-- Repairing -->
+
+				<!-- If we have more than 25 empty bag slots and our durability is greater than 30% -->
+				<If Condition="(Me.FreeBagSlots &gt; 25) &amp;&amp; (Me.LowestDurabilityPercent &gt;= 0.3)" >
+				
+					<!-- Load profile - [QO-N][Solstice][58-90][food] -->
+					<CustomBehavior File="LoadProfile" 
+											ProfileName="[QO-N][Solstice][58-90][food]" />
+											
+				</If>	<!-- If we have more than 25 empty bag slots and our durability is greater than 30% -->		
+				
+			</If>	<!-- If we are in Northrend -->
+			
+		</If> 	<!-- If our level is 81-84 -->	
+				
+				
+		<!-- *******************************************    level is 80-82 ******************************************************* -->
+		
+		
+		<!-- If our level is 80-82 -->
+		<If Condition="Me.Level &gt;= 80 &amp;&amp; Me.Level &lt; 82">
+		
+			<!-- Profile message - Our durability is less than 30% or we have less than 25 empty bag slots remaining -->
+			<CustomBehavior File="Message" 
+							Text="Our durability is less than 30% or we have less than 25 empty bag slots remaining." 
+							LogColor="Fuchsia" />
+
+			<!-- If we are in The Nexus -->
+			<If Condition="Me.MapId == 576">
+			
+				<!-- Profile message - The Nexus detected. Running out-->
+				<CustomBehavior File="Message" 
+								Text="The Nexus detected. Running out."
+								LogColor="Fuchsia" />
+				
+				<!-- Move to - zone in location -->
+				<MoveTo X="145.8687" Y="-12.01035" Z="-16.6367" />
+
+				<!-- Go through the portal -->
+				<CustomBehavior File="Misc\InInstance" 
+								X="145.9168" Y="-17.94392" Z="-16.6367" />
+				
+				<!-- Move to - zone out location -->
+				<MoveTo X="3896.74" Y="6985.4" Z="69.4879" />
+				
+			</If>	<!-- If we are in The Nexus -->
+			
+			<!-- If we are inside Ahn'kahet: The Old Kingdom -->
+			<If Condition="Me.ZoneId == 4494" >
+				
+				<!-- If our hearthstone is set at Stars' Rest or Agmar's Hammer -->
+				<If Condition="(Me.HearthstoneAreaId == 4158) || (Me.HearthstoneAreaId == 4165)">
+				
+					<!-- Profile message - We are in Ahn'kahet: The Old Kingdom, using our Hearthstone/Innkeeper's Daughter -->
+					<CustomBehavior File="Message" 
+									Text="We are in Ahn'kahet: The Old Kingdom, using our Hearthstone/Innkeeper's Daughter." 
+									LogColor="Cyan" />
+								
+					<!-- If we have a Hearthstone -->
+					<If Condition="HasItem(6948)">
+					
+						<!-- Profile message - Using our Hearthstone -->
+						<CustomBehavior File="Message" 
+										Text="Using our Hearthstone." 
+										LogColor="Fuchsia" />
+										
+						<!-- Custom behavior - Misc\RunLua -->				
+						<CustomBehavior File="Misc\RunLua" 
+										Lua="UseItemByName(6948)" 
+										WaitTime="1000" />
+										
+						<!-- Wait timer - wait 20 seconds - delay -->				
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000" />
+										
+					</If>	<!-- If we have a Hearthstone -->
+				
+					<!-- If we have a Innkeeper's Daughter -->
+					<If Condition="HasItem(64488)">
+					
+						<!-- Profile message - Using our Innkeeper's Daughter -->
+						<CustomBehavior File="Message" 
+										Text="Using our Innkeeper's Daughter." 
+										LogColor="Fuchsia" />
+											
+						<!-- Custom behavior - Misc\RunLua -->					
+						<CustomBehavior File="Misc\RunLua" 
+										Lua="UseItemByName(64488)" 
+										WaitTime="1000" />
+							
+						<!-- Wait timer - wait 20 seconds - delay -->	
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000" />
+										
+					</If>	<!-- If we have a Innkeeper's Daughter -->
+				
+				</If>	<!-- If our hearthstone is set here, use it -->
+				
+			</If>	<!-- If we are inside Ahn'kahet: The Old Kingdom -->
+
+			<!-- If we are still inside Ahn'kahet: The Old Kingdom -->
+			<If Condition="Me.ZoneId == 4494" >
+			
+				<!-- Profile message - Ahn'kahet: The Old Kingdom detected. Running out -->
+				<CustomBehavior File="Message" 
+								Text="Ahn'kahet: The Old Kingdom detected. Running out."
+								LogColor="Fuchsia" />
+				
+				<!-- Go through the portal -->
+				<CustomBehavior File="Misc\InInstance" 
+								X="332.1521" Y="-1111.701" Z="69.75838" />
+				
+				<!-- Move to - zone out location -->
+				<MoveTo X="3641.17" Y="2031.15" Z="2.59325" />
+
+				<!-- Move to - flying mount location -->
+				<MoveTo X="3676.57" Y="2099.666" Z="73.02065" />
+				
+				<!-- Fly to - Ahn'kahet: The Old Kingdom - hover point -->
+				<CustomBehavior File="FlyTo" 
+								X="3766.74" Y="2141.23" Z="133.6681" />
+				
+			</If>	<!-- If we are still inside Ahn'kahet: The Old Kingdom -->
+
+			<!-- If we are in Northrend -->
+			<If Condition="Me.MapId == 571">
+
+				<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+				<If Condition="(Me.FreeBagSlots &lt;= 25) || (Me.LowestDurabilityPercent &lt;= 0.3)" >
+				
+					<!-- If we are Alliance -->
+					<If Condition="Me.IsAlliance">
+					
+						<!-- Fly to - Stars' Rest hover point -->
+						<CustomBehavior File="FlyTo" 
+										X="3497.904" Y="2003.362" Z="107.9757" />
+						
+						<!-- Fly to - ally repair vendor -->
+						<CustomBehavior File="FlyTo" 
+										X="3509.89" Y="2002.35" Z="65.17567" />
+						
+						<!-- Custom behavior - ForcedDismount -->
+						<CustomBehavior File="ForcedDismount" />
+						
+						<!-- Profile message - Our durability is less than 30%, or our bags have less than 25 empty slots left -->
+						<CustomBehavior File="Message" 
+										Text="Our durability is less than 30%, or our bags have less than 25 empty slots left."
+										LogColor="Cyan" />
+
+						<!-- Stars' Rest -->					
+						<SetVendor>
+							<Vendors>
+								<Vendor Name="Sentinel Amberline" 
+										Entry="27055" 
+										Type="Repair" 
+										X="3514.701" Y="1999.156" Z="64.88631" />
+							</Vendors>
+						</SetVendor>
+							
+						<!-- Mailbox -->
+						<SetMailbox>
+							<Mailboxes>
+								<Mailbox X="3477.216" Y="2003.245" Z="64.88295" />
+							</Mailboxes>
+						</SetMailbox>	
+						
+						<!-- Vendor conditions -->
+						<CustomBehavior File="ForceSetVendor" 
+										DoMail="True" 
+										DoRepair="True" 
+										DoSell="True" 
+										DoTrain="False" />	
+						
+					</If>	<!-- If we are Alliance -->
+
+					<!-- If we are Horde -->
+					<If Condition="Me.IsHorde">
+					
+						<!-- Profile message - Flying to Agmar's Hammer -->
+						<CustomBehavior File="Message" 
+										Text="Flying to Agmar's Hammer." 
+										LogColor="Cyan" />
+				
+						<!-- Fly to - Agmar's Hammer hover point -->
+						<CustomBehavior File="FlyTo" 
+										X="3816.012" Y="1569.124" Z="176.2378" />
+						
+						<!-- Fly to - Agmar's Hammer repair vendor - Siegesmith Gulda -->
+						<CustomBehavior File="MyCTM"
+										X="3841.006" Y="1575.263" Z="86.69893" />
+
+						<!-- Custom behavior - ForcedDismount -->
+						<CustomBehavior File="ForcedDismount" />
+						
+						<!-- Profile message - Our durability is less than 30%, or our bags have less than 25 empty slots left -->
+						<CustomBehavior File="Message" 
+										Text="Our durability is less than 30%, or our bags have less than 25 empty slots left."
+										LogColor="Cyan" />
+						
+						<!-- Agmar's Hammer -->
+						<SetVendor>
+							<Vendors>
+								<Vendor Name="Siegesmith Gulda" 
+										Entry="27019" 
+										Type="Repair" 
+										X="3845.488" Y="1572.724" Z="86.69913" />	
+							</Vendors>
+						</SetVendor>
+						<SetMailbox>
+							<Mailboxes>
+								<Mailbox X="3827.762" Y="1537.921" Z="89.72385" />
+							</Mailboxes>
+						</SetMailbox>
+
+						<!-- Vendor conditions -->
+						<CustomBehavior File="ForceSetVendor" 
+										DoMail="True" 
+										DoRepair="True" 
+										DoSell="True" 
+										DoTrain="False" />
+						
+					</If>	<!-- If we are Horde -->
+
+					<!-- We are done repairing -->
+					<If Condition="(Me.FreeBagSlots &gt; 25) &amp;&amp; (Me.LowestDurabilityPercent &gt;= 0.3)" >
+					
+						<!-- Profile message - Repairing complete -->
+						<CustomBehavior File="Message" 
+										Text="Repairing complete." 
+										LogColor="Cyan" />
+										
+					</If>	<!-- We are done repairing -->
+					
+					<!-- If we are Alliance -->
+					<If Condition="Me.IsAlliance">
+					
+						<!-- Fly to - Stars' Rest hover point -->
+						<CustomBehavior File="FlyTo" 
+										X="3497.904" Y="2003.362" Z="107.9757" />
+						
+					</If>	<!-- If we are Alliance -->
+					
+					<!-- If we are Horde -->
+					<If Condition="Me.IsHorde">
+					
+						<!-- Fly to - Agmar's Hammer hover point -->
+						<CustomBehavior File="FlyTo" 
+										X="3827.927" Y="1593.636" Z="169.1055" />
+						
+					</If>	<!-- If we are Horde -->
+					
+				</If> <!-- Repairing -->
+
+				<!-- If we have more than 25 empty bag slots and our durability is greater than 30% -->
+				<If Condition="(Me.FreeBagSlots &gt; 25) &amp;&amp; (Me.LowestDurabilityPercent &gt;= 0.3)" >
+				
+					<!-- Load profile - [QO-N][Solstice][58-90][food] -->
+					<CustomBehavior File="LoadProfile" 
+											ProfileName="[QO-N][Solstice][58-90][food]" />
+											
+				</If>	<!-- If we have more than 25 empty bag slots and our durability is greater than 30% -->		
+				
+			</If>	<!-- If we are in Northrend -->
+			
+		</If> 	<!-- If our level is 80-82 -->	
+				
+				
+		<!-- *******************************************    level is 79-80 ******************************************************* -->
+		
+		
+		<!-- If our level is 79-80 -->
+		<If Condition="Me.Level &gt;= 79 &amp;&amp; Me.Level &lt; 80">
+		
+			<!-- Profile message - Our durability is less than 30% or we have less than 25 empty bag slots remaining -->
+			<CustomBehavior File="Message" 
+							Text="Our durability is less than 30% or we have less than 25 empty bag slots remaining." 
+							LogColor="Fuchsia" />
+								
+			<!-- If we are in Utgarde Keep exit the instance -->
+			<If Condition="Me.MapId == 574">
+			
+				<!-- Make our way to the exit -->
+				<MoveTo X="155.1128" Y="-86.14938" Z="12.55292" />
+
+				<!-- Go through the portal -->
+				<CustomBehavior File="Misc\InInstance" X="125.1626" Y="-87.67013" Z="12.55168" />
+				
+				<!-- Move to - zone out location -->
+				<MoveTo X="1221.63" Y="-4864.75" Z="41.2481" />
+				
+				<!-- Move to - outside Utgarde Keep -->
+				<MoveTo X="1221.63" Y="-4864.75" Z="41.2481" />
+				
+			</If>	<!-- If we are in Utgarde Keep, exit the instance -->					
+								
+			<!-- If we are inside The Nexus -->
+			<If Condition="Me.ZoneId == 4265" >
+				
+				<!-- If our hearthstone/innkeepers daughter is set at Fizzcrank Airstrip or Warsong Hold -->
+				<If Condition="(Me.HearthstoneAreaId == 4108) || (Me.HearthstoneAreaId == 4129)">
+				
+					<!-- Profile message - We are in The Nexus, using our Hearthstone/Innkeeper's Daughter -->
+					<CustomBehavior File="Message" 
+									Text="We are in The Nexus, using our Hearthstone/Innkeeper's Daughter." 
+									LogColor="Cyan" />
+								
+					<!-- If we have a Hearthstone -->
+					<If Condition="HasItem(6948)">
+					
+						<!-- Profile message - Using our Hearthstone -->
+						<CustomBehavior File="Message" 
+										Text="Using our Hearthstone." 
+										LogColor="Fuchsia" />
+										
+						<!-- Custom behavior - Misc\RunLua -->				
+						<CustomBehavior File="Misc\RunLua" 
+										Lua="UseItemByName(6948)" 
+										WaitTime="1000" />
+										
+						<!-- Wait timer - wait 20 seconds - delay -->				
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000" />
+										
+					</If>	<!-- If we have a Hearthstone -->
+				
+					<!-- If we have a Innkeeper's Daughter -->
+					<If Condition="HasItem(64488)">
+					
+						<!-- Profile message - Using our Innkeeper's Daughter -->
+						<CustomBehavior File="Message" 
+										Text="Using our Innkeeper's Daughter." 
+										LogColor="Fuchsia" />
+											
+						<!-- Custom behavior - Misc\RunLua -->					
+						<CustomBehavior File="Misc\RunLua" 
+										Lua="UseItemByName(64488)" 
+										WaitTime="1000" />
+							
+						<!-- Wait timer - wait 20 seconds - delay -->	
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000" />
+										
+					</If>	<!-- If we have a Innkeeper's Daughter -->
+				
+				</If>	<!-- If our hearthstone is set here, use it -->
+				
+			</If>	<!-- If we are inside The Nexus -->
+		
+			<!-- If we are still in The Nexus, exit the instance -->
+			<If Condition="Me.ZoneId == 4265" >
+			
+				<!-- Profile message - Our Hearthstone/Innkeeper's Daughter didn't work. Moving to the exit -->
+				<CustomBehavior File="Message" 
+								Text="Our Hearthstone/Innkeeper's Daughter didn't work. Moving to the exit."
+								LogColor="Fuchsia" />
+					
+					<!-- Move to - Zone in location -->
+					<MoveTo X="335.736" Y="-1108.36" Z="68.5133" />
+					
+					<!-- Go through the portal -->
+					<CustomBehavior File="Misc\InInstance" 
+									X="332.1521" Y="-1111.701" Z="69.75838" />
+					
+					<!-- Move to - zone out location -->
+					<MoveTo X="3641.17" Y="2031.15" Z="2.59325" />
+
+					<!-- Move to - Ahn'kahet: The Old Kingdom outside the caverns -->
+					<MoveTo X="3641.17" Y="2031.15" Z="2.59325" />
+					
+			</If>	<!-- If we are inside Drak'Tharon Keep -->
+
+			<!-- If we are in Northrend -->
+			<If Condition="Me.MapId == 571">
+
+				<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+				<If Condition="(Me.FreeBagSlots &lt;= 25) || (Me.LowestDurabilityPercent &lt;= 0.3)" >
+				
+					<!-- If we are Alliance -->
+					<If Condition="Me.IsAlliance">
+					
+						<!-- Profile message - Flying to Fizzcrank Airstrip -->
+						<CustomBehavior File="Message" 
+										Text="Flying to Fizzcrank Airstrip." 
+										LogColor="Cyan" />
+					
+						<!-- Fly to the Fizzcrank Airstrip hover point -->
+						<CustomBehavior File="FlyTo" 
+										X="4136.879" Y="5238.005" Z="73.28379" />
+						
+						<!-- Fly to - ally repair vendor -->
+						<CustomBehavior File="FlyTo" 
+										X="4139.759" Y="5280.504" Z="24.97566" />
+						
+						<!-- Custom behavior - ForcedDismount -->
+						<CustomBehavior File="ForcedDismount" />
+						
+						<!-- Profile message - Our durability is less than 30%, or our bags have less than 25 empty slots left -->
+						<CustomBehavior File="Message" 
+										Text="Our durability is less than 30%, or our bags have less than 25 empty slots left."
+										LogColor="Cyan" />
+
+						<!-- Fizzcrank Airstrip -->					
+						<SetVendor>
+							<Vendors>
+								<Vendor Name="Willis Wobblewheel" 
+										Entry="26599" 
+										Type="Repair" 
+										X="4135.004" Y="5281.168" Z="25.08808" />
+							</Vendors>
+						</SetVendor>
+							
+						<SetMailbox>
+							<Mailboxes>
+								<Mailbox X="4163.485" Y="5284.322" Z="26.37681" />
+							</Mailboxes>
+						</SetMailbox>	
+
+						<!-- Vendor conditions -->
+						<CustomBehavior File="ForceSetVendor" 
+										DoMail="True" 
+										DoRepair="True" 
+										DoSell="True" 
+										DoTrain="False" />
+						
+					</If>	<!-- If we are Alliance -->
+
+					<!-- If we are Horde -->
+					<If Condition="Me.IsHorde">
+					
+						<!-- Fly to - Warsong Hold Hover point -->
+						<CustomBehavior File="FlyTo" 
+											X="2709.102" Y="6067.899" Z="153.4154" />
+						
+						<!-- Front doorway of the inn -->
+						<CustomBehavior File="MyCTM"
+										X="2768.69" Y="6122.245" Z="91.23241" />
+						
+						<!-- Custom behavior - ForcedDismount -->
+						<CustomBehavior File="ForcedDismount" />
+
+						<!-- Run inside the inn -->
+						<MoveTo X="2774.279" Y="6198.512" Z="83.63516" />
+						
+						<!-- Profile message - Our durability is less than 30%, or our bags have less than 25 empty slots left -->
+						<CustomBehavior File="Message" 
+										Text="Our durability is less than 30%, or our bags have less than 25 empty slots left."
+										LogColor="Cyan" />
+						
+						<!-- Warsong Hold - vendor-->
+						<SetVendor>
+							<Vendors>
+								<Vendor Name="Armorer Orkuruk" 
+										Entry="25274" 
+										Type="Repair" 
+										X="2771.115" Y="6214.935" Z="83.45186" />	
+							</Vendors>
+						</SetVendor>
+						
+						<!-- Warsong Hold - Mailbox -->
+						<SetMailbox>
+							<Mailboxes>
+								<Mailbox X="2792.008" Y="6149.928" Z="84.70474" />
+							</Mailboxes>
+						</SetMailbox>
+
+						<!-- Vendor conditions -->
+						<CustomBehavior File="ForceSetVendor" 
+										DoMail="True" 
+										DoRepair="True" 
+										DoSell="True" 
+										DoTrain="False" />	
+						
+					</If>	<!-- If we are Horde -->
+
+					<!-- We are done repairing -->
+					<If Condition="(Me.FreeBagSlots &gt; 25) &amp;&amp; (Me.LowestDurabilityPercent &gt;= 0.3)" >
+					
+						<!-- Profile message - Repairing complete -->
+						<CustomBehavior File="Message" 
+										Text="Repairing complete." 
+										LogColor="Cyan" />
+										
+					</If>	<!-- We are done repairing -->
+					
+					<!-- If we are Alliance -->
+					<If Condition="Me.IsAlliance">
+					
+						<!-- Profile message - Flying to Fizzcrank Airstrip -->
+							<CustomBehavior File="Message" 
+											Text="Flying to Fizzcrank Airstrip." 
+											LogColor="Cyan" />
+						
+							<!-- Fly to the Fizzcrank Airstrip hover point -->
+							<CustomBehavior File="FlyTo" 
+											X="4136.879" Y="5238.005" Z="73.28379" />
+						
+					</If>	<!-- If we are Alliance -->
+					
+					<!-- If we are Horde -->
+					<If Condition="Me.IsHorde">
+					
+						<!-- Move to - Outside the inn -->
+						<MoveTo X="2746.528" Y="6101.545" Z="77.64475" />
+					
+						<!-- Fly to - Warsong Hold Hover point -->
+						<CustomBehavior File="FlyTo" 
+											X="2709.102" Y="6067.899" Z="153.4154" />
+						
+					</If>	<!-- If we are Horde -->
+					
+				</If> <!-- Repairing -->
+
+				<!-- If we have more than 25 empty bag slots and our durability is greater than 30% -->
+				<If Condition="(Me.FreeBagSlots &gt; 25) &amp;&amp; (Me.LowestDurabilityPercent &gt;= 0.3)" >
+				
+					<!-- Load profile - [QO-N][Solstice][58-90][food] -->
+					<CustomBehavior File="LoadProfile" 
+											ProfileName="[QO-N][Solstice][58-90][food]" />
+											
+				</If>	<!-- If we have more than 25 empty bag slots and our durability is greater than 30% -->		
+				
+			</If>	<!-- If we are in Northrend -->
+			
+		</If> 	<!-- If our level is 79-80 -->			
+
+		
+		<!-- *******************************************    level is 78-79 ******************************************************* -->
+		
+		
+		<!-- If our level is 78-79 -->
+		<If Condition="Me.Level &gt;= 78 &amp;&amp; Me.Level &lt; 79">
+		
+			<!-- Profile message - Our durability is less than 30% or we have less than 25 empty bag slots remaining -->
+			<CustomBehavior File="Message" 
+							Text="Our durability is less than 30% or we have less than 25 empty bag slots remaining." 
+							LogColor="Fuchsia" />
+								
+			<!-- If we are in Utgarde Keep -->
+			<If Condition="Me.MapId == 574">	
+				
+				<!-- If our hearthstone/innkeepers daughter is set to Vengeance Landing or  -->
+				<If Condition="Me.HearthstoneAreaId == 4532 || Me.HearthstoneAreaId == 4532" >
+				
+					<!-- Profile message - We are in Utgarde Keep, using our Hearthstone/Innkeeper's Daughter -->
+					<CustomBehavior File="Message" 
+									Text="We are in Utgarde Keep, using our Hearthstone/Innkeeper's Daughter." 
+									LogColor="Cyan" />
+								
+					<!-- If we have a Hearthstone -->
+					<If Condition="HasItem(6948)">
+					
+						<!-- Profile message - Using our Hearthstone -->
+						<CustomBehavior File="Message" 
+										Text="Using our Hearthstone." 
+										LogColor="Fuchsia" />
+										
+						<!-- Custom behavior - Misc\RunLua -->				
+						<CustomBehavior File="Misc\RunLua" 
+										Lua="UseItemByName(6948)" 
+										WaitTime="1000" />
+										
+						<!-- Wait timer - wait 20 seconds - delay -->				
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000" />
+										
+					</If>	<!-- If we have a Hearthstone -->
+				
+					<!-- If we have a Innkeeper's Daughter -->
+					<If Condition="HasItem(64488)">
+					
+						<!-- Profile message - Using our Innkeeper's Daughter -->
+						<CustomBehavior File="Message" 
+										Text="Using our Innkeeper's Daughter." 
+										LogColor="Fuchsia" />
+											
+						<!-- Custom behavior - Misc\RunLua -->					
+						<CustomBehavior File="Misc\RunLua" 
+										Lua="UseItemByName(64488)" 
+										WaitTime="1000" />
+							
+						<!-- Wait timer - wait 20 seconds - delay -->	
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000" />
+										
+					</If>	<!-- If we have a Innkeeper's Daughter -->
+				
+				</If>	<!-- If our hearthstone is set here, use it -->
+				
+			</If>	<!-- If we are in Utgarde Keep -->
+		
+			<!-- If we are still in Utgarde Keep exit the instance -->
+			<If Condition="Me.MapId == 574">
+			
+				<!-- Profile message - Our Hearthstone/Innkeeper's Daughter didn't work. Moving to the exit -->
+				<CustomBehavior File="Message" 
+								Text="Our Hearthstone/Innkeeper's Daughter didn't work. Moving to the exit."
+								LogColor="Fuchsia" />
+
+				<!-- Make our way to the exit -->
+				<MoveTo X="155.1128" Y="-86.14938" Z="12.55292" />
+
+				<!-- Go through the portal -->
+				<CustomBehavior File="Misc\InInstance" X="125.1626" Y="-87.67013" Z="12.55168" />
+				
+				<!-- Move to - zone out location -->
+				<MoveTo X="1221.63" Y="-4864.75" Z="41.2481" />
+				
+				<!-- Move to - outside Utgarde Keep -->
+				<MoveTo X="1221.63" Y="-4864.75" Z="41.2481" />
+				
+			</If>	<!-- If we are still in Utgarde Keep, exit the instance -->
+
+			<!-- If we are Howling Fjord -->
+			<If Condition="Me.ZoneId == 495">
+			
+				<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+				<If Condition="(Me.FreeBagSlots &lt;= 25) || (Me.LowestDurabilityPercent &lt;= 0.3)" >
+
+					<!-- If we are Alliance -->
+					<If Condition="Me.IsAlliance" >
+					
+						<!-- Fly to the Valgarde hover point -->
+						<CustomBehavior File="FlyTo" 
+										X="559.7667" Y="-5001.531" Z="66.78531" />
+									
+						<!-- Fly to - Bartleby Armorfist -->
+						<CustomBehavior File="FlyTo" 
+										X="547.3406" Y="-4994.309" Z="10.56499" />			
+					
+						<!-- Repair vendor - Bartleby Armorfist-->
+						<SetVendor>
+							<Vendors>
+								<Vendor Name="Bartleby Armorfist" 
+										Entry="23735" 
+										Type="Repair" 
+										X="543.8926" Y="-4995.161" Z="10.56964" />
+							</Vendors>
+						</SetVendor>
+				
+						<!-- Mailbox -->
+						<SetMailbox>
+							<Mailboxes>
+								<Mailbox X="567.3865" Y="-4937.301" Z="18.09565" />
+							</Mailboxes>
+						</SetMailbox>
+						
+						<!-- Vendor conditions -->
+						<CustomBehavior File="ForceSetVendor" 
+										DoMail="True" 
+										DoRepair="True" 
+										DoSell="True" 
+										DoTrain="False" />
+						
+					</If>	<!-- If we are Alliance -->
+					
+					<!-- If we are Horde -->
+					<If Condition="Me.IsHorde" >
+					
+						<!-- Fly to - Vengeance Landing hover point -->
+						<CustomBehavior File="FlyTo"
+										X="1926.545" Y="-6153.184" Z="70.18691" />
+					
+						<!-- Fly to - Vengeance Landing - repair - Alexis Walker -->
+						<CustomBehavior File="FlyTo"
+										X="1952.455" Y="-6186.166" Z="24.18039" />
+					
+						<!-- Forced dismount -->				
+						<CustomBehavior File="ForcedDismount" />
+
+						<SetVendor>
+							<Vendors>
+								<Vendor Name="Alexis Walker" 
+										Entry="24347" 
+										Type="Repair" 
+										X="1951.365" Y="-6189.404" Z="24.16514" />
+							</Vendors>
+						</SetVendor>
+
+						<SetMailbox>
+							<Mailboxes>
+								<Mailbox X="1887.699" Y="-6170.498" Z="23.80573" />
+							</Mailboxes>
+						</SetMailbox>
+
+						<!-- Vendor conditions -->
+						<CustomBehavior File="ForceSetVendor" 
+										DoMail="True" 
+										DoRepair="True" 
+										DoSell="True" 
+										DoTrain="False" />
+						
+					</If>	<!-- If we are Horde -->
+				
+				</If>	<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+					
+			</If>	<!-- If we are Howling Fjord -->			
+					
+			<!-- If we have more than 25 empty bag slots and our durability is greater than 30% -->
+			<If Condition="(Me.FreeBagSlots &gt; 25) &amp;&amp; (Me.LowestDurabilityPercent &gt;= 0.3)" >
+			
+				<!-- Load profile - [QO-N][Solstice][58-90][food] -->
+				<CustomBehavior File="LoadProfile" 
+										ProfileName="[QO-N][Solstice][58-90][food]" />
+										
+			</If>	<!-- If we have more than 25 empty bag slots and our durability is greater than 30% -->
+			
+		</If>	<!-- If our level is 78-79 -->
+				
+
+		<!-- *******************************************    level is 76-78 ******************************************************* -->
+		
+		
+		<!-- If our level is 76-78 -->
+		<If Condition="Me.Level &gt;= 76 &amp;&amp; Me.Level &lt; 78">
+		
+			<!-- Profile message - Our durability is less than 30% or we have less than 25 empty bag slots remaining -->
+			<CustomBehavior File="Message" 
+							Text="Our durability is less than 30% or we have less than 25 empty bag slots remaining." 
+							LogColor="Fuchsia" />
+
+			<!-- If we are in Botanica -->
+			<If Condition="Me.MapId == 553">	
+				
+				<!-- If our hearthstone is set at Area 52 -->
+				<If Condition="(Me.HearthstoneAreaId == 3712)">
+
+					<!-- Profile message - Our Innkeeper is set at Area 52 -->
+					<CustomBehavior File="Message" 
+										Text="Our Innkeeper is set at Area 52." 
+										LogColor="Cyan" />
+				
+					<!-- Profile message - We are in Botanica, using our Hearthstone/Innkeeper's Daughter -->
+					<CustomBehavior File="Message" 
+									Text="We are in Botanica, using our Hearthstone/Innkeeper's Daughter." 
+									LogColor="Cyan" />
+								
+					<!-- If we have a Hearthstone -->
+					<If Condition="HasItem(6948)">
+					
+						<!-- Profile message - Using our Hearthstone -->
+						<CustomBehavior File="Message" 
+										Text="Using our Hearthstone." 
+										LogColor="Fuchsia" />
+										
+						<!-- Custom behavior - Misc\RunLua -->				
+						<CustomBehavior File="Misc\RunLua" 
+										Lua="UseItemByName(6948)" 
+										WaitTime="1000" />
+										
+						<!-- Wait timer - wait 20 seconds - delay -->				
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000" />
+										
+					</If>	<!-- If we have a Hearthstone -->
+				
+					<!-- If we have a Innkeeper's Daughter -->
+					<If Condition="HasItem(64488)">
+					
+						<!-- Profile message - Using our Innkeeper's Daughter -->
+						<CustomBehavior File="Message" 
+										Text="Using our Innkeeper's Daughter." 
+										LogColor="Fuchsia" />
+											
+						<!-- Custom behavior - Misc\RunLua -->					
+						<CustomBehavior File="Misc\RunLua" 
+										Lua="UseItemByName(64488)" 
+										WaitTime="1000" />
+							
+						<!-- Wait timer - wait 20 seconds - delay -->	
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000" />
+										
+					</If>	<!-- If we have a Innkeeper's Daughter -->
+				
+				</If>	<!-- If our hearthstone is set here, use it -->
+				
+			</If>	<!-- If we are in Botanica -->
+
+			<!-- If we are still in Botanica, exit the instance -->
+			<If Condition="Me.MapId == 553">
+			
+				<!-- Profile message - Our hearth didn't work, exiting the instance --> 
+				<CustomBehavior File="Message" 
+								Text="Our hearth didn't work, exiting the instance."
+								LogColor="Orange" />
+
+				<!-- Move to - zone in location -->
+				<MoveTo X="2.63209" Y="-0.209401" Z="0.005755" />
+					
+				<!-- Go through the portal -->
+				<CustomBehavior File="Misc\InInstance" X="-20.722509" Y="0.3174916" Z="0.005990623" />
+				
+				<!-- Move to - zone out location -->
+				<MoveTo X="-3362.1" Y="4668.9" Z="-101.048" />
+
+				<!-- Move to - mount location -->
+				<MoveTo X="-3362.1" Y="4761.123" Z="-101.396" />
+			
+				<!-- Move to - Botanica hover point -->
+				<CustomBehavior File="FlyTo" 
+								X="-3362.06" Y="4944.15" Z="11.19478" />
+
+			</If> <!-- If we are still in Botanica, exit the instance -->				
+
+			<!-- If we are in Outland -->
+			<If Condition="Me.MapId == 530">
+			
+				<!-- If we are Alliance -->
+				<If Condition="Me.IsAlliance" >
+				
+					<!-- Profile message - Flying to Area 52 --> 
+					<CustomBehavior File="Message" 
+									Text="Flying to Area 52."
+									LogColor="Orange" />
+				
+					<!-- Move to - Area 52 - Hover Point -->
+					<CustomBehavior File="FlyTo"
+									X="3073.289" Y="3637.481" Z="173.0833" />
+									
+					<!-- Fly to - Area 52 - repair vendor -->
+					<CustomBehavior File="FlyTo" 
+									X="3062.79" Y="3674.078" Z="142.5128" />
+
+					<!-- Forced dismount -->				
+					<CustomBehavior File="ForcedDismount" />
+
+					<!-- Profile message - We are in Area 52 -->
+					<CustomBehavior File="Message" 
+									Text="We are in Area 52." 
+									LogColor="Cyan" />
+					
+					<!-- Move to - Blazzle - repair -->
+					<MoveTo X="3062.79" Y="3674.078" Z="142.5128" />
+
+					<!-- Repair vendors -->
+					<SetVendor>
+						<Vendors>
+							<Vendor Name="Blazzle" 
+									Entry="28344" 
+									Type="Repair" 
+									X="3063.406" Y="3677.57" Z="142.6777" />
+						</Vendors>
+					</SetVendor>
+					<SetMailbox>
+						<Mailboxes>
+							<Mailbox X="3053.866" Y="3686.277" Z="142.4536" />
+						</Mailboxes>
+					</SetMailbox>
+
+					<!-- Vendor conditions -->
+					<CustomBehavior File="ForceSetVendor" 
+									DoMail="True" 
+									DoRepair="True" 
+									DoSell="True" 
+									DoTrain="False" />
+						
+				</If>	<!-- If we are Alliance -->
+
+				<!-- If we are Horde -->
+				<If Condition="Me.IsHorde" >
+					
+					<!-- Profile message - Flying to Area 52 --> 
+					<CustomBehavior File="Message" 
+									Text="Flying to Area 52."
+									LogColor="Orange" />
+				
+					<!-- Move to - Area 52 - Hover Point -->
+					<CustomBehavior File="FlyTo"
+									X="3073.289" Y="3637.481" Z="173.0833" />
+									
+					<!-- Fly to - Area 52 - repair vendor -->
+					<CustomBehavior File="FlyTo" 
+									X="3062.79" Y="3674.078" Z="142.5128" />
+
+					<!-- Forced dismount -->				
+					<CustomBehavior File="ForcedDismount" />
+
+					<!-- Profile message - We are in Area 52 -->
+					<CustomBehavior File="Message" 
+									Text="We are in Area 52." 
+									LogColor="Cyan" />
+					
+					<!-- Move to - Blazzle - repair -->
+					<MoveTo X="3062.79" Y="3674.078" Z="142.5128" />
+					
+					<!-- Repair vendors -->
+					<SetVendor>
+						<Vendors>
+							<Vendor Name="Blazzle" 
+									Entry="28344" 
+									Type="Repair" 
+									X="3063.406" Y="3677.57" Z="142.6777" />
+						</Vendors>
+					</SetVendor>
+					<SetMailbox>
+						<Mailboxes>
+							<Mailbox X="3053.866" Y="3686.277" Z="142.4536" />
+						</Mailboxes>
+					</SetMailbox>
+
+					<!-- Vendor conditions -->
+					<CustomBehavior File="ForceSetVendor" 
+									DoMail="True" 
+									DoRepair="True" 
+									DoSell="True" 
+									DoTrain="False" />
+							
+				</If>	<!-- If we are Horde -->				
+				
+				<!-- Move to - Area 52 - Hover Point -->
+				<CustomBehavior File="FlyTo"
+								X="3073.289" Y="3637.481" Z="173.0833" />
+				
+			</If>	<!-- If we are in Outland -->
+
+			<!-- If we have more than 25 empty bag slots and our durability is greater than 30% -->
+			<If Condition="(Me.FreeBagSlots &gt; 25) &amp;&amp; (Me.LowestDurabilityPercent &gt;= 0.3)" >
+			
+				<!-- Load profile - [QO-N][Solstice][58-90][food] -->
+				<CustomBehavior File="LoadProfile" 
+										ProfileName="[QO-N][Solstice][58-90][food]" />
+										
+			</If>	<!-- If we have more than 25 empty bag slots and our durability is greater than 30% -->	
+			
+		</If>	<!-- If our level is 76-78 -->
+				
+
+		<!-- *******************************************    level is 74-76 ******************************************************* -->
+		
+
+		<!-- If our level is 74-76 -->
+		<If Condition="Me.Level &gt;= 74 &amp;&amp; Me.Level &lt; 76">
+		
+			<!-- Profile message - Our durability is less than 30% or we have less than 25 empty bag slots remaining -->
+			<CustomBehavior File="Message" 
+							Text="Our durability is less than 30% or we have less than 25 empty bag slots remaining." 
+							LogColor="Fuchsia" />
+				
+			<!-- If we are in Sethekk Halls -->
+			<If Condition="Me.MapId == 556">	
+				
+				<!-- If our hearthstone is set at Allerian Stronghold or Stonebreaker Hold -->
+				<If Condition="(Me.HearthstoneAreaId == 3684) || (Me.HearthstoneAreaId == 3683)">
+
+					<!-- Profile message - Our Innkeeper is set at Allerian Stronghold or Stonebreaker Hold -->
+					<CustomBehavior File="Message" 
+										Text="Our Innkeeper is set at Allerian Stronghold or Stonebreaker Hold." 
+										LogColor="Cyan" />
+				
+					<!-- Profile message - We are in Auchenai Crypts, using our Hearthstone/Innkeeper's Daughter -->
+					<CustomBehavior File="Message" 
+									Text="We are in Sethekk Halls, using our Hearthstone/Innkeeper's Daughter." 
+									LogColor="Cyan" />
+								
+					<!-- If we have a Hearthstone -->
+					<If Condition="HasItem(6948)">
+					
+						<!-- Profile message - Using our Hearthstone -->
+						<CustomBehavior File="Message" 
+										Text="Using our Hearthstone." 
+										LogColor="Fuchsia" />
+										
+						<!-- Custom behavior - Misc\RunLua -->				
+						<CustomBehavior File="Misc\RunLua" 
+										Lua="UseItemByName(6948)" 
+										WaitTime="1000" />
+										
+						<!-- Wait timer - wait 20 seconds - delay -->				
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000" />
+										
+					</If>	<!-- If we have a Hearthstone -->
+				
+					<!-- If we have a Innkeeper's Daughter -->
+					<If Condition="HasItem(64488)">
+					
+						<!-- Profile message - Using our Innkeeper's Daughter -->
+						<CustomBehavior File="Message" 
+										Text="Using our Innkeeper's Daughter." 
+										LogColor="Fuchsia" />
+											
+						<!-- Custom behavior - Misc\RunLua -->					
+						<CustomBehavior File="Misc\RunLua" 
+										Lua="UseItemByName(64488)" 
+										WaitTime="1000" />
+							
+						<!-- Wait timer - wait 20 seconds - delay -->	
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000" />
+										
+					</If>	<!-- If we have a Innkeeper's Daughter -->
+				
+				</If>	<!-- If our hearthstone is set here, use it -->
+				
+			</If>	<!-- If we are in Sethekk Halls -->
+
+			<!-- If we are still in Sethekk Halls, exit the instance -->
+			<If Condition="Me.MapId == 556">
+			
+				<!-- Profile message - Our hearth didn't work, exiting the instance --> 
+				<CustomBehavior File="Message" 
+								Text="Our hearth didn't work, exiting the instance."
+								LogColor="Orange" />
+
+				<!-- Move to - zone in location -->
+				<MoveTo X="2.63209" Y="-0.209401" Z="0.005755" />
+					
+				<!-- Go through the portal -->
+				<CustomBehavior File="Misc\InInstance" X="-20.722509" Y="0.3174916" Z="0.005990623" />
+				
+				<!-- Move to - zone out location -->
+				<MoveTo X="-3362.1" Y="4668.9" Z="-101.048" />
+
+				<!-- Move to - mount location -->
+				<MoveTo X="-3362.1" Y="4761.123" Z="-101.396" />
+			
+				<!-- Move to - Sethekk Halls hover point -->
+				<CustomBehavior File="FlyTo" 
+								X="-3362.06" Y="4944.15" Z="11.19478" />
+
+			</If> <!-- If we are still in Sethekk Halls, exit the instance -->				
+	
+			<!-- If we are in Auchenai Crypts, exit the instance -->
+			<If Condition="Me.MapId == 558">
+			
+				<!-- Profile message - Our hearth didn't work, exiting the instance --> 
+				<CustomBehavior File="Message" 
+								Text="Our hearth didn't work, exiting the instance."
+								LogColor="Orange" />
+			
+				<!-- Run to the exit -->
+				<MoveTo X="-16.7899" Y="-0.071496" Z="-0.120559" />
+
+				<!-- Go through the portal -->
+				<CustomBehavior File="Misc\InInstance" X="-28.9178" Y="0.09100415" Z="-0.1205578" />
+				
+				<!-- Make sure we run to the right spot outside the portal -->
+				<MoveTo X="-3361.8" Y="5209.2" Z="-101.049" />
+
+				<!-- Move to - mount location -->
+				<MoveTo X="-3361.594" Y="5110.184" Z="-101.3954" />
+			
+				<!-- Move to - Auchenai Crypts hover point -->
+				<CustomBehavior File="FlyTo" 
+								X="-3361.957" Y="4944.196" Z="20.87381" />
+
+			</If> <!-- If we are still in Auchenai Crypts, exit the instance -->
+			
+			<!-- If we are in Outland -->
+			<If Condition="Me.MapId == 530">
+			
+				<!-- If we are Alliance -->
+				<If Condition="Me.IsAlliance" >
+				
+					<!-- Profile message - Flying to Allerian Stronghold --> 
+					<CustomBehavior File="Message" 
+									Text="Flying to Allerian Stronghold."
+									LogColor="Orange" />
+				
+					<!-- Fly to - hover point - Allerian Stronghold - hover point -->
+					<CustomBehavior File="FlyTo" 
+									X="-2941.848" Y="3986.454" Z="29.54919" />
+									
+					<!-- Fly to - Allerian Stronghold - repair vendor -->
+					<CustomBehavior File="FlyTo" 
+									X="-2963.702" Y="4017.228" Z="1.642162" />
+
+					<!-- Forced dismount -->				
+					<CustomBehavior File="ForcedDismount" />
+
+					<!-- Profile message - We are in Allerian Stronghold -->
+					<CustomBehavior File="Message" 
+									Text="We are in Allerian Stronghold." 
+									LogColor="Cyan" />
+					
+					<!-- Move to - Cecil Meyers - repair -->
+					<MoveTo X="-2974.844" Y="4026.831" Z="3.573579" />
+
+					<!-- Repair vendors -->
+					<SetVendor>
+						<Vendors>
+							<Vendor Name="Cecil Meyers" 
+									Entry="19056" 
+									Type="Repair" 
+									X="-2978.951" Y="4033.115" Z="3.574028" />
+						</Vendors>
+					</SetVendor>
+					<SetMailbox>
+						<Mailboxes>
+							<Mailbox X="-2932.386" Y="4007.916" Z="-1.293741" />
+						</Mailboxes>
+					</SetMailbox>
+
+					<!-- Vendor conditions -->
+					<CustomBehavior File="ForceSetVendor" 
+									DoMail="True" 
+									DoRepair="True" 
+									DoSell="True" 
+									DoTrain="False" />
+						
+				</If>	<!-- If we are Alliance -->
+
+				<!-- If we are Horde -->
+				<If Condition="Me.IsHorde" >
+					
+					<!-- If we are inside Stonebreaker Hold -->
+					<If Condition="Me.X &gt; -2657.777 &amp;&amp; Me.X &lt; -2573.507 &amp;&amp; Me.Y &gt; 4414.723 &amp;&amp; Me.Y &lt; 4500.264" >
+					
+						<!-- Move to - Stonebreaker Hold - flight master -->
+						<MoveTo X="-2566.725" Y="4426.855" Z="39.26406" />
+						
+					</If>	<!-- If we are inside Stonebreaker Hold -->	
+					
+					<!-- Profile message - Flying to Stonebreaker Hold -->
+					<CustomBehavior File="Message" 
+									Text="Flying to Stonebreaker Hold."
+									LogColor="Orange" />
+
+					<!-- Fly to - hover point - Stonebreaker Hold -->
+					<CustomBehavior File="FlyTo" 
+									X="-2633.392" Y="4387.538" Z="93.16135" />
+									
+					<!-- Fly to - Stonebreaker Hold - repair vendor -->
+					<CustomBehavior File="FlyTo"
+									X="-2650.036" Y="4415.961" Z="35.32476" />
+					
+					<!-- Profile message - We are in Stonebreaker Hold -->
+					<CustomBehavior File="Message" 
+									Text="We are in Stonebreaker Hold." 
+									LogColor="Cyan" />
+					
+					<!-- Forced dismount -->				
+					<CustomBehavior File="ForcedDismount" />
+									
+					<!-- Move to - Bar Talet" - repair -->				
+					<CustomBehavior File="NoCombatMoveTo" 
+									X="-2639.384" Y="4425.386" Z="36.68329" />
+
+					<!-- Repair vendor-mailbox -->
+					<SetVendor>
+						<Vendors>
+							<Vendor Name="Bar Talet" 
+								Entry="18962" 
+								Type="Repair" 
+								X="-2639.384" Y="4425.386" Z="36.68329" />
+						</Vendors>
+					</SetVendor>
+					<SetMailbox>
+						<Mailboxes>
+							<Mailbox X="-2617.452" Y="4414.927" Z="35.65971" />
+						</Mailboxes>
+					</SetMailbox>
+
+					<!-- Vendor conditions -->
+					<CustomBehavior File="ForceSetVendor" 
+									DoMail="True" 
+									DoRepair="True" 
+									DoSell="True" 
+									DoTrain="False" />	
+						
+					<!-- If we are inside Stonebreaker Hold -->
+					<If Condition="Me.X &gt; -2657.777 &amp;&amp; Me.X &lt; -2573.507 &amp;&amp; Me.Y &gt; 4414.723 &amp;&amp; Me.Y &lt; 4500.264" >
+					
+						<!-- Move to - Stonebreaker Hold - flight master -->
+						<MoveTo X="-2566.725" Y="4426.855" Z="39.26406" />
+						
+					</If>	<!-- If we are inside Stonebreaker Hold -->		
+							
+				</If>	<!-- If we are Horde -->				
+
+			</If>	<!-- If we are in Outland -->
+			
+			<!-- If we have more than 25 empty bag slots and our durability is greater than 30% -->
+			<If Condition="(Me.FreeBagSlots &gt; 25) &amp;&amp; (Me.LowestDurabilityPercent &gt;= 0.3)" >
+			
+				<!-- Load profile - [QO-N][Solstice][58-90][food] -->
+				<CustomBehavior File="LoadProfile" 
+										ProfileName="[QO-N][Solstice][58-90][food]" />
+										
+			</If>	<!-- If we have more than 25 empty bag slots and our durability is greater than 30% -->	
+			
+		</If>	<!-- If our level is 74-76 -->
+				
+
+		<!-- *******************************************    level is 72-74 ******************************************************* -->
+		
+		
+		<!-- If our level is 72-74 -->
+		<If Condition="Me.Level &gt;= 72 &amp;&amp; Me.Level &lt; 74">
+		
+			<!-- Profile message - Our durability is less than 30% or we have less than 25 empty bag slots remaining -->
+			<CustomBehavior File="Message" 
+							Text="Our durability is less than 30% or we have less than 25 empty bag slots remaining." 
+							LogColor="Fuchsia" />
+
+			<!-- If we are in Auchenai Crypts -->
+			<If Condition="Me.MapId == 558">	
+				
+				<!-- If our hearthstone is set at Allerian Stronghold or Stonebreaker Hold -->
+				<If Condition="(Me.HearthstoneAreaId == 3684) || (Me.HearthstoneAreaId == 3683)">
+
+					<!-- Profile message - Our Innkeeper is set at Allerian Stronghold or Stonebreaker Hold -->
+					<CustomBehavior File="Message" 
+										Text="Our Innkeeper is set at Allerian Stronghold or Stonebreaker Hold." 
+										LogColor="Cyan" />
+				
+					<!-- Profile message - We are in Auchenai Crypts, using our Hearthstone/Innkeeper's Daughter -->
+					<CustomBehavior File="Message" 
+									Text="We are in Auchenai Crypts, using our Hearthstone/Innkeeper's Daughter." 
+									LogColor="Cyan" />
+								
+					<!-- If we have a Hearthstone -->
+					<If Condition="HasItem(6948)">
+					
+						<!-- Profile message - Using our Hearthstone -->
+						<CustomBehavior File="Message" 
+										Text="Using our Hearthstone." 
+										LogColor="Fuchsia" />
+										
+						<!-- Custom behavior - Misc\RunLua -->				
+						<CustomBehavior File="Misc\RunLua" 
+										Lua="UseItemByName(6948)" 
+										WaitTime="1000" />
+										
+						<!-- Wait timer - wait 20 seconds - delay -->				
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000" />
+										
+					</If>	<!-- If we have a Hearthstone -->
+				
+					<!-- If we have a Innkeeper's Daughter -->
+					<If Condition="HasItem(64488)">
+					
+						<!-- Profile message - Using our Innkeeper's Daughter -->
+						<CustomBehavior File="Message" 
+										Text="Using our Innkeeper's Daughter." 
+										LogColor="Fuchsia" />
+											
+						<!-- Custom behavior - Misc\RunLua -->					
+						<CustomBehavior File="Misc\RunLua" 
+										Lua="UseItemByName(64488)" 
+										WaitTime="1000" />
+							
+						<!-- Wait timer - wait 20 seconds - delay -->	
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000" />
+										
+					</If>	<!-- If we have a Innkeeper's Daughter -->
+				
+				</If>	<!-- If our hearthstone is set here, use it -->
+				
+			</If>	<!-- If we are in Auchenai Crypts -->
+
+			<!-- If we are still in Auchenai Crypts, exit the instance -->
+			<If Condition="Me.MapId == 558">
+			
+				<!-- Profile message - Our hearth didn't work, exiting the instance --> 
+				<CustomBehavior File="Message" 
+								Text="Our hearth didn't work, exiting the instance."
+								LogColor="Orange" />
+			
+				<!-- Run to the exit -->
+				<MoveTo X="-16.7899" Y="-0.071496" Z="-0.120559" />
+
+				<!-- Go through the portal -->
+				<CustomBehavior File="Misc\InInstance" X="-28.9178" Y="0.09100415" Z="-0.1205578" />
+				
+				<!-- Make sure we run to the right spot outside the portal -->
+				<MoveTo X="-3361.8" Y="5209.2" Z="-101.049" />
+
+				<!-- Move to - mount location -->
+				<MoveTo X="-3361.594" Y="5110.184" Z="-101.3954" />
+			
+				<!-- Move to - Auchenai Crypts hover point -->
+				<CustomBehavior File="FlyTo" 
+								X="-3361.957" Y="4944.196" Z="20.87381" />
+
+			</If> <!-- If we are still in Auchenai Crypts, exit the instance -->
+			
+			<!-- If we are in Outland -->
+			<If Condition="Me.MapId == 530">
+			
+				<!-- If we are Alliance -->
+				<If Condition="Me.IsAlliance" >
+				
+					<!-- Profile message - Flying to Allerian Stronghold --> 
+					<CustomBehavior File="Message" 
+									Text="Flying to Allerian Stronghold."
+									LogColor="Orange" />
+				
+					<!-- Fly to - hover point - Allerian Stronghold - hover point -->
+					<CustomBehavior File="FlyTo" 
+									X="-2941.848" Y="3986.454" Z="29.54919" />
+									
+					<!-- Fly to - Allerian Stronghold - repair vendor -->
+					<CustomBehavior File="FlyTo" 
+									X="-2963.702" Y="4017.228" Z="1.642162" />
+
+					<!-- Forced dismount -->				
+					<CustomBehavior File="ForcedDismount" />
+
+					<!-- Profile message - We are in Allerian Stronghold -->
+					<CustomBehavior File="Message" 
+									Text="We are in Allerian Stronghold." 
+									LogColor="Cyan" />
+					
+					<!-- Move to - Cecil Meyers - repair -->
+					<MoveTo X="-2974.844" Y="4026.831" Z="3.573579" />
+					
+					<!-- Repair vendors -->
+					<SetVendor>
+						<Vendors>
+							<Vendor Name="Cecil Meyers" 
+									Entry="19056" 
+									Type="Repair" 
+									X="-2978.951" Y="4033.115" Z="3.574028" />
+						</Vendors>
+					</SetVendor>
+					<SetMailbox>
+						<Mailboxes>
+							<Mailbox X="-2932.386" Y="4007.916" Z="-1.293741" />
+						</Mailboxes>
+					</SetMailbox>
+
+					<!-- Vendor conditions -->
+					<CustomBehavior File="ForceSetVendor" 
+									DoMail="True" 
+									DoRepair="True" 
+									DoSell="True" 
+									DoTrain="False" />	
+						
+				</If>	<!-- If we are Alliance -->
+
+				<!-- If we are Horde -->
+				<If Condition="Me.IsHorde" >
+					
+					<!-- If we are inside Stonebreaker Hold -->
+					<If Condition="Me.X &gt; -2657.777 &amp;&amp; Me.X &lt; -2573.507 &amp;&amp; Me.Y &gt; 4414.723 &amp;&amp; Me.Y &lt; 4500.264" >
+					
+						<!-- Move to - Stonebreaker Hold - flight master -->
+						<MoveTo X="-2566.725" Y="4426.855" Z="39.26406" />
+						
+					</If>	<!-- If we are inside Stonebreaker Hold -->	
+					
+					<!-- Profile message - Flying to Stonebreaker Hold -->
+					<CustomBehavior File="Message" 
+									Text="Flying to Stonebreaker Hold."
+									LogColor="Orange" />
+
+					<!-- Fly to - hover point - Stonebreaker Hold -->
+					<CustomBehavior File="FlyTo" 
+									X="-2633.392" Y="4387.538" Z="93.16135" />
+									
+					<!-- Fly to - Stonebreaker Hold - repair vendor -->
+					<CustomBehavior File="FlyTo"
+									X="-2650.036" Y="4415.961" Z="35.32476" />
+					
+					<!-- Profile message - We are in Stonebreaker Hold -->
+					<CustomBehavior File="Message" 
+									Text="We are in Stonebreaker Hold." 
+									LogColor="Cyan" />
+					
+					<!-- Forced dismount -->				
+					<CustomBehavior File="ForcedDismount" />
+									
+					<!-- Move to - Bar Talet" - repair -->				
+					<CustomBehavior File="NoCombatMoveTo" 
+									X="-2639.384" Y="4425.386" Z="36.68329" />
+
+					<!-- Repair vendor-mailbox -->
+					<SetVendor>
+						<Vendors>
+							<Vendor Name="Bar Talet" 
+								Entry="18962" 
+								Type="Repair" 
+								X="-2639.384" Y="4425.386" Z="36.68329" />
+						</Vendors>
+					</SetVendor>
+					<SetMailbox>
+						<Mailboxes>
+							<Mailbox X="-2617.452" Y="4414.927" Z="35.65971" />
+						</Mailboxes>
+					</SetMailbox>
+
+					<!-- Vendor conditions -->
+					<CustomBehavior File="ForceSetVendor" 
+									DoMail="True" 
+									DoRepair="True" 
+									DoSell="True" 
+									DoTrain="False" />
+						
+					<!-- If we are inside Stonebreaker Hold -->
+					<If Condition="Me.X &gt; -2657.777 &amp;&amp; Me.X &lt; -2573.507 &amp;&amp; Me.Y &gt; 4414.723 &amp;&amp; Me.Y &lt; 4500.264" >
+					
+						<!-- Move to - Stonebreaker Hold - flight master -->
+						<MoveTo X="-2566.725" Y="4426.855" Z="39.26406" />
+						
+					</If>	<!-- If we are inside Stonebreaker Hold -->		
+							
+				</If>	<!-- If we are Horde -->				
+
+			</If>	<!-- If we are in Outland -->
+			
+			<!-- If we have more than 25 empty bag slots and our durability is greater than 30% -->
+			<If Condition="(Me.FreeBagSlots &gt; 25) &amp;&amp; (Me.LowestDurabilityPercent &gt;= 0.3)" >
+			
+				<!-- Load profile - [QO-N][Solstice][58-90][food] -->
+				<CustomBehavior File="LoadProfile" 
+										ProfileName="[QO-N][Solstice][58-90][food]" />
+										
+			</If>	<!-- If we have more than 25 empty bag slots and our durability is greater than 30% -->	
+			
+		</If>	<!-- If our level is 72-74 -->
+		
+				
+		<!-- *******************************************    level is 70-72 ******************************************************* -->
+		
+			
+		<!-- If our level is 70-72 -->
+		<If Condition="Me.Level &gt;= 70 &amp;&amp; Me.Level &lt; 72">
+		
+			<!-- Profile message - Our durability is less than 30% or we have less than 25 empty bag slots remaining -->
+			<CustomBehavior File="Message" 
+							Text="Our durability is less than 30% or we have less than 25 empty bag slots remaining." 
+							LogColor="Fuchsia" />
+								
+			<!-- If we are in Mana Tombs -->
+			<If Condition="Me.ZoneId == 3792">	
+				
+				<!-- If our hearthstone is set at Allerian Stronghold or Stonebreaker Hold -->
+				<If Condition="(Me.HearthstoneAreaId == 3684) || (Me.HearthstoneAreaId == 3683)">
+
+					<!-- Profile message - Our Innkeeper is set at Allerian Stronghold or Stonebreaker Hold -->
+					<CustomBehavior File="Message" 
+										Text="Our Innkeeper is set at Allerian Stronghold or Stonebreaker Hold." 
+										LogColor="Cyan" />
+				
+					<!-- Profile message - We are in Hellfire Ramparts, using our Hearthstone/Innkeeper's Daughter -->
+					<CustomBehavior File="Message" 
+									Text="We are in Mana Tombs, using our Hearthstone/Innkeeper's Daughter." 
+									LogColor="Cyan" />
+								
+					<!-- If we have a Hearthstone -->
+					<If Condition="HasItem(6948)">
+					
+						<!-- Profile message - Using our Hearthstone -->
+						<CustomBehavior File="Message" 
+										Text="Using our Hearthstone." 
+										LogColor="Fuchsia" />
+										
+						<!-- Custom behavior - Misc\RunLua -->				
+						<CustomBehavior File="Misc\RunLua" 
+										Lua="UseItemByName(6948)" 
+										WaitTime="1000" />
+										
+						<!-- Wait timer - wait 20 seconds - delay -->				
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000" />
+										
+					</If>	<!-- If we have a Hearthstone -->
+				
+					<!-- If we have a Innkeeper's Daughter -->
+					<If Condition="HasItem(64488)">
+					
+						<!-- Profile message - Using our Innkeeper's Daughter -->
+						<CustomBehavior File="Message" 
+										Text="Using our Innkeeper's Daughter." 
+										LogColor="Fuchsia" />
+											
+						<!-- Custom behavior - Misc\RunLua -->					
+						<CustomBehavior File="Misc\RunLua" 
+										Lua="UseItemByName(64488)" 
+										WaitTime="1000" />
+							
+						<!-- Wait timer - wait 20 seconds - delay -->	
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000" />
+										
+					</If>	<!-- If we have a Innkeeper's Daughter -->
+				
+				</If>	<!-- If our hearthstone is set here, use it -->
+				
+			</If>	<!-- If we are in Mana Tombs -->
+		
+			<!-- If we are still in Mana Tombs, exit the instance -->
+			<If Condition="Me.ZoneId == 3792">
+				
+				<!-- Profile message - Mana Tombs detected. Running out to reset --> 
+				<CustomBehavior File="Message" 
+								Text="Our hearth didn't work, exiting the instance."
+								LogColor="Orange" />
+
+				<!-- Move to - zone in location -->
+				<MoveTo X="-4.81115" Y="1.00236" Z="-0.954329" />
+				
+				<!-- Go through the portal -->
+				<CustomBehavior File="Misc\InInstance" 
+								X="7.24442" Y="1.005781" Z="-0.954329" />
+				
+				<!-- Move to - zone out location -->
+				<MoveTo X="-3080.679" Y="4942.799" Z="-101.047" />
+			
+				<!-- Move to - mount location -->
+				<MoveTo X="-3190.779" Y="4942.563" Z="-101.3955" />
+			
+				<!-- Move to - Mana Tombs hover point -->
+				<CustomBehavior File="FlyTo" 
+								X="-3361.957" Y="4944.196" Z="20.87381" />
+
+			</If>	<!-- If we are still in Mana Tombs, exit the instance -->
+			
+			<!-- If we are in Outland -->
+			<If Condition="Me.MapId == 530">
+			
+				<!-- If we are Alliance -->
+				<If Condition="Me.IsAlliance" >
+				
+					<!-- Profile message - Flying to Allerian Stronghold --> 
+					<CustomBehavior File="Message" 
+									Text="Flying to Allerian Stronghold."
+									LogColor="Orange" />
+				
+					<!-- Fly to - hover point - Allerian Stronghold - hover point -->
+					<CustomBehavior File="FlyTo" 
+									X="-2941.848" Y="3986.454" Z="29.54919" />
+									
+					<!-- Fly to - Allerian Stronghold - repair vendor -->
+					<CustomBehavior File="FlyTo" 
+									X="-2963.702" Y="4017.228" Z="1.642162" />
+
+					<!-- Forced dismount -->				
+					<CustomBehavior File="ForcedDismount" />
+
+					<!-- Profile message - We are in Allerian Stronghold -->
+					<CustomBehavior File="Message" 
+									Text="We are in Allerian Stronghold." 
+									LogColor="Cyan" />
+					
+					<!-- Move to - Cecil Meyers - repair -->
+					<MoveTo X="-2974.844" Y="4026.831" Z="3.573579" />
+					
+					<!-- Repair vendors -->
+					<SetVendor>
+						<Vendors>
+							<Vendor Name="Cecil Meyers" 
+									Entry="19056" 
+									Type="Repair" 
+									X="-2978.951" Y="4033.115" Z="3.574028" />
+						</Vendors>
+					</SetVendor>
+					<SetMailbox>
+						<Mailboxes>
+							<Mailbox X="-2932.386" Y="4007.916" Z="-1.293741" />
+						</Mailboxes>
+					</SetMailbox>
+
+					<!-- Vendor conditions -->
+					<CustomBehavior File="ForceSetVendor" 
+									DoMail="True" 
+									DoRepair="True" 
+									DoSell="True" 
+									DoTrain="False" />
+						
+				</If>	<!-- If we are Alliance -->
+
+				<!-- If we are Horde -->
+				<If Condition="Me.IsHorde" >
+					
+					<!-- If we are inside Stonebreaker Hold -->
+					<If Condition="Me.X &gt; -2657.777 &amp;&amp; Me.X &lt; -2573.507 &amp;&amp; Me.Y &gt; 4414.723 &amp;&amp; Me.Y &lt; 4500.264" >
+					
+						<!-- Move to - Stonebreaker Hold - flight master -->
+						<MoveTo X="-2566.725" Y="4426.855" Z="39.26406" />
+						
+					</If>	<!-- If we are inside Stonebreaker Hold -->	
+					
+					<!-- Profile message - Flying to Stonebreaker Hold -->
+					<CustomBehavior File="Message" 
+									Text="Flying to Stonebreaker Hold."
+									LogColor="Orange" />
+
+					<!-- Fly to - hover point - Stonebreaker Hold -->
+					<CustomBehavior File="FlyTo" 
+									X="-2633.392" Y="4387.538" Z="93.16135" />
+									
+					<!-- Fly to - Stonebreaker Hold - repair vendor -->
+					<CustomBehavior File="FlyTo"
+									X="-2650.036" Y="4415.961" Z="35.32476" />
+					
+					<!-- Profile message - We are in Stonebreaker Hold -->
+					<CustomBehavior File="Message" 
+									Text="We are in Stonebreaker Hold." 
+									LogColor="Cyan" />
+					
+					<!-- Forced dismount -->				
+					<CustomBehavior File="ForcedDismount" />
+									
+					<!-- Move to - Bar Talet" - repair -->				
+					<CustomBehavior File="NoCombatMoveTo" 
+									X="-2639.384" Y="4425.386" Z="36.68329" />
+
+					<!-- Repair vendor-mailbox -->
+					<SetVendor>
+						<Vendors>
+							<Vendor Name="Bar Talet" 
+								Entry="18962" 
+								Type="Repair" 
+								X="-2639.384" Y="4425.386" Z="36.68329" />
+						</Vendors>
+					</SetVendor>
+					<SetMailbox>
+						<Mailboxes>
+							<Mailbox X="-2617.452" Y="4414.927" Z="35.65971" />
+						</Mailboxes>
+					</SetMailbox>
+
+					<!-- Vendor conditions -->
+					<CustomBehavior File="ForceSetVendor" 
+									DoMail="True" 
+									DoRepair="True" 
+									DoSell="True" 
+									DoTrain="False" />
+					
+					<!-- If we are inside Stonebreaker Hold -->
+					<If Condition="Me.X &gt; -2657.777 &amp;&amp; Me.X &lt; -2573.507 &amp;&amp; Me.Y &gt; 4414.723 &amp;&amp; Me.Y &lt; 4500.264" >
+					
+						<!-- Move to - Stonebreaker Hold - flight master -->
+						<MoveTo X="-2566.725" Y="4426.855" Z="39.26406" />
+						
+					</If>	<!-- If we are inside Stonebreaker Hold -->		
+							
+				</If>	<!-- If we are Horde -->				
+
+			</If>	<!-- If we are in Outland -->
+			
+			<!-- If we have more than 25 empty bag slots and our durability is greater than 30% -->
+			<If Condition="(Me.FreeBagSlots &gt; 25) &amp;&amp; (Me.LowestDurabilityPercent &gt;= 0.3)" >
+			
+				<!-- Load profile - [QO-N][Solstice][58-90][food] -->
+				<CustomBehavior File="LoadProfile" 
+										ProfileName="[QO-N][Solstice][58-90][food]" />
+										
+			</If>	<!-- If we have more than 25 empty bag slots and our durability is greater than 30% -->	
+			
+		</If>	<!-- If our level is 70-72 -->
+				
+
+		<!-- *******************************************    level is 67-70 ******************************************************* -->
+		
+		
+		<!-- If our level is 67-70 -->
+		<If Condition="Me.Level &gt;= 67 &amp;&amp; Me.Level &lt; 70">
+		
+			<!-- Profile message - Our durability is less than 30% or we have less than 25 empty bag slots remaining -->
+			<CustomBehavior File="Message" 
+							Text="Our durability is less than 30% or we have less than 25 empty bag slots remaining." 
+							LogColor="Fuchsia" />
+								
+			<!-- If we are in Hellfire Ramparts -->
+			<If Condition="Me.ZoneId == 3562">	
+				
+				<!-- If our hearthstone/innkeepers daughter is set to Honor Hold or Thrallmar -->
+				<If Condition="(Me.HearthstoneAreaId == 3538) || (Me.HearthstoneAreaId == 3536)">
+				
+				
+					<!-- Profile message - Our Innkeeper is set at Honor Hold or Thrallmar -->
+					<CustomBehavior File="Message" 
+										Text="Our Innkeeper is set at Honor Hold or Thrallmar." 
+										LogColor="Cyan" />
+				
+					<!-- Profile message - We are in Hellfire Ramparts, using our Hearthstone/Innkeeper's Daughter -->
+					<CustomBehavior File="Message" 
+									Text="We are in Hellfire Ramparts, using our Hearthstone/Innkeeper's Daughter." 
+									LogColor="Cyan" />
+								
+					<!-- If we have a Hearthstone -->
+					<If Condition="HasItem(6948)">
+					
+						<!-- Profile message - Using our Hearthstone -->
+						<CustomBehavior File="Message" 
+										Text="Using our Hearthstone." 
+										LogColor="Fuchsia" />
+										
+						<!-- Custom behavior - Misc\RunLua -->				
+						<CustomBehavior File="Misc\RunLua" 
+										Lua="UseItemByName(6948)" 
+										WaitTime="1000" />
+										
+						<!-- Wait timer - wait 20 seconds - delay -->				
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000" />
+										
+					</If>	<!-- If we have a Hearthstone -->
+				
+					<!-- If we have a Innkeeper's Daughter -->
+					<If Condition="HasItem(64488)">
+					
+						<!-- Profile message - Using our Innkeeper's Daughter -->
+						<CustomBehavior File="Message" 
+										Text="Using our Innkeeper's Daughter." 
+										LogColor="Fuchsia" />
+											
+						<!-- Custom behavior - Misc\RunLua -->					
+						<CustomBehavior File="Misc\RunLua" 
+										Lua="UseItemByName(64488)" 
+										WaitTime="1000" />
+							
+						<!-- Wait timer - wait 20 seconds - delay -->	
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000" />
+										
+					</If>	<!-- If we have a Innkeeper's Daughter -->
+				
+				</If>	<!-- If our hearthstone is set here, use it -->
+				
+			</If>	<!-- If we are in Hellfire Ramparts -->
+		
+			<!-- If we are still in Hellfire Ramparts, exit the instance -->
+			<If Condition="Me.ZoneId == 3562">
+				
+				<!-- Profile message - Hellfire Ramparts detected. Running out to reset --> 
+				<CustomBehavior File="Message" 
+								Text="Our hearth didn't work, exiting the instance."
+								LogColor="Orange" />
+
+				<!-- Move to - zone in location -->
+				<MoveTo X="-1355.28" Y="1641.57" Z="68.274" />
+				
+				<!-- Go through the portal -->
+				<CustomBehavior File="Misc\InInstance" 
+								X="-1358.403" Y="1629.539" Z="68.55495" />
+				
+				<!-- Move to - zone out location -->
+				<MoveTo X="-363.436" Y="3078.43" Z="-15.0013" />
+			
+			</If>	<!-- If we are still in Hellfire Ramparts, exit the instance -->
+			
+			<!-- If we are in Outland -->
+			<If Condition="Me.MapId == 530">
+			
+			
+				<!-- If we are Alliance -->
+				<If Condition="Me.IsAlliance" >
+				
+					<!-- Profile message - Flying to Honor Hold --> 
+					<CustomBehavior File="Message" 
+									Text="Flying to Honor Hold."
+									LogColor="Orange" />
+				
+					<!-- Fly to - hover point - Honor Hold -->
+					<CustomBehavior File="FlyTo" 
+									X="-699.7803" Y="2654.424" Z="153.3082" />
+									
+					<!-- Fly to - Honor Hold - repair vendor -->
+					<CustomBehavior File="FlyTo" X="-708.8553" Y="2620.628" Z="89.705" />
+
+					<!-- Forced dismount -->				
+					<CustomBehavior File="ForcedDismount" />
+
+					<!-- Profile message - We are in Honor Hold -->
+					<CustomBehavior File="Message" 
+									Text="We are in Honor Hold." 
+									LogColor="Cyan" />
+					
+					<!-- Move to - Humphry - repair -->
+					<MoveTo X="-713.475" Y="2607.182" Z="91.00004" />
+				
+					<!-- Repair vendors -->
+					<SetVendor>
+						<Vendors>
+							<Vendor Name="Humphry"
+									Entry="16823" 
+									Type="Repair" 
+									X="-717.3172" Y="2607.582" Z="91.01124" />
+						</Vendors>
+					</SetVendor>
+					<SetMailbox>
+						<Mailboxes>
+							<Mailbox X="-706.4096" Y="2697.286" Z="94.34798" />
+						</Mailboxes>
+					</SetMailbox>
+
+					<!-- Vendor conditions -->
+					<CustomBehavior File="ForceSetVendor" 
+									DoMail="True" 
+									DoRepair="True" 
+									DoSell="True" 
+									DoTrain="False" />
+					
+				</If>	<!-- If we are Alliance -->
+
+				<!-- If we are Horde -->
+				<If Condition="Me.IsHorde" >
+					
+					<!-- Profile message - Flying to Thrallmar -->
+					<CustomBehavior File="Message" 
+									Text="Flying to Thrallmar."
+									LogColor="Orange" />
+
+					<!-- Fly to - hover point - Thrallmar -->
+					<CustomBehavior File="FlyTo" 
+									X="142.965" Y="2674.377" Z="128.8037" />
+									
+					<!-- Fly to - Thrallmar - repair vendor -->
+					<CustomBehavior File="FlyTo"
+									X="178.3041" Y="2627.994" Z="87.11761" />
+					
+					<!-- Profile message - We are in Thrallmar -->
+					<CustomBehavior File="Message" 
+									Text="We are in Thrallmar." 
+									LogColor="Cyan" />
+					
+					<!-- Forced dismount -->				
+					<CustomBehavior File="ForcedDismount" />
+									
+					<!-- Move to - Reagan Mancuso - repair -->				
+					<CustomBehavior File="NoCombatMoveTo" 
+									X="182.118" Y="2605.53" Z="87.28407" />
+
+					<!-- Repair vendor-mailbox -->
+					<SetVendor>
+						<Vendors>
+							<Vendor Name="Reagan Mancuso" 
+									Entry="22225" 
+									Type="Repair" 
+									X="179.7871" Y="2605.4" Z="87.28391" />
+						</Vendors>
+					</SetVendor>
+					<SetMailbox>
+						<Mailboxes>
+							<Mailbox X="170.4133" Y="2625.975" Z="87.09581" />
+						</Mailboxes>
+					</SetMailbox>
+
+					<!-- Vendor conditions -->
+					<CustomBehavior File="ForceSetVendor" 
+									DoMail="True" 
+									DoRepair="True" 
+									DoSell="True" 
+									DoTrain="False" />
+					
+				</If>	<!-- If we are Horde -->				
+
+			</If>	<!-- If we are in Outland -->
+			
+			<!-- If we have more than 25 empty bag slots and our durability is greater than 30% -->
+			<If Condition="(Me.FreeBagSlots &gt; 25) &amp;&amp; (Me.LowestDurabilityPercent &gt;= 0.3)" >
+			
+				<!-- Load profile - [QO-N][Solstice][58-90][food] -->
+				<CustomBehavior File="LoadProfile" 
+										ProfileName="[QO-N][Solstice][58-90][food]" />
+										
+			</If>	<!-- If we have more than 25 empty bag slots and our durability is greater than 30% -->
+			
+		</If>	<!-- If our level is 67-70 -->
+				
+
+		<!-- *******************************************    level is 62-67 ******************************************************* -->
+		
+		
+		<!-- If our level is 62-67 -->
+		<If Condition="Me.Level &gt;= 62 &amp;&amp; Me.Level &lt; 67">
+		
+			<!-- Profile message - Our durability is less than 30% or we have less than 25 empty bag slots remaining -->
+			<CustomBehavior File="Message" 
+							Text="Our durability is less than 30% or we have less than 25 empty bag slots remaining." 
+							LogColor="Fuchsia" />
+								
+			<!-- If we are in Blackrock Spire -->
+			<If Condition="Me.ZoneId == 1583">	
+				
+				<!-- If our hearthstone/innkeepers daughter is set to Iron Summit -->
+				<If Condition="Me.HearthstoneAreaId == 5628" >
+				
+					<!-- Profile message - We are in Blackrock Spire, using our Hearthstone/Innkeeper's Daughter -->
+					<CustomBehavior File="Message" 
+									Text="We are in Blackrock Spire, using our Hearthstone/Innkeeper's Daughter." 
+									LogColor="Cyan" />
+								
+					<!-- If we have a Hearthstone -->
+					<If Condition="HasItem(6948)">
+					
+						<!-- Profile message - Using our Hearthstone -->
+						<CustomBehavior File="Message" 
+										Text="Using our Hearthstone." 
+										LogColor="Fuchsia" />
+										
+						<!-- Custom behavior - Misc\RunLua -->				
+						<CustomBehavior File="Misc\RunLua" 
+										Lua="UseItemByName(6948)" 
+										WaitTime="1000" />
+										
+						<!-- Wait timer - wait 20 seconds - delay -->				
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000" />
+										
+					</If>	<!-- If we have a Hearthstone -->
+				
+					<!-- If we have a Innkeeper's Daughter -->
+					<If Condition="HasItem(64488)">
+					
+						<!-- Profile message - Using our Innkeeper's Daughter -->
+						<CustomBehavior File="Message" 
+										Text="Using our Innkeeper's Daughter." 
+										LogColor="Fuchsia" />
+											
+						<!-- Custom behavior - Misc\RunLua -->					
+						<CustomBehavior File="Misc\RunLua" 
+										Lua="UseItemByName(64488)" 
+										WaitTime="1000" />
+							
+						<!-- Wait timer - wait 20 seconds - delay -->	
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000" />
+										
+					</If>	<!-- If we have a Innkeeper's Daughter -->
+				
+				</If>	<!-- If our hearthstone is set here, use it -->
+				
+			</If>	<!-- If we are in Blackrock Spire -->
+		
+			<!-- If we are still in Blackrock Spire, exit the instance -->
+			<If Condition="Me.ZoneId == 1583">
+			
+				<!-- Profile message - Our Hearthstone/Innkeeper's Daughter didn't work. Moving to the exit -->
+				<CustomBehavior File="Message" 
+								Text="Our Hearthstone/Innkeeper's Daughter didn't work. Moving to the exit."
+								LogColor="Fuchsia" />
+				
+									
+				<!-- If we are in UBRS -->
+				<If Condition="Me.Z &gt; 63 &amp;&amp; Me.X &lt; 46" >
+					
+					<!-- UserSettings -->
+					<CustomBehavior File="UserSettings"
+									PullDistance="1" />
+					
+					<!-- Profile message - We are in UBRS or near the entrance to UBRS, avoiding the burning brazier as we exit -->
+					<CustomBehavior File="Message" 
+									Text="We are in UBRS or near the entrance to UBRS, avoiding the burning brazier as we exit."
+									LogColor="Orange" />
+					
+					<!-- Move to the center of the ramp between the burning braziers -->
+					<MoveTo X="64.47768" Y="-319.3361" Z="65.46352" />
+					
+				</If>	<!-- If we are in UBRS -->				
+		
+				<!-- Move to - zone in location -->				
+				<MoveTo X="80.03099" Y="-258.143" Z="60.70329" />
+				
+				<!-- Go through  portal -->
+				<CustomBehavior File="Misc\InInstance" 
+								X="77.31385" Y="-210.969" Z="49.81922" />
+				
+				<!-- Move to - zone out location -->
+				<MoveTo X="-7526.999" Y="-1225.375" Z="285.731" />	
+
+				<!-- Move to - center of the balcony -->
+				<CustomBehavior File="NoCombatMoveTo"
+								X="-7534.879" Y="-1212.575" Z="285.4396" />
+				
+				<!-- Move to - jump off location -->
+				<CustomBehavior File="NoCombatMoveTo"
+								X="-7530.433" Y="-1209.103" Z="285.4521" />
+				
+				<!-- Custom Behavior - Jumpforward -->
+				<CustomBehavior File="Misc\JumpForward" />
+				
+				<!-- Wait timer - wait 3 seconds to aggro -->
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="3000" />
+				
+				<!-- Move to - overhead gate -->
+				<MoveTo X="-7498.533" Y="-1075.821" Z="264.7475" />
+
+			</If>	<!-- If we are still in Blackrock Depths, exit the instance -->
+
+			<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+			<If Condition="(Me.FreeBagSlots &lt;= 25) || (Me.LowestDurabilityPercent &lt;= 0.3)" >
+
+				<!-- Repair vendor -->
+				<SetVendor>
+					<Vendors>
+						<!-- Iron Summit -->
+						<Vendor Name="Fergus Gravelsmash" 
+								Entry="47937" 
+								Type="Repair" 
+								X="-7093.68" Y="-1268.31" Z="270.4849" />
+					</Vendors>
+				</SetVendor>
+		
+				<!-- Mailbox -->
+				<SetMailbox>
+					<Mailboxes>
+						<!-- Iron Summit -->
+						<Mailbox X="-7112.428" Y="-1201.948" Z="306.7885" />
+					</Mailboxes>
+				</SetMailbox>
+
+				<!-- Vendor conditions -->
+				<CustomBehavior File="ForceSetVendor" 
+								DoMail="True" 
+								DoRepair="True" 
+								DoSell="True" 
+								DoTrain="False" />
+				
+			</If>	<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+				
+			<!-- If we have more than 25 empty bag slots and our durability is greater than 30% -->
+			<If Condition="(Me.FreeBagSlots &gt; 25) &amp;&amp; (Me.LowestDurabilityPercent &gt;= 0.3)" >
+			
+				<!-- Load profile - [QO-N][Solstice][58-90][food] -->
+				<CustomBehavior File="LoadProfile" 
+										ProfileName="[QO-N][Solstice][58-90][food]" />
+										
+			</If>	<!-- If we have more than 25 empty bag slots and our durability is greater than 30% -->	
+			
+		</If>	<!-- If our level is 62-67 -->
+		
+		
+		<!-- *******************************************    level is 58-60 ******************************************************* -->
+		
+		
+		<!-- If our level is 58-62 -->
+		<If Condition="Me.Level &gt;= 58 &amp;&amp; Me.Level &lt; 62">
+
+			<!-- Profile message - Our durability is less than 30% or we have less than 25 empty bag slots remaining -->
+			<CustomBehavior File="Message" 
+							Text="Our durability is less than 30% or we have less than 25 empty bag slots remaining." 
+							LogColor="Fuchsia" />
+								
+			<!-- If our hearthstone/innkeepers daughter is set to Honor Hold or Thrallmar -->
+			<If Condition="(Me.HearthstoneAreaId == 3538) || (Me.HearthstoneAreaId == 3536)">
+			
+				<!-- Profile message - Our Innkeeper is set at Honor Hold or Thrallmar -->
+				<CustomBehavior File="Message" 
+									Text="Our Innkeeper is set at Honor Hold or Thrallmar." 
+									LogColor="Cyan" />
+							
+				<!-- If we have a Hearthstone -->
+				<If Condition="HasItem(6948)">
+				
+					<!-- Profile message - Using our Hearthstone -->
+					<CustomBehavior File="Message" 
+									Text="Using our Hearthstone." 
+									LogColor="Fuchsia" />
+									
+					<!-- Custom behavior - Misc\RunLua -->				
+					<CustomBehavior File="Misc\RunLua" 
+									Lua="UseItemByName(6948)" 
+									WaitTime="1000" />
+									
+					<!-- Wait timer - wait 20 seconds - delay -->				
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="20000" />
+									
+				</If>	<!-- If we have a Hearthstone -->
+			
+				<!-- If we have a Innkeeper's Daughter -->
+				<If Condition="HasItem(64488)">
+				
+					<!-- Profile message - Using our Innkeeper's Daughter -->
+					<CustomBehavior File="Message" 
+									Text="Using our Innkeeper's Daughter." 
+									LogColor="Fuchsia" />
+										
+					<!-- Custom behavior - Misc\RunLua -->					
+					<CustomBehavior File="Misc\RunLua" 
+									Lua="UseItemByName(64488)" 
+									WaitTime="1000" />
+						
+					<!-- Wait timer - wait 20 seconds - delay -->	
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="20000" />
+									
+				</If>	<!-- If we have a Innkeeper's Daughter -->
+
+			</If>	<!-- If our hearthstone/innkeepers daughter is set to Honor Hold or Thrallmar -->
+					
+			<!-- If we are in Outland -->
+			<If Condition="Me.MapId == 530">
+			
+				<!-- If we are Alliance -->
+				<If Condition="Me.IsAlliance" >
+				
+					<!-- Profile message - Moving to Honor Hold --> 
+					<CustomBehavior File="Message" 
+									Text="Moving to Honor Hold."
+									LogColor="Orange" />
+													
+					<!-- Move to - Honor Hold - repair vendor -->
+					<MoveTo X="-708.8553" Y="2620.628" Z="89.705" />
+
+					<!-- Forced dismount -->				
+					<CustomBehavior File="ForcedDismount" />
+
+					<!-- Profile message - We are in Honor Hold -->
+					<CustomBehavior File="Message" 
+									Text="We are in Honor Hold." 
+									LogColor="Cyan" />
+					
+					<!-- Move to - Humphry - repair -->
+					<MoveTo X="-713.475" Y="2607.182" Z="91.00004" />
+
+					<!-- Repair vendors -->
+					<SetVendor>
+						<Vendors>
+							<Vendor Name="Humphry"
+									Entry="16823" 
+									Type="Repair" 
+									X="-717.3172" Y="2607.582" Z="91.01124" />
+						</Vendors>
+					</SetVendor>
+					<SetMailbox>
+						<Mailboxes>
+							<Mailbox X="-706.4096" Y="2697.286" Z="94.34798" />
+						</Mailboxes>
+					</SetMailbox>
+					
+					<!-- Vendor conditions -->
+					<CustomBehavior File="ForceSetVendor" 
+									DoMail="True" 
+									DoRepair="True" 
+									DoSell="True" 
+									DoTrain="False" />
+						
+				</If>	<!-- If we are Alliance -->
+
+				<!-- If we are Horde -->
+				<If Condition="Me.IsHorde" >
+					
+					<!-- Profile message - Moving to Thrallmar -->
+					<CustomBehavior File="Message" 
+									Text="Moving to Thrallmar."
+									LogColor="Orange" />
+									
+					<!-- Move to - Thrallmar - repair vendor -->
+					<MoveTo X="178.3041" Y="2627.994" Z="87.11761" />
+					
+					<!-- Profile message - We are in Thrallmar -->
+					<CustomBehavior File="Message" 
+									Text="We are in Thrallmar." 
+									LogColor="Cyan" />
+					
+					<!-- Forced dismount -->				
+					<CustomBehavior File="ForcedDismount" />
+									
+					<!-- Move to - Reagan Mancuso - repair -->				
+					<CustomBehavior File="NoCombatMoveTo" 
+									X="182.118" Y="2605.53" Z="87.28407" />
+
+					<!-- Repair vendor-mailbox -->
+					<SetVendor>
+						<Vendors>
+							<Vendor Name="Reagan Mancuso" 
+									Entry="22225" 
+									Type="Repair" 
+									X="179.7871" Y="2605.4" Z="87.28391" />
+						</Vendors>
+					</SetVendor>
+					<SetMailbox>
+						<Mailboxes>
+							<Mailbox X="170.4133" Y="2625.975" Z="87.09581" />
+						</Mailboxes>
+					</SetMailbox>
+					
+					<!-- Vendor conditions -->
+					<CustomBehavior File="ForceSetVendor" 
+									DoMail="True" 
+									DoRepair="True" 
+									DoSell="True" 
+									DoTrain="False" />
+							
+				</If>	<!-- If we are Horde -->				
+
+			</If>	<!-- If we are in Outland -->
+			
+			<!-- If we have more than 25 empty bag slots and our durability is greater than 30% -->
+			<If Condition="(Me.FreeBagSlots &gt; 25) &amp;&amp; (Me.LowestDurabilityPercent &gt;= 0.3)" >
+			
+				<!-- Load profile - [QO-N][Solstice][58-90][food] -->
+				<CustomBehavior File="LoadProfile" 
+										ProfileName="[QO-N][Solstice][58-90][food]" />
+										
+			</If>	<!-- If we have more than 25 empty bag slots and our durability is greater than 30% -->
+			
+		</If>	<!-- If our level is 58-62 -->	
+		
+	</QuestOrder>
+	
+</HBProfile>
+

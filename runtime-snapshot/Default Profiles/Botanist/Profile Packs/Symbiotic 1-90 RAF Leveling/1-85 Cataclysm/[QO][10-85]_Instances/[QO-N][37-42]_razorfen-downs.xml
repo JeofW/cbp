@@ -1,0 +1,583 @@
+﻿<HBProfile creator="Botanist and Wigglez" version="1.0">
+	<Name>[QO-N][37-42]_razorfen-downs</Name>
+   
+	<MinLevel>1</MinLevel>
+	<MaxLevel>101</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	
+	<MailGrey>False</MailGrey>
+	<MailWhite>False</MailWhite>
+	<MailGreen>False</MailGreen>
+	<MailBlue>False</MailBlue>
+	<MailPurple>False</MailPurple>
+   
+	<SellGrey>False</SellGrey>
+	<SellWhite>False</SellWhite>
+	<SellGreen>False</SellGreen>
+	<SellBlue>False</SellBlue>
+	<SellPurple>False</SellPurple>
+
+	<AvoidMobs>
+		<Mob Name="Summon Enabler Stalker" Entry="53488" />	
+	</AvoidMobs>
+	
+	<Blackspots>
+		<!-- bone -->
+		<Blackspot X="2581.913" Y="1026.938" Z="50.94383" Radius="1" />
+		<!-- thorn -->
+		<Blackspot X="2571.802" Y="1021.42" Z="51.28505" Radius="1.393644" />
+		<!-- Gong room -->
+		<Blackspot X="2542.679" Y="856.7137" Z="50.90178" Radius="1.729485" />
+		<Blackspot X="2548.168" Y="860.8541" Z="51.29408" Radius="1.049623" />
+		<Blackspot X="2537.883" Y="856.9494" Z="50.76789" Radius="1.528436" />
+		<Blackspot X="2531.415" Y="858.7027" Z="49.56959" Radius="1.118679" />
+		<!-- Last boss bones -->
+		<Blackspot X="2394.321" Y="978.2196" Z="55.20959" Radius="5.656103" />
+		<Blackspot X="2387.089" Y="974.6604" Z="55.62838" Radius="4.983395" />
+		<!-- Fires -->
+		<Blackspot X="-4622.852" Y="-2264.846" Z="87.61284" Radius="1" />
+		<Blackspot X="-4488.864" Y="-2056.789" Z="80.13129" Radius="1" />
+	</Blackspots>
+
+	<Mailboxes>
+	</Mailboxes>
+ 
+	<Vendors>
+	</Vendors>
+
+	<Factions></Factions>
+	
+	<ProtectedItems>
+	</ProtectedItems>
+	
+	<QuestOrder>
+
+		
+		<!-- *******************************************************  Booster ************************************************************** -->
+		<If Condition="Me.Level &gt;= 85">
+			<CustomBehavior File="Message" 
+							Text="We are a booster." 
+							LogColor="Fuchsia" />
+		
+			<!-- Booster UserSettings -->
+			<CustomBehavior File="UserSettings"
+							FindMountAutomatically="True"
+							GroundMountFarmingMode="False"
+							HarvestHerbs="False"
+							HarvestMinerals="False"
+							KillBetweenHotspots="True"
+							LogoutForInactivity="False"
+							LogoutInactivityUseForceQuit="False"
+							LootMobs="True"
+							LootRadius="35"
+							MountName=""
+							NinjaSkin="False"
+							RessAtSpiritHealers="False"
+							SkinMobs="False"
+							UseMount="True" 
+							UseRandomMount="False" />
+							
+			<!-- Infinite loop -->
+			<While Condition="true" >
+				<!-- If we are inside Razorfen Kraul, run out to reset -->
+				<If Condition="Me.MapId == 47">
+					<CustomBehavior File="Message" 
+									Text="Razorfen Kraul detected. Running out." 
+									LogColor="Fuchsia" />	
+									
+					<RunTo X="1942.27" Y="1544.23" Z="81.80499" />
+					
+					<!-- Go through the portal -->
+					<CustomBehavior File="Misc\InInstance" X="1939.09" Y="1530.371" Z="82.28316" />
+					
+					<!-- Make sure we run to the right spot outside the portal -->
+					<RunTo X="-4462" Y="-1663.06" Z="81.8912" />
+				</If>	
+				
+				<!-- If we are inside Razorfen Downs -->
+				<If Condition="Me.MapId == 129">
+					<CustomBehavior File="Message" 
+									Text="Razorfen Downs detected. Running out."
+									LogColor="Fuchsia" />
+					
+					<RunTo X="2593.68" Y="1111.23" Z="50.9518" />
+					
+					<!-- Go through the portal -->
+					<CustomBehavior File="Misc\InInstance" X="2592.638" Y="1116.691" Z="50.39219" />
+					
+					<!-- Make sure we run to the right spot outside the portal -->
+					<RunTo X="-4659.44" Y="-2527.94" Z="81.6564" />	
+				</If> <!-- RFD -->
+				
+				<!-- If we are not in the box, load the movement profile -->
+				<If Condition="Me.X &lt; -4700 || Me.X &gt; -4600 || Me.Y &gt; -2500 || Me.Y &lt; -2600" >
+					<CustomBehavior File="Message" 
+									Text="Distance from portal is not within our proximity, initializing movement to get there."
+									LogColor="Fuchsia" />	
+									
+					<CustomBehavior File="LoadProfile" 
+									ProfileName="Movement\[QO-N-M][37-42]_razorfen-downs" />
+				</If> <!-- Not in box -->
+				
+				<!-- If we are in the box -->
+				<If Condition="Me.X &gt; -4700 &amp;&amp; Me.X &lt; -4600 &amp;&amp; Me.Y &lt; -2500 &amp;&amp; Me.Y &gt; -2600" >
+					<CustomBehavior File="Message" 
+									Text="Portal detected nearby."
+									LogColor="Fuchsia" />	
+								
+					<!-- If we didn't enter the instance, wait 20 seconds then attempt to enter again -->
+					<While Condition="Me.MapId != 129">
+						<!-- Make sure we run to the right spot outside the portal -->
+						<RunTo X="-4659.44" Y="-2527.94" Z="81.6564" />
+						
+						<!-- Run back in the Razorfen Downs portal -->
+						<CustomBehavior File="Misc\InInstance" X="-4661.966" Y="-2545.649" Z="82.09726" />
+										
+						<CustomBehavior File="Message" 
+										Text="Waiting for the dungeon to load." 
+										LogColor="Fuchsia" />
+									
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000" 
+										VariantTime="20000" />	
+										
+						<!-- If we still aren't in, we're locked out -->
+						<If Condition="Me.MapId != 129">
+							<CustomBehavior File="Message" 
+											Text="We are locked out. Waiting and trying again." 
+											LogColor="Fuchsia" />
+						</If> <!-- Locked -->
+					</While> <!-- While we aren't in the instance -->
+				</If> <!-- In box -->
+				
+				<!-- If we are inside Razorfen Downs and have checked our reset -->
+				<If Condition="Me.MapId == 129">
+				
+					<!-- Run macro to pass on loot -->
+					<CustomBehavior File="RunMacro"
+									Macro="/run SetOptOutOfLoot(1)" />
+				
+					<!-- Entrance -->
+					<RunTo X="2593.68" Y="1111.23" Z="50.9518" />
+				
+					<!-- Go to quest givers -->
+					<RunTo X="2571.918" Y="1106.778" Z="47.63247" />
+					
+					<!-- Begin the instance once all party members are within range  -->
+					<CustomBehavior File="Misc\LoadProfileOn" 
+									CheckRange="1" />
+									
+					<CustomBehavior File="WaitTimer"
+									WaitTime="5000" />
+									
+					<CustomBehavior File="Message" 
+									Text="Razorfen Downs initialized."  
+									LogColor="Fuchsia" />
+				
+					<!-- Start killing mobs at entrance into first room in left fork --> 
+					<RunTo X="2593.549" Y="1073.867" Z="55.13087" />
+					<RunTo X="2590.529" Y="1068.702" Z="54.61759" />
+					<RunTo X="2597.006" Y="1059.03" Z="54.66502" />
+					<RunTo X="2596.609" Y="1046.392" Z="52.93095" />
+					<RunTo X="2589.987" Y="1035.599" Z="50.71444" />
+					<RunTo X="2579.825" Y="1028.296" Z="50.72465" />
+					<RunTo X="2573.662" Y="1017.291" Z="51.90969" />
+					<RunTo X="2562.399" Y="1009.149" Z="51.92691" />
+					<RunTo X="2576.06" Y="1020.974" Z="51.40728" />
+					<RunTo X="2595.236" Y="986.5068" Z="53.97657" />
+					<RunTo X="2596.086" Y="968.1009" Z="52.98607" />
+					<RunTo X="2596.567" Y="979.9587" Z="53.51511" />
+					<RunTo X="2588.479" Y="992.0129" Z="54.44552" />
+					<RunTo X="2580.516" Y="999.3796" Z="53.96592" />
+					<RunTo X="2574.126" Y="1007.247" Z="52.92753" />
+					<RunTo X="2575.204" Y="1006.571" Z="53.01146" />
+					
+					
+						
+					<!-- Killed all mobs in first room and running back to entrance area and down the right fork -->
+					<RunTo X="2596.124" Y="1054.456" Z="54.05449" />
+					<RunTo X="2592.963" Y="1076.903" Z="55.3259" />
+					<RunTo X="2569.469" Y="1077.085" Z="53.27537" />
+					<RunTo X="2555.777" Y="1047.412" Z="50.61992" />
+					<RunTo X="2542.17" Y="1043.299" Z="47.32997" />
+					<RunTo X="2524.142" Y="1045.816" Z="46.62631" />
+					<RunTo X="2501.891" Y="1055.439" Z="47.46676" />
+					<RunTo X="2470.986" Y="1059.173" Z="48.06715" />
+					<RunTo X="2466.845" Y="1071.929" Z="47.49481" />
+					<RunTo X="2435.59" Y="1085.082" Z="38.49783" />
+					<RunTo X="2398.77" Y="1092.654" Z="31.51861" />
+					
+					
+					
+					<!-- Head to spiral -->
+					<RunTo X="2389.821" Y="1069.126" Z="28.18543" />
+					
+					<!-- The RAF toons have now reached the ledge and we can proceed to kite the spiral -->
+					<CustomBehavior File="RunLikeHell" 
+									UseCTM="false" 
+									NumOfTimes="1" 
+									AllowCombat="false">
+						<Hotspot X="2389.821" Y="1069.126" Z="28.18543" />
+						<Hotspot X="2379.383" Y="1051.855" Z="25.09511" />
+						<Hotspot X="2364.761" Y="1037.236" Z="25.11899" />
+						<Hotspot X="2349.789" Y="1023.801" Z="25.14009" />
+						<Hotspot X="2322.888" Y="973.2128" Z="26.46899" />
+						<Hotspot X="2336.182" Y="939.1804" Z="27.49368" />
+						<Hotspot X="2353.825" Y="915.9847" Z="28.51739" />
+						<Hotspot X="2376.262" Y="915.0237" Z="29.48641" />
+						<Hotspot X="2413.583" Y="902.9284" Z="30.90844" />
+						<Hotspot X="2451.076" Y="944.567" Z="36.2501" />
+						<Hotspot X="2440.318" Y="952.5859" Z="36.0599" />
+						<Hotspot X="2453.434" Y="986.956" Z="35.92033" />
+						<Hotspot X="2440.954" Y="1011.789" Z="38.36842" />
+						<Hotspot X="2418.186" Y="1019.136" Z="36.75761" />
+						<Hotspot X="2412.901" Y="1024.69" Z="37.58461" />
+						<Hotspot X="2375.152" Y="1011.837" Z="37.84305" />
+						<Hotspot X="2357.326" Y="995.5917" Z="39.35548" />
+						<Hotspot X="2357.031" Y="975.6326" Z="39.24543" />
+						<Hotspot X="2344.996" Y="974.5525" Z="41.21495" />
+						<Hotspot X="2350.692" Y="955.3834" Z="42.65942" />
+						<Hotspot X="2370.768" Y="936.2316" Z="41.50157" />
+						<Hotspot X="2398.932" Y="930.0771" Z="42.21943" />
+						<Hotspot X="2418.517" Y="930.0703" Z="44.32056" />
+						<Hotspot X="2426.249" Y="962.8974" Z="45.98397" />
+						<Hotspot X="2430.623" Y="987.6624" Z="48.98726" />
+						<Hotspot X="2420.232" Y="995.9717" Z="49.33158" />
+						<Hotspot X="2378.463" Y="991.7271" Z="54.1245" />
+						<Hotspot X="2389.615" Y="977.5052" Z="55.49356" />
+						<Hotspot X="2403.304" Y="961.2528" Z="55.11146" />
+						<Hotspot X="2401.446" Y="985.1541" Z="58.08332" />
+					</CustomBehavior>
+					<RunTo X="2401.446" Y="985.1541" Z="58.08332" />
+					<!-- Spiral cleared and we're at the top -->
+					
+					<!-- Running down the side -->
+					<CustomBehavior File="MyCTM" 
+									X="2380.92" Y="988.0463" Z="54.66792" />
+					<CustomBehavior File="MyCTM" 
+									X="2386.606" Y="985.9137" Z="54.52488" />
+					<CustomBehavior File="MyCTM" 
+									X="2373.27" Y="982.4531" Z="55.01749" />
+					<CustomBehavior File="MyCTM" 
+									X="2353.297" Y="987.437" Z="40.44402" />
+					<CustomBehavior File="MyCTM" 
+									X="2341.951" Y="960.8641" Z="44.14783" />
+					<CustomBehavior File="MyCTM" 
+									X="2334.795" Y="939.6528" Z="27.47945" />
+					
+					<CustomBehavior File="Message" 
+									Text="Running down Glutton's path to pick him up as well as finish off the spiral." 
+									LogColor="Fuchsia" />
+					
+					<!-- Pick up Glutton and the rest of the spiral -->
+					<CustomBehavior File="RunLikeHell" 
+									UseCTM="false" 
+									NumOfTimes="1" 
+									AllowCombat="false">
+						<Hotspot X="2323.408" Y="967.1266" Z="26.60037" />
+						<Hotspot X="2332.34" Y="993.7676" Z="25.98856" />
+						<Hotspot X="2345.525" Y="1019.574" Z="25.29383" />
+						<Hotspot X="2365.756" Y="1034.717" Z="25.01691" />
+						<Hotspot X="2393.697" Y="1043.055" Z="24.64121" />
+						<Hotspot X="2419.65" Y="1042.221" Z="25.08005" />
+						<Hotspot X="2447.255" Y="1030.274" Z="25.04158" />
+						<Hotspot X="2476.437" Y="989.8276" Z="23.28261" />
+						<Hotspot X="2473.303" Y="939.8805" Z="23.72399" />
+						<Hotspot X="2467.5" Y="916.7142" Z="26.19712" />
+						<Hotspot X="2466.086" Y="886.9749" Z="28.8393" />
+						<Hotspot X="2452.061" Y="858.8273" Z="38.12524" />
+						<Hotspot X="2445.387" Y="838.7546" Z="41.93529" />
+						<Hotspot X="2443.294" Y="808.8707" Z="42.34184" />
+						<Hotspot X="2448.957" Y="783.2763" Z="42.88146" />
+						<!-- u-turn -->
+						<Hotspot X="2443.294" Y="808.8707" Z="42.34184" />
+						<Hotspot X="2445.387" Y="838.7546" Z="41.93529" />
+						<Hotspot X="2466.086" Y="886.9749" Z="28.8393" />
+						<Hotspot X="2468.975" Y="900.5964" Z="27.69949" />
+						<Hotspot X="2471.975" Y="936.6887" Z="23.79778" />
+						<Hotspot X="2478.81" Y="970.6525" Z="23.39874" />
+						<Hotspot X="2462.063" Y="1017.078" Z="24.50733" />
+						<Hotspot X="2432.697" Y="1040.398" Z="24.58781" />
+					</CustomBehavior>
+					<RunTo X="2432.697" Y="1040.398" Z="24.58781" />
+					<!-- Remaining of the spiral is now dead -->
+					
+					<!-- Run back to the end of the spiral and start our next kite -->
+					<RunTo X="2457.461" Y="1022.575" Z="24.76495" />
+					<RunTo X="2469.688" Y="1001.079" Z="23.64095" />
+					<RunTo X="2478.942" Y="977.7206" Z="23.39299" />
+					<RunTo X="2477.989" Y="950.0295" Z="23.61514" />
+					<RunTo X="2470.068" Y="927.2324" Z="24.52768" />
+					<RunTo X="2468.914" Y="908.2883" Z="26.90753" />
+					<RunTo X="2461.561" Y="878.9279" Z="30.50809" />
+					<RunTo X="2449.257" Y="853.5571" Z="39.50018" />
+					<RunTo X="2439.197" Y="824.7026" Z="42.82424" />
+					<RunTo X="2442.341" Y="803.1027" Z="42.48029" />
+					
+					<!-- Kiting remainder of kitable mobs past the gong room -->
+					<CustomBehavior File="RunLikeHell" 
+									UseCTM="false" 
+									NumOfTimes="1" 
+									AllowCombat="false">
+						<Hotspot X="2448.839" Y="782.2243" Z="42.96945" />
+						<Hotspot X="2476.822" Y="762.6687" Z="46.10123" />
+						<Hotspot X="2484.696" Y="742.0898" Z="45.15409" />
+						<Hotspot X="2511.541" Y="756.7055" Z="39.44744" />
+						<Hotspot X="2522.143" Y="731.1634" Z="40.2185" />
+						<Hotspot X="2500.918" Y="683.3574" Z="54.55602" />
+						<Hotspot X="2480.499" Y="674.6307" Z="55.56416" />
+						<Hotspot X="2504.03" Y="733.776" Z="54.11325" />
+						<Hotspot X="2530.265" Y="750.7556" Z="53.59307" />
+						<Hotspot X="2558.913" Y="740.0865" Z="54.43997" />
+						<Hotspot X="2527.343" Y="796.5888" Z="45.64024" />
+						<Hotspot X="2496.451" Y="788.0076" Z="39.43689" />
+						<Hotspot X="2485.761" Y="806.8854" Z="43.29664" />
+						<Hotspot X="2487.582" Y="830.5212" Z="43.94963" />
+						<Hotspot X="2502.948" Y="852.7714" Z="47.67841" />
+						<Hotspot X="2545.249" Y="853.1404" Z="51.34494" />
+						<Hotspot X="2545.532" Y="860.3154" Z="50.84218" />
+						<Hotspot X="2536.017" Y="873.4875" Z="47.67813" />
+						<Hotspot X="2544.109" Y="884.5471" Z="47.74643" />
+						<Hotspot X="2549.018" Y="903.6691" Z="47.70613" />
+						<Hotspot X="2520.155" Y="923.7783" Z="46.32985" />
+						<Hotspot X="2497.796" Y="941.1547" Z="48.83188" />
+						<Hotspot X="2520.155" Y="923.7783" Z="46.32985" />
+						<Hotspot X="2521.533" Y="936.7698" Z="47.81801" />
+						<Hotspot X="2543.346" Y="978.6454" Z="50.30002" />
+						<Hotspot X="2564.619" Y="968.9324" Z="50.91134" />
+						<Hotspot X="2574.196" Y="944.6473" Z="53.42199" />
+						<Hotspot X="2558.261" Y="969.6706" Z="50.70581" />
+						<Hotspot X="2545.599" Y="979.0316" Z="49.93209" />
+						<Hotspot X="2539.008" Y="971.7888" Z="50.0174" />
+					</CustomBehavior>
+					<RunTo X="2539.008" Y="971.7888" Z="50.0174" />
+					
+					<CustomBehavior File="Message" 
+									Text="Tagging RAFs." 
+									LogColor="Fuchsia" />
+									
+					<!-- Go to activate spot -->
+					<RunTo X="2571.918" Y="1106.778" Z="47.63247" />
+
+					<!-- If we are high enough to go to the next instance, do so -->
+					<CustomBehavior File="Misc\LoadProfileOn" 
+									MinLevel="42" 
+									ProfileName="[QO-N][42-48]_blackrock-depths.xml"  />
+									
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="5000" />
+				</If> <!-- RFD -->
+				
+				<!-- If we are inside Razorfen Downs -->
+				<If Condition="Me.MapId == 129">
+					<CustomBehavior File="Message" 
+									Text="Razorfen Downs detected. Running out to reset."
+									LogColor="Fuchsia" />
+					
+					<RunTo X="2593.68" Y="1111.23" Z="50.9518" />
+					
+					<!-- Go through the portal -->
+					<CustomBehavior File="Misc\InInstance" X="2592.638" Y="1125.691" Z="50.39219" />
+					
+					<!-- Make sure we run to the right spot outside the portal -->
+					<RunTo X="-4659.44" Y="-2527.94" Z="81.6564" />	
+				</If> <!-- RFD -->
+				
+				<!-- If we are in the box -->
+				<If Condition="Me.X &gt; -4700 &amp;&amp; Me.X &lt; -4600 &amp;&amp; Me.Y &lt; -2500 &amp;&amp; Me.Y &gt; -2600" >
+					
+					<!-- First reset isn't enough to get a fresh instance if toons are still inside -->
+					<CustomBehavior File="Message" 
+									Text="Resetting instance, 1 of 2." 
+									LogColor="Fuchsia" />
+					
+					<CustomBehavior File="RunMacro" Macro="/script ResetInstances()" />
+					<CustomBehavior File="RunMacro" Macro="/script SetDungeonDifficultyID(1)" />
+					
+					<!-- Allow for an Honorbuddy pulse -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="200" />
+					
+					<!-- The second reset confirms we are safe to enter the instance -->
+					<CustomBehavior File="Message" 
+									Text="Resetting instance, 2 of 2." 
+									LogColor="Fuchsia" />
+					<CustomBehavior File="RunMacro" Macro="/script ResetInstances()" />
+					<CustomBehavior File="RunMacro" Macro="/script SetDungeonDifficultyID(1)" />
+					
+					<CustomBehavior File="Message" 
+									Text="Instance reset." 
+									LogColor="Fuchsia" />
+				</If> <!-- In box -->
+			</While> <!-- Infinite loop -->
+		</If> <!-- Booster -->
+		
+		<!-- *******************************************************  RAF Toons ************************************************************** -->
+		<If Condition="Me.Level &lt;= 84">
+			<CustomBehavior File="Message" 
+							Text="We are a RAF." 
+							LogColor="Fuchsia" />
+							
+			<If Condition="Me.IsAlliance">
+				<If Condition="Me.HearthstoneAreaId != 5148">
+					<CustomBehavior File="Message" 
+									Text="Our Hearthstone isn't set in the Trade District in Stormwind. Stopping profile." 
+									LogColor="Lime" />
+									
+					<CustomBehavior File="UserSettings" 
+										StopBot="true" />
+				</If>
+				
+				<ElseIf Condition="Me.IsHorde">
+					<If Condition="Me.HearthstoneAreaId != 5170">
+						<CustomBehavior File="Message" 
+										Text="Our Hearthstone isn't set in the Valley of Strength in Orgrimmar. Stopping profile." 
+										LogColor="Lime" />
+										
+						<CustomBehavior File="UserSettings" 
+										StopBot="true" />
+					</If>
+				</ElseIf>
+			</If>
+
+			<!-- RAF UserSettings -->
+			<CustomBehavior File="UserSettings"
+							GroundMountFarmingMode="False"
+							HarvestHerbs="False"
+							HarvestMinerals="False"
+							KillBetweenHotspots="True"
+							LogoutForInactivity="False"
+							LogoutInactivityUseForceQuit="False"
+							LootMobs="True"
+							LootRadius="15"
+							MountName=""
+							NinjaSkin="False"
+							RessAtSpiritHealers="False"
+							SkinMobs="False"
+							UseMount="True" 
+							UseRandomMount="False" />
+		
+			<!-- Infinite loop -->
+			<While Condition="true" >	
+				<!-- If we are inside Razorfen Kraul, run out to reset -->
+				<If Condition="Me.MapId == 47">
+					<CustomBehavior File="Message" 
+									Text="Razorfen Kraul detected. Running out." 
+									LogColor="Fuchsia" />	
+									
+					<RunTo X="1942.27" Y="1544.23" Z="81.80499" />
+					
+					<!-- Go through the portal -->
+					<CustomBehavior File="Misc\InInstance" X="1939.09" Y="1530.371" Z="82.28316" />
+					
+					<!-- Make sure we run to the right spot outside the portal -->
+					<RunTo X="-4462" Y="-1663.06" Z="81.8912" />
+				</If>	
+				
+				<!-- If we are inside Razorfen Downs, run out to reset -->
+				<If Condition="Me.MapId == 129">
+					<CustomBehavior File="Message" Text="Razorfen Downs detected. Running out." LogColor="Fuchsia" />
+					
+					<RunTo X="2593.68" Y="1111.23" Z="50.9518" />
+					
+					<!-- Go through the portal -->
+					<CustomBehavior File="Misc\InInstance" X="2592.638" Y="1125.691" Z="50.39219" />
+					
+					<!-- Make sure we run to the right spot outside the portal -->
+					<RunTo X="-4659.44" Y="-2527.94" Z="81.6564" />	
+				</If> <!-- RFD -->
+			
+				<!-- If we are not in the box, load the movement profile -->
+				<If Condition="Me.X &lt; -4700 || Me.X &gt; -4600 || Me.Y &gt; -2500 || Me.Y &lt; -2600" >
+					<CustomBehavior File="Message" 
+									Text="Distance from portal is not within our proximity, initializing movement to get there."
+									LogColor="Fuchsia" />	
+									
+					<CustomBehavior File="LoadProfile" 
+									ProfileName="Movement\[QO-N-M][37-42]_razorfen-downs" />
+				</If> <!-- Not in box -->
+				
+				<!-- If we are in the box -->
+				<If Condition="Me.X &gt; -4700 &amp;&amp; Me.X &lt; -4600 &amp;&amp; Me.Y &lt; -2500 &amp;&amp; Me.Y &gt; -2600" >
+					<CustomBehavior File="Message" 
+										Text="Portal detected nearby."
+										LogColor="Fuchsia" />	
+										
+					<!-- If we didn't enter the instance, wait 20 seconds then attempt to enter again -->
+					<While Condition="Me.MapId != 129">
+						<!-- Make sure we run to the right spot outside the portal -->
+						<RunTo X="-4659.44" Y="-2527.94" Z="81.6564" />
+						
+						<!-- Run back in the Razorfen Downs portal -->
+						<CustomBehavior File="Misc\InInstance" X="-4661.966" Y="-2545.649" Z="82.09726" />
+										
+						<CustomBehavior File="Message" 
+										Text="Waiting for the dungeon to load." 
+										LogColor="Fuchsia" />
+									
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000" 
+										VariantTime="20000" />	
+										
+						<!-- If we still aren't in, we're locked out -->
+						<If Condition="Me.MapId != 129">
+							<CustomBehavior File="Message" 
+											Text="We are locked out. Waiting and trying again." 
+											LogColor="Fuchsia" />
+						</If> <!-- Locked -->
+					</While> <!-- While we aren't in the instance -->
+				</If> <!-- In the box -->
+				
+				<!-- If we are inside Razorfen Downs and have checked our reset -->
+				<If Condition="Me.MapId == 129">
+					<CustomBehavior File="Message" 
+									Text="Avoiding instance lock from this point, do not touch." 
+									LogColor="Yellow" />	
+				
+					<!-- Entrance -->
+					<RunTo X="2593.68" Y="1111.23" Z="50.9518" />
+					
+					<!-- Disable combat -->
+					<DisableBehavior Name="Combat" />
+					
+					<!-- Go to quest givers -->
+					<RunTo X="2571.918" Y="1106.778" Z="47.63247" />
+					
+					<!-- Begin the instance once all party members are within range  -->
+					<CustomBehavior File="Misc\LoadProfileOn" 
+									CheckRange="2" />
+									
+					<CustomBehavior File="Misc\InstanceTimer" 
+									Timer="Start" />
+					
+					<CustomBehavior File="Message" 
+									Text="Razorfen Downs initialized."  
+									LogColor="Fuchsia" />
+									
+					<!-- Wait 30 seconds so the main can get away from us -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="30000" />
+									
+					<!-- When the booster tags us again, we can move forward -->
+					<CustomBehavior File="Misc\LoadProfileOn" 
+									CheckRange="5" />
+									
+					<!-- If we are high enough to go to the next instance, do so -->
+					<CustomBehavior File="Misc\LoadProfileOn" 
+									MinLevel="42" 
+									ProfileName="[QO-N][42-48]_blackrock-depths.xml"  />
+					
+					<!-- Wait 30 seconds so the main can get away from us -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="30000" />
+
+					<!-- enableable combat -->
+					<EnableBehavior Name="Combat" />
+				</If> <!-- RFD -->
+			</While> <!-- Infinite loop -->
+		</If> <!-- RAF -->
+	</QuestOrder>
+</HBProfile>
+

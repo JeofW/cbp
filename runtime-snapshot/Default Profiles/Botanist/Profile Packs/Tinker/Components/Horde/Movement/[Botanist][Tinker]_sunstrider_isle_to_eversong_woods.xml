@@ -1,0 +1,97 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+<Name>[Botanist][Tinker]_dun-morogh_to_stormwind</Name>
+
+<MinLevel>1</MinLevel>
+<MaxLevel>151</MaxLevel>
+
+<MinDurability>-1</MinDurability>
+<MinFreeBagSlots>-1</MinFreeBagSlots>
+<TargetingDistance>1</TargetingDistance>
+
+<MailGrey>False</MailGrey>
+<MailWhite>False</MailWhite>
+<MailGreen>False</MailGreen>
+<MailBlue>False</MailBlue>
+<MailPurple>False</MailPurple>
+
+<SellGrey>False</SellGrey>
+<SellWhite>False</SellWhite>
+<SellGreen>False</SellGreen>
+<SellBlue>False</SellBlue>
+<SellPurple>False</SellPurple>
+
+<AvoidMobs>		 
+</AvoidMobs>
+
+<Blackspots>
+</Blackspots>
+
+<Mailboxes>
+</Mailboxes>
+
+<Vendors>
+</Vendors>
+
+<ProtectedItems>	
+</ProtectedItems>
+
+	<QuestOrder>
+	
+		<!-- If we are in Sunstrider Isle -->
+		<If Condition="Me.ZoneId == 6455">				
+
+			<!-- Profile message - We are in Sunstrider Isle. Navigating to Eversong Woods -->
+			<CustomBehavior File="Message" 
+								Text="We are in Sunstrider Isle. Navigating to Eversong Woods." 
+								LogColor="Plum" />				
+	
+			<!-- Profile message - Disabling combat -->
+			<CustomBehavior File="Message" 
+								Text="Disabling combat." 
+								LogColor="Gold" />
+			
+			<!-- DisableBehavior - Combat -->
+			<DisableBehavior Name="Combat" />
+	
+			<!-- Profile message - Disabling 'Pull' behavior -->
+			<CustomBehavior File="Message" 
+							Text="Disabling 'Pull' behavior."
+							LogColor="Plum" />
+			
+			<!-- DisableBehavior - Pull -->
+			<DisableBehavior Name="Pull" />				
+
+			<!-- Move to - Dawning Lane - Everson Doods -->
+			<MoveTo X="9977.556" Y="-6492.255" Z="1.710775" />	
+				
+			<!-- Profile message - Enabling combat -->
+			<CustomBehavior File="Message" 
+								Text="Enabling combat." 
+								LogColor="Gold" />
+
+			<!-- enable combat -->
+			<EnableBehavior Name="Combat" />	
+				
+			<!-- Profile message - Enabling 'Pull' behavior -->
+			<CustomBehavior File="Message" 
+							Text="Enabling 'Pull' behavior."
+							LogColor="Plum" />
+			
+			<!-- EnableBehavior - Pull -->
+			<EnableBehavior Name="Pull" />	
+				
+		</If>	<!-- If we are in Sunstrider Isle -->
+		
+		<!-- If we are in Eversong Woods -->
+		<If Condition="Me.ZoneId == 3430">
+		
+			<!--  CustomBehavior - LoadProfile - [Botanist][Tinker]_eversong_woods_to_undercity -->				
+			<CustomBehavior File="LoadProfile" 
+							ProfileName="[Botanist][Tinker]_eversong_woods_to_undercity" />
+
+		</If>	<!-- If we are in Eversong Woods -->
+		
+	</QuestOrder>
+
+</HBProfile>
+

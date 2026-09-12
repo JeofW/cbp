@@ -1,0 +1,115 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+	<Name>[QO-N-M][10-X-Hr][Trash-Farm][90]_botanist_molten-core</Name>
+   
+	<MinLevel>1</MinLevel>
+	<MaxLevel>91</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	
+	<MailGrey>False</MailGrey>
+	<MailWhite>False</MailWhite>
+	<MailGreen>True</MailGreen>
+	<MailBlue>True</MailBlue>
+	<MailPurple>True</MailPurple>
+   
+	<SellGrey>True</SellGrey>
+	<SellWhite>True</SellWhite>
+	<SellGreen>False</SellGreen>
+	<SellBlue>False</SellBlue>
+	<SellPurple>True</SellPurple>
+   
+	<TargetElites>True</TargetElites>
+	
+	<AvoidMobs>	 
+		<Mob Name="Summon Enabler Stalker" Entry="53488" />
+	</AvoidMobs>
+	
+	<Blackspots>
+		<Blackspot X="895.1125" Y="-580.083" Z="-202.7817" Radius="35" />
+		<Blackspot X="741.8684" Y="-1198.659" Z="-119.1568" Radius="40" />
+		<Blackspot X="796.7194" Y="-994.7185" Z="-206.949" Radius="20" />
+	</Blackspots>
+
+	<Mailboxes>
+	</Mailboxes>
+ 
+	<Vendors>
+	</Vendors>
+	
+	<ProtectedItems></ProtectedItems>
+
+	<Factions></Factions>
+	
+	<QuestOrder>
+
+		<CustomBehavior File="UserSettings" 
+						UseMount="True" 
+						LootMobs="True" 
+						KillBetweenHotspots="True" 
+						HarvestHerbs="False" 
+						HarvestMinerals="False" 
+						LogoutForInactivity="True" />
+				
+		<!--  If we inside Blackrock Mountain -->
+		<If Condition="Me.X &gt; -7788.206 &amp;&amp; Me.X &lt; -7359.371 &amp;&amp; Me.Y &gt; -1237.015 &amp;&amp; Me.Y &lt; -951.3706 &amp;&amp; Me.Z &gt; 188" > 
+		
+			<!-- If we are not on lower level of Blackrock Mountain -->
+			<If Condition="Me.X &gt; -7538.875 || Me.X &lt; -7170.465 || Me.Y &gt; -1086.957 || Me.Y &lt; -856.9006" > 
+			
+				<CustomBehavior File="Message" Text="We are in Blackrock Mountain  /nbut not on the lower level /nmoving outside Blackrock Mountain." LogColor="Gold" />
+					
+				<!-- MoveTo - overhead gate -->
+				<MoveTo X="-7480.519" Y="-1071.433" Z="265.209" />	
+
+				<!-- MoveTo - mounting location -->
+				<MoveTo X="-7297.678" Y="-1064.582" Z="277.0615" />
+				
+			</If>	<!-- If we are not on lower level of Blackrock Mountain-->	
+			
+		</If>	<!--  If we inside blackrock mountain -->
+
+		<!-- If we are in Eastern Kingdoms -->
+		<If Condition="Me.MapId == 0" >
+			
+			<!-- If we are not on lower level of Blackrock Mountain -->
+			<If Condition="Me.X &lt; -7538.875 || Me.X &gt; -7170.465 || Me.Y &lt; -1086.957 || Me.Y &gt; -856.9006 || Me.Z &gt; 188" > 
+			
+				<!--  If we are not inside Blackrock Mountain -->
+				<If Condition="Me.X &gt; -7788.206 || Me.X &lt; -7359.371 || Me.Y &gt; -1237.015 || Me.Y &lt; -951.3706" > 
+				
+						<CustomBehavior File="FlyTo" X="-7061.772" Y="-1172.792" Z="341.141" />
+						<CustomBehavior File="FlyTo" X="-7250.553" Y="-1082.543" Z="327.7298" />
+						<CustomBehavior File="MyCTM" X="-7362.484" Y="-1101.394" Z="291.3846" />
+						<CustomBehavior File="MyCTM" X="-7378.989" Y="-1095.77" Z="291.633" />
+						<CustomBehavior File="MyCTM" X="-7409.676" Y="-1100.668" Z="289.8604" />
+						<CustomBehavior File="MyCTM" X="-7418.046" Y="-1068.09" Z="284.8479" />
+						<CustomBehavior File="MyCTM" X="-7434.496" Y="-1059.474" Z="281.5124" />
+						<CustomBehavior File="MyCTM" X="-7483.129" Y="-1071.903" Z="266.0364" />
+						<CustomBehavior File="MyCTM" X="-7544.171" Y="-1095.415" Z="273.5811" />
+						<CustomBehavior File="MyCTM" X="-7568.178" Y="-1055.278" Z="207.2832" />
+						<CustomBehavior File="MyCTM" X="-7521.016" Y="-1049.576" Z="180.9109" />
+						<CustomBehavior File="ForcedDismount" />	
+						
+						<MoveTo X="-7510.874" Y="-1040.787" Z="180.9114" />
+
+				</If>	<!--  If we are not inside Blackrock Mountain -->
+				
+			</If>	<!-- If we are not on lower level of Blackrock Mountain -->	
+			
+		</If>	<!-- If we are in Eastern Kingdoms -->
+			
+		<!-- If we are next to Lothos -->
+		<If Condition="Me.X &lt; -7498.32 &amp;&amp; Me.X &gt; -7518.32 &amp;&amp; Me.Y &lt; -1029.495 &amp;&amp; Me.Y &gt; -1049.495 &amp;&amp; Me.Z &lt; 185" >
+		
+			<!-- Custom behavior - LoadProfile - [QO-N][10-X-Hr][Trash-Farm][90]_botanist_molten-core -->
+			<CustomBehavior File="LoadProfile" 
+							ProfileName="..\[QO-N][10-X-Hr][Trash-Farm][90]_botanist_molten-core" />
+							
+		</If>	<!-- If we are next to Lothos -->
+		
+	</QuestOrder>
+
+
+</HBProfile>
+

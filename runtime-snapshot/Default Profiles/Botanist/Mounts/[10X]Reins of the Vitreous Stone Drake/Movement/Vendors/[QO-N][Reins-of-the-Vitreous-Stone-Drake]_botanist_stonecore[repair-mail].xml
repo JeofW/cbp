@@ -1,0 +1,295 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+	<Name>[QO-N][Reins-of-the-Vitreous-Stone-Drake]_botanist_stonecore[repair-mail]</Name>
+   
+	<MinLevel>1</MinLevel>
+	<MaxLevel>101</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	
+	<MailGrey>False</MailGrey>
+	<MailWhite>True</MailWhite>
+	<MailGreen>False</MailGreen>
+	<MailBlue>False</MailBlue>
+	<MailPurple>False</MailPurple>
+   
+	<SellGrey>True</SellGrey>
+	<SellWhite>False</SellWhite>
+	<SellGreen>True</SellGreen>
+	<SellBlue>True</SellBlue>
+	<SellPurple>False</SellPurple>
+   
+	<TargetElites>True</TargetElites>
+	
+	<AvoidMobs>
+	</AvoidMobs>
+	
+	<Blackspots>
+		<Blackspot X="-7118.695" Y="-1225.898" Z="290.2605" Radius="1" />
+		<Blackspot X="1091.256" Y="-166.446" Z="-65.30894" Radius="1" />
+	</Blackspots>
+
+	<Mailboxes>
+	</Mailboxes>
+ 
+	<Vendors>
+	</Vendors>
+	
+	<ProtectedItems>	
+	</ProtectedItems>
+
+	<Factions></Factions>
+	
+	<QuestOrder>
+
+		<!-- UserSettings -->
+		<CustomBehavior File="UserSettings"
+						FindMountAutomatically="True"
+						GroundMountFarmingMode="False"
+						HarvestHerbs="False"
+						HarvestMinerals="False"
+						KillBetweenHotspots="True"
+						LogoutForInactivity="False"
+						LogoutInactivityUseForceQuit="False"
+						LootMobs="True"
+						LootRadius="25"
+						MountName=""
+						NinjaSkin="False"
+						PullDistance="25"
+						RessAtSpiritHealers="False"
+						SkinMobs="False"
+						UseMount="True" 
+						UseRandomMount="False" />
+
+		<!-- If our level is => 85 -->
+		<If Condition="Me.Level &gt;= 85">
+
+			<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+			<If Condition="(Me.FreeBagSlots &lt;= 25) || (Me.LowestDurabilityPercent &lt;= 0.3)" >
+
+				<!-- Profile message - Our durability is less than 30%, or we need to vendor -->
+				<CustomBehavior File="Message" 
+								Text="Our durability is less than 30%, or we need to vendor." 
+								LogColor="Lime" />
+									
+				<!-- If our earthstone/Innkeepers Daughter is set at Temple of the Earth -->				
+				<If Condition="Me.HearthstoneAreaId == 5303 ">
+				
+					<!-- Profile message - Our Hearthstone/Innkeepers Daughter is set at Temple of the Earth -->
+					<CustomBehavior File="Message" 
+									Text="Our Hearthstone/Innkeepers Daughter is set at Temple of the Earth ." 
+									LogColor="Cyan" />
+										
+					<!-- Have hearthstone -->
+					<If Condition="HasItem(6948)">
+						<CustomBehavior File="Message" 
+										Text="Using Hearthstone." 
+										LogColor="Lime" />
+										
+						<CustomBehavior File="Misc\RunLua" 
+										Lua="UseItemByName(6948)" 
+										WaitTime="1000" />
+										
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000" />
+					</If> <!-- Have hearthstone -->
+				
+					<!-- Have Innkeeper's Daughter -->
+					<If Condition="HasItem(64488)">
+						<CustomBehavior File="Message" 
+										Text="Using Innkeeper's Daughter." 
+										LogColor="Lime" />
+											
+						<CustomBehavior File="Misc\RunLua" 
+										Lua="UseItemByName(64488)" 
+										WaitTime="1000" />
+							
+						<!-- Wait 20 seconds for the game to load -->	
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000" />
+										
+					</If> <!-- Have Innkeeper's Daughter -->
+					
+				</If>	<!-- If our earthstone/Innkeepers Daughter is set at Temple of the Earth -->
+					
+				<!-- If we are inside Temple of the Earth -->
+				<If Condition="Me.Y &gt; 408.4768 &amp;&amp; Me.Y &lt; 649.2817 &amp;&amp; Me.X &gt; 964.1465 &amp;&amp; Me.X &lt; 1112.985 &amp;&amp; Me.Z &lt; 0" >
+				
+					<!-- Profile message - We are inside Temple of the Earth --> 
+					<CustomBehavior File="Message" 
+									Text="We are inside Temple of the Earth."
+									LogColor="Plum" />
+		
+					<!-- If we are Alliance -->
+					<If Condition="Me.IsAlliance">
+
+						<SetVendor>
+							<Vendors>
+								<!-- Temple of the Earth Repair -->
+								<Vendor Name="Dugsley Deepdelver" 
+										Entry="45294" 
+										Type="Repair" 
+										X="1052.99" Y="636.936" Z="-45.8709" />
+							</Vendors>
+						</SetVendor>
+						
+						<SetMailbox>
+							<Mailboxes>
+								<Mailbox X="1049.912" Y="632.4952" Z="-45.55866" />
+							</Mailboxes>
+						</SetMailbox>
+						
+						<!-- Force set the vendor -->
+						<CustomBehavior File="ForceSetVendor" 
+										DoMail="True" 
+										DoRepair="True" 
+										DoSell="True" 
+										DoTrain="False" />
+				
+					</If>	<!-- If we are Alliance -->
+				
+					<!-- If we are Horde -->
+					<If Condition="Me.IsHorde">
+
+						<SetVendor>
+							<Vendors>
+								<!-- Temple of the Earth Repair -->
+								<Vendor Name="Rixi 'The Driller' 
+										Bombdigger" 
+										Entry="45293" 
+										Type="Repair" 
+										X="1091.19" Y="436.332" Z="-45.96812" />
+							</Vendors>
+						</SetVendor>
+						
+						<SetMailbox>
+							<Mailboxes>
+								<Mailbox X="1089.173" Y="435.719" Z="-45.85225" />
+							</Mailboxes>
+						</SetMailbox>
+						
+						<!-- Force set the vendor -->
+						<CustomBehavior File="ForceSetVendor" 
+										DoMail="True" 
+										DoRepair="True" 
+										DoSell="True" 
+										DoTrain="False" />
+				
+					</If>	<!-- If we are Horde -->
+					
+					<!-- Else we are not inside Temple of the Earth -->
+					<Else>
+						
+						<!-- If we are in Stonecore -->
+						<If Condition="Me.MapId == 725">
+						
+							<!-- Profile message - You started the bot with me inside Stonecore. Exiting the dungeon to reset -->
+							<CustomBehavior File="Message" Text="You started the bot with me inside Stonecore. Exiting the dungeon to reset." LogColor="Cyan" />	
+								
+							<!-- Move to - zone in location -->
+							<MoveTo X="851.052" Y="986.474" Z="317.2723" />
+
+							<!-- Go through the portal -->
+							<CustomBehavior File="Misc\InInstance" 
+											X="815.4514" Y="986.9715" Z="318.9995" />
+							
+							<!-- Move to - zone out location-->
+							<MoveTo X="1023.72" Y="644.747" Z="156.672" />
+										
+							<!-- Flt to - Temple of the Earth entrance -->			
+							<CustomBehavior File="FlyTo" 
+											X="840.5391" Y="492.2466" Z="-63.31997" />
+							
+							<!-- Move to -  Temple of the Earth Innkeep -->
+							<MoveTo X="1018.878" Y="545.7827" Z="-49.33431" />			
+										
+							<!-- CustomBehavior - ForcedDismount -->
+							<CustomBehavior File="ForcedDismount" />			
+
+						</If>	<!-- If we are in Stonecore -->
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						<!-- If we are Alliance -->
+						<If Condition="Me.IsAlliance">
+
+							<SetVendor>
+								<Vendors>
+									<!-- Temple of the Earth Repair -->
+									<Vendor Name="Dugsley Deepdelver" 
+											Entry="45294" 
+											Type="Repair" 
+											X="1052.99" Y="636.936" Z="-45.8709" />
+								</Vendors>
+							</SetVendor>
+							
+							<SetMailbox>
+								<Mailboxes>
+									<Mailbox X="1049.912" Y="632.4952" Z="-45.55866" />
+								</Mailboxes>
+							</SetMailbox>
+							
+							<!-- Force set the vendor -->
+							<CustomBehavior File="ForceSetVendor" 
+											DoMail="True" 
+											DoRepair="True" 
+											DoSell="True" 
+											DoTrain="False" />
+					
+						</If>	<!-- If we are Alliance -->
+					
+						<!-- If we are Horde -->
+						<If Condition="Me.IsHorde">
+
+							<SetVendor>
+								<Vendors>
+									<!-- Temple of the Earth Repair -->
+									<Vendor Name="Rixi 'The Driller' 
+											Bombdigger" 
+											Entry="45293" 
+											Type="Repair" 
+											X="1091.19" Y="436.332" Z="-45.96812" />
+								</Vendors>
+							</SetVendor>
+							
+							<SetMailbox>
+								<Mailboxes>
+									<Mailbox X="1089.173" Y="435.719" Z="-45.85225" />
+								</Mailboxes>
+							</SetMailbox>
+							
+							<!-- Force set the vendor -->
+							<CustomBehavior File="ForceSetVendor" 
+											DoMail="True" 
+											DoRepair="True" 
+											DoSell="True" 
+											DoTrain="False" />
+					
+						</If>	<!-- If we are Horde -->
+						
+					</Else>	<!-- Else we are not inside Temple of the Earth -->
+					
+				</If>	<!-- If we are inside Temple of the Earth -->	
+
+			</If>	<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->	
+			
+		</If>	<!-- If our level is => 85 -->	
+
+		<!-- If we have more than 25 empty bag slots and our durability is greater than 30% -->
+		<If Condition="(Me.FreeBagSlots &gt; 25) &amp;&amp; (Me.LowestDurabilityPercent &gt;= 0.3)" >
+		
+			<!-- Load profile - [QO-N][Reins-of-the-Vitreous-Stone-Drake]_botanist_stonecore -->
+			<CustomBehavior File="LoadProfile" 
+							ProfileName="..\..\[QO-N][Reins-of-the-Vitreous-Stone-Drake]_botanist_stonecore" />
+									
+		</If>	<!-- If we have more than 25 empty bag slots and our durability is greater than 30% -->	
+
+	</QuestOrder>
+	
+</HBProfile>

@@ -1,0 +1,329 @@
+<HBProfile>
+<Name>[QO-N-M-90][Ancient Guo-Lai Cache Key][Flying]_botanist</Name> 
+
+<MinLevel>85</MinLevel> 
+<MaxLevel>101</MaxLevel>
+<MinDurability>-1</MinDurability>
+<MinFreeBagSlots>-1</MinFreeBagSlots>
+
+<SellGrey>True</SellGrey>
+<SellWhite>False</SellWhite>
+<SellGreen>False</SellGreen>
+<SellBlue>False</SellBlue>
+<SellPurple>False</SellPurple>
+
+<MailGrey>False</MailGrey>
+<MailWhite>True</MailWhite>
+<MailGreen>True</MailGreen>
+<MailBlue>True</MailBlue>
+<MailPurple>True</MailPurple>
+<Vendors>
+</Vendors>
+	
+<Mailboxes>
+</Mailboxes>
+
+	<QuestOrder>
+	
+		<!-- While our level is >= 90 and < 100 -->
+		<While Condition="Me.Level &gt;= 90 &amp;&amp; Me.Level &lt; 100" >
+				
+			<!-- Profile message - Movement procedures initialized -->
+			<CustomBehavior File="Message" 
+							Text="Movement procedures initialized." 
+							LogColor="Orange" />
+			
+			<!-- UserSettings -->
+			<CustomBehavior File="UserSettings"
+							FindMountAutomatically="True"
+							GroundMountFarmingMode="False"
+							HarvestHerbs="False"
+							HarvestMinerals="False"
+							KillBetweenHotspots="False"
+							LogoutForInactivity="False"
+							LogoutInactivityUseForceQuit="False"
+							LootMobs="True"
+							LootRadius="5"
+							MountName=""
+							NinjaSkin="False"
+							PullDistance="1"
+							RessAtSpiritHealers="False"
+							SkinMobs="False"
+							UseMount="True" 
+							UseRandomMount="False" />
+			
+			<!-- If we are in Eastern Kingdoms -->
+		<If Condition="Me.ZMapId == 0" >
+		
+			<!-- If we are Alliance -->
+			<If Condition="Me.IsAlliance">
+			
+				<!-- Profile message - We are in Eastern Kingdoms -->
+				<CustomBehavior File="Message" 
+								Text="We are in Eastern Kingdoms"  
+								LogColor="Orange" />
+								
+				<!-- Wait timer - wait 3 seconds - delay -->
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="3000" />				
+								
+				<!-- Profile message - Moving to the Pandaria portal -->
+				<CustomBehavior File="Message" 
+								Text="Moving to the Pandaria portal."  
+								LogColor="Cyan" />				
+								
+				<!-- Move to - Pandaria portal - hover point -->				
+				<CustomBehavior File="FlyTo" 
+								X="-8240.943" Y="528.4667" Z="154.3051" />				
+								
+				<!-- CTM to - grounding at the Pandaria portal -->
+				<CustomBehavior File="MyCTM" 
+								X="-8198.1" Y="527.0742" Z="116.9559" />	
+
+				<!-- Forced dismount -->	
+				<CustomBehavior File="ForcedDismount" />
+				
+				<!-- Interact with the teleporter -->
+				<CustomBehavior File="InteractWith" 
+								MobId="215457" />
+												
+				<!-- Custom behavior - WaitTimer - wait 15 seconds - delay -->
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="15000" />
+								
+				<!-- Else we are Horde -->
+				<Else>
+				
+					<!-- Profile message - Horde must start the profile in Kalimdor or Pandaria -->
+					<CustomBehavior File="Message" 
+									Text="Horde must start the profile in Kalimdor or Pandaria"  
+									LogColor="Orange" />
+							
+					<!-- Profile message  - Stopping the bot -->	
+					<CustomBehavior File="Message" 
+									Text="Stopping the bot." 
+									LogColor="Orange" />
+				
+					<!-- CustomBehavior - UserSettings - StopBot -->
+					<CustomBehavior File="UserSettings" 
+									StopBot="true" />		
+							
+				</Else>	<!-- Else we are Horde -->
+			
+			</If>	<!-- Else we are Horde -->
+			
+		</If>	<!-- If we are Alliance -->
+
+		<!-- If we are in Kalimdor -->
+		<If Condition="Me.MapId == 1" >
+		
+			<!-- If we are Horde -->
+			<If Condition="Me.IsHorde">
+		
+				<!-- Profile message - We are in Kalimdor -->
+				<CustomBehavior File="Message" 
+								Text="We are in Kalimdor"  
+								LogColor="Orange" />
+								
+				<!-- Wait timer - wait 3 seconds - delay -->
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="3000" />				
+
+				<!-- Profile message - Moving to the Pandaria portal -->
+				<CustomBehavior File="Message" 
+								Text="Moving to the Pandaria portal."  
+								LogColor="Cyan" />				
+								
+				<!-- Move to - Pandaria portal - hover point -->				
+				<CustomBehavior File="FlyTo" 
+								X="1984.583" Y="-4668.362" Z="138.3537" />				
+								
+				<!-- CTM to - grounding at the Pandaria portal -->
+				<CustomBehavior File="MyCTM" 
+								X="2016.164" Y="-4697.142" Z="28.54681" />	
+
+				<!-- Forced dismount -->	
+				<CustomBehavior File="ForcedDismount" />
+				
+				<!-- Interact with the teleporter -->
+				<CustomBehavior File="InteractWith" 
+								MobId="215424" />
+												
+				<!-- Custom behavior - WaitTimer - wait 15 seconds - delay -->
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="15000" />
+			
+				<!-- Else we are Alliance -->
+				<Else>
+				
+					<!-- Profile message - Alliance must start the profile in Kalimdor or Pandaria -->
+					<CustomBehavior File="Message" 
+									Text="Alliance must start the profile in Eastern Kingdoms or Pandaria or Pandaria"  
+									LogColor="Orange" />
+							
+					<!-- Profile message  - Stopping the bot -->	
+					<CustomBehavior File="Message" 
+									Text="Stopping the bot." 
+									LogColor="Orange" />
+				
+					<!-- CustomBehavior - UserSettings - StopBot -->
+					<CustomBehavior File="UserSettings" 
+									StopBot="true" />		
+							
+				</Else>	<!-- Else we are Alliance -->
+			
+			</If>	<!-- Else we are Horde -->
+			
+		</If>	<!-- If we are in Kalimdor -->
+			
+			<!-- If we are in Pandaria -->
+			<If Condition="Me.MapId == 870" >
+			
+				<!-- Profile message - We are in Pandaria -->
+				<CustomBehavior File="Message" 
+							Text="We are in Pandaria." 
+							LogColor="Plum" />
+			
+				<!-- If our hearthstone is not set to Shrine of the Seven Stars or Shrine of Two Moons -->
+				<If Condition="(Me.HearthstoneAreaId != 6484) &amp;&amp; (Me.HearthstoneAreaId != 6519)">	
+				
+					<!-- Profile message - Moving to Shrine of the Seven Stars or Shrine of Two Moons to set our Hearthstone -->
+					<CustomBehavior File="Message" 
+									Text="Moving to Shrine of the Seven Stars or Shrine of Two Moons to set our Hearthstone." 
+									LogColor="Plum" />
+
+					<!-- If we are Alliance -->
+					<If Condition="Me.IsAlliance">			
+									
+						<!-- Move to - Shrine of the Seven Stars hover point -->
+						<CustomBehavior File="FlyTo"
+										X="848.1744" Y="359.405" Z="542.0466" />
+							
+						<!-- Move to -  Shrine of the Seven Stars - mailbox -->
+						<CustomBehavior File="MyCTM"
+										X="813.1781" Y="315.9352" Z="503.1204" />	
+							
+						<!-- Custom behavior - ForcedDismount -->	
+						<CustomBehavior File="ForcedDismount" />	
+							
+						<!--  Move to - Matron Vi Vinh - innkeep -->	
+						<MoveTo X="782.6702" Y="283.2522" Z="503.4185" />
+
+						<!-- Profile message - Setting our Hearthstone with the innkeep -->
+						<CustomBehavior File="Message" 
+										Text="Setting our Hearthstone with the innkeep." 
+										LogColor="Plum" />
+
+						<!-- Custom behavior - SetHearthstone -->				
+						<CustomBehavior File="SetHearthstone" 
+										MobId="64149" 
+										X="784.0816" Y="280.3924" Z="503.4188" />
+
+						<!-- Profile message - We have set our Hearthstone -->				
+						<CustomBehavior File="Message" 
+										Text="We have set our Hearthstone." 
+										LogColor="Plum" />
+						
+						<!-- Move to - Shrine of the Seven Stars - flight master -->
+						<MoveTo X="894.5328" Y="333.4745" Z="506.0945" />
+
+						<!-- Else we are Horde -->
+						<Else>
+						
+							<!-- Move to - Shrine of the Two Moons hover point -->
+							<CustomBehavior File="FlyTo"
+											X="1605.152" Y="852.9587" Z="520.5529" />
+								
+							<!-- Move to -  Shrine of the Two Moons - door -->
+							<CustomBehavior File="MyCTM"
+											X="1657.736" Y="872.8345" Z="470.626" />	
+								
+							<!-- Custom behavior - ForcedDismount -->	
+							<CustomBehavior File="ForcedDismount" />	
+								
+							<!--  Move to - Madam Vee Luo- innkeep -->	
+							<MoveTo X="1700.989" Y="891.2759" Z="470.9801" />
+
+							<!-- Profile message - Setting our Hearthstone with the innkeep -->
+							<CustomBehavior File="Message" 
+											Text="Setting our Hearthstone with the innkeep." 
+											LogColor="Plum" />
+
+							<!-- Custom behavior - SetHearthstone -->				
+							<CustomBehavior File="SetHearthstone" 
+											MobId="62996" 
+											X="1700.946" Y="893.5833" Z="470.9802" />
+
+							<!-- Profile message - We have set our Hearthstone -->				
+							<CustomBehavior File="Message" 
+											Text="We have set our Hearthstone." 
+											LogColor="Plum" />
+							
+							<!-- Move to - Shrine of the Two Moons - flight master -->
+							<MoveTo X="1579.75" Y="891.9209" Z="473.6002" />
+						
+						</Else>	<!-- Else we are Horde -->
+						
+					</If>	<!-- If we are Alliance -->	
+						
+					<!-- Else our hearthstone is set to Shrine of the Seven Stars or Shrine of Two Moons -->
+					<Else>
+					
+						<!-- Profile message - Our Hearthstone is set to Shrine of the Seven Stars or Shrine of Two Moons -->
+						<CustomBehavior File="Message" 
+										Text="Our Hearthstone is set to Shrine of the Seven Stars or Shrine of Two Moons." 
+										LogColor="Plum" />
+					
+					</Else>		<!-- Else our hearthstone is set to Shrine of the Seven Stars or Shrine of Two Moons -->	
+					
+				</If>	<!-- If our hearthstone is not set to Longying Outpost -->
+			
+				<!-- Else we are not in Pandaria -->
+				<Else>
+				
+					<!-- Profile message - You need to be in Pandaria to start this profile, until I add another movement file -->
+					<CustomBehavior File="Message" 
+								Text="You need to be in Pandaria to start this profile, until I add another movement file." 
+								LogColor="Plum" />
+								
+					<!-- Profile message - Stopping the bot -->
+					<CustomBehavior File="Message" 
+								Text="Stopping the bot." 
+								LogColor="Red" />
+
+					<!-- Custom behavior - StopBot -->
+					<CustomBehavior File="UserSettings" 
+									StopBot="true" />						
+				
+				</Else>		<!-- Else we are not in Pandaria -->
+			
+			</If>	<!-- If we are in Pandaria -->
+
+			<!-- If we are not in the farming area -->
+			<If Condition="Me.X &lt; 988.8118 || Me.X &gt; 1484.53 || Me.Y &lt; 1703.099 || Me.Y &gt; 2229.795" >
+			
+				<!-- Move to - beginning of the route hover point -->
+				<CustomBehavior File="FlyTo"
+								X="1036.593" Y="1756.34" Z="385.2216" />
+								
+			</If>	<!-- If we are not in the farming area -->
+
+			<!-- If we are in the farming area -->
+			<If Condition="Me.X &gt; 988.8118 &amp;&amp; Me.X &lt; 1484.53 &amp;&amp; Me.Y &gt; 1703.099 &amp;&amp; Me.Y &lt; 2229.795" >	
+			
+				<!-- Profile message - Movement procedures deactivated. Changing to farming mode -->
+				<CustomBehavior File="Message" 
+								Text="Movement procedures deactivated. Changing to farming mode." 
+								LogColor="Orange" />
+		
+				<!-- Load profile - [QO-N-90][Ancient Guo-Lai Cache Key][Flying]_botanist -->
+				<CustomBehavior File="LoadProfile" 
+								ProfileName="..\[QO-N-90][Ancient Guo-Lai Cache Key][Flying]_botanist" />
+
+			</If>	<!-- If we are in the farming area --> 	
+
+		</While>	<!-- While our level is >= 90 and < 100 -->
+			
+	</QuestOrder>
+	
+</HBProfile> 

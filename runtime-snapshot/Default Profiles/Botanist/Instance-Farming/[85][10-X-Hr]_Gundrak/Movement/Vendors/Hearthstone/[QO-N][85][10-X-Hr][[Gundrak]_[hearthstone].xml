@@ -1,0 +1,139 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+<Name>[QO-N][85][10-X-Hr][[Gundrak]_[hearthstone]</Name>
+
+<MinLevel>1</MinLevel>
+<MaxLevel>151</MaxLevel>
+
+<MinDurability>-1</MinDurability>
+<MinFreeBagSlots>-1</MinFreeBagSlots>
+<TargetingDistance>45</TargetingDistance>
+<TargetElites>False</TargetElites>
+
+<MailGrey>False</MailGrey>
+<MailWhite>False</MailWhite>
+<MailGreen>False</MailGreen>
+<MailBlue>False</MailBlue>
+<MailPurple>False</MailPurple>
+
+<SellGrey>False</SellGrey>
+<SellWhite>False</SellWhite>
+<SellGreen>False</SellGreen>
+<SellBlue>False</SellBlue>
+<SellPurple>False</SellPurple>
+
+<AvoidMobs>		 
+</AvoidMobs>
+
+<Blackspots>
+</Blackspots>
+
+<Mailboxes>
+</Mailboxes>
+
+<Vendors>
+</Vendors>
+
+<ProtectedItems>	
+</ProtectedItems>
+
+	<QuestOrder>
+	
+		<!-- UserSettings -->
+			<CustomBehavior File="UserSettings"
+							FindMountAutomatically="True"
+							GroundMountFarmingMode="False"
+							HarvestHerbs="False"
+							HarvestMinerals="False"
+							KillBetweenHotspots="False"
+							LogoutForInactivity="True"
+							LogoutInactivityUseForceQuit="True"
+							LootMobs="False"
+							LootRadius="1"
+							MountName=""
+							NinjaSkin="False"
+							RessAtSpiritHealers="False"
+							SkinMobs="False"
+							UseMount="True" 
+							UseRandomMount="False" />
+			
+		<!-- If our level = > 85 -->				
+		<If Condition="Me.Level &gt;= 85" >
+	
+			<!-- If our Hearthstone/Innkeepers Daughter is set at The Argent Stand -->
+			<If Condition="(Me.HearthstoneAreaId == 4275)">
+	
+				<!-- CustomBehavior - Message - Our Hearthstone has already been set at The Argent Stand -->
+				<CustomBehavior File="Message" 
+								Text="Our Hearthstone has already been set at The Argent Stand." 
+								LogColor="Plum" />
+								
+				<!-- CustomBehavior - WaitTimer - 1 second delay -->
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="1000" />
+
+				<!--  CustomBehavior - LoadProfile - [QO-N][85][10-X-Hr][[Gundrak]_botanist -->				
+				<CustomBehavior File="LoadProfile" 
+								ProfileName="..\..\..\[QO-N][85][10-X-Hr][[Gundrak]_botanist" />
+	
+				<!-- Else our hearthstone is not set at The Argent Stand -->
+				<Else>
+				
+					<!-- CustomBehavior - Message -  We have not set out Hearthstone in The Argent Stand. Navigating to the innkeep -->
+					<CustomBehavior File="Message" 
+										Text="We have not set our Hearthstone in The Argent Stand. Navigating to the innkeep." 
+										LogColor="Plum" />				
+			
+					<!-- Profile message - Flying to The Argent Stand -->
+					<CustomBehavior File="Message" 
+									Text="Flying to The Argent Stand." 
+									LogColor="Cyan" />
+				
+					<!-- Fly to - The Argent Stand hover point -->
+					<CustomBehavior File="FlyTo" 
+									X="5382.631" Y="-2629.626" Z="354.096" />
+
+					<!-- Fly to - doorway of the inn -->
+					<CustomBehavior File="MyCTM" 
+									X="5424.029" Y="-2630.762" Z="306.9579" />
+					
+					<!-- Custom behavior - ForcedDismount -->
+					<CustomBehavior File="ForcedDismount" />
+
+					<!-- Move to - inside the inn -->
+					<MoveTo X="5460.455" Y="-2635.566" Z="306.5505" />
+					
+					<!-- Profile message - Setting our Hearthstone -->
+					<CustomBehavior File="Message" 
+									Text="Setting our Hearthstone." 
+									LogColor="Cyan" />
+									
+					<!-- Custom behavior - SetHearthstone -->				
+					<CustomBehavior File="SetHearthstone" 
+									MobId="28791" 
+									X="5462.965" Y="-2639.05" Z="306.5511" />
+									
+					<!-- Move to - outside of the inn -->
+					<MoveTo X="5391.979" Y="-2633.406" Z="303.9542" />
+					
+					<!-- Fly to - The Argent Stand hover point -->
+					<CustomBehavior File="FlyTo" 
+									X="5382.631" Y="-2629.626" Z="354.096" />
+					
+					<!-- Profile message - We are in The Argent Stand -->
+					<CustomBehavior File="Message" 
+									Text="We are in The Argent Stand." 
+									LogColor="Cyan" />
+					
+					<!--  CustomBehavior - LoadProfile - [QO-N][85][10-X-Hr][[Gundrak]_botanist -->				
+					<CustomBehavior File="LoadProfile" 
+									ProfileName="..\..\..\[QO-N][85][10-X-Hr][[Gundrak]_botanist" />
+
+				</Else>	<!-- Else our hearthstone is not set at Golshire-->
+
+			</If>	<!-- If our hearthstone is set at Golshire-->
+
+		</If>	<!-- If our level = > 85 -->
+			
+	</QuestOrder>
+
+</HBProfile>

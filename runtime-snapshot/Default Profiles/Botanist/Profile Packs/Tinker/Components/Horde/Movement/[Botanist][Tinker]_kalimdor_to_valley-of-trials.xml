@@ -1,0 +1,77 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+<Name>[Botanist][Tinker]_orgrimmar_to_valley-of-trials</Name>
+
+<MinLevel>1</MinLevel>
+<MaxLevel>151</MaxLevel>
+
+<MinDurability>-1</MinDurability>
+<MinFreeBagSlots>-1</MinFreeBagSlots>
+<TargetingDistance>45</TargetingDistance>
+
+<MailGrey>False</MailGrey>
+<MailWhite>False</MailWhite>
+<MailGreen>False</MailGreen>
+<MailBlue>False</MailBlue>
+<MailPurple>False</MailPurple>
+
+<SellGrey>False</SellGrey>
+<SellWhite>False</SellWhite>
+<SellGreen>False</SellGreen>
+<SellBlue>False</SellBlue>
+<SellPurple>False</SellPurple>
+
+<AvoidMobs>		 
+</AvoidMobs>
+
+<Blackspots>
+</Blackspots>
+
+<Mailboxes>
+</Mailboxes>
+
+<Vendors>
+</Vendors>
+
+<ProtectedItems>	
+</ProtectedItems>
+
+	<QuestOrder>
+			
+		<!-- If we are in Kalidor -->
+		<If Condition="Me.MapId == 1">
+		
+			<!-- CustomBehavior - Message - We are in Kalidor. Navigating to Valley of Trials -->
+			<CustomBehavior File="Message" 
+							Text="We are in Kalidor. Navigating to Valley of Trials." 
+							LogColor="Plum" /> 
+							
+			<!-- Move to - Valley of Trials -->	
+			<MoveTo X="-618.2809" Y="-4251.517" Z="38.75153" />
+			
+			<!-- CustomBehavior - WaitTimer - 3 second delay  -->				
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="1000" />
+		
+		</If>	<!-- If we are in Orgrimmar -->
+		
+		<!-- If we are in Valley of Trials -->
+		<If Condition="Me.ZoneId == 6451">
+
+			<!-- CustomBehavior - WaitTimer - 1 second delay  -->				
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="1000" />
+		
+			<!-- CustomBehavior - Message - We are in Valley of Trials -->
+			<CustomBehavior File="Message" 
+							Text="We are in Valley of Trials." 
+							LogColor="Plum" />
+		
+			<!--  CustomBehavior - LoadProfile - [Botanist][Tinker][H-5][profession-check] -->				
+			<CustomBehavior File="LoadProfile" 
+							ProfileName="..\[Botanist][Tinker][H-5][profession-check]" />
+		
+		</If>	<!-- If we are in Valley of Trials -->
+
+	</QuestOrder>
+
+</HBProfile>

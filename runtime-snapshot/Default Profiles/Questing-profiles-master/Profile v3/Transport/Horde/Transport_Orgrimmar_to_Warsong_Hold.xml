@@ -1,0 +1,27 @@
+<HBProfile>
+	<!-- 
+    Transport Profile: Orgrimmar to Warsong Hold
+    Transport: Zeppelin to Borean Tundra (ID: 186238)
+    Faction: Horde
+    Route: Kalimdor -> Northrend
+    
+    Generated from WRobot coordinates
+  -->
+	<Name>Transport_Orgrimmar_to_Warsong_Hold</Name>
+	<MinLevel>1</MinLevel>
+	<MaxLevel>81</MaxLevel>
+
+	<AvoidMobs />
+
+	<SellGrey>false</SellGrey>
+
+	<QuestOrder>
+		<CustomBehavior File="UserSettings" LootMobs="False" />
+		<!-- Run to departure dock -->
+		<!-- Take transport -->
+		<RunTo X="1174.1" Y="-4152.4" Z="51.6" />
+		<CustomBehavior File="UseTransport" TransportId="186238" DestName="The Mighty Wind" WaitAtX="1174.1" WaitAtY="-4152.4" WaitAtZ="51.6" TransportStartX="1185" TransportStartY="-4144.2" TransportStartZ="70.6" StandOnX="1185" StandOnY="-4144.2" StandOnZ="51.6" TransportEndX="2837.9" TransportEndY="6187.4" TransportEndZ="140.2" GetOffX="2836.831" GetOffY="6185.15" GetOffZ="121.9923" />
+		<CustomBehavior File="WaitTimer" WaitTime="2000" />
+		<!-- Move away from dock -->
+	</QuestOrder>
+</HBProfile>

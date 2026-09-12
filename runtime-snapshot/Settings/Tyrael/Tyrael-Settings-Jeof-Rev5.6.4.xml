@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TyraelSettings>
+  <ChatOutput>True</ChatOutput>
+  <ClickToMove>True</ClickToMove>
+  <ContinuesHealingMode>False</ContinuesHealingMode>
+  <PluginPulsing>False</PluginPulsing>
+  <RaidWarningOutput>False</RaidWarningOutput>
+  <UseSoftLock>False</UseSoftLock>
+  <PauseKeyChoice>X</PauseKeyChoice>
+  <ModKeyChoice>Alt</ModKeyChoice>
+</TyraelSettings>

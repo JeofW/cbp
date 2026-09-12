@@ -1,0 +1,167 @@
+<HBProfile>
+	<Name>[QO-H-11][Iroquois]_botanist_pangaea</Name>
+	<MinLevel>1</MinLevel>
+	<MaxLevel>91</MaxLevel>
+  
+	<MinDurability>0.2</MinDurability>
+	<MinFreeBagSlots>2</MinFreeBagSlots>
+  
+	<MailGrey>False</MailGrey>
+	<MailWhite>True</MailWhite>
+	<MailGreen>True</MailGreen>
+	<MailBlue>True</MailBlue>
+	<MailPurple>True</MailPurple>
+  
+	<SellGrey>True</SellGrey>
+	<SellWhite>True</SellWhite>
+	<SellGreen>True</SellGreen>
+	<SellBlue>False</SellBlue>
+	<SellPurple>False</SellPurple>
+
+	<AvoidMobs>
+	</AvoidMobs>
+	
+	<Blackspots>
+	</Blackspots>
+	
+	<Mailboxes>
+	</Mailboxes>
+	
+	<Vendors>
+	</Vendors>
+	
+
+			
+		<SetVendor>
+			<Vendors>
+			</Vendors>
+		</SetVendor>
+		
+		
+	
+	<QuestOrder>
+
+				<If Condition="Me.MapId == 870" >
+					<CustomBehavior File="UserSettings" 
+									LootMobs="True" 
+									SkinMobs="False" 
+									NinjaSkin="False" 
+									HarvestHerbs="False" 
+									HarvestMinerals="False" 
+									KillBetweenHotspots="True" 
+									RessAtSpiritHealers="False"  
+									LootRadius="75" 
+									LogoutForInactivity="True" />
+					
+					<If Condition="((!HasQuest(31395)) &amp;&amp; (!IsQuestCompleted(31395)))" >
+						<CustomBehavior File="Message" Text="Moving to Temple of the White Tiger to complete 'A Celestial Experience'." LogColor="Lime" />
+							<MoveTo X="3691.744" Y="545.4194" Z="639.6908" />
+						<CustomBehavior File="RunLikeHell" UseCTM="true" NumOfTimes="1" AllowCombat="false">
+							<Hotspot X="3815.916" Y="535.1093" Z="639.0081" />
+						</CustomBehavior>
+						<PickUp QuestName="A Celestial Experience" QuestId="31395" GiverName="Sunwalker Dezco" GiverId="64542" />
+					</If>
+					
+					<If Condition="((HasQuest(31395)) &amp;&amp; (!IsQuestCompleted(31395)))" >
+					
+							<MoveTo X="3833.209" Y="528.6337" Z="639.691" />
+							
+					<!-- Interact with Xuen -->
+					<CustomBehavior File="InteractWith"
+									ObjectType="Npc"
+									Range="75"
+									MobId="64528"
+									X="3833.209" Y="528.6337" Z="639.691" />
+									
+						<CustomBehavior File="GetOutOfGroundEffectAndAuras" 
+										EventCompleteWhen="SpecificMobsDead" EventCompleteDeadMobId="64742"
+										EventX="3791.613" EventY="534.3569" EventZ="639.0074"
+										MoveOutOfGroundEffectAuraId1="126625"
+										MoveBehindMobCastingSpellId1="126631"
+										MoveAwayFromMobCastingSpellId1="126633"
+										MoveAwayFromMobWithAuraId1="23719"
+										MoveAwayFromMobWithAuraId2="126633">
+							<Safespots> <!-- safe spots in the room are the gold circles that comprise the big circle -->
+								<Hotspot X="3777.682" Y="549.4387" Z="639.0074" />
+								<Hotspot X="3798.857" Y="558.9065" Z="639.0074" />
+								<Hotspot X="3818.901" Y="545.8683" Z="639.2289" />
+								<Hotspot X="3815.414" Y="516.5005" Z="639.0848" />
+								<Hotspot X="3793.716" Y="507.7243" Z="639.0076" />
+								<Hotspot X="3773.379" Y="520.7094" Z="639.125" />
+							</Safespots>
+						</CustomBehavior>
+						
+						
+							<MoveTo X="3819.135" Y="535.2518" Z="639.0074" />
+							
+						<TurnIn QuestName="A Celestial Experience" QuestId="31395" TurnInName="Sunwalker Dezco" TurnInId="64542" />	
+						
+					</If>
+					
+					<If Condition="((!HasQuest(31511)) &amp;&amp; (!IsQuestCompleted(31511)))" >
+					
+						<PickUp QuestName="A Witness to History" QuestId="31511" GiverName="Sunwalker Dezco" GiverId="64542" />
+
+						<MoveTo X="1797.797" Y="1323.47" Z="468.8543" />
+							
+						<!-- Interact with Sunwalker Dezco -->
+						<CustomBehavior File="InteractWith"
+										ObjectType="Npc"
+										Range="75"
+										MobId="64853"
+										X="1797.797" Y="1323.47" Z="468.8543" />	
+							
+						<TurnIn QuestName="A Witness to History" QuestId="31511" TurnInName="Madam Vee Luo" TurnInId="62996" />
+						
+					</If>
+					
+					<If Condition="((HasQuest(31511)) &amp;&amp; (!IsQuestCompleted(31511)))" >
+					
+						<CustomBehavior File="UserSettings" UseMount="True"/>
+						
+						<MoveTo X="1797.797" Y="1323.47" Z="468.8543" />
+							
+						<!-- Interact with Sunwalker Dezco -->
+						<CustomBehavior File="InteractWith"
+										GossipOptions="1"
+										ObjectType="Npc"
+										Range="75"
+										MobId="64853"
+										X="1797.797" Y="1323.47" Z="468.8543" />	
+							
+						<TurnIn QuestName="A Witness to History" QuestId="31511" TurnInName="Madam Vee Luo" TurnInId="62996" />
+						
+					</If>
+					
+					<If Condition="Me.IsAlliance" >
+							
+							<MoveTo X="908.4436" Y="343.5705" Z="506.0943" />
+									
+						<CustomBehavior File="Message" Text="I have reached the level 90 flying trainer. I hope this profile was satisfactory for you needs." LogColor="Lime" />
+						<CustomBehavior File="WaitTimer" WaitTime="1000" />
+						<CustomBehavior File="Message" Text="I am stopping the bot. Thank you for using my profiles, Botanist" LogColor="Lime" />
+						<CustomBehavior File="WaitTimer" WaitTime="1000" />
+						<CustomBehavior File="UserSettings" StopBot="true" />
+					</If>
+					
+					<If Condition="Me.IsHorde" >
+						
+						<MoveTo X="1558.515" Y="893.5574" Z="473.6003" />
+													
+					<CustomBehavior File="Message" Text="I have reached the level 90 Flight Trainer. I hope this profile was satisfactory for your needs." LogColor="Lime" />
+					<CustomBehavior File="WaitTimer" WaitTime="1000" />
+					<CustomBehavior File="Message" Text="I am stopping the bot. Thank you for using my profiles, Botanist" LogColor="Lime" />
+					<CustomBehavior File="WaitTimer" WaitTime="1000" />
+					<CustomBehavior File="UserSettings" StopBot="true" />
+				</If>
+					
+				</If>	
+					
+				<If Condition="Me.MapId != 870" >
+					<CustomBehavior File="Message" Text="You need to be in Pandaria to run this profile. I am stopping the bot." LogColor="Lime" />
+					<CustomBehavior File="UserSettings" StopBot="true" />
+				</If>	
+				
+	</QuestOrder>
+
+</HBProfile>	

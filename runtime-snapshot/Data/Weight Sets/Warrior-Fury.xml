@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WeightSet Class="Warrior" Specialization="2" Name="Warrior-Fury">
+  <MetaSocket>11</MetaSocket>
+  <RedSocket>8</RedSocket>
+  <YellowSocket>8</YellowSocket>
+  <BlueSocket>8</BlueSocket>
+  <Strength>1</Strength>
+  <Stamina>1</Stamina>
+  <CriticalStrikeRatingMelee>0.9</CriticalStrikeRatingMelee>
+  <CriticalStrikeRating>0.9</CriticalStrikeRating>
+  <Agility>0.7</Agility>
+  <ArmorPenetrationRating>0.7</ArmorPenetrationRating>
+  <ExpertiseRating>0.7</ExpertiseRating>
+  <HasteRatingMelee>0.55</HasteRatingMelee>
+  <HasteRating>0.55</HasteRating>
+  <MeleeAttackPower>0.45</MeleeAttackPower>
+  <HitRatingMelee>0.4</HitRatingMelee>
+  <HitRating>0.4</HitRating>
+  <Armor>0.01</Armor>
+</WeightSet>

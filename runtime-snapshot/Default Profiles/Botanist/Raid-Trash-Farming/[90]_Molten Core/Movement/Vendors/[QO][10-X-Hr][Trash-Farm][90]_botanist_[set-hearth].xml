@@ -1,0 +1,115 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+	<Name>[QO][10-X-Hr][Trash-Farm][90]_botanist_[set-hearth]</Name>
+   
+	<MinLevel>1</MinLevel>
+	<MaxLevel>91</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	
+	<MailGrey>False</MailGrey>
+	<MailWhite>False</MailWhite>
+	<MailGreen>True</MailGreen>
+	<MailBlue>True</MailBlue>
+	<MailPurple>True</MailPurple>
+   
+	<SellGrey>True</SellGrey>
+	<SellWhite>True</SellWhite>
+	<SellGreen>False</SellGreen>
+	<SellBlue>False</SellBlue>
+	<SellPurple>True</SellPurple>
+   
+	<TargetElites>True</TargetElites>
+	
+	<AvoidMobs>	 
+		<Mob Name="Summon Enabler Stalker" Entry="53488" />
+	</AvoidMobs>
+	
+	<Blackspots>
+		<Blackspot X="895.1125" Y="-580.083" Z="-202.7817" Radius="35" />
+		<Blackspot X="741.8684" Y="-1198.659" Z="-119.1568" Radius="40" />
+		<Blackspot X="796.7194" Y="-994.7185" Z="-206.949" Radius="20" />
+	</Blackspots>
+
+	<Mailboxes></Mailboxes>
+ 
+	<Vendors></Vendors>
+	
+	<ProtectedItems></ProtectedItems>
+
+	<Factions></Factions>
+	
+	<QuestOrder>
+
+		<CustomBehavior File="UserSettings" 
+						UseMount="True" 
+						LootMobs="True" 
+						KillBetweenHotspots="True" 
+						HarvestHerbs="False" 
+						HarvestMinerals="False" 
+						LogoutForInactivity="True" />
+		
+		<!-- If we are next to Lothos -->
+		<If Condition="Me.X &lt; -7498.32 &amp;&amp; Me.X &gt; -7518.32 &amp;&amp; Me.Y &lt; -1029.495 &amp;&amp; Me.Y &gt; -1049.495 &amp;&amp; Me.Z &lt; 185" >
+
+			<!-- MoveTo - mounting location -->
+			<MoveTo X="-7535.025" Y="-1062.659" Z="180.9768" />
+			
+			<!-- CustomBehavior - ForcedMount -->
+			<CustomBehavior File="ForcedMount" 
+							MountType="Flying" />
+			
+			<!-- CustomBehavior - FlyTo - above the rock in the lava -->			
+			<CustomBehavior File="FlyTo"
+							X="-7582.389" Y="-1044.78" Z="207.4019" />
+			
+			<!-- MoveTo - above the overhead gate -->
+			<CustomBehavior File="MyCTM" 
+							X="-7546.272" Y="-1094.672" Z="287.0955" />
+		
+			<!-- MoveTo - below the overhead gate -->
+			<CustomBehavior File="MyCTM" 
+							X="-7481.851" Y="-1072.225" Z="265.3089" />
+		
+			<!-- MoveTo - mounting location -->
+			<MoveTo X="-7297.678" Y="-1064.582" Z="277.0615" />
+
+			<!-- CustomBehavior - FlyTo - Iron Summit hover point -->
+			<CustomBehavior File="FlyTo" 
+							X="-7114.312" Y="-1202.27" Z="306.3394" />	
+							
+			<!-- CustomBehavior - ForcedDismount -->				
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- MoveTo - innkeeper -->
+			<MoveTo X="-7083.612" Y="-1202.351" Z="324.2274" />
+			
+			<!-- CustomBehavior - Message - Setting our heartstone with the innkeep -->
+			<CustomBehavior File="Message" 
+							Text="Setting our heartstone with the innkeep." 
+							LogColor="Gold" />
+			
+			<!-- CustomBehavior - SetHearthstone -->
+			<CustomBehavior File="SetHearthstone" 
+							MobId="47942" 
+							X="-7085.53" Y="-1202.19" Z="323.9871" />
+
+			<!-- CustomBehavior - Message - I have set my Heartstone -->
+			<CustomBehavior File="Message" 
+							Text="I have set my Heartstone." 
+							LogColor="Gold" />
+
+		</If>	<!-- If we are next to Lothos -->
+		
+		<!-- If our hearthstone is set to Iron Summit -->
+		<If Condition="Me.HearthstoneAreaId == 5628">
+			
+			<!-- Custom behavior - LoadProfile - [QO-N-M][10-X-Hr][Trash-Farm][90]_botanist_molten-core -->
+			<CustomBehavior File="LoadProfile" 
+							ProfileName="..\[QO-N-M][10-X-Hr][Trash-Farm][90]_botanist_molten-core" />
+			
+		</If>	<!-- If our free bags slots is less than 15 or our gear's lowest durability is less than 30 % -->
+		
+	</QuestOrder>
+
+</HBProfile>

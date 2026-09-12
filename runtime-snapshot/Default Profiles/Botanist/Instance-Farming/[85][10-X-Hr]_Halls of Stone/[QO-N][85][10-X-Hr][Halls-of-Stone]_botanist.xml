@@ -1,0 +1,569 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+	<Name>[QO-N][85][10-X-Hr][Halls-of-Stone]_botanist</Name>
+   
+	<MinLevel>1</MinLevel>
+	<MaxLevel>101</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	<TargetingDistance>15</TargetingDistance>
+	
+	<MailGrey>False</MailGrey>
+	<MailWhite>False</MailWhite>
+	<MailGreen>True</MailGreen>
+	<MailBlue>False</MailBlue>
+	<MailPurple>False</MailPurple>
+   
+	<SellGrey>True</SellGrey>
+	<SellWhite>True</SellWhite>
+	<SellGreen>False</SellGreen>
+	<SellBlue>True</SellBlue>
+	<SellPurple>False</SellPurple>
+   
+	<TargetElites>True</TargetElites>
+	
+	<AvoidMobs>		 
+		<Mob Name="Summon Enabler Stalker" Entry="53488" />
+		<Mob Name="Abedneum" Entry="30899" />
+		<Mob Name="Marnak" Entry="30897" />
+		<Mob Name="Kaddrak" Entry="30898" />
+	</AvoidMobs>
+	
+	<Blackspots>
+	</Blackspots>
+
+	<QuestOrder>
+
+		<!-- Level Check -->
+		<If Condition="Me.Level &gt;= 85">
+		
+		 	<!-- UserSettings -->
+			<CustomBehavior File="UserSettings"
+							MountDistance="25"
+							FindMountAutomatically="True"
+							GroundMountFarmingMode="False"
+							HarvestHerbs="False"
+							HarvestMinerals="False"
+							KillBetweenHotspots="True"
+							LogoutForInactivity="False"
+							LogoutInactivityUseForceQuit="False"
+							LootMobs="True"
+							LootRadius="65"
+							MountName=""
+							NinjaSkin="False"
+							RessAtSpiritHealers="False"
+							SkinMobs="False"
+							UseMount="True" 
+							UseRandomMount="False" />
+						
+			<!-- Infinite loop -->
+			<While Condition="true" >	
+
+				<!-- If we are inside Halls of Stone -->
+				<If Condition="Me.MapId == 599">
+				
+					<!-- Profile message - Halls of Stone detected. Running out -->
+					<CustomBehavior File="Message" 
+									Text="Halls of Stone detected, running out."
+									LogColor="Chartreuse" />
+						
+					<!-- Move to - zone in location -->
+					<MoveTo X="1153.95" Y="809.891" Z="195.835" />
+
+					<!-- Profile message - Waiting 3 seconds - Bag and durability check -->
+					<CustomBehavior File="Message" 
+									Text="Waiting 3 seconds - Bag and durability check."  
+									LogColor="Orange" />
+					
+					<!-- Wait timer - wait 1 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="1000" />
+					
+					<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+					<If Condition="(Me.FreeBagSlots &lt;= 25) || (Me.LowestDurabilityPercent &lt;= 0.3)" >
+												
+						<!-- Load profile - [QO-N][85][10-X-Hr][Halls-of-Stone]_[repair-mail] -->
+						<CustomBehavior File="LoadProfile" 
+										ProfileName="Movement\Vendors\[QO-N][85][10-X-Hr][Halls-of-Stone]_[repair-mail]" />
+
+					</If>	<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+
+					<!-- Profile message - Waiting 3 seconds - Food check - Sweet Potato Bread -->
+					<CustomBehavior File="Message" 
+									Text="Waiting 3 seconds - Food check - Sweet Potato Bread."  
+									LogColor="Orange" />
+					
+					<!-- Wait timer - wait 1 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="1000" />
+					
+					<!-- If we don't have Sweet Potato Bread -->
+					<If Condition="!HasItem(35950)">
+
+						<!-- Load profile - [QO-N][85][10-X-Hr][Halls-of-Stone]_[repair-mail] -->
+						<CustomBehavior File="LoadProfile" 
+										ProfileName="Movement\Vendors\[QO-N][85][10-X-Hr][Halls-of-Stone]_[repair-mail]" />
+			
+					</If>	<!-- If we don't have Sweet Potato Bread -->
+					
+					<!-- Profile message - All checks complete -->
+					<CustomBehavior File="Message" 
+									Text="All checks complete."  
+									LogColor="Orange" />
+
+					<!-- Custom behavior - Misc/InInstance - exit the instance-->
+					<CustomBehavior File="MyCTM" 
+									X="1153.057" Y="814.8229" Z="195.3503" />
+
+					<!-- Wait timer - wait 12 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="12000" />
+									
+					<!-- Move to - zone out location -->
+					<MoveTo X="8921.17" Y="-979.096" Z="1039.16" />
+					
+				</If>	<!-- If we are inside Halls of Stone -->
+
+				<!-- If we are not in the Halls of Stone box, load the movement profile -->
+				<If Condition="Me.X &lt; 8911.17 || Me.X &gt; 8931.17 || Me.Y &lt; -989.096 || Me.Y &gt; -969.096" >
+					
+					<!-- Custom behavior - LoadProfile - [QO-N-M][85][10-X-Hr][Halls-of-Stone]_botanist -->
+					<CustomBehavior File="LoadProfile" 
+									ProfileName="Movement\[QO-N-M][85][10-X-Hr][Halls-of-Stone]_botanist" />
+					
+				</If>	<!-- If we are not in the Halls of Stone instance box, load the movement profile -->
+				
+				<!-- If we are in the Halls of Stone instance box -->
+				<If Condition="Me.X &gt; 8911.17 &amp;&amp; Me.X &lt; 8931.17 &amp;&amp; Me.Y &gt; -989.096 &amp;&amp; Me.Y &lt; -969.096" >
+
+					<!-- If our Hearthstone/Innkeepers Daughter is set at Bouldercrag's Refuge -->
+					<If Condition="(Me.HearthstoneAreaId == 4484)">
+				
+						<!-- CustomBehavior - message - Our Hearthstone has been set to Bouldercrag's Refuge -->
+						<CustomBehavior File="Message" 
+										Text="Our Hearthstone has been set to Bouldercrag's Refuge." 
+										LogColor="Cyan" />
+				
+						<!-- Else our hearthstone is not set to Bouldercrag's Refuge -->
+						<Else>
+						
+							<!-- CustomBehavior - message - Our Hearthstone has not been set to Bouldercrag's Refuge -->
+							<CustomBehavior File="Message" 
+											Text="Our Hearthstone has not been set to Bouldercrag's Refuge." 
+											LogColor="Cyan" />
+										
+						<!-- Load profile - [QO-N][85][10-X-Hr][Halls-of-Stone]_[hearthstone] -->
+						<CustomBehavior File="LoadProfile" 
+										ProfileName="Movement\Vendors\Hearthstone\[QO-N][85][10-X-Hr][Halls-of-Stone]_[hearthstone]" />				
+
+						</Else>	<!-- Else our hearthstone is not set to Bouldercrag's Refuge -->
+				
+					</If>	<!-- If our hearthstone is set to Bouldercrag's Refuge -->
+
+					<!-- Profile message - Portal detected nearby -->
+					<CustomBehavior File="Message" 
+									Text="Portal detected nearby."
+									LogColor="Orange" />	
+			
+					<!-- Profile message - Resetting the instance -->
+					<CustomBehavior File="Message" 
+									Text="Resetting the instance." 
+									LogColor="Orange" />
+					
+					<!-- Reset the instance -->
+					<CustomBehavior File="RunMacro" 
+									Macro="/script ResetInstances()" />	
+									
+					<!-- Set the dungeon difficulty to normal -->				
+					<CustomBehavior File="RunMacro" 
+									Macro="/script SetDungeonDifficultyID(1);" />
+					
+					<!-- Profile message - The instance has been reset -->
+					<CustomBehavior File="Message" 
+									Text="The instance has been reset." 
+									LogColor="Orange" />
+							
+					<!-- While we are not in Halls of Stone -->
+					<While Condition="Me.MapId != 599">
+					
+						<!-- Move to - zone out location -->
+						<MoveTo X="8921.17" Y="-979.096" Z="1039.16" />
+
+						<!-- Move to - attempt to enter the instance -->
+						<CustomBehavior File="Misc\InInstance" 
+										X="8920.819" Y="-958.8873" Z="1039.151" />
+										
+						<!-- Profile message - Waiting for the dungeon to load -->				
+						<CustomBehavior File="Message" 
+										Text="Waiting for the dungeon to load." 
+										LogColor="Chartreuse" />
+									
+						<!-- Wait timer - wait 12 seconds -->		
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="12000" />
+										
+						<!-- If we are not in Halls of Stone, we're locked out -->
+						<If Condition="Me.MapId != 599">
+						
+							<!-- Profile message - We are locked out. Waiting and trying again -->
+							<CustomBehavior File="Message" 
+											Text="We didn't enter the portal, trying again in 12 seconds." 
+											LogColor="Orange" />
+			
+						</If>	<!-- If we are not in Halls of Stone, we're locked out -->
+						
+					</While>	<!-- While we are not in Halls of Stone -->
+					
+				</If>	<!-- If we are in the Halls of Stone instance box -->
+				
+				<!-- If we are inside Halls of Stone -->
+				<If Condition="Me.MapId == 599">
+					
+					<!-- If our guild => 11 -->
+					<If Condition="StyxWoW.Me.GuildLevel &gt;= 11" >				
+									
+						<!--  CustomBehavior - Message - Our guild is level 11 or greater -->
+						<CustomBehavior File="Message" 
+										Text="Our guild is level 11 or greater."
+										LogColor="Gold" />			
+
+						<!-- If we have friendly reputation with our guild -->				
+						<If Condition="GetFactionReputation(1168) &gt; 3000">		
+								
+							<!--  CustomBehavior - Message - We have friendly or greater reputation with our guild -->
+							<CustomBehavior File="Message" 
+											Text="We have friendly or greater reputation with our guild."
+											LogColor="Gold" />	
+								
+							<!-- If we have > 1000 gold -->
+							<If Condition="(Me.Gold &gt;= 1000)" >
+								
+								<!--  CustomBehavior - Message - We have over 1000 gold in our bags -->
+								<CustomBehavior File="Message" 
+												Text="We have over 1000 gold in our bags."
+												LogColor="Gold" />
+								
+								<!-- Load profile - [QO-N][85][10-X-Hr][Halls-of-Stone]_[mobile-banking]_botanist -->
+								<CustomBehavior File="LoadProfile" 
+												ProfileName="Movement\Vendors\MobileBanking\[QO-N][85][10-X-Hr][Halls-of-Stone]_[mobile-banking]_botanist" />
+												
+								<!-- Else we have < 1000 gold -->				
+								<Else>
+								
+									<!--  CustomBehavior - Message - We have over 1000 gold in our bags -->
+									<CustomBehavior File="Message" 
+													Text="We have less than 1000 gold in our bags."
+													LogColor="Cyan" />
+													
+								</Else>		<!-- Else we have < 1000 gold -->
+								
+							</If>	<!-- If we have < 1000 gold -->	
+							
+							<!-- Else we have less than 1000 gold in our bags -->			
+							<Else>
+							
+								<!--  CustomBehavior - Message - We we don't have friendly reputation with our guild -->
+								<CustomBehavior File="Message" 
+												Text="We we don't have friendly reputation with our guild."
+												LogColor="Cyan" />
+												
+							</Else>		<!-- Else we don't have friendly reputation with our guild -->
+							
+						</If>	<!-- If we have friendly reputation with our guild -->				
+										
+						<!-- Else our guild < 11 -->			
+						<Else>
+						
+							<!--  CustomBehavior - Message - Our guild is less than level 11 -->
+							<CustomBehavior File="Message" 
+											Text="Our guild is less than level 11."
+											LogColor="Cyan" />
+											
+						</Else>		<!-- Else our guild < 11 -->				
+										
+					</If>	<!-- If our guild => 11 -->
+					
+					<!--Profile message	- Deleting unwanted items from our bags -->				
+					<CustomBehavior File="Message" 
+									Text="Deleting unwanted items from our bags." 
+									LogColor="Orange" />
+
+					<!-- Honeymint Tea, Salted Venison, Scroll of Stamina VII, Scroll of Agility VII, Scroll of Strength VII, Rhino Meat, Chilled Meat -->
+					<CustomBehavior File="DeleteItems" 
+									Ids="33445,33454,37093,43463,43465,43012,43013" />
+
+					<!-- Instance timer -->
+					<CustomBehavior File="Misc\InstanceTimer" 
+									Timer="Start" />							
+								
+					<!-- Turn on autolooting -->
+					<CustomBehavior File="RunMacro" 
+									Macro="/script SetCVar('AutoLootDefault', 1)" 
+									NumOfTimes="1" 
+									WaitTime="1000" />
+										
+					<!-- CustomBehavior - Message - Opening our bags to view our inventory -->
+					<CustomBehavior File="Message" 
+									Text="Opening our bags to view our inventory." 
+									LogColor="Plum" />
+								
+					<!-- CustomBehavior - RunMacro - /script OpenAllBags() -->
+					<CustomBehavior File="RunMacro" 
+									Macro="/script OpenAllBags()" />					
+										
+					<!-- Profile message - Halls of Stone initialized -->			
+					<CustomBehavior File="Message" 
+									Text="Halls of Stone initialized."  
+									LogColor="Orange" />
+					
+					
+					<!-- ****************************************************** Halls of Stone ********************************************************************** -->
+					
+					<!-- If we are DeathKnight-->
+					<If Condition="(Me.Class == WoWClass.DeathKnight)">
+					
+						<!-- CustomBehavior - message - We are a Death Knight \nCasting Horn of Winter -->
+						<CustomBehavior File="Message" 
+										Text="We are a Death Knight \nCasting Horn of Winter."  
+										LogColor="Orange" />
+										
+						<!-- CustomBehavior - RunMacro - Horn of Winter -->						
+						<CustomBehavior File="RunMacro"
+										NumOfTimes="1"
+										Macro="/cast Horn of Winter" />				
+										
+					</If>	<!-- If we are DeathKnight-->
+
+					
+					
+					
+					<!-- Profile message - Disabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Disabling combat." 
+										LogColor="Gold" />
+					
+					<!-- DisableBehavior - Combat -->
+					<DisableBehavior Name="Combat" />
+
+					<!-- Move to - front of the big X in the floor  -->
+					<MoveTo X="1154.226" Y="701.695" Z="196.2352" /> 
+
+					<!-- Move to - right of the big X in the floor  -->
+					<MoveTo X="1126.076" Y="667.0425" Z="196.2352" />
+					
+					<!-- Move to - rear of the big X in the floor  -->
+					<MoveTo X="1153.809" Y="632.2765" Z="196.235" />
+					
+					<!-- Move to - left of the big X in the floor -->
+					<MoveTo X="1188.615" Y="666.9812" Z="196.235" />
+
+					<!-- CustomBehavior -  message - Enabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Enabling combat." 
+										LogColor="Gold" />
+
+					<!-- enable combat -->
+					<EnableBehavior Name="Combat" />
+					
+					<!-- Wait timer - wait 5 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="5000" />
+				
+					<!-- Move to - left of the big X in the floor -->
+					<MoveTo X="1188.615" Y="666.9812" Z="196.235" />
+				
+					<!-- Wait timer - wait 1 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="1000" />
+									
+
+									
+					<!-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -->
+					
+					
+					<!-- Profile message - Disabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Disabling combat." 
+										LogColor="Gold" />
+					
+					<!-- DisableBehavior - Combat -->
+					<DisableBehavior Name="Combat" />
+
+					<!-- Move to - right of the big X in the floor  -->
+					<MoveTo X="1126.076" Y="667.0425" Z="196.2352" /> 
+
+					<!-- Move to - Krystallus  -->
+					<MoveTo X="1008.116" Y="760.4337" Z="208.4662" />
+
+					<!-- CustomBehavior -  message - Enabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Enabling combat." 
+										LogColor="Gold" />
+
+					<!-- enable combat -->
+					<EnableBehavior Name="Combat" />
+					
+					<!-- Wait timer - wait 5 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="5000" />
+				
+					<!-- Move to - Krystallus  -->
+					<MoveTo X="1008.116" Y="760.4337" Z="208.4662" />
+				
+					<!-- Wait timer - wait 1 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="1000" />
+					
+					<!-- Move to - Hall of the High Father  -->
+					<MoveTo X="1047.932" Y="664.9124" Z="201.6717" />
+					
+					
+					<!-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -->
+					
+					
+					<!-- Profile message - Disabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Disabling combat." 
+										LogColor="Gold" />
+					
+					<!-- DisableBehavior - Combat -->
+					<DisableBehavior Name="Combat" />
+
+					<!-- Move to - Maiden of Grief  -->
+					<MoveTo X="844.4003" Y="666.084" Z="190.0329" />
+
+					<!-- CustomBehavior -  message - Enabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Enabling combat." 
+										LogColor="Gold" />
+
+					<!-- enable combat -->
+					<EnableBehavior Name="Combat" />
+					
+					<!-- Wait timer - wait 5 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="5000" />
+				
+					<!-- Move to - Maiden of Grief  -->
+					<MoveTo X="844.4003" Y="666.084" Z="190.0329" />
+				
+					<!-- Wait timer - wait 1 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="1000" />
+					
+					<!-- Move to - Hall of the High Father  -->
+					<MoveTo X="1047.932" Y="664.9124" Z="201.6717" />
+					
+					
+					<!-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -->
+					
+					
+					<!-- Profile message - Disabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Disabling combat." 
+										LogColor="Gold" />
+					
+					<!-- DisableBehavior - Combat -->
+					<DisableBehavior Name="Combat" />
+
+					<!-- Move to - right-hand Raging Construct  -->
+					<MoveTo X="1037.517" Y="578.6956" Z="206.9384" />
+
+					<!-- Move to - left-hand Raging Construct  -->
+					<MoveTo X="1057.996" Y="579.3264" Z="206.592" />
+					
+					<!-- Move to - middle path to pick up the small golem  -->
+					<MoveTo X="1031.423" Y="472.0904" Z="207.741" />
+					
+					<!-- Move to - right-hand side of the big globe  -->
+					<MoveTo X="946.9329" Y="413.2821" Z="205.9943" />
+					
+					<!-- Move to - rear of the big globe  -->
+					<MoveTo X="948.0939" Y="382.6908" Z="205.9944" />
+					
+					<!-- Move to - left-hand side of the big globe  -->
+					<MoveTo X="980.7943" Y="386.6522" Z="205.9944" />
+					
+					<!-- Move to - Raging Construct  -->
+					<MoveTo X="1049.687" Y="468.651" Z="208.9254" />
+					
+					<!-- Move to - Raging Construct  -->
+					<MoveTo X="1060.1" Y="497.8775" Z="207.7307" />
+
+					<!-- CustomBehavior -  message - Enabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Enabling combat." 
+										LogColor="Gold" />
+
+					<!-- enable combat -->
+					<EnableBehavior Name="Combat" />
+					
+					<!-- Wait timer - wait 5 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="5000" />
+				
+					<!-- Move to - Raging Construct  -->
+					<MoveTo X="1060.1" Y="497.8775" Z="207.7307" />
+					
+					<!-- Wait timer - wait 1 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="1000" />
+									
+					
+					<!-- XXXXXXXXX EXIT XXXXXXX -->
+
+					
+					<!-- Move to - zone in location -->
+					<MoveTo X="1153.95" Y="809.891" Z="195.835" />
+					
+					<!-- CustomBehavior - Misc\InstanceTimer - 6 minutes and 40 seconds -->
+					<CustomBehavior File="Misc\InstanceTimer" 
+									Timer="Check" 
+									WaitTime="5000" />
+
+					<!-- If we don't have Sweet Potato Bread -->
+					<If Condition="!HasItem(35950)">
+
+						<!-- Load profile - [QO-N][85][10-X-Hr][Halls-of-Stone]_[repair-mail] -->
+						<CustomBehavior File="LoadProfile" 
+										ProfileName="Movement\Vendors\[QO-N][85][10-X-Hr][Halls-of-Stone]_[repair-mail]" />
+			
+					</If>	<!-- If we don't have Sweet Potato Bread -->
+					
+					<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+					<If Condition="(Me.FreeBagSlots &lt;= 25) || (Me.LowestDurabilityPercent &lt;= 0.3)" >
+												
+						<!-- Load profile - [QO-N][85][10-X-Hr][Halls-of-Stone]_[repair-mail] -->
+						<CustomBehavior File="LoadProfile" 
+										ProfileName="Movement\Vendors\[QO-N][85][10-X-Hr][Halls-of-Stone]_[repair-mail]" />
+
+					</If>	<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+				
+				</If>	<!-- If we are inside Halls of Stone -->
+				
+				<!-- If we are in the Halls of Stone -->
+				<If Condition="Me.MapId == 599" >	
+
+					<!-- Move to - zone in location -->
+					<MoveTo X="1153.95" Y="809.891" Z="195.835" /> 
+					
+					<!-- Custom behavior - Misc/InInstance - exit the instance-->
+					<CustomBehavior File="MyCTM" 
+									X="1153.057" Y="814.8229" Z="195.3503" />
+
+					<!-- Wait timer - wait 12 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="12000" />
+									
+					<!-- Move to - zone out location -->
+					<MoveTo X="8921.17" Y="-979.096" Z="1039.16" />		
+
+				</If>	<!-- If we are inside Halls of Stone -->		
+				
+			</While> <!-- Infinite loop -->
+		
+		</If>	<!-- Level Check -->
+		
+	</QuestOrder>
+	
+</HBProfile>

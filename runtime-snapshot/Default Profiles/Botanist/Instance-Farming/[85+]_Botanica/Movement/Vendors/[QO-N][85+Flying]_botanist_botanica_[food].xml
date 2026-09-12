@@ -1,0 +1,187 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+	<Name>[QO-N][85+Flying]_botanist_botanica_[food]</Name>
+   
+	<MinLevel>1</MinLevel>
+	<MaxLevel>101</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	
+	<MailGrey>False</MailGrey>
+	<MailWhite>False</MailWhite>
+	<MailGreen>False</MailGreen>
+	<MailBlue>False</MailBlue>
+	<MailPurple>True</MailPurple>
+   
+	<SellGrey>True</SellGrey>
+	<SellWhite>True</SellWhite>
+	<SellGreen>True</SellGreen>
+	<SellBlue>True</SellBlue>
+	<SellPurple>False</SellPurple>
+   
+	<TargetElites>True</TargetElites>
+	
+	<AvoidMobs>
+	</AvoidMobs>
+	
+	<Blackspots>
+		<Blackspot X="3064.36" Y="3607.146" Z="144.0166" Radius="1" />
+		<Blackspot X="-7118.711" Y="-1225.894" Z="290.2633" Radius="3" />
+	</Blackspots>
+
+	<Mailboxes>
+	</Mailboxes>
+ 
+	<Vendors>
+	</Vendors>
+	
+	<ProtectedItems>	
+	</ProtectedItems>
+
+	<Factions></Factions>
+	
+	<QuestOrder>
+
+		<!-- UserSettings -->
+		<CustomBehavior File="UserSettings"
+						FindMountAutomatically="True"
+						GroundMountFarmingMode="False"
+						HarvestHerbs="False"
+						HarvestMinerals="False"
+						KillBetweenHotspots="True"
+						LogoutForInactivity="False"
+						LogoutInactivityUseForceQuit="False"
+						LootMobs="True"
+						LootRadius="25"
+						MountName=""
+						NinjaSkin="False"
+						RessAtSpiritHealers="False"
+						SkinMobs="False"
+						UseMount="True" 
+						UseRandomMount="False" />	
+
+		<!-- If our level is => 85-->
+		<If Condition="Me.Level &gt;= 84">
+			
+			<!-- If we are Alliance -->
+			<If Condition="Me.IsAlliance" >
+				
+				<!-- If we don't have Pine Nut Bread -->
+				<If Condition="!HasItem(58260)">
+				
+					<!-- Profile message - We don't have any Pine Nut Bread -->
+					<CustomBehavior File="Message" 
+									Text="We don't have any Pine Nut Bread."
+									LogColor="Orange" />
+									
+					<!-- Profile message - Moving to Kazemde to purchase some -->
+					<CustomBehavior File="Message" 
+									Text="Moving to Kazemde to purchase some."
+									LogColor="Orange" />				
+
+					<!-- Fly to the Ramkahen hover point -->
+					<CustomBehavior File="FlyTo" 
+									X="-9519.121" Y="-961.4222" Z="164.6567" />
+
+					<!-- CTM to - doorway of the inn -->
+					<CustomBehavior File="MyCTM"  
+									X="-9425.368" Y="-959.3373" Z="111.7376" />
+					
+					<!-- Custom behavior - ForcedDismount -->
+					<CustomBehavior File="ForcedDismount" />
+
+					<!-- Move to - inside the inn -->
+					<MoveTo X="-9387.839" Y="-951.1343" Z="113.8286" />
+				
+					<!-- Move to - Kazemde -->
+					<Move X="-9389.101" Y="-944.342" Z="113.7647" />
+					
+					<!-- Interact with Kazemde and buy 60 Pine Nut Bread -->
+					<CustomBehavior File="InteractWith"
+									ObjectType="Npc"
+									GossipOptions="2"
+									Range="75"
+									MobId="48886" 
+									BuyItemId="58260" 
+									BuyItemCount="100"
+									X="-9389.101" Y="-944.342" Z="113.7647" />
+
+					<!-- Wait timer - wait 45 seconds for for server lag and to give HB time to think -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="45000" />
+
+					<!-- Move to the Ramkahen flight master -->
+					<MoveTo X="-9415.822" Y="-1049.807" Z="114.0229" />
+					
+				</If>	<!-- If we don't have Pine Nut Bread -->
+					
+			</If>	<!-- If we are Alliance -->
+			
+			<!-- If we are Horde -->
+			<If Condition="Me.IsHorde" >
+				
+				<!-- If we don't have Pine Nut Bread -->
+				<If Condition="!HasItem(58260)">
+				
+					<!-- Profile message - We don't have any Pine Nut Bread -->
+					<CustomBehavior File="Message" 
+									Text="We don't have any Pine Nut Bread."
+									LogColor="Orange" />
+									
+					<!-- Profile message - Moving to Kazemde to purchase some -->
+					<CustomBehavior File="Message" 
+									Text="Moving to Kazemde to purchase some."
+									LogColor="Orange" />				
+
+					<!-- Fly to the Ramkahen hover point -->
+					<CustomBehavior File="FlyTo" 
+									X="-9519.121" Y="-961.4222" Z="164.6567" />
+
+					<!-- CTM to - doorway of the inn -->
+					<CustomBehavior File="MyCTM"  
+									X="-9425.368" Y="-959.3373" Z="111.7376" />
+					
+					<!-- Custom behavior - ForcedDismount -->
+					<CustomBehavior File="ForcedDismount" />
+
+					<!-- Move to - inside the inn -->
+					<MoveTo X="-9387.839" Y="-951.1343" Z="113.8286" />
+				
+					<!-- Move to - Kazemde -->
+					<Move X="-9389.101" Y="-944.342" Z="113.7647" />
+					
+					<!-- Interact with Kazemde and buy 60 Pine Nut Bread -->
+					<CustomBehavior File="InteractWith"
+									ObjectType="Npc"
+									GossipOptions="2"
+									Range="75"
+									MobId="48886" 
+									BuyItemId="58260" 
+									BuyItemCount="100"
+									X="-9389.101" Y="-944.342" Z="113.7647" />
+
+					<!-- Wait timer - wait 45 seconds for for server lag and to give HB time to think -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="45000" />
+
+					<!-- Move to the Ramkahen flight master -->
+					<MoveTo X="-9415.822" Y="-1049.807" Z="114.0229" />
+					
+				</If>	<!-- If we don't have Pine Nut Bread -->
+	
+			</If>	<!-- If we are Horde -->
+			
+			<!-- If we have Pine Nut Bread -->
+			<If Condition="HasItem(58260)">
+			
+				<!-- Load profile - [QO-N][90-Flying]_botanist_lost-city-of-the-tol'virl -->
+				<CustomBehavior File="LoadProfile" 
+										ProfileName="..\..\[QO-N][90-Flying]_botanist_lost-city-of-the-tol'virl" />
+										
+			</If>	<!-- If we do have Pine Nut Bread -->	
+			
+		</If>	<!-- If our level is => 90 -->
+		
+	</QuestOrder>
+	
+</HBProfile>

@@ -1,0 +1,595 @@
+<HBProfile>
+<Name>[QO-N-M][Rogue-Pick-Pocket][Flying][80]_isle-of-quel'danas</Name> 
+
+<MinLevel>80</MinLevel> 
+<MaxLevel>101</MaxLevel>
+<MinDurability>-1</MinDurability>
+<MinFreeBagSlots>-1</MinFreeBagSlots>
+
+<SellGrey>True</SellGrey>
+<SellWhite>False</SellWhite>
+<SellGreen>False</SellGreen>
+<SellBlue>False</SellBlue>
+<SellPurple>False</SellPurple>
+
+<MailGrey>False</MailGrey>
+<MailWhite>True</MailWhite>
+<MailGreen>True</MailGreen>
+<MailBlue>True</MailBlue>
+<MailPurple>True</MailPurple>
+<Vendors>
+</Vendors>
+	
+<Mailboxes>
+</Mailboxes>
+
+	<QuestOrder>
+	
+		<!-- While our level is >= 80 and < 100 -->
+		<While Condition="Me.Level &gt;= 80 &amp;&amp; Me.Level &lt; 100" >
+				
+			<!-- Profile message - Movement procedures initialized -->
+			<CustomBehavior File="Message" 
+							Text="Movement procedures initialized." 
+							LogColor="Plum" />
+			
+		 	<!-- UserSettings -->
+			<CustomBehavior File="UserSettings"
+							FindMountAutomatically="True"
+							GroundMountFarmingMode="False"
+							HarvestHerbs="False"
+							HarvestMinerals="False"
+							KillBetweenHotspots="True"
+							LogoutForInactivity="False"
+							LogoutInactivityUseForceQuit="False"
+							LootMobs="True"
+							LootRadius="25"
+							MountName=""
+							NinjaSkin="False"
+							RessAtSpiritHealers="False"
+							SkinMobs="False"
+							UseMount="True" 
+							UseRandomMount="False" />
+			
+			<!-- If we are in Kalimdor -->
+			<If Condition="Me.MapId == 1" >
+			
+				<!-- If we are Alliance -->
+				<If Condition="Me.IsAlliance">
+				
+					<!-- Profile message - We are Alliance in Kalimdor, flying to Ratchet -->
+					<CustomBehavior File="Message" 
+									Text="We are Alliance in Kalimdor, flying to Ratchet." 
+									LogColor="Fuchsia" />
+
+					<!-- Profile message - Fly to the Ratchet docks -->
+					<CustomBehavior File="FlyTo" 
+									X="-994.0004" Y="-3827.987" Z="5.634368" />	
+					
+					<!-- Custom behavior - ForcedDismount -->
+					<CustomBehavior File="ForcedDismount" />
+					
+					<!-- Move to - end of the dock -->
+					<RunTo X="-994.0004" Y="-3827.987" Z="5.634368" />
+						
+					<!-- Profile message - Waiting for the boat to Bootybay -->	
+					<CustomBehavior File="Message" 
+									Text="Waiting for the boat to Bootybay." 
+									LogColor="Fuchsia" />	
+					
+					<!-- Custom behavior - UseTransport to Bootybay -->
+					<CustomBehavior File="UseTransport"
+									TransportId="20808"
+									WaitAtX="-994.0004" 
+									WaitAtY="-3827.987" 
+									WaitAtZ="5.634368" 
+									TransportStartX="-1005.61346" 
+									TransportStartY="-3841.648" 
+									TransportStartZ="-0.0262415316"
+									TransportEndX="-14277.7451" 
+									TransportEndY="582.86615" 
+									TransportEndZ="-0.048539947"
+									StandOnX="-999.8182" 
+									StandOnY="-3833.799" 
+									StandOnZ="6.034274" 
+									GetOffX="-14280.22" 
+									GetOffY="567.6113" 
+									GetOffZ="6.696649" />
+					
+					<!-- Fly to - Dark Portal hover point -->
+					<CustomBehavior File="FlyTo"
+									X="-11792.59" Y="-3188.481" Z="28.63114" />
+			
+					<!-- CTM to - Dark portal -->
+					<CustomBehavior File="MyCTM"
+									X="-11896.8" Y="-3206.77" Z="-14.6724" />
+									
+					<!-- Forced dismount -->	
+					<CustomBehavior File="ForcedDismount" />				
+									
+					<!-- Run through Dark Portal -->
+					<CustomBehavior File="Misc\InInstance" 
+									X="-11908.3" Y="-3207.804" Z="-14.82459" />	
+									
+				</If>	<!-- If we are Alliance -->
+
+				<!-- We are Horde -->
+				<If Condition="Me.IsHorde">
+				
+					<!-- Profile message - We are Horde, in Kalimdor -->
+					<CustomBehavior File="Message" 
+									Text="We are Horde, in Kalimdor." 
+									LogColor="Cyan" />
+							
+					<!-- If we are in the Cleft of Shadow -->
+					<If Condition="Me.X &lt; 1895.627 &amp;&amp; Me.X &gt; 1713.31 &amp;&amp; Me.Y &gt; -4440.429 &amp;&amp; Me.Y &lt; -4283.688 &amp;&amp; Me.Z &lt; 35" >
+					
+						<!-- Profile message - we are in the Cleft of Shadow -->
+						<CustomBehavior File="Message" 
+										Text="We are in the Cleft of Shadow"  
+										LogColor="Plum" />
+					
+						<!-- UserSettings -->
+						<CustomBehavior File="UserSettings" 
+											UseMount="False" />
+					
+						<!-- Move to - mount location outside the Cleft of Shadow -->
+						<MoveTo X="1892.877" Y="-4546.347" Z="29.89322" />
+					
+						<!-- UserSettings -->
+						<CustomBehavior File="UserSettings" 
+											UseMount="True" />
+						
+					</If>	<!-- If we are in the Cleft of Shadow -->		
+							
+					<!-- Profile message - Moving to the Blastedlands portal -->
+					<CustomBehavior File="Message" 
+									Text="Moving to the Cleft of Shadow." 
+									LogColor="Cyan" />		
+							
+					<!-- Fly to - The Drag hover point -->
+					<CustomBehavior File="FlyTo"
+									X="1880.009" Y="-4525.859" Z="116.2544" />		
+							
+					<!-- Profile message - Moving to the Blastedlands portal -->
+					<CustomBehavior File="Message" 
+									Text="Moving to the Blastedlands portal." 
+									LogColor="Cyan" />		
+							
+					<!-- CTM to - land - Cleft of Shadows -->
+					<CustomBehavior File="MyCTM"
+									X="1893.846" Y="-4482.481" Z="23.56198" />		
+							
+					<!-- Forced dismount -->	
+					<CustomBehavior File="ForcedDismount" />		
+							
+					<!-- Profile message - Disabling mount use -->
+					<CustomBehavior File="Message" 
+									Text="Disabling mount use." 
+									LogColor="Plum" />		
+							
+					<!-- UserSettings -->
+					<CustomBehavior File="UserSettings"
+									UseMount="False" />		
+							
+					<!-- Move to to - Blastedlands portal -->
+					<MoveTo X="1771.456" Y="-4326.629" Z="-8.225829" />
+					
+					<!-- CustomBehavior - InteractWith - Blastedlands portal -->
+					<CustomBehavior File="InteractWith" 
+									MobId="195142" 
+									ObjectType="Gameobject" 
+									Range="4.75" 
+									NumOfTimes="1"  
+									X="1768.45" Y="-4325.86" Z="-8.3711" />		
+							
+					<!-- Profile message - Enabling mount use -->
+					<CustomBehavior File="Message" 
+									Text="Enabling mount use." 
+									LogColor="Plum" />		
+							
+					<!-- UserSettings -->
+					<CustomBehavior File="UserSettings"
+									UseMount="True" />		
+							
+					<!-- Profile message - Moving to the Dark Portal -->
+					<CustomBehavior File="Message" 
+									Text="Moving to the Dark Portal." 
+									LogColor="Cyan" />		
+							
+					<!-- Fly to - Dark Portal hover point -->
+					<CustomBehavior File="FlyTo"
+									X="-11843.38" Y="-3197.073" Z="26.22154" />				
+									
+					<!-- Fly to - grounding at the Dark Portal -->
+					<CustomBehavior File="FlyTo"
+									X="-11893.59" Y="-3206.821" Z="-14.684" />
+			
+					<!-- Forced dismount -->	
+					<CustomBehavior File="ForcedDismount" />
+			
+					<!-- CTM to - Dark portal -->
+					<CustomBehavior File="MyCTM"
+									X="-11906" Y="-3208.6" Z="-14.88198" />
+									
+					<!-- Run through Dark Portal -->
+					<CustomBehavior File="MyCTM"
+									X="-11909.93" Y="-3209.166" Z="-14.77906" />
+
+					<!-- Custom behavior - WaitTimer - wait 10 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="10000" />
+
+				</If> 	<!-- We are horde in Kalimdor -->	
+				
+			</If> 	<!-- If we are in Kalimdor -->
+
+			<!-- If we are in Eastern Kingdoms -->
+			<If Condition="Me.MapId == 0" >
+			
+				<!-- Profile message - We are in Eastern Kingdoms -->
+				<CustomBehavior File="Message" 
+								Text="We are in Eastern Kingdoms." 
+								LogColor="Cyan" />
+			
+				<!-- If we are not on the Isle of Quel'Danas -->
+				<If Condition="Me.ZoneId != 4080" >
+				
+					<!-- If we are Alliance -->
+					<If Condition="Me.IsAlliance" >
+					
+						<!-- Profile message - We are Alliance -->
+						<CustomBehavior File="Message" 
+										Text="We are Alliance." 
+										LogColor="Cyan" />
+						
+						<!-- If we are in Stormwind -->
+						<If Condition="Me.ZoneId == 1519" >
+					
+							<!-- Profile message - We are in Stormwind -->
+							<CustomBehavior File="Message" 
+										Text="We are in Stormwind." 
+										LogColor="Cyan" />
+					
+							<!-- Profile message - Moving to the Dark portal -->
+							<CustomBehavior File="Message" 
+										Text="Moving to the Mage Tower." 
+										LogColor="Cyan" />
+					
+							<!-- Usersettings- disable mount use in Stormwind -->
+							<CustomBehavior File="UserSettings"
+											UseMount="False"  />				
+							
+							<!-- Move to - Stormwind portal to Blasted Lands -->
+							<MoveTo X="-9005.403" Y="869.1169" Z="129.6929" />
+
+							<!-- Custom behavior - Interactwith the Blasted Lands portal -->
+							<CustomBehavior File="InteractWith" 
+											MobId="195141" 
+											ObjectType="Gameobject"
+											Range="4.75" 
+											NumOfTimes="1"  
+											X="-9007.58" Y="871.8698" Z="129.6922" />
+
+							<!-- Usersettings- enable mount use in Blasted Lands -->
+							<CustomBehavior File="UserSettings"
+											UseMount="True"  />		
+					
+							<!-- Fly to - Dark Portal hover point -->
+							<CustomBehavior File="FlyTo"
+											X="-11843.38" Y="-3197.073" Z="26.22154" />				
+											
+							<!-- Fly to - grounding at the Dark Portal -->
+							<CustomBehavior File="FlyTo"
+											X="-11893.59" Y="-3206.821" Z="-14.684" />
+					
+							<!-- Forced dismount -->	
+							<CustomBehavior File="ForcedDismount" />
+					
+							<!-- CTM to - Dark portal -->
+							<CustomBehavior File="MyCTM"
+											X="-11906" Y="-3208.6" Z="-14.88198" />
+											
+							<!-- Run through Dark Portal -->
+							<CustomBehavior File="MyCTM"
+											X="-11909.93" Y="-3209.166" Z="-14.77906" />
+
+							<!-- Custom behavior - WaitTimer - wait 10 seconds - delay -->
+							<CustomBehavior File="WaitTimer" 
+											WaitTime="10000" />
+
+							<!-- We are not in Stormwind -->
+							<Else>
+							
+								<!-- Profile message - We are not in Stormwind -->
+								<CustomBehavior File="Message" 
+											Text="We are not in Stormwind." 
+											LogColor="Cyan" />
+							
+								<!-- Profile message - Moving to the Dark portal -->
+								<CustomBehavior File="Message" 
+											Text="Moving to the Dark portal." 
+											LogColor="Cyan" />
+							
+								<!-- Fly to - Dark Portal hover point -->
+								<CustomBehavior File="FlyTo"
+												X="-11843.38" Y="-3197.073" Z="26.22154" />				
+												
+								<!-- Fly to - grounding at the Dark Portal -->
+								<CustomBehavior File="FlyTo"
+												X="-11893.59" Y="-3206.821" Z="-14.684" />
+						
+								<!-- Forced dismount -->	
+								<CustomBehavior File="ForcedDismount" />
+						
+								<!-- CTM to - Dark portal -->
+								<CustomBehavior File="MyCTM"
+												X="-11906" Y="-3208.6" Z="-14.88198" />
+												
+								<!-- Run through Dark Portal -->
+								<CustomBehavior File="MyCTM"
+												X="-11909.93" Y="-3209.166" Z="-14.77906" />
+
+								<!-- Custom behavior - WaitTimer - wait 10 seconds - delay -->
+								<CustomBehavior File="WaitTimer" 
+												WaitTime="10000" />
+												
+							</Else>	<!-- We are not in Stormwind -->
+						
+						</If>	<!-- If we are in Stormwind -->
+					
+					</If>	<!-- If we are Alliance -->
+					
+					<!-- If we are Horde --> 
+					<If Condition="Me.IsHorde" >
+							
+						<!-- Profile message - Moving to the Dark Portal -->
+						<CustomBehavior File="Message" 
+										Text="Moving to the Dark Portal." 
+										LogColor="Cyan" />	
+
+						<!-- Fly to - Dark Portal hover point -->
+						<CustomBehavior File="FlyTo"
+										X="-11843.38" Y="-3197.073" Z="26.22154" />				
+										
+						<!-- Fly to - grounding at the Dark Portal -->
+						<CustomBehavior File="FlyTo"
+										X="-11893.59" Y="-3206.821" Z="-14.684" />
+				
+						<!-- Forced dismount -->	
+						<CustomBehavior File="ForcedDismount" />
+				
+						<!-- CTM to - Dark portal -->
+						<CustomBehavior File="MyCTM"
+										X="-11906" Y="-3208.6" Z="-14.88198" />
+										
+						<!-- Run through Dark Portal -->
+						<CustomBehavior File="MyCTM"
+										X="-11909.93" Y="-3209.166" Z="-14.77906" />
+
+						<!-- Custom behavior - WaitTimer - wait 10 seconds - delay -->
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="10000" />				
+										
+					</If>	<!-- If we are Horde -->
+
+				</If>	<!-- If we are not on the Isle of Quel'Danas -->
+				
+			</If> 	<!-- If we are in Eastern Kingdoms -->
+
+			<!-- If we are in Outland -->
+			<If Condition="Me.MapId == 530" >
+			
+				<!-- Profile message - We are in Outland -->
+				<CustomBehavior File="Message" 
+								Text="We are in Outland." 
+								LogColor="Cyan" />
+			
+				<!-- If we are in Hellfire Peninsula -->
+				<If Condition="Me.ZoneId == 3483" >
+				
+					<!-- Profile message - We are in Outland -->
+				<CustomBehavior File="Message" 
+								Text="We are in Hellfire Peninsula, avoiding the Twisting Nether." 
+								LogColor="Cyan" />
+				
+					<!-- Fly to - around the twisting nether -->
+					<CustomBehavior File="FlyTo"
+									X="-1452.373" Y="3443.024" Z="110.0411" />
+			
+				</If>	<!-- If we are not on the Isle of Quel'Danas -->
+				
+				<!-- If we are not on the Isle of Quel'Danas -->
+				<If Condition="Me.ZoneId != 4080" >
+
+					<!-- Profile message - Moving to the Shattrath City -->
+					<CustomBehavior File="Message" 
+									Text="Moving to the Shattrath City." 
+									LogColor="Cyan" />				
+									
+					<!-- Fly to - Shattrath City hover point -->
+					<CustomBehavior File="FlyTo"
+									X="-1820.471" Y="5345.667" Z="18.61915" />
+
+					<!-- CTM to - land -->
+					<CustomBehavior File="MyCTM"
+									X="-1836.657" Y="5376.674" Z="-12.42777" />				
+									
+					<!-- Forced dismount -->	
+					<CustomBehavior File="ForcedDismount" />
+			
+					<!-- UserSettings -->
+					<CustomBehavior File="UserSettings"
+									UseMount="False"  />
+
+					<!-- Profile message - Moving to the Isle of Quel'Danas portal -->
+					<CustomBehavior File="Message" 
+									Text="Moving to the Isle of Quel'Danas portal." 
+									LogColor="Cyan" />
+			
+					<!-- Move to - Isle of Quel'Danas portal -->
+					<MoveTo X="-1844.108" Y="5488.979" Z="-12.42777" />
+			
+					<!-- Forced dismount -->	
+					<CustomBehavior File="ForcedDismount" />
+			
+					<!-- Profile message - Using the Isle of Quel'Danas portal -->
+					<CustomBehavior File="Message" 
+									Text="Using the Isle of Quel'Danas portal." 
+									LogColor="Cyan" />
+			
+					<!-- Custom behavior - InteracteWith - Isle of Quel'Danas portal -->
+					<CustomBehavior File="InteractWith" 
+									MobId="187056" 
+									ObjectType="Gameobject"
+									Range="4.75" 
+									NumOfTimes="1"  
+									X="-1839.8772" Y="5500.596" Z="-12.42793" />
+
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+				
+					<!-- UserSettings -->
+					<CustomBehavior File="UserSettings"
+									UseMount="True"  />
+			
+				</If>	<!-- If we are not on the Isle of Quel'Danas -->
+			
+			</If>	<!-- If we are in Outlands -->
+
+			<!-- If we are on the Isle of Quel'Danas -->
+			<If Condition="Me.ZoneId == 4080" >
+			
+				<!-- Profile message - We are on the Isle of Quel'Danas -->
+				<CustomBehavior File="Message" 
+							Text="We are on the Isle of Quel'Danas." 
+							LogColor="Fuchsia" />
+			
+				<!-- If we are on top of the Sun's Reach Sanctum -->
+				<If Condition="Me.Z &gt; 35" >
+			
+					<!-- Profile message - We are at the Sun's Reach Sanctum zone in location, jumping off the ledge -->
+					<CustomBehavior File="Message" 
+								Text="We are at the Sun's Reach Sanctum zone in location, jumping off the ledge." 
+								LogColor="Fuchsia" />
+								
+					<!-- CTM to - jump off the balcony -->
+					<CustomBehavior File="MyCTM"
+									X="12810" Y="-6947.044" Z="10.75527" />			
+			
+				</If>
+			
+				<!-- If our hearthstone is not set to Sun's Reach -->
+				<If Condition="Me.HearthstoneAreaId != 4087" >
+					
+					<!-- Profile message - Moving to Sun's Reach to set our Hearthstone -->
+					<CustomBehavior File="Message" 
+									Text="Moving to Sun's Reach to set our Hearthstone." 
+									LogColor="Fuchsia" />
+
+					<!-- Move to - Sun's Reach - hover point -->
+					<MoveTo X="12778.72" Y="-6960.633" Z="14.14982" />
+
+					<!--  Move to - Caregiver Inaara - innkeep -->	
+					<MoveTo X="12814.24" Y="-7001.341" Z="18.59485" />
+
+					<!-- Custom behavior - ForcedDismount -->	
+					<CustomBehavior File="ForcedDismount" />
+					
+					<!-- Profile message - Setting our Hearthstone with the innkeep -->
+					<CustomBehavior File="Message" 
+									Text="Setting our Hearthstone with the innkeep." 
+									LogColor="Fuchsia" />
+
+					<!-- Custom behavior - SetHearthstone -->				
+					<CustomBehavior File="SetHearthstone" 
+									MobId="25036" 
+									X="12816.97" Y="-7004.863" Z="18.59461" />
+
+					<!-- Profile message - We have set our Hearthstone -->				
+					<CustomBehavior File="Message" 
+									Text="We have set our Hearthstone." 
+									LogColor="Fuchsia" />
+					
+					<!-- Move to - Sun's Reach - repair vendor -->
+					<MoveTo X="12663.47" Y="-6980.141" Z="14.55775" />
+
+					<!-- Else our hearthstone is set to Sun's Reach -->
+					<Else>
+					
+						<!-- Profile message - Moving to Sun's Reach to set our Hearthstone -->
+						<CustomBehavior File="Message" 
+										Text="Our Hearthstone is set to Sun's Reach." 
+										LogColor="Fuchsia" />
+					
+					</Else>
+					
+				</If>	<!-- If our hearthstone is not set to Sun's Reach -->
+			
+			</If>	<!-- If we are on the Isle of Quel'Danas -->
+
+			<!-- If we are in Sun's Reach -->
+			<If Condition="Me.X &gt; 12709.04 &amp;&amp; Me.X &lt; 12859.32 &amp;&amp; Me.Y &gt; -7017.926 &amp;&amp; Me.Y &lt; -6825.634" >
+			
+				<!-- Profile message - We are in Sun's Reach, moving to the farming area -->
+				<CustomBehavior File="Message" 
+								Text="We are in Sun's Reach, moving to the farming area." 
+								LogColor="Fuchsia" />
+				
+				<!-- Move to - Isle of Quel'Danas - staging location-->
+				<MoveTo X="12561.74" Y="-7310.449" Z="0.2845033" />
+				
+				<!-- Else we are not in Sun's Reach -->
+				<Else>
+				
+					<!-- Profile message - We are not in Sun's Reach -->
+					<CustomBehavior File="Message" 
+									Text="We are not in Sun's Reach." 
+									LogColor="Plum" />
+
+					<!-- If we are not in the farming area -->
+					<If Condition="Me.X &lt; 11825.51 || Me.X &gt; 12575.52 || Me.Y &lt; -7489.685 || Me.Y &gt; -7221.662" >
+					
+						<!-- Profile message - We are not in the farming area -->
+						<CustomBehavior File="Message" 
+										Text="We are not in the farming area." 
+										LogColor="Plum" />
+					
+						<!-- Wait timer - wait 3 seconds to aggro -->
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="3000" />
+
+						<!-- Profile message - Moving to the farming area -->
+						<CustomBehavior File="Message" 
+										Text="Moving to the farming area." 
+										LogColor="Fuchsia" />
+					
+						<!-- Move to - Isle of Quel'Danas - staging location-->
+						<MoveTo X="12561.74" Y="-7310.449" Z="0.2845033" />
+														
+					</If>	<!-- If we are not in the farming area -->
+				
+				</Else>		<!-- Else we are not in Sun's Reach -->
+					
+			</If>	<!-- If we are in Sun's Reach -->
+
+			<!-- If we are in the farming area -->
+			<If Condition="Me.X &gt; 11825.51 &amp;&amp; Me.X &lt; 12575.52 &amp;&amp; Me.Y &gt; -7489.685 &amp;&amp; Me.Y &lt; -7221.662" >	
+			
+				<!-- Profile message - Movement procedures deactivated. Changing to farming mode -->
+				<CustomBehavior File="Message" 
+								Text="Movement procedures deactivated. Changing to farming mode." 
+								LogColor="Plum" />
+		
+				<!-- Load profile - [QO-N][Rogue-Pick-Pocket][Flying][90]_isle-of-reckoning -->
+				<CustomBehavior File="LoadProfile" 
+								ProfileName="..\[QO-N][Rogue-Pick-Pocket][Flying][80]_isle-of-quel'danas" />
+
+			</If>	<!-- If we are in the farming area --> 	
+
+		</While>	<!-- While our level is >= 90 and < 100 -->
+			
+	</QuestOrder>
+	
+</HBProfile> 

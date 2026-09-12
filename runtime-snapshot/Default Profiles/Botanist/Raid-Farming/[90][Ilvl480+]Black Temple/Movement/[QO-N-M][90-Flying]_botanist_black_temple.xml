@@ -1,0 +1,221 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+	<Name>[QO-N-M][90-Flying]_botanist_black_temple</Name>
+   
+	<MinLevel>1</MinLevel>
+	<MaxLevel>101</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	
+	<MailGrey>True</MailGrey>
+	<MailWhite>False</MailWhite>
+	<MailGreen>False</MailGreen>
+	<MailBlue>False</MailBlue>
+	<MailPurple>False</MailPurple>
+   
+	<SellGrey>False</SellGrey>
+	<SellWhite>False</SellWhite>
+	<SellGreen>False</SellGreen>
+	<SellBlue>False</SellBlue>
+	<SellPurple>False</SellPurple>
+   
+	<TargetElites>True</TargetElites>
+	
+	<AvoidMobs>		
+		<Mob Name="Summon Enabler Stalker" Entry="53488" />
+	</AvoidMobs>
+	
+	<Blackspots>
+
+	</Blackspots>
+
+	<Mailboxes>
+	</Mailboxes>
+ 
+	<Vendors>
+	</Vendors>
+	
+	<ProtectedItems>
+	</ProtectedItems>
+
+	<Factions></Factions>
+	
+	<QuestOrder>
+
+		<!-- Level check - 90 -->
+		<If Condition="Me.Level &gt;= 90">
+		
+			<!-- UserSettings -->
+			<CustomBehavior File="UserSettings"
+							FindMountAutomatically="True"
+							GroundMountFarmingMode="False"
+							HarvestHerbs="False"
+							HarvestMinerals="False"
+							KillBetweenHotspots="True"
+							LogoutForInactivity="False"
+							LogoutInactivityUseForceQuit="False"
+							LootMobs="True"
+							LootRadius="25"
+							MountName=""
+							NinjaSkin="False"
+							RessAtSpiritHealers="False"
+							SkinMobs="False"
+							UseMount="True" 
+							UseRandomMount="False" />
+			
+			<!-- If we are in Eastern Kingdoms -->
+			<If Condition="Me.MapId == 0" >
+			
+				<!-- Profile message - We are in Eastern Kingdoms -->
+				<CustomBehavior File="Message" 
+								Text="We are in Eastern Kingdoms"  
+								LogColor="Orange" />
+
+				<!-- Faction check - Alliance -->
+				<If Condition="Me.IsAlliance" >				
+								
+					<!-- If we are in Stormwind	-->
+					<If Condition="Me.ZoneId == 1519" >			
+
+						<!-- Profile message - We are in Stormwind \nMoving to the Blasted Lands portal -->
+						<CustomBehavior File="Message" 
+										Text="We are in Stormwind \nMoving to the Blasted Lands portal."  
+										LogColor="Chartreuse" />				
+										
+						<!-- Move to - Mage Tower - hover point -->				
+						<CustomBehavior File="FlyTo" 
+										X="-8924.287" Y="832.0236" Z="191.1413" />				
+										
+						<!-- CTM to - grounding at the Mage Tower -->
+						<CustomBehavior File="MyCTM" 
+										X="-8999.207" Y="862.276" Z="129.296" />	
+
+						<!-- Forced dismount -->	
+						<CustomBehavior File="ForcedDismount" />
+
+						<!-- Usersettings- disable mount use in Stormwind -->
+						<CustomBehavior File="UserSettings"
+										UseMount="False"  />				
+						
+						<!-- Move to - Stormwind portal to Blasted Lands -->
+						<MoveTo X="-9005.403" Y="869.1169" Z="129.6929" />
+
+						<!-- Custom behavior - Interactwith the Blasted Lands portal -->
+						<CustomBehavior File="InteractWith" 
+										MobId="195141" 
+										ObjectType="Gameobject"
+										Range="4.75" 
+										NumOfTimes="1"  
+										X="-9007.58" Y="871.8698" Z="129.6922" />		
+										
+						<!-- CustomBehavior - FlyTo - Dark Portal -->
+						<CustomBehavior File="FlyTo"
+										X="-11896.8" Y="-3206.77" Z="-14.6724" />
+										
+						<!-- Forced dismount -->	
+						<CustomBehavior File="ForcedDismount" />				
+										
+						<!-- Run through Dark Portal -->
+						<CustomBehavior File="Misc\InInstance" 
+										X="-11908.3" Y="-3207.804" Z="-14.82459" />
+				
+						<!-- Wait timer - wait 10 seconds - game to load -->
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="10000" />	
+						
+						<!-- Else - We are not in Stormwind \nMoving to the Dark Portal -->						
+						<Else>
+
+							<!-- Profile message - We are not in Stormwind \nMoving to the Dark Portal -->
+							<CustomBehavior File="Message" 
+											Text="We are not in Stormwind \nMoving to the Dark Portal."  
+											LogColor="Chartreuse" />
+							<!-- CustomBehavior - FlyTo - Dark Portal -->
+							<CustomBehavior File="FlyTo"
+											X="-11896.8" Y="-3206.77" Z="-14.6724" />
+											
+							<!-- Forced dismount -->	
+							<CustomBehavior File="ForcedDismount" />				
+											
+							<!-- Run through Dark Portal -->
+							<CustomBehavior File="Misc\InInstance" 
+											X="-11908.3" Y="-3207.804" Z="-14.82459" />
+					
+							<!-- Wait timer - wait 10 seconds - game to load -->
+							<CustomBehavior File="WaitTimer" 
+											WaitTime="10000" />				
+											
+						</Else>	<!-- Else - We are not in Stormwind \nMoving to the Dark Portal -->
+										
+					</If>	<!-- If we are in Stormwind	-->
+					
+					<!-- Else - Faction check - Horde -->
+					<Else>
+					
+					</Else>	<!-- Else - Faction check - Horde -->
+					
+				</If>	<!-- Faction check - Alliance -->
+
+			</If>	<!-- If we are in Eastern Kingdoms -->
+
+			<!-- If we are in Outlands -->
+			<If Condition="Me.MapId == 530">
+			
+				<!-- Profile message - Waiting 3 seconds - Bag and durability check -->
+				<CustomBehavior File="Message" 
+								Text="Waiting 3 seconds - Bag and durability check."  
+								LogColor="Orange" />
+				
+				<!-- Wait timer - wait 3 seconds - delay -->
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="3000" />
+				
+				<!-- If we have less then 35 empty bag slots or our durability is less than 30% -->
+				<If Condition="(Me.FreeBagSlots &lt;= 35) || (Me.LowestDurabilityPercent &lt;= 0.3)" >
+											
+					<!-- Load profile - [QO-N][90-Flying]_botanist_black_temple_[repair-mail] -->
+					<CustomBehavior File="LoadProfile" 
+									ProfileName="Vendors\[QO-N][90-Flying]_botanist_black_temple_[repair-mail]" />
+
+				</If>	<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+
+				<!-- Profile message - All checks complete -->
+				<CustomBehavior File="Message" 
+								Text="All checks complete."  
+								LogColor="Orange" />
+
+				<!-- Profile message - Flying to Black Temple -->
+				<CustomBehavior File="Message" 
+								Text="Flying to Black Temple."  
+								LogColor="Orange" />
+
+				<!-- Fly to - Flying to Black Temple hover point -->
+				<CustomBehavior File="FlyTo" 
+								X="-3556.956" Y="332.331" Z="81.72329" />
+			
+				<!-- CTM to - land outside Black Temple -->
+				<CustomBehavior File="MyCTM" 
+								X="-3650.9" Y="316.897" Z="35.85256" />
+				
+				<!-- Custom behavior - ForcedDismount -->
+				<CustomBehavior File="ForcedDismount" />
+								
+				<!-- Move to - Black Temple instance box -->
+				<MoveTo X="-3650.9" Y="316.897" Z="35.85256" />
+				
+				<!-- If we are in the Black Temple instance box -->
+				<If Condition="Me.X &lt; -3607.206 &amp;&amp; Me.X &gt; -3655.454 &amp;&amp; Me.Y &gt; 292.4347 &amp;&amp; Me.Y &lt; 340.4077" >
+					
+					<!-- Load profile - [QO-N][90-Flying]_botanist_grim-batol -->
+					<CustomBehavior File="LoadProfile" 
+									ProfileName="..\[QO-N][90-Flying]_botanist_black_temple" />
+									
+				</If> 	<!-- If we are in the Black Temple instance box -->	
+				
+			</If>	<!-- If we are in Outland -->
+			
+		</If>	<!-- Level check - 90 -->	
+		
+	</QuestOrder>
+	
+</HBProfile>

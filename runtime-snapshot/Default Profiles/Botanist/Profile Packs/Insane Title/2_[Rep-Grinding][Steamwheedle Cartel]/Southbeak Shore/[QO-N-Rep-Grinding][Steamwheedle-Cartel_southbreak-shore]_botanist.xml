@@ -1,0 +1,163 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+	<Name>[QO-N-Rep-Grinding][Steamwheedle-Cartel_southbreak-shore]_botanist</Name>
+   
+	<MinLevel>85</MinLevel>
+    <MaxLevel>115</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	
+	<MailGrey>False</MailGrey>
+	<MailWhite>False</MailWhite>
+	<MailGreen>False</MailGreen>
+	<MailBlue>True</MailBlue>
+	<MailPurple>True</MailPurple>
+   
+	<SellGrey>True</SellGrey>
+	<SellWhite>True</SellWhite>
+	<SellGreen>True</SellGreen>
+	<SellBlue>False</SellBlue>
+	<SellPurple>False</SellPurple>
+   
+	<TargetElites>True</TargetElites>
+	
+	<AvoidMobs>
+	</AvoidMobs>
+	
+	<Blackspots>
+	</Blackspots>
+
+	<Mailboxes>
+	</Mailboxes>
+ 
+	<Vendors>
+	</Vendors>
+
+	<Factions>
+	</Factions>
+	
+	<ProtectedItems>
+	</ProtectedItems>
+	
+	<QuestOrder>
+
+		<!-- UserSettings -->
+		<CustomBehavior File="UserSettings"
+						FindMountAutomatically="True"
+						GroundMountFarmingMode="False"
+						HarvestHerbs="False"
+						HarvestMinerals="False"
+						KillBetweenHotspots="False"
+						LogoutForInactivity="True"
+						LogoutInactivityUseForceQuit="True"
+						LootMobs="False"
+						LootRadius="1"
+						MountName=""
+						NinjaSkin="False"
+						RessAtSpiritHealers="False"
+						SkinMobs="False"
+						UseMount="True" 
+						UseRandomMount="False" />
+		
+		<!-- If we are in Kalimdor -->
+		<If Condition="Me.MapId == 1" >
+			
+			<!-- Profile message  - We are in Kalimdor -->	
+			<CustomBehavior File="Message" 
+							Text="We are in Kalimdor." 
+							LogColor="Orange" />
+
+			<!-- Infinite loop -->
+			<While Condition="true">
+				
+				<!-- If we are within 1000 of the farming area -->
+				<If Condition="Me.Location.Distance(new WoWPoint(-8331.223, -5079.063, 2.249207)) &lt;= 1000" >
+				
+					<!-- Profile message - Moving to the farming location -->
+					<CustomBehavior File="Message" 
+									Text="Moving to the beginning of the route." 
+									LogColor="Fuchsia" />
+				
+					<!-- Custom behavior - UserSettings -->
+					<CustomBehavior File="UserSettings" 
+								UseMount="True"  />
+				
+					<!-- Fly to - farming location -->
+					<CustomBehavior File="FlyTo"
+									X="-8331.223" Y="-5079.063" Z="2.249207" />
+
+					<!-- Custom behavior - ForcedDismount -->
+					<CustomBehavior File="ForcedDismount" />
+					
+					<!-- Profile message  - Checking our coordinates -->
+					<CustomBehavior File="Message" 
+									Text="Checking our coordinates." 
+									LogColor="Fuchsia" />
+
+					<!-- Custom behavior - UserSettings -->
+					<CustomBehavior File="UserSettings" 
+								UseMount="False"  />				
+									
+					<!-- Custom behavior - RunMacro - cleartarget -->
+					<CustomBehavior File="RunMacro" 
+									Macro="/cleartarget" 
+									NumOfTimes="1" 
+									WaitTime="0"/>
+					
+					<!-- Profile message  - We have reached the farming area. We will farm this location until you stop the bot -->	
+					<CustomBehavior File="Message" 
+									Text="We have reached the farming area. We will farm this location until you stop the bot." 
+									LogColor="Orange" />
+					
+					<!-- While our level >= 80 -->
+					<While Condition="Me.Level &gt;= 80">
+						
+						<!-- If our empty bag slots > 4 and our lowest durability > 30 percent -->
+						<If Condition="(Me.FreeBagSlots &gt; 4) &amp;&amp; (Me.LowestDurabilityPercent &gt; 0.3)" >
+				
+							<SetGrindArea><GrindArea>
+								<TargetMinLevel>1</TargetMinLevel>
+								<TargetMaxLevel>101</TargetMaxLevel>
+								<Factions>2258</Factions>
+								<MaxDistance>100</MaxDistance>
+									<Hotspots>
+										<Hotspot X="-8156.201" Y="-5280.423" Z="0.6994926" />
+										<Hotspot X="-8457.585" Y="-4919.896" Z="1.543918" />
+									</Hotspots>
+							</GrindArea></SetGrindArea>
+								
+							<!-- Grind until bag slots are less than 4 or gear durability less than 30% -->							   
+							<GrindTo Condition="(Me.FreeBagSlots &lt; 4) || (Me.LowestDurabilityPercent &lt; 0.3)" />
+			
+							<!-- Else our empty bag slots < 4 or our lowest durability < 30 percent -->
+							<Else>
+													
+								<!-- Load profile - [QO-N-Rep-Grinding][Steamwheedle-Cartel_southbreak-shore]__repair-mail -->
+								<CustomBehavior File="LoadProfile" 
+												ProfileName="Movement\Vendors\[QO-N-Rep-Grinding][Steamwheedle-Cartel_southbreak-shore]__repair-mail" />
+
+							</Else>	<!-- Else our empty bag slots < 4 or our lowest durability < 30 percent -->
+							
+						</If>	<!-- If our empty bag slots > 4 and our lowest durability > 30 percent -->				
+			
+					</While> 	<!-- While our level >= 80 -->
+
+					<!-- Else we are more than 1000	yards from the farming area -->
+					<Else>
+					
+						<!-- Load profile - [QO-N-M-Rep-Grinding][Steamwheedle-Cartel_southbreak-shore]_botanist -->
+						<CustomBehavior File="LoadProfile" 
+										ProfileName="Movement\[QO-N-M-Rep-Grinding][Steamwheedle-Cartel_southbreak-shore]_botanist" />
+						
+					</Else>	<!-- Else we are more than 200 yards from the farming area -->
+					
+				</If>	<!-- If we are within 1000 of the farming area -->	
+				
+			</While> <!-- Infinite loop -->
+			
+		</If>	<!-- If we are in Kalimdor -->
+		
+	</QuestOrder>
+	
+</HBProfile>
+

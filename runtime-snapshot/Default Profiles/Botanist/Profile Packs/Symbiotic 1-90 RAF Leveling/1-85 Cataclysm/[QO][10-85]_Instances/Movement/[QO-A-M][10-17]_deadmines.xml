@@ -1,0 +1,526 @@
+﻿<HBProfile creator="Botanist and Wigglez" version="1.0">
+	<Name>[QO-A-M][10-17]_deadmines</Name>
+   
+	<MinLevel>1</MinLevel>
+	<MaxLevel>101</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	
+	<MailGrey>False</MailGrey>
+	<MailWhite>False</MailWhite>
+	<MailGreen>False</MailGreen>
+	<MailBlue>False</MailBlue>
+	<MailPurple>False</MailPurple>
+   
+	<SellGrey>True</SellGrey>
+	<SellWhite>True</SellWhite>
+	<SellGreen>True</SellGreen>
+	<SellBlue>True</SellBlue>
+	<SellPurple>False</SellPurple>
+
+	<AvoidMobs>	
+		<Mob Name="Summon Enabler Stalker" Entry="53488" />	
+	</AvoidMobs>
+	
+	<Blackspots>
+	</Blackspots>
+
+	<Mailboxes>
+	</Mailboxes>
+ 
+	<Vendors>
+	</Vendors>
+
+	<Factions>
+	</Factions>
+	
+	<ProtectedItems>	
+	</ProtectedItems>
+
+	
+	<QuestOrder>
+		
+		<!-- *******************************************************  Booster ************************************************************** -->
+		<If Condition="Me.Level &gt;= 85">
+			<CustomBehavior File="Message" 
+							Text="We are a booster." 
+							LogColor="Cyan" />
+			
+			<!-- Booster UserSettings -->
+			<CustomBehavior File="UserSettings"
+							FindMountAutomatically="True"
+							GroundMountFarmingMode="False"
+							HarvestHerbs="False"
+							HarvestMinerals="False"
+							KillBetweenHotspots="True"
+							LogoutForInactivity="False"
+							LogoutInactivityUseForceQuit="False"
+							LootMobs="True"
+							LootRadius="35"
+							MountName=""
+							NinjaSkin="False"
+							RessAtSpiritHealers="False"
+							SkinMobs="False"
+							UseMount="True" 
+							UseRandomMount="False" />
+							
+			<!-- If we are in Eastern Kingdoms -->
+			<If Condition="Me.MapId == 0" >	
+				<CustomBehavior File="Message" 
+								Text="We are in Eastern Kingdoms." 
+								LogColor="Cyan" />
+					
+				<!-- Outside the box -->
+				<If Condition="Me.X &gt; -11195 || Me.X &lt; -11220 || Me.Y &lt; 1650 || Me.Y &gt; 1690" >
+					<CustomBehavior File="Message" 
+									Text="We are not in the box." 
+									LogColor="Cyan" />
+					
+					<!-- Alliance -->
+					<If Condition="Me.IsAlliance">
+						<CustomBehavior File="Message" 
+										Text="We are Alliance." 
+										LogColor="Cyan" />
+										
+						<!-- Sentinel Hill = 108 -->
+						<!-- If our hearthstone is set here, use it -->
+						<If Condition="Me.HearthstoneAreaId == 108" >
+							<CustomBehavior File="Message" 
+											Text="Our Innkeeper is set at Sentinel Hill." 
+											LogColor="Cyan" />
+										
+							<!-- Have hearthstone -->
+							<If Condition="HasItem(6948)">
+								<CustomBehavior File="Message" 
+												Text="Using Hearthstone." 
+												LogColor="Lime" />
+												
+								<CustomBehavior File="Misc\RunLua" 
+												Lua="UseItemByName(6948)" 
+												WaitTime="1000" />
+												
+								<CustomBehavior File="WaitTimer" 
+												WaitTime="20000" />
+							</If> <!-- Have hearthstone -->
+						
+							<!-- Have Innkeeper's Daughter -->
+							<If Condition="HasItem(64488)">
+								<CustomBehavior File="Message" 
+												Text="Using Innkeeper's Daughter." 
+												LogColor="Lime" />
+													
+								<CustomBehavior File="Misc\RunLua" 
+												Lua="UseItemByName(64488)" 
+												WaitTime="1000" />
+												
+								<CustomBehavior File="WaitTimer" 
+												WaitTime="20000" />				
+							</If> <!-- Have Innkeeper's Daughter -->
+							
+							<!-- Our hearth isn't set, we need to go to the zone -->
+							<Else>
+								<CustomBehavior File="Message" 
+													Text="Our Hearthstone isn't set in the proper location. Moving to set it." 
+													LogColor="Lime" />
+							
+								<CustomBehavior File="Message" 
+												Text="Moving to Sentinel Hill." 
+												LogColor="Lime" />
+							
+								<!-- Quest is incomplete -->
+								<If Condition="!HasQuest(26322) &amp;&amp; !IsQuestCompleted(26322)" >
+									<CustomBehavior File="Message" 
+													Text="We have not completed the quest that changes the Innkeeper location." 
+													LogColor="Cyan" />
+								
+									<!-- Fly to the innkeep in the wooden building -->
+									<CustomBehavior File="FlyTo" 
+													X="-10640.08" Y="1157.555" Z="33.34619" />							
+									<CustomBehavior File="ForcedDismount" />
+									
+									<!-- Run inside the inn -->
+									<RunTo X="-10650.05" Y="1165.21" Z="34.5228" />
+									
+									<CustomBehavior File="Message" 
+													Text="We are in Sentinel Hill." 
+													LogColor="Cyan" />
+									
+									<!-- Set hearthstone -->
+									<CustomBehavior File="WaitTimer" 
+													WaitTime="1000" />
+									<CustomBehavior File="Message" 
+													Text="Setting my Hearthstone." 
+													LogColor="Lime" />
+									<CustomBehavior File="WaitTimer" 
+													WaitTime="1000" />
+									<CustomBehavior File="SetHearthstone" 
+													MobId="8931" 
+													X="-10653.28" Y="1166.431" Z="34.50462" />
+									<CustomBehavior File="WaitTimer" 
+													WaitTime="1000" />
+									
+								</If>
+								
+								<!-- Quest is complete -->
+								<If Condition="!HasQuest(26322) &amp;&amp; IsQuestCompleted(26322)">
+									<CustomBehavior File="Message" 
+													Text="We have completed the quest that changes the Innkeeper location." 
+													LogColor="Cyan" />
+								
+									<!-- Fly to the innkeep in the tower -->
+									<CustomBehavior File="FlyTo" 
+													X="-10510.34" Y="1053.079" Z="59.25743" />							
+									<CustomBehavior File="ForcedDismount" />
+									
+									<!-- Run inside the inn -->
+									<RunTo X="-10503.31" Y="1031.031" Z="60.52037" />
+									
+									<CustomBehavior File="Message" 
+													Text="We are in Sentinel Hill." 
+													LogColor="Cyan" />
+									
+									<!-- Set hearthstone -->
+									<CustomBehavior File="WaitTimer" 
+													WaitTime="1000" />
+									<CustomBehavior File="Message" 
+													Text="Setting my Hearthstone." 
+													LogColor="Lime" />
+									<CustomBehavior File="WaitTimer" 
+													WaitTime="1000" />
+									<CustomBehavior File="SetHearthstone" 
+													MobId="8931" 
+													X="-10501.87" Y="1028.536" Z="60.52414" />
+									<CustomBehavior File="WaitTimer" 
+													WaitTime="1000" />
+									
+								</If> <!-- Quest complete -->
+							</Else> <!-- Set hearth -->
+						</If> <!-- Check hearthstone -->
+						
+						<!-- Repair if necessary -->
+						<If Condition="Me.LowestDurabilityPercent &lt; 0.8" >
+							<CustomBehavior File="Message" 
+											Text="Our durability is less than 80%, we need to repair." 
+											LogColor="Fuchsia" />
+										
+							<CustomBehavior File="ForceSetVendor" 
+											DoMail="False" 
+											DoRepair="True" 
+											DoSell="False" 
+											DoTrain="False" />
+							
+							<SetVendor>
+								<Vendors>
+									<!-- Sentinel Hill -->
+									<Vendor Name="William MacGregor" 
+											Entry="1668" 
+											Type="Repair" 
+											X="-10653.31" Y="996.5868" Z="32.87417" />
+								</Vendors>
+							</SetVendor>
+						
+							<!-- We are done repairing -->
+							<If Condition="Me.DurabilityPercent &gt;= 0.8" >
+								<CustomBehavior File="Message" 
+												Text="Repairing complete." 
+												LogColor="Fuchsia" />
+							</If> <!-- repaired -->
+						</If> <!-- Repairing -->
+						
+						<!-- If we are Horde -->
+						<ElseIf Condition="Me.IsHorde">
+							<CustomBehavior File="Message" 
+											Text="We are Horde." 
+											LogColor="Cyan" />
+						
+							<CustomBehavior File="Message" 
+											Text="You are an idiot and are running an Alliance profile as Horde. Moving to Stormwind and saying hello to King Varian Wrynn." 
+											LogColor="Red" />
+										
+							<CustomBehavior File="FlyTo" 
+											X="-8363.977" Y="233.4493" Z="156.9894" />
+						</ElseIf> <!-- Horde -->
+					</If> <!-- Alliance -->
+					
+					<!-- Fly above sentinel hill -->
+					<CustomBehavior File="FlyTo"  
+									X="-10617.11" Y="1055.996" Z="105.6173" />
+					
+					<!-- Fly to the rendezvous location -->
+					<CustomBehavior File="FlyTo" 
+									X="-11047.48" Y="1512.795" Z="43.16088" />	
+					<CustomBehavior File="ForcedDismount" />
+					
+					<!-- Begin the randezvous once all party members are within range -->
+					<CustomBehavior File="Misc\LoadProfileOn" 
+									CheckRange="5" />
+					
+					<!-- Five second wait timer for all the toons to trigger -->
+					<CustomBehavior File="WaitTimer" 
+											WaitTime="5000" />
+											
+					<!-- Run through caverns to Deadmines -->							
+					<RunTo X="-11086.47" Y="1530.567" Z="43.27423" />
+					<RunTo X="-11097.69" Y="1515.96" Z="43.12984" />
+					<RunTo X="-11088.03" Y="1507.087" Z="42.99051" />
+					<RunTo X="-11073.57" Y="1500.448" Z="42.86707" />
+					<RunTo X="-11188.25" Y="1520.978" Z="18.98619" />
+					<RunTo X="-11181.27" Y="1541.052" Z="19.36648" />
+					
+					<!-- Run to the box -->
+					<RunTo X="-11208" Y="1676.41" Z="24.5716" />	
+				</If> <!-- Not in box -->
+				
+				<!-- Inside the instance box, load the Deadmines profile -->
+				<If Condition="Me.X &lt; -11195 &amp;&amp; Me.X &gt; -11220 &amp;&amp; Me.Y &gt; 1650 &amp;&amp; Me.Y &lt; 1690" >
+					<CustomBehavior File="Message" 
+									Text="We are in the box." 
+									LogColor="Cyan" />
+					
+					<CustomBehavior File="LoadProfile" 
+									ProfileName="..\[QO-A][10-17]_deadmines" />
+				</If> <!-- Load profile -->
+			</If> <!-- Eastern Kingdoms -->
+		</If> <!-- Booster -->
+
+
+	<!-- ******************************************************* RAF Toons *************************************************************** -->
+
+		<!-- RAF Toons -->
+		<If Condition="Me.Level &lt;= 84">
+			<CustomBehavior File="Message" 
+							Text="We are a RAF." 
+							LogColor="Cyan" />
+							
+			<If Condition="Me.IsAlliance">
+				<If Condition="Me.HearthstoneAreaId != 5148">
+					<CustomBehavior File="Message" 
+									Text="Our Hearthstone isn't set in the Trade District in Stormwind. Stopping profile." 
+									LogColor="Lime" />
+									
+					<CustomBehavior File="UserSettings" 
+										StopBot="true" />
+				</If>
+				
+				<ElseIf Condition="Me.IsHorde">
+					<If Condition="Me.HearthstoneAreaId != 5170">
+						<CustomBehavior File="Message" 
+										Text="Our Hearthstone isn't set in the Valley of Strength in Orgrimmar. Stopping profile." 
+										LogColor="Lime" />
+										
+						<CustomBehavior File="UserSettings" 
+										StopBot="true" />
+					</If>
+				</ElseIf>
+			</If>
+							
+			<!-- RAF UserSettings -->
+			<CustomBehavior File="UserSettings"
+							GroundMountFarmingMode="False"
+							HarvestHerbs="False"
+							HarvestMinerals="False"
+							KillBetweenHotspots="True"
+							LogoutForInactivity="False"
+							LogoutInactivityUseForceQuit="False"
+							LootMobs="True"
+							LootRadius="15"
+							MountName=""
+							NinjaSkin="False"
+							RessAtSpiritHealers="False"
+							SkinMobs="False"
+							UseMount="True" 
+							UseRandomMount="False" />
+	
+			<!-- Kalimdor -->
+			<If Condition="Me.MapId == 1">
+				<CustomBehavior File="Message" 
+								Text="We are in Kalimdor." 
+								LogColor="Cyan" />
+			
+				<CustomBehavior File="Message" 
+								Text="You are on the wrong continent. Move your character to Eastern Kingdoms." 
+								LogColor="Red" />	
+			</If> <!-- Kalimdor -->
+				
+			<!-- Eastern Kingdoms -->
+			<If Condition="Me.MapId == 0">
+				<CustomBehavior File="Message" 
+								Text="We are in Eastern Kingdoms." 
+								LogColor="Cyan" />
+								
+				<!-- Outside the box -->
+				<If Condition="Me.X &gt; -11195 || Me.X &lt; -11220 || Me.Y &lt; 1650 || Me.Y &gt; 1690" >
+					<CustomBehavior File="Message" 
+									Text="We are not in the box." 
+									LogColor="Cyan" />
+									
+					<!-- Stormwind -->
+					<If Condition="Me.ZoneId == 1519">
+						<CustomBehavior File="Message" 
+										Text="We are in Stormwind City." 
+										LogColor="Cyan" />
+										
+						<!-- Bag space and Durabilty check -->
+						<If Condition="(Me.FreeBagSlots &lt;= 4) || (Me.LowestDurabilityPercent &lt; 0.8)" >
+							<SetVendor>
+								<Vendors>
+									<Vendor Name="Gunther Weller" 
+											Entry="1289" 
+											Type="Repair" 
+											X="-8790.421" Y="607.3484" Z="96.77297" />
+								</Vendors>
+							</SetVendor>
+							<SetMailbox>
+								<Mailboxes>
+									<Mailbox X="-8862.369" Y="639.4135" Z="96.18259" />
+								</Mailboxes>
+							</SetMailbox>				
+							<CustomBehavior File="ForceSetVendor" 
+											DoMail="True" 
+											DoRepair="True" 
+											DoSell="True" 
+											DoTrain="False" />	
+						</If>		
+					
+						<CustomBehavior File="Message" 
+										Text="Moving to Goldshire." 
+										LogColor="Lime" />
+										
+						<!-- Run to Goldshire -->
+						<RunTo X="-9462.262" Y="64.13811" Z="55.91473" />
+					</If> <!-- Stormwind -->
+				
+					<!-- If we are in Elwynn Forest -->
+					<If Condition="Me.ZoneId == 12">
+						<CustomBehavior File="Message" 
+										Text="We are in Elwynn Forest." 
+										LogColor="Cyan" />
+					
+						<CustomBehavior File="Message" 
+										Text="Moving to Goldshire." 
+										LogColor="Lime" />
+										
+						<!-- Run to Goldshire to ensure we are on the road -->
+						<RunTo X="-9462.262" Y="64.13811" Z="55.91473" />
+						
+						<!-- User Dialog - All your Characters must be in a party at this time -->	
+						<CustomBehavior File="UserDialog"
+										AllowBotStop="False"
+										SoundCue="Exclamation"
+										SoundCueInterval="15"
+										ExpiryTime="300"
+										ExpiryAction="InputEnabled_Continue"
+										Text="RAF - All your characters must be in a party at this time. You have 5 minutes to assemble your party before the RAF toons run to Deadmines on their own	. The Booster must be the party leader."
+										Title="WARNING" />
+						
+						<CustomBehavior File="Message" 
+										Text="We are in Goldshire." 
+										LogColor="Cyan" />
+										
+						<CustomBehavior File="Message" 
+										Text="Moving to the bridge between Elwynn Forest and Westfall." 
+										LogColor="Lime" />
+								
+						<!-- Run to the Westfall bridge -->
+						<RunTo X="-9805.597" Y="838.1347" Z="29.13275" />
+						
+						<CustomBehavior File="Message" 
+										Text="We are on the bridge." 
+										LogColor="Cyan" />
+						
+						<Else>
+							<CustomBehavior File="Message" 
+											Text="We are not in Elwynn Forest." 
+											LogColor="Cyan" />
+										
+							<CustomBehavior File="Message" 
+											Text="Attempting to move to Goldshire." 
+											LogColor="Lime" />
+											
+							<CustomBehavior File="Message" 
+											Text="This profile should be started in Stormwind or Elwynn Forest. You are responsible for your own dickery at this point."
+											LogColor="Red" />
+						</Else> <!-- Not Elwynn Forest -->
+					</If> <!-- Elwynn Forest -->
+					
+					<!-- Between north of Sentinel Hill and top of Goldshire -->
+					<If Condition="Me.X &gt; -10100 &amp;&amp; Me.X &lt;= -9260">
+						<CustomBehavior File="Message" 
+										Text="We are between Goldshire and northern Sentinel Hill." 
+										LogColor="Cyan" />
+										
+						<CustomBehavior File="Message" 
+										Text="We are moving to the bridge between Elwynn Forest and Westfall." 
+										LogColor="Lime" />
+										
+						<!-- We are at the bridge no matter what -->
+						<RunTo X="-9805.597" Y="838.1347" Z="29.13275" />
+
+						<CustomBehavior File="Message" 
+										Text="We are at the bridge." 
+										LogColor="Cyan" />
+										
+						<CustomBehavior File="Message" 
+										Text="We are moving to Sentinel Hill." 
+										LogColor="Lime" />
+									
+						<!-- Move to Sentinel Hill fp -->
+						<RunTo X="-10549.74" Y="1034.109" Z="56.96315" />
+						
+						<CustomBehavior File="Message" 
+										Text="We are in Sentinel Hill." 
+										LogColor="Cyan" />
+									
+						<CustomBehavior File="Message" 
+										Text="We are moving to the rendezvous point." 
+										LogColor="Lime" />
+										
+						<!-- Move to rendezvous -->
+						<CustomBehavior File="NoCombatMoveTo" X="-11047.48" Y="1512.795" Z="43.16088" />	
+					</If> <!-- Bridge area -->
+					
+					<If Condition="Me.ZoneId == 40">
+						<CustomBehavior File="Message" 
+										Text="We are in Westfall." 
+										LogColor="Cyan" />
+											
+						<If Condition="Me.X &lt;= -10100">
+							<CustomBehavior File="Message" 
+											Text="We are at or below Sentinel Hill." 
+											LogColor="Cyan" />
+								
+							<CustomBehavior File="Message" 
+											Text="We are moving to the rendezvous point." 
+											LogColor="Lime" />
+							
+							<!-- We're at the rendezvous no matter what -->
+							<CustomBehavior File="NoCombatMoveTo" X="-11047.48" Y="1512.795" Z="43.16088" />	
+						
+							<!-- Rendezvous location -->
+							<CustomBehavior File="Misc\LoadProfileOn" 
+											CheckRange="5" />
+											
+							<!-- Wait timer to allow the 90 to clear the path to Deadmines -->		
+							<CustomBehavior File="WaitTimer" 
+											WaitTime="40000" />
+											
+							<CustomBehavior File="NoCombatMoveTo" X="-11208" Y="1676.41" Z="24.5716" />
+						</If> <!-- Sentinel Hill and below -->
+					</If> <!-- Westfall -->
+				</If> <!-- Not in box -->	
+				
+				<!-- Inside the instance box, load the Deadmines profile -->	
+				<If Condition="Me.X &lt; -11195 &amp;&amp; Me.X &gt; -11220 &amp;&amp; Me.Y &gt; 1650 &amp;&amp; Me.Y &lt; 1690" >
+					<CustomBehavior File="Message" 
+									Text="We are in the box." 
+									LogColor="Cyan" />
+											
+					<CustomBehavior File="LoadProfile" 
+									ProfileName="..\[QO-A][10-17]_deadmines" />
+				</If> <!-- Load profile -->
+			</If> <!-- Eastern Kingdoms -->
+		</If> <!-- RAF -->
+	</QuestOrder>
+</HBProfile>
+

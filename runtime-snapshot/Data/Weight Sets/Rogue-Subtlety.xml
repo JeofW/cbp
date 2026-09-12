@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WeightSet Class="Rogue" Specialization="3" Name="Rogue-Subtlety">
+  <MetaSocket>30</MetaSocket>
+  <BlueSocket>11.5</BlueSocket>
+  <RedSocket>11.5</RedSocket>
+  <YellowSocket>10.5</YellowSocket>
+  <DPS>1.2</DPS>
+  <ExpertiseRating>1.13</ExpertiseRating>
+  <Agility>1</Agility>
+  <HitRating>0.98</HitRating>
+  <HitRatingMelee>0.98</HitRatingMelee>
+  <HasteRating>0.95</HasteRating>
+  <HasteRatingMelee>0.95</HasteRatingMelee>
+  <CriticalStrikeRating>0.87</CriticalStrikeRating>
+  <CriticalStrikeRatingMelee>0.87</CriticalStrikeRatingMelee>
+  <Stamina>0.6</Stamina>
+  <Strength>0.57</Strength>
+  <AttackPower>0.52</AttackPower>
+  <MeleeAttackPower>0.52</MeleeAttackPower>
+  <ArmorPenetrationRating>0.44</ArmorPenetrationRating>
+  <Armor>0.05</Armor>
+</WeightSet>

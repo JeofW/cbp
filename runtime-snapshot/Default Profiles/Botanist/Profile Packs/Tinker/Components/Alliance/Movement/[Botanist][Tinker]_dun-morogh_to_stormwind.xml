@@ -1,0 +1,217 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+<Name>[Botanist][Tinker]_dun-morogh_to_stormwind</Name>
+
+<MinLevel>1</MinLevel>
+<MaxLevel>151</MaxLevel>
+
+<MinDurability>-1</MinDurability>
+<MinFreeBagSlots>-1</MinFreeBagSlots>
+<TargetingDistance>1</TargetingDistance>
+
+<MailGrey>False</MailGrey>
+<MailWhite>False</MailWhite>
+<MailGreen>False</MailGreen>
+<MailBlue>False</MailBlue>
+<MailPurple>False</MailPurple>
+
+<SellGrey>False</SellGrey>
+<SellWhite>False</SellWhite>
+<SellGreen>False</SellGreen>
+<SellBlue>False</SellBlue>
+<SellPurple>False</SellPurple>
+
+<AvoidMobs>		 
+</AvoidMobs>
+
+<Blackspots>
+</Blackspots>
+
+<Mailboxes>
+</Mailboxes>
+
+<Vendors>
+</Vendors>
+
+<ProtectedItems>	
+</ProtectedItems>
+
+	<QuestOrder>
+	
+		<!-- If we are in Dun Morogh -->
+		<If Condition="Me.MapId == 0 &amp;&amp; Me.ZoneId == 1">				
+
+			<!-- Profile message - We are in Dun Morogh. Navigating to Stormwind -->
+			<CustomBehavior File="Message" 
+								Text="We are in Dun Morogh. Navigating to Stormwind." 
+								LogColor="Plum" />				
+	
+			<!-- Profile message - Disabling combat -->
+			<CustomBehavior File="Message" 
+								Text="Disabling combat." 
+								LogColor="Gold" />
+			
+			<!-- DisableBehavior - Combat -->
+			<DisableBehavior Name="Combat" />
+	
+			<!-- Profile message - Disabling 'Pull' behavior -->
+			<CustomBehavior File="Message" 
+							Text="Disabling 'Pull' behavior."
+							LogColor="Plum" />
+			
+			<!-- DisableBehavior - Pull -->
+			<DisableBehavior Name="Pull" />
+	
+			<!-- Move to - Iron Forge flight master -->
+			<MoveTo X="-4821.78" Y="-1155.44" Z="502.21" />
+	
+			<!-- Move to - the Tram entrance Iron Forge -->
+			<MoveTo X="-4838.849" Y="-1318.539" Z="501.8685" />
+				
+			<!-- Go through the portal -->									
+			<CustomBehavior File="Misc\InInstance" 
+							X="-4841.061" Y="-1326.37" Z="501.8685" />	
+				
+			<!-- Move to - the Tram track in Iron Forge -->
+			<MoveTo X="4.504895" Y="39.665" Z="-13.86343" />	
+				
+			<!-- Move to - the Tram track in Stormwind -->
+			<MoveTo X="4.82688" Y="2459.661" Z="-13.863" />	
+			
+			<!-- Move to - the Tram exit Stormwind -->
+			<MoveTo X="65.82558" Y="2490.777" Z="-4.296983" />
+				
+			<!-- Go through the portal -->									
+			<CustomBehavior File="Misc\InInstance" 
+							X="71.85335" Y="2490.947" Z="-4.29649" />
+
+			<!-- Move to - exit the tram tunnle -->
+			<MoveTo X="-8402.378" Y="570.6393" Z="92.16895" />				
+
+			<!-- Move to - Stormwind flight master -->
+			<MoveTo X="-8836.922" Y="488.0515" Z="109.6097" />	
+				
+			<!-- Profile message - Enabling combat -->
+			<CustomBehavior File="Message" 
+								Text="Enabling combat." 
+								LogColor="Gold" />
+
+			<!-- enable combat -->
+			<EnableBehavior Name="Combat" />	
+				
+			<!-- Profile message - Enabling 'Pull' behavior -->
+			<CustomBehavior File="Message" 
+							Text="Enabling 'Pull' behavior."
+							LogColor="Plum" />
+			
+			<!-- EnableBehavior - Pull -->
+			<EnableBehavior Name="Pull" />	
+				
+			<!--  CustomBehavior - LoadProfile -->				
+			<CustomBehavior File="LoadProfile" 
+							ProfileName="[Botanist][Tinker]_teldrassil_to_stormwind" />	
+				
+		</If>	<!-- If we are in Dun Morogh -->
+		
+		<!-- If we are in Stormwind -->
+		<If Condition="Me.ZoneId == 1519">
+		
+			<!--  CustomBehavior - LoadProfile - [Botanist][Tinker]_unknown-to-elwynn-forest -->				
+			<CustomBehavior File="LoadProfile" 
+							ProfileName="[Botanist][Tinker]_unknown-to-elwynn-forest" />
+
+		</If>	<!-- If we are in Stormwind -->
+		
+		<!-- If we are in Eastern Kingdoms and we aren't in Elwynn Forest or Stormwind -->
+		<If Condition="Me.MapId == 0 &amp;&amp; Me.ZoneId != 12 &amp;&amp; Me.ZoneId != 1519">				
+
+			<!-- Profile message - We are in Eastern Kingdoms. Navigating to Stormwind -->
+			<CustomBehavior File="Message" 
+								Text="We are in Eastern Kingdoms. Navigating to Stormwind." 
+								LogColor="Plum" />				
+	
+			<!-- Move to - Iron Forge flight master -->
+			<MoveTo X="-4821.78" Y="-1155.44" Z="502.21" />
+	
+			<!-- Move to - the Tram entrance Iron Forge -->
+			<MoveTo X="-4838.849" Y="-1318.539" Z="501.8685" />
+				
+			<!-- Go through the portal -->									
+			<CustomBehavior File="Misc\InInstance" 
+							X="-4841.061" Y="-1326.37" Z="501.8685" />	
+				
+			<!-- Move to - the Tram track in Iron Forge -->
+			<MoveTo X="4.504895" Y="39.665" Z="-13.86343" />	
+				
+			<!-- Move to - the Tram track in Stormwind -->
+			<MoveTo X="4.82688" Y="2459.661" Z="-13.863" />	
+			
+			<!-- Move to - the Tram exit Stormwind -->
+			<MoveTo X="65.82558" Y="2490.777" Z="-4.296983" />
+				
+			<!-- Go through the portal -->									
+			<CustomBehavior File="Misc\InInstance" 
+							X="71.85335" Y="2490.947" Z="-4.29649" />
+
+			<!-- Move to - exit the tram tunnle -->
+			<MoveTo X="-8402.378" Y="570.6393" Z="92.16895" />				
+
+			<!-- Move to - Stormwind flight master -->
+			<MoveTo X="-8836.922" Y="488.0515" Z="109.6097" />	
+				
+			<!--  CustomBehavior - LoadProfile -->				
+			<CustomBehavior File="LoadProfile" 
+							ProfileName="[Botanist][Tinker]_teldrassil_to_stormwind" />	
+		
+		</If>	<!-- If we are in Eastern Kingdoms and we aren't in Dun Morogh or Elwynn Forest -->
+
+		<!-- If we are in Elwynn Forest -->
+		<If Condition="Me.ZoneId == 12 ">
+		
+			<!-- If our level < 6 -->				
+			<If Condition="Me.Level &lt; 5" >
+		
+				<!-- Profile message -  Navigating to Goldshire -->
+				<CustomBehavior File="Message" 
+									Text="Navigating to Goldshire." 
+									LogColor="Plum" />				
+		
+				<!-- Move to - Goldshire flight master -->	
+				<MoveTo X="-9433.99" Y="85.1493" Z="56.734" />
+				
+				<!-- CustomBehavior - WaitTimer - 3 second delay  -->				
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="3000" />
+		
+				<!-- Profile message - We are in Goldshire. Navigating to Northshire -->
+				<CustomBehavior File="Message" 
+								Text="We are in Goldshire. Navigating to Northshire." 
+								LogColor="Plum" />
+				
+				<!-- Move to - Northshire  -->	
+				<MoveTo X="-8927.191" Y="-119.1697" Z="82.0771" />	
+					
+				<!--  CustomBehavior - LoadProfile - [Botanist][Tinker][A-5][profession-check] -->				
+				<CustomBehavior File="LoadProfile" 
+								ProfileName="..\[Botanist][Tinker][A-5][profession-check]" />
+			
+			</If>	<!-- If our level < 5 -->
+			
+			<!-- If our level >= 5 -->				
+			<If Condition="Me.Level &gt;= 5" >
+		
+				<!-- CustomBehavior - WaitTimer - 3 second delay  -->				
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="3000" />	
+					
+				<!--  CustomBehavior - LoadProfile - [Botanist][Tinker][A-5][profession-check] -->				
+				<CustomBehavior File="LoadProfile" 
+								ProfileName="..\[Botanist][Tinker][A-5][profession-check]" />
+			
+			</If>	<!-- If our level >= 5 -->
+			
+		</If>	<!-- If we are in Elwynn Forest -->
+		
+	</QuestOrder>
+
+</HBProfile>
+

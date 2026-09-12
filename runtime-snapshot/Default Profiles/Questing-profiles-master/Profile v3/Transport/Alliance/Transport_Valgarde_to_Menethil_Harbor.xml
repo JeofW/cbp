@@ -1,0 +1,27 @@
+<HBProfile>
+	<!-- 
+    Transport Profile: Valgarde to Menethil Harbor
+    Transport: The Northspear (ID: 181688)
+    Faction: Alliance
+    Route: Northrend -> Azeroth
+    
+    Generated from WRobot coordinates
+  -->
+	<Name>Transport_Valgarde_to_Menethil_Harbor</Name>
+	<MinLevel>1</MinLevel>
+	<MaxLevel>81</MaxLevel>
+
+	<AvoidMobs />
+
+	<SellGrey>false</SellGrey>
+
+	<QuestOrder>
+		<CustomBehavior File="UserSettings" LootMobs="False" />
+		<!-- Run to departure dock -->
+		<!-- Take transport -->
+		<RunTo X="593.5266" Y="-5103.054" Z="5.2604" />
+		<CustomBehavior File="UseTransport" TransportId="181688" DestName="The Northspear" WaitAtX="593.5266" WaitAtY="-5103.054" WaitAtZ="5.2604" TransportStartX="584" TransportStartY="-5118.9" TransportStartZ="0" StandOnX="589.7733" StandOnY="-5118.479" StandOnZ="9.5609" TransportEndX="-3712.7" TransportEndY="-569.5" TransportEndZ="0" GetOffX="-3720.1" GetOffY="-589.2" GetOffZ="6.4" />
+		<CustomBehavior File="WaitTimer" WaitTime="2000" />
+		<!-- Move away from dock -->
+	</QuestOrder>
+</HBProfile>

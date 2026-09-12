@@ -1,0 +1,458 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+	<Name>[QO-N-M][85+Flying]_botanist_blackrock-caverns</Name>
+   
+	<MinLevel>1</MinLevel>
+	<MaxLevel>101</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	
+	<MailGrey>True</MailGrey>
+	<MailWhite>False</MailWhite>
+	<MailGreen>False</MailGreen>
+	<MailBlue>False</MailBlue>
+	<MailPurple>False</MailPurple>
+   
+	<SellGrey>False</SellGrey>
+	<SellWhite>False</SellWhite>
+	<SellGreen>False</SellGreen>
+	<SellBlue>False</SellBlue>
+	<SellPurple>False</SellPurple>
+   
+	<TargetElites>True</TargetElites>
+	
+	<AvoidMobs>		
+		<Mob Name="Summon Enabler Stalker" Entry="53488" />
+	</AvoidMobs>
+	
+	<Blackspots>
+		<Blackspot X="3064.36" Y="3607.146" Z="144.0166" Radius="1" />
+	</Blackspots>
+
+	<Mailboxes>
+	</Mailboxes>
+ 
+	<Vendors>
+	</Vendors>
+	
+	<ProtectedItems>
+	</ProtectedItems>
+
+	<Factions></Factions>
+	
+	<QuestOrder>
+		<ClearVendor />
+		<ClearMailbox />
+
+		<!-- Level check -->
+		<If Condition="Me.Level &gt;= 85">
+		
+		<!-- UserSettings -->
+		<CustomBehavior File="UserSettings"
+						FindMountAutomatically="True"
+						GroundMountFarmingMode="False"
+						HarvestHerbs="False"
+						HarvestMinerals="False"
+						KillBetweenHotspots="True"
+						LogoutForInactivity="False"
+						LogoutInactivityUseForceQuit="False"
+						LootMobs="True"
+						LootRadius="25"
+						MountName=""
+						NinjaSkin="False"
+						RessAtSpiritHealers="False"
+						SkinMobs="False"
+						UseMount="True" 
+						UseRandomMount="False" />							
+							
+			<!-- If we are in Kalimdor -->
+			<If Condition="Me.MapId == 1">
+			
+				<!-- Faction check - Horde -->
+				<If Condition="Me.IsHorde" >
+				
+					<!-- Profile message - We are in Horde  -->
+					<CustomBehavior File="Message" 
+									Text="We are in Horde." 
+									LogColor="Cyan" />
+									
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+									
+					<!-- If we don't have Pine Nut Bread -->
+					<If Condition="!HasItem(58260)">
+				
+						<!-- CustomBehavior - message - - I have detected that we don't have any Pine Nut Bread. Initializing vendor procedures -->
+						<CustomBehavior File="Message" 
+										Text="I have detected that we don't have any Pine Nut Bread. Initializing vendor procedures."  
+										LogColor="Plum" />
+
+						<!-- CustomBehavior - WaitTime - wait 3 seconds - delay -->
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="3000" />
+				
+						<!-- Load profile - [QO-N][85+Flying]_botanist_blackrock-caverns_[food] -->
+						<CustomBehavior File="LoadProfile" 
+										ProfileName="Vendors\[QO-N][85+Flying]_botanist_blackrock-caverns_[food]" />
+
+					</If>	<!-- If we don't have Pine Nut Bread -->				
+									
+					<!-- If we are in the Cleft of Shadow -->
+					<If Condition="Me.X &lt; 1895.627 &amp;&amp; Me.X &gt; 1713.31 &amp;&amp; Me.Y &gt; -4440.429 &amp;&amp; Me.Y &lt; -4283.688 &amp;&amp; Me.Z &lt; 35" >
+					
+						<!-- CustomBehavior - Message - We are in the Cleft of Shadow, disabling mount use -->
+						<CustomBehavior File="Message" 
+										Text="We are in the Cleft of Shadow, disabling mount use."  
+										LogColor="Cyan" />
+					
+						<!-- UserSettings -->
+						<CustomBehavior File="UserSettings" 
+											UseMount="False" />
+
+						<!-- Move to - mount location outside the Cleft of Shadow -->
+						<MoveTo X="1892.877" Y="-4546.347" Z="29.89322" />
+					
+						<!-- UserSettings -->
+						<CustomBehavior File="UserSettings" 
+											UseMount="True" />
+						
+					</If>	<!-- If we are in the Cleft of Shadow -->
+
+					<!-- Profile message - We are in Kalimdor -->
+					<CustomBehavior File="Message" 
+									Text="We are in Kalimdor." 
+									LogColor="Cyan" />
+									
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />				
+									
+					<!-- Profile message - Moving to the Blasted Lands portal -->
+					<CustomBehavior File="Message" 
+									Text="Moving to the Blasted Lands portal."  
+									LogColor="Cyan" />				
+									
+					<!-- Move to - Cleft of Shadow - hover point -->				
+					<CustomBehavior File="FlyTo" 
+									X="1889.579" Y="-4540.884" Z="90.5732" />				
+									
+					<!-- CTM to - grounding at the Cleft of Shadow -->
+					<CustomBehavior File="MyCTM" 
+									X="1893.12" Y="-4474.171" Z="23.24943" />	
+
+					<!-- Forced dismount -->	
+					<CustomBehavior File="ForcedDismount" />
+
+					<!-- CustomBehavior - Message - Disabling mount use while in the Cleft of Shadow -->
+					<CustomBehavior File="Message" 
+									Text="Disabling mount use while in the Cleft of Shadow."  
+									LogColor="Cyan" />
+									
+					<!-- Usersettings- disable mount use in Cleft of Shadow -->
+					<CustomBehavior File="UserSettings"
+									UseMount="False"  />				
+					
+					<!-- Move to - Orgrimmar portal to Blasted Lands -->
+					<MoveTo X="1771.722" Y="-4327.896" Z="-8.247296" />
+
+					<!-- CustomBehavior - Message - Interacting with the portal -->
+					<CustomBehavior File="Message" 
+									Text="Interacting with the portal."  
+									LogColor="Cyan" />
+									
+					<!-- Interact with the teleporter -->
+					<CustomBehavior File="InteractWith" 
+									MobId="195142" />
+					
+					<!-- Usersettings- enable mount use in Blasted Lands -->
+					<CustomBehavior File="UserSettings"
+									UseMount="True"  />		
+			
+					<!-- Else we are Alliance -->	
+					<Else>
+
+						<!-- Profile message - We are in Kalimdor -->
+						<CustomBehavior File="Message" 
+										Text="We are Alliance in Kalimdor"  
+										LogColor="Orange" />
+										
+						<!-- Profile message - Flying to Ratchet -->
+						<CustomBehavior File="Message" 
+										Text="Flying to Ratchet." 
+										LogColor="Cyan" />
+						
+						<!-- Fly to - Ratchet docks - hover point -->
+						<CustomBehavior File="FlyTo" 
+										X="-966.5041" Y="-3769.535" Z="46.41536" />	
+						
+						<!-- CTM to - grounding at Ratchet docks -->
+						<CustomBehavior File="MyCTM"
+										X="-994.0352" Y="-3814.759" Z="5.329047" />
+
+						<!-- Custom behavior - ForcedDismount -->
+						<CustomBehavior File="ForcedDismount" />
+						
+						<!-- Move to - transport wait location -->
+						<MoveTo X="-994.0004" Y="-3827.987" Z="5.634368" />
+							
+						<!-- Profile message - Waiting for the boat to Booty Bay -->	
+						<CustomBehavior File="Message" 
+										Text="Waiting for the boat to Booty Bay." 
+										LogColor="Cyan" />	
+						
+						<!-- Profile message - We are in Kalimdor -->
+						<CustomBehavior File="UseTransport"
+										TransportId="20808"
+										WaitAtX="-994.0004" 
+										WaitAtY="-3827.987" 
+										WaitAtZ="5.634368" 
+										TransportStartX="-1005.61346" 
+										TransportStartY="-3841.648" 
+										TransportStartZ="-0.0262415316"
+										TransportEndX="-14277.7451" 
+										TransportEndY="582.86615" 
+										TransportEndZ="-0.048539947"
+										StandOnX="-998.279" 
+										StandOnY="-3840.65" 
+										StandOnZ="6.02161" 
+										GetOffX="-14280.22" 
+										GetOffY="567.6113" 
+										GetOffZ="6.696649" />
+							
+						<!-- Move to - Booty Bay docks -->	
+						<MoveTo X="-14280.22" Y="567.6113" Z="6.696649" />
+										
+						<!-- If we don't have Pine Nut Bread -->
+						<If Condition="!HasItem(58260)">
+					
+							<!-- CustomBehavior - message - - I have detected that we don't have any Pine Nut Bread. Initializing vendor procedures -->
+							<CustomBehavior File="Message" 
+											Text="I have detected that we don't have any Pine Nut Bread. Initializing vendor procedures."  
+											LogColor="Plum" />
+
+							<!-- CustomBehavior - WaitTime - wait 3 seconds - delay -->
+							<CustomBehavior File="WaitTimer" 
+											WaitTime="3000" />
+					
+							<!-- Load profile - [QO-N][85+Flying]_botanist_blackrock-caverns_[food] -->
+							<CustomBehavior File="LoadProfile" 
+											ProfileName="Vendors\[QO-N][85+Flying]_botanist_blackrock-caverns_[food]" />
+
+						</If>	<!-- If we don't have Pine Nut Bread -->				
+										
+					</Else>		<!-- Else we are Alliance -->				
+									
+				</If>	<!-- Faction check - Horde -->
+				
+			</If>	<!-- If we are in Kalimdor -->			
+			
+			<!-- If we are in Eastern Kingdoms and not in Searing Gorge or Blackrock Mountain -->
+			<If Condition="((Me.MapId == 0) &amp;&amp; (Me.ZoneId != 51) &amp;&amp; (Me.ZoneId != 25))">
+
+				<!-- CustomBehavior -  message - We are in Eastern Kingdoms. Flying to Searing Gorge -->
+				<CustomBehavior File="Message" 
+								Text="We are in Eastern Kingdoms. Flying to Searing Gorge."  
+								LogColor="Plum" />
+			
+				<!-- If we don't have Pine Nut Bread -->
+				<If Condition="!HasItem(58260)">
+			
+					<!-- CustomBehavior - message - - I have detected that we don't have any Pine Nut Bread. Initializing vendor procedures -->
+					<CustomBehavior File="Message" 
+									Text="I have detected that we don't have any Pine Nut Bread. Initializing vendor procedures."  
+									LogColor="Plum" />
+
+					<!-- CustomBehavior - WaitTime - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+			
+					<!-- Load profile - [QO-N][85+Flying]_botanist_blackrock-caverns_[food] -->
+					<CustomBehavior File="LoadProfile" 
+									ProfileName="Vendors\[QO-N][85+Flying]_botanist_blackrock-caverns_[food]" />
+
+				</If>	<!-- If we don't have Pine Nut Bread -->
+			
+				<!-- Fly to the Iron Summit - hover point -->
+				<CustomBehavior File="FlyTo" 
+								X="-7155.026" Y="-1241.06" Z="330.1496" />	
+
+				<!-- CustomBehavior -  message - We have arrived in Searing Gorge -->
+				<CustomBehavior File="Message" 
+								Text="We have arrived in Searing Gorge."  
+								LogColor="Plum" />
+			
+			</If>	<!-- If we are in Eastern Kingdoms and not in Searing Gorge -->
+			
+			<!-- If we are in Blackrock Mountain -->
+			<If Condition="Me.ZoneId == 25">
+			
+				<!-- If we are not in the Blackrock Caverns instance box -->
+				<If Condition="Me.X &lt; -7581.14 || Me.X &gt; -7561.14 || Me.Y &lt; -1334.96 || Me.Y &gt; -1314.96" >
+				
+					<!-- Profile message - We are in Blackrock Mountain, exiting the mountain so we can get our bearings -->
+					<CustomBehavior File="Message" 
+									Text="We are in Blackrock Mountain, exiting the mountain so we can get our bearings."  
+									LogColor="Plum" />
+				
+					<!-- Move to - Nav=Fly - Blackrock Caverns - porticullis gate -->
+					<MoveTo Nav="Fly" X="-7482.628" Y="-1072.034" Z="266.0211" />
+				
+					<!-- Move to - Nav=Fly - Blackrock Caverns - gate -->
+					<MoveTo Nav="Fly" X="-7316.727" Y="-1077.39" Z="277.0694" />
+				
+					<!-- Move to - Nav=Fly - Blackrock Caverns - gate - hover point -->
+					<CustomBehavior File="FlyTo"
+									X="-7319.519" Y="-1099.172" Z="314.6976" />
+					
+					<!-- If we don't have Pine Nut Bread -->
+					<If Condition="!HasItem(58260)">
+				
+						<!-- CustomBehavior - message - - I have detected that we don't have any Pine Nut Bread. Initializing vendor procedures -->
+						<CustomBehavior File="Message" 
+										Text="I have detected that we don't have any Pine Nut Bread. Initializing vendor procedures."  
+										LogColor="Plum" />
+
+						<!-- CustomBehavior - WaitTime - wait 3 seconds - delay -->
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="3000" />
+				
+						<!-- Load profile - [QO-N][85+Flying]_botanist_blackrock-caverns_[food] -->
+						<CustomBehavior File="LoadProfile" 
+										ProfileName="Vendors\[QO-N][85+Flying]_botanist_blackrock-caverns_[food]" />
+
+					</If>	<!-- If we don't have Pine Nut Bread -->
+			
+				</If>	<!-- If we are not in the Blackrock Caverns instance box -->
+			
+			</If>	<!-- If we are in Blackrock Mountain -->
+			
+			<!-- If we don't have Pine Nut Bread -->
+			<If Condition="!HasItem(58260)">
+		
+				<!-- CustomBehavior - message - - I have detected that we don't have any Pine Nut Bread. Initializing vendor procedures -->
+				<CustomBehavior File="Message" 
+								Text="I have detected that we don't have any Pine Nut Bread. Initializing vendor procedures."  
+								LogColor="Plum" />
+
+				<!-- CustomBehavior - WaitTime - wait 3 seconds - delay -->
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="3000" />
+		
+				<!-- Load profile - [QO-N][85+Flying]_botanist_blackrock-caverns_[food] -->
+				<CustomBehavior File="LoadProfile" 
+								ProfileName="Vendors\[QO-N][85+Flying]_botanist_blackrock-caverns_[food]" />
+
+			</If>	<!-- If we don't have Pine Nut Bread -->
+			
+			<!-- CustomBehavior -  message - Waiting 3 seconds - Hearthstone check -->
+			<CustomBehavior File="Message" 
+							Text="Waiting 3 seconds - Hearthstone check."  
+							LogColor="Plum" />
+			
+			<!-- CustomBehavior - WaitTime - wait 3 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="3000" />
+
+			<!-- If our hearthstone is set to Iron Summit -->
+			<If Condition="Me.HearthstoneAreaId == 5628">
+										
+				<!-- CustomBehavior -  message - Our Hearthstone has been set to Iron Summit -->
+				<CustomBehavior File="Message" 
+								Text="Our Hearthstone has been set to Iron Summit."  
+								LogColor="Plum" />		
+
+				<!-- Else our hearthstone is not set to Area 52 -->				
+				<Else>
+				
+					<!-- CustomBehavior -  message - Our Hearthstone has not been set to Iron Summit -->
+					<CustomBehavior File="Message" 
+									Text="Our Hearthstone has been not set to Iron Summit."  
+									LogColor="Plum" />
+				
+					<!-- CustomBehavior - WaitTime - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+									
+					<!-- CustomBehavior -  message - Initializing hearth procedures -->
+					<CustomBehavior File="Message" 
+									Text="Initializing hearth procedures."  
+									LogColor="Plum" />				
+				
+					<!-- CustomBehavior - WaitTime - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+									
+					<!-- CustomBehavior - LoadProfile - [QO-N-M][85+Flying]_botanist_blackrock-caverns_set-hearth -->
+					<CustomBehavior File="LoadProfile" 
+									ProfileName="[QO-N-M][85+Flying]_botanist_blackrock-caverns_set-hearth" />
+									
+				</Else>		<!-- Else our hearthstone is not set to Iron Summit -->
+									
+			</If>	<!-- If our hearthstone is set to Iron Summit -->
+
+			<!-- Profile message - Waiting 3 seconds - Bag and durability check -->
+			<CustomBehavior File="Message" 
+							Text="Waiting 3 seconds - Bag and durability check."  
+							LogColor="Plum" />
+			
+			<!-- CustomBehavior - WaitTime - wait 3 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="3000" />
+			
+			<!-- If we have less then 15 empty bag slots or our durability is less than 30% -->
+			<If Condition="(Me.FreeBagSlots &lt;= 15) || (Me.LowestDurabilityPercent &lt;= 0.3)" >
+										
+				<!-- CustomBehavior -  message - I have detected that our bags have less than 15 empty slots or our gear is nearly broken. Initializing vendor procedures -->
+				<CustomBehavior File="Message" 
+								Text="I have detected that our bags have less than 15 empty slots or our gear is nearly broken. Initializing vendor procedures."  
+								LogColor="Plum" />						
+										
+				<!-- CustomBehavior - WaitTime - wait 3 seconds - delay -->
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="3000" />						
+										
+				<!-- CustomBehavior - LoadProfile - [QO-N][85+Flying]_botanist_blackrock-caverns_[repair-mail] -->
+				<CustomBehavior File="LoadProfile" 
+								ProfileName="Vendors\[QO-N][85+Flying]_botanist_blackrock-caverns_[repair-mail]" />
+
+			</If>	<!-- If we have less then 15 empty bag slots or our durability is less than 30% -->
+
+			<!-- Profile message - All checks complete -->
+			<CustomBehavior File="Message" 
+							Text="All checks complete."  
+							LogColor="Plum" />
+
+			<!-- Profile message - Flying to Blackrock Caverns -->
+			<CustomBehavior File="Message" 
+							Text="Flying to Blackrock Caverns."  
+							LogColor="Plum" />
+
+			<!-- Fly to - Blackrock Caverns - gate - hover point -->
+			<CustomBehavior File="FlyTo" 
+							X="-7319.519" Y="-1099.172" Z="314.6976" />
+							
+			<!-- CTM to - land outside the Blackrock Caverns - gate -->
+			<CustomBehavior File="MyCTM" 
+							X="-7365.422" Y="-1101.554" Z="277.8392" />
+			
+			<!-- Custom behavior - ForcedDismount -->
+			<CustomBehavior File="ForcedDismount" />
+							
+			<!-- Move to - Blackrock Caverns instance box -->
+			<MoveTo X="-7571.14" Y="-1324.96" Z="245.538" />
+			
+			<!-- If we are in the Blackrock Caverns instance box -->
+			<If Condition="Me.X &gt; -7581.14 &amp;&amp; Me.X &lt; -7561.14 &amp;&amp; Me.Y &gt; -1334.96 &amp;&amp; Me.Y &lt; -1314.96" >
+				
+				<!-- Load profile - [QO-N][85+Flying]_botanist_botanica -->
+				<CustomBehavior File="LoadProfile" 
+								ProfileName="..\[QO-N][85+Flying]_botanist_blackrock-caverns" />
+								
+			</If> 	<!-- If we are in the Blackrock Caverns instance box -->	
+			
+		</If>	<!-- Level check -->
+		
+	</QuestOrder>
+	
+</HBProfile>

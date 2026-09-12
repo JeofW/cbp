@@ -1,0 +1,77 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+<Name>[Botanist][Tinker]_kalimdar_to_durotar</Name>
+
+<MinLevel>1</MinLevel>
+<MaxLevel>151</MaxLevel>
+
+<MinDurability>-1</MinDurability>
+<MinFreeBagSlots>-1</MinFreeBagSlots>
+<TargetingDistance>45</TargetingDistance>
+
+<MailGrey>False</MailGrey>
+<MailWhite>False</MailWhite>
+<MailGreen>False</MailGreen>
+<MailBlue>False</MailBlue>
+<MailPurple>False</MailPurple>
+
+<SellGrey>False</SellGrey>
+<SellWhite>False</SellWhite>
+<SellGreen>False</SellGreen>
+<SellBlue>False</SellBlue>
+<SellPurple>False</SellPurple>
+
+<AvoidMobs>		 
+</AvoidMobs>
+
+<Blackspots>
+</Blackspots>
+
+<Mailboxes>
+</Mailboxes>
+
+<Vendors>
+</Vendors>
+
+<ProtectedItems>	
+</ProtectedItems>
+
+	<QuestOrder>
+			
+		<!-- If we are in Orgrimmar -->
+		<If Condition="Me.MapId == 1">
+		
+			<!-- CustomBehavior - Message - We are in Kalimdor. Navigating to Razor Hill -->
+			<CustomBehavior File="Message" 
+							Text="We are in Kalimdor. Navigating to Razor Hill." 
+							LogColor="Plum" /> 
+							
+			<!-- Move to - Razor Hill -->	
+			<MoveTo X="269.917" Y="-4766.76" Z="11.4946" />
+			
+			<!-- CustomBehavior - WaitTimer - 3 second delay  -->				
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="1000" />
+		
+		</If>	<!-- If we are in Kalimdor -->
+		
+		<!-- If we are in Durotar -->
+		<If Condition="Me.ZoneId == 14">
+
+			<!-- CustomBehavior - WaitTimer - 1 second delay  -->				
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="1000" />
+		
+			<!-- CustomBehavior - Message - We are in Durotar -->
+			<CustomBehavior File="Message" 
+							Text="We are in Durotar." 
+							LogColor="Plum" />
+		
+			<!--  CustomBehavior - LoadProfile - [Botanist][Tinker][H-6][classic] -->				
+			<CustomBehavior File="LoadProfile" 
+							ProfileName="..\[Botanist][Tinker][H-5][profession-check]" />
+		
+		</If>	<!-- If we are in Durotar -->
+
+	</QuestOrder>
+
+</HBProfile>

@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GatherbuddySettings>
+  <GatherHerbs>True</GatherHerbs>
+  <GatherMinerals>True</GatherMinerals>
+  <GatherChests>False</GatherChests>
+  <SkinMobs>False</SkinMobs>
+  <PathingType>Circle</PathingType>
+  <NodeDetectionRange>70</NodeDetectionRange>
+  <HeightModifier>0</HeightModifier>
+  <RandomizeHotspots>False</RandomizeHotspots>
+  <LootMobs>True</LootMobs>
+  <IgnoreElites>True</IgnoreElites>
+  <FaceNodes>True</FaceNodes>
+  <LootRadius>30</LootRadius>
+  <NoNinja>True</NoNinja>
+  <BlacklistTimer>45</BlacklistTimer>
+  <VendorWhenFull>True</VendorWhenFull>
+  <RepairAtVendor>True</RepairAtVendor>
+  <RepairDurabilityPercent>20</RepairDurabilityPercent>
+  <MinFreeBagSlots>1</MinFreeBagSlots>
+  <FindVendorsAutomatically>False</FindVendorsAutomatically>
+  <SellGrey>True</SellGrey>
+  <SellWhite>True</SellWhite>
+  <SellGreen>False</SellGreen>
+  <SellBlue>False</SellBlue>
+  <SellPurple>False</SellPurple>
+  <MailToAlt>False</MailToAlt>
+  <MailRecipient></MailRecipient>
+  <MailGrey>False</MailGrey>
+  <MailWhite>True</MailWhite>
+  <MailGreen>True</MailGreen>
+  <MailBlue>True</MailBlue>
+  <MailPurple>True</MailPurple>
+  <UseSpiritHealer>False</UseSpiritHealer>
+  <WaitRezSickness>True</WaitRezSickness>
+  <BottingHours>0</BottingHours>
+  <HearthAndExit>True</HearthAndExit>
+  <BlacklistedEntriesRaw></BlacklistedEntriesRaw>
+</GatherbuddySettings>

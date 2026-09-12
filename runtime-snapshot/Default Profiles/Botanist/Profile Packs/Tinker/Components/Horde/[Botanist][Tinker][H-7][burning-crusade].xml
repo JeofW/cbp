@@ -1,0 +1,75 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+<Name>[Botanist][Tinker][H-7][burning-crusade]</Name>
+
+<MinLevel>1</MinLevel>
+<MaxLevel>151</MaxLevel>
+
+<MinDurability>-1</MinDurability>
+<MinFreeBagSlots>-1</MinFreeBagSlots>
+<TargetingDistance>45</TargetingDistance>
+
+<MailGrey>False</MailGrey>
+<MailWhite>False</MailWhite>
+<MailGreen>False</MailGreen>
+<MailBlue>False</MailBlue>
+<MailPurple>False</MailPurple>
+
+<SellGrey>False</SellGrey>
+<SellWhite>False</SellWhite>
+<SellGreen>False</SellGreen>
+<SellBlue>False</SellBlue>
+<SellPurple>False</SellPurple>
+
+<AvoidMobs>		 
+</AvoidMobs>
+
+<Blackspots>
+</Blackspots>
+
+<Mailboxes>
+</Mailboxes>
+
+<Vendors>
+</Vendors>
+
+<ProtectedItems>	
+</ProtectedItems>
+
+	<QuestOrder>
+	
+		<!-- UserSettings -->
+		<CustomBehavior File="UserSettings"
+						AdvancedSettingsMode="True"
+						FindMountAutomatically="True"
+						GroundMountFarmingMode="False"
+						HarvestHerbs="False"
+						HarvestMinerals="False"
+						KillBetweenHotspots="False"
+						LogoutForInactivity="True"
+						LogoutInactivityUseForceQuit="True"
+						LootMobs="False"
+						LootRadius="1"
+						MountName=""
+						NinjaSkin="False"
+						ProfileDebuggingMode="False"
+						RessAtSpiritHealers="False"
+						SkinMobs="False"
+						UseMount="True" 
+						UseRandomMount="False" />
+			
+		<!-- Profile message - All checks complete -->
+		<CustomBehavior File="Message" 
+						Text="All checks complete: Classic."  
+						LogColor="Orange" />
+						
+		<!-- CustomBehavior - RunMacro - dance -->				
+		<CustomBehavior File="RunMacro" 
+						Macro="/Dance" />				
+		
+		<!-- CustomBehavior - WaitTimer - wait 5 minutes - delay -->
+		<CustomBehavior File="WaitTimer" 
+						WaitTime="300000"  />
+						
+	</QuestOrder>
+
+</HBProfile>

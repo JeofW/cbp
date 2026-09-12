@@ -1,0 +1,263 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+	<Name>[QO-N-M][90-Flying]_botanist_lost-city-of-the-tol'virl</Name>
+   
+	<MinLevel>1</MinLevel>
+	<MaxLevel>101</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	
+	<MailGrey>True</MailGrey>
+	<MailWhite>False</MailWhite>
+	<MailGreen>False</MailGreen>
+	<MailBlue>False</MailBlue>
+	<MailPurple>False</MailPurple>
+   
+	<SellGrey>False</SellGrey>
+	<SellWhite>False</SellWhite>
+	<SellGreen>False</SellGreen>
+	<SellBlue>False</SellBlue>
+	<SellPurple>False</SellPurple>
+   
+	<TargetElites>True</TargetElites>
+	
+	<AvoidMobs>		
+		<Mob Name="Summon Enabler Stalker" Entry="53488" />
+	</AvoidMobs>
+	
+	<Blackspots>
+
+	</Blackspots>
+
+	<Mailboxes>
+	</Mailboxes>
+ 
+	<Vendors>
+	</Vendors>
+	
+	<ProtectedItems>
+	</ProtectedItems>
+
+	<Factions></Factions>
+	
+	<QuestOrder>
+		<ClearVendor />
+		<ClearMailbox />
+
+		<!-- Level check -->
+		<If Condition="Me.Level &gt;= 84">
+		
+		<!-- UserSettings -->
+		<CustomBehavior File="UserSettings"
+						FindMountAutomatically="True"
+						GroundMountFarmingMode="False"
+						HarvestHerbs="False"
+						HarvestMinerals="False"
+						KillBetweenHotspots="True"
+						LogoutForInactivity="False"
+						LogoutInactivityUseForceQuit="False"
+						LootMobs="True"
+						LootRadius="25"
+						MountName=""
+						NinjaSkin="False"
+						RessAtSpiritHealers="False"
+						SkinMobs="False"
+						UseMount="True" 
+						UseRandomMount="False" />			
+							
+			<!-- If we are in Kalimdor -->
+			<If Condition="Me.MapId == 1">
+			
+				<!-- Profile message - We are in Kalimdor -->
+				<CustomBehavior File="Message" 
+								Text="We are in Kalimdor." 
+								LogColor="Cyan" />
+								
+				<!-- If our hearthstone is set to Ramkahen -->
+				<If Condition="Me.HearthstoneAreaId == 5466">
+				
+					<!-- Profile message - Our Hearthstone/Innkeepers Daughter has been set to Ramkahen -->
+					<CustomBehavior File="Message" 
+									Text="Our Hearthstone/Innkeepers Daughter has been set to Ramkahen." 
+									LogColor="Plum" />
+						
+					<!-- Else our hearthstone is not set to Ramkahen -->
+					<Else>
+					
+						<!-- Profile message - Our Hearthstone/Innkeepers Daughter has not been set to Ramkahen -->
+						<CustomBehavior File="Message" 
+										Text="Our Hearthstone/Innkeepers Daughter has not been set to Ramkahen." 
+										LogColor="Plum" />
+											
+						<!-- If we are Alliance -->					
+						<If Condition="Me.IsAlliance">					
+									
+							<!-- Profile message - Flying to Ramkahen -->
+							<CustomBehavior File="Message" 
+												Text="Flying to Ramkahen." 
+												LogColor="Plum" />
+									
+							<!-- Fly to the Ramkahen hover point -->
+							<CustomBehavior File="FlyTo" 
+											X="-9519.121" Y="-961.4222" Z="164.6567" />
+
+							<!-- CTM to - doorway of the inn -->
+							<CustomBehavior File="MyCTM"  
+											X="-9425.368" Y="-959.3373" Z="111.7376" />
+							
+							<!-- Custom behavior - ForcedDismount -->
+							<CustomBehavior File="ForcedDismount" />
+
+							<!-- Move to - inside the inn -->
+							<MoveTo X="-9387.839" Y="-951.1343" Z="113.8286" />
+							
+							<!-- Profile message - Setting our Hearthstone -->
+							<CustomBehavior File="Message" 
+											Text="Setting our Hearthstone." 
+											LogColor="Cyan" />
+
+							<!-- Custom behavior - SetHearthstone -->				
+							<CustomBehavior File="SetHearthstone" 
+											MobId="48886" 
+											X="-9389.101" Y="-944.342" Z="113.7644" />
+
+							<!-- Move to - outside of the inn -->
+							<MoveTo X="-9425.368" Y="-959.3373" Z="111.7376" />
+							
+							<!-- Fly to the Ramkahen hover point -->
+							<CustomBehavior File="FlyTo" 
+											X="-9519.121" Y="-961.4222" Z="164.6567" />
+							
+							<!-- Profile message - We are in Ramkahen -->
+							<CustomBehavior File="Message" 
+											Text="We are in Ramkahen." 
+											LogColor="Cyan" />				
+				
+						</If>	<!-- If we are Alliance -->					
+			
+						<!-- If we are Horde -->						
+						<If Condition="Me.IsHorde">					
+				
+							<!-- Profile message - Flying to Ramkahen -->
+							<CustomBehavior File="Message" 
+												Text="Flying to Ramkahen." 
+												LogColor="Plum" />
+									
+							<!-- Fly to the Ramkahen hover point -->
+							<CustomBehavior File="FlyTo" 
+											X="-9519.121" Y="-961.4222" Z="164.6567" />
+
+							<!-- CTM to - doorway of the inn -->
+							<CustomBehavior File="MyCTM"  
+											X="-9425.368" Y="-959.3373" Z="111.7376" />
+							
+							<!-- Custom behavior - ForcedDismount -->
+							<CustomBehavior File="ForcedDismount" />
+
+							<!-- Move to - inside the inn -->
+							<MoveTo X="-9387.839" Y="-951.1343" Z="113.8286" />
+							
+							<!-- Profile message - Setting our Hearthstone -->
+							<CustomBehavior File="Message" 
+											Text="Setting our Hearthstone." 
+											LogColor="Cyan" />
+
+							<!-- Custom behavior - SetHearthstone -->				
+							<CustomBehavior File="SetHearthstone" 
+											MobId="48886" 
+											X="-9389.101" Y="-944.342" Z="113.7644" />
+
+							<!-- Move to - outside of the inn -->
+							<MoveTo X="-9425.368" Y="-959.3373" Z="111.7376" />
+							
+							<!-- Fly to the Ramkahen hover point -->
+							<CustomBehavior File="FlyTo" 
+											X="-9519.121" Y="-961.4222" Z="164.6567" />
+							
+							<!-- Profile message - We are in Ramkahen -->
+							<CustomBehavior File="Message" 
+											Text="We are in Ramkahen." 
+											LogColor="Cyan" />
+				
+						</If>	<!-- If we are Horde -->					
+
+					</Else>		<!-- Else our hearthstone is not set to Ramkahen -->
+					
+				</If>	<!-- If our hearthstone is set to Ramkahen -->	
+				
+			</If>	<!-- If we are in Eastern Kingdoms -->			
+
+			<!-- Profile message - Waiting 3 seconds - Bag and durability check -->
+			<CustomBehavior File="Message" 
+							Text="Waiting 3 seconds - Bag and durability check."  
+							LogColor="Plum" />
+			
+			<!-- Wait timer - wait 3 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="3000" />
+			
+			<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+			<If Condition="(Me.FreeBagSlots &lt;= 25) || (Me.LowestDurabilityPercent &lt;= 0.3)" >
+										
+				<!-- Load profile - [QO-N][90-Flying]_botanist_lost-city-of-the-tol'virll_[repair-mail] -->
+				<CustomBehavior File="LoadProfile" 
+								ProfileName="Vendors\[QO-N][90-Flying]_botanist_lost-city-of-the-tol'virll_[repair-mail]" />
+
+			</If>	<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+
+			<!-- Profile message - Waiting 3 seconds - Food check - Pine Nut Bread -->
+			<CustomBehavior File="Message" 
+							Text="Waiting 3 seconds - Food check - Pine Nut Bread."  
+							LogColor="Plum" />
+			
+			<!-- Wait timer - wait 3 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="3000" />
+			
+			<!-- If we don't have Pine Nut Bread -->
+			<If Condition="!HasItem(58260)">
+	
+				<!-- Load profile - [QO-N][90-Flying]_botanist_lost-city-of-the-tol'virll_[repair-mail] -->
+				<CustomBehavior File="LoadProfile" 
+								ProfileName="Vendors\[QO-N][90-Flying]_botanist_lost-city-of-the-tol'virll_[repair-mail]" />
+	
+			</If>	<!-- If we don't have Pine Nut Bread -->
+			
+			<!-- Profile message - All checks complete -->
+			<CustomBehavior File="Message" 
+							Text="All checks complete."  
+							LogColor="Plum" />
+
+			<!-- Profile message - Flying to Lost City of the Tol'vir -->
+			<CustomBehavior File="Message" 
+							Text="Flying to Lost City of the Tol'vir."  
+							LogColor="Plum" />
+
+			<!-- Fly to - Flying to Lost City of the Tol'vir hover point -->
+			<CustomBehavior File="FlyTo" 
+							X="-10535.73" Y="-1265.413" Z="133.453" />
+		
+			<!-- CTM to - land outside Lost City of the Tol'vir -->
+			<CustomBehavior File="MyCTM" 
+							X="-10679.7" Y="-1307.1" Z="17.34246" />
+			
+			<!-- Custom behavior - ForcedDismount -->
+			<CustomBehavior File="ForcedDismount" />
+							
+			<!-- Move to - Lost City of the Tol'vir instance box -->
+			<MoveTo X="-10679.7" Y="-1307.1" Z="17.34246" />
+			
+			<!-- If we are in the Lost City of the Tol'vir instance box -->
+			<If Condition="Me.Y &gt; -1320.377 &amp;&amp; Me.Y &lt; -1291.219 &amp;&amp; Me.X &lt; -10658.9 &amp;&amp; Me.X &gt; -10684.36" >
+				
+				<!-- Load profile - [QO-N-M][90-Flying]_botanist_lost-city-of-the-tol'virl -->
+				<CustomBehavior File="LoadProfile" 
+								ProfileName="..\[QO-N][90-Flying]_botanist_lost-city-of-the-tol'virl" />
+								
+			</If> 	<!-- If we are in the Lost City of the Tol'vir instance box -->	
+			
+		</If>	<!-- Level check -->
+		
+	</QuestOrder>
+	
+</HBProfile>

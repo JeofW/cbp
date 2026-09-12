@@ -1,0 +1,81 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+<Name>[Botanist][Tinker]_unknown-to-westfall</Name>
+
+<MinLevel>1</MinLevel>
+<MaxLevel>151</MaxLevel>
+
+<MinDurability>-1</MinDurability>
+<MinFreeBagSlots>-1</MinFreeBagSlots>
+<TargetingDistance>45</TargetingDistance>
+
+<MailGrey>False</MailGrey>
+<MailWhite>False</MailWhite>
+<MailGreen>False</MailGreen>
+<MailBlue>False</MailBlue>
+<MailPurple>False</MailPurple>
+
+<SellGrey>False</SellGrey>
+<SellWhite>False</SellWhite>
+<SellGreen>False</SellGreen>
+<SellBlue>False</SellBlue>
+<SellPurple>False</SellPurple>
+
+<AvoidMobs>		 
+</AvoidMobs>
+
+<Blackspots>
+</Blackspots>
+
+<Mailboxes>
+</Mailboxes>
+
+<Vendors>
+</Vendors>
+
+<ProtectedItems>	
+</ProtectedItems>
+
+	<QuestOrder>
+			
+		<!-- If we are not in Westfall -->
+		<If Condition="Me.MapId == 0 &amp;&amp; Me.ZoneId != 40">
+		
+			<!-- CustomBehavior - Message - We are in Eastern Kingdoms. Navigating to Westfall -->
+			<CustomBehavior File="Message" 
+							Text="We are in Eastern Kingdoms. Navigating to Westfall." 
+							LogColor="Plum" /> 
+							
+			<!-- Move to - Sentinel Hill flight master -->	
+			<MoveTo X="-10549.73" Y="1033.991" Z="56.96619" />
+			
+			<!-- CustomBehavior - WaitTimer - 3 second delay  -->				
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="1000" />
+		
+			<!--  CustomBehavior - LoadProfile - [Botanist][Tinker][A-5][profession-check] -->				
+			<CustomBehavior File="LoadProfile" 
+							ProfileName="..\[Botanist][Tinker][A-5][profession-check]" />
+		
+		</If>	<!-- If we are not in Westfall -->
+		
+		<!-- If we are in Westfall -->
+		<If Condition="Me.MapId == 0 &amp;&amp; Me.ZoneId == 40">
+
+			<!-- CustomBehavior - WaitTimer - 1 second delay  -->				
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="1000" />
+		
+			<!-- CustomBehavior - Message - We are in Westfall -->
+			<CustomBehavior File="Message" 
+							Text="We are in Westfall" 
+							LogColor="Plum" />
+		
+			<!--  CustomBehavior - LoadProfile - [Botanist][Tinker][A-5][profession-check] -->				
+			<CustomBehavior File="LoadProfile" 
+							ProfileName="..\[Botanist][Tinker][A-5][profession-check]" />
+		
+		</If>	<!-- If we are in Westfall -->
+
+	</QuestOrder>
+
+</HBProfile>

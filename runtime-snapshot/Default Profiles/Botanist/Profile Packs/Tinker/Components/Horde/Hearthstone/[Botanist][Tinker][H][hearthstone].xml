@@ -1,0 +1,174 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+<Name>[Botanist][Tinker][H][hearthstone]</Name>
+
+<MinLevel>1</MinLevel>
+<MaxLevel>151</MaxLevel>
+
+<MinDurability>-1</MinDurability>
+<MinFreeBagSlots>-1</MinFreeBagSlots>
+<TargetingDistance>45</TargetingDistance>
+
+<MailGrey>False</MailGrey>
+<MailWhite>False</MailWhite>
+<MailGreen>False</MailGreen>
+<MailBlue>False</MailBlue>
+<MailPurple>False</MailPurple>
+
+<SellGrey>False</SellGrey>
+<SellWhite>False</SellWhite>
+<SellGreen>False</SellGreen>
+<SellBlue>False</SellBlue>
+<SellPurple>False</SellPurple>
+
+<AvoidMobs>		 
+</AvoidMobs>
+
+<Blackspots>
+</Blackspots>
+
+<Mailboxes>
+</Mailboxes>
+
+<Vendors>
+</Vendors>
+
+<ProtectedItems>	
+</ProtectedItems>
+
+	<QuestOrder>
+	
+		<!-- UserSettings -->
+		<CustomBehavior File="UserSettings"
+						FindMountAutomatically="True"
+						GroundMountFarmingMode="False"
+						HarvestHerbs="False"
+						HarvestMinerals="False"
+						KillBetweenHotspots="False"
+						LogoutForInactivity="True"
+						LogoutInactivityUseForceQuit="True"
+						LootMobs="False"
+						LootRadius="1"
+						MountName=""
+						NinjaSkin="False"
+						RessAtSpiritHealers="False"
+						SkinMobs="False"
+						UseMount="True" 
+						UseRandomMount="False" />
+			
+		<!-- If our level => 6 and < 10 -->				
+		<If Condition="Me.Level &gt;= 6 &amp;&amp; Me.Level &lt; 10" >
+	
+			<!-- If our hearthstone is set at Razor Hill -->
+			<If Condition="(Me.HearthstoneAreaId == 362)" >
+	
+				<!-- CustomBehavior - Message - Our Hearthstone has already been set at Razor Hill -->
+				<CustomBehavior File="Message" 
+								Text="Our Hearthstone has already been set at Razor Hill." 
+								LogColor="Plum" />
+								
+				<!-- CustomBehavior - WaitTimer - 1 second delay -->
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="1000" />
+
+				<!--  CustomBehavior - LoadProfile - [Botanist][Tinker][A-6][classic] -->				
+				<CustomBehavior File="LoadProfile" 
+								ProfileName="..\[Botanist][Tinker][H-6][classic]" />
+	
+				<!-- Else our hearthstone is not set at Golshire-->
+				<Else>
+				
+					<!-- CustomBehavior - Message -  We have not set out Hearthstone in Razor Hill. Navigating to the innkeep -->
+					<CustomBehavior File="Message" 
+										Text="We have not set out Hearthstone in Razor Hill. Navigating to the innkeep." 
+										LogColor="Plum" />				
+			
+					<!-- Move to - Razor Hill - innkeep -->	
+					<MoveTo X="338.0277" Y="-4688.74" Z="16.48947" />
+					
+					<!-- CustomBehavior - Message - We have arrived at the Razor Hill inkeep -->
+					<CustomBehavior File="Message" 
+									Text="We have arrived at the Razor Hill inkeep." 
+									LogColor="Plum" />
+
+					<!-- CustomBehavior - SetHearthstone - Razor Hill -->				
+					<CustomBehavior File="SetHearthstone" 
+									MobId="6928"  
+									X="340.3629" Y="-4686.287" Z="16.48974" />
+					
+					<!-- Move to - Razor Hill - inn exit -->	
+					<MoveTo X="313.577" Y="-4725.352" Z="10.44901" />
+					
+					<!--  CustomBehavior - LoadProfile - [Botanist][Tinker][A-6][classic] -->				
+					<CustomBehavior File="LoadProfile" 
+									ProfileName="..\[Botanist][Tinker][H-6][classic]" />
+
+				</Else>	<!-- Else our hearthstone is not set at Razor Hill-->
+
+			</If>	<!-- If our hearthstone is set at Razor Hill-->
+
+		</If>	<!-- If our level => 6 and < 10 -->
+			
+
+		<!-- If our level => 10 and < 16 -->				
+		<If Condition="Me.Level &gt;= 10 &amp;&amp; Me.Level &lt; 16" >
+	
+			<!-- If our hearthstone is set at Crossroads -->
+			<If Condition="(Me.HearthstoneAreaId == 380)" >
+	
+				<!-- CustomBehavior - Message - Our Hearthstone has already been set at Crossroads -->
+				<CustomBehavior File="Message" 
+								Text="Our Hearthstone has already been set at Crossroads." 
+								LogColor="Plum" />
+								
+				<!-- CustomBehavior - WaitTimer - 1 second delay -->
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="1000" />
+
+				<!--  CustomBehavior - LoadProfile - [Botanist][Tinker][A-6][classic] -->				
+				<CustomBehavior File="LoadProfile" 
+								ProfileName="..\[Botanist][Tinker][H-6][classic]" />
+	
+				<!-- Else our hearthstone is not set at Crossroads -->
+				<Else>
+				
+					<!-- CustomBehavior - Message -  We have not set out Hearthstone in Crossroads. Navigating to the innkeep -->
+					<CustomBehavior File="Message" 
+										Text="We have not set out Hearthstone in Crossroads. Navigating to the innkeep." 
+										LogColor="Plum" />				
+			
+					<!-- Move to - Crossroads - innkeep -->	
+					<MoveTo X="-410.4298" Y="-2645.957" Z="96.22322" />
+					
+					<!-- CustomBehavior - Message - We have arrived at the Crossroads inkeep -->
+					<CustomBehavior File="Message" 
+									Text="We have arrived at the Crossroads inkeep." 
+									LogColor="Plum" />
+
+					<!-- CustomBehavior - SetHearthstone - Razor Hill -->				
+					<CustomBehavior File="SetHearthstone" 
+									MobId="3934"  
+									X="-407.1227" Y="-2645.225" Z="96.22307" />
+					
+					<!-- Move to - Crossroads - inn exit -->	
+					<MoveTo X="-457.6736" Y="-2648.439" Z="95.54889" />
+					
+					<!--  CustomBehavior - LoadProfile - [Botanist][Tinker][A-6][classic] -->				
+					<CustomBehavior File="LoadProfile" 
+									ProfileName="..\[Botanist][Tinker][H-6][classic]" />
+
+				</Else>	<!-- Else our hearthstone is not set at Crossroads -->
+
+			</If>	<!-- If our hearthstone is set at Crossroads -->
+
+		</If>	<!-- If our level => 10 and < 16 -->
+
+
+
+		
+
+
+
+			
+	</QuestOrder>
+
+</HBProfile>

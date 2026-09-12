@@ -1,0 +1,262 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+	<Name>[QO-N][85][10-X-Hr][[Gundrak]_[repair-mail]</Name>
+   
+	<MinLevel>1</MinLevel>
+	<MaxLevel>101</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	<TargetingDistance>1</TargetingDistance>
+	
+	<MailGrey>False</MailGrey>
+	<MailWhite>True</MailWhite>
+	<MailGreen>False</MailGreen>
+	<MailBlue>False</MailBlue>
+	<MailPurple>False</MailPurple>
+   
+	<SellGrey>True</SellGrey>
+	<SellWhite>False</SellWhite>
+	<SellGreen>True</SellGreen>
+	<SellBlue>True</SellBlue>
+	<SellPurple>True</SellPurple>
+   
+	<TargetElites>True</TargetElites>
+	
+	<AvoidMobs>
+	</AvoidMobs>
+	
+	<Blackspots>
+		<Blackspot X="-7118.695" Y="-1225.898" Z="290.2605" Radius="1" />
+		<Blackspot X="1091.256" Y="-166.446" Z="-65.30894" Radius="1" />
+	</Blackspots>
+
+	<Mailboxes>
+	</Mailboxes>
+ 
+	<Vendors>
+	</Vendors>
+	
+	<ProtectedItems>
+		<Item name="Book of Glyph Mastery" entry="45912" />
+		<Item name="Frostweave Cloth" entry="33470" />		
+	</ProtectedItems>
+
+	<Factions></Factions>
+	
+	<QuestOrder>
+
+		<!-- UserSettings -->
+		<CustomBehavior File="UserSettings"
+						FindMountAutomatically="True"
+						GroundMountFarmingMode="False"
+						HarvestHerbs="False"
+						HarvestMinerals="False"
+						KillBetweenHotspots="True"
+						LogoutForInactivity="False"
+						LogoutInactivityUseForceQuit="False"
+						LootMobs="True"
+						LootRadius="25"
+						MountName=""
+						NinjaSkin="False"
+						PullDistance="25"
+						RessAtSpiritHealers="False"
+						SkinMobs="False"
+						UseMount="True" 
+						UseRandomMount="False" />
+
+		<!-- If our level is => -->
+		<If Condition="Me.Level &gt;= 85">
+			
+			<!-- If we are inside Gundrak -->
+			<If Condition="Me.MapId == 604">	
+				
+				<!-- If our Hearthstone/Innkeepers Daughter is set at The Argent Stand -->
+					<If Condition="(Me.HearthstoneAreaId == 4275)">
+				
+					<!-- Profile message - We are in Gundrak -->
+					<CustomBehavior File="Message" 
+									Text="We are in Gundrak" 
+									LogColor="Cyan" />
+								
+					<!-- If we have a Hearthstone -->
+					<If Condition="HasItem(6948)">
+					
+						<!-- Profile message - Using our Hearthstone -->
+						<CustomBehavior File="Message" 
+										Text="Using our Hearthstone." 
+										LogColor="Orange" />
+										
+						<!-- Custom behavior - Misc\RunLua -->				
+						<CustomBehavior File="Misc\RunLua" 
+										Lua="UseItemByName(6948)" 
+										WaitTime="1000" />
+										
+						<!-- Wait timer - wait 20 seconds - delay -->				
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000" />
+										
+					</If>	<!-- If we have a Hearthstone -->
+				
+					<!-- If we have a Innkeeper's Daughter -->
+					<If Condition="HasItem(64488)">
+					
+						<!-- Profile message - Using our Innkeeper's Daughter -->
+						<CustomBehavior File="Message" 
+										Text="Using our Innkeeper's Daughter." 
+										LogColor="Orange" />
+											
+						<!-- Custom behavior - Misc\RunLua -->					
+						<CustomBehavior File="Misc\RunLua" 
+										Lua="UseItemByName(64488)" 
+										WaitTime="1000" />
+							
+						<!-- Wait timer - wait 20 seconds - delay -->	
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000" />
+										
+					</If>	<!-- If we have a Innkeeper's Daughter -->
+				
+				</If>	<!-- If our hearthstone is set here, use it -->
+				
+			</If>	<!-- If we are in Forge of Souls -->
+
+			<!-- If we are inside Gundrak -->
+			<If Condition="Me.MapId == 604">
+			
+				<!-- Profile message - Gundrak detected. Running out -->
+				<CustomBehavior File="Message" 
+								Text="Gundrak detected, running out."
+								LogColor="Chartreuse" />
+					
+				<!-- Move to - zone in location -->
+				<MoveTo X="1880.74" Y="853.76" Z="176.696" />
+
+				<!-- Custom behavior - Misc/InInstance - exit the instance-->
+				<CustomBehavior File="Misc\InInstance" 
+								X="1900.536" Y="815.8542" Z="176.637" />
+				
+				<!-- Move to - zone out location -->
+				<MoveTo X="6717.32" Y="-4645.55" Z="450.017" />
+				
+			</If>	<!-- If we are inside Gundrak -->
+
+			<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+			<If Condition="(Me.FreeBagSlots &lt;= 25) || (Me.LowestDurabilityPercent &lt;= 0.3)" >
+
+				<!-- Profile message - Our durability is less than 30% or we have less than 25 empty bag slots remaining -->
+				<CustomBehavior File="Message" 
+								Text="Our durability is less than 30% or we have less than 25 empty bag slots remaining." 
+								LogColor="Orange" />
+								
+				<!-- Profile message - Disabling combat -->
+				<CustomBehavior File="Message" 
+									Text="Disabling combat." 
+									LogColor="Gold" />
+				
+				<!-- DisableBehavior - Combat -->
+				<DisableBehavior Name="Combat" />
+			
+				<!-- If we are Alliance -->
+				<If Condition="Me.IsAlliance">
+				
+					<!-- Fly to - The Argent Stand hover point -->
+					<CustomBehavior File="FlyTo" 
+									X="5382.631" Y="-2629.626" Z="354.096" />
+					
+					<!-- CTM to - ally repair vendor -->
+					<CustomBehavior File="MyCTM" 
+										X="5405.251" Y="-2657.311" Z="303.9556" />
+					
+					<!-- Custom behavior - ForcedDismount -->
+					<CustomBehavior File="ForcedDismount" />
+					
+					<!-- Profile message - Our durability is less than 30%, or our bags have less than 25 empty slots left -->
+					<CustomBehavior File="Message" 
+									Text="Our durability is less than 30%, or our bags have less than 25 empty slots left."
+									LogColor="Cyan" />
+									
+					<!-- The Argent Stand -->					
+					<SetVendor>
+						<Vendors>
+							<Vendor Name="Arlen Brighthammer" 
+									Entry="28796" 
+									Type="Repair" 
+									X="5410.7" Y="-2658.249" Z="303.9539" />
+						</Vendors>
+					</SetVendor>
+
+					<SetMailbox>
+						<Mailboxes>
+							<Mailbox X="5412.528" Y="-2623.317" Z="306.1588" />
+						</Mailboxes>
+					</SetMailbox>	
+
+					<!-- Vendor conditions -->
+					<CustomBehavior File="ForceSetVendor" 
+									DoMail="True" 
+									DoRepair="True" 
+									DoSell="True" 
+									DoTrain="False" />
+					
+				</If>	<!-- If we are Alliance -->
+
+				<!-- If we are Horde -->
+				<If Condition="Me.IsHorde">
+				
+					<!-- Fly to - The Argent Stand hover point -->
+					<CustomBehavior File="FlyTo" 
+									X="5382.631" Y="-2629.626" Z="354.096" />
+					
+					<!-- CTM to - ally repair vendor -->
+					<CustomBehavior File="MyCTM" 
+										X="5405.251" Y="-2657.311" Z="303.9556" />
+					
+					<!-- Custom behavior - ForcedDismount -->
+					<CustomBehavior File="ForcedDismount" />
+					
+					<!-- Profile message - Our durability is less than 30%, or our bags have less than 25 empty slots left -->
+					<CustomBehavior File="Message" 
+									Text="Our durability is less than 30%, or our bags have less than 25 empty slots left."
+									LogColor="Cyan" />
+									
+					<!-- The Argent Stand -->					
+					<SetVendor>
+						<Vendors>
+							<Vendor Name="Arlen Brighthammer" 
+									Entry="28796" 
+									Type="Repair" 
+									X="5410.7" Y="-2658.249" Z="303.9539" />
+						</Vendors>
+					</SetVendor>
+
+					<SetMailbox>
+						<Mailboxes>
+							<Mailbox X="5412.528" Y="-2623.317" Z="306.1588" />
+						</Mailboxes>
+					</SetMailbox>
+					
+					<!-- Vendor conditions -->
+					<CustomBehavior File="ForceSetVendor" 
+									DoMail="True" 
+									DoRepair="True" 
+									DoSell="True" 
+									DoTrain="False" />
+
+				</If>	<!-- If we are Horde -->
+
+			</If>	<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+				
+			<!-- If we have more than 25 empty bag slots and our durability is greater than 30% -->
+			<If Condition="(Me.FreeBagSlots &gt; 25) &amp;&amp; (Me.LowestDurabilityPercent &gt;= 0.3)" >
+			
+				<!-- Load profile - [QO-N][85][10-X-Hr][[Gundrak]_[food] -->
+				<CustomBehavior File="LoadProfile" 
+								ProfileName="[QO-N][85][10-X-Hr][[Gundrak]_[food]" />
+										
+			</If>	<!-- If we have more than 25 empty bag slots and our durability is greater than 30% -->	
+			
+		</If>	<!-- If our level is => -->
+		
+	</QuestOrder>
+	
+</HBProfile>

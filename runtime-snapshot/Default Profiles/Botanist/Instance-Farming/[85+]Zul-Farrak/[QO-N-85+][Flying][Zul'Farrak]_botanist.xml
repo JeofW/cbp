@@ -1,0 +1,374 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+	<Name>[QO-N-85+][Flying][Zul'Farrak]_botanist</Name>
+   
+	<MinLevel>1</MinLevel>
+	<MaxLevel>101</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	
+	<MailGrey>False</MailGrey>
+	<MailWhite>False</MailWhite>
+	<MailGreen>False</MailGreen>
+	<MailBlue>False</MailBlue>
+	<MailPurple>False</MailPurple>
+   
+	<SellGrey>True</SellGrey>
+	<SellWhite>True</SellWhite>
+	<SellGreen>True</SellGreen>
+	<SellBlue>True</SellBlue>
+	<SellPurple>False</SellPurple>
+   
+	<TargetElites>True</TargetElites>
+	
+	<AvoidMobs>		 
+		<Mob Name="Summon Enabler Stalker" Entry="53488" />
+	</AvoidMobs>
+	
+	<Blackspots>
+		<Blackspot X="1649.766" Y="802.4726" Z="8.881916" Radius="3" />
+
+	</Blackspots>
+
+	<Mailboxes>
+	</Mailboxes>
+ 
+	<Vendors>
+	</Vendors>
+	
+	<ProtectedItems>
+	</ProtectedItems>
+
+	<Factions></Factions>
+	
+	<QuestOrder>
+		<ClearVendor />
+		<ClearMailbox />
+
+		
+		<!-- Level check - 85 + -->
+		<If Condition="Me.Level &gt;= 85">
+		
+		 	<!-- UserSettings -->
+			<CustomBehavior File="UserSettings"
+							FindMountAutomatically="True"
+							GroundMountFarmingMode="False"
+							HarvestHerbs="False"
+							HarvestMinerals="False"
+							KillBetweenHotspots="True"
+							LogoutForInactivity="False"
+							LogoutInactivityUseForceQuit="False"
+							LootMobs="True"
+							LootRadius="65"
+							MountName=""
+							NinjaSkin="False"
+							RessAtSpiritHealers="True"
+							SkinMobs="False"
+							UseMount="True" 
+							UseRandomMount="False" />
+						
+			<!-- Infinite loop -->
+			<While Condition="true" >
+			
+				<!-- If we are in Zul'Farrak -->
+				<If Condition="Me.ZoneId == 1176">
+				
+					<!-- CustomBehavior - Message - Zul'Farrak detected. Exiting the instance --> 
+					<CustomBehavior File="Message" 
+									Text="Zul'Farrak detected. Exiting the instance."
+									LogColor="Plum" />
+						
+					<!-- MoveTo - Make our way to the exit -->
+					<MoveTo X="1212.67" Y="842.04" Z="8.93346" />
+					
+					<!-- InInstance to exit the dungeon -->
+					<CustomBehavior File="Misc\InInstance" 
+									X="1200.531" Y="842.4256" Z="8.886497" />
+					
+					<!-- CustomBehavior - Waittimer - 15 seconds -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="15000" />
+					
+					<!-- Move to - zone out location -->
+					<MoveTo X="-6795.56" Y="-2890.72" Z="8.88742" />
+					
+				</If>	<!-- If we are in Zul'Farrak -->
+				
+				<!-- If we are not in the Zul'Farrak instance box -->
+				<If Condition="Me.X &lt; -6805.56 || Me.X &gt; -6785.56 || Me.Y &lt; -2900.72 || Me.Y &gt; -2880.72" >
+					
+					<!-- CustomBehavior - LoadProfile - [QO-N-M][85+][Flying][Zul'Farrak]_botanist -->
+					<CustomBehavior File="LoadProfile" 
+									ProfileName="Movement\[QO-N-M][85+][Flying][Zul'Farrak]_botanist" />
+					
+				</If> 	<!-- If we are not in the Zul'Farrak instance box -->
+				
+				<!-- If we are in the the Zul'Farrak instance box -->
+				<If Condition="Me.X &gt; -6805.56 &amp;&amp; Me.X &lt; -6785.56 &amp;&amp; Me.Y &gt; -2900.72 &amp;&amp; Me.Y &lt; -2880.72" >
+				
+					<CustomBehavior File="Message" 
+									Text="Portal detected nearby."
+									LogColor="Plum" />	
+						
+					<!-- CustomBehavior - Message - Resetting the instance -->
+					<CustomBehavior File="Message" 
+									Text="Resetting the instance." 
+									LogColor="Plum" />
+					
+					<!-- Reset the instance -->
+					<CustomBehavior File="RunMacro" 
+									Macro="/script ResetInstances()" />	
+									
+					<!-- Set the dungeon difficulty to normal -->				
+					<CustomBehavior File="RunMacro" 
+									Macro="/script SetDungeonDifficultyID(1);" />
+					
+					<CustomBehavior File="Message" 
+									Text="Instance reset." 
+									LogColor="Plum" />
+	
+					<!-- If we didn't enter the instance, wait 20 seconds then attempt to enter again -->
+					<While Condition="Me.ZoneId != 1176">
+					
+						<!-- Move to - zone out location -->
+						<MoveTo X="-6795.56" Y="-2890.72" Z="8.88742" />
+
+						<!-- CustomBehavior - Misc\InInstance - enter the instance -->
+						<CustomBehavior File="Misc\InInstance" 
+										X="-6785.857" Y="-2890.678" Z="8.92489" /> 
+										
+						<!-- CustomBehavior - Message - Waiting for the instance to load -->				
+						<CustomBehavior File="Message" 
+										Text="Waiting for the instance to load." 
+										LogColor="Plum" />
+									
+						<!-- CustomBehavior - WaitTimer - 20 second with 20 second variable -->			
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000"
+										VariantTime="20000" />
+										
+						<!-- If we are not in Zul'Farrak -->
+						<If Condition="Me.ZoneId != 1176">
+						
+							<!-- CustomBehavior - Message - We are instance locked. Waiting a few seconds before attempting to enter again -->
+							<CustomBehavior File="Message" 
+											Text="We are instance locked. Waiting a few seconds before attempting to enter again." 
+											LogColor="Plum" />
+										
+						</If> 	<!-- If we are not in Zul'Farrak -->
+						
+					</While> <!-- While we aren't in the instance -->
+					
+				</If>	<!-- If we are in the the Zul'Farrak instance box -->
+				
+				<!-- If we are inside Zul'Farrak and have checked our reset -->
+				<If Condition="Me.ZoneId == 1176">
+				
+					<!-- MoveTo - zone in location -->
+					<MoveTo X="1212.67" Y="842.04" Z="8.93346" />
+					
+					<!-- Runmacro - open all our bags -->				
+					<CustomBehavior File="RunMacro" 
+									Macro="/script OpenAllBags();" 
+									NumOfTimes="1" 
+									WaitTime="1000" />
+	
+					<!--Profile message	- Deleting unwanted items from our bags -->				
+					<CustomBehavior File="Message" 
+									Text="Deleting unwanted items from our bags." 
+									LogColor="Orange" />
+
+					<!-- Shriveled Troll Heart -->
+					<CustomBehavior File="DeleteItems" 
+									Ids="9243" />
+									
+					<!-- Sandstalker Ankleguards -->				
+					<CustomBehavior File="DeleteItems" 
+									Ids="12470" />
+	
+					<!-- Cured Ham Steak -->				
+					<CustomBehavior File="DeleteItems" 
+									Ids="4599" />
+								
+					<!-- Moonberry Juice -->				
+					<CustomBehavior File="DeleteItems" 
+									Ids="1645" />
+									
+					<!-- Superior Healing Potion -->				
+					<CustomBehavior File="DeleteItems" 
+									Ids="3928" />
+								
+					<!-- OOX-17/TN Distress Beacon -->				
+					<CustomBehavior File="DeleteItems" 
+									Ids="8623" />
+									
+					<!-- Greater Mana Potion -->				
+					<CustomBehavior File="DeleteItems" 
+									Ids="6149" />
+									
+					<!-- Desertwalker Cane -->				
+					<CustomBehavior File="DeleteItems" 
+									Ids="12471" />
+					
+					<!-- Gahz'rilla Fang -->				
+					<CustomBehavior File="DeleteItems" 
+									Ids="9467" />
+
+					<!-- Gahz'rilla Scale Armor -->				
+					<CustomBehavior File="DeleteItems" 
+									Ids="9469" />
+									
+					<!-- CustomBehavior - Misc\InstanceTimer - 12 minutes and 30 seconds -->
+					<CustomBehavior File="Misc\InstanceTimer" 
+									Timer="Start" /> 
+	
+					<!-- CustomBehavior - ForcedDismount -->
+					<CustomBehavior File="ForcedDismount" />
+					
+					<!-- UserSettings -->
+					<CustomBehavior File="UserSettings"
+									UseMount="False"  />
+	
+					<!-- Profile message - Zul'Farrak initialized -->
+					<CustomBehavior File="Message" 
+									Text="Zul'Farrak initialized."
+									LogColor="Plum" />
+					
+					<!-- Profile message - Opening our bags to view our inventory -->
+					<CustomBehavior File="Message" 
+									Text="Opening our bags to view our inventory." 
+									LogColor="Plum" />
+								
+					<!-- Custom behavior - RunMacro - /script OpenAllBags() -->
+					<CustomBehavior File="RunMacro"
+									WaitTime="500"
+									NumOfTimes="3"
+									Macro="/script OpenAllBags()" />
+
+					<!-- Profile message - Disabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Disabling combat." 
+										LogColor="Gold" />
+					
+					<!-- DisableBehavior - Combat -->
+					<DisableBehavior Name="Combat" />
+
+					<!-- Move to - 1st group on the right -->
+					<MoveTo X="1264.911" Y="842.8763" Z="9.15176" />
+					<MoveTo X="1299.802" Y="806.7003" Z="13.17857" />
+					<MoveTo X="1322.502" Y="839.8149" Z="10.33482" />
+					<MoveTo X="1362.753" Y="818.1628" Z="8.890861" />
+					<MoveTo X="1430.011" Y="794.7748" Z="11.84203" />
+					<MoveTo X="1464.91" Y="834.9185" Z="10.4963" />
+					<MoveTo X="1489.885" Y="815.3383" Z="9.108708" />
+					<MoveTo X="1506.005" Y="845.6409" Z="9.582233" />
+					<MoveTo X="1532.901" Y="822.295" Z="9.132388" />
+					<MoveTo X="1563.208" Y="871.0881" Z="9.687004" />
+					<MoveTo X="1584.891" Y="849.7919" Z="10.82658" />
+					<MoveTo X="1606.708" Y="857.2328" Z="11.88335" />
+					<MoveTo X="1615.033" Y="897.2968" Z="9.712112" />
+					<MoveTo X="1633.495" Y="867.5463" Z="10.56966" />
+					<MoveTo X="1661.108" Y="940.2663" Z="9.077874" />
+					<MoveTo X="1665.577" Y="907.7595" Z="9.451087" />
+					<MoveTo X="1709.706" Y="916.0345" Z="11.02313" />
+					<MoveTo X="1682.897" Y="865.5497" Z="8.877296" />
+					<MoveTo X="1641.613" Y="804.2529" Z="8.887267" />
+					<MoveTo X="1628.986" Y="796.0302" Z="8.982753" /> 
+					<MoveTo X="1769.87" Y="830.008" Z="17.49674" />
+					<MoveTo X="1853.473" Y="725.7968" Z="19.06584" />
+					<MoveTo X="1738.751" Y="706.1715" Z="24.72952" />
+					
+					<!-- Profile message - Enabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Enabling combat." 
+										LogColor="Gold" />
+
+					<!-- enable combat -->
+					<EnableBehavior Name="Combat" />
+
+					<!-- Wait timer - wait 5 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="5000" />
+					
+					<!-- Profile message - Disabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Disabling combat." 
+										LogColor="Gold" />
+					
+					<!-- DisableBehavior - Combat -->
+					<DisableBehavior Name="Combat" />
+
+					<MoveTo X="1902.033" Y="1137.849" Z="8.904837" />
+					<MoveTo X="1915.433" Y="1196.829" Z="9.050422" />
+					<MoveTo X="1636.942" Y="1102.159" Z="8.951746" />
+					<MoveTo X="1718.259" Y="1186.87" Z="10.80216" />
+					<MoveTo X="1728.441" Y="1284.737" Z="14.85542" />
+					<MoveTo X="1663.727" Y="1257.241" Z="10.25281" />
+					<MoveTo X="1620.653" Y="1191.971" Z="9.064547" />
+					<MoveTo X="1605.506" Y="1106.422" Z="8.877" />
+					<MoveTo X="1576.367" Y="1080.056" Z="8.91695" />
+					<MoveTo X="1580.758" Y="1036.003" Z="8.877168" />
+					<MoveTo X="1525.956" Y="1018.066" Z="9.857677" />
+					<MoveTo X="1547.653" Y="993.3045" Z="8.876901" />
+					<MoveTo X="1534.053" Y="1004.915" Z="8.881378" />				
+
+					<!-- Profile message - Enabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Enabling combat." 
+										LogColor="Gold" />
+
+					<!-- enable combat -->
+					<EnableBehavior Name="Combat" />
+					
+					<!-- Wait timer - wait 5 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="5000" />				
+								
+					<!-- Move to - zone in location -->
+					<MoveTo X="1212.67" Y="842.04" Z="8.93346" />
+		
+					<!-- UserSettings -->
+					<CustomBehavior File="UserSettings"
+									UseMount="True"  />
+	
+				</If><!-- If we are inside Zul'Farrak and have checked our reset -->
+						
+				<!-- If we are in Zul'Farrak -->
+				<If Condition="Me.ZoneId == 1176">
+				
+					<!-- CustomBehavior - Message - Zul'Farrak detected. Exiting the instance --> 
+					<CustomBehavior File="Message" 
+									Text="Zul'Farrak detected. Exiting the instance."
+									LogColor="Plum" />
+						
+					<!-- Move to - zone in location -->
+					<MoveTo X="1212.67" Y="842.04" Z="8.93346" />
+					
+					<!-- InInstance to exit the dungeon -->
+					<CustomBehavior File="Misc\InInstance" 
+									X="1200.531" Y="842.4256" Z="8.886497" />
+					
+					<!-- CustomBehavior - Waittimer - 15 seconds -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="15000" />
+					
+					<!-- Move to - zone out location -->
+					<MoveTo X="-6795.56" Y="-2890.72" Z="8.88742" />
+					
+				</If>	<!-- If we are in Zul'Farrak -->
+				
+				<!-- Repair if necessary -->
+				<If Condition="(Me.FreeBagSlots &lt; 25) || (Me.LowestDurabilityPercent &lt; 0.3)" >
+				
+					<!-- CustomBehavior - LoadProfile - [QO-N-M][85+][Flying][Zul'Farrak]_botanist -->
+					<CustomBehavior File="LoadProfile" 
+									ProfileName="Movement\Vendors\[QO-N][85+][Flying][Zul'Farrak]_botanist_[repair-mail]" />
+					
+				</If> <!-- Repair if necessary -->
+						
+			</While> <!-- Infinite loop -->
+			
+		</If> 	<!-- Level check - 85 + -->
+		
+	</QuestOrder>
+</HBProfile>

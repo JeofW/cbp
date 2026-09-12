@@ -1,0 +1,536 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+	<Name>[QO-N][90][10-X-Hr]_Pit-of-Saron_Battered-Hilt</Name>
+   
+	<MinLevel>1</MinLevel>
+	<MaxLevel>101</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	<TargetingDistance>10</TargetingDistance>
+	
+	<MailGrey>False</MailGrey>
+	<MailWhite>False</MailWhite>
+	<MailGreen>True</MailGreen>
+	<MailBlue>False</MailBlue>
+	<MailPurple>False</MailPurple>
+   
+	<SellGrey>True</SellGrey>
+	<SellWhite>True</SellWhite>
+	<SellGreen>False</SellGreen>
+	<SellBlue>True</SellBlue>
+	<SellPurple>False</SellPurple>
+   
+	<TargetElites>True</TargetElites>
+	
+	<AvoidMobs>		 
+		<Mob Name="Summon Enabler Stalker" Entry="53488" />
+	</AvoidMobs>
+	
+	<Blackspots>
+	
+		<!-- Mound in Pit of Saron - after Ick -->
+		<Blackspot X="843.5392" Y="59.3031" Z="515.72" Radius="5" />
+		
+		<Blackspot X="5147.632" Y="2135.759" Z="652.1669" Radius="3" />
+		
+	</Blackspots>
+
+	<QuestOrder>
+
+		<!-- Level Check -->
+		<If Condition="Me.Level &gt;= 85">
+		
+		 	<!-- UserSettings -->
+			<CustomBehavior File="UserSettings"
+							MountDistance="25"
+							FindMountAutomatically="True"
+							GroundMountFarmingMode="False"
+							HarvestHerbs="False"
+							HarvestMinerals="False"
+							KillBetweenHotspots="True"
+							LogoutForInactivity="False"
+							LogoutInactivityUseForceQuit="False"
+							LootMobs="True"
+							LootRadius="65"
+							MountName=""
+							NinjaSkin="False"
+							RessAtSpiritHealers="False"
+							SkinMobs="False"
+							UseMount="True" 
+							UseRandomMount="False" />
+						
+			<!-- Infinite loop -->
+			<While Condition="true" >	
+			
+				<!-- If we are in the Pit of Saron -->
+				<If Condition="Me.MapId == 658" >
+				
+					<!-- Profile message - You started the bot with us inside the Pit of Saron. Running out to reset the dungeon -->
+					<CustomBehavior File="Message" 
+									Text="You started the bot with us inside the Pit of Saron. Running out to reset the dungeon." 
+									LogColor="Cyan" />
+									
+					<!-- Move to - zone in location -->
+					<MoveTo X="432.568" Y="212.344" Z="528.7089" /> 
+					
+					<!-- Profile message - Waiting 3 seconds - Bag and durability check -->
+					<CustomBehavior File="Message" 
+									Text="Waiting 3 seconds - Bag and durability check."  
+									LogColor="Orange" />
+					
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+					<If Condition="(Me.FreeBagSlots &lt;= 25) || (Me.LowestDurabilityPercent &lt;= 0.3)" >
+												
+						<!-- Load profile - [QO-N][90][10-X-Hr]_Pit-of-Saron_Battered-Hilt_[repair-mail] -->
+						<CustomBehavior File="LoadProfile" 
+										ProfileName="Movement\Vendors\[QO-N][90][10-X-Hr]_Pit-of-Saron_Battered-Hilt_[repair-mail]" />
+
+					</If>	<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+
+					<!-- Profile message - Waiting 3 seconds - Food check - Savory Snowplum -->
+					<CustomBehavior File="Message" 
+									Text="Waiting 3 seconds - Food check - Savory Snowplum."  
+									LogColor="Orange" />
+					
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					<!-- If we don't have Savory Snowplum -->
+					<If Condition="!HasItem(35948)">
+
+						<!-- Load profile - [QO-N][90][10-X-Hr]_Pit-of-Saron_Battered-Hilt_[repair-mail] -->
+						<CustomBehavior File="LoadProfile" 
+										ProfileName="Movement\Vendors\[QO-N][90][10-X-Hr]_Pit-of-Saron_Battered-Hilt_[repair-mail]" />
+			
+					</If>	<!-- If we don't have Savory Snowplum -->
+					
+					<!-- Profile message - All checks complete -->
+					<CustomBehavior File="Message" 
+									Text="All checks complete."  
+									LogColor="Orange" />
+									
+					<!-- Move to - attempt to exit the instance -->
+					<CustomBehavior File="Misc\InInstance"
+									X="421.0371" Y="212.262" Z="529.8098" /> 
+					
+					<!-- Move to - zone out location -->
+					<MoveTo X="5595.78" Y="2013.27" Z="798.041" />
+									
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />				
+									
+				</If>	<!-- If we are in the Pit of Saron -->
+				
+				<!-- If we are inside Forge of Souls -->
+				<If Condition="Me.MapId == 632">
+				
+					<!--  Forge of Souls detected. Running out -->
+					<CustomBehavior File="Message" 
+									Text="Forge of Souls detected. Running out."
+									LogColor="Orange" />
+						
+					<!-- Move to - zone in location -->
+					<MoveTo X="4921.31" Y="2177.36" Z="638.733" />
+
+					<!-- Custom behavior - Misc/InInstance - exit the instance-->
+					<CustomBehavior File="Misc\InInstance" 
+									X="4926.322" Y="2166.706" Z="638.733" />
+					
+					<!-- Move to - zone out location -->
+					<MoveTo X="5595.78" Y="2013.27" Z="798.041" />
+					
+				</If>	<!-- If we are inside Forge of Souls -->
+
+				<!-- If we are not in the Pit of Saron instance box, load the movement profile -->
+				<If Condition="Me.X &gt; 5605.78 || Me.X &lt; 5585.78 || Me.Y &gt; 2023.27 || Me.Y &lt; 2003.27" >
+					
+					<!-- Custom behavior - LoadProfile - [QO-N-M][90][10-X-Hr]_Pit-of-Saron_Battered-Hilt -->
+					<CustomBehavior File="LoadProfile" 
+									ProfileName="Movement\[QO-N-M][90][10-X-Hr]_Pit-of-Saron_Battered-Hilt" />
+					
+				</If>	<!-- If we are not in the Pit of Saron instance box, load the movement profile -->
+				
+				<!-- If we are in the Pit of Saron instance box -->
+				<If Condition="Me.X &lt; 5605.78 &amp;&amp; Me.X &gt; 5585.78 &amp;&amp; Me.Y &lt; 2023.27 &amp;&amp; Me.Y &gt; 2003.27" >
+
+					<!-- If our hearthstone is set to Nesingwary Base Camp -->
+					<If Condition="Me.HearthstoneAreaId == 4284">
+				
+						<!-- CustomBehavior - message - Our Hearthstone has been set to Nesingwary Base Camp -->
+						<CustomBehavior File="Message" 
+										Text="Our Hearthstone has been set to Nesingwary Base Camp." 
+										LogColor="Cyan" />
+				
+						<!-- Else our hearthstone is not set to Nesingwary Base Camp -->
+						<Else>
+						
+							<!-- CustomBehavior - message - Our Hearthstone has not been set to Nesingwary Base Camp -->
+						<CustomBehavior File="Message" 
+										Text="Our Hearthstone has not been set to Nesingwary Base Camp." 
+										LogColor="Cyan" />
+										
+						<!-- Load profile - [QO-N][90][10-X-Hr]_Pit-of-Saron_[Battered-Hilt]_hearthstone -->
+						<CustomBehavior File="LoadProfile" 
+										ProfileName="Movement\Vendors\Hearthstone\[QO-N][90][10-X-Hr]_Pit-of-Saron_[Battered-Hilt]_hearthstone" />				
+
+						</Else>	<!-- Else our hearthstone is not set to Nesingwary Base Camp -->
+				
+					</If>	<!-- If our hearthstone is set to Nesingwary Base Camp -->
+
+					<!-- Profile message - Portal detected nearby -->
+					<CustomBehavior File="Message" 
+									Text="Portal detected nearby."
+									LogColor="Orange" />	
+			
+					<!-- Profile message - Resetting the instance -->
+					<CustomBehavior File="Message" 
+									Text="Resetting the instance." 
+									LogColor="Orange" />
+					
+					<!-- Reset the instance -->
+					<CustomBehavior File="RunMacro" 
+									Macro="/script ResetInstances()" />	
+									
+					<!-- Set the dungeon difficulty to Heroic -->				
+					<CustomBehavior File="RunMacro" 
+									Macro="/script SetDungeonDifficultyID(2);" />
+					
+					<!-- Profile message - The instance has been reset -->
+					<CustomBehavior File="Message" 
+									Text="The instance has been reset." 
+									LogColor="Orange" />
+							
+					<!-- While we are not in Pit of Saron -->
+					<While Condition="Me.MapId != 658">
+					
+						<!-- Move to - inside the gate -->
+						<MoveTo X="5589.354" Y="2007.788" Z="798.1819" />
+
+						<!-- Attempt to enter the portal -->
+						<CustomBehavior File="Misc\InInstance" 
+										X="5585.37" Y="2004.168" Z="798.0645" /> 
+										
+						<!-- Profile message - Waiting for the dungeon to load -->				
+						<CustomBehavior File="Message" 
+										Text="Waiting for the dungeon to load." 
+										LogColor="Orange" />
+									
+						<!-- Wait timer - wait 10 seconds -->		
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="10000" />
+										
+						<!-- If we are not in Pit of Saron, we're locked out -->
+						<If Condition="Me.MapId != 658">
+						
+							<!-- Profile message - We are locked out. Waiting and trying again -->
+							<CustomBehavior File="Message" 
+											Text="We didn't enter the portal, trying again in 5 seconds." 
+											LogColor="Orange" />
+			
+						</If>	<!-- If we are not in Pit of Saron, we're locked out -->
+						
+					</While>	<!-- While we are not in Pit of Saron -->
+					
+				</If>	<!-- If we are in the Pit of Saron instance box -->
+				
+				<!-- If we are inside Pit of Saron -->
+				<If Condition="Me.MapId == 658">
+
+					<!--Profile message	- Deleting unwanted items from our bags -->				
+					<CustomBehavior File="Message" 
+									Text="Deleting unwanted items from our bags." 
+									LogColor="Orange" />
+
+					<!-- Morning Glory Dew -->
+					<CustomBehavior File="DeleteItems" 
+									Ids="8766" />
+
+					<!-- Instance timer -->
+					<CustomBehavior File="Misc\InstanceTimer" 
+									Timer="Start" />							
+								
+					<!-- Turn on autolooting -->
+					<CustomBehavior File="RunMacro" 
+									Macro="/script SetCVar('AutoLootDefault', 1)" 
+									NumOfTimes="1" 
+									WaitTime="1000" />
+
+					<!-- CustomBehavior - Message - Opening our bags to view our inventory -->
+					<CustomBehavior File="Message" 
+									Text="Opening our bags to view our inventory." 
+									LogColor="Plum" />
+								
+					<!-- CustomBehavior - RunMacro - /script OpenAllBags() -->
+					<CustomBehavior File="RunMacro" 
+									Macro="/script OpenAllBags()" />
+									
+					<!-- Profile message - Pit of Saron (Battered Hilt Farm) initialized -->			
+					<CustomBehavior File="Message" 
+									Text="Pit of Saron (Battered Hilt Farm) initialized."  
+									LogColor="Gold" />
+					
+					
+					<!-- ****************************************************** Pit of Saron ********************************************************************** -->
+					
+					<!-- If we are DeathKnight-->
+					<If Condition="(Me.Class == WoWClass.DeathKnight)">
+					
+						<!-- CustomBehavior - message - We are a Death Knight \nCasting Horn of Winter -->
+						<CustomBehavior File="Message" 
+										Text="We are a Death Knight \nCasting Horn of Winter."  
+										LogColor="Orange" />
+										
+						<!-- CustomBehavior - RunMacro - Horn of Winter -->						
+						<CustomBehavior File="RunMacro"
+										NumOfTimes="1"
+										Macro="/cast Horn of Winter" />				
+										
+					</If>	<!-- If we are DeathKnight-->
+					
+					
+					
+					
+					
+					
+					<!-- Level Check - 90 -->
+					<If Condition="Me.Level &gt;= 90">
+					
+						<!-- Profile message - We are level 90. \n\n\n\nInitiating level 90 farming mechanics -->
+						<CustomBehavior File="Message" 
+											Text="We are level 90. \n\n\n\nInitiating level 90 farming mechanics." 
+											LogColor="Gold" /> 
+											
+						<!-- Profile message - Disabling combat -->
+						<CustomBehavior File="Message" 
+											Text="Disabling combat." 
+											LogColor="Gold" />
+						
+						<!-- DisableBehavior - Combat -->
+						<DisableBehavior Name="Combat" />
+						
+						<!-- Move to - Deathwhisper Necrolyte  -->
+						<MoveTo X="497.3195" Y="247.8559" Z="528.7088" />
+						
+						<!-- Move to - Wrathbone Laborer  -->
+						<MoveTo X="562.6528" Y="315.9115" Z="508.5274" />
+						
+						<!-- Move to - Deathwhisper Torturer  -->
+						<MoveTo X="594.4445" Y="273.5695" Z="506.1756" />
+
+						<!-- Move to - Wrathbone Laborer  -->
+						<MoveTo X="629.1441" Y="332.3004" Z="511.8989" />
+						
+						<!-- Move to - Wrathbone Laborer  -->
+						<MoveTo X="638.908" Y="246.5469" Z="508.4926" />
+
+						<!-- Move to - Deathwhisper Torturer  -->
+						<MoveTo X="618.8143" Y="211.2049" Z="507.2203" />
+						
+						<!-- CustomBehavior -  message - Enabling combat -->
+						<CustomBehavior File="Message" 
+											Text="Enabling combat." 
+											LogColor="Gold" />
+
+						<!-- enable combat -->
+						<EnableBehavior Name="Combat" />
+						
+						<!-- Wait timer - wait 5 seconds - delay -->
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="5000" />
+					
+						<!-- Move to - Deathwhisper Torturer  -->
+						<MoveTo X="618.8143" Y="211.2049" Z="507.2203" />
+
+					
+					
+						<!-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -->
+						
+						
+						<!-- Profile message - Disabling combat -->
+						<CustomBehavior File="Message" 
+											Text="Disabling combat." 
+											LogColor="Gold" />
+											
+						<!-- DisableBehavior - Combat -->
+						<DisableBehavior Name="Combat" />
+						
+						<!-- Move to - Wrathbone Laborer  -->
+						<MoveTo X="710.5347" Y="184.6962" Z="511.4628" />
+						
+						<!-- Move to - plateu -->
+						<MoveTo X="672.9695" Y="131.5805" Z="512.4858" />
+
+						<!-- Move to - Wrathbone Laborer  -->
+						<MoveTo X="672.9695" Y="131.5805" Z="512.4858" />
+						
+						<!-- Move to - Wrathbone Laborer  -->
+						<MoveTo X="589.704" Y="193.2678" Z="509.1335" />
+
+						<!-- Move to - Deathwhisper Torturer -->
+						<MoveTo X="589.1077" Y="156.2326" Z="509.6336" />
+
+						<!-- Move to - Deathwhisper Torturer -->
+						<MoveTo X="626.2118" Y="112.3264" Z="509.9253" />
+						
+						<!-- Move to - Wrathbone Laborer -->
+						<MoveTo X="552.8108" Y="72.85243" Z="525.5356" />
+						
+						<!-- Move to - Deathwhisper Necrolyte -->
+						<MoveTo X="559.6146" Y="143.4896" Z="516.1251" />
+						
+						<!-- CustomBehavior -  message - Enabling combat -->
+						<CustomBehavior File="Message" 
+											Text="Enabling combat." 
+											LogColor="Gold" />
+
+						<!-- enable combat -->
+						<EnableBehavior Name="Combat" />
+						
+						<!-- Wait timer - wait 5 seconds - delay -->
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="5000" />
+					
+						<!-- Move to - Deathwhisper Necrolyte -->
+						<MoveTo X="559.6146" Y="143.4896" Z="516.1251" />
+
+					
+					
+						<!-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -->
+					
+						
+						<!-- Profile message - Disabling combat -->
+						<CustomBehavior File="Message" 
+											Text="Disabling combat." 
+											LogColor="Gold" />
+											
+						<!-- DisableBehavior - Combat -->
+						<DisableBehavior Name="Combat" />
+						
+						<!-- Move to - start of the path  -->
+						<MoveTo X="624.5706" Y="86.80049" Z="512.1835" />
+						
+						<!-- Move to - middle of the path - turn right to tag the Wrathbone Laborer -->
+						<MoveTo X="616.5588" Y="41.81187" Z="512.4357" />
+
+						<!-- Move to - Wrathbone Laborer -->
+						<MoveTo X="598.3862" Y="54.78419" Z="509.7706" />
+
+						<!-- Move to - middle of the path - turn right to tag the Wrathbone Laborer -->
+						<MoveTo X="615.6514" Y="54.16396" Z="512.424" />
+
+						<!-- CustomBehavior -  message - Enabling combat -->
+						<CustomBehavior File="Message" 
+											Text="Enabling combat." 
+											LogColor="Gold" />
+						
+						<!-- enable combat -->
+						<EnableBehavior Name="Combat" />
+													
+						<!-- Wait timer - wait 5 seconds - delay -->
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="5000" />							
+					
+						<!-- Profile message - Disabling combat -->
+						<CustomBehavior File="Message" 
+											Text="Disabling combat." 
+											LogColor="Gold" />
+											
+						<!-- DisableBehavior - Combat -->
+						<DisableBehavior Name="Combat" />							
+													
+						<!-- Move to - middle of the path -->
+						<MoveTo X="617.4015" Y="27.0486" Z="512.9844" />
+						
+						<!-- Move to - Wrathbone Laborer -->
+						<MoveTo X="619.5226" Y="-19.36111" Z="512.9057" />
+
+						<!-- Move to - Wrathbone Laborer -->
+						<MoveTo X="645.7587" Y="-119.1181" Z="513.5258" />
+						
+						<!-- Move to - middle of the path -->
+						<MoveTo X="677.7943" Y="-98.10395" Z="513.7341" />
+						
+						<!-- CustomBehavior -  message - Enabling combat -->
+						<CustomBehavior File="Message" 
+											Text="Enabling combat." 
+											LogColor="Gold" />
+						
+						<!-- enable combat -->
+						<EnableBehavior Name="Combat" />
+					
+						<!-- Wait timer - wait 5 seconds - delay -->
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="5000" />
+										
+					</If>	<!-- Level Check - 90 -->
+					
+					<!-- Level Check - < 90 -->
+					<If Condition="Me.Level &lt; 90">
+						
+						<!-- Profile message - We are less than level 90. \n\n\n\nInitiating 85-89 farming mechanics -->
+						<CustomBehavior File="Message" 
+											Text="We are less than level 90. \n\n\n\nInitiating 85-89 farming mechanics." 
+											LogColor="Gold" />
+	
+					</If>	<!-- Level Check - < 90 -->
+					
+					
+					<!-- XXXXXXXXX EXIT XXXXXXX -->
+
+					
+					<!-- Move to - zone in location -->
+					<MoveTo X="432.568" Y="212.344" Z="528.7089" />
+					
+					<!-- CustomBehavior - Misc\InstanceTimer - 6 minutes and 40 seconds -->
+					<CustomBehavior File="Misc\InstanceTimer" 
+									Timer="Check" 
+									WaitTime="5000" />
+
+					<!-- If we don't have Savory Snowplum -->
+					<If Condition="!HasItem(35948)">
+
+						<!-- Load profile - [QO-N][90][10-X-Hr]_Pit-of-Saron_Battered-Hilt_[repair-mail] -->
+						<CustomBehavior File="LoadProfile" 
+										ProfileName="Movement\Vendors\[QO-N][90][10-X-Hr]_Pit-of-Saron_Battered-Hilt_[repair-mail]" />
+			
+					</If>	<!-- If we don't have Savory Snowplum -->
+					
+					<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+					<If Condition="(Me.FreeBagSlots &lt;= 25) || (Me.LowestDurabilityPercent &lt;= 0.3)" >
+												
+						<!-- Load profile - [QO-N][90][10-X-Hr]_Pit-of-Saron_Battered-Hilt_[repair-mail] -->
+						<CustomBehavior File="LoadProfile" 
+										ProfileName="Movement\Vendors\[QO-N][90][10-X-Hr]_Pit-of-Saron_Battered-Hilt_[repair-mail]" />
+
+					</If>	<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+				
+				</If>	<!-- If we are inside Pit of Saron -->
+				
+				<!-- If we are in the Pit of Saron -->
+				<If Condition="Me.MapId == 658" >	
+
+					<!-- Move to - zone in location -->
+					<MoveTo X="432.568" Y="212.344" Z="528.7089" /> 
+					
+					<!-- Move to - attempt to exit the instance -->
+					<CustomBehavior File="Misc\InInstance"
+									X="421.0371" Y="212.262" Z="529.8098" /> 
+					
+					<!-- Move to - zone out location -->
+					<MoveTo X="5595.78" Y="2013.27" Z="798.041" />
+
+				</If>	<!-- If we are inside Pit of Saron -->		
+				
+			</While> <!-- Infinite loop -->
+		
+		</If>	<!-- Level Check -->
+		
+	</QuestOrder>
+	
+</HBProfile>

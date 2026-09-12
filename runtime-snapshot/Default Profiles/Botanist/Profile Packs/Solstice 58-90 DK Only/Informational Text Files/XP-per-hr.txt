@@ -1,0 +1,53 @@
+[QO-N][Solstice][58-60]_grind ------------------------->
+[QO-N][Solstice][58-60]_grind ------------------------->
+
+[QO-N][Solstice][58-65]_blackrock-depths --------------> 
+[QO-N][Solstice][58-65]_blackrock-depths -------------->
+
+[QO-N][Solstice][62-67]_blackrock-spire --------------->
+[QO-N][Solstice][62-67]_blackrock-spire --------------->
+[QO-N][Solstice][62-67]_blackrock-spire --------------->
+[QO-N][Solstice][62-67]_blackrock-spire --------------->
+
+[QO-N][Solstice][67-70]_hellfire-ramparts ------------->
+[QO-N][Solstice][67-70]_hellfire-ramparts ------------->
+[QO-N][Solstice][67-70]_hellfire-ramparts ------------->
+
+
+[QO-N][Solstice][70-72]_mana-tombs --------------------> 
+[QO-N][Solstice][70-72]_mana-tombs -------------------->
+
+[QO-N][Solstice][72-74]_auchenai-crypts --------------->
+[QO-N][Solstice][72-74]_auchenai-crypts --------------->
+
+[QO-N][Solstice][74-76]_sethekk-halls -----------------> 
+[QO-N][Solstice][74-76]_sethekk-halls ----------------->
+[QO-N][Solstice][74-76]_sethekk-halls ----------------->
+[QO-N][Solstice][74-76]_sethekk-halls -----------------> 
+
+[QO-N][Solstice][78-79]_utgarde-keep -----------------> 
+[QO-N][Solstice][78-79]_utgarde-keep -----------------> 
+[QO-N][Solstice][78-79]_utgarde-keep -----------------> 
+[QO-N][Solstice][78-79]_utgarde-keep -----------------> 
+
+[QO-N][Solstice][79-84]_drak'tharon-keep -------------> 
+[QO-N][Solstice][79-84]_drak'tharon-keep -------------> 
+[QO-N][Solstice][79-84]_drak'tharon-keep -------------> 
+[QO-N][Solstice][79-84]_drak'tharon-keep -------------> 
+
+[QO-N][Solstice][84-86]_gundrak ----------------------> 
+[QO-N][Solstice][84-86]_gundrak ----------------------> 
+[QO-N][Solstice][84-86]_gundrak ----------------------> 
+[QO-N][Solstice][84-86]_gundrak ----------------------> 
+
+[QO-N][Solstice][86-87]_halls-of-lightning -----------> 
+[QO-N][Solstice][86-87]_halls-of-lightning -----------> 
+[QO-N][Solstice][86-87]_halls-of-lightning -----------> 
+
+[QO-N][Solstice][87-88]_blackrock-caverns ------------> 
+[QO-N][Solstice][87-88]_blackrock-caverns ------------> 
+[QO-N][Solstice][87-88]_blackrock-caverns ------------> 
+
+[QO-N][Solstice][88-90]_lost-city-of-the-tol'vir -----> 
+[QO-N][Solstice][88-90]_lost-city-of-the-tol'vir -----> 
+[QO-N][Solstice][88-90]_lost-city-of-the-tol'vir -----> 

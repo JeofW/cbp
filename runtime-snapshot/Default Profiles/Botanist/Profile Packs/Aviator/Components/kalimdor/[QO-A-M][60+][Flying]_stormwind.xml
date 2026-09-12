@@ -1,0 +1,432 @@
+<HBProfile creator="Botanist" version="1.0">
+	<Name>[QO-A-M][90][Flying]_stormwind</Name>
+   
+	<MinLevel>1</MinLevel>
+	<MaxLevel>101</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	
+	<MailGrey>False</MailGrey>
+	<MailWhite>False</MailWhite>
+	<MailGreen>False</MailGreen>
+	<MailBlue>False</MailBlue>
+	<MailPurple>False</MailPurple>
+   
+	<SellGrey>False</SellGrey>
+	<SellWhite>False</SellWhite>
+	<SellGreen>False</SellGreen>
+	<SellBlue>False</SellBlue>
+	<SellPurple>False</SellPurple>
+
+	<AvoidMobs>
+	</AvoidMobs>
+	
+	<Blackspots>
+	</Blackspots>
+
+	<Mailboxes>
+	</Mailboxes>
+ 
+	<Vendors>
+	</Vendors>
+
+	<Factions></Factions>
+	
+	<ProtectedItems>
+		
+	</ProtectedItems>
+
+	<QuestOrder>
+				
+		<!-- UserSettings -->
+		<CustomBehavior File="UserSettings"
+						FindMountAutomatically="True"
+						GroundMountFarmingMode="False"
+						HarvestHerbs="False"
+						HarvestMinerals="False"
+						KillBetweenHotspots="True"
+						LogoutForInactivity="False"
+						LogoutInactivityUseForceQuit="False"
+						LootMobs="True"
+						LootRadius="35"
+						MountName=""
+						NinjaSkin="False"
+						RessAtSpiritHealers="False"
+						SkinMobs="False"
+						UseMount="True" 
+						UseRandomMount="False" />		
+				
+		<!-- If we can fly -->		
+		<If Condition="CanFly()">
+                
+			<!-- Profile message - We can fly -->
+			<CustomBehavior File="Message" 
+							Text="We can fly."  
+							LogColor="Orange" />	
+			
+			<!-- Else we can not fly -->
+			<Else>
+
+				<!-- Profile message - We can not fly -->
+				<CustomBehavior File="Message" 
+								Text="We can not fly."  
+								LogColor="Red" />
+								
+				<!-- Wait timer - wait 3 seconds - delay -->
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="3000" />
+
+				<!-- Profile message - Initiating training procedures -->
+				<CustomBehavior File="Message" 
+								Text="Initiating training procedures."  
+								LogColor="Orange" />
+
+				<!-- If we have more than 500 gold -->
+				<If Condition="(Me.Gold &gt;= 500)" >
+
+					<!-- Profile message - We have the gold to purchase Expert Riding and a Flight Master's License -->
+					<CustomBehavior File="Message" 
+									Text="We have the gold to purchase Expert Riding and a Flight Master's License."  
+									LogColor="Orange" />
+				
+					<!-- Load profile - Training\[QO-A-M-T][90][Flying]_stormwind -->
+					<CustomBehavior File="LoadProfile" 
+									ProfileName="Training\[QO-A-M-T][90][Flying]_stormwind" />
+				
+					<!-- Else we don't have more than 500 gold -->
+					<Else>
+					
+						<!-- Profile message - We have the gold to purchase Expert Riding and a Flight Master's License -->
+						<CustomBehavior File="Message" 
+										Text="We don't have the gold to purchase Expert Riding and a Flight Master's License."  
+										LogColor="Red" />
+										
+						<!-- Wait timer - wait 3 seconds - delay -->
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="3000" />
+
+						<!-- Profile message - Restart the profile with a minimum of 505 gold on your character. Stopping the bot! -->
+						<CustomBehavior File="Message" 
+										Text="Restart the profile with a minimum of 505 gold on your character. Stopping the bot!"  
+										LogColor="Red" />
+
+						<!-- Wait timer - wait 1 seconds - delay -->
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="1000" />
+
+						<!-- Custom behavior - Usersettings - StopBot -->				
+						<CustomBehavior File="UserSettings" 
+										StopBot="true" />				
+					
+					</Else>		<!-- Else we don't have more than 500 gold -->
+					
+				</If>	<!-- If we have more than 500 gold -->
+				
+			</Else>		<!-- Else we can not fly -->
+				
+        </If>	<!-- If we can fly -->
+		
+		<!-- If we are in Pandaria -->
+		<If Condition="Me.MapId == 870">
+		
+			<!-- Profile message - We are in Pandaria -->
+			<CustomBehavior File="Message" 
+							Text="We are in Pandaria"  
+							LogColor="Orange" />
+			
+			<!-- Profile message - Moving to Stormwind portal -->
+			<CustomBehavior File="Message" 
+							Text="Moving to Stormwind portal." 
+							LogColor="Cyan" />
+		
+			<!-- Fly to - Shrine of Seven Stars hover point-->
+			<CustomBehavior File="FlyTo" 
+							X="902.952" Y="242.6688" Z="527.6846" />
+
+			<!-- CTM to - doorway entering the portal room -->
+			<CustomBehavior File="MyCTM" 
+							X="878.8149" Y="225.4941" Z="503.0988" />
+			
+			<!-- Custom behavior - ForcedDismount -->
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- UserSettings -->
+			<CustomBehavior File="UserSettings"
+							UseMount="False" />
+			
+			<!-- Move to - stormwind portal -->
+			<Moveto X="829.231" Y="183.8077" Z="519.5355" />
+			
+			<!-- Interact with the teleporter -->
+			<CustomBehavior File="InteractWith" 
+							MobId="215119" />
+			
+			<!-- Wait timer for game to load -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="20000" />
+
+			<!-- Move to - exit of the mage tower -->
+			<MoveTo X="-8995.354" Y="860.3063" Z="127.8901" />
+		
+			<!-- UserSettings -->
+			<CustomBehavior File="UserSettings"
+							UseMount="True" />
+		
+		</If>	<!-- If we are in Pandaria -->
+		
+		<!-- If we are in Northrend -->
+		<If Condition="Me.MapId == 571">
+		
+			<!-- Profile message - We are in Northrend -->
+			<CustomBehavior File="Message" 
+							Text="We are in Northrend"  
+							LogColor="Orange" />
+			
+			<!-- Profile message - Flying to Dalaran Portals -->
+			<CustomBehavior File="Message" 
+							Text="Flying to Dalaran Portals." 
+							LogColor="Cyan" />
+		
+			<!-- Fly to - last hill-top before Dalaran -->
+			<CustomBehavior File="FlyTo" 
+							X="6285.581" Y="396.274" Z="692.8207" />
+
+			<!-- CTM to - Dalaran hover point -->
+			<CustomBehavior File="MyCTM" 
+							X="5815.257" Y="607.0639" Z="811.6552" />
+		
+			<!-- CTM to - doorway entering the portal room -->
+			<CustomBehavior File="MyCTM" 
+							X="5763.177" Y="711.4803" Z="641.8541" />
+			
+			<!-- Custom behavior - ForcedDismount -->
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- UserSettings -->
+			<CustomBehavior File="UserSettings"
+							UseMount="False" />
+			
+			<!-- Move to - stormwind portal -->
+			<Moveto X="5721.021" Y="724.2441" Z="641.5439" />
+			
+			<!-- Interact with the portal to Stormwind -->
+			<CustomBehavior File="InteractWith" 
+							MobId="190960" 
+							ObjectType="Gameobject" 
+							Range="4.75"
+							NumOfTimes="1"  
+							X="5719.184" Y="719.6667" Z="641.727844" />
+			
+			<!-- Wait timer for game to load -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="20000" />
+
+			<!-- Move to - exit of the mage tower -->
+			<MoveTo X="-8995.354" Y="860.3063" Z="127.8901" />
+		
+			<!-- UserSettings -->
+			<CustomBehavior File="UserSettings"
+							UseMount="True" />
+		
+		</If>	<!-- If we are in Northrend -->
+		
+		<!-- If we are in Outland -->
+		<If Condition="Me.MapId == 530">
+		
+			<!-- Profile message - We are in Outland -->
+			<CustomBehavior File="Message" 
+							Text="We are in Outland"  
+							LogColor="Orange" />
+
+			<!-- Wait timer - wait 3 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="3000" />				
+							
+			<!-- Profile message - Moving to the Shattrath City to use the portal to Stormwind -->
+			<CustomBehavior File="Message" 
+							Text="Moving to the Shattrath City to use the portal to Stormwind."  
+							LogColor="Cyan" />				
+
+			<!-- Fly to - Shattrath City - hover point -->
+			<CustomBehavior File="FlyTo" X="-1977.775" Y="5373.526" Z="54.82305" />
+
+			<!-- CTM to - grounding at Shattrath City -->
+			<CustomBehavior File="MyCTM"
+							X="-1920.137" Y="5400.772" Z="-12.42688" />
+			
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Profile message - Moving to the Stormwind portal -->				
+			<CustomBehavior File="Message" 
+							Text="Moving to the Stormwind portal." 
+							LogColor="Cyan" />		
+						
+			<!-- Move to - Stormwind portal -->
+			<MoveTo X="-1892.733" Y="5390.708" Z="-12.42776" />
+			
+			<!-- Interact with Stormwind portal -->
+			<CustomBehavior File="InteractWith" 
+							MobId="183325" 
+							ObjectType="Gameobject" 
+							Range="55.1" 
+							NumOfTimes="1"
+							WaitTime="10000" 
+							X="-1894.18921" Y="5387.93945" Z="-12.4282484" />				
+
+			<!-- Wait timer - wait 15 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="15000" />				
+							
+		</If>	<!-- If we are in Outland -->
+		
+		<!-- If we are in Kalimdor -->
+		<If Condition="Me.MapId == 1">
+		
+			<!-- Profile message - We are in Kalimdor -->
+			<CustomBehavior File="Message" 
+							Text="We are in Kalimdor"  
+							LogColor="Orange" />
+							
+			<!-- Profile message - Flying to Ratchet -->
+			<CustomBehavior File="Message" 
+							Text="Flying to Ratchet." 
+							LogColor="Cyan" />
+			
+			<!-- Fly to - Ratchet docks - hover point -->
+			<CustomBehavior File="FlyTo" 
+							X="-966.5041" Y="-3769.535" Z="46.41536" />	
+			
+			<!-- CTM to - grounding at Ratchet docks -->
+			<CustomBehavior File="MyCTM"
+							X="-994.0352" Y="-3814.759" Z="5.329047" />
+
+			<!-- Custom behavior - ForcedDismount -->
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Move to - transport wait location -->
+			<MoveTo X="-994.0004" Y="-3827.987" Z="5.634368" />
+				
+			<!-- Profile message - Waiting for the boat to Booty Bay -->	
+			<CustomBehavior File="Message" 
+							Text="Waiting for the boat to Booty Bay." 
+							LogColor="Cyan" />	
+			
+			<!-- Profile message - We are in Kalimdor -->
+			<CustomBehavior File="UseTransport"
+							TransportId="20808"
+							WaitAtX="-994.0004" 
+							WaitAtY="-3827.987" 
+							WaitAtZ="5.634368" 
+							TransportStartX="-1005.61346" 
+							TransportStartY="-3841.648" 
+							TransportStartZ="-0.0262415316"
+							TransportEndX="-14277.7451" 
+							TransportEndY="582.86615" 
+							TransportEndZ="-0.048539947"
+							StandOnX="-998.279" 
+							StandOnY="-3840.65" 
+							StandOnZ="6.02161" 
+							GetOffX="-14280.22" 
+							GetOffY="567.6113" 
+							GetOffZ="6.696649" />
+				
+			<!-- Move to - Booty Bay docks -->	
+			<MoveTo X="-14280.22" Y="567.6113" Z="6.696649" />
+
+		</If>	<!-- If we are in Kalimdor -->		
+				
+		<!-- If we are in Deepholme -->		
+		<If Condition="Me.MapId == 646">
+		
+			<!-- Profile message - We are in Deepholme -->
+			<CustomBehavior File="Message" 
+							Text="We are in Deepholme"  
+							LogColor="Orange" />
+							
+			<!-- Profile message - Moving to the Temple of the Earth entrance -->
+			<CustomBehavior File="Message" 
+							Text="Moving to the Temple of the Earth entrance." 
+							LogColor="Cyan" />
+			
+			<!-- Fly to - Temple of the Earth - hover point -->
+			<CustomBehavior File="FlyTo" 
+							X="826.0179" Y="489.8276" Z="-41.14435" />	
+			
+			<!-- CTM to - Temple of the Earth -->
+			<CustomBehavior File="MyCTM"
+							X="948.6265" Y="511.0801" Z="-49.33325" />
+
+			<!-- Custom behavior - ForcedDismount -->
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- UserSettings -->
+			<CustomBehavior File="UserSettings" 
+								UseMount="False" />
+
+			<!-- Move to - Stormwind portal location -->
+			<MoveTo X="968.0467" Y="574.3024" Z="-44.53132" />
+				
+			<!-- Profile message - Using the portal to Stormwind -->	
+			<CustomBehavior File="Message" 
+							Text="Using the portal to Stormwind." 
+							LogColor="Cyan" />				
+							
+			<!-- Interact with Stormwind portal -->
+			<CustomBehavior File="InteractWith" 
+							MobId="205272" 
+							ObjectType="Gameobject" 
+							Range="55.1" 
+							NumOfTimes="1"
+							WaitTime="10000" 
+							X="965.25" Y="577.229" Z="-44.2583" />				
+							
+			<!-- UserSettings -->
+			<CustomBehavior File="UserSettings" 
+								UseMount="True" />				
+		
+		</If>		
+				
+		<!-- If we are in Eastern Kingdoms -->		
+		<If Condition="Me.MapId == 0">
+		
+			<!-- Profile message - We are in Eastern Kingdoms -->
+			<CustomBehavior File="Message" 
+							Text="We are in Eastern Kingdoms"  
+							LogColor="Orange" />
+							
+			<!-- Wait timer - wait 3 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="3000" />				
+							
+			<!-- Profile message - Moving to the Stormwind flight master -->
+			<CustomBehavior File="Message" 
+							Text="Moving to the Stormwind flight master."  
+							LogColor="Cyan" />				
+							
+			<!-- Move to - Stormwind flight master - hover point -->				
+			<CustomBehavior File="FlyTo" 
+							X="-8933.752" Y="451.1799" Z="134.7807" />				
+							
+			<!-- CTM to - grounding at the Stormwind flight master -->
+			<CustomBehavior File="MyCTM" 
+							X="-8845.87" Y="495.948" Z="109.6085" />	
+
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+		
+		</If>	<!-- If we are in Eastern Kingdoms -->
+
+		<!-- If we are at the Stormwind flight master -->
+		<If Condition="Me.X &gt; -8873 &amp;&amp; Me.X &lt; -8807 &amp;&amp; Me.Y &gt; 438 &amp;&amp; Me.Y &lt; 560" >
+		
+			<!-- Load profile - Staging Locations\[QO-A-M][60+][Flying]_kalimdor -->
+			<CustomBehavior File="LoadProfile" 
+							ProfileName="Staging Locations\[QO-A-M][60+][Flying]_kalimdor" />
+		
+		</If>	<!-- If we are at the Stormwind flight master -->
+
+	</QuestOrder>
+	
+</HBProfile>	

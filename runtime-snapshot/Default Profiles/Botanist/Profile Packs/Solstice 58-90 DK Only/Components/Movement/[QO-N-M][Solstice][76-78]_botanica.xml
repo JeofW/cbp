@@ -1,0 +1,728 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+	<Name>[QO-N-M][Solstice][76-78]_botanica</Name>
+   
+	<MinLevel>1</MinLevel>
+	<MaxLevel>101</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	
+	<MailGrey>False</MailGrey>
+	<MailWhite>False</MailWhite>
+	<MailGreen>False</MailGreen>
+	<MailBlue>False</MailBlue>
+	<MailPurple>True</MailPurple>
+   
+	<SellGrey>True</SellGrey>
+	<SellWhite>True</SellWhite>
+	<SellGreen>True</SellGreen>
+	<SellBlue>True</SellBlue>
+	<SellPurple>False</SellPurple>
+
+	<AvoidMobs>
+		<Mob Name="Summon Enabler Stalker" Entry="53488" />
+	</AvoidMobs>
+	
+	<Blackspots>
+		<Blackspot X="-8830.189" Y="616.5771" Z="94.05379" Radius="1" />
+		<Blackspot X="64.52451" Y="80.84284" Z="0.4361966" Radius="1" />
+	</Blackspots>
+
+	<Mailboxes>
+	</Mailboxes>
+ 
+	<Vendors>
+	</Vendors>
+
+	<Factions></Factions>
+	
+	<ProtectedItems>
+		
+	</ProtectedItems>
+	
+	<QuestOrder>
+
+		<!-- Level check -->
+		<If Condition="Me.Level &gt;= 76">
+						
+			<!-- Profile message - Movement procedures initialized -->			
+			<CustomBehavior File="Message" 
+							Text="Movement procedures initialized." 
+							LogColor="Fuchsia" />
+						
+			<!-- UserSettings -->
+			<CustomBehavior File="UserSettings"
+							FindMountAutomatically="True"
+							GroundMountFarmingMode="False"
+							HarvestHerbs="False"
+							HarvestMinerals="False"
+							KillBetweenHotspots="True"
+							LogoutForInactivity="False"
+							LogoutInactivityUseForceQuit="False"
+							LootMobs="True"
+							LootRadius="35"
+							MountName=""
+							NinjaSkin="False"
+							RessAtSpiritHealers="False"
+							SkinMobs="False"
+							UseMount="True" 
+							UseRandomMount="False" />
+			
+			<!-- Northrend -->
+			<If Condition="Me.MapId == 571">
+				<CustomBehavior File="Message" 
+								Text="We are in Northrend." 
+								LogColor="Cyan" />
+								
+				<CustomBehavior File="Message" 
+								Text="Flying to Dalaran Portals." 
+								LogColor="Cyan" />
+			
+				<!-- Fly to last hilltop before Dalaran -->
+				<CustomBehavior File="FlyTo" X="6238.808" Y="-155.1916" Z="603.1764" />
+			
+				<!-- CTM to the same altitude as the hover point in Dalaran -->
+				<CustomBehavior File="MyCTM" X="6195.48" Y="-80.85192" Z="816.6508" />
+				
+				<!-- CTM to the hover point in Dalaran -->
+				<CustomBehavior File="MyCTM" X="5804.329" Y="640.8198" Z="816.6508" />
+			
+				<!-- If we are Alliance, use the portal to Stormwind -->
+				<If Condition="Me.IsAlliance">
+					<CustomBehavior File="FlyTo" X="5763.367" Y="710.6233" Z="643.6194" />
+					<CustomBehavior File="FlyTo" X="5732.852" Y="735.7708" Z="644.6849" />
+					<CustomBehavior File="FlyTo" X="5720.347" Y="721.5897" Z="643.5318" />
+					<CustomBehavior File="ForcedDismount" />
+					
+					<!-- Interact with the portal to Stormwind -->
+					<CustomBehavior File="InteractWith" 
+									MobId="190960" 
+									ObjectType="Gameobject" 
+									Range="4.75"
+									NumOfTimes="1"  
+									X="5719.184" Y="719.6667" Z="641.727844" />
+					
+					<!-- Wait timer for game to load -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="20000" />
+
+					
+				</If>
+			
+				<!-- If we are Horde, use the portal to Orgrimmar -->
+				<If Condition="Me.IsHorde">
+					<CustomBehavior File="FlyTo" X="5864.578" Y="584.0018" Z="725.4819" />
+					<CustomBehavior File="FlyTo" X="5897.451" Y="565.5864" Z="648.7625" />
+					<CustomBehavior File="FlyTo" X="5923.795" Y="590.6122" Z="641.8165" />
+					<CustomBehavior File="ForcedDismount" />
+					
+					<!-- Interact with the portal to Orgrimmar -->
+					<CustomBehavior File="InteractWith" 
+									MobId="191009" 
+									ObjectType="Gameobject" 
+									Range="4.75" 
+									NumOfTimes="1"  
+									X="5925.874" Y="593.1875" Z="640.5933" />
+					
+					<!-- Wait timer for game to load -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="20000" />
+ 
+				</If>	<!-- Horde -->		
+			</If>	<!-- Northrend -->			
+			
+			<!-- If we are in Eastern Kingdoms -->
+			<If Condition="Me.MapId == 0">
+			
+				<!-- Profile message - We are in Eastern Kingdoms -->
+				<CustomBehavior File="Message" 
+									Text="We are in Eastern Kingdoms." 
+									LogColor="Cyan" />
+									
+				<!-- If we are Alliance -->
+				<If Condition="Me.IsAlliance" >
+				
+					<!-- Profile message - We are Alliance -->
+					<CustomBehavior File="Message" 
+									Text="We are Alliance." 
+									LogColor="Cyan" />
+					
+					<!-- If we are in Stormwind -->
+					<If Condition="Me.ZoneId == 1519" >
+				
+						<!-- Profile message - We are in Stormwind -->
+						<CustomBehavior File="Message" 
+									Text="We are in Stormwind." 
+									LogColor="Cyan" />
+				
+						<!-- Profile message - Moving to the Dark portal -->
+						<CustomBehavior File="Message" 
+									Text="Moving to the Mage Tower." 
+									LogColor="Cyan" />
+				
+						<!-- Usersettings- disable mount use in Stormwind -->
+						<CustomBehavior File="UserSettings"
+										UseMount="False"  />				
+						
+						<!-- Move to - Stormwind portal to Blasted Lands -->
+						<RunTo X="-9005.403" Y="869.1169" Z="129.6929" />
+
+						<!-- Custom behavior - Interactwith the Blasted Lands portal -->
+						<CustomBehavior File="InteractWith" 
+										MobId="195141" 
+										ObjectType="Gameobject"
+										Range="4.75" 
+										NumOfTimes="1"  
+										X="-9007.58" Y="871.8698" Z="129.6922" />
+
+						<!-- Wait timer - wait 10 seconds - game to load -->
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="10000" />				
+										
+						<!-- Usersettings- enable mount use in Blasted Lands -->
+						<CustomBehavior File="UserSettings"
+										UseMount="True"  />		
+				
+						<!-- Move to - Dark portal -->
+						<RunTo X="-11896.8" Y="-3206.77" Z="-14.6724" />
+										
+						<!-- Run through Dark Portal -->
+						<CustomBehavior File="Misc\InInstance" 
+										X="-11912.37" Y="-3209.4" Z="-14.70996" />			
+				
+						<!-- Wait timer - wait 10 seconds - game to load -->
+						<CustomBehavior File="WaitTimer" 
+									WaitTime="10000" />
+				
+						<!-- Move to Alliance flight master -->
+						<CustomBehavior File="NoCombatMoveTo"
+										X="-320.2289" Y="1026.322" Z="54.17362" />
+						
+						<!-- Forced dismount -->	
+						<CustomBehavior File="ForcedDismount" />
+						
+						<!-- Wait timer - wait 3 seconds - lag delay -->
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="3000" />
+						
+						<!-- Move to Honor Hold -->
+						<RunTo X="-673.42" Y="2717.27" Z="94.18" />
+
+						<!-- We are not in Stormwind -->
+						<Else>
+						
+							<!-- Profile message - We are not in Stormwind -->
+							<CustomBehavior File="Message" 
+										Text="We are not in Stormwind." 
+										LogColor="Cyan" />
+						
+							<!-- Profile message - Moving to the Dark portal -->
+							<CustomBehavior File="Message" 
+										Text="Moving to the Dark portal." 
+										LogColor="Cyan" />
+						
+							<!-- Move to - Dark portal -->
+							<RunTo X="-11896.8" Y="-3206.77" Z="-14.6724" />
+											
+							<!-- Run through Dark Portal -->
+							<CustomBehavior File="Misc\InInstance" 
+											X="-11912.37" Y="-3209.4" Z="-14.70996" />			
+					
+							<!-- Wait timer - wait 10 seconds - game to load -->
+							<CustomBehavior File="WaitTimer" 
+										WaitTime="10000" />
+					
+							<!-- Move to Alliance flight master -->
+							<CustomBehavior File="NoCombatMoveTo"
+											X="-320.2289" Y="1026.322" Z="54.17362" />
+							
+							<!-- Forced dismount -->	
+							<CustomBehavior File="ForcedDismount" />
+							
+							<!-- Wait timer - wait 3 seconds - lag delay -->
+							<CustomBehavior File="WaitTimer" 
+											WaitTime="3000" />
+										
+							<!-- Move to Honor Hold -->
+							<RunTo X="-673.42" Y="2717.27" Z="94.18" />
+						
+						</Else>	<!-- We are not in Stormwind -->
+					
+					</If>	<!-- If we are in Stormwind -->
+				
+				</If>	<!-- If we are Alliance -->
+				
+				<!-- If we are Horde --> 
+				<If Condition="Me.IsHorde" >
+						
+					<!-- Move to - Dark portal -->
+					<RunTo X="-11896.8" Y="-3206.77" Z="-14.6724" />
+									
+					<!-- Run through Dark Portal -->
+					<CustomBehavior File="Misc\InInstance" 
+									X="-11912.37" Y="-3209.4" Z="-14.70996" />			
+			
+					<!-- Wait timer - wait 10 seconds - game to load -->
+					<CustomBehavior File="WaitTimer" 
+								WaitTime="10000" />
+			
+					<!-- Move to - Dark portal -->
+					<RunTo X="-11896.8" Y="-3206.77" Z="-14.6724" />
+									
+					<!-- Run through Dark Portal -->
+					<CustomBehavior File="Misc\InInstance" 
+									X="-11912.37" Y="-3209.4" Z="-14.70996" />			
+			
+					<!-- Wait timer - wait 10 seconds - game to load -->
+					<CustomBehavior File="WaitTimer" 
+								WaitTime="10000" />
+			
+					<!-- Move to Horde flight master -->
+					<CustomBehavior File="NoCombatMoveTo"
+									X="-178.09" Y="1026.72" Z="54.19" />
+					
+					<!-- Forced dismount -->	
+					<CustomBehavior File="ForcedDismount" />
+					
+					<!-- Wait timer - wait 3 seconds - lag delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+								
+					<!-- Move to Thrallmar -->
+					<RunTo X="228.5" Y="2633.57" Z="87.66663" />
+
+				</If>	<!-- If we are Horde -->
+				
+			</If>	<!-- If We are in Eastern Kingdoms -->
+			
+			<!-- If we are in Kalimdor -->
+			<If Condition="Me.MapId == 1" >
+			
+				<!-- If we are Alliance -->
+				<If Condition="Me.IsAlliance" >
+				
+					<!-- Profile message - We are in Kalimdor, moving to Ratchet -->
+					<CustomBehavior File="Message" 
+									Text="We are in Kalimdor, moving to Ratchet." 
+									LogColor="Cyan" />
+									
+					<!-- Move to Ratchet docks -->				
+					<RunTo X="-996.9926" Y="-3824.178" Z="5.496727" />	
+						
+					<!-- Forced dismount -->	
+					<CustomBehavior File="ForcedDismount" />
+					
+					<!-- Run to the wait position -->
+					<RunTo X="-996.7842" Y="-3827.834" Z="5.570349" />
+					
+					<!-- Profile message - Waiting for the transport to Bootybay -->
+					<CustomBehavior File="Message" 
+									Text=" Waiting for the transport to Bootybay." 
+									LogColor="Cyan" />
+									
+					<!-- Use the transport from Ratchet to Bootybay -->				
+					<CustomBehavior File="UseTransport"
+									TransportId="20808"
+									WaitAtX="-996.7842" 
+									WaitAtY="-3827.834" 
+									WaitAtZ="5.570349" 
+									TransportStartX="-1005.61346" 
+									TransportStartY="-3864.279" 
+									TransportStartZ="-0.0262415316"
+									TransportEndX="-14277.7451" 
+									TransportEndY="582.86615" 
+									TransportEndZ="0.0493392348"
+									StandOnX="-999.8182" 
+									StandOnY="-3833.799" 
+									StandOnZ="6.034274" 
+									GetOffX="-14280.22" 
+									GetOffY="567.6113" 
+									GetOffZ="6.696649" />
+									
+					<!-- Run to the dock after getting off the transport -->				
+					<RunTo X="-14280.22" Y="567.6113" Z="6.696649" />
+					
+					<!-- Forced ground mount -->
+					<CustomBehavior File="ForcedMount"
+									MountType="Ground" />
+	 
+					<!-- Move to - Dark portal -->
+					<RunTo X="-11896.8" Y="-3206.77" Z="-14.6724" />
+									
+					<!-- Run through Dark Portal -->
+					<CustomBehavior File="Misc\InInstance" 
+									X="-11912.37" Y="-3209.4" Z="-14.70996" />			
+			
+					<!-- Wait timer - wait 10 seconds - game to load -->
+					<CustomBehavior File="WaitTimer" 
+								WaitTime="10000" />
+			
+					<!-- Move to Alliance flight master -->
+					<CustomBehavior File="NoCombatMoveTo"
+									X="-320.2289" Y="1026.322" Z="54.17362" />
+					
+					<!-- Forced dismount -->	
+					<CustomBehavior File="ForcedDismount" />
+					
+					<!-- Wait timer - wait 3 seconds - lag delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					<!-- Move to Honor Hold -->
+					<RunTo X="-673.42" Y="2717.27" Z="94.18" />
+									
+				</If>	<!-- If we are Alliance -->	
+				
+			</If>	<!-- If we are Alliance in Kalimdor -->
+
+			<!-- If we are in Kalimdor -->
+			<If Condition="Me.MapId == 1" >
+			
+				<!-- If we are Horde -->
+				<If Condition="Me.IsHorde" >
+
+					<!-- Move to - Orgrimmar portal to Blasted Lands -->
+					<RunTo X="1773.622" Y="-4329.713" Z="-8.128812" />
+
+					<!-- Custom behavior - Interactwith the Blasted Lands portal -->
+					<CustomBehavior File="InteractWith" 
+									MobId="195142" 
+									ObjectType="Gameobject"
+									Range="4.75" 
+									NumOfTimes="1"  
+									X="1768.45" Y="-4325.86" Z="-8.3711" />
+
+					<!-- Wait timer - wait 10 seconds - game to load -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="10000" />					
+									
+					<!-- Usersettings- enable mount use in Blasted Lands -->
+					<CustomBehavior File="UserSettings"
+									UseMount="True"  />		
+
+					<!-- Move to - Dark portal -->
+					<RunTo X="-11896.8" Y="-3206.77" Z="-14.6724" />
+									
+					<!-- Run through Dark Portal -->
+					<CustomBehavior File="Misc\InInstance" 
+									X="-11912.37" Y="-3209.4" Z="-14.70996" />			
+			
+					<!-- Wait timer - wait 10 seconds - game to load -->
+					<CustomBehavior File="WaitTimer" 
+								WaitTime="10000" />
+			
+					<!-- Move to Horde flight master -->
+					<CustomBehavior File="NoCombatMoveTo"
+									X="-178.09" Y="1026.72" Z="54.19" />
+					
+					<!-- Forced dismount -->	
+					<CustomBehavior File="ForcedDismount" />
+					
+					<!-- Wait timer - wait 3 seconds - lag delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+									
+					<!-- Move to Thrallmar -->
+					<RunTo X="228.5" Y="2633.57" Z="87.66663" />
+
+				</If>	<!-- If we are Horde -->	
+				
+			</If>	<!-- If we are in Kalimdor -->
+			
+			<!-- If we are in Sethekk Halls -->
+			<If Condition="Me.MapId == 556">	
+				
+				<!-- If our hearthstone is set at  Area 52 -->
+				<If Condition="(Me.HearthstoneAreaId == 3684) || (Me.HearthstoneAreaId == 3683)">
+
+					<!-- Profile message - Our Innkeeper is set at Allerian Stronghold or Area 52 -->
+					<CustomBehavior File="Message" 
+										Text="Our Innkeeper is set at Allerian Stronghold or Area 52." 
+										LogColor="Cyan" />
+				
+					<!-- Profile message - We are in Auchenai Crypts, using our Hearthstone/Innkeeper's Daughter -->
+					<CustomBehavior File="Message" 
+									Text="We are in Botanica, using our Hearthstone/Innkeeper's Daughter." 
+									LogColor="Cyan" />
+								
+					<!-- Have hearthstone -->
+					<If Condition="HasItem(6948)">
+						<CustomBehavior File="Message" 
+										Text="Using Hearthstone." 
+										LogColor="Fuchsia" />
+										
+						<CustomBehavior File="Misc\RunLua" 
+										Lua="UseItemByName(6948)" 
+										WaitTime="1000" />
+										
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000" />
+					</If> <!-- Have hearthstone -->
+				
+					<!-- Have Innkeeper's Daughter -->
+					<If Condition="HasItem(64488)">
+						<CustomBehavior File="Message" 
+										Text="Using Innkeeper's Daughter." 
+										LogColor="Fuchsia" />
+											
+						<CustomBehavior File="Misc\RunLua" 
+										Lua="UseItemByName(64488)" 
+										WaitTime="1000" />
+							
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000" />
+										
+					</If> <!-- Have Innkeeper's Daughter -->
+				
+				</If>	<!-- If our hearthstone is set here, use it -->
+				
+			</If>	<!-- If we are in Sethekk Halls -->
+
+			<!-- If we are still in Sethekk Halls, exit the instance -->
+			<If Condition="Me.MapId == 556">
+			
+				<!-- Profile message - Our hearth didn't work, exiting the instance --> 
+				<CustomBehavior File="Message" 
+								Text="Our hearth didn't work, exiting the instance."
+								LogColor="Orange" />
+
+				<!-- Move to - zone in location -->
+				<RunTo X="2.63209" Y="-0.209401" Z="0.005755" />
+					
+				<!-- Go through the portal -->
+				<CustomBehavior File="Misc\InInstance" X="-20.722509" Y="0.3174916" Z="0.005990623" />
+				
+				<!-- Move to - zone out location -->
+				<RunTo X="-3362.1" Y="4668.9" Z="-101.048" />
+
+				<!-- Move to - mount location -->
+				<RunTo X="-3362.1" Y="4761.123" Z="-101.396" />
+			
+				<!-- Move to - Sethekk Halls hover point -->
+				<CustomBehavior File="FlyTo" 
+								X="-3362.06" Y="4944.15" Z="11.19478" />
+
+			</If> <!-- If we are still in Sethekk Halls exit the instance -->
+			
+			<!-- Outland -->
+			<If Condition="Me.MapId == 530">
+			
+				<!-- Profile message - We are in Outland -->
+				<CustomBehavior File="Message" 
+								Text="We are in Outland." 
+								LogColor="Cyan" />
+						
+				<!-- If our hearthstone is set at Area 52 -->
+				<If Condition="(Me.HearthstoneAreaId == 3712)">
+				
+					<!-- Profile message - Our Hearthstone is set at Area 52 -->
+					<CustomBehavior File="Message" 
+										Text="Our Hearthstone is set at Area 52." 
+										LogColor="Cyan" />
+										
+					<!-- Else our hearthstone is not set at Area 52 -->
+					<Else>
+					
+						<!-- Profile message - Our Hearthstone isn't set in the proper location. Moving to set it -->
+						<CustomBehavior File="Message" 
+										Text="Our Hearthstone isn't set in the proper location. Moving to set it." 
+										LogColor="Cyan" />
+					
+						<!-- Alliance -->
+						<If Condition="Me.IsAlliance">
+						
+							<!-- Profile message - Flying to Area 52 -->
+							<CustomBehavior File="Message" 
+											Text="Flying to Area 52." 
+											LogColor="Cyan" />
+						
+							<!-- Move to - Area 52 - Hover Point -->
+							<CustomBehavior File="FlyTo"
+											X="3073.289" Y="3637.481" Z="173.0833" />
+
+							<!-- Front doorway of the inn -->
+							<CustomBehavior File="FlyTo" 
+											X="3053.248" Y="3690.068" Z="142.5451" />
+							
+							<!-- Custom behavior - ForcedDismount -->
+							<CustomBehavior File="ForcedDismount" />
+
+							<!-- Run inside the inn -->
+							<RunTo X="3065.171" Y="3701.012" Z="142.478" />
+							
+							<!-- Profile message - Setting our Hearthstone -->
+							<CustomBehavior File="Message" 
+											Text="Setting our Hearthstone." 
+											LogColor="Cyan" />
+
+							<!-- Custom behavior - SetHearthstone -->				
+							<CustomBehavior File="SetHearthstone" 
+											MobId="19571" 
+											X="3062.147" Y="3701.815" Z="142.4791" />
+
+							<!-- Move to - outside of the inn -->
+							<RunTo X="3053.248" Y="3690.068" Z="142.5451" />
+							
+							<!-- Fly to - Area 52 hover point -->
+							<CustomBehavior File="FlyTo" 
+											X="3038.298" Y="3669.083" Z="237.0228" />
+							
+							<!-- Profile message - We are in Area 52 -->
+							<CustomBehavior File="Message" 
+											Text="We are in Area 52." 
+											LogColor="Cyan" />
+
+							<!-- Horde -->
+							<ElseIf Condition="Me.IsHorde">
+							
+								<!-- Profile message - Flying to Area 52 -->
+								<CustomBehavior File="Message" 
+												Text="Flying to Area 52." 
+												LogColor="Cyan" />
+							
+								<!-- Move to - Area 52 - Hover Point -->
+								<CustomBehavior File="FlyTo"
+												X="3073.289" Y="3637.481" Z="173.0833" />
+
+								<!-- Front doorway of the inn -->
+								<CustomBehavior File="FlyTo" 
+												X="3053.248" Y="3690.068" Z="142.5451" />
+								
+								<!-- Custom behavior - ForcedDismount -->
+								<CustomBehavior File="ForcedDismount" />
+
+								<!-- Run inside the inn -->
+								<RunTo X="3065.171" Y="3701.012" Z="142.478" />
+								
+								<!-- Profile message - Setting our Hearthstone -->
+								<CustomBehavior File="Message" 
+												Text="Setting our Hearthstone." 
+												LogColor="Cyan" />
+
+								<!-- Custom behavior - SetHearthstone -->				
+								<CustomBehavior File="SetHearthstone" 
+												MobId="19571" 
+												X="3062.147" Y="3701.815" Z="142.4791" />
+
+								<!-- Move to - outside of the inn -->
+								<RunTo X="3053.248" Y="3690.068" Z="142.5451" />
+
+								<!-- Profile message - We are in Area 52 -->
+								<CustomBehavior File="Message" 
+												Text="We are in Area 52." 
+												LogColor="Cyan" />
+
+								<!-- If we are inside Area 52 -->
+								<If Condition="Me.X &gt; 2924.227 &amp;&amp; Me.X &lt; 3130.197 &amp;&amp; Me.Y &gt; 3607.757 &amp;&amp; Me.Y &lt; 3780.382" >
+								
+									<!-- Move to - Area 52 - flight master -->
+									<RunTo X="3052.292" Y="3590.085" Z="143.3366" />
+									
+								</If>	<!-- If we are inside Area 52 -->	
+								
+								<!-- Move to - Area 52 - Hover Point -->
+								<CustomBehavior File="FlyTo"
+												X="3073.289" Y="3637.481" Z="173.0833" />
+								
+								<!-- Profile message - We are in Area 52 -->
+								<CustomBehavior File="Message" 
+												Text="We are in Area 52." 
+												LogColor="Cyan" />
+												
+							</ElseIf> 	<!-- Horde -->
+							
+						</If> 	<!-- Alliance -->
+						
+					</Else>		<!-- Else our hearthstone is not set at Area 52 -->
+					
+				</If> <!-- Check hearthstone -->
+				
+				<!-- Profile message - Waiting 3 seconds - Bag and durability check -->
+				<CustomBehavior File="Message" 
+								Text="Waiting 3 seconds - Bag and durability check."  
+								LogColor="Orange" />
+				
+				<!-- Wait timer - wait 3 seconds - delay -->
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="3000" />
+				
+				<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+				<If Condition="(Me.FreeBagSlots &lt;= 25) || (Me.LowestDurabilityPercent &lt;= 0.3)" >
+											
+					<!-- Load profile - [QO-N][Solstice][58-90][repair-mail] -->
+					<CustomBehavior File="LoadProfile" 
+												ProfileName="Vendors\[QO-N][Solstice][58-90][repair-mail]" />
+
+				</If>	<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+
+				<!-- Profile message - Waiting 3 seconds - Food check - Mag'har Grainbread -->
+				<CustomBehavior File="Message" 
+								Text="Waiting 3 seconds - Food check - Mag'har Grainbread."  
+								LogColor="Orange" />
+				
+				<!-- Wait timer - wait 3 seconds - delay -->
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="3000" />
+				
+				<!-- If we don't have Mag'har Grainbread -->
+				<If Condition="!HasItem(27855)">
+		
+					<!-- Load profile - [QO-N][Solstice][58-90][repair-mail] -->
+					<CustomBehavior File="LoadProfile" 
+									ProfileName="Vendors\[QO-N][Solstice][58-90][repair-mail]" />
+		
+				</If>	<!-- If we don't have any Mag'har Grainbread -->
+				
+				<!-- Profile message - All checks complete -->
+				<CustomBehavior File="Message" 
+								Text="All checks complete."  
+								LogColor="Orange" />
+				
+				<!-- If we are inside Area 52 -->
+				<If Condition="Me.X &gt; 2824.227 &amp;&amp; Me.X &lt; 3230.197 &amp;&amp; Me.Y &gt; 3507.757 &amp;&amp; Me.Y &lt; 3880.382" >
+				
+					<!-- Move to - Area 52 - Hover Point -->
+					<CustomBehavior File="FlyTo"
+									X="3073.289" Y="3637.481" Z="173.0833" />
+					
+				</If>	<!-- If we are inside Area 52 -->
+				
+				<!-- Profile message - Flying to Botanica -->
+				<CustomBehavior File="Message" 
+								Text="Flying to Botanica." 
+								LogColor="Cyan" />
+				
+				<!-- Fly to - Cosmowrench -->
+				<CustomBehavior File="FlyTo"
+								X="2975.385" Y="1847.396" Z="258.4142" />
+				
+				<!-- CTM - Botanica hover point -->
+				<CustomBehavior File="MyCTM" 
+								X="3322.24" Y="1790.625" Z="362.5011" />
+								
+				<!-- CTM - to the Botanica instance box -->
+				<CustomBehavior File="MyCTM" 
+								X="3409.85" Y="1486.26" Z="182.837" />
+								
+				<!-- Forced dismount -->				
+				<CustomBehavior File="ForcedDismount" />
+				
+				<!-- Move to - zone out location -->
+				<RunTo X="3409.85" Y="1486.26" Z="182.837" />
+
+			</If> <!-- Outland -->
+			
+			<!-- If we are in the Botanica instance box -->
+			<If Condition="Me.X &gt; 3359.2 &amp;&amp; Me.X &lt; 3459.858 &amp;&amp; Me.Y &gt; 1436.971 &amp;&amp; Me.Y &lt; 1516.012" >
+			
+				<!-- Custom behavior - LoadProfile - [QO-N][Solstice][76-78]_botanica -->
+				<CustomBehavior File="LoadProfile" 
+								ProfileName="..\[QO-N][Solstice][76-78]_botanica" />
+								
+			</If>	<!-- If we are in the Botanica instance box -->		
+			
+		</If> 	<!-- Level check -->
+		
+	</QuestOrder>
+</HBProfile>
+

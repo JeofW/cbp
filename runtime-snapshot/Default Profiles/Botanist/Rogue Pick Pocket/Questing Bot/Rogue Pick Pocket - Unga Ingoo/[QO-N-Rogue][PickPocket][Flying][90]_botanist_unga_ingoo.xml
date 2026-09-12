@@ -1,0 +1,588 @@
+<HBProfile>
+<Name>[QO-N-Rogue][PickPocket][Flying][90]_botanist_unga_ingoo</Name> 
+
+<MinLevel>90</MinLevel> 
+<MaxLevel>101</MaxLevel>
+<MinDurability>-1</MinDurability>
+<MinFreeBagSlots>-1</MinFreeBagSlots>
+
+<SellGrey>True</SellGrey>
+<SellWhite>False</SellWhite>
+<SellGreen>False</SellGreen>
+<SellBlue>False</SellBlue>
+<SellPurple>False</SellPurple>
+
+<MailGrey>False</MailGrey>
+<MailWhite>True</MailWhite>
+<MailGreen>True</MailGreen>
+<MailBlue>True</MailBlue>
+<MailPurple>True</MailPurple>
+<Vendors>
+</Vendors>
+	
+<Mailboxes>
+</Mailboxes>
+
+	<QuestOrder>
+	
+		<While Condition="true" >
+				
+						<If Condition="(Me.FreeBagSlots &lt;= 6) || (Me.LowestDurabilityPercent &lt;= 0.3)" >
+							<CustomBehavior File="Message" Text="I have detected that my gear is about to break or my bags are nearly full. I'm flying to mail and repair. Then I'll return to the farming location" LogColor="Lime" />
+							<CustomBehavior File="FlyTo" X="529.2774" Y="-648.7822" Z="256.8641" />
+							<CustomBehavior File="ForcedDismount" />
+							<SetVendor>
+								<Vendors>
+									<Vendor Name="Claretta" Entry="61215" Type="Repair" X="528.3212" Y="-652.0018" Z="257.0843" />
+								</Vendors>
+							</SetVendor>
+							<SetMailbox>
+								<Mailboxes>
+									<Mailbox X="537.5491" Y="-614.8963" Z="258.6812" />
+								</Mailboxes>
+							</SetMailbox>			
+							<CustomBehavior File="ForceSetVendor" DoMail="True" DoRepair="True" DoSell="True" DoTrain="False" />
+							<CustomBehavior File="FlyTo" X="-2871.132" Y="642.4452" Z="63.86713" />
+							<CustomBehavior File="FlyTo" X="-2883.781" Y="610.3947" Z="34.46361" />
+							<CustomBehavior File="ForcedDismount" />
+						</If>
+						
+						<If Condition="Me.MapId == 870" >
+							<If Condition="Me.X &gt; 592.749 || Me.X &lt; 510.7658 || Me.Y &gt; -588.135 || Me.Y &lt; -646.6171" >	<!-- outside inn box -->
+								<If Condition="Me.X &lt; -3121.363 || Me.X &gt; -2728.969 || Me.Y &lt; 437.9791 || Me.Y &gt; 1028.945" >	<!-- outside farming area box -->
+									<CustomBehavior File="Message" Text="Flying to Pang's Stead to set my Hearthstone." LogColor="Lime" />
+									<CustomBehavior File="FlyTo" X="535.6326" Y="-613.7032" Z="258.6743" />
+									<CustomBehavior File="ForcedDismount" />
+										<RunTo X="564.7505" Y="-605.0576" Z="263.4492" />
+									<CustomBehavior File="Message" Text="Setting my Hearthstone with the innkeep." LogColor="Lime" />
+									<CustomBehavior File="WaitTimer" WaitTime="1000" />
+									<CustomBehavior File="SetHearthstone" MobId="65528" X="567.5018" Y="-608.4028" Z="263.4468" />
+									<CustomBehavior File="WaitTimer" WaitTime="1000" />
+									<CustomBehavior File="Message" Text="I have set my Hearthstone." LogColor="Lime" />
+									<CustomBehavior File="WaitTimer" WaitTime="1000" />
+										<RunTo X="535.6326" Y="-613.7032" Z="258.6743" />
+									<CustomBehavior File="FlyTo" X="-2871.132" Y="642.4452" Z="63.86713" />
+									<CustomBehavior File="FlyTo" X="-2883.781" Y="610.3947" Z="34.46361" />
+									<CustomBehavior File="ForcedDismount" />
+								</If>
+							</If>	
+						</If>
+						
+						<If Condition="Me.MapId == 870" >
+							<If Condition="Me.X &lt; 592.749 &amp;&amp; Me.X &gt; 510.7658 &amp;&amp; Me.Y &lt; -588.135 &amp;&amp; Me.Y &gt; -646.6171" >	<!-- inside inn box -->
+								<CustomBehavior File="Message" Text="I am ar Pang's Stead, flying to the farming area." LogColor="Lime" />
+								<CustomBehavior File="FlyTo" X="-2871.132" Y="642.4452" Z="63.86713" />
+								<CustomBehavior File="FlyTo" X="-2883.781" Y="610.3947" Z="34.46361" />
+							</If>
+						</If>	
+				
+				<While Condition="(Me.FreeBagSlots &gt; 6) &amp;&amp; (Me.LowestDurabilityPercent &gt; 0.3)" >			
+						
+						<If Condition="Me.MapId == 870" >
+							<If Condition="Me.X &gt; -3121.363 &amp;&amp; Me.X &lt; -2728.969 &amp;&amp; Me.Y &gt; 437.9791 &amp;&amp; Me.Y &lt; 1028.945" >	<!-- inside farming area box -->
+								<CustomBehavior File="Message" Text="I'm in the farming area, moving to the beginning of the route." LogColor="Lime" />
+								<CustomBehavior File="ForcedMount" MountType="Flying" />
+								<CustomBehavior File="FlyTo" X="-2871.132" Y="642.4452" Z="63.86713" />
+								<CustomBehavior File="FlyTo" X="-2883.781" Y="610.3947" Z="34.46361" />
+								<CustomBehavior File="ForcedDismount" />
+								<CustomBehavior File="UserSettings" UseMount="False" LootMobs="False" SkinMobs="False" NinjaSkin="False" HarvestHerbs="False" HarvestMinerals="False" PullDistance="1" KillBetweenHotspots="False" RessAtSpiritHealers="False" FindVendorsAutomatically="False" LootRadius="30" LogoutForInactivity="True" />
+								
+								<If Condition="!Me.HasAura(&quot;Stealth&quot;)">	
+									<CustomBehavior File="RunMacro" Macro="/cast stealth" />
+								</If>	
+								<If Condition="Me.HasAura(&quot;Stealth&quot;)">
+									<CustomBehavior File="NoCombatMoveTo" X="-2894.599" Y="633.0496" Z="25.44086" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2879.807" Y="638.9351" Z="19.28494" />	  <!-- mob 1 -->
+									<CustomBehavior File="RunMacro" Macro="/targetenemy\n/cast pick pocket" NumOfTimes="1" />
+									<CustomBehavior File="RunMacro" Macro="/cleartarget" NumOfTimes="1" WaitTime="0"/>
+								</If>
+								
+								<If Condition="!Me.HasAura(&quot;Stealth&quot;)">	
+									<CustomBehavior File="RunMacro" Macro="/cast stealth" />
+								</If>	
+								<If Condition="Me.HasAura(&quot;Stealth&quot;)">
+									<CustomBehavior File="NoCombatMoveTo" X="-2877.116" Y="649.4437" Z="17.55157" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2878.237" Y="651.0023" Z="17.72516" />	  <!-- mob 2 -->
+									<CustomBehavior File="RunMacro" Macro="/targetenemy\n/cast pick pocket" NumOfTimes="1" />
+									<CustomBehavior File="RunMacro" Macro="/cleartarget" NumOfTimes="1" WaitTime="0"/>
+								</If>
+								
+								<If Condition="!Me.HasAura(&quot;Stealth&quot;)">	
+									<CustomBehavior File="RunMacro" Macro="/cast stealth" />
+								</If>	
+								<If Condition="Me.HasAura(&quot;Stealth&quot;)">
+									<CustomBehavior File="NoCombatMoveTo" X="-2880.981" Y="649.6007" Z="18.92" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2890.868" Y="648.4525" Z="19.56397" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2898.181" Y="639.012" Z="24.45678" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2900.951" Y="643.1686" Z="24.40541" />	  <!-- mob 3 -->
+									<CustomBehavior File="RunMacro" Macro="/targetenemy\n/cast pick pocket" NumOfTimes="1" />
+									<CustomBehavior File="RunMacro" Macro="/cleartarget" NumOfTimes="1" WaitTime="0"/>
+								</If>
+								
+								<If Condition="!Me.HasAura(&quot;Stealth&quot;)">	
+									<CustomBehavior File="RunMacro" Macro="/cast stealth" />
+								</If>	
+								<If Condition="Me.HasAura(&quot;Stealth&quot;)">
+									<CustomBehavior File="NoCombatMoveTo" X="-2904.925" Y="653.847" Z="23.73165" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2912.885" Y="653.6672" Z="24.737" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2921.98" Y="643.5051" Z="24.80437" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2925.766" Y="645.9378" Z="24.80499" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2924.836" Y="648.3508" Z="24.80499" />	<!-- mob 4 -->
+									<CustomBehavior File="RunMacro" Macro="/targetenemy\n/cast pick pocket" NumOfTimes="4" />
+									<CustomBehavior File="RunMacro" Macro="/cleartarget" NumOfTimes="1" WaitTime="0"/>
+								</If>
+								
+								<If Condition="!Me.HasAura(&quot;Stealth&quot;)">	
+									<CustomBehavior File="RunMacro" Macro="/cast stealth" />
+								</If>	
+								<If Condition="Me.HasAura(&quot;Stealth&quot;)">
+									<CustomBehavior File="NoCombatMoveTo" X="-2920.642" Y="642.6479" Z="24.8005" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2932.778" Y="634.4879" Z="30.10498" />
+									<CustomBehavior File="MyCTM" X="-2941.932" Y="648.3992" Z="23.95654" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2935.348" Y="655.3519" Z="24.18858" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2935.495" Y="663.2415" Z="23.64035" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2942.042" Y="659.3176" Z="25.67459" />	  <!-- 4 man hut -->
+									<CustomBehavior File="RunMacro" Macro="/targetenemy\n/cast pick pocket" NumOfTimes="5" />
+									<CustomBehavior File="RunMacro" Macro="/cleartarget" NumOfTimes="1" WaitTime="0"/>
+								</If>
+								
+								<If Condition="!Me.HasAura(&quot;Stealth&quot;)">	
+									<CustomBehavior File="RunMacro" Macro="/cast stealth" />
+								</If>	
+								<If Condition="Me.HasAura(&quot;Stealth&quot;)">
+									<CustomBehavior File="NoCombatMoveTo" X="-2935.358" Y="663.3273" Z="23.61937" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2935.469" Y="667.0354" Z="22.74715" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2943.426" Y="668.7324" Z="23.74228" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2950.716" Y="674.9521" Z="23.2329" />	  <!-- mob 7 -->
+									<CustomBehavior File="RunMacro" Macro="/targetenemy\n/cast pick pocket" NumOfTimes="3" />
+									<CustomBehavior File="RunMacro" Macro="/cleartarget" NumOfTimes="1" WaitTime="0"/>
+								</If>
+								
+								<If Condition="!Me.HasAura(&quot;Stealth&quot;)">	
+									<CustomBehavior File="RunMacro" Macro="/cast stealth" />
+								</If>	
+								<If Condition="Me.HasAura(&quot;Stealth&quot;)">
+									<CustomBehavior File="NoCombatMoveTo" X="-2951.45" Y="665.9544" Z="23.95432" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2957.747" Y="662.3244" Z="27.56003" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2963.811" Y="671.5323" Z="25.37263" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2963.634" Y="672.6533" Z="25.06171" />	  <!-- mob 8 -->
+									<CustomBehavior File="RunMacro" Macro="/targetenemy\n/cast pick pocket" NumOfTimes="2" />
+									<CustomBehavior File="RunMacro" Macro="/cleartarget" NumOfTimes="1" WaitTime="0"/>
+								</If>
+								
+								<If Condition="!Me.HasAura(&quot;Stealth&quot;)">	
+									<CustomBehavior File="RunMacro" Macro="/cast stealth" />
+								</If>	
+								<If Condition="Me.HasAura(&quot;Stealth&quot;)">
+									<CustomBehavior File="NoCombatMoveTo" X="-2974.082" Y="683.1282" Z="23.61063" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2970.354" Y="699.4352" Z="15.88247" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2960.095" Y="706.7627" Z="15.25287" />	  <!-- mob 9 -->
+									<CustomBehavior File="RunMacro" Macro="/targetenemy\n/cast pick pocket" NumOfTimes="5" />
+									<CustomBehavior File="RunMacro" Macro="/cleartarget" NumOfTimes="1" WaitTime="0"/>
+								</If>
+								
+								<If Condition="!Me.HasAura(&quot;Stealth&quot;)">	
+									<CustomBehavior File="RunMacro" Macro="/cast stealth" />
+								</If>	
+								<If Condition="Me.HasAura(&quot;Stealth&quot;)">
+									<CustomBehavior File="NoCombatMoveTo" X="-2974.609" Y="697.2217" Z="18.19973" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2985.809" Y="705.1847" Z="20.05305" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2984.475" Y="710.5549" Z="18.88827" />	  <!-- mob 10 -->
+									<CustomBehavior File="RunMacro" Macro="/targetenemy\n/cast pick pocket" NumOfTimes="3" />
+									<CustomBehavior File="RunMacro" Macro="/cleartarget" NumOfTimes="1" WaitTime="0"/>
+								</If>
+								
+								<If Condition="!Me.HasAura(&quot;Stealth&quot;)">	
+									<CustomBehavior File="RunMacro" Macro="/cast stealth" />
+								</If>	
+								<If Condition="Me.HasAura(&quot;Stealth&quot;)">
+									<CustomBehavior File="NoCombatMoveTo" X="-2991.021" Y="713.5863" Z="19.31391" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2994.47" Y="725.9456" Z="19.43696" />
+									<CustomBehavior File="NoCombatMoveTo" X="-3006.286" Y="739.4727" Z="23.82449" />
+									<CustomBehavior File="NoCombatMoveTo" X="-3018.21" Y="715.8115" Z="33.91131" />
+									<CustomBehavior File="NoCombatMoveTo" X="-3001.661" Y="692.43" Z="37.5457" />
+									<CustomBehavior File="NoCombatMoveTo" X="-3006.371" Y="689.4288" Z="37.61661" />	  <!-- mob 11 -->
+									<CustomBehavior File="RunMacro" Macro="/targetenemy\n/cast pick pocket" NumOfTimes="3" />
+									<CustomBehavior File="RunMacro" Macro="/cleartarget" NumOfTimes="1" WaitTime="0"/>
+								</If>
+								
+								<If Condition="!Me.HasAura(&quot;Stealth&quot;)">	
+									<CustomBehavior File="RunMacro" Macro="/cast stealth" />
+								</If>	
+								<If Condition="Me.HasAura(&quot;Stealth&quot;)">
+									<CustomBehavior File="NoCombatMoveTo" X="-3001.661" Y="692.43" Z="37.5457" />
+									<CustomBehavior File="NoCombatMoveTo" X="-3009.153" Y="708.0316" Z="36.39331" />
+									<CustomBehavior File="NoCombatMoveTo" X="-3023.098" Y="719.4617" Z="33.74205" />	  <!-- mob 11 b -->
+									<CustomBehavior File="RunMacro" Macro="/targetenemy\n/cast pick pocket" NumOfTimes="3" />
+									<CustomBehavior File="RunMacro" Macro="/cleartarget" NumOfTimes="1" WaitTime="0"/>
+								</If>
+								
+								<If Condition="!Me.HasAura(&quot;Stealth&quot;)">	
+									<CustomBehavior File="RunMacro" Macro="/cast stealth" />
+								</If>	
+								<If Condition="Me.HasAura(&quot;Stealth&quot;)">
+									<CustomBehavior File="NoCombatMoveTo" X="-3013.88" Y="720.5803" Z="31.38666" />
+									<CustomBehavior File="NoCombatMoveTo" X="-3015.135" Y="723.1082" Z="31.8091" />
+									<CustomBehavior File="NoCombatMoveTo" X="-3025.802" Y="731.7757" Z="33.92229" />
+									<CustomBehavior File="NoCombatMoveTo" X="-3035.74" Y="728.9664" Z="35.86703" />
+									<CustomBehavior File="NoCombatMoveTo" X="-3034.26" Y="726.3157" Z="35.25327" />	<!-- mob 11 c -->
+									<CustomBehavior File="RunMacro" Macro="/targetenemy\n/cast pick pocket" NumOfTimes="2" />
+									<CustomBehavior File="RunMacro" Macro="/cleartarget" NumOfTimes="1" WaitTime="0"/>
+								</If>
+								
+								<If Condition="!Me.HasAura(&quot;Stealth&quot;)">	
+									<CustomBehavior File="RunMacro" Macro="/cast stealth" />
+								</If>	
+								<If Condition="Me.HasAura(&quot;Stealth&quot;)">	
+									<CustomBehavior File="NoCombatMoveTo" X="-3044.654" Y="744.8271" Z="32.51907" />
+									<CustomBehavior File="NoCombatMoveTo" X="-3047.736" Y="745.4199" Z="33.06662" />	  <!-- mob 12 -->
+									<CustomBehavior File="RunMacro" Macro="/targetenemy\n/cast pick pocket" NumOfTimes="2" />
+									<CustomBehavior File="RunMacro" Macro="/cleartarget" NumOfTimes="1" WaitTime="0"/>
+								</If>
+								
+								<If Condition="!Me.HasAura(&quot;Stealth&quot;)">	
+									<CustomBehavior File="RunMacro" Macro="/cast stealth" />
+								</If>	
+								<If Condition="Me.HasAura(&quot;Stealth&quot;)">
+									<CustomBehavior File="NoCombatMoveTo" X="-3049.169" Y="750.8783" Z="31.41331" />
+									<CustomBehavior File="NoCombatMoveTo" X="-3057.618" Y="764.2797" Z="27.3058" />
+									<CustomBehavior File="NoCombatMoveTo" X="-3049.722" Y="767.9719" Z="28.72056" />
+									<CustomBehavior File="NoCombatMoveTo" X="-3053.127" Y="779.5287" Z="28.23276" />
+									<CustomBehavior File="NoCombatMoveTo" X="-3048.185" Y="776.0779" Z="28.90666" /><!-- mob 13 -->
+									<CustomBehavior File="RunMacro" Macro="/targetenemy\n/cast pick pocket" NumOfTimes="2" />
+									<CustomBehavior File="RunMacro" Macro="/cleartarget" NumOfTimes="1" WaitTime="0"/>
+								</If>
+								
+								<If Condition="!Me.HasAura(&quot;Stealth&quot;)">	
+									<CustomBehavior File="RunMacro" Macro="/cast stealth" />
+								</If>	
+								<If Condition="Me.HasAura(&quot;Stealth&quot;)">
+									<CustomBehavior File="NoCombatMoveTo" X="-3039.7" Y="795.4565" Z="32.12053" />
+									<CustomBehavior File="NoCombatMoveTo" X="-3028.202" Y="809.5595" Z="29.96746" />
+									<CustomBehavior File="NoCombatMoveTo" X="-3026.988" Y="827.8483" Z="29.05872" />	  <!-- mob 14 -->
+									<CustomBehavior File="RunMacro" Macro="/targetenemy\n/cast pick pocket" NumOfTimes="2" />
+									<CustomBehavior File="RunMacro" Macro="/cleartarget" NumOfTimes="1" WaitTime="0"/>
+								</If>
+								
+								<If Condition="!Me.HasAura(&quot;Stealth&quot;)">	
+									<CustomBehavior File="RunMacro" Macro="/cast stealth" />
+								</If>	
+								<If Condition="Me.HasAura(&quot;Stealth&quot;)">
+									<CustomBehavior File="NoCombatMoveTo" X="-3017.887" Y="811.9766" Z="30.43279" />
+									<CustomBehavior File="NoCombatMoveTo" X="-3013.272" Y="812.9655" Z="28.76101" />	<!-- mob 15 -->
+									<CustomBehavior File="RunMacro" Macro="/targetenemy\n/cast pick pocket" NumOfTimes="4" />
+									<CustomBehavior File="RunMacro" Macro="/cleartarget" NumOfTimes="1" WaitTime="0"/>
+								</If>
+								
+								<If Condition="!Me.HasAura(&quot;Stealth&quot;)">	
+									<CustomBehavior File="RunMacro" Macro="/cast stealth" />
+								</If>	
+								<If Condition="Me.HasAura(&quot;Stealth&quot;)">
+									<CustomBehavior File="NoCombatMoveTo" X="-3003.681" Y="814.4171" Z="27.85955" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2996.982" Y="815.8714" Z="24.45897" />
+									<CustomBehavior File="MyCTM" X="-2988.258" Y="822.8636" Z="16.47248" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2988.735" Y="830.7033" Z="16.53582" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2983.271" Y="837.4026" Z="14.49228" />	<!-- mob 16 -->
+									<CustomBehavior File="RunMacro" Macro="/targetenemy\n/cast pick pocket" NumOfTimes="2" />
+									<CustomBehavior File="RunMacro" Macro="/cleartarget" NumOfTimes="1" WaitTime="0"/>
+								</If>
+								
+								<If Condition="!Me.HasAura(&quot;Stealth&quot;)">	
+									<CustomBehavior File="RunMacro" Macro="/cast stealth" />
+								</If>	
+								<If Condition="Me.HasAura(&quot;Stealth&quot;)">
+									<CustomBehavior File="NoCombatMoveTo" X="-2987.73" Y="846.2324" Z="15.87825" />
+									<CustomBehavior File="NoCombatMoveTo" X="-3000.152" Y="860.8281" Z="15.48775" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2996.51" Y="860.2403" Z="15.90444" />		<!-- mob 18 -->
+									<CustomBehavior File="RunMacro" Macro="/targetenemy\n/cast pick pocket" NumOfTimes="3" />
+									<CustomBehavior File="RunMacro" Macro="/cleartarget" NumOfTimes="1" WaitTime="0"/>
+								</If>
+								
+								<If Condition="!Me.HasAura(&quot;Stealth&quot;)">	
+									<CustomBehavior File="RunMacro" Macro="/cast stealth" />
+								</If>	
+								<If Condition="Me.HasAura(&quot;Stealth&quot;)">
+									<CustomBehavior File="NoCombatMoveTo" X="-3002.16" Y="860.0521" Z="15.15513" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2996.562" Y="873.8356" Z="14.26874" />
+									<CustomBehavior File="MyCTM" X="-2990.464" Y="885.9164" Z="6.576967" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2990.082" Y="898.0861" Z="6.182637" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2974.025" Y="911.8528" Z="9.753622" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2962.707" Y="912.938" Z="11.07324" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2953.785" Y="934.8983" Z="14.65335" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2936.313" Y="922.8955" Z="8.706633" />		<!-- 3 grp @ fire -->
+									<CustomBehavior File="RunMacro" Macro="/targetenemy\n/cast pick pocket" NumOfTimes="3" />
+									<CustomBehavior File="RunMacro" Macro="/cleartarget" NumOfTimes="1" WaitTime="0"/>
+								</If>
+								
+								<If Condition="!Me.HasAura(&quot;Stealth&quot;)">	
+									<CustomBehavior File="RunMacro" Macro="/cast stealth" />
+								</If>	
+								<If Condition="Me.HasAura(&quot;Stealth&quot;)">
+									<CustomBehavior File="NoCombatMoveTo" X="-2939.857" Y="924.6272" Z="8.706633" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2938.555" Y="915.5756" Z="8.705689" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2935.135" Y="912.3267" Z="8.705689" />	
+									<CustomBehavior File="NoCombatMoveTo" X="-2936.647" Y="910.7545" Z="8.705689" />	<!-- mob 20 -->
+									<CustomBehavior File="RunMacro" Macro="/targetenemy\n/cast pick pocket" NumOfTimes="5" />
+									<CustomBehavior File="RunMacro" Macro="/cleartarget" NumOfTimes="1" WaitTime="0"/>
+								</If>
+								
+								<If Condition="!Me.HasAura(&quot;Stealth&quot;)">	
+									<CustomBehavior File="RunMacro" Macro="/cast stealth" />
+								</If>	
+								<If Condition="Me.HasAura(&quot;Stealth&quot;)">
+									<CustomBehavior File="NoCombatMoveTo" X="-2930.18" Y="912.495" Z="8.705689" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2916.987" Y="926.0161" Z="9.710916" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2911.608" Y="929.0419" Z="12.06037" />	<!-- 4 man hut -->
+									<CustomBehavior File="RunMacro" Macro="/targetenemy\n/cast pick pocket" NumOfTimes="5" />
+									<CustomBehavior File="RunMacro" Macro="/cleartarget" NumOfTimes="1" WaitTime="0"/>
+								</If>
+								
+								<If Condition="!Me.HasAura(&quot;Stealth&quot;)">	
+									<CustomBehavior File="RunMacro" Macro="/cast stealth" />
+								</If>	
+								<If Condition="Me.HasAura(&quot;Stealth&quot;)">
+									<CustomBehavior File="NoCombatMoveTo" X="-2919.06" Y="924.0446" Z="9.283921" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2916.766" Y="919.9593" Z="8.577249" />	<!-- 2 outside hut -->
+									<CustomBehavior File="RunMacro" Macro="/targetenemy\n/cast pick pocket" NumOfTimes="3" />
+									<CustomBehavior File="RunMacro" Macro="/cleartarget" NumOfTimes="1" WaitTime="0"/>
+								</If>
+								
+								<If Condition="!Me.HasAura(&quot;Stealth&quot;)">	
+									<CustomBehavior File="RunMacro" Macro="/cast stealth" />
+								</If>	
+								<If Condition="Me.HasAura(&quot;Stealth&quot;)">
+									<CustomBehavior File="NoCombatMoveTo" X="-2906.319" Y="921.0651" Z="8.614408" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2896.521" Y="908.3938" Z="7.291922" />		<!-- mob 21 -->
+									<CustomBehavior File="RunMacro" Macro="/targetenemy\n/cast pick pocket" NumOfTimes="4" />
+									<CustomBehavior File="RunMacro" Macro="/cleartarget" NumOfTimes="1" WaitTime="0"/>
+								</If>
+								
+								<If Condition="!Me.HasAura(&quot;Stealth&quot;)">	
+									<CustomBehavior File="RunMacro" Macro="/cast stealth" />
+								</If>	
+								<If Condition="Me.HasAura(&quot;Stealth&quot;)">
+									<CustomBehavior File="NoCombatMoveTo" X="-2912.844" Y="894.7972" Z="7.891657" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2940.28" Y="890.8971" Z="7.034849" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2945.152" Y="886.7684" Z="6.183545" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2944.405" Y="883.8846" Z="5.729667" />		<!-- 1st circle grp -->
+									<CustomBehavior File="RunMacro" Macro="/targetenemy\n/cast pick pocket" NumOfTimes="5" />
+									<CustomBehavior File="RunMacro" Macro="/cleartarget" NumOfTimes="1" WaitTime="0"/>
+								</If>
+								
+								<If Condition="!Me.HasAura(&quot;Stealth&quot;)">	
+									<CustomBehavior File="RunMacro" Macro="/cast stealth" />
+								</If>	
+								<If Condition="Me.HasAura(&quot;Stealth&quot;)">
+									<CustomBehavior File="NoCombatMoveTo" X="-2956.846" Y="883.5728" Z="8.425447" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2962.125" Y="877.7103" Z="7.734316" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2959.641" Y="875.4191" Z="7.612997" />		<!-- 2nd -->
+									<CustomBehavior File="RunMacro" Macro="/targetenemy\n/cast pick pocket" NumOfTimes="4" />
+									<CustomBehavior File="RunMacro" Macro="/cleartarget" NumOfTimes="1" WaitTime="0"/>
+								</If>
+								
+								<If Condition="!Me.HasAura(&quot;Stealth&quot;)">	
+									<CustomBehavior File="RunMacro" Macro="/cast stealth" />
+								</If>	
+								<If Condition="Me.HasAura(&quot;Stealth&quot;)">
+									<CustomBehavior File="NoCombatMoveTo" X="-2963.008" Y="874.9688" Z="6.835829" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2964.618" Y="848.3817" Z="8.509074" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2963.74" Y="852.2065" Z="8.528234" />		<!-- 3rd -->
+									<CustomBehavior File="RunMacro" Macro="/targetenemy\n/cast pick pocket" NumOfTimes="3" />
+									<CustomBehavior File="RunMacro" Macro="/cleartarget" NumOfTimes="1" WaitTime="0"/>
+								</If>
+								
+								<If Condition="!Me.HasAura(&quot;Stealth&quot;)">	
+									<CustomBehavior File="RunMacro" Macro="/cast stealth" />
+								</If>	
+								<If Condition="Me.HasAura(&quot;Stealth&quot;)">
+									<CustomBehavior File="NoCombatMoveTo" X="-2961.202" Y="848.3281" Z="7.928573" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2958.548" Y="842.4279" Z="6.919496" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2954.818" Y="834.9505" Z="4.608669" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2950.687" Y="838.7468" Z="3.742104" />	<!-- 4th -->
+									<CustomBehavior File="RunMacro" Macro="/targetenemy\n/cast pick pocket" NumOfTimes="5" />
+									<CustomBehavior File="RunMacro" Macro="/cleartarget" NumOfTimes="1" WaitTime="0"/>
+								</If>
+								
+								<If Condition="!Me.HasAura(&quot;Stealth&quot;)">	
+									<CustomBehavior File="RunMacro" Macro="/cast stealth" />
+								</If>	
+								<If Condition="Me.HasAura(&quot;Stealth&quot;)">
+									<CustomBehavior File="NoCombatMoveTo" X="-2943.642" Y="831.7448" Z="5.967042" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2917.888" Y="842.9769" Z="2.902698" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2922.108" Y="844.9152" Z="3.500442" />		<!-- 5th -->
+									<CustomBehavior File="RunMacro" Macro="/targetenemy\n/cast pick pocket" NumOfTimes="2" />
+									<CustomBehavior File="RunMacro" Macro="/cleartarget" NumOfTimes="1" WaitTime="0"/>
+								</If>
+								
+								<If Condition="!Me.HasAura(&quot;Stealth&quot;)">	
+									<CustomBehavior File="RunMacro" Macro="/cast stealth" />
+								</If>	
+								<If Condition="Me.HasAura(&quot;Stealth&quot;)">
+									<CustomBehavior File="NoCombatMoveTo" X="-2914.755" Y="871.523" Z="6.634864" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2921.542" Y="868.5056" Z="5.223566" />		<!-- 6th -->
+									<CustomBehavior File="RunMacro" Macro="/targetenemy\n/cast pick pocket" NumOfTimes="2" />
+									<CustomBehavior File="RunMacro" Macro="/cleartarget" NumOfTimes="1" WaitTime="0"/>
+								</If>
+								
+								<If Condition="!Me.HasAura(&quot;Stealth&quot;)">	
+									<CustomBehavior File="RunMacro" Macro="/cast stealth" />
+								</If>	
+								<If Condition="Me.HasAura(&quot;Stealth&quot;)">
+									<CustomBehavior File="NoCombatMoveTo" X="-2915.207" Y="878.6381" Z="7.404943" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2908.746" Y="902.9836" Z="7.521861" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2892.682" Y="935.8181" Z="11.79534" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2898.889" Y="945.2295" Z="13.6333" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2904.284" Y="951.7668" Z="13.9397" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2910.63" Y="958.6946" Z="14.93757" />	<!-- center circle -->
+									<CustomBehavior File="NoCombatMoveTo" X="-2914.909" Y="959.4116" Z="15.03471" />	<!-- south -->	
+									<CustomBehavior File="RunMacro" Macro="/targetenemy\n/cast pick pocket" NumOfTimes="4" />
+									<CustomBehavior File="RunMacro" Macro="/cleartarget" NumOfTimes="1" WaitTime="0"/>
+								</If>
+								
+								<If Condition="!Me.HasAura(&quot;Stealth&quot;)">	
+									<CustomBehavior File="RunMacro" Macro="/cast stealth" />
+								</If>	
+								<If Condition="Me.HasAura(&quot;Stealth&quot;)">
+									<CustomBehavior File="NoCombatMoveTo" X="-2910.694" Y="958.955" Z="14.94264" />		<!-- center circle -->	
+									<CustomBehavior File="NoCombatMoveTo" X="-2907.659" Y="962.7026" Z="15.07946" />		<!-- west -->
+									<CustomBehavior File="RunMacro" Macro="/targetenemy\n/cast pick pocket" NumOfTimes="4" />
+									<CustomBehavior File="RunMacro" Macro="/cleartarget" NumOfTimes="1" WaitTime="0"/>
+								</If>
+								
+								<If Condition="!Me.HasAura(&quot;Stealth&quot;)">	
+									<CustomBehavior File="RunMacro" Macro="/cast stealth" />
+								</If>	
+								<If Condition="Me.HasAura(&quot;Stealth&quot;)">
+									<CustomBehavior File="NoCombatMoveTo" X="-2911.027" Y="957.8105" Z="14.91187" />		<!-- center circle -->	
+									<CustomBehavior File="NoCombatMoveTo" X="-2906.334" Y="955.895" Z="14.62494" />		<!-- north -->
+									<CustomBehavior File="RunMacro" Macro="/targetenemy\n/cast pick pocket" NumOfTimes="4" />
+									<CustomBehavior File="RunMacro" Macro="/cleartarget" NumOfTimes="1" WaitTime="0"/>
+								</If>
+								
+								<If Condition="!Me.HasAura(&quot;Stealth&quot;)">	
+									<CustomBehavior File="RunMacro" Macro="/cast stealth" />
+								</If>	
+								<If Condition="Me.HasAura(&quot;Stealth&quot;)">
+									<CustomBehavior File="NoCombatMoveTo" X="-2911.027" Y="957.8105" Z="14.91187" />		<!-- center circle -->	
+									<CustomBehavior File="NoCombatMoveTo" X="-2911.875" Y="952.9531" Z="14.70855" />		<!-- east -->
+									<CustomBehavior File="RunMacro" Macro="/targetenemy\n/cast pick pocket" NumOfTimes="4" />
+									<CustomBehavior File="RunMacro" Macro="/cleartarget" NumOfTimes="1" WaitTime="0"/>
+								</If>
+								
+								<If Condition="!Me.HasAura(&quot;Stealth&quot;)">	
+									<CustomBehavior File="RunMacro" Macro="/cast stealth" />
+								</If>	
+								<If Condition="Me.HasAura(&quot;Stealth&quot;)">
+									<CustomBehavior File="NoCombatMoveTo" X="-2903.452" Y="938.5292" Z="12.25296" />	
+									<CustomBehavior File="NoCombatMoveTo" X="-2881.082" Y="935.9202" Z="11.90656" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2878.219" Y="927.1298" Z="8.956637" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2862.369" Y="927.5606" Z="5.086081" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2851.696" Y="929.8573" Z="1.495831" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2826.302" Y="974.1835" Z="0.1065038" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2821.259" Y="970.7484" Z="0.1973288" />		
+									<CustomBehavior File="RunMacro" Macro="/targetenemy\n/cast pick pocket" NumOfTimes="2" />
+									<CustomBehavior File="RunMacro" Macro="/cleartarget" NumOfTimes="1" WaitTime="0"/>
+								</If>
+								
+								<If Condition="!Me.HasAura(&quot;Stealth&quot;)">	
+									<CustomBehavior File="RunMacro" Macro="/cast stealth" />
+								</If>	
+								<If Condition="Me.HasAura(&quot;Stealth&quot;)">
+									<CustomBehavior File="NoCombatMoveTo" X="-2815.658" Y="973.3138" Z="-0.1601793" />	
+									<CustomBehavior File="NoCombatMoveTo" X="-2806.338" Y="957.2897" Z="-0.1131889" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2806.558" Y="954.7517" Z="-0.04398329" />		
+									<CustomBehavior File="RunMacro" Macro="/targetenemy\n/cast pick pocket" NumOfTimes="2" />
+									<CustomBehavior File="RunMacro" Macro="/cleartarget" NumOfTimes="1" WaitTime="0"/>
+								</If>
+								
+								<If Condition="!Me.HasAura(&quot;Stealth&quot;)">	
+									<CustomBehavior File="RunMacro" Macro="/cast stealth" />
+								</If>	
+								<If Condition="Me.HasAura(&quot;Stealth&quot;)">
+									<CustomBehavior File="NoCombatMoveTo" X="-2802.913" Y="952.1255" Z="-0.3801898" />	
+									<CustomBehavior File="NoCombatMoveTo" X="-2771.739" Y="920.9739" Z="-0.08887397" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2771.947" Y="918.5782" Z="0.008942009" />		
+									<CustomBehavior File="RunMacro" Macro="/targetenemy\n/cast pick pocket" NumOfTimes="2" />
+									<CustomBehavior File="RunMacro" Macro="/cleartarget" NumOfTimes="1" WaitTime="0"/>
+								</If>
+								
+								<If Condition="!Me.HasAura(&quot;Stealth&quot;)">	
+									<CustomBehavior File="RunMacro" Macro="/cast stealth" />
+								</If>	
+								<If Condition="Me.HasAura(&quot;Stealth&quot;)">
+									<CustomBehavior File="NoCombatMoveTo" X="-2766.144" Y="915.6945" Z="-0.2366684" />	
+									<CustomBehavior File="NoCombatMoveTo" X="-2771.164" Y="896.8403" Z="-0.14731" />
+									<CustomBehavior File="NoCombatMoveTo" X="-2773.976" Y="896.6828" Z="-0.04063105" />		
+									<CustomBehavior File="RunMacro" Macro="/targetenemy\n/cast pick pocket" NumOfTimes="2" />
+									<CustomBehavior File="RunMacro" Macro="/cleartarget" NumOfTimes="1" WaitTime="0"/>
+								</If>
+								
+								<If Condition="!Me.HasAura(&quot;Stealth&quot;)">	
+									<CustomBehavior File="RunMacro" Macro="/cast stealth" />
+								</If>	
+								<If Condition="Me.HasAura(&quot;Stealth&quot;)">
+									<CustomBehavior File="NoCombatMoveTo" X="-2774.573" Y="890.9824" Z="-0.2488994" />	
+									<CustomBehavior File="NoCombatMoveTo" X="-2808.864" Y="865.83" Z="-0.5614995" />
+									
+								</If>
+									<CustomBehavior File="ForcedMount" MountType="Flying" />
+							</If>
+						</If>	
+				</While>
+				
+				<If Condition="(Me.FreeBagSlots &lt;= 6) || (Me.LowestDurabilityPercent &lt;= 0.3)" >
+					<CustomBehavior File="UserSettings" UseMount="True" LootMobs="False" SkinMobs="False" NinjaSkin="False" HarvestHerbs="False" HarvestMinerals="False" PullDistance="1" KillBetweenHotspots="False" RessAtSpiritHealers="False" FindVendorsAutomatically="False" LootRadius="30" LogoutForInactivity="True" />
+					<CustomBehavior File="WaitTimer" WaitTime="1000" />
+						<If Condition="Me.X &gt; -3121.363 &amp;&amp; Me.X &lt; -2728.969 &amp;&amp; Me.Y &gt; 437.9791 &amp;&amp; Me.Y &lt; 1028.945" >
+							<CustomBehavior File="Message" Text="I have detected that my gear is about to break or my bags are nearly full. I'm going to repair and mail. Then I'll return to the farming location." LogColor="Lime" />
+							<CustomBehavior File="FlyTo" X="-2888.452" Y="566.0591" Z="61.28687" />		<!-- safe location -->
+							<CustomBehavior File="ForcedDismount" />
+							<CustomBehavior File="Misc\RunLua" Lua="UseItemByName(6948)" WaitTime="1000" />
+							<CustomBehavior File="WaitTimer" WaitTime="12000" GoalText="Waiting for hearth*{TimeRemaining}" />
+							<If Condition="Me.X &lt; -3121.363 || Me.X &gt; -2728.969 || Me.Y &lt; 437.9791 || Me.Y &gt; 1028.945" >	<!-- outside farming area -->
+								<If Condition="(Me.FreeBagSlots &lt;= 6) || (Me.LowestDurabilityPercent &lt;= 0.3)" >
+									<CustomBehavior File="Message" Text="Succesfully hearthed, moving to the repair vendor." LogColor="Lime" />
+									<SetVendor>
+										<Vendors>
+											<Vendor Name="Claretta" Entry="61215" Type="Repair" X="528.3212" Y="-652.0018" Z="257.0843" />
+										</Vendors>
+									</SetVendor>
+									<SetMailbox>
+										<Mailboxes>
+											<Mailbox X="537.5491" Y="-614.8963" Z="258.6812" />
+										</Mailboxes>
+									</SetMailbox>			
+									<CustomBehavior File="ForceSetVendor" DoMail="True" DoRepair="True" DoSell="True" DoTrain="False" />
+									<CustomBehavior File="FlyTo" X="-2871.132" Y="642.4452" Z="63.86713" />
+									<CustomBehavior File="FlyTo" X="-2883.781" Y="610.3947" Z="34.46361" />
+									<CustomBehavior File="ForcedDismount" />
+								</If>
+							</If>
+							
+							<If Condition="Me.X &gt; -3121.363 &amp;&amp; Me.X &lt; -2728.969 &amp;&amp; Me.Y &gt; 437.9791 &amp;&amp; Me.Y &lt; 1028.945" >	<!-- insideside farming area -->
+								<If Condition="(Me.FreeBagSlots &lt;= 6) || (Me.LowestDurabilityPercent &lt;= 0.3)" >
+									<CustomBehavior File="Message" Text="My hearth didn't work, flying to the repair vendor." LogColor="Lime" />
+									<CustomBehavior File="FlyTo" X="529.2774" Y="-648.7822" Z="256.8641" />
+									<SetVendor>
+										<Vendors>
+											<Vendor Name="Claretta" Entry="61215" Type="Repair" X="528.3212" Y="-652.0018" Z="257.0843" />
+										</Vendors>
+									</SetVendor>
+									<SetMailbox>
+										<Mailboxes>
+											<Mailbox X="537.5491" Y="-614.8963" Z="258.6812" />
+										</Mailboxes>
+									</SetMailbox>			
+									<CustomBehavior File="ForceSetVendor" DoMail="True" DoRepair="True" DoSell="True" DoTrain="False" />
+									<CustomBehavior File="FlyTo" X="-2871.132" Y="642.4452" Z="63.86713" />
+									<CustomBehavior File="FlyTo" X="-2883.781" Y="610.3947" Z="34.46361" />
+									<CustomBehavior File="ForcedDismount" />
+								</If>
+							</If>
+						</If>
+				</If>
+		</While>		
+				
+	</QuestOrder>
+	
+</HBProfile> 

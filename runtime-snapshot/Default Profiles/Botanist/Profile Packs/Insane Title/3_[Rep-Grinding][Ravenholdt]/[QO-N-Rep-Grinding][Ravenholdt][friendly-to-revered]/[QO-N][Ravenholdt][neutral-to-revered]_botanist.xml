@@ -1,0 +1,136 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+	<Name>[QO-N][Ravenholdt][neutral-to-revered]_botanist</Name>
+   
+	<MinLevel>1</MinLevel>
+	<MaxLevel>101</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	<TargetingDistance>45</TargetingDistance>
+	
+	<MailGrey>False</MailGrey>
+	<MailWhite>False</MailWhite>
+	<MailGreen>True</MailGreen>
+	<MailBlue>False</MailBlue>
+	<MailPurple>False</MailPurple>
+   
+	<SellGrey>True</SellGrey>
+	<SellWhite>True</SellWhite>
+	<SellGreen>False</SellGreen>
+	<SellBlue>True</SellBlue>
+	<SellPurple>False</SellPurple>
+
+	<AvoidMobs>		 
+		<Mob Name="Summon Enabler Stalker" Entry="53488" />
+	</AvoidMobs>
+	
+	<Blackspots>
+		<Blackspot X="6724.658" Y="-1930.006" Z="547.2991" Radius="13.85462" />
+	</Blackspots>
+
+	<QuestOrder>
+
+		<!-- Infinite loop -->
+		<While Condition="true">
+	
+			<!-- Level Check - 60 -->
+			<If Condition="Me.Level &gt;= 60">
+
+				<!-- If we are in Eastern Kingdoms -->
+				<If Condition="Me.MapId == 0">
+					
+					<!-- CustomBehavior - message - We are in Eastern Kingdoms -->
+					<CustomBehavior File="Message" 
+									Text="We are in Eastern Kingdoms\n\n Flying to Northfold Manor\n\n"  
+									LogColor="Chartreuse" />
+
+					<!-- If we are in the farming area -->
+					<If Condition="Me.X &gt; -1012.2614 &amp;&amp; Me.X &lt; -612.2614 &amp;&amp; Me.Y &gt; -2306.291 &amp;&amp; Me.Y &lt; -1906.291" >	
+					
+						<!-- Profile message - We are in the farming area -->
+						<CustomBehavior File="Message" 
+										Text="We are in the farming area." 
+										LogColor="Orange" />
+
+						<!-- Profile message - Moving to the beginning of the route -->
+						<CustomBehavior File="Message" 
+										Text="Moving to the beginning of the route." 
+										LogColor="Plum" />
+
+						<!-- Profile message - We have reached the beginning of the farming route -->
+						<CustomBehavior File="Message" 
+										Text="We have reached the beginning of the farming route." 
+										LogColor="Gold" />
+
+					
+						<!-- ***************************************** Farming ***************************************** -->
+						
+							
+						<SetGrindArea><GrindArea>
+								<Factions>87</Factions>
+									<Hotspots>
+										<Hotspot X="-816.9293" Y="-2071.455" Z="33.65833" />
+										<Hotspot X="-865.4079" Y="-2050.734" Z="34.31161" />
+										<Hotspot X="-857.8734" Y="-1983.288" Z="35.88223" />
+										<Hotspot X="-756.1992" Y="-1960.921" Z="34.63415" />
+								</Hotspots>
+							</GrindArea></SetGrindArea>	
+										
+						<GrindTo Condition="(GetFactionreputation(349) &gt; 21001) || (Me.LowestDurabilityPercent &lt; .30)" />
+
+						<!-- If we have less then 4 empty bag slots or our durability is less than 30% -->
+						<If Condition="(Me.FreeBagSlots &lt;= 4) || (Me.LowestDurabilityPercent &lt;= 0.3)" >
+							
+							<!-- CustomBehavior - UserSettings - UseMount = True -->
+							<CustomBehavior File="UserSettings"
+											UseMount="True" />								
+												
+							<!-- Load profile - [QO-N][Ravenholdt][friendly-to-revered]_botanist_repair -->
+							<CustomBehavior File="LoadProfile" 
+											ProfileName="Movement\Vendors\[QO-N][Ravenholdt][friendly-to-revered]_botanist_repair" />
+
+						</If>	<!-- If we have less then 4 empty bag slots or our durability is less than 30% -->
+
+						<Else>
+						
+							<!-- FlyTo - Northfold Manor -->				
+							<CustomBehavior File="FlyTo" 
+											X="-812.2614" Y="-2106.291" Z="52.8705" />
+									
+						</Else>
+						
+					</If>	<!-- If we are in the farming area -->
+
+					<!-- Else we are not in Eastern Kingdoms -->
+					<Else>
+					
+						<!-- Custom behavior - LoadProfile - [QO-N-M][Ravenholdt][friendly-to-revered]_botanist -->
+						<CustomBehavior File="LoadProfile" 
+										ProfileName="Movement\[QO-N-M][Ravenholdt][friendly-to-revered]_botanist" />
+										
+					</Else>		<!-- Else we are not in Kalimdor -->					
+					
+				</If>	<!-- If we are in Eastern Kingdoms -->
+
+				<!-- If our reputation with Ravenholdt is greater than Revered -->
+				<If Condition="GetFactionreputation(349) &gt; 21001">
+			
+					<!-- CustomBehavior - message - We have Revered reputation with Ravenholdt \nStopping the bot -->
+					<CustomBehavior File="Message" 
+									Text="We have Revered reputation with Ravenholdt \nStopping the bot."  
+									LogColor="Chartreuse" />
+					
+					<!-- CustomBehavior - UserSettings - StopBot -->
+					<CustomBehavior File="UserSettings" 
+									StopBot="true" />
+					
+				</If>	<!-- If our reputation with Ravenholdt is greater than Revered -->
+				
+			</If>	<!-- Level Check -->
+		
+		</While>	<!-- Infinite loop -->
+		
+		
+	</QuestOrder>
+	
+</HBProfile>

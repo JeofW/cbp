@@ -1,0 +1,98 @@
+<HBProfile creator="Botanist" version="1.0">
+	<Name>[QO-N][90][Aviator-All-Flight-Paths][Flying]_auto-loader</Name>
+   
+	<MinLevel>1</MinLevel>
+	<MaxLevel>101</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	
+	<MailGrey>False</MailGrey>
+	<MailWhite>False</MailWhite>
+	<MailGreen>False</MailGreen>
+	<MailBlue>False</MailBlue>
+	<MailPurple>False</MailPurple>
+   
+	<SellGrey>False</SellGrey>
+	<SellWhite>False</SellWhite>
+	<SellGreen>False</SellGreen>
+	<SellBlue>False</SellBlue>
+	<SellPurple>False</SellPurple>
+
+	<AvoidMobs>
+	</AvoidMobs>
+	
+	<Blackspots>
+	</Blackspots>
+
+	<Mailboxes>
+	</Mailboxes>
+ 
+	<Vendors>
+	</Vendors>
+
+	<Factions></Factions>
+	
+	<ProtectedItems>
+		
+	</ProtectedItems>
+
+	<QuestOrder>
+				
+		<!-- UserSettings -->
+		<CustomBehavior File="UserSettings"
+						FindMountAutomatically="True"
+						GroundMountFarmingMode="False"
+						HarvestHerbs="False"
+						HarvestMinerals="False"
+						KillBetweenHotspots="True"
+						LogoutForInactivity="False"
+						LogoutInactivityUseForceQuit="False"
+						LootMobs="True"
+						LootRadius="35"
+						MountName=""
+						NinjaSkin="False"
+						RessAtSpiritHealers="False"
+						SkinMobs="False"
+						UseMount="True" 
+						UseRandomMount="False" />			
+				
+			<!-- If we are Alliance -->
+			<If Condition="Me.IsAlliance">
+				
+				<!-- Profile message - We are Alliance -->
+				<CustomBehavior File="Message" 
+								Text="We are Alliance." 
+								LogColor="Cyan" />
+				
+				<!-- Wait timer - wait 3 seconds - delay -->
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="3000" />
+				
+				<!-- Load profile - Components\all\[QO-A-M][60+][Flying]_stormwind -->
+				<CustomBehavior File="LoadProfile" 
+								ProfileName="Components\all\[QO-A-M][60+][Flying]_stormwind" />
+				
+			</If>	<!-- If we are Alliance -->	
+				
+			<!-- If we are Horde -->
+			<If Condition="Me.IsHorde">
+				
+				<!-- Profile message - We are Horde -->
+				<CustomBehavior File="Message" 
+								Text="We are Horde." 
+								LogColor="Cyan" />
+				
+				<!-- Wait timer - wait 3 seconds - delay -->
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="3000" />
+				
+				<!-- Load profile - Components\all\[QO-H-M][60+][Flying]_orgrimmar -->
+				<CustomBehavior File="LoadProfile" 
+								ProfileName="Components\all\[QO-H-M][60+][Flying]_orgrimmar" />
+				
+			</If>	<!-- If we are Horde -->
+				
+	</QuestOrder>
+	
+</HBProfile>	

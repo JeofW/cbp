@@ -1,0 +1,305 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+	<Name>[QO-N][90][10-X-Hr]_Pit-of-Saron_Battered-Hilt_[repair-mail]</Name>
+   
+	<MinLevel>1</MinLevel>
+	<MaxLevel>101</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	<TargetingDistance>1</TargetingDistance>
+	
+	<MailGrey>False</MailGrey>
+	<MailWhite>True</MailWhite>
+	<MailGreen>False</MailGreen>
+	<MailBlue>False</MailBlue>
+	<MailPurple>True</MailPurple>
+   
+	<SellGrey>True</SellGrey>
+	<SellWhite>False</SellWhite>
+	<SellGreen>True</SellGreen>
+	<SellBlue>True</SellBlue>
+	<SellPurple>False</SellPurple>
+   
+	<TargetElites>True</TargetElites>
+	
+	<AvoidMobs>
+	</AvoidMobs>
+	
+	<Blackspots>
+		<Blackspot X="-7118.695" Y="-1225.898" Z="290.2605" Radius="1" />
+		<Blackspot X="1091.256" Y="-166.446" Z="-65.30894" Radius="1" />
+	</Blackspots>
+
+	<Mailboxes>
+	</Mailboxes>
+ 
+	<Vendors>
+	</Vendors>
+	
+	<ProtectedItems>
+		<Item name="Book of Glyph Mastery" entry="45912" />
+		<Item name="Frostweave Cloth" entry="33470" />
+		<Item name="Battered Hilt" entry="50380" />
+	</ProtectedItems>
+
+	<Factions></Factions>
+	
+	<QuestOrder>
+
+		<!-- UserSettings -->
+		<CustomBehavior File="UserSettings"
+						FindMountAutomatically="True"
+						GroundMountFarmingMode="False"
+						HarvestHerbs="False"
+						HarvestMinerals="False"
+						KillBetweenHotspots="True"
+						LogoutForInactivity="False"
+						LogoutInactivityUseForceQuit="False"
+						LootMobs="True"
+						LootRadius="25"
+						MountName=""
+						NinjaSkin="False"
+						PullDistance="25"
+						RessAtSpiritHealers="False"
+						SkinMobs="False"
+						UseMount="True" 
+						UseRandomMount="False" />
+
+		<!-- If our level is => -->
+		<If Condition="Me.Level &gt;= 85">
+			
+			<!-- If we are inside Forge of Souls or Pit of Saron -->
+			<If Condition="Me.MapId == 658">	
+				
+				<!-- If our hearthstone is set to Nesingwary Base Camp -->
+				<If Condition="Me.HearthstoneAreaId == 4284">
+				
+					<!-- Profile message - We are in Pit of Saron -->
+					<CustomBehavior File="Message" 
+									Text="We are in Pit of Saron" 
+									LogColor="Cyan" />
+								
+					<!-- If we have a Hearthstone -->
+					<If Condition="HasItem(6948)">
+					
+						<!-- Profile message - Using our Hearthstone -->
+						<CustomBehavior File="Message" 
+										Text="Using our Hearthstone." 
+										LogColor="Orange" />
+										
+						<!-- Custom behavior - Misc\RunLua -->				
+						<CustomBehavior File="Misc\RunLua" 
+										Lua="UseItemByName(6948)" 
+										WaitTime="1000" />
+										
+						<!-- Wait timer - wait 20 seconds - delay -->				
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000" />
+										
+					</If>	<!-- If we have a Hearthstone -->
+				
+					<!-- If we have a Innkeeper's Daughter -->
+					<If Condition="HasItem(64488)">
+					
+						<!-- Profile message - Using our Innkeeper's Daughter -->
+						<CustomBehavior File="Message" 
+										Text="Using our Innkeeper's Daughter." 
+										LogColor="Orange" />
+											
+						<!-- Custom behavior - Misc\RunLua -->					
+						<CustomBehavior File="Misc\RunLua" 
+										Lua="UseItemByName(64488)" 
+										WaitTime="1000" />
+							
+						<!-- Wait timer - wait 20 seconds - delay -->	
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000" />
+										
+					</If>	<!-- If we have a Innkeeper's Daughter -->
+				
+				</If>	<!-- If our hearthstone is set here, use it -->
+				
+			</If>	<!-- If we are in Forge of Souls -->
+
+			<!-- If we are inside Pit of Saron -->
+			<If Condition="Me.MapId == 658">	
+
+				<!-- Move to - zone in location -->
+				<MoveTo X="432.568" Y="212.344" Z="528.7089" /> 
+				
+				<!-- Move to - attempt to exit the instance -->
+				<CustomBehavior File="Misc\InInstance"
+								X="421.0371" Y="212.262" Z="529.8098" /> 
+				
+				<!-- Move to - safe mounting location -->
+				<MoveTo X="5607.845" Y="2028.193" Z="798.0425" />
+				<MoveTo X="5614.709" Y="2035.648" Z="798.0425" />
+				<MoveTo X="5626.423" Y="2046.705" Z="798.0425" />
+				<MoveTo X="5635.56" Y="2059.689" Z="798.0532" />
+				<MoveTo X="5638.2" Y="2075.524" Z="798.0557" />
+				<MoveTo X="5639.41" Y="2091.568" Z="798.0557" />
+				<MoveTo X="5650.82" Y="2100.726" Z="798.0557" />
+				<MoveTo X="5666.634" Y="2097.846" Z="798.0557" />
+				<MoveTo X="5682.542" Y="2097.554" Z="798.0557" />
+				<MoveTo X="5690.303" Y="2110.782" Z="798.0557" />
+				<MoveTo X="5691.236" Y="2126.847" Z="798.0557" />
+				<MoveTo X="5692.303" Y="2142.946" Z="798.0655" />
+				<MoveTo X="5693.214" Y="2158.808" Z="798.1254" />
+				<MoveTo X="5693.699" Y="2168.448" Z="798.1254" />
+
+				<!-- CustomBehavior ForcedMount - Flying -->
+			   <CustomBehavior File="ForcedMount"
+							   QuestId="14069"
+							   MountType="Flying" />				
+								
+				<!-- CustomBehavior - FlyTo - avoid entering the Frozen Throne -->
+				<CustomBehavior File="FlyTo" 
+								X="5694.623" Y="2212.47" Z="815.1514" />
+						
+				<!-- Move to - avoid entering the Frozen Throne -->
+				<CustomBehavior File="MyCTM"
+								X="5612.389" Y="2610.774" Z="848.3267" />
+				
+				<!-- Move to - avoid flying to the ocean -->
+				<CustomBehavior File="MyCTM"
+								X="5778.345" Y="3172.62" Z="806.609" />
+								
+				<!-- Move to - avoid flying to the ocean -->
+				<CustomBehavior File="MyCTM"
+								X="5721.773" Y="3977.292" Z="-51.11684" />				
+								
+			</If>	<!-- If we are inside Pit of Saron -->
+
+			<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+			<If Condition="(Me.FreeBagSlots &lt;= 25) || (Me.LowestDurabilityPercent &lt;= 0.3)" >
+
+				<!-- Profile message - Our durability is less than 30% or we have less than 25 empty bag slots remaining -->
+				<CustomBehavior File="Message" 
+								Text="Our durability is less than 30% or we have less than 25 empty bag slots remaining." 
+								LogColor="Orange" />
+								
+				<!-- Profile message - Disabling combat -->
+				<CustomBehavior File="Message" 
+									Text="Disabling combat." 
+									LogColor="Gold" />
+				
+				<!-- DisableBehavior - Combat -->
+				<DisableBehavior Name="Combat" />
+			
+				<!-- If we are Alliance -->					
+				<If Condition="Me.IsAlliance">					
+							
+					<!-- Profile message - Flying to Nesingwary Base Camp -->
+					<CustomBehavior File="Message" 
+										Text="Flying to Nesingwary Base Camp." 
+										LogColor="Orange" />
+							
+					<!-- Fly to the Nesingwary Base Camp - hover point -->
+					<CustomBehavior File="FlyTo" 
+									X="5480.209" Y="5761.487" Z="-39.52147" />
+
+					<!-- CTM to - Mardan Thunderhoof - Nesingwary Base Camp repair vendor -->
+					<CustomBehavior File="MyCTM" 
+									X="5552.578" Y="5742.317" Z="-76.53156" />
+					
+					<!-- Custom behavior - ForcedDismount -->
+					<CustomBehavior File="ForcedDismount" />
+
+					<!-- Move to - Mardan Thunderhoof - Thundermar repair vendor -->
+					<MoveTo X="5552.578" Y="5742.317" Z="-76.53156" />
+					
+					<SetVendor>
+							<Vendors>
+								<Vendor Name="Mardan Thunderhoof" 
+										Entry="28040" 
+										Type="Repair" X="5552.257" Y="5738.877" Z="-76.21748" />
+							</Vendors>
+						</SetVendor>
+						<SetMailbox>
+							<Mailboxes>
+								<Mailbox X="5563.184" Y="5756.806" Z="-75.43555" />
+							</Mailboxes>
+						</SetMailbox>
+			
+						<CustomBehavior File="ForceSetVendor" 
+										DoMail="True" 
+										DoRepair="True" 
+										DoSell="True" 
+										DoTrain="False" />
+					
+					<!-- Move to - flying mount location -->				
+					<MoveTo X="5519.479" Y="5758.857" Z="-82.73079" />
+
+					<!-- Fly to the Nesingwary Base Camp hover point -->
+					<CustomBehavior File="FlyTo" 
+									X="5480.209" Y="5761.487" Z="-39.52147" />
+
+				</If>	<!-- If we are Alliance -->					
+		
+				<!-- If we are Horde -->						
+				<If Condition="Me.IsHorde">					
+		
+					<!-- Profile message - Flying to Nesingwary Base Camp -->
+					<CustomBehavior File="Message" 
+										Text="Flying to Nesingwary Base Camp." 
+										LogColor="Orange" />
+							
+					<!-- Fly to the Nesingwary Base Camp hover point -->
+					<CustomBehavior File="FlyTo" 
+									X="5480.209" Y="5761.487" Z="-39.52147" />
+
+					<!-- CTM to - Caelyb Coppercrag - Thundermar repair vendor -->
+					<CustomBehavior File="MyCTM" 
+									X="5552.578" Y="5742.317" Z="-76.53156" />
+					
+					<!-- Custom behavior - ForcedDismount -->
+					<CustomBehavior File="ForcedDismount" />
+
+					<!-- Move to - Mardan Thunderhoof - Thundermar repair vendor -->
+					<MoveTo X="5552.578" Y="5742.317" Z="-76.53156" />
+					
+					<SetVendor>
+							<Vendors>
+								<Vendor Name="Mardan Thunderhoof" 
+										Entry="28040" 
+										Type="Repair" X="5552.257" Y="5738.877" Z="-76.21748" />
+							</Vendors>
+						</SetVendor>
+						<SetMailbox>
+							<Mailboxes>
+								<Mailbox X="5563.184" Y="5756.806" Z="-75.43555" />
+							</Mailboxes>
+						</SetMailbox>
+			
+						<CustomBehavior File="ForceSetVendor" 
+										DoMail="True" 
+										DoRepair="True" 
+										DoSell="True" 
+										DoTrain="False" />
+					
+					<!-- Move to - flying mount location -->				
+					<MoveTo X="5519.479" Y="5758.857" Z="-82.73079" />
+
+					<!-- Fly to the Nesingwary Base Camp hover point -->
+					<CustomBehavior File="FlyTo" 
+									X="5480.209" Y="5761.487" Z="-39.52147" />
+
+		
+				</If>	<!-- If we are Horde -->
+
+			</If>	<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+				
+			<!-- If we have more than 25 empty bag slots and our durability is greater than 30% -->
+			<If Condition="(Me.FreeBagSlots &gt; 25) &amp;&amp; (Me.LowestDurabilityPercent &gt;= 0.3)" >
+			
+				<!-- Load profile - [QO-N][90][10-X-Hr]_Pit-of-Saron_Battered-Hilt_[food] -->
+				<CustomBehavior File="LoadProfile" 
+								ProfileName="[QO-N][90][10-X-Hr]_Pit-of-Saron_Battered-Hilt_[food]" />
+										
+			</If>	<!-- If we have more than 25 empty bag slots and our durability is greater than 30% -->	
+			
+		</If>	<!-- If our level is => -->
+		
+	</QuestOrder>
+	
+</HBProfile>

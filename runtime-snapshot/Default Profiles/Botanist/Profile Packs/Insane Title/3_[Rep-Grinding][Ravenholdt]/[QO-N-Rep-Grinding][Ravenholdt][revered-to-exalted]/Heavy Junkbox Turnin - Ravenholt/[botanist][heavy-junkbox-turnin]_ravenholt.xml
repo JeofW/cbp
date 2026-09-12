@@ -1,0 +1,77 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+<Name>[botanist][heavy-junkbox-turnin]_ravenholt</Name>
+
+<MinLevel>1</MinLevel>
+<MaxLevel>151</MaxLevel>
+
+<MinDurability>-1</MinDurability>
+<MinFreeBagSlots>-1</MinFreeBagSlots>
+
+<MailGrey>False</MailGrey>
+<MailWhite>False</MailWhite>
+<MailGreen>False</MailGreen>
+<MailBlue>False</MailBlue>
+<MailPurple>False</MailPurple>
+
+<SellGrey>False</SellGrey>
+<SellWhite>False</SellWhite>
+<SellGreen>False</SellGreen>
+<SellBlue>False</SellBlue>
+<SellPurple>False</SellPurple>
+
+<TargetElites>False</TargetElites>
+
+<AvoidMobs>		 
+</AvoidMobs>
+
+<Blackspots>
+</Blackspots>
+
+<Mailboxes>
+</Mailboxes>
+
+<Vendors>
+</Vendors>
+
+<ProtectedItems>	
+</ProtectedItems>
+
+<ClearVendor />
+<ClearMailbox />
+	
+	<QuestOrder>
+
+		<!-- While we have Heavy Junkbox -->
+		<While Condition="HasItem(16885)">
+			
+			<!--  Move to - Winstone Wolfe -->	
+			<MoveTo  X="23.77" Y="-1622.14" Z="197.55" />
+			
+			<!--  CustomBehavior - InteractWith - Winstone Wolfe -->
+			<CustomBehavior File="InteractWith"
+                   ObjectType="Npc"
+                   MobId="7323"
+                   NumOfTimes="1"
+                   CollectionDistance="100"
+                   X="23.77"
+                   Y="-1622.14"
+                   Z="197.55" />
+				   
+			<!-- CustomBehavior - RunMacro - turnin Heavy Junkbox -->				
+			<CustomBehavior File="RunMacro"
+							NumOfTimes="2"
+							Macro="/run SelectGossipAvailableQuest(1)CompleteQuest()GetQuestReward()" />
+			 
+			<!--  Move to - lock picking safe location -->	
+			<MoveTo X="9.599493" Y="-1620.185" Z="196.6536" />
+			
+			<!-- CustomBehavior - DeleteItems - Dusksteel Throwing Knife -->
+			<CustomBehavior File="DeleteItems" 
+							Ids="25878" />
+							
+		</While>	<!-- While we have Heavy Junkbox -->
+
+	</QuestOrder>
+
+</HBProfile>
+

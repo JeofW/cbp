@@ -1,0 +1,290 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+	<Name>[QO-N][85+Flying]_botanist_botanica_[repair-mail]</Name>
+	<MinLevel>1</MinLevel>
+	<MaxLevel>101</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	
+	<MailGrey>False</MailGrey>
+	<MailWhite>True</MailWhite>
+	<MailGreen>False</MailGreen>
+	<MailBlue>False</MailBlue>
+	<MailPurple>True</MailPurple>
+   
+	<SellGrey>True</SellGrey>
+	<SellWhite>False</SellWhite>
+	<SellGreen>True</SellGreen>
+	<SellBlue>True</SellBlue>
+	<SellPurple>False</SellPurple>
+   
+	<TargetElites>True</TargetElites>
+	
+	<AvoidMobs>
+	</AvoidMobs>
+
+	<Blackspots>
+		<Blackspot X="3064.36" Y="3607.146" Z="144.0166" Radius="1" />
+		<Blackspot X="-7118.695" Y="-1225.898" Z="290.2605" Radius="1" />
+		<Blackspot X="1091.256" Y="-166.446" Z="-65.30894" Radius="1" />
+	</Blackspots>
+
+	<Mailboxes>
+	</Mailboxes>
+ 
+	<Vendors>
+	</Vendors>
+	
+	<ProtectedItems>	
+	</ProtectedItems>
+
+	<Factions></Factions>
+	
+	<QuestOrder>
+
+		<!-- UserSettings -->
+		<CustomBehavior File="UserSettings"
+						FindMountAutomatically="True"
+						GroundMountFarmingMode="False"
+						HarvestHerbs="False"
+						HarvestMinerals="False"
+						KillBetweenHotspots="True"
+						LogoutForInactivity="False"
+						LogoutInactivityUseForceQuit="False"
+						LootMobs="True"
+						LootRadius="25"
+						MountName=""
+						NinjaSkin="False"
+						RessAtSpiritHealers="False"
+						SkinMobs="False"
+						UseMount="True" 
+						UseRandomMount="False" />	
+
+		<!-- Level check 85+ -->
+		<If Condition="Me.Level &gt;= 85">
+			
+			<!-- If we are inside Botanica -->
+			<If Condition="Me.MapId == 553">	
+				
+				<!-- If our hearthstone is set to Area 52 -->
+				<If Condition="Me.HearthstoneAreaId == 3712">
+				
+					<!-- Profile message - We are in Botanica, using our Hearthstone/Innkeeper's Daughter -->
+					<CustomBehavior File="Message" 
+									Text="We are in Botanica using our Hearthstone/Innkeeper's Daughter." 
+									LogColor="Cyan" />
+								
+					<!-- If we have a Hearthstone -->
+					<If Condition="HasItem(6948)">
+					
+						<!-- Profile message - Using our Hearthstone -->
+						<CustomBehavior File="Message" 
+										Text="Using our Hearthstone." 
+										LogColor="Fuchsia" />
+										
+						<!-- Custom behavior - Misc\RunLua -->				
+						<CustomBehavior File="Misc\RunLua" 
+										Lua="UseItemByName(6948)" 
+										WaitTime="1000" />
+										
+						<!-- Wait timer - wait 20 seconds - delay -->				
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000" />
+										
+					</If>	<!-- If we have a Hearthstone -->
+				
+					<!-- If we have a Innkeeper's Daughter -->
+					<If Condition="HasItem(64488)">
+					
+						<!-- Profile message - Using our Innkeeper's Daughter -->
+						<CustomBehavior File="Message" 
+										Text="Using our Innkeeper's Daughter." 
+										LogColor="Fuchsia" />
+											
+						<!-- Custom behavior - Misc\RunLua -->					
+						<CustomBehavior File="Misc\RunLua" 
+										Lua="UseItemByName(64488)" 
+										WaitTime="1000" />
+							
+						<!-- Wait timer - wait 20 seconds - delay -->	
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000" />
+										
+					</If>	<!-- If we have a Innkeeper's Daughter -->
+				
+				</If>	<!-- If our hearthstone is set to Area 52 -->
+				
+			</If>	<!-- If we are in Grim Batol -->
+		
+			<!-- If we are still in Botanica, exit the instance -->
+			<If Condition="Me.MapId == 553">
+			
+				<!-- Profile message - Botanica detected. Running out -->
+				<CustomBehavior File="Message" 
+								Text="Botanica detected. Running out."
+								LogColor="Fuchsia" />
+					
+					<!-- Move to - zone in location - exiting -->
+					<MoveTo X="153.363" Y="391.9256" Z="-34.30891" />
+					
+					<!-- Custom behavior - Misc/InInstance - exit the instance-->
+					<CustomBehavior File="Misc\InInstance" 
+									X="163.9293" Y="391.7535" Z="-36.18522" />
+					
+					<!-- WaitTime - wait 15 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="15000" />
+					
+					<!-- Move to - zone out location -->
+					<MoveTo X="3409.85" Y="1486.26" Z="182.837" />
+				
+			</If>	<!-- If we are inside Grim Batol -->
+
+			<!-- If we have less then 15 empty bag slots or our durability is less than 30% -->
+			<If Condition="(Me.FreeBagSlots &lt;= 25) || (Me.LowestDurabilityPercent &lt;= 0.3)" >
+
+				<!-- Profile message - Our durability is less than 30% or we have less than 15 empty bag slots remaining -->
+				<CustomBehavior File="Message" 
+								Text="Our durability is less than 30% or we have less than 15 empty bag slots remaining." 
+								LogColor="Cyan" />
+			
+				<!-- If we are Alliance -->					
+				<If Condition="Me.IsAlliance">					
+							
+					<!-- Profile message - Flying to Area 52 -->
+					<CustomBehavior File="Message" 
+										Text="Flying to Area 52." 
+										LogColor="Orange" />
+							
+					<!-- Fly to the Area 52 hover point -->
+					<CustomBehavior File="FlyTo" 
+									X="3016.049" Y="3732.265" Z="198.2659" />
+
+					<!-- CTM to - Blazzle - Area 52 repair vendor -->
+					<CustomBehavior File="MyCTM" 
+									X="3061.428" Y="3672.265" Z="142.4376" />
+					
+					<!-- Custom behavior - ForcedDismount -->
+					<CustomBehavior File="ForcedDismount" />
+					
+					<!-- UserSettings - usemount - false -->
+					<CustomBehavior File="UserSettings"
+									UseMount="False" />
+					
+					<!-- Move to - Blazzle - Area 52 repair vendor -->
+					<MoveTo X="3061.428" Y="3672.265" Z="142.4376" />
+					
+					<!-- Vendor conditions -->
+					<CustomBehavior File="ForceSetVendor" 
+									DoMail="True" 
+									DoRepair="True" 
+									DoSell="True" 
+									DoTrain="False" />
+										
+					<!-- Repair vendor - Area 52 -->
+					<SetVendor>
+						<Vendors>
+							<Vendor Name="Blazzle" 
+									Entry="28344" 
+									Type="Repair" 
+									X="3063.406" Y="3677.57" Z="142.6777" />
+						</Vendors>
+					</SetVendor>
+					
+					<SetMailbox>
+						<Mailboxes>
+							<Mailbox X="3052.535" Y="3685.289" Z="142.3399" />
+						</Mailboxes>
+					</SetMailbox>
+					
+					<!-- Move to - mount location -->
+					<MoveTo X="3038.064" Y="3698.748" Z="143.6465" />
+					
+					<!-- UserSettings - usemount - true -->
+					<CustomBehavior File="UserSettings"
+									UseMount="True" />
+					
+					<!-- Fly to the Area 52 hover point -->
+					<CustomBehavior File="FlyTo" 
+									X="3016.049" Y="3732.265" Z="198.2659" />
+
+				</If>	<!-- If we are Alliance -->					
+		
+				<!-- If we are Horde -->						
+				<If Condition="Me.IsHorde">					
+		
+					<!-- Profile message - Flying to Area 52 -->
+					<CustomBehavior File="Message" 
+										Text="Flying to Area 52." 
+										LogColor="Orange" />
+							
+					<!-- Fly to the Area 52 hover point -->
+					<CustomBehavior File="FlyTo" 
+									X="3016.049" Y="3732.265" Z="198.2659" />
+
+					<!-- CTM to - Blazzle - Area 52 repair vendor -->
+					<CustomBehavior File="MyCTM" 
+									X="3061.428" Y="3672.265" Z="142.4376" />
+					
+					<!-- Custom behavior - ForcedDismount -->
+					<CustomBehavior File="ForcedDismount" />
+					
+					<!-- UserSettings - usemount - false -->
+					<CustomBehavior File="UserSettings"
+									UseMount="False" />
+					
+					<!-- Move to - Blazzle - Area 52 repair vendor -->
+					<MoveTo X="3061.428" Y="3672.265" Z="142.4376" />
+					
+					<!-- Vendor conditions -->
+					<CustomBehavior File="ForceSetVendor" 
+									DoMail="True" 
+									DoRepair="True" 
+									DoSell="True" 
+									DoTrain="False" />
+										
+					<!-- Repair vendor - Area 52 -->
+					<SetVendor>
+						<Vendors>
+							<Vendor Name="Blazzle" 
+									Entry="28344" 
+									Type="Repair" 
+									X="3063.406" Y="3677.57" Z="142.6777" />
+						</Vendors>
+					</SetVendor>
+					
+					<SetMailbox>
+						<Mailboxes>
+							<Mailbox X="3052.535" Y="3685.289" Z="142.3399" />
+						</Mailboxes>
+					</SetMailbox>
+					
+					<!-- Move to - mount location -->
+					<MoveTo X="3038.064" Y="3698.748" Z="143.6465" />
+					
+					<!-- UserSettings - usemount - true -->
+					<CustomBehavior File="UserSettings"
+									UseMount="True" />
+					
+					<!-- Fly to the Area 52 hover point -->
+					<CustomBehavior File="FlyTo" 
+									X="3016.049" Y="3732.265" Z="198.2659" />
+		
+				</If>	<!-- If we are Horde -->
+		
+			</If>	<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+				
+			<!-- If we have more than 15 empty bag slots and our durability is greater than 30% -->
+			<If Condition="(Me.FreeBagSlots &gt; 15) &amp;&amp; (Me.LowestDurabilityPercent &gt;= 0.3)" >
+			
+				<!-- Load profile - [QO-N][85+Flying]_botanist_botanica -->
+				<CustomBehavior File="LoadProfile" 
+										ProfileName="..\..\[QO-N][85+Flying]_botanist_botanica" />
+										
+			</If>	<!-- If we have more than 15 empty bag slots and our durability is greater than 30% -->	
+			
+		</If>	<!-- Level check 85+ -->
+		
+	</QuestOrder>
+	
+</HBProfile>

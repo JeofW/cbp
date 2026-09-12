@@ -1,0 +1,175 @@
+<HBProfile creator="Botanist" version="1.0">
+<Name>[QO-N-M-Rep-Grinding][Steamwheedle-Cartel_southbreak-shore]_botanist</Name> 
+
+<MinLevel>85</MinLevel> 
+<MaxLevel>101</MaxLevel>
+<MinDurability>-1</MinDurability>
+<MinFreeBagSlots>-1</MinFreeBagSlots>
+
+<SellGrey>True</SellGrey>
+<SellWhite>False</SellWhite>
+<SellGreen>False</SellGreen>
+<SellBlue>False</SellBlue>
+<SellPurple>False</SellPurple>
+
+<MailGrey>False</MailGrey>
+<MailWhite>True</MailWhite>
+<MailGreen>True</MailGreen>
+<MailBlue>True</MailBlue>
+<MailPurple>True</MailPurple>
+<Vendors>
+</Vendors>
+	
+<Mailboxes>
+</Mailboxes>
+
+	<QuestOrder>
+	
+		<!-- If we are in Eastern Kingdoms -->
+		<If Condition="Me.MapId == 0" >		
+
+			<!-- Profile message - Moving to Menethil Harbor docks -->
+			<CustomBehavior File="Message" 
+							Text="Moving to Menethil Harbor docks."  
+							LogColor="Cyan" />				
+			
+			<!-- Move to -Menethil Harbor docks -->				
+			<CustomBehavior File="FlyTo"
+							X="-3862.272" Y="-656.2274" Z="5.336261" />
+
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />				
+
+			<!-- Custom behavior - UseTransport	- Menethril Harbor to Theramore Isle -->	
+			<CustomBehavior File="UseTransport" 
+							TransportId="176231" 
+							WaitAtX="-3862.272" 
+							WaitAtY="-656.2274" 
+							WaitAtZ="5.336261"
+							TransportStartX="-3872.35" 
+							TransportStartY="-639.944" 
+							TransportStartZ="-0.0055067873"
+							StandOnX="-3867.742" 
+							StandOnY="-637.0014" 
+							StandOnZ="6.116831"
+							TransportEndX="-4016.39" 
+							TransportEndY="-4740.588338" 
+							TransportEndZ="-0.04059135"	
+							GetOffX="-3998.461" 
+							GetOffY="-4721.858" 
+							GetOffZ="4.263693" />						
+					
+			<!-- Move to - Theramore Isle docks -->			
+			<MoveTo X="-3998.461" Y="-4721.858" Z="4.263693" />	
+			
+			<!-- Move to - Theramore Isle flight master -->			
+			<MoveTo X="-3828.75" Y="-4520.198" Z="10.86853" />
+
+		</If>	<!-- If we are in Eastern Kingdoms -->
+
+		<!-- If we are not within 1000 of the farming area or our Z > -10 -->
+		<If Condition="Me.Location.Distance(new WoWPoint(-8358.695, -4937.201, 8.815199)) &gt;= 1000" >
+		
+			<!-- If our hearthstone is set to Gadgetzan -->
+			<If Condition="Me.HearthstoneAreaId == 976 ">
+											
+				<!-- Durability and empty bag slot check -->
+				<If Condition="(Me.FreeBagSlots &lt;= 4) || (Me.LowestDurabilityPercent &lt;= 0.3)" >
+				
+					<!-- CustomBehavior - LoadProfile - [QO-N][Flying][Schnottz-Elite-Troopers]_repair-mail -->
+					<CustomBehavior File="LoadProfile" 
+									ProfileName="Vendors\[QO-N][Flying][Schnottz-Elite-Troopers]_repair-mail" />
+					
+				</If> 	<!-- Durability and empty bag slot check -->							
+											
+				<!-- Else our hearthstone is not set to Gadgetzan -->
+				<Else>
+				
+					<!-- CustomBehavior - message - Our Hearthstone isn't set in the proper location. Moving to set it -->
+					<CustomBehavior File="Message" 
+									Text="Our Hearthstone isn't set in the proper location. Moving to set it." 
+									LogColor="Plum" />
+					
+					<!-- Flyto - Gadgetzan - hover point -->
+					<CustomBehavior File="FlyTo" 
+									X="-7113.458" Y="-3858.775" Z="54.0993" />
+									
+					<!-- CTM to - land outside the inn -->
+					<CustomBehavior File="MyCTM" 
+									X="-7082.933" Y="-3854.494" Z="10.14053" />
+									
+					<!-- CustomBehavior - ForcedDismount -->
+					<CustomBehavior File="ForcedDismount" />
+					
+					<!-- Moveto - innkeeper -->
+					<MoveTo X="-7070.37" Y="-3856.25" Z="9.827553" />
+					
+					<!-- CustomBehavior - message - Setting our Hearthstone -->										
+					<CustomBehavior File="Message" 
+									Text="Setting our Hearthstone." 
+									LogColor="Plum" />
+									
+					<!-- CustomBehavior - SetHearthstone - Gadgetzan innkeeper -->					
+					<CustomBehavior File="SetHearthstone" 
+									MobId="7733" 
+									X="-7069.17" Y="-3854.53" Z="9.852692" />
+																								
+					<!-- Run outside the innkeep -->
+					<MoveTo X="-7082.933" Y="-3854.494" Z="10.14053" />
+					
+					<!-- Durability and empty bag slot check -->
+					<If Condition="(Me.FreeBagSlots &lt;= 4) || (Me.LowestDurabilityPercent &lt;= 0.3)" >
+					
+						<!-- CustomBehavior - LoadProfile - [QO-N-Rep-Grinding][Steamwheedle-Cartel_southbreak-shore]__repair-mail -->
+						<CustomBehavior File="LoadProfile" 
+										ProfileName="Vendors\[QO-N-Rep-Grinding][Steamwheedle-Cartel_southbreak-shore]__repair-mail" />
+						
+					</If> 	<!-- Durability and empty bag slot check -->			
+										
+					<!-- Profile message - Our hearth has been set, we have more than 4 empty slots in our bags and our gear is above 30 percent durability -->
+					<CustomBehavior File="Message" 
+									Text="Our hearth has been set, we have more than 4 empty slots in our bags and our gear is above 30 percent durability." 
+									LogColor="Plum" />	
+				
+				</Else>		<!-- Else our hearthstone is not set to Gadgetzan -->
+				
+			</If>	<!-- If our hearthstone is set to Gadgetzan -->
+	
+			<!-- Profile message  - Moving to the farming area -->
+			<CustomBehavior File="Message" 
+							Text="Moving to the farming area." 
+							LogColor="Orange" />
+			
+			<!-- Fly to - farming location -->
+			<CustomBehavior File="FlyTo"
+							X="-8331.223" Y="-5079.063" Z="2.249207" />
+							
+			<!-- Profile message  - Checking our coordinates -->
+			<CustomBehavior File="Message" 
+							Text="Checking our coordinates." 
+							LogColor="Fuchsia" />
+
+			<!-- Custom behavior - RunMacro - cleartarget -->
+			<CustomBehavior File="RunMacro" 
+							Macro="/cleartarget" 
+							NumOfTimes="1" 
+							WaitTime="0"/>
+
+		</If>	<!-- If we are not within 1000 of the farming area or our Z > -10 -->
+
+		<!-- If we are within 1000 of the farming area -->
+		<If Condition="Me.Location.Distance(new WoWPoint(-8358.695, -4937.201, 8.815199)) &lt;= 1000" >
+		
+			<!-- Load profile - [QO-N-Rep-Grinding][Steamwheedle-Cartel_southbreak-shore]_botanist -->
+			<CustomBehavior File="LoadProfile" 
+							ProfileName="../[QO-N-Rep-Grinding][Steamwheedle-Cartel_southbreak-shore]_botanist" />
+											
+		</If>	<!-- If we are within 1000 of the farming area -->
+
+	</QuestOrder>
+	
+</HBProfile> 

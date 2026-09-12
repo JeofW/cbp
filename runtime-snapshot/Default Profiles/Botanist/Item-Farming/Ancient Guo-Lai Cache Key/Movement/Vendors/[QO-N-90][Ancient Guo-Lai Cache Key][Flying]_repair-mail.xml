@@ -1,0 +1,219 @@
+<HBProfile>
+<Name>[QO-N-90][Ancient Guo-Lai Cache Key][Flying]_repair-mail</Name> 
+
+<MinLevel>90</MinLevel> 
+<MaxLevel>101</MaxLevel>
+<MinDurability>-1</MinDurability>
+<MinFreeBagSlots>-1</MinFreeBagSlots>
+
+<SellGrey>True</SellGrey>
+<SellWhite>False</SellWhite>
+<SellGreen>False</SellGreen>
+<SellBlue>False</SellBlue>
+<SellPurple>False</SellPurple>
+
+<MailGrey>False</MailGrey>
+<MailWhite>True</MailWhite>
+<MailGreen>True</MailGreen>
+<MailBlue>True</MailBlue>
+<MailPurple>True</MailPurple>
+<Vendors>
+</Vendors>
+	
+<Mailboxes>
+</Mailboxes>
+
+	<QuestOrder>
+	
+		<!-- While our level is >= 90 and < 100 -->
+		<While Condition="Me.Level &gt;= 90 &amp;&amp; Me.Level &lt; 100" >
+				
+			<!-- Profile message - Repair\Mail procedures initialized -->
+			<CustomBehavior File="Message" 
+							Text="Repair\Mail procedures initialized." 
+							LogColor="Orange" />
+			
+			<!-- UserSettings -->
+			<CustomBehavior File="UserSettings"
+							FindMountAutomatically="True"
+							GroundMountFarmingMode="False"
+							HarvestHerbs="False"
+							HarvestMinerals="False"
+							KillBetweenHotspots="False"
+							LogoutForInactivity="False"
+							LogoutInactivityUseForceQuit="False"
+							LootMobs="True"
+							LootRadius="5"
+							MountName=""
+							NinjaSkin="False"
+							PullDistance="1"
+							RessAtSpiritHealers="False"
+							SkinMobs="False"
+							UseMount="True" 
+							UseRandomMount="False" />
+			
+			<!-- If our free bag slots are < 4 or our durability < 30% -->		
+			<If Condition="(Me.FreeBagSlots &lt;= 4) || (Me.LowestDurabilityPercent &lt;= 0.3)" >
+		
+				<!-- Have hearthstone -->
+				<If Condition="HasItem(6948)">
+				
+					<!-- Profile message - Using Hearthstone -->
+					<CustomBehavior File="Message" 
+									Text="Using our Hearthstone." 
+									LogColor="Plum" />
+									
+					<!-- Custom Behavior - Using Hearthstone -->				
+					<CustomBehavior File="Misc\RunLua" 
+									Lua="UseItemByName(6948)" 
+									WaitTime="1000" />
+									
+					<!-- Wait timer - wait 20 seconds - delay -->				
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="20000" />
+									
+				</If> <!-- Have hearthstone -->
+			
+				<!-- Have Innkeeper's Daughter -->
+				<If Condition="HasItem(64488)">
+				
+					<!-- Profile message - Innkeeper's Daughter -->
+					<CustomBehavior File="Message" 
+									Text="Innkeeper's Daughter." 
+									LogColor="Plum" />
+										
+					<!-- Custom Behavior - Innkeeper's Daughter -->					
+					<CustomBehavior File="Misc\RunLua" 
+									Lua="UseItemByName(64488)" 
+									WaitTime="1000" />
+						
+					<!-- Wait timer - wait 20 seconds - delay -->				
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="20000" />
+									
+				</If> <!-- Have Innkeeper's Daughter -->
+
+				<!-- If we are not in the farming area -->
+				<If Condition="Me.X &lt; 698.6161 || Me.X &gt; 931.9396 || Me.Y &lt; 1085.338 || Me.Y &gt; 1481.26" >
+				
+					<!-- Profile message - We successfully hearthed, moving to the repair vendor -->
+					<CustomBehavior File="Message" 
+									Text="We successfully hearthed, moving to the repair vendor." 
+									LogColor="Plum" />
+					
+					<!-- Else we are not in the farming area -->
+					<Else>
+					
+						<!-- Profile message - We did not successfully hearth. Flying to the vendors -->
+						<CustomBehavior File="Message" 
+										Text="We did not successfully hearth. Flying to the vendors." 
+										LogColor="Plum" />
+									
+						<!-- If we are Alliance -->
+						<If Condition="Me.IsAlliance">
+					
+							<!-- Fly to - Shrine of the Seven Stars - hover point -->
+							<CustomBehavior File="FlyTo"
+											X="865.1238" Y="362.6855" Z="544.9125" />
+					 
+							<!-- CTM to -grounding at Shrine of the Seven Stars -->
+							<CustomBehavior File="MyCTM" 
+											X="813.4589" Y="316.1886" Z="503.1214" />
+					 
+							<!-- Custom behavior - ForcedDismount -->
+							<CustomBehavior File="ForcedDismount" />
+							
+							<!-- Else we are Horde -->
+							<Else>
+							
+								<!-- Move to - Shrine of the Two Moons hover point -->
+								<CustomBehavior File="FlyTo"
+												X="1605.152" Y="852.9587" Z="520.5529" />
+								
+								<!-- Move to -  Shrine of the Two Moons - door -->
+								<CustomBehavior File="MyCTM"
+												X="1657.736" Y="872.8345" Z="470.626" />	
+									
+								<!-- Custom behavior - ForcedDismount -->	
+								<CustomBehavior File="ForcedDismount" />
+							
+							</Else>	<!-- Else we are Horde -->
+							
+						</If>	<!-- If we are Alliance -->
+						
+					</Else>		<!-- Else we are not in the farming area -->
+									
+				</If>	<!-- If we are not in the farming area -->
+
+				<!-- If we are in Shrine of the Seven Stars -->
+				<If Condition="Me.X &gt; 777.0357 &amp;&amp; Me.X &lt; 878.4283 &amp;&amp; Me.Y &gt; 219.8819 &amp;&amp; Me.Y &lt; 337.3056" >
+					
+					<!-- Repair vendor -->				
+					<SetVendor>
+						<Vendors>
+							<Vendor Name="Clarice Chapmann" 
+									Entry="74021" 
+									Type="Repair" 
+									X="809.5851" Y="264.8767" Z="521.9882" />
+						</Vendors>
+					</SetVendor>	
+					
+					<SetMailbox>
+						<Mailboxes>
+							<Mailbox X="791.8309" Y="294.8908" Z="503.4194" />
+						</Mailboxes>
+					</SetMailbox>	
+					
+					<!-- Vendor settings -->
+					<CustomBehavior File="ForceSetVendor" 
+									DoMail="True" 
+									DoRepair="True" 
+									DoSell="True" 
+									DoTrain="False" />		
+							
+				</If>	<!-- If we are in Shrine of the Seven Stars -->
+
+				<!-- If we are in Shrine of Two Moons -->
+				<If Condition="Me.X &gt; 1614.274 &amp;&amp; Me.X &lt; 1725 &amp;&amp; Me.Y &gt; 840.3156 &amp;&amp; Me.Y &lt; 1001.765" >
+					
+					<!-- Repair vendor -->				
+					<SetVendor>
+						<Vendors>
+							<Vendor Name="Joan Tremblay" 
+									Entry="64114" 
+									Type="Repair" 
+									X="1700.556" Y="919.2535" Z="470.9495" />
+						</Vendors>
+					</SetVendor>	
+					
+					<SetMailbox>
+						<Mailboxes>
+							<Mailbox X="1698.625" Y="912.1407" Z="470.937" />
+						</Mailboxes>
+					</SetMailbox>	
+					
+					<!-- Vendor settings -->
+					<CustomBehavior File="ForceSetVendor" 
+									DoMail="True" 
+									DoRepair="True" 
+									DoSell="True" 
+									DoTrain="False" />		
+							
+				</If>	<!-- If we are in Shrine of the Seven Stars -->
+
+			</If>	<!-- If our free bag slots are < 4 or our durability < 30% -->	
+
+			<!-- If our free bag slots are > 4 and our durability > 30% -->		
+			<If Condition="(Me.FreeBagSlots &gt; 4) &amp;&amp; (Me.LowestDurabilityPercent &gt; 0.3)" >
+			
+				<!-- Load profile - [QO-N-90][Ancient Guo-Lai Cache Key][Flying]_botanist -->
+				<CustomBehavior File="LoadProfile" 
+								ProfileName="..\..\[QO-N-90][Ancient Guo-Lai Cache Key][Flying]_botanist" />
+			
+			</If>	<!-- If our free bag slots are > 4 and our durability > 30% -->
+			
+		</While>	<!-- While our level is >= 90 and < 100 -->
+			
+	</QuestOrder>
+	
+</HBProfile> 

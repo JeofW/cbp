@@ -1,0 +1,294 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v10.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v10.0": {
+      "CopilotBuddy/1.0.0": {
+        "dependencies": {
+          "MahApps.Metro": "2.4.11",
+          "Microsoft.CodeAnalysis.CSharp": "4.12.0",
+          "Microsoft.CodeAnalysis.CSharp.Scripting": "4.12.0",
+          "System.ServiceModel.NetNamedPipe": "8.0.0",
+          "System.ServiceModel.Primitives": "8.0.0",
+          "fasmdll_managed": "1.0.3262.20709",
+          "System.Data.SQLite": "1.0.65.0"
+        },
+        "runtime": {
+          "CopilotBuddy.dll": {}
+        },
+        "resources": {
+          "cs-CZ/CopilotBuddy.resources.dll": {
+            "locale": "cs-CZ"
+          },
+          "de-DE/CopilotBuddy.resources.dll": {
+            "locale": "de-DE"
+          },
+          "es-ES/CopilotBuddy.resources.dll": {
+            "locale": "es-ES"
+          },
+          "fr-FR/CopilotBuddy.resources.dll": {
+            "locale": "fr-FR"
+          },
+          "it-IT/CopilotBuddy.resources.dll": {
+            "locale": "it-IT"
+          },
+          "ja-JP/CopilotBuddy.resources.dll": {
+            "locale": "ja-JP"
+          },
+          "ko-KR/CopilotBuddy.resources.dll": {
+            "locale": "ko-KR"
+          },
+          "nl-NL/CopilotBuddy.resources.dll": {
+            "locale": "nl-NL"
+          },
+          "pl-PL/CopilotBuddy.resources.dll": {
+            "locale": "pl-PL"
+          },
+          "pt-PT/CopilotBuddy.resources.dll": {
+            "locale": "pt-PT"
+          },
+          "ru-RU/CopilotBuddy.resources.dll": {
+            "locale": "ru-RU"
+          },
+          "tr-TR/CopilotBuddy.resources.dll": {
+            "locale": "tr-TR"
+          },
+          "zh-Hans/CopilotBuddy.resources.dll": {
+            "locale": "zh-Hans"
+          },
+          "zh-Hant/CopilotBuddy.resources.dll": {
+            "locale": "zh-Hant"
+          }
+        }
+      },
+      "ControlzEx/4.4.0": {
+        "dependencies": {
+          "Microsoft.Xaml.Behaviors.Wpf": "1.1.19"
+        },
+        "runtime": {
+          "lib/netcoreapp3.1/ControlzEx.dll": {
+            "assemblyVersion": "4.0.0.0",
+            "fileVersion": "4.4.0.50"
+          }
+        }
+      },
+      "MahApps.Metro/2.4.11": {
+        "dependencies": {
+          "ControlzEx": "4.4.0"
+        },
+        "runtime": {
+          "lib/netcoreapp3.1/MahApps.Metro.dll": {
+            "assemblyVersion": "2.0.0.0",
+            "fileVersion": "2.4.11.0"
+          }
+        }
+      },
+      "Microsoft.CodeAnalysis.Common/4.12.0": {
+        "runtime": {
+          "lib/net8.0/Microsoft.CodeAnalysis.dll": {
+            "assemblyVersion": "4.12.0.0",
+            "fileVersion": "4.1200.24.57207"
+          }
+        }
+      },
+      "Microsoft.CodeAnalysis.CSharp/4.12.0": {
+        "dependencies": {
+          "Microsoft.CodeAnalysis.Common": "4.12.0"
+        },
+        "runtime": {
+          "lib/net8.0/Microsoft.CodeAnalysis.CSharp.dll": {
+            "assemblyVersion": "4.12.0.0",
+            "fileVersion": "4.1200.24.57207"
+          }
+        }
+      },
+      "Microsoft.CodeAnalysis.CSharp.Scripting/4.12.0": {
+        "dependencies": {
+          "Microsoft.CodeAnalysis.CSharp": "4.12.0",
+          "Microsoft.CodeAnalysis.Common": "4.12.0",
+          "Microsoft.CodeAnalysis.Scripting.Common": "4.12.0"
+        },
+        "runtime": {
+          "lib/net8.0/Microsoft.CodeAnalysis.CSharp.Scripting.dll": {
+            "assemblyVersion": "4.12.0.0",
+            "fileVersion": "4.1200.24.57207"
+          }
+        }
+      },
+      "Microsoft.CodeAnalysis.Scripting.Common/4.12.0": {
+        "dependencies": {
+          "Microsoft.CodeAnalysis.Common": "4.12.0"
+        },
+        "runtime": {
+          "lib/net8.0/Microsoft.CodeAnalysis.Scripting.dll": {
+            "assemblyVersion": "4.12.0.0",
+            "fileVersion": "4.1200.24.57207"
+          }
+        }
+      },
+      "Microsoft.Extensions.ObjectPool/6.0.16": {
+        "runtime": {
+          "lib/net6.0/Microsoft.Extensions.ObjectPool.dll": {
+            "assemblyVersion": "6.0.0.0",
+            "fileVersion": "6.0.1623.17406"
+          }
+        }
+      },
+      "Microsoft.Xaml.Behaviors.Wpf/1.1.19": {
+        "runtime": {
+          "lib/netcoreapp3.0/Microsoft.Xaml.Behaviors.dll": {
+            "assemblyVersion": "1.1.0.0",
+            "fileVersion": "1.1.19.35512"
+          }
+        }
+      },
+      "System.ServiceModel.NetFramingBase/8.0.0": {
+        "dependencies": {
+          "System.ServiceModel.Primitives": "8.0.0"
+        },
+        "runtime": {
+          "lib/net8.0/System.ServiceModel.NetFramingBase.dll": {
+            "assemblyVersion": "8.0.0.0",
+            "fileVersion": "8.0.23.60704"
+          }
+        }
+      },
+      "System.ServiceModel.NetNamedPipe/8.0.0": {
+        "dependencies": {
+          "System.ServiceModel.NetFramingBase": "8.0.0",
+          "System.ServiceModel.Primitives": "8.0.0"
+        },
+        "runtime": {
+          "lib/net8.0/System.ServiceModel.NetNamedPipe.dll": {
+            "assemblyVersion": "8.0.0.0",
+            "fileVersion": "8.0.23.60704"
+          }
+        }
+      },
+      "System.ServiceModel.Primitives/8.0.0": {
+        "dependencies": {
+          "Microsoft.Extensions.ObjectPool": "6.0.16"
+        },
+        "runtime": {
+          "lib/net8.0/System.ServiceModel.Primitives.dll": {
+            "assemblyVersion": "8.0.0.0",
+            "fileVersion": "8.0.23.60704"
+          }
+        }
+      },
+      "fasmdll_managed/1.0.3262.20709": {
+        "runtime": {
+          "fasmdll_managed.dll": {
+            "assemblyVersion": "1.0.3262.20709",
+            "fileVersion": "0.0.0.0"
+          }
+        }
+      },
+      "System.Data.SQLite/1.0.65.0": {
+        "runtime": {
+          "System.Data.SQLite.dll": {
+            "assemblyVersion": "1.0.65.0",
+            "fileVersion": "1.0.65.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "CopilotBuddy/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "ControlzEx/4.4.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-pZ5z4hYWwE4R13UMCVs6vII//nL7hz+Nwn4oJlnsZJRGqJNy6Z9KnJiTZfly6lKFu0pMc1aWBZpx+VqFTQKP1Q==",
+      "path": "controlzex/4.4.0",
+      "hashPath": "controlzex.4.4.0.nupkg.sha512"
+    },
+    "MahApps.Metro/2.4.11": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-pvk757N/ViZy+zlbB56AakryuZkts328M6pX2mMn/Z7r5ifkScDrS300zSBjLd+eGOPeHgUjH4f7cZbRiMyvQg==",
+      "path": "mahapps.metro/2.4.11",
+      "hashPath": "mahapps.metro.2.4.11.nupkg.sha512"
+    },
+    "Microsoft.CodeAnalysis.Common/4.12.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-c1kNYihL2gdcuU1dqm8R8YeA4YkB43TpU3pa2r66Uooh6AAhRtENzj9A4Kj0a+H8JDDyuTjNZql9XlVUzV+UjA==",
+      "path": "microsoft.codeanalysis.common/4.12.0",
+      "hashPath": "microsoft.codeanalysis.common.4.12.0.nupkg.sha512"
+    },
+    "Microsoft.CodeAnalysis.CSharp/4.12.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-30vVQ1MizeC22iEdEvI2w0eTIYG43/L20yBzuQH01xKzJgHAoWehzI2F8u07o4mXh4DGMOjQF7aEm0zzvsG3Mg==",
+      "path": "microsoft.codeanalysis.csharp/4.12.0",
+      "hashPath": "microsoft.codeanalysis.csharp.4.12.0.nupkg.sha512"
+    },
+    "Microsoft.CodeAnalysis.CSharp.Scripting/4.12.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-w2b47HQD/2bnFL+yKaaLTo/fNdx6mviHWl2YEqBHaFE08mTLAZPsLNiUuJzlx7oED0LnKZiC8cGPt2ImWWyJyg==",
+      "path": "microsoft.codeanalysis.csharp.scripting/4.12.0",
+      "hashPath": "microsoft.codeanalysis.csharp.scripting.4.12.0.nupkg.sha512"
+    },
+    "Microsoft.CodeAnalysis.Scripting.Common/4.12.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-HS0nh9K+cSKLf04oDMExJKyZLzBv4tM2MNq6kmJCPuP7gf1chC7Iu6N1PYn7cw0PT9a3JuJf6Y1X7PXDpPJNrg==",
+      "path": "microsoft.codeanalysis.scripting.common/4.12.0",
+      "hashPath": "microsoft.codeanalysis.scripting.common.4.12.0.nupkg.sha512"
+    },
+    "Microsoft.Extensions.ObjectPool/6.0.16": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-OVX5tlKg6LY+XKqlUn7i9KY+6Liut0iewWff2DNr7129i/NJ8rpUzbmxavPydZgcLREEWHklXZiPKCS895tNIQ==",
+      "path": "microsoft.extensions.objectpool/6.0.16",
+      "hashPath": "microsoft.extensions.objectpool.6.0.16.nupkg.sha512"
+    },
+    "Microsoft.Xaml.Behaviors.Wpf/1.1.19": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-5sPWkbqImc2t1aQwIfJcKsUo7tOg1Tr8+6xVzZJB56Nzt4u9NlpcLofgdX/aRYpPKdWDA3U23Akw1KQzU5e82g==",
+      "path": "microsoft.xaml.behaviors.wpf/1.1.19",
+      "hashPath": "microsoft.xaml.behaviors.wpf.1.1.19.nupkg.sha512"
+    },
+    "System.ServiceModel.NetFramingBase/8.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-eJ1Dql/BTivvCiWqXVV0WbOBDzTQnMCrU4z3qFJQRJ/t7Gof4vLFSz9AmWuUxcyM0T7L++8LqHnhFYWRp0wK8Q==",
+      "path": "system.servicemodel.netframingbase/8.0.0",
+      "hashPath": "system.servicemodel.netframingbase.8.0.0.nupkg.sha512"
+    },
+    "System.ServiceModel.NetNamedPipe/8.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-Te2og/DkVzePgfjY5omaxNXnJM5hjC1MbNS1m3JfWGdrL1FVEJZHCaEhBWdAJYNCL4RivI19iE2/hGFQ8/ig1A==",
+      "path": "system.servicemodel.netnamedpipe/8.0.0",
+      "hashPath": "system.servicemodel.netnamedpipe.8.0.0.nupkg.sha512"
+    },
+    "System.ServiceModel.Primitives/8.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-hVzK77Bl00H+1V7ho7h03tKlgxAIKssV3eUnRdH+gTCZCK4Ywnv2CR35AV9ly/tRpvsGwNL1d/jkAwB1MWw3Fw==",
+      "path": "system.servicemodel.primitives/8.0.0",
+      "hashPath": "system.servicemodel.primitives.8.0.0.nupkg.sha512"
+    },
+    "fasmdll_managed/1.0.3262.20709": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "System.Data.SQLite/1.0.65.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

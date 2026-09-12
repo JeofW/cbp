@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WeightSet Class="Druid" Specialization="1" Name="Druid-Balance">
+  <MetaSocket>25.72</MetaSocket>
+  <BlueSocket>20.8</BlueSocket>
+  <RedSocket>20.5</RedSocket>
+  <YellowSocket>20.123</YellowSocket>
+  <Stamina>14.56</Stamina>
+  <ExpertiseRating>12.69</ExpertiseRating>
+  <Agility>8.35</Agility>
+  <Armor>8.2</Armor>
+  <DefenseRating>5.54</DefenseRating>
+  <DodgeRating>5.02</DodgeRating>
+  <HitRatingMelee>4.31</HitRatingMelee>
+  <Strength>3.14</Strength>
+  <ResilienceRating>2.38</ResilienceRating>
+  <HasteRating>2.22</HasteRating>
+  <HitRating>1.61</HitRating>
+  <MeleeAttackPower>1.57</MeleeAttackPower>
+  <AttackPowerInForms>1.57</AttackPowerInForms>
+  <Health>1.16</Health>
+  <ArmorPenetrationRating>0.93</ArmorPenetrationRating>
+  <CriticalStrikeRating>0.8</CriticalStrikeRating>
+</WeightSet>

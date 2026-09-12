@@ -1,0 +1,128 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+<Name>[Botanist][Tinker]_undercity_to_orgrimmar</Name>
+
+<MinLevel>1</MinLevel>
+<MaxLevel>151</MaxLevel>
+
+<MinDurability>-1</MinDurability>
+<MinFreeBagSlots>-1</MinFreeBagSlots>
+<TargetingDistance>45</TargetingDistance>
+
+<MailGrey>False</MailGrey>
+<MailWhite>False</MailWhite>
+<MailGreen>False</MailGreen>
+<MailBlue>False</MailBlue>
+<MailPurple>False</MailPurple>
+
+<SellGrey>False</SellGrey>
+<SellWhite>False</SellWhite>
+<SellGreen>False</SellGreen>
+<SellBlue>False</SellBlue>
+<SellPurple>False</SellPurple>
+
+<AvoidMobs>		 
+</AvoidMobs>
+
+<Blackspots>
+</Blackspots>
+
+<Mailboxes>
+</Mailboxes>
+
+<Vendors>
+</Vendors>
+
+<ProtectedItems>	
+</ProtectedItems>
+
+	<QuestOrder>
+	
+		<!-- UserSettings -->
+		<CustomBehavior File="UserSettings"
+						FindMountAutomatically="True"
+						GroundMountFarmingMode="False"
+						HarvestHerbs="False"
+						HarvestMinerals="False"
+						KillBetweenHotspots="False"
+						LogoutForInactivity="True"
+						LogoutInactivityUseForceQuit="True"
+						LootMobs="False"
+						LootRadius="1"
+						MountName=""
+						NinjaSkin="False"
+						RessAtSpiritHealers="False"
+						SkinMobs="False"
+						UseMount="True" 
+						UseRandomMount="False" />
+		
+		<!-- Profile message - Movement procedures initiated -->
+		<CustomBehavior File="Message" 
+						Text="Movement procedures initiated." 
+						LogColor="Gold" />
+							
+		<!-- If we are in Eastern Kingdoms -->
+		<If Condition="Me.MapId == 0">	
+		
+			<!-- Profile message - We are currently in Eastern Kingdoms. Navigating to Orgrimmar -->
+			<CustomBehavior File="Message" 
+							Text="We are currently in Eastern Kingdoms. Navigating to Orgrimmar." 
+							LogColor="Plum" />				
+
+			<!-- Profile message - Moving to the zeppelin -->
+			<CustomBehavior File="Message" 
+							Text="Moving to the zeppelin." 
+							LogColor="Plum" />
+	
+			<!-- Move to - zeppelin -->
+			<MoveTo X="2065.45" Y="289.2531" Z="97.03259" />				
+				
+			<!-- Forced dismount -->		
+			<CustomBehavior File="ForcedDismount" />
+
+			<!-- Profile message - Waiting for the zeppelin to Orgrimar -->
+			<CustomBehavior File="Message" 
+							Text="Waiting for the zeppelin to Orgrimar." 
+							LogColor="Plum" />
+			
+			<!-- Custom behavior - UseTransport - move to Orgrimmar -->
+			<CustomBehavior File="UseTransport" 
+							TransportId="164871" 
+							WaitAtX="2066.09" 
+							WaitAtY="288.9603" 
+							WaitAtZ="97.03149"								
+							TransportStartX="2062.376" 
+							TransportStartY="292.998" 
+							TransportStartZ="114.973"								
+							StandOnX="2068.133" 
+							StandOnY="295.2583" 
+							StandOnZ="97.24683"
+							TransportEndX="1833.509" 
+							TransportEndY="-4391.543" 
+							TransportEndZ="152.7679"	
+							GetOffX="1847.108" 
+							GetOffY="-4397.473" 
+							GetOffZ="135.2055" />	
+						
+			<!-- Move to - Orgrimmar flight master -->
+			<RunTo X="1802.869" Y="-4368.173" Z="102.689" />
+	
+		</If>	<!-- If we are in Eastern Kingdoms -->
+
+		<!-- If we are in Orgrimmar -->
+		<If Condition="Me.MapId == 1">	
+		
+			<!-- CustomBehavior - Message - We are in Orgrimmar -->
+			<CustomBehavior File="Message" 
+							Text="We are in Kalimdor." 
+							LogColor="Plum" />		
+							
+			<!--  CustomBehavior - LoadProfile - [Botanist][Tinker]_orgrimmar_to_valley-of-trials -->				
+			<CustomBehavior File="LoadProfile" 
+							ProfileName="[Botanist][Tinker]_orgrimmar_to_valley-of-trials" />
+				
+		</If>	<!-- If we are in Orgrimmar -->
+
+	</QuestOrder>
+
+</HBProfile>
+

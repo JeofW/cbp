@@ -1,0 +1,514 @@
+﻿<HBProfile creator="Botanist and Wigglez" version="1.0">
+	<Name>[QO-N-M][48-60]_blackrock-spire</Name>
+   
+	<MinLevel>1</MinLevel>
+	<MaxLevel>101</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	
+	<MailGrey>False</MailGrey>
+	<MailWhite>False</MailWhite>
+	<MailGreen>False</MailGreen>
+	<MailBlue>False</MailBlue>
+	<MailPurple>False</MailPurple>
+   
+	<SellGrey>True</SellGrey>
+	<SellWhite>True</SellWhite>
+	<SellGreen>True</SellGreen>
+	<SellBlue>True</SellBlue>
+	<SellPurple>False</SellPurple>
+
+	<AvoidMobs>	
+		<Mob Name="Summon Enabler Stalker" Entry="53488" />
+	</AvoidMobs>
+	
+	<Blackspots>
+	</Blackspots>
+
+	<Mailboxes>
+	</Mailboxes>
+ 
+	<Vendors>
+	</Vendors>
+	
+	<ProtectedItems>
+	</ProtectedItems>
+
+	<Factions>
+	</Factions>
+	
+	<QuestOrder>
+
+
+		<!-- *******************************************************  Booster ************************************************************** -->
+		<If Condition="Me.Level &gt;= 85">
+			<CustomBehavior File="Message" 
+							Text="We are a booster." 
+							LogColor="Cyan" />
+							
+			<!-- Booster UserSettings -->
+			<CustomBehavior File="UserSettings"
+							FindMountAutomatically="True"
+							GroundMountFarmingMode="False"
+							HarvestHerbs="False"
+							HarvestMinerals="False"
+							KillBetweenHotspots="True"
+							LogoutForInactivity="False"
+							LogoutInactivityUseForceQuit="False"
+							LootMobs="True"
+							LootRadius="35"
+							MountName=""
+							NinjaSkin="False"
+							RessAtSpiritHealers="False"
+							SkinMobs="False"
+							UseMount="True" 
+							UseRandomMount="False" />
+							
+			<!-- If we are in Kalimdor -->
+			<If Condition="Me.MapId == 1" >
+				<CustomBehavior File="Message" 
+								Text="We are in Kalimdor." 
+								LogColor="Cyan" />
+						
+
+				<CustomBehavior File="Message" 
+								Text="You are on the wrong continent." 
+								LogColor="Red" />		
+				
+				<CustomBehavior File="Message" 
+								Text="At this point you should be outside of the Blackrock Depths portal. Go there to continue." 
+								LogColor="Red" />	
+								
+				<CustomBehavior File="UserSettings" 
+								StopBot="true" />
+			</If> 	
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			<!-- If we are in Eastern Kingdoms -->
+			<If Condition="Me.MapId == 0">
+				<CustomBehavior File="Message" 
+								Text="We are in Eastern Kingdoms." 
+								LogColor="Cyan" />
+			
+				<!-- Not in box -->
+				<If Condition="Me.X &gt; -7500 || Me.X &lt; -7550 || Me.Y &lt; -1260 || Me.Y &gt; -1200" >
+					<CustomBehavior File="Message" 
+									Text="We are not in the box." 
+									LogColor="Cyan" />
+									
+					<!-- If we are in Blackrock Mountain -->
+					<If Condition="Me.ZoneId == 25">	
+					
+						<!-- If we are in the BRD instance box -->
+						<If Condition="Me.X &gt; -7200 &amp;&amp; Me.X &lt; -7000 &amp;&amp; Me.Y &lt; -900 &amp;&amp; Me.Y &gt; -1000" >
+							<CustomBehavior File="Message" 
+											Text="We are in the Blackrock Depths box."
+											LogColor="Cyan" />
+							
+							<!-- ALLOW ZONING OUT -->
+							<CustomBehavior File="WaitTimer" 
+											WaitTime="15000" />	
+							
+							<CustomBehavior File="Misc\LoadProfileOn" 
+											CheckRange="1" />
+									
+							<CustomBehavior File="WaitTimer" 
+											WaitTime="20000" />	
+											
+							<!-- Kill the Overmaster Pyron (E) -->
+							<CustomBehavior File="TargetAndMoveToMob" 
+											MobId="9026" 
+											MoveWithinMaxRangeOfMob="1" 
+											WaitForNpcs="false"
+											X="-7250.287" Y="-907.6682" Z="165.3785" />
+											
+							<!-- Kill The Behemoth (R) -->
+							<CustomBehavior File="TargetAndMoveToMob" 
+											MobId="8924" 
+											MoveWithinMaxRangeOfMob="1" 
+											WaitForNpcs="false" >
+								<HuntingGrounds>
+									<Hotspot X="-7423.542" Y="-887.9393" Z="172.5045" />
+									<Hotspot X="-7394.76" Y="-944.812" Z="170.1162" />
+									<Hotspot X="-7374.073" Y="-1010.682" Z="173.8385" />
+								</HuntingGrounds>
+							</CustomBehavior>
+											
+							<RunTo X="-7228.612" Y="-906.2562" Z="165.3779" />
+							<RunTo X="-7273.199" Y="-909.1801" Z="165.3779" />
+							<RunTo X="-7355.229" Y="-925.483" Z="166.7336" />
+							<RunTo X="-7389.105" Y="-937.8923" Z="168.9674" />
+							<RunTo X="-7400.685" Y="-987.957" Z="172.1836" />
+							<RunTo X="-7443.979" Y="-999.8006" Z="170.9489" />
+							<RunTo X="-7449.863" Y="-1007.678" Z="171.4387" />
+							
+							<!-- Run back to tag rafs -->
+							<RunTo X="-7178.41" Y="-922.152" Z="166.092" />	
+							
+							<!-- At Lothos -->
+							<RunTo X="-7516.15" Y="-1045.365" Z="182.2999" />
+						</If> <!-- IN BRD BOX -->
+					</If> <!-- Blackrock Mountain -->
+				
+					<!-- If our hearthstone is set here, use it -->
+					<If Condition="Me.HearthstoneAreaId == 5628" >
+						<CustomBehavior File="Message" 
+										Text="Our Innkeeper is set at Iron Summit." 
+										LogColor="Cyan" />
+										
+						<!-- Have hearthstone -->
+						<If Condition="HasItem(6948)">
+							<CustomBehavior File="Message" 
+											Text="Using Hearthstone." 
+											LogColor="Lime" />
+											
+							<CustomBehavior File="Misc\RunLua" 
+											Lua="UseItemByName(6948)" 
+											WaitTime="1000" />
+											
+							<CustomBehavior File="WaitTimer" 
+											WaitTime="20000" />
+						</If> <!-- Have hearthstone -->
+					
+						<!-- Have Innkeeper's Daughter -->
+						<If Condition="HasItem(64488)">
+							<CustomBehavior File="Message" 
+											Text="Using Innkeeper's Daughter." 
+											LogColor="Lime" />
+												
+							<CustomBehavior File="Misc\RunLua" 
+											Lua="UseItemByName(64488)" 
+											WaitTime="1000" />
+								
+							<CustomBehavior File="WaitTimer" 
+											WaitTime="20000" />
+						</If> <!-- Have Innkeeper's Daughter -->
+							
+						<!-- Our hearth isn't set, we need to go to the zone -->
+						<Else>
+							<CustomBehavior File="Message" 
+											Text="Our Hearthstone isn't set in the proper location. Moving to set it." 
+											LogColor="Lime" />
+					
+							<CustomBehavior File="Message" 
+											Text="Flying to Iron Summit." 
+											LogColor="Lime" />
+											
+							<!-- If we are in Blackrock Mountain -->
+							<If Condition="Me.ZoneId == 25">
+							
+								<!-- MoveTo - outside the Blackrock Mountain gates -->
+								<MoveTo X="-7319.676" Y="-1080.691" Z="277.0691" />
+							
+							</If>	<!-- If we are in Blackrock Mountain -->
+					
+							<!-- Fly to the hover point above the innkeep in Iron Summit -->
+							<CustomBehavior File="FlyTo" 
+											X="-7070.313" Y="-1215.361" Z="336.248" />
+					
+							<!-- Land at innkeeper -->
+							<CustomBehavior File="FlyTo" 
+											X="-7083.119" Y="-1201.846" Z="324.2862" />
+							<CustomBehavior File="ForcedDismount" />
+							
+							<!-- Set hearthstone -->
+							<CustomBehavior File="WaitTimer" 
+											WaitTime="1000" />
+							<CustomBehavior File="Message" 
+											Text="Setting my Hearthstone." 
+											LogColor="Lime" />
+							<CustomBehavior File="WaitTimer" 
+											WaitTime="1000" />
+							<CustomBehavior File="SetHearthstone" 
+											MobId="47942" 
+											X="-7085.53" Y="-1202.19" Z="323.9885" />
+							<CustomBehavior File="WaitTimer" 
+											WaitTime="1000" />
+						</Else> <!-- Set hearth -->
+					</If> <!-- Check hearthstone -->
+					
+					<!-- Fly to the hover point above the innkeep in Iron Summit -->
+					<CustomBehavior File="FlyTo" 
+									X="-7070.313" Y="-1215.361" Z="336.248" />
+											
+					<!-- Repair if necessary -->
+					<If Condition="Me.LowestDurabilityPercent &lt; 0.8" >
+						<CustomBehavior File="FlyTo"  
+										X="-7095.479" Y="-1266.96" Z="270.4855" />
+						<CustomBehavior File="ForcedDismount" />
+					
+						<CustomBehavior File="Message" 
+										Text="Our durability is less than 30%, we need to repair." 
+										LogColor="Fuchsia" />
+									
+						<CustomBehavior File="ForceSetVendor" 
+										DoMail="False" 
+										DoRepair="True" 
+										DoSell="False" 
+										DoTrain="False" />
+						
+						<SetVendor>
+							<Vendors>
+								<!-- Iron Summit -->
+								<Vendor Name="Fergus Gravelsmash" 
+										Entry="47937" 
+										Type="Repair" 
+										X="-7093.68" Y="-1268.31" Z="270.4849" />
+							</Vendors>
+						</SetVendor>
+					
+						<!-- We are done repairing -->
+						<If Condition="(Me.FreeBagSlots &gt; 15) &amp;&amp; (Me.LowestDurabilityPercent &gt; 0.3)" >
+							<CustomBehavior File="Message" 
+											Text="Repairing complete." 
+											LogColor="Fuchsia" />
+						</If> <!-- repaired -->
+					</If> <!-- Repairing -->
+					
+					<!-- fly to hover point -->
+					<CustomBehavior File="FlyTo" 
+									X="-7070.313" Y="-1215.361" Z="336.248" />
+									
+					<CustomBehavior File="Message" 
+									Text="We are in Iron Summit." 
+									LogColor="Cyan" />
+									
+					<CustomBehavior File="Message" 
+									Text="Moving to Blackrock Spire." 
+									LogColor="Cyan" />
+
+					<CustomBehavior File="FlyTo" 
+									X="-7316.447" Y="-1079.151" Z="277.0703" />
+					
+					<CustomBehavior File="ForcedDismount" />				
+
+					<!-- MoveTo - balcony -->
+					<MoveTo X="-7535.527" Y="-1212.692" Z="285.4439" />
+					
+					<!-- MoveTo - bottom of the ramp -->
+					<CustomBehavior File="MyCTM"
+									X="-7522.896" Y="-1232.071" Z="285.7424" />
+					
+					<!-- MoveTo - top of the ramp -->
+					<CustomBehavior File="MyCTM"
+									X="-7516.769" Y="-1263.331" Z="296.6023" />
+					
+					
+					<!-- MoveTo - middle of the room -->
+					<CustomBehavior File="MyCTM"
+									X="-7506.983" Y="-1326.109" Z="291.6811" />
+
+					<!-- MoveTo - zone out location -->
+					<CustomBehavior File="MyCTM"
+									X="-7516.25" Y="-1333.5" Z="291.686" />		
+					
+				</If>	<!-- If we are not in the Lower Blackrock Spire instance box -->
+				
+				<!-- If we are in the Lower Blackrock Spire instance box -->
+				<If Condition="Me.X &gt; -7521.25 &amp;&amp; Me.X &lt; -7511.25 &amp;&amp; Me.Y &lt; -1328.5 &amp;&amp; Me.Y &gt; -1338.5" >
+					<CustomBehavior File="Message" 
+									Text="We are in the box." 
+									LogColor="Cyan" />
+					
+					<CustomBehavior File="LoadProfile" 
+									ProfileName="..\[QO-N][48-60]_blackrock-spire" />
+				</If> <!-- Load profile -->
+				
+			</If> <!-- Eastern Kingdoms -->
+		</If> <!-- Booster -->
+						
+		
+		
+		
+		
+		
+		
+		
+				
+		<!-- ******************************************************* RAF Toons *************************************************************** -->			
+				
+	
+	
+		
+		
+		
+		
+		
+		
+		
+		<!-- RAF Toons -->		
+		<If Condition="Me.Level &lt;= 84">
+			<CustomBehavior File="Message" 
+							Text="We are a RAF." 
+							LogColor="Cyan" />
+		
+			<If Condition="Me.IsAlliance">
+				<If Condition="Me.HearthstoneAreaId != 5148">
+					<CustomBehavior File="Message" 
+									Text="Our Hearthstone isn't set in the Trade District in Stormwind. Stopping profile." 
+									LogColor="Lime" />
+									
+					<CustomBehavior File="UserSettings" 
+										StopBot="true" />
+				</If>
+				
+				<ElseIf Condition="Me.IsHorde">
+					<If Condition="Me.HearthstoneAreaId != 5170">
+						<CustomBehavior File="Message" 
+										Text="Our Hearthstone isn't set in the Valley of Strength in Orgrimmar. Stopping profile." 
+										LogColor="Lime" />
+										
+						<CustomBehavior File="UserSettings" 
+										StopBot="true" />
+					</If>
+				</ElseIf>
+			</If>
+			
+			<!-- RAF UserSettings -->
+			<CustomBehavior File="UserSettings"
+							GroundMountFarmingMode="False"
+							HarvestHerbs="False"
+							HarvestMinerals="False"
+							KillBetweenHotspots="True"
+							LogoutForInactivity="False"
+							LogoutInactivityUseForceQuit="False"
+							LootMobs="True"
+							LootRadius="15"
+							MountName=""
+							NinjaSkin="False"
+							RessAtSpiritHealers="False"
+							SkinMobs="False"
+							UseMount="True" 
+							UseRandomMount="False" />
+					
+			<!-- Kalimdor -->
+			<If Condition="Me.MapId == 1">
+				<CustomBehavior File="Message" 
+								Text="We are in Kalimdor." 
+								LogColor="Cyan" />
+
+				<CustomBehavior File="Message" 
+								Text="You have made a mistake somehow and are in Kalimdor." 
+								LogColor="Red" />	
+				
+				<CustomBehavior File="Message" 
+								Text="We should be outside of the Blackrock Depths portal." 
+								LogColor="Red" />	
+			</If> <!-- Kalimdor -->
+			
+			<!-- Eastern Kingdoms -->
+			<If Condition="Me.MapId == 0">
+				<CustomBehavior File="Message" 
+								Text="We are in Eastern Kingdoms." 
+								LogColor="Cyan" />
+									
+				<!-- Not in the box -->
+				<If Condition="Me.X &gt; -7500 || Me.X &lt; -7550 || Me.Y &lt; -1260 || Me.Y &gt; -1200" >	
+					<CustomBehavior File="Message" 
+									Text="We are not in the box." 
+									LogColor="Cyan" />				
+								
+					<!-- Blackrock Mountain -->
+					<If Condition="Me.ZoneId == 25">
+						<CustomBehavior File="Message" 
+										Text="We are in Blackrock Mountain."
+										LogColor="Cyan" />
+
+						<!-- IN BRD BOX -->
+						<If Condition="Me.X &gt; -7200 &amp;&amp; Me.X &lt; -7000 &amp;&amp; Me.Y &lt; -900 &amp;&amp; Me.Y &gt; -1000" >
+							<CustomBehavior File="Message" 
+											Text="We are in the Blackrock Depths box."
+											LogColor="Cyan" />
+							
+							<!-- ALLOW ZONING OUT -->
+							<CustomBehavior File="WaitTimer" 
+											WaitTime="15000" />	
+							
+							<CustomBehavior File="Misc\LoadProfileOn" 
+											CheckRange="2" />
+									
+							<CustomBehavior File="WaitTimer" 
+											WaitTime="30000" />	
+											
+							<CustomBehavior File="Misc\LoadProfileOn" 
+											CheckRange="2" />
+											
+							<CustomBehavior File="WaitTimer" 
+											WaitTime="10000" />	
+							
+							<CustomBehavior File="Message" 
+										Text="Moving to Lothos."
+										LogColor="Lime" />
+											
+							<CustomBehavior File="NoCombatMoveTo" X="-7516.15" Y="-1045.365" Z="182.2999" />
+						</If> <!-- IN BRD BOX -->
+										
+						<CustomBehavior File="ForcedMount"
+										MountType="Ground" />
+										
+						<!-- Move to end of chain -->
+						<RunTo X="-7482.167" Y="-1163.467" Z="277.9067" />
+
+						<!-- MoveTo - balcony -->
+						<MoveTo X="-7535.527" Y="-1212.692" Z="285.4439" />
+						
+						<!-- MoveTo - bottom of the ramp -->
+						<CustomBehavior File="MyCTM"
+										X="-7522.896" Y="-1232.071" Z="285.7424" />
+						
+						<!-- MoveTo - top of the ramp -->
+						<CustomBehavior File="MyCTM"
+										X="-7516.769" Y="-1263.331" Z="296.6023" />
+						
+						
+						<!-- MoveTo - middle of the room -->
+						<CustomBehavior File="MyCTM"
+										X="-7506.983" Y="-1326.109" Z="291.6811" />
+
+						<!-- MoveTo - zone out location -->
+						<CustomBehavior File="MyCTM"
+										X="-7516.25" Y="-1333.5" Z="291.686" />	
+						
+						<!-- Not in Blackrock mountain -->
+						<Else>
+							<CustomBehavior File="Message" 
+											Text="You started this RAF outside of Blackrock Mountain." 
+											LogColor="Red" />
+							
+							<CustomBehavior File="Message" 
+											Text="In order for movement to Blackrock Spire to be functional as intended, move this character outside of the Blackrock Depths portal and start the profile again." 
+											LogColor="Red" />
+											
+							<CustomBehavior File="UserSettings" 
+											StopBot="true" />
+						</Else> <!-- Not in blackrock mountain -->
+					</If> <!-- Blackrock Mountain -->
+				</If> <!-- Not in box -->
+				
+				<!-- If we are in the Lower Blackrock Spire instance box -->
+				<If Condition="Me.X &gt; -7521.25 &amp;&amp; Me.X &lt; -7511.25 &amp;&amp; Me.Y &lt; -1328.5 &amp;&amp; Me.Y &gt; -1338.5" >
+					<CustomBehavior File="Message" 
+									Text="We are in the box." 
+									LogColor="Cyan" />
+					
+					<CustomBehavior File="LoadProfile" 
+									ProfileName="..\[QO-N][48-60]_blackrock-spire" />
+				</If> <!-- Load profile -->
+			</If> <!-- Eastern Kingdoms -->
+		</If> <!-- RAF toons -->
+	</QuestOrder>
+</HBProfile>
+

@@ -1,0 +1,431 @@
+<HBProfile creator="Botanist" version="1.0">
+	<Name>[QO-H-M][90][Flying]_orgrimmar</Name>
+   
+	<MinLevel>1</MinLevel>
+	<MaxLevel>101</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	
+	<MailGrey>False</MailGrey>
+	<MailWhite>False</MailWhite>
+	<MailGreen>False</MailGreen>
+	<MailBlue>False</MailBlue>
+	<MailPurple>False</MailPurple>
+   
+	<SellGrey>False</SellGrey>
+	<SellWhite>False</SellWhite>
+	<SellGreen>False</SellGreen>
+	<SellBlue>False</SellBlue>
+	<SellPurple>False</SellPurple>
+
+	<AvoidMobs>
+	</AvoidMobs>
+	
+	<Blackspots>
+	</Blackspots>
+
+	<Mailboxes>
+	</Mailboxes>
+ 
+	<Vendors>
+	</Vendors>
+
+	<Factions></Factions>
+	
+	<ProtectedItems>
+		
+	</ProtectedItems>
+
+	<QuestOrder>
+				
+		<!-- UserSettings -->
+		<CustomBehavior File="UserSettings"
+						FindMountAutomatically="True"
+						GroundMountFarmingMode="False"
+						HarvestHerbs="False"
+						HarvestMinerals="False"
+						KillBetweenHotspots="True"
+						LogoutForInactivity="False"
+						LogoutInactivityUseForceQuit="False"
+						LootMobs="True"
+						LootRadius="35"
+						MountName=""
+						NinjaSkin="False"
+						RessAtSpiritHealers="False"
+						SkinMobs="False"
+						UseMount="True" 
+						UseRandomMount="False" />			
+				
+		<!-- If we can fly -->		
+		<If Condition="CanFly()">
+                
+			<!-- Profile message - We can fly -->
+			<CustomBehavior File="Message" 
+							Text="We can fly."  
+							LogColor="Orange" />	
+			
+			<!-- Else we can not fly -->
+			<Else>
+
+				<!-- Profile message - We can not fly -->
+				<CustomBehavior File="Message" 
+								Text="We can not fly."  
+								LogColor="Red" />
+								
+				<!-- Wait timer - wait 3 seconds - delay -->
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="3000" />
+
+				<!-- Profile message - Initiating training procedures -->
+				<CustomBehavior File="Message" 
+								Text="Initiating training procedures."  
+								LogColor="Orange" />
+
+				<!-- If we have more than 500 gold -->
+				<If Condition="(Me.Gold &gt;= 500)" >
+
+					<!-- Profile message - We have the gold to purchase Expert Riding and a Flight Master's License -->
+					<CustomBehavior File="Message" 
+									Text="We have the gold to purchase Expert Riding and a Flight Master's License."  
+									LogColor="Orange" />
+				
+					<!-- Load profile - Training\[QO-H-M][90][Flying]_orgrimmar -->
+					<CustomBehavior File="LoadProfile" 
+									ProfileName="Training\[QO-H-M][90][Flying]_orgrimmar" />
+				
+					<!-- Else we don't have more than 500 gold -->
+					<Else>
+					
+						<!-- Profile message - We have the gold to purchase Expert Riding and a Flight Master's License -->
+						<CustomBehavior File="Message" 
+										Text="We don't have the gold to purchase Expert Riding and a Flight Master's License."  
+										LogColor="Red" />
+										
+						<!-- Wait timer - wait 3 seconds - delay -->
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="3000" />
+
+						<!-- Profile message - Restart the profile with a minimum of 505 gold on your character. Stopping the bot! -->
+						<CustomBehavior File="Message" 
+										Text="Restart the profile with a minimum of 505 gold on your character. Stopping the bot!"  
+										LogColor="Red" />
+
+						<!-- Wait timer - wait 1 seconds - delay -->
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="1000" />
+
+										
+						<!-- Custom behavior - Usersettings - StopBot -->				
+						<CustomBehavior File="UserSettings" 
+										StopBot="true" />				
+					
+					</Else>		<!-- Else we don't have more than 500 gold -->
+					
+				</If>	<!-- If we have more than 500 gold -->
+				
+			</Else>		<!-- Else we can not fly -->
+				
+        </If>	<!-- If we can fly -->
+		
+		<!-- If we are in Eastern Kingdoms -->		
+		<If Condition="Me.MapId == 0">
+		
+			<!-- Profile message - We are in Eastern Kingdoms. Moving to Orgrimmar -->
+			<CustomBehavior File="Message" 
+							Text="We are in Eastern Kingdoms. Moving to Orgrimmar."  
+							LogColor="Plum" />
+		
+			<!-- Fly to the zeppelin hover point -->
+			<CustomBehavior File="FlyTo"
+							X="2031.435" Y="272.2105" Z="137.2492" />
+						
+			<!-- Land on the deck -->
+			<CustomBehavior File="MyCTM"
+							X="2065.45" Y="289.2531" Z="97.03259" />				
+				
+			<!-- Forced dismount -->		
+			<CustomBehavior File="ForcedDismount" />
+
+			<!-- Custom behavior - UseTransport - move to Orgrimmar -->
+			<CustomBehavior File="UseTransport" 
+							TransportId="164871" 
+							WaitAtX="2066.09" 
+							WaitAtY="288.9603" 
+							WaitAtZ="97.03149"								
+							TransportStartX="2062.376" 
+							TransportStartY="292.998" 
+							TransportStartZ="114.973"								
+							StandOnX="2068.133" 
+							StandOnY="295.2583" 
+							StandOnZ="97.24683"
+							TransportEndX="1833.509" 
+							TransportEndY="-4391.543" 
+							TransportEndZ="152.7679"	
+							GetOffX="1847.108" 
+							GetOffY="-4397.473" 
+							GetOffZ="135.2055" />	
+						
+			<!-- Move to - Orgrimmar flight master -->
+			<RunTo X="1802.869" Y="-4368.173" Z="102.689" />	
+
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+		
+		</If>	<!-- If we are in Eastern Kingdoms -->
+
+		<!-- If we are in Pandaria -->
+		<If Condition="Me.MapId == 870">
+		
+			<!-- Profile message - We are in Pandaria -->
+			<CustomBehavior File="Message" 
+							Text="We are in Pandaria"  
+							LogColor="Orange" />
+			
+			<!-- Profile message - Moving to Orgrimmar portal -->
+			<CustomBehavior File="Message" 
+							Text="Moving to Orgrimmar portal." 
+							LogColor="Cyan" />
+
+			<!-- Fly to - Shrine of Two Moons hover point-->
+			<CustomBehavior File="FlyTo" 
+							X="1620.946" Y="856.0002" Z="482.6452" />
+
+			<!-- CTM to - doorway entering the portal room -->
+			<CustomBehavior File="MyCTM" 
+							X="1655.863" Y="872.6954" Z="470.627" />
+			
+			<!-- Custom behavior - ForcedDismount -->
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- UserSettings -->
+			<CustomBehavior File="UserSettings"
+							UseMount="False" />
+			
+			<!-- Move to - Orgrimmar portal -->
+			<Moveto X="1734.844" Y="875.362" Z="487.3592" />
+			
+			<!-- Interact with the teleporter -->
+			<CustomBehavior File="InteractWith" 
+							MobId="215127" />
+			
+			<!-- Wait timer for game to load -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="20000" />
+
+			<!-- UserSettings -->
+			<CustomBehavior File="UserSettings"
+							UseMount="True" />
+		
+		</If>	<!-- If we are in Pandaria -->
+
+		<!-- If we are in Northrend -->
+		<If Condition="Me.MapId == 571">
+		
+			<!-- Profile message - We are in Northrend -->
+			<CustomBehavior File="Message" 
+							Text="We are in Northrend"  
+							LogColor="Orange" />
+			
+			<!-- Profile message - Flying to Dalaran Portals -->
+			<CustomBehavior File="Message" 
+							Text="Flying to Dalaran Portals." 
+							LogColor="Cyan" />
+		
+			<!-- Fly to - last hill-top before Dalaran -->
+			<CustomBehavior File="FlyTo" 
+							X="6285.581" Y="396.274" Z="692.8207" />
+
+			<!-- CTM to - Dalaran hover point -->
+			<CustomBehavior File="MyCTM" 
+							X="5903.925" Y="491.4554" Z="768.6636" />
+		
+			<!-- CTM to - ledge overhanging the portal -->
+			<CustomBehavior File="MyCTM" 
+							X="5891.943" Y="563.4158" Z="639.689" />
+			
+			<!-- Custom behavior - ForcedDismount -->
+			<CustomBehavior File="ForcedDismount" />
+
+			<!-- UserSettings -->
+			<CustomBehavior File="UserSettings"
+							UseMount="False" />
+			
+			<!-- Move to - Orgrimmar portal -->
+			<Moveto X="5924.011" Y="589.8676" Z="639.8697" />
+			
+			<!-- Interact with the teleporter -->
+			<CustomBehavior File="InteractWith" 
+							MobId="191009" />
+			
+			<!-- Wait timer for game to load -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="20000" />
+
+			<!-- Move to - exit Cleft of Shadow -->
+			<MoveTo X="1888.954" Y="-4541.664" Z="28.9646" />
+		
+			<!-- UserSettings -->
+			<CustomBehavior File="UserSettings"
+							UseMount="True" />
+		
+		</If>	<!-- If we are in Northrend -->
+		
+		<!-- If we are in Outland -->
+		<If Condition="Me.MapId == 530">
+		
+			<!-- Profile message - We are in Outland -->
+			<CustomBehavior File="Message" 
+							Text="We are in Outland"  
+							LogColor="Orange" />
+
+			<!-- Wait timer - wait 3 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="3000" />				
+							
+			<!-- Profile message - Moving to the Shattrath City to use the portal to Orgrimmar -->
+			<CustomBehavior File="Message" 
+							Text="Moving to the Shattrath City to use the portal to Orgrimmar."  
+							LogColor="Cyan" />				
+
+			<!-- Fly to - Shattrath City - hover point -->
+			<CustomBehavior File="FlyTo" X="-1977.775" Y="5373.526" Z="54.82305" />
+
+			<!-- CTM to - grounding at Shattrath City -->
+			<CustomBehavior File="MyCTM"
+							X="-1920.137" Y="5400.772" Z="-12.42688" />
+			
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Profile message - Moving to the Orgrimmar portal -->				
+			<CustomBehavior File="Message" 
+							Text="Moving to the Orgrimmar portal." 
+							LogColor="Cyan" />		
+						
+			<!-- Move to - Orgrimmar portal -->
+			<MoveTo X="-1892.733" Y="5390.708" Z="-12.42776" />
+			
+			<!-- Interact with the teleporter -->
+			<CustomBehavior File="InteractWith" 
+							MobId="183323" />				
+
+			<!-- Wait timer - wait 15 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="15000" />				
+							
+			<!-- Move to - exit Cleft of Shadow -->
+			<MoveTo X="1888.954" Y="-4541.664" Z="28.9646" />				
+										
+		</If>	<!-- If we are in Outland -->		
+				
+		<!-- If we are in Deepholme -->		
+		<If Condition="Me.MapId == 646">
+		
+			<!-- Profile message - We are in Deepholme -->
+			<CustomBehavior File="Message" 
+							Text="We are in Deepholme"  
+							LogColor="Orange" />
+							
+			<!-- Profile message - Moving to the Temple of the Earth entrance -->
+			<CustomBehavior File="Message" 
+							Text="Moving to the Temple of the Earth entrance." 
+							LogColor="Cyan" />
+			
+			<!-- Fly to - Temple of the Earth - hover point -->
+			<CustomBehavior File="FlyTo" 
+							X="826.0179" Y="489.8276" Z="-41.14435" />	
+			
+			<!-- CTM to - Temple of the Earth -->
+			<CustomBehavior File="MyCTM"
+							X="948.6265" Y="511.0801" Z="-49.33325" />
+
+			<!-- Custom behavior - ForcedDismount -->
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- UserSettings -->
+			<CustomBehavior File="UserSettings" 
+								UseMount="False" />
+
+			<!-- Move to - Orgrimmar portal location -->
+			<MoveTo X="991.5721" Y="458.3684" Z="-44.2784" />
+				
+			<!-- Profile message - Using the portal to Orgrimmar -->	
+			<CustomBehavior File="Message" 
+							Text="Using the portal to Orgrimmar." 
+							LogColor="Cyan" />				
+							
+			<!-- Interact with the teleporter -->
+			<CustomBehavior File="InteractWith" 
+							MobId="205273" />				
+							
+			<!-- UserSettings -->
+			<CustomBehavior File="UserSettings" 
+								UseMount="True" />
+
+		</If>		
+				
+		<!-- If we are in Kalimdor -->
+		<If Condition="Me.MapId == 1">
+		
+			<!-- If we are in the Cleft of Shadow -->
+			<If Condition="Me.X &lt; 1895.627 &amp;&amp; Me.X &gt; 1713.31 &amp;&amp; Me.Y &gt; -4440.429 &amp;&amp; Me.Y &lt; -4283.688 &amp;&amp; Me.Z &lt; 35" >
+			
+				<!-- Profile message - we are in the Cleft of Shadow -->
+				<CustomBehavior File="Message" 
+								Text="We are in the Cleft of Shadow"  
+								LogColor="Orange" />
+			
+				<!-- UserSettings -->
+				<CustomBehavior File="UserSettings" 
+									UseMount="False" />
+			
+				<!-- Move to - mount location outside the Cleft of Shadow -->
+				<MoveTo X="1892.877" Y="-4546.347" Z="29.89322" />
+			
+				<!-- UserSettings -->
+				<CustomBehavior File="UserSettings" 
+									UseMount="True" />
+				
+			</If>	<!-- If we are in the Cleft of Shadow -->
+
+			<!-- Profile message - We are in Kalimdor -->
+			<CustomBehavior File="Message" 
+							Text="We are in Kalimdor"  
+							LogColor="Orange" />
+							
+			<!-- Profile message - Flying to Orgrimmar flight master -->
+			<CustomBehavior File="Message" 
+							Text="Flying to Orgrimmar flight master." 
+							LogColor="Cyan" />
+			
+			<!-- Fly to - Orgrimmar flight master - hover point -->
+			<CustomBehavior File="FlyTo" 
+							X="1784.987" Y="-4324.083" Z="165.4276" />	
+			
+			<!-- CTM to - Orgrimmar flight master -->
+			<CustomBehavior File="MyCTM"
+							X="1798.712" Y="-4362.202" Z="102.4993" />
+
+			<!-- Custom behavior - ForcedDismount -->
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Profile message - We are in Kalimdor -->
+			<CustomBehavior File="Message" 
+							Text="We have arrived at the Orgrimmar flight master"  
+							LogColor="Orange" />
+			
+		</If>	<!-- If we are in Kalimdor -->
+
+		<!-- If we are at the Orgrimmar flight master -->
+		<If Condition="Me.X &gt; 1734.58 &amp;&amp; Me.X &lt; 1878.138 &amp;&amp; Me.Y &gt; -4469.707 &amp;&amp; Me.Y &lt; -4238.392" >
+		
+			<!-- Load profile - Staging Locations\[QO-H-M][60+][Flying]_outland -->
+			<CustomBehavior File="LoadProfile" 
+							ProfileName="Staging Locations\[QO-H-M][60+][Flying]_outland" />
+		
+		</If>	<!-- If we are at the Orgrimmar flight master -->
+
+	</QuestOrder>
+	
+</HBProfile>

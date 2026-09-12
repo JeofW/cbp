@@ -1,0 +1,308 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+	<Name>[QO-N-M][Reins-of-the-Vitreous-Stone-Drake]_botanist_stonecore</Name>
+   
+	<MinLevel>1</MinLevel>
+	<MaxLevel>101</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	
+	<MailGrey>False</MailGrey>
+	<MailWhite>True</MailWhite>
+	<MailGreen>False</MailGreen>
+	<MailBlue>False</MailBlue>
+	<MailPurple>False</MailPurple>
+   
+	<SellGrey>True</SellGrey>
+	<SellWhite>False</SellWhite>
+	<SellGreen>True</SellGreen>
+	<SellBlue>True</SellBlue>
+	<SellPurple>False</SellPurple>
+   
+	<TargetElites>True</TargetElites>
+	
+	<AvoidMobs>
+	</AvoidMobs>
+	
+	<Blackspots>
+	</Blackspots>
+
+	<Mailboxes>
+	</Mailboxes>
+ 
+	<Vendors>
+	</Vendors>
+
+	<Factions>14,16,2156</Factions>
+	
+	<ProtectedItems>
+		<Item Name="Elementium Lockbox" Entry="68729" />	
+	</ProtectedItems>
+	
+	<QuestOrder>
+
+		<!-- UserSettings -->
+		<CustomBehavior File="UserSettings"
+						FindMountAutomatically="True"
+						GroundMountFarmingMode="False"
+						HarvestHerbs="False"
+						HarvestMinerals="False"
+						KillBetweenHotspots="False"
+						LogoutForInactivity="False"
+						LogoutInactivityUseForceQuit="False"
+						LootMobs="True"
+						LootRadius="5"
+						MountName=""
+						NinjaSkin="False"
+						RessAtSpiritHealers="False"
+						SkinMobs="False"
+						UseMount="True" 
+						UseRandomMount="False" />
+
+		<!-- If we are in Eastern Kingdoms -->				
+		<If Condition="Me.MapId == 0" > 
+		
+			<!-- If we are Alliance -->
+			<If Condition="Me.IsAlliance" >
+			
+				<!-- CustomBehavior - Message - We are in Eastern Kingdoms. Flying to the Deepholm portal in Stormwind -->
+				<CustomBehavior File="Message" 
+								Text="We are in Eastern Kingdoms. Flying to the Deepholm portal in Stormwind." 
+								LogColor="Plum" />
+				
+				<!-- CustomBehavior - FlyTo - Stormwind portals -->
+				<CustomBehavior File="FlyTo" 
+								X="-8219.944" Y="448.447" Z="117.6114" />		
+				
+				<!-- CustomBehavior - ForcedDismount -->
+				<CustomBehavior File="ForcedDismount" />
+				
+				<!-- CustomBehavior - Message - Taking the portal to Deepholme -->
+				<CustomBehavior File="Message" 
+								Text="Taking the portal to Deepholme." 
+								LogColor="Plum" />
+				
+				<!-- CustomBehavior - InteractWith - portal to Deepholme -->
+				<CustomBehavior File="InteractWith" 
+								MobId="207693" 
+								ObjectType="Gameobject" 
+								Range="4.75" 
+								NumOfTimes="1" 
+								X="-8223.319" Y="451.182281" Z="117.4883" />
+								
+				<!-- CustomBehavior - WaitTimer - 10 second delay -->				
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="10000"  />
+								
+				<!-- If we are in Deepholme -->				
+				<If Condition="Me.ZoneId == 5042" >
+				
+					<!-- CustomBehavior - Message - I have ported to Deepholm -->
+					<CustomBehavior File="Message" 
+									Text="I have ported to Deepholm." 
+									LogColor="Plum" />
+					
+				</If>	<!-- If we are in Deepholme -->		
+
+				<!-- Else we are Horde -->
+				<Else>
+				
+					<!-- Profile message - We are in Eastern Kingdoms. Flying to Brill and using the zeppelin to Orgrimmar -->
+					<CustomBehavior File="Message" 
+									Text="We are in Eastern Kingdoms. Flying to Brill and using the zeppelin to Orgrimmar."  
+									LogColor="Plum" />
+				
+					<!-- Fly to the zeppelin hover point -->
+					<CustomBehavior File="FlyTo"
+									X="2031.435" Y="272.2105" Z="137.2492" />
+								
+					<!-- Land on the deck -->
+					<CustomBehavior File="MyCTM"
+									X="2065.45" Y="289.2531" Z="97.03259" />				
+						
+					<!-- Forced dismount -->		
+					<CustomBehavior File="ForcedDismount" />
+
+					<!-- Profile message - Waiting for the zeppelin to Orgrimmar -->
+					<CustomBehavior File="Message" 
+									Text="Waiting for the zeppelin to Orgrimmar."  
+									LogColor="Plum" />
+					
+					<!-- Custom behavior - UseTransport - move to Orgrimmar -->
+					<CustomBehavior File="UseTransport" 
+									TransportId="164871" 
+									WaitAtX="2066.09" 
+									WaitAtY="288.9603" 
+									WaitAtZ="97.03149"								
+									TransportStartX="2062.376" 
+									TransportStartY="292.998" 
+									TransportStartZ="114.973"								
+									StandOnX="2068.133" 
+									StandOnY="295.2583" 
+									StandOnZ="97.24683"
+									TransportEndX="1833.509" 
+									TransportEndY="-4391.543" 
+									TransportEndZ="152.7679"	
+									GetOffX="1847.108" 
+									GetOffY="-4397.473" 
+									GetOffZ="135.2055" />		
+
+				</Else>		<!-- Else we are Horde -->
+				
+			</If>	<!-- If we are Alliance -->	
+			
+		</If>	<!-- If we are in Eastern Kingdoms -->	
+
+		<!-- If we are in Kalimdor -->				
+		<If Condition="Me.MapId == 1" > 
+		
+			<!-- If we are Horde -->
+			<If Condition="Me.IsHorde" >
+		
+				<!-- If we are in the Cleft of Shadow -->
+				<If Condition="Me.X &lt; 1895.627 &amp;&amp; Me.X &gt; 1713.31 &amp;&amp; Me.Y &gt; -4440.429 &amp;&amp; Me.Y &lt; -4283.688 &amp;&amp; Me.Z &lt; 35" >
+				
+					<!-- CustomBehavior - Message - We are in the Cleft of Shadow, disabling mount use -->
+					<CustomBehavior File="Message" 
+									Text="We are in the Cleft of Shadow, disabling mount use."  
+									LogColor="Cyan" />
+				
+					<!-- UserSettings -->
+					<CustomBehavior File="UserSettings" 
+										UseMount="False" />
+
+					<!-- Move to - mount location outside the Cleft of Shadow -->
+					<MoveTo X="1892.877" Y="-4546.347" Z="29.89322" />
+				
+					<!-- UserSettings -->
+					<CustomBehavior File="UserSettings" 
+										UseMount="True" />
+					
+				</If>	<!-- If we are in the Cleft of Shadow -->
+					
+				<!-- CustomBehavior - Message - We are in Kalimdor. Flying to the Deepholm portal in Orgrimmar  -->
+				<CustomBehavior File="Message" 
+								Text="We are in Kalimdor. Flying to the Deepholm portal in Orgrimmar." 
+								LogColor="Plum" />
+								
+				<!-- Fly to - Deepholme portal hover point -->
+				<CustomBehavior File="FlyTo"
+								X="2046.472" Y="-4379.226" Z="124.5676" />	
+				
+				<!-- CustomBehavior - MyCTM - grounding - Deepholme portal -->
+				<CustomBehavior File="MyCTM"
+								X="2061.656" Y="-4388.287" Z="98.04972" />
+				
+				<!-- CustomBehavior - ForcedDismount -->
+				<CustomBehavior File="ForcedDismount" />
+				
+				<!-- CustomBehavior - Message - Taking the portal to Deepholme -->
+				<CustomBehavior File="Message" 
+								Text="Taking the portal to Deepholme." 
+								LogColor="Plum" />
+				
+				<!-- CustomBehavior - InteractWith - portal to Deepholme -->
+				<CustomBehavior File="InteractWith" 
+								MobId="207689" 
+								ObjectType="Gameobject" 
+								Range="4.75" 
+								NumOfTimes="1" 
+								X="2065.724" Y="-4390.854" Z="98.06486" />
+								
+				<!-- CustomBehavior - WaitTimer - 15 second delay -->				
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="15000"  />
+
+				<!-- Else we are Alliance -->	
+				<Else>
+
+					<!-- CustomBehavior - Message - I need to move Alliance to Ratchet-Bootybay-deepholme from kalimdor -->
+					<CustomBehavior File="Message" 
+									Text="I need to move Alliance to Ratchet-Bootybay-deepholme from kalimdor." 
+									LogColor="Plum" />
+					
+				</Else>		<!-- Else we are Alliance -->	
+					
+			</If>	<!-- If we are Horde -->
+			
+			<!-- If we are in Deepholme -->				
+			<If Condition="Me.ZoneId == 5042" >
+			
+				<!-- CustomBehavior - Message - I have ported to Deepholm -->
+				<CustomBehavior File="Message" 
+								Text="I have ported to Deepholm." 
+								LogColor="Plum" />
+				
+			</If>	<!-- If we are in Deepholme -->
+				
+		</If>	<!-- If we are in Kalimdor -->
+		
+		<!-- Repair if necessary -->
+		<If Condition="(Me.FreeBagSlots &lt; 25) || (Me.LowestDurabilityPercent &lt; 0.3)" >
+		
+			<!-- CustomBehavior - LoadProfile - [QO-N][Reins-of-the-Vitreous-Stone-Drake]_botanist_stonecore[repair-mail] -->
+			<CustomBehavior File="LoadProfile" 
+							ProfileName="Vendors\[QO-N][Reins-of-the-Vitreous-Stone-Drake]_botanist_stonecore[repair-mail]" />
+			
+		</If> <!-- Repair if necessary -->
+		
+		<!-- If we are in Deepholm -->
+		<If Condition="Me.MapId == 646">
+	
+			<!-- Profile message - We are in Deepholm --> 
+			<CustomBehavior File="Message" 
+							Text="We are in Deepholm."
+							LogColor="Plum" />
+	
+			<!-- If are inside Temple of the Earth -->
+			<If Condition="Me.Y &gt; 408.4768 &amp;&amp; Me.Y &lt; 649.2817 &amp;&amp; Me.X &gt; 964.1465 &amp;&amp; Me.X &lt; 1112.985 &amp;&amp; Me.Z &lt; 0" >
+			
+				<!-- Profile message - We are inside Temple of the Earth --> 
+				<CustomBehavior File="Message" 
+								Text="We are inside Temple of the Earth."
+								LogColor="Plum" />
+	
+				<!-- Move to - outside Temple of the Earth -->
+				<MoveTo X="847.6309" Y="497.956" Z="-63.26773" />
+				
+			</If>	<!-- If are inside Temple of the Earth -->
+			
+			<!-- If we are not in the Stonecore instance box -->
+			<If Condition="Me.Y &lt; 620.9702 || Me.Y &gt; 678.2952 || Me.X &lt; 987.7558 || Me.X &gt; 1062.086 || (Me.Z &lt; 150 &amp;&amp; Me.Z &gt; 160)" >	
+	
+				<!-- Profile message - Moving to Stonecore --> 
+				<CustomBehavior File="Message" 
+								Text="Moving to Stonecore."
+								LogColor="Plum" />
+				
+				<CustomBehavior File="FlyTo" X="773.7523" Y="596.1415" Z="43.54036" />
+
+				<CustomBehavior File="FlyTo" X="1027.767" Y="739.9456" Z="199.1932" />
+				
+				<CustomBehavior File="MyCTM" X="1026.425" Y="667.5716" Z="164.4908" /> 
+				
+				<CustomBehavior File="MyCTM" X="1027.74" Y="624.3236" Z="156.5981" />
+
+				<CustomBehavior File="ForcedDismount" />
+
+				<!-- Profile message - We have reached our destination --> 
+				<CustomBehavior File="Message" 
+								Text="We have reached our destination."
+								LogColor="Plum" />
+				
+			</If>	<!-- If we are not in the Stonecore instance box -->
+	
+		</If>	<!-- If we are in Deepholm -->
+																		 
+		<!-- If we are in the Stonecore instance box -->
+		<If Condition="Me.Y &gt; 620.9702 &amp;&amp; Me.Y &lt; 678.2952 &amp;&amp; Me.X &gt; 987.7558 &amp;&amp; Me.X &lt; 1062.086 &amp;&amp; (Me.Z &gt; 150 &amp;&amp; Me.Z &lt; 160)" >										
+			
+			<!-- CustomBehavior - LoadProfile - [QO-N-M][85+][Flying][Stratholme]_botanist -->
+			<CustomBehavior File="LoadProfile" 
+							ProfileName="..\[QO-N][Reins-of-the-Vitreous-Stone-Drake]_botanist_stonecore" />
+			
+		</If>	<!-- If we are in the Stonecore instance box -->				
+              
+	</QuestOrder>
+
+</HBProfile>

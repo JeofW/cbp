@@ -1,0 +1,728 @@
+﻿<HBProfile creator="Botanist and Wigglez" version="1.0">
+	<Name>[QO-H][10-17]_wailing-caverns</Name>
+   
+	<MinLevel>1</MinLevel>
+	<MaxLevel>101</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	
+	<MailGrey>False</MailGrey>
+	<MailWhite>False</MailWhite>
+	<MailGreen>False</MailGreen>
+	<MailBlue>False</MailBlue>
+	<MailPurple>False</MailPurple>
+   
+	<SellGrey>False</SellGrey>
+	<SellWhite>False</SellWhite>
+	<SellGreen>False</SellGreen>
+	<SellBlue>False</SellBlue>
+	<SellPurple>False</SellPurple>
+
+	<AvoidMobs>
+		<Mob Name="Summon Enabler Stalker" Entry="53488" />	
+	</AvoidMobs>
+	
+	<Blackspots>
+		<Blackspot X="-140.0314" Y="-405.6042" Z="58.6548" Radius="1" />
+	</Blackspots>
+
+	<Mailboxes>
+	</Mailboxes>
+ 
+	<Vendors>
+	</Vendors>
+
+	<Factions></Factions>
+	
+	<ProtectedItems>	
+	</ProtectedItems>
+	
+	<QuestOrder>
+
+		
+		<!-- *******************************************************  Booster ************************************************************** -->
+		<If Condition="Me.Level &gt;= 85">
+			<CustomBehavior File="Message" 
+							Text="We are a booster." 
+							LogColor="Fuchsia" />
+							
+			<!-- Booster UserSettings -->
+			<CustomBehavior File="UserSettings"
+							FindMountAutomatically="True"
+							GroundMountFarmingMode="False"
+							HarvestHerbs="False"
+							HarvestMinerals="False"
+							KillBetweenHotspots="True"
+							LogoutForInactivity="False"
+							LogoutInactivityUseForceQuit="False"
+							LootMobs="True"
+							LootRadius="35"
+							MountName=""
+							NinjaSkin="False"
+							RessAtSpiritHealers="False"
+							SkinMobs="False"
+							UseMount="True" 
+							UseRandomMount="False" />
+		 
+			<!-- Infinite loop -->
+			<While Condition="true" >	
+			
+				<!-- If we are inside Wailing Caverns, run out to reset -->
+				<If Condition="Me.ZoneId == 718">
+				
+					<CustomBehavior File="Message" 
+									Text="Wailing Caverns detected. Running out." 
+									LogColor="Fuchsia" />
+					
+					<!-- Run to the instance entrance -->
+					<MoveTo X="-158.441" Y="131.601" Z="-74.2552" />
+
+					<!-- Go through the portal -->
+					<CustomBehavior File="Misc\InInstance" X="-165.6319" Y="134.9559" Z="-73.44581" />
+					
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="15000" />
+									
+					<!-- Make sure we run to the right spot outside the portal -->
+					<MoveTo X="-738.462" Y="-2217.8" Z="16.66944" />	
+					
+				</If> <!-- Inside Wailing Caverns -->
+				
+				<!-- If we are not in the box, load the movement profile -->
+				<If Condition="Me.X &lt; -748.462 || Me.X &gt; -728.462 || Me.Y &gt; -2207.8 || Me.Y &lt; -2227.8" >
+					<CustomBehavior File="Message" 
+									Text="Distance from portal is not within our proximity, initializing movement to get there." 
+									LogColor="Fuchsia" />
+									
+					<CustomBehavior File="LoadProfile" 
+									ProfileName="Movement\[QO-H-M][10-17]_wailing-caverns" />
+				</If> <!-- Not in box -->
+			
+				<!-- If we are in the box -->
+				<If Condition="Me.X &gt; -748.462 &amp;&amp; Me.X &lt; -728.462 &amp;&amp; Me.Y &lt; -2207.8 &amp;&amp; Me.Y &gt; -2227.8" >
+					<CustomBehavior File="Message" 
+									Text="Portal detected nearby." 
+									LogColor="Fuchsia" />	
+									
+					<While Condition="Me.ZoneId != 718">
+					
+						<!-- Make sure we run to the right spot outside the portal -->
+						<MoveTo X="-738.462" Y="-2217.8" Z="16.66925" />	
+						
+						<!-- Run back in the Wailing Caverns portal -->
+						<CustomBehavior File="Misc\InInstance" X="-755.4048" Y="-2216.026" Z="15.71743" />
+										
+						<CustomBehavior File="Message" 
+										Text="Waiting for the dungeon to load." 
+										LogColor="Fuchsia" />
+										
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000" 
+										VariantTime="20000" />	
+										
+						<!-- If we still aren't in, we're locked out -->
+						<If Condition="Me.ZoneId != 718">
+							<CustomBehavior File="Message" 
+											Text="We are locked out. Waiting and trying again." 
+											LogColor="Fuchsia" />
+						</If> <!-- Locked -->
+					</While> <!-- While we aren't in the instance -->
+				</If> <!-- In box -->
+				
+				
+				<!-- If we are inside Wailing Caverns and have checked our reset -->
+				<If Condition="Me.ZoneId == 718">
+				
+					<!-- Run macro to pass on loot -->
+					<CustomBehavior File="RunMacro"
+									Macro="/run SetOptOutOfLoot(1)" />
+					<!-- Entrance -->
+					<MoveTo X="-158.441" Y="131.601" Z="-74.2552" />
+					
+					<!-- Run to quest givers -->
+					<MoveTo X="-153.1192" Y="121.2448" Z="-75.33085" />
+				
+					<!-- Begin the instance once all party members are within range  -->
+					<CustomBehavior File="Misc\LoadProfileOn" 
+									CheckRange="1" />
+									
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="5000" />	
+									
+					<CustomBehavior File="Message" 
+									Text="Wailing Caverns initialized."  
+									LogColor="Fuchsia" />
+				
+					
+					<!-- Kill everything close to the RAF toons to make sure they remain safe -->
+					<MoveTo X="-129.3444" Y="131.7502" Z="-78.3682" />
+					<MoveTo X="-117.9076" Y="139.6017" Z="-79.74553" />
+					<MoveTo X="-110.648" Y="151.6116" Z="-80.76749" />
+					<MoveTo X="-108.5439" Y="165.336" Z="-79.61012" />
+					<MoveTo X="-101.01" Y="176.675" Z="-78.31906" />
+					<MoveTo X="-102.2908" Y="189.0469" Z="-78.41322" />
+					<MoveTo X="-109.7623" Y="198.1397" Z="-81.05716" />
+					<MoveTo X="-110.9246" Y="211.9709" Z="-84.65254" />
+					<MoveTo X="-109.0684" Y="225.587" Z="-88.82538" />
+					<MoveTo X="-104.8424" Y="237.0701" Z="-92.35992" />
+					<MoveTo X="-107.5306" Y="250.3794" Z="-92.29836" />
+					<MoveTo X="-106.0108" Y="252.7915" Z="-92.05981" />
+					<MoveTo X="-106.9418" Y="237.9231" Z="-92.40269" />
+					<MoveTo X="-95.68211" Y="230.0531" Z="-90.49995" />
+					<MoveTo X="-83.09807" Y="224.3054" Z="-93.48954" />
+					<MoveTo X="-74.53231" Y="215.2957" Z="-93.75369" />
+					<MoveTo X="-74.33948" Y="194.836" Z="-93.90272" />
+					<MoveTo X="-79.69797" Y="184.9965" Z="-92.643" />
+					<MoveTo X="-65.97739" Y="207.63" Z="-93.31628" />
+					
+					<!-- Profile message - Disabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Disabling combat." 
+										LogColor="Gold" />
+					
+					<!-- DisableBehavior - Combat -->
+					<DisableBehavior Name="Combat" />	
+						
+						<MoveTo X="-49.15811" Y="205.6763" Z="-95.94606" />
+						<MoveTo X="-34.34705" Y="205.3586" Z="-96.58438" />
+						<MoveTo X="-33.91103" Y="192.3888" Z="-96.50288" />
+						<MoveTo X="-33.08053" Y="171.9149" Z="-96.31918" />
+						<MoveTo X="-32.95458" Y="168.2841" Z="-96.31167" />
+						<MoveTo X="-37.03424" Y="152.1356" Z="-94.25566" />
+						<MoveTo X="-37.33955" Y="151.1163" Z="-94.06791" />
+						<MoveTo X="-48.95012" Y="135.7444" Z="-90.74788" />
+						<MoveTo X="-60.15459" Y="118.6757" Z="-89.40043" />
+						<MoveTo X="-68.06773" Y="103.8591" Z="-88.55324" />
+						<MoveTo X="-76.06266" Y="115.2724" Z="-88.99322" />
+						<MoveTo X="-71.54515" Y="132.4365" Z="-90.68638" />
+						<MoveTo X="-41.09809" Y="112.7262" Z="-87.71428" />
+						<MoveTo X="-29.45962" Y="104.8576" Z="-89.07166" />
+						<MoveTo X="-25.49983" Y="99.52939" Z="-89.73112" />
+						<MoveTo X="-24.2526" Y="97.56217" Z="-90.8" />
+						<MoveTo X="-30.07859" Y="79.72296" Z="-90.69164" />
+						<MoveTo X="-30.94009" Y="77.11034" Z="-90.42783" />
+						<MoveTo X="-22.14191" Y="98.19223" Z="-91.22717" />
+						<MoveTo X="-14.63241" Y="117.135" Z="-90.03101" />
+						<MoveTo X="-6.639287" Y="136.0395" Z="-89.14458" />
+						<MoveTo X="1.81332" Y="154.1764" Z="-88.49499" />
+						<MoveTo X="7.31289" Y="174.1023" Z="-86.34263" />
+						<MoveTo X="11.04024" Y="193.9176" Z="-84.44572" />
+						<MoveTo X="10.51138" Y="214.3502" Z="-83.98508" />
+						<MoveTo X="18.31919" Y="232.8837" Z="-84.90018" />
+						<MoveTo X="32.92858" Y="247.0225" Z="-87.33201" />
+						<MoveTo X="48.64552" Y="234.2261" Z="-88.74903" />
+						<MoveTo X="53.52885" Y="214.3008" Z="-89.24837" />
+						<MoveTo X="60.46181" Y="205.8295" Z="-91.57993" />
+						<MoveTo X="53.04169" Y="194.09" Z="-89.88055" />
+						<MoveTo X="41.80745" Y="176.872" Z="-88.67706" />
+						<MoveTo X="27.88647" Y="161.8387" Z="-89.74438" />
+						<MoveTo X="10.36083" Y="171.6175" Z="-86.69128" />
+						<MoveTo X="9.0744" Y="192.0594" Z="-84.42619" />
+						<MoveTo X="9.898765" Y="212.3684" Z="-84.01238" />
+						<MoveTo X="14.12864" Y="232.4058" Z="-84.76337" />
+						<MoveTo X="29.56455" Y="245.8621" Z="-87.04601" />
+						<MoveTo X="33.83073" Y="265.5967" Z="-87.72501" />
+						<MoveTo X="21.45341" Y="281.5237" Z="-87.67694" />
+						<MoveTo X="10.17194" Y="298.4629" Z="-87.3716" />
+						<MoveTo X="-0.2265372" Y="315.9781" Z="-89.18652" />
+						<MoveTo X="-19.39684" Y="309.2057" Z="-88.55144" />
+						<MoveTo X="-39.41696" Y="307.8717" Z="-89.79078" />
+						<MoveTo X="-57.79425" Y="298.6145" Z="-90.20776" />
+						<MoveTo X="-44.723" Y="283.6547" Z="-92.53545" />
+						<MoveTo X="-39.71056" Y="264.0518" Z="-92.74992" />
+						<MoveTo X="-59.86334" Y="263.1721" Z="-92.84425" />
+						<MoveTo X="-66.1064" Y="282.5919" Z="-91.67841" />
+						<MoveTo X="-61.05016" Y="296.5789" Z="-90.04153" />
+						<MoveTo X="-45.97957" Y="284.2761" Z="-92.61327" />
+						<MoveTo X="-38.16993" Y="265.2358" Z="-92.72944" />
+						<MoveTo X="-32.47032" Y="245.543" Z="-93.78784" />
+						<MoveTo X="-30.39034" Y="225.037" Z="-95.55383" />
+						<MoveTo X="-32.23152" Y="204.9151" Z="-96.632" />
+						<MoveTo X="-32.2523" Y="204.7132" Z="-96.62791" />
+						<MoveTo X="-21.50929" Y="188.8813" Z="-102.4145" />
+						<MoveTo X="-20.28646" Y="168.6116" Z="-104.5593" />
+						<MoveTo X="-26.08565" Y="149.0883" Z="-104.8312" />
+						<MoveTo X="-27.76398" Y="144.7233" Z="-104.8436" />
+						<MoveTo X="-20.99495" Y="167.1716" Z="-104.499" />
+						<MoveTo X="-20.41969" Y="168.7873" Z="-104.5447" />
+						<MoveTo X="-17.87174" Y="188.7369" Z="-103.3084" />
+						<MoveTo X="-17.57928" Y="208.6387" Z="-100.0079" />
+						<MoveTo X="-18.17099" Y="228.2298" Z="-104.1947" />
+						<MoveTo X="-19.83333" Y="248.6457" Z="-104.3595" />
+						<MoveTo X="-26.98022" Y="267.5128" Z="-104.3659" />
+						<MoveTo X="-29.15146" Y="270.6837" Z="-104.3288" />
+						<MoveTo X="-9.439845" Y="277.7814" Z="-106.4169" />
+						<MoveTo X="1.192418" Y="260.2414" Z="-106.4169" />
+						<MoveTo X="-0.6162829" Y="239.8464" Z="-106.2793" />
+						<MoveTo X="-2.744419" Y="219.4913" Z="-106.1611" />
+						<MoveTo X="-6.042657" Y="199.3539" Z="-106.1611" />
+						<MoveTo X="-5.448603" Y="179.1085" Z="-106.1611" />
+						<MoveTo X="-9.079034" Y="158.9618" Z="-106.1611" />
+						<MoveTo X="-18.37395" Y="141.1335" Z="-106.1611" />
+						<MoveTo X="-27.93781" Y="123.0058" Z="-106.1611" />
+						<MoveTo X="-41.60763" Y="108.2571" Z="-106.1611" />
+						<MoveTo X="-55.80534" Y="93.74877" Z="-106.1611" />
+						<MoveTo X="-35.98131" Y="95.84129" Z="-106.1611" />
+						<MoveTo X="-47.66378" Y="75.32914" Z="-106.1611" />
+						<MoveTo X="-60.08759" Y="59.15851" Z="-106.3903" />
+						<MoveTo X="-60.45475" Y="55.97378" Z="-106.4478" />
+						<MoveTo X="-61.39075" Y="73.20924" Z="-106.1616" />
+						<MoveTo X="-77.15828" Y="70.4272" Z="-106.1616" />
+						<MoveTo X="-96.76006" Y="66.03336" Z="-106.1852" />
+						<MoveTo X="-116.794" Y="69.50153" Z="-106.6133" />
+						<MoveTo X="-136.9428" Y="68.60329" Z="-106.383" />
+						<MoveTo X="-154.8675" Y="59.18358" Z="-106.4035" />
+						<MoveTo X="-171.1158" Y="46.68049" Z="-105.6762" />
+						<MoveTo X="-189.9768" Y="39.96898" Z="-105.2074" />
+						<MoveTo X="-201.5358" Y="23.33386" Z="-105.5733" />
+						<MoveTo X="-211.1429" Y="5.632956" Z="-105.3982" />
+						<MoveTo X="-225.8478" Y="-8.622575" Z="-105.5741" />
+						<MoveTo X="-245.5147" Y="-13.92615" Z="-105.6546" />
+						<MoveTo X="-265.1761" Y="-9.803925" Z="-105.6339" />
+						<MoveTo X="-283.0426" Y="0.2336433" Z="-105.6185" />
+						<MoveTo X="-300.3362" Y="10.9032" Z="-106.2168" />
+						<MoveTo X="-320.0412" Y="16.02509" Z="-105.9157" />
+						<MoveTo X="-339.8049" Y="17.69921" Z="-102.6082" />
+						<MoveTo X="-357.8787" Y="26.23929" Z="-100.5685" />
+						<MoveTo X="-355.5268" Y="46.16684" Z="-100.3485" />
+						<MoveTo X="-340.5019" Y="32.93375" Z="-99.55745" />
+						<MoveTo X="-324.4072" Y="44.92512" Z="-96.91743" />
+						<MoveTo X="-304.3391" Y="46.69064" Z="-93.18891" />
+						<MoveTo X="-286.8529" Y="36.14179" Z="-89.94082" />
+						<MoveTo X="-266.8307" Y="39.14955" Z="-87.84872" />
+						<MoveTo X="-247.1887" Y="44.73224" Z="-85.80428" />
+						<MoveTo X="-227.3924" Y="43.45193" Z="-82.38302" />
+						<MoveTo X="-207.1737" Y="46.47705" Z="-82.3335" />
+						<MoveTo X="-200.8646" Y="65.778" Z="-82.47111" />
+						<MoveTo X="-190.0703" Y="82.92635" Z="-79.84145" />
+						<MoveTo X="-170.8645" Y="88.96926" Z="-77.12679" />
+						<MoveTo X="-158.8989" Y="72.19614" Z="-75.96973" />
+						<MoveTo X="-148.6786" Y="54.38204" Z="-75.79889" />
+						<MoveTo X="-141.1915" Y="35.62429" Z="-75.20718" />
+						<MoveTo X="-140.1826" Y="15.13018" Z="-74.18285" />
+						<MoveTo X="-146.5544" Y="-4.154051" Z="-75.43455" />
+						<MoveTo X="-153.505" Y="-23.39551" Z="-79.32473" />
+						<MoveTo X="-159.6637" Y="-42.9502" Z="-79.35735" />
+						<MoveTo X="-142.6449" Y="-53.8497" Z="-77.8093" />
+						<MoveTo X="-162.2845" Y="-58.07106" Z="-74.88854" />
+						<MoveTo X="-173.5071" Y="-73.82581" Z="-68.41198" />
+						<MoveTo X="-176.4011" Y="-94.16374" Z="-69.45721" />
+						<MoveTo X="-188.9063" Y="-110.3545" Z="-71.73238" />
+						<MoveTo X="-205.5385" Y="-122.1017" Z="-71.05904" />
+						<MoveTo X="-225.5935" Y="-126.4358" Z="-69.3098" />
+						<MoveTo X="-245.9229" Y="-123.8811" Z="-66.83772" />
+						<MoveTo X="-265.3857" Y="-118.1159" Z="-63.82684" />
+						<MoveTo X="-283.6643" Y="-109.2438" Z="-60.51439" />
+						<MoveTo X="-299.3138" Y="-96.02113" Z="-57.9682" />
+						<MoveTo X="-311.9532" Y="-80.25545" Z="-57.02559" />
+						<MoveTo X="-315.8302" Y="-60.22052" Z="-59.34562" />
+						<MoveTo X="-311.439" Y="-40.38883" Z="-60.37816" />
+						<MoveTo X="-301.1958" Y="-22.59584" Z="-60.38532" />
+						<MoveTo X="-294.962" Y="-7.791349" Z="-58.82622" />
+						<MoveTo X="-309.2078" Y="-41.22727" Z="-60.31507" />
+						<MoveTo X="-313.1623" Y="-61.29454" Z="-59.67719" />
+						<MoveTo X="-310.412" Y="-81.43291" Z="-57.12823" />
+						<MoveTo X="-298.1798" Y="-97.7401" Z="-58.05374" />
+						<MoveTo X="-280.5818" Y="-107.9155" Z="-61.2261" />
+						<MoveTo X="-263.3353" Y="-117.8877" Z="-64.18717" />
+						<MoveTo X="-244.176" Y="-124.4058" Z="-67.07273" />
+						<MoveTo X="-224.1063" Y="-126.1108" Z="-69.46147" />
+						<MoveTo X="-204.8039" Y="-119.9514" Z="-71.09042" />
+						<MoveTo X="-188.2516" Y="-107.9352" Z="-71.65923" />
+						<MoveTo X="-176.6406" Y="-91.51926" Z="-68.7731" />
+						<MoveTo X="-170.3885" Y="-72.2057" Z="-69.18946" />
+						<MoveTo X="-163.4451" Y="-54.56715" Z="-75.71877" />
+						<MoveTo X="-156.1734" Y="-36.09486" Z="-80.27257" />
+						<MoveTo X="-148.9441" Y="-17.03629" Z="-77.56442" />
+						<MoveTo X="-144.2576" Y="2.863521" Z="-74.8002" />
+						<MoveTo X="-139.5945" Y="22.66383" Z="-74.58125" />
+						<MoveTo X="-140.7267" Y="42.96253" Z="-75.3356" />
+						<MoveTo X="-151.0877" Y="60.59283" Z="-75.82841" />
+						<MoveTo X="-160.9844" Y="78.28138" Z="-76.05746" />
+						<MoveTo X="-175.6534" Y="91.7893" Z="-78.1929" />
+						<MoveTo X="-194.0172" Y="84.14439" Z="-80.27286" />
+						<MoveTo X="-204.7607" Y="67.23778" Z="-82.45748" />
+						<MoveTo X="-219.0863" Y="52.94614" Z="-82.34264" />
+						<MoveTo X="-238.8662" Y="49.5872" Z="-83.81006" />
+						<MoveTo X="-257.446" Y="42.55959" Z="-86.97976" />
+						<MoveTo X="-276.6307" Y="35.26707" Z="-88.62853" />
+						<MoveTo X="-294.2526" Y="44.77222" Z="-91.68799" />
+						<MoveTo X="-312.1233" Y="53.46383" Z="-94.70311" />
+						<MoveTo X="-332.377" Y="51.03326" Z="-97.45275" />
+						<MoveTo X="-344.1064" Y="34.73748" Z="-99.56866" />
+						<MoveTo X="-331.1645" Y="19.30866" Z="-104.099" />
+						<MoveTo X="-312.3867" Y="12.39481" Z="-106.2701" />
+						<MoveTo X="-292.8537" Y="5.440542" Z="-105.6613" />
+						<MoveTo X="-275.0393" Y="-4.336648" Z="-106.7141" />
+						<MoveTo X="-255.8883" Y="-10.36475" Z="-105.6814" />
+						<MoveTo X="-235.5374" Y="-11.18195" Z="-105.6582" />
+						<MoveTo X="-215.7317" Y="-16.26083" Z="-105.6224" />
+						<MoveTo X="-195.4835" Y="-13.39712" Z="-106.0909" />
+						<MoveTo X="-179.291" Y="-1.567868" Z="-106.3091" />
+						<MoveTo X="-160.5752" Y="5.891149" Z="-105.9366" />
+						<MoveTo X="-153.0679" Y="24.73725" Z="-106.2711" />
+						<MoveTo X="-158.3147" Y="44.76707" Z="-106.76" />
+						<MoveTo X="-151.6785" Y="63.80458" Z="-106.358" />
+						<MoveTo X="-132.3195" Y="69.86664" Z="-106.3791" />
+						<MoveTo X="-112.144" Y="69.91039" Z="-106.4922" />
+						<MoveTo X="-91.97301" Y="65.14888" Z="-106.1616" />
+						<MoveTo X="-75.96137" Y="77.88805" Z="-106.1616" />
+						<MoveTo X="-60.14999" Y="90.87469" Z="-106.1616" />
+						<MoveTo X="-45.47745" Y="105.0285" Z="-106.1616" />
+						<MoveTo X="-32.79028" Y="121.1614" Z="-106.1616" />
+						<MoveTo X="-22.11035" Y="138.5287" Z="-106.1616" />
+						<MoveTo X="-13.07605" Y="157.1365" Z="-106.1616" />
+						<MoveTo X="-8.292012" Y="176.7047" Z="-106.1616" />
+						<MoveTo X="-6.400225" Y="197.3241" Z="-106.1616" />
+						<MoveTo X="-4.930843" Y="217.5564" Z="-106.1616" />
+						<MoveTo X="-5.795998" Y="224.5592" Z="-106.1616" />
+						<MoveTo X="-8.974605" Y="214.6738" Z="-106.1616" />
+						
+					<!-- Profile message - Enabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Enabling combat." 
+										LogColor="Gold" />
+
+					<!-- enable combat -->
+					<EnableBehavior Name="Combat" />	
+					
+					<MoveTo X="-8.974605" Y="214.6738" Z="-106.1616" />
+
+					<!-- Profile message - Disabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Disabling combat." 
+										LogColor="Gold" />
+					
+					<!-- DisableBehavior - Combat -->
+					<DisableBehavior Name="Combat" />
+					
+						<MoveTo X="-15.78955" Y="265.4492" Z="-106.4169" />
+						<MoveTo X="-27.09355" Y="282.838" Z="-106.4169" />
+						<MoveTo X="-37.869" Y="299.7356" Z="-106.4169" />
+						<MoveTo X="-53.33327" Y="312.7968" Z="-106.4221" />
+						<MoveTo X="-77.28635" Y="327.6127" Z="-106.1616" />
+						<MoveTo X="-74.61169" Y="343.6121" Z="-106.1615" />
+						<MoveTo X="-69.81438" Y="363.2195" Z="-106.2677" />
+						<MoveTo X="-71.20749" Y="383.7509" Z="-105.8151" />
+						<MoveTo X="-77.98994" Y="402.6116" Z="-107.6854" />
+						<MoveTo X="-73.06161" Y="422.1913" Z="-106.6127" />
+						<MoveTo X="-54.84221" Y="432.4208" Z="-105.6946" />
+						<MoveTo X="-39.14036" Y="446.1407" Z="-104.6004" />
+						<MoveTo X="-23.09393" Y="457.9695" Z="-99.14294" />
+						<MoveTo X="-6.256872" Y="467.672" Z="-92.38454" />
+						<MoveTo X="13.27292" Y="471.6247" Z="-88.5764" />
+						<MoveTo X="27.84722" Y="457.0182" Z="-86.34554" />
+						<MoveTo X="30.78375" Y="429.6602" Z="-82.93761" />
+						<MoveTo X="17.94002" Y="436.0238" Z="-81.2268" />
+						<MoveTo X="4.822774" Y="454.8038" Z="-77.63119" />
+						<MoveTo X="0.211825" Y="447.6989" Z="-75.13891" />
+						<MoveTo X="6.215102" Y="434.8811" Z="-72.81208" />
+						<MoveTo X="-1.361587" Y="418.461" Z="-66.58492" />
+						<MoveTo X="-26.49936" Y="423.2625" Z="-60.76123" />
+						<MoveTo X="-33.20145" Y="414.3039" Z="-60.26309" />
+						<MoveTo X="-43.62446" Y="396.6971" Z="-59.88469" />
+						<MoveTo X="-45.85612" Y="376.7961" Z="-59.99923" />
+						<MoveTo X="-17.50874" Y="369.6222" Z="-59.79112" />
+						<MoveTo X="-17.61543" Y="385.341" Z="-60.23713" />
+						<MoveTo X="-7.380016" Y="380.5868" Z="-59.73604" />
+						<MoveTo X="7.425873" Y="394.4564" Z="-59.61403" />
+						<MoveTo X="27.7637" Y="390.4855" Z="-59.27389" />
+						<MoveTo X="47.37138" Y="396.4638" Z="-61.31778" />
+						<MoveTo X="64.15268" Y="407.8867" Z="-63.68895" />
+						<MoveTo X="69.41999" Y="427.6099" Z="-64.13721" />
+						<MoveTo X="60.17511" Y="446.0973" Z="-64.70313" />
+						<MoveTo X="51.62378" Y="464.282" Z="-65.41715" />
+						<MoveTo X="42.27665" Y="482.3251" Z="-65.31512" />
+						<MoveTo X="33.15907" Y="500.2491" Z="-61.1963" />
+						<MoveTo X="21.2515" Y="529.111" Z="-56.98517" />
+						<MoveTo X="7.008275" Y="517.5527" Z="-57.12908" />
+						<MoveTo X="-6.295315" Y="502.3751" Z="-56.1544" />
+						<MoveTo X="-21.11397" Y="488.6292" Z="-54.94327" />
+						<MoveTo X="-33.39382" Y="472.4083" Z="-53.90336" />
+						<MoveTo X="-53.48546" Y="473.754" Z="-57.2364" />
+						<MoveTo X="-72.42393" Y="477.9793" Z="-63.83698" />
+						<MoveTo X="-88.12806" Y="466.6438" Z="-69.23745" />
+						<MoveTo X="-107.0264" Y="458.7943" Z="-71.90508" />
+						<MoveTo X="-110.4708" Y="439.0609" Z="-73.03948" />
+						<MoveTo X="-116.2486" Y="429.8482" Z="-72.64239" />
+						<MoveTo X="-124.3197" Y="405.2759" Z="-72.74611" />
+						<MoveTo X="-144.7891" Y="409.98" Z="-72.6844" />
+						<MoveTo X="-153.1607" Y="417.2497" Z="-72.66648" />
+						<MoveTo X="-118.6774" Y="419.863" Z="-72.7491" />
+						<MoveTo X="-111.27" Y="446.5121" Z="-72.67807" />
+						<MoveTo X="-86.78979" Y="466.1757" Z="-69.06179" />
+						<MoveTo X="-70.9092" Y="472.0704" Z="-64.66934" />
+						<MoveTo X="-52.17018" Y="477.9824" Z="-56.94809" />
+						<MoveTo X="-34.3546" Y="486.4625" Z="-53.63092" />
+						<MoveTo X="-14.45762" Y="491.4631" Z="-55.7051" />
+						<MoveTo X="5.56506" Y="493.0945" Z="-57.34721" />
+						<MoveTo X="18.83552" Y="508.6921" Z="-58.20925" />
+						<MoveTo X="27.40164" Y="526.9741" Z="-57.28511" />
+						<MoveTo X="32.0102" Y="507.493" Z="-59.48333" />
+						<MoveTo X="36.06233" Y="487.8113" Z="-64.74094" />
+						<MoveTo X="44.08385" Y="469.3593" Z="-65.84049" />
+						<MoveTo X="53.42347" Y="450.9564" Z="-65.27496" />
+						<MoveTo X="69.11823" Y="427.9761" Z="-64.17358" />
+						<MoveTo X="62.47556" Y="416.3576" Z="-63.71891" />
+						<MoveTo X="60.0872" Y="406.367" Z="-63.64789" />
+						<MoveTo X="48.29839" Y="412.7419" Z="-64.26271" />
+						<MoveTo X="34.92303" Y="398.5219" Z="-59.69318" />
+						<MoveTo X="25.15625" Y="401.75" Z="-59.79424" />
+						<MoveTo X="16.02219" Y="391.7363" Z="-59.35877" />
+						<MoveTo X="-3.849434" Y="388.4398" Z="-59.78518" />
+						<MoveTo X="-32.4203" Y="425.149" Z="-59.42012" />
+						<MoveTo X="-3.27119" Y="418.3863" Z="-66.22556" />
+						<MoveTo X="5.666956" Y="437.7461" Z="-73.74577" />
+						<MoveTo X="4.861853" Y="442.1546" Z="-74.88028" />
+						<MoveTo X="12.8479" Y="451.7771" Z="-79.74179" />
+						<MoveTo X="30.3026" Y="442.9922" Z="-84.78296" />
+						<MoveTo X="28.57839" Y="461.3581" Z="-86.43504" />
+						<MoveTo X="6.768717" Y="475.4892" Z="-89.18295" />
+						<MoveTo X="-19.75855" Y="460.8098" Z="-98.0784" />
+						<MoveTo X="-61.06774" Y="421.1778" Z="-106.3236" />
+						<MoveTo X="-77.37061" Y="332.5689" Z="-106.1614" />
+						<MoveTo X="-73.66046" Y="323.4745" Z="-106.1614" />
+						<MoveTo X="-35.04015" Y="306.5195" Z="-106.418" />
+						<MoveTo X="-27.63673" Y="283.8257" Z="-106.418" />
+						<MoveTo X="-14.83686" Y="268.612" Z="-106.417" />
+						<MoveTo X="-11.64153" Y="251.2964" Z="-106.4053" />
+						<MoveTo X="-8.610621" Y="220.0208" Z="-106.1623" />
+						<MoveTo X="-8.339139" Y="198.088" Z="-106.1623" />
+						<MoveTo X="-9.213695" Y="178.6422" Z="-106.1623" />
+						
+					<!-- Profile message - Enabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Enabling combat." 
+										LogColor="Gold" />
+
+					<!-- enable combat -->
+					<EnableBehavior Name="Combat" />
+					
+					<CustomBehavior File="Message" 
+									Text="Tagging RAFs." 
+									LogColor="Fuchsia" />
+										
+					<!-- Tag rafs -->
+					<MoveTo X="-153.1192" Y="121.2448" Z="-75.33085" />
+					
+					<!-- If we are high enough to go to the next instance, do so -->
+					<CustomBehavior File="Misc\LoadProfileOn" 
+									MinLevel="17" 
+									ProfileName="[QO-N][17-25]_blackfathom-deeps.xml"  />
+					
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="5000" />
+				</If> <!-- Inside Wailing Caverns -->
+				
+				<!-- If we are inside Wailing Caverns, run out to reset -->
+				<If Condition="Me.ZoneId == 718">
+					<CustomBehavior File="Message" 
+									Text="Wailing Caverns detected. Running out to reset." 
+									LogColor="Fuchsia" />
+					
+					<!-- Run to the instance entrance -->
+					<MoveTo X="-158.441" Y="131.601" Z="-74.2552" />
+
+					<!-- Go through the portal -->
+					<CustomBehavior File="Misc\InInstance" X="-165.6319" Y="134.9559" Z="-73.44581" />
+					
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="15000" />
+									
+					<!-- Make sure we run to the right spot outside the portal -->
+					<MoveTo X="-738.462" Y="-2217.8" Z="16.66944" />	
+				</If> <!-- Inside Wailing Caverns -->
+				
+				<If Condition="Me.X &gt; -750 &amp;&amp; Me.X &lt; -700 &amp;&amp; Me.Y &lt; -2190 &amp;&amp; Me.Y &gt; -2240" >
+					<!-- First reset isn't enough to get a fresh instance if toons are still inside -->
+					<CustomBehavior File="Message" 
+									Text="Resetting instance, 1 of 2." 
+									LogColor="Fuchsia" />
+					
+					<CustomBehavior File="RunMacro" Macro="/script ResetInstances()" />
+					<CustomBehavior File="RunMacro" Macro="/script SetDungeonDifficultyID(1)" />
+					
+					<!-- Allow for an Honorbuddy pulse -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="200" />
+					
+					<!-- The second reset confirms we are safe to enter the instance -->
+					<CustomBehavior File="Message" 
+									Text="Resetting instance, 2 of 2." 
+									LogColor="Fuchsia" />
+					<CustomBehavior File="RunMacro" Macro="/script ResetInstances()" />
+					<CustomBehavior File="RunMacro" Macro="/script SetDungeonDifficultyID(1)" />
+					
+					<CustomBehavior File="Message" 
+									Text="Instance reset." 
+									LogColor="Fuchsia" />
+					
+					<!-- Make sure we have a huge pull range to get all mobs possible -->
+					<CustomBehavior File="UserSettings"
+									PullDistance="45" />
+					
+					<MoveTo X="-733.1425" Y="-2221.002" Z="17.3775" />
+					<MoveTo X="-730.9532" Y="-2237.13" Z="17.83195" />
+					<MoveTo X="-726.8771" Y="-2266.522" Z="14.56399" />
+					<MoveTo X="-721.996" Y="-2282.324" Z="16.48109" />
+					<MoveTo X="-707.9053" Y="-2277.512" Z="15.20878" />
+					<MoveTo X="-707.6799" Y="-2268.636" Z="14.33964" />
+					<MoveTo X="-701.4159" Y="-2260.049" Z="15.78607" />
+					<MoveTo X="-689.6935" Y="-2251.837" Z="17.05974" />
+					<MoveTo X="-688.0182" Y="-2240.847" Z="17.14497" />
+					<MoveTo X="-697.5497" Y="-2236.409" Z="17.37995" />
+					<MoveTo X="-704.6389" Y="-2243.184" Z="17.01747" />
+					<MoveTo X="-720.8867" Y="-2253.975" Z="15.35637" />
+					<MoveTo X="-724.9947" Y="-2238.683" Z="16.59282" />
+					<MoveTo X="-719.3188" Y="-2220.112" Z="17.76496" />
+					<MoveTo X="-715.3535" Y="-2203.146" Z="22.48803" />
+					<MoveTo X="-701.8679" Y="-2193.814" Z="27.24336" />
+					<MoveTo X="-685.6509" Y="-2191.349" Z="34.09104" />
+					<MoveTo X="-710.4796" Y="-2197.513" Z="23.90433" />
+					<MoveTo X="-718.0719" Y="-2207.895" Z="21.15666" />
+					<MoveTo X="-720.9946" Y="-2227.718" Z="16.85107" />
+					<MoveTo X="-713.558" Y="-2229.422" Z="17.94413" />
+					
+					<!-- run back into the box -->
+					<MoveTo X="-738.462" Y="-2217.8" Z="16.66925" />	
+					
+					<!-- set pull distance back to normal -->
+					<CustomBehavior File="UserSettings" 
+									PullDistance="25" />	
+				</If> <!-- In box -->
+			</While> <!-- Infinite loop -->
+		</If> <!-- Booster -->
+		
+		<!-- *******************************************************  RAF Toons ************************************************************** -->
+		<If Condition="Me.Level &lt;= 84">
+			<CustomBehavior File="Message" 
+							Text="We are a RAF." 
+							LogColor="Fuchsia" />
+			
+			<!-- RAF UserSettings -->
+			<CustomBehavior File="UserSettings"
+							GroundMountFarmingMode="False"
+							HarvestHerbs="False"
+							HarvestMinerals="False"
+							KillBetweenHotspots="True"
+							LogoutForInactivity="False"
+							LogoutInactivityUseForceQuit="False"
+							LootMobs="True"
+							LootRadius="15"
+							MountName=""
+							NinjaSkin="False"
+							RessAtSpiritHealers="False"
+							SkinMobs="False"
+							UseMount="True" 
+							UseRandomMount="False" />
+							
+			<!-- Infinite loop -->
+			<While Condition="true" >	
+				<!-- If we are inside Wailing Caverns, run out to reset -->
+				<If Condition="Me.ZoneId == 718">
+					<CustomBehavior File="Message" 
+									Text="Wailing Caverns detected. Running out." 
+									LogColor="Fuchsia" />
+					
+					<!-- Run to the instance entrance -->
+					<MoveTo X="-158.441" Y="131.601" Z="-74.2552" />
+
+					<!-- Go through the portal -->
+					<CustomBehavior File="Misc\InInstance" X="-165.6319" Y="134.9559" Z="-73.44581" />
+					
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="15000" />
+									
+					<!-- Make sure we run to the right spot outside the portal -->
+					<MoveTo X="-738.462" Y="-2217.8" Z="16.66944" />	
+				</If>	
+				
+				<!-- If we are not in the box, load the movement profile -->
+				<If Condition="Me.X &lt; -748.462 || Me.X &gt; -728.462 || Me.Y &gt; -2207.8 || Me.Y &lt; -2227.8" >
+					<CustomBehavior File="Message"
+									Text="Distance from portal is not within our proximity, initializing movement to get there." 
+									LogColor="Fuchsia" />
+									
+					<CustomBehavior File="LoadProfile" 
+									ProfileName="Movement\[QO-H-M][10-17]_wailing-caverns" />
+				</If> <!-- Not in box -->
+			
+				<!-- If we are in the box -->
+				<If Condition="Me.X &gt; -748.462 &amp;&amp; Me.X &lt; -728.462 &amp;&amp; Me.Y &lt; -2207.8 &amp;&amp; Me.Y &gt; -2227.8" >
+					<CustomBehavior File="Message" 
+									Text="Portal detected nearby." 
+									LogColor="Fuchsia" />	
+							
+					<While Condition="Me.ZoneId != 718">
+						<!-- Make sure we run to the right spot outside the portal -->
+						<MoveTo X="-738.462" Y="-2217.8" Z="16.66925" />	
+					
+						<!-- Go inside the Wailing Caverns portal -->
+						<CustomBehavior File="Misc\InInstance" X="-755.4048" Y="-2216.026" Z="15.71743" />
+					
+						<CustomBehavior File="Message" 
+									Text="Waiting for the dungeon to load." 
+									LogColor="Fuchsia" />
+									
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000" 
+										VariantTime="20000" />	
+							
+						<If Condition="Me.ZoneId != 718">
+							<CustomBehavior File="Message" 
+											Text="We are locked out. Waiting and trying again." 
+											LogColor="Fuchsia" />
+						</If> <!-- Locked -->
+					</While> <!-- While we aren't in the instance -->
+				</If> <!-- In box -->		
+				
+				<!-- If we are inside Wailing Caverns and have checked our reset -->
+				<If Condition="Me.ZoneId == 718">
+					<CustomBehavior File="Message" 
+									Text="Avoiding instance lock from this point, do not touch." 
+									LogColor="Yellow" />	
+				
+					<!-- Entrance -->
+					<MoveTo X="-158.441" Y="131.601" Z="-74.2552" />
+
+					<!-- Disable combat -->
+					<DisableBehavior Name="Combat" />
+					
+					<!-- Run to quest givers -->
+					<MoveTo X="-153.1192" Y="121.2448" Z="-75.33085" />
+					
+					<!-- Begin the instance once all party members are within range  -->
+					<CustomBehavior File="Misc\LoadProfileOn" 
+									CheckRange="2" />
+									
+					<CustomBehavior File="Misc\InstanceTimer" 
+									Timer="Start" />	
+									
+					<CustomBehavior File="Message" 
+									Text="Wailing Caverns initialized."  
+									LogColor="Fuchsia" />
+								
+					<CustomBehavior File="WaitTimer"
+									WaitTime="60000" />
+						
+					<!-- Run back out the instance when the booster runs next to us  -->
+					<CustomBehavior File="Misc\LoadProfileOn" 
+									CheckRange="5" />
+									
+					<!-- If we are high enough to go to the next instance, do so -->
+					<CustomBehavior File="Misc\LoadProfileOn" 
+									MinLevel="17" 
+									ProfileName="[QO-N][17-25]_blackfathom-deeps.xml"  />
+									
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="120000" />
+
+					<!-- enableable combat -->
+					<EnableBehavior Name="Combat" />
+				</If> <!-- Wailing Caverns -->
+			</While> <!-- Infinite loop -->
+		</If> <!-- RAF -->
+	</QuestOrder>
+</HBProfile>
+

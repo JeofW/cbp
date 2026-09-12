@@ -1,0 +1,179 @@
+<HBProfile>
+<Name>[QO-N][Rogue-Pick-Pocket][Flying][80]_isle-of-quel'danas_repair-mail</Name> 
+
+<MinLevel>80</MinLevel> 
+<MaxLevel>101</MaxLevel>
+<MinDurability>-1</MinDurability>
+<MinFreeBagSlots>-1</MinFreeBagSlots>
+
+<SellGrey>True</SellGrey>
+<SellWhite>False</SellWhite>
+<SellGreen>False</SellGreen>
+<SellBlue>False</SellBlue>
+<SellPurple>False</SellPurple>
+
+<MailGrey>False</MailGrey>
+<MailWhite>True</MailWhite>
+<MailGreen>True</MailGreen>
+<MailBlue>True</MailBlue>
+<MailPurple>True</MailPurple>
+<Vendors>
+</Vendors>
+	
+<Mailboxes>
+</Mailboxes>
+
+	<QuestOrder>
+	
+		<!-- While our level is >= 80 and < 100 -->
+		<While Condition="Me.Level &gt;= 80 &amp;&amp; Me.Level &lt; 100" >
+				
+			<!-- Profile message - Repair\Mail procedures initialized -->
+			<CustomBehavior File="Message" 
+							Text="Procédures de réparations/ postales initialisés." 
+							LogColor="Orange" />
+			
+		 	<!-- UserSettings -->
+			<CustomBehavior File="UserSettings"
+							FindMountAutomatically="True"
+							GroundMountFarmingMode="False"
+							HarvestHerbs="False"
+							HarvestMinerals="False"
+							KillBetweenHotspots="True"
+							LogoutForInactivity="False"
+							LogoutInactivityUseForceQuit="False"
+							LootMobs="True"
+							LootRadius="25"
+							MountName=""
+							NinjaSkin="False"
+							RessAtSpiritHealers="False"
+							SkinMobs="False"
+							UseMount="True" 
+							UseRandomMount="False" />
+			
+			<!-- If our free bag slots are < 4 or our durability < 30% -->		
+			<If Condition="(Me.FreeBagSlots &lt;= 4) || (Me.LowestDurabilityPercent &lt;= 0.3)" >
+		
+				<!-- Have hearthstone -->
+				<If Condition="HasItem(6948)">
+				
+					<!-- Profile message - Using Hearthstone -->
+					<CustomBehavior File="Message" 
+									Text="Utiliser notre pierre de foyer." 
+									LogColor="Fuchsia" />
+									
+					<!-- Custom Behavior - Using Hearthstone -->				
+					<CustomBehavior File="Misc\RunLua" 
+									Lua="UseItemByName(6948)" 
+									WaitTime="1000" />
+									
+					<!-- Wait timer - wait 20 seconds - delay -->				
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="20000" />
+									
+				</If> <!-- Have hearthstone -->
+			
+				<!-- Have Innkeeper's Daughter -->
+				<If Condition="HasItem(64488)">
+				
+					<!-- Profile message - Innkeeper's Daughter -->
+					<CustomBehavior File="Message" 
+									Text="La fille de l'aubergiste." 
+									LogColor="Fuchsia" />
+										
+					<!-- Custom Behavior - Innkeeper's Daughter -->					
+					<CustomBehavior File="Misc\RunLua" 
+									Lua="UseItemByName(64488)" 
+									WaitTime="1000" />
+						
+					<!-- Wait timer - wait 20 seconds - delay -->				
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="20000" />
+									
+				</If> <!-- Have Innkeeper's Daughter -->
+
+				<!-- If we are in Sun's Reach -->
+				<If Condition="Me.X &gt; 12709.04 &amp;&amp; Me.X &lt; 12859.32 &amp;&amp; Me.Y &gt; -7017.926 &amp;&amp; Me.Y &lt; -6825.634" >
+					
+					<!-- Profile message - We successfully hearthed, moving to the repair vendor -->
+					<CustomBehavior File="Message" 
+									Text="Nous avons utlisé la pierre de foyer avec succès, bougez vers le vendeur de réparation." 
+									LogColor="Fuchsia" />	
+
+					<!-- Repair vendor -->				
+					<SetVendor>
+						<Vendors>
+							<Vendor Name="Smith Hauthaa" 
+									Entry="25046" 
+									Type="Repair" 
+									X="12664.15" Y="-6984.873" Z="14.54476" />
+						</Vendors>
+					</SetVendor>	
+					
+					<SetMailbox>
+						<Mailboxes>
+							<Mailbox X="12789.94" Y="-6966.073" Z="15.28112" />
+						</Mailboxes>
+					</SetMailbox>	
+					
+					<!-- Vendor settings -->
+					<CustomBehavior File="ForceSetVendor" 
+									DoMail="True" 
+									DoRepair="True" 
+									DoSell="True" 
+									DoTrain="False" />
+							
+					<!-- Else we are not in Sun's Reach -->
+					<Else>
+					
+						<!-- Profile message - We did not successfully hearth, moving to the repair vendor --> 
+						<CustomBehavior File="Message" 
+										Text="Nous n'avons pas réussi à utiliser la pierre de foyer, bougez vers le vendeur de réparation." 
+										LogColor="Fuchsia" />
+					
+						<!-- Move to - Sun's Reach repair vendor -->
+						<MoveTo X="12663.08" Y="-6981.885" Z="14.55773" />
+							
+						<!-- Repair vendor -->				
+						<SetVendor>
+							<Vendors>
+								<Vendor Name="Smith Hauthaa" 
+										Entry="25046" 
+										Type="Repair" 
+										X="12664.15" Y="-6984.873" Z="14.54476" />
+							</Vendors>
+						</SetVendor>	
+						
+						<SetMailbox>
+							<Mailboxes>
+								<Mailbox X="12789.94" Y="-6966.073" Z="15.28112" />
+							</Mailboxes>
+						</SetMailbox>	
+						
+						<!-- Vendor settings -->
+						<CustomBehavior File="ForceSetVendor" 
+										DoMail="True" 
+										DoRepair="True" 
+										DoSell="True" 
+										DoTrain="False" />
+					
+					</Else>	<!-- Else we are not in Longying Outpost -->		
+							
+				</If>	<!-- If we are in Sun's Reach -->
+
+			</If>	<!-- If our free bag slots are < 4 or our durability < 30% -->	
+			
+			<!-- If our free bag slots are > 4 and our durability > 30% -->		
+			<If Condition="(Me.FreeBagSlots &gt; 4) &amp;&amp; (Me.LowestDurabilityPercent &gt; 0.3)" >
+			
+				<!-- Load profile - [Chinese][QO-N-M][Rogue-Pick-Pocket][Flying][90]_sra'vess -->
+				<CustomBehavior File="LoadProfile" 
+								ProfileName="..\..\[QO-N][Rogue-Pick-Pocket][Flying][80]_isle-of-quel'danas" />
+			
+			</If>	<!-- If our free bag slots are > 4 and our durability > 30% -->
+			
+		</While>	<!-- While our level is >= 80 and < 100 -->
+			
+	</QuestOrder>
+	
+</HBProfile> 

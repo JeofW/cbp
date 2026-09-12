@@ -1,0 +1,338 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+	<Name>[QO-N][10-X-Hr][Trash-Farm][90]_botanist_molten-core</Name>
+   
+	<MinLevel>1</MinLevel>
+	<MaxLevel>91</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	
+	<MailGrey>False</MailGrey>
+	<MailWhite>False</MailWhite>
+	<MailGreen>True</MailGreen>
+	<MailBlue>True</MailBlue>
+	<MailPurple>True</MailPurple>
+   
+	<SellGrey>True</SellGrey>
+	<SellWhite>True</SellWhite>
+	<SellGreen>False</SellGreen>
+	<SellBlue>False</SellBlue>
+	<SellPurple>True</SellPurple>
+   
+	<TargetElites>True</TargetElites>
+	
+	<AvoidMobs>	 
+		<Mob Name="Summon Enabler Stalker" Entry="53488" />
+	</AvoidMobs>
+	
+	<Blackspots>
+		<Blackspot X="895.1125" Y="-580.083" Z="-202.7817" Radius="35" />
+		<Blackspot X="741.8684" Y="-1198.659" Z="-119.1568" Radius="40" />
+		<Blackspot X="796.7194" Y="-994.7185" Z="-206.949" Radius="20" />
+	</Blackspots>
+
+	<Mailboxes></Mailboxes>
+ 
+	<Vendors></Vendors>
+	
+	<ProtectedItems></ProtectedItems>
+
+	<Factions></Factions>
+	
+	<QuestOrder>
+
+		<!-- UserSettings -->
+		<CustomBehavior File="UserSettings"
+						MountDistance="25"
+						FindMountAutomatically="True"
+						GroundMountFarmingMode="False"
+						HarvestHerbs="False"
+						HarvestMinerals="False"
+						KillBetweenHotspots="True"
+						LogoutForInactivity="False"
+						LogoutInactivityUseForceQuit="False"
+						LootMobs="True"
+						LootRadius="65"
+						MountName=""
+						NinjaSkin="False"
+						RessAtSpiritHealers="False"
+						SkinMobs="False"
+						UseMount="True" 
+						UseRandomMount="False" />
+
+		<!-- If we are inside Molten Core -->
+		<If Condition="Me.MapId == 409" >
+			
+			<!-- CustomBehavior - Message - You started the bot with us in Molten Core. Running out to reset the raid -->
+			<CustomBehavior File="Message" 
+							Text="You started the bot with us in Molten Core. Running out to reset the raid." 
+							LogColor="Gold" />
+			
+			<!-- MoveTo - zone in location -->
+			<MoveTo X="1092.479" Y="-467.0182" Z="-105.0071" />
+				
+			<!-- CustomBehavior - Misc\InInstance -->	
+			<CustomBehavior File="Misc\InInstance" 
+							X="1098.734" Y="-465.0661" Z="-104.5405" />	
+			
+			<!-- CustomBehavior - WaitTimer -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="12000"  />	
+			
+			<!-- CustomBehavior - Message - We have exited Molten Core -->					
+			<CustomBehavior File="Message" 
+							Text="We have exited Molten Core." 
+							LogColor="Gold" />
+			
+			<!-- Move to Lothos -->					
+			<MoveTo X="-7508.32" Y="-1039.74" Z="180.9114" />
+			
+		</If>	<!-- If we are inside Molten Core -->		
+		
+		<!-- If we are not next to Lothos -->
+		<If Condition="Me.X &gt; -7498.32 || Me.X &lt; -7518.32 || Me.Y &gt; -1029.495 || Me.Y &lt; -1049.495 || Me.Z &gt; 185" >
+			
+			<!-- Custom behavior - LoadProfile - [QO-N-M][10-X-Hr][Trash-Farm][90]_botanist_molten-core -->
+			<CustomBehavior File="LoadProfile" 
+							ProfileName="Movement\[QO-N-M][10-X-Hr][Trash-Farm][90]_botanist_molten-core" />
+			
+		</If>	<!-- If we are not in the Molten Core instance box, load the movement profile -->
+
+		<!-- While our free bags slots is greater than 15 and our gear's lowest durability is greater than 30 % -->
+		<While Condition="(Me.FreeBagSlots &gt; 15) &amp;&amp; (Me.LowestDurabilityPercent &gt; 0.3)" >
+
+			<!-- If we are inside Molten Core -->
+			<If Condition="Me.MapId == 409" >
+				
+				<!-- CustomBehavior - Message - Exiting Molten Core -->
+				<CustomBehavior File="Message" 
+								Text="Exiting Molten Core." 
+								LogColor="Gold" />
+				
+				<!-- MoveTo - zone in location -->
+				<MoveTo X="1092.479" Y="-467.0182" Z="-105.0071" />
+					
+				<!-- CustomBehavior - Misc\InInstance -->	
+				<CustomBehavior File="Misc\InInstance" 
+								X="1098.734" Y="-465.0661" Z="-104.5405" />	
+				
+				<!-- CustomBehavior - WaitTimer -->
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="12000"  />	
+				
+				<!-- CustomBehavior - Message - We have exited Molten Core -->					
+				<CustomBehavior File="Message" 
+								Text="We have exited Molten Core." 
+								LogColor="Gold" />
+				
+				<!-- Move to Lothos -->					
+				<MoveTo X="-7508.32" Y="-1039.74" Z="180.9114" />
+				
+			</If>	<!-- If we are inside Molten Core -->
+		
+			<!-- If we are next to Lothos -->
+			<If Condition="Me.X &lt; -7498.32 &amp;&amp; Me.X &gt; -7518.32 &amp;&amp; Me.Y &lt; -1029.495 &amp;&amp; Me.Y &gt; -1049.495 &amp;&amp; Me.Z &lt; 185" >
+
+				<!-- If our hearthstone is not set to Iron Summit -->
+				<If Condition="Me.HearthstoneAreaId != 5628">
+			
+					<!-- Custom behavior - LoadProfile - [QO][10-X-Hr][Trash-Farm][90]_botanist_[set-hearth] -->
+					<CustomBehavior File="LoadProfile" 
+									ProfileName="Movement\Vendors\[QO][10-X-Hr][Trash-Farm][90]_botanist_[set-hearth]" />
+			
+				</If>	<!-- If our hearthstone is not set to Iron Summit -->
+				
+				<!-- Move to Lothos -->
+				<MoveTo X="-7508.32" Y="-1039.74" Z="180.9121" />
+				
+				<!-- CustomBehavior - RunMacro - ResetInstances	-->		
+				<CustomBehavior File="RunMacro" 
+								Macro="/script ResetInstances()" />	
+								
+				<!-- CustomBehavior - InteractWith - Lothos-->
+				<CustomBehavior File="InteractWith" 
+								MobId="14387" 
+								GossipOptions="1" 
+								NumOfTimes="1" 
+								X="-7508.632" Y="-1039.495" Z="180.9122" />
+								
+				<!-- CustomBehavior - WaitTimer -->
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="12000"  />
+		
+				<!-- If we are inside Molten Core -->
+				<If Condition="Me.MapId == 409" >
+
+					<!-- Move to - zone in location -->
+					<MoveTo X="1080" Y="-483" Z="-108" />
+				
+					<!--Profile message	- Deleting unwanted items from our bags -->				
+					<CustomBehavior File="Message" 
+									Text="Deleting unwanted items from our bags." 
+									LogColor="Orange" />
+
+					<!-- Morning Glory Dew -->
+					<CustomBehavior File="DeleteItems" 
+									Ids="8766" />
+									
+					<!-- Instance timer -->
+					<CustomBehavior File="Misc\InstanceTimer" 
+									Timer="Start" />				
+									
+					<!-- Profile message - Molten Core initialized -->			
+					<CustomBehavior File="Message" 
+									Text="Molten Core initialized."  
+									LogColor="Orange" />
+				
+					<!-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -->
+				
+					<!-- Profile message - Disabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Disabling combat." 
+										LogColor="Gold" />
+					
+					<!-- DisableBehavior - Combat -->
+					<DisableBehavior Name="Combat" />
+					
+					<MoveTo X="1107.488" Y="-523.5194" Z="-102.4456" />
+					<MoveTo X="1122.739" Y="-544.2302" Z="-107.2681" />
+					<MoveTo X="1171.747" Y="-563.05" Z="-112.6176" />
+					<MoveTo X="1140.565" Y="-583.305" Z="-112.9326" />
+					<MoveTo X="1209.022" Y="-631.3238" Z="-125.1191" />
+					<MoveTo X="1173.717" Y="-672.3179" Z="-128.7645" />
+					<MoveTo X="1146.329" Y="-648.8168" Z="-131.8563" />
+					<MoveTo X="1151.127" Y="-766.462" Z="-140.0642" />
+					<MoveTo X="1069.344" Y="-763.9103" Z="-151.627" />
+					<MoveTo X="1049.884" Y="-717.0928" Z="-154.5513" />
+					<MoveTo X="1099.998" Y="-665.1874" Z="-153.9546" />
+					<MoveTo X="1089.732" Y="-650.0986" Z="-154.2226" />
+
+					<!-- CustomBehavior -  message - Enabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Enabling combat." 
+										LogColor="Gold" />
+
+					<!-- enable combat -->
+					<EnableBehavior Name="Combat" />
+					
+					<!-- Wait timer - wait 10 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="10000" />
+
+					<!-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -->
+					
+					<!-- Profile message - Disabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Disabling combat." 
+										LogColor="Gold" />
+					
+					<!-- DisableBehavior - Combat -->
+					<DisableBehavior Name="Combat" />
+					
+					<MoveTo X="1019.93" Y="-754.0003" Z="-156.1299" />
+					<MoveTo X="1055.702" Y="-800.087" Z="-151.7849" />
+					<MoveTo X="1053.955" Y="-861.2562" Z="-159.311" />
+					<MoveTo X="956.8801" Y="-886.9951" Z="-174.167" />
+					
+					<!-- CustomBehavior -  message - Enabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Enabling combat." 
+										LogColor="Gold" />
+
+					<!-- enable combat -->
+					<EnableBehavior Name="Combat" />
+					
+					<!-- Wait timer - wait 10 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="10000" />
+
+					<!-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -->
+					
+					<!-- Profile message - Disabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Disabling combat." 
+										LogColor="Gold" />
+					
+					<!-- DisableBehavior - Combat -->
+					<DisableBehavior Name="Combat" />
+					
+					<MoveTo X="1011.53" Y="-675.3555" Z="-187.6132" />
+					<MoveTo X="986.3157" Y="-673.1135" Z="-195.6786" />
+					<MoveTo X="960.1671" Y="-656.3311" Z="-199.6863" />
+					<MoveTo X="889.9736" Y="-618.1478" Z="-200.1551" />
+					<MoveTo X="835.1667" Y="-622.9037" Z="-203.3452" />
+					<MoveTo X="759.3291" Y="-697.5734" Z="-212.6821" />
+					<MoveTo X="693.0594" Y="-553.3425" Z="-212.3137" />
+					<MoveTo X="764.3664" Y="-506.9882" Z="-212.7521" />
+					<MoveTo X="864.949" Y="-590.0022" Z="-203.5799" />
+					<MoveTo X="831.6591" Y="-611.2188" Z="-202.6279" />
+					
+					<!-- CustomBehavior -  message - Enabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Enabling combat." 
+										LogColor="Gold" />
+
+					<!-- enable combat -->
+					<EnableBehavior Name="Combat" />
+					
+					<!-- Wait timer - wait 10 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="10000" />
+
+					<!-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -->
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					<!-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -->
+					
+					<MoveTo X="974.8994" Y="-577.5766" Z="-202.5281" />
+					
+					<!-- CustomBehavior - Misc\InstanceTimer -  6 minutes and 40 seconds -->				
+					<CustomBehavior File="Misc\InstanceTimer" 
+									Timer="Check" 
+									WaitTime="400000" />
+					
+				</If>	<!-- If we are inside Molten Core -->
+				
+			</If>	<!-- If we are next to Lothos -->	
+				
+		</While>	<!-- While our free bags slots is greater than 15 and our gear's lowest durability is greater than 30 % -->	
+
+		<!-- If our free bags slots is less than 15 or our gear's lowest durability is less than 30 % -->
+		<If Condition="(Me.FreeBagSlots &lt; 15) || (Me.LowestDurabilityPercent &lt; 0.3)" > 
+			
+			<!-- Custom behavior - LoadProfile - [QO][10-X-Hr][Trash-Farm][90]_botanist_[repair-mail] -->
+			<CustomBehavior File="LoadProfile" 
+							ProfileName="Movement\Vendors\[QO][10-X-Hr][Trash-Farm][90]_botanist_[repair-mail]" />
+			
+		</If>	<!-- If our free bags slots is less than 15 or our gear's lowest durability is less than 30 % -->
+
+	</QuestOrder>
+
+</HBProfile>
+

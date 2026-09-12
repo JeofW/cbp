@@ -1,0 +1,234 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+	<Name>[QO-N][Rep-Grinding][Bloodsail-Buccaneers]</Name>
+   
+	<MinLevel>1</MinLevel>
+    <MaxLevel>115</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	
+	<MailGrey>False</MailGrey>
+	<MailWhite>False</MailWhite>
+	<MailGreen>False</MailGreen>
+	<MailBlue>True</MailBlue>
+	<MailPurple>True</MailPurple>
+   
+	<SellGrey>True</SellGrey>
+	<SellWhite>True</SellWhite>
+	<SellGreen>True</SellGreen>
+	<SellBlue>False</SellBlue>
+	<SellPurple>False</SellPurple>
+   
+	<TargetElites>True</TargetElites>
+	
+	<AvoidMobs>
+	</AvoidMobs>
+	
+	<Blackspots>
+	</Blackspots>
+
+	<Mailboxes>
+	</Mailboxes>
+ 
+	<Vendors>
+	</Vendors>
+
+	<Factions>
+	</Factions>
+	
+	<ProtectedItems>
+	</ProtectedItems>
+	
+	<QuestOrder>
+
+		<CustomBehavior File="UserSettings" 
+						LootMobs="True" 
+						HarvestHerbs="False" 
+						HarvestMinerals="False" 
+						PullDistance="25" 
+						KillBetweenHotspots="True" 
+						RessAtSpiritHealers="True" 
+						LootRadius="50" 
+						LogoutForInactivity="False" />
+		
+		
+		
+		
+		<!-- If we are in Eastern Kingdoms -->
+		<If Condition="Me.MapId == 0" >
+			
+			<!-- Profile message  - We are in Eastern Kingdoms -->	
+			<CustomBehavior File="Message" 
+							Text="We are in Eastern Kingdoms." 
+							LogColor="Orange" />
+
+			<!-- Infinite loop -->
+			<While Condition="true">
+				
+				<!-- If we are within 100 of the farming area -->
+				<If Condition="Me.Location.Distance(new WoWPoint(-2088.914, -2048.281, 3.499427)) &lt;= 100" >
+
+					<!-- Profile message - Moving to the farming location -->
+					<CustomBehavior File="Message" 
+									Text="Moving to the beginning of the route." 
+									LogColor="Fuchsia" />
+				
+					<!-- Custom behavior - UserSettings -->
+					<CustomBehavior File="UserSettings" 
+								UseMount="True"  />
+				
+					<!-- Fly to - farming location - hover point -->
+					<CustomBehavior File="FlyTo"
+									X="-2079.81" Y="-2074.396" Z="46.03708" />
+
+					<!-- CTM to - grounding at the farming location -->
+					<CustomBehavior File="MyCTM"				
+									X="-2088.914" Y="-2048.281" Z="3.499427" />
+
+					<!-- Custom behavior - ForcedDismount -->
+					<CustomBehavior File="ForcedDismount" />
+					
+					<!-- Profile message  - Checking our coordinates -->
+					<CustomBehavior File="Message" 
+									Text="Checking our coordinates." 
+									LogColor="Fuchsia" />
+
+					<!-- Custom behavior - UserSettings -->
+					<CustomBehavior File="UserSettings" 
+								UseMount="False"  />				
+									
+					<!-- Custom behavior - RunMacro - cleartarget -->
+					<CustomBehavior File="RunMacro" 
+									Macro="/cleartarget" 
+									NumOfTimes="1" 
+									WaitTime="0"/>
+					
+					<!-- Profile message  - We have reached the farming area. We will farm this location until you stop the bot -->	
+					<CustomBehavior File="Message" 
+									Text="We have reached the farming area. We will farm this location until you stop the bot." 
+									LogColor="Orange" />
+
+					<!-- While our reputation with Bloodsail Buccaneers is less than Honored -->
+					<While Condition="GetFactionReputation(87) &lt; 18001">
+						
+						<!-- If our empty bag slots > 4 and our lowest durability > 30 percent -->
+						<If Condition="(Me.FreeBagSlots &gt; 4) &amp;&amp; (Me.LowestDurabilityPercent &gt; 0.3)" >
+
+							<!-- Custom behavior - TargetAndMoveToMob - Shakes O'Breen -->
+							<CustomBehavior File="TargetAndMoveToMob"
+											MoveWithinMaxRangeOfMob="15"
+											TargetOnlyIfHealthPercentAbove="5"
+											WaitForNpcs="False"
+											MobId="2610" >		
+							</CustomBehavior>	<!-- Custom behavior - Shakes O'Breen -->
+
+							<!-- If our target is a Shakes O'Breen -->
+							<If Condition="(Me.CurrentTarget != null) &amp;&amp; (Me.CurrentTarget.Entry == 2610)">
+						
+								<!-- Profile message  - Engaging Shakes O'Breen -->	
+								<CustomBehavior File="Message" 
+												Text="Engaging a Shakes O'Breen." 
+												LogColor="Cyan" />
+								
+								<!-- CustomBehavior - Misc\RangedAttack-->
+								<CustomBehavior File="Misc\RangeAttack" />	
+
+								<!-- Custom behavior - TargetAndMoveToMob - Shakes O'Breen -->
+								<CustomBehavior File="TargetAndMoveToMob"
+												MoveWithinMaxRangeOfMob="3"
+												TargetOnlyIfHealthPercentAbove="5"
+												WaitForNpcs="False"
+												MobId="2610" >		
+								</CustomBehavior>	<!-- Custom behavior - Shakes O'Breen -->
+
+								<!-- CustomBehavior - RunMacro - /startattack -->					
+								<CustomBehavior File="RunMacro" 
+												Macro="/startattack"  
+												WaitTime="0"/>
+								
+								<!-- CustomBehavior - WaitTimer - wait 5 seconds - delay -->
+								<CustomBehavior File="WaitTimer" 
+												WaitTime="5000" />	
+
+								<!-- CustomBehavior - RunMacro - cleartarget -->					
+								<CustomBehavior File="RunMacro" 
+												Macro="/cleartarget"  
+												WaitTime="0"/>							
+												
+							</If>	<!-- If our target is Shakes O'Breen --> 
+
+							<!-- Custom behavior - TargetAndMoveToMob - Mate Nilzlix -->
+							<CustomBehavior File="TargetAndMoveToMob"
+											MoveWithinMaxRangeOfMob="15"
+											TargetOnlyIfHealthPercentAbove="5"
+											WaitForNpcs="False"
+											MobId="2767" >		
+							</CustomBehavior>	<!-- Custom behavior - Mate Nilzlix -->
+
+							<!-- If our target is a Mate Nilzlix -->
+							<If Condition="(Me.CurrentTarget != null) &amp;&amp; (Me.CurrentTarget.Entry == 2767)">
+						
+								<!-- Profile message  - Engaging Mate Nilzlix -->	
+								<CustomBehavior File="Message" 
+												Text="Engaging Mate Nilzlix." 
+												LogColor="Cyan" />
+								
+								<!-- CustomBehavior - Misc\RangedAttack-->
+								<CustomBehavior File="Misc\RangeAttack" />	
+
+								<!-- Custom behavior - TargetAndMoveToMob - Mate Nilzlix -->
+								<CustomBehavior File="TargetAndMoveToMob"
+												MoveWithinMaxRangeOfMob="3"
+												TargetOnlyIfHealthPercentAbove="5"
+												WaitForNpcs="False"
+												MobId="2767" >		
+								</CustomBehavior>	<!-- Custom behavior - Mate Nilzlix -->
+
+								<!-- CustomBehavior - RunMacro - /startattack -->					
+								<CustomBehavior File="RunMacro" 
+												Macro="/startattack"  
+												WaitTime="0"/>
+												
+								<!-- CustomBehavior - WaitTimer - wait 5 seconds - delay -->
+								<CustomBehavior File="WaitTimer" 
+												WaitTime="5000" />	
+
+								<!-- CustomBehavior - RunMacro - cleartarget -->					
+								<CustomBehavior File="RunMacro" 
+												Macro="/cleartarget"  
+												WaitTime="0"/>							
+												
+							</If>	<!-- If our target is Mate Nilzlix --> 
+							
+							<!-- Else our empty bag slots < 4 or our lowest durability < 30 percent -->
+							<Else>
+													
+								<!-- Load profile - [QO-N][Rep-Grinding][Bloodsail-Buccaneers]_botanist__repair-mail -->
+								<CustomBehavior File="LoadProfile" 
+												ProfileName="Movement\Vendors\[QO-N][Rep-Grinding][Bloodsail-Buccaneers]_botanist__repair-mail" />
+
+							</Else>	<!-- Else our empty bag slots < 4 or our lowest durability < 30 percent -->
+							
+						</If>	<!-- If our empty bag slots > 4 and our lowest durability > 30 percent -->				
+			
+					</While> 	<!-- While our level >= 80 -->
+
+					<!-- Else we are more than 1000	ards from the farming area -->
+					<Else>
+					
+						<!-- Load profile - [QO-N-M][Rep-Grinding][Bloodsail-Buccaneers]_botanist -->
+						<CustomBehavior File="LoadProfile" 
+										ProfileName="Movement\[QO-N-M][Rep-Grinding][Bloodsail-Buccaneers]_botanist" />
+						
+					</Else>	<!-- Else we are more than 100 yards from the farming area -->
+					
+				</If>	<!-- If we are within 1000 of the farming area -->	
+				
+			</While> <!-- Infinite loop -->
+			
+		</If>	<!-- If we are in Eastern Kingdoms -->
+		
+	</QuestOrder>
+	
+</HBProfile>
+

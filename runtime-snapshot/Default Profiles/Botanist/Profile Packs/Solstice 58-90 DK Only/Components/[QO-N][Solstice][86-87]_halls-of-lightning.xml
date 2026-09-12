@@ -1,0 +1,780 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+	<Name>[QO-N][Solstice][86-87]_halls-of-lightning</Name>
+   
+	<MinLevel>1</MinLevel>
+	<MaxLevel>101</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	<TargetingDistance>15</TargetingDistance>
+	
+	<MailGrey>False</MailGrey>
+	<MailWhite>False</MailWhite>
+	<MailGreen>False</MailGreen>
+	<MailBlue>False</MailBlue>
+	<MailPurple>True</MailPurple>
+   
+	<SellGrey>True</SellGrey>
+	<SellWhite>True</SellWhite>
+	<SellGreen>True</SellGreen>
+	<SellBlue>True</SellBlue>
+	<SellPurple>False</SellPurple>
+
+	<AvoidMobs>		
+		<Mob Name="Summon Enabler Stalker" Entry="53488" />
+	</AvoidMobs>
+	
+	<Blackspots>
+	</Blackspots>
+
+	<Mailboxes>
+	</Mailboxes>
+ 
+	<Vendors>
+	</Vendors>
+	
+	<ProtectedItems>
+	</ProtectedItems>
+
+	<Factions>16</Factions>
+	
+	<QuestOrder>
+
+		<!-- Level check -->
+		<If Condition="Me.Level &gt;= 86">
+		
+		
+			<!-- Profile message - You meet the level requirement to run this profile -->
+			<CustomBehavior File="Message" 
+							Text="You meet the level requirement to run this profile." 
+							LogColor="Fuchsia" />
+		
+		 	<!-- UserSettings -->
+			<CustomBehavior File="UserSettings"
+							FindMountAutomatically="True"
+							GroundMountFarmingMode="False"
+							HarvestHerbs="False"
+							HarvestMinerals="False"
+							KillBetweenHotspots="True"
+							LogoutForInactivity="False"
+							LogoutInactivityUseForceQuit="False"
+							LootMobs="True"
+							LootRadius="35"
+							MountName=""
+							NinjaSkin="False"
+							RessAtSpiritHealers="False"
+							SkinMobs="False"
+							UseMount="True" 
+							UseRandomMount="False" />
+							
+			<!-- Infinite loop -->
+			<While Condition="true" >	
+			
+				<!-- If we are inside Halls of Lightning -->
+				<If Condition="Me.ZoneId == 4272">
+				
+					<!-- Profile message - Halls of Lightning detected. Running out -->
+					<CustomBehavior File="Message" 
+									Text="Halls of Lightning detected. Running out."
+									LogColor="Fuchsia" />
+						
+					<!-- Move to - zone in location -->
+					<MoveTo X="1331.41" Y="241.904" Z="52.5046" />
+
+					<!-- Profile message - Waiting 3 seconds - Bag and durability check -->
+					<CustomBehavior File="Message" 
+									Text="Waiting 3 seconds - Bag and durability check."  
+									LogColor="Orange" />
+					
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+					<If Condition="(Me.FreeBagSlots &lt;= 25) || (Me.LowestDurabilityPercent &lt;= 0.3)" >
+												
+						<!-- Load profile - [QO-N][Solstice][58-90][repair-mail] -->
+						<CustomBehavior File="LoadProfile" 
+										ProfileName="Movement\Vendors\[QO-N][Solstice][58-90][repair-mail]" />
+
+					</If>	<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+
+					<!-- Profile message - Waiting 3 seconds - Food check - Sweet Potato Bread -->
+					<CustomBehavior File="Message" 
+									Text="Waiting 3 seconds - Food check - Sweet Potato Bread."  
+									LogColor="Orange" />
+					
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+									
+					<!-- If we don't have Sweet Potato Bread -->
+					<If Condition="!HasItem(35950)">
+			
+						<!-- Load profile - [QO-N][Solstice][58-90][repair-mail] -->
+						<CustomBehavior File="LoadProfile" 
+										ProfileName="Movement\Vendors\[QO-N][Solstice][58-90][repair-mail]" />
+			
+					</If>	<!-- If we don't have Sweet Potato Bread -->
+					
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+														
+					<!-- Profile message - All checks complete -->
+					<CustomBehavior File="Message" 
+									Text="All checks complete."  
+									LogColor="Orange" />
+					
+					<!-- Go through the portal -->
+					<CustomBehavior File="Misc\InInstance" 
+									X="1333.524" Y="290.7161" Z="52.81057" />
+					
+					<!-- Move to - zone out location -->
+					<MoveTo X="9175.68" Y="-1378.8" Z="1103.57" />
+					
+				</If>	<!-- If we are inside Halls of Lightning -->
+				
+				<!-- If we are not in the Halls of Lightning instance box, load the movement profile -->
+				<If Condition="Me.X &lt; 9100 || Me.X &gt; 9200 || Me.Y &lt; -1400 || Me.Y &gt; -1300" >
+				
+					<!-- Profile message - Distance from portal is not within our proximity, initializing movement to get there -->
+					<CustomBehavior File="Message" 
+									Text="Distance from portal is not within our proximity, initializing movement to get there."
+									LogColor="Fuchsia" />	
+									
+					<!-- Load profile - Movement\[QO-N-M][Solstice][86-87]_halls-of-lightning -->				
+					<CustomBehavior File="LoadProfile" 
+									ProfileName="Movement\[QO-N-M][Solstice][86-87]_halls-of-lightning" />
+									
+				</If> 	<!-- If we are not in the Halls of Lightning instance box, load the movement profile -->
+				
+				<!-- If we are in the Halls of Lightning instance box -->
+				<If Condition="Me.X &gt; 9100 &amp;&amp; Me.X &lt; 9200 &amp;&amp; Me.Y &gt; -1400 &amp;&amp; Me.Y &lt; -1300" >
+					
+					<!-- Move to - weapon enchant location -->
+					<MoveTo X="9162.704" Y="-1366.123" Z="1090.014" />
+						
+					<!-- Custom behavior - DKEnchantWeapon -->
+					<CustomBehavior File="Misc\DKEnchantWeapon" SpellID="53342" />	
+					
+					<!-- Move to - zone out location -->
+					<MoveTo X="9175.68" Y="-1378.8" Z="1103.57" />
+					
+					<!-- Profile message - Portal detected nearby --> 
+					<CustomBehavior File="Message" 
+									Text="Portal detected nearby."
+									LogColor="Fuchsia" />	
+						
+					<!-- Profile message - Resetting the instance -->
+					<CustomBehavior File="Message" 
+									Text="Resetting the instance." 
+									LogColor="Fuchsia" />
+					
+					<!-- Custom behavior - macro - reset the instance -->
+					<CustomBehavior File="RunMacro" 
+									Macro="/script ResetInstances()" />	
+					
+					<!-- Custom behavior - macro - set the dungeon difficulty to normal -->
+					<CustomBehavior File="RunMacro" 
+									Macro="/script SetDungeonDifficultyID(1)" />
+					
+					<!-- Profile message - The instance has been reset -->
+					<CustomBehavior File="Message" 
+									Text="The instance has been reset." 
+									LogColor="Fuchsia" />
+									
+					<!-- While we didn't enter Halls of Lightning -->
+					<While Condition="Me.ZoneId != 4272">
+					
+						<!-- Move to - zone out location -->
+						<MoveTo X="9175.68" Y="-1378.8" Z="1103.57" />
+
+						<!-- Move to - attempt to enter the instance -->
+						<CustomBehavior File="Misc\InInstance" 
+										X="9188.984" Y="-1390.553" Z="1110.215" />
+										
+						<!-- Profile message - Waiting for the dungeon to load -->				
+						<CustomBehavior File="Message" 
+										Text="Waiting for the dungeon to load." 
+										LogColor="Fuchsia" />
+									
+						<!-- Wait timer - wait 20-40 seconds -->			
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000"
+										VariantTime="20000" />
+										
+						<!-- If we are not in Halls of Lightning -->
+						<If Condition="Me.ZoneId != 4272">
+						
+							<!-- Profile message - We are instance locked, initiating loop procedures until we enter the instance -->
+							<CustomBehavior File="Message" 
+											Text="We are instance locked, initiating loop procedures until we enter the instance." 
+											LogColor="Fuchsia" />
+											
+						</If> 	<!-- If we are not in Halls of Lightning -->
+						
+					</While> 	<!-- While we didn't enter Halls of Lightning -->
+					
+				</If> 	<!-- If we are in the Halls of Lightning instance box, load the movement profile -->
+				
+				<!-- If we are inside Halls of Lightning -->
+				<If Condition="Me.ZoneId == 4272">
+					
+					<!-- Move to - zone in location -->
+					<MoveTo X="1331.41" Y="241.904" Z="52.5046" />
+					
+					<!--Profile message	- Deleting unwanted items from our bags -->				
+					<CustomBehavior File="Message" 
+									Text="Deleting unwanted items from our bags." 
+									LogColor="Orange" />
+
+					<!-- Morning Glory Dew -->
+					<CustomBehavior File="DeleteItems" 
+									Ids="8766" />
+									
+					<!-- Major Mana Potion -->				
+					<CustomBehavior File="DeleteItems" 
+									Ids="13444" />	
+									
+					<!-- Libram of Voracity -->										
+					<CustomBehavior File="DeleteItems" 
+									Ids="11737" />
+									
+					<!-- Libram of Resilience -->
+					<CustomBehavior File="DeleteItems" 
+									Ids="11736" />	
+									
+					<!-- Roasted Quail -->
+					<CustomBehavior File="DeleteItems" 
+									Ids="8952" />	
+									
+					<!-- Superior Mana Potion -->
+					<CustomBehavior File="DeleteItems" 
+									Ids="22256" />	
+									
+					<!-- Mana Potion -->
+					<CustomBehavior File="DeleteItems" 
+									Ids="26480" />
+									
+					<!-- Light Feather -->
+					<CustomBehavior File="DeleteItems" 
+									Ids="17056" />
+									
+					<!-- Dark Iron Bullet -->
+					<CustomBehavior File="DeleteItems" 
+									Ids="62916" />	
+									
+					<!-- Mag'har Grainbread -->
+					<CustomBehavior File="DeleteItems" 
+									Ids="27855" />
+									
+					<!-- Homemade Cherry Pie -->
+					<CustomBehavior File="DeleteItems" 
+									Ids="8950" />
+									
+					<!-- Salted Venison -->
+					<CustomBehavior File="DeleteItems" 
+									Ids="33454" />				
+									
+					<!-- Smoked Talbuk Venison -->
+					<CustomBehavior File="DeleteItems" 
+									Ids="27854" />		
+							
+					<!-- Instance timer -->
+					<CustomBehavior File="Misc\InstanceTimer" 
+									Timer="Start" />							
+								
+					<!-- Turn on autolooting -->
+					<CustomBehavior File="RunMacro" 
+									Macro="/script SetCVar('AutoLootDefault', 1)" 
+									NumOfTimes="1" 
+									WaitTime="1000" />
+
+					<!-- Profile message - Hall of Lightning initialized -->			
+					<CustomBehavior File="Message" 
+									Text="Hall of Lightning initialized."  
+									LogColor="Fuchsia" />
+				
+				
+				<!-- **************************************************************************************************************************** -->
+					
+					
+					<!-- Move to - 1st group near the entrance -->
+					<MoveTo X="1331.942" Y="162.6868" Z="53.70423" />
+					
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+					
+					
+					<!-- Move to - 2nd group at the base of the ramp -->
+					<MoveTo X="1332.058" Y="99.57481" Z="40.18045" />
+					
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+					
+					
+					<!-- Move to - single mob on left-hand side of the lower ramp -->
+					<MoveTo X="1300.272" Y="92.14516" Z="37.55207" />
+					
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+					
+					
+					<!--WFP to avoid General Bjarngrim -->	
+					<CustomBehavior File="SpecificQuests\DeathknightStart\WaitForPatrol" 
+									MovementBy="NavigatorOnly" 
+									AvoidMobId="28586" 
+									AvoidDistance="100"
+									X="1296.49" Y="99.79095" Z="36.70185" >	<!-- Our wait location -->
+						
+					</CustomBehavior>	<!--WFP to avoid Watchkeeper Gargolmar if he is spawned -->	
+					
+					
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+					
+					
+					<!-- Move to - right-hand group at the base of the lower ramp -->
+					<MoveTo X="1262.109" Y="99.63439" Z="33.50556" />
+					
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+					
+					
+					<!-- Forces kill of General Bjarngrim -->
+					<CustomBehavior File="GetOutOfGroundEffectAndAuras" 
+									EventCompleteWhen="SpecificMobsDead" EventCompleteDeadMobId="28586"
+									EventX="1262.109" EventY="99.63439" EventZ="33.50556"
+									MoveOutOfGroundEffectAuraId1="111111"
+									MoveAwayFromMobCastingSpellId1="111111"
+									MoveAwayFromMobWithAuraId1="111111">
+						<Safespots>
+							<Hotspot X="1262.109" Y="99.63439" Z="33.50556" />
+						</Safespots>
+					</CustomBehavior>
+
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+					
+					
+					<!-- Move to - middle of the corridor -->
+					<MoveTo X="1262.299" Y="81.6347" Z="33.50555" />
+					
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+					
+					
+					<!-- Move to - end of the line -->
+					<MoveTo X="1262.589" Y="-0.4513651" Z="33.50576" />
+					
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+					
+					
+					<!-- Move to - back right-hand group -->
+					<MoveTo X="1260.568" Y="-30.84642" Z="33.50571" />
+					
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+					
+					
+					<!-- Move to - top of the ramp near the Iron Crucible -->
+					<MoveTo X="1332.734" Y="-36.47167" Z="40.18055" />
+					
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+					
+					
+					<!-- Move to - top of the ramp -->
+					<MoveTo X="1397.848" Y="39.88373" Z="50.03833" />
+					
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+					
+					
+					<!-- Move to - right-hand group - top of the ramp -->
+					<MoveTo X="1439.317" Y="34.70203" Z="56.66879" />
+					
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+					
+					
+					<!-- Move to - the Iron Crucible -->
+					<MoveTo X="1331.732" Y="-79.59801" Z="28.38452" />
+					
+					<!-- Profile message - Disabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Disabling combat." 
+										LogColor="Gold" />				
+									
+					<!-- DisableBehavior - Combat -->
+					<DisableBehavior Name="Combat" />
+					
+					<!-- Move to - top of the stairs after the Iron Crucible -->
+					<MoveTo X="1332.003" Y="-235.2139" Z="37.8082" />
+					
+					<!-- Profile message - Enabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Enabling combat." 
+										LogColor="Gold" />				
+									
+					<!-- EnableBehavior - Combat -->				
+					<EnableBehavior Name="Combat" />
+					
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+					
+					
+					<!-- Move to - right-hand group - top of the ramp -->
+					<MoveTo X="1298.3" Y="-240.1155" Z="37.80291" />
+					
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+					
+					
+					<!-- Move to - left-hand group - top of the ramp -->
+					<MoveTo X="1361.657" Y="-238.5735" Z="37.80605" />
+					
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+					
+					
+					<!-- Move to - right-hand group - top of the stairs -->
+					<MoveTo X="1366.486" Y="-184.5924" Z="52.02657" />
+					
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+					
+					
+					<!-- Move to - left-hand group - top of the stairs -->
+					<MoveTo X="1300.221" Y="-186.252" Z="52.02362" />
+					
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+					
+					
+					<!-- Move to - left-hand group - bone pile -->
+					<MoveTo X="1295.641" Y="-138.394" Z="53.67313" />
+					
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+					
+					
+					<!-- Move to - right-hand group - bone pile -->
+					<MoveTo X="1360.659" Y="-138.6828" Z="52.17916" />
+					
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+					
+					
+					<!-- Forces kill of Volkhan -->
+					<CustomBehavior File="GetOutOfGroundEffectAndAuras" 
+									EventCompleteWhen="SpecificMobsDead" EventCompleteDeadMobId="28587"
+									EventX="1332.382" EventY="-102.078" EventZ="56.71772"
+									MoveOutOfGroundEffectAuraId1="111111"
+									MoveAwayFromMobCastingSpellId1="111111"
+									MoveAwayFromMobWithAuraId1="111111">
+						<Safespots>
+							<Hotspot X="1332.382" Y="-102.078" Z="56.71772" />
+						</Safespots>
+					</CustomBehavior>
+
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+					
+					
+					<!-- Move to - last group before Ionar -->
+					<MoveTo X="1117.448" Y="-262.4941" Z="56.8739" />
+					
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+					
+					
+					<!-- Forces kill of Volkhan -->
+					<CustomBehavior File="GetOutOfGroundEffectAndAuras" 
+									EventCompleteWhen="SpecificMobsDead" EventCompleteDeadMobId="28546"
+									EventX="1081.995" EventY="-261.8092" EventZ="61.20797"
+									MoveOutOfGroundEffectAuraId1="111111"
+									MoveAwayFromMobCastingSpellId1="111111"
+									MoveAwayFromMobWithAuraId1="111111">
+						<Safespots>
+							<Hotspot X="1081.995" Y="-261.8092" Z="61.20797" />
+						</Safespots>
+					</CustomBehavior>
+
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+					
+					
+					<!-- Move to - 1st group after Ionar -->
+					<MoveTo X="1080.164" Y="-212.4395" Z="61.19297" />
+					
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+					
+					
+					<!-- Move to - back left group in the Terrestrial Watchtower -->
+					<MoveTo X="1029.638" Y="-111.4972" Z="61.22473" />
+					
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+					
+					
+					<!-- Move to - 1st group right-hand side in the Terrestrial Watchtower -->
+					<MoveTo X="1089.381" Y="-171.9451" Z="56.64924" />
+					
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+					
+					
+					<!-- Move to - back right group in the Terrestrial Watchtower -->
+					<MoveTo X="1115.536" Y="-111.8787" Z="61.25663" />
+					
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+					
+					
+					<!-- Move to - center group in the Terrestrial Watchtower -->
+					<MoveTo X="1070.996" Y="-105.3329" Z="56.74244" />
+					
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+					
+					
+					<!-- Move to - 1st two Stormforged Constructs - Terrestrial Watchtower -->
+					<MoveTo X="1080.151" Y="-39.60352" Z="61.19692" />
+					
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+					
+					
+					<!-- Move to - last two Stormforged Constructs - Terrestrial Watchtower -->
+					<MoveTo X="1077.009" Y="90.31758" Z="61.14857" />
+					
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					
+					
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+					
+					
+					<!-- Move to - left-hand side of the stairs - front of Loken -->
+					<MoveTo X="1078.368" Y="62.60248" Z="53.40939" />
+					
+					<!-- Wait timer - wait 15 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="15000" />
+					
+					
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+					
+					
+					<!-- Move to - right-hand side of the stairs - front of Loken -->
+					<MoveTo X="1080.149" Y="4.194992" Z="53.37827" />
+					
+					<!-- Wait timer - wait 5 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="5000" />
+
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+					
+					
+					<!-- Move to - Ionar -->
+					<MoveTo X="1072.901" Y="-261.1833" Z="61.22717" />
+					
+					
+					<!-- Move to the Iron Crucible -->
+					<MoveTo X="1331.97" Y="-196.5727" Z="23.22557" />
+					
+
+					<!-- @@@@@@@@@@@@@@@@@@@@ Avoid Loken - Exit @@@@@@@@@@@@@@@@@@@@ -->
+					
+					
+					<!-- Move to - zone in location -->
+					<MoveTo X="1331.41" Y="241.904" Z="52.5046" />
+					
+					<!-- If we are high enough to go to the next instance, do so -->
+					<CustomBehavior File="Misc\LoadProfileOn" 
+									MinLevel="87" 
+									ProfileName="[QO-N][Solstice][87-88]_blackrock-caverns.xml"  />
+									
+					<!-- Profile message - Waiting 3 seconds - Bag and durability check -->
+					<CustomBehavior File="Message" 
+									Text="Waiting 3 seconds - Bag and durability check."  
+									LogColor="Orange" />
+					
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+					<If Condition="(Me.FreeBagSlots &lt;= 25) || (Me.LowestDurabilityPercent &lt;= 0.3)" >
+												
+						<!-- Load profile - [QO-N][Solstice][58-90][repair-mail] -->
+						<CustomBehavior File="LoadProfile" 
+										ProfileName="Movement\Vendors\[QO-N][Solstice][58-90][repair-mail]" />
+
+					</If>	<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+
+					<!-- Profile message - Waiting 3 seconds - Food check - Sweet Potato Bread -->
+					<CustomBehavior File="Message" 
+									Text="Waiting 3 seconds - Food check - Sweet Potato Bread."  
+									LogColor="Orange" />
+					
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					<!-- If we don't have Sweet Potato Bread -->
+					<If Condition="!HasItem(35950)">
+
+						<!-- Load profile - [QO-N][Solstice][58-90][repair-mail] -->
+						<CustomBehavior File="LoadProfile" 
+										ProfileName="Movement\Vendors\[QO-N][Solstice][58-90][repair-mail]" />
+			
+					</If>	<!-- If we don't have Sweet Potato Bread -->
+					
+					<!-- Profile message - All checks complete -->
+					<CustomBehavior File="Message" 
+									Text="All checks complete."  
+									LogColor="Orange" />				
+									
+				</If>	<!-- If we are inside Gundrak -->
+				
+				<!-- If we don't need to vendor -->
+				<If Condition="Me.ZoneId == 4272">
+				
+					<!-- Profile message - Halls of Lightning detected. Running out -->
+					<CustomBehavior File="Message" 
+									Text="Halls of Lightning detected. Running out."
+									LogColor="Fuchsia" />
+						
+					<!-- Move to - zone in location -->
+					<MoveTo X="1331.41" Y="241.904" Z="52.5046" />
+				
+					<!-- Go through the portal -->
+					<CustomBehavior File="Misc\InInstance" 
+									X="1333.524" Y="290.7161" Z="52.81057" />
+					
+					<!-- Move to - zone out location -->
+					<MoveTo X="9175.68" Y="-1378.8" Z="1103.57" />
+					
+				</If>	<!-- If we don't need to vendor -->
+				
+			</While>	 <!-- Infinite loop -->
+			
+		</If>	<!-- Level check -->
+
+	</QuestOrder>
+	
+</HBProfile>

@@ -1,0 +1,180 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+	<Name>[QO-N][90][10-X-Hr]_Pit-of-Saron_Battered-Hilt_[food]</Name>
+   
+	<MinLevel>1</MinLevel>
+	<MaxLevel>101</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	
+	<MailGrey>False</MailGrey>
+	<MailWhite>False</MailWhite>
+	<MailGreen>True</MailGreen>
+	<MailBlue>False</MailBlue>
+	<MailPurple>False</MailPurple>
+   
+	<SellGrey>True</SellGrey>
+	<SellWhite>True</SellWhite>
+	<SellGreen>False</SellGreen>
+	<SellBlue>True</SellBlue>
+	<SellPurple>False</SellPurple>
+   
+	<TargetElites>True</TargetElites>
+	
+	<AvoidMobs>
+	</AvoidMobs>
+	
+	<Blackspots>
+		<Blackspot X="-7118.711" Y="-1225.894" Z="290.2633" Radius="3" />
+	</Blackspots>
+
+	<Mailboxes>
+	</Mailboxes>
+ 
+	<Vendors>
+	</Vendors>
+	
+	<ProtectedItems>	
+	</ProtectedItems>
+
+	<Factions></Factions>
+	
+	<QuestOrder>
+
+		<!-- UserSettings -->
+		<CustomBehavior File="UserSettings"
+						FindMountAutomatically="True"
+						GroundMountFarmingMode="False"
+						HarvestHerbs="False"
+						HarvestMinerals="False"
+						KillBetweenHotspots="True"
+						LogoutForInactivity="False"
+						LogoutInactivityUseForceQuit="False"
+						LootMobs="True"
+						LootRadius="25"
+						MountName=""
+						NinjaSkin="False"
+						RessAtSpiritHealers="False"
+						SkinMobs="False"
+						UseMount="True" 
+						UseRandomMount="False" />
+
+		<!-- If our level is => -->
+		<If Condition="Me.Level &gt;= 70">
+			
+			<!-- If we are Alliance -->
+			<If Condition="Me.IsAlliance" >
+				
+				<!-- If we don't have Mead Basted Caribou -->
+				<If Condition="!HasItem(35953)">
+				
+					<!-- Profile message - We don't have any Mead Basted Caribou -->
+					<CustomBehavior File="Message" 
+									Text="We don't have any Mead Basted Caribou."
+									LogColor="Orange" />
+									
+					<!-- Profile message - Moving to Amisi Azuregaze to purchase some -->
+					<CustomBehavior File="Message" 
+									Text="Moving to Amisi Azuregaze to purchase some."
+									LogColor="Orange" />				
+				
+					<!-- Move to - Amisi Azuregaze -->
+					<Move X="5850.968" Y="637.5089" Z="647.5125" />
+					
+					<!-- Interact with Purser Boulian and buy 60 Savory Snowplum -->
+					<CustomBehavior File="InteractWith"
+									ObjectType="Npc"
+									Range="75"
+									MobId="28687" 
+									GossipOptions="2"
+									BuyItemId="35953" 
+									BuyItemCount="60"
+									X="5847.973" Y="635.4348" Z="647.5126" />
+
+					<!-- Wait timer - wait 30 seconds for for server lag and to give HB time to think -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="30000" />
+
+					<!-- Else we have Mead Basted Caribou -->
+					<Else>
+					
+						<!-- Profile message - We have Mead Basted Caribou -->
+						<CustomBehavior File="Message" 
+										Text="We have Mead Basted Caribou."
+										LogColor="Orange" />
+									
+						<!-- Load profile - [QO-N][90][10-X-Hr]_Pit-of-Saron_Battered-Hilt -->
+						<CustomBehavior File="LoadProfile" 
+										ProfileName="..\..\[QO-N][90][10-X-Hr]_Pit-of-Saron_Battered-Hilt" />	
+								
+					</Else>	<!-- Else we have Mead Basted Caribou -->
+					
+				</If>	<!-- If we don't have Mead Basted Caribou -->
+					
+			</If>	<!-- If we are Alliance -->
+			
+			<!-- If we are Horde -->
+			<If Condition="Me.IsHorde" >
+				
+				<!-- If we don't have Mead Basted Caribou -->
+				<If Condition="!HasItem(35953)">
+				
+					<!-- Profile message - We don't have any Mead Basted Caribou -->
+					<CustomBehavior File="Message" 
+									Text="We don't have any Mead Basted Caribou."
+									LogColor="Orange" />
+									
+					<!-- Profile message - Moving to Amisi Azuregaze to purchase some -->
+					<CustomBehavior File="Message" 
+									Text="Moving to Amisi Azuregaze to purchase some."
+									LogColor="Orange" />				
+				
+					<!-- Move to - Amisi Azuregaze -->
+					<Move X="5850.968" Y="637.5089" Z="647.5125" />
+					
+					<!-- Interact with Purser Boulian and buy 60 Savory Snowplum -->
+					<CustomBehavior File="InteractWith"
+									ObjectType="Npc"
+									Range="75"
+									MobId="28687" 
+									GossipOptions="2"
+									BuyItemId="35953" 
+									BuyItemCount="60"
+									X="5847.973" Y="635.4348" Z="647.5126" />
+
+					<!-- Wait timer - wait 30 seconds for for server lag and to give HB time to think -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="30000" />
+
+					<!-- Else we have Mead Basted Caribou -->
+					<Else>
+					
+						<!-- Profile message - We have Mead Basted Caribou -->
+						<CustomBehavior File="Message" 
+										Text="We have Mead Basted Caribou."
+										LogColor="Orange" />
+									
+						<!-- Load profile - [QO-N][90][10-X-Hr]_Pit-of-Saron_Battered-Hilt -->
+						<CustomBehavior File="LoadProfile" 
+										ProfileName="..\..\[QO-N][90][10-X-Hr]_Pit-of-Saron_Battered-Hilt" />	
+								
+					</Else>	<!-- Else we have Mead Basted Caribou -->
+					
+				</If>	<!-- If we don't have Mead Basted Caribou -->
+				
+			</If>	<!-- If we are Horde -->
+			
+			<!-- If we have Mead Basted Caribou -->
+			<If Condition="HasItem(35953)">
+				
+				<!-- Load profile - [QO-N][90][10-X-Hr]_Pit-of-Saron_Battered-Hilt -->
+				<CustomBehavior File="LoadProfile" 
+								ProfileName="..\..\[QO-N][90][10-X-Hr]_Pit-of-Saron_Battered-Hilt" />
+										
+			</If>	<!-- If we do have Mead Basted Caribou -->	
+			
+		</If>	<!-- If our level is => -->
+		
+	</QuestOrder>
+	
+</HBProfile>

@@ -1,0 +1,9 @@
+Copy the questbehaviors in this Misc folder and paste them to your Honorbuddy\Questbehaviors\Misc folder
+
+Do NOT replace any files that are already there
+
+Close and restart the bot after copying the questbehaviors
+
+If you do not do this, most of the profiles will not run
+
+You will need to repeat the same procedure each time you do a clean extraction of HonorBuddy

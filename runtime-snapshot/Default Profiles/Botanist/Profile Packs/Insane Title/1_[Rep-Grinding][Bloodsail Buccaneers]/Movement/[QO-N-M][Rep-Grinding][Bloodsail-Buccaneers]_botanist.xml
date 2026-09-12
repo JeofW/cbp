@@ -1,0 +1,89 @@
+<HBProfile creator="Botanist" version="1.0">
+<Name>[QO-N-][Rep-Grinding][Bloodsail-Buccaneers]_botanist</Name> 
+
+<MinLevel>85</MinLevel> 
+<MaxLevel>101</MaxLevel>
+<MinDurability>-1</MinDurability>
+<MinFreeBagSlots>-1</MinFreeBagSlots>
+
+<SellGrey>True</SellGrey>
+<SellWhite>False</SellWhite>
+<SellGreen>False</SellGreen>
+<SellBlue>False</SellBlue>
+<SellPurple>False</SellPurple>
+
+<MailGrey>False</MailGrey>
+<MailWhite>True</MailWhite>
+<MailGreen>True</MailGreen>
+<MailBlue>True</MailBlue>
+<MailPurple>True</MailPurple>
+<Vendors>
+</Vendors>
+	
+<Mailboxes>
+</Mailboxes>
+
+	<QuestOrder>
+	
+		<!-- If we are in Kalimdor -->
+		<If Condition="Me.MapId == 1">	
+		
+			<!-- CustomBehavior - Message - We are in Kalimdor, flying to Ratchet -->
+			<CustomBehavior File="Message" Text="We are in Kalimdor, flying to Ratchet." 
+							LogColor="Lime" />
+			
+			<!-- CustomBehavior - FlyTo - Ratchet -->				
+			<CustomBehavior File="FlyTo" 
+							X="-994.0004" Y="-3827.987" Z="5.634368" />	
+			
+			<!-- CustomBehavior - ForcedDismount -->	
+			<CustomBehavior File="ForcedDismount" />	
+			
+			<!-- MoveTo - wait location -->
+			<MoveTo X="-994.0004" Y="-3827.987" Z="5.634368" />
+			
+			<!-- CustomBehavior - Message - Waiting for the boat -->
+			<CustomBehavior File="Message" 
+							Text="Waiting for the boat." 
+							LogColor="Lime" />	
+			
+			<!-- CustomBehavior - UseTransport - Ratchet to Booty Bay -->
+			<CustomBehavior File="UseTransport"
+							TransportId="20808"
+							WaitAtX="-994.0004" WaitAtY="-3827.987" WaitAtZ="5.634368" 
+							TransportStartX="-1005.61346" TransportStartY="-3841.648" TransportStartZ="-0.0262415316"
+							TransportEndX="-14277.7451" TransportEndY="582.86615" TransportEndZ="-0.048539947"
+							StandOnX="-999.8182" StandOnY="-3833.799" StandOnZ="6.034274" 
+							GetOffX="-14280.22" GetOffY="567.6113" GetOffZ="6.696649" />
+				
+			<!-- MoveTo - Booty Bay docks -->	
+			<MoveTo X="-14280.22" Y="567.6113" Z="6.696649" />
+			
+		</If>	<!-- If we are in Kalimdor -->
+
+		<!-- If we are in Eastern Kingdoms -->
+		<If Condition="Me.MapId == 0" >		
+
+			<!-- Profile message - We are in Eastern Kingdoms /nMoving to Faldir's Cove -->
+			<CustomBehavior File="Message" 
+							Text="We are in Eastern Kingdoms /nMoving to Faldir's Cove."  
+							LogColor="Cyan" />				
+			
+			<!-- CustomBehavior - FlyTo - Faldir's Cove -->				
+			<CustomBehavior File="FlyTo"
+							X="-2079.81" Y="-2074.396" Z="46.03708" />
+							
+		</If>	<!-- If we are in Eastern Kingdoms -->
+
+		<!-- If we are within 100 yards of the farming area -->
+		<If Condition="Me.Location.Distance(new WoWPoint(-2088.914, -2048.281, 3.499427)) &lt;= 1000" >
+		
+			<!-- Load profile - [QO-N-Rep-Grinding][Steamwheedle-Cartel_southbreak-shore]_botanist -->
+			<CustomBehavior File="LoadProfile" 
+							ProfileName="../[QO-N][Rep-Grinding][Bloodsail-Buccaneers]" />
+											
+		</If>	<!-- If we are within 1000 of the farming area -->
+
+	</QuestOrder>
+	
+</HBProfile> 

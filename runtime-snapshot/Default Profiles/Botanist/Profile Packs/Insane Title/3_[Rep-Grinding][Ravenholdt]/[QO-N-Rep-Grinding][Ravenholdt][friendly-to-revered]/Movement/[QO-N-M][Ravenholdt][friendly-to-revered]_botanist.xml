@@ -1,0 +1,135 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+	<Name>[QO-N-M][Reputation][60+Flying][Timbermaw-Hold]_botanist</Name>
+   
+	<MinLevel>1</MinLevel>
+	<MaxLevel>101</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	
+	<MailGrey>False</MailGrey>
+	<MailWhite>False</MailWhite>
+	<MailGreen>True</MailGreen>
+	<MailBlue>False</MailBlue>
+	<MailPurple>False</MailPurple>
+   
+	<SellGrey>True</SellGrey>
+	<SellWhite>True</SellWhite>
+	<SellGreen>False</SellGreen>
+	<SellBlue>True</SellBlue>
+	<SellPurple>False</SellPurple>
+   
+	<TargetElites>True</TargetElites>
+	
+	<AvoidMobs>		
+		<Mob Name="Summon Enabler Stalker" Entry="53488" />
+	</AvoidMobs>
+	
+	<Blackspots>
+
+	</Blackspots>
+
+	<Mailboxes>
+	</Mailboxes>
+ 
+	<Vendors>
+	</Vendors>
+	
+	<ProtectedItems>
+	</ProtectedItems>
+
+	<Factions></Factions>
+	
+	<QuestOrder>
+
+		<!-- Level Check -->
+		<If Condition="Me.Level &gt;= 60">
+		
+		 	<!-- UserSettings -->
+			<CustomBehavior File="UserSettings"
+							FindMountAutomatically="True"
+							GroundMountFarmingMode="False"
+							HarvestHerbs="False"
+							HarvestMinerals="False"
+							KillBetweenHotspots="True"
+							LogoutForInactivity="False"
+							LogoutInactivityUseForceQuit="False"
+							LootMobs="True"
+							LootRadius="25"
+							MountName=""
+							NinjaSkin="False"
+							RessAtSpiritHealers="False"
+							SkinMobs="False"
+							UseMount="True" 
+							UseRandomMount="False" />
+
+			<!-- If we are in Kalimdor -->
+			<If Condition="Me.MapId == 1">
+			
+				<!-- Profile message - We are in Kalimdor -->
+				<CustomBehavior File="Message" 
+								Text="We are in Kalimdor"  
+								LogColor="Orange" />
+								
+				<!-- Profile message - Flying to Ratchet -->
+				<CustomBehavior File="Message" 
+								Text="Flying to Ratchet." 
+								LogColor="Cyan" />
+				
+				<!-- Fly to - Ratchet docks - hover point -->
+				<CustomBehavior File="FlyTo" 
+								X="-966.5041" Y="-3769.535" Z="46.41536" />	
+				
+				<!-- CTM to - grounding at Ratchet docks -->
+				<CustomBehavior File="MyCTM"
+								X="-994.0352" Y="-3814.759" Z="5.329047" />
+
+				<!-- Custom behavior - ForcedDismount -->
+				<CustomBehavior File="ForcedDismount" />
+				
+				<!-- Move to - transport wait location -->
+				<MoveTo X="-994.0004" Y="-3827.987" Z="5.634368" />
+					
+				<!-- Profile message - Waiting for the boat to Booty Bay -->	
+				<CustomBehavior File="Message" 
+								Text="Waiting for the boat to Booty Bay." 
+								LogColor="Cyan" />	
+				
+				<!-- Profile message - We are in Kalimdor -->
+				<CustomBehavior File="UseTransport"
+								TransportId="20808"
+								WaitAtX="-994.0004" 
+								WaitAtY="-3827.987" 
+								WaitAtZ="5.634368" 
+								TransportStartX="-1005.61346" 
+								TransportStartY="-3841.648" 
+								TransportStartZ="-0.0262415316"
+								TransportEndX="-14277.7451" 
+								TransportEndY="582.86615" 
+								TransportEndZ="-0.048539947"
+								StandOnX="-998.279" 
+								StandOnY="-3840.65" 
+								StandOnZ="6.02161" 
+								GetOffX="-14280.22" 
+								GetOffY="567.6113" 
+								GetOffZ="6.696649" />
+					
+				<!-- Move to - Booty Bay docks -->	
+				<MoveTo X="-14280.22" Y="567.6113" Z="6.696649" />
+
+			</If>	<!-- If we are in Kalimdor -->
+
+			<!-- If we are in Eastern Kingdoms -->
+			<If Condition="Me.MapId == 0">
+				
+				<!-- Load profile - [QO-N][Ravenholdt][neutral-to-revered]_botanist -->
+				<CustomBehavior File="LoadProfile" 
+								ProfileName="..\[QO-N][Ravenholdt][neutral-to-revered]_botanist" />
+								
+			</If> 	<!-- If we are in Eastern Kingdoms -->
+			
+		</If>	<!-- Level Check -->
+		
+	</QuestOrder>
+	
+</HBProfile>

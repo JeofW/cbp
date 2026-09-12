@@ -1,0 +1,135 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+<Name>[Botanist][Tinker][A-5][profession-check]</Name>
+
+<MinLevel>1</MinLevel>
+<MaxLevel>151</MaxLevel>
+
+<MinDurability>-1</MinDurability>
+<MinFreeBagSlots>-1</MinFreeBagSlots>
+<TargetingDistance>45</TargetingDistance>
+
+<MailGrey>False</MailGrey>
+<MailWhite>False</MailWhite>
+<MailGreen>False</MailGreen>
+<MailBlue>False</MailBlue>
+<MailPurple>False</MailPurple>
+
+<SellGrey>False</SellGrey>
+<SellWhite>False</SellWhite>
+<SellGreen>False</SellGreen>
+<SellBlue>False</SellBlue>
+<SellPurple>False</SellPurple>
+
+<AvoidMobs>		 
+</AvoidMobs>
+
+<Blackspots>
+</Blackspots>
+
+<Mailboxes>
+</Mailboxes>
+
+<Vendors>
+</Vendors>
+
+<ProtectedItems>	
+</ProtectedItems>
+
+	<QuestOrder>
+			
+		<!-- UserSettings -->
+		<CustomBehavior File="UserSettings"
+						FindMountAutomatically="True"
+						GroundMountFarmingMode="False"
+						HarvestHerbs="False"
+						HarvestMinerals="False"
+						KillBetweenHotspots="False"
+						LogoutForInactivity="True"
+						LogoutInactivityUseForceQuit="True"
+						LootMobs="False"
+						LootRadius="1"
+						MountName=""
+						NinjaSkin="False"
+						RessAtSpiritHealers="False"
+						SkinMobs="False"
+						UseMount="True" 
+						UseRandomMount="False" />
+						
+		<!-- Profile message - Checking our characters professions -->
+		<CustomBehavior File="Message" 
+						Text="Checking our characters professions." 
+						LogColor="Orange" />
+		
+		<!-- CustomBehavior - Wait timer - wait 1 seconds - delay -->
+		<CustomBehavior File="WaitTimer" 
+						WaitTime="3000" />
+		
+		<!-- If our Skinning level <= 1 -->
+		<If Condition="Me.GetSkill(Styx.SkillLine.Skinning).CurrentValue &lt;= 1">	
+			
+			<!-- Profile message -We have not trained or leveled Skinning profession yet -->
+			<CustomBehavior File="Message" 
+							Text="We have not trained or leveled Skinning profession yet." 
+							LogColor="Orange" />
+		
+			<!-- CustomBehavior - Wait timer - wait 1 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="3000" />
+	
+		</If>	<!-- If our skinning level <= 1 -->
+		
+		<!-- If our skinning level > 1 -->
+		<If Condition="Me.GetSkill(Styx.SkillLine.Skinning).CurrentValue &gt; 1">	
+			
+			<!-- Profile message - We have trained Skinning -->
+			<CustomBehavior File="Message" 
+							Text="We have trained Skinning." 
+							LogColor="Orange" />
+		
+			<!-- CustomBehavior - Wait timer - wait 1 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="3000" />
+		
+		</If>	<!-- If our Skinning level <= 1 -->
+
+		
+		<!-- If our Herbalism level <= 1 -->
+		<If Condition="Me.GetSkill(Styx.SkillLine.Herbalism).CurrentValue &lt;= 1">	
+			
+			<!-- Profile message - We have not trained or leveled Herbalism profession yet -->
+			<CustomBehavior File="Message" 
+							Text="We have not trained or leveled Herbalism profession yet." 
+							LogColor="Orange" />
+		
+			<!-- CustomBehavior - Wait timer - wait 1 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="3000" />
+	
+			<!--  CustomBehavior - LoadProfile - [Botanist][Tinker][A-6][classic] -->				
+			<CustomBehavior File="LoadProfile" 
+							ProfileName="[Botanist][Tinker][A-6][classic]" />
+		
+		</If>	<!-- If our skinning level <= 1 -->
+		
+		<!-- If our skinning level > 1 -->
+		<If Condition="Me.GetSkill(Styx.SkillLine.Herbalism).CurrentValue &gt; 1">	
+			
+			<!-- Profile message - We have trained Herbalism -->
+			<CustomBehavior File="Message" 
+							Text="We have trained Herbalism." 
+							LogColor="Orange" />
+		
+			<!-- CustomBehavior - Wait timer - wait 1 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="3000" />
+	
+			<!--  CustomBehavior - LoadProfile - [Botanist][Tinker][A-6][classic] -->				
+			<CustomBehavior File="LoadProfile" 
+							ProfileName="[Botanist][Tinker][A-6][classic]" />
+		
+		</If>	<!-- If our skinning level <= 1 -->
+
+	</QuestOrder>
+
+</HBProfile>
+

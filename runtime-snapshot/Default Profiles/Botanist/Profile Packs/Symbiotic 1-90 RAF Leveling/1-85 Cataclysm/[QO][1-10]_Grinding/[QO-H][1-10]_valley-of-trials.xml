@@ -1,0 +1,827 @@
+<HBProfile creator="Botanist and Wigglez" version="1.0">
+	<Name>[QO-H][1-10]_valley-of-trials</Name>
+   
+	<MinLevel>1</MinLevel>
+	<MaxLevel>101</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	
+	<MailGrey>False</MailGrey>
+	<MailWhite>False</MailWhite>
+	<MailGreen>False</MailGreen>
+	<MailBlue>False</MailBlue>
+	<MailPurple>False</MailPurple>
+   
+	<SellGrey>False</SellGrey>
+	<SellWhite>False</SellWhite>
+	<SellGreen>False</SellGreen>
+	<SellBlue>False</SellBlue>
+	<SellPurple>False</SellPurple>
+
+	<AvoidMobs>
+		<AvoidMob Name="Training Dummy" Entry="44548" />
+		<AvoidMob Name="Thuros Lightfingers" Entry="61" />
+		<AvoidMob Name="Ritualist Tarak" Entry="43363" />
+		<AvoidMob Name="Overlord Barbarius" Entry="43369" />
+		<AvoidMob Name="Lieutenant Palliter" Entry="39269" />
+	</AvoidMobs>
+	
+	<Blackspots>
+		<Blackspot X="351.9265" Y="-4747.049" Z="12.24206" Radius="10" />
+		
+	
+	</Blackspots>
+
+	<Mailboxes>
+	</Mailboxes>
+ 
+	<Vendors>
+		<Vendor Name="Innkeeper Grosk" Entry="6928" Type="Food" X="340.3629" Y="-4686.287" Z="16.48972" />
+	</Vendors>
+
+	<Factions>
+	</Factions>
+	
+	<ProtectedItems>
+	</ProtectedItems>
+
+	<QuestOrder>
+		
+		<!-- *******************************************************  RAF Toons ************************************************************** -->
+		<If Condition="Me.Level &lt;= 85">
+			<CustomBehavior File="Message" 
+							Text="We are a RAF." 
+							LogColor="Cyan" />
+							
+			<!-- Gold -->
+			<If Condition="Me.Gold &lt; 5">
+				<CustomBehavior File="Message" 
+								Text="You need at least 5 gold in order to utilize this profile's armor/weapon purchasing." 
+								LogColor="Red" />
+								
+				<CustomBehavior File="UserSettings" 
+								StopBot="true" />
+			</If> <!-- Gold -->
+							
+			<!-- UserSettings -->
+			<CustomBehavior File="UserSettings"
+							FindMountAutomatically="True"
+							GroundMountFarmingMode="False"
+							HarvestHerbs="False"
+							HarvestMinerals="False"
+							KillBetweenHotspots="True"
+							LogoutForInactivity="False"
+							LogoutInactivityUseForceQuit="False"
+							LootMobs="True"
+							LootRadius="35"
+							MountName=""
+							NinjaSkin="False"
+							RessAtSpiritHealers="False"
+							SkinMobs="False"
+							UseMount="True" 
+							UseRandomMount="False" />
+			
+			<!-- Sunstrider Isle / Eversong Woods / Ghostlands -->
+			<If Condition="Me.ZoneId == 6455 || Me.ZoneId == 3430 || Me.ZoneId == 3433">
+				<CustomBehavior File="Message" 
+								Text="We are in Sunstrider Isle, Eversong Woods or Ghostlands." 
+								LogColor="Cyan" />
+								
+				<CustomBehavior File="Message" 
+								Text="Moving to Orb of Translocation in Silvermoon City." 
+								LogColor="Lime" />
+				
+				<!-- Orb of Translocation -->
+				<CustomBehavior File="NoCombatMoveTo" X="10039.99" Y="-7001.027" Z="61.98234" />
+			</If> <!-- Eversong Woods -->
+						
+			<!-- Silvermoon City -->
+			<If Condition="Me.ZoneId == 3487">
+				<CustomBehavior File="Message" 
+								Text="We are in Silvermoon City." 
+								LogColor="Cyan" />
+								
+				<CustomBehavior File="Message" 
+								Text="Moving to Orb of Translocation." 
+								LogColor="Lime" />
+				
+				<!-- Orb of Translocation -->
+				<CustomBehavior File="NoCombatMoveTo" X="10039.99" Y="-7001.027" Z="61.98234" />	
+
+				<CustomBehavior File="Message" 
+								Text="We are at the Orb of Translocation." 
+								LogColor="Cyan" />
+							
+				<CustomBehavior File="Message" 
+								Text="Using the Orb of Translocation." 
+								LogColor="Lime" />			
+									
+				<!-- Orb of translocation -->
+				<CustomBehavior File="InteractWith" 
+								MobId="184502"
+								ObjectType="Gameobject"
+								Range="4.75" 
+								NumOfTimes="1" 
+								X="10032.3633" Y="-7000.2876" Z="61.30979" />
+								
+				<RunTo X="1805" Y="327" Z="70.39766" />
+			</If> <!-- Silvermoon City -->
+			
+			<!-- Undercity -->
+			<If Condition="Me.ZoneId == 1497">
+				<CustomBehavior File="Message" 
+								Text="We are in Undercity." 
+								LogColor="Cyan" />
+				
+				<!-- Orb of Translocation -->
+				<RunTo X="1805" Y="327" Z="70.39766" />
+				
+				<CustomBehavior File="Message" 
+								Text="Moving to Tirisfal Glades." 
+								LogColor="Lime" />
+								
+				<!-- Get to zeppelin tower -->				
+				<CustomBehavior File="NoCombatMoveTo" X="2066.202" Y="282.9644" Z="97.0315" />
+			</If> <!-- Undercity -->
+			
+			<!-- Deathknell / Tirisfal Glades / Silverpine Forest -->
+			<If Condition="Me.ZoneId == 6454 || Me.ZoneId == 85 || Me.ZoneId == 130">
+				<CustomBehavior File="Message" 
+								Text="We are in Deathknell, Tirisfal Glades or Silverpine Forest." 
+								LogColor="Cyan" />
+								
+				<CustomBehavior File="Message" 
+								Text="Moving to zeppelin to Orgrimmar." 
+								LogColor="Lime" />
+								
+				<!-- Get to zeppelin tower -->
+				<CustomBehavior File="NoCombatMoveTo" X="2066.202" Y="282.9644" Z="97.0315" />
+			
+				<!-- Undercity to Orgrimmar -->
+				<CustomBehavior File="UseTransport"
+								TransportId="164871"
+								WaitAtX="2069.196" 
+								WaitAtY="290.1878" 
+								WaitAtZ="97.03156" 
+								TransportStartX="2062.376" 
+								TransportStartY="292.998047" 
+								TransportStartZ="114.670547"
+								TransportEndX="1833.509" 
+								TransportEndY="-4391.543" 
+								TransportEndZ="152.7679"
+								StandOnX="2067.631" 
+								StandOnY="293.5163" 
+								StandOnZ="97.19795" 
+								GetOffX="1841.82"
+								GetOffY="-4393.583" 
+								GetOffZ="135.233" />
+				
+				<!-- Orgrimmar fp -->
+				<RunTo X="1801.861" Y="-4368.239" Z="102.6186" />
+			</If> <!-- Tirisfal Glades -->
+			
+			<!-- Camp Narache / Mulgore -->
+			<If Condition="Me.ZoneId == 6452 || Me.ZoneId == 215">
+				<CustomBehavior File="Message" 
+								Text="We are in Camp Narache or Mulgore." 
+								LogColor="Cyan" />
+								
+				<CustomBehavior File="Message" 
+								Text="Moving to Bloodhoof Village." 
+								LogColor="Lime" />
+				
+					
+				<!-- Bloodhoof Village fp -->
+				<CustomBehavior File="NoCombatMoveTo" X="-2299.54" Y="-379.069" Z="-9.11829" />
+				
+				<!-- Thunder Bluff fp -->
+				<RunTo X="-1195.865" Y="28.09892" Z="176.949" />
+			</If> <!-- Mulgore -->
+			
+			<!-- Thunder Bluff -->
+			<If Condition="Me.ZoneId == 1638">
+				<CustomBehavior File="Message" 
+								Text="We are in Thunder Bluff." 
+								LogColor="Cyan" />
+								
+				<CustomBehavior File="Message" 
+								Text="Moving to Orgrimmar." 
+								LogColor="Lime" />
+				
+				<!-- Thunder Bluff fp -->
+				<RunTo X="-1195.865" Y="28.09892" Z="176.949" />
+				
+				<!-- Orgrimmar fp -->
+				<RunTo X="1798.27" Y="-4363.27" Z="102.5216" />
+					
+				
+			</If> <!-- Thunder Bluff -->
+			
+			<!-- Orgrimmar -->
+			<If Condition="Me.ZoneId == 1637">
+				<CustomBehavior File="Message" 
+								Text="We are in Orgrimmar." 
+								LogColor="Cyan" />
+								
+				<!-- Hearth -->
+				<If Condition="Me.HearthstoneAreaId != 5170">
+					<CustomBehavior File="Message" 
+									Text="Our Hearthstone isn't set in the proper location. Moving to set it." 
+									LogColor="Lime" />
+									
+					<!-- Front doorway of the inn -->	
+					<RunTo X="1569.392" Y="-4426.286" Z="14.43938" />	
+
+					<!-- Run inside -->
+					<RunTo X="1572.79" Y="-4437.783" Z="16.05454" />
+					
+					<!-- Set hearthstone -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="1000" />
+					<CustomBehavior File="Message" 
+									Text="Setting my Hearthstone." 
+									LogColor="Lime" />
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="1000" />
+					<CustomBehavior File="SetHearthstone" 
+									MobId="6929" 
+									X="1573.266" Y="-4439.158" Z="16.0564" />
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="1000" />
+				</If> <!-- Hearth -->
+				
+				<CustomBehavior File="Message" 
+								Text="Moving to Sen'jin Village." 
+								LogColor="Lime" />
+									
+				<!-- Move to orgrimmar fp -->
+				<RunTo X="1798.27" Y="-4363.27" Z="102.5216" />
+				
+				<!-- Sen'jin fp -->
+				<RunTo X="-780.267" Y="-4890.28" Z="19.6215" />
+			</If> <!-- Orgrimmar -->
+
+			<CustomBehavior File="UserSettings"
+							PullDistance="30" />
+			
+			<!-- Infinite loop -->
+			<While Condition="true">
+				<!-- 1-3 -->
+				<If Condition="Me.Level &gt;= 1 &amp;&amp; Me.Level &lt; 3">
+					<CustomBehavior File="Message" 
+									Text="We are level 1-3." 
+									LogColor="Cyan" />
+									
+					<CustomBehavior File="Message" 
+									Text="Moving to boars." 
+									LogColor="Lime" />	
+									
+					<!-- Go to boars -->
+					<CustomBehavior File="NoCombatMoveTo" X="-496.0468" Y="-4304.235" Z="41.63905" />
+					
+					<CustomBehavior File="Message" 
+									Text="Waiting for party members to meet us here."  
+									LogColor="Cyan" />
+					
+					<SetGrindArea>
+						<GrindArea>
+							<Factions>
+								189
+							</Factions>
+							
+							<Hotspots>
+								<Hotspot X="-453.8467" Y="-4279.513" Z="42.86316" />
+								<Hotspot X="-488.3141" Y="-4343.978" Z="39.60603" />
+							</Hotspots>
+						</GrindArea>
+					</SetGrindArea>		
+					
+					<GrindTo Condition="Me.Level == 3" />
+				</If> <!-- 1-3 -->
+				
+				<!-- 3-5 -->
+				<If Condition="Me.Level &gt;= 3 &amp;&amp; Me.Level &lt; 5">
+					<CustomBehavior File="Message" 
+									Text="We are level 3-5." 
+									LogColor="Cyan" />
+									
+					<CustomBehavior File="Message" 
+									Text="Moving to imps." 
+									LogColor="Lime" />	
+							
+					<!-- Go to imps -->
+					<CustomBehavior File="NoCombatMoveTo" X="-332.7863" Y="-4300.681" Z="56.38295" />
+					
+					<CustomBehavior File="Message" 
+									Text="Waiting for party members to meet us here."  
+									LogColor="Cyan" />
+										
+					<SetGrindArea>
+						<GrindArea>
+							<Factions>
+								7
+							</Factions>
+							
+							<Hotspots>
+								<Hotspot X="-260.1014" Y="-4281.093" Z="60.13472" />
+								<Hotspot X="-271.6667" Y="-4388.936" Z="59.54266" />
+								<Hotspot X="-124.7621" Y="-4336.783" Z="64.38166" />
+								<Hotspot X="-97.38179" Y="-4291.972" Z="61.11745" />
+								<Hotspot X="-141.4261" Y="-4287.317" Z="64.96313" />
+								<Hotspot X="-103.8282" Y="-4209.244" Z="53.7942" />
+								<Hotspot X="-54.70451" Y="-4329.642" Z="68.44824" />
+								<Hotspot X="-53.75384" Y="-4278.838" Z="69.55197" />
+								<Hotspot X="-39.94887" Y="-4226.796" Z="64.75858" />
+							</Hotspots>
+						</GrindArea>
+					</SetGrindArea>	
+
+					<GrindTo Condition="Me.Level == 5" />
+				</If> <!-- 3-5 -->
+				
+				<!-- 5-8 -->
+				<If Condition="Me.Level &gt;= 5 &amp;&amp; Me.Level &lt; 8">
+					<CustomBehavior File="Message" 
+									Text="We are level 5-8." 
+									LogColor="Cyan" />
+									
+					<CustomBehavior File="Message" 
+									Text="Moving to Razor Hill to purchase equipment." 
+									LogColor="Lime" />	
+									
+					<!-- Go to Razor Hill to buy some gear -->
+					<CustomBehavior File="NoCombatMoveTo" X="316.9291" Y="-4740.251" Z="9.559894" />
+					
+					<!-- 
+						3166	Cutac 						
+						<Cloth & Leather Armor Merchant>
+						X="367.8849" Y="-4770.914" Z="12.4702" />
+						
+						2364	Woven Vest					441
+						3606	Woven Belt					221
+						2366	Woven Pants					444
+						2367	Woven Boots					334
+						3607	Woven Bracers				221
+						2369	Woven Gloves				226
+						2370	Battered Leather Harness	450
+						2371	Battered Leather Belt		227
+						2372	Battered Leather Pants		410
+						2373	Battered Leather Boots		308
+						2374	Battered Leather Bracers	208
+						2375	Battered Leather Gloves		209
+						
+						
+						3167	Wuark
+						<Armorer and Shieldcrafter>
+						X="358.1284" Y="-4706.727" Z="14.39389" />
+						
+						2398	Light Chain Armor			431
+						2399	Light Chain Belt			217
+						2400	Light Chain Leggings		434
+						2401	Light Chain Boots			326
+						2402	Light Chain Bracers			220
+						2403	Light Chain Gloves			221
+						17185	Round Buckler				221
+						2376	Worn Heater Shield			381
+						2901	Mining Pick					69
+						30746	Mining Sack					85000
+						2880	Weak Flux					85
+						3466	Strong Flux					1700
+						3857	Coal						425
+						20815	Jeweler's Kit				680
+						
+						
+						3163	Uhgar						
+						<Weaponsmith>
+						X="381.653" Y="-4712.06" Z="16.03346" />
+						
+						2489	Two-Handed Sword			292
+						2492	Cudgel						243
+						2491	Large Axe					412
+						2494	Stiletto					342
+						2495	Walking Stick				430
+						2488	Gladius						456
+						2490	Tomahawk					459
+						2493	Wooden Mallet				596
+						
+						
+						3165	Ghrawt						
+						<Bowyer>
+						X="362.1046" Y="-4763.842" Z="12.46934" />
+						
+						2506	Hornwood Recurve Bow		243
+						2507	Laminated Recurve Bow		1490
+						
+					-->
+						
+					<!-- Cloth wearers -->
+					<If Condition="Me.Class == WoWClass.Mage || Me.Class == WoWClass.Priest || Me.Class == WoWClass.Warlock">
+						<!-- Armor -->
+						
+						<!-- Woven Vest -->
+						<If Condition="!HasItem(2364)">
+							<CustomBehavior File="InteractWith" 
+											MobId="3166" 
+											BuyItemId="2364" 
+											BuyItemCount="1"
+											X="367.8849" Y="-4770.914" Z="12.4702" />
+						</If>
+						
+						<!-- Woven Belt -->
+						<If Condition="!HasItem(3606)">
+							<CustomBehavior File="InteractWith" 
+											MobId="3166" 
+											BuyItemId="3606" 
+											BuyItemCount="1"
+											X="367.8849" Y="-4770.914" Z="12.4702" />
+						</If>
+						
+						<!-- Woven Pants -->
+						<If Condition="!HasItem(2366)">
+							<CustomBehavior File="InteractWith" 
+											MobId="3166" 
+											BuyItemId="2366" 
+											BuyItemCount="1"
+											X="367.8849" Y="-4770.914" Z="12.4702" />
+						</If>
+						
+						<!-- Woven Boots -->
+						<If Condition="!HasItem(2367)">
+							<CustomBehavior File="InteractWith" 
+											MobId="3166" 
+											BuyItemId="2367" 
+											BuyItemCount="1"
+											X="367.8849" Y="-4770.914" Z="12.4702" />
+						</If>
+						
+						<!-- Woven Bracers -->
+						<If Condition="!HasItem(3607)">
+							<CustomBehavior File="InteractWith" 
+											MobId="3166" 
+											BuyItemId="3607"
+											BuyItemCount="1"											
+											X="367.8849" Y="-4770.914" Z="12.4702" />
+						</If>
+						
+						<!-- Woven Gloves -->
+						<If Condition="!HasItem(2369)">
+							<CustomBehavior File="InteractWith" 
+											MobId="3166" 
+											BuyItemId="2369" 
+											BuyItemCount="1"
+											X="367.8849" Y="-4770.914" Z="12.4702" />
+						</If>
+						
+						
+						<!-- Weapons -->
+						
+						<!-- Walking Stick -->
+						<If Condition="!HasItem(2495)">
+							<CustomBehavior File="InteractWith" 
+											MobId="3163" 
+											BuyItemId="2495" 
+											BuyItemCount="1"
+											X="381.653" Y="-4712.06" Z="16.03346" />
+						</If>
+						
+					</If> <!-- Cloth wearers -->
+					
+					<!-- Leather wearers -->
+					<If Condition="Me.Class == WoWClass.Rogue || Me.Class == WoWClass.Monk || Me.Class == WoWClass.Druid || Me.Class == WoWClass.Shaman || Me.Class == WoWClass.Hunter">
+						<!-- Armor -->
+						
+						<!-- Battered Leather Harness -->
+						<If Condition="!HasItem(2370)">
+							<CustomBehavior File="InteractWith" 
+											MobId="3166" 
+											BuyItemId="2370"
+											BuyItemCount="1"											
+											X="367.8849" Y="-4770.914" Z="12.4702" />
+						</If>
+						
+						<!-- Battered Leather Belt -->
+						<If Condition="!HasItem(2371)">
+							<CustomBehavior File="InteractWith" 
+											MobId="3166" 
+											BuyItemId="2371" 
+											BuyItemCount="1"
+											X="367.8849" Y="-4770.914" Z="12.4702" />
+						</If>
+						
+						<!-- Battered Leather Pants -->
+						<If Condition="!HasItem(2372)">
+							<CustomBehavior File="InteractWith" 
+											MobId="3166" 
+											BuyItemId="2372" 
+											BuyItemCount="1"
+											X="367.8849" Y="-4770.914" Z="12.4702" />
+						</If>
+						
+						<!-- Battered Leather Boots -->
+						<If Condition="!HasItem(2373)">
+							<CustomBehavior File="InteractWith" 
+											MobId="3166" 
+											BuyItemId="2373" 
+											BuyItemCount="1"
+											X="367.8849" Y="-4770.914" Z="12.4702" />
+						</If>
+						
+						<!-- Battered Leather Bracers -->
+						<If Condition="!HasItem(2374)">
+							<CustomBehavior File="InteractWith" 
+											MobId="3166" 
+											BuyItemId="2374" 
+											BuyItemCount="1"
+											X="367.8849" Y="-4770.914" Z="12.4702" />
+						</If>
+						
+						<!-- Battered Leather Gloves -->
+						<If Condition="!HasItem(2375)">
+							<CustomBehavior File="InteractWith" 
+											MobId="3166" 
+											BuyItemId="2375" 
+											BuyItemCount="1"
+											X="367.8849" Y="-4770.914" Z="12.4702" />
+						</If>
+						
+						<!-- Weapons -->
+						
+						<!-- Stiletto -->
+						<If Condition="Me.Class == WoWClass.Rogue">
+							<If Condition="!HasItem(2494)">
+								<CustomBehavior File="InteractWith" 
+												MobId="3163" 
+												BuyItemId="2494" 
+												BuyItemCount="2"
+												X="381.653" Y="-4712.06" Z="16.03346" />
+							</If>
+						</If> 
+						
+						<!-- Cudgel -->
+						<If Condition="Me.Class == WoWClass.Monk || Me.Class == WoWClass.Shaman">
+							<If Condition="!HasItem(2492)">
+								<CustomBehavior File="InteractWith" 
+												MobId="3163" 
+												BuyItemId="2492" 
+												BuyItemCount="2"
+												X="381.653" Y="-4712.06" Z="16.03346" />
+							</If>
+						</If> 
+						
+						<!-- Walking Stick -->
+						<If Condition="Me.Class == WoWClass.Druid">
+							<If Condition="!HasItem(2495)">
+								<CustomBehavior File="InteractWith" 
+												MobId="3163" 
+												BuyItemId="2495" 
+												BuyItemCount="1"
+												X="381.653" Y="-4712.06" Z="16.03346" />
+							</If>
+						</If>
+						
+						<!-- Hornwood Recurve Bow -->
+						<If Condition="Me.Class == WoWClass.Hunter">
+							<If Condition="!HasItem(2506)">
+								<CustomBehavior File="InteractWith" 
+												MobId="3165" 
+												BuyItemId="2506" 
+												BuyItemCount="1"
+												X="362.1046" Y="-4763.842" Z="12.46934" />
+							</If>
+						</If>
+					</If> <!-- Leather wearers -->
+					
+					<!-- Mail wearers -->
+					<If Condition="Me.Class == WoWClass.Paladin || Me.Class == WoWClass.Warrior">
+						<!-- Armor -->
+						
+						<!-- Light Chain Armor -->
+						<If Condition="!HasItem(2398)">
+							<CustomBehavior File="InteractWith" 
+											MobId="3167" 
+											BuyItemId="2398" 
+											BuyItemCount="1"
+											X="358.1284" Y="-4706.727" Z="14.39389" />
+						</If>
+						
+						<!-- Light Chain Belt -->
+						<If Condition="!HasItem(2399)">
+							<CustomBehavior File="InteractWith" 
+											MobId="3167" 
+											BuyItemId="2399" 
+											BuyItemCount="1"
+											X="358.1284" Y="-4706.727" Z="14.39389" />
+						</If>
+						
+						<!-- Light Chain Leggings -->
+						<If Condition="!HasItem(2400)">
+							<CustomBehavior File="InteractWith" 
+											MobId="3167" 
+											BuyItemId="2400" 
+											BuyItemCount="1"
+											X="358.1284" Y="-4706.727" Z="14.39389" />
+						</If>
+						
+						<!-- Light Chain Boots -->
+						<If Condition="!HasItem(2401)">
+							<CustomBehavior File="InteractWith" 
+											MobId="3167" 
+											BuyItemId="2401" 
+											BuyItemCount="1"
+											X="358.1284" Y="-4706.727" Z="14.39389" />
+						</If>
+						
+						<!-- Light Chain Bracers -->
+						<If Condition="!HasItem(2402)">
+							<CustomBehavior File="InteractWith" 
+											MobId="3167" 
+											BuyItemId="2402" 
+											BuyItemCount="1"
+											X="358.1284" Y="-4706.727" Z="14.39389" />
+						</If>
+						
+						<!-- Light Chain Gloves -->
+						<If Condition="!HasItem(2403)">
+							<CustomBehavior File="InteractWith" 
+											MobId="3167" 
+											BuyItemId="2403" 
+											BuyItemCount="1"
+											X="358.1284" Y="-4706.727" Z="14.39389" />
+						</If>
+						
+						<!-- Worn Heater Shield -->
+						<If Condition="!HasItem(2376)">
+							<CustomBehavior File="InteractWith" 
+											MobId="3167" 
+											BuyItemId="2376" 
+											BuyItemCount="1"
+											X="358.1284" Y="-4706.727" Z="14.39389" />
+						</If>
+						
+						<!-- Gladius -->
+						<If Condition="!HasItem(2488)">
+							<CustomBehavior File="InteractWith" 
+											MobId="3163" 
+											BuyItemId="2488" 
+											BuyItemCount="1"
+											X="381.653" Y="-4712.06" Z="16.03346" />
+						</If>
+					</If> <!-- Mail wearers -->
+									
+					<CustomBehavior File="Message" 
+									Text="Moving to Northwatch guards." 
+									LogColor="Lime" />	
+									
+					<!-- Go to guards -->
+					<CustomBehavior File="NoCombatMoveTo" X="-250.4299" Y="-4918.466" Z="26.3126" />
+					
+					<CustomBehavior File="Message" 
+									Text="Waiting for party members to meet us here."  
+									LogColor="Cyan" />
+										
+					<SetGrindArea>
+						<GrindArea>
+							<Factions>
+								1077
+							</Factions>
+							
+							<Hotspots>
+								<Hotspot X="-236.5782" Y="-4982.417" Z="21.50436" />
+								<Hotspot X="-178.267" Y="-5026.979" Z="21.09766" />
+								<Hotspot X="-146.6811" Y="-5001.711" Z="22.1731" />
+								<Hotspot X="-160.9166" Y="-5092.261" Z="20.51166" />
+								<Hotspot X="-273.2453" Y="-5063.808" Z="20.66992" />
+								<Hotspot X="-222.6984" Y="-5050.663" Z="19.54734" />
+								<Hotspot X="-247.541" Y="-5086.827" Z="24.00604" />
+								<Hotspot X="-269.1379" Y="-5107.274" Z="25.24518" />
+								<Hotspot X="-240.8512" Y="-5115.523" Z="25.24518" />
+								<Hotspot X="-244.3746" Y="-5113.045" Z="34.06549" />
+							</Hotspots>
+						</GrindArea>
+					</SetGrindArea>		
+
+					<GrindTo Condition="Me.Level == 8" />	
+				</If> <!-- 5-8 -->
+				
+				<!-- 8-10 -->
+				<If Condition="Me.Level &gt;= 8 &amp;&amp; Me.Level &lt; 10">
+					<CustomBehavior File="Message" 
+									Text="We are level 8-10." 
+									LogColor="Cyan" />
+									
+					<CustomBehavior File="Message" 
+									Text="Moving to elementals." 
+									LogColor="Lime" />
+							
+					<!-- Go to elementals -->
+					<CustomBehavior File="NoCombatMoveTo" X="1240.841" Y="-4253.781" Z="23.98017" />
+
+					<CustomBehavior File="Message" 
+									Text="Waiting for party members to meet us here."  
+									LogColor="Cyan" />
+										
+					<SetGrindArea>
+						<GrindArea>
+							<Factions>
+								91
+							</Factions>
+							
+							<Hotspots>
+								<!-- Elementals -->
+								<Hotspot X="1245.499" Y="-4108.859" Z="25.54549" />
+								<Hotspot X="1191.728" Y="-4087.215" Z="18.84283" />
+								<Hotspot X="1231.005" Y="-4077.312" Z="22.96015" />
+								<Hotspot X="1248.387" Y="-4052.195" Z="21.96889" />
+								<Hotspot X="1204.771" Y="-4036.635" Z="18.03594" />
+								<Hotspot X="1178.798" Y="-4043.709" Z="14.36299" />
+								<Hotspot X="1252.657" Y="-4014.624" Z="22.18472" />
+								<Hotspot X="1237.173" Y="-3972.519" Z="19.53499" />
+								<Hotspot X="1200.451" Y="-3964.294" Z="19.23733" />
+								<Hotspot X="1190.241" Y="-4000.262" Z="16.88264" />
+								<Hotspot X="1145.419" Y="-4008.955" Z="16.36102" />
+								<Hotspot X="1119.607" Y="-3983.564" Z="14.83048" />
+								<Hotspot X="1087.757" Y="-4014.252" Z="18.71025" />
+								<Hotspot X="1122.43" Y="-3942.553" Z="20.44883" />
+								<Hotspot X="1169.328" Y="-3948.03" Z="18.09521" />
+								
+								<Hotspot X="1032.488" Y="-3926.509" Z="19.66791" />
+								<Hotspot X="1023.834" Y="-3969.508" Z="18.16248" />
+								<Hotspot X="1016.663" Y="-3901.927" Z="18.33387" />
+								<Hotspot X="982.7812" Y="-3879.847" Z="18.58193" />
+								<Hotspot X="957.5467" Y="-3897.826" Z="18.4237" />
+								<Hotspot X="947.4322" Y="-3866.402" Z="18.52212" />
+								<Hotspot X="920.0316" Y="-3849.16" Z="18.36242" />
+								<Hotspot X="911.5445" Y="-3917.051" Z="20.5236" />
+							</Hotspots>
+						</GrindArea>
+					</SetGrindArea>	
+					
+					<GrindTo Condition="Me.Level == 10" />
+				</If> <!-- 8-10 -->
+				
+				<!-- 10+ -->
+				<If Condition="Me.Level &gt;= 10">
+					<CustomBehavior File="Message" 
+									Text="We are level 10 or above." 
+									LogColor="Cyan" />
+					
+					<!-- Durotar -->
+					<If Condition="Me.ZoneId == 14 &amp;&amp; Me.HearthstoneAreaId != 5170">
+						<CustomBehavior File="Message" 
+										Text="Our Hearthstone isn't set in the proper location. Moving to set it." 
+										LogColor="Lime" />
+											
+						<!-- razor hill fp -->
+						<RunTo X="269.917" Y="-4766.76" Z="11.4946" />	
+						
+						<!-- orgrimmar fp -->
+						<RunTo X="1798.27" Y="-4363.27" Z="102.5216" />
+					</If> <!-- Durotar -->
+					
+					<!-- Orgrimmar -->
+					<If Condition="Me.ZoneId == 1637">
+						<!-- Front doorway of the inn -->	
+						<RunTo X="1569.392" Y="-4426.286" Z="14.43938" />			
+						
+						<!-- Run inside -->
+						<RunTo X="1572.79" Y="-4437.783" Z="16.05454" />
+						
+						<!-- Set hearthstone -->
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="1000" />
+						<CustomBehavior File="Message" 
+										Text="Setting my Hearthstone." 
+										LogColor="Lime" />
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="1000" />
+						<CustomBehavior File="SetHearthstone" 
+										MobId="6929" 
+										X="1573.266" Y="-4439.158" Z="16.0564" />
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="1000" />
+								
+						<!-- hearth is set -->
+						<If Condition="Me.HearthstoneAreaId == 5170">
+							<!-- Move to orgrimmar fp -->
+							<RunTo X="1798.27" Y="-4363.27" Z="102.5216" />
+							
+							<CustomBehavior File="Message" 
+											Text="Moving to Razor Hill." 
+											LogColor="Lime" />
+							
+							<!-- razor hill fp -->
+							<RunTo X="269.917" Y="-4766.76" Z="11.4946" />	
+						</If> <!-- hearth is set -->
+					</If> <!-- Orgrimmar -->
+					
+					<!-- Durotar -->
+					<If Condition="Me.ZoneId == 14 &amp;&amp; Me.HearthstoneAreaId == 5170">
+						<CustomBehavior File="LoadProfile" 
+										ProfileName="..\[QO][10-80]_Instances\[QO-H][10-17]_wailing-caverns" />
+					</If> <!-- Durotar -->
+				</If> <!-- 10+ -->
+			</While> <!-- Infinite loop -->
+		</If> <!-- RAF -->
+	</QuestOrder >			
+ </HBProfile>

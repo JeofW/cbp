@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<DungeonBuddyProfile>
+  <Name>Deadmines</Name>
+  <DungeonId>6</DungeonId>
+  <BossEncounters>
+    <Boss isFinal="false" entry="644" name="Rhahk'Zor" killOrder="1" optional="false" X="-192.9" Y="-448.2" Z="54.4"/>
+    <Boss isFinal="false" entry="642" name="Sneed's Shredder" killOrder="2" optional="false" X="-289.5" Y="-513.0" Z="49.7"/>
+    <Boss isFinal="false" entry="643" name="Sneed" killOrder="3" optional="false" X="-289.5" Y="-513.0" Z="49.7"/>
+    <Boss isFinal="false" entry="1763" name="Gilnid" killOrder="4" optional="false" X="-177.4" Y="-574.5" Z="19.3"/>
+    <Boss isFinal="false" entry="646" name="Mr. Smite" killOrder="5" optional="false" X="-22.8" Y="-797.3" Z="20.4"/>
+    <Boss isFinal="false" entry="647" name="Captain Greenskin" killOrder="6" optional="false" X="-59.6" Y="-820.1" Z="41.6"/>
+    <Boss isFinal="true" entry="639" name="Edwin VanCleef" killOrder="7" optional="false" X="-87.4" Y="-819.9" Z="39.3"/>
+    <Boss isFinal="false" entry="645" name="Cookie" killOrder="8" optional="false" X="-67.6" Y="-853.7" Z="17.1"/>
+  </BossEncounters>
+  <Blackspots>
+    <!-- Cannon at entrance to final area -->
+    <Blackspot X="-107.3257" Y="-660.2736" Z="7.421467" Radius="2.552785" />
+
+    <!-- Post on Dock-->
+    <Blackspot X="-4.758108" Y="-780.5305" Z="9.795969" Radius="0.8994852" />
+    <!-- back ship ramp-->
+    <Blackspot X="-66.67523" Y="-881.4882" Z="15.10234" Radius="9.900934" />
+    <!-- corner on dock that followers go to and fall off.-->
+    <Blackspot X="-40.37247" Y="-733.9104" Z="9.485084" Radius="2.697061" />
+  </Blackspots>
+</DungeonBuddyProfile>

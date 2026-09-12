@@ -1,0 +1,280 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+<Name>[Botanist][Tinker]_azuremyst-bloodmyst-isle_to_rut'theran-village</Name>
+
+<MinLevel>1</MinLevel>
+<MaxLevel>151</MaxLevel>
+
+<MinDurability>-1</MinDurability>
+<MinFreeBagSlots>-1</MinFreeBagSlots>
+<TargetingDistance>1</TargetingDistance>
+
+<MailGrey>False</MailGrey>
+<MailWhite>False</MailWhite>
+<MailGreen>False</MailGreen>
+<MailBlue>False</MailBlue>
+<MailPurple>False</MailPurple>
+
+<SellGrey>False</SellGrey>
+<SellWhite>False</SellWhite>
+<SellGreen>False</SellGreen>
+<SellBlue>False</SellBlue>
+<SellPurple>False</SellPurple>
+
+<AvoidMobs>		 
+</AvoidMobs>
+
+<Blackspots>
+</Blackspots>
+
+<Mailboxes>
+</Mailboxes>
+
+<Vendors>
+</Vendors>
+
+<ProtectedItems>	
+</ProtectedItems>
+
+	<QuestOrder>
+	
+		<!-- UserSettings -->
+		<CustomBehavior File="UserSettings"
+						FindMountAutomatically="True"
+						GroundMountFarmingMode="False"
+						HarvestHerbs="False"
+						HarvestMinerals="False"
+						KillBetweenHotspots="False"
+						LogoutForInactivity="True"
+						LogoutInactivityUseForceQuit="True"
+						LootMobs="False"
+						LootRadius="1"
+						MountName=""
+						NinjaSkin="False"
+						RessAtSpiritHealers="False"
+						SkinMobs="False"
+						UseMount="True" 
+						UseRandomMount="False" />
+		
+		<!-- Profile message - Movement procedures initiated -->
+		<CustomBehavior File="Message" 
+						Text="Movement procedures initiated." 
+						LogColor="Gold" />
+							
+		<!-- If we are in Ammen Vale -->
+		<If Condition="Me.ZoneId == 6456">				
+
+			<!-- Profile message - We are in Ammen Vale. Navigating to Azuremyst Isle -->
+			<CustomBehavior File="Message" 
+							Text="We are in Ammen Vale. Navigating to Azuremyst Isle." 
+							LogColor="Plum" />				
+			
+			<!-- Move to - top of the incline -->
+			<MoveTo X="-4255.467" Y="-13207.74" Z="63.82463" />
+			
+			<!-- Profile message - Disabling combat -->
+			<CustomBehavior File="Message" 
+							Text="Disabling combat." 
+							LogColor="Gold" />
+			
+			<!-- DisableBehavior - Combat -->
+			<DisableBehavior Name="Combat" />
+			
+			<!-- Profile message - Disabling 'Pull' behavior -->
+			<CustomBehavior File="Message" 
+							Text="Disabling 'Pull' behavior."
+							LogColor="Plum" />
+			
+			<!-- DisableBehavior - Pull -->
+			<DisableBehavior Name="Pull" />	
+	
+			<!-- Move to - bottom of the incline -->
+			<MoveTo X="-4250.331" Y="-12966.74" Z="3.457005" />
+			
+			<!-- Move to - road to Azure Watch -->
+			<MoveTo X="-4248.941" Y="-12963.79" Z="3.662844" />
+			<MoveTo X="-4248.237" Y="-12938.25" Z="5.72512" />
+			<MoveTo X="-4251.464" Y="-12913.24" Z="9.374222" />
+			<MoveTo X="-4251.135" Y="-12887.84" Z="12.12065" />
+			<MoveTo X="-4251.385" Y="-12862.47" Z="13.86147" />
+			<MoveTo X="-4250.651" Y="-12837.26" Z="15.16317" />
+			<MoveTo X="-4249.96" Y="-12811.99" Z="16.69942" />
+			<MoveTo X="-4242.649" Y="-12787.9" Z="18.96666" />
+			<MoveTo X="-4234.106" Y="-12763.98" Z="21.12859" />
+			<MoveTo X="-4225.807" Y="-12740.13" Z="22.95638" />
+			<MoveTo X="-4216.688" Y="-12716.61" Z="25.41198" />
+			<MoveTo X="-4207.878" Y="-12692.84" Z="27.45189" />
+			<MoveTo X="-4204.076" Y="-12667.76" Z="29.49638" />
+			<MoveTo X="-4200.415" Y="-12642.66" Z="31.37194" />
+			<MoveTo X="-4197.015" Y="-12617.69" Z="33.02933" />
+			<MoveTo X="-4196.317" Y="-12592.29" Z="34.74452" />
+			<MoveTo X="-4194.375" Y="-12567.01" Z="38.09029" />
+			<MoveTo X="-4189.085" Y="-12542.56" Z="42.12861" />
+			<MoveTo X="-4174.675" Y="-12521.83" Z="44.83181" />
+			<MoveTo X="-4150.409" Y="-12513.32" Z="45.1759" />
+			
+			<!-- Move to - Azure Watch -->
+			<MoveTo X="-4130.527" Y="-12520.46" Z="44.36323" />
+
+		</If>	<!-- If we are in Ammen Vale -->
+			
+		<!-- If we are in Azuremyst Isle-Bloodmyst Isle -->
+		<If Condition="Me.X &lt; -825.2612 &amp;&amp; Me.X &gt; -5052.591 &amp;&amp; Me.Y &gt; -13282.24 &amp;&amp; Me.Y &lt; -10545.25" >				
+
+			<!-- Profile message - We are in Azuremyst Isle - Bloodmyst Isle. Navigating to Azure Watch -->
+			<CustomBehavior File="Message" 
+							Text="We are in Azuremyst Isle - Bloodmyst Isle. Navigating to Azure Watch." 
+							LogColor="Plum" />				
+	
+			<!-- Move to - Azure Watch -->
+			<MoveTo X="-4130.444" Y="-12519.84" Z="44.39832" />
+
+			<!-- Profile message - We are in Azure Watch. Navigating to Exodar -->
+			<CustomBehavior File="Message" 
+							Text="We are in Azure Watch. Navigating to Exodar." 
+							LogColor="Plum" />
+							
+			<!-- Move to - road to Exodar -->
+			<MoveTo X="-4229.443" Y="-12491.29" Z="42.69837" />
+			<MoveTo X="-4252.562" Y="-12483.14" Z="35.25514" />
+			<MoveTo X="-4275.173" Y="-12475.29" Z="27.30322" />
+			<MoveTo X="-4286.442" Y="-12453.03" Z="22.70311" />
+			<MoveTo X="-4274.89" Y="-12431.05" Z="19.67725" />
+			<MoveTo X="-4261.676" Y="-12409.49" Z="17.03791" />
+			<MoveTo X="-4249.832" Y="-12387.01" Z="13.52082" />
+			<MoveTo X="-4237.713" Y="-12364.88" Z="9.494564" />
+			<MoveTo X="-4226.162" Y="-12342.91" Z="5.191123" />
+			<MoveTo X="-4214.514" Y="-12320.5" Z="2.28332" />
+			<MoveTo X="-4200.828" Y="-12299.06" Z="0.7013537" />
+			<MoveTo X="-4185.303" Y="-12278.9" Z="-0.1669112" />
+			<MoveTo X="-4168.887" Y="-12259.37" Z="-0.7153774" />
+			<MoveTo X="-4155.078" Y="-12238.17" Z="-0.9174402" />
+			<MoveTo X="-4144.847" Y="-12214.89" Z="-0.9489565" />
+			<MoveTo X="-4135.067" Y="-12191.46" Z="-1.038466" />
+			<MoveTo X="-4125.171" Y="-12168.06" Z="-1.379068" />
+			<MoveTo X="-4113.961" Y="-12145.3" Z="-1.6015" />
+			<MoveTo X="-4110.055" Y="-12138.71" Z="-1.589499" />
+						
+			<!-- CTM to - cross the bridge -->
+			<CustomBehavior File="MyCTM"
+							X="-4092.157" Y="-12111.69" Z="-0.8815794" />	
+			
+			<!-- Move to - Exodar -->
+			<MoveTo X="-3867.56" Y="-11641.1" Z="-137.664" />
+			
+			<!-- CustomBehavior - WaitTimer - 3 second delay  -->				
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="3000" />
+			
+			<!-- Profile message - We are in Exodar. Navigating to Valaar's Berth -->
+			<CustomBehavior File="Message" 
+							Text="We are in Exodar. Navigating to Valaar's Berth." 
+							LogColor="Plum" />				
+			
+			<!-- Move to - exit of the Exodar -->
+			<MoveTo X="-3989.851" Y="-11852.66" Z="0.3300133" />
+			
+			<!-- Profile message - Disabling combat -->
+			<CustomBehavior File="Message" 
+							Text="Disabling combat." 
+							LogColor="Gold" />
+			
+			<!-- DisableBehavior - Combat -->
+			<DisableBehavior Name="Combat" />
+			
+			<!-- Profile message - Disabling 'Pull' behavior -->
+			<CustomBehavior File="Message" 
+							Text="Disabling 'Pull' behavior."
+							LogColor="Plum" />
+			
+			<!-- DisableBehavior - Pull -->
+			<DisableBehavior Name="Pull" />
+			
+			<!-- Move to - road to Valaar's Berth -->
+			<MoveTo X="-4003.905" Y="-11874.04" Z="-0.7578294" />
+			<MoveTo X="-4017.97" Y="-11894.91" Z="-1.972278" />
+			<MoveTo X="-4041.792" Y="-11903.75" Z="-2.524792" />
+			<MoveTo X="-4063.988" Y="-11892.18" Z="-2.193947" />
+			<MoveTo X="-4085.031" Y="-11877.97" Z="-1.59174" />
+			<MoveTo X="-4102.096" Y="-11859.54" Z="-0.3670446" />
+			<MoveTo X="-4114.577" Y="-11837.64" Z="1.426291" />
+			<MoveTo X="-4119.465" Y="-11813.02" Z="2.084755" />
+			<MoveTo X="-4117.262" Y="-11787.9" Z="2.293729" />
+			<MoveTo X="-4117.676" Y="-11762.5" Z="2.247817" />
+			<MoveTo X="-4122.014" Y="-11737.63" Z="2.196361" />
+			<MoveTo X="-4130.9" Y="-11714.02" Z="3.010182" />
+			<MoveTo X="-4141.514" Y="-11691.07" Z="2.996391" />
+			<MoveTo X="-4157.877" Y="-11671.81" Z="3.905073" />
+			<MoveTo X="-4174.204" Y="-11652.53" Z="4.909358" />
+			<MoveTo X="-4190.636" Y="-11633.13" Z="6.327211" />
+			<MoveTo X="-4205.506" Y="-11612.84" Z="8.831325" />
+			<MoveTo X="-4216.339" Y="-11589.94" Z="11.0484" />
+			<MoveTo X="-4223.997" Y="-11565.75" Z="11.78104" />
+			<MoveTo X="-4230.603" Y="-11541.35" Z="11.36127" />
+			<MoveTo X="-4237.065" Y="-11516.96" Z="9.825873" />
+			<MoveTo X="-4243.574" Y="-11492.4" Z="9.350229" />
+			<MoveTo X="-4250.015" Y="-11468.1" Z="9.880096" />
+			<MoveTo X="-4254.247" Y="-11443.11" Z="10.44956" />
+			<MoveTo X="-4254.594" Y="-11438.17" Z="9.728904" />
+	
+			<!-- Move to - Valaar's Berth -->
+			<MoveTo X="-4261.292" Y="-11331.39" Z="5.477137" />
+			
+			<!-- Profile message - Enabling 'Pull' behavior -->
+			<CustomBehavior File="Message" 
+							Text="Enabling 'Pull' behavior."
+							LogColor="Plum" />
+			
+			<!-- EnableBehavior - Pull -->
+			<EnableBehavior Name="Pull" />
+			
+			<!-- Profile message - Enabling combat -->
+			<CustomBehavior File="Message" 
+								Text="Enabling combat." 
+								LogColor="Gold" />
+
+			<!-- enable combat -->
+			<EnableBehavior Name="Combat" />
+
+			<!-- Profile message - We are at Valaar's Berth. Navigating to Rut'theran Village -->
+			<CustomBehavior File="Message" 
+							Text="We are at Valaar's Berth. Navigating to Rut'theran Village." 
+							LogColor="Plum" />
+							
+			<!-- Custom behavior waitTimer - 3 second delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="3000" />				
+							
+			<!-- Profile message - Waiting for the transport to Rut'theran Village -->	
+			<CustomBehavior File="Message" 
+							Text="Waiting for the transport to Rut'theran Village." 
+							LogColor="Orange" />
+							
+			<!-- Use transport - Exodar to Rut'theran Village -->				
+			<CustomBehavior File="UseTransport" 
+							TransportId="181646" 
+							WaitAtX="-4261.292" 
+							WaitAtY="-11331.39" 
+							WaitAtZ="5.477137"
+							TransportStartX="-4264.996" 
+							TransportStartY="-11317.2012" 
+							TransportStartZ="-0.00142484042"								
+							StandOnX="-4261.175" 
+							StandOnY="-11323.61" 
+							StandOnZ="5.020504"
+							TransportEndX="8346.647" 
+							TransportEndY="1177.08508" 
+							TransportEndZ="-0.043206314"	
+							GetOffX="8343.973" 
+							GetOffY="1162.03" 
+							GetOffZ="4.471126" />				
+
+		</If>	<!-- If we are in Azuremyst Isle-Bloodmyst Isle -->
+
+		<!--  CustomBehavior - LoadProfile -->				
+		<CustomBehavior File="LoadProfile" 
+						ProfileName="[Botanist][Tinker]_teldrassil_to_stormwind" />
+		
+	</QuestOrder>
+
+</HBProfile>
+

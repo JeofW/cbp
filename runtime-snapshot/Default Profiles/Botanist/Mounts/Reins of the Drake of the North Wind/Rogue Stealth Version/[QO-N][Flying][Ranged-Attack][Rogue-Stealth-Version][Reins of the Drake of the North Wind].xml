@@ -1,0 +1,1333 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+	<Name>[QO-N][Flying][Ranged-Attack][Rogue-Stealth-Version][Reins of the Drake of the North Wind]</Name>
+   
+	<MinLevel>1</MinLevel>
+	<MaxLevel>101</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	<TargetingDistance>0</TargetingDistance>
+	<TargetElites>False</TargetElites>
+	
+	<MailGrey>False</MailGrey>
+	<MailWhite>False</MailWhite>
+	<MailGreen>False</MailGreen>
+	<MailBlue>False</MailBlue>
+	<MailPurple>False</MailPurple>
+   
+	<SellGrey>True</SellGrey>
+	<SellWhite>True</SellWhite>
+	<SellGreen>True</SellGreen>
+	<SellBlue>True</SellBlue>
+	<SellPurple>False</SellPurple>
+   
+	<TargetElites>True</TargetElites>
+	
+	<AvoidMobs>		 
+		<Mob Name="Summon Enabler Stalker" Entry="53488" />
+		<Mob Name="Lurking Tempest" Entry="45704" />
+		<Mob Name="Summon Enabler Stalker" Entry="53488" />
+	</AvoidMobs>
+	
+	<Blackspots>
+
+	</Blackspots>
+
+	<Mailboxes>
+	</Mailboxes>
+ 
+	<Vendors>
+	</Vendors>
+	
+	<ProtectedItems>
+	</ProtectedItems>
+
+	<Factions></Factions>
+	
+	<QuestOrder>
+		<ClearVendor />
+		<ClearMailbox />
+
+
+		<If Condition="Me.Level &gt;= 85">
+		
+		 	<!-- UserSettings -->
+			<CustomBehavior File="UserSettings"
+							FindMountAutomatically="True"
+							GroundMountFarmingMode="False"
+							HarvestHerbs="False"
+							HarvestMinerals="False"
+							KillBetweenHotspots="True"
+							LogoutForInactivity="False"
+							LogoutInactivityUseForceQuit="False"
+							LootMobs="True"
+							LootRadius="45"
+							MountName=""
+							NinjaSkin="False"
+							RessAtSpiritHealers="False"
+							SkinMobs="False"
+							UseMount="True" 
+							UseRandomMount="False" />
+						
+			<!-- Infinite loop -->
+			<While Condition="true" >	
+			
+				<!--The Vortex Pinnacle -->
+				<If Condition="Me.ZoneId == 5035">
+				
+					<CustomBehavior File="Message" 
+									Text="The Vortex Pinnacle detected. Running out."
+									LogColor="Plum" />
+						
+					<!-- If we are stealthed -->
+					<If Condition="Me.HasAura(&quot;Stealth&quot;)">	
+					
+						<!-- Profile message - We are stealthed -->
+						<CustomBehavior File="Message" 
+										Text="We are stealthed." 
+										LogColor="Orange" />
+					
+						<!-- Else if we are not stealthed -->
+						<Else>
+						
+							<!-- Profile message - We are not stealthed. Casting Stealth -->
+							<CustomBehavior File="Message" 
+											Text="We are not stealthed. Casting Stealth." 
+											LogColor="Plum" />
+										
+							<!-- Custom behavior - RunMacro - cast stealth -->
+							<CustomBehavior File="RunMacro" 
+											Macro="/cast Stealth" />			
+										
+							<!-- Profile message - We are stealthed -->
+							<CustomBehavior File="Message" 
+											Text="We are stealthed." 
+											LogColor="Orange" />			
+										
+						</Else>		<!-- Else if we are not stealthed -->					
+						
+					</If>	<!-- If we are stealthed -->
+					
+					<!-- Make our way to the exit -->
+					<MoveTo X="-337.627" Y="15.3073" Z="626.979" />
+					
+					<!-- InInstance to exit the dunfeon -->
+					<CustomBehavior File="Misc\InInstance" X="-327.7366" Y="24.78619" Z="626.7043" />
+					
+					<!-- Wait timer for game to load -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="15000" />
+					
+					<!-- If we are stealthed -->
+					<If Condition="Me.HasAura(&quot;Stealth&quot;)">	
+					
+						<!-- Profile message - We are stealthed -->
+						<CustomBehavior File="Message" 
+										Text="We are stealthed." 
+										LogColor="Orange" />
+					
+						<!-- Else if we are not stealthed -->
+						<Else>
+						
+							<!-- Profile message - We are not stealthed. Casting Stealth -->
+							<CustomBehavior File="Message" 
+											Text="We are not stealthed. Casting Stealth." 
+											LogColor="Plum" />
+										
+							<!-- Custom behavior - RunMacro - cast stealth -->
+							<CustomBehavior File="RunMacro" 
+											Macro="/cast Stealth" />			
+										
+							<!-- Profile message - We are stealthed -->
+							<CustomBehavior File="Message" 
+											Text="We are stealthed." 
+											LogColor="Orange" />			
+										
+						</Else>		<!-- Else if we are not stealthed -->					
+						
+					</If>	<!-- If we are stealthed -->
+					
+					<!-- Make sure we run to the right spot outside the potral -->
+					<MoveTo X="-11513.3" Y="-2309.88" Z="608.393" />
+					
+				</If> <!-- Vortex Pinnacle -->
+				
+				<!-- If we are not in the box, load the movement profile -->
+				<If Condition="Me.X &gt; -11413 || Me.X &lt; -11613 || Me.Y &lt; -2409 || Me.Y &gt; -2209 || Me.Z &lt; 575" >
+					
+					<CustomBehavior File="LoadProfile" 
+									ProfileName="Movement\[QO-N-M][Flying][Ranged-Attack][Rogue-Stealth-Version][Reins of the Drake of the North Wind]" />
+					
+				</If> <!-- Not in box -->
+				
+				<!-- If we are in the box -->
+				<If Condition="Me.X &lt; -11413 &amp;&amp; Me.X &gt; -11613 &amp;&amp; Me.Y &gt; -2409 &amp;&amp; Me.Y &lt; -2209 &amp;&amp; Me.Z &gt; 575" >
+				
+					<!-- If we are stealthed -->
+					<If Condition="Me.HasAura(&quot;Stealth&quot;)">	
+					
+						<!-- Profile message - We are stealthed -->
+						<CustomBehavior File="Message" 
+										Text="We are stealthed." 
+										LogColor="Orange" />
+					
+						<!-- Else if we are not stealthed -->
+						<Else>
+						
+							<!-- Profile message - We are not stealthed. Casting Stealth -->
+							<CustomBehavior File="Message" 
+											Text="We are not stealthed. Casting Stealth." 
+											LogColor="Plum" />
+										
+							<!-- Custom behavior - RunMacro - cast stealth -->
+							<CustomBehavior File="RunMacro" 
+											Macro="/cast Stealth" />			
+										
+							<!-- Profile message - We are stealthed -->
+							<CustomBehavior File="Message" 
+											Text="We are stealthed." 
+											LogColor="Orange" />			
+										
+						</Else>		<!-- Else if we are not stealthed -->					
+						
+					</If>	<!-- If we are stealthed -->
+					
+					<CustomBehavior File="Message" 
+									Text="Portal detected nearby."
+									LogColor="Plum" />	
+						
+					<!-- Profile message - Resetting the instance -->
+					<CustomBehavior File="Message" 
+									Text="Resetting the instance, we didn't need to repair." 
+									LogColor="Plum" />
+					
+					<!-- Reset the instance -->
+					<CustomBehavior File="RunMacro" 
+									Macro="/script ResetInstances()" />
+									
+					<!-- Set the dungeon difficulty to normal -->				
+					<CustomBehavior File="RunMacro" 
+									Macro="/script SetDungeonDifficultyID(1);" />
+					
+					<CustomBehavior File="Message" 
+									Text="Instance reset." 
+									LogColor="Plum" />
+				
+				</If> <!-- If we are in the box -->		
+					
+				<!-- While we didn't enter the instance, wait 20 seconds then attempt to enter again -->
+				<While Condition="Me.ZoneId != 5035">
+				
+					<!-- Make sure we run to the right spot outside the portal -->
+					<MoveTo X="-11513.3" Y="-2309.88" Z="608.393" />
+
+					<!-- Run back in the portal -->
+					<CustomBehavior File="Misc\InInstance" X="-11521.92" Y="-2317.052" Z="608.393" /> 
+									
+					<CustomBehavior File="Message" 
+									Text="Waiting for the dungeon to load." 
+									LogColor="Plum" />
+								
+					<!-- Custom behavior - WWaitTimer - wait 20 second + 20 second variable -->			
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="20000"
+									VariantTime="20000" />
+									
+					<!-- If we still aren't in, we're locked out -->
+					<If Condition="Me.ZoneId != 5035">
+						<CustomBehavior File="Message" 
+										Text="We are locked out. Waiting and trying again." 
+										LogColor="Plum" />
+					</If> <!-- Locked -->
+					
+				</While> <!-- While we aren't in the instance -->
+			
+				<!-- If we are inside Vortex Pinnacle and have checked our reset -->
+				<If Condition="Me.ZoneId == 5035">
+				
+					<!-- If we are stealthed -->
+					<If Condition="Me.HasAura(&quot;Stealth&quot;)">	
+					
+						<!-- Profile message - We are stealthed -->
+						<CustomBehavior File="Message" 
+										Text="We are stealthed." 
+										LogColor="Orange" />
+					
+						<!-- Else if we are not stealthed -->
+						<Else>
+						
+							<!-- Profile message - We are not stealthed. Casting Stealth -->
+							<CustomBehavior File="Message" 
+											Text="We are not stealthed. Casting Stealth." 
+											LogColor="Plum" />
+										
+							<!-- Custom behavior - RunMacro - cast stealth -->
+							<CustomBehavior File="RunMacro" 
+											Macro="/cast Stealth" />			
+										
+							<!-- Profile message - We are stealthed -->
+							<CustomBehavior File="Message" 
+											Text="We are stealthed." 
+											LogColor="Orange" />			
+										
+						</Else>		<!-- Else if we are not stealthed -->					
+						
+					</If>	<!-- If we are stealthed -->
+					
+					<!-- Move to - zone in location -->
+					<MoveTo X="-337.627" Y="15.3073" Z="626.979" />
+					
+					<!-- Runmacro - open all our bags -->				
+					<CustomBehavior File="RunMacro" 
+									Macro="/script OpenAllBags();" 
+									NumOfTimes="1" 
+									WaitTime="1000" />
+	
+					<!-- Instance timer to ensure run take a minimum of 12 minutes and 30 seconds to avoid instance locks -->
+					<CustomBehavior File="Misc\InstanceTimer" 
+									Timer="Start" /> 
+	
+					<!-- Profile message - Vortex Pinnacle initialized -->
+					<CustomBehavior File="Message" 
+									Text="Vortex Pinnacle initialized."
+									LogColor="Plum" />
+	
+					<!-- If we are stealthed -->
+					<If Condition="Me.HasAura(&quot;Stealth&quot;)">	
+					
+						<!-- Profile message - We are stealthed -->
+						<CustomBehavior File="Message" 
+										Text="We are stealthed." 
+										LogColor="Orange" />
+					
+						<!-- Else if we are not stealthed -->
+						<Else>
+						
+							<!-- Profile message - We are not stealthed. Casting Stealth -->
+							<CustomBehavior File="Message" 
+											Text="We are not stealthed. Casting Stealth." 
+											LogColor="Plum" />
+										
+							<!-- Custom behavior - RunMacro - cast stealth -->
+							<CustomBehavior File="RunMacro" 
+											Macro="/cast Stealth" />			
+										
+							<!-- Profile message - We are stealthed -->
+							<CustomBehavior File="Message" 
+											Text="We are stealthed." 
+											LogColor="Orange" />			
+										
+						</Else>		<!-- Else if we are not stealthed -->					
+						
+					</If>	<!-- If we are stealthed -->
+
+					<!-- Profile message - Disabling 'Pull' behavior -->
+					<CustomBehavior File="Message" 
+									Text="Disabling 'Pull' behavior."
+									LogColor="Plum" />
+					
+					<!-- DisableBehavior - Pull -->
+					<DisableBehavior Name="Pull" />
+					
+					<!-- Move to - make our way to Vizier Ertan -->
+					<MoveTo X="-371.0247" Y="-17.95491" Z="634.4307" />
+					
+					<!-- If we are stealthed -->
+					<If Condition="Me.HasAura(&quot;Stealth&quot;)">	
+					
+						<!-- Profile message - We are stealthed -->
+						<CustomBehavior File="Message" 
+										Text="We are stealthed." 
+										LogColor="Orange" />
+					
+						<!-- Else if we are not stealthed -->
+						<Else>
+						
+							<!-- Profile message - We are not stealthed. Casting Stealth -->
+							<CustomBehavior File="Message" 
+											Text="We are not stealthed. Casting Stealth." 
+											LogColor="Plum" />
+										
+							<!-- Custom behavior - RunMacro - cast stealth -->
+							<CustomBehavior File="RunMacro" 
+											Macro="/cast Stealth" />			
+										
+							<!-- Profile message - We are stealthed -->
+							<CustomBehavior File="Message" 
+											Text="We are stealthed." 
+											LogColor="Orange" />			
+										
+						</Else>		<!-- Else if we are not stealthed -->					
+						
+					</If>	<!-- If we are stealthed -->
+					
+					<MoveTo X="-392.4903" Y="-40.0477" Z="634.4307" />
+					
+					<!-- If we are stealthed -->
+					<If Condition="Me.HasAura(&quot;Stealth&quot;)">	
+					
+						<!-- Profile message - We are stealthed -->
+						<CustomBehavior File="Message" 
+										Text="We are stealthed." 
+										LogColor="Orange" />
+					
+						<!-- Else if we are not stealthed -->
+						<Else>
+						
+							<!-- Profile message - We are not stealthed. Casting Stealth -->
+							<CustomBehavior File="Message" 
+											Text="We are not stealthed. Casting Stealth." 
+											LogColor="Plum" />
+										
+							<!-- Custom behavior - RunMacro - cast stealth -->
+							<CustomBehavior File="RunMacro" 
+											Macro="/cast Stealth" />			
+										
+							<!-- Profile message - We are stealthed -->
+							<CustomBehavior File="Message" 
+											Text="We are stealthed." 
+											LogColor="Orange" />			
+										
+						</Else>		<!-- Else if we are not stealthed -->					
+						
+					</If>	<!-- If we are stealthed -->
+					
+					<MoveTo X="-428.9141" Y="-62.2612" Z="634.4307" />
+					
+					<!-- If we are stealthed -->
+					<If Condition="Me.HasAura(&quot;Stealth&quot;)">	
+					
+						<!-- Profile message - We are stealthed -->
+						<CustomBehavior File="Message" 
+										Text="We are stealthed." 
+										LogColor="Orange" />
+					
+						<!-- Else if we are not stealthed -->
+						<Else>
+						
+							<!-- Profile message - We are not stealthed. Casting Stealth -->
+							<CustomBehavior File="Message" 
+											Text="We are not stealthed. Casting Stealth." 
+											LogColor="Plum" />
+										
+							<!-- Custom behavior - RunMacro - cast stealth -->
+							<CustomBehavior File="RunMacro" 
+											Macro="/cast Stealth" />			
+										
+							<!-- Profile message - We are stealthed -->
+							<CustomBehavior File="Message" 
+											Text="We are stealthed." 
+											LogColor="Orange" />			
+										
+						</Else>		<!-- Else if we are not stealthed -->					
+						
+					</If>	<!-- If we are stealthed -->
+					
+					<MoveTo X="-438.2787" Y="-99.04351" Z="638.8128" />
+					
+					<!-- If we are stealthed -->
+					<If Condition="Me.HasAura(&quot;Stealth&quot;)">	
+					
+						<!-- Profile message - We are stealthed -->
+						<CustomBehavior File="Message" 
+										Text="We are stealthed." 
+										LogColor="Orange" />
+					
+						<!-- Else if we are not stealthed -->
+						<Else>
+						
+							<!-- Profile message - We are not stealthed. Casting Stealth -->
+							<CustomBehavior File="Message" 
+											Text="We are not stealthed. Casting Stealth." 
+											LogColor="Plum" />
+										
+							<!-- Custom behavior - RunMacro - cast stealth -->
+							<CustomBehavior File="RunMacro" 
+											Macro="/cast Stealth" />			
+										
+							<!-- Profile message - We are stealthed -->
+							<CustomBehavior File="Message" 
+											Text="We are stealthed." 
+											LogColor="Orange" />			
+										
+						</Else>		<!-- Else if we are not stealthed -->					
+						
+					</If>	<!-- If we are stealthed -->
+					<MoveTo X="-490.8129" Y="-154.7145" Z="638.9378" />
+					
+					<!-- If we are stealthed -->
+					<If Condition="Me.HasAura(&quot;Stealth&quot;)">	
+					
+						<!-- Profile message - We are stealthed -->
+						<CustomBehavior File="Message" 
+										Text="We are stealthed." 
+										LogColor="Orange" />
+					
+						<!-- Else if we are not stealthed -->
+						<Else>
+						
+							<!-- Profile message - We are not stealthed. Casting Stealth -->
+							<CustomBehavior File="Message" 
+											Text="We are not stealthed. Casting Stealth." 
+											LogColor="Plum" />
+										
+							<!-- Custom behavior - RunMacro - cast stealth -->
+							<CustomBehavior File="RunMacro" 
+											Macro="/cast Stealth" />			
+										
+							<!-- Profile message - We are stealthed -->
+							<CustomBehavior File="Message" 
+											Text="We are stealthed." 
+											LogColor="Orange" />			
+										
+						</Else>		<!-- Else if we are not stealthed -->					
+						
+					</If>	<!-- If we are stealthed -->
+					
+					<MoveTo X="-509.2975" Y="-177.6022" Z="638.9378" />
+					
+					<!-- If we are stealthed -->
+					<If Condition="Me.HasAura(&quot;Stealth&quot;)">	
+					
+						<!-- Profile message - We are stealthed -->
+						<CustomBehavior File="Message" 
+										Text="We are stealthed." 
+										LogColor="Orange" />
+					
+						<!-- Else if we are not stealthed -->
+						<Else>
+						
+							<!-- Profile message - We are not stealthed. Casting Stealth -->
+							<CustomBehavior File="Message" 
+											Text="We are not stealthed. Casting Stealth." 
+											LogColor="Plum" />
+										
+							<!-- Custom behavior - RunMacro - cast stealth -->
+							<CustomBehavior File="RunMacro" 
+											Macro="/cast Stealth" />			
+										
+							<!-- Profile message - We are stealthed -->
+							<CustomBehavior File="Message" 
+											Text="We are stealthed." 
+											LogColor="Orange" />			
+										
+						</Else>		<!-- Else if we are not stealthed -->					
+						
+					</If>	<!-- If we are stealthed -->
+					<MoveTo X="-538.8408" Y="-206.0673" Z="630.8161" />
+					
+					<!-- If we are stealthed -->
+					<If Condition="Me.HasAura(&quot;Stealth&quot;)">	
+					
+						<!-- Profile message - We are stealthed -->
+						<CustomBehavior File="Message" 
+										Text="We are stealthed." 
+										LogColor="Orange" />
+					
+						<!-- Else if we are not stealthed -->
+						<Else>
+						
+							<!-- Profile message - We are not stealthed. Casting Stealth -->
+							<CustomBehavior File="Message" 
+											Text="We are not stealthed. Casting Stealth." 
+											LogColor="Plum" />
+										
+							<!-- Custom behavior - RunMacro - cast stealth -->
+							<CustomBehavior File="RunMacro" 
+											Macro="/cast Stealth" />			
+										
+							<!-- Profile message - We are stealthed -->
+							<CustomBehavior File="Message" 
+											Text="We are stealthed." 
+											LogColor="Orange" />			
+										
+						</Else>		<!-- Else if we are not stealthed -->					
+						
+					</If>	<!-- If we are stealthed -->
+					
+					<MoveTo X="-552.032" Y="-163.3009" Z="623.6596" />
+					
+					<!-- If we are stealthed -->
+					<If Condition="Me.HasAura(&quot;Stealth&quot;)">	
+					
+						<!-- Profile message - We are stealthed -->
+						<CustomBehavior File="Message" 
+										Text="We are stealthed." 
+										LogColor="Orange" />
+					
+						<!-- Else if we are not stealthed -->
+						<Else>
+						
+							<!-- Profile message - We are not stealthed. Casting Stealth -->
+							<CustomBehavior File="Message" 
+											Text="We are not stealthed. Casting Stealth." 
+											LogColor="Plum" />
+										
+							<!-- Custom behavior - RunMacro - cast stealth -->
+							<CustomBehavior File="RunMacro" 
+											Macro="/cast Stealth" />			
+										
+							<!-- Profile message - We are stealthed -->
+							<CustomBehavior File="Message" 
+											Text="We are stealthed." 
+											LogColor="Orange" />			
+										
+						</Else>		<!-- Else if we are not stealthed -->					
+						
+					</If>	<!-- If we are stealthed -->
+					
+					<MoveTo X="-605.5417" Y="-136.902" Z="619.7444" />
+					
+					<!-- If we are stealthed -->
+					<If Condition="Me.HasAura(&quot;Stealth&quot;)">	
+					
+						<!-- Profile message - We are stealthed -->
+						<CustomBehavior File="Message" 
+										Text="We are stealthed." 
+										LogColor="Orange" />
+					
+						<!-- Else if we are not stealthed -->
+						<Else>
+						
+							<!-- Profile message - We are not stealthed. Casting Stealth -->
+							<CustomBehavior File="Message" 
+											Text="We are not stealthed. Casting Stealth." 
+											LogColor="Plum" />
+										
+							<!-- Custom behavior - RunMacro - cast stealth -->
+							<CustomBehavior File="RunMacro" 
+											Macro="/cast Stealth" />			
+										
+							<!-- Profile message - We are stealthed -->
+							<CustomBehavior File="Message" 
+											Text="We are stealthed." 
+											LogColor="Orange" />			
+										
+						</Else>		<!-- Else if we are not stealthed -->					
+						
+					</If>	<!-- If we are stealthed -->
+					
+					<MoveTo X="-605.096" Y="-119.3211" Z="619.8513" />
+					
+					<!-- If we are stealthed -->
+					<If Condition="Me.HasAura(&quot;Stealth&quot;)">	
+					
+						<!-- Profile message - We are stealthed -->
+						<CustomBehavior File="Message" 
+										Text="We are stealthed." 
+										LogColor="Orange" />
+					
+						<!-- Else if we are not stealthed -->
+						<Else>
+						
+							<!-- Profile message - We are not stealthed. Casting Stealth -->
+							<CustomBehavior File="Message" 
+											Text="We are not stealthed. Casting Stealth." 
+											LogColor="Plum" />
+										
+							<!-- Custom behavior - RunMacro - cast stealth -->
+							<CustomBehavior File="RunMacro" 
+											Macro="/cast Stealth" />			
+										
+							<!-- Profile message - We are stealthed -->
+							<CustomBehavior File="Message" 
+											Text="We are stealthed." 
+											LogColor="Orange" />			
+										
+						</Else>		<!-- Else if we are not stealthed -->					
+						
+					</If>	<!-- If we are stealthed -->
+					
+					<MoveTo X="-639.0942" Y="-76.5791" Z="619.7435" />
+					
+					<!-- If we are stealthed -->
+					<If Condition="Me.HasAura(&quot;Stealth&quot;)">	
+					
+						<!-- Profile message - We are stealthed -->
+						<CustomBehavior File="Message" 
+										Text="We are stealthed." 
+										LogColor="Orange" />
+					
+						<!-- Else if we are not stealthed -->
+						<Else>
+						
+							<!-- Profile message - We are not stealthed. Casting Stealth -->
+							<CustomBehavior File="Message" 
+											Text="We are not stealthed. Casting Stealth." 
+											LogColor="Plum" />
+										
+							<!-- Custom behavior - RunMacro - cast stealth -->
+							<CustomBehavior File="RunMacro" 
+											Macro="/cast Stealth" />			
+										
+							<!-- Profile message - We are stealthed -->
+							<CustomBehavior File="Message" 
+											Text="We are stealthed." 
+											LogColor="Orange" />			
+										
+						</Else>		<!-- Else if we are not stealthed -->					
+						
+					</If>	<!-- If we are stealthed -->
+					
+					<MoveTo X="-695.9657" Y="-19.72294" Z="635.6709" />
+
+					<!-- Profile message - Enabling 'Pull' behavior -->
+					<CustomBehavior File="Message" 
+									Text="Enabling 'Pull' behavior."
+									LogColor="Plum" />
+					
+					<!-- EnableBehavior - Pull -->
+					<EnableBehavior Name="Pull" />
+					
+					<!-- Move to - Grand Vizier Ertan -->
+					<MoveTo X="-719.587" Y="4.32986" Z="635.7563" />
+					
+					<!-- Wait timer - Waiting 3 seconds - safety -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					<!-- Profile message - Disabling 'Pull' behavior -->
+					<CustomBehavior File="Message" 
+									Text="Disabling 'Pull' behavior."
+									LogColor="Plum" />
+					
+					<!-- DisableBehavior - Pull -->
+					<DisableBehavior Name="Pull" />
+
+					<!-- Move to - slipstream -->
+					<MoveTo X="-769.088" Y="-55.73653" Z="639.926" />
+									
+					<!-- Use the slipstream -->
+					<CustomBehavior File="MountVehOnly" 
+									VehicleMountId="45455" 
+									X="-768.213" Y="-53.6862" Z="639.926" />
+										
+					<!-- Custom behavior - WWaitTimer - wait 15 seconds- delay -->			
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="15000" />					
+										
+					<!-- If we are stealthed -->
+					<If Condition="Me.HasAura(&quot;Stealth&quot;)">	
+					
+						<!-- Profile message - We are stealthed -->
+						<CustomBehavior File="Message" 
+										Text="We are stealthed." 
+										LogColor="Orange" />
+					
+						<!-- Else if we are not stealthed -->
+						<Else>
+						
+							<!-- Profile message - We are not stealthed. Casting Stealth -->
+							<CustomBehavior File="Message" 
+											Text="We are not stealthed. Casting Stealth." 
+											LogColor="Plum" />
+										
+							<!-- Custom behavior - RunMacro - cast stealth -->
+							<CustomBehavior File="RunMacro" 
+											Macro="/cast Stealth" />			
+										
+							<!-- Profile message - We are stealthed -->
+							<CustomBehavior File="Message" 
+											Text="We are stealthed." 
+											LogColor="Orange" />			
+										
+						</Else>		<!-- Else if we are not stealthed -->					
+						
+					</If>	<!-- If we are stealthed -->					
+										
+										
+					<MoveTo X="-956.5892" Y="-153.0373" Z="669.2651" />					
+										
+					<!-- If we are stealthed -->
+					<If Condition="Me.HasAura(&quot;Stealth&quot;)">	
+					
+						<!-- Profile message - We are stealthed -->
+						<CustomBehavior File="Message" 
+										Text="We are stealthed." 
+										LogColor="Orange" />
+					
+						<!-- Else if we are not stealthed -->
+						<Else>
+						
+							<!-- Profile message - We are not stealthed. Casting Stealth -->
+							<CustomBehavior File="Message" 
+											Text="We are not stealthed. Casting Stealth." 
+											LogColor="Plum" />
+										
+							<!-- Custom behavior - RunMacro - cast stealth -->
+							<CustomBehavior File="RunMacro" 
+											Macro="/cast Stealth" />			
+										
+							<!-- Profile message - We are stealthed -->
+							<CustomBehavior File="Message" 
+											Text="We are stealthed." 
+											LogColor="Orange" />			
+										
+						</Else>		<!-- Else if we are not stealthed -->					
+						
+					</If>	<!-- If we are stealthed -->
+					
+					<MoveTo X="-972.9379" Y="-83.3875" Z="694.9169" />					
+										
+					<!-- If we are stealthed -->
+					<If Condition="Me.HasAura(&quot;Stealth&quot;)">	
+					
+						<!-- Profile message - We are stealthed -->
+						<CustomBehavior File="Message" 
+										Text="We are stealthed." 
+										LogColor="Orange" />
+					
+						<!-- Else if we are not stealthed -->
+						<Else>
+						
+							<!-- Profile message - We are not stealthed. Casting Stealth -->
+							<CustomBehavior File="Message" 
+											Text="We are not stealthed. Casting Stealth." 
+											LogColor="Plum" />
+										
+							<!-- Custom behavior - RunMacro - cast stealth -->
+							<CustomBehavior File="RunMacro" 
+											Macro="/cast Stealth" />			
+										
+							<!-- Profile message - We are stealthed -->
+							<CustomBehavior File="Message" 
+											Text="We are stealthed." 
+											LogColor="Orange" />			
+										
+						</Else>		<!-- Else if we are not stealthed -->					
+						
+					</If>	<!-- If we are stealthed -->
+					
+					<MoveTo X="-1022.075" Y="-87.50958" Z="695.8756" />					
+	
+					<!-- If we are stealthed -->
+					<If Condition="Me.HasAura(&quot;Stealth&quot;)">	
+					
+						<!-- Profile message - We are stealthed -->
+						<CustomBehavior File="Message" 
+										Text="We are stealthed." 
+										LogColor="Orange" />
+					
+						<!-- Else if we are not stealthed -->
+						<Else>
+						
+							<!-- Profile message - We are not stealthed. Casting Stealth -->
+							<CustomBehavior File="Message" 
+											Text="We are not stealthed. Casting Stealth." 
+											LogColor="Plum" />
+										
+							<!-- Custom behavior - RunMacro - cast stealth -->
+							<CustomBehavior File="RunMacro" 
+											Macro="/cast Stealth" />			
+										
+							<!-- Profile message - We are stealthed -->
+							<CustomBehavior File="Message" 
+											Text="We are stealthed." 
+											LogColor="Orange" />			
+										
+						</Else>		<!-- Else if we are not stealthed -->					
+						
+					</If>	<!-- If we are stealthed -->
+					
+					<!-- Move to - first Howling Gale - staging location-->				
+					<MoveTo X="-1007.842" Y="-101.291" Z="694.9153" />
+					
+					<!-- Profile message - Disabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Disabling combat." 
+										LogColor="Plum" />
+
+					<!-- Disable combat -->
+					<DisableBehavior Name="Combat" />
+					
+					<!-- Move to - first Howling Gale -->				
+					<MoveTo X="-1039.558" Y="-69.81506" Z="700.4934" />				
+	
+					<!-- Target the Howling Gale -->
+					<CustomBehavior File="RunMacro" 
+									Macro="/tar Howling Gale" 
+									NumOfTimes="1" 
+									WaitTime="1000" />
+					
+					<!-- CustomBehavior - RunMacro - cast Throw -->
+					<CustomBehavior File="RunMacro" 
+									Macro="/cast Throw" 
+									NumOfTimes="1" 
+									WaitTime="500" />
+
+					<!-- Custom behavior - RunMacro - cleartarget -->	
+					<CustomBehavior File="RunMacro" 
+									Macro="/cleartarget" 
+									NumOfTimes="1" 
+									WaitTime="0"/>
+					
+					<!-- If we are stealthed -->
+					<If Condition="Me.HasAura(&quot;Stealth&quot;)">	
+					
+						<!-- Profile message - We are stealthed -->
+						<CustomBehavior File="Message" 
+										Text="We are stealthed." 
+										LogColor="Orange" />
+					
+						<!-- Else if we are not stealthed -->
+						<Else>
+						
+							<!-- Profile message - We are not stealthed. Casting Stealth -->
+							<CustomBehavior File="Message" 
+											Text="We are not stealthed. Casting Stealth." 
+											LogColor="Plum" />
+										
+							<!-- Custom behavior - RunMacro - cast stealth -->
+							<CustomBehavior File="RunMacro" 
+											Macro="/cast Stealth" />			
+										
+							<!-- Profile message - We are stealthed -->
+							<CustomBehavior File="Message" 
+											Text="We are stealthed." 
+											LogColor="Orange" />			
+										
+						</Else>		<!-- Else if we are not stealthed -->					
+						
+					</If>	<!-- If we are stealthed -->
+					
+					<!-- Move to - second Howling Gale -->				
+					<MoveTo X="-1061.07" Y="-48.62126" Z="700.4818" />
+					
+					<!-- Custom behavior -  Wait timer- 3 second loot delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+									
+					<!-- Clear target -->				
+					<CustomBehavior File="RunMacro" 
+									Macro="/cleartarget" 
+									NumOfTimes="1" 
+									WaitTime="1000" />					
+									
+					<!-- Target the Howling Gale -->				
+					<CustomBehavior File="RunMacro" 
+									Macro="/targetenemy" 
+									NumOfTimes="1" 
+									WaitTime="1000" />
+					
+					<!-- CustomBehavior - RunMacro - cast Throw -->
+					<CustomBehavior File="RunMacro" 
+									Macro="/cast Throw" 
+									NumOfTimes="1" 
+									WaitTime="500" />
+									
+					<!-- MoveTo to the top of the stairs -->				
+					<MoveTo X="-1107.029" Y="-2.914684" Z="704.7407" />
+					
+					<!-- Custom behavior - RunMacro - cleartarget -->	
+					<CustomBehavior File="RunMacro" 
+									Macro="/cleartarget" 
+									NumOfTimes="1" 
+									WaitTime="0"/>
+					
+					<!-- Profile message - Enabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Enabling combat." 
+										LogColor="Plum" />
+
+					<!-- enable combat -->
+					<EnableBehavior Name="Combat" />			
+									
+					<!-- Custom behavior - RunMacro - cleartarget -->	
+					<CustomBehavior File="RunMacro" 
+									Macro="/cleartarget" 
+									NumOfTimes="1" 
+									WaitTime="0"/>					
+
+					<!-- If we are stealthed -->
+					<If Condition="Me.HasAura(&quot;Stealth&quot;)">	
+					
+						<!-- Profile message - We are stealthed -->
+						<CustomBehavior File="Message" 
+										Text="We are stealthed." 
+										LogColor="Orange" />
+					
+						<!-- Else if we are not stealthed -->
+						<Else>
+						
+							<!-- Profile message - We are not stealthed. Casting Stealth -->
+							<CustomBehavior File="Message" 
+											Text="We are not stealthed. Casting Stealth." 
+											LogColor="Plum" />
+										
+							<!-- Custom behavior - RunMacro - cast stealth -->
+							<CustomBehavior File="RunMacro" 
+											Macro="/cast Stealth" />			
+										
+							<!-- Profile message - We are stealthed -->
+							<CustomBehavior File="Message" 
+											Text="We are stealthed." 
+											LogColor="Orange" />			
+										
+						</Else>		<!-- Else if we are not stealthed -->					
+						
+					</If>	<!-- If we are stealthed -->				
+									
+					<MoveTo X="-1183.024" Y="36.31194" Z="707.9154" />				
+									
+					<!-- If we are stealthed -->
+					<If Condition="Me.HasAura(&quot;Stealth&quot;)">	
+					
+						<!-- Profile message - We are stealthed -->
+						<CustomBehavior File="Message" 
+										Text="We are stealthed." 
+										LogColor="Orange" />
+					
+						<!-- Else if we are not stealthed -->
+						<Else>
+						
+							<!-- Profile message - We are not stealthed. Casting Stealth -->
+							<CustomBehavior File="Message" 
+											Text="We are not stealthed. Casting Stealth." 
+											LogColor="Plum" />
+										
+							<!-- Custom behavior - RunMacro - cast stealth -->
+							<CustomBehavior File="RunMacro" 
+											Macro="/cast Stealth" />			
+										
+							<!-- Profile message - We are stealthed -->
+							<CustomBehavior File="Message" 
+											Text="We are stealthed." 
+											LogColor="Orange" />			
+										
+						</Else>		<!-- Else if we are not stealthed -->					
+						
+					</If>	<!-- If we are stealthed -->			
+								
+					<MoveTo X="-1252.601" Y="62.80965" Z="729.608" />				
+									
+					<!-- If we are stealthed -->
+					<If Condition="Me.HasAura(&quot;Stealth&quot;)">	
+					
+						<!-- Profile message - We are stealthed -->
+						<CustomBehavior File="Message" 
+										Text="We are stealthed." 
+										LogColor="Orange" />
+					
+						<!-- Else if we are not stealthed -->
+						<Else>
+						
+							<!-- Profile message - We are not stealthed. Casting Stealth -->
+							<CustomBehavior File="Message" 
+											Text="We are not stealthed. Casting Stealth." 
+											LogColor="Plum" />
+										
+							<!-- Custom behavior - RunMacro - cast stealth -->
+							<CustomBehavior File="RunMacro" 
+											Macro="/cast Stealth" />			
+										
+							<!-- Profile message - We are stealthed -->
+							<CustomBehavior File="Message" 
+											Text="We are stealthed." 
+											LogColor="Orange" />			
+										
+						</Else>		<!-- Else if we are not stealthed -->					
+						
+					</If>	<!-- If we are stealthed -->				
+		
+					<!-- Profile message - Enabling 'Pull' behavior -->
+					<CustomBehavior File="Message" 
+									Text="Enabling 'Pull' behavior."
+									LogColor="Plum" />
+					
+					<!-- EnableBehavior - Pull -->
+					<EnableBehavior Name="Pull" />
+		
+					<!-- Kill Altairus -->
+					<MoveTo X="-1194.486" Y="54.48828" Z="734.1755" />
+
+					<!-- Macro - Clear target -->					
+					<CustomBehavior File="RunMacro" 
+									Macro="/cleartarget" 
+									NumOfTimes="1" 
+									WaitTime="0"/>			
+								
+					<!-- Macro - targetenemy -->						
+					<CustomBehavior File="RunMacro"
+									NumOfTimes="1"
+									Macro="/tar Altairus" />
+					
+					<!-- Macro -cast Ambush -->					
+					<CustomBehavior File="RunMacro" 
+									Macro="/cast Ambush" 
+									NumOfTimes="1" 
+									WaitTime="0"/>
+
+					<!-- Custom behavior -  Wait timer- 10 second loot delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="10000" />
+									
+					<!-- Move to - top of the platform -->
+					<MoveTo X="-1082.505" Y="28.14781" Z="705.6274" />
+
+					<!-- Custom behavior -  Wait timer- 10 second loot delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="10000" />		
+
+					<!-- If we are stealthed -->
+					<If Condition="Me.HasAura(&quot;Stealth&quot;)">	
+					
+						<!-- Profile message - We are stealthed -->
+						<CustomBehavior File="Message" 
+										Text="We are stealthed." 
+										LogColor="Orange" />
+					
+						<!-- Else if we are not stealthed -->
+						<Else>
+						
+							<!-- Profile message - We are not stealthed. Casting Stealth -->
+							<CustomBehavior File="Message" 
+											Text="We are not stealthed. Casting Stealth." 
+											LogColor="Plum" />
+										
+							<!-- Custom behavior - RunMacro - cast stealth -->
+							<CustomBehavior File="RunMacro" 
+											Macro="/cast Stealth" />			
+										
+							<!-- Profile message - We are stealthed -->
+							<CustomBehavior File="Message" 
+											Text="We are stealthed." 
+											LogColor="Orange" />			
+										
+						</Else>		<!-- Else if we are not stealthed -->					
+						
+					</If>	<!-- If we are stealthed -->
+							
+					<!-- Run to the top of the platform -->
+					<MoveTo X="-1082.505" Y="28.14781" Z="705.6274" />					
+									
+					<!-- If we are stealthed -->
+					<If Condition="Me.HasAura(&quot;Stealth&quot;)">	
+					
+						<!-- Profile message - We are stealthed -->
+						<CustomBehavior File="Message" 
+										Text="We are stealthed." 
+										LogColor="Orange" />
+					
+						<!-- Else if we are not stealthed -->
+						<Else>
+						
+							<!-- Profile message - We are not stealthed. Casting Stealth -->
+							<CustomBehavior File="Message" 
+											Text="We are not stealthed. Casting Stealth." 
+											LogColor="Plum" />
+										
+							<!-- Custom behavior - RunMacro - cast stealth -->
+							<CustomBehavior File="RunMacro" 
+											Macro="/cast Stealth" />			
+										
+							<!-- Profile message - We are stealthed -->
+							<CustomBehavior File="Message" 
+											Text="We are stealthed." 
+											LogColor="Orange" />			
+										
+						</Else>		<!-- Else if we are not stealthed -->					
+						
+					</If>	<!-- If we are stealthed -->				
+									
+					<CustomBehavior File="MyCTM" 
+									X="-361.0677" Y="-5.696181" Z="632.7807" />				
+									
+					<!-- If we are stealthed -->
+					<If Condition="Me.HasAura(&quot;Stealth&quot;)">	
+					
+						<!-- Profile message - We are stealthed -->
+						<CustomBehavior File="Message" 
+										Text="We are stealthed." 
+										LogColor="Orange" />
+					
+						<!-- Else if we are not stealthed -->
+						<Else>
+						
+							<!-- Profile message - We are not stealthed. Casting Stealth -->
+							<CustomBehavior File="Message" 
+											Text="We are not stealthed. Casting Stealth." 
+											LogColor="Plum" />
+										
+							<!-- Custom behavior - RunMacro - cast stealth -->
+							<CustomBehavior File="RunMacro" 
+											Macro="/cast Stealth" />			
+										
+							<!-- Profile message - We are stealthed -->
+							<CustomBehavior File="Message" 
+											Text="We are stealthed." 
+											LogColor="Orange" />			
+										
+						</Else>		<!-- Else if we are not stealthed -->					
+						
+					</If>	<!-- If we are stealthed -->				
+									
+					<!-- Run to the exit -->
+					<MoveTo X="-337.627" Y="15.3073" Z="626.979" />
+		
+					<!-- CustomBehavior - Misc\InstanceTimer -  6 minutes and 40 seconds -->				
+					<CustomBehavior File="Misc\InstanceTimer" 
+									Timer="Check" 
+									WaitTime="400000" />
+	
+				</If><!-- If we are inside Vortex Pinnacle and have checked our reset -->
+						
+				<!--The Vortex Pinnacle -->
+				<If Condition="Me.ZoneId == 5035">
+					<CustomBehavior File="Message" 
+									Text="The Vortex Pinnacle detected. Running out."
+									LogColor="Plum" />
+						
+					<!-- Make our way to the exit -->
+					<MoveTo X="-337.627" Y="15.3073" Z="626.979" />
+					
+					<!-- Go through the portal -->
+					<CustomBehavior File="Misc\InInstance" 
+									X="-327.7366" Y="24.78619" Z="626.7043" />
+					
+					<!-- Wait timer for game to load -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="15000" />
+					
+					<!-- If we are stealthed -->
+					<If Condition="Me.HasAura(&quot;Stealth&quot;)">	
+					
+						<!-- Profile message - We are stealthed -->
+						<CustomBehavior File="Message" 
+										Text="We are stealthed." 
+										LogColor="Orange" />
+					
+						<!-- Else if we are not stealthed -->
+						<Else>
+						
+							<!-- Profile message - We are not stealthed. Casting Stealth -->
+							<CustomBehavior File="Message" 
+											Text="We are not stealthed. Casting Stealth." 
+											LogColor="Plum" />
+										
+							<!-- Custom behavior - RunMacro - cast stealth -->
+							<CustomBehavior File="RunMacro" 
+											Macro="/cast Stealth" />			
+										
+							<!-- Profile message - We are stealthed -->
+							<CustomBehavior File="Message" 
+											Text="We are stealthed." 
+											LogColor="Orange" />			
+										
+						</Else>		<!-- Else if we are not stealthed -->					
+						
+					</If>	<!-- If we are stealthed -->
+					
+					<!-- Make sure we run to the right spot outside the potral -->
+					<MoveTo X="-11513.3" Y="-2309.88" Z="608.393" />
+					
+				</If> <!-- Vortex Pinnacle -->
+				
+				<!-- Repair if necessary -->
+				<If Condition="(Me.FreeBagSlots &lt; 25) || (Me.LowestDurabilityPercent &lt; 0.3)" >
+				
+					<!-- Profile message - Our durability is less than 30%, or we need to vendor -->
+					<CustomBehavior File="Message" 
+									Text="Our durability is less than 30%, or we need to vendor." 
+									LogColor="Plum" />
+									
+					<!-- Use our hearthstone or innkeeps daughter -->				
+					<If Condition="Me.HearthstoneAreaId == 5466 ">
+						<CustomBehavior File="Message" 
+										Text="Our Innkeeper is set at Ramkahen." 
+										LogColor="Cyan" />
+											
+						<!-- Have hearthstone -->
+						<If Condition="HasItem(6948)">
+							<CustomBehavior File="Message" 
+											Text="Using Hearthstone." 
+											LogColor="Plum" />
+											
+							<CustomBehavior File="Misc\RunLua" 
+											Lua="UseItemByName(6948)" 
+											WaitTime="1000" />
+											
+							<CustomBehavior File="WaitTimer" 
+											WaitTime="20000" />
+						</If> <!-- Have hearthstone -->
+					
+						<!-- Have Innkeeper's Daughter -->
+						<If Condition="HasItem(64488)">
+							<CustomBehavior File="Message" 
+											Text="Using Innkeeper's Daughter." 
+											LogColor="Plum" />
+												
+							<CustomBehavior File="Misc\RunLua" 
+											Lua="UseItemByName(64488)" 
+											WaitTime="1000" />
+								
+							<!-- Wait 20 seconds for the game to load -->	
+							<CustomBehavior File="WaitTimer" 
+											WaitTime="20000" />
+											
+						</If> <!-- Have Innkeeper's Daughter -->
+					</If> <!-- hearth location check -->
+						
+					
+					<!-- If we have hearthed to Uldum -->						
+					<If Condition="Me.X &gt; -10700">		
+						<SetVendor>
+							<Vendors>
+								<!-- Ramkahen Repair -->
+								<Vendor Name="Blacksmith Abasi" 
+										Entry="48617" 
+										Type="Repair" 
+										X="-9404.68" Y="-906.438" Z="112.5411" />
+							</Vendors>
+						</SetVendor>
+						
+						<SetMailbox>
+							<Mailboxes>
+								<Mailbox X="-9428.854" Y="-968.5951" Z="111.0117" />
+							</Mailboxes>
+						</SetMailbox>
+						
+						<!-- Force set the vendor -->
+						<CustomBehavior File="ForceSetVendor" 
+										DoMail="True" 
+										DoRepair="True" 
+										DoSell="True" 
+										DoTrain="False" />
+					
+					</If>	<!-- If we have hearthed to Uldum -->	
+					
+				</If> <!-- Repair if necessary -->
+				
+				<!-- If we aren't in the box -->
+				<If Condition="Me.X &gt; -11413 || Me.X &lt; -11613 || Me.Y &lt; -2409 || Me.Y &gt; -2209 || Me.Z &lt; 575" >
+					
+					<!-- Profile message - Moving to the river delta -->
+					<CustomBehavior File="Message" 
+									Text="Moving to the river delta." 
+									LogColor="Plum" />					
+											
+					<!-- Fly to - river bed -->
+					<CustomBehavior File="FlyTo" 
+									X="-11260.66" Y="-1804.485" Z="31.9262" />
+											
+					
+					<!-- CTM to The Vortex Pinnacle hover point -->
+					<CustomBehavior File="MyCTM" 
+									X="-11355.9" Y="-2183.812" Z="674.7065" />
+					
+					<!-- CTM to the instance box -->
+					<CustomBehavior File="MyCTM" 
+									X="-11513.3" Y="-2309.88" Z="608.393" />
+					
+					<CustomBehavior File="ForcedDismount" />	
+					
+					<!-- Run to the instance box -->
+					<MoveTo X="-11513.3" Y="-2309.88" Z="608.393" />
+				
+				</If> <!-- If we aren't in the box -->	
+				
+			</While> <!-- Infinite loop -->
+			
+		</If> <!-- I am level 90 -->	
+		
+	</QuestOrder>
+</HBProfile>

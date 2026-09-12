@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<StyxSettings>
+  <Language></Language>
+  <FormLocationX>20</FormLocationX>
+  <FormLocationY>20</FormLocationY>
+  <UseExperimentalPathFollowing>True</UseExperimentalPathFollowing>
+  <KillBetweenHotspots>False</KillBetweenHotspots>
+  <!--Whether or not we should log out after the bot has detected inactivity.-->
+  <LogoutForInactivity>True</LogoutForInactivity>
+  <!--Logs out after X minutes of inactivity.-->
+  <LogoutInactivityTimer>10</LogoutInactivityTimer>
+  <LogoutInactivityUseForceQuit>False</LogoutInactivityUseForceQuit>
+  <ProfileDebuggingMode>False</ProfileDebuggingMode>
+  <!--Whether or not to use the frame lock when reading game memory.-->
+  <UseFrameLock>False</UseFrameLock>
+  <LoggingLevel>Normal</LoggingLevel>
+</StyxSettings>

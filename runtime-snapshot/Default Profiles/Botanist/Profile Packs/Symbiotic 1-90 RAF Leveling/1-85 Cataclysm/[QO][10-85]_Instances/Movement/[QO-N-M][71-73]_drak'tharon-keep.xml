@@ -1,0 +1,426 @@
+﻿<HBProfile creator="Botanist and Wigglez" version="1.0">
+	<Name>[QO-N-M][71-73]_drak'tharon-keep</Name>
+   
+	<MinLevel>1</MinLevel>
+	<MaxLevel>101</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	
+	<MailGrey>False</MailGrey>
+	<MailWhite>False</MailWhite>
+	<MailGreen>False</MailGreen>
+	<MailBlue>False</MailBlue>
+	<MailPurple>False</MailPurple>
+   
+	<SellGrey>True</SellGrey>
+	<SellWhite>True</SellWhite>
+	<SellGreen>True</SellGreen>
+	<SellBlue>True</SellBlue>
+	<SellPurple>False</SellPurple>
+
+	<AvoidMobs>		
+		<Mob Name="Summon Enabler Stalker" Entry="53488" />
+		<Mob Name="Drakkari Guardian" Entry="26620" />
+	</AvoidMobs>
+	
+	<Blackspots>
+		<Blackspot X="-295.7177" Y="-744.481" Z="29.66842" Radius="3" />
+	</Blackspots>
+
+	<Mailboxes>
+	</Mailboxes>
+ 
+	<Vendors>
+	</Vendors>
+	
+	<ProtectedItems>
+		<Item name="Book of Glyph Mastery" entry="45912" />
+		<Item name="Frostweave Cloth" entry="33470" />		
+	</ProtectedItems>
+
+	<Factions>16</Factions>
+	
+	<QuestOrder>
+
+		
+		<!-- *******************************************************  Booster ************************************************************** -->
+		<If Condition="Me.Level &gt;= 90">
+			<CustomBehavior File="Message" 
+							Text="We are a booster." 
+							LogColor="Cyan" />
+							
+			<!-- Booster UserSettings -->
+			<CustomBehavior File="UserSettings"
+							FindMountAutomatically="True"
+							GroundMountFarmingMode="False"
+							HarvestHerbs="False"
+							HarvestMinerals="False"
+							KillBetweenHotspots="True"
+							LogoutForInactivity="False"
+							LogoutInactivityUseForceQuit="False"
+							LootMobs="True"
+							LootRadius="35"
+							MountName=""
+							NinjaSkin="False"
+							RessAtSpiritHealers="False"
+							SkinMobs="False"
+							UseMount="True" 
+							UseRandomMount="False" />
+							
+			<!-- Utgarde Keep -->
+			<If Condition="Me.ZoneId == 206">
+				<CustomBehavior File="Message" 
+								Text="Utgarde Keep detected. Running out."
+								LogColor="Fuchsia" />
+			
+				<!-- Make our way to the exit -->
+				<RunTo X="155.1128" Y="-86.14938" Z="12.55292" />
+
+				<!-- Go through the portal -->
+				<CustomBehavior File="MyCTM" X="147.1626" Y="-87.67013" Z="12.55168" />
+								
+				<!-- Outside portal -->
+				<RunTo X="1221.63" Y="-4864.75" Z="41.2481" />						
+								
+				<!-- run outside Utgarde Keep -->
+				<RunTo X="1213.57" Y="-5184.801" Z="132.5065" />
+				
+			</If> <!-- UK -->
+
+			<!-- Northrend -->
+			<If Condition="Me.MapId == 571">
+				<CustomBehavior File="Message" 
+								Text="We are in Northrend." 
+								LogColor="Cyan" />
+									
+				<!-- If our hearthstone is set here, use it -->
+				<If Condition="(Me.HearthstoneAreaId == 4204) || (Me.HearthstoneAreaId == 4206)">
+					<CustomBehavior File="Message" 
+									Text="Our Innkeeper is set at Amberpine Lodge or Conquest Hold." 
+									LogColor="Cyan" />
+										
+					<!-- Have hearthstone -->
+					<If Condition="HasItem(6948)">
+						<CustomBehavior File="Message" 
+										Text="Using Hearthstone." 
+										LogColor="Lime" />
+										
+						<CustomBehavior File="Misc\RunLua" 
+										Lua="UseItemByName(6948)" 
+										WaitTime="1000" />
+										
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000" />
+					</If> <!-- Have hearthstone -->
+				
+					<!-- Have Innkeeper's Daughter -->
+					<If Condition="HasItem(64488)">
+						<CustomBehavior File="Message" 
+										Text="Using Innkeeper's Daughter." 
+										LogColor="Lime" />
+											
+						<CustomBehavior File="Misc\RunLua" 
+										Lua="UseItemByName(64488)" 
+										WaitTime="1000" />
+							
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000" />
+					</If> <!-- Have Innkeeper's Daughter -->
+						
+					<!-- Our hearth isn't set, we need to go to the zone -->
+					<Else>
+						<CustomBehavior File="Message" 
+										Text="Our Hearthstone isn't set in the proper location. Moving to set it." 
+										LogColor="Lime" />
+					
+						<!-- Alliance -->
+						<If Condition="Me.IsAlliance">
+							<CustomBehavior File="Message" 
+											Text="Flying to Amberpine Lodge." 
+											LogColor="Lime" />
+						
+							<!-- Fly to the hover point -->
+							<CustomBehavior File="FlyTo" X="3444.486" Y="-2777.132" Z="282.1241" />
+
+							<!-- Front doorway of the inn -->
+							<CustomBehavior File="FlyTo" X="3437.849" Y="-2772.048" Z="200.4837" />
+							<CustomBehavior File="ForcedDismount" />
+
+							<!-- Run inside the inn -->
+							<RunTo X="3408.015" Y="-2793.484" Z="201.5198" />
+							
+							<!-- Set hearthstone -->
+							<CustomBehavior File="WaitTimer" 
+											WaitTime="1000" />
+							<CustomBehavior File="Message" 
+											Text="Setting my Hearthstone." 
+											LogColor="Lime" />
+							<CustomBehavior File="WaitTimer" 
+											WaitTime="1000" />
+							<CustomBehavior File="SetHearthstone" 
+											MobId="27066" 
+											X="3406.959" Y="-2788.631" Z="201.5214" />
+							<CustomBehavior File="WaitTimer" 
+											WaitTime="1000" />
+								
+							<!-- Run outside of inn -->
+							<RunTo X="3437.849" Y="-2772.048" Z="200.4837" />
+							
+							<!-- Hover point -->
+							<CustomBehavior File="FlyTo" X="3444.486" Y="-2777.132" Z="282.1241" />
+							
+							<CustomBehavior File="Message" 
+											Text="We are in Amberpine Lodge." 
+											LogColor="Fuchsia" />
+
+							<!-- Horde -->
+							<ElseIf Condition="Me.IsHorde">
+								<CustomBehavior File="Message" 
+												Text="Flying to Conquest Hold." 
+												LogColor="Lime" />
+						
+								<!-- Hover point -->
+								<CustomBehavior File="FlyTo" X="3242.183" Y="-2287.45" Z="159.358" />
+
+								<!-- Front doorway of the inn -->
+								<CustomBehavior File="FlyTo" X="3258.933" Y="-2226.123" Z="116.8299" />
+								<CustomBehavior File="ForcedDismount" />
+
+								<!-- Run inside the inn -->
+								<RunTo X="3258.109" Y="-2203.184" Z="117.0297" />
+								
+								<!-- Set hearthstone -->
+								<CustomBehavior File="WaitTimer" 
+												WaitTime="1000" />
+								<CustomBehavior File="Message" 
+												Text="Setting my Hearthstone." 
+												LogColor="Lime" />
+								<CustomBehavior File="WaitTimer" 
+												WaitTime="1000" />
+								<CustomBehavior File="SetHearthstone" 
+												MobId="27125"
+												X="3256.434" Y="-2202.075" Z="117.0299" />
+								<CustomBehavior File="WaitTimer" 
+												WaitTime="1000" />
+							
+								<!-- Run outside of the inn -->
+								<RunTo X="3258.933" Y="-2226.123" Z="116.8299" />
+								
+								<!-- Hover point -->
+								<CustomBehavior File="FlyTo" X="3242.183" Y="-2287.45" Z="159.358" />
+								
+								<CustomBehavior File="Message" 
+												Text="We are in Conquest Hold." 
+												LogColor="Fuchsia" />
+							</ElseIf> <!-- Horde -->
+						</If> <!-- Alliance -->
+					</Else> <!-- Set hearth -->
+				</If> <!-- Check hearthstone -->
+				
+				<!-- Repair if necessary -->
+				<If Condition="Me.LowestDurabilityPercent &lt; 0.8" >
+					<If Condition="Me.IsAlliance">
+						<CustomBehavior File="FlyTo" X="3424.898" Y="-2753.648" Z="199.3004" />
+						<CustomBehavior File="ForcedDismount" />
+					</If>
+					
+					<If Condition="Me.IsHorde">
+						<CustomBehavior File="FlyTo" X="3308.259" Y="-2337.812" Z="110.551" />
+						<CustomBehavior File="ForcedDismount" />
+					</If>
+				
+					<CustomBehavior File="Message" 
+									Text="Our durability is less than 80%, we need to repair." 
+									LogColor="Fuchsia" />
+								
+					<CustomBehavior File="ForceSetVendor" 
+									DoMail="False" 
+									DoRepair="True" 
+									DoSell="False" 
+									DoTrain="False" />
+					
+					<SetVendor>
+						<Vendors>
+							<!-- Amberpine Lodge -->
+							<Vendor Name="Brom Armstrong" 
+									Entry="27062" 
+									Type="Repair" 
+									X="3421.368" Y="-2757.578" Z="199.3002" />
+
+							<!-- Conquest Hold -->
+							<Vendor Name="Smith Prigka" 
+									Entry="27134" 
+									Type="Repair" 
+									X="3309.34" Y="-2338.626" Z="110.8466" />
+						</Vendors>
+					</SetVendor>
+				
+					<!-- We are done repairing -->
+					<If Condition="Me.DurabilityPercent &gt;= 0.8" >
+						<CustomBehavior File="Message" 
+										Text="Repairing complete." 
+										LogColor="Fuchsia" />
+					</If> <!-- repaired -->
+					
+					<If Condition="Me.IsAlliance">
+						<!-- Hover point -->
+						<CustomBehavior File="FlyTo" X="3444.486" Y="-2777.132" Z="282.1241" />
+					</If>
+					
+					<If Condition="Me.IsHorde">
+						<!-- Hover point -->
+						<CustomBehavior File="FlyTo" X="3242.183" Y="-2287.45" Z="159.358" />
+					</If>
+				</If> <!-- Repairing -->
+				
+				<CustomBehavior File="Message" 
+								Text="Flying to the rendezvous location." 
+								LogColor="Lime" />
+				
+				<!-- Fly outside of Drak'tharon Keep at rendezvous -->
+				<CustomBehavior File="FlyTo" X="4964.347" Y="-2048.781" Z="335.2357" />
+
+				<CustomBehavior File="Misc\LoadProfileOn" 
+								CheckRange="5" />
+									
+				<CustomBehavior File="WaitTimer"
+								WaitTime="10000" />
+								
+				<!-- Fly down -->
+				<CustomBehavior File="FlyTo" X="4890.459" Y="-2034.065" Z="265.2314" />
+
+				<!-- Fly into box -->
+				<CustomBehavior File="FlyTo" X="4834.526" Y="-2033.971" Z="250.0722" />
+				<CustomBehavior File="ForcedDismount" />
+				
+				<RunTo X="4774.44" Y="-2030.03" Z="229.38" />
+			</If> <!-- Northrend -->
+			
+			<!-- In box -->
+			<If Condition="Me.X &gt; 4700 &amp;&amp; Me.X &lt; 4800 &amp;&amp; Me.Y &gt; -2100 &amp;&amp; Me.Y &lt; -2000" >
+				<CustomBehavior File="LoadProfile" 
+								ProfileName="..\[QO-N][71-73]_drak'tharon-keep" />
+			</If> <!-- In box -->		
+		</If> <!-- Booster -->
+			
+		
+		
+		
+		
+		
+		
+		
+				
+		<!-- ******************************************************* RAF Toons *************************************************************** -->			
+				
+	
+	
+		
+		
+		
+		
+		
+		
+		<!-- RAF Toons -->		
+		<If Condition="Me.Level &lt;= 85">
+			<CustomBehavior File="Message" 
+							Text="We are a RAF." 
+							LogColor="Cyan" />
+		
+			<If Condition="Me.IsAlliance">
+				<If Condition="Me.HearthstoneAreaId != 5148">
+					<CustomBehavior File="Message" 
+									Text="Our Hearthstone isn't set in the Trade District in Stormwind. Stopping profile." 
+									LogColor="Lime" />
+									
+					<CustomBehavior File="UserSettings" 
+										StopBot="true" />
+				</If>
+				
+				<ElseIf Condition="Me.IsHorde">
+					<If Condition="Me.HearthstoneAreaId != 5170">
+						<CustomBehavior File="Message" 
+										Text="Our Hearthstone isn't set in the Valley of Strength in Orgrimmar. Stopping profile." 
+										LogColor="Lime" />
+										
+						<CustomBehavior File="UserSettings" 
+										StopBot="true" />
+					</If>
+				</ElseIf>
+			</If>
+			
+			<!-- RAF UserSettings -->
+			<CustomBehavior File="UserSettings"
+							GroundMountFarmingMode="False"
+							HarvestHerbs="False"
+							HarvestMinerals="False"
+							KillBetweenHotspots="True"
+							LogoutForInactivity="False"
+							LogoutInactivityUseForceQuit="False"
+							LootMobs="True"
+							LootRadius="15"
+							MountName=""
+							NinjaSkin="False"
+							RessAtSpiritHealers="False"
+							SkinMobs="False"
+							UseMount="True" 
+							UseRandomMount="False" />
+							
+			<!-- Utgarde Keep -->
+			<If Condition="Me.ZoneId == 206">
+				<CustomBehavior File="Message" 
+								Text="Utgarde Keep detected. Running out."
+								LogColor="Fuchsia" />
+			
+				<!-- Make our way to the exit -->
+				<RunTo X="155.1128" Y="-86.14938" Z="12.55292" />
+
+				<!-- Go through the portal -->
+				<CustomBehavior File="MyCTM" X="147.1626" Y="-87.67013" Z="12.55168" />
+								
+				<!-- Outside portal -->
+				<RunTo X="1221.63" Y="-4864.75" Z="41.2481" />				
+								
+				<!-- run outside Utgarde Keep -->
+				<RunTo X="1213.57" Y="-5184.801" Z="132.5065" />
+				
+			</If> <!-- UK -->
+
+			<!-- Northrend -->
+			<If Condition="Me.MapId == 571">
+			
+				<!-- Fly to the  Drak'tharon Keep hover point -->
+				<CustomBehavior File="FlyTo" X="3444.486" Y="-2777.132" Z="282.1241" />	
+			
+				<CustomBehavior File="Message" 
+								Text="Flying to the rendezvous location." 
+								LogColor="Lime" />
+				
+				<!-- Fly outside of Drak'tharon Keep at rendezvous -->
+				<CustomBehavior File="FlyTo" X="4964.347" Y="-2048.781" Z="335.2357" />
+
+				<CustomBehavior File="Misc\LoadProfileOn" 
+								CheckRange="5" />
+									
+				<CustomBehavior File="WaitTimer"
+								WaitTime="10000" />
+								
+				<!-- Fly down -->
+				<CustomBehavior File="FlyTo" X="4890.459" Y="-2034.065" Z="265.2314" />
+
+				<!-- Fly into box -->
+				<CustomBehavior File="FlyTo" X="4834.526" Y="-2033.971" Z="250.0722" />
+				<CustomBehavior File="ForcedDismount" />
+				
+				<RunTo X="4774.44" Y="-2030.03" Z="229.38" />
+			</If> <!-- Northrend -->
+			
+			<!-- In box -->
+			<If Condition="Me.X &gt; 4700 &amp;&amp; Me.X &lt; 4800 &amp;&amp; Me.Y &gt; -2100 &amp;&amp; Me.Y &lt; -2000" >
+				<CustomBehavior File="LoadProfile" 
+								ProfileName="..\[QO-N][71-73]_drak'tharon-keep" />
+			</If> <!-- In box -->	
+		</If> <!-- RAF toons -->
+	</QuestOrder>
+</HBProfile>

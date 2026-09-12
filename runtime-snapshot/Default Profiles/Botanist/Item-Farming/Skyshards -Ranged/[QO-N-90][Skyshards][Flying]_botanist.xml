@@ -1,0 +1,208 @@
+<HBProfile>
+<Name>[QO-N-90][Skyshards][Flying]_botanist</Name> 
+
+<MinLevel>85</MinLevel> 
+<MaxLevel>101</MaxLevel>
+<MinDurability>-1</MinDurability>
+<MinFreeBagSlots>-1</MinFreeBagSlots>
+<TargetingDistance>1</TargetingDistance>
+
+<SellGrey>True</SellGrey>
+<SellWhite>False</SellWhite>
+<SellGreen>False</SellGreen>
+<SellBlue>False</SellBlue>
+<SellPurple>False</SellPurple>
+
+<MailGrey>False</MailGrey>
+<MailWhite>True</MailWhite>
+<MailGreen>True</MailGreen>
+<MailBlue>True</MailBlue>
+<MailPurple>True</MailPurple>
+
+<Vendors>
+</Vendors>
+	
+<Mailboxes>
+</Mailboxes>
+
+	<QuestOrder>
+	
+		<!-- While our level is >= 90 and < 100 -->
+		<While Condition="Me.Level &gt;= 90 &amp;&amp; Me.Level &lt; 100" >
+	
+			<!-- Profile message - We meet the level requirements to run this profile -->
+			<CustomBehavior File="Message" 
+							Text="We meet the level requirements to run this profile." 
+							LogColor="Orange" />
+			
+			<!-- UserSettings -->
+			<CustomBehavior File="UserSettings"
+							FindMountAutomatically="True"
+							GroundMountFarmingMode="False"
+							HarvestHerbs="False"
+							HarvestMinerals="False"
+							KillBetweenHotspots="False"
+							LogoutForInactivity="False"
+							LogoutInactivityUseForceQuit="False"
+							LootMobs="True"
+							LootRadius="65"
+							MountDistance="200"
+							MountName=""
+							NinjaSkin="False"
+							RessAtSpiritHealers="False"
+							SkinMobs="False"
+							UseMount="True" 
+							UseRandomMount="False" />
+
+			<!-- If our hearthstone is set to Shrine of the Seven Stars or Shrine of Two Moons -->
+			<If Condition="(Me.HearthstoneAreaId == 6484) || (Me.HearthstoneAreaId == 6519)">
+			
+				<!-- Profile message - Our hearthstone is set at Shrine of the Seven Stars or Shrine of Two Moons -->
+				<CustomBehavior File="Message" 
+								Text="Our hearthstone is set at Shrine of the Seven Stars or Shrine of Two Moons." 
+								LogColor="Gold" />
+			
+				<!-- Else our hearthstone is not set at Shrine of the Seven Stars or Shrine of Two Moons -->
+				<Else>
+				
+					<!-- Profile message - Our hearthstone is not set at Shrine of the Seven Stars or Shrine of Two Moons. Initiating movement procedures -->
+					<CustomBehavior File="Message" 
+									Text="Our hearthstone is not set at Shrine of the Seven Stars or Shrine of Two Moons. Initiating movement procedures." 
+									LogColor="Red" />
+			
+					<!-- Load profile - [QO-N-M-90][Skyshards][Flying]_botanist -->
+					<CustomBehavior File="LoadProfile" 
+									ProfileName="Movement\[QO-N-M-90][Skyshards][Flying]_botanist" />				
+
+				</Else>		<!-- Else our hearthstone is not set at Shrine of the Seven Stars or Shrine of Two Moons -->
+
+			</If>	<!-- If our hearthstone is set to Shrine of the Seven Stars or Shrine of Two Moons -->
+
+			<!-- If we are not in the farming area -->
+			<If Condition="Me.X &lt; 698.6161 || Me.X &gt; 931.9396 || Me.Y &lt; 1085.338 || Me.Y &gt; 1481.26" >
+			
+				<!-- Load profile - [QO-N-M-90][Skyshards][Flying]_botanist -->
+				<CustomBehavior File="LoadProfile" 
+								ProfileName="Movement\[QO-N-M-90][Skyshards][Flying]_botanist" />				
+
+			</If>	<!-- If we are not in the farming area -->
+
+			<!-- If we are in the farming area -->
+			<If Condition="Me.X &gt; 698.6161 &amp;&amp; Me.X &lt; 931.9396 &amp;&amp; Me.Y &gt; 1085.338 &amp;&amp; Me.Y &lt; 1481.26" >	
+			
+				<!-- Profile message - We are in the farming area -->
+				<CustomBehavior File="Message" 
+								Text="We are in the farming area." 
+								LogColor="Orange" />
+			
+				<!-- Wait timer - wait 1 seconds to aggro -->
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="1000" />
+
+				<!-- Profile message - Moving to the beginning of the route -->
+				<CustomBehavior File="Message" 
+								Text="Moving to the beginning of the route." 
+								LogColor="Plum" />
+			
+				<!-- Move to - beginning of the route hover point -->
+				<CustomBehavior File="FlyTo"
+								X="848.1554" Y="1441.762" Z="454.6664" />
+								
+				<!-- CTM to -  safe location - beginning of the route -->
+				<CustomBehavior File="MyCTM"
+								X="880.8686" Y="1445.572" Z="376.8419" />
+			
+				<!-- Custom behavior - ForcedDismount -->	
+				<CustomBehavior File="ForcedDismount" />
+			
+				<!-- Profile message - We have reached the beginning of the farming route -->
+				<CustomBehavior File="Message" 
+								Text="We have reached the beginning of the farming route." 
+								LogColor="Gold" />
+				
+				<!-- Profile message - Opening our bags to view our inventory -->
+				<CustomBehavior File="Message" 
+								Text="Opening our bags to view our inventory." 
+								LogColor="Plum" />
+							
+				<!-- Custom behavior - RunMacro - /script OpenAllBags() -->
+				<CustomBehavior File="RunMacro" 
+								Macro="/script OpenAllBags()" />
+				
+				<!-- Wait timer - wait 1 seconds - delay -->
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="1000" />
+				
+				<!-- Profile message - Disabling mount use -->
+				<CustomBehavior File="Message" 
+								Text="Disabling mount use." 
+								LogColor="Plum" />
+				
+				<!-- Wait timer - wait 1 seconds - delay -->
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="1000" />
+				
+				<!-- UserSettings -->
+				<CustomBehavior File="UserSettings"
+								UseMount="False" />	
+
+			
+				<!-- ***************************************** Farming ***************************************** -->
+				
+				
+				<While Condition="(Me.FreeBagSlots &gt; 4) &amp;&amp; (Me.LowestDurabilityPercent &gt;= 0.3)" >
+				
+					<!-- Custom behavior - TargetAndMoveToMob -->
+					<CustomBehavior File="TargetAndMoveToMob"
+									MoveWithinMaxRangeOfMob="20"
+									TargetOnlyIfHealthPercentAbove="5"
+									WaitForNpcs="False"
+									MobId="58671" >
+						<HuntingGrounds>
+			                <Hotspot X="880.9749" Y="1446.555" Z="376.5369" />
+							<Hotspot X="762.4465" Y="1388.602" Z="437.8762" />
+							<Hotspot X="727.1005" Y="1294.87" Z="465.7336" />
+							<Hotspot X="813.3298" Y="1185.12" Z="464.8368" />
+			            </HuntingGrounds>			
+					</CustomBehavior>	<!-- Custom behavior - TargetAndMoveToMob -->
+				
+					<!-- If our target is a Ancient Mogu Spirit -->
+					<If Condition="(Me.CurrentTarget != null) &amp;&amp; (Me.CurrentTarget.Entry == 58671)">
+					
+						<!-- Profile message  - Engaging a Ancient Mogu Spirit -->	
+						<CustomBehavior File="Message" 
+										Text="Engaging a Ancient Mogu Spirit." 
+										LogColor="Cyan" />
+						
+						<!-- Cast one of the following spells -->
+						<CustomBehavior File="Misc\RangeAttack" />
+
+					</If>	<!-- If our target is a Ancient Mogu Spirit --> 
+
+				</While>	<!-- While our empty bag slots is > 4 and our lowest durability is > 30% -->
+
+			</If>	<!-- If we are in the farming area -->	
+			
+			<!-- If our free bag slots are <= 4 or our durability <= 30% -->		
+			<If Condition="(Me.FreeBagSlots &lt;= 4) || (Me.LowestDurabilityPercent &lt;= 0.3)" >
+
+				<!-- UserSettings -->
+				<CustomBehavior File="UserSettings"
+								UseMount="True" />
+			
+				<!-- Profile message - I have detected that our bags are fullor our gear is about to break. Initiating vendor procedures -->
+				<CustomBehavior File="Message" 
+								Text="I have detected that our bags are fullor our gear is about to break. Initiating vendor procedures." 
+								LogColor="Plum" />
+								
+				<!-- Load profile - [QO-N-90][Skyshards][Flying]_repair-mail -->
+				<CustomBehavior File="LoadProfile" 
+								ProfileName="Movement\Vendors\[QO-N-90][Skyshards][Flying]_repair-mail" />				
+
+			</If>	<!-- If our free bag slots are <= 4 or our durability <= 30% -->
+
+		</While>	<!-- While our level is >= 90 and < 100 -->
+			
+	</QuestOrder>
+	
+</HBProfile> 

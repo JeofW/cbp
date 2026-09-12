@@ -1,0 +1,1377 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+	<Name>[QO-N-][Flying][Mount-Deathcharger's-Reins][looting]_botanist_stratholme</Name>
+   
+	<MinLevel>1</MinLevel>
+	<MaxLevel>101</MaxLevel>
+   
+	<MinDurability>0.2</MinDurability>
+	<MinFreeBagSlots>0</MinFreeBagSlots>
+	<TargetingDistance>5</TargetingDistance>
+	
+	<MailGrey>False</MailGrey>
+	<MailWhite>True</MailWhite>
+	<MailGreen>False</MailGreen>
+	<MailBlue>False</MailBlue>
+	<MailPurple>True</MailPurple>
+   
+	<SellGrey>True</SellGrey>
+	<SellWhite>False</SellWhite>
+	<SellGreen>True</SellGreen>
+	<SellBlue>True</SellBlue>
+	<SellPurple>False</SellPurple>
+   
+	<TargetElites>True</TargetElites>
+	
+	<AvoidMobs>
+		<Mob Name="Argent Crusader" 
+			 Entry="45456" />
+		<Mob Name="Summon Enabler Stalker" 
+			 Entry="53488" />
+	</AvoidMobs>
+	
+	<Blackspots>
+		<Blackspot X="3682.632" Y="-3619.021" Z="139.3497" 
+				   Radius="10" />
+				   
+	   <Blackspot X="3916.617" Y="-3546.865" Z="134.6607"
+				  Radius="15" />
+	</Blackspots>
+
+	<Mailboxes>
+	</Mailboxes>
+ 
+	<Vendors>
+	</Vendors>
+
+	<Factions></Factions>
+	
+	<ProtectedItems>
+		<Item Name="Deathcharger's Reins" 
+			  Entry="13335" />
+		<Item Name="Runeblade of Baron Rivendare" 
+			  Entry="13505" />
+	</ProtectedItems>
+	
+	<QuestOrder>
+		
+	<CustomBehavior File="UserSettings"  
+					UseFlightPaths="True" 
+					LootMobs="True" 
+					SkinMobs="False" 
+					NinjaSkin="False" 
+					HarvestHerbs="False" 
+					HarvestMinerals="False" 
+					KillBetweenHotspots="True" 
+					RessAtSpiritHealers="False" 
+					LootRadius="45" 
+					LogoutForInactivity="True" />
+				
+        <While Condition="true" >
+
+
+			<!-- If our hearthstone is not set to Light's Hope Chapel -->
+			<If Condition="Me.HearthstoneAreaId != 2268 " >
+			
+				<!-- Profile message - Our Hearthstone is not set at Light's Hope Chapel -->
+				<CustomBehavior File="Message" 
+								Text="Our Hearthstone is not set at Light's Hope Chapel." 
+								LogColor="Cyan" />
+								
+				<!-- Wait timer - wait 3 seconds - delay -->
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="3000" />
+
+				<!-- Profile message - Moving to Light's Hope Chapel -->
+				<CustomBehavior File="Message" 
+								Text="Moving to Light's Hope Chapel." 
+								LogColor="Cyan" />				
+			
+				<!-- If we are in the instance box-->
+				<If Condition="Me.X &lt; 3239.871 &amp;&amp; Me.X &gt; 3184.693 &amp;&amp; Me.Y &lt; -4033.876 &amp;&amp; Me.Y &gt; -4050.978" >
+			
+					<!-- Move to - East Gate Service Entrance gate -->
+					<MoveTo X="3189.636" Y="-4039.492" Z="107.9911" />
+						
+					<!-- Custom behavior- InteractWith - East Gate Service Entrance gate -->	
+					<CustomBehavior File="InteractWith" 
+									MobId="175369" 
+									ObjectType="Gameobject" 
+									Range="4.75" 
+									NumOfTimes="1"  
+									WaitTime="1" 
+									X="3185.4812" Y="-4039.09937" Z="107.791389" />
+					
+					<!-- Move to - outside the East Gate Service Entrance -->
+					<MoveTo X="3174.903" Y="-4040.003" Z="105.5004" />
+			
+				</If>
+			
+				<!-- Fly to - Light's Hope Chapel -->
+				<CustomBehavior File="FlyTo" 
+								X="2280.737" Y="-5319.798" Z="88.75224" />
+			
+				<!-- Custom behavior - ForcedDismount -->
+				<CustomBehavior File="ForcedDismount" />
+				
+				<!-- Usersettings -->
+				<CustomBehavior File="UserSettings" 
+								UseMount="False" />
+				
+				<!-- Move to - Jessica Chambers -->
+				<MoveTo X="2297.197" Y="-5335.058" Z="90.75238" />	
+						
+				<!-- Profile message - Setting our Hearthstone with the innkeep-->
+				<CustomBehavior File="Message" 
+								Text="Setting our Hearthstone with the innkeep." 
+								LogColor="Chartreuse" />
+
+				<!-- Custom behavior - SetHearthstone -->				
+				<CustomBehavior File="SetHearthstone" 
+								MobId="16256"  
+								X="2295.74" Y="-5336.82" Z="90.75285" />
+
+				<!-- Profile message - I have set our Hearthstone -->				
+				<CustomBehavior File="Message" 
+								Text="I have set our Hearthstone." 
+								LogColor="Chartreuse" />
+
+				<!-- Move to - exit the inn -->
+				<MoveTo X="2280.737" Y="-5319.798" Z="88.75224" />
+
+				<!-- If we have < 20 empty bag slots or our durability < 30% -->
+				<If Condition="(Me.FreeBagSlots &lt;= 20) || (Me.LowestDurabilityPercent &lt;= 0.3)" >
+					
+					<!-- Profile message - Checking our bag space and gear durability -->
+					<CustomBehavior File="Message" 
+									Text="Checking our bag space and gear durability." 
+									LogColor="Chartreuse" />
+					
+					<!-- Wait timer - wait 1 second - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="1000" />
+					
+					<!-- Profile message - Checking our bag space and gear durability -->
+					<CustomBehavior File="Message" 
+									Text="I have detected that we have less than 20 empty bag slots or that our gear is about to break. I'm going to repair and mail." 
+									LogColor="Chartreuse" />
+					
+					<!-- Profile message - Moving to repair and mail -->
+					<CustomBehavior File="Message" Text="Moving to repair and mail." 
+									LogColor="Chartreuse" />	
+					
+					<SetVendor>
+						<Vendors>
+							<Vendor Name="Vincent Randolph" 
+									Entry="47286" 
+									Type="Repair" 
+									X="2257.292" Y="-5293.229" Z="82.14259" />
+						</Vendors>
+					</SetVendor>						
+					<SetMailbox>
+						<Mailboxes>
+							<Mailbox X="2290.367" Y="-5320.899" Z="90.15194" />
+						</Mailboxes>
+					</SetMailbox>	
+					
+					<!-- Vendor settings -->
+					<CustomBehavior File="ForceSetVendor" 
+									DoMail="True" 
+									DoRepair="True" 
+									DoSell="True" 
+									DoTrain="False" />
+									
+				</If>	<!-- If we have < 20 empty bag slots or our durability < 30% -->
+
+				<!-- If we have > 20 empty bag slots and our durability > 30% -->
+				<If Condition="(Me.FreeBagSlots &gt; 20) &amp;&amp; (Me.LowestDurabilityPercent &gt; 0.3)" >	
+				
+					<!-- Usersettings -->
+					<CustomBehavior File="UserSettings" 
+									UseMount="False" />
+				
+					<!-- Profile message - We have more than 20 empty slots and our gear is above 30 percent durability -->
+					<CustomBehavior File="Message" 
+									Text="We have more than 20 empty slots and our gear is above 30 percent durability." 
+									LogColor="Chartreuse" />
+					
+					<!-- Wait timer - wait 1 second - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="1000" />
+					
+					<!-- Custom behavior - ForcedMount - flying -->
+					<CustomBehavior File="ForcedMount" 
+									MountType="Flying" />
+							
+					<!-- Profile message - Flying to the East Gate Service Entrance -->		
+					<CustomBehavior File="Message" 
+									Text="Flying to the East Gate Service Entrance." 
+									LogColor="Chartreuse" />
+					
+					<!-- Fly to - East Gate Service Entrance -->
+					<CustomBehavior File="FlyTo" 
+									X="3175.539" Y="-4039.376" Z="105.4958" />
+					
+					<!-- Profile message - We have reached the East Gate Service Entrance -->	
+					<CustomBehavior File="Message" 
+									Text="We have reached the East Gate Service Entrance." 
+									LogColor="Chartreuse" />
+					
+					<!-- Custom behavior - ForcedDismount -->
+					<CustomBehavior File="ForcedDismount" />
+					
+					<!-- Profile message - Opening the gate -->
+					<CustomBehavior File="Message" 
+									Text="Opening the gate." 
+									LogColor="Chartreuse" />
+					
+					<!-- Move to - East Gate Service Entrance gate -->
+					<MoveTo X="3182.442" Y="-4039.105" Z="107.3712" />
+						
+					<!-- Custom behavior- InteractWith - East Gate Service Entrance gate -->	
+					<CustomBehavior File="InteractWith" 
+									MobId="175369" 
+									ObjectType="Gameobject" 
+									Range="4.75" 
+									NumOfTimes="1"  
+									WaitTime="1" 
+									X="3185.4812" Y="-4039.09937" Z="107.791389" />
+					
+					<!-- Move to - right-hand turn -->
+					<MoveTo X="3185.573" Y="-4038.596" Z="107.9911" />
+					
+					<!-- Move to - zone out location -->
+					<MoveTo X="3233.06" Y="-4048.3" Z="108.442" />
+					
+				</If>
+			
+			</If>	<!-- If our hearthstone is not set to Lights Hope Chapel -->
+
+			<!-- If our hearthstone is set to Light's Hope Chapel -->
+			<If Condition="Me.HearthstoneAreaId == 2268 " >
+		
+				<!-- Profile message - Our Hearthstone is set to Light's Hope Chapel -->
+				<CustomBehavior File="Message" 
+								Text="Our Hearthstone is set to Light's Hope Chapel." 
+								LogColor="Orange" />
+		
+				<!-- If we aren't in Stratholme -->
+				<If Condition="Me.MapId != 329">
+		
+					<!-- Profile message - We aren't in Stratholme -->
+					<CustomBehavior File="Message" 
+									Text="We aren't in Stratholme." 
+									LogColor="Orange" />
+		
+					<!-- If we aren't in the East Gate Service Entrance -->
+					<If Condition="Me.X &gt; 3239.871 || Me.X &lt; 3184.693 || Me.Y &gt; -4033.876 || Me.Y &lt; -4050.978" >
+
+						<!-- Profile message - We aren't in the East Gate Service Entrance -->
+						<CustomBehavior File="Message" 
+										Text="We aren't in the East Gate Service Entrance." 
+										LogColor="Orange" />
+					
+						<!-- If we have < 20 empty bag slots or our durability < 30% -->
+						<If Condition="(Me.FreeBagSlots &lt;= 20) || (Me.LowestDurabilityPercent &lt;= 0.3)" >
+							
+							<!-- Profile message - Checking our bag space and gear durability -->
+							<CustomBehavior File="Message" 
+											Text="Checking our bag space and gear durability." 
+											LogColor="Chartreuse" />
+							
+							<!-- Wait timer - wait 1 second - delay -->
+							<CustomBehavior File="WaitTimer" 
+											WaitTime="1000" />
+							
+							<!-- Profile message - Checking our bag space and gear durability -->
+							<CustomBehavior File="Message" 
+											Text="I have detected that we have less than 20 empty bag slots or that our gear is about to break. I'm going to repair and mail." 
+											LogColor="Chartreuse" />
+							
+							<!-- Profile message - Moving to repair and mail -->
+							<CustomBehavior File="Message" Text="Moving to repair and mail." 
+											LogColor="Chartreuse" />	
+							
+							<!-- Fly to - Light's Hope Chapel -->
+							<CustomBehavior File="FlyTo" 
+											X="2280.737" Y="-5319.798" Z="88.75224" />
+						
+							<!-- Custom behavior - ForcedDismount -->
+							<CustomBehavior File="ForcedDismount" />
+							
+							<!-- Usersettings -->
+							<CustomBehavior File="UserSettings" 
+											UseMount="False" />
+
+							<SetVendor>
+								<Vendors>
+									<Vendor Name="Vincent Randolph" 
+											Entry="47286" 
+											Type="Repair" 
+											X="2257.292" Y="-5293.229" Z="82.14259" />
+								</Vendors>
+							</SetVendor>						
+							<SetMailbox>
+								<Mailboxes>
+									<Mailbox X="2290.367" Y="-5320.899" Z="90.15194" />
+								</Mailboxes>
+							</SetMailbox>	
+							
+							<!-- Vendor settings -->
+							<CustomBehavior File="ForceSetVendor" 
+											DoMail="True" 
+											DoRepair="True" 
+											DoSell="True" 
+											DoTrain="False" />
+											
+							<!-- Usersettings -->
+							<CustomBehavior File="UserSettings" 
+											UseMount="True" />				
+											
+						</If>	<!-- If we have < 20 empty bag slots or our durability < 30% -->
+			
+						<!-- If we have > 20 empty bag slots and our durability > 30% -->
+						<If Condition="(Me.FreeBagSlots &gt; 20) &amp;&amp; (Me.LowestDurabilityPercent &gt; 0.3)" >	
+						
+							<!-- Profile message - We have more than 20 empty slots and our gear is above 30 percent durability -->
+							<CustomBehavior File="Message" 
+											Text="We have more than 20 empty slots and our gear is above 30 percent durability." 
+											LogColor="Chartreuse" />
+							
+							<!-- Wait timer - wait 1 second - delay -->
+							<CustomBehavior File="WaitTimer" 
+											WaitTime="1000" />
+									
+							<!-- Profile message - Flying to the East Gate Service Entrance -->		
+							<CustomBehavior File="Message" 
+											Text="Flying to the East Gate Service Entrance." 
+											LogColor="Chartreuse" />
+							
+							<!-- Fly to - East Gate Service Entrance -->
+							<CustomBehavior File="FlyTo" 
+											X="3175.539" Y="-4039.376" Z="105.4958" />
+							
+							<!-- Profile message - We have reached the East Gate Service Entrance -->	
+							<CustomBehavior File="Message" 
+											Text="We have reached the East Gate Service Entrance." 
+											LogColor="Chartreuse" />
+							
+							<!-- Custom behavior - ForcedDismount -->
+							<CustomBehavior File="ForcedDismount" />
+							
+							<!-- Profile message - Opening the gate -->
+							<CustomBehavior File="Message" 
+											Text="Opening the gate." 
+											LogColor="Chartreuse" />
+							
+							<!-- Move to - East Gate Service Entrance gate -->
+							<MoveTo X="3182.442" Y="-4039.105" Z="107.3712" />
+								
+							<!-- Custom behavior- InteractWith - East Gate Service Entrance gate -->	
+							<CustomBehavior File="InteractWith" 
+											MobId="175369" 
+											ObjectType="Gameobject" 
+											Range="4.75" 
+											NumOfTimes="1"  
+											WaitTime="1" 
+											X="3185.4812" Y="-4039.09937" Z="107.791389" />
+							
+							<!-- Move to - right-hand turn -->
+							<MoveTo X="3229.305" Y="-4036.7" Z="108.423" />
+							
+							<!-- Move to - zone out location -->
+							<MoveTo X="3233.06" Y="-4048.3" Z="108.442" />
+						
+						</If>	<!-- If we have > 20 empty bag slots and our durability > 30% -->
+
+					</If>	<!-- If we aren't in the East Gate Service Entrance -->
+
+				</If>	<!-- If we aren't in Stratholme -->
+
+			</If>	<!-- If our hearthstone is set to Light's Hope Chapel -->
+				
+			<!-- If we are in the instance box-->
+			<If Condition="Me.X &lt; 3239.871 &amp;&amp; Me.X &gt; 3184.693 &amp;&amp; Me.Y &lt; -4033.876 &amp;&amp; Me.Y &gt; -4050.978" > 
+						
+				<!-- Profile message - Portal detected nearby -->
+				<CustomBehavior File="Message" 
+								Text="Portal detected nearby."
+								LogColor="Plum" />	
+
+				<!-- Profile message - Resetting the instance -->
+				<CustomBehavior File="Message" 
+								Text="Resetting the instance." 
+								LogColor="Plum" />
+				
+				<!-- Custom behavior - macro - reset the instance -->
+				<CustomBehavior File="RunMacro" 
+								Macro="/script ResetInstances()" />	
+								
+				<!-- Custom behavior - macro - set dungeon difficulty to normal -->					
+				<CustomBehavior File="RunMacro" 
+								Macro="/script SetDungeonDifficultyID(1)" />
+				
+				<!-- Profile message - The instance has been reset -->
+				<CustomBehavior File="Message" 
+								Text="The instance has been reset." 
+								LogColor="Plum" />
+					
+				<!-- If we didn't enter the instance, wait 20 seconds then attempt to enter again -->
+				<While Condition="Me.MapId != 329">
+				
+					<!-- Move to - zone out location -->
+					<MoveTo X="3233.06" Y="-4048.3" Z="108.442" />
+
+					<!-- Move to - attempt to enter the instance -->
+					<CustomBehavior File="Misc\InInstance" 
+									X="3238.079" Y="-4057.018" Z="108.4619" />
+									
+					<!-- Profile message - Waiting for the dungeon to load -->				
+					<CustomBehavior File="Message" 
+									Text="Waiting for the dungeon to load." 
+									LogColor="Plum" />
+					
+					<!-- Wait timer - wait 20 seconds for the instance to load -->						
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="20000" />
+									
+					<!-- If we still aren't in, we're locked out -->
+					<If Condition="Me.MapId != 329">
+					
+						<!-- Profile message - We are locked out. Waiting 20 seconds, then attempting to enter again -->
+						<CustomBehavior File="Message" 
+										Text="We are locked out. Waiting 20 seconds, then attempting to enter again ." 
+										LogColor="Plum" />
+										
+					</If>	<!-- If we still aren't in, we're locked out -->
+					
+				</While>	<!-- If we didn't enter the instance, wait 20 seconds then attempt to enter again -->
+				
+			</If>	<!-- If we are in the instance box -->	
+
+			<!-- If we are inside Stratholme -->
+			<If Condition="Me.MapId == 329">
+			
+				<!-- Zone in location -->
+				<MoveTo X="3590.87" Y="-3643.22" Z="138.491" />
+				
+				<!--Profile message	- Deleting unwanted items from our bags -->				
+				<CustomBehavior File="Message" 
+								Text="Deleting unwanted items from our bags." 
+								LogColor="Orange" />
+								
+				<!-- Custom behavior - DeleteItems -->				
+				<CustomBehavior File="DeleteItems"
+								Ids="3927,1645,3928,6149,7972,10285" />				
+								
+				<!-- Instance timer -->
+				<CustomBehavior File="Misc\InstanceTimer" 
+								Timer="Start" />
+				
+				<!-- Turn on autolooting -->
+				<CustomBehavior File="RunMacro" 
+								Macro="/script SetCVar('AutoLootDefault', 1)"  
+								WaitTime="1000" />
+				
+				<!-- Profile message - Stratholme initialized -->
+				<CustomBehavior File="Message" 
+								Text="Stratholme initialized."  
+								LogColor="Plum" />				
+								
+				<!-- Move to - left-hand turn -->			
+				<MoveTo X="3598.325" Y="-3654.991" Z="138.5105" />
+				
+				<!-- Move to - 1st gate -->
+				<MoveTo X="3621.646" Y="-3643.887" Z="138.5105" />
+
+				<!-- Profile message - Opening the gate -->	
+				<CustomBehavior File="Message" 
+								Text="Opening the gate." 
+								LogColor="Plum" />
+				
+				<!-- Custom behavior - InteractWith - 1st gate  -->				
+				<CustomBehavior File="InteractWith" 
+								MobId="175368" 
+								ObjectType="Gameobject" 
+								Range="4.75" 
+								NumOfTimes="1"  
+								WaitTime="1" 
+								X="3624.90845" Y="-3642.1626" Z="138.445114" />
+								
+				<!-- Profile message - Disabling combat -->
+				<CustomBehavior File="Message" 
+									Text="Disabling combat." 
+									LogColor="Chartreuse" />
+
+				<!-- Disable combat -->
+				<DisableBehavior Name="Combat" />				
+								
+				<!-- RLH to - pull all mobs in the court yard inside the church -->				
+				<MoveTo X="3628.536" Y="-3640.215" Z="138.5518" />
+				<MoveTo X="3641.778" Y="-3639.01" Z="138.5127" />
+				<MoveTo X="3659.161" Y="-3603.504" Z="136.9696" />
+				<MoveTo X="3671.745" Y="-3592.973" Z="137.1315" />
+				<MoveTo X="3711.208" Y="-3607.594" Z="141.2447" />
+				<MoveTo X="3684.45" Y="-3607.668" Z="137.989" />
+				<MoveTo X="3661.411" Y="-3613.698" Z="137.2019" />
+				<MoveTo X="3667.093" Y="-3624.899" Z="139.9525" />
+				<MoveTo X="3673.547" Y="-3632.984" Z="139.9443" />
+				<MoveTo X="3678.544" Y="-3630.957" Z="139.9443" />
+				<MoveTo X="3685.982" Y="-3640.979" Z="139.9442" />
+				<MoveTo X="3676.79" Y="-3646.862" Z="139.9442" />
+				<MoveTo X="3668.196" Y="-3638.921" Z="139.9441" />
+				<MoveTo X="3678.544" Y="-3630.957" Z="139.9443" />
+
+				<!-- Profile message - Enabling combat -->
+				<CustomBehavior File="Message" 
+									Text="Enabling combat." 
+									LogColor="Gold" />
+				
+				<!-- EnableBehavior - Combat -->	
+				<EnableBehavior Name="Combat" />
+				
+				<!-- Move to - exit the church -->
+				<MoveTo X="3661.368" Y="-3617.587" Z="137.5836" />
+				
+				<!-- Move to - avoid the lamp post -->
+				<MoveTo X="3684.298" Y="-3607.257" Z="137.9445" />
+				
+				<!-- Move to - 2nd gate -->
+				<MoveTo X="3722.172" Y="-3600.637" Z="142.3367" />
+
+				<!-- Custom behavior - InteractWith - 1st gate  -->	
+				<CustomBehavior File="InteractWith" 
+								MobId="175357" 
+								ObjectType="Gameobject" 
+								Range="4.75" 
+								NumOfTimes="1"  
+								WaitTime="1" 
+								X="3727.29126" Y="-3599.08252" Z="142.219528" />	
+				
+				<!-- Move to - the gauntlet -->
+				<MoveTo X="3781.684" Y="-3587.039" Z="143.5968" />
+
+				<!-- Wait timer - wait 5 seconds - delay -->
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="5000" />
+
+				<!-- Profile message - Moving to Nerub'enkan -->
+				<CustomBehavior File="Message" 
+								Text="Moving to Nerub'enkan." 
+								LogColor="Plum" />
+				
+				<!-- Move to - Nerub'enkan  - bottom step-->	
+				<MoveTo X="3858.502" Y="-3546.269" Z="137.8303" />
+
+				<!-- Macro - Clear target -->					
+				<CustomBehavior File="RunMacro" 
+								Macro="/cleartarget" 
+								NumOfTimes="1" 
+								WaitTime="0"/>
+
+				<!-- Custom behavior waitTimer - 3 second delay -->
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="3000" />				
+								
+				<!-- Custom behavior - Runmacro - target Nerub'enkan -->	
+				<CustomBehavior File="RunMacro" 
+								Macro="/target Nerub'enkan" />				
+								
+				<If Condition="(Me.CurrentTarget != null) &amp;&amp; (Me.CurrentTarget.HealthPercent > 20) &amp;&amp; (Me.CurrentTarget.Entry == 10437)" >				
+								
+					<!-- Custom behavior - TargetAndMoveToMob - Nerub'enkan -->
+					<CustomBehavior File="TargetAndMoveToMob"
+									MoveWithinMaxRangeOfMob="1"
+									TargetOnlyIfHealthPercentAbove="5"
+									WaitForNpcs="False"
+									MobId="10437" >
+					</CustomBehavior>	<!-- Custom behavior - TargetAndMoveToMob -->
+			
+					<!-- Custom behavior waitTimer - 3 second delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+			
+				</If>
+				
+				<!-- Move to - Nerub'enkan  -->	
+				<MoveTo X="3855.564" Y="-3529.974" Z="144.2102" />
+				
+				<!-- Wait timer - wait 3 seconds - delay -->
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="3000" />
+					
+				<!-- Profile message - Disabling combat -->
+				<CustomBehavior File="Message" 
+									Text="Disabling combat." 
+									LogColor="Plum" />
+
+				<!-- Disable combat -->
+				<DisableBehavior Name="Combat" />	
+
+				<!-- Move to - 1st ziggurat - kite  -->	
+				<MoveTo X="3844.769" Y="-3510.155" Z="144.2098" />
+
+				<!-- Move to - 1st ziggurat - kite  -->	
+				<MoveTo X="3847.577" Y="-3491.228" Z="141.2107" />
+								
+				<!-- Move to - 1st ziggurat - kite  -->	
+				<MoveTo X="3835.397" Y="-3490.049" Z="141.2107" />
+								
+				<!-- Move to - 1st ziggurat - kite  -->	
+				<MoveTo X="3829.033" Y="-3502.767" Z="141.2107" />
+								
+				<!-- Move to - 1st ziggurat - kite  -->	
+				<MoveTo X="3845.252" Y="-3510.9" Z="144.21" />
+								
+				<!-- Move to - 1st ziggurat - kite  -->	
+				<MoveTo X="3855.84" Y="-3530.776" Z="144.21" />
+
+				<!-- Profile message - Enabling combat -->
+				<CustomBehavior File="Message" 
+									Text="Enabling combat." 
+									LogColor="Gold" />
+				
+				<!-- EnableBehavior - Combat -->	
+				<EnableBehavior Name="Combat" />
+							
+				<!-- Wait timer - wait 3 seconds - delay -->
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="3000" />
+								
+				<!-- Profile message - Disabling combat -->
+				<CustomBehavior File="Message" 
+									Text="Disabling combat." 
+									LogColor="Plum" />
+
+				<!-- Disable combat -->
+				<DisableBehavior Name="Combat" />	
+
+				<!-- Move to - 1st ziggurat - kite  -->	
+				<MoveTo X="3844.769" Y="-3510.155" Z="144.2098" />
+
+				<!-- Move to - 1st ziggurat - kite  -->	
+				<MoveTo X="3847.577" Y="-3491.228" Z="141.2107" />
+								
+				<!-- Move to - 1st ziggurat - kite  -->	
+				<MoveTo X="3835.397" Y="-3490.049" Z="141.2107" />
+								
+				<!-- Move to - 1st ziggurat - kite  -->	
+				<MoveTo X="3829.033" Y="-3502.767" Z="141.2107" />
+								
+				<!-- Move to - 1st ziggurat - kite  -->	
+				<MoveTo X="3845.252" Y="-3510.9" Z="144.21" />
+								
+				<!-- Move to - 1st ziggurat - kite  -->	
+				<MoveTo X="3855.84" Y="-3530.776" Z="144.21" />
+
+				<!-- Profile message - Enabling combat -->
+				<CustomBehavior File="Message" 
+									Text="Enabling combat." 
+									LogColor="Gold" />
+				
+				<!-- EnableBehavior - Combat -->	
+				<EnableBehavior Name="Combat" />
+							
+				<!-- Wait timer - wait 3 seconds - delay -->
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="3000" />				
+
+								
+				<!-- @@@@@@@@@@@@@@@@@@@@ 3rd pull @@@@@@@@@@@@@@@@@@@@ -->
+
+
+				<!-- Profile message - Moving to Baroness Anastari -->
+				<CustomBehavior File="Message" 
+								Text="Moving to Baroness Anastari." 
+								LogColor="Plum" />
+				
+				<!-- Move to - Baroness Anastari  - bottom step-->	
+				<MoveTo X="3863.933" Y="-3701.562" Z="141.6275" />
+
+				<!-- Macro - Clear target -->					
+				<CustomBehavior File="RunMacro" 
+								Macro="/cleartarget" 
+								NumOfTimes="1" 
+								WaitTime="0"/>
+
+				<!-- Custom behavior waitTimer - 3 second delay -->
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="3000" />				
+								
+				<!-- Custom behavior - Runmacro - target Baroness Anastari -->	
+				<CustomBehavior File="RunMacro" 
+								Macro="/target Baroness Anastari" />				
+								
+				<If Condition="(Me.CurrentTarget != null) &amp;&amp; (Me.CurrentTarget.HealthPercent > 20) &amp;&amp; (Me.CurrentTarget.Entry == 10436)" >				
+								
+					<!-- Custom behavior - TargetAndMoveToMob - Baroness Anastari -->
+					<CustomBehavior File="TargetAndMoveToMob"
+									MoveWithinMaxRangeOfMob="1"
+									TargetOnlyIfHealthPercentAbove="5"
+									WaitForNpcs="False"
+									MobId="10436" >
+					</CustomBehavior>	<!-- Custom behavior - TargetAndMoveToMob -->
+			
+					<!-- Custom behavior waitTimer - 3 second delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+			
+				</If>
+				
+				<!-- Move to - Baroness Anastari  -->	
+				<MoveTo X="3855.145" Y="-3716.093" Z="148.0915" />
+				
+				<!-- Wait timer - wait 5 seconds - delay -->
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="5000" />
+					
+				<!-- Profile message - Disabling combat -->
+				<CustomBehavior File="Message" 
+									Text="Disabling combat." 
+									LogColor="Plum" />
+
+				<!-- Disable combat -->
+				<DisableBehavior Name="Combat" />	
+
+				<!-- Move to - 2nd ziggurat - kite  -->	
+				<MoveTo X="3850.447" Y="-3736.665" Z="148.0916" />
+
+				<!-- Move to - 2nd ziggurat - kite  -->	
+				<MoveTo X="3837.173" Y="-3747.164" Z="145.0919" />
+								
+				<!-- Move to - 2nd ziggurat - kite  -->	
+				<MoveTo X="3845.205" Y="-3759.438" Z="145.0919" />
+								
+				<!-- Move to - 2nd ziggurat - kite  -->	
+				<MoveTo X="3858.33" Y="-3750.337" Z="145.0919" />
+								
+				<!-- Move to - 2nd ziggurat - kite  -->	
+				<MoveTo X="3850.71" Y="-3735.741" Z="148.0918" />
+								
+				<!-- Move to - 2nd ziggurat - kite  -->	
+				<MoveTo X="3855.511" Y="-3715.12" Z="148.0918" />
+
+				<!-- Profile message - Enabling combat -->
+				<CustomBehavior File="Message" 
+									Text="Enabling combat." 
+									LogColor="Gold" />
+				
+				<!-- EnableBehavior - Combat -->	
+				<EnableBehavior Name="Combat" />
+							
+				<!-- Wait timer - wait 5 seconds - delay -->
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="5000" />
+								
+				<!-- Profile message - Disabling combat -->
+				<CustomBehavior File="Message" 
+									Text="Disabling combat." 
+									LogColor="Plum" />
+
+				<!-- Disable combat -->
+				<DisableBehavior Name="Combat" />	
+
+				<!-- Move to - 2nd ziggurat - kite  -->	
+				<MoveTo X="3850.447" Y="-3736.665" Z="148.0916" />
+
+				<!-- Move to - 2nd ziggurat - kite  -->	
+				<MoveTo X="3837.173" Y="-3747.164" Z="145.0919" />
+								
+				<!-- Move to - 2nd ziggurat - kite  -->	
+				<MoveTo X="3845.205" Y="-3759.438" Z="145.0919" />
+								
+				<!-- Move to - 2nd ziggurat - kite  -->	
+				<MoveTo X="3858.33" Y="-3750.337" Z="145.0919" />
+								
+				<!-- Move to - 2nd ziggurat - kite  -->	
+				<MoveTo X="3850.71" Y="-3735.741" Z="148.0918" />
+								
+				<!-- Move to - 2nd ziggurat - kite  -->	
+				<MoveTo X="3855.511" Y="-3715.12" Z="148.0918" />
+
+				<!-- Profile message - Enabling combat -->
+				<CustomBehavior File="Message" 
+									Text="Enabling combat." 
+									LogColor="Gold" />
+				
+				<!-- EnableBehavior - Combat -->	
+				<EnableBehavior Name="Combat" />
+							
+				<!-- Wait timer - wait 5 seconds - delay -->
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="5000" />				
+
+								
+				<!-- @@@@@@@@@@@@@@@@@@@@ 3rd pull @@@@@@@@@@@@@@@@@@@@ -->
+				
+				
+				<!-- Profile message - Moving to Maleki -->
+				<CustomBehavior File="Message" 
+								Text="Moving to Maleki." 
+								LogColor="Plum" />
+								
+				<!-- Move to - Maleki the Pallid  -->	
+				<MoveTo X="4034.621" Y="-3647.001" Z="135.6551" />
+				
+				<!-- Wait timer - wait 5 seconds - delay -->
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="5000" />
+					
+				<!-- Profile message - Disabling combat -->
+				<CustomBehavior File="Message" 
+									Text="Disabling combat." 
+									LogColor="Plum" />
+
+				<!-- Disable combat -->
+				<DisableBehavior Name="Combat" />	
+
+				<!-- Move to - 3rd ziggurat - kite  -->	
+				<MoveTo X="4048.956" Y="-3659.22" Z="135.6549" />
+
+				<!-- Move to - 3rd ziggurat - kite  -->	
+				<MoveTo X="4051.054" Y="-3675.281" Z="132.6552" />
+								
+				<!-- Move to - 3rd ziggurat - kite  -->	
+				<MoveTo X="4066.247" Y="-3674.111" Z="132.6552" />
+								
+				<!-- Move to - 3rd ziggurat - kite  -->	
+				<MoveTo X="4065.782" Y="-3659.761" Z="132.6552" />
+								
+				<!-- Move to - 3rd ziggurat - kite  -->	
+				<MoveTo X="4048.268" Y="-3658.728" Z="135.6551" />
+								
+				<!-- Move to - 3rd ziggurat - kite  -->	
+				<MoveTo X="4030.922" Y="-3643.495" Z="135.6551" />
+
+				<!-- Profile message - Enabling combat -->
+				<CustomBehavior File="Message" 
+									Text="Enabling combat." 
+									LogColor="Gold" />
+				
+				<!-- EnableBehavior - Combat -->	
+				<EnableBehavior Name="Combat" />
+							
+				<!-- Wait timer - wait 5 seconds - delay -->
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="5000" />
+								
+				<!-- Profile message - Disabling combat -->
+				<CustomBehavior File="Message" 
+									Text="Disabling combat." 
+									LogColor="Plum" />
+
+				<!-- Disable combat -->
+				<DisableBehavior Name="Combat" />	
+
+				<!-- Move to - 3rd ziggurat - kite  -->	
+				<MoveTo X="4048.956" Y="-3659.22" Z="135.6549" />
+
+				<!-- Move to - 3rd ziggurat - kite  -->	
+				<MoveTo X="4051.054" Y="-3675.281" Z="132.6552" />
+								
+				<!-- Move to - 3rd ziggurat - kite  -->	
+				<MoveTo X="4066.247" Y="-3674.111" Z="132.6552" />
+								
+				<!-- Move to - 3rd ziggurat - kite  -->	
+				<MoveTo X="4065.782" Y="-3659.761" Z="132.6552" />
+								
+				<!-- Move to - 3rd ziggurat - kite  -->	
+				<MoveTo X="4048.268" Y="-3658.728" Z="135.6551" />
+								
+				<!-- Move to - 3rd ziggurat - kite  -->	
+				<MoveTo X="4030.922" Y="-3643.495" Z="135.6551" />
+
+				<!-- Profile message - Enabling combat -->
+				<CustomBehavior File="Message" 
+									Text="Enabling combat." 
+									LogColor="Gold" />
+				
+				<!-- EnableBehavior - Combat -->	
+				<EnableBehavior Name="Combat" />
+							
+				<!-- Wait timer - wait 3 seconds - delay -->
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="3000" />				
+
+								
+				<!-- @@@@@@@@@@@@@@@@@@@@ 3rd pull @@@@@@@@@@@@@@@@@@@@ -->
+
+				
+
+				<!-- Profile message - Moving to Slaughter Square -->
+				<CustomBehavior File="Message" 
+								Text="Moving to Slaughter Square." 
+								LogColor="Plum" />
+				
+				<!-- Move to - slaughter square  -->	
+				<MoveTo X="4032.698" Y="-3402.134" Z="115.2236" />
+		
+				<!-- While Me.X &lt; 4029.67 || Me.X &gt; 4036.001 || Me.Y &lt; -3394.394 || Me.Y &gt; -3390.152 -->
+				<While Condition="Me.X &lt; 4029.67 || Me.X &gt; 4036.001 || Me.Y &lt; -3394.394 || Me.Y &gt; -3390.152" >
+					
+					<!-- Macro - Clear target -->					
+					<CustomBehavior File="RunMacro" 
+									Macro="/cleartarget" 
+									NumOfTimes="1" 
+									WaitTime="0"/>
+
+					<!-- Custom behavior waitTimer - 3 second delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />				
+									
+					<!-- Custom behavior - Runmacro - target Желчеплюй -->	
+					<CustomBehavior File="RunMacro" 
+									Macro="/target Желчеплюй" />				
+									
+					<If Condition="(Me.CurrentTarget != null) &amp;&amp; (Me.CurrentTarget.HealthPercent > 20) &amp;&amp; (Me.CurrentTarget.Entry == 10416)" >				
+									
+						<!-- Profile message - Engaging a Желчеплюй. -->
+						<CustomBehavior File="Message" 
+										Text="Engaging a Желчеплюй." 
+										LogColor="Plum" />
+								
+						<!-- Custom behavior - TargetAndMoveToMob - Желчеплюй -->
+						<CustomBehavior File="TargetAndMoveToMob"
+										MoveWithinMaxRangeOfMob="1"
+										TargetOnlyIfHealthPercentAbove="5"
+										WaitForNpcs="False"
+										MobId="10416" >
+						</CustomBehavior>	<!-- Custom behavior - TargetAndMoveToMob -->
+				
+						<!-- Custom behavior waitTimer - 3 second delay -->
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="3000" />
+				
+						<Else>
+					
+							<!-- Profile message - There are no Желчеплюй's available, moving to the door to break the while loop -->
+							<CustomBehavior File="Message" 
+											Text="There are no Желчеплюй's available, moving to the door to break the while loop." 
+											LogColor="Plum" />
+						
+							<!-- Move to - top of the stairs to break the while loop  -->	
+							<MoveTo X="4032.944" Y="-3391.041" Z="119.7397" />
+						
+							<!-- Custom behavior waitTimer - 5 second delay -->
+							<CustomBehavior File="WaitTimer" 
+											WaitTime="5000" />
+
+					
+						</Else>
+				
+					</If>
+					
+				</While>	<!-- While Me.X &lt; 4029.67 || Me.X &gt; 4036.001 || Me.Y &lt; -3394.394 || Me.Y &gt; -3390.152 -->		
+
+				<!-- Move to - bottom of the stairs to start the while loop  -->	
+				<MoveTo X="4032.698" Y="-3402.134" Z="115.2236" />
+	
+				<!-- Custom behavior waitTimer - 5 second delay -->
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="5000" />
+	
+				<!-- While Me.X &lt; 4029.67 || Me.X &gt; 4036.001 || Me.Y &lt; -3394.394 || Me.Y &gt; -3390.152 -->
+				<While Condition="Me.X &lt; 4029.67 || Me.X &gt; 4036.001 || Me.Y &lt; -3394.394 || Me.Y &gt; -3390.152" >
+				
+					<!-- Macro - Clear target -->					
+					<CustomBehavior File="RunMacro" 
+									Macro="/cleartarget" 
+									NumOfTimes="1" 
+									WaitTime="0"/>
+					
+					<!-- Custom behavior waitTimer - 3 second delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />				
+									
+					<!-- Custom behavior - Runmacro - target Изрыгатель яда -->	
+					<CustomBehavior File="RunMacro" 
+									Macro="/target Изрыгатель яда" />				
+									
+					<If Condition="(Me.CurrentTarget != null) &amp;&amp; (Me.CurrentTarget.HealthPercent > 20) &amp;&amp; (Me.CurrentTarget.Entry == 10417)" >				
+									
+						<!-- Profile message - Engaging a Изрыгатель яда -->
+						<CustomBehavior File="Message" 
+										Text="Engaging a Изрыгатель яда." 
+										LogColor="Plum" />			
+									
+						<!-- Custom behavior - TargetAndMoveToMob - Изрыгатель яда -->
+						<CustomBehavior File="TargetAndMoveToMob"
+										MoveWithinMaxRangeOfMob="1"
+										TargetOnlyIfHealthPercentAbove="5"
+										WaitForNpcs="False"
+										MobId="10417" >
+						</CustomBehavior>	<!-- Custom behavior - TargetAndMoveToMob -->
+				
+						<!-- Custom behavior waitTimer - 3 second delay -->
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="3000" />
+				
+						<Else>
+					
+							<!-- Profile message - There are no Изрыгатель ядаr's available, moving to the door to break the while loop -->
+							<CustomBehavior File="Message" 
+											Text="There are no Изрыгатель яда's available, moving to the door to break the while loop." 
+											LogColor="Plum" />
+						
+							<!-- Move to - top of the stairs to break the while loop  -->	
+							<MoveTo X="4032.944" Y="-3391.041" Z="119.7397" />
+						
+							<!-- Custom behavior waitTimer - 5 second delay -->
+							<CustomBehavior File="WaitTimer" 
+											WaitTime="5000" />
+
+					
+						</Else>
+				
+					</If>
+					
+				</While>	<!-- While Me.X &lt; 4029.67 || Me.X &gt; 4036.001 || Me.Y &lt; -3394.394 || Me.Y &gt; -3390.152 -->
+
+				<!-- Wait timer - wait 2 seconds - delay -->
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="2000" />	
+
+				<!-- Forces kill of Black Guard Sentry -->
+				<CustomBehavior File="GetOutOfGroundEffectAndAuras" 
+								EventCompleteWhen="SpecificMobsDead" EventCompleteDeadMobId="10394"
+								EventX="4032.094" EventY="-3433.813" EventZ="118.5511"
+								MoveOutOfGroundEffectAuraId1="111111"
+								MoveAwayFromMobCastingSpellId1="111111"
+								MoveAwayFromMobWithAuraId1="111111">
+					<Safespots>
+						<Hotspot X="4032.094" Y="-3433.813" Z="118.5511" />
+					</Safespots>
+				</CustomBehavior>	
+
+				<!-- Wait timer - wait 3 seconds - delay -->
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="3000" />
+				
+				<!-- Move to - door entering the Slaughter House  -->	
+				<MoveTo X="4032.902" Y="-3371.6" Z="115.0624" />
+				
+				<!-- Usersettings -->
+				<CustomBehavior File="UserSettings" 
+								LootMobs="True" />
+				
+				<!-- Move to - Lord Aurius Rivendare  -->	
+				<MoveTo X="4035.828" Y="-3336.308" Z="115.06" /> 
+				
+				<!-- Wait timer - wait 3 seconds - delay -->
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="3000" />
+
+				<!-- Move to - door exiting the Slaughter House  -->	
+				<MoveTo X="4032.902" Y="-3371.6" Z="115.0624" />
+
+				<!-- If we looted Deathcharger's Reins -->
+				<If Condition="HasItem(13335)" >
+				
+					<!-- Profile message - We looted Deathcharger's Reins -->
+					<CustomBehavior File="Message" 
+									Text="We looted Deathcharger's Reins." 
+									LogColor="Chartreuse" />
+					
+					<!-- Wait timer - wait 1 second - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="1000" />
+					
+					<!-- Profile message - Equipping Deathcharger's Reins -->
+					<CustomBehavior File="Message" 
+									Text="Equipping Deathcharger's Reins." 
+									LogColor="Chartreuse" />
+					
+					<!-- Custom behavior - RunLua - Equip Deathcharger's -->
+					<CustomBehavior File="Misc\RunLua" 
+									Lua="UseItemByName(6948)" 
+									WaitTime="1000" />
+					
+					<!-- Profile message - Congrats on your mount -->
+					<CustomBehavior File="Message" 
+									Text="Congrats on your mount." 
+									LogColor="Chartreuse" />
+					
+					<!-- Wait timer - wait 3 second - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					<!-- Profile message - Stopping the bot -->
+					<CustomBehavior File="Message" 
+									Text="Stopping the bot." 
+									LogColor="Chartreuse" />
+					
+					<!-- Custom behavior - UserSettings - StopBot -->
+					<CustomBehavior File="UserSettings" 
+									StopBot="true" />
+					
+					<!-- Else Deathcharger's Reins didn't drop -->
+					<Else>
+					
+						<!-- Profile message - Deathcharger's Reins didn't drop -->
+						<CustomBehavior File="Message" Text="Deathcharger's Reins didn't drop." LogColor="Chartreuse" />
+				
+						<!-- Wait timer - wait 1 second - delay -->
+						<CustomBehavior File="WaitTimer" WaitTime="1000" />
+						
+						<!-- Profile message - Checking our gears durability -->
+						<CustomBehavior File="Message" Text="Checking our gears durability." LogColor="Chartreuse" />
+						
+						<!-- If our bags have less than 20 empty slots or our durability < 30 % -->
+						<If Condition="(Me.FreeBagSlots &lt; 10) || (Me.LowestDurabilityPercent &lt; 0.3)" >
+					
+							<!-- Wait timer - wait 1 second - delay -->
+							<CustomBehavior File="WaitTimer" WaitTime="1000" />
+							
+							<!-- Profile message - I have detected that our gear is about to break. I'm going to hearth, and repair -->
+							<CustomBehavior File="Message" Text="I have detected that our gear is about to break. I'm going to hearth, and repair." LogColor="Chartreuse" />
+							
+							<!-- Have hearthstone -->
+							<If Condition="HasItem(6948)">
+								<CustomBehavior File="Message" 
+												Text="Using our Hearthstone." 
+												LogColor="Orange" />
+												
+								<CustomBehavior File="Misc\RunLua" 
+												Lua="UseItemByName(6948)" 
+												WaitTime="1000" />
+												
+								<CustomBehavior File="WaitTimer" 
+												WaitTime="15000" />
+							</If> <!-- Have hearthstone -->
+						
+							<!-- Have Innkeeper's Daughter -->
+							<If Condition="HasItem(64488)">
+								<CustomBehavior File="Message" 
+												Text="Using our Innkeeper's Daughter." 
+												LogColor="Orange" />
+													
+								<CustomBehavior File="Misc\RunLua" 
+												Lua="UseItemByName(64488)" 
+												WaitTime="1000" />
+									
+								<CustomBehavior File="WaitTimer" 
+												WaitTime="15000" />
+							</If> <!-- Have Innkeeper's Daughter -->
+							
+							<!-- If we aren't in Stratholme -->
+							<If Condition="Me.MapId != 329">
+							
+								<!-- Profile message - We successfully hearthed, moving to the repair vendor -->
+								<CustomBehavior File="Message" Text="We successfully hearthed, moving to the repair vendor." LogColor="Chartreuse" />		
+								
+								<SetVendor>
+									<Vendors>
+										<Vendor Name="Vincent Randolph" 
+												Entry="47286" 
+												Type="Repair" 
+												X="2257.292" Y="-5293.229" Z="82.14259" />
+									</Vendors>
+								</SetVendor>	
+								
+								<SetMailbox>
+									<Mailboxes>
+										<Mailbox X="2290.367" Y="-5320.899" Z="90.15194" />
+									</Mailboxes>
+								</SetMailbox>
+								
+								<!-- Vendor settings -->
+								<CustomBehavior File="ForceSetVendor" 
+												DoMail="True" 
+												DoRepair="True" 
+												DoSell="True" 
+												DoTrain="False" />
+							
+							</If>
+							
+							<!-- If we are in Stratholme -->
+							<If Condition="Me.MapId == 329">
+								
+								<!-- Profile message -Our Hearthstone didn't work. Exiting the instance -->
+								<CustomBehavior File="Message" Text="Our Hearthstone didn't work. Exiting the instance." LogColor="Chartreuse" />
+								
+								<!-- Move to - 1st gate -->
+								<MoveTo X="3627.206" Y="-3640.699" Z="138.4589" />
+									
+								<!-- Custom behavior - InteractWith - open the gate -->	
+								<CustomBehavior File="WaitTimer" 
+												WaitTime="1000" />
+								
+								<!-- Profile message - Opening the gate -->
+								<CustomBehavior File="Message" 
+												Text="Opening the gate." 
+												LogColor="Chartreuse" />
+								
+								<!-- Custom behavior - InteractWith - open the gate -->	
+								<CustomBehavior File="InteractWith" 
+												MobId="175368" 
+												ObjectType="Gameobject" 
+												Range="4.75" 
+												NumOfTimes="1"  
+												WaitTime="1" 
+												X="3624.90845" Y="-3642.1626" Z="138.445114" />
+								
+								<!-- Move to - right-hand turn  -->
+								<MoveTo X="3597.31" Y="-3654.986" Z="138.511" />
+								
+								<!-- Move to - zone in location -->
+								<MoveTo X="3590.87" Y="-3643.22" Z="138.4909" />
+								
+								<!-- Move to - attempt to enter the instance -->
+								<CustomBehavior File="Misc\InInstance" 
+												X="3588.449" Y="-3639.78" Z="138.4822" />
+								
+								<!-- Wait timer - wait 15 seconds - delay -->
+								<CustomBehavior File="WaitTimer" 
+												WaitTime="15000" />
+								
+								<!-- Profile message - I have exited the dungeon -->
+								<CustomBehavior File="Message" 
+												Text="I have exited the dungeon." 
+												LogColor="Chartreuse" />
+												
+								<!-- Move to - East Gate Service Entrance gate -->
+								<MoveTo X="3189.636" Y="-4039.492" Z="107.9911" />
+									
+								<!-- Custom behavior- InteractWith - East Gate Service Entrance gate -->	
+								<CustomBehavior File="InteractWith" 
+												MobId="175369" 
+												ObjectType="Gameobject" 
+												Range="4.75" 
+												NumOfTimes="1"  
+												WaitTime="1" 
+												X="3185.4812" Y="-4039.09937" Z="107.791389" />
+								
+								<!-- Move to - outside the East Gate Service Entrance -->
+								<MoveTo X="3174.903" Y="-4040.003" Z="105.5004" />
+
+								<!-- Fly to - Light's Hope Chapel -->
+								<CustomBehavior File="FlyTo" 
+												X="2280.737" Y="-5319.798" Z="88.75224" />
+							
+								<!-- Custom behavior - ForcedDismount -->
+								<CustomBehavior File="ForcedDismount" />
+								
+								<!-- Usersettings -->
+								<CustomBehavior File="UserSettings" 
+												UseMount="False" />
+
+								<SetVendor>
+									<Vendors>
+										<Vendor Name="Vincent Randolph" 
+												Entry="47286" 
+												Type="Repair" 
+												X="2257.292" Y="-5293.229" Z="82.14259" />
+									</Vendors>
+								</SetVendor>						
+								<SetMailbox>
+									<Mailboxes>
+										<Mailbox X="2290.367" Y="-5320.899" Z="90.15194" />
+									</Mailboxes>
+								</SetMailbox>	
+								
+								<!-- Vendor settings -->
+								<CustomBehavior File="ForceSetVendor" 
+												DoMail="True" 
+												DoRepair="True" 
+												DoSell="True" 
+												DoTrain="False" />
+												
+								<!-- Usersettings -->
+								<CustomBehavior File="UserSettings" 
+												UseMount="True" />
+												
+								<!-- CustomBehavior - Misc\InstanceTimer -->
+								<CustomBehavior File="Misc\InstanceTimer" 
+												Timer="Check" 
+												WaitTime="5000" />				
+							
+							</If>
+
+							<!-- If our bags have more than 20 empty slots and our durability > 30 % -->
+							<Else>
+								
+								<!-- Profile message - I have detected that our gear is above 30 percent durability -->
+								<CustomBehavior File="Message" 
+												Text="I have detected that our gear is above 30 percent durability." 
+												LogColor="Chartreuse" />
+				
+								<!-- Wait timer - wait 1 second - delay -->
+								<CustomBehavior File="WaitTimer" 
+												WaitTime="1000" />
+								
+								<!-- Profile message - Exiting the dungeon -->
+								<CustomBehavior File="Message" 
+												Text="Exiting the dungeon." 
+												LogColor="Chartreuse" />
+							
+								<!-- Move to - Slaughter Square  -->	
+								<CustomBehavior File="NoCombatMoveTo" 
+												X="4037.272" Y="-3469.75" Z="121.7361" />
+								
+								<!-- Move to - the narrow tunnel  -->	
+								<CustomBehavior File="NoCombatMoveTo" 
+												X="3927.902" Y="-3659.664" Z="139.3729" />
+
+								<!-- Move to - 2nd gate  -->	
+								<CustomBehavior File="NoCombatMoveTo" 
+												X="3777.657" Y="-3579.614" Z="142.3524" />
+
+								<!-- Move to - the church  -->	
+								<CustomBehavior File="NoCombatMoveTo" 
+												X="3661.993" Y="-3606.111" Z="137.0387" />
+							
+								<!-- Move to - the 1st gate  -->	
+								<CustomBehavior File="NoCombatMoveTo" 
+												X="3627.281" Y="-3639.765" Z="138.5332" />
+
+								<!-- Profile message - Opening the gate -->
+								<CustomBehavior File="Message" 
+												Text="Opening the gate." 
+												LogColor="Chartreuse" />
+				
+								<!-- Custom behavior - InteractWith - open the gate -->
+								<CustomBehavior File="InteractWith" 
+												MobId="175368" 
+												ObjectType="Gameobject" 
+												Range="4.75" 
+												NumOfTimes="1"  
+												WaitTime="1" 
+												X="3624.90845" Y="-3642.1626" Z="138.445114" />
+								
+								<!-- Move to - right-hand turn  -->
+								<MoveTo X="3597.31" Y="-3654.986" Z="138.511" />
+								
+								<!-- Move to - zone in location -->
+								<MoveTo X="3590.87" Y="-3643.22" Z="138.4909" />
+								
+								<!-- CustomBehavior - Misc\InstanceTimer -->
+								<CustomBehavior File="Misc\InstanceTimer" 
+												Timer="Check" 
+												WaitTime="5000" />
+								
+								<!-- Move to - attempt to exit the instance -->
+								<CustomBehavior File="Misc\InInstance" 
+												X="3588.449" Y="-3639.78" Z="138.4822" />
+
+								<!-- Wait timer - wait 15 seconds - delay -->
+								<CustomBehavior File="WaitTimer" 
+												WaitTime="15000" />
+
+								<!-- Custom behavior - DeleteItems -->				
+								<CustomBehavior File="DeleteItems"
+												Ids="3927,1645,3928,6149,7972,10285" />
+
+							</Else>		<!-- If our bags have more than 20 empty slots and our durability > 30 % -->
+							
+						</If>	<!-- If our bags have less than 20 empty slots or our durability < 30 % -->
+				
+					</Else>	<!-- Else Deathcharger's Reins didn't drop -->
+					
+				</If>	<!-- If we looted Deathcharger's Reins -->
+
+			</If>	<!-- If we are in Stratholme -->	
+	
+		</While>
+	
+	</QuestOrder>
+
+</HBProfile>

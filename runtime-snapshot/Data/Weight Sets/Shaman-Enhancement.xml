@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WeightSet Class="Shaman" Specialization="2" Name="Shaman-Enhancement">
+  <MetaSocket>15.5</MetaSocket>
+  <RedSocket>8.25</RedSocket>
+  <YellowSocket>7.12</YellowSocket>
+  <BlueSocket>5.79</BlueSocket>
+  <CriticalStrikeRatingMelee>1</CriticalStrikeRatingMelee>
+  <CriticalStrikeRating>1</CriticalStrikeRating>
+  <Agility>0.88</Agility>
+  <HitRatingMelee>0.7</HitRatingMelee>
+  <HitRating>0.7</HitRating>
+  <MeleeAttackPower>0.62</MeleeAttackPower>
+  <Strength>0.6</Strength>
+  <Stamina>0.42</Stamina>
+  <Armor>0.1</Armor>
+  <Mana>0.1</Mana>
+  <Health>0.1</Health>
+  <Intellect>0.1</Intellect>
+  <BonusDamage>0.1</BonusDamage>
+  <ManaRegeneration>0.1</ManaRegeneration>
+  <ArmorPenetrationRating>0.1</ArmorPenetrationRating>
+</WeightSet>

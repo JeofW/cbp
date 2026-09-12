@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WeightSet Class="Paladin" Specialization="2" Name="Paladin-Protection">
+  <!-- Normalized from the bundled Pawn/Wowhead WotLK Protection scale. -->
+  <DPS>1</DPS>
+  <MinDamage>0</MinDamage>
+  <MaxDamage>0</MaxDamage>
+  <MetaSocket>36</MetaSocket>
+  <RedSocket>12</RedSocket>
+  <YellowSocket>12</YellowSocket>
+  <BlueSocket>20</BlueSocket>
+  <Stamina>1</Stamina>
+  <Agility>0.6</Agility>
+  <ExpertiseRating>0.59</ExpertiseRating>
+  <DodgeRating>0.55</DodgeRating>
+  <DefenseRating>0.45</DefenseRating>
+  <ParryRating>0.3</ParryRating>
+  <Strength>0.16</Strength>
+  <Armor>0.08</Armor>
+  <BlockRating>0.07</BlockRating>
+  <BlockValue>0.06</BlockValue>
+</WeightSet>

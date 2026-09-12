@@ -1,0 +1,295 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+<Name>[Botanist][Tinker][auto-loader]</Name>
+
+<MinLevel>1</MinLevel>
+<MaxLevel>151</MaxLevel>
+
+<MinDurability>-1</MinDurability>
+<MinFreeBagSlots>-1</MinFreeBagSlots>
+
+<MailGrey>False</MailGrey>
+<MailWhite>False</MailWhite>
+<MailGreen>False</MailGreen>
+<MailBlue>False</MailBlue>
+<MailPurple>False</MailPurple>
+
+<SellGrey>False</SellGrey>
+<SellWhite>False</SellWhite>
+<SellGreen>False</SellGreen>
+<SellBlue>False</SellBlue>
+<SellPurple>False</SellPurple>
+
+<AvoidMobs>		 
+</AvoidMobs>
+
+<Blackspots>
+</Blackspots>
+
+<Mailboxes>
+</Mailboxes>
+
+<Vendors>
+</Vendors>
+
+<ProtectedItems>	
+</ProtectedItems>
+
+	<QuestOrder>
+	
+		<!-- CustomBehavior - Message - Initializing the profile -->
+		<CustomBehavior File="Message" 
+						Text="Initializing the profile." 
+						LogColor="Plum" />
+						
+		<!-- CustomBehavior - Wait timer - wait 1 seconds - delay -->
+		<CustomBehavior File="WaitTimer" 
+						WaitTime="3000" />
+	
+		<!-- UserSettings -->
+		<CustomBehavior File="UserSettings"
+						FindMountAutomatically="True"
+						GroundMountFarmingMode="False"
+						HarvestHerbs="False"
+						HarvestMinerals="False"
+						KillBetweenHotspots="False"
+						LogoutForInactivity="True"
+						LogoutInactivityUseForceQuit="True"
+						LootMobs="False"
+						LootRadius="1"
+						MountName=""
+						NinjaSkin="False"
+						RessAtSpiritHealers="False"
+						SkinMobs="False"
+						UseMount="True" 
+						UseRandomMount="False" />				
+						
+		<!-- CustomBehavior - Message - Enabling Autoloot -->
+		<CustomBehavior File="Message" 
+						Text="Enabling Autoloot." 
+						LogColor="Plum" />				
+						
+		<!-- CustomBehavior - Wait timer - wait 3 seconds - delay -->
+		<CustomBehavior File="WaitTimer" 
+						WaitTime="3000" />				
+						
+		<!-- Turn auto-loot on-->
+        <CustomBehavior File="RunMacro" 
+						Macro="/script SetCVar('AutoLootDefault', 1)" 
+						NumOfTimes="1" WaitTime="1000" />				
+	
+		<!-- CustomBehavior - Message - Enabling the Refreshment Detectionplugin -->
+		<CustomBehavior File="Message" 
+						Text="Enabling the Refreshment Detection plugin." 
+						LogColor="Plum" />				
+						
+		<!-- CustomBehavior - EnablePlugin - Refreshment Detection -->				
+		<CustomBehavior File="EnablePlugin" 
+						Names="Refreshment Detection" />				
+						
+		<!-- CustomBehavior - Wait timer - wait 3 seconds - delay -->
+		<CustomBehavior File="WaitTimer" 
+						WaitTime="3000" />				
+						
+		<!-- CustomBehavior - Message - Misc\ProfileCompatibilityInfo -->				
+		<CustomBehavior File="Misc\ProfileCompatibilityInfo"
+						AllowBrokenAddOns="true" 
+						AllowBrokenPlugIns="true" />				
+						
+		<!-- CustomBehavior - Message - Enabling the Anti Drown plugin -->
+		<CustomBehavior File="Message" 
+						Text="Enabling the Anti Drown plugin." 
+						LogColor="Plum" />
+							
+		<!-- CustomBehavior - EnablePlugin - Anti Drown -->					
+		<CustomBehavior File="EnablePlugin" 
+						Names="Anti Drown" />
+	
+		<!-- CustomBehavior - Wait timer - wait 3 seconds - delay -->
+		<CustomBehavior File="WaitTimer" 
+						WaitTime="3000" />
+
+		<!-- CustomBehavior - Message - Enabling the Talented2 plugin -->
+		<CustomBehavior File="Message" 
+						Text="Enabling the Talented2 plugin." 
+						LogColor="Plum" />
+		
+		<!-- CustomBehavior - EnablePlugin - Talented2 -->
+		<CustomBehavior File="EnablePlugin" 
+						Names="Talented2" />
+						
+		<!-- CustomBehavior - Wait timer - wait 3 seconds - delay -->
+		<CustomBehavior File="WaitTimer" 
+						WaitTime="3000" />				
+						
+		<!-- Profile message - Be sure to select a talent build for this character -->
+		<CustomBehavior File="Message" 
+						Text="Be sure to select a talent build for this character." 
+						LogColor="Orange" />				
+	
+		<!-- CustomBehavior - Wait timer - wait 5 seconds - delay -->
+		<CustomBehavior File="WaitTimer" 
+						WaitTime="5000" />
+
+		<!-- CustomBehavior - Message - Enabling the AutoEquip2 plugin -->
+		<CustomBehavior File="Message" 
+						Text="Enabling the AutoEquip2 plugin." 
+						LogColor="Plum" />
+		
+		<!-- CustomBehavior - EnablePlugin - AutoEquip2 -->		
+		<CustomBehavior File="EnablePlugin" 
+						Names="AutoEquip2" />
+	
+		<!-- CustomBehavior - Wait timer - wait 3 seconds - delay -->
+		<CustomBehavior File="WaitTimer" 
+						WaitTime="3000" />
+	
+		<!-- Profile message - Be sure to configure AutoEquip for this character -->
+		<CustomBehavior File="Message" 
+						Text="Be sure to configure AutoEquip for this character." 
+						LogColor="Orange" />				
+	
+		<!-- CustomBehavior - Wait timer - wait 5 seconds - delay -->
+		<CustomBehavior File="WaitTimer" 
+						WaitTime="5000" />				
+						
+		<!-- Profile message - Checking our current characters faction -->
+		<CustomBehavior File="Message" 
+						Text="Checking our current characters faction." 
+						LogColor="Gold" />
+		
+		<!-- CustomBehavior - Wait timer - wait 1 seconds - delay -->
+		<CustomBehavior File="WaitTimer" 
+						WaitTime="1000" />
+	
+		<!-- If our level >= 1 and <= 101 -->
+		<If Condition="Me.Level &gt;= 1 &amp;&amp; Me.Level &lt;= 101" >
+		
+			<!-- If we are a Worgen -->
+			<If Condition="(Me.Race == WoWRace.Worgen)">
+			
+				<!-- If we are in Gilneas or Gilneas City -->
+				<If Condition="(Me.ZoneId == 4714) || (Me.ZoneId == 4755)">
+				
+					<!-- Profile message - Your character must exit the starting zone. Then restart the profile in Stormwind -->
+					<CustomBehavior File="Message" 
+									Text="Your character must exit the starting zone. Then restart the profile in Stormwind." 
+									LogColor="Orange" />
+									
+					<!-- CustomBehavior - Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />				
+									
+					<!-- CustomBehavior - UserSettings - StopBot -->				
+					<CustomBehavior File="UserSettings" 
+									StopBot="true" />				
+				
+				</If>	<!-- If we are in Gilneas -->
+				
+				<!-- If we are in Plaguelands: The Scarlet Enclave -->
+				<If Condition="(Me.ZoneId == 4298)  || (Me.ZoneId == 4755)">
+				
+					<!-- Profile message - Your character must exit the starting zone. Then restart the profile in Stormwind -->
+					<CustomBehavior File="Message" 
+									Text="Your character must exit the starting zone. Then restart the profile in Stormwind." 
+									LogColor="Orange" />
+									
+					<!-- CustomBehavior - Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />				
+									
+					<!-- CustomBehavior - UserSettings - StopBot -->				
+					<CustomBehavior File="UserSettings" 
+									StopBot="true" />				
+									
+				</If>	<!-- If we are in Plaguelands: The Scarlet Enclave -->
+				
+			</If>	<!-- If we are a Worgen -->
+		
+			<!-- If we are a Pandaren -->
+			<If Condition="(Me.Race == WoWRace.Pandaren)">
+			
+				<!-- If we are in The Wandering Isle -->
+				<If Condition="Me.ZoneId == 5736">
+					
+					<!-- Profile message - Your character must exit the starting zone. Then restart the profile in Stormwind -->
+					<CustomBehavior File="Message" 
+									Text="Your character must exit the starting zone. Then restart the profile in Stormwind." 
+									LogColor="Orange" />
+									
+					<!-- CustomBehavior - Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />				
+									
+					<!-- CustomBehavior - UserSettings - StopBot -->				
+					<CustomBehavior File="UserSettings" 
+									StopBot="true" />
+									
+				</If>	<!-- If we are in The Wandering Isle -->
+				 
+			</If>	<!-- If we are a Pandaren -->
+
+			<!-- If we are a Goblin -->
+			<If Condition="(Me.Race == WoWRace.Goblin)">
+			
+				<!-- If we are in Kezan or The Lost Isles -->
+				<If Condition="(Me.ZoneId == 4737) || (Me.ZoneId == 4720)">
+				
+					<!-- Profile message - Your character must exit the starting zone. Then restart the profile in Stormwind -->
+					<CustomBehavior File="Message" 
+									Text="Your character must exit the starting zone. Then restart the profile in Stormwind." 
+									LogColor="Orange" />
+									
+					<!-- CustomBehavior - Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />				
+									
+					<!-- CustomBehavior - UserSettings - StopBot -->				
+					<CustomBehavior File="UserSettings" 
+									StopBot="true" />				
+				
+				</If>	<!-- If we are in Kezan or The Lost Isles -->
+				
+			</If>	<!-- If we are a Goblin -->	
+				
+		</If>	<!-- If our level >= 1 and <= 101 -->
+
+		<!-- Faction check - Alliance -->
+		<If Condition="Me.IsAlliance" >		
+
+			<!-- Profile message - We are currently leveling a Alliance character -->
+			<CustomBehavior File="Message" 
+							Text="We are currently leveling a Alliance character." 
+							LogColor="Plum" />
+		
+			<!-- CustomBehavior - Wait timer - wait 1 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="1000" />
+		
+			<!--  CustomBehavior - LoadProfile - [Botanist][Tinker][A-1]race-check] -->
+			<CustomBehavior File="LoadProfile" 
+							ProfileName="Components\Alliance\[Botanist][Tinker][A-1]race-check]" />
+			
+			<!-- Else we are Horde -->
+			<Else>
+			
+				<!-- Profile message - We are currently leveling a Horde character -->
+				<CustomBehavior File="Message" 
+								Text="We are currently leveling a Horde character." 
+								LogColor="Plum" />
+								
+				<!-- CustomBehavior - Wait timer - wait 1 seconds - delay -->
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="1000" />		
+								
+				<!--  CustomBehavior - LoadProfile -->
+				<CustomBehavior File="LoadProfile" 
+								ProfileName="Components\Horde\[Botanist][Tinker][H-1]race-check]" />
+
+			</Else>		<!-- Else we are Horde -->
+			
+		</If>	<!-- Faction check - Alliance -->
+				
+	</QuestOrder>
+
+</HBProfile>
+

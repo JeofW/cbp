@@ -1,0 +1,226 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+	<Name>[[QO-N][90-Flying]_botanist_black_temple_[repair-mail]</Name>
+   
+	<MinLevel>1</MinLevel>
+	<MaxLevel>101</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	
+	<MailGrey>False</MailGrey>
+	<MailWhite>True</MailWhite>
+	<MailGreen>False</MailGreen>
+	<MailBlue>False</MailBlue>
+	<MailPurple>True</MailPurple>
+   
+	<SellGrey>True</SellGrey>
+	<SellWhite>False</SellWhite>
+	<SellGreen>True</SellGreen>
+	<SellBlue>True</SellBlue>
+	<SellPurple>False</SellPurple>
+   
+	<TargetElites>True</TargetElites>
+	
+	<AvoidMobs>
+	</AvoidMobs>
+	
+	<Blackspots>
+		<Blackspot X="-7118.695" Y="-1225.898" Z="290.2605" Radius="1" />
+		<Blackspot X="1091.256" Y="-166.446" Z="-65.30894" Radius="1" />
+	</Blackspots>
+
+	<Mailboxes>
+	</Mailboxes>
+ 
+	<Vendors>
+	</Vendors>
+	
+	<ProtectedItems>	
+	</ProtectedItems>
+
+	<Factions></Factions>
+	
+	<QuestOrder>
+
+		 	<!-- UserSettings -->
+			<CustomBehavior File="UserSettings"
+							FindMountAutomatically="True"
+							GroundMountFarmingMode="False"
+							HarvestHerbs="False"
+							HarvestMinerals="False"
+							KillBetweenHotspots="True"
+							LogoutForInactivity="False"
+							LogoutInactivityUseForceQuit="False"
+							LootMobs="True"
+							LootRadius="25"
+							MountName=""
+							NinjaSkin="False"
+							RessAtSpiritHealers="False"
+							SkinMobs="False"
+							UseMount="True" 
+							UseRandomMount="False" />
+
+		<!-- If our level is => 90 -->
+		<If Condition="Me.Level &gt;= 90">
+			
+			<!-- If we have less then 35 empty bag slots or our durability is less than 30% -->
+			<If Condition="(Me.FreeBagSlots &lt;= 35) || (Me.LowestDurabilityPercent &lt;= 0.3)" >
+
+				<!-- Profile message - Our durability is less than 30% or we have less than 35 empty bag slots remaining -->
+				<CustomBehavior File="Message" 
+								Text="Our durability is less than 30% or we have less than 35 empty bag slots remaining." 
+								LogColor="Chartreuse" />
+			
+				<!-- If we are inside Black Temple -->
+				<If Condition="Me.MapId == 564">
+				
+					<!-- The Black Temple detected. Running out -->
+					<CustomBehavior File="Message" 
+									Text="The Black Temple detected. Running out."
+									LogColor="Plum" />
+						
+					<!-- Move to - zone in location -->
+					<MoveTo X="97.7989" Y="1001.99" Z="-86.7756" />
+					
+					<!-- Custom behavior - Misc/InInstance - exit the instance-->
+					<CustomBehavior File="Misc\InInstance" 
+									X="80.51482" Y="1001.702" Z="-88.89784" />
+					
+					<!-- Wait timer - wait 15 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="15000" />
+					
+					<!-- Move to - zone out location -->
+					<MoveTo X="-3650.9" Y="316.897" Z="35.85276" />
+					
+				</If>	<!-- If we are inside Black Temple -->
+
+				<!-- If we are Alliance -->					
+				<If Condition="Me.IsAlliance">					
+							
+					<!-- Profile message - Flying to WildHammer -->
+					<CustomBehavior File="Message" 
+										Text="Flying to WildHammer." 
+										LogColor="Chartreuse" />
+							
+					<!-- Fly to the WildHammer hover point -->
+					<CustomBehavior File="FlyTo" 
+									X="-4021.56" Y="2183.144" Z="173.1463" />
+
+					<!-- CTM to - Mari Stonehand - WildHammer repair vendor -->
+					<CustomBehavior File="MyCTM" 
+									X="-3967.705" Y="2205.684" Z="101.743" />
+					
+					<!-- Custom behavior - ForcedDismount -->
+					<CustomBehavior File="ForcedDismount" />
+					
+					<!-- UserSettings - usemount - false -->
+					<CustomBehavior File="UserSettings"
+									UseMount="False" />
+					
+					<!-- Move to - Mari Stonehand - WildHammer repair vendor -->
+					<MoveTo X="-3967.705" Y="2205.684" Z="101.743" />
+					
+					<!-- Vendor conditions -->
+					<CustomBehavior File="ForceSetVendor" 
+									DoMail="True" 
+									DoRepair="True" 
+									DoSell="True" 
+									DoTrain="False" />
+										
+					<!-- Repair vendor - WildHammer -->
+					<SetVendor>
+						<Vendors>
+							<Vendor Name="Mari Stonehand" 
+									Entry="19373" 
+									Type="Repair" 
+									X="-3966.329" Y="2201.351" Z="101.8702" />
+						</Vendors>
+					</SetVendor>
+					
+					<SetMailbox>
+						<Mailboxes>
+							<Mailbox X="-4055.699" Y="2182.407" Z="110.0367" />
+						</Mailboxes>
+					</SetMailbox>
+					
+					<!-- Move to - mount location -->
+					<MoveTo X="-3998.733" Y="2173.973" Z="104.1934" />
+					
+					<!-- UserSettings - usemount - true -->
+					<CustomBehavior File="UserSettings"
+									UseMount="True" />
+					
+					<!-- Fly to the WildHammer hover point -->
+					<CustomBehavior File="FlyTo" 
+									X="-4021.56" Y="2183.144" Z="173.1463" />
+
+				</If>	<!-- If we are Alliance -->					
+		
+				<!-- If we are Horde -->						
+				<If Condition="Me.IsHorde">					
+		
+					<!-- Profile message - Flying to Bloodgulch -->
+					<CustomBehavior File="Message" 
+										Text="Flying to Bloodgulch." 
+										LogColor="Chartreuse" />
+							
+					<!-- Fly to the Bloodgulch hover point -->
+					<CustomBehavior File="FlyTo" 
+									X="-3672.317" Y="-5320.684" Z="76.85636" />
+
+					<!-- Fly to - Naka Scaleblade - Bloodgulch repair vendor -->
+					<CustomBehavior File="FlyTo" 
+									X="-3677.07" Y="-5376.532" Z="35.76823" />
+					
+					<!-- Custom behavior - ForcedDismount -->
+					<CustomBehavior File="ForcedDismount" />
+					
+					<!-- Move to - Naka Scaleblade - Bloodgulch repair vendor -->
+					<MoveTo X="-3677.07" Y="-5376.532" Z="35.76823" />
+					
+					<!-- Vendor conditions -->
+					<CustomBehavior File="ForceSetVendor" 
+									DoMail="True" 
+									DoRepair="True" 
+									DoSell="True" 
+									DoTrain="False" />
+										
+					<!-- Repair vendor - Bloodgulch -->
+					<SetVendor>
+						<Vendors>
+							<Vendor Name="Naka Scaleblade" 
+									Entry="49768" 
+									Type="Repair" 
+									X="-3675.151" Y="-5381.104" Z="35.76828" />
+						</Vendors>
+					</SetVendor>
+					
+					<SetMailbox>
+						<Mailboxes>
+							<Mailbox X="-3671.405" Y="-5280.594" Z="41.5924" />
+						</Mailboxes>
+					</SetMailbox>
+					
+					<!-- Fly to the Bloodgulch hover point -->
+					<CustomBehavior File="FlyTo" 
+									X="-3672.317" Y="-5320.684" Z="76.85636" />
+		
+				</If>	<!-- If we are Horde -->
+		
+			</If>	<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+				
+			<!-- If we have more than 25 empty bag slots and our durability is greater than 30% -->
+			<If Condition="(Me.FreeBagSlots &gt; 25) &amp;&amp; (Me.LowestDurabilityPercent &gt;= 0.3)" >
+			
+				<!-- Load profile - [QO-N][90-Flying]_botanist_black_temple -->
+				<CustomBehavior File="LoadProfile" 
+										ProfileName="..\..\[QO-N][90-Flying]_botanist_black_temple" />
+										
+			</If>	
+			
+		</If>
+		
+	</QuestOrder>
+	
+</HBProfile>

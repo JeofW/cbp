@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WeightSet Class="Warlock" Specialization="3" Name="Warlock-Destruction">
+  <MetaSocket>15.5</MetaSocket>
+  <RedSocket>8.25</RedSocket>
+  <YellowSocket>7.12</YellowSocket>
+  <BlueSocket>5.79</BlueSocket>
+  <HitRating>0.85</HitRating>
+  <Stamina>0.7</Stamina>
+  <SpellPower>0.6</SpellPower>
+  <Spirit>0.5</Spirit>
+  <CriticalStrikeRating>0.5</CriticalStrikeRating>
+  <HasteRatingSpell>0.42</HasteRatingSpell>
+  <HasteRating>0.42</HasteRating>
+  <Intellect>0.4</Intellect>
+  <Armor>0.01</Armor>
+</WeightSet>

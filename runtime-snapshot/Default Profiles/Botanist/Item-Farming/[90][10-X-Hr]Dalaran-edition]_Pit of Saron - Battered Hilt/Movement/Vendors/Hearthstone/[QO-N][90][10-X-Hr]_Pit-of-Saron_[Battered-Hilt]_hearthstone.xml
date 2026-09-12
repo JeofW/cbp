@@ -1,0 +1,185 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+<Name>[QO-N][90][10-X-Hr]_Pit-of-Saron_[Battered-Hilt]_hearthstone</Name>
+
+<MinLevel>1</MinLevel>
+<MaxLevel>151</MaxLevel>
+
+<MinDurability>-1</MinDurability>
+<MinFreeBagSlots>-1</MinFreeBagSlots>
+<TargetingDistance>45</TargetingDistance>
+<TargetElites>False</TargetElites>
+
+<MailGrey>False</MailGrey>
+<MailWhite>False</MailWhite>
+<MailGreen>False</MailGreen>
+<MailBlue>False</MailBlue>
+<MailPurple>False</MailPurple>
+
+<SellGrey>False</SellGrey>
+<SellWhite>False</SellWhite>
+<SellGreen>False</SellGreen>
+<SellBlue>False</SellBlue>
+<SellPurple>False</SellPurple>
+
+<AvoidMobs>		 
+</AvoidMobs>
+
+<Blackspots>
+</Blackspots>
+
+<Mailboxes>
+</Mailboxes>
+
+<Vendors>
+</Vendors>
+
+<ProtectedItems>	
+</ProtectedItems>
+
+	<QuestOrder>
+	
+		<!-- UserSettings -->
+			<CustomBehavior File="UserSettings"
+							FindMountAutomatically="True"
+							GroundMountFarmingMode="False"
+							HarvestHerbs="False"
+							HarvestMinerals="False"
+							KillBetweenHotspots="False"
+							LogoutForInactivity="True"
+							LogoutInactivityUseForceQuit="True"
+							LootMobs="False"
+							LootRadius="1"
+							MountName=""
+							NinjaSkin="False"
+							RessAtSpiritHealers="False"
+							SkinMobs="False"
+							UseMount="True" 
+							UseRandomMount="False" />
+			
+		<!-- If our level = > 85 -->				
+		<If Condition="Me.Level &gt;= 70" >
+	
+			<!-- If our hearthstone is set to Dalaran -->
+			<If Condition="Me.HearthstoneAreaId == 4284">
+	
+				<!-- CustomBehavior - Message - Our Hearthstone has already been set to Dalaran -->
+				<CustomBehavior File="Message" 
+								Text="Our Hearthstone has already been set to Dalaran." 
+								LogColor="Plum" />
+								
+				<!-- CustomBehavior - WaitTimer - 1 second delay -->
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="1000" />
+
+				<!--  CustomBehavior - LoadProfile - [QO-N][85][10-X-Hr][Forge-of-Souls]_botanist -->				
+				<CustomBehavior File="LoadProfile" 
+								ProfileName="..\..\..\[QO-N][85][10-X-Hr][Forge-of-Souls]_botanist" />
+	
+				<!-- Else our hearthstone is not set at Dalaran-->
+				<Else>
+				
+					<!-- CustomBehavior - Message -  We have not set our Hearthstone in Dalaran. Navigating to the innkeep -->
+					<CustomBehavior File="Message" 
+										Text="We have not set our Hearthstone in Dalaran. Navigating to the innkeep." 
+										LogColor="Plum" />				
+			
+					<!-- If we are in Borean Tundra -->
+					<If Condition="Me.ZoneId == 3537">
+				
+						<!-- Profile message - We are in Borean Tundra \nInitiating Wintergrasp avoidance procedures \nMoving to Dragon Blight -->
+						<CustomBehavior File="Message" 
+										Text="We are in Borean Tundra \nInitiating Wintergrasp avoidance procedures \nMoving to Dragon Blight"  
+										LogColor="Chartreuse" />
+				
+						<!-- Fly to - Snowfall Glade -->
+						<CustomBehavior File="FlyTo" 
+										X="3450.25" Y="1374.661" Z="274.1828" />
+
+						<!-- CTM to - The Crystal Vice - avoid Wintergrasp -->
+						<CustomBehavior File="MyCTM"
+										X="4821.534" Y="273.7776" Z="379.9668" />
+
+					</If>	<!-- If we are in Borean Tundra -->
+
+					<!-- Fly to - The Crystal Vice - avoid Wintergrasp -->
+					<CustomBehavior File="FlyTo"
+									X="4821.534" Y="273.7776" Z="379.9668" />
+					
+					<!-- CTM to - Dalaran flight master - hover point -->
+					<CustomBehavior File="MyCTM"
+									X="5764.008" Y="288.0249" Z="703.4487" />
+					
+					<!-- CTM to - Dalaran flight master -->
+					<CustomBehavior File="MyCTM"
+									X="5816.453" Y="458.7583" Z="658.7628" />
+					
+					<!-- Custom behavior - ForcedDismount -->
+					<CustomBehavior File="ForcedDismount" />
+
+					<!-- CustomBehavior - UserSettings - usemount -->
+					<CustomBehavior File="UserSettings"
+									UseMount="False" />
+
+					<!-- If we are Alliance -->					
+					<If Condition="Me.IsAlliance">				
+
+						<!-- Move to - innkeep -->
+						<MoveTo X="5848.938" Y="637.4938" Z="647.513" />
+		
+						<!-- CustomBehavior - Message - We have arrived at the Dalaran innkeep -->
+						<CustomBehavior File="Message" 
+										Text="We have arrived at the Nesingwary Base Camp innkeep." 
+										LogColor="Plum" />
+
+						<!-- CustomBehavior - SetHearthstone - Amisi Azuregaze - Dalaran -->				
+						<CustomBehavior File="SetHearthstone" 
+										MobId="28687"  
+										X="5847.973" Y="635.4348" Z="647.5124" />
+						
+						<!-- Move to - flight master -->				
+						<MoveTo X="5816.453" Y="458.7583" Z="658.7628" />
+						
+						<!-- CustomBehavior - UserSettings - usemount -->
+						<CustomBehavior File="UserSettings"
+										UseMount="True" />
+					
+						<!-- Else we are Horde -->
+						<Else>
+					
+							<!-- Move to - innkeep -->
+							<MoveTo X="5848.938" Y="637.4938" Z="647.513" />
+			
+							<!-- CustomBehavior - Message - We have arrived at the Dalaran innkeep -->
+							<CustomBehavior File="Message" 
+											Text="We have arrived at the Nesingwary Base Camp innkeep." 
+											LogColor="Plum" />
+
+							<!-- CustomBehavior - SetHearthstone - Amisi Azuregaze - Dalaran -->				
+							<CustomBehavior File="SetHearthstone" 
+											MobId="28687"  
+											X="5847.973" Y="635.4348" Z="647.5124" />
+							
+							<!-- Move to - flight master -->				
+							<MoveTo X="5816.453" Y="458.7583" Z="658.7628" />
+							
+							<!-- CustomBehavior - UserSettings - usemount -->
+							<CustomBehavior File="UserSettings"
+											UseMount="True" />
+
+						</Else>		<!-- Else we are Horde -->
+						
+					</If>	<!-- If we are Alliance -->	
+					
+					<!--  CustomBehavior - LoadProfile - [QO-N][90][10-X-Hr]_Pit-of-Saron_Battered-Hilt -->				
+					<CustomBehavior File="LoadProfile" 
+									ProfileName="..\..\..\[QO-N][90][10-X-Hr]_Pit-of-Saron_Battered-Hilt" />
+
+				</Else>		<!-- Else our hearthstone is not set at Dalaran -->
+
+			</If>	<!-- If our hearthstone is set to Dalaran -->
+			
+		</If>	<!-- If our level = > 85 -->
+			
+	</QuestOrder>
+
+</HBProfile>

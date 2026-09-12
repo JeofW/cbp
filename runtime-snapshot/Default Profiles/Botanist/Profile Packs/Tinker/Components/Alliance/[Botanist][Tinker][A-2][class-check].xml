@@ -1,0 +1,269 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+<Name>[Botanist][Tinker][A-2][class-check]</Name>
+
+<MinLevel>1</MinLevel>
+<MaxLevel>151</MaxLevel>
+
+<MinDurability>-1</MinDurability>
+<MinFreeBagSlots>-1</MinFreeBagSlots>
+<TargetingDistance>45</TargetingDistance>
+
+
+<MailGrey>False</MailGrey>
+<MailWhite>False</MailWhite>
+<MailGreen>False</MailGreen>
+<MailBlue>False</MailBlue>
+<MailPurple>False</MailPurple>
+
+<SellGrey>False</SellGrey>
+<SellWhite>False</SellWhite>
+<SellGreen>False</SellGreen>
+<SellBlue>False</SellBlue>
+<SellPurple>False</SellPurple>
+
+<AvoidMobs>		 
+</AvoidMobs>
+
+<Blackspots>
+</Blackspots>
+
+<Mailboxes>
+</Mailboxes>
+
+<Vendors>
+</Vendors>
+
+<ProtectedItems>	
+</ProtectedItems>
+
+	<QuestOrder>
+	
+		<!-- UserSettings -->
+		<CustomBehavior File="UserSettings"
+						FindMountAutomatically="True"
+						GroundMountFarmingMode="False"
+						HarvestHerbs="False"
+						HarvestMinerals="False"
+						KillBetweenHotspots="False"
+						LogoutForInactivity="True"
+						LogoutInactivityUseForceQuit="True"
+						LootMobs="False"
+						LootRadius="1"
+						MountName=""
+						NinjaSkin="False"
+						RessAtSpiritHealers="False"
+						SkinMobs="False"
+						UseMount="True" 
+						UseRandomMount="False" />
+		
+		<!-- Profile message - Checking the curent characters class -->
+		<CustomBehavior File="Message" 
+						Text="Checking our curent characters class." 
+						LogColor="Gold" />
+		
+		<!-- CustomBehavior - Wait timer - wait 1 seconds - delay -->
+		<CustomBehavior File="WaitTimer" 
+						WaitTime="1000" />
+		
+		<!-- If we are Hunter-->
+		<If Condition="(Me.Class == WoWClass.Hunter)">
+		
+			<!-- Profile message - We are currently leveling a Hunter -->
+			<CustomBehavior File="Message" 
+							Text="We are currently leveling a Hunter." 
+							LogColor="Plum" />
+							
+			<!-- CustomBehavior - Wait timer - wait 1 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="1000" />	
+
+			<!--  CustomBehavior - LoadProfile -->				
+			<CustomBehavior File="LoadProfile" 
+							ProfileName="[Botanist][Tinker][A-3][level-check]" />				
+							
+		</If>	<!-- If we are Hunter-->
+		
+		<!-- If we are DeathKnight-->
+		<If Condition="(Me.Class == WoWClass.DeathKnight)">
+		
+			<!-- Profile message - We are currently leveling a DeathKnight -->
+			<CustomBehavior File="Message" 
+							Text="We are currently leveling a DeathKnight." 
+							LogColor="Plum" />
+							
+			<!-- CustomBehavior - Wait timer - wait 1 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="1000" />	
+
+			<!--  CustomBehavior - LoadProfile -->				
+			<CustomBehavior File="LoadProfile" 
+							ProfileName="[Botanist][Tinker][A-3][level-check]" />				
+							
+		</If>	<!-- If we are DeathKnight-->
+		
+		<!-- If we are Druid-->
+		<If Condition="(Me.Class == WoWClass.Druid)">
+		
+			<!-- Profile message - We are currently leveling a Druid -->
+			<CustomBehavior File="Message" 
+							Text="We are currently leveling a Druid." 
+							LogColor="Plum" />
+							
+			<!-- CustomBehavior - Wait timer - wait 1 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="1000" />	
+
+			<!--  CustomBehavior - LoadProfile -->				
+			<CustomBehavior File="LoadProfile" 
+							ProfileName="[Botanist][Tinker][A-3][level-check]" />				
+							
+		</If>	<!-- If we are Druid-->
+		
+		<!-- If we are Mage-->
+		<If Condition="(Me.Class == WoWClass.Mage)">
+		
+			<!-- Profile message - We are currently leveling a Mage -->
+			<CustomBehavior File="Message" 
+							Text="We are currently leveling a Mage." 
+							LogColor="Plum" />
+							
+			<!-- CustomBehavior - Wait timer - wait 1 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="1000" />	
+
+			<!--  CustomBehavior - LoadProfile -->				
+			<CustomBehavior File="LoadProfile" 
+							ProfileName="[Botanist][Tinker][A-3][level-check]" />				
+							
+		</If>	<!-- If we are Mage-->
+		
+		<!-- If we are Paladin-->
+		<If Condition="(Me.Class == WoWClass.Paladin)">
+		
+			<!-- Profile message - We are currently leveling a Paladin -->
+			<CustomBehavior File="Message" 
+							Text="We are currently leveling a Paladin." 
+							LogColor="Plum" />
+							
+			<!-- CustomBehavior - Wait timer - wait 1 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="1000" />	
+
+			<!--  CustomBehavior - LoadProfile -->				
+			<CustomBehavior File="LoadProfile" 
+							ProfileName="[Botanist][Tinker][A-3][level-check]" />				
+							
+		</If>	<!-- If we are Paladin-->
+		
+		<!-- If we are Priest-->
+		<If Condition="(Me.Class == WoWClass.Priest)">
+		
+			<!-- Profile message - We are currently leveling a Priest -->
+			<CustomBehavior File="Message" 
+							Text="We are currently leveling a Priest." 
+							LogColor="Plum" />
+							
+			<!-- CustomBehavior - Wait timer - wait 1 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="1000" />	
+
+			<!--  CustomBehavior - LoadProfile -->				
+			<CustomBehavior File="LoadProfile" 
+							ProfileName="[Botanist][Tinker][A-3][level-check]" />				
+							
+		</If>	<!-- If we are Priest-->
+		
+		<!-- If we are Rogue-->
+		<If Condition="(Me.Class == WoWClass.Rogue)">
+		
+			<!-- Profile message - We are currently leveling a Rogue -->
+			<CustomBehavior File="Message" 
+							Text="We are currently leveling a Rogue." 
+							LogColor="Plum" />
+							
+			<!-- CustomBehavior - Wait timer - wait 1 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="1000" />	
+
+			<!--  CustomBehavior - LoadProfile -->				
+			<CustomBehavior File="LoadProfile" 
+							ProfileName="[Botanist][Tinker][A-3][level-check]" />				
+							
+		</If>	<!-- If we are Rogue-->
+		
+		<!-- If we are Shaman-->
+		<If Condition="(WoWClass.Shaman)">
+		
+			<!-- Profile message - We are currently leveling a Shaman -->
+			<CustomBehavior File="Message" 
+							Text="We are currently leveling a Shaman." 
+							LogColor="Plum" />
+							
+			<!-- CustomBehavior - Wait timer - wait 1 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="1000" />	
+
+			<!--  CustomBehavior - LoadProfile -->				
+			<CustomBehavior File="LoadProfile" 
+							ProfileName="[Botanist][Tinker][A-3][level-check]" />				
+							
+		</If>	<!-- If we are Shaman-->
+		
+		<!-- If we are Warlock-->
+		<If Condition="(Me.Class == WoWClass.Warlock)">
+		
+			<!-- Profile message - We are currently leveling a Warlock -->
+			<CustomBehavior File="Message" 
+							Text="We are currently leveling a Warlock." 
+							LogColor="Plum" />
+							
+			<!-- CustomBehavior - Wait timer - wait 1 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="1000" />	
+
+			<!--  CustomBehavior - LoadProfile -->				
+			<CustomBehavior File="LoadProfile" 
+							ProfileName="[Botanist][Tinker][A-3][level-check]" />				
+							
+		</If>	<!-- If we are Warlock-->
+		
+		<!-- If we are Warrior-->
+		<If Condition="(Me.Class == WoWClass.Warrior)">
+		
+			<!-- Profile message - We are currently leveling a Warrior -->
+			<CustomBehavior File="Message" 
+							Text="We are currently leveling a Warrior." 
+							LogColor="Plum" />
+							
+			<!-- CustomBehavior - Wait timer - wait 1 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="1000" />	
+
+			<!--  CustomBehavior - LoadProfile -->				
+			<CustomBehavior File="LoadProfile" 
+							ProfileName="[Botanist][Tinker][A-3][level-check]" />				
+							
+		</If>	<!-- If we are Warrior-->
+		
+		<!-- If we are Monk-->
+		<If Condition="(Me.Class == WoWClass.Monk)">
+		
+			<!-- Profile message - We are currently leveling a Monk -->
+			<CustomBehavior File="Message" 
+							Text="We are currently leveling a Monk." 
+							LogColor="Plum" />
+							
+			<!-- CustomBehavior - Wait timer - wait 1 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="1000" />	
+
+			<!--  CustomBehavior - LoadProfile -->				
+			<CustomBehavior File="LoadProfile" 
+							ProfileName="[Botanist][Tinker][A-3][level-check]" />				
+							
+		</If>	<!-- If we are Warrior-->
+		
+	</QuestOrder>
+
+</HBProfile>
+

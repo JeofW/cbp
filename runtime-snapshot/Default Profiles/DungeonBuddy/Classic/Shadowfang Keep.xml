@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<DungeonBuddyProfile>
+  <Name>Shadowfang Keep</Name>
+  <DungeonId>8</DungeonId>
+  <BossEncounters>
+    <Boss isFinal="false" entry="3914" name="Rethilgore" killOrder="1" optional="false" X="-252.1" Y="2123.1" Z="81.2"/>
+    <Boss isFinal="false" entry="3886" name="Razorclaw the Butcher" killOrder="2" optional="false" X="-202.6" Y="2258.0" Z="76.3"/>
+    <Boss isFinal="false" entry="3887" name="Baron Silverlaine" killOrder="3" optional="false" X="-275.3" Y="2297.4" Z="76.2"/>
+    <Boss isFinal="false" entry="4278" name="Commander Springvale" killOrder="4" optional="false" X="-222.6" Y="2259.4" Z="102.8"/>
+    <Boss isFinal="false" entry="4279" name="Odo the Blindwatcher" killOrder="5" optional="false" X="-236.7" Y="2146.1" Z="100.1"/>
+    <Boss isFinal="false" entry="4274" name="Fenrus the Devourer" killOrder="6" optional="false" X="-135.6" Y="2168.7" Z="128.8"/>
+    <Boss isFinal="false" entry="3927" name="Wolf Master Nandos" killOrder="7" optional="false" X="-120.7" Y="2162.0" Z="155.8"/>
+    <Boss isFinal="true" entry="4275" name="Archmage Arugal" killOrder="8" optional="false" X="-76.8" Y="2152.4" Z="155.8"/>
+  </BossEncounters>
+  <Blackspots>
+    <!-- Light post in Commanders room -->
+    <Blackspot X="-249.0789" Y="2242.855" Z="100.8921" Radius="0.6894027" />
+    <!-- Door messed up after Commanders room -->
+    <Blackspot X="-234.4324" Y="2229.138" Z="93.54119" Radius="0.5389959" />
+    <!-- Door messed up after 2nd boss -->
+    <Blackspot X="-289.4478" Y="2300.298" Z="90.45692" Radius="0.6405292" />
+    <!-- Door messed up before 2nd boss -->
+    <Blackspot X="-178.5918" Y="2222.235" Z="79.75758" Radius="0.7041734" />
+    <!-- Door messed up before springfield boss -->
+    <Blackspot X="-251.2009" Y="2260.961" Z="101.5895" Radius="0.9515269" />
+</Blackspots>
+</DungeonBuddyProfile>

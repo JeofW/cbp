@@ -1,0 +1,121 @@
+<HBProfile creator="Botanist" version="1.0">
+	<Name>[QO-N][Solstice][58-90][mobile-banking]</Name>
+	<MinLevel>1</MinLevel>
+	<MaxLevel>99</MaxLevel>
+  
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+  
+	<MailGrey>False</MailGrey>
+	<MailWhite>False</MailWhite>
+	<MailGreen>False</MailGreen>
+	<MailBlue>False</MailBlue>
+	<MailPurple>False</MailPurple>
+  
+	<SellGrey>True</SellGrey>
+	<SellWhite>False</SellWhite>
+	<SellGreen>False</SellGreen>
+	<SellBlue>False</SellBlue>
+	<SellPurple>False</SellPurple>
+
+	<Vendors>
+	</Vendors>
+  
+	<AvoidMobs>
+		<Mob Name="Summon Enabler Stalker" 
+			 Entry="53488" />
+	</AvoidMobs>
+   
+	<Blackspots>
+		<Blackspot X="-8830.189" Y="616.5771" Z="94.05379" Radius="3" />
+	</Blackspots>
+
+	<QuestOrder >
+
+		<!-- UserSettings -->
+		<CustomBehavior File="UserSettings"
+						FindMountAutomatically="True"
+						GroundMountFarmingMode="False"
+						HarvestHerbs="False"
+						HarvestMinerals="False"
+						KillBetweenHotspots="True"
+						LogoutForInactivity="False"
+						LogoutInactivityUseForceQuit="False"
+						LootMobs="True"
+						LootRadius="35"
+						MountName=""
+						NinjaSkin="False"
+						RessAtSpiritHealers="False"
+						SkinMobs="False"
+						UseMount="True" 
+						UseRandomMount="False" />
+	
+		<!-- Profile message - Checking to see if we have Mobile Banking -->
+		<CustomBehavior File="Message" 
+						Text="Checking to see if we have Mobile banking." 
+						LogColor="Gold" />
+						
+		<!-- Wait timer - wait 3 seconds - reaction time -->				
+		<CustomBehavior File="WaitTimer" 
+						WaitTime="3000" GoalText="TimeRemaining}" />				
+	
+		<!-- If we have spell (83958) - mobile banking -->
+		<If Condition="SpellManager.HasSpell(&quot;Mobile Banking&quot;)">
+		
+			<!-- Custom behavior - macro Cast Mobile Banking -->
+			<CustomBehavior File="RunMacro" 
+							Macro="/cast Mobile Banking" />
+							
+			<!-- Wait timer - wait 3 seconds - reaction time -->				
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="3000" GoalText="TimeRemaining}" />
+			
+			<!-- Profile message - Interacting with the Mobile Bank -->
+			<CustomBehavior File="Message" 
+							Text="Interacting with the Mobile Bank." 
+							LogColor="Gold" />
+			
+			<!-- Custom behavior - Ianteractwith - Mobile Bank -->		
+			<CustomBehavior File="InteractWith" 
+							MobId="206602" 
+							ObjectType="GameObject"  />  
+			
+			<!-- Wait timer - wait 3 seconds - reaction time -->		
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="3000" GoalText="TimeRemaining}" />   
+			
+			<!-- Custom behavior - macro - DepositGuildBankMoney(30000000) -->		
+			<CustomBehavior File="RunMacro" 
+							Macro="/run DepositGuildBankMoney(GetMoney() - 3000000)" /> 
+
+			<!-- Wait timer - wait 3 seconds - reaction time -->		
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="3000" GoalText="TimeRemaining}" />  
+
+			<Else>
+			
+				<!-- Profile message - Checking to see if we have Mobile Banking -->
+				<CustomBehavior File="Message" 
+								Text="Mobile Banking requires friendly reputation with a Level 11 + guild to access." 
+								LogColor="Orange" />
+			
+			</Else>
+			
+		</If>	<!-- If we have spell (83958) - mobile banking -->
+				
+		<!-- If we are done with Mobile Banking or don't have it -->
+		<If Condition="true" >
+		
+			<!-- Profile message - Checking to see if we have Mobile Banking -->
+			<CustomBehavior File="Message" 
+							Text="We are done depositing gold into the guild bank or we don't have Mobile Banking." 
+							LogColor="Gold" />
+		
+			<!-- Load profile - [QO-N-M][Solstice][58-90][food] -->
+			<CustomBehavior File="LoadProfile" 
+									ProfileName="..\..\..\[QO-N][58-90][Solstice][Auto-Loader]_LOAD-THIS-AND-ONLY-THIS" />
+									
+		</If>
+
+	</QuestOrder>
+</HBProfile>

@@ -1,0 +1,27 @@
+<HBProfile>
+	<!-- 
+    Transport Profile: Vengeance Landing to Undercity
+    Transport: Zeppelin to Howling Fjord (ID: 181689)
+    Faction: Horde
+    Route: Northrend -> Azeroth
+    
+    Generated from WRobot coordinates
+  -->
+	<Name>Transport_Vengeance_Landing_to_Undercity</Name>
+	<MinLevel>1</MinLevel>
+	<MaxLevel>81</MaxLevel>
+
+	<AvoidMobs />
+
+	<SellGrey>false</SellGrey>
+
+	<QuestOrder>
+		<CustomBehavior File="UserSettings" LootMobs="False" />
+		<!-- Run to departure dock -->
+		<!-- Take transport -->
+		<RunTo X="1975.661" Y="-6097.837" Z="67.1533" />
+		<CustomBehavior File="UseTransport" TransportId="181689" DestName="The Cloudkisser" WaitAtX="1975.661" WaitAtY="-6097.837" WaitAtZ="67.1533" TransportStartX="1989.4" TransportStartY="-6082.8" TransportStartZ="85.6" StandOnX="1981.89" StandOnY="-6090.596" StandOnZ="67.7387" TransportEndX="2056.5" TransportEndY="381.6" TransportEndZ="100.4" GetOffX="2060.931" GetOffY="361.9963" GetOffZ="82.5015" />
+		<CustomBehavior File="WaitTimer" WaitTime="2000" />
+		<!-- Move away from dock -->
+	</QuestOrder>
+</HBProfile>

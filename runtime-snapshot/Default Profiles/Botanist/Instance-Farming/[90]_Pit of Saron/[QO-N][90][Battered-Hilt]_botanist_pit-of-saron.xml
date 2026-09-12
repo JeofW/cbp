@@ -1,0 +1,554 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+	<Name>[QO-N][90][Battered-Hilt]_botanist_pit-of-saron</Name>
+   
+	<MinLevel>1</MinLevel>
+	<MaxLevel>101</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	
+	<MailGrey>False</MailGrey>
+	<MailWhite>False</MailWhite>
+	<MailGreen>False</MailGreen>
+	<MailBlue>False</MailBlue>
+	<MailPurple>False</MailPurple>
+   
+	<SellGrey>True</SellGrey>
+	<SellWhite>True</SellWhite>
+	<SellGreen>True</SellGreen>
+	<SellBlue>True</SellBlue>
+	<SellPurple>True</SellPurple>
+   
+	<TargetElites>True</TargetElites>
+	
+	<AvoidMobs>
+		<Mob Name="Collapsing Icicle" Entry="36847" />
+		<Mob Name="Stonespine Gargoyle" Entry="36896" />
+		<Mob Name="Summon Enabler Stalker" Entry="53488" />
+	</AvoidMobs>
+	
+	<Blackspots>
+		
+	</Blackspots>
+
+	<Mailboxes>
+	</Mailboxes>
+ 
+	<Vendors>
+	</Vendors>
+
+	<Factions></Factions>
+	
+	<ProtectedItems>		
+	</ProtectedItems>
+	
+	<QuestOrder>
+	
+		<ClearVendor />
+		<ClearMailbox />
+
+	<!-- While loop -->		
+	<While Condition="Me.Level &gt;= 90">	
+
+		<!-- UserSettings -->
+		<CustomBehavior File="UserSettings"
+						FindMountAutomatically="True"
+						GroundMountFarmingMode="False"
+						HarvestHerbs="False"
+						HarvestMinerals="False"
+						KillBetweenHotspots="True"
+						LogoutForInactivity="False"
+						LogoutInactivityUseForceQuit="False"
+						LootMobs="True"
+						LootRadius="25"
+						MountName=""
+						NinjaSkin="False"
+						RessAtSpiritHealers="False"
+						SkinMobs="False"
+						UseMount="True" 
+						UseRandomMount="False" />		
+				
+		<!-- If we are in Eatern Kingsoms -->
+		<If Condition="Me.MapId == 0" >
+		
+			<!-- Profile message - We are in Eastern Kingdoms -->
+			<CustomBehavior File="Message" 
+							Text="We are in Eastern Kingdoms"  
+							LogColor="Orange" />
+							
+			<!-- Wait timer - wait 3 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="3000" />				
+							
+			<!-- If we are Alliance -->
+			<If Condition="Me.IsAlliance">				
+							
+				<!-- Profile message - Moving to Stormwind docks -->
+				<CustomBehavior File="Message" 
+								Text="Moving to Stormwind docks."  
+								LogColor="Cyan" />				
+								
+				<!-- Move to - Stormwind docks - hover point -->				
+				<CustomBehavior File="FlyTo" 
+								X="-8293.106" Y="1345.912" Z="67.3783" />				
+								
+				<!-- CTM to - grounding at the Stormwind docks -->
+				<CustomBehavior File="MyCTM" 
+								X="-8294.888" Y="1405.77" Z="4.406102" />	
+
+				<!-- Forced dismount -->	
+				<CustomBehavior File="ForcedDismount" />
+				
+				<!-- Profile message - Waiting for the boat to Borean Tundra -->				
+				<CustomBehavior File="Message" 
+								Text="Waiting for the boat to Borean Tundra." 
+								LogColor="Lime" />
+												
+				<!-- STormwindW dock - Valiance Keep - Borean Tundra -->
+				<CustomBehavior File="UseTransport" 
+								TransportId="190536" 
+								WaitAtX="-8300.08" 
+								WaitAtY="1405.158" 
+								WaitAtZ="4.422395"
+								TransportStartX="-8288.816" 
+								TransportStartY="1424.703" 
+								TransportStartZ="0.04"
+								StandOnX="-8294.842" 
+								StandOnY="1421.358" 
+								StandOnZ="9.488697"
+								TransportEndX="2218.391" 
+								TransportEndY="5119.589" 
+								TransportEndZ="0.04"	
+								GetOffX="2234.375" 
+								GetOffY="5132.568" 
+								GetOffZ="5.343217" />
+								
+			</If>	<!-- If we are Alliance -->
+			
+		</If>	<!-- If we are in Eatern Kingsoms -->		
+
+		<!-- If we are in Kalimdor -->
+		<If Condition="Me.MapId == 1" >
+		
+			<!-- Profile message - We are in Kalimdor -->
+			<CustomBehavior File="Message" 
+							Text="We are in Kalimdor"  
+							LogColor="Orange" />
+							
+			<!-- Wait timer - wait 3 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="3000" />				
+							
+			<!-- If we are Horde -->
+			<If Condition="Me.IsHorde">				
+							
+				<!-- Profile message - Moving to Stormwind docks -->
+				<CustomBehavior File="Message" 
+								Text="Moving to Stormwind docks."  
+								LogColor="Cyan" />				
+								
+				<!-- Move to - Stormwind docks - hover point -->				
+				<CustomBehavior File="FlyTo" 
+								X="-8293.106" Y="1345.912" Z="67.3783" />				
+								
+				<!-- CTM to - grounding at the Stormwind docks -->
+				<CustomBehavior File="MyCTM" 
+								X="-8294.888" Y="1405.77" Z="4.406102" />	
+
+				<!-- Forced dismount -->	
+				<CustomBehavior File="ForcedDismount" />
+				
+				<!-- Profile message - Waiting for the boat to Borean Tundra -->				
+				<CustomBehavior File="Message" 
+								Text="Waiting for the boat to Borean Tundra." 
+								LogColor="Lime" />
+												
+				<!-- STormwindW dock - Valiance Keep - Borean Tundra -->
+				<CustomBehavior File="UseTransport" 
+								TransportId="190536" 
+								WaitAtX="-8300.08" 
+								WaitAtY="1405.158" 
+								WaitAtZ="4.422395"
+								TransportStartX="-8288.816" 
+								TransportStartY="1424.703" 
+								TransportStartZ="0.04"
+								StandOnX="-8294.842" 
+								StandOnY="1421.358" 
+								StandOnZ="9.488697"
+								TransportEndX="2218.391" 
+								TransportEndY="5119.589" 
+								TransportEndZ="0.04"	
+								GetOffX="2234.375" 
+								GetOffY="5132.568" 
+								GetOffZ="5.343217" />
+			
+			</If>	<!-- If we are IsHorde -->
+			
+		</If>	<!-- If we are in Kalimdor -->
+		
+		<!-- If we are in the Pit of Saron -->
+		<If Condition="Me.ZoneId == 4813" >
+		
+			<!-- Profile message - You started the bot with us inside the Pit of Saron. Running out to reset the dungeon -->
+			<CustomBehavior File="Message" 
+							Text="You started the bot with us inside the Pit of Saron. Running out to reset the dungeon." 
+							LogColor="Cyan" />
+							
+			<!-- Move to - zone in location -->
+			<MoveTo X="432.568" Y="212.344" Z="528.7089" /> 
+			
+			<!-- Move to - attempt to exit the instance -->
+			<CustomBehavior File="Misc\InInstance"
+							X="421.0371" Y="212.262" Z="529.8098" />  
+			
+			<!-- Wait timer - wait 12 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="12000" />
+			
+			<!-- Move to - zone out location -->
+			<MoveTo X="5595.78" Y="2013.27" Z="798.041" />
+			
+			<!-- Profile message - Checking my free bag space and my gear's durability -->
+			<CustomBehavior File="Message" 
+							Text="Checking my free bag space and my gear's durability." 
+							LogColor="Plum" />
+							
+		</If>	<!-- If we are in the Pit of Saron -->		
+				
+		<!-- If we are not in the Pit of Saron instance box -->
+		<If Condition="Me.X &lt; 5583 || Me.X &gt; 5603 || Me.Y &lt; 2001 || Me.Y &gt; 2021.057" >
+
+			<!-- Profile message - Moving to the Frozen Halls -->
+			<CustomBehavior File="Message" 
+							Text="Moving to the Frozen Halls." 
+							LogColor="Plum" />
+			
+			<!-- Fly to - Ice Crown Citadel hover point -->
+			<CustomBehavior File="FlyTo" 
+							X="5961.686" Y="2153.792" Z="716.7491" />
+			
+			<!-- Move to - Frozen Halls point above the entrance to the Frozen Throne -->
+			<CustomBehavior File="MyCTM" 
+							X="5790.766" Y="2254.771" Z="888.5391" />
+			
+			<!-- CTM to - land at the entrance to the Frozen Throne -->
+			<CustomBehavior File="MyCTM" 
+							X="5692.304" Y="2159.46" Z="798.1241" />
+			
+			<!-- Move to - zone out location -->
+			<MoveTo X="5595.78" Y="2013.27" Z="798.041" /> 
+
+		</If>	<!-- If we are not in the Pit of Saron instance box -->
+
+		<!-- Durability and free bag-slot check -->
+		<If Condition="(Me.FreeBagSlots &lt; 25) || (Me.LowestDurabilityPercent &lt; 0.3)" > 
+
+			<!-- Profile message - I have detected that our bags are full or our gear is about to break. Flying to the repair vendor at The Argent Tournament grounds -->
+			<CustomBehavior File="Message" 
+							Text="I have detected that our bags are full or our gear is about to break. Flying to the repair vendor at The Argent Tournament grounds." 
+							LogColor="Plum" />
+			
+			<!-- Move to - exit of the Frozen Throne -->
+			<MoveTo X="5693.106" Y="2167.813" Z="798.1242" />
+				
+			<!-- Fly to - Frozen throne hover point -->	
+			<CustomBehavior File="FlyTo" 
+							X="5694.912" Y="2197.339" Z="826.4079" />
+			
+			<!-- XXXXXXXXXXXXXXXXXXXX -->
+			<CustomBehavior File="MyCTM" 
+							X="5820.244" Y="2266.59" Z="909.5264" />	
+			
+			<!-- XXXXXXXXXXXXXXXXXXXX -->
+			<CustomBehavior File="MyCTM" 
+							X="8342.837" Y="937.6993" Z="975.0637" />
+			
+			<!-- XXXXXXXXXXXXXXXXXXXX -->
+			<CustomBehavior File="MyCTM" 
+							X="8586.275" Y="939.3901" Z="616.4142" />
+			
+			<!-- XXXXXXXXXXXXXXXXXXXX -->
+			<CustomBehavior File="MyCTM" 
+							X="8552.242" Y="932.2313" Z="547.2932" />
+			
+			<!-- XXXXXXXXXXXXXXXXXXXX -->
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- If we are Alliance -->					
+			<If Condition="Me.IsAlliance">
+
+				<!-- Brollen Wheatbeard -->
+				<SetVendor>
+					<Vendors>
+						<Vendor Name="Brollen Wheatbeard" 
+								Entry="33599" 
+								Type="Repair" 
+								X="8548.112" Y="933.3629" Z="547.2943" />
+					</Vendors>
+				</SetVendor>						
+				<SetMailbox>
+					<Mailboxes>
+						<Mailbox X="8589.71" Y="695.7098" Z="547.2932" />
+					</Mailboxes>
+				</SetMailbox>
+				
+				<!-- ForceSetVendor -->
+				<CustomBehavior File="ForceSetVendor" 
+								DoMail="True" 
+								DoRepair="True" 
+								DoSell="True" 
+								DoTrain="False" />
+								
+			</If>	<!-- If we are Alliance -->	
+			
+			<!-- If we are Horde -->					
+			<If Condition="Me.IsHorde">
+
+				<!-- Fizzix Blastbolt -->
+				<SetVendor>
+					<Vendors>
+						<Vendor Name="Fizzix Blastbolt" 
+								Entry="33594" 
+								Type="Repair" 
+								X="8553.434" Y="915.6268" Z="547.3928" />
+					</Vendors>
+				</SetVendor>						
+				<SetMailbox>
+					<Mailboxes>
+						<Mailbox X="8455.704" Y="685.0724" Z="547.2927" />
+					</Mailboxes>
+				</SetMailbox>
+				
+				<!-- ForceSetVendor -->
+				<CustomBehavior File="ForceSetVendor" 
+								DoMail="True" 
+								DoRepair="True" 
+								DoSell="True" 
+								DoTrain="False" />
+								
+			</If>	<!-- If we are Horde -->	
+				
+		</If>	<!-- Durability and free bag-slot check -->
+
+		<!-- If we have more than 35 empty bag slots and our durability is greater than 30% -->
+		<If Condition="(Me.FreeBagSlots &gt; 35) &amp;&amp; (Me.LowestDurabilityPercent &gt;= 0.3)" >
+
+			<!-- If we are not inside the Pit of Saron instance box -->
+			<If Condition="Me.X &lt; 5583 || Me.X &gt; 5603 || Me.Y &lt; 2001 || Me.Y &gt; 2021.057" >
+		
+				<!-- Profile message - Flying to the Frozen Halls -->
+				<CustomBehavior File="Message" 
+								Text="Flying to the Frozen Halls." 
+								LogColor="Plum" />
+				
+				<!-- Fly to - XXXXXXXX -->					
+				<CustomBehavior File="FlyTo" 
+								X="8586.275" Y="939.3901" Z="616.4142" />
+								
+				<!-- Move to - last peak before ICC -->				
+				<CustomBehavior File="MyCTM" 
+								X="6050.875" Y="1752.029" Z="855.2743" />
+				
+				<!-- Fly to - Ice Crown Citadel hover point -->
+				<CustomBehavior File="FlyTo" 
+								X="5961.686" Y="2153.792" Z="716.7491" />
+				
+				<!-- Move to - Frozen Halls point above the entrance to the Frozen Throne -->
+				<CustomBehavior File="MyCTM" 
+								X="5790.766" Y="2254.771" Z="888.5391" />
+				
+				<!-- CTM to - land at the entrance to the Frozen Throne -->
+				<CustomBehavior File="MyCTM" 
+								X="5692.304" Y="2159.46" Z="798.1241" />
+				
+				<!-- Move to - zone out location -->
+				<MoveTo X="5595.78" Y="2013.27" Z="798.041" />
+				
+			</If>	<!-- If we are not inside the Pit of Saron instance box -->
+		
+		</If>	<!-- If we have more than 35 empty bag slots and our durability is greater than 30% -->
+		
+		<!-- If we are inside the Pit of Saron instance box -->
+		<If Condition="Me.X &gt; 5583 &amp;&amp; Me.X &lt; 5603 &amp;&amp; Me.Y &gt; 2001 &amp;&amp; Me.Y &lt; 2021.057" >
+		
+			<!-- Profile message - I am resetting Pit of Saron -->
+			<CustomBehavior File="Message" 
+							Text="I'm resetting Pit of Saron." 
+							LogColor="Plum" />
+							
+			<!-- Custom behavior - RunMacro - Reset the instance -->				
+			<CustomBehavior File="RunMacro" 
+							Macro="/script ResetInstances()" />	
+							
+			<!-- Custom behavior - macro - set dungeon difficulty to normal -->					
+			<CustomBehavior File="RunMacro" 
+							Macro="/script SetDungeonDifficultyID(2)" /> 
+							
+			<!-- Profile message - I have reset Pit of Saron -->			
+			<CustomBehavior File="Message" 
+							Text="I have reset Pit of Saron." 
+							LogColor="Cyan" />
+							
+			<!-- Move to - the gate -->				
+			<MoveTo X="5593.713" Y="2011.442" Z="798.041" />
+			
+			<!-- Profile message - Opening the gate so we may enter the Pit of Saron-->
+			<CustomBehavior File="Message" 
+							Text="Opening the gate so we may enter the Pit of Saron." 
+							LogColor="Plum" />
+							
+			<!-- Custom behavior - InteractWith - open the gate -->				
+			<CustomBehavior File="InteractWith" 
+							MobId="201761" 
+							ObjectType="Gameobject" 
+							Range="4.75" 
+							NumOfTimes="1"  
+							X="5590.884" Y="2009.19" Z="797.3859" />
+							
+			<!-- Move to - attempt to enter the instance -->
+			<CustomBehavior File="Misc\InInstance"  
+							X="5584.25" Y="2003.589" Z="798.0412" />
+							
+			<!-- Profile message - Waiting for the dungeon to load -->				
+			<CustomBehavior File="Message" 
+							Text="Waiting for the dungeon to load." 
+							LogColor="Cyan" />
+							
+			<!-- Wait timer - wait 12 seconds - delay -->				
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="12000" />
+							
+		</If>	<!-- If we are inside the Pit of Saron instance box -->
+
+		<!-- If we are in Pit of Saron -->
+		<If Condition="Me.MapId == 658" >
+		
+			<!-- Zone in location -->
+			<MoveTo X="432.568" Y="212.344" Z="528.7089" />
+			
+			<!--Profile message	- Deleting unwanted items from our bags -->				
+			<CustomBehavior File="Message" 
+							Text="Deleting unwanted items from our bags." 
+							LogColor="Orange" />
+
+			<!-- Morning Glory Dew -->
+			<CustomBehavior File="DeleteItems" 
+							Ids="8766" />
+									
+			<!-- Instance timer -->
+			<CustomBehavior File="Misc\InstanceTimer" 
+							Timer="Start" />							
+						
+			<!--Profile message	- Initiallizing a 12 minute and 30 second instance timer -->				
+			<CustomBehavior File="Message" 
+							Text="Initiallizing a 12 minute and 30 second instance timer." 
+							LogColor="Orange" />			
+						
+			<!-- Turn on autolooting -->
+			<CustomBehavior File="RunMacro" 
+							Macro="/script SetCVar('AutoLootDefault', 1)" 
+							NumOfTimes="1" 
+							WaitTime="1000" />
+
+			<!-- Profile message - Pit of Saron initialized -->			
+			<CustomBehavior File="Message" 
+							Text="Pit of Saron initialized."  
+							LogColor="Fuchsia" />
+			
+			
+			
+			<!-- @@@@@@@@@@@@@@@@@@@@ 1st pull @@@@@@@@@@@@@@@@@@@@ -->
+			
+			
+			
+			<MoveTo X="503.9032" Y="202.8421" Z="528.7089" />
+			
+			<MoveTo X="501.0548" Y="241.8979" Z="528.7083" />
+			
+			<MoveTo X="597.8208" Y="274.5186" Z="506.1147" />
+			<MoveTo X="564.2429" Y="313.8267" Z="509.5386" />
+			<MoveTo X="628.8962" Y="331.616" Z="511.8988" />
+			<MoveTo X="621.5218" Y="308.7238" Z="508.2643" />
+			<MoveTo X="638.7652" Y="247.9218" Z="508.5842" />
+			<MoveTo X="619.3526" Y="213.0474" Z="507.2346" />
+			<MoveTo X="652.0519" Y="211.0064" Z="507.6022" />
+			<MoveTo X="714.0215" Y="185.6643" Z="512.3255" />
+							
+
+			<!-- @@@@@@@@@@@@@@@@@@@@ 1st pull @@@@@@@@@@@@@@@@@@@@ -->
+			
+			
+			<MoveTo X="627.9106" Y="183.6804" Z="508.0793" />
+			<MoveTo X="672.4707" Y="129.7047" Z="512.4971" />
+			<MoveTo X="626.7306" Y="109.1024" Z="510.3845" />
+			<MoveTo X="608.7493" Y="192.0677" Z="507.2346" />
+			<MoveTo X="585.6143" Y="159.4981" Z="510.2337" />
+			<MoveTo X="559.4708" Y="142.9642" Z="516.0651" />
+			<MoveTo X="549.5168" Y="77.31388" Z="526.1061" />
+						
+			
+			<!-- @@@@@@@@@@@@@@@@@@@@ 1st pull @@@@@@@@@@@@@@@@@@@@ -->
+			
+			
+			<MoveTo X="549.5168" Y="77.31388" Z="526.1061" />
+			
+			<MoveTo X="627.7996" Y="94.68565" Z="511.8828" />
+			
+			<MoveTo X="621.3756" Y="79.37693" Z="512.4171" />
+			<MoveTo X="614.4464" Y="28.27111" Z="512.9081" />
+			<MoveTo X="627.027" Y="-25.65667" Z="513.8214" />
+						
+			
+			
+			<!-- @@@@@@@@@@@@@@@@@@@@ 1st pull @@@@@@@@@@@@@@@@@@@@ -->
+			
+			<MoveTo X="683.4432" Y="-97.61732" Z="513.7358" />
+			
+			<MoveTo X="646.5347" Y="-120.1576" Z="513.5201" />			
+			
+			
+			<!-- @@@@@@@@@@@@@@@@@@@@ 1st pull @@@@@@@@@@@@@@@@@@@@ -->
+			
+			
+			<MoveTo X="715.2592" Y="-103.3553" Z="513.7347" />
+			<MoveTo X="745.0694" Y="-123.3556" Z="512.6193" />
+			<MoveTo X="752.4495" Y="-68.91569" Z="511.7672" />
+			<MoveTo X="786.0978" Y="-24.94733" Z="508.3118" />
+			<MoveTo X="827.8647" Y="3.969784" Z="509.7711" />
+			<MoveTo X="844.842" Y="-24.3854" Z="509.2504" />
+			
+			
+			<!-- @@@@@@@@@@@@@@@@@@@@ 1st pull @@@@@@@@@@@@@@@@@@@@ -->
+		
+		
+
+			<!-- Move to - zone in location -->
+			<MoveTo X="432.568" Y="212.344" Z="528.7089" />
+			
+			<!-- Instance timer check if we didn't repair -->
+			<CustomBehavior File="Misc\InstanceTimer" 
+							Timer="Check" />
+									
+			<!-- Move to - attempt to exit the instance -->
+			<CustomBehavior File="Misc\InInstance"
+							X="421.0371" Y="212.262" Z="529.8098" />  
+			
+			<!-- Wait timer - wait 12 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="12000" />
+			
+			<!-- Move to - zone out location -->
+			<MoveTo X="5595.78" Y="2013.27" Z="798.041" />
+			
+			<!-- Profile message - Checking our free bag space and gear's durability -->
+			<CustomBehavior File="Message" 
+							Text="Checking our free bag space and gear's durability." 
+							LogColor="Plum" />
+							
+		</If>	<!-- If we are in Pit of Saron -->	
+
+	</While>	<!-- While loop -->
+	
+	</QuestOrder>
+
+</HBProfile>

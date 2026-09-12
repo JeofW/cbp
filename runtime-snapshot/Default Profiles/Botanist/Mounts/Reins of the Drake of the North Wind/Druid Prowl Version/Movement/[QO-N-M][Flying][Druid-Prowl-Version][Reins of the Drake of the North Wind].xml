@@ -1,0 +1,292 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+	<Name>[QO-N-M][Flying][Druid-Prowl-Version][Reins of the Drake of the North Wind]</Name>
+   
+	<MinLevel>1</MinLevel>
+	<MaxLevel>101</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	
+	<MailGrey>True</MailGrey>
+	<MailWhite>False</MailWhite>
+	<MailGreen>False</MailGreen>
+	<MailBlue>False</MailBlue>
+	<MailPurple>False</MailPurple>
+   
+	<SellGrey>False</SellGrey>
+	<SellWhite>False</SellWhite>
+	<SellGreen>False</SellGreen>
+	<SellBlue>False</SellBlue>
+	<SellPurple>False</SellPurple>
+   
+	<TargetElites>True</TargetElites>
+	
+	<AvoidMobs>		
+		<Mob Name="Summon Enabler Stalker" Entry="53488" />
+	</AvoidMobs>
+	
+	<Blackspots>
+
+	</Blackspots>
+
+	<Mailboxes>
+	</Mailboxes>
+ 
+	<Vendors>
+	</Vendors>
+	
+	<ProtectedItems>
+	</ProtectedItems>
+
+	<Factions></Factions>
+	
+	<QuestOrder>
+		<ClearVendor />
+		<ClearMailbox />
+
+
+		<If Condition="Me.Level &gt;= 85">
+		
+		 	<!-- UserSettings -->
+			<CustomBehavior File="UserSettings"
+							FindMountAutomatically="True"
+							GroundMountFarmingMode="False"
+							HarvestHerbs="False"
+							HarvestMinerals="False"
+							KillBetweenHotspots="True"
+							LogoutForInactivity="False"
+							LogoutInactivityUseForceQuit="False"
+							LootMobs="True"
+							LootRadius="25"
+							MountName=""
+							NinjaSkin="False"
+							RessAtSpiritHealers="False"
+							SkinMobs="False"
+							UseMount="True" 
+							UseRandomMount="False" />
+
+			<!-- Eastern Kingdoms -->
+			<If Condition="Me.MapId == 0">
+				<CustomBehavior File="Message" 
+								Text="We are in Eastern Kingdoms." 
+								LogColor="Cyan" />
+								
+				<!-- If our hearthstone is set here, use it -->
+				<If Condition="Me.HearthstoneAreaId == 5466 ">
+					<CustomBehavior File="Message" 
+									Text="Our Innkeeper is set at Ramkahen." 
+									LogColor="Cyan" />
+										
+					<!-- Have hearthstone -->
+					<If Condition="HasItem(6948)">
+						<CustomBehavior File="Message" 
+										Text="Using Hearthstone." 
+										LogColor="Cyan" />
+										
+						<CustomBehavior File="Misc\RunLua" 
+										Lua="UseItemByName(6948)" 
+										WaitTime="1000" />
+										
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000" />
+					</If> <!-- Have hearthstone -->
+				
+					<!-- Have Innkeeper's Daughter -->
+					<If Condition="HasItem(64488)">
+						<CustomBehavior File="Message" 
+										Text="Using Innkeeper's Daughter." 
+										LogColor="Cyan" />
+											
+						<CustomBehavior File="Misc\RunLua" 
+										Lua="UseItemByName(64488)" 
+										WaitTime="1000" />
+							
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000" />
+					</If> <!-- Have Innkeeper's Daughter -->
+						
+					<!-- Our hearth isn't set, we need to go to the zone -->
+					<Else>
+						<CustomBehavior File="Message" 
+										Text="Our Hearthstone isn't set in the proper location. Moving to set it." 
+										LogColor="Cyan" />
+		
+						<!-- Profile message - Flying to Booty Bay -->
+						<CustomBehavior File="Message" 
+											Text="Flying to Booty Bay." 
+											LogColor="Cyan" />
+											
+						<!-- Fly to Booty Bay -->
+						<CustomBehavior File="FlyTo" 
+										X="-10353.59" Y="-7.647873" Z="284.1171" />
+										
+						<CustomBehavior File="FlyTo" 
+										X="-14281.86" Y="564.9252" Z="7.45587" />
+						<CustomBehavior File="ForcedDismount" />
+						
+						<!-- Profile message - Waiting on the boat to Ratchet -->
+						<CustomBehavior File="Message" 
+											Text="Waiting on the boat to Ratchet." 
+											LogColor="Cyan" />
+										
+						<!-- Take boat from Booty Bay to ratchet -->
+						<CustomBehavior File="UseTransport" 
+										TransportId="20808" 
+										WaitAtX="-14281.86" 
+										WaitAtY="564.9252" 
+										WaitAtZ="7.45587"
+										TransportStartX="-14277.74" 
+										TransportStartY="582.86" 
+										TransportStartZ="0.015"
+										StandOnX="-14271.49" 
+										StandOnY="581.3417" 
+										StandOnZ="6.019351"
+										TransportEndX="-1005.613" 
+										TransportEndY="-3841.648" 
+										TransportEndZ="0.03330701"	
+										GetOffX="-997.8598" 
+										GetOffY="-3824.981" 
+										GetOffZ="5.466243" />								
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="1000" />
+										
+						<RunTo X="-984.0112" Y="-3801.92" Z="5.412419" />
+					</Else> 
+				</If>	<!-- hearth -->		
+			</If>	<!-- Eastern Kingdoms -->			
+					
+			<If Condition="Me.MapId == 1">	<!-- Kalimdor -->
+				<If Condition="Me.HearthstoneAreaId == 5466">	<!-- hearth -->
+												
+						<!-- Profile message - Moving to the river delta -->
+					<CustomBehavior File="Message" 
+									Text="Moving to the river delta." 
+									LogColor="Plum" />					
+											
+					<!-- Fly to - river bed -->
+					<CustomBehavior File="FlyTo" 
+									X="-11260.66" Y="-1804.485" Z="31.9262" />
+											
+					
+					<!-- CTM to The Vortex Pinnacle hover point -->
+					<CustomBehavior File="MyCTM" 
+									X="-11355.9" Y="-2183.812" Z="674.7065" />
+					
+					<!-- CTM to the instance box -->
+					<CustomBehavior File="MyCTM" 
+									X="-11513.3" Y="-2309.88" Z="608.393" />
+					
+					<CustomBehavior File="ForcedDismount" />	
+					
+					<!-- Run to the instance box -->
+					<MoveTo X="-11513.3" Y="-2309.88" Z="608.393" />
+					
+					<!-- Our hearth isn't set, we need to go to the zone -->
+					<Else>
+						<CustomBehavior File="Message" 
+										Text="Our Hearthstone isn't set in the proper location. Moving to set it." 
+										LogColor="Cyan" />
+						
+						<!-- Fly to the hover point above the innkeep in Ramkahen -->
+						<CustomBehavior File="FlyTo" 
+										X="-9453.837" Y="-962.6011" Z="139.4122" />
+										
+						<!-- Land at innkeeper -->
+						<CustomBehavior File="FlyTo" 
+										X="-9418.183" Y="-959.1581" Z="113.5946" />
+						<CustomBehavior File="ForcedDismount" />
+						
+						<RunTo X="-9390.605" Y="-947.8786" Z="113.7644" />
+						
+						<!-- Set hearthstone -->										
+						<CustomBehavior File="Message" 
+										Text="Setting my Hearthstone." 
+										LogColor="Cyan" />
+										
+						<CustomBehavior File="SetHearthstone" 
+										MobId="48886" 
+										X="-9389.101" Y="-944.342" Z="113.765" />
+																									
+						<!-- Run outside the innkeep -->
+						<RunTo X="-9418.183" Y="-959.1581" Z="113.5946" />
+						
+						<!-- Repair if necessary -->
+						<If Condition="Me.LowestDurabilityPercent &lt; 0.8" >
+							<CustomBehavior File="Message" 
+											Text="Our durability is less than 80%, we need to repair." 
+											LogColor="Cyan" />
+											
+							<RunTo X="-9409.512" Y="-911.5088" Z="112.5401" />
+
+							<SetVendor>
+								<Vendors>
+									<!-- Ramkahen  -->
+									<Vendor Name="Blacksmith Abasi" 
+											Entry="48617" 
+											Type="Repair" 
+											X="-9404.68" Y="-906.438" Z="112.5411" />
+								</Vendors>
+							</SetVendor>
+							
+							<SetMailbox>
+								<!-- Ramkahen  -->
+								<Mailboxes>
+									<Mailbox X="-9428.854" Y="-968.5951" Z="111.0117" />
+								</Mailboxes>
+							</SetMailbox>
+							
+							<!-- Force set the vendor -->
+							<CustomBehavior File="ForceSetVendor" 
+											DoMail="True" 
+											DoRepair="True" 
+											DoSell="True" 
+											DoTrain="False" />
+						
+							<!-- We are done repairing -->
+							<If Condition="Me.DurabilityPercent &gt;= 0.8" >
+								<CustomBehavior File="Message" 
+												Text="Repairing complete." 
+												LogColor="Cyan" />
+							</If> <!-- repaired -->
+						</If> <!-- Repairing -->			
+											
+						<!-- Profile message - Our hearth has been set, we have more than 25 empty slots in our bags and our gear is above 80 percent durability -->
+								<CustomBehavior File="Message" 
+												Text="Our hearth has been set, we have more than 25 empty slots in our bags and our gear is above 80 percent durability." 
+												LogColor="Cyan" />
+												
+						<!-- Profile message - Flying to the sphinx in south eastern Uldum -->
+								<CustomBehavior File="Message" 
+												Text="Flying to the sphinx in south eastern Uldum." 
+												LogColor="Cyan" />					
+											
+						<!-- Fly to the hover point at the last ridge near the sphinx-->
+						<CustomBehavior File="FlyTo" X="-10703.96" Y="-1767.715" Z="353.466" />
+												
+						<!-- Profile message - CTM to The Vortex Pinnacle hover point -->						
+						<CustomBehavior File="Message" 
+										Text="CTM to The Vortex Pinnacle hover point." 
+										LogColor="Cyan" />
+						
+						<!-- CTM to The Vortex Pinnacle hover point -->
+						<CustomBehavior File="MyCTM" X="-11446.21" Y="-2263.146" Z="651.7057" />
+						
+						<!-- CTM to the instance box -->
+						<CustomBehavior File="MyCTM" X="-11513.3" Y="-2309.88" Z="608.393" />
+						<CustomBehavior File="ForcedDismount" />	
+						
+						<!-- Run to the instance box -->
+						<Runto X="-11513.3" Y="-2309.88" Z="608.393" />	
+					
+					</Else>
+				</If>	<!-- hearth -->	
+			</If>	<!-- Kalimdor -->
+
+			<!-- In box -->
+			<If Condition="Me.X &lt; -11413 &amp;&amp; Me.X &gt; -11613 &amp;&amp; Me.Y &gt; -2409 &amp;&amp; Me.Y &lt; -2209 &amp;&amp; Me.Z &gt; 575" >
+				<CustomBehavior File="LoadProfile" 
+								ProfileName="..\[QO-N][Flying][Druid-Prowl-Version][Reins of the Drake of the North Wind]" />
+			</If> <!-- In box -->		
+		</If> <!-- Booster -->
+	</QuestOrder>
+</HBProfile>

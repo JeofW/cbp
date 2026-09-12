@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WeightSet Class="Paladin" Specialization="1" Name="Paladin-Holy">
+  <!-- Normalized from the bundled Pawn/Wowhead WotLK Holy scale. -->
+  <DPS>0</DPS>
+  <MinDamage>0</MinDamage>
+  <MaxDamage>0</MaxDamage>
+  <MetaSocket>36</MetaSocket>
+  <RedSocket>12</RedSocket>
+  <YellowSocket>20</YellowSocket>
+  <BlueSocket>12</BlueSocket>
+  <Intellect>1</Intellect>
+  <ManaRegeneration>0.88</ManaRegeneration>
+  <SpellPower>0.58</SpellPower>
+  <CriticalStrikeRatingSpell>0.46</CriticalStrikeRatingSpell>
+  <CriticalStrikeRating>0.46</CriticalStrikeRating>
+  <HasteRatingSpell>0.35</HasteRatingSpell>
+  <HasteRating>0.35</HasteRating>
+  <Stamina>0.001</Stamina>
+  <Armor>0</Armor>
+</WeightSet>

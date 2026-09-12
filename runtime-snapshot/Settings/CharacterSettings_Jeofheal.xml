@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CharacterSettings>
+  <FoodAmount>0</FoodAmount>
+  <DrinkAmount>0</DrinkAmount>
+  <EnabledPlugins>
+    <Entry>AutoEquip2</Entry>
+    <Entry>Death Stall Recovery</Entry>
+    <Entry>DrinkPotions</Entry>
+    <Entry>Talented</Entry>
+    <Entry>Tidy Bags 3 Reloaded</Entry>
+    <Entry>Vendor Recovery</Entry>
+    <Entry>Zygor Profile Recovery</Entry>
+  </EnabledPlugins>
+  <!--The last selected index used by the Combobox in the form.-->
+  <SelectedBotIndex>12</SelectedBotIndex>
+  <!--Allow the bot to use flight paths. (Note: this will also allow the bot to interact with new flightmasters to learn new connections.-->
+  <UseFlightPaths>False</UseFlightPaths>
+  <FindMountAutomatically>True</FindMountAutomatically>
+  <UseRandomMount>True</UseRandomMount>
+  <MailRecipient></MailRecipient>
+  <FoodName></FoodName>
+  <DrinkName></DrinkName>
+  <MountName></MountName>
+  <FlyingMountName></FlyingMountName>
+  <LootMobs>True</LootMobs>
+  <SkinMobs>False</SkinMobs>
+  <NinjaSkin>False</NinjaSkin>
+  <LootChests>True</LootChests>
+  <HarvestMinerals>False</HarvestMinerals>
+  <HarvestHerbs>False</HarvestHerbs>
+  <UseMount>True</UseMount>
+  <PullDistance>30</PullDistance>
+  <UseFreeLook>False</UseFreeLook>
+  <FreeLook>0</FreeLook>
+  <TicksPerSecond>13</TicksPerSecond>
+  <LootRadius>45</LootRadius>
+  <FindVendorsAutomatically>False</FindVendorsAutomatically>
+  <TrainNewSkills>False</TrainNewSkills>
+  <LearnFlightPaths>True</LearnFlightPaths>
+  <LastUsedPath></LastUsedPath>
+  <MountDistance>75</MountDistance>
+  <RessAtSpiritHealers>False</RessAtSpiritHealers>
+  <OverrideProfileSettings>False</OverrideProfileSettings>
+  <IgnoreCheckpoints>False</IgnoreCheckpoints>
+  <SellGrey>True</SellGrey>
+  <SellWhite>False</SellWhite>
+  <SellGreen>False</SellGreen>
+  <SellBlue>False</SellBlue>
+  <SellPurple>False</SellPurple>
+  <MailGrey>False</MailGrey>
+  <MailWhite>False</MailWhite>
+  <MailGreen>False</MailGreen>
+  <MailBlue>False</MailBlue>
+  <MailPurple>False</MailPurple>
+</CharacterSettings>

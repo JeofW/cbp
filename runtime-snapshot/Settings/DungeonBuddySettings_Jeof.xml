@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DungeonBuddySettings>
+  <UseFrameLock>False</UseFrameLock>
+  <Role>Auto</Role>
+  <TankInRandomGroups>False</TankInRandomGroups>
+  <QueueType>Specific</QueueType>
+  <LootMode>BossesOnly</LootMode>
+  <MailBoeItems>False</MailBoeItems>
+  <SellItemQuality>Poor</SellItemQuality>
+  <MinFreeBagSlots>0</MinFreeBagSlots>
+  <MailItemQuality>Poor</MailItemQuality>
+  <LootRollType>0</LootRollType>
+  <FollowingDistance>0</FollowingDistance>
+  <KillOptionalBosses>False</KillOptionalBosses>
+  <ShowAllDungeons>False</ShowAllDungeons>
+  <PartyMode>Off</PartyMode>
+</DungeonBuddySettings>

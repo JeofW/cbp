@@ -1,0 +1,1166 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+	<Name>[QO-N][90-Flying]_botanist_black_temple</Name>
+   
+	<MinLevel>1</MinLevel>
+	<MaxLevel>101</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	<TargetingDistance>1</TargetingDistance>
+	
+	<MailGrey>False</MailGrey>
+	<MailWhite>False</MailWhite>
+	<MailGreen>False</MailGreen>
+	<MailBlue>False</MailBlue>
+	<MailPurple>False</MailPurple>
+   
+	<SellGrey>True</SellGrey>
+	<SellWhite>True</SellWhite>
+	<SellGreen>True</SellGreen>
+	<SellBlue>True</SellBlue>
+	<SellPurple>False</SellPurple>
+   
+	<TargetElites>True</TargetElites>
+	
+	<AvoidMobs>		 
+		<Mob Name="Summon Enabler Stalker" Entry="53488" />
+	</AvoidMobs>
+	
+	<Blackspots>
+
+	</Blackspots>
+
+	<Mailboxes>
+	</Mailboxes>
+ 
+	<Vendors>
+	</Vendors>
+	
+	<ProtectedItems>
+	</ProtectedItems>
+
+	<Factions></Factions>
+	
+	<QuestOrder>
+		<ClearVendor />
+		<ClearMailbox />
+
+		<!-- Level check -->
+		<If Condition="Me.Level &gt;= 80">
+		
+		 	<!-- UserSettings -->
+			<CustomBehavior File="UserSettings"
+							FindMountAutomatically="True"
+							GroundMountFarmingMode="False"
+							HarvestHerbs="False"
+							HarvestMinerals="False"
+							KillBetweenHotspots="True"
+							LogoutForInactivity="False"
+							LogoutInactivityUseForceQuit="False"
+							LootMobs="True"
+							LootRadius="25"
+							MountName=""
+							NinjaSkin="False"
+							RessAtSpiritHealers="False"
+							SkinMobs="False"
+							UseMount="True" 
+							UseRandomMount="False" />
+						
+			<!-- If we are inside Black Temple -->
+			<If Condition="Me.MapId == 564">
+			
+				<!-- The Black Temple detected. Running out -->
+				<CustomBehavior File="Message" 
+								Text="The Black Temple detected. Running out."
+								LogColor="Plum" />
+					
+				<!-- Move to - zone in location -->
+				<MoveTo X="97.7989" Y="1001.99" Z="-86.7756" />
+				
+				<!-- Profile message - Waiting 3 seconds - Bag and durability check -->
+				<CustomBehavior File="Message" 
+								Text="Waiting 3 seconds - Bag and durability check."  
+								LogColor="Orange" />
+				
+				<!-- Wait timer - wait 3 seconds - delay -->
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="3000" />
+				
+				<!-- If we have less then 35 empty bag slots or our durability is less than 30% -->
+				<If Condition="(Me.FreeBagSlots &lt;= 35) || (Me.LowestDurabilityPercent &lt;= 0.3)" >
+											
+					<!-- Load profile - [QO-N][90-Flying]_botanist_grim-batol_[repair-mail] -->
+					<CustomBehavior File="LoadProfile" 
+									ProfileName="Movement\Vendors\[QO-N][90-Flying]_botanist_black_temple_[repair-mail]" />
+
+				</If>	<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+				
+				<!-- Profile message - All checks complete -->
+				<CustomBehavior File="Message" 
+								Text="All checks complete."  
+								LogColor="Orange" />
+
+				<!-- Custom behavior - Misc/InInstance - exit the instance-->
+				<CustomBehavior File="Misc\InInstance" 
+								X="80.51482" Y="1001.702" Z="-88.89784" />
+				
+				<!-- Wait timer - wait 15 seconds - delay -->
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="15000" />
+				
+				<!-- Move to - zone out location -->
+				<MoveTo X="-3650.9" Y="316.897" Z="35.85276" />
+				
+			</If>	<!-- If we are inside Black Temple -->
+			
+			<!-- If we are not in the Black Temple instance box, load the movement profile -->
+			<If Condition="Me.X &gt; -3607.206 || Me.X &lt; -3655.454 || Me.Y &lt; 292.4347 || Me.Y &gt; 340.4077" >
+				
+				<!-- Custom behavior - LoadProfile - Movement\[QO-N-M][90-Flying]_botanist_black_temple -->
+				<CustomBehavior File="LoadProfile" 
+								ProfileName="Movement\[QO-N-M][90-Flying]_botanist_black_temple" />
+				
+			</If>	<!-- If we are not in the Black Temple instance box, load the movement profile -->
+			
+			<!-- If we are in the Black Temple instance box -->
+			<If Condition="Me.X &lt; -3607.206 &amp;&amp; Me.X &gt; -3655.454 &amp;&amp; Me.Y &gt; 292.4347 &amp;&amp; Me.Y &lt; 340.4077" >
+			
+				<!-- Profile message - Portal detected nearby -->
+				<CustomBehavior File="Message" 
+								Text="Portal detected nearby."
+								LogColor="Plum" />	
+		
+				<!-- Profile message - Resetting the instance -->
+				<CustomBehavior File="Message" 
+								Text="Resetting the instance." 
+								LogColor="Orange" />
+				
+				<!-- Reset the instance -->
+				<CustomBehavior File="RunMacro" 
+								Macro="/script ResetInstances()" />
+								
+				<!-- Set the dungeon difficulty to normal -->				
+				<CustomBehavior File="RunMacro" 
+								Macro="/script SetDungeonDifficultyID(1);" />
+				
+				<!-- Profile message - The instance has been reset -->
+				<CustomBehavior File="Message" 
+								Text="The instance has been reset." 
+								LogColor="Plum" />
+						
+				<!-- While we are not in Black Temple -->
+				<While Condition="Me.MapId != 564">
+				
+					<!-- Move to - zone out location -->
+					<MoveTo X="-3650.9" Y="316.897" Z="35.85276" />
+
+					<!-- Attempt to re-enter the portal -->
+					<CustomBehavior File="Misc\InInstance" 
+									X="-3665.714" Y="319.1302" Z="35.00054" />
+									
+					<!-- Profile message - Waiting for the dungeon to load -->				
+					<CustomBehavior File="Message" 
+									Text="Waiting for the dungeon to load." 
+									LogColor="Plum" />
+								
+					<!-- Wait timer - wait 20-40 seconds -->		
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="20000"
+									VariantTime="20000" />
+									
+					<!-- If we are not in Black Temple, we're locked out -->
+					<If Condition="Me.MapId != 564">
+					
+						<!-- Profile message - We are locked out. Waiting and trying again -->
+						<CustomBehavior File="Message" 
+										Text="We are locked out. Waiting and trying again." 
+										LogColor="Plum" />
+										
+					</If>	<!-- If we are not in Black Temple, we're locked out -->
+					
+				</While>	<!-- While we are not in Black Temple -->
+				
+			</If>	<!-- If we are in the Black Temple instance box -->
+			
+			<!-- If we are inside Black Temple -->
+			<If Condition="Me.MapId == 564">
+				
+				<!--Profile message	- Deleting unwanted items from our bags -->				
+				<CustomBehavior File="Message" 
+								Text="Deleting unwanted items from our bags." 
+								LogColor="Orange" />
+
+				<!-- Morning Glory Dew -->
+				<CustomBehavior File="DeleteItems" 
+								Ids="8766" />
+						
+				<!-- Instance timer -->
+				<CustomBehavior File="Misc\InstanceTimer" 
+								Timer="Start" />							
+							
+				<!-- Turn on autolooting -->
+				<CustomBehavior File="RunMacro" 
+								Macro="/script SetCVar('AutoLootDefault', 1)" 
+								NumOfTimes="1" 
+								WaitTime="1000" />
+
+				<!-- Profile message - Black Temple initialized -->			
+				<CustomBehavior File="Message" 
+								Text="Black Temple initialized."  
+								LogColor="Plum" />
+								
+				<!-- Profile message - Disabling 'Pull' behavior -->
+				<CustomBehavior File="Message" 
+								Text="Disabling 'Pull' behavior."
+								LogColor="Plum" />
+				
+				<!-- DisableBehavior - Pull -->
+				<DisableBehavior Name="Pull" />				
+								
+								
+								
+				<!-- ****************************************************** Black Temple ********************************************************************** -->
+								
+								
+									
+				<!-- Profile message - Moving to engage High Warlord Naj'entus -->
+				<CustomBehavior File="Message" 
+								Text="Moving to engage High Warlord Naj'entus." 
+								LogColor="Plum" />
+	
+				<MoveTo X="253.3045" Y="811.6322" Z="-26.70453" />
+				
+				<MoveTo X="396.2937" Y="812.9945" Z="13.16231" />
+				
+				<MoveTo X="433.8813" Y="852.0111" Z="12.36403" />
+				
+				<!-- Wait timer - wait 3 seconds - delay -->
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="3000" />
+										
+				<MoveTo X="455.1141" Y="795.9451" Z="12.06058" />
+				
+				<!-- Wait timer - wait 3 seconds - delay -->
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="3000" />
+				
+				<!-- Profile message - Disabling combat -->
+				<CustomBehavior File="Message" 
+								Text="Disabling combat." 
+								LogColor="Gold" />
+				
+				<!-- DisableBehavior - Combat -->
+				<DisableBehavior Name="Combat" />
+						
+				<!-- Move to - safe ranged attack -->		
+				<MoveTo X="424.5919" Y="821.5549" Z="12.36993" />
+
+				<!-- Move to - safe ranged attack - pivot location-->
+				<CustomBehavior File="MyCTM" 
+								X="407.083" Y="791.6342" Z="14.9453" />
+								
+				<!-- Move to - safe ranged attack -->
+				<CustomBehavior File="MyCTM" 
+								X="412.433" Y="776.1443" Z="13.77013" />				
+								
+				<!-- Profile message - Enabling combat -->
+				<CustomBehavior File="Message" 
+									Text="Enabling combat." 
+									LogColor="Gold" />
+
+				<!-- enable combat -->
+				<EnableBehavior Name="Combat" />				
+								
+				<!-- Macro - Clear target -->					
+				<CustomBehavior File="RunMacro" 
+								Macro="/cleartarget" 
+								NumOfTimes="1" 
+								WaitTime="0"/>				
+								
+				<!-- Macro - targetenemy -->						
+				<CustomBehavior File="RunMacro"
+								NumOfTimes="1"
+								Macro="/targetenemy" />				
+								
+				<!-- If our current target is an Aqueous Lord -->
+				<If Condition="(Me.CurrentTarget != null) &amp;&amp; (Me.CurrentTarget.Entry == 22878)">
+				
+					<!-- Custom behavior - TargetAndMoveToMob - Aqueous Lord -->
+					<CustomBehavior File="TargetAndMoveToMob"
+									MoveWithinMaxRangeOfMob="1"
+									TargetOnlyIfHealthPercentAbove="5"
+									WaitForNpcs="False"
+									MobId="22878" >
+					</CustomBehavior>	<!-- Custom behavior - TargetAndMoveToMob -->
+									
+					<!-- Custom behavior waitTimer - 3 second delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />				
+		
+				</If>	<!-- If our current target is an Aqueous Lord -->				
+
+				<!-- Move to - safe location -->		
+				<MoveTo X="434.6562" Y="772.8652" Z="11.96425" />
+				
+				<!-- Macro - Clear target -->					
+				<CustomBehavior File="RunMacro" 
+								Macro="/cleartarget" 
+								NumOfTimes="1" 
+								WaitTime="0"/>
+
+				<!-- Macro - targetenemy -->						
+				<CustomBehavior File="RunMacro"
+								NumOfTimes="1"
+								Macro="/tar High Warlord Naj'entus" />
+				
+				<!-- If our current target is High Warlord Naj'entus -->
+				<If Condition="(Me.CurrentTarget != null) &amp;&amp; (Me.CurrentTarget.Entry == 22887)">
+				
+					<CustomBehavior File="GetOutOfGroundEffectAndAuras" 
+								EventCompleteWhen="SpecificMobsDead" EventCompleteDeadMobId="22887"
+								EventX="434.943" EventY="739.2537" EventZ="14.98658"
+								MoveAwayFromMobCastingSpellId1="39872"
+								MoveAwayFromMobWithAuraId1="39872"
+								MoveOutOfGroundEffectAuraId1="39872" >
+							<Safespots>
+								<Hotspot X="436.2317" Y="851.8698" Z="12.36358" />
+								<Hotspot X="397.2709" Y="812.9184" Z="13.09668" />
+								<Hotspot X="456.1422" Y="808.7392" Z="12.1311" />
+							</Safespots>
+					</CustomBehavior>
+						
+					<!-- Custom behavior waitTimer - 3 second delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+
+					<!-- Else our current target is not High Warlord Naj'entus -->				
+					<Else>
+						
+						<!-- Profile message - High Warlord Naj'entus is not spawned -->
+						<CustomBehavior File="Message" 
+										Text="High Warlord Naj'entus is not spawned."
+										LogColor="Gold" />
+					
+					</Else>	<!-- Else our current target is not High Warlord Naj'entus -->					
+									
+				</If>	<!-- If our current target is High Warlord Naj'entus -->					
+									
+				<!-- Profile message - Disabling 'Pull' behavior -->
+				<CustomBehavior File="Message" 
+								Text="Disabling 'Pull' behavior."
+								LogColor="Plum" />
+				
+				<!-- DisableBehavior - Pull -->
+				<DisableBehavior Name="Pull" />				
+
+
+				<!-- ************************************************************* -->				
+									
+									
+				<!-- Profile message - Moving to engage Supremus -->
+				<CustomBehavior File="Message" 
+								Text="Moving to engage Supremus." 
+								LogColor="Plum" />		
+								
+				<MoveTo X="683.4987" Y="886.5897" Z="54.7619"  />
+				
+				<!-- Profile message - Enabling 'Pull' behavior -->
+				<CustomBehavior File="Message" 
+								Text="Enabling 'Pull' behavior."
+								LogColor="Plum" />
+				
+				<!-- EnableBehavior - Pull -->
+				<EnableBehavior Name="Pull" />
+
+				<!-- Wait timer - wait 3 seconds - delay -->
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="3000" />
+
+				<!-- Macro - Clear target -->					
+				<CustomBehavior File="RunMacro" 
+								Macro="/cleartarget" 
+								NumOfTimes="1" 
+								WaitTime="0"/>
+
+				<!-- Macro - targetenemy -->						
+				<CustomBehavior File="RunMacro"
+								NumOfTimes="1"
+								Macro="/tar Supremus" />
+				
+				<!-- If our current target is Supremus -->
+				<If Condition="(Me.CurrentTarget != null) &amp;&amp; (Me.CurrentTarget.Entry == 22898)">
+				
+					<!-- Custom behavior - TargetAndMoveToMob - Supremus -->
+					<CustomBehavior File="TargetAndMoveToMob"
+									MoveWithinMaxRangeOfMob="15"
+									TargetOnlyIfHealthPercentAbove="5"
+									WaitForNpcs="False"
+									MobId="22898" >
+					</CustomBehavior>	<!-- Custom behavior - TargetAndMoveToMob -->
+				
+					<CustomBehavior File="GetOutOfGroundEffectAndAuras" 
+								EventCompleteWhen="SpecificMobsDead" EventCompleteDeadMobId="22898"
+								EventX="702.1411" EventY="650.7153" EventZ="74.96607"
+								MoveAwayFromMobCastingSpellId1="111111"
+								MoveAwayFromMobWithAuraId1="111111"
+								MoveOutOfGroundEffectAuraId1="111111" >
+							<Safespots>
+								<Hotspot X="702.1411" Y="650.7153" Z="74.96607" />	
+							</Safespots>
+					</CustomBehavior>
+						
+					<!-- Custom behavior waitTimer - 3 second delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+
+					<!-- Else our current target is not Supremus -->				
+					<Else>
+						
+						<!-- Profile message - Supremus is not spawned -->
+						<CustomBehavior File="Message" 
+										Text="Supremus is not spawned."
+										LogColor="Gold" />
+					
+					</Else>	<!-- Else our current target is not Supremus -->					
+									
+				</If>	<!-- If our current target is Supremus -->					
+									
+				<!-- Profile message - Disabling 'Pull' behavior -->
+				<CustomBehavior File="Message" 
+								Text="Disabling 'Pull' behavior."
+								LogColor="Plum" />
+				
+				<!-- DisableBehavior - Pull -->
+				<DisableBehavior Name="Pull" />
+				
+
+				
+				<!-- ************************************************************* -->
+				
+				
+				
+				<!-- Profile message - Moving to Akama -->
+				<CustomBehavior File="Message" 
+								Text="Moving to Akama." 
+								LogColor="Plum" />
+								
+				<!-- Move to - door before Akama -->
+				<MoveTo X="558.213" Y="400.2941" Z="112.7837" />
+				
+				<!-- Profile message - Enabling 'Pull' behavior -->
+				<CustomBehavior File="Message" 
+								Text="Enabling 'Pull' behavior."
+								LogColor="Plum" />
+				
+				<!-- EnableBehavior - Pull -->
+				<EnableBehavior Name="Pull" />
+				
+				<!-- gather trash around Akama -->
+				<MoveTo X="495.747" Y="442.1542" Z="112.7837" />
+				
+				<MoveTo X="496.2091" Y="367.5033" Z="112.7837" />
+				
+				<MoveTo X="536.7358" Y="368.5437" Z="112.7837" />
+
+				<MoveTo X="547.0215" Y="400.0178" Z="112.784" />
+				
+				<!-- Profile message - Initiating the event -->
+				<CustomBehavior File="Message" 
+								Text="Initiating the event." 
+								LogColor="Plum" />
+				
+				<!-- Custom behavior - InteractWith -  Akama -->
+				<CustomBehavior File="InteractWith" 
+								ObjectType="Npc" 
+								MobId="23191"
+								WaitForNpcs="false" 
+								GossipOptions="1" 
+								X="547.1864" Y="400.5344" Z="112.7837" />			
+	
+				<!-- Profile message - Disabling 'Pull' behavior -->
+				<CustomBehavior File="Message" 
+								Text="Disabling 'Pull' behavior."
+								LogColor="Plum" />
+				
+				<!-- DisableBehavior - Pull -->
+				<DisableBehavior Name="Pull" />	
+				
+				<!-- Custom behavior waitTimer - 5 second delay -->
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="5000" />
+								
+				<!-- move to - raised platform -->				
+				<MoveTo X="467.2708" Y="401.6108" Z="118.5379" />				
+								
+											
+								
+				<!-- ************************************************************* -->					
+											
+											
+										
+				<!-- While our X < 535 -->
+				<While Condition="Me.X &lt; 535" >
+				
+					<!-- Macro - Clear target -->					
+					<CustomBehavior File="RunMacro" 
+									Macro="/cleartarget" 
+									NumOfTimes="1" 
+									WaitTime="0"/>
+
+					<!-- Custom behavior - TargetAndMoveToMob - Ashtongue Channeler -->
+					<CustomBehavior File="TargetAndMoveToMob"
+									MoveWithinMaxRangeOfMob="3"
+									TargetOnlyIfHealthPercentAbove="5"
+									WaitForNpcs="False"
+									MobId="23421" >
+					</CustomBehavior>	<!-- Custom behavior - TargetAndMoveToMob -->
+				
+					<!-- If our target is an Ashtongue Channeler -->
+					<If Condition="(Me.CurrentTarget != null) &amp;&amp; (Me.CurrentTarget.Entry == 23421)">
+					
+						<!-- Profile message  - Engaging a Ashtongue Channeler -->	
+						<CustomBehavior File="Message" 
+										Text="Engaging a Ashtongue Channeler." 
+										LogColor="Cyan" />
+						
+						<!-- CustomBehavior - RunMacro - Auto Attack -->
+						<CustomBehavior File="RunMacro"
+										NumOfTimes="5"
+										Macro="/cast Auto Attack" />					
+
+						<Else>
+						
+							<!-- Profile message  - No Ashtongue Channeler's available -->	
+							<CustomBehavior File="Message" 
+											Text="No Ashtongue Channeler's available." 
+											LogColor="Cyan" />				
+											
+							<!-- move to killzone -->				
+							<MoveTo X="469.366" Y="401.0816" Z="118.5381" />				
+											
+							<!-- Profile message - Enabling 'Pull' behavior -->
+							<CustomBehavior File="Message" 
+											Text="Enabling 'Pull' behavior."
+											LogColor="Plum" />
+							
+							<!-- EnableBehavior - Pull -->
+							<EnableBehavior Name="Pull" />
+							
+							<!-- Profile message - Enabling combat -->
+							<CustomBehavior File="Message" 
+												Text="Enabling combat." 
+												LogColor="Gold" />
+
+							<!-- enable combat -->
+							<EnableBehavior Name="Combat" />
+				
+							<!-- Custom behavior waitTimer - 5 second delay -->
+							<CustomBehavior File="WaitTimer" 
+											WaitTime="5000" />
+											
+							<!-- Profile message - Disabling 'Pull' behavior -->
+							<CustomBehavior File="Message" 
+											Text="Disabling 'Pull' behavior."
+											LogColor="Plum" />
+							
+							<!-- DisableBehavior - Pull -->
+							<DisableBehavior Name="Pull" />				
+											
+							<!-- move to the exit to break the while loop -->				
+							<MoveTo X="548.3693" Y="400.7865" Z="112.7839" />
+							
+						</Else>
+						
+					</If>	<!-- If our target is a Ashtongue Channeler -->
+
+				</While>	<!-- While our X < 535 -->
+			
+				<!-- move to - raised platform -->				
+				<MoveTo X="467.2708" Y="401.6108" Z="118.5379" />	
+
+				<!-- While our X < 535 -->
+				<While Condition="Me.X &lt; 535" >
+				
+					<!-- Macro - Clear target -->					
+					<CustomBehavior File="RunMacro" 
+									Macro="/cleartarget" 
+									NumOfTimes="1" 
+									WaitTime="0"/>
+
+					<!-- Custom behavior - TargetAndMoveToMob - Ashtongue Sorcerer -->
+					<CustomBehavior File="TargetAndMoveToMob"
+									MoveWithinMaxRangeOfMob="1"
+									TargetOnlyIfHealthPercentAbove="5"
+									WaitForNpcs="False"
+									MobId="23215" >
+					</CustomBehavior>	<!-- Custom behavior - TargetAndMoveToMob -->
+				
+					<!-- If our target is an Ashtongue Sorcerer -->
+					<If Condition="(Me.CurrentTarget != null) &amp;&amp; (Me.CurrentTarget.Entry == 23215)">
+					
+						<!-- Profile message  - Engaging a Ashtongue Sorcerer -->	
+						<CustomBehavior File="Message" 
+										Text="Engaging a Ashtongue Sorcerer." 
+										LogColor="Cyan" />
+						
+						<!-- CustomBehavior - RunMacro - Auto Attack -->
+						<CustomBehavior File="RunMacro"
+										NumOfTimes="5"
+										Macro="/cast Auto Attack" />
+
+						<Else>
+						
+							<!-- Profile message  - No Ashtongue Sorcerer's available -->	
+							<CustomBehavior File="Message" 
+											Text="No shtongue Sorcerer's available." 
+											LogColor="Cyan" />
+											
+							<!-- move to killzone -->				
+							<MoveTo X="469.366" Y="401.0816" Z="118.5381" />				
+											
+							<!-- Profile message - Enabling 'Pull' behavior -->
+							<CustomBehavior File="Message" 
+											Text="Enabling 'Pull' behavior."
+											LogColor="Plum" />
+							
+							<!-- EnableBehavior - Pull -->
+							<EnableBehavior Name="Pull" />
+							
+							<!-- Profile message - Enabling combat -->
+							<CustomBehavior File="Message" 
+												Text="Enabling combat." 
+												LogColor="Gold" />
+
+							<!-- enable combat -->
+							<EnableBehavior Name="Combat" />
+				
+							<!-- Custom behavior waitTimer - 5 second delay -->
+							<CustomBehavior File="WaitTimer" 
+											WaitTime="5000" />
+											
+							<!-- Profile message - Disabling 'Pull' behavior -->
+							<CustomBehavior File="Message" 
+											Text="Disabling 'Pull' behavior."
+											LogColor="Plum" />
+							
+							<!-- DisableBehavior - Pull -->
+							<DisableBehavior Name="Pull" />				
+											
+							<!-- move to the exit to break the while loop -->				
+							<MoveTo X="548.3693" Y="400.7865" Z="112.7839" />
+
+						</Else>
+						
+					</If>	<!-- If our target is a Ashtongue Channeler -->
+
+				</While>	<!-- While our X < 535 -->
+				
+				<!-- Profile message - Enabling 'Pull' behavior -->
+				<CustomBehavior File="Message" 
+								Text="Enabling 'Pull' behavior."
+								LogColor="Plum" />
+				
+				<!-- EnableBehavior - Pull -->
+				<EnableBehavior Name="Pull" />
+				
+				<!-- Profile message - Enabling combat -->
+				<CustomBehavior File="Message" 
+									Text="Enabling combat." 
+									LogColor="Gold" />
+
+				<!-- enable combat -->
+				<EnableBehavior Name="Combat" />
+				
+				<!-- Custom behavior waitTimer - 5 second delay -->
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="5000" />
+								
+				<!-- Profile message - Disabling 'Pull' behavior -->
+				<CustomBehavior File="Message" 
+								Text="Disabling 'Pull' behavior."
+								LogColor="Plum" />
+				
+				<!-- DisableBehavior - Pull -->
+				<DisableBehavior Name="Pull" />					
+			
+				<!-- While our X < 580 -->
+				<While Condition="Me.X &lt; 580" >				
+								
+					<!-- Macro - Clear target -->					
+					<CustomBehavior File="RunMacro" 
+									Macro="/cleartarget" 
+									NumOfTimes="1" 
+									WaitTime="0"/>
+
+					<!-- Custom behavior - TargetAndMoveToMob - Shade of Akama -->
+					<CustomBehavior File="TargetAndMoveToMob"
+									MoveWithinMaxRangeOfMob="1"
+									TargetOnlyIfHealthPercentAbove="5"
+									WaitForNpcs="False"
+									MobId="22841" >
+					</CustomBehavior>	<!-- Custom behavior - TargetAndMoveToMob -->				
+									
+					<!-- If our target is Shade of Akama -->
+					<If Condition="(Me.CurrentTarget != null) &amp;&amp; (Me.CurrentTarget.Entry == 22841)">				
+									
+						<!-- Profile message  - Engaging Shade of Akama -->	
+						<CustomBehavior File="Message" 
+										Text="Engaging Shade of Akama." 
+										LogColor="Cyan" />
+						
+						<!-- CustomBehavior - RunMacro - Auto Attack -->
+						<CustomBehavior File="RunMacro"
+										NumOfTimes="5"
+										Macro="/cast Auto Attack" />			
+									
+						<Else>
+						
+							<!-- Profile message  - Shade of Akama is not available -->	
+							<CustomBehavior File="Message" 
+											Text="Shade of Akama is not available." 
+											LogColor="Cyan" />
+				
+							<!-- Custom behavior waitTimer - 5 second delay -->
+							<CustomBehavior File="WaitTimer" 
+											WaitTime="5000" />
+											
+							<!-- Profile message - Disabling 'Pull' behavior -->
+							<CustomBehavior File="Message" 
+											Text="Disabling 'Pull' behavior."
+											LogColor="Plum" />
+							
+							<!-- DisableBehavior - Pull -->
+							<DisableBehavior Name="Pull" />				
+											
+							<!-- Move to - exit the room to break the while loop -->				
+							<MoveTo X="586.847" Y="399.6789" Z="112.752" />
+
+						</Else>				
+									
+					</If>	<!-- If our target is Shade of Akama -->				
+			
+				</While>	<!-- While our X < 580 -->
+			
+				<!-- ************************************************************* -->
+				
+				
+				<!-- Custom behavior waitTimer - 5 second delay -->
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="5000" />
+								
+
+				
+				<!-- ************************************************************* -->
+				
+				
+
+				<!-- Profile message - Moving to engage Tenon Gorefiend -->
+				<CustomBehavior File="Message" 
+								Text="Moving to engage Tenon Gorefiend." 
+								LogColor="Plum" />
+								
+				<MoveTo X="580.9857" Y="402.8667" Z="190.6412" />
+				
+				<!-- Macro - Clear target -->					
+				<CustomBehavior File="RunMacro" 
+								Macro="/cleartarget" 
+								NumOfTimes="1" 
+								WaitTime="0"/>
+
+				<!-- Custom behavior - TargetAndMoveToMob - Tenon Gorefiend -->
+				<CustomBehavior File="TargetAndMoveToMob"
+								MoveWithinMaxRangeOfMob="15"
+								TargetOnlyIfHealthPercentAbove="5"
+								WaitForNpcs="False"
+								MobId="22871" >
+				</CustomBehavior>	<!-- Custom behavior - TargetAndMoveToMob -->				
+								
+				<!-- If our target is Tenon Gorefiend -->
+				<If Condition="(Me.CurrentTarget != null) &amp;&amp; (Me.CurrentTarget.Entry == 22871)">				
+
+					<CustomBehavior File="GetOutOfGroundEffectAndAuras" 
+								EventCompleteWhen="SpecificMobsDead" EventCompleteDeadMobId="22871"
+								EventX="606.6405" EventY="402.1733" EventZ="187.0896"
+								MoveAwayFromMobCastingSpellId1="39872"
+								MoveAwayFromMobWithAuraId1="39872"
+								MoveOutOfGroundEffectAuraId1="39872" >
+							<Safespots>
+								<Hotspot X="606.6405" Y="402.1733" Z="187.0896" />
+							</Safespots>
+					</CustomBehavior>			
+								
+					<Else>
+					
+						<!-- Profile message  - Tenon Gorefiend is not available -->	
+						<CustomBehavior File="Message" 
+										Text="Tenon Gorefiend is not available." 
+										LogColor="Cyan" />
+			
+						<!-- Custom behavior waitTimer - 5 second delay -->
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="5000" />
+										
+						<!-- Profile message - Disabling 'Pull' behavior -->
+						<CustomBehavior File="Message" 
+										Text="Disabling 'Pull' behavior."
+										LogColor="Plum" />
+						
+						<!-- DisableBehavior - Pull -->
+						<DisableBehavior Name="Pull" />				
+
+					</Else>				
+								
+				</If>	<!-- If our target is Tenon Gorefiend -->
+
+				
+				
+				<!-- ************************************************************* -->
+				
+				
+				<!-- Profile message - Moving to Halls of Anguishd -->
+				<CustomBehavior File="Message" 
+								Text="Moving to Halls of Anguish." 
+								LogColor="Plum" />
+								
+				<!--  Move to - Halls of Anguish -->
+				<MoveTo X="658.5698" Y="71.56376" Z="112.712" />
+				
+				<!-- Profile message - Disabling combat -->
+				<CustomBehavior File="Message" 
+									Text="Disabling combat." 
+									LogColor="Gold" />
+				
+				<!-- DisableBehavior - Combat -->
+				<DisableBehavior Name="Combat" />
+
+				<!--  Move to - top of the stairs before Essence of Suffering -->
+				<MoveTo X="498.1594" Y="95.87411" Z="103.0903" />
+				
+				<!-- Profile message - Enabling combat -->
+				<CustomBehavior File="Message" 
+									Text="Enabling combat." 
+									LogColor="Gold" />
+
+				<!-- enable combat -->
+				<EnableBehavior Name="Combat" />
+				
+				<!-- Wait timer - wait 5 seconds - delay -->
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="5000" />
+				
+				<!-- Profile message - Moving to the Reliquary of the Lost -->
+				<CustomBehavior File="Message" 
+								Text="Moving to the Reliquary of the Lost." 
+								LogColor="Plum" />
+
+				<!-- Profile message - Enabling 'Pull' behavior -->
+				<CustomBehavior File="Message" 
+								Text="Enabling 'Pull' behavior."
+								LogColor="Plum" />
+				
+				<!-- EnableBehavior - Pull -->
+				<EnableBehavior Name="Pull" />				
+								
+				<!--  Move to - bottom of the stairs before Essence of Suffering -->
+				<MoveTo X="492.5621" Y="115.9483" Z="94.75452" />				
+								
+				<!-- Wait timer - wait 240 seconds - delay -->
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="240000" />
+
+				<!-- Profile message - Disabling 'Pull' behavior -->
+				<CustomBehavior File="Message" 
+								Text="Disabling 'Pull' behavior."
+								LogColor="Plum" />
+				
+				<!-- DisableBehavior - Pull -->
+				<DisableBehavior Name="Pull" />					
+
+				
+				<!-- ************************************************************* -->
+				
+				
+				<!-- Profile message - Moving to engage Gurtogg Bloodboil -->
+				<CustomBehavior File="Message" 
+								Text="Moving to engage Gurtogg Bloodboil." 
+								LogColor="Plum" />
+				
+				<!-- Move to - stairs leading down -->
+				<MoveTo X="926.9655" Y="105.4944" Z="112.6941" />
+							
+				<!-- Profile message - Enabling 'Pull' behavior -->
+				<CustomBehavior File="Message" 
+								Text="Enabling 'Pull' behavior."
+								LogColor="Plum" />
+				
+				<!-- EnableBehavior - Pull -->
+				<EnableBehavior Name="Pull" />			
+							
+				<!-- Move to - bottom of the stairs before Gurtogg Bloodboil -->
+				<MoveTo X="799.0012" Y="276.7987" Z="63.69327" />			
+							
+				<!-- If we are a DeathKnight -->
+				<If Condition="(Me.Class == WoWClass.DeathKnight)">
+				
+					<!-- Custom behavior - Macro - /cast Horn of Winter -->					
+					<CustomBehavior File="RunMacro" 
+									Macro="/cast Horn of Winter" 
+									NumOfTimes="1" 
+									WaitTime="500"/>
+					
+					<!-- Custom behavior - Macro - /cast Icebound Fortitude -->					
+					<CustomBehavior File="RunMacro" 
+									Macro="/cast Icebound Fortitude" 
+									NumOfTimes="1" 
+									WaitTime="500"/>
+										
+					<!-- Custom behavior - Macro - /cast Lichborne -->					
+					<CustomBehavior File="RunMacro" 
+									Macro="/cast Lichborne" 
+									NumOfTimes="1" 
+									WaitTime="500"/>
+						
+				</If>	 <!-- If we are a DeathKnight -->			
+
+				<!-- Move to - Gurtogg Bloodboil -->
+				<MoveTo X="754.1675" Y="276.9928" Z="63.77333" />
+				
+				<!-- Custom behavior waitTimer - 3 second delay -->
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="3000" />
+
+				<!-- Profile message - Disabling 'Pull' behavior -->
+				<CustomBehavior File="Message" 
+								Text="Disabling 'Pull' behavior."
+								LogColor="Plum" />
+				
+				<!-- DisableBehavior - Pull -->
+				<DisableBehavior Name="Pull" />
+				
+				
+				
+				<!-- ************************************************************* -->
+				
+				
+				<!-- Profile message - Moving to engage Mother Shahraz -->
+				<CustomBehavior File="Message" 
+								Text="Moving to engage Mother Shahraz." 
+								LogColor="Plum" />
+								
+				<MoveTo X="946.3041" Y="185.0681" Z="192.3209" />
+				
+				<!-- Profile message - Enabling 'Pull' behavior -->
+				<CustomBehavior File="Message" 
+								Text="Enabling 'Pull' behavior."
+								LogColor="Plum" />
+				
+				<!-- EnableBehavior - Pull -->
+				<EnableBehavior Name="Pull" />
+				
+				<!-- Move to - Mother Shahraz -->
+				<MoveTo X="945.3135" Y="149.0778" Z="197.0748" />
+				
+				<!-- Custom behavior waitTimer - 3 second delay -->
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="3000" />
+
+				<!-- Profile message - Disabling 'Pull' behavior -->
+				<CustomBehavior File="Message" 
+								Text="Disabling 'Pull' behavior."
+								LogColor="Plum" />
+				
+				<!-- DisableBehavior - Pull -->
+				<DisableBehavior Name="Pull" />
+				
+				
+				
+				<!-- ************************************************************* -->
+				
+				
+				<!-- Profile message - Moving to engage the Illidari Council  -->
+				<CustomBehavior File="Message" 
+								Text="Moving to engage the Illidari Council." 
+								LogColor="Plum" />
+								
+				<!-- Move to - entrance of the Chamber of Command -->				
+				<MoveTo X="648.7404" Y="304.9178" Z="271.6894" />
+				
+				<!-- Move to - safe ranged attack -->		
+				<MoveTo X="680.7355" Y="248.6717" Z="271.702" />
+				
+				<!-- If we are a DeathKnight -->
+				<If Condition="(Me.Class == WoWClass.DeathKnight)">
+				
+					<!-- Custom behavior - Macro - /cast Army of the Dead -->					
+					<CustomBehavior File="RunMacro" 
+									Macro="/cast Army of the Dead" 
+									NumOfTimes="1" 
+									WaitTime="500"/>
+				
+				</If>	 <!-- If we are a DeathKnight -->
+				
+				<!-- Move to - safe ranged attack -->		
+				<MoveTo X="709.156" Y="273.4322" Z="277.4417" />
+						
+				<!-- Macro - Clear target -->					
+				<CustomBehavior File="RunMacro" 
+								Macro="/cleartarget" 
+								NumOfTimes="1" 
+								WaitTime="0"/>
+
+				<!-- Custom behavior - Runmacro - target Gathios the Shatterer -->	
+				<CustomBehavior File="RunMacro" 
+								Macro="/target Gathios the Shatterer" />				
+	
+				<!-- If our target is Gathios the Shatterer -->
+				<If Condition="(Me.CurrentTarget != null) &amp;&amp; (Me.CurrentTarget.Entry == 22949)">				
+
+					<!-- Profile message  - Engaging Gathios the Shatterer -->	
+					<CustomBehavior File="Message" 
+									Text="Engaging Gathios the Shatterer." 
+									LogColor="Cyan" />
+					
+					<CustomBehavior File="GetOutOfGroundEffectAndAuras" 
+								EventCompleteWhen="SpecificMobsDead" EventCompleteDeadMobId="22949"
+								EventX="704.5431" EventY="304.8978" EventZ="277.4431"
+								MoveAwayFromMobCastingSpellId1="111111"
+								MoveAwayFromMobWithAuraId1="111111"
+								MoveOutOfGroundEffectAuraId1="111111" >
+							<Safespots>
+								<Hotspot X="704.5431" Y="304.8978" Z="277.4431" />
+							</Safespots>
+					</CustomBehavior>
+								
+					<Else>
+					
+						<!-- Profile message  - Illidari Council is not available -->	
+						<CustomBehavior File="Message" 
+										Text="Illidari Council is not available." 
+										LogColor="Cyan" />
+										
+						<!-- Profile message - Disabling 'Pull' behavior -->
+						<CustomBehavior File="Message" 
+										Text="Disabling 'Pull' behavior."
+										LogColor="Plum" />
+						
+						<!-- DisableBehavior - Pull -->
+						<DisableBehavior Name="Pull" />	
+										
+					</Else>				
+								
+				</If>	<!-- If our target is Gathios the Shatterer -->				
+
+				
+				
+				<!-- ************************************************************* -->
+				
+				
+				
+				<!-- Profile message - Waiting 15 seconds for Akama -->
+				<CustomBehavior File="Message" 
+								Text="Waiting 15 seconds for Akama." 
+								LogColor="Plum" />
+								
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="15000" />
+								
+				<!-- Profile message - Moving to Akama -->
+				<CustomBehavior File="Message" 
+								Text="Moving to Akama." 
+								LogColor="Plum" />
+
+				<!-- Move to - Akama -->
+				<MoveTo X="660.7646" Y="305.7663" Z="271.6883" />				
+
+				<CustomBehavior File="InteractWith" 
+								ObjectType="Npc"
+								MobId="23089" 
+								WaitForNpcs="false" 
+								GossipOptions="1" 
+								X="660.3757" Y="305.8006" Z="271.6877" />
+				
+				
+				<!-- ************************************************************* -->
+				 
+				
+				<!-- Move to - top of the ramp -->				
+				<MoveTo X="754.4705" Y="304.6359" Z="312.1339"  />
+				
+				<!-- Profile message - Waiting 80 seconds for Akama -->
+				<CustomBehavior File="Message" 
+								Text="Waiting 80 seconds for Akama." 
+								LogColor="Plum" />
+								
+				<!-- Custom behavior waitTimer - 80 second delay -->				
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="80000" />
+				
+				
+				<!-- ************************************************************* -->
+				
+				<!-- Move to - top of the stairs before Illidan Stormrage -->
+				<MoveTo X="750.6966" Y="238.0088" Z="353.0394" />
+				
+				<!-- Custom behavior - InteractWith - Akama -->
+				<CustomBehavior File="InteractWith" 
+								ObjectType="Npc" 
+								MobId="23089" 
+								WaitForNpcs="false" 
+								GossipOptions="1" 
+								X="748.4362" Y="235.8051" Z="352.9961" />
+				
+				
+				<!-- ************************************************************* -->
+				
+				<!-- Profile message - Enabling 'Pull' behavior -->
+				<CustomBehavior File="Message" 
+								Text="Enabling 'Pull' behavior."
+								LogColor="Plum" />
+				
+				<!-- EnableBehavior - Pull -->
+				<EnableBehavior Name="Pull" />
+				
+				<!-- Profile message - Moving to engage Illidan Stormrage -->
+				<CustomBehavior File="Message" 
+								Text="Moving to engage Illidan Stormrage." 
+								LogColor="Plum" />
+				
+				<!-- Move to - Illidan Stormrage -->
+				<MoveTo X="705.7319" Y="304.9877" Z="353.8415" />
+				
+				<!-- Custom behavior waitTimer - 5 minute delay -->
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="300000" />
+
+				<!-- Profile message - Disabling 'Pull' behavior -->
+				<CustomBehavior File="Message" 
+								Text="Disabling 'Pull' behavior."
+								LogColor="Plum" />
+				
+				<!-- DisableBehavior - Pull -->
+				<DisableBehavior Name="Pull" />				
+
+
+				
+				<!-- ************************************************************* -->
+
+
+								
+				<!-- Move to - zone in location -->
+				<MoveTo X="97.7989" Y="1001.99" Z="-86.7756" />	
+
+				<!-- Profile message - Black Temple is complete. Stopping the bot -->			
+				<CustomBehavior File="Message" 
+								Text="Black Temple is complete. Stopping the bot."  
+								LogColor="Orange" />
+				
+				<!-- Custom behavior - UserSettings - stopbot -->
+				<CustomBehavior File="UserSettings" StopBot="true" />
+				
+			</If>	<!-- If we are inside Black Temple -->
+
+		</If>	<!-- Level check -->
+		
+	</QuestOrder>
+	
+</HBProfile>

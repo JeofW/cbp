@@ -1,0 +1,1074 @@
+<HBProfile creator="Botanist" version="1.0">
+	<Name>[QO-H-M][60+][Flying]_eastern-kingdoms</Name>
+   
+	<MinLevel>1</MinLevel>
+	<MaxLevel>101</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	
+	<MailGrey>False</MailGrey>
+	<MailWhite>False</MailWhite>
+	<MailGreen>False</MailGreen>
+	<MailBlue>False</MailBlue>
+	<MailPurple>False</MailPurple>
+   
+	<SellGrey>False</SellGrey>
+	<SellWhite>False</SellWhite>
+	<SellGreen>False</SellGreen>
+	<SellBlue>False</SellBlue>
+	<SellPurple>False</SellPurple>
+
+	<AvoidMobs>
+	</AvoidMobs>
+	
+	<Blackspots>
+	</Blackspots>
+
+	<Mailboxes>
+	</Mailboxes>
+ 
+	<Vendors>
+	</Vendors>
+
+	<Factions></Factions>
+	
+	<ProtectedItems>
+		
+	</ProtectedItems>
+
+	<QuestOrder>
+				
+		<!-- UserSettings -->
+		<CustomBehavior File="UserSettings"
+						FindMountAutomatically="True"
+						GroundMountFarmingMode="False"
+						HarvestHerbs="False"
+						HarvestMinerals="False"
+						KillBetweenHotspots="True"
+						LogoutForInactivity="False"
+						LogoutInactivityUseForceQuit="False"
+						LootMobs="True"
+						LootRadius="35"
+						MountName=""
+						NinjaSkin="False"
+						RessAtSpiritHealers="False"
+						SkinMobs="False"
+						UseMount="True" 
+						UseRandomMount="False" />			
+				
+		<!-- If we are in Kalimdor -->
+		<If Condition="Me.MapId == 1">
+		
+			<!-- Profile message - Initializing Eastern Kingdoms flight path mechanics -->
+			<CustomBehavior File="Message" 
+							Text="Initializing Eastern Kingdoms flight path mechanics."  
+							LogColor="Orange" />
+		
+			<!-- Profile message - Moving to the Undercity zeppelin -->
+			<CustomBehavior File="Message" 
+							Text="Moving to the Undercity zeppelin."  
+							LogColor="Plum" />
+		
+			<!-- Fly to - Orgrimmar to Undercity hover point -->
+			<CustomBehavior File="FlyTo"
+							X="1854.599" Y="-4404.583" Z="169.8815" />
+							
+			<!-- Land on the deck -->
+			<CustomBehavior File="MyCTM"
+							X="1844.287" Y="-4395.305" Z="135.2319" />				
+					
+			<!-- Forced dismount -->		
+			<CustomBehavior File="ForcedDismount" />						
+									
+			<CustomBehavior File="UseTransport" 
+				TransportId="164871" 
+				WaitAtX="1840.016" 
+				WaitAtY="-4391.266" 
+				WaitAtZ="135.2319"								
+				TransportStartX="1833.50867" 
+				TransportStartY="-4391.54346" 
+				TransportStartZ="152.767868"								
+				StandOnX="1834.315" 
+				StandOnY="-4385.276" 
+				StandOnZ="135.0402"
+				TransportEndX="2062.376" 
+				TransportEndY="292.998047" 
+				TransportEndZ="114.972954"	
+				GetOffX="2066.645" 
+				GetOffY="285.7304" 
+				GetOffZ="97.03136" />
+		
+		<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+		<CustomBehavior File="WaitTimer" 
+						WaitTime="5000" />
+		
+		</If>	<!-- If we are in Kalimdor -->
+		
+		<!-- If we are in Eastern Kingdoms -->
+		<If Condition="Me.MapId == 0">
+		
+
+			<!-- ************************************************** Moving to Brill ************************************************************** -->
+
+							
+			<!-- Profile message - Moving to the Brill flight master. -->
+			<CustomBehavior File="Message" 
+							Text="Moving to the Brill flight master."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Brill  flight master -->			
+			<CustomBehavior File="FlyTo" 
+							X="2278.065" Y="372.5141" Z="34.91993" />
+			
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+
+		
+		
+			<!-- ************************************************** Moving to Hearthglen ************************************************************** -->
+
+							
+							
+			<!-- Profile message - Moving to the Hearthglen flight master. -->
+			<CustomBehavior File="Message" 
+							Text="Moving to the Hearthglen flight master."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Hearthglen flight master -->			
+			<CustomBehavior File="FlyTo" 
+							X="2839.78" Y="-1500.51" Z="146.089" />
+			
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+		
+		
+		
+			<!-- ************************************************** Moving to Plaguewood Tower ************************************************************** -->
+
+							
+							
+			<!-- Profile message - Moving to the Plaguewood Tower flight master. -->
+			<CustomBehavior File="Message" 
+							Text="Moving to the Plaguewood Tower flight master."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Plaguewood Tower -->			
+			<CustomBehavior File="FlyTo" 
+							X="1935.97" Y="-2694.48" Z="199.2031" />
+			
+			<!-- Fly to - Plaguewood Tower flight master -->			
+			<CustomBehavior File="FlyTo" 
+							X="2965.55" Y="-3033.61" Z="126.929" />
+			
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+		
+		
+		
+			<!-- ************************************************** Moving to Northpass Tower ************************************************************** -->
+
+							
+							
+			<!-- Profile message - Moving to the Northpass Tower flight master. -->
+			<CustomBehavior File="Message" 
+							Text="Moving to the Northpass Tower flight master."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Northpass Tower flight master -->			
+			<CustomBehavior File="FlyTo" 
+							X="3134.26" Y="-4354.78" Z="133.463" />
+			
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+		
+		
+		
+			<!-- ************************************************** Moving to Light's Hope Chapel ************************************************************** -->
+
+							
+							
+			<!-- Profile message - Moving to the Light's Hope Chapel flight master. -->
+			<CustomBehavior File="Message" 
+							Text="Moving to the Light's Hope Chapel flight master."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Light's Hope Chapel flight master -->			
+			<CustomBehavior File="FlyTo" 
+							X="2270.2" Y="-5343.11" Z="86.9733" />
+			
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+		
+		
+		
+			<!-- ************************************************** Moving to Eastwall Tower ************************************************************** -->
+
+							
+							
+			<!-- Profile message - Moving to the Eastwall Tower flight master. -->
+			<CustomBehavior File="Message" 
+							Text="Moving to the Eastwall Tower flight master."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Eastwall Tower flight master -->			
+			<CustomBehavior File="FlyTo" 
+							X="2524.44" Y="-4769.56" Z="103.286" />
+			
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+		
+		
+		
+			<!-- ************************************************** Moving to Light's Shield Tower ************************************************************** -->
+
+							
+							
+			<!-- Profile message - Moving to the Light's Shield Tower flight master. -->
+			<CustomBehavior File="Message" 
+							Text="Moving to the Light's Shield Tower flight master."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Light's Shield Tower flight master -->			
+			<CustomBehavior File="FlyTo" 
+							X="2262.1" Y="-4411.52" Z="111.652" />
+			
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+		
+		
+		
+			<!-- ************************************************** Moving to Thodroril River ************************************************************** -->
+
+							
+							
+			<!-- Profile message - Moving to the Crown Guard Tower flight master. -->
+			<CustomBehavior File="Message" 
+							Text="Moving to the Thodroril River flight master."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Thodroril River flight master -->			
+			<CustomBehavior File="FlyTo" 
+							X="1876.4" Y="-3693.32" Z="157.687" />
+			
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+		
+		
+		
+			<!-- ************************************************** Moving to The Menders Stead ************************************************************** -->
+
+							
+							
+			<!-- Profile message - Moving to The Menders Stead flight master. -->
+			<CustomBehavior File="Message" 
+							Text="Moving to The Menders Stead flight master."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - The Menders Stead flight master -->			
+			<CustomBehavior File="FlyTo" 
+							X="1864.32" Y="-1755.82" Z="59.662" />
+			
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+		
+		
+		
+		
+			<!-- ************************************************** Moving to Andorhal ************************************************************** -->
+
+							
+							
+			<!-- Profile message - Moving to the Andorhal flight master. -->
+			<CustomBehavior File="Message" 
+							Text="Moving to the Andorhal flight master."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Andorhal flight master -->			
+			<CustomBehavior File="FlyTo" 
+							X="1511.8" Y="-1586.95" Z="64.3419" />
+			
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+		
+		
+		
+			<!-- ************************************************** Moving to The Bulwark ************************************************************** -->
+
+							
+							
+			<!-- Profile message - Moving to The Bulwark flight master -->
+			<CustomBehavior File="Message" 
+							Text="Moving to The Bulwark flight master."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - The Bulwark flight master -->			
+			<CustomBehavior File="FlyTo" 
+							X="1726.62" Y="-740.981" Z="59.9282" />
+			
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+		
+		
+		
+			<!-- ************************************************** Moving to the Forsaken High Command ************************************************************** -->
+
+							
+							
+			<!-- Profile message - Moving to the Forsaken High Command flight master -->
+			<CustomBehavior File="Message" 
+							Text="Moving to the Forsaken High Command flight master."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - the Forsaken Command flight master -->			
+			<CustomBehavior File="FlyTo" 
+							X="1421.02" Y="1018.23" Z="52.6672" />
+			
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+		
+		
+			<!-- ************************************************** Moving to the Forsaken Rear Guard ************************************************************** -->
+
+							
+							
+			<!-- Profile message - Moving to the Forsaken Rear Guard flight master -->
+			<CustomBehavior File="Message" 
+							Text="Moving to the Forsaken Rear Guard flight master."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - the Forsaken Rear Guard flight master -->			
+			<CustomBehavior File="FlyTo" 
+							X="1056.06" Y="1518.9" Z="30.13824" />
+			
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+		
+		
+		
+			<!-- ************************************************** Moving to the Sepulcher ************************************************************** -->
+
+							
+							
+			<!-- Profile message - Moving to the Sepulcher flight master -->
+			<CustomBehavior File="Message" 
+							Text="Moving to the Sepulcher flight master."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - the Sepulcher flight master -->			
+			<CustomBehavior File="FlyTo" 
+							X="478.86" Y="1536.59" Z="131.1039" />
+			
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+		
+		
+		
+		<!-- ************************************************** Moving to the Forsaken Front ************************************************************** -->
+
+							
+							
+			<!-- Profile message - Moving to the Forsaken Front flight master -->
+			<CustomBehavior File="Message" 
+							Text="Moving to the Forsaken Front flight master."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - the Forsaken Front flight master -->			
+			<CustomBehavior File="FlyTo" 
+							X="-118.1103" Y="1311.236" Z="56.74166" />
+			
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+							
+							
+							
+			<!-- ************************************************** Moving to the Forsaken Forward Command ************************************************************** -->
+
+							
+							
+			<!-- Profile message - Moving to the Forsaken Forward Command flight master -->
+			<CustomBehavior File="Message" 
+							Text="Moving to the Forsaken Forward Command flight master."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - the Forward Command flight master -->			
+			<CustomBehavior File="FlyTo" 
+							X="-910.2202" Y="1638.599" Z="68.37079" />
+			
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+		
+		
+		
+			<!-- ************************************************** Moving to the Southpoint Gate ************************************************************** -->
+
+							
+							
+			<!-- Profile message - Moving to the Southpoint Gate flight master -->
+			<CustomBehavior File="Message" 
+							Text="Moving to the Southpoint Gate flight master."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - the Southpoint Gate flight master -->			
+			<CustomBehavior File="FlyTo" 
+							X="-605.184" Y="435.465" Z="79.4447" />
+			
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+		
+		
+		
+			<!-- ************************************************** Moving to the Ruins of Southshore ************************************************************** -->
+
+							
+							
+			<!-- Profile message - Moving to the Ruins of Southshore flight master -->
+			<CustomBehavior File="Message" 
+							Text="Moving to the Ruins of Southshore flight master."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - the Ruins of Southshore flight master -->			
+			<CustomBehavior File="FlyTo" 
+							X="-661.837" Y="-536.493" Z="28.215" />
+			
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+		
+		
+		
+			<!-- ************************************************** Moving to the Strahnbrad ************************************************************** -->
+
+							
+							
+			<!-- Profile message - Moving to the Strahnbrad flight master -->
+			<CustomBehavior File="Message" 
+							Text="Moving to the Strahnbrad flight master."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - the Strahnbrad flight master -->			
+			<CustomBehavior File="FlyTo" 
+							X="622.851" Y="-979.578" Z="168.2083" />
+			
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+		
+		
+		
+			<!-- ************************************************** Moving to the Tarren Mill ************************************************************** -->
+
+							
+							
+			<!-- Profile message - Moving to the Tarren Mill flight master -->
+			<CustomBehavior File="Message" 
+							Text="Moving to the Tarren Mill flight master."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - the Tarren Mill flight master -->			
+			<CustomBehavior File="FlyTo" 
+							X="-17.7066" Y="-874.203" Z="59.0056" />
+			
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+		
+		
+		
+			<!-- ************************************************** Moving to Galen's Fall ************************************************************** -->
+
+							
+							
+			<!-- Profile message - Moving to Galen's Fall flight master -->
+			<CustomBehavior File="Message" 
+							Text="Moving to Galen's Fall flight master."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Galen's Fall flight master -->			
+			<CustomBehavior File="FlyTo" 
+							X="-952.377" Y="-1585.74" Z="51.3004" />
+			
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+		
+		
+		
+			<!-- ************************************************** Moving to the Eastpoint Tower ************************************************************** -->
+
+							
+							
+			<!-- Profile message - Moving to the Eastpoint Tower flight master -->
+			<CustomBehavior File="Message" 
+							Text="Moving to the Eastpoint Tower flight master."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - the Eastpoint Tower flight master -->			
+			<CustomBehavior File="FlyTo" 
+							X="-566.889" Y="-1051.2" Z="59.4055" />
+			
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+		
+		
+		
+			<!-- ************************************************** Moving to the Hiri'watha Research Station ************************************************************** -->
+
+							
+							
+			<!-- Profile message - Moving to the Hiri'watha Research Station flight master -->
+			<CustomBehavior File="Message" 
+							Text="Moving to the Hiri'watha Research Station flight master."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - the Hiri'watha Research Station flight master -->			
+			<CustomBehavior File="FlyTo" 
+							X="-25.776" Y="-2821.78" Z="125.17" />
+			
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+		
+		
+		
+			<!-- ************************************************** Moving to the Revantusk Village ************************************************************** -->
+
+							
+							
+			<!-- Profile message - Moving to the Revantusk Village flight master -->
+			<CustomBehavior File="Message" 
+							Text="Moving to the Revantusk Village flight master."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - the Revantusk Village flight master -->			
+			<CustomBehavior File="FlyTo" 
+							X="-635.26" Y="-4720.5" Z="5.38" />
+			
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+		
+		
+		
+			<!-- ************************************************** Moving to the Hammerfall ************************************************************** -->
+
+							
+							
+			<!-- Profile message - Moving to the Hammerfall flight master -->
+			<CustomBehavior File="Message" 
+							Text="Moving to the Hammerfall flight master."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - the Hammerfall flight master -->			
+			<CustomBehavior File="FlyTo" 
+							X="-916.29" Y="-3496.89" Z="70.45" />
+			
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+		
+		
+		
+			<!-- ************************************************** Moving to the Fuselight ************************************************************** -->
+
+							
+							
+			<!-- Profile message - Moving to the Fuselight flight master -->
+			<CustomBehavior File="Message" 
+							Text="Moving to the Fuselight flight master."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - the Fuselight flight master -->			
+			<CustomBehavior File="FlyTo" 
+							X="-6588.14" Y="-3981.469" Z="368.3979" />
+			
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+							
+			<!-- Move to - away from the tent to avoid getting stuck -->				
+			<MoveTo X="-6588.14" Y="-3981.469" Z="368.3979" />
+		
+		
+			<!-- ************************************************** Moving to the Bloodwatcher Point ************************************************************** -->
+
+							
+							
+			<!-- Profile message - Moving to the Bloodwatcher Point flight master -->
+			<CustomBehavior File="Message" 
+							Text="Moving to the Bloodwatcher Point flight master."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - the Bloodwatcher Point flight master -->			
+			<CustomBehavior File="FlyTo" 
+							X="-6898.25" Y="-3513.99" Z="242.085" />
+			
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+		
+		
+		
+			<!-- ************************************************** Moving to the New Kargath ************************************************************** -->
+
+							
+							
+			<!-- Profile message - Moving to the New Kargath flight master -->
+			<CustomBehavior File="Message" 
+							Text="Moving to the New Kargath flight master."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - the New Kargath flight master -->			
+			<CustomBehavior File="FlyTo" 
+							X="-6676.87" Y="-2433.37" Z="272.7711" />
+			
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+		
+		
+		
+			<!-- ************************************************** Moving to the Flame Crest ************************************************************** -->
+
+							
+							
+			<!-- Profile message - Moving to the Flame Crest flight master -->
+			<CustomBehavior File="Message" 
+							Text="Moving to the Flame Crest flight master."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - the Flame Crest flight master -->			
+			<CustomBehavior File="FlyTo" 
+							X="-7504.03" Y="-2187.54" Z="165.53" />
+			
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+		
+		
+		
+			<!-- ************************************************** Moving to the Thorium Point  ************************************************************** -->
+
+							
+							
+			<!-- Profile message - Moving to the Thorium Point flight master -->
+			<CustomBehavior File="Message" 
+							Text="Moving to the Thorium Point flight master."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - the Thorium Point flight master -->			
+			<CustomBehavior File="FlyTo" 
+							X="-6554.93" Y="-1100.05" Z="309.57" />
+			
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+		
+		
+		
+			<!-- ************************************************** Moving to Iron Summit  ************************************************************** -->
+
+							
+							
+			<!-- Profile message - Moving to e Iron Summit flight master -->
+			<CustomBehavior File="Message" 
+							Text="Moving to Iron Summit flight master."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Iron Summit flight master -->			
+			<CustomBehavior File="FlyTo" 
+							X="-7123.06" Y="-1236.63" Z="290.131" />
+			
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+		
+		
+		
+			<!-- ************************************************** Moving to Flamestar Post  ************************************************************** -->
+
+							
+							
+			<!-- Profile message - Moving to Flamestar Post flight master -->
+			<CustomBehavior File="Message" 
+							Text="Moving to Flamestar Post flight master."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Flamestar Post flight master -->			
+			<CustomBehavior File="FlyTo" 
+							X="-8092.26" Y="-1025.79" Z="132.2352" />
+			
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+							
+							
+							
+							
+			<!-- ************************************************** Moving to Chiselgrip  ************************************************************** -->
+
+							
+							
+			<!-- Profile message - Moving to Chiselgrip flight master -->
+			<CustomBehavior File="Message" 
+							Text="Moving to Chiselgrip flight master."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Chiselgrip flight master -->			
+			<CustomBehavior File="FlyTo" 
+							X="-7865.93" Y="-1919.53" Z="144.722" />
+			
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />				
+							
+							
+							
+			<!-- ************************************************** Moving to Bogpaddle  ************************************************************** -->
+
+							
+							
+			<!-- Profile message - Moving to Bogpaddle flight master -->
+			<CustomBehavior File="Message" 
+							Text="Moving to Bogpaddle flight master."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Bogpaddle flight master -->			
+			<CustomBehavior File="FlyTo" 
+							X="-9737.08" Y="-3890.72" Z="22.73" />
+			
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />				
+							
+							
+							
+			<!-- ************************************************** Moving to Stonard  ************************************************************** -->
+
+							
+							
+			<!-- Profile message - Moving to Stonard flight master -->
+			<CustomBehavior File="Message" 
+							Text="Moving to Stonard flight master."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Stonard flight master -->			
+			<CustomBehavior File="FlyTo" 
+							X="-10457" Y="-3279.25" Z="21.35" />
+			
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />				
+							
+							
+							
+			<!-- ************************************************** Moving to Dreadmaul Hold  ************************************************************** -->
+
+							
+							
+			<!-- Profile message - Moving to Dreadmaul Hold flight master -->
+			<CustomBehavior File="Message" 
+							Text="Moving to Dreadmaul Hold flight master."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Dreadmaul Hold flight master -->			
+			<CustomBehavior File="FlyTo" 
+							X="-10933.3" Y="-2790.98" Z="25.6968" />
+			
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />				
+							
+							
+							
+			<!-- ************************************************** Moving to Sunveil Excursion  ************************************************************** -->
+
+							
+							
+			<!-- Profile message - Moving to Sunveil Excursion flight master -->
+			<CustomBehavior File="Message" 
+							Text="Moving to Sunveil Excursion flight master."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Sunveil Excursion flight master -->			
+			<CustomBehavior File="FlyTo" 
+							X="-12357.6" Y="-3058.23" Z="90.3242" />
+			
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />				
+							
+							
+							
+			<!-- ************************************************** Moving to Bambala  ************************************************************** -->
+
+							
+							
+			<!-- Profile message - Moving to Bambala flight master -->
+			<CustomBehavior File="Message" 
+							Text="Moving to Bambala flight master."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Bambala flight master -->			
+			<CustomBehavior File="FlyTo" 
+							X="-12092.2" Y="-814.099" Z="42.3411" />
+			
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />				
+							
+							
+							
+			<!-- ************************************************** Moving to Grom'gol Base Camp  ************************************************************** -->
+
+							
+							
+			<!-- Profile message - Moving to Grom'gol Base Camp flight master -->
+			<CustomBehavior File="Message" 
+							Text="Moving to Grom'gol Base Camp flight master."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Grom'gol Base Camp flight master -->			
+			<CustomBehavior File="FlyTo" 
+							X="-12414.2" Y="146.29" Z="3.269266" />
+			
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />				
+							
+							
+							
+			<!-- ************************************************** Moving to Hardwrench Hideaway  ************************************************************** -->
+
+							
+							
+			<!-- Profile message - Moving to Hardwrench Hideaway flight master -->
+			<CustomBehavior File="Message" 
+							Text="Moving to Hardwrench Hideaway flight master."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Hardwrench Hideaway flight master -->			
+			<CustomBehavior File="FlyTo" 
+							X="-13288.3" Y="722.028" Z="3.75389" />
+			
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />				
+							
+							
+							
+			<!-- ************************************************** Moving to Booty Bay  ************************************************************** -->
+
+							
+							
+			<!-- Profile message - Moving to Booty Bay flight master -->
+			<CustomBehavior File="Message" 
+							Text="Moving to Booty Bay flight master."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Booty Bay flight master -->			
+			<CustomBehavior File="FlyTo" 
+							X="-14444.3" Y="509.62" Z="26.2" />
+			
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />				
+							
+
+		
+			<!-- ************************************************** Moving to Orgrimmar ************************************************************** -->
+		
+		
+			<!-- Profile message - Returning to Kalimdor -->
+			<CustomBehavior File="Message" 
+							Text="Returning to Kalimdor."  
+							LogColor="Cyan" />
+		
+			<!-- Fly to the Booty Bay - boat hover point -->
+			<CustomBehavior File="FlyTo"
+							X="-14300.4" Y="518.0767" Z="38.75513" />
+						
+			<!-- Land on the deck -->
+			<CustomBehavior File="MyCTM"
+							X="-14290.02" Y="545.6638" Z="8.691406" />				
+				
+			<!-- Forced dismount -->		
+			<CustomBehavior File="ForcedDismount" />
+
+			<CustomBehavior File="UseTransport" 
+							TransportId="20808" 
+							WaitAtX="-14281.86" 
+							WaitAtY="564.9252" 
+							WaitAtZ="7.45587"
+							TransportStartX="-14277.74" 
+							TransportStartY="582.86" 
+							TransportStartZ="0.015"
+							StandOnX="-14271.49" 
+							StandOnY="581.3417" 
+							StandOnZ="6.019351"
+							TransportEndX="-1005.613" 
+							TransportEndY="-3841.648" 
+							TransportEndZ="0.03330701"	
+							GetOffX="-997.8598" 
+							GetOffY="-3824.981" 
+							GetOffZ="5.466243" />	
+						
+			<!-- Fly to - Orgrimmar flight master -->
+			<CustomBehavior File="FlyTo"
+							X="1802.869" Y="-4368.173" Z="102.689" />
+		
+		</If>	<!-- If we are in Eastern Kingdoms -->
+		
+		<!-- If we are at the Orgrimmar flight master -->
+		<If Condition="Me.X &gt; 1734.58 &amp;&amp; Me.X &lt; 1878.138 &amp;&amp; Me.Y &gt; -4469.707 &amp;&amp; Me.Y &lt; -4238.392" >
+		
+			<!-- Load profile - [QO-H-M][60+][Flying]_outland -->
+			<CustomBehavior File="LoadProfile" 
+							ProfileName="[QO-H-M][60+][Flying]_outland" />
+		
+		</If>	<!-- If we are at the Orgrimmar flight master -->
+				
+	</QuestOrder>
+	
+</HBProfile>

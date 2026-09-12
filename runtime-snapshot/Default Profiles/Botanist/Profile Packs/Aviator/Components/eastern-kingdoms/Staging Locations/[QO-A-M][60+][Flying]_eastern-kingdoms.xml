@@ -1,0 +1,1476 @@
+<HBProfile creator="Botanist" version="1.0">
+	<Name>[QO-A-M][60+][Flying]_eastern-kingdoms</Name>
+   
+	<MinLevel>60</MinLevel>
+	<MaxLevel>101</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	
+	<MailGrey>False</MailGrey>
+	<MailWhite>False</MailWhite>
+	<MailGreen>False</MailGreen>
+	<MailBlue>False</MailBlue>
+	<MailPurple>False</MailPurple>
+   
+	<SellGrey>False</SellGrey>
+	<SellWhite>False</SellWhite>
+	<SellGreen>False</SellGreen>
+	<SellBlue>False</SellBlue>
+	<SellPurple>False</SellPurple>
+
+	<AvoidMobs>
+	</AvoidMobs>
+	
+	<Blackspots>
+	</Blackspots>
+
+	<Mailboxes>
+	</Mailboxes>
+ 
+	<Vendors>
+	</Vendors>
+
+	<Factions></Factions>
+	
+	<ProtectedItems>
+		
+	</ProtectedItems>
+
+	<QuestOrder>
+				
+		<!-- UserSettings -->
+		<CustomBehavior File="UserSettings"
+						FindMountAutomatically="True"
+						GroundMountFarmingMode="False"
+						HarvestHerbs="False"
+						HarvestMinerals="False"
+						KillBetweenHotspots="True"
+						LogoutForInactivity="False"
+						LogoutInactivityUseForceQuit="False"
+						LootMobs="True"
+						LootRadius="35"
+						MountName=""
+						NinjaSkin="False"
+						RessAtSpiritHealers="False"
+						SkinMobs="False"
+						UseMount="True" 
+						UseRandomMount="False" />	
+
+		<!-- If we are at the Stormwind flight master -->
+		<If Condition="Me.X &gt; -8873 &amp;&amp; Me.X &lt; -8807 &amp;&amp; Me.Y &gt; 438 &amp;&amp; Me.Y &lt; 560" >
+
+			<!-- Profile message - Initializing Eastern Kingdoms flight path mechanics -->
+			<CustomBehavior File="Message" 
+							Text="Initializing Eastern Kingdoms flight path mechanics."  
+							LogColor="Orange" />
+
+			<!-- Move to - Stormwind flight master -->
+			<MoveTo X="-8854.612" Y="496.4341" Z="109.601" />
+
+			<!-- Custom behavior - ForcedMount - Flying -->
+			<CustomBehavior File="ForcedMount"
+							MountType="Flying" />
+
+			<!-- Fly to - Stormwind flight master - hover point -->				
+			<CustomBehavior File="FlyTo" 
+							X="-8933.752" Y="451.1799" Z="134.7807" />
+							
+
+			<!-- ************************************************** Moving to Furlbrow's Pumpkin Farm ************************************************************** -->
+
+							
+			<!-- Profile message - Moving to Furlbrow's Pumpkin Farm -->
+			<CustomBehavior File="Message" 
+							Text="Moving to Furlbrow's Pumpkin Farm."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Furlbrow's Pumpkin Farm - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-9835.185" Y="1258.198" Z="65.54236" />
+			
+			<!-- CTM to - grounding at the Furlbrow's Pumpkin Farm flight master -->
+			<CustomBehavior File="MyCTM" 
+							X="-9838.51" Y="1273.93" Z="40.7067" />	
+
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+
+			<!-- Fly to - Furlbrow's Pumpkin Farm - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-9835.185" Y="1258.198" Z="65.54236" />				
+
+							
+			<!-- ************************************************** Moving to Moonbrook ************************************************************** -->
+
+							
+			<!-- Profile message - Moving to Moonbrook -->
+			<CustomBehavior File="Message" 
+							Text="Moving to Moonbrook."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Moonbrook - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-10886.2" Y="1530.784" Z="78.80808" />
+			
+			<!-- CTM to - grounding at the Moonbrook flight master -->
+			<CustomBehavior File="MyCTM" 
+							X="-10876.9" Y="1542.88" Z="54.5289" />	
+
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+
+			<!-- Fly to - Moonbrook - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-10886.2" Y="1530.784" Z="78.80808" />
+							
+							
+			<!-- ************************************************** Moving to Sentinel Hill ************************************************************** -->
+
+							
+			<!-- Profile message - Moving to Sentinel Hill -->
+			<CustomBehavior File="Message" 
+							Text="Moving to Sentinel Hill."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Sentinel Hill - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-10556.23" Y="1065.792" Z="99.02417" />
+			
+			<!-- CTM to - grounding at the Sentinel Hill flight master -->
+			<CustomBehavior File="MyCTM" 
+							X="-10551.9" Y="1034.39" Z="56.95426" />	
+
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+
+			<!-- Fly to - Sentinel Hill - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-10556.23" Y="1065.792" Z="99.02417" />	
+
+			
+			<!-- ************************************************** Moving to Golshire ************************************************************** -->
+
+							
+			<!-- Profile message - Moving to Golshire -->
+			<CustomBehavior File="Message" 
+							Text="Moving to Golshire."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Golshire - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-9480.883" Y="50.84209" Z="133.1027" />
+			
+			<!-- CTM to - grounding at the Golshire flight master -->
+			<CustomBehavior File="MyCTM" 
+							X="-9433.99" Y="85.1493" Z="56.734" />	
+
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+
+			<!-- Fly to - Golshire - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-9480.883" Y="50.84209" Z="133.1027" />
+							
+							
+			<!-- ************************************************** Moving to Raven Hill ************************************************************** -->
+
+							
+			<!-- Profile message - Moving to Raven Hill -->
+			<CustomBehavior File="Message" 
+							Text="Moving to Raven Hill."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Raven Hill - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-10772.99" Y="285.8436" Z="73.09927" />
+			
+			<!-- CTM to - grounding at the Raven Hill flight master -->
+			<CustomBehavior File="MyCTM" 
+							X="-10737.6" Y="267.043" Z="42.3478" />	
+
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+
+			<!-- Fly to - Raven Hill - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-10772.99" Y="285.8436" Z="73.09927" />		
+
+							
+			<!-- ************************************************** Moving to Dark Shire ************************************************************** -->
+
+							
+			<!-- Profile message - Moving to Dark Shire -->
+			<CustomBehavior File="Message" 
+							Text="Moving to Dark Shire."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Dark Shire - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-10544.45" Y="-1284.564" Z="93.00702" />
+			
+			<!-- CTM to - grounding at the Dark Shire flight master -->
+			<CustomBehavior File="MyCTM" 
+							X="-10515.5" Y="-1261.65" Z="41.34" />	
+
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+
+			<!-- Fly to - Dark Shire - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-10544.45" Y="-1284.564" Z="93.00702" />
+			
+			
+			<!-- ************************************************** Moving to Eastvale Logging Camp ************************************************************** -->
+
+							
+			<!-- Profile message - Moving to Eastvale Logging Camp -->
+			<CustomBehavior File="Message" 
+							Text="Moving to Eastvale Logging Camp."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Eastvale Logging Camp - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-9498.966" Y="-1325.617" Z="109.5559" />
+			
+			<!-- CTM to - grounding at the Eastvale Logging Camp flight master -->
+			<CustomBehavior File="MyCTM" 
+							X="-9475.71" Y="-1306.74" Z="44.1496" />	
+
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+
+			<!-- Fly to - Eastvale Logging Camp - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-9498.966" Y="-1325.617" Z="109.5559" />
+
+
+			<!-- ************************************************** Moving to Fort Livingston ************************************************************** -->
+
+							
+			<!-- Profile message - Moving to Fort Livingston -->
+			<CustomBehavior File="Message" 
+							Text="Moving to Fort Livingston."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Fort Livingston - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-12830.7" Y="-360.493" Z="72.32738" />
+			
+			<!-- CTM to - grounding at the Fort Livingston flight master -->
+			<CustomBehavior File="MyCTM" 
+							X="-12828.8" Y="-413.71" Z="12.9666" />	
+
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+
+			<!-- Fly to - Fort Livingston - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-12830.7" Y="-360.493" Z="72.32738" />
+
+							
+			<!-- ************************************************** Moving to Explorer's League Digsite ************************************************************** -->
+
+							
+			<!-- Profile message - Moving to Explorer's League Digsite -->
+			<CustomBehavior File="Message" 
+							Text="Moving to Explorer's League Digsite."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Explorer's League Digsite - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-13599.24" Y="-48.90652" Z="109.2901" />
+			
+			<!-- CTM to - grounding at the Explorer's League Digsite flight master -->
+			<CustomBehavior File="MyCTM" 
+							X="-13600.9" Y="-85.5486" Z="37.8078" />
+
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+
+			<!-- Fly to - Explorer's League Digsite - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-13599.24" Y="-48.90652" Z="109.2901" />
+
+
+			<!-- ************************************************** Moving to Booty Bay ************************************************************** -->
+
+							
+			<!-- Profile message - Moving to Booty Bay -->
+			<CustomBehavior File="Message" 
+							Text="Moving to Booty Bay."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Booty Bay - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-14449.04" Y="433.9048" Z="84.01836" />
+			
+			<!-- CTM to - grounding at the Booty Bay flight master -->
+			<CustomBehavior File="MyCTM" 
+							X="-14473" Y="464.15" Z="36.43" />
+
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+
+			<!-- Fly to - Booty Bay - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-14449.04" Y="433.9048" Z="84.01836" />
+
+
+			<!-- ************************************************** Moving to Surwich ************************************************************** -->
+
+							
+			<!-- Profile message - Moving to Surwich -->
+			<CustomBehavior File="Message" 
+							Text="Moving to Surwich."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Surwich - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-12759.4" Y="-2867.615" Z="58.44384" />
+			
+			<!-- CTM to - grounding at the Surwich flight master -->
+			<CustomBehavior File="MyCTM" 
+							X="-12761.9" Y="-2919.04" Z="7.04836" />
+
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+
+			<!-- Fly to - Surwich - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-12759.4" Y="-2867.615" Z="58.44384" />
+
+			
+			<!-- ************************************************** Moving to Nethergarde Keep ************************************************************** -->
+
+							
+			<!-- Profile message - Moving to Nethergarde Keep -->
+			<CustomBehavior File="Message" 
+							Text="Moving to Nethergarde Keep."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Nethergarde Keep - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-11144.96" Y="-3430.984" Z="138.5686" />
+			
+			<!-- CTM to - grounding at the Nethergarde Keep flight master -->
+			<CustomBehavior File="MyCTM" 
+							X="-11112.3" Y="-3435.74" Z="79.08791" />
+
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+
+			<!-- Fly to - Nethergarde Keep - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-11144.96" Y="-3430.984" Z="138.5686" />
+
+
+			<!-- ************************************************** Moving to Marshtide Watch ************************************************************** -->
+
+							
+			<!-- Profile message - Moving to Marshtide Watch -->
+			<CustomBehavior File="Message" 
+							Text="Moving to Marshtide Watch."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Marshtide Watch - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-10153.22" Y="-3791.846" Z="74.40043" />
+			
+			<!-- CTM to - grounding at the Marshtide Watch flight master -->
+			<CustomBehavior File="MyCTM" 
+							X="-10176.6" Y="-3836.54" Z="17.8841" />
+
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+
+			<!-- Fly to - Marshtide Watch - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-10153.22" Y="-3791.846" Z="74.40043" />
+
+
+			<!-- ************************************************** Moving to Marshtide Watch ************************************************************** -->
+
+							
+			<!-- Profile message - Moving to Marshtide Watch -->
+			<CustomBehavior File="Message" 
+							Text="Moving to Marshtide Watch."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Marshtide Watch - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-10153.22" Y="-3791.846" Z="74.40043" />
+			
+			<!-- CTM to - grounding at the Marshtide Watch flight master -->
+			<CustomBehavior File="MyCTM" 
+							X="-10176.6" Y="-3836.54" Z="17.8841" />
+
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+
+			<!-- Fly to - Marshtide Watch - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-10153.22" Y="-3791.846" Z="74.40043" />
+
+
+			<!-- ************************************************** Moving to Bogpaddle ************************************************************** -->
+
+							
+			<!-- Profile message - Moving to Bogpaddle -->
+			<CustomBehavior File="Message" 
+							Text="Moving to Bogpaddle."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Bogpaddle - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-9768.041" Y="-3922.771" Z="77.36864" />
+			
+			<!-- CTM to - grounding at the Bogpaddle flight master -->
+			<CustomBehavior File="MyCTM" 
+							X="-9737.08" Y="-3890.72" Z="22.73" />
+
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+
+			<!-- Fly to - Bogpaddle - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-9768.041" Y="-3922.771" Z="77.36864" />
+
+
+			<!-- ************************************************** Moving to Shalewind Canyon ************************************************************** -->
+
+							
+			<!-- Profile message - Moving to Shalewind Canyon -->
+			<CustomBehavior File="Message" 
+							Text="Moving to Shalewind Canyon."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Shalewind Canyon flight master -->
+			<CustomBehavior File="FlyTo" 
+							X="-9641.67" Y="-3479.37" Z="121.956" />
+
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+
+
+			<!-- ************************************************** Moving to The Harborage ************************************************************** -->
+
+							
+			<!-- Profile message - Moving to The Harborage -->
+			<CustomBehavior File="Message" 
+							Text="Moving to The Harborage."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - The Harborage - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-10158.72" Y="-2860.672" Z="65.67432" />
+			
+			<!-- CTM to - grounding at the The Harborage flight master -->
+			<CustomBehavior File="MyCTM" 
+							X="-10118.6" Y="-2852.48" Z="23.4641" />
+
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+
+			<!-- Fly to - The Harborage - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-10158.72" Y="-2860.672" Z="65.67432" />
+
+
+			<!-- ************************************************** Moving to Lakeshire ************************************************************** -->
+
+							
+			<!-- Profile message - Moving to Lakeshire -->
+			<CustomBehavior File="Message" 
+							Text="Moving to Lakeshire."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Lakeshire - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-9424.54" Y="-2268.206" Z="138.9814" />
+			
+			<!-- CTM to - grounding at the Lakeshire flight master -->
+			<CustomBehavior File="MyCTM" 
+							X="-9429.1" Y="-2231.4" Z="68.65" />
+
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+
+			<!-- Fly to - Lakeshire - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-9424.54" Y="-2268.206" Z="138.9814" />
+
+			
+			<!-- ************************************************** Moving to Camp Everstill ************************************************************** -->
+
+							
+			<!-- Profile message - Moving to Camp Everstill -->
+			<CustomBehavior File="Message" 
+							Text="Moving to Camp Everstill."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Camp Everstill - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-9434.113" Y="-2801.716" Z="106.7805" />
+			
+			<!-- CTM to - grounding at the Camp Everstill flight master -->
+			<CustomBehavior File="MyCTM" 
+							X="-9446.64" Y="-2836.99" Z="64.5761" />
+
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+
+			<!-- Fly to - Camp Everstill - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-9434.113" Y="-2801.716" Z="106.7805" />
+
+
+			<!-- ************************************************** Moving to Morgan's Vigil ************************************************************** -->
+
+							
+			<!-- Profile message - Moving to Morgan's Vigil -->
+			<CustomBehavior File="Message" 
+							Text="Moving to Morgan's Vigil."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Morgan's Vigil - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-8399.533" Y="-2723.776" Z="264.5327" />
+			
+			<!-- CTM to - grounding at the Morgan's Vigil flight master -->
+			<CustomBehavior File="MyCTM" 
+							X="-8364.61" Y="-2738.35" Z="185.46" />
+
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+
+			<!-- Fly to - Morgan's Vigil - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-8399.533" Y="-2723.776" Z="264.5327" />
+
+
+			<!-- ************************************************** Moving to Chiselgrip ************************************************************** -->
+
+							
+			<!-- Profile message - Moving to Chiselgrip -->
+			<CustomBehavior File="Message" 
+							Text="Moving to Chiselgrip."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Chiselgrip - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-7897.496" Y="-1919.794" Z="181.5273" />
+			
+			<!-- CTM to - grounding at the Chiselgrip flight master -->
+			<CustomBehavior File="MyCTM" 
+							X="-7865.93" Y="-1919.53" Z="144.722" />
+
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+
+			<!-- Fly to - Chiselgrip - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-7897.496" Y="-1919.794" Z="181.5273" />
+
+
+			<!-- ************************************************** Moving to Flamestar ************************************************************** -->
+
+							
+			<!-- Profile message - Moving to Flamestar -->
+			<CustomBehavior File="Message" 
+							Text="Moving to Flamestar."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Flamestar - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-8079.794" Y="-1049.817" Z="179.6488" />
+			
+			<!-- CTM to - grounding at the Flamestar flight master -->
+			<CustomBehavior File="MyCTM" 
+							X="-8092.26" Y="-1025.79" Z="132.2358" />
+
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+
+			<!-- Fly to - Flamestar - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-8079.794" Y="-1049.817" Z="179.6488" />
+
+			
+			<!-- ************************************************** Moving to Iron Summit ************************************************************** -->
+
+							
+			<!-- Profile message - Moving to Iron Summit -->
+			<CustomBehavior File="Message" 
+							Text="Moving to Iron Summit."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Iron Summit - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-7128.637" Y="-1209.836" Z="317.6651" />
+			
+			<!-- CTM to - grounding at the Iron Summit flight master -->
+			<CustomBehavior File="MyCTM" 
+							X="-7123.06" Y="-1236.63" Z="290.131" />
+
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+
+			<!-- Fly to - Iron Summit - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-7152.578" Y="-1272.832" Z="332.4962" />
+
+
+			<!-- ************************************************** Moving to Thorium Point ************************************************************** -->
+
+							
+			<!-- Profile message - Moving to Thorium Point -->
+			<CustomBehavior File="Message" 
+							Text="Moving to Thorium Point."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Thorium Point - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-6584.536" Y="-1161.258" Z="350.1971" />
+			
+			<!-- CTM to - grounding at the Thorium Point flight master -->
+			<CustomBehavior File="MyCTM" 
+							X="-6552.59" Y="-1168.27" Z="309.31" />
+
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+
+			<!-- Fly to - Thorium Point - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-6584.536" Y="-1161.258" Z="350.1971" />
+
+
+			<!-- ************************************************** Moving to Kharanos ************************************************************** -->
+
+							
+			<!-- Profile message - Moving to Kharanos -->
+			<CustomBehavior File="Message" 
+							Text="Moving to Kharanos."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Kharanos - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-5690.971" Y="-498.9309" Z="455.0908" />
+			
+			<!-- CTM to - grounding at the Kharanos flight master -->
+			<CustomBehavior File="MyCTM" 
+							X="-5660.8" Y="-494.851" Z="397.008" />
+
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+
+			<!-- Fly to - Kharanos - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-5690.971" Y="-498.9309" Z="455.0908" />
+
+			
+			<!-- ************************************************** Moving to Gol'Bolar Quarry ************************************************************** -->
+
+							
+			<!-- Profile message - Moving to Gol'Bolar Quarry -->
+			<CustomBehavior File="Message" 
+							Text="Moving to Gol'Bolar Quarry."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Gol'Bolar Quarry - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-5769.502" Y="-1595.451" Z="434.1587" />
+			
+			<!-- CTM to - grounding at the Gol'Bolar Quarry flight master -->
+			<CustomBehavior File="MyCTM" 
+							X="-5714.14" Y="-1578.64" Z="383.204" />
+
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+
+			<!-- Fly to - Gol'Bolar Quarry - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-5769.502" Y="-1595.451" Z="434.1587" />
+
+
+			<!-- ************************************************** Moving to Dragon's Mouth ************************************************************** -->
+
+							
+			<!-- Profile message - Moving to Dragon's Mouth -->
+			<CustomBehavior File="Message" 
+							Text="Moving to Dragon's Mouth."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Dragon's Mouth - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-6986.126" Y="-2528.464" Z="309.2753" />
+			
+			<!-- CTM to - grounding at the Dragon's Mouth flight master -->
+			<CustomBehavior File="MyCTM" 
+							X="-7034.53" Y="-2570.79" Z="252.153" />
+
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+
+			<!-- Fly to - Dragon's Mouth - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-6986.126" Y="-2528.464" Z="309.2753" />
+
+
+			<!-- ************************************************** Moving to Dustwind Dig ************************************************************** -->
+
+							
+			<!-- Profile message - Moving to Dustwind Dig -->
+			<CustomBehavior File="Message" 
+							Text="Moving to Dustwind Dig."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Dustwind Dig - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-6585.347" Y="-3340.767" Z="324.1684" />
+			
+			<!-- CTM to - grounding at the Dustwind Dig flight master -->
+			<CustomBehavior File="MyCTM" 
+							X="-6594.09" Y="-3401.18" Z="279.209" />
+
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+
+			<!-- Custom behavior - ForcedMount - Flying -->
+			<CustomBehavior File="ForcedMount"
+							MountType="Flying" />				
+
+			<!-- Fly to - Dustwind Dig - hover point -->			
+			<CustomBehavior File="MyCTM" 
+							X="-6585.347" Y="-3340.767" Z="324.1684" />
+
+
+			<!-- ************************************************** Moving to Fuselight ************************************************************** -->
+
+							
+			<!-- Profile message - Moving to Fuselight -->
+			<CustomBehavior File="Message" 
+							Text="Moving to Fuselight."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - grounding at the Fuselight flight master -->
+			<CustomBehavior File="FlyTo"  
+							X="-6574.94" Y="-3875.13" Z="390.94" />
+
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+
+
+			<!-- ************************************************** Moving to Farstrider Lodge ************************************************************** -->
+
+							
+			<!-- Profile message - Moving to Farstrider Lodge -->
+			<CustomBehavior File="Message" 
+							Text="Moving to Farstrider Lodge."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Farstrider Lodge - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-5700.81" Y="-4230.986" Z="420.3809" />
+			
+			<!-- CTM to - grounding at the Farstrider Lodge flight master -->
+			<CustomBehavior File="MyCTM" 
+							X="-5668.31" Y="-4253.44" Z="407.015" />
+
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+
+			<!-- Custom behavior - ForcedMount - Flying -->
+			<CustomBehavior File="ForcedMount"
+							MountType="Flying" />				
+							
+			<!-- CTM to - Farstrider Lodge - hover point -->			
+			<CustomBehavior File="MyCTM" 
+							X="-5700.81" Y="-4230.986" Z="420.3809" />
+
+			
+			<!-- ************************************************** Moving to Thelsamar ************************************************************** -->
+
+							
+			<!-- Profile message - Moving to Thelsamar -->
+			<CustomBehavior File="Message" 
+							Text="Moving to Thelsamar."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Thelsamar - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-5416.274" Y="-2877.126" Z="423.1255" />
+			
+			<!-- CTM to - grounding at the Thelsamar flight master -->
+			<CustomBehavior File="MyCTM" 
+							X="-5421.91" Y="-2930.01" Z="347.2454" />
+
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+
+			<!-- Fly to - Thelsamar - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-5416.274" Y="-2877.126" Z="423.1255" />
+
+							
+			<!-- ************************************************** Moving to Slabchisel's Survey ************************************************************** -->
+
+							
+			<!-- Profile message - Moving to Slabchisel's Survey -->
+			<CustomBehavior File="Message" 
+							Text="Moving to Slabchisel's Survey."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Slabchisel's Survey - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-4181.201" Y="-2718.077" Z="137.0593" />
+			
+			<!-- CTM to - grounding at the Slabchisel's Survey flight master -->
+			<CustomBehavior File="MyCTM" 
+							X="-4113.6" Y="-2741.21" Z="18.9467" />
+
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+
+			<!-- Fly to - Slabchisel's Survey - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-4181.201" Y="-2718.077" Z="137.0593" />
+
+
+			<!-- ************************************************** Moving to Greenwarden's Grove ************************************************************** -->
+
+							
+			<!-- Profile message - Moving to Greenwarden's Grove -->
+			<CustomBehavior File="Message" 
+							Text="Moving to Greenwarden's Grove."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Greenwarden's Grove - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-3306.484" Y="-2660.119" Z="81.42256" />
+			
+			<!-- CTM to - grounding at the Greenwarden's Grove flight master -->
+			<CustomBehavior File="MyCTM" 
+							X="-3306.65" Y="-2718.69" Z="20.4836" />
+
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+
+			<!-- Fly to - Greenwarden's Grove - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-3306.484" Y="-2660.119" Z="81.42256" />
+
+
+			<!-- ************************************************** Moving to Dun Modr ************************************************************** -->
+
+							
+			<!-- Profile message - Moving to Dun Modr -->
+			<CustomBehavior File="Message" 
+							Text="Moving to Dun Modr."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Dun Modr - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-2673.69" Y="-2510.464" Z="147.1897" />
+			
+			<!-- CTM to - grounding at the Dun Modr flight master -->
+			<CustomBehavior File="MyCTM" 
+							X="-2656.54" Y="-2464.28" Z="80.33779" />
+
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+
+			<!-- Fly to - Dun Modr - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-2673.69" Y="-2510.464" Z="147.1897" />
+
+
+			<!-- ************************************************** Moving to Refuge Pointe ************************************************************** -->
+
+							
+			<!-- Profile message - Moving to Refuge Pointe -->
+			<CustomBehavior File="Message" 
+							Text="Moving to Refuge Pointe."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Refuge Pointe - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-1301.252" Y="-2498.174" Z="82.13638" />
+			
+			<!-- CTM to - grounding at the Refuge Pointe flight master -->
+			<CustomBehavior File="MyCTM" 
+							X="-1240.53" Y="-2515.11" Z="21.84025" />
+
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+
+			<!-- Fly to - Refuge Pointe - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-1301.252" Y="-2498.174" Z="82.13638" />
+
+
+			<!-- ************************************************** Moving to Stormfeather Outpost ************************************************************** -->
+
+							
+			<!-- Profile message - Moving to Stormfeather Outpost -->
+			<CustomBehavior File="Message" 
+							Text="Moving to Stormfeather Outpost."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Stormfeather Outpost - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="308.5331" Y="-4072.386" Z="193.6872" />
+			
+			<!-- CTM to - grounding at the Stormfeather Outpost flight master -->
+			<CustomBehavior File="MyCTM" 
+							X="312.326" Y="-4105.36" Z="118.263" />
+
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+
+			<!-- Fly to - Stormfeather Outpost - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="308.5331" Y="-4072.386" Z="193.6872" />
+
+
+			<!-- ************************************************** Moving to Light's Hope Chapel ************************************************************** -->
+
+							
+			<!-- Profile message - Moving to Light's Hope Chapel -->
+			<CustomBehavior File="Message" 
+							Text="Moving to Light's Hope Chapel."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Light's Hope Chapel - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="2239.658" Y="-5290.788" Z="136.5284" />
+			
+			<!-- CTM to - grounding at the Light's Hope Chapel flight master -->
+			<CustomBehavior File="MyCTM" 
+							X="2271.09" Y="-5340.8" Z="87.11" />
+
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+
+			<!-- Fly to - Light's Hope Chapel - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="2239.658" Y="-5290.788" Z="136.5284" />
+
+
+			<!-- ************************************************** Moving to Eastwall Tower ************************************************************** -->
+
+							
+			<!-- Profile message - Moving to Eastwall Tower -->
+			<CustomBehavior File="Message" 
+							Text="Moving to Eastwall Tower."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Eastwall Tower - flight master -->			
+			<CustomBehavior File="FlyTo" 
+							X="2524.44" Y="-4769.56" Z="103.2862" />
+			
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+
+			
+			<!-- ************************************************** Moving to Northpass Tower ************************************************************** -->
+
+							
+			<!-- Profile message - Moving to Northpass Tower -->
+			<CustomBehavior File="Message" 
+							Text="Moving to Northpass Tower."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Northpass Tower - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="3121.911" Y="-4281.739" Z="176.7952" />
+			
+			<!-- CTM to - grounding at the Northpass Tower flight master -->
+			<CustomBehavior File="MyCTM" 
+							X="3134.26" Y="-4354.78" Z="133.463" />
+
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+
+			<!-- Fly to - Northpass Tower - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="3121.911" Y="-4281.739" Z="176.7952" />
+
+
+			<!-- ************************************************** Moving to Light's Shield Tower ************************************************************** -->
+
+							
+			<!-- Profile message - Moving to Light's Shield Tower -->
+			<CustomBehavior File="Message" 
+							Text="Moving to Light's Shield Tower."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Light's Shield Tower - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="2188.778" Y="-4407.024" Z="154.7452" />
+			
+			<!-- CTM to - grounding at the Light's Shield Tower flight master -->
+			<CustomBehavior File="MyCTM" 
+							X="2262.1" Y="-4411.52" Z="111.652" />
+
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+
+			<!-- Fly to - Light's Shield Tower - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="2188.778" Y="-4407.024" Z="154.7452" />
+
+
+			<!-- ************************************************** Moving to Crowns Guard Tower ************************************************************** -->
+
+							
+			<!-- Profile message - Moving to Crowns Guard Tower -->
+			<CustomBehavior File="Message" 
+							Text="Moving to Crowns Guard Tower."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Crowns Guard Tower - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="1812.447" Y="-3632.008" Z="201.8681" />
+			
+			<!-- CTM to - grounding at the Crowns Guard Tower flight master -->
+			<CustomBehavior File="MyCTM" 
+							X="1876.4" Y="-3693.32" Z="157.687" />
+
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+
+			<!-- Fly to - Crowns Guard Tower - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="1812.447" Y="-3632.008" Z="201.8681" />
+
+
+			<!-- ************************************************** Moving to Plaguewood Tower ************************************************************** -->
+
+							
+			<!-- Profile message - Moving to Plaguewood Tower -->
+			<CustomBehavior File="Message" 
+							Text="Moving to Plaguewood Tower."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Plaguewood Tower - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="2931.355" Y="-3107.224" Z="175.84" />
+			
+			<!-- CTM to - grounding at the Plaguewood Tower flight master -->
+			<CustomBehavior File="MyCTM" 
+							X="2965.55" Y="-3033.61" Z="126.929" />
+
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+
+			<!-- Fly to - Plaguewood Tower - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="2931.355" Y="-3107.224" Z="175.84" />
+
+
+			<!-- ************************************************** Moving to Thondroril River ************************************************************** -->
+
+							
+			<!-- Profile message - Moving to Thondroril River -->
+			<CustomBehavior File="Message" 
+							Text="Moving to Thondroril River."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Thondroril River - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="1906.252" Y="-2716.706" Z="127.9519" />
+			
+			<!-- CTM to - grounding at the Thondroril River flight master -->
+			<CustomBehavior File="MyCTM" 
+							X="1935.97" Y="-2694.48" Z="61.94709" />
+
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+
+			<!-- Fly to - Thondroril River - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="1906.252" Y="-2716.706" Z="127.9519" />
+
+
+
+			<!-- ************************************************** Moving to The Menders' Stead ************************************************************** -->
+
+							
+			<!-- Profile message - Moving to The Menders' Stead -->
+			<CustomBehavior File="Message" 
+							Text="Moving to The Menders' Stead."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - The Menders' Stead - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="1820.251" Y="-1722.204" Z="131.4075" />
+			
+			<!-- CTM to - grounding at the The Menders' Stead flight master -->
+			<CustomBehavior File="MyCTM" 
+							X="1864.32" Y="-1755.82" Z="59.662" />
+
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+
+			<!-- Fly to - The Menders' Stead - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="1820.251" Y="-1722.204" Z="131.4075" />
+
+
+			<!-- ************************************************** Moving to Hearthglen ************************************************************** -->
+
+							
+			<!-- Profile message - Moving to Hearthglen -->
+			<CustomBehavior File="Message" 
+							Text="Moving to Hearthglen."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Hearthglen - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="2883.224" Y="-1479.759" Z="208.071" />
+			
+			<!-- CTM to - grounding at the Hearthglen flight master -->
+			<CustomBehavior File="MyCTM" 
+							X="2839.78" Y="-1500.51" Z="146.089" />
+
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+
+			<!-- Fly to - Hearthglen - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="2883.224" Y="-1479.759" Z="208.071" />
+
+
+			<!-- ************************************************** Moving to Andorhal ************************************************************** -->
+
+							
+			<!-- Profile message - Moving to Andorhal -->
+			<CustomBehavior File="Message" 
+							Text="Moving to Andorhal."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Andorhal - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="1366.184" Y="-1333.81" Z="99.71312" />
+			
+			<!-- CTM to - grounding at the Andorhal flight master -->
+			<CustomBehavior File="MyCTM" 
+							X="1374.23" Y="-1281.94" Z="59.17396" />
+
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+
+			<!-- Fly to - Andorhal - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="1366.184" Y="-1333.81" Z="99.71312" />
+
+
+			<!-- ************************************************** Moving to Chillwind Camp ************************************************************** -->
+
+							
+			<!-- Profile message - Moving to Chillwind Camp -->
+			<CustomBehavior File="Message" 
+							Text="Moving to Chillwind Camp."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Chillwind Camp - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="965.4606" Y="-1490.133" Z="135.1043" />
+			
+			<!-- CTM to - grounding at the Chillwind Camp flight master -->
+			<CustomBehavior File="MyCTM" 
+							X="931.32" Y="-1430.11" Z="64.67" />
+
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+
+			<!-- Fly to - Chillwind Camp - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="965.4606" Y="-1490.133" Z="135.1043" />
+
+
+			<!-- ************************************************** Moving to Aerie Peak ************************************************************** -->
+
+							
+			<!-- Profile message - Moving to Aerie Peak -->
+			<CustomBehavior File="Message" 
+							Text="Moving to Aerie Peak."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Aerie Peak - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="251.8868" Y="-2041.704" Z="234.7442" />
+			
+			<!-- CTM to - grounding at the Aerie Peak flight master -->
+			<CustomBehavior File="MyCTM" 
+							X="283.74" Y="-2002.76" Z="194.1266" />
+
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+
+			<!-- Fly to - Aerie Peak - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="251.8868" Y="-2041.704" Z="234.7442" />
+							
+							
+			<!-- ************************************************** Moving to Menethil Harbor ************************************************************** -->
+
+							
+			<!-- Profile message - Moving to Menethil Harbor -->
+			<CustomBehavior File="Message" 
+							Text="Moving to Menethil Harbor."  
+							LogColor="Cyan" />				
+			
+			<!-- Fly to - Menethil Harbor - hover point -->			
+			<CustomBehavior File="FlyTo" 
+							X="-3766.036" Y="-740.7012" Z="13.16103" />
+			
+			<!-- CTM to - grounding at the Menethil Harbor flight master -->
+			<CustomBehavior File="MyCTM" 
+							X="-3787.81" Y="-777.696" Z="1.5582" />
+
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+							
+							
+							
+			<!-- ************************************************** Moving to Stormwind ************************************************************** -->
+			
+			
+							
+			<!-- Profile message - Moving to the Stormwind flight master -->
+			<CustomBehavior File="Message" 
+							Text="Moving to the Stormwind flight master."  
+							LogColor="Cyan" />				
+							
+			<!-- Move to - Stormwind flight master - hover point -->				
+			<CustomBehavior File="FlyTo" 
+							X="-8933.752" Y="451.1799" Z="134.7807" />				
+							
+			<!-- CTM to - grounding at the Stormwind flight master -->
+			<CustomBehavior File="MyCTM" 
+							X="-8845.87" Y="495.948" Z="109.6085" />	
+
+			<!-- Forced dismount -->	
+			<CustomBehavior File="ForcedDismount" />
+			
+			<!-- Profile message - his portion of the profile has completed -->
+			<CustomBehavior File="Message" 
+							Text="This portion of the profile has completed."  
+							LogColor="Orange" />
+		
+			<!-- Wait timer - wait 3 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="3000" />
+							
+			<!-- Profile message - Stopping the bot -->
+			<CustomBehavior File="Message" 
+							Text="Stopping the bot."  
+							LogColor="Red" />				
+							
+			<!-- Custom behavior - Usersettings - StopBot -->				
+			<CustomBehavior File="UserSettings" 
+							StopBot="true" />
+							
+		</If>	<!-- If we are at the Stormwind flight master -->	
+							
+	</QuestOrder>
+	
+</HBProfile>	

@@ -1,0 +1,127 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+	<Name>[QO-N-M][85+Flying]_botanist_botanica_set-hearth</Name>
+   
+	<MinLevel>1</MinLevel>
+	<MaxLevel>101</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	
+	<MailGrey>True</MailGrey>
+	<MailWhite>False</MailWhite>
+	<MailGreen>False</MailGreen>
+	<MailBlue>False</MailBlue>
+	<MailPurple>False</MailPurple>
+   
+	<SellGrey>False</SellGrey>
+	<SellWhite>False</SellWhite>
+	<SellGreen>False</SellGreen>
+	<SellBlue>False</SellBlue>
+	<SellPurple>False</SellPurple>
+   
+	<TargetElites>True</TargetElites>
+	
+	<AvoidMobs>		
+		<Mob Name="Summon Enabler Stalker" Entry="53488" />
+	</AvoidMobs>
+	
+	<Blackspots>
+		<Blackspot X="3064.36" Y="3607.146" Z="144.0166" Radius="1" />
+	</Blackspots>
+
+	<Mailboxes>
+	</Mailboxes>
+ 
+	<Vendors>
+	</Vendors>
+	
+	<ProtectedItems>
+	</ProtectedItems>
+
+	<Factions></Factions>
+	
+	<QuestOrder>
+		<ClearVendor />
+		<ClearMailbox />
+
+		<!-- Level check -->
+		<If Condition="Me.Level &gt;= 85">
+		
+		<!-- UserSettings -->
+		<CustomBehavior File="UserSettings"
+						FindMountAutomatically="True"
+						GroundMountFarmingMode="False"
+						HarvestHerbs="False"
+						HarvestMinerals="False"
+						KillBetweenHotspots="True"
+						LogoutForInactivity="False"
+						LogoutInactivityUseForceQuit="False"
+						LootMobs="True"
+						LootRadius="25"
+						MountName=""
+						NinjaSkin="False"
+						RessAtSpiritHealers="False"
+						SkinMobs="False"
+						UseMount="True" 
+						UseRandomMount="False" />			
+							
+			<!-- If our hearthstone is not set to Area 52 -->
+			<If Condition="Me.HearthstoneAreaId != 5142">
+			
+				<!-- Profile message - Flying to Area 52 -->
+				<CustomBehavior File="Message" 
+									Text="Flying to Area 52." 
+									LogColor="Plum" />
+						
+				<!-- Fly to the Area 52 hover point -->
+				<CustomBehavior File="FlyTo" 
+								X="3016.049" Y="3732.265" Z="198.2659" />
+
+				<!-- Fly to - doorway of the inn -->
+				<CustomBehavior File="FlyTo" 
+								X="3047.975" Y="3686.774" Z="142.4171" />
+				
+				<!-- Custom behavior - ForcedDismount -->
+				<CustomBehavior File="ForcedDismount" />
+
+				<!-- Move to - inside the inn -->
+				<MoveTo X="3066.405" Y="3698.33" Z="142.3793" />
+				
+				<!-- Profile message - Setting our Hearthstone -->
+				<CustomBehavior File="Message" 
+								Text="Setting our Hearthstone." 
+								LogColor="Cyan" />
+
+				<!-- Custom behavior - SetHearthstone -->				
+				<CustomBehavior File="SetHearthstone" 
+								MobId="19571" 
+								X="3062.147" Y="3701.815" Z="142.479" />
+
+				<!-- Move to - outside of the inn -->
+				<MoveTo X="3047.975" Y="3686.774" Z="142.4171" />
+				
+				<!-- Fly to the Area 52 hover point -->
+				<CustomBehavior File="FlyTo" 
+								X="3016.049" Y="3732.265" Z="198.2659" />
+				
+				<!-- Profile message - We are in Area 52 -->
+				<CustomBehavior File="Message" 
+								Text="We are in Area 52." 
+								LogColor="Plum" />
+
+			</If> 	<!-- If our hearthstone is not set to Area 52 -->					
+
+			<!-- If our hearthstone is set to Area 52 -->
+			<If Condition="Me.HearthstoneAreaId == 5142">
+				
+				<!-- CustomBehavior - LoadProfile - [QO-N-M][85+Flying]_botanist_botanica -->
+				<CustomBehavior File="LoadProfile" 
+								ProfileName="[QO-N-M][85+Flying]_botanist_botanica" />
+								
+			</If> 	<!-- If our hearthstone is set to Area 52 -->
+			
+		</If>	<!-- Level check -->
+		
+	</QuestOrder>
+	
+</HBProfile>

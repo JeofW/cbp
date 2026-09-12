@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WeightSet Class="Priest" Specialization="2" Name="Priest-Holy">
+  <MetaSocket>10</MetaSocket>
+  <RedSocket>5</RedSocket>
+  <YellowSocket>5</YellowSocket>
+  <BlueSocket>5</BlueSocket>
+  <HitRating>1.41</HitRating>
+  <HasteRatingSpell>1</HasteRatingSpell>
+  <HasteRating>1</HasteRating>
+  <SpellPower>1</SpellPower>
+  <CriticalStrikeRatingSpell>0.88</CriticalStrikeRatingSpell>
+  <CriticalStrikeRating>0.88</CriticalStrikeRating>
+  <Stamina>0.6</Stamina>
+  <Spirit>0.58</Spirit>
+  <Intellect>0.4</Intellect>
+  <Armor>0.01</Armor>
+</WeightSet>

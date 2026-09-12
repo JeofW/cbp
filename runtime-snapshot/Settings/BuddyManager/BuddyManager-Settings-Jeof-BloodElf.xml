@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BuddyManagerSettings>
+  <SelectedBB1>Grind Bot</SelectedBB1>
+  <SelectedBB2>Grind Bot</SelectedBB2>
+  <SelectedBB3>Grind Bot</SelectedBB3>
+  <SelectedBB4>Grind Bot</SelectedBB4>
+  <SelectedProfile1>None</SelectedProfile1>
+  <SelectedProfile2>None</SelectedProfile2>
+  <SelectedProfile3>None</SelectedProfile3>
+  <SelectedProfile4>None</SelectedProfile4>
+  <ThreeEnabled>False</ThreeEnabled>
+  <FourEnabled>False</FourEnabled>
+  <LogOutAfter>True</LogOutAfter>
+  <LoopAll>False</LoopAll>
+  <LoopHours>0</LoopHours>
+  <LoopMins>0</LoopMins>
+  <P1Hours>0</P1Hours>
+  <P2Hours>0</P2Hours>
+  <P3Hours>0</P3Hours>
+  <P4Hours>0</P4Hours>
+  <P1Mins>0</P1Mins>
+  <P2Mins>0</P2Mins>
+  <P3Mins>0</P3Mins>
+  <P4Mins>0</P4Mins>
+  <Zone1> </Zone1>
+  <Zone2> </Zone2>
+  <Zone3> </Zone3>
+  <Zone4> </Zone4>
+  <Repair>False</Repair>
+  <Mail>False</Mail>
+  <Sell>False</Sell>
+  <HearthRMS>False</HearthRMS>
+</BuddyManagerSettings>

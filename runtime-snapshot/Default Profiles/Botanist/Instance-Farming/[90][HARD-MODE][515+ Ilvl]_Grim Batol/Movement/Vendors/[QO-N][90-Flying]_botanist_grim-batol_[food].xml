@@ -1,0 +1,171 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+	<Name>[QO-N][Solstice][58-90][food]</Name>
+   
+	<MinLevel>1</MinLevel>
+	<MaxLevel>101</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	
+	<MailGrey>False</MailGrey>
+	<MailWhite>False</MailWhite>
+	<MailGreen>False</MailGreen>
+	<MailBlue>False</MailBlue>
+	<MailPurple>True</MailPurple>
+   
+	<SellGrey>True</SellGrey>
+	<SellWhite>True</SellWhite>
+	<SellGreen>True</SellGreen>
+	<SellBlue>True</SellBlue>
+	<SellPurple>False</SellPurple>
+   
+	<TargetElites>True</TargetElites>
+	
+	<AvoidMobs>
+	</AvoidMobs>
+	
+	<Blackspots>
+		<Blackspot X="-7118.711" Y="-1225.894" Z="290.2633" Radius="3" />
+	</Blackspots>
+
+	<Mailboxes>
+	</Mailboxes>
+ 
+	<Vendors>
+	</Vendors>
+	
+	<ProtectedItems>	
+	</ProtectedItems>
+
+	<Factions></Factions>
+	
+	<QuestOrder>
+
+		<!-- UserSettings -->
+		<CustomBehavior File="UserSettings"
+						FindMountAutomatically="True"
+						GroundMountFarmingMode="False"
+						HarvestHerbs="False"
+						HarvestMinerals="False"
+						KillBetweenHotspots="True"
+						LogoutForInactivity="False"
+						LogoutInactivityUseForceQuit="False"
+						LootMobs="True"
+						LootRadius="25"
+						MountName=""
+						NinjaSkin="False"
+						RessAtSpiritHealers="True"
+						SkinMobs="False"
+						UseMount="True" 
+						UseRandomMount="False" />	
+
+		<!-- If our level is => -->
+		<If Condition="Me.Level &gt;= 80">
+			
+			<!-- If we are Alliance -->
+			<If Condition="Me.IsAlliance" >
+				
+				<!-- If we don't have Pine Nut Bread -->
+				<If Condition="!HasItem(58260)">
+				
+					<!-- Profile message - We don't have any Pine Nut Bread -->
+					<CustomBehavior File="Message" 
+									Text="We don't have any Pine Nut Bread."
+									LogColor="Orange" />
+									
+					<!-- Profile message - Moving to Sloan Simmersquall to purchase some -->
+					<CustomBehavior File="Message" 
+									Text="Moving to Sloan Simmersquall to purchase some."
+									LogColor="Orange" />				
+				
+					<!-- Fly to - Sloan Simmersquall -->
+					<CustomBehavior File="FlyTo"
+									X="-3201.541" Y="-5063.699" Z="120.5425" />
+					
+					<!-- Forced dismount -->				
+					<CustomBehavior File="ForcedDismount" />
+				
+					<!-- Move to - Sloan Simmersquall -->
+					<Move X="-3204.073" Y="-5072.816" Z="120.5469" />
+					
+					<!-- Interact with Sloan Simmersquall and buy 60 Pine Nut Bread -->
+					<CustomBehavior File="InteractWith"
+									ObjectType="Npc"
+									Range="75"
+									MobId="49596" 
+									BuyItemId="58260" 
+									BuyItemCount="60"
+									X="-3201.806" Y="-5075.444" Z="120.5738" />
+
+					<!-- Wait timer - wait 30 seconds for for server lag and to give HB time to think -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="30000" />
+
+					<!-- Move to - Thundermar flight master -->				
+					<MoveTo X="-3147.937" Y="-4991.919" Z="128.3904" />
+					
+				</If>	<!-- If we don't have Pine Nut Bread -->
+					
+			</If>	<!-- If we are Alliance -->
+			
+			<!-- If we are Horde -->
+			<If Condition="Me.IsHorde" >
+				
+				<!-- If we don't have Pine Nut Bread -->
+				<If Condition="!HasItem(58260)">
+				
+					<!-- Profile message - We don't have any Pine Nut Bread -->
+					<CustomBehavior File="Message" 
+									Text="We don't have any Pine Nut Bread."
+									LogColor="Orange" />
+									
+					<!-- Profile message - Moving to Garm Bonehew to purchase some -->
+					<CustomBehavior File="Message" 
+									Text="Moving to Garm Bonehew to purchase some."
+									LogColor="Orange" />				
+				
+					<!-- Fly to - Garm Bonehew -->
+					<CustomBehavior File="FlyTo"
+									X="-3723.578" Y="-5282.84" Z="37.23776" />
+					
+					<!-- Forced dismount -->				
+					<CustomBehavior File="ForcedDismount" />
+				
+					<!-- Move to - Sloan Simmersquall -->
+					<MoveTo X="-3723.578" Y="-5282.84" Z="37.23776" />
+					
+					<!-- Interact with Sloan Simmersquall and buy 60 Pine Nut Bread -->
+					<CustomBehavior File="InteractWith"
+												ObjectType="Npc"
+												Range="75"
+												MobId="49763" 
+												BuyItemId="58260" 
+												BuyItemCount="60"
+												X="-3731.536" Y="-5281.377" Z="37.23803" />
+
+					<!-- Wait timer - wait 30 seconds for for server lag and to give HB time to think -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="30000" />
+
+					<!-- Fly to the Bloodgulch hover point -->
+					<CustomBehavior File="FlyTo" 
+									X="-3672.317" Y="-5320.684" Z="76.85636" />
+					
+				</If>	<!-- If we don't have Pine Nut Bread -->
+	
+			</If>	<!-- If we are Horde -->
+			
+			<!-- If we have Pine Nut Bread -->
+			<If Condition="HasItem(58260)">
+			
+				<!-- Load profile - [N][90][HARD-MODE]_Grim Batol -->
+				<CustomBehavior File="LoadProfile" 
+										ProfileName="..\..\[N][90][HARD-MODE]_Grim Batol" />
+										
+			</If>	<!-- If we do have Pine Nut Bread -->	
+			
+		</If>	<!-- If our level is => 90 -->
+		
+	</QuestOrder>
+	
+</HBProfile>

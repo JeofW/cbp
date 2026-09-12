@@ -1,0 +1,133 @@
+<HBProfile creator="Botanist" version="1.0">
+	<Name>[QO-A-M-T][60+][Flying]_stormwind</Name>
+   
+	<MinLevel>1</MinLevel>
+	<MaxLevel>101</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	
+	<MailGrey>False</MailGrey>
+	<MailWhite>False</MailWhite>
+	<MailGreen>False</MailGreen>
+	<MailBlue>False</MailBlue>
+	<MailPurple>False</MailPurple>
+   
+	<SellGrey>False</SellGrey>
+	<SellWhite>False</SellWhite>
+	<SellGreen>False</SellGreen>
+	<SellBlue>False</SellBlue>
+	<SellPurple>False</SellPurple>
+
+	<AvoidMobs>
+	</AvoidMobs>
+	
+	<Blackspots>
+	</Blackspots>
+
+	<Mailboxes>
+	</Mailboxes>
+ 
+	<Vendors>
+	</Vendors>
+
+	<Factions></Factions>
+	
+	<ProtectedItems>
+		
+	</ProtectedItems>
+
+	<QuestOrder>
+				
+		<!-- UserSettings -->
+		<CustomBehavior File="UserSettings"
+						FindMountAutomatically="True"
+						GroundMountFarmingMode="False"
+						HarvestHerbs="False"
+						HarvestMinerals="False"
+						KillBetweenHotspots="True"
+						LogoutForInactivity="False"
+						LogoutInactivityUseForceQuit="False"
+						LootMobs="True"
+						LootRadius="35"
+						MountName=""
+						NinjaSkin="False"
+						RessAtSpiritHealers="False"
+						SkinMobs="False"
+						UseMount="True" 
+						UseRandomMount="False" />			
+				
+		<!-- If we are in Pandaria -->
+		<If Condition="Me.MapId == 870">
+		
+			<!-- Profile message - We are in Pandaria -->
+			<CustomBehavior File="Message" 
+							Text="We are in Pandaria"  
+							LogColor="Orange" />
+							
+			<!-- Move to - Stormwind flight trainer -->				
+		
+		</If>
+		
+		<!-- If we are in Northrend -->
+		<If Condition="Me.MapId == 571">
+		
+			<!-- Profile message - We are in Northrend -->
+			<CustomBehavior File="Message" 
+							Text="We are in Northrend"  
+							LogColor="Orange" />
+			
+			<!-- Move to - Stormwind flight trainer -->
+		
+		</If>
+		
+		<!-- If we are in Outland -->
+		<If Condition="Me.MapId == 530">
+		
+			<!-- Profile message - We are in Outland -->
+			<CustomBehavior File="Message" 
+							Text="We are in Outland"  
+							LogColor="Orange" />
+		
+			<!-- Move to - Stormwind flight trainer -->
+		
+		</If>
+		
+		<!-- If we are in Kalimdor -->
+		<If Condition="Me.MapId == 1">
+		
+			<!-- Profile message - We are in Kalimdor -->
+			<CustomBehavior File="Message" 
+							Text="We are in Kalimdor"  
+							LogColor="Orange" />
+							
+			<!-- Move to - Stormwind flight trainer -->				
+		
+		</If>		
+				
+		<!-- If we are in Deepholme -->		
+		<If Condition="Me.MapId == 646">
+		
+			<!-- Profile message - We are in Deepholme -->
+			<CustomBehavior File="Message" 
+							Text="We are in Deepholme"  
+							LogColor="Orange" />
+							
+			<!-- Move to - Stormwind flight trainer -->				
+		
+		</If>		
+				
+		<!-- If we are in Eastern Kingdoms -->		
+		<If Condition="Me.MapId == 0">
+		
+			<!-- Profile message - We are in Eastern Kingdoms -->
+			<CustomBehavior File="Message" 
+							Text="We are in Eastern Kingdoms"  
+							LogColor="Orange" />
+							
+			<!-- Move to - Stormwind flight trainer -->				
+		
+		</If>
+				
+	</QuestOrder>
+</HBProfile>	

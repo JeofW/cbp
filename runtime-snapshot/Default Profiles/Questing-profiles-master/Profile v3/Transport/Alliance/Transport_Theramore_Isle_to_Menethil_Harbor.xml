@@ -1,0 +1,27 @@
+<HBProfile>
+	<!-- 
+    Transport Profile: Theramore Isle to Menethil Harbor
+    Transport: The Bravery (ID: 176310)
+    Faction: Alliance
+    Route: Kalimdor -> Azeroth
+    
+    Generated from WRobot coordinates
+  -->
+	<Name>Transport_Theramore_Isle_to_Menethil_Harbor</Name>
+	<MinLevel>1</MinLevel>
+	<MaxLevel>81</MaxLevel>
+
+	<AvoidMobs />
+
+	<SellGrey>false</SellGrey>
+
+	<QuestOrder>
+		<CustomBehavior File="UserSettings" LootMobs="False" />
+		<!-- Run to departure dock -->
+		<!-- Take transport -->
+		<RunTo X="-3999.067" Y="-4726.306" Z="4.3842" />
+		<CustomBehavior File="UseTransport" TransportId="176231" DestName="The Lady Mehley" WaitAtX="-3999.067" WaitAtY="-4726.306" WaitAtZ="4.3842" TransportStartX="-4016.4" TransportStartY="-4740.6" TransportStartZ="0" StandOnX="-4006.659" StandOnY="-4734.664" StandOnZ="6.0765" TransportEndX="-3905.2" TransportEndY="-585.8" TransportEndZ="0" GetOffX="-3904.1" GetOffY="-605.2" GetOffZ="5.3" />
+		<CustomBehavior File="WaitTimer" WaitTime="2000" />
+		<!-- Move away from dock -->
+	</QuestOrder>
+</HBProfile>

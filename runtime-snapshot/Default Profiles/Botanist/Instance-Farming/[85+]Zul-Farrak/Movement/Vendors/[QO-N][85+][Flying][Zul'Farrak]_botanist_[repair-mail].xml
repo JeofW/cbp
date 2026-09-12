@@ -1,0 +1,288 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+	<Name>[QO-N][85+][Flying][Zul'Farrak]_botanist_[repair-mail]</Name>
+   
+	<MinLevel>1</MinLevel>
+	<MaxLevel>101</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	
+	<MailGrey>False</MailGrey>
+	<MailWhite>True</MailWhite>
+	<MailGreen>True</MailGreen>
+	<MailBlue>True</MailBlue>
+	<MailPurple>True</MailPurple>
+   
+	<SellGrey>True</SellGrey>
+	<SellWhite>False</SellWhite>
+	<SellGreen>False</SellGreen>
+	<SellBlue>False</SellBlue>
+	<SellPurple>False</SellPurple>
+   
+	<TargetElites>True</TargetElites>
+	
+	<AvoidMobs>
+	</AvoidMobs>
+	
+	<Blackspots>
+	</Blackspots>
+
+	<Mailboxes>
+	</Mailboxes>
+ 
+	<Vendors>
+	</Vendors>
+	
+	<ProtectedItems>	
+	</ProtectedItems>
+
+	<Factions></Factions>
+	
+	<QuestOrder>
+
+		<!-- UserSettings -->
+		<CustomBehavior File="UserSettings"
+						FindMountAutomatically="True"
+						GroundMountFarmingMode="False"
+						HarvestHerbs="False"
+						HarvestMinerals="False"
+						KillBetweenHotspots="True"
+						LogoutForInactivity="False"
+						LogoutInactivityUseForceQuit="False"
+						LootMobs="True"
+						LootRadius="25"
+						MountName=""
+						NinjaSkin="False"
+						RessAtSpiritHealers="True"
+						SkinMobs="False"
+						UseMount="True" 
+						UseRandomMount="False" />	
+
+		<!-- If our level is => -->
+		<If Condition="Me.Level &gt;= 85">
+			
+			<!-- If we are inside Zul'Farrak -->
+			<If Condition="Me.ZoneId == 1176">	
+				
+				<!-- If our hearthstone is set to Gadgetzan -->
+				<If Condition="Me.HearthstoneAreaId == 976 ">
+				
+					<!-- Profile message - We are in Zul'Farrak, using our Hearthstone/Innkeeper's Daughter -->
+					<CustomBehavior File="Message" 
+									Text="We are in Zul'Farrak, using our Hearthstone/Innkeeper's Daughter." 
+									LogColor="Cyan" />
+								
+					<!-- If we have a Hearthstone -->
+					<If Condition="HasItem(6948)">
+					
+						<!-- Profile message - Using our Hearthstone -->
+						<CustomBehavior File="Message" 
+										Text="Using our Hearthstone." 
+										LogColor="Fuchsia" />
+										
+						<!-- Custom behavior - Misc\RunLua -->				
+						<CustomBehavior File="Misc\RunLua" 
+										Lua="UseItemByName(6948)" 
+										WaitTime="1000" />
+										
+						<!-- Wait timer - wait 20 seconds - delay -->				
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000" />
+										
+					</If>	<!-- If we have a Hearthstone -->
+				
+					<!-- If we have a Innkeeper's Daughter -->
+					<If Condition="HasItem(64488)">
+					
+						<!-- Profile message - Using our Innkeeper's Daughter -->
+						<CustomBehavior File="Message" 
+										Text="Using our Innkeeper's Daughter." 
+										LogColor="Fuchsia" />
+											
+						<!-- Custom behavior - Misc\RunLua -->					
+						<CustomBehavior File="Misc\RunLua" 
+										Lua="UseItemByName(64488)" 
+										WaitTime="1000" />
+							
+						<!-- Wait timer - wait 20 seconds - delay -->	
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000" />
+										
+					</If>	<!-- If we have a Innkeeper's Daughter -->
+				
+				</If>	<!-- If our hearthstone is set here, use it -->
+				
+			</If>	<!-- If we are in Zul'Farrak -->
+		
+			<!-- If we are in Zul'Farrak -->
+			<If Condition="Me.ZoneId == 1176">
+			
+				<!-- CustomBehavior - Message - Zul'Farrak detected. Exiting the instance --> 
+				<CustomBehavior File="Message" 
+								Text="Zul'Farrak detected. Exiting the instance."
+								LogColor="Plum" />
+					
+				<!-- MoveTo - Make our way to the exit -->
+				<MoveTo X="1212.67" Y="842.04" Z="8.93346" />
+				
+				<!-- InInstance to exit the dungeon -->
+				<CustomBehavior File="Misc\InInstance" 
+								X="1200.531" Y="842.4256" Z="8.886497" />
+				
+				<!-- CustomBehavior - Waittimer - 15 seconds -->
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="15000" />
+				
+				<!-- Move to - zone out location -->
+				<MoveTo X="-6795.56" Y="-2890.72" Z="8.88742" />
+				
+			</If>	<!-- If we are in Zul'Farrak -->
+
+			<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+			<If Condition="(Me.FreeBagSlots &lt;= 25) || (Me.LowestDurabilityPercent &lt;= 0.3)" >
+
+				<!-- Profile message - Our durability is less than 30% or we have less than 25 empty bag slots remaining -->
+				<CustomBehavior File="Message" 
+								Text="Our durability is less than 30% or we have less than 25 empty bag slots remaining." 
+								LogColor="Fuchsia" />
+			
+				<!-- If we are Alliance -->					
+				<If Condition="Me.IsAlliance">					
+							
+					<!-- Profile message - Flying to Gadgetzan -->
+					<CustomBehavior File="Message" 
+										Text="Flying to Gadgetzan." 
+										LogColor="Fuchsia" />
+							
+					<!-- Fly to - Gadgetzan hover point -->
+					<CustomBehavior File="FlyTo" 
+									X="-7188.167" Y="-3789.478" Z="63.94907" />
+
+					<!-- CTM to - Krinkle Goodsteel - Gadgetzan repair vendor -->
+					<CustomBehavior File="MyCTM" 
+									X="-7232.01" Y="-3751.71" Z="9.092709" />
+					
+					<!-- Custom behavior - ForcedDismount -->
+					<CustomBehavior File="ForcedDismount" />
+					
+					<!-- UserSettings - usemount - false -->
+					<CustomBehavior File="UserSettings"
+									UseMount="False" />
+					
+					<!-- Move to - Krinkle Goodsteel - Gadgetzan repair vendor -->
+					<MoveTo X="-7232.01" Y="-3751.71" Z="9.092709" />
+					
+					<!-- Vendor conditions -->
+					<CustomBehavior File="ForceSetVendor" 
+									DoMail="True" 
+									DoRepair="True" 
+									DoSell="True" 
+									DoTrain="False" />
+										
+					<!-- Repair vendor - Thundermar -->
+					<SetVendor>
+						<Vendors>
+							<Vendor Name="Krinkle Goodsteel" 
+									Entry="5411" 
+									Type="Repair" 
+									X="-7232.01" Y="-3751.71" Z="9.092709" />
+						</Vendors>
+					</SetVendor>
+					
+					<SetMailbox>
+						<Mailboxes>
+							<Mailbox X="-7084.255" Y="-3851.479" Z="9.72274" />
+						</Mailboxes>
+					</SetMailbox>
+					
+					<!-- Move to - mount location -->
+					<MoveTo X="-7100.873" Y="-3853.215" Z="8.892753" />
+					
+					<!-- UserSettings - usemount - true -->
+					<CustomBehavior File="UserSettings"
+									UseMount="True" />
+					
+					<!-- Fly to - Gadgetzan hover point -->
+					<CustomBehavior File="FlyTo" 
+									X="-7188.167" Y="-3789.478" Z="63.94907" />
+
+				</If>	<!-- If we are Alliance -->					
+		
+				<!-- If we are Horde -->						
+				<If Condition="Me.IsHorde">					
+		
+					<!-- Profile message - Flying to Gadgetzan -->
+					<CustomBehavior File="Message" 
+										Text="Flying to Gadgetzan." 
+										LogColor="Fuchsia" />
+							
+					<!-- Fly to - Gadgetzan hover point -->
+					<CustomBehavior File="FlyTo" 
+									X="-7188.167" Y="-3789.478" Z="63.94907" />
+
+					<!-- CTM to - Krinkle Goodsteel - Gadgetzan repair vendor -->
+					<CustomBehavior File="MyCTM" 
+									X="-7232.01" Y="-3751.71" Z="9.092709" />
+					
+					<!-- Custom behavior - ForcedDismount -->
+					<CustomBehavior File="ForcedDismount" />
+					
+					<!-- UserSettings - usemount - false -->
+					<CustomBehavior File="UserSettings"
+									UseMount="False" />
+					
+					<!-- Move to - Krinkle Goodsteel - Gadgetzan repair vendor -->
+					<MoveTo X="-7232.01" Y="-3751.71" Z="9.092709" />
+					
+					<!-- Vendor conditions -->
+					<CustomBehavior File="ForceSetVendor" 
+									DoMail="True" 
+									DoRepair="True" 
+									DoSell="True" 
+									DoTrain="False" />
+										
+					<!-- Repair vendor - Thundermar -->
+					<SetVendor>
+						<Vendors>
+							<Vendor Name="Krinkle Goodsteel" 
+									Entry="5411" 
+									Type="Repair" 
+									X="-7232.01" Y="-3751.71" Z="9.092709" />
+						</Vendors>
+					</SetVendor>
+					
+					<SetMailbox>
+						<Mailboxes>
+							<Mailbox X="-7084.255" Y="-3851.479" Z="9.72274" />
+						</Mailboxes>
+					</SetMailbox>
+					
+					<!-- Move to - mount location -->
+					<MoveTo X="-7100.873" Y="-3853.215" Z="8.892753" />
+					
+					<!-- UserSettings - usemount - true -->
+					<CustomBehavior File="UserSettings"
+									UseMount="True" />
+					
+					<!-- Fly to - Gadgetzan hover point -->
+					<CustomBehavior File="FlyTo" 
+									X="-7188.167" Y="-3789.478" Z="63.94907" />
+		
+				</If>	<!-- If we are Horde -->
+		
+			</If>	<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+				
+			<!-- If we have more than 25 empty bag slots and our durability is greater than 30% -->
+			<If Condition="(Me.FreeBagSlots &gt; 25) &amp;&amp; (Me.LowestDurabilityPercent &gt;= 0.3)" >
+			
+				<!-- Load profile - [QO-N-85+][Flying][Zul'Farrak]_botanist -->
+				<CustomBehavior File="LoadProfile" 
+										ProfileName="..\..\[QO-N-85+][Flying][Zul'Farrak]_botanist" />
+										
+			</If>	
+			
+		</If>
+		
+	</QuestOrder>
+	
+</HBProfile>

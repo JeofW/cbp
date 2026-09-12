@@ -1,0 +1,130 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+<Name>[QO-N][90][10-X-Hr]_Pit-of-Saron_[Battered-Hilt]_hearthstone</Name>
+
+<MinLevel>1</MinLevel>
+<MaxLevel>151</MaxLevel>
+
+<MinDurability>-1</MinDurability>
+<MinFreeBagSlots>-1</MinFreeBagSlots>
+<TargetingDistance>45</TargetingDistance>
+<TargetElites>False</TargetElites>
+
+<MailGrey>False</MailGrey>
+<MailWhite>False</MailWhite>
+<MailGreen>False</MailGreen>
+<MailBlue>False</MailBlue>
+<MailPurple>False</MailPurple>
+
+<SellGrey>False</SellGrey>
+<SellWhite>False</SellWhite>
+<SellGreen>False</SellGreen>
+<SellBlue>False</SellBlue>
+<SellPurple>False</SellPurple>
+
+<AvoidMobs>		 
+</AvoidMobs>
+
+<Blackspots>
+</Blackspots>
+
+<Mailboxes>
+</Mailboxes>
+
+<Vendors>
+</Vendors>
+
+<ProtectedItems>	
+</ProtectedItems>
+
+	<QuestOrder>
+	
+		<!-- UserSettings -->
+			<CustomBehavior File="UserSettings"
+							FindMountAutomatically="True"
+							GroundMountFarmingMode="False"
+							HarvestHerbs="False"
+							HarvestMinerals="False"
+							KillBetweenHotspots="False"
+							LogoutForInactivity="True"
+							LogoutInactivityUseForceQuit="True"
+							LootMobs="False"
+							LootRadius="1"
+							MountName=""
+							NinjaSkin="False"
+							RessAtSpiritHealers="False"
+							SkinMobs="False"
+							UseMount="True" 
+							UseRandomMount="False" />
+			
+		<!-- If our level = > 85 -->				
+		<If Condition="Me.Level &gt;= 85" >
+	
+			<!-- If our hearthstone is set to Nesingwary Base Camp -->
+			<If Condition="Me.HearthstoneAreaId == 4284">
+	
+				<!-- CustomBehavior - Message - Our Hearthstone has already been set at Nesingwary Base Camp -->
+				<CustomBehavior File="Message" 
+								Text="Our Hearthstone has already been set at Nesingwary Base Camp." 
+								LogColor="Plum" />
+								
+				<!-- CustomBehavior - WaitTimer - 1 second delay -->
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="1000" />
+
+				<!--  CustomBehavior - LoadProfile - [QO-N][85][10-X-Hr][Forge-of-Souls]_botanist -->				
+				<CustomBehavior File="LoadProfile" 
+								ProfileName="..\..\..\[QO-N][85][10-X-Hr][Forge-of-Souls]_botanist" />
+	
+				<!-- Else our hearthstone is not set at Nesingwary Base Camp-->
+				<Else>
+				
+					<!-- CustomBehavior - Message -  We have not set out Hearthstone in Nesingwary Base Camp. Navigating to the innkeep -->
+					<CustomBehavior File="Message" 
+										Text="We have not set out Hearthstone in Nesingwary Base Camp. Navigating to the innkeep." 
+										LogColor="Plum" />				
+			
+					<!-- Fly to the Nesingwary Base Camp - hover point -->
+					<CustomBehavior File="FlyTo" 
+									X="5480.209" Y="5761.487" Z="-39.52147" />
+
+					<!-- CTM to - Mardan Thunderhoof - Nesingwary Base Camp repair vendor -->
+					<CustomBehavior File="MyCTM" 
+									X="5552.578" Y="5742.317" Z="-76.53156" />
+					
+					<!-- Custom behavior - ForcedDismount -->
+					<CustomBehavior File="ForcedDismount" />
+					
+					<!-- CustomBehavior - UserSettings - usemount -->
+					<CustomBehavior File="UserSettings"
+									UseMount="False" />
+
+					<!-- CustomBehavior - Message - We have arrived at the Nesingwary Base Camp innkeep -->
+					<CustomBehavior File="Message" 
+									Text="We have arrived at the Nesingwary Base Camp innkeep." 
+									LogColor="Plum" />
+
+					<!-- CustomBehavior - SetHearthstone - Nesingwary Base Camp -->				
+					<CustomBehavior File="SetHearthstone" 
+									MobId="28038"  
+									X="5566.248" Y="5763.706" Z="-75.22582" />
+					
+					<!-- Move to - flying mount location -->				
+					<MoveTo X="5544.475" Y="5755.743" Z="-78.33588" />
+					
+					<!-- CustomBehavior - UserSettings - usemount -->
+					<CustomBehavior File="UserSettings"
+									UseMount="True" />
+					
+					<!--  CustomBehavior - LoadProfile - [QO-N][90][10-X-Hr]_Pit-of-Saron_Battered-Hilt -->				
+					<CustomBehavior File="LoadProfile" 
+									ProfileName="..\..\..\[QO-N][90][10-X-Hr]_Pit-of-Saron_Battered-Hilt" />
+
+				</Else>	<!-- Else our hearthstone is not set at Golshire-->
+
+			</If>	<!-- If our hearthstone is set at Golshire-->
+
+		</If>	<!-- If our level = > 85 -->
+			
+	</QuestOrder>
+
+</HBProfile>

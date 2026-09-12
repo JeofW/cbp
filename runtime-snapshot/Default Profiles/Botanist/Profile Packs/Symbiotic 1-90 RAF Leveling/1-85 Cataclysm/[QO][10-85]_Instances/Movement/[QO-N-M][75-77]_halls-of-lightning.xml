@@ -1,0 +1,340 @@
+﻿<HBProfile creator="Botanist and Wigglez" version="1.0">
+	<Name>[QO-N-M][75-77]_halls-of-lightning</Name>
+   
+	<MinLevel>1</MinLevel>
+	<MaxLevel>101</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	
+	<MailGrey>False</MailGrey>
+	<MailWhite>False</MailWhite>
+	<MailGreen>False</MailGreen>
+	<MailBlue>False</MailBlue>
+	<MailPurple>True</MailPurple>
+   
+	<SellGrey>True</SellGrey>
+	<SellWhite>True</SellWhite>
+	<SellGreen>True</SellGreen>
+	<SellBlue>True</SellBlue>
+	<SellPurple>False</SellPurple>
+
+	<AvoidMobs>
+		<Mob Name="Summon Enabler Stalker" Entry="53488" />
+	</AvoidMobs>
+	
+	<Blackspots>
+	</Blackspots>
+
+	<Mailboxes>
+	</Mailboxes>
+ 
+	<Vendors>
+	</Vendors>
+	
+	<ProtectedItems>	
+	</ProtectedItems>
+
+	<Factions>16</Factions>
+	
+	<QuestOrder>
+
+
+		<!-- *******************************************************  Booster ************************************************************** -->
+		<If Condition="Me.Level &gt;= 90">
+			<CustomBehavior File="Message" 
+							Text="We are a booster." 
+							LogColor="Cyan" />
+							
+			<!-- Booster UserSettings -->
+			<CustomBehavior File="UserSettings"
+							FindMountAutomatically="True"
+							GroundMountFarmingMode="False"
+							HarvestHerbs="False"
+							HarvestMinerals="False"
+							KillBetweenHotspots="True"
+							LogoutForInactivity="False"
+							LogoutInactivityUseForceQuit="False"
+							LootMobs="True"
+							LootRadius="35"
+							MountName=""
+							NinjaSkin="False"
+							RessAtSpiritHealers="False"
+							SkinMobs="False"
+							UseMount="True" 
+							UseRandomMount="False" />
+							
+			<!-- Gundrak -->
+			<If Condition="Me.ZoneId == 4416">
+				<CustomBehavior File="Message" 
+								Text="Gundrak detected. Running out to reset."
+								LogColor="Fuchsia" />
+					
+				<!-- Make our way to the exit -->
+				<RunTo X="1969.795" Y="833.3107" Z="135.2538" />
+
+				<!-- Go through the portal -->
+				<CustomBehavior File="MyCTM" X="1979.768" Y="840.1291" Z="135.2121" />
+				
+				<!-- Make sure we run to the right spot outside the potral -->
+				<RunTo X="6717.32" Y="-4645.55" Z="450.017" />
+			</If> <!-- GD -->
+
+			<!-- Northrend -->
+			<If Condition="Me.MapId == 571">
+				<CustomBehavior File="Message" 
+								Text="We are in Northrend." 
+								LogColor="Cyan" />
+								
+				<!-- If our hearthstone is set here, use it -->
+				<If Condition="Me.HearthstoneAreaId == 4484">
+					<CustomBehavior File="Message" 
+									Text="Our Innkeeper is set at Bouldercrag's Refuge." 
+									LogColor="Cyan" />
+										
+					<!-- Have hearthstone -->
+					<If Condition="HasItem(6948)">
+						<CustomBehavior File="Message" 
+										Text="Using Hearthstone." 
+										LogColor="Lime" />
+										
+						<CustomBehavior File="Misc\RunLua" 
+										Lua="UseItemByName(6948)" 
+										WaitTime="1000" />
+										
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000" />
+					</If> <!-- Have hearthstone -->
+				
+					<!-- Have Innkeeper's Daughter -->
+					<If Condition="HasItem(64488)">
+						<CustomBehavior File="Message" 
+										Text="Using Innkeeper's Daughter." 
+										LogColor="Lime" />
+											
+						<CustomBehavior File="Misc\RunLua" 
+										Lua="UseItemByName(64488)" 
+										WaitTime="1000" />
+							
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000" />
+					</If> <!-- Have Innkeeper's Daughter -->
+						
+					<!-- Our hearth isn't set, we need to go to the zone -->
+					<Else>
+						<CustomBehavior File="Message" 
+										Text="Our Hearthstone isn't set in the proper location. Moving to set it." 
+										LogColor="Lime" />
+					
+						<CustomBehavior File="Message" 
+										Text="Flying to Bouldercrag's Refuge." 
+										LogColor="Lime" />
+					
+						<!-- Fly to the hover point -->
+						<CustomBehavior File="FlyTo" X="8471.806" Y="-301.3479" Z="976.4656" />
+
+						<!-- Front doorway of the inn -->
+						<CustomBehavior File="FlyTo" X="8446.114" Y="-333.7011" Z="906.6091" />
+						<CustomBehavior File="ForcedDismount" />
+						
+						<!-- Run inside -->
+						<RunTo X="8427.607" Y="-354.2716" Z="906.4023" />
+
+						<!-- Set hearthstone -->
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="1000" />
+						<CustomBehavior File="Message" 
+										Text="Setting my Hearthstone." 
+										LogColor="Lime" />
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="1000" />
+						<CustomBehavior File="SetHearthstone" 
+										MobId="29963" 
+										X="8426.41" Y="-355.5836" Z="906.4028" />
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="1000" />
+																
+						<CustomBehavior File="Message" 
+										Text="We are in Bouldercrag's Refuge." 
+										LogColor="Fuchsia" />
+
+					</Else> <!-- Set hearth -->
+				</If> <!-- Check hearthstone -->
+				
+				<!-- Repair if necessary -->
+				<If Condition="Me.LowestDurabilityPercent &lt; 0.8" >
+					<CustomBehavior File="Message" 
+									Text="Our durability is less than 80%, we need to repair." 
+									LogColor="Fuchsia" />
+									
+					<CustomBehavior File="FlyTo" X="8446.114" Y="-333.7011" Z="906.6091" />
+					<CustomBehavior File="ForcedDismount" />
+					
+					<RunTo X="8385.353" Y="-389.2431" Z="903.1184" />
+					
+					<CustomBehavior File="ForceSetVendor" 
+									DoMail="False" 
+									DoRepair="True" 
+									DoSell="False" 
+									DoTrain="False" />
+					
+					<SetVendor>
+						<Vendors>
+							<!-- Bouldercrag's Refuge -->
+							<Vendor Name="Dargum Hammerdeep" 
+									Entry="29964"
+									Type="Repair"
+									X="8383.45" Y="-390.166" Z="903.1188" />
+						</Vendors>
+					</SetVendor>
+				
+					<!-- We are done repairing -->
+					<If Condition="Me.DurabilityPercent &gt;= 0.8" >
+						<CustomBehavior File="Message" 
+										Text="Repairing complete." 
+										LogColor="Fuchsia" />
+					</If> <!-- repaired -->
+					
+					
+					<!-- Hover point -->
+					<CustomBehavior File="FlyTo" X="8471.806" Y="-301.3479" Z="976.4656" />
+				
+				</If> <!-- Repairing -->
+				
+				<CustomBehavior File="Message" 
+								Text="Flying to the rendezvous location." 
+								LogColor="Lime" />
+				
+				<!-- Fly outside of Halls of Lightning at rendezvous -->
+				<CustomBehavior File="FlyTo" X="9067.207" Y="-1353.584" Z="1197.683" />
+
+				<CustomBehavior File="Misc\LoadProfileOn" 
+								CheckRange="5" />
+									
+				<CustomBehavior File="WaitTimer"
+								WaitTime="10000" />
+								
+				<!-- Fly down -->
+				<CustomBehavior File="FlyTo" X="9140.729" Y="-1356.245" Z="1140.377" />
+				<CustomBehavior File="ForcedDismount" />
+				
+				<RunTo X="9175.68" Y="-1378.8" Z="1103.57" />
+			</If> <!-- Northrend -->
+			
+			<!-- In box -->
+			<If Condition="Me.X &gt; 9100 &amp;&amp; Me.X &lt; 9200 &amp;&amp; Me.Y &gt; -1400 &amp;&amp; Me.Y &lt; -1300" >
+				<CustomBehavior File="LoadProfile" 
+								ProfileName="..\[QO-N][75-77]_halls-of-lightning" />
+			</If> <!-- In box -->		
+		</If> <!-- Booster -->
+		
+		
+		
+		
+		
+		
+		
+		
+				
+		<!-- ******************************************************* RAF Toons *************************************************************** -->			
+				
+	
+	
+		
+		
+		
+		
+		
+		
+		<!-- RAF Toons -->		
+		<If Condition="Me.Level &lt;= 85">
+			<CustomBehavior File="Message" 
+							Text="We are a RAF." 
+							LogColor="Cyan" />
+		
+			<If Condition="Me.IsAlliance">
+				<If Condition="Me.HearthstoneAreaId != 5148">
+					<CustomBehavior File="Message" 
+									Text="Our Hearthstone isn't set in the Trade District in Stormwind. Stopping profile." 
+									LogColor="Lime" />
+									
+					<CustomBehavior File="UserSettings" 
+										StopBot="true" />
+				</If>
+				
+				<ElseIf Condition="Me.IsHorde">
+					<If Condition="Me.HearthstoneAreaId != 5170">
+						<CustomBehavior File="Message" 
+										Text="Our Hearthstone isn't set in the Valley of Strength in Orgrimmar. Stopping profile." 
+										LogColor="Lime" />
+										
+						<CustomBehavior File="UserSettings" 
+										StopBot="true" />
+					</If>
+				</ElseIf>
+			</If>
+			
+			<!-- RAF UserSettings -->
+			<CustomBehavior File="UserSettings"
+							GroundMountFarmingMode="False"
+							HarvestHerbs="False"
+							HarvestMinerals="False"
+							KillBetweenHotspots="True"
+							LogoutForInactivity="False"
+							LogoutInactivityUseForceQuit="False"
+							LootMobs="True"
+							LootRadius="15"
+							MountName=""
+							NinjaSkin="False"
+							RessAtSpiritHealers="False"
+							SkinMobs="False"
+							UseMount="True" 
+							UseRandomMount="False" />
+			
+			<!-- Gundrak -->
+			<If Condition="Me.ZoneId == 4416">
+				<CustomBehavior File="Message" 
+								Text="Gundrak detected. Running out."
+								LogColor="Fuchsia" />
+					
+				<!-- Make our way to the exit -->
+				<RunTo X="1887.432" Y="839.571" Z="176.6754" />
+
+				<!-- Go through the portal -->
+				<CustomBehavior File="MyCTM" X="1892.536" Y="826.8542" Z="176.637" />
+				
+				<!-- Make sure we run to the right spot outside the potral -->
+				<RunTo X="6717.32" Y="-4645.55" Z="450.017" />
+			</If> <!-- GD -->
+
+			<!-- Northrend -->
+			<If Condition="Me.MapId == 571">
+				<CustomBehavior File="Message" 
+								Text="Flying to the rendezvous location." 
+								LogColor="Lime" />
+				
+				<!-- Fly outside of Halls of Lightning at rendezvous -->
+				<CustomBehavior File="FlyTo" X="9067.207" Y="-1353.584" Z="1197.683" />
+
+				<CustomBehavior File="Misc\LoadProfileOn" 
+								CheckRange="5" />
+									
+				<CustomBehavior File="WaitTimer"
+								WaitTime="10000" />
+								
+				<!-- Fly down -->
+				<CustomBehavior File="FlyTo" X="9140.729" Y="-1356.245" Z="1140.377" />
+				<CustomBehavior File="ForcedDismount" />
+				
+				<RunTo X="9175.68" Y="-1378.8" Z="1103.57" />
+			</If> <!-- Northrend -->
+			
+			<!-- In box -->
+			<If Condition="Me.X &gt; 9100 &amp;&amp; Me.X &lt; 9200 &amp;&amp; Me.Y &gt; -1400 &amp;&amp; Me.Y &lt; -1300" >
+				<CustomBehavior File="LoadProfile" 
+								ProfileName="..\[QO-N][75-77]_halls-of-lightning" />
+			</If> <!-- In box -->		
+		</If> <!-- RAF toons -->
+	</QuestOrder>
+</HBProfile>
+

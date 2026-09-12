@@ -1,0 +1,183 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+	<Name>[QO-N][Reputation][60+Flying][Timbermaw-Hold][repair-mail]</Name>
+   
+	<MinLevel>1</MinLevel>
+	<MaxLevel>101</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	<TargetingDistance>1</TargetingDistance>
+	
+	<MailGrey>False</MailGrey>
+	<MailWhite>True</MailWhite>
+	<MailGreen>False</MailGreen>
+	<MailBlue>False</MailBlue>
+	<MailPurple>False</MailPurple>
+   
+	<SellGrey>True</SellGrey>
+	<SellWhite>False</SellWhite>
+	<SellGreen>True</SellGreen>
+	<SellBlue>True</SellBlue>
+	<SellPurple>True</SellPurple>
+   
+	<TargetElites>True</TargetElites>
+	
+	<AvoidMobs>
+	</AvoidMobs>
+	
+	<Blackspots>
+	</Blackspots>
+
+	<Mailboxes>
+	</Mailboxes>
+ 
+	<Vendors>
+	</Vendors>
+	
+	<ProtectedItems>	
+	</ProtectedItems>
+
+	<Factions></Factions>
+	
+	<QuestOrder>
+
+		<!-- UserSettings -->
+		<CustomBehavior File="UserSettings"
+						FindMountAutomatically="True"
+						GroundMountFarmingMode="False"
+						HarvestHerbs="False"
+						HarvestMinerals="False"
+						KillBetweenHotspots="True"
+						LogoutForInactivity="False"
+						LogoutInactivityUseForceQuit="False"
+						LootMobs="True"
+						LootRadius="25"
+						MountName=""
+						NinjaSkin="False"
+						PullDistance="25"
+						RessAtSpiritHealers="False"
+						SkinMobs="False"
+						UseMount="True" 
+						UseRandomMount="False" />
+
+		<!-- If our level is => -->
+		<If Condition="Me.Level &gt;= 60">
+			
+			<!-- If we have less then 4 empty bag slots or our durability is less than 30% -->
+			<If Condition="(Me.FreeBagSlots &lt;= 4) || (Me.LowestDurabilityPercent &lt;= 0.3)" >
+
+				<!-- Profile message - Our durability is less than 30% or we have less than 4 empty bag slots remaining -->
+				<CustomBehavior File="Message" 
+								Text="Our durability is less than 30% or we have less than 4 empty bag slots remaining." 
+								LogColor="Orange" />
+								
+				<!-- Profile message - Disabling combat -->
+				<CustomBehavior File="Message" 
+									Text="Disabling combat." 
+									LogColor="Gold" />
+				
+				<!-- DisableBehavior - Combat -->
+				<DisableBehavior Name="Combat" />
+			
+				<!-- If we are Alliance -->
+				<If Condition="Me.IsAlliance">
+				
+					<!-- Fly to - Refuge Point - hover point -->
+					<CustomBehavior File="FlyTo" 
+									X="-1265.327" Y="-2488.484" Z="75.54308" />
+					
+					<!-- CTM to - ally repair vendor -->
+					<CustomBehavior File="MyCTM" 
+										X="-1256.566" Y="-2542.965" Z="21.31395" />
+					
+					<!-- Custom behavior - ForcedDismount -->
+					<CustomBehavior File="ForcedDismount" />
+					
+					<!-- Profile message - Our durability is less than 30%, or our bags have less than 25 empty slots left -->
+					<CustomBehavior File="Message" 
+									Text="Our durability is less than 30%, or our bags have less than 25 empty slots left."
+									LogColor="Cyan" />
+									
+					<!-- Whisperwind Grove -->					
+					<SetVendor>
+						<Vendors>
+							<Vendor Name="Jannos Ironwill" 
+									Entry="1471" 
+									Type="Repair" 
+									X="-1257.819" Y="-2546.45" Z="21.45369" />
+						</Vendors>
+					</SetVendor>
+
+					<SetMailbox>
+						<Mailboxes>
+						</Mailboxes>
+					</SetMailbox>	
+
+					<!-- Vendor conditions -->
+					<CustomBehavior File="ForceSetVendor" 
+									DoMail="False" 
+									DoRepair="True" 
+									DoSell="True" 
+									DoTrain="False" />
+					
+				</If>	<!-- If we are Alliance -->
+
+				<!-- If we are Horde -->
+				<If Condition="Me.IsHorde">
+				
+					<!-- Fly to - Hammerfall - hover point -->
+					<CustomBehavior File="FlyTo" 
+									X="-976.5247" Y="-3508.619" Z="95.83376" />
+					
+					<!-- CTM to - Horde repair vendor -->
+					<CustomBehavior File="MyCTM" 
+										X="-938.5004" Y="-3477.394" Z="51.33202" />
+					
+					<!-- Custom behavior - ForcedDismount -->
+					<CustomBehavior File="ForcedDismount" />
+					
+					<!-- Profile message - Our durability is less than 30%, or our bags have less than 25 empty slots left -->
+					<CustomBehavior File="Message" 
+									Text="Our durability is less than 30%, or our bags have less than 25 empty slots left."
+									LogColor="Cyan" />
+									
+					<!-- Hammerfall -->					
+					<SetVendor>
+						<Vendors>
+							<Vendor Name="Mu'uta" 
+									Entry="9555" 
+									Type="Repair" 
+									X="-933.8503" Y="-3477.469" Z="51.30426" />
+						</Vendors>
+					</SetVendor>
+
+					<SetMailbox>
+						<Mailboxes>
+						</Mailboxes>
+					</SetMailbox>	
+
+					<!-- Vendor conditions -->
+					<CustomBehavior File="ForceSetVendor" 
+									DoMail="False" 
+									DoRepair="True" 
+									DoSell="True" 
+									DoTrain="False" />
+
+				</If>	<!-- If we are Horde -->
+
+			</If>	<!-- If we have less then 4 empty bag slots or our durability is less than 30% -->
+				
+			<!-- If we have more than 4 empty bag slots and our durability is greater than 30% -->
+			<If Condition="(Me.FreeBagSlots &gt; 4) &amp;&amp; (Me.LowestDurabilityPercent &gt;= 0.3)" >
+			
+				<!-- Load profile - [QO-N][Ravenholdt][neutral-to-revered]_botanist -->
+				<CustomBehavior File="LoadProfile" 
+								ProfileName="..\..\[QO-N][Ravenholdt][neutral-to-revered]_botanist" />
+										
+			</If>	<!-- If we have more than 4 empty bag slots and our durability is greater than 30% -->	
+			
+		</If>	<!-- If our level is => 60 -->
+		
+	</QuestOrder>
+	
+</HBProfile>

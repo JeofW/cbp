@@ -1,0 +1,841 @@
+﻿<HBProfile creator="Botanist and Wigglez" version="1.0">
+	<Name>[QO-N-M][25-37]_razorfen-kraul</Name>
+   
+	<MinLevel>1</MinLevel>
+	<MaxLevel>101</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	
+	<MailGrey>False</MailGrey>
+	<MailWhite>False</MailWhite>
+	<MailGreen>False</MailGreen>
+	<MailBlue>False</MailBlue>
+	<MailPurple>False</MailPurple>
+   
+	<SellGrey>True</SellGrey>
+	<SellWhite>True</SellWhite>
+	<SellGreen>True</SellGreen>
+	<SellBlue>True</SellBlue>
+	<SellPurple>False</SellPurple>
+
+	<AvoidMobs>
+		<Mob Name="Summon Enabler Stalker" Entry="53488" />	
+		<Mob Name="Mankrik" Entry="37847" />
+	</AvoidMobs>
+	
+	<Blackspots>
+		<!-- Avoid Mankrik -->
+		<Blackspot X="-4148.532" Y="-1943.097" Z="92.97999" Radius="20" />
+	</Blackspots>
+
+	<Mailboxes>
+	</Mailboxes>
+ 
+	<Vendors>
+	</Vendors>
+
+	<Factions>
+	</Factions>
+	
+	<ProtectedItems>
+	</ProtectedItems>
+	
+	<QuestOrder>
+
+		
+		<!-- *******************************************************  Booster ************************************************************** -->
+		<If Condition="Me.Level &gt;= 85">
+			<CustomBehavior File="Message" 
+							Text="We are a booster." 
+							LogColor="Cyan" />
+							
+			<!-- Booster UserSettings -->
+			<CustomBehavior File="UserSettings"
+							FindMountAutomatically="True"
+							GroundMountFarmingMode="False"
+							HarvestHerbs="False"
+							HarvestMinerals="False"
+							KillBetweenHotspots="True"
+							LogoutForInactivity="False"
+							LogoutInactivityUseForceQuit="False"
+							LootMobs="True"
+							LootRadius="35"
+							MountName=""
+							NinjaSkin="False"
+							RessAtSpiritHealers="False"
+							SkinMobs="False"
+							UseMount="True" 
+							UseRandomMount="False" />
+							
+			<!-- If we are in Kalimdor -->
+			<If Condition="Me.MapId == 1" >	
+				<CustomBehavior File="Message" 
+								Text="We are in Kalimdor." 
+								LogColor="Cyan" />
+							
+				<!-- Outside the box -->
+				<If Condition="Me.X &lt; -4500 || Me.X &gt; -4440 || Me.Y &gt; -1650 || Me.Y &lt; -1700" >
+					<CustomBehavior File="Message" 
+									Text="We are not in the box." 
+									LogColor="Cyan" />
+								
+					<!-- If our hearthstone is set here, use it -->
+					<If Condition="Me.HearthstoneAreaId == 4010" >
+						<CustomBehavior File="Message" 
+										Text="Our Innkeeper is set at Mudsprocket." 
+										LogColor="Cyan" />
+										
+						<!-- Have hearthstone -->
+						<If Condition="HasItem(6948)">
+							<CustomBehavior File="Message" 
+											Text="Using Hearthstone." 
+											LogColor="Lime" />
+											
+							<CustomBehavior File="Misc\RunLua" 
+											Lua="UseItemByName(6948)" 
+											WaitTime="1000" />
+											
+							<CustomBehavior File="WaitTimer" 
+											WaitTime="20000" />
+						</If> <!-- Have hearthstone -->
+					
+						<!-- Have Innkeeper's Daughter -->
+						<If Condition="HasItem(64488)">
+							<CustomBehavior File="Message" 
+											Text="Using Innkeeper's Daughter." 
+											LogColor="Lime" />
+												
+							<CustomBehavior File="Misc\RunLua" 
+											Lua="UseItemByName(64488)" 
+											WaitTime="1000" />
+								
+							<CustomBehavior File="WaitTimer" 
+											WaitTime="20000" />
+						</If> <!-- Have Innkeeper's Daughter -->
+							
+						<!-- Our hearth isn't set, we need to go to the zone -->
+						<Else>
+							<CustomBehavior File="Message" 
+											Text="Our Hearthstone isn't set in the proper location. Moving to set it." 
+											LogColor="Lime" />
+					
+							<CustomBehavior File="Message" 
+											Text="Flying to Mudsprocket." 
+											LogColor="Lime" />
+					
+							<!-- Fly to the hover point above the innkeep in Mudsprocket -->
+							<CustomBehavior File="FlyTo" 
+											X="-4561.028" Y="-3169.96" Z="62.55063" />
+					
+							<!-- Front doorway of the inn -->
+							<CustomBehavior File="FlyTo" 
+											X="-4589.012" Y="-3173.481" Z="34.17432" />
+							<CustomBehavior File="ForcedDismount" />
+	
+							<!-- Run inside the inn -->
+							<RunTo X="-4620.78" Y="-3172.521" Z="34.81204" />
+							
+							<!-- Set hearthstone -->
+							<CustomBehavior File="WaitTimer" 
+											WaitTime="1000" />
+							<CustomBehavior File="Message" 
+											Text="Setting my Hearthstone." 
+											LogColor="Lime" />
+							<CustomBehavior File="WaitTimer" 
+											WaitTime="1000" />
+							<CustomBehavior File="SetHearthstone" 
+											MobId="23995" 
+											X="-4630.091" Y="-3176.113" Z="41.22118" />
+							<CustomBehavior File="WaitTimer" 
+											WaitTime="1000" />
+						</Else> <!-- Set hearth -->
+					</If> <!-- Check hearthstone -->
+					
+					<!-- fly to hover point -->
+					<CustomBehavior File="FlyTo" 
+									X="-4561.028" Y="-3169.96" Z="62.55063" />
+					
+					<!-- Repair if necessary -->
+					<If Condition="Me.LowestDurabilityPercent &lt; 0.8" >
+						<CustomBehavior File="FlyTo" 
+										X="-4603.045" Y="-3206.708" Z="34.92397" />
+						<CustomBehavior File="ForcedDismount" />
+					
+						<CustomBehavior File="Message" 
+										Text="Our durability is less than 80%, we need to repair." 
+										LogColor="Fuchsia" />
+									
+						<CustomBehavior File="ForceSetVendor" 
+										DoMail="False" 
+										DoRepair="True" 
+										DoSell="False" 
+										DoTrain="False" />
+						
+						<SetVendor>
+							<Vendors>
+								<!-- Mudsprocket -->
+								<Vendor Name="Razbo Rustgear" 
+										Entry="23571" 
+										Type="Repair" 
+										X="-4603.661" Y="-3210.939" Z="34.92585" />
+							</Vendors>
+						</SetVendor>
+					
+						<!-- We are done repairing -->
+						<If Condition="Me.DurabilityPercent &gt;= 0.8" >
+							<CustomBehavior File="Message" 
+											Text="Repairing complete." 
+											LogColor="Fuchsia" />
+						</If> <!-- repaired -->
+					</If> <!-- Repairing -->
+					
+					<!-- fly to hover point -->
+					<CustomBehavior File="FlyTo" 
+									X="-4561.028" Y="-3169.96" Z="62.55063" />
+									
+					<CustomBehavior File="Message" 
+									Text="We are in Mudsprocket." 
+									LogColor="Fuchsia" />
+							
+					<CustomBehavior File="Message" 
+									Text="Flying to the rendezvous location." 
+									LogColor="Lime" />
+											
+					<CustomBehavior File="FlyTo" X="-4120.178" Y="-1999.181" Z="91.66761" />
+									
+					<CustomBehavior File="ForcedDismount" />
+					
+					<RunTo X="-4120.178" Y="-1999.181" Z="91.66761" />
+					
+					<CustomBehavior File="Misc\LoadProfileOn" 
+									CheckRange="5" />
+					
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="5000" />
+					
+					<RunTo X="-4199.099" Y="-1930.017" Z="91.60564" />
+					<RunTo X="-4181.171" Y="-1897.548" Z="91.9545" />
+					<RunTo X="-4203.039" Y="-1909.542" Z="91.72755" />
+					<RunTo X="-4223.585" Y="-1913.943" Z="93.54006" />
+					<RunTo X="-4236.775" Y="-1887.289" Z="92.32339" />
+					<RunTo X="-4239.272" Y="-1884.396" Z="92.66742" />
+					<RunTo X="-4277.22" Y="-1886" Z="91.82715" />
+					<RunTo X="-4294.447" Y="-1875.844" Z="92.717" />
+					<RunTo X="-4317.577" Y="-1885.929" Z="91.17356" />
+					<RunTo X="-4357.689" Y="-1884.55" Z="89.30547" />
+					<RunTo X="-4369.329" Y="-1877.063" Z="88.58798" />
+					<RunTo X="-4390.023" Y="-1908.57" Z="86.39541" />
+					<RunTo X="-4392.706" Y="-1910.346" Z="86.30326" />
+					<RunTo X="-4389.78" Y="-1914.587" Z="86.55402" />
+					<RunTo X="-4388.44" Y="-1910.293" Z="86.51731" />
+					<RunTo X="-4405.193" Y="-1874.473" Z="85.97189" />
+					<RunTo X="-4412.994" Y="-1875.631" Z="86.01228" />
+					<RunTo X="-4453.119" Y="-1872.967" Z="85.90644" />
+					<RunTo X="-4468.336" Y="-1879.926" Z="85.98127" />
+					<RunTo X="-4481.66" Y="-1888.556" Z="86.41856" />
+					<RunTo X="-4487.705" Y="-1894.022" Z="86.47855" />
+					<RunTo X="-4488.469" Y="-1894.753" Z="86.49744" />
+					<RunTo X="-4476.935" Y="-1880.971" Z="85.83622" />
+					<RunTo X="-4477.098" Y="-1855.147" Z="86.18663" />
+					<RunTo X="-4476.665" Y="-1814.934" Z="86.37875" />
+					<RunTo X="-4486.202" Y="-1776.021" Z="86.10852" />
+					<RunTo X="-4487.747" Y="-1768.671" Z="86.10852" />
+					<RunTo X="-4474.706" Y="-1811.373" Z="86.06303" />
+					<RunTo X="-4479.221" Y="-1793.526" Z="86.11845" />
+					<RunTo X="-4485.021" Y="-1773.773" Z="86.10855" />
+					<RunTo X="-4483.426" Y="-1748.391" Z="86.17936" />
+					<RunTo X="-4483.276" Y="-1735.582" Z="86.6567" />
+					<RunTo X="-4482.836" Y="-1732.599" Z="86.77713" />
+					<RunTo X="-4492.055" Y="-1730.62" Z="88.06927" />
+					<RunTo X="-4483.8" Y="-1732.597" Z="86.85407" />
+					<RunTo X="-4475.263" Y="-1696" Z="82.32021" />
+					<RunTo X="-4473.421" Y="-1688.759" Z="81.30132" />
+					<RunTo X="-4468.679" Y="-1673.395" Z="81.81928" />
+					
+					<!-- Tag the rafs -->
+					<CustomBehavior File="FlyTo" X="-4120.178" Y="-1999.181" Z="91.66761" />
+					
+					<CustomBehavior File="ForcedDismount" />
+					
+					<RunTo X="-4120.178" Y="-1999.181" Z="91.66761" />
+					
+					<!-- fly back to where we left off -->
+					<CustomBehavior File="FlyTo" X="-4468.679" Y="-1673.395" Z="81.81928" />
+					
+					<CustomBehavior File="ForcedDismount" />
+					
+					<!-- Moving to the instance box -->
+					<RunTo X="-4462" Y="-1663.06" Z="81.8912" />
+				</If> <!-- Not in box -->
+				
+				<!-- Inside the instance box, load the profile -->
+				<If Condition="Me.X &gt; -4500 &amp;&amp; Me.X &lt; -4440 &amp;&amp; Me.Y &lt; -1650 &amp;&amp; Me.Y &gt; -1700" >
+					<CustomBehavior File="Message" 
+									Text="We are in the box." 
+									LogColor="Cyan" />
+					
+					<CustomBehavior File="LoadProfile" 
+									ProfileName="..\[QO-N][25-37]_razorfen-kraul" />
+				</If> <!-- Load profile -->
+			</If> <!-- Kalimdor -->
+		</If> <!-- Booster -->
+						
+		
+		
+		
+		
+		
+		
+				
+		<!-- ******************************************************* RAF Toons *************************************************************** -->			
+				
+	
+	
+	
+	
+	
+	
+	
+	
+		<!-- RAF Toons -->		
+		<If Condition="Me.Level &lt;= 84">
+			<CustomBehavior File="Message" 
+							Text="We are a RAF." 
+							LogColor="Cyan" />
+		
+			<If Condition="Me.IsAlliance">
+				<If Condition="Me.HearthstoneAreaId != 5148">
+					<CustomBehavior File="Message" 
+									Text="Our Hearthstone isn't set in the Trade District in Stormwind. Stopping profile." 
+									LogColor="Lime" />
+									
+					<CustomBehavior File="UserSettings" 
+										StopBot="true" />
+				</If>
+				
+				<ElseIf Condition="Me.IsHorde">
+					<If Condition="Me.HearthstoneAreaId != 5170">
+						<CustomBehavior File="Message" 
+										Text="Our Hearthstone isn't set in the Valley of Strength in Orgrimmar. Stopping profile." 
+										LogColor="Lime" />
+										
+						<CustomBehavior File="UserSettings" 
+										StopBot="true" />
+					</If>
+				</ElseIf>
+			</If>
+		
+			<!-- RAF UserSettings -->
+			<CustomBehavior File="UserSettings"
+							GroundMountFarmingMode="False"
+							HarvestHerbs="False"
+							HarvestMinerals="False"
+							KillBetweenHotspots="True"
+							LogoutForInactivity="False"
+							LogoutInactivityUseForceQuit="False"
+							LootMobs="True"
+							LootRadius="15"
+							MountName=""
+							NinjaSkin="False"
+							RessAtSpiritHealers="False"
+							SkinMobs="False"
+							UseMount="True" 
+							UseRandomMount="False" />
+				
+			<!-- Eastern Kingdoms -->
+			<If Condition="Me.MapId == 0">
+				<!-- Alliance -->
+				<If Condition="Me.IsAlliance">
+					<CustomBehavior File="Message" 
+									Text="We are Alliance." 
+									LogColor="Cyan" />
+									
+					<!-- Stormwind -->
+					<If Condition="Me.ZoneId == 1519">
+						<CustomBehavior File="Message" 
+										Text="We are in Stormwind City." 
+										LogColor="Cyan" />
+										
+						<!-- Bag space and Durabilty check -->
+						<If Condition="(Me.FreeBagSlots &lt;= 4) || (Me.LowestDurabilityPercent &lt; 0.8)" >
+							<SetVendor>
+								<Vendors>
+									<Vendor Name="Gunther Weller" 
+											Entry="1289" 
+											Type="Repair" 
+											X="-8790.421" Y="607.3484" Z="96.77297" />
+								</Vendors>
+							</SetVendor>
+							<SetMailbox>
+								<Mailboxes>
+									<Mailbox X="-8862.369" Y="639.4135" Z="96.18259" />
+								</Mailboxes>
+							</SetMailbox>				
+							<CustomBehavior File="ForceSetVendor" 
+											DoMail="True" 
+											DoRepair="True" 
+											DoSell="True" 
+											DoTrain="False" />	
+						</If>			
+									
+						<!-- If we are 20 -->
+						<If Condition="Me.Level &gt;= 20" >	
+							<!-- Buy mount training until we've reached our needed skill -->
+							<While Condition="Me.GetSkill(Styx.SkillLine.Riding).CurrentValue &lt; 75">
+								<!-- Have gold -->
+								<If Condition="(Me.Gold &gt;= 5)" >
+									<CustomBehavior File="Message" 
+													Text="Moving to the riding trainer."
+													LogColor="Orange" />
+											
+									<RunTo X="-8847.744" Y="500.6151" Z="109.6094" />	
+
+									<CustomBehavior File="InteractWith" 
+													MobId="43769" 
+													WaitTime="1000"
+													CollectionDistance="50" 
+													X="-8845.4" Y="502.653" Z="109.617" />
+											
+									<CustomBehavior File="ForceTrainRiding" 
+													MobId="43769" />
+									
+									<Else>
+										<CustomBehavior File="Message" 
+														Text="You have insufficient gold for training. You require 5g or more to be able to train." 
+														LogColor="Red" />	
+									</Else>
+								</If> <!-- Have gold -->
+							</While> <!-- Loop mount purchasing -->
+							
+							<Else>
+								<CustomBehavior File="Message" 
+												Text="You are not level 20." 
+												LogColor="Red" />	
+							</Else>
+						</If> <!-- Level check -->
+							
+						<!-- Run to the flight master in stormwind -->
+						<RunTo X="-8838.393" Y="489.0495" Z="109.6092" />
+						
+						<CustomBehavior File="UserDialog" 
+										AllowBotStop="False" 
+										SoundCue="Exclamation" 
+										SoundCueInterval="15" 
+										ExpiryTime="600"
+										ExpiryAction="InputEnabled_Continue" 
+										Text="RAF - We suggest you have a ground mount beyond this level. Press continue if you already have a ground mount. Otherwise stop the bot, go purchase a mount and return to this location before restarting the bot" 	
+										Title="WARNING" />	
+						
+						<!-- trained -->
+						<If Condition="Me.GetSkill(Styx.SkillLine.Riding).CurrentValue &gt;= 75" >
+							<CustomBehavior File="Message" 
+											Text="Moving to Gol'Bolar Quarry."
+											LogColor="Lime" />
+							
+							<!-- gol'bolar quarry fp -->
+							<RunTo X="-5714.14" Y="-1578.64" Z="383.204" />
+							
+							<!-- Dun Morogh -->
+							<If Condition="Me.ZoneId == 1">
+								<CustomBehavior File="Message" 
+												Text="We are in Dun Morogh."
+												LogColor="Cyan" />
+												
+								<CustomBehavior File="Message" 
+												Text="Moving to Menethil Harbor."
+												LogColor="Lime" />
+								
+								<!-- move to menethil harbor fp -->
+								<RunTo X="-3787.81" Y="-777.696" Z="1.5582" />
+							</If> <!-- Dun Morogh -->
+							
+							<!-- Wetlands -->
+							<If Condition="Me.ZoneId == 11">
+								<CustomBehavior File="Message" 
+												Text="We are in Wetlands."
+												LogColor="Cyan" />
+												
+								<CustomBehavior File="Message" 
+												Text="We are moving to Theramore Isle."
+												LogColor="Lime" />
+							
+								<!-- move to the docks and take the boat to theramore -->
+								<RunTo X="-3862.112" Y="-657.6467" Z="5.291173" />
+								
+								<CustomBehavior File="Message" 
+												Text="Waiting for the boat to Dustwallow Marsh." 
+												LogColor="Lime" />
+												
+								<CustomBehavior File="UseTransport" 
+												TransportId="176231"
+												WaitAtX="-3862.112" 
+												WaitAtY="-657.6467" 
+												WaitAtZ="5.291173"
+												TransportStartX="-3872.35" 
+												TransportStartY="-639.944" 
+												TransportStartZ="0.0387598276"		
+												StandOnX="-3866.424" 
+												StandOnY="-638.1647" 
+												StandOnZ="6.098088"
+												TransportEndX="-4016.39" 
+												TransportEndY="-4740.58838" 
+												TransportEndZ="-0.0113018192"	
+												GetOffX="-3997.751" 
+												GetOffY="-4724.298" 
+												GetOffZ="4.309702" />
+							</If> <!-- Wetlands -->
+						</If> <!-- Mount trained -->
+					</If> <!-- Stormwind -->
+				</If> <!-- Alliance -->
+			</If> <!-- Eastern Kingdoms -->
+			
+			<!-- Kalimdor -->
+			<If Condition="Me.MapId == 1">
+				<CustomBehavior File="Message" 
+								Text="We are in Kalimdor."
+								LogColor="Cyan" />
+								
+				<!-- Alliance -->
+				<If Condition="Me.IsAlliance">
+					<CustomBehavior File="Message" 
+									Text="We are Alliance."
+									LogColor="Cyan" />
+									
+					<!-- Dustwallow Marsh -->
+					<If Condition="Me.ZoneId == 15" >
+						<CustomBehavior File="Message" 
+										Text="We are in Dustwallow Marsh."
+										LogColor="Cyan" />
+										
+						<CustomBehavior File="Message" 
+										Text="We are moving to the Western gate exiting Theramore Isle."
+										LogColor="Lime" />
+								
+						<!-- Forced ground mount, runlikehell to western gate leading out of theramore -->
+						<CustomBehavior File="ForcedMount"
+										MountType="Ground" />
+														
+						<CustomBehavior File="RunLikeHell"
+									UseCTM="false" 
+									NumOfTimes="1" 
+									AllowCombat="false">
+							<Hotspot X="-3782.567" Y="-4255.7" Z="6.254439" />
+						</CustomBehavior>
+						
+						<CustomBehavior File="Message" 
+										Text="We are moving to the Southern Barrens."
+										LogColor="Lime" />
+										
+						<!-- runlikehell out of theramore to sotuhern barrens -->
+						<CustomBehavior File="RunLikeHell" 
+										NumOfTimes="1" 
+										AllowCombat="false">
+							<Hotspot X="-3784.842" Y="-4122.856" Z="3.85025" />
+							<Hotspot X="-3779.616" Y="-4058.117" Z="7.74936" />
+							<Hotspot X="-3788.214" Y="-3916.856" Z="6.083549" />
+							<Hotspot X="-3782.844" Y="-3835.111" Z="31.10342" />
+							<Hotspot X="-3805.591" Y="-3693.427" Z="43.28993" />
+							<Hotspot X="-3819.059" Y="-3580.17" Z="42.87718" />
+							<Hotspot X="-3814.875" Y="-3550.336" Z="42.68598" />
+							<Hotspot X="-3820.341" Y="-3525.151" Z="43.11248" />
+							<Hotspot X="-3807.917" Y="-3447.343" Z="42.42683" />
+							<Hotspot X="-3810.861" Y="-3348.939" Z="38.41087" />
+							<Hotspot X="-3818.86" Y="-3267.249" Z="38.9136" />
+							<Hotspot X="-3814.412" Y="-3206.013" Z="38.91971" />
+							<Hotspot X="-3818.042" Y="-3185.422" Z="40.01119" />
+							<Hotspot X="-3800.683" Y="-3155.293" Z="38.14743" />
+							<Hotspot X="-3812.186" Y="-3130.041" Z="39.10503" />
+							<Hotspot X="-3785.212" Y="-3023.778" Z="37.93139" />
+							<Hotspot X="-3735.473" Y="-2941.778" Z="37.26948" />
+							<Hotspot X="-3719.428" Y="-2929.908" Z="36.85535" />
+							<Hotspot X="-3709.873" Y="-2902.872" Z="40.00324" />
+							<Hotspot X="-3682.953" Y="-2832.898" Z="36.79173" />
+							<Hotspot X="-3667.548" Y="-2748.487" Z="36.08558" />
+							<Hotspot X="-3670.469" Y="-2591.573" Z="52.48718" />
+							<Hotspot X="-3683.468" Y="-2545.132" Z="61.50312" />
+							<Hotspot X="-3684.107" Y="-2456.478" Z="80.84489" />	<!-- entered southern barrens -->
+						</CustomBehavior>	
+					</If> <!-- Dustwallow Marsh -->
+					
+					<!-- Southern Barrens -->
+					<If Condition="Me.ZoneId == 4709" >
+						<CustomBehavior File="Message" 
+										Text="We are in Southern Barrens."
+										LogColor="Cyan" />
+										
+						<CustomBehavior File="Message" 
+										Text="We are moving to the rendezvous point."
+										LogColor="Lime" />
+										
+						<!-- Run to the road entering southern barrens from dustwallow marsh -->
+						<RunTo X="-3646.009" Y="-2419.298" Z="93.58193" />
+						
+						<!-- Runlikehell to the rendezvous -->
+						<CustomBehavior File="RunLikeHell" 
+										NumOfTimes="1" 
+										AllowCombat="false">
+							<Hotspot X="-3646.009" Y="-2419.298" Z="93.58193" />
+							<Hotspot X="-3620.597" Y="-2360.604" Z="93.94967" />
+							<Hotspot X="-3579.165" Y="-2314.584" Z="96.32779" />
+							<Hotspot X="-3573.779" Y="-2234.296" Z="91.66689" />
+							<Hotspot X="-3491.423" Y="-2131.443" Z="92.94565" />
+							<Hotspot X="-3482.574" Y="-2055.368" Z="97.01271" />
+							<Hotspot X="-3583.164" Y="-2033.708" Z="91.70001" />
+							<Hotspot X="-3642.783" Y="-2016.442" Z="91.66727" />
+							<Hotspot X="-3703.971" Y="-2021.292" Z="91.66727" />
+							<Hotspot X="-3799.034" Y="-2049.649" Z="91.69884" />
+							<Hotspot X="-3877.587" Y="-2049.556" Z="95.66039" />
+							<Hotspot X="-4076.114" Y="-2045.069" Z="91.66761" />
+							<Hotspot X="-4120.178" Y="-1999.181" Z="91.66761" />	<!-- rendezvous at fire beside the road -->				
+						</CustomBehavior>
+					</If> <!-- Southern Barrens -->
+					
+					<!-- Horde -->
+					<ElseIf Condition="Me.IsHorde">
+						<CustomBehavior File="Message" 
+										Text="We are Horde." 
+										LogColor="Cyan" />
+				
+						<!-- Orgrimmar -->
+						<If Condition="Me.ZoneId == 1637" >	
+							<CustomBehavior File="Message" 
+											Text="We are in Orgrimmar."
+											LogColor="Cyan" />
+										
+							<!-- Bag space and Durabilty check -->
+							<If Condition="(Me.FreeBagSlots &lt;= 4) || (Me.LowestDurabilityPercent &lt; 0.8)" >
+								<SetVendor>
+									<Vendors>
+										<Vendor Name="Sana" 
+												Entry="3319" 
+												Type="Repair"
+												X="1583.74" Y="-4288.98" Z="21.54101" />
+									</Vendors>
+								</SetVendor>
+								
+								<SetMailbox>
+									<Mailboxes>
+										<Mailbox X="1606.27" Y="-4383.281" Z="20.70483" />
+									</Mailboxes>
+								</SetMailbox>				
+								
+								<CustomBehavior File="ForceSetVendor" 
+												DoMail="True" 
+												DoRepair="True" 
+												DoSell="True" 
+												DoTrain="False" />	
+							</If>						
+										
+							<!-- If we are 20 -->
+							<If Condition="Me.Level &gt;= 20" >	
+								<!-- Buy mount training until we've reached our needed skill -->
+								<While Condition="Me.GetSkill(Styx.SkillLine.Riding).CurrentValue &lt; 75">
+									<!-- Have gold -->
+									<If Condition="(Me.Gold &gt;= 5)" >	
+										<CustomBehavior File="Message" 
+														Text="Moving to the riding trainer." 
+														LogColor="Orange" />
+														
+										<!-- move to riding trainer -->
+										<RunTo X="1802.374" Y="-4368.528" Z="102.6684" />
+										
+										<CustomBehavior File="InteractWith" 
+														MobId="44919" 
+														WaitTime="1000"
+														CollectionDistance="50" 
+														X="1799.54" Y="-4357.09" Z="102.4019" />
+														
+										<CustomBehavior File="ForceTrainRiding" MobId="44919" />
+										
+										<Else>
+											<CustomBehavior File="Message" 
+															Text="You have insufficient gold for training. You require 5g or more to be able to train." 
+															LogColor="Red" />	
+										</Else>
+									</If> <!-- Have gold -->	
+								</While> <!-- Loop mount purchasing -->
+								
+								<Else>
+									<CustomBehavior File="Message" 
+													Text="You are not level 20." 
+													LogColor="Red" />	
+								</Else>
+							</If> <!-- Level check -->
+								
+							<CustomBehavior File="UserDialog" 
+											AllowBotStop="False" 
+											SoundCue="Exclamation" 
+											SoundCueInterval="15" 
+											ExpiryTime="600"
+											ExpiryAction="InputEnabled_Continue" 
+											Text="RAF - We suggest you have a ground mount beyond this level. Press continue if you already have a ground mount. Otherwise stop the bot, go purchase a mount and return to this location before restarting the bot" 	
+											Title="WARNING" />
+							
+							<!-- trained -->
+							<If Condition="Me.GetSkill(Styx.SkillLine.Riding).CurrentValue &gt;= 75" >
+								<CustomBehavior File="Message" 
+												Text="Moving to The Crossroads."
+												LogColor="Lime" />
+										
+								<!-- Orgrimmar fp -->
+								<RunTo X="1801.323" Y="-4368.617" Z="102.6116" />
+								
+								<!-- flightmaster to crossroads fp -->
+								<RunTo X="-440.4101" Y="-2598.192" Z="95.90119" />
+							</If> <!-- Trained riding -->
+						</If> <!-- Orgrimmar -->
+						
+						<!-- Northern Barrens -->
+						<If Condition="Me.ZoneId == 17">
+							<CustomBehavior File="Message" 
+											Text="We are in Northern Barrens."
+											LogColor="Cyan" />
+											
+							<CustomBehavior File="ForcedMount"
+											MountType="Ground" />
+											
+							<CustomBehavior File="Message" 
+											Text="Moving to the west of Crossroads to make our way around the gap."
+											LogColor="Lime" />
+
+							<!-- Edge of northern barrens -->
+							<CustomBehavior File="NoCombatMoveTo" X="-40.85432" Y="-1371.105" Z="92.10313" />
+							
+							<!-- Run into Southern Barrens -->
+							<CustomBehavior File="NoCombatMoveTo" X="-100.2644" Y="-1279.025" Z="82.82246" />
+						</If> <!-- Northern Barrens -->
+						
+						<!-- Southern Barrens -->
+						<If Condition="Me.ZoneId == 4709" >
+							<CustomBehavior File="Message" 
+											Text="We are in Southern Barrens."
+											LogColor="Cyan" />
+												
+							<!-- Not in box -->
+							<If Condition="Me.X &lt; -4500 || Me.X &gt; -4440 || Me.Y &gt; -1650 || Me.Y &lt; -1700" >
+								<CustomBehavior File="Message" 
+												Text="We are not in the box."
+												LogColor="Cyan" />
+												
+								<!-- If we are above the overgrowth -->
+								<If Condition="Me.X &gt;= -800">
+									<CustomBehavior File="ForcedMount"
+													MountType="Ground" />
+								
+									<!-- Run into southern barrens -->
+									<CustomBehavior File="NoCombatMoveTo" X="-100.2644" Y="-1279.025" Z="82.82246" />
+									
+									<CustomBehavior File="Message" 
+													Text="Moving to Hunter's Hill."
+													LogColor="Lime" />
+													
+									<CustomBehavior File="NoCombatMoveTo" X="-130.4653" Y="-1191.24" Z="69.42342" />
+													
+									<!-- Run to the hill -->
+									<CustomBehavior File="NoCombatMoveTo" X="-450.7377" Y="-971.5682" Z="95.21753" />
+								
+									<!-- Run up the hill and to Hunter's Hill -->
+									<CustomBehavior File="NoCombatMoveTo" X="-793.7448" Y="-1580.115" Z="140.5937" />
+									
+									<CustomBehavior File="Message" 
+													Text="We are in Hunter's Hill."
+													LogColor="Cyan" />
+									
+									<!-- Hunter's Hill fp -->
+									<RunTo X="-795.6033" Y="-1589.205" Z="140.7133" />
+									
+									<!-- Get to our run like hell -->
+									<RunTo X="-846.6653" Y="-1546.151" Z="140.3311" />
+								</If> <!-- Above the overgrowth -->
+									
+								<!-- If we are between the Hunter's Hill and Desolation Hold -->
+								<If Condition="Me.X &lt; -800 &amp;&amp; Me.X &gt;= -3400" >	
+									<CustomBehavior File="ForcedMount"
+													MountType="Ground" />
+													
+									<CustomBehavior File="Message" 
+													Text="We are between Hunter's Hill and Desolation Hold."
+													LogColor="Cyan" />
+													
+									<CustomBehavior File="Message" 
+													Text="Moving to Desolation Hold."
+													LogColor="Lime" />
+												
+									<CustomBehavior File="NoCombatMoveTo" X="-3314.967" Y="-1714.101" Z="120.3568" />
+									
+									<!-- Pick up the fp -->
+									<RunTo X="-3294.295" Y="-1698.981" Z="122.6187" />
+									
+									<CustomBehavior File="Message" 
+													Text="We are in Desolation Hold."
+													LogColor="Cyan" />
+									
+									<!-- run to gates exiting desolation hold -->
+									<RunTo X="-3376.696" Y="-1881.078" Z="97.73006" />
+									
+									<RunTo X="-3407.712" Y="-1887.552" Z="95.4744" />
+								</If> <!-- Divider -->
+								
+								<!-- Below Desolation Hold -->
+								<If Condition="Me.X &lt; -3400" >	
+									<CustomBehavior File="ForcedMount"
+													MountType="Ground" />
+								
+									<CustomBehavior File="Message" 
+													Text="We are below Desolation Hold."
+													LogColor="Cyan" />
+									
+									<CustomBehavior File="Message" 
+													Text="Moving to the rendezvous point."
+													LogColor="Lime" />
+								
+									<CustomBehavior File="NoCombatMoveTo" X="-4120.38" Y="-1999.253" Z="91.66689" />
+								</If> <!-- Below Desolation Hold -->
+							</If> <!-- Not in box -->
+						</If> <!-- Southern Barrens -->
+					</ElseIf> <!-- Horde -->
+				</If> <!-- Alliance -->
+				
+				<!-- Southern Barrens -->
+				<If Condition="Me.ZoneId == 4709" >
+					<!-- Begin the escort once all party members are within range -->
+					<CustomBehavior File="Misc\LoadProfileOn" CheckRange="5" />
+			
+					<CustomBehavior File="Message" 
+									Text="The booster will now clear the path to Razorfen Kraul."
+									LogColor="Cyan" />
+											
+					<!-- Wait timer to allow the booster to clear a path to RFK -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="20000" />
+									
+					<CustomBehavior File="Misc\LoadProfileOn" CheckRange="5" />
+					
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="5000" />
+									
+					<CustomBehavior File="Message" 
+									Text="Moving to Razorfen Kraul."
+									LogColor="Lime" />
+									
+					<!-- Moving to the instance box -->
+					<CustomBehavior File="NoCombatMoveTo" X="-4462" Y="-1663.06" Z="81.8912" />
+					
+					<CustomBehavior File="ForcedDismount" />
+					
+					<!-- Inside the instance box, load the profile -->
+					<If Condition="Me.X &gt; -4500 &amp;&amp; Me.X &lt; -4440 &amp;&amp; Me.Y &lt; -1650 &amp;&amp; Me.Y &gt; -1700" >
+						<CustomBehavior File="Message" 
+										Text="We are in the box." 
+										LogColor="Cyan" />
+						
+						<CustomBehavior File="LoadProfile" 
+										ProfileName="..\[QO-N][25-37]_razorfen-kraul" />
+					</If> <!-- Load profile -->
+				</If> <!-- Southern Barrens -->
+			</If> <!-- Kalimdor -->
+		</If> <!-- RAF -->
+	</QuestOrder>
+</HBProfile>
+

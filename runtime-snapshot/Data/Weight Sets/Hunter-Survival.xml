@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WeightSet Class="Hunter" Specialization="3" Name="Hunter-Survival">
+  <MetaSocket>8</MetaSocket>
+  <RedSocket>5</RedSocket>
+  <YellowSocket>5</YellowSocket>
+  <BlueSocket>4</BlueSocket>
+  <Reserved57>1.5</Reserved57>
+  <CriticalStrikeRatingRanged>1.2</CriticalStrikeRatingRanged>
+  <CriticalStrikeRating>1.2</CriticalStrikeRating>
+  <Agility>1</Agility>
+  <ExpertiseRating>1</ExpertiseRating>
+  <DPS>1</DPS>
+  <HitRatingRanged>1</HitRatingRanged>
+  <HitRating>1</HitRating>
+  <Intellect>0.9</Intellect>
+  <MeleeAttackPower>0.75</MeleeAttackPower>
+  <AttackPower>0.75</AttackPower>
+  <Stamina>0.66</Stamina>
+  <RangedAttackPower>0.45</RangedAttackPower>
+  <ParryRating>0.1</ParryRating>
+  <DodgeRating>0.1</DodgeRating>
+  <Armor>0.05</Armor>
+  <Strength>0.025</Strength>
+  <DefenseRating>0.015</DefenseRating>
+</WeightSet>

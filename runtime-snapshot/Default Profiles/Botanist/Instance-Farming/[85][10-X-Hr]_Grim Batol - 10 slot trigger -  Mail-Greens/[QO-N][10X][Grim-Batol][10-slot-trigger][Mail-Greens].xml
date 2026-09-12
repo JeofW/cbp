@@ -1,0 +1,460 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+	<Name>[QO-N][10X][Grim-Batol][10-slot-trigger][Mail-Greens]</Name>
+   
+	<MinLevel>1</MinLevel>
+	<MaxLevel>101</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	
+	<MailGrey>False</MailGrey>
+	<MailWhite>False</MailWhite>
+	<MailGreen>True</MailGreen>
+	<MailBlue>False</MailBlue>
+	<MailPurple>False</MailPurple>
+   
+	<SellGrey>True</SellGrey>
+	<SellWhite>True</SellWhite>
+	<SellGreen>False</SellGreen>
+	<SellBlue>True</SellBlue>
+	<SellPurple>False</SellPurple>
+   
+	<TargetElites>True</TargetElites>
+	
+	<AvoidMobs>		 
+		<Mob Name="Summon Enabler Stalker" Entry="53488" />
+	</AvoidMobs>
+	
+	<Blackspots>
+
+	</Blackspots>
+
+	<QuestOrder>
+	
+		<ClearVendor />
+		<ClearMailbox />
+
+		<!-- Level Check -->
+		<If Condition="Me.Level &gt;= 85">
+		
+		 	<!-- UserSettings -->
+			<CustomBehavior File="UserSettings"
+							FindMountAutomatically="True"
+							GroundMountFarmingMode="False"
+							HarvestHerbs="False"
+							HarvestMinerals="False"
+							KillBetweenHotspots="True"
+							LogoutForInactivity="False"
+							LogoutInactivityUseForceQuit="False"
+							LootMobs="True"
+							LootRadius="25"
+							MountName=""
+							NinjaSkin="False"
+							PullDistance="25"
+							RessAtSpiritHealers="False"
+							SkinMobs="False"
+							UseMount="True" 
+							UseRandomMount="False" />
+						
+			<!-- Infinite loop -->
+			<While Condition="true" >	
+			
+				<!-- If we are inside Grim Batol -->
+				<If Condition="Me.ZoneId == 4950">
+				
+					<!-- The Grim Batol detected. Running out -->
+					<CustomBehavior File="Message" 
+									Text="The Grim Batol detected. Running out."
+									LogColor="Fuchsia" />
+						
+					<!-- Move to - zone in location -->
+					<MoveTo X="-624.155" Y="-189.365" Z="272.04" />
+					
+					<!-- Profile message - Waiting 3 seconds - Bag and durability check -->
+					<CustomBehavior File="Message" 
+									Text="Waiting 3 seconds - Bag and durability check."  
+									LogColor="Orange" />
+					
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					<!-- If we have less then 10 empty bag slots or our durability is less than 30% -->
+					<If Condition="(Me.FreeBagSlots &lt;= 10) || (Me.LowestDurabilityPercent &lt;= 0.3)" >
+												
+						<!-- Load profile - [QO-N][85-Flying]_botanist_grim-batol_[repair-mail] -->
+						<CustomBehavior File="LoadProfile" 
+										ProfileName="Movement\Vendors\[QO-N][85-Flying]_botanist_grim-batol_[repair-mail]" />
+
+					</If>	<!-- If we have less then 10 empty bag slots or our durability is less than 30% -->
+
+					<!-- Profile message - Waiting 3 seconds - Food check - Pine Nut Bread -->
+					<CustomBehavior File="Message" 
+									Text="Waiting 3 seconds - Food check - Pine Nut Bread."  
+									LogColor="Orange" />
+					
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					<!-- If we don't have Pine Nut Bread -->
+					<If Condition="!HasItem(58260)">
+
+						<!-- Load profile - [QO-N][85-Flying]_botanist_grim-batol_[repair-mail] -->
+						<CustomBehavior File="LoadProfile" 
+										ProfileName="Movement\Vendors\[QO-N][85-Flying]_botanist_grim-batol_[repair-mail]" />
+			
+					</If>	<!-- If we don't have Pine Nut Bread -->
+					
+					<!-- Profile message - All checks complete -->
+					<CustomBehavior File="Message" 
+									Text="All checks complete."  
+									LogColor="Orange" />
+
+					<!-- Custom behavior - Misc/InInstance - exit the instance-->
+					<CustomBehavior File="Misc\InInstance" 
+									X="-630.1126" Y="-172.9248" Z="272.1369" />
+					
+					<!-- Wait timer - wait 15 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="15000" />
+					
+					<!-- Move to - zone out location -->
+					<MoveTo X="-4058.4" Y="-3450.03" Z="281.0914" />
+					
+				</If>	<!-- If we are inside Grim Batol -->
+				
+				<!-- If we are not in the Grim Batol instance box, load the movement profile -->
+				<If Condition="Me.X &gt; -4051.118 || Me.X &lt; -4088.162 || Me.Y &gt; -3439.181 || Me.Y &lt; -3462.127" >
+					
+					<!-- Custom behavior - LoadProfile - Movement\[QO-N-M][85-Flying]_botanist_grim-batol -->
+					<CustomBehavior File="LoadProfile" 
+									ProfileName="Movement\[QO-N-M][85-Flying]_botanist_grim-batol" />
+					
+				</If>	<!-- If we are not in the Grim Batol instance box, load the movement profile -->
+				
+				<!-- If we are in the Grim Batol instance box -->
+				<If Condition="Me.X &lt; -4051.118 &amp;&amp; Me.X &gt; -4088.162 &amp;&amp; Me.Y &lt; -3439.181 &amp;&amp; Me.Y &gt; -3462.127 " >
+				
+					<!-- Profile message - Portal detected nearby -->
+					<CustomBehavior File="Message" 
+									Text="Portal detected nearby."
+									LogColor="Fuchsia" />	
+			
+					<!-- Profile message - Resetting the instance -->
+					<CustomBehavior File="Message" 
+									Text="Resetting the instance." 
+									LogColor="Orange" />
+					
+					<!-- Reset the instance -->
+					<CustomBehavior File="RunMacro" 
+									Macro="/script ResetInstances()" />
+									
+					<!-- Set the dungeon difficulty to normal -->				
+					<CustomBehavior File="RunMacro" 
+									Macro="/script SetDungeonDifficultyID(1);" />
+					
+					<!-- Profile message - The instance has been reset -->
+					<CustomBehavior File="Message" 
+									Text="The instance has been reset." 
+									LogColor="Fuchsia" />
+							
+					<!-- While we are not in Grim Batol -->
+					<While Condition="Me.ZoneId != 4950">
+					
+						<!-- Move to - zone out location -->
+						<MoveTo X="-4058.4" Y="-3450.03" Z="281.0914" />
+
+						<!-- Attempt to re-enter the portal -->
+						<CustomBehavior File="Misc\InInstance" 
+										X="-4045.885" Y="-3445.876" Z="283.3513" /> 
+										
+						<!-- Profile message - Waiting for the dungeon to load -->				
+						<CustomBehavior File="Message" 
+										Text="Waiting for the dungeon to load." 
+										LogColor="Fuchsia" />
+									
+						<!-- Wait timer - wait 20-40 seconds -->		
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000"
+										VariantTime="20000" />
+										
+						<!-- If we are not in Grim Batol, we're locked out -->
+						<If Condition="Me.ZoneId != 4950">
+						
+							<!-- Profile message - We are locked out. Waiting and trying again -->
+							<CustomBehavior File="Message" 
+											Text="We are locked out. Waiting and trying again." 
+											LogColor="Fuchsia" />
+											
+						</If>	<!-- If we are not in Grim Batol, we're locked out -->
+						
+					</While>	<!-- While we are not in Grim Batol -->
+					
+				</If>	<!-- If we are in the Grim Batol instance box -->
+				
+				<!-- If we are inside Grim Batol -->
+				<If Condition="Me.ZoneId == 4950">
+					
+					<!--Profile message	- Deleting unwanted items from our bags -->				
+					<CustomBehavior File="Message" 
+									Text="Deleting unwanted items from our bags." 
+									LogColor="Orange" />
+
+					<!-- Morning Glory Dew -->
+					<CustomBehavior File="DeleteItems" 
+									Ids="8766" />
+									
+					<!-- Major Mana Potion -->				
+					<CustomBehavior File="DeleteItems" 
+									Ids="13444" />	
+									
+					<!-- Libram of Voracity -->										
+					<CustomBehavior File="DeleteItems" 
+									Ids="11737" />
+									
+					<!-- Libram of Resilience -->
+					<CustomBehavior File="DeleteItems" 
+									Ids="11736" />	
+									
+					<!-- Roasted Quail -->
+					<CustomBehavior File="DeleteItems" 
+									Ids="8952" />	
+									
+					<!-- Superior Mana Potion -->
+					<CustomBehavior File="DeleteItems" 
+									Ids="22256" />	
+									
+					<!-- Mana Potion -->
+					<CustomBehavior File="DeleteItems" 
+									Ids="26480" />
+									
+					<!-- Light Feather -->
+					<CustomBehavior File="DeleteItems" 
+									Ids="17056" />
+									
+					<!-- Dark Iron Bullet -->
+					<CustomBehavior File="DeleteItems" 
+									Ids="62916" />	
+									
+					<!-- Mag'har Grainbread -->
+					<CustomBehavior File="DeleteItems" 
+									Ids="27855" />
+									
+					<!-- Homemade Cherry Pie -->
+					<CustomBehavior File="DeleteItems" 
+									Ids="8950" />
+									
+					<!-- Smoked Talbuk Venison -->
+					<CustomBehavior File="DeleteItems" 
+									Ids="27854" />		
+							
+					<!-- Instance timer -->
+					<CustomBehavior File="Misc\InstanceTimer" 
+									Timer="Start" />							
+								
+					<!-- Turn on autolooting -->
+					<CustomBehavior File="RunMacro" 
+									Macro="/script SetCVar('AutoLootDefault', 1)" 
+									NumOfTimes="1" 
+									WaitTime="1000" />
+
+					<!-- Profile message - Grim Batol initialized -->			
+					<CustomBehavior File="Message" 
+									Text="Grim Batol initialized."  
+									LogColor="Fuchsia" />
+									
+									
+					<!-- ****************************************************** Grim Batol ********************************************************************** -->
+									
+				
+					<!-- Move to - left-hand door -->
+					<MoveTo X="-582.2782" Y="-238.0787" Z="276.5966" />
+				
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+									
+					<!-- Move to - gather the Trogg Dwellers -->
+					<MoveTo X="-553.6485" Y="-233.4932" Z="276.4262" />
+					
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+
+					<!-- Move to - gather the Trogg Dwellers -->
+					<MoveTo X="-554.808" Y="-248.984" Z="276.3495" />
+					
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					<!-- Move to - gather the Trogg Dwellers -->
+					<MoveTo X="-536.5169" Y="-243.2952" Z="276.3268" />
+					
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					<!-- Move to - 1st group on the right -->
+					<MoveTo X="-561.8001" Y="-313.8802" Z="268.7676" />
+
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+
+									
+					<!-- @@@@@@@@@@@@@@@@@@@@ 2nd pull @@@@@@@@@@@@@@@@@@@@ -->
+						
+						
+						
+					<!-- Move to - the patrols before the corner -->
+					<MoveTo X="-505.5677" Y="-312.5799" Z="268.7676" />	
+
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+									
+					<!-- Move to - the the corner right-hand turn -->
+					<MoveTo X="-453.9798" Y="-330.8488" Z="268.6504" />
+
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />					
+						
+					<!-- Move to - the dragons -->
+					<MoveTo X="-454.8412" Y="-369.033" Z="268.4093" />				
+									
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />				
+									
+					<!-- Move to - the group past the corner-right-hand turn  -->
+					<MoveTo X="-507.1369" Y="-362.9927" Z="268.7672" />					
+
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+				
+				
+					<!-- @@@@@@@@@@@@@@@@@@@@ 2nd pull @@@@@@@@@@@@@@@@@@@@ -->
+				
+				
+					<!-- Move to - the left-hand group -->
+					<MoveTo X="-533.4741" Y="-368.2653" Z="269.1197" />
+
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+									
+					<!-- Move to - center group  -->
+					<MoveTo X="-560.5746" Y="-360.9503" Z="268.7674" />					
+
+					
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+									
+					<!-- Move to - group before the 1st bridge -->
+					<MoveTo X="-597.8605" Y="-372.8197" Z="268.7674" />	
+						
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />	
+									
+					<!-- Move to - the last group before crossing the bridge -->
+					<MoveTo X="-632.401" Y="-393.3" Z="268.7674" />				
+									
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+				
+					<!-- @@@@@@@@@@@@@@@@@@@@ 2nd pull @@@@@@@@@@@@@@@@@@@@ -->
+				
+						
+					<!-- Move to - the right-hand group crossing the bridge -->
+					<MoveTo X="-617.4884" Y="-329.9324" Z="268.7662" />
+
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+									
+					<!-- Move to - the right-hand group before the 1st boss -->
+					<MoveTo X="-700.5612" Y="-390.7761" Z="268.7662" />					
+									
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />				
+											
+									
+					<!-- @@@@@@@@@@@@@@@@@@@@ 2nd pull @@@@@@@@@@@@@@@@@@@@ -->
+				
+				
+					<!-- Move to - the left-hand group before the 1st boss -->
+					<MoveTo X="-669.6215" Y="-424.6758" Z="268.7671" />				
+									
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+									
+									
+					<!-- @@@@@@@@@@@@@@@@@@@@ 2nd pull @@@@@@@@@@@@@@@@@@@@ -->
+				
+					
+					<!-- Move to - General Umbriss -->
+					<MoveTo X="-702.1149" Y="-438.2811" Z="269.1475" />				
+									
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />				
+				
+				
+					<!-- @@@@@@@@@@@@@@@@@@@@ hearth out @@@@@@@@@@@@@@@@@@@@ -->
+				
+				
+					<!-- Move to - zone in location -->
+					<MoveTo X="-624.155" Y="-189.365" Z="272.04" />
+					
+					<!-- CustomBehavior - Misc\InstanceTimer - 6 minutes and 40 seconds -->
+					<CustomBehavior File="Misc\InstanceTimer" 
+									Timer="Check" 
+									WaitTime="400000" />
+									
+				</If>	<!-- If we are inside Grim Batol -->
+					
+				<!-- If we are inside Grim Batol -->
+				<If Condition="Me.ZoneId == 4950">	
+
+					<!-- Move to - zone in location -->
+					<MoveTo X="-624.155" Y="-189.365" Z="272.04" />
+
+					<!-- Custom behavior - Misc/InInstance - exit the instance-->
+					<CustomBehavior File="Misc\InInstance" 
+									X="-630.1126" Y="-172.9248" Z="272.1369" />
+					
+					<!-- Wait timer - wait 15 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="15000" />
+					
+					<!-- If we have less then 10 empty bag slots or our durability is less than 30% -->
+					<If Condition="(Me.FreeBagSlots &lt;= 10) || (Me.LowestDurabilityPercent &lt;= 0.3)" >
+												
+						<!-- Load profile - [QO-N][85-Flying]_botanist_grim-batol_[repair-mail] -->
+						<CustomBehavior File="LoadProfile" 
+										ProfileName="Movement\Vendors\[QO-N][85-Flying]_botanist_grim-batol_[repair-mail]" />
+
+					</If>	<!-- If we have less then 10 empty bag slots or our durability is less than 30% -->
+					
+					<!-- Move to - zone out location -->
+					<MoveTo X="-4058.4" Y="-3450.03" Z="281.0914" />
+					
+				</If>	<!-- If we don't need to vendor -->		
+					
+			</While> <!-- Infinite loop -->
+			
+		</If>	<!-- Level Check -->
+		
+	</QuestOrder>
+	
+</HBProfile>

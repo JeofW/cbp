@@ -1,0 +1,291 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+	<Name>[QO-N-M][85+][Flying][Zul'Farrak]_botanist</Name>
+   
+	<MinLevel>85</MinLevel>
+	<MaxLevel>101</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	
+	<MailGrey>True</MailGrey>
+	<MailWhite>False</MailWhite>
+	<MailGreen>False</MailGreen>
+	<MailBlue>False</MailBlue>
+	<MailPurple>False</MailPurple>
+   
+	<SellGrey>False</SellGrey>
+	<SellWhite>False</SellWhite>
+	<SellGreen>False</SellGreen>
+	<SellBlue>False</SellBlue>
+	<SellPurple>False</SellPurple>
+   
+	<TargetElites>True</TargetElites>
+	
+	<AvoidMobs>		
+		<Mob Name="Summon Enabler Stalker" Entry="53488" />
+	</AvoidMobs>
+	
+	<Blackspots>
+
+	</Blackspots>
+
+	<Mailboxes>
+	</Mailboxes>
+ 
+	<Vendors>
+	</Vendors>
+	
+	<ProtectedItems>
+	</ProtectedItems>
+
+	<Factions></Factions>
+	
+	<QuestOrder>
+		<ClearVendor />
+		<ClearMailbox />
+
+		
+		<!-- Level check -->
+		<If Condition="Me.Level &gt;= 85">
+		
+		 	<!-- UserSettings -->
+			<CustomBehavior File="UserSettings"
+							FindMountAutomatically="True"
+							GroundMountFarmingMode="False"
+							HarvestHerbs="False"
+							HarvestMinerals="False"
+							KillBetweenHotspots="True"
+							LogoutForInactivity="False"
+							LogoutInactivityUseForceQuit="False"
+							LootMobs="True"
+							LootRadius="25"
+							MountName=""
+							NinjaSkin="False"
+							RessAtSpiritHealers="False"
+							SkinMobs="False"
+							UseMount="True" 
+							UseRandomMount="False" />
+
+			<!-- If we are in Eastern Kingdoms -->
+			<If Condition="Me.MapId == 0">
+			
+				<!-- CustomBehavior - Message  - We are in Eastern Kingdoms -->
+				<CustomBehavior File="Message" 
+								Text="We are in Eastern Kingdoms." 
+								LogColor="Cyan" />
+								
+				<!-- If our hearthstone is set to Gadgetzan -->
+				<If Condition="Me.HearthstoneAreaId == 976 ">
+				
+					<!-- CustomBehavior - Message  - Our Innkeeper is set at Gadgetzan -->
+					<CustomBehavior File="Message" 
+									Text="Our Innkeeper is set at Gadgetzan." 
+									LogColor="Cyan" />
+										
+					<!-- Have hearthstone -->
+					<If Condition="HasItem(6948)">
+					
+						<!-- CustomBehavior - Message  - Using our Hearthstone -->
+						<CustomBehavior File="Message" 
+										Text="Using our Hearthstone." 
+										LogColor="Plum" />
+										
+						<CustomBehavior File="Misc\RunLua" 
+										Lua="UseItemByName(6948)" 
+										WaitTime="1000" />
+										
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000" />
+					</If> <!-- Have hearthstone -->
+				
+					<!-- Have Innkeeper's Daughter -->
+					<If Condition="HasItem(64488)">
+					
+						<!-- CustomBehavior - Message  - Using our Innkeeper's Daughter -->
+						<CustomBehavior File="Message" 
+										Text="Using our Innkeeper's Daughter." 
+										LogColor="Plum" />
+											
+						<CustomBehavior File="Misc\RunLua" 
+										Lua="UseItemByName(64488)" 
+										WaitTime="1000" />
+							
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000" />
+					</If> <!-- Have Innkeeper's Daughter -->
+						
+					<!-- Else our hearthstone is not set to Gadgetzan -->
+					<Else>
+						<CustomBehavior File="Message" 
+										Text="Our Hearthstone isn't set in Gadgetzan. Moving to set it." 
+										LogColor="Plum" />
+		
+						<!-- Profile message - Flying to Booty Bay -->
+						<CustomBehavior File="Message" 
+											Text="Flying to Booty Bay." 
+											LogColor="Plum" />
+											
+						<!-- Fly to Booty Bay -->
+						<CustomBehavior File="FlyTo" 
+										X="-10353.59" Y="-7.647873" Z="284.1171" />
+										
+						<CustomBehavior File="FlyTo" 
+										X="-14281.86" Y="564.9252" Z="7.45587" />
+						<CustomBehavior File="ForcedDismount" />
+						
+						<!-- Profile message - Waiting on the boat to Ratchet -->
+						<CustomBehavior File="Message" 
+											Text="Waiting on the boat to Ratchet." 
+											LogColor="Plum" />
+										
+						<!-- Take boat from Booty Bay to ratchet -->
+						<CustomBehavior File="UseTransport" 
+										TransportId="20808" 
+										WaitAtX="-14281.86" 
+										WaitAtY="564.9252" 
+										WaitAtZ="7.45587"
+										TransportStartX="-14277.74" 
+										TransportStartY="582.86" 
+										TransportStartZ="0.015"
+										StandOnX="-14271.49" 
+										StandOnY="581.3417" 
+										StandOnZ="6.019351"
+										TransportEndX="-1005.613" 
+										TransportEndY="-3841.648" 
+										TransportEndZ="0.03330701"	
+										GetOffX="-997.8598" 
+										GetOffY="-3824.981" 
+										GetOffZ="5.466243" />								
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="1000" />
+										
+						<MoveTo X="-984.0112" Y="-3801.92" Z="5.412419" />
+						
+					</Else>	<!-- Else our hearthstone is not set to Gadgetzan --> 
+					
+				</If>	<!-- If our hearthstone is set to Gadgetzan -->	
+				
+			</If>	<!-- If we are in Eastern Kingdoms -->			
+
+			<!-- If we are in Kalimdor -->		
+			<If Condition="Me.MapId == 1">
+			
+				<!-- If our hearthstone is set to Gadgetzan -->
+				<If Condition="Me.HearthstoneAreaId == 976 ">
+												
+					<!-- Repair if necessary -->
+					<If Condition="(Me.FreeBagSlots &lt; 25) || (Me.LowestDurabilityPercent &lt; 0.3)" >
+					
+						<!-- CustomBehavior - LoadProfile - [QO-N-M][85+][Flying][Zul'Farrak]_botanist -->
+						<CustomBehavior File="LoadProfile" 
+										ProfileName="Vendors\[QO-N][85+][Flying][Zul'Farrak]_botanist_[repair-mail]" />
+						
+					</If> <!-- Repair if necessary -->							
+												
+					<!-- CustomBehavior - message - Flying to Zul'Farrak -->
+					<CustomBehavior File="Message" 
+									Text="Flying to Zul'Farrak." 
+									LogColor="Plum" />					
+										
+					<!-- Fly to - Zul'Farrak hover point -->
+					<CustomBehavior File="FlyTo" 
+									X="-6833.176" Y="-2923.226" Z="67.77458" />
+											
+					<!-- CTM to - Zul'Farrak instance box -->
+					<CustomBehavior File="MyCTM" 
+									X="-6795.56" Y="-2890.72" Z="8.88742" />
+					
+					<!-- CustomBehavior - ForcedDismount -->
+					<CustomBehavior File="ForcedDismount" />	
+					
+					<!-- Moveto -  Zul'Farrak instance box -->
+					<MoveTo X="-6795.56" Y="-2890.72" Z="8.88742" />
+					
+					<!-- Else our hearthstone is not set to Gadgetzan -->
+					<Else>
+					
+						<!-- CustomBehavior - message - Our Hearthstone isn't set in the proper location. Moving to set it -->
+						<CustomBehavior File="Message" 
+										Text="Our Hearthstone isn't set in the proper location. Moving to set it." 
+										LogColor="Plum" />
+						
+						<!-- Flyto - Gadgetzan - hover point -->
+						<CustomBehavior File="FlyTo" 
+										X="-7092.67" Y="-3854.277" Z="36.81052" />
+										
+						<!-- Flyto - land outside the inn -->
+						<CustomBehavior File="FlyTo" 
+										X="-7082.933" Y="-3854.494" Z="10.14053" />
+										
+						<!-- CustomBehavior - ForcedDismount -->
+						<CustomBehavior File="ForcedDismount" />
+						
+						<!-- Moveto - innkeeper -->
+						<MoveTo X="-7070.37" Y="-3856.25" Z="9.827553" />
+						
+						<!-- CustomBehavior - message - Setting our Hearthstone -->										
+						<CustomBehavior File="Message" 
+										Text="Setting our Hearthstone." 
+										LogColor="Plum" />
+										
+						<!-- CustomBehavior - SetHearthstone - Gadgetzan innkeeper -->					
+						<CustomBehavior File="SetHearthstone" 
+										MobId="7733" 
+										X="-7069.17" Y="-3854.53" Z="9.852692" />
+																									
+						<!-- Run outside the innkeep -->
+						<MoveTo X="-7082.933" Y="-3854.494" Z="10.14053" />
+						
+						<!-- Repair if necessary -->
+						<If Condition="(Me.FreeBagSlots &lt; 25) || (Me.LowestDurabilityPercent &lt; 0.3)" >
+						
+							<!-- CustomBehavior - LoadProfile - [QO-N-M][85+][Flying][Zul'Farrak]_botanist -->
+							<CustomBehavior File="LoadProfile" 
+											ProfileName="Vendors\[QO-N][85+][Flying][Zul'Farrak]_botanist_[repair-mail]" />
+							
+						</If> <!-- Repair if necessary -->			
+											
+						<!-- Profile message - Our hearth has been set, we have more than 25 empty slots in our bags and our gear is above 80 percent durability -->
+						<CustomBehavior File="Message" 
+										Text="Our hearth has been set, we have more than 25 empty slots in our bags and our gear is above 80 percent durability." 
+										LogColor="Plum" />
+												
+						<!-- CustomBehavior - message - Flying to Zul'Farrak -->
+						<CustomBehavior File="Message" 
+										Text="Flying to Zul'Farrak." 
+										LogColor="Plum" />					
+											
+						<!-- Fly to - Zul'Farrak hover point -->
+						<CustomBehavior File="FlyTo" 
+										X="-6833.176" Y="-2923.226" Z="67.77458" />
+												
+						<!-- CTM to - Zul'Farrak instance box -->
+						<CustomBehavior File="MyCTM" 
+										X="-6795.56" Y="-2890.72" Z="8.88742" />
+						
+						<!-- CustomBehavior - ForcedDismount -->
+						<CustomBehavior File="ForcedDismount" />	
+						
+						<!-- Moveto -  Zul'Farrak instance box -->
+						<MoveTo X="-6795.56" Y="-2890.72" Z="8.88742" />	
+					
+					</Else>		<!-- Else our hearthstone is not set to Gadgetzan -->
+					
+				</If>	<!-- If our hearthstone is set to Gadgetzan -->
+				
+			</If>	<!-- If we are in Kalimdor -->
+
+			<!-- If we are in the the Zul'Farrak instance box -->
+			<If Condition="Me.X &gt; -6805.56 &amp;&amp; Me.X &lt; -6785.56 &amp;&amp; Me.Y &gt; -2900.72 &amp;&amp; Me.Y &lt; -2880.72" >
+			
+				<!-- CustomBehavior - LoadProfile - [QO-N-85+][Flying][Zul'Farrak]_botanist -->
+				<CustomBehavior File="LoadProfile" 
+								ProfileName="..\[QO-N-85+][Flying][Zul'Farrak]_botanist" />
+								
+			</If> 	<!-- If we are in the the Zul'Farrak instance box -->	
+			
+		</If> 	<!-- Level check -->
+		
+	</QuestOrder>
+	
+</HBProfile>

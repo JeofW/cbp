@@ -1,0 +1,263 @@
+<HBProfile creator="Botanist" version="1.0">
+<Name>[QO-N-Rep-Grinding][Steamwheedle-Cartel_southbreak-shore]__repair-mail</Name> 
+
+<MinLevel>85</MinLevel> 
+<MaxLevel>101</MaxLevel>
+<MinDurability>-1</MinDurability>
+<MinFreeBagSlots>-1</MinFreeBagSlots>
+
+<SellGrey>True</SellGrey>
+<SellWhite>False</SellWhite>
+<SellGreen>True</SellGreen>
+<SellBlue>True</SellBlue>
+<SellPurple>False</SellPurple>
+
+<MailGrey>False</MailGrey>
+<MailWhite>True</MailWhite>
+<MailGreen>False</MailGreen>
+<MailBlue>False</MailBlue>
+<MailPurple>True</MailPurple>
+
+<Vendors>
+</Vendors>
+	
+<Mailboxes>
+</Mailboxes>
+
+	<QuestOrder>
+	
+		<!-- Durability and empty bag slot check -->
+		<If Condition="(Me.FreeBagSlots &lt;= 4) || (Me.LowestDurabilityPercent &lt;= 0.3)" >
+		
+			<!-- Custom behavior - UserSettings -->
+			<CustomBehavior File="UserSettings" 
+						UseMount="True"  />
+		
+			<!-- Profile message  - Checking my free bag slots and gear's durability -->
+			<CustomBehavior File="Message" 
+							Text="Checking my free bag slots and gear's durability." 
+							LogColor="Lime" />
+			
+			<!-- Wait timer - wait 3 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="3000" />
+			
+			<!-- Profile message  - I have determined that we have less than 4 empty bag slots left or our gear is below 30% durability -->
+			<CustomBehavior File="Message" 
+							Text="I have determined that we have less than 4 empty bag slots left or our gear is below 30% durability." 
+							LogColor="Lime" />
+			
+			<!-- If we have a Hearthstone -->
+			<If Condition="HasItem(6948)">
+			
+				<!-- Profile message - Using our Hearthstone -->
+				<CustomBehavior File="Message" 
+								Text="Using our Hearthstone." 
+								LogColor="Fuchsia" />
+								
+				<!-- Custom behavior - Misc\RunLua -->				
+				<CustomBehavior File="Misc\RunLua" 
+								Lua="UseItemByName(6948)" 
+								WaitTime="1000" />
+								
+				<!-- Wait timer - wait 20 seconds - delay -->				
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="20000" />
+								
+			</If>	<!-- If we have a Hearthstone -->
+		
+			<!-- If we have a Innkeeper's Daughter -->
+			<If Condition="HasItem(64488)">
+			
+				<!-- Profile message - Using our Innkeeper's Daughter -->
+				<CustomBehavior File="Message" 
+								Text="Using our Innkeeper's Daughter." 
+								LogColor="Fuchsia" />
+									
+				<!-- Custom behavior - Misc\RunLua -->					
+				<CustomBehavior File="Misc\RunLua" 
+								Lua="UseItemByName(64488)" 
+								WaitTime="1000" />
+					
+				<!-- Wait timer - wait 20 seconds - delay -->	
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="20000" />
+								
+			</If>	<!-- If we have a Innkeeper's Daughter -->
+			
+			<!-- If we hearthed  -->
+			<If Condition="Me.Z &gt; -10" >
+
+				<!-- Profile message - We successfully hearthed. -->
+				<CustomBehavior File="Message" 
+								Text="We successfully hearthed." 
+								LogColor="Fuchsia" />
+			
+				<!-- Else our hearthstone did not work -->
+				<Else>
+				
+					<!-- Profile message - Our Hearthstone/Innkeepers Daughter didn't work. Flying to the vendor -->
+					<CustomBehavior File="Message" 
+									Text="Our Hearthstone/Innkeepers Daughter didn't work. Flying to the vendor." 
+									LogColor="Fuchsia" />
+				
+					<!-- Move to - fly over the moving tiles -->
+					<MoveTo Nav="Fly" 
+							X="-8816.488" Y="281.256" Z="5.753469" />
+				
+					<!-- Move to - moving to the top of the square hole -->
+					<CustomBehavior File="MyCTM"
+									X="-8757.862" Y="378.9624" Z="155.7066" />
+				
+					<!-- Move to - moving over the lake-->
+					<CustomBehavior File="MyCTM"
+									X="-8638.784" Y="574.1295" Z="162.0476" />
+
+				</Else>		<!-- Else our hearthstone did not work -->
+
+			</If>	<!-- If we hearthed  -->
+			
+			<!-- Profile message -  -->
+			<CustomBehavior File="Message" 
+							Text="We have reached the repair vendor." 
+							LogColor="Lime" /> 
+			
+			<!-- If we are Alliance -->					
+			<If Condition="Me.IsAlliance">					
+						
+				<!-- Profile message - Flying to Gadgetzan -->
+				<CustomBehavior File="Message" 
+									Text="Flying to Gadgetzan." 
+									LogColor="Fuchsia" />
+						
+				<!-- Fly to - Gadgetzan hover point -->
+				<CustomBehavior File="FlyTo" 
+								X="-7188.167" Y="-3789.478" Z="63.94907" />
+
+				<!-- CTM to - Krinkle Goodsteel - Gadgetzan repair vendor -->
+				<CustomBehavior File="MyCTM" 
+								X="-7232.01" Y="-3751.71" Z="9.092709" />
+				
+				<!-- Custom behavior - ForcedDismount -->
+				<CustomBehavior File="ForcedDismount" />
+				
+				<!-- UserSettings - usemount - false -->
+				<CustomBehavior File="UserSettings"
+								UseMount="False" />
+				
+				<!-- Move to - Krinkle Goodsteel - Gadgetzan repair vendor -->
+				<MoveTo X="-7232.01" Y="-3751.71" Z="9.092709" />
+				
+				<!-- Vendor conditions -->
+				<CustomBehavior File="ForceSetVendor" 
+								DoMail="True" 
+								DoRepair="True" 
+								DoSell="True" 
+								DoTrain="False" />
+									
+				<!-- Repair vendor - Thundermar -->
+				<SetVendor>
+					<Vendors>
+						<Vendor Name="Krinkle Goodsteel" 
+								Entry="5411" 
+								Type="Repair" 
+								X="-7232.01" Y="-3751.71" Z="9.092709" />
+					</Vendors>
+				</SetVendor>
+				
+				<SetMailbox>
+					<Mailboxes>
+						<Mailbox X="-7084.255" Y="-3851.479" Z="9.72274" />
+					</Mailboxes>
+				</SetMailbox>
+				
+				<!-- Move to - mount location -->
+				<MoveTo X="-7100.873" Y="-3853.215" Z="8.892753" />
+				
+				<!-- UserSettings - usemount - true -->
+				<CustomBehavior File="UserSettings"
+								UseMount="True" />
+				
+				<!-- Fly to - Gadgetzan hover point -->
+				<CustomBehavior File="FlyTo" 
+								X="-7188.167" Y="-3789.478" Z="63.94907" />
+
+			</If>	<!-- If we are Alliance -->					
+	
+			<!-- If we are Horde -->						
+			<If Condition="Me.IsHorde">					
+	
+				<!-- Profile message - Flying to Gadgetzan -->
+				<CustomBehavior File="Message" 
+									Text="Flying to Gadgetzan." 
+									LogColor="Fuchsia" />
+						
+				<!-- Fly to - Gadgetzan hover point -->
+				<CustomBehavior File="FlyTo" 
+								X="-7188.167" Y="-3789.478" Z="63.94907" />
+
+				<!-- CTM to - Krinkle Goodsteel - Gadgetzan repair vendor -->
+				<CustomBehavior File="MyCTM" 
+								X="-7232.01" Y="-3751.71" Z="9.092709" />
+				
+				<!-- Custom behavior - ForcedDismount -->
+				<CustomBehavior File="ForcedDismount" />
+				
+				<!-- UserSettings - usemount - false -->
+				<CustomBehavior File="UserSettings"
+								UseMount="False" />
+				
+				<!-- Move to - Krinkle Goodsteel - Gadgetzan repair vendor -->
+				<MoveTo X="-7232.01" Y="-3751.71" Z="9.092709" />
+				
+				<!-- Vendor conditions -->
+				<CustomBehavior File="ForceSetVendor" 
+								DoMail="True" 
+								DoRepair="True" 
+								DoSell="True" 
+								DoTrain="False" />
+									
+				<!-- Repair vendor - Thundermar -->
+				<SetVendor>
+					<Vendors>
+						<Vendor Name="Krinkle Goodsteel" 
+								Entry="5411" 
+								Type="Repair" 
+								X="-7232.01" Y="-3751.71" Z="9.092709" />
+					</Vendors>
+				</SetVendor>
+				
+				<SetMailbox>
+					<Mailboxes>
+						<Mailbox X="-7084.255" Y="-3851.479" Z="9.72274" />
+					</Mailboxes>
+				</SetMailbox>
+				
+				<!-- Move to - mount location -->
+				<MoveTo X="-7100.873" Y="-3853.215" Z="8.892753" />
+				
+				<!-- UserSettings - usemount - true -->
+				<CustomBehavior File="UserSettings"
+								UseMount="True" />
+				
+				<!-- Fly to - Gadgetzan hover point -->
+				<CustomBehavior File="FlyTo" 
+								X="-7188.167" Y="-3789.478" Z="63.94907" />
+	
+			</If>	<!-- If we are Horde -->
+				
+		</If>	<!-- Durability and empty bag slot check -->
+			
+		<!-- If our free bag slots are > 4 and our durability > 30% -->		
+		<If Condition="(Me.FreeBagSlots &gt; 4) &amp;&amp; (Me.LowestDurabilityPercent &gt; 0.3)" >
+		
+			<!-- Load profile - [QO-N-Rep-Grinding][Steamwheedle-Cartel_southbreak-shore]_botanist -->
+			<CustomBehavior File="LoadProfile" 
+							ProfileName="..\..\[QO-N-Rep-Grinding][Steamwheedle-Cartel_southbreak-shore]_botanist" />
+		
+		</If>	<!-- If our free bag slots are > 4 and our durability > 30% -->
+			
+			
+	</QuestOrder>
+	
+</HBProfile> 

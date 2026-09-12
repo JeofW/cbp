@@ -1,0 +1,548 @@
+﻿<HBProfile creator="Botanist and Wigglez" version="1.0">
+	<Name>[QO-N][37-42]_razorfen-downs</Name>
+   
+	<MinLevel>1</MinLevel>
+	<MaxLevel>101</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	
+	<MailGrey>False</MailGrey>
+	<MailWhite>False</MailWhite>
+	<MailGreen>False</MailGreen>
+	<MailBlue>False</MailBlue>
+	<MailPurple>False</MailPurple>
+   
+	<SellGrey>True</SellGrey>
+	<SellWhite>True</SellWhite>
+	<SellGreen>True</SellGreen>
+	<SellBlue>True</SellBlue>
+	<SellPurple>False</SellPurple>
+
+	<AvoidMobs>
+		<Mob Name="Summon Enabler Stalker" Entry="53488" />	
+		<Mob Name="Mankrik" Entry="37847" />
+	</AvoidMobs>
+	
+	<Blackspots>
+		<!-- Avoid Mankrik -->
+		<Blackspot X="-4148.532" Y="-1943.097" Z="92.97999" Radius="20" />
+	</Blackspots>
+
+	<Mailboxes>
+	</Mailboxes>
+ 
+	<Vendors>
+	</Vendors>
+
+	<Factions>
+	</Factions>
+	
+	<ProtectedItems>
+	</ProtectedItems>
+	
+	<QuestOrder>
+
+		
+		<!-- *******************************************************  Booster ************************************************************** -->
+		<If Condition="Me.Level &gt;= 85">
+			<CustomBehavior File="Message" 
+							Text="We are a booster." 
+							LogColor="Cyan" />
+							
+			<!-- Booster UserSettings -->
+			<CustomBehavior File="UserSettings"
+							FindMountAutomatically="True"
+							GroundMountFarmingMode="False"
+							HarvestHerbs="False"
+							HarvestMinerals="False"
+							KillBetweenHotspots="True"
+							LogoutForInactivity="False"
+							LogoutInactivityUseForceQuit="False"
+							LootMobs="True"
+							LootRadius="35"
+							MountName=""
+							NinjaSkin="False"
+							RessAtSpiritHealers="False"
+							SkinMobs="False"
+							UseMount="True" 
+							UseRandomMount="False" />
+							
+			<!-- If we are in Kalimdor -->
+			<If Condition="Me.MapId == 1" >	
+				<CustomBehavior File="Message" 
+								Text="We are in Kalimdor." 
+								LogColor="Cyan" />
+					
+				<!-- Outside the box -->
+				<If Condition="Me.X &lt; -4700 || Me.X &gt; -4600 || Me.Y &gt; -2500 || Me.Y &lt; -2600" >
+					<CustomBehavior File="Message" 
+									Text="We are not in the box." 
+									LogColor="Cyan" />
+							
+					<If Condition="Me.ZoneId == 491">
+						<CustomBehavior File="Message" 
+										Text="Clearing a path out of Razorfen Kraul." 
+										LogColor="Cyan" />
+									
+						<RunTo X="-4476.292" Y="-1707.955" Z="84.74947" />
+						<RunTo X="-4473.844" Y="-1686.843" Z="80.9815" />
+						
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="5000" />
+						
+						<RunTo X="-4477.191" Y="-1728.074" Z="87.1525" />
+						<RunTo X="-4489.179" Y="-1731.32" Z="87.53991" />
+						<RunTo X="-4487.268" Y="-1767.6" Z="86.10882" />
+						<RunTo X="-4470.871" Y="-1877.172" Z="85.94276" />
+						<RunTo X="-4485.833" Y="-1891.958" Z="86.43341" />
+						<RunTo X="-4404.227" Y="-1874.959" Z="85.96223" />
+						<RunTo X="-4389.431" Y="-1909.32" Z="86.43382" />
+						<RunTo X="-4393.427" Y="-1938.729" Z="85.74217" />
+						<RunTo X="-4413.951" Y="-1945.386" Z="85.50691" />
+						<RunTo X="-4370.797" Y="-1880.019" Z="88.27864" />
+
+						<CustomBehavior File="Message" 
+										Text="Triggering the RAFs to get to rendezvous location." 
+										LogColor="Lime" />
+										
+						<!-- Trigger rafs -->
+						<CustomBehavior File="FlyTo" X="-4473.001" Y="-1690.047" Z="81.50154" />
+										
+						<CustomBehavior File="ForcedDismount" />
+						
+						<RunTo X="-4473.001" Y="-1690.047" Z="81.50154" />
+						
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="5000" />
+					</If>
+					
+					<!-- If our hearthstone is set here, use it -->
+					<If Condition="Me.HearthstoneAreaId == 4010" >
+						<CustomBehavior File="Message" 
+										Text="Our Innkeeper is set at Mudsprocket." 
+										LogColor="Cyan" />
+										
+						<!-- Have hearthstone -->
+						<If Condition="HasItem(6948)">
+							<CustomBehavior File="Message" 
+											Text="Using Hearthstone." 
+											LogColor="Lime" />
+											
+							<CustomBehavior File="Misc\RunLua" 
+											Lua="UseItemByName(6948)" 
+											WaitTime="1000" />
+											
+							<CustomBehavior File="WaitTimer" 
+											WaitTime="20000" />
+						</If> <!-- Have hearthstone -->
+					
+						<!-- Have Innkeeper's Daughter -->
+						<If Condition="HasItem(64488)">
+							<CustomBehavior File="Message" 
+											Text="Using Innkeeper's Daughter." 
+											LogColor="Lime" />
+												
+							<CustomBehavior File="Misc\RunLua" 
+											Lua="UseItemByName(64488)" 
+											WaitTime="1000" />
+								
+							<CustomBehavior File="WaitTimer" 
+											WaitTime="20000" />
+						</If> <!-- Have Innkeeper's Daughter -->
+						
+						<!-- Our hearth isn't set, we need to go to the zone -->
+						<Else>
+							<CustomBehavior File="Message" 
+											Text="Our Hearthstone isn't set in the proper location. Moving to set it." 
+											LogColor="Lime" />
+					
+							<CustomBehavior File="Message" 
+											Text="Flying to Mudsprocket." 
+											LogColor="Lime" />
+					
+							<!-- Fly to the hover point above the innkeep in Mudsprocket -->
+							<CustomBehavior File="FlyTo" 
+											X="-4561.028" Y="-3169.96" Z="62.55063" />
+					
+							<!-- Front doorway of the inn -->
+							<CustomBehavior File="FlyTo" 
+											X="-4589.012" Y="-3173.481" Z="34.17432" />
+							<CustomBehavior File="ForcedDismount" />
+	
+							<!-- Run inside the inn -->
+							<RunTo X="-4620.78" Y="-3172.521" Z="34.81204" />
+							
+							<!-- Set hearthstone -->
+							<CustomBehavior File="WaitTimer" 
+											WaitTime="1000" />
+							<CustomBehavior File="Message" 
+											Text="Setting my Hearthstone." 
+											LogColor="Lime" />
+							<CustomBehavior File="WaitTimer" 
+											WaitTime="1000" />
+							<CustomBehavior File="SetHearthstone" 
+											MobId="23995" 
+											X="-4630.091" Y="-3176.113" Z="41.22118" />
+							<CustomBehavior File="WaitTimer" 
+											WaitTime="1000" />
+						</Else> <!-- Set hearth -->
+					</If> <!-- Check hearthstone -->
+					
+					<!-- fly to hover point -->
+					<CustomBehavior File="FlyTo" 
+									X="-4561.028" Y="-3169.96" Z="62.55063" />
+					
+					<!-- Repair if necessary -->
+					<If Condition="Me.LowestDurabilityPercent &lt; 0.8" >
+						<CustomBehavior File="FlyTo" 
+										X="-4603.045" Y="-3206.708" Z="34.92397" />
+						<CustomBehavior File="ForcedDismount" />
+					
+						<CustomBehavior File="Message" 
+										Text="Our durability is less than 80%, we need to repair." 
+										LogColor="Fuchsia" />
+									
+						<CustomBehavior File="ForceSetVendor" 
+										DoMail="False" 
+										DoRepair="True" 
+										DoSell="False" 
+										DoTrain="False" />
+						
+						<SetVendor>
+							<Vendors>
+								<!-- Mudsprocket -->
+								<Vendor Name="Razbo Rustgear" 
+										Entry="23571" 
+										Type="Repair" 
+										X="-4603.661" Y="-3210.939" Z="34.92585" />
+							</Vendors>
+						</SetVendor>
+					
+						<!-- We are done repairing -->
+						<If Condition="Me.DurabilityPercent &gt;= 0.8" >
+							<CustomBehavior File="Message" 
+											Text="Repairing complete." 
+											LogColor="Fuchsia" />
+						</If> <!-- repaired -->
+					</If> <!-- Repairing -->
+					
+					<!-- fly to hover point -->
+					<CustomBehavior File="FlyTo" X="-4561.028" Y="-3169.96" Z="62.55063" />
+									
+					<CustomBehavior File="Message" 
+									Text="We are in Mudsprocket." 
+									LogColor="Fuchsia" />
+							
+					<CustomBehavior File="Message" 
+									Text="Flying to the rendezvous location." 
+									LogColor="Lime" />
+											
+					<CustomBehavior File="FlyTo" X="-4440.37" Y="-1977.765" Z="106.8785" />
+
+					<CustomBehavior File="ForcedDismount" />
+					
+					<!-- Begin clearing a path once all party members are within range  -->
+					<CustomBehavior File="Misc\LoadProfileOn" 
+									CheckRange="1" />
+					
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="5000" />
+					
+					<CustomBehavior File="MyCTM" 
+									X="-4453.554" Y="-2010.971" Z="84.19661" />
+					
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="5000" />
+					
+					<MoveTo X="-4463.335" Y="-2008.031" Z="85.18822" />
+					<MoveTo X="-4485.521" Y="-2021.108" Z="83.49168" />
+					<MoveTo X="-4530.188" Y="-2061.421" Z="83.56724" />
+					<MoveTo X="-4512.611" Y="-2095.405" Z="83.41085" />
+					<MoveTo X="-4554.688" Y="-2091.316" Z="89.58046" />
+					<MoveTo X="-4581.391" Y="-2108.959" Z="88.91241" />
+					<MoveTo X="-4617.868" Y="-2125.706" Z="84.14546" />
+					<MoveTo X="-4584.123" Y="-2134.356" Z="90.07339" />
+					<MoveTo X="-4596.642" Y="-2138.654" Z="90.07341" />
+					<MoveTo X="-4655.248" Y="-2123.123" Z="88.81917" />
+					<MoveTo X="-4647.375" Y="-2143.207" Z="84.33843" />
+					<MoveTo X="-4661.803" Y="-2181.047" Z="91.69653" />
+					<MoveTo X="-4655.373" Y="-2220.878" Z="88.80693" />
+					<MoveTo X="-4671.205" Y="-2284.709" Z="89.00578" />
+					<MoveTo X="-4701.226" Y="-2301.179" Z="86.88428" />
+					<MoveTo X="-4725.667" Y="-2339.611" Z="85.76685" />
+					<MoveTo X="-4673.943" Y="-2369.657" Z="85.16312" />
+					<MoveTo X="-4627.676" Y="-2406.288" Z="86.31362" />
+					<MoveTo X="-4643.272" Y="-2422.891" Z="86.28069" />
+					<MoveTo X="-4672.398" Y="-2415.187" Z="85.71968" />
+					<MoveTo X="-4686.675" Y="-2438.651" Z="86.25529" />
+					<MoveTo X="-4653.798" Y="-2472.882" Z="84.57667" />
+					<MoveTo X="-4664.313" Y="-2500.658" Z="80.17852" />
+					<MoveTo X="-4656.187" Y="-2524.607" Z="81.53856" />
+					
+					<CustomBehavior File="UserSettings" 
+									UseMount="True" />	
+					
+					<!-- Trigger RAFs at rendezvous -->
+					<CustomBehavior File="FlyTo" 
+									X="-4440.37" Y="-1977.765" Z="106.8785" />
+					
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="5000" />
+					
+					<!-- Fly above RFD -->
+					<CustomBehavior File="FlyTo" X="-4639.8" Y="-2452.013" Z="128.0884" />
+									
+					<!-- Fly to the ground -->
+					<CustomBehavior File="FlyTo" 
+									X="-4644.762" Y="-2497.573" Z="82.52825" />
+								
+					<CustomBehavior File="ForcedDismount" />
+									
+					<!-- Move back to box -->
+					<RunTo X="-4659.44" Y="-2527.94" Z="81.6564" />
+					
+				</If> <!-- Not in box -->
+				
+				<!-- Inside the instance box, load the profile -->
+				<If Condition="Me.X &gt; -4700 &amp;&amp; Me.X &lt; -4600 &amp;&amp; Me.Y &lt; -2500 &amp;&amp; Me.Y &gt; -2600" >
+					<CustomBehavior File="Message" 
+									Text="We are in the box." 
+									LogColor="Cyan" />
+					
+					<CustomBehavior File="LoadProfile" 
+									ProfileName="..\[QO-N][37-42]_razorfen-downs" />
+				</If> <!-- Load profile -->
+			</If> <!-- Kalimdor -->
+		</If> <!-- Booster -->
+						
+		
+		
+		
+		
+		
+		
+				
+		<!-- ******************************************************* RAF Toons *************************************************************** -->			
+				
+	
+	
+	
+	
+	
+	
+	
+	
+		<!-- RAF Toons -->		
+		<If Condition="Me.Level &lt;= 84">
+			<CustomBehavior File="Message" 
+							Text="We are a RAF." 
+							LogColor="Cyan" />
+		
+			<If Condition="Me.IsAlliance">
+				<If Condition="Me.HearthstoneAreaId != 5148">
+					<CustomBehavior File="Message" 
+									Text="Our Hearthstone isn't set in the Trade District in Stormwind. Stopping profile." 
+									LogColor="Lime" />
+									
+					<CustomBehavior File="UserSettings" 
+										StopBot="true" />
+				</If>
+				
+				<ElseIf Condition="Me.IsHorde">
+					<If Condition="Me.HearthstoneAreaId != 5170">
+						<CustomBehavior File="Message" 
+										Text="Our Hearthstone isn't set in the Valley of Strength in Orgrimmar. Stopping profile." 
+										LogColor="Lime" />
+										
+						<CustomBehavior File="UserSettings" 
+										StopBot="true" />
+					</If>
+				</ElseIf>
+			</If>
+		
+			<!-- RAF UserSettings -->
+			<CustomBehavior File="UserSettings"
+							GroundMountFarmingMode="False"
+							HarvestHerbs="False"
+							HarvestMinerals="False"
+							KillBetweenHotspots="True"
+							LogoutForInactivity="False"
+							LogoutInactivityUseForceQuit="False"
+							LootMobs="True"
+							LootRadius="15"
+							MountName=""
+							NinjaSkin="False"
+							RessAtSpiritHealers="False"
+							SkinMobs="False"
+							UseMount="True" 
+							UseRandomMount="False" />
+				
+			<!-- Kalimdor -->
+			<If Condition="Me.MapId == 1">
+				<CustomBehavior File="Message" 
+								Text="We are in Kalimdor." 
+								LogColor="Cyan" />
+				
+				<!-- RFK -->
+				<If Condition="Me.ZoneId == 491">	
+					<CustomBehavior File="Message" 
+									Text="We are in the Razorfen Kraul area." 
+									LogColor="Cyan" />
+				
+					<!-- RFK portal exit -->
+					<RunTo X="-4462" Y="-1663.06" Z="81.8912" />
+					
+					<CustomBehavior File="Message" 
+									Text="Waiting for the booster to clear a path out of Razorfen Kraul." 
+									LogColor="Cyan" />
+				
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="80000" />
+									
+					<RunTo X="-4473.001" Y="-1690.047" Z="81.50154" />
+									
+					<CustomBehavior File="Misc\LoadProfileOn" 
+									CheckRange="5" />
+									
+					<CustomBehavior File="ForcedMount"
+									MountType="Ground" />
+							
+					<CustomBehavior File="NoCombatMoveTo" X="-4442.853" Y="-1986.486" Z="105.6165" />
+				</If>
+					
+				<!-- Southern Barrens -->
+				<If Condition="Me.ZoneId == 4709" >
+					<CustomBehavior File="Message" 
+									Text="We are in Southern Barrens." 
+									LogColor="Cyan" />
+					
+					<CustomBehavior File="NoCombatMoveTo" 
+									X="-4440.37" Y="-1977.765" Z="106.8785" />
+					
+					<!-- Begin the escort once all party members are within range -->
+					<CustomBehavior File="Misc\LoadProfileOn" 
+									CheckRange="5" />
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+					<CustomBehavior File="Message" 
+									Text="The booster will now clear the path to Razorfen Downs."
+									LogColor="Cyan" />
+											
+					<!-- Wait timer to allow the booster to clear a path -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="30000" />
+									
+					<!-- Get tagged by booster -->
+					<CustomBehavior File="Misc\LoadProfileOn" 
+									CheckRange="5" />
+									
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="5000" />
+					
+					<!-- ForcedMount, and fly above the village -->
+					<CustomBehavior File="ForcedMount"
+									MountType="Ground" />
+											
+					<CustomBehavior File="Message" 
+									Text="Moving to Razorfen Downs."
+									LogColor="Lime" />
+									
+					<CustomBehavior File="MyCTM" 
+									X="-4453.554" Y="-2010.971" Z="84.19661" /> 
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+					<!-- Profile message - Disabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Disabling combat." 
+										LogColor="Gold" />
+					
+					<!-- DisableBehavior - Combat -->
+					<DisableBehavior Name="Combat" />
+					
+					<!-- Profile message - Disabling Pull -->
+					<CustomBehavior File="Message" 
+										Text="Disabling Pull." 
+										LogColor="Gold" />
+					
+					<!-- DisableBehavior - Pull -->
+					<DisableBehavior Name="Pull" />
+
+					<MoveTo X="-4504.419" Y="-2015.987" Z="84.48018" />
+					<MoveTo X="-4536.773" Y="-2083.285" Z="85.65292" />
+					<MoveTo X="-4582.11" Y="-2107.229" Z="89.01717" />
+					<MoveTo X="-4602.482" Y="-2130.597" Z="86.685" />
+					<MoveTo X="-4658.016" Y="-2164.841" Z="89.86844" />
+					<MoveTo X="-4659.952" Y="-2231.721" Z="88.4982" />
+					<MoveTo X="-4670.338" Y="-2281.325" Z="89.00804" />
+					<MoveTo X="-4712.338" Y="-2299.025" Z="84.12761" />
+					<MoveTo X="-4729.985" Y="-2312.126" Z="84.50535" />
+					<MoveTo X="-4733.428" Y="-2331.422" Z="85.94094" />
+					<MoveTo X="-4722.677" Y="-2342.039" Z="85.64737" />
+					<MoveTo X="-4684.734" Y="-2366.267" Z="87.48664" />
+					<MoveTo X="-4643.892" Y="-2381.468" Z="86.0158" />
+					
+					<MoveTo X="-4628.369" Y="-2405.101" Z="86.22894" />
+					<MoveTo X="-4641.169" Y="-2420.865" Z="85.9403" />
+					<MoveTo X="-4668.708" Y="-2413.385" Z="85.68805" />
+					<MoveTo X="-4684.806" Y="-2425.667" Z="85.85558" />
+					<MoveTo X="-4683.305" Y="-2442.905" Z="86.01178" />
+					<MoveTo X="-4662.646" Y="-2460.721" Z="85.59547" />
+					<MoveTo X="-4656.361" Y="-2470.957" Z="84.87613" />
+					<MoveTo X="-4644.707" Y="-2495.303" Z="82.91087" />
+					<MoveTo X="-4650.273" Y="-2507.573" Z="81.32278" />
+
+					<!-- Move to - instance box -->
+					<MoveTo X="-4659.44" Y="-2527.94" Z="81.6564" />
+					
+					<!-- Profile message - Enabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Enabling combat." 
+										LogColor="Gold" />
+
+					<!-- enable combat -->
+					<EnableBehavior Name="Combat" />
+					
+					<!-- Profile message - Enabling Pull -->
+					<CustomBehavior File="Message" 
+										Text="Enabling Pull." 
+										LogColor="Gold" />
+
+					<!-- enable Pull -->
+					<EnableBehavior Name="Pull" />
+					
+					<!-- Inside the instance box, load the profile -->
+					<If Condition="Me.X &gt; -4700 &amp;&amp; Me.X &lt; -4600 &amp;&amp; Me.Y &lt; -2500 &amp;&amp; Me.Y &gt; -2600" >
+						<CustomBehavior File="Message" 
+										Text="We are in the box." 
+										LogColor="Cyan" />
+						
+						<CustomBehavior File="LoadProfile" 
+										ProfileName="..\[QO-N][37-42]_razorfen-downs" />
+					</If> <!-- Load profile -->
+				</If> <!-- Southern Barrens -->
+			</If> <!-- Kalimdor -->
+		</If> <!-- RAF -->
+	</QuestOrder>
+</HBProfile>
+

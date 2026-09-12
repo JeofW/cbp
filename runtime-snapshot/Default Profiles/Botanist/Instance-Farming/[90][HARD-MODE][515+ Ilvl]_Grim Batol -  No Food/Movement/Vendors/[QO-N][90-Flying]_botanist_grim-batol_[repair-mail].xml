@@ -1,0 +1,279 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+	<Name>[QO-N][90-Flying]_botanist_grim-batol_[repair-mail]</Name>
+   
+	<MinLevel>1</MinLevel>
+	<MaxLevel>101</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	
+	<MailGrey>False</MailGrey>
+	<MailWhite>True</MailWhite>
+	<MailGreen>False</MailGreen>
+	<MailBlue>False</MailBlue>
+	<MailPurple>True</MailPurple>
+   
+	<SellGrey>True</SellGrey>
+	<SellWhite>False</SellWhite>
+	<SellGreen>True</SellGreen>
+	<SellBlue>True</SellBlue>
+	<SellPurple>False</SellPurple>
+   
+	<TargetElites>True</TargetElites>
+	
+	<AvoidMobs>
+	</AvoidMobs>
+	
+	<Blackspots>
+		<Blackspot X="-7118.695" Y="-1225.898" Z="290.2605" Radius="1" />
+		<Blackspot X="1091.256" Y="-166.446" Z="-65.30894" Radius="1" />
+	</Blackspots>
+
+	<Mailboxes>
+	</Mailboxes>
+ 
+	<Vendors>
+	</Vendors>
+	
+	<ProtectedItems>	
+	</ProtectedItems>
+
+	<Factions></Factions>
+	
+	<QuestOrder>
+
+		<!-- UserSettings -->
+		<CustomBehavior File="UserSettings"
+						FindMountAutomatically="True"
+						GroundMountFarmingMode="False"
+						HarvestHerbs="False"
+						HarvestMinerals="False"
+						KillBetweenHotspots="True"
+						LogoutForInactivity="False"
+						LogoutInactivityUseForceQuit="False"
+						LootMobs="True"
+						LootRadius="25"
+						MountName=""
+						NinjaSkin="False"
+						RessAtSpiritHealers="False"
+						SkinMobs="False"
+						UseMount="True" 
+						UseRandomMount="False" />	
+
+		<!-- If our level is => -->
+		<If Condition="Me.Level &gt;= 80">
+			
+			<!-- If we are inside Grim Batol -->
+			<If Condition="Me.ZoneId == 4950">	
+				
+				<!-- If our hearthstone is set to Thundermar or Bloodgulch -->
+				<If Condition="Me.HearthstoneAreaId == 5142 || Me.HearthstoneAreaId == 5138">
+				
+					<!-- Profile message - We are in Grim Batol, using our Hearthstone/Innkeeper's Daughter -->
+					<CustomBehavior File="Message" 
+									Text="We are in Grim Batol, using our Hearthstone/Innkeeper's Daughter." 
+									LogColor="Cyan" />
+								
+					<!-- If we have a Hearthstone -->
+					<If Condition="HasItem(6948)">
+					
+						<!-- Profile message - Using our Hearthstone -->
+						<CustomBehavior File="Message" 
+										Text="Using our Hearthstone." 
+										LogColor="Fuchsia" />
+										
+						<!-- Custom behavior - Misc\RunLua -->				
+						<CustomBehavior File="Misc\RunLua" 
+										Lua="UseItemByName(6948)" 
+										WaitTime="1000" />
+										
+						<!-- Wait timer - wait 20 seconds - delay -->				
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000" />
+										
+					</If>	<!-- If we have a Hearthstone -->
+				
+					<!-- If we have a Innkeeper's Daughter -->
+					<If Condition="HasItem(64488)">
+					
+						<!-- Profile message - Using our Innkeeper's Daughter -->
+						<CustomBehavior File="Message" 
+										Text="Using our Innkeeper's Daughter." 
+										LogColor="Fuchsia" />
+											
+						<!-- Custom behavior - Misc\RunLua -->					
+						<CustomBehavior File="Misc\RunLua" 
+										Lua="UseItemByName(64488)" 
+										WaitTime="1000" />
+							
+						<!-- Wait timer - wait 20 seconds - delay -->	
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000" />
+										
+					</If>	<!-- If we have a Innkeeper's Daughter -->
+				
+				</If>	<!-- If our hearthstone is set here, use it -->
+				
+			</If>	<!-- If we are in Grim Batol -->
+		
+			<!-- If we are still in Grim Batol, exit the instance -->
+			<If Condition="Me.ZoneId == 4950">
+			
+				<!-- The Grim Batol detected. Running out -->
+				<CustomBehavior File="Message" 
+								Text="The Grim Batol detected. Running out."
+								LogColor="Fuchsia" />
+					
+				<!-- Move to - zone in location -->
+				<MoveTo X="-624.155" Y="-189.365" Z="272.04" />
+				
+				<!-- Custom behavior - Misc/InInstance - exit the instance-->
+				<CustomBehavior File="Misc\InInstance" 
+								X="-630.1126" Y="-172.9248" Z="272.1369" />
+				
+				<!-- Wait timer - wait 15 seconds - delay -->
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="15000" />
+				
+				<!-- Move to - zone out location -->
+				<MoveTo X="-4058.4" Y="-3450.03" Z="281.0914" />
+				
+			</If>	<!-- If we are inside Grim Batol -->
+
+			<!-- If we have less then 35 empty bag slots or our durability is less than 30% -->
+			<If Condition="(Me.FreeBagSlots &lt;= 35) || (Me.LowestDurabilityPercent &lt;= 0.3)" >
+
+				<!-- Profile message - Our durability is less than 30% or we have less than 25 empty bag slots remaining -->
+				<CustomBehavior File="Message" 
+								Text="Our durability is less than 30% or we have less than 25 empty bag slots remaining." 
+								LogColor="Fuchsia" />
+			
+				<!-- If we are Alliance -->					
+				<If Condition="Me.IsAlliance">					
+							
+					<!-- Profile message - Flying to Thundermar -->
+					<CustomBehavior File="Message" 
+										Text="Flying to Thundermar." 
+										LogColor="Fuchsia" />
+							
+					<!-- Fly to the Thundermar hover point -->
+					<CustomBehavior File="FlyTo" 
+									X="-3208.278" Y="-4977.597" Z="159.7892" />
+
+					<!-- CTM to - Caelyb Coppercrag - Thundermar repair vendor -->
+					<CustomBehavior File="MyCTM" 
+									X="-3200.014" Y="-5043.748" Z="119.6321" />
+					
+					<!-- Custom behavior - ForcedDismount -->
+					<CustomBehavior File="ForcedDismount" />
+					
+					<!-- UserSettings - usemount - false -->
+					<CustomBehavior File="UserSettings"
+									UseMount="False" />
+					
+					<!-- Move to - Caelyb Coppercrag - Thundermar repair vendor -->
+					<MoveTo X="-3185.851" Y="-5024.844" Z="120.5098" />
+					
+					<!-- Vendor conditions -->
+					<CustomBehavior File="ForceSetVendor" 
+									DoMail="True" 
+									DoRepair="True" 
+									DoSell="True" 
+									DoTrain="False" />
+										
+					<!-- Repair vendor - Thundermar -->
+					<SetVendor>
+						<Vendors>
+							<Vendor Name="Caelyb Coppercrag" 
+									Entry="49592" 
+									Type="Repair" 
+									X="-3177.95" Y="-5021.481" Z="121.2318" />
+						</Vendors>
+					</SetVendor>
+					
+					<SetMailbox>
+						<Mailboxes>
+							<Mailbox X="-3205.434" Y="-5045.54" Z="120.2964" />
+						</Mailboxes>
+					</SetMailbox>
+					
+					<!-- Move to - mount location -->
+					<MoveTo X="-3200.014" Y="-5043.748" Z="119.6321" />
+					
+					<!-- UserSettings - usemount - true -->
+					<CustomBehavior File="UserSettings"
+									UseMount="True" />
+					
+					<!-- Fly to the Thundermar hover point -->
+					<CustomBehavior File="FlyTo" 
+									X="-3213.797" Y="-5007.835" Z="173.0237" />
+
+				</If>	<!-- If we are Alliance -->					
+		
+				<!-- If we are Horde -->						
+				<If Condition="Me.IsHorde">					
+		
+					<!-- Profile message - Flying to Bloodgulch -->
+					<CustomBehavior File="Message" 
+										Text="Flying to Bloodgulch." 
+										LogColor="Fuchsia" />
+							
+					<!-- Fly to the Bloodgulch hover point -->
+					<CustomBehavior File="FlyTo" 
+									X="-3672.317" Y="-5320.684" Z="76.85636" />
+
+					<!-- Fly to - Naka Scaleblade - Bloodgulch repair vendor -->
+					<CustomBehavior File="FlyTo" 
+									X="-3677.07" Y="-5376.532" Z="35.76823" />
+					
+					<!-- Custom behavior - ForcedDismount -->
+					<CustomBehavior File="ForcedDismount" />
+					
+					<!-- Move to - Naka Scaleblade - Bloodgulch repair vendor -->
+					<MoveTo X="-3677.07" Y="-5376.532" Z="35.76823" />
+					
+					<!-- Vendor conditions -->
+					<CustomBehavior File="ForceSetVendor" 
+									DoMail="True" 
+									DoRepair="True" 
+									DoSell="True" 
+									DoTrain="False" />
+										
+					<!-- Repair vendor - Bloodgulch -->
+					<SetVendor>
+						<Vendors>
+							<Vendor Name="Naka Scaleblade" 
+									Entry="49768" 
+									Type="Repair" 
+									X="-3675.151" Y="-5381.104" Z="35.76828" />
+						</Vendors>
+					</SetVendor>
+					
+					<SetMailbox>
+						<Mailboxes>
+							<Mailbox X="-3671.405" Y="-5280.594" Z="41.5924" />
+						</Mailboxes>
+					</SetMailbox>
+					
+					<!-- Fly to the Bloodgulch hover point -->
+					<CustomBehavior File="FlyTo" 
+									X="-3672.317" Y="-5320.684" Z="76.85636" />
+		
+				</If>	<!-- If we are Horde -->
+		
+			</If>	<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+				
+			<!-- If we have more than 35 empty bag slots and our durability is greater than 30% -->
+			<If Condition="(Me.FreeBagSlots &gt; 35) &amp;&amp; (Me.LowestDurabilityPercent &gt;= 0.3)" >
+			
+				<!-- Load profile - [N][90][HARD-MODE]_Grim Batol - 35 slot trigger - Hearth-Exit -->
+				<CustomBehavior File="LoadProfile" 
+										ProfileName="..\..\[N][90][HARD-MODE]_Grim Batol - 35 slot trigger - Hearth-Exit" />
+										
+			</If>	
+			
+		</If>
+		
+	</QuestOrder>
+	
+</HBProfile>

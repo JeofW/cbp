@@ -1,0 +1,81 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+<Name>[Botanist][Tinker]_unknown-to-elwynn-forest</Name>
+
+<MinLevel>1</MinLevel>
+<MaxLevel>151</MaxLevel>
+
+<MinDurability>-1</MinDurability>
+<MinFreeBagSlots>-1</MinFreeBagSlots>
+<TargetingDistance>45</TargetingDistance>
+
+<MailGrey>False</MailGrey>
+<MailWhite>False</MailWhite>
+<MailGreen>False</MailGreen>
+<MailBlue>False</MailBlue>
+<MailPurple>False</MailPurple>
+
+<SellGrey>False</SellGrey>
+<SellWhite>False</SellWhite>
+<SellGreen>False</SellGreen>
+<SellBlue>False</SellBlue>
+<SellPurple>False</SellPurple>
+
+<AvoidMobs>		 
+</AvoidMobs>
+
+<Blackspots>
+</Blackspots>
+
+<Mailboxes>
+</Mailboxes>
+
+<Vendors>
+</Vendors>
+
+<ProtectedItems>	
+</ProtectedItems>
+
+	<QuestOrder>
+			
+		<!-- If we are not in Elwynn Forrest -->
+		<If Condition="Me.MapId == 0 &amp;&amp; Me.ZoneId != 12">
+		
+			<!-- CustomBehavior - Message - Position check, we need to be in Goldshire -->
+			<CustomBehavior File="Message" 
+							Text="We are in Eastern Kingdoms. Navigating to Goldshire" 
+							LogColor="Plum" /> 
+							
+			<!-- Move to - Goldshire flight master -->	
+			<MoveTo X="-9433.99" Y="85.1493" Z="56.734" />
+			
+			<!-- CustomBehavior - WaitTimer - 3 second delay  -->				
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="1000" />
+		
+			<!--  CustomBehavior - LoadProfile - [Botanist][Tinker][A-5][profession-check] -->				
+			<CustomBehavior File="LoadProfile" 
+							ProfileName="..\[Botanist][Tinker][A-5][profession-check]" />
+		
+		</If>	<!-- If we are in Eastern Kingdoms -->
+		
+		<!-- If we are in Elwynn Forrest -->
+		<If Condition="Me.MapId == 0 &amp;&amp; Me.ZoneId == 12">
+
+			<!-- CustomBehavior - WaitTimer - 1 second delay  -->				
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="1000" />
+		
+			<!-- CustomBehavior - Message - We are in Elwynn Forest -->
+			<CustomBehavior File="Message" 
+							Text="We are in Elwynn Forest" 
+							LogColor="Plum" />
+		
+			<!--  CustomBehavior - LoadProfile - [Botanist][Tinker][A-5][profession-check] -->				
+			<CustomBehavior File="LoadProfile" 
+							ProfileName="..\[Botanist][Tinker][A-5][profession-check]" />
+		
+		</If>	<!-- If we are in Eastern Kingdoms -->
+
+	</QuestOrder>
+
+</HBProfile>

@@ -1,0 +1,1030 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+	<Name>[QO-N][Solstice][84-86]_gundrak</Name>
+   
+	<MinLevel>1</MinLevel>
+	<MaxLevel>101</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	<TargetingDistance>15</TargetingDistance>
+	
+	<MailGrey>False</MailGrey>
+	<MailWhite>False</MailWhite>
+	<MailGreen>False</MailGreen>
+	<MailBlue>False</MailBlue>
+	<MailPurple>True</MailPurple>
+   
+	<SellGrey>True</SellGrey>
+	<SellWhite>True</SellWhite>
+	<SellGreen>True</SellGreen>
+	<SellBlue>True</SellBlue>
+	<SellPurple>False</SellPurple>
+
+	<AvoidMobs>		
+		<Mob Name="Summon Enabler Stalker" Entry="53488" />
+		<Mob Name="Drakkari Guardian" Entry="26620" />
+	</AvoidMobs>
+	
+	<Blackspots>
+		<Blackspot X="-295.7177" Y="-744.481" Z="29.66842" Radius="3" />
+	</Blackspots>
+
+	<Mailboxes>
+	</Mailboxes>
+ 
+	<Vendors>
+	</Vendors>
+	
+	<ProtectedItems>
+	</ProtectedItems>
+
+	<Factions>16</Factions>
+	
+	<QuestOrder>
+
+		<!-- Level check -->
+		<If Condition="Me.Level &gt;= 79">
+		
+			<!-- Profile message - You meet the level requirement to run this profile -->
+			<CustomBehavior File="Message" 
+							Text="You meet the level requirement to run this profile." 
+							LogColor="Fuchsia" />
+		
+		 	<!-- UserSettings -->
+			<CustomBehavior File="UserSettings"
+							FindMountAutomatically="True"
+							GroundMountFarmingMode="False"
+							HarvestHerbs="False"
+							HarvestMinerals="False"
+							KillBetweenHotspots="True"
+							LogoutForInactivity="False"
+							LogoutInactivityUseForceQuit="False"
+							LootMobs="True"
+							LootRadius="35"
+							MountName=""
+							NinjaSkin="False"
+							RessAtSpiritHealers="False"
+							SkinMobs="False"
+							UseMount="True" 
+							UseRandomMount="False" />
+						
+			<!-- Infinite loop -->
+			<While Condition="true" >	
+			
+				<!-- If we are inside Gundrak -->
+				<If Condition="Me.ZoneId == 4416">
+				
+					<!-- Profile message - Gundrak detected. Running out -->
+					<CustomBehavior File="Message" 
+									Text="Gundrak detected, running out."
+									LogColor="Fuchsia" />
+						
+					<!-- Move to - zone in location -->
+					<MoveTo X="1887.432" Y="839.571" Z="176.6754" />
+
+					<!-- Profile message - Waiting 3 seconds - Bag and durability check -->
+					<CustomBehavior File="Message" 
+									Text="Waiting 3 seconds - Bag and durability check."  
+									LogColor="Orange" />
+					
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+					<If Condition="(Me.FreeBagSlots &lt;= 25) || (Me.LowestDurabilityPercent &lt;= 0.3)" >
+												
+						<!-- Load profile - [QO-N][Solstice][58-90][repair-mail] -->
+						<CustomBehavior File="LoadProfile" 
+										ProfileName="Movement\Vendors\[QO-N][Solstice][58-90][repair-mail]" />
+
+					</If>	<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+
+					<!-- Profile message - Waiting 3 seconds - Food check - Mead Basted Caribou -->
+					<CustomBehavior File="Message" 
+									Text="Waiting 3 seconds - Food check - Mead Basted Caribou."  
+									LogColor="Orange" />
+					
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+									
+					<!-- If we don't have Sweet Potato Bread -->
+					<If Condition="!HasItem(35950)">
+			
+						<!-- Load profile - [QO-N][Solstice][58-90][repair-mail] -->
+						<CustomBehavior File="LoadProfile" 
+										ProfileName="Movement\Vendors\[QO-N][Solstice][58-90][repair-mail]" />
+			
+					</If>	<!-- If we don't have Sweet Potato Bread -->
+					
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+														
+					<!-- Profile message - All checks complete -->
+					<CustomBehavior File="Message" 
+									Text="All checks complete."  
+									LogColor="Orange" />
+
+					<!-- Go through the portal -->
+					<CustomBehavior File="Misc\InInstance" 
+									X="1900.536" Y="815.8542" Z="176.637" />
+					
+				</If>	<!-- If we are inside Gundrak -->
+
+				<!-- If we are not in the Gundrak box, load the movement profile -->
+				<If Condition="Me.X &lt; 6650 || Me.X &gt; 6750 || Me.Y &lt; -4700 || Me.Y &gt; -4600" >
+				
+					<!-- Profile message - Distance from portal is not within our proximity, initializing movement to get there -->
+					<CustomBehavior File="Message" 
+									Text="Distance from portal is not within our proximity, initializing movement to get there."
+									LogColor="Fuchsia" />	
+					
+					<!-- Load profile - Movement\[QO-N-M][Solstice][84-86]_gundrak -->					
+					<CustomBehavior File="LoadProfile" 
+									ProfileName="Movement\[QO-N-M][Solstice][84-86]_gundrak" />
+									
+				</If>	<!-- If we are not in the Gundrak box, load the movement profile -->
+				
+				<!-- If we are in the Gundrak instance box -->
+				<If Condition="Me.X &gt; 6650 &amp;&amp; Me.X &lt; 6750 &amp;&amp; Me.Y &gt; -4700 &amp;&amp; Me.Y &lt; -4600" >
+
+					<!-- Move to - weapon enchant location -->
+					<MoveTo X="6737.965" Y="-4626.453" Z="450.518" />
+						
+					<!-- Custom behavior - DKEnchantWeapon -->
+					<CustomBehavior File="Misc\DKEnchantWeapon" SpellID="53342" />	
+					
+					<!-- Move to - zone out location -->
+					<MoveTo X="6717.32" Y="-4645.55" Z="450.017" />
+					
+					<!-- Profile message - Portal detected nearby --> 
+					<CustomBehavior File="Message" 
+									Text="Portal detected nearby."
+									LogColor="Fuchsia" />	
+						
+					<!-- Profile message - Resetting the instance -->
+					<CustomBehavior File="Message" 
+									Text="Resetting the instance." 
+									LogColor="Fuchsia" />
+					
+					<!-- Custom behavior - macro - reset the instance -->
+					<CustomBehavior File="RunMacro" 
+									Macro="/script ResetInstances()" />	
+					
+					<!-- Custom behavior - macro - set the dungeon difficulty to normal -->
+					<CustomBehavior File="RunMacro" 
+									Macro="/script SetDungeonDifficultyID(1)" />
+					
+					<!-- Profile message - The instance has been reset -->
+					<CustomBehavior File="Message" 
+									Text="The instance has been reset." 
+									LogColor="Fuchsia" />	
+						
+					<!-- While we didn't enter Gundrak -->
+					<While Condition="Me.ZoneId != 4416">
+					
+						<!-- Move to - zone out location -->
+						<MoveTo X="6717.32" Y="-4645.55" Z="450.017" />
+
+						<!-- Move to - attempt to enter the instance -->
+						<CustomBehavior File="Misc\InInstance" 
+										X="6690.202" Y="-4670.903" Z="441.5623" />
+										
+										
+						<!-- Profile message - Waiting for the dungeon to load -->				
+						<CustomBehavior File="Message" 
+										Text="Waiting for the dungeon to load." 
+										LogColor="Fuchsia" />
+									
+						<!-- Wait timer - wait 20-40 seconds -->			
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000"
+										VariantTime="20000" />
+										
+						<!-- If we are not in Gundrak -->
+						<If Condition="Me.ZoneId != 4416" >
+						
+							<!-- Profile message - We are instance locked, initiating loop procedures until we enter the instance -->
+							<CustomBehavior File="Message" 
+											Text="We are instance locked, initiating loop procedures until we enter the instance." 
+											LogColor="Fuchsia" />
+											
+						</If>	<!-- If we are not in Gundrak -->
+						
+					</While>	<!-- While we didn't enter Gundrak -->
+					
+				</If>	<!-- If we are in the Gundrak instance box -->
+
+				<!-- If we are inside Gundrak -->
+				<If Condition="Me.ZoneId == 4416">
+				
+					<!--Profile message	- Deleting unwanted items from our bags -->				
+					<CustomBehavior File="Message" 
+									Text="Deleting unwanted items from our bags." 
+									LogColor="Orange" />
+
+					<!-- Morning Glory Dew -->
+					<CustomBehavior File="DeleteItems" 
+									Ids="8766" />
+									
+					<!-- Major Mana Potion -->				
+					<CustomBehavior File="DeleteItems" 
+									Ids="13444" />	
+									
+					<!-- Libram of Voracity -->										
+					<CustomBehavior File="DeleteItems" 
+									Ids="11737" />
+									
+					<!-- Libram of Resilience -->
+					<CustomBehavior File="DeleteItems" 
+									Ids="11736" />	
+									
+					<!-- Roasted Quail -->
+					<CustomBehavior File="DeleteItems" 
+									Ids="8952" />	
+									
+					<!-- Superior Mana Potion -->
+					<CustomBehavior File="DeleteItems" 
+									Ids="22256" />	
+									
+					<!-- Mana Potion -->
+					<CustomBehavior File="DeleteItems" 
+									Ids="26480" />
+									
+					<!-- Light Feather -->
+					<CustomBehavior File="DeleteItems" 
+									Ids="17056" />
+									
+					<!-- Dark Iron Bullet -->
+					<CustomBehavior File="DeleteItems" 
+									Ids="62916" />	
+									
+					<!-- Mag'har Grainbread -->
+					<CustomBehavior File="DeleteItems" 
+									Ids="27855" />
+									
+					<!-- Homemade Cherry Pie -->
+					<CustomBehavior File="DeleteItems" 
+									Ids="8950" />
+									
+					<!-- Smoked Talbuk Venison -->
+					<CustomBehavior File="DeleteItems" 
+									Ids="27854" />		
+							
+					<!-- Instance timer -->
+					<CustomBehavior File="Misc\InstanceTimer" 
+									Timer="Start" />							
+								
+					<!-- Turn on autolooting -->
+					<CustomBehavior File="RunMacro" 
+									Macro="/script SetCVar('AutoLootDefault', 1)" 
+									NumOfTimes="1" 
+									WaitTime="1000" />
+
+					<!-- Profile message - Gundrak initialized -->			
+					<CustomBehavior File="Message" 
+									Text="Gundrak initialized."  
+									LogColor="Fuchsia" />
+				
+				
+				<!-- **************************************************************************************************************************** -->
+				
+				
+					<!-- Move to - top of the ramp near the rail -->
+					<MoveTo X="1853.866" Y="852.3528" Z="175.8627" />
+					
+					<!-- CTM to - jumps in the water -->
+					<CustomBehavior File="MyCTM" 
+									X="1833.152" Y="854.8209" Z="126.1961" />
+									
+					<!-- CTM to - moves to the front of the ramp -->				
+					<CustomBehavior File="MyCTM" 
+									X="1839.313" Y="861.5237" Z="126.2872" />
+									
+					<!-- CTM to - moves up the ramp -->				
+					<CustomBehavior File="MyCTM" 
+									X="1828.871" Y="861.0834" Z="129.3011" />
+
+					<!-- Move to - the doorway -->
+					<MoveTo X="1825.406" Y="851.5631" Z="129.2871" />
+					
+					
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+					
+					
+					<!-- Move to - 1st group at the banister -->
+					<MoveTo X="1802.111" Y="850.8854" Z="129.1956" />
+					
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+					
+					
+					<!-- Move to - Drakkari Earthshaker -->
+					<MoveTo X="1772.727" Y="857.4819" Z="123.1927" />
+					
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+					
+					
+					<!-- Move to - 2nd group at the banister -->
+					<MoveTo X="1743.959" Y="851.903" Z="129.1971" />
+					
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+					
+					
+					<!-- Move to - Moorabi - staging location -->
+					<MoveTo X="1772.234" Y="851.3779" Z="123.1928" />
+					
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+					
+
+					<!-- Kill Moorabi -->
+					<CustomBehavior File="GetOutOfGroundEffectAndAuras" 
+									EventCompleteWhen="SpecificMobsDead" 
+									EventCompleteDeadMobId="29305"
+									EventX="1772.471" EventY="809.537" EventZ="129.2166"
+									MoveOutOfGroundEffectAuraId1="111111"
+									MoveAwayFromMobCastingSpellId1="111111"
+									MoveAwayFromMobWithAuraId1="111111">
+						<Safespots>
+							<Hotspot X="1772.471" Y="809.537" Z="129.2166" />
+						</Safespots>
+					</CustomBehavior>
+					
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+					
+					
+					<!-- Interact with 1st obelisk -->
+					<CustomBehavior File="InteractWith" 
+									MobId="192519" 
+									ObjectType="Gameobject" 
+									Range="4.75" 
+									NumOfTimes="1"  
+									X="1772.122" Y="809.2382" Z="129.2173" />
+					
+					
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+
+					
+					<!-- Move to - 2nd group at the banister -->
+					<MoveTo X="1743.959" Y="851.903" Z="129.1971" />
+					
+
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+					
+					
+					<!-- Move to - door entering the Cave of Mam'toth -->
+					<MoveTo X="1715.614" Y="852.194" Z="129.1973" />
+					
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+					
+					
+					<!-- Profile message - Disabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Disabling combat." 
+										LogColor="Fuchsia" />
+
+					<!-- Disable combat -->
+					<DisableBehavior Name="Combat" />
+					
+					<!-- Move to - left-hand turn -->
+					<MoveTo X="1698.545" Y="893.2339" Z="133.945" />
+					
+					<!-- Profile message - Enabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Enabling combat." 
+										LogColor="Fuchsia" />
+					
+					<!-- enable combat -->
+					<EnableBehavior Name="Combat" />
+					
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+					
+					
+					<!-- Profile message - Disabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Disabling combat." 
+										LogColor="Fuchsia" />
+
+					<!-- Disable combat -->
+					<DisableBehavior Name="Combat" />
+					
+					<!-- Move to - center torch -->
+					<MoveTo X="1653.482" Y="891.9479" Z="142.5371" />
+					
+					<!-- Profile message - Enabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Enabling combat." 
+										LogColor="Fuchsia" />
+					
+					<!-- enable combat -->
+					<EnableBehavior Name="Combat" />
+					
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+					
+					
+					<!-- Move to - torch group - pivot location -->
+					<MoveTo X="1653.482" Y="891.9479" Z="142.5371" />											
+																
+					<!-- CTM to - align our target macro -->
+					<CustomBehavior File="MyCTM" 
+									X="1656.488" Y="886.5637" Z="140.7582" />
+
+					<!-- Profile message - Targeting the enemy -->
+					<CustomBehavior File="Message" 
+									Text="Targeting the enemy."  
+									LogColor="Orange" />
+	
+					<!-- Macro - Clear target -->					
+					<CustomBehavior File="RunMacro" 
+									Macro="/cleartarget" 
+									NumOfTimes="1" 
+									WaitTime="0"/>
+	
+					<!-- Macro - targetenemy -->						
+					<CustomBehavior File="RunMacro"
+									NumOfTimes="1"
+									Macro="/targetenemy [noharm]" />
+					
+					<!-- Profile message - Casting Death Grip -->
+					<CustomBehavior File="Message" 
+									Text="Casting Death Grip."  
+									LogColor="Orange" />
+
+					<!-- Macro - Cast Death Grip -->
+					<CustomBehavior File="RunMacro"
+									NumOfTimes="1"
+									Macro="/cast Death Grip" />
+							
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />		
+							
+					<!-- Move to - torch group - safety -->
+					<MoveTo X="1664.677" Y="870.9516" Z="138.0594" />		
+
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+					
+					
+					<!-- Move to - left turn -->
+					<MoveTo X="1627.177" Y="902.5988" Z="146.0623" />													
+
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+					
+					
+					<!-- Move to - right-hand group near the top of the incline - pivot location -->
+					<MoveTo X="1615.174" Y="891.0612" Z="147.2333" />											
+																
+					<!-- CTM to - align our target macro -->
+					<CustomBehavior File="MyCTM" 
+									X="1604.994" Y="886.5743" Z="148.5346" />
+
+					<!-- Profile message - Targeting the enemy -->
+					<CustomBehavior File="Message" 
+									Text="Targeting the enemy."  
+									LogColor="Orange" />
+	
+					<!-- Macro - Clear target -->					
+					<CustomBehavior File="RunMacro" 
+									Macro="/cleartarget" 
+									NumOfTimes="1" 
+									WaitTime="0"/>
+	
+					<!-- Macro - targetenemy -->						
+					<CustomBehavior File="RunMacro"
+									NumOfTimes="1"
+									Macro="/targetenemy [noharm]" />
+					
+					<!-- Profile message - Casting Death Grip -->
+					<CustomBehavior File="Message" 
+									Text="Casting Death Grip."  
+									LogColor="Orange" />
+
+					<!-- Macro - Cast Death Grip -->
+					<CustomBehavior File="RunMacro"
+									NumOfTimes="1"
+									Macro="/cast Death Grip" />
+							
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />		
+							
+					<!-- Move to - right-hand group near the top of the incline - safety -->
+					<MoveTo X="1589.088" Y="883.2546" Z="150.8411" />		
+
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+					
+					
+					<!-- Move to - 2nd right-hand group near the top of the incline  -->
+					<MoveTo X="1571.322" Y="842.8065" Z="154.3192" />		
+
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+					
+					
+					<!-- Move to - door entering Tomb of the Ancients  -->
+					<MoveTo X="1624.884" Y="777.079" Z="142.7833" />		
+
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+					
+					
+					<!-- Move to - Drakkari Golem  -->
+					<MoveTo X="1625.006" Y="747.4019" Z="142.7861" />		
+
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+					
+					
+					<!-- Move to - Drakkari Golem  -->
+					<MoveTo X="1576.464" Y="718.9174" Z="143.0686" />		
+
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+					
+					
+					<!-- Move to - center of the Tomb of the Ancients  -->
+					<MoveTo X="1625.173" Y="743.596" Z="142.7861" />
+					
+					<!-- Forces kill of Kill Drakkari Colossus  -->
+					<CustomBehavior File="GetOutOfGroundEffectAndAuras" 
+									EventCompleteWhen="SpecificMobsDead" EventCompleteDeadMobId="29307"
+									EventX="1672.963" EventY="743.488" EventZ="142.7862"
+									MoveOutOfGroundEffectAuraId1="111111"
+									MoveAwayFromMobCastingSpellId1="111111"
+									MoveAwayFromMobWithAuraId1="111111">
+						<Safespots>
+							<Hotspot X="1672.963" Y="743.488" Z="142.7862" />
+						</Safespots>
+					</CustomBehavior>
+					
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+					
+
+					<!-- Interact with second obelisk -->
+					<CustomBehavior File="InteractWith" 
+									MobId="192520" 
+									ObjectType="Gameobject" 
+									Range="4.75" 
+									NumOfTimes="1"  
+									X="1688.547" Y="743.5333" Z="142.7832"  />
+								
+								
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->			
+
+					
+					<!-- Move to - door entering Den of Sseratus  -->
+					<MoveTo X="1625.17" Y="704.8969" Z="142.782" />		
+
+
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+					
+					
+					<!-- Move to - bottom of the 1st bone pile  -->
+					<MoveTo X="1636.692" Y="651.2754" Z="123.546" />		
+
+					<!-- Profile message - Disabling combat -->
+						<CustomBehavior File="Message" 
+											Text="Waiting 60 seconds to aggro the patrols." 
+											LogColor="Fuchsia" />
+					
+					<!-- Profile message - Let's dance -->
+					<CustomBehavior File="Message" 
+									Text="Let's dance."  
+									LogColor="Gold" />
+					
+					<!-- Macro - Cast Dance -->
+					<CustomBehavior File="RunMacro"
+									NumOfTimes="1"
+									Macro="/dance" />
+					
+					<!-- Wait timer - wait 60 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="60000" />
+
+
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+					
+					
+					<!-- Move to - bottom of the 2nd bone pile  -->
+					<MoveTo X="1670.381" Y="633.4419" Z="128.8682" />		
+
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+
+
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+					
+					
+					<!-- Move to - the 3rd bone pile  -->
+					<MoveTo X="1694.304" Y="631.3964" Z="128.4061" />		
+
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+
+					
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+					
+					
+					<!-- Move to - door entering  Slad'ran's chamber -->
+					<MoveTo X="1734.909" Y="633.2009" Z="129.1984" />		
+
+
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+					
+					
+					<!-- Move to - left-hand patrol  -->
+					<MoveTo X="1775.58" Y="642.6674" Z="124.2618" />		
+
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+
+
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+					
+					
+					<!-- Move to - right-hand patrol  -->
+					<MoveTo X="1774.579" Y="613.8542" Z="124.2091" />		
+
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+
+
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+					
+					
+					<!-- Move to - door guards  -->
+					<MoveTo X="1806.023" Y="633.5998" Z="129.167" />		
+
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+
+
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->				
+									
+									
+					<!-- Move to - Slad'ran - pivot location -->
+					<MoveTo X="1775.659" Y="637.0078" Z="124.3707" />				
+									
+					<!-- CTM to - align our target macro -->
+					<CustomBehavior File="MyCTM" 
+									X="1775.013" Y="653.7159" Z="124.4804" />
+
+					<!-- Profile message - Disabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Disabling combat." 
+										LogColor="Fuchsia" />
+
+					<!-- Disable combat -->
+					<DisableBehavior Name="Combat" />				
+
+					<!-- Move to - aggro - Slad'ran -->
+					<MoveTo X="1775.129" Y="674.9809" Z="129.2167" />
+							
+					<!-- Move to - kite - Slad'ran -->
+					<MoveTo X="1827.449" Y="622.3249" Z="152.2444" />		
+							
+					<!-- Profile message - Enabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Enabling combat." 
+										LogColor="Fuchsia" />
+					
+					<!-- enable combat -->
+					<EnableBehavior Name="Combat" />		
+
+					<!-- Kill Slad'ran -->
+					<CustomBehavior File="GetOutOfGroundEffectAndAuras" 
+									EventCompleteWhen="SpecificMobsDead" EventCompleteDeadMobId="29304"
+									EventX="1827.449" EventY="622.3249" EventZ="152.2444"
+									MoveOutOfGroundEffectAuraId1="111111"
+									MoveAwayFromMobCastingSpellId1="111111"
+									MoveAwayFromMobWithAuraId1="111111" >
+						<Safespots>
+							<Hotspot X="1827.449" Y="622.3249" Z="152.2444" />
+						</Safespots>
+					</CustomBehavior>
+					
+					<!-- Wait timer -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+					
+
+					<!-- Move to - jump location near the banister -->				
+					<MoveTo X="1856.686" Y="636.3968" Z="175.9108" />
+					
+					<!-- CTM to - jumps in the water -->
+					<CustomBehavior File="MyCTM" 
+									X="1833.343" Y="629.4993" Z="126.2749" />
+					
+					<!-- CTM to - move the the end of the ramp -->
+					<CustomBehavior File="MyCTM" 
+									X="1843.107" Y="623.7644" Z="126.2867" />
+					
+					<!-- CTM to - move to the top of the ramp -->
+					<CustomBehavior File="MyCTM" 
+									X="1832.475" Y="624.2209" Z="128.8399" />
+					
+					<!-- Move to - move to the door -->				
+					<MoveTo X="1820.624" Y="632.6727" Z="129.1983" />
+					
+					<!-- Move to the third obelisk -->				
+					<MoveTo X="1775.231" Y="674.2245" Z="129.2172" />
+					
+					<!-- Interact with third obelisk -->
+					<CustomBehavior File="InteractWith" 
+									MobId="192518" 
+									ObjectType="Gameobject" 
+									Range="4.75" 
+									NumOfTimes="1"  
+									X="1775.231" Y="674.2245" Z="129.2172" />
+									
+					
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->					
+									
+									
+					<!-- Move to the turnstyle -->				
+					<MoveTo X="1737.843" Y="743.5225" Z="118.7635" />
+
+					<!-- Profile message - Disabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Disabling combat." 
+										LogColor="Gold" />
+					
+					<!-- DisableBehavior - Combat -->
+					<DisableBehavior Name="Combat" />
+					
+					<!-- CTM to - move across the turnstyle -->
+					<MoveTo X="1817.451" Y="743.8315" Z="119.5354" />
+					
+					<!-- Profile message - Enabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Enabling combat." 
+										LogColor="Gold" />
+					
+					<!-- EnableBehavior - Combat -->	
+					<EnableBehavior Name="Combat" />
+					
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+					
+					
+					<!-- Move to - top of the stairs  -->
+					<MoveTo X="1845.93" Y="743.3076" Z="136.0011" />		
+
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+					
+					
+					<!-- Move to - top of the stairs  -->
+					<MoveTo X="1845.93" Y="743.3076" Z="136.0011" />
+					
+					<!-- Profile message - Disabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Disabling combat." 
+										LogColor="Gold" />
+					
+					<!-- DisableBehavior - Combat -->
+					<DisableBehavior Name="Combat" />
+					
+					<!-- MoveTo to - 1st rhino -->
+					<MoveTo X="1876.422" Y="727.1338" Z="135.9296" />
+					
+					<!-- MoveTo to - 2nd rhino -->
+					<MoveTo X="1880.895" Y="753.4171" Z="136.0907" />
+					
+					<!-- Profile message - Enabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Enabling combat." 
+										LogColor="Gold" />
+					
+					<!-- EnableBehavior - Combat -->	
+					<EnableBehavior Name="Combat" />
+					
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+									
+									
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->				
+									
+									
+					<!-- Move to - center of the star  -->
+					<MoveTo X="1869.422" Y="743.2881" Z="136.4116" />				
+									
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />				
+									
+					<!-- Profile message - Casting Army of the Dead -->
+					<CustomBehavior File="Message" 
+									Text="Casting Army of the Dead."  
+									LogColor="Orange" />
+								
+					<!-- Wait timer - wait 1 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="1000" />			
+								
+					<!-- Macro - Cast Army of the Dead -->
+					<CustomBehavior File="RunMacro"
+									NumOfTimes="1"
+									Macro="/cast Army of the Dead" />
+
+					<!-- Wait timer - wait 6 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="6000" />				
+					
+					
+					<!-- @@@@@@@@@@@@@@@@@@@@ 12th pull @@@@@@@@@@@@@@@@@@@@ -->
+					
+
+					<!-- Forces kill of Gal'darah  -->
+					<CustomBehavior File="GetOutOfGroundEffectAndAuras" 
+									EventCompleteWhen="SpecificMobsDead" 
+									EventCompleteDeadMobId="29306"
+									EventX="1914.748" EventY="743.6536" EventZ="136.4952"
+									MoveOutOfGroundEffectAuraId1="111111"
+									MoveAwayFromMobCastingSpellId1="111111"
+									MoveAwayFromMobWithAuraId1="111111" >
+						<Safespots>
+							<Hotspot X="1914.748" Y="743.6536" Z="136.4952" />
+						</Safespots>
+					</CustomBehavior>
+					
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					
+					<!-- @@@@@@@@@@@@@@@@@@@@ Exit @@@@@@@@@@@@@@@@@@@@ -->
+					
+					
+					<!-- Move to - alternate exit after Gal'darah -->
+					<MoveTo X="1972.546" Y="834.9451" Z="135.2546" />
+					
+					<!-- If we are high enough to go to the next instance, do so -->
+					<CustomBehavior File="Misc\LoadProfileOn" 
+									MinLevel="86" 
+									ProfileName="[QO-N][Solstice][86-87]_halls-of-lightning.xml"  />
+									
+					<!-- Profile message - Waiting 3 seconds - Bag and durability check -->
+					<CustomBehavior File="Message" 
+									Text="Waiting 3 seconds - Bag and durability check."  
+									LogColor="Orange" />
+					
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+					<If Condition="(Me.FreeBagSlots &lt;= 25) || (Me.LowestDurabilityPercent &lt;= 0.3)" >
+												
+						<!-- Load profile - [QO-N][Solstice][58-90][repair-mail] -->
+						<CustomBehavior File="LoadProfile" 
+										ProfileName="Movement\Vendors\[QO-N][Solstice][58-90][repair-mail]" />
+
+					</If>	<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+
+					<!-- Profile message - Waiting 3 seconds - Food check - Mead Basted Caribou -->
+					<CustomBehavior File="Message" 
+									Text="Waiting 3 seconds - Food check - Mead Basted Caribou."  
+									LogColor="Orange" />
+					
+					<!-- Wait timer - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					<!-- If we don't have Mead Basted Caribou -->
+					<If Condition="!HasItem(35953)">
+
+							<!-- Load profile - [QO-N][Solstice][58-90][repair-mail] -->
+							<CustomBehavior File="LoadProfile" 
+											ProfileName="Movement\Vendors\[QO-N][Solstice][58-90][repair-mail]" />
+			
+					</If>	<!-- If we don't have Mead Basted Caribou -->
+
+					<!-- Profile message - All checks complete -->
+					<CustomBehavior File="Message" 
+									Text="All checks complete."  
+									LogColor="Orange" />				
+									
+				</If>	<!-- If we are inside Gundrak -->
+				
+				<!-- If we don't need to vendor -->
+				<If Condition="Me.ZoneId == 4416">
+				
+					<!-- Profile message - Gundrak detected. Running out to reset -->
+					<CustomBehavior File="Message" 
+									Text="Gundrak detected. Running out to reset."
+									LogColor="Fuchsia" />
+				
+					<!-- Move to - alternate exit after Gal'darah -->
+					<MoveTo X="1972.546" Y="834.9451" Z="135.2546" />
+
+					<!-- Go through the portal -->
+					<CustomBehavior File="Misc\InInstance" 
+									X="1980.87" Y="841.8154" Z="135.2125" />
+					
+					<!-- Move to - zone out location -->
+					<MoveTo X="6717.32" Y="-4645.55" Z="450.017" />	
+					
+				</If>	<!-- If we don't need to vendor -->
+				
+			</While>	 <!-- Infinite loop -->
+			
+		</If>	<!-- Level check -->
+
+	</QuestOrder>
+	
+</HBProfile>

@@ -1,0 +1,174 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+	<Name>[QO-N-M][Reputation][60+Flying][Timbermaw-Hold]_botanist</Name>
+   
+	<MinLevel>1</MinLevel>
+	<MaxLevel>101</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	
+	<MailGrey>False</MailGrey>
+	<MailWhite>False</MailWhite>
+	<MailGreen>True</MailGreen>
+	<MailBlue>False</MailBlue>
+	<MailPurple>False</MailPurple>
+   
+	<SellGrey>True</SellGrey>
+	<SellWhite>True</SellWhite>
+	<SellGreen>False</SellGreen>
+	<SellBlue>True</SellBlue>
+	<SellPurple>False</SellPurple>
+   
+	<TargetElites>True</TargetElites>
+	
+	<AvoidMobs>		
+		<Mob Name="Summon Enabler Stalker" Entry="53488" />
+	</AvoidMobs>
+	
+	<Blackspots>
+
+	</Blackspots>
+
+	<Mailboxes>
+	</Mailboxes>
+ 
+	<Vendors>
+	</Vendors>
+	
+	<ProtectedItems>
+	</ProtectedItems>
+
+	<Factions></Factions>
+	
+	<QuestOrder>
+
+		<!-- Level Check -->
+		<If Condition="Me.Level &gt;= 60">
+		
+		 	<!-- UserSettings -->
+			<CustomBehavior File="UserSettings"
+							FindMountAutomatically="True"
+							GroundMountFarmingMode="False"
+							HarvestHerbs="False"
+							HarvestMinerals="False"
+							KillBetweenHotspots="True"
+							LogoutForInactivity="False"
+							LogoutInactivityUseForceQuit="False"
+							LootMobs="True"
+							LootRadius="25"
+							MountName=""
+							NinjaSkin="False"
+							RessAtSpiritHealers="False"
+							SkinMobs="False"
+							UseMount="True" 
+							UseRandomMount="False" />
+
+
+			<!-- If we are in Eastern Kingdoms -->
+			<If Condition="Me.MapId == 0">
+			
+				<!-- If we are Horde -->						
+				<If Condition="Me.IsHorde">
+				
+					<!-- Profile message - We are Horde.\nWe are in Eastern Kingdoms.\nWe need to be in Kalimdor.\nMoving to Brill.\nTaking the zeppelin to Orgrimmar -->
+					<CustomBehavior File="Message" 
+									Text="We are Horde.\nWe are in Eastern Kingdoms.\nWe need to be in Kalimdor.\nMoving to Brill.\nTaking the zeppelin to Orgrimmar."  
+									LogColor="Cyan" />
+									
+					<!-- Fly to the zeppelin hover point -->
+					<CustomBehavior File="FlyTo"
+									X="2048.888" Y="340.6552" Z="114.2172" />
+								
+					<!-- Land on the deck -->
+					<CustomBehavior File="MyCTM"
+									X="2060.692" Y="359.7457" Z="82.48454" />				
+						
+					<!-- Forced dismount -->		
+					<CustomBehavior File="ForcedDismount" />
+
+					<!-- Custom behavior - UseTransport - move Undercity to Howling Fjord -->
+					<CustomBehavior File="UseTransport" 
+									TransportId="181689" 
+									WaitAtX="2060.692" 
+									WaitAtY="359.7457" 
+									WaitAtZ="82.48454"								
+									TransportStartX="2056.49268" 
+									TransportStartY="381.6347" 
+									TransportStartZ="100.362007"								
+									StandOnX="2059.666" 
+									StandOnY="372.6241" 
+									StandOnZ="82.47188"
+									TransportEndX="1989.35266" 
+									TransportEndY="-6082.77637" 
+									TransportEndZ="85.59646"	
+									GetOffX="1976.729" 
+									GetOffY="-6096.442" 
+									GetOffZ="67.15246" />	
+								
+					<!-- Move to -  center of the deck -->
+					<MoveTo X="1973.995" Y="-6098.911" Z="67.15916" />
+				
+				</If>	<!-- If we are Horde -->				
+								
+				<!-- If we are Alliance -->					
+				<If Condition="Me.IsAlliance">				
+
+					<!-- Profile message - We are Allince.\nWe are in Eastern Kingdoms.\nWe need to be in Kalimdor.\nMoving to Menethil Harbor docks.\nTaking the boat to Theramore Isle -->
+					<CustomBehavior File="Message" 
+									Text="We are Allince.\nWe are in Eastern Kingdoms.\nWe need to be in Kalimdor.\nMoving to Menethil Harbor docks.\nTaking the boat to Theramore Isle."  
+									LogColor="Cyan" />				
+					
+					<!-- Move to - Menethil Harbor docks -->				
+					<CustomBehavior File="FlyTo"
+									X="-3862.272" Y="-656.2274" Z="5.336261" />
+
+					<!-- Forced dismount -->	
+					<CustomBehavior File="ForcedDismount" />
+					
+					<!-- Custom behavior - WaitTimer - wait 5 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="5000" />				
+
+					<!-- Custom behavior - UseTransport	- Menethril Harbor to Theramore Isle -->	
+					<CustomBehavior File="UseTransport" 
+									TransportId="176231" 
+									WaitAtX="-3862.272" 
+									WaitAtY="-656.2274" 
+									WaitAtZ="5.336261"
+									TransportStartX="-3872.35" 
+									TransportStartY="-639.944" 
+									TransportStartZ="-0.0055067873"
+									StandOnX="-3867.742" 
+									StandOnY="-637.0014" 
+									StandOnZ="6.116831"
+									TransportEndX="-4016.39" 
+									TransportEndY="-4740.588338" 
+									TransportEndZ="-0.04059135"	
+									GetOffX="-3998.461" 
+									GetOffY="-4721.858" 
+									GetOffZ="4.263693" />						
+							
+					<!-- Move to - Theramore Isle docks -->			
+					<MoveTo X="-3998.461" Y="-4721.858" Z="4.263693" />	
+					
+					<!-- Move to - Theramore Isle flight master -->			
+					<MoveTo X="-3828.75" Y="-4520.198" Z="10.86853" />	
+
+				</If>	<!-- If we are Alliance -->				
+								
+			</If>	<!-- If we are in Eastern Kingdoms -->	
+			
+			<!-- If we are in Kalimdor -->
+			<If Condition="Me.MapId == 1">
+				
+				<!-- Load profile - [QO-N][Reputation][60+Flying][Timbermaw-Hold]_botanist -->
+				<CustomBehavior File="LoadProfile" 
+								ProfileName="..\[QO-N][Reputation][60+Flying][Timbermaw-Hold]_botanist" />
+								
+			</If> 	<!-- If we are in Kalimdor -->
+			
+		</If>	<!-- Level Check -->
+		
+	</QuestOrder>
+	
+</HBProfile>

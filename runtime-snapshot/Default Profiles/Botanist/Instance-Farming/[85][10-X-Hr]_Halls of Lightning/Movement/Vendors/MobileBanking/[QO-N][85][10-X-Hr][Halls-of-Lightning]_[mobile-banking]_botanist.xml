@@ -1,0 +1,124 @@
+<HBProfile creator="Botanist" version="1.0">
+	<Name>[QO-N][85][10-X-Hr][Halls-of-Lightning]_[mobile-banking]_botanist</Name>
+	<MinLevel>1</MinLevel>
+	<MaxLevel>99</MaxLevel>
+  
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+  
+	<MailGrey>False</MailGrey>
+	<MailWhite>False</MailWhite>
+	<MailGreen>False</MailGreen>
+	<MailBlue>False</MailBlue>
+	<MailPurple>False</MailPurple>
+  
+	<SellGrey>True</SellGrey>
+	<SellWhite>False</SellWhite>
+	<SellGreen>False</SellGreen>
+	<SellBlue>False</SellBlue>
+	<SellPurple>False</SellPurple>
+  
+	<TargetElites>True</TargetElites>
+
+	<Vendors>
+	</Vendors>
+  
+	<AvoidMobs>
+		<Mob Name="Summon Enabler Stalker" 
+			 Entry="53488" />
+	</AvoidMobs>
+   
+	<Blackspots>
+		<Blackspot X="-8830.189" Y="616.5771" Z="94.05379" Radius="3" />
+	</Blackspots>
+
+	<QuestOrder >
+
+		<!-- UserSettings -->
+		<CustomBehavior File="UserSettings"
+						FindMountAutomatically="True"
+						GroundMountFarmingMode="False"
+						HarvestHerbs="False"
+						HarvestMinerals="False"
+						KillBetweenHotspots="True"
+						LogoutForInactivity="False"
+						LogoutInactivityUseForceQuit="False"
+						LootMobs="True"
+						LootRadius="35"
+						MountName=""
+						NinjaSkin="False"
+						RessAtSpiritHealers="False"
+						SkinMobs="False"
+						UseMount="True" 
+						UseRandomMount="False" />
+	
+
+		<!-- Move to - Mobile Banking location -->
+		<MoveTo X="1331.503" Y="226.8768" Z="52.96012" />
+		
+		<!-- Wait timer - wait 3 seconds -->		
+		<CustomBehavior File="WaitTimer" 
+						WaitTime="3000" />
+										
+		<!-- Custom behavior - macro Cast Mobile Banking -->
+		<CustomBehavior File="RunMacro" 
+						Macro="/cast Mobile Banking" />
+						
+		<!-- Wait timer - wait 3 seconds - reaction time -->				
+		<CustomBehavior File="WaitTimer" 
+						WaitTime="3000" GoalText="TimeRemaining}" />
+		
+		<!-- Profile message - Interacting with the Mobile Bank -->
+		<CustomBehavior File="Message" 
+						Text="Interacting with the Mobile Bank." 
+						LogColor="Gold" />
+		
+		<!-- If we are Alliance -->					
+		<If Condition="Me.IsAlliance">
+			
+			<!-- Custom behavior - Ianteractwith - Mobile Bank -->		
+			<CustomBehavior File="InteractWith" 
+							MobId="206602" 
+							ObjectType="GameObject"  /> 
+
+		</If>	<!-- If we are Alliance -->
+
+		<!-- If we are Horde -->					
+		<If Condition="Me.IsHorde">
+			
+			<!-- Custom behavior - Iteractwith - Mobile Bank -->		
+			<CustomBehavior File="InteractWith" 
+							MobId="206603" 
+							ObjectType="GameObject"  /> 
+
+		</If>	<!-- If we are Horde -->
+
+		<!-- Wait timer - wait 3 seconds - reaction time -->		
+		<CustomBehavior File="WaitTimer" 
+						WaitTime="3000" GoalText="TimeRemaining}" />   
+		
+		<!-- Custom behavior - macro - DepositGuildBankMoney(30000000) -->		
+		<CustomBehavior File="RunMacro" 
+						Macro="/run DepositGuildBankMoney(GetMoney() - 1000000)" /> 
+
+		<!-- Wait timer - wait 3 seconds - reaction time -->		
+		<CustomBehavior File="WaitTimer" 
+						WaitTime="3000" GoalText="TimeRemaining}" />  
+
+		<!-- If we have < 1000 gold -->
+		<If Condition="(Me.Gold &lt;= 1000)" >
+		
+			<!-- Profile message - We are done depositing gold into the guild bank -->
+			<CustomBehavior File="Message" 
+							Text="We are done depositing gold into the guild bank." 
+							LogColor="Gold" />
+							
+			<!-- Load profile - [QO-N][85][10-X-Hr][Halls-of-Lightning]_botanist -->
+			<CustomBehavior File="LoadProfile" 
+							ProfileName="..\..\..\[QO-N][85][10-X-Hr][Halls-of-Lightning]_botanist" />				
+							
+		</If>	<!-- If we have < 1000 gold -->
+
+	</QuestOrder>
+	
+</HBProfile>

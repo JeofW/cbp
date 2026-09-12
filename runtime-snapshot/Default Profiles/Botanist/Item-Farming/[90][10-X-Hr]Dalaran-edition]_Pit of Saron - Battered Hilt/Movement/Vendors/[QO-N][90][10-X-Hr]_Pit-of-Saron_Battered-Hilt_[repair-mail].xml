@@ -1,0 +1,301 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+	<Name>[QO-N][90][10-X-Hr]_Pit-of-Saron_Battered-Hilt_[repair-mail]</Name>
+   
+	<MinLevel>1</MinLevel>
+	<MaxLevel>101</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	<TargetingDistance>1</TargetingDistance>
+	
+	<MailGrey>False</MailGrey>
+	<MailWhite>True</MailWhite>
+	<MailGreen>False</MailGreen>
+	<MailBlue>False</MailBlue>
+	<MailPurple>True</MailPurple>
+   
+	<SellGrey>True</SellGrey>
+	<SellWhite>False</SellWhite>
+	<SellGreen>True</SellGreen>
+	<SellBlue>True</SellBlue>
+	<SellPurple>False</SellPurple>
+   
+	<TargetElites>True</TargetElites>
+	
+	<AvoidMobs>
+	</AvoidMobs>
+	
+	<Blackspots>
+		<Blackspot X="-7118.695" Y="-1225.898" Z="290.2605" Radius="1" />
+		<Blackspot X="1091.256" Y="-166.446" Z="-65.30894" Radius="1" />
+	</Blackspots>
+
+	<Mailboxes>
+	</Mailboxes>
+ 
+	<Vendors>
+	</Vendors>
+	
+	<ProtectedItems>
+		<Item name="Book of Glyph Mastery" entry="45912" />
+		<Item name="Frostweave Cloth" entry="33470" />
+		<Item name="Battered Hilt" entry="50380" />
+	</ProtectedItems>
+
+	<Factions></Factions>
+	
+	<QuestOrder>
+
+		<!-- UserSettings -->
+		<CustomBehavior File="UserSettings"
+						FindMountAutomatically="True"
+						GroundMountFarmingMode="False"
+						HarvestHerbs="False"
+						HarvestMinerals="False"
+						KillBetweenHotspots="True"
+						LogoutForInactivity="False"
+						LogoutInactivityUseForceQuit="False"
+						LootMobs="True"
+						LootRadius="25"
+						MountName=""
+						NinjaSkin="False"
+						PullDistance="25"
+						RessAtSpiritHealers="False"
+						SkinMobs="False"
+						UseMount="True" 
+						UseRandomMount="False" />
+
+		<!-- If our level is => -->
+		<If Condition="Me.Level &gt;= 70">
+			
+			<!-- If we are inside Pit of Saron -->
+			<If Condition="Me.MapId == 658">	
+				
+				<!-- If our hearthstone is set to Dalaran -->
+				<If Condition="Me.HearthstoneAreaId == 4395">
+				
+					<!-- Profile message - We are in Pit of Saron -->
+					<CustomBehavior File="Message" 
+									Text="We are in Pit of Saron" 
+									LogColor="Cyan" />
+								
+					<!-- If we have a Hearthstone -->
+					<If Condition="HasItem(6948)">
+					
+						<!-- Profile message - Using our Hearthstone -->
+						<CustomBehavior File="Message" 
+										Text="Using our Hearthstone." 
+										LogColor="Orange" />
+										
+						<!-- Custom behavior - Misc\RunLua -->				
+						<CustomBehavior File="Misc\RunLua" 
+										Lua="UseItemByName(6948)" 
+										WaitTime="1000" />
+										
+						<!-- Wait timer - wait 20 seconds - delay -->				
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000" />
+										
+					</If>	<!-- If we have a Hearthstone -->
+				
+					<!-- If we have a Innkeeper's Daughter -->
+					<If Condition="HasItem(64488)">
+					
+						<!-- Profile message - Using our Innkeeper's Daughter -->
+						<CustomBehavior File="Message" 
+										Text="Using our Innkeeper's Daughter." 
+										LogColor="Orange" />
+											
+						<!-- Custom behavior - Misc\RunLua -->					
+						<CustomBehavior File="Misc\RunLua" 
+										Lua="UseItemByName(64488)" 
+										WaitTime="1000" />
+							
+						<!-- Wait timer - wait 20 seconds - delay -->	
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="20000" />
+										
+					</If>	<!-- If we have a Innkeeper's Daughter -->
+				
+				</If>	<!-- If we are inside Pit of Saron -->
+				
+			</If>	<!-- If we are in Forge of Souls -->
+
+			<!-- If we are inside Pit of Saron -->
+			<If Condition="Me.MapId == 658">	
+
+				<!-- Move to - zone in location -->
+				<MoveTo X="432.568" Y="212.344" Z="528.7089" /> 
+				
+				<!-- Move to - attempt to exit the instance -->
+				<CustomBehavior File="Misc\InInstance"
+								X="421.0371" Y="212.262" Z="529.8098" /> 
+				
+				<!-- Move to - safe mounting location -->
+				<MoveTo X="5722.014" Y="2293.396" Z="798.126" />
+
+				<!-- CustomBehavior ForcedMount - Flying -->
+			   <CustomBehavior File="ForcedMount"
+							   MountType="Flying" />				
+								
+				<!-- CustomBehavior - FlyTo - avoid entering the Frozen Throne -->
+				<CustomBehavior File="FlyTo" 
+								X="5742.033" Y="2295.418" Z="824.0442" />
+						
+				<!-- Move to - avoid entering the Frozen Throne -->
+				<CustomBehavior File="MyCTM"
+								X="6049.759" Y="1760.161" Z="867.7488" />
+				
+				<!-- Move to - Dalaran -->
+				<CustomBehavior File="MyCTM"
+								X="5848.121" Y="851.1066" Z="929.0766" />
+								
+				<!-- Move to - grounding outside the repair vendor -->
+				<CustomBehavior File="MyCTM"
+								X="5772.364" Y="697.2077" Z="642.0697" />				
+								
+				<!-- Move to - repair vendor -->
+				<MoveTo X="5797.192" Y="686.8152" Z="647.0978" />				
+											
+			</If>	<!-- If we are inside Pit of Saron -->
+
+			<!-- If we are in Northrend but not in Dalaran -->
+			<If Condition="Me.MapId == 571 &amp;&amp; Me.ZoneId != 4395">
+			
+				<!-- If we are in Borean Tundra -->
+				<If Condition="Me.ZoneId == 3537">
+			
+					<!-- Profile message - We are in Borean Tundra \nInitiating Wintergrasp avoidance procedures \nMoving to Dragon Blight -->
+					<CustomBehavior File="Message" 
+									Text="We are in Borean Tundra \nInitiating Wintergrasp avoidance procedures \nMoving to Dragon Blight"  
+									LogColor="Chartreuse" />
+			
+					<!-- Fly to - Snowfall Glade -->
+					<CustomBehavior File="FlyTo" 
+									X="3450.25" Y="1374.661" Z="274.1828" />
+
+					<!-- CTM to - The Crystal Vice - avoid Wintergrasp -->
+					<CustomBehavior File="MyCTM"
+									X="4821.534" Y="273.7776" Z="379.9668" />
+
+				</If>	<!-- If we are in Borean Tundra -->
+
+				<!-- Fly to - The Crystal Vice - avoid Wintergrasp -->
+				<CustomBehavior File="FlyTo"
+								X="4821.534" Y="273.7776" Z="379.9668" />
+				
+				<!-- CTM to - Dalaran flight master - hover point -->
+				<CustomBehavior File="MyCTM"
+								X="5764.008" Y="288.0249" Z="703.4487" />
+				
+				<!-- CTM to - Dalaran flight master -->
+				<CustomBehavior File="MyCTM"
+								X="5816.453" Y="458.7583" Z="658.7628" />
+				
+				<!-- Custom behavior - ForcedDismount -->
+				<CustomBehavior File="ForcedDismount" />
+			
+			</If>	<!-- If we are in Northrend but not in Dalaran -->
+			
+			<!-- If we are in Dalaran -->
+			<If Condition="Me.ZoneId == 4395">				
+								
+				<!-- Move to - repair vendor -->
+				<MoveTo X="5797.192" Y="686.8152" Z="647.0978" />				
+											
+				<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+				<If Condition="(Me.FreeBagSlots &lt;= 25) || (Me.LowestDurabilityPercent &lt;= 0.3)" >
+
+					<!-- Profile message - Our durability is less than 30% or we have less than 25 empty bag slots remaining -->
+					<CustomBehavior File="Message" 
+									Text="Our durability is less than 30% or we have less than 25 empty bag slots remaining." 
+									LogColor="Orange" />
+									
+					<!-- Profile message - Disabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Disabling combat." 
+										LogColor="Gold" />
+					
+					<!-- DisableBehavior - Combat -->
+					<DisableBehavior Name="Combat" />
+			
+					<!-- If we are Alliance -->					
+					<If Condition="Me.IsAlliance">					
+
+						<!-- Move to - repair vendor -->
+						<MoveTo X="5797.192" Y="686.8152" Z="647.0978" />
+						
+						<SetVendor>
+							<Vendors>
+								<Vendor Name="Rueben Lauren" 
+										Entry="35496" 
+										Type="Repair" 
+										X="5798.024" Y="689.6007" Z="647.0988" />
+							</Vendors>
+						</SetVendor>
+						<SetMailbox>
+							<Mailboxes>
+								<Mailbox X="5801.233" Y="728.1974" Z="640.5959" />
+							</Mailboxes>
+						</SetMailbox>
+				
+						<CustomBehavior File="ForceSetVendor" 
+										DoMail="True" 
+										DoRepair="True" 
+										DoSell="True" 
+										DoTrain="False" />
+						
+						<!-- Move to - flying mount location -->				
+						<MoveTo X="5814.071" Y="447.9562" Z="658.7526" />
+
+					</If>	<!-- If we are Alliance -->					
+			
+					<!-- If we are Horde -->						
+					<If Condition="Me.IsHorde">					
+
+						<!-- Move to - repair vendor -->
+						<MoveTo X="5797.192" Y="686.8152" Z="647.0978" />
+						
+						<SetVendor>
+							<Vendors>
+								<Vendor Name="Rueben Lauren" 
+										Entry="35496" 
+										Type="Repair" 
+										X="5798.024" Y="689.6007" Z="647.0988" />
+							</Vendors>
+						</SetVendor>
+						<SetMailbox>
+							<Mailboxes>
+								<Mailbox X="5801.233" Y="728.1974" Z="640.5959" />
+							</Mailboxes>
+						</SetMailbox>
+				
+						<CustomBehavior File="ForceSetVendor" 
+										DoMail="True" 
+										DoRepair="True" 
+										DoSell="True" 
+										DoTrain="False" />
+						
+						<!-- Move to - flying mount location -->				
+						<MoveTo X="5814.071" Y="447.9562" Z="658.7526" />
+
+					</If>	<!-- If we are Horde -->
+
+				</If>	<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+				
+			</If>	<!-- If we are in Dalaran -->	
+				
+			<!-- If we have more than 25 empty bag slots and our durability is greater than 30% -->
+			<If Condition="(Me.FreeBagSlots &gt; 25) &amp;&amp; (Me.LowestDurabilityPercent &gt;= 0.3)" >
+			
+				<!-- Load profile - [QO-N][90][10-X-Hr]_Pit-of-Saron_Battered-Hilt_[food] -->
+				<CustomBehavior File="LoadProfile" 
+								ProfileName="[QO-N][90][10-X-Hr]_Pit-of-Saron_Battered-Hilt_[food]" />
+										
+			</If>	<!-- If we have more than 25 empty bag slots and our durability is greater than 30% -->	
+			
+		</If>	<!-- If our level is => -->
+		
+	</QuestOrder>
+	
+</HBProfile>

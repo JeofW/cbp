@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PaladinSettings>
+  <Seal>Auto</Seal>
+  <Aura>Auto</Aura>
+  <HolyLightHealth>50</HolyLightHealth>
+  <Blessings>Auto</Blessings>
+  <LayOnHandsHealth>30</LayOnHandsHealth>
+  <FlashOfLightHealth>50</FlashOfLightHealth>
+  <HolyShockHealth>90</HolyShockHealth>
+  <DivinePleaMana>50</DivinePleaMana>
+  <DivineProtectionHealthProt>80</DivineProtectionHealthProt>
+  <AvengersPullOnly>False</AvengersPullOnly>
+  <ProtConsecrationCount>3</ProtConsecrationCount>
+  <DivineProtectionHealthRet>70</DivineProtectionHealthRet>
+  <ConsecrationCount>3</ConsecrationCount>
+  <RetributionHealHealth>30</RetributionHealHealth>
+</PaladinSettings>

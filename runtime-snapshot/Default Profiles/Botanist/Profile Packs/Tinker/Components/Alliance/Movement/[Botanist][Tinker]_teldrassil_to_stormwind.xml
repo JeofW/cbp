@@ -1,0 +1,265 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+<Name>[Botanist][Tinker]_teldrassil_to_stormwind</Name>
+
+<MinLevel>1</MinLevel>
+<MaxLevel>151</MaxLevel>
+
+<MinDurability>-1</MinDurability>
+<MinFreeBagSlots>-1</MinFreeBagSlots>
+<TargetingDistance>45</TargetingDistance>
+
+<MailGrey>False</MailGrey>
+<MailWhite>False</MailWhite>
+<MailGreen>False</MailGreen>
+<MailBlue>False</MailBlue>
+<MailPurple>False</MailPurple>
+
+<SellGrey>False</SellGrey>
+<SellWhite>False</SellWhite>
+<SellGreen>False</SellGreen>
+<SellBlue>False</SellBlue>
+<SellPurple>False</SellPurple>
+
+<AvoidMobs>		 
+</AvoidMobs>
+
+<Blackspots>
+</Blackspots>
+
+<Mailboxes>
+</Mailboxes>
+
+<Vendors>
+</Vendors>
+
+<ProtectedItems>	
+</ProtectedItems>
+
+	<QuestOrder>
+	
+		<!-- UserSettings -->
+		<CustomBehavior File="UserSettings"
+						FindMountAutomatically="True"
+						GroundMountFarmingMode="False"
+						HarvestHerbs="False"
+						HarvestMinerals="False"
+						KillBetweenHotspots="False"
+						LogoutForInactivity="True"
+						LogoutInactivityUseForceQuit="True"
+						LootMobs="False"
+						LootRadius="1"
+						MountName=""
+						NinjaSkin="False"
+						RessAtSpiritHealers="False"
+						SkinMobs="False"
+						UseMount="True" 
+						UseRandomMount="False" />
+		
+		<!-- Profile message - Movement procedures initiated -->
+		<CustomBehavior File="Message" 
+						Text="Movement procedures initiated." 
+						LogColor="Gold" />
+							
+		<!-- If we are in Shadowglen -->
+		<If Condition="Me.ZoneId == 6450">	
+		
+			<!-- Profile message - We are currently in Shadowglen. Navigating to Teldrassil -->
+			<CustomBehavior File="Message" 
+							Text="We are currently in Shadowglen. Navigating to Teldrassil." 
+							LogColor="Plum" />				
+	
+			<!-- Move to - Teldrassil -->
+			<MoveTo X="10174.4" Y="693.9739" Z="1361.796" />
+	
+		</If>	<!-- If we are in Shadowglen -->
+		
+		<!-- If we are in Teldrassil -->
+		<If Condition="Me.ZoneId == 141">				
+
+			<!-- If we are not in Rut'theran Village -->
+			<If Condition="Me.X &lt; 8145 || Me.X &gt; 8600 || Me.Y &gt; 1225 || Me.Y &lt; 735" >
+		
+				<!-- Profile message - We are in Teldrassil. Navigating to Darnassus -->
+				<CustomBehavior File="Message" 
+								Text="We are in Teldrassil. Navigating to Darnassus." 
+								LogColor="Plum" />				
+	
+				<!-- Move to - Darnassus -->
+				<MoveTo X="9968.8" Y="2622.09" Z="1316.08" />
+			
+			</If>	<!-- If we are not in Rut'theran Village -->
+	
+		</If>	<!-- If we are in Teldrassil -->
+		
+		<!-- If we are in Darnassus -->
+		<If Condition="Me.ZoneId == 1657">				
+
+			<!-- Profile message - We are in Darnassus. Navigating to Rut'theran Village -->
+			<CustomBehavior File="Message" 
+							Text="We are in Teldrassil. Navigating to Rut'theran Village." 
+							LogColor="Plum" />				
+	
+			<!-- Move to - Rut'theran Village -->
+			<MoveTo X="9959.419" Y="2619.949" Z="1316.002" />
+			
+			<!-- Go through the portal -->
+			<CustomBehavior File="Misc\InInstance" 
+							X="9954.132" Y="2625.944" Z="1317.423" />
+			
+			<!-- CustomBehavior - WaitTimer - loading screen  -->				
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="5000" />
+			
+		</If>	<!-- If we are in Darnassus -->
+		
+		<!-- If we are in Rut'theran Village -->
+		<If Condition="Me.X &gt; 8145 &amp;&amp; Me.X &lt; 8600 &amp;&amp; Me.Y &lt; 1225 &amp;&amp; Me.Y &gt; 735" >				
+
+			<!-- Profile message - We are in Rut'theran Village. Navigating to Stormwind -->
+			<CustomBehavior File="Message" 
+							Text="We are in Rut'theran Village. Navigating to Stormwind." 
+							LogColor="Plum" />				
+	
+			<!-- Move to - rut'theran village dock, to stormwind  -->				
+			<MoveTo X="8179.316" Y="1002.142" Z="6.875345" />
+				
+			<!-- Profile message -Waiting for the transport to Stormwind -->	
+			<CustomBehavior File="Message" 
+							Text="Waiting for the transport to Stormwind." 
+							LogColor="Orange" />
+							
+			<!-- Use the transport to stormwind -->				
+			<CustomBehavior File="UseTransport" 
+							TransportId="176310" 
+							WaitAtX="8179.316" 
+							WaitAtY="1002.142" 
+							WaitAtZ="6.875345"
+							TransportStartX="8162.587" 
+							TransportStartY="1005.365" 
+							TransportStartZ="-0.0382334"								
+							StandOnX="8167.021" 
+							StandOnY="1009.898" 
+							StandOnZ="6.098088"
+							TransportEndX="-8650.719" 
+							TransportEndY="1346.051" 
+							TransportEndZ="0.012419"	
+							GetOffX="-8644.193" 
+							GetOffY="1327.927" 
+							GetOffZ="5.536721" />	
+						
+			<!-- Profile message - We are in Stormwind City. Navigating to the flight master -->
+			<CustomBehavior File="Message" 
+							Text="We are in Stormwind City. Navigating to the flight master." 
+							LogColor="Plum" />			
+						
+			<!-- Move to - stormwind flight master -->	
+			<MoveTo X="-8837.493" Y="487.0235" Z="109.609" />
+				
+		</If>	<!-- If we are in Rut'theran Village -->
+		
+		<!-- If we are in Stormwind City -->
+		<If Condition="Me.ZoneId == 1519">				
+
+			<!-- Profile message - We are in Stormwind City. Navigating to the flight master -->
+			<CustomBehavior File="Message" 
+							Text="We are in Stormwind City. Navigating to the flight master." 
+							LogColor="Plum" />				
+	
+			<!-- Move to - stormwind flight master -->	
+			<MoveTo X="-8837.493" Y="487.0235" Z="109.609" />
+		
+		</If>	<!-- If we are in Stormwind City -->
+
+		<!-- If our level => 1 and =< 5 -->				
+		<If Condition="Me.Level &gt;= 1 &amp;&amp; Me.Level &lt;= 5" >
+		
+			<!-- If we are not in Northshire Valley -->
+			<If Condition="Me.X &lt; -9053.869 || Me.X &gt; -8602.287 || Me.Y &lt; -497.3038 || Me.Y &gt; 91.08976" >
+
+				<!-- If we are in Eastern Kingdoms -->
+				<If Condition="Me.MapId == 0">				
+
+					<!-- Profile message - We are in Eastern Kingdoms. Navigating to Goldshire -->
+					<CustomBehavior File="Message" 
+									Text="We are in Eastern Kingdoms. Navigating to Goldshire." 
+									LogColor="Plum" />	
+									
+					<!-- Move to - Goldshire flight master -->	
+					<MoveTo X="-9433.99" Y="85.1493" Z="56.734" />
+					
+					<!-- CustomBehavior - WaitTimer - 3 second delay  -->				
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+			
+					<!-- Profile message - We are in Goldshire. Navigating to Northshire -->
+					<CustomBehavior File="Message" 
+									Text="We are in Goldshire. Navigating to Northshire." 
+									LogColor="Plum" />
+					
+					<!-- Move to - Northshire  -->	
+					<MoveTo X="-8927.191" Y="-119.1697" Z="82.0771" />
+			
+				</If>	<!-- If we are in Eastern Kingdoms -->
+		
+			</If>	<!-- If we are not in Northshire Valley -->
+		
+		</If>	<!-- If our level => 1 and =< 5 -->
+
+		<!-- If our level => 6 and =< 12 -->				
+		<If Condition="Me.Level &gt;= 6 &amp;&amp; Me.Level &lt;= 12" >
+
+			<!-- If we are in Eastern Kingdoms -->
+			<If Condition="Me.MapId == 0">				
+
+				<!-- Profile message - We are in Eastern Kingdoms. Navigating to Goldshire -->
+				<CustomBehavior File="Message" 
+								Text="We are in Eastern Kingdoms. Navigating to Goldshire." 
+								LogColor="Plum" />	
+								
+				<!-- Move to - Goldshire flight master -->	
+				<MoveTo X="-9433.99" Y="85.1493" Z="56.734" />
+				
+				<!-- CustomBehavior - WaitTimer - 3 second delay  -->				
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="3000" />
+
+				<!--  CustomBehavior - LoadProfile - [Botanist][Tinker][A-5][profession-check] -->				
+				<CustomBehavior File="LoadProfile" 
+								ProfileName="[Botanist][Tinker][A-5][profession-check]" />				
+								
+			</If>	<!-- If we are in Eastern Kingdoms -->
+		
+		</If>	<!-- If our level => 6 and =< 12 -->
+		
+		<!-- If our level => 12 and =< 57 -->				
+		<If Condition="Me.Level &gt;= 12 &amp;&amp; Me.Level &lt;= 57" >
+
+			<!-- If we are in Eastern Kingdoms -->
+			<If Condition="Me.MapId == 0">				
+
+				<!--  CustomBehavior - LoadProfile - [Botanist][Tinker][A-5][profession-check] -->				
+				<CustomBehavior File="LoadProfile" 
+								ProfileName="[Botanist][Tinker][A-5][profession-check]" />				
+								
+			</If>	<!-- If we are in Eastern Kingdoms -->
+		
+		</If>	<!-- If our level => 6 and =< 12 -->
+
+		<!-- If we are in Northshire Valley -->
+		<If Condition="Me.X &gt; -9053.869 &amp;&amp; Me.X &lt; -8602.287 &amp;&amp; Me.Y &gt; -497.3038 &amp;&amp; Me.Y &lt; 91.08976" > 
+		
+			<!-- CustomBehavior - Message - We are in Northshire Valley -->
+			<CustomBehavior File="Message" 
+							Text="We are in Northshire Valley." 
+							LogColor="Plum" />		
+							
+			<!--  CustomBehavior - LoadProfile - [Botanist][Tinker][A-5][profession-check] -->				
+			<CustomBehavior File="LoadProfile" 
+							ProfileName="..\[Botanist][Tinker][A-5][profession-check]" />
+				
+		</If>	<!-- If we are in Northshire Valley -->
+
+	</QuestOrder>
+
+</HBProfile>
+

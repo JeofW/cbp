@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<DungeonBuddyProfile>
+  <Name>Stormwind Stockade</Name>
+  <DungeonId>12</DungeonId>
+  <BossEncounters>
+    <Boss isFinal="false" entry="1696" name="Targorr the Dread" killOrder="1" optional="false" X="159.58" Y="1.25" Z="-25.61"/>
+    <Boss isFinal="false" entry="1663" name="Dextren Ward" killOrder="2" optional="false" X="166.79" Y="134.79" Z="-33.94"/>
+    <Boss isFinal="false" entry="1666" name="Kam Deepfury" killOrder="3" optional="false" X="142.64" Y="-71.85" Z="-34.86"/>
+    <Boss isFinal="false" entry="1717" name="Hamhock" killOrder="4" optional="false" X="105.52" Y="-105.79" Z="-35.11"/>
+    <Boss isFinal="true" entry="1716" name="Bazil Thredd" killOrder="5" optional="false" X="89.55" Y="-136.92" Z="-33.94"/>
+  </BossEncounters>
+  <Blackspots>
+    <Blackspot X="109.965" Y="-3.15503" Z="-25.88335" Radius="2.048146" />
+    <Blackspot X="73.73563" Y="-87.46348" Z="-33.93955" Radius="0.7283562" />
+    <Blackspot X="72.21924" Y="-90.40993" Z="-33.93919" Radius="0.5977057" />
+    <Blackspot X="155.3795" Y="41.15371" Z="-34.85617" Radius="0.3920015" />
+  </Blackspots>
+</DungeonBuddyProfile>

@@ -1,0 +1,606 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+	<Name>[QO-N][85+Flying]_botanist_botanica</Name>
+   
+	<MinLevel>1</MinLevel>
+	<MaxLevel>101</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	<TargetingDistance>25</TargetingDistance>
+	
+	
+	<MailGrey>False</MailGrey>
+	<MailWhite>False</MailWhite>
+	<MailGreen>False</MailGreen>
+	<MailBlue>False</MailBlue>
+	<MailPurple>False</MailPurple>
+   
+	<SellGrey>True</SellGrey>
+	<SellWhite>True</SellWhite>
+	<SellGreen>True</SellGreen>
+	<SellBlue>True</SellBlue>
+	<SellPurple>False</SellPurple>
+   
+	<TargetElites>True</TargetElites>
+	
+	<AvoidMobs>		 
+		<Mob Name="Summon Enabler Stalker" Entry="53488" />
+	</AvoidMobs>
+	
+	<Blackspots>
+		<Blackspot X="3064.36" Y="3607.146" Z="144.0166" Radius="1" />
+	</Blackspots>
+
+	<Mailboxes>
+	</Mailboxes>
+ 
+	<Vendors>
+	</Vendors>
+	
+	<ProtectedItems>
+	</ProtectedItems>
+
+	<Factions></Factions>
+	
+	<QuestOrder>
+		<ClearVendor />
+		<ClearMailbox />
+
+		<If Condition="Me.Level &gt;= 85">
+		
+		<!-- UserSettings -->
+		<CustomBehavior File="UserSettings"
+						FindMountAutomatically="True"
+						GroundMountFarmingMode="False"
+						HarvestHerbs="False"
+						HarvestMinerals="False"
+						KillBetweenHotspots="True"
+						LogoutForInactivity="False"
+						LogoutInactivityUseForceQuit="False"
+						LootMobs="True"
+						LootRadius="25"
+						MountName=""
+						NinjaSkin="False"
+						RessAtSpiritHealers="False"
+						SkinMobs="False"
+						UseMount="True" 
+						UseRandomMount="False" />	
+						
+			<!-- Infinite loop -->
+			<While Condition="true" >	
+			
+				<!-- If we are inside Botanica -->
+				<If Condition="Me.MapId == 553">
+				
+					<!-- CustomBehavior - Message - The Botanica detected. Running out -->
+					<CustomBehavior File="Message" 
+									Text="The Botanica detected. Running out."
+									LogColor="Cyan" />
+						
+					<!-- Move to - zone in location - entering -->
+					<MoveTo X="40.5531" Y="-28.7947" Z="-1.11728" />
+					
+					<!-- CustomBehavior - message - Waiting 3 seconds - Bag and durability check -->
+					<CustomBehavior File="Message" 
+									Text="Waiting 3 seconds - Bag and durability check."  
+									LogColor="Plum" />
+					
+					<!-- CustomBehavior - WaitTime - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					<!-- If we have less then 15 empty bag slots or our durability is less than 30% -->
+					<If Condition="(Me.FreeBagSlots &lt;= 15) || (Me.LowestDurabilityPercent &lt;= 0.3)" >
+											
+						<!-- CustomBehavior - message - - Our bags are full or our gear is near breaking. Loading the vendor profile -->
+						<CustomBehavior File="Message" 
+										Text="Our bags are full or our gear is near breaking. Loading the vendor profile."  
+										LogColor="Plum" />
+
+						<!-- CustomBehavior - WaitTime - wait 3 seconds - delay -->
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="3000" />
+
+						<!-- CustomBehavior - LoadProfile - [QO-N][85+Flying]_botanist_botanica_[repair-mail] -->
+						<CustomBehavior File="LoadProfile" 
+										ProfileName="Movement\Vendors\[QO-N][85+Flying]_botanist_botanica_[repair-mail]" />
+
+					</If>	<!-- If we have less then 15 empty bag slots or our durability is less than 30% -->
+					
+					<!-- CustomBehavior - message - All checks complete -->
+					<CustomBehavior File="Message" 
+									Text="All checks complete."  
+									LogColor="Plum" />
+
+					<!-- Custom behavior - Misc/InInstance - exit the instance-->
+					<CustomBehavior File="Misc\InInstance" 
+									X="50.40223" Y="-38.66514" Z="-1.098705" />
+					
+					<!-- CustomBehavior - WaitTime - wait 15 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="15000" />
+					
+					<!-- Move to - zone out location -->
+					<MoveTo X="3409.85" Y="1486.26" Z="182.837" />
+					
+				</If>	<!-- If we are inside Botanica -->
+				
+				<!-- If we are not in the Botanica instance box, load the movement profile -->
+				<If Condition="Me.X &lt; 3379 || Me.X &gt; 33439 || Me.Y &lt; 1456 || Me.Y &gt; 1506" >
+					
+					<!-- CustomBehavior - WaitTime - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+									
+					<!-- CustomBehavior - message - Loading the movement profile so we can navigate to Botanica -->
+					<CustomBehavior File="Message" 
+									Text="Loading the movement profile so we can navigate to Botanica."  
+									LogColor="Plum" />
+					
+					<!-- CustomBehavior - WaitTime - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+									
+					<!-- Custom behavior - LoadProfile - Movement\[QO-N-M][85+Flying]_botanist_botanica -->
+					<CustomBehavior File="LoadProfile" 
+									ProfileName="Movement\[QO-N-M][85+Flying]_botanist_botanica" />
+					
+				</If>	<!-- If we are not in the Botanica instance box, load the movement profile -->
+				
+				<!-- If we are in the Botanica instance box -->
+				<If Condition="Me.X &gt; 3379 &amp;&amp; Me.X &lt; 33439 &amp;&amp; Me.Y &gt; 1456 &amp;&amp; Me.Y &lt; 1506" >
+				
+					<!-- CustomBehavior - Message - Portal detected nearby -->
+					<CustomBehavior File="Message" 
+									Text="Portal detected nearby."
+									LogColor="Cyan" />	
+			
+					<!-- CustomBehavior - Message - Resetting the instance -->
+					<CustomBehavior File="Message" 
+									Text="Resetting the instance." 
+									LogColor="Plum" />
+					
+					<!-- Reset the instance -->
+					<CustomBehavior File="RunMacro" 
+									Macro="/script ResetInstances()" />	
+									
+					<!-- Set the dungeon difficulty to normal -->				
+					<CustomBehavior File="RunMacro" 
+									Macro="/script SetDungeonDifficultyID(1);" />
+					
+					<!-- CustomBehavior - Message - The instance has been reset -->
+					<CustomBehavior File="Message" 
+									Text="The instance has been reset." 
+									LogColor="Cyan" />
+							
+					<!-- While we are not in Botanica -->
+					<While Condition="Me.MapId != 553">
+					
+						<!-- Move to - zone out location -->
+						<MoveTo X="3409.85" Y="1486.26" Z="182.837" />
+
+						<!-- Attempt to re-enter the portal -->
+						<CustomBehavior File="Misc\InInstance" 
+										X="3417.746" Y="1478.354" Z="182.837" /> 
+										
+						<!-- CustomBehavior - Message - Waiting for the dungeon to load -->				
+						<CustomBehavior File="Message" 
+										Text="Waiting for the dungeon to load." 
+										LogColor="Cyan" />
+									
+						<!-- WaitTime - wait 10 seconds -->		
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="10000"/>			
+									
+						<!-- If we are not in Botanica, we're locked out -->
+						<If Condition="Me.MapId != 553">
+						
+							<!-- CustomBehavior - Message - We are locked out. Waiting and trying again -->
+							<CustomBehavior File="Message" 
+											Text="We are locked out. Waiting and trying again." 
+											LogColor="Cyan" />
+											
+							<!-- CustomBehavior - WaitTime - wait 40-80 seconds -->		
+							<CustomBehavior File="WaitTimer" 
+											WaitTime="40000"
+											VariantTime="40000" />				
+											
+						</If>	<!-- If we are not in Botanica, we're locked out -->
+						
+					</While>	<!-- While we are not in Botanica -->
+					
+				</If>	<!-- If we are in the Botanica instance box -->
+				
+				<!-- If we are inside Botanica -->
+				<If Condition="Me.MapId == 553">
+											
+					<!-- CustomBehavior - Message -Deleting unwanted items from our bags -->				
+					<CustomBehavior File="Message" 
+									Text="Deleting unwanted items from our bags." 
+									LogColor="Plum" />
+
+					<!-- CustomBehavior - DeleteItems - 32902,32905 -->
+					<CustomBehavior File="DeleteItems" 
+									Ids="32902,32905" />
+									
+					<!-- CustomBehavior - Message - Bottled Nethergon Energy, Bottled Nethergon Vapor -->				
+					<CustomBehavior File="Message" 
+									Text="Bottled Nethergon Energy, Bottled Nethergon Vapor." 
+									LogColor="Plum" />			
+								
+					<!-- CustomBehavior - WaitTime - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />			
+								
+					<!-- CustomBehavior - Misc\InstanceTimer -->
+					<CustomBehavior File="Misc\InstanceTimer" 
+									Timer="Start" />							
+								
+					<!-- CustomBehavior - RunMacro - enable autolooting -->
+					<CustomBehavior File="RunMacro" 
+									Macro="/script SetCVar('AutoLootDefault', 1)" 
+									NumOfTimes="1" 
+									WaitTime="1000" />
+
+					<!-- CustomBehavior - Message - Botanica initialized -->			
+					<CustomBehavior File="Message" 
+									Text="Botanica initialized."  
+									LogColor="Cyan" />
+									
+									
+					<!-- ****************************************************** Botanica ********************************************************************** -->
+									
+				
+					<!-- @@@@@@@@@@@@@@@@@@@@ 1st pull @@@@@@@@@@@@@@@@@@@@ -->
+													  
+													  
+					<!-- CustomBehavior - Message - Disabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Disabling combat." 
+										LogColor="Gold" />				
+									
+					<!-- DisableBehavior - Combat -->
+					<DisableBehavior Name="Combat" />
+					
+					<!-- Move to - gathering mobs -->
+					<MoveTo X="14.62827" Y="195.1689" Z="-5.540365" />
+					
+					<!-- Move to - gathering mobs -->
+					<MoveTo X="-12.23108" Y="197.7377" Z="-5.54037" />
+					
+					<!-- Move to - gathering mobs -->
+					<MoveTo X="-0.7425096" Y="252.2537" Z="-5.502192" />
+
+					<!-- Move to - 1st bridge -->
+					<MoveTo X="-0.9430473" Y="288.3139" Z="1.130166" />
+
+					<!-- CustomBehavior - Message - Enabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Enabling combat." 
+										LogColor="Gold" />				
+									
+					<!-- EnableBehavior - Combat -->				
+					<EnableBehavior Name="Combat" />
+					
+					<!-- CustomBehavior - WaitTime - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />								   
+											
+											
+													   
+					<!-- @@@@@@@@@@@@@@@@@@@@ 2nd pull @@@@@@@@@@@@@@@@@@@@ -->
+
+													   
+													   
+					<!-- CustomBehavior - Message - Disabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Disabling combat." 
+										LogColor="Gold" />				
+									
+					<!-- DisableBehavior - Combat -->
+					<DisableBehavior Name="Combat" />
+					
+					<!-- Move to - gathering mobs -->
+					<MoveTo X="169.8958" Y="295.7655" Z="-3.609087" />
+					
+					<!-- Move to - Commander Sarannis -->
+					<MoveTo X="126.0757" Y="320.7108" Z="-3.490491" />
+
+					<!-- CustomBehavior - Message - Enabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Enabling combat." 
+										LogColor="Gold" />				
+									
+					<!-- EnableBehavior - Combat -->				
+					<EnableBehavior Name="Combat" />
+					
+					<!-- CustomBehavior - WaitTime - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />								   
+													   
+													   
+													   
+													   
+					<!-- @@@@@@@@@@@@@@@@@@@@ 3rd pull @@@@@@@@@@@@@@@@@@@@ -->
+
+													   
+													   
+					<!-- CustomBehavior - Message - Disabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Disabling combat." 
+										LogColor="Gold" />				
+									
+					<!-- DisableBehavior - Combat -->
+					<DisableBehavior Name="Combat" />
+					
+					<!-- Move to - gathering mobs -->
+					<MoveTo X="160.6192" Y="371.0287" Z="-5.386363" />
+
+					<!-- Move to - gathering mobs -->
+					<MoveTo X="194.8489" Y="380.1787" Z="-5.466407" />
+					
+					<!-- Move to - gathering mobs -->
+					<MoveTo X="175.8427" Y="387.1663" Z="-5.386388" />
+
+					<!-- Move to - gathering mobs -->
+					<MoveTo X="163.0895" Y="409.0392" Z="-5.38641" />
+					
+					<!-- Move to - gathering mobs -->
+					<MoveTo X="171.556" Y="495.3921" Z="-2.568545" />
+
+					<!-- Move to - High Botanist Freywinn -->
+					<MoveTo X="117.1749" Y="451.6305" Z="-4.805527" />
+					
+					<!-- CustomBehavior - Message - Enabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Enabling combat." 
+										LogColor="Gold" />				
+									
+					<!-- EnableBehavior - Combat -->				
+					<EnableBehavior Name="Combat" />
+					
+					<!-- CustomBehavior - WaitTime - wait 10 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="10000" />								   
+													   
+													 
+													
+													
+					<!-- @@@@@@@@@@@@@@@@@@@@ 4th pull @@@@@@@@@@@@@@@@@@@@ -->
+
+													   
+													   
+					<!-- CustomBehavior - Message - Disabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Disabling combat." 
+										LogColor="Gold" />				
+									
+					<!-- DisableBehavior - Combat -->
+					<DisableBehavior Name="Combat" />
+					
+					<!-- Move to - gathering mobs -->
+					<MoveTo X="-14.4822" Y="483.1741" Z="-5.465672" />
+
+					<!-- Move to - gathering mobs -->
+					<MoveTo X="-0.7360826" Y="504.9797" Z="-5.317556" />
+					
+					<!-- CustomBehavior - Message - Enabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Enabling combat." 
+										LogColor="Gold" />				
+									
+					<!-- EnableBehavior - Combat -->				
+					<EnableBehavior Name="Combat" />
+					
+					<!-- CustomBehavior - WaitTime - wait 10 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="10000" />
+					
+					<!-- CustomBehavior - Message - Disabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Disabling combat." 
+										LogColor="Gold" />				
+									
+					<!-- DisableBehavior - Combat -->
+					<DisableBehavior Name="Combat" />
+
+					<!-- Move to - gathering mobs -->
+					<MoveTo X="-19.79892" Y="505.1236" Z="-5.311627" />
+
+					<!-- Move to - Thorngrin the Tender -->
+					<MoveTo X="5.064537" Y="595.4506" Z="-15.15428" />
+					
+					<!-- CustomBehavior - Message - Enabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Enabling combat." 
+										LogColor="Gold" />				
+									
+					<!-- EnableBehavior - Combat -->				
+					<EnableBehavior Name="Combat" />
+					
+					<!-- CustomBehavior - WaitTime - wait 10 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="10000" />								   
+					
+					<!-- @@@@@@@@@@@@@@@@@@@@ 5th pull @@@@@@@@@@@@@@@@@@@@ -->
+
+													   
+													   
+					<!-- CustomBehavior - Message - Disabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Disabling combat." 
+										LogColor="Gold" />				
+									
+					<!-- DisableBehavior - Combat -->
+					<DisableBehavior Name="Combat" />
+					
+					<!-- Move to - gathering mobs -->
+					<MoveTo X="-11.59121" Y="392.2809" Z="-27.92147" />
+
+					<!-- CustomBehavior - Message - Enabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Enabling combat." 
+										LogColor="Gold" />				
+									
+					<!-- EnableBehavior - Combat -->				
+					<EnableBehavior Name="Combat" />
+					
+					<!-- CustomBehavior - WaitTime - wait 10 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="10000" />	
+									
+					<!-- CustomBehavior - Message - Disabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Disabling combat." 
+										LogColor="Gold" />				
+									
+					<!-- DisableBehavior - Combat -->
+					<DisableBehavior Name="Combat" />
+
+					<!-- Move to - gathering mobs -->
+					<MoveTo X="11.13739" Y="372.5763" Z="-26.70484" />
+					
+					<!-- CustomBehavior - Message - Enabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Enabling combat." 
+										LogColor="Gold" />				
+									
+					<!-- EnableBehavior - Combat -->				
+					<EnableBehavior Name="Combat" />
+					
+					<!-- CustomBehavior - WaitTime - wait 10 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="10000" />	
+									
+					<!-- CustomBehavior - Message - Disabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Disabling combat." 
+										LogColor="Gold" />				
+									
+					<!-- DisableBehavior - Combat -->
+					<DisableBehavior Name="Combat" />
+					
+					<!-- Move to - gathering mobs -->
+					<MoveTo X="3.182537" Y="414.833" Z="-28.0943" />
+
+					<!-- CustomBehavior - Message - Enabling combat -->
+					<CustomBehavior File="Message" 
+										Text="Enabling combat." 
+										LogColor="Gold" />				
+									
+					<!-- EnableBehavior - Combat -->				
+					<EnableBehavior Name="Combat" />
+					
+					<!-- CustomBehavior - WaitTime - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					<!-- Move to - Warp Splinter -->
+					<MoveTo X="63.84069" Y="391.8824" Z="-27.97718" />
+					
+					<!-- CustomBehavior - WaitTime - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />								   
+			   
+	
+					<!-- @@@@@@@@@@@@@@@@@@@@ Exit @@@@@@@@@@@@@@@@@@@@ -->				
+									
+									
+									
+									
+					<!-- Move to - arch exiting -->
+					<MoveTo X="112.7845" Y="391.7779" Z="-27.09873" />			
+	
+					<!-- Move to - zone in location - exiting -->
+					<CustomBehavior File="MyCTM"
+									X="153.363" Y="391.9256" Z="-34.30891" />				
+									
+					<!-- CustomBehavior - Message - Waiting 3 seconds - Bag and durability check -->
+					<CustomBehavior File="Message" 
+									Text="Waiting 3 seconds - Bag and durability check."  
+									LogColor="Plum" />
+					
+					<!-- CustomBehavior - WaitTime - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+					
+					<!-- If we have less then 15 empty bag slots or our durability is less than 30% -->
+					<If Condition="(Me.FreeBagSlots &lt;= 15) || (Me.LowestDurabilityPercent &lt;= 0.3)" >
+											
+						<!-- CustomBehavior - message - - Our bags are full or our gear is near breaking. Loading the vendor profile -->
+						<CustomBehavior File="Message" 
+										Text="Our bags are full or our gear is near breaking. Loading the vendor profile."  
+										LogColor="Plum" />
+
+						<!-- CustomBehavior - WaitTime - wait 3 seconds - delay -->
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="3000" />
+
+						<!-- CustomBehavior - LoadProfile - [QO-N][85+Flying]_botanist_botanica_[repair-mail] -->
+						<CustomBehavior File="LoadProfile" 
+										ProfileName="Movement\Vendors\[QO-N][85+Flying]_botanist_botanica_[repair-mail]" />
+
+					</If>	<!-- If we have less then 15 empty bag slots or our durability is less than 30% -->
+
+					<!-- CustomBehavior - Message - All checks complete -->
+					<CustomBehavior File="Message" 
+									Text="All checks complete."  
+									LogColor="Plum" />
+								
+				</If>	<!-- If we are inside Botanica -->	
+					
+				<!-- If we don't need to vendor -->
+				<If Condition="Me.MapId == 553">	
+
+					<!-- CustomBehavior - Message - We have more than 15 empty bag slots and our gear is above 30% durability -->
+					<CustomBehavior File="Message" 
+									Text="We have more than 15 empty bag slots and our gear is above 30% durability."
+									LogColor="Plum" />
+				
+					<!-- CustomBehavior - WaitTime - wait 3 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="3000" />
+				
+					<!-- CustomBehavior - Message - Checking our dungeon run time. We will exit if the run time is greater than 13 minutes -->
+					<CustomBehavior File="Message" 
+									Text="Checking our dungeon run time. We will exit if the run time is greater than 13 minutes."
+									LogColor="Cyan" />
+				
+					<!-- Instance timer check if we didn't repair -->
+					<CustomBehavior File="Misc\InstanceTimer" 
+									Timer="Check" 
+									WaitTime="780000" />
+
+					<!-- The Botanica detected. Running out -->
+					<CustomBehavior File="Message" 
+									Text="The Botanica detected. Running out."
+									LogColor="Cyan" />
+						
+					<!-- Move to - zone in location - exiting -->
+					<MoveTo X="153.363" Y="391.9256" Z="-34.30891" />
+					
+					<!-- CustomBehavior - Message - All checks complete -->
+					<CustomBehavior File="Message" 
+									Text="All checks complete."  
+									LogColor="Plum" />
+
+					<!-- Custom behavior - Misc/InInstance - exit the instance-->
+					<CustomBehavior File="Misc\InInstance" 
+									X="163.9293" Y="391.7535" Z="-36.18522" />
+					
+					<!-- WaitTime - wait 15 seconds - delay -->
+					<CustomBehavior File="WaitTimer" 
+									WaitTime="15000" />
+					
+					<!-- Move to - zone out location -->
+					<MoveTo X="3409.85" Y="1486.26" Z="182.837" />
+					
+				</If>	<!-- If we don't need to vendor -->	
+						
+			</While> <!-- Infinite loop -->
+			
+		</If> <!-- I am level 85 -->	
+		
+	</QuestOrder>
+	
+</HBProfile>

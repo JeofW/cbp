@@ -1,0 +1,714 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+	<Name>[QO-N][Solstice][58-62]_grind</Name>
+   
+	<MinLevel>1</MinLevel>
+	<MaxLevel>101</MaxLevel>
+   
+	<MinDurability>-1</MinDurability>
+	<MinFreeBagSlots>-1</MinFreeBagSlots>
+	<TargetingDistance>25</TargetingDistance>
+	
+	
+	<MailGrey>False</MailGrey>
+	<MailWhite>False</MailWhite>
+	<MailGreen>False</MailGreen>
+	<MailBlue>False</MailBlue>
+	<MailPurple>True</MailPurple>
+   
+	<SellGrey>True</SellGrey>
+	<SellWhite>True</SellWhite>
+	<SellGreen>True</SellGreen>
+	<SellBlue>True</SellBlue>
+	<SellPurple>False</SellPurple>
+
+	<AvoidMobs>	
+	</AvoidMobs>
+	
+	<Blackspots>
+		<Blackspot X="-525.508" Y="3114.154" Z="-2.246957" Radius="40" />
+	</Blackspots>
+
+	<Mailboxes>
+	</Mailboxes>
+ 
+	<Vendors>
+	</Vendors>
+	
+	<ProtectedItems>
+	</ProtectedItems>
+
+	<Factions>
+	</Factions>
+
+	<QuestOrder>
+		
+		<!-- Level check -->
+		<If Condition="Me.Level &gt;= 58">
+		
+			<CustomBehavior File="Message" 
+							Text="You meet the level requirement to run this profile." 
+							LogColor="Fuchsia" />
+		
+		 	<!-- UserSettings -->
+			<CustomBehavior File="UserSettings"
+							FindMountAutomatically="True"
+							GroundMountFarmingMode="False"
+							HarvestHerbs="False"
+							HarvestMinerals="False"
+							KillBetweenHotspots="True"
+							LogoutForInactivity="False"
+							LogoutInactivityUseForceQuit="False"
+							LootMobs="True"
+							LootRadius="35"
+							MountName=""
+							NinjaSkin="False"
+							RessAtSpiritHealers="False"
+							SkinMobs="False"
+							UseMount="True" 
+							UseRandomMount="False" />
+							
+			<!-- Infinite loop -->
+			<While Condition="true" >
+				
+				<!-- If we are Alliance -->
+				<If Condition="Me.IsAlliance" >
+					
+					<!-- If we are not in Outland -->
+					<If Condition="Me.MapId != 530" >
+
+						<!-- Profile message - We are not in Outlands -->
+						<CustomBehavior File="Message" 
+											Text="We are not in Outlands." 
+											LogColor="Fuchsia" />
+						
+							<!-- Load profile - [QO-N][Solstice][58-90][repair-mail] -->
+							<CustomBehavior File="LoadProfile" 
+														ProfileName="Movement\[QO-N-M][Solstice][58-62]_grind" />
+					
+					</If>	<!-- If we are not in Outland -->
+					
+					<!-- If our hearthstone is set to Honor Hold -->
+					<If Condition="(Me.HearthstoneAreaId == 3538)" >
+						
+						<!-- Profile message - Our Hearthstone is already set to Honor Hold -->
+						<CustomBehavior File="Message" 
+											Text="Our Hearthstone is already set to Honor Hold." 
+											LogColor="Cyan" />
+					
+						<Else>	<!-- If our hearthstone is not set to Honor Hold -->
+						
+							<!-- Profile message - Our Hearthstone is not set to Honor Hold. Moving to Honor Hold -->
+							<CustomBehavior File="Message" 
+												Text="Our Hearthstone is not set to Honor Hold. Moving to Honor Hold." 
+												LogColor="Cyan" />
+						
+							<!-- Move to - Honor Hold -->
+							<MoveTo X="-709.9306" Y="2699.804" Z="94.41746" />
+							
+							<!-- Forced dismount -->
+							<CustomBehavior File="ForcedDismount" />
+
+							<!-- Move to - innkeeper -->
+							<MoveTo X="-708.0077" Y="2736.445" Z="94.73333" />
+							
+							<!-- Profile message - We have located the innkeep, setting our Hearthstone -->
+							<CustomBehavior File="Message" 
+											Text="We have located the innkeep, setting our Hearthstone." 
+											LogColor="Cyan" />
+
+							<!-- Custom behavior - SetHearthtone -->				
+							<CustomBehavior File="SetHearthstone" 
+											MobId="16826" 
+											X="-708.8713" Y="2739.131" Z="94.73363" />
+								
+							<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+							<If Condition="(Me.FreeBagSlots &lt;= 25) || (Me.LowestDurabilityPercent &lt;= 0.3)" >
+														
+								<!-- Load profile - [QO-N][Solstice][58-90][repair-mail] -->
+								<CustomBehavior File="LoadProfile" 
+															ProfileName="Movement\Vendors\[QO-N][Solstice][58-90][repair-mail]" />
+
+							</If>	<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+
+							<!-- Profile message - Waiting 3 seconds - Food check - Smoked Talbuk Venison -->
+							<CustomBehavior File="Message" 
+											Text="Waiting 3 seconds - Food check - Smoked Talbuk Venison."  
+											LogColor="Orange" />
+							
+							<!-- Wait timer - wait 3 seconds - delay -->
+							<CustomBehavior File="WaitTimer" 
+											WaitTime="3000" />
+											
+							<!-- If we don't have any Smoked Talbuk Venison -->
+							<If Condition="!HasItem(27854)">
+					
+								<!-- Load profile - [QO-N][Solstice][58-90][repair-mail] -->
+								<CustomBehavior File="LoadProfile" 
+												ProfileName="Movement\Vendors\[QO-N][Solstice][58-90][repair-mail]" />
+					
+							</If>	<!-- If we don't have any Smoked Talbuk Venison -->
+							
+							<!-- Wait timer - wait 3 seconds - delay -->
+							<CustomBehavior File="WaitTimer" 
+											WaitTime="3000" />
+																
+							<!-- Profile message - All checks complete -->
+							<CustomBehavior File="Message" 
+											Text="All checks complete."  
+											LogColor="Orange" />	
+
+							<!-- Move to - Honor Hold flight master --> 
+							<MoveTo X="-709.9306" Y="2699.804" Z="94.41746" />
+
+						</Else>
+					
+						<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+						<If Condition="(Me.FreeBagSlots &lt;= 25) || (Me.LowestDurabilityPercent &lt;= 0.3)" >
+													
+							<!-- Load profile - [QO-N][Solstice][58-90][repair-mail] -->
+							<CustomBehavior File="LoadProfile" 
+														ProfileName="Movement\Vendors\[QO-N][Solstice][58-90][repair-mail]" />
+
+						</If>	<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+
+						<!-- Profile message - Waiting 3 seconds - Food check - Smoked Talbuk Venison -->
+						<CustomBehavior File="Message" 
+										Text="Waiting 3 seconds - Food check - Smoked Talbuk Venison."  
+										LogColor="Orange" />
+						
+						<!-- Wait timer - wait 3 seconds - delay -->
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="3000" />
+										
+						<!-- If we don't have any Smoked Talbuk Venison -->
+						<If Condition="!HasItem(27854)">
+				
+							<!-- Load profile - [QO-N][Solstice][58-90][repair-mail] -->
+							<CustomBehavior File="LoadProfile" 
+											ProfileName="Movement\Vendors\[QO-N][Solstice][58-90][repair-mail]" />
+				
+						</If>	<!-- If we don't have any Smoked Talbuk Venison -->
+						
+						<!-- Wait timer - wait 3 seconds - delay -->
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="3000" />
+															
+						<!-- Profile message - All checks complete -->
+						<CustomBehavior File="Message" 
+										Text="All checks complete."  
+										LogColor="Orange" />	
+					
+					</If>	<!-- If our hearthstone is set to Honor Hold -->
+
+					<!-- If we are => level 58 and < level 60 -->
+					<If Condition="Me.Level &gt;= 58 &amp;&amp; Me.Level &lt; 60" >
+
+						<!-- Profile message - Moving to the grinding location -->
+						<CustomBehavior File="Message" 
+										Text="Moving to the 58-60 grinding location."  
+										LogColor="Orange" />
+						
+						<!-- Move to - grinding location -->
+						<MoveTo X="-908.0336" Y="2776.117" Z="16.10062" />
+						
+						<!-- Profile message - We have reached the grinding location. We will grind here until we reach level 60 -->
+						<CustomBehavior File="Message" 
+										Text="We have reached the grinding location. We will grind here until we reach level 60." 
+										LogColor="Orange" />		
+						
+						<!-- UserSettings -->
+						<CustomBehavior File="UserSettings"
+										PullDistance="45" />
+						
+						<!-- Grind area -->
+						<SetGrindArea>
+							<GrindArea>
+						
+							<!-- Factions -->
+							<Factions>954,14</Factions>
+							
+								<!-- Hotspots -->
+								<Hotspots>
+									<Hotspot X="-969.1675" Y="2763.589" Z="7.455122" />
+									<Hotspot X="-997.6815" Y="2573.895" Z="0.2122621" />
+									<Hotspot X="-923.4387" Y="2501.73" Z="5.982316" />
+									<Hotspot X="-860.2055" Y="2324.272" Z="-15.65071" />
+									<Hotspot X="-701.6417" Y="2278.827" Z="12.49428" />
+									<Hotspot X="-741.7643" Y="2432.157" Z="39.42841" />
+									<Hotspot X="-895.2057" Y="2568.733" Z="21.23432" />
+								</Hotspots>		<!-- Hotspots -->
+								
+							</GrindArea>
+						</SetGrindArea>		<!-- Grind area -->	
+						
+						<!-- Grind conditions -->
+						<GrindTo Condition="(Me.FreeBagSlots &lt;= 25) || (Me.LowestDurabilityPercent &lt;= 0.3) || (!HasItem(27854)) || (Me.Level &gt;= 60)" GoalText="Grinding to level 60" />
+					
+						<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+						<If Condition="(Me.FreeBagSlots &lt;= 25) || (Me.LowestDurabilityPercent &lt;= 0.3)" >
+													
+							<!-- Load profile - [QO-N][Solstice][58-90][repair-mail] -->
+							<CustomBehavior File="LoadProfile" 
+											ProfileName="Movement\Vendors\[QO-N][Solstice][58-90][repair-mail]" />
+
+						</If>	<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+
+						<!-- Profile message - Waiting 3 seconds - Food check - Smoked Talbuk Venison -->
+						<CustomBehavior File="Message" 
+										Text="Waiting 3 seconds - Food check - Smoked Talbuk Venison."  
+										LogColor="Orange" />
+						
+						<!-- Wait timer - wait 3 seconds - delay -->
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="3000" />
+										
+						<!-- If we don't have any Smoked Talbuk Venison -->
+						<If Condition="!HasItem(27854)">
+				
+							<!-- Load profile - [QO-N][Solstice][58-90][repair-mail] -->
+							<CustomBehavior File="LoadProfile" 
+											ProfileName="Movement\Vendors\[QO-N][Solstice][58-90][repair-mail]" />
+				
+						</If>	<!-- If we don't have any Smoked Talbuk Venison -->
+						
+						<!-- Wait timer - wait 3 seconds - delay -->
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="3000" />
+															
+						<!-- Profile message - All checks complete -->
+						<CustomBehavior File="Message" 
+										Text="All checks complete."  
+										LogColor="Orange" />
+
+					</If>	<!-- If we are => level 58 and < level 60 -->				
+									
+					<!-- If we are => level 60 and < level 62 -->
+					<If Condition="Me.Level &gt;= 60 &amp;&amp; Me.Level &lt; 62" >
+
+						<!-- Profile message - Moving to the 60-62 grinding location -->
+						<CustomBehavior File="Message" 
+										Text="Moving to the 60-62 grinding location."  
+										LogColor="Orange" />
+						
+						<!-- Move to - the bridge near the grinding area -->
+						<MoveTo X="-534.5937" Y="3553.632" Z="51.80806" />
+						
+						<!-- CTM to - down the bank -->
+						<CustomBehavior File="MyCTM" 
+											X="-529.6925" Y="3612.78" Z="28.99558" />
+						
+						<!-- Move to - grinding location -->
+						<MoveTo X="-506.3479" Y="3695.365" Z="29.00221" />
+						
+						<!-- Profile message - We have reached the grinding location. We will grind here until we reach level 62 -->
+						<CustomBehavior File="Message" 
+										Text="We have reached the grinding location. We will grind here until we reach level 62." 
+										LogColor="Orange" />		
+						
+						<!-- UserSettings -->
+						<CustomBehavior File="UserSettings"
+										PullDistance="45" />
+						
+						<!-- Grind area -->
+						<SetGrindArea>
+							<GrindArea>
+						
+							<!-- Factions -->
+							<Factions>1873,14</Factions>
+							
+								<!-- Hotspots -->
+								<Hotspots>
+									<Hotspot X="-506.3479" Y="3695.365" Z="29.00221" />
+									<Hotspot X="-535.4313" Y="3633.695" Z="28.99734" />
+									<Hotspot X="-690.2812" Y="3599.05" Z="29.047" />
+									<Hotspot X="-721.365" Y="3706.895" Z="27.7515" />
+									<Hotspot X="-622.6154" Y="3817.526" Z="28.99553" />
+									<Hotspot X="-717.4683" Y="3929.645" Z="29.08404" />
+									<Hotspot X="-645.5285" Y="3987.174" Z="29.35611" />
+									<Hotspot X="-569.0958" Y="3941.715" Z="28.99526" />
+									<Hotspot X="-564.1874" Y="3840.89" Z="28.99515" />
+									<Hotspot X="-514.7455" Y="3765.306" Z="28.99559" />
+								</Hotspots>		<!-- Hotspots -->
+								
+							</GrindArea>
+						</SetGrindArea>		<!-- Grind area -->	
+						
+						<!-- Grind conditions -->
+						<GrindTo Condition="(Me.FreeBagSlots &lt;= 25) || (Me.LowestDurabilityPercent &lt;= 0.3) || (!HasItem(27854)) || (Me.Level &gt;= 62)" GoalText="Grinding to level 62" />
+					
+						<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+						<If Condition="(Me.FreeBagSlots &lt;= 25) || (Me.LowestDurabilityPercent &lt;= 0.3)" >
+													
+							<!-- Load profile - [QO-N][Solstice][58-90][repair-mail] -->
+							<CustomBehavior File="LoadProfile" 
+											ProfileName="Movement\Vendors\[QO-N][Solstice][58-90][repair-mail]" />
+
+						</If>	<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+
+						<!-- Profile message - Waiting 3 seconds - Food check - Smoked Talbuk Venison -->
+						<CustomBehavior File="Message" 
+										Text="Waiting 3 seconds - Food check - Smoked Talbuk Venison."  
+										LogColor="Orange" />
+						
+						<!-- Wait timer - wait 3 seconds - delay -->
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="3000" />
+										
+						<!-- If we don't have any Smoked Talbuk Venison -->
+						<If Condition="!HasItem(27854)">
+				
+							<!-- Load profile - [QO-N][Solstice][58-90][repair-mail] -->
+							<CustomBehavior File="LoadProfile" 
+											ProfileName="Movement\Vendors\[QO-N][Solstice][58-90][repair-mail]" />
+				
+						</If>	<!-- If we don't have any Smoked Talbuk Venison -->
+						
+						<!-- Wait timer - wait 3 seconds - delay -->
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="3000" />
+															
+						<!-- Profile message - All checks complete -->
+						<CustomBehavior File="Message" 
+										Text="All checks complete."  
+										LogColor="Orange" />
+
+					</If>	<!-- If we are => level 60 and < level 62 -->				
+
+					<!-- If we have reached level 62 -->		 
+					<If Condition="(Me.Level &gt;= 62)" >
+				
+						<!-- Load profile - [QO-N][58-90][Solstice][Auto-Loader]_LOAD-THIS-AND-ONLY-THIS -->
+						<CustomBehavior File="LoadProfile" 
+										ProfileName="..\[QO-N][58-90][Solstice][Auto-Loader]_LOAD-THIS-AND-ONLY-THIS" />
+				
+					</If>	<!-- If we have reached level 62 -->
+
+				</If>	<!-- If we are Alliance -->
+				
+				
+				
+				<!-- ***************************************************************************************************************************** -->
+				
+				
+				
+				<!-- If we are Horde -->
+				<If Condition="Me.IsHorde" >
+
+					<!-- If we are not in Outland -->
+					<If Condition="Me.MapId != 530" >
+
+						<!-- Profile message - We are not in Outlands -->
+						<CustomBehavior File="Message" 
+											Text="We are not in Outlands." 
+											LogColor="Fuchsia" />
+						
+							<!-- Load profile - [QO-N][Solstice][58-90][repair-mail] -->
+							<CustomBehavior File="LoadProfile" 
+														ProfileName="Movement\[QO-N-M][Solstice][58-62]_grind" />
+					
+					</If>	<!-- If we are not in Outland -->
+					
+					<!-- If our hearthstone is set to Thrallmar -->
+					<If Condition="(Me.HearthstoneAreaId == 3536)" >
+						
+						<!-- Profile message - Our Hearthstone is already set to Thrallmar -->
+						<CustomBehavior File="Message" 
+											Text="Our Hearthstone is already set to Thrallmar." 
+											LogColor="Cyan" />
+					
+						<Else>	<!-- If our hearthstone is not set to Thrallmar -->
+						
+							<!-- Profile message - Our Hearthstone is not set to Thrallmar. Moving to Thrallmar -->
+							<CustomBehavior File="Message" 
+												Text="Our Hearthstone is not set to Thrallmar. Moving to Thrallmar." 
+												LogColor="Cyan" />
+						
+							<!-- Move to - Thrallmar -->
+							<MoveTo X="178.6801" Y="2628.115" Z="87.12171" />
+							
+							<!-- Forced dismount -->
+							<CustomBehavior File="ForcedDismount" />
+
+							<!-- Move to - innkeeper -->
+							<MoveTo X="190.1132" Y="2611.777" Z="87.28358" />
+							
+							<!-- Profile message - We have located the innkeep, setting our Hearthstone -->
+							<CustomBehavior File="Message" 
+											Text="We have located the innkeep, setting our Hearthstone." 
+											LogColor="Cyan" />
+
+							<!-- Set our hearthstone -->
+								<CustomBehavior File="SetHearthstone" 
+												MobId="16602"
+												X="190.8758" Y="2610.927" Z="87.28391" />
+								
+							<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+							<If Condition="(Me.FreeBagSlots &lt;= 25) || (Me.LowestDurabilityPercent &lt;= 0.3)" >
+														
+								<!-- Load profile - [QO-N][Solstice][58-90][repair-mail] -->
+								<CustomBehavior File="LoadProfile" 
+															ProfileName="Movement\Vendors\[QO-N][Solstice][58-90][repair-mail]" />
+
+							</If>	<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+
+							<!-- Profile message - Waiting 3 seconds - Food check - Smoked Talbuk Venison -->
+							<CustomBehavior File="Message" 
+											Text="Waiting 3 seconds - Food check - Smoked Talbuk Venison."  
+											LogColor="Orange" />
+							
+							<!-- Wait timer - wait 3 seconds - delay -->
+							<CustomBehavior File="WaitTimer" 
+											WaitTime="3000" />
+											
+							<!-- If we don't have any Smoked Talbuk Venison -->
+							<If Condition="!HasItem(27854)">
+					
+								<!-- Load profile - [QO-N][Solstice][58-90][repair-mail] -->
+								<CustomBehavior File="LoadProfile" 
+												ProfileName="Movement\Vendors\[QO-N][Solstice][58-90][repair-mail]" />
+					
+							</If>	<!-- If we don't have any Smoked Talbuk Venison -->
+							
+							<!-- Wait timer - wait 3 seconds - delay -->
+							<CustomBehavior File="WaitTimer" 
+											WaitTime="3000" />
+																
+							<!-- Profile message - All checks complete -->
+							<CustomBehavior File="Message" 
+											Text="All checks complete."  
+											LogColor="Orange" />	
+
+							<!-- Move to - Thrallmar flight master --> 
+								<MoveTo X="228.5" Y="2633.57" Z="87.66663" />
+
+						</Else>
+					
+						<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+						<If Condition="(Me.FreeBagSlots &lt;= 25) || (Me.LowestDurabilityPercent &lt;= 0.3)" >
+													
+							<!-- Load profile - [QO-N][Solstice][58-90][repair-mail] -->
+							<CustomBehavior File="LoadProfile" 
+														ProfileName="Movement\Vendors\[QO-N][Solstice][58-90][repair-mail]" />
+
+						</If>	<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+
+						<!-- Profile message - Waiting 3 seconds - Food check - Smoked Talbuk Venison -->
+						<CustomBehavior File="Message" 
+										Text="Waiting 3 seconds - Food check - Smoked Talbuk Venison."  
+										LogColor="Orange" />
+						
+						<!-- Wait timer - wait 3 seconds - delay -->
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="3000" />
+										
+						<!-- If we don't have any Smoked Talbuk Venison -->
+						<If Condition="!HasItem(27854)">
+				
+							<!-- Load profile - [QO-N][Solstice][58-90][repair-mail] -->
+							<CustomBehavior File="LoadProfile" 
+											ProfileName="Movement\Vendors\[QO-N][Solstice][58-90][repair-mail]" />
+				
+						</If>	<!-- If we don't have any Smoked Talbuk Venison -->
+						
+						<!-- Wait timer - wait 3 seconds - delay -->
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="3000" />
+															
+						<!-- Profile message - All checks complete -->
+						<CustomBehavior File="Message" 
+										Text="All checks complete."  
+										LogColor="Orange" />	
+					
+					</If>	<!-- If our hearthstone is set to Thrallmar -->
+
+					<!-- If we are => level 58 and < level 60 -->
+					<If Condition="Me.Level &gt;= 58 &amp;&amp; Me.Level &lt; 60" >
+
+						<!-- Profile message - Moving to the 58-60 grinding location -->
+						<CustomBehavior File="Message" 
+										Text="Moving to the 58-60 grinding location."  
+										LogColor="Orange" />
+						
+						<!-- Move to - grinding location -->
+						<MoveTo X="91.30276" Y="2398.917" Z="55.07299" />
+						
+						<!-- Profile message - We have reached the grinding location. We will grind here until we reach level 62 -->
+						<CustomBehavior File="Message" 
+										Text="We have reached the grinding location. We will grind here until we reach level 62." 
+										LogColor="Orange" />		
+						
+						<!-- UserSettings -->
+						<CustomBehavior File="UserSettings"
+										PullDistance="45" />
+						
+						<!-- Grind area -->
+						<SetGrindArea>
+							<GrindArea>
+						
+							<!-- Factions -->
+							<Factions>90,954</Factions>
+							
+								<!-- Hotspots -->
+								<Hotspots>
+									<Hotspot X="131.4035" Y="2387.091" Z="52.35034" />
+									<Hotspot X="283.2397" Y="2343.318" Z="66.61724" />
+									<Hotspot X="300.3437" Y="2000.817" Z="29.66216" />
+									<Hotspot X="114.5064" Y="2092.981" Z="76.68272" />
+									<Hotspot X="52.72532" Y="2278.996" Z="74.68255" />
+								</Hotspots>		<!-- Hotspots -->
+								
+							</GrindArea>
+						</SetGrindArea>		<!-- Grind area -->	
+
+						<!-- Grind conditions -->
+						<GrindTo Condition="(Me.FreeBagSlots &lt;= 25) || (Me.LowestDurabilityPercent &lt;= 0.3) || (!HasItem(27854)) || (Me.Level &gt;= 60)" GoalText="Grinding to level 60" />
+					
+						<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+						<If Condition="(Me.FreeBagSlots &lt;= 25) || (Me.LowestDurabilityPercent &lt;= 0.3)" >
+													
+							<!-- Load profile - [QO-N][Solstice][58-90][repair-mail] -->
+							<CustomBehavior File="LoadProfile" 
+											ProfileName="Movement\Vendors\[QO-N][Solstice][58-90][repair-mail]" />
+
+						</If>	<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+
+						<!-- Profile message - Waiting 3 seconds - Food check - Smoked Talbuk Venison -->
+						<CustomBehavior File="Message" 
+										Text="Waiting 3 seconds - Food check - Smoked Talbuk Venison."  
+										LogColor="Orange" />
+						
+						<!-- Wait timer - wait 3 seconds - delay -->
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="3000" />
+										
+						<!-- If we don't have any Smoked Talbuk Venison -->
+						<If Condition="!HasItem(27854)">
+				
+							<!-- Load profile - [QO-N][Solstice][58-90][repair-mail] -->
+							<CustomBehavior File="LoadProfile" 
+											ProfileName="Movement\Vendors\[QO-N][Solstice][58-90][repair-mail]" />
+				
+						</If>	<!-- If we don't have any Smoked Talbuk Venison -->
+						
+						<!-- Wait timer - wait 3 seconds - delay -->
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="3000" />
+															
+						<!-- Profile message - All checks complete -->
+						<CustomBehavior File="Message" 
+										Text="All checks complete."  
+										LogColor="Orange" />
+
+					</If>	<!-- If we are => level 58 and < level 60 -->				
+	
+					<!-- If we are => level 60 and < level 62 -->
+					<If Condition="Me.Level &gt;= 60 &amp;&amp; Me.Level &lt; 62" >
+
+						<!-- Profile message - Moving to the 60-62 grinding location -->
+						<CustomBehavior File="Message" 
+										Text="Moving to the 60-62 grinding location."  
+										LogColor="Orange" />
+						
+						<!-- Move to - the bridge near the grinding area -->
+						<MoveTo X="-534.5937" Y="3553.632" Z="51.80806" />
+						
+						<!-- CTM to - down the bank -->
+						<CustomBehavior File="MyCTM" 
+											X="-529.6925" Y="3612.78" Z="28.99558" />
+						
+						<!-- Move to - grinding location -->
+						<MoveTo X="-506.3479" Y="3695.365" Z="29.00221" />
+						
+						<!-- Profile message - We have reached the grinding location. We will grind here until we reach level 62 -->
+						<CustomBehavior File="Message" 
+										Text="We have reached the grinding location. We will grind here until we reach level 62." 
+										LogColor="Orange" />		
+						
+						<!-- UserSettings -->
+						<CustomBehavior File="UserSettings"
+										PullDistance="45" />
+						
+						<!-- Grind area -->
+						<SetGrindArea>
+							<GrindArea>
+						
+							<!-- Factions -->
+							<Factions>1873,14</Factions>
+							
+								<!-- Hotspots -->
+								<Hotspots>
+									<Hotspot X="-506.3479" Y="3695.365" Z="29.00221" />
+									<Hotspot X="-535.4313" Y="3633.695" Z="28.99734" />
+									<Hotspot X="-690.2812" Y="3599.05" Z="29.047" />
+									<Hotspot X="-721.365" Y="3706.895" Z="27.7515" />
+									<Hotspot X="-622.6154" Y="3817.526" Z="28.99553" />
+									<Hotspot X="-717.4683" Y="3929.645" Z="29.08404" />
+									<Hotspot X="-645.5285" Y="3987.174" Z="29.35611" />
+									<Hotspot X="-569.0958" Y="3941.715" Z="28.99526" />
+									<Hotspot X="-564.1874" Y="3840.89" Z="28.99515" />
+									<Hotspot X="-514.7455" Y="3765.306" Z="28.99559" />
+								</Hotspots>		<!-- Hotspots -->
+								
+							</GrindArea>
+						</SetGrindArea>		<!-- Grind area -->	
+						
+						<!-- Grind conditions -->
+						<GrindTo Condition="(Me.FreeBagSlots &lt;= 25) || (Me.LowestDurabilityPercent &lt;= 0.3) || (!HasItem(27854)) || (Me.Level &gt;= 62)" GoalText="Grinding to level 62" />
+					
+						<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+						<If Condition="(Me.FreeBagSlots &lt;= 25) || (Me.LowestDurabilityPercent &lt;= 0.3)" >
+													
+							<!-- Load profile - [QO-N][Solstice][58-90][repair-mail] -->
+							<CustomBehavior File="LoadProfile" 
+											ProfileName="Movement\Vendors\[QO-N][Solstice][58-90][repair-mail]" />
+
+						</If>	<!-- If we have less then 25 empty bag slots or our durability is less than 30% -->
+
+						<!-- Profile message - Waiting 3 seconds - Food check - Smoked Talbuk Venison -->
+						<CustomBehavior File="Message" 
+										Text="Waiting 3 seconds - Food check - Smoked Talbuk Venison."  
+										LogColor="Orange" />
+						
+						<!-- Wait timer - wait 3 seconds - delay -->
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="3000" />
+										
+						<!-- If we don't have any Smoked Talbuk Venison -->
+						<If Condition="!HasItem(27854)">
+				
+							<!-- Load profile - [QO-N][Solstice][58-90][repair-mail] -->
+							<CustomBehavior File="LoadProfile" 
+											ProfileName="Movement\Vendors\[QO-N][Solstice][58-90][repair-mail]" />
+				
+						</If>	<!-- If we don't have any Smoked Talbuk Venison -->
+						
+						<!-- Wait timer - wait 3 seconds - delay -->
+						<CustomBehavior File="WaitTimer" 
+										WaitTime="3000" />
+															
+						<!-- Profile message - All checks complete -->
+						<CustomBehavior File="Message" 
+										Text="All checks complete."  
+										LogColor="Orange" />
+
+					</If>	<!-- If we are => level 60 and < level 62 -->				
+
+					<!-- If we have reached level 62 -->		 
+					<If Condition="(Me.Level &gt;= 62)" >
+				
+						<!-- Load profile - [QO-N][58-90][Solstice][Auto-Loader]_LOAD-THIS-AND-ONLY-THIS -->
+						<CustomBehavior File="LoadProfile" 
+										ProfileName="..\[QO-N][58-90][Solstice][Auto-Loader]_LOAD-THIS-AND-ONLY-THIS" />
+				
+					</If>	<!-- If we have reached level 62 -->
+
+				</If>	<!-- If we are Horde -->
+
+			</While> <!-- Infinite loop -->
+			
+		</If>	<!-- Level check -->
+		
+	</QuestOrder>
+	
+</HBProfile>
+

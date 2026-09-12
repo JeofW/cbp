@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CharacterSettings>
+  <FoodAmount>13</FoodAmount>
+  <DrinkAmount>13</DrinkAmount>
+  <EnabledPlugins>
+    <Entry>AutoEquip2</Entry>
+    <Entry>DrinkPotions</Entry>
+  </EnabledPlugins>
+  <!--The last selected index used by the Combobox in the form.-->
+  <SelectedBotIndex>1</SelectedBotIndex>
+  <!--Allow the bot to use flight paths. (Note: this will also allow the bot to interact with new flightmasters to learn new connections.-->
+  <UseFlightPaths>True</UseFlightPaths>
+  <FindMountAutomatically>True</FindMountAutomatically>
+  <UseRandomMount>True</UseRandomMount>
+  <MailRecipient></MailRecipient>
+  <FoodName></FoodName>
+  <DrinkName></DrinkName>
+  <MountName>35022</MountName>
+  <FlyingMountName></FlyingMountName>
+  <LootMobs>True</LootMobs>
+  <SkinMobs>False</SkinMobs>
+  <NinjaSkin>False</NinjaSkin>
+  <LootChests>False</LootChests>
+  <HarvestMinerals>False</HarvestMinerals>
+  <HarvestHerbs>False</HarvestHerbs>
+  <UseMount>True</UseMount>
+  <PullDistance>24</PullDistance>
+  <UseFreeLook>False</UseFreeLook>
+  <FreeLook>0</FreeLook>
+  <TicksPerSecond>13</TicksPerSecond>
+  <LootRadius>45</LootRadius>
+  <FindVendorsAutomatically>True</FindVendorsAutomatically>
+  <TrainNewSkills>True</TrainNewSkills>
+  <LearnFlightPaths>True</LearnFlightPaths>
+  <LastUsedPath></LastUsedPath>
+  <MountDistance>75</MountDistance>
+  <RessAtSpiritHealers>True</RessAtSpiritHealers>
+  <OverrideProfileSettings>False</OverrideProfileSettings>
+  <IgnoreCheckpoints>False</IgnoreCheckpoints>
+  <SellGrey>True</SellGrey>
+  <SellWhite>False</SellWhite>
+  <SellGreen>False</SellGreen>
+  <SellBlue>False</SellBlue>
+  <SellPurple>False</SellPurple>
+  <MailGrey>False</MailGrey>
+  <MailWhite>False</MailWhite>
+  <MailGreen>False</MailGreen>
+  <MailBlue>False</MailBlue>
+  <MailPurple>False</MailPurple>
+</CharacterSettings>

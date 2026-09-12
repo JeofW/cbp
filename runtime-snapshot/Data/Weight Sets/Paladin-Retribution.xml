@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WeightSet Class="Paladin" Specialization="3" Name="Paladin-Retribution">
+  <!-- Normalized from the bundled Pawn/Wowhead WotLK Retribution scale. -->
+  <DPS>4.7</DPS>
+  <MinDamage>0</MinDamage>
+  <MaxDamage>0</MaxDamage>
+  <MetaSocket>36</MetaSocket>
+  <RedSocket>16</RedSocket>
+  <YellowSocket>10</YellowSocket>
+  <BlueSocket>8</BlueSocket>
+  <HitRatingMelee>1</HitRatingMelee>
+  <HitRating>1</HitRating>
+  <Strength>0.8</Strength>
+  <ExpertiseRating>0.66</ExpertiseRating>
+  <CriticalStrikeRatingMelee>0.4</CriticalStrikeRatingMelee>
+  <CriticalStrikeRating>0.4</CriticalStrikeRating>
+  <MeleeAttackPower>0.34</MeleeAttackPower>
+  <AttackPower>0.34</AttackPower>
+  <Agility>0.32</Agility>
+  <HasteRatingMelee>0.3</HasteRatingMelee>
+  <HasteRating>0.3</HasteRating>
+  <ArmorPenetrationRating>0.22</ArmorPenetrationRating>
+  <SpellPower>0.09</SpellPower>
+  <Stamina>0.001</Stamina>
+  <Armor>0</Armor>
+</WeightSet>

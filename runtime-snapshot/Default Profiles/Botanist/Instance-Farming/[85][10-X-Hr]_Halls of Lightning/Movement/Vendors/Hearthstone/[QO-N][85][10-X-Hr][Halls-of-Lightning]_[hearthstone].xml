@@ -1,0 +1,138 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+<Name>[QO-N][85][10-X-Hr][Halls-of-Lightning]_[hearthstone]</Name>
+
+<MinLevel>1</MinLevel>
+<MaxLevel>151</MaxLevel>
+
+<MinDurability>-1</MinDurability>
+<MinFreeBagSlots>-1</MinFreeBagSlots>
+<TargetingDistance>1</TargetingDistance>
+
+<MailGrey>False</MailGrey>
+<MailWhite>False</MailWhite>
+<MailGreen>False</MailGreen>
+<MailBlue>False</MailBlue>
+<MailPurple>False</MailPurple>
+
+<SellGrey>False</SellGrey>
+<SellWhite>False</SellWhite>
+<SellGreen>False</SellGreen>
+<SellBlue>False</SellBlue>
+<SellPurple>False</SellPurple>
+
+<AvoidMobs>		 
+</AvoidMobs>
+
+<Blackspots>
+</Blackspots>
+
+<Mailboxes>
+</Mailboxes>
+
+<Vendors>
+</Vendors>
+
+<ProtectedItems>	
+</ProtectedItems>
+
+	<QuestOrder>
+	
+		<!-- UserSettings -->
+		<CustomBehavior File="UserSettings"
+						FindMountAutomatically="True"
+						GroundMountFarmingMode="False"
+						HarvestHerbs="False"
+						HarvestMinerals="False"
+						KillBetweenHotspots="False"
+						LogoutForInactivity="True"
+						LogoutInactivityUseForceQuit="True"
+						LootMobs="False"
+						LootRadius="65"
+						MountName=""
+						NinjaSkin="False"
+						RessAtSpiritHealers="False"
+						SkinMobs="False"
+						UseMount="True" 
+						UseRandomMount="False" />
+			
+		<!-- If our level = > 85 -->				
+		<If Condition="Me.Level &gt;= 85" >
+	
+			<!-- If our Hearthstone/Innkeepers Daughter is set at Bouldercrag's Refuge -->
+			<If Condition="(Me.HearthstoneAreaId == 4484)">
+
+				<!-- CustomBehavior - Message - Our Hearthstone has already been set at Bouldercrag's Refuge -->
+				<CustomBehavior File="Message" 
+								Text="Our Hearthstone has already been set at Bouldercrag's Refuge." 
+								LogColor="Plum" />
+								
+				<!-- CustomBehavior - WaitTimer - 1 second delay -->
+				<CustomBehavior File="WaitTimer" 
+								WaitTime="1000" />
+
+				<!--  CustomBehavior - LoadProfile - [QO-N][85][10-X-Hr][Halls-of-Stone]_botanist -->				
+				<CustomBehavior File="LoadProfile" 
+								ProfileName="..\..\..\[QO-N][85][10-X-Hr][Halls-of-Stone]_botanist" />
+
+				<!-- Else our hearthstone is not set at The Argent Stand -->
+				<Else>
+				
+					<!-- CustomBehavior - Message -  We have not set out Hearthstone in Bouldercrag's Refuge. Navigating to the innkeep -->
+					<CustomBehavior File="Message" 
+										Text="We have not set our Hearthstone in Bouldercrag's Refuge. Navigating to the innkeep." 
+										LogColor="Plum" />				
+			
+					<!-- Profile message - Flying to Bouldercrag's Refuge -->
+					<CustomBehavior File="Message" 
+									Text="Flying to Bouldercrag's Refuge." 
+									LogColor="Cyan" />
+				
+					<!-- Fly to - Bouldercrag's Refuge hover point -->
+					<CustomBehavior File="FlyTo" 
+									X="8509.008" Y="-259.9264" Z="941.7101" />
+					
+					<!-- CTM to - repair vendor -->
+					<CustomBehavior File="MyCTM" 
+										X="8395.655" Y="-390.9962" Z="902.9985" />
+					
+					<!-- Custom behavior - ForcedDismount -->
+					<CustomBehavior File="ForcedDismount" />
+
+					<!-- Move to - inside the inn -->
+					<MoveTo X="8426.41" Y="-355.5836" Z="906.4028" />
+					
+					<!-- Profile message - Setting our Hearthstone -->
+					<CustomBehavior File="Message" 
+									Text="Setting our Hearthstone." 
+									LogColor="Cyan" />
+									
+					<!-- Custom behavior - SetHearthstone -->				
+					<CustomBehavior File="SetHearthstone" 
+									MobId="29963" 
+									X="8426.41" Y="-355.5836" Z="906.4028" />
+									
+					<!-- Move to - outside of the inn -->
+					<MoveTo X="8451.409" Y="-327.6355" Z="907.044" />
+					
+					<!-- Fly to - Bouldercrag's Refuge hover point -->
+					<CustomBehavior File="FlyTo" 
+									X="8509.008" Y="-259.9264" Z="941.7101" />
+					
+					<!-- Profile message - We are in Bouldercrag's Refuge -->
+					<CustomBehavior File="Message" 
+									Text="We are in Bouldercrag's Refuge." 
+									LogColor="Cyan" />
+					
+					<!--  CustomBehavior - LoadProfile - [QO-N][85][10-X-Hr][Halls-of-Lightning]_botanist -->				
+					<CustomBehavior File="LoadProfile" 
+									ProfileName="..\..\..\[QO-N][85][10-X-Hr][Halls-of-Lightning]_botanist" />
+
+				</Else>	<!-- Else our hearthstone is not set at Bouldercrag's Refuge -->
+
+			</If>	<!-- If our hearthstone is set at Bouldercrag's Refuge -->
+
+		</If>	<!-- If our level = > 85 -->
+			
+	</QuestOrder>
+
+</HBProfile>

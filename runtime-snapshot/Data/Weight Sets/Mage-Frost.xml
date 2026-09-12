@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WeightSet Class="Mage" Specialization="3" Name="Mage-Frost">
+  <HitRating>1.5</HitRating>
+  <HitRatingSpell>1.3</HitRatingSpell>
+  <HasteRatingSpell>1.25</HasteRatingSpell>
+  <HasteRating>1.25</HasteRating>
+  <SpellPower>1.21</SpellPower>
+  <Intellect>1.1</Intellect>
+  <CriticalStrikeRatingSpell>0.76</CriticalStrikeRatingSpell>
+  <CriticalStrikeRating>0.76</CriticalStrikeRating>
+  <Stamina>0.7</Stamina>
+  <Spirit>0.5</Spirit>
+  <Armor>0.01</Armor>
+</WeightSet>

@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<WarriorSettings>
+  <WarriorEnragedRegenerationHealth>50</WarriorEnragedRegenerationHealth>
+  <WarriorProtShieldWallHealth>40</WarriorProtShieldWallHealth>
+  <UseWarriorDpsCooldowns>True</UseWarriorDpsCooldowns>
+  <UseWarriorInterupts>True</UseWarriorInterupts>
+  <UseWarriorShouts>True</UseWarriorShouts>
+  <UseWarriorSlows>True</UseWarriorSlows>
+  <UseWarriorBasicRotation>False</UseWarriorBasicRotation>
+  <UseWarriorAOE>True</UseWarriorAOE>
+  <UseWarriorKeepStance>True</UseWarriorKeepStance>
+  <UseWarriorCloser>True</UseWarriorCloser>
+  <UseWarriorSlamTalent>True</UseWarriorSlamTalent>
+  <UseWarriorBladestorm>True</UseWarriorBladestorm>
+  <UseWarriorStanceDance>False</UseWarriorStanceDance>
+</WarriorSettings>

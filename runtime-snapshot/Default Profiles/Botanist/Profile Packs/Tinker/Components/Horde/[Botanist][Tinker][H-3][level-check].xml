@@ -1,0 +1,251 @@
+﻿<HBProfile creator="Botanist" version="1.0">
+<Name>[Botanist][Tinker][A-3][level-check]</Name>
+
+<MinLevel>1</MinLevel>
+<MaxLevel>151</MaxLevel>
+
+<MinDurability>-1</MinDurability>
+<MinFreeBagSlots>-1</MinFreeBagSlots>
+<TargetingDistance>45</TargetingDistance>
+
+<MailGrey>False</MailGrey>
+<MailWhite>False</MailWhite>
+<MailGreen>False</MailGreen>
+<MailBlue>False</MailBlue>
+<MailPurple>False</MailPurple>
+
+<SellGrey>False</SellGrey>
+<SellWhite>False</SellWhite>
+<SellGreen>False</SellGreen>
+<SellBlue>False</SellBlue>
+<SellPurple>False</SellPurple>
+
+<AvoidMobs>		 
+</AvoidMobs>
+
+<Blackspots>
+</Blackspots>
+
+<Mailboxes>
+</Mailboxes>
+
+<Vendors>
+</Vendors>
+
+<ProtectedItems>	
+</ProtectedItems>
+
+	<QuestOrder>
+			
+		<!-- UserSettings -->
+		<CustomBehavior File="UserSettings"
+						FindMountAutomatically="True"
+						GroundMountFarmingMode="False"
+						HarvestHerbs="False"
+						HarvestMinerals="False"
+						KillBetweenHotspots="False"
+						LogoutForInactivity="True"
+						LogoutInactivityUseForceQuit="True"
+						LootMobs="False"
+						LootRadius="1"
+						MountName=""
+						NinjaSkin="False"
+						RessAtSpiritHealers="False"
+						SkinMobs="False"
+						UseMount="True" 
+						UseRandomMount="False" />	
+			
+		<!-- Profile message - Checking our current characters level -->
+		<CustomBehavior File="Message" 
+						Text="Checking our current characters level." 
+						LogColor="Gold" />
+		
+		<!-- CustomBehavior - Wait timer - wait 1 seconds - delay -->
+		<CustomBehavior File="WaitTimer" 
+						WaitTime="1000" />
+			
+		<!-- If our level >= 1 and < 3-->
+		<If Condition="Me.Level &gt;= 1 &amp;&amp; Me.Level &lt; 3" >
+		
+			<!-- Profile message - We are currently leveling in the 1-3 bracket -->
+			<CustomBehavior File="Message" 
+							Text="We are currently leveling in the 1-3 bracket." 
+							LogColor="Plum" />
+							
+			<!-- CustomBehavior - Wait timer - wait 1 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="1000" />	
+
+			<!--  CustomBehavior - LoadProfile -->				
+			<CustomBehavior File="LoadProfile" 
+							ProfileName="[Botanist][Tinker][H-4][position-check]" />				
+							
+		</If>	<!-- If our level >= 1 and < 3 -->
+
+		<!-- If our level >= 3 and < 5 -->
+		<If Condition="Me.Level &gt;= 3 &amp;&amp; Me.Level &lt; 5" >
+		
+			<!-- Profile message - We are currently leveling in the 3 to 4 bracket -->
+			<CustomBehavior File="Message" 
+							Text="We are currently leveling in the 3 to 4 bracket." 
+							LogColor="Plum" />
+							
+			<!-- CustomBehavior - Wait timer - wait 1 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="1000" />	
+
+			<!--  CustomBehavior - LoadProfile -->				
+			<CustomBehavior File="LoadProfile" 
+							ProfileName="[Botanist][Tinker][H-4][position-check]" />				
+							
+		</If>	<!-- If our level >= 3 and < 5 -->
+		
+		<!-- If our level >= 5 and < 6 -->
+		<If Condition="Me.Level &gt;= 5 &amp;&amp; Me.Level &lt; 6" >
+		
+			<!-- Profile message - We are currently leveling in the 5 to 6 bracket -->
+			<CustomBehavior File="Message" 
+							Text="We are currently leveling in the 5 to 6 bracket." 
+							LogColor="Plum" />
+							
+			<!-- CustomBehavior - Wait timer - wait 1 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="1000" />	
+
+			<!--  CustomBehavior - LoadProfile -->				
+			<CustomBehavior File="LoadProfile" 
+							ProfileName="[Botanist][Tinker][H-4][position-check]" />				
+							
+		</If>	<!-- If our level >= 5 and < 6 -->
+		
+		<!-- If our level >= 6 and < 8 -->
+		<If Condition="Me.Level &gt;= 6 &amp;&amp; Me.Level &lt; 8" >
+		
+			<!-- Profile message - We are currently leveling in the 6 to 8 bracket -->
+			<CustomBehavior File="Message" 
+							Text="We are currently leveling in the 6 to 8 bracket." 
+							LogColor="Plum" />
+							
+			<!-- CustomBehavior - Wait timer - wait 1 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="1000" />	
+
+			<!--  CustomBehavior - LoadProfile -->				
+			<CustomBehavior File="LoadProfile" 
+							ProfileName="[Botanist][Tinker][H-4][position-check]" />				
+							
+		</If>	<!-- If our level >= 6 and < 8 -->
+		
+		<!-- If our level >= 8 and < 10 -->
+		<If Condition="Me.Level &gt;= 8 &amp;&amp; Me.Level &lt; 10" >
+		
+			<!-- Profile message - We are currently leveling in the 8 to 10 bracket -->
+			<CustomBehavior File="Message" 
+							Text="We are currently leveling in the 8 to 10 bracket." 
+							LogColor="Plum" />
+							
+			<!-- CustomBehavior - Wait timer - wait 1 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="1000" />	
+
+			<!--  CustomBehavior - LoadProfile -->				
+			<CustomBehavior File="LoadProfile" 
+							ProfileName="[Botanist][Tinker][H-4][position-check]" />				
+							
+		</If>	<!-- If our level >= 8 and < 10 -->
+		
+		<!-- If our level >= 10 and < 12 -->
+		<If Condition="Me.Level &gt;= 10 &amp;&amp; Me.Level &lt; 12" >
+		
+			<!-- Profile message - We are currently leveling in the 10 - 12 bracket -->
+			<CustomBehavior File="Message" 
+							Text="We are currently leveling in the 10 - 12 bracket." 
+							LogColor="Plum" />
+							
+			<!-- CustomBehavior - Wait timer - wait 1 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="1000" />	
+
+			<!--  CustomBehavior - LoadProfile -->				
+			<CustomBehavior File="LoadProfile" 
+							ProfileName="[Botanist][Tinker][H-4][position-check]" />				
+							
+		</If>	<!-- If our level >= 10 and < 58 -->
+		
+		<!-- If our level >= 12 and < 14 -->
+		<If Condition="Me.Level &gt;= 12 &amp;&amp; Me.Level &lt; 14" >
+		
+			<!-- Profile message - We are currently leveling in the 12 - 14 bracket -->
+			<CustomBehavior File="Message" 
+							Text="We are currently leveling in the 12 - 14 bracket." 
+							LogColor="Plum" />
+							
+			<!-- CustomBehavior - Wait timer - wait 1 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="1000" />	
+
+			<!--  CustomBehavior - LoadProfile -->				
+			<CustomBehavior File="LoadProfile" 
+							ProfileName="[Botanist][Tinker][H-4][position-check]" />				
+							
+		</If>	<!-- If our level >= 10 and < 58 -->
+		
+		<!-- If our level >= 14 and < 15 -->
+		<If Condition="Me.Level &gt;= 14 &amp;&amp; Me.Level &lt; 15" >
+		
+			<!-- Profile message - We are currently leveling in the 14 - 15 bracket -->
+			<CustomBehavior File="Message" 
+							Text="We are currently leveling in the 14 - 15 bracket." 
+							LogColor="Plum" />
+							
+			<!-- CustomBehavior - Wait timer - wait 1 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="1000" />	
+
+			<!--  CustomBehavior - LoadProfile -->				
+			<CustomBehavior File="LoadProfile" 
+							ProfileName="[Botanist][Tinker][H-4][position-check]" />				
+							
+		</If>	<!-- If our level >= 10 and < 58 -->
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		<!-- If our level >= 10 and < 58 -->
+		<If Condition="Me.Level &gt;= 15 &amp;&amp; Me.Level &lt; 58" >
+		
+			<!-- Profile message - We are currently leveling in the 10 - 58 bracket -->
+			<CustomBehavior File="Message" 
+							Text="We are currently leveling in the 15 - 58 bracket." 
+							LogColor="Plum" />
+							
+			<!-- CustomBehavior - Wait timer - wait 1 seconds - delay -->
+			<CustomBehavior File="WaitTimer" 
+							WaitTime="1000" />	
+
+			<!--  CustomBehavior - LoadProfile -->				
+			<CustomBehavior File="LoadProfile" 
+							ProfileName="[Botanist][Tinker][H-4][position-check]" />				
+							
+		</If>	<!-- If our level >= 10 and < 58 -->
+		
+	</QuestOrder>
+
+</HBProfile>
+
