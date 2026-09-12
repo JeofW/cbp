@@ -1,7 +1,7 @@
 name: Audit quest regression suites
 on:
   push:
-    branches: ['audit/04-quest-validation-20260912']
+    branches: ['audit/04-quest-validation-20260912', 'audit/05-quest-navigation-evidence-20260912']
     paths: ['**.cs', '**.csproj', '.github/workflows/audit-quest-suites.yml']
   workflow_dispatch:
 permissions:
