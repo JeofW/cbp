@@ -1,0 +1,39 @@
+name: Audit evidence exports
+on:
+  push:
+    branches: ['audit/01-evidence-baseline-20260912']
+    paths: ['Tools/EvidenceAudit/**', '.github/workflows/audit-evidence-exports.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  evidence:
+    if: github.repository == 'JeofW/CopilotBuddy-private' && github.event.repository.private == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Verify analyzers and regenerate the immutable baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m venv "$RUNNER_TEMP/audit-venv"
+          PY="$RUNNER_TEMP/audit-venv/bin/python"
+          "$PY" -m pip install --only-binary=:all: -r Tools/EvidenceAudit/requirements.txt
+          mkdir -p "$RUNNER_TEMP/audit-source" "$RUNNER_TEMP/audit-evidence"
+          "$PY" -m unittest discover -s Tools/EvidenceAudit -p 'test_*.py' -v 2>&1 | tee "$RUNNER_TEMP/audit-evidence/analyzer-tests.txt"
+          git archive 63112d57a373c1186cee880f98dab65245a214e1 | tar -x -C "$RUNNER_TEMP/audit-source"
+          "$PY" Tools/EvidenceAudit/run.py "$RUNNER_TEMP/audit-source" "$RUNNER_TEMP/audit-evidence" --source-commit 63112d57a373c1186cee880f98dab65245a214e1
+          git rev-parse HEAD > "$RUNNER_TEMP/audit-evidence/analyzer-commit.txt"
+      - name: Retain private reproducible exports
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: audit-evidence-${{ github.sha }}
+          path: ${{ runner.temp }}/audit-evidence/
+          compression-level: 9
+          retention-days: 7
+          if-no-files-found: error
