@@ -1,0 +1,33 @@
+--- a/Styx/WoWInternals/WoWMovement.cs
++++ b/Styx/WoWInternals/WoWMovement.cs
+@@ -272,6 +272,8 @@
+ 
+ 		public static void MoveStop()
+ 		{
++			if (ObjectManager.Wow == null && ObjectManager.Me == null)
++				return;
+ 			WoWUnit? activeMover = ActiveMover ?? ObjectManager.Me;
+ 			if ((activeMover == null || !activeMover.MovementInfo.IsMoving)
+ 				&& ClickToMoveInfo.Type == ClickToMoveType.None
+@@ -302,7 +304,9 @@
+ 
+ 		public static void StopMovement(MovementDirection direction)
+ 		{
+-			StyxWoW.ResetAfk();
++			// A stop/cleanup may arrive after the client memory has detached.
++			if (ObjectManager.Wow != null)
++				StyxWoW.ResetAfk();
+ 
+ 			// Native for all directions except JumpAscend (matches HB 4.3.4/6.2.3 smethod_1).
+ 			var nativeDirs = direction & ~MovementDirection.JumpAscend;
+@@ -568,7 +572,9 @@
+ 			// Do NOT guard on ActiveInputControl.Flags.HasFlag — start commands are idempotent
+ 			// and skipping them when the flag read is stale would block movement silently.
+ 
+-			StyxWoW.ResetAfk();
++			// A stop/cleanup may arrive after the client memory has detached.
++			if (ObjectManager.Wow != null)
++				StyxWoW.ResetAfk();
+ 
+ 			// Native for all directions except JumpAscend (matches HB 4.3.4/6.2.3 smethod_1).
+ 			// Writes directly to CGInputControl.m_flags — no Lua round-trip, no "key stuck" glitch.
