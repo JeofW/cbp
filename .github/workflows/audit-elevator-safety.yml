@@ -1,0 +1,40 @@
+name: Audit elevator safety
+on:
+  push:
+    branches: ['audit/03-lift-boarding-safety-20260912']
+    paths:
+      - 'Styx/Logic/Pathing/ElevatorTransitController.cs'
+      - 'Styx/Logic/Pathing/WoWPoint.cs'
+      - 'Tools/ElevatorSafetyRegressionTests/**'
+      - 'Tools/QuestRecoveryRegressionTests/ElevatorTransitRegressionTests.cs'
+      - '.github/workflows/audit-elevator-safety.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  policy:
+    if: github.repository == 'JeofW/CopilotBuddy-private' && github.event.repository.private == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9
+        with:
+          dotnet-version: '10.0.x'
+      - name: Execute actual controller and regression fixtures
+        shell: bash
+        run: |
+          set -euo pipefail
+          git rev-parse HEAD > "$RUNNER_TEMP/elevator-commit.txt"
+          dotnet run --project Tools/ElevatorSafetyRegressionTests/ElevatorSafetyRegressionTests.csproj --configuration Release 2>&1 | tee "$RUNNER_TEMP/elevator-results.txt"
+      - name: Retain test evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: elevator-safety-${{ github.sha }}
+          path: |
+            ${{ runner.temp }}/elevator-commit.txt
+            ${{ runner.temp }}/elevator-results.txt
+          retention-days: 7
