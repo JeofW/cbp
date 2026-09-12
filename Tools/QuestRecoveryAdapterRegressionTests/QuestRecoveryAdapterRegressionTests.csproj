@@ -10,8 +10,8 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\CopilotBuddy.csproj" />
-    <Compile Include="..\..\..\..\Quest Behaviors\SafePickUp.cs" Link="SafePickUp.cs" />
-    <Compile Include="..\..\..\..\Quest Behaviors\SafeTurnIn.cs" Link="SafeTurnIn.cs" />
-    <Compile Include="..\..\..\..\Plugins\ZygorProfileRecovery\ZygorProfileRecovery.cs" Link="ZygorProfileRecovery.cs" />
+    <Compile Include="..\..\runtime-snapshot\Quest Behaviors\SafePickUp.cs" Link="SafePickUp.cs" />
+    <Compile Include="..\..\runtime-snapshot\Quest Behaviors\SafeTurnIn.cs" Link="SafeTurnIn.cs" />
+    <Compile Include="..\..\runtime-snapshot\Plugins\ZygorProfileRecovery\ZygorProfileRecovery.cs" Link="ZygorProfileRecovery.cs" />
   </ItemGroup>
 </Project>

@@ -37,7 +37,7 @@ jobs:
           & (Join-Path $destination 'dotnet.exe') --list-runtimes *> (Join-Path $out 'x86-runtimes.txt')
           if ($LASTEXITCODE -ne 0) { throw 'Installed x86 runtime host did not execute' }
           if (-not (Select-String -Path (Join-Path $out 'x86-runtimes.txt') -Pattern 'Microsoft.WindowsDesktop.App 10\.')) { throw 'x86 desktop framework missing' }
-      - name: Build and run all five checked-in quest and vendor suites
+      - name: Build and run quest, vendor and explicit routine-compatibility suites
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Continue'
@@ -55,6 +55,10 @@ jobs:
               if ($null -eq $dll) { $run = 99 } else {
                 & $runtime $dll.FullName *> (Join-Path $out "$name-run.txt")
                 $run = $LASTEXITCODE
+                if ($name -eq 'QuestRecoveryRegressionTests') {
+                  & $runtime $dll.FullName --routine-compatibility *> (Join-Path $out 'RoutineCompatibility-run.txt')
+                  $results += [ordered]@{ suite = 'RoutineCompatibility'; build_exit_code = $build; run_exit_code = $LASTEXITCODE; game_attached = $false }
+                }
               }
             }
             $results += [ordered]@{ suite = $name; build_exit_code = $build; run_exit_code = $run; game_attached = $false }
