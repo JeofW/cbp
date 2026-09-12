@@ -1075,38 +1075,35 @@ namespace Styx.Logic.Combat
 		#region LuaEvent Auto-Refresh (ported from HB 4.3.4 smethod_0/1/2/3)
 
 		/// <summary>
-		/// HB 6.2.3 smethod_7: Called once during engine initialization.
-		/// Hooks BotEvents.OnBotStart so each bot run re-subscribes the Lua
-		/// events and forces a spellbook rebuild.
-		/// NOTE: TreeRoot calls RaiseBotStart(), NOT RaiseBotStarted().
+		/// TreeRoot.OnBotStart already calls this on every bot start. Keep that
+		/// direct call as the sole refresh owner; appending another BotStart
+		/// callback here grows work on each restart and misses first-run binding.
 		/// </summary>
 		internal static void Initialize()
 		{
-			BotEvents.OnBotStart += OnBotStarted_RefreshSpells;
 			_knownSpells.Clear();
-			_lastKnownSpellCount = 0;
-			Refresh();
-			Logging.WriteDebug("[SpellManager] Initialize \u2014 subscribed to BotEvents.OnBotStart");
+			RefreshSpellsAndBindLuaEvents();
+			Logging.WriteDebug("[SpellManager] Initialize — refreshed and bound owned Lua events");
 		}
 
 		/// <summary>
-		/// HB 6.2.3 pattern: Called during engine teardown.
-		/// Unhooks BotEvents.OnBotStart and clears the spellbook.
+		/// Explicit engine teardown releases only this owner's Lua subscriptions
+		/// and clears the spellbook. Repeated teardown is safe.
 		/// </summary>
 		internal static void Shutdown()
 		{
 			_knownSpells.Clear();
 			_lastKnownSpellCount = 0;
-			BotEvents.OnBotStart -= OnBotStarted_RefreshSpells;
-			Logging.WriteDebug("[SpellManager] Shutdown \u2014 unsubscribed from BotEvents.OnBotStart");
+			Lua.Events.DetachEvent("LEARNED_SPELL_IN_TAB", new LuaEventHandlerDelegate(OnSpellBookChanged));
+			Lua.Events.DetachEvent("ACTIVE_TALENT_GROUP_CHANGED", new LuaEventHandlerDelegate(OnSpellBookChanged));
+			Logging.WriteDebug("[SpellManager] Shutdown — released owned Lua events");
 		}
 
 		/// <summary>
-		/// HB 6.2.3 smethod_0: OnBotStart handler. Rebuilds the spellbook, then
-		/// detach+reattach the two Lua events (idempotent pattern from HB 4.3.4).
-		/// TreeRoot calls RaiseBotStart() during Start(), so this fires each bot run.
+		/// Rebuild once per direct initialization and bind exactly one owned
+		/// handler per Lua event without removing any other subscriber.
 		/// </summary>
-		private static void OnBotStarted_RefreshSpells(EventArgs args)
+		private static void RefreshSpellsAndBindLuaEvents()
 		{
 			_lastKnownSpellCount = 0;
 			Refresh();
