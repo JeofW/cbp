@@ -1,0 +1,59 @@
+name: Audit spell lifecycle
+on:
+  push:
+    branches: ['audit/06-spell-lifecycle-20260912']
+    paths: ['**.cs', '**.csproj', '.github/workflows/audit-spell-lifecycle.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  lifecycle-and-core:
+    if: github.repository == 'JeofW/CopilotBuddy-private' && github.event.repository.private == true
+    runs-on: windows-latest
+    timeout-minutes: 15
+    env:
+      GIT_CONFIG_COUNT: '1'
+      GIT_CONFIG_KEY_0: core.longpaths
+      GIT_CONFIG_VALUE_0: 'true'
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9
+        with:
+          dotnet-version: '10.0.x'
+      - name: Verify x86 frameworks and run lifecycle, core and Singular checks
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $out = Join-Path $env:RUNNER_TEMP 'spell-lifecycle-results'
+          New-Item -ItemType Directory -Force $out | Out-Null
+          git rev-parse HEAD | Out-File (Join-Path $out 'commit.txt')
+          $installer = Join-Path (Split-Path $env:RUNNER_WORKSPACE) '_actions/actions/setup-dotnet/67a3573c9a986a3f9c594539f4ab511d57bb3ce9/externals/install-dotnet.ps1'
+          $destination = Join-Path $env:RUNNER_TEMP 'dotnet-x86'
+          foreach ($framework in @('dotnet', 'windowsdesktop')) {
+            & pwsh -NoProfile -File $installer -Channel '10.0' -Runtime $framework -Architecture x86 -InstallDir $destination -NoPath *> (Join-Path $out "install-$framework.txt")
+            if ($LASTEXITCODE -ne 0) { throw "x86 $framework installation failed" }
+          }
+          $runtime = Join-Path $destination 'dotnet.exe'
+          & $runtime --list-runtimes *> (Join-Path $out 'x86-runtimes.txt')
+          if ($LASTEXITCODE -ne 0) { throw 'x86 runtime failed to execute' }
+          if (-not (Select-String -Path (Join-Path $out 'x86-runtimes.txt') -Pattern 'Microsoft.WindowsDesktop.App 10\.')) { throw 'x86 desktop framework missing' }
+          dotnet build Tools/QuestRecoveryRegressionTests/QuestRecoveryRegressionTests.csproj --configuration Release -p:Platform=x86 --verbosity quiet *> (Join-Path $out 'build.txt')
+          if ($LASTEXITCODE -ne 0) { throw 'Lifecycle/core build failed' }
+          $dlls = @(Get-ChildItem Tools/QuestRecoveryRegressionTests/bin -Filter QuestRecoveryRegressionTests.dll -Recurse | Where-Object { $_.FullName -notmatch '[\\/](ref|refint)[\\/]' })
+          if ($dlls.Count -ne 1) { throw 'Expected exactly one compiled regression assembly' }
+          & $runtime $dlls[0].FullName *> (Join-Path $out 'core-run.txt')
+          $coreExit = $LASTEXITCODE
+          & $runtime $dlls[0].FullName --routine-compatibility *> (Join-Path $out 'routine-run.txt')
+          $routineExit = $LASTEXITCODE
+          @{ build_exit_code = 0; core_exit_code = $coreExit; routine_exit_code = $routineExit; game_attached = $false } | ConvertTo-Json | Out-File (Join-Path $out 'result.json')
+          if ($coreExit -ne 0 -or $routineExit -ne 0) { exit 1 }
+      - name: Retain complete private lifecycle evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: spell-lifecycle-${{ github.sha }}
+          path: ${{ runner.temp }}/spell-lifecycle-results/
+          retention-days: 7
+          if-no-files-found: error
