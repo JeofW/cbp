@@ -9,6 +9,7 @@ Do not assume every movement symptom is a bad mesh. Separate navmesh data defect
 Start by reading:
 
 - `AUDIT_CONTEXT.md`
+- `KNOWN_ISSUES_AND_HYPOTHESES.md`
 - `Styx/Logic/Pathing/MeshNavigator.cs`
 - `Styx/Logic/Pathing/ElevatorTransitController.cs`
 - `Styx/Logic/Pathing/StuckHandler.cs`
@@ -26,6 +27,28 @@ Start by reading:
 - all files under `runtime-logs/`, prioritizing `runtime-logs/2026-09-12_1701_45740.log`
 
 The runtime snapshot is evidence of what was installed; core source outside it is the implementation source. Determine whether any installed file is generated/copied from another source before editing it. Do not patch only a runtime copy when a canonical source exists.
+
+## Mandatory whole-codebase study and causal graph
+
+Do not perform a shallow file-by-file review. First inventory the entire repository and divide it into analysis communities: host lifecycle/threading, behavior-tree scheduler, game-object/memory/Lua layer, navigation/mesh/transports, movement/stuck/avoidance, quest/POI/profile/recovery, bot bases including Wholesome AutoQuest, plugins, runtime compilation/loading, Singular shared infrastructure, each class/spec family, settings/data, and test/build/deployment tooling.
+
+Create a directed “spider-web” knowledge graph that joins static code structure to runtime evidence. Use `/graphify --mode deep --directed` if available, scoped so generated files, binaries, caches, and giant raw artifacts do not overwhelm source analysis; otherwise build an equivalent graph and document the extraction method. Read and follow the graph requirements in `KNOWN_ISSUES_AND_HYPOTHESES.md`.
+
+The graph is an investigation instrument, not decoration. It must let us query from a symptom such as “back-and-forth movement” to the exact log incidents, emitters, call chain, state owners, competing movement producers, hypotheses, falsification tests, proposed fix, regression, and PR. Mark edges `EXTRACTED`, `INFERRED`, or `AMBIGUOUS`, with direction, confidence, and provenance. Never present an inferred edge as confirmed.
+
+Run the audit in explicit passes:
+
+1. **Corpus census:** identify canonical source, installed/runtime copies, generated/package artifacts, tests, logs, missing assets, and duplication/drift risks.
+2. **Static structure:** imports/references, call graph, public APIs, event subscriptions, shared state, thread boundaries, behavior composition, source-to-runtime deployment, and high-centrality components.
+3. **Runtime evidence:** parse every log into sessions and structured incidents; cluster by signatures, map/coordinate radius, POI, state, timing, stack, and recovery sequence; calculate unique incidents and latency distributions rather than relying on raw line counts.
+4. **Cross-layer traces:** reconstruct navigation, quest, vendor, transport, combat, mount, startup/shutdown, and routine-decision flows end to end.
+5. **Feedback loops:** prove or reject the causal loops seeded in `KNOWN_ISSUES_AND_HYPOTHESES.md`, especially partial-path recovery, blackspot/replan oscillation, mount/buff contention, handler multiplication, and latency-induced false recovery.
+6. **Adversarial hypothesis review:** for each suspected cause, document alternatives and actively search for counter-evidence. Distinguish correlation, trigger, contributing factor, and root cause.
+7. **Reproduction and measurement:** create deterministic fixtures or recorded replays, establish p50/p95/p99/max baselines, and identify what still requires a live game run.
+8. **Architecture synthesis:** identify ownership violations, cycles, god nodes, duplicate policy, weak contracts, and missing typed states; compare focused repair versus redesign options.
+9. **Implementation mapping:** link every approved change to its evidence, regression, architecture boundary, risk, rollout, and staged PR.
+
+Save the compact graph, graph report, community index/wiki, extraction/regeneration instructions, saved investigation queries, and audit report in the repository. Large interactive output may remain a reproducible artifact rather than being committed. The audit is incomplete if a high-priority conclusion cannot be traversed as symptom → evidence → code → hypothesis → reproduction → test → fix → PR.
 
 ## Known evidence that must be reproduced and explained
 
