@@ -3,6 +3,7 @@ on:
   push:
     branches: ['audit/03-lift-boarding-safety-20260912']
     paths:
+      - 'CopilotBuddy.csproj'
       - 'Styx/Logic/Pathing/ElevatorTransitController.cs'
       - 'Styx/Logic/Pathing/WoWPoint.cs'
       - 'Tools/ElevatorSafetyRegressionTests/**'
