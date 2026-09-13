@@ -103,6 +103,28 @@ internal static class MissingOfferEvidenceRegressionTests
             tracker.Reset(); Check(!tracker.PickupUnavailable && tracker.LastOutcome == null && tracker.ConfirmedCycles == 0,
                 "explicit reset retained stale evidence");
         });
+        foreach (var observation in new (string Name, bool UniqueTitle, bool ListLoaded, uint[] Offered, bool Clear)[]
+        {
+            ("unique exact target title invalidates old absence", true, false, Array.Empty<uint>(), true),
+            ("target returning in a loaded offer list invalidates old absence", false, true, new uint[] { 876 }, true),
+            ("ambiguous title without ID is not positive evidence", false, false, Array.Empty<uint>(), false),
+            ("an unloaded empty frame is not positive evidence", false, false, Array.Empty<uint>(), false)
+        })
+        {
+            var sample = observation;
+            Test(sample.Name, () =>
+            {
+                var tracker = new QuestPickupMismatchTracker();
+                tracker.Observe(Missing(Array.Empty<uint>()), 1);
+                tracker.Observe(Missing(Array.Empty<uint>()), 2);
+                string shown = sample.UniqueTitle || sample.Name.StartsWith("ambiguous") ? "Target quest" : "";
+                var next = QuestPickupDialogPolicy.Decide(876, "Target quest", 0, shown, 123, sample.Offered,
+                    false, false, false, false, false, false, sample.UniqueTitle, sample.ListLoaded);
+                tracker.Observe(next, 3);
+                Check(sample.Clear ? tracker.ConfirmedCycles == 0 && tracker.LastOutcome == null : tracker.LastOutcome != null,
+                    "positive target evidence and unknown/ambiguous observations must remain distinct");
+            });
+        }
         var failures = new List<string>();
         foreach (var test in tests)
         {
