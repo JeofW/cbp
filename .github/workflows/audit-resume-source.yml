@@ -1,0 +1,38 @@
+name: Audit resume source snapshot
+on:
+  push:
+    branches: ['audit/next-21-reviewed-integration-20260913']
+    paths: ['.github/workflows/audit-resume-source.yml']
+permissions:
+  contents: read
+jobs:
+  snapshot:
+    if: github.repository == 'JeofW/CopilotBuddy-private' && github.event.repository.private == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GIT_LFS_SKIP_SMUDGE: '1'
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+          lfs: false
+          fetch-depth: 0
+      - name: Export only existing Git objects and branch identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/audit-resume-source"
+          mkdir -p "$out"
+          git rev-parse HEAD > "$out/checkout.txt"
+          git show-ref > "$out/refs.txt"
+          git bundle create "$out/source.bundle" --all
+          git bundle verify "$out/source.bundle"
+          sha256sum "$out/source.bundle" > "$out/SHA256SUMS"
+          printf 'Git object snapshot only; LFS binary objects were not downloaded. No remote refs changed.\n' > "$out/README.txt"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: audit-resume-source-${{ github.sha }}
+          path: ${{ runner.temp }}/audit-resume-source/
+          retention-days: 7
+          if-no-files-found: error
