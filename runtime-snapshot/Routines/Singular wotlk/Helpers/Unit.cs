@@ -50,53 +50,25 @@ namespace Singular.Helpers
         }
 
 
-        public static bool IsDungeonCombatBotTargetingRestricted
+        public static bool IsDungeonCombatBotTargetingRestricted => GroupCombatSafety.IsRestricted;
+
+        public static bool IsEligibleDungeonCombatTarget(this WoWUnit unit) => GroupCombatSafety.MayAttack(unit);
+
+        // Recheck at dispatch after dismount/face/setup has yielded. Friendly support
+        // remains possible without a hostile target; self-centered AoE is still checked.
+        public static bool IsCombatActionSafe(string spellName, WoWUnit target)
         {
-            get
-            {
-                return StyxWoW.Me != null &&
-                       DungeonEngagementPolicy.IsRestricted(
-                           BotManager.Current != null ? BotManager.Current.Name : null,
-                           StyxWoW.Me.CurrentMap.IsDungeon);
-            }
+            if (!IsDungeonCombatBotTargetingRestricted) return true;
+            return target != null
+                && (target.IsMe || target.IsFriendly || target.IsEligibleDungeonCombatTarget())
+                && IsAreaEffectSafe(spellName, target);
         }
 
-        public static bool IsEligibleDungeonCombatTarget(this WoWUnit unit)
+        public static bool IsCombatActionSafe(int spellId, WoWUnit target)
         {
-            if (unit == null)
-                return false;
-
-            bool restricted = IsDungeonCombatBotTargetingRestricted;
-            if (!restricted)
-                return true;
-
-            if (DungeonEngagementPolicy.IsEngaged(
-                    true,
-                    unit.Aggro,
-                    unit.PetAggro,
-                    unit.IsTargetingMeOrPet,
-                    unit.IsTargetingAnyMinion,
-                    unit.IsTargetingMyPartyMember,
-                    unit.IsTargetingMyRaidMember,
-                    unit.TaggedByMe,
-                    false))
-            {
-                return true;
-            }
-
-            bool assistTarget = false;
-            var leader = RaFHelper.Leader;
-            if (leader != null && leader.IsValid && !leader.IsMe && leader.Combat && leader.CurrentTarget == unit)
-            {
-                assistTarget = true;
-            }
-            else
-            {
-                assistTarget = Group.Tanks.Any(tank =>
-                    tank != null && tank.IsValid && !tank.IsMe && tank.Combat && tank.CurrentTarget == unit);
-            }
-
-            return assistTarget;
+            if (!IsDungeonCombatBotTargetingRestricted) return true;
+            var spell = WoWSpell.FromId(spellId);
+            return spell != null && IsCombatActionSafe(spell.Name, target);
         }
 
         public static bool IsAreaEffectSafe(string spellName, WoWUnit target)

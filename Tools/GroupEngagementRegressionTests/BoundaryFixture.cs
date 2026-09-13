@@ -22,7 +22,7 @@ namespace Styx.Logic.Combat
  public enum WoWSpellMechanic { None, Banished, Charmed, Horrified, Incapacitated, Polymorphed, Sapped, Shackled, Asleep, Frozen, Invulnerable, Invulnerable2, Turned }
  public enum WoWApplyAuraType { None, ModResistancePct, ModDamagePercentDone, ModMechanicDamageTakenPercent }
  public sealed class SpellEffect { public WoWApplyAuraType AuraType; public int MiscValueA; public int BasePoints; }
- public sealed class WoWSpell { public string Name = ""; public WoWSpellMechanic Mechanic; public SpellEffect? GetSpellEffect(int _) => null; }
+ public sealed class WoWSpell { public static WoWSpell FromId(int id) => new() { Name = id == 53385 ? "Divine Storm" : "Crusader Strike" }; public string Name = ""; public WoWSpellMechanic Mechanic; public SpellEffect? GetSpellEffect(int _) => null; }
  public sealed class WoWAura { public string Name=""; public int StackCount; public ulong CreatorGuid; public TimeSpan TimeLeft; public WoWSpell Spell=new(); }
 }
 namespace Styx.WoWInternals
