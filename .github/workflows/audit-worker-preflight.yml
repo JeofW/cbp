@@ -1,0 +1,105 @@
+# Temporary exact-source preflight; removed when the verified source is committed.
+name: Audit worker ownership preflight
+on:
+  push:
+    branches: ['audit/next-23-worker-ownership-20260913']
+    paths: ['Tools/Audit/worker-ownership.patch', '.github/workflows/audit-worker-preflight.yml']
+permissions:
+  contents: read
+jobs:
+  worker:
+    if: github.repository == 'JeofW/CopilotBuddy-private' && github.event.repository.private == true && github.actor == 'JeofW'
+    runs-on: windows-2022
+    timeout-minutes: 20
+    permissions:
+      contents: write # Only unreferenced, hash-verified blobs; no branch or deployment writes.
+    env:
+      GIT_CONFIG_COUNT: '2'
+      GIT_CONFIG_KEY_0: core.longpaths
+      GIT_CONFIG_VALUE_0: 'true'
+      GIT_CONFIG_KEY_1: core.autocrlf
+      GIT_CONFIG_VALUE_1: 'false'
+      GIT_LFS_SKIP_SMUDGE: '1'
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+          lfs: false
+      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9
+        with:
+          dotnet-version: '10.0.x'
+      - name: Verify and apply only the reviewed source patch
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $out = Join-Path $env:RUNNER_TEMP 'worker-preflight'
+          New-Item -ItemType Directory -Force $out | Out-Null
+          git rev-parse HEAD | Out-File (Join-Path $out 'commit.txt')
+          $before = @{
+            'Styx/Logic/BehaviorTree/TreeRoot.cs' = 'dd2741516364b9382e56b5215c7f3a8d0e56ae68'
+            'TreeSharp/Composite.cs' = 'bfa9a6b37efe327c3a54321e031b2f17171e9d34'
+          }
+          $after = @{
+            'Styx/Logic/BehaviorTree/TreeRoot.cs' = 'b44fb330e3bfd14e90f077b8b8fd9cbd116f5311'
+            'TreeSharp/Composite.cs' = '3d1fda2135b9c4fba78785d3104fe34e4c26e00d'
+          }
+          foreach ($p in $before.Keys) { if ((git hash-object -- $p) -ne $before[$p]) { throw "Unexpected preimage $p" } }
+          git apply --check --whitespace=error Tools/Audit/worker-ownership.patch
+          if ($LASTEXITCODE -ne 0) { throw 'Patch preflight failed' }
+          git apply --whitespace=error Tools/Audit/worker-ownership.patch
+          if ($LASTEXITCODE -ne 0) { throw 'Patch apply failed' }
+          $changed = @(git diff --name-only)
+          if ($changed.Count -ne 2) { throw 'Unexpected changed paths' }
+          foreach ($p in $changed) { if (-not $after.ContainsKey($p) -or (git hash-object -- $p) -ne $after[$p]) { throw "Unexpected postimage $p" } }
+          git diff --check
+          if ($LASTEXITCODE -ne 0) { throw 'Whitespace validation failed' }
+      - name: Execute actual worker, core and Singular regressions
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $out = Join-Path $env:RUNNER_TEMP 'worker-preflight'
+          $installer = Join-Path (Split-Path $env:RUNNER_WORKSPACE) '_actions/actions/setup-dotnet/67a3573c9a986a3f9c594539f4ab511d57bb3ce9/externals/install-dotnet.ps1'
+          $destination = Join-Path $env:RUNNER_TEMP 'dotnet-x86'
+          foreach ($framework in @('dotnet','windowsdesktop')) {
+            & pwsh -NoProfile -File $installer -Channel '10.0' -Runtime $framework -Architecture x86 -InstallDir $destination -NoPath *> (Join-Path $out "install-$framework.txt")
+            if ($LASTEXITCODE -ne 0) { throw 'Runtime installation failed' }
+          }
+          $runtime = Join-Path $destination 'dotnet.exe'
+          & $runtime --list-runtimes *> (Join-Path $out 'runtimes.txt')
+          if ($LASTEXITCODE -ne 0 -or -not (Select-String -Path (Join-Path $out 'runtimes.txt') -Pattern 'Microsoft.WindowsDesktop.App 10\.')) { throw 'x86 desktop runtime not verified' }
+          dotnet build Tools/QuestRecoveryRegressionTests/QuestRecoveryRegressionTests.csproj -c Release -p:Platform=x86 -v quiet *> (Join-Path $out 'build.txt')
+          if ($LASTEXITCODE -ne 0) { throw 'Core build failed' }
+          $dlls = @(Get-ChildItem Tools/QuestRecoveryRegressionTests/bin -Filter QuestRecoveryRegressionTests.dll -Recurse | Where-Object { $_.FullName -notmatch '[\\/](ref|refint)[\\/]' })
+          if ($dlls.Count -ne 1) { throw 'Expected exactly one regression assembly' }
+          & $runtime $dlls[0].FullName *> (Join-Path $out 'core-run.txt')
+          $core = $LASTEXITCODE
+          & $runtime $dlls[0].FullName --routine-compatibility *> (Join-Path $out 'routine-run.txt')
+          $routine = $LASTEXITCODE
+          @{build=0;core=$core;routine=$routine;game_attached=$false;patched_worktree=$true} | ConvertTo-Json | Out-File (Join-Path $out 'result.json')
+          if ($core -ne 0 -or $routine -ne 0) { throw 'Regression failure; no blobs will be staged' }
+      - name: Stage verified blobs without creating commits or changing refs
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $expected = @{
+            'Styx/Logic/BehaviorTree/TreeRoot.cs' = 'b44fb330e3bfd14e90f077b8b8fd9cbd116f5311'
+            'TreeSharp/Composite.cs' = '3d1fda2135b9c4fba78785d3104fe34e4c26e00d'
+          }
+          $records = @()
+          foreach ($p in ($expected.Keys | Sort-Object)) {
+            if ((git hash-object -- $p) -ne $expected[$p]) { throw "Source changed during validation $p" }
+            $body = @{encoding='base64';content=[Convert]::ToBase64String([IO.File]::ReadAllBytes((Join-Path $PWD $p)))} | ConvertTo-Json -Compress
+            $response = Invoke-RestMethod -Method Post -Uri 'https://api.github.com/repos/JeofW/CopilotBuddy-private/git/blobs' -Headers @{Authorization="Bearer $env:GH_TOKEN";Accept='application/vnd.github+json';'X-GitHub-Api-Version'='2022-11-28'} -ContentType 'application/json' -Body $body
+            if ($response.sha -ne $expected[$p]) { throw 'Uploaded blob mismatch' }
+            $records += @{path=$p;sha=$response.sha;sha256=(Get-FileHash $p -Algorithm SHA256).Hash.ToLowerInvariant()}
+          }
+          $records | ConvertTo-Json | Out-File (Join-Path $env:RUNNER_TEMP 'worker-preflight/verified-blobs.json')
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: worker-preflight-${{ github.sha }}
+          path: ${{ runner.temp }}/worker-preflight/
+          retention-days: 7
+          if-no-files-found: error
