@@ -107,8 +107,14 @@ internal static class RoutineCompilationRegression
 
         if (!Invoke(false, false, false, false))
             throw new InvalidOperationException("Low-level Paladin must retain ranged Exorcism opener.");
-        if (!Invoke(false, false, true, true))
-            throw new InvalidOperationException("Low-level Paladin must allow Exorcism as a melee filler.");
+        // Intentional policy migration: ranged openers stay available, but a
+        // non-proc hard cast must not take ownership from active melee swings.
+        if (Invoke(false, false, true, true))
+            throw new InvalidOperationException("Unprocced Exorcism must preserve active melee attacks.");
+        if (!Invoke(false, false, false, true))
+            throw new InvalidOperationException("Auto-attack enabled at range must not block the stationary opener.");
+        if (!Invoke(false, true, true, true))
+            throw new InvalidOperationException("An observed Art of War proc must not require successful talent discovery.");
         if (!Invoke(true, true, true, true))
             throw new InvalidOperationException("Art of War must retain instant Exorcism in melee.");
         if (Invoke(true, false, false, false))
@@ -138,7 +144,7 @@ internal static class RoutineCompilationRegression
         const BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
         string[] factories = { "CreateRetributionPaladinNormalPullAndCombat",
             "CreateRetributionPaladinPvPPullAndCombat", "CreateRetributionPaladinInstancePullAndCombat",
-            "CreateMeleeStrikeBehavior" };
+            "CreateMeleeStrikeBehavior", "CreateExorcismBehavior" };
         var originalPlayer = Styx.WoWInternals.ObjectManager.Me;
         int checkedPredicates = 0;
         try

@@ -57,6 +57,7 @@ namespace Styx
         public int Level { get; set; }
         public double ManaPercent { get; set; } = 100;
         public bool IsAutoAttacking { get; set; } = true;
+        public bool IsMoving { get; set; }
         public Dictionary<string, Aura> ActiveAuras => Auras;
         public bool HasAuraWithMechanic(params Logic.Combat.WoWSpellMechanic[] _) => false;
     }
