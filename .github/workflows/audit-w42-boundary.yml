@@ -1,0 +1,77 @@
+name: Audit W42 uploaded observation boundary
+on:
+  push:
+    branches: ['audit/next-42-observation-boundary-20260914']
+    paths: ['Styx/Logic/Questing/**', 'runtime-snapshot/Bots/WholesomeAutoQuest-master/**.cs', 'Tools/QuestObservationBoundaryRegressionTests/**', 'Tools/QuestCompletionOwnerRegressionTests/**', '.github/workflows/audit-w42-boundary.yml']
+permissions:
+  contents: read
+jobs:
+  boundary:
+    if: github.repository == 'JeofW/CopilotBuddy-private' && github.event.repository.private == true
+    runs-on: windows-2022
+    timeout-minutes: 15
+    env:
+      GIT_LFS_SKIP_SMUDGE: '1'
+      GIT_CONFIG_COUNT: '2'
+      GIT_CONFIG_KEY_0: core.longpaths
+      GIT_CONFIG_VALUE_0: 'true'
+      GIT_CONFIG_KEY_1: core.autocrlf
+      GIT_CONFIG_VALUE_1: 'false'
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+          lfs: false
+          fetch-depth: 0
+      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9
+        with:
+          dotnet-version: '10.0.x'
+      - name: Extract and execute pinned production owners as x86
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $out = Join-Path $env:RUNNER_TEMP 'w42-boundary-results'
+          New-Item -ItemType Directory -Force $out | Out-Null
+          $sha = (git rev-parse HEAD).Trim()
+          $sha | Out-File (Join-Path $out 'commit.txt')
+          $export = Join-Path $out 'w42-test-sources.zip'
+          git archive --format=zip -o $export HEAD Tools/QuestLogObservationRegressionTests Tools/QuestObservationBoundaryRegressionTests Tools/QuestCompletionOwnerRegressionTests Styx/Logic/Questing/QuestLog.cs Styx/Logic/Questing/PlayerQuest.cs Tools/WholesomeQuestRecoveryRegressionTests/QuestLogCompletenessRegressionTests.cs .github/workflows/audit-w42-boundary.yml
+          if ($LASTEXITCODE -ne 0) { throw 'Test-source export failed' }
+          $installer = Join-Path (Split-Path $env:RUNNER_WORKSPACE) '_actions/actions/setup-dotnet/67a3573c9a986a3f9c594539f4ab511d57bb3ce9/externals/install-dotnet.ps1'
+          $dest = Join-Path $env:RUNNER_TEMP 'dotnet-x86'
+          & pwsh -NoProfile -File $installer -Channel '10.0' -Runtime dotnet -Architecture x86 -InstallDir $dest -NoPath *> (Join-Path $out 'install.txt')
+          if ($LASTEXITCODE -ne 0) { throw 'x86 runtime install failed' }
+          $runtime = Join-Path $dest 'dotnet.exe'
+          & $runtime --info *> (Join-Path $out 'runtime-info.txt')
+          python Tools/QuestObservationBoundaryRegressionTests/extract_owners.py --repo . --ref $sha --out Tools/QuestObservationBoundaryRegressionTests/Generated *> (Join-Path $out 'extract.txt')
+          if ($LASTEXITCODE -ne 0) { throw 'Extraction failed; not a behavioral regression' }
+          Copy-Item Tools/QuestObservationBoundaryRegressionTests/Generated/source-manifest.json $out
+          dotnet build Tools/QuestObservationBoundaryRegressionTests -c Release -p:PlatformTarget=x86 -v quiet *> (Join-Path $out 'build.txt')
+          $build = $LASTEXITCODE
+          $run = $null
+          if ($build -eq 0) {
+            & $runtime Tools/QuestObservationBoundaryRegressionTests/bin/Release/net10.0/QuestObservationBoundaryRegressionTests.dll (Join-Path $out 'cases.json') *> (Join-Path $out 'run.txt')
+            $run = $LASTEXITCODE
+          }
+          @{commit=$sha;build=$build;run=$run;game_attached=$false;architecture='x86';scope='actual extracted owners, controlled boundaries; no scheduler'} | ConvertTo-Json | Out-File (Join-Path $out 'result.json')
+          $ownerSources = @('Styx/Logic/Questing/QuestLog.cs', 'Styx/Logic/Questing/PlayerQuest.cs', 'Tools/QuestLogObservationRegressionTests/BoundaryFixture.cs', 'Tools/QuestCompletionOwnerRegressionTests/Program.cs', 'Tools/QuestCompletionOwnerRegressionTests/QuestCompletionOwnerRegressionTests.csproj')
+          $ownerFiles = @($ownerSources | ForEach-Object { @{path=$_;git_blob=(git rev-parse ($sha + ':' + $_)).Trim();sha256=(Get-FileHash $_ -Algorithm SHA256).Hash.ToLowerInvariant()} })
+          @{source_commit=$sha;files=$ownerFiles} | ConvertTo-Json -Depth 8 | Out-File (Join-Path $out 'actual-owner-manifest.json')
+          dotnet build Tools/QuestCompletionOwnerRegressionTests -c Release -p:PlatformTarget=x86 -v quiet *> (Join-Path $out 'completion-build.txt')
+          $ownerBuild = $LASTEXITCODE
+          $ownerRun = $null
+          if ($ownerBuild -eq 0) {
+            & $runtime Tools/QuestCompletionOwnerRegressionTests/bin/Release/net10.0/QuestCompletionOwnerRegressionTests.dll (Join-Path $out 'completion-cases.json') (Join-Path $out 'actual-owner-manifest.json') *> (Join-Path $out 'completion-run.txt')
+            $ownerRun = $LASTEXITCODE
+          }
+          @{commit=$sha;build=$ownerBuild;run=$ownerRun;game_attached=$false;architecture='x86';scope='full QuestLog/PlayerQuest; no scheduler publication'} | ConvertTo-Json | Out-File (Join-Path $out 'completion-result.json')
+          $hashes = @(Get-ChildItem $out -File | ForEach-Object { @{file=$_.Name;sha256=(Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()} })
+          $hashes | ConvertTo-Json -Depth 5 | Out-File (Join-Path $out 'files-sha256.json')
+          if ($build -ne 0 -or $run -ne 0 -or $ownerBuild -ne 0 -or $ownerRun -ne 0) { exit 1 }
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: w42-boundary-${{ github.sha }}
+          path: ${{ runner.temp }}/w42-boundary-results/
+          retention-days: 14
+          if-no-files-found: error
