@@ -1,73 +1,69 @@
-# CopilotBuddy audit — current verified resume checkpoint
+# CopilotBuddy audit — post-merge resume checkpoint
 
-Date: 13 September 2026. Repository: JeofW/CopilotBuddy-private.
+Repository: `JeofW/CopilotBuddy-private`. This document supersedes the pre-merge statements in older checkpoint documents. Inspect remote heads before using any saved SHA.
 
-**Resume branch:** `audit/next-36-verified-party-quest-checkpoint-20260913`.
-**Tested production/test commit:** `a732ccd6728d9893f5a1bac10b628ea4ec15ba2e`.
-**Tested tree:** `5db4e7be2b2be3ff6cb52065bd86f711a75f6c39`.
-This checkpoint changes documentation only. It supersedes the old next-30 resume location, not its retained evidence. No merge, deployment or installed-file change has been performed.
+## Actual merge and authorization boundary
 
-## Recover, do not restart
+The owner explicitly authorized merging the previously completed aggregate. **PR #34 is merged into master**, merge commit **8382a7ec05a64212ea0a237159dca427a0767425**, on 13 September 2026. The old master **c43c50d8d5d6775055f19bf018b52930a264d4a4** is preserved on `audit/backup-master-before-approved-merge-20260913`.
 
-Read this file, inspect current remote heads, then the relevant saved plan/source and failing/passing evidence. The original CODEX_AUDIT_PROMPT.md, KNOWN_ISSUES_AND_HYPOTHESES.md and AUDIT_CONTEXT.md still govern scope. Original broad evidence remains in docs/audit/2026-09-12/AUDIT.md and GRAPH.md. Earlier checkpoint documents describe their own pinned revisions; pending-at-creation statements may be superseded by the actual later runs below.
+The merge preserved the earlier focused audit history. Some individual stacked PRs still appear open because they target other audit branches; their included source must not be merged repeatedly to change UI badges. The earlier reconciliation excluded only the unrelated capability-test PR #1 and the optional native-queue experiment PR #25. Verify ancestry again before closing or reconciling any PR.
 
-A failed chat response does not establish that preceding GitHub writes were lost. Commits, PRs and Actions artifacts are the recovery authority, not unsaved analysis or an old chat summary. The cause of the displayed chat error is unknown. Avoid redownloading meshes for ordinary managed tests. If an artifact expires, rerun its recorded workflow at its recorded commit rather than inventing results.
+This is a SOURCE merge, not an installed-bot update. No navigation DLL, mesh or installed files were replaced. The existing native-format compatibility issue and live acceptance gaps remain. The owner approval was for the completed aggregate, not blanket approval to merge future repairs or deploy the native candidate.
 
-## What is included
+## Resume from the newer, unmerged follow-up tree
 
-The earlier verified managed fixes are preserved through d62f2c7b73305087dd23f45d8e881ae38d3ab3e7 / PR #28: quest identity, exact endpoint evidence, navigation deferral, vendor backoff, rest ownership, shared cast dispatch, worker cancellation/teardown, lift corridor/onward-route/observation continuity, and Exorcism/Paladin decisions.
+**Working branch: `audit/next-41-wholesome-postmerge-verification-20260913`.**
 
-The saved combined tree ed68d59f78763620650e4935f15aec78ded47bd9 adds:
+**Tested production/test commit: `c14bd264da90bdd384ebd9bf2bcc8f7b7a9a8217`.**
 
-| Slice | Commit | Review |
+**Tested tree: `a1da20dc3ecbe98ae1fbc29986d49f7afaad0b17`.**
+
+This tree contains master plus the following two independent follow-ups. Subsequent handover commits modify documentation only.
+
+| Follow-up | Saved commit | Review state at handover |
 |---|---|---|
-| Paladin blessings, separate aura coverage, actual Retribution Purify/Cleanse | 315929f7477a09d90c7a7ce9ca48799a9408ceed | PR #29 |
-| Current group engagement at botbase/routine/dispatch boundaries | fcab14f8c76559720fedb93c01cf7c8dbefcac68 | PR #30 |
-| Wholesome owned collection and stable missing-offer observations | 4c67950e20bf28ee15846fcf124bcd94de541d77 | PR #31 |
-| Original 3.3.5a role tuple normalization at five consumers | a732ccd6728d9893f5a1bac10b628ea4ec15ba2e | PR #33 |
+| Preserve creature/game-object relation identity through scheduler, ancestor checks and generated profiles | `67a1a112d0e6a94bdf01984ef430de0e6a596100` | PR #35, open, not merged |
+| Protect current accepted and scheduled quest items plus shared protected names/IDs before Wholesome selling | `8e8ebf4f623b16b3779a8fd6a3893b63611bb901` | PR #36, open, not merged |
 
-The optional indexed native queue experiment in draft PR #25 is excluded. It did not establish a useful speedup on the expensive Grod routes. Do not promote it by default. Temporary write-token source-preparation workflows for the completed slices have been removed. Do not integrate the older competing quest fixture branch in place of PR #31.
+Do not recreate those repairs. Read their diffs, tests and limitations, and build the next focused branch from this combined tree when both are required. Preserve their failing-before histories. Do not merge competing old fixture branches or silently promote optional experiments.
 
-## Final exact-source verification
+## Verified execution evidence
 
-At a732ccd6728d9893f5a1bac10b628ea4ec15ba2e:
+The complete archives below were recovered from GitHub Actions and their SHA-256, embedded source commit and results were checked during continuation. These are actual executions at the recorded commits, not newly invented results or live client sessions.
 
-- **Combined run 34756892419**, artifact **10317327272**, SHA-256 **03d7d3fa289e690938fa036e8a1798f101267da3d3437601c39ccb95223c8b4e**: all **13 required entries** have build/run exit 0. Complete ZIP, checksum, embedded commit, results and all suite run logs inspected.
-- **Original-role run 34756892472**, artifact **10317397111**, SHA-256 **4067b53b7de7988d945474da98d6a801746bc5470b4acc80ec2c239d3c5bf5af**: **50/50 exact production-query cases under Lua 5.1.5** and **26/26 actual-helper adapter checks** pass. Complete ZIP and commit inspected.
+| Tested source | Run / artifact | Result | Archive SHA-256 |
+|---|---|---|---|
+| master `8382a7ec` | 34761250161 / 10319091671 | 13 integrated build/run entries exit 0; 99 Singular source files compile; 33 analyzer tests pass | `e3e1f818a656039c0df92c6cb0de452bce4b598a08cf1864b79ba0322ed24d89` |
+| same master | 34761250147 / 10319221117 | 50/50 original-role query cases under Lua 5.1.5; 26/26 actual-helper adapter checks | `27c99a997dcfc5cccc7c4a7177087380d1dbb9668ba448190d71f4dbb5adfc35` |
+| combined follow-up `c14bd264` | 34763063805 / 10319148422 | All 14 integrated entries exit 0, including 23/23 relation and 23/23 sale cases; 99 Singular files compile; 33 analyzer tests pass | `42ce9e2f1bffc18b7aac32cea1c6761c1d24ac976fc8c490a48c20de2d7a6121` |
+| sale baseline `5b735d95` | 34762222832 / 10319506621 | 17/23 fail; six controls pass | `2a60da891f68d48d58f5416883b9d56973360aa92b93ce65389c315d05ec5bb5` |
 
-The thirteen combined entries are QuestRecovery, WholesomeQuestRecovery, QuestRecoveryAdapter, QuestPickupPolicy, VendorCore, NativeContract, ShutdownBoundary, explicit Singular compatibility, portable Elevator, portable PaladinDecisions, GroupEngagement, PaladinSupport and Python evidence analyzers.
+Independent Windows host run **34763063883** also reports success at `c14bd264`. PR #35 retains the relation red/preflight/committed evidence. The combined suite has controlled world boundaries and compiled wiring checks, not exhaustive gameplay/branch coverage. It is not proof of original-client server acceptance. Counts can overlap between executables.
 
-Selected same-run coverage: 44 Paladin support scenarios; 25 group engagement scenarios and 9 compiled guard/call-order checks; 62 Wholesome/pickup/inventory cases; 61 elevator scenarios plus 500 seeded permission checks; 39 Exorcism cases/192 observation rows plus 42 existing Paladin cases/135 availability rows; prior 11 dataset, 13 endpoint, 15 navigation deferral, 25 vendor, 9 rest, 18 terminal-route, 11 timer/2,000 seeded operation, 16 cast-dispatch, 13 routine-boundary, 22 worker and 9 shutdown cases; 6 native wrapper checks; 33 analyzer tests; **99 tracked Singular source files compile**.
+The sale regression extracts the actual checkout method and links the real protected-items manager; it does not reimplement the decision. The complete Wholesome class is compiled separately by the broader suite. Temporary source-preparation/write-token workflows were removed before the follow-up production commits.
 
-Counts overlap across executables and fixtures. They are not unique quests, whole-codebase branch coverage or attached gameplay. No client was attached. The native wrapper checks deliberately use a missing map, not the compatible-mesh candidate. The extra Lua role suite controls API returns and validates actual query text; it does not certify every original-client API.
+## First unfinished dependency: complete quest observations and protection ownership
 
-The earlier ed68d59 combined run 34755373640 also passed 13 entries, artifact 10317415624, SHA-256 59b73788dfebcaa543250da1a025dedfc600061e0b12c2d64bfedcabb8ba2c55. It is superseded by the final same-source verification above.
+**Confirmed source information-loss path, not yet behaviorally reproduced:** `Styx/Logic/Questing/QuestLog.cs:101-125` walks 25 slots and drops null `GetQuest` results. A nonzero occupied slot reaches `PlayerQuest.FromId`; `Styx/Logic/Questing/PlayerQuest.cs:169-174` returns null when quest cache metadata is unavailable. An accepted quest can therefore be omitted from the materialized list without a completeness indication. Historical frequency is unverified.
 
-## Owner's five concerns: implemented scope and boundaries
+This affects both scheduler and mutation permissions. In particular, a null-list fixture in the new sale suite does NOT prove the real list is complete. Preserve raw occupied quest identities independently from optional cached metadata; make incomplete/changed observations explicit and test before implementation. Do not infer abandonment, completion or permission to sell from a missing cache record. Keep the old public API compatible where possible. Recheck player/session/log identity at side-effect boundaries.
 
-**Wholesome:** inventory checking existed already and was extended. Satisfied collection objectives are checked before validating unused source metadata. Unknown inventory remains distinct from zero. Missing offers use stable quest/giver/reason episodes rather than ordered unrelated offers; stale cycles cannot erase current evidence. Positive target identity can clear an old missing-offer episode before UI buttons finish loading. Whole-quest completion is not fabricated from one collected item. PR #31 records 20/62 controlled baseline failures and 62/62 after repair. This is focused architecture/owner repair, not a complete audit of every quest behavior.
+**Protection ownership:** `CollectItemObjective` adds an item to the shared runtime set and unconditionally removes it on disposal; `ProtectedItemsManager.Add/Remove` are plain set operations. A scoped owner must not release another owner's protection. Reproduce two simultaneous collectors, pre-existing manual protection, disposal order, duplicate disposal, cancellation and reset before introducing compatible leases. Also investigate reload clearing protection before successful file parsing.
 
-**Original 3.3.5a compatibility:** the support/quest/group slices introduce no modern Lua API. The role repair corrects five consumers of the original tank/healer/damage tuple through one validated-token normalizer. Red run 34756501144 failed all 50 query cases; preflight 34756679123 passed 50/50 and 26/26 before promotion. See LEGACY_ROLE_PLAN.md and PR #33. Full command/offset/ABI compatibility still requires its own evidence, including live acceptance.
+These gaps are NOT closed by PR #36. It repairs missing current/shared exceptions at its caller boundary; it does not certify complete quest snapshots, mutations inside a native sale batch or all destructive inventory callers.
 
-**No unrelated dungeon/raid pulls:** one GroupCombatSafety owner requires current enemy combat and evidence linking that enemy to the group; selection by a fighting tank/leader is insufficient. Botbase, shared string/ID casts, auto-attacks, pet Attack and wand dispatch recheck permission. Known area effects receive fresh checks. Outdoor/Wholesome pulls retain their scope. Active persistent AoE/pets, all class-specific hit shapes and arbitrary plugin/native bypasses remain open.
+## Continuing verification, not another census
 
-**Blessings and auras:** separate owners consider current caster/recipient coverage, normal/Greater variants, learned spells and useful complementary Kings/Might/Wisdom; explicit settings and an owned useful contribution remain. This is observed coverage, not distributed assignments or rank-strength/talent negotiation. Simultaneous peers, locale and live aura propagation need acceptance.
+Read `docs/audit/2026-09-13/WHOLESOME_BEHAVIOR_VERIFICATION.md` for the coverage frontier and `POSTMERGE_GRAPH.json` for directed evidence links. Continue every active Wholesome behavior and the host owners it calls; distinguish source-reviewed, reproduced, regression-verified and live-unverified work. Keep a checked inventory so untested branches cannot disappear from the scope.
 
-**Disease/Poison:** Retribution now actually invokes Purify/Cleanse after emergency Lay on Hands and before ordinary heals; precombat also dispels before maintenance. Capability declarations alone previously did not dispatch a cure. Safe removal masks and conservative encounter exclusions avoid incidentally removing a protected effect. Self/group switches remain available. The exclusion list is not exhaustive and no server-confirmed cure is claimed.
+Priority after the two contracts above: merchant/mail/discard/consumption revalidation and acknowledgment; vendor data discovery/settings; restart/rest/merchant state; extension cancellation; prerequisites, unsupported/special/scripted objectives and bounded recovery; group roster identity; original-client APIs; remaining combat/support boundaries; native compatibility, route resources and validated lift alternatives. Do not quarantine valid quests or invent landing coordinates to make tests pass.
 
-## Meshes and native status
+## Operational constraints and restart protocol
 
-The complete installed LFS dataset was already retrieved and verified: 6,054 files / 2,985,832,908 bytes; selective later replays used hashed Kalimdor assets. The checked-in Navigation.dll rejects inspected format-6 headers, while a pinned source-built candidate can query them. Lib/Navigation.dll, mmaps/, raw logs and installed files remain unchanged.
+World of Warcraft **3.3.5a build 12340**, Windows x86, .NET 10, runtime-compiled extensions. Validate original Lua 5.1 APIs/return schemas, not retail or modern Wrath Classic. No live client is attached here. Full multi-tick target identity, active pets/persistent AoE, simultaneous Paladin/rank/locale/encounter behavior and physical transport support still need acceptance.
 
-Captured forward Grod requests remain partial/resource-limited. Destination-side polygons and nearby controls exist, but out-of-nodes is not proof of an unreachable destination or a complete route. No global shortest-route, safe live boarding, or complete vendor-trip claim. The native queue experiment's preserved semantics did not yield a useful expensive-route speedup; retain its negative evidence.
+`mmaps/` is the installed LFS dataset; actual bytes were previously pulled and verified (6,054 files / 2,985,832,908 bytes). Pull needed tiles only for mesh-backed jobs and verify hashes. Managed tests do not need another 3 GB download. The checked-in DLL rejects inspected format-6 headers; the source-built candidate remains unpromoted. Partial/out-of-nodes is neither successful arrival nor proof of unreachability. PR #25 did not establish useful Grod-query speedup and remains excluded.
 
-## Remaining work — explicit, not hidden by passing CI
+Read the original `CODEX_AUDIT_PROMPT.md`, `KNOWN_ISSUES_AND_HYPOTHESES.md`, `AUDIT_CONTEXT.md` and existing audit/graph evidence before extending scope. Preserve corrected counterevidence rather than trusting every original hypothesis. Use tests that fail for the intended defect, focused repairs, affected plus combined verification, and recorded hashes/PR links. Save a concise checkpoint after each coherent slice. If artifacts expire, rerun the pinned workflow instead of assuming outcomes. Independent review has not occurred; never label self-review as independent approval.
 
-1. Original-client group identity: the GUID-only WoWPartyMember constructor retains incomplete `party`/`raid` tokens rather than resolving a current indexed unit. New role normalization safely returns NONE for these, but does not fix identity/slot freshness. Reproduce GUID-to-slot and roster-reorder behavior before repair; retain unknown/manual fallbacks rather than guessing another member's role.
-2. Complete command compatibility: inventory API schemas, aura/caster observations, role/spec fallbacks, client offsets and native ABI/terrain placement need continuing original-client verification. Compilation alone is insufficient.
-3. Quest breadth and ownership: item protection across vendor/discard/mail/consumption, fresh inventory after mutations, special/scripted/item-started/escort/vehicle objectives, quest-log fullness and remaining zone/global reconciliation need cross-owner regression and live evidence. Do not label all candidates confirmed bugs or quarantine valid quests automatically.
-4. Group combat/support breadth: persistent AoE and already attacking pets, all cone/chain/rank geometries, crowd-control preservation, full multi-tick target identity and direct plugin/native commands remain. Support needs simultaneous-peer/rank/locale/encounter acceptance, not only single-client coverage fixtures.
-5. Native navigation and lifts: explicit source-built compatible loader packaging, measured search resources/cancellation, validated approach/wait/ride/exit/onward route alternatives and costs, actual moving-platform support/attachment, and the Grod journey remain open. Do not fabricate coordinates, increase budgets blindly, or label partial paths complete.
-6. Review/release: independent review is pending; code has only self review. Rerun exact combined suites after each new production change and perform supervised original-client pickup/objective/turn-in/vendor/combat/buff/dispel/lift acceptance with interruption cases. No automatic merge, force push, installation or deployment.
-
-Continue from these unfinished dependencies using the saved branch and evidence, not from the original broad census again.
+The long chat's failure does not undo committed work. Resume from GitHub, not unsaved analysis. See `NEXT_CHAT_PROMPT.md`. No new follow-up merge, force push, installation or binary replacement is authorized by this handover.

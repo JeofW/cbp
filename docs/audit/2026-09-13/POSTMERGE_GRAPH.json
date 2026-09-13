@@ -1,0 +1,43 @@
+{
+  "schema": "copilotbuddy-audit-postmerge/v1",
+  "directed": true,
+  "scope": "Human-reviewed continuation overlay; not a complete semantic call graph",
+  "master": "8382a7ec05a64212ea0a237159dca427a0767425",
+  "tested_followups": "c14bd264da90bdd384ebd9bf2bcc8f7b7a9a8217",
+  "nodes": [
+    {"id":"pr34","kind":"pull-request","number":34,"status":"merged","commit":"8382a7ec05a64212ea0a237159dca427a0767425"},
+    {"id":"master-tests","kind":"execution-evidence","run":34761250161,"artifact":10319091671,"entries_passed":13,"game_attached":false},
+    {"id":"role-tests","kind":"execution-evidence","run":34761250147,"artifact":10319221117,"queries_passed":50,"adapters_passed":26,"game_attached":false},
+    {"id":"relation","kind":"fix","commit":"67a1a112d0e6a94bdf01984ef430de0e6a596100","pr":35,"status":"open-unmerged","owner":"QuestScheduler/ProfileBuilder"},
+    {"id":"sale","kind":"fix","commit":"8e8ebf4f623b16b3779a8fd6a3893b63611bb901","pr":36,"status":"open-unmerged","owner":"WholesomeAutoQuest.SellByQuality"},
+    {"id":"sale-red","kind":"execution-evidence","run":34762222832,"artifact":10319506621,"failed":17,"cases":23},
+    {"id":"combined","kind":"integration","commit":"c14bd264da90bdd384ebd9bf2bcc8f7b7a9a8217","tree":"a1da20dc3ecbe98ae1fbc29986d49f7afaad0b17","merged":false},
+    {"id":"combined-tests","kind":"execution-evidence","run":34763063805,"artifact":10319148422,"entries_passed":14,"relation_cases_passed":23,"sale_cases_passed":23,"game_attached":false},
+    {"id":"occupied-slot","kind":"source-observation","path":"Styx/Logic/Questing/QuestLog.cs","lines":[116,125]},
+    {"id":"cache-materialization","kind":"source-owner","path":"Styx/Logic/Questing/PlayerQuest.cs","lines":[169,174]},
+    {"id":"materialized-log","kind":"source-owner","path":"Styx/Logic/Questing/QuestLog.cs","lines":[101,110]},
+    {"id":"W42","kind":"confirmed-source-risk","name":"Occupied quest identity omitted on unavailable cached metadata","reproduced":false,"historical_frequency":"unknown"},
+    {"id":"snapshot-tests","kind":"planned-regression","status":"not-implemented","cases":["occupied slot without cache","hydration later","same-count different IDs","player/session replacement","accept or abandon between reads"]},
+    {"id":"W43","kind":"confirmed-source-risk","name":"Protection set release lacks scoped ownership","paths":["Bots/Quest/Objectives/CollectItemObjective.cs","Styx/Logic/Profiles/ProtectedItemsManager.cs"],"reproduced":false},
+    {"id":"lease-tests","kind":"planned-regression","status":"not-implemented","cases":["two collectors","manual pre-protection","both disposal orders","double disposal","reset and cancellation"]},
+    {"id":"native-queue","kind":"experiment","pr":25,"included":false,"conclusion":"No established useful speedup on target Grod queries"},
+    {"id":"live-acceptance","kind":"unresolved-gate","name":"Original client geometry/attachment, inventory and server action acceptance","status":"pending"}
+  ],
+  "edges": [
+    {"source":"pr34","target":"master-tests","relation":"verified-by","classification":"EXTRACTED","confidence":"high","provenance":"Master run/artifact and embedded commit verified"},
+    {"source":"pr34","target":"role-tests","relation":"verified-by","classification":"EXTRACTED","confidence":"high","provenance":"Master Lua archive and embedded commit verified"},
+    {"source":"pr34","target":"combined","relation":"ancestor-of","classification":"EXTRACTED","confidence":"high","provenance":"GitHub compare: master ... c14bd264, ahead with no divergence"},
+    {"source":"sale-red","target":"sale","relation":"motivates-repair","classification":"EXTRACTED","confidence":"high","provenance":"Actual extracted sale method fails 17/23 baseline cases"},
+    {"source":"relation","target":"combined","relation":"included-in","classification":"EXTRACTED","confidence":"high","provenance":"Saved integration parent/source comparison"},
+    {"source":"sale","target":"combined","relation":"included-in","classification":"EXTRACTED","confidence":"high","provenance":"Comparison 8e8ebf4 ... c14bd264 changes only relation source/tests"},
+    {"source":"combined","target":"combined-tests","relation":"verified-by","classification":"EXTRACTED","confidence":"high","provenance":"Artifact10319148422 SHA42ce9e2f1bffc18b7aac32cea1c6761c1d24ac976fc8c490a48c20de2d7a6121"},
+    {"source":"occupied-slot","target":"cache-materialization","relation":"calls","classification":"EXTRACTED","confidence":"high","provenance":"QuestLog.GetQuest: nonzero raw ID forwarded to PlayerQuest.FromId"},
+    {"source":"cache-materialization","target":"materialized-log","relation":"can-produce-omitted-null","classification":"EXTRACTED","confidence":"high","provenance":"PlayerQuest169-174 returns null for missing cache; QuestLog101-110 skips null"},
+    {"source":"materialized-log","target":"W42","relation":"contains-information-loss","classification":"EXTRACTED","confidence":"high","provenance":"QuestLog blob cdceb09dd4c3f2cfdff00beb761c6dbc5807a850; PlayerQuest blob a13d62739f7c29863977ed38feac2eb1e4be2996"},
+    {"source":"W42","target":"sale","relation":"can-omit-required-protection","classification":"INFERRED","confidence":"high-for-source-contract","provenance":"Sale builds accepted IDs from GetAllQuests; absent cached record is not reported as incomplete","falsification":"Run occupied-slot/cache-miss fixture through actual log and sale owners; determine whether runtime guarantees hydration before sale"},
+    {"source":"W42","target":"snapshot-tests","relation":"requires-reproduction","classification":"INFERRED","confidence":"pending","provenance":"Missing live completeness guarantee; test raw identity versus metadata before repair"},
+    {"source":"W43","target":"lease-tests","relation":"requires-reproduction","classification":"INFERRED","confidence":"pending","provenance":"CollectItemObjective adds/removes global ID; manager157-175 is a set without owner identity"},
+    {"source":"combined","target":"live-acceptance","relation":"does-not-satisfy","classification":"EXTRACTED","confidence":"high","provenance":"All listed fixtures report no game attached"},
+    {"source":"native-queue","target":"combined","relation":"deliberately-excluded-from","classification":"EXTRACTED","confidence":"high","provenance":"Saved exclusion policy; negative benchmark PR25"}
+  ]
+}
