@@ -550,6 +550,10 @@ namespace WholesomeAQ
             var allEndpoints = new List<QuestEndpointCandidate>();
             foreach (QuestObjective objective in quest.Objectives.OrderBy(value => value.Index))
             {
+                // Already-satisfied work does not require usable collection-source
+                // metadata. Do not turn an unused source into a quest-data failure.
+                if (IsObjectiveComplete(objective, objectiveCounts, snapshot.CarriedItemCounts))
+                    continue;
                 if (!Supported(objective))
                 {
                     var unsupportedKey = QuestRecoveryKey.ForObjective((uint)quest.Id, objective.Index);
@@ -559,8 +563,6 @@ namespace WholesomeAQ
                             "scheduler:unsupported-objective", reportDataFailure);
                     continue;
                 }
-                if (IsObjectiveComplete(objective, objectiveCounts, snapshot.CarriedItemCounts))
-                    continue;
                 var objectiveKey = QuestRecoveryKey.ForObjective((uint)quest.Id, objective.Index);
                 QuestRecoveryDecision objectiveDecision = evaluate(objectiveKey);
                 if (!objectiveDecision.MayAttempt)

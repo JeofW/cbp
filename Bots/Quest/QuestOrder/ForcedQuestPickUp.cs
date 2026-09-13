@@ -462,9 +462,11 @@ public class ForcedQuestPickUp : ForcedBehavior
             decision.Action, shownQuestId, this.QuestId, acceptVisible, continueVisible,
             completeQuestVisible, shownQuestCompletion);
 
+        // Even a Wait can contain positive target identity before buttons appear.
+        // Feed it to the tracker before deciding whether to keep the dialog open.
+        RecordPickupDecision(decision);
         if (decision.Action == QuestPickupDialogAction.RejectMismatch)
         {
-            RecordPickupDecision(decision);
             Logging.WriteDebug(
                 "[QuestPickUp] Rejected mismatched dialog (cycle {0}/3, unavailable={1}): {2}",
                 _mismatchTracker.ConfirmedCycles,
@@ -540,7 +542,7 @@ public class ForcedQuestPickUp : ForcedBehavior
             cycle = _interactionCycleId;
         QuestAttemptOutcome outcome = _mismatchTracker.Observe(decision, cycle);
         PickupUnavailable = _mismatchTracker.PickupUnavailable;
-        if (outcome == null || outcome.InteractionCycleId != cycle)
+        if (outcome != null && outcome.InteractionCycleId != cycle)
             return;
         lock (_outcomeSync)
         {
