@@ -2,7 +2,7 @@ name: Audit W42 uploaded observation boundary
 on:
   push:
     branches: ['audit/next-42-observation-boundary-20260914']
-    paths: ['Styx/Logic/Questing/**', 'runtime-snapshot/Bots/WholesomeAutoQuest-master/**.cs', 'Tools/QuestObservationBoundaryRegressionTests/**', '.github/workflows/audit-w42-boundary.yml']
+    paths: ['Styx/Logic/Questing/**', 'runtime-snapshot/Bots/WholesomeAutoQuest-master/**.cs', 'Tools/QuestObservationBoundaryRegressionTests/**', 'Tools/QuestCompletionOwnerRegressionTests/**', '.github/workflows/audit-w42-boundary.yml']
 permissions:
   contents: read
 jobs:
@@ -35,7 +35,7 @@ jobs:
           $sha = (git rev-parse HEAD).Trim()
           $sha | Out-File (Join-Path $out 'commit.txt')
           $export = Join-Path $out 'w42-test-sources.zip'
-          git archive --format=zip -o $export HEAD Tools/QuestLogObservationRegressionTests Tools/QuestObservationBoundaryRegressionTests Tools/WholesomeQuestRecoveryRegressionTests/QuestLogCompletenessRegressionTests.cs .github/workflows/audit-w42-boundary.yml
+          git archive --format=zip -o $export HEAD Tools/QuestLogObservationRegressionTests Tools/QuestObservationBoundaryRegressionTests Tools/QuestCompletionOwnerRegressionTests Styx/Logic/Questing/QuestLog.cs Styx/Logic/Questing/PlayerQuest.cs Tools/WholesomeQuestRecoveryRegressionTests/QuestLogCompletenessRegressionTests.cs .github/workflows/audit-w42-boundary.yml
           if ($LASTEXITCODE -ne 0) { throw 'Test-source export failed' }
           $installer = Join-Path (Split-Path $env:RUNNER_WORKSPACE) '_actions/actions/setup-dotnet/67a3573c9a986a3f9c594539f4ab511d57bb3ce9/externals/install-dotnet.ps1'
           $dest = Join-Path $env:RUNNER_TEMP 'dotnet-x86'
@@ -54,8 +54,20 @@ jobs:
             $run = $LASTEXITCODE
           }
           @{commit=$sha;build=$build;run=$run;game_attached=$false;architecture='x86';scope='actual extracted owners, controlled boundaries; no scheduler'} | ConvertTo-Json | Out-File (Join-Path $out 'result.json')
-          Get-ChildItem $out -File | Get-FileHash -Algorithm SHA256 | Select-Object Hash,Path | ConvertTo-Json | Out-File (Join-Path $out 'files-sha256.json')
-          if ($build -ne 0 -or $run -ne 0) { exit 1 }
+          $ownerSources = @('Styx/Logic/Questing/QuestLog.cs', 'Styx/Logic/Questing/PlayerQuest.cs', 'Tools/QuestLogObservationRegressionTests/BoundaryFixture.cs', 'Tools/QuestCompletionOwnerRegressionTests/Program.cs', 'Tools/QuestCompletionOwnerRegressionTests/QuestCompletionOwnerRegressionTests.csproj')
+          $ownerFiles = @($ownerSources | ForEach-Object { @{path=$_;git_blob=(git rev-parse ($sha + ':' + $_)).Trim();sha256=(Get-FileHash $_ -Algorithm SHA256).Hash.ToLowerInvariant()} })
+          @{source_commit=$sha;files=$ownerFiles} | ConvertTo-Json -Depth 8 | Out-File (Join-Path $out 'actual-owner-manifest.json')
+          dotnet build Tools/QuestCompletionOwnerRegressionTests -c Release -p:PlatformTarget=x86 -v quiet *> (Join-Path $out 'completion-build.txt')
+          $ownerBuild = $LASTEXITCODE
+          $ownerRun = $null
+          if ($ownerBuild -eq 0) {
+            & $runtime Tools/QuestCompletionOwnerRegressionTests/bin/Release/net10.0/QuestCompletionOwnerRegressionTests.dll (Join-Path $out 'completion-cases.json') (Join-Path $out 'actual-owner-manifest.json') *> (Join-Path $out 'completion-run.txt')
+            $ownerRun = $LASTEXITCODE
+          }
+          @{commit=$sha;build=$ownerBuild;run=$ownerRun;game_attached=$false;architecture='x86';scope='full QuestLog/PlayerQuest; no scheduler publication'} | ConvertTo-Json | Out-File (Join-Path $out 'completion-result.json')
+          $hashes = @(Get-ChildItem $out -File | ForEach-Object { @{file=$_.Name;sha256=(Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()} })
+          $hashes | ConvertTo-Json -Depth 5 | Out-File (Join-Path $out 'files-sha256.json')
+          if ($build -ne 0 -or $run -ne 0 -or $ownerBuild -ne 0 -or $ownerRun -ne 0) { exit 1 }
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
