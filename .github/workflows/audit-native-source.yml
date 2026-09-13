@@ -1,0 +1,36 @@
+name: Audit pinned native source acquisition
+on:
+  push:
+    branches: ['audit/next-07-integrated-mesh-20260912']
+    paths: ['.github/workflows/audit-native-source.yml']
+permissions:
+  contents: read
+jobs:
+  source-only:
+    if: github.repository == 'JeofW/CopilotBuddy-private' && github.event.repository.private == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: Likon69/Navigation-C-
+          ref: 221dfe2877fa3f749ada49c98687e99fac74d437
+          persist-credentials: false
+          path: upstream
+      - name: Capture public source for inspection without executing its code
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd upstream
+          test "$(git rev-parse HEAD)" = 221dfe2877fa3f749ada49c98687e99fac74d437
+          mkdir -p "$RUNNER_TEMP/native-source"
+          git archive --format=zip --output="$RUNNER_TEMP/native-source/upstream.zip" HEAD
+          git rev-parse HEAD HEAD^{tree} > "$RUNNER_TEMP/native-source/provenance.txt"
+          sha256sum "$RUNNER_TEMP/native-source/upstream.zip" > "$RUNNER_TEMP/native-source/SHA256SUMS"
+          git ls-tree -r HEAD > "$RUNNER_TEMP/native-source/tree.txt"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: pinned-native-source-221dfe2877fa3f749ada49c98687e99fac74d437
+          path: ${{ runner.temp }}/native-source/
+          retention-days: 7
+          if-no-files-found: error

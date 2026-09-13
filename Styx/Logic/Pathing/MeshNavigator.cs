@@ -30,7 +30,7 @@ namespace Styx.Logic.Pathing
 	/// Not here (stays in Navigator facade):
 	/// - Flightor routing, mount/dismount, avoidance wiring, bot lifecycle
 	/// </summary>
-	public class MeshNavigator : NavigationProvider
+	public partial class MeshNavigator : NavigationProvider
 	{
 		#region Fields — path state (HB 6.2.3 MeshNavigator fields)
 
@@ -67,7 +67,6 @@ namespace Styx.Logic.Pathing
 		private const float LiveCollisionProbeDistance = 6f;
 		private readonly LiveCollisionTracker _liveCollisionTracker = new LiveCollisionTracker();
 		private readonly CommandedMovementProgressTracker _commandedProgress = new CommandedMovementProgressTracker();
-		private readonly TerminalPartialPathRecovery _terminalPartialRecovery = new TerminalPartialPathRecovery();
 		private readonly LocalDetourAttemptHistory _localDetourHistory = new LocalDetourAttemptHistory();
 		private readonly WaitTimer _liveCollisionProbeTimer = new WaitTimer(TimeSpan.FromMilliseconds(250));
 		private readonly WaitTimer _liveCollisionRepathTimer = new WaitTimer(TimeSpan.FromSeconds(2));
@@ -509,12 +508,22 @@ namespace Styx.Logic.Pathing
 			if (destination == WoWPoint.Zero)
 				return MoveResult.Failed;
 
-			if (float.IsNaN(destination.X) || float.IsNaN(destination.Y) || float.IsNaN(destination.Z))
+			if (!IsFiniteRoutePoint(destination))
+			{
+				ResetTerminalRouteEvidence();
+				LastRouteFailure = RouteFailureReason.InvalidCoordinates;
 				return MoveResult.Failed;
+			}
 
 			LocalPlayer? me = ObjectManager.Me;
 			if (me == null)
 				return MoveResult.Failed;
+			if (!IsFiniteRoutePoint(me.Location))
+			{
+				ResetTerminalRouteEvidence();
+				LastRouteFailure = RouteFailureReason.InvalidCoordinates;
+				return MoveResult.Failed;
+			}
 			CancelElevatorTransitIfDestinationChanged(destination);
 			ObserveMovementCadence(DateTime.UtcNow);
 
@@ -542,7 +551,7 @@ namespace Styx.Logic.Pathing
 			if (distance < precision)
 			{
 				_commandedProgress.Reset();
-				_terminalPartialRecovery.Reset();
+				ResetTerminalRouteEvidence();
 				_suppressDriftUntilUtc = DateTime.MinValue;
 				_liveCollisionTracker.Reset();
 				_destination = WoWPoint.Zero;
@@ -559,6 +568,9 @@ namespace Styx.Logic.Pathing
 				if (connectorResult.HasValue)
 					return connectorResult.Value;
 			}
+
+			if (ShouldDeferTerminalRetry(me.Location, destination, me.MapId, DateTime.UtcNow))
+				return MoveResult.Failed;
 
 			// A snapped final waypoint may be consumed before the requested point is
 			// reached. Let the normal regeneration path retry instead of keeping a
@@ -591,7 +603,7 @@ namespace Styx.Logic.Pathing
 				if (destinationChanged)
 				{
 					_commandedProgress.Reset();
-					_terminalPartialRecovery.Reset();
+					ResetTerminalRouteEvidence();
 					_suppressDriftUntilUtc = DateTime.MinValue;
 					_liveCollisionTracker.Reset();
 					try { StuckHandler.Reset(); } catch { }
@@ -599,12 +611,15 @@ namespace Styx.Logic.Pathing
 				}
 
 				// HB 6.2.3 MeshNavigator.FindPath → MeshMovePath assignment.
+				ResetTerminalRouteEvidence();
 				var pathResult = FindPath(me.Location, destination);
+				_lastPathStatus = pathResult.Status;
 				if (!pathResult.Succeeded || pathResult.Points == null || pathResult.Points.Length == 0)
 				{
 					Logging.Write(System.Drawing.Color.Red,
 						"Could not generate path from {0} to {1} on map {2} (status: {3})",
 						me.Location, destination, me.MapId, pathResult.Status);
+					RecordTerminalRouteFailure(me, partial: false);
 					return MoveResult.PathGenerationFailed;
 				}
 
@@ -725,7 +740,7 @@ namespace Styx.Logic.Pathing
 					_currentPathIndex++;
 					ResetElevatorTransit();
 					if (_currentPathIndex >= _currentPath.Count)
-						return _isPartialPath ? MoveResult.Failed : MoveResult.ReachedDestination;
+						return CompletePathOrRecover(me);
 					return MoveResult.Moved;
 				}
 
@@ -872,25 +887,6 @@ namespace Styx.Logic.Pathing
 			return MoveResult.Moved;
 		}
 
-		private MoveResult CompletePathOrRecover(LocalPlayer me)
-		{
-			if (!_isPartialPath)
-			{
-				_terminalPartialRecovery.Reset();
-				return MoveResult.ReachedDestination;
-			}
-
-			if (!_terminalPartialRecovery.Observe(me.Location, _destination, DateTime.UtcNow))
-				return MoveResult.Failed;
-
-			Logging.WriteDiagnostic(
-				"[Nav] Exhausted partial path remained stationary for 3s at {0} toward {1}; advancing stuck recovery.",
-				me.Location,
-				_destination);
-			StuckHandler.Unstick();
-			_suppressDriftUntilUtc = DateTime.UtcNow + UnstickDriftGrace;
-			return MoveResult.UnstuckAttempt;
-		}
 
 		/// <summary>
 		/// Clears all navigation state. HB 6.2.3 MeshNavigator.Clear().
@@ -898,7 +894,7 @@ namespace Styx.Logic.Pathing
 		public override bool Clear()
 		{
 			_commandedProgress.Reset();
-			_terminalPartialRecovery.Reset();
+			ResetTerminalRouteEvidence();
 			try { StuckHandler.Reset(); } catch { }
 			if (_localConnectorTarget != WoWPoint.Zero)
 				Navigator.PlayerMover.MoveStop();
@@ -1164,6 +1160,7 @@ namespace Styx.Logic.Pathing
 		/// </summary>
 		public void OverrideCurrentPath(WoWPoint[] points)
 		{
+			ResetTerminalRouteEvidence();
 			_currentPath.Clear();
 			if (points != null)
 				foreach (var p in points)
@@ -1637,15 +1634,17 @@ namespace Styx.Logic.Pathing
 			WoWGameObject? transport = null;
 			WoWPoint liveLocation = WoWPoint.Empty;
 			WoWPoint[] shortcut = Array.Empty<WoWPoint>();
+			int sourceExitIndex = -1;
 			bool hasGroundSupport = HasGroundSupport(me);
 			foreach (var candidate in candidates)
 			{
-				if (!TryCreateSafeElevatorShortcut(
+				if (!TryCreateSafeElevatorContinuation(
 						me.Location,
 						destination,
 						candidate.LiveLocation,
 						originalMeshPath,
-						out shortcut))
+						out shortcut,
+						out sourceExitIndex))
 				{
 					continue;
 				}
@@ -1664,24 +1663,11 @@ namespace Styx.Logic.Pathing
 						candidates.Length);
 				return false;
 			}
-			_currentPath.Clear();
-			_currentPath.AddRange(shortcut);
-			_currentPathIndex = 1;
-			_currentFlags = new[]
+			if (!TryInstallElevatorContinuation(shortcut, sourceExitIndex))
 			{
-				TripperNav.StraightPathFlags.OffMeshConnection,
-				TripperNav.StraightPathFlags.None,
-				TripperNav.StraightPathFlags.End
-			};
-			_currentPolyTypes = new[]
-			{
-				TripperNav.AreaType.Elevator,
-				TripperNav.AreaType.Ground,
-				TripperNav.AreaType.Ground
-			};
-			_currentAbilityFlags = new TripperNav.AbilityFlags[shortcut.Length];
-			_isPartialPath = false;
-			_cachedPushAheadIndex = -1;
+				Logging.WriteDiagnostic("[Nav] Skipping elevator shortcut: onward mesh metadata is incomplete or inconsistent.");
+				return false;
+			}
 			BeginElevatorTransit(transport, liveLocation, shortcut[0], shortcut[1]);
 			Logging.WriteDiagnostic(
 				"[Nav] Preferring nearby elevator over ground detour: entry={0} guid={1:X} live={2} from={3} exit={4} destination={5}",
@@ -1713,21 +1699,9 @@ namespace Styx.Logic.Pathing
 			WoWPoint destination,
 			WoWPoint transport,
 			IReadOnlyList<WoWPoint> originalMeshPath,
-			out WoWPoint[] shortcut)
-		{
-			WoWPoint waitingPoint = SelectDirectionalMeshLanding(
-				transport, player, player.Z, originalMeshPath, 3f, 15f);
-			WoWPoint exitPoint = SelectDirectionalMeshLanding(
-				transport, destination, destination.Z, originalMeshPath, 5f, 15f);
-			if (waitingPoint == WoWPoint.Empty || exitPoint == WoWPoint.Empty)
-			{
-				shortcut = Array.Empty<WoWPoint>();
-				return false;
-			}
-
-			shortcut = new[] { waitingPoint, exitPoint, destination };
-			return true;
-		}
+			out WoWPoint[] shortcut) =>
+			TryCreateSafeElevatorContinuation(player, destination, transport,
+				originalMeshPath, out shortcut, out _);
 
 		private static WoWPoint SelectDirectionalMeshLanding(
 			WoWPoint transport,
@@ -1904,9 +1878,15 @@ namespace Styx.Logic.Pathing
 			bool hasGroundSupport = HasGroundSupport(me);
 			bool attachedToSelectedTransport = me.WoWMovementInfo.TransportGuid
 			                                   == _elevatorTransit.SelectedTransportGuid;
-			bool boardingPathSafe = !_elevatorTransit.NeedsBoardingCorridor
-			                          || IsElevatorGroundCorridorSafe(
-				                          me, _elevatorTransit.WaitPoint, hasGroundSupport);
+			bool needsGroundBoarding = _elevatorTransit.NeedsBoardingCorridor && !attachedToSelectedTransport;
+			bool approachPathSafe = !needsGroundBoarding
+			                        || IsElevatorGroundCorridorSafe(me, _elevatorTransit.WaitPoint, hasGroundSupport);
+			// Check the same live target that MoveToBoard will command. A safe
+			// waiting point alone says nothing about the remaining boarding gap.
+			bool boardingPathSafe = !needsGroundBoarding
+			                        || (liveLocationAvailable
+			                            && liveLocation.Distance(_elevatorTransit.StartDock) <= 1.25f
+			                            && IsElevatorGroundCorridorSafe(me, liveLocation, hasGroundSupport));
 			bool exitPathSafe = !_elevatorTransit.NeedsExitCorridor
 			                      || (attachedToSelectedTransport
 				                      ? liveLocationAvailable
@@ -1923,6 +1903,7 @@ namespace Styx.Logic.Pathing
 				me.WoWMovementInfo.TransportGuid,
 				isFalling,
 				hasGroundSupport,
+				approachPathSafe,
 				boardingPathSafe,
 				exitPathSafe);
 
@@ -1932,6 +1913,7 @@ namespace Styx.Logic.Pathing
 				transport,
 				liveLocation,
 				hasGroundSupport,
+				approachPathSafe,
 				boardingPathSafe,
 				exitPathSafe);
 			switch (decision.Kind)
@@ -1978,6 +1960,7 @@ namespace Styx.Logic.Pathing
 			WoWGameObject? transport,
 			WoWPoint liveLocation,
 			bool hasGroundSupport,
+			bool approachPathSafe,
 			bool boardingPathSafe,
 			bool exitPathSafe)
 		{
@@ -1987,7 +1970,7 @@ namespace Styx.Logic.Pathing
 
 			_nextElevatorDiagnosticUtc = now.AddSeconds(2);
 			Logging.WriteDiagnostic(
-				"[Nav][Elevator] stage={0} action={1} entry={2} guid={3:X} object={4} live={5} player={6} attached={7:X} falling={8} grounded={9} boardPath={10} exitPath={11} mounted={12} startDock={13} endDock={14} landing={15}",
+				"[Nav][Elevator] stage={0} action={1} entry={2} guid={3:X} object={4} live={5} player={6} attached={7:X} falling={8} grounded={9} approachPath={10} boardPath={11} exitPath={12} mounted={13} startDock={14} endDock={15} landing={16}",
 				_elevatorTransit.StageName,
 				decision.Kind,
 				_elevatorTransit.SelectedTransportEntry,
@@ -1998,6 +1981,7 @@ namespace Styx.Logic.Pathing
 				me.WoWMovementInfo.TransportGuid,
 				me.IsFalling || me.MovementInfo.IsFalling,
 				hasGroundSupport,
+				approachPathSafe,
 				boardingPathSafe,
 				exitPathSafe,
 				me.Mounted,

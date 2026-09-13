@@ -262,9 +262,12 @@ namespace Singular.Helpers
                     //Logger.WriteDebug("OnUnit: " + onUnit(ret));
                     //Logger.WriteDebug("CanCast: " + SpellManager.CanCast(name, onUnit(ret), false));
 
-                    var target = onUnit != null ? onUnit(ret) : null;
-                    var minReqs = requirements != null && requirements(ret) && target != null && name != null &&
-                                  Unit.IsAreaEffectSafe(name, target);
+                    if (string.IsNullOrWhiteSpace(name) || onUnit == null || requirements == null || checkMovement == null)
+                        return false;
+                    var target = onUnit(ret);
+                    if (target == null)
+                        return false;
+                    var minReqs = requirements(ret) && Unit.IsCombatActionSafe(name, target);
                     var canCast = false;
                     var inRange = false;
                     if (minReqs)
@@ -319,8 +322,17 @@ namespace Singular.Helpers
                     new Action(
                         ret =>
                         {
-                            Logger.Write("Casting " + name + " on " + onUnit(ret).SafeName());
-                            SpellManager.Cast(name, onUnit(ret));
+                            // Setup may have yielded since the outer predicate. Resolve once
+                            // here, and never turn a rejected submission into tree success.
+                            if (string.IsNullOrWhiteSpace(name) || onUnit == null)
+                                return RunStatus.Failure;
+                            var target = onUnit(ret);
+                            if (target == null || !Unit.IsCombatActionSafe(name, target))
+                                return RunStatus.Failure;
+                            Logger.Write("Casting " + name + " on " + target.SafeName());
+                            return SpellManager.Cast(name, target)
+                                ? RunStatus.Success
+                                : RunStatus.Failure;
 
                             //WoWSpell spell;
                             //if (SpellManager.Spells.TryGetValue(name, out spell))
@@ -410,7 +422,12 @@ namespace Singular.Helpers
         {
             return new Decorator(
                 ret =>
-                requirements != null && requirements(ret) && onUnit != null && onUnit(ret) != null && SpellManager.CanCast(spellId, onUnit(ret), true),
+                {
+                    if (spellId <= 0 || onUnit == null || requirements == null)
+                        return false;
+                    var target = onUnit(ret);
+                    return target != null && requirements(ret) && Unit.IsCombatActionSafe(spellId, target) && SpellManager.CanCast(spellId, target, true);
+                },
                 new Sequence(
                     new DecoratorContinue(
                         ret => Movement.NeedsOffTargetCastSetup(onUnit(ret)),
@@ -418,8 +435,17 @@ namespace Singular.Helpers
                     new Action(
                         ret =>
                         {
-                            Logger.Write("Casting " + spellId + " on " + onUnit(ret).SafeName());
-                            SpellManager.Cast(spellId, onUnit(ret));
+                            // Setup may have yielded since the outer predicate. Resolve once
+                            // here, and never turn a rejected submission into tree success.
+                            if (spellId <= 0 || onUnit == null)
+                                return RunStatus.Failure;
+                            var target = onUnit(ret);
+                            if (target == null || !Unit.IsCombatActionSafe(spellId, target))
+                                return RunStatus.Failure;
+                            Logger.Write("Casting " + spellId + " on " + target.SafeName());
+                            return SpellManager.Cast(spellId, target)
+                                ? RunStatus.Success
+                                : RunStatus.Failure;
                         }))
                 );
         }
@@ -562,8 +588,14 @@ namespace Singular.Helpers
 
             return
                 new Decorator(
-                    ret => onUnit(ret) != null && !DoubleCastPreventionDict.ContainsKey(name) &&
-                           buffNames.All(b => myBuff ? !onUnit(ret).HasMyAura(b) : !onUnit(ret).HasAura(b)),
+                    ret =>
+                    {
+                        if (string.IsNullOrWhiteSpace(name) || onUnit == null || requirements == null || buffNames == null)
+                            return false;
+                        var target = onUnit(ret);
+                        return target != null && !DoubleCastPreventionDict.ContainsKey(name) &&
+                               buffNames.All(b => myBuff ? !target.HasMyAura(b) : !target.HasAura(b));
+                    },
                     new Sequence(
                 // new Action(ctx => _lastBuffCast = name),
                         Cast(name, onUnit, requirements),
@@ -691,7 +723,13 @@ namespace Singular.Helpers
         {
             return
                 new Decorator(
-                    ret => onUnit(ret) != null && !onUnit(ret).Auras.Values.Any(a => a.SpellId == spellId),
+                    ret =>
+                    {
+                        if (spellId <= 0 || onUnit == null || requirements == null)
+                            return false;
+                        var target = onUnit(ret);
+                        return target != null && !target.Auras.Values.Any(a => a.SpellId == spellId);
+                    },
                     Cast(spellId, onUnit, requirements));
         }
 

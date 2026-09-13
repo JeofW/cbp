@@ -99,23 +99,7 @@ namespace Styx.Bot.CustomBots
             }
         }
 
-        private static bool IsEligibleDungeonTarget(WoWUnit unit)
-        {
-            if (!StyxWoW.Me.CurrentMap.IsDungeon)
-                return true;
-
-            if (unit == null)
-                return false;
-
-            if (unit.Aggro || unit.PetAggro || unit.IsTargetingMeOrPet || unit.IsTargetingAnyMinion ||
-                unit.IsTargetingMyPartyMember || unit.IsTargetingMyRaidMember || unit.TaggedByMe)
-            {
-                return true;
-            }
-
-            WoWUnit leader = RaFHelper.Leader;
-            return leader != null && leader.IsValid && !leader.IsMe && leader.Combat && leader.CurrentTarget == unit;
-        }
+        private static bool IsEligibleDungeonTarget(WoWUnit unit) => GroupCombatSafety.MayAttack(unit);
 
         #endregion
 
@@ -127,7 +111,7 @@ namespace Styx.Bot.CustomBots
         {
             var target = StyxWoW.Me.CurrentTarget;
 
-            if (target == null)
+            if (target == null || !IsEligibleDungeonTarget(target))
                 return false;
 
             if (!target.InLineOfSight)
@@ -257,7 +241,7 @@ namespace Styx.Bot.CustomBots
 
                         new PrioritySelector(
                             // Use the Behavior
-                            new Decorator(ctx => RoutineManager.Current.CombatBehavior != null,
+                            new Decorator(ctx => IsEligibleDungeonTarget(StyxWoW.Me.CurrentTarget) && RoutineManager.Current.CombatBehavior != null,
                                 new PrioritySelector(
                                     RoutineManager.Current.CombatBehavior,
                                     new Action(delegate { return RunStatus.Success; })
@@ -266,7 +250,12 @@ namespace Styx.Bot.CustomBots
                             // Don't use the Behavior
                             new Sequence(
                                 new Action(ret => TreeRoot.StatusText = "Combat"),
-                                new Action(ret => RoutineManager.Current.Combat())))
+                                new Action(ret =>
+                                {
+                                    if (!IsEligibleDungeonTarget(StyxWoW.Me.CurrentTarget)) return RunStatus.Failure;
+                                    RoutineManager.Current.Combat();
+                                    return RunStatus.Success;
+                                })))
 
                         #endregion
 
@@ -292,7 +281,7 @@ namespace Styx.Bot.CustomBots
                     {
                         for (int i = 1; i < 5; i++)
                         {
-                            string role = Lua.GetReturnVal<string>(string.Format("return UnitGroupRolesAssigned('party{0}')", i), 0);
+                            string role = LegacyGroupRoles.GetAssignedRole("party" + i);
                             if (role == "TANK")
                                 _followMe = ObjectManager.GetObjectByGuid<WoWPlayer>(StyxWoW.Me.GetPartyMemberGuid(i - 1));
                         }

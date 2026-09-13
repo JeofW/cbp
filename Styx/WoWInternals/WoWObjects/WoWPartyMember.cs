@@ -379,8 +379,8 @@ namespace Styx.WoWInternals.WoWObjects
         {
             get
             {
-                // UnitGroupRolesAssigned returns "TANK", "HEALER", "DAMAGER", or "NONE"
-                var lfgRole = Lua.GetReturnVal<string>($"return UnitGroupRolesAssigned('{_unitId}')", 0);
+                // Normalize original 3.3.5a tank/healer/damage flags at the shared owner.
+                var lfgRole = LegacyGroupRoles.GetAssignedRole(_unitId);
                 switch (lfgRole)
                 {
                     case "TANK":    return GroupRole.Tank;

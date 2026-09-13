@@ -1,0 +1,13 @@
+# Vendor travel recovery: temporary endpoint evidence, not a persistent NPC ban
+
+Owner-approved cross-boundary audit continuation, based on 67ce37a0a1a902ccbffa2ff873cd7b05d04e2207. No merge or deployment.
+
+Source chain: WholesomeAutoQuest.Pulse detects 30 seconds of stationary state and directly adds the current service entry to BlacklistedVendors then calls SaveVendorBlacklist. Two additional frame-open fallbacks blame the nearest vendor/trainer. SaveVendorBlacklist writes disk and the core process-wide VendorSafetyPolicy. These paths conflate travel, rest, transport waiting and in-progress service work with a permanent exclusion. This is source-confirmed, not proof of every historical vendor incident.
+
+Repair design: a small shared, locked VendorTravelBackoff owns temporary map/entry/endpoint evidence. Wholesome provides an immutable snapshot and a lifecycle owner token. Only active-world, non-suspended, stationary failed service travel with a fresh matching movement destination and no active path may acquire a fixed two-minute retry. Reject paused/combat/dead/rest/taxi/transport/elevator/service-frame activity, arrival and non-finite evidence. Duplicate observations cannot slide the deadline. Scope endpoints by horizontal and vertical tolerance; bound memory; owner reset and expiry must not affect other owners. No disk write or persistent Reject occurs in the timeout path.
+
+Both Wholesome's nearest selection (before Take) and core VendorManager.IsBlacklisted (used by profile selection and automatic fallback) consult the same temporary policy. Explicit/manual/session exclusions retain their existing authority. Expiry requests one profile refresh; stop/start releases this bot's temporary leases. Remove the frame-open-nearest-NPC guessing branches rather than converting them to another automatic ban.
+
+Test-first coverage: a compiled-IL structural regression confirms Pulse's direct persistence calls without pretending to execute an unattached live Pulse. New policy/selection cases are new-contract regressions, not 24 independent historical bugs. They cover exact expiry, duplicate/stale/future evidence, clock rollback, floor/map identity, owner reset/isolation, capacity, every suspended activity, arrival, successful movement, immutable manual exclusions and core/Wholesome selection. Preserve prior saved-blacklist tests and all other combined suites.
+
+Remaining boundaries: native game cancellation, confirmed hostile/dead or missing-service-NPC policy, BotPoi death attribution and all-live-service acceptance remain separately reviewable. This slice does not turn unknown routes into proven unreachable routes or clear previously persisted user exclusions automatically.

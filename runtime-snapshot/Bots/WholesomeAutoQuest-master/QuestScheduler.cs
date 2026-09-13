@@ -139,6 +139,9 @@ namespace WholesomeAQ
                 validatedGrindProfilePath,
                 QuestRecoveryManager.Instance.MarkCompleted,
                 message => Logging.WriteDiagnostic($"[WholesomeAQ] {message}"),
+                // Safety vetoes are per hotspot, including points without a native path probe.
+                isKnownUnsafe: point => BlackspotManager.IsBlackspotted(
+                    new WoWPoint((float)point.X, (float)point.Y, (float)point.Z)),
                 navigationAssessment: point => AssessNavigation(point, me.Location),
                 reportDataFailure: outcome => QuestRecoveryManager.Instance.Report(outcome, context)));
             LastStatus = LastSchedule.Status;
@@ -547,6 +550,10 @@ namespace WholesomeAQ
             var allEndpoints = new List<QuestEndpointCandidate>();
             foreach (QuestObjective objective in quest.Objectives.OrderBy(value => value.Index))
             {
+                // Already-satisfied work does not require usable collection-source
+                // metadata. Do not turn an unused source into a quest-data failure.
+                if (IsObjectiveComplete(objective, objectiveCounts, snapshot.CarriedItemCounts))
+                    continue;
                 if (!Supported(objective))
                 {
                     var unsupportedKey = QuestRecoveryKey.ForObjective((uint)quest.Id, objective.Index);
@@ -556,8 +563,6 @@ namespace WholesomeAQ
                             "scheduler:unsupported-objective", reportDataFailure);
                     continue;
                 }
-                if (IsObjectiveComplete(objective, objectiveCounts, snapshot.CarriedItemCounts))
-                    continue;
                 var objectiveKey = QuestRecoveryKey.ForObjective((uint)quest.Id, objective.Index);
                 QuestRecoveryDecision objectiveDecision = evaluate(objectiveKey);
                 if (!objectiveDecision.MayAttempt)
@@ -576,20 +581,16 @@ namespace WholesomeAQ
                     continue;
                 }
 
-                var knownClusters = Cluster(knownSpawns
-                    .Where(point => InRange(point, snapshot, scanThreshold)));
-                if (knownClusters.Count == 0)
+                var inRangeSpawns = knownSpawns
+                    .Where(point => InRange(point, snapshot, scanThreshold)).ToArray();
+                if (inRangeSpawns.Length == 0)
                 {
                     AddObjectiveOmission(
                         quest, workStage, objective.Index, "outside-scan-radius", null, exclusions);
                     continue;
                 }
 
-                var assessedClusters = knownClusters
-                    .Select(cluster => (Cluster: cluster, Assessment: assessNavigation(cluster.Value[0])))
-                    .Where(value => value.Assessment.IsKnownReachable != false
-                                    && value.Assessment.IsKnownSafe != false)
-                    .ToArray();
+                var assessedClusters = AssessClusters(inRangeSpawns, assessNavigation);
                 if (assessedClusters.Length == 0)
                 {
                     AddNavigationRetry(quest, workStage, objectiveKey, snapshot, candidates, exclusions);
@@ -722,19 +723,15 @@ namespace WholesomeAQ
                     continue;
                 }
 
-                var knownClusters = Cluster(knownSpawns
-                    .Where(point => InRange(point, snapshot, scanThreshold)));
-                if (knownClusters.Count == 0)
+                var inRangeSpawns = knownSpawns
+                    .Where(point => InRange(point, snapshot, scanThreshold)).ToArray();
+                if (inRangeSpawns.Length == 0)
                 {
                     exclusions.Add($"excluded quest={quest.Id};stage={workStage};npc={relation.Entry};reason=outside-scan-radius;retry=context-change");
                     continue;
                 }
 
-                var assessedClusters = knownClusters
-                    .Select(cluster => (Cluster: cluster, Assessment: assessNavigation(cluster.Value[0])))
-                    .Where(value => value.Assessment.IsKnownReachable != false
-                                    && value.Assessment.IsKnownSafe != false)
-                    .ToArray();
+                var assessedClusters = AssessClusters(inRangeSpawns, assessNavigation);
                 var spawns = assessedClusters.SelectMany(value => value.Cluster.Value).ToArray();
                 if (spawns.Length == 0)
                 {
@@ -892,6 +889,43 @@ namespace WholesomeAQ
             reportDataFailure?.Invoke(QuestAttemptOutcome.Failure(key, reason, evidence));
         }
 
+        // A recovery cluster limits attempts; it does not authorize its other points.
+        // Apply every point's veto before grouping, then rank representatives using only
+        // their own evidence. Unprobed alternatives remain unknown and bounded by the
+        // existing five-cluster execution policy.
+        private static (KeyValuePair<QuestRecoveryKey, IReadOnlyList<SpawnPoint>> Cluster,
+            SpawnNavigationAssessment Assessment)[] AssessClusters(
+            IEnumerable<SpawnPoint> points,
+            Func<SpawnPoint, SpawnNavigationAssessment> assessNavigation) =>
+            points
+                .OrderBy(point => point.Map)
+                .ThenBy(point => point.X)
+                .ThenBy(point => point.Y)
+                .ThenBy(point => point.Z)
+                .Select(point => (Point: point, Assessment: assessNavigation(point)))
+                .Where(value => value.Assessment.IsKnownReachable != false
+                                && value.Assessment.IsKnownSafe != false)
+                .GroupBy(value => EndpointKey(0, QuestRecoveryStage.Navigation, value.Point))
+                .OrderBy(group => group.Key.MapId)
+                .ThenBy(group => group.Key.Endpoint, StringComparer.Ordinal)
+                .Select(group =>
+                {
+                    var eligible = group
+                        .OrderByDescending(value => value.Assessment.IsKnownReachable == true
+                                                    && value.Assessment.IsKnownSafe == true)
+                        .ThenByDescending(value => value.Assessment.SafetyScore)
+                        .ThenBy(value => value.Point.X)
+                        .ThenBy(value => value.Point.Y)
+                        .ThenBy(value => value.Point.Z)
+                        .DistinctBy(value => (value.Point.Map, value.Point.X, value.Point.Y, value.Point.Z))
+                        .ToArray();
+                    return (
+                        Cluster: new KeyValuePair<QuestRecoveryKey, IReadOnlyList<SpawnPoint>>(
+                            group.Key, eligible.Select(value => value.Point).ToArray()),
+                        Assessment: eligible[0].Assessment);
+                })
+                .ToArray();
+
         private static IReadOnlyList<KeyValuePair<QuestRecoveryKey, IReadOnlyList<SpawnPoint>>> Cluster(
             IEnumerable<SpawnPoint> points) =>
             points
@@ -950,29 +984,16 @@ namespace WholesomeAQ
             Func<SpawnPoint, SpawnNavigationAssessment> navigationAssessment,
             Func<SpawnPoint, bool> isKnownUnsafe)
         {
-            var cache = new Dictionary<QuestRecoveryKey, SpawnNavigationAssessment>();
+            // Exact destinations own live evidence. Coarse cells only share a query
+            // budget, never a safety/reachability result, including across floors.
+            var cache = new Dictionary<(int Map, double X, double Y, double Z), SpawnNavigationAssessment>();
+            var probedCells = new HashSet<QuestRecoveryKey>();
             return point =>
             {
-                QuestRecoveryKey clusterKey = EndpointKey(0, QuestRecoveryStage.Navigation, point);
-                if (cache.TryGetValue(clusterKey, out SpawnNavigationAssessment cached))
-                    return cached;
-
-                SpawnNavigationAssessment live = null;
-                try
-                {
-                    live = navigationAssessment?.Invoke(point);
-                }
-                catch
-                {
-                    live = null;
-                }
-
-                bool? knownSafe = live?.IsKnownSafe;
-                bool? knownReachable = live?.IsKnownReachable;
-                if (point.IsKnownSafe == false)
-                    knownSafe = false;
-                if (point.IsKnownReachable == false)
-                    knownReachable = false;
+                if (point == null) throw new ArgumentNullException(nameof(point));
+                bool? knownSafe = point.IsKnownSafe == false ? false : (bool?)null;
+                bool? knownReachable = point.IsKnownReachable == false ? false : (bool?)null;
+                bool safetyQueryFailed = false;
                 if (isKnownUnsafe != null)
                 {
                     try
@@ -982,18 +1003,45 @@ namespace WholesomeAQ
                     }
                     catch
                     {
-                        knownSafe = null;
+                        safetyQueryFailed = true;
                     }
                 }
 
-                var result = new SpawnNavigationAssessment
+                // Explicit negative evidence is decisive and needs no native path query.
+                if (knownSafe == false || knownReachable == false)
+                    return new SpawnNavigationAssessment
+                    {
+                        IsKnownSafe = knownSafe,
+                        IsKnownReachable = knownReachable,
+                        SafetyScore = point.SafetyScore
+                    };
+
+                var locationKey = (point.Map, point.X, point.Y, point.Z);
+                if (!cache.TryGetValue(locationKey, out SpawnNavigationAssessment live)
+                    && probedCells.Add(EndpointKey(0, QuestRecoveryStage.Navigation, point)))
                 {
-                    IsKnownSafe = knownSafe,
-                    IsKnownReachable = knownReachable,
+                    try
+                    {
+                        live = navigationAssessment?.Invoke(point);
+                    }
+                    catch
+                    {
+                        live = null;
+                    }
+                    // Cache failures too: no repeated native probe during the same scan.
+                    cache[locationKey] = live;
+                }
+
+                // Exhausting a cell's query budget leaves other locations unknown.
+                // A failed safety query must never erase an already established veto.
+                return new SpawnNavigationAssessment
+                {
+                    IsKnownSafe = live?.IsKnownSafe == false
+                        ? false
+                        : safetyQueryFailed ? null : live?.IsKnownSafe,
+                    IsKnownReachable = live?.IsKnownReachable,
                     SafetyScore = point.SafetyScore + (live?.SafetyScore ?? 0)
                 };
-                cache[clusterKey] = result;
-                return result;
             };
         }
 

@@ -33,6 +33,7 @@ namespace Singular.ClassSpecific.Paladin
                 Spell.Cast("Lay on Hands", ret => StyxWoW.Me,
                            ret => StyxWoW.Me.HealthPercent <= SingularSettings.Instance.Paladin.LayOnHandsHealth &&
                                   !StyxWoW.Me.HasAura("Forbearance")),
+                Common.CreatePaladinDispelBehavior(),
                 // Holy Light: primary heal (big, slow) — uses HolyLightHealth threshold
                 Spell.Heal("Holy Light", ret => StyxWoW.Me,
                            ret => StyxWoW.Me.HealthPercent <= SingularSettings.Instance.Paladin.HolyLightHealth),
@@ -62,7 +63,6 @@ namespace Singular.ClassSpecific.Paladin
         [Class(WoWClass.Paladin)]
         [Spec(TalentSpec.RetributionPaladin)]
         [Behavior(BehaviorType.Pull)]
-        [Behavior(BehaviorType.Heal)]
         [Behavior(BehaviorType.Combat)]
         [Context(WoWContext.Normal)]
         public static Composite CreateRetributionPaladinNormalPullAndCombat()
@@ -86,7 +86,7 @@ namespace Singular.ClassSpecific.Paladin
                                                           WoWSpellMechanic.Slowed,
                                                           WoWSpellMechanic.Snared)),
 
-                    Spell.BuffSelf("Divine Shield", ret => StyxWoW.Me.HealthPercent <= 20 && !StyxWoW.Me.HasAura("Forbearance") && (!StyxWoW.Me.HasAura("Horde Flag") || !StyxWoW.Me.HasAura("Alliance Flag"))),
+                    Spell.BuffSelf("Divine Shield", ret => StyxWoW.Me.HealthPercent <= 20 && !StyxWoW.Me.HasAura("Forbearance") && (!StyxWoW.Me.HasAura("Horde Flag") && !StyxWoW.Me.HasAura("Alliance Flag"))),
                     Spell.BuffSelf("Divine Protection", ret => StyxWoW.Me.HealthPercent <= SingularSettings.Instance.Paladin.DivineProtectionHealthRet),
 
                     //2	Let's keep up Insight instead of Truth for grinding.  Keep up Righteousness if we need to AoE.  
@@ -102,22 +102,14 @@ namespace Singular.ClassSpecific.Paladin
                     Spell.BuffSelf("Lifeblood", ret => SpellManager.HasSpell("Lifeblood") && StyxWoW.Me.ActiveAuras.ContainsKey("Avenging Wrath")),
 
                     //Exo is above HoW if we're fighting Undead / Demon
-                    CreateExorcismRetryBehavior(Spell.Cast("Exorcism", ret => StyxWoW.Me.CurrentTarget is { } target &&
-                        StyxWoW.Me.ActiveAuras.ContainsKey("The Art of War") && target.IsUndeadOrDemon())),
+                    CreateExorcismBehavior(requireProc: true, undeadOrDemon: true),
                     //Hammer of Wrath if target < 20% HP
                     Spell.Cast("Hammer of Wrath", ret => StyxWoW.Me.CurrentTarget is { } target && target.HealthPercent <= 20), // WotLK: Sanctified Wrath does not unlock HoW above 20% (Cata-only)
-                    // In WotLK 3.3.5a, Paladins don't have Holy Power - use simpler rotation
-                    // Same condition as BG rotation: skip CS if 4+ enemies (replace with Divine Storm)
-                    Spell.Cast("Crusader Strike", ret => Unit.NearbyUnfriendlyUnits.Count(u => u.Distance <= 8) < 4 || !SpellManager.HasSpell("Divine Storm")),
-                    Spell.Cast("Divine Storm", ret => Unit.NearbyUnfriendlyUnits.Count(u => u.Distance <= 8) >= 4),
+                    CreateMeleeStrikeBehavior(),
                     Spell.Cast("Judgement of Light"),
-                    // Filler at either distance; keep primary melee attacks ahead of a hard cast.
-                    CreateExorcismRetryBehavior(Spell.Cast("Exorcism", ret => StyxWoW.Me.CurrentTarget is { } target &&
-                        ShouldCastExorcism(
-                            SpellManager.HasSpell("The Art of War"),
-                            StyxWoW.Me.ActiveAuras.ContainsKey("The Art of War"),
-                            target.IsWithinMeleeRange,
-                            StyxWoW.Me.IsAutoAttacking))),
+                    // Disjoint windows prevent the same proc from bypassing an earlier retry guard.
+                    CreateExorcismBehavior(requireProc: true, undeadOrDemon: false),
+                    CreateExorcismBehavior(),
                     Spell.Cast("Holy Wrath", ret => Unit.NearbyUnfriendlyUnits.Count(u => u.Distance <= 8) >= 4),
                 //consecration,not_flying=1,if=mana>16000
                     Spell.Cast("Consecration", ret => StyxWoW.Me.CurrentTarget is { } target &&
@@ -138,7 +130,6 @@ namespace Singular.ClassSpecific.Paladin
         [Spec(TalentSpec.RetributionPaladin)]
         [Behavior(BehaviorType.Pull)]
         [Behavior(BehaviorType.Combat)]
-        [Behavior(BehaviorType.Heal)]
         [Context(WoWContext.Battlegrounds)]
 
         public static Composite CreateRetributionPaladinPvPPullAndCombat()
@@ -162,33 +153,30 @@ namespace Singular.ClassSpecific.Paladin
                                                           WoWSpellMechanic.Slowed,
                                                           WoWSpellMechanic.Snared)),
 
-                    Spell.BuffSelf("Divine Shield", ret => StyxWoW.Me.HealthPercent <= 20 && !StyxWoW.Me.HasAura("Forbearance") && (!StyxWoW.Me.HasAura("Horde Flag") || !StyxWoW.Me.HasAura("Alliance Flag"))),
+                    Spell.BuffSelf("Divine Shield", ret => StyxWoW.Me.HealthPercent <= 20 && !StyxWoW.Me.HasAura("Forbearance") && (!StyxWoW.Me.HasAura("Horde Flag") && !StyxWoW.Me.HasAura("Alliance Flag"))),
                     Spell.BuffSelf("Divine Protection", ret => StyxWoW.Me.HealthPercent <= SingularSettings.Instance.Paladin.DivineProtectionHealthRet),
 
                     //  Buffs
                     Spell.BuffSelf("Retribution Aura"),
-                    Spell.BuffSelf("Seal of Vengeance", ret => StyxWoW.Me.CurrentTarget.Entry != 28781 && !StyxWoW.Me.CurrentTarget.HasAura("Horde Flag") && !StyxWoW.Me.CurrentTarget.HasAura("Alliance Flag") && !SpellManager.HasSpell("Seal of Corruption")),
-                    Spell.BuffSelf("Seal of Corruption", ret => StyxWoW.Me.CurrentTarget.Entry != 28781 && !StyxWoW.Me.CurrentTarget.HasAura("Horde Flag") && !StyxWoW.Me.CurrentTarget.HasAura("Alliance Flag")),
-                    Spell.BuffSelf("Seal of Justice", ret => StyxWoW.Me.CurrentTarget.Entry == 28781 || StyxWoW.Me.CurrentTarget.HasAura("Horde Flag") || StyxWoW.Me.CurrentTarget.HasAura("Alliance Flag")),
+                    Spell.BuffSelf("Seal of Vengeance", ret => StyxWoW.Me.CurrentTarget is { } target && target.Entry != 28781 && !target.HasAura("Horde Flag") && !target.HasAura("Alliance Flag") && !SpellManager.HasSpell("Seal of Corruption")),
+                    Spell.BuffSelf("Seal of Corruption", ret => StyxWoW.Me.CurrentTarget is { } target && target.Entry != 28781 && !target.HasAura("Horde Flag") && !target.HasAura("Alliance Flag")),
+                    Spell.BuffSelf("Seal of Justice", ret => StyxWoW.Me.CurrentTarget is { } target && (target.Entry == 28781 || target.HasAura("Horde Flag") || target.HasAura("Alliance Flag"))),
 
-                    Spell.BuffSelf("Avenging Wrath", ret => StyxWoW.Me.CurrentTarget.Distance <= 8),
+                    Spell.BuffSelf("Avenging Wrath", ret => StyxWoW.Me.CurrentTarget is { } target && target.Distance <= 8),
                     Spell.BuffSelf("Blood Fury", ret => SpellManager.HasSpell("Blood Fury") && StyxWoW.Me.ActiveAuras.ContainsKey("Avenging Wrath")),
                     Spell.BuffSelf("Berserking", ret => SpellManager.HasSpell("Berserking") && StyxWoW.Me.ActiveAuras.ContainsKey("Avenging Wrath")),
                     Spell.BuffSelf("Lifeblood", ret => SpellManager.HasSpell("Lifeblood") && StyxWoW.Me.ActiveAuras.ContainsKey("Avenging Wrath")),
 
                     //Hammer of Wrath if target < 20% HP
-                    Spell.Cast("Hammer of Wrath", ret => StyxWoW.Me.CurrentTarget.HealthPercent <= 20), // WotLK: Sanctified Wrath does not unlock HoW above 20% (Cata-only)
-                    //Exo if we have Art of War
-                    // WotLK QC: cast unconditionally if Art of War talent is not learned (pre-lvl 40) - proc can never trigger
-                    Spell.Cast("Exorcism", ret => StyxWoW.Me.ActiveAuras.ContainsKey("The Art of War") || !SpellManager.HasSpell("The Art of War")),
+                    Spell.Cast("Hammer of Wrath", ret => StyxWoW.Me.CurrentTarget is { } target && target.HealthPercent <= 20), // WotLK: Sanctified Wrath does not unlock HoW above 20% (Cata-only)
+                    // Only an observed instant proc belongs ahead of the melee strikes.
+                    CreateExorcismBehavior(requireProc: true),
 
-                    // WotLK: Holy Power doesn't exist - simplified rotation
-                    // Throttle: prevent log spam when on CD (lag tolerance in CanCast allows re-cast every ~100ms)
-                    new Throttle(1, Spell.Cast("Crusader Strike", ret => (Unit.NearbyUnfriendlyUnits.Count(u => u.Distance <= 8) < 4 || !SpellManager.HasSpell("Divine Storm")) && StyxWoW.Me.CurrentTarget.Distance <= 5f)),
-                    Spell.Cast("Divine Storm", ret => Unit.NearbyUnfriendlyUnits.Count(u => u.Distance <= 8) >= 4),
+                    CreateMeleeStrikeBehavior(throttleCrusaderStrike: true),
                     Spell.Cast("Judgement of Light"),
+                    CreateExorcismBehavior(),
                     Spell.Cast("Holy Wrath"),
-                    Spell.Cast("Consecration", ret => StyxWoW.Me.CurrentTarget.Distance <= Spell.MeleeRange && Unit.NearbyUnfriendlyUnits.Count(u => u.Distance <= 8) >= SingularSettings.Instance.Paladin.ConsecrationCount),
+                    Spell.Cast("Consecration", ret => StyxWoW.Me.CurrentTarget is { } target && target.Distance <= Spell.MeleeRange && Unit.NearbyUnfriendlyUnits.Count(u => u.Distance <= 8) >= SingularSettings.Instance.Paladin.ConsecrationCount),
                     Spell.Cast("Divine Plea", ret => StyxWoW.Me.ManaPercent < SingularSettings.Instance.Paladin.DivinePleaMana && StyxWoW.Me.HealthPercent > 70),
 
                 Movement.CreateMoveToMeleeBehavior(true)
@@ -224,7 +212,7 @@ namespace Singular.ClassSpecific.Paladin
                                                                WoWSpellMechanic.Slowed,
                                                                WoWSpellMechanic.Snared)),
 
-                    Spell.BuffSelf("Divine Shield", ret => StyxWoW.Me.HealthPercent <= 20 && !StyxWoW.Me.HasAura("Forbearance") && (!StyxWoW.Me.HasAura("Horde Flag") || !StyxWoW.Me.HasAura("Alliance Flag"))),
+                    Spell.BuffSelf("Divine Shield", ret => StyxWoW.Me.HealthPercent <= 20 && !StyxWoW.Me.HasAura("Forbearance") && (!StyxWoW.Me.HasAura("Horde Flag") && !StyxWoW.Me.HasAura("Alliance Flag"))),
                     Spell.BuffSelf("Divine Protection", ret => StyxWoW.Me.HealthPercent <= SingularSettings.Instance.Paladin.DivineProtectionHealthRet),
 
                     //2	seal_of_truth (WotLK: Seal of Vengeance/Corruption)
@@ -237,26 +225,16 @@ namespace Singular.ClassSpecific.Paladin
                     Spell.BuffSelf("Berserking", ret => SpellManager.HasSpell("Berserking") && StyxWoW.Me.ActiveAuras.ContainsKey("Avenging Wrath")),
                     Spell.BuffSelf("Lifeblood", ret => SpellManager.HasSpell("Lifeblood") && StyxWoW.Me.ActiveAuras.ContainsKey("Avenging Wrath")),
 
-                    //Exo is above HoW if we're fighting Undead / Demon
-                    // WotLK QC: cast unconditionally if Art of War talent is not learned (pre-lvl 40) - proc can never trigger
-                    Spell.Cast("Exorcism", ret => StyxWoW.Me.CurrentTarget is { } target &&
-                        (StyxWoW.Me.ActiveAuras.ContainsKey("The Art of War") && target.IsUndeadOrDemon()
-                         || !SpellManager.HasSpell("The Art of War"))),
+                    // Preserve the earlier undead/demon instant-proc window, not a hard cast.
+                    CreateExorcismBehavior(requireProc: true, undeadOrDemon: true),
                     //Hammer of Wrath if target < 20% HP
                     Spell.Cast("Hammer of Wrath", ret => StyxWoW.Me.CurrentTarget is { } target && target.HealthPercent <= 20), // WotLK: Sanctified Wrath does not unlock HoW above 20% (Cata-only)
-                    //Exo is above HoW if we're fighting Undead / Demon
-                    // WotLK QC: cast unconditionally if Art of War talent is not learned (pre-lvl 40) - proc can never trigger
-                    Spell.Cast("Exorcism", ret => StyxWoW.Me.ActiveAuras.ContainsKey("The Art of War") || !SpellManager.HasSpell("The Art of War")),
+                    CreateExorcismBehavior(requireProc: true, undeadOrDemon: false),
 
-                    //crusader_strike - simplified for WotLK (no Holy Power checks)
-                    Spell.Cast("Crusader Strike", ret =>
-                        StyxWoW.Me.CurrentTarget is { } target &&
-                        (Unit.NearbyUnfriendlyUnits.Count(u => u.Distance <= 8) < 4 || !SpellManager.HasSpell("Divine Storm")) && target.Distance <= 5f),
-                //Replace CS with DS during AoE
-                    Spell.Cast("Divine Storm", ret =>
-                        Unit.NearbyUnfriendlyUnits.Count(u => u.Distance <= 8) >= 4),
+                    CreateMeleeStrikeBehavior(),
                 //judgement - simplified for WotLK
                     Spell.Cast("Judgement of Light"),
+                    CreateExorcismBehavior(),
                 //holy_wrath
                     Spell.Cast("Holy Wrath"),
                 //consecration,not_flying=1,if=mana>16000
@@ -445,6 +423,40 @@ namespace Singular.ClassSpecific.Paladin
         #endregion
          */
 
+        // Independent ready attacks must not disable one another merely because
+        // another spell is known or the target count crosses an arbitrary gate.
+        // Spell.Cast retains the real spellbook, cooldown, range and area-safety
+        // checks. Preserve the existing CS-before-DS order and PvP retry throttle.
+        private static Composite CreateMeleeStrikeBehavior(bool throttleCrusaderStrike = false)
+        {
+            Composite crusaderStrike = Spell.Cast("Crusader Strike", ret =>
+                StyxWoW.Me.CurrentTarget is { } target && target.IsWithinMeleeRange);
+            return new PrioritySelector(
+                throttleCrusaderStrike ? new Throttle(1, crusaderStrike) : crusaderStrike,
+                Spell.Cast("Divine Storm", ret =>
+                    StyxWoW.Me.CurrentTarget is { } target && target.Distance <= 8));
+        }
+
+        // Use one policy in every active context. Each priority window owns a
+        // disjoint set of proc states, so an unconfirmed attempt cannot immediately
+        // fall through to another Exorcism node with a fresh retry budget.
+        private static Composite CreateExorcismBehavior(bool requireProc = false, bool? undeadOrDemon = null)
+        {
+            return CreateExorcismRetryBehavior(Spell.Cast("Exorcism", ret =>
+            {
+                var player = StyxWoW.Me;
+                var target = player?.CurrentTarget;
+                if (target == null)
+                    return false;
+                bool proc = player.ActiveAuras.ContainsKey("The Art of War");
+                return proc == requireProc
+                       && (!undeadOrDemon.HasValue || target.IsUndeadOrDemon() == undeadOrDemon.Value)
+                       && (proc || !player.IsMoving)
+                       && ShouldCastExorcism(SpellManager.HasSpell("The Art of War"), proc,
+                           target.IsWithinMeleeRange, player.IsAutoAttacking);
+            }));
+        }
+
         private static Composite CreateExorcismRetryBehavior(Composite cast)
         {
             // Cast reports dispatch, not server acceptance. Yield to other attacks and
@@ -458,10 +470,10 @@ namespace Singular.ClassSpecific.Paladin
             bool targetInMeleeRange,
             bool autoAttacking)
         {
-            if (knowsArtOfWar)
-                return hasArtOfWarProc;
-
-            return true;
+            // AutoAttack may already be enabled while approaching at range.
+            // Protect an active melee opportunity, not that flag in isolation.
+            // A real proc remains usable if passive-talent discovery is incomplete.
+            return hasArtOfWarProc || (!knowsArtOfWar && !(targetInMeleeRange && autoAttacking));
         }
     }
 }

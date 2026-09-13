@@ -33,6 +33,8 @@ namespace Styx.Logic.Pathing
 	internal sealed class ElevatorTransitController
 	{
 		private static readonly TimeSpan DockConfirmationDuration = TimeSpan.FromMilliseconds(750);
+		// Unobserved time is not evidence that a moving platform remained docked.
+		private static readonly TimeSpan MaximumDockObservationGap = TimeSpan.FromSeconds(2);
 		private const float DockDistanceTolerance = 1.25f;
 		private const float DockMotionTolerance = 0.05f;
 		private const float LandingDistanceTolerance = 3f;
@@ -41,6 +43,7 @@ namespace Styx.Logic.Pathing
 		private ElevatorTransitStage _stage;
 		private bool _active;
 		private DateTime _dockCandidateSinceUtc;
+		private DateTime _lastDockObservationUtc;
 		private WoWPoint _dockCandidateOrigin;
 		private bool _hasDockCandidate;
 
@@ -66,6 +69,9 @@ namespace Styx.Logic.Pathing
 		{
 			if (selectedTransportGuid == 0UL)
 				throw new ArgumentOutOfRangeException(nameof(selectedTransportGuid));
+
+			if (!IsFinite(startDock) || !IsFinite(endDock) || !IsFinite(waitPoint) || !IsFinite(exitPoint))
+				throw new ArgumentException("Elevator docks and landings must have finite coordinates.");
 
 			SelectedTransportGuid = selectedTransportGuid;
 			SelectedTransportEntry = selectedTransportEntry;
@@ -98,8 +104,33 @@ namespace Styx.Logic.Pathing
 			bool boardingPathSafe,
 			bool exitPathSafe)
 		{
+			// Compatibility for existing pure callers whose permission covers both legs.
+			return Observe(observedAtUtc, playerLocation, liveTransportLocation, liveLocationAvailable,
+				attachedTransportGuid, isFalling, hasGroundSupport, boardingPathSafe, boardingPathSafe, exitPathSafe);
+		}
+
+		internal ElevatorTransitDecision Observe(
+			DateTime observedAtUtc,
+			WoWPoint playerLocation,
+			WoWPoint liveTransportLocation,
+			bool liveLocationAvailable,
+			ulong attachedTransportGuid,
+			bool isFalling,
+			bool hasGroundSupport,
+			bool approachPathSafe,
+			bool boardingPathSafe,
+			bool exitPathSafe)
+		{
 			if (!_active)
 				throw new InvalidOperationException("Elevator transit has not begun.");
+
+			// Empty is deliberately allowed when no live platform observation exists.
+			// NaN comparisons must never authorize movement or preserve dock confirmation.
+			if (!IsFinite(playerLocation) || (liveLocationAvailable && !IsFinite(liveTransportLocation)))
+			{
+				ResetDockCandidate();
+				return Decision(ElevatorTransitAction.Wait);
+			}
 
 			bool attachedToSelected = attachedTransportGuid == SelectedTransportGuid;
 			bool attachedToDifferentTransport = attachedTransportGuid != 0UL && !attachedToSelected;
@@ -117,9 +148,12 @@ namespace Styx.Logic.Pathing
 				case ElevatorTransitStage.Approach:
 				case ElevatorTransitStage.Boarding:
 					if (isFalling || !hasGroundSupport || attachedToDifferentTransport)
+					{
+						// Boarding is a continuing authorization, not a one-time permission.
+						// Lost safety evidence also invalidates the previous stable-dock dwell.
+						ResetDockCandidate();
 						return Decision(ElevatorTransitAction.Wait);
-					if (_stage == ElevatorTransitStage.Approach && !boardingPathSafe)
-						return Decision(ElevatorTransitAction.Wait);
+					}
 
 					if (_stage == ElevatorTransitStage.Approach
 					    && (playerLocation.Distance2D(WaitPoint) > LandingDistanceTolerance
@@ -127,7 +161,9 @@ namespace Styx.Logic.Pathing
 					{
 						_stage = ElevatorTransitStage.Approach;
 						ResetDockCandidate();
-						return Decision(ElevatorTransitAction.MoveToWait, WaitPoint);
+						return approachPathSafe
+							? Decision(ElevatorTransitAction.MoveToWait, WaitPoint)
+							: Decision(ElevatorTransitAction.Wait);
 					}
 
 					if (!liveLocationAvailable || liveTransportLocation.Distance(StartDock) > DockDistanceTolerance)
@@ -135,27 +171,41 @@ namespace Styx.Logic.Pathing
 						bool wasBoarding = _stage == ElevatorTransitStage.Boarding;
 						_stage = ElevatorTransitStage.Approach;
 						ResetDockCandidate();
-						return wasBoarding && boardingPathSafe
+						return wasBoarding && approachPathSafe
 							? Decision(ElevatorTransitAction.MoveToWait, WaitPoint)
 							: Decision(ElevatorTransitAction.Wait);
 					}
 
+					// Permission must describe the actual segment to the live platform,
+					// not the different approach segment to the waiting point.
+					if (!boardingPathSafe)
+					{
+						ResetDockCandidate();
+						return Decision(ElevatorTransitAction.Wait);
+					}
 					if (!HasStableDockObservation(liveTransportLocation, observedAtUtc))
 						return Decision(ElevatorTransitAction.Wait);
 					_stage = ElevatorTransitStage.Boarding;
 					return Decision(ElevatorTransitAction.MoveToBoard, liveTransportLocation);
 
 				case ElevatorTransitStage.Riding:
-					if (!attachedToSelected)
-						return Decision(ElevatorTransitAction.Wait);
+					if (!attachedToSelected || isFalling)
+					{
+						ResetDockCandidate();
+						return Decision(attachedToSelected ? ElevatorTransitAction.Ride : ElevatorTransitAction.Wait);
+					}
 					if (!liveLocationAvailable || liveTransportLocation.Distance(EndDock) > DockDistanceTolerance)
 					{
 						ResetDockCandidate();
 						return Decision(ElevatorTransitAction.Ride);
 					}
-					if (!HasStableDockObservation(liveTransportLocation, observedAtUtc))
-						return Decision(ElevatorTransitAction.Ride);
+					// A veto interrupts observation even before the candidate dwell completes.
 					if (!exitPathSafe)
+					{
+						ResetDockCandidate();
+						return Decision(ElevatorTransitAction.Ride);
+					}
+					if (!HasStableDockObservation(liveTransportLocation, observedAtUtc))
 						return Decision(ElevatorTransitAction.Ride);
 
 					_stage = ElevatorTransitStage.Exiting;
@@ -163,7 +213,10 @@ namespace Styx.Logic.Pathing
 
 				case ElevatorTransitStage.Exiting:
 					if (attachedToDifferentTransport || isFalling)
+					{
+						ResetDockCandidate();
 						return Decision(ElevatorTransitAction.Wait);
+					}
 
 					if (attachedToSelected)
 					{
@@ -174,10 +227,20 @@ namespace Styx.Logic.Pathing
 							return Decision(ElevatorTransitAction.Ride);
 						}
 						if (!exitPathSafe)
+						{
+							ResetDockCandidate();
 							return Decision(ElevatorTransitAction.Wait);
+						}
+						// Keep exit permission tied to the current platform observations,
+						// even while it remains within the destination dock radius.
+						if (!HasStableDockObservation(liveTransportLocation, observedAtUtc))
+							return Decision(ElevatorTransitAction.Ride);
 						return Decision(ElevatorTransitAction.MoveToExit, ExitPoint);
 					}
 
+					// Detached ground travel owns its own support checks. It cannot retain
+					// platform dwell for a later reattachment, even when the ground leg is safe.
+					ResetDockCandidate();
 					if (isFalling
 					    || !hasGroundSupport
 					    || !exitPathSafe
@@ -192,16 +255,24 @@ namespace Styx.Logic.Pathing
 			}
 		}
 
+		private static bool IsFinite(WoWPoint point) =>
+			float.IsFinite(point.X) && float.IsFinite(point.Y) && float.IsFinite(point.Z);
+
 		private bool HasStableDockObservation(WoWPoint liveTransportLocation, DateTime observedAtUtc)
 		{
-			if (!_hasDockCandidate || _dockCandidateOrigin.Distance(liveTransportLocation) > DockMotionTolerance)
+			if (!_hasDockCandidate
+			    || observedAtUtc < _lastDockObservationUtc
+			    || observedAtUtc - _lastDockObservationUtc > MaximumDockObservationGap
+			    || _dockCandidateOrigin.Distance(liveTransportLocation) > DockMotionTolerance)
 			{
 				_hasDockCandidate = true;
 				_dockCandidateOrigin = liveTransportLocation;
 				_dockCandidateSinceUtc = observedAtUtc;
+				_lastDockObservationUtc = observedAtUtc;
 				return false;
 			}
 
+			_lastDockObservationUtc = observedAtUtc;
 			return observedAtUtc - _dockCandidateSinceUtc >= DockConfirmationDuration;
 		}
 
@@ -210,6 +281,7 @@ namespace Styx.Logic.Pathing
 			_hasDockCandidate = false;
 			_dockCandidateOrigin = default;
 			_dockCandidateSinceUtc = DateTime.MinValue;
+			_lastDockObservationUtc = DateTime.MinValue;
 		}
 
 		private static ElevatorTransitDecision Decision(

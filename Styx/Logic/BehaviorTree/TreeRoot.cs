@@ -323,6 +323,11 @@ namespace Styx.Logic.BehaviorTree
 				action();
 				return true;
 			}
+			catch (ThreadInterruptedException)
+			{
+				// WorkerThread owns stop cleanup. Never turn this into branch failure.
+				throw;
+			}
 			catch (Exception ex)
 			{
 				Logging.WriteDiagnostic("Exception was thrown in {0}", name);
@@ -525,26 +530,35 @@ namespace Styx.Logic.BehaviorTree
 				if (Current == null)
 					return;
 
-				// HB 6.2.3 pattern: if a previous thread is still stopping, wait for it to exit.
-				// IMPORTANT: do NOT wait while holding the lock if the caller is the worker thread
-				// itself (e.g. ChangeBotAction via Dispatcher.Invoke) — that would deadlock.
-				// Use a timed wait outside the lock instead.
+				// State alone is not proof of termination. Retain the stopping worker
+				// until it actually exits; a timed-out or self-issued restart is refused.
 				if (State == TreeRootState.Stopping)
 				{
-					if (_workerThread != null && _workerThread.IsAlive &&
-					    Thread.CurrentThread != _workerThread)
+					Thread? previousWorker = _workerThread;
+					if (previousWorker?.IsAlive == true)
 					{
-						// Release the lock while waiting so the worker thread can acquire it to set Stopped
+						if (ReferenceEquals(Thread.CurrentThread, previousWorker))
+							return;
+
+						bool exited;
 						Monitor.Exit(_stateLock);
-						bool exited = _workerThread.Join(5000); // 5s max
-						Monitor.Enter(_stateLock);
-						if (!exited)
-							Logging.WriteDebug("[TreeRoot] Worker thread did not stop in time — forcing Stopped state");
+						try { exited = previousWorker.Join(5000); }
+						finally { Monitor.Enter(_stateLock); }
+
+						// Another caller may have acquired startup ownership while we waited.
+						if (!ReferenceEquals(previousWorker, _workerThread)
+						    || (State != TreeRootState.Stopping && State != TreeRootState.Stopped))
+							return;
+						if (!exited || previousWorker.IsAlive)
+						{
+							Logging.WriteDebug("[TreeRoot] Previous worker is still stopping; restart refused.");
+							return;
+						}
 					}
 					State = TreeRootState.Stopped;
 				}
 
-				if (State != TreeRootState.Stopped)
+				if (State != TreeRootState.Stopped || _workerThread?.IsAlive == true)
 					return;
 
 				try
@@ -613,64 +627,55 @@ namespace Styx.Logic.BehaviorTree
 		/// </summary>
 		public static void Stop(string? reason = null)
 		{
-			Thread threadToInterrupt = null;
-			lock (_stateLock)
+			Thread? threadToInterrupt = null;
+			try
 			{
-				if (State != TreeRootState.Running && State != TreeRootState.Starting && State != TreeRootState.Paused)
-					return;
+				lock (_stateLock)
+				{
+					if (State != TreeRootState.Running && State != TreeRootState.Starting && State != TreeRootState.Paused)
+						return;
 
-				Logging.Write(Colors.DeepSkyBlue, "Bot stopping! Reason: {0}", reason ?? "User request");
-				State = TreeRootState.Stopping;
-				threadToInterrupt = _workerThread;
-
-				// Raise OnBotStopRequested — same pattern as HB Legion
-				BotEvents.RaiseBotStopRequested();
+					Logging.Write(Colors.DeepSkyBlue, "Bot stopping! Reason: {0}", reason ?? "User request");
+					State = TreeRootState.Stopping;
+					threadToInterrupt = _workerThread;
+					BotEvents.RaiseBotStopRequested();
+				}
 			}
-			// Wake the worker if it is sleeping between ticks so it sees State == Stopping
-			// immediately instead of waiting up to (1000/TPS) ms.
-			// Thread.Interrupt() only affects managed waits (Thread.Sleep, Monitor.Wait etc.);
-			// it is a no-op if the thread is executing native code or running a tick.
-			threadToInterrupt?.Interrupt();
-			// Stop() returns immediately. The worker thread sees State == Stopping,
-			// exits its while loop, and does cleanup in its own finally block.
+			finally
+			{
+				// A subscriber failure must not suppress the managed-wait wakeup.
+				// This preserves the subscriber exception; it does not cancel native code.
+				try { threadToInterrupt?.Interrupt(); }
+				catch (ThreadStateException) when (threadToInterrupt?.IsAlive != true) { }
+			}
 		}
 
 		private static void WorkerThread()
 		{
-			// HB 4.3.4/6.2.3: Set invariant culture on bot thread so float.ToString()
-			// always produces "1.5" (not "1,5" on European locales). Lua DoString
-			// embeds numbers — wrong decimal separator breaks WoW API calls.
-			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-			Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
-
-			// Use lock to prevent race with Stop() called right after Start()
-			lock (_stateLock)
-			{
-				if (State != TreeRootState.Starting)
-				{
-					// Stop() was called before we could start — bail out
-					State = TreeRootState.Stopped;
-					return;
-				}
-				State = TreeRootState.Running;
-			}
-
-			// HB Legion pattern: fire OnBotStarted AFTER State = Running,
-			// so UI (BCP overlay) can enable/disable buttons correctly.
-			BotEvents.RaiseBotStarted();
+			Thread owner = Thread.CurrentThread;
+			// Never let a stale entry mutate or tear down a different run.
+			if (!ReferenceEquals(_workerThread, owner))
+				return;
 
 			try
 			{
-				// Main tick loop — exits when Stop() sets State to Stopping
-				// HB 6.2.3: Loop must continue for Paused state (tick body handles it)
-				while (State == TreeRootState.Running || State == TreeRootState.Paused)
+				Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+				Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
+
+				// Startup already initialized the bot. Cancellation before this lock,
+				// including an interrupted lock wait, must still reach owned cleanup.
+				lock (_stateLock)
 				{
-					Tick();
+					if (!ReferenceEquals(_workerThread, owner) || State != TreeRootState.Starting)
+						return;
+					State = TreeRootState.Running;
 				}
+				BotEvents.RaiseBotStarted();
+				while (State == TreeRootState.Running || State == TreeRootState.Paused)
+					Tick();
 			}
 			catch (ThreadInterruptedException)
 			{
-				// Stop() called Thread.Interrupt() to wake us from sleep — normal shutdown.
 				Logging.WriteDebug("[TreeRoot] Worker thread interrupted by Stop() — stopping cleanly.");
 			}
 			catch (Exception ex)
@@ -679,23 +684,21 @@ namespace Styx.Logic.BehaviorTree
 			}
 			finally
 			{
-				// HB 6.2.3 pattern: cleanup on worker thread, NO GrabFrame.
-				try
+				if (ReferenceEquals(_workerThread, owner))
 				{
-					// HB 6.2.3 cleanup order: Current.Stop → Root.Stop → Navigator.Clear → BotPoi.Clear → RaiseBotStopped
+					// Preserve the established cleanup order, without holding a frame.
 					try { Current?.Stop(); } catch { }
 					try { Current?.Root?.Stop(null); } catch { }
 					try { Navigator.Clear(); } catch { }
 					try { BotPoi.Clear(); } catch { }
 					try { BotEvents.RaiseBotStopped(); } catch { }
+					lock (_stateLock)
+					{
+						if (ReferenceEquals(_workerThread, owner))
+							State = TreeRootState.Stopped;
+					}
+					Logging.WriteDebug("Worker thread exited cleanly");
 				}
-				catch (Exception ex)
-				{
-					Logging.WriteException(ex);
-				}
-
-				State = TreeRootState.Stopped;
-				Logging.WriteDebug("Worker thread exited cleanly");
 			}
 		}
 

@@ -44,6 +44,8 @@ public sealed class QuestPickupDialogDecision
     public uint TargetQuestId { get; init; }
     public uint ShownQuestId { get; init; }
     public uint GiverId { get; init; }
+    // Positive identity/list evidence is distinct from an unloaded Wait observation.
+    public bool TargetObserved { get; init; }
     public IReadOnlyList<uint> OfferedQuestIds
     {
         get => _offeredQuestIds;
@@ -189,6 +191,7 @@ public static class QuestPickupDialogPolicy
             TargetQuestId = targetQuestId,
             ShownQuestId = shownQuestId,
             GiverId = giverId,
+            TargetObserved = targetIdentified || (targetQuestId != 0 && offeredQuestListLoaded && offeredSnapshot.Contains(targetQuestId)),
             OfferedQuestIds = offeredSnapshot,
             Evidence = evidence
         };
@@ -268,6 +271,7 @@ public sealed class QuestPickupMismatchTracker
 {
     private string _lastEvidence;
     private long? _lastInteractionCycleId;
+    private long? _latestObservedInteractionCycleId;
 
     public int ConfirmedCycles { get; private set; }
     public bool PickupUnavailable { get; private set; }
@@ -277,20 +281,33 @@ public sealed class QuestPickupMismatchTracker
     {
         if (decision == null)
             throw new ArgumentNullException(nameof(decision));
-        if (decision.Action == QuestPickupDialogAction.Wait)
+        // Older callbacks cannot add an attempt or erase newer observations.
+        if (_latestObservedInteractionCycleId.HasValue && interactionCycleId < _latestObservedInteractionCycleId.Value)
             return LastOutcome;
+        _latestObservedInteractionCycleId = interactionCycleId;
+        if (decision.Action == QuestPickupDialogAction.Wait)
+        {
+            if (decision.TargetObserved)
+                ClearEpisode();
+            return LastOutcome;
+        }
         if (decision.Action != QuestPickupDialogAction.RejectMismatch)
         {
-            Reset();
+            ClearEpisode();
             return null;
         }
 
-        bool evidenceChanged = !string.Equals(_lastEvidence, decision.Evidence, StringComparison.Ordinal);
+        // The requested quest is still absent when unrelated offers change. Keep
+        // raw ordered diagnostics on the outcome, not in this semantic retry key.
+        string identity = decision.Reason == QuestFailureReason.PickupTargetNotOffered
+            ? $"missing:{decision.TargetQuestId}:{decision.GiverId}:{decision.Reason}"
+            : decision.Evidence;
+        bool evidenceChanged = !string.Equals(_lastEvidence, identity, StringComparison.Ordinal);
         if (evidenceChanged)
         {
             ConfirmedCycles = 0;
             PickupUnavailable = false;
-            _lastEvidence = decision.Evidence;
+            _lastEvidence = identity;
             LastOutcome = null;
         }
 
@@ -313,6 +330,12 @@ public sealed class QuestPickupMismatchTracker
     }
 
     public void Reset()
+    {
+        _latestObservedInteractionCycleId = null;
+        ClearEpisode();
+    }
+
+    private void ClearEpisode()
     {
         _lastEvidence = null;
         _lastInteractionCycleId = null;

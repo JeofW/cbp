@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading;
+using System.Runtime.ExceptionServices;
 
 namespace TreeSharp
 {
@@ -44,6 +46,13 @@ namespace TreeSharp
                         $"Iterator completed unexpectedly in {GetType().FullName} - did Execute() yield all status values correctly?");
 
                 LastStatus = _enumerator.Current;
+            }
+            catch (ThreadInterruptedException)
+            {
+                // A run-stop signal is not a failed branch: letting the parent select
+                // a fallback can issue another movement command during shutdown.
+                StopAfterInterruption(context);
+                throw;
             }
             catch (Exception ex)
             {
@@ -95,6 +104,13 @@ namespace TreeSharp
                 if (_enumerator == null)
                     throw new ApplicationException($"GetEnumerator() returned null for {GetType().Name}");
             }
+            catch (ThreadInterruptedException)
+            {
+                // A run-stop signal is not a failed branch: letting the parent select
+                // a fallback can issue another movement command during shutdown.
+                StopAfterInterruption(context);
+                throw;
+            }
             catch (Exception ex)
             {
                 Styx.Helpers.Logging.WriteException(ex);
@@ -102,19 +118,37 @@ namespace TreeSharp
             }
         }
 
+        private void StopAfterInterruption(object context)
+        {
+            LastStatus = RunStatus.Failure;
+            try
+            {
+                Stop(context);
+            }
+            catch (Exception cleanupError)
+            {
+                // Preserve the original interruption even when cleanup/log subscribers
+                // fail. An ordinary cleanup error cannot authorize parent fallback.
+                try { Styx.Helpers.Logging.WriteException(cleanupError); }
+                catch { }
+            }
+        }
+
         public virtual void Stop(object context)
         {
-            Cleanup();
-            
-            if (_enumerator != null)
+            // Detach before user cleanup, including reentrant/throwing cleanup.
+            // A later Start must never reuse the interrupted iterator.
+            var enumerator = _enumerator;
+            _enumerator = null;
+            try
             {
-                _enumerator.Dispose();
-                _enumerator = null;
+                Cleanup();
             }
-            
-            if (LastStatus.HasValue && LastStatus.Value == RunStatus.Running)
+            finally
             {
-                LastStatus = RunStatus.Failure;
+                if (LastStatus == RunStatus.Running)
+                    LastStatus = RunStatus.Failure;
+                enumerator?.Dispose();
             }
         }
 
@@ -124,8 +158,20 @@ namespace TreeSharp
             if (CleanupHandlers.Count == 0)
                 return;
                 
+            ExceptionDispatchInfo? failure = null;
             while (CleanupHandlers.Count != 0)
-                CleanupHandlers.Pop().Dispose();
+            {
+                try { CleanupHandlers.Pop().Dispose(); }
+                catch (Exception error)
+                {
+                    // Drain all owned cleanup before propagating the original error.
+                    // Stop signals take precedence over ordinary cleanup failures.
+                    if (failure == null || (error is ThreadInterruptedException
+                        && failure.SourceException is not ThreadInterruptedException))
+                        failure = ExceptionDispatchInfo.Capture(error);
+                }
+            }
+            failure?.Throw();
         }
 
         public bool Equals(Composite? other)

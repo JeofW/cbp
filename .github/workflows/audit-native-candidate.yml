@@ -1,0 +1,106 @@
+name: Audit pinned format6 native candidate
+on:
+  push:
+    branches: ['audit/next-07-integrated-mesh-20260912']
+    paths: ['Tools/NativeMeshAudit/Build-PinnedNative.ps1', 'Tools/NativeMeshAudit/AbiAssertions.cpp', '.github/workflows/audit-native-candidate.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  controlled-native-comparison:
+    if: github.repository == 'JeofW/CopilotBuddy-private' && github.event.repository.private == true
+    runs-on: windows-latest
+    timeout-minutes: 25
+    env:
+      GIT_CONFIG_COUNT: '2'
+      GIT_CONFIG_KEY_0: core.longpaths
+      GIT_CONFIG_VALUE_0: 'true'
+      GIT_CONFIG_KEY_1: core.autocrlf
+      GIT_CONFIG_VALUE_1: 'false'
+      GIT_LFS_SKIP_SMUDGE: '1'
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+          lfs: false
+          path: host
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: Likon69/Navigation-C-
+          ref: 221dfe2877fa3f749ada49c98687e99fac74d437
+          persist-credentials: false
+          path: upstream
+      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9
+        with:
+          dotnet-version: '10.0.x'
+      - name: Fetch only the pinned Kalimdor LFS objects
+        working-directory: host
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $out = Join-Path $env:RUNNER_TEMP 'native-candidate'
+          New-Item -ItemType Directory -Force $out | Out-Null
+          git rev-parse HEAD | Out-File (Join-Path $out 'host-commit.txt')
+          $auth = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes("x-access-token:$env:GH_TOKEN"))
+          git -c "http.https://github.com/.extraheader=AUTHORIZATION: basic $auth" lfs fetch --include='mmaps/001*' --exclude='' origin $env:GITHUB_SHA *> (Join-Path $out 'lfs-fetch.txt')
+          if ($LASTEXITCODE -ne 0) { throw 'Selected LFS fetch failed' }
+          git lfs checkout 'mmaps/001*' *> (Join-Path $out 'lfs-checkout.txt')
+          if ($LASTEXITCODE -ne 0) { throw 'Selected LFS checkout failed' }
+          git lfs ls-files --json | Out-File (Join-Path $out 'lfs-manifest.json')
+          $manifest = Get-Content (Join-Path $out 'lfs-manifest.json') -Raw | ConvertFrom-Json
+          $selected = @($manifest.files | Where-Object { $_.name -like 'mmaps/001*' })
+          if ($selected.Count -ne 989) { throw 'Pinned Kalimdor census changed' }
+          foreach ($entry in $selected) {
+            $file = Get-Item $entry.name
+            if (-not $entry.checkout -or $file.Length -ne $entry.size -or (Get-FileHash $entry.name -Algorithm SHA256).Hash.ToLowerInvariant() -ne $entry.oid) { throw "Mesh object integrity mismatch: $($entry.name)" }
+          }
+          @{verified_files=$selected.Count;bytes=($selected | Measure-Object size -Sum).Sum;other_maps_downloaded=$false} | ConvertTo-Json | Out-File (Join-Path $out 'asset-verification.json')
+      - name: Build pinned upstream without modifying host dependency
+        shell: pwsh
+        run: |
+          & ./host/Tools/NativeMeshAudit/Build-PinnedNative.ps1 -SourceRoot ./upstream -OutputDirectory (Join-Path $env:RUNNER_TEMP 'native-candidate/build')
+          if ($LASTEXITCODE -ne 0) { throw 'Native build script failed' }
+      - name: Compare the exact same harness with old and source-built DLLs
+        working-directory: host
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $out = Join-Path $env:RUNNER_TEMP 'native-candidate'
+          $installer = Join-Path (Split-Path $env:RUNNER_WORKSPACE) '_actions/actions/setup-dotnet/67a3573c9a986a3f9c594539f4ab511d57bb3ce9/externals/install-dotnet.ps1'
+          $destination = Join-Path $env:RUNNER_TEMP 'dotnet-x86'
+          foreach ($framework in @('dotnet','windowsdesktop')) {
+            & pwsh -NoProfile -File $installer -Channel '10.0' -Runtime $framework -Architecture x86 -InstallDir $destination -NoPath *> (Join-Path $out "install-$framework.txt")
+            if ($LASTEXITCODE -ne 0) { throw 'Runtime installation failed' }
+          }
+          dotnet build Tools/NativeMeshAudit/NativeMeshAudit.csproj -c Release -p:Platform=x86 -v quiet *> (Join-Path $out 'managed-build.txt')
+          if ($LASTEXITCODE -ne 0) { throw 'Managed harness build failed' }
+          $assemblies = @(Get-ChildItem Tools/NativeMeshAudit/bin -Filter NativeMeshAudit.dll -Recurse | Where-Object { $_.FullName -notmatch '[\\/](ref|refint)[\\/]' })
+          if ($assemblies.Count -ne 1) { throw 'Unexpected managed harness count' }
+          $assembly = $assemblies[0]
+          New-Item -ItemType Junction -Path (Join-Path $assembly.DirectoryName 'mmaps') -Target (Join-Path $PWD 'mmaps') | Out-Null
+          $results = @()
+          foreach ($variant in @('checked-in','source-built')) {
+            $variantOut = Join-Path $out $variant
+            New-Item -ItemType Directory -Force $variantOut | Out-Null
+            if ($variant -eq 'source-built') { Copy-Item (Join-Path $out 'build/Navigation.dll') (Join-Path $assembly.DirectoryName 'Navigation.dll') -Force }
+            & (Join-Path $destination 'dotnet.exe') $assembly.FullName $PWD.Path $variantOut *> (Join-Path $variantOut 'console.txt')
+            $exitCode = $LASTEXITCODE
+            $results += @{variant=$variant;exit_code=$exitCode;game_attached=$false}
+            if ($variant -eq 'checked-in' -and $exitCode -eq 0) { throw 'The baseline no longer reproduces; investigate before attributing the fix' }
+          }
+          $results | ConvertTo-Json | Out-File (Join-Path $out 'comparison.json')
+          if ($results[1].exit_code -ne 0) { throw 'The source-built candidate has not established route compatibility' }
+          $routes = Get-Content (Join-Path $out 'source-built/routes.json') -Raw | ConvertFrom-Json
+          $controls = @($routes | Where-Object { $_.route -like '*local-control' })
+          if ($controls.Count -ne 8 -or @($controls | Where-Object { -not $_.succeeded -or $_.partial -or $_.endpoint_distance -gt 5 }).Count) { throw 'Local controls must complete; a partial captured route is not a compatibility pass by itself' }
+          if (@(git status --porcelain --untracked-files=no).Count) { throw 'Host tracked inputs were changed by candidate comparison' }
+      - name: Retain private evidence and source provenance; no deployment
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: native-candidate-${{ github.sha }}
+          path: ${{ runner.temp }}/native-candidate/
+          retention-days: 7
+          if-no-files-found: error

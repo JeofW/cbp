@@ -1,0 +1,48 @@
+{
+  "schema": "copilotbuddy-resume-overlay/v1",
+  "directed": true,
+  "scope": "Human-reviewed continuation overlay, not complete semantic binding or live-cause proof",
+  "tested_commit": "6fd314cd5bb6012c6da52cbd0ac963d0db894f15",
+  "sources": {
+    "lift_red": {"commit":"deb6a8c709aca0fbee4bfb5a775b08b84ea09c7f","run":34745518034,"artifact":10314370870,"sha256":"4545406a3b57c72b647818fcdaf5f6374e4ca5a7a15dfe5b1f758f95d04d6224","failed_additional_cases":8},
+    "lift_green": {"commit":"49ea729bad4f48492f3ae0162f6df54c0c8e270f","run":34746823439,"artifact":10314148434,"sha256":"5576ffcf80c31b922870f20b9e2f37d75d98859018d93616532cf6166f08682d"},
+    "exorcism_red": {"commit":"ef347d25cb528eaff9b9ceb49bea0af8ab583f96","run":34743243847,"artifact":10313532452,"sha256":"354de633bc3efc46b51f071772ae5ef9579fad0fe9b1c2ddb71196b874fc3306","failed_cases":19,"cases":39},
+    "exorcism_green": {"commit":"cdf47cfb0e437886df03c46d6286998b7753307f","run":34744322637,"artifact":10313569029,"sha256":"0d7c422372db19806ab04c8fa9cb36f7e0eb9e50f37b2d5c65b6566b4d856fd7"},
+    "queue_portable": {"commit":"a560eabe7acf763272aeaeff18c031b9e267687e","run":34745419542,"artifact":10314170476,"sha256":"3b7fde684d7f5dd301dfdac1c626b4c28bb25577a221474167e5a6a0fcdcc40e"},
+    "queue_mesh": {"run":34745419648,"artifact":10313921620,"sha256":"ccf3e675b325f812d915e640a2185f41e0e7c655f4d0895488a0c91e558a678a","identical_semantic_records":80,"grod_speedup_established":false},
+    "combined": {"commit":"6fd314cd5bb6012c6da52cbd0ac963d0db894f15","tree":"46ea3862597933a7d33dfa243dc1e9d1efe74c13","run":34747083607,"artifact":10314113855,"sha256":"226228171e0fa72af56666dafe7806d41857029bcbe22f00b8eec475eb1df408","passed_entries":11,"game_attached":false}
+  },
+  "nodes": [
+    {"id":"exit-risk","kind":"reproduced-contract-failure","label":"Early unsafe/detached observations preserve stale platform dwell"},
+    {"id":"exit-owner","kind":"source","path":"Styx/Logic/Pathing/ElevatorTransitController.cs","symbols":["Observe","HasStableDockObservation","ResetDockCandidate"]},
+    {"id":"exit-repair","kind":"repair","commit":"49ea729bad4f48492f3ae0162f6df54c0c8e270f","pr":26},
+    {"id":"cast-policy-risk","kind":"reproduced-decision-mismatch","label":"Non-proc Exorcism displaces movement or active melee opportunity"},
+    {"id":"cast-policy-owner","kind":"source","path":"runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Paladin/Retribution.cs","symbols":["CreateExorcismBehavior","ShouldCastExorcism"]},
+    {"id":"cast-policy-repair","kind":"repair","commit":"cdf47cfb0e437886df03c46d6286998b7753307f","pr":27},
+    {"id":"linear-modify","kind":"measured-algorithmic-cost","label":"Linear native frontier search on node improvement"},
+    {"id":"indexed-candidate","kind":"experiment","pr":25,"default_selected":false},
+    {"id":"negative-benchmark","kind":"counterevidence","label":"Target forward Grod route speedup not established"},
+    {"id":"combined-tree","kind":"integration","source":"combined"},
+    {"id":"grod-live-route","kind":"open-gate","label":"Actual acquisition, full route cost, supported attachment/exit and onward quest/vendor travel"},
+    {"id":"whole-bot-acceptance","kind":"open-gate","label":"Full quest/class/command ownership and supervised live acceptance"}
+  ],
+  "edges": [
+    {"from":"exit-risk","to":"exit-owner","relation":"localized-in","classification":"reproduced","evidence":["lift_red"],"confidence":"high-within-fixtures"},
+    {"from":"exit-owner","to":"exit-repair","relation":"repaired-by","classification":"source-and-regression","evidence":["lift_red","lift_green"],"confidence":"high-within-fixtures"},
+    {"from":"cast-policy-risk","to":"cast-policy-owner","relation":"localized-in","classification":"reproduced-policy-mismatch","evidence":["exorcism_red"],"confidence":"high-for-controlled-inputs"},
+    {"from":"cast-policy-owner","to":"cast-policy-repair","relation":"conservative-policy-change","classification":"source-and-regression","evidence":["exorcism_red","exorcism_green"],"confidence":"high-for-controlled-inputs-not-DPS"},
+    {"from":"linear-modify","to":"indexed-candidate","relation":"isolated-update-work-reduced","classification":"measured","evidence":["queue_portable"],"confidence":"high-for-fixture"},
+    {"from":"indexed-candidate","to":"negative-benchmark","relation":"workload-speedup-hypothesis-not-supported","classification":"measured-counterevidence","evidence":["queue_mesh"],"confidence":"limited-to-recorded-ABBA-sample"},
+    {"from":"exit-repair","to":"combined-tree","relation":"included-and-executed","classification":"verified","evidence":["combined"],"confidence":"high"},
+    {"from":"cast-policy-repair","to":"combined-tree","relation":"included-and-executed","classification":"verified","evidence":["combined"],"confidence":"high"},
+    {"from":"negative-benchmark","to":"combined-tree","relation":"candidate-excluded-from-default","classification":"verified-change-scope","evidence":["combined","queue_mesh"],"confidence":"high"},
+    {"from":"combined-tree","to":"grod-live-route","relation":"does-not-close","classification":"explicit-acceptance-limit","evidence":["combined"],"confidence":"high-for-test-scope"},
+    {"from":"combined-tree","to":"whole-bot-acceptance","relation":"does-not-close","classification":"explicit-acceptance-limit","evidence":["combined"],"confidence":"high-for-test-scope"}
+  ],
+  "saved_queries": [
+    {"name":"exit-evidence-to-current-tree","start":"exit-risk","target":"combined-tree"},
+    {"name":"cast-policy-to-current-tree","start":"cast-policy-risk","target":"combined-tree"},
+    {"name":"performance-hypothesis-counterevidence","start":"linear-modify","target":"negative-benchmark"}
+  ],
+  "acceptance": {"independent_review":"pending","live_game":"not_attached","merged":false,"deployed":false}
+}

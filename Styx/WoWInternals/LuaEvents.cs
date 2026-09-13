@@ -346,7 +346,9 @@ namespace Styx.WoWInternals
         {
             if (!string.IsNullOrEmpty(this._eventTableName))
             {
-                LuaTValue field = Lua.State.Globals.GetField(this._eventTableName);
+                // A managed registration may outlive the client Lua state (logout,
+                // reconnect or startup). Missing globals are not an initialized table.
+                LuaTValue field = Lua.State.Globals?.GetField(this._eventTableName);
                 if (field != null && field.Type == LuaType.Table)
                 {
                     return field;

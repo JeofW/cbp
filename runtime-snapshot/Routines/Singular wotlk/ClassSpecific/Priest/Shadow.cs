@@ -17,6 +17,11 @@ namespace Singular.ClassSpecific.Priest
 {
     public class Shadow
     {
+        // Yield to the bot tick while preserving the existing delay between actions.
+        // Stopping/restarting the composite cancels/restarts the pending wait.
+        private static Composite CreateInnerFocusDelay() =>
+            new WaitContinue(TimeSpan.FromMilliseconds(100), _ => false, new ActionAlwaysSucceed());
+
         #region Normal Rotation
 
         [Class(WoWClass.Priest)]
@@ -107,7 +112,7 @@ namespace Singular.ClassSpecific.Priest
                     ret => SpellManager.HasSpell("Inner Focus") && SpellManager.CanCast("Inner Focus"),
                     new Sequence(
                         Spell.BuffSelf("Inner Focus"),
-                        new Action(ret => System.Threading.Thread.Sleep(100)), // Small delay
+                        CreateInnerFocusDelay(),
                         Spell.Cast("Mind Blast")
                     )),
                 
@@ -177,7 +182,7 @@ namespace Singular.ClassSpecific.Priest
                     ret => SpellManager.HasSpell("Inner Focus") && SpellManager.CanCast("Inner Focus"),
                     new Sequence(
                         Spell.BuffSelf("Inner Focus"),
-                        new Action(ret => System.Threading.Thread.Sleep(100)),
+                        CreateInnerFocusDelay(),
                         Spell.Cast("Mind Blast")
                     )),
                     
@@ -257,7 +262,7 @@ namespace Singular.ClassSpecific.Priest
                             ret => SpellManager.HasSpell("Inner Focus") && SpellManager.CanCast("Inner Focus"),
                             new Sequence(
                                 Spell.BuffSelf("Inner Focus"),
-                                new Action(ret => System.Threading.Thread.Sleep(100)),
+                                CreateInnerFocusDelay(),
                                 Spell.Cast("Mind Blast")
                             )),
                             

@@ -29,7 +29,7 @@ namespace Styx.Helpers
         public static bool IsTank(this WoWPlayer me)
         {
             if (me.IsMe) {
-                string role = Lua.GetReturnVal<string>("return UnitGroupRolesAssigned('player')", 0);
+                string role = LegacyGroupRoles.GetAssignedRole("player");
                 if (!string.IsNullOrEmpty(role) && role != "NONE") return role == "TANK";
                 return me.Class switch { WoWClass.Warrior => SpellManager.HasSpell("Shield Slam"), WoWClass.Paladin => SpellManager.HasSpell("Avenger's Shield"), WoWClass.DeathKnight => SpellManager.HasSpell("Heart Strike"), WoWClass.Druid => SpellManager.HasSpell("Mangle") && !SpellManager.HasSpell("Moonkin Form"), _ => false };
             }
@@ -42,7 +42,7 @@ namespace Styx.Helpers
         public static bool IsHealer(this WoWPlayer me)
         {
             if (me.IsMe) {
-                string role = Lua.GetReturnVal<string>("return UnitGroupRolesAssigned('player')", 0);
+                string role = LegacyGroupRoles.GetAssignedRole("player");
                 if (!string.IsNullOrEmpty(role) && role != "NONE") return role == "HEALER";
                 return me.Class switch { WoWClass.Priest => !SpellManager.HasSpell("Shadowform"), WoWClass.Paladin => SpellManager.HasSpell("Holy Shock"), WoWClass.Shaman => SpellManager.HasSpell("Riptide"), WoWClass.Druid => SpellManager.HasSpell("Swiftmend"), _ => false };
             }
@@ -55,7 +55,7 @@ namespace Styx.Helpers
         public static bool IsDps(this WoWPlayer me)
         {
             if (me.IsMe) {
-                string role = Lua.GetReturnVal<string>("return UnitGroupRolesAssigned('player')", 0);
+                string role = LegacyGroupRoles.GetAssignedRole("player");
                 if (!string.IsNullOrEmpty(role) && role != "NONE") return role == "DAMAGER";
                 return !me.IsTank() && !me.IsHealer();
             }

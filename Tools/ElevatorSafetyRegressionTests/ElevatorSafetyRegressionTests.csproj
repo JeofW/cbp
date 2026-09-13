@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <Compile Include="CorridorBoundaryRegressionTests.cs" />
+    <Compile Include="ObservationContinuityRegressionTests.cs" />
+    <Compile Include="EarlyDockVetoRegressionTests.cs" />
+    <Compile Include="../../Styx/Logic/Pathing/ElevatorTransitController.cs" Link="Production/ElevatorTransitController.cs" />
+    <Compile Include="../../Styx/Logic/Pathing/WoWPoint.cs" Link="Production/WoWPoint.cs" />
+    <Compile Include="../../Styx/Helpers/IRangeAble.cs" Link="Production/IRangeAble.cs" />
+    <Compile Include="../../Styx/Helpers/Range.cs" Link="Production/Range.cs" />
+    <Compile Include="../../Styx/WoWInternals/InputMouseButton.cs" Link="Production/InputMouseButton.cs" />
+    <Compile Include="../QuestRecoveryRegressionTests/ElevatorTransitRegressionTests.cs" Link="Existing/ElevatorTransitRegressionTests.cs" />
+  </ItemGroup>
+</Project>

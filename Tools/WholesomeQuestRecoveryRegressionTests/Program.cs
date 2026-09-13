@@ -3276,6 +3276,9 @@ void TestLoadedSpawnsReceiveCachedLiveNavigationEnrichment()
             10,
             1000,
             7,
+            // Mirror the production split: cheap per-point vetoes must also cover
+            // hotspots that do not receive a native path probe in this scan.
+            isKnownUnsafe: point => point.X < 160,
             navigationAssessment: point =>
             {
                 enrichmentCalls++;
@@ -3290,8 +3293,8 @@ void TestLoadedSpawnsReceiveCachedLiveNavigationEnrichment()
             new WoWPoint(0, 0, 0),
             _ => false);
 
-        Assert(enrichmentCalls == 7,
-            "live enrichment must run once per distinct quantized cluster per scan, not once per spawn record or comparator call");
+        Assert(enrichmentCalls == 5,
+            "live enrichment must skip explicit unsafe points and run once per remaining query-budget cell, not once per spawn record");
         Assert(hotspots.Any(point => point.X == 481)
                && hotspots.All(point => point.X >= 400),
             "five nearer live-unsafe or unreachable clusters must not hide a farther confirmed safe and reachable cluster");
@@ -3679,13 +3682,21 @@ void TestDatasetFingerprintIsDeterministic()
         Assert(first.Load() != null && second.Load() != null, "the controlled quest datasets must load");
         Assert(first.DatasetFingerprint == second.DatasetFingerprint
                && first.DatasetFingerprint != "unknown",
-            "equal ordered path/length/timestamp metadata must produce one deterministic dataset fingerprint");
+            "equal parsed bytes and logical roles must produce one deterministic dataset fingerprint");
 
         File.SetLastWriteTimeUtc(path, stamp.AddSeconds(1));
         var changed = new DataLoader(path);
         changed.Load();
-        Assert(changed.DatasetFingerprint != first.DatasetFingerprint,
-            "changing dataset metadata must change the dataset fingerprint");
+        Assert(changed.DatasetFingerprint == first.DatasetFingerprint,
+            "timestamp-only changes must preserve content-owned recovery context");
+
+        // Data identity follows the bytes, not the previous metadata-only policy.
+        File.AppendAllText(path, " ");
+        File.SetLastWriteTimeUtc(path, stamp);
+        var contentChanged = new DataLoader(path);
+        contentChanged.Load();
+        Assert(contentChanged.DatasetFingerprint != first.DatasetFingerprint,
+            "changed parsed snapshot bytes must invalidate recovery context even with the old timestamp");
     }
     finally
     {
@@ -4342,8 +4353,16 @@ void TestSchedulerReportsEveryEndpointlessObjectiveOmission()
             StringComparison.Ordinal),
         "an objective with no known in-range endpoint must report its exact scheduler omission");
 
+    // Every destination in this fixture must actually receive a probe. Nearby
+    // unprobed alternatives are covered separately and must remain unknown.
+    var fullyProbedDb = SchedulerDatabase();
+    fullyProbedDb.CreatureSpawns["2000"] = new()
+    {
+        new SpawnPoint { Map = 1, X = 1, Y = 1 },
+        new SpawnPoint { Map = 1, X = 161, Y = 1 }
+    };
     var noAssessed = QuestScheduler.MaterializeSchedule(
-        SchedulerDatabase(),
+        fullyProbedDb,
         Snapshot(new[] { Accepted(867, false) }, Array.Empty<uint>(), authoritative: false),
         _ => Eligible(),
         10,
@@ -4410,6 +4429,13 @@ void TestDistantRelationsRemainEligibleAfterScanExpansion()
 void TestNavigationRejectionDoesNotQuarantineQuestData()
 {
     var db = SchedulerDatabase();
+    // One destination per query-budget cell: all endpoints are really assessed,
+    // rather than treating an unprobed neighbor as an already rejected path.
+    db.CreatureSpawns["2000"] = new()
+    {
+        new SpawnPoint { Map = 1, X = 1, Y = 1 },
+        new SpawnPoint { Map = 1, X = 161, Y = 1 }
+    };
     var failures = new List<QuestAttemptOutcome>();
     var snapshot = Snapshot(new[] { Accepted(867, false) }, Array.Empty<uint>(), authoritative: false);
     var blocked = QuestScheduler.MaterializeSchedule(db, snapshot, _ => Eligible(), 10, 500, 7,
