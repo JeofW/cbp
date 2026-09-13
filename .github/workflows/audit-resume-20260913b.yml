@@ -1,0 +1,36 @@
+name: Audit continuation source recovery
+on:
+  push:
+    branches: ['audit/next-23-worker-ownership-20260913']
+    paths: ['.github/workflows/audit-resume-20260913b.yml']
+permissions:
+  contents: read
+jobs:
+  source:
+    if: github.repository == 'JeofW/CopilotBuddy-private' && github.event.repository.private == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GIT_LFS_SKIP_SMUDGE: '1'
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 0
+          lfs: false
+          persist-credentials: false
+      - name: Export tracked Git objects only
+        run: |
+          set -eu
+          out="$RUNNER_TEMP/resume-source"
+          mkdir -p "$out"
+          git rev-parse HEAD > "$out/checkout.txt"
+          git show-ref > "$out/refs.txt"
+          git bundle create "$out/source.bundle" --all
+          sha256sum "$out/source.bundle" > "$out/SHA256SUMS"
+          printf 'Git objects only; no LFS payload downloads; no remote refs modified.\n' > "$out/README.txt"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: continuation-source-${{ github.sha }}
+          path: ${{ runner.temp }}/resume-source/
+          retention-days: 7
+          if-no-files-found: error
