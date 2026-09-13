@@ -8,8 +8,8 @@ records = json.loads(capture.getvalue())
 p = Path('runtime-snapshot/Bots/WholesomeAutoQuest-master/VendorDataLoader.cs')
 def blob(data): return hashlib.sha1(b'blob ' + str(len(data)).encode() + b'\0' + data).hexdigest()
 assert blob(p.read_bytes()) == 'c0b0ae4b21fc2afebfd1662eb189fa76f28b50fd'
-p.write_bytes(p.read_bytes().replace(b'using Styx.WoWInternals;', b'using Styx;\nusing Styx.WoWInternals;'))
-assert blob(p.read_bytes()) == 'a4fefb0277fe5e8d02da086d418e5e3f858a4891'
+p.write_bytes(p.read_bytes().replace(b'using Styx.WoWInternals;', b'using Styx.Logic.Pathing;\nusing Styx.WoWInternals;'))
+assert blob(p.read_bytes()) == '892f7d3405e0766ebd4f2b9917a121649d53a2da'
 for record in records:
     if record['path'] == p.as_posix():
         record['sha'] = blob(p.read_bytes())
