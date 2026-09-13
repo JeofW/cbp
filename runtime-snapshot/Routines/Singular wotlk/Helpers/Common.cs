@@ -31,6 +31,7 @@ namespace Singular.Helpers
                     ret => !StyxWoW.Me.IsAutoAttacking && StyxWoW.Me.AutoRepeatingSpellId != spellIdAutoShot,
                     new Action(ret =>
                         {
+                            if (!GroupCombatSafety.MayAttackCurrentTarget()) return RunStatus.Failure;
                             StyxWoW.Me.ToggleAttack();
                             return RunStatus.Failure;
                         })),
@@ -39,6 +40,7 @@ namespace Singular.Helpers
                     new Action(
                         delegate
                         {
+                            if (!GroupCombatSafety.MayAttackCurrentTarget()) return RunStatus.Failure;
                             PetManager.CastPetAction("Attack");
                             return RunStatus.Failure;
                         }))
@@ -67,7 +69,11 @@ namespace Singular.Helpers
             return new PrioritySelector(
                 new Decorator(
                     ret => Item.HasWand && !StyxWoW.Me.IsWanding() && extra(ret),
-                    new Action(ret => SpellManager.Cast("Shoot")))
+                    new Action(ret =>
+                    {
+                        if (!GroupCombatSafety.MayAttackCurrentTarget()) return RunStatus.Failure;
+                        return SpellManager.Cast("Shoot") ? RunStatus.Success : RunStatus.Failure;
+                    }))
                 );
         }
 

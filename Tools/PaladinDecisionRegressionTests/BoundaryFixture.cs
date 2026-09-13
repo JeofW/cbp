@@ -132,3 +132,12 @@ namespace Singular.Helpers
             Fixture.Attempt(name, select, requires);
     }
 }
+
+// The support suite links the actual Common owner; rotation-only tests isolate it.
+namespace Singular.ClassSpecific.Paladin
+{
+    public static class Common
+    {
+        public static Composite CreatePaladinDispelBehavior() => Fixture.Nothing();
+    }
+}

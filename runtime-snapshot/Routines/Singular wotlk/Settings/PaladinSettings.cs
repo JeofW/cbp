@@ -19,6 +19,20 @@ namespace Singular.Settings
         
         #region Common
         [Setting]
+        [DefaultValue(true)]
+        [Category("Common")]
+        [DisplayName("Dispel Debuffs")]
+        [Description("Use learned Purify/Cleanse for safe removable effects. Disable for encounter-specific assignments.")]
+        public bool DispelDebuffs { get; set; }
+
+        [Setting]
+        [DefaultValue(true)]
+        [Category("Common")]
+        [DisplayName("Dispel Party and Raid")]
+        [Description("Include visible friendly group members in automatic cleansing. Self cleansing remains independent.")]
+        public bool DispelParty { get; set; }
+
+        [Setting]
         [DefaultValue(PaladinSeal.Auto)]
         [Category("Common")]
         [DisplayName("Seal")]

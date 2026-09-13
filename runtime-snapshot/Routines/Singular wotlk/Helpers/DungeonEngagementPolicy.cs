@@ -49,7 +49,7 @@ namespace Singular.Helpers
             bool isAssistTarget)
         {
             return !restricted || hasAggro || hasPetAggro || targetsMeOrPet || targetsAnyMinion ||
-                   targetsPartyMember || targetsRaidMember || taggedByMe || isAssistTarget;
+                   targetsPartyMember || targetsRaidMember || taggedByMe;
         }
 
         public static bool ShouldAllowAreaEffect(bool restricted, bool hasUnengagedEnemyInArea)

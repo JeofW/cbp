@@ -267,7 +267,7 @@ namespace Singular.Helpers
                     var target = onUnit(ret);
                     if (target == null)
                         return false;
-                    var minReqs = requirements(ret) && Unit.IsAreaEffectSafe(name, target);
+                    var minReqs = requirements(ret) && Unit.IsCombatActionSafe(name, target);
                     var canCast = false;
                     var inRange = false;
                     if (minReqs)
@@ -327,7 +327,7 @@ namespace Singular.Helpers
                             if (string.IsNullOrWhiteSpace(name) || onUnit == null)
                                 return RunStatus.Failure;
                             var target = onUnit(ret);
-                            if (target == null)
+                            if (target == null || !Unit.IsCombatActionSafe(name, target))
                                 return RunStatus.Failure;
                             Logger.Write("Casting " + name + " on " + target.SafeName());
                             return SpellManager.Cast(name, target)
@@ -426,7 +426,7 @@ namespace Singular.Helpers
                     if (spellId <= 0 || onUnit == null || requirements == null)
                         return false;
                     var target = onUnit(ret);
-                    return target != null && requirements(ret) && SpellManager.CanCast(spellId, target, true);
+                    return target != null && requirements(ret) && Unit.IsCombatActionSafe(spellId, target) && SpellManager.CanCast(spellId, target, true);
                 },
                 new Sequence(
                     new DecoratorContinue(
@@ -440,7 +440,7 @@ namespace Singular.Helpers
                             if (spellId <= 0 || onUnit == null)
                                 return RunStatus.Failure;
                             var target = onUnit(ret);
-                            if (target == null)
+                            if (target == null || !Unit.IsCombatActionSafe(spellId, target))
                                 return RunStatus.Failure;
                             Logger.Write("Casting " + spellId + " on " + target.SafeName());
                             return SpellManager.Cast(spellId, target)
