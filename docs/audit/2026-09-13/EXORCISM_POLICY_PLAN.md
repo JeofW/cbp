@@ -1,0 +1,11 @@
+# Exorcism movement/opportunity ownership
+
+Owner-approved continuation of CODEX_AUDIT_PROMPT.md, pinned combined baseline c8c7fb59c23d627a6f55ba611e48000619d66a0e. The actual compiled Normal/Instance/Battleground rotation still permits unprocced melee hard casts, and Instance/Battleground place those attempts ahead of available strikes. The four-input predicate ignores melee and auto-attack inputs; movement is not an explicit policy guard.
+
+Counterevidence: Helpers/Common.cs:25-44 enables auto-attack at range too. Rejecting merely because IsAutoAttacking is true would break ranged openers. The proposed rule therefore treats *melee plus active auto-attack*, not that flag alone, as the protected swing opportunity. A proc permits an instant while moving. Without a proc a trained Art of War build waits; an untrained build may hard cast only while stationary and not actively melee attacking. Higher-priority melee strikes and Judgement precede an unprocced ranged filler. Preserve existing special instant-proc priorities, cast safety and retry contracts.
+
+Use one shared Exorcism behavior builder across the three active contexts, retaining the existing four-input compatibility method. All calls observe the current target and movement each tick. No change to spell damage, cooldown, server acceptance, lowbie composition, public APIs or learned-spell detection.
+
+Test-only commit must precede repair: 39 decision scenarios plus 192 level/observation combinations execute the linked production rotation and TreeSharp with controlled external world/dispatch helpers. Check selected/rejected actions and swallowed exception logs. Change the legacy melee-hardcast compatibility assertion only after the new failures are captured, documenting the intentional policy change; do not remove it. Run the existing Paladin matrix and all eleven integrated entries after repair.
+
+This is a conservative opportunity/movement policy, not a measured DPS optimization. Swing reset, cast latency, target lifetime, gearing, actual passive talent detection and live damage remain acceptance measurements. The presence of a proc is independently honored even when discovery is incomplete. Do not infer a globally optimal rotation from these synthetic inputs.
