@@ -262,9 +262,12 @@ namespace Singular.Helpers
                     //Logger.WriteDebug("OnUnit: " + onUnit(ret));
                     //Logger.WriteDebug("CanCast: " + SpellManager.CanCast(name, onUnit(ret), false));
 
-                    var target = onUnit != null ? onUnit(ret) : null;
-                    var minReqs = requirements != null && requirements(ret) && target != null && name != null &&
-                                  Unit.IsAreaEffectSafe(name, target);
+                    if (string.IsNullOrWhiteSpace(name) || onUnit == null || requirements == null || checkMovement == null)
+                        return false;
+                    var target = onUnit(ret);
+                    if (target == null)
+                        return false;
+                    var minReqs = requirements(ret) && Unit.IsAreaEffectSafe(name, target);
                     var canCast = false;
                     var inRange = false;
                     if (minReqs)
@@ -410,7 +413,12 @@ namespace Singular.Helpers
         {
             return new Decorator(
                 ret =>
-                requirements != null && requirements(ret) && onUnit != null && onUnit(ret) != null && SpellManager.CanCast(spellId, onUnit(ret), true),
+                {
+                    if (spellId <= 0 || onUnit == null || requirements == null)
+                        return false;
+                    var target = onUnit(ret);
+                    return target != null && requirements(ret) && SpellManager.CanCast(spellId, target, true);
+                },
                 new Sequence(
                     new DecoratorContinue(
                         ret => Movement.NeedsOffTargetCastSetup(onUnit(ret)),
@@ -562,8 +570,14 @@ namespace Singular.Helpers
 
             return
                 new Decorator(
-                    ret => onUnit(ret) != null && !DoubleCastPreventionDict.ContainsKey(name) &&
-                           buffNames.All(b => myBuff ? !onUnit(ret).HasMyAura(b) : !onUnit(ret).HasAura(b)),
+                    ret =>
+                    {
+                        if (string.IsNullOrWhiteSpace(name) || onUnit == null || requirements == null || buffNames == null)
+                            return false;
+                        var target = onUnit(ret);
+                        return target != null && !DoubleCastPreventionDict.ContainsKey(name) &&
+                               buffNames.All(b => myBuff ? !target.HasMyAura(b) : !target.HasAura(b));
+                    },
                     new Sequence(
                 // new Action(ctx => _lastBuffCast = name),
                         Cast(name, onUnit, requirements),
@@ -691,7 +705,13 @@ namespace Singular.Helpers
         {
             return
                 new Decorator(
-                    ret => onUnit(ret) != null && !onUnit(ret).Auras.Values.Any(a => a.SpellId == spellId),
+                    ret =>
+                    {
+                        if (spellId <= 0 || onUnit == null || requirements == null)
+                            return false;
+                        var target = onUnit(ret);
+                        return target != null && !target.Auras.Values.Any(a => a.SpellId == spellId);
+                    },
                     Cast(spellId, onUnit, requirements));
         }
 
