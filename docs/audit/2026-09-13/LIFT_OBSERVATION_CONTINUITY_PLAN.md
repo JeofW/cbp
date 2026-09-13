@@ -1,0 +1,9 @@
+# Lift observation continuity
+
+Owner-approved continuation, combined baseline c8c7fb59c23d627a6f55ba611e48000619d66a0e. The earlier boarding and corridor repairs remain intact. The Riding branch retains dock dwell when attachment disappears or changes, ignores falling at the exit-decision boundary, and retains confirmation when the exit safety predicate fails. Exiting rechecks dock radius but not current platform stability; a departing platform can stay within the radius and still authorize movement. HasStableDockObservation has no observation-gap or clock-reversal invalidation.
+
+Test the real portable controller first, with 28 cases across both directions. Controls preserve ordinary exit, missing-transform recovery and supported detached landing completion. Fixtures assert actions, not private fields; they do not simulate real platform collision.
+
+Repair by invalidating stability evidence at every observation/permission interruption, reusing stability checks during active exit, and treating reversed clocks or observations more than two seconds apart as a fresh dwell. Two seconds is an explicit conservative freshness ceiling, not a measured platform period or proof of continuous physics. The existing 750ms confirmation, 1.25-yard dock radius, motion tolerance and landing coordinates are unchanged. Slow or paused observations should wait for fresh evidence rather than count unseen time as stable.
+
+No timer claims real-time safety or fixes transport acquisition/route costs. Do not forcibly abort an attached crossing or issue an unstick command. Re-run the existing elevator suite, 500 finite-input permission checks and all eleven integrated entries after committing the source change. Then include it in the combined review tree and retain live boarding/attachment/exit as unverified acceptance.
