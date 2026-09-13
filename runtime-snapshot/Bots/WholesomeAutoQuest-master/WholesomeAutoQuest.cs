@@ -845,7 +845,12 @@ namespace WholesomeAQ
         private double _lastX, _lastY, _lastZ;
         private double _anchorX, _anchorY, _anchorZ;
         private bool _anchorSet;
-        private DateTime _lastMovedTime = DateTime.Now;
+        private DateTime _lastMovedTime = DateTime.UtcNow;
+        private readonly Guid _vendorTravelOwner = Guid.NewGuid();
+        private DateTime _lastVendorObservationUtc = DateTime.MinValue;
+        private uint _lastVendorMap;
+        private uint _lastVendorEntry;
+        private WoWPoint _lastVendorDestination;
         private HashSet<int> _lastReadyQuestIds;
         private bool _wasStuck;
         private bool _stuckLogged;
@@ -1121,6 +1126,11 @@ namespace WholesomeAQ
             _deathMonitor.Reset();
             _attemptOwnership.Clear();
             _nextProgressSampleUtc = DateTime.MinValue;
+            VendorSafetyPolicy.Travel.Reset(_vendorTravelOwner);
+            _lastVendorObservationUtc = DateTime.MinValue;
+            _lastMovedTime = DateTime.UtcNow;
+            _wasStuck = false;
+            _stuckLogged = false;
         }
 
         private bool DoScan(QuestScheduler scheduler, RefreshLease lease)
@@ -1233,6 +1243,8 @@ namespace WholesomeAQ
             if (_stopped)
                 return;
 
+            if (VendorSafetyPolicy.Travel.ReleaseExpired(_vendorTravelOwner, DateTime.UtcNow))
+                RequestRefresh("Temporary vendor travel retry is due; queuing one scheduler rebuild.");
             CapturePreDeathAttribution();
             MaybeRequestTimedRetry();
             ObserveRecoveryActivation();
@@ -1349,6 +1361,7 @@ namespace WholesomeAQ
             }
 
             base.Pulse();
+            ObserveVendorTravelContext();
 
             if (StyxWoW.IsInGame && StyxWoW.Me != null && !StyxWoW.Me.Combat && TreeRoot.IsRunning)
             {
@@ -1378,68 +1391,20 @@ namespace WholesomeAQ
                     _lastX = loc.X;
                     _lastY = loc.Y;
                     _lastZ = loc.Z;
-                    _lastMovedTime = DateTime.Now;
+                    _lastMovedTime = DateTime.UtcNow;
                     _wasStuck = false;
                     _stuckLogged = false;
                 }
                 else
                 {
-                    double stuckSec = (DateTime.Now - _lastMovedTime).TotalSeconds;
+                    double stuckSec = (DateTime.UtcNow - _lastMovedTime).TotalSeconds;
 
                     if (stuckSec > 30 && !_wasStuck)
                     {
-                        var poi = BotPoi.Current;
-                        bool poiIsVendor = poi != null
-                            && (poi.Type == PoiType.Sell
-                             || poi.Type == PoiType.Repair
-                             || poi.Type == PoiType.Buy
-                             || poi.Type == PoiType.Train);
-
-                        if (poiIsVendor)
+                        if (TryRecoverFailedVendorTravel(loc, TimeSpan.FromSeconds(stuckSec)))
                         {
                             _wasStuck = true;
                             _stuckLogged = true;
-                            _settings.BlacklistedVendors.Add((int)poi.Entry);
-                            SaveVendorBlacklist();
-                            Log($"Blacklisted vendor {poi.Name} (Entry:{poi.Entry}) — stuck for {stuckSec:F0}s, forcing re-scan");
-                            BotPoi.Clear("Wholesome vendor endpoint failed");
-                            RequestRefresh("Vendor endpoint failed; queuing one scheduler rebuild.");
-                        }
-                        else if (MerchantFrame.Instance.IsVisible
-                            && _scheduler?.CurrentVendors != null
-                            && _scheduler.CurrentVendors.Any(v =>
-                                Math.Sqrt(Math.Pow(v.X - loc.X, 2) + Math.Pow(v.Y - loc.Y, 2)) < 50))
-                        {
-                            _wasStuck = true;
-                            _stuckLogged = true;
-                            var stuckVendor = _scheduler.CurrentVendors
-                                .Where(v => Math.Sqrt(Math.Pow(v.X - loc.X, 2) + Math.Pow(v.Y - loc.Y, 2)) < 50)
-                                .OrderBy(v => Math.Sqrt(Math.Pow(v.X - loc.X, 2) + Math.Pow(v.Y - loc.Y, 2)))
-                                .First();
-                            _settings.BlacklistedVendors.Add(stuckVendor.Entry);
-                            SaveVendorBlacklist();
-                            Log($"Blacklisted vendor {stuckVendor.Name} (Entry:{stuckVendor.Entry}) — stuck for {stuckSec:F0}s (fallback), forcing re-scan");
-                            BotPoi.Clear("Wholesome vendor endpoint failed");
-                            RequestRefresh("Vendor endpoint failed; queuing one scheduler rebuild.");
-                        }
-                        else if (TrainerFrame.Instance.IsVisible
-                            && _scheduler?.CurrentVendors != null
-                            && _scheduler.CurrentVendors.Any(v =>
-                                !string.IsNullOrEmpty(v.TrainClass)
-                                && Math.Sqrt(Math.Pow(v.X - loc.X, 2) + Math.Pow(v.Y - loc.Y, 2)) < 50))
-                        {
-                            _wasStuck = true;
-                            _stuckLogged = true;
-                            var stuckVendor = _scheduler.CurrentVendors
-                                .Where(v => !string.IsNullOrEmpty(v.TrainClass)
-                                    && Math.Sqrt(Math.Pow(v.X - loc.X, 2) + Math.Pow(v.Y - loc.Y, 2)) < 50)
-                                .OrderBy(v => Math.Sqrt(Math.Pow(v.X - loc.X, 2) + Math.Pow(v.Y - loc.Y, 2)))
-                                .First();
-                            _settings.BlacklistedVendors.Add(stuckVendor.Entry);
-                            SaveVendorBlacklist();
-                            Log($"Blacklisted trainer {stuckVendor.Name} (Entry:{stuckVendor.Entry}) — stuck for {stuckSec:F0}s (trainer frame open), forcing re-scan");
-                            BotPoi.Clear("Wholesome trainer endpoint failed");
-                            RequestRefresh("Trainer endpoint failed; queuing one scheduler rebuild.");
                         }
                         else if (TryRecoverFailedPickupTravel(loc, stuckSec))
                         {
@@ -1798,6 +1763,67 @@ namespace WholesomeAQ
             bool navigatorTargetsEndpoint = navigatorDestination.Distance2DSqr(endpoint) <= precisionSqr &&
                 Math.Abs(navigatorDestination.Z - endpoint.Z) < 4.5f;
             return !playerAtEndpoint && navigatorTargetsEndpoint;
+        }
+
+        // Do not charge a new trip for time spent on another POI, paused, loading,
+        // in combat or intentionally resting. A long sampling gap is unknown time.
+        private void ObserveVendorTravelContext()
+        {
+            var me = StyxWoW.Me;
+            var poi = BotPoi.Current;
+            DateTime now = DateTime.UtcNow;
+            if (me == null || !StyxWoW.IsInWorld || poi == null || !VendorSafetyPolicy.IsService(poi.Type))
+            {
+                _lastVendorObservationUtc = DateTime.MinValue;
+                return;
+            }
+            bool newContext = _lastVendorObservationUtc == DateTime.MinValue
+                || now < _lastVendorObservationUtc || now - _lastVendorObservationUtc > TimeSpan.FromSeconds(5)
+                || me.MapId != _lastVendorMap || poi.Entry != _lastVendorEntry
+                || !VendorTravelBackoff.SameEndpoint(poi.Location, _lastVendorDestination);
+            if (newContext || TreeRoot.IsPaused || !TreeRoot.IsRunning || me.Combat
+                || me.Dead || me.IsGhost || me.OnTaxi || me.IsOnTransport
+                || Navigator.IsRidingElevator || _restingPaused)
+            {
+                _lastMovedTime = now;
+                _wasStuck = false;
+                _stuckLogged = false;
+            }
+            _lastVendorObservationUtc = now;
+            _lastVendorMap = me.MapId;
+            _lastVendorEntry = poi.Entry;
+            _lastVendorDestination = poi.Location;
+        }
+
+        private bool TryRecoverFailedVendorTravel(WoWPoint playerLocation, TimeSpan stationaryFor)
+        {
+            var me = StyxWoW.Me;
+            var poi = BotPoi.Current;
+            if (me == null || poi == null || poi.Entry > int.MaxValue || !VendorSafetyPolicy.IsService(poi.Type)
+                || Navigator.NavigationProvider is not MeshNavigator mesh)
+                return false;
+            bool intentionalRest = _restingPaused || me.HasAura("Food") || me.HasAura("Drink");
+            bool frameOpen = MerchantFrame.Instance.IsVisible || TrainerFrame.Instance.IsVisible
+                || Styx.Logic.Inventory.Frames.Gossip.GossipFrame.Instance.IsVisible;
+            if (intentionalRest || frameOpen) _lastMovedTime = DateTime.UtcNow;
+            var sample = new VendorTravelObservation
+            {
+                NowUtc = DateTime.UtcNow, MapId = me.MapId, Entry = (int)poi.Entry, Type = poi.Type,
+                PlayerLocation = playerLocation, Destination = poi.Location,
+                LastMoveDestination = mesh.LastMoveDestination, LastMoveResult = mesh.LastMoveResult,
+                LastMoveAttemptUtc = mesh.LastMoveAttemptUtc, StationaryFor = stationaryFor,
+                IsActiveWorld = !_stopped && StyxWoW.IsInWorld && TreeRoot.IsRunning,
+                IsPaused = TreeRoot.IsPaused, IsCombat = me.Combat, IsDead = me.Dead || me.IsGhost,
+                IsResting = intentionalRest, IsOnTaxi = me.OnTaxi, IsOnTransport = me.IsOnTransport,
+                IsElevatorTransit = mesh.IsRidingElevator, HasActivePath = mesh.HasActivePath,
+                IsServiceFrameOpen = frameOpen
+            };
+            if (!VendorSafetyPolicy.Travel.TryDefer(_vendorTravelOwner, sample)) return false;
+            Log($"Vendor travel deferred for 120s: {poi.Name} (Entry:{poi.Entry}), map={me.MapId}, "
+                + $"destination={poi.Location}; movement={mesh.LastMoveResult}, reason={mesh.LastRouteFailure}. No saved blacklist change.");
+            BotPoi.Clear("Wholesome temporary vendor travel retry");
+            RequestRefresh("Vendor travel temporarily deferred; selecting another eligible endpoint.");
+            return true;
         }
 
         private bool TryRecoverFailedPickupTravel(WoWPoint playerLocation, double stalledSeconds)

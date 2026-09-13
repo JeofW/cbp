@@ -4,7 +4,10 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json;
+using Styx.Logic.Pathing;
 using Styx.WoWInternals;
+using Styx.Combat.CombatRoutine;
+using Styx.Logic.Profiles;
 using Styx.WoWInternals.WoWObjects;
 
 namespace WholesomeAQ
@@ -63,20 +66,27 @@ namespace WholesomeAQ
 
         public List<VendorEntry> GetNearestVendors(LocalPlayer me, string type, int count = 5, HashSet<int> blacklist = null)
         {
-            if (_database == null)
+            if (me == null) return new List<VendorEntry>();
+            return SelectNearestVendors(me.MapId, me.Class, me.Location, type, count, blacklist);
+        }
+
+        private List<VendorEntry> SelectNearestVendors(uint map, WoWClass playerClass,
+            WoWPoint origin, string type, int count, HashSet<int> blacklist)
+        {
+            if (_database == null || count <= 0 || !VendorTravelBackoff.IsFinite(origin))
                 return new List<VendorEntry>();
-
-            int playerMap = (int)me.MapId;
-            string playerClass = me.Class.ToString();
-
+            DateTime now = DateTime.UtcNow;
+            string className = playerClass.ToString();
             return _database.Vendors
-                .Where(v => v.Map == playerMap && v.Type == type)
-                .Where(v => type != "Train" || string.IsNullOrEmpty(v.TrainClass) || v.TrainClass == playerClass)
+                .Where(v => v.Map == map && v.Type == type)
+                .Where(v => type != "Train" || string.IsNullOrEmpty(v.TrainClass) || v.TrainClass == className)
                 .Where(v => blacklist == null || !blacklist.Contains(v.Entry))
-                .Where(v => !Styx.Logic.Profiles.VendorSafetyPolicy.IsRejected(v.Entry))
-                .OrderBy(v => Math.Sqrt(
-                    (v.X - me.Location.X) * (v.X - me.Location.X) +
-                    (v.Y - me.Location.Y) * (v.Y - me.Location.Y)))
+                .Where(v => !VendorSafetyPolicy.IsRejected(v.Entry))
+                .Where(v => VendorTravelBackoff.IsFinite(new WoWPoint((float)v.X, (float)v.Y, (float)v.Z)))
+                .Where(v => !VendorSafetyPolicy.Travel.IsDeferred(map, v.Entry,
+                    new WoWPoint((float)v.X, (float)v.Y, (float)v.Z), now))
+                .OrderBy(v => (v.X - origin.X) * (v.X - origin.X) + (v.Y - origin.Y) * (v.Y - origin.Y))
+                .ThenBy(v => v.Entry)
                 .Take(count)
                 .ToList();
         }
