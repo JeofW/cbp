@@ -14,6 +14,7 @@ jobs:
     permissions:
       contents: write
     env:
+      PYTHONUTF8: '1'
       GIT_LFS_SKIP_SMUDGE: '1'
       GIT_CONFIG_COUNT: '2'
       GIT_CONFIG_KEY_0: core.longpaths
