@@ -1,0 +1,113 @@
+# Temporary controlled red/green replay, with identical test entry on both sides.
+name: Audit worker entry controlled preflight
+on:
+  push:
+    branches: ['audit/next-23-worker-ownership-20260913']
+    paths: ['Tools/Audit/worker-test-entry.patch', '.github/workflows/audit-worker-entry-preflight.yml']
+permissions:
+  contents: read
+jobs:
+  worker:
+    if: github.repository == 'JeofW/CopilotBuddy-private' && github.event.repository.private == true && github.actor == 'JeofW'
+    runs-on: windows-2022
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    env:
+      GIT_CONFIG_COUNT: '2'
+      GIT_CONFIG_KEY_0: core.longpaths
+      GIT_CONFIG_VALUE_0: 'true'
+      GIT_CONFIG_KEY_1: core.autocrlf
+      GIT_CONFIG_VALUE_1: 'false'
+      GIT_LFS_SKIP_SMUDGE: '1'
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+          lfs: false
+      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9
+        with:
+          dotnet-version: '10.0.x'
+      - name: Run unchanged assertions after module initialization, then repair owners
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $out = Join-Path $env:RUNNER_TEMP 'worker-entry-preflight'
+          New-Item -ItemType Directory -Force $out | Out-Null
+          git rev-parse HEAD | Out-File (Join-Path $out 'commit.txt')
+          $before = @{
+            'Styx/Logic/BehaviorTree/TreeRoot.cs' = 'dd2741516364b9382e56b5215c7f3a8d0e56ae68'
+            'TreeSharp/Composite.cs' = 'bfa9a6b37efe327c3a54321e031b2f17171e9d34'
+            'Tools/QuestRecoveryRegressionTests/Program.cs' = '669991a621cbb96d25250758eeb5d8070bb93a78'
+            'Tools/QuestRecoveryRegressionTests/WorkerOwnershipRegressionTests.cs' = 'ec4c4d9043c98102a99a89806fd820db11182e3d'
+          }
+          foreach ($p in $before.Keys) { if ((git hash-object -- $p) -ne $before[$p]) { throw "Unexpected preimage $p" } }
+          git apply --check --whitespace=error Tools/Audit/worker-test-entry.patch
+          if ($LASTEXITCODE -ne 0) { throw 'Test-entry patch check failed' }
+          git apply --whitespace=error Tools/Audit/worker-test-entry.patch
+          if ($LASTEXITCODE -ne 0) { throw 'Test-entry patch failed' }
+          if ((git hash-object Tools/QuestRecoveryRegressionTests/Program.cs) -ne '2a59cd7053dcde749c52a55328d69e619069c6e8' -or (git hash-object Tools/QuestRecoveryRegressionTests/WorkerOwnershipRegressionTests.cs) -ne '83b7905a1c1ee2e8028c4a116d85d745bf2be4e0') { throw 'Unexpected test entry bytes' }
+          $installer = Join-Path (Split-Path $env:RUNNER_WORKSPACE) '_actions/actions/setup-dotnet/67a3573c9a986a3f9c594539f4ab511d57bb3ce9/externals/install-dotnet.ps1'
+          $destination = Join-Path $env:RUNNER_TEMP 'dotnet-x86'
+          foreach ($framework in @('dotnet','windowsdesktop')) {
+            & pwsh -NoProfile -File $installer -Channel '10.0' -Runtime $framework -Architecture x86 -InstallDir $destination -NoPath *> (Join-Path $out "install-$framework.txt")
+            if ($LASTEXITCODE -ne 0) { throw 'Runtime installation failed' }
+          }
+          $runtime = Join-Path $destination 'dotnet.exe'
+          & $runtime --list-runtimes *> (Join-Path $out 'runtimes.txt')
+          if ($LASTEXITCODE -ne 0 -or -not (Select-String -Path (Join-Path $out 'runtimes.txt') -Pattern 'Microsoft.WindowsDesktop.App 10\.')) { throw 'x86 runtime not verified' }
+          $results = @()
+          foreach ($phase in @('red','green')) {
+            if ($phase -eq 'green') {
+              git apply --check --whitespace=error Tools/Audit/worker-ownership.patch
+              if ($LASTEXITCODE -ne 0) { throw 'Production patch check failed' }
+              git apply --whitespace=error Tools/Audit/worker-ownership.patch
+              if ($LASTEXITCODE -ne 0) { throw 'Production patch failed' }
+              if ((git hash-object Styx/Logic/BehaviorTree/TreeRoot.cs) -ne 'b44fb330e3bfd14e90f077b8b8fd9cbd116f5311' -or (git hash-object TreeSharp/Composite.cs) -ne '3d1fda2135b9c4fba78785d3104fe34e4c26e00d') { throw 'Production postimage mismatch' }
+            }
+            dotnet build Tools/QuestRecoveryRegressionTests/QuestRecoveryRegressionTests.csproj -c Release -p:Platform=x86 -v quiet *> (Join-Path $out "$phase-build.txt")
+            if ($LASTEXITCODE -ne 0) { throw "$phase build failed" }
+            $dlls = @(Get-ChildItem Tools/QuestRecoveryRegressionTests/bin -Filter QuestRecoveryRegressionTests.dll -Recurse | Where-Object { $_.FullName -notmatch '[\\/](ref|refint)[\\/]' })
+            if ($dlls.Count -ne 1) { throw 'Expected one regression assembly' }
+            & $runtime $dlls[0].FullName *> (Join-Path $out "$phase-core.txt")
+            $code = $LASTEXITCODE
+            $results += @{phase=$phase;build=0;core=$code;game_attached=$false}
+            $results | ConvertTo-Json | Out-File (Join-Path $out 'results.json')
+            if ($phase -eq 'red') {
+              if ($code -eq 0 -or -not (Select-String -Path (Join-Path $out 'red-core.txt') -Pattern 'Worker ownership scenarios:')) { throw 'Baseline must reproduce expected worker assertion failures' }
+            } elseif ($code -ne 0) { throw 'Worker repair failed; do not stage blobs' }
+          }
+          & $runtime $dlls[0].FullName --routine-compatibility *> (Join-Path $out 'green-routine.txt')
+          $routine = $LASTEXITCODE
+          @{routine=$routine;game_attached=$false} | ConvertTo-Json | Out-File (Join-Path $out 'routine-result.json')
+          if ($routine -ne 0) { throw 'Singular compatibility failed' }
+          git diff --check
+          if ($LASTEXITCODE -ne 0 -or @(git diff --name-only).Count -ne 4) { throw 'Unexpected final diff' }
+      - name: Stage exact four verified blobs without writing any refs
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $expected = @{
+            'Styx/Logic/BehaviorTree/TreeRoot.cs' = 'b44fb330e3bfd14e90f077b8b8fd9cbd116f5311'
+            'TreeSharp/Composite.cs' = '3d1fda2135b9c4fba78785d3104fe34e4c26e00d'
+            'Tools/QuestRecoveryRegressionTests/Program.cs' = '2a59cd7053dcde749c52a55328d69e619069c6e8'
+            'Tools/QuestRecoveryRegressionTests/WorkerOwnershipRegressionTests.cs' = '83b7905a1c1ee2e8028c4a116d85d745bf2be4e0'
+          }
+          $records = @()
+          foreach ($p in ($expected.Keys | Sort-Object)) {
+            if ((git hash-object -- $p) -ne $expected[$p]) { throw 'Source changed after validation' }
+            $body = @{encoding='base64';content=[Convert]::ToBase64String([IO.File]::ReadAllBytes((Join-Path $PWD $p)))} | ConvertTo-Json -Compress
+            $r = Invoke-RestMethod -Method Post -Uri 'https://api.github.com/repos/JeofW/CopilotBuddy-private/git/blobs' -Headers @{Authorization="Bearer $env:GH_TOKEN";Accept='application/vnd.github+json';'X-GitHub-Api-Version'='2022-11-28'} -ContentType 'application/json' -Body $body
+            if ($r.sha -ne $expected[$p]) { throw 'Uploaded blob mismatch' }
+            $records += @{path=$p;sha=$r.sha;sha256=(Get-FileHash $p -Algorithm SHA256).Hash.ToLowerInvariant()}
+          }
+          $records | ConvertTo-Json | Out-File (Join-Path $env:RUNNER_TEMP 'worker-entry-preflight/verified-blobs.json')
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: worker-entry-preflight-${{ github.sha }}
+          path: ${{ runner.temp }}/worker-entry-preflight/
+          retention-days: 7
+          if-no-files-found: error

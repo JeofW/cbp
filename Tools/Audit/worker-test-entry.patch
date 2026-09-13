@@ -1,0 +1,27 @@
+diff --git a/Tools/QuestRecoveryRegressionTests/Program.cs b/Tools/QuestRecoveryRegressionTests/Program.cs
+index 669991a6..2a59cd70 100644
+--- a/Tools/QuestRecoveryRegressionTests/Program.cs
++++ b/Tools/QuestRecoveryRegressionTests/Program.cs
+@@ -18,6 +18,8 @@ if (args.Contains("--routine-compatibility"))
+     return;
+ }
+ 
++WorkerOwnershipRegressionTests.Run();
++
+ var now = new DateTime(2026, 9, 2, 12, 0, 0, DateTimeKind.Utc);
+ var testRoot = Path.Combine(AppContext.BaseDirectory, "quest-recovery-test-data");
+ ResetDirectory(testRoot);
+diff --git a/Tools/QuestRecoveryRegressionTests/WorkerOwnershipRegressionTests.cs b/Tools/QuestRecoveryRegressionTests/WorkerOwnershipRegressionTests.cs
+index ec4c4d90..83b7905a 100644
+--- a/Tools/QuestRecoveryRegressionTests/WorkerOwnershipRegressionTests.cs
++++ b/Tools/QuestRecoveryRegressionTests/WorkerOwnershipRegressionTests.cs
+@@ -24,7 +24,8 @@ internal static class WorkerOwnershipRegressionTests
+     private static readonly TestAction WorkerBody =
+         (TestAction)typeof(TreeRoot).GetMethod("WorkerThread", PrivateStatic)!.CreateDelegate(typeof(TestAction));
+ 
+-    [ModuleInitializer]
++    // Run from Main after module initialization: joining a child that invokes
++    // test-assembly callbacks during its module initializer can deadlock on CLR initialization.
+     internal static void Run()
+     {
+         // Run thread/lifecycle fixtures once, in the core process, not again during
