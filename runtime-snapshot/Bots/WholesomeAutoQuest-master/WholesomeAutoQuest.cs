@@ -1443,7 +1443,7 @@ namespace WholesomeAQ
                         StyxWoW.Me.IsGhost,
                         StyxWoW.Me.OnTaxi,
                         StyxWoW.Me.IsOnTransport,
-                        _restingPaused || StyxWoW.Me.IsResting ||
+                        _restingPaused ||
                             StyxWoW.Me.HasAura("Food") || StyxWoW.Me.HasAura("Drink"),
                         TreeRoot.IsPaused && !_restingPaused,
                         StyxWoW.Me.Combat);
@@ -1677,7 +1677,7 @@ namespace WholesomeAQ
                 me?.OnTaxi == true,
                 me?.IsOnTransport == true ||
                     Navigator.NavigationProvider is MeshNavigator transit && transit.IsRidingElevator,
-                _restingPaused || me?.IsResting == true || me?.HasAura("Food") == true || me?.HasAura("Drink") == true,
+                _restingPaused || me?.HasAura("Food") == true || me?.HasAura("Drink") == true,
                 TreeRoot.IsPaused && !_restingPaused,
                 me?.Combat == true,
                 questCombat,
@@ -1839,7 +1839,7 @@ namespace WholesomeAQ
             var me = StyxWoW.Me;
             if (_stopped || me == null || !StyxWoW.IsInWorld || TreeRoot.IsPaused ||
                 me.Dead || me.IsGhost || me.OnTaxi || me.IsOnTransport ||
-                meshNavigator.IsRidingElevator || _restingPaused || me.IsResting ||
+                meshNavigator.IsRidingElevator || _restingPaused ||
                 me.HasAura("Food") || me.HasAura("Drink"))
                 return false;
 
@@ -2183,7 +2183,7 @@ namespace WholesomeAQ
                 me.IsGhost,
                 me.OnTaxi,
                 me.IsOnTransport,
-                _restingPaused || me.IsResting || me.HasAura("Food") || me.HasAura("Drink"),
+                _restingPaused || me.HasAura("Food") || me.HasAura("Drink"),
                 TreeRoot.IsPaused && !_restingPaused,
                 me.Combat,
                 questCombat,
