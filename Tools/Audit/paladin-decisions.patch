@@ -1,0 +1,221 @@
+diff --git a/Tools/QuestRecoveryRegressionTests/RoutineCompilationRegression.cs b/Tools/QuestRecoveryRegressionTests/RoutineCompilationRegression.cs
+index 4fe738c..d9b31cd 100644
+--- a/Tools/QuestRecoveryRegressionTests/RoutineCompilationRegression.cs
++++ b/Tools/QuestRecoveryRegressionTests/RoutineCompilationRegression.cs
+@@ -135,31 +135,73 @@ internal static class RoutineCompilationRegression
+     {
+         Type retribution = assembly.GetType("Singular.ClassSpecific.Paladin.Retribution")
+             ?? throw new InvalidOperationException("Singular Retribution routine was not found.");
+-        MethodInfo predicate = retribution
+-            .GetNestedTypes(BindingFlags.NonPublic)
+-            .SelectMany(type => type.GetMethods(BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic))
+-            .SingleOrDefault(method => method.Name ==
+-                "<CreateRetributionPaladinNormalPullAndCombat>b__2_12")
+-            ?? throw new InvalidOperationException("Logged Retribution post-kill predicate was not found.");
++        const BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
++        string[] factories = { "CreateRetributionPaladinNormalPullAndCombat",
++            "CreateRetributionPaladinPvPPullAndCombat", "CreateRetributionPaladinInstancePullAndCombat",
++            "CreateMeleeStrikeBehavior" };
+         var originalPlayer = Styx.WoWInternals.ObjectManager.Me;
+-
++        int checkedPredicates = 0;
+         try
+         {
+             Styx.WoWInternals.ObjectManager.Me = new Styx.WoWInternals.WoWObjects.LocalPlayer(0);
+-            object? target = predicate.IsStatic
+-                ? null
+-                : System.Runtime.CompilerServices.RuntimeHelpers.GetUninitializedObject(predicate.DeclaringType!);
+-            predicate.Invoke(target, new object?[predicate.GetParameters().Length]);
++            foreach (string name in factories)
++            {
++                MethodInfo factory = retribution.GetMethod(name, flags)
++                    ?? throw new InvalidOperationException("Missing Retribution factory: " + name);
++                // Anchor to actual factory IL and CurrentTarget access, not compiler
++                // lambda numbering, which changes after unrelated source edits.
++                var predicates = CalledMethods(factory).OfType<MethodInfo>().Where(method =>
++                    method.ReturnType == typeof(bool) && method.GetParameters().Length == 1
++                    && method.GetParameters()[0].ParameterType == typeof(object)
++                    && CalledMethods(method).Any(callee => callee.Name == "get_CurrentTarget"))
++                    .Distinct().ToArray();
++                if (predicates.Length == 0)
++                    throw new InvalidOperationException("No target predicates checked for " + name);
++                foreach (MethodInfo predicate in predicates)
++                {
++                    object? owner = predicate.IsStatic ? null
++                        : System.Runtime.CompilerServices.RuntimeHelpers.GetUninitializedObject(predicate.DeclaringType!);
++                    if ((bool)predicate.Invoke(owner, new object?[] { null })!)
++                        throw new InvalidOperationException("A missing current target authorized " + predicate.Name);
++                    checkedPredicates++;
++                }
++            }
++            Console.WriteLine($"Retribution post-kill guards checked: {checkedPredicates} actual target predicates.");
+         }
+         catch (TargetInvocationException ex) when (ex.InnerException is NullReferenceException)
+         {
+             throw new InvalidOperationException(
+-                "Retribution must tolerate CurrentTarget disappearing immediately after a kill.",
+-                ex.InnerException);
++                "Retribution must tolerate CurrentTarget disappearing immediately after a kill.", ex.InnerException);
+         }
+-        finally
++        finally { Styx.WoWInternals.ObjectManager.Me = originalPlayer; }
++    }
++
++    private static IEnumerable<MethodBase> CalledMethods(MethodBase method)
++    {
++        var codes = typeof(System.Reflection.Emit.OpCodes).GetFields(BindingFlags.Public | BindingFlags.Static)
++            .Select(field => (System.Reflection.Emit.OpCode)field.GetValue(null)!)
++            .GroupBy(code => unchecked((ushort)code.Value)).ToDictionary(group => group.Key, group => group.First());
++        byte[] bytes = method.GetMethodBody()?.GetILAsByteArray() ?? Array.Empty<byte>();
++        for (int i = 0; i < bytes.Length;)
+         {
+-            Styx.WoWInternals.ObjectManager.Me = originalPlayer;
++            ushort key = bytes[i++]; if (key == 0xfe) key = (ushort)(0xfe00 | bytes[i++]);
++            var code = codes[key];
++            if (code.OperandType == System.Reflection.Emit.OperandType.InlineMethod)
++            {
++                int token = BitConverter.ToInt32(bytes, i); i += 4;
++                yield return method.Module.ResolveMethod(token)!;
++                continue;
++            }
++            i += code.OperandType switch
++            {
++                System.Reflection.Emit.OperandType.InlineNone => 0,
++                System.Reflection.Emit.OperandType.ShortInlineBrTarget or System.Reflection.Emit.OperandType.ShortInlineI
++                    or System.Reflection.Emit.OperandType.ShortInlineVar => 1,
++                System.Reflection.Emit.OperandType.InlineVar => 2,
++                System.Reflection.Emit.OperandType.InlineI8 or System.Reflection.Emit.OperandType.InlineR => 8,
++                System.Reflection.Emit.OperandType.InlineSwitch => 4 + 4 * BitConverter.ToInt32(bytes, i),
++                _ => 4
++            };
+         }
+     }
+ }
+diff --git a/runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Paladin/Retribution.cs b/runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Paladin/Retribution.cs
+index 5fc20eb..fdbef50 100644
+--- a/runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Paladin/Retribution.cs	
++++ b/runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Paladin/Retribution.cs	
+@@ -62,7 +62,6 @@ namespace Singular.ClassSpecific.Paladin
+         [Class(WoWClass.Paladin)]
+         [Spec(TalentSpec.RetributionPaladin)]
+         [Behavior(BehaviorType.Pull)]
+-        [Behavior(BehaviorType.Heal)]
+         [Behavior(BehaviorType.Combat)]
+         [Context(WoWContext.Normal)]
+         public static Composite CreateRetributionPaladinNormalPullAndCombat()
+@@ -86,7 +85,7 @@ namespace Singular.ClassSpecific.Paladin
+                                                           WoWSpellMechanic.Slowed,
+                                                           WoWSpellMechanic.Snared)),
+ 
+-                    Spell.BuffSelf("Divine Shield", ret => StyxWoW.Me.HealthPercent <= 20 && !StyxWoW.Me.HasAura("Forbearance") && (!StyxWoW.Me.HasAura("Horde Flag") || !StyxWoW.Me.HasAura("Alliance Flag"))),
++                    Spell.BuffSelf("Divine Shield", ret => StyxWoW.Me.HealthPercent <= 20 && !StyxWoW.Me.HasAura("Forbearance") && (!StyxWoW.Me.HasAura("Horde Flag") && !StyxWoW.Me.HasAura("Alliance Flag"))),
+                     Spell.BuffSelf("Divine Protection", ret => StyxWoW.Me.HealthPercent <= SingularSettings.Instance.Paladin.DivineProtectionHealthRet),
+ 
+                     //2	Let's keep up Insight instead of Truth for grinding.  Keep up Righteousness if we need to AoE.  
+@@ -106,10 +105,7 @@ namespace Singular.ClassSpecific.Paladin
+                         StyxWoW.Me.ActiveAuras.ContainsKey("The Art of War") && target.IsUndeadOrDemon())),
+                     //Hammer of Wrath if target < 20% HP
+                     Spell.Cast("Hammer of Wrath", ret => StyxWoW.Me.CurrentTarget is { } target && target.HealthPercent <= 20), // WotLK: Sanctified Wrath does not unlock HoW above 20% (Cata-only)
+-                    // In WotLK 3.3.5a, Paladins don't have Holy Power - use simpler rotation
+-                    // Same condition as BG rotation: skip CS if 4+ enemies (replace with Divine Storm)
+-                    Spell.Cast("Crusader Strike", ret => Unit.NearbyUnfriendlyUnits.Count(u => u.Distance <= 8) < 4 || !SpellManager.HasSpell("Divine Storm")),
+-                    Spell.Cast("Divine Storm", ret => Unit.NearbyUnfriendlyUnits.Count(u => u.Distance <= 8) >= 4),
++                    CreateMeleeStrikeBehavior(),
+                     Spell.Cast("Judgement of Light"),
+                     // Filler at either distance; keep primary melee attacks ahead of a hard cast.
+                     CreateExorcismRetryBehavior(Spell.Cast("Exorcism", ret => StyxWoW.Me.CurrentTarget is { } target &&
+@@ -138,7 +134,6 @@ namespace Singular.ClassSpecific.Paladin
+         [Spec(TalentSpec.RetributionPaladin)]
+         [Behavior(BehaviorType.Pull)]
+         [Behavior(BehaviorType.Combat)]
+-        [Behavior(BehaviorType.Heal)]
+         [Context(WoWContext.Battlegrounds)]
+ 
+         public static Composite CreateRetributionPaladinPvPPullAndCombat()
+@@ -162,33 +157,30 @@ namespace Singular.ClassSpecific.Paladin
+                                                           WoWSpellMechanic.Slowed,
+                                                           WoWSpellMechanic.Snared)),
+ 
+-                    Spell.BuffSelf("Divine Shield", ret => StyxWoW.Me.HealthPercent <= 20 && !StyxWoW.Me.HasAura("Forbearance") && (!StyxWoW.Me.HasAura("Horde Flag") || !StyxWoW.Me.HasAura("Alliance Flag"))),
++                    Spell.BuffSelf("Divine Shield", ret => StyxWoW.Me.HealthPercent <= 20 && !StyxWoW.Me.HasAura("Forbearance") && (!StyxWoW.Me.HasAura("Horde Flag") && !StyxWoW.Me.HasAura("Alliance Flag"))),
+                     Spell.BuffSelf("Divine Protection", ret => StyxWoW.Me.HealthPercent <= SingularSettings.Instance.Paladin.DivineProtectionHealthRet),
+ 
+                     //  Buffs
+                     Spell.BuffSelf("Retribution Aura"),
+-                    Spell.BuffSelf("Seal of Vengeance", ret => StyxWoW.Me.CurrentTarget.Entry != 28781 && !StyxWoW.Me.CurrentTarget.HasAura("Horde Flag") && !StyxWoW.Me.CurrentTarget.HasAura("Alliance Flag") && !SpellManager.HasSpell("Seal of Corruption")),
+-                    Spell.BuffSelf("Seal of Corruption", ret => StyxWoW.Me.CurrentTarget.Entry != 28781 && !StyxWoW.Me.CurrentTarget.HasAura("Horde Flag") && !StyxWoW.Me.CurrentTarget.HasAura("Alliance Flag")),
+-                    Spell.BuffSelf("Seal of Justice", ret => StyxWoW.Me.CurrentTarget.Entry == 28781 || StyxWoW.Me.CurrentTarget.HasAura("Horde Flag") || StyxWoW.Me.CurrentTarget.HasAura("Alliance Flag")),
++                    Spell.BuffSelf("Seal of Vengeance", ret => StyxWoW.Me.CurrentTarget is { } target && target.Entry != 28781 && !target.HasAura("Horde Flag") && !target.HasAura("Alliance Flag") && !SpellManager.HasSpell("Seal of Corruption")),
++                    Spell.BuffSelf("Seal of Corruption", ret => StyxWoW.Me.CurrentTarget is { } target && target.Entry != 28781 && !target.HasAura("Horde Flag") && !target.HasAura("Alliance Flag")),
++                    Spell.BuffSelf("Seal of Justice", ret => StyxWoW.Me.CurrentTarget is { } target && (target.Entry == 28781 || target.HasAura("Horde Flag") || target.HasAura("Alliance Flag"))),
+ 
+-                    Spell.BuffSelf("Avenging Wrath", ret => StyxWoW.Me.CurrentTarget.Distance <= 8),
++                    Spell.BuffSelf("Avenging Wrath", ret => StyxWoW.Me.CurrentTarget is { } target && target.Distance <= 8),
+                     Spell.BuffSelf("Blood Fury", ret => SpellManager.HasSpell("Blood Fury") && StyxWoW.Me.ActiveAuras.ContainsKey("Avenging Wrath")),
+                     Spell.BuffSelf("Berserking", ret => SpellManager.HasSpell("Berserking") && StyxWoW.Me.ActiveAuras.ContainsKey("Avenging Wrath")),
+                     Spell.BuffSelf("Lifeblood", ret => SpellManager.HasSpell("Lifeblood") && StyxWoW.Me.ActiveAuras.ContainsKey("Avenging Wrath")),
+ 
+                     //Hammer of Wrath if target < 20% HP
+-                    Spell.Cast("Hammer of Wrath", ret => StyxWoW.Me.CurrentTarget.HealthPercent <= 20), // WotLK: Sanctified Wrath does not unlock HoW above 20% (Cata-only)
++                    Spell.Cast("Hammer of Wrath", ret => StyxWoW.Me.CurrentTarget is { } target && target.HealthPercent <= 20), // WotLK: Sanctified Wrath does not unlock HoW above 20% (Cata-only)
+                     //Exo if we have Art of War
+                     // WotLK QC: cast unconditionally if Art of War talent is not learned (pre-lvl 40) - proc can never trigger
+                     Spell.Cast("Exorcism", ret => StyxWoW.Me.ActiveAuras.ContainsKey("The Art of War") || !SpellManager.HasSpell("The Art of War")),
+ 
+-                    // WotLK: Holy Power doesn't exist - simplified rotation
+-                    // Throttle: prevent log spam when on CD (lag tolerance in CanCast allows re-cast every ~100ms)
+-                    new Throttle(1, Spell.Cast("Crusader Strike", ret => (Unit.NearbyUnfriendlyUnits.Count(u => u.Distance <= 8) < 4 || !SpellManager.HasSpell("Divine Storm")) && StyxWoW.Me.CurrentTarget.Distance <= 5f)),
+-                    Spell.Cast("Divine Storm", ret => Unit.NearbyUnfriendlyUnits.Count(u => u.Distance <= 8) >= 4),
++                    CreateMeleeStrikeBehavior(throttleCrusaderStrike: true),
+                     Spell.Cast("Judgement of Light"),
+                     Spell.Cast("Holy Wrath"),
+-                    Spell.Cast("Consecration", ret => StyxWoW.Me.CurrentTarget.Distance <= Spell.MeleeRange && Unit.NearbyUnfriendlyUnits.Count(u => u.Distance <= 8) >= SingularSettings.Instance.Paladin.ConsecrationCount),
++                    Spell.Cast("Consecration", ret => StyxWoW.Me.CurrentTarget is { } target && target.Distance <= Spell.MeleeRange && Unit.NearbyUnfriendlyUnits.Count(u => u.Distance <= 8) >= SingularSettings.Instance.Paladin.ConsecrationCount),
+                     Spell.Cast("Divine Plea", ret => StyxWoW.Me.ManaPercent < SingularSettings.Instance.Paladin.DivinePleaMana && StyxWoW.Me.HealthPercent > 70),
+ 
+                 Movement.CreateMoveToMeleeBehavior(true)
+@@ -224,7 +216,7 @@ namespace Singular.ClassSpecific.Paladin
+                                                                WoWSpellMechanic.Slowed,
+                                                                WoWSpellMechanic.Snared)),
+ 
+-                    Spell.BuffSelf("Divine Shield", ret => StyxWoW.Me.HealthPercent <= 20 && !StyxWoW.Me.HasAura("Forbearance") && (!StyxWoW.Me.HasAura("Horde Flag") || !StyxWoW.Me.HasAura("Alliance Flag"))),
++                    Spell.BuffSelf("Divine Shield", ret => StyxWoW.Me.HealthPercent <= 20 && !StyxWoW.Me.HasAura("Forbearance") && (!StyxWoW.Me.HasAura("Horde Flag") && !StyxWoW.Me.HasAura("Alliance Flag"))),
+                     Spell.BuffSelf("Divine Protection", ret => StyxWoW.Me.HealthPercent <= SingularSettings.Instance.Paladin.DivineProtectionHealthRet),
+ 
+                     //2	seal_of_truth (WotLK: Seal of Vengeance/Corruption)
+@@ -248,13 +240,7 @@ namespace Singular.ClassSpecific.Paladin
+                     // WotLK QC: cast unconditionally if Art of War talent is not learned (pre-lvl 40) - proc can never trigger
+                     Spell.Cast("Exorcism", ret => StyxWoW.Me.ActiveAuras.ContainsKey("The Art of War") || !SpellManager.HasSpell("The Art of War")),
+ 
+-                    //crusader_strike - simplified for WotLK (no Holy Power checks)
+-                    Spell.Cast("Crusader Strike", ret =>
+-                        StyxWoW.Me.CurrentTarget is { } target &&
+-                        (Unit.NearbyUnfriendlyUnits.Count(u => u.Distance <= 8) < 4 || !SpellManager.HasSpell("Divine Storm")) && target.Distance <= 5f),
+-                //Replace CS with DS during AoE
+-                    Spell.Cast("Divine Storm", ret =>
+-                        Unit.NearbyUnfriendlyUnits.Count(u => u.Distance <= 8) >= 4),
++                    CreateMeleeStrikeBehavior(),
+                 //judgement - simplified for WotLK
+                     Spell.Cast("Judgement of Light"),
+                 //holy_wrath
+@@ -445,6 +431,20 @@ namespace Singular.ClassSpecific.Paladin
+         #endregion
+          */
+ 
++        // Independent ready attacks must not disable one another merely because
++        // another spell is known or the target count crosses an arbitrary gate.
++        // Spell.Cast retains the real spellbook, cooldown, range and area-safety
++        // checks. Preserve the existing CS-before-DS order and PvP retry throttle.
++        private static Composite CreateMeleeStrikeBehavior(bool throttleCrusaderStrike = false)
++        {
++            Composite crusaderStrike = Spell.Cast("Crusader Strike", ret =>
++                StyxWoW.Me.CurrentTarget is { } target && target.IsWithinMeleeRange);
++            return new PrioritySelector(
++                throttleCrusaderStrike ? new Throttle(1, crusaderStrike) : crusaderStrike,
++                Spell.Cast("Divine Storm", ret =>
++                    StyxWoW.Me.CurrentTarget is { } target && target.Distance <= 8));
++        }
++
+         private static Composite CreateExorcismRetryBehavior(Composite cast)
+         {
+             // Cast reports dispatch, not server acceptance. Yield to other attacks and
