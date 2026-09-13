@@ -3,7 +3,7 @@ name: Audit group safety preflight
 on:
   push:
     branches: ['audit/next-32-group-engagement-20260913']
-    paths: ['Tools/Audit/prepare_group_safety.py', '.github/workflows/audit-group-preflight.yml']
+    paths: ['Tools/Audit/prepare_group_safety.py', 'Styx/Logic/Combat/GroupCombatSafety.cs', '.github/workflows/audit-group-preflight.yml']
 permissions:
   contents: read
 jobs:

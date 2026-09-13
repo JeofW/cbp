@@ -10,9 +10,9 @@ namespace Styx.Logic.Combat
     /// </summary>
     public static class GroupCombatSafety
     {
-        public static bool IsRestricted => StyxWoW.Me != null
-            && StyxWoW.Me.CurrentMap.IsDungeon
-            && string.Equals(BotManager.Current?.Name, "Combat Bot", StringComparison.OrdinalIgnoreCase);
+        public static bool IsRestricted =>
+            string.Equals(BotManager.Current?.Name, "Combat Bot", StringComparison.OrdinalIgnoreCase)
+            && StyxWoW.Me != null && StyxWoW.Me.CurrentMap.IsDungeon;
 
         public static bool MayAttack(WoWUnit target) => target != null
             && (!IsRestricted || IsEngagedWithGroup(target));
