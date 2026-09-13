@@ -1,0 +1,39 @@
+name: Audit native queue regression
+on:
+  push:
+    branches: ['audit/next-29-native-queue-20260913']
+    paths: ['Tools/NativeQueueRegressionTests/**', '.github/workflows/audit-native-queue.yml']
+permissions:
+  contents: read
+jobs:
+  queue:
+    if: github.repository == 'JeofW/CopilotBuddy-private' && github.event.repository.private == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GIT_LFS_SKIP_SMUDGE: '1'
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+          lfs: false
+          path: host
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: Likon69/Navigation-C-
+          ref: 221dfe2877fa3f749ada49c98687e99fac74d437
+          persist-credentials: false
+          path: upstream
+      - name: Reproduce actual-source queue complexity before implementation
+        shell: bash
+        run: |
+          python host/Tools/NativeQueueRegressionTests/run.py upstream "$RUNNER_TEMP/queue-baseline"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: native-queue-${{ github.sha }}
+          path: |
+            ${{ runner.temp }}/queue-baseline/*.json
+            ${{ runner.temp }}/queue-baseline/*.txt
+          retention-days: 7
+          if-no-files-found: error

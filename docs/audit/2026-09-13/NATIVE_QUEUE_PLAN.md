@@ -1,0 +1,11 @@
+# Native open-list update cost — measured continuation
+
+Owner-approved efficiency investigation from combined c8c7fb59c23d627a6f55ba611e48000619d66a0e. Native source pin: Likon69/Navigation-C-@221dfe2877fa3f749ada49c98687e99fac74d437. Preserve license notices and label altered upstream files. No upstream repository write or installed DLL replacement.
+
+The actual dtNodeQueue::modify linearly scans its heap before bubbling an improved node. Portable tests link the pinned Detour queue/pool/allocator sources and instrument only heap lvalue accesses in an isolated copied header/source. The local baseline executes 40,004,000 heap accesses for 2,000 decreasing-key updates in a 20,000-node queue. All four functional controls pass, including equal-cost ordering and 20,000 seeded operations. The logarithmic-work assertion fails. This is algorithmic cost evidence, not yet proof of the dominant Grod query cost.
+
+Candidate: store a queue index on each internal dtNode, update it on every heap movement, invalidate popped/cleared membership and verify pointer identity before modifying a queue slot. Preserve comparisons and tie ordering. Pool allocation initializes the index; this build uses one open list per node pool. Internal node memory increases; serialized tiles and exported result types do not change. Do not increase the 748,983-node budget or alter costs, heuristics, filters, transport logic or resource-limit interpretation.
+
+Require the unchanged functional/complexity fixtures, AddressSanitizer and UndefinedBehaviorSanitizer. Build clean-pinned and patched Win32 DLLs with the same toolset, validate relevant native layouts and import exports, then replay identical SHA-verified Kalimdor assets with the same managed harness. Compare points, polygon identities, flags, statuses and requested endpoints rather than a green exit alone. Separate cold and warm timings. No counting instrumentation enters the benchmark DLL; no speedup claim before a measured native replay.
+
+Retain test-first commits and native pre/postimage hashes. Keep any candidate opt-in; never silently replace Lib/Navigation.dll. Resource-limited searches remain resource-limited regardless of elapsed time. Optimal routes, lift acquisition/attachment/exit, all-map behavior and native cancellation remain separate gates.
