@@ -1,0 +1,60 @@
+# Temporary exact-source preflight; removed on reviewed blob promotion.
+name: Audit support preflight
+on:
+  push:
+    branches: ['audit/next-31-paladin-support-20260913']
+    paths: ['Tools/Audit/prepare_paladin_support.py', '.github/workflows/audit-support-preflight.yml']
+permissions:
+  contents: read
+jobs:
+  verify:
+    if: github.repository == 'JeofW/CopilotBuddy-private' && github.event.repository.private == true && github.actor == 'JeofW'
+    runs-on: windows-2022
+    timeout-minutes: 25
+    permissions:
+      contents: write
+    env:
+      GIT_LFS_SKIP_SMUDGE: '1'
+      GIT_CONFIG_COUNT: '2'
+      GIT_CONFIG_KEY_0: core.longpaths
+      GIT_CONFIG_VALUE_0: 'true'
+      GIT_CONFIG_KEY_1: core.autocrlf
+      GIT_CONFIG_VALUE_1: 'false'
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+          lfs: false
+      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9
+        with:
+          dotnet-version: '10.0.x'
+      - name: Verify exact source and all twelve test owners
+        shell: pwsh
+        run: |
+          python Tools/Audit/prepare_paladin_support.py
+          if ($LASTEXITCODE -ne 0) { throw 'Source verification failed' }
+          & pwsh -NoProfile -File support-combined.ps1
+          if ($LASTEXITCODE -ne 0) { throw 'Combined source preflight failed' }
+      - name: Stage only hash-verified source blobs without updating refs
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $expected = Get-Content support-blobs.json -Raw | ConvertFrom-Json -AsHashtable
+          $records = @()
+          foreach ($path in $expected.Keys) {
+            if ((git hash-object -- $path) -ne $expected[$path]) { throw "Source changed: $path" }
+            $body = @{ encoding='base64'; content=[Convert]::ToBase64String([IO.File]::ReadAllBytes((Join-Path $PWD $path))) } | ConvertTo-Json -Compress
+            $response = Invoke-RestMethod -Method Post -Uri 'https://api.github.com/repos/JeofW/CopilotBuddy-private/git/blobs' -Headers @{ Authorization="Bearer $env:GH_TOKEN"; Accept='application/vnd.github+json' } -ContentType 'application/json' -Body $body
+            if ($response.sha -ne $expected[$path]) { throw "Blob mismatch: $path" }
+            $records += @{ path=$path; sha=$response.sha }
+          }
+          $records | ConvertTo-Json | Out-File (Join-Path $env:RUNNER_TEMP 'integrated-results/verified-blobs.json')
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: support-preflight-${{ github.sha }}
+          path: ${{ runner.temp }}/integrated-results/
+          retention-days: 7
+          if-no-files-found: error
