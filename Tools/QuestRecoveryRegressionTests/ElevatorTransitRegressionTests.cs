@@ -152,10 +152,17 @@ internal static class ElevatorTransitRegressionTests
                 false, exitPathSafe: false).Kind == ElevatorTransitAction.Ride,
             "a stable destination dock must not be exited through an unproven landing corridor");
 
+        // Earlier unsafe samples do not count toward a continuous safe dock dwell.
         Assert(Observe(controller, start.AddMilliseconds(800), bottomDock, bottomDock, true, 11UL,
+                false, exitPathSafe: true).Kind == ElevatorTransitAction.Ride,
+            "corridor recovery must begin fresh dock confirmation rather than reuse unsafe time");
+        Assert(Observe(controller, start.AddMilliseconds(1549), bottomDock, bottomDock, true, 11UL,
+                false, exitPathSafe: true).Kind == ElevatorTransitAction.Ride,
+            "exit recovery must observe the full 750 millisecond safe dwell");
+        Assert(Observe(controller, start.AddMilliseconds(1550), bottomDock, bottomDock, true, 11UL,
                 false, exitPathSafe: true).Kind == ElevatorTransitAction.MoveToExit,
-            "fixture must authorize exit after the landing corridor becomes safe");
-        Assert(Observe(controller, start.AddSeconds(1), new WoWPoint(1f, 0f, 0f), bottomDock,
+            "a fresh confirmed safe dock must remain able to authorize exit");
+        Assert(Observe(controller, start.AddMilliseconds(1600), new WoWPoint(1f, 0f, 0f), bottomDock,
                 true, 0UL, false, hasGroundSupport: true,
                 exitPathSafe: false).Kind == ElevatorTransitAction.Wait,
             "ground support on a wrong ledge must not bypass a blocked exit corridor");
