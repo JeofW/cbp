@@ -1,0 +1,46 @@
+name: Audit W42 source export
+on:
+  push:
+    branches: [audit/next-42-quest-log-snapshots-20260914]
+    paths: [.github/workflows/audit-snapshot-source-export.yml]
+permissions:
+  contents: read
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          lfs: false
+      - name: Export pinned source and blob manifest, without meshes or captured logs
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import subprocess, pathlib, tarfile, json, hashlib
+          root=pathlib.Path.cwd()
+          out=pathlib.Path('/tmp/audit-source-export'); out.mkdir()
+          sha=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
+          entries=subprocess.check_output(['git','ls-tree','-r','-z','HEAD']).split(b'\0')
+          manifest=[]
+          with tarfile.open(out/'source.tar.gz','w:gz') as archive:
+              for entry in entries:
+                  if not entry: continue
+                  meta,path=entry.split(b'\t',1); mode,kind,blob=meta.decode().split()
+                  path=path.decode()
+                  if kind!='blob' or path.startswith(('mmaps/','runtime-logs/')) or path=='output.zip': continue
+                  data=(root/path).read_bytes()
+                  actual=hashlib.sha1(b'blob '+str(len(data)).encode()+b'\0'+data).hexdigest()
+                  if actual!=blob: raise RuntimeError('checkout differs from tree: '+path)
+                  manifest.append({'path':path,'blob':blob,'sha256':hashlib.sha256(data).hexdigest(),'size':len(data)})
+                  archive.add(root/path,arcname=path,recursive=False)
+          (out/'manifest.json').write_text(json.dumps({'commit':sha,'files':manifest},indent=2))
+          (out/'commit.txt').write_text(sha+'\n')
+          print('Exported',len(manifest),'files; no LFS tile download.')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: audit-w42-source-export
+          path: /tmp/audit-source-export/*
+          retention-days: 7
