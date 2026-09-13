@@ -43,4 +43,4 @@ jobs:
         with:
           name: audit-w42-source-export
           path: /tmp/audit-source-export/*
-          retention-days: 7
+          retention-days: 14
