@@ -1,0 +1,109 @@
+diff --git a/Navigation/Detour/Include/DetourNode.h b/Navigation/Detour/Include/DetourNode.h
+--- a/Navigation/Detour/Include/DetourNode.h
++++ b/Navigation/Detour/Include/DetourNode.h
+@@ -18,6 +18,9 @@
+ 
+ #ifndef DETOURNODE_H
+ #define DETOURNODE_H
++
++// CopilotBuddy audit modification (2026-09-13): indexed single-owner open list.
++// The original comparison and equal-cost ordering rules are retained.
+ 
+ #include "DetourNavMesh.h"
+ 
+@@ -42,6 +45,7 @@
+ 	unsigned int state : DT_NODE_STATE_BITS;	///< extra state information. A polyRef can have multiple nodes with different extra info. see DT_MAX_STATES_PER_NODE
+ 	unsigned int flags : 3;						///< Node flags. A combination of dtNodeFlags.
+ 	dtPolyRef id;								///< Polygon ref the node corresponds to.
++	int heapIndex;							///< Internal open-list index, -1 when not queued.
+ };
+ 
+ static const int DT_MAX_STATES_PER_NODE = 1 << DT_NODE_STATE_BITS;	// number of extra states per node. See dtNode::state
+@@ -111,7 +115,12 @@
+ 	dtNodeQueue(int n);
+ 	~dtNodeQueue();
+ 	
+-	inline void clear() { m_size = 0; }
++	inline void clear()
++	{
++		for (int i = 0; i < m_size; ++i)
++			m_heap[i]->heapIndex = -1;
++		m_size = 0;
++	}
+ 	
+ 	inline dtNode* top() { return m_heap[0]; }
+ 	
+@@ -119,7 +128,9 @@
+ 	{
+ 		dtNode* result = m_heap[0];
+ 		m_size--;
+-		trickleDown(0, m_heap[m_size]);
++		if (m_size > 0)
++			trickleDown(0, m_heap[m_size]);
++		result->heapIndex = -1;
+ 		return result;
+ 	}
+ 	
+@@ -131,16 +142,13 @@
+ 	
+ 	inline void modify(dtNode* node)
+ 	{
+-		for (int i = 0; i < m_size; ++i)
+-		{
+-			if (m_heap[i] == node)
+-			{
+-				bubbleUp(i, node);
+-				return;
+-			}
+-		}
++		if (!node) return;
++		const int i = node->heapIndex;
++		// Identity check rejects a popped/cleared handle whose old slot was reused.
++		if (i >= 0 && i < m_size && m_heap[i] == node)
++			bubbleUp(i, node);
+ 	}
+-	
++
+ 	inline bool empty() const { return m_size == 0; }
+ 	
+ 	inline int getMemUsed() const
+ diff --git a/Navigation/Detour/Source/DetourNode.cpp b/Navigation/Detour/Source/DetourNode.cpp
+--- a/Navigation/Detour/Source/DetourNode.cpp
++++ b/Navigation/Detour/Source/DetourNode.cpp
+@@ -16,6 +16,7 @@
+ // 3. This notice may not be removed or altered from any source distribution.
+ //
+ 
++// CopilotBuddy audit modification (2026-09-13): maintain internal heap membership.
+ #include "DetourNode.h"
+ #include "DetourAlloc.h"
+ #include "DetourAssert.h"
+@@ -144,6 +145,7 @@
+ 	node->id = id;
+ 	node->state = state;
+ 	node->flags = 0;
++	node->heapIndex = -1;
+ 	
+ 	m_next[i] = m_first[bucket];
+ 	m_first[bucket] = i;
+@@ -176,10 +178,12 @@
+ 	while ((i > 0) && (m_heap[parent]->total > node->total))
+ 	{
+ 		m_heap[i] = m_heap[parent];
++		m_heap[i]->heapIndex = i;
+ 		i = parent;
+ 		parent = (i-1)/2;
+ 	}
+ 	m_heap[i] = node;
++	node->heapIndex = i;
+ }
+ 
+ void dtNodeQueue::trickleDown(int i, dtNode* node)
+@@ -193,6 +197,7 @@
+ 			child++;
+ 		}
+ 		m_heap[i] = m_heap[child];
++		m_heap[i]->heapIndex = i;
+ 		i = child;
+ 		child = (i*2)+1;
+ 	}
