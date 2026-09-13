@@ -24,13 +24,16 @@ string Hash(string path) { using var stream = File.OpenRead(path); return Conver
 void Save(string name, object value) => File.WriteAllText(Path.Combine(output, name), JsonSerializer.Serialize(value, json));
 try
 {
+    if (IntPtr.Size != 4) throw new InvalidOperationException("This native replay requires the x86 host contract.");
     if (!Directory.Exists(Path.Combine(root, "mmaps"))) throw new DirectoryNotFoundException("Mesh directory is absent.");
     if (Styx.WoWInternals.ObjectManager.Wow != null || Styx.WoWInternals.ObjectManager.Me != null)
         throw new InvalidOperationException("This harness must never attach to a game client.");
+    string expectedDll = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "Navigation.dll"));
     Save("environment.json", new
     {
         game_attached = false, process_bits = IntPtr.Size * 8, framework = Environment.Version.ToString(),
-        native_dll_sha256 = Hash(Path.Combine(AppContext.BaseDirectory, "Navigation.dll")),
+        native_dll_sha256 = Hash(expectedDll),
+        host_assembly_sha256 = Hash(typeof(NativeNavigator).Assembly.Location),
         map = 1, map_identity = "Kalimdor; captured Thunder Bluff witness",
         note = "Static native path replay only. No platform position, attachment or client collision is simulated as real."
     });
@@ -39,6 +42,11 @@ try
     navigator.OnNavigatorLogMessage += message => nativeMessages.Add(message);
     navigator.TileLoaded += (_, tile) => tiles.Add(new { map = tile.MapId, x = tile.TileX, y = tile.TileY });
     if (!navigator.LoadMeshes()) throw new InvalidOperationException("Native wrapper failed to initialize.");
+    var loaded = Process.GetCurrentProcess().Modules.Cast<ProcessModule>()
+        .SingleOrDefault(module => string.Equals(module.ModuleName, "Navigation.dll", StringComparison.OrdinalIgnoreCase));
+    if (loaded == null || !string.Equals(Path.GetFullPath(loaded.FileName), expectedDll, StringComparison.OrdinalIgnoreCase))
+        throw new InvalidOperationException("The loaded native module is not the selected replay DLL.");
+    Save("loaded-native.json", new { file_name = loaded.ModuleName, sha256 = Hash(loaded.FileName), selected_path_verified = true });
     if (!navigator.SetQueryFilterByStored("Horde")) throw new InvalidOperationException("Expected the production Horde filter.");
     var grod = new Vector3(-1152.76f, 71.41f, 145.87f);
     var lower = new Vector3(-1350.26f, 167.19f, 48.68f);
@@ -63,20 +71,34 @@ try
             var points = path.Points ?? Array.Empty<Vector3>();
             if (points.Any(p => !float.IsFinite(p.X) || !float.IsFinite(p.Y) || !float.IsFinite(p.Z)))
                 throw new InvalidDataException("Native path contained non-finite coordinates.");
+            if (path.CallerElapsed < TimeSpan.Zero || path.LockWaitElapsed < TimeSpan.Zero
+                || path.NativeCallElapsed < TimeSpan.Zero || path.ManagedAndCleanupElapsed < TimeSpan.Zero
+                || path.CallerElapsed != path.LockWaitElapsed + path.NativeCallElapsed + path.ManagedAndCleanupElapsed
+                || path.CallerElapsed > timer.Elapsed + TimeSpan.FromMilliseconds(1))
+                throw new InvalidDataException("Caller/native/lock/cleanup timings are inconsistent.");
+            bool resourceLimited = (path.Status.Value & ((1u << 2) | (1u << 4) | (1u << 5))) != 0;
             samples.Add(new
             {
                 route = route.Name, provenance = route.Provenance, repeat,
                 cold_process = samples.Count == 0, requested_start = XYZ(route.Start), requested_end = XYZ(route.End),
                 succeeded = path.Succeeded, partial = path.IsPartialPath, status = path.Status.Value,
-                fail_step = path.FailStep.ToString(), count = points.Length,
+                status_hex = $"0x{path.Status.Value:X8}", resource_limited = resourceLimited,
+                out_of_nodes = (path.Status.Value & (1u << 5)) != 0,
+                // Producing a prefix is not complete-route success, especially after a resource limit.
+                complete_to_requested = path.Succeeded && !path.IsPartialPath && !resourceLimited
+                    && points.Length > 0 && Vector3.Distance(points[^1], route.End) <= 5,
+                fail_step = path.FailStep.ToString(), raw_native_fail_step = path.RawNativeFailStep, count = points.Length,
                 wall_ms = timer.Elapsed.TotalMilliseconds, wrapper_ms = path.Elapsed.TotalMilliseconds,
+                caller_ms = path.CallerElapsed.TotalMilliseconds, lock_wait_ms = path.LockWaitElapsed.TotalMilliseconds,
+                native_call_ms = path.NativeCallElapsed.TotalMilliseconds,
+                managed_cleanup_ms = path.ManagedAndCleanupElapsed.TotalMilliseconds,
                 new_tile_callbacks = tiles.Count - tileStart,
                 endpoint_distance = points.Length > 0 ? (double?)Vector3.Distance(points[^1], route.End) : null,
                 endpoint_z_gap = points.Length > 0 ? (double?)Math.Abs(points[^1].Z - route.End.Z) : null,
                 points = points.Select(XYZ).ToArray(), flags = path.Flags.Select(f => f.ToString()).ToArray(),
                 areas = path.PolyTypes.Select(f => f.ToString()).ToArray(), polygons = path.Polygons.Select(p => p.Id.ToString()).ToArray()
             });
-            Console.WriteLine($"{route.Name}[{repeat}] success={path.Succeeded} partial={path.IsPartialPath} points={points.Length} wall={timer.Elapsed.TotalMilliseconds:F3}ms wrapper={path.Elapsed.TotalMilliseconds:F3}ms");
+            Console.WriteLine($"{route.Name}[{repeat}] success={path.Succeeded} partial={path.IsPartialPath} status=0x{path.Status.Value:X8} points={points.Length} wall={timer.Elapsed.TotalMilliseconds:F3}ms native={path.NativeCallElapsed.TotalMilliseconds:F3}ms");
             Save("routes.json", samples);
         }
     }
@@ -91,7 +113,7 @@ try
         asset_compatibility_demonstrated = pathsProduced > 0, live_route_acceptance = false });
     if (pathsProduced == 0)
     {
-        LoaderDiagnostics.Run(navigator,root,output);
+        LoaderDiagnostics.Run(navigator, root, output);
         throw new InvalidOperationException("No path was produced under the host contract. Inspect separately labeled loader/filter controls; do not infer mesh corruption.");
     }
     return 0;

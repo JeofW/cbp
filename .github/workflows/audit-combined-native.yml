@@ -1,0 +1,111 @@
+name: Audit combined source native replay
+on:
+  push:
+    branches: ['audit/next-25-verified-integration-20260913']
+    paths: ['Tools/NativeMeshAudit/**', '.github/workflows/audit-combined-native.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  actual-mesh-comparison:
+    if: github.repository == 'JeofW/CopilotBuddy-private' && github.event.repository.private == true
+    runs-on: windows-2022
+    timeout-minutes: 25
+    env:
+      GIT_CONFIG_COUNT: '2'
+      GIT_CONFIG_KEY_0: core.longpaths
+      GIT_CONFIG_VALUE_0: 'true'
+      GIT_CONFIG_KEY_1: core.autocrlf
+      GIT_CONFIG_VALUE_1: 'false'
+      GIT_LFS_SKIP_SMUDGE: '1'
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+          lfs: false
+          path: host
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: Likon69/Navigation-C-
+          ref: 221dfe2877fa3f749ada49c98687e99fac74d437
+          persist-credentials: false
+          path: upstream
+      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9
+        with:
+          dotnet-version: '10.0.x'
+      - name: Verify selected actual LFS objects without downloading other maps
+        working-directory: host
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $out = Join-Path $env:RUNNER_TEMP 'combined-native'
+          New-Item -ItemType Directory -Force $out | Out-Null
+          git rev-parse HEAD | Out-File (Join-Path $out 'host-commit.txt')
+          $auth = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes("x-access-token:$env:GH_TOKEN"))
+          git -c "http.https://github.com/.extraheader=AUTHORIZATION: basic $auth" lfs fetch --include='mmaps/001*' --exclude='' origin $env:GITHUB_SHA *> (Join-Path $out 'lfs-fetch.txt')
+          if ($LASTEXITCODE -ne 0) { throw 'Selected LFS fetch failed' }
+          git lfs checkout 'mmaps/001*' *> (Join-Path $out 'lfs-checkout.txt')
+          if ($LASTEXITCODE -ne 0) { throw 'LFS checkout failed' }
+          git lfs ls-files --json | Out-File (Join-Path $out 'lfs-manifest.json')
+          $manifest = Get-Content (Join-Path $out 'lfs-manifest.json') -Raw | ConvertFrom-Json
+          $selected = @($manifest.files | Where-Object { $_.name -like 'mmaps/001*' })
+          if ($selected.Count -ne 989) { throw 'Pinned Kalimdor census changed' }
+          foreach ($entry in $selected) {
+            $file = Get-Item $entry.name
+            if (-not $entry.checkout -or $file.Length -ne $entry.size -or (Get-FileHash $entry.name -Algorithm SHA256).Hash.ToLowerInvariant() -ne $entry.oid) { throw "LFS bytes do not match pointer $($entry.name)" }
+          }
+          @{verified_files=$selected.Count;bytes=($selected | Measure-Object size -Sum).Sum;other_maps_downloaded=$false} | ConvertTo-Json | Out-File (Join-Path $out 'asset-verification.json')
+      - name: Build exact pinned native source and verify ABI without changing the repository DLL
+        shell: pwsh
+        run: |
+          & ./host/Tools/NativeMeshAudit/Build-PinnedNative.ps1 -SourceRoot ./upstream -OutputDirectory (Join-Path $env:RUNNER_TEMP 'combined-native/build')
+          if ($LASTEXITCODE -ne 0) { throw 'Native build failed' }
+      - name: Execute both native variants through the latest combined managed host
+        working-directory: host
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $out = Join-Path $env:RUNNER_TEMP 'combined-native'
+          $installer = Join-Path (Split-Path $env:RUNNER_WORKSPACE) '_actions/actions/setup-dotnet/67a3573c9a986a3f9c594539f4ab511d57bb3ce9/externals/install-dotnet.ps1'
+          $destination = Join-Path $env:RUNNER_TEMP 'dotnet-x86'
+          foreach ($framework in @('dotnet','windowsdesktop')) {
+            & pwsh -NoProfile -File $installer -Channel '10.0' -Runtime $framework -Architecture x86 -InstallDir $destination -NoPath *> (Join-Path $out "install-$framework.txt")
+            if ($LASTEXITCODE -ne 0) { throw 'Runtime installation failed' }
+          }
+          $runtime = Join-Path $destination 'dotnet.exe'
+          & $runtime --list-runtimes *> (Join-Path $out 'runtimes.txt')
+          if ($LASTEXITCODE -ne 0 -or -not (Select-String -Path (Join-Path $out 'runtimes.txt') -Pattern 'Microsoft.WindowsDesktop.App 10\.')) { throw 'x86 runtime not verified' }
+          dotnet build Tools/NativeMeshAudit/NativeMeshAudit.csproj -c Release -p:Platform=x86 -v quiet *> (Join-Path $out 'managed-build.txt')
+          if ($LASTEXITCODE -ne 0) { throw 'Managed harness build failed' }
+          $assemblies = @(Get-ChildItem Tools/NativeMeshAudit/bin -Filter NativeMeshAudit.dll -Recurse | Where-Object { $_.FullName -notmatch '[\\/](ref|refint)[\\/]' })
+          if ($assemblies.Count -ne 1) { throw 'Expected one managed harness' }
+          $assembly = $assemblies[0]
+          New-Item -ItemType Junction -Path (Join-Path $assembly.DirectoryName 'mmaps') -Target (Join-Path $PWD 'mmaps') | Out-Null
+          $results = @()
+          foreach ($variant in @('checked-in','source-built')) {
+            $variantOut = Join-Path $out $variant
+            New-Item -ItemType Directory -Force $variantOut | Out-Null
+            if ($variant -eq 'source-built') { Copy-Item (Join-Path $out 'build/Navigation.dll') (Join-Path $assembly.DirectoryName 'Navigation.dll') -Force }
+            & $runtime $assembly.FullName $PWD.Path $variantOut *> (Join-Path $variantOut 'console.txt')
+            $exitCode = $LASTEXITCODE
+            $results += @{variant=$variant;exit_code=$exitCode;game_attached=$false}
+            $results | ConvertTo-Json | Out-File (Join-Path $out 'comparison.json')
+            $routes = @(Get-Content (Join-Path $variantOut 'routes.json') -Raw | ConvertFrom-Json)
+            if ($routes.Count -ne 20) { throw "$variant did not complete all 20 requests" }
+            if ($variant -eq 'checked-in' -and ($exitCode -eq 0 -or @($routes | Where-Object { $_.count -ne 0 }).Count)) { throw 'Baseline no longer reproduces; do not attribute candidate results blindly' }
+            if ($variant -eq 'source-built') {
+              $controls = @($routes | Where-Object { $_.route -like '*local-control' })
+              if ($exitCode -ne 0 -or $controls.Count -ne 8 -or @($controls | Where-Object { -not $_.complete_to_requested }).Count) { throw 'Candidate local controls must complete, not merely produce partial prefixes' }
+            }
+          }
+          if (@(git status --porcelain --untracked-files=no).Count) { throw 'Tracked inputs changed during native comparison' }
+      - name: Retain private evidence only; no merge or deployment
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: combined-native-${{ github.sha }}
+          path: ${{ runner.temp }}/combined-native/
+          retention-days: 7
+          if-no-files-found: error
