@@ -1,0 +1,100 @@
+# Temporary hash-locked red/green validation. Remove after source promotion.
+name: Audit quest observation repair
+on:
+  push:
+    branches: ['audit/next-33-wholesome-observations-20260913']
+    paths: ['Tools/Audit/quest-observation-repair.patch', '.github/workflows/audit-quest-observation-preflight.yml']
+permissions:
+  contents: read
+jobs:
+  red-green:
+    if: github.repository == 'JeofW/CopilotBuddy-private' && github.event.repository.private == true && github.actor == 'JeofW'
+    runs-on: windows-2022
+    timeout-minutes: 25
+    permissions:
+      contents: write
+    env:
+      PYTHONUTF8: '1'
+      GIT_LFS_SKIP_SMUDGE: '1'
+      GIT_CONFIG_COUNT: '2'
+      GIT_CONFIG_KEY_0: core.longpaths
+      GIT_CONFIG_VALUE_0: 'true'
+      GIT_CONFIG_KEY_1: core.autocrlf
+      GIT_CONFIG_VALUE_1: 'false'
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+          lfs: false
+      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9
+        with:
+          dotnet-version: '10.0.x'
+      - name: Reproduce all recovered cases before changing production
+        shell: pwsh
+        run: |
+          $ErrorActionPreference='Stop'
+          python Tools/Audit/prepare_quest_test_entry.py
+          if ($LASTEXITCODE -ne 0) { throw 'Test preparation failed' }
+          & pwsh -NoProfile -File quest-test-combined.ps1
+          $out=Join-Path $env:RUNNER_TEMP 'integrated-results'
+          $retained=Join-Path $env:RUNNER_TEMP 'quest-observation-preflight'
+          New-Item -ItemType Directory -Force $retained | Out-Null
+          Copy-Item $out (Join-Path $retained 'red') -Recurse
+          $results=Get-Content (Join-Path $out 'results.json') -Raw | ConvertFrom-Json
+          $failed=@($results | Where-Object { $_.run -ne 0 })
+          if ($results.Count -ne 11 -or @($results | Where-Object { $_.build -ne 0 -or $null -eq $_.run }).Count -ne 0 -or $failed.Count -ne 2) { throw 'Expected two compiled failing owners, not build errors' }
+          if (@($failed | Where-Object { $_.suite -notin @('WholesomeQuestRecoveryRegressionTests','QuestPickupPolicyRegressionTests') }).Count) { throw 'Unexpected baseline failure' }
+          Write-Host 'Expected baseline failures retained; production has not been repaired yet.'
+          exit 0
+      - name: Apply exactly four source repairs and execute all eleven owners again
+        shell: pwsh
+        run: |
+          $ErrorActionPreference='Stop'
+          $before=@{
+            'Bots/Quest/QuestOrder/QuestPickupDialogPolicy.cs'='595924e59389aee29a581a50f7c45e2f921384e0'
+            'Bots/Quest/QuestOrder/ForcedQuestPickUp.cs'='9863c6a681b773f8939d069b81ce69b9fb0f4efe'
+            'runtime-snapshot/Bots/WholesomeAutoQuest-master/WholesomeAutoQuest.cs'='a03f3eb9c20fe47e2b51aad5c77762149590659f'
+            'runtime-snapshot/Bots/WholesomeAutoQuest-master/QuestScheduler.cs'='8193398e7a16a51126388131e72a8bdd1e963e5b'
+          }
+          $after=@{
+            'Bots/Quest/QuestOrder/QuestPickupDialogPolicy.cs'='ea22cb939546da15fabad856f73d25a54aef168b'
+            'Bots/Quest/QuestOrder/ForcedQuestPickUp.cs'='920face77d065542452bd8496c2581504f98c610'
+            'runtime-snapshot/Bots/WholesomeAutoQuest-master/WholesomeAutoQuest.cs'='9e34f658923b3f35cf997579d5321a2f4352af54'
+            'runtime-snapshot/Bots/WholesomeAutoQuest-master/QuestScheduler.cs'='17911b4069a0e157e54b96a892e332aacbf87aa7'
+          }
+          foreach ($path in $before.Keys) { if ((git hash-object -- $path) -ne $before[$path]) { throw "Unexpected preimage: $path" } }
+          git apply --check --whitespace=error Tools/Audit/quest-observation-repair.patch
+          if ($LASTEXITCODE -ne 0) { throw 'Patch check failed' }
+          git apply --whitespace=error Tools/Audit/quest-observation-repair.patch
+          if ($LASTEXITCODE -ne 0) { throw 'Patch failed' }
+          foreach ($path in $after.Keys) { if ((git hash-object -- $path) -ne $after[$path]) { throw "Unexpected postimage: $path" } }
+          git diff --check
+          if ($LASTEXITCODE -ne 0) { throw 'Whitespace validation failed' }
+          & pwsh -NoProfile -File quest-test-combined.ps1
+          $code=$LASTEXITCODE
+          Copy-Item (Join-Path $env:RUNNER_TEMP 'integrated-results') (Join-Path $env:RUNNER_TEMP 'quest-observation-preflight/green') -Recurse
+          if ($code -ne 0) { throw 'Repaired combined execution failed' }
+          $all=Get-Content quest-test-blobs.json -Raw | ConvertFrom-Json -AsHashtable
+          foreach ($path in $after.Keys) { $all[$path]=$after[$path] }
+          $all | ConvertTo-Json | Out-File quest-verified-blobs.json
+      - name: Stage verified source and test blobs only
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $ErrorActionPreference='Stop'
+          $expected=Get-Content quest-verified-blobs.json -Raw | ConvertFrom-Json -AsHashtable
+          foreach ($path in $expected.Keys) {
+            if ((git hash-object -- $path) -ne $expected[$path]) { throw "Source changed during tests: $path" }
+            $body=@{encoding='base64';content=[Convert]::ToBase64String([IO.File]::ReadAllBytes((Join-Path $PWD $path)))} | ConvertTo-Json -Compress
+            $response=Invoke-RestMethod -Method Post -Uri 'https://api.github.com/repos/JeofW/CopilotBuddy-private/git/blobs' -Headers @{Authorization="Bearer $env:GH_TOKEN";Accept='application/vnd.github+json'} -ContentType 'application/json' -Body $body
+            if ($response.sha -ne $expected[$path]) { throw "Uploaded blob mismatch: $path" }
+          }
+          Copy-Item quest-verified-blobs.json (Join-Path $env:RUNNER_TEMP 'quest-observation-preflight/verified-blobs.json')
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: quest-observation-preflight-${{ github.sha }}
+          path: ${{ runner.temp }}/quest-observation-preflight/
+          retention-days: 7
+          if-no-files-found: error
