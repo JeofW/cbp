@@ -1,5 +1,8 @@
 ﻿
+using System;
 using System.Collections.Generic;
+using System.Runtime.ExceptionServices;
+using System.Threading;
 
 namespace TreeSharp
 {
@@ -40,11 +43,19 @@ namespace TreeSharp
                 if (owner?.Children == null)
                     return;
                     
-                foreach (Composite child in owner.Children)
+                ExceptionDispatchInfo? failure = null;
+                // Snapshot so one child's cleanup cannot invalidate enumeration.
+                foreach (Composite child in new List<Composite>(owner.Children))
                 {
-                    if (child != null)
-                        child.Stop(context);
+                    try { child?.Stop(context); }
+                    catch (Exception error)
+                    {
+                        if (failure == null || (error is ThreadInterruptedException
+                            && failure.SourceException is not ThreadInterruptedException))
+                            failure = ExceptionDispatchInfo.Capture(error);
+                    }
                 }
+                failure?.Throw();
             }
         }
 

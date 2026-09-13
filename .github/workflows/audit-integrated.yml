@@ -46,7 +46,7 @@ jobs:
           & $runtime --list-runtimes *> (Join-Path $out 'runtimes.txt')
           if ($LASTEXITCODE -ne 0 -or -not (Select-String -Path (Join-Path $out 'runtimes.txt') -Pattern 'Microsoft.WindowsDesktop.App 10\.')) { throw 'Verified x86 desktop runtime required' }
           $results = @()
-          foreach ($name in @('QuestRecoveryRegressionTests', 'WholesomeQuestRecoveryRegressionTests', 'QuestRecoveryAdapterRegressionTests', 'QuestPickupPolicyRegressionTests', 'VendorCoreRegressionTests', 'NativeContractRegressionTests')) {
+          foreach ($name in @('QuestRecoveryRegressionTests', 'WholesomeQuestRecoveryRegressionTests', 'QuestRecoveryAdapterRegressionTests', 'QuestPickupPolicyRegressionTests', 'VendorCoreRegressionTests', 'NativeContractRegressionTests', 'ShutdownBoundaryRegressionTests')) {
             dotnet build "Tools/$name/$name.csproj" -c Release -p:Platform=x86 -v quiet *> (Join-Path $out "$name-build.txt")
             $build = $LASTEXITCODE
             $run = $null
@@ -72,7 +72,7 @@ jobs:
           $results += @{ suite='Analyzers'; build=0; run=$LASTEXITCODE; game_attached=$false }
           $results | ConvertTo-Json | Out-File (Join-Path $out 'results.json')
           $results | ConvertTo-Json | Write-Host
-          if ($results.Count -ne 10 -or @($results | Where-Object { $_.build -ne 0 -or $null -eq $_.run -or $_.run -ne 0 }).Count) { exit 1 }
+          if ($results.Count -ne 11 -or @($results | Where-Object { $_.build -ne 0 -or $null -eq $_.run -or $_.run -ne 0 }).Count) { exit 1 }
       - name: Retain private results
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
