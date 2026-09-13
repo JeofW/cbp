@@ -1634,15 +1634,17 @@ namespace Styx.Logic.Pathing
 			WoWGameObject? transport = null;
 			WoWPoint liveLocation = WoWPoint.Empty;
 			WoWPoint[] shortcut = Array.Empty<WoWPoint>();
+			int sourceExitIndex = -1;
 			bool hasGroundSupport = HasGroundSupport(me);
 			foreach (var candidate in candidates)
 			{
-				if (!TryCreateSafeElevatorShortcut(
+				if (!TryCreateSafeElevatorContinuation(
 						me.Location,
 						destination,
 						candidate.LiveLocation,
 						originalMeshPath,
-						out shortcut))
+						out shortcut,
+						out sourceExitIndex))
 				{
 					continue;
 				}
@@ -1661,24 +1663,11 @@ namespace Styx.Logic.Pathing
 						candidates.Length);
 				return false;
 			}
-			_currentPath.Clear();
-			_currentPath.AddRange(shortcut);
-			_currentPathIndex = 1;
-			_currentFlags = new[]
+			if (!TryInstallElevatorContinuation(shortcut, sourceExitIndex))
 			{
-				TripperNav.StraightPathFlags.OffMeshConnection,
-				TripperNav.StraightPathFlags.None,
-				TripperNav.StraightPathFlags.End
-			};
-			_currentPolyTypes = new[]
-			{
-				TripperNav.AreaType.Elevator,
-				TripperNav.AreaType.Ground,
-				TripperNav.AreaType.Ground
-			};
-			_currentAbilityFlags = new TripperNav.AbilityFlags[shortcut.Length];
-			_isPartialPath = false;
-			_cachedPushAheadIndex = -1;
+				Logging.WriteDiagnostic("[Nav] Skipping elevator shortcut: onward mesh metadata is incomplete or inconsistent.");
+				return false;
+			}
 			BeginElevatorTransit(transport, liveLocation, shortcut[0], shortcut[1]);
 			Logging.WriteDiagnostic(
 				"[Nav] Preferring nearby elevator over ground detour: entry={0} guid={1:X} live={2} from={3} exit={4} destination={5}",
@@ -1710,21 +1699,9 @@ namespace Styx.Logic.Pathing
 			WoWPoint destination,
 			WoWPoint transport,
 			IReadOnlyList<WoWPoint> originalMeshPath,
-			out WoWPoint[] shortcut)
-		{
-			WoWPoint waitingPoint = SelectDirectionalMeshLanding(
-				transport, player, player.Z, originalMeshPath, 3f, 15f);
-			WoWPoint exitPoint = SelectDirectionalMeshLanding(
-				transport, destination, destination.Z, originalMeshPath, 5f, 15f);
-			if (waitingPoint == WoWPoint.Empty || exitPoint == WoWPoint.Empty)
-			{
-				shortcut = Array.Empty<WoWPoint>();
-				return false;
-			}
-
-			shortcut = new[] { waitingPoint, exitPoint, destination };
-			return true;
-		}
+			out WoWPoint[] shortcut) =>
+			TryCreateSafeElevatorContinuation(player, destination, transport,
+				originalMeshPath, out shortcut, out _);
 
 		private static WoWPoint SelectDirectionalMeshLanding(
 			WoWPoint transport,
