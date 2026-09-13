@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
+using System.Runtime.ExceptionServices;
 
 namespace TreeSharp
 {
@@ -157,8 +158,20 @@ namespace TreeSharp
             if (CleanupHandlers.Count == 0)
                 return;
                 
+            ExceptionDispatchInfo? failure = null;
             while (CleanupHandlers.Count != 0)
-                CleanupHandlers.Pop().Dispose();
+            {
+                try { CleanupHandlers.Pop().Dispose(); }
+                catch (Exception error)
+                {
+                    // Drain all owned cleanup before propagating the original error.
+                    // Stop signals take precedence over ordinary cleanup failures.
+                    if (failure == null || (error is ThreadInterruptedException
+                        && failure.SourceException is not ThreadInterruptedException))
+                        failure = ExceptionDispatchInfo.Capture(error);
+                }
+            }
+            failure?.Throw();
         }
 
         public bool Equals(Composite? other)
