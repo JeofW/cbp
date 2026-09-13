@@ -135,31 +135,73 @@ internal static class RoutineCompilationRegression
     {
         Type retribution = assembly.GetType("Singular.ClassSpecific.Paladin.Retribution")
             ?? throw new InvalidOperationException("Singular Retribution routine was not found.");
-        MethodInfo predicate = retribution
-            .GetNestedTypes(BindingFlags.NonPublic)
-            .SelectMany(type => type.GetMethods(BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic))
-            .SingleOrDefault(method => method.Name ==
-                "<CreateRetributionPaladinNormalPullAndCombat>b__2_12")
-            ?? throw new InvalidOperationException("Logged Retribution post-kill predicate was not found.");
+        const BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
+        string[] factories = { "CreateRetributionPaladinNormalPullAndCombat",
+            "CreateRetributionPaladinPvPPullAndCombat", "CreateRetributionPaladinInstancePullAndCombat",
+            "CreateMeleeStrikeBehavior" };
         var originalPlayer = Styx.WoWInternals.ObjectManager.Me;
-
+        int checkedPredicates = 0;
         try
         {
             Styx.WoWInternals.ObjectManager.Me = new Styx.WoWInternals.WoWObjects.LocalPlayer(0);
-            object? target = predicate.IsStatic
-                ? null
-                : System.Runtime.CompilerServices.RuntimeHelpers.GetUninitializedObject(predicate.DeclaringType!);
-            predicate.Invoke(target, new object?[predicate.GetParameters().Length]);
+            foreach (string name in factories)
+            {
+                MethodInfo factory = retribution.GetMethod(name, flags)
+                    ?? throw new InvalidOperationException("Missing Retribution factory: " + name);
+                // Anchor to actual factory IL and CurrentTarget access, not compiler
+                // lambda numbering, which changes after unrelated source edits.
+                var predicates = CalledMethods(factory).OfType<MethodInfo>().Where(method =>
+                    method.ReturnType == typeof(bool) && method.GetParameters().Length == 1
+                    && method.GetParameters()[0].ParameterType == typeof(object)
+                    && CalledMethods(method).Any(callee => callee.Name == "get_CurrentTarget"))
+                    .Distinct().ToArray();
+                if (predicates.Length == 0)
+                    throw new InvalidOperationException("No target predicates checked for " + name);
+                foreach (MethodInfo predicate in predicates)
+                {
+                    object? owner = predicate.IsStatic ? null
+                        : System.Runtime.CompilerServices.RuntimeHelpers.GetUninitializedObject(predicate.DeclaringType!);
+                    if ((bool)predicate.Invoke(owner, new object?[] { null })!)
+                        throw new InvalidOperationException("A missing current target authorized " + predicate.Name);
+                    checkedPredicates++;
+                }
+            }
+            Console.WriteLine($"Retribution post-kill guards checked: {checkedPredicates} actual target predicates.");
         }
         catch (TargetInvocationException ex) when (ex.InnerException is NullReferenceException)
         {
             throw new InvalidOperationException(
-                "Retribution must tolerate CurrentTarget disappearing immediately after a kill.",
-                ex.InnerException);
+                "Retribution must tolerate CurrentTarget disappearing immediately after a kill.", ex.InnerException);
         }
-        finally
+        finally { Styx.WoWInternals.ObjectManager.Me = originalPlayer; }
+    }
+
+    private static IEnumerable<MethodBase> CalledMethods(MethodBase method)
+    {
+        var codes = typeof(System.Reflection.Emit.OpCodes).GetFields(BindingFlags.Public | BindingFlags.Static)
+            .Select(field => (System.Reflection.Emit.OpCode)field.GetValue(null)!)
+            .GroupBy(code => unchecked((ushort)code.Value)).ToDictionary(group => group.Key, group => group.First());
+        byte[] bytes = method.GetMethodBody()?.GetILAsByteArray() ?? Array.Empty<byte>();
+        for (int i = 0; i < bytes.Length;)
         {
-            Styx.WoWInternals.ObjectManager.Me = originalPlayer;
+            ushort key = bytes[i++]; if (key == 0xfe) key = (ushort)(0xfe00 | bytes[i++]);
+            var code = codes[key];
+            if (code.OperandType == System.Reflection.Emit.OperandType.InlineMethod)
+            {
+                int token = BitConverter.ToInt32(bytes, i); i += 4;
+                yield return method.Module.ResolveMethod(token)!;
+                continue;
+            }
+            i += code.OperandType switch
+            {
+                System.Reflection.Emit.OperandType.InlineNone => 0,
+                System.Reflection.Emit.OperandType.ShortInlineBrTarget or System.Reflection.Emit.OperandType.ShortInlineI
+                    or System.Reflection.Emit.OperandType.ShortInlineVar => 1,
+                System.Reflection.Emit.OperandType.InlineVar => 2,
+                System.Reflection.Emit.OperandType.InlineI8 or System.Reflection.Emit.OperandType.InlineR => 8,
+                System.Reflection.Emit.OperandType.InlineSwitch => 4 + 4 * BitConverter.ToInt32(bytes, i),
+                _ => 4
+            };
         }
     }
 }

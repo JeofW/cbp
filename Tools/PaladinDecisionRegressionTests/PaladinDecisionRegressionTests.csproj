@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../../TreeSharp/*.cs" Link="Production/TreeSharp/%(Filename)%(Extension)" />
+    <Compile Include="../../runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Paladin/Retribution.cs" Link="Production/Retribution.cs" />
+    <Compile Include="../../runtime-snapshot/Routines/Singular wotlk/Dynamics/Attributes.cs" Link="Production/Attributes.cs" />
+    <Compile Include="../../runtime-snapshot/Routines/Singular wotlk/Helpers/Throttle.cs" Link="Production/Throttle.cs" />
+  </ItemGroup>
+</Project>
