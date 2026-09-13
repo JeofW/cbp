@@ -1904,9 +1904,15 @@ namespace Styx.Logic.Pathing
 			bool hasGroundSupport = HasGroundSupport(me);
 			bool attachedToSelectedTransport = me.WoWMovementInfo.TransportGuid
 			                                   == _elevatorTransit.SelectedTransportGuid;
-			bool boardingPathSafe = !_elevatorTransit.NeedsBoardingCorridor
-			                          || IsElevatorGroundCorridorSafe(
-				                          me, _elevatorTransit.WaitPoint, hasGroundSupport);
+			bool needsGroundBoarding = _elevatorTransit.NeedsBoardingCorridor && !attachedToSelectedTransport;
+			bool approachPathSafe = !needsGroundBoarding
+			                        || IsElevatorGroundCorridorSafe(me, _elevatorTransit.WaitPoint, hasGroundSupport);
+			// Check the same live target that MoveToBoard will command. A safe
+			// waiting point alone says nothing about the remaining boarding gap.
+			bool boardingPathSafe = !needsGroundBoarding
+			                        || (liveLocationAvailable
+			                            && liveLocation.Distance(_elevatorTransit.StartDock) <= 1.25f
+			                            && IsElevatorGroundCorridorSafe(me, liveLocation, hasGroundSupport));
 			bool exitPathSafe = !_elevatorTransit.NeedsExitCorridor
 			                      || (attachedToSelectedTransport
 				                      ? liveLocationAvailable
@@ -1923,6 +1929,7 @@ namespace Styx.Logic.Pathing
 				me.WoWMovementInfo.TransportGuid,
 				isFalling,
 				hasGroundSupport,
+				approachPathSafe,
 				boardingPathSafe,
 				exitPathSafe);
 
@@ -1932,6 +1939,7 @@ namespace Styx.Logic.Pathing
 				transport,
 				liveLocation,
 				hasGroundSupport,
+				approachPathSafe,
 				boardingPathSafe,
 				exitPathSafe);
 			switch (decision.Kind)
@@ -1978,6 +1986,7 @@ namespace Styx.Logic.Pathing
 			WoWGameObject? transport,
 			WoWPoint liveLocation,
 			bool hasGroundSupport,
+			bool approachPathSafe,
 			bool boardingPathSafe,
 			bool exitPathSafe)
 		{
@@ -1987,7 +1996,7 @@ namespace Styx.Logic.Pathing
 
 			_nextElevatorDiagnosticUtc = now.AddSeconds(2);
 			Logging.WriteDiagnostic(
-				"[Nav][Elevator] stage={0} action={1} entry={2} guid={3:X} object={4} live={5} player={6} attached={7:X} falling={8} grounded={9} boardPath={10} exitPath={11} mounted={12} startDock={13} endDock={14} landing={15}",
+				"[Nav][Elevator] stage={0} action={1} entry={2} guid={3:X} object={4} live={5} player={6} attached={7:X} falling={8} grounded={9} approachPath={10} boardPath={11} exitPath={12} mounted={13} startDock={14} endDock={15} landing={16}",
 				_elevatorTransit.StageName,
 				decision.Kind,
 				_elevatorTransit.SelectedTransportEntry,
@@ -1998,6 +2007,7 @@ namespace Styx.Logic.Pathing
 				me.WoWMovementInfo.TransportGuid,
 				me.IsFalling || me.MovementInfo.IsFalling,
 				hasGroundSupport,
+				approachPathSafe,
 				boardingPathSafe,
 				exitPathSafe,
 				me.Mounted,
