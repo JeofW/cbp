@@ -76,13 +76,29 @@ namespace WholesomeAQ
             if (!File.Exists(_dataFile))
                 return null;
 
-            string json = File.ReadAllText(_dataFile);
-            _database = JsonSerializer.Deserialize<QuestDatabase>(json, JsonOptions);
-            if (_database != null)
+            // Fingerprint the exact snapshot being deserialized, not a later file read.
+            // This is a dataset-load operation, never a per-pulse content hash.
+            byte[] snapshot = File.ReadAllBytes(_dataFile);
+            string fingerprint = FingerprintManifest(new[]
             {
-                DatasetFingerprint = CreateDatasetFingerprint(new[] { _dataFile });
-                PublishDependencies(_database);
-            }
+                (Role: LogicalRole(_dataFile), Digest: Convert.ToHexString(SHA256.HashData(snapshot)))
+            });
+            string json;
+            using (var stream = new MemoryStream(snapshot, writable: false))
+            using (var reader = new StreamReader(stream, Encoding.UTF8, detectEncodingFromByteOrderMarks: true))
+                json = reader.ReadToEnd();
+
+            QuestDatabase database = JsonSerializer.Deserialize<QuestDatabase>(json, JsonOptions);
+            if (database == null)
+                return null;
+            if (database.Quests == null || database.Quests.Any(quest => quest == null || quest.PreviousQuestsIds == null))
+                throw new InvalidDataException("Quest dependency records cannot be null.");
+
+            // If prerequisite validation/publication throws, a later Load must retry
+            // rather than returning a partially initialized cached database.
+            PublishDependencies(database);
+            DatasetFingerprint = fingerprint;
+            _database = database;
             return _database;
         }
 
@@ -115,16 +131,39 @@ namespace WholesomeAQ
 
         internal static string CreateDatasetFingerprint(IEnumerable<string> dataFiles)
         {
-            string metadata = string.Join("\n", dataFiles
-                .Select(Path.GetFullPath)
-                .OrderBy(path => path, StringComparer.OrdinalIgnoreCase)
-                .Select(path =>
-                {
-                    var file = new FileInfo(path);
-                    return $"{path}|{file.Length}|{file.LastWriteTimeUtc.Ticks}";
-                }));
-            return Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(metadata)))
-                .ToLowerInvariant();
+            if (dataFiles == null)
+                throw new ArgumentNullException(nameof(dataFiles));
+            return FingerprintManifest(dataFiles.Select(path =>
+            {
+                string role = LogicalRole(path);
+                using (var stream = File.OpenRead(path))
+                    return (Role: role, Digest: Convert.ToHexString(SHA256.HashData(stream)));
+            }));
+        }
+
+        private static string LogicalRole(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+                throw new ArgumentException("A dataset file path is required.", nameof(path));
+            string role = Path.GetFileName(path).ToLowerInvariant();
+            if (string.IsNullOrEmpty(role))
+                throw new InvalidDataException("A dataset file must have a logical filename.");
+            return role;
+        }
+
+        private static string FingerprintManifest(IEnumerable<(string Role, string Digest)> entries)
+        {
+            var ordered = entries.OrderBy(entry => entry.Role, StringComparer.Ordinal).ToArray();
+            if (ordered.Length == 0)
+                throw new InvalidDataException("A dataset manifest must contain at least one file.");
+            if (ordered.Select(entry => entry.Role).Distinct(StringComparer.Ordinal).Count() != ordered.Length)
+                throw new InvalidDataException("Dataset logical filenames must be unique, regardless of directory.");
+
+            // Versioning intentionally invalidates old metadata-derived fingerprints.
+            // Base64 roles and fixed-length digests make separators unambiguous.
+            string manifest = "quest-dataset-content-v2\n" + string.Join("\n", ordered.Select(entry =>
+                Convert.ToBase64String(Encoding.UTF8.GetBytes(entry.Role)) + ":" + entry.Digest));
+            return Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(manifest))).ToLowerInvariant();
         }
     }
 }
