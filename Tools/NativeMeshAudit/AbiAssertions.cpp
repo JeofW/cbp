@@ -19,3 +19,11 @@ static_assert(NAV_STEP_NONE == -1 && NAV_STEP_FIND_START_POLY == 0
     && NAV_STEP_FIND_END_POLY == 1 && NAV_STEP_INIT_PATHFIND == 2
     && NAV_STEP_UPDATE_PATHFIND == 3 && NAV_STEP_FINALIZE_PATHFIND == 4
     && NAV_STEP_FIND_STRAIGHT_PATH == 5, "Native failure-step contract changed.");
+
+// dtNode is query scratch memory, not serialized mesh or an exported result.
+#include "DetourNode.h"
+#ifdef AUDIT_INDEXED_QUEUE
+static_assert(sizeof(dtNode) == 40, "Indexed queue scratch-memory budget changed.");
+#else
+static_assert(sizeof(dtNode) == 32, "Pinned queue scratch-memory budget changed.");
+#endif

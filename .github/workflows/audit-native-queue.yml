@@ -1,0 +1,59 @@
+name: Audit native queue regression
+on:
+  push:
+    branches: ['audit/next-29-native-queue-20260913']
+    paths: ['Tools/NativeQueueRegressionTests/**', '.github/workflows/audit-native-queue.yml']
+permissions:
+  contents: read
+jobs:
+  queue:
+    if: github.repository == 'JeofW/CopilotBuddy-private' && github.event.repository.private == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GIT_LFS_SKIP_SMUDGE: '1'
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+          lfs: false
+          path: host
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: Likon69/Navigation-C-
+          ref: 221dfe2877fa3f749ada49c98687e99fac74d437
+          persist-credentials: false
+          path: upstream
+      - name: Retain reproduced baseline and validate the exact indexed candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/queue-evidence"
+          mkdir -p "$out"
+          set +e
+          python host/Tools/NativeQueueRegressionTests/run.py upstream "$out/baseline"
+          baseline=$?
+          set -e
+          test "$baseline" -eq 1
+          grep -q 'queue scenarios=4/5' "$out/baseline/run.txt"
+          grep -q 'modify heap accesses=40004000' "$out/baseline/run.txt"
+          test "$(grep -c '^FAIL ' "$out/baseline/run.txt")" -eq 1
+          python host/Tools/NativeQueueRegressionTests/run.py upstream "$out/baseline-sanitized" --sanitizers
+          patch="$PWD/host/Tools/NativeQueueRegressionTests/indexed-queue.patch"
+          git -C upstream apply --check --whitespace=error "$patch"
+          git -C upstream apply --whitespace=error "$patch"
+          test "$(git -C upstream hash-object Navigation/Detour/Include/DetourNode.h)" = faab085d8c419d9001db31a969e0ca7762096144
+          test "$(git -C upstream hash-object Navigation/Detour/Source/DetourNode.cpp)" = fb91d0a7c3c485a4956efe13db2702d8d08a0719
+          python host/Tools/NativeQueueRegressionTests/run.py upstream "$out/indexed" --allow-modified
+          python host/Tools/NativeQueueRegressionTests/run.py upstream "$out/indexed-sanitized" --allow-modified --sanitizers
+          python -m unittest discover -s host/Tools/NativeQueueRegressionTests -p 'test_*.py' -v > "$out/comparison-tests.txt" 2>&1
+          git -C host rev-parse HEAD > "$out/host-commit.txt"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: native-queue-${{ github.sha }}
+          path: |
+            ${{ runner.temp }}/queue-evidence/**/*.json
+            ${{ runner.temp }}/queue-evidence/**/*.txt
+          retention-days: 7
+          if-no-files-found: error
