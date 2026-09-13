@@ -139,6 +139,54 @@ public sealed class QuestRecoveryManager
         }
     }
 
+    /// <summary>
+    /// Release one current attempt for a bounded navigation retry, without asserting
+    /// quest failure or consuming failure/quarantine budgets. Duplicate or stale
+    /// observations cannot renew the cooldown or override terminal authority.
+    /// </summary>
+    public QuestRecoveryReportResult TryDeferNavigationAttempt(
+        QuestRecoveryKey key,
+        long attemptGeneration,
+        QuestRecoveryContext context,
+        string evidence)
+    {
+        ArgumentNullException.ThrowIfNull(key);
+        ArgumentNullException.ThrowIfNull(context);
+        lock (_sync)
+        {
+            EnsureConfiguredCore();
+            var normalized = NormalizeContext(context);
+            if (attemptGeneration <= 0 || FindQuestTerminalCore(key.QuestId) is not null ||
+                !_records.TryGetValue(key, out var current) ||
+                current.State != QuestRecoveryState.Attempting ||
+                current.AttemptGeneration != attemptGeneration)
+            {
+                return new QuestRecoveryReportResult
+                {
+                    Accepted = false,
+                    Decision = EvaluateCore(key, normalized)
+                };
+            }
+            DateTime now = _clock.UtcNow;
+            var deferred = Copy(current,
+                state: QuestRecoveryState.CoolingDown,
+                reason: QuestFailureReason.NavigationUnavailable,
+                cooldownUntilUtc: now.AddSeconds(30), replaceCooldownUntilUtc: true,
+                nextHalfOpenUtc: null, replaceNextHalfOpenUtc: true,
+                failureContext: normalized);
+            deferred = WithEvidence(deferred, QuestFailureReason.NavigationUnavailable,
+                evidence ?? "Navigation evidence is incomplete.", now, coalesce: true);
+            _records[key] = deferred;
+            _dirty = true;
+            LogTransition(current, deferred);
+            return new QuestRecoveryReportResult
+            {
+                Accepted = true,
+                Decision = EvaluateCore(key, normalized)
+            };
+        }
+    }
+
     public QuestRecoveryDecision TryBeginAttempt(QuestRecoveryKey key, QuestRecoveryContext context)
     {
         ArgumentNullException.ThrowIfNull(key);

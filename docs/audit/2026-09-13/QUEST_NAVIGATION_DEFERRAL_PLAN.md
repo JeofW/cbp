@@ -1,0 +1,11 @@
+# Quest navigation deferral: preserve ownership without inventing failure evidence
+
+Continuation of the approved mesh/quest architecture plan, based on terminal repair 02f18934e2056174e70c01d37bbd684e670737b5. No master merge or deployment.
+
+Source chain: MeshNavigator.LastMoveResult -> WholesomeAutoQuest.HasFailedActiveEndpoint -> QuestWorkSample.EndpointPathFailed -> WholesomeProgressMonitor.Sample -> generated endpoint PathGenerationFailed and stage NoNavigableHotspot -> QuestRecoveryManager.TryReportGeneratedFailures -> rolling failure budget and eventual quarantine. A resource-exhausted/partial route is not proof that all quest endpoints are unusable.
+
+Design: carry fresh, destination-matched RouteFailureReason into the work sample. An active incomplete-search observation asks for one owned navigation deferral rather than creating failed-endpoint records. Real objective progress wins. Add an exact-generation manager method that releases the active lease into a fixed 30-second cooldown, retains historical real failure counters without incrementing them, and does not consume rolling-hour failure budget. Duplicates cannot renew the delay; stale owners and quest-terminal authority cannot be overridden. Wire objective and pickup consumers, and suspend objective accounting during selected elevator transit before physical attachment as well as while attached. Keep the existing actual-failure path when no typed incomplete-search evidence exists.
+
+The first four fixtures call the actual monitor with the same old failed-endpoint input and add typed evidence only when that member exists, reproducing the consumer's incorrect failure classification. Manager fixtures introduce a new ownership contract and must not be presented as independently reproduced historical bugs. Cases cover progress/inactive controls, expiry, persistence, one hundred repeated deferrals, stale/duplicate ownership, terminal authority and real subsequent failure.
+
+Test-only commit precedes implementation. Required gates: observe intended failing behavior; implement manager/consumer wiring; run all combined suites; inspect source diff and outcome generation; remove temporary promotion tooling; rerun committed sources and link graph/PR. Vendor timeout-driven permanent exclusion is a separate source defect, not closed by this quest deferral slice.
