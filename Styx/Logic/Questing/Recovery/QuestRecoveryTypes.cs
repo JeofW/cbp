@@ -11,7 +11,7 @@ public enum QuestFailureReason
     EndpointUnreachable, NoNavigableHotspot, NoObjectiveTargetsObserved,
     NoObjectiveProgress, RepeatedDeaths, TurnInQuestIncomplete,
     TurnInTargetNotOffered, UnsupportedObjective, InvalidQuestData,
-    InternalBehaviorError, LegacyUnknown, UserExcluded
+    InternalBehaviorError, LegacyUnknown, UserExcluded, NavigationUnavailable
 }
 
 public interface IQuestRecoveryClock { DateTime UtcNow { get; } }

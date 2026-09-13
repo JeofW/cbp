@@ -289,6 +289,7 @@ namespace WholesomeAQ
         public IReadOnlyList<QuestRecoveryKey> KnownEndpointKeys { get; init; } = Array.Empty<QuestRecoveryKey>();
         public bool IsActiveWork { get; init; }
         public bool EndpointPathFailed { get; init; }
+        public RouteFailureReason NavigationFailure { get; init; }
         public bool AllHotspotsUnavailable { get; init; }
         public bool DeathAttributable { get; init; }
         public bool CombatOwnedByQuest { get; init; }
@@ -298,6 +299,7 @@ namespace WholesomeAQ
     {
         public bool MadeProgress { get; init; }
         public bool RequestAlternateCluster { get; init; }
+        public bool NavigationDeferred { get; init; }
         public IReadOnlyList<int> ObjectiveCounts { get; init; } = Array.Empty<int>();
         public IReadOnlyList<QuestAttemptOutcome> Outcomes { get; init; } = Array.Empty<QuestAttemptOutcome>();
     }
@@ -473,6 +475,16 @@ namespace WholesomeAQ
                     MadeProgress = true,
                     ObjectiveCounts = _counts
                 };
+            }
+
+            if (sample.IsActiveWork && sample.EndpointPathFailed &&
+                WholesomeAutoQuest.IsUnresolvedNavigationFailure(sample.NavigationFailure))
+            {
+                // A search prefix/resource limit is not a failed quest endpoint.
+                // The consumer releases this exact stage through the core deferral owner.
+                _lastSampleUtc = now;
+                _previousSampleActive = false;
+                return new QuestProgressUpdate { NavigationDeferred = true };
             }
 
             TimeSpan sampleGap = now - _lastSampleUtc;
@@ -1640,6 +1652,7 @@ namespace WholesomeAQ
             QuestRecoveryKey clusterKey = null;
             bool allHotspotsUnavailable = false;
             bool endpointPathFailed = false;
+            RouteFailureReason navigationFailure = RouteFailureReason.None;
 
             if (me != null && area != null)
             {
@@ -1676,6 +1689,8 @@ namespace WholesomeAQ
                                     meshNavigator.LastMoveResult,
                                     meshNavigator.LastMoveAttemptUtc,
                                     DateTime.UtcNow);
+                                if (endpointPathFailed)
+                                    navigationFailure = meshNavigator.LastRouteFailure;
                             }
                         }
                     }
@@ -1695,7 +1710,8 @@ namespace WholesomeAQ
                 me?.Dead == true,
                 me?.IsGhost == true,
                 me?.OnTaxi == true,
-                me?.IsOnTransport == true,
+                me?.IsOnTransport == true ||
+                    Navigator.NavigationProvider is MeshNavigator transit && transit.IsRidingElevator,
                 _restingPaused || me?.IsResting == true || me?.HasAura("Food") == true || me?.HasAura("Drink") == true,
                 TreeRoot.IsPaused && !_restingPaused,
                 me?.Combat == true,
@@ -1706,7 +1722,8 @@ namespace WholesomeAQ
                 endpointPathFailed,
                 allHotspotsUnavailable,
                 deathAttributable: false,
-                attemptGeneration);
+                attemptGeneration,
+                navigationFailure);
         }
 
         internal static bool HasFailedActiveEndpoint(
@@ -1793,6 +1810,13 @@ namespace WholesomeAQ
                 return false;
             }
 
+            var me = StyxWoW.Me;
+            if (_stopped || me == null || !StyxWoW.IsInWorld || TreeRoot.IsPaused ||
+                me.Dead || me.IsGhost || me.OnTaxi || me.IsOnTransport ||
+                meshNavigator.IsRidingElevator || _restingPaused || me.IsResting ||
+                me.HasAura("Food") || me.HasAura("Drink"))
+                return false;
+
             BotPoi poi = BotPoi.Current;
             if (!HasFailedPickupTravel(
                     StyxWoW.Me?.Combat == true,
@@ -1809,6 +1833,10 @@ namespace WholesomeAQ
                 return false;
             }
 
+            if (IsUnresolvedNavigationFailure(meshNavigator.LastRouteFailure))
+                return TryDeferCurrentNavigation(pickup, pickupOwner, pickupGeneration,
+                    QuestRecoveryRuntime.Capture(), meshNavigator.LastRouteFailure);
+
             var outcome = QuestAttemptOutcome.Failure(
                 pickupOwner,
                 QuestFailureReason.EndpointUnreachable,
@@ -1819,11 +1847,45 @@ namespace WholesomeAQ
             return true;
         }
 
+        internal static bool IsUnresolvedNavigationFailure(RouteFailureReason reason) =>
+            reason is RouteFailureReason.SearchResourceLimit or RouteFailureReason.PartialPath or
+                RouteFailureReason.VerticalAccessUnresolved or RouteFailureReason.PathSearchFailed;
+
+        private bool TryDeferCurrentNavigation(
+            ForcedBehavior behavior,
+            QuestRecoveryKey key,
+            long generation,
+            QuestRecoveryContext context,
+            RouteFailureReason reason)
+        {
+            if (_stopped || !IsUnresolvedNavigationFailure(reason) ||
+                !ReferenceEquals(QuestOrder.Instance?.CurrentBehavior, behavior) ||
+                !_attemptOwnership.TryGet(behavior, out QuestRecoveryKey ownedKey, out long ownedGeneration) ||
+                !ownedKey.Equals(key) || ownedGeneration != generation)
+                return false;
+            var result = QuestRecoveryManager.Instance.TryDeferNavigationAttempt(
+                key, generation, context,
+                $"Navigation deferred: {reason}; incomplete search does not establish endpoint/quest failure.");
+            if (!result.Accepted || !_attemptOwnership.Release(behavior, generation))
+                return false;
+            _scheduler?.ReleaseActivation(behavior);
+            TryClearRecoveryOutcomePoi(behavior, key, QuestOrder.Instance?.CurrentBehavior,
+                BotPoi.Current, () => BotPoi.Clear("Wholesome navigation retry deferred"));
+            RequestRefresh($"Quest {key.QuestId} navigation is unresolved ({reason}); retry {result.Decision.RetryUtc:O}; selecting alternate eligible work without a failure episode.");
+            return true;
+        }
+
         private void ProcessProgressUpdate(
             ForcedQuestObjective behavior,
             QuestWorkSample sample,
             QuestProgressUpdate update)
         {
+            if (update.NavigationDeferred)
+            {
+                TryDeferCurrentNavigation(behavior, sample.Key, sample.AttemptGeneration,
+                    QuestRecoveryRuntime.Capture(sample.ObjectiveCounts), sample.NavigationFailure);
+                return;
+            }
             if (update.RequestAlternateCluster)
             {
                 bool advanced = false;
@@ -2215,7 +2277,8 @@ namespace WholesomeAQ
             bool endpointPathFailed,
             bool allHotspotsUnavailable,
             bool deathAttributable,
-            long attemptGeneration = 0)
+            long attemptGeneration = 0,
+            RouteFailureReason navigationFailure = RouteFailureReason.None)
         {
             QuestRecoveryKey activeKey = QuestScheduler.ActivationKey(currentBehavior);
             bool exactObjectiveOwner = activeKey != null &&
@@ -2238,6 +2301,8 @@ namespace WholesomeAQ
                 IsActiveWork = active,
                 CombatOwnedByQuest = exactObjectiveOwner && active && combatOwnedByQuest,
                 EndpointPathFailed = exactObjectiveOwner && endpointPathFailed,
+                NavigationFailure = exactObjectiveOwner && endpointPathFailed
+                    ? navigationFailure : RouteFailureReason.None,
                 AllHotspotsUnavailable = exactObjectiveOwner && allHotspotsUnavailable,
                 DeathAttributable = exactObjectiveOwner && deathAttributable && !excludedPoi
             };
