@@ -199,13 +199,14 @@ namespace Styx.Logic.Pathing
 						ResetDockCandidate();
 						return Decision(ElevatorTransitAction.Ride);
 					}
-					if (!HasStableDockObservation(liveTransportLocation, observedAtUtc))
-						return Decision(ElevatorTransitAction.Ride);
+					// A veto interrupts observation even before the candidate dwell completes.
 					if (!exitPathSafe)
 					{
 						ResetDockCandidate();
 						return Decision(ElevatorTransitAction.Ride);
 					}
+					if (!HasStableDockObservation(liveTransportLocation, observedAtUtc))
+						return Decision(ElevatorTransitAction.Ride);
 
 					_stage = ElevatorTransitStage.Exiting;
 					return Decision(ElevatorTransitAction.MoveToExit, ExitPoint);
@@ -237,6 +238,9 @@ namespace Styx.Logic.Pathing
 						return Decision(ElevatorTransitAction.MoveToExit, ExitPoint);
 					}
 
+					// Detached ground travel owns its own support checks. It cannot retain
+					// platform dwell for a later reattachment, even when the ground leg is safe.
+					ResetDockCandidate();
 					if (isFalling
 					    || !hasGroundSupport
 					    || !exitPathSafe
