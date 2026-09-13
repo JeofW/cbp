@@ -1,0 +1,35 @@
+name: Audit source recovery 20260913
+on:
+  push:
+    branches: ['audit/next-26-source-recovery-20260913']
+    paths: ['.github/workflows/audit-source-recovery-20260913.yml']
+permissions:
+  contents: read
+jobs:
+  source:
+    if: github.repository == 'JeofW/CopilotBuddy-private' && github.event.repository.private == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GIT_LFS_SKIP_SMUDGE: '1'
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+          lfs: false
+      - name: Export source history with LFS pointers only
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/audit-source"
+          git rev-parse HEAD > "$RUNNER_TEMP/audit-source/commit.txt"
+          git bundle create "$RUNNER_TEMP/audit-source/source.bundle" --all
+          git bundle verify "$RUNNER_TEMP/audit-source/source.bundle"
+          sha256sum "$RUNNER_TEMP/audit-source/source.bundle" > "$RUNNER_TEMP/audit-source/SHA256SUMS"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: audit-source-recovery-${{ github.sha }}
+          path: ${{ runner.temp }}/audit-source/
+          retention-days: 7
+          if-no-files-found: error
