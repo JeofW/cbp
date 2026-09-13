@@ -110,6 +110,16 @@ namespace WholesomeAQ
             return doc.Declaration + Environment.NewLine + doc.ToString();
         }
 
+        private static string ProfileRelationType(QuestObjectType type)
+        {
+            switch (type)
+            {
+                case QuestObjectType.Creature: return "Npc";
+                case QuestObjectType.GameObject: return "GameObject";
+                default: throw new ArgumentOutOfRangeException(nameof(type), type, "Unsupported quest relation type.");
+            }
+        }
+
         private static XElement BuildPickupGuard(QuestPlanEntry entry) =>
             new XElement("If",
                 new XAttribute("Condition", $"!HasQuest({entry.Quest.Id}) && !IsQuestCompleted({entry.Quest.Id})"),
@@ -119,6 +129,7 @@ namespace WholesomeAQ
                         new XAttribute("QuestId", entry.Quest.Id),
                         new XAttribute("GiverName", entry.Giver.GiverName ?? ""),
                         new XAttribute("GiverId", entry.Giver.GiverId),
+                        new XAttribute("GiverType", ProfileRelationType(entry.Giver.GiverType)),
                         LocationAttributes(point))));
 
         private static XElement BuildObjectiveGuard(QuestPlanEntry entry)
@@ -218,6 +229,7 @@ namespace WholesomeAQ
                         new XAttribute("QuestId", entry.Quest.Id),
                         new XAttribute("TurnInName", entry.Ender.EnderName ?? ""),
                         new XAttribute("TurnInId", entry.Ender.EnderId),
+                        new XAttribute("TurnInType", ProfileRelationType(entry.Ender.EnderType)),
                         LocationAttributes(point))));
 
         private static XElement BuildObjectiveDefinition(

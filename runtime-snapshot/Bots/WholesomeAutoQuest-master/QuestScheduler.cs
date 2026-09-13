@@ -691,7 +691,7 @@ namespace WholesomeAQ
             var distinctRelations = relations
                 .OrderBy(value => value.Entry)
                 .ThenBy(value => value.DisplayName, StringComparer.Ordinal)
-                .GroupBy(value => value.Entry)
+                .GroupBy(value => (value.Type, value.Entry))
                 .Select(group => group.First())
                 .ToArray();
             if (distinctRelations.Length == 0)
@@ -715,7 +715,7 @@ namespace WholesomeAQ
                     continue;
                 }
 
-                SpawnPoint[] knownSpawns = GetRelationSpawns(relation.Entry, db).ToArray();
+                SpawnPoint[] knownSpawns = GetRelationSpawns(relation.Entry, relation.Type, db).ToArray();
                 if (knownSpawns.Length == 0)
                 {
                     ReportDataOmission(relationKey, QuestFailureReason.InvalidQuestData,
@@ -960,14 +960,16 @@ namespace WholesomeAQ
                 : Enumerable.Empty<SpawnPoint>();
         }
 
-        private static IEnumerable<SpawnPoint> GetRelationSpawns(int entry, QuestDatabase db)
+        private static IEnumerable<SpawnPoint> GetRelationSpawns(
+            int entry, QuestObjectType type, QuestDatabase db)
         {
+            // Entry numbers are unique only within their declared object namespace.
+            // Missing or invalid type evidence must not borrow another type's geometry.
+            var source = type == QuestObjectType.Creature ? db.CreatureSpawns
+                : type == QuestObjectType.GameObject ? db.GameObjectSpawns : null;
             string key = entry.ToString(CultureInfo.InvariantCulture);
-            if (db.CreatureSpawns.TryGetValue(key, out List<SpawnPoint> creatures))
-                return creatures;
-            if (db.GameObjectSpawns.TryGetValue(key, out List<SpawnPoint> objects))
-                return objects;
-            return Enumerable.Empty<SpawnPoint>();
+            return source != null && source.TryGetValue(key, out List<SpawnPoint> points)
+                && points != null ? points : Enumerable.Empty<SpawnPoint>();
         }
 
         private static bool InRange(SpawnPoint point, QuestSchedulerSnapshot snapshot, int scanThreshold) =>
@@ -1171,7 +1173,7 @@ namespace WholesomeAQ
             Supported(quest) &&
             db.QuestGivers
                 .Where(giver => giver.QuestId == quest.Id)
-                .SelectMany(giver => GetRelationSpawns(giver.GiverId, db))
+                .SelectMany(giver => GetRelationSpawns(giver.GiverId, giver.GiverType, db))
                 .Any(point => InRange(point, snapshot, scanThreshold));
 
         private static bool PrerequisitesComplete(QuestEntry quest, HashSet<uint> completed)
@@ -1255,6 +1257,7 @@ namespace WholesomeAQ
             }
 
             public int Entry { get; }
+            public QuestObjectType Type => Giver?.GiverType ?? Ender?.EnderType ?? (QuestObjectType)(-1);
             public QuestGiverEntry Giver { get; }
             public QuestEnderEntry Ender { get; }
             public string DisplayName => Giver?.GiverName ?? Ender?.EnderName ?? "";
