@@ -18,7 +18,10 @@ jobs:
         with:
           persist-credentials: false
           lfs: false
-      - name: Execute exact production queries with original Lua language version
+      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9
+        with:
+          dotnet-version: '10.0.x'
+      - name: Execute exact production queries and adapter contracts
         shell: bash
         run: |
           set -euo pipefail
@@ -28,6 +31,7 @@ jobs:
           sudo apt-get install -y lua5.1
           lua5.1 -v > "$RUNNER_TEMP/legacy-roles/version.txt" 2>&1
           python3 Tools/LegacyRoleLuaTests/test_roles.py --out "$RUNNER_TEMP/legacy-roles" 2>&1 | tee "$RUNNER_TEMP/legacy-roles/run.txt"
+          dotnet run --project Tools/LegacyRoleLuaTests -c Release 2>&1 | tee "$RUNNER_TEMP/legacy-roles/adapter-run.txt"
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:

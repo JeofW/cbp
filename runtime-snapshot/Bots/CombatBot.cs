@@ -281,7 +281,7 @@ namespace Styx.Bot.CustomBots
                     {
                         for (int i = 1; i < 5; i++)
                         {
-                            string role = Lua.GetReturnVal<string>(string.Format("return UnitGroupRolesAssigned('party{0}')", i), 0);
+                            string role = LegacyGroupRoles.GetAssignedRole("party" + i);
                             if (role == "TANK")
                                 _followMe = ObjectManager.GetObjectByGuid<WoWPlayer>(StyxWoW.Me.GetPartyMemberGuid(i - 1));
                         }
