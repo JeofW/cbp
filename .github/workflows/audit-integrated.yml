@@ -12,7 +12,7 @@ concurrency:
 jobs:
   combined:
     if: github.repository == 'JeofW/CopilotBuddy-private' && github.event.repository.private == true
-    runs-on: windows-latest
+    runs-on: windows-2022
     timeout-minutes: 25
     env:
       GIT_CONFIG_COUNT: '2'
