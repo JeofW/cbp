@@ -24,7 +24,8 @@ internal static class WorkerOwnershipRegressionTests
     private static readonly TestAction WorkerBody =
         (TestAction)typeof(TreeRoot).GetMethod("WorkerThread", PrivateStatic)!.CreateDelegate(typeof(TestAction));
 
-    [ModuleInitializer]
+    // Run from Main after module initialization: joining a child that invokes
+    // test-assembly callbacks during its module initializer can deadlock on CLR initialization.
     internal static void Run()
     {
         // Run thread/lifecycle fixtures once, in the core process, not again during

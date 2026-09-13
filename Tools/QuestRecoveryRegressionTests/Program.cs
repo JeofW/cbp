@@ -18,6 +18,8 @@ if (args.Contains("--routine-compatibility"))
     return;
 }
 
+WorkerOwnershipRegressionTests.Run();
+
 var now = new DateTime(2026, 9, 2, 12, 0, 0, DateTimeKind.Utc);
 var testRoot = Path.Combine(AppContext.BaseDirectory, "quest-recovery-test-data");
 ResetDirectory(testRoot);
