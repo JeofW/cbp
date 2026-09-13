@@ -1,0 +1,12 @@
+diff --git a/runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Paladin/PaladinSupport.cs b/runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Paladin/PaladinSupport.cs
+--- a/runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Paladin/PaladinSupport.cs
++++ b/runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Paladin/PaladinSupport.cs
+@@ -123,7 +123,7 @@ namespace Singular.ClassSpecific.Paladin
+                 order = new[] { setting == PaladinAura.Resistance ? "Shadow Resistance Aura" : setting + " Aura" };
+             else if (TalentManager.CurrentSpec == TalentSpec.HolyPaladin)
+                 order = new[] { "Concentration Aura", "Devotion Aura", "Retribution Aura" };
+-            else if (TalentManager.CurrentSpec == TalentSpec.ProtectionPaladin && (player.IsInParty || player.IsInRaid))
++            else if (TalentManager.CurrentSpec == TalentSpec.ProtectionPaladin && (StyxWoW.Me.IsInParty || StyxWoW.Me.IsInRaid))
+                 order = new[] { "Devotion Aura", "Retribution Aura", "Concentration Aura" };
+             else
+                 order = new[] { "Retribution Aura", "Devotion Aura", "Concentration Aura" };

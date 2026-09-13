@@ -3,7 +3,7 @@ name: Audit support preflight
 on:
   push:
     branches: ['audit/next-31-paladin-support-20260913']
-    paths: ['Tools/Audit/prepare_paladin_support.py', '.github/workflows/audit-support-preflight.yml']
+    paths: ['Tools/Audit/prepare_paladin_support.py', 'Tools/Audit/support-client-type.patch', '.github/workflows/audit-support-preflight.yml']
 permissions:
   contents: read
 jobs:
@@ -32,8 +32,18 @@ jobs:
       - name: Verify exact source and all twelve test owners
         shell: pwsh
         run: |
+          $ErrorActionPreference = 'Stop'
+          $source = 'runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Paladin/PaladinSupport.cs'
+          if ((git hash-object -- $source) -ne 'e7465779e1aee728a7d9e89bff203c1398d84904') { throw 'Unexpected support preimage' }
+          git apply --check --whitespace=error Tools/Audit/support-client-type.patch
+          if ($LASTEXITCODE -ne 0) { throw 'Type patch check failed' }
+          git apply --whitespace=error Tools/Audit/support-client-type.patch
+          if ($LASTEXITCODE -ne 0 -or (git hash-object -- $source) -ne '45a4b7d166f3d3d51650710ace75b9aa03733bf3') { throw 'Unexpected type patch result' }
           python Tools/Audit/prepare_paladin_support.py
           if ($LASTEXITCODE -ne 0) { throw 'Source verification failed' }
+          $expected = Get-Content support-blobs.json -Raw | ConvertFrom-Json -AsHashtable
+          $expected[$source] = '45a4b7d166f3d3d51650710ace75b9aa03733bf3'
+          $expected | ConvertTo-Json | Out-File support-blobs.json
           & pwsh -NoProfile -File support-combined.ps1
           if ($LASTEXITCODE -ne 0) { throw 'Combined source preflight failed' }
       - name: Stage only hash-verified source blobs without updating refs
