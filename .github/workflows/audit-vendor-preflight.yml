@@ -2,7 +2,7 @@ name: Audit temporary vendor travel preflight
 on:
   push:
     branches: ['audit/next-16-vendor-travel-backoff-20260913']
-    paths: ['Tools/Audit/prepare-vendor-backoff.py', '.github/workflows/audit-vendor-preflight.yml']
+    paths: ['Tools/Audit/prepare-vendor-backoff*.py', '.github/workflows/audit-vendor-preflight.yml']
 permissions:
   contents: read
 jobs:
@@ -34,7 +34,7 @@ jobs:
           $out = Join-Path $env:RUNNER_TEMP 'vendor-preflight'
           New-Item -ItemType Directory -Force $out | Out-Null
           git rev-parse HEAD | Out-File (Join-Path $out 'commit.txt')
-          python Tools/Audit/prepare-vendor-backoff.py > (Join-Path $out 'candidate-blobs.json')
+          python Tools/Audit/prepare-vendor-backoff-verified.py > (Join-Path $out 'candidate-blobs.json')
           if ($LASTEXITCODE -ne 0) { throw 'Source identity check failed' }
           git add --intent-to-add Styx/Logic/Profiles/VendorTravelBackoff.cs
           git diff --check
