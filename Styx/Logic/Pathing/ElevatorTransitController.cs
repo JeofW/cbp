@@ -33,6 +33,8 @@ namespace Styx.Logic.Pathing
 	internal sealed class ElevatorTransitController
 	{
 		private static readonly TimeSpan DockConfirmationDuration = TimeSpan.FromMilliseconds(750);
+		// Unobserved time is not evidence that a moving platform remained docked.
+		private static readonly TimeSpan MaximumDockObservationGap = TimeSpan.FromSeconds(2);
 		private const float DockDistanceTolerance = 1.25f;
 		private const float DockMotionTolerance = 0.05f;
 		private const float LandingDistanceTolerance = 3f;
@@ -41,6 +43,7 @@ namespace Styx.Logic.Pathing
 		private ElevatorTransitStage _stage;
 		private bool _active;
 		private DateTime _dockCandidateSinceUtc;
+		private DateTime _lastDockObservationUtc;
 		private WoWPoint _dockCandidateOrigin;
 		private bool _hasDockCandidate;
 
@@ -186,8 +189,11 @@ namespace Styx.Logic.Pathing
 					return Decision(ElevatorTransitAction.MoveToBoard, liveTransportLocation);
 
 				case ElevatorTransitStage.Riding:
-					if (!attachedToSelected)
-						return Decision(ElevatorTransitAction.Wait);
+					if (!attachedToSelected || isFalling)
+					{
+						ResetDockCandidate();
+						return Decision(attachedToSelected ? ElevatorTransitAction.Ride : ElevatorTransitAction.Wait);
+					}
 					if (!liveLocationAvailable || liveTransportLocation.Distance(EndDock) > DockDistanceTolerance)
 					{
 						ResetDockCandidate();
@@ -196,14 +202,20 @@ namespace Styx.Logic.Pathing
 					if (!HasStableDockObservation(liveTransportLocation, observedAtUtc))
 						return Decision(ElevatorTransitAction.Ride);
 					if (!exitPathSafe)
+					{
+						ResetDockCandidate();
 						return Decision(ElevatorTransitAction.Ride);
+					}
 
 					_stage = ElevatorTransitStage.Exiting;
 					return Decision(ElevatorTransitAction.MoveToExit, ExitPoint);
 
 				case ElevatorTransitStage.Exiting:
 					if (attachedToDifferentTransport || isFalling)
+					{
+						ResetDockCandidate();
 						return Decision(ElevatorTransitAction.Wait);
+					}
 
 					if (attachedToSelected)
 					{
@@ -214,7 +226,14 @@ namespace Styx.Logic.Pathing
 							return Decision(ElevatorTransitAction.Ride);
 						}
 						if (!exitPathSafe)
+						{
+							ResetDockCandidate();
 							return Decision(ElevatorTransitAction.Wait);
+						}
+						// Keep exit permission tied to the current platform observations,
+						// even while it remains within the destination dock radius.
+						if (!HasStableDockObservation(liveTransportLocation, observedAtUtc))
+							return Decision(ElevatorTransitAction.Ride);
 						return Decision(ElevatorTransitAction.MoveToExit, ExitPoint);
 					}
 
@@ -237,14 +256,19 @@ namespace Styx.Logic.Pathing
 
 		private bool HasStableDockObservation(WoWPoint liveTransportLocation, DateTime observedAtUtc)
 		{
-			if (!_hasDockCandidate || _dockCandidateOrigin.Distance(liveTransportLocation) > DockMotionTolerance)
+			if (!_hasDockCandidate
+			    || observedAtUtc < _lastDockObservationUtc
+			    || observedAtUtc - _lastDockObservationUtc > MaximumDockObservationGap
+			    || _dockCandidateOrigin.Distance(liveTransportLocation) > DockMotionTolerance)
 			{
 				_hasDockCandidate = true;
 				_dockCandidateOrigin = liveTransportLocation;
 				_dockCandidateSinceUtc = observedAtUtc;
+				_lastDockObservationUtc = observedAtUtc;
 				return false;
 			}
 
+			_lastDockObservationUtc = observedAtUtc;
 			return observedAtUtc - _dockCandidateSinceUtc >= DockConfirmationDuration;
 		}
 
@@ -253,6 +277,7 @@ namespace Styx.Logic.Pathing
 			_hasDockCandidate = false;
 			_dockCandidateOrigin = default;
 			_dockCandidateSinceUtc = DateTime.MinValue;
+			_lastDockObservationUtc = DateTime.MinValue;
 		}
 
 		private static ElevatorTransitDecision Decision(
