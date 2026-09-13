@@ -1,0 +1,45 @@
+name: Audit quest-log observation owners
+on:
+  push:
+    branches: ['audit/next-*']
+    paths: ['Styx/Logic/Questing/**', 'runtime-snapshot/Bots/WholesomeAutoQuest-master/**.cs', 'Tools/QuestLogObservationRegressionTests/**', '.github/workflows/audit-quest-log-observation.yml']
+permissions:
+  contents: read
+jobs:
+  owners:
+    runs-on: windows-2022
+    timeout-minutes: 15
+    env:
+      GIT_LFS_SKIP_SMUDGE: '1'
+      GIT_CONFIG_COUNT: '2'
+      GIT_CONFIG_KEY_0: core.longpaths
+      GIT_CONFIG_VALUE_0: 'true'
+      GIT_CONFIG_KEY_1: core.autocrlf
+      GIT_CONFIG_VALUE_1: 'false'
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with: {persist-credentials: false, lfs: false}
+      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9
+        with: {dotnet-version: '10.0.x'}
+      - name: Build and execute actual owners as x86
+        shell: pwsh
+        run: |
+          $out=Join-Path $env:RUNNER_TEMP 'quest-log-results'
+          New-Item -ItemType Directory -Force $out | Out-Null
+          git rev-parse HEAD | Out-File (Join-Path $out 'commit.txt')
+          $installer=Join-Path (Split-Path $env:RUNNER_WORKSPACE) '_actions/actions/setup-dotnet/67a3573c9a986a3f9c594539f4ab511d57bb3ce9/externals/install-dotnet.ps1'
+          $dest=Join-Path $env:RUNNER_TEMP 'dotnet-x86'
+          & pwsh -NoProfile -File $installer -Channel '10.0' -Runtime dotnet -Architecture x86 -InstallDir $dest -NoPath *> (Join-Path $out 'install.txt')
+          if($LASTEXITCODE -ne 0){throw 'x86 runtime install failed'}
+          dotnet build Tools/QuestLogObservationRegressionTests -c Release -p:PlatformTarget=x86 -v quiet *> (Join-Path $out 'build.txt')
+          $build=$LASTEXITCODE
+          $run=$null
+          if($build -eq 0){& "$dest/dotnet.exe" Tools/QuestLogObservationRegressionTests/bin/Release/net10.0/QuestLogObservationRegressionTests.dll *> (Join-Path $out 'run.txt');$run=$LASTEXITCODE}
+          @{build=$build;run=$run;game_attached=$false;architecture='x86'} | ConvertTo-Json | Out-File (Join-Path $out 'result.json')
+          if($build -ne 0 -or $run -ne 0){exit 1}
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: quest-log-observation-${{ github.sha }}
+          path: ${{ runner.temp }}/quest-log-results/
+          retention-days: 14
