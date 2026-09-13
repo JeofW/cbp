@@ -1,0 +1,72 @@
+name: Prepare pinned combined audit source
+on:
+  push:
+    branches: ['audit/next-13-combined-regressions-20260913']
+    paths: ['.github/workflows/audit-combined-source.yml']
+permissions:
+  contents: read
+jobs:
+  prepare:
+    if: github.repository == 'JeofW/CopilotBuddy-private' && github.event.repository.private == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GIT_LFS_SKIP_SMUDGE: '1'
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+          lfs: false
+      - name: Combine pinned repairs locally and export exact review inputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/combined-review"
+          export AUDIT_REVIEW_OUT="$RUNNER_TEMP/combined-review"
+          git config user.name 'CopilotBuddy audit validation'
+          git config user.email 'audit-validation@users.noreply.github.com'
+          git config core.autocrlf false
+          git rev-parse HEAD > "$AUDIT_REVIEW_OUT/checkout-commit.txt"
+          for revision in \
+            89e5e03cb2bc3df2a491cee739fada7be5af97ca \
+            ce4bf39191227666563af01984e365409724c8e4 \
+            81370e0ddea8a2224008006d577f21432978fd3c \
+            bab7c79a0cd118b506d569ca1533f1bfc0699952 \
+            f2dce82cffc29ad0a531e8641e0e7c989321b67f
+          do
+            git cat-file -e "$revision^{commit}"
+            git merge --no-edit --no-ff "$revision"
+          done
+          git diff --check 292e42add337a3dc2cdcda6a84910ea9c6cfe7f6 HEAD
+          git diff --binary 292e42add337a3dc2cdcda6a84910ea9c6cfe7f6 HEAD > "$AUDIT_REVIEW_OUT/combined.diff"
+          git archive --format=zip --output="$AUDIT_REVIEW_OUT/source-snapshot.zip" HEAD
+          python - <<'PY'
+          import hashlib, json, os, pathlib, subprocess
+          out = pathlib.Path(os.environ['AUDIT_REVIEW_OUT'])
+          base = '292e42add337a3dc2cdcda6a84910ea9c6cfe7f6'
+          paths = subprocess.check_output(['git','diff','--no-renames','--name-only','-z',base,'HEAD']).decode().split('\0')
+          entries=[]
+          for path in filter(None, paths):
+              raw = subprocess.check_output(['git','ls-tree','-z','HEAD','--',path]).decode()
+              if raw:
+                  meta, actual = raw.rstrip('\0').split('\t',1)
+                  mode, kind, sha = meta.split()
+                  assert actual == path and kind == 'blob', (path,raw)
+                  entries.append(dict(path=path,mode=mode,type=kind,sha=sha))
+              else:
+                  entries.append(dict(path=path,mode='100644',type='blob',sha=None))
+          manifest=dict(base=base, checkout=(out/'checkout-commit.txt').read_text().strip(),
+              tree=subprocess.check_output(['git','rev-parse','HEAD^{tree}']).decode().strip(),
+              local_merge_only=True, game_attached=False, mesh_bytes_downloaded=False, entries=entries)
+          (out/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
+          (out/'SHA256SUMS').write_text(''.join(hashlib.sha256(p.read_bytes()).hexdigest()+'  '+p.name+'\n' for p in sorted(out.iterdir()) if p.is_file()))
+          print(json.dumps(manifest,indent=2))
+          PY
+          echo 'Local review tree only. No branch pushed, PR merged, or deployment performed.'
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: combined-review-${{ github.sha }}
+          path: ${{ runner.temp }}/combined-review/
+          retention-days: 7
+          if-no-files-found: error
