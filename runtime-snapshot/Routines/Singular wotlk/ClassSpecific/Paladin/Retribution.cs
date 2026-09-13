@@ -33,6 +33,7 @@ namespace Singular.ClassSpecific.Paladin
                 Spell.Cast("Lay on Hands", ret => StyxWoW.Me,
                            ret => StyxWoW.Me.HealthPercent <= SingularSettings.Instance.Paladin.LayOnHandsHealth &&
                                   !StyxWoW.Me.HasAura("Forbearance")),
+                Common.CreatePaladinDispelBehavior(),
                 // Holy Light: primary heal (big, slow) — uses HolyLightHealth threshold
                 Spell.Heal("Holy Light", ret => StyxWoW.Me,
                            ret => StyxWoW.Me.HealthPercent <= SingularSettings.Instance.Paladin.HolyLightHealth),
