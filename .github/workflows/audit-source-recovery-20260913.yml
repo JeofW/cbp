@@ -1,4 +1,4 @@
-# Resume export: preserve all saved branch heads after interrupted responses.
+# Resume export: preserve Paladin, engagement and Wholesome work saved during interrupted responses.
 # Read-only source history only; do not download LFS meshes or execute bot code.
 name: Audit source recovery 20260913
 on:
