@@ -2397,22 +2397,43 @@ namespace WholesomeAQ
 
             if (mask == ItemQuality.None) return;
 
-            var protectedIds = new HashSet<uint>();
+            // Selling is destructive. A scheduler batch is not the full live quest log.
+            var me = StyxWoW.Me;
+            var database = _dataLoader?.Database;
+            if (me == null || !me.IsValid || !me.IsAlive || database?.Quests == null)
+                return;
+            var accepted = me.QuestLog.GetAllQuests();
+            if (accepted == null)
+                return;
 
-            if (_dataLoader.Database != null && _scheduler?.ActiveQuestIds != null)
+            var protectedIds = new HashSet<uint>(ProtectedItemsManager.GetAllItemIds());
+            var protectedNames = ProtectedItemsManager.GetAllItemNames();
+            var acceptedIds = new HashSet<int>();
+            foreach (var current in accepted)
             {
-                foreach (int qId in _scheduler.ActiveQuestIds)
+                if (current == null || current.Id == 0 || current.Id > int.MaxValue)
+                    return;
+                acceptedIds.Add((int)current.Id);
+            }
+            // Keep the old upcoming/scheduled protection as well as deferred and
+            // completed-but-not-turned-in quests. Do not protect unrelated dataset rows.
+            var protectedQuestIds = new HashSet<int>(acceptedIds);
+            if (_scheduler?.ActiveQuestIds != null)
+                protectedQuestIds.UnionWith(_scheduler.ActiveQuestIds);
+            foreach (int qId in protectedQuestIds)
+            {
+                var matches = database.Quests.Where(q => q != null && q.Id == qId).ToArray();
+                if (matches.Length != 1 || matches[0].Objectives == null
+                    || matches[0].Objectives.Any(obj => obj == null))
                 {
-                    var quest = _dataLoader.Database.Quests.FirstOrDefault(q => q.Id == qId);
-                    if (quest == null) continue;
-                    if (quest.StartItem > 0)
-                        protectedIds.Add((uint)quest.StartItem);
-                    foreach (var obj in quest.Objectives)
-                    {
-                        if (obj.ItemId > 0)
-                            protectedIds.Add((uint)obj.ItemId);
-                    }
+                    // Missing/ambiguous accepted data is not permission to sell its items.
+                    if (acceptedIds.Contains(qId)) return;
+                    continue;
                 }
+                var quest = matches[0];
+                if (quest.StartItem > 0) protectedIds.Add((uint)quest.StartItem);
+                foreach (var obj in quest.Objectives)
+                    if (obj.ItemId > 0) protectedIds.Add((uint)obj.ItemId);
             }
 
             var bestFood = Consumable.GetBestFood(false);
@@ -2422,8 +2443,9 @@ namespace WholesomeAQ
             if (bestDrink != null)
                 protectedIds.Add(bestDrink.Entry);
 
-            foreach (var item in StyxWoW.Me.BagItems)
+            foreach (var item in me.BagItems)
             {
+                if (item == null) return;
                 if (item.ItemClass == WoWItemClass.Projectile
                  || item.ItemClass == WoWItemClass.Quiver
                  || item.ItemClass == WoWItemClass.Reagent
@@ -2431,7 +2453,11 @@ namespace WholesomeAQ
                     protectedIds.Add(item.Entry);
             }
 
-            MerchantFrame.Instance.SellItemQualities(mask, null, protectedIds);
+            // Recheck the immediate dispatch boundary after observing inventory.
+            if (!ReferenceEquals(me, StyxWoW.Me) || !me.IsValid || !me.IsAlive
+                || !MerchantFrame.Instance.IsVisible)
+                return;
+            MerchantFrame.Instance.SellItemQualities(mask, protectedNames, protectedIds);
         }
 
         private static string FindProfilePath()

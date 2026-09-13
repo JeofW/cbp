@@ -70,13 +70,15 @@ jobs:
           $results += @{ suite='GroupEngagement'; build=0; run=$LASTEXITCODE; game_attached=$false }
           dotnet run --project Tools/PaladinSupportRegressionTests -c Release *> (Join-Path $out 'PaladinSupport-run.txt')
           $results += @{ suite='PaladinSupport'; build=0; run=$LASTEXITCODE; game_attached=$false }
+          dotnet run --project Tools/WholesomeSaleRegressionTests -c Release *> (Join-Path $out 'WholesomeSale-run.txt')
+          $results += @{ suite='WholesomeSale'; build=0; run=$LASTEXITCODE; game_attached=$false }
           python -m pip install -r Tools/EvidenceAudit/requirements.txt *> (Join-Path $out 'python-install.txt')
           if ($LASTEXITCODE -ne 0) { throw 'Analyzer dependency install failed' }
           python -m unittest discover -s Tools/EvidenceAudit -p 'test_*.py' -v *> (Join-Path $out 'Analyzer-run.txt')
           $results += @{ suite='Analyzers'; build=0; run=$LASTEXITCODE; game_attached=$false }
           $results | ConvertTo-Json | Out-File (Join-Path $out 'results.json')
           $results | ConvertTo-Json | Write-Host
-          if ($results.Count -ne 13 -or @($results | Where-Object { $_.build -ne 0 -or $null -eq $_.run -or $_.run -ne 0 }).Count) { exit 1 }
+          if ($results.Count -ne 14 -or @($results | Where-Object { $_.build -ne 0 -or $null -eq $_.run -or $_.run -ne 0 }).Count) { exit 1 }
       - name: Retain private results
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
