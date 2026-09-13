@@ -322,8 +322,17 @@ namespace Singular.Helpers
                     new Action(
                         ret =>
                         {
-                            Logger.Write("Casting " + name + " on " + onUnit(ret).SafeName());
-                            SpellManager.Cast(name, onUnit(ret));
+                            // Setup may have yielded since the outer predicate. Resolve once
+                            // here, and never turn a rejected submission into tree success.
+                            if (string.IsNullOrWhiteSpace(name) || onUnit == null)
+                                return RunStatus.Failure;
+                            var target = onUnit(ret);
+                            if (target == null)
+                                return RunStatus.Failure;
+                            Logger.Write("Casting " + name + " on " + target.SafeName());
+                            return SpellManager.Cast(name, target)
+                                ? RunStatus.Success
+                                : RunStatus.Failure;
 
                             //WoWSpell spell;
                             //if (SpellManager.Spells.TryGetValue(name, out spell))
@@ -426,8 +435,17 @@ namespace Singular.Helpers
                     new Action(
                         ret =>
                         {
-                            Logger.Write("Casting " + spellId + " on " + onUnit(ret).SafeName());
-                            SpellManager.Cast(spellId, onUnit(ret));
+                            // Setup may have yielded since the outer predicate. Resolve once
+                            // here, and never turn a rejected submission into tree success.
+                            if (spellId <= 0 || onUnit == null)
+                                return RunStatus.Failure;
+                            var target = onUnit(ret);
+                            if (target == null)
+                                return RunStatus.Failure;
+                            Logger.Write("Casting " + spellId + " on " + target.SafeName());
+                            return SpellManager.Cast(spellId, target)
+                                ? RunStatus.Success
+                                : RunStatus.Failure;
                         }))
                 );
         }
