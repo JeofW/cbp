@@ -512,6 +512,52 @@ namespace Tripper.Navigation
         /// <returns>PathFindResult containing the calculated path.</returns>
         public PathFindResult FindPath(uint mapId, Vector3 start, Vector3 end, bool straightPath = true)
         {
+            // Keep legacy Elapsed intact, but separately account for everything the
+            // caller waits for, including lock contention and result cleanup.
+            var caller = Stopwatch.StartNew();
+            TimeSpan lockWait = TimeSpan.Zero;
+            TimeSpan nativeCall = TimeSpan.Zero;
+            PathFindResult? result = null;
+            try
+            {
+                lock (_meshLock)
+                {
+                    lockWait = caller.Elapsed;
+                    result = FindPathCore(mapId, start, end, straightPath, out nativeCall);
+                    return result;
+                }
+            }
+            finally
+            {
+                caller.Stop();
+                if (result != null)
+                {
+                    result.CallerElapsed = caller.Elapsed;
+                    result.LockWaitElapsed = lockWait;
+                    result.NativeCallElapsed = nativeCall;
+                    result.ManagedAndCleanupElapsed = caller.Elapsed - lockWait - nativeCall;
+                }
+            }
+        }
+
+        // Native NavPathFindStep is not ABI-identical to the existing public enum.
+        // Do not renumber public values used by plugins or persisted diagnostics.
+        internal static PathFindStep DecodeNativePathFindStep(int raw) => raw switch
+        {
+            -1 => PathFindStep.None,
+            0 => PathFindStep.FindStartPoly,
+            1 => PathFindStep.FindEndPoly,
+            2 => PathFindStep.InitPathFind,
+            3 => PathFindStep.UpdatePathFind,
+            4 => PathFindStep.FinalizePathFind,
+            5 => PathFindStep.FindStraightPath,
+            _ => PathFindStep.Unknown
+        };
+
+        private PathFindResult FindPathCore(uint mapId, Vector3 start, Vector3 end, bool straightPath,
+            out TimeSpan nativeCall)
+        {
+            nativeCall = TimeSpan.Zero;
             if (!IsLoaded)
             {
                 Log("Cannot pathfind - meshes not loaded");
@@ -529,7 +575,17 @@ namespace Tripper.Navigation
                     var endC = new NativeMethods.XYZ(end);
 
                     // Use CalculatePathEx for complete path data
-                    IntPtr resultPtr = NativeMethods.CalculatePathEx(mapId, startC, endC, straightPath);
+                    IntPtr resultPtr;
+                    var nativeTimer = Stopwatch.StartNew();
+                    try
+                    {
+                        resultPtr = NativeMethods.CalculatePathEx(mapId, startC, endC, straightPath);
+                    }
+                    finally
+                    {
+                        nativeTimer.Stop();
+                        nativeCall = nativeTimer.Elapsed;
+                    }
 
                     if (resultPtr == IntPtr.Zero)
                     {
@@ -551,7 +607,8 @@ namespace Tripper.Navigation
                             {
                                 Elapsed = stopwatch.Elapsed,
                                 Status = status,
-                                FailStep = (PathFindStep)nativeResult.FailStep,
+                                FailStep = DecodeNativePathFindStep(nativeResult.FailStep),
+                                RawNativeFailStep = nativeResult.FailStep,
                                 Start = start,
                                 End = end
                             };
@@ -659,7 +716,8 @@ namespace Tripper.Navigation
                             End = points.Length > 0 ? points[^1] : end,
                             Aborted = false,
                             IsPartialPath = status.IsPartialResult,
-                            FailStep = PathFindStep.None
+                            FailStep = PathFindStep.None,
+                            RawNativeFailStep = nativeResult.FailStep
                         };
 
                         RaisePathProgress(result);
