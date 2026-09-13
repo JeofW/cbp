@@ -20,6 +20,21 @@ namespace Tripper.Navigation
         /// </summary>
         public TimeSpan Elapsed { get; internal set; }
 
+        /// <summary>Total elapsed FindPath call, including lock wait and cleanup.</summary>
+        public TimeSpan CallerElapsed { get; internal set; }
+
+        /// <summary>Elapsed time before acquiring the native query lock.</summary>
+        public TimeSpan LockWaitElapsed { get; internal set; }
+
+        /// <summary>Elapsed time inside the primary native CalculatePathEx call.</summary>
+        public TimeSpan NativeCallElapsed { get; internal set; }
+
+        /// <summary>Remaining managed, post-processing, callback and cleanup time.</summary>
+        public TimeSpan ManagedAndCleanupElapsed { get; internal set; }
+
+        /// <summary>Original native failure-step integer; null for managed-only outcomes.</summary>
+        public int? RawNativeFailStep { get; internal set; }
+
         /// <summary>
         /// Detour status of the pathfinding operation.
         /// </summary>

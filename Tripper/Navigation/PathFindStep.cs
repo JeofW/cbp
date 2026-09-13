@@ -28,6 +28,9 @@ namespace Tripper.Navigation
         SnapPartialPathToEnd = 6,
 
         /// <summary>Finding the straight path from polygon corridor.</summary>
-        FindStraightPath = 7
+        FindStraightPath = 7,
+
+        /// <summary>A native step code not recognized by this wrapper.</summary>
+        Unknown = 8
     }
 }
