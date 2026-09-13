@@ -44,8 +44,9 @@ jobs:
           }
           $runtime = Join-Path $destination 'dotnet.exe'
           & $runtime --list-runtimes *> (Join-Path $out 'runtimes.txt')
+          if ($LASTEXITCODE -ne 0 -or -not (Select-String -Path (Join-Path $out 'runtimes.txt') -Pattern 'Microsoft.WindowsDesktop.App 10\.')) { throw 'Verified x86 desktop runtime required' }
           $results = @()
-          foreach ($name in @('QuestRecoveryRegressionTests', 'WholesomeQuestRecoveryRegressionTests', 'QuestRecoveryAdapterRegressionTests', 'QuestPickupPolicyRegressionTests', 'VendorCoreRegressionTests')) {
+          foreach ($name in @('QuestRecoveryRegressionTests', 'WholesomeQuestRecoveryRegressionTests', 'QuestRecoveryAdapterRegressionTests', 'QuestPickupPolicyRegressionTests', 'VendorCoreRegressionTests', 'NativeContractRegressionTests')) {
             dotnet build "Tools/$name/$name.csproj" -c Release -p:Platform=x86 -v quiet *> (Join-Path $out "$name-build.txt")
             $build = $LASTEXITCODE
             $run = $null
@@ -56,28 +57,20 @@ jobs:
               $run = $LASTEXITCODE
               if ($name -eq 'QuestRecoveryRegressionTests') {
                 & $runtime $dlls[0].FullName --routine-compatibility *> (Join-Path $out 'Singular-run.txt')
-                $results += @{ suite='Singular'; build=0; run=$LASTEXITCODE }
+                $results += @{ suite='Singular'; build=0; run=$LASTEXITCODE; game_attached=$false }
               }
             }
-            $results += @{ suite=$name; build=$build; run=$run }
+            $results += @{ suite=$name; build=$build; run=$run; game_attached=$false }
           }
           dotnet run --project Tools/ElevatorSafetyRegressionTests -c Release *> (Join-Path $out 'Elevator-run.txt')
-          $results += @{ suite='Elevator'; build=0; run=$LASTEXITCODE }
+          $results += @{ suite='Elevator'; build=0; run=$LASTEXITCODE; game_attached=$false }
           python -m pip install -r Tools/EvidenceAudit/requirements.txt *> (Join-Path $out 'python-install.txt')
           if ($LASTEXITCODE -ne 0) { throw 'Analyzer dependency install failed' }
           python -m unittest discover -s Tools/EvidenceAudit -p 'test_*.py' -v *> (Join-Path $out 'Analyzer-run.txt')
-          $results += @{ suite='Analyzers'; build=0; run=$LASTEXITCODE }
+          $results += @{ suite='Analyzers'; build=0; run=$LASTEXITCODE; game_attached=$false }
           $results | ConvertTo-Json | Out-File (Join-Path $out 'results.json')
-          $results | Format-Table | Out-String | Write-Host
-          if (@($results | Where-Object { $_.build -ne 0 -or $null -eq $_.run -or $_.run -ne 0 }).Count) { exit 1 }
-      - name: Export tracked source snapshot with LFS pointers, not mesh bytes
-        if: always() && github.ref_name == 'audit/next-07-integrated-mesh-20260912'
-        shell: pwsh
-        run: |
-          $out = Join-Path $env:RUNNER_TEMP 'integrated-results'
-          New-Item -ItemType Directory -Force $out | Out-Null
-          git archive --format=zip --output="$out/source-snapshot.zip" HEAD
-          if ($LASTEXITCODE -ne 0) { throw 'Source archive failed' }
+          $results | ConvertTo-Json | Write-Host
+          if ($results.Count -ne 9 -or @($results | Where-Object { $_.build -ne 0 -or $null -eq $_.run -or $_.run -ne 0 }).Count) { exit 1 }
       - name: Retain private results
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02

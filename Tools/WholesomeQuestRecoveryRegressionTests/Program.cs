@@ -3682,13 +3682,21 @@ void TestDatasetFingerprintIsDeterministic()
         Assert(first.Load() != null && second.Load() != null, "the controlled quest datasets must load");
         Assert(first.DatasetFingerprint == second.DatasetFingerprint
                && first.DatasetFingerprint != "unknown",
-            "equal ordered path/length/timestamp metadata must produce one deterministic dataset fingerprint");
+            "equal parsed bytes and logical roles must produce one deterministic dataset fingerprint");
 
         File.SetLastWriteTimeUtc(path, stamp.AddSeconds(1));
         var changed = new DataLoader(path);
         changed.Load();
-        Assert(changed.DatasetFingerprint != first.DatasetFingerprint,
-            "changing dataset metadata must change the dataset fingerprint");
+        Assert(changed.DatasetFingerprint == first.DatasetFingerprint,
+            "timestamp-only changes must preserve content-owned recovery context");
+
+        // Data identity follows the bytes, not the previous metadata-only policy.
+        File.AppendAllText(path, " ");
+        File.SetLastWriteTimeUtc(path, stamp);
+        var contentChanged = new DataLoader(path);
+        contentChanged.Load();
+        Assert(contentChanged.DatasetFingerprint != first.DatasetFingerprint,
+            "changed parsed snapshot bytes must invalidate recovery context even with the old timestamp");
     }
     finally
     {
