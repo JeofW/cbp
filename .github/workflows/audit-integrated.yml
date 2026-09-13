@@ -1,7 +1,7 @@
 name: Audit integrated regression baseline
 on:
   push:
-    branches: ['audit/next-*']
+    branches: ['master', 'audit/next-*']
     paths: ['**.cs', '**.csproj', 'Tools/EvidenceAudit/**', '.github/workflows/audit-integrated.yml']
   workflow_dispatch:
 permissions:

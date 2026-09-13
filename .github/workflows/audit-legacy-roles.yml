@@ -1,7 +1,7 @@
 name: Audit original 3.3.5a role queries
 on:
   push:
-    branches: ['audit/next-35-legacy-role-compatibility-20260913']
+    branches: ['master', 'audit/next-*']
     paths: ['Styx/Helpers/*.cs', 'Styx/WoWInternals/WoWObjects/WoWPartyMember.cs', 'runtime-snapshot/Bots/CombatBot.cs', 'Tools/LegacyRoleLuaTests/**', '.github/workflows/audit-legacy-roles.yml']
   workflow_dispatch:
 permissions:
