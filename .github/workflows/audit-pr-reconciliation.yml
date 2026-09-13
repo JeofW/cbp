@@ -1,0 +1,32 @@
+name: Audit PR reconciliation and source checkpoint
+on:
+  push:
+    branches: ['audit/next-37-wholesome-review-20260913']
+    paths: ['Tools/Audit/reconcile_pull_requests.py', '.github/workflows/audit-pr-reconciliation.yml']
+permissions:
+  contents: read
+  pull-requests: read
+jobs:
+  reconcile:
+    if: github.repository == 'JeofW/CopilotBuddy-private' && github.event.repository.private == true
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      GIT_LFS_SKIP_SMUDGE: '1'
+      AUDIT_OUT: ${{ runner.temp }}/pr-reconciliation
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 0
+          lfs: false
+          persist-credentials: false
+      - name: Reconcile all PRs and retain source history without LFS data
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 Tools/Audit/reconcile_pull_requests.py
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: pr-reconciliation-${{ github.sha }}
+          path: ${{ runner.temp }}/pr-reconciliation/
+          retention-days: 7
+          if-no-files-found: error
