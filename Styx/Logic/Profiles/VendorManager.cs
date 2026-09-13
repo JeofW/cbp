@@ -84,7 +84,9 @@ namespace Styx.Logic.Profiles
         public HashSet<Vendor> Blacklist { get; private set; }
 
         public bool IsBlacklisted(Vendor vendor) => VendorSafetyPolicy.IsRejected(vendor.Entry) ||
-            Blacklist.Any(failed => failed.Entry == vendor.Entry);
+            Blacklist.Any(failed => failed.Entry == vendor.Entry) ||
+            (StyxWoW.Me is { } player && VendorSafetyPolicy.Travel.IsDeferred(
+                player.MapId, vendor.Entry, vendor.Location, DateTime.UtcNow));
 
         public static void RejectVendor(int entry, string reason)
         {

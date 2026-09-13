@@ -8,6 +8,8 @@ namespace Styx.Logic.Profiles
     {
         private static readonly HashSet<int> RejectedEntries = new();
 
+        public static VendorTravelBackoff Travel { get; } = new();
+
         public static bool Reject(int entry) => entry > 0 && RejectedEntries.Add(entry);
         public static bool IsRejected(int entry) => RejectedEntries.Contains(entry);
 
