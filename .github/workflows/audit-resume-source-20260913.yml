@@ -1,0 +1,36 @@
+name: Audit continuation source export
+on:
+  push:
+    branches: ['audit/next-16-vendor-travel-backoff-20260913']
+    paths: ['.github/workflows/audit-resume-source-20260913.yml']
+permissions:
+  contents: read
+jobs:
+  source:
+    if: github.repository == 'JeofW/CopilotBuddy-private' && github.event.repository.private == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      GIT_LFS_SKIP_SMUDGE: '1'
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+          lfs: false
+      - name: Export tracked bytes and provenance
+        shell: bash
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/resume-source"
+          mkdir -p "$out"
+          git rev-parse HEAD > "$out/commit.txt"
+          git ls-tree -r HEAD > "$out/tracked-blobs.txt"
+          git archive --format=zip --output="$out/source.zip" HEAD
+          sha256sum "$out/source.zip" > "$out/SHA256SUMS"
+          git status --porcelain > "$out/worktree-status.txt"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: continuation-source-${{ github.sha }}
+          path: ${{ runner.temp }}/resume-source/
+          retention-days: 7
+          if-no-files-found: error
