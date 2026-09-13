@@ -101,19 +101,14 @@ namespace Singular.ClassSpecific.Paladin
                     Spell.BuffSelf("Lifeblood", ret => SpellManager.HasSpell("Lifeblood") && StyxWoW.Me.ActiveAuras.ContainsKey("Avenging Wrath")),
 
                     //Exo is above HoW if we're fighting Undead / Demon
-                    CreateExorcismRetryBehavior(Spell.Cast("Exorcism", ret => StyxWoW.Me.CurrentTarget is { } target &&
-                        StyxWoW.Me.ActiveAuras.ContainsKey("The Art of War") && target.IsUndeadOrDemon())),
+                    CreateExorcismBehavior(requireProc: true, undeadOrDemon: true),
                     //Hammer of Wrath if target < 20% HP
                     Spell.Cast("Hammer of Wrath", ret => StyxWoW.Me.CurrentTarget is { } target && target.HealthPercent <= 20), // WotLK: Sanctified Wrath does not unlock HoW above 20% (Cata-only)
                     CreateMeleeStrikeBehavior(),
                     Spell.Cast("Judgement of Light"),
-                    // Filler at either distance; keep primary melee attacks ahead of a hard cast.
-                    CreateExorcismRetryBehavior(Spell.Cast("Exorcism", ret => StyxWoW.Me.CurrentTarget is { } target &&
-                        ShouldCastExorcism(
-                            SpellManager.HasSpell("The Art of War"),
-                            StyxWoW.Me.ActiveAuras.ContainsKey("The Art of War"),
-                            target.IsWithinMeleeRange,
-                            StyxWoW.Me.IsAutoAttacking))),
+                    // Disjoint windows prevent the same proc from bypassing an earlier retry guard.
+                    CreateExorcismBehavior(requireProc: true, undeadOrDemon: false),
+                    CreateExorcismBehavior(),
                     Spell.Cast("Holy Wrath", ret => Unit.NearbyUnfriendlyUnits.Count(u => u.Distance <= 8) >= 4),
                 //consecration,not_flying=1,if=mana>16000
                     Spell.Cast("Consecration", ret => StyxWoW.Me.CurrentTarget is { } target &&
@@ -173,12 +168,12 @@ namespace Singular.ClassSpecific.Paladin
 
                     //Hammer of Wrath if target < 20% HP
                     Spell.Cast("Hammer of Wrath", ret => StyxWoW.Me.CurrentTarget is { } target && target.HealthPercent <= 20), // WotLK: Sanctified Wrath does not unlock HoW above 20% (Cata-only)
-                    //Exo if we have Art of War
-                    // WotLK QC: cast unconditionally if Art of War talent is not learned (pre-lvl 40) - proc can never trigger
-                    Spell.Cast("Exorcism", ret => StyxWoW.Me.ActiveAuras.ContainsKey("The Art of War") || !SpellManager.HasSpell("The Art of War")),
+                    // Only an observed instant proc belongs ahead of the melee strikes.
+                    CreateExorcismBehavior(requireProc: true),
 
                     CreateMeleeStrikeBehavior(throttleCrusaderStrike: true),
                     Spell.Cast("Judgement of Light"),
+                    CreateExorcismBehavior(),
                     Spell.Cast("Holy Wrath"),
                     Spell.Cast("Consecration", ret => StyxWoW.Me.CurrentTarget is { } target && target.Distance <= Spell.MeleeRange && Unit.NearbyUnfriendlyUnits.Count(u => u.Distance <= 8) >= SingularSettings.Instance.Paladin.ConsecrationCount),
                     Spell.Cast("Divine Plea", ret => StyxWoW.Me.ManaPercent < SingularSettings.Instance.Paladin.DivinePleaMana && StyxWoW.Me.HealthPercent > 70),
@@ -229,20 +224,16 @@ namespace Singular.ClassSpecific.Paladin
                     Spell.BuffSelf("Berserking", ret => SpellManager.HasSpell("Berserking") && StyxWoW.Me.ActiveAuras.ContainsKey("Avenging Wrath")),
                     Spell.BuffSelf("Lifeblood", ret => SpellManager.HasSpell("Lifeblood") && StyxWoW.Me.ActiveAuras.ContainsKey("Avenging Wrath")),
 
-                    //Exo is above HoW if we're fighting Undead / Demon
-                    // WotLK QC: cast unconditionally if Art of War talent is not learned (pre-lvl 40) - proc can never trigger
-                    Spell.Cast("Exorcism", ret => StyxWoW.Me.CurrentTarget is { } target &&
-                        (StyxWoW.Me.ActiveAuras.ContainsKey("The Art of War") && target.IsUndeadOrDemon()
-                         || !SpellManager.HasSpell("The Art of War"))),
+                    // Preserve the earlier undead/demon instant-proc window, not a hard cast.
+                    CreateExorcismBehavior(requireProc: true, undeadOrDemon: true),
                     //Hammer of Wrath if target < 20% HP
                     Spell.Cast("Hammer of Wrath", ret => StyxWoW.Me.CurrentTarget is { } target && target.HealthPercent <= 20), // WotLK: Sanctified Wrath does not unlock HoW above 20% (Cata-only)
-                    //Exo is above HoW if we're fighting Undead / Demon
-                    // WotLK QC: cast unconditionally if Art of War talent is not learned (pre-lvl 40) - proc can never trigger
-                    Spell.Cast("Exorcism", ret => StyxWoW.Me.ActiveAuras.ContainsKey("The Art of War") || !SpellManager.HasSpell("The Art of War")),
+                    CreateExorcismBehavior(requireProc: true, undeadOrDemon: false),
 
                     CreateMeleeStrikeBehavior(),
                 //judgement - simplified for WotLK
                     Spell.Cast("Judgement of Light"),
+                    CreateExorcismBehavior(),
                 //holy_wrath
                     Spell.Cast("Holy Wrath"),
                 //consecration,not_flying=1,if=mana>16000
@@ -445,6 +436,26 @@ namespace Singular.ClassSpecific.Paladin
                     StyxWoW.Me.CurrentTarget is { } target && target.Distance <= 8));
         }
 
+        // Use one policy in every active context. Each priority window owns a
+        // disjoint set of proc states, so an unconfirmed attempt cannot immediately
+        // fall through to another Exorcism node with a fresh retry budget.
+        private static Composite CreateExorcismBehavior(bool requireProc = false, bool? undeadOrDemon = null)
+        {
+            return CreateExorcismRetryBehavior(Spell.Cast("Exorcism", ret =>
+            {
+                var player = StyxWoW.Me;
+                var target = player?.CurrentTarget;
+                if (target == null)
+                    return false;
+                bool proc = player.ActiveAuras.ContainsKey("The Art of War");
+                return proc == requireProc
+                       && (!undeadOrDemon.HasValue || target.IsUndeadOrDemon() == undeadOrDemon.Value)
+                       && (proc || !player.IsMoving)
+                       && ShouldCastExorcism(SpellManager.HasSpell("The Art of War"), proc,
+                           target.IsWithinMeleeRange, player.IsAutoAttacking);
+            }));
+        }
+
         private static Composite CreateExorcismRetryBehavior(Composite cast)
         {
             // Cast reports dispatch, not server acceptance. Yield to other attacks and
@@ -458,10 +469,10 @@ namespace Singular.ClassSpecific.Paladin
             bool targetInMeleeRange,
             bool autoAttacking)
         {
-            if (knowsArtOfWar)
-                return hasArtOfWarProc;
-
-            return true;
+            // AutoAttack may already be enabled while approaching at range.
+            // Protect an active melee opportunity, not that flag in isolation.
+            // A real proc remains usable if passive-talent discovery is incomplete.
+            return hasArtOfWarProc || (!knowsArtOfWar && !(targetInMeleeRange && autoAttacking));
         }
     }
 }
