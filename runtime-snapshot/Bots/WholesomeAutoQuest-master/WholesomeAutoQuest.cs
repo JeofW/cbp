@@ -329,7 +329,7 @@ namespace WholesomeAQ
             }
             if (!active || outcome == null || interactionCycle <= 0 ||
                 outcome.InteractionCycleId != interactionCycle ||
-                interactionCycle == _lastInteractionCycle || !outcome.Key.Equals(key) ||
+                interactionCycle <= _lastInteractionCycle || !outcome.Key.Equals(key) ||
                 outcome.Reason is not (QuestFailureReason.PickupWrongQuestShown or
                     QuestFailureReason.PickupTargetNotOffered))
                 return null;

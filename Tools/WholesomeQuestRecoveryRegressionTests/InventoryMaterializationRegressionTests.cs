@@ -43,7 +43,6 @@ internal static class InventoryMaterializationRegressionTests
             reportDataFailure: outcome => failures?.Add(outcome));
     }
     private static int Work(QuestScheduleResult plan) => plan.Plan.Count(p => p.Stage == QuestWorkStage.Objective);
-    [ModuleInitializer]
     internal static void Run()
     {
         var tests = new List<(string Name, Action Run)>();

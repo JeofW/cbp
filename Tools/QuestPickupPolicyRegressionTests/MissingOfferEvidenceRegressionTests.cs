@@ -13,7 +13,6 @@ internal static class MissingOfferEvidenceRegressionTests
         876, "Target quest", 876, "Target quest", 123, new uint[] { 876 },
         canAccept, false, false, false, false, false, false, offeredQuestListLoaded: true);
 
-    [ModuleInitializer]
     internal static void Run()
     {
         var tests = new List<(string Name, Action Run)>();

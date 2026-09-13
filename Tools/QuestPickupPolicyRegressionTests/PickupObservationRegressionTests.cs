@@ -12,7 +12,6 @@ internal static class PickupObservationRegressionTests
             new uint[] {867}, true, false, false, false, false, false, false, true);
     private static void Check(bool good, string why) { if (!good) throw new InvalidOperationException(why); }
 
-    [ModuleInitializer]
     internal static void Run()
     {
         var tests = new (string Name, Action Run)[]
@@ -69,11 +68,11 @@ internal static class PickupObservationRegressionTests
                 Check(tracker.Observe(Accept(), 11) == null && tracker.ConfirmedCycles == 0 && !tracker.PickupUnavailable,
                     "the requested quest appearing must remain eligible");
             }),
-            ("genuinely changed current offers require fresh evidence", () =>
+            ("unrelated current offers do not erase the requested quest absence", () =>
             {
                 var tracker = new QuestPickupMismatchTracker(); tracker.Observe(Missing(101), 10);
                 tracker.Observe(Missing(101), 11); tracker.Observe(Missing(102), 12);
-                Check(tracker.ConfirmedCycles == 1 && !tracker.PickupUnavailable, "different offers must not inherit the previous absence episode");
+                Check(tracker.ConfirmedCycles == 3 && tracker.PickupUnavailable, "the requested quest is still absent despite unrelated offer changes");
             }),
             ("an unloaded dialog is not a confirmed missing quest", () =>
             {

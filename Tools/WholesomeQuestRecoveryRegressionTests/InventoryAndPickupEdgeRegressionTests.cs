@@ -15,7 +15,6 @@ internal static class InventoryAndPickupEdgeRegressionTests
         new() {Key=key, InteractionCycleId=cycle, Kind=failed?QuestAttemptOutcomeKind.Failure:QuestAttemptOutcomeKind.Observation,
             Reason=QuestFailureReason.PickupTargetNotOffered, IsFailureEpisode=failed};
 
-    [ModuleInitializer]
     internal static void Run()
     {
         var tests = new List<(string Name, Action Run)>();

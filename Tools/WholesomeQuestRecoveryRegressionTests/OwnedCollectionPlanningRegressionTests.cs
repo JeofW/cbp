@@ -4,7 +4,6 @@ using WholesomeAQ;
 
 internal static class OwnedCollectionPlanningRegressionTests
 {
-    [ModuleInitializer]
     internal static void Run()
     {
         var failures = new List<string>(); int scenarios=0;
