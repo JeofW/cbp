@@ -1,3 +1,4 @@
 <Project>
   <Import Project="../W42TestAggregation/Normalize.targets" />
+  <Import Project="NativeBoundary/OfflineBoundary.targets" />
 </Project>
