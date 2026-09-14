@@ -82,18 +82,25 @@ namespace WholesomeAQ
         public bool ScanAndRefresh(LocalPlayer me, string validatedGrindProfilePath = null)
         {
             if (me == null)
+            {
+                InvalidatePublishedWork("Quest observations unavailable: no player was supplied.");
                 throw new ArgumentNullException(nameof(me));
+            }
 
             _lastScan = DateTime.Now;
             QuestDatabase db = _dataLoader.Database;
             if (db == null)
             {
-                LastStatus = "No quest data loaded";
-                LastSchedule = new QuestScheduleResult
-                {
-                    FallbackMode = QuestFallbackMode.TimedIdle,
-                    Status = LastStatus
-                };
+                InvalidatePublishedWork("No quest data loaded");
+                return false;
+            }
+
+            // QuestLog reads ObjectManager.Me, not the LocalPlayer argument. An old
+            // wrapper must not borrow another player's log or fabricate an empty one.
+            if (!ReferenceEquals(me, ObjectManager.Me) || ObjectManager.Wow == null ||
+                !Styx.StyxWoW.IsInWorld || !me.IsValid)
+            {
+                InvalidatePublishedWork("Quest observations unavailable: the current player is not ready.");
                 return false;
             }
 
@@ -161,6 +168,28 @@ namespace WholesomeAQ
                 LastSchedule.Plan, db, me.ZoneText, me.Name, me.Level, CurrentVendors);
             CurrentProfilePath = _profileBuilder.WriteProfile(xml);
             return true;
+        }
+
+        internal void InvalidatePublishedWork(string status)
+        {
+            // Revoke the execution gate first, including a child that is already Running.
+            // Unknown is not an eligible grind fallback or an instruction to load an old XML.
+            LastSchedule = new QuestScheduleResult
+            {
+                FallbackMode = QuestFallbackMode.TimedIdle,
+                Status = status
+            };
+            CurrentProfilePath = null;
+            LastQuestCount = 0;
+            LastStatus = status;
+            _lastRecoveryContext = null;
+            _lastActivation = null;
+            _lastActivationKey = null;
+            _rebuildRequested = false;
+
+            // ActiveQuestIds also protects scheduled quest items at SellByQuality.
+            // Keep that conservative protection until a successful observation replaces
+            // it or the explicit lifecycle Reset runs. It is not execution permission.
         }
 
         internal QuestScheduleResult ApplyScanExpansionBeforeFallback(QuestScheduleResult result)
