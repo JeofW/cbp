@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.ExceptionServices;
 using Bots.Quest.Actions;
 using Bots.Quest.QuestOrder;
 using CommonBehaviors.Actions;
@@ -25,6 +26,8 @@ public sealed class PublishedQuestRoot : PrioritySelector
     private OrderNode node, runningNode;
     private ForcedBehavior behavior, runningBehavior;
     private bool exclusive, cycleChanged;
+    private Composite lifecycleOwner;
+    private object executionContext;
 
     public PublishedQuestRoot(Func<Func<bool>> capturePermission)
     {
@@ -56,6 +59,10 @@ public sealed class PublishedQuestRoot : PrioritySelector
             return LastStatus.Value;
         try
         {
+            lifecycleOwner = Parent;
+            executionContext = context;
+            if (!CanRunRoot())
+                return StopDeniedRoot(context);
             permission = capturePermission();
             nodes = order.Nodes;
             node = order.CurrentNode;
@@ -65,12 +72,8 @@ public sealed class PublishedQuestRoot : PrioritySelector
             exclusive = ObserveExclusiveOwner(allowed);
             allowed = CanExecuteQuest();
 
-            if (ObjectManager.Me == null)
-            {
-                Stop(context);
-                LastStatus = RunStatus.Failure;
-                return RunStatus.Failure;
-            }
+            if (ObjectManager.Me == null || !CanRunRoot())
+                return StopDeniedRoot(context);
 
             int selected = Selection == null ? -1 : Children.IndexOf(Selection);
             bool questSelected = selected == 5;
@@ -91,6 +94,10 @@ public sealed class PublishedQuestRoot : PrioritySelector
                 base.Start(context);
             }
 
+            // Observation and preemption cleanup may end the outer lifecycle.
+            // Quest-refresh cancellation alone is not this whole-root permission.
+            if (!CanRunRoot())
+                return StopDeniedRoot(context);
             var status = base.Tick(context);
             if (status == RunStatus.Running && ReferenceEquals(Selection, Children[5]))
             {
@@ -101,13 +108,34 @@ public sealed class PublishedQuestRoot : PrioritySelector
             }
             return status;
         }
-        catch
+        catch (Exception error)
         {
-            // Observation/cleanup may throw outside Composite.Tick. Drain our
-            // captured child while preserving the original signal and no fallback.
-            try { Stop(context); } catch { }
+            // An ordinary observation failure must not mask a cleanup stop signal.
+            // Reuse the first-stop-signal rule also used by Composite/GroupComposite.
+            ExceptionDispatchInfo failure = ExceptionDispatchInfo.Capture(error);
+            try { Stop(context); }
+            catch (Exception cleanupError) { PreserveCleanupFailure(ref failure, cleanupError); }
+            failure.Throw();
             throw;
         }
+    }
+
+    private bool CanRunRoot()
+    {
+        if (!ReferenceEquals(Parent, lifecycleOwner)) return false;
+        // The outer decorator owns lifecycle/rest admission. Reuse that exact
+        // instance's predicate instead of duplicating its policy or reading the
+        // quest-publication lease as permission to run combat/services.
+        var gate = lifecycleOwner as Decorator;
+        return (gate == null || gate.IsExecutionAllowedFor(this, executionContext))
+            && ReferenceEquals(Parent, lifecycleOwner);
+    }
+
+    private RunStatus StopDeniedRoot(object context)
+    {
+        Stop(context);
+        LastStatus = RunStatus.Failure;
+        return RunStatus.Failure;
     }
 
     private bool SameCycleOrder() => ReferenceEquals(order.Nodes, nodes)
@@ -116,13 +144,13 @@ public sealed class PublishedQuestRoot : PrioritySelector
 
     private bool CanExecuteQuest()
     {
-        if (cycleChanged || !SameCycleOrder())
+        if (cycleChanged || !CanRunRoot() || !SameCycleOrder())
             return false;
         bool current = permission != null && permission();
         // Validation is itself a callback boundary. Any observed replacement
         // invalidates this cycle, even when the new owner is independently valid.
         if (!SameCycleOrder()) cycleChanged = true;
-        return current && !cycleChanged;
+        return current && !cycleChanged && CanRunRoot();
     }
 
     private bool ObserveExclusiveOwner(bool allowed)
