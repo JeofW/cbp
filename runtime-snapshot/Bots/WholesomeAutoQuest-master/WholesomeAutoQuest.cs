@@ -1145,7 +1145,12 @@ namespace WholesomeAQ
                     {
                         if (_stopped || !_initialized || !_dataReady || scheduler == null ||
                             !StyxWoW.IsInWorld || StyxWoW.Me == null)
+                        {
+                            // This callback is fenced by the current refresh lease. Do not
+                            // leave a prior plan running when the scan itself is skipped.
+                            scheduler?.InvalidatePublishedWork("Quest observations unavailable; waiting for the current world and data.");
                             return false;
+                        }
                         _lastScanTime = DateTime.Now;
                         if (_vendorDataReady)
                         {
@@ -1174,7 +1179,7 @@ namespace WholesomeAQ
                     });
                 return runAgain;
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not ThreadInterruptedException && ex is not OperationCanceledException)
             {
                 Log($"Scan error: {ex.Message}");
                 return false;

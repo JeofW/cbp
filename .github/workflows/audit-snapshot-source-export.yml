@@ -1,16 +1,19 @@
 name: Audit W42 source export
 on:
   push:
-    branches: [audit/next-42-quest-log-snapshots-20260914]
+    branches: [audit/next-42-quest-log-snapshots-20260914, audit/next-42-ready-owner-20260914]
     paths: [.github/workflows/audit-snapshot-source-export.yml]
 permissions:
   contents: read
 jobs:
   export:
+    if: github.repository == 'JeofW/CopilotBuddy-private' && github.event.repository.private == true
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    env:
+      GIT_LFS_SKIP_SMUDGE: '1'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           persist-credentials: false
           lfs: false
@@ -40,13 +43,15 @@ jobs:
                   manifest.append({'path':path,'blob':blob,'sha256':hashlib.sha256(data).hexdigest(),'size':len(data)})
                   info=tarfile.TarInfo(path); info.size=len(data); info.mode=int(mode,8)&0o777
                   archive.addfile(info,io.BytesIO(data))
-          proc.stdin.close(); proc.wait()
+          proc.stdin.close()
+          if proc.wait()!=0: raise RuntimeError('git cat-file failed')
           (out/'manifest.json').write_text(json.dumps({'commit':sha,'files':manifest},indent=2))
           (out/'commit.txt').write_text(sha+'\n')
           print('Exported',len(manifest),'canonical files; no LFS tile download.')
           PY
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: audit-w42-source-export
           path: /tmp/audit-source-export/*
           retention-days: 14
+          if-no-files-found: error
