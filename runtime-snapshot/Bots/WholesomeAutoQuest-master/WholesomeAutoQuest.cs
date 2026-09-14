@@ -1148,30 +1148,38 @@ namespace WholesomeAQ
                         {
                             // This callback is fenced by the current refresh lease. Do not
                             // leave a prior plan running when the scan itself is skipped.
-                            scheduler?.InvalidatePublishedWork("Quest observations unavailable; waiting for the current world and data.");
+                            _refreshGate.TryApply(lease, () =>
+                                scheduler?.InvalidatePublishedWork("Quest observations unavailable; waiting for the current world and data."));
                             return false;
                         }
                         // Vendor discovery is part of this lease's fallible observation phase.
                         // Revoke before it runs; a late catch could revoke a replacement lease.
-                        scheduler.InvalidatePublishedWork("Refreshing quest observations; waiting for vendor and quest data.");
-                        _lastScanTime = DateTime.Now;
+                        if (!_refreshGate.TryApply(lease, () =>
+                        {
+                            scheduler.InvalidatePublishedWork("Refreshing quest observations; waiting for vendor and quest data.");
+                            _lastScanTime = DateTime.Now;
+                        }))
+                            return false;
                         if (_vendorDataReady)
                         {
                             var bl = _settings.BlacklistedVendors;
-                            scheduler.CurrentVendors = _vendorLoader.GetNearestVendors(StyxWoW.Me, "Repair", 3, bl)
+                            var vendors = _vendorLoader.GetNearestVendors(StyxWoW.Me, "Repair", 3, bl)
                                 .Concat(_vendorLoader.GetNearestVendors(StyxWoW.Me, "Food", 3, bl))
                                 .Concat(_vendorLoader.GetNearestVendors(StyxWoW.Me, "Train", 2, bl))
                                 .ToList();
+                            if (!_refreshGate.TryApply(lease, () => scheduler.CurrentVendors = vendors))
+                                return false;
                         }
-                        refreshed = scheduler.ScanAndRefresh(StyxWoW.Me);
+                        refreshed = scheduler.ScanAndRefresh(
+                            StyxWoW.Me, null,
+                            apply => _refreshGate.TryApply(lease, apply),
+                            path => ProfileManager.TryLoadNew(path, true));
                         return !refreshed && scheduler.LastSchedule?.FallbackMode == QuestFallbackMode.None;
                     },
                     () =>
                     {
                         if (refreshed)
                         {
-                            if (!string.IsNullOrWhiteSpace(scheduler.CurrentProfilePath))
-                                ProfileManager.LoadNew(scheduler.CurrentProfilePath);
                             Log($"Profile refreshed - {scheduler.LastStatus}");
                             LogFarAwayQuests();
                         }
