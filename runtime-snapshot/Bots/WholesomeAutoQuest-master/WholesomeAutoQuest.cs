@@ -1151,6 +1151,9 @@ namespace WholesomeAQ
                             scheduler?.InvalidatePublishedWork("Quest observations unavailable; waiting for the current world and data.");
                             return false;
                         }
+                        // Vendor discovery is part of this lease's fallible observation phase.
+                        // Revoke before it runs; a late catch could revoke a replacement lease.
+                        scheduler.InvalidatePublishedWork("Refreshing quest observations; waiting for vendor and quest data.");
                         _lastScanTime = DateTime.Now;
                         if (_vendorDataReady)
                         {
