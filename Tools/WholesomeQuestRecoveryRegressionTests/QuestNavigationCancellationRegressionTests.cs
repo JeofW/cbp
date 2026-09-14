@@ -10,6 +10,7 @@ using Bots.Quest.QuestOrder;
 using Styx;
 using Styx.Logic.Pathing;
 using Styx.Logic.Profiles;
+using Styx.Logic.Profiles.Quest;
 using Styx.WoWInternals.WoWObjects;
 using WholesomeAQ;
 using Action = System.Action;
