@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0-windows7.0</TargetFramework>
+    <UseAppHost>false</UseAppHost>
+    <PlatformTarget>x86</PlatformTarget>
+    <Platforms>x86</Platforms>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+  <!-- Supplemental retained baseline only. The W42 initializer stays enabled in the original project. -->
+  <ItemGroup>
+    <Compile Include="RuntimeGuard.cs" />
+    <Compile Include="../WholesomeQuestRecoveryRegressionTests/ContinuationGlobalUsings.cs" Link="ContinuationGlobalUsings.cs" />
+    <Compile Include="../WholesomeQuestRecoveryRegressionTests/ContinuationRegressionEntry.cs" Link="ContinuationRegressionEntry.cs" />
+    <Compile Include="../WholesomeQuestRecoveryRegressionTests/DatasetIdentityRegressionTests.cs" Link="DatasetIdentityRegressionTests.cs" />
+    <Compile Include="../WholesomeQuestRecoveryRegressionTests/EndpointAssessmentRegressionTests.cs" Link="EndpointAssessmentRegressionTests.cs" />
+    <Compile Include="../WholesomeQuestRecoveryRegressionTests/InventoryAndPickupEdgeRegressionTests.cs" Link="InventoryAndPickupEdgeRegressionTests.cs" />
+    <Compile Include="../WholesomeQuestRecoveryRegressionTests/InventoryMaterializationRegressionTests.cs" Link="InventoryMaterializationRegressionTests.cs" />
+    <Compile Include="../WholesomeQuestRecoveryRegressionTests/NavigationDeferralRegressionTests.cs" Link="NavigationDeferralRegressionTests.cs" />
+    <Compile Include="../WholesomeQuestRecoveryRegressionTests/OwnedCollectionPlanningRegressionTests.cs" Link="OwnedCollectionPlanningRegressionTests.cs" />
+    <Compile Include="../WholesomeQuestRecoveryRegressionTests/Program.cs" Link="Program.cs" />
+    <Compile Include="../WholesomeQuestRecoveryRegressionTests/RelationIdentityRegressionTests.cs" Link="RelationIdentityRegressionTests.cs" />
+    <Compile Include="../WholesomeQuestRecoveryRegressionTests/RestLatencyRegressionTests.cs" Link="RestLatencyRegressionTests.cs" />
+    <Compile Include="../WholesomeQuestRecoveryRegressionTests/RestOwnershipRegressionTests.cs" Link="RestOwnershipRegressionTests.cs" />
+    <Compile Include="../WholesomeQuestRecoveryRegressionTests/VendorTravelBackoffRegressionTests.cs" Link="VendorTravelBackoffRegressionTests.cs" />
+    <ProjectReference Include="..\..\CopilotBuddy.csproj" />
+    <Compile Include="..\..\runtime-snapshot\Bots\WholesomeAutoQuest-master\DataModels.cs" Link="DataModels.cs" />
+    <Compile Include="..\..\runtime-snapshot\Bots\WholesomeAutoQuest-master\DataLoader.cs" Link="DataLoader.cs" />
+    <Compile Include="..\..\runtime-snapshot\Bots\WholesomeAutoQuest-master\ProfileBuilder.cs" Link="ProfileBuilder.cs" />
+    <Compile Include="..\..\runtime-snapshot\Bots\WholesomeAutoQuest-master\QuestScheduler.cs" Link="QuestScheduler.cs" />
+    <Compile Include="..\..\runtime-snapshot\Bots\WholesomeAutoQuest-master\QuestSchedulingPolicy.cs" Link="QuestSchedulingPolicy.cs" />
+    <Compile Include="..\..\runtime-snapshot\Bots\WholesomeAutoQuest-master\SettingsForm.cs" Link="SettingsForm.cs" />
+    <Compile Include="..\..\runtime-snapshot\Bots\WholesomeAutoQuest-master\VendorDataLoader.cs" Link="VendorDataLoader.cs" />
+    <Compile Include="..\..\runtime-snapshot\Bots\WholesomeAutoQuest-master\WholesomeAQSettings.cs" Link="WholesomeAQSettings.cs" />
+    <Compile Include="..\..\runtime-snapshot\Bots\WholesomeAutoQuest-master\WholesomeRestPolicy.cs" Link="WholesomeRestPolicy.cs" />
+    <Compile Include="..\..\runtime-snapshot\Bots\WholesomeAutoQuest-master\WholesomeAutoQuest.cs" Link="WholesomeAutoQuest.cs" />
+  </ItemGroup>
+</Project>
