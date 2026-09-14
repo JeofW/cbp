@@ -48,7 +48,7 @@ internal static class QuestRootProtectionRegressionTests
     private static void DeathCase(uint health, bool stale)
     {
         using var c = new Harness(); c.StartQuest();
-        c.SetHealth(health); Check(health == 0 ? c.Player.Dead : c.Player.IsGhost, "actual death/ghost observation absent");
+        c.SetHealth(health); if (health == 1) c.SetGhostFlag(); Check(health == 0 ? c.Player.Dead : c.Player.IsGhost, "actual death/ghost observation absent");
         if (stale) c.RawProgress();
         object support = c.Composition.Children[0]; Set(support, "Status", RunStatus.Success);
         c.ExpectSupport(support, "death");
@@ -107,6 +107,14 @@ internal static class QuestRootProtectionRegressionTests
         private void Write(uint address, uint value) => Call(Source, "Write", address, value);
         private void Write64(uint address, ulong value) { Write(address, (uint)value); Write(address + 4, (uint)(value >> 32)); }
         internal void SetHealth(uint health) => Write(descriptor + Field("Health"), health);
+        internal void SetGhostFlag()
+        {
+            // WoWPlayer hides WoWUnit.IsGhost with the actual player-flag contract.
+            uint field = (uint)typeof(WoWPlayer).GetField("DescPlayerFlags", StaticHidden)!.GetRawConstantValue()!;
+            uint address = descriptor + field * 4;
+            uint flags = unchecked((uint)Marshal.ReadInt32(new IntPtr(unchecked((int)address))));
+            Write(address, flags | 16u);
+        }
         internal void AttachPet(bool alive)
         {
             petStorage = Marshal.AllocHGlobal(8192); Marshal.Copy(new byte[8192], 0, petStorage, 8192);
