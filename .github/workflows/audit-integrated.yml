@@ -2,7 +2,7 @@ name: Audit integrated regression baseline
 on:
   push:
     branches: ['master', 'audit/next-*']
-    paths: ['**.cs', '**.csproj', 'Tools/EvidenceAudit/**', '.github/workflows/audit-integrated.yml']
+    paths: ['**.cs', '**.csproj', 'Tools/EvidenceAudit/**', 'Tools/W42TestAggregation/**', 'Tools/QuestLogObservationRegressionTests/Directory.Build.targets', 'Tools/WholesomeQuestRecoveryRegressionTests/Directory.Build.targets', '.github/workflows/audit-integrated.yml', '.github/workflows/audit-w42-normalized.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -26,16 +26,19 @@ jobs:
         with:
           persist-credentials: false
           lfs: false
+          fetch-depth: 0
       - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9
         with:
           dotnet-version: '10.0.x'
-      - name: Execute all combined test owners without mesh downloads
+      - name: Execute every retained owner and W42 under Windows x86 without meshes
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
           $out = Join-Path $env:RUNNER_TEMP 'integrated-results'
           New-Item -ItemType Directory -Force $out | Out-Null
-          git rev-parse HEAD | Out-File (Join-Path $out 'commit.txt')
+          $sha = (git rev-parse HEAD).Trim()
+          $sha | Out-File (Join-Path $out 'commit.txt')
+          @{production_commit=$sha; production_tree=(git rev-parse 'HEAD^{tree}'); fixture_commit=$sha; game_attached=$false} | ConvertTo-Json | Out-File (Join-Path $out 'source-identity.json')
           $installer = Join-Path (Split-Path $env:RUNNER_WORKSPACE) '_actions/actions/setup-dotnet/67a3573c9a986a3f9c594539f4ab511d57bb3ce9/externals/install-dotnet.ps1'
           $destination = Join-Path $env:RUNNER_TEMP 'dotnet-x86'
           foreach ($framework in @('dotnet', 'windowsdesktop')) {
@@ -43,47 +46,83 @@ jobs:
             if ($LASTEXITCODE -ne 0) { throw "x86 $framework installation failed" }
           }
           $runtime = Join-Path $destination 'dotnet.exe'
+          & $runtime --info *> (Join-Path $out 'runtime-info.txt')
           & $runtime --list-runtimes *> (Join-Path $out 'runtimes.txt')
           if ($LASTEXITCODE -ne 0 -or -not (Select-String -Path (Join-Path $out 'runtimes.txt') -Pattern 'Microsoft.WindowsDesktop.App 10\.')) { throw 'Verified x86 desktop runtime required' }
+          python Tools/QuestObservationBoundaryRegressionTests/extract_owners.py --repo . --ref $sha --out Tools/QuestObservationBoundaryRegressionTests/Generated *> (Join-Path $out 'W42-extraction.txt')
+          $extraction = $LASTEXITCODE
           $results = @()
-          foreach ($name in @('QuestRecoveryRegressionTests', 'WholesomeQuestRecoveryRegressionTests', 'QuestRecoveryAdapterRegressionTests', 'QuestPickupPolicyRegressionTests', 'VendorCoreRegressionTests', 'NativeContractRegressionTests', 'ShutdownBoundaryRegressionTests')) {
-            dotnet build "Tools/$name/$name.csproj" -c Release -p:Platform=x86 -v quiet *> (Join-Path $out "$name-build.txt")
+          $projects = @(
+            @{project='QuestRecoveryRegressionTests'; suite='QuestRecoveryRegressionTests'},
+            @{project='WholesomeQuestRecoveryRegressionTests'; suite='WholesomeQuestRecoveryRegressionTests'},
+            @{project='QuestRecoveryAdapterRegressionTests'; suite='QuestRecoveryAdapterRegressionTests'},
+            @{project='QuestPickupPolicyRegressionTests'; suite='QuestPickupPolicyRegressionTests'},
+            @{project='VendorCoreRegressionTests'; suite='VendorCoreRegressionTests'},
+            @{project='NativeContractRegressionTests'; suite='NativeContractRegressionTests'},
+            @{project='ShutdownBoundaryRegressionTests'; suite='ShutdownBoundaryRegressionTests'},
+            @{project='ElevatorSafetyRegressionTests'; suite='Elevator'},
+            @{project='PaladinDecisionRegressionTests'; suite='PaladinDecisions'},
+            @{project='GroupEngagementRegressionTests'; suite='GroupEngagement'},
+            @{project='PaladinSupportRegressionTests'; suite='PaladinSupport'},
+            @{project='WholesomeSaleRegressionTests'; suite='WholesomeSale'},
+            @{project='QuestLogObservationRegressionTests'; suite='QuestLogObservationRegressionTests'},
+            @{project='QuestCompletionOwnerRegressionTests'; suite='QuestCompletionOwnerRegressionTests'},
+            @{project='QuestObservationBoundaryRegressionTests'; suite='QuestObservationBoundaryRegressionTests'}
+          )
+          foreach ($entry in $projects) {
+            $name = $entry.project
+            $suite = $entry.suite
+            dotnet build "Tools/$name/$name.csproj" -c Release -p:Platform=x86 -p:PlatformTarget=x86 -v quiet *> (Join-Path $out "$suite-build.txt")
             $build = $LASTEXITCODE
             $run = $null
+            $harnessError = $null
             if ($build -eq 0) {
               $dlls = @(Get-ChildItem "Tools/$name/bin" -Filter "$name.dll" -Recurse | Where-Object { $_.FullName -notmatch '[\\/](ref|refint)[\\/]' })
-              if ($dlls.Count -ne 1) { throw "Unexpected executable count for $name" }
-              & $runtime $dlls[0].FullName *> (Join-Path $out "$name-run.txt")
-              $run = $LASTEXITCODE
-              if ($name -eq 'QuestRecoveryRegressionTests') {
-                & $runtime $dlls[0].FullName --routine-compatibility *> (Join-Path $out 'Singular-run.txt')
-                $results += @{ suite='Singular'; build=0; run=$LASTEXITCODE; game_attached=$false }
+              if ($dlls.Count -ne 1) { $harnessError = "Unexpected executable count: $($dlls.Count)" }
+              elseif ($name -eq 'QuestObservationBoundaryRegressionTests' -and $extraction -ne 0) { $harnessError = 'Pinned extraction failed; not a behavioral reproduction' }
+              else {
+                $arguments = @($dlls[0].FullName)
+                if ($name -eq 'QuestCompletionOwnerRegressionTests') { $arguments += @((Join-Path $out 'completion-cases.json'), (Join-Path $out 'source-identity.json')) }
+                if ($name -eq 'QuestObservationBoundaryRegressionTests') { $arguments += (Join-Path $out 'boundary-cases.json') }
+                & $runtime @arguments *> (Join-Path $out "$suite-run.txt")
+                $run = $LASTEXITCODE
               }
             }
-            $results += @{ suite=$name; build=$build; run=$run; game_attached=$false }
+            $results += @{suite=$suite; build=$build; run=$run; harness_error=$harnessError; game_attached=$false; architecture='x86'}
+            if ($name -eq 'QuestRecoveryRegressionTests') {
+              $singular = $null
+              if ($build -eq 0 -and $dlls.Count -eq 1) {
+                & $runtime $dlls[0].FullName --routine-compatibility *> (Join-Path $out 'Singular-run.txt')
+                $singular = $LASTEXITCODE
+              }
+              $results += @{suite='Singular'; build=$build; run=$singular; game_attached=$false; architecture='x86'}
+            }
           }
-          dotnet run --project Tools/ElevatorSafetyRegressionTests -c Release *> (Join-Path $out 'Elevator-run.txt')
-          $results += @{ suite='Elevator'; build=0; run=$LASTEXITCODE; game_attached=$false }
-          dotnet run --project Tools/PaladinDecisionRegressionTests -c Release *> (Join-Path $out 'Paladin-run.txt')
-          $results += @{ suite='PaladinDecisions'; build=0; run=$LASTEXITCODE; game_attached=$false }
-          dotnet run --project Tools/GroupEngagementRegressionTests -c Release *> (Join-Path $out 'GroupEngagement-run.txt')
-          $results += @{ suite='GroupEngagement'; build=0; run=$LASTEXITCODE; game_attached=$false }
-          dotnet run --project Tools/PaladinSupportRegressionTests -c Release *> (Join-Path $out 'PaladinSupport-run.txt')
-          $results += @{ suite='PaladinSupport'; build=0; run=$LASTEXITCODE; game_attached=$false }
-          dotnet run --project Tools/WholesomeSaleRegressionTests -c Release *> (Join-Path $out 'WholesomeSale-run.txt')
-          $results += @{ suite='WholesomeSale'; build=0; run=$LASTEXITCODE; game_attached=$false }
           python -m pip install -r Tools/EvidenceAudit/requirements.txt *> (Join-Path $out 'python-install.txt')
-          if ($LASTEXITCODE -ne 0) { throw 'Analyzer dependency install failed' }
-          python -m unittest discover -s Tools/EvidenceAudit -p 'test_*.py' -v *> (Join-Path $out 'Analyzer-run.txt')
-          $results += @{ suite='Analyzers'; build=0; run=$LASTEXITCODE; game_attached=$false }
-          $results | ConvertTo-Json | Out-File (Join-Path $out 'results.json')
-          $results | ConvertTo-Json | Write-Host
-          if ($results.Count -ne 14 -or @($results | Where-Object { $_.build -ne 0 -or $null -eq $_.run -or $_.run -ne 0 }).Count) { exit 1 }
-      - name: Retain private results
+          $analyzerBuild = $LASTEXITCODE
+          $analyzerRun = $null
+          if ($analyzerBuild -eq 0) {
+            python -m unittest discover -s Tools/EvidenceAudit -p 'test_*.py' -v *> (Join-Path $out 'Analyzer-run.txt')
+            $analyzerRun = $LASTEXITCODE
+          }
+          $results += @{suite='Analyzers'; build=$analyzerBuild; run=$analyzerRun; game_attached=$false}
+          $results | ConvertTo-Json -Depth 8 | Out-File (Join-Path $out 'results.json')
+          foreach ($name in @('QuestLogObservationRegressionTests','WholesomeQuestRecoveryRegressionTests')) {
+            $target = Join-Path $out "normalized/$name"
+            New-Item -ItemType Directory -Force $target | Out-Null
+            Get-ChildItem "Tools/$name/obj" -Directory -Filter W42Normalized -Recurse | ForEach-Object { Copy-Item $_.FullName $target -Recurse -Force }
+          }
+          $inputs = @(git ls-files | Where-Object { $_ -match '\.(cs|csproj|props|targets|py|yml)$' } | ForEach-Object { @{path=$_; sha256=(Get-FileHash $_ -Algorithm SHA256).Hash.ToLowerInvariant()} })
+          $inputs | ConvertTo-Json -Depth 5 | Out-File (Join-Path $out 'working-source-hashes.json')
+          $hashes = @(Get-ChildItem $out -File -Recurse | ForEach-Object { @{path=[IO.Path]::GetRelativePath($out,$_.FullName); sha256=(Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()} })
+          $hashes | ConvertTo-Json -Depth 5 | Out-File (Join-Path $out 'files-sha256.json')
+          $results | ConvertTo-Json -Depth 8 | Write-Host
+          if ($results.Count -ne 17 -or @($results | Where-Object { $_.build -ne 0 -or $null -eq $_.run -or $_.run -ne 0 }).Count) { exit 1 }
+      - name: Retain complete private results
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: integrated-${{ github.sha }}
           path: ${{ runner.temp }}/integrated-results/
-          retention-days: 7
+          retention-days: 14
           if-no-files-found: error
