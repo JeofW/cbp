@@ -1,13 +1,13 @@
 name: Audit W42 source export
 on:
   push:
-    branches: [audit/next-42-quest-log-snapshots-20260914, audit/next-42-ready-owner-20260914]
+    branches: [audit/next-42-quest-log-snapshots-20260914, audit/next-42-ready-owner-20260914, audit/next-42-scheduler-observation-20260914]
     paths: [.github/workflows/audit-snapshot-source-export.yml]
 permissions:
   contents: read
 jobs:
   export:
-    if: github.repository == 'JeofW/CopilotBuddy-private' && github.event.repository.private == true
+    if: github.repository == 'jeofwong/CopilotBuddy-private' && github.event.repository.private == true
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
