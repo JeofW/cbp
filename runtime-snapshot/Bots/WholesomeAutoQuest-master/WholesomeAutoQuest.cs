@@ -852,6 +852,7 @@ namespace WholesomeAQ
         private uint _lastVendorEntry;
         private WoWPoint _lastVendorDestination;
         private HashSet<int> _lastReadyQuestIds;
+        private QuestLogSnapshot _lastReadyQuestSnapshot;
         private bool _wasStuck;
         private bool _stuckLogged;
         private DateTime _nextProgressSampleUtc = DateTime.MinValue;
@@ -1121,6 +1122,8 @@ namespace WholesomeAQ
 
         internal void ResetRecoveryLifecycleState()
         {
+            _lastReadyQuestIds = null;
+            _lastReadyQuestSnapshot = null;
             _progressMonitor.Reset();
             _pickupMonitor.Reset();
             _deathMonitor.Reset();
@@ -1256,6 +1259,13 @@ namespace WholesomeAQ
 
         public override void Pulse()
         {
+            // Do not carry ready-history authority across an observed world/run gap,
+            // including early returns below. This is not a continuous session lease.
+            if (_stopped || !StyxWoW.IsInGame || StyxWoW.Me == null || !TreeRoot.IsRunning)
+            {
+                _lastReadyQuestIds = null;
+                _lastReadyQuestSnapshot = null;
+            }
             if (_stopped)
                 return;
 
@@ -1486,28 +1496,43 @@ namespace WholesomeAQ
                     _pickupMonitor.Reset();
                 }
 
-                var currentReady = new HashSet<int>(
-                    StyxWoW.Me.QuestLog.GetAllQuests()
-                        .Where(q => q.IsCompleted)
-                        .Select(q => (int)q.Id));
-
-                if (_lastReadyQuestIds != null && _lastReadyQuestIds.Count > 0)
-                {
-                    var turnedIn = _lastReadyQuestIds.Where(id => !currentReady.Contains(id)).ToList();
-                    if (turnedIn.Count > 0)
-                    {
-                        Log($"Turned in {turnedIn.Count} quest(s): {string.Join(",", turnedIn)} — triggering rescan");
-                        RequestRefresh("A quest turn-in completed; queuing one scheduler rebuild.");
-                        _lastReadyQuestIds = null;
-                        return;
-                    }
-                }
-
-                _lastReadyQuestIds = currentReady;
+                if (ObserveReadyQuestLog())
+                    return;
             }
 
             if (_settings.SellWhite || _settings.SellGreen || _settings.SellBlue)
                 SellByQuality();
+        }
+
+        private bool ObserveReadyQuestLog()
+        {
+            var previous = _lastReadyQuestSnapshot;
+            var previousReady = _lastReadyQuestIds;
+            // Clear before observing so failures/cancellation cannot retain authority.
+            _lastReadyQuestSnapshot = null;
+            _lastReadyQuestIds = null;
+            if (!StyxWoW.IsInGame || StyxWoW.Me == null)
+                return false;
+
+            var current = StyxWoW.Me.QuestLog.CaptureSnapshot();
+            if (!current.IsIdentityComplete)
+                return false;
+
+            _lastReadyQuestSnapshot = current;
+            _lastReadyQuestIds = new HashSet<int>(current.ReadyQuestIds.Select(id => (int)id));
+            if (previous == null || previousReady == null || !previous.HasSameOwner(current))
+                return false;
+
+            var accepted = new HashSet<uint>(current.AcceptedQuestIds);
+            var departed = previousReady.Where(id => !accepted.Contains((uint)id)).ToList();
+            if (departed.Count == 0)
+                return false;
+
+            // A raw departure requests fresh scheduling. It does not prove that a
+            // server turn-in succeeded or grant completed-quest history authority.
+            Log($"Previously ready quest(s) left the observed log: {string.Join(",", departed)} — triggering rescan");
+            RequestRefresh("Previously ready quest left the observed log; queuing one scheduler rebuild.");
+            return true;
         }
 
         private void ObserveRecoveryActivation()
