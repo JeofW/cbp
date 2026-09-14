@@ -1,0 +1,43 @@
+name: Audit W42 publication preparation
+on:
+  push:
+    branches: [audit/next-42-scan-entry-20260914]
+    paths: [.github/workflows/audit-w42-publication-preflight.yml]
+permissions:
+  contents: read
+jobs:
+  source:
+    if: github.repository == 'JeofW/CopilotBuddy-private' && github.event.repository.private == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GIT_LFS_SKIP_SMUDGE: '1'
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with: {persist-credentials: false, lfs: false}
+      - name: Export canonical text sources without meshes, native binaries or captured logs
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import subprocess,pathlib,zipfile,hashlib,json,os
+          out=pathlib.Path(os.environ['RUNNER_TEMP'])/'w42-publication-source';out.mkdir()
+          allowed={'.cs','.csproj','.props','.targets','.py','.yml','.yaml','.md','.json','.xml','.sln'}
+          rows=[]
+          with zipfile.ZipFile(out/'source.zip','w',zipfile.ZIP_DEFLATED) as z:
+              for raw in subprocess.check_output(['git','ls-files','-z']).split(b'\0'):
+                  if not raw: continue
+                  name=raw.decode();p=pathlib.Path(name)
+                  if p.suffix.lower() not in allowed or name.startswith(('mmaps/','runtime-logs/')):continue
+                  data=subprocess.check_output(['git','show','HEAD:'+name])
+                  blob=hashlib.sha1(b'blob '+str(len(data)).encode()+b'\0'+data).hexdigest()
+                  z.writestr(name,data);rows.append({'path':name,'blob':blob,'sha256':hashlib.sha256(data).hexdigest(),'bytes':len(data)})
+          head=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
+          (out/'manifest.json').write_text(json.dumps({'commit':head,'files':rows,'game_attached':False},indent=2))
+          print('Canonical text sources:',len(rows),'; commit:',head)
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: w42-publication-source-${{ github.sha }}
+          path: ${{ runner.temp }}/w42-publication-source/
+          retention-days: 14
+          if-no-files-found: error
