@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "recorded_date": "2026-09-14",
+  "repository": "JeofW/CopilotBuddy-private",
+  "pull_request": 42,
+  "branch": "audit/next-42-scan-entry-20260914",
+  "scope": "Recovery and verification of pre-existing PR42 executions; this documentation continuation did not run new C# tests or recreate the production repair.",
+  "base_checkpoint": "d08d0b20f6187e9a423489fbcfebed9d1b275537",
+  "test_first_commit": "d9db8db451c1c399a74cdb54551d2985e144c532",
+  "tested_repaired_commit": "01ec5542448ae5b5087fccd4ca2f17c61906e6d5",
+  "tested_repaired_tree": "542526f07b84bfcc4ab2671e5aa69c640afbc583",
+  "actual_recovery_note_commit": "b770d035b161ccee87233b9810f73ccac2f74039",
+  "runs": [
+    {"role":"clean_red_current_variant","commit":"d9db8db451c1c399a74cdb54551d2985e144c532","run_id":34806012900,"artifact_id":10333380384,"sha256":"2bf5127b7711190f6b72d6009ee1148a891112346acb9fffc99c5e0df1d87033","file_members":47,"internal_hash_entries":46,"scan_entry_passed":10,"scan_entry_total":15,"scan_entry_assertions":5,"scan_entry_unexpected":0},
+    {"role":"repaired_focused_current","commit":"01ec5542448ae5b5087fccd4ca2f17c61906e6d5","run_id":34806763262,"artifact_id":10333104684,"sha256":"e6a88652d1f0bd7babfdb425a4d6b1e530fa885fbc888e558b4c2e248497b19e","file_members":47,"internal_hash_entries":46,"scan_entry_passed":15,"scan_entry_total":15,"scan_entry_assertions":0,"scan_entry_unexpected":0},
+    {"role":"repaired_actual_combined","commit":"01ec5542448ae5b5087fccd4ca2f17c61906e6d5","run_id":34806763203,"artifact_id":10333461502,"sha256":"cfb1b860c52b8771fabc8d21922793de5ef73a82667669eab5dacc687d630f7f","file_members":71,"internal_hash_entries":70,"build_zero":17,"run_zero":14,"total_entries":17,"scan_entry_passed":15,"scan_entry_total":15,"scan_entry_assertions":0,"scan_entry_unexpected":0},
+    {"role":"repaired_host_compilation_only","commit":"01ec5542448ae5b5087fccd4ca2f17c61906e6d5","run_id":34806763318,"artifact_id":10332224535,"sha256":"f2c4dea4e1524689a6ccf17a57412d76fb214e6ef3f45d036c9e73448cac620d","file_members":4,"internal_hash_entries":0,"internal_manifest_present":false,"host_build_exit_code":0,"tests_run":false,"warnings":3278,"errors":0}
+  ],
+  "archive_verification": {"authenticated_outer_digests_match":true,"all_zip_crc_checks_pass":true,"all_supplied_internal_hashes_match":true,"internal_path_handling":"Canonicalize Windows backslashes; reject duplicate or unsafe paths. Host has no internal manifest.","full_result_sets_and_run_logs_inspected":true},
+  "source_comparison": {"tracked_input_hashes_each":1681,"focused_combined_all_equal":true,"red_green_only_changed_path":"runtime-snapshot/Bots/WholesomeAutoQuest-master/WholesomeAutoQuest.cs","nested_source_files_each":46,"nested_source_hashes_match_working_manifest":true,"nested_only_changed_path":"runtime-snapshot/Bots/WholesomeAutoQuest-master/WholesomeAutoQuest.cs","normalized_files_each":26,"normalized_red_green_and_focused_combined_equal":true,"normalization_packaging_difference":"0 versus W42Normalized directory component only","production_blob_red":"7e6165d1b7d6845c2f68067ed57c03e4b89d8863","production_blob_repaired":"8e92bb6f4b7018e022a5ab335b204aee86db1e4a","scan_entry_test_blob_both":"0d3bfc1b7f743ad73c00e682d57d8a06237ea6c1"},
+  "retained_passes": {"scan_failure":14,"scan_revocation":13,"scan_retry":6,"relation_identity":23,"original_sale":23,"completion_owner":15,"python_analyzers":33,"singular_source_files_compiled":99},
+  "combined_red_suites": ["WholesomeQuestRecoveryRegressionTests","QuestLogObservationRegressionTests","QuestObservationBoundaryRegressionTests"],
+  "remaining_reported_groups": {"observation":{"passed":4,"total":25,"missing_proposed_contracts":19,"sale_assertions":2},"ready":{"passed":1,"total":5,"assertions":4},"scheduler":{"passed":2,"total":5,"missing_proposed_contracts":2,"null_accepted_pickup_assertions":1},"boundary":{"passed":16,"total":24,"assertions":8,"unexpected":0}},
+  "counterevidence": ["World-read failure is already converted to unavailable by ObjectManager.IsInGame; retain as control.","Obsolete and replacement-generation controls pass both red and green.","Missing proposed contracts are not reproduced production bugs; suite counts overlap.","Test-only deny-native-dispatch boundary is preserved, not a native production/shutdown fix."],
+  "target": "original WoW3.3.5a build12340; managed Windows x86 .NET10.0.12; analyzers Python",
+  "game_attached": false,
+  "new_csharp_runs_in_recovery_continuation": 0,
+  "full_w42_complete": false,
+  "exhaustive_audit_complete": false,
+  "independent_review_complete": false,
+  "live_acceptance_verified": false,
+  "merge_or_deployment_authorized": false
+}

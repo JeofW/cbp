@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "scope": "Human-reviewed directed PR42 evidence overlay, not an exhaustive semantic call graph.",
+  "source_commit": "01ec5542448ae5b5087fccd4ca2f17c61906e6d5",
+  "nodes": [
+    {"id":"vendor_early_failure","kind":"symptom","status":"controlled_reproduced","description":"Vendor discovery failure can leave the old selected/grind child authorized before repair."},
+    {"id":"do_scan","kind":"source_owner","path":"runtime-snapshot/Bots/WholesomeAutoQuest-master/WholesomeAutoQuest.cs","lines":"1136-1189"},
+    {"id":"early_invalidation","kind":"repair","path":"runtime-snapshot/Bots/WholesomeAutoQuest-master/WholesomeAutoQuest.cs","lines":"1154-1156","commit":"01ec5542448ae5b5087fccd4ca2f17c61906e6d5"},
+    {"id":"execution_gate","kind":"source_consumer","path":"runtime-snapshot/Bots/WholesomeAutoQuest-master/WholesomeAutoQuest.cs","lines":"805-821"},
+    {"id":"scan_entry_tests","kind":"regression","path":"Tools/WholesomeQuestRecoveryRegressionTests/QuestScanEntryRegressionTests.cs","blob":"0d3bfc1b7f743ad73c00e682d57d8a06237ea6c1","cases":15},
+    {"id":"red_artifact","kind":"execution","run":34806012900,"artifact":10333380384,"result":"10/15; five assertions; zero unexpected"},
+    {"id":"green_artifact","kind":"execution","run":34806763262,"artifact":10333104684,"result":"15/15; broader W42 red"},
+    {"id":"combined_artifact","kind":"execution","run":34806763203,"artifact":10333461502,"result":"17 build0;14 run0;3 run1"},
+    {"id":"world_guard_control","kind":"counterevidence","status":"controlled_verified","description":"Failed world-memory observations are already unavailable; not a new throwing-world-owner defect."},
+    {"id":"replacement_control","kind":"counterevidence","status":"controlled_verified","description":"Obsolete lease and later generation replacement must not be revoked by a late catch."},
+    {"id":"publication_frontier","kind":"open_boundary","status":"source_confirmed_ordering_behavior_unclosed","description":"LastSchedule assigned before XML build/write; LoadNew follows; successful stale publication and failure lifecycle need actual producer/consumer tests."},
+    {"id":"raw_session_frontier","kind":"open_boundary","status":"unclosed","description":"Read-success/raw slot identity versus metadata; real session/frame ownership, reconnect/ABA, ready history and sale freshness."},
+    {"id":"pr42","kind":"review","url":"https://github.com/JeofW/CopilotBuddy-private/pull/42","merged":false}
+  ],
+  "edges": [
+    {"from":"vendor_early_failure","to":"do_scan","type":"EXTRACTED","confidence":"high","provenance":"Test-first artifact stack and controlled vendor-discovery ordering case."},
+    {"from":"do_scan","to":"execution_gate","type":"EXTRACTED","confidence":"high","provenance":"Running-child selected/grind cases execute the actual gate before and after DoScan."},
+    {"from":"scan_entry_tests","to":"red_artifact","type":"EXTRACTED","confidence":"high","provenance":"Immutable source archive and complete 15-case run log."},
+    {"from":"early_invalidation","to":"green_artifact","type":"EXTRACTED","confidence":"high","provenance":"Only WholesomeAutoQuest.cs changes among1681 inputs; identical test sources;15/15."},
+    {"from":"green_artifact","to":"combined_artifact","type":"EXTRACTED","confidence":"high","provenance":"Same source commit, all1681 input hashes and26 normalized outputs match."},
+    {"from":"world_guard_control","to":"vendor_early_failure","type":"EXTRACTED","confidence":"high","provenance":"World-unavailable and actual-vendor-origin controls narrow the defect."},
+    {"from":"replacement_control","to":"early_invalidation","type":"EXTRACTED","confidence":"high","provenance":"Both pre/post repair retain obsolete and replacement-generation controls."},
+    {"from":"early_invalidation","to":"pr42","type":"EXTRACTED","confidence":"high","provenance":"Remote commit01ec5542 is in existing draft PR42; not newly recreated by recovery."},
+    {"from":"do_scan","to":"publication_frontier","type":"INFERRED","confidence":"medium","provenance":"Confirmed source ordering alone does not reproduce all XML/write/load failure or stale-generation outcomes."},
+    {"from":"publication_frontier","to":"raw_session_frontier","type":"INFERRED","confidence":"medium","provenance":"Successful publication must ultimately depend on trustworthy observations; no atomicity or session guarantee established."}
+  ],
+  "full_w42_complete": false,
+  "exhaustive_audit_complete": false,
+  "live_validation": false
+}
