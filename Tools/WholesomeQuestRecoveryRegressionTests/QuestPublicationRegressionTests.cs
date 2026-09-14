@@ -63,6 +63,32 @@ internal static class QuestPublicationRegressionTests
                 Check(ProfileManager.XmlLocation == f.Output && ProfileManager.CurrentProfile != null,
                     "normal DoScan did not load its generated output");
             })),
+            ("host rejects a generated profile outside the current player level", () => WithFixture(f =>
+            {
+                var scheduler = f.Scheduler(f.Output);
+                Check(scheduler.ScanAndRefresh(f.Player), "normal scan did not build a profile");
+                Generated(f, scheduler); f.SetLevel(100);
+                ProfileManager.LoadNew(f.Output, false);
+                Check(ProfileManager.CurrentOuterProfile != null
+                    && typeof(ProfileManager).GetField("_currentProfile", StaticHidden)!.GetValue(null) == null,
+                    "actual host did not reject the out-of-level profile");
+            })),
+            ("host level refusal cannot authorize the old selected child", () => WithFixture(f =>
+            {
+                var scheduler = f.Scheduler(f.Output); Seed(scheduler);
+                WithRunning(scheduler, (bot, root, child, context) =>
+                {
+                    int events = 0;
+                    BotEvents.Profile.NewProfileLoadedDelegate changeLevel = _ => { events++; f.SetLevel(100); };
+                    BotEvents.Profile.OnNewOuterProfileLoaded += changeLevel;
+                    try { Invoke(bot, "DoScan", scheduler, Lease(bot)); }
+                    finally { BotEvents.Profile.OnNewOuterProfileLoaded -= changeLevel; }
+                    Check(events == 1 && File.Exists(f.Output)
+                        && typeof(ProfileManager).GetField("_currentProfile", StaticHidden)!.GetValue(null) == null,
+                        "actual host load/refusal was not reached");
+                    Stopped(root, child, context); Idle(scheduler);
+                });
+            })),
             ("XML serialization failure cannot authorize the old selected child", () => WithFixture(f =>
             {
                 var scheduler = f.Scheduler(f.Output); f.Database.Quests[0].Name = "invalid\u0001xml";
@@ -330,6 +356,13 @@ internal static class QuestPublicationRegressionTests
         }
         private void Bytes(uint address, byte[] bytes) => cache.Value![new IntPtr(unchecked((int)address))] = bytes;
         private static void Write(uint address, uint value) => Marshal.WriteInt32(new IntPtr(unchecked((int)address)), unchecked((int)value));
+        internal void SetLevel(uint level)
+        {
+            Type fields = typeof(WoWUnit).Assembly.GetTypes().Single(t => t.IsEnum && t.Name == "UnitFields");
+            uint address = descriptor + Convert.ToUInt32(Enum.Parse(fields, "Level")) * 4;
+            Write(address, level);
+            cache.Value!.Remove(new IntPtr(unchecked((int)address)));
+        }
         internal void ClearAccepted() { Write(descriptor + 632, 0); Write(descriptor + 636, 0); cache.Value!.Remove(new IntPtr(unchecked((int)(descriptor + 632)))); }
         internal QuestScheduler Scheduler(string? path)
         {
