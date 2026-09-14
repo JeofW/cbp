@@ -31,7 +31,7 @@ class NormalizationTests(unittest.TestCase):
         self.assertEqual((root/'Example.cs').read_text(), group)
         self.assertEqual((root/'obj/normalized/Example.cs').read_text(), group.replace('[ModuleInitializer]', ''))
         row = next(x for x in manifest['files'] if x['file'] == 'Example.cs')
-        self.assertEqual(row['original_sha256'], hashlib.sha256(group.encode()).hexdigest())
+        self.assertEqual(row['original_sha256'], hashlib.sha256((root/'Example.cs').read_bytes()).hexdigest())
 
     def test_observation_groups_follow_main_exit_assignment(self):
         root, _, _ = self.make_project()
