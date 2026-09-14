@@ -1,0 +1,12 @@
+<Project>
+  <Target Name="NormalizeW42TestEntryPoints" BeforeTargets="CoreCompile">
+    <PropertyGroup>
+      <W42GeneratedDirectory>$(MSBuildProjectDirectory)/$(IntermediateOutputPath)W42Normalized</W42GeneratedDirectory>
+    </PropertyGroup>
+    <Exec Command="python &quot;$(MSBuildThisFileDirectory)normalize.py&quot; --project &quot;$(MSBuildProjectDirectory)&quot; --out &quot;$(W42GeneratedDirectory)&quot;" />
+    <ItemGroup>
+      <Compile Remove="*.cs" />
+      <Compile Include="$(W42GeneratedDirectory)/*.cs" />
+    </ItemGroup>
+  </Target>
+</Project>
