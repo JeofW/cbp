@@ -21,6 +21,14 @@ Never request tokens in chat, print credentials, use a GET-only endpoint for wri
 
 Always re-read current PR heads and committed checkpoints before using an attached ZIP. The ZIPs are historical/local preparation unless the exact files are independently found committed. Preserve already-published work, later corrections, and failing tests.
 
-Master `8382a7ec05a64212ea0a237159dca427a0767425` and backup `audit/backup-master-before-approved-merge-20260913` at `c43c50d8d5d6775055f19bf018b52930a264d4a4` are not write targets. PR #34 is already merged. Preserve #35/#36 and the existing W42 #38/#39/#40 stack; do not remerge older stacked PRs or recreate their repairs. PR #25 remains excluded. No merge, deployment, installed-bot change, Navigation.dll replacement, mesh download for managed tests, or runtime-capture modification is authorized.
+Master `8382a7ec05a64212ea0a237159dca427a0767425` and backup `audit/backup-master-before-approved-merge-20260913` at `c43c50d8d5d6775055f19bf018b52930a264d4a4` are not write targets. PR #34 is already merged. Preserve #35/#36 and the existing W42 stack, including #38/#39/#40/#41/#42 and any verified successors; do not remerge older stacked PRs or recreate their repairs. PR #25 remains excluded. No merge, deployment, installed-bot change, Navigation.dll replacement, mesh download for managed tests, or runtime-capture modification is authorized.
 
 The exhaustive audit/refactoring work remains in progress. Maintain source-confirmed, reproduced, regression-verified and live-unverified distinctions. Add a link to this runbook in current handover documents whenever updating them.
+
+## Retry observation and stale-handover safeguard
+
+On the subsequent 14 September retry after the user reported reconnecting, action discovery exposed 89 GitHub actions, including native file/GitDB/PR writers. Earlier conversation reports described 48 read-oriented actions. These counts describe observations, not a stable API contract or proof of why the surface changed. Do not diagnose token expiry or claim reconnection caused recovery without evidence.
+
+The live repository already contained PRs #40, #41 and #42 beyond the uploaded PR #39 completion checkpoint. Therefore, do not resume from #39 automatically, repeat its repair, or normalize tests already normalized in #40. Read the latest open PR and its committed source/checkpoint, inspect its actual runs, and extend that frontier. Existing PRs, commits and historical runs belong to their original continuations; a successful read does not make them new work by the current session.
+
+When the user has already reconnected, acknowledge that fact and perform the bounded retry; do not repeatedly ask for the same reconnect without a new actionable error. Preserve an exact handoff even when the UI reports an interrupted or failed response, because a remote commit may already have succeeded.
