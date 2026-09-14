@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
@@ -153,15 +154,23 @@ internal static class QuestScanFailureRegressionTests
             catch (Exception error) { unexpected++; Console.Error.WriteLine("ERROR scan failure fixture/owner: " + test.Name + ": " + error); }
         }
         Console.WriteLine($"Scan failure scenarios: {tests.Count - assertions - unexpected}/{tests.Count}; assertions={assertions}; unexpected={unexpected}; actual host/scan/DoScan/execution owners; controlled cached external observations; no game attached.");
+        Console.WriteLine("Scan failure loaded native-assembler assemblies: " + string.Join(", ",
+            AppDomain.CurrentDomain.GetAssemblies().Where(assembly => assembly.GetName().Name?.Contains("fasm", StringComparison.OrdinalIgnoreCase) == true)
+                .Select(assembly => assembly.FullName)));
         if (assertions != 0 || unexpected != 0) throw new InvalidOperationException("Scan failure regressions: assertions=" + assertions + "; unexpected=" + unexpected);
     }
 
     private static void WithWorld(System.Action<ObservedPlayer> test)
     {
         var previousPlayer = ObjectManager.Me; var previousMemory = ObjectManager.Wow; var previousExecutor = ObjectManager.Executor;
-        var memory = new Memory(0); // Constructor does not open a process or initialize a native executor.
-        var cache = (ThreadLocal<Dictionary<IntPtr, byte[]>>)typeof(Memory).GetField("_cache", Instance)!.GetValue(memory)!;
-        var enabled = (ThreadLocal<bool>)typeof(Memory).GetField("_cacheEnabled", Instance)!.GetValue(memory)!;
+        // Do not JIT Memory's process/assembler constructor in an offline fixture.
+        // Only its external read-cache/handle fields are controlled; actual Read methods
+        // and all host/quest/scheduler owners below remain unchanged production code.
+        var memory = (Memory)RuntimeHelpers.GetUninitializedObject(typeof(Memory));
+        var cache = new ThreadLocal<Dictionary<IntPtr, byte[]>>(() => new Dictionary<IntPtr, byte[]>());
+        var enabled = new ThreadLocal<bool>(() => false);
+        typeof(Memory).GetField("_cache", Instance)!.SetValue(memory, cache);
+        typeof(Memory).GetField("_cacheEnabled", Instance)!.SetValue(memory, enabled);
         // Current-thread pseudo-handle is NOT a process handle: an unseeded RPM cannot read a client.
         // Seed only the actual Memory read cache, not QuestLog or scheduler return values.
         typeof(Memory).GetField("_hProcess", Instance)!.SetValue(memory, new IntPtr(-2));
@@ -231,7 +240,10 @@ internal static class QuestScanFailureRegressionTests
     private sealed class RunningChild : Composite
     {
         internal int Ticks; internal int Stops;
-        public override RunStatus Tick(object context) { Ticks++; return RunStatus.Running; }
+        protected override IEnumerable<RunStatus> Execute(object context)
+        {
+            while (true) { Ticks++; yield return RunStatus.Running; }
+        }
         public override void Stop(object context) { Stops++; base.Stop(context); }
     }
     private static void Stopped(GroupComposite root, RunningChild child, object context) =>
