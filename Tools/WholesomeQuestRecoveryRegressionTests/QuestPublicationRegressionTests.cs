@@ -329,6 +329,8 @@ internal static class QuestPublicationRegressionTests
             Marshal.Copy(zoneBytes, 0, new IntPtr(unchecked((int)zoneText)), zoneBytes.Length);
             Bytes(12388232U, BitConverter.GetBytes(zoneText));
             Write(start + 8, descriptor); Write(start + 0x14, 4); Write(start + 0xBC, 0);
+            // Supply matching raw object/descriptor identity in this allocated fixture.
+            Write(start + 48, 123); Write(descriptor, 123);
             Type fields = typeof(WoWUnit).Assembly.GetTypes().Single(t => t.IsEnum && t.Name == "UnitFields");
             Write(descriptor + Convert.ToUInt32(Enum.Parse(fields, "Level")) * 4, 20);
             Write(descriptor + Convert.ToUInt32(Enum.Parse(fields, "Bytes0")) * 4, 0x0101);
