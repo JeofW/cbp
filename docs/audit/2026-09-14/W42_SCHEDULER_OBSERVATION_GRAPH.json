@@ -1,0 +1,134 @@
+{
+  "kind": "human-reviewed directed source/test/evidence overlay, not a complete semantic call graph",
+  "nodes": [
+    {
+      "id": "raw-owner",
+      "path": "Styx/Logic/Questing/QuestLogSnapshot.cs",
+      "status": "inherited from PR42"
+    },
+    {
+      "id": "legacy-list",
+      "path": "Styx/Logic/Questing/QuestLog.cs",
+      "symbol": "GetAllQuests",
+      "status": "lossy materialization source"
+    },
+    {
+      "id": "scheduler",
+      "path": "runtime-snapshot/Bots/WholesomeAutoQuest-master/QuestScheduler.cs",
+      "symbol": "ScanAndRefresh / MaterializeSchedule",
+      "status": "source-confirmed consumer gap; clean red"
+    },
+    {
+      "id": "profile",
+      "path": "runtime-snapshot/Bots/WholesomeAutoQuest-master/ProfileBuilder.cs",
+      "symbol": "BuildProfileXml / WriteProfile"
+    },
+    {
+      "id": "loader",
+      "path": "Styx/Logic/Profiles/ProfileManager.cs",
+      "symbol": "TryLoadNew"
+    },
+    {
+      "id": "refresh-execution",
+      "path": "runtime-snapshot/Bots/WholesomeAutoQuest-master/WholesomeAutoQuest.cs",
+      "symbol": "DoScan / RefreshGate / WholesomeExecutionGate"
+    },
+    {
+      "id": "tests",
+      "path": "Tools/WholesomeQuestRecoveryRegressionTests/QuestSchedulerRawPublicationRegressionTests.cs",
+      "status": "23 executed,16 intended assertions,0unexpected"
+    },
+    {
+      "id": "red",
+      "run": 34831110419,
+      "artifact": 10342172741
+    },
+    {
+      "id": "combined",
+      "run": 34831110320,
+      "artifact": 10342527041
+    },
+    {
+      "id": "candidate",
+      "path": "Tools/W42TestAggregation/prepare_scheduler_candidate.py",
+      "status": "unexecuted/unpromoted"
+    },
+    {
+      "id": "blocked",
+      "run": 34831727583,
+      "status": "two attempts,zero runner/steps"
+    },
+    {
+      "id": "travel",
+      "path": "docs/audit/2026-09-14/QUEST_TRAVEL_COVERAGE.md",
+      "status": "open; not repaired by this slice"
+    }
+  ],
+  "edges": [
+    [
+      "legacy-list",
+      "scheduler",
+      "current production consumes incomplete materialization"
+    ],
+    [
+      "scheduler",
+      "profile",
+      "candidate work to generated XML/file"
+    ],
+    [
+      "profile",
+      "loader",
+      "actual output acceptance"
+    ],
+    [
+      "loader",
+      "refresh-execution",
+      "publication authorization"
+    ],
+    [
+      "tests",
+      "scheduler",
+      "actual owner exercised"
+    ],
+    [
+      "tests",
+      "loader",
+      "actual load events exercised"
+    ],
+    [
+      "tests",
+      "refresh-execution",
+      "running child and replacement lease exercised"
+    ],
+    [
+      "red",
+      "tests",
+      "new executed evidence"
+    ],
+    [
+      "combined",
+      "tests",
+      "retained integrated execution"
+    ],
+    [
+      "raw-owner",
+      "candidate",
+      "existing owner APIs proposed for real scheduler"
+    ],
+    [
+      "candidate",
+      "scheduler",
+      "proposed one-file repair,not promoted"
+    ],
+    [
+      "blocked",
+      "candidate",
+      "prevents execution verification"
+    ],
+    [
+      "travel",
+      "scheduler",
+      "separate routing/elevation requirements remain"
+    ]
+  ]
+}
