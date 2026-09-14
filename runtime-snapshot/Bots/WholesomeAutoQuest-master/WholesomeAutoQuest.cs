@@ -2443,9 +2443,11 @@ namespace WholesomeAQ
             var database = _dataLoader?.Database;
             if (me == null || !me.IsValid || !me.IsAlive || database?.Quests == null)
                 return;
-            var accepted = me.QuestLog.GetAllQuests();
-            if (accepted == null)
+            var questLog = me.QuestLog;
+            var observation = questLog.CaptureSnapshot();
+            if (observation == null || !observation.IsComplete)
                 return;
+            var accepted = observation.Quests;
 
             var protectedIds = new HashSet<uint>(ProtectedItemsManager.GetAllItemIds());
             var protectedNames = ProtectedItemsManager.GetAllItemNames();
@@ -2496,7 +2498,8 @@ namespace WholesomeAQ
 
             // Recheck the immediate dispatch boundary after observing inventory.
             if (!ReferenceEquals(me, StyxWoW.Me) || !me.IsValid || !me.IsAlive
-                || !MerchantFrame.Instance.IsVisible)
+                || !MerchantFrame.Instance.IsVisible
+                || !questLog.IsSnapshotCurrent(observation))
                 return;
             MerchantFrame.Instance.SellItemQualities(mask, protectedNames, protectedIds);
         }
