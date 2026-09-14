@@ -81,6 +81,7 @@ internal static class Program
                 try { Observe(); throw new AssertionFailure("Cache interruption was swallowed."); }
                 catch (ThreadInterruptedException actual) { Check(ReferenceEquals(actual, expected), "Interruption identity changed."); }
             }),
+            ("zero quest ID is not an accepted empty slot", () => { History(false); Expect(StyxWoW.Me!.QuestLog.GetQuestCompletionSnapshot(0), false, QuestCompletionState.KnownIncomplete); }),
             ("legacy raw and materialized lookup APIs remain distinct", () => {
                 Accept(false); var log = StyxWoW.Me!.QuestLog;
                 Check(log.GetQuestId(0) == QuestId && log.ContainsQuest(QuestId) && log.GetQuestById(QuestId) == null && log.GetAllQuests().Count == 0,
