@@ -82,7 +82,7 @@ internal static class QuestRootPreemptionRegressionTests
             })),
             ("stopping an unticked instance cannot drain another instance's running executor", () => With(c =>
             {
-                var other = c.NewBot(c.Scheduler); c.Rescan(other); var root = (GroupComposite)other.Root;
+                var other = c.NewBot(c.Scheduler); c.Rescan(other); c.InstallBehavior(); var root = (GroupComposite)other.Root;
                 c.Configure(root, separateSupport: true); var context = new object(); root.Start(context);
                 try
                 {
@@ -134,7 +134,7 @@ internal static class QuestRootPreemptionRegressionTests
             { c.StartQuest(); c.RawProgress(1); c.ExpectIdle(); c.RawProgress(0); c.Step(); Check(c.Behavior.Body.Effects == 1 && c.Roam.Effects == 0, "raw equality resurrected revoked publication"); })),
             ("same-path host reload is a different publication owner", () => With(c =>
             {
-                c.StartQuest(); Check(ProfileManager.TryLoadNew(c.Output, false), "same-path reload was not accepted"); c.InstallBehavior(); c.Step();
+                c.StartQuest(); Check(ProfileManager.TryLoadNew(c.Output, false), "same-path reload was not accepted"); c.InstallBehavior(); c.Step(); c.Step();
                 Check(c.Behavior.Body.Effects == 0 && c.Roam.Effects == 0, "same-path replacement borrowed old authorization");
             })),
             ("replacement during exclusivity observation does not authorize its quest effect", () => With(c =>
@@ -147,7 +147,30 @@ internal static class QuestRootPreemptionRegressionTests
                     "old exclusivity continuation touched replacement effects or abandoned its own cleanup");
             })),
             ("cancellation at actual exclusivity observation cleans the running owner", () => ObservationSignal(new OperationCanceledException("exclusivity cancel"))),
-            ("interruption at actual exclusivity observation cleans the running owner", () => ObservationSignal(new ThreadInterruptedException("exclusivity interrupt")))
+            ("interruption at actual exclusivity observation cleans the running owner", () => ObservationSignal(new ThreadInterruptedException("exclusivity interrupt"))),
+            ("raw progress changed during actual OnTick is checked before the first branch effect", () => With(c =>
+            {
+                int callbacks = 0; c.Behavior.OnTickCallback = () => { callbacks++; c.RawProgress(1); }; c.Step();
+                Check(callbacks == 1 && c.Behavior.Body.Effects == 0 && c.Roam.Effects == 0, "OnTick observation change admitted a stale branch effect"); c.Protected();
+            })),
+            ("refresh epoch changed during OnTick cannot authorize the branch", () => With(c =>
+            {
+                int callbacks = 0; c.Behavior.OnTickCallback = () => { callbacks++; c.Gate.Stop(); c.Gate.Start(); }; c.Step();
+                Check(callbacks == 1 && c.Behavior.Body.Effects == 0 && c.Roam.Effects == 0, "OnTick epoch change admitted a stale branch effect");
+            })),
+            ("new successful publication inside OnTick survives the old continuation", () => With(c =>
+            {
+                var original = c.Behavior; ObservedBehavior? replacement = null; int callbacks = 0;
+                original.OnTickCallback = () => { callbacks++; c.Rescan(); replacement = c.InstallBehavior(); }; c.Step();
+                Check(callbacks == 1 && replacement != null && original.Body.Effects == 0 && replacement.Body.Effects == 0 && replacement.Body.Cleanups == 0,
+                    "old OnTick continuation started or cleaned replacement work"); c.AssertPublished();
+                Check(c.Step() == RunStatus.Running && replacement.Body.Effects == 1, "replacement publication lost later authorization");
+            })),
+            ("raw progress changed during exclusivity observation prevents a same-cycle quest effect", () => With(c =>
+            {
+                c.Behavior.Exclusive = true; int callbacks = 0; c.Behavior.OnExclusive = () => { callbacks++; c.RawProgress(1); }; c.Step();
+                Check(callbacks == 1 && c.Behavior.Body.Effects == 0 && c.Roam.Effects == 0, "exclusivity observation change admitted a stale quest effect"); c.Protected();
+            }))
         };
         int assertions = 0, unexpected = 0;
         foreach (var test in cases)
@@ -208,8 +231,10 @@ internal static class QuestRootPreemptionRegressionTests
         internal readonly EffectLeaf Body;
         internal bool Exclusive, Done, Deferred;
         internal Action? OnExclusive;
+        internal Action? OnTickCallback;
         internal ObservedBehavior(List<string> events) { Body = new EffectLeaf(events); }
         public override bool IsDone => Done;
+        public override void OnTick() { var callback = OnTickCallback; OnTickCallback = null; callback?.Invoke(); }
         public override bool IsExecutionDeferred => Deferred;
         public override bool SuppressServiceBehavior { get { var callback = OnExclusive; OnExclusive = null; callback?.Invoke(); return Exclusive; } }
         protected override Composite CreateBehavior() => Body;
