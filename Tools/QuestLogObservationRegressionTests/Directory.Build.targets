@@ -1,0 +1,3 @@
+<Project>
+  <Import Project="../W42TestAggregation/Normalize.targets" />
+</Project>
