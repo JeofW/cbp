@@ -1,0 +1,53 @@
+name: Audit W42 normalized baseline and current owners
+on:
+  push:
+    branches: [audit/next-42-test-aggregation-20260914]
+    paths: ['Tools/**', '**.cs', '.github/workflows/audit-w42-normalized.yml', '.github/workflows/audit-integrated.yml']
+permissions:
+  contents: read
+concurrency:
+  group: w42-normalized-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  compare:
+    runs-on: windows-2022
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        variant: [baseline, current]
+    env:
+      GIT_LFS_SKIP_SMUDGE: '1'
+      GIT_CONFIG_COUNT: '2'
+      GIT_CONFIG_KEY_0: core.longpaths
+      GIT_CONFIG_VALUE_0: 'true'
+      GIT_CONFIG_KEY_1: core.autocrlf
+      GIT_CONFIG_VALUE_1: 'false'
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with: {persist-credentials: false, lfs: false, fetch-depth: 0}
+      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9
+        with: {dotnet-version: '10.0.x'}
+      - name: Run identical normalized fixtures against pinned production
+        shell: pwsh
+        env:
+          W42_VARIANT: ${{ matrix.variant }}
+        run: |
+          $out=Join-Path $env:RUNNER_TEMP ('w42-normalized-'+$env:W42_VARIANT)
+          New-Item -ItemType Directory -Force $out | Out-Null
+          $installer=Join-Path (Split-Path $env:RUNNER_WORKSPACE) '_actions/actions/setup-dotnet/67a3573c9a986a3f9c594539f4ab511d57bb3ce9/externals/install-dotnet.ps1'
+          $dest=Join-Path $env:RUNNER_TEMP 'dotnet-x86'
+          foreach($framework in @('dotnet','windowsdesktop')) {
+            & pwsh -NoProfile -File $installer -Channel '10.0' -Runtime $framework -Architecture x86 -InstallDir $dest -NoPath *> (Join-Path $out "install-$framework.txt")
+            if($LASTEXITCODE -ne 0){throw "x86 $framework installation failed"}
+          }
+          python Tools/W42TestAggregation/verify.py --repo . --out $out --runtime "$dest/dotnet.exe" --fixtures $env:GITHUB_SHA --variant $env:W42_VARIANT
+          exit $LASTEXITCODE
+      - name: Retain complete source identities, cases, builds and generated fixtures
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: w42-normalized-${{ matrix.variant }}-${{ github.sha }}
+          path: ${{ runner.temp }}/w42-normalized-${{ matrix.variant }}/
+          retention-days: 14
+          if-no-files-found: error
