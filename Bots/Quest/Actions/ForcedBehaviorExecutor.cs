@@ -29,9 +29,16 @@ namespace Bots.Quest.Actions;
 
 public class ForcedBehaviorExecutor : Composite
 {
-    public ForcedBehaviorExecutor(Bots.Quest.QuestOrder.QuestOrder order)
+    private readonly Func<bool> canExecute;
+
+    public ForcedBehaviorExecutor(Bots.Quest.QuestOrder.QuestOrder order) : this(order, null) { }
+
+    // Optional owner policy for instance-specific publication admission. Ordinary
+    // QuestBot and existing callers retain the one-argument execution contract.
+    public ForcedBehaviorExecutor(Bots.Quest.QuestOrder.QuestOrder order, Func<bool> canExecute)
     {
         this.Order = order != null ? order : throw new ArgumentNullException(nameof(order));
+        this.canExecute = canExecute;
     }
 
     public Bots.Quest.QuestOrder.QuestOrder Order { get; private set; }
@@ -47,6 +54,12 @@ public class ForcedBehaviorExecutor : Composite
     private bool Owns(OrderNodeCollection nodes, OrderNode node, ForcedBehavior behavior)
     {
         return ReferenceEquals(Order.Nodes, nodes)
+            && ReferenceEquals(Order.CurrentNode, node)
+            && ReferenceEquals(Order.CurrentBehavior, behavior)
+            && (canExecute == null || canExecute())
+            // Admission can observe reentrant host work; do not trust the identities
+            // checked before that callback, including after OnTick/branch Start.
+            && ReferenceEquals(Order.Nodes, nodes)
             && ReferenceEquals(Order.CurrentNode, node)
             && ReferenceEquals(Order.CurrentBehavior, behavior);
     }
@@ -82,7 +95,7 @@ public class ForcedBehaviorExecutor : Composite
             var nodes = Order.Nodes;
             var node = Order.CurrentNode;
             var behavior = Order.CurrentBehavior;
-            if (node == null)
+            if (node == null || !Owns(nodes, node, behavior))
             {
                 yield return RunStatus.Failure;
                 yield break;

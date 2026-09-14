@@ -870,9 +870,8 @@ namespace WholesomeAQ
         }
 
         public override Composite Root => _root ??= new WholesomeExecutionGate(
-            _ => WholesomeRestPolicy.ShouldRunQuestRoot(_restingPaused)
-                && ShouldExecuteQuestRoot(_stopped, _scheduler?.LastSchedule),
-            base.Root);
+            _ => !_stopped && WholesomeRestPolicy.ShouldRunQuestRoot(_restingPaused),
+            new Bots.Quest.PublishedQuestRoot(() => _scheduler?.CaptureExecutionPermission()));
 
         internal static bool ShouldExecuteQuestRoot(bool stopped, QuestScheduleResult schedule)
         {
@@ -1176,7 +1175,9 @@ namespace WholesomeAQ
                         refreshed = scheduler.ScanAndRefresh(
                             StyxWoW.Me, null,
                             apply => _refreshGate.TryApply(lease, apply),
-                            path => ProfileManager.TryLoadNew(path, true));
+                            path => ProfileManager.TryLoadNew(path, true),
+                            () => !_stopped && ReferenceEquals(_scheduler, scheduler)
+                                && _refreshGate.IsCurrent(lease));
                         return !refreshed && scheduler.LastSchedule?.FallbackMode == QuestFallbackMode.None;
                     },
                     () =>

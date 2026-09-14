@@ -56,6 +56,53 @@ namespace WholesomeAQ
         private ForcedBehavior _lastActivation;
         private QuestRecoveryKey _lastActivationKey;
         private bool _rebuildRequested;
+        private PublishedWork _publishedWork;
+
+        private sealed class PublishedWork
+        {
+            internal LocalPlayer Player;
+            internal QuestLog Log;
+            internal QuestLogSnapshot Observation;
+            internal object OuterProfile, Profile;
+            internal string Path;
+            internal QuestScheduleResult Schedule;
+            internal Func<bool> LeaseIsCurrent;
+            internal Func<bool> Check;
+        }
+
+        // A stable delegate is the identity of one completed publication, not of
+        // a Pending/Running refresh request. Capture it once per root driver tick.
+        internal Func<bool> CaptureExecutionPermission() => _publishedWork?.Check;
+
+        private bool HasPublicationOwner(PublishedWork work) =>
+            ReferenceEquals(_publishedWork, work)
+            && (work.LeaseIsCurrent == null || work.LeaseIsCurrent())
+            && ReferenceEquals(LastSchedule, work.Schedule)
+            && ReferenceEquals(ObjectManager.Me, work.Player)
+            && ReferenceEquals(Styx.Logic.Profiles.ProfileManager.CurrentOuterProfile, work.OuterProfile)
+            && ReferenceEquals(Styx.Logic.Profiles.ProfileManager.CurrentProfile, work.Profile)
+            && string.Equals(Styx.Logic.Profiles.ProfileManager.XmlLocation, work.Path, StringComparison.Ordinal);
+
+        private bool IsPublicationCurrent(PublishedWork work)
+        {
+            if (!ReferenceEquals(_publishedWork, work)) return false;
+            bool current;
+            try
+            {
+                current = HasPublicationOwner(work)
+                    && work.Log.IsSnapshotCurrent(work.Observation)
+                    && HasPublicationOwner(work);
+            }
+            catch (Exception error) when (error is not ThreadInterruptedException && error is not OperationCanceledException)
+            {
+                current = false;
+            }
+            // Do not revoke a new publication created by an observation callback.
+            if (!ReferenceEquals(_publishedWork, work)) return false;
+            if (!current)
+                InvalidatePublishedWork("Published quest observations or owner changed; waiting for a fresh scan.");
+            return current;
+        }
         private static int _unknownNavigationFingerprintLogged;
         private static readonly TimeSpan ScanCooldown = TimeSpan.FromSeconds(10);
 
@@ -91,7 +138,8 @@ namespace WholesomeAQ
             LocalPlayer me,
             string validatedGrindProfilePath,
             Func<System.Action, bool> tryApplyPublication,
-            Func<string, bool> tryLoadProfile)
+            Func<string, bool> tryLoadProfile,
+            Func<bool> isPublicationLeaseCurrent = null)
         {
             if (tryApplyPublication == null)
                 throw new ArgumentNullException(nameof(tryApplyPublication));
@@ -244,7 +292,20 @@ namespace WholesomeAQ
                     LastQuestCount = candidate.Selected.Count;
                     ActiveQuestIds = new HashSet<int>(candidate.Selected.Select(item => (int)item.QuestId));
                     CurrentProfilePath = path;
-                    LastSchedule = candidate; // Execution permission is published last.
+                    LastSchedule = candidate;
+                    // Generate-only callers do not establish host execution ownership.
+                    if (hasWork && tryLoadProfile != null)
+                    {
+                        var work = new PublishedWork
+                        {
+                            Player = me, Log = questLog, Observation = observation,
+                            OuterProfile = Styx.Logic.Profiles.ProfileManager.CurrentOuterProfile,
+                            Profile = Styx.Logic.Profiles.ProfileManager.CurrentProfile,
+                            Path = path, Schedule = candidate, LeaseIsCurrent = isPublicationLeaseCurrent
+                        };
+                        work.Check = () => IsPublicationCurrent(work);
+                        _publishedWork = work; // Continuing execution permission is published last.
+                    }
                     published = true;
                 });
             });
@@ -253,6 +314,7 @@ namespace WholesomeAQ
 
         internal void InvalidatePublishedWork(string status)
         {
+            _publishedWork = null;
             // Revoke the execution gate first, including a child that is already Running.
             // Unknown is not an eligible grind fallback or an instruction to load an old XML.
             LastSchedule = new QuestScheduleResult
@@ -1355,6 +1417,7 @@ namespace WholesomeAQ
 
         public void Reset()
         {
+            _publishedWork = null;
             _scanThreshold = _settings.ScanStartDistance;
             ActiveQuestIds = null;
             CurrentProfilePath = null;
