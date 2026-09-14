@@ -272,7 +272,8 @@ internal static class QuestPublicationRegressionTests
         private readonly Memory? previousMemory = ObjectManager.Wow;
         private readonly ExecutorRand? previousExecutor = ObjectManager.Executor;
         private readonly NavigationProvider previousNavigation = Navigator.NavigationProvider;
-        private readonly object? previousCache = typeof(StyxWoW).GetField("_cache", StaticHidden)!.GetValue(null);
+        private readonly object? previousCache;
+        private bool cacheCaptured;
         private readonly Memory memory = (Memory)RuntimeHelpers.GetUninitializedObject(typeof(Memory));
         private readonly ThreadLocal<Dictionary<IntPtr, byte[]>> cache = new ThreadLocal<Dictionary<IntPtr, byte[]>>(() => new());
         private readonly ThreadLocal<bool> enabled = new ThreadLocal<bool>(() => true);
@@ -301,6 +302,13 @@ internal static class QuestPublicationRegressionTests
             Write(descriptor + 632, 867); Write(descriptor + 636, (uint)WoWDescriptorQuestFlags.Completed);
             typeof(ObjectManager).GetProperty("Wow")!.SetValue(null, memory);
             ObjectManager.Executor = null; Player = new ObservedPlayer(start); ObjectManager.Me = Player;
+            // Reading a StyxWoW static field initializes Landmarks. Install its
+            // controlled observations first; the constants below match the actual
+            // Landmarks fields, not the differing hexadecimal comments there.
+            Bytes(12488416, BitConverter.GetBytes(0));
+            Bytes(12488476, BitConverter.GetBytes(0u));
+            previousCache = typeof(StyxWoW).GetField("_cache", StaticHidden)!.GetValue(null);
+            cacheCaptured = true;
             var questCache = new WoWCache(); typeof(StyxWoW).GetField("_cache", StaticHidden)!.SetValue(null, questCache);
             WoWCache.Cache owner = questCache[CacheDb.Quest]; Set(owner, "_entryOffset", 0u);
             uint table = start + 32768, node = start + 33024;
@@ -333,7 +341,9 @@ internal static class QuestPublicationRegressionTests
             foreach (var item in profileState) item.Field.SetValue(null, item.Value);
             if (previousRememberedPath != null) Styx.Helpers.LevelbotSettings.Instance.LastUsedPath = previousRememberedPath;
             Navigator.NavigationProvider = previousNavigation;
-            typeof(StyxWoW).GetField("_cache", StaticHidden)!.SetValue(null, previousCache);
+            // Do not initialize the host or overwrite uncaptured cache state
+            // while unwinding a partially constructed fixture.
+            if (cacheCaptured) typeof(StyxWoW).GetField("_cache", StaticHidden)!.SetValue(null, previousCache);
             ObjectManager.Me = previousPlayer; ObjectManager.Executor = previousExecutor;
             typeof(ObjectManager).GetProperty("Wow")!.SetValue(null, previousMemory);
             Set(memory, "_hProcess", IntPtr.Zero); cache.Dispose(); enabled.Dispose(); Marshal.FreeHGlobal(storage);
