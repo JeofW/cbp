@@ -53,7 +53,7 @@ internal static class QuestLogCompletenessRegressionTests
             Check(!built && scheduler.LastSchedule.FallbackMode==QuestFallbackMode.TimedIdle && scheduler.CurrentProfilePath==null,"unavailable log did not safely defer publication");
         }));
         int failed=0;
-        foreach(var test in tests){try{test.Item2();Console.WriteLine("PASS scheduler observation: "+test.Item1);}catch(Exception ex){failed++;Console.Error.WriteLine("FAIL scheduler observation: "+test.Item1+": "+ex.GetType().Name+": "+ex.Message);}}
+        foreach(var test in tests){try{test.Item2();Console.WriteLine("PASS scheduler observation: "+test.Item1);}catch(Exception ex){failed++;Console.Error.WriteLine("FAIL scheduler observation: "+test.Item1+": "+ex);}}
         Console.WriteLine($"Scheduler observation scenarios: {tests.Count-failed}/{tests.Count}; actual full scheduler and host; no client attached.");
         if(failed!=0)throw new InvalidOperationException("Scheduler observation regressions: "+failed);
     }
