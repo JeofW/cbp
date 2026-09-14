@@ -112,9 +112,9 @@ jobs:
             New-Item -ItemType Directory -Force $target | Out-Null
             Get-ChildItem "Tools/$name/obj" -Directory -Filter W42Normalized -Recurse | ForEach-Object { Copy-Item $_.FullName $target -Recurse -Force }
           }
-          $inputs = @(git ls-files | Where-Object { $_ -match '\.(cs|csproj|props|targets|py|yml)$' } | ForEach-Object { @{path=$_; sha256=(Get-FileHash $_ -Algorithm SHA256).Hash.ToLowerInvariant()} })
+          $inputs = @(git -c core.quotepath=false ls-files | Where-Object { $_ -match '\.(cs|csproj|props|targets|py|yml)$' } | ForEach-Object { @{path=$_; sha256=(Get-FileHash -LiteralPath $_ -Algorithm SHA256).Hash.ToLowerInvariant()} })
           $inputs | ConvertTo-Json -Depth 5 | Out-File (Join-Path $out 'working-source-hashes.json')
-          $hashes = @(Get-ChildItem $out -File -Recurse | ForEach-Object { @{path=[IO.Path]::GetRelativePath($out,$_.FullName); sha256=(Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()} })
+          $hashes = @(Get-ChildItem $out -File -Recurse | ForEach-Object { @{path=[IO.Path]::GetRelativePath($out,$_.FullName); sha256=(Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()} })
           $hashes | ConvertTo-Json -Depth 5 | Out-File (Join-Path $out 'files-sha256.json')
           $results | ConvertTo-Json -Depth 8 | Write-Host
           if ($results.Count -ne 17 -or @($results | Where-Object { $_.build -ne 0 -or $null -eq $_.run -or $_.run -ne 0 }).Count) { exit 1 }
