@@ -1,4 +1,20 @@
-# W42 continuation recheck — runner diagnostic required
+# W42 continuation recheck — billing diagnostic and retry
+
+## Latest update: owner supplied the annotation; third attempt still unstarted
+
+14 September 2026, after the owner reported increasing their GitHub Actions limit. The supplied screenshot identifies the EARLIER failure as GitHub's account-payment/spending-limit block. It is no longer accurate to call that earlier annotation unknown. The owner says the limit has now been increased; that account setting is user-reported and is not directly visible through the repository connector.
+
+PR44 was read at `4463d21322c8decd418c74b27e10ddf32af35f4d`, still draft/open/unmerged, with base PR42 at `e97263eef2dbf1bc6b050d80d9c3e51232ce42e2`. No candidate was recreated or promoted.
+
+One authorized retry of run `34831727583` was invoked using native `rerun_failed_workflow_run_jobs`; the API returned success. The new attempt is **3**, job **103953985983**, source `9a84d797ec6a77f9967c68ffe2117946e10d6843`. The actual job started/finished at **11:15:48Z–11:15:51Z** (19:15:48–19:15:51 Malaysia time) and reports **completed/failure, runner_id=0, empty runner name, steps=[]**. The latest commit check confirms that same new job, one annotation, and null diagnostic title/summary/text. Candidate preparation, compilation and tests did NOT execute.
+
+This is a new failed attempt after the owner's message, not a reread of attempt2. The previous screenshot alone does not establish the third attempt's exact cause. Do not assume the increased limit failed to save, demand another payment, diagnose propagation delay, or request another plugin reconnect. The current connector does not expose the annotation text. An attempted direct actions/jobs URL was rejected by the connector; the supported run/jobs subresource provided the actual full job result above. No authentication failure was returned.
+
+**Next:** refresh the same Actions run page and inspect the annotation for attempt3/job103953985983. Once the current startup block is resolved, retry the saved preflight once and follow the existing exact-source verification/promotion plan. No further blind retries were launched. Preserve the saved candidate, all existing tests and review constraints. This update changes documentation only; no new C# execution, production/test/workflow change, merge, deployment or Work/Codex switch occurred.
+
+The remainder below is the preserved historical recheck, written before the owner supplied the billing screenshot. Its unknown-annotation and latest-job wording is superseded by this section.
+
+---
 
 14 September 2026. Continue draft PR44 on `audit/next-42-scheduler-observation-20260914`, not the older publication handoff. Before this documentation write, PR44 head was `e22874dd01ed1f703785ad555f71b45304852917`; its base PR42 was `e97263eef2dbf1bc6b050d80d9c3e51232ce42e2`. Both remain open and unmerged. Re-read live heads before further work.
 
