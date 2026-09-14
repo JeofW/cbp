@@ -1,48 +1,25 @@
-# CopilotBuddy audit — W42 scan-entry checkpoint
+# CopilotBuddy audit — verified publication slice and travel frontier
 
-Recorded 14 September 2026. Resume existing draft **PR #42**, branch **`audit/next-42-scan-entry-20260914`**, based on PR41 checkpoint `d08d0b20f6187e9a423489fbcfebed9d1b275537`. Always re-read current remote heads; another conversation or an interrupted response may already have published work. Full W42 and the exhaustive architecture/refactoring audit are **not complete**.
+Recorded 14 September 2026. Continue existing draft PR42, branch `audit/next-42-scan-entry-20260914`, base `audit/next-42-ready-owner-20260914` at `d08d0b20f6187e9a423489fbcfebed9d1b275537`. Re-read actual remote heads before writes; another conversation or an interrupted response may already have published work. Full W42 and the exhaustive audit remain open.
 
-## GitHub recovery — retained owner instruction
+## Current evidence-backed state
 
-Read **[GITHUB_CONNECTION_RECOVERY.md](GITHUB_CONNECTION_RECOVERY.md)**. If actions disappear, become read-only or stall, perform one bounded check, remind the owner to reconnect GitHub, then rediscover/retry once after reconnection. When they already reconnected, retry rather than asking repeatedly. Cause is unproven; container Git/DNS/local .NET limitations are separate from native connector publishing. Never request/export tokens or misuse GET.
+**Tested repair:** `c237ca5b5a32e33780552784b33e36e6973b735c`, tree `fb6e821f7ca1b4a018584647149d52564c614db5`. Three production owners now keep a running-bot candidate non-executable until the actual host accepts its profile and the real refresh lease still owns publication. Cancellation and replacement controls remain; failed publication retains conservative ActiveQuestIds protection. Existing public generate-only APIs remain compatible and are not a universal host-acceptance guarantee.
 
-The latest recovery exposed89 actions and successfully committed the runbook as `b770d035b161ccee87233b9810f73ccac2f74039`, verified by PR42 head readback. This is actual publishing evidence, not permissions metadata. The following checkpoint is documentation-only; compare it against the tested source before inheriting test evidence.
+**Clean red:** `f0bba89d525207b3d5511eb339bcfdbc509ce47e`: original publication9/21 and new acceptance3/9, eighteen assertions total, zero unexpected errors. At the exact repaired commit both focused and actual combined runs execute publication21/21 plus acceptance9/9. All17 combined entries build;14 run0, three broader W42 entries run1. Host build0,3278warnings/0errors, tests_run:false. This is Windows x86 controlled owner execution, not a live WoW acceptance result.
 
-## Existing repaired source — do not recreate
+Read `docs/audit/2026-09-14/W42_PUBLICATION_CHECKPOINT.md`, `W42_PUBLICATION_EVIDENCE.json`, `W42_PUBLICATION_GRAPH.json`, the extended `W42_PUBLICATION_SLICE_PLAN.md`, and `QUEST_TRAVEL_COVERAGE.md`. The attached publication handoff includes complete red/focused/combined/host/standalone/preflight artifacts and a standard-library verification script. Re-running that verifier checks transferred evidence; it does not run new C# tests.
 
-**Tested production/test commit: `01ec5542448ae5b5087fccd4ca2f17c61906e6d5`.**
+## Immediate continuation
 
-**Tree: `542526f07b84bfcc4ab2671e5aa69c640afbc583`.**
+Do not recreate publication tests or repair. Review the source/evidence boundary, then continue existing W42 raw occupied-quest/read-success provenance, readiness history, session/frame/reconnect/ABA and sale-dispatch freshness. Missing proposed APIs are not automatically reproduced production defects. Preserve all original assertions and ordinary-success controls.
 
-The existing three-line repair revokes prior execution in DoScan's current-lease callback before fallible vendor observations. It preserves cancellation, refresh release, conservative ActiveQuestIds protection and replacement-generation controls. The fifteen tests, repair and Windows runs predated this recovery continuation; they were recovered and verified, not recreated or newly executed here.
+The owner additionally requires elevation-aware safe quest routes and pickup/turn-in wind-rider parity. Source tracing found XY-based quest ranking despite XYZ endpoint/path checks, restrictive lift-discovery heuristics, no overall timeout contract in the inspected lift controller, and taxi threshold/cooldown/nearest-origin limitations. Standard pickup and turn-in both reach shared taxi-aware ground navigation; the reported live pickup detour has NOT been reproduced or fixed. Follow the actual-owner test matrix in QUEST_TRAVEL_COVERAGE.md; no blanket conversion of every Distance2D call or unconditional taxi forcing.
 
-Clean red `d9db8db451c1c399a74cdb54551d2985e144c532`: scan entry10/15, five intended assertions, zero unexpected errors. At01ec5542:15/15 in both focused and actual combined. Prior scan-failure14/14, revocation13/13 and retry6/6 remain passing. All1681 repaired focused/combined input hashes match; red-to-green only the intended Wholesome source changes. All26 normalized outputs and archived test/fixture/extractor sources match.
+## Recovery and authorization
 
-## Actual combined status — still red
+`GITHUB_CONNECTION_RECOVERY.md` is authoritative and supersedes reconnect-first wording in older files: first retry an explicit @GitHub invocation; if publishing actions remain absent, preserve handoff and use a fresh ChatGPT conversation with GitHub selected; reconnect only if that fresh conversation also lacks publishing. Do not repeatedly rediscover the limitation. Do not infer expired credentials from missing actions or equate container tooling with native connector capabilities.
 
-Recovered focused34806763262/art10333104684; combined34806763203/art10333461502; host34806763318/art10332224535. Complete archives, authenticated digests, internal manifests, source identities and logs were inspected. Exact digests, counts and red evidence are in the files below.
+No merge, force push, deployment, installed-bot/Navigation.dll/mesh/runtime-capture change is authorized. Preserve master `8382a7ec05a64212ea0a237159dca427a0767425`, backup `audit/backup-master-before-approved-merge-20260913` at `c43c50d8d5d6775055f19bf018b52930a264d4a4`, PR34's existing merge, PR35/36 and the W42 stack; exclude PR25. Capability-test PR43/sol-write-test stays separate and unmerged. No Work/Codex switch. Native/live acceptance and independent review remain pending.
 
-**All17 build/setup0;14 run0;three W42-containing entries run1.** Historical14 entries plus3 W42 entries remain. Original Wholesome groups/Main finish; relation23/23, original sale23/23, completion-owner15/15,33 Python analyzers and99 compiled Singular source files are retained. Managed execution is Windows x86/.NET10.0.12. Host build0 has3278 warnings/0errors and tests_run:false; it is not a combined regression pass. No client attached.
-
-Remaining observation4/25 includes19 missing proposed contracts and2 sale assertions; ready1/5; scheduler2/5 includes2 missing contracts and1 null-accepted pickup assertion; boundary16/24 has8 assertions/0 unexpected. Missing APIs are not reproduced bugs; overlapping counts are not unique defects.
-
-## Read next
-
-- [W42_SCAN_ENTRY_CHECKPOINT.md](docs/audit/2026-09-14/W42_SCAN_ENTRY_CHECKPOINT.md)
-- [W42_SCAN_ENTRY_EVIDENCE.json](docs/audit/2026-09-14/W42_SCAN_ENTRY_EVIDENCE.json)
-- [W42_SCAN_ENTRY_GRAPH.json](docs/audit/2026-09-14/W42_SCAN_ENTRY_GRAPH.json)
-- [NEXT_CHAT_PROMPT.md](NEXT_CHAT_PROMPT.md)
-
-Preserve the existing W42_SCAN_ENTRY_SLICE_PLAN, PR41 W42_SCAN_EXCEPTION checkpoint/evidence/graph and reconciliation, PR40 aggregation evidence, PR39 completion evidence, W41 behavior/graph, and original audit context/hypotheses. The older root handover remains available in parent history; do not reset the frontier to PR39/41 or rewrite historical evidence.
-
-PR40 branched from PR39's earlier completion repair, not its later supplemental runner/docs; do not falsely linearize them. PR39's completion owner, PR40 normalization and PR41 unavailable-input/retry/scan-exception repairs already exist. The test-only deny-native-dispatch assembler boundary is retained and is not a native shutdown fix.
-
-## Next unresolved owner boundary
-
-Investigate actual ScanAndRefresh -> MaterializeSchedule -> ProfileBuilder.BuildProfileXml/WriteProfile -> DoScan/ProfileManager.LoadNew -> already-running WholesomeExecutionGate. LastSchedule is assigned before XML build/write; successful stale publication and XML/write/load failure/cancellation remain unclosed. Establish production-owner tests and publication lifecycle before refactoring staged/committed authorization. Do not solve only the next scan or unconditionally revoke replacement work in a late catch.
-
-Raw read-success and occupied slot identity independent of metadata, real session/frame provenance, reconnect/ABA, ready history and sale freshness remain open. Equal scans/counts/names do not prove atomicity or continuity. Unknown is not abandonment, completion, capacity or destructive permission.
-
-Master8382a7ec05a64212ea0a237159dca427a0767425 and backupc43c50d8d5d6775055f19bf018b52930a264d4a4 are not write targets. PR34 already merged;35/36 preserved;25 excluded. No merge, force push, deployment, installed-bot, Navigation.dll, mesh or runtime-capture changes. Original WoW3.3.5a build12340; Lua5.1 checks only if Lua changes. Independent review and live acceptance remain pending.
-
-After W42: owner-scoped item protection; atomic FILE reload (not runtime/profile clearing); merchant/mail/discard/consumption; vendor discovery/settings; rest/restart/cancellation; special quests; roster; combat/support; native/lifts.
+The prior root handovers are preserved byte-for-byte in `docs/audit/2026-09-14/pre-publication/`. Earlier PR39/40/41/42 checkpoints, graphs, original ZIP and their attribution remain intact. Their old next-step and reconnect instructions are historical where this checkpoint supersedes them.
