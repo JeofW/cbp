@@ -33,6 +33,9 @@ namespace WholesomeAQ
         public int MapId { get; init; }
         public double X { get; init; }
         public double Y { get; init; }
+        // Explicit pure snapshots retain their complete-input default. The live
+        // producer below derives this flag from the actual raw/metadata owner.
+        public bool HasCompleteQuestLog { get; init; } = true;
         public bool HasAuthoritativeCompletions { get; init; }
         public IReadOnlyCollection<uint> CompletedQuestIds { get; init; } = Array.Empty<uint>();
         public IReadOnlyList<QuestSchedulerAcceptedQuest> AcceptedQuests { get; init; } = Array.Empty<QuestSchedulerAcceptedQuest>();
@@ -129,7 +132,9 @@ namespace WholesomeAQ
             QuestRecoveryRuntime.EnsureConfigured(
                 _dataLoader.DatasetFingerprint,
                 NavigationProviderFingerprint());
-            var accepted = me.QuestLog.GetAllQuests()
+            QuestLog questLog = me.QuestLog;
+            QuestLogSnapshot observation = questLog.CaptureSnapshot();
+            var accepted = observation.Quests
                 .OrderBy(quest => quest.Id)
                 .Select(quest => new QuestSchedulerAcceptedQuest
                 {
@@ -150,6 +155,7 @@ namespace WholesomeAQ
                 MapId = (int)me.MapId,
                 X = me.Location.X,
                 Y = me.Location.Y,
+                HasCompleteQuestLog = observation.IsComplete,
                 HasAuthoritativeCompletions = authoritative,
                 CompletedQuestIds = authoritative ? completed : Array.Empty<uint>(),
                 AcceptedQuests = accepted,
@@ -157,6 +163,33 @@ namespace WholesomeAQ
                     .ToDictionary(group => group.Key, group => group.Sum(item => (long)item.StackCount))
             };
 
+            // Raw observations are samples, not a native transaction/session lease.
+            // Recheck the same sample at each fallible publication boundary. The
+            // nested lease check also protects replacement work from reentrant
+            // player/world observations; an obsolete failure must not revoke it.
+            bool TryApplyObserved(Action apply)
+            {
+                bool applied = false;
+                tryApplyPublication(() =>
+                {
+                    bool current = snapshot.HasCompleteQuestLog && questLog.IsSnapshotCurrent(observation);
+                    tryApplyPublication(() =>
+                    {
+                        if (!current)
+                        {
+                            InvalidatePublishedWork("Quest observations incomplete or changed; waiting for a fresh scan.");
+                            return;
+                        }
+                        apply();
+                        applied = true;
+                    });
+                });
+                return applied;
+            }
+
+            // Admission precedes recovery selection/marks and navigation probes.
+            if (!TryApplyObserved(() => { }))
+                return false;
             QuestScheduleResult candidate = MaterializeSchedule(
                 db,
                 snapshot,
@@ -175,7 +208,7 @@ namespace WholesomeAQ
 
             // Preparation can invoke external navigation/player owners. An obsolete
             // continuation must not change a replacement's scan state or output file.
-            if (!tryApplyPublication(() => candidate = ApplyScanExpansionBeforeFallback(candidate)))
+            if (!TryApplyObserved(() => candidate = ApplyScanExpansionBeforeFallback(candidate)))
                 return false;
 
             string path = null;
@@ -184,7 +217,7 @@ namespace WholesomeAQ
             {
                 string xml = _profileBuilder.BuildProfileXml(
                     candidate.Plan, db, me.ZoneText, me.Name, me.Level, CurrentVendors);
-                if (!tryApplyPublication(() => path = _profileBuilder.WriteProfile(xml)))
+                if (!TryApplyObserved(() => path = _profileBuilder.WriteProfile(xml)))
                     return false;
             }
             else if (candidate.FallbackMode == QuestFallbackMode.ValidatedGrind)
@@ -193,7 +226,7 @@ namespace WholesomeAQ
             }
 
             bool published = false;
-            tryApplyPublication(() =>
+            TryApplyObserved(() =>
             {
                 // Null output is the builder's supported no-output mode, not an
                 // instruction to reuse the prior profile or authorize its old child.
@@ -204,7 +237,7 @@ namespace WholesomeAQ
                 // Loading raises synchronous host events. They can stop/restart the
                 // bot reentrantly, even while the refresh monitor is held. Recheck the
                 // real lease after those events, rather than revoking in a late catch.
-                tryApplyPublication(() =>
+                TryApplyObserved(() =>
                 {
                     _lastRecoveryContext = context;
                     LastStatus = candidate.Status;
@@ -286,6 +319,15 @@ namespace WholesomeAQ
             if (db == null) throw new ArgumentNullException(nameof(db));
             if (snapshot == null) throw new ArgumentNullException(nameof(snapshot));
             if (evaluate == null) throw new ArgumentNullException(nameof(evaluate));
+            if (!snapshot.HasCompleteQuestLog || snapshot.AcceptedQuests == null)
+            {
+                return new QuestScheduleResult
+                {
+                    FallbackMode = QuestFallbackMode.TimedIdle,
+                    EarliestRetryUtc = snapshot.UtcNow.Add(ScanCooldown),
+                    Status = "Quest observations incomplete; waiting for a fresh scan."
+                };
+            }
 
             var completed = new HashSet<uint>(snapshot.CompletedQuestIds ?? Array.Empty<uint>());
             if (snapshot.HasAuthoritativeCompletions && markCompleted != null)

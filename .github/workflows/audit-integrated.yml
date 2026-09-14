@@ -11,7 +11,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   combined:
-    if: github.repository == 'JeofW/CopilotBuddy-private' && github.event.repository.private == true
+    if: github.repository == 'jeofwong/CopilotBuddy-private' && github.event.repository.private == true
     runs-on: windows-2022
     timeout-minutes: 25
     env:
