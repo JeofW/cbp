@@ -13,7 +13,21 @@ namespace WholesomeAQ
  public enum WoWItemClass { Miscellaneous,Projectile,Quiver,Reagent,Key }
  public sealed class Item { public uint Entry; public WoWItemClass ItemClass; }
  public sealed class Player { public bool IsValid=true,IsAlive=true; public QuestLog QuestLog {get;}=new(); public List<Item> BagItems {get;}=new(); }
- public sealed class QuestLog { public List<AcceptedQuest>? Quests {get;set;}=new(); public Exception? Failure; public List<AcceptedQuest>? GetAllQuests() { if(Failure!=null)throw Failure;return Quests; } }
+ // Historical 23-case sale unit tests script a stable external quest observation.
+ // This double is NOT the raw snapshot implementation or freshness verification;
+ // SaleObservationRegressionTests links the real QuestLog and snapshot instead.
+ public sealed class QuestLog
+ {
+  public List<AcceptedQuest>? Quests {get;set;}=new(); public Exception? Failure;
+  public List<AcceptedQuest>? GetAllQuests() { if(Failure!=null)throw Failure;return Quests; }
+  public StableSaleObservation CaptureSnapshot() => new(GetAllQuests());
+  public bool IsSnapshotCurrent(StableSaleObservation _) => true;
+ }
+ public sealed class StableSaleObservation(List<AcceptedQuest>? quests)
+ {
+  public bool IsComplete => quests != null;
+  public List<AcceptedQuest>? Quests => quests;
+ }
  public sealed class AcceptedQuest { public uint Id; public bool IsCompleted; }
  public sealed class Objective { public int ItemId; }
  public sealed class QuestEntry { public int Id,StartItem; public List<Objective>? Objectives=new(); }
