@@ -321,6 +321,13 @@ internal static class QuestPublicationRegressionTests
             Set(memory, "_hProcess", new IntPtr(-1));
             Bytes(0xBD0792, new byte[] { 1 }); Bytes(0xB6A9E0, BitConverter.GetBytes(0u));
             Bytes(0xBD088C, BitConverter.GetBytes(1u));
+            // ZoneText reads a client-global pointer, then an actual 512-byte string.
+            // Both observations must belong to this fixture, not arbitrary memory
+            // at the same numeric address in the Windows test process.
+            uint zoneText = start + 49152;
+            byte[] zoneBytes = System.Text.Encoding.UTF8.GetBytes("W42 Publication Zone\0");
+            Marshal.Copy(zoneBytes, 0, new IntPtr(unchecked((int)zoneText)), zoneBytes.Length);
+            Bytes(12388232U, BitConverter.GetBytes(zoneText));
             Write(start + 8, descriptor); Write(start + 0x14, 4); Write(start + 0xBC, 0);
             Type fields = typeof(WoWUnit).Assembly.GetTypes().Single(t => t.IsEnum && t.Name == "UnitFields");
             Write(descriptor + Convert.ToUInt32(Enum.Parse(fields, "Level")) * 4, 20);
@@ -328,6 +335,8 @@ internal static class QuestPublicationRegressionTests
             Write(descriptor + 632, 867); Write(descriptor + 636, (uint)WoWDescriptorQuestFlags.Completed);
             typeof(ObjectManager).GetProperty("Wow")!.SetValue(null, memory);
             ObjectManager.Executor = null; Player = new ObservedPlayer(start); ObjectManager.Me = Player;
+            if (Player.ZoneText != "W42 Publication Zone")
+                throw new InvalidOperationException("Controlled zone text did not reach the actual memory reader.");
             // Reading a StyxWoW static field initializes Landmarks. Install its
             // controlled observations first; the constants below match the actual
             // Landmarks fields, not the differing hexadecimal comments there.
