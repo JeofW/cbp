@@ -1,0 +1,32 @@
+name: Prepare hash-locked scan exception Git objects
+on:
+  push:
+    branches: [audit/next-42-ready-owner-20260914]
+    paths: [.github/workflows/audit-scan-exception-candidate.yml, docs/audit/2026-09-14/preparation/prepare_scan_candidate.py]
+permissions:
+  contents: read
+jobs:
+  prepare:
+    if: github.repository == 'JeofW/CopilotBuddy-private' && github.event.repository.private == true && github.ref == 'refs/heads/audit/next-42-ready-owner-20260914'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    env:
+      GIT_LFS_SKIP_SMUDGE: '1'
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+          lfs: false
+      - name: Prepare two pinned source objects without updating any ref
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python3 docs/audit/2026-09-14/preparation/prepare_scan_candidate.py
+      - name: Retain only source and immutable candidate identities, never credentials
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: scan-exception-candidate-${{ github.sha }}
+          path: ${{ runner.temp }}/scan-exception-candidate/
+          retention-days: 14
+          if-no-files-found: error
