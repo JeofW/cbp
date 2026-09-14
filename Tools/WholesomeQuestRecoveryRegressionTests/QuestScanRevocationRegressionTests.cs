@@ -45,11 +45,13 @@ internal static class QuestScanRevocationRegressionTests
                 Check(rejected, "the existing null-argument contract changed");
                 Idle(scheduler);
             })),
-            ("unavailable scan clears a previously published path and accepted work set", () => WithoutPlayer(() =>
+            ("unavailable scan revokes publication without releasing scheduled-item protection", () => WithoutPlayer(() =>
             {
                 var scheduler = Scheduler(); Seed(scheduler);
                 ObserveUnavailableScan(scheduler);
                 Idle(scheduler);
+                Check(scheduler.ActiveQuestIds != null && scheduler.ActiveQuestIds.Contains(867),
+                    "revoking execution must not release the scheduled-item protection used by SellByQuality");
             })),
             ("missing database clears prior publication instead of just returning false", () => WithoutPlayer(() =>
             {
@@ -164,8 +166,10 @@ internal static class QuestScanRevocationRegressionTests
     {
         Check(scheduler.LastSchedule.FallbackMode == QuestFallbackMode.TimedIdle && scheduler.LastSchedule.Selected.Count == 0,
             "unknown observation retained execution permission");
-        Check(scheduler.CurrentProfilePath == null && scheduler.LastQuestCount == 0 &&
-            (scheduler.ActiveQuestIds == null || scheduler.ActiveQuestIds.Count == 0), "stale publication metadata survived invalidation");
+        // ActiveQuestIds is also a sale-protection input. It is not execution permission;
+        // retain that conservative protection until a successful new observation replaces it.
+        Check(scheduler.CurrentProfilePath == null && scheduler.LastQuestCount == 0,
+            "stale profile publication survived invalidation");
     }
 
     private static void ObserveUnavailableScan(QuestScheduler scheduler, string? grind = null)
