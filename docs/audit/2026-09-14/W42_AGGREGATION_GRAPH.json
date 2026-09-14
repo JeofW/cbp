@@ -1,0 +1,42 @@
+{
+  "schema": 1,
+  "scope": "Incremental W42 execution reconciliation, not a replacement architecture graph",
+  "tested_commit": "cd82129ec81f8e51fa12620f95b307e2ca5b34b6",
+  "nodes": [
+    {"id": "module_initializer_abort", "status": "historically_reproduced", "evidence": "34769629603/10321233037; 25 main cases masked"},
+    {"id": "post_init_aggregation", "status": "regression_verified", "evidence": "34794252845: both variants execute 25 main, five ready and five scheduler records; later Wholesome groups and Main finish"},
+    {"id": "raw_acceptance", "owner": "QuestLog.GetQuestId/ContainsQuest", "status": "source_confirmed"},
+    {"id": "optional_materialization", "owner": "PlayerQuest.FromId/QuestLog.GetAllQuests", "status": "controlled_reproduced", "risk": "occupied identity omitted when cache metadata is missing"},
+    {"id": "completion_owner", "owner": "QuestLog.GetQuestCompletionSnapshot", "status": "inherited_repair_regression_verified", "repair_commit": "1dccead847f330430f148609858c6f89d5724ad8", "evidence": "identical 15-case fixture: baseline 10/15, current 15/15"},
+    {"id": "ready_history", "status": "controlled_assertions_unrepaired", "evidence": "four assertions and genuine-departure control on both variants"},
+    {"id": "sale_authorization", "status": "controlled_assertions_unrepaired", "evidence": "eight remaining extracted boundary assertions, overlapping two main observation sale assertions"},
+    {"id": "reliable_identity_read", "status": "open", "risk": "memory read default zero is not proof of successful empty-slot read"},
+    {"id": "session_provenance", "status": "open", "risk": "PID/name/count/equal scans do not establish lifetime generation or atomicity"},
+    {"id": "scan", "owner": "Wholesome ScanAndRefresh", "status": "open_fixture_isolation", "evidence": "unavailable-owner case currently NullReferenceException; not a clean behavioral reproduction"},
+    {"id": "schedule", "owner": "MaterializeSchedule", "status": "one_controlled_assertion_unrepaired", "evidence": "null accepted input fabricates pickup; complete-empty control passes"},
+    {"id": "publication", "owner": "ProfileBuilder.WriteProfile -> DoScan/ProfileManager.LoadNew", "status": "open_end_to_end_coverage"},
+    {"id": "executing_permission", "owner": "WholesomeExecutionGate", "status": "open_invalidation_coverage"},
+    {"id": "proposed_contracts", "status": "unimplemented_not_reproduced_defects", "evidence": "19 CaptureSnapshot and two HasCompleteQuestLog cases"},
+    {"id": "integrated_baseline", "status": "executed_not_green", "evidence": "34794252860/10329172220: all 17 build, 14 run exit 0, three run exit 1; original 14 entries retained"},
+    {"id": "artifact_capture", "status": "repaired_and_verified", "evidence": "literal-path hashing; final ZIP digests and 41/41/65 internal entries verified"},
+    {"id": "live_behavior", "status": "unverified", "risk": "controlled merchant calls and offline cases do not prove item deletion or client/server acceptance"}
+  ],
+  "edges": [
+    {"from": "module_initializer_abort", "to": "post_init_aggregation", "relation": "fixed_execution_masking_without_removing_assertions"},
+    {"from": "raw_acceptance", "to": "optional_materialization", "relation": "identity_information_loss_boundary"},
+    {"from": "raw_acceptance", "to": "completion_owner", "relation": "inherited_fix_decides_acceptance_before_metadata"},
+    {"from": "optional_materialization", "to": "ready_history", "relation": "metadata_loss_misread_as_departure"},
+    {"from": "optional_materialization", "to": "sale_authorization", "relation": "omitted_accepted_requirements"},
+    {"from": "reliable_identity_read", "to": "scan", "relation": "required_foundation"},
+    {"from": "session_provenance", "to": "scan", "relation": "required_owner_lifetime"},
+    {"from": "scan", "to": "schedule", "relation": "actual_production_observation_handoff_to_close"},
+    {"from": "schedule", "to": "publication", "relation": "actual_profile_handoff_to_close"},
+    {"from": "publication", "to": "executing_permission", "relation": "must_revoke_already_executing_stale_plan"},
+    {"from": "session_provenance", "to": "sale_authorization", "relation": "revalidate_before_side_effect"},
+    {"from": "post_init_aggregation", "to": "integrated_baseline", "relation": "all_retained_groups_observable_even_when_w42_red"},
+    {"from": "artifact_capture", "to": "integrated_baseline", "relation": "same_commit_hashed_evidence"},
+    {"from": "integrated_baseline", "to": "live_behavior", "relation": "does_not_establish"}
+  ],
+  "w42_complete": false,
+  "counts_overlap": true
+}
