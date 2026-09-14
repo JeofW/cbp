@@ -30,19 +30,25 @@ internal static class QuestExecutorOwnershipRegressionTests
             { c.Start(); c.Executor.Stop(c.Context); c.Executor.Stop(c.Context); Check(c.Body.Cleanups == 1, "nested cleanup was skipped or repeated"); })),
             ("parent selector stop reaches the actual nested branch", () => With(c =>
             { c.UseParent(); c.Start(); c.Root.Stop(c.Context); Check(c.Body.Cleanups == 1, "parent stop orphaned the forced branch"); })),
-            ("running deferral stops effects and yields a terminal cycle", () => With(c =>
+            ("running deferral suspends effects and resumes a fresh branch lifetime", () => With(c =>
             {
                 c.Start(); c.Behavior.Deferred = true;
-                Check(c.Tick() == RunStatus.Failure && c.Body.Ticks == 1 && c.Body.Cleanups == 1,
-                    "deferred continuation ticked or retained its running branch");
+                Check(c.Tick() == RunStatus.Running && c.Body.Ticks == 1 && c.Body.Cleanups == 1,
+                    "deferred continuation ticked or retained its active branch");
+                Check(c.Tick() == RunStatus.Running && c.Body.Ticks == 1 && c.Body.Cleanups == 1,
+                    "repeated deferral resumed an effect or repeated cleanup");
                 Check(c.Order.Nodes.Count == 1 && ReferenceEquals(c.Order.CurrentBehavior, c.Behavior)
                     && c.Behavior.Disposals == 0, "temporary deferral advanced or disposed the retained behavior");
+                c.Behavior.Deferred = false;
+                Check(c.Tick() == RunStatus.Running && c.Body.Starts == 2 && c.Body.Ticks == 2,
+                    "cleared deferral did not resume a new branch lifetime");
             })),
-            ("initial deferral yields without starting an effect", () => With(c =>
+            ("initial deferral retains the existing suspended-iterator contract", () => With(c =>
             {
                 c.Behavior.Deferred = true; c.Root.Start(c.Context);
-                Check(c.Tick() == RunStatus.Failure && c.Body.Starts == 0 && c.Body.Ticks == 0,
-                    "initial deferral retained an endless running selection");
+                Check(c.Tick() == RunStatus.Running && c.Tick() == RunStatus.Running
+                    && c.Body.Starts == 0 && c.Body.Ticks == 0,
+                    "initial deferral broke the retained suspended-iterator contract");
             })),
             ("completion during a running branch stops effects and advances once", () => With(c =>
             {
