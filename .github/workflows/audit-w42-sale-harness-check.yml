@@ -1,0 +1,141 @@
+name: Audit W42 sale harness paired verification
+on:
+  push:
+    branches: [audit/next-42-scan-entry-20260914]
+    paths: [.github/workflows/audit-w42-sale-harness-check.yml]
+permissions:
+  contents: read
+jobs:
+  paired:
+    if: github.repository == 'JeofW/CopilotBuddy-private' && github.event.repository.private == true
+    runs-on: windows-2022
+    timeout-minutes: 25
+    permissions:
+      contents: write
+    env:
+      GIT_LFS_SKIP_SMUDGE: '1'
+      GIT_CONFIG_COUNT: '2'
+      GIT_CONFIG_KEY_0: core.longpaths
+      GIT_CONFIG_VALUE_0: 'true'
+      GIT_CONFIG_KEY_1: core.autocrlf
+      GIT_CONFIG_VALUE_1: 'false'
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with: {persist-credentials: false, lfs: false, fetch-depth: 0}
+      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9
+        with: {dotnet-version: '10.0.x'}
+      - name: Prepare identical fixed external fixtures for the existing red and green owners
+        shell: python
+        run: |
+          import pathlib,subprocess,hashlib,json,os,difflib
+          out=pathlib.Path(os.environ['RUNNER_TEMP'])/'sale-harness-check';out.mkdir()
+          def change(path,expected,after,edits):
+              p=pathlib.Path(path);before=p.read_bytes()
+              if hashlib.sha256(before).hexdigest()!=expected:raise RuntimeError('Unexpected test preimage '+path)
+              text=before.decode()
+              for old,new in edits:
+                  if text.count(old)!=1:raise RuntimeError('Ambiguous test boundary '+path)
+                  text=text.replace(old,new)
+              data=text.encode()
+              if hashlib.sha256(data).hexdigest()!=after:raise RuntimeError('Unexpected test postimage '+path)
+              p.write_bytes(data)
+              (out/(p.name+'.diff')).write_text(''.join(difflib.unified_diff(before.decode().splitlines(True),text.splitlines(True),fromfile='a/'+path,tofile='b/'+path)),encoding='utf-8')
+              return {'path':path,'blob':hashlib.sha1(b'blob '+str(len(data)).encode()+b'\0'+data).hexdigest(),'sha256':after}
+          line='    <Compile Include="../../Styx/Logic/Questing/QuestLog.cs" Link="Production/QuestLog.cs" />'
+          records=[change('Tools/QuestCompletionOwnerRegressionTests/QuestCompletionOwnerRegressionTests.csproj','88200925e77a7bbdfc2f6c2fc3e1465612c30579e9201c65f4d3cc415c44c434','6a65647a38cd09b72936165b2fbb3e3946f0f95a4526ce818d5918eb90cec349',[(line,line+'\n    <Compile Include="../../Styx/Logic/Questing/QuestLogSnapshot*.cs" Link="Production/%(Filename)%(Extension)" />')])]
+          old='            Bytes(0xBD088C, BitConverter.GetBytes(1u));'
+          new=old+'\n            // ZoneText reads a client-global pointer, then an actual 512-byte string.\n            // Both observations must belong to this fixture, not arbitrary memory\n            // at the same numeric address in the Windows test process.\n            uint zoneText = start + 49152;\n            byte[] zoneBytes = System.Text.Encoding.UTF8.GetBytes("W42 Publication Zone\\0");\n            Marshal.Copy(zoneBytes, 0, new IntPtr(unchecked((int)zoneText)), zoneBytes.Length);\n            Bytes(12388232U, BitConverter.GetBytes(zoneText));'
+          old2='            // Reading a StyxWoW static field initializes Landmarks.'
+          new2='            if (Player.ZoneText != "W42 Publication Zone")\n                throw new InvalidOperationException("Controlled zone text did not reach the actual memory reader.");\n'+old2
+          records.append(change('Tools/WholesomeQuestRecoveryRegressionTests/QuestPublicationRegressionTests.cs','8f653e557302007c00f796186d75c3c19d5929144a45ff4bfdad69330d340caa','dc2efce6c5617951f28815d8303c564a8c606811e27cd223a48fe471f32fb74f',[(old,new),(old2,new2)]))
+          subprocess.run(['git','diff','--check'],check=True)
+          if set(subprocess.check_output(['git','diff','--name-only'],text=True).splitlines())!={r['path'] for r in records}:raise RuntimeError('Unexpected fixture edits')
+          def commit(message):
+              subprocess.run(['git','add','--all'],check=True)
+              subprocess.run(['git','-c','user.name=Audit Fixture','-c','user.email=audit-fixture@example.invalid','-c','commit.gpgsign=false','commit','-m',message],check=True)
+              return subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
+          green=commit('Local-only controlled fixtures over committed sale repair')
+          sale='runtime-snapshot/Bots/WholesomeAutoQuest-master/WholesomeAutoQuest.cs'
+          redbytes=subprocess.check_output(['git','show','ee60f6c5705ad63b0b1eb4cb4b6851c90a3000ce:'+sale])
+          if hashlib.sha256(redbytes).hexdigest()!='bd8d7eea211159b3742f7359d14aa8157bd234a67f5379f12bdbd22c2dab3ad7':raise RuntimeError('Unexpected red production')
+          pathlib.Path(sale).write_bytes(redbytes);red=commit('Local-only identical fixtures with existing clean-red sale owner')
+          roots={}
+          for variant,sha in [('red',red),('green',green)]:
+              path=pathlib.Path(os.environ['RUNNER_TEMP'])/('sale-harness-'+variant)
+              subprocess.run(['git','worktree','add','--detach',str(path),sha],check=True)
+              roots[variant]={'path':str(path),'local_only_commit':sha}
+          (out/'pair.json').write_text(json.dumps({'github_source_commit':os.environ['GITHUB_SHA'],'production_green':'1a74f798fc3391827e8a21e0f671d003d685296e','production_red':'ee60f6c5705ad63b0b1eb4cb4b6851c90a3000ce','fixtures':records,'variants':roots,'local_commits_not_published':True,'game_attached':False},indent=2))
+      - name: Execute both complete focused runners with Windows x86
+        shell: pwsh
+        run: |
+          $out=Join-Path $env:RUNNER_TEMP 'sale-harness-check'
+          $installer=Join-Path (Split-Path $env:RUNNER_WORKSPACE) '_actions/actions/setup-dotnet/67a3573c9a986a3f9c594539f4ab511d57bb3ce9/externals/install-dotnet.ps1'
+          $dest=Join-Path $env:RUNNER_TEMP 'dotnet-x86'
+          foreach($framework in @('dotnet','windowsdesktop')) {
+            & pwsh -NoProfile -File $installer -Channel '10.0' -Runtime $framework -Architecture x86 -InstallDir $dest -NoPath *> (Join-Path $out "install-$framework.txt")
+            if($LASTEXITCODE -ne 0){throw 'x86 runtime installation failed'}
+          }
+          $pair=Get-Content (Join-Path $out 'pair.json') -Raw | ConvertFrom-Json
+          $exits=@{}
+          foreach($variant in @('red','green')) {
+            $v=$pair.variants.$variant
+            python (Join-Path $v.path 'Tools/W42TestAggregation/verify.py') --repo $v.path --out (Join-Path $out $variant) --runtime "$dest/dotnet.exe" --fixtures $v.local_only_commit --variant current *> (Join-Path $out "$variant-runner.txt")
+            $exits[$variant]=$LASTEXITCODE
+          }
+          $exits|ConvertTo-Json|Set-Content -Encoding utf8 (Join-Path $out 'runner-exits.json')
+          exit 0
+      - name: Verify all retained controls and store only two immutable test blobs
+        shell: python
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          import pathlib,json,hashlib,os,urllib.request,re
+          out=pathlib.Path(os.environ['RUNNER_TEMP'])/'sale-harness-check';pair=json.loads((out/'pair.json').read_text());checks={}
+          hashes={};normalized={}
+          for variant in ['red','green']:
+              root=out/variant
+              read=lambda n:(root/n).read_text(encoding='utf-8-sig',errors='replace')
+              result=json.loads(read('results.json'));checks[variant+' all four builds']=len(result['suites'])==4 and all(x['build']['exit']==0 for x in result['suites'])
+              checks[variant+' expected exits']=all(x['run']['exit']==(1 if x['suite']=='WholesomeQuestRecoveryRegressionTests' or (variant=='red' and x['suite']!='QuestCompletionOwnerRegressionTests') else 0) for x in result['suites'])
+              w=read('WholesomeQuestRecoveryRegressionTests-run.txt');q=read('QuestLogObservationRegressionTests-run.txt')
+              for pattern in ['Publication scenarios: 21/21; assertions=0; unexpected=0','Publication acceptance scenarios: 9/9; assertions=0; unexpected=0','Raw-memory scenarios: 18/18; assertions=0; missing_contracts=0; unexpected=0','Ready lifecycle scenarios: 3/3; assertions=0; unexpected=0','Scan entry scenarios: 15/15; assertions=0; unexpected=0','Scan failure scenarios: 14/14; assertions=0; unexpected=0','Scan retry scenarios: 6/6','Scan revocation scenarios: 13/13','Relation identity: 23/23;']:
+                  checks[variant+' '+pattern]=pattern in w
+              checks[variant+' only retained scheduler aggregate failure']=re.findall(r'^FAIL aggregate group: ([^:]+):',w,re.M)==['QuestLogCompletenessRegressionTests']
+              checks[variant+' completion15']='Completion-owner cases: 15/15; assertions 0; unexpected 0' in read('QuestCompletionOwnerRegressionTests-run.txt')
+              checks[variant+' sale28']=('Sale observation scenarios: '+('11/28; assertions=17' if variant=='red' else '28/28; assertions=0')+'; unexpected=0') in q
+              checks[variant+' main25']=('Quest-log observation scenarios: '+('23/25' if variant=='red' else '25/25')) in q
+              checks[variant+' ready16']='Raw-ready scenarios: 16/16; assertions=0; unexpected=0' in q
+              checks[variant+' ready5']='Ready-log observation scenarios: 5/5' in q
+              b=json.loads(read('boundary-cases.json'));checks[variant+' boundary24']=b['executed_cases']==24 and b['unexpected_errors']==0 and b['assertion_failures']==(8 if variant=='red' else 0)
+              hashes[variant]={x['path'].replace('\\','/'):x['sha256'] for x in json.loads(read('working-source-hashes.json'))}
+              normalized[variant]={str(p.relative_to(root/'normalized')).replace('\\','/'):hashlib.sha256(p.read_bytes()).hexdigest() for p in (root/'normalized').rglob('*') if p.is_file()}
+          sale='runtime-snapshot/Bots/WholesomeAutoQuest-master/WholesomeAutoQuest.cs'
+          checks['same source input sets']=hashes['red'].keys()==hashes['green'].keys()
+          checks['only sale production differs']=[k for k in hashes['red'] if hashes['red'][k]!=hashes['green'][k]]==[sale]
+          checks['identical normalized fixtures']=normalized['red']==normalized['green']
+          (out/'checks.json').write_text(json.dumps(checks,indent=2))
+          if not all(checks.values()):raise RuntimeError('Paired verification failed; no blobs stored')
+          if os.environ['GITHUB_REPOSITORY']!='JeofW/CopilotBuddy-private':raise RuntimeError('Wrong repository')
+          for item in pair['fixtures']:
+              data=(pathlib.Path(pair['variants']['green']['path'])/item['path']).read_bytes()
+              if hashlib.sha256(data).hexdigest()!=item['sha256']:raise RuntimeError('Fixture changed')
+              req=urllib.request.Request('https://api.github.com/repos/'+os.environ['GITHUB_REPOSITORY']+'/git/blobs',data=json.dumps({'content':data.decode(),'encoding':'utf-8'}).encode(),headers={'Authorization':'Bearer '+os.environ['GH_TOKEN'],'Accept':'application/vnd.github+json','Content-Type':'application/json','X-GitHub-Api-Version':'2022-11-28'},method='POST')
+              with urllib.request.urlopen(req,timeout=60) as response:stored=json.load(response)
+              if stored['sha']!=item['blob']:raise RuntimeError('Stored blob mismatch')
+          (out/'stored-test-blobs.json').write_text(json.dumps(pair['fixtures'],indent=2))
+          print('Both complete focused variants verified; two immutable test blobs stored; no remote commit/ref/merge.')
+      - name: Hash all transferred evidence
+        if: always()
+        shell: python
+        run: |
+          import pathlib,hashlib,json,os
+          out=pathlib.Path(os.environ['RUNNER_TEMP'])/'sale-harness-check';out.mkdir(exist_ok=True)
+          rows=[{'path':str(p.relative_to(out)).replace('\\','/'),'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in sorted(out.rglob('*')) if p.is_file() and p!=out/'files-sha256.json']
+          (out/'files-sha256.json').write_text(json.dumps(rows,indent=2))
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: w42-sale-harness-check-${{ github.sha }}
+          path: ${{ runner.temp }}/sale-harness-check/
+          retention-days: 14
+          if-no-files-found: error
