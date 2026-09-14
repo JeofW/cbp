@@ -1179,7 +1179,7 @@ namespace WholesomeAQ
                     });
                 return runAgain;
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not ThreadInterruptedException && ex is not OperationCanceledException)
             {
                 Log($"Scan error: {ex.Message}");
                 return false;

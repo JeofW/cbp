@@ -104,6 +104,10 @@ namespace WholesomeAQ
                 return false;
             }
 
+            // A refresh is not permission to keep executing the previous plan while
+            // fresh identity/log/context reads can fail. Revoke before those reads;
+            // do not revoke again in a late catch that may belong to an older refresh.
+            InvalidatePublishedWork("Refreshing quest observations; prior work is not authorized.");
             QuestRecoveryRuntime.EnsureConfigured(
                 _dataLoader.DatasetFingerprint,
                 NavigationProviderFingerprint());
