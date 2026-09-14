@@ -177,6 +177,8 @@ namespace WholesomeAQ
             LastSchedule = new QuestScheduleResult
             {
                 FallbackMode = QuestFallbackMode.TimedIdle,
+                // A retry requests a fresh observation; it does not restore stale work.
+                EarliestRetryUtc = DateTime.UtcNow.Add(ScanCooldown),
                 Status = status
             };
             CurrentProfilePath = null;
