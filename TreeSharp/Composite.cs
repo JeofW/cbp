@@ -47,11 +47,12 @@ namespace TreeSharp
 
                 LastStatus = _enumerator.Current;
             }
-            catch (ThreadInterruptedException)
+            catch (Exception signal) when (signal is ThreadInterruptedException
+                || signal is OperationCanceledException)
             {
                 // A run-stop signal is not a failed branch: letting the parent select
                 // a fallback can issue another movement command during shutdown.
-                StopAfterInterruption(context);
+                StopAfterStopSignal(context);
                 throw;
             }
             catch (Exception ex)
@@ -104,11 +105,12 @@ namespace TreeSharp
                 if (_enumerator == null)
                     throw new ApplicationException($"GetEnumerator() returned null for {GetType().Name}");
             }
-            catch (ThreadInterruptedException)
+            catch (Exception signal) when (signal is ThreadInterruptedException
+                || signal is OperationCanceledException)
             {
                 // A run-stop signal is not a failed branch: letting the parent select
                 // a fallback can issue another movement command during shutdown.
-                StopAfterInterruption(context);
+                StopAfterStopSignal(context);
                 throw;
             }
             catch (Exception ex)
@@ -118,7 +120,7 @@ namespace TreeSharp
             }
         }
 
-        private void StopAfterInterruption(object context)
+        private void StopAfterStopSignal(object context)
         {
             LastStatus = RunStatus.Failure;
             try
@@ -127,7 +129,7 @@ namespace TreeSharp
             }
             catch (Exception cleanupError)
             {
-                // Preserve the original interruption even when cleanup/log subscribers
+                // Preserve the original stop signal even when cleanup/log subscribers
                 // fail. An ordinary cleanup error cannot authorize parent fallback.
                 try { Styx.Helpers.Logging.WriteException(cleanupError); }
                 catch { }
@@ -137,7 +139,7 @@ namespace TreeSharp
         public virtual void Stop(object context)
         {
             // Detach before user cleanup, including reentrant/throwing cleanup.
-            // A later Start must never reuse the interrupted iterator.
+            // A later Start must never reuse the stopped iterator.
             var enumerator = _enumerator;
             _enumerator = null;
             try

@@ -36,118 +36,229 @@ public class ForcedBehaviorExecutor : Composite
 
     public Bots.Quest.QuestOrder.QuestOrder Order { get; private set; }
 
+    public override void Start(object context)
+    {
+        // This executor owns a nested branch that is not a GroupComposite child.
+        // A restart must release that lifetime before replacing its iterator.
+        Stop(context);
+        base.Start(context);
+    }
+
+    private bool Owns(OrderNodeCollection nodes, OrderNode node, ForcedBehavior behavior)
+    {
+        return ReferenceEquals(Order.Nodes, nodes)
+            && ReferenceEquals(Order.CurrentNode, node)
+            && ReferenceEquals(Order.CurrentBehavior, behavior);
+    }
+
+    private sealed class BranchCleanup : CleanupHandler
+    {
+        private readonly Composite branch;
+
+        internal BranchCleanup(ForcedBehaviorExecutor owner, Composite branch, object context)
+            : base(owner, context)
+        {
+            this.branch = branch;
+        }
+
+        protected override void DoCleanup(object context) => branch.Stop(context);
+    }
+
+    private void ReleaseBranch(BranchCleanup cleanup)
+    {
+        if (cleanup == null)
+            return;
+        // Dispose marks itself first, so callbacks and repeated Stop cannot drain
+        // this branch twice. Remove the completed registration on normal suspension.
+        cleanup.Dispose();
+        if (CleanupHandlers.Count > 0 && ReferenceEquals(CleanupHandlers.Peek(), cleanup))
+            CleanupHandlers.Pop();
+    }
+
     protected override IEnumerable<RunStatus> Execute(object context)
     {
         while (true)
         {
-            if (this.Order.CurrentNode == null)
+            var nodes = Order.Nodes;
+            var node = Order.CurrentNode;
+            var behavior = Order.CurrentBehavior;
+            if (node == null)
             {
                 yield return RunStatus.Failure;
                 yield break;
             }
 
-            if (this.Order.CurrentBehavior == null)
+            if (behavior == null)
             {
-                if (GetQuestNodeCompletionAction(this.Order.CurrentNode) == QuestNodeCompletionAction.Defer)
+                var completion = GetQuestNodeCompletionAction(node);
+                if (!Owns(nodes, node, null))
+                {
+                    yield return RunStatus.Failure;
+                    yield break;
+                }
+                if (completion == QuestNodeCompletionAction.Defer)
                 {
                     yield return RunStatus.Running;
+                    // Do not adopt a replacement order on this suspended iterator.
+                    if (!Owns(nodes, node, null))
+                    {
+                        yield return RunStatus.Failure;
+                        yield break;
+                    }
                     continue;
                 }
 
                 try
                 {
-                    this.Order.CurrentBehavior = this.CreateForcedBehavior(this.Order.CurrentNode);
+                    behavior = CreateForcedBehavior(node);
                 }
-                catch (Exception ex)
+                catch (Exception ex) when (!(ex is OperationCanceledException)
+                    && !(ex is System.Threading.ThreadInterruptedException))
                 {
-                    if (this.Order.CurrentNode.Element != null)
-                        Logging.Write(Color.Red, "Could not create current in quest bot; exception was thrown, Element: {0}", (object)this.Order.CurrentNode.Element);
-                    else
-                        Logging.Write(Color.Red, "Could not create current in quest bot; exception was thrown");
-                    Logging.WriteException(ex);
-                    TreeRoot.Stop();
+                    if (Owns(nodes, node, null))
+                    {
+                        if (node.Element != null)
+                            Logging.Write(Color.Red, "Could not create current in quest bot; exception was thrown, Element: {0}", (object)node.Element);
+                        else
+                            Logging.Write(Color.Red, "Could not create current in quest bot; exception was thrown");
+                        Logging.WriteException(ex);
+                        if (Owns(nodes, node, null))
+                            TreeRoot.Stop();
+                    }
                 }
-                if (this.Order.CurrentBehavior == null)
+                if (!Owns(nodes, node, null))
                 {
-                    Logging.Write("Could not create current in quest bot.");
-                    TreeRoot.Stop();
                     yield return RunStatus.Failure;
                     yield break;
                 }
-                TreeRoot.GoalText = "";
-                this.Order.CurrentBehavior.OnStart();
-            }
-            while (this.Order.CurrentBehavior.IsDone)
-            {
-                Logging.WriteDiagnostic("[FBE] Advancing past {0} (IsDone=true), remaining nodes: {1}",
-                    this.Order.CurrentBehavior, this.Order.Nodes.Count);
-                this.Order.CurrentBehavior.Dispose();
-                this.Order.CurrentBehavior = (ForcedBehavior)null;
-                this.Order.Advance();
-                if (this.Order.Nodes.Count > 0)
+                if (behavior == null)
                 {
-                    if (GetQuestNodeCompletionAction(this.Order.CurrentNode) == QuestNodeCompletionAction.Defer)
-                    {
-                        yield return RunStatus.Running;
-                        break;
-                    }
+                    Logging.Write("Could not create current in quest bot.");
+                    if (Owns(nodes, node, null))
+                        TreeRoot.Stop();
+                    yield return RunStatus.Failure;
+                    yield break;
+                }
+                Order.CurrentBehavior = behavior;
+                TreeRoot.GoalText = "";
+                if (!Owns(nodes, node, behavior))
+                {
+                    yield return RunStatus.Failure;
+                    yield break;
+                }
+                behavior.OnStart();
+            }
 
-                    try
+            Composite branch = null;
+            BranchCleanup cleanup = null;
+            while (true)
+            {
+                if (!Owns(nodes, node, behavior))
+                {
+                    yield return RunStatus.Failure;
+                    yield break;
+                }
+                bool done = behavior.IsDone;
+                if (!Owns(nodes, node, behavior))
+                {
+                    yield return RunStatus.Failure;
+                    yield break;
+                }
+                if (done)
+                {
+                    ReleaseBranch(cleanup);
+                    if (!Owns(nodes, node, behavior))
                     {
-                        this.Order.CurrentBehavior = this.CreateForcedBehavior(this.Order.CurrentNode);
+                        yield return RunStatus.Failure;
+                        yield break;
                     }
-                    catch (Exception ex)
+                    Logging.WriteDiagnostic("[FBE] Advancing past {0} (IsDone=true), remaining nodes: {1}",
+                        behavior, nodes.Count);
+                    if (!Owns(nodes, node, behavior))
                     {
-                        Logging.Write(Color.Red, "Could not create current in quest bot; exception was thrown");
-                        Logging.Write(Color.Red, ex.Message);
-                        TreeRoot.Stop();
+                        yield return RunStatus.Failure;
+                        yield break;
                     }
-                    if (this.Order.CurrentBehavior != null)
+                    behavior.Dispose();
+                    if (!Owns(nodes, node, behavior))
                     {
-                        TreeRoot.GoalText = "";
-                        this.Order.CurrentBehavior.OnStart();
+                        yield return RunStatus.Failure;
+                        yield break;
                     }
-                    else
+                    var nextNode = nodes.Count > 1 ? nodes[1] : null;
+                    Order.CurrentBehavior = null;
+                    Order.Advance();
+                    // OnNoMoreNodes can publish replacement work during Advance.
+                    if (!Owns(nodes, nextNode, null))
                     {
-                        Logging.Write("Could not create current in quest bot.");
-                        TreeRoot.Stop();
+                        yield return RunStatus.Failure;
+                        yield break;
+                    }
+                    break;
+                }
+
+                bool deferred = behavior.IsExecutionDeferred;
+                if (!Owns(nodes, node, behavior))
+                {
+                    yield return RunStatus.Failure;
+                    yield break;
+                }
+                if (deferred)
+                {
+                    ReleaseBranch(cleanup);
+                    cleanup = null;
+                    branch = null;
+                    if (!Owns(nodes, node, behavior))
+                    {
+                        yield return RunStatus.Failure;
+                        yield break;
+                    }
+                    // Preserve the generic suspended-iterator compatibility contract.
+                    // Root-level protective preemption is a separate owner policy.
+                    yield return RunStatus.Running;
+                    continue;
+                }
+
+                if (branch == null)
+                {
+                    behavior.OnTick();
+                    if (!Owns(nodes, node, behavior))
+                    {
+                        yield return RunStatus.Failure;
+                        yield break;
+                    }
+                    branch = behavior.Branch;
+                    if (!Owns(nodes, node, behavior) || branch == null)
+                    {
+                        yield return RunStatus.Failure;
+                        yield break;
+                    }
+                    cleanup = new BranchCleanup(this, branch, context);
+                    CleanupHandlers.Push(cleanup);
+                    branch.Start(context);
+                    if (!Owns(nodes, node, behavior))
+                    {
                         yield return RunStatus.Failure;
                         yield break;
                     }
                 }
-                else
+
+                var status = branch.Tick(context);
+                if (!Owns(nodes, node, behavior))
                 {
                     yield return RunStatus.Failure;
                     yield break;
                 }
-            }
-            if (this.Order.CurrentBehavior == null)
-                continue;
-            if (this.Order.CurrentBehavior.IsExecutionDeferred)
-            {
-                yield return RunStatus.Running;
-                continue;
-            }
-            this.Order.CurrentBehavior.OnTick();
-            // Guard against bot stop during execution — CurrentBehavior or Branch may be set to null
-            // when TreeRoot.Stop() is called while the behavior tree is yielding RunStatus.Running
-            if (this.Order.CurrentBehavior?.Branch == null)
-            {
-                yield return RunStatus.Failure;
+                if (status == RunStatus.Running)
+                {
+                    yield return RunStatus.Running;
+                    continue;
+                }
+                ReleaseBranch(cleanup);
+                // Cleanup is a callback boundary; never read a replacement's status.
+                yield return Owns(nodes, node, behavior) ? status : RunStatus.Failure;
                 yield break;
             }
-            this.Order.CurrentBehavior.Branch.Start(context);
-            while (this.Order.CurrentBehavior?.Branch != null && 
-                   this.Order.CurrentBehavior.Branch.Tick(context) == RunStatus.Running)
-                yield return RunStatus.Running;
-            if (this.Order.CurrentBehavior?.Branch == null)
-            {
-                yield return RunStatus.Failure;
-                yield break;
-            }
-            this.Order.CurrentBehavior.Branch.Stop(context);
-            yield return (RunStatus)((int?)this.Order.CurrentBehavior?.Branch?.LastStatus ?? 0);
-            yield break;
         }
     }
 
