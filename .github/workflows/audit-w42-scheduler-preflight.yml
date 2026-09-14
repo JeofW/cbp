@@ -7,7 +7,7 @@ permissions:
   contents: read
 jobs:
   candidate:
-    if: github.repository == 'JeofW/CopilotBuddy-private' && github.event.repository.private == true
+    if: github.repository == 'jeofwong/CopilotBuddy-private' && github.event.repository.private == true
     runs-on: windows-2022
     timeout-minutes: 25
     permissions:
@@ -76,7 +76,7 @@ jobs:
           if not all(checks.values()):raise RuntimeError('Candidate verification failed; no blob stored')
           p='runtime-snapshot/Bots/WholesomeAutoQuest-master/QuestScheduler.cs';data=pathlib.Path(p).read_bytes()
           assert hashlib.sha256(data).hexdigest()=='6741ddc6c2058cbcbc5722f5e0982972eff37ac45dc83abcd9593c9dd86d2ad8'
-          req=urllib.request.Request('https://api.github.com/repos/JeofW/CopilotBuddy-private/git/blobs',data=json.dumps({'content':data.decode(),'encoding':'utf-8'}).encode(),headers={'Authorization':'Bearer '+os.environ['GH_TOKEN'],'Accept':'application/vnd.github+json','Content-Type':'application/json'},method='POST')
+          req=urllib.request.Request('https://api.github.com/repos/jeofwong/CopilotBuddy-private/git/blobs',data=json.dumps({'content':data.decode(),'encoding':'utf-8'}).encode(),headers={'Authorization':'Bearer '+os.environ['GH_TOKEN'],'Accept':'application/vnd.github+json','Content-Type':'application/json'},method='POST')
           with urllib.request.urlopen(req,timeout=60) as response:stored=json.load(response)
           assert stored['sha']=='61fac208910fc182918cf17a1020bc0d868e765d'
           (out/'verified-blob.json').write_text(json.dumps({'path':p,'blob':stored['sha'],'sha256':hashlib.sha256(data).hexdigest(),'remote_commit_or_ref_updated':False},indent=2))
