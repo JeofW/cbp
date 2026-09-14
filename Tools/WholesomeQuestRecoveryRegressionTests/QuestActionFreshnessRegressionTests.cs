@@ -70,6 +70,27 @@ internal static class QuestActionFreshnessRegressionTests
             { c.StartQuest(); c.Gate.Stop(); c.NoMoreEffects(); })),
             ("new lifecycle epoch cannot reuse the prior published quest effect", () => With(c =>
             { c.StartQuest(); c.Gate.Stop(); c.Gate.Start(); c.NoMoreEffects(); })),
+            ("a newer refresh run cannot borrow the previous publication", () => With(c =>
+            {
+                c.StartQuest(); Check(c.Gate.TryRequest(), "replacement request refused");
+                var replacement = c.Gate.Begin(); Check(replacement.HasValue, "replacement lease absent");
+                c.NoMoreEffects(); Check(c.Gate.IsCurrent(replacement!.Value), "old execution revoked the replacement lease");
+            })),
+            ("actual host profile replacement cannot borrow an old publication", () => With(c =>
+            {
+                string replacement = c.ReplacementProfile();
+                Check(ProfileManager.TryLoadNew(replacement, false) && ProfileManager.XmlLocation == replacement,
+                    "actual replacement profile was not accepted");
+                c.InstallBehavior(); c.NoInitialEffects();
+            })),
+            ("cancelling an actual rescan blocks old quest effects but retains combat", () => With(c =>
+            {
+                c.StartQuest(); var error = new OperationCanceledException("quest-action rescan cancelled");
+                c.BeforeNavigation(() => throw error); Check(c.Gate.TryRequest(), "cancelled rescan request refused");
+                try { Call(c.Bot, "RunPendingRefresh"); throw new AssertionFailure("cancellation did not propagate"); }
+                catch (Exception actual) when (ReferenceEquals(actual, error)) { }
+                c.AssertDeferred(); c.NoMoreEffects(); c.SupportRuns(combat: true);
+            })),
             ("requesting a refresh alone does not suppress unchanged published work", () => With(c =>
             {
                 c.StartQuest(); Check(c.Gate.TryRequest(), "normal refresh request refused");
@@ -181,7 +202,8 @@ internal static class QuestActionFreshnessRegressionTests
                 Rescan(); AssertPublished();
                 sharedRoot.SetValue(null, null);
                 Root = (GroupComposite)Bot.Root;
-                var tree = Descendants(Root).OfType<PrioritySelector>().Single(g => g.Children.Count == 7);
+                var tree = Descendants(Root).OfType<PrioritySelector>().Single(g => g.Children.Count == 7
+                    && Descendants(g.Children[5]).OfType<ForcedBehaviorExecutor>().Any());
                 Check(Descendants(tree.Children[5]).OfType<ForcedBehaviorExecutor>().Count() == 1,
                     "actual forced-behavior executor missing from the quest branch");
                 // External support leaves only. Retain the real service Decorator and
@@ -229,12 +251,24 @@ internal static class QuestActionFreshnessRegressionTests
             Check(Behavior.Body.Ticks == before, "stale publication executed another forced-behavior effect");
             Check(Scheduler.ActiveQuestIds.Contains(867), "uncertainty released published quest-item protection");
         }
+        internal void NoInitialEffects()
+        {
+            Root.Start(Context); rootStarted = true; Tick();
+            Check(Behavior.Body.Ticks == 0, "an unrelated host profile borrowed old quest publication");
+        }
+        internal string ReplacementProfile()
+        {
+            string path = Output + ".replacement.xml"; File.Copy(Output, path); return path;
+        }
+        internal void BeforeNavigation(Action callback) => Set(fixture, "BeforeNavigation", (Action)(() =>
+        { Set(fixture, "BeforeNavigation", null); callback(); }));
         internal void SupportRuns(bool combat)
         {
+            int effects = Behavior.Body.Ticks, supportTicks = (combat ? Combat : Service).Ticks;
             (combat ? Combat : Service).Status = RunStatus.Success;
             Root.Start(Context); rootStarted = true;
-            Check(Tick() == RunStatus.Success && (combat ? Combat : Service).Ticks == 1
-                && Behavior.Body.Ticks == 0, (combat ? "combat" : "service") + " was blocked by quest admission");
+            Check(Tick() == RunStatus.Success && (combat ? Combat : Service).Ticks == supportTicks + 1
+                && Behavior.Body.Ticks == effects, (combat ? "combat" : "service") + " was blocked by quest admission");
         }
         internal void Write(uint address, uint value)
         {
