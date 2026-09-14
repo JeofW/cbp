@@ -269,6 +269,11 @@ internal static class QuestRootPreemptionRegressionTests
             try
             {
                 BotPoi.Current = new BotPoi(PoiType.None);
+                // The raw-publication fixture zeroes unrelated fields. A running
+                // quest control must be alive, not a zero-health death observation.
+                Type fields = typeof(WoWUnit).Assembly.GetTypes().Single(t => t.IsEnum && t.Name == "UnitFields");
+                Write(Descriptor + Convert.ToUInt32(Enum.Parse(fields, "Health")) * 4, 100);
+                Check(Player.IsAlive && !Player.IsGhost, "root control requires an actual alive descriptor");
                 Scheduler = (QuestScheduler)Call(fixture, "Scheduler", Output)!;
                 Bot = NewBot(Scheduler); Gate = (RefreshGate)Get(Bot, "_refreshGate")!; Gate.Start(); Rescan(); AssertPublished();
                 sharedRoot.SetValue(null, null); Root = (GroupComposite)Bot.Root; Configure(Root); InstallBehavior();
