@@ -32,3 +32,11 @@ On the subsequent 14 September retry after the user reported reconnecting, actio
 The live repository already contained PRs #40, #41 and #42 beyond the uploaded PR #39 completion checkpoint. Therefore, do not resume from #39 automatically, repeat its repair, or normalize tests already normalized in #40. Read the latest open PR and its committed source/checkpoint, inspect its actual runs, and extend that frontier. Existing PRs, commits and historical runs belong to their original continuations; a successful read does not make them new work by the current session.
 
 When the user has already reconnected, acknowledge that fact and perform the bounded retry; do not repeatedly ask for the same reconnect without a new actionable error. Preserve an exact handoff even when the UI reports an interrupted or failed response, because a remote commit may already have succeeded.
+
+## Subsequent same-conversation retry: publication plan already committed
+
+After the read-only stop recorded in the local `copilotbuddy-w42-session-checkpoint-20260914.md`, the owner replied `retry`. Fresh discovery returned 89 actions, including native file, GitDB and PR writers. There is still no workflow-dispatch action in this observed surface; use verified existing push triggers rather than inventing dispatch support. Do not ask the owner for the same reconnect again while a legitimate writer can be tried.
+
+The fresh PR42 read returned `99c8165ee5bcd7fce28cc4f2abd8ffc0e36702ca`, not the uploaded `0f4fee60`. The intervening commit adds `docs/audit/2026-09-14/W42_PUBLICATION_SLICE_PLAN.md` only. Comparison from tested `01ec5542` to `99c8165` confirms seven Markdown/JSON paths changed and no production/test/workflow change. Preserve and execute that existing plan; it was not newly authored by this retry. The current open-PR search returned no newer PR. Master and backup still match the protected values above.
+
+This runbook update records the reconciled starting point. Verify its returned commit and PR/branch readback before citing it as successful publishing. It is not a production repair, new C# execution, or publication-boundary closure. The next work remains clean test-first execution of actual schedule/profile publication and already-running authorization, followed only by evidence-supported repair and exact-source Windows verification.
