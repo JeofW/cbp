@@ -1,7 +1,7 @@
 name: Audit W42 uploaded observation boundary
 on:
   push:
-    branches: ['audit/next-42-observation-boundary-20260914']
+    branches: ['audit/next-42-observation-boundary-20260914', 'audit/next-42-completion-owner-20260914']
     paths: ['Styx/Logic/Questing/**', 'runtime-snapshot/Bots/WholesomeAutoQuest-master/**.cs', 'Tools/QuestObservationBoundaryRegressionTests/**', 'Tools/QuestCompletionOwnerRegressionTests/**', '.github/workflows/audit-w42-boundary.yml']
 permissions:
   contents: read

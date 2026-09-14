@@ -1,0 +1,72 @@
+name: Audit supplemental retained Wholesome baseline
+on:
+  push:
+    branches: ['audit/next-42-completion-owner-20260914']
+    paths: ['**.cs', '**.csproj', '.github/workflows/audit-wholesome-retained-baseline.yml']
+permissions:
+  contents: read
+jobs:
+  retained-baseline:
+    if: github.repository == 'JeofW/CopilotBuddy-private' && github.event.repository.private == true
+    runs-on: windows-2022
+    timeout-minutes: 15
+    env:
+      GIT_LFS_SKIP_SMUDGE: '1'
+      GIT_CONFIG_COUNT: '2'
+      GIT_CONFIG_KEY_0: core.longpaths
+      GIT_CONFIG_VALUE_0: 'true'
+      GIT_CONFIG_KEY_1: core.autocrlf
+      GIT_CONFIG_VALUE_1: 'false'
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+          lfs: false
+      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9
+        with:
+          dotnet-version: '10.0.x'
+      - name: Execute retained assertions without disabling pending W42 checks
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $out = Join-Path $env:RUNNER_TEMP 'retained-wholesome-results'
+          New-Item -ItemType Directory -Force $out | Out-Null
+          $sha = (git rev-parse HEAD).Trim()
+          $sha | Out-File (Join-Path $out 'commit.txt')
+          $paths = @('Tools/WholesomePostmergeBaselineRegressionTests', 'Tools/WholesomeQuestRecoveryRegressionTests', 'runtime-snapshot/Bots/WholesomeAutoQuest-master/*.cs', 'Styx/Logic/Questing/QuestLog.cs', 'Styx/Logic/Questing/PlayerQuest.cs', 'CopilotBuddy.csproj', '.github/workflows/audit-wholesome-retained-baseline.yml')
+          $sources = @(git ls-files -- $paths)
+          if ($LASTEXITCODE -ne 0 -or $sources.Count -eq 0) { throw 'Missing source provenance' }
+          $files = @($sources | ForEach-Object { @{path=$_;git_blob=(git rev-parse ($sha + ':' + $_)).Trim();sha256=(Get-FileHash $_ -Algorithm SHA256).Hash.ToLowerInvariant()} })
+          @{source_commit=$sha;scope='retained baseline only; original W42 checks remain enabled';files=$files} | ConvertTo-Json -Depth 8 | Out-File (Join-Path $out 'source-manifest.json')
+          git archive --format=zip -o (Join-Path $out 'sources.zip') HEAD -- $sources
+          if ($LASTEXITCODE -ne 0) { throw 'Source export failed' }
+          $installer = Join-Path (Split-Path $env:RUNNER_WORKSPACE) '_actions/actions/setup-dotnet/67a3573c9a986a3f9c594539f4ab511d57bb3ce9/externals/install-dotnet.ps1'
+          $destination = Join-Path $env:RUNNER_TEMP 'dotnet-x86'
+          foreach ($framework in @('dotnet', 'windowsdesktop')) {
+            & pwsh -NoProfile -File $installer -Channel '10.0' -Runtime $framework -Architecture x86 -InstallDir $destination -NoPath *> (Join-Path $out "install-$framework.txt")
+            if ($LASTEXITCODE -ne 0) { throw "x86 $framework installation failed" }
+          }
+          $runtime = Join-Path $destination 'dotnet.exe'
+          & $runtime --info *> (Join-Path $out 'runtime-info.txt')
+          if ($LASTEXITCODE -ne 0) { throw 'Runtime inspection failed' }
+          $name = 'WholesomePostmergeBaselineRegressionTests'
+          dotnet build "Tools/$name/$name.csproj" -c Release -p:Platform=x86 -v quiet *> (Join-Path $out 'build.txt')
+          $build = $LASTEXITCODE
+          $run = $null
+          if ($build -eq 0) {
+            $dlls = @(Get-ChildItem "Tools/$name/bin" -Filter "$name.dll" -Recurse | Where-Object { $_.FullName -notmatch '[\\/](ref|refint)[\\/]' })
+            if ($dlls.Count -ne 1) { throw 'Unexpected retained executable count' }
+            & $runtime $dlls[0].FullName *> (Join-Path $out 'run.txt')
+            $run = $LASTEXITCODE
+          }
+          @{commit=$sha;build=$build;run=$run;architecture='x86';game_attached=$false;scope='supplemental retained tests; pending W42 failures remain in original project'} | ConvertTo-Json | Out-File (Join-Path $out 'result.json')
+          $hashes = @(Get-ChildItem $out -File | ForEach-Object { @{file=$_.Name;sha256=(Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()} })
+          $hashes | ConvertTo-Json -Depth 5 | Out-File (Join-Path $out 'files-sha256.json')
+          if ($build -ne 0 -or $null -eq $run -or $run -ne 0) { exit 1 }
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: retained-wholesome-${{ github.sha }}
+          path: ${{ runner.temp }}/retained-wholesome-results/
+          retention-days: 14
+          if-no-files-found: error
