@@ -142,16 +142,29 @@ namespace TreeSharp
             // A later Start must never reuse the stopped iterator.
             var enumerator = _enumerator;
             _enumerator = null;
-            try
-            {
-                Cleanup();
-            }
+            ExceptionDispatchInfo? failure = null;
+            try { Cleanup(); }
+            catch (Exception error) { PreserveCleanupFailure(ref failure, error); }
             finally
             {
                 if (LastStatus == RunStatus.Running)
                     LastStatus = RunStatus.Failure;
-                enumerator?.Dispose();
+                // Iterator finally blocks are cleanup owners too. Drain them even
+                // after handler failure without replacing the first stop signal.
+                try { enumerator?.Dispose(); }
+                catch (Exception error) { PreserveCleanupFailure(ref failure, error); }
             }
+            failure?.Throw();
+        }
+
+        internal static void PreserveCleanupFailure(ref ExceptionDispatchInfo? failure, Exception error)
+        {
+            // Cancellation and interruption are equally authoritative stop signals.
+            // Preserve the first signal; ordinary failures cannot mask either one.
+            bool stop = error is ThreadInterruptedException || error is OperationCanceledException;
+            if (failure == null || (stop && failure.SourceException is not ThreadInterruptedException
+                && failure.SourceException is not OperationCanceledException))
+                failure = ExceptionDispatchInfo.Capture(error);
         }
 
         [DebuggerStepThrough]
@@ -168,9 +181,7 @@ namespace TreeSharp
                 {
                     // Drain all owned cleanup before propagating the original error.
                     // Stop signals take precedence over ordinary cleanup failures.
-                    if (failure == null || (error is ThreadInterruptedException
-                        && failure.SourceException is not ThreadInterruptedException))
-                        failure = ExceptionDispatchInfo.Capture(error);
+                    PreserveCleanupFailure(ref failure, error);
                 }
             }
             failure?.Throw();

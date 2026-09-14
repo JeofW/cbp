@@ -134,12 +134,21 @@ namespace WholesomeAQ
         public bool ScanAndRefresh(LocalPlayer me, string validatedGrindProfilePath = null) =>
             ScanAndRefresh(me, validatedGrindProfilePath, apply => { apply(); return true; }, null);
 
+        // Preserve the original four-argument method, including reflection callers.
+        // The owned entry has a distinct name to avoid ambiguous method lookup.
         internal bool ScanAndRefresh(
             LocalPlayer me,
             string validatedGrindProfilePath,
             Func<System.Action, bool> tryApplyPublication,
+            Func<string, bool> tryLoadProfile) =>
+            ScanAndRefreshOwned(me, validatedGrindProfilePath, tryApplyPublication, tryLoadProfile, null);
+
+        internal bool ScanAndRefreshOwned(
+            LocalPlayer me,
+            string validatedGrindProfilePath,
+            Func<System.Action, bool> tryApplyPublication,
             Func<string, bool> tryLoadProfile,
-            Func<bool> isPublicationLeaseCurrent = null)
+            Func<bool> isPublicationLeaseCurrent)
         {
             if (tryApplyPublication == null)
                 throw new ArgumentNullException(nameof(tryApplyPublication));

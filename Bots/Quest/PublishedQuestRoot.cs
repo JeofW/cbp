@@ -143,6 +143,8 @@ public sealed class PublishedQuestRoot : PrioritySelector
         if (me.Dead || me.IsGhost) return 0;
         var poi = BotPoi.Current?.Type ?? PoiType.None;
         if (me.Combat || poi == PoiType.Kill) return 1;
+        var pet = me.Pet;
+        if (pet != null && pet.IsAlive && pet.Combat) return 1;
         if (poi == PoiType.Loot || poi == PoiType.Skin || poi == PoiType.Harvest) return 2;
         if (!exclusive && (poi == PoiType.Sell || poi == PoiType.Repair ||
             poi == PoiType.Buy || poi == PoiType.Mail || poi == PoiType.Train || poi == PoiType.Fly)) return 4;

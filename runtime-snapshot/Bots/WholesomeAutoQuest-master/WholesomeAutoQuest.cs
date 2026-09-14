@@ -1172,7 +1172,7 @@ namespace WholesomeAQ
                             if (!_refreshGate.TryApply(lease, () => scheduler.CurrentVendors = vendors))
                                 return false;
                         }
-                        refreshed = scheduler.ScanAndRefresh(
+                        refreshed = scheduler.ScanAndRefreshOwned(
                             StyxWoW.Me, null,
                             apply => _refreshGate.TryApply(lease, apply),
                             path => ProfileManager.TryLoadNew(path, true),
