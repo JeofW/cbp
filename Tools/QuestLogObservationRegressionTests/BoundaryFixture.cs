@@ -11,9 +11,36 @@ namespace GreenMagic
   public WoWDescriptorQuest[] Slots=Enumerable.Range(0,25).Select(_=>new WoWDescriptorQuest{ObjectivesDone=new ushort[4]}).ToArray();
   public int ArrayReads; public bool CacheEnabled=true,ReadWhileCached; public Action? AfterArrayRead; public Exception? Failure;
   public int ProcessId=1;
+  // Models the existing Memory.ReadBytes full-length/null contract. These switches
+  // are external observations, not production snapshot or readiness implementations.
+  public bool FailRawLogReads, ShortRawLogRead;
+  public byte[]? ReadBytes(uint address,int count)
+  {
+   if(Failure!=null)throw Failure;
+   var me=ObjectManager.Me ?? throw new InvalidOperationException("No observed player");
+   if(address==me.BaseAddress+8U && count==4)return BitConverter.GetBytes(me.Descriptor);
+   if((address==me.Descriptor || address==me.BaseAddress+48U) && count==8)return BitConverter.GetBytes(me.Guid);
+   if(address==me.Descriptor+632U && count==500)
+   {
+    ArrayReads++;ReadWhileCached|=CacheEnabled;
+    if(FailRawLogReads)return null;
+    byte[] data=new byte[500];
+    for(int i=0;i<25;i++)
+    {
+     BitConverter.GetBytes(Slots[i].Id).CopyTo(data,i*20);
+     BitConverter.GetBytes((uint)Slots[i].Flags).CopyTo(data,i*20+4);
+     for(int j=0;j<4;j++)BitConverter.GetBytes(Slots[i].ObjectivesDone[j]).CopyTo(data,i*20+8+j*2);
+     BitConverter.GetBytes(Slots[i].SecondsBeforeFailed).CopyTo(data,i*20+16);
+    }
+    AfterArrayRead?.Invoke();
+    return ShortRawLogRead ? data[..499] : data;
+   }
+   throw new InvalidOperationException("Unexpected byte read "+address+"/"+count);
+  }
   public T Read<T>(uint address) where T:struct
   {
    if(Failure!=null)throw Failure;
+   if(FailRawLogReads && ObjectManager.Me!=null && address>=ObjectManager.Me.Descriptor+632U && address<ObjectManager.Me.Descriptor+1132U)return default;
    object value;
    var me=ObjectManager.Me;
    if(address==me!.BaseAddress+8U)value=me.Descriptor;
@@ -28,6 +55,7 @@ namespace GreenMagic
    if(Failure!=null)throw Failure;
    if(typeof(T)!=typeof(WoWDescriptorQuest) || count!=25)throw new InvalidOperationException("Unexpected native boundary");
    ArrayReads++;ReadWhileCached|=CacheEnabled;
+   if(FailRawLogReads)return (T[])(object)new WoWDescriptorQuest[25];
    var result=Slots.Select(q=>new WoWDescriptorQuest{Id=q.Id,Flags=q.Flags,ObjectivesDone=(ushort[])q.ObjectivesDone.Clone(),SecondsBeforeFailed=q.SecondsBeforeFailed}).ToArray();
    AfterArrayRead?.Invoke();return (T[])(object)result;
   }

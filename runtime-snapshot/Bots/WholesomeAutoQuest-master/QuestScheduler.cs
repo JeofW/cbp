@@ -79,19 +79,36 @@ namespace WholesomeAQ
 
         public bool BuildForLogQuests(LocalPlayer me) => ScanAndRefresh(me);
 
-        public bool ScanAndRefresh(LocalPlayer me, string validatedGrindProfilePath = null)
+        // Retain the generate-only API for standalone callers. The running bot uses
+        // the lease-fenced overload and the host's actual load-acceptance result.
+        public bool ScanAndRefresh(LocalPlayer me, string validatedGrindProfilePath = null) =>
+            ScanAndRefresh(me, validatedGrindProfilePath, apply => { apply(); return true; }, null);
+
+        internal bool ScanAndRefresh(
+            LocalPlayer me,
+            string validatedGrindProfilePath,
+            Func<System.Action, bool> tryApplyPublication,
+            Func<string, bool> tryLoadProfile)
         {
+            if (tryApplyPublication == null)
+                throw new ArgumentNullException(nameof(tryApplyPublication));
             if (me == null)
             {
-                InvalidatePublishedWork("Quest observations unavailable: no player was supplied.");
+                tryApplyPublication(() => InvalidatePublishedWork("Quest observations unavailable: no player was supplied."));
                 throw new ArgumentNullException(nameof(me));
             }
 
-            _lastScan = DateTime.Now;
+            int scanThreshold = 0;
+            if (!tryApplyPublication(() =>
+            {
+                _lastScan = DateTime.Now;
+                scanThreshold = _scanThreshold;
+            }))
+                return false;
             QuestDatabase db = _dataLoader.Database;
             if (db == null)
             {
-                InvalidatePublishedWork("No quest data loaded");
+                tryApplyPublication(() => InvalidatePublishedWork("No quest data loaded"));
                 return false;
             }
 
@@ -100,14 +117,15 @@ namespace WholesomeAQ
             if (!ReferenceEquals(me, ObjectManager.Me) || ObjectManager.Wow == null ||
                 !Styx.StyxWoW.IsInWorld || !me.IsValid)
             {
-                InvalidatePublishedWork("Quest observations unavailable: the current player is not ready.");
+                tryApplyPublication(() => InvalidatePublishedWork("Quest observations unavailable: the current player is not ready."));
                 return false;
             }
 
             // A refresh is not permission to keep executing the previous plan while
             // fresh identity/log/context reads can fail. Revoke before those reads;
             // do not revoke again in a late catch that may belong to an older refresh.
-            InvalidatePublishedWork("Refreshing quest observations; prior work is not authorized.");
+            if (!tryApplyPublication(() => InvalidatePublishedWork("Refreshing quest observations; prior work is not authorized.")))
+                return false;
             QuestRecoveryRuntime.EnsureConfigured(
                 _dataLoader.DatasetFingerprint,
                 NavigationProviderFingerprint());
@@ -122,7 +140,6 @@ namespace WholesomeAQ
                 .ToArray();
             QuestRecoveryContext context = QuestRecoveryRuntime.Capture(
                 accepted.SelectMany(quest => quest.ObjectiveCounts).ToArray());
-            _lastRecoveryContext = context;
 
             bool authoritative = me.QuestLog.TryGetAuthoritativeCompletedQuests(out var completed);
             var snapshot = new QuestSchedulerSnapshot
@@ -140,12 +157,12 @@ namespace WholesomeAQ
                     .ToDictionary(group => group.Key, group => group.Sum(item => (long)item.StackCount))
             };
 
-            LastSchedule = ApplyScanExpansionBeforeFallback(MaterializeSchedule(
+            QuestScheduleResult candidate = MaterializeSchedule(
                 db,
                 snapshot,
                 key => QuestRecoveryManager.Instance.Evaluate(key, context),
                 _settings.MaxQuestsPerProfile,
-                _scanThreshold,
+                scanThreshold,
                 _settings.MinQuestLevelOffset,
                 validatedGrindProfilePath,
                 QuestRecoveryManager.Instance.MarkCompleted,
@@ -154,24 +171,51 @@ namespace WholesomeAQ
                 isKnownUnsafe: point => BlackspotManager.IsBlackspotted(
                     new WoWPoint((float)point.X, (float)point.Y, (float)point.Z)),
                 navigationAssessment: point => AssessNavigation(point, me.Location),
-                reportDataFailure: outcome => QuestRecoveryManager.Instance.Report(outcome, context)));
-            LastStatus = LastSchedule.Status;
-            LastQuestCount = LastSchedule.Selected.Count;
-            ActiveQuestIds = new HashSet<int>(LastSchedule.Selected.Select(candidate => (int)candidate.QuestId));
+                reportDataFailure: outcome => QuestRecoveryManager.Instance.Report(outcome, context));
 
-            if (LastSchedule.Selected.Count == 0)
+            // Preparation can invoke external navigation/player owners. An obsolete
+            // continuation must not change a replacement's scan state or output file.
+            if (!tryApplyPublication(() => candidate = ApplyScanExpansionBeforeFallback(candidate)))
+                return false;
+
+            string path = null;
+            bool hasWork = candidate.Selected.Count > 0 || candidate.FallbackMode == QuestFallbackMode.ValidatedGrind;
+            if (candidate.Selected.Count > 0)
             {
-                CurrentProfilePath = LastSchedule.FallbackMode == QuestFallbackMode.ValidatedGrind
-                    ? LastSchedule.ValidatedGrindProfilePath
-                    : null;
-                return LastSchedule.FallbackMode == QuestFallbackMode.ValidatedGrind;
+                string xml = _profileBuilder.BuildProfileXml(
+                    candidate.Plan, db, me.ZoneText, me.Name, me.Level, CurrentVendors);
+                if (!tryApplyPublication(() => path = _profileBuilder.WriteProfile(xml)))
+                    return false;
+            }
+            else if (candidate.FallbackMode == QuestFallbackMode.ValidatedGrind)
+            {
+                path = candidate.ValidatedGrindProfilePath;
             }
 
-            _scanThreshold = _settings.ScanStartDistance;
-            string xml = _profileBuilder.BuildProfileXml(
-                LastSchedule.Plan, db, me.ZoneText, me.Name, me.Level, CurrentVendors);
-            CurrentProfilePath = _profileBuilder.WriteProfile(xml);
-            return true;
+            bool published = false;
+            tryApplyPublication(() =>
+            {
+                // Null output is the builder's supported no-output mode, not an
+                // instruction to reuse the prior profile or authorize its old child.
+                if (hasWork && (string.IsNullOrWhiteSpace(path) ||
+                    (tryLoadProfile != null && !tryLoadProfile(path))))
+                    return;
+
+                // Loading raises synchronous host events. They can stop/restart the
+                // bot reentrantly, even while the refresh monitor is held. Recheck the
+                // real lease after those events, rather than revoking in a late catch.
+                tryApplyPublication(() =>
+                {
+                    _lastRecoveryContext = context;
+                    LastStatus = candidate.Status;
+                    LastQuestCount = candidate.Selected.Count;
+                    ActiveQuestIds = new HashSet<int>(candidate.Selected.Select(item => (int)item.QuestId));
+                    CurrentProfilePath = path;
+                    LastSchedule = candidate; // Execution permission is published last.
+                    published = true;
+                });
+            });
+            return published && hasWork;
         }
 
         internal void InvalidatePublishedWork(string status)

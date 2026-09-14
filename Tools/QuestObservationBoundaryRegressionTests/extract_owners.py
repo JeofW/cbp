@@ -164,6 +164,17 @@ def generate(repo: Path, ref: str, out: Path) -> dict:
         'DualHashSet.cs': source['sets'],
         'ValuePair.cs': source['pairs'],
     }
+    # Copy the complete raw observation owner from the SAME immutable source ref.
+    # Historical refs without it remain valid legacy baselines; no fake contract
+    # is inserted into production or into the generated QuestLog owner.
+    snapshot_path = "Styx/Logic/Questing/QuestLogSnapshot.cs"
+    if git(repo, 'ls-tree', commit, '--', snapshot_path).strip():
+        for path in [snapshot_path, "Styx/Logic/Questing/WoWDescriptorQuestFlags.cs"]:
+            raw = git(repo, 'show', f'{commit}:{path}')
+            manifest['files'][path] = {'git_blob': git_blob_sha(raw),
+                                       'sha256': hashlib.sha256(raw).hexdigest(),
+                                       'bytes': len(raw)}
+            generated[Path(path).name] = raw.decode('utf-8-sig')
     manifest['generated_sha256'] = {name: hashlib.sha256(text.encode('utf-8')).hexdigest()
                                     for name, text in generated.items()}
     manifest['extracted_log_signatures'] = LOG_METHODS

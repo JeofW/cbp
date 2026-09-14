@@ -8,6 +8,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="BoundaryFixture.cs" />
+    <Compile Include="RawObservationBoundary.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Generated/*.cs" />
     <None Include="Generated/source-manifest.json" CopyToOutputDirectory="Always" TargetPath="source-manifest.json" />

@@ -39,7 +39,7 @@ namespace Styx.Logic.Questing
 	/// Provides access to the player's quest log.
 	/// Matches HB 4.3.4 API while using Lua for completed quests (more reliable than memory reads).
 	/// </summary>
-	public class QuestLog
+	public partial class QuestLog
 	{
 		// WoW 3.3.5a Quest Log Offsets
 		private const int OFFSET_COMPLETED_QUEST_LIST = 5005;  // Completed quest linked list head

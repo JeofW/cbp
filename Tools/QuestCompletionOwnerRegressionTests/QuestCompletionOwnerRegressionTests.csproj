@@ -6,6 +6,7 @@
   <ItemGroup>
     <Compile Include="../QuestLogObservationRegressionTests/BoundaryFixture.cs" Link="ControlledExternalBoundaries.cs" />
     <Compile Include="../../Styx/Logic/Questing/QuestLog.cs" Link="Production/QuestLog.cs" />
+    <Compile Include="../../Styx/Logic/Questing/QuestLogSnapshot*.cs" Link="Production/%(Filename)%(Extension)" />
     <Compile Include="../../Styx/Logic/Questing/PlayerQuest.cs" Link="Production/PlayerQuest.cs" />
     <Compile Include="../../Styx/Logic/Questing/WoWDescriptorQuest.cs" Link="Production/WoWDescriptorQuest.cs" />
     <Compile Include="../../Styx/Logic/Questing/WoWDescriptorQuestFlags.cs" Link="Production/WoWDescriptorQuestFlags.cs" />
