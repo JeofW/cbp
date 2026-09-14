@@ -1,0 +1,194 @@
+name: Stage exact W42 review fixes
+on:
+  push:
+    branches: [audit/next-42-scheduler-observation-20260914]
+    paths: [.github/workflows/audit-w42-review-fix-stage.yml]
+permissions:
+  contents: read
+jobs:
+  stage:
+    if: github.repository_id == '1367174964' && github.repository == 'jeofwong/CopilotBuddy-private' && github.event.repository.private == true && github.actor == 'JeofW'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    env:
+      GIT_LFS_SKIP_SMUDGE: '1'
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+          lfs: false
+      - name: Apply verified patch to index and create unreferenced blobs only
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import base64, hashlib, json, os, pathlib, subprocess, urllib.request, zipfile
+          patch = """diff --git a/Bots/Quest/PublishedQuestRoot.cs b/Bots/Quest/PublishedQuestRoot.cs
+          index 99c88df..b7029a8 100644
+          --- a/Bots/Quest/PublishedQuestRoot.cs
+          +++ b/Bots/Quest/PublishedQuestRoot.cs
+          @@ -142,7 +142,8 @@ public sealed class PublishedQuestRoot : PrioritySelector
+                   if (me == null) return int.MaxValue;
+                   if (me.Dead || me.IsGhost) return 0;
+                   var poi = BotPoi.Current?.Type ?? PoiType.None;
+          -        if (me.Combat || poi == PoiType.Kill) return 1;
+          +        var pet = me.Pet;
+          +        if (me.Combat || (pet != null && pet.IsAlive && pet.Combat) || poi == PoiType.Kill) return 1;
+                   if (poi == PoiType.Loot || poi == PoiType.Skin || poi == PoiType.Harvest) return 2;
+                   if (!exclusive && (poi == PoiType.Sell || poi == PoiType.Repair ||
+                       poi == PoiType.Buy || poi == PoiType.Mail || poi == PoiType.Train || poi == PoiType.Fly)) return 4;
+          diff --git a/TreeSharp/Composite.cs b/TreeSharp/Composite.cs
+          index 335193c..5db9d31 100644
+          --- a/TreeSharp/Composite.cs
+          +++ b/TreeSharp/Composite.cs
+          @@ -142,16 +142,29 @@ namespace TreeSharp
+                       // A later Start must never reuse the stopped iterator.
+                       var enumerator = _enumerator;
+                       _enumerator = null;
+          -            try
+          -            {
+          -                Cleanup();
+          -            }
+          +            ExceptionDispatchInfo? failure = null;
+          +            try { Cleanup(); }
+          +            catch (Exception error) { PreserveCleanupFailure(ref failure, error); }
+                       finally
+                       {
+                           if (LastStatus == RunStatus.Running)
+                               LastStatus = RunStatus.Failure;
+          -                enumerator?.Dispose();
+          +                // Iterator finally blocks are cleanup owners too. Drain them even
+          +                // after handler failure without replacing the first stop signal.
+          +                try { enumerator?.Dispose(); }
+          +                catch (Exception error) { PreserveCleanupFailure(ref failure, error); }
+                       }
+          +            failure?.Throw();
+          +        }
+          +
+          +        internal static void PreserveCleanupFailure(ref ExceptionDispatchInfo? failure, Exception error)
+          +        {
+          +            // Cancellation and interruption are equally authoritative stop signals.
+          +            // Preserve the first signal; ordinary failures cannot mask either one.
+          +            bool stop = error is ThreadInterruptedException || error is OperationCanceledException;
+          +            if (failure == null || (stop && failure.SourceException is not ThreadInterruptedException
+          +                && failure.SourceException is not OperationCanceledException))
+          +                failure = ExceptionDispatchInfo.Capture(error);
+                   }
+           
+                   [DebuggerStepThrough]
+          @@ -168,9 +181,7 @@ namespace TreeSharp
+                           {
+                               // Drain all owned cleanup before propagating the original error.
+                               // Stop signals take precedence over ordinary cleanup failures.
+          -                    if (failure == null || (error is ThreadInterruptedException
+          -                        && failure.SourceException is not ThreadInterruptedException))
+          -                        failure = ExceptionDispatchInfo.Capture(error);
+          +                    PreserveCleanupFailure(ref failure, error);
+                           }
+                       }
+                       failure?.Throw();
+          diff --git a/TreeSharp/GroupComposite.cs b/TreeSharp/GroupComposite.cs
+          index 9a93a4a..bea0c07 100644
+          --- a/TreeSharp/GroupComposite.cs
+          +++ b/TreeSharp/GroupComposite.cs
+          @@ -50,9 +50,7 @@ namespace TreeSharp
+                               try { child?.Stop(context); }
+                               catch (Exception error)
+                               {
+          -                        if (failure == null || (error is ThreadInterruptedException
+          -                            && failure.SourceException is not ThreadInterruptedException))
+          -                            failure = ExceptionDispatchInfo.Capture(error);
+          +                        PreserveCleanupFailure(ref failure, error);
+                               }
+                           }
+                           failure?.Throw();
+          diff --git a/runtime-snapshot/Bots/WholesomeAutoQuest-master/QuestScheduler.cs b/runtime-snapshot/Bots/WholesomeAutoQuest-master/QuestScheduler.cs
+          index 0d7fa80..ed976b2 100644
+          --- a/runtime-snapshot/Bots/WholesomeAutoQuest-master/QuestScheduler.cs
+          +++ b/runtime-snapshot/Bots/WholesomeAutoQuest-master/QuestScheduler.cs
+          @@ -134,12 +134,21 @@ namespace WholesomeAQ
+                   public bool ScanAndRefresh(LocalPlayer me, string validatedGrindProfilePath = null) =>
+                       ScanAndRefresh(me, validatedGrindProfilePath, apply => { apply(); return true; }, null);
+           
+          +        // Preserve the original four-argument method, including reflection callers.
+          +        // The owned entry has a distinct name to avoid ambiguous method lookup.
+                   internal bool ScanAndRefresh(
+          +            LocalPlayer me,
+          +            string validatedGrindProfilePath,
+          +            Func<System.Action, bool> tryApplyPublication,
+          +            Func<string, bool> tryLoadProfile) =>
+          +            ScanAndRefreshOwned(me, validatedGrindProfilePath, tryApplyPublication, tryLoadProfile, null);
+          +
+          +        internal bool ScanAndRefreshOwned(
+                       LocalPlayer me,
+                       string validatedGrindProfilePath,
+                       Func<System.Action, bool> tryApplyPublication,
+                       Func<string, bool> tryLoadProfile,
+          -            Func<bool> isPublicationLeaseCurrent = null)
+          +            Func<bool> isPublicationLeaseCurrent)
+                   {
+                       if (tryApplyPublication == null)
+                           throw new ArgumentNullException(nameof(tryApplyPublication));
+          diff --git a/runtime-snapshot/Bots/WholesomeAutoQuest-master/WholesomeAutoQuest.cs b/runtime-snapshot/Bots/WholesomeAutoQuest-master/WholesomeAutoQuest.cs
+          index b6dddf1..c4c157a 100644
+          --- a/runtime-snapshot/Bots/WholesomeAutoQuest-master/WholesomeAutoQuest.cs
+          +++ b/runtime-snapshot/Bots/WholesomeAutoQuest-master/WholesomeAutoQuest.cs
+          @@ -1172,7 +1172,7 @@ namespace WholesomeAQ
+                                       if (!_refreshGate.TryApply(lease, () => scheduler.CurrentVendors = vendors))
+                                           return false;
+                                   }
+          -                        refreshed = scheduler.ScanAndRefresh(
+          +                        refreshed = scheduler.ScanAndRefreshOwned(
+                                       StyxWoW.Me, null,
+                                       apply => _refreshGate.TryApply(lease, apply),
+                                       path => ProfileManager.TryLoadNew(path, true),
+          """.encode()
+          expected_base = 'c5e8e69dd9aa42e602b589b5a62373adf92938ab'
+          expected_patch = 'd56b9a73807e30765643fef3df22091666390b153780729bb52b15520c980707'
+          files = {
+              'TreeSharp/Composite.cs': ('06a3d081673d2f88b50caddcb7cc2b5d4eab4183605c21ea58ff3f300f66717e', 'b9059c1ec3b38e073865e9495abad2fafc6d2b36ab62f4bcc9e07e72dd0c0d51'),
+              'TreeSharp/GroupComposite.cs': ('3eb4b677b7bc7d42c4e8000c6c709c2db32bd04e3e0d73c59c84787266b0975a', '96cff6c4796bc1a5880decaaf3d7175887cf7b6c319563c9fa6f626f877c3cad'),
+              'Bots/Quest/PublishedQuestRoot.cs': ('220c166af1926a5fc789328171c14346c14671beaefc320bde9566b0266d220e', '72bb5dd444ed8535edecfcaf7a34e96dc24a54f848f73138b20948da92c29b7f'),
+              'runtime-snapshot/Bots/WholesomeAutoQuest-master/QuestScheduler.cs': ('b50db0681c654c1791868ef47080a5ad3d50e1eeab120a538efcea1873019034', '6428e015f1f816c657799526b3fd2a324e9d84eb5f8bd1c16761826ff3be80f2'),
+              'runtime-snapshot/Bots/WholesomeAutoQuest-master/WholesomeAutoQuest.cs': ('44fbcd895d15b637321119458847e30810824823b38a7a7e7943bd319558f935', '239849ebe9a180bee1cda0599c6f0f4c8c47f91eb83e53c30b5fe9c4ea597690'),
+          }
+          def git(*args, data=None): return subprocess.check_output(['git', *args], input=data)
+          head = git('rev-parse', 'HEAD').decode().strip()
+          assert head == os.environ['GITHUB_SHA']
+          assert os.environ['GITHUB_REF'] == 'refs/heads/audit/next-42-scheduler-observation-20260914'
+          assert git('rev-parse', 'HEAD~1').decode().strip() == expected_base
+          assert set(git('diff', '--name-only', expected_base, head).decode().splitlines()) == {'.github/workflows/audit-w42-review-fix-stage.yml'}
+          assert hashlib.sha256(patch).hexdigest() == expected_patch
+          for path, (before, after) in files.items():
+              assert hashlib.sha256(git('show', head + ':' + path)).hexdigest() == before, path
+          git('apply', '--cached', '--whitespace=error', '-', data=patch)
+          git('diff', '--cached', '--check')
+          assert set(git('diff', '--cached', '--name-only').decode().splitlines()) == set(files)
+          out = pathlib.Path('/tmp/w42-review-fix'); out.mkdir()
+          evidence = {'parent_commit': head, 'base_commit': expected_base, 'patch_sha256': expected_patch, 'base_tree': git('rev-parse', 'HEAD^{tree}').decode().strip(), 'files': {}, 'ref_updated': False, 'commit_created': False, 'tests_run': False}
+          with zipfile.ZipFile(out / 'exact-files.zip', 'w', zipfile.ZIP_DEFLATED) as archive:
+              for path in sorted(files):
+                  content = git('show', ':' + path)
+                  digest = hashlib.sha256(content).hexdigest()
+                  assert digest == files[path][1], path
+                  blob = hashlib.sha1(b'blob ' + str(len(content)).encode() + b'\0' + content).hexdigest()
+                  body = json.dumps({'content': base64.b64encode(content).decode(), 'encoding': 'base64'}).encode()
+                  request = urllib.request.Request('https://api.github.com/repos/jeofwong/CopilotBuddy-private/git/blobs', data=body, method='POST', headers={'Authorization': 'Bearer ' + os.environ['GH_TOKEN'], 'Accept': 'application/vnd.github+json', 'Content-Type': 'application/json', 'X-GitHub-Api-Version': '2022-11-28'})
+                  with urllib.request.urlopen(request, timeout=30) as response: result = json.load(response)
+                  assert result['sha'] == blob, path
+                  evidence['files'][path] = {'blob': blob, 'sha256': digest, 'size': len(content)}
+                  archive.writestr(path, content)
+          (out / 'staged.json').write_text(json.dumps(evidence, indent=2) + '\n')
+          (out / 'repair.patch').write_bytes(patch)
+          print(json.dumps(evidence, indent=2))
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: w42-review-fix-objects
+          path: /tmp/w42-review-fix/*
+          retention-days: 14
+          if-no-files-found: error
