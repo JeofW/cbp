@@ -1,69 +1,43 @@
-# CopilotBuddy audit — post-merge resume checkpoint
+# CopilotBuddy audit — W42 scan-exception checkpoint
 
-Repository: `JeofW/CopilotBuddy-private`. This document supersedes the pre-merge statements in older checkpoint documents. Inspect remote heads before using any saved SHA.
+Recorded 14 September 2026. Resume draft **PR #41**, branch **`audit/next-42-ready-owner-20260914`**, not the older W41 root instructions or uploaded PR39 ZIP. Re-read current remote heads before writing. The exhaustive architecture/refactoring audit and full W42 remain incomplete.
 
-## Actual merge and authorization boundary
+## Connection recovery: retained owner instruction
 
-The owner explicitly authorized merging the previously completed aggregate. **PR #34 is merged into master**, merge commit **8382a7ec05a64212ea0a237159dca427a0767425**, on 13 September 2026. The old master **c43c50d8d5d6775055f19bf018b52930a264d4a4** is preserved on `audit/backup-master-before-approved-merge-20260913`.
+Read **[GITHUB_CONNECTION_RECOVERY.md](GITHUB_CONNECTION_RECOVERY.md)**. When GitHub actions unexpectedly disappear, become read-only or stall, perform one bounded check and remind the owner to **reconnect the GitHub plugin, then retry in this conversation**. Reconnection appeared to restore actions previously; the cause is not proven. Rediscover and retry once after reconnection. Do not repeat an extended read-only audit. Missing local gh/.NET or container DNS is not proof that native connector writes fail. Never request/export tokens or misuse GET for writes.
 
-The merge preserved the earlier focused audit history. Some individual stacked PRs still appear open because they target other audit branches; their included source must not be merged repeatedly to change UI badges. The earlier reconciliation excluded only the unrelated capability-test PR #1 and the optional native-queue experiment PR #25. Verify ancestry again before closing or reconciling any PR.
+## Current verified source
 
-This is a SOURCE merge, not an installed-bot update. No navigation DLL, mesh or installed files were replaced. The existing native-format compatibility issue and live acceptance gaps remain. The owner approval was for the completed aggregate, not blanket approval to merge future repairs or deploy the native candidate.
+**Production/test commit: `7bf54c1ede756867968b250e8472d9c9428337af`.**
 
-## Resume from the newer, unmerged follow-up tree
+**Tree: `8d9b058cdfe2a7e4edd16fb552c070a5f1227e8b`.**
 
-**Working branch: `audit/next-41-wholesome-postmerge-verification-20260913`.**
+A later checkpoint commit must be documentation-only relative to this source before inheriting its evidence. This continuation actually published native connector commits/ref updates and triggered Windows Actions. The test runner was GitHub Windows, not a local C# runtime. No new duplicate PR was created: the existing draft PR41 was extended.
 
-**Tested production/test commit: `c14bd264da90bdd384ebd9bf2bcc8f7b7a9a8217`.**
+The new bounded repair revokes previous execution permission before fresh identity/log/context reads in actual `QuestScheduler.ScanAndRefresh`, and preserves interruption/cancellation through `WholesomeAutoQuest.DoScan`. It uses the existing invalidation, timed retry and execution-gate owners. It does not clear conservative ActiveQuestIds item protection and does not introduce an unconditional late catch that erases newer-generation publication. Public signatures remain unchanged.
 
-**Tested tree: `a1da20dc3ecbe98ae1fbc29986d49f7afaad0b17`.**
+Clean unchanged-production baseline `c3d455d0d8c6988d8b3f796f02b7928053022b51` executes all fourteen new cases: four controls pass, ten intended assertions fail, zero unexpected case errors. At `7bf54c1e`, the same source assertions execute **14/14** in both focused and actual combined workflows. Existing thirteen revocation and six retry cases also pass. All 25 generated normalization outputs are byte-identical red-to-green; comparing all 1,680 tracked input hashes finds only the two intended production files changed.
 
-This tree contains master plus the following two independent follow-ups. Subsequent handover commits modify documentation only.
+## Actual combined status — NOT all green
 
-| Follow-up | Saved commit | Review state at handover |
-|---|---|---|
-| Preserve creature/game-object relation identity through scheduler, ancestor checks and generated profiles | `67a1a112d0e6a94bdf01984ef430de0e6a596100` | PR #35, open, not merged |
-| Protect current accepted and scheduled quest items plus shared protected names/IDs before Wholesome selling | `8e8ebf4f623b16b3779a8fd6a3893b63611bb901` | PR #36, open, not merged |
+Focused run **34803757188**, artifact **10332441880**. Combined run **34803757306**, artifact **10332172475**. Host run **34803757195**, artifact **10332122465**. Complete archives, hashes, source identities and every suite result were inspected. Exact SHA-256 digests and retained counterevidence are in the evidence file below.
 
-Do not recreate those repairs. Read their diffs, tests and limitations, and build the next focused branch from this combined tree when both are required. Preserve their failing-before histories. Do not merge competing old fixture branches or silently promote optional experiments.
+The original combined workflow retains all historical14 entries plus three W42 entries: **17/17 build/setup exit0, 14/17 run exit0**. Three W42-containing entries remain red. The original Wholesome main and retained groups execute instead of being masked by an initializer; relation23/23, original sale23/23, completion-owner15/15, 33 analyzer tests and compilation of99 Singular files are retained. Managed execution is Windows x86/.NET10.0.12; analyzers are Python. Independent host compilation succeeds with3278 warnings/0errors and `tests_run:false`.
 
-## Verified execution evidence
+Remaining reported checks: observation main4/25 (nineteen missing proposed CaptureSnapshot contracts and two sale assertions), ready1/5, scheduler2/5 (two missing proposed HasCompleteQuestLog contracts and one null-log-to-pickup assertion), boundary16/24 with eight assertions/zero unexpected errors. Counts overlap and are not unique bugs. Do not implement a fake contract merely to change a badge.
 
-The complete archives below were recovered from GitHub Actions and their SHA-256, embedded source commit and results were checked during continuation. These are actual executions at the recorded commits, not newly invented results or live client sessions.
+## Reconciled existing work — do not recreate
 
-| Tested source | Run / artifact | Result | Archive SHA-256 |
-|---|---|---|---|
-| master `8382a7ec` | 34761250161 / 10319091671 | 13 integrated build/run entries exit 0; 99 Singular source files compile; 33 analyzer tests pass | `e3e1f818a656039c0df92c6cb0de452bce4b598a08cf1864b79ba0322ed24d89` |
-| same master | 34761250147 / 10319221117 | 50/50 original-role query cases under Lua 5.1.5; 26/26 actual-helper adapter checks | `27c99a997dcfc5cccc7c4a7177087380d1dbb9668ba448190d71f4dbb5adfc35` |
-| combined follow-up `c14bd264` | 34763063805 / 10319148422 | All 14 integrated entries exit 0, including 23/23 relation and 23/23 sale cases; 99 Singular files compile; 33 analyzer tests pass | `42ce9e2f1bffc18b7aac32cea1c6761c1d24ac976fc8c490a48c20de2d7a6121` |
-| sale baseline `5b735d95` | 34762222832 / 10319506621 | 17/23 fail; six controls pass | `2a60da891f68d48d58f5416883b9d56973360aa92b93ce65389c315d05ec5bb5` |
+PR39's completion-owner repair at `1dccead847f330430f148609858c6f89d5724ad8` was already done; its final source `3d8493927adb76e886b1e1ccca03a93cce0cfb8b` and documentation head `318c0a7d9e8518a468a52af05134aaad3e401eee` are historical sibling records. PR40 at `877de5cd9d332d10d3d1586a78be6b6cff2c504b` already normalized test execution. PR41 already contained unavailable-owner revocation at `61a2ff714a7b606b2ea2441f91e04d9b624c00ce` and timed retry at `dc441aaaf3817e23905d23d8bdad81f70c2af92b`. The earlier retry result was recovered and verified, not rerun under a different claim.
 
-Independent Windows host run **34763063883** also reports success at `c14bd264`. PR #35 retains the relation red/preflight/committed evidence. The combined suite has controlled world boundaries and compiled wiring checks, not exhaustive gameplay/branch coverage. It is not proof of original-client server acceptance. Counts can overlap between executables.
+PR40 branched from the earlier PR39 repair, not its later supplemental runner/documentation. Do not assume linear ancestry or rebuild those independent records. The original retained tests now run inside their original normalized executable; the separate PR39 supplemental runner was not recreated or claimed newly executed.
 
-The sale regression extracts the actual checkout method and links the real protected-items manager; it does not reimplement the decision. The complete Wholesome class is compiled separately by the broader suite. Temporary source-preparation/write-token workflows were removed before the follow-up production commits.
+## Read next and preserve these limits
 
-## First unfinished dependency: complete quest observations and protection ownership
+Read [W42_SCAN_EXCEPTION_CHECKPOINT.md](docs/audit/2026-09-14/W42_SCAN_EXCEPTION_CHECKPOINT.md), [W42_SCAN_EXCEPTION_EVIDENCE.json](docs/audit/2026-09-14/W42_SCAN_EXCEPTION_EVIDENCE.json), [W42_SCAN_EXCEPTION_GRAPH.json](docs/audit/2026-09-14/W42_SCAN_EXCEPTION_GRAPH.json), and **[NEXT_CHAT_PROMPT.md](NEXT_CHAT_PROMPT.md)**. Keep W42_PR39_TO_PR41_RECONCILIATION.md, W42_SCAN_EXCEPTION_SLICE_PLAN.md, PR40 aggregation evidence, PR39 completion evidence and W41 behavior/graph records as historical evidence, not obsolete starting instructions. The prior root text is preserved unchanged in W41_ROOT_HANDOVER_RETAINED.md.
 
-**Confirmed source information-loss path, not yet behaviorally reproduced:** `Styx/Logic/Questing/QuestLog.cs:101-125` walks 25 slots and drops null `GetQuest` results. A nonzero occupied slot reaches `PlayerQuest.FromId`; `Styx/Logic/Questing/PlayerQuest.cs:169-174` returns null when quest cache metadata is unavailable. An accepted quest can therefore be omitted from the materialized list without a completeness indication. Historical frequency is unverified.
+The new actual-memory fixture exposed a separate process-exit native callback failure. Clean managed testing uses an explicit deny-dispatch assembler type boundary only in the private Wholesome test output. The original repository Lib, host output and installed/native files are unchanged. This is not a production native fix. Boundary source/targets are identical across red/green; rebuilt binary hashes differ and are separately recorded, not asserted byte-identical. Native shutdown remains unverified.
 
-This affects both scheduler and mutation permissions. In particular, a null-list fixture in the new sale suite does NOT prove the real list is complete. Preserve raw occupied quest identities independently from optional cached metadata; make incomplete/changed observations explicit and test before implementation. Do not infer abandonment, completion or permission to sell from a missing cache record. Keep the old public API compatible where possible. Recheck player/session/log identity at side-effect boundaries.
+Next close real read-success/raw accepted identity, metadata completeness and actual session/frame ownership, then actual scan/materialization/profile publication and current executing-plan authorization, ready history and sale freshness. Exceptions before the repaired capture point, vendor discovery before ScanAndRefresh, and failures after LastSchedule assignment/WriteProfile/LoadNew remain explicit gaps. Equal scans/counts or character names cannot prove atomicity, session continuity or ABA immunity.
 
-**Protection ownership:** `CollectItemObjective` adds an item to the shared runtime set and unconditionally removes it on disposal; `ProtectedItemsManager.Add/Remove` are plain set operations. A scoped owner must not release another owner's protection. Reproduce two simultaneous collectors, pre-existing manual protection, disposal order, duplicate disposal, cancellation and reset before introducing compatible leases. Also investigate reload clearing protection before successful file parsing.
-
-These gaps are NOT closed by PR #36. It repairs missing current/shared exceptions at its caller boundary; it does not certify complete quest snapshots, mutations inside a native sale batch or all destructive inventory callers.
-
-## Continuing verification, not another census
-
-Read `docs/audit/2026-09-13/WHOLESOME_BEHAVIOR_VERIFICATION.md` for the coverage frontier and `POSTMERGE_GRAPH.json` for directed evidence links. Continue every active Wholesome behavior and the host owners it calls; distinguish source-reviewed, reproduced, regression-verified and live-unverified work. Keep a checked inventory so untested branches cannot disappear from the scope.
-
-Priority after the two contracts above: merchant/mail/discard/consumption revalidation and acknowledgment; vendor data discovery/settings; restart/rest/merchant state; extension cancellation; prerequisites, unsupported/special/scripted objectives and bounded recovery; group roster identity; original-client APIs; remaining combat/support boundaries; native compatibility, route resources and validated lift alternatives. Do not quarantine valid quests or invent landing coordinates to make tests pass.
-
-## Operational constraints and restart protocol
-
-World of Warcraft **3.3.5a build 12340**, Windows x86, .NET 10, runtime-compiled extensions. Validate original Lua 5.1 APIs/return schemas, not retail or modern Wrath Classic. No live client is attached here. Full multi-tick target identity, active pets/persistent AoE, simultaneous Paladin/rank/locale/encounter behavior and physical transport support still need acceptance.
-
-`mmaps/` is the installed LFS dataset; actual bytes were previously pulled and verified (6,054 files / 2,985,832,908 bytes). Pull needed tiles only for mesh-backed jobs and verify hashes. Managed tests do not need another 3 GB download. The checked-in DLL rejects inspected format-6 headers; the source-built candidate remains unpromoted. Partial/out-of-nodes is neither successful arrival nor proof of unreachability. PR #25 did not establish useful Grod-query speedup and remains excluded.
-
-Read the original `CODEX_AUDIT_PROMPT.md`, `KNOWN_ISSUES_AND_HYPOTHESES.md`, `AUDIT_CONTEXT.md` and existing audit/graph evidence before extending scope. Preserve corrected counterevidence rather than trusting every original hypothesis. Use tests that fail for the intended defect, focused repairs, affected plus combined verification, and recorded hashes/PR links. Save a concise checkpoint after each coherent slice. If artifacts expire, rerun the pinned workflow instead of assuming outcomes. Independent review has not occurred; never label self-review as independent approval.
-
-The long chat's failure does not undo committed work. Resume from GitHub, not unsaved analysis. See `NEXT_CHAT_PROMPT.md`. No new follow-up merge, force push, installation or binary replacement is authorized by this handover.
+Master remains `8382a7ec05a64212ea0a237159dca427a0767425`; backup `audit/backup-master-before-approved-merge-20260913` remains `c43c50d8d5d6775055f19bf018b52930a264d4a4`. PR34 is already merged;35/36 are inherited and25 excluded. No merge, deployment, installed-bot update, Navigation.dll replacement, runtime-capture rewrite or managed-test mesh download. Original WoW3.3.5a build12340, Windows x86/.NET10; execute Lua5.1 checks for any future Lua change. No Lua changed in this slice. Independent review and live acceptance remain pending.
