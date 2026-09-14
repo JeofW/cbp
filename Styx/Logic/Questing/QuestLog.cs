@@ -269,17 +269,24 @@ namespace Styx.Logic.Questing
 		}
 
 		/// <summary>
-		/// Captures acceptance and completion from the same live quest-log lookup.
+		/// Resolves raw acceptance before optional metadata and historical completion.
+		/// This does not provide an atomic or session-stable whole-log observation.
 		/// </summary>
 		public QuestCompletionSnapshot GetQuestCompletionSnapshot(uint questId)
 		{
-			PlayerQuest acceptedQuest = GetQuestById(questId);
-			if (acceptedQuest != null)
+			// Zero denotes an empty descriptor slot, not an accepted quest identity.
+			if (questId != 0U && ContainsQuest(questId))
+			{
+				PlayerQuest acceptedQuest = PlayerQuest.FromId(questId);
+				if (acceptedQuest == null)
+					return new QuestCompletionSnapshot(true, QuestCompletionState.Unknown);
+
 				return ResolveQuestCompletionSnapshot(
 					accepted: true,
 					acceptedCompleted: acceptedQuest.IsCompleted,
 					cacheValid: false,
 					cachedCompleted: false);
+			}
 
 			bool cacheValid = TryGetAuthoritativeCompletedQuests(out ReadOnlyCollection<uint> completedQuestIds);
 			return ResolveQuestCompletionSnapshot(
