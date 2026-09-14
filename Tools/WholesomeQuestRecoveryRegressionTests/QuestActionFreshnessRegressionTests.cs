@@ -13,6 +13,7 @@ using Bots.Quest.QuestOrder;
 using Styx;
 using Styx.Logic.Profiles;
 using Styx.Logic.Profiles.Quest;
+using Styx.Logic.Questing;
 using Styx.WoWInternals;
 using Styx.WoWInternals.WoWObjects;
 using TreeSharp;
