@@ -2,7 +2,7 @@ name: Stage exact W42 root repair objects
 on:
   push:
     branches: [audit/next-42-scheduler-observation-20260914]
-    paths: [.github/audit-patches/w42-root-publish.json]
+    paths: [.github/audit-patches/w42-root-publish.json, .github/workflows/audit-w42-root-stage.yml]
 permissions:
   contents: read
 jobs:
@@ -18,7 +18,7 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           persist-credentials: false
-          fetch-depth: 3
+          fetch-depth: 4
           lfs: false
       - name: Verify exact patch and create unreferenced blobs only
         env:
@@ -40,7 +40,7 @@ jobs:
           assert os.environ['GITHUB_REF'] == 'refs/heads/audit/next-42-scheduler-observation-20260914'
           head = git('rev-parse', 'HEAD').decode().strip()
           assert head == os.environ['GITHUB_SHA']
-          assert git('rev-parse', 'HEAD~2').decode().strip() == expected_base
+          assert git('rev-parse', 'HEAD~3').decode().strip() == expected_base
           assert set(git('diff', '--name-only', expected_base, head).decode().splitlines()) == {payload_path, workflow_path}
           payload = json.loads((root / payload_path).read_text())
           assert payload['base_commit'] == expected_base and payload['nonce'] == 'w42-root-20260915-v1'
@@ -54,8 +54,7 @@ jobs:
               else:
                   data = git('show', head + ':' + path)
                   assert hashlib.sha256(data).hexdigest() == before, path
-                  (root / path).write_bytes(data)
-          git('apply', '--index', '--whitespace=error', '-', data=patch)
+          git('apply', '--cached', '--whitespace=error', '-', data=patch)
           assert set(git('diff', '--cached', '--name-only').decode().splitlines()) == expected_files
           git('diff', '--cached', '--check')
           entries = []
@@ -67,7 +66,7 @@ jobs:
                   return json.load(response)
           with zipfile.ZipFile(out / 'exact-repair-files.zip', 'w', zipfile.ZIP_DEFLATED) as archive:
               for path in sorted(expected_files):
-                  data = (root / path).read_bytes()
+                  data = git('show', ':' + path)
                   assert hashlib.sha256(data).hexdigest() == payload['files'][path]['after'], path
                   blob = hashlib.sha1(b'blob ' + str(len(data)).encode() + b'\0' + data).hexdigest()
                   response = post('git/blobs', {'content': base64.b64encode(data).decode(), 'encoding': 'base64'})
