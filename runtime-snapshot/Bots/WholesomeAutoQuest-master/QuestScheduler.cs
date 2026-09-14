@@ -1124,7 +1124,7 @@ namespace WholesomeAQ
                         if (isKnownUnsafe(point))
                             knownSafe = false;
                     }
-                    catch
+                    catch (Exception ex) when (ex is not ThreadInterruptedException && ex is not OperationCanceledException)
                     {
                         safetyQueryFailed = true;
                     }
@@ -1147,7 +1147,7 @@ namespace WholesomeAQ
                     {
                         live = navigationAssessment?.Invoke(point);
                     }
-                    catch
+                    catch (Exception ex) when (ex is not ThreadInterruptedException && ex is not OperationCanceledException)
                     {
                         live = null;
                     }
@@ -1183,7 +1183,7 @@ namespace WholesomeAQ
                     ? isKnownUnsafe(destination)
                     : BlackspotManager.IsBlackspotted(destination);
             }
-            catch
+            catch (Exception ex) when (ex is not ThreadInterruptedException && ex is not OperationCanceledException)
             {
                 return new SpawnNavigationAssessment();
             }
@@ -1215,7 +1215,7 @@ namespace WholesomeAQ
                     SafetyScore = (int)Math.Max(-100000, 1000 - Math.Min(101000, Math.Round(detour)))
                 };
             }
-            catch
+            catch (Exception ex) when (ex is not ThreadInterruptedException && ex is not OperationCanceledException)
             {
                 return new SpawnNavigationAssessment();
             }
