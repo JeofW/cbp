@@ -1,0 +1,83 @@
+name: Stage verified W42 review payload
+on:
+  push:
+    branches: [audit/next-42-scheduler-observation-20260914]
+    paths: [.github/workflows/audit-w42-review-stage-recovered.yml]
+permissions:
+  contents: read
+jobs:
+  stage:
+    if: github.repository_id == '1367174964' && github.repository == 'jeofwong/CopilotBuddy-private' && github.event.repository.private == true && github.actor == 'JeofW'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    env:
+      GIT_LFS_SKIP_SMUDGE: '1'
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+          fetch-depth: 3
+          lfs: false
+      - name: Recover the exact original bytes then stage unreferenced objects
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import ast, base64, hashlib, json, os, pathlib, re, subprocess, urllib.request, zipfile, zlib
+          original = '.github/workflows/audit-w42-review-stage.yml'
+          workflow = '.github/workflows/audit-w42-review-stage-recovered.yml'
+          # Read a string literal only, never execute the earlier workflow source.
+          text = pathlib.Path(original).read_text()
+          literal = re.findall(r"^\s+encoded = ('[^']*')$", text, re.M)
+          assert len(literal) == 1
+          encoded = ast.literal_eval(literal[0])
+          for wrong, right in [('q4mf3665oB5', 'q4mf366oB5'), ('FiazFiazFxlI', 'FiazFxlI')]:
+              assert encoded.count(wrong) == 1
+              encoded = encoded.replace(wrong, right)
+          data = zlib.decompress(base64.b64decode(encoded, validate=True))
+          expected_hash = '452bed85117120d45b5883f5b576c3d652861617d0785576d77b19d6d8a737f0'
+          assert hashlib.sha256(data).hexdigest() == expected_hash
+          payload = json.loads(data)
+          expected_base = '229f44efc03b930d54f9e2e4a18253ecf9fe1177'
+          allowed = {'Tools/WholesomeQuestRecoveryRegressionTests/QuestCleanupSignalRegressionTests.cs', 'Tools/WholesomeQuestRecoveryRegressionTests/QuestRootPreemptionRegressionTests.cs', 'Tools/WholesomeQuestRecoveryRegressionTests/QuestRootProtectionRegressionTests.cs', 'docs/audit/2026-09-15/W42_ROOT_REVIEW_FINDINGS.md'}
+          def git(*args, data=None): return subprocess.check_output(['git', *args], input=data)
+          head = git('rev-parse', 'HEAD').decode().strip()
+          assert head == os.environ['GITHUB_SHA']
+          assert os.environ['GITHUB_REF'] == 'refs/heads/audit/next-42-scheduler-observation-20260914'
+          assert git('rev-parse', 'HEAD~2').decode().strip() == expected_base == payload['base_commit']
+          assert set(git('diff', '--name-only', expected_base, head).decode().splitlines()) == {workflow, original}
+          assert set(payload['files']) == allowed
+          for path, hashes in payload['files'].items():
+              if hashes['before'] is None: assert not pathlib.Path(path).exists(), path
+              else: assert hashlib.sha256(git('show', head + ':' + path)).hexdigest() == hashes['before'], path
+          patch = payload['patch'].encode()
+          git('apply', '--cached', '--whitespace=error', '-', data=patch)
+          git('diff', '--cached', '--check')
+          assert set(git('diff', '--cached', '--name-only').decode().splitlines()) == allowed
+          out = pathlib.Path('/tmp/w42-review-stage'); out.mkdir()
+          evidence = {'parent_commit': head, 'base_commit': expected_base, 'payload_sha256': expected_hash, 'base_tree': git('rev-parse', 'HEAD^{tree}').decode().strip(), 'files': {}, 'ref_updated': False, 'commit_created': False, 'tests_run': False}
+          with zipfile.ZipFile(out / 'exact-files.zip', 'w', zipfile.ZIP_DEFLATED) as archive:
+              for path in sorted(allowed):
+                  content = git('show', ':' + path)
+                  sha256 = hashlib.sha256(content).hexdigest()
+                  assert sha256 == payload['files'][path]['after'], path
+                  blob = hashlib.sha1(b'blob ' + str(len(content)).encode() + b'\0' + content).hexdigest()
+                  body = json.dumps({'content': base64.b64encode(content).decode(), 'encoding': 'base64'}).encode()
+                  request = urllib.request.Request('https://api.github.com/repos/jeofwong/CopilotBuddy-private/git/blobs', data=body, method='POST', headers={'Authorization': 'Bearer ' + os.environ['GH_TOKEN'], 'Accept': 'application/vnd.github+json', 'Content-Type': 'application/json', 'X-GitHub-Api-Version': '2022-11-28'})
+                  with urllib.request.urlopen(request, timeout=30) as response: result = json.load(response)
+                  assert result['sha'] == blob, path
+                  evidence['files'][path] = {'blob': blob, 'sha256': sha256, 'size': len(content)}
+                  archive.writestr(path, content)
+          (out / 'staged.json').write_text(json.dumps(evidence, indent=2) + '\n')
+          (out / 'patch.diff').write_bytes(patch)
+          print(json.dumps(evidence, indent=2))
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: w42-review-regression-objects
+          path: /tmp/w42-review-stage/*
+          retention-days: 14
+          if-no-files-found: error
