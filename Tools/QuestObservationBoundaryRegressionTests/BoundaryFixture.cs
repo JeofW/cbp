@@ -21,6 +21,7 @@ namespace W42Fixture
             HistoryReads = 0;
             Styx.StyxWoW.Cache = new();
             Styx.StyxWoW.Me = new();
+            Styx.WoWInternals.ObjectManager.Wow = new();
             WholesomeAQ.MerchantFrame.Instance = new();
             WholesomeAQ.Consumable.Food = null;
             WholesomeAQ.Consumable.Drink = null;
@@ -72,7 +73,7 @@ namespace Styx
 
 namespace Styx.WoWInternals
 {
-    public static class ObjectManager
+    public static partial class ObjectManager
     {
         public static WholesomeAQ.Player Me => Styx.StyxWoW.Me;
     }
@@ -119,9 +120,9 @@ namespace WholesomeAQ
     [Flags] public enum ItemQuality { None = 0, Common = 1, Uncommon = 2, Rare = 4 }
     public enum WoWItemClass { Miscellaneous, Projectile, Quiver, Reagent, Key }
     public sealed class Item { public uint Entry; public WoWItemClass ItemClass; }
-    public sealed class Player
+    public sealed class Player : Styx.WoWInternals.WoWObjects.LocalPlayer
     {
-        public bool IsValid = true, IsAlive = true;
+        public bool IsAlive = true;
         public uint[] Slots = new uint[25];
         public QuestLog QuestLog { get; } = new();
         public List<Item> BagItems { get; } = new();
