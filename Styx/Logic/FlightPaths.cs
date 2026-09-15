@@ -232,6 +232,21 @@ namespace Styx.Logic
                 (merchantObservation != null && !merchantObservation.IsCurrent()))
                 return false;
 
+            if (!PublishObservedFlightPoi(poi, startNode, endNode, nextReason,
+                () => observation.InputsCurrent() &&
+                    (merchantObservation == null || merchantObservation.IsCurrent())))
+                return false;
+            startFp = start;
+            endFp = end;
+            return true;
+        }
+
+        // All explicit and route-driven flight POIs share one publication and
+        // completion protocol. The caller supplies its already-admitted inputs;
+        // no provider re-query or native navigation is introduced here.
+        private static bool PublishObservedFlightPoi(BotPoi poi, XmlFlightNode startNode,
+            XmlFlightNode endNode, FlightPathReason nextReason, Func<bool> inputsCurrent)
+        {
             var publication = new object();
             bool OwnsPublication() => ReferenceEquals(_flightIntentOwner, publication) &&
                 ReferenceEquals(TakingPathFrom, startNode) &&
@@ -263,18 +278,17 @@ namespace Styx.Logic
                 ExceptionDispatchInfo? failure = ExceptionDispatchInfo.Capture(error);
                 if (OwnsPublication())
                 {
-                    bool inputsCurrent = false;
+                    bool observedCurrent = false;
                     try
                     {
-                        inputsCurrent = observation.InputsCurrent() &&
-                            (merchantObservation == null || merchantObservation.IsCurrent());
+                        observedCurrent = inputsCurrent();
                     }
                     catch (Exception observationError)
                     {
                         // Unavailable revalidation cannot certify this intent.
                         TreeSharp.Composite.PreserveCleanupFailure(ref failure, observationError);
                     }
-                    if (!inputsCurrent)
+                    if (!observedCurrent)
                     {
                         try { RevokeOwnedPublication(); }
                         catch (Exception cleanupError)
@@ -297,8 +311,7 @@ namespace Styx.Logic
             bool finalInputsCurrent;
             try
             {
-                finalInputsCurrent = observation.InputsCurrent() &&
-                    (merchantObservation == null || merchantObservation.IsCurrent());
+                finalInputsCurrent = inputsCurrent();
             }
             catch (Exception error)
             {
@@ -326,8 +339,6 @@ namespace Styx.Logic
                 return false;
             }
 
-            startFp = start;
-            endFp = end;
             return true;
         }
 
@@ -564,30 +575,35 @@ namespace Styx.Logic
         /// </summary>
         public static void SetPoi(XmlFlightNode node = null)
         {
-            switch (Reason)
+            var nextReason = Reason;
+            if (nextReason != FlightPathReason.Learn && nextReason != FlightPathReason.Update &&
+                nextReason != FlightPathReason.Use)
+                return;
+            if (nextReason == FlightPathReason.Use &&
+                (node == null || node.MasterEntry == 0U || !IsFinitePoint(node.Location)))
+                return;
+
+            var observation = new FlightContextObservation();
+            BotPoi poi;
+            Func<bool> inputsCurrent;
+            if (nextReason == FlightPathReason.Use)
             {
-                case FlightPathReason.Learn:
-                case FlightPathReason.Update:
-                    var observation = new FlightContextObservation();
-                    if (!TryObserveFlightMerchant(observation.IsCurrent, out WoWUnit merchant,
-                        out FlightMerchantObservation merchantObservation) || merchant == null)
-                        break;
-                    // Reuse the one admitted wrapper, rather than performing a
-                    // second feasibility query with potentially different input.
-                    var poi = new BotPoi(merchant, PoiType.Fly);
-                    if (poi.Type == PoiType.Fly && observation.IsCurrent() && merchantObservation.IsCurrent())
-                        BotPoi.Current = poi;
-                    break;
-                case FlightPathReason.Use:
-                    if (node != null)
-                    {
-                        BotPoi.Current = new BotPoi(node.Location, PoiType.Fly)
-                        {
-                            Entry = node.MasterEntry
-                        };
-                    }
-                    break;
+                var selected = new FlightNodeObservation(node);
+                poi = new BotPoi(node.Location, PoiType.Fly) { Entry = node.MasterEntry };
+                inputsCurrent = () => observation.InputsCurrent() && selected.IsCurrent(node);
             }
+            else
+            {
+                if (!TryObserveFlightMerchant(observation.IsCurrent, out WoWUnit merchant,
+                    out FlightMerchantObservation merchantObservation) || merchant == null)
+                    return;
+                poi = new BotPoi(merchant, PoiType.Fly);
+                inputsCurrent = () => observation.InputsCurrent() && merchantObservation.IsCurrent();
+            }
+            // Check ownership after the last callback-capable input observation.
+            if (poi.Type != PoiType.Fly || !inputsCurrent() || !observation.IsCurrent())
+                return;
+            PublishObservedFlightPoi(poi, TakingPathFrom, TakingPathTo, nextReason, inputsCurrent);
         }
 
         /// <summary>
@@ -894,7 +910,6 @@ namespace Styx.Logic
         {
             Name = (string)element.Attribute("Name") ?? "";
             MasterEntry = (uint?)element.Attribute("MasterEntry") ?? 0;
-            UpdateLevel = (int?)element.Attribute("UpdateLevel") ?? 0;
             Continent = (uint?)element.Attribute("Continent") ?? 0;
 
             float x = (float?)element.Attribute("X") ?? 0;
