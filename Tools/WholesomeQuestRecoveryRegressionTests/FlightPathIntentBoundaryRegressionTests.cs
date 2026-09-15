@@ -47,6 +47,13 @@ internal static class FlightPathIntentBoundaryRegressionTests
             ("invalidated selected merchant cannot authorize Update", f => f.Reject(() =>
                 typeof(WoWObject).GetMethod("UpdateBaseAddress", Hidden)!.Invoke(f.Merchant, new object[] { 0U }))),
             ("ordinary provider failure propagates without changing intent", f => f.ProviderError()),
+            ("removing the selected node from the same network invalidates selection", f => f.Reject(() => FlightPaths.XmlNodes.Remove(f.Origin))),
+            ("changed destination coordinates invalidate the captured candidate", f => f.Reject(() => f.ChangeDestination())),
+            ("replacement navigation provider cannot inherit old feasibility", f => f.Reject(() => Navigator.NavigationProvider = new Probe())),
+            ("an admitted merchant is reused rather than reobserved during publication", f => f.SingleObservation()),
+            ("nested publication from the POI log cannot be reported as old success", f => f.AfterPublish(f.PublishReplacement)),
+            ("Reset from the POI log cannot be reported as old success", f => f.AfterPublish(FlightPaths.Reset)),
+            ("replacement service POI from the log is retained without old success", f => f.AfterPublish(() => BotPoi.Current = new BotPoi(new WoWPoint(7, 8, 9), PoiType.Repair))),
         };
         int passed = 0, assertions = 0, unexpected = 0;
         foreach (var item in cases)
@@ -136,6 +143,37 @@ internal static class FlightPathIntentBoundaryRegressionTests
                 || !ReferenceEquals(FlightPaths.TakingPathFrom, origin) || !ReferenceEquals(FlightPaths.TakingPathTo, destination)
                 || start != origin.Location || end != destination.Location || FlightPaths.Reason != FlightPathReason.Use)
                 throw new InvalidOperationException("Genuine nested publication setup failed");
+        }
+        internal void ChangeDestination() => Destination.Location = new WoWPoint(1060, 20, 40);
+        internal void SingleObservation()
+        {
+            Stable(true);
+            Check(probe.Calls == 1, "admitted merchant was re-observed during publication: " + probe.Calls);
+        }
+        internal void AfterPublish(Action change)
+        {
+            Origin.MasterEntry = 0;
+            if (typeof(Navigator).GetField("_meshNavigator", StaticHidden)!.GetValue(null) != null)
+                throw new InvalidOperationException("Offline publication callback requires no mesh navigator");
+            Intent? replacement = null; Exception? callbackError = null; int callbacks = 0;
+            Action<LogLevel, string>? handler = null;
+            handler = (_, message) =>
+            {
+                if (!message.Contains("Changed POI to:", StringComparison.Ordinal) || BotPoi.Current.Type != PoiType.Fly) return;
+                Logging.OnMessageLogged -= handler;
+                callbacks++;
+                try { change(); replacement = new Intent(); }
+                catch (Exception error) { callbackError = error; throw; }
+            };
+            Logging.OnMessageLogged += handler;
+            bool result = false; Exception? observed = null; var start = WoWPoint.Empty; var end = WoWPoint.Empty;
+            try { result = FlightPaths.SetFlightPathUsage(From, To, out start, out end); }
+            catch (Exception error) { observed = error; }
+            finally { Logging.OnMessageLogged -= handler; }
+            if (callbackError != null) ExceptionDispatchInfo.Capture(callbackError).Throw();
+            Check(callbacks == 1 && replacement != null, "actual POI logging callback was not reached exactly once");
+            Check(observed == null && !result && Empty(start) && Empty(end) && replacement!.Retained,
+                $"denied={!result}; empty={Empty(start) && Empty(end)}; replacement-retained={replacement!.Retained}; owner-error={observed?.GetType().Name ?? "none"}");
         }
         internal void ProviderError()
         {
