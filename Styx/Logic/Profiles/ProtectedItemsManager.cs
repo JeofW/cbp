@@ -1,5 +1,7 @@
 #nullable disable
+using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -18,6 +20,9 @@ namespace Styx.Logic.Profiles
         private static readonly DualHashSet<uint, string> _fileProtectedItems;
         // Items added at runtime
         private static readonly DualHashSet<uint, string> _runtimeProtectedItems;
+        // Legacy Add/Remove own the manual set; collector leases are independent.
+        private static readonly object _runtimeSync = new object();
+        private static readonly Dictionary<uint, int> _itemOwners = new Dictionary<uint, int>();
         // Valid file names for protected items
         private static readonly HashSet<string> _validFileNames;
 
@@ -119,8 +124,11 @@ namespace Styx.Logic.Profiles
         /// </summary>
         public static bool Contains(uint item)
         {
-            if (_fileProtectedItems.Contains(item) || _runtimeProtectedItems.Contains(item))
+            if (_fileProtectedItems.Contains(item))
                 return true;
+            lock (_runtimeSync)
+                if (_runtimeProtectedItems.Contains(item) || _itemOwners.ContainsKey(item))
+                    return true;
 
             return CheckProfileProtectedItems(item);
         }
@@ -132,8 +140,11 @@ namespace Styx.Logic.Profiles
         {
             item = item.ToLower();
 
-            if (_fileProtectedItems.Contains(item) || _runtimeProtectedItems.Contains(item))
+            if (_fileProtectedItems.Contains(item))
                 return true;
+            lock (_runtimeSync)
+                if (_runtimeProtectedItems.Contains(item))
+                    return true;
 
             return CheckProfileProtectedItems(item);
         }
@@ -157,22 +168,54 @@ namespace Styx.Logic.Profiles
         /// <summary>
         /// Adds an item id to the runtime protected list.
         /// </summary>
-        public static bool Add(uint item) => _runtimeProtectedItems.Add(item);
+        public static bool Add(uint item) { lock (_runtimeSync) return _runtimeProtectedItems.Add(item); }
 
         /// <summary>
         /// Adds an item name to the runtime protected list.
         /// </summary>
-        public static bool Add(string item) => _runtimeProtectedItems.Add(item.ToLower());
+        public static bool Add(string item) { lock (_runtimeSync) return _runtimeProtectedItems.Add(item.ToLower()); }
 
         /// <summary>
         /// Removes an item id from the runtime protected list.
         /// </summary>
-        public static bool Remove(uint item) => _runtimeProtectedItems.Remove(item);
+        public static bool Remove(uint item) { lock (_runtimeSync) return _runtimeProtectedItems.Remove(item); }
 
         /// <summary>
         /// Removes an item name from the runtime protected list.
         /// </summary>
-        public static bool Remove(string item) => _runtimeProtectedItems.Remove(item.ToLower());
+        public static bool Remove(string item) { lock (_runtimeSync) return _runtimeProtectedItems.Remove(item.ToLower()); }
+
+        /// <summary>
+        /// Acquires one runtime item-ID owner. Disposing it releases only this
+        /// owner, never FILE/profile/manual protection or another active lease.
+        /// </summary>
+        public static IDisposable Acquire(uint item)
+        {
+            var owner = new ItemProtection(item);
+            lock (_runtimeSync)
+            {
+                _itemOwners.TryGetValue(item, out int count);
+                _itemOwners[item] = checked(count + 1);
+            }
+            return owner;
+        }
+
+        private sealed class ItemProtection : IDisposable
+        {
+            private readonly uint item;
+            private int disposed;
+            internal ItemProtection(uint item) { this.item = item; }
+            public void Dispose()
+            {
+                if (Interlocked.Exchange(ref disposed, 1) != 0) return;
+                lock (_runtimeSync)
+                {
+                    int count = _itemOwners[item];
+                    if (count == 1) _itemOwners.Remove(item);
+                    else _itemOwners[item] = count - 1;
+                }
+            }
+        }
 
         /// <summary>
         /// Gets all protected item names.
@@ -184,8 +227,8 @@ namespace Styx.Logic.Profiles
             foreach (string name in _fileProtectedItems.HashSet2)
                 list.Add(name);
 
-            foreach (string name in _runtimeProtectedItems.HashSet2)
-                list.Add(name);
+            lock (_runtimeSync)
+                list.AddRange(_runtimeProtectedItems.HashSet2);
 
             if (ProfileManager.CurrentProfile?.ProtectedItems != null)
             {
@@ -206,8 +249,12 @@ namespace Styx.Logic.Profiles
             foreach (uint id in _fileProtectedItems.HashSet1)
                 list.Add(id);
 
-            foreach (uint id in _runtimeProtectedItems.HashSet1)
-                list.Add(id);
+            lock (_runtimeSync)
+            {
+                list.AddRange(_runtimeProtectedItems.HashSet1);
+                foreach (uint id in _itemOwners.Keys)
+                    if (!_runtimeProtectedItems.Contains(id)) list.Add(id);
+            }
 
             if (ProfileManager.CurrentProfile?.ProtectedItems != null)
             {
