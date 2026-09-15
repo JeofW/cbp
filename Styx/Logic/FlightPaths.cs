@@ -246,8 +246,24 @@ namespace Styx.Logic
             if (!ReferenceEquals(_flightIntentOwner, publication) ||
                 !ReferenceEquals(TakingPathFrom, startNode) ||
                 !ReferenceEquals(TakingPathTo, endNode) || Reason != nextReason ||
-                !ReferenceEquals(BotPoi.Current, poi) || !observation.InputsCurrent())
+                !ReferenceEquals(BotPoi.Current, poi))
                 return false;
+
+            if (!observation.InputsCurrent() ||
+                (merchantObservation != null && !merchantObservation.IsCurrent()))
+            {
+                // This call still owns the publication, but its observed inputs
+                // no longer authorize it. Detach before the final POI diagnostic
+                // can publish replacement work. No old writes follow that callback.
+                // Clear/Reset also affect navigation and would resume after their
+                // callbacks; this admission has not started native movement.
+                _flightIntentOwner = new object();
+                TakingPathFrom = null;
+                TakingPathTo = null;
+                Reason = FlightPathReason.None;
+                BotPoi.Current = new BotPoi(PoiType.None);
+                return false;
+            }
 
             startFp = start;
             endFp = end;
