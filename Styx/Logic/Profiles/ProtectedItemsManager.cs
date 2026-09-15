@@ -60,7 +60,7 @@ namespace Styx.Logic.Profiles
                     string[] files = Directory.GetFiles(source, "*.xml", SearchOption.AllDirectories);
                     foreach (string filePath in files)
                     {
-                        string fileName = Path.GetFileNameWithoutExtension(filePath)?.ToLower();
+                        string fileName = Path.GetFileNameWithoutExtension(filePath)?.ToLowerInvariant();
                         if (!_validFileNames.Contains(fileName)) continue;
                         source = filePath;
                         AppendProtectedItemsFile(filePath, candidate);
@@ -92,7 +92,7 @@ namespace Styx.Logic.Profiles
 
             foreach (var element in root.Elements())
             {
-                if (element.Name.ToString().ToLower() != "item")
+                if (element.Name.ToString().ToLowerInvariant() != "item")
                     continue;
 
                 uint id = 0;
@@ -100,7 +100,7 @@ namespace Styx.Logic.Profiles
 
                 foreach (var attr in element.Attributes())
                 {
-                    string attrName = attr.Name.ToString().ToLower();
+                    string attrName = attr.Name.ToString().ToLowerInvariant();
                     switch (attrName)
                     {
                         case "id":
@@ -108,7 +108,7 @@ namespace Styx.Logic.Profiles
                             uint.TryParse(attr.Value, out id);
                             break;
                         case "name":
-                            name = attr.Value.ToLower();
+                            name = attr.Value.ToLowerInvariant();
                             break;
                     }
                 }
@@ -148,7 +148,7 @@ namespace Styx.Logic.Profiles
         /// </summary>
         public static bool Contains(string item)
         {
-            item = item.ToLower();
+            item = item.ToLowerInvariant();
 
             if (FileSnapshot.Contains(item))
                 return true;
@@ -172,7 +172,7 @@ namespace Styx.Logic.Profiles
         /// </summary>
         private static bool CheckProfileProtectedItems(string item)
         {
-            return ProfileManager.CurrentProfile?.ProtectedItems?.Contains(item.ToLower()) ?? false;
+            return ProfileManager.CurrentProfile?.ProtectedItems?.Contains(item.ToLowerInvariant()) ?? false;
         }
 
         /// <summary>
@@ -183,7 +183,7 @@ namespace Styx.Logic.Profiles
         /// <summary>
         /// Adds an item name to the runtime protected list.
         /// </summary>
-        public static bool Add(string item) { lock (_runtimeSync) return _runtimeProtectedItems.Add(item.ToLower()); }
+        public static bool Add(string item) { lock (_runtimeSync) return _runtimeProtectedItems.Add(item.ToLowerInvariant()); }
 
         /// <summary>
         /// Removes an item id from the runtime protected list.
@@ -193,7 +193,7 @@ namespace Styx.Logic.Profiles
         /// <summary>
         /// Removes an item name from the runtime protected list.
         /// </summary>
-        public static bool Remove(string item) { lock (_runtimeSync) return _runtimeProtectedItems.Remove(item.ToLower()); }
+        public static bool Remove(string item) { lock (_runtimeSync) return _runtimeProtectedItems.Remove(item.ToLowerInvariant()); }
 
         /// <summary>
         /// Acquires one runtime item-ID owner. Disposing it releases only this
