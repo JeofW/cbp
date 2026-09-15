@@ -885,7 +885,7 @@ namespace Styx.Logic.Profiles
 				if (itemId > 0)
 					items.Add(itemId);
 				if (!string.IsNullOrEmpty(itemName))
-					items.Add(itemName.ToLower());
+					items.Add(itemName.ToLowerInvariant());
 			}
 		}
 
