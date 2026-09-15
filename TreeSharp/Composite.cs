@@ -57,9 +57,7 @@ namespace TreeSharp
             }
             catch (Exception ex)
             {
-                Styx.Helpers.Logging.WriteException(ex);
-                LastStatus = RunStatus.Failure;
-                Stop(context);
+                ReportFailureAndStop(context, ex, null);
                 return LastStatus.Value;
             }
 
@@ -115,9 +113,23 @@ namespace TreeSharp
             }
             catch (Exception ex)
             {
-                Styx.Helpers.Logging.WriteException(ex);
+                ReportFailureAndStop(context, ex, ExceptionDispatchInfo.Capture(ex));
                 throw;
             }
+        }
+
+        private void ReportFailureAndStop(object context, Exception error, ExceptionDispatchInfo? failure)
+        {
+            // Diagnostics invoke external subscribers. Even a throwing subscriber
+            // must not prevent release of this faulted execution's resources.
+            // Tick retains its ordinary Failure result; Start retains its original
+            // factory error. A cancellation/interruption from either boundary wins.
+            try { Styx.Helpers.Logging.WriteException(error); }
+            catch (Exception diagnosticError) { PreserveCleanupFailure(ref failure, diagnosticError); }
+            LastStatus = RunStatus.Failure;
+            try { Stop(context); }
+            catch (Exception cleanupError) { PreserveCleanupFailure(ref failure, cleanupError); }
+            failure?.Throw();
         }
 
         private void StopAfterStopSignal(object context)
