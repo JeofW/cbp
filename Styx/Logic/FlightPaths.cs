@@ -294,8 +294,31 @@ namespace Styx.Logic
             if (!OwnsPublication())
                 return false;
 
-            if (!observation.InputsCurrent() ||
-                (merchantObservation != null && !merchantObservation.IsCurrent()))
+            bool finalInputsCurrent;
+            try
+            {
+                finalInputsCurrent = observation.InputsCurrent() &&
+                    (merchantObservation == null || merchantObservation.IsCurrent());
+            }
+            catch (Exception error)
+            {
+                // A failed final observation is unknown, even if a second read
+                // might succeed. Revoke only this call's still-owned publication
+                // without re-reading the failing input or touching newer work.
+                ExceptionDispatchInfo? failure = ExceptionDispatchInfo.Capture(error);
+                try { RevokeOwnedPublication(); }
+                catch (Exception cleanupError)
+                {
+                    TreeSharp.Composite.PreserveCleanupFailure(ref failure, cleanupError);
+                }
+                failure.Throw();
+                throw;
+            }
+            // Virtual observation getters can also replace work while returning
+            // unchanged values. Input equality cannot substitute for ownership.
+            if (!OwnsPublication())
+                return false;
+            if (!finalInputsCurrent)
             {
                 // Clear/Reset also affect navigation. This admission has not
                 // started native movement; revoke only its owned publication.
