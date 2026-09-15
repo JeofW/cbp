@@ -26,6 +26,7 @@ namespace Styx.Logic
 		private static readonly MailFrame _mailFrame;
 		private static readonly GossipFrame _gossipFrame;
 		private static bool _sellSessionActive;
+		private static object? _sellSessionCandidate;
 		private static ItemQuality _sellSessionQualities;
 		private static List<string>? _sellSessionProtectedNames;
 		private static List<uint>? _sellSessionProtectedIds;
@@ -116,15 +117,17 @@ namespace Styx.Logic
 			{
 				var args = new MailItemsEventArgs { AdditionalItems = new List<WoWItem>() };
 
-				foreach (Delegate handler in OnMailItems.GetInvocationList())
+				foreach (MailItemsEventHandler handler in OnMailItems.GetInvocationList())
 				{
 					try
 					{
-						handler.DynamicInvoke(args);
+						handler(args);
 					}
-					catch (Exception ex)
+					catch (Exception ex) when (ex is not OperationCanceledException
+						&& ex is not ThreadInterruptedException)
 					{
 						Logging.WriteException(ex);
+						args.AdditionalItems.Clear();
 						continue;
 					}
 
@@ -180,6 +183,10 @@ namespace Styx.Logic
 			if (_sellSessionActive)
 				return true;
 
+			// Each construction attempt owns a distinct identity. Reset or nested
+			// admission invalidates older callbacks without touching a replacement.
+			object candidate = new object();
+			_sellSessionCandidate = candidate;
 			ItemQuality qualityMask = ItemQuality.None;
 			Profile? currentProfile = ProfileManager.CurrentProfile;
 
@@ -234,19 +241,27 @@ namespace Styx.Logic
 					IdExceptions = new List<uint>()
 				};
 
-				foreach (Delegate handler in OnVendorItems.GetInvocationList())
+				foreach (VendorItemsEventHandler handler in OnVendorItems.GetInvocationList())
 				{
+					if (!IsSellSessionCandidateCurrent(candidate, currentProfile))
+						return false;
 					try
 					{
-						handler.DynamicInvoke(args);
+						handler(args);
 					}
-					catch (Exception ex)
+					catch (Exception ex) when (ex is not OperationCanceledException
+						&& ex is not ThreadInterruptedException)
 					{
 						Logging.WriteException(ex);
 						args.NameExceptions.Clear();
 						args.IdExceptions.Clear();
+						if (!IsSellSessionCandidateCurrent(candidate, currentProfile))
+							return false;
 						continue;
 					}
+
+					if (!IsSellSessionCandidateCurrent(candidate, currentProfile))
+						return false;
 
 					foreach (string name in args.NameExceptions)
 					{
@@ -268,6 +283,17 @@ namespace Styx.Logic
 				protectedIds.AddRange(args.IdExceptions);
 			}
 
+			// Callback work may add protection or change the active profile. Preserve
+			// every earlier exclusion, but never publish an old profile's candidate.
+			if (!IsSellSessionCandidateCurrent(candidate, currentProfile))
+				return false;
+			foreach (string name in ProtectedItemsManager.GetAllItemNames())
+				if (!protectedNames.Contains(name)) protectedNames.Add(name);
+			foreach (uint id in ProtectedItemsManager.GetAllItemIds())
+				if (!protectedIds.Contains(id)) protectedIds.Add(id);
+			if (!IsSellSessionCandidateCurrent(candidate, currentProfile))
+				return false;
+
 			_sellSessionActive = true;
 			_sellSessionQualities = qualityMask;
 			_sellSessionProtectedNames = protectedNames;
@@ -275,6 +301,10 @@ namespace Styx.Logic
 			_sellSessionStackCount = 0;
 			return true;
 		}
+
+		private static bool IsSellSessionCandidateCurrent(object candidate, Profile profile) =>
+			ReferenceEquals(_sellSessionCandidate, candidate) && !_sellSessionActive
+			&& ReferenceEquals(ProfileManager.CurrentProfile, profile);
 
 		private static bool ContinueSellSession()
 		{
@@ -313,6 +343,7 @@ namespace Styx.Logic
 
 		private static void ResetSellSession()
 		{
+			_sellSessionCandidate = null;
 			_sellSessionActive = false;
 			_sellSessionProtectedNames = null;
 			_sellSessionProtectedIds = null;
@@ -331,18 +362,19 @@ namespace Styx.Logic
 			if (OnBuyItems != null)
 			{
 				var args = new BuyItemsEventArgs();
-				foreach (Delegate handler in OnBuyItems.GetInvocationList())
+				foreach (BuyItemsEventHandler handler in OnBuyItems.GetInvocationList())
 				{
 					try
 					{
-						handler.DynamicInvoke(args);
+						handler(args);
 						foreach (var kvp in args.BuyItemsIds)
 						{
 							if (!itemsToBuy.ContainsKey(kvp.Key))
 								itemsToBuy.Add(kvp.Key, kvp.Value);
 						}
 					}
-					catch (Exception ex)
+					catch (Exception ex) when (ex is not OperationCanceledException
+						&& ex is not ThreadInterruptedException)
 					{
 						Logging.WriteException(ex);
 						args.BuyItemsIds.Clear();

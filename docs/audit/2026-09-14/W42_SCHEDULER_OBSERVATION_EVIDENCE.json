@@ -1,0 +1,100 @@
+{
+  "status": "reproduced_red_candidate_not_executed_or_promoted",
+  "pr": 44,
+  "branch": "audit/next-42-scheduler-observation-20260914",
+  "base": "e97263eef2dbf1bc6b050d80d9c3e51232ce42e2",
+  "tested_commit": "35cc917435f74d33558d0250e566bcb7ad9a6641",
+  "tested_tree": "54aa82050d6dad8de98a7b567f25efc470f5468f",
+  "new_group": {
+    "executed": 23,
+    "pass": 7,
+    "assertion_failures": 16,
+    "unexpected": 0
+  },
+  "retained_scheduler": {
+    "executed": 5,
+    "pass": 2,
+    "behavior_assertions": 1,
+    "missing_contracts": 2
+  },
+  "combined": {
+    "entries": 17,
+    "build_zero": 17,
+    "run_zero": 16,
+    "run_nonzero": [
+      "WholesomeQuestRecoveryRegressionTests"
+    ]
+  },
+  "source_comparison": {
+    "input_count": 1690,
+    "changed": [],
+    "identical_normalized_outputs": 33,
+    "normalization_paths": "focused <project>/0 vs combined <project>/W42Normalized; compared matching project+relative file with collision check"
+  },
+  "candidate": {
+    "path": "runtime-snapshot/Bots/WholesomeAutoQuest-master/QuestScheduler.cs",
+    "preimage_sha256": "c603c55f18ed3b8c5f57cb0b57134240d52d63082afa209110322ca8c462b9a9",
+    "sha256": "6741ddc6c2058cbcbc5722f5e0982972eff37ac45dc83abcd9593c9dd86d2ad8",
+    "blob": "61fac208910fc182918cf17a1020bc0d868e765d",
+    "game_attached": false
+  },
+  "candidate_compiled": false,
+  "candidate_executed": false,
+  "candidate_promoted": false,
+  "blocked_workflow": {
+    "commit": "9a84d797ec6a77f9967c68ffe2117946e10d6843",
+    "run": 34831727583,
+    "attempts": 2,
+    "jobs": [
+      103936377807,
+      103937050245
+    ],
+    "steps_each": 0,
+    "runner_id_each": 0,
+    "annotation_count_latest": 1,
+    "annotation_text_retrieved": false,
+    "cause": "unconfirmed",
+    "native_retry_succeeded": true
+  },
+  "artifacts": [
+    {
+      "label": "recovered sale pair",
+      "file": "w42-sale-paired-1d08c16c.zip",
+      "run": 34829035555,
+      "artifact": 10341398183,
+      "sha256": "73ec9bb867fbad1a6115b2cfa5a56e8387c18bd6cf89bafe92e889f5851f9971"
+    },
+    {
+      "label": "fixture preparation only",
+      "file": "w42-scheduler-fixture-51a6d8c5.zip",
+      "run": 34830355111,
+      "artifact": 10341887083,
+      "sha256": "3577ef4a035a4cd94c03bbc76d705cad6f85eb74e8f25c2b59ce39e22aa58b59"
+    },
+    {
+      "label": "new unchanged-production current red",
+      "file": "w42-scheduler-red-35cc9174.zip",
+      "run": 34831110419,
+      "artifact": 10342172741,
+      "sha256": "4bb7c1669eb3b03b5ab310b4ed8b50478d7e444ee91a31a5396c50f2742fc041"
+    },
+    {
+      "label": "new combined red",
+      "file": "w42-scheduler-combined-red-35cc9174.zip",
+      "run": 34831110320,
+      "artifact": 10342527041,
+      "sha256": "e22f298572601e1473180bd9351bf410acae6b69a745b1077500577e4c99db49"
+    },
+    {
+      "label": "host build at test source only",
+      "file": "w42-scheduler-host-red-35cc9174.zip",
+      "run": 34831110267,
+      "artifact": 10341888242,
+      "sha256": "47be1733057e1f4c6e4161035666a980d3d00ed2059f89f84bf426d9cdd65c2f"
+    }
+  ],
+  "game_attached": false,
+  "merge_or_deployment": false,
+  "independent_review": "pending",
+  "source_scope": "one proposed scheduler production file; only tests/preparation/docs committed in this slice"
+}

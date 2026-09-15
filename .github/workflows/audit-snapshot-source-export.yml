@@ -1,0 +1,57 @@
+name: Audit W42 source export
+on:
+  push:
+    branches: [audit/next-42-quest-log-snapshots-20260914, audit/next-42-ready-owner-20260914, audit/next-42-scheduler-observation-20260914]
+    paths: [.github/workflows/audit-snapshot-source-export.yml]
+permissions:
+  contents: read
+jobs:
+  export:
+    if: github.repository == 'jeofwong/CopilotBuddy-private' && github.event.repository.private == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GIT_LFS_SKIP_SMUDGE: '1'
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+          lfs: false
+      - name: Export canonical git blobs, excluding meshes and captured logs
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import subprocess, pathlib, tarfile, json, hashlib, io
+          out=pathlib.Path('/tmp/audit-source-export'); out.mkdir()
+          sha=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
+          entries=subprocess.check_output(['git','ls-tree','-r','-z','HEAD']).split(b'\0')
+          manifest=[]
+          proc=subprocess.Popen(['git','cat-file','--batch'],stdin=subprocess.PIPE,stdout=subprocess.PIPE)
+          with tarfile.open(out/'source.tar.gz','w:gz') as archive:
+              for entry in entries:
+                  if not entry: continue
+                  meta,path=entry.split(b'\t',1); mode,kind,blob=meta.decode().split()
+                  path=path.decode()
+                  if kind!='blob' or path.startswith(('mmaps/','runtime-logs/')) or path=='output.zip': continue
+                  proc.stdin.write((blob+'\n').encode()); proc.stdin.flush()
+                  header=proc.stdout.readline().decode().split()
+                  if len(header)!=3 or header[0]!=blob or header[1]!='blob': raise RuntimeError('invalid blob header')
+                  data=proc.stdout.read(int(header[2]))
+                  if proc.stdout.read(1)!=b'\n': raise RuntimeError('invalid blob framing')
+                  actual=hashlib.sha1(b'blob '+str(len(data)).encode()+b'\0'+data).hexdigest()
+                  if actual!=blob: raise RuntimeError('blob hash mismatch: '+path)
+                  manifest.append({'path':path,'blob':blob,'sha256':hashlib.sha256(data).hexdigest(),'size':len(data)})
+                  info=tarfile.TarInfo(path); info.size=len(data); info.mode=int(mode,8)&0o777
+                  archive.addfile(info,io.BytesIO(data))
+          proc.stdin.close()
+          if proc.wait()!=0: raise RuntimeError('git cat-file failed')
+          (out/'manifest.json').write_text(json.dumps({'commit':sha,'files':manifest},indent=2))
+          (out/'commit.txt').write_text(sha+'\n')
+          print('Exported',len(manifest),'canonical files; no LFS tile download.')
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: audit-w42-source-export
+          path: /tmp/audit-source-export/*
+          retention-days: 14
+          if-no-files-found: error

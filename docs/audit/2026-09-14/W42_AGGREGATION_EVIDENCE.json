@@ -1,0 +1,91 @@
+{
+  "schema": 1,
+  "date": "2026-09-14",
+  "repository": "JeofW/CopilotBuddy-private",
+  "pr": 40,
+  "branch": "audit/next-42-test-aggregation-20260914",
+  "tested_commit": "cd82129ec81f8e51fa12620f95b307e2ca5b34b6",
+  "tested_tree": "36f2c1065c678644460a4f15a3152de00c51c9b4",
+  "baseline_production": "2d3728feb22938428fe64d8ff8204d5779cb4e9e",
+  "inherited_repair_not_authored_in_this_slice": "1dccead847f330430f148609858c6f89d5724ad8",
+  "independent_base_checkpoint": "318c0a7d9e8518a468a52af05134aaad3e401eee",
+  "authenticated_branch_and_commit_writes": true,
+  "actual_draft_pr_created": true,
+  "trigger": "authorized branch pushes; not a dispatch claim",
+  "local_csharp_execution": false,
+  "runtime": {"os": "Windows", "architecture": "x86", "framework": "10.0.12", "pointer_bytes": 4, "game_attached": false, "target": "original WoW 3.3.5a build 12340"},
+  "artifacts": [
+    {"variant": "baseline", "run": 34794252845, "artifact": 10329485658, "filename": "w42-normalized-baseline-cd82129.zip", "sha256": "685f735e55acc840fd232306353f276d560d0da0cfde6b3e0b7cd72286c61af0", "files": 42, "internal_hashes_verified": 41},
+    {"variant": "current", "run": 34794252845, "artifact": 10329646073, "filename": "w42-normalized-current-cd82129.zip", "sha256": "3ee7a49e02c7cf5bc1ff1b9d3143c11f7e96ca7b940943b3b4c1fecb5241b81a", "files": 42, "internal_hashes_verified": 41},
+    {"variant": "integrated", "run": 34794252860, "artifact": 10329172220, "filename": "w42-integrated-cd82129.zip", "sha256": "d671013f7d370824dff63ba530998cad33047fbc735334aa43de28a21afc73c7", "files": 66, "internal_hashes_verified": 65}
+  ],
+  "artifact_verification": {"full_archives_downloaded": true, "zip_crc_valid": true, "sha256_matches_github_metadata": true, "all_internal_manifest_entries_verified": true, "manifest_excludes_only_itself": true},
+  "source_checks": {
+    "identical_normalized_files_between_variants": 21,
+    "original_and_generated_csharp_entries_verified_per_variant": 17,
+    "identical_current_and_integrated_recorded_source_config_hashes": 1672,
+    "only_changed_production_csharp_path": "Styx/Logic/Questing/QuestLog.cs",
+    "baseline_questlog_sha256": "2ff679d217f71f4e03fa86e613e507407617a253ef041704bd70bbc4e6c9029b",
+    "current_questlog_sha256": "cc6c64d1445ac82cda8161accbc1a54adb89e2bea04fdd4e36984df6561c10b5"
+  },
+  "comparison": {
+    "all_four_suites_build_exit_zero_in_each_variant": true,
+    "all_35_observation_ready_scheduler_records_present_in_each_variant": true,
+    "normalization_python_utility_tests": {"baseline_pass": 8, "current_pass": 8, "production_behavior_proof": false},
+    "main_observation": {"total": 25, "baseline_pass": 3, "baseline_behavior_assertions": 3, "current_pass": 4, "current_behavior_assertions": 2, "missing_proposed_contracts_each": 19},
+    "ready_log": {"total": 5, "pass_each": 1, "assertions_each": 4},
+    "scheduler": {"total": 5, "pass_each": 1, "behavior_assertions_each": 1, "missing_proposed_contracts_each": 2, "unresolved_null_reference_errors_each": 1},
+    "full_completion_owner": {"total": 15, "baseline_pass": 10, "baseline_assertions": 5, "current_pass": 15, "current_assertions": 0, "unexpected_errors_each": 0},
+    "extracted_boundary": {"total": 24, "baseline_pass": 13, "baseline_assertions": 11, "current_pass": 16, "current_assertions": 8, "unexpected_errors_each": 0},
+    "wholesome_deferred_groups": {"started_each": 9, "pass_each": 8, "failed_each": 1, "legacy_main_finishes_each": true, "aggregate_exit_each": 1},
+    "counts_overlap_not_unique_bug_totals": true
+  },
+  "integrated": {
+    "historical_entries_retained": 14,
+    "entries": 17,
+    "build_exit_zero": 17,
+    "run_exit_zero": 14,
+    "run_exit_one": 3,
+    "all_managed_executables_x86": true,
+    "results": [
+      {"suite": "QuestRecoveryRegressionTests", "build": 0, "run": 0},
+      {"suite": "Singular", "build": 0, "run": 0, "source_files_compiled": 99},
+      {"suite": "WholesomeQuestRecoveryRegressionTests", "build": 0, "run": 1, "relation_pass": 23, "relation_total": 23, "legacy_main_finishes": true},
+      {"suite": "QuestRecoveryAdapterRegressionTests", "build": 0, "run": 0},
+      {"suite": "QuestPickupPolicyRegressionTests", "build": 0, "run": 0},
+      {"suite": "VendorCoreRegressionTests", "build": 0, "run": 0},
+      {"suite": "NativeContractRegressionTests", "build": 0, "run": 0, "mesh_downloaded": false},
+      {"suite": "ShutdownBoundaryRegressionTests", "build": 0, "run": 0},
+      {"suite": "Elevator", "build": 0, "run": 0},
+      {"suite": "PaladinDecisions", "build": 0, "run": 0},
+      {"suite": "GroupEngagement", "build": 0, "run": 0},
+      {"suite": "PaladinSupport", "build": 0, "run": 0},
+      {"suite": "WholesomeSale", "build": 0, "run": 0, "pass": 23, "total": 23},
+      {"suite": "QuestLogObservationRegressionTests", "build": 0, "run": 1},
+      {"suite": "QuestCompletionOwnerRegressionTests", "build": 0, "run": 0, "pass": 15, "total": 15},
+      {"suite": "QuestObservationBoundaryRegressionTests", "build": 0, "run": 1, "pass": 16, "total": 24},
+      {"suite": "Analyzers", "build": 0, "run": 0, "pass": 33, "total": 33}
+    ]
+  },
+  "superseded_first_attempt": {
+    "commit": "678c6d01f4de448b319d3f0c681ffed05448deeb",
+    "comparison_run": 34793881615,
+    "comparison_artifacts": [
+      {"artifact": 10329585635, "sha256": "5220db4b3dfc0f8edf77350fba86cf1b542b847eec793e0f1777cdf6e5d2709a"},
+      {"artifact": 10329620557, "sha256": "ed7659f9d779ba19401621f9f44bc67596b6e41204aae6f45b799936b3f7452b"}
+    ],
+    "integrated_run": 34793881514,
+    "integrated_artifact": 10328847531,
+    "integrated_sha256": "946d18b30b0e0a45110e37e16a582b41b7e60d2ab4d24bba33dc5e0b87ae57a2",
+    "all_17_entries_executed": true,
+    "complete_internal_manifest": false,
+    "classification": "Post-test workflow hashing failed on bracketed paths. Not a production defect. Fixed with literal-path hashing and rerun at cd82129."
+  },
+  "protected_refs": {"master": "8382a7ec05a64212ea0a237159dca427a0767425", "audit/backup-master-before-approved-merge-20260913": "c43c50d8d5d6775055f19bf018b52930a264d4a4"},
+  "new_production_repair_in_this_slice": false,
+  "w42_complete": false,
+  "whole_architecture_audit_complete": false,
+  "merged": false,
+  "deployed": false,
+  "live_verified": false
+}

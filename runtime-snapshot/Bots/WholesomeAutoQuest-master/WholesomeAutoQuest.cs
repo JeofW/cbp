@@ -852,6 +852,7 @@ namespace WholesomeAQ
         private uint _lastVendorEntry;
         private WoWPoint _lastVendorDestination;
         private HashSet<int> _lastReadyQuestIds;
+        private QuestLogSnapshot _lastReadyQuestSnapshot;
         private bool _wasStuck;
         private bool _stuckLogged;
         private DateTime _nextProgressSampleUtc = DateTime.MinValue;
@@ -869,9 +870,8 @@ namespace WholesomeAQ
         }
 
         public override Composite Root => _root ??= new WholesomeExecutionGate(
-            _ => WholesomeRestPolicy.ShouldRunQuestRoot(_restingPaused)
-                && ShouldExecuteQuestRoot(_stopped, _scheduler?.LastSchedule),
-            base.Root);
+            _ => !_stopped && WholesomeRestPolicy.ShouldRunQuestRoot(_restingPaused),
+            new Bots.Quest.PublishedQuestRoot(() => _scheduler?.CaptureExecutionPermission()));
 
         internal static bool ShouldExecuteQuestRoot(bool stopped, QuestScheduleResult schedule)
         {
@@ -1121,6 +1121,8 @@ namespace WholesomeAQ
 
         internal void ResetRecoveryLifecycleState()
         {
+            _lastReadyQuestIds = null;
+            _lastReadyQuestSnapshot = null;
             _progressMonitor.Reset();
             _pickupMonitor.Reset();
             _deathMonitor.Reset();
@@ -1145,25 +1147,43 @@ namespace WholesomeAQ
                     {
                         if (_stopped || !_initialized || !_dataReady || scheduler == null ||
                             !StyxWoW.IsInWorld || StyxWoW.Me == null)
+                        {
+                            // This callback is fenced by the current refresh lease. Do not
+                            // leave a prior plan running when the scan itself is skipped.
+                            _refreshGate.TryApply(lease, () =>
+                                scheduler?.InvalidatePublishedWork("Quest observations unavailable; waiting for the current world and data."));
                             return false;
-                        _lastScanTime = DateTime.Now;
+                        }
+                        // Vendor discovery is part of this lease's fallible observation phase.
+                        // Revoke before it runs; a late catch could revoke a replacement lease.
+                        if (!_refreshGate.TryApply(lease, () =>
+                        {
+                            scheduler.InvalidatePublishedWork("Refreshing quest observations; waiting for vendor and quest data.");
+                            _lastScanTime = DateTime.Now;
+                        }))
+                            return false;
                         if (_vendorDataReady)
                         {
                             var bl = _settings.BlacklistedVendors;
-                            scheduler.CurrentVendors = _vendorLoader.GetNearestVendors(StyxWoW.Me, "Repair", 3, bl)
+                            var vendors = _vendorLoader.GetNearestVendors(StyxWoW.Me, "Repair", 3, bl)
                                 .Concat(_vendorLoader.GetNearestVendors(StyxWoW.Me, "Food", 3, bl))
                                 .Concat(_vendorLoader.GetNearestVendors(StyxWoW.Me, "Train", 2, bl))
                                 .ToList();
+                            if (!_refreshGate.TryApply(lease, () => scheduler.CurrentVendors = vendors))
+                                return false;
                         }
-                        refreshed = scheduler.ScanAndRefresh(StyxWoW.Me);
+                        refreshed = scheduler.ScanAndRefreshOwned(
+                            StyxWoW.Me, null,
+                            apply => _refreshGate.TryApply(lease, apply),
+                            path => ProfileManager.TryLoadNew(path, true),
+                            () => !_stopped && ReferenceEquals(_scheduler, scheduler)
+                                && _refreshGate.IsCurrent(lease));
                         return !refreshed && scheduler.LastSchedule?.FallbackMode == QuestFallbackMode.None;
                     },
                     () =>
                     {
                         if (refreshed)
                         {
-                            if (!string.IsNullOrWhiteSpace(scheduler.CurrentProfilePath))
-                                ProfileManager.LoadNew(scheduler.CurrentProfilePath);
                             Log($"Profile refreshed - {scheduler.LastStatus}");
                             LogFarAwayQuests();
                         }
@@ -1174,7 +1194,7 @@ namespace WholesomeAQ
                     });
                 return runAgain;
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not ThreadInterruptedException && ex is not OperationCanceledException)
             {
                 Log($"Scan error: {ex.Message}");
                 return false;
@@ -1240,6 +1260,13 @@ namespace WholesomeAQ
 
         public override void Pulse()
         {
+            // Do not carry ready-history authority across an observed world/run gap,
+            // including early returns below. This is not a continuous session lease.
+            if (_stopped || !StyxWoW.IsInGame || StyxWoW.Me == null || !TreeRoot.IsRunning)
+            {
+                _lastReadyQuestIds = null;
+                _lastReadyQuestSnapshot = null;
+            }
             if (_stopped)
                 return;
 
@@ -1470,28 +1497,43 @@ namespace WholesomeAQ
                     _pickupMonitor.Reset();
                 }
 
-                var currentReady = new HashSet<int>(
-                    StyxWoW.Me.QuestLog.GetAllQuests()
-                        .Where(q => q.IsCompleted)
-                        .Select(q => (int)q.Id));
-
-                if (_lastReadyQuestIds != null && _lastReadyQuestIds.Count > 0)
-                {
-                    var turnedIn = _lastReadyQuestIds.Where(id => !currentReady.Contains(id)).ToList();
-                    if (turnedIn.Count > 0)
-                    {
-                        Log($"Turned in {turnedIn.Count} quest(s): {string.Join(",", turnedIn)} — triggering rescan");
-                        RequestRefresh("A quest turn-in completed; queuing one scheduler rebuild.");
-                        _lastReadyQuestIds = null;
-                        return;
-                    }
-                }
-
-                _lastReadyQuestIds = currentReady;
+                if (ObserveReadyQuestLog())
+                    return;
             }
 
             if (_settings.SellWhite || _settings.SellGreen || _settings.SellBlue)
                 SellByQuality();
+        }
+
+        private bool ObserveReadyQuestLog()
+        {
+            var previous = _lastReadyQuestSnapshot;
+            var previousReady = _lastReadyQuestIds;
+            // Clear before observing so failures/cancellation cannot retain authority.
+            _lastReadyQuestSnapshot = null;
+            _lastReadyQuestIds = null;
+            if (!StyxWoW.IsInGame || StyxWoW.Me == null)
+                return false;
+
+            var current = StyxWoW.Me.QuestLog.CaptureSnapshot();
+            if (!current.IsIdentityComplete)
+                return false;
+
+            _lastReadyQuestSnapshot = current;
+            _lastReadyQuestIds = new HashSet<int>(current.ReadyQuestIds.Select(id => (int)id));
+            if (previous == null || previousReady == null || !previous.HasSameOwner(current))
+                return false;
+
+            var accepted = new HashSet<uint>(current.AcceptedQuestIds);
+            var departed = previousReady.Where(id => !accepted.Contains((uint)id)).ToList();
+            if (departed.Count == 0)
+                return false;
+
+            // A raw departure requests fresh scheduling. It does not prove that a
+            // server turn-in succeeded or grant completed-quest history authority.
+            Log($"Previously ready quest(s) left the observed log: {string.Join(",", departed)} — triggering rescan");
+            RequestRefresh("Previously ready quest left the observed log; queuing one scheduler rebuild.");
+            return true;
         }
 
         private void ObserveRecoveryActivation()
@@ -2397,22 +2439,45 @@ namespace WholesomeAQ
 
             if (mask == ItemQuality.None) return;
 
-            var protectedIds = new HashSet<uint>();
+            // Selling is destructive. A scheduler batch is not the full live quest log.
+            var me = StyxWoW.Me;
+            var database = _dataLoader?.Database;
+            if (me == null || !me.IsValid || !me.IsAlive || database?.Quests == null)
+                return;
+            var questLog = me.QuestLog;
+            var observation = questLog.CaptureSnapshot();
+            if (observation == null || !observation.IsComplete)
+                return;
+            var accepted = observation.Quests;
 
-            if (_dataLoader.Database != null && _scheduler?.ActiveQuestIds != null)
+            var protectedIds = new HashSet<uint>(ProtectedItemsManager.GetAllItemIds());
+            var protectedNames = ProtectedItemsManager.GetAllItemNames();
+            var acceptedIds = new HashSet<int>();
+            foreach (var current in accepted)
             {
-                foreach (int qId in _scheduler.ActiveQuestIds)
+                if (current == null || current.Id == 0 || current.Id > int.MaxValue)
+                    return;
+                acceptedIds.Add((int)current.Id);
+            }
+            // Keep the old upcoming/scheduled protection as well as deferred and
+            // completed-but-not-turned-in quests. Do not protect unrelated dataset rows.
+            var protectedQuestIds = new HashSet<int>(acceptedIds);
+            if (_scheduler?.ActiveQuestIds != null)
+                protectedQuestIds.UnionWith(_scheduler.ActiveQuestIds);
+            foreach (int qId in protectedQuestIds)
+            {
+                var matches = database.Quests.Where(q => q != null && q.Id == qId).ToArray();
+                if (matches.Length != 1 || matches[0].Objectives == null
+                    || matches[0].Objectives.Any(obj => obj == null))
                 {
-                    var quest = _dataLoader.Database.Quests.FirstOrDefault(q => q.Id == qId);
-                    if (quest == null) continue;
-                    if (quest.StartItem > 0)
-                        protectedIds.Add((uint)quest.StartItem);
-                    foreach (var obj in quest.Objectives)
-                    {
-                        if (obj.ItemId > 0)
-                            protectedIds.Add((uint)obj.ItemId);
-                    }
+                    // Missing/ambiguous accepted data is not permission to sell its items.
+                    if (acceptedIds.Contains(qId)) return;
+                    continue;
                 }
+                var quest = matches[0];
+                if (quest.StartItem > 0) protectedIds.Add((uint)quest.StartItem);
+                foreach (var obj in quest.Objectives)
+                    if (obj.ItemId > 0) protectedIds.Add((uint)obj.ItemId);
             }
 
             var bestFood = Consumable.GetBestFood(false);
@@ -2422,8 +2487,9 @@ namespace WholesomeAQ
             if (bestDrink != null)
                 protectedIds.Add(bestDrink.Entry);
 
-            foreach (var item in StyxWoW.Me.BagItems)
+            foreach (var item in me.BagItems)
             {
+                if (item == null) return;
                 if (item.ItemClass == WoWItemClass.Projectile
                  || item.ItemClass == WoWItemClass.Quiver
                  || item.ItemClass == WoWItemClass.Reagent
@@ -2431,7 +2497,12 @@ namespace WholesomeAQ
                     protectedIds.Add(item.Entry);
             }
 
-            MerchantFrame.Instance.SellItemQualities(mask, null, protectedIds);
+            // Recheck the immediate dispatch boundary after observing inventory.
+            if (!ReferenceEquals(me, StyxWoW.Me) || !me.IsValid || !me.IsAlive
+                || !MerchantFrame.Instance.IsVisible
+                || !questLog.IsSnapshotCurrent(observation))
+                return;
+            MerchantFrame.Instance.SellItemQualities(mask, protectedNames, protectedIds);
         }
 
         private static string FindProfilePath()

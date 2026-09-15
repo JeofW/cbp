@@ -97,12 +97,13 @@ namespace Styx.Logic.Profiles
 			LoadProfileForLevel();
 		}
 
-		private static void LoadProfileForLevel()
+		private static Profile? LoadProfileForLevel()
 		{
 			var profile = GetProfileForLevel(ObjectManager.Me?.Level ?? 1);
 			CurrentProfile = profile;
 			if (profile != null)
 				Logging.WriteDebug("Selected sub-profile: {0} (L{1}-{2})", profile.Name, profile.MinLevel, profile.MaxLevel);
+			return profile;
 		}
 
 		private static Profile? GetProfileForLevel(int level)
@@ -164,6 +165,16 @@ namespace Styx.Logic.Profiles
 
 		public static void LoadNew(string path, bool rememberMe)
 		{
+			TryLoadNew(path, rememberMe);
+		}
+
+		/// <summary>
+		/// Reports actual compilation and selection acceptance without changing the
+		/// existing void LoadNew API. File/parse/cancellation exceptions still propagate.
+		/// A profile replaced by a synchronous load event is not this call's success.
+		/// </summary>
+		public static bool TryLoadNew(string path, bool rememberMe)
+		{
 			if (string.IsNullOrEmpty(path) || !File.Exists(path))
 			{
 				throw new FileNotFoundException("Profile file not found.", path);
@@ -178,13 +189,20 @@ namespace Styx.Logic.Profiles
 
 			StyxWoW.AreaManager.SetArea(null);
 			Logging.WriteDebug("Loading profile from {0}", path);
-			CurrentOuterProfile = new Profile(path, null);
-			if (!CompileProfileCode(CurrentOuterProfile))
+			var candidate = new Profile(path, null);
+			CurrentOuterProfile = candidate;
+			if (!ReferenceEquals(_currentOuterProfile, candidate))
+				return false;
+			if (!CompileProfileCode(candidate))
 			{
 				TreeRoot.Stop();
-				return;
+				return false;
 			}
-			LoadProfileForLevel();
+			if (!ReferenceEquals(_currentOuterProfile, candidate))
+				return false;
+			Profile? selected = LoadProfileForLevel();
+			return selected != null && ReferenceEquals(_currentOuterProfile, candidate)
+				&& ReferenceEquals(_currentProfile, selected);
 		}
 
 		public static void LoadNew(string path)

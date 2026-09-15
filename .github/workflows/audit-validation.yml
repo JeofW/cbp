@@ -18,7 +18,7 @@ concurrency:
 
 jobs:
   host-build:
-    if: github.repository == 'JeofW/CopilotBuddy-private' && github.event.repository.private == true
+    if: github.repository == 'jeofwong/CopilotBuddy-private' && github.event.repository.private == true
     runs-on: windows-latest
     timeout-minutes: 15
     env:

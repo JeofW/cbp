@@ -1,0 +1,26 @@
+{
+  "repair_commit": "c237ca5b5a32e33780552784b33e36e6973b735c",
+  "repair_tree": "fb6e821f7ca1b4a018584647149d52564c614db5",
+  "red_commit": "f0bba89d525207b3d5511eb339bcfdbc509ce47e",
+  "game_attached": false,
+  "independent_review": false,
+  "artifacts": [
+    {"key":"red","run":34813174582,"artifact":10335921112,"sha256":"43a64981b4ab2ea9ce5ad3b43d728fda235676119014d51c05a415b30438aba2","members":49,"internal_manifest_entries":48},
+    {"key":"preflight_not_committed_repair","run":34814280250,"artifact":10336147195,"sha256":"78286dade35f6278208a4f06e7daaeea48ffb28775c2ad97433746aeb39cbb79","members":12,"internal_manifest_entries":null},
+    {"key":"focused_current","run":34814906143,"artifact":10335859057,"sha256":"3d939c55b079452a6696725b659edf9aef6d8b548836366f30e3ff3a182439e5","members":49,"internal_manifest_entries":48},
+    {"key":"combined17","run":34814906088,"artifact":10335973778,"sha256":"fb2de83c98124e781ded99bfe5595432008cef74d2e9e975087b680c9ca0d56b","members":73,"internal_manifest_entries":72},
+    {"key":"host_compile_only","run":34814906071,"artifact":10335639675,"sha256":"18cdcab07a3760160aa2333d3215a75ee3e0eefb38a8c6fd4e43805e53d5356f","members":4,"internal_manifest_entries":null},
+    {"key":"standalone_observation","run":34814906117,"artifact":10335704291,"sha256":"2019eb94c7f18b6ba7d36c3b4ffbd08d7854c5f40e52f9c80c9489178033876a","members":5,"internal_manifest_entries":null}
+  ],
+  "promoted_sources": [
+    {"path":"runtime-snapshot/Bots/WholesomeAutoQuest-master/QuestScheduler.cs","blob":"d0f92435591e1f97fcf1915e0a18669d083a8426","sha256":"c603c55f18ed3b8c5f57cb0b57134240d52d63082afa209110322ca8c462b9a9"},
+    {"path":"runtime-snapshot/Bots/WholesomeAutoQuest-master/WholesomeAutoQuest.cs","blob":"ca49471d5ccbd597c1281dc1c2533d903e3d7fb4","sha256":"d2db91b93392f325df7bd7f3fce7214a05b48f09351cc0c47faf3f92ee12498a"},
+    {"path":"Styx/Logic/Profiles/ProfileManager.cs","blob":"7b7d02b204ed4ea53a525e78d147278855c1e6b3","sha256":"069d099f4504a798cc0edb63c7491487706cfe1609c8fcd419b57dadd85b0e28"}
+  ],
+  "source_checks":{"working_hashes_each":1683,"focused_combined_equal":true,"only_three_production_paths_change_from_red":true,"normalized_outputs_equal":28,"nested_export_files_each":48,"nested_export_includes_ProfileManager":false,"test_fixture_normalizer_boundary_unchanged":true},
+  "red_publication":{"original_pass":9,"original_total":21,"original_assertions":12,"acceptance_pass":3,"acceptance_total":9,"acceptance_assertions":6,"unexpected":0},
+  "repaired_publication":{"original_pass":21,"original_total":21,"acceptance_pass":9,"acceptance_total":9,"assertions":0,"unexpected":0,"also_runs_in_combined":true},
+  "combined":{"entries":17,"build_zero":17,"run_zero":14,"run_one":["WholesomeQuestRecoveryRegressionTests","QuestLogObservationRegressionTests","QuestObservationBoundaryRegressionTests"]},
+  "host":{"build_exit":0,"warnings":3278,"errors":0,"tests_run":false},
+  "remaining":{"observation_main":"4/25;19 missing proposed contracts and2 assertions","ready":"1/5","scheduler":"2/5;2 missing proposed contracts and1 assertion","boundary":"16/24;8 assertions;0unexpected","counts_overlap":true,"live_travel_symptoms_reproduced":false,"full_W42_closed":false}
+}

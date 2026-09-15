@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+ <PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net10.0</TargetFramework><Nullable>enable</Nullable><ImplicitUsings>enable</ImplicitUsings></PropertyGroup>
+ <ItemGroup>
+  <Compile Include="../../Styx/Logic/Profiles/ProtectedItemsManager.cs" Link="Production/ProtectedItemsManager.cs" />
+  <Compile Include="../../Styx/Helpers/DualHashSet.cs" Link="Production/DualHashSet.cs" />
+  <Compile Include="../../Styx/Helpers/ValuePair.cs" Link="Production/ValuePair.cs" />
+ </ItemGroup>
+ <Target Name="ExtractActualSaleMethod" BeforeTargets="CoreCompile">
+  <Exec Command="python &quot;$(MSBuildProjectDirectory)/extract_sale.py&quot; &quot;$(MSBuildProjectDirectory)/$(IntermediateOutputPath)SaleMethod.g.cs&quot;" />
+  <ItemGroup><Compile Include="$(MSBuildProjectDirectory)/$(IntermediateOutputPath)SaleMethod.g.cs" /></ItemGroup>
+ </Target>
+</Project>

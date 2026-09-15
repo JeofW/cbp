@@ -61,7 +61,19 @@ namespace Styx.Logic
 
         public static void Add(ulong guid, TimeSpan end)
         {
+            AddIfCurrent(guid, end, null);
+        }
+
+        // Optional managed owner guard for callers whose observations can be
+        // invalidated by the synchronous diagnostic. Ordinary Add keeps its
+        // public behavior; an obsolete guarded caller performs no mutation.
+        internal static bool AddIfCurrent(ulong guid, TimeSpan end, Func<bool> isCurrent)
+        {
+            if (isCurrent != null && !isCurrent())
+                return false;
             Logging.WriteDebug("Blacklisting {0:X16} for {1}", guid, end);
+            if (isCurrent != null && !isCurrent())
+                return false;
             if (Blacklist._blacklistedGuids.ContainsKey(guid))
             {
                 Dictionary<ulong, DateTime> dictionary = Blacklist._blacklistedGuids;
@@ -74,6 +86,7 @@ namespace Styx.Logic
                 DateTime now2 = DateTime.Now;
                 dictionary2.Add(guid, now2.Add(end));
             }
+            return true;
         }
 
         public static void Add(WoWObject o, TimeSpan end)

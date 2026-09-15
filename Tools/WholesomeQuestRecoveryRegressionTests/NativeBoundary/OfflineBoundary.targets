@@ -1,0 +1,17 @@
+<Project>
+  <ItemGroup Condition="'$(MSBuildProjectName)' == 'WholesomeQuestRecoveryRegressionTests'">
+    <Compile Remove="NativeBoundary/**/*.cs" />
+    <ProjectReference Include="$(MSBuildThisFileDirectory)OfflineAssemblerBoundary.csproj" ReferenceOutputAssembly="false" PrivateAssets="all" />
+  </ItemGroup>
+  <Target Name="InstallWholesomeOfflineAssemblerBoundary" AfterTargets="Build" Condition="'$(MSBuildProjectName)' == 'WholesomeQuestRecoveryRegressionTests'">
+    <MSBuild Projects="$(MSBuildThisFileDirectory)OfflineAssemblerBoundary.csproj" Targets="GetTargetPath" Properties="Configuration=$(Configuration);Platform=$(Platform)">
+      <Output TaskParameter="TargetOutputs" ItemName="WholesomeOfflineAssemblerOutput" />
+    </MSBuild>
+    <Error Condition="'@(WholesomeOfflineAssemblerOutput->Count())' != '1'" Text="Expected exactly one offline assembler boundary output." />
+    <Copy SourceFiles="@(WholesomeOfflineAssemblerOutput)" DestinationFiles="$(TargetDir)fasmdll_managed.dll" />
+    <GetFileHash Files="$(TargetDir)fasmdll_managed.dll" Algorithm="SHA256">
+      <Output TaskParameter="Items" ItemName="WholesomeOfflineBoundaryHash" />
+    </GetFileHash>
+    <Message Importance="high" Text="OFFLINE TEST BOUNDARY: %(WholesomeOfflineBoundaryHash.Identity) SHA256=%(WholesomeOfflineBoundaryHash.FileHash). Native dispatch forbidden; production host and repository Lib are not replaced." />
+  </Target>
+</Project>

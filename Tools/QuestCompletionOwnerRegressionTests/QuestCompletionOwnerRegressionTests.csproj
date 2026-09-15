@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType><TargetFramework>net10.0</TargetFramework>
+    <PlatformTarget>x86</PlatformTarget><Nullable>enable</Nullable><ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../QuestLogObservationRegressionTests/BoundaryFixture.cs" Link="ControlledExternalBoundaries.cs" />
+    <Compile Include="../../Styx/Logic/Questing/QuestLog.cs" Link="Production/QuestLog.cs" />
+    <Compile Include="../../Styx/Logic/Questing/QuestLogSnapshot*.cs" Link="Production/%(Filename)%(Extension)" />
+    <Compile Include="../../Styx/Logic/Questing/PlayerQuest.cs" Link="Production/PlayerQuest.cs" />
+    <Compile Include="../../Styx/Logic/Questing/WoWDescriptorQuest.cs" Link="Production/WoWDescriptorQuest.cs" />
+    <Compile Include="../../Styx/Logic/Questing/WoWDescriptorQuestFlags.cs" Link="Production/WoWDescriptorQuestFlags.cs" />
+    <Compile Include="../../Styx/Logic/Questing/QuestLogEntry.cs" Link="Production/QuestLogEntry.cs" />
+    <Compile Include="../../Styx/Logic/Profiles/ProtectedItemsManager.cs" Link="Production/ProtectedItemsManager.cs" />
+    <Compile Include="../../Styx/Helpers/DualHashSet.cs" Link="Production/DualHashSet.cs" />
+    <Compile Include="../../Styx/Helpers/ValuePair.cs" Link="Production/ValuePair.cs" />
+  </ItemGroup>
+  <Target Name="SupplySharedBoundarySaleMethod" BeforeTargets="CoreCompile">
+    <Exec Command="python &quot;$(MSBuildProjectDirectory)/../WholesomeSaleRegressionTests/extract_sale.py&quot; &quot;$(MSBuildProjectDirectory)/$(IntermediateOutputPath)SaleMethod.g.cs&quot;" />
+    <ItemGroup><Compile Include="$(MSBuildProjectDirectory)/$(IntermediateOutputPath)SaleMethod.g.cs" /></ItemGroup>
+  </Target>
+</Project>

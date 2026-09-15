@@ -36,6 +36,18 @@ namespace TreeSharp
             return this.Runner == null || this.Runner(context);
         }
 
+        // An explicitly cooperating child may revalidate this exact owner's
+        // predicate after a callback, without ticking or restarting the parent.
+        // Other decorators retain their existing scheduling behavior.
+        internal bool IsExecutionAllowedFor(Composite child, object context)
+        {
+            if (Children.Count != 1 || !ReferenceEquals(DecoratedChild, child))
+                return false;
+            bool allowed = Runner != null ? Runner(context) : CanRun(context);
+            return allowed && Children.Count == 1
+                && ReferenceEquals(DecoratedChild, child);
+        }
+
         public override void Start(object context)
         {
             if (Children.Count != 1)
