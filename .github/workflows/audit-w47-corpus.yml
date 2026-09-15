@@ -1,0 +1,80 @@
+name: Audit W47 source and recorded-runtime census
+on:
+  push:
+    branches: [audit/next-47-flight-owner-boundaries-20260916]
+    paths: ['**.cs', '**.csproj', 'Tools/EvidenceAudit/**', '.github/workflows/audit-w47-corpus.yml']
+permissions:
+  contents: read
+concurrency:
+  group: w47-corpus-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  census:
+    if: github.repository == 'jeofwong/CopilotBuddy-private' && github.event.repository.private == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      GIT_LFS_SKIP_SMUDGE: '1'
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with: {persist-credentials: false, lfs: false}
+      - name: Validate retained analyzers and audit the exact checkout
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/w47-corpus"
+          mkdir -p "$OUT/analysis-wheels"
+          python -m pip download -r Tools/EvidenceAudit/requirements.txt --dest "$OUT/analysis-wheels" > "$OUT/dependency-download.txt" 2>&1
+          python -m pip install --no-index --find-links "$OUT/analysis-wheels" -r Tools/EvidenceAudit/requirements.txt > "$OUT/dependency-install.txt" 2>&1
+          python -m unittest discover -s Tools/EvidenceAudit -p 'test_*.py' -v > "$OUT/analyzer-tests.txt" 2>&1
+          python - "$OUT" <<'PY'
+          import csv, hashlib, json, pathlib, subprocess, sys, tarfile
+          root=pathlib.Path.cwd(); out=pathlib.Path(sys.argv[1])
+          sys.path.insert(0,str(root/'Tools/EvidenceAudit'))
+          import runtime, structure, quests
+          sha=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
+          tree=subprocess.check_output(['git','rev-parse','HEAD^{tree}'],text=True).strip()
+          def dump(name,value): (out/name).write_text(json.dumps(value,indent=2,ensure_ascii=True)+'\n')
+          syntax=structure.extract_repository(root); syntax['source_commit']=sha
+          dump('structure.json',syntax)
+          structure.write_graphml(syntax,out/'structure.graphml')
+          captures=runtime.analyze_directory(root); captures['source_commit']=sha
+          dump('runtime.json',captures)
+          with tarfile.open(out/'recorded-runtime-logs.tar.gz','w:gz') as archive:
+              for capture in captures['captures']:
+                  path=root/capture['capture']; raw=path.read_bytes()
+                  if raw.startswith(b'version https://git-lfs.github.com/spec/v1'): raise RuntimeError('Runtime log is an unresolved LFS pointer: '+str(path))
+                  archive.add(path,arcname=capture['capture'],recursive=False)
+          data_path=root/'runtime-snapshot/Bots/WholesomeAutoQuest-master/quest_data/quest_data.json'
+          raw=data_path.read_bytes(); data=json.loads(raw)
+          result=quests.audit_database(data)
+          zones={p.relative_to(root).as_posix():json.loads(p.read_bytes()) for p in sorted(data_path.parent.glob('Zone_*.json'))}
+          result['zones']=quests.compare_zones(data,zones)
+          result['source']={'commit':sha,'path':data_path.relative_to(root).as_posix(),'sha256':hashlib.sha256(raw).hexdigest()}
+          dump('quests.json',result)
+          behaviors=[n for n in syntax['nodes'] if n['type']=='method' and n.get('community','').startswith('Singular/') and 'Behavior(' in n.get('attributes','')]
+          with (out/'singular-behavior-inventory.csv').open('w',newline='') as stream:
+              writer=csv.writer(stream); writer.writerow(['community','method','path','start_line','attributes','runtime_status'])
+              for n in behaviors: writer.writerow([n['community'],n['label'],n['source']['path'],n['source']['start_line'],n['attributes'],'NOT_EXECUTED_BY_CENSUS'])
+          entries=subprocess.check_output(['git','ls-tree','-r','-z','HEAD']).split(b'\0'); files=[]
+          for entry in entries:
+              if not entry: continue
+              meta,path=entry.split(b'\t',1); mode,kind,blob=meta.decode().split(); path=path.decode()
+              if kind!='blob': continue
+              files.append({'path':path,'git_blob':blob,'mode':mode})
+          dump('tracked-corpus.json',{'commit':sha,'tree':tree,'files':files})
+          dump('source-identity.json',{'production_commit':sha,'production_tree':tree,'game_attached':False,'mesh_geometry_executed':False})
+          summary={'commit':sha,'tree':tree,'tracked_blob_count':len(files),'csharp_files':sum(syntax['source_files_by_community'].values()),'syntax_nodes':len(syntax['nodes']),'syntax_edges':len(syntax['edges']),'parse_error_files':len(syntax['parse_errors']),'communities':syntax['source_files_by_community'],'recorded_log_files':len(captures['captures']),'raw_log_matches':captures['raw_line_matches'],'quest_count':result['quest_count'],'zone_files':len(zones),'behavior_declarations':len(behaviors),'limitations':['Syntax-only edges are not type-bound calls or execution evidence.','Historical recorded logs are not new client acceptance or post-fix performance measurements.','Warning percentiles are threshold-censored, not all-tick latency.','Behavior declarations are not all-spec runtime correctness.','The old baseline-specific curated causal overlay is intentionally not reused as current evidence.','No game attachment or native mesh/travel execution.']}
+          dump('summary.json',summary)
+          manifest=[{'path':p.relative_to(out).as_posix(),'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in sorted(out.rglob('*')) if p.is_file()]
+          dump('files-sha256.json',manifest)
+          print(json.dumps(summary,indent=2))
+          PY
+      - name: Retain private exact-source analysis and recorded evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: w47-corpus-${{ github.sha }}
+          path: ${{ runner.temp }}/w47-corpus/
+          retention-days: 14
+          if-no-files-found: error
