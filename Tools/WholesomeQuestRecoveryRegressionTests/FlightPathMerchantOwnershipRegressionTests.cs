@@ -152,24 +152,39 @@ internal static class FlightPathMerchantOwnershipRegressionTests
         {
             var point = new WoWPoint(80, 90, 100);
             Marshal.StructureToPtr(point, new IntPtr(unchecked((int)(merchant.BaseAddress + 1944))), false);
-            ObjectManager.Wow!.ClearCache();
+            EvictRead(merchant.BaseAddress + 1944);
             typeof(WoWUnit).GetField("_cachedLocation", Hidden)!.SetValue(merchant, null);
+            CheckPlayerContext();
             if (merchant.Location != point) throw new InvalidOperationException("Merchant movement was not observed");
         }
         internal void ChangeEntry()
         {
             uint descriptor = merchant.BaseAddress + 4096;
             Marshal.WriteInt32(new IntPtr(unchecked((int)(descriptor + 12))), 54322);
-            ObjectManager.Wow!.ClearCache();
+            EvictRead(descriptor + 12);
             typeof(WoWObject).GetField("_cachedEntry", Hidden)!.SetValue(merchant, 0U);
+            CheckPlayerContext();
             if (merchant.Entry != 54322) throw new InvalidOperationException("Merchant entry mutation was not observed");
         }
         internal void RemoveFlightFlag()
         {
             uint offset = (uint)typeof(FlightPathUpdateProviderRegressionTests).GetMethod("Field", StaticHidden)!.Invoke(null, new object[] { "NpcFlags" })!;
             Marshal.WriteInt32(new IntPtr(unchecked((int)(merchant.BaseAddress + 4096 + offset))), 0);
-            ObjectManager.Wow!.ClearCache();
+            EvictRead(merchant.BaseAddress + 4096 + offset);
+            CheckPlayerContext();
             if (merchant.IsFlightMaster) throw new InvalidOperationException("Merchant flag mutation was not observed");
+        }
+        private void CheckPlayerContext()
+        {
+            if (!ReferenceEquals(ObjectManager.Me, player) || !player.IsValid || player.MapId != 1 || !Styx.StyxWoW.IsInWorld)
+                throw new InvalidOperationException("Merchant mutation disturbed the retained player/world fixture");
+        }
+        private static void EvictRead(uint address)
+        {
+            // Evict only the changed test-process address. Clearing the whole
+            // Memory cache would erase controlled client-global fixture bytes.
+            var cache = (System.Threading.ThreadLocal<Dictionary<IntPtr, byte[]>>)ObjectManager.Wow!.GetType().GetField("_cache", Hidden)!.GetValue(ObjectManager.Wow)!;
+            cache.Value!.Remove(new IntPtr(unchecked((int)address)));
         }
         internal void RegistryChange(bool replace)
         {
