@@ -138,33 +138,29 @@ namespace Styx.Logic
         /// </summary>
         public static bool SetFlightPathUsage(WoWPoint from, WoWPoint to, out WoWPoint startFp, out WoWPoint endFp)
         {
+            startFp = endFp = WoWPoint.Empty;
             if (!CanTakeFlightPaths)
-            {
-                startFp = endFp = WoWPoint.Empty;
                 return false;
-            }
 
             FindClosestFlightNodes(from, to, out XmlFlightNode startNode, out XmlFlightNode endNode);
+            if (startNode == null || endNode == null)
+                return false;
+
+            FlightPathReason nextReason;
+            if (startNode.MasterEntry != 0U)
+                nextReason = FlightPathReason.Use;
+            else if (NearestFlightMerchant != null)
+                nextReason = FlightPathReason.Update;
+            else
+                return false;
+
+            // Rejected/incomplete candidates must not overwrite existing intent.
             TakingPathTo = endNode;
             TakingPathFrom = startNode;
-
-            if (startNode?.MasterEntry != 0U)
-            {
-                Reason = FlightPathReason.Use;
-            }
-            else if (NearestFlightMerchant != null)
-            {
-                Reason = FlightPathReason.Update;
-            }
-            else
-            {
-                startFp = endFp = WoWPoint.Empty;
-                return false;
-            }
-
+            Reason = nextReason;
             SetPoi(startNode);
-            startFp = startNode?.Location ?? WoWPoint.Empty;
-            endFp = endNode?.Location ?? WoWPoint.Empty;
+            startFp = startNode.Location;
+            endFp = endNode.Location;
             return true;
         }
 
@@ -178,7 +174,7 @@ namespace Styx.Logic
                 return false;
 
             FindClosestFlightNodes(from, to, out XmlFlightNode startNode, out XmlFlightNode endNode);
-            return startNode?.MasterEntry != 0U && endNode != null;
+            return startNode != null && startNode.MasterEntry != 0U && endNode != null;
         }
 
         /// <summary>
@@ -390,14 +386,15 @@ namespace Styx.Logic
         /// </summary>
         private static void FindClosestFlightNodes(WoWPoint from, WoWPoint to, out XmlFlightNode startNode, out XmlFlightNode endNode)
         {
-            if (XmlNodes == null || XmlNodes.Count == 0)
-            {
-                startNode = endNode = null;
+            startNode = endNode = null;
+            var me = StyxWoW.Me;
+            if (me == null || !IsFinitePoint(from) || !IsFinitePoint(to) ||
+                XmlNodes == null || XmlNodes.Count == 0)
                 return;
-            }
 
+            uint continent = me.MapId;
             List<XmlFlightNode> continentNodes = XmlNodes
-                .Where(n => n.Continent == StyxWoW.Me.MapId)
+                .Where(n => n != null && IsFinitePoint(n.Location) && n.Continent == continent)
                 .ToList();
 
             if (continentNodes.Count == 0)
