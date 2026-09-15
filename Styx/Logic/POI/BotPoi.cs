@@ -301,14 +301,7 @@ namespace Styx.Logic.POI
 
 		public static void Clear(string reason = "")
 		{
-			if (!string.IsNullOrEmpty(reason))
-			{
-				Logging.WriteDebug("Cleared POI - Reason {0}", reason);
-			}
-			// HB 4.3.4 order: Navigator → Current → FlightPaths
-			Pathing.Navigator.Clear();
-			Current = new BotPoi(PoiType.None);
-			FlightPaths.Reset();
+			FlightPaths.ResetOwnedState(true, reason);
 		}
 
 		public double DistanceToPoi

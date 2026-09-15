@@ -177,15 +177,43 @@ namespace Styx.Logic
         /// <summary>
         /// Reset flight path state
         /// </summary>
-        public static void Reset()
+        public static void Reset() => ResetOwnedState(false, "FlightPaths.Reset()");
+
+        // Reset and POI clearing share one nonrecursive cleanup lifetime. Detach
+        // flight intent before external callbacks; an obsolete cleanup must not
+        // clear navigation again or consume a callback's replacement POI/intent.
+        internal static void ResetOwnedState(bool clearNonFlightPoi, string reason)
         {
-            _flightIntentOwner = new object();
+            var owner = new object();
+            var expectedPoi = BotPoi.Current;
+            var expectedType = expectedPoi.Type;
+            bool clearPoi = clearNonFlightPoi || expectedType == PoiType.Fly;
+            _flightIntentOwner = owner;
             TakingPathFrom = null;
             TakingPathTo = null;
             Reason = FlightPathReason.None;
-            Navigator.Clear();
-            if (BotPoi.Current.Type == PoiType.Fly)
-                BotPoi.Clear("FlightPaths.Reset()");
+            bool OwnsCleanup() => ReferenceEquals(_flightIntentOwner, owner) &&
+                TakingPathFrom == null && TakingPathTo == null && Reason == FlightPathReason.None &&
+                ReferenceEquals(BotPoi.Current, expectedPoi) && expectedPoi.Type == expectedType;
+
+            ExceptionDispatchInfo? failure = null;
+            try { Navigator.Clear(); }
+            catch (Exception error) { TreeSharp.Composite.PreserveCleanupFailure(ref failure, error); }
+            if (clearPoi && OwnsCleanup())
+            {
+                expectedPoi = new BotPoi(PoiType.None);
+                expectedType = PoiType.None;
+                try { BotPoi.Current = expectedPoi; }
+                catch (Exception error) { TreeSharp.Composite.PreserveCleanupFailure(ref failure, error); }
+                // Diagnostics come after owned mutations. A throwing diagnostic
+                // cannot strand old work, and no old mutation resumes after it.
+                if (OwnsCleanup() && !string.IsNullOrEmpty(reason))
+                {
+                    try { Logging.WriteDebug("Cleared POI - Reason {0}", reason); }
+                    catch (Exception error) { TreeSharp.Composite.PreserveCleanupFailure(ref failure, error); }
+                }
+            }
+            failure?.Throw();
         }
 
         /// <summary>
