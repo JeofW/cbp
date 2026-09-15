@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
+using System.Runtime.InteropServices;
 using System.Threading;
 using Styx.Helpers;
 using Styx.Logic;
@@ -137,7 +138,27 @@ internal static class VendorSessionBoundaryRegressionTests
             world = Activator.CreateInstance(typeof(QuestPublicationRegressionTests).GetNestedType("Fixture", BindingFlags.NonPublic)!, true)!;
             try
             {
-                Check(ObjectManager.Me != null && ObjectManager.Me.BagItems.Count == 0, "fixture requires a real empty bag observation");
+                var player = ObjectManager.Me;
+                Check(player != null, "controlled player was not installed");
+                // Inventory items belong to the fixture's allocated 64-KiB block.
+                // Seed the native bag-GUID globals in its memory cache as well;
+                // an unreadable global must not masquerade as an empty inventory.
+                uint inventory = player!.BaseAddress + 6384U;
+                uint items = player.BaseAddress + 55000U;
+                byte[] bag = new byte[17];
+                BitConverter.GetBytes(150U).CopyTo(bag, 0);
+                BitConverter.GetBytes(items).CopyTo(bag, 4); bag[16] = 1;
+                Marshal.Copy(bag, 0, new IntPtr(unchecked((int)inventory)), bag.Length);
+                var bytes = world.GetType().GetMethod("Bytes", BindingFlags.Instance | BindingFlags.NonPublic)!;
+                bytes.Invoke(world, new object[] { inventory, bag });
+                for (uint i = 0; i < 4; i++)
+                {
+                    bytes.Invoke(world, new object[] { 12727616U + 8U * i, new byte[8] });
+                    Check(player.GetBagGuidAtIndex(i) == 0, "controlled bag GUID was not empty");
+                }
+                var backpack = player.Inventory.Backpack.ItemGuids;
+                Check(backpack.Length == 16 && backpack.All(guid => guid == 0) && player.BagItems.Count == 0,
+                    "fixture requires 16 observed empty backpack slots and no equipped bags");
                 var next = (CharacterSettings)RuntimeHelpers.GetUninitializedObject(typeof(CharacterSettings));
                 typeof(CharacterSettings).GetProperty("Instance")!.SetValue(null, next);
                 next.FoodName = (Item + 2).ToString(); next.DrinkName = (Item + 3).ToString();
