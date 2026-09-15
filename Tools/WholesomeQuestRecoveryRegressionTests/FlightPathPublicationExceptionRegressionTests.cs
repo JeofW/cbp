@@ -7,6 +7,7 @@ using System.Runtime.ExceptionServices;
 using System.Threading;
 using Styx.Helpers;
 using Styx.Logic;
+using Styx.Logic.Pathing;
 using Styx.Logic.POI;
 using Styx.WoWInternals;
 
