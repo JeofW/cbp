@@ -37,6 +37,7 @@ namespace Styx.Logic
         private static readonly HashSet<uint> _hordeBlacklist = new HashSet<uint> { 12617U };
         private static readonly HashSet<uint> _allianceBlacklist = new HashSet<uint> { 12636U, 18788U };
         private static WaitTimer _checkTimer = new WaitTimer(TimeSpan.FromSeconds(15.0));
+        private static object _flightIntentOwner = new object();
 
         /// <summary>
         /// Check if flight master is blacklisted for current faction
@@ -125,6 +126,7 @@ namespace Styx.Logic
         /// </summary>
         public static void Reset()
         {
+            _flightIntentOwner = new object();
             TakingPathFrom = null;
             TakingPathTo = null;
             Reason = FlightPathReason.None;
@@ -139,36 +141,141 @@ namespace Styx.Logic
         public static bool SetFlightPathUsage(WoWPoint from, WoWPoint to, out WoWPoint startFp, out WoWPoint endFp)
         {
             startFp = endFp = WoWPoint.Empty;
-            if (!CanTakeFlightPaths)
+            var observation = new FlightPublicationObservation();
+            if (!observation.IsCurrent())
                 return false;
 
             FindClosestFlightNodes(from, to, out XmlFlightNode startNode, out XmlFlightNode endNode);
             if (startNode == null || endNode == null)
                 return false;
 
-            FlightPathReason nextReason;
-            if (startNode.MasterEntry != 0U)
-                nextReason = FlightPathReason.Use;
-            else if (NearestFlightMerchant != null)
-                nextReason = FlightPathReason.Update;
-            else
+            WoWUnit merchant = null;
+            FlightPathReason nextReason = FlightPathReason.Use;
+            if (startNode.MasterEntry == 0U)
             {
-                // The nearest connected marker may have no known master. When
-                // it cannot be updated here, keep searching known alternatives.
-                FindFlightNodes(from, to, out startNode, out endNode, true);
-                if (startNode == null || endNode == null)
+                merchant = NearestFlightMerchant;
+                // Feasibility is a callback boundary, not a lease on the player,
+                // settings, cached network, provider or existing travel intent.
+                if (!observation.IsCurrent())
                     return false;
-                nextReason = FlightPathReason.Use;
+                if (merchant != null)
+                {
+                    if (!merchant.IsValid)
+                        return false;
+                    nextReason = FlightPathReason.Update;
+                }
+                else
+                {
+                    FindFlightNodes(from, to, out startNode, out endNode, true);
+                    if (startNode == null || endNode == null)
+                        return false;
+                }
             }
 
-            // Rejected/incomplete candidates must not overwrite existing intent.
+            var start = startNode.Location;
+            var end = endNode.Location;
+            // Reuse the admitted merchant. SetPoi would query the provider again
+            // and could turn one admission into three unrelated observations.
+            var poi = merchant != null
+                ? new BotPoi(merchant, PoiType.Fly)
+                : new BotPoi(start, PoiType.Fly) { Entry = startNode.MasterEntry };
+            if (poi.Type != PoiType.Fly || !observation.IsCurrent() ||
+                (merchant != null && !merchant.IsValid))
+                return false;
+
+            var publication = new object();
+            _flightIntentOwner = publication;
             TakingPathTo = endNode;
             TakingPathFrom = startNode;
             Reason = nextReason;
-            SetPoi(startNode);
-            startFp = startNode.Location;
-            endFp = endNode.Location;
+            BotPoi.Current = poi;
+            // The POI setter logs synchronously. A subscriber can Reset, publish
+            // another flight, or install service work. Never report the old call
+            // as successful or overwrite that replacement after the callback.
+            if (!ReferenceEquals(_flightIntentOwner, publication) ||
+                !ReferenceEquals(TakingPathFrom, startNode) ||
+                !ReferenceEquals(TakingPathTo, endNode) || Reason != nextReason ||
+                !ReferenceEquals(BotPoi.Current, poi) || !observation.InputsCurrent())
+                return false;
+
+            startFp = start;
+            endFp = end;
             return true;
+        }
+
+        // Observed managed ownership only: this is not a native frame/session
+        // atomicity claim. Snapshot values as well as references because cached
+        // nodes and their connection sets can be edited in place by callbacks.
+        private sealed class FlightPublicationObservation
+        {
+            private readonly LocalPlayer player = StyxWoW.Me;
+            private readonly CharacterSettings settings = CharacterSettings.Instance;
+            private readonly NavigationProvider provider = Navigator.NavigationProvider;
+            private readonly List<XmlFlightNode> network = XmlNodes;
+            private readonly object intentOwner = _flightIntentOwner;
+            private readonly XmlFlightNode previousFrom = TakingPathFrom, previousTo = TakingPathTo;
+            private readonly FlightPathReason previousReason = Reason;
+            private readonly bool previousNeed = NeedFlightPath;
+            private readonly BotPoi previousPoi = BotPoi.Current;
+            private readonly uint playerAddress;
+            private readonly ulong playerGuid;
+            private readonly uint map;
+            private readonly FlightNodeObservation[] nodes;
+
+            internal FlightPublicationObservation()
+            {
+                playerAddress = player?.BaseAddress ?? 0;
+                playerGuid = player?.Guid ?? 0;
+                map = player?.MapId ?? 0;
+                nodes = network?.Select(node => new FlightNodeObservation(node)).ToArray();
+            }
+
+            internal bool IsCurrent() => InputsCurrent()
+                && ReferenceEquals(_flightIntentOwner, intentOwner)
+                && ReferenceEquals(TakingPathFrom, previousFrom)
+                && ReferenceEquals(TakingPathTo, previousTo) && Reason == previousReason
+                && NeedFlightPath == previousNeed && ReferenceEquals(BotPoi.Current, previousPoi);
+
+            internal bool InputsCurrent()
+            {
+                if (player == null || !ReferenceEquals(StyxWoW.Me, player) ||
+                    player.BaseAddress != playerAddress || player.Guid != playerGuid || player.MapId != map ||
+                    settings == null || !ReferenceEquals(CharacterSettings.Instance, settings) || !settings.UseFlightPaths ||
+                    !ReferenceEquals(Navigator.NavigationProvider, provider) ||
+                    network == null || !ReferenceEquals(XmlNodes, network) || network.Count != nodes.Length)
+                    return false;
+                for (int i = 0; i < nodes.Length; i++)
+                    if (!nodes[i].IsCurrent(network[i])) return false;
+                return true;
+            }
+        }
+
+        private sealed class FlightNodeObservation
+        {
+            private readonly XmlFlightNode node;
+            private readonly string name;
+            private readonly uint master, continent;
+            private readonly int level;
+            private readonly WoWPoint location;
+            private readonly HashSet<string> connections;
+            private readonly string[] destinations;
+
+            internal FlightNodeObservation(XmlFlightNode node)
+            {
+                this.node = node;
+                if (node == null) return;
+                name = node.Name; master = node.MasterEntry; continent = node.Continent;
+                level = node.UpdateLevel; location = node.Location;
+                connections = node.Connections;
+                destinations = connections?.ToArray();
+            }
+
+            internal bool IsCurrent(XmlFlightNode current) => ReferenceEquals(node, current)
+                && (node == null || (node.Name == name && node.MasterEntry == master &&
+                    node.Continent == continent && node.UpdateLevel == level &&
+                    node.Location.X.Equals(location.X) && node.Location.Y.Equals(location.Y) && node.Location.Z.Equals(location.Z) &&
+                    ReferenceEquals(node.Connections, connections) &&
+                    (connections == null || connections.SetEquals(destinations))));
         }
 
         /// <summary>
