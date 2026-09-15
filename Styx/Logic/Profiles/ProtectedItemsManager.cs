@@ -17,7 +17,9 @@ namespace Styx.Logic.Profiles
     public static class ProtectedItemsManager
     {
         // Items from XML files
-        private static readonly DualHashSet<uint, string> _fileProtectedItems;
+        private static DualHashSet<uint, string> _fileProtectedItems;
+        private static readonly object _reloadSync = new object();
+        private static DualHashSet<uint, string> FileSnapshot => Volatile.Read(ref _fileProtectedItems);
         // Items added at runtime
         private static readonly DualHashSet<uint, string> _runtimeProtectedItems;
         // Legacy Add/Remove own the manual set; collector leases are independent.
@@ -44,41 +46,49 @@ namespace Styx.Logic.Profiles
         /// </summary>
         public static void ReloadProtectedItems()
         {
-            _fileProtectedItems.HashSet1.Clear();
-            _fileProtectedItems.HashSet2.Clear();
-
-            string directoryName = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            if (directoryName == null) return;
-
-            string[] files = Directory.GetFiles(directoryName, "*.xml", SearchOption.AllDirectories);
-            foreach (string filePath in files)
+            Exception failure = null;
+            string source = null;
+            lock (_reloadSync)
             {
-                string fileName = Path.GetFileNameWithoutExtension(filePath)?.ToLower();
-                if (_validFileNames.Contains(fileName))
+                // Build privately. Readers continue using the old complete FILE
+                // layer while I/O or parsing is in progress; runtime owners are separate.
+                var candidate = new DualHashSet<uint, string>();
+                try
                 {
-                    LoadProtectedItemsFile(filePath);
+                    source = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                    if (source == null) return;
+                    string[] files = Directory.GetFiles(source, "*.xml", SearchOption.AllDirectories);
+                    foreach (string filePath in files)
+                    {
+                        string fileName = Path.GetFileNameWithoutExtension(filePath)?.ToLower();
+                        if (!_validFileNames.Contains(fileName)) continue;
+                        source = filePath;
+                        AppendProtectedItemsFile(filePath, candidate);
+                    }
+                    Volatile.Write(ref _fileProtectedItems, candidate);
+                }
+                catch (Exception error) when (error is XmlException || error is IOException
+                    || error is UnauthorizedAccessException)
+                {
+                    // Never publish a partial candidate or roll back a newer layer.
+                    failure = error;
                 }
             }
+            // Logging is a callback boundary: run it outside manager locks. A
+            // callback may reload successfully or throw a stop signal of its own.
+            if (failure != null)
+                Logging.Write($"Error in ProtectedItems XML file at {source}: {failure.Message}");
         }
 
         /// <summary>
-        /// Loads protected items from an XML file.
+        /// Parses one enumerated file into an unpublished candidate FILE layer.
+        /// Read/parse failure aborts the caller's complete reload, not just this file.
         /// </summary>
-        private static void LoadProtectedItemsFile(string filePath)
+        private static void AppendProtectedItemsFile(string filePath, DualHashSet<uint, string> candidate)
         {
-            if (Path.GetExtension(filePath)?.ToLower() != ".xml" || !File.Exists(filePath))
-                return;
-
-            XElement root;
-            try
-            {
-                root = XElement.Load(filePath);
-            }
-            catch (XmlException ex)
-            {
-                Logging.Write($"Error in ProtectedItems XML file at {filePath}: {ex.Message}");
-                return;
-            }
+            // A file disappearing after enumeration is an incomplete observation.
+            // Do not silently skip it through a File.Exists check.
+            XElement root = XElement.Load(filePath);
 
             foreach (var element in root.Elements())
             {
@@ -112,10 +122,10 @@ namespace Styx.Logic.Profiles
                 if (id == 0 && string.IsNullOrEmpty(name))
                     continue;
 
-                if (!_fileProtectedItems.Contains(id))
-                    _fileProtectedItems.Add(id);
-                if (!_fileProtectedItems.Contains(name))
-                    _fileProtectedItems.Add(name);
+                if (!candidate.Contains(id))
+                    candidate.Add(id);
+                if (!candidate.Contains(name))
+                    candidate.Add(name);
             }
         }
 
@@ -124,7 +134,7 @@ namespace Styx.Logic.Profiles
         /// </summary>
         public static bool Contains(uint item)
         {
-            if (_fileProtectedItems.Contains(item))
+            if (FileSnapshot.Contains(item))
                 return true;
             lock (_runtimeSync)
                 if (_runtimeProtectedItems.Contains(item) || _itemOwners.ContainsKey(item))
@@ -140,7 +150,7 @@ namespace Styx.Logic.Profiles
         {
             item = item.ToLower();
 
-            if (_fileProtectedItems.Contains(item))
+            if (FileSnapshot.Contains(item))
                 return true;
             lock (_runtimeSync)
                 if (_runtimeProtectedItems.Contains(item))
@@ -224,7 +234,7 @@ namespace Styx.Logic.Profiles
         {
             var list = new List<string>();
 
-            foreach (string name in _fileProtectedItems.HashSet2)
+            foreach (string name in FileSnapshot.HashSet2)
                 list.Add(name);
 
             lock (_runtimeSync)
@@ -246,7 +256,7 @@ namespace Styx.Logic.Profiles
         {
             var list = new List<uint>();
 
-            foreach (uint id in _fileProtectedItems.HashSet1)
+            foreach (uint id in FileSnapshot.HashSet1)
                 list.Add(id);
 
             lock (_runtimeSync)
