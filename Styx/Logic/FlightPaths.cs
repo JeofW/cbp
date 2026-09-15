@@ -152,7 +152,14 @@ namespace Styx.Logic
             else if (NearestFlightMerchant != null)
                 nextReason = FlightPathReason.Update;
             else
-                return false;
+            {
+                // The nearest connected marker may have no known master. When
+                // it cannot be updated here, keep searching known alternatives.
+                FindFlightNodes(from, to, out startNode, out endNode, true);
+                if (startNode == null || endNode == null)
+                    return false;
+                nextReason = FlightPathReason.Use;
+            }
 
             // Rejected/incomplete candidates must not overwrite existing intent.
             TakingPathTo = endNode;
@@ -173,8 +180,10 @@ namespace Styx.Logic
             if (!CanTakeFlightPaths || StyxWoW.Me == null)
                 return false;
 
-            FindClosestFlightNodes(from, to, out XmlFlightNode startNode, out XmlFlightNode endNode);
-            return startNode != null && startNode.MasterEntry != 0U && endNode != null;
+            // Read-only queries require a known master on each candidate, not
+            // just on the first connected marker returned by the search.
+            FindFlightNodes(from, to, out XmlFlightNode startNode, out XmlFlightNode endNode, true);
+            return startNode != null && endNode != null;
         }
 
         /// <summary>
@@ -384,7 +393,13 @@ namespace Styx.Logic
         /// connected node nearest to 'to'. Disconnected origins are skipped.
         /// Also guards against flight "going backwards" (start closer to dest than end).
         /// </summary>
-        private static void FindClosestFlightNodes(WoWPoint from, WoWPoint to, out XmlFlightNode startNode, out XmlFlightNode endNode)
+        private static void FindClosestFlightNodes(WoWPoint from, WoWPoint to, out XmlFlightNode startNode, out XmlFlightNode endNode) =>
+            FindFlightNodes(from, to, out startNode, out endNode, false);
+
+        // Keep the original four-argument lookup contract, including reflection
+        // callers. The known-master mode does not query merchants or mutate POI.
+        private static void FindFlightNodes(WoWPoint from, WoWPoint to, out XmlFlightNode startNode,
+            out XmlFlightNode endNode, bool requireKnownMaster)
         {
             startNode = endNode = null;
             var me = StyxWoW.Me;
@@ -409,6 +424,8 @@ namespace Styx.Logic
             // proof of an approach path or a globally optimal travel route.
             foreach (XmlFlightNode sNode in continentNodes.OrderBy(n => n.Location.DistanceSqr(from)))
             {
+                if (requireKnownMaster && sNode.MasterEntry == 0U)
+                    continue;
                 var connections = sNode.Connections;
                 if (connections == null || connections.Count == 0)
                     continue;
