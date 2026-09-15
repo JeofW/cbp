@@ -54,14 +54,7 @@ namespace Styx.Logic
         {
             get
             {
-                // use cached units for flight master lookup
-                WoWUnit flightMaster = ObjectManager.CachedUnits
-                    .Where(u => u.IsFlightMaster && 
-                                !Blacklist.Contains(u) && 
-                                !u.IsHostile && 
-                                !IsBlacklisted(u.Entry))
-                    .OrderBy(u => u.Distance)
-                    .FirstOrDefault();
+                WoWUnit flightMaster = FindNearestFlightMerchantCandidate();
 
                 if (flightMaster != null && !Navigator.CanNavigateFully(StyxWoW.Me.Location, flightMaster.Location))
                 {
@@ -72,6 +65,68 @@ namespace Styx.Logic
 
                 return flightMaster;
             }
+        }
+
+        private static WoWUnit FindNearestFlightMerchantCandidate() => ObjectManager.CachedUnits
+            .Where(u => u.IsFlightMaster && !Blacklist.Contains(u) &&
+                        !u.IsHostile && !IsBlacklisted(u.Entry))
+            .OrderBy(u => u.Distance)
+            .FirstOrDefault();
+
+        // Publication needs a current observation across both feasibility and
+        // diagnostics. An invalidated observation is not an ordinary missing
+        // merchant and must not fall through to another route or blacklist it.
+        private static bool TryObserveFlightMerchant(FlightPublicationObservation observation,
+            out WoWUnit merchant, out FlightMerchantObservation merchantObservation)
+        {
+            merchant = null;
+            merchantObservation = null;
+            var candidate = FindNearestFlightMerchantCandidate();
+            if (candidate == null)
+                return observation.IsCurrent();
+
+            var selected = new FlightMerchantObservation(candidate);
+            Func<bool> isCurrent = () => observation.IsCurrent() && selected.IsCurrent();
+            if (!isCurrent())
+                return false;
+            bool reachable = Navigator.CanNavigateFully(StyxWoW.Me.Location, selected.Location);
+            if (!isCurrent())
+                return false;
+            if (!reachable)
+            {
+                Logging.Write("Blacklisting {0} for 5 minutes because we can't navigate to it.", candidate.Name);
+                // Blacklist's own diagnostic is another synchronous callback.
+                // Guard its actual mutation, rather than undoing a newer entry.
+                return Blacklist.AddIfCurrent(selected.Guid, new TimeSpan(0, 5, 0), isCurrent);
+            }
+
+            merchant = candidate;
+            merchantObservation = selected;
+            return true;
+        }
+
+        private sealed class FlightMerchantObservation
+        {
+            private readonly WoWUnit merchant;
+            private readonly uint address, entry;
+            internal readonly ulong Guid;
+            internal readonly WoWPoint Location;
+
+            internal FlightMerchantObservation(WoWUnit merchant)
+            {
+                this.merchant = merchant;
+                address = merchant.BaseAddress;
+                Guid = merchant.Guid;
+                entry = merchant.Entry;
+                Location = merchant.Location;
+            }
+
+            internal bool IsCurrent() => merchant.IsValid && merchant.BaseAddress == address &&
+                merchant.Guid == Guid && merchant.Entry == entry &&
+                ReferenceEquals(ObjectManager.GetObjectByGuid<WoWObject>(Guid), merchant) &&
+                merchant.Location.X.Equals(Location.X) && merchant.Location.Y.Equals(Location.Y) &&
+                merchant.Location.Z.Equals(Location.Z) && merchant.IsFlightMaster &&
+                !Blacklist.Contains(Guid) && !merchant.IsHostile && !IsBlacklisted(entry);
         }
 
         /// <summary>
@@ -150,18 +205,14 @@ namespace Styx.Logic
                 return false;
 
             WoWUnit merchant = null;
+            FlightMerchantObservation merchantObservation = null;
             FlightPathReason nextReason = FlightPathReason.Use;
             if (startNode.MasterEntry == 0U)
             {
-                merchant = NearestFlightMerchant;
-                // Feasibility is a callback boundary, not a lease on the player,
-                // settings, cached network, provider or existing travel intent.
-                if (!observation.IsCurrent())
+                if (!TryObserveFlightMerchant(observation, out merchant, out merchantObservation))
                     return false;
                 if (merchant != null)
                 {
-                    if (!merchant.IsValid)
-                        return false;
                     nextReason = FlightPathReason.Update;
                 }
                 else
@@ -180,7 +231,7 @@ namespace Styx.Logic
                 ? new BotPoi(merchant, PoiType.Fly)
                 : new BotPoi(start, PoiType.Fly) { Entry = startNode.MasterEntry };
             if (poi.Type != PoiType.Fly || !observation.IsCurrent() ||
-                (merchant != null && !merchant.IsValid))
+                (merchantObservation != null && !merchantObservation.IsCurrent()))
                 return false;
 
             var publication = new object();
