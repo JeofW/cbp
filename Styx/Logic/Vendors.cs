@@ -26,6 +26,7 @@ namespace Styx.Logic
 		private static readonly MailFrame _mailFrame;
 		private static readonly GossipFrame _gossipFrame;
 		private static bool _sellSessionActive;
+		private static object? _sellSessionCandidate;
 		private static ItemQuality _sellSessionQualities;
 		private static List<string>? _sellSessionProtectedNames;
 		private static List<uint>? _sellSessionProtectedIds;
@@ -180,6 +181,10 @@ namespace Styx.Logic
 			if (_sellSessionActive)
 				return true;
 
+			// Each construction attempt owns a distinct identity. Reset or nested
+			// admission invalidates older callbacks without touching a replacement.
+			object candidate = new object();
+			_sellSessionCandidate = candidate;
 			ItemQuality qualityMask = ItemQuality.None;
 			Profile? currentProfile = ProfileManager.CurrentProfile;
 
@@ -236,6 +241,8 @@ namespace Styx.Logic
 
 				foreach (VendorItemsEventHandler handler in OnVendorItems.GetInvocationList())
 				{
+					if (!IsSellSessionCandidateCurrent(candidate, currentProfile))
+						return false;
 					try
 					{
 						handler(args);
@@ -246,8 +253,13 @@ namespace Styx.Logic
 						Logging.WriteException(ex);
 						args.NameExceptions.Clear();
 						args.IdExceptions.Clear();
+						if (!IsSellSessionCandidateCurrent(candidate, currentProfile))
+							return false;
 						continue;
 					}
+
+					if (!IsSellSessionCandidateCurrent(candidate, currentProfile))
+						return false;
 
 					foreach (string name in args.NameExceptions)
 					{
@@ -271,13 +283,13 @@ namespace Styx.Logic
 
 			// Callback work may add protection or change the active profile. Preserve
 			// every earlier exclusion, but never publish an old profile's candidate.
-			if (!ReferenceEquals(ProfileManager.CurrentProfile, currentProfile))
+			if (!IsSellSessionCandidateCurrent(candidate, currentProfile))
 				return false;
 			foreach (string name in ProtectedItemsManager.GetAllItemNames())
 				if (!protectedNames.Contains(name)) protectedNames.Add(name);
 			foreach (uint id in ProtectedItemsManager.GetAllItemIds())
 				if (!protectedIds.Contains(id)) protectedIds.Add(id);
-			if (!ReferenceEquals(ProfileManager.CurrentProfile, currentProfile))
+			if (!IsSellSessionCandidateCurrent(candidate, currentProfile))
 				return false;
 
 			_sellSessionActive = true;
@@ -287,6 +299,10 @@ namespace Styx.Logic
 			_sellSessionStackCount = 0;
 			return true;
 		}
+
+		private static bool IsSellSessionCandidateCurrent(object candidate, Profile profile) =>
+			ReferenceEquals(_sellSessionCandidate, candidate) && !_sellSessionActive
+			&& ReferenceEquals(ProfileManager.CurrentProfile, profile);
 
 		private static bool ContinueSellSession()
 		{
@@ -325,6 +341,7 @@ namespace Styx.Logic
 
 		private static void ResetSellSession()
 		{
+			_sellSessionCandidate = null;
 			_sellSessionActive = false;
 			_sellSessionProtectedNames = null;
 			_sellSessionProtectedIds = null;
