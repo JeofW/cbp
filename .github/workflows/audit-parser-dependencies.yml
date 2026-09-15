@@ -1,7 +1,7 @@
 name: Audit parser dependencies
 on:
   push:
-    branches: ['audit/01-evidence-baseline-20260912']
+    branches: ['audit/01-evidence-baseline-20260912', 'audit/next-47-flight-owner-boundaries-20260916']
     paths: ['.github/workflows/audit-parser-dependencies.yml']
   workflow_dispatch:
 permissions:
