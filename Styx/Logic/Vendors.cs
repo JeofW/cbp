@@ -234,13 +234,14 @@ namespace Styx.Logic
 					IdExceptions = new List<uint>()
 				};
 
-				foreach (Delegate handler in OnVendorItems.GetInvocationList())
+				foreach (VendorItemsEventHandler handler in OnVendorItems.GetInvocationList())
 				{
 					try
 					{
-						handler.DynamicInvoke(args);
+						handler(args);
 					}
-					catch (Exception ex)
+					catch (Exception ex) when (ex is not OperationCanceledException
+						&& ex is not ThreadInterruptedException)
 					{
 						Logging.WriteException(ex);
 						args.NameExceptions.Clear();
@@ -267,6 +268,17 @@ namespace Styx.Logic
 				protectedNames.AddRange(args.NameExceptions);
 				protectedIds.AddRange(args.IdExceptions);
 			}
+
+			// Callback work may add protection or change the active profile. Preserve
+			// every earlier exclusion, but never publish an old profile's candidate.
+			if (!ReferenceEquals(ProfileManager.CurrentProfile, currentProfile))
+				return false;
+			foreach (string name in ProtectedItemsManager.GetAllItemNames())
+				if (!protectedNames.Contains(name)) protectedNames.Add(name);
+			foreach (uint id in ProtectedItemsManager.GetAllItemIds())
+				if (!protectedIds.Contains(id)) protectedIds.Add(id);
+			if (!ReferenceEquals(ProfileManager.CurrentProfile, currentProfile))
+				return false;
 
 			_sellSessionActive = true;
 			_sellSessionQualities = qualityMask;
