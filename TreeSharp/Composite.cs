@@ -142,13 +142,15 @@ namespace TreeSharp
             // A later Start must never reuse the stopped iterator.
             var enumerator = _enumerator;
             _enumerator = null;
+            // Publish the stopped lifetime's status before callbacks can Start a
+            // replacement. The old Stop must not overwrite that new status.
+            if (LastStatus == RunStatus.Running)
+                LastStatus = RunStatus.Failure;
             ExceptionDispatchInfo? failure = null;
             try { Cleanup(); }
             catch (Exception error) { PreserveCleanupFailure(ref failure, error); }
             finally
             {
-                if (LastStatus == RunStatus.Running)
-                    LastStatus = RunStatus.Failure;
                 // Iterator finally blocks are cleanup owners too. Drain them even
                 // after handler failure without replacing the first stop signal.
                 try { enumerator?.Dispose(); }
@@ -173,10 +175,15 @@ namespace TreeSharp
             if (CleanupHandlers.Count == 0)
                 return;
                 
+            // Detach registrations as well as the iterator. A cleanup callback
+            // may Start/Tick a new lifetime and register its own cleanup; neither
+            // drain is allowed to consume the other lifetime's registrations.
+            var handlers = CleanupHandlers;
+            CleanupHandlers = new Stack<CleanupHandler>();
             ExceptionDispatchInfo? failure = null;
-            while (CleanupHandlers.Count != 0)
+            while (handlers.Count != 0)
             {
-                try { CleanupHandlers.Pop().Dispose(); }
+                try { handlers.Pop().Dispose(); }
                 catch (Exception error)
                 {
                     // Drain all owned cleanup before propagating the original error.
