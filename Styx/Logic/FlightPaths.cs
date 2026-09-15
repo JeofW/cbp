@@ -910,6 +910,7 @@ namespace Styx.Logic
         {
             Name = (string)element.Attribute("Name") ?? "";
             MasterEntry = (uint?)element.Attribute("MasterEntry") ?? 0;
+            UpdateLevel = (int?)element.Attribute("UpdateLevel") ?? 0;
             Continent = (uint?)element.Attribute("Continent") ?? 0;
 
             float x = (float?)element.Attribute("X") ?? 0;
