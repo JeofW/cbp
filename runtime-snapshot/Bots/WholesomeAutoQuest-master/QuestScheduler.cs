@@ -33,6 +33,9 @@ namespace WholesomeAQ
         public int MapId { get; init; }
         public double X { get; init; }
         public double Y { get; init; }
+        // Explicit pure snapshots retain their complete-input default. The live
+        // producer below derives this flag from the actual raw/metadata owner.
+        public bool HasCompleteQuestLog { get; init; } = true;
         public bool HasAuthoritativeCompletions { get; init; }
         public IReadOnlyCollection<uint> CompletedQuestIds { get; init; } = Array.Empty<uint>();
         public IReadOnlyList<QuestSchedulerAcceptedQuest> AcceptedQuests { get; init; } = Array.Empty<QuestSchedulerAcceptedQuest>();
@@ -53,6 +56,53 @@ namespace WholesomeAQ
         private ForcedBehavior _lastActivation;
         private QuestRecoveryKey _lastActivationKey;
         private bool _rebuildRequested;
+        private PublishedWork _publishedWork;
+
+        private sealed class PublishedWork
+        {
+            internal LocalPlayer Player;
+            internal QuestLog Log;
+            internal QuestLogSnapshot Observation;
+            internal object OuterProfile, Profile;
+            internal string Path;
+            internal QuestScheduleResult Schedule;
+            internal Func<bool> LeaseIsCurrent;
+            internal Func<bool> Check;
+        }
+
+        // A stable delegate is the identity of one completed publication, not of
+        // a Pending/Running refresh request. Capture it once per root driver tick.
+        internal Func<bool> CaptureExecutionPermission() => _publishedWork?.Check;
+
+        private bool HasPublicationOwner(PublishedWork work) =>
+            ReferenceEquals(_publishedWork, work)
+            && (work.LeaseIsCurrent == null || work.LeaseIsCurrent())
+            && ReferenceEquals(LastSchedule, work.Schedule)
+            && ReferenceEquals(ObjectManager.Me, work.Player)
+            && ReferenceEquals(Styx.Logic.Profiles.ProfileManager.CurrentOuterProfile, work.OuterProfile)
+            && ReferenceEquals(Styx.Logic.Profiles.ProfileManager.CurrentProfile, work.Profile)
+            && string.Equals(Styx.Logic.Profiles.ProfileManager.XmlLocation, work.Path, StringComparison.Ordinal);
+
+        private bool IsPublicationCurrent(PublishedWork work)
+        {
+            if (!ReferenceEquals(_publishedWork, work)) return false;
+            bool current;
+            try
+            {
+                current = HasPublicationOwner(work)
+                    && work.Log.IsSnapshotCurrent(work.Observation)
+                    && HasPublicationOwner(work);
+            }
+            catch (Exception error) when (error is not ThreadInterruptedException && error is not OperationCanceledException)
+            {
+                current = false;
+            }
+            // Do not revoke a new publication created by an observation callback.
+            if (!ReferenceEquals(_publishedWork, work)) return false;
+            if (!current)
+                InvalidatePublishedWork("Published quest observations or owner changed; waiting for a fresh scan.");
+            return current;
+        }
         private static int _unknownNavigationFingerprintLogged;
         private static readonly TimeSpan ScanCooldown = TimeSpan.FromSeconds(10);
 
@@ -84,11 +134,21 @@ namespace WholesomeAQ
         public bool ScanAndRefresh(LocalPlayer me, string validatedGrindProfilePath = null) =>
             ScanAndRefresh(me, validatedGrindProfilePath, apply => { apply(); return true; }, null);
 
+        // Preserve the original four-argument method, including reflection callers.
+        // The owned entry has a distinct name to avoid ambiguous method lookup.
         internal bool ScanAndRefresh(
             LocalPlayer me,
             string validatedGrindProfilePath,
             Func<System.Action, bool> tryApplyPublication,
-            Func<string, bool> tryLoadProfile)
+            Func<string, bool> tryLoadProfile) =>
+            ScanAndRefreshOwned(me, validatedGrindProfilePath, tryApplyPublication, tryLoadProfile, null);
+
+        internal bool ScanAndRefreshOwned(
+            LocalPlayer me,
+            string validatedGrindProfilePath,
+            Func<System.Action, bool> tryApplyPublication,
+            Func<string, bool> tryLoadProfile,
+            Func<bool> isPublicationLeaseCurrent)
         {
             if (tryApplyPublication == null)
                 throw new ArgumentNullException(nameof(tryApplyPublication));
@@ -129,7 +189,9 @@ namespace WholesomeAQ
             QuestRecoveryRuntime.EnsureConfigured(
                 _dataLoader.DatasetFingerprint,
                 NavigationProviderFingerprint());
-            var accepted = me.QuestLog.GetAllQuests()
+            QuestLog questLog = me.QuestLog;
+            QuestLogSnapshot observation = questLog.CaptureSnapshot();
+            var accepted = observation.Quests
                 .OrderBy(quest => quest.Id)
                 .Select(quest => new QuestSchedulerAcceptedQuest
                 {
@@ -150,6 +212,7 @@ namespace WholesomeAQ
                 MapId = (int)me.MapId,
                 X = me.Location.X,
                 Y = me.Location.Y,
+                HasCompleteQuestLog = observation.IsComplete,
                 HasAuthoritativeCompletions = authoritative,
                 CompletedQuestIds = authoritative ? completed : Array.Empty<uint>(),
                 AcceptedQuests = accepted,
@@ -157,6 +220,33 @@ namespace WholesomeAQ
                     .ToDictionary(group => group.Key, group => group.Sum(item => (long)item.StackCount))
             };
 
+            // Raw observations are samples, not a native transaction/session lease.
+            // Recheck the same sample at each fallible publication boundary. The
+            // nested lease check also protects replacement work from reentrant
+            // player/world observations; an obsolete failure must not revoke it.
+            bool TryApplyObserved(Action apply)
+            {
+                bool applied = false;
+                tryApplyPublication(() =>
+                {
+                    bool current = snapshot.HasCompleteQuestLog && questLog.IsSnapshotCurrent(observation);
+                    tryApplyPublication(() =>
+                    {
+                        if (!current)
+                        {
+                            InvalidatePublishedWork("Quest observations incomplete or changed; waiting for a fresh scan.");
+                            return;
+                        }
+                        apply();
+                        applied = true;
+                    });
+                });
+                return applied;
+            }
+
+            // Admission precedes recovery selection/marks and navigation probes.
+            if (!TryApplyObserved(() => { }))
+                return false;
             QuestScheduleResult candidate = MaterializeSchedule(
                 db,
                 snapshot,
@@ -175,7 +265,7 @@ namespace WholesomeAQ
 
             // Preparation can invoke external navigation/player owners. An obsolete
             // continuation must not change a replacement's scan state or output file.
-            if (!tryApplyPublication(() => candidate = ApplyScanExpansionBeforeFallback(candidate)))
+            if (!TryApplyObserved(() => candidate = ApplyScanExpansionBeforeFallback(candidate)))
                 return false;
 
             string path = null;
@@ -184,7 +274,7 @@ namespace WholesomeAQ
             {
                 string xml = _profileBuilder.BuildProfileXml(
                     candidate.Plan, db, me.ZoneText, me.Name, me.Level, CurrentVendors);
-                if (!tryApplyPublication(() => path = _profileBuilder.WriteProfile(xml)))
+                if (!TryApplyObserved(() => path = _profileBuilder.WriteProfile(xml)))
                     return false;
             }
             else if (candidate.FallbackMode == QuestFallbackMode.ValidatedGrind)
@@ -193,7 +283,7 @@ namespace WholesomeAQ
             }
 
             bool published = false;
-            tryApplyPublication(() =>
+            TryApplyObserved(() =>
             {
                 // Null output is the builder's supported no-output mode, not an
                 // instruction to reuse the prior profile or authorize its old child.
@@ -204,14 +294,27 @@ namespace WholesomeAQ
                 // Loading raises synchronous host events. They can stop/restart the
                 // bot reentrantly, even while the refresh monitor is held. Recheck the
                 // real lease after those events, rather than revoking in a late catch.
-                tryApplyPublication(() =>
+                TryApplyObserved(() =>
                 {
                     _lastRecoveryContext = context;
                     LastStatus = candidate.Status;
                     LastQuestCount = candidate.Selected.Count;
                     ActiveQuestIds = new HashSet<int>(candidate.Selected.Select(item => (int)item.QuestId));
                     CurrentProfilePath = path;
-                    LastSchedule = candidate; // Execution permission is published last.
+                    LastSchedule = candidate;
+                    // Generate-only callers do not establish host execution ownership.
+                    if (hasWork && tryLoadProfile != null)
+                    {
+                        var work = new PublishedWork
+                        {
+                            Player = me, Log = questLog, Observation = observation,
+                            OuterProfile = Styx.Logic.Profiles.ProfileManager.CurrentOuterProfile,
+                            Profile = Styx.Logic.Profiles.ProfileManager.CurrentProfile,
+                            Path = path, Schedule = candidate, LeaseIsCurrent = isPublicationLeaseCurrent
+                        };
+                        work.Check = () => IsPublicationCurrent(work);
+                        _publishedWork = work; // Continuing execution permission is published last.
+                    }
                     published = true;
                 });
             });
@@ -220,6 +323,7 @@ namespace WholesomeAQ
 
         internal void InvalidatePublishedWork(string status)
         {
+            _publishedWork = null;
             // Revoke the execution gate first, including a child that is already Running.
             // Unknown is not an eligible grind fallback or an instruction to load an old XML.
             LastSchedule = new QuestScheduleResult
@@ -286,6 +390,15 @@ namespace WholesomeAQ
             if (db == null) throw new ArgumentNullException(nameof(db));
             if (snapshot == null) throw new ArgumentNullException(nameof(snapshot));
             if (evaluate == null) throw new ArgumentNullException(nameof(evaluate));
+            if (!snapshot.HasCompleteQuestLog || snapshot.AcceptedQuests == null)
+            {
+                return new QuestScheduleResult
+                {
+                    FallbackMode = QuestFallbackMode.TimedIdle,
+                    EarliestRetryUtc = snapshot.UtcNow.Add(ScanCooldown),
+                    Status = "Quest observations incomplete; waiting for a fresh scan."
+                };
+            }
 
             var completed = new HashSet<uint>(snapshot.CompletedQuestIds ?? Array.Empty<uint>());
             if (snapshot.HasAuthoritativeCompletions && markCompleted != null)
@@ -1082,7 +1195,7 @@ namespace WholesomeAQ
                         if (isKnownUnsafe(point))
                             knownSafe = false;
                     }
-                    catch
+                    catch (Exception ex) when (ex is not ThreadInterruptedException && ex is not OperationCanceledException)
                     {
                         safetyQueryFailed = true;
                     }
@@ -1105,7 +1218,7 @@ namespace WholesomeAQ
                     {
                         live = navigationAssessment?.Invoke(point);
                     }
-                    catch
+                    catch (Exception ex) when (ex is not ThreadInterruptedException && ex is not OperationCanceledException)
                     {
                         live = null;
                     }
@@ -1141,7 +1254,7 @@ namespace WholesomeAQ
                     ? isKnownUnsafe(destination)
                     : BlackspotManager.IsBlackspotted(destination);
             }
-            catch
+            catch (Exception ex) when (ex is not ThreadInterruptedException && ex is not OperationCanceledException)
             {
                 return new SpawnNavigationAssessment();
             }
@@ -1173,7 +1286,7 @@ namespace WholesomeAQ
                     SafetyScore = (int)Math.Max(-100000, 1000 - Math.Min(101000, Math.Round(detour)))
                 };
             }
-            catch
+            catch (Exception ex) when (ex is not ThreadInterruptedException && ex is not OperationCanceledException)
             {
                 return new SpawnNavigationAssessment();
             }
@@ -1313,6 +1426,7 @@ namespace WholesomeAQ
 
         public void Reset()
         {
+            _publishedWork = null;
             _scanThreshold = _settings.ScanStartDistance;
             ActiveQuestIds = null;
             CurrentProfilePath = null;

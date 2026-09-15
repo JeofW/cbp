@@ -1,5 +1,7 @@
 #nullable disable
+using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -15,9 +17,14 @@ namespace Styx.Logic.Profiles
     public static class ProtectedItemsManager
     {
         // Items from XML files
-        private static readonly DualHashSet<uint, string> _fileProtectedItems;
+        private static DualHashSet<uint, string> _fileProtectedItems;
+        private static readonly object _reloadSync = new object();
+        private static DualHashSet<uint, string> FileSnapshot => Volatile.Read(ref _fileProtectedItems);
         // Items added at runtime
         private static readonly DualHashSet<uint, string> _runtimeProtectedItems;
+        // Legacy Add/Remove own the manual set; collector leases are independent.
+        private static readonly object _runtimeSync = new object();
+        private static readonly Dictionary<uint, int> _itemOwners = new Dictionary<uint, int>();
         // Valid file names for protected items
         private static readonly HashSet<string> _validFileNames;
 
@@ -39,45 +46,53 @@ namespace Styx.Logic.Profiles
         /// </summary>
         public static void ReloadProtectedItems()
         {
-            _fileProtectedItems.HashSet1.Clear();
-            _fileProtectedItems.HashSet2.Clear();
-
-            string directoryName = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            if (directoryName == null) return;
-
-            string[] files = Directory.GetFiles(directoryName, "*.xml", SearchOption.AllDirectories);
-            foreach (string filePath in files)
+            Exception failure = null;
+            string source = null;
+            lock (_reloadSync)
             {
-                string fileName = Path.GetFileNameWithoutExtension(filePath)?.ToLower();
-                if (_validFileNames.Contains(fileName))
+                // Build privately. Readers continue using the old complete FILE
+                // layer while I/O or parsing is in progress; runtime owners are separate.
+                var candidate = new DualHashSet<uint, string>();
+                try
                 {
-                    LoadProtectedItemsFile(filePath);
+                    source = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                    if (source == null) return;
+                    string[] files = Directory.GetFiles(source, "*.xml", SearchOption.AllDirectories);
+                    foreach (string filePath in files)
+                    {
+                        string fileName = Path.GetFileNameWithoutExtension(filePath)?.ToLowerInvariant();
+                        if (!_validFileNames.Contains(fileName)) continue;
+                        source = filePath;
+                        AppendProtectedItemsFile(filePath, candidate);
+                    }
+                    Volatile.Write(ref _fileProtectedItems, candidate);
+                }
+                catch (Exception error) when (error is XmlException || error is IOException
+                    || error is UnauthorizedAccessException)
+                {
+                    // Never publish a partial candidate or roll back a newer layer.
+                    failure = error;
                 }
             }
+            // Logging is a callback boundary: run it outside manager locks. A
+            // callback may reload successfully or throw a stop signal of its own.
+            if (failure != null)
+                Logging.Write($"Error in ProtectedItems XML file at {source}: {failure.Message}");
         }
 
         /// <summary>
-        /// Loads protected items from an XML file.
+        /// Parses one enumerated file into an unpublished candidate FILE layer.
+        /// Read/parse failure aborts the caller's complete reload, not just this file.
         /// </summary>
-        private static void LoadProtectedItemsFile(string filePath)
+        private static void AppendProtectedItemsFile(string filePath, DualHashSet<uint, string> candidate)
         {
-            if (Path.GetExtension(filePath)?.ToLower() != ".xml" || !File.Exists(filePath))
-                return;
-
-            XElement root;
-            try
-            {
-                root = XElement.Load(filePath);
-            }
-            catch (XmlException ex)
-            {
-                Logging.Write($"Error in ProtectedItems XML file at {filePath}: {ex.Message}");
-                return;
-            }
+            // A file disappearing after enumeration is an incomplete observation.
+            // Do not silently skip it through a File.Exists check.
+            XElement root = XElement.Load(filePath);
 
             foreach (var element in root.Elements())
             {
-                if (element.Name.ToString().ToLower() != "item")
+                if (element.Name.ToString().ToLowerInvariant() != "item")
                     continue;
 
                 uint id = 0;
@@ -85,7 +100,7 @@ namespace Styx.Logic.Profiles
 
                 foreach (var attr in element.Attributes())
                 {
-                    string attrName = attr.Name.ToString().ToLower();
+                    string attrName = attr.Name.ToString().ToLowerInvariant();
                     switch (attrName)
                     {
                         case "id":
@@ -93,7 +108,7 @@ namespace Styx.Logic.Profiles
                             uint.TryParse(attr.Value, out id);
                             break;
                         case "name":
-                            name = attr.Value.ToLower();
+                            name = attr.Value.ToLowerInvariant();
                             break;
                     }
                 }
@@ -107,10 +122,10 @@ namespace Styx.Logic.Profiles
                 if (id == 0 && string.IsNullOrEmpty(name))
                     continue;
 
-                if (!_fileProtectedItems.Contains(id))
-                    _fileProtectedItems.Add(id);
-                if (!_fileProtectedItems.Contains(name))
-                    _fileProtectedItems.Add(name);
+                if (!candidate.Contains(id))
+                    candidate.Add(id);
+                if (!candidate.Contains(name))
+                    candidate.Add(name);
             }
         }
 
@@ -119,8 +134,11 @@ namespace Styx.Logic.Profiles
         /// </summary>
         public static bool Contains(uint item)
         {
-            if (_fileProtectedItems.Contains(item) || _runtimeProtectedItems.Contains(item))
+            if (FileSnapshot.Contains(item))
                 return true;
+            lock (_runtimeSync)
+                if (_runtimeProtectedItems.Contains(item) || _itemOwners.ContainsKey(item))
+                    return true;
 
             return CheckProfileProtectedItems(item);
         }
@@ -130,10 +148,13 @@ namespace Styx.Logic.Profiles
         /// </summary>
         public static bool Contains(string item)
         {
-            item = item.ToLower();
+            item = item.ToLowerInvariant();
 
-            if (_fileProtectedItems.Contains(item) || _runtimeProtectedItems.Contains(item))
+            if (FileSnapshot.Contains(item))
                 return true;
+            lock (_runtimeSync)
+                if (_runtimeProtectedItems.Contains(item))
+                    return true;
 
             return CheckProfileProtectedItems(item);
         }
@@ -151,28 +172,60 @@ namespace Styx.Logic.Profiles
         /// </summary>
         private static bool CheckProfileProtectedItems(string item)
         {
-            return ProfileManager.CurrentProfile?.ProtectedItems?.Contains(item.ToLower()) ?? false;
+            return ProfileManager.CurrentProfile?.ProtectedItems?.Contains(item.ToLowerInvariant()) ?? false;
         }
 
         /// <summary>
         /// Adds an item id to the runtime protected list.
         /// </summary>
-        public static bool Add(uint item) => _runtimeProtectedItems.Add(item);
+        public static bool Add(uint item) { lock (_runtimeSync) return _runtimeProtectedItems.Add(item); }
 
         /// <summary>
         /// Adds an item name to the runtime protected list.
         /// </summary>
-        public static bool Add(string item) => _runtimeProtectedItems.Add(item.ToLower());
+        public static bool Add(string item) { lock (_runtimeSync) return _runtimeProtectedItems.Add(item.ToLowerInvariant()); }
 
         /// <summary>
         /// Removes an item id from the runtime protected list.
         /// </summary>
-        public static bool Remove(uint item) => _runtimeProtectedItems.Remove(item);
+        public static bool Remove(uint item) { lock (_runtimeSync) return _runtimeProtectedItems.Remove(item); }
 
         /// <summary>
         /// Removes an item name from the runtime protected list.
         /// </summary>
-        public static bool Remove(string item) => _runtimeProtectedItems.Remove(item.ToLower());
+        public static bool Remove(string item) { lock (_runtimeSync) return _runtimeProtectedItems.Remove(item.ToLowerInvariant()); }
+
+        /// <summary>
+        /// Acquires one runtime item-ID owner. Disposing it releases only this
+        /// owner, never FILE/profile/manual protection or another active lease.
+        /// </summary>
+        public static IDisposable Acquire(uint item)
+        {
+            var owner = new ItemProtection(item);
+            lock (_runtimeSync)
+            {
+                _itemOwners.TryGetValue(item, out int count);
+                _itemOwners[item] = checked(count + 1);
+            }
+            return owner;
+        }
+
+        private sealed class ItemProtection : IDisposable
+        {
+            private readonly uint item;
+            private int disposed;
+            internal ItemProtection(uint item) { this.item = item; }
+            public void Dispose()
+            {
+                if (Interlocked.Exchange(ref disposed, 1) != 0) return;
+                lock (_runtimeSync)
+                {
+                    int count = _itemOwners[item];
+                    if (count == 1) _itemOwners.Remove(item);
+                    else _itemOwners[item] = count - 1;
+                }
+            }
+        }
 
         /// <summary>
         /// Gets all protected item names.
@@ -181,11 +234,11 @@ namespace Styx.Logic.Profiles
         {
             var list = new List<string>();
 
-            foreach (string name in _fileProtectedItems.HashSet2)
+            foreach (string name in FileSnapshot.HashSet2)
                 list.Add(name);
 
-            foreach (string name in _runtimeProtectedItems.HashSet2)
-                list.Add(name);
+            lock (_runtimeSync)
+                list.AddRange(_runtimeProtectedItems.HashSet2);
 
             if (ProfileManager.CurrentProfile?.ProtectedItems != null)
             {
@@ -203,11 +256,15 @@ namespace Styx.Logic.Profiles
         {
             var list = new List<uint>();
 
-            foreach (uint id in _fileProtectedItems.HashSet1)
+            foreach (uint id in FileSnapshot.HashSet1)
                 list.Add(id);
 
-            foreach (uint id in _runtimeProtectedItems.HashSet1)
-                list.Add(id);
+            lock (_runtimeSync)
+            {
+                list.AddRange(_runtimeProtectedItems.HashSet1);
+                foreach (uint id in _itemOwners.Keys)
+                    if (!_runtimeProtectedItems.Contains(id)) list.Add(id);
+            }
 
             if (ProfileManager.CurrentProfile?.ProtectedItems != null)
             {

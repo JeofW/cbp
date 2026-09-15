@@ -38,6 +38,7 @@ public class CollectItemObjective : QuestObjective
     private readonly HashSet<uint> _excludedMobs = new HashSet<uint>();
     private readonly HashSet<uint> _includedMobs = new HashSet<uint>();
     private Composite _behaviorTree;
+    private readonly IDisposable _itemProtection;
     private WoWPoint? _cachedObjectiveLocation;
     private readonly CollectItemObjectiveInfo _collectItemInfo;
     private readonly MerchantFrame _merchantFrame = new MerchantFrame();
@@ -62,7 +63,7 @@ public class CollectItemObjective : QuestObjective
         Targeting.Instance.IncludeTargetsFilter += new IncludeTargetsFilterDelegate(this.IncludeTargets);
         LootTargeting.Instance.IncludeTargetsFilter += new IncludeTargetsFilterDelegate(this.IncludeLootTargets);
         this.Objective = questObjective;
-        ProtectedItemsManager.Add((uint)this.Objective.ID);
+        this._itemProtection = ProtectedItemsManager.Acquire((uint)this.Objective.ID);
         if (this.OverridedQuestInfo != null)
             this._collectItemInfo = this.OverridedQuestInfo.FindCollectItem((uint)this.Objective.ID);
     }
@@ -83,7 +84,7 @@ public class CollectItemObjective : QuestObjective
 
     public override void Dispose()
     {
-        ProtectedItemsManager.Remove((uint)this.Objective.ID);
+        this._itemProtection.Dispose();
         LootTargeting.Instance.IncludeTargetsFilter -= new IncludeTargetsFilterDelegate(this.IncludeLootTargets);
         Targeting.Instance.IncludeTargetsFilter -= new IncludeTargetsFilterDelegate(this.IncludeTargets);
         Targeting.Instance.WeighTargetsFilter -= new WeighTargetsDelegate(this.WeighTargets);

@@ -4,6 +4,7 @@ import hashlib
 import json
 from pathlib import Path
 import re
+from isolate_schedule_gates import isolate
 
 PROJECTS = {'QuestLogObservationRegressionTests', 'WholesomeQuestRecoveryRegressionTests'}
 INITIALIZER = re.compile(r'\[ModuleInitializer\](?=\s*internal\s+static\s+void\s+Run\s*\(\s*\))')
@@ -35,6 +36,7 @@ def normalize(project: Path, output: Path) -> dict:
             changed = INITIALIZER.sub('', text)
             groups.append(classes[0])
         sources[path.name] = (raw, changed)
+    sources, topology_migrations = isolate(sources) if project.name == 'WholesomeQuestRecoveryRegressionTests' else (sources, [])
     if not groups or 'Program.cs' not in sources:
         raise ValueError('Expected test entry and initialized groups were not found')
     raw, entry = sources['Program.cs']
@@ -71,7 +73,8 @@ def normalize(project: Path, output: Path) -> dict:
         files.append({'file': name, 'original_sha256': digest(raw), 'generated_sha256': digest(data)})
     (output / 'W42PostInitializationGroups.cs').write_bytes(generated_driver)
     manifest = {'schema': 1, 'project': project.name, 'groups': groups, 'files': files,
-                'driver_sha256': digest(generated_driver), 'production_modified': False}
+                'driver_sha256': digest(generated_driver), 'production_modified': False,
+                'fixture_topology_migrations': topology_migrations}
     (output / 'normalization-manifest.json').write_text(json.dumps(manifest, indent=2) + '\n', encoding='utf-8')
     return manifest
 

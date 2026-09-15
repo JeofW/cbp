@@ -47,18 +47,17 @@ namespace TreeSharp
 
                 LastStatus = _enumerator.Current;
             }
-            catch (ThreadInterruptedException)
+            catch (Exception signal) when (signal is ThreadInterruptedException
+                || signal is OperationCanceledException)
             {
                 // A run-stop signal is not a failed branch: letting the parent select
                 // a fallback can issue another movement command during shutdown.
-                StopAfterInterruption(context);
+                StopAfterStopSignal(context);
                 throw;
             }
             catch (Exception ex)
             {
-                Styx.Helpers.Logging.WriteException(ex);
-                LastStatus = RunStatus.Failure;
-                Stop(context);
+                ReportFailureAndStop(context, ex, null);
                 return LastStatus.Value;
             }
 
@@ -104,21 +103,36 @@ namespace TreeSharp
                 if (_enumerator == null)
                     throw new ApplicationException($"GetEnumerator() returned null for {GetType().Name}");
             }
-            catch (ThreadInterruptedException)
+            catch (Exception signal) when (signal is ThreadInterruptedException
+                || signal is OperationCanceledException)
             {
                 // A run-stop signal is not a failed branch: letting the parent select
                 // a fallback can issue another movement command during shutdown.
-                StopAfterInterruption(context);
+                StopAfterStopSignal(context);
                 throw;
             }
             catch (Exception ex)
             {
-                Styx.Helpers.Logging.WriteException(ex);
+                ReportFailureAndStop(context, ex, ExceptionDispatchInfo.Capture(ex));
                 throw;
             }
         }
 
-        private void StopAfterInterruption(object context)
+        private void ReportFailureAndStop(object context, Exception error, ExceptionDispatchInfo? failure)
+        {
+            // Diagnostics invoke external subscribers. Even a throwing subscriber
+            // must not prevent release of this faulted execution's resources.
+            // Tick retains its ordinary Failure result; Start retains its original
+            // factory error. A cancellation/interruption from either boundary wins.
+            try { Styx.Helpers.Logging.WriteException(error); }
+            catch (Exception diagnosticError) { PreserveCleanupFailure(ref failure, diagnosticError); }
+            LastStatus = RunStatus.Failure;
+            try { Stop(context); }
+            catch (Exception cleanupError) { PreserveCleanupFailure(ref failure, cleanupError); }
+            failure?.Throw();
+        }
+
+        private void StopAfterStopSignal(object context)
         {
             LastStatus = RunStatus.Failure;
             try
@@ -127,7 +141,7 @@ namespace TreeSharp
             }
             catch (Exception cleanupError)
             {
-                // Preserve the original interruption even when cleanup/log subscribers
+                // Preserve the original stop signal even when cleanup/log subscribers
                 // fail. An ordinary cleanup error cannot authorize parent fallback.
                 try { Styx.Helpers.Logging.WriteException(cleanupError); }
                 catch { }
@@ -137,19 +151,34 @@ namespace TreeSharp
         public virtual void Stop(object context)
         {
             // Detach before user cleanup, including reentrant/throwing cleanup.
-            // A later Start must never reuse the interrupted iterator.
+            // A later Start must never reuse the stopped iterator.
             var enumerator = _enumerator;
             _enumerator = null;
-            try
-            {
-                Cleanup();
-            }
+            // Publish the stopped lifetime's status before callbacks can Start a
+            // replacement. The old Stop must not overwrite that new status.
+            if (LastStatus == RunStatus.Running)
+                LastStatus = RunStatus.Failure;
+            ExceptionDispatchInfo? failure = null;
+            try { Cleanup(); }
+            catch (Exception error) { PreserveCleanupFailure(ref failure, error); }
             finally
             {
-                if (LastStatus == RunStatus.Running)
-                    LastStatus = RunStatus.Failure;
-                enumerator?.Dispose();
+                // Iterator finally blocks are cleanup owners too. Drain them even
+                // after handler failure without replacing the first stop signal.
+                try { enumerator?.Dispose(); }
+                catch (Exception error) { PreserveCleanupFailure(ref failure, error); }
             }
+            failure?.Throw();
+        }
+
+        internal static void PreserveCleanupFailure(ref ExceptionDispatchInfo? failure, Exception error)
+        {
+            // Cancellation and interruption are equally authoritative stop signals.
+            // Preserve the first signal; ordinary failures cannot mask either one.
+            bool stop = error is ThreadInterruptedException || error is OperationCanceledException;
+            if (failure == null || (stop && failure.SourceException is not ThreadInterruptedException
+                && failure.SourceException is not OperationCanceledException))
+                failure = ExceptionDispatchInfo.Capture(error);
         }
 
         [DebuggerStepThrough]
@@ -158,17 +187,20 @@ namespace TreeSharp
             if (CleanupHandlers.Count == 0)
                 return;
                 
+            // Detach registrations as well as the iterator. A cleanup callback
+            // may Start/Tick a new lifetime and register its own cleanup; neither
+            // drain is allowed to consume the other lifetime's registrations.
+            var handlers = CleanupHandlers;
+            CleanupHandlers = new Stack<CleanupHandler>();
             ExceptionDispatchInfo? failure = null;
-            while (CleanupHandlers.Count != 0)
+            while (handlers.Count != 0)
             {
-                try { CleanupHandlers.Pop().Dispose(); }
+                try { handlers.Pop().Dispose(); }
                 catch (Exception error)
                 {
                     // Drain all owned cleanup before propagating the original error.
                     // Stop signals take precedence over ordinary cleanup failures.
-                    if (failure == null || (error is ThreadInterruptedException
-                        && failure.SourceException is not ThreadInterruptedException))
-                        failure = ExceptionDispatchInfo.Capture(error);
+                    PreserveCleanupFailure(ref failure, error);
                 }
             }
             failure?.Throw();

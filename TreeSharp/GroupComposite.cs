@@ -50,9 +50,7 @@ namespace TreeSharp
                     try { child?.Stop(context); }
                     catch (Exception error)
                     {
-                        if (failure == null || (error is ThreadInterruptedException
-                            && failure.SourceException is not ThreadInterruptedException))
-                            failure = ExceptionDispatchInfo.Capture(error);
+                        PreserveCleanupFailure(ref failure, error);
                     }
                 }
                 failure?.Throw();
