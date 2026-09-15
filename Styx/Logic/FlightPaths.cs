@@ -380,8 +380,8 @@ namespace Styx.Logic
 
         /// <summary>
         /// Find closest flight nodes for start and end points.
-        /// Ported from HB 4.3.4 smethod_1: finds nearest node to 'from' as start,
-        /// then among start's connected nodes, picks the one nearest to 'to' as end.
+        /// Prefers the nearest origin with a usable cached connection, then its
+        /// connected node nearest to 'to'. Disconnected origins are skipped.
         /// Also guards against flight "going backwards" (start closer to dest than end).
         /// </summary>
         private static void FindClosestFlightNodes(WoWPoint from, WoWPoint to, out XmlFlightNode startNode, out XmlFlightNode endNode)
@@ -403,39 +403,32 @@ namespace Styx.Logic
                 return;
             }
 
-            // HB 4.3.4: nearest node to player = start
-            XmlFlightNode sNode = continentNodes.OrderBy(n => n.Location.DistanceSqr(from)).First();
-
-            // HB 4.3.4: among start's connected nodes, pick nearest to destination
-            if (sNode.Connections == null || sNode.Connections.Count == 0)
+            // Prefer the nearest usable cached origin, not merely the nearest
+            // marker. A disconnected/unknown/backwards candidate must not hide
+            // a later forward connection. This is still cached connectivity, not
+            // proof of an approach path or a globally optimal travel route.
+            foreach (XmlFlightNode sNode in continentNodes.OrderBy(n => n.Location.DistanceSqr(from)))
             {
-                startNode = endNode = null;
+                var connections = sNode.Connections;
+                if (connections == null || connections.Count == 0)
+                    continue;
+
+                XmlFlightNode eNode = continentNodes
+                    .Where(n => connections.Contains(n.Name))
+                    .OrderBy(n => n.Location.DistanceSqr(to))
+                    .FirstOrDefault();
+
+                if (eNode == null || eNode.Name == sNode.Name)
+                    continue;
+
+                // Retain the existing no-backwards guard for every origin.
+                if (sNode.Location.DistanceSqr(to) < eNode.Location.DistanceSqr(to))
+                    continue;
+
+                startNode = sNode;
+                endNode = eNode;
                 return;
             }
-
-            // Filter to only connected nodes and pick nearest to destination
-            var connections = sNode.Connections;
-            XmlFlightNode? eNode = continentNodes
-                .Where(n => connections.Contains(n.Name))
-                .OrderBy(n => n.Location.DistanceSqr(to))
-                .FirstOrDefault();
-
-            if (eNode == null || eNode.Name == sNode.Name)
-            {
-                startNode = endNode = null;
-                return;
-            }
-
-            // HB 6.2.3 guard: if the start node is actually closer to destination
-            // than the end node, the flight would go backwards — cancel.
-            if (sNode.Location.DistanceSqr(to) < eNode.Location.DistanceSqr(to))
-            {
-                startNode = endNode = null;
-                return;
-            }
-
-            startNode = sNode;
-            endNode = eNode;
         }
 
         /// <summary>
