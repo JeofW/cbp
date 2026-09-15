@@ -196,8 +196,10 @@ namespace Styx.Logic
         /// </summary>
         public static TimeSpan GetFlightPathTime(WoWPoint from, WoWPoint to)
         {
-            // Flight speed is approximately 19.6 yards/second, with 1.2x multiplier for path winding
-            return new TimeSpan(0, 0, (int)Math.Ceiling(from.Distance2D(to) * 1.2f / 19.6f));
+            if (!IsFinitePoint(from) || !IsFinitePoint(to))
+                return TimeSpan.MaxValue;
+            // Retain the planar flight approximation; unknown evidence is not a free route.
+            return GetBoundedTravelTime(from.Distance2D(to) * 1.2f / 19.6f);
         }
 
         /// <summary>
@@ -205,6 +207,12 @@ namespace Styx.Logic
         /// </summary>
         public static TimeSpan GetFullTravelTime(WoWPoint start, WoWPoint end, WoWPoint flightPathStart, WoWPoint flightPathEnd, float travelSpeed)
         {
+            if (!IsValidTravelSpeed(travelSpeed))
+                return TimeSpan.MaxValue;
+            TimeSpan flightTime = GetFlightPathTime(flightPathStart, flightPathEnd);
+            if (flightTime == TimeSpan.MaxValue)
+                return TimeSpan.MaxValue;
+
             TimeSpan toStart = start.Distance(flightPathStart) < 5f
                 ? TimeSpan.Zero
                 : GetRunPathTime(Navigator.GeneratePath(start, flightPathStart), travelSpeed);
@@ -216,7 +224,7 @@ namespace Styx.Logic
             if (toStart == TimeSpan.MaxValue || fromEnd == TimeSpan.MaxValue)
                 return TimeSpan.MaxValue;
 
-            return GetFlightPathTime(flightPathStart, flightPathEnd) + toStart + fromEnd;
+            return flightTime + toStart + fromEnd;
         }
 
         /// <summary>
@@ -224,9 +232,31 @@ namespace Styx.Logic
         /// </summary>
         public static TimeSpan GetRunPathTime(IList<WoWPoint> path, float travelSpeed)
         {
-            if (path == null || path.Count == 0)
+            if (path == null || path.Count == 0 || !IsValidTravelSpeed(travelSpeed))
                 return TimeSpan.MaxValue;
-            return new TimeSpan(0, 0, (int)Math.Ceiling(GetPathLength(path) / travelSpeed));
+            for (int i = 0; i < path.Count; i++)
+                if (!IsFinitePoint(path[i])) return TimeSpan.MaxValue;
+            return GetBoundedTravelTime(GetPathLength(path) / travelSpeed);
+        }
+
+        private static bool IsValidTravelSpeed(float speed) =>
+            speed > 0 && !float.IsNaN(speed) && !float.IsInfinity(speed);
+
+        private static bool IsFinitePoint(WoWPoint point) =>
+            !float.IsNaN(point.X) && !float.IsInfinity(point.X) &&
+            !float.IsNaN(point.Y) && !float.IsInfinity(point.Y) &&
+            !float.IsNaN(point.Z) && !float.IsInfinity(point.Z);
+
+        private static TimeSpan GetBoundedTravelTime(float seconds)
+        {
+            // Preserve the existing whole-second/int estimator domain. Validate
+            // before conversion: NaN, infinity and overflow can otherwise become
+            // zero, a negative value or a saturated but falsely known duration.
+            double rounded = Math.Ceiling(seconds);
+            if (double.IsNaN(rounded) || double.IsInfinity(rounded) ||
+                rounded < 0 || rounded > int.MaxValue)
+                return TimeSpan.MaxValue;
+            return new TimeSpan(0, 0, (int)rounded);
         }
 
         /// <summary>
