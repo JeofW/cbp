@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.ExceptionServices;
 using System.Xml.Linq;
 using Styx.Helpers;
 using Styx.Logic.Inventory.Frames.Taxi;
@@ -235,33 +236,73 @@ namespace Styx.Logic
                 return false;
 
             var publication = new object();
-            _flightIntentOwner = publication;
-            TakingPathTo = endNode;
-            TakingPathFrom = startNode;
-            Reason = nextReason;
-            BotPoi.Current = poi;
-            // The POI setter logs synchronously. A subscriber can Reset, publish
-            // another flight, or install service work. Never report the old call
-            // as successful or overwrite that replacement after the callback.
-            if (!ReferenceEquals(_flightIntentOwner, publication) ||
-                !ReferenceEquals(TakingPathFrom, startNode) ||
-                !ReferenceEquals(TakingPathTo, endNode) || Reason != nextReason ||
-                !ReferenceEquals(BotPoi.Current, poi))
-                return false;
-
-            if (!observation.InputsCurrent() ||
-                (merchantObservation != null && !merchantObservation.IsCurrent()))
+            bool OwnsPublication() => ReferenceEquals(_flightIntentOwner, publication) &&
+                ReferenceEquals(TakingPathFrom, startNode) &&
+                ReferenceEquals(TakingPathTo, endNode) && Reason == nextReason &&
+                ReferenceEquals(BotPoi.Current, poi);
+            void RevokeOwnedPublication()
             {
-                // This call still owns the publication, but its observed inputs
-                // no longer authorize it. Detach before the final POI diagnostic
-                // can publish replacement work. No old writes follow that callback.
-                // Clear/Reset also affect navigation and would resume after their
-                // callbacks; this admission has not started native movement.
+                // Revalidation can itself fail or replace work. Check ownership
+                // at the mutation boundary, then detach before the final callback.
+                if (!OwnsPublication())
+                    return;
                 _flightIntentOwner = new object();
                 TakingPathFrom = null;
                 TakingPathTo = null;
                 Reason = FlightPathReason.None;
                 BotPoi.Current = new BotPoi(PoiType.None);
+            }
+
+            _flightIntentOwner = publication;
+            TakingPathTo = endNode;
+            TakingPathFrom = startNode;
+            Reason = nextReason;
+            try
+            {
+                BotPoi.Current = poi;
+            }
+            catch (Exception error)
+            {
+                ExceptionDispatchInfo? failure = ExceptionDispatchInfo.Capture(error);
+                if (OwnsPublication())
+                {
+                    bool inputsCurrent = false;
+                    try
+                    {
+                        inputsCurrent = observation.InputsCurrent() &&
+                            (merchantObservation == null || merchantObservation.IsCurrent());
+                    }
+                    catch (Exception observationError)
+                    {
+                        // Unavailable revalidation cannot certify this intent.
+                        TreeSharp.Composite.PreserveCleanupFailure(ref failure, observationError);
+                    }
+                    if (!inputsCurrent)
+                    {
+                        try { RevokeOwnedPublication(); }
+                        catch (Exception cleanupError)
+                        {
+                            TreeSharp.Composite.PreserveCleanupFailure(ref failure, cleanupError);
+                        }
+                    }
+                }
+                // No old writes follow cleanup diagnostics. Preserve the first
+                // cancellation/interruption, or the original ordinary exception.
+                failure.Throw();
+                throw;
+            }
+            // The POI setter logs synchronously. A subscriber can Reset, publish
+            // another flight, or install service work. Never report the old call
+            // as successful or overwrite that replacement after the callback.
+            if (!OwnsPublication())
+                return false;
+
+            if (!observation.InputsCurrent() ||
+                (merchantObservation != null && !merchantObservation.IsCurrent()))
+            {
+                // Clear/Reset also affect navigation. This admission has not
+                // started native movement; revoke only its owned publication.
+                RevokeOwnedPublication();
                 return false;
             }
 
