@@ -139,7 +139,7 @@ internal static class FlightPathMerchantOwnershipRegressionTests
             Action<LogLevel, string>? handler = null;
             handler = (_, message) =>
             {
-                if (!message.StartsWith("Blacklisting ", StringComparison.Ordinal)
+                if (!message.Contains("Blacklisting ", StringComparison.Ordinal)
                     || (blacklistLog ? !message.Contains(guid.ToString("X16"), StringComparison.Ordinal) : !message.Contains("for 5 minutes", StringComparison.Ordinal))) return;
                 Logging.OnMessageLogged -= handler; calls++;
                 try { change(); replacement = new Intent(); } catch (Exception e) { callbackError = e; throw; }
