@@ -117,15 +117,17 @@ namespace Styx.Logic
 			{
 				var args = new MailItemsEventArgs { AdditionalItems = new List<WoWItem>() };
 
-				foreach (Delegate handler in OnMailItems.GetInvocationList())
+				foreach (MailItemsEventHandler handler in OnMailItems.GetInvocationList())
 				{
 					try
 					{
-						handler.DynamicInvoke(args);
+						handler(args);
 					}
-					catch (Exception ex)
+					catch (Exception ex) when (ex is not OperationCanceledException
+						&& ex is not ThreadInterruptedException)
 					{
 						Logging.WriteException(ex);
+						args.AdditionalItems.Clear();
 						continue;
 					}
 
@@ -360,18 +362,19 @@ namespace Styx.Logic
 			if (OnBuyItems != null)
 			{
 				var args = new BuyItemsEventArgs();
-				foreach (Delegate handler in OnBuyItems.GetInvocationList())
+				foreach (BuyItemsEventHandler handler in OnBuyItems.GetInvocationList())
 				{
 					try
 					{
-						handler.DynamicInvoke(args);
+						handler(args);
 						foreach (var kvp in args.BuyItemsIds)
 						{
 							if (!itemsToBuy.ContainsKey(kvp.Key))
 								itemsToBuy.Add(kvp.Key, kvp.Value);
 						}
 					}
-					catch (Exception ex)
+					catch (Exception ex) when (ex is not OperationCanceledException
+						&& ex is not ThreadInterruptedException)
 					{
 						Logging.WriteException(ex);
 						args.BuyItemsIds.Clear();
