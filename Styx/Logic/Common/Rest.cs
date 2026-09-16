@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading;
 using Styx.Helpers;
 using Styx.Logic.Inventory;
+using Styx.Logic.Pathing;
 using Styx.WoWInternals;
 using Styx.WoWInternals.WoWObjects;
 
@@ -125,57 +126,55 @@ public static class Rest
     /// Immediately uses food to restore health without waiting.
     /// Used by Singular for quick eating.
     /// </summary>
-    public static void FeedImmediate()
+    public static void FeedImmediate() => UseImmediate(false);
+
+    /// <summary>Immediately uses drink without waiting, on a current dry owner only.</summary>
+    public static void DrinkImmediate() => UseImmediate(true);
+
+    private static bool CanUseConsumables(LocalPlayer? player)
     {
-        if (!_feedTimer.IsFinished)
-            return;
-
-        var me = ObjectManager.Me;
-        if (me == null)
-            return;
-
-        _feedTimer.Reset();
-
-        // Auto-detect best food
-        WoWItem food = Consumable.GetBestFood(false);
-        if (food != null)
-        {
-            Logging.Write("Eating {0}", food.Name);
-            food.Use();
-        }
-        else
-        {
-            NoFood = true;
-            Logging.Write("Could not find any food to eat.");
-        }
+        return player != null && ReferenceEquals(ObjectManager.Me, player)
+            && player.IsValid && player.IsAlive && !player.IsGhost && !player.Combat
+            && !player.Mounted && !player.IsOnTransport && !player.IsMoving
+            && !player.IsCasting && !player.IsChanneling
+            && !LiquidEnvironment.IsPlayerInLiquid(player)
+            && ReferenceEquals(ObjectManager.Me, player);
     }
 
-    /// <summary>
-    /// Immediately uses drink to restore mana without waiting.
-    /// Used by Singular for quick drinking.
-    /// </summary>
-    public static void DrinkImmediate()
+    private static void UseImmediate(bool drinking)
     {
-        if (!_drinkTimer.IsFinished)
+        var timer = drinking ? _drinkTimer : _feedTimer;
+        if (!timer.IsFinished)
+            return;
+        var player = ObjectManager.Me;
+        var memory = ObjectManager.Wow;
+        uint address = player?.BaseAddress ?? 0U;
+        bool StillAdmitted() => ReferenceEquals(ObjectManager.Wow, memory)
+            && (player?.BaseAddress ?? 0U) == address && CanUseConsumables(player)
+            && ReferenceEquals(ObjectManager.Wow, memory) && player!.BaseAddress == address;
+        if (!StillAdmitted())
             return;
 
-        var me = ObjectManager.Me;
-        if (me == null)
+        WoWItem? item = drinking ? Consumable.GetBestDrink(false) : Consumable.GetBestFood(false);
+        if (!StillAdmitted())
             return;
-
-        _drinkTimer.Reset();
-
-        // Auto-detect best drink
-        WoWItem drink = Consumable.GetBestDrink(false);
-        if (drink != null)
+        // An ineligible environment is not missing inventory and must not spend
+        // the retry interval. Both public entry points share the same admission.
+        timer.Reset();
+        if (item != null)
         {
-            Logging.Write("Drinking {0}", drink.Name);
-            drink.Use();
+            string name = item.Name;
+            if (!StillAdmitted())
+                return;
+            Logging.Write(drinking ? "Drinking {0}" : "Eating {0}", name);
+            // Logging/inventory observation can reenter or change the world.
+            if (StillAdmitted())
+                item.Use();
         }
         else
         {
-            NoDrink = true;
-            Logging.Write("Could not find any water to drink.");
+            if (drinking) NoDrink = true; else NoFood = true;
+            Logging.Write(drinking ? "Could not find any water to drink." : "Could not find any food to eat.");
         }
     }
 }
