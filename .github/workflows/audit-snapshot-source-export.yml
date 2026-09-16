@@ -1,3 +1,4 @@
+# Refresh the canonical read-only export for the W48 aquatic and Paladin review.
 name: Audit W42 source export
 on:
   push:
