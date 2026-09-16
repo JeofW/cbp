@@ -248,16 +248,24 @@ namespace Singular.ClassSpecific.Paladin
             private readonly object player;
             private readonly object target;
             private readonly string spell;
+            private readonly ulong playerGuid, targetGuid;
+            private readonly TalentSpec specialization;
 
             internal TacticsChoice(Func<string> choose)
             {
                 player = StyxWoW.Me;
                 target = StyxWoW.Me?.CurrentTarget;
+                playerGuid = StyxWoW.Me?.Guid ?? 0UL;
+                targetGuid = StyxWoW.Me?.CurrentTarget?.Guid ?? 0UL;
+                specialization = TalentManager.CurrentSpec;
                 spell = choose();
             }
 
             private bool SameOwner => ReferenceEquals(StyxWoW.Me, player)
-                && ReferenceEquals(StyxWoW.Me?.CurrentTarget, target);
+                && ReferenceEquals(StyxWoW.Me?.CurrentTarget, target)
+                && (StyxWoW.Me?.Guid ?? 0UL) == playerGuid
+                && (StyxWoW.Me?.CurrentTarget?.Guid ?? 0UL) == targetGuid
+                && TalentManager.CurrentSpec == specialization;
 
             internal bool IsCurrent(string expected, Func<string> choose) =>
                 spell == expected && SameOwner && choose() == expected && SameOwner;
@@ -295,6 +303,12 @@ namespace Singular.ClassSpecific.Paladin
             else
             {
                 var target = me.CurrentTarget;
+                // Player combat values immediate damage and controlled CC. The
+                // dungeon area guard is not an arena safety observation. Keep
+                // automatic cleave/DoT seals out when Righteousness is learned;
+                // explicit Command remains available for a deliberate assignment.
+                if (target != null && target.IsPlayer && SpellManager.HasSpell("Seal of Righteousness"))
+                    return me.HasAura("Seal of Righteousness") ? null : "Seal of Righteousness";
                 string stacking = SpellManager.HasSpell("Seal of Corruption") ? "Seal of Corruption"
                     : SpellManager.HasSpell("Seal of Vengeance") ? "Seal of Vengeance" : null;
                 bool safeCleave = target == null || Unit.IsAreaEffectSafe("Divine Storm", target);
