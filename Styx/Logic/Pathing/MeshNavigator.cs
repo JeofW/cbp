@@ -432,14 +432,18 @@ namespace Styx.Logic.Pathing
 
 		private void ResetLocalConnector()
 		{
+			var mover = Navigator.PlayerMover;
+			// Detach this connector before stopping movement: the callback can
+			// throw, Clear, or publish a replacement route on this same instance.
 			_commandedProgress.Reset();
-			Navigator.PlayerMover.MoveStop();
 			_localConnectorTarget = WoWPoint.Zero;
 			_localConnectorDestination = WoWPoint.Zero;
 			_currentPath.Clear();
 			_currentPathIndex = 0;
 			_cachedPushAheadIndex = -1;
 			_pathRegenThrottle.Stop();
+			// No old connector writes follow the external movement boundary.
+			mover.MoveStop();
 		}
 
 		private static bool ValidateLocalConnector(LocalPlayer me, WoWPoint origin, WoWPoint landing)
@@ -2040,9 +2044,13 @@ namespace Styx.Logic.Pathing
 
 		private void CancelElevatorTransitMovement()
 		{
-			if (_elevatorTransit.SelectedTransportGuid != 0UL || _ridingElevator)
-				Navigator.PlayerMover.MoveStop();
+			bool stopMovement = _elevatorTransit.SelectedTransportGuid != 0UL || _ridingElevator;
+			var mover = stopMovement ? Navigator.PlayerMover : null;
+			// Drain only this elevator before callbacks. A nested Clear sees no
+			// old stop obligation; replacement elevator/path state remains intact.
 			ResetElevatorTransit();
+			if (stopMovement)
+				mover!.MoveStop();
 		}
 
 		internal bool CancelElevatorTransitIfDestinationChanged(WoWPoint destination)
