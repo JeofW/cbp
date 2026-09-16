@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Singular.Dynamics;
 using Singular.Helpers;
 using Singular.Managers;
 using Singular.Settings;
@@ -58,8 +59,9 @@ namespace Singular.ClassSpecific.Paladin
         private static string SelectBlessing(WoWPlayer player)
         {
             if (!CanMaintainSupport() || !IsCurrentRecipient(player, true)) return null;
-            var auras = SupportAuras(player);
+            var auras = SupportAuras(player).Where(a => a.TimeLeft > TimeSpan.Zero).ToArray();
             var setting = SingularSettings.Instance.Paladin.Blessings;
+            bool battleShout = auras.Any(a => a.Name == "Battle Shout");
             string[] order;
             if (setting != PaladinBlessings.Auto)
                 order = new[] { "Blessing of " + setting };
@@ -68,12 +70,35 @@ namespace Singular.ClassSpecific.Paladin
                 bool caster = player.Class == WoWClass.Mage || player.Class == WoWClass.Priest
                     || player.Class == WoWClass.Warlock || player.HasAura("Moonkin Form") || player.HasAura("Tree of Life")
                     || player.IsMe && TalentManager.CurrentSpec == TalentSpec.HolyPaladin;
+                // Ret is a known damage role only for our own character. Do not
+                // invent a teammate's spec/tank assignment from its class alone.
+                bool groupedRet = player.IsMe && TalentManager.CurrentSpec == TalentSpec.RetributionPaladin
+                    && (StyxWoW.Me.IsInParty || StyxWoW.Me.IsInRaid)
+                    && SingularRoutine.CurrentWoWContext != WoWContext.Battlegrounds;
                 order = caster
                     ? new[] { "Blessing of Kings", "Blessing of Wisdom" }
-                    : new[] { "Blessing of Kings", "Blessing of Might", "Blessing of Wisdom" };
+                    : groupedRet && !battleShout
+                        ? new[] { "Blessing of Might", "Blessing of Kings", "Blessing of Wisdom" }
+                        : new[] { "Blessing of Kings", "Blessing of Might", "Blessing of Wisdom" };
+
+                // Preserve a unique, useful contribution rather than fighting an
+                // existing assignment on every pulse. Expired or duplicated buffs
+                // do not freeze selection. Explicit settings bypass this Auto rule.
+                foreach (string retained in new[] { "Blessing of Kings", "Blessing of Might" })
+                {
+                    if (retained == "Blessing of Might" && (caster || battleShout)) continue;
+                    var owners = auras.Where(a => MatchesBlessing(a, retained)).ToArray();
+                    if (owners.Any(a => a.CreatorGuid == StyxWoW.Me.Guid)
+                        && !owners.Any(a => a.CreatorGuid != 0 && a.CreatorGuid != StyxWoW.Me.Guid))
+                        return null;
+                }
             }
             foreach (string name in order)
             {
+                // Flat attack-power coverage is not the separate percentage-AP
+                // category (Trueshot/Unleashed Rage/Abomination's Might).
+                // This is contribution selection, not a rank-strength DPS model.
+                if (setting == PaladinBlessings.Auto && name == "Blessing of Might" && battleShout) continue;
                 if (name == "Blessing of Wisdom" && player.MaxMana <= 0) continue;
                 var coverage = auras.Where(a => MatchesBlessing(a, name)).ToArray();
                 bool external = coverage.Any(a => a.CreatorGuid != 0 && a.CreatorGuid != StyxWoW.Me.Guid);
