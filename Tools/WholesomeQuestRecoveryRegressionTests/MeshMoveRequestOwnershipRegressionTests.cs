@@ -66,7 +66,7 @@ internal static class MeshMoveRequestOwnershipRegressionTests
         internal bool AliveTrigger;
         internal Player(uint address) : base(address) { }
         internal void Fire() { var callback = Callback; Callback = null; callback?.Invoke(); }
-        public override WoWPoint Location { get { Reads++; if (Reads == Trigger) Fire(); return Target; } }
+        public override WoWPoint Location { get { Reads++; if (Reads == Trigger) Fire(); return MeshMoveRequestOwnershipRegressionTests.Target; } }
         public override bool IsAlive { get { if (AliveTrigger) Fire(); return true; } }
     }
     private sealed class Mover : IPlayerMover
