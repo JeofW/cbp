@@ -116,7 +116,7 @@ internal static class MeshClearOwnershipRegressionTests
             if (mode != Mode.Empty)
             {
                 mesh.OverrideCurrentPath(new[] { Start, End }); Set("_destination", End);
-                mesh.CurrentAvoidPath = new[] { Start, End }; mesh.CurrentAvoidPathIndex = 1;
+                Set("_currentAvoidPath", new[] { Start, End }); Set("_currentAvoidPathIndex", 1);
                 Set("_isPartialPath", true); Set("_cachedPushAheadIndex", 1);
                 Set("<LastMoveResult>k__BackingField", (MoveResult?)MoveResult.Moved);
                 Set("<LastMoveOrigin>k__BackingField", Start); Set("<LastMoveDestination>k__BackingField", End);
@@ -132,7 +132,7 @@ internal static class MeshClearOwnershipRegressionTests
         }
         private bool Drained => !mesh.HasActivePath && mesh.CurrentPath.Count == 0 && mesh.CurrentPathIndex == 0 &&
             mesh.Destination == WoWPoint.Zero && !mesh.IsRidingElevator && Selected == 0 &&
-            mesh.CurrentAvoidPath == null && mesh.CurrentAvoidPathIndex == 0 &&
+            Get<WoWPoint[]?>("_currentAvoidPath") == null && Get<int>("_currentAvoidPathIndex") == 0 &&
             Get<WoWPoint>("_localConnectorTarget") == WoWPoint.Zero && !Get<bool>("_usingDirectSwimMovement") &&
             mesh.LastMoveResult == null && mesh.LastMoveAttemptUtc == DateTime.MinValue;
         private static bool NeedsStop(Mode mode) => mode == Mode.Connector || mode == Mode.Elevator || mode == Mode.Both;
@@ -171,7 +171,7 @@ internal static class MeshClearOwnershipRegressionTests
             Action callback = () =>
             {
                 invoked = true; detached = Drained;
-                mesh.OverrideCurrentPath(Replacement); mesh.CurrentAvoidPath = Replacement;
+                mesh.OverrideCurrentPath(Replacement); Set("_currentAvoidPath", Replacement);
                 mover.ReplacementPublished = stuck.ReplacementPublished = true;
                 Throw(signal);
             };
@@ -179,7 +179,7 @@ internal static class MeshClearOwnershipRegressionTests
             var caught = Clear();
             Check(invoked && detached, "replacement callback ran before old managed state was detached");
             Check(ReferenceEquals(caught, signal), "replacement changed exact cancellation identity");
-            Check(mesh.CurrentPath.SequenceEqual(Replacement) && ReferenceEquals(mesh.CurrentAvoidPath, Replacement), "obsolete cleanup overwrote a replacement path");
+            Check(mesh.CurrentPath.SequenceEqual(Replacement) && ReferenceEquals(Get<WoWPoint[]?>("_currentAvoidPath"), Replacement), "obsolete cleanup overwrote a replacement path");
             Check(mover.ObsoleteStops == 0 && stuck.ObsoleteResets == 0 && mover.Moves == 0, "old cleanup resumed destructive callbacks after replacement");
         }
         internal void Nested(bool inMover)
