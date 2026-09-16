@@ -18,13 +18,36 @@ namespace Styx.Logic.POI
 		private object? _object0;
 		private WoWPoint _location;
 
-		private void OnObjectInvalidated()
+		private WoWObject? _observedObject;
+		private ObjectInvalidateDelegate? _objectInvalidated;
+
+		// Bind once per observed wrapper, not once per property read. The exact
+		// registration owns its callback, so a captured old multicast tail cannot
+		// revoke a replacement (including a later binding of the same wrapper).
+		private void ObserveObject(WoWObject? obj)
 		{
-			if (_asObject != null)
+			_asObject = obj;
+			if (ReferenceEquals(_observedObject, obj))
+				return;
+			var previous = _observedObject;
+			var previousHandler = _objectInvalidated;
+			_observedObject = null;
+			_objectInvalidated = null;
+			if (previous != null && previousHandler != null)
+				previous.OnInvalidate -= previousHandler;
+			if (obj == null)
+				return;
+
+			ObjectInvalidateDelegate? handler = null;
+			handler = () =>
 			{
-				_asObject.OnInvalidate -= OnObjectInvalidated;
-				_asObject = null;
-			}
+				if (ReferenceEquals(_observedObject, obj) &&
+					ReferenceEquals(_objectInvalidated, handler))
+					ObserveObject(null);
+			};
+			_observedObject = obj;
+			_objectInvalidated = handler;
+			obj.OnInvalidate += handler;
 		}
 
 		static BotPoi()
@@ -63,8 +86,7 @@ namespace Styx.Logic.POI
 					Guid = obj.Guid;
 					Entry = obj.Entry;
 					Location = obj.Location;
-					_asObject = obj;
-					obj.OnInvalidate += OnObjectInvalidated;
+					ObserveObject(obj);
 				}
 				catch (Exception ex)
 				{
@@ -73,7 +95,7 @@ namespace Styx.Logic.POI
 					Guid = 0UL;
 					Entry = 0U;
 					Type = PoiType.None;
-					_asObject = null;
+					ObserveObject(null);
 				}
 			}
 		}
@@ -277,10 +299,7 @@ namespace Styx.Logic.POI
 						_asObject = null;
 					}
 				}
-				if (_asObject != null)
-				{
-					_asObject.OnInvalidate += OnObjectInvalidated;
-				}
+				ObserveObject(_asObject);
 				return _asObject;
 			}
 		}
