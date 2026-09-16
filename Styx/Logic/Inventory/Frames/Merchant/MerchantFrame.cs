@@ -347,7 +347,10 @@ namespace Styx.Logic.Inventory.Frames.Merchant
 
         private int? GetMerchantIndex(uint itemId)
         {
-            for (int i = 1; i < MerchantNumItems + 1; i++)
+            if (itemId == 0)
+                return null;
+
+            for (int i = 0; i < MerchantNumItems; i++)
             {
                 MerchantItem item = GetMerchantItemAtIndex(i);
                 if ((long)item.ItemId == (long)itemId)
