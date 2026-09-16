@@ -1,0 +1,186 @@
+{
+  "schema": 1,
+  "repository": "jeofwong/CopilotBuddy-private",
+  "pr": 47,
+  "branch": "audit/next-47-flight-owner-boundaries-20260916",
+  "master": "71c79d1c5a3de54e2f3a207a93373b59a8f55984",
+  "latest_focused_verified_code": "c97d699ae4019549619facb925743bd48ca060a5",
+  "code_tree": "45697de646100c98d8794b813013d4284d262ecf",
+  "current_focused": {
+    "projects": 4,
+    "all_builds_and_runs_pass": true,
+    "Wholesome_groups": 66,
+    "QuestLog_groups": 3,
+    "source_config_hashes": 1750,
+    "source_exports_verified": 104,
+    "normalized_members": 81,
+    "internal_manifest_entries": 101
+  },
+  "new_repairs": [
+    {
+      "changed_source_inputs": [
+        "Styx/Logic/Combat/WoWSpell.cs"
+      ],
+      "source_input_count": 1749,
+      "normalized_members_identical": 80,
+      "retained_aggregate_outcomes_identical": 67,
+      "target": "SpellRowLookupRegressionTests",
+      "red_summary": "Spell row lookup scenarios: 11/24; assertions=13; unexpected=0;",
+      "green_summary": "Spell row lookup scenarios: 24/24; assertions=0; unexpected=0;",
+      "original_tests_and_workflows_unchanged": true,
+      "full_integration_proven": false
+    },
+    {
+      "changed_source_inputs": [
+        "runtime-snapshot/Routines/Singular wotlk/Helpers/Group.cs"
+      ],
+      "source_input_count": 1750,
+      "normalized_members_identical": 81,
+      "retained_aggregate_outcomes_identical": 68,
+      "target": "PaladinTankRoleRegressionTests",
+      "red_summary": "Paladin tank-role scenarios: 16/28; assertions=12; unexpected=0;",
+      "green_summary": "Paladin tank-role scenarios: 28/28; assertions=0; unexpected=0;",
+      "original_tests_and_workflows_unchanged": true,
+      "full_integration_proven": false
+    }
+  ],
+  "recovered_ports": {
+    "code": "057a153bc543e149eab2b145fa0f88353a7b427a",
+    "red_cases": [
+      6,
+      24,
+      18,
+      0
+    ],
+    "green_cases": [
+      24,
+      24,
+      0,
+      0
+    ],
+    "source_hashes": 1748,
+    "normalized_members": 79,
+    "retained_other_groups": 66,
+    "all_four_focused_pass": true,
+    "not_new_execution": true,
+    "correction": "W49/W50 generalized skipped integrated/host into no post-port pass. Actual focused current had passed."
+  },
+  "artifacts": [
+    {
+      "phase": "recovered-ports-red",
+      "file": "w51-recovered-current-f9f40612.zip",
+      "run_id": 35103084292,
+      "artifact_id": 10449341478,
+      "sha256": "ce422dce36b4d8990f5eb9c6b193b36ca9bb29dbacfda6d91d4c2d9246938c9f"
+    },
+    {
+      "phase": "recovered-ports-green",
+      "file": "w51-current-057a153b.zip",
+      "run_id": 35105135595,
+      "artifact_id": 10449349602,
+      "sha256": "d1dbd60daa0009f23bb10575bb9bd495ed510f1725bbb973ed511f1926401b8b"
+    },
+    {
+      "phase": "new-spell-fixture-compile-error",
+      "file": "w51-current-d189b4eb.zip",
+      "run_id": 35116612621,
+      "artifact_id": 10455198520,
+      "sha256": "d07eb761626d469969174f1a6c07fd400272500e3ad6f573ab95a9104ee717a8"
+    },
+    {
+      "phase": "new-spell-clean-red",
+      "file": "w51-current-07a4929f.zip",
+      "run_id": 35117072562,
+      "artifact_id": 10454539555,
+      "sha256": "2d8f85bb1d215d5a6a8f60fb7620d4e41d385a35de84d8601408ce96eae8ae10"
+    },
+    {
+      "phase": "new-spell-green",
+      "file": "w51-current-7283609f.zip",
+      "run_id": 35117843737,
+      "artifact_id": 10456580611,
+      "sha256": "a8d61d89feb0e760858d143eae14d57d37cd2fbb06ba82ff1f15408d55e7d0ad"
+    },
+    {
+      "phase": "new-role-clean-red",
+      "file": "w51-current-6acf21a0.zip",
+      "run_id": 35119012944,
+      "artifact_id": 10456522672,
+      "sha256": "0175019df0373ac244465e2703d510cb76c505fa260d1cb85802a18b44643f5c"
+    },
+    {
+      "phase": "new-role-green",
+      "file": "w51-current-c97d699a.zip",
+      "run_id": 35119678023,
+      "artifact_id": 10456688734,
+      "sha256": "c060085dfd56aa0f5582e3d6c2bf720573f270a3e2ab3af64f95b19f1fe3b06d"
+    }
+  ],
+  "skipped_current_jobs": [
+    {
+      "name": "combined",
+      "run": 35119678001,
+      "job": 104873960170,
+      "conclusion": "skipped"
+    },
+    {
+      "name": "host-build",
+      "run": 35119677890,
+      "job": 104873959590,
+      "conclusion": "skipped"
+    }
+  ],
+  "source_blobs": {
+    "WoWSpell.cs": "c3d0ac6af5bd26c38a089736f54ab5b74f9f003b",
+    "Group.cs": "2c0e37451f8d0f3881a3389069d9092e2de43507",
+    "SpellRowLookupRegressionTests.cs": "9ec1788ac4c741bcd4ad60866b46f8fb6fabdb0b",
+    "PaladinTankRoleRegressionTests.cs": "653c7585f05c0e34f58d3e55c17da9bf58493f74"
+  },
+  "scope": {
+    "full_integration": false,
+    "new_host_build": false,
+    "live_game": false,
+    "independent_approval": false,
+    "exhaustive_complete": false,
+    "measured_dps_gain": false,
+    "new_master_merge": false,
+    "workflow_or_guard_changes": false,
+    "initial_spell_test_compile_error_preserved": true,
+    "new_python_verifier_tests": 11,
+    "pending_unexecuted_test_at_final_code": false
+  },
+  "graph_delta": {
+    "prior_review": "docs/audit/2026-09-16/W50_SOURCE_REVIEW.md",
+    "confirmed_edges": [
+      {
+        "from": "WoWSpell.FromId",
+        "to": "WoWDb.DbTable.GetRow",
+        "contract": "Resolve the currently published row, including late hydration and observed removal/replacement",
+        "evidence": "24 actual focused Windows cases; unchanged-test 11/24 ->24/24",
+        "scope": "No complete native frame/header/packed-row guarantee"
+      },
+      {
+        "from": "Singular.Helpers.Group.MeIsTank",
+        "to": "TalentManager.CurrentSpec and host aura readers",
+        "contract": "Known Ret/Holy do not gain tank inference solely from leftover Righteous Fury",
+        "evidence": "28 actual focused Windows cases; unchanged-test 16/28 ->28/28",
+        "scope": "Explicit server assignment and aura cancellation not executed"
+      },
+      {
+        "from": "SingularRoutine.Pulse",
+        "to": "Group.MeIsTank",
+        "contract": "Shared role controls grouped TankManager pulse admission",
+        "evidence": "Source-traced caller; not a new live or TankManager execution"
+      }
+    ],
+    "remaining_prior_requirements": [
+      "WoWDb complete bounded discovery and packed-row lifetime",
+      "separate spell-info cache and live spellbook/role observations",
+      "Paladin threat-aura cleanup and encounter/rank/gear/utility policies",
+      "CollectThings/WaterBehavior breath budgets, zero-breath and safe shoreline routes",
+      "legacy Feed post-admission ownership and nonblocking waiting",
+      "upstream merchant/loot/corpse/quest-item compatibility adaptations",
+      "full integrated and host CI, independent review, original-client acceptance"
+    ]
+  }
+}
