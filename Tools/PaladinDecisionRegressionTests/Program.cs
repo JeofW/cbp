@@ -87,3 +87,5 @@ foreach (var factory in factories)
 }
 Console.WriteLine($"Paladin decisions: {scenarios - failures.Count}/{scenarios}; exhaustive matrix rows={matrixRows}. Actual linked rotation/TreeSharp, controlled world/dispatch, no game attached.");
 if (failures.Count != 0) throw new InvalidOperationException(string.Join(Environment.NewLine, failures));
+
+RetributionTacticsRegressionTests.Run();
