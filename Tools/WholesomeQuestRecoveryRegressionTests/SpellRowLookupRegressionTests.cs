@@ -8,6 +8,7 @@ using System.Threading;
 using GreenMagic;
 using Styx;
 using Styx.Logic.Combat;
+using Styx.Patchables;
 using Styx.WoWInternals;
 
 // Actual FromId -> DbTable.GetRow -> Memory -> Row.GetStruct. Only the
