@@ -110,8 +110,7 @@ namespace Singular.ClassSpecific.Paladin
                     CreateExorcismBehavior(),
                     Spell.Cast("Holy Wrath", ret => HasHolyWrathTarget()),
                 //consecration,not_flying=1,if=mana>16000
-                    Spell.Cast("Consecration", ret => StyxWoW.Me.CurrentTarget is { } target &&
-                        Unit.NearbyUnfriendlyUnits.Count(u => u.Distance <= 8) >= SingularSettings.Instance.Paladin.ConsecrationCount && target.Distance <= 5),
+                    CreateConsecrationBehavior(),
 
                     // Move to melee is LAST. Period.
                     Movement.CreateMoveToMeleeBehavior(true)
@@ -171,7 +170,7 @@ namespace Singular.ClassSpecific.Paladin
                     CreateRetributionJudgementBehavior(),
                     CreateExorcismBehavior(),
                     Spell.Cast("Holy Wrath", ret => HasHolyWrathTarget()),
-                    Spell.Cast("Consecration", ret => StyxWoW.Me.CurrentTarget is { } target && target.Distance <= Spell.MeleeRange && Unit.NearbyUnfriendlyUnits.Count(u => u.Distance <= 8) >= SingularSettings.Instance.Paladin.ConsecrationCount),
+                    CreateConsecrationBehavior(),
 
                 Movement.CreateMoveToMeleeBehavior(true)
                 );
@@ -230,8 +229,7 @@ namespace Singular.ClassSpecific.Paladin
                 //holy_wrath
                     Spell.Cast("Holy Wrath", ret => HasHolyWrathTarget()),
                 //consecration,not_flying=1,if=mana>16000
-                    Spell.Cast("Consecration", ret => StyxWoW.Me.CurrentTarget is { } target &&
-                        target.Distance <= Spell.MeleeRange && Unit.NearbyUnfriendlyUnits.Count(u => u.Distance <= 8) >= SingularSettings.Instance.Paladin.ConsecrationCount),
+                    CreateConsecrationBehavior(),
 
                     // Move to melee is LAST. Period.
                     Movement.CreateMoveToMeleeBehavior(true)
@@ -349,6 +347,31 @@ namespace Singular.ClassSpecific.Paladin
             Spell.BuffSelf("Divine Plea", _ => StyxWoW.Me != null
                 && StyxWoW.Me.ManaPercent < SingularSettings.Instance.Paladin.DivinePleaMana
                 && StyxWoW.Me.HealthPercent > 70));
+
+        private static Composite CreateConsecrationBehavior() =>
+            CreateTacticsBehavior(false, SelectConsecration, "Consecration");
+
+        private static string SelectConsecration()
+        {
+            var me = StyxWoW.Me;
+            var target = me?.CurrentTarget;
+            if (me == null || target == null || !me.IsValid || !me.IsAlive
+                || !target.IsValid || !target.IsAlive || me.Mounted || me.IsOnTransport
+                || me.IsMoving || target.IsMoving || me.IsCasting || me.IsChanneling
+                || target.Distance > Spell.MeleeRange
+                || me.ManaPercent <= SingularSettings.Instance.Paladin.DivinePleaMana
+                || !SpellManager.HasSpell("Consecration")
+                || !Unit.IsAreaEffectSafe("Consecration", target))
+                return null;
+
+            // A sustained boss can use the ground damage even without adds. This
+            // is a conservative filler, not a forecast of target lifetime or DPS.
+            // Keep the configured pack threshold and reserve recovery mana; the
+            // real spell layer still checks current cost, cooldown and safety.
+            int nearby = Unit.NearbyUnfriendlyUnits.Count(u => u.IsValid && u.IsAlive && u.Distance <= 8);
+            return target.IsBoss() || nearby >= SingularSettings.Instance.Paladin.ConsecrationCount
+                ? "Consecration" : null;
+        }
 
         private static bool HasHolyWrathTarget() =>
             Unit.NearbyUnfriendlyUnits.Any(u => u.IsValid && u.IsAlive && u.Distance <= 10 && u.IsUndeadOrDemon());
