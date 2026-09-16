@@ -49,7 +49,7 @@ internal static class Fixture
 namespace Styx
 {
     public class Aura { public string Name { get; set; } = ""; public ulong CreatorGuid { get; set; } public bool IsActive { get; set; } = true; public TimeSpan TimeLeft { get; set; } = TimeSpan.FromSeconds(20); }
-    public class UnitState
+    public partial class UnitState
     {
         public uint Entry { get; set; } = 1;
         public double HealthPercent { get; set; } = 100;
@@ -71,7 +71,7 @@ namespace Styx
         public bool IsUndeadOrDemon() => UndeadOrDemon;
         public bool IsBoss() => Boss;
     }
-    public sealed class Player : UnitState
+    public sealed partial class Player : UnitState
     {
         public UnitState? CurrentTarget { get; set; }
         public int Level { get; set; }
@@ -86,23 +86,23 @@ namespace Styx
         public Dictionary<string, Aura> ActiveAuras => Auras;
         public bool HasAuraWithMechanic(params Logic.Combat.WoWSpellMechanic[] _) => false;
     }
-    public static class StyxWoW { public static Player Me { get; set; } = new(); }
+    public static partial class StyxWoW { public static Player Me { get; set; } = new(); }
 }
 namespace Styx.Helpers
 {
-    public static class Logging { public static void WriteException(Exception error) => Fixture.Exceptions.Add(error); }
+    public static partial class Logging { public static void WriteException(Exception error) => Fixture.Exceptions.Add(error); }
 }
 namespace Styx.Combat.CombatRoutine { public enum WoWClass { Paladin } }
 namespace Styx.Logic.Combat
 {
     public enum WoWSpellMechanic { Dazed, Disoriented, Frozen, Incapacitated, Rooted, Slowed, Snared }
-    public static class SpellManager { public static bool HasSpell(string name) => Fixture.Known.Contains(name);
+    public static partial class SpellManager { public static bool HasSpell(string name) => Fixture.Known.Contains(name);
         public static bool CanCast(string name, Styx.UnitState? target, bool range = true, bool movement = false) => target != null && HasSpell(name) && Fixture.Ready.Contains(name); }
 }
 namespace Singular.Managers
 {
     public enum TalentSpec { RetributionPaladin, ProtectionPaladin, HolyPaladin }
-    public static class TalentManager { public static TalentSpec CurrentSpec { get; set; } = TalentSpec.RetributionPaladin; }
+    public static partial class TalentManager { public static TalentSpec CurrentSpec { get; set; } = TalentSpec.RetributionPaladin; }
     public static class HealerManager { public static bool NeedHealTargeting { get; set; } }
 }
 namespace Singular.Dynamics
@@ -135,11 +135,7 @@ namespace Singular.Helpers
     public static class Unit { public static List<Styx.UnitState> NearbyUnfriendlyUnits { get; } = new();
         public static bool IsAreaEffectSafe(string name, Styx.UnitState target) => Fixture.AreaSafe; }
     public static class Safers { public static Composite EnsureTarget() => Fixture.Nothing(); }
-    public static class Common
-    {
-        public static Composite CreateAutoAttack(bool _) => Fixture.Nothing();
-        public static Composite CreateInterruptSpellCast(Func<object, Styx.UnitState?> _) => Fixture.Nothing();
-    }
+    // The real shared Helpers.Common is linked by the project, not mocked.
     public static class Movement
     {
         public static Composite CreateMoveToLosBehavior() => Fixture.Nothing();
@@ -148,7 +144,7 @@ namespace Singular.Helpers
         { Fixture.Selected = "movement"; return RunStatus.Success; });
     }
     public static class Rest { public static Composite CreateDefaultRestBehaviour() => Fixture.Nothing(); }
-    public static class Spell
+    public static partial class Spell
     {
         public const float MeleeRange = 5;
         public static Composite WaitForCast(bool _ = true, bool __ = true) => Fixture.Nothing();

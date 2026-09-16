@@ -10,5 +10,6 @@
     <Compile Include="../../runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Paladin/Retribution.cs" Link="Production/Retribution.cs" />
     <Compile Include="../../runtime-snapshot/Routines/Singular wotlk/Dynamics/Attributes.cs" Link="Production/Attributes.cs" />
     <Compile Include="../../runtime-snapshot/Routines/Singular wotlk/Helpers/Throttle.cs" Link="Production/Throttle.cs" />
+    <Compile Include="../../runtime-snapshot/Routines/Singular wotlk/Helpers/Common.cs" Link="Production/SharedCommon.cs" />
   </ItemGroup>
 </Project>

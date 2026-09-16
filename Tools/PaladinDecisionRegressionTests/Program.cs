@@ -89,3 +89,4 @@ Console.WriteLine($"Paladin decisions: {scenarios - failures.Count}/{scenarios};
 if (failures.Count != 0) throw new InvalidOperationException(string.Join(Environment.NewLine, failures));
 
 RetributionTacticsRegressionTests.Run();
+SharedPaladinInterruptRegressionTests.Run();
