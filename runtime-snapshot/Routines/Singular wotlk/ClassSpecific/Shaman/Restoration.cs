@@ -56,6 +56,7 @@ namespace Singular.ClassSpecific.Shaman
         [Class(WoWClass.Shaman)]
         [Spec(TalentSpec.RestorationShaman)]
         [Behavior(BehaviorType.Combat)]
+        [Behavior(BehaviorType.Pull)]
         [Context(WoWContext.All)]
         public static Composite CreateRestoShamanCombatBehavior()
         {
@@ -148,7 +149,6 @@ namespace Singular.ClassSpecific.Shaman
                             new PrioritySelector(
                                 // This seems a bit tricky, but its really not. This is just how we cache a somewhat expensive lookup.
                                 // Set the context to the "best unit" for the cluster, so we don't have to do that check twice.
-                                // Then just use the context when passing the unit to throw the heal on, and the target of the heal from the cluster count.
                                 // Also ensure it will jump at least 3 times. (CH is pointless to cast if it won't jump 3 times!)
                                 new PrioritySelector(
                                     context => Clusters.GetBestUnitForCluster(ChainHealPlayers, ClusterType.Chained, 12f),
