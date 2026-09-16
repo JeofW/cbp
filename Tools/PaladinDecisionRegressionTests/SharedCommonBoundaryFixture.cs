@@ -27,7 +27,8 @@ namespace Styx
         public bool IsFlying => false;
         public WoWInternals.ShapeshiftForm Shapeshift => WoWInternals.ShapeshiftForm.None;
         public bool IsWanding() => false;
-        public void ToggleAttack() { IsAutoAttacking = !IsAutoAttacking; Fixture.Trace.Add("autoattack-toggle"); }
+        // Dispatch does not fabricate a subsequently observed client flag.
+        public void ToggleAttack() { Fixture.Trace.Add("autoattack-toggle"); }
     }
     public static partial class StyxWoW { public static class WoWClient { public static int Latency => 0; } }
 }
