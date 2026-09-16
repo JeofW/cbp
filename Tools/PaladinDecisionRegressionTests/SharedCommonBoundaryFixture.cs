@@ -8,6 +8,7 @@ namespace Styx
 {
     public partial class UnitState
     {
+        public UnitState? CurrentTarget { get; set; }
         public bool IsCasting { get; set; }
         public bool CanInterruptCurrentSpellCast { get; set; }
         public bool IsFriendly { get; set; }
