@@ -67,7 +67,10 @@ namespace Singular.ClassSpecific.Paladin
                             Spell.BuffSelf("Seal of Righteousness", ret => !SpellManager.HasSpell("Seal of Wisdom"))
                             )),
                     new Decorator(
-                        ret => TalentManager.CurrentSpec != TalentSpec.HolyPaladin,
+                        ret => TalentManager.CurrentSpec == TalentSpec.RetributionPaladin,
+                        Retribution.CreateRetributionSealBehavior()),
+                    new Decorator(
+                        ret => TalentManager.CurrentSpec != TalentSpec.HolyPaladin && TalentManager.CurrentSpec != TalentSpec.RetributionPaladin,
                         new PrioritySelector(
                             Spell.BuffSelf("Righteous Fury", ret => TalentManager.CurrentSpec == TalentSpec.ProtectionPaladin && StyxWoW.Me.IsInParty),
                             // Select seal added by xyFaded

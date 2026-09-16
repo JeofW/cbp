@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Singular.Dynamics;
 using Singular.Helpers;
@@ -36,10 +37,10 @@ namespace Singular.ClassSpecific.Paladin
                 Common.CreatePaladinDispelBehavior(),
                 // Holy Light: primary heal (big, slow) — uses HolyLightHealth threshold
                 Spell.Heal("Holy Light", ret => StyxWoW.Me,
-                           ret => StyxWoW.Me.HealthPercent <= SingularSettings.Instance.Paladin.HolyLightHealth),
+                           ret => StyxWoW.Me.HealthPercent <= GetRetributionHealThreshold(SingularSettings.Instance.Paladin.HolyLightHealth)),
                 // Flash of Light: fast cheap fallback — uses FlashOfLightHealth threshold
                 Spell.Heal("Flash of Light", ret => StyxWoW.Me,
-                           ret => StyxWoW.Me.HealthPercent <= SingularSettings.Instance.Paladin.FlashOfLightHealth));
+                           ret => StyxWoW.Me.HealthPercent <= GetRetributionHealThreshold(SingularSettings.Instance.Paladin.FlashOfLightHealth)));
         }
 
         [Class(WoWClass.Paladin)]
@@ -87,13 +88,10 @@ namespace Singular.ClassSpecific.Paladin
                                                           WoWSpellMechanic.Snared)),
 
                     Spell.BuffSelf("Divine Shield", ret => StyxWoW.Me.HealthPercent <= 20 && !StyxWoW.Me.HasAura("Forbearance") && (!StyxWoW.Me.HasAura("Horde Flag") && !StyxWoW.Me.HasAura("Alliance Flag"))),
-                    Spell.BuffSelf("Divine Protection", ret => StyxWoW.Me.HealthPercent <= SingularSettings.Instance.Paladin.DivineProtectionHealthRet),
+                    Spell.BuffSelf("Divine Protection", ret => StyxWoW.Me.HealthPercent <= SingularSettings.Instance.Paladin.DivineProtectionHealthRet && !StyxWoW.Me.HasAura("Forbearance")),
 
-                    //2	Let's keep up Insight instead of Truth for grinding.  Keep up Righteousness if we need to AoE.  
-                     // WotLK: Seal of Vengeance (Alliance) / Seal of Corruption (Horde) for single target
-                     Spell.BuffSelf("Seal of Vengeance", ret => Unit.NearbyUnfriendlyUnits.Count(u => u.Distance <= 8) < 4 && !SpellManager.HasSpell("Seal of Corruption")),
-                     Spell.BuffSelf("Seal of Corruption", ret => Unit.NearbyUnfriendlyUnits.Count(u => u.Distance <= 8) < 4),
-                    Spell.BuffSelf("Seal of Righteousness", ret => Unit.NearbyUnfriendlyUnits.Count(u => u.Distance <= 8) >= 4),
+                    CreateRetributionSealBehavior(),
+                    CreateManaRecoveryBehavior(),
 
                     //7	Blow buffs seperatly.  No reason for stacking while grinding.
                     Spell.BuffSelf("Avenging Wrath", ret => Unit.NearbyUnfriendlyUnits.Count(u => u.Distance <= 8) >= 3),
@@ -106,16 +104,14 @@ namespace Singular.ClassSpecific.Paladin
                     //Hammer of Wrath if target < 20% HP
                     Spell.Cast("Hammer of Wrath", ret => StyxWoW.Me.CurrentTarget is { } target && target.HealthPercent <= 20), // WotLK: Sanctified Wrath does not unlock HoW above 20% (Cata-only)
                     CreateMeleeStrikeBehavior(),
-                    Spell.Cast("Judgement of Light"),
+                    CreateRetributionJudgementBehavior(),
                     // Disjoint windows prevent the same proc from bypassing an earlier retry guard.
                     CreateExorcismBehavior(requireProc: true, undeadOrDemon: false),
                     CreateExorcismBehavior(),
-                    Spell.Cast("Holy Wrath", ret => Unit.NearbyUnfriendlyUnits.Count(u => u.Distance <= 8) >= 4),
+                    Spell.Cast("Holy Wrath", ret => HasHolyWrathTarget()),
                 //consecration,not_flying=1,if=mana>16000
                     Spell.Cast("Consecration", ret => StyxWoW.Me.CurrentTarget is { } target &&
                         Unit.NearbyUnfriendlyUnits.Count(u => u.Distance <= 8) >= SingularSettings.Instance.Paladin.ConsecrationCount && target.Distance <= 5),
-                    // WotLK QC: Fixed CurrentMana → ManaPercent (setting is a percentage, not raw mana)
-                    Spell.Cast("Divine Plea", ret => StyxWoW.Me.ManaPercent < SingularSettings.Instance.Paladin.DivinePleaMana && StyxWoW.Me.HealthPercent > 70),
 
                     // Move to melee is LAST. Period.
                     Movement.CreateMoveToMeleeBehavior(true)
@@ -154,13 +150,12 @@ namespace Singular.ClassSpecific.Paladin
                                                           WoWSpellMechanic.Snared)),
 
                     Spell.BuffSelf("Divine Shield", ret => StyxWoW.Me.HealthPercent <= 20 && !StyxWoW.Me.HasAura("Forbearance") && (!StyxWoW.Me.HasAura("Horde Flag") && !StyxWoW.Me.HasAura("Alliance Flag"))),
-                    Spell.BuffSelf("Divine Protection", ret => StyxWoW.Me.HealthPercent <= SingularSettings.Instance.Paladin.DivineProtectionHealthRet),
+                    Spell.BuffSelf("Divine Protection", ret => StyxWoW.Me.HealthPercent <= SingularSettings.Instance.Paladin.DivineProtectionHealthRet && !StyxWoW.Me.HasAura("Forbearance")),
 
                     //  Buffs
                     Spell.BuffSelf("Retribution Aura"),
-                    Spell.BuffSelf("Seal of Vengeance", ret => StyxWoW.Me.CurrentTarget is { } target && target.Entry != 28781 && !target.HasAura("Horde Flag") && !target.HasAura("Alliance Flag") && !SpellManager.HasSpell("Seal of Corruption")),
-                    Spell.BuffSelf("Seal of Corruption", ret => StyxWoW.Me.CurrentTarget is { } target && target.Entry != 28781 && !target.HasAura("Horde Flag") && !target.HasAura("Alliance Flag")),
-                    Spell.BuffSelf("Seal of Justice", ret => StyxWoW.Me.CurrentTarget is { } target && (target.Entry == 28781 || target.HasAura("Horde Flag") || target.HasAura("Alliance Flag"))),
+                    CreateRetributionSealBehavior(),
+                    CreateManaRecoveryBehavior(),
 
                     Spell.BuffSelf("Avenging Wrath", ret => StyxWoW.Me.CurrentTarget is { } target && target.Distance <= 8),
                     Spell.BuffSelf("Blood Fury", ret => SpellManager.HasSpell("Blood Fury") && StyxWoW.Me.ActiveAuras.ContainsKey("Avenging Wrath")),
@@ -173,11 +168,10 @@ namespace Singular.ClassSpecific.Paladin
                     CreateExorcismBehavior(requireProc: true),
 
                     CreateMeleeStrikeBehavior(throttleCrusaderStrike: true),
-                    Spell.Cast("Judgement of Light"),
+                    CreateRetributionJudgementBehavior(),
                     CreateExorcismBehavior(),
-                    Spell.Cast("Holy Wrath"),
+                    Spell.Cast("Holy Wrath", ret => HasHolyWrathTarget()),
                     Spell.Cast("Consecration", ret => StyxWoW.Me.CurrentTarget is { } target && target.Distance <= Spell.MeleeRange && Unit.NearbyUnfriendlyUnits.Count(u => u.Distance <= 8) >= SingularSettings.Instance.Paladin.ConsecrationCount),
-                    Spell.Cast("Divine Plea", ret => StyxWoW.Me.ManaPercent < SingularSettings.Instance.Paladin.DivinePleaMana && StyxWoW.Me.HealthPercent > 70),
 
                 Movement.CreateMoveToMeleeBehavior(true)
                 );
@@ -213,12 +207,10 @@ namespace Singular.ClassSpecific.Paladin
                                                                WoWSpellMechanic.Snared)),
 
                     Spell.BuffSelf("Divine Shield", ret => StyxWoW.Me.HealthPercent <= 20 && !StyxWoW.Me.HasAura("Forbearance") && (!StyxWoW.Me.HasAura("Horde Flag") && !StyxWoW.Me.HasAura("Alliance Flag"))),
-                    Spell.BuffSelf("Divine Protection", ret => StyxWoW.Me.HealthPercent <= SingularSettings.Instance.Paladin.DivineProtectionHealthRet),
+                    Spell.BuffSelf("Divine Protection", ret => StyxWoW.Me.HealthPercent <= SingularSettings.Instance.Paladin.DivineProtectionHealthRet && !StyxWoW.Me.HasAura("Forbearance")),
 
-                    //2	seal_of_truth (WotLK: Seal of Vengeance/Corruption)
-                    Spell.BuffSelf("Seal of Vengeance", ret => Unit.NearbyUnfriendlyUnits.Count(u => u.Distance <= 8) < 4 && !SpellManager.HasSpell("Seal of Corruption")),
-                    Spell.BuffSelf("Seal of Corruption", ret => Unit.NearbyUnfriendlyUnits.Count(u => u.Distance <= 8) < 4),
-                    Spell.BuffSelf("Seal of Righteousness", ret => Unit.NearbyUnfriendlyUnits.Count(u => u.Distance <= 8) >= 4),
+                    CreateRetributionSealBehavior(),
+                    CreateManaRecoveryBehavior(),
 
                     Spell.BuffSelf("Avenging Wrath", ret => StyxWoW.Me.CurrentTarget is { } target && target.IsBoss()),
                     Spell.BuffSelf("Blood Fury", ret => SpellManager.HasSpell("Blood Fury") && StyxWoW.Me.ActiveAuras.ContainsKey("Avenging Wrath")),
@@ -233,15 +225,13 @@ namespace Singular.ClassSpecific.Paladin
 
                     CreateMeleeStrikeBehavior(),
                 //judgement - simplified for WotLK
-                    Spell.Cast("Judgement of Light"),
+                    CreateRetributionJudgementBehavior(),
                     CreateExorcismBehavior(),
                 //holy_wrath
-                    Spell.Cast("Holy Wrath"),
+                    Spell.Cast("Holy Wrath", ret => HasHolyWrathTarget()),
                 //consecration,not_flying=1,if=mana>16000
                     Spell.Cast("Consecration", ret => StyxWoW.Me.CurrentTarget is { } target &&
                         target.Distance <= Spell.MeleeRange && Unit.NearbyUnfriendlyUnits.Count(u => u.Distance <= 8) >= SingularSettings.Instance.Paladin.ConsecrationCount),
-                //wait,sec=0.1,if=cooldown.crusader_strike.remains<0.2&cooldown.crusader_strike.remains>0
-                    Spell.Cast("Divine Plea", ret => StyxWoW.Me.ManaPercent < SingularSettings.Instance.Paladin.DivinePleaMana),
 
                     // Move to melee is LAST. Period.
                     Movement.CreateMoveToMeleeBehavior(true)
@@ -250,178 +240,125 @@ namespace Singular.ClassSpecific.Paladin
 
         #endregion
 
-        /*
-        #region Normal Rotation
 
-        [Class(WoWClass.Paladin)]
-        [Spec(TalentSpec.RetributionPaladin)]
-        [Behavior(BehaviorType.Pull)]
-        [Behavior(BehaviorType.Combat)]
-        [Context(WoWContext.Normal)]
-        public static Composite CreateRetributionPaladinNormalPullAndCombat()
+
+
+        // Ret policies share the existing behavior-tree dispatch, rather than a
+        // second rotation engine. Choices are observed again after cast setup.
+        private sealed class TacticsChoice
         {
-            return new PrioritySelector(
-                Safers.EnsureTarget(),
-                Movement.CreateMoveToLosBehavior(),
-                Movement.CreateFaceTargetBehavior(),
-                Helpers.Common.CreateAutoAttack(true),
-                Helpers.Common.CreateInterruptSpellCast(ret => StyxWoW.Me.CurrentTarget),
+            private readonly object player;
+            private readonly object target;
+            private readonly string spell;
 
-                // Heals
-                Spell.Heal("Holy Light", ret => StyxWoW.Me, ret => !SpellManager.HasSpell("Flash of Light") && StyxWoW.Me.HealthPercent <= SingularSettings.Instance.Paladin.RetributionHealHealth),
-                Spell.Heal("Flash of Light", ret => StyxWoW.Me, ret => StyxWoW.Me.HealthPercent <= SingularSettings.Instance.Paladin.RetributionHealHealth),
+            internal TacticsChoice(Func<string> choose)
+            {
+                player = StyxWoW.Me;
+                target = StyxWoW.Me?.CurrentTarget;
+                spell = choose();
+            }
 
-                // Defensive
-                Spell.BuffSelf("Hand of Freedom",
-                    ret => StyxWoW.Me.HasAuraWithMechanic(WoWSpellMechanic.Dazed,
-                                                          WoWSpellMechanic.Disoriented,
-                                                          WoWSpellMechanic.Frozen,
-                                                          WoWSpellMechanic.Incapacitated,
-                                                          WoWSpellMechanic.Rooted,
-                                                          WoWSpellMechanic.Slowed,
-                                                          WoWSpellMechanic.Snared)),
+            private bool SameOwner => ReferenceEquals(StyxWoW.Me, player)
+                && ReferenceEquals(StyxWoW.Me?.CurrentTarget, target);
 
-                // AoE Rotation
-                new Decorator(
-                    ret => Unit.UnfriendlyUnitsNearTarget(8f).Count() >= SingularSettings.Instance.Paladin.ConsecrationCount,
-                    new PrioritySelector(
-                // Cooldowns
-                        Spell.BuffSelf("Avenging Wrath"),
-                        Spell.BuffSelf("Divine Storm"),
-                        Spell.BuffSelf("Consecration"),
-                        Spell.BuffSelf("Holy Wrath")
-                        )),
-
-                // Rotation - simplified for WotLK (no Holy Power abilities)
-                Spell.Cast("Hammer of Justice", ret => StyxWoW.Me.HealthPercent <= 40),
-                Spell.Cast("Crusader Strike"),
-                Spell.Cast("Hammer of Wrath"),
-                // WotLK QC: cast unconditionally if Art of War talent is not learned (pre-lvl 40) - proc can never trigger
-                Spell.Cast("Exorcism", ret => StyxWoW.Me.ActiveAuras.ContainsKey("The Art of War") || !SpellManager.HasSpell("The Art of War")),
-                Spell.Cast("Judgement of Light"),
-
-                Movement.CreateMoveToMeleeBehavior(true)
-                );
+            internal bool IsCurrent(string expected, Func<string> choose) =>
+                spell == expected && SameOwner && choose() == expected && SameOwner;
         }
 
-        #endregion
-
-        #region Battleground Rotation
-
-        [Class(WoWClass.Paladin)]
-        [Spec(TalentSpec.RetributionPaladin)]
-        [Behavior(BehaviorType.Pull)]
-        [Behavior(BehaviorType.Combat)]
-        [Context(WoWContext.Battlegrounds)]
-        public static Composite CreateRetributionPaladinPvPPullAndCombat()
+        private static Composite CreateTacticsBehavior(bool self, Func<string> choose, params string[] spells)
         {
-            return new PrioritySelector(
-                Safers.EnsureTarget(),
-                Movement.CreateMoveToLosBehavior(),
-                Movement.CreateFaceTargetBehavior(),
-                Helpers.Common.CreateAutoAttack(true),
-                Helpers.Common.CreateInterruptSpellCast(ret => StyxWoW.Me.CurrentTarget),
-
-                // Defensive
-                Spell.BuffSelf("Hand of Freedom",
-                    ret => !StyxWoW.Me.Auras.Values.Any(a => a.Name.Contains("Hand of") && a.CreatorGuid == StyxWoW.Me.Guid) &&
-                           StyxWoW.Me.HasAuraWithMechanic(WoWSpellMechanic.Dazed,
-                                                          WoWSpellMechanic.Disoriented,
-                                                          WoWSpellMechanic.Frozen,
-                                                          WoWSpellMechanic.Incapacitated,
-                                                          WoWSpellMechanic.Rooted,
-                                                          WoWSpellMechanic.Slowed,
-                                                          WoWSpellMechanic.Snared)),
-                Spell.BuffSelf("Divine Shield", ret => StyxWoW.Me.HealthPercent <= 20 && !StyxWoW.Me.HasAura("Forbearance")),
-
-                // Cooldowns
-                Spell.BuffSelf("Avenging Wrath"),
-
-                // AoE Rotation
-                new Decorator(
-                    ret => Unit.UnfriendlyUnitsNearTarget(8f).Count() >= 3,
-                    new PrioritySelector(
-                        Spell.BuffSelf("Divine Storm"),
-                        Spell.BuffSelf("Consecration"),
-                        Spell.BuffSelf("Holy Wrath")
-                        )),
-
-                // Rotation - simplified for WotLK (no Holy Power abilities)
-                Spell.Cast("Hammer of Justice", ret => StyxWoW.Me.CurrentTarget.HealthPercent <= 40),
-                Spell.Cast("Crusader Strike"),
-                Spell.Cast("Hammer of Wrath"),
-                // WotLK QC: cast unconditionally if Art of War talent is not learned (pre-lvl 40) - proc can never trigger
-                Spell.Cast("Exorcism", ret => StyxWoW.Me.ActiveAuras.ContainsKey("The Art of War") || !SpellManager.HasSpell("The Art of War")),
-                Spell.Cast("Judgement of Light"),
-                Spell.BuffSelf("Holy Wrath"),
-                Spell.BuffSelf("Consecration"),
-
-                Movement.CreateMoveToMeleeBehavior(true)
-                );
+            return new PrioritySelector(_ => new TacticsChoice(choose),
+                spells.Select(name => Spell.Cast(name,
+                    context => context is TacticsChoice choice && choice.IsCurrent(name, choose)
+                        ? (self ? StyxWoW.Me : StyxWoW.Me.CurrentTarget) : null,
+                    _ => true)).ToArray());
         }
 
-        #endregion
+        internal static Composite CreateRetributionSealBehavior() =>
+            CreateTacticsBehavior(true, SelectRetributionSeal,
+                "Seal of Command", "Seal of Corruption", "Seal of Justice", "Seal of Light",
+                "Seal of Righteousness", "Seal of Vengeance", "Seal of Wisdom");
 
-
-        #region Instance Rotation
-
-        [Class(WoWClass.Paladin)]
-        [Spec(TalentSpec.RetributionPaladin)]
-        [Behavior(BehaviorType.Pull)]
-        [Behavior(BehaviorType.Combat)]
-        [Context(WoWContext.Instances)]
-        public static Composite CreateRetributionPaladinInstancePullAndCombat()
+        private static string SelectRetributionSeal()
         {
-            return new PrioritySelector(
-                Safers.EnsureTarget(),
-                Movement.CreateMoveToLosBehavior(),
-                Movement.CreateFaceTargetBehavior(),
-                Helpers.Common.CreateAutoAttack(true),
-                Helpers.Common.CreateInterruptSpellCast(ret => StyxWoW.Me.CurrentTarget),
-                Movement.CreateMoveBehindTargetBehavior(),
+            var me = StyxWoW.Me;
+            if (me == null || !me.IsValid || !me.IsAlive || me.Mounted || me.IsOnTransport
+                || me.IsCasting || me.IsChanneling || me.HasAura("Food") || me.HasAura("Drink"))
+                return null;
 
-                // Defensive
-                Spell.BuffSelf("Hand of Freedom",
-                    ret => !StyxWoW.Me.Auras.Values.Any(a => a.Name.Contains("Hand of") && a.CreatorGuid == StyxWoW.Me.Guid) &&
-                           StyxWoW.Me.HasAuraWithMechanic(WoWSpellMechanic.Dazed,
-                                                          WoWSpellMechanic.Disoriented,
-                                                          WoWSpellMechanic.Frozen,
-                                                          WoWSpellMechanic.Incapacitated,
-                                                          WoWSpellMechanic.Rooted,
-                                                          WoWSpellMechanic.Slowed,
-                                                          WoWSpellMechanic.Snared)),
-                Spell.BuffSelf("Divine Shield", ret => StyxWoW.Me.HealthPercent <= 20 && !StyxWoW.Me.HasAura("Forbearance")),
-
-                // Cooldowns
-                new Decorator(
-                    ret => StyxWoW.Me.CurrentTarget.IsBoss(),
-                    new PrioritySelector(
-                    Spell.BuffSelf("Avenging Wrath"))),
-
-                // AoE Rotation
-                new Decorator(
-                    ret => Unit.UnfriendlyUnitsNearTarget(8f).Count() >= SingularSettings.Instance.Paladin.ConsecrationCount,
-                    new PrioritySelector(
-                        Spell.BuffSelf("Divine Storm"),
-                        Spell.BuffSelf("Consecration"),
-                        Spell.BuffSelf("Holy Wrath")
-                        )),
-
-                // Rotation - simplified for WotLK (no Holy Power abilities)
-                Spell.Cast("Crusader Strike"),
-                Spell.Cast("Hammer of Wrath"),
-                // WotLK QC: cast unconditionally if Art of War talent is not learned (pre-lvl 40) - proc can never trigger
-                Spell.Cast("Exorcism", ret => StyxWoW.Me.ActiveAuras.ContainsKey("The Art of War") || !SpellManager.HasSpell("The Art of War")),
-                Spell.Cast("Judgement of Light"),
-                Spell.BuffSelf("Holy Wrath"),
-                Spell.BuffSelf("Consecration"),
-
-                Movement.CreateMoveToMeleeBehavior(true)
-                );
+            string wanted;
+            PaladinSeal configured = SingularSettings.Instance.Paladin.Seal;
+            if (configured != PaladinSeal.Auto)
+            {
+                // A deliberate recovery/control seal must not fight precombat Auto.
+                wanted = "Seal of " + configured;
+                if (!SpellManager.HasSpell(wanted)) return null;
+            }
+            else
+            {
+                var target = me.CurrentTarget;
+                string stacking = SpellManager.HasSpell("Seal of Corruption") ? "Seal of Corruption"
+                    : SpellManager.HasSpell("Seal of Vengeance") ? "Seal of Vengeance" : null;
+                bool safeCleave = target == null || Unit.IsAreaEffectSafe("Divine Storm", target);
+                int nearby = Unit.NearbyUnfriendlyUnits.Count(u => u.IsValid && u.IsAlive && u.Distance <= 8);
+                bool boss = target != null && target.IsBoss();
+                bool command = SpellManager.HasSpell("Seal of Command") && safeCleave
+                    && ((!boss && (nearby >= 3 || nearby >= 2 && me.HasAura("Seal of Command"))) || stacking == null);
+                wanted = command ? "Seal of Command" : stacking
+                    ?? (SpellManager.HasSpell("Seal of Righteousness") ? "Seal of Righteousness" : null);
+                // Damage seals stay preferred in groups; mana is recovered with
+                // judgements/Plea, not an automatic DPS-to-Wisdom seal swap.
+            }
+            return wanted != null && !me.HasAura(wanted) ? wanted : null;
         }
 
-        #endregion
-         */
+        private static Composite CreateRetributionJudgementBehavior() =>
+            CreateTacticsBehavior(false, SelectRetributionJudgement,
+                "Judgement of Wisdom", "Judgement of Light", "Judgement of Justice");
+
+        private static string SelectRetributionJudgement()
+        {
+            var me = StyxWoW.Me;
+            var target = me?.CurrentTarget;
+            if (me == null || target == null || !me.IsValid || !me.IsAlive || !target.IsValid || !target.IsAlive)
+                return null;
+            if ((target.Fleeing || target.IsPlayer && (target.IsMoving || target.HasAura("Horde Flag") || target.HasAura("Alliance Flag")))
+                && SpellManager.HasSpell("Judgement of Justice"))
+                return "Judgement of Justice";
+
+            bool grouped = me.IsInParty || me.IsInRaid;
+            // Auras belong to their caster. Our own Wisdom is not a partner's
+            // coverage, and expired/unknown-owner observations cannot cover it.
+            var auras = target.GetAllAuras().ToArray();
+            bool externalWisdom = auras.Any(a => a != null && a.Name == "Judgement of Wisdom"
+                && a.IsActive && a.TimeLeft > TimeSpan.FromSeconds(2) && a.CreatorGuid != 0 && a.CreatorGuid != me.Guid);
+            bool externalLight = auras.Any(a => a != null && a.Name == "Judgement of Light"
+                && a.IsActive && a.TimeLeft > TimeSpan.FromSeconds(2) && a.CreatorGuid != 0 && a.CreatorGuid != me.Guid);
+            bool preferLight = grouped ? externalWisdom && !externalLight : me.HealthPercent < 70 && me.ManaPercent >= 40;
+            string preferred = preferLight ? "Judgement of Light" : "Judgement of Wisdom";
+            string fallback = preferLight ? "Judgement of Wisdom" : "Judgement of Light";
+            return SpellManager.HasSpell(preferred) ? preferred
+                : SpellManager.HasSpell(fallback) ? fallback : null;
+        }
+
+        private static Composite CreateManaRecoveryBehavior() => new PrioritySelector(
+            // Talented damaging judgements also restore mana. Keep the cheap
+            // judgement available before spending the last mana on melee strikes.
+            new Decorator(_ => StyxWoW.Me != null && StyxWoW.Me.ManaPercent <= 15,
+                CreateRetributionJudgementBehavior()),
+            Spell.BuffSelf("Divine Plea", _ => StyxWoW.Me != null
+                && StyxWoW.Me.ManaPercent < SingularSettings.Instance.Paladin.DivinePleaMana
+                && StyxWoW.Me.HealthPercent > 70));
+
+        private static bool HasHolyWrathTarget() =>
+            Unit.NearbyUnfriendlyUnits.Any(u => u.IsValid && u.IsAlive && u.Distance <= 10 && u.IsUndeadOrDemon());
+
+        private static int GetRetributionHealThreshold(int configured)
+        {
+            var me = StyxWoW.Me;
+            return me != null && me.Combat && (me.IsInParty || me.IsInRaid)
+                ? Math.Min(configured, SingularSettings.Instance.Paladin.RetributionHealHealth) : configured;
+        }
 
         // Independent ready attacks must not disable one another merely because
         // another spell is known or the target count crosses an arbitrary gate.
