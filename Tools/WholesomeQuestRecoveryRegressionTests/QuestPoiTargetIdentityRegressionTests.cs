@@ -95,7 +95,13 @@ internal static class QuestPoiTargetIdentityRegressionTests
         stage == Stage.Pickup ? PickUpNode.FromXml(Xml(stage, type, quest, location)) : TurnInNode.FromXml(Xml(stage, type, quest, location));
     private static BotPoi Poi(OrderNode node) => node is PickUpNode pickup ? new BotPoi(pickup) : new BotPoi((TurnInNode)node);
     private static IEnumerable<Composite> Walk(Composite root)
-    { yield return root; foreach (var child in root.Children) foreach (var node in Walk(child)) yield return node; }
+    {
+        yield return root;
+        // GroupComposite intentionally exposes a hidden concrete child list;
+        // the base Composite.Children view is empty, not the executable tree.
+        var children = root is GroupComposite group ? group.Children : root.Children;
+        foreach (var child in children) foreach (var node in Walk(child)) yield return node;
+    }
     private static BotPoi Publish(ForcedBehavior behavior)
     {
         var leaf = Walk(behavior.Branch).OfType<ActionSetPoi>().Single();
