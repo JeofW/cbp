@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using Bots.Quest.QuestOrder;
 using Styx.Logic.Combat;
 using Styx.Logic.Inventory.Frames.Merchant;
+using Styx.Logic.Pathing;
 using Styx.Logic.Profiles.Quest;
 using Styx.WoWInternals;
 using Styx.WoWInternals.WoWObjects;
