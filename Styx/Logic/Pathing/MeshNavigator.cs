@@ -308,10 +308,17 @@ namespace Styx.Logic.Pathing
 		public MoveResult MoveTo(WoWPoint destination, float precision, string destinationName)
 		{
 			_routeOwner = new object();
-			WoWPoint origin = ObjectManager.Me?.Location ?? WoWPoint.Zero;
+			var request = new MovementRequestObservation(this);
+			WoWPoint origin = request.Player?.Location ?? WoWPoint.Zero;
+			if (!request.IsCurrent(this))
+				return MoveResult.Failed;
 			MoveResult result = MoveToCore(destination, precision, destinationName);
+			// A callback may have completed another request on this same instance.
+			// The old return must not overwrite that request's movement evidence.
+			if (!request.IsCurrent(this))
+				return MoveResult.Failed;
 			RecordMoveOutcome(origin, destination, result);
-			return result;
+			return request.IsCurrent(this) ? result : MoveResult.Failed;
 		}
 
 		internal void RecordMoveOutcome(WoWPoint origin, WoWPoint destination, MoveResult result)
@@ -514,6 +521,7 @@ namespace Styx.Logic.Pathing
 
 		private MoveResult MoveToCore(WoWPoint destination, float precision, string destinationName)
 		{
+			var request = new MovementRequestObservation(this);
 			if (destination == WoWPoint.Zero)
 				return MoveResult.Failed;
 
@@ -524,22 +532,34 @@ namespace Styx.Logic.Pathing
 				return MoveResult.Failed;
 			}
 
-			LocalPlayer? me = ObjectManager.Me;
+			LocalPlayer? me = request.Player;
 			if (me == null)
 				return MoveResult.Failed;
-			if (!IsFiniteRoutePoint(me.Location))
+			WoWPoint observedLocation = me.Location;
+			if (!request.IsCurrent(this))
+				return MoveResult.Failed;
+			if (!IsFiniteRoutePoint(observedLocation))
 			{
 				ResetTerminalRouteEvidence();
 				LastRouteFailure = RouteFailureReason.InvalidCoordinates;
 				return MoveResult.Failed;
 			}
 			CancelElevatorTransitIfDestinationChanged(destination);
+			if (!request.IsCurrent(this))
+				return MoveResult.Failed;
 			ObserveMovementCadence(DateTime.UtcNow);
 
-			ApplyAliveQueryFilter(me.IsAlive);
+			bool isAlive = me.IsAlive;
+			if (!request.IsCurrent(this))
+				return MoveResult.Failed;
+			ApplyAliveQueryFilter(isAlive);
+			if (!request.IsCurrent(this))
+				return MoveResult.Failed;
 
 			if (!me.IsSwimming)
 				UpdateDirectSwimState(isSwimming: false, useDirectSwimming: false);
+			if (!request.IsCurrent(this))
+				return MoveResult.Failed;
 
 			if (me.IsSwimming)
 			{
@@ -548,15 +568,19 @@ namespace Styx.Logic.Pathing
 				// at the shoreline while the old path still points behind the player.
 				bool useDirectSwimming = _usingDirectSwimMovement
 					|| !HasShortGroundPath(me.Location, destination, 2000f);
+				if (!request.IsCurrent(this))
+					return MoveResult.Failed;
 				UpdateDirectSwimState(isSwimming: true, useDirectSwimming);
 				if (useDirectSwimming)
 				{
-					Navigator.PlayerMover.MoveTowards(destination);
+					request.Mover.MoveTowards(destination);
 					return MoveResult.Moved;
 				}
 			}
 
 			float distance = me.Location.Distance(destination);
+			if (!request.IsCurrent(this))
+				return MoveResult.Failed;
 			if (distance < precision)
 			{
 				_commandedProgress.Reset();
