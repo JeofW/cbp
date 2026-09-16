@@ -11,7 +11,13 @@ concurrency:
   cancel-in-progress: true
 jobs:
   combined:
-    if: github.repository == 'jeofwong/CopilotBuddy-private' && github.event.repository.private == true
+    # Owner-authorized public CI; no fork/PR event or arbitrary manual ref.
+    if: >-
+      github.repository == 'jeofwong/CopilotBuddy-private' &&
+      github.repository_id == '1367174964' &&
+      (github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
+      github.ref_type == 'branch' &&
+      (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/audit/next-'))
     runs-on: windows-2022
     timeout-minutes: 25
     env:
@@ -118,7 +124,7 @@ jobs:
           $hashes | ConvertTo-Json -Depth 5 | Out-File (Join-Path $out 'files-sha256.json')
           $results | ConvertTo-Json -Depth 8 | Write-Host
           if ($results.Count -ne 17 -or @($results | Where-Object { $_.build -ne 0 -or $null -eq $_.run -or $_.run -ne 0 }).Count) { exit 1 }
-      - name: Retain complete private results
+      - name: Retain complete regression results (public artifact)
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:

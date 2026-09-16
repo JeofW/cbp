@@ -2,7 +2,7 @@ name: Audit Windows validation
 
 on:
   push:
-    branches: ['audit/**']
+    branches: ['master', 'audit/next-*']
     paths:
       - '**.cs'
       - '**.csproj'
@@ -18,7 +18,13 @@ concurrency:
 
 jobs:
   host-build:
-    if: github.repository == 'jeofwong/CopilotBuddy-private' && github.event.repository.private == true
+    # Owner-authorized public CI; no fork/PR event or arbitrary manual ref.
+    if: >-
+      github.repository == 'jeofwong/CopilotBuddy-private' &&
+      github.repository_id == '1367174964' &&
+      (github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
+      github.ref_type == 'branch' &&
+      (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/audit/next-'))
     runs-on: windows-latest
     timeout-minutes: 15
     env:
@@ -46,7 +52,7 @@ jobs:
           Get-Content (Join-Path $out 'host-build.txt') | Select-String ': error ' | Select-Object -First 20 | ForEach-Object { Write-Host $_.Line }
           Write-Host "Host build exit code: $buildExit. This job does not run the game or claim runtime validation."
           exit $buildExit
-      - name: Retain private validation evidence
+      - name: Retain validation evidence (public artifact)
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
