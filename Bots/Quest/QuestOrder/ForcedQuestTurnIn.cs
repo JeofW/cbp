@@ -38,6 +38,13 @@ public class ForcedQuestTurnIn : ForcedBehavior
     {
     }
 
+    // Compatibility for stock behaviors that do not supply an NPC name.
+    // Delegate through the retained constructor and preserve typed-target ownership.
+    public ForcedQuestTurnIn(uint questId, string questName, uint npcId, WoWPoint location)
+        : this(questId, questName, npcId, string.Empty, location)
+    {
+    }
+
     public ForcedQuestTurnIn(uint questId, string questName, uint npcId, string npcName,
         WoWPoint location, QuestObjectType? turnInType)
     {
