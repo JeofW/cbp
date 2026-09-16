@@ -64,12 +64,15 @@ internal static class AquaticShorelineAdmissionRegressionTests
     private sealed class Fixture : IDisposable
     {
         private readonly IDisposable world;
-        private readonly string oldFood = LevelbotSettings.Instance.FoodName, oldDrink = LevelbotSettings.Instance.DrinkName;
+        private readonly FieldInfo settingsField = typeof(CharacterSettings).GetField("<Instance>k__BackingField",Static)!;
+        private readonly object? oldSettings;
         internal readonly LocalPlayer Player;
         internal Fixture()
         {
             world=(IDisposable)Activator.CreateInstance(typeof(AquaticObservationRegressionTests).GetNestedType("Fixture",BindingFlags.NonPublic)!,true)!;
             Player=(LocalPlayer)world.GetType().GetField("Player",Hidden)!.GetValue(world)!;
+            oldSettings=settingsField.GetValue(null);
+            settingsField.SetValue(null,RuntimeHelpers.GetUninitializedObject(typeof(CharacterSettings)));
             Check(ObjectManager.Executor == null, "native executor must remain absent");
         }
         private void Call(string name, params object[] values)
@@ -98,8 +101,8 @@ internal static class AquaticShorelineAdmissionRegressionTests
         }
         internal void Legacy(bool drink,string state)
         {
-            Resource("UNIT_FIELD_HEALTH",20); Resource("UNIT_FIELD_MAXHEALTH",100);
-            Resource("UNIT_FIELD_POWER1",10); Resource("UNIT_FIELD_MAXPOWER1",100);
+            Resource("Health",20); Resource("MaxHealth",100);
+            Resource("Mana",10); Resource("MaxMana",100);
             LevelbotSettings.Instance.FoodName=drink ? "" : "Aquatic-test-food";
             LevelbotSettings.Instance.DrinkName=drink ? "Aquatic-test-drink" : "";
             if (state != "unknown") Prime();
@@ -113,7 +116,7 @@ internal static class AquaticShorelineAdmissionRegressionTests
         }
         public void Dispose()
         {
-            LevelbotSettings.Instance.FoodName=oldFood; LevelbotSettings.Instance.DrinkName=oldDrink;
+            settingsField.SetValue(null,oldSettings);
             world.Dispose();
         }
     }
