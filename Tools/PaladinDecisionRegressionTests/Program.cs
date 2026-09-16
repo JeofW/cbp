@@ -90,3 +90,4 @@ if (failures.Count != 0) throw new InvalidOperationException(string.Join(Environ
 
 RetributionTacticsRegressionTests.Run();
 SharedPaladinInterruptRegressionTests.Run();
+RetributionPlayerSealRegressionTests.Run();
