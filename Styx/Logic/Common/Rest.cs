@@ -44,7 +44,7 @@ public static class Rest
     public static void Feed()
     {
         var me = ObjectManager.Me;
-        if (me == null)
+        if (!CanUseConsumables(me, requireStationary: false))
             return;
 
         if (me.CurrentTarget != null)
@@ -131,11 +131,11 @@ public static class Rest
     /// <summary>Immediately uses drink without waiting, on a current dry owner only.</summary>
     public static void DrinkImmediate() => UseImmediate(true);
 
-    private static bool CanUseConsumables(LocalPlayer? player)
+    private static bool CanUseConsumables(LocalPlayer? player, bool requireStationary = true)
     {
         return player != null && ReferenceEquals(ObjectManager.Me, player)
             && player.IsValid && player.IsAlive && !player.IsGhost && !player.Combat
-            && !player.Mounted && !player.IsOnTransport && !player.IsMoving
+            && !player.Mounted && !player.IsOnTransport && (!requireStationary || !player.IsMoving)
             && !player.IsCasting && !player.IsChanneling
             && !LiquidEnvironment.IsPlayerInLiquid(player)
             && ReferenceEquals(ObjectManager.Me, player);

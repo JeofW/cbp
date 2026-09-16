@@ -54,11 +54,14 @@ namespace Styx.Logic.Pathing
                 _hasProbe = false;
                 return true;
             }
+            // A dry point says nothing about a nearby shoreline. Only a wet
+            // result may be reused after horizontal movement without another trace.
             long age = now - _lastProbeTick;
             if (_hasProbe && ReferenceEquals(_lastProbePlayer, player)
                 && ReferenceEquals(_lastProbeMemory, memory) && _lastProbeAddress == address
                 && mapId == _lastProbeMapId && age >= 0 && age < ProbeIntervalMilliseconds
-                && location.Z == _lastProbeLocation.Z && location.DistanceSqr(_lastProbeLocation) < 4f)
+                && location.Z == _lastProbeLocation.Z && location.DistanceSqr(_lastProbeLocation) < 4f
+                && (_lastProbeResult || location == _lastProbeLocation))
                 return _lastProbeResult;
 
             bool liquidBetweenEyeAndFeet = GameWorld.TraceLine(
