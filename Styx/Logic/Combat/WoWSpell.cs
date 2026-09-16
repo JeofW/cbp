@@ -16,12 +16,10 @@ namespace Styx.Logic.Combat
         private readonly WoWDb.Row _row;
 
         private static readonly Dictionary<int, SpellInfoCache> _spellInfoCache;
-        private static readonly Dictionary<int, WoWDb.Row> _rowCache;
 
         static WoWSpell()
         {
             _spellInfoCache = new Dictionary<int, SpellInfoCache>();
-            _rowCache = new Dictionary<int, WoWDb.Row>();
         }
 
         private WoWSpell(int id, WoWDb.Row row)
@@ -466,21 +464,13 @@ namespace Styx.Logic.Combat
 
         public static WoWSpell FromId(int id)
         {
-            WoWDb.Row row;
-            if (!_rowCache.TryGetValue(id, out row))
-            {
-                var db = StyxWoW.Db[ClientDb.Spell];
-                if (db != null)
-                {
-                    row = db.GetRow((uint)id);
-                    _rowCache.Add(id, row);
-                }
-            }
-            if (row == null)
-            {
-                return null;
-            }
-            return new WoWSpell(id, row);
+            // A spell ID is not a lifetime for its native row address. Resolve
+            // the currently published table and row each time; Memory retains
+            // its existing read cache. Missing rows must remain retryable, and
+            // removed/replaced rows must not inherit an old ID-only entry.
+            var table = StyxWoW.Db[ClientDb.Spell];
+            var row = table?.GetRow((uint)id);
+            return row == null ? null : new WoWSpell(id, row);
         }
 
         public override string ToString()
