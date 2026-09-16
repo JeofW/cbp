@@ -87,7 +87,7 @@ internal static class WholesomeAquaticPauseRegressionTests
         }
         private void Resource(string name, uint value)
         {
-            Type fields = typeof(WoWUnit).Assembly.GetType("Styx.Offsets.UnitFields")!;
+            Type fields = typeof(UnitFields);
             uint descriptor = ObjectManager.Wow!.Read<uint>(player.BaseAddress + 8);
             uint address = descriptor + Convert.ToUInt32(Enum.Parse(fields, name)) * 4;
             WorldCall("Cache", address, BitConverter.GetBytes(value));
