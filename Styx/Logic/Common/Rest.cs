@@ -44,7 +44,7 @@ public static class Rest
     public static void Feed()
     {
         var me = ObjectManager.Me;
-        if (!CanUseConsumables(me, requireStationary: false))
+        if (me == null || !CanUseConsumables(me, requireStationary: false))
             return;
 
         if (me.CurrentTarget != null)
