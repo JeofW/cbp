@@ -40,6 +40,14 @@ namespace Levelbot.Decorators.Combat
                         && !Targeting.Instance.KillBetweenHotspots)
                         return false;
 
+                    // The profile target filter already admits explicit MobIDs.
+                    // Keep that same identity when mounted, even when the profile
+                    // leaves TargetMaxLevel at its default unlimited value.
+                    if (firstUnit.Entry <= int.MaxValue &&
+                        currentGrindArea.MobIDs.Contains((int)firstUnit.Entry) &&
+                        IsWithinLevelRange(firstUnit, currentGrindArea))
+                        return true;
+
                     // Check faction filters
                     Profile currentProfile = ProfileManager.CurrentProfile;
                     if (currentProfile != null && currentProfile.Factions.Contains(firstUnit.FactionId))
