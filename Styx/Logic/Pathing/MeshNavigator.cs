@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Runtime.ExceptionServices;
+using System.Threading;
 using Styx.Common;
 using Styx.Helpers;
 using Styx.Logic.BehaviorTree;
@@ -39,6 +41,8 @@ namespace Styx.Logic.Pathing
 		// OnRemoveAsCurrent throws if not registered. Prevents BotEvents.OnPulse double-hook.
 		private bool _isCurrent;
 
+		// Managed request identity fences reentrant cleanup, not native frame/session state.
+		private object _routeOwner = new object();
 		private WoWPoint _destination;
 		private readonly List<WoWPoint> _currentPath = new List<WoWPoint>();
 
@@ -303,6 +307,7 @@ namespace Styx.Logic.Pathing
 
 		public MoveResult MoveTo(WoWPoint destination, float precision, string destinationName)
 		{
+			_routeOwner = new object();
 			WoWPoint origin = ObjectManager.Me?.Location ?? WoWPoint.Zero;
 			MoveResult result = MoveToCore(destination, precision, destinationName);
 			RecordMoveOutcome(origin, destination, result);
@@ -893,11 +898,19 @@ namespace Styx.Logic.Pathing
 		/// </summary>
 		public override bool Clear()
 		{
+			var owner = new object();
+			_routeOwner = owner;
+			var mover = Navigator.PlayerMover;
+			var provider = Navigator.NavigationProvider;
+			var stuck = _stuckHandler;
+			bool stopMovement = _localConnectorTarget != WoWPoint.Zero ||
+				_elevatorTransit.SelectedTransportGuid != 0UL || _ridingElevator;
+
+			// Detach the entire managed route before either external cleanup boundary.
+			// CancelElevatorTransitMovement stops first and can reenter; split its
+			// managed reset from the single admitted stop shared with the connector.
 			_commandedProgress.Reset();
 			ResetTerminalRouteEvidence();
-			try { StuckHandler.Reset(); } catch { }
-			if (_localConnectorTarget != WoWPoint.Zero)
-				Navigator.PlayerMover.MoveStop();
 			LastMoveResult = null;
 			LastMoveOrigin = WoWPoint.Zero;
 			LastMoveDestination = WoWPoint.Zero;
@@ -913,7 +926,8 @@ namespace Styx.Logic.Pathing
 			_currentFlags = null;
 			_currentPolyTypes = null;
 			_currentAbilityFlags = null;
-			CancelElevatorTransitMovement();
+			_isPartialPath = false;
+			ResetElevatorTransit();
 			_usingDirectSwimMovement = false;
 			_currentAvoidPath = null;
 			_currentAvoidPathIndex = 0;
@@ -925,6 +939,32 @@ namespace Styx.Logic.Pathing
 			_liveCollisionProbeTimer.Stop();
 			_liveCollisionRepathTimer.Stop();
 			_pathRegenThrottle = new WaitTimer(TimeSpan.FromMilliseconds(500));
+
+			ExceptionDispatchInfo? failure = null;
+			// Stop before resetting the handler, so a nested Clear from that handler
+			// cannot lose the old stop obligation after seeing an already empty route.
+			if (stopMovement)
+			{
+				try { mover.MoveStop(); }
+				catch (Exception error) { TreeSharp.Composite.PreserveCleanupFailure(ref failure, error); }
+			}
+			// Public path lists are mutable as well as replaceable through the API.
+			// Never reset a replacement handler/route after the mover callback.
+			if (ReferenceEquals(_routeOwner, owner) && ReferenceEquals(_stuckHandler, stuck) &&
+				ReferenceEquals(Navigator.PlayerMover, mover) && ReferenceEquals(Navigator.NavigationProvider, provider) &&
+				_currentPath.Count == 0 && _currentAvoidPath == null && _destination == WoWPoint.Zero &&
+				_localConnectorTarget == WoWPoint.Zero && !_ridingElevator && !_usingDirectSwimMovement &&
+				_elevatorTransit.SelectedTransportGuid == 0UL)
+			{
+				try { stuck?.Reset(); }
+				catch (Exception error) when (error is OperationCanceledException || error is ThreadInterruptedException)
+				{
+					TreeSharp.Composite.PreserveCleanupFailure(ref failure, error);
+				}
+				catch (Exception) { } // Preserve ordinary legacy stuck-reset error compatibility.
+			}
+			// No old state writes or further callbacks follow either cleanup boundary.
+			failure?.Throw();
 			return true;
 		}
 
@@ -1160,6 +1200,7 @@ namespace Styx.Logic.Pathing
 		/// </summary>
 		public void OverrideCurrentPath(WoWPoint[] points)
 		{
+			_routeOwner = new object();
 			ResetTerminalRouteEvidence();
 			_currentPath.Clear();
 			if (points != null)
