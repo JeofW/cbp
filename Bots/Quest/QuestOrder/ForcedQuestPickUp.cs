@@ -238,7 +238,10 @@ public class ForcedQuestPickUp : ForcedBehavior
     private bool ShouldSetPoi(object context)
     {
         BotPoi current = BotPoi.Current;
-        return current.Type != PoiType.QuestPickUp || (int)current.Entry != (int)this.GiverId;
+        var pickup = current.AsPickUp;
+        return current.Type != PoiType.QuestPickUp || current.Entry != this.GiverId ||
+            pickup == null || pickup.QuestId != this.QuestId || pickup.GiverType != this.GiverType ||
+            !pickup.GiverLocation.Equals(this.GiverLocation);
     }
 
     private void UseQuestItem(WoWItem item)

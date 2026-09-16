@@ -15,6 +15,7 @@ using Styx.Logic.Inventory.Frames.Gossip;
 using Styx.Logic.Inventory.Frames.Quest;
 using Styx.Logic.Pathing;
 using Styx.Logic.POI;
+using Styx.Logic.Profiles.Quest;
 using Styx.WoWInternals;
 using Styx.WoWInternals.WoWObjects;
 using System;
@@ -31,13 +32,21 @@ public class ForcedQuestTurnIn : ForcedBehavior
     private static readonly Frame QuestFrameCompleteButton = new Frame("QuestFrameCompleteButton");
     private int completeQuestAttempts;
 
+    // Preserve the original constructor for compiled/reflection callers.
     public ForcedQuestTurnIn(uint questId, string questName, uint npcId, string npcName, WoWPoint location)
+        : this(questId, questName, npcId, npcName, location, null)
+    {
+    }
+
+    public ForcedQuestTurnIn(uint questId, string questName, uint npcId, string npcName,
+        WoWPoint location, QuestObjectType? turnInType)
     {
         this.QuestId = questId;
         this.QuestName = questName;
         this.NpcId = npcId;
         this.NpcName = npcName;
         this.Location = location;
+        this.TurnInType = turnInType;
     }
 
     public override bool IsDone => !ObjectManager.Me.QuestLog.ContainsQuest(this.QuestId);
@@ -51,6 +60,8 @@ public class ForcedQuestTurnIn : ForcedBehavior
     public string NpcName { get; private set; }
 
     public WoWPoint Location { get; private set; }
+
+    public QuestObjectType? TurnInType { get; private set; }
 
     public long InteractionCycleId { get; private set; }
 
@@ -82,12 +93,7 @@ public class ForcedQuestTurnIn : ForcedBehavior
             PoiType.Kill
         }, (Composite)new PrioritySelector((ContextChangeHandler)(context => (object)null), new Composite[3]
         {
-            (Composite)new Decorator(new CanRunDecoratorDelegate(this.ShouldSetPoi), (Composite)new ActionSetPoi(true, (RetrieveBotPoiDelegate)(context => new BotPoi(PoiType.QuestTurnIn)
-            {
-                Name = this.NpcName,
-                Entry = this.NpcId,
-                Location = this.Location
-            }))),
+            (Composite)new Decorator(new CanRunDecoratorDelegate(this.ShouldSetPoi), (Composite)new ActionSetPoi(true, (RetrieveBotPoiDelegate)(context => new BotPoi(new TurnInNode(this.Location, this.NpcId, this.NpcName, this.TurnInType, this.QuestId, this.QuestName))))),
             (Composite)new Decorator((CanRunDecoratorDelegate)(context => !(BotPoi.Current.AsObject != (WoWObject)null) ? (double)ForcedQuestTurnIn.Me.Location.DistanceSqr(BotPoi.Current.Location) > 16.0 : !BotPoi.Current.AsObject.WithinInteractRange), (Composite)new ActionMoveToPoi()),
             (Composite)new Decorator((CanRunDecoratorDelegate)(context => BotPoi.Current.AsObject != (WoWObject)null && BotPoi.Current.AsObject.WithinInteractRange), (Composite)new Sequence((ContextChangeHandler)(context => (object)BotPoi.Current.AsObject), new Composite[9]
             {
@@ -135,7 +141,10 @@ public class ForcedQuestTurnIn : ForcedBehavior
     private bool ShouldSetPoi(object context)
     {
         BotPoi current = BotPoi.Current;
-        return current.Type != PoiType.QuestTurnIn || (int)current.Entry != (int)this.NpcId;
+        var turnIn = current.AsTurnIn;
+        return current.Type != PoiType.QuestTurnIn || current.Entry != this.NpcId ||
+            turnIn == null || turnIn.QuestId != this.QuestId || turnIn.TurnInType != this.TurnInType ||
+            !turnIn.TurnInLocation.Equals(this.Location);
     }
 
     private RunStatus CloseFrames(object context)

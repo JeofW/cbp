@@ -123,6 +123,7 @@ namespace Styx.Logic.POI
 			_object0 = turnIn;
 			Entry = turnIn.TurnInId;
 			Name = turnIn.TurnInName;
+			Location = turnIn.TurnInLocation;
 		}
 
 		public static BotPoi Current
@@ -232,9 +233,12 @@ namespace Styx.Logic.POI
 							
 						case PoiType.QuestPickUp:
 						case PoiType.QuestTurnIn:
-							// Search for unit or gameobject by entry
+							// Numeric entries belong to separate NPC/object namespaces.
+							// Only an unspecified legacy target may search both.
+							var targetType = Type == PoiType.QuestPickUp
+								? AsPickUp?.GiverType : AsTurnIn?.TurnInType;
 							_asObject = ObjectManager.ObjectList
-								.Where(o => (o is WoWUnit || o is WoWGameObject) && o.IsValid)
+								.Where(o => MatchesQuestTargetType(o, targetType) && o.IsValid)
 								.FirstOrDefault(o => o.Entry == Entry);
 							break;
 						
@@ -279,6 +283,14 @@ namespace Styx.Logic.POI
 				}
 				return _asObject;
 			}
+		}
+
+		private static bool MatchesQuestTargetType(WoWObject obj, QuestObjectType? type)
+		{
+			if (!type.HasValue)
+				return obj is WoWUnit || obj is WoWGameObject;
+			return type.Value == QuestObjectType.Npc ? obj is WoWUnit
+				: type.Value == QuestObjectType.GameObject && obj is WoWGameObject;
 		}
 
 		public WoWUnit? AsUnit => AsObject as WoWUnit;
