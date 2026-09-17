@@ -57,6 +57,18 @@ internal static class EquipmentObservationRegressionTests
             Add("unknown equipment level is not a known zero", s => Check(float.IsNaN(ItemLevel()), "unknown equipment level enabled tie-breaking"));
             Add("unknown equipment cannot authorize Need", s => { s.NoMatchRule = NoMatchRollType.Pass; Roll(); Check(LootCases.Scripts.SequenceEqual(new[] { "RollOnLoot(42, 0)" }), "unknown comparison authorized Need"); });
             Add("unknown equipment cannot authorize auto-equip", s => { Equip(); Check(!LootCases.Scripts.Contains("EQUIP"), "unknown slot caused item use"); });
+            Add("unknown comparison cannot choose Disenchant over Greed", s => {
+                s.NoMatchRule = NoMatchRollType.Greed; s.RollForLootDE = true; LootCases.CanDisenchant = true;
+                Roll(); Check(LootCases.Scripts.SequenceEqual(new[] { "RollOnLoot(42, 2)" }), "unresolved comparison entered destructive fallback");
+            });
+            Add("unknown comparison cannot choose Disenchant over Pass", s => {
+                s.NoMatchRule = NoMatchRollType.Pass; s.RollForLootDE = true; LootCases.CanDisenchant = true;
+                Roll(); Check(LootCases.Scripts.SequenceEqual(new[] { "RollOnLoot(42, 0)" }), "unresolved comparison ignored configured Pass");
+            });
+            Add("unknown comparison with unavailable Greed still cannot Disenchant", s => {
+                s.NoMatchRule = NoMatchRollType.Greed; s.RollForLootDE = true; LootCases.CanDisenchant = true; LootCases.CanGreed = false;
+                Roll(); Check(LootCases.Scripts.SequenceEqual(new[] { "RollOnLoot(42, 0)" }), "unavailable Greed escalated to Disenchant");
+            });
         }
         cases.Add(("known empty inventory retains a zero baseline", () => { var s = Reset(); Check(PawnScorer.GetMinEquippedScore(InventoryType.Neck, s.GetWeightsDictionary()) == 0 && SlotEmpty(), "known empty slot was blocked"); }));
         cases.Add(("known empty slot still equips", () => { Reset(); Equip(); Check(LootCases.Scripts.Count(x => x == "EQUIP") == 1, "known empty equip control failed"); }));
