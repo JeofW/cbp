@@ -120,7 +120,7 @@ public static class AuraCases
     private static void StopSignal(Exception expected){var a=Reset();Dispatch=()=>throw expected;Exception? got=null;try{a.TryCancel();}catch(Exception e){got=e;}Check(ReferenceEquals(got,expected),"stop signal swallowed or replaced");}
     private static void Check(bool yes,string why){if(!yes)throw new Failure(why);}
 }
-namespace Styx.WoWInternals
+/* Compiled fixture namespace, not the enclosing initializer. */ namespace Styx.WoWInternals
 {
     public class Player
     {
@@ -132,15 +132,15 @@ namespace Styx.WoWInternals
     public static class ObjectManager{public static Player? Me;public static Memory? Wow;public static object? Executor;}
     public static class Lua{public static void DoString(string script){AuraCases.Dispatch?.Invoke();AuraCases.Scripts.Add(script);}}
 }
-namespace Styx.Helpers
+/* Compiled fixture namespace, not the enclosing initializer. */ namespace Styx.Helpers
 {
     public static class Logging{public static void WriteDebug(string text,params object[] values)=>AuraCases.Log?.Invoke();public static void WriteException(Exception error){} }
 }
-namespace Styx
+/* Compiled fixture namespace, not the enclosing initializer. */ namespace Styx
 {
     public static class StyxWoW{public static class WoWClient{public static ulong PerformanceCounter()=>1;}}
 }
-namespace Styx.Logic.Combat
+/* Compiled fixture namespace, not the enclosing initializer. */ namespace Styx.Logic.Combat
 {
     public class WoWSpell{public string Name=>"Righteous Fury";public string Rank=>"";public Effect? SpellEffect1=>null;public static WoWSpell FromId(int id)=>new();}
     public class Effect{public WoWApplyAuraType AuraType=>WoWApplyAuraType.None;}
