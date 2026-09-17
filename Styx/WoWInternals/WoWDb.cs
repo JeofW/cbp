@@ -11,8 +11,10 @@ namespace Styx.WoWInternals
     {
         #region Fields
 
-        private static readonly Dictionary<ClientDb, DbTable> _tables = new Dictionary<ClientDb, DbTable>();
-        // Static flag: true once init succeeded. False allows retry if WoW wasn't attached on first call.
+        private static readonly object InitializationSync = new object();
+        private static Dictionary<ClientDb, DbTable> _tables = new Dictionary<ClientDb, DbTable>();
+        // Publish readiness only with a complete registry; failed observations can retry.
+        private const int MaximumRegistrationRecords = 512;
         private static bool _initialized = false;
 
         #endregion
@@ -26,54 +28,84 @@ namespace Styx.WoWInternals
 
         private void Initialize()
         {
-            if (_initialized) return;
+            Dictionary<ClientDb, DbTable>? published = null;
+            lock (InitializationSync)
+            {
+                if (_initialized) return;
+                var memory = ObjectManager.Wow;
+                if (memory == null) return;
 
-            var wow = ObjectManager.Wow;
-            if (wow == null) return;
+                try
+                {
+                    var candidate = new Dictionary<ClientDb, DbTable>();
+                    var addresses = new Dictionary<ClientDb, uint>();
+                    uint start = (uint)GlobalOffsets.ClientDb_RegisterBase;
+                    // The retained original-client contract uses 17-byte entries.
+                    // A missing terminator or partial field cannot publish a prefix.
+                    for (int index = 0; index <= MaximumRegistrationRecords; index++)
+                    {
+                        ulong next = (ulong)start + (uint)index * 17;
+                        if (next > uint.MaxValue - 14) return;
+                        uint address = (uint)next;
+                        byte[]? opcode = ReadExact(memory, address, 1);
+                        if (opcode == null) return;
+                        if (opcode[0] == 0xC3)
+                        {
+                            if (candidate.Count == 0 || !ReferenceEquals(memory, ObjectManager.Wow))
+                                return;
+                            _tables = candidate;
+                            _initialized = true;
+                            published = candidate;
+                            break;
+                        }
+                        if (index == MaximumRegistrationRecords) return;
 
-            _initialized = true;
+                        byte[]? idBytes = ReadExact(memory, address + 1, 4);
+                        byte[]? pointerBytes = ReadExact(memory, address + 11, 4);
+                        if (idBytes == null || pointerBytes == null) return;
+                        var id = (ClientDb)BitConverter.ToUInt32(idBytes, 0);
+                        if (!Enum.IsDefined(typeof(ClientDb), id)) return;
+                        uint pointer = BitConverter.ToUInt32(pointerBytes, 0);
+                        if (pointer == 0 || pointer > uint.MaxValue - 24) return;
+                        if (addresses.TryGetValue(id, out uint previous))
+                        {
+                            if (previous != pointer) return;
+                            continue;
+                        }
+                        byte[]? bytes = ReadExact(memory, pointer, Marshal.SizeOf<DbTableHeader>());
+                        if (bytes == null) return;
+                        var header = (DbTableHeader)ReadManagedValue(bytes, typeof(DbTableHeader), 0)!;
+                        // Discovery need not wait for every table's rows to load.
+                        // Preserve that state, but never treat a short read as zeros.
+                        candidate.Add(id, new DbTable(new IntPtr(unchecked((int)(pointer + 24))), header));
+                        addresses.Add(id, pointer);
+                    }
+                }
+                catch (Exception error) when (error is not OperationCanceledException && error is not ThreadInterruptedException)
+                {
+                    return;
+                }
+            }
 
+            if (published == null) return;
+            // Diagnostics are external callbacks. Run them after atomic publication
+            // and outside the registry lock; stop signals must retain their identity.
             try
             {
-                // Base address for ClientDb_RegisterBase
-                uint addr = (uint)GlobalOffsets.ClientDb_RegisterBase; // 0x633DD0
-                
-                // Walk through the registration table
-                while (true)
-                {
-                    byte opcode = wow.Read<byte>(addr);
-                    if (opcode == 0xC3) // RET instruction = end of list
-                        break;
-
-                    uint tableId = wow.Read<uint>(addr + 1);
-                    int tablePtr = wow.Read<int>(addr + 11);
-                    IntPtr pointer = new IntPtr(tablePtr + 24);
-                    
-                    if (!_tables.ContainsKey((ClientDb)tableId))
-                    {
-                        _tables.Add((ClientDb)tableId, new DbTable(pointer));
-                    }
-                    
-                    addr += 17; // Each entry is 17 bytes
-                }
-                
-                // Diagnostic: log what was loaded
-                Helpers.Logging.WriteDebug($"[WoWDb] Loaded {_tables.Count} DBC tables");
+                Helpers.Logging.WriteDebug($"[WoWDb] Loaded {published.Count} DBC tables");
                 int logged = 0;
-                foreach (var kvp in _tables)
+                foreach (var kvp in published)
                 {
                     if (logged++ < 5)
                         Helpers.Logging.WriteDebug($"[WoWDb]   Key={(int)kvp.Key} (0x{(int)kvp.Key:X8}) Rows={kvp.Value.NumRows}");
                 }
-                
-                // Check if Lock DBC is accessible
-                var lockDb = this[ClientDb.Lock];
+                published.TryGetValue(ClientDb.Lock, out var lockDb);
                 Helpers.Logging.WriteDebug($"[WoWDb] Lock DBC lookup: {(lockDb != null ? $"FOUND (rows={lockDb.NumRows})" : "NOT FOUND")}");
                 Helpers.Logging.WriteDebug($"[WoWDb] ClientDb.Lock enum value = {(int)ClientDb.Lock} (0x{(int)ClientDb.Lock:X8})");
             }
-            catch (Exception)
+            catch (Exception error) when (error is not OperationCanceledException && error is not ThreadInterruptedException)
             {
-                // Table initialization failed - tables will be unavailable
+                // A diagnostic failure does not undo the complete registry.
             }
         }
 
@@ -84,8 +116,9 @@ namespace Styx.WoWInternals
         {
             get
             {
-                DbTable? table;
-                return _tables.TryGetValue(db, out table) ? table : null;
+                Initialize();
+                lock (InitializationSync)
+                    return _initialized && _tables.TryGetValue(db, out var table) ? table : null;
             }
         }
 
@@ -165,6 +198,11 @@ namespace Styx.WoWInternals
                 _tablePtr = tablePtr;
                 var wow = ObjectManager.Wow;
                 _header = wow != null ? wow.ReadStruct<DbTableHeader>((uint)tablePtr.ToInt32() - 24) : default;
+            }
+            internal DbTable(IntPtr tablePtr, DbTableHeader header)
+            {
+                _tablePtr = tablePtr;
+                _header = header;
             }
             public bool IsLoaded => _header.IsLoaded != 0;
             public int NumRows => _header.NumRows;
