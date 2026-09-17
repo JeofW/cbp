@@ -131,8 +131,9 @@ internal static class DatabaseDiscoveryRegressionTests
         internal void WithLog(Action change,Action action)
         {
             bool fired=false;
-            Action<LogLevel,string> handler=(_,message)=>{if(!fired && message.StartsWith("[WoWDb] Loaded ")){fired=true;change();}};
+            Action<LogLevel,string> handler=(_,message)=>{if(!fired && message.Contains("[WoWDb] Loaded ",StringComparison.Ordinal)){fired=true;change();}};
             Logging.OnMessageLogged+=handler;try{action();}finally{Logging.OnMessageLogged-=handler;}
+            Check(fired,"actual diagnostic hook was not reached");
         }
         public void Dispose()
         {
