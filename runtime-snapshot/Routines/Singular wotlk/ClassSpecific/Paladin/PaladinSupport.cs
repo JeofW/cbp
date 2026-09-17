@@ -143,7 +143,7 @@ namespace Singular.ClassSpecific.Paladin
 
         private static string SelectAura(WoWPlayer player)
         {
-            if (!CanMaintainSupport() || !player.IsMe) return null;
+            if (!CanMaintainSupport() || player == null || !player.IsMe || player.Guid == 0) return null;
             var setting = SingularSettings.Instance.Paladin.Aura;
             string[] order;
             if (setting != PaladinAura.Auto)
@@ -155,6 +155,19 @@ namespace Singular.ClassSpecific.Paladin
             else
                 order = new[] { "Retribution Aura", "Devotion Aura", "Concentration Aura" };
             var auras = SupportAuras(player);
+            if (setting == PaladinAura.Auto)
+            {
+                // Preserve a useful contribution even when a preferred aura briefly
+                // disappears. For known duplicate casters, one stable GUID ordering
+                // keeps every Paladin from switching away at the same time.
+                foreach (string name in order)
+                {
+                    var coverage = auras.Where(a => a.Name == name).ToArray();
+                    if (coverage.Any(a => a.CreatorGuid == player.Guid)
+                        && !coverage.Any(a => a.CreatorGuid != 0 && a.CreatorGuid < player.Guid))
+                        return null;
+                }
+            }
             foreach (string name in order)
             {
                 var coverage = auras.Where(a => a.Name == name).ToArray();
@@ -166,7 +179,16 @@ namespace Singular.ClassSpecific.Paladin
             return null;
         }
 
-        private static Composite CreatePaladinAuraBehavior() => CreateSupportBehavior(
+        [Class(WoWClass.Paladin)]
+        [Spec(TalentSpec.RetributionPaladin)]
+        [Spec(TalentSpec.HolyPaladin)]
+        [Spec(TalentSpec.ProtectionPaladin)]
+        [Spec(TalentSpec.Lowbie)]
+        [Behavior(BehaviorType.CombatBuffs)]
+        [Context(WoWContext.All)]
+        public static Composite CreatePaladinCombatAuras() => CreatePaladinAuraBehavior();
+
+        internal static Composite CreatePaladinAuraBehavior() => CreateSupportBehavior(
             () => FindSupportAction(false, SelectAura), "Devotion Aura", "Retribution Aura", "Concentration Aura",
             "Shadow Resistance Aura", "Crusader Aura");
 

@@ -152,7 +152,6 @@ namespace Singular.ClassSpecific.Paladin
                     Spell.BuffSelf("Divine Protection", ret => StyxWoW.Me.HealthPercent <= SingularSettings.Instance.Paladin.DivineProtectionHealthRet && !StyxWoW.Me.HasAura("Forbearance")),
 
                     //  Buffs
-                    Spell.BuffSelf("Retribution Aura"),
                     CreateRetributionSealBehavior(),
                     CreateManaRecoveryBehavior(),
 
