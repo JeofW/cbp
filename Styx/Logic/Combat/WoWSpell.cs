@@ -466,10 +466,11 @@ namespace Styx.Logic.Combat
         {
             // A spell ID is not a lifetime for its native row address. Resolve
             // the currently published table and row each time; Memory retains
-            // its existing read cache. Missing rows must remain retryable, and
+            // its existing read cache. Localized rows own a decoded snapshot.
+            // Missing rows must remain retryable, and
             // removed/replaced rows must not inherit an old ID-only entry.
             var table = StyxWoW.Db[ClientDb.Spell];
-            var row = table?.GetRow((uint)id);
+            var row = table?.GetLocalizedRow(id);
             return row == null ? null : new WoWSpell(id, row);
         }
 
