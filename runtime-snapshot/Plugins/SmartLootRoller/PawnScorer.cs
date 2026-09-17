@@ -352,7 +352,12 @@ namespace SmartLootRoller
             if (!TryObserveEquipment(out var equippedItems, out var mainHand, out var offHand))
                 return false;
             
-            if (invType == InventoryType.TwoHandWeapon || invType == InventoryType.WeaponMainHand || invType == InventoryType.Weapon)
+            // A two-hander displaces both hands. An empty main-hand alone
+            // cannot bypass comparison with a valuable off-hand.
+            if (invType == InventoryType.TwoHandWeapon)
+                return mainHand == null && offHand == null;
+
+            if (invType == InventoryType.WeaponMainHand || invType == InventoryType.Weapon)
             {
                 var mh = mainHand;
                 return mh == null || mh.ItemInfo == null;
@@ -391,12 +396,17 @@ namespace SmartLootRoller
 
             if (invType == InventoryType.TwoHandWeapon || invType == InventoryType.WeaponMainHand || invType == InventoryType.Weapon)
             {
-                var mh = mainHand;
+                // Retain the existing main-hand tie convention, but do not
+                // lose the only displaced item when the main-hand is empty.
+                var mh = invType == InventoryType.TwoHandWeapon ? mainHand ?? offHand : mainHand;
                 if (mh != null && mh.ItemInfo != null) ilvls.Add(mh.ItemInfo.Level);
             }
             else if (invType == InventoryType.Shield || invType == InventoryType.WeaponOffHand || invType == InventoryType.Holdable)
             {
-                var oh = offHand;
+                // Off-hand replacement of a two-hander already uses the
+                // main-hand score; its level comparison must use that item too.
+                var oh = mainHand != null && mainHand.ItemInfo != null &&
+                    mainHand.ItemInfo.InventoryType == InventoryType.TwoHandWeapon ? mainHand : offHand;
                 if (oh != null && oh.ItemInfo != null) ilvls.Add(oh.ItemInfo.Level);
             }
             else
