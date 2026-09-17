@@ -57,7 +57,7 @@ public static class LootCases
     private sealed class Failure(string text):Exception(text){}
     internal static readonly List<string> Scripts=new();
     internal static string Stats="ITEM_MOD_STRENGTH_SHORT:10,";
-    internal static bool CanDisenchant;
+    internal static bool CanDisenchant, CanNeed, CanGreed;
     public static void Run()
     {
         var cases=new List<(string,Action)>();
@@ -82,6 +82,29 @@ public static class LootCases
         {string k=key;Add("settings round-trip canonical "+k,()=>{var s=Reset();s.ClearWeights();typeof(SmartLootRollerSettings).GetProperty("Weight_"+k)!.SetValue(s,2f);var weights=s.GetWeightsDictionary();Check(weights.Count==1&&weights.TryGetValue(k,out var v)&&v==2,"setting not mapped to scorer key "+k);});}
         Add("Ret preset weights Strength above positive Agility",()=>{Reset();var w=PawnScorer.ParseWeights(StatWeightsPresets.GetPresets()["Paladin - Retribution"]);Check(w["Strength"]>w["Agility"]&&w["Agility"]>0&&w["WeaponDps"]>0,"Ret preset lost expected weighted stats");});
         Add("two equal Ret items differ by their real weighted stats",()=>{var s=Reset();s.Weight_Strength=2.7f;s.Weight_Agility=1.8f;Stats="ITEM_MOD_STRENGTH_SHORT:10,";float strength=PawnScorer.CalculateScore(ItemInfo.Current,"item:41001",s.GetWeightsDictionary());Stats="ITEM_MOD_AGILITY_SHORT:10,";float agility=PawnScorer.CalculateScore(ItemInfo.Current,"item:41001",s.GetWeightsDictionary());Check(strength>agility&&agility>0,"actual scorer lost Strength/Agility ordering");});
+        // Original 3.3.5 FrameXML separates canNeed, canGreed and canDisenchant.
+        // A weighted upgrade never grants a roll option disabled by the client.
+        foreach(bool allowDE in new[]{false,true})
+        foreach(bool passFallback in new[]{false,true})
+        foreach(int flags in Enumerable.Range(0,8))
+        {
+            bool de=allowDE, pass=passFallback;int bits=flags;
+            Add($"Need availability matrix de={de} pass={pass} flags={bits}",()=>{
+                var s=Reset();s.MatchRule=MatchRollType.Need;s.RollForLootDE=de;
+                s.NoMatchRule=pass?NoMatchRollType.Pass:NoMatchRollType.Greed;
+                CanNeed=(bits&1)!=0;CanGreed=(bits&2)!=0;CanDisenchant=(bits&4)!=0;
+                Roll();Expect(CanNeed?1:de&&CanDisenchant?3:!pass&&CanGreed?2:0);
+            });
+        }
+        foreach(bool matching in new[]{false,true})
+        foreach(bool allowed in new[]{false,true})
+        {
+            bool match=matching, can=allowed;
+            Add($"configured Greed matches={match} available={can}",()=>{
+                var s=Reset();if(!match)s.Weight_Strength=0;s.MatchRule=MatchRollType.Greed;
+                CanNeed=true;CanGreed=can;Roll();Expect(can?2:0);
+            });
+        }
         int pass=0,failed=0,unexpected=0;
         foreach(var item in cases){try{item.Item2();pass++;Console.WriteLine("PASS loot decision: "+item.Item1);}catch(Failure e){failed++;Console.Error.WriteLine("FAIL loot decision assertion: "+item.Item1+": "+e.Message);}catch(Exception e){unexpected++;Console.Error.WriteLine("ERROR loot decision fixture: "+item.Item1+": "+e);}}
         Console.WriteLine($"SmartLoot decision scenarios: {pass}/{cases.Count}; assertions={failed}; unexpected={unexpected}; actual four tracked owners; controlled world and Lua; no live roll/equip.");
@@ -89,7 +112,7 @@ public static class LootCases
     }
     private static SmartLootRollerSettings Reset()
     {
-        Scripts.Clear();Stats="ITEM_MOD_STRENGTH_SHORT:10,";CanDisenchant=false;StyxWoW.Me=new Player();
+        Scripts.Clear();Stats="ITEM_MOD_STRENGTH_SHORT:10,";CanDisenchant=false;CanNeed=true;CanGreed=true;StyxWoW.Me=new Player();
         ItemInfo.Current=new ItemInfo{InventoryType=InventoryType.Neck,ItemClass=WoWItemClass.Armor,Name="test-neck"};
         var s=(SmartLootRollerSettings)RuntimeHelpers.GetUninitializedObject(typeof(SmartLootRollerSettings));
         typeof(SmartLootRollerSettings).GetField("_instance",BindingFlags.Static|BindingFlags.NonPublic)!.SetValue(null,s);
@@ -131,7 +154,7 @@ public static class LootCases
     {
         public static LuaEvents Events=new();
         public static T GetReturnVal<T>(string text,int index)
-        {if(typeof(T)==typeof(string))return (T)(object)(text.Contains("GetItemStats")?LootCases.Stats:"|Hitem:41001:0|h[test]|h");if(typeof(T)==typeof(bool))return (T)(object)LootCases.CanDisenchant;throw new InvalidOperationException("Unexpected Lua observation");}
+        {if(typeof(T)==typeof(string))return (T)(object)(text.Contains("GetItemStats")?LootCases.Stats:"|Hitem:41001:0|h[test]|h");if(typeof(T)==typeof(bool))return (T)(object)(index==5?LootCases.CanNeed:index==6?LootCases.CanGreed:index==7?LootCases.CanDisenchant:throw new InvalidOperationException("Unexpected loot availability index"));throw new InvalidOperationException("Unexpected Lua observation");}
         public static void DoString(string text,params object[] args)=>LootCases.Scripts.Add(args.Length==0?text:string.Format(text,args));
     }
 }
