@@ -254,50 +254,70 @@ namespace Styx.Logic.Combat
         #region Methods
         
         /// <summary>
-        /// Attempts to cancel this aura (if it's cancellable).
-        /// Only works for auras on the player.
+        /// Requests cancellation of a currently observed, self-cast player buff.
         /// </summary>
-        /// <returns>True if the aura was cancelled, false otherwise.</returns>
+        /// <returns>True if a guarded request was dispatched, not server acknowledgement.</returns>
         public bool TryCancel()
         {
-            if (!Cancellable || IsHarmful)
+            if (SpellId <= 0 || !IsActive || !Cancellable || IsHarmful || IsPassive)
                 return false;
-            
-            // Verify this aura belongs to the player
-            var me = ObjectManager.Me;
-            if (me == null || CreatorGuid != me.Guid)
-                return false;
-            
+
             try
             {
-                // Use index-based cancellation to avoid name escaping issues
-                // Find the aura index by spell ID
-                var auras = me.GetAllAuras();
-                int index = 1; // Lua uses 1-based indexing
-                foreach (var aura in auras)
+                var me = ObjectManager.Me;
+                var memory = ObjectManager.Wow;
+                var executor = ObjectManager.Executor;
+                if (me == null || memory == null || executor == null ||
+                    !me.IsValid || !me.IsAlive || me.BaseAddress == 0 ||
+                    me.Guid == 0 || CreatorGuid != me.Guid)
+                    return false;
+
+                var guid = me.Guid;
+                var address = me.BaseAddress;
+                bool SameOwner() => ReferenceEquals(ObjectManager.Me, me) &&
+                    ReferenceEquals(ObjectManager.Wow, memory) &&
+                    ReferenceEquals(ObjectManager.Executor, executor) &&
+                    me.IsValid && me.IsAlive && me.BaseAddress == address && me.Guid == guid;
+
+                bool observed = false;
+                foreach (var aura in me.GetAllAuras())
                 {
-                    if (aura.SpellId == SpellId)
+                    if (aura != null && aura.SpellId == SpellId && aura.CreatorGuid == guid &&
+                        aura.IsActive && aura.Cancellable && !aura.IsHarmful && !aura.IsPassive)
                     {
-                        WoWInternals.Lua.DoString($"CancelUnitBuff(\"player\", {index})");
-                        Helpers.Logging.WriteDebug("[WoWAura] Cancelled aura: {0} (index {1})", Name, index);
-                        return true;
+                        observed = true;
+                        break;
                     }
-                    index++;
                 }
-                
-                // Fallback to name-based cancellation (escape quotes)
-                string safeName = Name.Replace("\"", "\\\"");
-                WoWInternals.Lua.DoString($"CancelUnitBuff(\"player\", \"{safeName}\")");
-                Helpers.Logging.WriteDebug("[WoWAura] Cancelled aura: {0}", Name);
+                if (!observed || !SameOwner())
+                    return false;
+
+                // Raw aura slots include harmful entries and are not Lua buff indices.
+                // Resolve the exact spell in the same filtered helpful list used for
+                // cancellation. Bind both actor and spell again in the client request;
+                // never fall back to cancelling an unobserved name or a stale ordinal.
+                string script = $"local expected='0x{guid:X16}'; " +
+                    "local function current() return string.upper(UnitGUID('player') or '')==string.upper(expected) end; " +
+                    $"if not current() then return end; local wanted=GetSpellInfo({SpellId}); " +
+                    "if not wanted then return end; local filter='HELPFUL|CANCELABLE|PLAYER'; " +
+                    "for i=1,40 do local name,rank,icon,count,kind,duration,expires,caster,stealable,consolidate,id=UnitBuff('player',i,filter); " +
+                    "if not name then break end; " +
+                    $"if id=={SpellId} and name==wanted and caster and " +
+                    "string.upper(UnitGUID(caster) or '')==string.upper(expected) then " +
+                    "if current() then CancelUnitBuff('player',i,filter) end; return end end";
+                if (!SameOwner())
+                    return false;
+                Lua.DoString(script);
                 return true;
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is not OperationCanceledException &&
+                                       ex is not System.Threading.ThreadInterruptedException)
             {
                 Helpers.Logging.WriteException(ex);
                 return false;
             }
         }
-        
+
         /// <summary>
         /// Returns a string representation of this aura.
         /// </summary>

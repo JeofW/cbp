@@ -55,16 +55,11 @@ namespace Styx.Logic
         {
             get
             {
-                WoWUnit flightMaster = FindNearestFlightMerchantCandidate();
-
-                if (flightMaster != null && !Navigator.CanNavigateFully(StyxWoW.Me.Location, flightMaster.Location))
-                {
-                    Logging.Write("Blacklisting {0} for 5 minutes because we can't navigate to it.", flightMaster.Name);
-                    Blacklist.Add(flightMaster, new TimeSpan(0, 5, 0));
-                    return null;
-                }
-
-                return flightMaster;
+                // A direct query does not require enabled flight settings or a
+                // cached network, but its observed context must survive callbacks.
+                var observation = new FlightContextObservation();
+                return TryObserveFlightMerchant(observation.IsCurrent, out WoWUnit merchant, out _)
+                    ? merchant : null;
             }
         }
 
@@ -77,17 +72,19 @@ namespace Styx.Logic
         // Publication needs a current observation across both feasibility and
         // diagnostics. An invalidated observation is not an ordinary missing
         // merchant and must not fall through to another route or blacklist it.
-        private static bool TryObserveFlightMerchant(FlightPublicationObservation observation,
+        private static bool TryObserveFlightMerchant(Func<bool> observationCurrent,
             out WoWUnit merchant, out FlightMerchantObservation merchantObservation)
         {
             merchant = null;
             merchantObservation = null;
+            if (!observationCurrent())
+                return false;
             var candidate = FindNearestFlightMerchantCandidate();
             if (candidate == null)
-                return observation.IsCurrent();
+                return observationCurrent();
 
             var selected = new FlightMerchantObservation(candidate);
-            Func<bool> isCurrent = () => observation.IsCurrent() && selected.IsCurrent();
+            Func<bool> isCurrent = () => observationCurrent() && selected.IsCurrent();
             if (!isCurrent())
                 return false;
             bool reachable = Navigator.CanNavigateFully(StyxWoW.Me.Location, selected.Location);
@@ -180,15 +177,43 @@ namespace Styx.Logic
         /// <summary>
         /// Reset flight path state
         /// </summary>
-        public static void Reset()
+        public static void Reset() => ResetOwnedState(false, "FlightPaths.Reset()");
+
+        // Reset and POI clearing share one nonrecursive cleanup lifetime. Detach
+        // flight intent before external callbacks; an obsolete cleanup must not
+        // clear navigation again or consume a callback's replacement POI/intent.
+        internal static void ResetOwnedState(bool clearNonFlightPoi, string reason)
         {
-            _flightIntentOwner = new object();
+            var owner = new object();
+            var expectedPoi = BotPoi.Current;
+            var expectedType = expectedPoi.Type;
+            bool clearPoi = clearNonFlightPoi || expectedType == PoiType.Fly;
+            _flightIntentOwner = owner;
             TakingPathFrom = null;
             TakingPathTo = null;
             Reason = FlightPathReason.None;
-            Navigator.Clear();
-            if (BotPoi.Current.Type == PoiType.Fly)
-                BotPoi.Clear("FlightPaths.Reset()");
+            bool OwnsCleanup() => ReferenceEquals(_flightIntentOwner, owner) &&
+                TakingPathFrom == null && TakingPathTo == null && Reason == FlightPathReason.None &&
+                ReferenceEquals(BotPoi.Current, expectedPoi) && expectedPoi.Type == expectedType;
+
+            ExceptionDispatchInfo? failure = null;
+            try { Navigator.Clear(); }
+            catch (Exception error) { TreeSharp.Composite.PreserveCleanupFailure(ref failure, error); }
+            if (clearPoi && OwnsCleanup())
+            {
+                expectedPoi = new BotPoi(PoiType.None);
+                expectedType = PoiType.None;
+                try { BotPoi.Current = expectedPoi; }
+                catch (Exception error) { TreeSharp.Composite.PreserveCleanupFailure(ref failure, error); }
+                // Diagnostics come after owned mutations. A throwing diagnostic
+                // cannot strand old work, and no old mutation resumes after it.
+                if (OwnsCleanup() && !string.IsNullOrEmpty(reason))
+                {
+                    try { Logging.WriteDebug("Cleared POI - Reason {0}", reason); }
+                    catch (Exception error) { TreeSharp.Composite.PreserveCleanupFailure(ref failure, error); }
+                }
+            }
+            failure?.Throw();
         }
 
         /// <summary>
@@ -210,7 +235,7 @@ namespace Styx.Logic
             FlightPathReason nextReason = FlightPathReason.Use;
             if (startNode.MasterEntry == 0U)
             {
-                if (!TryObserveFlightMerchant(observation, out merchant, out merchantObservation))
+                if (!TryObserveFlightMerchant(observation.IsCurrent, out merchant, out merchantObservation))
                     return false;
                 if (merchant != null)
                 {
@@ -235,6 +260,21 @@ namespace Styx.Logic
                 (merchantObservation != null && !merchantObservation.IsCurrent()))
                 return false;
 
+            if (!PublishObservedFlightPoi(poi, startNode, endNode, nextReason,
+                () => observation.InputsCurrent() &&
+                    (merchantObservation == null || merchantObservation.IsCurrent())))
+                return false;
+            startFp = start;
+            endFp = end;
+            return true;
+        }
+
+        // All explicit and route-driven flight POIs share one publication and
+        // completion protocol. The caller supplies its already-admitted inputs;
+        // no provider re-query or native navigation is introduced here.
+        private static bool PublishObservedFlightPoi(BotPoi poi, XmlFlightNode startNode,
+            XmlFlightNode endNode, FlightPathReason nextReason, Func<bool> inputsCurrent)
+        {
             var publication = new object();
             bool OwnsPublication() => ReferenceEquals(_flightIntentOwner, publication) &&
                 ReferenceEquals(TakingPathFrom, startNode) &&
@@ -266,18 +306,17 @@ namespace Styx.Logic
                 ExceptionDispatchInfo? failure = ExceptionDispatchInfo.Capture(error);
                 if (OwnsPublication())
                 {
-                    bool inputsCurrent = false;
+                    bool observedCurrent = false;
                     try
                     {
-                        inputsCurrent = observation.InputsCurrent() &&
-                            (merchantObservation == null || merchantObservation.IsCurrent());
+                        observedCurrent = inputsCurrent();
                     }
                     catch (Exception observationError)
                     {
                         // Unavailable revalidation cannot certify this intent.
                         TreeSharp.Composite.PreserveCleanupFailure(ref failure, observationError);
                     }
-                    if (!inputsCurrent)
+                    if (!observedCurrent)
                     {
                         try { RevokeOwnedPublication(); }
                         catch (Exception cleanupError)
@@ -297,8 +336,30 @@ namespace Styx.Logic
             if (!OwnsPublication())
                 return false;
 
-            if (!observation.InputsCurrent() ||
-                (merchantObservation != null && !merchantObservation.IsCurrent()))
+            bool finalInputsCurrent;
+            try
+            {
+                finalInputsCurrent = inputsCurrent();
+            }
+            catch (Exception error)
+            {
+                // A failed final observation is unknown, even if a second read
+                // might succeed. Revoke only this call's still-owned publication
+                // without re-reading the failing input or touching newer work.
+                ExceptionDispatchInfo? failure = ExceptionDispatchInfo.Capture(error);
+                try { RevokeOwnedPublication(); }
+                catch (Exception cleanupError)
+                {
+                    TreeSharp.Composite.PreserveCleanupFailure(ref failure, cleanupError);
+                }
+                failure.Throw();
+                throw;
+            }
+            // Virtual observation getters can also replace work while returning
+            // unchanged values. Input equality cannot substitute for ownership.
+            if (!OwnsPublication())
+                return false;
+            if (!finalInputsCurrent)
             {
                 // Clear/Reset also affect navigation. This admission has not
                 // started native movement; revoke only its owned publication.
@@ -306,20 +367,17 @@ namespace Styx.Logic
                 return false;
             }
 
-            startFp = start;
-            endFp = end;
             return true;
         }
 
-        // Observed managed ownership only: this is not a native frame/session
-        // atomicity claim. Snapshot values as well as references because cached
-        // nodes and their connection sets can be edited in place by callbacks.
-        private sealed class FlightPublicationObservation
+        // General managed context is shared by standalone merchant queries and
+        // publications. It observes settings without requiring them to be enabled;
+        // read-only lookup and explicit learn-only POIs retain their contracts.
+        private sealed class FlightContextObservation
         {
             private readonly LocalPlayer player = StyxWoW.Me;
             private readonly CharacterSettings settings = CharacterSettings.Instance;
             private readonly NavigationProvider provider = Navigator.NavigationProvider;
-            private readonly List<XmlFlightNode> network = XmlNodes;
             private readonly object intentOwner = _flightIntentOwner;
             private readonly XmlFlightNode previousFrom = TakingPathFrom, previousTo = TakingPathTo;
             private readonly FlightPathReason previousReason = Reason;
@@ -328,14 +386,15 @@ namespace Styx.Logic
             private readonly uint playerAddress;
             private readonly ulong playerGuid;
             private readonly uint map;
-            private readonly FlightNodeObservation[] nodes;
+            private readonly bool? useFlightPaths, learnFlightPaths;
 
-            internal FlightPublicationObservation()
+            internal FlightContextObservation()
             {
                 playerAddress = player?.BaseAddress ?? 0;
                 playerGuid = player?.Guid ?? 0;
                 map = player?.MapId ?? 0;
-                nodes = network?.Select(node => new FlightNodeObservation(node)).ToArray();
+                useFlightPaths = settings?.UseFlightPaths;
+                learnFlightPaths = settings?.LearnFlightPaths;
             }
 
             internal bool IsCurrent() => InputsCurrent()
@@ -344,13 +403,39 @@ namespace Styx.Logic
                 && ReferenceEquals(TakingPathTo, previousTo) && Reason == previousReason
                 && NeedFlightPath == previousNeed && ReferenceEquals(BotPoi.Current, previousPoi);
 
+            internal bool InputsCurrent() => player != null && ReferenceEquals(StyxWoW.Me, player)
+                && player.BaseAddress == playerAddress && player.Guid == playerGuid && player.MapId == map
+                && ReferenceEquals(CharacterSettings.Instance, settings)
+                && settings?.UseFlightPaths == useFlightPaths && settings?.LearnFlightPaths == learnFlightPaths
+                && ReferenceEquals(Navigator.NavigationProvider, provider);
+        }
+
+        // Cached network values are needed only by route publication and update
+        // decisions, not by direct merchant lookup. This is managed observation,
+        // not a native frame/session atomicity claim.
+        private sealed class FlightPublicationObservation
+        {
+            private readonly FlightContextObservation context = new FlightContextObservation();
+            private readonly List<XmlFlightNode> network = XmlNodes;
+            private readonly FlightNodeObservation[] nodes;
+            private readonly bool requireNetwork;
+
+            internal FlightPublicationObservation(bool requireNetwork = true)
+            {
+                this.requireNetwork = requireNetwork;
+                nodes = network?.Select(node => new FlightNodeObservation(node)).ToArray();
+            }
+
+            internal bool IsCurrent() => context.IsCurrent() && InputsCurrent();
+
             internal bool InputsCurrent()
             {
-                if (player == null || !ReferenceEquals(StyxWoW.Me, player) ||
-                    player.BaseAddress != playerAddress || player.Guid != playerGuid || player.MapId != map ||
-                    settings == null || !ReferenceEquals(CharacterSettings.Instance, settings) || !settings.UseFlightPaths ||
-                    !ReferenceEquals(Navigator.NavigationProvider, provider) ||
-                    network == null || !ReferenceEquals(XmlNodes, network) || network.Count != nodes.Length)
+                if (!context.InputsCurrent() || CharacterSettings.Instance?.UseFlightPaths != true ||
+                    !ReferenceEquals(XmlNodes, network))
+                    return false;
+                if (network == null)
+                    return !requireNetwork;
+                if (network.Count != nodes.Length)
                     return false;
                 for (int i = 0; i < nodes.Length; i++)
                     if (!nodes[i].IsCurrent(network[i])) return false;
@@ -518,23 +603,35 @@ namespace Styx.Logic
         /// </summary>
         public static void SetPoi(XmlFlightNode node = null)
         {
-            switch (Reason)
+            var nextReason = Reason;
+            if (nextReason != FlightPathReason.Learn && nextReason != FlightPathReason.Update &&
+                nextReason != FlightPathReason.Use)
+                return;
+            if (nextReason == FlightPathReason.Use &&
+                (node == null || node.MasterEntry == 0U || !IsFinitePoint(node.Location)))
+                return;
+
+            var observation = new FlightContextObservation();
+            BotPoi poi;
+            Func<bool> inputsCurrent;
+            if (nextReason == FlightPathReason.Use)
             {
-                case FlightPathReason.Learn:
-                case FlightPathReason.Update:
-                    if (NearestFlightMerchant != null)
-                        BotPoi.Current = new BotPoi(NearestFlightMerchant, PoiType.Fly);
-                    break;
-                case FlightPathReason.Use:
-                    if (node != null)
-                    {
-                        BotPoi.Current = new BotPoi(node.Location, PoiType.Fly)
-                        {
-                            Entry = node.MasterEntry
-                        };
-                    }
-                    break;
+                var selected = new FlightNodeObservation(node);
+                poi = new BotPoi(node.Location, PoiType.Fly) { Entry = node.MasterEntry };
+                inputsCurrent = () => observation.InputsCurrent() && selected.IsCurrent(node);
             }
+            else
+            {
+                if (!TryObserveFlightMerchant(observation.IsCurrent, out WoWUnit merchant,
+                    out FlightMerchantObservation merchantObservation) || merchant == null)
+                    return;
+                poi = new BotPoi(merchant, PoiType.Fly);
+                inputsCurrent = () => observation.InputsCurrent() && merchantObservation.IsCurrent();
+            }
+            // Check ownership after the last callback-capable input observation.
+            if (poi.Type != PoiType.Fly || !inputsCurrent() || !observation.IsCurrent())
+                return;
+            PublishObservedFlightPoi(poi, TakingPathFrom, TakingPathTo, nextReason, inputsCurrent);
         }
 
         /// <summary>
@@ -553,10 +650,15 @@ namespace Styx.Logic
             if (!CharacterSettings.Instance.UseFlightPaths)
                 return false;
 
-            WoWUnit nearestFlightMerchant = NearestFlightMerchant;
-            bool needsUpdate = nearestFlightMerchant != null && 
-                               FindNodeByMasterEntry(nearestFlightMerchant.Entry, StyxWoW.Me.Level) == null;
-
+            // A missing network may need updating. A network replaced or edited
+            // by the provider, however, is not the observation admitted here.
+            var observation = new FlightPublicationObservation(requireNetwork: false);
+            if (!TryObserveFlightMerchant(observation.IsCurrent, out WoWUnit merchant,
+                out FlightMerchantObservation merchantObservation) || merchant == null)
+                return false;
+            bool needsUpdate = FindNodeByMasterEntry(merchant.Entry, StyxWoW.Me.Level) == null;
+            if (!observation.IsCurrent() || !merchantObservation.IsCurrent())
+                return false;
             if (needsUpdate)
                 Reason = FlightPathReason.Update;
 

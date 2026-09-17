@@ -74,6 +74,10 @@ namespace Styx.Logic.Inventory
         MetaSocket,
         RedSocket,
         YellowSocket,
-        BlueSocket
+        BlueSocket,
+
+        // Legacy item/enchantment MP5 spelling. Append the alias so existing
+        // numeric stat identities and the canonical weight key stay unchanged.
+        ManaPer5Sec = ManaRegeneration
     }
 }

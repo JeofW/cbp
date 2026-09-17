@@ -1,11 +1,14 @@
+using System;
+using Styx.WoWInternals;
 using Styx.WoWInternals.WoWObjects;
 using Styx.WoWInternals.World;
 
 namespace Styx.Logic.Pathing
 {
     /// <summary>
-    /// Centralizes WotLK liquid detection. The swimming flag is cleared while a player
-    /// stands on a submerged riverbed, so an eye-to-feet liquid trace is also required.
+    /// Conservative liquid admission from swimming and a local surface crossing.
+    /// A failed trace is not proof of dry ground. This does not establish depth,
+    /// a safe shoreline route, or a complete native frame/session identity.
     /// </summary>
     public static class LiquidEnvironment
     {
@@ -14,6 +17,10 @@ namespace Styx.Logic.Pathing
         private static uint _lastProbeMapId;
         private static WoWPoint _lastProbeLocation = WoWPoint.Zero;
         private static bool _lastProbeResult;
+        private static bool _hasProbe;
+        private static LocalPlayer? _lastProbePlayer;
+        private static object? _lastProbeMemory;
+        private static uint _lastProbeAddress;
 
         public static bool IsInLiquid(bool isSwimming, bool liquidBetweenEyeAndFeet)
         {
@@ -22,26 +29,57 @@ namespace Styx.Logic.Pathing
 
         public static bool IsPlayerInLiquid(LocalPlayer player)
         {
-            if (player.IsSwimming)
-                return true;
-
-            long now = System.Environment.TickCount64;
-            if (player.MapId == _lastProbeMapId &&
-                now - _lastProbeTick < ProbeIntervalMilliseconds &&
-                player.Location.Distance2DSqr(_lastProbeLocation) < 4f)
+            var memory = ObjectManager.Wow;
+            uint address = player?.BaseAddress ?? 0U;
+            bool OwnsObservation() => player != null && ReferenceEquals(ObjectManager.Me, player)
+                && ReferenceEquals(ObjectManager.Wow, memory) && player.BaseAddress == address;
+            if (player == null || memory == null || address == 0U || !player.IsValid || !OwnsObservation())
             {
-                return _lastProbeResult;
+                _hasProbe = false;
+                return true;
+            }
+            if (player.IsSwimming)
+            {
+                // Leaving and reentering a dry-looking pose cannot resurrect the
+                // dry observation that preceded an observed swimming interval.
+                _hasProbe = false;
+                return true;
             }
 
-            bool liquidBetweenEyeAndFeet = GameWorld.TraceLine(
-                player.GetTraceLinePos(),
-                player.Location,
-                GameWorld.CGWorldFrameHitFlags.HitTestLiquid);
+            long now = Environment.TickCount64;
+            WoWPoint location = player.Location;
+            uint mapId = player.MapId;
+            if (!OwnsObservation() || !float.IsFinite(location.X) || !float.IsFinite(location.Y) || !float.IsFinite(location.Z))
+            {
+                _hasProbe = false;
+                return true;
+            }
+            // A dry point says nothing about a nearby shoreline. Only a wet
+            // result may be reused after horizontal movement without another trace.
+            long age = now - _lastProbeTick;
+            if (_hasProbe && ReferenceEquals(_lastProbePlayer, player)
+                && ReferenceEquals(_lastProbeMemory, memory) && _lastProbeAddress == address
+                && mapId == _lastProbeMapId && age >= 0 && age < ProbeIntervalMilliseconds
+                && location.Z == _lastProbeLocation.Z && location.DistanceSqr(_lastProbeLocation) < 4f
+                && (_lastProbeResult || location == _lastProbeLocation))
+                return _lastProbeResult;
 
+            bool liquidBetweenEyeAndFeet = GameWorld.TraceLine(
+                location.Add(0f, 0f, 2.132f), location,
+                GameWorld.CGWorldFrameHitFlags.HitTestLiquid);
+            if (!OwnsObservation())
+            {
+                _hasProbe = false;
+                return true;
+            }
             _lastProbeTick = now;
-            _lastProbeMapId = player.MapId;
-            _lastProbeLocation = player.Location;
+            _lastProbeMapId = mapId;
+            _lastProbeLocation = location;
+            _lastProbePlayer = player;
+            _lastProbeMemory = memory;
+            _lastProbeAddress = address;
             _lastProbeResult = IsInLiquid(false, liquidBetweenEyeAndFeet);
+            _hasProbe = true;
             return _lastProbeResult;
         }
     }

@@ -51,7 +51,7 @@ namespace Singular.Helpers
         ///  Creates a behavior to start shooting current target with the wand.
         /// </summary>
         /// <remarks>
-        ///  Created 23/05/2011
+        ///  Created 23/05/2011.
         /// </remarks>
         /// <returns></returns>
         public static Composite CreateUseWand()
@@ -77,51 +77,68 @@ namespace Singular.Helpers
                 );
         }
 
-        /// <summary>Creates an interrupt spell cast composite. This will attempt to use racials before any class/spec abilities. It will attempt to stun if possible!</summary>
-        /// <remarks>Created 9/7/2011.</remarks>
-        /// <param name="onUnit">The on unit.</param>
-        /// <returns>.</returns>
+        /// <summary>Creates an interrupt decision with class abilities before racials.</summary>
+        /// <param name="onUnit">Selector evaluated with the original caller context.</param>
         public static Composite CreateInterruptSpellCast(UnitSelectionDelegate onUnit)
         {
-            return
+            UnitSelectionDelegate current = context => context is UnitSelectionDelegate observation
+                ? observation(context) : null;
+            return new PrioritySelector(
+                context => CaptureInterruptTarget(onUnit, context),
                 new Decorator(
-                // If the target is casting, and can actually be interrupted, AND we've waited out the double-interrupt timer, then find something to interrupt with.
-                    ret => onUnit != null && onUnit(ret) != null && onUnit(ret).IsCasting && onUnit(ret).CanInterruptCurrentSpellCast,
+                    ret => current(ret) != null,
                     new PrioritySelector(
-                        Spell.Cast("Avenger's Shield", onUnit),
-                        Spell.Cast("Hammer of Justice", onUnit),
-                        Spell.Cast("Repentance", onUnit,
-                            ret => onUnit(ret).IsPlayer || onUnit(ret).IsDemon || onUnit(ret).IsHumanoid ||
-                                    onUnit(ret).IsDragon || onUnit(ret).IsGiant || onUnit(ret).IsUndead),
+                        // Spellbook availability alone is not current role authority.
+                        Spell.Cast("Avenger's Shield", ret => TalentManager.CurrentSpec == TalentSpec.ProtectionPaladin
+                            ? current(ret) : null),
+                        Spell.Cast("Hammer of Justice", current),
+                        Spell.Cast("Repentance", current,
+                            ret => current(ret) is { } target && (target.IsPlayer || target.IsDemon || target.IsHumanoid ||
+                                target.IsDragon || target.IsGiant || target.IsUndead)),
 
-                        Spell.Cast("Kick", onUnit),
-                        Spell.Cast("Gouge", onUnit, ret => !onUnit(ret).IsBoss() && !onUnit(ret).MeIsSafelyBehind), // Can't gouge bosses.
+                        Spell.Cast("Kick", current),
+                        Spell.Cast("Gouge", current, ret => current(ret) is { } target && !target.IsBoss() && !target.MeIsSafelyBehind),
+                        Spell.Cast("Counterspell", current),
+                        Spell.Cast("Wind Shear", current),
+                        Spell.Cast("Pummel", current),
+                        // Gag Order is a silence; retain its non-boss and talent gates.
+                        Spell.Cast("Heroic Throw", current, ret => TalentManager.GetCount(3, 10) == 2
+                            && current(ret) is { } target && !target.IsBoss()),
+                        Spell.Cast("Silence", current),
+                        Spell.Cast("Silencing Shot", current),
+                        Spell.Cast("Bash", current, ret => current(ret) is { } target && !target.IsBoss()),
+                        Spell.Cast("Strangulate", current),
+                        Spell.Cast("Mind Freeze", current),
+                        // Racials last, preserving the existing order.
+                        Spell.Cast("Arcane Torrent", current),
+                        Spell.Cast("War Stomp", current, ret => current(ret) is { } target && !target.IsBoss() && target.Distance < 8)
+                    )));
+        }
 
-                        Spell.Cast("Counterspell", onUnit),
-
-                        Spell.Cast("Wind Shear", onUnit),
-
-                        Spell.Cast("Pummel", onUnit),
-                // Gag Order only works on non-bosses due to it being a silence, not an interrupt!
-                // WotLK QC: Gag Order is at index 10 in WotLK Prot tree (was index 7 in Cata)
-                        Spell.Cast("Heroic Throw", onUnit, ret => TalentManager.GetCount(3, 10) == 2 && !onUnit(ret).IsBoss()),
-
-                        Spell.Cast("Silence", onUnit),
-
-                        Spell.Cast("Silencing Shot", onUnit),
-
-                        // Can't stun most bosses. So use it on trash, etc.
-                        Spell.Cast("Bash", onUnit, ret => !onUnit(ret).IsBoss()),
-
-                        Spell.Cast("Strangulate", onUnit),
-                        Spell.Cast("Mind Freeze", onUnit),
-
-
-                        // Racials last.
-                        Spell.Cast("Arcane Torrent", onUnit),
-                // Don't waste stomp on bosses. They can't be stunned 99% of the time!
-                        Spell.Cast("War Stomp", onUnit, ret => !onUnit(ret).IsBoss() && onUnit(ret).Distance < 8)
-                        ));
+        private static UnitSelectionDelegate CaptureInterruptTarget(UnitSelectionDelegate select, object callerContext)
+        {
+            var player = StyxWoW.Me;
+            var spec = TalentManager.CurrentSpec;
+            ulong playerGuid = player?.Guid ?? 0;
+            var target = select?.Invoke(callerContext);
+            ulong targetGuid = target?.Guid ?? 0;
+            // The closure owns this decision, not the caller's future target. Spell.Cast
+            // resolves it again after setup; no alternate target may inherit permission.
+            return _ =>
+            {
+                if (select == null || player == null || target == null
+                    || !ReferenceEquals(StyxWoW.Me, player) || player.Guid != playerGuid
+                    || TalentManager.CurrentSpec != spec)
+                    return null;
+                var observed = select(callerContext);
+                if (!ReferenceEquals(observed, target) || target.Guid != targetGuid
+                    || !target.IsValid || !target.IsAlive || !target.IsCasting || !target.CanInterruptCurrentSpellCast)
+                    return null;
+                // Selectors and virtual observations can change ownership themselves.
+                return ReferenceEquals(StyxWoW.Me, player) && player.Guid == playerGuid
+                    && TalentManager.CurrentSpec == spec && target.Guid == targetGuid
+                    ? target : null;
+            };
         }
 
         /// <summary>

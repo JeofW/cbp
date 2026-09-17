@@ -41,6 +41,7 @@ namespace Singular.Dynamics
                 //Logger.WriteDebug("[CompositeBuilder] Checking attributes on " + mi.Name);
                 bool classMatches = false, specMatches = false, behaviorMatches = false, contextMatches = false, hasIgnore = false;
                 int thePriority = 0;
+                int matchingBehaviorCount = 0;
                 var theBehaviourType = BehaviorType.All;
                 var theIgnoreType = BehaviorType.All;
                 foreach (object ca in mi.GetCustomAttributes(false))
@@ -74,7 +75,7 @@ namespace Singular.Dynamics
                         }
                         //Logger.WriteDebug(mi.Name + " has my behavior");
                         theBehaviourType = attrib.Type;
-                        behaviourCount++;
+                        matchingBehaviorCount++;
                         behaviorMatches = true;
                     }
                     else if (ca is ContextAttribute)
@@ -108,7 +109,7 @@ namespace Singular.Dynamics
 
                 if (behaviorMatches && hasIgnore && theBehaviourType == theIgnoreType)
                 {
-                    behaviourCount--;
+                    matchingBehaviorCount--;
                 }
 
                 // If all our attributes match, then mark it as wanted!
@@ -141,6 +142,9 @@ namespace Singular.Dynamics
                     {
                         matchedMethods[thePriority].AddChild(matched);
                     }
+                    // Rejected class/spec/context candidates and failed factories
+                    // cannot contribute support to the routine being constructed.
+                    behaviourCount += matchingBehaviorCount;
                 }
             }
             // If we found no methods, rofls!

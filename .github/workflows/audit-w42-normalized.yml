@@ -1,7 +1,7 @@
 name: Audit W42 normalized baseline and current owners
 on:
   push:
-    branches: [audit/next-42-test-aggregation-20260914, audit/next-42-ready-owner-20260914, audit/next-42-scan-entry-20260914, audit/next-42-scheduler-observation-20260914]
+    branches: [audit/next-42-test-aggregation-20260914, audit/next-42-ready-owner-20260914, audit/next-42-scan-entry-20260914, audit/next-42-scheduler-observation-20260914, audit/next-47-flight-owner-boundaries-20260916]
     paths: ['Tools/**', '**.cs', '.github/workflows/audit-w42-normalized.yml', '.github/workflows/audit-integrated.yml']
 permissions:
   contents: read

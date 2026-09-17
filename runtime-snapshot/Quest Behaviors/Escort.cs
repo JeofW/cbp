@@ -135,32 +135,22 @@ namespace Styx.Bot.Quest_Behaviors.Escort
         {
             get
             {
-                WoWObject @object = null;
+                var player = Me;
+                if (player == null || !player.IsValid || !player.IsAlive || ObjectId == null)
+                    return null;
 
-                switch (MobType)
-                {
-                    case ObjectType.GameObject:
-                        @object = ObjectManager.GetObjectsOfType<WoWGameObject>()
-                                                .OrderBy(ret => ret.Distance)
-                                                .FirstOrDefault(obj => ObjectId.Contains((int)obj.Entry));
-                        break;
-
-                    case ObjectType.Npc:
-                        var baseTargets = ObjectManager.GetObjectsOfType<WoWUnit>()
-                                                               .OrderBy(target => target.Distance)
-                                                               .Where(target => ObjectId.Contains((int)target.Entry));
-
-                        var npcStateQualifiedTargets = baseTargets
-                                                            .Where(target => (target.IsAlive));
-
-                        @object = npcStateQualifiedTargets.FirstOrDefault();
-                        break;
-                }
-
-                if (@object != null)
-                { LogMessage("debug", @object.Name); }
-
-                return @object;
+                // A read captures one subject; do not rediscover it inside each
+                // candidate predicate or let an invalid nearest object mask it.
+                if (MobType == ObjectType.GameObject)
+                    return ObjectManager.GetObjectsOfType<WoWGameObject>()
+                        .Where(obj => obj != null && obj.IsValid && ObjectId.Contains((int)obj.Entry))
+                        .OrderBy(obj => obj.Distance).FirstOrDefault();
+                if (MobType == ObjectType.Npc)
+                    return ObjectManager.GetObjectsOfType<WoWUnit>()
+                        .Where(unit => unit != null && unit.IsValid && unit.IsAlive
+                            && ObjectId.Contains((int)unit.Entry))
+                        .OrderBy(unit => unit.Distance).FirstOrDefault();
+                return null;
             }
         }
 
@@ -168,10 +158,48 @@ namespace Styx.Bot.Quest_Behaviors.Escort
         {
             get
             {
-                return (ObjectManager.GetObjectsOfType<WoWUnit>()
-                                        .Where(u => (u.CurrentTarget == DefendObject || u.Location.Distance(DefendObject.Location) < 10) && !u.Dead)
-                                        .OrderBy(u => u.Location.Distance(DefendObject.Location)).ToList());
+                var subject = DefendObject;
+                if (subject == null || !subject.IsValid || subject.Guid == 0)
+                    return new List<WoWUnit>();
+                var location = subject.Location;
+                return ObjectManager.GetObjectsOfType<WoWUnit>()
+                    .Where(unit => unit != null && unit.IsValid && unit.IsAlive
+                        && unit.IsHostile && unit.Guid != subject.Guid)
+                    .Select(unit => new { Unit = unit, Distance = unit.Location.Distance(location),
+                        AttackingSubject = unit.CurrentTargetGuid == subject.Guid })
+                    .Where(candidate => !float.IsNaN(candidate.Distance) && !float.IsInfinity(candidate.Distance)
+                        && (candidate.AttackingSubject || candidate.Distance < 10))
+                    .OrderByDescending(candidate => candidate.AttackingSubject)
+                    .ThenBy(candidate => candidate.Distance)
+                    .Select(candidate => candidate.Unit).ToList();
             }
+        }
+
+        private bool HasReachedEscortDestination()
+        {
+            var player = Me;
+            if (EscortUntil != EscortUntilType.DestinationReached || player == null
+                || !player.IsValid || !player.IsAlive || !IsFinitePoint(EscortDestination))
+                return false;
+            var subject = DefendObject;
+            return subject != null && subject.IsValid && IsFinitePoint(subject.Location)
+                && IsFinitePoint(player.Location)
+                && player.Location.Distance(EscortDestination) <= DestinationTolerance
+                && subject.Location.Distance(EscortDestination) <= DestinationTolerance;
+        }
+
+        private static bool IsFinitePoint(WoWPoint point) => point != WoWPoint.Empty
+            && !float.IsNaN(point.X) && !float.IsInfinity(point.X)
+            && !float.IsNaN(point.Y) && !float.IsInfinity(point.Y)
+            && !float.IsNaN(point.Z) && !float.IsInfinity(point.Z);
+
+        private RunStatus TargetEscortThreat()
+        {
+            // Select the attacker, not its possibly friendly or missing victim.
+            var enemy = EnemyList.FirstOrDefault();
+            if (enemy == null) return RunStatus.Failure;
+            enemy.Target();
+            return RunStatus.Success;
         }
 
 
@@ -244,8 +272,7 @@ namespace Styx.Bot.Quest_Behaviors.Escort
 
                         new PrioritySelector(
 
-                    new Decorator(ret => ((EscortUntil == EscortUntilType.DestinationReached)
-                                          && (Me.Location.Distance(EscortDestination) <= DestinationTolerance)),
+                    new Decorator(ret => HasReachedEscortDestination(),
                         new Action(delegate
                         {
                             TreeRoot.StatusText = "Finished!";
@@ -308,7 +335,7 @@ namespace Styx.Bot.Quest_Behaviors.Escort
                             new Decorator(
                                 ret => Me.CurrentTarget == null,
                                 new Sequence(
-                                new Action(ret => EnemyList[0].CurrentTarget.Target()),
+                                new Action(ret => TargetEscortThreat()),
                                 new Action(ret => StyxWoW.SleepForLagDuration()))),
                             new Decorator(
                                 ret => !Me.Combat,
@@ -326,8 +353,7 @@ namespace Styx.Bot.Quest_Behaviors.Escort
 
                         new PrioritySelector(
 
-                    new Decorator(ret => ((EscortUntil == EscortUntilType.DestinationReached)
-                                          && (Me.Location.Distance(EscortDestination) <= DestinationTolerance)),
+                    new Decorator(ret => HasReachedEscortDestination(),
                         new Action(delegate
                         {
                             TreeRoot.StatusText = "Finished!";
@@ -415,7 +441,7 @@ namespace Styx.Bot.Quest_Behaviors.Escort
                             new Decorator(
                                 ret => Me.CurrentTarget == null,
                                 new Sequence(
-                                new Action(ret => EnemyList[0].CurrentTarget.Target()),
+                                new Action(ret => TargetEscortThreat()),
                                 new Action(ret => StyxWoW.SleepForLagDuration()))),
                             new Decorator(
                                 ret => !Me.Combat,

@@ -1292,6 +1292,13 @@ namespace WholesomeAQ
                     && immediateTarget.IsHostile
                     && immediateTarget.IsTargetingMeOrPet);
 
+                // Consumables cannot start in water or an unknown liquid observation.
+                // Release only the routine rest pause so movement/air recovery is not
+                // held behind a thirty-second wait for an impossible food/drink aura.
+                bool canRestHere = !LiquidEnvironment.IsPlayerInLiquid(StyxWoW.Me);
+                if (!canRestHere)
+                    _restingPaused = false;
+
                 if (_restingPaused)
                 {
                     TimeSpan elapsed = DateTime.Now - _restStartTime;
@@ -1339,7 +1346,7 @@ namespace WholesomeAQ
                     _lastFacingLog = DateTime.Now;
                 }
 
-                if (!_restingPaused && !StyxWoW.Me.Combat && DateTime.Now > _restTimeoutEnd)
+                if (canRestHere && !_restingPaused && !StyxWoW.Me.Combat && DateTime.Now > _restTimeoutEnd)
                 {
                     bool usesMana = StyxWoW.Me.MaxMana > 0;
                     if (WholesomeRestPolicy.ShouldStartRest(

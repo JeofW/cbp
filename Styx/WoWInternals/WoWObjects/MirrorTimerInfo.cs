@@ -25,7 +25,13 @@ namespace Styx.WoWInternals.WoWObjects
 		{
 			get
 			{
-				return (uint)((long)this.InitialValue + (long)this.ChangePerMillisecond * (long)((ulong)(ObjectManager.PerformanceCounter - this.StartTime)));
+				// Client ticks wrap as uint; remaining time must not. A negative
+				// countdown is empty, not billions of milliseconds of oxygen.
+				if (MaxValue <= 0)
+					return 0;
+				uint elapsed = _paused != 0 ? 0U : unchecked(ObjectManager.PerformanceCounter - StartTime);
+				long remaining = (long)InitialValue + (long)ChangePerMillisecond * elapsed;
+				return (uint)Math.Clamp(remaining, 0L, (long)MaxValue);
 			}
 		}
 

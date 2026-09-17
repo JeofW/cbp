@@ -102,6 +102,8 @@ namespace Styx.WoWInternals.WoWObjects
         public bool IsCasting { get; set; }
         public bool IsChanneling { get; set; }
         public bool IsMoving { get; set; }
+        public bool IsPlayer { get; set; }
+        public bool Fleeing { get; set; }
         public bool IsAutoAttacking { get; set; }
         public float Distance { get; set; } = 5;
         public float DistanceSqr => Distance * Distance;
@@ -161,6 +163,7 @@ namespace Singular.Settings
         public int DivineProtectionHealthRet => 20;
         public int ConsecrationCount => 3;
         public int DivinePleaMana => 30;
+        public int RetributionHealHealth => 30;
     }
     internal class SingularSettings
     {
@@ -170,7 +173,7 @@ namespace Singular.Settings
 }
 namespace Singular.Helpers
 {
-    public static class Unit { public static List<WoWUnit> NearbyUnfriendlyUnits { get; } = new(); }
+    public static class Unit { public static List<WoWUnit> NearbyUnfriendlyUnits { get; } = new(); public static bool IsAreaEffectSafe(string name, WoWUnit target) => true; }
     public static class Safers { public static Composite EnsureTarget() => Fixture.Nothing(); }
     public static class Common
     {

@@ -113,7 +113,7 @@ namespace SmartLootRoller
             if (Weight_SpellPower > 0) dict["SpellPower"] = Weight_SpellPower;
             if (Weight_Intellect > 0) dict["Intellect"] = Weight_Intellect;
             if (Weight_Spirit > 0) dict["Spirit"] = Weight_Spirit;
-            if (Weight_Mp5 > 0) dict["ManaEvery5Seconds"] = Weight_Mp5;
+            if (Weight_Mp5 > 0) dict["Mp5"] = Weight_Mp5;
             return dict;
         }
 

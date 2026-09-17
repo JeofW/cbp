@@ -56,6 +56,7 @@ namespace Singular.ClassSpecific.Shaman
         [Class(WoWClass.Shaman)]
         [Spec(TalentSpec.RestorationShaman)]
         [Behavior(BehaviorType.Combat)]
+        [Behavior(BehaviorType.Pull)]
         [Context(WoWContext.All)]
         public static Composite CreateRestoShamanCombatBehavior()
         {

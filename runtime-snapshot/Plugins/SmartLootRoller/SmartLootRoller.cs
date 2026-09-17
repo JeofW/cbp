@@ -207,12 +207,22 @@ namespace SmartLootRoller
                     }
                 }
 
+                // Original 3.3.5 exposes roll availability separately from item stats.
+                // A score upgrade cannot override an unavailable Need option; use
+                // the configured nonmatching fallback, including explicit DE policy.
+                if (matchesCriteria && settings.MatchRule == MatchRollType.Need &&
+                    !Lua.GetReturnVal<bool>("return GetLootRollItemInfo(" + rollId + ")", 5))
+                    matchesCriteria = false;
+
                 // 4. Determine Roll Type and Execute Roll
                 int rollType = (int)NoMatchRollType.Greed;
 
                 if (matchesCriteria)
                 {
-                    rollType = (int)settings.MatchRule;
+                    // Saved enum values are not Lua roll codes: legacy Pass=3
+                    // must remain readable, but code 3 means Disenchant to the client.
+                    rollType = settings.MatchRule == MatchRollType.Need ? 1
+                        : settings.MatchRule == MatchRollType.Greed ? 2 : 0;
                     Logging.Write("[SmartLootRoller] Item '{0}' MATCHES your criteria. Rolling {1}.", rollItemInfo.Name, settings.MatchRule);
                 }
                 else
@@ -225,11 +235,18 @@ namespace SmartLootRoller
                     }
                     else
                     {
-                        rollType = (int)settings.NoMatchRule;
+                        // Unknown saved values also fail closed to Pass, never DE.
+                        rollType = settings.NoMatchRule == NoMatchRollType.Greed ? 2 : 0;
                         Logging.Write("[SmartLootRoller] Item '{0}' does NOT match. Rolling {1}.", rollItemInfo.Name, settings.NoMatchRule);
                     }
                 }
 
+                if (rollType == 2 &&
+                    !Lua.GetReturnVal<bool>("return GetLootRollItemInfo(" + rollId + ")", 6))
+                {
+                    rollType = 0;
+                    Logging.Write("[SmartLootRoller] Greed is unavailable; passing.");
+                }
                 Lua.DoString("RollOnLoot(" + rollId + ", " + rollType + ")");
             }
             catch (Exception ex)

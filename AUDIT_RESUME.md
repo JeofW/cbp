@@ -1,22 +1,13 @@
-# CopilotBuddy audit — scheduler observation continuation
+# CopilotBuddy audit — W54 verified shared buffs and loot permissions
 
-14 September 2026. Resume draft PR44, branch `audit/next-42-scheduler-observation-20260914`, stacked on PR42 at e97263eef2dbf1bc6b050d80d9c3e51232ce42e2. Re-read current heads before writing. Do not resume from the older publication-only handoff or recreate raw/readiness/sale/fixture fixes recovered from interrupted continuations.
+Read `docs/audit/WOTLK_335A_RESEARCH_POLICY.md` FIRST. The fixed gameplay/client target is original WoW3.3.5a build12340, not WrathClassic3.4.x, Cataclysm or Retail. Every class/spec, stat, buff, gear and quest claim must have version-appropriate evidence. Then read `docs/audit/2026-09-17/W54_CHECKPOINT.md`, `W54_EVIDENCE.json`, `W54_GEAR_RESEARCH.md`, and `NEXT_CHAT_PROMPT.md`.
 
-## Current state
+Continue draft PR47 in `jeofwong/CopilotBuddy-private`, branch `audit/next-47-flight-owner-boundaries-20260916`. Re-read live refs before writing. Latest verified code is **06ab57a31bf2a1634b6dafaf781fa70f73197623**, tree53c2da7ecd31c7ea17de454d95a7d24bc96d67aa. Current focused4/4, integrated17/17 and host compile0 pass; host3296 warnings/0 errors, not game acceptance. Final focused/integrated1761 input hashes,92 normalized members and80 aggregate group outcomes match;115 source exports verified.
 
-**Test-first reproduction exists; proposed production repair is not verified or promoted.**
+New unchanged-fixture repairs: shared buff dispatch36/54->54/54, and client roll availability61/79->79/79, both with18 intended assertions and0unexpected in clean red. Intermediate e300 passed the new cases but failed two older closure/predicate compatibility checks;704 restored explicit outer guards without altering tests. The final loot fix06ab preserves existing stat weights, enum serialization and authorized DE behavior. No unexecuted test remains at the verified code head.
 
-New tested commit35cc917435f74d33558d0250e566bcb7ad9a6641:23 actual raw-memory/scheduler/XML/file/loader/running-gate cases execute,7pass/16assertions/0unexpected. Existing scheduler2/5 remains. Actual combined17 builds all succeed;16 executions pass and the Wholesome aggregate fails. Host builds with0errors/3278warnings, tests_run:false. Complete artifacts and matching1690 source/config hashes were inspected;33 normalized outputs match after their expected directory-layout mapping.
+Public-CI adaptation is already authorized, implemented and running. Older pending-approval/private-only-skipped status is obsolete. The current continuation successfully committed the policy, code/tests and this documentation; do not infer current write failure from old incidents. Bounded native retries and exact-source verification still apply.
 
-Candidate preflight at9a84d797ec6a77f9967c68ffe2117946e10d6843, run34831727583, failed twice BEFORE runner assignment: zero steps, runner_id0. No candidate C# build/run occurred. The error annotation text is not available through the connector. Inspect that annotation in GitHub Actions; do not repeat blind retries or mislabel this as missing GitHub publishing actions.
+Master was freshly read at518baec545cedc8fe219afc0861c0e8cb9475a8f, preserving its separate README-only edit. No PR47 merge, force push, deployment or installed binary/mesh replacement. Preserve backups c43c50d8/8382a7ec, exclusions25/43/45 and the already integrated PR44 history. Archive older root pointers under `docs/audit/2026-09-17/pre-w54/`.
 
-## Read in order
-
-1. `docs/audit/2026-09-14/W42_SCHEDULER_OBSERVATION_CHECKPOINT.md` — exact state, recovered vs new attribution, verification and next action.
-2. `W42_SCHEDULER_OBSERVATION_EVIDENCE.json` and `W42_SCHEDULER_OBSERVATION_GRAPH.json` in the same directory.
-3. `W42_SCHEDULER_OBSERVATION_PLAN.md`, `W42_SCHEDULER_CANDIDATE_UNVERIFIED.diff`, `NEXT_CHAT_PROMPT.md` and `GITHUB_CONNECTION_RECOVERY.md`.
-4. Existing raw/readiness/sale/publication plans and all older evidence, plus `QUEST_TRAVEL_COVERAGE.md`.
-
-The candidate preparation script and temporary preflight workflow are deliberately retained to resume exact verification. They have not changed production. Remove them only when promoting a verified source blob. Previous root handovers are retained byte-for-byte under `docs/audit/2026-09-14/pre-scheduler/`.
-
-All original assertions and successful controls remain. The actual XYZ/cliff/lift/wind-rider complaints, continuous execution freshness without combat suppression, true session/frame/ABA provenance, typed cache freshness, broader protection/merchant lifecycle, independent review and live original3.3.5a acceptance remain open. No merge/deployment/native/mesh/installed change. Master8382a7ec and backupc43c50d8 protected;34 already merged,35/36 retained,25 excluded,43 separate. Work remains in ChatGPT/GitHub.
+The existing47-case Escort repair and63-case BattleShout/Might repair are retained, not pending recreation. Automatic Wholesome escort strategy, effective-rank/all-spec singleton policy, safe underwater escape, equipment-policy unification/active reward path, remaining native/upstream adaptations, independent review and original-client acceptance remain open. The preset contains positive Strength/Agility weights but two equipment paths disagree; no optimal DPS coefficients are established.

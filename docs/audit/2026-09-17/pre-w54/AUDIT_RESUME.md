@@ -1,0 +1,11 @@
+# CopilotBuddy audit — W51 focused-verified spell lookup and Paladin roles
+
+Read `docs/audit/2026-09-16/W51_FINAL_REF_RECONCILIATION.md` FIRST, then `W51_SPELL_ROLE_CHECKPOINT.md`, `W51_EVIDENCE.json`, and `NEXT_CHAT_PROMPT.md`. Continue draft PR47 on `audit/next-47-flight-owner-boundaries-20260916` in `jeofwong/CopilotBuddy-private`. Re-read live refs before writing.
+
+**Final observed master is 518baec545cedc8fe219afc0861c0e8cb9475a8f**, a separate README-only child of approved PR46 merge71c79d1c. Native compare confirms one path,README.md,136 deletions and no code/test/workflow changes. Preserve that external edit; earlier W51 master71c79d1c statements are superseded, not permission to reset or restore master. Both backups c43c50d8 and8382a7ec remain unchanged.
+
+Latest focused-verified code remains **c97d699ae4019549619facb925743bd48ca060a5**, tree45697de646100c98d8794b813013d4284d262ecf. Two new actual unchanged-fixture Windows repairs: spell-row lookup11/24->24/24 and Paladin tank fallback16/28->28/28, all intended assertion reds with zero unexpected errors. All4 focused projects pass;66Wholesome+3QuestLog groups,1750 input hashes,81 normalized members and104 source exports verified. No pending unexecuted test remains at this code revision. Subsequent commits are documentation only.
+
+Correction retained: earlier ports057a153b already passed focused run35105135595,24/24 contracts. Only full integrated/host were skipped under private-only guards. The focused workflow was already enabled; no workflow,guard,permission,event or suite migration was changed. Public adaptation of integrated/host was requested,not assumed authorized. Last fully focused/integrated passing checkpoint remains3c0b6744. Do not invent a new host warning count, independent approval or live acceptance.
+
+PR47 is unmerged; exclude25/43/45 and do not remerge historical PR44. No force push,merge,deployment or installed-binary/mesh replacement. W50/W51 retain remaining bounded database/packed-row,actual role API,threat-aura cleanup,utility/blessing/rotation,safe aquatic escape and upstream merchant/loot requirements. Focused green is not maximum DPS,automatic Fury removal,complete underwater recovery or exhaustive completion.

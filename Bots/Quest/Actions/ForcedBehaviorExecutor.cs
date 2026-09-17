@@ -461,7 +461,7 @@ public class ForcedBehaviorExecutor : Composite
             {
                 TurnInObjectiveInfo turnIn = quest.FindTurnIn();
                 if (turnIn != null)
-                    return new ForcedQuestTurnIn(turnInNode.QuestId, turnInNode.QuestName, turnInNode.TurnInId, turnInNode.TurnInName, turnIn.Location);
+                    return new ForcedQuestTurnIn(turnInNode.QuestId, turnInNode.QuestName, turnInNode.TurnInId, turnInNode.TurnInName, turnIn.Location, turnInNode.TurnInType);
             }
         }
         
@@ -479,10 +479,10 @@ public class ForcedBehaviorExecutor : Composite
             }
         }
         if (turnInNode.TurnInLocation != WoWPoint.Zero)
-            return new ForcedQuestTurnIn(turnInNode.QuestId, turnInNode.QuestName, turnInNode.TurnInId, turnInNode.TurnInName, turnInNode.TurnInLocation);
+            return new ForcedQuestTurnIn(turnInNode.QuestId, turnInNode.QuestName, turnInNode.TurnInId, turnInNode.TurnInName, turnInNode.TurnInLocation, turnInNode.TurnInType);
         NpcResult npcById = NpcQueries.GetNpcById(turnInNode.TurnInId);
         if (npcById != (NpcResult)null && (!nullable.HasValue || (double)npcById.Location.Distance2DSqr(new WoWPoint(nullable.Value.StepPosition.X, nullable.Value.StepPosition.Y, 0.0f)) <= 400.0))
-            return new ForcedQuestTurnIn(turnInNode.QuestId, turnInNode.QuestName, turnInNode.TurnInId, turnInNode.TurnInName, npcById.Location);
+            return new ForcedQuestTurnIn(turnInNode.QuestId, turnInNode.QuestName, turnInNode.TurnInId, turnInNode.TurnInName, npcById.Location, turnInNode.TurnInType);
         if (!nullable.HasValue)
         {
             Logging.Write("Could not find turn in step. Please specify a turn in override.");
@@ -490,7 +490,7 @@ public class ForcedBehaviorExecutor : Composite
         }
         var xnaVec = new Tripper.XNAMath.Vector3(nullable.Value.StepPosition.X, nullable.Value.StepPosition.Y, 0.0f);
         if (Navigator.FindHeight(ref xnaVec))
-            return new ForcedQuestTurnIn(turnInNode.QuestId, turnInNode.QuestName, turnInNode.TurnInId, turnInNode.TurnInName, new WoWPoint(xnaVec.X, xnaVec.Y, xnaVec.Z));
+            return new ForcedQuestTurnIn(turnInNode.QuestId, turnInNode.QuestName, turnInNode.TurnInId, turnInNode.TurnInName, new WoWPoint(xnaVec.X, xnaVec.Y, xnaVec.Z), turnInNode.TurnInType);
         Logging.Write("Could not find a height to turn in quest {0}. Consider overriding this quest in your profile.", (object)questById.Name);
         return (ForcedQuestTurnIn)null;
     }

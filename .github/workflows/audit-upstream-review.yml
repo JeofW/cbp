@@ -1,0 +1,87 @@
+name: Pinned upstream compatibility review
+on:
+  push:
+    branches: [audit/next-47-flight-owner-boundaries-20260916]
+    paths: [.github/workflows/audit-upstream-review.yml]
+permissions:
+  contents: read
+jobs:
+  compare:
+    if: github.repository == 'jeofwong/CopilotBuddy-private' && github.event.repository.private == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      GIT_LFS_SKIP_SMUDGE: '1'
+      GIT_TERMINAL_PROMPT: '0'
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+          lfs: false
+      - name: Read pinned public upstream objects without executing source
+        shell: bash
+        run: |
+          git fetch --no-tags --filter=blob:none https://github.com/Likon69/CopilotBuddy.git 4c0595d97d52644b9b64a823c2bb48c30b5c8dfb
+          python3 - <<'PY'
+          import subprocess, pathlib, hashlib, json, io, tarfile
+          out=pathlib.Path('/tmp/upstream-review'); out.mkdir()
+          ours='75d5347d25a59ca0abf70dfe970eff9db18a9564'
+          upstream='4c0595d97d52644b9b64a823c2bb48c30b5c8dfb'
+          def git(*args): return subprocess.check_output(['git',*args])
+          base=git('merge-base',ours,upstream).decode().strip()
+          if base!='462729050723eaf89cafa0bf3e05ae272431de36': raise RuntimeError('Unexpected ancestry; inspect before continuing')
+          commits=git('rev-list','--reverse',base+'..'+upstream).decode().splitlines()
+          paths=[p.decode() for p in git('diff','--name-only','-z',base,upstream).split(b'\0') if p]
+          records=[]
+          for sha in commits:
+              message=git('show','-s','--format=%B',sha).decode()
+              date=git('show','-s','--format=%cI',sha).decode().strip()
+              parents=git('show','-s','--format=%P',sha).decode().split()
+              changed=[p.decode() for p in git('diff-tree','--no-commit-id','--name-only','-r','-z',sha).split(b'\0') if p]
+              patch=git('show','--format=fuller','--binary',sha)
+              p=out/'commits'/(sha+'.patch'); p.parent.mkdir(exist_ok=True); p.write_bytes(patch)
+              records.append({'sha':sha,'date':date,'message':message,'parents':parents,'files':changed})
+          manifest=[]
+          def export(version,ref,path):
+              spec=ref+':'+path
+              found=subprocess.run(['git','cat-file','-e',spec],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL).returncode==0
+              if not found: return None
+              blob=git('rev-parse',spec).decode().strip(); data=git('cat-file','blob',blob)
+              actual=hashlib.sha1(b'blob '+str(len(data)).encode()+b'\0'+data).hexdigest()
+              if actual!=blob: raise RuntimeError('Blob identity mismatch')
+              dest=out/version/path; dest.parent.mkdir(parents=True,exist_ok=True); dest.write_bytes(data)
+              entry={'version':version,'path':path,'blob':blob,'sha256':hashlib.sha256(data).hexdigest(),'size':len(data)}
+              manifest.append(entry); return entry
+          files=[]
+          for path in paths:
+              versions={v:export(v,r,path) for v,r in [('base',base),('ours',ours),('upstream',upstream)]}
+              files.append({'path':path,'versions':versions})
+          # Canonical current source for local review; omit meshes, logs and packaged binaries.
+          with tarfile.open(out/'ours-source.tar.gz','w:gz') as tf:
+              for entry in git('ls-tree','-r','-z',ours).split(b'\0'):
+                  if not entry: continue
+                  meta,p=entry.split(b'\t',1); mode,kind,blob=meta.decode().split(); path=p.decode()
+                  if kind!='blob' or path.startswith(('mmaps/','runtime-logs/')) or path=='output.zip': continue
+                  data=git('cat-file','blob',blob)
+                  info=tarfile.TarInfo(path); info.size=len(data); info.mode=int(mode,8)&0o777
+                  tf.addfile(info,io.BytesIO(data))
+                  manifest.append({'version':'ours-source','path':path,'blob':blob,'sha256':hashlib.sha256(data).hexdigest(),'size':len(data)})
+          info={'ours':ours,'upstream':upstream,'merge_base':base,'upstream_commits':records,'changed_files':files,
+                'counts':{'upstream_commits':len(commits),'changed_files':len(paths)},
+                'scope':'read-only canonical git objects; upstream source not executed; no merge or deployment'}
+          (out/'comparison.json').write_text(json.dumps(info,indent=2))
+          (out/'source-manifest.json').write_text(json.dumps(manifest,indent=2))
+          (out/'upstream.patch').write_bytes(git('diff','--binary',base,upstream))
+          (out/'local-history.txt').write_bytes(git('log','--format=%H %cI %s',base+'..'+ours))
+          (out/'patch-equivalence.txt').write_bytes(git('cherry','-v',ours,upstream,base))
+          payload=[{'path':str(p.relative_to(out)),'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in out.rglob('*') if p.is_file()]
+          (out/'artifact-manifest.json').write_text(json.dumps(payload,indent=2))
+          print(json.dumps(info['counts']), 'merge-base',base)
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: pinned-upstream-review
+          path: /tmp/upstream-review/*
+          retention-days: 14
+          if-no-files-found: error

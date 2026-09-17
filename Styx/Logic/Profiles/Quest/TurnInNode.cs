@@ -64,7 +64,7 @@ namespace Styx.Logic.Profiles.Quest
             if (turnInTypeAttr != null)
             {
                 turnInType = PickUpNode.ParseQuestObjectType(turnInTypeAttr.Value);
-                if (turnInType.HasValue && turnInType.Value == QuestObjectType.Item)
+                if (!turnInType.HasValue || turnInType.Value == QuestObjectType.Item)
                     throw new ProfileAttributeExpectedException(turnInTypeAttr, "Object", "Npc");
             }
 

@@ -1,7 +1,8 @@
+# Refresh the canonical read-only export for the W48 aquatic and Paladin review.
 name: Audit W42 source export
 on:
   push:
-    branches: [audit/next-42-quest-log-snapshots-20260914, audit/next-42-ready-owner-20260914, audit/next-42-scheduler-observation-20260914]
+    branches: [audit/next-42-quest-log-snapshots-20260914, audit/next-42-ready-owner-20260914, audit/next-42-scheduler-observation-20260914, audit/next-47-flight-owner-boundaries-20260916]
     paths: [.github/workflows/audit-snapshot-source-export.yml]
 permissions:
   contents: read

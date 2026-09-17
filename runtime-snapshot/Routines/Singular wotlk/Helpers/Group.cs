@@ -26,6 +26,11 @@ namespace Singular.Helpers
 
                 // Spec-based fallback for manually formed groups
                 var spec = TalentManager.CurrentSpec;
+                // A retained threat aura is not a role assignment. Known non-tank
+                // Paladin specs must not be promoted by the last-resort aura fallback.
+                if (spec == TalentSpec.RetributionPaladin || spec == TalentSpec.HolyPaladin)
+                    return false;
+
                 // WotLK: Blood is the tank spec (Frost Presence for tanking). Frost DK is DPS in WotLK.
                 if (spec == TalentSpec.ProtectionWarrior || spec == TalentSpec.ProtectionPaladin ||
                     spec == TalentSpec.BloodDeathKnight || spec == TalentSpec.FeralDruid)

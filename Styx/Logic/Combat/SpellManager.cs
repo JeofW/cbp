@@ -996,18 +996,17 @@ namespace Styx.Logic.Combat
 			XButton2 = 16U
 		}
 
-		private enum MouseButtonByte : byte { Left = 0, Right = 1 }
-		
 		[System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Sequential)]
 		private struct TerrainClickInfo
 		{
-			public WoWPoint Location;
 			public ulong TargetGuid;
-			public MouseButtonByte Button;
+			public WoWPoint Location;
+			[System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.U4)]
+			public MouseButton Button;
 		}
 		
-		// Spell_C__HandleTerrainClick function address (WoW 3.3.5a)
-		private const uint Spell_C__HandleTerrainClick = 0x80B740; // 8438592U
+		// Original 3.3.5a contract: 8438592 decimal is 0x80C340, not 0x80B740.
+		private const uint Spell_C__HandleTerrainClick = 0x80C340; // 8438592U
 
 		public static bool ClickRemoteLocation(WoWPoint location)
 		{
@@ -1024,7 +1023,7 @@ namespace Styx.Logic.Combat
 			{
 				Location = location,
 				TargetGuid = 0UL,
-				Button = MouseButtonByte.Left
+				Button = MouseButton.Left
 			};
 
 			try

@@ -50,6 +50,16 @@ namespace Styx.Logic.Inventory.Frames.Merchant
             }
         }
 
+        // The original client marks both quest items and quest-starting IDs.
+        // Failed/missing observation is pending, never permission to sell.
+        // Share this boundary without replacing either seller's existing guards.
+        private const string QuestItemSaleGuardLua =
+            "if not skip then " +
+            "if type(GetContainerItemQuestInfo)~='function' then return 'ok',2 end " +
+            "local queried,isQuestItem,questId=pcall(GetContainerItemQuestInfo,b,s) " +
+            "if not queried then return 'ok',2 end " +
+            "if isQuestItem or questId then skip=true end end ";
+
         /// <summary>
         /// Sells all items matching the specified qualities.
         /// </summary>
@@ -72,6 +82,7 @@ namespace Styx.Logic.Inventory.Frames.Merchant
                 "if itemExceptions then for i=1,#itemExceptions do " +
                 "if (itemExceptions[i].i and id==itemExceptions[i].i) or " +
                 "(itemExceptions[i].n and name==itemExceptions[i].n) then skip=true break end end end " +
+                QuestItemSaleGuardLua +
                 "if not skip then local _,_,locked=GetContainerItemInfo(b,s) " +
                 "if not locked then UseContainerItem(b,s) end end end end end end end",
                 exceptions, qualityCondition));
@@ -119,6 +130,7 @@ namespace Styx.Logic.Inventory.Frames.Merchant
                 "if {1} then local skip=false if itemExceptions then for i=1,#itemExceptions do " +
                 "if (itemExceptions[i].i and id==itemExceptions[i].i) or " +
                 "(itemExceptions[i].n and name==itemExceptions[i].n) then skip=true break end end end " +
+                QuestItemSaleGuardLua +
                 "if not skip then local _,_,locked=GetContainerItemInfo(b,s) " +
                 "if locked then return 'ok',2 end UseContainerItem(b,s) return 'ok',1 end end end end end " +
                 "return 'ok',0",
@@ -335,7 +347,10 @@ namespace Styx.Logic.Inventory.Frames.Merchant
 
         private int? GetMerchantIndex(uint itemId)
         {
-            for (int i = 1; i < MerchantNumItems + 1; i++)
+            if (itemId == 0)
+                return null;
+
+            for (int i = 0; i < MerchantNumItems; i++)
             {
                 MerchantItem item = GetMerchantItemAtIndex(i);
                 if ((long)item.ItemId == (long)itemId)

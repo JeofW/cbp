@@ -826,7 +826,12 @@ namespace Bots.Grind
                             ),
                             // Move to lootable
                             new Decorator(
-                                ctx => BotPoi.Current.AsObject != null && !BotPoi.Current.AsObject.WithinInteractRange,
+                                ctx =>
+                                {
+                                    WoWObject target = BotPoi.Current.AsObject;
+                                    return target != null && (target is WoWUnit unit
+                                        ? !unit.WithinLootRange : !target.WithinInteractRange);
+                                },
                                 new ActionMoveToPoi()
                             ),
                             // Stop descending if flying
