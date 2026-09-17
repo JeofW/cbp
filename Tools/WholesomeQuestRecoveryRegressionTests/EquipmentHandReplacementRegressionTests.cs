@@ -146,7 +146,7 @@ internal static class EquipmentHandReplacementRegressionTests
     private static object? Invoke(MethodInfo method, object? instance)
     {
         try { return method.Invoke(instance, null); }
-        catch (TargetInvocationException e) when (e.InnerException != null) { ExceptionDispatchInfo.Capture(e.InnerException).Throw(); throw; }
+        catch (TargetInvocationException e) when (e.InnerException != null) { System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(e.InnerException).Throw(); throw; }
     }
     private static void Check(bool value, string why) { if (!value) throw new Failure(why); }
 }
