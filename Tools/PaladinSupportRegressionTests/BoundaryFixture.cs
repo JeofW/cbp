@@ -11,11 +11,12 @@ internal static class Fixture
     internal static readonly HashSet<string> Unavailable = new(StringComparer.Ordinal);
     internal static readonly List<(string Spell, ulong Target)> Attempts = new();
     internal static readonly List<Exception> Errors = new();
+    internal static readonly Dictionary<string, WoWSpell> Metadata = new();
     internal static int DefaultRestCalls;
     internal static RunStatus DefaultRestResult = RunStatus.Failure;
     internal static void Reset()
     {
-        Known.Clear(); Unavailable.Clear(); Attempts.Clear(); Errors.Clear();
+        Known.Clear(); Unavailable.Clear(); Attempts.Clear(); Errors.Clear(); Metadata.Clear();
         DefaultRestCalls = 0; DefaultRestResult = RunStatus.Failure;
         Singular.Managers.TankManager.Instance.FirstUnit = null;
         Singular.Managers.TankManager.Instance.NeedToTaunt.Clear();
@@ -70,7 +71,8 @@ namespace Styx.Combat.CombatRoutine
 namespace Styx.Logic.Combat
 {
     public enum WoWSpellMechanic { Dazed, Disoriented, Frozen, Incapacitated, Rooted, Slowed, Snared }
-    public class WoWSpell { public WoWDispelType DispelType { get; set; } }
+    public sealed class SpellRecord { public int[]? Reagent = new int[8]; public uint[]? ReagentCount = new uint[8]; }
+    public class WoWSpell { public WoWDispelType DispelType { get; set; } public SpellRecord InternalInfo { get; } = new(); }
     public class WoWAura
     {
         public string Name { get; set; } = "";
@@ -84,6 +86,7 @@ namespace Styx.Logic.Combat
     }
     public static class SpellManager
     {
+        public static Dictionary<string, WoWSpell> Spells => Fixture.Metadata;
         public static bool HasSpell(string name) => Fixture.Known.Contains(name);
         public static bool CanCast(string name, WoWUnit target, bool checkRange = true, bool checkMovement = false)
             => HasSpell(name) && !Fixture.Unavailable.Contains(name) && target.IsValid && target.IsAlive &&
@@ -142,7 +145,11 @@ namespace Styx.WoWInternals.WoWObjects
         public List<WoWPlayer> PartyMembers { get; } = new();
         public List<WoWPlayer> RaidMembers { get; } = new();
     }
-    public sealed class LocalPlayer : WoWPlayer { }
+    public sealed class LocalPlayer : WoWPlayer
+    {
+        public Dictionary<uint, int> ItemCounts { get; } = new();
+        public int GetCarriedItemCount(uint id) => ItemCounts.TryGetValue(id, out int count) ? count : 0;
+    }
 }
 namespace Styx { public static class StyxWoW { public static LocalPlayer Me { get; set; } = new(); } }
 namespace Styx.Helpers { public static class Logging { public static void WriteException(Exception ex) => Fixture.Errors.Add(ex); } }
@@ -170,6 +177,7 @@ namespace Singular.Settings
         public Singular.ClassSpecific.Paladin.PaladinSeal Seal { get; set; }
         public Singular.ClassSpecific.Paladin.PaladinAura Aura { get; set; }
         public Singular.ClassSpecific.Paladin.PaladinBlessings Blessings { get; set; }
+        public bool UseGreaterBlessings { get; set; }
         public bool DispelDebuffs { get; set; } = true;
         public bool DispelParty { get; set; } = true;
         public int LayOnHandsHealth => 15;
