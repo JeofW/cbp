@@ -38,87 +38,128 @@ public static class Rest
     /// </summary>
     public static bool NoDrink { get; private set; }
 
+    private static object? _legacyFeedOwner;
+
     /// <summary>
     /// Makes the player eat and drink to restore health and mana.
     /// </summary>
     public static void Feed()
     {
-        var me = ObjectManager.Me;
-        if (me == null || !CanUseConsumables(me, requireStationary: false))
-            return;
-
-        if (me.CurrentTarget != null)
+        // A nested call supersedes this invocation even when the same player
+        // and item settings remain. Old cleanup must not clear the new owner.
+        var owner = new object();
+        _legacyFeedOwner = owner;
+        try
         {
-            Logging.Write("Resting.");
-            ObjectManager.Me.ClearTarget();
+            var me = ObjectManager.Me;
+            var memory = ObjectManager.Wow;
+            if (memory == null || me == null || !CanUseConsumables(me, requireStationary: false))
+                return;
+            uint address = me.BaseAddress;
+            ulong guid = me.Guid;
+            string foodName = LevelbotSettings.Instance.FoodName;
+            string drinkName = LevelbotSettings.Instance.DrinkName;
+            bool StillAdmitted(bool requireStationary = true) =>
+                ReferenceEquals(_legacyFeedOwner, owner) && ReferenceEquals(ObjectManager.Wow, memory)
+                && me.BaseAddress == address && me.Guid == guid
+                && LevelbotSettings.Instance.FoodName == foodName && LevelbotSettings.Instance.DrinkName == drinkName
+                && CanUseConsumables(me, requireStationary)
+                && ReferenceEquals(_legacyFeedOwner, owner) && ReferenceEquals(ObjectManager.Wow, memory)
+                && me.BaseAddress == address && me.Guid == guid;
+            if (!StillAdmitted(false))
+                return;
+
+            if (me.CurrentTarget != null)
+            {
+                ulong targetGuid = me.CurrentTargetGuid;
+                Logging.Write("Resting.");
+                if (!StillAdmitted(false) || me.CurrentTargetGuid != targetGuid)
+                    return;
+                me.ClearTarget();
+                if (!StillAdmitted(false))
+                    return;
+            }
+
+            if (me.IsMoving)
+                WoWMovement.MoveStop();
+            // A movement-stop request is not acknowledgement that we can eat.
+            if (!StillAdmitted())
+                return;
+
+            if (!string.IsNullOrEmpty(foodName) && me.HealthPercent <= 55.0 && !me.Auras.ContainsKey("Food"))
+            {
+                var escapedFood = Lua.Escape(foodName);
+                var foodCount = Lua.GetReturnVal<int>($"return GetItemCount(\"{escapedFood}\")", 0);
+                if (!StillAdmitted())
+                    return;
+                if (foodCount > 0)
+                {
+                    Logging.Write("Eating {0}", foodName);
+                    if (!StillAdmitted() || me.HealthPercent > 55.0 || me.Auras.ContainsKey("Food"))
+                        return;
+                    Lua.DoString($"UseItemByName(\"{escapedFood}\")");
+                    if (!StillAdmitted())
+                        return;
+                    NoFood = false;
+                }
+                else
+                {
+                    NoFood = true;
+                    Logging.Write("No {0} in bags.", foodName);
+                }
+            }
+
+            // A food/logging callback can change the world or start another rest.
+            if (!StillAdmitted())
+                return;
+            if (!string.IsNullOrEmpty(drinkName) && me.ManaPercent <= 55.0 && !me.Auras.ContainsKey("Drink"))
+            {
+                var escapedDrink = Lua.Escape(drinkName);
+                var drinkCount = Lua.GetReturnVal<int>($"return GetItemCount(\"{escapedDrink}\")", 0);
+                if (!StillAdmitted())
+                    return;
+                if (drinkCount > 0)
+                {
+                    Logging.Write("Drinking {0}", drinkName);
+                    if (!StillAdmitted() || me.ManaPercent > 55.0 || me.Auras.ContainsKey("Drink"))
+                        return;
+                    Lua.DoString($"UseItemByName(\"{escapedDrink}\")");
+                    if (!StillAdmitted())
+                        return;
+                    NoDrink = false;
+                }
+                else
+                {
+                    NoDrink = true;
+                    Logging.Write("No {0} in bags.", drinkName);
+                }
+            }
+
+            if (!StillAdmitted())
+                return;
+            // Preserve the legacy synchronous API, but not stale permission
+            // across its waits. The routine's immediate APIs stay nonblocking.
+            if (!string.IsNullOrEmpty(drinkName) || !string.IsNullOrEmpty(foodName))
+            {
+                StyxWoW.Sleep(1000);
+                while (StillAdmitted() && (me.Auras.ContainsKey("Food") || me.Auras.ContainsKey("Drink")))
+                {
+                    StyxWoW.Sleep(100);
+                    if (!StillAdmitted())
+                        return;
+                    if (me.HealthPercent == 100.0 && me.ManaPercent == 100.0)
+                        break;
+                    if (me.HealthPercent == 100.0 && !me.Auras.ContainsKey("Drink"))
+                        break;
+                    if (me.ManaPercent == 100.0 && !me.Auras.ContainsKey("Food"))
+                        break;
+                }
+            }
         }
-
-        if (me.IsMoving)
+        finally
         {
-            WoWMovement.MoveStop();
-        }
-
-        // Eat food
-        if (!string.IsNullOrEmpty(LevelbotSettings.Instance.FoodName) &&
-            me.HealthPercent <= 55.0 &&
-            !me.Auras.ContainsKey("Food"))
-        {
-            var escapedFood = Lua.Escape(LevelbotSettings.Instance.FoodName);
-            var foodCount = Lua.GetReturnVal<int>($"return GetItemCount(\"{escapedFood}\")", 0);
-            if (foodCount > 0)
-            {
-                Logging.Write("Eating {0}", LevelbotSettings.Instance.FoodName);
-                Lua.DoString($"UseItemByName(\"{escapedFood}\")");
-                NoFood = false;
-            }
-            else
-            {
-                NoFood = true;
-                Logging.Write("No {0} in bags.", LevelbotSettings.Instance.FoodName);
-            }
-        }
-
-        // Drink
-        if (!string.IsNullOrEmpty(LevelbotSettings.Instance.DrinkName) &&
-            me.ManaPercent <= 55.0 &&
-            !me.Auras.ContainsKey("Drink"))
-        {
-            var escapedDrink = Lua.Escape(LevelbotSettings.Instance.DrinkName);
-            var drinkCount = Lua.GetReturnVal<int>($"return GetItemCount(\"{escapedDrink}\")", 0);
-            if (drinkCount > 0)
-            {
-                NoDrink = false;
-                Logging.Write("Drinking {0}", LevelbotSettings.Instance.DrinkName);
-                Lua.DoString($"UseItemByName(\"{escapedDrink}\")");
-            }
-            else
-            {
-                NoDrink = true;
-                Logging.Write("No {0} in bags.", LevelbotSettings.Instance.DrinkName);
-            }
-        }
-
-        // Wait while eating/drinking
-        if (!string.IsNullOrEmpty(LevelbotSettings.Instance.DrinkName) ||
-            !string.IsNullOrEmpty(LevelbotSettings.Instance.FoodName))
-        {
-            StyxWoW.Sleep(1000);
-            while (me.Auras.ContainsKey("Food") || me.Auras.ContainsKey("Drink"))
-            {
-                StyxWoW.Sleep(100);
-
-                if (me.HealthPercent == 100.0 && me.ManaPercent == 100.0)
-                    break;
-
-                if (me.Combat)
-                    break;
-
-                if (me.HealthPercent == 100.0 && !me.Auras.ContainsKey("Drink"))
-                    break;
-
-                if (me.ManaPercent == 100.0 && !me.Auras.ContainsKey("Food"))
-                    break;
-            }
+            if (ReferenceEquals(_legacyFeedOwner, owner))
+                _legacyFeedOwner = null;
         }
     }
 
