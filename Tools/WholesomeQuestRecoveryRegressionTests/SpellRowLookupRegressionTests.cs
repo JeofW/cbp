@@ -72,6 +72,7 @@ internal static class SpellRowLookupRegressionTests
         private readonly List<System.Collections.DictionaryEntry> oldRows=new();
         private readonly FieldInfo dbField=typeof(StyxWoW).GetField("_db",Static)!;
         private readonly object? oldDb;
+        private readonly bool oldDatabaseReady;
         private readonly IntPtr storage;
         private int nextRow=512;
         private int nextHeader;
@@ -83,6 +84,9 @@ internal static class SpellRowLookupRegressionTests
             memory=ObjectManager.Wow!;
             tables=(Dictionary<ClientDb,WoWDb.DbTable>)typeof(WoWDb).GetField("_tables",Static)!.GetValue(null)!;
             oldTables=tables.ToArray(); oldDb=dbField.GetValue(null);
+            var ready=typeof(WoWDb).GetField("_initialized",Static)!;
+            oldDatabaseReady=(bool)ready.GetValue(null)!;
+            ready.SetValue(null,true); // This fixture explicitly publishes its controlled table; do not run discovery.
             legacyCache=typeof(WoWSpell).GetField("_rowCache",Static)?.GetValue(null) as System.Collections.IDictionary;
             if(legacyCache!=null) { foreach(System.Collections.DictionaryEntry row in legacyCache) oldRows.Add(row); legacyCache.Clear(); }
             storage=Marshal.AllocHGlobal(16384); Marshal.Copy(new byte[16384],0,storage,16384);
@@ -146,6 +150,7 @@ internal static class SpellRowLookupRegressionTests
             if(legacyCache!=null) { legacyCache.Clear(); foreach(var row in oldRows) legacyCache.Add(row.Key,row.Value); }
             tables.Clear(); foreach(var entry in oldTables) tables.Add(entry.Key,entry.Value);
             dbField.SetValue(null,oldDb);
+            typeof(WoWDb).GetField("_initialized",Static)!.SetValue(null,oldDatabaseReady);
             foreach(var x in replacements) { typeof(Memory).GetField("_hProcess",Instance)!.SetValue(x.Memory,IntPtr.Zero); x.Cache.Dispose(); x.Enabled.Dispose(); }
             Marshal.FreeHGlobal(storage); world.Dispose();
         }
