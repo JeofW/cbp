@@ -209,12 +209,16 @@ namespace Styx.Bot.Quest_Behaviors.UseItemOn
         {
             get
             {
+                var me = Me;
+                if (me == null || !me.IsValid || !me.IsAlive)
+                    return null;
                 WoWObject @object = null;
 
                 switch (MobType)
                 {
                     case ObjectType.GameObject:
-                        @object = ObjectManager.GetObjectsOfType<WoWGameObject>()
+                        @object = (ObjectManager.GetObjectsOfType<WoWGameObject>() ?? Enumerable.Empty<WoWGameObject>())
+                                                .Where(obj => obj != null && obj.IsValid && obj.Guid != 0)
                                                 .OrderBy(ret => ret.Distance)
                                                 .FirstOrDefault(obj => !_npcBlacklist.Contains(obj.Guid)
                                                                         && obj.Distance < CollectionDistance
@@ -222,16 +226,16 @@ namespace Styx.Bot.Quest_Behaviors.UseItemOn
                         break;
 
                     case ObjectType.Npc:
-                        var baseTargets = ObjectManager.GetObjectsOfType<WoWUnit>()
+                        var baseTargets = (ObjectManager.GetObjectsOfType<WoWUnit>() ?? Enumerable.Empty<WoWUnit>())
+                                                               .Where(target => target != null && target.IsValid && target.Guid != 0)
                                                                .OrderBy(target => target.Distance)
                                                                .Where(target => !_npcBlacklist.Contains(target.Guid) && !BehaviorBlacklist.Contains(target.Guid)
                                                                                 && (target.Distance < CollectionDistance)
                                                                                 && MobIds.Contains((int)target.Entry) && (!IgnoreMobsInBlackspots || (IgnoreMobsInBlackspots && !Targeting.IsTooNearBlackspot(ProfileManager.CurrentProfile.Blackspots, target.Location))));
 
                         var auraQualifiedTargets = baseTargets
-                                                            .Where(target => (((MobAuraName == null) && (MobAuraMissingName == null))
-                                                                              || ((MobAuraName != null) && target.HasAura(MobAuraName))
-                                                                              || ((MobAuraMissingName != null) && !target.HasAura(MobAuraMissingName))));
+                                                            .Where(target => (MobAuraName == null || target.HasAura(MobAuraName))
+                                                                              && (MobAuraMissingName == null || !target.HasAura(MobAuraMissingName)));
 
                         var npcStateQualifiedTargets = auraQualifiedTargets
                                                             .Where(target => ((NpcState == NpcStateType.DontCare)
@@ -285,7 +289,10 @@ namespace Styx.Bot.Quest_Behaviors.UseItemOn
         {
             get
             {
-                return StyxWoW.Me.CarriedItems.FirstOrDefault(ret => ret.Entry == ItemId);
+                var me = StyxWoW.Me;
+                if (me == null || !me.IsValid || !me.IsAlive)
+                    return null;
+                return me.CarriedItems?.FirstOrDefault(item => item != null && item.IsValid && item.Entry == ItemId);
             }
         }
 
