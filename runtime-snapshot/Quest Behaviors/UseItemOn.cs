@@ -296,6 +296,103 @@ namespace Styx.Bot.Quest_Behaviors.UseItemOn
             }
         }
 
+        // One attempted use owns one actor, inventory item and recipient. Setup
+        // callbacks must not silently substitute another same-entry object/item.
+        private RunStatus UseCapturedItem()
+        {
+            var player = Me;
+            var recipient = CurrentObject;
+            var item = Item;
+            // This branch already admitted an attempt. On revocation, consume
+            // this tick without falling into the old roaming/waiting actions.
+            if (player == null || recipient == null || item == null)
+                return RunStatus.Success;
+
+            ulong playerGuid = player.Guid;
+            ulong recipientGuid = recipient.Guid;
+            ulong itemGuid = item.Guid;
+            uint recipientEntry = recipient.Entry;
+            bool targeted = false;
+
+            bool OwnsActor() => !_isDisposed && !_isBehaviorDone && playerGuid != 0
+                && ReferenceEquals(Me, player) && player.IsValid && player.IsAlive
+                && player.Guid == playerGuid;
+
+            bool Admitted(bool requireSelectedTarget)
+            {
+                if (!OwnsActor() || recipientGuid == 0 || itemGuid == 0
+                    || !recipient.IsValid || recipient.Guid != recipientGuid || recipient.Entry != recipientEntry
+                    || !item.IsValid || item.Guid != itemGuid || item.Entry != ItemId || item.Cooldown != 0
+                    || player.CarriedItems == null || !player.CarriedItems.Any(candidate => ReferenceEquals(candidate, item))
+                    || !ReferenceEquals(ObjectManager.GetObjectByGuid<WoWObject>(recipientGuid), recipient)
+                    || MobIds == null || !MobIds.Contains((int)recipientEntry) || _npcBlacklist.Contains(recipientGuid))
+                    return false;
+
+                double distance = recipient.DistanceSqr;
+                if (double.IsNaN(distance) || double.IsInfinity(distance)
+                    || !(distance <= Range * Range) || !(distance < CollectionDistance * CollectionDistance))
+                    return false;
+
+                if (MobType == ObjectType.GameObject)
+                {
+                    if (!(recipient is WoWGameObject)) return false;
+                }
+                else if (MobType == ObjectType.Npc && recipient is WoWUnit unit)
+                {
+                    if (BehaviorBlacklist.Contains(recipientGuid)
+                        || (MobAuraName != null && !unit.HasAura(MobAuraName))
+                        || (MobAuraMissingName != null && unit.HasAura(MobAuraMissingName))
+                        || !(NpcState == NpcStateType.DontCare
+                            || NpcState == NpcStateType.Dead && unit.Dead
+                            || NpcState == NpcStateType.Alive && unit.IsAlive
+                            || NpcState == NpcStateType.BelowHp && unit.IsAlive && unit.HealthPercent < MobHpPercentLeft)
+                        || IgnoreMobsInBlackspots && Targeting.IsTooNearBlackspot(ProfileManager.CurrentProfile.Blackspots, unit.Location)
+                        || requireSelectedTarget && (!ReferenceEquals(player.CurrentTarget, unit)
+                            || player.CurrentTarget.Guid != recipientGuid))
+                        return false;
+                }
+                else return false;
+                return OwnsActor();
+            }
+
+            if (!Admitted(false)) return RunStatus.Success;
+            if (player.IsMoving)
+            {
+                WoWMovement.MoveStop();
+                if (!Admitted(false)) return RunStatus.Success;
+                StyxWoW.SleepForLagDuration();
+                if (!Admitted(false)) return RunStatus.Success;
+            }
+            TreeRoot.StatusText = "Using item on \"" + recipient.Name + "\"";
+            if (!Admitted(false)) return RunStatus.Success;
+            if (recipient is WoWUnit target && !ReferenceEquals(player.CurrentTarget, target))
+            {
+                target.Target();
+                targeted = true;
+                if (!Admitted(true)) return RunStatus.Success;
+                StyxWoW.SleepForLagDuration();
+            }
+            if (!Admitted(true)) return RunStatus.Success;
+            WoWMovement.Face(recipientGuid);
+            if (!Admitted(true)) return RunStatus.Success;
+            item.UseContainerItem();
+
+            // Invocation is not server quest credit. Retain the legacy local
+            // repetition count, but never write into a disposed/replaced actor's
+            // continuation. A legitimately consumed item need not remain in bags.
+            if (!OwnsActor()) return RunStatus.Success;
+            _npcBlacklist.Add(recipientGuid);
+            Counter++;
+            StyxWoW.SleepForLagDuration();
+            if (!OwnsActor()) return RunStatus.Success;
+            if (WaitTime < 100) WaitTime = 100;
+            if (WaitTime > 100 && targeted && ReferenceEquals(player.CurrentTarget, recipient)
+                && player.CurrentTarget.Guid == recipientGuid)
+                player.ClearTarget();
+            if (OwnsActor()) Thread.Sleep(WaitTime);
+            return RunStatus.Success;
+        }
+
         #region Overrides of CustomForcedBehavior
 
         protected override Composite CreateBehavior()
@@ -329,44 +426,7 @@ namespace Styx.Bot.Quest_Behaviors.UseItemOn
                                     )))),
 
                         new Decorator(ret => CurrentObject != null && CurrentObject.DistanceSqr <= Range * Range && Item != null && Item.Cooldown == 0,
-                            new Sequence(
-                                new DecoratorContinue(ret => StyxWoW.Me.IsMoving,
-                                    new Action(ret =>
-                                    {
-                                        WoWMovement.MoveStop();
-                                        StyxWoW.SleepForLagDuration();
-                                    })),
-
-                                new Action(ret =>
-                                {
-                                    bool targeted = false;
-                                    TreeRoot.StatusText = "Using item on \"" + CurrentObject.Name + "\"";
-                                    if (CurrentObject is WoWUnit && (StyxWoW.Me.CurrentTarget == null || StyxWoW.Me.CurrentTarget != CurrentObject))
-                                    {
-                                        (CurrentObject as WoWUnit).Target();
-                                        targeted = true;
-                                        StyxWoW.SleepForLagDuration();
-                                    }
-
-                                    WoWMovement.Face(CurrentObject.Guid);
-
-                                    Item.UseContainerItem();
-                                    _npcBlacklist.Add(CurrentObject.Guid);
-
-                                    StyxWoW.SleepForLagDuration();
-                                    Counter++;
-
-                                    if (WaitTime < 100)
-                                        WaitTime = 100;
-
-                                    if (WaitTime > 100)
-                                    {
-                                        if (targeted)
-                                            StyxWoW.Me.ClearTarget();
-                                    }
-
-                                    Thread.Sleep(WaitTime);
-                                }))
+                            new Action(ret => UseCapturedItem()))
                                     ),
 
                             new Decorator(
