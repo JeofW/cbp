@@ -185,6 +185,7 @@ namespace Singular.Helpers
         public static Composite CreateMoveToLosBehavior() => Fixture.Nothing();
         public static Composite CreateFaceTargetBehavior() => Fixture.Nothing();
         public static Composite CreateMoveToMeleeBehavior(bool _) => Fixture.Nothing();
+        public static Composite CreateMoveToTargetBehavior(bool _, float range) => Fixture.Nothing();
     }
     public static class Rest { public static Composite CreateDefaultRestBehaviour() => Fixture.Nothing(); }
     public static class Spell
