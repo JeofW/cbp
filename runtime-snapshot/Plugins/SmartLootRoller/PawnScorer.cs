@@ -240,6 +240,23 @@ namespace SmartLootRoller
             return true;
         }
 
+        // Match the host's physical slot aliases, not just the inventory-type
+        // spelling. This does not grant class eligibility or change hand loadouts.
+        private static InventoryType ComparableSlot(InventoryType type)
+        {
+            switch (type)
+            {
+                case InventoryType.Robe:
+                    return InventoryType.Chest;
+                case InventoryType.Thrown:
+                case InventoryType.RangedRight:
+                case InventoryType.Relic:
+                    return InventoryType.Ranged;
+                default:
+                    return type;
+            }
+        }
+
         public static float GetMinEquippedScore(InventoryType invType, Dictionary<string, float> weights)
         {
             if (!TryObserveEquipment(out var equippedItems, out var mhItem, out var ohItem))
@@ -297,25 +314,12 @@ namespace SmartLootRoller
 
             // --- DEFAULT CASE: ARMOR, RINGS, TRINKETS ---
             var scores = new List<float>();
+            var comparableSlot = ComparableSlot(invType);
             foreach (var item in equippedItems)
             {
                 if (item != null && item.ItemInfo != null)
                 {
-                    bool matchesSlot = false;
-                    
-                    if (item.ItemInfo.InventoryType == invType)
-                    {
-                        matchesSlot = true;
-                    }
-                    else if (invType == InventoryType.Ranged && 
-                            (item.ItemInfo.InventoryType == InventoryType.Ranged || 
-                             item.ItemInfo.InventoryType == InventoryType.Thrown ||
-                             item.ItemInfo.InventoryType == InventoryType.RangedRight))
-                    {
-                        matchesSlot = true;
-                    }
-
-                    if (matchesSlot)
+                    if (ComparableSlot(item.ItemInfo.InventoryType) == comparableSlot)
                     {
                         scores.Add(CalculateScore(item, weights));
                     }
@@ -366,11 +370,12 @@ namespace SmartLootRoller
             }
 
             int count = 0;
+            var comparableSlot = ComparableSlot(invType);
             int maxAllowed = (invType == InventoryType.Finger || invType == InventoryType.Trinket || invType == InventoryType.Weapon) ? 2 : 1;
 
             foreach (var item in equippedItems)
             {
-                if (item != null && item.ItemInfo != null && item.ItemInfo.InventoryType == invType)
+                if (item != null && item.ItemInfo != null && ComparableSlot(item.ItemInfo.InventoryType) == comparableSlot)
                     count++;
             }
 
@@ -382,6 +387,7 @@ namespace SmartLootRoller
             if (!TryObserveEquipment(out var equippedItems, out var mainHand, out var offHand))
                 return float.NaN;
             List<float> ilvls = new List<float>();
+            var comparableSlot = ComparableSlot(invType);
 
             if (invType == InventoryType.TwoHandWeapon || invType == InventoryType.WeaponMainHand || invType == InventoryType.Weapon)
             {
@@ -397,7 +403,7 @@ namespace SmartLootRoller
             {
                 foreach (var item in equippedItems)
                 {
-                    if (item != null && item.ItemInfo != null && item.ItemInfo.InventoryType == invType)
+                    if (item != null && item.ItemInfo != null && ComparableSlot(item.ItemInfo.InventoryType) == comparableSlot)
                     {
                         ilvls.Add(item.ItemInfo.Level);
                     }
