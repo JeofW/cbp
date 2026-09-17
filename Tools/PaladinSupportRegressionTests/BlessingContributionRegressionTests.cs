@@ -35,7 +35,19 @@ internal static class BlessingContributionRegressionTests
             Add("duplicated own Might yields to missing Kings",()=>{Know(Kings,Might);Aura(Might,1);Aura(Might,99);Bless();Expect(Kings);});
             Add("expired own Kings does not freeze contribution",()=>{Know(Kings,Might);Aura(Kings,1,0);Bless();Expect(Might);});
             Add("manual Kings remains explicit",()=>{Know(Kings,Might);SingularSettings.Instance.Paladin.Blessings=PaladinBlessings.Kings;Bless();Expect(Kings);});
-            Add("manual Might is not silently rewritten by Shout",()=>{Know(Kings,Might);Aura("Battle Shout",99);SingularSettings.Instance.Paladin.Blessings=PaladinBlessings.Might;Bless();Expect(Might);});
+            Add("manual Might is deferred under Shout without substituting Kings",()=>{Know(Kings,Might);Aura("Battle Shout",99);SingularSettings.Instance.Paladin.Blessings=PaladinBlessings.Might;Bless();Expect(null);});
+            // Explicit preference cannot override an active same-category conflict.
+            // Effective rank/talent magnitude is unknown here; preserve coverage.
+            Add("manual Might alone does not retry covered AP",()=>{Know(Might);ManualMight();Aura("Battle Shout",99);Bless();Expect(null);});
+            Add("unknown Shout caster still establishes observed coverage",()=>{Know(Might);ManualMight();Aura("Battle Shout",0);Bless();Expect(null);});
+            Add("short remaining Shout is not cancelled or overwritten early",()=>{Know(Might);ManualMight();Aura("Battle Shout",99,1);Bless();Expect(null);});
+            Add("inactive Shout permits manual Might",()=>{Know(Might);ManualMight();Aura("Battle Shout",99);StyxWoW.Me.ObservedAuras[^1].IsActive=false;Bless();Expect(Might);});
+            Add("expired Shout permits manual Might",()=>{Know(Might);ManualMight();Aura("Battle Shout",99,0);Bless();Expect(Might);});
+            Add("manual Might also respects Greater Might",()=>{Know(Might);ManualMight();Aura("Greater "+Might,99);Bless();Expect(null);});
+            Add("forty fresh decisions cannot repeat a rejected Might",()=>{Know(Kings,Might);ManualMight();Aura("Battle Shout",99);for(int i=0;i<40;i++)Bless();Expect(null);});
+            Add("Shout arrival and expiry change admission without sticky backoff",()=>{Know(Might);ManualMight();Bless();Expect(Might);Fixture.Attempts.Clear();Aura("Battle Shout",99);Bless();Expect(null);StyxWoW.Me.ObservedAuras[^1].TimeLeft=TimeSpan.Zero;Bless();Expect(Might);});
+            Add("teammate Shout is checked on that recipient",()=>{Know(Might);ManualMight();Aura(Might,1);var p=Fixture.Add(WoWClass.Warrior,isRaid);Fixture.Aura(p,"Battle Shout",99);Bless();Expect(null);});
+            Add("another recipient Shout cannot suppress uncovered self",()=>{Know(Might);ManualMight();var p=Fixture.Add(WoWClass.Warrior,isRaid);Fixture.Aura(p,"Battle Shout",99);Bless();Expect(Might);});
             Add("unknown Might falls back to learned Kings",()=>{Know(Kings);Bless();Expect(Kings);});
             Add("unavailable Might does not starve Kings",()=>{Know(Kings,Might);Fixture.Unavailable.Add(Might);Bless();Expect(Kings);});
             Add("PvP preserves the Kings survival default",()=>{Know(Kings,Might);Singular.SingularRoutine.CurrentWoWContext=WoWContext.Battlegrounds;Bless();Expect(Kings);});
@@ -62,6 +74,7 @@ internal static class BlessingContributionRegressionTests
         if(assertions+unexpected!=0)Environment.ExitCode=1;
     }
     private static void Setup(bool raid){Fixture.Reset();StyxWoW.Me.IsInParty=!raid;StyxWoW.Me.IsInRaid=raid;Singular.SingularRoutine.CurrentWoWContext=WoWContext.Instances;}
+    private static void ManualMight()=>SingularSettings.Instance.Paladin.Blessings=PaladinBlessings.Might;
     private static void Know(params string[] names){Fixture.Known.UnionWith(names);}
     private static void Aura(string name,ulong owner,int seconds=600){Fixture.Aura(StyxWoW.Me,name,owner);StyxWoW.Me.ObservedAuras[^1].TimeLeft=TimeSpan.FromSeconds(seconds);}
     private static void Bless()=>Fixture.Tick(Common.CreatePaladinPreCombatBuffs());
