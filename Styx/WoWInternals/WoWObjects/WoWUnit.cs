@@ -80,7 +80,10 @@ namespace Styx.WoWInternals.WoWObjects
             }
         }
 
-        private BitVector32 NpcFlags => GetDescriptor<BitVector32>(UnitFields.NpcFlags);
+        private BitVector32 NpcFlagsVector => GetDescriptor<BitVector32>(UnitFields.NpcFlags);
+
+        // Original stock-behavior compatibility: preserve the unsigned raw mask.
+        public uint NpcFlags => GetDescriptor<uint>(UnitFields.NpcFlags);
 
         private BitVector32 DynamicFlags => GetDescriptor<BitVector32>(UnitFields.DynamicFlags);
 
@@ -280,7 +283,7 @@ namespace Styx.WoWInternals.WoWObjects
 
         private bool HasNpcFlag(UnitNPCFlags flags)
         {
-            BitVector32 npcFlags = NpcFlags;
+            BitVector32 npcFlags = NpcFlagsVector;
             return npcFlags[(int)flags];
         }
 
@@ -661,6 +664,9 @@ namespace Styx.WoWInternals.WoWObjects
         public ulong CharmedByGuid => GetDescriptor<ulong>(UnitFields.CharmedBy);
 
         public WoWUnit? CharmedBy => ObjectManager.GetObjectByGuid<WoWUnit>(CharmedByGuid);
+
+        public ulong CharmedByUnitGuid => CharmedByGuid;
+        public WoWUnit? CharmedByUnit => CharmedBy;
 
         public ulong Summon => GetDescriptor<ulong>(UnitFields.Summon);
         public ulong Charmed => GetDescriptor<ulong>(UnitFields.Charm);
@@ -1138,6 +1144,7 @@ namespace Styx.WoWInternals.WoWObjects
         public int NativeDisplayId => GetDescriptor<int>(UnitFields.NativeDisplayId);
 
         public ulong CreatedByGuid => GetDescriptor<ulong>(UnitFields.CreatedBy);
+        public ulong CreatedByUnitGuid => CreatedByGuid;
         public WoWUnit? CreatedBy => ObjectManager.GetObjectByGuid<WoWUnit>(CreatedByGuid);
         public uint CreatedBySpellId => GetDescriptor<uint>(UnitFields.CreatedBySpell);
         public int BaseMana => GetDescriptor<int>(UnitFields.BaseMana);
@@ -1222,6 +1229,42 @@ namespace Styx.WoWInternals.WoWObjects
         }
 
         public override float InteractRange => CombatReach + 4f;
+
+        /// <summary>
+        /// Corpse-looting reach is independent of normal NPC interaction range.
+        /// Retains the upstream 3.3.5a formula; unknown geometry grants no reach.
+        /// </summary>
+        public float LootRange
+        {
+            get
+            {
+                float corpseReach = CombatReach;
+                float playerReach = ObjectManager.Me?.CombatReach ?? 1.5f;
+                if (!float.IsFinite(corpseReach) || !float.IsFinite(playerReach)
+                    || corpseReach < 0f || playerReach < 0f)
+                    return 0f;
+                float range = Math.Max(5f, corpseReach + playerReach + 1.3333334f);
+                return float.IsFinite(range * range) ? range : 0f;
+            }
+        }
+
+        public bool WithinLootRange
+        {
+            get
+            {
+                var player = ObjectManager.Me;
+                var memory = ObjectManager.Wow;
+                if (player == null || memory == null || !player.IsValid || !IsValid)
+                    return false;
+                float range = LootRange;
+                double distance = DistanceSqr;
+                return range > 0f && double.IsFinite(distance) && distance >= 0d
+                    && distance < range * range
+                    && ReferenceEquals(player, ObjectManager.Me)
+                    && ReferenceEquals(memory, ObjectManager.Wow);
+            }
+        }
+
 
         public WoWFactionTemplate? FactionTemplate => WoWFactionTemplate.FromId(FactionId);
 
