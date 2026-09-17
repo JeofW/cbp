@@ -126,7 +126,22 @@ public static class MovementCases
         if(assertions+unexpected!=0)throw new InvalidOperationException("Combat sight movement failures");
     }
     private static void Reset(){StyxWoW.Me=new WoWUnit{Guid=1,CurrentTarget=new WoWUnit{Guid=2,Location=new WoWPoint(20,30,5)}};Moves.Clear();Stops=Selections=0;Result=MoveResult.Moved;SingularSettings.Instance.DisableAllMovement=false;}
-    private static void Tick(Composite tree){tree.Start(null!);try{int n=0;while(tree.Tick(null!)==RunStatus.Running)if(++n>10)throw new Failure("unbounded helper");}finally{tree.Stop(null!);}}
+    private static void Tick(Composite tree)
+    {
+        // TreeSharp intentionally logs ordinary owner errors and returns Failure.
+        // A no-navigation assertion must not accidentally accept a null dereference.
+        var diagnostics=new List<string>();
+        void Record(Styx.Helpers.LogLevel level,string message)=>diagnostics.Add(message);
+        Styx.Helpers.Logging.OnMessageLogged+=Record;
+        try
+        {
+            tree.Start(null!);
+            try{int n=0;while(tree.Tick(null!)==RunStatus.Running)if(++n>10)throw new Failure("unbounded helper");}
+            finally{tree.Stop(null!);}
+            Check(diagnostics.Count==0,"owner produced a swallowed diagnostic: "+string.Join(";",diagnostics));
+        }
+        finally{Styx.Helpers.Logging.OnMessageLogged-=Record;}
+    }
     private static void Check(bool yes,string why){if(!yes)throw new Failure(why);}
 }
 /* Controlled unit observations only. */ namespace Styx.WoWInternals.WoWObjects
