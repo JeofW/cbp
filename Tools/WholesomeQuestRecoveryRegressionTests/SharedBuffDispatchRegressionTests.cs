@@ -28,7 +28,7 @@ internal static class SharedBuffDispatchRegressionTests
             throw new InvalidOperationException("Ambiguous actual Cast/Buff region boundaries");
         string region=text.Substring(first,last-first);
         Console.WriteLine("Shared buff exact-region SHA256: "+Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(region))).ToLowerInvariant());
-        string prefix="using System; using System.Collections.Generic; using System.Linq; using CommonBehaviors.Actions; using Styx; using Styx.Logic.Combat; using Styx.WoWInternals.WoWObjects; using TreeSharp; using Action=TreeSharp.Action; namespace Singular.Helpers { public delegate WoWUnit UnitSelectionDelegate(object c); public delegate bool SimpleBooleanDelegate(object c); internal static " + "class Spell { private const float MeleeRange=5; ";
+        string prefix="using System; using System.Collections.Generic; using System.Linq; using CommonBehaviors.Actions; using Styx; using Styx.Logic.Combat; using Styx.WoWInternals.WoWObjects; using TreeSharp; using Action=TreeSharp.Action; namespace Singular.Helpers { public delegate WoWUnit UnitSelectionDelegate(object c); public delegate bool SimpleBooleanDelegate(object c); internal static " + "class Spell { private const float MeleeRange=5; \n";
         string temp=Path.Combine(Path.GetTempPath(),"cb-shared-buff-"+Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(temp);
         bool logging=Styx.Helpers.Logging.FileLogging;
@@ -131,7 +131,7 @@ public static class SharedBuffCases
 }
 /* Controlled spell admission/dispatch only. */ namespace Styx.Logic.Combat
 {
-    public class WoWSpell{public uint SpellRangeId=>3;public float MinRange=>0,MaxRange=>100;public int CastTime=>0;public bool IsFunnel=>false;public bool IsChanneled=>false;}
+    public class WoWSpell{public uint SpellRangeId=>3;public float MinRange=>0;public float MaxRange=>100;public int CastTime=>0;public bool IsFunnel=>false;public bool IsChanneled=>false;}
     public static class SpellManager
     {
         public static Dictionary<string,WoWSpell> Spells=new();
