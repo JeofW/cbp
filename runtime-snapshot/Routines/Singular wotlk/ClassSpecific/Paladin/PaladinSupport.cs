@@ -97,8 +97,10 @@ namespace Singular.ClassSpecific.Paladin
             {
                 // Flat attack-power coverage is not the separate percentage-AP
                 // category (Trueshot/Unleashed Rage/Abomination's Might).
-                // This is contribution selection, not a rank-strength DPS model.
-                if (setting == PaladinBlessings.Auto && name == "Blessing of Might" && battleShout) continue;
+                // Explicit preference is not permission to fight existing coverage.
+                // Effective aura rank/talent strength is not observed here: defer
+                // Might conservatively and reconsider when the covering aura expires.
+                if (name == "Blessing of Might" && battleShout) continue;
                 if (name == "Blessing of Wisdom" && player.MaxMana <= 0) continue;
                 var coverage = auras.Where(a => MatchesBlessing(a, name)).ToArray();
                 bool external = coverage.Any(a => a.CreatorGuid != 0 && a.CreatorGuid != StyxWoW.Me.Guid);
