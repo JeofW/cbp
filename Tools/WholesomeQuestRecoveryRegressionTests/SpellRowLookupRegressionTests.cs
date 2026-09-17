@@ -88,6 +88,7 @@ internal static class SpellRowLookupRegressionTests
             storage=Marshal.AllocHGlobal(16384); Marshal.Copy(new byte[16384],0,storage,16384);
             tables.Clear(); dbField.SetValue(null,RuntimeHelpers.GetUninitializedObject(typeof(WoWDb)));
             InstallTable();
+            SeedUncompressedFlag(memory);
             Check(ObjectManager.Executor==null,"fixture must never install a native executor");
         }
         internal void InstallTable(bool replacement=false)
@@ -129,8 +130,14 @@ internal static class SpellRowLookupRegressionTests
             typeof(Memory).GetField("_cache",Instance)!.SetValue(owner,cache);
             typeof(Memory).GetField("_cacheEnabled",Instance)!.SetValue(owner,enabled);
             typeof(Memory).GetField("_hProcess",Instance)!.SetValue(owner,new IntPtr(-1));
+            SeedUncompressedFlag(owner);
             replacements.Add((owner,cache,enabled));
             typeof(ObjectManager).GetProperty("Wow")!.SetValue(null,owner);
+        }
+        private static void SeedUncompressedFlag(Memory owner)
+        {
+            var bytes=(ThreadLocal<Dictionary<IntPtr,byte[]>>)typeof(Memory).GetField("_cache",Instance)!.GetValue(owner)!;
+            bytes.Value![new IntPtr(0xC5DEA0)]=new byte[]{0};
         }
         public void Dispose()
         {
