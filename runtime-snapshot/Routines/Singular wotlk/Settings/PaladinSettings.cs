@@ -61,6 +61,13 @@ namespace Singular.Settings
         public PaladinBlessings Blessings { get; set; }
 
         [Setting]
+        [DefaultValue(false)]
+        [Category("Common")]
+        [DisplayName("Use Greater Blessings")]
+        [Description("Prefer a learned Greater blessing out of combat only with known reagent availability and compatible same-class group coverage. Otherwise use the normal blessing.")]
+        public bool UseGreaterBlessings { get; set; }
+
+        [Setting]
         [DefaultValue(30)]
         [Category("Common")]
         [DisplayName("Lay on Hand Health")]

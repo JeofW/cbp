@@ -58,6 +58,12 @@ namespace Singular.ClassSpecific.Paladin
 
         private static string SelectBlessing(WoWPlayer player)
         {
+            string normal = SelectNormalBlessing(player);
+            return normal == null ? null : SelectBlessingVariant(player, normal);
+        }
+
+        private static string SelectNormalBlessing(WoWPlayer player)
+        {
             if (!CanMaintainSupport() || !IsCurrentRecipient(player, true)) return null;
             var auras = SupportAuras(player).Where(a => a.TimeLeft > TimeSpan.Zero).ToArray();
             var setting = SingularSettings.Instance.Paladin.Blessings;
@@ -111,6 +117,70 @@ namespace Singular.ClassSpecific.Paladin
                 if (SpellManager.HasSpell(name) && SpellManager.CanCast(name, player)) return name;
             }
             return null;
+        }
+
+        private static string SelectBlessingVariant(WoWPlayer player, string normal)
+        {
+            var me = StyxWoW.Me;
+            string greater = "Greater " + normal;
+            if (!SingularSettings.Instance.Paladin.UseGreaterBlessings || me == null
+                || me.Guid == 0 || player.Guid == 0 || me.Combat
+                || !SpellManager.HasSpell(greater) || !SpellManager.CanCast(greater, player)
+                || !HasGreaterBlessingReagents(greater))
+                return normal;
+
+            // Greater blessings can reach other group members of the selected
+            // class. Do not silently replace an assignment or borrow coverage
+            // from an unobservable member. The normal action remains available.
+            var roster = me.IsInRaid ? me.RaidMembers : me.IsInParty ? me.PartyMembers : Enumerable.Empty<WoWPlayer>();
+            if (roster == null) return normal;
+            var members = roster.Take(41).ToArray();
+            if (members.Length > 40 || members.Any(p => p == null || p.Guid == 0)) return normal;
+            var seen = new HashSet<ulong>();
+            foreach (var member in new[] { me }.Cast<WoWPlayer>().Concat(members))
+            {
+                if (member.Class != player.Class || !seen.Add(member.Guid)) continue;
+                if (!IsSupportRecipient(member)) return normal;
+                var auras = SupportAuras(member).Where(a => a.TimeLeft > TimeSpan.Zero).ToArray();
+                if (auras.Any(a => a.CreatorGuid == me.Guid
+                    && (a.Name.StartsWith("Blessing of ", StringComparison.Ordinal)
+                        || a.Name.StartsWith("Greater Blessing of ", StringComparison.Ordinal))
+                    && !MatchesBlessing(a, normal)))
+                    return normal;
+                // Evaluate only the underlying single-target policy here, not
+                // this variant selector recursively. Covered/discordant members
+                // deny a mass rebuff, including Might versus active Battle Shout.
+                if (SelectNormalBlessing(member) != normal) return normal;
+            }
+            return greater;
+        }
+
+        private static bool HasGreaterBlessingReagents(string name)
+        {
+            WoWSpell spell;
+            if (!SpellManager.Spells.TryGetValue(name, out spell) || spell == null) return false;
+            var data = spell.InternalInfo;
+            if (data.Reagent == null || data.ReagentCount == null
+                || data.Reagent.Length != 8 || data.ReagentCount.Length != 8) return false;
+            var needed = new Dictionary<uint, long>();
+            for (int index = 0; index < data.Reagent.Length; index++)
+            {
+                int id = data.Reagent[index];
+                uint count = data.ReagentCount[index];
+                if (id <= 0)
+                {
+                    if (count != 0) return false;
+                    continue;
+                }
+                if (count == 0) return false;
+                long prior;
+                needed.TryGetValue((uint)id, out prior);
+                needed[(uint)id] = prior + count;
+            }
+            // Missing/zeroed metadata is not proof that a Greater buff is free.
+            // Sum repeated reagent entries before comparing actual carried stock.
+            return needed.Count > 0 && needed.All(item =>
+                StyxWoW.Me.GetCarriedItemCount(item.Key) >= item.Value);
         }
 
         private static SupportAction FindBlessingAction() => FindSupportAction(true, SelectBlessing);
