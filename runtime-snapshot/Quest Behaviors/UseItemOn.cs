@@ -324,7 +324,7 @@ namespace Styx.Bot.Quest_Behaviors.UseItemOn
                     || !recipient.IsValid || recipient.Guid != recipientGuid || recipient.Entry != recipientEntry
                     || !item.IsValid || item.Guid != itemGuid || item.Entry != ItemId || item.Cooldown != 0
                     || player.CarriedItems == null || !player.CarriedItems.Any(candidate => ReferenceEquals(candidate, item))
-                    || !ReferenceEquals(ObjectManager.GetObjectByGuid<WoWObject>(recipientGuid), recipient)
+                    || !(ObjectManager.GetObjectsOfType<WoWObject>()?.Any(candidate => ReferenceEquals(candidate, recipient)) ?? false)
                     || MobIds == null || !MobIds.Contains((int)recipientEntry) || _npcBlacklist.Contains(recipientGuid))
                     return false;
 
@@ -426,7 +426,7 @@ namespace Styx.Bot.Quest_Behaviors.UseItemOn
                                     )))),
 
                         new Decorator(ret => CurrentObject != null && CurrentObject.DistanceSqr <= Range * Range && Item != null && Item.Cooldown == 0,
-                            new Action(ret => UseCapturedItem()))
+                            new Action(ret => UseCapturedItem())
                                     ),
 
                             new Decorator(
