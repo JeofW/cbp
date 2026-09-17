@@ -586,19 +586,24 @@ namespace Singular.Helpers
             //    return new Action(ret => RunStatus.Success);
             //}
 
+            // Cast resolves this selector again after any yielded setup. Keeping
+            // coverage in the selector prevents a stale outer predicate from
+            // submitting a duplicate while retaining caller-declared equivalents.
+            UnitSelectionDelegate uncoveredUnit = ret =>
+            {
+                if (string.IsNullOrWhiteSpace(name) || onUnit == null || requirements == null || buffNames == null)
+                    return null;
+                var target = onUnit(ret);
+                return target != null && !DoubleCastPreventionDict.ContainsKey(name) &&
+                       buffNames.All(b => myBuff ? !target.HasMyAura(b) : !target.HasAura(b))
+                    ? target : null;
+            };
             return
                 new Decorator(
-                    ret =>
-                    {
-                        if (string.IsNullOrWhiteSpace(name) || onUnit == null || requirements == null || buffNames == null)
-                            return false;
-                        var target = onUnit(ret);
-                        return target != null && !DoubleCastPreventionDict.ContainsKey(name) &&
-                               buffNames.All(b => myBuff ? !target.HasMyAura(b) : !target.HasAura(b));
-                    },
+                    ret => uncoveredUnit(ret) != null,
                     new Sequence(
                 // new Action(ctx => _lastBuffCast = name),
-                        Cast(name, onUnit, requirements),
+                        Cast(name, uncoveredUnit, requirements),
                         // WotLK QC fix: instant-cast buffs (Aspect of the Viper/Dragonhawk, etc.)
                         // skip the WaitContinue below and were never added to the dict, so the bot
                         // spammed CastSpellById every pulse (~5x/600ms in the wild). Mark the spell
@@ -721,16 +726,16 @@ namespace Singular.Helpers
         /// <returns></returns>
         public static Composite Buff(int spellId, UnitSelectionDelegate onUnit, SimpleBooleanDelegate requirements)
         {
-            return
-                new Decorator(
-                    ret =>
-                    {
-                        if (spellId <= 0 || onUnit == null || requirements == null)
-                            return false;
-                        var target = onUnit(ret);
-                        return target != null && !target.Auras.Values.Any(a => a.SpellId == spellId);
-                    },
-                    Cast(spellId, onUnit, requirements));
+            UnitSelectionDelegate uncoveredUnit = ret =>
+            {
+                if (spellId <= 0 || onUnit == null || requirements == null)
+                    return null;
+                var target = onUnit(ret);
+                return target != null && !target.Auras.Values.Any(a => a.SpellId == spellId)
+                    ? target : null;
+            };
+            return new Decorator(ret => uncoveredUnit(ret) != null,
+                Cast(spellId, uncoveredUnit, requirements));
         }
 
         #endregion
@@ -748,7 +753,7 @@ namespace Singular.Helpers
         /// <returns>.</returns>
         public static Composite BuffSelf(int spellId)
         {
-            return Buff(spellId, ret => true);
+            return Buff(spellId, ret => StyxWoW.Me, ret => true);
         }
 
         /// <summary>
