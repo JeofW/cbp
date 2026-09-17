@@ -88,12 +88,12 @@ public static class LootCases
         foreach(bool passFallback in new[]{false,true})
         foreach(int flags in Enumerable.Range(0,8))
         {
-            bool de=allowDE, pass=passFallback;int bits=flags;
-            Add($"Need availability matrix de={de} pass={pass} flags={bits}",()=>{
+            bool de=allowDE, fallbackPass=passFallback;int bits=flags;
+            Add($"Need availability matrix de={de} pass={fallbackPass} flags={bits}",()=>{
                 var s=Reset();s.MatchRule=MatchRollType.Need;s.RollForLootDE=de;
-                s.NoMatchRule=pass?NoMatchRollType.Pass:NoMatchRollType.Greed;
+                s.NoMatchRule=fallbackPass?NoMatchRollType.Pass:NoMatchRollType.Greed;
                 CanNeed=(bits&1)!=0;CanGreed=(bits&2)!=0;CanDisenchant=(bits&4)!=0;
-                Roll();Expect(CanNeed?1:de&&CanDisenchant?3:!pass&&CanGreed?2:0);
+                Roll();Expect(CanNeed?1:de&&CanDisenchant?3:!fallbackPass&&CanGreed?2:0);
             });
         }
         foreach(bool matching in new[]{false,true})
