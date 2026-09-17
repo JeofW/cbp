@@ -212,7 +212,10 @@ namespace SmartLootRoller
 
                 if (matchesCriteria)
                 {
-                    rollType = (int)settings.MatchRule;
+                    // Saved enum values are not Lua roll codes: legacy Pass=3
+                    // must remain readable, but code 3 means Disenchant to the client.
+                    rollType = settings.MatchRule == MatchRollType.Need ? 1
+                        : settings.MatchRule == MatchRollType.Greed ? 2 : 0;
                     Logging.Write("[SmartLootRoller] Item '{0}' MATCHES your criteria. Rolling {1}.", rollItemInfo.Name, settings.MatchRule);
                 }
                 else
@@ -225,7 +228,8 @@ namespace SmartLootRoller
                     }
                     else
                     {
-                        rollType = (int)settings.NoMatchRule;
+                        // Unknown saved values also fail closed to Pass, never DE.
+                        rollType = settings.NoMatchRule == NoMatchRollType.Greed ? 2 : 0;
                         Logging.Write("[SmartLootRoller] Item '{0}' does NOT match. Rolling {1}.", rollItemInfo.Name, settings.NoMatchRule);
                     }
                 }
