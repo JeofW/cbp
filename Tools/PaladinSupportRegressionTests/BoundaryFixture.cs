@@ -11,9 +11,15 @@ internal static class Fixture
     internal static readonly HashSet<string> Unavailable = new(StringComparer.Ordinal);
     internal static readonly List<(string Spell, ulong Target)> Attempts = new();
     internal static readonly List<Exception> Errors = new();
+    internal static int DefaultRestCalls;
+    internal static RunStatus DefaultRestResult = RunStatus.Failure;
     internal static void Reset()
     {
         Known.Clear(); Unavailable.Clear(); Attempts.Clear(); Errors.Clear();
+        DefaultRestCalls = 0; DefaultRestResult = RunStatus.Failure;
+        Singular.Managers.TankManager.Instance.FirstUnit = null;
+        Singular.Managers.TankManager.Instance.NeedToTaunt.Clear();
+        Singular.Settings.SingularSettings.Instance.EnableTaunting = false;
         Styx.StyxWoW.Me = new LocalPlayer { Guid = 1, Class = WoWClass.Paladin };
         Singular.Settings.SingularSettings.Instance.Paladin = new();
         Singular.Managers.TalentManager.CurrentSpec = Singular.Managers.TalentSpec.RetributionPaladin;
@@ -86,8 +92,11 @@ namespace Styx.Logic.Combat
 }
 namespace Styx.WoWInternals.WoWObjects
 {
+    public class MapState { public bool IsBattleground { get; set; } public bool IsInstance { get; set; } }
     public class WoWUnit
     {
+        public MapState CurrentMap { get; } = new();
+        public bool IsInInstance => CurrentMap.IsInstance;
         public ulong Guid { get; set; }
         public uint Entry { get; set; } = 1;
         public bool IsValid { get; set; } = true;
@@ -142,10 +151,16 @@ namespace Singular.Managers
     public enum TalentSpec { RetributionPaladin, HolyPaladin, ProtectionPaladin, Lowbie }
     public static class TalentManager { public static TalentSpec CurrentSpec { get; set; } }
     public static class HealerManager { public static bool NeedHealTargeting { get; set; } }
+    public sealed class TankManager
+    {
+        public static TankManager Instance { get; } = new();
+        public WoWUnit? FirstUnit { get; set; }
+        public List<WoWUnit> NeedToTaunt { get; } = new();
+    }
 }
 namespace Singular.Dynamics
 {
-    public enum BehaviorType { Heal, Rest, Pull, Combat, PreCombatBuffs, CombatBuffs }
+    public enum BehaviorType { Heal, Rest, Pull, Combat, PreCombatBuffs, CombatBuffs, PullBuffs }
     public enum WoWContext { All, Normal, Battlegrounds, Instances }
 }
 namespace Singular.Settings
@@ -158,9 +173,12 @@ namespace Singular.Settings
         public bool DispelDebuffs { get; set; } = true;
         public bool DispelParty { get; set; } = true;
         public int LayOnHandsHealth => 15;
-        public int HolyLightHealth => 30;
+        public int HolyLightHealth { get; set; } = 30;
         public int FlashOfLightHealth => 50;
         public int DivineProtectionHealthRet => 20;
+        public int DivineProtectionHealthProt => 20;
+        public int ProtConsecrationCount => 3;
+        public bool AvengersPullOnly { get; set; }
         public int ConsecrationCount => 3;
         public int DivinePleaMana => 30;
         public int RetributionHealHealth => 30;
@@ -169,11 +187,12 @@ namespace Singular.Settings
     {
         public static SingularSettings Instance { get; } = new();
         public PaladinSettings Paladin { get; set; } = new();
+        public bool EnableTaunting { get; set; }
     }
 }
 namespace Singular.Helpers
 {
-    public static class Unit { public static List<WoWUnit> NearbyUnfriendlyUnits { get; } = new(); public static bool IsAreaEffectSafe(string name, WoWUnit target) => true; }
+    public static class Unit { public static List<WoWUnit> NearbyUnfriendlyUnits { get; } = new(); public static IEnumerable<WoWUnit> UnfriendlyUnitsNearTarget(float range) => NearbyUnfriendlyUnits; public static bool IsAreaEffectSafe(string name, WoWUnit target) => true; }
     public static class Safers { public static Composite EnsureTarget() => Fixture.Nothing(); }
     public static class Common
     {
@@ -187,7 +206,11 @@ namespace Singular.Helpers
         public static Composite CreateMoveToMeleeBehavior(bool _) => Fixture.Nothing();
         public static Composite CreateMoveToTargetBehavior(bool _, float range) => Fixture.Nothing();
     }
-    public static class Rest { public static Composite CreateDefaultRestBehaviour() => Fixture.Nothing(); }
+    public static class Rest
+    {
+        public static Composite CreateDefaultRestBehaviour() => new TreeSharp.Action(_ =>
+        { Fixture.DefaultRestCalls++; return Fixture.DefaultRestResult; });
+    }
     public static class Spell
     {
         public const float MeleeRange = 5;
