@@ -1,0 +1,123 @@
+{
+  "schema": 1,
+  "repository": "jeofwong/CopilotBuddy-private",
+  "repository_id": 1367174964,
+  "pr": 47,
+  "branch": "audit/next-47-flight-owner-boundaries-20260916",
+  "target": "original WoW 3.3.5a build 12340",
+  "verified_code": "06ab57a31bf2a1634b6dafaf781fa70f73197623",
+  "verified_tree": "53c2da7ecd31c7ea17de454d95a7d24bc96d67aa",
+  "observed_master": "518baec545cedc8fe219afc0861c0e8cb9475a8f",
+  "policy": "docs/audit/WOTLK_335A_RESEARCH_POLICY.md",
+  "policy_commit": "9231739e5f0a78e35ce1a3a467e55d4651ca95ad",
+  "new_repairs": [
+    {
+      "name": "shared buff dispatch",
+      "red": "053fa9f3a8d5bd546615f2725145f8205977d6e5",
+      "red_passed": 36,
+      "cases": 54,
+      "red_assertions": 18,
+      "red_unexpected": 0,
+      "first_repair": "e3004d6c2a69b41ead811c4fd8361edb7b1e028d",
+      "first_repair_status": "54 new cases pass but two retained isolated null-input predicates fail; not an overall pass",
+      "green": "70487ce104c73fab3f669bdf67c645d492568aeb",
+      "green_passed": 54,
+      "restored_compatibility_cases": "13/13",
+      "changed_source_paths": ["runtime-snapshot/Routines/Singular wotlk/Helpers/Spell.cs"],
+      "unchanged_other_aggregate_groups": 79,
+      "unchanged_normalized_members": 92,
+      "tests_and_workflows_unchanged_across_repair": true
+    },
+    {
+      "name": "client loot-roll permissions",
+      "red": "2b36193340058bd102449262059d0c7a04f741e3",
+      "red_passed": 61,
+      "cases": 79,
+      "red_assertions": 18,
+      "red_unexpected": 0,
+      "green": "06ab57a31bf2a1634b6dafaf781fa70f73197623",
+      "green_passed": 79,
+      "original_cases_retained": 43,
+      "added_cases": 36,
+      "changed_source_paths": ["runtime-snapshot/Plugins/SmartLootRoller/SmartLootRoller.cs"],
+      "unchanged_other_aggregate_groups": 79,
+      "unchanged_normalized_members": 92,
+      "tests_and_workflows_unchanged_across_repair": true,
+      "fixture_correction": "cc6762d2 test addition renamed captured pass to fallbackPass in 2b361933; no expected behavior changed"
+    }
+  ],
+  "artifacts": [
+    {"phase":"shared-buff-red","file":"w54-integrated-red-053fa9f3.zip","commit":"053fa9f3a8d5bd546615f2725145f8205977d6e5","run_id":35198349244,"artifact_id":10487057720,"sha256":"4995c00fb3e95da4b8e7d955f3e5a68f32a764426a7a15889d2dab414983cce8"},
+    {"phase":"intermediate-compatibility-failure","file":"w54-integrated-green-e3004d6c.zip","commit":"e3004d6c2a69b41ead811c4fd8361edb7b1e028d","run_id":35203272697,"artifact_id":10488946932,"sha256":"d1ed36c8d5aea372418a00498711cf6a163734606a227bf2a9fcb6b1b954ef10","filename_is_not_result":true},
+    {"phase":"shared-buff-green","file":"w54-integrated-green-70487ce1.zip","commit":"70487ce104c73fab3f669bdf67c645d492568aeb","run_id":35204257811,"artifact_id":10489535996,"sha256":"fb426f006e42c2572b34b2ebf0d6b5414c5f9a04b7ac9c5f36e8fd02dd7d22d1"},
+    {"phase":"loot-permission-red","file":"w54-loot-red-2b361933.zip","commit":"2b36193340058bd102449262059d0c7a04f741e3","run_id":35204906278,"artifact_id":10489980862,"sha256":"c4884cb6e00c5ef4f90e99e5745d5ad686db54af57addc150a5aa0ad7cd8ea7c"},
+    {"phase":"final-integrated-green","file":"w54-loot-green-06ab57a3.zip","commit":"06ab57a31bf2a1634b6dafaf781fa70f73197623","run_id":35205551275,"artifact_id":10490106473,"sha256":"c164b1047fef05b28b29b3e53aba0f45dae7f6602175b55662b09a6d63e9c5dc"},
+    {"phase":"final-focused-green","file":"w54-focused-06ab57a3.zip","commit":"06ab57a31bf2a1634b6dafaf781fa70f73197623","run_id":35205551161,"artifact_id":10489912107,"sha256":"47452cb4d560e966c352809bf0c6d1fa58ebd4e57a7d220e6fc8f88fa4f27558"},
+    {"phase":"final-host-compile","file":"w54-host-06ab57a3.zip","commit":"06ab57a31bf2a1634b6dafaf781fa70f73197623","run_id":35205551093,"artifact_id":10489852215,"sha256":"3092d83611c2c2e66fef2c71eeccc5f18c6407fdfbcb1b9cc0de2dca8a82dadc"}
+  ],
+  "final_verification": {
+    "integrated_entries_passed": 17,
+    "focused_projects_passed": 4,
+    "identical_source_config_hashes": 1761,
+    "identical_normalized_members": 92,
+    "matching_aggregate_group_outcomes": 80,
+    "focused_internal_manifest_entries": 112,
+    "integrated_internal_manifest_entries": 136,
+    "source_exports_verified_against_inputs": 115,
+    "host_exit": 0,
+    "host_warnings": 3296,
+    "host_errors": 0,
+    "host_has_internal_manifest": false,
+    "utility_verifier_tests": 12,
+    "outer_digests_and_crc_verified": true
+  },
+  "source_blobs": {
+    "shared_buff_final": "c0f5719ca058eaad2805604ab238f7488b943bdc",
+    "loot_final": "be39a8a4542a2bf743ee0c423a7693f3c529c172",
+    "loot_test_final": "19dc5a2c32dd08c223c6ad2bf6f8db5756c95529",
+    "research_policy": "a565fe550748ec7abd2ba8a3e1fc1d7cd63e6bfc"
+  },
+  "research": {
+    "original_ui_ref": "tekkub/wow-ui-source@c4e0255fc574598428ee1c25f160ab949798bc98",
+    "original_ui_path": "FrameXML/LootFrame.lua",
+    "original_ui_blob": "28fe1b491a6ae1e8355f246f412a4a550286a1c5",
+    "emulator_stat_source_blob": "24c025ac6d6d6e17fa5c75cb93178cb8de92a282",
+    "emulator_scope": "implementation evidence, not proof of the owner's realm or bundled numerical coefficients",
+    "stat_weights_changed": false,
+    "smartloot_ret_strength": 2.7,
+    "smartloot_ret_agility": 1.8,
+    "autoequip_xml_ret_strength": 0.8,
+    "autoequip_xml_ret_agility": 0.32
+  },
+  "graph_delta": {
+    "confirmed": [
+      "Buff coverage selector is re-evaluated by actual Cast after yielded setup",
+      "BuffSelf(int) selects player rather than current target",
+      "SmartLoot item score is subordinate to client Need and Greed availability"
+    ],
+    "retained_verified_examples": {"escort_observation":47,"blessing_contribution":63,"paladin_support":44,"aura_cancellation":35},
+    "remaining": [
+      "automatic Wholesome escort/event strategy and authoritative completion",
+      "all-spec rank-strength and singleton effect ownership, legitimate transitions and late callbacks",
+      "unified loadout/cap-aware equipment decisions and active quest-reward path",
+      "underwater air, obstacle and shoreline recovery",
+      "remaining upstream/native/merchant lifetime requirements",
+      "independent review, representative performance and original-client acceptance"
+    ]
+  },
+  "scope": {
+    "new_github_code_writes": true,
+    "new_windows_runs": true,
+    "public_ci_already_operational": true,
+    "workflow_changes_in_this_slice": false,
+    "master_merge": false,
+    "deployment": false,
+    "historical_baseline_arm_reverified": false,
+    "all_class_rotations_executed": false,
+    "measured_dps_improvement": false,
+    "independent_approval": false,
+    "live_game_acceptance": false,
+    "exhaustive_audit_complete": false,
+    "pending_unexecuted_test_at_verified_code": false
+  }
+}
