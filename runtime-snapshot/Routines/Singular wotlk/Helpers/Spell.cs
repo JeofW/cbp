@@ -600,7 +600,8 @@ namespace Singular.Helpers
             };
             return
                 new Decorator(
-                    ret => uncoveredUnit(ret) != null,
+                    ret => onUnit != null && requirements != null && buffNames != null
+                           && !string.IsNullOrWhiteSpace(name) && uncoveredUnit(ret) != null,
                     new Sequence(
                 // new Action(ctx => _lastBuffCast = name),
                         Cast(name, uncoveredUnit, requirements),
@@ -734,7 +735,8 @@ namespace Singular.Helpers
                 return target != null && !target.Auras.Values.Any(a => a.SpellId == spellId)
                     ? target : null;
             };
-            return new Decorator(ret => uncoveredUnit(ret) != null,
+            return new Decorator(ret => spellId > 0 && onUnit != null && requirements != null
+                && uncoveredUnit(ret) != null,
                 Cast(spellId, uncoveredUnit, requirements));
         }
 
