@@ -164,11 +164,11 @@ public static class QuestItemSelectionCases
     private static void ExpectItem(WoWItem? expected)
     { if(!ReferenceEquals(Read("Item"),expected))throw new Failure("item lookup differs from the valid carried item"); }
 }
-namespace Styx
+/* Embedded controlled observation namespace, not the outer initializer. */ namespace Styx
 {
     public static class StyxWoW { public static WoWInternals.WoWObjects.LocalPlayer? Me=>WoWInternals.ObjectManager.Me;public static void SleepForLagDuration(){} }
 }
-namespace Styx.WoWInternals.WoWObjects
+/* Embedded controlled observation namespace, not the outer initializer. */ namespace Styx.WoWInternals.WoWObjects
 {
     public class WoWObject
     {
@@ -194,7 +194,7 @@ namespace Styx.WoWInternals.WoWObjects
     }
     public class FakeQuestLog { public Styx.Logic.Questing.PlayerQuest? GetQuestById(uint id)=>null; }
 }
-namespace Styx.WoWInternals
+/* Embedded controlled observation namespace, not the outer initializer. */ namespace Styx.WoWInternals
 {
     public static class ObjectManager
     {
@@ -204,24 +204,24 @@ namespace Styx.WoWInternals
     }
     public static class WoWMovement { public static void MoveStop(){} public static void ClickToMove(WoWPoint p){}public static void Face(ulong id){} }
 }
-namespace Styx.Logic.Combat
+/* Embedded controlled observation namespace, not the outer initializer. */ namespace Styx.Logic.Combat
 {
     public class WoWSpell { public string Name=>"ControlledAura";public static WoWSpell FromId(int id)=>new(); }
 }
-namespace Styx.Logic
+/* Embedded controlled observation namespace, not the outer initializer. */ namespace Styx.Logic
 {
     public static class Targeting { public static bool IsTooNearBlackspot(object ignored,WoWPoint point)=>false; }
 }
-namespace Styx.Logic.Pathing
+/* Embedded controlled observation namespace, not the outer initializer. */ namespace Styx.Logic.Pathing
 {
     public static class Navigator { public static bool CanNavigateFully(WoWPoint a,WoWPoint b)=>true;public static MoveResult MoveTo(WoWPoint p)=>MoveResult.Moved; }
 }
-namespace Styx.Logic.Profiles
+/* Embedded controlled observation namespace, not the outer initializer. */ namespace Styx.Logic.Profiles
 {
     public static class ProfileManager { public static Profile CurrentProfile{get;}=new(); }
     public class Profile { public object Blackspots{get;}=new(); }
 }
-namespace Styx.Logic.BehaviorTree
+/* Embedded controlled observation namespace, not the outer initializer. */ namespace Styx.Logic.BehaviorTree
 {
     public static class TreeRoot { public static string GoalText{get;set;}="";public static string StatusText{get;set;}="";public static ControlledBot? Current{get;set;} }
     public class ControlledBot { public Composite Root{get;set;}=new PrioritySelector(); }
