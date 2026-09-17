@@ -74,6 +74,9 @@ public static class MovementCases
             Deny("self target does not navigate",()=>Player.CurrentTarget=Player);
             Deny("invalid target does not navigate",()=>Target.IsValid=false);
             Deny("dead target does not navigate",()=>Target.IsAlive=false);
+            // Actual Druid Rebirth calls the delegate overload for a dead ally.
+            Add("dead friendly resurrection target remains reachable",()=>{Target.IsAlive=false;Target.IsFriendly=true;var expected=Target.Location;Tick(Build());Check(Moves.SequenceEqual(new[]{expected}),"resurrection approach was disabled by a blanket dead-target veto");});
+            Add("living friendly healing target remains reachable",()=>{Target.IsFriendly=true;var expected=Target.Location;Tick(Build());Check(Moves.SequenceEqual(new[]{expected}),"friendly healing approach was disabled");});
             Deny("invalid player does not navigate",()=>Player.IsValid=false);
             Deny("dead player does not navigate",()=>Player.IsAlive=false);
             Deny("in-progress cast is not interrupted for LOS",()=>Player.IsCasting=true);
@@ -114,6 +117,7 @@ public static class MovementCases
         StopCase("disabled movement does not stop approach",()=>SingularSettings.Instance.DisableAllMovement=true,false);
         StopCase("invalid target is not casting evidence",()=>Target.IsValid=false,false);
         StopCase("dead target is not casting evidence",()=>Target.IsAlive=false,false);
+        StopCase("visible friendly corpse can be a resurrection destination",()=>{Target.IsAlive=false;Target.IsFriendly=true;},true);
         StopCase("owner replaced during sight read cannot stop replacement",()=>Target.OnSight=()=>StyxWoW.Me=new WoWUnit{Guid=99,IsMoving=true},false);
         int passed=0,assertions=0,unexpected=0;
         foreach(var c in cases)
