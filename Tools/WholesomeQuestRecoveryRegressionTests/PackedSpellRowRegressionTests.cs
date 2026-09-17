@@ -21,6 +21,7 @@ internal static class PackedSpellRowRegressionTests
     [ModuleInitializer]
     internal static void Run()
     {
+        Console.WriteLine("Packed spell fixture: managed prefix="+Marshal.SizeOf<SpellEntry>()+"; native decoded record=704.");
         var cases = new List<(string Name, Action Test)>();
         void Add(string name, Action<Fixture> test) => cases.Add((name, () => { using var f = new Fixture(); test(f); }));
         Add("uncompressed current FromId control", f => f.ExpectSpell(77));
@@ -97,11 +98,16 @@ internal static class PackedSpellRowRegressionTests
         internal Fixture()
         {
             rows=(IDisposable)Activator.CreateInstance(typeof(SpellRowLookupRegressionTests).GetNestedType("Fixture",BindingFlags.NonPublic)!,true)!;
-            storage=(IntPtr)rows.GetType().GetField("storage",Hidden)!.GetValue(rows)!;
-            memory=ObjectManager.Wow!;
-            cache=((ThreadLocal<Dictionary<IntPtr,byte[]>>)typeof(Memory).GetField("_cache",Hidden)!.GetValue(memory)!).Value!;
-            Check(Marshal.SizeOf<SpellEntry>()==704,"unexpected original-client SpellEntry layout");
-            Flag(0);Publish(77);
+            try
+            {
+                storage=(IntPtr)rows.GetType().GetField("storage",Hidden)!.GetValue(rows)!;
+                memory=ObjectManager.Wow!;
+                cache=((ThreadLocal<Dictionary<IntPtr,byte[]>>)typeof(Memory).GetField("_cache",Hidden)!.GetValue(memory)!).Value!;
+                int prefix=Marshal.SizeOf<SpellEntry>();
+                if(prefix<=0 || prefix>704) throw new InvalidOperationException("Managed SpellEntry exceeds the supplied 704-byte native record contract: "+prefix);
+                Flag(0);Publish(77);
+            }
+            catch { rows.Dispose(); throw; }
         }
         internal void Publish(uint level)=>Invoke(rows.GetType().GetMethod("Publish",Hidden)!,rows,new object[]{0,level});
         internal void Flag(byte value)=>cache[new IntPtr(0xC5DEA0)]=new[]{value};

@@ -96,7 +96,7 @@ internal static class SpellRowLookupRegressionTests
             if(replacement) nextHeader+=64;
             Type headerType=typeof(WoWDb).GetNestedType("DbTableHeader",BindingFlags.NonPublic)!;
             object header=Activator.CreateInstance(headerType)!;
-            foreach(var field in new (string Name,object Value)[] { ("IsLoaded",1),("NumRows",2),("MinIndex",Id),("MaxIndex",Id+1),("RecordSize",Marshal.SizeOf<SpellEntry>()),("FieldCount",Marshal.SizeOf<SpellEntry>()/4),("RowArrayPtr",IntPtr.Add(storage,256)) })
+            foreach(var field in new (string Name,object Value)[] { ("IsLoaded",1),("NumRows",2),("MinIndex",Id),("MaxIndex",Id+1),("RecordSize",704),("FieldCount",176),("RowArrayPtr",IntPtr.Add(storage,256)) })
                 headerType.GetField(field.Name)!.SetValue(header,field.Value);
             IntPtr address=IntPtr.Add(storage,nextHeader); Marshal.StructureToPtr(header,address,false); Invalidate(address);
             tables[ClientDb.Spell]=(WoWDb.DbTable)Activator.CreateInstance(typeof(WoWDb.DbTable),Instance,null,new object[]{IntPtr.Add(address,24)},null)!;
@@ -104,7 +104,8 @@ internal static class SpellRowLookupRegressionTests
         internal void RemoveTable() => tables.Remove(ClientDb.Spell);
         internal void Publish(int slot,uint level)
         {
-            int size=Marshal.SizeOf<SpellEntry>();
+            // The managed SpellEntry is a prefix of the supplied native record.
+            int size=704;
             if(nextRow+size>16384) throw new InvalidOperationException("fixture storage exhausted");
             IntPtr row=IntPtr.Add(storage,nextRow); nextRow+=size+16;
             Marshal.Copy(new byte[size],0,row,size);
