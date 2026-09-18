@@ -746,7 +746,7 @@ namespace WholesomeAQ
                 // metadata. Do not turn an unused source into a quest-data failure.
                 if (IsObjectiveComplete(objective, objectiveCounts, snapshot.CarriedItemCounts))
                     continue;
-                if (!Supported(objective))
+                if (!Supported(quest, objective))
                 {
                     var unsupportedKey = QuestRecoveryKey.ForObjective((uint)quest.Id, objective.Index);
                     QuestRecoveryDecision unsupportedDecision = evaluate(unsupportedKey);
@@ -1319,7 +1319,15 @@ namespace WholesomeAQ
         }
 
         private static bool Supported(QuestEntry quest) =>
-            quest.Objectives.Count > 0 && quest.Objectives.All(Supported);
+            quest.Objectives.Count > 0 && quest.Objectives.All(objective => Supported(quest, objective));
+
+        private static bool Supported(QuestEntry quest, QuestObjective objective) =>
+            Supported(objective) &&
+            // Both TrinityCore 3.3.5 and AzerothCore use SpecialFlags 0x20
+            // for cast credit, not a kill. No item/interaction recipe is implied.
+            // Keep the imported row intact; unsupported work is reported by its
+            // existing objective owner, after satisfied counters are considered.
+            (objective.Type != ObjectiveType.KillMob || (quest.SpecialFlags & 0x20) == 0);
 
         private static bool Supported(QuestObjective objective) =>
             (objective.Type == ObjectiveType.KillMob && objective.MobId > 0) ||
