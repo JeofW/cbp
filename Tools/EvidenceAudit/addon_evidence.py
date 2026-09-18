@@ -39,6 +39,12 @@ def _link(info: os.stat_result) -> bool:
 
 
 def _identity(info: os.stat_result) -> tuple:
+    # Python 3.12+ deprecates st_ctime_ns as creation time on Windows, and
+    # path-stat versus handle-stat observations can disagree for a fresh file.
+    # Keep a stable object/content identity there; retain ctime on POSIX.
+    if os.name == "nt":
+        return (info.st_dev, info.st_ino, info.st_size, info.st_mtime_ns,
+                getattr(info, "st_birthtime_ns", None))
     return info.st_dev, info.st_ino, info.st_size, info.st_mtime_ns, info.st_ctime_ns
 
 
