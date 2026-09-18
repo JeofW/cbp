@@ -639,7 +639,7 @@ namespace Bots.Gatherbuddy
         /// </summary>
         private Composite CreateRepairBehavior()
         {
-            return new PrioritySelector(
+            return new Sequence(
                 // Phase 1: find repair vendor, move into range. Cache the unit for Phase 2.
                 new Action(ctx =>
                 {
