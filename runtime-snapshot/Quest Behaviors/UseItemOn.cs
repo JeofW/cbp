@@ -314,9 +314,16 @@ namespace Styx.Bot.Quest_Behaviors.UseItemOn
             uint recipientEntry = recipient.Entry;
             bool targeted = false;
 
-            bool OwnsActor() => !_isDisposed && !_isBehaviorDone && playerGuid != 0
+            bool OwnsActorIdentity() => !_isDisposed && !_isBehaviorDone && playerGuid != 0
                 && ReferenceEquals(Me, player) && player.IsValid && player.IsAlive
                 && player.Guid == playerGuid;
+
+            // Quest acceptance/completion can change during setup or item use.
+            // Reuse the explicit profile's requirements, not a guessed recipe,
+            // and fence the observation with the same actor/lifetime checks.
+            bool OwnsActor() => OwnsActorIdentity()
+                && UtilIsProgressRequirementsMet(QuestId, QuestRequirementInLog, QuestRequirementComplete)
+                && OwnsActorIdentity();
 
             bool Admitted(bool requireSelectedTarget)
             {
