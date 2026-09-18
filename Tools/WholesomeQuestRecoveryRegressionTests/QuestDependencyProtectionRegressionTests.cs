@@ -60,6 +60,39 @@ internal static class QuestDependencyProtectionRegressionTests
                 var db = Database(0); db.Quests[0].NextQuestID = 200;
                 using var f = new Fixture(db); RequireProtected(100, 200);
             }),
+            ("negative exclusive dependent predecessor protects every group member", () =>
+            {
+                var db = Database(0);
+                db.Quests[0].ExclusiveGroup = -7;
+                db.Quests.Insert(1, new QuestEntry { Id = 101, ExclusiveGroup = -7 });
+                db.Quests.Single(q => q.Id == 200).PreviousQuestsIds.Add(100);
+                using var f = new Fixture(db);
+                RequireProtected(100, 200);
+                RequireProtected(101, 200);
+            }),
+            ("positive exclusive dependent predecessor does not protect its sibling", () =>
+            {
+                var db = Database(0);
+                db.Quests[0].ExclusiveGroup = 7;
+                db.Quests.Insert(1, new QuestEntry { Id = 101, ExclusiveGroup = 7 });
+                db.Quests.Single(q => q.Id == 200).PreviousQuestsIds.Add(100);
+                using var f = new Fixture(db);
+                RequireProtected(100, 200);
+                var result = Status(101, 200);
+                Check(result == QuestPrerequisiteStatus.NotActive && Decision(result).MayAbandon,
+                    "positive alternative sibling became a required parent");
+            }),
+            ("direct positive predecessor does not expand a negative exclusive group", () =>
+            {
+                var db = Database(100);
+                db.Quests[0].ExclusiveGroup = -7;
+                db.Quests.Insert(1, new QuestEntry { Id = 101, ExclusiveGroup = -7 });
+                using var f = new Fixture(db);
+                RequireProtected(100, 200);
+                var result = Status(101, 200);
+                Check(result == QuestPrerequisiteStatus.NotActive && Decision(result).MayAbandon,
+                    "direct PrevQuestID incorrectly expanded through negative group");
+            }),
             ("active-parent and rewarded-parent edges are both retained", () =>
             {
                 var db = Database(-100); db.Quests.Add(new QuestEntry { Id = 101 });
