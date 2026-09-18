@@ -213,7 +213,7 @@ namespace Bots.Grind
                     )),
                     // Not in combat: Rest, PreCombatBuff, Pull
                     new Decorator(
-                        ctx => !StyxWoW.Me.Combat,
+                        ctx => !IsPlayerOrPetInCombat(),
                         new PrioritySelector(
                             Routine.RestBehavior,
                             Routine.PreCombatBuffBehavior,
@@ -239,28 +239,37 @@ namespace Bots.Grind
                             ))
                         )
                     ),
-                    // In combat: Heal, CombatBuff, Combat
-                    // combat branch: only run when we have a valid first target
-                new Decorator(
-                        ctx =>
-                        {
-                            bool combat = StyxWoW.Me.Combat || (StyxWoW.Me.GotAlivePet && StyxWoW.Me.Pet.Combat);
-                            return !StyxWoW.Me.Mounted && combat &&
-                                   Targeting.Instance.FirstUnit != null;
-                        },
+                    // A transient targeting gap does not end observed ground combat.
+                    // Retain self-healing and ownership; only offensive leaves need a target.
+                    new Decorator(
+                        ctx => !StyxWoW.Me.Mounted && IsPlayerOrPetInCombat(),
                         new PrioritySelector(
                             new Decorator(
                                 ctx => StyxWoW.Me.Mounted,
                                 new TreeSharp.Action(ctx => Mount.Dismount("Combat"))
                             ),
                             Routine.HealBehavior,
-                            Routine.CombatBuffBehavior,
-                            Routine.CombatBehavior,
+                            new Decorator(
+                                ctx => Targeting.Instance.FirstUnit != null,
+                                new PrioritySelector(
+                                    Routine.CombatBuffBehavior,
+                                    Routine.CombatBehavior
+                                )
+                            ),
                             new ActionAlwaysSucceed()
                         )
                     )
                 )
             );
+        }
+
+        private static bool IsPlayerOrPetInCombat()
+        {
+            var player = StyxWoW.Me;
+            if (player == null)
+                return false;
+            var pet = player.GotAlivePet ? player.Pet : null;
+            return player.Combat || (pet != null && pet.Combat);
         }
 
         private static bool CanPull()
