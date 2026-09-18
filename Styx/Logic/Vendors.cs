@@ -179,8 +179,14 @@ namespace Styx.Logic
 
 		internal static bool SellAllItemsStep()
 		{
-			if (!_sellSessionActive && !StartSellSession())
-				return true;
+			if (!_sellSessionActive)
+			{
+				Profile? profile = ProfileManager.CurrentProfile;
+				if (!StartSellSession())
+					// An aborted candidate cannot finish its caller's service sequence.
+					// Preserve only the existing no-profile-at-entry terminal no-op.
+					return profile == null && ProfileManager.CurrentProfile == null && !_sellSessionActive;
+			}
 
 			return ContinueSellSession();
 		}
@@ -486,5 +492,4 @@ namespace Styx.Logic
 		}
 	}
 }
-
 
