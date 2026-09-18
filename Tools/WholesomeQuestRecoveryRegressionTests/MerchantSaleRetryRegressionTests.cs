@@ -72,7 +72,7 @@ public static class SaleReplayCases
         Add("unrelated successful request does not release rejected key",()=>{Step();Token="p:m:0:2:1:item:101";Step();Token="p:m:0:1:1:item:100";Check(Step()==0&&Requests==2,"unrelated item released old retry guard");});
         Add("cooldown remains effective immediately before deadline",()=>{Step();Now+=119999;Check(Step()==0&&Requests==1,"guard expired early");});
         Add("exact cooldown deadline permits one fresh attempt",()=>{Step();Now+=120000;Check(Step()==1&&Requests==2,"finite retry never recovered");Check(Step()==0&&Requests==2,"fresh attempt was not guarded");});
-        Add("locked observation remains pending without an attempt key",()=>{Result=new(){"ok","2"};Check(Step()==2,"locked state changed");Result=null;Check(Step()==1,"lock poisoned later eligibility");});
+        Add("locked observation remains pending without an attempt key",()=>{Result=new(){"ok","2"};Check(Step()==2,"locked state changed");Now+=1000;Result=null;Check(Step()==1,"lock poisoned later eligibility");});
         Add("closed merchant retains closed code",()=>{Result=new(){"ok","3"};Check(Step()==3,"closed state changed");});
         Add("empty queue retains empty code",()=>{Result=new(){"ok","0"};Check(Step()==0,"empty queue changed");});
         Add("empty quality does not invoke external query",()=>{Check(Seller.SellNextItemQualities(ItemQuality.None,null!,null!)==0&&Queries==0,"empty mask queried");});
