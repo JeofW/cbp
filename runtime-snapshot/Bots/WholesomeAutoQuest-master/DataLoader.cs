@@ -91,11 +91,11 @@ namespace WholesomeAQ
                 : ParseProvenance(provenanceSnapshot, snapshot);
             string fingerprint = FingerprintManifest(
                 provenanceSnapshot == null
-                    ? new[] { (Role: LogicalRole(_dataFile), Digest: Digest(snapshot)) }
+                    ? new[] { (Role: LogicalRole(_dataFile), Digest: FingerprintDigest(snapshot)) }
                     : new[]
                     {
-                        (Role: LogicalRole(_dataFile), Digest: Digest(snapshot)),
-                        (Role: LogicalRole(provenancePath), Digest: Digest(provenanceSnapshot))
+                        (Role: LogicalRole(_dataFile), Digest: FingerprintDigest(snapshot)),
+                        (Role: LogicalRole(provenancePath), Digest: FingerprintDigest(provenanceSnapshot))
                     });
             string json;
             using (var stream = new MemoryStream(snapshot, writable: false))
@@ -223,6 +223,9 @@ namespace WholesomeAQ
         private static string Digest(byte[] bytes) =>
             Convert.ToHexString(SHA256.HashData(bytes)).ToLowerInvariant();
 
+        private static string FingerprintDigest(byte[] bytes) =>
+            Convert.ToHexString(SHA256.HashData(bytes));
+
         internal static string CreateDatasetFingerprint(IEnumerable<string> dataFiles)
         {
             if (dataFiles == null)
@@ -231,7 +234,7 @@ namespace WholesomeAQ
             {
                 string role = LogicalRole(path);
                 using (var stream = File.OpenRead(path))
-                    return (Role: role, Digest: Convert.ToHexString(SHA256.HashData(stream)).ToLowerInvariant());
+                    return (Role: role, Digest: Convert.ToHexString(SHA256.HashData(stream)));
             }));
         }
 
