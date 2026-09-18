@@ -722,7 +722,7 @@ namespace Bots.Gatherbuddy
         /// </summary>
         private Composite CreateSellBehavior()
         {
-            return new PrioritySelector(
+            return new Sequence(
                 // Phase 1: find vendor, move into range. Cache the unit for Phase 2.
                 new Action(ctx =>
                 {
