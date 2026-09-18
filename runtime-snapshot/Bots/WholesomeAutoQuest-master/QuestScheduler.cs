@@ -486,6 +486,12 @@ namespace WholesomeAQ
                         !Supported(quest))
                         continue;
 
+                    // A negative PrevQuestID requires an accepted parent, not a
+                    // rewarded parent. Preserve the signed TC/AC 3.3.5 contract.
+                    if (quest.PrevQuestID < 0 && (quest.PrevQuestID == int.MinValue ||
+                        !accepted.ContainsKey((uint)-quest.PrevQuestID)))
+                        continue;
+
                     uint ancestor = FindAcceptedIncompleteAncestor(quest, quests, accepted, completed);
                     if (ancestor != 0 || !PrerequisitesComplete(quest, completed))
                         continue;
