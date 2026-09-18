@@ -19,6 +19,12 @@ namespace Styx.Logic.Inventory.Frames.Merchant
         private string prefix;
 
         internal int Execute(string script, Func<string, List<string>> query, long now)
+            => ExecuteCore(script, query, now, batch: false);
+
+        internal int ExecuteBatch(string script, Func<string, List<string>> query, long now)
+            => ExecuteCore(script, query, now, batch: true);
+
+        private int ExecuteCore(string script, Func<string, List<string>> query, long now, bool batch)
         {
             if (query == null) throw new ArgumentNullException(nameof(query));
             if (now < 0 || now > long.MaxValue - RetryMilliseconds) return -1;
@@ -46,11 +52,32 @@ namespace Styx.Logic.Inventory.Frames.Merchant
                 }
                 // Bound generated source as well as the number of retained keys.
                 if (prefix.Length > 65536) return 4;
-                List<string> values = query(prefix + script);
+                int available = MaximumKeys - attempts.Count;
+                string budget = batch
+                    ? "local saleAttemptBudget=" + available.ToString(CultureInfo.InvariantCulture) + ";"
+                    : string.Empty;
+                List<string> values = query(prefix + budget + script);
                 if (values == null || values.Count < 2 || values[0] != "ok" ||
                     !int.TryParse(values[1], NumberStyles.None, CultureInfo.InvariantCulture, out int result) ||
-                    result < 0 || result > 3)
+                    result < 0 || result > (batch ? 4 : 3))
                     return -1;
+                if (batch)
+                {
+                    // A batch returns its terminal state plus every attempted key,
+                    // including attempts before a pending/closed/error boundary.
+                    // Validate all keys first: malformed data cannot partly publish.
+                    if (result == 1 || values.Count - 2 > available) return -1;
+                    var receipts = new HashSet<string>(StringComparer.Ordinal);
+                    for (int index = 2; index < values.Count; index++)
+                    {
+                        string key = values[index];
+                        if (string.IsNullOrEmpty(key) || Encoding.UTF8.GetByteCount(key) > 2048
+                            || attempts.ContainsKey(key) || !receipts.Add(key)) return -1;
+                    }
+                    foreach (string key in receipts) attempts[key] = now + RetryMilliseconds;
+                    if (receipts.Count != 0) prefix = null;
+                    return result;
+                }
                 if (result != 1) return values.Count == 2 ? result : -1;
                 if (values.Count != 3 || string.IsNullOrEmpty(values[2]) ||
                     Encoding.UTF8.GetByteCount(values[2]) > 2048)

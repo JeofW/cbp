@@ -81,11 +81,20 @@ namespace Styx.Logic.Inventory.Frames.Merchant
                 qualities, nameExceptions, idExceptions,
                 out string exceptions, out string qualityCondition);
 
-            Lua.DoString(string.Format(
-                "if not MerchantFrame or not MerchantFrame:IsShown() then return end " +
+            // Bulk callers (including Wholesome) share the stepped seller's
+            // retry receipts. Preserve earlier attempts when a later observation
+            // is pending or a Lua call fails; none is proof of server acceptance.
+            _saleAttemptGate.ExecuteBatch(string.Format(
+                "if not MerchantFrame or not MerchantFrame:IsShown() then return 'ok',3 end " +
+                "if type(UnitGUID)~='function' then return 'ok',2 end " +
+                "local player=UnitGUID('player') local merchant=UnitGUID('npc') " +
+                "if type(player)~='string' or player=='' or type(merchant)~='string' or merchant=='' then return 'ok',2 end " +
+                "local submitted={{}} local budget=saleAttemptBudget or 256 " +
+                "local function sellPass() " +
                 "{0}for b=0,4 do for s=1,GetContainerNumSlots(b) do " +
                 "local itemLink=GetContainerItemLink(b,s) if itemLink then " +
                 "local name,_,quality,_,_,_,_,_,_,_,sellPrice=GetItemInfo(itemLink) " +
+                "if not name or quality==nil then return 'ok',2 end " +
                 "if name and quality~=nil then local id=tonumber(string.match(itemLink,'item:(%d+)')) " +
                 "name=string.lower(name) if {1} then local skip=false " +
                 "if itemExceptions then for i=1,#itemExceptions do " +
@@ -93,9 +102,23 @@ namespace Styx.Logic.Inventory.Frames.Merchant
                 "(itemExceptions[i].n and name==itemExceptions[i].n) then skip=true break end end end " +
                 SaleValueGuardLua +
                 QuestItemSaleGuardLua +
-                "if not skip then local _,_,locked=GetContainerItemInfo(b,s) " +
-                "if not locked then UseContainerItem(b,s) end end end end end end end",
-                exceptions, qualityCondition));
+                "if not skip then local _,count,locked=GetContainerItemInfo(b,s) " +
+                "if not locked then " +
+                "if type(count)~='number' or count~=count or count<1 or count==math.huge or count~=math.floor(count) then return 'ok',2 end " +
+                "local token=player..':'..merchant..':'..b..':'..s..':'..count..':'..itemLink " +
+                "if #token>2048 then return 'ok',2 end " +
+                "if not blockedSaleStacks or not blockedSaleStacks[token] then " +
+                "if #submitted>=budget then return 'ok',4 end " +
+                "if not MerchantFrame or not MerchantFrame:IsShown() then return 'ok',3 end " +
+                "if UnitGUID('player')~=player or UnitGUID('npc')~=merchant then return 'ok',2 end " +
+                "submitted[#submitted+1]=token " +
+                "if blockedSaleStacks then blockedSaleStacks[token]=true end " +
+                "UseContainerItem(b,s) end end end end end end end end " +
+                "return 'ok',0 end " +
+                "local ok,marker,status=pcall(sellPass) " +
+                "if not ok then return 'ok',2,unpack(submitted) end " +
+                "return marker,status,unpack(submitted)",
+                exceptions, qualityCondition), Lua.GetReturnValues, Environment.TickCount64);
         }
 
         /// <summary>
