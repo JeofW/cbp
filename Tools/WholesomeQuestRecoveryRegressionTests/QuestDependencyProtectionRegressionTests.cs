@@ -96,12 +96,12 @@ internal static class QuestDependencyProtectionRegressionTests
             {
                 using var f = new Fixture(Database(100)); RequireUnknown(0);
             }),
-            ("direct dependency API also preserves unknown queried coverage", () =>
+            ("direct dependency API retains its explicit complete-edge-list contract", () =>
             {
                 var result = QuestPrerequisiteAuthority.DetermineFromDependencies(999,
                     new[] { new QuestDependencyEvidence(200, 100, true, true) });
-                Check(result == QuestPrerequisiteStatus.Unknown && !Decision(result).MayAbandon,
-                    "direct traversal invented known-negative coverage");
+                Check(result == QuestPrerequisiteStatus.NotActive && Decision(result).MayAbandon,
+                    "direct traversal changed its established complete-edge-list contract");
             }),
             ("known queried quest is not its own dependent", () =>
             {
