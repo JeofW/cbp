@@ -99,6 +99,31 @@ class InventoryTests(unittest.TestCase):
         self.put("Test/Test.TOC", b"\xef\xbb\xbf## Version: 2\r\n")
         self.assertEqual(ae.scan(self.root)["addons"][0]["tocs"][0]["metadata"]["version"], ["2"])
 
+    def test_windows_fresh_text_identity_probe(self):
+        if os.name != "nt":
+            self.skipTest("Windows file-identity probe")
+        original_identity = ae._identity
+        for attempt in range(128):
+            target = self.put("Probe/Probe.toc", b"## Interface: 30300\r\n## Version: 2\r\n")
+            observed = []
+            def capture(info):
+                value = original_identity(info)
+                observed.append(value)
+                return value
+            with patch.object(ae, "_identity", side_effect=capture):
+                result = ae.scan(self.root)
+            addon = next((item for item in result["addons"] if item["folder"] == "Probe"), None)
+            if addon is None or len(addon["tocs"]) != 1:
+                try:
+                    current = original_identity(target.lstat())
+                except OSError as error:
+                    current = (type(error).__name__, str(error))
+                self.fail(
+                    f"fresh text snapshot dropped at attempt {attempt}; "
+                    f"identity_calls={observed!r}; current={current!r}; issues={result['issues']!r}")
+            target.unlink()
+            target.parent.rmdir()
+
     def test_oversized_file_marks_partial(self):
         self.put("Test/Test.lua", "x" * 20)
         result = ae.scan(self.root, max_bytes=10)
