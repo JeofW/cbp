@@ -14,9 +14,13 @@ namespace Styx.Logic.Inventory.Frames.Merchant
     {
         private const int MaximumKeys = 256;
         private const long RetryMilliseconds = 120000;
+        private const long PendingPollMilliseconds = 1000;
+        private const long PendingLimitMilliseconds = 10000;
         private readonly Dictionary<string, long> attempts = new(StringComparer.Ordinal);
         private int executing;
         private string prefix;
+        private long pendingSince = -1;
+        private long nextPendingQueryAt = -1;
 
         internal int Execute(string script, Func<string, List<string>> query, long now)
             => ExecuteCore(script, query, now, batch: false);
@@ -31,6 +35,19 @@ namespace Styx.Logic.Inventory.Frames.Merchant
             if (Interlocked.CompareExchange(ref executing, 1, 0) != 0) return 2;
             try
             {
+                if (!batch && pendingSince >= 0)
+                {
+                    if (now < pendingSince)
+                        ClearPendingObservation();
+                    else if (now - pendingSince >= PendingLimitMilliseconds)
+                    {
+                        ClearPendingObservation();
+                        return 4;
+                    }
+                    else if (now < nextPendingQueryAt)
+                        return 2;
+                }
+
                 foreach (string key in attempts.Where(pair => pair.Value <= now).Select(pair => pair.Key).ToArray())
                 {
                     attempts.Remove(key);
@@ -60,7 +77,10 @@ namespace Styx.Logic.Inventory.Frames.Merchant
                 if (values == null || values.Count < 2 || values[0] != "ok" ||
                     !int.TryParse(values[1], NumberStyles.None, CultureInfo.InvariantCulture, out int result) ||
                     result < 0 || result > (batch ? 4 : 3))
+                {
+                    if (!batch) MarkPendingObservation(now);
                     return -1;
+                }
                 if (batch)
                 {
                     // A batch returns its terminal state plus every attempted key,
@@ -78,16 +98,45 @@ namespace Styx.Logic.Inventory.Frames.Merchant
                     if (receipts.Count != 0) prefix = null;
                     return result;
                 }
-                if (result != 1) return values.Count == 2 ? result : -1;
+                if (result != 1)
+                {
+                    if (values.Count != 2)
+                    {
+                        MarkPendingObservation(now);
+                        return -1;
+                    }
+                    if (result == 2)
+                        MarkPendingObservation(now);
+                    else
+                        ClearPendingObservation();
+                    return result;
+                }
                 if (values.Count != 3 || string.IsNullOrEmpty(values[2]) ||
                     Encoding.UTF8.GetByteCount(values[2]) > 2048)
+                {
+                    MarkPendingObservation(now);
                     return -1;
+                }
 
                 attempts[values[2]] = now + RetryMilliseconds;
                 prefix = null;
+                ClearPendingObservation();
                 return 1;
             }
             finally { Volatile.Write(ref executing, 0); }
+        }
+
+        private void MarkPendingObservation(long now)
+        {
+            if (pendingSince < 0 || now < pendingSince)
+                pendingSince = now;
+            nextPendingQueryAt = now + PendingPollMilliseconds;
+        }
+
+        private void ClearPendingObservation()
+        {
+            pendingSince = -1;
+            nextPendingQueryAt = -1;
         }
     }
 }
