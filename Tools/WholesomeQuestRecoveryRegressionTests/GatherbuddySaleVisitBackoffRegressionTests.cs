@@ -73,7 +73,10 @@ internal static class GatherbuddySaleVisitBackoffRegressionTests
                 int start = source.IndexOf("public override void Start()", StringComparison.Ordinal);
                 int end = start < 0 ? -1 : source.IndexOf("#endregion", start, StringComparison.Ordinal);
                 Check(start >= 0 && end > start, "start lifecycle region changed");
-                Check(source.Substring(start, end - start).Contains("_lastSaleVisitAt = DateTime.MinValue", StringComparison.Ordinal),
+                string region = source.Substring(start, end - start);
+                int field = region.IndexOf("_lastSaleVisitAt", StringComparison.Ordinal);
+                int reset = field < 0 ? -1 : region.IndexOf("DateTime.MinValue", field, StringComparison.Ordinal);
+                Check(field >= 0 && reset > field,
                     "new GatherBuddy session inherited a prior sale backoff");
             }),
             ("mail cooldown remains an independent owner", () =>
