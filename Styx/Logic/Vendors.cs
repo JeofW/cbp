@@ -308,11 +308,21 @@ namespace Styx.Logic
 
 		private static bool ContinueSellSession()
 		{
+			// A result and its diagnostics belong to the session that requested them.
+			// Reentrant callbacks may reset or publish a different session.
+			object session = _sellSessionCandidate;
+			bool OwnsSession() => session != null && _sellSessionActive
+				&& ReferenceEquals(_sellSessionCandidate, session);
+			if (!OwnsSession())
+				return false;
+
 			int result = _merchantFrame.SellNextItemQualities(
 				_sellSessionQualities,
 				_sellSessionProtectedNames ?? Enumerable.Empty<string>(),
 				_sellSessionProtectedIds ?? Enumerable.Empty<uint>());
 
+			if (!OwnsSession())
+				return false;
 			if (result < 0)
 				return false;
 
@@ -328,6 +338,8 @@ namespace Styx.Logic
 			if (result == 3)
 			{
 				Logging.WriteDebug("Vendor sale interrupted because the merchant window closed during the scan.");
+				if (!OwnsSession())
+					return false;
 				ResetSellSession();
 				return true;
 			}
@@ -335,6 +347,8 @@ namespace Styx.Logic
 			if (result == 4)
 			{
 				Logging.Write("Vendor sale pass deferred by the bounded retry guard; no sale acknowledgement is inferred.");
+				if (!OwnsSession())
+					return false;
 				ResetSellSession();
 				ForceSell = false;
 				return true;
@@ -343,6 +357,8 @@ namespace Styx.Logic
 				return false;
 
 			Logging.Write("Vendor sale pass complete: submitted {0} request(s); merchant acceptance is not inferred.", _sellSessionStackCount);
+			if (!OwnsSession())
+				return false;
 			ResetSellSession();
 			ForceSell = false;
 			return true;
