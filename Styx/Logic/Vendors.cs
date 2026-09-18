@@ -162,10 +162,17 @@ namespace Styx.Logic
 			if (!StartSellSession())
 				return;
 
+			object session = _sellSessionCandidate;
+			if (session == null || !_sellSessionActive)
+				return;
+
 			_merchantFrame.SellItemQualities(
 				_sellSessionQualities,
 				_sellSessionProtectedNames ?? Enumerable.Empty<string>(),
 				_sellSessionProtectedIds ?? Enumerable.Empty<uint>());
+			// The bulk callback may have reset or replaced the admitted session.
+			if (!ReferenceEquals(_sellSessionCandidate, session) || !_sellSessionActive)
+				return;
 			ResetSellSession();
 			ForceSell = false;
 		}
