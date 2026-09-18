@@ -94,6 +94,6 @@ public static class SaleReplayCases
     private static void Check(bool ok,string reason){if(!ok)throw new Failure(reason);}
 }
 // Namespaces are deliberately inside a raw fixture string, not initializer owners.
-namespace Styx.Logic.Inventory.Frames.Merchant {internal static class Lua{public static List<string> GetReturnValues(string s)=>SaleReplayCases.Query(s);public static void DoString(string s){SaleReplayCases.Script=s;}public static string Escape(string s)=>s.Replace("\\","\\\\").Replace("\"","\\\"");}internal static class Environment{public static long TickCount64=>SaleReplayCases.Now;}}
+/* fixture */ namespace Styx.Logic.Inventory.Frames.Merchant {internal static class Lua{public static List<string> GetReturnValues(string s)=>SaleReplayCases.Query(s);public static void DoString(string s){SaleReplayCases.Script=s;}public static string Escape(string s)=>s.Replace("\\","\\\\").Replace("\"","\\\"");}internal static class Environment{public static long TickCount64=>SaleReplayCases.Now;}}
 """;
 }
