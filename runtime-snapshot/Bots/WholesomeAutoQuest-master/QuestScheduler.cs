@@ -475,6 +475,7 @@ namespace WholesomeAQ
             if (snapshot.HasAuthoritativeCompletions && !questLogFull)
             {
                 int minimumLevel = Math.Max(1, snapshot.PlayerLevel - minQuestLevelOffset);
+                var claimedPositiveExclusiveGroups = new HashSet<int>();
                 foreach (QuestEntry quest in db.Quests.OrderBy(quest => quest.QuestLevel).ThenBy(quest => quest.Id))
                 {
                     uint questId = (uint)quest.Id;
@@ -484,6 +485,9 @@ namespace WholesomeAQ
                         (quest.QuestLevel > 0 && (quest.QuestLevel < minimumLevel || quest.QuestLevel > snapshot.PlayerLevel)) ||
                         !RaceAllowed(quest.AllowableRaces, snapshot.PlayerRaceId) ||
                         !Supported(quest))
+                        continue;
+                    if (!PositiveExclusiveGroupAvailable(
+                        quest, db, accepted, completed, claimedPositiveExclusiveGroups))
                         continue;
 
                     // A negative PrevQuestID requires an accepted parent, not a
@@ -496,12 +500,15 @@ namespace WholesomeAQ
                     if (ancestor != 0 || !PrerequisitesComplete(quest, completed))
                         continue;
 
+                    int plannedBefore = candidatePlans.Count;
                     AddRelationWork(
                         quest, QuestWorkStage.Pickup, QuestRecoveryStage.Pickup,
                         db.QuestGivers.Where(giver => giver.QuestId == quest.Id)
                             .Select(giver => new Relation(giver.GiverId, giver: giver)),
                         db, snapshot, evaluate, candidates, candidatePlans, exclusions, scanThreshold,
                         assessNavigation, reportDataFailure);
+                    if (quest.ExclusiveGroup > 0 && candidatePlans.Count > plannedBefore)
+                        claimedPositiveExclusiveGroups.Add(quest.ExclusiveGroup);
                 }
             }
 
@@ -1381,6 +1388,26 @@ namespace WholesomeAQ
                 .Where(giver => giver.QuestId == quest.Id)
                 .SelectMany(giver => GetRelationSpawns(giver.GiverId, giver.GiverType, db))
                 .Any(point => InRange(point, snapshot, scanThreshold));
+
+        private static bool PositiveExclusiveGroupAvailable(
+            QuestEntry quest,
+            QuestDatabase db,
+            IReadOnlyDictionary<uint, QuestSchedulerAcceptedQuest> accepted,
+            HashSet<uint> completed,
+            HashSet<int> claimed)
+        {
+            int group = quest.ExclusiveGroup;
+            if (group <= 0)
+                return true;
+            if (claimed.Contains(group))
+                return false;
+
+            return !db.Quests.Any(other =>
+                other.Id > 0 &&
+                other.Id != quest.Id &&
+                other.ExclusiveGroup == group &&
+                (accepted.ContainsKey((uint)other.Id) || completed.Contains((uint)other.Id)));
+        }
 
         private static bool PrerequisitesComplete(QuestEntry quest, HashSet<uint> completed)
         {
