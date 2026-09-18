@@ -12,16 +12,19 @@ internal static class Fixture
     internal static readonly List<(string Spell, ulong Target)> Attempts = new();
     internal static readonly List<Exception> Errors = new();
     internal static readonly Dictionary<string, WoWSpell> Metadata = new();
+    internal static readonly List<string> LuaQueries = new();
+    internal static Func<string, List<string>>? LuaResult;
     internal static int DefaultRestCalls;
     internal static RunStatus DefaultRestResult = RunStatus.Failure;
     internal static void Reset()
     {
         Known.Clear(); Unavailable.Clear(); Attempts.Clear(); Errors.Clear(); Metadata.Clear();
+        LuaQueries.Clear(); LuaResult = null;
         DefaultRestCalls = 0; DefaultRestResult = RunStatus.Failure;
         Singular.Managers.TankManager.Instance.FirstUnit = null;
         Singular.Managers.TankManager.Instance.NeedToTaunt.Clear();
         Singular.Settings.SingularSettings.Instance.EnableTaunting = false;
-        Styx.StyxWoW.Me = new LocalPlayer { Guid = 1, Class = WoWClass.Paladin };
+        Styx.StyxWoW.Me = new LocalPlayer { Guid = 1, Class = WoWClass.Paladin, Name = "SelfPaladin" };
         Singular.Settings.SingularSettings.Instance.Paladin = new();
         Singular.Managers.TalentManager.CurrentSpec = Singular.Managers.TalentSpec.RetributionPaladin;
         Singular.Helpers.Unit.NearbyUnfriendlyUnits.Clear();
@@ -30,6 +33,7 @@ internal static class Fixture
     {
         var me = Styx.StyxWoW.Me;
         var p = new WoWPlayer { Guid = (ulong)(me.PartyMembers.Count + me.RaidMembers.Count + 10), Class = kind,
+            Name = "Member" + (me.PartyMembers.Count + me.RaidMembers.Count + 10),
             MaxMana = kind is WoWClass.Warrior or WoWClass.Rogue or WoWClass.DeathKnight ? 0 : 100 };
         if (raid) { me.IsInRaid = true; me.RaidMembers.Add(p); }
         else { me.IsInParty = true; me.PartyMembers.Add(p); }
@@ -102,6 +106,7 @@ namespace Styx.WoWInternals.WoWObjects
         public bool IsInInstance => CurrentMap.IsInstance;
         public ulong Guid { get; set; }
         public uint Entry { get; set; } = 1;
+        public string Name { get; set; } = "";
         public bool IsValid { get; set; } = true;
         public bool IsAlive { get; set; } = true;
         public bool IsFriendly { get; set; } = true;
@@ -152,6 +157,18 @@ namespace Styx.WoWInternals.WoWObjects
     }
 }
 namespace Styx { public static class StyxWoW { public static LocalPlayer Me { get; set; } = new(); } }
+namespace Styx.WoWInternals
+{
+    public static class Lua
+    {
+        public static List<string> GetReturnValues(string code)
+        {
+            Fixture.LuaQueries.Add(code);
+            return Fixture.LuaResult?.Invoke(code) ?? new List<string>();
+        }
+        public static string Escape(string value) => (value ?? "").Replace("\\", "\\\\").Replace("\"", "\\\"");
+    }
+}
 namespace Styx.Helpers { public static class Logging { public static void WriteException(Exception ex) => Fixture.Errors.Add(ex); } }
 namespace Singular.Managers
 {
@@ -178,6 +195,7 @@ namespace Singular.Settings
         public Singular.ClassSpecific.Paladin.PaladinAura Aura { get; set; }
         public Singular.ClassSpecific.Paladin.PaladinBlessings Blessings { get; set; }
         public bool UseGreaterBlessings { get; set; }
+        public bool UsePallyPowerAssignments { get; set; }
         public bool DispelDebuffs { get; set; } = true;
         public bool DispelParty { get; set; } = true;
         public int LayOnHandsHealth => 15;
