@@ -174,6 +174,8 @@ namespace Styx.Logic.Inventory.Frames.Merchant
                 "if type(count)~='number' or count~=count or count<1 or count==math.huge or count~=math.floor(count) then return 'ok',2 end " +
                 "local token=player..':'..merchant..':'..b..':'..s..':'..count..':'..itemLink " +
                 "if not blockedSaleStacks or not blockedSaleStacks[token] then " +
+                "if not MerchantFrame or not MerchantFrame:IsShown() then return 'ok',3 end " +
+                "if UnitGUID('player')~=player or UnitGUID('npc')~=merchant then return 'ok',2 end " +
                 "UseContainerItem(b,s) return 'ok',1,token end end end end end end " +
                 "return 'ok',0",
                 exceptions, qualityCondition);
