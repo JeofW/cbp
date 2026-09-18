@@ -108,8 +108,8 @@ namespace WholesomeAQ
                 database.Quests.SelectMany(quest =>
                 {
                     var prerequisites = quest.PreviousQuestsIds
-                        .Concat(quest.PrevQuestID > 0
-                            ? new[] { quest.PrevQuestID }
+                        .Concat(quest.PrevQuestID != 0 && quest.PrevQuestID != int.MinValue
+                            ? new[] { Math.Abs(quest.PrevQuestID) }
                             : Array.Empty<int>())
                         .Where(id => id > 0)
                         .Select(id => new QuestDependencyEvidence(
