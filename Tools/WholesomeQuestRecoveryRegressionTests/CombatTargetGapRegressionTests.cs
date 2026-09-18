@@ -154,22 +154,22 @@ public static class GapCases
     }
     private static void Check(bool ok,string why){if(!ok)throw new Failure(why);}
 }
-namespace Styx {public static class StyxWoW{public static LocalPlayer Me=new();}}
-namespace Styx.WoWInternals.WoWObjects
+/* Embedded fixture namespace, not the initializer scope. */ namespace Styx {public static class StyxWoW{public static LocalPlayer Me=new();}}
+/* Embedded fixture namespace, not the initializer scope. */ namespace Styx.WoWInternals.WoWObjects
 {
     public class WoWObject{public WoWPoint Location=new(10,10,10);public WoWUnit ToUnit()=>(WoWUnit)this;}
     public class WoWUnit:WoWObject{public bool IsAlive=true;public bool Dead=>!IsAlive;public bool Combat;public bool InLineOfSpellSight=true;public float Distance=3;public WoWUnit? CurrentTarget;public void Target(){GapCases.Targets++;StyxWoW.Me.CurrentTarget=this;}}
     public class LocalPlayer:WoWUnit{public bool Mounted;public WoWUnit? Pet;public bool GotAlivePet=>Pet?.IsAlive==true;public bool HasPendingSpell(string name)=>false;}
 }
-namespace Styx.Logic {public sealed class Targeting{public static Targeting Instance=new();public static float PullDistance=30;public List<WoWUnit> TargetList=new();public WoWUnit? FirstUnit=>TargetList.FirstOrDefault();}}
-namespace Styx.Logic.POI
+/* Embedded fixture namespace, not the initializer scope. */ namespace Styx.Logic {public sealed class Targeting{public static Targeting Instance=new();public static float PullDistance=30;public List<WoWUnit> TargetList=new();public WoWUnit? FirstUnit=>TargetList.FirstOrDefault();}}
+/* Embedded fixture namespace, not the initializer scope. */ namespace Styx.Logic.POI
 {
     public enum PoiType{None,Kill,Skin}
     public sealed class BotPoi{public static BotPoi Current=new(null,PoiType.None);public WoWObject? AsObject;public PoiType Type;public WoWPoint Location=>AsObject?.Location??WoWPoint.Zero;public BotPoi(WoWObject? subject,PoiType type){AsObject=subject;Type=type;}public static void Clear(string reason){Current=new(null,PoiType.None);}}
 }
-namespace Styx.Logic.Pathing {public static class Mount{public static bool DismountNeeded;public static bool ShouldDismount(WoWPoint p)=>DismountNeeded;public static void Dismount(string reason){GapCases.Dismounts++;StyxWoW.Me.Mounted=false;}}}
-namespace Styx.WoWInternals {public static class Lua{public static void DoString(string text){}}}
-namespace CommonBehaviors.Actions
+/* Embedded fixture namespace, not the initializer scope. */ namespace Styx.Logic.Pathing {public static class Mount{public static bool DismountNeeded;public static bool ShouldDismount(WoWPoint p)=>DismountNeeded;public static void Dismount(string reason){GapCases.Dismounts++;StyxWoW.Me.Mounted=false;}}}
+/* Embedded fixture namespace, not the initializer scope. */ namespace Styx.WoWInternals {public static class Lua{public static void DoString(string text){}}}
+/* Embedded fixture namespace, not the initializer scope. */ namespace CommonBehaviors.Actions
 {
     public sealed class ActionClearPoi:TreeSharp.Action{public ActionClearPoi(string reason):base(_=>{BotPoi.Clear(reason);return RunStatus.Success;}){}}
     public sealed class ActionDebugString:TreeSharp.Action{public ActionDebugString(string text):base(_=>RunStatus.Success){}}
