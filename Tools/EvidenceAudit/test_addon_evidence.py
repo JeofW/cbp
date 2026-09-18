@@ -284,4 +284,140 @@ class HintTests(unittest.TestCase):
         self.assertEqual(ae.loads_strict('{"x":1}'), {"x":1})
 
 
+def sample_world_map_bounds():
+    return {
+        "schema": "world-map-area-bounds-335-v1",
+        "client_build": 12340,
+        "source": {
+            "provider": "controlled-worldmaparea-fixture",
+            "revision": "fixture-rev",
+            "sha256": "b" * 64,
+        },
+        "areas": [{
+            "world_map_area_id": 42,
+            "continent_map_id": 1,
+            "loc_left": 100.0,
+            "loc_right": 300.0,
+            "loc_top": 1000.0,
+            "loc_bottom": 600.0,
+        }],
+    }
+
+
+class WorldMapConversionTests(unittest.TestCase):
+    def convert(self, staged, bounds):
+        self.assertTrue(
+            hasattr(ae, "convert_world_map_area_hints"),
+            "WorldMapArea candidate conversion contract is missing")
+        return ae.convert_world_map_area_hints(staged, bounds)
+
+    def staged(self):
+        return ae.stage(sample_pack())
+
+    def test_point_percent_uses_335_client_axis_swap(self):
+        result = self.convert(self.staged(), sample_world_map_bounds())
+        hint = result["hints"][0]
+        self.assertEqual(hint["world_xy"], {
+            "continent_map_id": 1, "kind": "point", "x": 920.0, "y": 120.0})
+        self.assertIsNone(hint["world_xyz"])
+        self.assertEqual(hint["conversion_status"], "xy-candidate-only")
+        self.assertFalse(result["runtime_enabled"])
+
+    def test_fraction_scale_matches_percent_scale(self):
+        staged = self.staged()
+        staged["hints"][0]["geometry"].update(units="zone-fraction", x=.1, y=.2)
+        result = self.convert(staged, sample_world_map_bounds())
+        self.assertEqual(result["hints"][0]["world_xy"]["x"], 920.0)
+        self.assertEqual(result["hints"][0]["world_xy"]["y"], 120.0)
+
+    def test_box_remains_box_and_transforms_all_corners(self):
+        staged = self.staged()
+        staged["hints"][0]["geometry"] = {
+            "kind": "box", "units": "zone-percent",
+            "x_min": 10, "y_min": 30, "x_max": 20, "y_max": 40}
+        hint = self.convert(staged, sample_world_map_bounds())["hints"][0]
+        self.assertEqual(hint["world_xy"], {
+            "continent_map_id": 1, "kind": "box",
+            "x_min": 840.0, "y_min": 120.0,
+            "x_max": 880.0, "y_max": 140.0})
+        self.assertNotIn("x", hint["world_xy"])
+
+    def test_carbonite_zone_stays_unmapped(self):
+        staged = self.staged()
+        staged["hints"][0]["map_namespace"] = "carbonite-zone"
+        hint = self.convert(staged, sample_world_map_bounds())["hints"][0]
+        self.assertIsNone(hint["world_xy"])
+        self.assertEqual(hint["conversion_status"], "source-namespace-unmapped")
+        self.assertIsNone(hint["world_xyz"])
+
+    def test_questie_area_stays_unmapped(self):
+        staged = self.staged()
+        staged["hints"][0]["map_namespace"] = "questie-area"
+        hint = self.convert(staged, sample_world_map_bounds())["hints"][0]
+        self.assertIsNone(hint["world_xy"])
+        self.assertEqual(hint["conversion_status"], "source-namespace-unmapped")
+
+    def test_floor_specific_hint_is_not_flattened(self):
+        staged = self.staged()
+        staged["hints"][0]["floor"] = 2
+        hint = self.convert(staged, sample_world_map_bounds())["hints"][0]
+        self.assertIsNone(hint["world_xy"])
+        self.assertEqual(hint["conversion_status"], "floor-unresolved")
+
+    def test_missing_area_never_invents_world_zero(self):
+        staged = self.staged()
+        staged["hints"][0]["map_id"] = 99
+        hint = self.convert(staged, sample_world_map_bounds())["hints"][0]
+        self.assertIsNone(hint["world_xy"])
+        self.assertEqual(hint["conversion_status"], "world-map-area-unresolved")
+        self.assertIsNone(hint["world_xyz"])
+
+    def test_degenerate_bounds_are_rejected(self):
+        bounds = sample_world_map_bounds()
+        bounds["areas"][0]["loc_bottom"] = bounds["areas"][0]["loc_top"]
+        with self.assertRaises(ValueError):
+            self.convert(self.staged(), bounds)
+
+    def test_wrong_client_build_is_rejected(self):
+        bounds = sample_world_map_bounds()
+        bounds["client_build"] = 30403
+        with self.assertRaises(ValueError):
+            self.convert(self.staged(), bounds)
+
+    def test_duplicate_world_map_area_ids_are_rejected(self):
+        bounds = sample_world_map_bounds()
+        bounds["areas"].append(copy.deepcopy(bounds["areas"][0]))
+        with self.assertRaises(ValueError):
+            self.convert(self.staged(), bounds)
+
+    def test_unknown_bounds_fields_are_rejected(self):
+        bounds = sample_world_map_bounds()
+        bounds["areas"][0]["z"] = 0
+        with self.assertRaises(ValueError):
+            self.convert(self.staged(), bounds)
+
+    def test_conversion_does_not_mutate_staged_input(self):
+        staged = self.staged()
+        before = copy.deepcopy(staged)
+        self.convert(staged, sample_world_map_bounds())
+        self.assertEqual(staged, before)
+
+    def test_conversion_never_promotes_search_hint_authority(self):
+        result = self.convert(self.staged(), sample_world_map_bounds())
+        hint = result["hints"][0]
+        self.assertEqual(hint["authority"], "search-hint-only")
+        self.assertFalse(result["runtime_enabled"])
+        self.assertFalse(result["terrain_verified"])
+        self.assertFalse(result["path_verified"])
+        self.assertEqual(result["conversion_authority"], "coordinate-candidate-only")
+
+    def test_bounds_source_is_retained_without_becoming_core_provenance(self):
+        result = self.convert(self.staged(), sample_world_map_bounds())
+        self.assertEqual(result["world_map_area_bounds"]["provider"],
+                         "controlled-worldmaparea-fixture")
+        self.assertEqual(result["world_map_area_bounds"]["revision"], "fixture-rev")
+        self.assertEqual(result["world_map_area_bounds"]["sha256"], "b" * 64)
+        self.assertFalse(result["source_verified"])
+
+
 if __name__ == "__main__": unittest.main()
