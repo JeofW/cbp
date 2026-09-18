@@ -175,10 +175,15 @@ internal static class VendorSaleEntryOwnershipRegressionTests
             try { Activate(QuietProfile()); CheckOffline(); }
             catch { Dispose(); throw; }
         }
-        internal static Profile QuietProfile() => new Profile
+        internal static Profile QuietProfile()
         {
-            SellGrey = false, SellWhite = false, SellGreen = false, SellBlue = false, SellPurple = false
-        };
+            var profile = new Profile(System.Xml.Linq.XElement.Parse(
+                "<HBProfile><SellGrey>false</SellGrey><SellWhite>false</SellWhite>" +
+                "<SellGreen>false</SellGreen><SellBlue>false</SellBlue><SellPurple>false</SellPurple></HBProfile>"), null);
+            if (profile.SellGrey || profile.SellWhite || profile.SellGreen || profile.SellBlue || profile.SellPurple)
+                throw new InvalidOperationException("Fixture requires a parsed profile with no sale qualities.");
+            return profile;
+        }
         internal bool Step() => (bool)Invoke(typeof(Vendors).GetMethod("SellAllItemsStep", Hidden)!, null, null)!;
         internal bool Start() => (bool)Invoke(actual.GetType().GetMethod("Start", All)!, actual, null)!;
         internal void Reset() => Invoke(typeof(Vendors).GetMethod("ResetSellSession", Hidden)!, null, null);
