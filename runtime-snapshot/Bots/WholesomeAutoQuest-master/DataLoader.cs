@@ -25,6 +25,7 @@ namespace WholesomeAQ
 
         public QuestDatabase Database => _database;
         public string DatasetFingerprint { get; private set; } = "unknown";
+        public QuestDatasetSourceIdentity DatasetSourceIdentity { get; private set; } = new QuestDatasetSourceIdentity();
 
         public DataLoader()
         {
@@ -76,13 +77,26 @@ namespace WholesomeAQ
             if (!File.Exists(_dataFile))
                 return null;
 
-            // Fingerprint the exact snapshot being deserialized, not a later file read.
-            // This is a dataset-load operation, never a per-pulse content hash.
+            // Fingerprint the exact snapshots being deserialized/validated, not later file reads.
+            // Provenance is optional: no sidecar means the dataset remains explicitly unknown.
             byte[] snapshot = File.ReadAllBytes(_dataFile);
-            string fingerprint = FingerprintManifest(new[]
-            {
-                (Role: LogicalRole(_dataFile), Digest: Convert.ToHexString(SHA256.HashData(snapshot)))
-            });
+            string provenancePath = Path.Combine(
+                Path.GetDirectoryName(Path.GetFullPath(_dataFile)) ?? Environment.CurrentDirectory,
+                "quest_data.provenance.json");
+            byte[] provenanceSnapshot = File.Exists(provenancePath)
+                ? File.ReadAllBytes(provenancePath)
+                : null;
+            QuestDatasetSourceIdentity sourceIdentity = provenanceSnapshot == null
+                ? new QuestDatasetSourceIdentity()
+                : ParseProvenance(provenanceSnapshot, snapshot);
+            string fingerprint = FingerprintManifest(
+                provenanceSnapshot == null
+                    ? new[] { (Role: LogicalRole(_dataFile), Digest: Digest(snapshot)) }
+                    : new[]
+                    {
+                        (Role: LogicalRole(_dataFile), Digest: Digest(snapshot)),
+                        (Role: LogicalRole(provenancePath), Digest: Digest(provenanceSnapshot))
+                    });
             string json;
             using (var stream = new MemoryStream(snapshot, writable: false))
             using (var reader = new StreamReader(stream, Encoding.UTF8, detectEncodingFromByteOrderMarks: true))
@@ -98,6 +112,7 @@ namespace WholesomeAQ
             // rather than returning a partially initialized cached database.
             PublishDependencies(database);
             DatasetFingerprint = fingerprint;
+            DatasetSourceIdentity = sourceIdentity;
             _database = database;
             return _database;
         }
@@ -129,6 +144,85 @@ namespace WholesomeAQ
                 database.Quests.Where(quest => quest.Id > 0).Select(quest => unchecked((uint)quest.Id)));
         }
 
+        private static QuestDatasetSourceIdentity ParseProvenance(byte[] snapshot, byte[] questDataSnapshot)
+        {
+            string text;
+            using (var stream = new MemoryStream(snapshot, writable: false))
+            using (var reader = new StreamReader(stream, Encoding.UTF8, detectEncodingFromByteOrderMarks: true))
+                text = reader.ReadToEnd();
+
+            using JsonDocument document = JsonDocument.Parse(text);
+            if (document.RootElement.ValueKind != JsonValueKind.Object)
+                throw new InvalidDataException("Quest dataset provenance must be a JSON object.");
+
+            string[] required =
+            {
+                "Schema", "ClientBuild", "SourceCore", "SourceBranch", "CoreRevision",
+                "DatabaseRevision", "Exporter", "ExporterVersion", "QuestDataSha256",
+                "RealmOverridesDeclared"
+            };
+            var names = document.RootElement.EnumerateObject().Select(property => property.Name).ToArray();
+            if (names.Length != required.Length ||
+                !required.OrderBy(value => value, StringComparer.Ordinal)
+                    .SequenceEqual(names.OrderBy(value => value, StringComparer.Ordinal), StringComparer.Ordinal))
+                throw new InvalidDataException("Quest dataset provenance has missing or unsupported fields.");
+
+            JsonElement root = document.RootElement;
+            string schema = RequiredString(root, "Schema");
+            if (schema != "quest-dataset-provenance-v1")
+                throw new InvalidDataException("Unsupported quest dataset provenance schema.");
+
+            if (!root.GetProperty("ClientBuild").TryGetInt32(out int clientBuild) || clientBuild != 12340)
+                throw new InvalidDataException("Quest dataset provenance requires original client build 12340.");
+
+            string sourceCore = RequiredString(root, "SourceCore");
+            if (sourceCore != "trinitycore-3.3.5" && sourceCore != "azerothcore-wotlk")
+                throw new InvalidDataException("Quest dataset provenance uses an unsupported source core.");
+
+            string sourceBranch = RequiredString(root, "SourceBranch");
+            string coreRevision = RequiredString(root, "CoreRevision");
+            string databaseRevision = RequiredString(root, "DatabaseRevision");
+            string exporter = RequiredString(root, "Exporter");
+            string exporterVersion = RequiredString(root, "ExporterVersion");
+            string questDataSha256 = RequiredString(root, "QuestDataSha256").ToLowerInvariant();
+            if (questDataSha256.Length != 64 || questDataSha256.Any(value => !Uri.IsHexDigit(value)))
+                throw new InvalidDataException("Quest dataset provenance has an invalid quest-data SHA256.");
+            if (!string.Equals(questDataSha256, Digest(questDataSnapshot), StringComparison.Ordinal))
+                throw new InvalidDataException("Quest dataset provenance does not match the quest-data snapshot.");
+
+            JsonElement overrides = root.GetProperty("RealmOverridesDeclared");
+            if (overrides.ValueKind != JsonValueKind.True && overrides.ValueKind != JsonValueKind.False)
+                throw new InvalidDataException("RealmOverridesDeclared must be an explicit boolean.");
+
+            return new QuestDatasetSourceIdentity
+            {
+                Status = QuestDatasetSourceStatus.DeclaredAndBound,
+                ClientBuild = clientBuild,
+                SourceCore = sourceCore,
+                SourceBranch = sourceBranch,
+                CoreRevision = coreRevision,
+                DatabaseRevision = databaseRevision,
+                Exporter = exporter,
+                ExporterVersion = exporterVersion,
+                QuestDataSha256 = questDataSha256,
+                RealmOverridesDeclared = overrides.GetBoolean()
+            };
+        }
+
+        private static string RequiredString(JsonElement root, string name)
+        {
+            JsonElement value = root.GetProperty(name);
+            if (value.ValueKind != JsonValueKind.String)
+                throw new InvalidDataException("Quest dataset provenance field " + name + " must be text.");
+            string result = value.GetString();
+            if (string.IsNullOrWhiteSpace(result) || result.Length > 512)
+                throw new InvalidDataException("Quest dataset provenance field " + name + " is blank or oversized.");
+            return result;
+        }
+
+        private static string Digest(byte[] bytes) =>
+            Convert.ToHexString(SHA256.HashData(bytes)).ToLowerInvariant();
+
         internal static string CreateDatasetFingerprint(IEnumerable<string> dataFiles)
         {
             if (dataFiles == null)
@@ -137,7 +231,7 @@ namespace WholesomeAQ
             {
                 string role = LogicalRole(path);
                 using (var stream = File.OpenRead(path))
-                    return (Role: role, Digest: Convert.ToHexString(SHA256.HashData(stream)));
+                    return (Role: role, Digest: Convert.ToHexString(SHA256.HashData(stream)).ToLowerInvariant());
             }));
         }
 

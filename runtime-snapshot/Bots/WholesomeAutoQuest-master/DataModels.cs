@@ -21,6 +21,26 @@ namespace WholesomeAQ
         public int Map { get; set; }
     }
 
+    public enum QuestDatasetSourceStatus
+    {
+        Unknown,
+        DeclaredAndBound
+    }
+
+    public sealed class QuestDatasetSourceIdentity
+    {
+        public QuestDatasetSourceStatus Status { get; init; } = QuestDatasetSourceStatus.Unknown;
+        public int ClientBuild { get; init; }
+        public string SourceCore { get; init; } = "unknown";
+        public string SourceBranch { get; init; } = "";
+        public string CoreRevision { get; init; } = "";
+        public string DatabaseRevision { get; init; } = "";
+        public string Exporter { get; init; } = "";
+        public string ExporterVersion { get; init; } = "";
+        public string QuestDataSha256 { get; init; } = "";
+        public bool RealmOverridesDeclared { get; init; }
+    }
+
     public class QuestDatabase
     {
         public List<QuestEntry> Quests { get; set; } = new List<QuestEntry>();
