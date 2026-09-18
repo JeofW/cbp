@@ -7,6 +7,7 @@ of the installed client's active addon set or a realm's server implementation.
 from __future__ import annotations
 
 import argparse
+import copy
 import hashlib
 import json
 import math
@@ -322,6 +323,129 @@ def stage(pack: dict, *, max_hints: int = 100000) -> dict[str, Any]:
             "client_build": 12340, "runtime_enabled": False, "source_verified": False,
             "licence_verified": False, "source": dict(source), "hints": hints,
             "duplicates_removed": len(pack["hints"]) - len(hints)}
+
+
+def _finite_number(value: Any, label: str) -> float:
+    if type(value) not in (int, float) or not math.isfinite(value):
+        raise ValueError(label + " must be a finite number")
+    return float(value)
+
+
+def _world_map_area_bounds(pack: dict) -> tuple[dict[int, dict[str, Any]], dict[str, str]]:
+    _fields(pack, {"schema", "client_build", "source", "areas"}, "world-map-area bounds pack")
+    if pack["schema"] != "world-map-area-bounds-335-v1" or pack["client_build"] != 12340:
+        raise ValueError("world-map-area-bounds-335-v1 for original client build12340 required")
+    source = pack["source"]
+    _fields(source, {"provider", "revision", "sha256"}, "world-map-area bounds source")
+    if any(type(source[key]) is not str or not source[key].strip() or len(source[key]) > 512
+           for key in ("provider", "revision")):
+        raise ValueError("WorldMapArea bounds source identity must be bounded text")
+    if type(source["sha256"]) is not str or not re.fullmatch(r"[a-f0-9]{64}", source["sha256"]):
+        raise ValueError("WorldMapArea bounds source SHA256 must be lowercase hexadecimal")
+    if type(pack["areas"]) is not list or len(pack["areas"]) > 100000:
+        raise ValueError("WorldMapArea bounds must be a bounded list")
+
+    areas: dict[int, dict[str, Any]] = {}
+    for area in pack["areas"]:
+        _fields(area, {"world_map_area_id", "continent_map_id", "loc_left", "loc_right",
+                       "loc_top", "loc_bottom"}, "WorldMapArea record")
+        _integer(area["world_map_area_id"], "world_map_area_id")
+        _integer(area["continent_map_id"], "continent_map_id", minimum=0)
+        left = _finite_number(area["loc_left"], "loc_left")
+        right = _finite_number(area["loc_right"], "loc_right")
+        top = _finite_number(area["loc_top"], "loc_top")
+        bottom = _finite_number(area["loc_bottom"], "loc_bottom")
+        if left == right or top == bottom:
+            raise ValueError("WorldMapArea bounds must have nonzero width and height")
+        ident = area["world_map_area_id"]
+        if ident in areas:
+            raise ValueError("Duplicate WorldMapArea id: " + str(ident))
+        areas[ident] = {
+            "continent_map_id": area["continent_map_id"],
+            "loc_left": left, "loc_right": right,
+            "loc_top": top, "loc_bottom": bottom,
+        }
+    return areas, dict(source)
+
+
+def _world_xy(area: dict[str, Any], x: float, y: float, units: str) -> tuple[float, float]:
+    scale = 100.0 if units == "zone-percent" else 1.0
+    # 3.x client map axes are swapped versus world X/Y. This matches the
+    # pinned MaNGOS WorldMapArea conversion used as the offline reference.
+    zone_x = y / scale * 100.0
+    zone_y = x / scale * 100.0
+    world_x = zone_x * ((area["loc_bottom"] - area["loc_top"]) / 100.0) + area["loc_top"]
+    world_y = zone_y * ((area["loc_right"] - area["loc_left"]) / 100.0) + area["loc_left"]
+    return world_x, world_y
+
+
+def convert_world_map_area_hints(staged: dict, bounds_pack: dict) -> dict[str, Any]:
+    """Attach candidate world XY to already-quarantined neutral hints.
+
+    This does not decode Carbonite, invent elevation, validate terrain, or make
+    hints executable. Only an explicitly normalized world-map-area-335 hint is
+    eligible. Other source namespaces remain unresolved until their own mapping
+    is separately proven.
+    """
+    _fields(staged, {"schema", "status", "client_build", "runtime_enabled",
+                     "source_verified", "licence_verified", "source", "hints",
+                     "duplicates_removed"}, "staged hint pack")
+    if (staged["schema"] != "quarantined-addon-hints-335-v1" or
+            staged["status"] != "quarantined" or staged["client_build"] != 12340 or
+            staged["runtime_enabled"] is not False):
+        raise ValueError("Only quarantined build12340 hints may be converted")
+    if type(staged["hints"]) is not list:
+        raise ValueError("Quarantined hints must be a list")
+
+    areas, bounds_source = _world_map_area_bounds(bounds_pack)
+    result = copy.deepcopy(staged)
+    result["conversion_authority"] = "coordinate-candidate-only"
+    result["terrain_verified"] = False
+    result["path_verified"] = False
+    result["world_map_area_bounds"] = bounds_source
+
+    for hint in result["hints"]:
+        if type(hint) is not dict or hint.get("authority") != "search-hint-only":
+            raise ValueError("Converted input must retain search-hint-only authority")
+        if hint.get("world_xyz") is not None:
+            raise ValueError("Quarantined hints cannot arrive with world XYZ authority")
+        hint["world_xy"] = None
+        if hint.get("map_namespace") != "world-map-area-335":
+            hint["conversion_status"] = "source-namespace-unmapped"
+            continue
+        if hint.get("floor") is not None:
+            hint["conversion_status"] = "floor-unresolved"
+            continue
+        area = areas.get(hint.get("map_id"))
+        if area is None:
+            hint["conversion_status"] = "world-map-area-unresolved"
+            continue
+        geometry = hint.get("geometry")
+        if type(geometry) is not dict or geometry.get("units") not in ("zone-percent", "zone-fraction"):
+            raise ValueError("Converted hint has invalid geometry units")
+        kind = geometry.get("kind")
+        if kind == "point":
+            x, y = _world_xy(area, _finite_number(geometry.get("x"), "geometry.x"),
+                             _finite_number(geometry.get("y"), "geometry.y"),
+                             geometry["units"])
+            hint["world_xy"] = {
+                "continent_map_id": area["continent_map_id"],
+                "kind": "point", "x": x, "y": y}
+        elif kind == "box":
+            corners = [
+                _world_xy(area, geometry[xk], geometry[yk], geometry["units"])
+                for xk in ("x_min", "x_max") for yk in ("y_min", "y_max")
+            ]
+            hint["world_xy"] = {
+                "continent_map_id": area["continent_map_id"], "kind": "box",
+                "x_min": min(value[0] for value in corners),
+                "y_min": min(value[1] for value in corners),
+                "x_max": max(value[0] for value in corners),
+                "y_max": max(value[1] for value in corners)}
+        else:
+            raise ValueError("Converted hint geometry must be point or box")
+        hint["conversion_status"] = "xy-candidate-only"
+    return result
 
 
 def main() -> int:
