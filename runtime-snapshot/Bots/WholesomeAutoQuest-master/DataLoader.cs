@@ -119,16 +119,48 @@ namespace WholesomeAQ
 
         private static void PublishDependencies(QuestDatabase database)
         {
+            var byId = database.Quests
+                .Where(quest => quest.Id > 0)
+                .GroupBy(quest => quest.Id)
+                .ToDictionary(group => group.Key, group => group.First());
+            var negativeGroups = database.Quests
+                .Where(quest => quest.Id > 0 && quest.ExclusiveGroup < 0)
+                .GroupBy(quest => quest.ExclusiveGroup)
+                .ToDictionary(
+                    group => group.Key,
+                    group => group.Select(quest => quest.Id).Distinct().OrderBy(id => id).ToArray());
+
             QuestPrerequisiteAuthority.PublishAuthoritativeDependencies(
                 database.Quests.SelectMany(quest =>
                 {
-                    var prerequisites = quest.PreviousQuestsIds
-                        .Concat(quest.PrevQuestID != 0 && quest.PrevQuestID != int.MinValue
-                            ? new[] { Math.Abs(quest.PrevQuestID) }
-                            : Array.Empty<int>())
+                    // PreviousQuestsIds is the dependent-predecessor input. If a
+                    // referenced predecessor belongs to a negative ExclusiveGroup,
+                    // every known member of that group protects the dependent.
+                    var dependent = quest.PreviousQuestsIds
                         .Where(id => id > 0)
+                        .SelectMany(id =>
+                        {
+                            if (byId.TryGetValue(id, out QuestEntry predecessor) &&
+                                predecessor.ExclusiveGroup < 0 &&
+                                negativeGroups.TryGetValue(predecessor.ExclusiveGroup, out int[] group))
+                                return group;
+                            return new[] { id };
+                        })
                         .Select(id => new QuestDependencyEvidence(
                             unchecked((uint)quest.Id), unchecked((uint)id), false, true));
+
+                    // Direct PrevQuestID stays a direct edge, including the
+                    // separately supported signed active-parent form.
+                    var direct = quest.PrevQuestID != 0 && quest.PrevQuestID != int.MinValue
+                        ? new[]
+                        {
+                            new QuestDependencyEvidence(
+                                unchecked((uint)quest.Id),
+                                unchecked((uint)Math.Abs(quest.PrevQuestID)),
+                                false,
+                                true)
+                        }
+                        : Array.Empty<QuestDependencyEvidence>();
                     var forward = quest.NextQuestID > 0
                         ? new[]
                         {
@@ -139,7 +171,7 @@ namespace WholesomeAQ
                                 true)
                         }
                         : Array.Empty<QuestDependencyEvidence>();
-                    return prerequisites.Concat(forward);
+                    return dependent.Concat(direct).Concat(forward);
                 }),
                 database.Quests.Where(quest => quest.Id > 0).Select(quest => unchecked((uint)quest.Id)));
         }

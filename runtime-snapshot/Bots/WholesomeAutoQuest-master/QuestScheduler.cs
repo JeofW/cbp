@@ -497,7 +497,7 @@ namespace WholesomeAQ
                         continue;
 
                     uint ancestor = FindAcceptedIncompleteAncestor(quest, quests, accepted, completed);
-                    if (ancestor != 0 || !PrerequisitesComplete(quest, completed))
+                    if (ancestor != 0 || !PrerequisitesComplete(quest, db, completed))
                         continue;
 
                     int plannedBefore = candidatePlans.Count;
@@ -1409,11 +1409,38 @@ namespace WholesomeAQ
                 (accepted.ContainsKey((uint)other.Id) || completed.Contains((uint)other.Id)));
         }
 
-        private static bool PrerequisitesComplete(QuestEntry quest, HashSet<uint> completed)
+        private static bool PrerequisitesComplete(
+            QuestEntry quest,
+            QuestDatabase db,
+            HashSet<uint> completed)
         {
+            // Direct PrevQuestID keeps its own signed 3.3.5 contract. In
+            // particular, do not expand this field through ExclusiveGroup.
             if (quest.PrevQuestID > 0 && !completed.Contains((uint)quest.PrevQuestID))
                 return false;
-            return quest.PreviousQuestsIds.All(id => id <= 0 || completed.Contains((uint)id));
+
+            foreach (int id in quest.PreviousQuestsIds)
+            {
+                if (id <= 0)
+                    continue;
+                if (!completed.Contains((uint)id))
+                    return false;
+
+                // TrinityCore 3.3.5 dependent-previous semantics: a referenced
+                // predecessor in a negative ExclusiveGroup represents an
+                // each-from-all group. Preserve the current list semantics for
+                // all other predecessors; dataset provenance is still explicit.
+                QuestEntry grouped = db.Quests.FirstOrDefault(candidate => candidate.Id == id);
+                if (grouped == null || grouped.ExclusiveGroup >= 0)
+                    continue;
+                int group = grouped.ExclusiveGroup;
+                if (db.Quests.Any(candidate =>
+                    candidate.Id > 0 &&
+                    candidate.ExclusiveGroup == group &&
+                    !completed.Contains((uint)candidate.Id)))
+                    return false;
+            }
+            return true;
         }
 
         private static uint FindAcceptedIncompleteAncestor(
