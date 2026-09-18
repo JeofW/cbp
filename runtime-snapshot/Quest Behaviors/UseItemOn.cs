@@ -359,7 +359,10 @@ namespace Styx.Bot.Quest_Behaviors.UseItemOn
                         return false;
                 }
                 else return false;
-                return OwnsActor();
+                // Generic container use is merchant-sensitive. Defer the attempt,
+                // without closing another owner's UI or recording false progress.
+                return !Styx.Logic.Inventory.Frames.Merchant.MerchantFrame.Instance.IsVisible
+                    && OwnsActor();
             }
 
             if (!Admitted(false)) return RunStatus.Success;
