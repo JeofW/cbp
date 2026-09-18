@@ -332,10 +332,17 @@ namespace Styx.Logic
 				return true;
 			}
 
+			if (result == 4)
+			{
+				Logging.Write("Vendor sale pass deferred by the bounded retry guard; no sale acknowledgement is inferred.");
+				ResetSellSession();
+				ForceSell = false;
+				return true;
+			}
 			if (result != 0)
 				return false;
 
-			Logging.Write("Vendor sale complete: sold {0} eligible stack(s).", _sellSessionStackCount);
+			Logging.Write("Vendor sale pass complete: submitted {0} request(s); merchant acceptance is not inferred.", _sellSessionStackCount);
 			ResetSellSession();
 			ForceSell = false;
 			return true;
@@ -456,6 +463,5 @@ namespace Styx.Logic
 		}
 	}
 }
-
 
 
