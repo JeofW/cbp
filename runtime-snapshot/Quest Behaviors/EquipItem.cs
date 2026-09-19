@@ -241,14 +241,17 @@ namespace Styx.Bot.Quest_Behaviors
 
         private void ConfirmOwnedEquipPopup()
         {
-            if (!HasPendingEquip)
+            if (!HasPendingEquip || _pendingEquipSlot == InventorySlot.None)
                 return;
 
             try
             {
-                Lua.DoString(
+                string script = string.Format(
+                    System.Globalization.CultureInfo.InvariantCulture,
                     "local p=StaticPopup_FindVisible('EQUIP_BIND') or StaticPopup_FindVisible('AUTOEQUIP_BIND'); " +
-                    "if p and p.button1 then p.button1:Click() end");
+                    "if p and tonumber(p.data)=={0} and p.button1 then p.button1:Click() end",
+                    (int)_pendingEquipSlot);
+                Lua.DoString(script);
             }
             catch (Exception error)
             {
