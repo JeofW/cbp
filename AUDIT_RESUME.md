@@ -1,13 +1,33 @@
-# W77 — post-cutoff regression review; questing scope only
+# W77 resume — verified fixes, partial review, publishing recovery recorded
 
-Read `docs/audit/2026-09-19/W77_REVIEW_SCOPE.md` FIRST, then `docs/audit/WOTLK_335A_RESEARCH_POLICY.md`, `TRINITYCORE_335_COMPATIBILITY.md`, `QUEST_DATA_PROVENANCE_335.md`, `ADDON_EVIDENCE_335.md`, and the earlier W69-W76 evidence.
+Repo `jeofwong/CopilotBuddy-private` (1367174964), draft PR51, branch `audit/next-55-equipment-observation-20260917`. Reconcile live refs before writing. Read the four original-client/core/provenance policies under `docs/audit/`, then `docs/audit/2026-09-19/W77_CHECKPOINT.md`, `W77_EVIDENCE.json`, `W77_REVIEW_SCOPE.md`, and `NEXT_CHAT_PROMPT.md`.
 
-Repository `jeofwong/CopilotBuddy-private`, draft/unmerged PR51, branch `audit/next-55-equipment-observation-20260917`. Reconcile live refs before writing. The owner now requests review of all changes after 18 September 2026 21:58 Malaysia time (13:58 UTC), not further auction feature development.
+**Scope:** Wholesome questing, navigation and Singular combat. Review after18 September2026 21:58 Malaysia/13:58 UTC, cutoff ancestor4c6b1b2e75af4dd0eaffde11d38ebbc84a21f4c0. Original WoW3.3.5a/build12340; TrinityCore3.3.5 primary, AzerothCore WotLK secondary. No desktop mouse automation or assumed modern/Classic APIs. **Do not continue AuctionHouse or ProfessionBuddy.**
 
-Review entry head: bf1cd682c229a7f0143d5f3e54a6949c53ad8c44, 125 commits after cutoff ancestor4c6b1b2e75af4dd0eaffde11d38ebbc84a21f4c0. The unfinished five-commit auction experiment after ac03b01e is being withdrawn from the active tree only; history and evidence remain. This rollback does not certify legacy auction behavior.
+## Exact verified code
 
-Last preceding integrated-green code698068344bbc51f79d81f76e7d3b91453f29de0c/run35441935790 had17/17 entries and host35441935725 success. These are real CI results but NOT full equip/delete runtime acceptance: the new cursor groups mainly compile owners and check source/pure helpers. Do not repeat W76's stronger lifecycle claims without actual execution evidence.
+**f0a8b316c42498b85798fe067d5cbdf35a410d7f**, tree **4d368e01b4172b641d329c66da5053e451ff70f7**. Documentation is newer, not newly tested production.
 
-Current priorities: custom-behavior restart/completed-objective admission, inventory-aware progress, UseItemOn/GossipEvent safety, source-qualified Gordunni Cobalt shovel/location/spawn/loot support, navigation and Singular review. Review W76 displaced-cursor and timeout risks. Do not write a universal once-ever completed-behavior cache.
+Integrated35452490981/art10586823183:17/17; collection replay34/34, Ret registration9/9, acknowledged equip timeout10/10, Python89 tests. Host35452490898/art10587595640:exit0,3344 warnings,0 errors; no game/tests. ZIP digests, CRC/inner manifests and paired input comparisons are recorded in W77_EVIDENCE.json.
 
-Do not continue AuctionHouse/ProfessionBuddy. No desktop mouse automation, master/backup writes, force push, PR51 merge, deployment or installed file replacement. Original WoW3.3.5a build12340; TC3.3.5 primary/AC WotLK secondary. Unknown state remains unknown. Full review and live acceptance remain open until verified and documented.
+Do not recreate:
+- **06733822:** restore the five Normal Ret Pull/Combat registration attributes to the full rotation, not the optional Exorcism isolation helper. Actual compiled red5/9 ->green9/9; only Ret source changed among1818 indexed inputs;137 normalized members identical.
+- **0298c2d2 -> f0a8b316:** real generated collection-condition red18/34 ->green34/34. Check current collected-objective inventory before transport/custom work. Tool item is not completion evidence. Only ProfileBuilder changes among1819 inputs;138 normalized members identical. Tests unchanged, no once-ever cache/new Lua/pickup/turn-in/kill-guard change.
+- Earlier W77 acknowledged-but-blocked equip timeout repair, retained10/10.
+- **d8b6476a:** unfinished auction experiment withdrawn; not legacy auction safety certification. Stale W76 auction next steps are superseded.
+
+## Remaining work
+
+The full post-cutoff review is not complete. Continue non-collection individual-objective already-complete admission in UseItemOn/GossipEvent and direct profiles; current inventory alone is not all event completion. Verify original-client APIs instead of copying a possibly newer call such as GetQuestLogIndexByID from an existing helper.
+
+Review real displaced-item/cursor/popup ownership: ReturnDisplacedCursorToSource currently accepts any different held item at an empty remembered source slot.19/19 earlier cursor checks are mainly compilation/source contracts, not full native lifecycle proof. Preserve valid guards while reproducing the missing ownership; no desktop clicking or blind ClearCursor rollback.
+
+Gordunni Cobalt2987 has shipped shovel9466, cobalt9463/count12 and mound144064, but no newly implemented complete dig/spawn/loot strategy. Both pinned TC335/AC Feralas sources distinguish cobalt and junk outcomes. Do not invent coordinates or treat invocation as loot/progress. The new collection guard only suppresses already-fulfilled generated collection travel.
+
+Continue isolation-plan actor/routine/context and actual-route review, source-bound strategy location authority, prerequisites, PallyPower, reward choice, plugin refresh, merchant/gather, aquatic/native paths. Retain every earlier provenance, addon/terrain, buff, gear/loadout/cap, escort/event, LOS/ABI and supervised acceptance requirement. A model label does not independently certify these changes.
+
+## Publication incident — do not hide or misstate master
+
+An erroneous blank-branch file-update call added one empty W77_CHECKPOINT.md on master at69296e337b9b40682e4d425e7e96156db3c9fcb2. Immediate exact-file deletion produced **b2324913e2499ba30b239dd67224ca2c655c05cc**, now master. Native comparison to approvedf462a9bb4eb18acac9069f495177df35672286d5 has zero changed files, and both trees are **552eeab1233c7c282897dca0ed9f4334c5e8ed43**. No production/test/workflow content changed, no force push, no PR51 merge. Two documentation add/revert commits remain in master history. Prepared unreferenced857722c7 documentation was superseded; do not resume it.
+
+Every future write must use the correct discovered action, explicit nonempty approved branch, reviewed content/message and expected blob or parent identity. Never submit placeholder/blank writes. Preserve backup/exclusion rules. PR51 stays draft/unmerged; no deployment, installed-file modification, independent/live/exhaustive acceptance claim.
