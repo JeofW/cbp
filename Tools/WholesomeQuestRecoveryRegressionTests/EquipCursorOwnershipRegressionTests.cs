@@ -59,8 +59,9 @@ internal static class EquipCursorOwnershipRegressionTests
             }),
             ("EquipItem observes safe pickup success before explicit equip", () =>
             {
-                Check(behavior.Contains("TryPickUp(", StringComparison.Ordinal)
-                    && !behavior.Contains("PickupContainerItem(", StringComparison.Ordinal),
+                string region = MethodRegion(behavior, "private RunStatus TickPendingEquip()");
+                Check(region.Contains("TryPickUp(", StringComparison.Ordinal)
+                    && !region.Contains("PickupContainerItem(", StringComparison.Ordinal),
                     "EquipItem explicit-slot path bypasses shared validated pickup");
             }),
             ("EquipItem never clears a foreign cursor", () =>
