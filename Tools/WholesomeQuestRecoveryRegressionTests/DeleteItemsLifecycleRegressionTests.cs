@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Generic;
+using System.CodeDom.Compiler;\nusing System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -30,28 +30,29 @@ internal static class DeleteItemsLifecycleRegressionTests
         {
             string copy = Path.Combine(temp, "DeleteItems.cs");
             File.Copy(tracked, copy);
-            Action<LogLevel, string> capture = (_, text) =>
-            {
-                if (text.Contains("QuestBehavior", StringComparison.Ordinal)
-                    || text.Contains("COMPILATION FAILED", StringComparison.Ordinal)
-                    || text.Contains("[DeleteItems.cs]", StringComparison.Ordinal))
-                    compilerMessages.Add(text);
-            };
-            Logging.OnMessageLogged += capture;
             try
             {
-                try
+                Type compilerType = typeof(Styx.StyxWoW).Assembly.GetType("Styx.Loaders.SourceCompiler", throwOnError: true)!;
+                object compiler = Activator.CreateInstance(compilerType, new object[] { copy })!;
+                var results = (CompilerResults?)compilerType
+                    .GetMethod("Compile", BindingFlags.Instance | BindingFlags.Public)!
+                    .Invoke(compiler, null);
+                if (results == null)
                 {
-                    assembly = new QuestBehaviorHelper(copy).GetAssembly();
+                    compilerMessages.Add("SourceCompiler returned no results");
                 }
-                catch (Exception error)
+                else
                 {
-                    compileFailure = error;
+                    foreach (CompilerError error in results.Errors)
+                        if (!error.IsWarning)
+                            compilerMessages.Add(error.ToString());
+                    assembly = compilerType.GetProperty("CompiledAssembly", BindingFlags.Instance | BindingFlags.Public)!
+                        .GetValue(compiler) as Assembly;
                 }
             }
-            finally
+            catch (Exception error)
             {
-                Logging.OnMessageLogged -= capture;
+                compileFailure = error;
             }
 
             var cases = new List<(string Name, Action Test)>
