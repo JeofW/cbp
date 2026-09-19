@@ -4,7 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using Styx.Helpers;\nusing Styx.Logic.Profiles.Quest;
+using Styx.Helpers;
+using Styx.Logic.Profiles.Quest;
 
 // Standalone destructive-delete contract for the real runtime-snapshot DeleteItems
 // quest behavior. The behavior is compiled through the production quest-behavior
