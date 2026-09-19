@@ -1,37 +1,13 @@
-# Resume at W76 — owned EquipItem/AutoEquip cursor transactions verified
+# W77 — post-cutoff regression review; questing scope only
 
-Repo `jeofwong/CopilotBuddy-private`, draft PR51, branch `audit/next-55-equipment-observation-20260917`. Reconcile live refs first.
+Read `docs/audit/2026-09-19/W77_REVIEW_SCOPE.md` FIRST, then `docs/audit/WOTLK_335A_RESEARCH_POLICY.md`, `TRINITYCORE_335_COMPATIBILITY.md`, `QUEST_DATA_PROVENANCE_335.md`, `ADDON_EVIDENCE_335.md`, and the earlier W69-W76 evidence.
 
-Verified code/test head **698068344bbc51f79d81f76e7d3b91453f29de0c**, tree **77dd5c926b45a82f2961f89f95e058111d7cc0d1**. W76 documentation is newer than the tested code head.
+Repository `jeofwong/CopilotBuddy-private`, draft/unmerged PR51, branch `audit/next-55-equipment-observation-20260917`. Reconcile live refs before writing. The owner now requests review of all changes after 18 September 2026 21:58 Malaysia time (13:58 UTC), not further auction feature development.
 
-Read `docs/audit/2026-09-19/W76_CHECKPOINT.md` and `W76_EVIDENCE.json`, then W75/W74 and the governing original3.3.5/core/provenance files.
+Review entry head: bf1cd682c229a7f0143d5f3e54a6949c53ad8c44, 125 commits after cutoff ancestor4c6b1b2e75af4dd0eaffde11d38ebbc84a21f4c0. The unfinished five-commit auction experiment after ac03b01e is being withdrawn from the active tree only; history and evidence remain. This rollback does not certify legacy auction behavior.
 
-Exact W76 green:
-- integrated **35441935790 / art10583728386** — 17/17
-- host **35441935725 / art10583953031** — success
-- Equip cursor ownership **19/19**, assertions0, unexpected0
-- W75 container identity20/20 and MrItemRemover delete14/14 retained
+Last preceding integrated-green code698068344bbc51f79d81f76e7d3b91453f29de0c/run35441935790 had17/17 entries and host35441935725 success. These are real CI results but NOT full equip/delete runtime acceptance: the new cursor groups mainly compile owners and check source/pure helpers. Do not repeat W76's stronger lifecycle claims without actual execution evidence.
 
-Primary clean red was **6622f782**, integrated **35437261168/art10583270460**: Equip4/17,13 intended assertions,0unexpected; both owners compiled. Host **35437261170** green.
+Current priorities: custom-behavior restart/completed-objective admission, inventory-aware progress, UseItemOn/GossipEvent safety, source-qualified Gordunni Cobalt shovel/location/spawn/loot support, navigation and Singular review. Review W76 displaced-cursor and timeout risks. Do not write a universal once-ever completed-behavior cache.
 
-Residual original-3.3.5 popup red was **86333b35**, integrated **35441689706/art10583628215**: Equip17/19,2 intended assertions,0unexpected. Host **35441689712/art10583752980** green.
-
-Retain W76 production:
-- **1315fecf** validated `TryPickUp(out bag, out slot)` source location,
-- **fb11f02d** owned `EquipItem` transaction,
-- **6bf484f2** owned `AutoEquip2` transaction,
-- **69806834** exact bind-popup type + `dialog.data` equipment-slot ownership; unknown-slot bind confirmation fails closed.
-
-Pinned original UI evidence: `wowgaming/3.3.5-interface-files@d0339b17...` — EQUIP_BIND/AUTOEQUIP_BIND call `EquipPendingItem(slot)`; `StaticPopup_Show` stores `dialog.data`.
-
-NEXT: **AuctionHouse core only**, test first:
-- `Styx/WoWInternals/Misc/AuctionHouse.cs`
-- `Styx/Logic/Inventory/Frames/AuctionHouse/AuctionHouse.cs`
-
-Current risks: raw `ClearCursor`, raw/caller bag-slot pickup, no stable GUID/entry transfer proof, no sell-slot acknowledgement, no late AuctionFrame context check before `StartAuction`. Preserve search/browse/bid/buyout/cancel. Do not include ProfessionBuddy in this repair.
-
-After AuctionHouse core, audit ProfessionBuddy separately, beginning with `runtime-snapshot/Bots/ProfessionBuddy/Composites/SellItemOnAhAction.cs`.
-
-Retain all W71-W76 open requirements, including core/data provenance, dependency semantics, authoritative recipe/event/escort work, buffs/PallyPower, gear/loadout/caps, addon terrain, underwater/GatherBuddy, native LOS/ABI, same-entry ABA/cross-owner coexistence and supervised original-client acceptance.
-
-Do not merge PR51 without explicit approval. Use exact SHA/run/artifact IDs and bounded reads.
+Do not continue AuctionHouse/ProfessionBuddy. No desktop mouse automation, master/backup writes, force push, PR51 merge, deployment or installed file replacement. Original WoW3.3.5a build12340; TC3.3.5 primary/AC WotLK secondary. Unknown state remains unknown. Full review and live acceptance remain open until verified and documented.

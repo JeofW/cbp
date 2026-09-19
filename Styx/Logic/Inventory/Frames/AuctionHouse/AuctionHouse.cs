@@ -271,18 +271,15 @@ namespace Styx.Logic.Inventory.Frames.AuctionHouse
         /// <param name="buyoutPrice">Buyout price in copper (0 = no buyout)</param>
         /// <param name="duration">Duration index: 1=12h, 2=24h, 3=48h</param>
         /// <param name="stackSize">Number of items per stack</param>
-        public static bool TryPostAuction(int bag, int slot, int startingBid,
-            int buyoutPrice, int duration = 2, int stackSize = 1)
-        {
-            return Styx.WoWInternals.Misc.AuctionPostTransaction.TryPostAtLocation(
-                bag, slot, startingBid, buyoutPrice, duration, (uint)stackSize, 1U);
-        }
-
         public static void PostAuction(int bag, int slot, int startingBid,
             int buyoutPrice, int duration = 2, int stackSize = 1)
         {
-            Styx.WoWInternals.Misc.AuctionPostTransaction.TryPostAtLocation(
-                bag, slot, startingBid, buyoutPrice, duration, (uint)stackSize, 1U);
+            // Pick up item
+            Lua.DoString($"PickupContainerItem({bag},{slot})");
+            // Place on sell slot
+            Lua.DoString("ClickAuctionSellItemButton()");
+            // Start auction
+            Lua.DoString($"StartAuction({startingBid},{buyoutPrice},{duration},{stackSize})");
         }
 
         /// <summary>
