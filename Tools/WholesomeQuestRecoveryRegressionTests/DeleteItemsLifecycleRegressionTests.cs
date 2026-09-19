@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using Styx.Logic.Profiles.Quest;
+using Styx.Helpers;\nusing Styx.Logic.Profiles.Quest;
 
 // Standalone destructive-delete contract for the real runtime-snapshot DeleteItems
 // quest behavior. The behavior is compiled through the production quest-behavior
@@ -22,19 +22,35 @@ internal static class DeleteItemsLifecycleRegressionTests
         string source = File.ReadAllText(tracked);
         Assembly? assembly = null;
         Exception? compileFailure = null;
+        var compilerMessages = new List<string>();
         string temp = Path.Combine(Path.GetTempPath(), "cb-deleteitems-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(temp);
         try
         {
             string copy = Path.Combine(temp, "DeleteItems.cs");
             File.Copy(tracked, copy);
+            Action<LogLevel, string> capture = (_, text) =>
+            {
+                if (text.Contains("QuestBehavior", StringComparison.Ordinal)
+                    || text.Contains("COMPILATION FAILED", StringComparison.Ordinal)
+                    || text.Contains("[DeleteItems.cs]", StringComparison.Ordinal))
+                    compilerMessages.Add(text);
+            };
+            Logging.OnMessageLogged += capture;
             try
             {
-                assembly = new QuestBehaviorHelper(copy).GetAssembly();
+                try
+                {
+                    assembly = new QuestBehaviorHelper(copy).GetAssembly();
+                }
+                catch (Exception error)
+                {
+                    compileFailure = error;
+                }
             }
-            catch (Exception error)
+            finally
             {
-                compileFailure = error;
+                Logging.OnMessageLogged -= capture;
             }
 
             var cases = new List<(string Name, Action Test)>
@@ -42,7 +58,8 @@ internal static class DeleteItemsLifecycleRegressionTests
                 ("real DeleteItems behavior compiles through production compiler", () =>
                 {
                     Check(compileFailure == null && assembly != null,
-                        "tracked DeleteItems did not compile: " + compileFailure?.Message);
+                        "tracked DeleteItems did not compile: "
+                        + (compileFailure?.Message ?? string.Join(" | ", compilerMessages)));
                     Check(assembly!.GetType("DeleteItems.DeleteItems", throwOnError: false) != null,
                         "compiled assembly does not contain DeleteItems.DeleteItems");
                 }),
