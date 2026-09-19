@@ -59,7 +59,7 @@ internal static class EquipCursorOwnershipRegressionTests
             }),
             ("EquipItem observes safe pickup success before explicit equip", () =>
             {
-                Check(behavior.Contains("TryPickUp()", StringComparison.Ordinal)
+                Check(behavior.Contains("TryPickUp(", StringComparison.Ordinal)
                     && !behavior.Contains("PickupContainerItem(", StringComparison.Ordinal),
                     "EquipItem explicit-slot path bypasses shared validated pickup");
             }),
@@ -103,8 +103,8 @@ internal static class EquipCursorOwnershipRegressionTests
             }),
             ("AutoEquip does not independently derive bag coordinates for equip", () =>
             {
-                string region = MethodRegion(auto, "private static void EquipItemIntoSlot");
-                string helper = MethodRegion(auto, "private static void EquipItem(int bagIndex");
+                string region = MethodRegion(auto, "private void EquipItemIntoSlot");
+                string helper = MethodRegion(auto, "private void BeginEquip");
                 Check(!region.Contains("item.BagIndex", StringComparison.Ordinal)
                     && !region.Contains("item.BagSlot", StringComparison.Ordinal)
                     && !helper.Contains("PickupContainerItem", StringComparison.Ordinal),
