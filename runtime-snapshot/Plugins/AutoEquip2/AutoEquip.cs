@@ -840,7 +840,7 @@ namespace Styx.Bot.Plugins.AutoEquip2
 
         private void ConfirmOwnedEquipPopup()
         {
-            if (!HasPendingEquip || _pendingEquipSlot == InventorySlot.None)
+            if (!HasPendingEquip || !_pendingEquipSubmitted || _pendingEquipSlot == InventorySlot.None)
                 return;
 
             try
