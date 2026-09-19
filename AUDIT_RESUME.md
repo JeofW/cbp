@@ -1,28 +1,20 @@
-# Resume at W72 — exact TC negative-parent status verified
+# Resume at W73 — validated single-item cursor pickup verified
 
 Repo `jeofwong/CopilotBuddy-private`, draft PR51, branch `audit/next-55-equipment-observation-20260917`. Reconcile live refs first.
 
-Verified code/test head **7a471da4d674ca1dffdc6169340b091e96a36e46**, tree **3bafec33ca952646ff1093f2a4a84d9a82c9e1bf**.
+Verified code/test head **3c76cddb12dbaef94ae7e6f121bb2678387f3471**, tree **154ce386ab94df0065b27a87c66c1416caa01847**.
 
-Read `docs/audit/2026-09-19/W72_CHECKPOINT.md` and `W72_EVIDENCE.json`, then W71 and the original-client/core/provenance policies.
+Read `docs/audit/2026-09-19/W73_CHECKPOINT.md` and `W73_EVIDENCE.json`, then W72 and the original-client/core/provenance policies.
 
 Exact green:
-- integrated **35431678604 / art10580349205** — 17/17 entries
-- quest-log owners **35431678616 / art10579879846**
-- host **35431678735 / art10580898437** — 0 errors / 3340 warnings
+- integrated **35432153183 / art10580649556** — 17/17
+- host **35432153030 / art10580249866** — 0 errors / 3342 warnings
+- container slot identity + pickup **16/16**
 
-New retained scope:
-- ActiveParent **39/39**
-- QuestLogObservation **27/27**
-- RawReady **16/16**
-- dependent alternatives **14/14**
-- negative exclusive dependencies **10/10**
-- container slot identity **9/9**
+New retained contract: `WoWItem.TryPickUp()` reuses GUID slot resolution/revalidation, requires empty `GetCursorInfo()`, validates expected item entry before `PickupContainerItem`, requires `CursorHasItem()` after, never ClearCursor, and public PickUp delegates to it. Same-entry ABA/live acceptance remain open.
 
-TC-primary negative direct `PrevQuestID` now requires a current accepted parent that is neither ready/completed nor failed. Raw `FailedQuestIds` comes from the same immutable quest-log observation and is revalidated with it. Pinned AC WotLK remains broader; do not erase that divergence or infer core identity.
+NEXT: standalone `runtime-snapshot/Quest Behaviors/DeleteItems.cs` first, test-first with a dedicated compiled-behavior harness. Current OnStart loops matching items, calls PickUp/DeleteCursorItem and immediately marks done. Original3.3.5 DeleteCursorItem can open DELETE_ITEM or DELETE_GOOD_ITEM; quality3+ requires DELETE_ITEM_CONFIRM_STRING in the exact popup edit box. One invocation is not deletion acknowledgement.
 
-NEXT: native safe single-item cursor pickup. Current `WoWItem.PickUp()` still derives BagIndex/BagSlot independently. Test first a `TryPickUp` contract that reuses GUID/slot validation, requires `GetCursorInfo()==nil`, validates expected entry immediately before `PickupContainerItem`, and requires `CursorHasItem()` afterward. Never implicitly ClearCursor; caller owns it. Keep same-entry ABA explicit.
+Required next repair: safe pickup success gate, exact cursor/item ownership, exact popup identity, actual item absence acknowledgement, bounded pending/retry, no done-on-invocation. Do not fold MrItemRemover into the same repair. Its generic DELETE_ITEM_CONFIRM handler and many ClearCursor/delete sites need a separate owner audit.
 
-After that audit callers separately. DeleteItems/MrItemRemover need confirmation + deletion acknowledgement; EquipItem/AutoEquip need equip/bind/final slot acknowledgement; AuctionHouse needs sell/post acknowledgement; ProfessionBuddy bank/mail/stack/AH cursor transfers are intentional multi-step transactions and must not use a blanket helper.
-
-Do not merge PR51 without explicit approval. Use exact SHA/run IDs with bounded reads for connector stalls.
+Then EquipItem/AutoEquip, AuctionHouse and ProfessionBuddy cursor transactions separately. Do not merge PR51 without explicit approval. Use exact SHA/run IDs and bounded reads for connector stalls.
