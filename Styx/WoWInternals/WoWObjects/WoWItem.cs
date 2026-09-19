@@ -680,6 +680,15 @@ namespace Styx.WoWInternals.WoWObjects
 
         public bool TryPickUp()
         {
+            int luaBag, luaSlot;
+            return TryPickUp(out luaBag, out luaSlot);
+        }
+
+        public bool TryPickUp(out int luaBag, out int luaSlot)
+        {
+            luaBag = -1;
+            luaSlot = -1;
+
             LocalPlayer me = StyxWoW.Me;
             ulong expectedGuid = Guid;
             uint expectedEntry = Entry;
@@ -695,28 +704,35 @@ namespace Styx.WoWInternals.WoWObjects
                 bags[index] = bag != null ? bag.ItemGuids : Array.Empty<ulong>();
             }
 
-            int luaBag, luaSlot;
             if (!TryResolveContainerLocation(
                     expectedGuid, backpack, bags, out luaBag, out luaSlot))
                 return false;
 
             if (!IsContainerLocationCurrent(
                     me, luaBag, luaSlot, expectedGuid))
+            {
+                luaBag = -1;
+                luaSlot = -1;
                 return false;
+            }
 
             string script = BuildValidatedContainerPickupLua(
                 luaBag, luaSlot, expectedEntry);
             try
             {
-                return Lua.GetReturnVal<bool>(script, 0U);
+                if (Lua.GetReturnVal<bool>(script, 0U))
+                    return true;
             }
             catch (Exception ex)
             {
                 Logging.WriteDebug(
                     "PickupContainerItem refused {0} ({1}) after slot validation: {2}",
                     Name, expectedEntry, ex.Message);
-                return false;
             }
+
+            luaBag = -1;
+            luaSlot = -1;
+            return false;
         }
 
         public void PickUp()
