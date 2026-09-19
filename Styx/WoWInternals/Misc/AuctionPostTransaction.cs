@@ -1,6 +1,6 @@
 using System;
 using System.Globalization;
-using Styx.Common;
+using Styx.Helpers;
 using Styx.WoWInternals.WoWObjects;
 
 namespace Styx.WoWInternals.Misc
