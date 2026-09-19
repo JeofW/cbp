@@ -70,7 +70,9 @@ internal static class ContainerItemSlotIdentityRegressionTests
                     "Styx","WoWInternals","WoWObjects","WoWItem.cs"));
                 int start=source.IndexOf("public void UseContainerItem()",StringComparison.Ordinal);
                 Check(start>=0,"public UseContainerItem owner is missing");
-                string region=source.Substring(start,Math.Min(1600,source.Length-start));
+                int end=source.IndexOf("public void PickUp()",start,StringComparison.Ordinal);
+                if(end<0)end=Math.Min(source.Length,start+1600);
+                string region=source.Substring(start,end-start);
                 Check(region.Contains("TryUseContainerItem",StringComparison.Ordinal)
                     && !region.Contains("BagIndex + 1",StringComparison.Ordinal)
                     && !region.Contains("BagSlot + 1",StringComparison.Ordinal),
