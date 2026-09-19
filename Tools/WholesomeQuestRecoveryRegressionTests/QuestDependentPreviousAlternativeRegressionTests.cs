@@ -84,6 +84,16 @@ internal static class QuestDependentPreviousAlternativeRegressionTests
             {
                 var r = Plan(new uint[] { 101 }, accepted: new uint[] { 90 }, dependent: new[] { 100, 101 }, direct: -90);
                 Check(Pickup(r, 200), "active signed parent plus rewarded dependent alternative did not unlock child");
+            }),
+            ("rewarded alternative without predecessor metadata cannot authorize", () =>
+            {
+                var r = Plan(new uint[] { 100 }, dependent: new[] { 100, 101 }, omitMetadata: new[] { 100 });
+                Check(!Pickup(r, 200), "unknown predecessor group metadata was treated as permission");
+            }),
+            ("later known rewarded alternative can satisfy after unknown rewarded candidate", () =>
+            {
+                var r = Plan(new uint[] { 100, 101 }, dependent: new[] { 100, 101 }, omitMetadata: new[] { 100 });
+                Check(Pickup(r, 200), "unknown candidate poisoned a later known rewarded ordinary alternative");
             })
         };
 
@@ -123,7 +133,8 @@ internal static class QuestDependentPreviousAlternativeRegressionTests
         uint[]? accepted = null,
         int[]? dependent = null,
         int direct = 0,
-        IReadOnlyDictionary<int, int>? groups = null)
+        IReadOnlyDictionary<int, int>? groups = null,
+        IReadOnlyCollection<int>? omitMetadata = null)
     {
         int Group(int id) => groups != null && groups.TryGetValue(id, out int group) ? group : 0;
 
@@ -152,7 +163,11 @@ internal static class QuestDependentPreviousAlternativeRegressionTests
         if (direct > 0) ids.Add(direct);
         if (direct < 0 && direct != int.MinValue) ids.Add(-direct);
 
-        var quests = ids.OrderBy(id => id).Select(Q).ToList();
+        var quests = ids
+            .Where(id => omitMetadata == null || !omitMetadata.Contains(id))
+            .OrderBy(id => id)
+            .Select(Q)
+            .ToList();
         var child = Q(200);
         child.PrevQuestID = direct;
         child.PreviousQuestsIds = (dependent ?? Array.Empty<int>()).ToList();
