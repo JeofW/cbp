@@ -327,7 +327,6 @@ namespace Styx.Bot.Plugins.AutoEquip2
                 other2 = StatTypes.Agility;
             }
 
-
             //Now check and make sure the item has our stat on it.
             if (!newstats.Stats.ContainsKey(primary) && (newstats.Stats.ContainsKey(other1) || newstats.Stats.ContainsKey(other2)) && rollItemInfo.EquipSlot != InventoryType.Ranged)
             { 
@@ -516,7 +515,7 @@ namespace Styx.Bot.Plugins.AutoEquip2
 
                 if (AutoEquipSettings.Instance.ProtectedSlots.Contains(inventorySlot))
                 {
-                    //Log(true, "I'm not equipping into equipment slot {0} as it is protected", inventorySlot);
+                    //LogDebug("I'm not equipping into equipment slot {0} as it is protected", inventorySlot);
                     continue;
                 }
 
@@ -792,6 +791,14 @@ namespace Styx.Bot.Plugins.AutoEquip2
             if (!HasPendingEquip)
                 return;
 
+            if (DateTime.UtcNow - _pendingEquipSince >= EquipTimeout)
+            {
+                Log("Equip transaction for entry {0} timed out waiting for equipment/cursor completion.", _pendingEquipEntry);
+                RestoreOwnedCursorToSource();
+                ResetPendingEquip();
+                return;
+            }
+
             ConfirmOwnedEquipPopup();
 
             if (IsPendingEquipAcknowledged())
@@ -801,14 +808,6 @@ namespace Styx.Bot.Plugins.AutoEquip2
                     Log("Equipped item entry {0} into {1}", _pendingEquipEntry, _pendingEquipSlot);
                     ResetPendingEquip();
                 }
-                return;
-            }
-
-            if (DateTime.UtcNow - _pendingEquipSince >= EquipTimeout)
-            {
-                Log("Equip transaction for entry {0} timed out.", _pendingEquipEntry);
-                RestoreOwnedCursorToSource();
-                ResetPendingEquip();
                 return;
             }
 

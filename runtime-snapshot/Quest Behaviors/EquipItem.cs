@@ -151,6 +151,17 @@ namespace Styx.Bot.Quest_Behaviors
 
             if (HasPendingEquip)
             {
+                if (DateTime.UtcNow - _pendingEquipSince >= EquipTimeout)
+                {
+                    LogMessage("error",
+                        "EquipItem timed out waiting for equipment/cursor completion for item {0} ({1}), slot {2}.",
+                        _pendingEquipGuid, _pendingEquipEntry, _pendingEquipSlot);
+                    RestoreOwnedCursorToSource();
+                    ResetPendingEquip();
+                    _isBehaviorDone = true;
+                    return RunStatus.Success;
+                }
+
                 ConfirmOwnedEquipPopup();
 
                 if (IsPendingEquipAcknowledged())
@@ -162,17 +173,6 @@ namespace Styx.Bot.Quest_Behaviors
                         ResetPendingEquip();
                         _isBehaviorDone = true;
                     }
-                    return RunStatus.Success;
-                }
-
-                if (DateTime.UtcNow - _pendingEquipSince >= EquipTimeout)
-                {
-                    LogMessage("error",
-                        "EquipItem timed out waiting for item {0} ({1}) to reach slot {2}.",
-                        _pendingEquipGuid, _pendingEquipEntry, _pendingEquipSlot);
-                    RestoreOwnedCursorToSource();
-                    ResetPendingEquip();
-                    _isBehaviorDone = true;
                     return RunStatus.Success;
                 }
 
