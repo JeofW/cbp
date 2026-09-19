@@ -1,27 +1,27 @@
-# Resume W78 — normal-objective restart verified; broader review open
+# Resume W79 — two verified slices, full review still open
 
-Repo `jeofwong/CopilotBuddy-private` (1367174964), draft/unmerged PR51, branch `audit/next-55-equipment-observation-20260917`. Reconcile live refs before writes. Read the four governing original-client/core/provenance policies under `docs/audit/`, then `docs/audit/2026-09-19/W78_CHECKPOINT.md`, `W78_EVIDENCE.json`, W77 and `NEXT_CHAT_PROMPT.md`.
+Repository `jeofwong/CopilotBuddy-private` (1367174964), draft/unmerged PR51, branch `audit/next-55-equipment-observation-20260917`. Reconcile live refs first. Read the four governing original-client/core/provenance policies under `docs/audit/`, then `docs/audit/2026-09-19/W79_CHECKPOINT.md`, `W79_EVIDENCE.json`, W78, W77, and `NEXT_CHAT_PROMPT.md`.
 
-Scope remains Wholesome questing, navigation and Singular combat, original WoW3.3.5a/build12340 only; TC3.3.5 primary/AC WotLK secondary. Cutoff18 September2026 21:58 Malaysia/13:58 UTC, ancestor4c6b1b2e75af4dd0eaffde11d38ebbc84a21f4c0. Do not resume AuctionHouse/ProfessionBuddy or assume modern/Classic Lua. No desktop mouse, merge, force push, deployment or installed files.
+Scope: Wholesome questing/navigation/Singular, original WoW3.3.5a/build12340; TC3.3.5 primary/AC WotLK secondary. Cutoff18 September2026 21:58 Malaysia/13:58 UTC, ancestor4c6b1b2e75af4dd0eaffde11d38ebbc84a21f4c0. No desktop mouse, assumed modern/Classic Lua, AuctionHouse/ProfessionBuddy expansion, merge, force push, deployment or installed-file changes.
 
-## Verified code
+## Exact latest verified code
 
-**44cfdca70a59f3cd660364748687782f23a2793d**, tree **2085deefa367cf9bf2d65a1f660c8a50a15035b1**. Documentation is newer, not another tested production revision.
+**96d1259f1d3c7035b85b1fa4bf00d05fe52d4ee6**, tree **bed704f539f0e21697cec2862906096d30139f03**. Subsequent documentation is not a new production validation.
 
-Integrated35455659843/art10588032523 passes17/17; new normal-objective restart37/37. Host35455659845/art10588291999 exits0 with3344 warnings/0 errors. Focused quest-log35455659850/art10588381917 passes groups27/27,16/16,5/5,28/28. No game attached. All archive digests and inspection details in W78_EVIDENCE.
+Integrated35456734949/art10587779649:17/17; popup18/18; W78 restart37/37; W77 collection34/34; Ret registration9/9; acknowledged-equip timeout10/10; analyzers89 tests. Host35456734963/art10588378360:exit0,3344 warnings,0 errors; compile only. No game attached.
 
-Clean test-first pair: **5ccbce88 ->44cfdca7**,23/37 with14 intended assertions0unexpected ->37/37.183 inner hashes verified in both archives; all139 normalized members byte-identical; indexed inputs1820->1821 with only new QuestObjectiveCompletion.cs and changed UseItemOn/GossipEvent. Earlier921c9511 was a fixture-constructor error0/37 with37unexpected, not gameplay red; retain it separately. Unreferenced preliminary53312c13 was superseded before publication, do not resume it.
+W79 clean red **ae418d26** integrated35456262122/art10587819087:8/18,10 intended assertions,0unexpected,other16 entries pass. Repair96d1259f adds only the existing submission flag to both ConfirmOwnedEquipPopup early guards. All140 normalized members identical,184 inner hashes verified per archive,1822 input sets differ only in EquipItem.cs/AutoEquip.cs. No Lua strings, retry/timeout/return, valuation, ammo, loot, test or workflow changes; incidental EquipItem final-newline removal. This proves selected C# method admission with recording Lua, NOT physical displaced-item/native popup safety.
 
-The helper positively recognizes completed normal NPC/GameObject counters0..3 using explicit cached requirements and repeated existing descriptor observations. It is NOT a displayed Lua row/collection index. False includes unknown, not proof unfinished or permission. Both named behaviors use it for ObjectiveProgress restart; last item/gossip/NPC submission rechecks were added. Existing delta acknowledgement, InvocationCount/QuestComplete modes, all tests/workflows/recipes and Lua API calls remain unchanged. No permanent once-ever flag.
+W78 retained **5ccbce88 ->44cfdca7**: complete tracked quest owners/constructors/OnStart/ticks and actual packed reads23/37->37/37,14 intended assertions0unexpected;139 normalized members identical. Positive normal-counter completion uses existing metadata/descriptor reader, no new Lua/offset/permanent cache, and late submission checks. Earlier921c9511 was37 fixture-constructor errors, not assertion red. W78 docs atc041780c, focused quest-log and archive details in W78_EVIDENCE. Do not recreate W78 or W77 Ret/collection/timeout fixes, or auction rollbackd8b6476a.
 
-Retain W77 Ret registration06733822, collection-before-travelf0a8b316, acknowledged-equip timeout, and auction withdrawal d8b6476a. Do not recreate them.
+## Next unresolved work
 
-## Next
+ReturnDisplacedCursorToSource still accepts any different held entry at an empty old source slot. Submission gating does not solve physical displaced-item identity, same-slot foreign popups after valid submission, same-entry ABA, reentrancy or cross-plugin ownership. Do not call guessed native functions from Offsets335 symbol names or replace working safeguards with raw ClearCursor. Reproduce precise owner/identity failures before another repair.
 
-Review cursor confirmation admission (whether pending but not locally submitted equip can confirm a same-slot bind dialog) with actual method execution; the displaced-item identity gap remains independent. ReturnDisplacedCursorToSource still accepts any different entry at an empty old source slot. Existing Offsets335 symbol names are NOT ABI or cursor GUID proof; no guessed native call.
+Normal-objective restart covers explicit raw NPC/GameObject counter indices0..3 inside UseItemOn/GossipEvent ObjectiveProgress mode, not arbitrary displayed quest rows or collected-item indices. Audit caller/source mapping, generated preamble and direct/event-only profile admission separately; unknown is not completion or permission. No universal once-ever flag.
 
-Continue event-only/direct handwritten profile and generated preamble admission not covered by the two normal-counter owners. Gordunni Cobalt2987 still requires a sourced shovel9466/location/spawn/loot recipe; cobalt9463count12 and mound144064 alone do not establish it. No new coordinates/recipe were shipped.
+Gordunni Cobalt2987 remains a missing complete shovel9466/location/trigger/spawn/loot strategy; cobalt9463count12/mound144064 and pinned cobalt/junk outcomes are only part of the source recipe. No guessed coordinates or new quest recipe shipped. TBC/Vanilla/Retail search results are not authorization; empty large-file fetch is not database absence.
 
-Preserve all remaining prerequisite, source/strategy provenance and location, PallyPower/buff, reward/gear/loadout, plugin reuse, merchant/gather, underwater, actual-route/LOS/ABI and supervised acceptance gates. Full post-cutoff review is incomplete; source-pattern test counts are not full client lifecycle acceptance.
+Continue the remaining strategy/location, last-moment gossip NPC/menu, isolation lifetime/actual-route, prerequisite, PallyPower/buff, reward/gear/loadout, plugin reuse, merchant/gather, underwater/native/LOS review. Preserve every prior provenance, backup/exclusion, independent-review and supervised original-client/server acceptance requirement. Full post-cutoff review remains incomplete.
 
-Master expected **b2324913e2499ba30b239dd67224ca2c655c05cc**, tree552eeab1233c7c282897dca0ed9f4334c5e8ed43. W77 documents the earlier empty-doc add/revert; no master write in W78. Verify direct master ref, not stale PR base_sha. Use explicit approved nonempty branch, exact expected parent/blob, meaningful reviewed content/message; never blank placeholder write calls. Keep all backups/exclusions. Publish only to PR51 branch.
+Direct master remains **b2324913e2499ba30b239dd67224ca2c655c05cc**; original restored tree552eeab1233c7c282897dca0ed9f4334c5e8ed43. W77 records the earlier empty-doc add/revert; no master write in W78/W79. Verify direct ref rather than cached PR base_sha. Every write: exact discovered action, explicit nonempty approved branch, reviewed content/message and expected parent/blob; no blank placeholder writes. PR51 stays draft/unmerged.
