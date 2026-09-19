@@ -37,6 +37,17 @@ internal static class PluginRefreshCompilationReuseRegressionTests
                 Check(fingerprint != null && load != null,
                     "PluginManager has no unchanged-source compilation reuse boundary")),
 
+            ("RefreshPlugins routes source paths through the cache owner", () =>
+            {
+                string source = File.ReadAllText(Path.Combine(RepositoryRoot(),
+                    "Styx", "Plugins", "PluginManager.cs"));
+                int loop = source.IndexOf("for (int i = 0; i < files.Count; i++)", StringComparison.Ordinal);
+                int cached = source.IndexOf("LoadPluginPathWithCache", loop, StringComparison.Ordinal);
+                int direct = source.IndexOf("List<HBPlugin> loadedPlugins = CompileAndLoadFrom", loop, StringComparison.Ordinal);
+                Check(loop >= 0 && cached > loop && direct < 0,
+                    "RefreshPlugins can still bypass unchanged-source reuse");
+            }),
+
             ("unchanged source compiles once but returns fresh plugin instances", () =>
             {
                 using var f = new Fixture();
@@ -211,6 +222,14 @@ internal static class PluginRefreshCompilationReuseRegressionTests
             System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(e.InnerException).Throw();
             throw;
         }
+    }
+
+    private static string RepositoryRoot()
+    {
+        for (var d = new DirectoryInfo(AppContext.BaseDirectory); d != null; d = d.Parent)
+            if (File.Exists(Path.Combine(d.FullName, "CopilotBuddy.csproj")))
+                return d.FullName;
+        throw new Failure("tracked checkout required");
     }
 
     private sealed class Fixture : IDisposable
