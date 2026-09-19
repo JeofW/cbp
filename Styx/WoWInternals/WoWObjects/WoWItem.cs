@@ -474,6 +474,25 @@ namespace Styx.WoWInternals.WoWObjects
                 luaBag, luaSlot, expectedEntry);
         }
 
+        internal static string BuildValidatedContainerPickupLua(
+            int luaBag,
+            int luaSlot,
+            uint expectedEntry)
+        {
+            if (luaBag < 0 || luaSlot <= 0 || expectedEntry == 0)
+                throw new ArgumentOutOfRangeException("container item identity");
+
+            return string.Format(
+                System.Globalization.CultureInfo.InvariantCulture,
+                "local kind=GetCursorInfo(); if kind then return false end; " +
+                "local link=GetContainerItemLink({0},{1}); " +
+                "local id=link and tonumber(string.match(link,'item:(%d+)')); " +
+                "if id~={2} then return false end; " +
+                "PickupContainerItem({0},{1}); " +
+                "return CursorHasItem() and true or false",
+                luaBag, luaSlot, expectedEntry);
+        }
+
         private static string CreateItemLink(uint itemId, int quality, int enchantId, int[]? gemIds, uint suffixId)
         {
             return $"|cff{GetQualityColor(quality)}|Hitem:{itemId}:0:0:0:0:0:{suffixId}:0|h[Item]|h|r";
@@ -640,9 +659,53 @@ namespace Styx.WoWInternals.WoWObjects
                     Name);
         }
 
+        public bool TryPickUp()
+        {
+            LocalPlayer me = StyxWoW.Me;
+            ulong expectedGuid = Guid;
+            uint expectedEntry = Entry;
+            if (me == null || expectedGuid == 0 || expectedEntry == 0 || !IsValid ||
+                me.Inventory == null || me.Inventory.Backpack == null)
+                return false;
+
+            ulong[] backpack = me.Inventory.Backpack.ItemGuids;
+            var bags = new ulong[11][];
+            for (uint index = 0; index <= 10U; index++)
+            {
+                WoWContainer bag = me.GetBagAtIndex(index);
+                bags[index] = bag != null ? bag.ItemGuids : Array.Empty<ulong>();
+            }
+
+            int luaBag, luaSlot;
+            if (!TryResolveContainerLocation(
+                    expectedGuid, backpack, bags, out luaBag, out luaSlot))
+                return false;
+
+            if (!IsContainerLocationCurrent(
+                    me, luaBag, luaSlot, expectedGuid))
+                return false;
+
+            string script = BuildValidatedContainerPickupLua(
+                luaBag, luaSlot, expectedEntry);
+            try
+            {
+                return Lua.GetReturnVal<bool>(script, 0U);
+            }
+            catch (Exception ex)
+            {
+                Logging.WriteDebug(
+                    "PickupContainerItem refused {0} ({1}) after slot validation: {2}",
+                    Name, expectedEntry, ex.Message);
+                return false;
+            }
+        }
+
         public void PickUp()
         {
-            Lua.DoString("PickupContainerItem({0}, {1})", (object)(this.BagIndex + 1), (object)(this.BagSlot + 1));
+            if (!TryPickUp())
+                Logging.WriteDebug(
+                    "PickUp skipped {0}: cursor or current container slot identity could not be verified.",
+                    Name);
         }
 
         private static bool UseItem(uint itemPtr, ulong targetGuid, bool forceUse)
