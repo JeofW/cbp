@@ -272,7 +272,7 @@ namespace Levelbot.Actions.Combat
             if (target.Distance > _plan.PullRange || !target.InLineOfSpellSight)
                 return RejectCurrentTarget(context, target, "safe pull point does not provide valid ranged line of sight");
 
-            if (!TryRefreshRetreatAnchor(me.Location, target))
+            if (!TryRefreshRetreatAnchor(me, target))
                 return RejectCurrentTarget(context, target, "retreat anchor became unsafe before the opener");
 
             if (me.IsMoving)
