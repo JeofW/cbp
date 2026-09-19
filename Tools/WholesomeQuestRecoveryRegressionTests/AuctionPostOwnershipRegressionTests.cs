@@ -158,12 +158,12 @@ internal static class AuctionPostOwnershipRegressionTests
                     "auction owner still treats fixed sleep as posting acknowledgement");
             }),
 
-            ("failure cleanup is ownership-scoped", () =>
+            ("failure cleanup avoids unverified sell-slot cancellation semantics", () =>
             {
                 Check(owner.Contains("TryRestoreOwnedCursor", StringComparison.Ordinal)
-                    && owner.Contains("TryCancelOwnedSell", StringComparison.Ordinal)
-                    && !owner.Contains("ClearCursor", StringComparison.Ordinal),
-                    "failed auction transfer has no ownership-scoped cursor/sell cleanup");
+                    && !owner.Contains("ClearCursor", StringComparison.Ordinal)
+                    && !owner.Contains("CancelSell(", StringComparison.Ordinal),
+                    "shared owner treats unverified CancelSell semantics as sell-slot recovery");
             }),
 
             ("auction admission refuses a pre-existing sell-slot selection before pickup", () =>
@@ -194,6 +194,23 @@ internal static class AuctionPostOwnershipRegressionTests
                     && region.IndexOf("stackSize <= 0", StringComparison.Ordinal)
                        < region.IndexOf("(uint)stackSize", StringComparison.Ordinal),
                     "negative or zero stackSize can cross the frame wrapper as an unsigned value");
+            }),
+
+            ("auction coordinate entry accepts carried bags only", () =>
+            {
+                string region = MethodRegion(owner, "internal static bool TryPostAtLocation(");
+                Check(region.Contains("luaBag < 0", StringComparison.Ordinal)
+                    && region.Contains("luaBag > 4", StringComparison.Ordinal),
+                    "AuctionPostTransaction can source bank/container IDs outside carried bags 0-4");
+            }),
+
+            ("item-based posting rejects a resolved source outside carried bags", () =>
+            {
+                string region = MethodRegion(owner, "internal static bool TryPost(");
+                int pickup = region.IndexOf("TryPickUp(out", StringComparison.Ordinal);
+                Check(pickup >= 0
+                    && region.IndexOf("sourceBag > 4", pickup, StringComparison.Ordinal) > pickup,
+                    "item-based auction posting can retain a bank-bag source after pickup");
             }),
 
             ("posting preserves original 3.3.5 price validity before pickup", () =>
