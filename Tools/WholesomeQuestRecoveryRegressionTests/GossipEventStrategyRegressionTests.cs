@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using Styx.Logic.Pathing;
 using WholesomeAQ;
 
 // Source-bound GossipEvent contract. The complete tracked behavior is compiled
@@ -59,6 +60,18 @@ internal static class GossipEventStrategyRegressionTests
                 Check(!(bool)m.Invoke(null,new object[]{2,2})!, "index equal to count was admitted");
                 Check(!(bool)m.Invoke(null,new object[]{-1,2})!, "negative option was admitted");
             }),
+            ("target discovery remains bounded to the source hotspot anchor", () =>
+            {
+                Type type=Behavior();
+                MethodInfo m=Require(type,"IsWithinSourceAnchor");
+                var anchor=new WoWPoint(10,20,30);
+                Check((bool)m.Invoke(null,new object[]{new WoWPoint(12,20,30),anchor,5d})!,
+                    "near source-bound target was rejected");
+                Check(!(bool)m.Invoke(null,new object[]{new WoWPoint(30,20,30),anchor,5d})!,
+                    "same-entry NPC outside source anchor was admitted");
+                Check(!(bool)m.Invoke(null,new object[]{anchor,anchor,double.NaN})!,
+                    "invalid collection radius was admitted");
+            }),
             ("submission timestamp follows exact gossip selection", () =>
             {
                 string source=BehaviorSource();
@@ -104,6 +117,12 @@ internal static class GossipEventStrategyRegressionTests
                     && xml.Contains("TargetWaitTimeout=\"30000\"",StringComparison.Ordinal)
                     && xml.Contains("WaitForNpcs=\"true\"",StringComparison.Ordinal),
                     "generated GossipEvent omitted bounded liveness policy");
+            }),
+            ("GossipEvent refuses a hotspot derived from a different objective target", () =>
+            {
+                var s=Scenario(QuestStrategyKind.GossipEvent, objectiveMobId:9999, targetId:2164);
+                Throws<InvalidDataException>(()=>Build(s.Builder,s.Plan,s.Database,s.Pack),
+                    "unrelated objective hotspot became authority for the gossip target");
             }),
             ("Escort remains non-executable until its recipe carries start and completion semantics", () =>
             {
@@ -172,11 +191,14 @@ internal static class GossipEventStrategyRegressionTests
     private sealed record StrategyScenario(
         ProfileBuilder Builder,List<QuestPlanEntry> Plan,QuestDatabase Database,QuestStrategyPack Pack);
 
-    private static StrategyScenario Scenario(QuestStrategyKind kind)
+    private static StrategyScenario Scenario(
+        QuestStrategyKind kind,
+        int objectiveMobId=2164,
+        int targetId=2164)
     {
         var quest=new QuestEntry{
             Id=2118,Name="Controlled",
-            Objectives=new List<QuestObjective>{new QuestObjective{Index=0,Type=ObjectiveType.KillMob,MobId=2164,KillCount=1}}
+            Objectives=new List<QuestObjective>{new QuestObjective{Index=0,Type=ObjectiveType.KillMob,MobId=objectiveMobId,KillCount=1}}
         };
         var plan=new List<QuestPlanEntry>{new QuestPlanEntry{
             Quest=quest,Stage=QuestWorkStage.Objective,ObjectiveIndex=0,
@@ -185,7 +207,7 @@ internal static class GossipEventStrategyRegressionTests
         var db=new QuestDatabase{Quests=new List<QuestEntry>{quest}};
         var recipe=new QuestStrategyRecipe{
             QuestId=2118,ObjectiveIndex=0,Kind=kind,SourceRef="controlled://gossip/2118/0",
-            TargetType=QuestStrategyTargetType.Creature,TargetId=2164,
+            TargetType=QuestStrategyTargetType.Creature,TargetId=targetId,
             Range=5,RequireLos=true,MaxAttempts=3,GossipOptionIndex=1,
             SuccessEvidence=QuestStrategySuccessEvidence.ObjectiveProgress
         };
@@ -213,6 +235,12 @@ internal static class GossipEventStrategyRegressionTests
         for(var d=new DirectoryInfo(AppContext.BaseDirectory);d!=null;d=d.Parent)
             if(File.Exists(Path.Combine(d.FullName,"CopilotBuddy.csproj")))return d.FullName;
         throw new Failure("tracked checkout required");
+    }
+
+    private static void Throws<T>(Action action,string why) where T:Exception
+    {
+        try{action();}catch(T){return;}
+        throw new Failure(why);
     }
 
     private static void Check(bool ok,string why){if(!ok)throw new Failure(why);}
