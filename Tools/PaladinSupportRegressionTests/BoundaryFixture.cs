@@ -120,6 +120,7 @@ namespace Styx.WoWInternals.WoWObjects
         public bool IsChanneling { get; set; }
         public bool IsMoving { get; set; }
         public bool IsPlayer { get; set; }
+        public bool Elite { get; set; }
         public bool Fleeing { get; set; }
         public bool IsAutoAttacking { get; set; }
         public float Distance { get; set; } = 5;
@@ -186,6 +187,13 @@ namespace Singular.Dynamics
 {
     public enum BehaviorType { Heal, Rest, Pull, Combat, PreCombatBuffs, CombatBuffs, PullBuffs }
     public enum WoWContext { All, Normal, Battlegrounds, Instances }
+}
+namespace Singular
+{
+    public static class SingularRoutine
+    {
+        public static Singular.Dynamics.WoWContext CurrentWoWContext { get; set; } = Singular.Dynamics.WoWContext.Normal;
+    }
 }
 namespace Singular.Settings
 {

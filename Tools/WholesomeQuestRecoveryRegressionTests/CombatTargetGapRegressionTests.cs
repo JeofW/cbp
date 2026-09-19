@@ -32,7 +32,7 @@ internal static class CombatTargetGapRegressionTests
         try
         {
             Styx.Helpers.Logging.FileLogging=false;
-            File.WriteAllText(Path.Combine(temp,"Combat.cs"),"using System;using TreeSharp;using Styx;using Styx.Logic;using Styx.Logic.POI;using Styx.Logic.Pathing;using Styx.WoWInternals;using Styx.WoWInternals.WoWObjects;using CommonBehaviors.Actions;using CommonBehaviors.Decorators;using Mount=Styx.Logic.Pathing.Mount;namespace Bots.Grind{public static class LevelBot{private static RoutineSet Routine=>GapCases.Routine;\n"+region+"\n}}");
+            File.WriteAllText(Path.Combine(temp,"Combat.cs"),"using System;using TreeSharp;using Styx;using Styx.Logic;using Styx.Logic.POI;using Styx.Logic.Pathing;using Styx.WoWInternals;using Styx.WoWInternals.WoWObjects;using CommonBehaviors.Actions;using CommonBehaviors.Decorators;using Levelbot.Actions.Combat;using Mount=Styx.Logic.Pathing.Mount;namespace Bots.Grind{public static class LevelBot{private static RoutineSet Routine=>GapCases.Routine;\n"+region+"\n}}");
             File.Copy(Path.Combine(root,"CommonBehaviors","Decorators","DecoratorIsPoiType.cs"),Path.Combine(temp,"DecoratorIsPoiType.cs"));
             File.WriteAllText(Path.Combine(temp,"Boundary.cs"),Boundary);
             Type type=typeof(Styx.StyxWoW).Assembly.GetType("Styx.Loaders.SourceCompiler",true)!;
@@ -59,6 +59,14 @@ using Styx.Logic.Pathing;
 using Styx.WoWInternals.WoWObjects;
 using TreeSharp;
 using Mount=Styx.Logic.Pathing.Mount;
+namespace Levelbot.Actions.Combat
+{
+    public static class PullIsolationCoordinator
+    {
+        public static Composite CreatePreCombatBehavior()=>GapCases.Leaf("isolation-pre");
+        public static Composite CreateRetreatBehavior()=>GapCases.Leaf("isolation-retreat");
+    }
+}
 public sealed class RoutineSet
 {
     public Composite RestBehavior=GapCases.Leaf("rest");
