@@ -116,6 +116,8 @@ namespace Singular.ClassSpecific.Paladin
             string query =
                 "local classIndex=" + classIndex + ";local targetName=\"" + target + "\";" +
                 "if type(IsAddOnLoaded)=='function' and not IsAddOnLoaded('PallyPower') then return '0' end;" +
+                "if type(GetAddOnMetadata)~='function' then return '2' end;" +
+                "local ppVersion=GetAddOnMetadata('PallyPower','Version');if ppVersion~='v3.2.21' then return '2' end;" +
                 "local pp=PallyPower;if type(pp)~='table' then return '2' end;" +
                 "if pp.IsWrath~=true then return '2' end;" +
                 "local a=PallyPower_Assignments and PallyPower_Assignments[\"Wrath\"];" +
