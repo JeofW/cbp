@@ -15,10 +15,10 @@ internal static class PullIsolationRegressionTests
     [System.Runtime.CompilerServices.ModuleInitializer]
     internal static void Run()
     {
-        var cases=new List<(string Name,Action Test)>
+        var cases=new List<(string Name,System.Action Test)>
         {
             ("optional routine provider exists and Singular implements it",()=>{
-                var asm=typeof(Levelbot.LevelBot).Assembly;
+                var asm=typeof(Bots.Grind.LevelBot).Assembly;
                 Type provider=RequireType(asm,"Styx.Combat.CombatRoutine.IIsolationPullProvider");
                 Type singular=RequireType(asm,"Singular.SingularRoutine");
                 Check(provider.IsAssignableFrom(singular),"Singular did not opt into the isolation-pull provider");
