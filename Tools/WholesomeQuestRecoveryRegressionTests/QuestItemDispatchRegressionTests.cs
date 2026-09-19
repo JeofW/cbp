@@ -132,11 +132,11 @@ public static class QuestItemDispatchCases
         });
         Add("safe slot refusal gates authoritative timestamp before bookkeeping",()=>{
             string source=System.IO.File.ReadAllText(System.IO.Path.Combine(Root(),"runtime-snapshot","Quest Behaviors","UseItemOn.cs"));
-            int submit=source.IndexOf("item.TryUseContainerItem()",StringComparison.Ordinal);
             int refusal=source.IndexOf("if (!item.TryUseContainerItem())",StringComparison.Ordinal);
-            int stamp=source.IndexOf("_lastSubmissionUtc = UtcNowMilliseconds()",StringComparison.Ordinal);
-            int count=source.IndexOf("Counter++",StringComparison.Ordinal);
-            Check(submit>=0&&refusal==submit&&stamp>refusal&&count>refusal,
+            int accepted=refusal<0 ? -1 : source.IndexOf("_submissionRefusalUtc = -1;",refusal,StringComparison.Ordinal);
+            int stamp=accepted<0 ? -1 : source.IndexOf("_lastSubmissionUtc = UtcNowMilliseconds()",accepted,StringComparison.Ordinal);
+            int count=accepted<0 ? -1 : source.IndexOf("Counter++",accepted,StringComparison.Ordinal);
+            Check(refusal>=0&&accepted>refusal&&stamp>accepted&&count>stamp,
                 "authoritative/local bookkeeping is not structurally gated by safe submission result");
         });
         Add("persistent safe slot refusal has a bounded local deferral lifetime",()=>{

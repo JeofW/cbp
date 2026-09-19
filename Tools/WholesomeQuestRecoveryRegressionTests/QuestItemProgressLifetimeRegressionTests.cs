@@ -30,7 +30,7 @@ internal static class QuestItemProgressLifetimeRegressionTests
             boundary = boundary.Replace(before, after);
         }
         Replace("public static void SleepForLagDuration(){}", "public static void SleepForLagDuration(){QuestItemProgressLifetimeCases.Boundary(\"lag\");}");
-        Replace("public void UseContainerItem(){}", "public void UseContainerItem(){QuestItemProgressLifetimeCases.Submit(this);}");
+        Replace("public bool TryUseContainerItem()=>true; public void UseContainerItem(){TryUseContainerItem();}", "public bool TryUseContainerItem(){QuestItemProgressLifetimeCases.Submit(this);return true;} public void UseContainerItem(){TryUseContainerItem();}");
         Replace("public void Target(){ObjectManager.Me!.CurrentTarget=this;}", "public void Target(){ObjectManager.Me!.CurrentTarget=this;QuestItemProgressLifetimeCases.Boundary(\"target\");}");
         Replace("public void ClearTarget(){CurrentTarget=null;}", "public void ClearTarget(){QuestItemProgressLifetimeCases.Clears++;CurrentTarget=null;}");
         Replace("public static void MoveStop(){}", "public static void MoveStop(){if(ObjectManager.Me!=null)ObjectManager.Me.IsMoving=false;QuestItemProgressLifetimeCases.Boundary(\"stop\");}");
