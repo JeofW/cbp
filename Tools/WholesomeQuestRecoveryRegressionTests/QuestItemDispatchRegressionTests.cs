@@ -26,7 +26,7 @@ internal static class QuestItemDispatchRegressionTests
             boundary = boundary.Replace(before, after);
         }
         Replace("public static void SleepForLagDuration(){}", "public static void SleepForLagDuration(){QuestItemDispatchCases.Boundary(\"lag\");}");
-        Replace("public void UseContainerItem(){}", "public void UseContainerItem(){QuestItemDispatchCases.Submit(this);}");
+        Replace("public void UseContainerItem(){}", "public bool TryUseContainerItem(){return QuestItemDispatchCases.Submit(this);}public void UseContainerItem(){TryUseContainerItem();}");
         Replace("public void Target(){ObjectManager.Me!.CurrentTarget=this;}", "public void Target(){ObjectManager.Me!.CurrentTarget=this;QuestItemDispatchCases.Boundary(\"target\");}");
         Replace("public void ClearTarget(){CurrentTarget=null;}", "public void ClearTarget(){QuestItemDispatchCases.Clears++;CurrentTarget=null;}");
         Replace("public static void MoveStop(){}", "public static void MoveStop(){if(ObjectManager.Me!=null)ObjectManager.Me.IsMoving=false;QuestItemDispatchCases.Boundary(\"stop\");}");
@@ -68,12 +68,17 @@ public static class QuestItemDispatchCases
     private static string stage="";
     private static bool fired;
     private static readonly List<ulong> used=new();
+    private static bool SubmissionAllowed;
     public static int Clears;
     public static void Boundary(string name)
     {
         if(!fired && name==stage){fired=true;var callback=mutation;mutation=null;callback?.Invoke();}
     }
-    public static void Submit(WoWItem selected){used.Add(selected.Guid);Boundary("use");}
+    public static bool Submit(WoWItem selected)
+    {
+        if(!SubmissionAllowed){Boundary("use");return false;}
+        used.Add(selected.Guid);Boundary("use");return true;
+    }
     public static void Run()
     {
         var cases=new List<(string,System.Action)>();
@@ -120,6 +125,27 @@ public static class QuestItemDispatchCases
             stage="use";mutation=()=>typeof(Script).GetField("_isDisposed",Hidden)!.SetValue(owner,true);
             Tick();Check(used.Count==1&&Counter==0&&Blacklist.Count==0&&Clears==0,"disposed attempt mutated local state or new target");
         });
+        Add("safe slot refusal does not advance legacy invocation count",()=>{
+            SubmissionAllowed=false;Tick();
+            Check(used.Count==0&&Counter==0&&Blacklist.Count==0,
+                "refused container submission consumed legacy invocation bookkeeping");
+        });
+        Add("safe slot refusal gates authoritative timestamp before bookkeeping",()=>{
+            string source=System.IO.File.ReadAllText(System.IO.Path.Combine(Root(),"runtime-snapshot","Quest Behaviors","UseItemOn.cs"));
+            int submit=source.IndexOf("item.TryUseContainerItem()",StringComparison.Ordinal);
+            int refusal=source.IndexOf("if (!item.TryUseContainerItem())",StringComparison.Ordinal);
+            int stamp=source.IndexOf("_lastSubmissionUtc = UtcNowMilliseconds()",StringComparison.Ordinal);
+            int count=source.IndexOf("Counter++",StringComparison.Ordinal);
+            Check(submit>=0&&refusal==submit&&stamp>refusal&&count>refusal,
+                "authoritative/local bookkeeping is not structurally gated by safe submission result");
+        });
+        Add("persistent safe slot refusal has a bounded local deferral lifetime",()=>{
+            string source=System.IO.File.ReadAllText(System.IO.Path.Combine(Root(),"runtime-snapshot","Quest Behaviors","UseItemOn.cs"));
+            Check(source.Contains("SubmissionRefusalTimeout",StringComparison.Ordinal)
+                && source.Contains("_submissionRefusalUtc",StringComparison.Ordinal)
+                && source.Contains("DeferSubmissionRefusal",StringComparison.Ordinal),
+                "safe container refusal can retry forever without consuming an attempt");
+        });
         Add("no duplicate use after a completed local attempt",()=>{Tick();Tick();Check(used.Count==1&&Counter==1,"completed local repetition submitted twice");});
         Add("legacy caller without LOS requirement remains usable when observation is blocked",()=>{
             Set("RequireLos",false);target.InLineOfSight=false;Tick();
@@ -154,7 +180,7 @@ public static class QuestItemDispatchCases
         item=new WoWItem{Guid=17,Entry=12345};player.CarriedItems!.Add(item);
         typeof(Script).GetField("_isDisposed",Hidden)!.SetValue(owner,false);
         GC.SuppressFinalize(owner);Set("MobAuraMissingName","Forbidden");Set("WaitTime",101);
-        mutation=null;stage="";fired=false;Clears=0;used.Clear();
+        mutation=null;stage="";fired=false;Clears=0;SubmissionAllowed=true;used.Clear();
     }
     private static int Counter=>(int)typeof(Script).GetProperty("Counter",Hidden)!.GetValue(owner)!;
     private static List<ulong> Blacklist=>(List<ulong>)typeof(Script).GetField("_npcBlacklist",Hidden)!.GetValue(owner)!;
@@ -173,6 +199,12 @@ public static class QuestItemDispatchCases
             Check(errors.Count==0,"swallowed owner exception: "+string.Join(";",errors));
         }
         finally{Styx.Helpers.Logging.OnMessageLogged-=Record;}
+    }
+    private static string Root()
+    {
+        for(var d=new System.IO.DirectoryInfo(AppContext.BaseDirectory);d!=null;d=d.Parent)
+            if(System.IO.File.Exists(System.IO.Path.Combine(d.FullName,"CopilotBuddy.csproj")))return d.FullName;
+        throw new Failure("tracked checkout required");
     }
     private static void Check(bool value,string message){if(!value)throw new Failure(message);}
 }
