@@ -80,7 +80,14 @@ internal static class QuestItemAuthoritativeProgressRegressionTests
                     Check(source.Contains("MaxAttempts", StringComparison.Ordinal)
                         && source.Contains("AuthoritativeAttemptsExhausted", StringComparison.Ordinal)
                         && source.Contains("HasAuthoritativeSuccess", StringComparison.Ordinal),
-                        "attempt exhaustion is not separated from success"))
+                        "attempt exhaustion is not separated from success")),
+                ("authoritative validation occurs after quest identity parsing", () =>
+                {
+                    int quest = source.IndexOf("QuestId = GetAttributeAsNullable<int>", StringComparison.Ordinal);
+                    int validation = source.IndexOf("SuccessEvidence == SuccessEvidenceType.ObjectiveProgress", quest < 0 ? 0 : quest, StringComparison.Ordinal);
+                    Check(quest >= 0 && validation > quest,
+                        "authoritative mode validates before the quest identity exists");
+                })
             };
 
             int passed = 0, assertions = 0, unexpected = 0;
