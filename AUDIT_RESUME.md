@@ -1,19 +1,29 @@
-# Resume at W70 — GossipEvent and plugin refresh reuse verified
+# Resume at W71 — container submission + dependent prerequisites verified
 
 Repo `jeofwong/CopilotBuddy-private`, draft PR51, branch `audit/next-55-equipment-observation-20260917`. Reconcile live refs first.
 
-Verified code **2456369563478b1f0c11c902649d7b308169ddfc**, tree **90501a9a3233d9bd043621abf2ae5671c658cf05**.
-Read `docs/audit/2026-09-19/W70_CHECKPOINT.md` and `W70_EVIDENCE.json`, then W69 and the original-client/provenance policies.
+Verified code/test head **5db0de566cea515a21f3706fd7835b82dda9737a**, tree **f9b8a5cbb14ebad0a419ac1a53ff3ab04dafbad0**. Production prerequisite repair is **16acaaac108d817642993e48bfe25dc10958c298**.
 
-Exact-head green:
-- integrated **35425658391 / art10578078516**
-- host **35425658309 / art10578774562**
-- quest-log owners **35425658361 / art10578159821**
+Read `docs/audit/2026-09-19/W71_CHECKPOINT.md` and `W71_EVIDENCE.json`, then W70 plus `WOTLK_335A_RESEARCH_POLICY.md`, `TRINITYCORE_335_COMPATIBILITY.md`, `QUEST_DATA_PROVENANCE_335.md` and `ADDON_EVIDENCE_335.md`.
 
-New retained groups: PluginRefreshReuse9/9 and GossipEvent14/14. Earlier PullIsolation12/12, AuraCount8/8, CollectThingsBreath7/7, QuestStrategyExecution9/9, equipment groups remain green.
+Exact green:
+- integrated **35430867637 / art10580233586** — 17/17 entries
+- host **35430867668 / art10580507599** — 0 errors / 3340 warnings
+- production quest-log owners at 16acaaac: **35430209827 / art10580646500**
 
-NEXT: native container slot identity. Current WoWItem.UseContainerItem independently reads BagIndex and BagSlot; unresolved BagIndex=-1 aliases backpack. Prepared test blob **0970290ab69cc54bc8a39f98e8814f7f6c081420**. Prepared production blob **ffc12d34d2971c944ff32196f3fd1ede83361f5e** is off-branch only and must not be published before a clean intended red. After repair, audit authoritative UseItemOn/callers so failed safe slot resolution cannot count as a successful dispatch.
+Retain:
+- container slot identity **9/9** and `TryUseContainerItem` fail-closed GUID/slot/entry validation
+- UseItemOn bounded safe-submission refusal; refusal is not invocation or quest credit
+- dependent previous alternatives **14/14**
+- active parent prerequisites **32/32**
+- negative exclusive dependencies **10/10**
+- plugin refresh **9/9**, GossipEvent **14/14**, Singular required registration **189/189**
+- all older W70/W69 requirements and evidence
 
-Escort stays unwired. All-class buff strength/ownership, equipment caps/loadout, raw addon terrain, full underwater/GatherBuddy, native cursor/LOS and live acceptance remain open.
+Dependent prerequisite semantics now follow pinned TC335 for `PreviousQuestsIds`: stored-order OR, negative group each-from-all, direct positive field independent, unknown predecessor metadata cannot authorize, ancestor correction follows only blocking roots. Dataset provenance is still not a realm DB certificate.
 
-For GitHub polling failures: exact head + run ID, short one-shot reads, bounded retries; no long polling or blind reruns.
+NEXT prerequisite slice: negative direct `PrevQuestID` status. Pinned TC335 8fda442f requires the parent to be `QUEST_STATUS_INCOMPLETE`; current Wholesome accepts any accepted parent including ready/completed-in-log. Pinned AC WotLK 8337a378 is broader. Test first using existing `QuestSchedulerAcceptedQuest.IsCompleted`; TC-primary conservative policy should require accepted + not ready. Do not silently erase the AC divergence.
+
+After that continue cursor ownership separately: WoWItem.PickUp, delete, equip, auction and ProfessionBuddy cursor transfers are not one blanket contract. Then proceed with remaining buff/gear/water/GatherBuddy/native/live acceptance frontiers.
+
+Do not merge PR51 without explicit user approval. For connector failures use exact SHA/run IDs, short one-shot reads and bounded retries; no blind reruns.
