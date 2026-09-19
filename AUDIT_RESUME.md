@@ -1,17 +1,19 @@
-# Resume at W69 — dense-pull + aura/breath safety verified
+# Resume at W70 — GossipEvent and plugin refresh reuse verified
 
 Repo `jeofwong/CopilotBuddy-private`, draft PR51, branch `audit/next-55-equipment-observation-20260917`. Reconcile live refs first.
 
-Verified code **0640174f5b128ea466059c30493702a00307a478**, tree **6e2fca4209af9be109907e1ce5d902d303359040**. Read `docs/audit/2026-09-19/W69_CHECKPOINT.md` / `W69_EVIDENCE.json`, then W68/W67 and the 3.3.5 research/provenance policies.
+Verified code **2456369563478b1f0c11c902649d7b308169ddfc**, tree **90501a9a3233d9bd043621abf2ae5671c658cf05**.
+Read `docs/audit/2026-09-19/W70_CHECKPOINT.md` and `W70_EVIDENCE.json`, then W69 and the original-client/provenance policies.
 
-Exact-head green: integrated **35423774281 / artifact10578017430**; host **35423774279 / artifact10578222288**.
+Exact-head green:
+- integrated **35425658391 / art10578078516**
+- host **35425658309 / art10578774562**
+- quest-log owners **35425658361 / art10578159821**
 
-W69 retains bounded authoritative UseItemOn + source-bound strategy execution, open-world dense-pack isolation with a normal Ret Exorcism opener, client aura-count allocation guard, and uncapped long-route CollectThings breath budgeting. PullIsolation12/12, AuraCount8/8, CollectThingsBreath7/7, QuestStrategyExecution9/9.
+New retained groups: PluginRefreshReuse9/9 and GossipEvent14/14. Earlier PullIsolation12/12, AuraCount8/8, CollectThingsBreath7/7, QuestStrategyExecution9/9, equipment groups remain green.
 
-Runtime-log reconciliation covers all 62 captured logs including oversized blobs. Old FBE iterator, Ret target-NRE, ManaPer5Sec and aura-allocation signatures are source-addressed. A separate Roslyn OOM during repeated PluginManager.RefreshPlugins remains open, as do mixed navigation/stuck/transport/latency signatures.
+NEXT: native container slot identity. Current WoWItem.UseContainerItem independently reads BagIndex and BagSlot; unresolved BagIndex=-1 aliases backpack. Prepared test blob **0970290ab69cc54bc8a39f98e8814f7f6c081420**. Prepared production blob **ffc12d34d2971c944ff32196f3fd1ede83361f5e** is off-branch only and must not be published before a clean intended red. After repair, audit authoritative UseItemOn/callers so failed safe slot resolution cannot count as a successful dispatch.
 
-NEXT: first investigate/test the plugin-refresh default-context assembly lifetime / unchanged-source recompilation OOM. Then authoritative GossipEvent acknowledgement wiring. Escort must remain unwired until explicit start/completion/reacquisition schema exists.
+Escort stays unwired. All-class buff strength/ownership, equipment caps/loadout, raw addon terrain, full underwater/GatherBuddy, native cursor/LOS and live acceptance remain open.
 
-PallyPower bridge and quarantined Carbonite/WorldMapArea conversion already exist; do not recreate them. All-class buff strength, loadout/caps/rewards, raw addon adapters/terrain, complete underwater/GatherBuddy ownership, native ABI and live acceptance remain open.
-
-For connector polling failures, resume by exact PR head + run ID using short one-shot reads with bounded retries; do not blindly rerun or republish.
+For GitHub polling failures: exact head + run ID, short one-shot reads, bounded retries; no long polling or blind reruns.

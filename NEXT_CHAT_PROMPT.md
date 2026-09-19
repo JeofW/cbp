@@ -1,15 +1,13 @@
 @GitHub
 
-Continue `jeofwong/CopilotBuddy-private`, draft PR51 on `audit/next-55-equipment-observation-20260917`. Reconcile live refs and read W69 checkpoint/evidence first.
+Continue PR51 on `audit/next-55-equipment-observation-20260917` from W70. Reconcile live refs and read W70 checkpoint/evidence first.
 
-Verified checkpoint: **0640174f5b128ea466059c30493702a00307a478**, tree **6e2fca4209af9be109907e1ce5d902d303359040**; integrated **35423774281/art10578017430** and host **35423774279/art10578222288** pass.
+Verified checkpoint: **2456369563478b1f0c11c902649d7b308169ddfc**, tree **90501a9a3233d9bd043621abf2ae5671c658cf05**. Integrated **35425658391/art10578078516**, host **35425658309/art10578774562**, quest-log **35425658361/art10578159821** pass.
 
-Retain, do not recreate: bounded authoritative UseItemOn + source-bound strategy execution; dense-pack pull isolation (12/12) with normal Ret Exorcism opener and no taunt/melee close; aura-count allocation guard (8/8); CollectThings breath-budget fix (7/7); existing PallyPower read-only v3.2.21 Wrath bridge; quarantined addon hints + WorldMapArea candidate XY conversion; existing equipment observation/hand/reward identity tests.
+Retain: source-bound UseItemOn, dense-pack isolation, aura-count guard, breath recovery, plugin refresh reuse (9/9), authoritative single-option GossipEvent (14/14), PallyPower bridge, quarantined addon hints, equipment observation/hand/reward identity. Escort remains unwired.
 
-First next slice: investigate the log-backed Roslyn OOM in repeated `PluginManager.RefreshPlugins`. `2026-09-12_1232_48388.log` has multiple successful refreshes followed by OOMs in `MetadataReference.CreateFromFile`. Current source recompiles plugins into unique `Assembly.LoadFrom` default-context assemblies that are not unloadable. Obtain a clean intended red before repair; prefer unchanged-source compilation reuse/content fingerprinting over speculative collectible-context changes unless type/lifetime evidence justifies them.
+First next slice: native container slot identity in WoWItem.UseContainerItem. Current BagIndex=-1 means both backpack and unresolved container, and BagSlot reads BagIndex again. Publish the prepared test-only contract first and require a clean assertion red. Prepared test blob: **0970290ab69cc54bc8a39f98e8814f7f6c081420**. Prepared production blob **ffc12d34d2971c944ff32196f3fd1ede83361f5e** is NOT yet authorized. After core repair, audit UseItemOn and other authoritative/destructive callers so a refused safe submission does not become local success.
 
-After that, design authoritative GossipEvent submission/acknowledgement lifetime before wiring it into Wholesome strategy execution. Do not wire Escort yet: current recipe lacks explicit start interaction, completion mode/destination, item/timer start semantics and bounded reacquisition facts.
+Then continue all-class stronger/exclusive buff policy, cap/loadout/reward evaluation, native cursor/LOS, GatherBuddy/full underwater, remaining nav/performance signatures and live acceptance. Do not merge PR51 without explicit approval.
 
-Keep all broader W69 open requirements explicit. Do not merge PR51 without user approval.
-
-For GitHub polling/stream failures, recover automatically from exact head SHA + run ID with short one-shot reads and bounded retries; do not wait on long polling and do not ask the user to say “retry” for ordinary connector timeouts.
+For normal GitHub connector timeouts self-recover by exact SHA/run IDs with short reads and bounded retries; do not ask the user to say retry.
