@@ -74,7 +74,7 @@ internal static class DeleteItemsLifecycleRegressionTests
                 }),
                 ("delete request has an owned cursor identity helper", () =>
                 {
-                    string region = MethodRegion(source, "BuildOwnedDeleteRequestLua");
+                    string region = MethodRegion(source, "private static string BuildOwnedDeleteRequestLua");
                     Check(region.Contains("GetCursorInfo", StringComparison.Ordinal)
                         && region.Contains("DeleteCursorItem", StringComparison.Ordinal)
                         && (region.Contains("expectedEntry", StringComparison.Ordinal)
@@ -85,7 +85,7 @@ internal static class DeleteItemsLifecycleRegressionTests
                 }),
                 ("confirmation handling proves exact original popup identity", () =>
                 {
-                    string region = MethodRegion(source, "BuildOwnedDeleteConfirmationLua");
+                    string region = MethodRegion(source, "private static string BuildOwnedDeleteConfirmationLua");
                     Check(region.Contains("StaticPopup_FindVisible", StringComparison.Ordinal)
                         && region.Contains("DELETE_ITEM", StringComparison.Ordinal)
                         && region.Contains("DELETE_GOOD_ITEM", StringComparison.Ordinal),
@@ -95,7 +95,7 @@ internal static class DeleteItemsLifecycleRegressionTests
                 }),
                 ("good-item confirmation uses the original confirmation string contract", () =>
                 {
-                    string region = MethodRegion(source, "BuildOwnedDeleteConfirmationLua");
+                    string region = MethodRegion(source, "private static string BuildOwnedDeleteConfirmationLua");
                     Check(region.Contains("DELETE_ITEM_CONFIRM_STRING", StringComparison.Ordinal)
                         && region.Contains("editBox", StringComparison.Ordinal),
                         "high-quality delete confirmation does not use the exact original edit-box contract");
