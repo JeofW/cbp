@@ -166,6 +166,62 @@ internal static class AuctionPostOwnershipRegressionTests
                     "failed auction transfer has no ownership-scoped cursor/sell cleanup");
             }),
 
+            ("auction admission refuses a pre-existing sell-slot selection before pickup", () =>
+            {
+                string post = MethodRegion(owner, "internal static bool TryPost(");
+                string ready = MethodRegion(owner, "private static bool IsAuctionSellContextReady()");
+                Check(post.Contains("IsAuctionSellContextReady", StringComparison.Ordinal)
+                    && post.IndexOf("IsAuctionSellContextReady", StringComparison.Ordinal)
+                       < post.IndexOf("TryPickUp(out", StringComparison.Ordinal)
+                    && ready.Contains("GetAuctionSellItemInfo", StringComparison.Ordinal),
+                    "posting can steal or displace an already-selected auction sell item");
+            }),
+
+            ("sell transfer rechecks an empty sell slot immediately before click", () =>
+            {
+                string lua = BuildTransfer(transferBuilder, 2, 3, 7586);
+                int sellInfo = lua.IndexOf("GetAuctionSellItemInfo", StringComparison.Ordinal);
+                int click = lua.IndexOf("ClickAuctionSellItemButton", StringComparison.Ordinal);
+                Check(sellInfo >= 0 && click > sellInfo
+                    && lua.Substring(0, click).Contains("return false", StringComparison.Ordinal),
+                    "sell transfer can click while another item already owns the AH sell slot");
+            }),
+
+            ("frame wrapper rejects nonpositive stack size before uint conversion", () =>
+            {
+                string region = MethodRegion(frame, "public static bool TryPostAuction(int bag");
+                Check(region.Contains("stackSize <= 0", StringComparison.Ordinal)
+                    && region.IndexOf("stackSize <= 0", StringComparison.Ordinal)
+                       < region.IndexOf("(uint)stackSize", StringComparison.Ordinal),
+                    "negative or zero stackSize can cross the frame wrapper as an unsigned value");
+            }),
+
+            ("posting preserves original 3.3.5 price validity before pickup", () =>
+            {
+                string region = MethodRegion(owner, "internal static bool TryPost(");
+                int validate = region.IndexOf("MaximumBidPrice", StringComparison.Ordinal);
+                int pickup = region.IndexOf("TryPickUp(out", StringComparison.Ordinal);
+                Check(validate >= 0 && pickup > validate
+                    && owner.Contains("2000000000", StringComparison.Ordinal)
+                    && region.Contains("minBid <= 0", StringComparison.Ordinal)
+                    && region.Contains("minBid > MaximumBidPrice", StringComparison.Ordinal)
+                    && region.Contains("buyout > 0", StringComparison.Ordinal)
+                    && region.Contains("buyout < minBid", StringComparison.Ordinal),
+                    "direct StartAuction path bypasses original 3.3.5 price-form validity");
+            }),
+
+            ("late StartAuction validation preserves selected stack and total-count bounds", () =>
+            {
+                string lua = BuildStart(startBuilder, 7586, 100, 200, 2, 5, 3);
+                int stackLimit = lua.IndexOf("stackCount", StringComparison.Ordinal);
+                int totalLimit = lua.IndexOf("totalCount", StringComparison.Ordinal);
+                int start = lua.IndexOf("StartAuction(", StringComparison.Ordinal);
+                Check(stackLimit >= 0 && totalLimit > stackLimit && start > totalLimit
+                    && lua.Contains("5", StringComparison.Ordinal)
+                    && lua.Contains("3", StringComparison.Ordinal),
+                    "direct StartAuction path ignores original 3.3.5 selected stack/total-count limits");
+            }),
+
             ("query bid buyout and cancel owners remain outside cursor repair", () =>
             {
                 Check(legacy.Contains("PerformSearch", StringComparison.Ordinal)
