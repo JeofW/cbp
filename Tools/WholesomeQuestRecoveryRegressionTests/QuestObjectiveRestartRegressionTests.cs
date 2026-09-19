@@ -204,9 +204,19 @@ public static class ObjectiveRestartCases
         player=ObjectManager.Me!;player.IsMoving=false;player.CurrentTarget=ObjectManager.Objects!.OfType<WoWUnit>().Single();
         player.CarriedItems!.Add(new WoWItem{Guid=17,Entry=12345});
         kind=mode=="UseItemOn"?typeof(Script):typeof(Styx.Bot.Quest_Behaviors.GossipEvent.GossipEvent);
-        owner=mode=="UseItemOn"?typeof(QuestItemSelectionCases).GetField("owner",Hidden)!.GetValue(null)!
-            :RuntimeHelpers.GetUninitializedObject(kind);
-        GC.SuppressFinalize(owner);kind.GetField("_isDisposed",Hidden)!.SetValue(owner,false);
+        var args=new Dictionary<string,string>
+        {
+            ["QuestId"]="867",["ObjectiveIndex"]=slot.ToString(System.Globalization.CultureInfo.InvariantCulture),
+            ["SuccessEvidence"]="ObjectiveProgress",["MobId"]="70001",["CollectionDistance"]="100",
+            ["Range"]="4",["MaxAttempts"]="3",["AcknowledgementTimeout"]="5000",
+            ["X"]="10",["Y"]="10",["Z"]="10"
+        };
+        if(mode=="UseItemOn")args["ItemId"]="12345";
+        else args["GossipOptionIndex"]="0";
+        owner=Activator.CreateInstance(kind,new object[]{args})!;
+        GC.SuppressFinalize(owner);
+        if(((Styx.Logic.Questing.CustomForcedBehavior)owner).IsAttributeProblem)
+            throw new InvalidOperationException("Controlled restart constructor rejected its explicit arguments");
         Set("QuestId",867);Set("ObjectiveIndex",slot);Set("MaxAttempts",3);Set("AcknowledgementTimeout",5000);
         Set("SuccessEvidence",Enum.Parse(kind.GetNestedType("SuccessEvidenceType")!,"ObjectiveProgress"));
         Set("QuestRequirementInLog",Styx.Logic.Questing.CustomForcedBehavior.QuestInLogRequirement.InLog);
