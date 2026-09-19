@@ -66,6 +66,32 @@ namespace Singular.ClassSpecific.Paladin
         [Behavior(BehaviorType.Pull)]
         [Behavior(BehaviorType.Combat)]
         [Context(WoWContext.Normal)]
+        // Optional LevelBot dense-pack opener. This is intentionally not part
+        // of the normal Ret rotation: it provides one ranged damage submission,
+        // with no taunt and no melee closing, after LevelBot validates the pull point.
+        public static Composite CreateRetributionPaladinIsolationPull()
+        {
+            return new PrioritySelector(
+                Safers.EnsureTarget(),
+                Spell.WaitForCast(false, false),
+                Movement.CreateMoveToLosBehavior(),
+                Movement.CreateFaceTargetBehavior(),
+                Spell.Cast("Exorcism",
+                    ret => StyxWoW.Me?.CurrentTarget,
+                    ret => IsValidIsolationPullTarget(StyxWoW.Me, StyxWoW.Me?.CurrentTarget))
+            );
+        }
+
+        private static bool IsValidIsolationPullTarget(LocalPlayer me, WoWUnit target)
+        {
+            return me != null && target != null &&
+                   SingularRoutine.CurrentWoWContext == WoWContext.Normal &&
+                   TalentManager.CurrentSpec == TalentSpec.RetributionPaladin &&
+                   target.IsValid && target.IsAlive && !target.IsPlayer && !target.Elite &&
+                   !me.IsMoving && !me.IsOnTransport &&
+                   target.Distance >= 7 && target.Distance <= 30;
+        }
+
         public static Composite CreateRetributionPaladinNormalPullAndCombat()
         {
             return new PrioritySelector(

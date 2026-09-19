@@ -144,6 +144,7 @@ namespace Bots.Grind
 
         public override void Start()
         {
+            PullIsolationCoordinator.Reset();
             if (ProfileManager.CurrentOuterProfile == null)
                 throw new HonorbuddyUnableToStartException("You haven't loaded a profile.");
 
@@ -161,6 +162,7 @@ namespace Bots.Grind
 
         public override void Stop()
         {
+            PullIsolationCoordinator.Reset();
             Targeting.Instance.IncludeTargetsFilter -= LevelBotIncludeTargetsFilter;
             LootTargeting.Instance.IncludeTargetsFilter -= LevelbotIncludeLootsFilter;
             Bots.DungeonBuddy.Avoidance.WorldObstacleManager.Shutdown();
@@ -231,6 +233,10 @@ namespace Bots.Grind
                                         )
                                     )
                                 ),
+                                // Dense-pack isolation is opt-in per routine. It owns only
+                                // the approach/opener/retreat episode; ordinary pulls remain
+                                // the fallback whenever no isolation plan is active.
+                                PullIsolationCoordinator.CreatePreCombatBehavior(),
                                 // Pull if ready
                                 new Decorator(
                                     ctx => CanPull(),
@@ -249,6 +255,9 @@ namespace Bots.Grind
                                 new TreeSharp.Action(ctx => Mount.Dismount("Combat"))
                             ),
                             Routine.HealBehavior,
+                            // A successful ranged peel owns movement until the target is
+                            // separated or another mob joins. Healing still has priority.
+                            PullIsolationCoordinator.CreateRetreatBehavior(),
                             new Decorator(
                                 ctx => Targeting.Instance.FirstUnit != null,
                                 new PrioritySelector(
