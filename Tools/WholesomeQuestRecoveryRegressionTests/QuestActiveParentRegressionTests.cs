@@ -63,6 +63,12 @@ internal static class QuestActiveParentRegressionTests
         QuestEntry Q(int id)=>new(){Id=id,Name="Controlled quest "+id,MinLevel=1,QuestLevel=20,Objectives=new(){new QuestObjective{Type=ObjectiveType.TurnInOnly}}};
         var child=Q(200);child.PrevQuestID=parent;child.PreviousQuestsIds=required?.ToList()??new();
         var quests=new List<QuestEntry>{child};if(metadata)quests.Add(Q(100));if(unrelated)quests.Add(Q(300));
+        // Explicit rewarded prerequisites model core-loaded predecessor metadata.
+        // The metadata flag above intentionally controls only the signed parent
+        // presence/absence cases; do not turn a rewarded required ID into
+        // unknown-provenance evidence for this active-parent contract.
+        foreach(int id in required??Array.Empty<int>())
+            if(id>0&&id!=200&&!quests.Any(q=>q.Id==id))quests.Add(Q(id));
         // Explicitly observed positions, not invented live terrain coordinates.
         var point=new SpawnPoint{Map=1,X=10,Y=10,Z=5};
         var db=new QuestDatabase{Quests=quests,QuestGivers=quests.Select(q=>new QuestGiverEntry{QuestId=q.Id,GiverId=1001}).ToList(),QuestEnders=quests.Select(q=>new QuestEnderEntry{QuestId=q.Id,EnderId=1001}).ToList(),CreatureSpawns=new(){["1001"]=new(){point}}};
