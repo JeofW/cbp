@@ -32,6 +32,14 @@ internal static class MrItemRemoverDeletionLifecycleRegressionTests
             Type compilerType = typeof(Styx.StyxWoW).Assembly.GetType(
                 "Styx.Loaders.SourceCompiler", throwOnError: true)!;
             object compiler = Activator.CreateInstance(compilerType, new object[] { plugin })!;
+            string? drawing = ((string?)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES"))
+                ?.Split(Path.PathSeparator)
+                .FirstOrDefault(path => string.Equals(
+                    Path.GetFileName(path), "System.Drawing.Common.dll",
+                    StringComparison.OrdinalIgnoreCase));
+            if (!string.IsNullOrEmpty(drawing))
+                compilerType.GetMethod("AddReference", BindingFlags.Instance | BindingFlags.Public)!
+                    .Invoke(compiler, new object[] { drawing });
             var results = (CompilerResults?)compilerType
                 .GetMethod("Compile", BindingFlags.Instance | BindingFlags.Public)!
                 .Invoke(compiler, null);
