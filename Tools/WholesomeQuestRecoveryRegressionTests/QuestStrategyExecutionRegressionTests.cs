@@ -97,18 +97,16 @@ internal static class QuestStrategyExecutionRegressionTests
                 string wired = BuildWithStrategies(scenario.Builder, scenario.Plan, scenario.Database, missing);
                 Check(wired == legacy, "missing strategy pack changed legacy profile XML");
             }),
-            ("Gossip and Escort remain non-executable in first wiring slice", () =>
+            ("Escort remains non-executable until its separate start/completion lifetime exists", () =>
             {
-                foreach (QuestStrategyKind kind in new[]{QuestStrategyKind.GossipEvent, QuestStrategyKind.Escort})
-                {
-                    var scenario = Scenario(kind, QuestStrategyTargetType.Creature);
-                    string legacy = scenario.Builder.BuildProfileXml(
-                        scenario.Plan, scenario.Database, "zone", "player", 20, null);
-                    string wired = BuildWithStrategies(scenario.Builder, scenario.Plan, scenario.Database, scenario.Pack);
-                    Check(wired == legacy, kind + " became executable before its separate acknowledgement lifetime exists");
-                    Check(!wired.Contains("File=\"UseItemOn\"", StringComparison.Ordinal),
-                        kind + " was rewritten as UseItemOn");
-                }
+                var scenario = Scenario(QuestStrategyKind.Escort, QuestStrategyTargetType.Creature);
+                string legacy = scenario.Builder.BuildProfileXml(
+                    scenario.Plan, scenario.Database, "zone", "player", 20, null);
+                string wired = BuildWithStrategies(scenario.Builder, scenario.Plan, scenario.Database, scenario.Pack);
+                Check(wired == legacy, "Escort became executable before its separate start/completion lifetime exists");
+                Check(!wired.Contains("File=\"UseItemOn\"", StringComparison.Ordinal)
+                    && !wired.Contains("File=\"GossipEvent\"", StringComparison.Ordinal),
+                    "Escort was rewritten as another strategy kind");
             }),
             ("recipe ownership is exact quest and objective", () =>
             {
