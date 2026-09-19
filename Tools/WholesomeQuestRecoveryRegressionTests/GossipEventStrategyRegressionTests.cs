@@ -82,6 +82,15 @@ internal static class GossipEventStrategyRegressionTests
                 Check(!source.Contains("SelectGossipOption(0)",StringComparison.Ordinal),
                     "behavior contains a first-option fallback");
             }),
+            ("open gossip menu is fenced to the exact interacted NPC", () =>
+            {
+                string source=BehaviorSource();
+                int identity=source.IndexOf("IsCurrentGossipNpc(_interactionGuid)",StringComparison.Ordinal);
+                int select=source.IndexOf("SelectGossipOption(GossipOptionIndex)",StringComparison.Ordinal);
+                Check(identity>=0 && select>identity
+                    && source.Contains("UnitGUID('npc')",StringComparison.Ordinal),
+                    "gossip option can be submitted without exact NPC-frame identity");
+            }),
             ("bounded attempt exhaustion defers rather than becoming quest success", () =>
             {
                 string source=BehaviorSource();
