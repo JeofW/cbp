@@ -1,13 +1,17 @@
 @GitHub
 
-Continue `jeofwong/CopilotBuddy-private`, draft PR51 branch `audit/next-55-equipment-observation-20260917`, from W75. Reconcile live refs, then read `AUDIT_RESUME.md`, `docs/audit/2026-09-19/W75_CHECKPOINT.md`, `W75_EVIDENCE.json` and the governing original3.3.5/core/provenance files.
+Continue `jeofwong/CopilotBuddy-private`, draft PR51 branch `audit/next-55-equipment-observation-20260917`, from W76. Reconcile live refs, then read `AUDIT_RESUME.md`, `docs/audit/2026-09-19/W76_CHECKPOINT.md`, `W76_EVIDENCE.json` and the governing original3.3.5/core/provenance files.
 
-Verified tested head **4e7c7699d577bbc6922bdbc12adea30e17c12450**, tree **ffd735430f64cdfdf91af3ce3d1d41d2f53f94db**. Integrated **35436934243/art10582366699** passes17/17; host **35436934248/art10582840978** passes; container identity20/20 and MrItemRemover delete14/14, assertions0 unexpected0.
+Verified tested head **698068344bbc51f79d81f76e7d3b91453f29de0c**, tree **77dd5c926b45a82f2961f89f95e058111d7cc0d1**. Integrated **35441935790/art10583728386** passes17/17; host **35441935725/art10583953031** passes; Equip cursor ownership19/19 assertions0 unexpected0. Retain W75 container identity20/20 and MrItemRemover delete14/14.
 
-Retain W73/W74/W75 cursor contracts: GUID slot resolution/revalidation, expected cursor item entry after TryPickUp, no ClearCursor, exact popup identity, DELETE_ITEM_CONFIRM_STRING for good-item confirmation, cursor release + exact GUID absence acknowledgement, bounded ownership, fail-closed quest-item slot observation, and no generic popup click.
+Retain W76 equip contracts: stable GUID/entry/intended-slot ownership; shared validated `TryPickUp(out bag,out slot)`; no independent BagIndex/BagSlot mutation; no `ClearCursor`; exact cursor entry before `EquipCursorItem`; intended equipment-slot GUID acknowledgement; bounded pending transaction; guarded displaced-item return; one managed AutoEquip transaction; exact EQUIP_BIND/AUTOEQUIP_BIND popup type plus `dialog.data` slot match; unknown-slot bind prompts fail closed.
 
-First next slice: `runtime-snapshot/Quest Behaviors/EquipItem.cs` and `runtime-snapshot/Plugins/AutoEquip2/AutoEquip.cs`, test first. Require stable item GUID/entry/slot ownership, no independent BagIndex/BagSlot reads for explicit equip, no ClearCursor, exact cursor entry before EquipCursorItem, exact/owned popup handling where required, bounded pending lifetime, and acknowledgement from the intended equipment slot before completion. EquipItem must not mark done immediately after fire-and-forget. AutoEquip must not start multiple simultaneous equip transactions.
+First next slice: **AuctionHouse core cursor/post ownership only**, test first. Audit:
+- `Styx/WoWInternals/Misc/AuctionHouse.cs`
+- `Styx/Logic/Inventory/Frames/AuctionHouse/AuctionHouse.cs`
 
-Preserve existing ammo path, scoring, weapon-style decisions, loot-roll policy and bag selection. Do not refactor gear valuation in this cursor slice. Do not include AuctionHouse or ProfessionBuddy yet.
+Require stable physical item GUID/entry/container identity, safe cursor admission, current AuctionFrame/sell context, acknowledgement that the intended item reached the auction sell slot before posting, no raw `ClearCursor`, bounded pending/no-progress handling, and late context revalidation immediately before `StartAuction`. Preserve query/search/bid/buyout/cancel behavior.
 
-Then review AuctionHouse and ProfessionBuddy cursor transactions separately. Preserve all W71-W75 open requirements and do not merge PR51 without explicit user approval.
+Do **not** include ProfessionBuddy in the AuctionHouse core repair. After that is separately green, audit ProfessionBuddy's independent cursor paths beginning with `SellItemOnAhAction.cs`.
+
+Preserve original WoW 3.3.5a build12340; TrinityCore3.3.5 primary and AzerothCore WotLK secondary for server semantics. Do not infer mechanics from Wrath Classic/modern sources. Preserve all W71-W76 open requirements and do not merge PR51 without explicit user approval.
