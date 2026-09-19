@@ -250,6 +250,11 @@ namespace Styx.Bot.Quest_Behaviors.UseItemOn
             if (SuccessEvidence == SuccessEvidenceType.QuestComplete)
                 return IsAuthoritativeAcknowledged(SuccessEvidence, 0, null, questComplete);
 
+            if (SuccessEvidence == SuccessEvidenceType.ObjectiveProgress && QuestId > 0 &&
+                QuestObjectiveCompletion.IsNormalObjectiveComplete(
+                    Me?.QuestLog?.GetQuestById((uint)QuestId), ObjectiveIndex))
+                return true;
+
             return InitialObjectiveCount.HasValue &&
                 IsAuthoritativeAcknowledged(
                     SuccessEvidence,
@@ -497,7 +502,7 @@ namespace Styx.Bot.Quest_Behaviors.UseItemOn
             }
             if (!Admitted(true)) return RunStatus.Success;
             WoWMovement.Face(recipientGuid);
-            if (!Admitted(true)) return RunStatus.Success;
+            if (!Admitted(true) || HasAuthoritativeSuccess()) return RunStatus.Success;
             if (!item.TryUseContainerItem())
             {
                 long now = UtcNowMilliseconds();

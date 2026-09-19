@@ -222,6 +222,11 @@ namespace Styx.Bot.Quest_Behaviors.GossipEvent
                 return IsAuthoritativeAcknowledged(
                     SuccessEvidence, 0, null, questComplete);
 
+            if (SuccessEvidence == SuccessEvidenceType.ObjectiveProgress && QuestId > 0 &&
+                QuestObjectiveCompletion.IsNormalObjectiveComplete(
+                    Me?.QuestLog?.GetQuestById((uint)QuestId), ObjectiveIndex))
+                return true;
+
             return InitialObjectiveCount.HasValue &&
                 IsAuthoritativeAcknowledged(
                     SuccessEvidence,
@@ -350,6 +355,9 @@ namespace Styx.Bot.Quest_Behaviors.GossipEvent
                                 "the observed gossip menu does not contain the exact source-bound option");
                         }
 
+                        if (IsDone)
+                            return RunStatus.Success;
+
                         GossipFrame.Instance.SelectGossipOption(GossipOptionIndex);
                         _lastSubmissionUtc = UtcNowMilliseconds();
                         _gossipOpenStartedUtc = -1;
@@ -457,6 +465,9 @@ namespace Styx.Bot.Quest_Behaviors.GossipEvent
                 target.DistanceSqr > Range * Range ||
                 RequireLos && !target.InLineOfSight)
                 return RunStatus.Running;
+
+            if (IsDone)
+                return RunStatus.Success;
 
             target.Interact();
             Counter++;
