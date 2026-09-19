@@ -19,6 +19,7 @@ internal static class ContainerItemSlotIdentityRegressionTests
     {
         MethodInfo? resolve=typeof(WoWItem).GetMethod("TryResolveContainerLocation",Hidden);
         MethodInfo? lua=typeof(WoWItem).GetMethod("BuildValidatedContainerUseLua",Hidden);
+        MethodInfo? pickupLua=typeof(WoWItem).GetMethod("BuildValidatedContainerPickupLua",Hidden);
 
         var cases=new List<(string Name,Action Test)>
         {
@@ -88,6 +89,64 @@ internal static class ContainerItemSlotIdentityRegressionTests
                 int luaCall=region.IndexOf("Lua.GetReturnVal<bool>",StringComparison.Ordinal);
                 Check(revalidate>=0&&luaCall>revalidate,
                     "container GUID slot is not revalidated before Lua submission");
+            }),
+            ("validated pickup Lua builder exists",()=>{
+                Check(pickupLua!=null,"WoWItem lacks a validated single-item pickup Lua boundary");
+            }),
+            ("pickup refuses every pre-existing cursor payload without clearing it",()=>{
+                string code=BuildPickupLua(pickupLua,2,3,7586);
+                int cursor=code.IndexOf("GetCursorInfo",StringComparison.Ordinal);
+                int pickup=code.IndexOf("PickupContainerItem",StringComparison.Ordinal);
+                Check(cursor>=0&&pickup>cursor
+                    && !code.Contains("ClearCursor",StringComparison.Ordinal),
+                    "single-item pickup does not fail closed on caller-owned cursor state");
+            }),
+            ("pickup validates expected entry before container mutation",()=>{
+                string code=BuildPickupLua(pickupLua,2,3,7586);
+                int link=code.IndexOf("GetContainerItemLink(2,3)",StringComparison.Ordinal);
+                int expected=code.IndexOf("7586",StringComparison.Ordinal);
+                int pickup=code.IndexOf("PickupContainerItem(2,3)",StringComparison.Ordinal);
+                Check(link>=0&&expected>link&&pickup>expected,
+                    "pickup mutates the slot before validating its expected item entry");
+            }),
+            ("pickup requires cursor-item acknowledgement after mutation",()=>{
+                string code=BuildPickupLua(pickupLua,2,3,7586);
+                int pickup=code.IndexOf("PickupContainerItem(2,3)",StringComparison.Ordinal);
+                int ack=code.IndexOf("CursorHasItem",StringComparison.Ordinal);
+                Check(pickup>=0&&ack>pickup,
+                    "pickup does not require an original-client cursor item acknowledgement");
+            }),
+            ("pickup builder is distinct from item-use submission",()=>{
+                string code=BuildPickupLua(pickupLua,2,3,7586);
+                Check(!code.Contains("UseContainerItem",StringComparison.Ordinal),
+                    "cursor pickup accidentally reused item-use mutation semantics");
+            }),
+            ("TryPickUp resolves and revalidates GUID before Lua pickup",()=>{
+                string source=File.ReadAllText(Path.Combine(Root(),
+                    "Styx","WoWInternals","WoWObjects","WoWItem.cs"));
+                int start=source.IndexOf("public bool TryPickUp()",StringComparison.Ordinal);
+                Check(start>=0,"TryPickUp owner is missing");
+                string region=source.Substring(start,Math.Min(3400,source.Length-start));
+                int resolveCall=region.IndexOf("TryResolveContainerLocation",StringComparison.Ordinal);
+                int revalidate=region.IndexOf("IsContainerLocationCurrent",StringComparison.Ordinal);
+                int builder=region.IndexOf("BuildValidatedContainerPickupLua",StringComparison.Ordinal);
+                int luaCall=region.IndexOf("Lua.GetReturnVal<bool>",StringComparison.Ordinal);
+                Check(resolveCall>=0&&revalidate>resolveCall&&builder>revalidate&&luaCall>builder,
+                    "TryPickUp does not retain one validated GUID/slot identity through Lua submission");
+            }),
+            ("public PickUp delegates without independent BagIndex BagSlot reads",()=>{
+                string source=File.ReadAllText(Path.Combine(Root(),
+                    "Styx","WoWInternals","WoWObjects","WoWItem.cs"));
+                int start=source.IndexOf("public void PickUp()",StringComparison.Ordinal);
+                Check(start>=0,"public PickUp owner is missing");
+                int end=source.IndexOf("private static bool UseItem",start,StringComparison.Ordinal);
+                if(end<0)end=Math.Min(source.Length,start+1800);
+                string region=source.Substring(start,end-start);
+                Check(region.Contains("TryPickUp()",StringComparison.Ordinal)
+                    && !region.Contains("BagIndex + 1",StringComparison.Ordinal)
+                    && !region.Contains("BagSlot + 1",StringComparison.Ordinal)
+                    && !region.Contains("Lua.DoString(\"PickupContainerItem",StringComparison.Ordinal),
+                    "public PickUp still derives or mutates an unverified container slot");
             })
         };
 
@@ -114,6 +173,13 @@ internal static class ContainerItemSlotIdentityRegressionTests
     private static string BuildLua(MethodInfo? method,int bag,int slot,uint entry)
     {
         if(method==null)throw new Failure("BuildValidatedContainerUseLua is missing");
+        return Convert.ToString(method.Invoke(null,new object[]{bag,slot,entry}),
+            System.Globalization.CultureInfo.InvariantCulture)??"";
+    }
+
+    private static string BuildPickupLua(MethodInfo? method,int bag,int slot,uint entry)
+    {
+        if(method==null)throw new Failure("BuildValidatedContainerPickupLua is missing");
         return Convert.ToString(method.Invoke(null,new object[]{bag,slot,entry}),
             System.Globalization.CultureInfo.InvariantCulture)??"";
     }
