@@ -116,6 +116,16 @@ internal static class ContainerItemSlotIdentityRegressionTests
                 Check(pickup>=0&&ack>pickup,
                     "pickup does not require an original-client cursor item acknowledgement");
             }),
+            ("pickup acknowledgement confirms expected cursor item entry",()=>{
+                string code=BuildPickupLua(pickupLua,2,3,7586);
+                int pickup=code.IndexOf("PickupContainerItem(2,3)",StringComparison.Ordinal);
+                int cursor=pickup<0 ? -1 : code.IndexOf("GetCursorInfo",pickup,StringComparison.Ordinal);
+                string tail=cursor<0 ? "" : code.Substring(cursor);
+                Check(cursor>pickup
+                    && tail.Contains("7586",StringComparison.Ordinal)
+                    && (tail.Contains("'item'",StringComparison.Ordinal) || tail.Contains("\"item\"",StringComparison.Ordinal)),
+                    "post-pickup acknowledgement does not prove the expected item entry owns the cursor");
+            }),
             ("pickup builder is distinct from item-use submission",()=>{
                 string code=BuildPickupLua(pickupLua,2,3,7586);
                 Check(!code.Contains("UseContainerItem",StringComparison.Ordinal),
