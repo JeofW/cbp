@@ -94,14 +94,14 @@ namespace Styx.Bot.Quest_Behaviors.UseItemOn
                 SuccessEvidence = GetAttributeAsNullable<SuccessEvidenceType>("SuccessEvidence", false, null, null) ?? SuccessEvidenceType.InvocationCount;
                 ObjectiveIndex = GetAttributeAsNullable<int>("ObjectiveIndex", false, null, null) ?? -1;
                 MaxAttempts = GetAttributeAsNullable<int>("MaxAttempts", false, ConstrainAs.RepeatCount, null) ?? NumOfTimes;
-                if (SuccessEvidence == SuccessEvidenceType.ObjectiveProgress &&
-                    (QuestId <= 0 || ObjectiveIndex < 0 || ObjectiveIndex > 3))
-                    IsAttributeProblem = true;
                 NpcState = GetAttributeAsNullable<NpcStateType>("MobState", false, null, new[] { "NpcState" }) ?? NpcStateType.DontCare;
                 NavigationState = GetAttributeAsNullable<NavigationType>("Nav", false, null, new[] { "Navigation" }) ?? NavigationType.Mesh;
                 WaitForNpcs = GetAttributeAsNullable<bool>("WaitForNpcs", false, null, null) ?? false;
                 Range = GetAttributeAsNullable<double>("Range", false, ConstrainAs.Range, null) ?? 4;
                 QuestId = GetAttributeAsNullable<int>("QuestId", false, ConstrainAs.QuestId(this), null) ?? 0;
+                if (SuccessEvidence == SuccessEvidenceType.ObjectiveProgress &&
+                    (QuestId <= 0 || ObjectiveIndex < 0 || ObjectiveIndex > 3))
+                    IsAttributeProblem = true;
                 QuestRequirementComplete = GetAttributeAsNullable<QuestCompleteRequirement>("QuestCompleteRequirement", false, null, null) ?? QuestCompleteRequirement.NotComplete;
                 QuestRequirementInLog = GetAttributeAsNullable<QuestInLogRequirement>("QuestInLogRequirement", false, null, null) ?? QuestInLogRequirement.InLog;
                 WaitTime = GetAttributeAsNullable<int>("WaitTime", false, ConstrainAs.Milliseconds, null) ?? 1500;
