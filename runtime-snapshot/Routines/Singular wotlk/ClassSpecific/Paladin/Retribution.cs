@@ -76,14 +76,14 @@ namespace Singular.ClassSpecific.Paladin
                 Spell.WaitForCast(false, false),
                 Movement.CreateMoveToLosBehavior(),
                 Movement.CreateFaceTargetBehavior(),
-                Spell.Cast("Exorcism",
-                    ret => StyxWoW.Me?.CurrentTarget,
-                    ret => IsValidIsolationPullTarget(StyxWoW.Me, StyxWoW.Me?.CurrentTarget))
+                Spell.Cast("Exorcism", ret => IsValidIsolationPullTarget())
             );
         }
 
-        private static bool IsValidIsolationPullTarget(LocalPlayer me, WoWUnit target)
+        private static bool IsValidIsolationPullTarget()
         {
+            var me = StyxWoW.Me;
+            var target = me?.CurrentTarget;
             return me != null && target != null &&
                    SingularRoutine.CurrentWoWContext == WoWContext.Normal &&
                    TalentManager.CurrentSpec == TalentSpec.RetributionPaladin &&

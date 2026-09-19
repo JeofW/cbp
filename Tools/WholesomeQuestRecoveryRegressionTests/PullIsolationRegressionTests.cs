@@ -17,14 +17,16 @@ internal static class PullIsolationRegressionTests
     {
         var cases=new List<(string Name,System.Action Test)>
         {
-            ("optional routine provider exists and Singular implements it",()=>{
+            ("optional routine provider exists and Singular source declares it",()=>{
                 var asm=typeof(Bots.Grind.LevelBot).Assembly;
                 Type provider=RequireType(asm,"Styx.Combat.CombatRoutine.IIsolationPullProvider");
-                Type singular=RequireType(asm,"Singular.SingularRoutine");
-                Check(provider.IsAssignableFrom(singular),"Singular did not opt into the isolation-pull provider");
                 Check(provider.GetMethod("CreateIsolationPullBehavior")!=null
                     && provider.GetProperty("IsolationPullDistance")!=null,
                     "provider contract does not expose behavior and practical range");
+                string root=Checkout();
+                string source=File.ReadAllText(Path.Combine(root,"runtime-snapshot","Routines","Singular wotlk","SingularRoutine.cs"));
+                Check(source.Contains("public partial class SingularRoutine : CombatRoutine, IIsolationPullProvider",StringComparison.Ordinal),
+                    "runtime-compiled Singular source did not opt into the provider");
             }),
             ("context policy is restricted to ordinary open-world NPC pulls",()=>{
                 Type t=Coordinator();
