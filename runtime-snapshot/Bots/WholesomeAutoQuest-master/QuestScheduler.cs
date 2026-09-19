@@ -498,7 +498,7 @@ namespace WholesomeAQ
                         continue;
 
                     uint ancestor = FindAcceptedIncompleteAncestor(quest, quests, accepted, completed);
-                    if (ancestor != 0 || !PrerequisitesComplete(quest, db, completed))
+                    if (ancestor != 0 || !PrerequisitesComplete(quest, quests, completed))
                         continue;
 
                     int plannedBefore = candidatePlans.Count;
@@ -1412,36 +1412,86 @@ namespace WholesomeAQ
 
         private static bool PrerequisitesComplete(
             QuestEntry quest,
-            QuestDatabase db,
+            IReadOnlyDictionary<uint, QuestEntry> quests,
+            HashSet<uint> completed) =>
+            BlockingPrerequisiteRoots(quest, quests, completed).Count == 0;
+
+        private static IReadOnlyList<uint> BlockingPrerequisiteRoots(
+            QuestEntry quest,
+            IReadOnlyDictionary<uint, QuestEntry> quests,
             HashSet<uint> completed)
         {
-            // Direct PrevQuestID keeps its own signed 3.3.5 contract. In
-            // particular, do not expand this field through ExclusiveGroup.
-            if (quest.PrevQuestID > 0 && !completed.Contains((uint)quest.PrevQuestID))
-                return false;
+            var blockers = new List<uint>();
+            var seen = new HashSet<uint>();
 
-            foreach (int id in quest.PreviousQuestsIds)
+            // Direct PrevQuestID keeps its own signed 3.3.5 contract. The
+            // negative form is handled by the active-parent gate above; the
+            // positive form independently requires rewarded history.
+            if (quest.PrevQuestID > 0)
             {
-                if (id <= 0)
-                    continue;
-                if (!completed.Contains((uint)id))
-                    return false;
-
-                // TrinityCore 3.3.5 dependent-previous semantics: a referenced
-                // predecessor in a negative ExclusiveGroup represents an
-                // each-from-all group. Preserve the current list semantics for
-                // all other predecessors; dataset provenance is still explicit.
-                QuestEntry grouped = db.Quests.FirstOrDefault(candidate => candidate.Id == id);
-                if (grouped == null || grouped.ExclusiveGroup >= 0)
-                    continue;
-                int group = grouped.ExclusiveGroup;
-                if (db.Quests.Any(candidate =>
-                    candidate.Id > 0 &&
-                    candidate.ExclusiveGroup == group &&
-                    !completed.Contains((uint)candidate.Id)))
-                    return false;
+                uint direct = (uint)quest.PrevQuestID;
+                if (!completed.Contains(direct) && seen.Add(direct))
+                    blockers.Add(direct);
             }
-            return true;
+
+            // Pinned TrinityCore 3.3.5 treats DependentPreviousQuests as an
+            // ordered OR. A rewarded ordinary/positive-group predecessor
+            // satisfies the dependent gate immediately. A rewarded predecessor
+            // in a negative ExclusiveGroup switches to each-from-all semantics;
+            // a missing member fails that gate immediately rather than falling
+            // through to a later alternative.
+            foreach (int rawId in quest.PreviousQuestsIds)
+            {
+                if (rawId <= 0)
+                    continue;
+
+                uint id = (uint)rawId;
+                if (!completed.Contains(id))
+                    continue;
+
+                // Unknown predecessor metadata cannot prove that this completed
+                // quest is an ordinary alternative. Keep scanning for another
+                // rewarded candidate with known metadata; otherwise fail closed.
+                if (!quests.TryGetValue(id, out QuestEntry predecessor))
+                    continue;
+
+                if (predecessor.ExclusiveGroup >= 0)
+                    return blockers;
+
+                int group = predecessor.ExclusiveGroup;
+                uint[] missingGroupMembers = quests.Values
+                    .Where(candidate =>
+                        candidate.Id > 0 &&
+                        candidate.ExclusiveGroup == group &&
+                        !completed.Contains((uint)candidate.Id))
+                    .Select(candidate => (uint)candidate.Id)
+                    .OrderBy(candidateId => candidateId)
+                    .ToArray();
+
+                if (missingGroupMembers.Length == 0)
+                    return blockers;
+
+                foreach (uint missing in missingGroupMembers)
+                    if (seen.Add(missing))
+                        blockers.Add(missing);
+
+                return blockers;
+            }
+
+            // No known rewarded alternative satisfied the dependent gate.
+            // Preserve source order and keep unknown completed candidates as
+            // blockers: completion without predecessor metadata is not
+            // permission to assume non-negative group semantics.
+            foreach (int rawId in quest.PreviousQuestsIds)
+            {
+                if (rawId <= 0)
+                    continue;
+                uint id = (uint)rawId;
+                if (seen.Add(id))
+                    blockers.Add(id);
+            }
+
+            return blockers;
         }
 
         private static uint FindAcceptedIncompleteAncestor(
@@ -1452,8 +1502,8 @@ namespace WholesomeAQ
         {
             var pending = new Queue<uint>();
             var seen = new HashSet<uint>();
-            foreach (int id in DirectPrerequisites(quest))
-                if (id > 0) pending.Enqueue((uint)id);
+            foreach (uint id in BlockingPrerequisiteRoots(quest, quests, completed))
+                pending.Enqueue(id);
 
             while (pending.Count > 0)
             {
@@ -1464,19 +1514,11 @@ namespace WholesomeAQ
                     return id;
                 if (quests.TryGetValue(id, out QuestEntry ancestor))
                 {
-                    foreach (int previous in DirectPrerequisites(ancestor))
-                        if (previous > 0) pending.Enqueue((uint)previous);
+                    foreach (uint previous in BlockingPrerequisiteRoots(ancestor, quests, completed))
+                        pending.Enqueue(previous);
                 }
             }
             return 0;
-        }
-
-        private static IEnumerable<int> DirectPrerequisites(QuestEntry quest)
-        {
-            if (quest.PrevQuestID > 0)
-                yield return quest.PrevQuestID;
-            foreach (int id in quest.PreviousQuestsIds.OrderBy(id => id))
-                yield return id;
         }
 
         private static IReadOnlyList<int> ReadObjectiveCounts(PlayerQuest quest)
