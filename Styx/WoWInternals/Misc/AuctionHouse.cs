@@ -144,18 +144,20 @@ namespace Styx.WoWInternals.Misc
             return results;
         }
 
+        public static bool TryPostAuction(long minBid, long buyout, AuctionPostTime postTime,
+            WoWItem item, uint stackSize, uint numStacks)
+        {
+            return item != null &&
+                AuctionPostTransaction.TryPost(
+                    item, minBid, buyout, (int)postTime, stackSize, numStacks);
+        }
+
         public static void PostAuction(long minBid, long buyout, AuctionPostTime postTime,
             WoWItem item, uint stackSize, uint numStacks)
         {
-            if (!Frame.IsVisible) return;
             if (item == null) throw new ArgumentNullException("item");
-
-            item.PickUp();
-            Lua.DoString("ClickAuctionSellItemButton()");
-            Lua.DoString("ClearCursor()");
-            Thread.Sleep(1000);
-            Lua.DoString(string.Format("StartAuction({0},{1},{2},{3},{4})",
-                minBid, buyout, (int)postTime, stackSize, numStacks));
+            AuctionPostTransaction.TryPost(
+                item, minBid, buyout, (int)postTime, stackSize, numStacks);
         }
 
         private static string TypeToString(AuctionListType type)
