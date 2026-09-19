@@ -91,6 +91,14 @@ internal static class GossipEventStrategyRegressionTests
                     && source.Contains("UnitGUID('npc')",StringComparison.Ordinal),
                     "gossip option can be submitted without exact NPC-frame identity");
             }),
+            ("approach navigation is bounded and fail-closed", () =>
+            {
+                string source=BehaviorSource();
+                Check(source.Contains("NavigationTimeout",StringComparison.Ordinal)
+                    && source.Contains("MoveResult.PathGenerationFailed",StringComparison.Ordinal)
+                    && source.Contains("bounded navigation window",StringComparison.Ordinal),
+                    "visible/unreachable gossip target can own navigation indefinitely");
+            }),
             ("bounded attempt exhaustion defers rather than becoming quest success", () =>
             {
                 string source=BehaviorSource();
@@ -124,6 +132,7 @@ internal static class GossipEventStrategyRegressionTests
                 Check(xml.Contains("AcknowledgementTimeout=\"5000\"",StringComparison.Ordinal)
                     && xml.Contains("GossipOpenTimeout=\"3000\"",StringComparison.Ordinal)
                     && xml.Contains("TargetWaitTimeout=\"30000\"",StringComparison.Ordinal)
+                    && xml.Contains("NavigationTimeout=\"120000\"",StringComparison.Ordinal)
                     && xml.Contains("WaitForNpcs=\"true\"",StringComparison.Ordinal),
                     "generated GossipEvent omitted bounded liveness policy");
             }),
