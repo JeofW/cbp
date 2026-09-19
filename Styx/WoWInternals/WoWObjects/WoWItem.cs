@@ -489,7 +489,8 @@ namespace Styx.WoWInternals.WoWObjects
                 "local id=link and tonumber(string.match(link,'item:(%d+)')); " +
                 "if id~={2} then return false end; " +
                 "PickupContainerItem({0},{1}); " +
-                "return CursorHasItem() and true or false",
+                "local cursorType,cursorItemId=GetCursorInfo(); " +
+                "return CursorHasItem() and cursorType=='item' and tonumber(cursorItemId)=={2} and true or false",
                 luaBag, luaSlot, expectedEntry);
         }
 
