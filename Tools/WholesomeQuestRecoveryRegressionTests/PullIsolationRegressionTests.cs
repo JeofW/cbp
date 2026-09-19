@@ -149,7 +149,7 @@ internal static class PullIsolationRegressionTests
     private sealed record Obs(ulong Guid,WoWPoint Location,float AggroRange,bool Engaged,bool Attackable);
     private static Obs O(ulong guid,WoWPoint p,float range,bool engaged,bool attackable)=>new(guid,p,range,engaged,attackable);
 
-    private static Type Coordinator()=>RequireType(typeof(Levelbot.LevelBot).Assembly,"Levelbot.Actions.Combat.PullIsolationCoordinator");
+    private static Type Coordinator()=>RequireType(typeof(Bots.Grind.LevelBot).Assembly,"Levelbot.Actions.Combat.PullIsolationCoordinator");
 
     private static Type RequireType(Assembly asm,string name)=>
         asm.GetType(name,false) ?? throw new AssertionFailure(name+" is missing");
