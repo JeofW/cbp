@@ -56,15 +56,29 @@ internal static class QuestDependentPreviousAlternativeRegressionTests
                 var r = Plan(new uint[] { 100, 103 }, dependent: new[] { 100, 103 }, groups: groups);
                 Check(!Pickup(r, 200), "partial negative group incorrectly fell through to a later alternative");
             }),
+            ("earlier rewarded ordinary alternative succeeds before later partial negative group", () =>
+            {
+                var groups = new Dictionary<int, int> { [100] = -7, [101] = -7 };
+                var r = Plan(new uint[] { 100, 103 }, dependent: new[] { 103, 100 }, groups: groups);
+                Check(Pickup(r, 200), "stored dependent order was ignored after an ordinary predecessor had already satisfied the gate");
+            }),
             ("direct positive predecessor remains an independent requirement", () =>
             {
-                var r = Plan(new uint[] { 100 }, dependent: new[] { 100, 101 }, direct: 90);
+                // TrinityCore also inserts a positive direct predecessor into its
+                // derived DependentPreviousQuests list. Keep the fixture core-shaped.
+                var r = Plan(new uint[] { 100 }, dependent: new[] { 90, 100, 101 }, direct: 90);
                 Check(!Pickup(r, 200), "dependent alternative bypassed the direct positive predecessor");
             }),
-            ("direct positive plus one dependent alternative unlocks child", () =>
+            ("direct positive plus its derived dependency unlocks child", () =>
             {
-                var r = Plan(new uint[] { 90, 101 }, dependent: new[] { 100, 101 }, direct: 90);
-                Check(Pickup(r, 200), "direct predecessor and a valid dependent alternative were treated as all-list requirements");
+                var r = Plan(new uint[] { 90, 101 }, dependent: new[] { 90, 100, 101 }, direct: 90);
+                Check(Pickup(r, 200), "rewarded direct predecessor did not satisfy its derived dependent gate");
+            }),
+            ("core-shaped direct positive negative group still requires every group member", () =>
+            {
+                var groups = new Dictionary<int, int> { [100] = -7, [101] = -7 };
+                var r = Plan(new uint[] { 100 }, dependent: new[] { 100 }, direct: 100, groups: groups);
+                Check(!Pickup(r, 200), "derived dependent edge lost negative-group all-required semantics");
             }),
             ("active negative direct parent remains separate from dependent alternatives", () =>
             {
