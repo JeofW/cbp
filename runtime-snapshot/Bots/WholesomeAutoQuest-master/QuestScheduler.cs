@@ -187,7 +187,7 @@ namespace WholesomeAQ
             if (!tryApplyPublication(() => InvalidatePublishedWork("Refreshing quest observations; prior work is not authorized.")))
                 return false;
             QuestRecoveryRuntime.EnsureConfigured(
-                _dataLoader.DatasetFingerprint,
+                _dataLoader.ExecutionFingerprint,
                 NavigationProviderFingerprint());
             QuestLog questLog = me.QuestLog;
             QuestLogSnapshot observation = questLog.CaptureSnapshot();
@@ -273,7 +273,8 @@ namespace WholesomeAQ
             if (candidate.Selected.Count > 0)
             {
                 string xml = _profileBuilder.BuildProfileXml(
-                    candidate.Plan, db, me.ZoneText, me.Name, me.Level, CurrentVendors);
+                    candidate.Plan, db, me.ZoneText, me.Name, me.Level, CurrentVendors,
+                    _dataLoader.StrategyPack);
                 if (!TryApplyObserved(() => path = _profileBuilder.WriteProfile(xml)))
                     return false;
             }

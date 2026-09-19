@@ -25,7 +25,17 @@ namespace WholesomeAQ
             string zoneName,
             string playerName,
             int playerLevel,
-            List<VendorEntry> vendors = null)
+            List<VendorEntry> vendors = null) =>
+            BuildProfileXml(plan, db, zoneName, playerName, playerLevel, vendors, null);
+
+        public string BuildProfileXml(
+            IReadOnlyList<QuestPlanEntry> plan,
+            QuestDatabase db,
+            string zoneName,
+            string playerName,
+            int playerLevel,
+            List<VendorEntry> vendors,
+            QuestStrategyPack strategyPack)
         {
             if (plan == null)
                 throw new ArgumentNullException(nameof(plan));
@@ -94,6 +104,18 @@ namespace WholesomeAQ
                     if (entry.Hotspots == null || entry.Hotspots.Count == 0)
                         continue;
 
+                    QuestStrategyRecipe strategy = FindUseItemOnStrategy(
+                        strategyPack, entry.Quest.Id, entry.ObjectiveIndex);
+                    if (strategy != null)
+                    {
+                        XElement strategyGuard = BuildUseItemOnStrategyGuard(entry, strategy);
+                        if (strategyGuard == null)
+                            throw new InvalidDataException(
+                                $"Quest strategy {entry.Quest.Id}/{entry.ObjectiveIndex} could not be materialized.");
+                        questOrder.Add(strategyGuard);
+                        continue;
+                    }
+
                     XElement definition = BuildObjectiveDefinition(objective, entry.Hotspots);
                     XElement guard = BuildObjectiveGuard(entry);
                     if (definition == null || guard == null)
@@ -131,6 +153,70 @@ namespace WholesomeAQ
                         new XAttribute("GiverId", entry.Giver.GiverId),
                         new XAttribute("GiverType", ProfileRelationType(entry.Giver.GiverType)),
                         LocationAttributes(point))));
+
+        private static QuestStrategyRecipe FindUseItemOnStrategy(
+            QuestStrategyPack strategyPack,
+            int questId,
+            int objectiveIndex)
+        {
+            if (strategyPack == null ||
+                strategyPack.Status != QuestStrategyPackStatus.DeclaredAndBound ||
+                strategyPack.Recipes == null)
+                return null;
+
+            QuestStrategyRecipe[] matches = strategyPack.Recipes
+                .Where(recipe => recipe != null
+                    && recipe.Kind == QuestStrategyKind.UseItemOn
+                    && recipe.QuestId == questId
+                    && recipe.ObjectiveIndex == objectiveIndex)
+                .ToArray();
+            if (matches.Length > 1)
+                throw new InvalidDataException(
+                    $"Multiple UseItemOn strategies own quest {questId} objective {objectiveIndex}.");
+            return matches.SingleOrDefault();
+        }
+
+        private static XElement BuildUseItemOnStrategyGuard(
+            QuestPlanEntry entry,
+            QuestStrategyRecipe strategy)
+        {
+            if (entry?.Quest == null || entry.Hotspots == null || entry.Hotspots.Count == 0 ||
+                strategy == null || strategy.ItemId <= 0 || strategy.TargetId <= 0 ||
+                strategy.Range <= 0 || strategy.MaxAttempts <= 0)
+                return null;
+
+            // The v1 pack records the BelowHp state but not the required percentage.
+            // Do not invent a threshold or silently fall back to generic objective work.
+            if (strategy.TargetState == QuestStrategyTargetState.BelowHp)
+                throw new InvalidDataException(
+                    $"UseItemOn strategy {strategy.QuestId}/{strategy.ObjectiveIndex} requires an explicit BelowHp threshold before runtime execution.");
+
+            SpawnPoint anchor = entry.Hotspots[0];
+            string mobType = strategy.TargetType == QuestStrategyTargetType.Creature
+                ? "Npc"
+                : "GameObject";
+            XElement behavior = new XElement("CustomBehavior",
+                new XAttribute("File", "UseItemOn"),
+                new XAttribute("QuestId", strategy.QuestId),
+                new XAttribute("ObjectiveIndex", strategy.ObjectiveIndex),
+                new XAttribute("ItemId", strategy.ItemId),
+                new XAttribute("MobId", strategy.TargetId),
+                new XAttribute("MobType", mobType),
+                new XAttribute("MobState", strategy.TargetState.ToString()),
+                new XAttribute("Range", strategy.Range),
+                new XAttribute("RequireLos", strategy.RequireLos),
+                new XAttribute("MaxAttempts", strategy.MaxAttempts),
+                new XAttribute("SuccessEvidence", strategy.SuccessEvidence.ToString()),
+                new XAttribute("WaitForNpcs", true),
+                new XAttribute("AcknowledgementTimeout", 5000),
+                LocationAttributes(anchor));
+
+            return new XElement("If",
+                new XAttribute("Condition", $"HasQuest({entry.Quest.Id})"),
+                BuildFreewindDescentGuard(entry.Hotspots),
+                BuildGreatLiftAscentGuard(entry.Hotspots),
+                behavior);
+        }
 
         private static XElement BuildObjectiveGuard(QuestPlanEntry entry)
         {

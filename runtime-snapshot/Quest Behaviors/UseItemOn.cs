@@ -99,6 +99,7 @@ namespace Styx.Bot.Quest_Behaviors.UseItemOn
                 NavigationState = GetAttributeAsNullable<NavigationType>("Nav", false, null, new[] { "Navigation" }) ?? NavigationType.Mesh;
                 WaitForNpcs = GetAttributeAsNullable<bool>("WaitForNpcs", false, null, null) ?? false;
                 Range = GetAttributeAsNullable<double>("Range", false, ConstrainAs.Range, null) ?? 4;
+                RequireLos = GetAttributeAsNullable<bool>("RequireLos", false, null, null) ?? false;
                 QuestId = GetAttributeAsNullable<int>("QuestId", false, ConstrainAs.QuestId(this), null) ?? 0;
                 if (SuccessEvidence == SuccessEvidenceType.ObjectiveProgress &&
                     (QuestId <= 0 || ObjectiveIndex < 0 || ObjectiveIndex > 3))
@@ -150,6 +151,7 @@ namespace Styx.Bot.Quest_Behaviors.UseItemOn
         public QuestCompleteRequirement QuestRequirementComplete { get; private set; }
         public QuestInLogRequirement QuestRequirementInLog { get; private set; }
         public double Range { get; private set; }
+        public bool RequireLos { get; private set; }
         public bool WaitForNpcs { get; private set; }
         public int WaitTime { get; private set; }
         public bool IgnoreMobsInBlackspots { get; private set; }
@@ -434,6 +436,8 @@ namespace Styx.Bot.Quest_Behaviors.UseItemOn
                 if (double.IsNaN(distance) || double.IsInfinity(distance)
                     || !(distance <= Range * Range) || !(distance < CollectionDistance * CollectionDistance))
                     return false;
+                if (RequireLos && !recipient.InLineOfSight)
+                    return false;
 
                 if (MobType == ObjectType.GameObject)
                 {
@@ -564,7 +568,9 @@ namespace Styx.Bot.Quest_Behaviors.UseItemOn
                     })),
 
                     new PrioritySelector(
-                        new Decorator(ret => CurrentObject != null && CurrentObject.DistanceSqr > Range * Range,
+                        new Decorator(ret => CurrentObject != null &&
+                            (CurrentObject.DistanceSqr > Range * Range ||
+                             RequireLos && !CurrentObject.InLineOfSight),
                             new Switch<NavigationType>(ret => NavigationState,
                                 new SwitchArgument<NavigationType>(
                                     NavigationType.CTM,

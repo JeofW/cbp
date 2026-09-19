@@ -25,7 +25,9 @@ namespace WholesomeAQ
 
         public QuestDatabase Database => _database;
         public string DatasetFingerprint { get; private set; } = "unknown";
+        public string ExecutionFingerprint { get; private set; } = "unknown";
         public QuestDatasetSourceIdentity DatasetSourceIdentity { get; private set; } = new QuestDatasetSourceIdentity();
+        public QuestStrategyPack StrategyPack { get; private set; } = new QuestStrategyPack();
 
         public DataLoader()
         {
@@ -89,6 +91,13 @@ namespace WholesomeAQ
             QuestDatasetSourceIdentity sourceIdentity = provenanceSnapshot == null
                 ? new QuestDatasetSourceIdentity()
                 : ParseProvenance(provenanceSnapshot, snapshot);
+            string strategyPath = Path.Combine(
+                Path.GetDirectoryName(Path.GetFullPath(_dataFile)) ?? Environment.CurrentDirectory,
+                "quest_strategies.json");
+            QuestStrategyPack strategyPack = QuestStrategyPackLoader.Load(
+                strategyPath,
+                Digest(snapshot),
+                out string strategyContentSha256);
             string fingerprint = FingerprintManifest(
                 provenanceSnapshot == null
                     ? new[] { (Role: LogicalRole(_dataFile), Digest: FingerprintDigest(snapshot)) }
@@ -112,7 +121,11 @@ namespace WholesomeAQ
             // rather than returning a partially initialized cached database.
             PublishDependencies(database);
             DatasetFingerprint = fingerprint;
+            ExecutionFingerprint = string.IsNullOrEmpty(strategyContentSha256)
+                ? fingerprint
+                : CreateExecutionFingerprint(fingerprint, strategyContentSha256);
             DatasetSourceIdentity = sourceIdentity;
+            StrategyPack = strategyPack;
             _database = database;
             return _database;
         }
@@ -280,6 +293,21 @@ namespace WholesomeAQ
             return role;
         }
 
+        internal static string CreateExecutionFingerprint(string datasetFingerprint, string strategyContentSha256)
+        {
+            if (string.IsNullOrWhiteSpace(datasetFingerprint) || datasetFingerprint.Length != 64 ||
+                datasetFingerprint.Any(value => !Uri.IsHexDigit(value)))
+                throw new InvalidDataException("Dataset fingerprint must be a SHA256 hexadecimal digest.");
+            if (string.IsNullOrWhiteSpace(strategyContentSha256) || strategyContentSha256.Length != 64 ||
+                strategyContentSha256.Any(value => !Uri.IsHexDigit(value)))
+                throw new InvalidDataException("Strategy-pack fingerprint must be a SHA256 hexadecimal digest.");
+
+            string manifest = "quest-execution-content-v1\n"
+                + datasetFingerprint.ToLowerInvariant() + "\n"
+                + strategyContentSha256.ToLowerInvariant();
+            return Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(manifest))).ToLowerInvariant();
+        }
+
         private static string FingerprintManifest(IEnumerable<(string Role, string Digest)> entries)
         {
             var ordered = entries.OrderBy(entry => entry.Role, StringComparer.Ordinal).ToArray();
@@ -303,8 +331,15 @@ namespace WholesomeAQ
             "curated-profile", "trinitycore-3.3.5", "azerothcore-wotlk"
         };
 
-        public static QuestStrategyPack Load(string path, string expectedQuestDataSha256)
+        public static QuestStrategyPack Load(string path, string expectedQuestDataSha256) =>
+            Load(path, expectedQuestDataSha256, out _);
+
+        public static QuestStrategyPack Load(
+            string path,
+            string expectedQuestDataSha256,
+            out string contentSha256)
         {
+            contentSha256 = "";
             ValidateSha(expectedQuestDataSha256, "expected quest-data SHA256");
             if (string.IsNullOrWhiteSpace(path))
                 throw new ArgumentException("A quest strategy pack path is required.", nameof(path));
@@ -312,6 +347,7 @@ namespace WholesomeAQ
                 return new QuestStrategyPack();
 
             byte[] snapshot = File.ReadAllBytes(path);
+            contentSha256 = Convert.ToHexString(SHA256.HashData(snapshot)).ToLowerInvariant();
             string text;
             using (var stream = new MemoryStream(snapshot, writable: false))
             using (var reader = new StreamReader(stream, Encoding.UTF8, detectEncodingFromByteOrderMarks: true))
