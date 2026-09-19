@@ -20,6 +20,7 @@ internal static class ContainerItemSlotIdentityRegressionTests
         MethodInfo? resolve=typeof(WoWItem).GetMethod("TryResolveContainerLocation",Hidden);
         MethodInfo? lua=typeof(WoWItem).GetMethod("BuildValidatedContainerUseLua",Hidden);
         MethodInfo? pickupLua=typeof(WoWItem).GetMethod("BuildValidatedContainerPickupLua",Hidden);
+        MethodInfo? questInfoLua=typeof(WoWItem).GetMethod("BuildValidatedContainerQuestInfoLua",Hidden);
 
         var cases=new List<(string Name,Action Test)>
         {
@@ -89,6 +90,35 @@ internal static class ContainerItemSlotIdentityRegressionTests
                 int luaCall=region.IndexOf("Lua.GetReturnVal<bool>",StringComparison.Ordinal);
                 Check(revalidate>=0&&luaCall>revalidate,
                     "container GUID slot is not revalidated before Lua submission");
+            }),
+            ("validated quest-item info Lua builder exists",()=>{
+                Check(questInfoLua!=null,
+                    "WoWItem lacks a validated GetContainerItemQuestInfo boundary");
+            }),
+            ("quest-item info validates expected entry before original API query",()=>{
+                string code=BuildQuestInfoLua(questInfoLua,2,3,7586);
+                int link=code.IndexOf("GetContainerItemLink(2,3)",StringComparison.Ordinal);
+                int expected=code.IndexOf("7586",StringComparison.Ordinal);
+                int query=code.IndexOf("GetContainerItemQuestInfo(2,3)",StringComparison.Ordinal);
+                Check(link>=0&&expected>link&&query>expected,
+                    "quest-item query reads an unverified container slot");
+                Check(code.Contains("isQuestItem",StringComparison.Ordinal)
+                    && code.Contains("questId",StringComparison.Ordinal)
+                    && code.Contains("isActive",StringComparison.Ordinal),
+                    "quest-item query does not preserve original 3.3.5 return semantics");
+            }),
+            ("TryGetContainerItemQuestInfo retains validated GUID slot identity",()=>{
+                string source=File.ReadAllText(Path.Combine(Root(),
+                    "Styx","WoWInternals","WoWObjects","WoWItem.cs"));
+                int start=source.IndexOf("public bool TryGetContainerItemQuestInfo",StringComparison.Ordinal);
+                Check(start>=0,"TryGetContainerItemQuestInfo owner is missing");
+                string region=source.Substring(start,Math.Min(4200,source.Length-start));
+                int resolveCall=region.IndexOf("TryResolveContainerLocation",StringComparison.Ordinal);
+                int revalidate=region.IndexOf("IsContainerLocationCurrent",StringComparison.Ordinal);
+                int builder=region.IndexOf("BuildValidatedContainerQuestInfoLua",StringComparison.Ordinal);
+                int returns=region.IndexOf("Lua.GetReturnValues",StringComparison.Ordinal);
+                Check(resolveCall>=0&&revalidate>resolveCall&&builder>revalidate&&returns>builder,
+                    "quest-item info does not keep one GUID/slot identity through the Lua query");
             }),
             ("validated pickup Lua builder exists",()=>{
                 Check(pickupLua!=null,"WoWItem lacks a validated single-item pickup Lua boundary");
@@ -183,6 +213,13 @@ internal static class ContainerItemSlotIdentityRegressionTests
     private static string BuildLua(MethodInfo? method,int bag,int slot,uint entry)
     {
         if(method==null)throw new Failure("BuildValidatedContainerUseLua is missing");
+        return Convert.ToString(method.Invoke(null,new object[]{bag,slot,entry}),
+            System.Globalization.CultureInfo.InvariantCulture)??"";
+    }
+
+    private static string BuildQuestInfoLua(MethodInfo? method,int bag,int slot,uint entry)
+    {
+        if(method==null)throw new Failure("BuildValidatedContainerQuestInfoLua is missing");
         return Convert.ToString(method.Invoke(null,new object[]{bag,slot,entry}),
             System.Globalization.CultureInfo.InvariantCulture)??"";
     }
