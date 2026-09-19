@@ -64,6 +64,13 @@ namespace Styx.Bot.Quest_Behaviors.UseItemOn
             None,
         }
 
+        public enum SuccessEvidenceType
+        {
+            InvocationCount,
+            ObjectiveProgress,
+            QuestComplete,
+        }
+
         public UseItemOn(Dictionary<string, string> args)
             : base(args)
         {
@@ -84,6 +91,12 @@ namespace Styx.Bot.Quest_Behaviors.UseItemOn
                 MobIds = GetNumberedAttributesAsArray<int>("MobId", 1, ConstrainAs.MobId, new[] { "NpcId" });
                 MobType = GetAttributeAsNullable<ObjectType>("MobType", false, null, new[] { "ObjectType" }) ?? ObjectType.Npc;
                 NumOfTimes = GetAttributeAsNullable<int>("NumOfTimes", false, ConstrainAs.RepeatCount, null) ?? 1;
+                SuccessEvidence = GetAttributeAsNullable<SuccessEvidenceType>("SuccessEvidence", false, null, null) ?? SuccessEvidenceType.InvocationCount;
+                ObjectiveIndex = GetAttributeAsNullable<int>("ObjectiveIndex", false, null, null) ?? -1;
+                MaxAttempts = GetAttributeAsNullable<int>("MaxAttempts", false, ConstrainAs.RepeatCount, null) ?? NumOfTimes;
+                if (SuccessEvidence == SuccessEvidenceType.ObjectiveProgress &&
+                    (QuestId <= 0 || ObjectiveIndex < 0 || ObjectiveIndex > 3))
+                    IsAttributeProblem = true;
                 NpcState = GetAttributeAsNullable<NpcStateType>("MobState", false, null, new[] { "NpcState" }) ?? NpcStateType.DontCare;
                 NavigationState = GetAttributeAsNullable<NavigationType>("Nav", false, null, new[] { "Navigation" }) ?? NavigationType.Mesh;
                 WaitForNpcs = GetAttributeAsNullable<bool>("WaitForNpcs", false, null, null) ?? false;
@@ -126,6 +139,11 @@ namespace Styx.Bot.Quest_Behaviors.UseItemOn
         public NpcStateType NpcState { get; private set; }
         public NavigationType NavigationState { get; private set; }
         public int NumOfTimes { get; private set; }
+        public SuccessEvidenceType SuccessEvidence { get; private set; }
+        public int ObjectiveIndex { get; private set; }
+        public int MaxAttempts { get; private set; }
+        public int? InitialObjectiveCount { get; private set; }
+        public bool AuthoritativeAttemptsExhausted { get; private set; }
         public int QuestId { get; private set; }
         public QuestCompleteRequirement QuestRequirementComplete { get; private set; }
         public QuestInLogRequirement QuestRequirementInLog { get; private set; }
@@ -146,6 +164,54 @@ namespace Styx.Bot.Quest_Behaviors.UseItemOn
         // Private properties
         private int Counter { get; set; }
         private LocalPlayer Me { get { return (ObjectManager.Me); } }
+
+        internal static bool IsAuthoritativeAcknowledged(
+            SuccessEvidenceType evidence,
+            int baseline,
+            int? currentCount,
+            bool questComplete)
+        {
+            if (evidence == SuccessEvidenceType.ObjectiveProgress)
+                return currentCount.HasValue && currentCount.Value > baseline;
+            if (evidence == SuccessEvidenceType.QuestComplete)
+                return questComplete;
+            // InvocationCount is legacy local bookkeeping, never server acknowledgement.
+            return false;
+        }
+
+        private int? ReadObjectiveCount()
+        {
+            if (QuestId <= 0 || ObjectiveIndex < 0 || ObjectiveIndex > 3)
+                return null;
+            var player = Me;
+            PlayerQuest quest = player?.QuestLog?.GetQuestById((uint)QuestId);
+            if (quest == null || !quest.GetData(out QuestDescriptorData data) ||
+                data.ObjectivesDone == null || ObjectiveIndex >= data.ObjectivesDone.Length)
+                return null;
+            return data.ObjectivesDone[ObjectiveIndex];
+        }
+
+        private bool HasAuthoritativeSuccess()
+        {
+            if (SuccessEvidence == SuccessEvidenceType.InvocationCount)
+                return false;
+
+            bool questComplete = QuestId > 0 &&
+                UtilIsProgressRequirementsMet(
+                    QuestId,
+                    QuestInLogRequirement.InLog,
+                    QuestCompleteRequirement.Complete);
+
+            if (SuccessEvidence == SuccessEvidenceType.QuestComplete)
+                return IsAuthoritativeAcknowledged(SuccessEvidence, 0, null, questComplete);
+
+            return InitialObjectiveCount.HasValue &&
+                IsAuthoritativeAcknowledged(
+                    SuccessEvidence,
+                    InitialObjectiveCount.Value,
+                    ReadObjectiveCount(),
+                    questComplete);
+        }
 
         // DON'T EDIT THESE--they are auto-populated by Subversion
         public override string SubversionId { get { return ("$Id: UseItemOn.cs 229 2012-04-25 01:57:29Z natfoth $"); } }
@@ -410,8 +476,38 @@ namespace Styx.Bot.Quest_Behaviors.UseItemOn
             return _root ?? (_root =
             new PrioritySelector(
 
-                new Decorator(ret => Counter >= NumOfTimes,
+                new Decorator(
+                    ret => SuccessEvidence == SuccessEvidenceType.InvocationCount && Counter >= NumOfTimes,
                     new Action(ret => _isBehaviorDone = true)),
+
+                new Decorator(
+                    ret => SuccessEvidence != SuccessEvidenceType.InvocationCount && HasAuthoritativeSuccess(),
+                    new Action(ret => _isBehaviorDone = true)),
+
+                new Decorator(
+                    ret => SuccessEvidence != SuccessEvidenceType.InvocationCount &&
+                           (SuccessEvidence != SuccessEvidenceType.ObjectiveProgress || InitialObjectiveCount.HasValue) &&
+                           Counter >= MaxAttempts,
+                    new Action(ret =>
+                    {
+                        AuthoritativeAttemptsExhausted = true;
+                        LogMessage("warning",
+                            "UseItemOn exhausted {0} bounded attempt(s) without authoritative {1} acknowledgement for quest {2}; deferring.",
+                            MaxAttempts, SuccessEvidence, QuestId);
+                        _isBehaviorDone = true;
+                        return RunStatus.Success;
+                    })),
+
+                new Decorator(
+                    ret => SuccessEvidence == SuccessEvidenceType.ObjectiveProgress && !InitialObjectiveCount.HasValue,
+                    new Action(ret =>
+                    {
+                        LogMessage("warning",
+                            "UseItemOn cannot establish the initial objective count for quest {0} objective {1}; deferring without item use.",
+                            QuestId, ObjectiveIndex);
+                        _isBehaviorDone = true;
+                        return RunStatus.Success;
+                    })),
 
                     new PrioritySelector(
                         new Decorator(ret => CurrentObject != null && CurrentObject.DistanceSqr > Range * Range,
@@ -465,7 +561,8 @@ namespace Styx.Bot.Quest_Behaviors.UseItemOn
         {
             get
             {
-                return (_isBehaviorDone     // normal completion
+                return (_isBehaviorDone     // local execution completion/deferral
+                        || (SuccessEvidence != SuccessEvidenceType.InvocationCount && HasAuthoritativeSuccess())
                         || !UtilIsProgressRequirementsMet(QuestId, QuestRequirementInLog, QuestRequirementComplete));
             }
         }
@@ -476,6 +573,9 @@ namespace Styx.Bot.Quest_Behaviors.UseItemOn
             // We had to defer this action, as the 'profile line number' is not available during the element's
             // constructor call.
             OnStart_HandleAttributeProblem();
+
+            if (!IsAttributeProblem && SuccessEvidence == SuccessEvidenceType.ObjectiveProgress)
+                InitialObjectiveCount = ReadObjectiveCount();
 
             // If the quest is complete, this behavior is already done...
             // So we don't want to falsely inform the user of things that will be skipped.
