@@ -133,6 +133,19 @@ internal static class PallyPowerAssignmentRegressionTests
                 Check(Aura(StyxWoW.Me) == "Devotion Aura", "manual aura lost precedence");
                 Check(Fixture.LuaQueries.Count == 0, "manual aura queried PallyPower");
             }),
+            ("read-only query pins reviewed addon version before interpreting slots", () =>
+            {
+                Setup(); Know("Blessing of Kings");
+                Fixture.LuaResult = code =>
+                {
+                    Check(code.Contains("GetAddOnMetadata('PallyPower','Version')", StringComparison.Ordinal),
+                        "query did not observe loaded PallyPower version");
+                    Check(code.Contains("v3.2.21", StringComparison.Ordinal),
+                        "query did not pin the reviewed v3.2.21 mapping");
+                    return Row(1,3,0,0);
+                };
+                Check(Bless(StyxWoW.Me) == "Blessing of Kings", "version-pinned query control failed");
+            }),
             ("read-only query pins the Wrath table name", () =>
             {
                 Setup(); Know("Blessing of Kings");
