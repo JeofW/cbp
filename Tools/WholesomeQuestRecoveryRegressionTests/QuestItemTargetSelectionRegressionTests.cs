@@ -176,6 +176,7 @@ public static class QuestItemSelectionCases
         public WoWPoint Location{get;set;}=new WoWPoint(10,10,10);public string Name=>"Controlled";
         public float Distance=>ObjectManager.Me==null?0:Location.Distance(ObjectManager.Me.Location);
         public float DistanceSqr=>Distance*Distance;
+        public bool InLineOfSight{get;set;}=true;
     }
     public class WoWUnit:WoWObject
     {

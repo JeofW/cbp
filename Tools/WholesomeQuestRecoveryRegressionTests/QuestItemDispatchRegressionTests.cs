@@ -121,6 +121,18 @@ public static class QuestItemDispatchCases
             Tick();Check(used.Count==1&&Counter==0&&Blacklist.Count==0&&Clears==0,"disposed attempt mutated local state or new target");
         });
         Add("no duplicate use after a completed local attempt",()=>{Tick();Tick();Check(used.Count==1&&Counter==1,"completed local repetition submitted twice");});
+        Add("legacy caller without LOS requirement remains usable when observation is blocked",()=>{
+            Set("RequireLos",false);target.InLineOfSight=false;Tick();
+            Check(used.Count==1&&Counter==1,"legacy caller unexpectedly inherited the generated LOS requirement");
+        });
+        Add("explicit LOS requirement defers use while the recipient is blocked",()=>{
+            Set("RequireLos",true);target.InLineOfSight=false;Tick();
+            Check(used.Count==0&&Counter==0,"LOS-gated item use crossed an obstructed recipient");
+        });
+        Add("explicit LOS requirement admits the same recipient once sight is clear",()=>{
+            Set("RequireLos",true);target.InLineOfSight=true;Tick();
+            Check(used.Count==1&&Counter==1,"clear LOS did not admit the explicit generated recipe");
+        });
         Add("recipe for a corpse is preserved",()=>{Set("NpcState",Script.NpcStateType.Dead);target.IsAlive=false;Tick();Check(used.Count==1&&Counter==1,"valid corpse recipe was removed");});
         Add("ordinary active-target cleanup remains available",()=>{Tick();Check(used.Count==1&&Counter==1&&Clears==1&&player.CurrentTarget==null,"normal targeted cleanup changed");});
         int passed=0,assertions=0,unexpected=0;

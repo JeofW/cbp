@@ -160,7 +160,7 @@ internal static class QuestStrategyExecutionRegressionTests
 
         internal string CreatePack(string revision,string? questSha=null)
         {
-            string sha=questSha ?? Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(DataText))).ToLowerInvariant();
+            string sha=questSha ?? Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(DataPath))).ToLowerInvariant();
             return "{"+
                 "\"Schema\":\"quest-strategy-pack-335-v1\","+
                 "\"ClientBuild\":12340,"+
