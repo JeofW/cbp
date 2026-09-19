@@ -27,7 +27,7 @@ internal static class QuestItemMerchantContextRegressionTests
             boundary = boundary.Replace(before, after);
         }
         Replace("public static void SleepForLagDuration(){}", "public static void SleepForLagDuration(){QuestItemMerchantCases.Boundary(\"lag\");}");
-        Replace("public void UseContainerItem(){}", "public void UseContainerItem(){QuestItemMerchantCases.Submit(this);}");
+        Replace("public bool TryUseContainerItem()=>true; public void UseContainerItem(){TryUseContainerItem();}", "public bool TryUseContainerItem(){QuestItemMerchantCases.Submit(this);return true;}public void UseContainerItem(){TryUseContainerItem();}");
         Replace("public void Target(){ObjectManager.Me!.CurrentTarget=this;}", "public void Target(){ObjectManager.Me!.CurrentTarget=this;QuestItemMerchantCases.Boundary(\"target\");}");
         Replace("public void ClearTarget(){CurrentTarget=null;}", "public void ClearTarget(){QuestItemMerchantCases.Clears++;CurrentTarget=null;}");
         Replace("public static void MoveStop(){}", "public static void MoveStop(){if(ObjectManager.Me!=null)ObjectManager.Me.IsMoving=false;QuestItemMerchantCases.Boundary(\"stop\");}");

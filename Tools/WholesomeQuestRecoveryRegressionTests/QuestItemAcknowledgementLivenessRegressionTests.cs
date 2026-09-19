@@ -60,12 +60,18 @@ internal static class QuestItemAcknowledgementLivenessRegressionTests
                 ("deadline releases local execution", () => Check(!Pending(6000, 1000, 5000), "ack window never expires")),
                 ("clock reversal fails open", () => Check(!Pending(999, 1000, 5000), "clock reversal can strand acknowledgement wait")),
                 ("invalid timeout cannot create an infinite wait", () => Check(!Pending(1001, 1000, 0), "invalid timeout created pending state")),
-                ("tracked source records submission time only after item use", () =>
+                ("tracked source records submission time only after accepted safe item use", () =>
                 {
-                    int use = source.IndexOf("item.UseContainerItem()", StringComparison.Ordinal);
-                    int stamp = source.IndexOf("_lastSubmissionUtc", use < 0 ? 0 : use, StringComparison.Ordinal);
-                    Check(use >= 0 && stamp > use, "submission timestamp is absent or published before dispatch");
+                    int use = source.IndexOf("if (!item.TryUseContainerItem())", StringComparison.Ordinal);
+                    int stamp = source.IndexOf("_lastSubmissionUtc = UtcNowMilliseconds()", use < 0 ? 0 : use, StringComparison.Ordinal);
+                    Check(use >= 0 && stamp > use,
+                        "submission timestamp is absent or published before accepted safe dispatch");
                 }),
+                ("safe local submission refusal has its own bounded lifetime", () =>
+                    Check(source.Contains("SubmissionRefusalTimeout", StringComparison.Ordinal)
+                        && source.Contains("_submissionRefusalUtc", StringComparison.Ordinal)
+                        && source.Contains("DeferSubmissionRefusal", StringComparison.Ordinal),
+                        "safe slot refusal can spin forever outside the authoritative acknowledgement window")),
                 ("authoritative mode waits before considering attempt exhaustion", () =>
                 {
                     int success = source.IndexOf("HasAuthoritativeSuccess()", StringComparison.Ordinal);

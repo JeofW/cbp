@@ -26,7 +26,7 @@ internal static class QuestItemDispatchRegressionTests
             boundary = boundary.Replace(before, after);
         }
         Replace("public static void SleepForLagDuration(){}", "public static void SleepForLagDuration(){QuestItemDispatchCases.Boundary(\"lag\");}");
-        Replace("public void UseContainerItem(){}", "public bool TryUseContainerItem(){return QuestItemDispatchCases.Submit(this);}public void UseContainerItem(){TryUseContainerItem();}");
+        Replace("public bool TryUseContainerItem()=>true; public void UseContainerItem(){TryUseContainerItem();}", "public bool TryUseContainerItem(){return QuestItemDispatchCases.Submit(this);}public void UseContainerItem(){TryUseContainerItem();}");
         Replace("public void Target(){ObjectManager.Me!.CurrentTarget=this;}", "public void Target(){ObjectManager.Me!.CurrentTarget=this;QuestItemDispatchCases.Boundary(\"target\");}");
         Replace("public void ClearTarget(){CurrentTarget=null;}", "public void ClearTarget(){QuestItemDispatchCases.Clears++;CurrentTarget=null;}");
         Replace("public static void MoveStop(){}", "public static void MoveStop(){if(ObjectManager.Me!=null)ObjectManager.Me.IsMoving=false;QuestItemDispatchCases.Boundary(\"stop\");}");

@@ -95,6 +95,9 @@ namespace Styx.Bot.Quest_Behaviors.UseItemOn
                 ObjectiveIndex = GetAttributeAsNullable<int>("ObjectiveIndex", false, null, null) ?? -1;
                 MaxAttempts = GetAttributeAsNullable<int>("MaxAttempts", false, ConstrainAs.RepeatCount, null) ?? NumOfTimes;
                 AcknowledgementTimeout = GetAttributeAsNullable<int>("AcknowledgementTimeout", false, ConstrainAs.Milliseconds, null) ?? 5000;
+                SubmissionRefusalTimeout = GetAttributeAsNullable<int>("SubmissionRefusalTimeout", false, ConstrainAs.Milliseconds, null) ?? 5000;
+                if (SubmissionRefusalTimeout <= 0)
+                    IsAttributeProblem = true;
                 NpcState = GetAttributeAsNullable<NpcStateType>("MobState", false, null, new[] { "NpcState" }) ?? NpcStateType.DontCare;
                 NavigationState = GetAttributeAsNullable<NavigationType>("Nav", false, null, new[] { "Navigation" }) ?? NavigationType.Mesh;
                 WaitForNpcs = GetAttributeAsNullable<bool>("WaitForNpcs", false, null, null) ?? false;
@@ -145,6 +148,7 @@ namespace Styx.Bot.Quest_Behaviors.UseItemOn
         public int ObjectiveIndex { get; private set; }
         public int MaxAttempts { get; private set; }
         public int AcknowledgementTimeout { get; private set; }
+        public int SubmissionRefusalTimeout { get; private set; }
         public int? InitialObjectiveCount { get; private set; }
         public bool AuthoritativeAttemptsExhausted { get; private set; }
         public int QuestId { get; private set; }
@@ -165,6 +169,7 @@ namespace Styx.Bot.Quest_Behaviors.UseItemOn
         private readonly List<ulong> _npcBlacklist = new List<ulong>();
         private Composite _root;
         private long _lastSubmissionUtc = -1;
+        private long _submissionRefusalUtc = -1;
 
         // Private properties
         private int Counter { get; set; }
@@ -206,6 +211,15 @@ namespace Styx.Bot.Quest_Behaviors.UseItemOn
             LogMessage("warning",
                 "UseItemOn is deferring without authoritative {0} acknowledgement for quest {1}: {2}",
                 SuccessEvidence, QuestId, reason);
+            _isBehaviorDone = true;
+            return RunStatus.Success;
+        }
+
+        private RunStatus DeferSubmissionRefusal(string reason)
+        {
+            LogMessage("warning",
+                "UseItemOn is deferring because the container item submission could not be safely validated for quest {0}: {1}",
+                QuestId, reason);
             _isBehaviorDone = true;
             return RunStatus.Success;
         }
@@ -484,7 +498,27 @@ namespace Styx.Bot.Quest_Behaviors.UseItemOn
             if (!Admitted(true)) return RunStatus.Success;
             WoWMovement.Face(recipientGuid);
             if (!Admitted(true)) return RunStatus.Success;
-            item.UseContainerItem();
+            if (!item.TryUseContainerItem())
+            {
+                long now = UtcNowMilliseconds();
+                if (_submissionRefusalUtc < 0)
+                    _submissionRefusalUtc = now;
+
+                if (IsAcknowledgementPending(
+                        now,
+                        _submissionRefusalUtc,
+                        SubmissionRefusalTimeout))
+                {
+                    TreeRoot.StatusText =
+                        "Waiting for a stable container item slot before submission";
+                    return RunStatus.Success;
+                }
+
+                return DeferSubmissionRefusal(
+                    "the item GUID/slot identity did not stabilize within the bounded local submission window");
+            }
+
+            _submissionRefusalUtc = -1;
             if (SuccessEvidence != SuccessEvidenceType.InvocationCount)
                 _lastSubmissionUtc = UtcNowMilliseconds();
 
@@ -635,6 +669,7 @@ namespace Styx.Bot.Quest_Behaviors.UseItemOn
             OnStart_HandleAttributeProblem();
 
             _lastSubmissionUtc = -1;
+            _submissionRefusalUtc = -1;
 
             if (!IsAttributeProblem && SuccessEvidence == SuccessEvidenceType.ObjectiveProgress)
                 InitialObjectiveCount = ReadObjectiveCount();
