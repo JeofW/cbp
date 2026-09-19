@@ -1,15 +1,13 @@
 @GitHub
 
-Continue `jeofwong/CopilotBuddy-private`, draft PR51 on `audit/next-55-equipment-observation-20260917`, from W71. Reconcile live refs and read `AUDIT_RESUME.md`, `docs/audit/2026-09-19/W71_CHECKPOINT.md` and `W71_EVIDENCE.json` first.
+Continue `jeofwong/CopilotBuddy-private`, draft PR51 branch `audit/next-55-equipment-observation-20260917`, from W72. Reconcile live refs, then read `AUDIT_RESUME.md`, `docs/audit/2026-09-19/W72_CHECKPOINT.md`, `W72_EVIDENCE.json` and the governing 3.3.5/core/provenance policies.
 
-Verified head **5db0de566cea515a21f3706fd7835b82dda9737a**, tree **f9b8a5cbb14ebad0a419ac1a53ff3ab04dafbad0**. Integrated **35430867637/art10580233586** passes all17 entries; host **35430867668/art10580507599** is0 errors/3340 warnings. Production quest-log owners at prerequisite repair **16acaaac** pass **35430209827/art10580646500**.
+Verified head **7a471da4d674ca1dffdc6169340b091e96a36e46**, tree **3bafec33ca952646ff1093f2a4a84d9a82c9e1bf**. Integrated **35431678604/art10580349205** passes17/17; quest-log owners **35431678616/art10579879846** pass; host **35431678735/art10580898437** is0 errors/3340 warnings.
 
-Retain and do not recreate: safe GUID-based container use (9/9), bounded UseItemOn submission refusal, TC335 dependent-previous ordered OR (14/14), active-parent tests (32/32), negative-exclusive dependency tests (10/10), plugin refresh reuse, GossipEvent, PallyPower bridge, quarantined addon evidence and prior equipment/navigation/merchant work.
+Retain: TC335 dependent previous OR; exact negative direct parent status (accepted incomplete only); raw FailedQuestIds; safe container use/UseItemOn; all W71/W70 merchant/equipment/buff/navigation/addon evidence. Pinned AC WotLK negative-parent semantics are broader and remain an explicit divergence.
 
-First next slice: pinned TrinityCore335 `8fda442f...` requires negative direct `PrevQuestID` parent status `QUEST_STATUS_INCOMPLETE`. Current scheduler merely checks accepted membership and therefore allows a ready/completed-but-unturned-in parent. Pinned AzerothCore WotLK `8337a378...` is broader. Existing snapshot already distinguishes accepted vs ready through `QuestSchedulerAcceptedQuest.IsCompleted`. Add a test-only TC-primary conservative contract first; require clean Windows assertion red, then repair without inventing core identity. Preserve the AC divergence as an explicit unresolved compatibility difference.
+First next slice: safe single-item cursor pickup in `WoWItem`, test first. Current `PickUp()` still uses independent BagIndex/BagSlot. Original3.3.5 APIs confirmed: `GetCursorInfo`, `GetContainerItemLink`, `PickupContainerItem`, `CursorHasItem`. Require empty cursor without calling ClearCursor, GUID slot resolution/revalidation, expected-entry Lua check before pickup, and cursor-item acknowledgement after pickup. Keep same-entry ABA/live acceptance limitations explicit.
 
-The live ForcedQuestPickUp already checks the actual gossip/native offered quest list and confirms target identity before AcceptQuest; missing class/reputation/condition data may cause travel but is not permission to accept an unoffered quest.
+Do NOT blanket migrate callers. DeleteItems/MrItemRemover, EquipItem/AutoEquip, AuctionHouse and ProfessionBuddy each have separate ownership/acknowledgement semantics. Original3.3.5 DeleteCursorItem can trigger DELETE_ITEM / DELETE_GOOD_ITEM; quality3+ DELETE_GOOD_ITEM requires DELETE_ITEM_CONFIRM_STRING in an edit box before accept. One DeleteCursorItem invocation is not deletion success.
 
-Then resume separate cursor ownership review (PickUp/Delete/Equip/AH/ProfessionBuddy); do not blanket-convert multi-step cursor transactions. Keep all W71 open frontiers explicit and do not merge PR51 without user approval.
-
-For ordinary GitHub stalls recover from exact head/run IDs with short bounded reads; do not ask the user to repeat state or blindly rerun.
+Do not merge PR51 without explicit approval. For connector stalls use exact SHA/run IDs, short reads and bounded retries.

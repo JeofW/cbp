@@ -1,29 +1,28 @@
-# Resume at W71 — container submission + dependent prerequisites verified
+# Resume at W72 — exact TC negative-parent status verified
 
 Repo `jeofwong/CopilotBuddy-private`, draft PR51, branch `audit/next-55-equipment-observation-20260917`. Reconcile live refs first.
 
-Verified code/test head **5db0de566cea515a21f3706fd7835b82dda9737a**, tree **f9b8a5cbb14ebad0a419ac1a53ff3ab04dafbad0**. Production prerequisite repair is **16acaaac108d817642993e48bfe25dc10958c298**.
+Verified code/test head **7a471da4d674ca1dffdc6169340b091e96a36e46**, tree **3bafec33ca952646ff1093f2a4a84d9a82c9e1bf**.
 
-Read `docs/audit/2026-09-19/W71_CHECKPOINT.md` and `W71_EVIDENCE.json`, then W70 plus `WOTLK_335A_RESEARCH_POLICY.md`, `TRINITYCORE_335_COMPATIBILITY.md`, `QUEST_DATA_PROVENANCE_335.md` and `ADDON_EVIDENCE_335.md`.
+Read `docs/audit/2026-09-19/W72_CHECKPOINT.md` and `W72_EVIDENCE.json`, then W71 and the original-client/core/provenance policies.
 
 Exact green:
-- integrated **35430867637 / art10580233586** — 17/17 entries
-- host **35430867668 / art10580507599** — 0 errors / 3340 warnings
-- production quest-log owners at 16acaaac: **35430209827 / art10580646500**
+- integrated **35431678604 / art10580349205** — 17/17 entries
+- quest-log owners **35431678616 / art10579879846**
+- host **35431678735 / art10580898437** — 0 errors / 3340 warnings
 
-Retain:
-- container slot identity **9/9** and `TryUseContainerItem` fail-closed GUID/slot/entry validation
-- UseItemOn bounded safe-submission refusal; refusal is not invocation or quest credit
-- dependent previous alternatives **14/14**
-- active parent prerequisites **32/32**
+New retained scope:
+- ActiveParent **39/39**
+- QuestLogObservation **27/27**
+- RawReady **16/16**
+- dependent alternatives **14/14**
 - negative exclusive dependencies **10/10**
-- plugin refresh **9/9**, GossipEvent **14/14**, Singular required registration **189/189**
-- all older W70/W69 requirements and evidence
+- container slot identity **9/9**
 
-Dependent prerequisite semantics now follow pinned TC335 for `PreviousQuestsIds`: stored-order OR, negative group each-from-all, direct positive field independent, unknown predecessor metadata cannot authorize, ancestor correction follows only blocking roots. Dataset provenance is still not a realm DB certificate.
+TC-primary negative direct `PrevQuestID` now requires a current accepted parent that is neither ready/completed nor failed. Raw `FailedQuestIds` comes from the same immutable quest-log observation and is revalidated with it. Pinned AC WotLK remains broader; do not erase that divergence or infer core identity.
 
-NEXT prerequisite slice: negative direct `PrevQuestID` status. Pinned TC335 8fda442f requires the parent to be `QUEST_STATUS_INCOMPLETE`; current Wholesome accepts any accepted parent including ready/completed-in-log. Pinned AC WotLK 8337a378 is broader. Test first using existing `QuestSchedulerAcceptedQuest.IsCompleted`; TC-primary conservative policy should require accepted + not ready. Do not silently erase the AC divergence.
+NEXT: native safe single-item cursor pickup. Current `WoWItem.PickUp()` still derives BagIndex/BagSlot independently. Test first a `TryPickUp` contract that reuses GUID/slot validation, requires `GetCursorInfo()==nil`, validates expected entry immediately before `PickupContainerItem`, and requires `CursorHasItem()` afterward. Never implicitly ClearCursor; caller owns it. Keep same-entry ABA explicit.
 
-After that continue cursor ownership separately: WoWItem.PickUp, delete, equip, auction and ProfessionBuddy cursor transfers are not one blanket contract. Then proceed with remaining buff/gear/water/GatherBuddy/native/live acceptance frontiers.
+After that audit callers separately. DeleteItems/MrItemRemover need confirmation + deletion acknowledgement; EquipItem/AutoEquip need equip/bind/final slot acknowledgement; AuctionHouse needs sell/post acknowledgement; ProfessionBuddy bank/mail/stack/AH cursor transfers are intentional multi-step transactions and must not use a blanket helper.
 
-Do not merge PR51 without explicit user approval. For connector failures use exact SHA/run IDs, short one-shot reads and bounded retries; no blind reruns.
+Do not merge PR51 without explicit approval. Use exact SHA/run IDs with bounded reads for connector stalls.
