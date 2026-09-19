@@ -22,6 +22,7 @@ namespace WholesomeAQ
     {
         public uint QuestId { get; init; }
         public bool IsCompleted { get; init; }
+        public bool IsFailed { get; init; }
         public IReadOnlyList<int> ObjectiveCounts { get; init; } = Array.Empty<int>();
     }
 
@@ -197,6 +198,7 @@ namespace WholesomeAQ
                 {
                     QuestId = quest.Id,
                     IsCompleted = quest.IsCompleted,
+                    IsFailed = observation.FailedQuestIds.Contains(quest.Id),
                     ObjectiveCounts = ReadObjectiveCounts(quest)
                 })
                 .ToArray();
@@ -491,10 +493,17 @@ namespace WholesomeAQ
                         quest, db, accepted, completed, claimedPositiveExclusiveGroups))
                         continue;
 
-                    // A negative PrevQuestID requires an accepted parent, not a
-                    // rewarded parent. Preserve the signed TC/AC 3.3.5 contract.
-                    if (quest.PrevQuestID < 0 && (quest.PrevQuestID == int.MinValue ||
-                        !accepted.ContainsKey((uint)-quest.PrevQuestID)))
+                    // TrinityCore 3.3.5 primary: a negative direct PrevQuestID
+                    // requires QUEST_STATUS_INCOMPLETE. Accepted ready/completed
+                    // and failed parents do not unlock the child. Pinned
+                    // AzerothCore WotLK is broader (non-NONE); keep that
+                    // compatibility difference explicit rather than inferring a
+                    // source core from the realm or dataset name.
+                    if (quest.PrevQuestID < 0 &&
+                        (quest.PrevQuestID == int.MinValue ||
+                         !accepted.TryGetValue((uint)-quest.PrevQuestID, out QuestSchedulerAcceptedQuest activeParent) ||
+                         activeParent.IsCompleted ||
+                         activeParent.IsFailed))
                         continue;
 
                     uint ancestor = FindAcceptedIncompleteAncestor(quest, quests, accepted, completed);
