@@ -97,6 +97,16 @@ internal static class EquipCursorOwnershipRegressionTests
                         || behavior.Contains("_pendingEquipStart", StringComparison.Ordinal)),
                     "EquipItem pending equip can remain unresolved indefinitely");
             }),
+            ("EquipItem bind confirmation is scoped to its owned equipment slot", () =>
+            {
+                string region = MethodRegion(behavior, "private void ConfirmOwnedEquipPopup()");
+                Check(region.Contains("_pendingEquipSlot == InventorySlot.None", StringComparison.Ordinal)
+                    && region.Contains("StaticPopup_FindVisible('EQUIP_BIND')", StringComparison.Ordinal)
+                    && region.Contains("StaticPopup_FindVisible('AUTOEQUIP_BIND')", StringComparison.Ordinal)
+                    && region.Contains("p.data", StringComparison.Ordinal)
+                    && region.Contains("_pendingEquipSlot", StringComparison.Ordinal),
+                    "EquipItem can confirm a same-type bind popup without proving the popup slot belongs to its transaction");
+            }),
             ("AutoEquip does not clear a foreign cursor", () =>
             {
                 Check(!auto.Contains("ClearCursor()", StringComparison.Ordinal),
@@ -132,6 +142,16 @@ internal static class EquipCursorOwnershipRegressionTests
             {
                 Check(!auto.Contains("StaticPopup1Button1", StringComparison.Ordinal),
                     "AutoEquip still confirms an arbitrary visible StaticPopup1");
+            }),
+            ("AutoEquip bind confirmation is scoped to its owned equipment slot", () =>
+            {
+                string region = MethodRegion(auto, "private void ConfirmOwnedEquipPopup()");
+                Check(region.Contains("_pendingEquipSlot == InventorySlot.None", StringComparison.Ordinal)
+                    && region.Contains("StaticPopup_FindVisible('EQUIP_BIND')", StringComparison.Ordinal)
+                    && region.Contains("StaticPopup_FindVisible('AUTOEQUIP_BIND')", StringComparison.Ordinal)
+                    && region.Contains("p.data", StringComparison.Ordinal)
+                    && region.Contains("_pendingEquipSlot", StringComparison.Ordinal),
+                    "AutoEquip can confirm a same-type bind popup without proving the popup slot belongs to its transaction");
             }),
             ("AutoEquip requires equipment acknowledgement before starting another equip", () =>
             {
