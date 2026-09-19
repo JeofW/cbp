@@ -61,11 +61,6 @@ namespace Singular.ClassSpecific.Paladin
 
         #region Normal Rotation
 
-        [Class(WoWClass.Paladin)]
-        [Spec(TalentSpec.RetributionPaladin)]
-        [Behavior(BehaviorType.Pull)]
-        [Behavior(BehaviorType.Combat)]
-        [Context(WoWContext.Normal)]
         // Optional LevelBot dense-pack opener. This is intentionally not part
         // of the normal Ret rotation: it provides one ranged damage submission,
         // with no taunt and no melee closing, after LevelBot validates the pull point.
@@ -92,6 +87,11 @@ namespace Singular.ClassSpecific.Paladin
                    target.Distance >= 7 && target.Distance <= 30;
         }
 
+        [Class(WoWClass.Paladin)]
+        [Spec(TalentSpec.RetributionPaladin)]
+        [Behavior(BehaviorType.Pull)]
+        [Behavior(BehaviorType.Combat)]
+        [Context(WoWContext.Normal)]
         public static Composite CreateRetributionPaladinNormalPullAndCombat()
         {
             return new PrioritySelector(
