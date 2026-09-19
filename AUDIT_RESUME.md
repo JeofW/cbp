@@ -1,15 +1,15 @@
-# Resume at W66 — verified GatherBuddy sale-visit backoff
+# Resume at W67 — verified provenance/dependency/addon/reward frontier
 
 Repository `jeofwong/CopilotBuddy-private`, draft PR51, branch `audit/next-55-equipment-observation-20260917`. Reconcile live head/master before writing.
 
-Latest verified code: **37511a5f0a4db7b8fe91efd1475f8d2700cad4f6**, tree **71de8d71865929a8b8938ccdd8180b8e76c66ecc**. Read `docs/audit/2026-09-18/W66_CHECKPOINT.md` and `W66_EVIDENCE.json` first. W65/W64/W63 remain preserved evidence and requirements.
+Latest verified code **0c918908d0b6372c1b8b20359982e037c87a635b**, tree **daf4476e9836c8aaa4d3199c12d6fb0de760fef2**. Read `docs/audit/2026-09-19/W67_CHECKPOINT.md` and `W67_EVIDENCE.json`, then WOTLK_335A_RESEARCH_POLICY, TRINITYCORE_335_COMPATIBILITY and QUEST_DATA_PROVENANCE_335. W63–W66 requirements/evidence remain retained.
 
-W65 docs were stale by eight commits at the start of W66. Those commits were reviewed, not recreated: GatherBuddy repair Sequence; signed negative-parent protection publication plus fail-closed unknown coverage; and Windows file-identity stabilization with retained snapshot safety checks.
+New verified slices since W66: bounded merchant pending observations; optional strict dataset provenance while the current dataset remains Unknown; legacy fingerprint identity preservation; positive and negative ExclusiveGroup handling without rewriting signed negative PrevQuestID; opt-in read-only/version-pinned PallyPower v3.2.21 Wrath assignments; quarantined WorldMapArea candidate conversion with no Z/terrain/runtime authority; strict source-bound special-strategy pack validation; and fail-closed live quest reward identity.
 
-W66 test-only `b0c4b7c9` reproduced the missing outer sale-visit backoff at 1/9 with8 intended assertions,0unexpected. Final production is the GatherBuddy-only +20/-1 delta through `42f38223`; `37511a5f` corrects a whitespace-brittle test assertion only. Final integrated35360041922/art10553948558 passes17/17 entries,101 Wholesome+3 QuestLog groups and75 analyzers. Host35360041925/art10553963467:0errors3304warnings,compile only.
+Final integrated35412850647/art10575210442 SHA96e49a57538d6abada13c62ea8d3aedbd65d03654bdf0c95f4e8ba8b39b3684b passes on exact code head. Host35412850625/art10575030460 SHAafbed4763aa50e841bc6efbfbb69758763d0ff886942489b58c57cf598a0b23a passes compile-only.
 
-The new policy suppresses immediate full-bag GatherBuddy re-entry for two minutes after a terminal still-open sale pass, matching the existing per-stack retry interval. It is not sale acknowledgement, deletion or permanent blacklist. Persistent result -1/2 inside one active SellAllItemsStep session remains open, as do post-submission result loss and native slot/cursor freshness.
+NEXT execution slice: source-bound special recipes are validated but unused. Start with UseItemOn only. Do not let local invocation count establish success. A generated strategy must preserve quest/objective/item/target/state/range/LOS/max-attempt/source identity and terminate only from authoritative ObjectiveProgress/QuestComplete or bounded deferral. Gossip and Escort remain separate later slices.
 
-Next priority: bounded no-progress handling for persistent unknown/locked sale observations, preserving exact session ownership and existing result assertions. Do not make unknown=empty/success, do not delete items, and do not use the two-minute stack retry as an instruction to idle at a merchant.
+Do not silently reinterpret PreviousQuestsIds as TC OR semantics until exporter/source provenance is established. Current JSON provenance is unknown. PallyPower is Paladin assignment integration, not all-class strength optimization. Carbonite is search hints only. Reward identity safety is not cap/loadout optimization. Aquatic observation/rest tests are not underwater escape. Full GatherBuddy/rest/remount, native UI/slot/cursor/LOS, independent review and original client/server acceptance remain open.
 
-Original3.3.5a/build12340; TC3.3.5 primary, ACWotLK secondary. Masterf462a9bb unchanged; preserve backups/exclusions, PR51 draft/unmerged, no force push/deployment/installed addon/binary/mesh changes. Broader quest/buff/gear/underwater/LOS/full GatherBuddy/native acceptance scope remains open.
+Masterf462a9bb unchanged. Preserve backups/exclusions; no PR51 merge, force push, deployment or installed addon/binary/mesh modification.
