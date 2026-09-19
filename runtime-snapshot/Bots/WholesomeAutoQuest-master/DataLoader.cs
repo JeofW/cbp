@@ -295,4 +295,234 @@ namespace WholesomeAQ
             return Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(manifest))).ToLowerInvariant();
         }
     }
+
+    public static class QuestStrategyPackLoader
+    {
+        private static readonly HashSet<string> SourceKinds = new HashSet<string>(StringComparer.Ordinal)
+        {
+            "curated-profile", "trinitycore-3.3.5", "azerothcore-wotlk"
+        };
+
+        public static QuestStrategyPack Load(string path, string expectedQuestDataSha256)
+        {
+            ValidateSha(expectedQuestDataSha256, "expected quest-data SHA256");
+            if (string.IsNullOrWhiteSpace(path))
+                throw new ArgumentException("A quest strategy pack path is required.", nameof(path));
+            if (!File.Exists(path))
+                return new QuestStrategyPack();
+
+            byte[] snapshot = File.ReadAllBytes(path);
+            string text;
+            using (var stream = new MemoryStream(snapshot, writable: false))
+            using (var reader = new StreamReader(stream, Encoding.UTF8, detectEncodingFromByteOrderMarks: true))
+                text = reader.ReadToEnd();
+
+            using JsonDocument document = JsonDocument.Parse(text);
+            JsonElement root = document.RootElement;
+            if (root.ValueKind != JsonValueKind.Object)
+                throw new InvalidDataException("Quest strategy pack must be a JSON object.");
+
+            RequireExactFields(root,
+                new[] { "Schema", "ClientBuild", "QuestDataSha256", "SourceKind", "SourceRevision", "Recipes" },
+                "quest strategy pack");
+
+            if (RequiredString(root, "Schema") != "quest-strategy-pack-335-v1")
+                throw new InvalidDataException("Unsupported quest strategy pack schema.");
+            if (!root.GetProperty("ClientBuild").TryGetInt32(out int clientBuild) || clientBuild != 12340)
+                throw new InvalidDataException("Quest strategy pack requires original client build 12340.");
+
+            string questDataSha256 = RequiredString(root, "QuestDataSha256").ToLowerInvariant();
+            ValidateSha(questDataSha256, "QuestDataSha256");
+            if (!string.Equals(questDataSha256, expectedQuestDataSha256.ToLowerInvariant(), StringComparison.Ordinal))
+                throw new InvalidDataException("Quest strategy pack does not match the quest dataset.");
+
+            string sourceKind = RequiredString(root, "SourceKind");
+            if (!SourceKinds.Contains(sourceKind))
+                throw new InvalidDataException("Quest strategy pack has an unsupported source kind.");
+            string sourceRevision = RequiredString(root, "SourceRevision");
+
+            JsonElement recipesNode = root.GetProperty("Recipes");
+            if (recipesNode.ValueKind != JsonValueKind.Array)
+                throw new InvalidDataException("Quest strategy pack Recipes must be an array.");
+            if (recipesNode.GetArrayLength() > 4096)
+                throw new InvalidDataException("Quest strategy pack has too many recipes.");
+
+            var recipes = new List<QuestStrategyRecipe>();
+            var owners = new HashSet<(int QuestId, int ObjectiveIndex)>();
+            foreach (JsonElement recipeNode in recipesNode.EnumerateArray())
+            {
+                QuestStrategyRecipe recipe = ParseRecipe(recipeNode);
+                if (!owners.Add((recipe.QuestId, recipe.ObjectiveIndex)))
+                    throw new InvalidDataException("Quest strategy pack has duplicate quest/objective owners.");
+                recipes.Add(recipe);
+            }
+
+            return new QuestStrategyPack
+            {
+                Status = QuestStrategyPackStatus.DeclaredAndBound,
+                ClientBuild = clientBuild,
+                QuestDataSha256 = questDataSha256,
+                SourceKind = sourceKind,
+                SourceRevision = sourceRevision,
+                Recipes = recipes
+            };
+        }
+
+        private static QuestStrategyRecipe ParseRecipe(JsonElement node)
+        {
+            if (node.ValueKind != JsonValueKind.Object)
+                throw new InvalidDataException("Quest strategy recipe must be a JSON object.");
+
+            int questId = RequiredPositiveInt(node, "QuestId");
+            int objectiveIndex = RequiredNonNegativeInt(node, "ObjectiveIndex");
+            string kindText = RequiredString(node, "Kind");
+            if (!Enum.TryParse(kindText, ignoreCase: false, out QuestStrategyKind kind))
+                throw new InvalidDataException("Quest strategy recipe has an unsupported Kind.");
+            string sourceRef = RequiredString(node, "SourceRef", maximumLength: 1024);
+            int targetId = RequiredPositiveInt(node, "TargetId");
+            QuestStrategyTargetType targetType = RequiredEnum<QuestStrategyTargetType>(node, "TargetType");
+            double range = RequiredFinitePositive(node, "Range", maximum: 100.0);
+            bool requireLos = RequiredBool(node, "RequireLos");
+            int maxAttempts = RequiredBoundedInt(node, "MaxAttempts", 1, 20);
+            QuestStrategySuccessEvidence success = RequiredEnum<QuestStrategySuccessEvidence>(node, "SuccessEvidence");
+
+            QuestStrategyRecipe recipe;
+            if (kind == QuestStrategyKind.UseItemOn)
+            {
+                RequireExactFields(node,
+                    new[] { "QuestId", "ObjectiveIndex", "Kind", "SourceRef", "ItemId",
+                        "TargetType", "TargetId", "TargetState", "Range", "RequireLos",
+                        "MaxAttempts", "SuccessEvidence" },
+                    "UseItemOn strategy");
+                recipe = new QuestStrategyRecipe
+                {
+                    QuestId = questId,
+                    ObjectiveIndex = objectiveIndex,
+                    Kind = kind,
+                    SourceRef = sourceRef,
+                    ItemId = RequiredPositiveInt(node, "ItemId"),
+                    TargetType = targetType,
+                    TargetId = targetId,
+                    TargetState = RequiredEnum<QuestStrategyTargetState>(node, "TargetState"),
+                    Range = range,
+                    RequireLos = requireLos,
+                    MaxAttempts = maxAttempts,
+                    SuccessEvidence = success
+                };
+            }
+            else if (kind == QuestStrategyKind.GossipEvent)
+            {
+                RequireExactFields(node,
+                    new[] { "QuestId", "ObjectiveIndex", "Kind", "SourceRef", "TargetType",
+                        "TargetId", "GossipOptionIndex", "Range", "RequireLos", "MaxAttempts",
+                        "SuccessEvidence" },
+                    "GossipEvent strategy");
+                if (targetType != QuestStrategyTargetType.Creature)
+                    throw new InvalidDataException("GossipEvent strategy target must be a creature.");
+                recipe = new QuestStrategyRecipe
+                {
+                    QuestId = questId,
+                    ObjectiveIndex = objectiveIndex,
+                    Kind = kind,
+                    SourceRef = sourceRef,
+                    TargetType = targetType,
+                    TargetId = targetId,
+                    GossipOptionIndex = RequiredBoundedInt(node, "GossipOptionIndex", 0, 64),
+                    Range = range,
+                    RequireLos = requireLos,
+                    MaxAttempts = maxAttempts,
+                    SuccessEvidence = success
+                };
+            }
+            else
+            {
+                RequireExactFields(node,
+                    new[] { "QuestId", "ObjectiveIndex", "Kind", "SourceRef", "TargetType",
+                        "TargetId", "Range", "RequireLos", "MaxAttempts", "SuccessEvidence" },
+                    "Escort strategy");
+                if (targetType != QuestStrategyTargetType.Creature)
+                    throw new InvalidDataException("Escort strategy target must be a creature.");
+                recipe = new QuestStrategyRecipe
+                {
+                    QuestId = questId,
+                    ObjectiveIndex = objectiveIndex,
+                    Kind = kind,
+                    SourceRef = sourceRef,
+                    TargetType = targetType,
+                    TargetId = targetId,
+                    Range = range,
+                    RequireLos = requireLos,
+                    MaxAttempts = maxAttempts,
+                    SuccessEvidence = success
+                };
+            }
+
+            return recipe;
+        }
+
+        private static void RequireExactFields(JsonElement node, IEnumerable<string> expected, string label)
+        {
+            var required = expected.OrderBy(value => value, StringComparer.Ordinal).ToArray();
+            var actual = node.EnumerateObject().Select(property => property.Name)
+                .OrderBy(value => value, StringComparer.Ordinal).ToArray();
+            if (!required.SequenceEqual(actual, StringComparer.Ordinal))
+                throw new InvalidDataException(label + " has missing or unsupported fields.");
+        }
+
+        private static string RequiredString(JsonElement node, string name, int maximumLength = 512)
+        {
+            if (!node.TryGetProperty(name, out JsonElement value) || value.ValueKind != JsonValueKind.String)
+                throw new InvalidDataException("Quest strategy field " + name + " must be text.");
+            string result = value.GetString();
+            if (string.IsNullOrWhiteSpace(result) || result.Length > maximumLength)
+                throw new InvalidDataException("Quest strategy field " + name + " is blank or oversized.");
+            return result;
+        }
+
+        private static int RequiredPositiveInt(JsonElement node, string name) =>
+            RequiredBoundedInt(node, name, 1, int.MaxValue);
+
+        private static int RequiredNonNegativeInt(JsonElement node, string name) =>
+            RequiredBoundedInt(node, name, 0, int.MaxValue);
+
+        private static int RequiredBoundedInt(JsonElement node, string name, int minimum, int maximum)
+        {
+            if (!node.TryGetProperty(name, out JsonElement value) || !value.TryGetInt32(out int result) ||
+                result < minimum || result > maximum)
+                throw new InvalidDataException("Quest strategy field " + name + " is outside its supported range.");
+            return result;
+        }
+
+        private static bool RequiredBool(JsonElement node, string name)
+        {
+            if (!node.TryGetProperty(name, out JsonElement value) ||
+                (value.ValueKind != JsonValueKind.True && value.ValueKind != JsonValueKind.False))
+                throw new InvalidDataException("Quest strategy field " + name + " must be boolean.");
+            return value.GetBoolean();
+        }
+
+        private static double RequiredFinitePositive(JsonElement node, string name, double maximum)
+        {
+            if (!node.TryGetProperty(name, out JsonElement value) || !value.TryGetDouble(out double result) ||
+                double.IsNaN(result) || double.IsInfinity(result) || result <= 0 || result > maximum)
+                throw new InvalidDataException("Quest strategy field " + name + " is outside its supported range.");
+            return result;
+        }
+
+        private static T RequiredEnum<T>(JsonElement node, string name) where T : struct
+        {
+            string text = RequiredString(node, name);
+            if (!Enum.TryParse(text, ignoreCase: false, out T value) || !Enum.IsDefined(typeof(T), value))
+                throw new InvalidDataException("Quest strategy field " + name + " has an unsupported value.");
+            return value;
+        }
+
+        private static void ValidateSha(string value, string name)
+        {
+            if (string.IsNullOrWhiteSpace(value) || value.Length != 64 ||
+                value.Any(character => !Uri.IsHexDigit(character)))
+                throw new InvalidDataException(name + " must be a SHA256 hexadecimal digest.");
+        }
+    }
+
 }
