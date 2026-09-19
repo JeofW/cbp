@@ -246,7 +246,7 @@ namespace WholesomeAQ
                 LocationAttributes(anchor));
 
             return new XElement("If",
-                new XAttribute("Condition", $"HasQuest({entry.Quest.Id})"),
+                new XAttribute("Condition", BuildObjectiveAdmissionCondition(entry)),
                 BuildFreewindDescentGuard(entry.Hotspots),
                 BuildGreatLiftAscentGuard(entry.Hotspots),
                 behavior);
@@ -290,10 +290,24 @@ namespace WholesomeAQ
                 LocationAttributes(anchor));
 
             return new XElement("If",
-                new XAttribute("Condition", $"HasQuest({entry.Quest.Id})"),
+                new XAttribute("Condition", BuildObjectiveAdmissionCondition(entry)),
                 BuildFreewindDescentGuard(entry.Hotspots),
                 BuildGreatLiftAscentGuard(entry.Hotspots),
                 behavior);
+        }
+
+        private static string BuildObjectiveAdmissionCondition(QuestPlanEntry entry)
+        {
+            string condition = $"HasQuest({entry.Quest.Id})";
+            QuestObjective objective = entry.Quest.Objectives
+                .FirstOrDefault(value => value.Index == entry.ObjectiveIndex);
+            // Re-read collected items before transport or custom behavior on every
+            // entry/restart. The action's tool item is not the collection objective.
+            if (objective != null && objective.ItemId > 0 && objective.CollectCount > 0 &&
+                (objective.Type == ObjectiveType.CollectItem ||
+                 objective.Type == ObjectiveType.CollectFromGameObject))
+                condition += $" && GetItemCount({objective.ItemId}) < {objective.CollectCount}";
+            return condition;
         }
 
         private static XElement BuildObjectiveGuard(QuestPlanEntry entry)
@@ -306,7 +320,7 @@ namespace WholesomeAQ
             return node == null
                 ? null
                 : new XElement("If",
-                    new XAttribute("Condition", $"HasQuest({entry.Quest.Id})"),
+                    new XAttribute("Condition", BuildObjectiveAdmissionCondition(entry)),
                     BuildFreewindDescentGuard(entry.Hotspots),
                     BuildGreatLiftAscentGuard(entry.Hotspots),
                     node);
