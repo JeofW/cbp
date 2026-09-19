@@ -94,6 +94,7 @@ namespace Styx.Bot.Quest_Behaviors.UseItemOn
                 SuccessEvidence = GetAttributeAsNullable<SuccessEvidenceType>("SuccessEvidence", false, null, null) ?? SuccessEvidenceType.InvocationCount;
                 ObjectiveIndex = GetAttributeAsNullable<int>("ObjectiveIndex", false, null, null) ?? -1;
                 MaxAttempts = GetAttributeAsNullable<int>("MaxAttempts", false, ConstrainAs.RepeatCount, null) ?? NumOfTimes;
+                AcknowledgementTimeout = GetAttributeAsNullable<int>("AcknowledgementTimeout", false, ConstrainAs.Milliseconds, null) ?? 5000;
                 NpcState = GetAttributeAsNullable<NpcStateType>("MobState", false, null, new[] { "NpcState" }) ?? NpcStateType.DontCare;
                 NavigationState = GetAttributeAsNullable<NavigationType>("Nav", false, null, new[] { "Navigation" }) ?? NavigationType.Mesh;
                 WaitForNpcs = GetAttributeAsNullable<bool>("WaitForNpcs", false, null, null) ?? false;
@@ -142,6 +143,7 @@ namespace Styx.Bot.Quest_Behaviors.UseItemOn
         public SuccessEvidenceType SuccessEvidence { get; private set; }
         public int ObjectiveIndex { get; private set; }
         public int MaxAttempts { get; private set; }
+        public int AcknowledgementTimeout { get; private set; }
         public int? InitialObjectiveCount { get; private set; }
         public bool AuthoritativeAttemptsExhausted { get; private set; }
         public int QuestId { get; private set; }
@@ -160,6 +162,7 @@ namespace Styx.Bot.Quest_Behaviors.UseItemOn
         private readonly List<ulong> _npcAuraWait = new List<ulong>();
         private readonly List<ulong> _npcBlacklist = new List<ulong>();
         private Composite _root;
+        private long _lastSubmissionUtc = -1;
 
         // Private properties
         private int Counter { get; set; }
@@ -177,6 +180,32 @@ namespace Styx.Bot.Quest_Behaviors.UseItemOn
                 return questComplete;
             // InvocationCount is legacy local bookkeeping, never server acknowledgement.
             return false;
+        }
+
+        internal static bool IsAcknowledgementPending(
+            long nowUtcMilliseconds,
+            long submittedUtcMilliseconds,
+            int timeoutMilliseconds)
+        {
+            if (submittedUtcMilliseconds < 0 || timeoutMilliseconds <= 0 ||
+                nowUtcMilliseconds < submittedUtcMilliseconds)
+                return false;
+
+            return nowUtcMilliseconds - submittedUtcMilliseconds < timeoutMilliseconds;
+        }
+
+        private static long UtcNowMilliseconds()
+        {
+            return DateTime.UtcNow.Ticks / TimeSpan.TicksPerMillisecond;
+        }
+
+        private RunStatus DeferAuthoritativeAttempt(string reason)
+        {
+            LogMessage("warning",
+                "UseItemOn is deferring without authoritative {0} acknowledgement for quest {1}: {2}",
+                SuccessEvidence, QuestId, reason);
+            _isBehaviorDone = true;
+            return RunStatus.Success;
         }
 
         private int? ReadObjectiveCount()
@@ -452,6 +481,8 @@ namespace Styx.Bot.Quest_Behaviors.UseItemOn
             WoWMovement.Face(recipientGuid);
             if (!Admitted(true)) return RunStatus.Success;
             item.UseContainerItem();
+            if (SuccessEvidence != SuccessEvidenceType.InvocationCount)
+                _lastSubmissionUtc = UtcNowMilliseconds();
 
             // Invocation is not server quest credit. Retain the legacy local
             // repetition count, but never write into a disposed/replaced actor's
@@ -483,6 +514,29 @@ namespace Styx.Bot.Quest_Behaviors.UseItemOn
                 new Decorator(
                     ret => SuccessEvidence != SuccessEvidenceType.InvocationCount && HasAuthoritativeSuccess(),
                     new Action(ret => _isBehaviorDone = true)),
+
+                new Decorator(
+                    ret => SuccessEvidence != SuccessEvidenceType.InvocationCount &&
+                           IsAcknowledgementPending(
+                               UtcNowMilliseconds(),
+                               _lastSubmissionUtc,
+                               AcknowledgementTimeout),
+                    new Action(ret =>
+                    {
+                        TreeRoot.StatusText = "Waiting for authoritative quest acknowledgement";
+                        return RunStatus.Running;
+                    })),
+
+                new Decorator(
+                    ret => SuccessEvidence != SuccessEvidenceType.InvocationCount &&
+                           _lastSubmissionUtc >= 0 &&
+                           !IsAcknowledgementPending(
+                               UtcNowMilliseconds(),
+                               _lastSubmissionUtc,
+                               AcknowledgementTimeout) &&
+                           Item == null,
+                    new Action(ret => DeferAuthoritativeAttempt(
+                        "the submitted item is no longer available after the bounded acknowledgement window"))),
 
                 new Decorator(
                     ret => SuccessEvidence != SuccessEvidenceType.InvocationCount &&
@@ -573,6 +627,8 @@ namespace Styx.Bot.Quest_Behaviors.UseItemOn
             // We had to defer this action, as the 'profile line number' is not available during the element's
             // constructor call.
             OnStart_HandleAttributeProblem();
+
+            _lastSubmissionUtc = -1;
 
             if (!IsAttributeProblem && SuccessEvidence == SuccessEvidenceType.ObjectiveProgress)
                 InitialObjectiveCount = ReadObjectiveCount();
