@@ -188,13 +188,6 @@ namespace Singular.Dynamics
     public enum BehaviorType { Heal, Rest, Pull, Combat, PreCombatBuffs, CombatBuffs, PullBuffs }
     public enum WoWContext { All, Normal, Battlegrounds, Instances }
 }
-namespace Singular
-{
-    public static class SingularRoutine
-    {
-        public static Singular.Dynamics.WoWContext CurrentWoWContext { get; set; } = Singular.Dynamics.WoWContext.Normal;
-    }
-}
 namespace Singular.Settings
 {
     internal class PaladinSettings
