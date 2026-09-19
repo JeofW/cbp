@@ -26,7 +26,7 @@ public class ActionSelectReward : Action
     private const int MaximumRewardChoices = 64;
     private readonly WeightSetEx _weightSet = WeightSetEx.CurrentWeightSet;
 
-    private sealed class LiveRewardChoice
+    internal sealed class LiveRewardChoice
     {
         public int Index { get; set; }
         public uint ItemId { get; set; }
