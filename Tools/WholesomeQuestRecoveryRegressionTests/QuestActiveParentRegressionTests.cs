@@ -7,6 +7,9 @@ using WholesomeAQ;
 
 // Actual public scheduler. Snapshot observations are explicit controls, not a
 // replacement prerequisite policy or evidence that the NPC offered this quest.
+// Pinned TrinityCore 3.3.5 8fda442f requires negative direct PrevQuestID to
+// reference QUEST_STATUS_INCOMPLETE. Pinned AzerothCore WotLK 8337a378 is
+// broader (non-NONE); this fixture deliberately tests the TC-primary contract.
 internal static class QuestActiveParentRegressionTests
 {
     private sealed class AssertionFailure(string text) : Exception(text) { }
@@ -23,8 +26,9 @@ internal static class QuestActiveParentRegressionTests
             Add(prefix + "negative parent historically rewarded but absent still defers", () => Expect(-100, Array.Empty<uint>(), new uint[] {100}, false, include));
             Add(prefix + "wrong active quest cannot unlock child", () => Expect(-100, new uint[] {101}, Array.Empty<uint>(), false, include));
             Add(prefix + "negative parent accepted unlocks child", () => Expect(-100, new uint[] {100}, Array.Empty<uint>(), true, include));
-            Add(prefix + "ready but unturned-in active parent unlocks child", () => Expect(-100, new uint[] {100}, Array.Empty<uint>(), true, include, ready: true));
-            Add(prefix + "accepted repeat parent outranks old rewarded history", () => Expect(-100, new uint[] {100}, new uint[] {100}, true, include));
+            Add(prefix + "TC-primary ready but unturned-in negative parent does not unlock child", () => Expect(-100, new uint[] {100}, Array.Empty<uint>(), false, include, ready: true));
+            Add(prefix + "TC-primary ready negative parent is not rescued by old rewarded history", () => Expect(-100, new uint[] {100}, new uint[] {100}, false, include, ready: true));
+            Add(prefix + "accepted incomplete repeat parent outranks old rewarded history", () => Expect(-100, new uint[] {100}, new uint[] {100}, true, include));
             Add(prefix + "positive predecessor absent defers child", () => Expect(100, Array.Empty<uint>(), Array.Empty<uint>(), false, include));
             Add(prefix + "positive predecessor accepted only cannot unlock", () => Expect(100, new uint[] {100}, Array.Empty<uint>(), false, include));
             Add(prefix + "positive predecessor ready is not rewarded", () => Expect(100, new uint[] {100}, Array.Empty<uint>(), false, include, ready: true));
