@@ -494,6 +494,24 @@ namespace Styx.WoWInternals.WoWObjects
                 luaBag, luaSlot, expectedEntry);
         }
 
+        internal static string BuildValidatedContainerQuestInfoLua(
+            int luaBag,
+            int luaSlot,
+            uint expectedEntry)
+        {
+            if (luaBag < 0 || luaSlot <= 0 || expectedEntry == 0)
+                throw new ArgumentOutOfRangeException("container item identity");
+
+            return string.Format(
+                System.Globalization.CultureInfo.InvariantCulture,
+                "local link=GetContainerItemLink({0},{1}); " +
+                "local id=link and tonumber(string.match(link,'item:(%d+)')); " +
+                "if id~={2} then return false,false,0,false end; " +
+                "local isQuestItem,questId,isActive=GetContainerItemQuestInfo({0},{1}); " +
+                "return true,isQuestItem and true or false,tonumber(questId) or 0,isActive and true or false",
+                luaBag, luaSlot, expectedEntry);
+        }
+
         private static string CreateItemLink(uint itemId, int quality, int enchantId, int[]? gemIds, uint suffixId)
         {
             return $"|cff{GetQualityColor(quality)}|Hitem:{itemId}:0:0:0:0:0:{suffixId}:0|h[Item]|h|r";
@@ -707,6 +725,62 @@ namespace Styx.WoWInternals.WoWObjects
                 Logging.WriteDebug(
                     "PickUp skipped {0}: cursor or current container slot identity could not be verified.",
                     Name);
+        }
+
+        public bool TryGetContainerItemQuestInfo(
+            out bool isQuestItem,
+            out int questId,
+            out bool isActive)
+        {
+            isQuestItem = false;
+            questId = 0;
+            isActive = false;
+
+            LocalPlayer me = StyxWoW.Me;
+            ulong expectedGuid = Guid;
+            uint expectedEntry = Entry;
+            if (me == null || expectedGuid == 0 || expectedEntry == 0 || !IsValid ||
+                me.Inventory == null || me.Inventory.Backpack == null)
+                return false;
+
+            ulong[] backpack = me.Inventory.Backpack.ItemGuids;
+            var bags = new ulong[11][];
+            for (uint index = 0; index <= 10U; index++)
+            {
+                WoWContainer bag = me.GetBagAtIndex(index);
+                bags[index] = bag != null ? bag.ItemGuids : Array.Empty<ulong>();
+            }
+
+            int luaBag, luaSlot;
+            if (!TryResolveContainerLocation(
+                    expectedGuid, backpack, bags, out luaBag, out luaSlot))
+                return false;
+
+            if (!IsContainerLocationCurrent(
+                    me, luaBag, luaSlot, expectedGuid))
+                return false;
+
+            string script = BuildValidatedContainerQuestInfoLua(
+                luaBag, luaSlot, expectedEntry);
+            try
+            {
+                List<string> values = Lua.GetReturnValues(script);
+                if (values == null || values.Count < 4 ||
+                    !Lua.ParseLuaValue<bool>(values[0]))
+                    return false;
+
+                isQuestItem = Lua.ParseLuaValue<bool>(values[1]);
+                questId = Lua.ParseLuaValue<int>(values[2]);
+                isActive = Lua.ParseLuaValue<bool>(values[3]);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Logging.WriteDebug(
+                    "GetContainerItemQuestInfo refused {0} ({1}) after slot validation: {2}",
+                    Name, expectedEntry, ex.Message);
+                return false;
+            }
         }
 
         private static bool UseItem(uint itemPtr, ulong targetGuid, bool forceUse)
