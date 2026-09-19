@@ -1,13 +1,13 @@
 @GitHub
 
-Continue `jeofwong/CopilotBuddy-private`, draft PR51 branch `audit/next-55-equipment-observation-20260917`, from W73. Reconcile live refs, then read `AUDIT_RESUME.md`, `docs/audit/2026-09-19/W73_CHECKPOINT.md`, `W73_EVIDENCE.json` and governing 3.3.5/core/provenance files.
+Continue `jeofwong/CopilotBuddy-private`, draft PR51 branch `audit/next-55-equipment-observation-20260917`, from W74. Reconcile live refs, then read `AUDIT_RESUME.md`, `docs/audit/2026-09-19/W74_CHECKPOINT.md`, `W74_EVIDENCE.json` and the governing original3.3.5/core/provenance files.
 
-Verified head **3c76cddb12dbaef94ae7e6f121bb2678387f3471**, tree **154ce386ab94df0065b27a87c66c1416caa01847**. Integrated **35432153183/art10580649556** passes17/17; host **35432153030/art10580249866** is0 errors/3342 warnings; container slot/pickup group16/16.
+Verified tested head **67411dbbd765a6d781809b7c18d4ca8e1a20d24a**, tree **2878b68b99bacf93079f48c1a99efacff803aa61**. Integrated **35435502277/art10582149126** passes17/17; host **35435502301/art10581398494** passes; DeleteItems12/12 assertions0 unexpected0.
 
-Retain `TryPickUp`: empty-cursor GetCursorInfo gate, GUID slot resolution/revalidation, expected-entry Lua check, PickupContainerItem, CursorHasItem acknowledgement, no ClearCursor. Do not recreate or broaden it into multi-step transaction ownership.
+Retain W73 + post-W73 single-item pickup: GUID slot resolution/revalidation, empty cursor, expected entry before PickupContainerItem, exact expected cursor item acknowledgement afterward, no ClearCursor. Retain W74 DeleteItems: tick-owned exact GUID/entry pending transaction, TryPickUp success gate, exact DELETE_ITEM/DELETE_GOOD_ITEM handling, DELETE_ITEM_CONFIRM_STRING for quality3+, cursor-release + physical GUID disappearance acknowledgement, bounded timeout, fail closed without stealing cursor.
 
-First next slice: standalone `runtime-snapshot/Quest Behaviors/DeleteItems.cs`, test first with an actual compiled behavior/control boundary. It currently mutates only in OnStart, calls item.PickUp + DeleteCursorItem for every requested ID, then marks done. Original3.3.5 DELETE_ITEM_CONFIRM opens DELETE_ITEM below quality3 or DELETE_GOOD_ITEM at quality3+; both need a second owned delete action and DELETE_GOOD_ITEM requires DELETE_ITEM_CONFIRM_STRING. StaticPopup_FindVisible exists. Require safe pickup, exact popup ownership, actual item disappearance acknowledgement, bounded pending/retry and no completion on invocation alone.
+First next slice: `runtime-snapshot/Plugins/MrItemRemover2` destructive deletion only, test first. Current source has multiple ClearCursor -> PickUp -> DeleteCursorItem paths, other direct delete paths, a global DELETE_ITEM_CONFIRM handler that clicks generic StaticPopup1Button1 merely when CurrentTarget exists, and IsQuestItem derives BagIndex + 1 and BagSlot + 1 independently before destructive eligibility.
 
-Do NOT repair MrItemRemover in the same commit. Its plugin attaches DELETE_ITEM_CONFIRM and generically clicks StaticPopup1Button1 when a current target exists; it needs its own regression. EquipItem/AutoEquip, AuctionHouse and ProfessionBuddy likewise remain separate.
+Require one pending delete owner, TryPickUp success, exact GUID/entry/cursor ownership, exact popup identity, exact high-quality edit-box confirmation, no generic popup click, no ClearCursor, bounded pending/disable reset, cursor release + actual GUID absence before completion, and stable container identity for quest-item protection. Do not refactor selling/opening/combining unless needed to preserve compatibility.
 
-Preserve all W72/W71 requirements and do not merge PR51 without user approval.
+Then handle EquipItem/AutoEquip, AuctionHouse and ProfessionBuddy cursor transactions separately. Preserve all W73/W72/W71 open requirements and do not merge PR51 without explicit user approval.
