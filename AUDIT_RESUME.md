@@ -1,33 +1,28 @@
-# Resume at W74 — owned DeleteItems cursor/confirmation lifecycle verified
+# Resume at W75 — owned MrItemRemover deletion verified
 
 Repo `jeofwong/CopilotBuddy-private`, draft PR51, branch `audit/next-55-equipment-observation-20260917`. Reconcile live refs first.
 
-Verified code/test head **67411dbbd765a6d781809b7c18d4ca8e1a20d24a**, tree **2878b68b99bacf93079f48c1a99efacff803aa61**. W74 documentation is newer than the tested code head.
+Verified code/test head **4e7c7699d577bbc6922bdbc12adea30e17c12450**, tree **ffd735430f64cdfdf91af3ce3d1d41d2f53f94db**. W75 documentation is newer than the tested code head.
 
-Read `docs/audit/2026-09-19/W74_CHECKPOINT.md` and `W74_EVIDENCE.json`, then W73/W72 and the original-client/core/provenance policies.
+Read `docs/audit/2026-09-19/W75_CHECKPOINT.md` and `W75_EVIDENCE.json`, then W74/W73 and the governing original3.3.5/core/provenance files.
 
 Exact green at tested head:
-- integrated **35435502277 / art10582149126** — 17/17
-- host **35435502301 / art10581398494** — success
-- DeleteItems lifecycle **12/12**, assertions0, unexpected0
+- integrated **35436934243 / art10582366699** — 17/17
+- host **35436934248 / art10582840978** — success
+- container slot identity **20/20**, assertions0, unexpected0
+- MrItemRemover delete **14/14**, assertions0, unexpected0
 
-Retain the post-W73 pickup strengthening at **fb746ecd**: successful `TryPickUp()` must identify the expected cursor item entry, not merely a non-empty cursor.
+Retain W74 DeleteItems and W73 single-item pickup contracts. New W75 production:
+- **7cb5dcbc** adds validated GUID/slot/entry `GetContainerItemQuestInfo` preserving original 3.3.5 `isQuestItem, questId, isActive`,
+- **6335967d** adds one owned MrItemRemover delete transaction, exact cursor entry, exact delete popup identities, high-quality confirmation, absence acknowledgement, timeout and no ClearCursor,
+- **4e7c7699** services pending delete state from Pulse and resets managed ownership on enable/disable without stealing the cursor.
 
-Retain W74 DeleteItems production **153128f7**:
-- mutation moved out of OnStart into a tick-owned lifecycle,
-- exact `TryPickUp()` success gate,
-- no `ClearCursor()`,
-- exact pending GUID + entry ownership,
-- exact `DELETE_ITEM` / `DELETE_GOOD_ITEM` popup identity,
-- `DELETE_ITEM_CONFIRM_STRING` for high-quality delete,
-- cursor release plus GUID disappearance acknowledgement,
-- bounded refusal/confirmation lifetime,
-- fail-closed bot stop on unresolved destructive ambiguity.
+Clean W75 behavioral red was **f0b2cba9**, integrated **35436213745/art10582725289**: MrItemRemover2/14,12 intended assertions,0unexpected; plugin compiled. Host **35436213791** was green.
 
-Clean behavioral red was **fd7d6f20**, integrated **35435022827/art10581607785**: DeleteItems2/12,10 intended assertions,0unexpected; real behavior compiled. Production then reached9/12; final test-only helper-declaration anchor **67411dbb** made the same assertions inspect the intended helper bodies and all12 pass.
+NEXT: `runtime-snapshot/Quest Behaviors/EquipItem.cs` + `runtime-snapshot/Plugins/AutoEquip2/AutoEquip.cs`, test first and scoped to equip cursor ownership. Current risks: fire-and-forget completion, independent BagIndex/BagSlot reads, AutoEquip ClearCursor, generic StaticPopup1Button1, and no exact item/cursor/equipment-slot acknowledgement. Preserve ammo/scoring/gear-selection behavior; do not fold AuctionHouse or ProfessionBuddy into this slice.
 
-NEXT: `runtime-snapshot/Plugins/MrItemRemover2` destructive deletion only, test first. Current risks: generic DELETE_ITEM_CONFIRM handler clicks StaticPopup1Button1 based on CurrentTarget, multiple ClearCursor/PickUp/DeleteCursorItem paths, other unguarded deletes, and IsQuestItem independently derives BagIndex+1/BagSlot+1 before destructive eligibility. One pending owner, exact popup/item identity, bounded lifecycle, actual absence acknowledgement, and stable quest-item slot identity are required.
+After EquipItem/AutoEquip, review AuctionHouse and ProfessionBuddy cursor transactions separately.
 
-Do not fold selling/opening/combining into the first delete repair unless compatibility requires it. After MrItemRemover, continue EquipItem/AutoEquip, AuctionHouse and ProfessionBuddy cursor transactions separately.
+Retain W71-W75 open requirements: prerequisite provenance/core differences, positive ExclusiveGroup repeatable/cooldown semantics, class/skill/reputation/breadcrumb planning inputs, buffs, gear/loadout/caps, addon terrain, underwater, GatherBuddy, native LOS/ABI, Escort/event chains, same-entry ABA/cross-owner cursor coexistence and supervised original-client acceptance.
 
-This remains offline/source verification; supervised original-client deletion, same-entry ABA and cross-plugin coexistence remain open. Do not merge PR51 without explicit approval. Use exact SHA/run IDs and bounded reads for connector stalls.
+Do not merge PR51 without explicit approval. Use exact SHA/run IDs and bounded reads for connector stalls.
