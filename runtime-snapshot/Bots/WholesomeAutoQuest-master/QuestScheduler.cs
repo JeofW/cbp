@@ -24,6 +24,11 @@ namespace WholesomeAQ
         public bool IsCompleted { get; init; }
         public bool IsFailed { get; init; }
         public IReadOnlyList<int> ObjectiveCounts { get; init; } = Array.Empty<int>();
+        // Null retains the public materializer's legacy direct-input contract.
+        // The live producer always supplies both arrays, including empty evidence;
+        // its raw counters must never fall through to dataset-index completion.
+        public IReadOnlyList<int> NormalObjectiveIds { get; init; }
+        public IReadOnlyList<int> NormalObjectiveRequiredCounts { get; init; }
     }
 
     public sealed class QuestSchedulerSnapshot
@@ -64,6 +69,7 @@ namespace WholesomeAQ
             internal LocalPlayer Player;
             internal QuestLog Log;
             internal QuestLogSnapshot Observation;
+            internal IReadOnlyList<QuestSchedulerAcceptedQuest> Accepted;
             internal object OuterProfile, Profile;
             internal string Path;
             internal QuestScheduleResult Schedule;
@@ -91,7 +97,7 @@ namespace WholesomeAQ
             try
             {
                 current = HasPublicationOwner(work)
-                    && work.Log.IsSnapshotCurrent(work.Observation)
+                    && AreNormalObjectivesCurrent(work.Log, work.Observation, work.Accepted)
                     && HasPublicationOwner(work);
             }
             catch (Exception error) when (error is not ThreadInterruptedException && error is not OperationCanceledException)
@@ -199,7 +205,9 @@ namespace WholesomeAQ
                     QuestId = quest.Id,
                     IsCompleted = quest.IsCompleted,
                     IsFailed = observation.FailedQuestIds.Contains(quest.Id),
-                    ObjectiveCounts = ReadObjectiveCounts(quest)
+                    ObjectiveCounts = ReadObjectiveCounts(quest),
+                    NormalObjectiveIds = quest.NormalObjectiveIDs?.ToArray() ?? Array.Empty<int>(),
+                    NormalObjectiveRequiredCounts = quest.NormalObjectiveRequiredCounts?.ToArray() ?? Array.Empty<int>()
                 })
                 .ToArray();
             QuestRecoveryContext context = QuestRecoveryRuntime.Capture(
@@ -231,7 +239,8 @@ namespace WholesomeAQ
                 bool applied = false;
                 tryApplyPublication(() =>
                 {
-                    bool current = snapshot.HasCompleteQuestLog && questLog.IsSnapshotCurrent(observation);
+                    bool current = snapshot.HasCompleteQuestLog &&
+                        AreNormalObjectivesCurrent(questLog, observation, accepted);
                     tryApplyPublication(() =>
                     {
                         if (!current)
@@ -312,7 +321,7 @@ namespace WholesomeAQ
                     {
                         var work = new PublishedWork
                         {
-                            Player = me, Log = questLog, Observation = observation,
+                            Player = me, Log = questLog, Observation = observation, Accepted = accepted,
                             OuterProfile = Styx.Logic.Profiles.ProfileManager.CurrentOuterProfile,
                             Profile = Styx.Logic.Profiles.ProfileManager.CurrentProfile,
                             Path = path, Schedule = candidate, LeaseIsCurrent = isPublicationLeaseCurrent
@@ -491,7 +500,7 @@ namespace WholesomeAQ
                         correctionAncestors.Contains(acceptedQuest.QuestId)
                             ? QuestWorkStage.AncestorCorrection
                             : QuestWorkStage.Objective,
-                        acceptedQuest.ObjectiveCounts,
+                        acceptedQuest,
                         db, snapshot, evaluate, candidates, candidatePlans, exclusions, scanThreshold,
                         assessNavigation, reportDataFailure, strategyPack);
                 }
@@ -756,7 +765,7 @@ namespace WholesomeAQ
         private static void AddObjectiveWork(
             QuestEntry quest,
             QuestWorkStage workStage,
-            IReadOnlyList<int> objectiveCounts,
+            QuestSchedulerAcceptedQuest acceptedQuest,
             QuestDatabase db,
             QuestSchedulerSnapshot snapshot,
             Func<QuestRecoveryKey, QuestRecoveryDecision> evaluate,
@@ -802,7 +811,7 @@ namespace WholesomeAQ
                         (objective.Type == ObjectiveType.CollectItem ||
                          objective.Type == ObjectiveType.CollectFromGameObject) &&
                         IsObjectiveComplete(objective, null, snapshot.CarriedItemCounts)
-                    : IsObjectiveComplete(objective, objectiveCounts, snapshot.CarriedItemCounts);
+                    : IsObjectiveComplete(objective, acceptedQuest, snapshot.CarriedItemCounts);
                 if (complete)
                     continue;
 
@@ -1443,7 +1452,7 @@ namespace WholesomeAQ
 
         private static bool IsObjectiveComplete(
             QuestObjective objective,
-            IReadOnlyList<int> objectiveCounts,
+            QuestSchedulerAcceptedQuest acceptedQuest,
             IReadOnlyDictionary<int, long> carriedItemCounts)
         {
             // Match CollectItemObjective's completion rule for every source of the item.
@@ -1452,6 +1461,36 @@ namespace WholesomeAQ
                 (objective.Type == ObjectiveType.CollectItem || objective.Type == ObjectiveType.CollectFromGameObject))
                 return objective.CollectCount > 0 &&
                     carriedItemCounts.TryGetValue(objective.ItemId, out long count) && count >= objective.CollectCount;
+            if (acceptedQuest == null)
+                return false;
+            IReadOnlyList<int> objectiveCounts = acceptedQuest.ObjectiveCounts;
+            IReadOnlyList<int> ids = acceptedQuest.NormalObjectiveIds;
+            IReadOnlyList<int> requirements = acceptedQuest.NormalObjectiveRequiredCounts;
+            if (ids != null || requirements != null)
+            {
+                // Only an unambiguous creature credit with the same required count
+                // can suppress this ordinary kill row. A dataset index, collection
+                // item or same-numbered GameObject is not a normal creature slot.
+                if (objective.Type != ObjectiveType.KillMob || objective.MobId <= 0 ||
+                    objective.KillCount <= 0 || ids == null || requirements == null ||
+                    ids.Count != 4 || requirements.Count != 4 || objectiveCounts == null ||
+                    objectiveCounts.Count != 4)
+                    return false;
+                int matchedSlot = -1;
+                for (int slot = 0; slot < 4; slot++)
+                {
+                    if (ids[slot] != objective.MobId)
+                        continue;
+                    if (matchedSlot >= 0)
+                        return false;
+                    matchedSlot = slot;
+                }
+                return matchedSlot >= 0 && requirements[matchedSlot] == objective.KillCount &&
+                    objectiveCounts[matchedSlot] >= objective.KillCount;
+            }
+
+            // Compatibility for explicitly supplied legacy materializer snapshots.
+            // ScanAndRefreshOwned always supplies metadata and cannot enter this path.
             if (objectiveCounts == null || objective.Index < 0 || objective.Index >= objectiveCounts.Count)
                 return false;
             int required = objective.Type == ObjectiveType.KillMob
@@ -1613,12 +1652,51 @@ namespace WholesomeAQ
             return 0;
         }
 
+        private static bool AreNormalObjectivesCurrent(
+            QuestLog log, QuestLogSnapshot observation,
+            IReadOnlyList<QuestSchedulerAcceptedQuest> accepted)
+        {
+            try
+            {
+                var memory = ObjectManager.Wow;
+                if (memory == null || accepted == null || !log.IsSnapshotCurrent(observation))
+                    return false;
+                // Old PlayerQuest handles retain cached metadata. Rehydrate through
+                // the existing cache reader with fresh memory at each publication
+                // boundary, then recheck raw/player ownership after those reads.
+                using (memory.TemporaryCacheState(false))
+                {
+                    foreach (QuestSchedulerAcceptedQuest captured in accepted)
+                    {
+                        Quest current = Quest.FromId(captured.QuestId);
+                        if (current == null || current.Id != captured.QuestId ||
+                            captured.NormalObjectiveIds == null || captured.NormalObjectiveRequiredCounts == null ||
+                            current.NormalObjectiveIDs == null || current.NormalObjectiveRequiredCounts == null ||
+                            !captured.NormalObjectiveIds.SequenceEqual(current.NormalObjectiveIDs) ||
+                            !captured.NormalObjectiveRequiredCounts.SequenceEqual(current.NormalObjectiveRequiredCounts))
+                            return false;
+                    }
+                    return ReferenceEquals(memory, ObjectManager.Wow) && log.IsSnapshotCurrent(observation);
+                }
+            }
+            catch (Exception error) when (error is not ThreadInterruptedException && error is not OperationCanceledException)
+            {
+                return false;
+            }
+        }
+
         private static IReadOnlyList<int> ReadObjectiveCounts(PlayerQuest quest)
         {
             try
             {
-                if (quest.GetData(out QuestDescriptorData data) && data.ObjectivesDone != null)
-                    return data.ObjectivesDone.Select(value => (int)value).ToArray();
+                var memory = ObjectManager.Wow;
+                if (memory == null)
+                    return Array.Empty<int>();
+                using (memory.TemporaryCacheState(false))
+                {
+                    if (quest.GetData(out QuestDescriptorData data) && data.Id == quest.Id && data.ObjectivesDone != null)
+                        return data.ObjectivesDone.Select(value => (int)value).ToArray();
+                }
             }
             catch (Exception ex)
             {
