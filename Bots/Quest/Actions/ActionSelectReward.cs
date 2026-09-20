@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using Styx;
 using Styx.Helpers;
 using Styx.Logic.Inventory;
 using Styx.Logic.Inventory.Frames.Quest;
