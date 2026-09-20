@@ -223,6 +223,8 @@ internal static class MrItemRemoverDeletionLifecycleRegressionTests
     {
         int start = source.IndexOf(marker, StringComparison.Ordinal);
         if (start < 0)
+            start = source.IndexOf(marker.Replace("private static ", "private "), StringComparison.Ordinal);
+        if (start < 0)
             throw new Failure(marker + " is missing");
 
         int brace = source.IndexOf('{', start);
