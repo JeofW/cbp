@@ -112,9 +112,18 @@ internal static class QuestStrategyConstructorDispatchRegressionTests
         Check((string?)element.Attribute("File") == kind, "scheduler emitted the wrong behavior name");
 
         // File and every argument are the unmodified emitted XML attributes.
-        var node = (CodeNode)CodeNode.FromXml(element);
-        Check(node.Path == kind && !node.Arguments.ContainsKey("File"), "actual CodeNode did not preserve the emitted contract");
-        Assembly? assembly = node.AssemblyGetter();
+        CodeNode node;
+        Assembly? assembly;
+        Action<LogLevel, string> recordCompiler = (level, message) =>
+            Console.WriteLine("CONSTRUCTOR_COMPILER_LOG: " + message);
+        Logging.OnMessageLogged += recordCompiler;
+        try
+        {
+            node = (CodeNode)CodeNode.FromXml(element);
+            Check(node.Path == kind && !node.Arguments.ContainsKey("File"), "actual CodeNode did not preserve the emitted contract");
+            assembly = node.AssemblyGetter();
+        }
+        finally { Logging.OnMessageLogged -= recordCompiler; }
         Check(assembly != null, "actual QuestBehaviorHelper could not compile the tracked behavior; inspect its compiler diagnostics");
         MethodInfo factory = typeof(ForcedCodeBehavior).GetMethod("CreateCustomBehaviorInstance", Hidden)!;
         CustomForcedBehavior? owner = null;
