@@ -112,7 +112,8 @@ public static class GossipLifetimeCases
     public static string MenuText=null!;
     public static string[] Options=null!;
     public static object?[] Available=null!,Active=null!;
-    public static bool SnapshotKnown,ThrowOnSnapshot;
+    public static bool SnapshotKnown,ThrowOnSnapshot,StringOnlyBridge;
+    public static string? CaptureFault;
     public static ulong ClientPlayer;
     public static readonly Dictionary<string,string> GeneratedLua=new();
     public static int Selections,Closes,Interactions;
@@ -182,6 +183,18 @@ public static class GossipLifetimeCases
             Check(Selections==1,"non-ASCII or quoted menu could not be selected");});
         Add("unchanged quoted unicode multiline menu remains owned for cleanup",()=>{
             MenuText="Quoted ' text \\ and \n新しい会話";Open();Invoke("ResetForRetry");Check(Closes==1,"quoted menu cleanup was lost");});
+        Add("current NPC predicate survives the host string-only Lua return bridge",()=>{
+            Open(false);StringOnlyBridge=true;Tick();Check(Selections==1,"boolean NPC observation was lost by the string-only return bridge");});
+        Add("foreign NPC predicate stays rejected through the string-only bridge",()=>{
+            Open(false);StringOnlyBridge=true;CurrentNpc=3;Tick();Check(Selections==0&&Closes==0,"foreign NPC passed transport check");});
+        Add("a menu larger than one native string read remains selectable",()=>{
+            MenuText=new string('q',1200);Open(false);Tick();Check(Selections==1,"long menu was truncated or rejected instead of completely observed");});
+        foreach(string fault in new[]{"missing-chunk","truncated-chunk","wrong-length"})
+        {
+            string f=fault;
+            Add("incomplete menu transport "+f+" is not mutation authority",()=>{
+                Open(false);CaptureFault=f;Tick();Check(Selections==0&&Closes==0,"incomplete menu transport caused a mutation");CheckNoSubmission();});
+        }
         int pass=0,assertions=0,unexpected=0;
         foreach(var test in tests)
         {
@@ -207,7 +220,7 @@ public static class GossipLifetimeCases
         if(((Styx.Logic.Questing.CustomForcedBehavior)owner).IsAttributeProblem)throw new InvalidOperationException("Actual constructor rejected controlled arguments");
         kind.GetProperty("Location",Hidden)!.SetValue(owner,player.Location);
         Selections=Closes=Interactions=0;OnMenu=BeforeClientRequest=null;CurrentNpc=2;Frame.IsVisible=false;
-        ClientPlayer=player.Guid;SnapshotKnown=true;ThrowOnSnapshot=false;
+        ClientPlayer=player.Guid;SnapshotKnown=true;ThrowOnSnapshot=false;StringOnlyBridge=false;CaptureFault=null;
         MenuText="Source-bound interaction";Options=new[]{"Proceed","gossip","Leave","gossip"};
         Available=new object?[]{"Available quest",10,false,false,false};Active=new object?[]{"Active quest",10,false,false};
         Invoke("OnStart");
@@ -269,6 +282,24 @@ public static class GossipLifetimeCases
 {
     public static class Lua
     {
+        public static List<string> GetReturnValues(string script)
+        {
+            foreach(string api in new[]{"GetGossipText()","GetGossipOptions()","GetGossipAvailableQuests()","GetGossipActiveQuests()"})
+                if(!script.Contains(api,StringComparison.Ordinal))throw new InvalidOperationException("Incomplete original-client menu observation: "+api);
+            GossipLifetimeCases.Record("capture",script);
+            if(GossipLifetimeCases.ThrowOnSnapshot)throw new InvalidOperationException("controlled unreadable menu");
+            if(!GossipLifetimeCases.SnapshotKnown||!GossipLifetimeCases.ClientContext(script))return new List<string>();
+            string value=GossipLifetimeCases.Signature();
+            // GreenMagic.Memory.ReadString reads 512 bytes even when given another
+            // length. Model complete short string returns, not an unlimited bridge.
+            // The production Lua splitter is separately exercised by an interpreter.
+            var values=new List<string>{value.Length.ToString(System.Globalization.CultureInfo.InvariantCulture)};
+            for(int i=0;i<value.Length;i+=480)values.Add(value.Substring(i,Math.Min(480,value.Length-i)));
+            if(GossipLifetimeCases.CaptureFault=="missing-chunk")values.RemoveAt(values.Count-1);
+            if(GossipLifetimeCases.CaptureFault=="truncated-chunk")values[1]=values[1].Substring(0,values[1].Length-1);
+            if(GossipLifetimeCases.CaptureFault=="wrong-length")values[0]=(value.Length+1).ToString(System.Globalization.CultureInfo.InvariantCulture);
+            return values;
+        }
         public static T GetReturnVal<T>(string script,uint index)
         {
             if(index!=0)throw new InvalidOperationException("Unexpected return index");
@@ -297,7 +328,15 @@ public static class GossipLifetimeCases
                 }
                 return (T)(object)own;
             }
-            if(script=="return UnitGUID('npc') == '0x0000000000000002'")return (T)(object)(GossipLifetimeCases.CurrentNpc==2);
+            const string oldNpc="return UnitGUID('npc') == '0x0000000000000002'";
+            const string numericNpc="return (UnitGUID('npc') == '0x0000000000000002') and 1 or 0";
+            if(script==oldNpc||script==numericNpc)
+            {
+                GossipLifetimeCases.Record("npc",script);
+                // lua_tolstring transports numbers/strings, not raw booleans.
+                bool observed=GossipLifetimeCases.CurrentNpc==2&&(!GossipLifetimeCases.StringOnlyBridge||script==numericNpc);
+                return (T)(object)observed;
+            }
             // An ownership-guarded close request remains a controlled boundary,
             // not evidence that this fixture executes a Lua interpreter.
             if(script.Contains("CloseGossip()",StringComparison.Ordinal)
