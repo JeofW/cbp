@@ -113,6 +113,8 @@ namespace Styx.Bot.Quest_Behaviors.GossipEvent
         private long _targetWaitStartedUtc = -1;
         private long _navigationStartedUtc = -1;
         private ulong _interactionGuid;
+        private LocalPlayer _ownerPlayer;
+        private ulong _ownerGuid;
 
         private LocalPlayer Me { get { return ObjectManager.Me; } }
 
@@ -165,8 +167,7 @@ namespace Styx.Bot.Quest_Behaviors.GossipEvent
                 || double.IsInfinity(collectionDistance)
                 || float.IsNaN(candidate.X) || float.IsNaN(candidate.Y) || float.IsNaN(candidate.Z)
                 || float.IsNaN(anchor.X) || float.IsNaN(anchor.Y) || float.IsNaN(anchor.Z)
-                || float.IsInfinity(candidate.X) || float.IsInfinity(candidate.Y) || float.IsInfinity(candidate.Z)
-                || float.IsInfinity(anchor.X) || float.IsInfinity(anchor.Y) || float.IsInfinity(anchor.Z))
+                || float.IsInfinity(candidate.X) || float.IsInfinity(candidate.Y) || float.IsInfinity(candidate.Z))
                 return false;
 
             return candidate.DistanceSqr(anchor) <= collectionDistance * collectionDistance;
@@ -250,46 +251,61 @@ namespace Styx.Bot.Quest_Behaviors.GossipEvent
                 .FirstOrDefault();
         }
 
+        private bool OwnsActor()
+        {
+            LocalPlayer player = Me;
+            return !_isDisposed && !_isBehaviorDone && _ownerGuid != 0 &&
+                player != null && ReferenceEquals(player, _ownerPlayer) &&
+                player.IsValid && player.IsAlive && player.Guid == _ownerGuid &&
+                StyxWoW.IsInGame;
+        }
+
+        private void TryCloseOwnedGossip()
+        {
+            if (!OwnsActor() || _interactionGuid == 0)
+                return;
+
+            string expected = string.Format(
+                System.Globalization.CultureInfo.InvariantCulture,
+                "0x{0:X16}", _interactionGuid);
+            try
+            {
+                // Frame and NPC checks belong to the same client request as close.
+                // No interaction identity means no permission to close visible UI.
+                Lua.GetReturnVal<bool>(
+                    "if GossipFrame and GossipFrame:IsShown() and UnitGUID('npc') == '" +
+                    expected + "' then CloseGossip(); return true end; return false", 0U);
+            }
+            catch { }
+        }
+
         private RunStatus DeferAuthoritativeAttempt(string reason)
         {
             LogMessage("warning",
                 "GossipEvent is deferring without authoritative {0} acknowledgement for quest {1}: {2}",
                 SuccessEvidence, QuestId, reason);
-            try
-            {
-                if (GossipFrame.Instance.IsVisible)
-                    GossipFrame.Instance.Close();
-            }
-            catch { }
+            TryCloseOwnedGossip();
             _isBehaviorDone = true;
             return RunStatus.Success;
         }
 
         private void ResetForRetry()
         {
+            TryCloseOwnedGossip();
             _lastSubmissionUtc = -1;
             _gossipOpenStartedUtc = -1;
             _navigationStartedUtc = -1;
             _interactionGuid = 0;
-            try
-            {
-                if (GossipFrame.Instance.IsVisible)
-                    GossipFrame.Instance.Close();
-            }
-            catch { }
         }
 
         private RunStatus TickBehavior()
         {
-            if (_isBehaviorDone || IsDone)
+            if (_isDisposed || _isBehaviorDone)
                 return RunStatus.Success;
-
-            LocalPlayer player = Me;
-            if (player == null || !player.IsValid || !StyxWoW.IsInGame)
-            {
-                TreeRoot.StatusText = "Waiting for valid player observation";
-                return RunStatus.Running;
-            }
+            if (!OwnsActor())
+                return DeferAuthoritativeAttempt("the captured player or behavior lifetime is no longer current");
+            if (IsDone)
+                return RunStatus.Success;
 
             if (HasAuthoritativeSuccess())
             {
@@ -357,6 +373,10 @@ namespace Styx.Bot.Quest_Behaviors.GossipEvent
 
                         if (IsDone)
                             return RunStatus.Success;
+                        if (!OwnsActor())
+                            return DeferAuthoritativeAttempt("the player changed while observing gossip options");
+                        if (!IsCurrentGossipNpc(_interactionGuid) || !OwnsActor())
+                            return DeferAuthoritativeAttempt("the interacted NPC changed while observing gossip options");
 
                         GossipFrame.Instance.SelectGossipOption(GossipOptionIndex);
                         _lastSubmissionUtc = UtcNowMilliseconds();
@@ -400,6 +420,8 @@ namespace Styx.Bot.Quest_Behaviors.GossipEvent
                             "the source-bound gossip-event location was not reached within the bounded navigation window");
 
                     TreeRoot.StatusText = "Moving to source-bound gossip-event location";
+                    if (!OwnsActor())
+                        return DeferAuthoritativeAttempt("the player changed before location movement");
                     MoveResult movement = Navigator.MoveTo(Location);
                     if (movement == MoveResult.Failed ||
                         movement == MoveResult.PathGenerationFailed)
@@ -440,6 +462,8 @@ namespace Styx.Bot.Quest_Behaviors.GossipEvent
                         "the exact source-bound gossip NPC was not reached within the bounded navigation window");
 
                 TreeRoot.StatusText = "Moving to source-bound gossip NPC";
+                if (!OwnsActor())
+                    return DeferAuthoritativeAttempt("the player changed before NPC movement");
                 MoveResult movement = Navigator.MoveTo(target.Location);
                 if (movement == MoveResult.Failed ||
                     movement == MoveResult.PathGenerationFailed)
@@ -450,15 +474,17 @@ namespace Styx.Bot.Quest_Behaviors.GossipEvent
 
             _navigationStartedUtc = -1;
 
+            if (!OwnsActor())
+                return DeferAuthoritativeAttempt("the player changed before interaction setup");
             if (Me.IsMoving)
             {
                 WoWMovement.MoveStop();
                 return RunStatus.Running;
             }
 
-            // Close a stale frame before establishing a new interaction lifetime.
+            // A pre-existing menu is not ours to dismiss or replace.
             if (GossipFrame.Instance.IsVisible)
-                GossipFrame.Instance.Close();
+                return DeferAuthoritativeAttempt("a pre-existing gossip menu belongs to another interaction");
 
             ulong guid = target.Guid;
             if (guid == 0 || !target.IsValid || !target.IsAlive ||
@@ -468,6 +494,8 @@ namespace Styx.Bot.Quest_Behaviors.GossipEvent
 
             if (IsDone)
                 return RunStatus.Success;
+            if (!OwnsActor())
+                return DeferAuthoritativeAttempt("the player changed before NPC interaction");
 
             target.Interact();
             Counter++;
@@ -486,7 +514,7 @@ namespace Styx.Bot.Quest_Behaviors.GossipEvent
         {
             get
             {
-                return _isBehaviorDone
+                return _isDisposed || _isBehaviorDone
                     || HasAuthoritativeSuccess()
                     || !UtilIsProgressRequirementsMet(
                         QuestId,
@@ -497,6 +525,10 @@ namespace Styx.Bot.Quest_Behaviors.GossipEvent
 
         public override void OnStart()
         {
+            if (_isDisposed)
+                return;
+            _ownerPlayer = Me;
+            _ownerGuid = _ownerPlayer != null ? _ownerPlayer.Guid : 0;
             OnStart_HandleAttributeProblem();
 
             Counter = 0;
@@ -522,6 +554,8 @@ namespace Styx.Bot.Quest_Behaviors.GossipEvent
         {
             if (!_isDisposed)
             {
+                // Reentrant callbacks cannot continue the old owner during cleanup.
+                _isDisposed = true;
                 try
                 {
                     TreeRoot.GoalText = string.Empty;
@@ -529,7 +563,6 @@ namespace Styx.Bot.Quest_Behaviors.GossipEvent
                 }
                 finally
                 {
-                    _isDisposed = true;
                     base.Dispose();
                 }
             }
