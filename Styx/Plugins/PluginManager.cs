@@ -496,16 +496,23 @@ namespace Styx.Plugins
         /// <returns>List of loaded plugins.</returns>
         public static List<HBPlugin> CompileAndLoadFrom(string path)
         {
-            var classCollection = new ClassCollection<HBPlugin>();
-            CompilerResults compilerResults;
-            classCollection.CompileAndLoadFrom(path, out compilerResults);
+            if (!Directory.Exists(path) && !File.Exists(path))
+                throw new FileNotFoundException("The specified path was not found.", path);
 
+            // Keep the existing source compiler, but do not let DllLoader turn
+            // failed constructors into an apparently successful partial/empty set.
+            var compiler = new Styx.Loaders.SourceCompiler(path);
+            CompilerResults compilerResults = compiler.Compile();
             if (compilerResults != null && compilerResults.Errors.HasErrors)
-            {
                 throw new CompilerErrorsException(Utilities.FormatCompilerErrors(compilerResults));
-            }
+            if (compilerResults == null)
+                return new List<HBPlugin>();
 
-            return classCollection;
+            Assembly assembly = compiler.CompiledAssembly;
+            if (assembly == null)
+                throw new InvalidOperationException("Plugin compilation did not produce an assembly.");
+            return InstantiatePluginTypes(assembly.GetTypes().Where(type =>
+                type.IsClass && !type.IsAbstract && typeof(HBPlugin).IsAssignableFrom(type)));
         }
     }
 }
