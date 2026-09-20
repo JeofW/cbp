@@ -167,7 +167,8 @@ namespace Styx.Bot.Quest_Behaviors.GossipEvent
                 || double.IsInfinity(collectionDistance)
                 || float.IsNaN(candidate.X) || float.IsNaN(candidate.Y) || float.IsNaN(candidate.Z)
                 || float.IsNaN(anchor.X) || float.IsNaN(anchor.Y) || float.IsNaN(anchor.Z)
-                || float.IsInfinity(candidate.X) || float.IsInfinity(candidate.Y) || float.IsInfinity(candidate.Z))
+                || float.IsInfinity(candidate.X) || float.IsInfinity(candidate.Y) || float.IsInfinity(candidate.Z)
+                || float.IsInfinity(anchor.X) || float.IsInfinity(anchor.Y) || float.IsInfinity(anchor.Z))
                 return false;
 
             return candidate.DistanceSqr(anchor) <= collectionDistance * collectionDistance;
