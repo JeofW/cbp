@@ -1,19 +1,60 @@
 @GitHub
 
-Continue `jeofwong/CopilotBuddy-private` (1367174964), draft PR51 on `audit/next-55-equipment-observation-20260917`, from W88. Reconcile direct refs first; do not recreate newer work from stale handoffs. Read AUDIT_RESUME.md, docs/audit/HANDOFF_POLICY.md, docs/audit/2026-09-20/W88_CHECKPOINT.md, W88_EVIDENCE.json, W87/W86 and W80's completed review/ledger, plus WOTLK_335A_RESEARCH_POLICY.md, TRINITYCORE_335_COMPATIBILITY.md, QUEST_DATA_PROVENANCE_335.md and ADDON_EVIDENCE_335.md under docs/audit/.
+Continue jeofwong/CopilotBuddy-private (1367174964), draft PR51 on
+audit/next-55-equipment-observation-20260917, from W89.
 
-Final tested revision f6ee23de269228270d0d12950b47a5a2b53535ef, treea3878575232f508c6561f4f7486bc3c7e44a48ec. Last production changee984fe15f37ab66bcf0bf45d11b58a8fc51fbba0; f6ee23de is the retained restart-fixture adapter, not another production repair. Integrated35507918903/art10604537448 passes17/17, gossip58/58 and objective restart37/37. Host35507918907/art10604851733 exits0 with3344 warnings/0 errors. Auxiliary recorded Lua57/57 ran in stockLua5.4 with controlled original APIs, not the original5.1/client. Documentation is newer than tested source.
+Reconcile direct refs first. Final tested source/last production commit:
+67cdec20d5ac7b7bc9ae64e9de633252f1ad248a
+tree 1b73cba2afaa5ddb9efe58964a3bc302f8f65827.
+This last production edit is only GossipEvent goal-text quoting/EOF;
+functional scheduler admission repair remains040a274d79707a33b1a28b46ac6eef3369ddf521.
+The documentation-only checkpoint descendant is not a new C# execution.
 
-Already complete, do not repeat: W80's140-commit review after18 September2026 21:58 Malaysia; W77-W87 named repairs/containments; W88 captured-menu comparison inside final selection/cleanup, bounded480-character transport and numeric1/0 NPC result. Preserve all actor/lifetime/NPC/quest-completion checks. Changed/unknown menus confer no mutation authority; cleanup cannot capture and borrow an unobserved current menu. No shared bridge/native offset or arbitrary option fallback was added.
+Read live AUDIT_RESUME.md, NEXT_CHAT_PROMPT.md, HANDOFF_POLICY.md,
+W89_CHECKPOINT/W89_EVIDENCE, retained W88/W87/W86/W80 evidence and
+all four original-client/core/provenance policies. Do not restart W80's
+completed140-commit review after18 September2026 21:58 Malaysia.
 
-Evidence history: test-only2dc0ed45 was19/52,33 assertions; strengthened03c255ff21/58,37 assertions,0unexpected before the repair. e984fe15 achieved58/58 gossip but its integrated run failed on an old restart-fixture missing GetReturnValues; do not conceal or call it aggregate green. f6ee23de adapts that controlled boundary, retaining37 original cases/assertions. Supplemental reference8cc504ca15ebf69d16e735b5ed5ade770915c40b/run35507944742/art10604921533 is21/58 with37 intended assertions,0unexpected and37/37 restart. Its153 normalized members are byte-identical to finalf6ee23de;1,835 source paths differ only in GossipEvent.cs. Never merge the intentionally failing `audit/next-88-gossip-unchanged-fixture-red-20260920` branch.
+Do not recreate f119fbe6/071d3d8b, scheduler040a274d, constructor/diagnostic/
+isolation3bf9c9a2/76673b22/716e7f6b, lifecycleae82b6de, exact-title test7f344c81,
+or title fix67cdec20. Original QuestStrategySchedulerRegressionTests.cs is
+unchanged. W89 reconciles work that arrived after the stale W88 pointers.
 
-Next priority is R03: trace actual CAST recipe admission from dataset/strategy binding through scheduler collection, generated XML and behavior dispatch. Keep dataset objective index, collection index and packed raw-counter slot distinct. Reproduce supported sparse/mixed-index cases and unsupported CAST cases through the actual path before a narrow repair; unsupported actions remain rejected, never converted to ordinary killing. Do not invent Gordunni/escort coordinates or protocol.
+Final Windows x86 integrated run35512279345/art10605223925:
+17/17, scheduler28/28 and constructor/lifecycle12/12,0 assertions/0 unexpected.
+Host run35512279263/art10606002826:exit0,3344 warnings/0 errors,compile only.
+Exact-source archives/hashes/results were inspected. All game_attached=false.
 
-R04 physical displaced/foreign cursor, same-slot popup and full lifecycle; R07 actual compiler dependencies/static-state reload/full refresh; and R06 original-client/native acceptance remain. W88 does not establish same-content close/reopen generation identity or native bridge concurrency. Retain W84/W86/W87's limited R05 observation/context/finite-scan scope, W87's two separate unchanged-fixture pairs, dense-pull containment, auction withdrawal and all prior provenance, prerequisites, addon/terrain, quest/buff/gear/navigation/native/live-acceptance requirements. Do not re-add the duplicate MIR scan harness removed atb065b5e0; preserve disclosed W77/W87 history.
+Keep separate evidence:071d-to040 scheduler12/28-to28/28 with154 identical
+normalized members/1836 inputs differing only in QuestScheduler.cs;766-to716
+compiler-fixture collision and child-process isolation;7f344c81-to67cdec20
+goal-text9/12-to12/12 with155 identical normalized members and
+1837 inputs differing only in GossipEvent.cs. No assertion weakening.
 
-Original WoW3.3.5a/build12340 only, TrinityCore3.3.5 primary/AzerothCore WotLK secondary. Scope Wholesome questing/navigation/Singular and related safety. No desktop mouse simulation, guessed offsets, AuctionHouse/ProfessionBuddy expansion or installed-file replacement. Obtain actual intended assertion-level red, keep tests unchanged through each production repair and inspect exact-source Windows integrated/host artifacts before claiming green.
+The generated XML now reaches actual CodeNode/runtime compiler/factory,
+ForcedCodeBehavior OnStart/OnTick and real branch ticks in six controlled
+missing-recipient cases. Packed counters cannot finish whole-quest work;
+raw-ready and fresh-wrapper-after-ready cases pass. This is NOT a matching
+recipient/native request, acknowledgment, full QuestBot or original-client test.
 
-Conditional merge authority is already given only after all blockers and final gates are genuinely cleared. Do not ask again or merge a partial state because CI is green. Reconcile direct refs, preserve backup, inspect exact merge preview and final evidence, then exact-head conditional merge. Direct master last checkedb2324913e2499ba30b239dd67224ca2c655c05cc, not the cached PR base. W88 entry backup is audit/backup-pr51-before-w88-20260920 at2d73392d43009dccc1a01c986fd77288e70c7fef. All writes require an explicit nonempty approved branch, expected parent/blob, reviewed content/message and force=false. No deployment follows from merge authorization.
+Next R03: source-proved dataset/collection/raw-counter mapping and matching
+recipient/request/acknowledgment integration beyond the covered managed wait.
+V1 supplies no verified raw mapping; leave ObjectiveProgress deferred rather
+than equate an index with a slot. Preserve CAST refusal and independent valid
+work. No invented recipe/threshold/offset/coordinate or behavior-property
+rewriting to make tests pass. Retain exact assertion-level red through repairs.
 
-Always update durable pointers and finish with both a copy-ready new-chat prompt and downloadable UTF-8 handoff containing exact published/tested refs, results/limits, retained repairs, blockers and next task. Do not claim independent review, original-client execution or full remediation from narrower offline tests.
+Preserve original WoW3.3.5a/build12340, TC3.3.5 primary/AC WotLK secondary,
+all W77-W88 fixes, W88 intermediate failure/adapter and matched reference,
+W87 separate pairs, backups/exclusions, R04/R07/R06 and all final gates.
+Never merge the intentionally red W88 reference or PR57 capability-test branch.
+No desktop mouse simulation, AuctionHouse/ProfessionBuddy expansion or
+installed-file replacement. No independent/live acceptance is claimed.
+
+Publishing worked; rediscover with bounded retries if needed, checking refs
+before repeating writes. Stay in this conversation, no Work/Codex switch.
+Every mutation needs an explicit approved nonempty branch and expected
+parent/blob, force=false. Conditional merge authority remains subject to ALL
+gates, direct refs, backup, exact merge preview and exact-head validation.
+Direct master last checkedb2324913e2499ba30b239dd67224ca2c655c05cc,not cached PR base.
+Finish with accurate durable pointers, copy-ready prompt and UTF-8 handoff.
