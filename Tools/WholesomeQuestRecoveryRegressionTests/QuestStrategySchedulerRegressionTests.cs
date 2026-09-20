@@ -119,6 +119,8 @@ internal static class QuestStrategySchedulerRegressionTests
             Check(refused, "mismatched dataset digest was accepted");
         }));
 
+        AddNormalCreditCases(tests);
+
         int passed = 0, assertions = 0, unexpected = 0;
         bool logging = Styx.Helpers.Logging.FileLogging;
         try
@@ -134,6 +136,86 @@ internal static class QuestStrategySchedulerRegressionTests
         finally { Styx.Helpers.Logging.FileLogging = logging; }
         Console.WriteLine($"Quest strategy scheduler scenarios: {passed}/{tests.Count}; assertions={assertions}; unexpected={unexpected}; actual loader/raw QuestLog/live scan/scheduler/XML; controlled external memory/navigation; no behavior dispatch or game attached.");
         if (assertions + unexpected != 0) throw new InvalidOperationException("Quest strategy scheduler regression");
+    }
+
+    private static void AddNormalCreditCases(List<(string Name, Action Test)> tests)
+    {
+        // Dataset row, raw normal slot and credit entry are configured independently.
+        // These are synthetic observations, not a new quest recipe or offset table.
+        var cases = new[]
+        {
+            ("matching incomplete credit retains ordinary work", 0, new[] {70001,70002,0,0}, new[] {1,1,0,0}, new ushort[] {0,1,0,0}, true),
+            ("matching complete credit suppresses ordinary work", 0, new[] {70001,70002,0,0}, new[] {1,1,0,0}, new ushort[] {1,0,0,0}, false),
+            ("unrelated completed slot cannot suppress reordered credit", 0, new[] {70002,70001,0,0}, new[] {1,1,0,0}, new ushort[] {1,0,0,0}, true),
+            ("reordered matching completion suppresses the dataset row", 0, new[] {70002,70001,0,0}, new[] {1,1,0,0}, new ushort[] {0,1,0,0}, false),
+            ("sparse dataset row uses proven raw slot three", 17, new[] {0,0,0,70001}, new[] {0,0,0,1}, new ushort[] {0,0,0,1}, false),
+            ("dataset row three cannot borrow unrelated slot three", 3, new[] {70001,0,0,70002}, new[] {1,0,0,1}, new ushort[] {0,0,0,1}, true),
+            ("missing credit metadata is not completion", 0, new[] {0,0,0,0}, new[] {0,0,0,0}, new ushort[] {1,0,0,0}, true),
+            ("different credit entry is not completion", 0, new[] {70002,0,0,0}, new[] {1,0,0,0}, new ushort[] {1,0,0,0}, true),
+            ("same-numbered GameObject credit is not creature completion", 0, new[] {unchecked((int)(0x80000000U | 70001U)),0,0,0}, new[] {1,0,0,0}, new ushort[] {1,0,0,0}, true),
+            ("disagreeing required count is not completion", 0, new[] {70001,0,0,0}, new[] {2,0,0,0}, new ushort[] {9,0,0,0}, true),
+            ("zero required count is not completion", 0, new[] {70001,0,0,0}, new[] {0,0,0,0}, new ushort[] {9,0,0,0}, true),
+            ("duplicate credit entries are ambiguous", 0, new[] {70001,70001,0,0}, new[] {1,1,0,0}, new ushort[] {1,0,0,0}, true),
+            ("required count cannot disambiguate duplicate entries", 0, new[] {70001,70001,0,0}, new[] {1,2,0,0}, new ushort[] {1,0,0,0}, true)
+        };
+        foreach (var row in cases)
+        {
+            var test = row;
+            tests.Add(("ordinary credit: " + test.Item1, () =>
+            {
+                using var c = new Case(null, test.Item2, castCredit: false);
+                c.NormalCredit(test.Item3, test.Item4, test.Item5);
+                c.Scan();
+                if (test.Item6) c.OrdinaryOnly(test.Item2);
+                else c.Deferred();
+            }));
+        }
+        tests.Add(("ordinary credit: matched completion leaves independent collection", () =>
+        {
+            using var c = new Case(null, 0, castCredit: false, independent: true);
+            c.NormalCredit(new[] {70002,70001,0,0}, new[] {1,1,0,0}, new ushort[] {0,1,0,0});
+            c.Scan(); c.IndependentOnly();
+        }));
+        tests.Add(("ordinary credit: collection item identity cannot borrow normal credit", () =>
+        {
+            using var c = new Case(null, 0, castCredit: false, collection: true);
+            c.NormalCredit(new[] {22222,0,0,0}, new[] {3,0,0,0}, new ushort[] {9,0,0,0});
+            c.Scan();
+            Check(c.Scheduler.LastSchedule.Plan.Count == 1 && c.Scheduler.LastSchedule.Plan[0].ObjectiveIndex == 0,
+                "normal credit suppressed independent carried-item work");
+            Check(c.Xml().Descendants("Objective").Any(e => (string?)e.Attribute("Type") == "CollectItem" &&
+                (string?)e.Attribute("ItemId") == "22222"), "collection did not retain its own item identity");
+        }));
+        tests.Add(("ordinary credit: metadata change during navigation prevents publication", () =>
+        {
+            using var c = new Case(null, 0, castCredit: false);
+            c.NormalCredit(new[] {70001,0,0,0}, new[] {1,0,0,0}, new ushort[] {0,0,0,0});
+            int reached = 0;
+            c.BeforeNavigation(() => { reached++; c.NormalMetadata(new[] {70002,0,0,0}, new[] {1,0,0,0}); });
+            c.Scan();
+            Check(reached == 1, "ordinary work did not reach controlled navigation");
+            c.Deferred();
+        }));
+        tests.Add(("ordinary credit: required count change before XML prevents publication", () =>
+        {
+            using var c = new Case(null, 0, castCredit: false);
+            c.NormalCredit(new[] {70001,0,0,0}, new[] {1,0,0,0}, new ushort[] {0,0,0,0});
+            int reached = 0;
+            c.BeforeProfileArguments(() => { reached++; c.NormalMetadata(new[] {70001,0,0,0}, new[] {2,0,0,0}); });
+            c.Scan();
+            Check(reached == 1, "ordinary work did not reach actual XML argument observation");
+            c.Deferred();
+        }));
+        tests.Add(("ordinary credit: raw change during navigation still prevents publication", () =>
+        {
+            using var c = new Case(null, 0, castCredit: false);
+            c.NormalCredit(new[] {70001,0,0,0}, new[] {1,0,0,0}, new ushort[] {0,0,0,0});
+            int reached = 0;
+            c.BeforeNavigation(() => { reached++; c.Write(c.Descriptor + 640U, 1U); });
+            c.Scan();
+            Check(reached == 1, "ordinary work did not reach controlled navigation");
+            c.Deferred();
+        }));
     }
 
     private sealed class Case : IDisposable
@@ -215,6 +297,52 @@ internal static class QuestStrategySchedulerRegressionTests
                 Scheduler = new QuestScheduler(loader, new ProfileBuilder(output), new WholesomeAQSettings());
             }
             catch { ((IDisposable)fixture).Dispose(); throw; }
+        }
+
+        internal void NormalCredit(int[] ids, int[] required, ushort[] counts)
+        {
+            Check(counts.Length == 4, "controlled normal counts must have four raw slots");
+            NormalMetadata(ids, required);
+            Write(Descriptor + 640U, (uint)counts[0] | ((uint)counts[1] << 16));
+            Write(Descriptor + 644U, (uint)counts[2] | ((uint)counts[3] << 16));
+            var observation = Player.QuestLog.CaptureSnapshot();
+            Check(observation.IsComplete && observation.Quests.Count == 1, "actual quest observation was incomplete");
+            var quest = observation.Quests.Single();
+            Check(quest.NormalObjectiveIDs.SequenceEqual(ids) && quest.NormalObjectiveRequiredCounts.SequenceEqual(required),
+                "configured credit metadata did not reach the actual PlayerQuest reader");
+            Check(quest.GetData(out QuestDescriptorData data) && data.ObjectivesDone.SequenceEqual(counts) && !quest.IsCompleted,
+                "configured packed counts did not reach the actual reader as an incomplete quest");
+        }
+        internal void NormalMetadata(int[] ids, int[] required)
+        {
+            Check(ids.Length == 4 && required.Length == 4, "controlled metadata must retain four raw slots");
+            var block = Styx.StyxWoW.Cache[Styx.WoWInternals.WoWCache.CacheDb.Quest].GetInfoBlockById(867);
+            Check(block != null && block.Address != 0, "retained allocated quest cache entry is missing");
+            uint first = block!.Address;
+            uint last = checked(first + (uint)Marshal.SizeOf<Styx.WoWInternals.WoWCache.WoWCache.QuestCacheEntry>());
+            int idOffset = Marshal.OffsetOf<Styx.WoWInternals.WoWCache.WoWCache.QuestCacheEntry>("ObjectiveId").ToInt32();
+            int requiredOffset = Marshal.OffsetOf<Styx.WoWInternals.WoWCache.WoWCache.QuestCacheEntry>("ObjectiveRequiredCount").ToInt32();
+            for (int slot = 0; slot < 4; slot++)
+            {
+                Marshal.WriteInt32(new IntPtr(unchecked((int)first)), idOffset + slot * sizeof(int), ids[slot]);
+                Marshal.WriteInt32(new IntPtr(unchecked((int)first)), requiredOffset + slot * sizeof(int), required[slot]);
+            }
+            var cache = (ThreadLocal<Dictionary<IntPtr, byte[]>>)Get(fixture, "cache")!;
+            foreach (IntPtr key in cache.Value!.Keys.Where(k => unchecked((uint)k.ToInt32()) >= first &&
+                unchecked((uint)k.ToInt32()) < last).ToArray()) cache.Value.Remove(key);
+        }
+        internal void OrdinaryOnly(int index)
+        {
+            Check(Scheduler.LastSchedule.Plan.Count == 1 && Scheduler.LastSchedule.Plan[0].ObjectiveIndex == index,
+                "ordinary work was suppressed or its dataset identity changed; " + Scheduler.LastStatus);
+            Check(Xml().Descendants("Objective").Any(e => (string?)e.Attribute("Type") == "KillMob" &&
+                (string?)e.Attribute("MobId") == "70001") && !Xml().Descendants("CustomBehavior").Any(),
+                "ordinary XML lost the dataset creature or acquired a recipe");
+        }
+        internal void BeforeProfileArguments(Action action)
+        {
+            var field = Player.GetType().GetField("BeforeProfileArguments", Hidden)!;
+            field.SetValue(Player, (Action)(() => { field.SetValue(Player, null); action(); }));
         }
 
         internal void Write(uint address, uint value)
