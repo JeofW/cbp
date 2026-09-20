@@ -142,13 +142,11 @@ internal static class GossipEventStrategyRegressionTests
                 Throws<InvalidDataException>(()=>Build(s.Builder,s.Plan,s.Database,s.Pack),
                     "unrelated objective hotspot became authority for the gossip target");
             }),
-            ("Escort remains non-executable until its recipe carries start and completion semantics", () =>
+            ("Escort cannot fall back to ordinary work without an implemented executor", () =>
             {
                 var s=Scenario(QuestStrategyKind.Escort);
-                string legacy=s.Builder.BuildProfileXml(s.Plan,s.Database,"zone","player",20,null);
-                string wired=Build(s.Builder,s.Plan,s.Database,s.Pack);
-                Check(wired==legacy && !wired.Contains("File=\"Escort\"",StringComparison.Ordinal),
-                    "Escort became executable from the still-incomplete recipe schema");
+                Throws<InvalidDataException>(()=>Build(s.Builder,s.Plan,s.Database,s.Pack),
+                    "declared unimplemented Escort silently became an ordinary objective");
             })
         };
 
