@@ -286,7 +286,7 @@ namespace MrItemRemover2
 
         private static int TryConfirmPendingDelete()
         {
-            if (!HasPendingDelete)
+            if (!HasPendingDelete || !_pendingDeleteRequested)
                 return 0;
 
             try
