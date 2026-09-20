@@ -86,7 +86,7 @@ public enum WoWContext { Normal, Instances, Battlegrounds }
 public enum TalentSpec { RetributionPaladin, Other }
 public static class TalentManager { public static TalentSpec CurrentSpec; }
 public static class StyxWoW { public static object Me; }
-namespace Styx.Logic.Combat
+""" + "\nnamespace Styx.Logic.Combat\n" + """
 {
     public sealed class Spell { public double MaxRange; }
     public static class SpellManager
@@ -96,7 +96,7 @@ namespace Styx.Logic.Combat
         public static bool HasSpell(string name){return Learned;}
     }
 }
-namespace Singular.ClassSpecific.Paladin
+""" + "\nnamespace Singular.ClassSpecific.Paladin\n" + """
 {
     public static class Retribution
     {
