@@ -143,7 +143,7 @@ internal static class QuestStrategySchedulerRegressionTests
         private readonly DataLoader loader;
         internal readonly QuestScheduler Scheduler;
         internal uint Descriptor => (uint)Get(fixture, "descriptor")!;
-        private LocalPlayer Player => (LocalPlayer)Get(fixture, "Player")!;
+        private readonly LocalPlayer Player;
 
         internal Case(string? kind, int index, bool castCredit = true, bool progress = false,
             bool collection = false, bool rawDone = false, bool completed = false,
@@ -154,6 +154,10 @@ internal static class QuestStrategySchedulerRegressionTests
                 .GetNestedType("Fixture", BindingFlags.NonPublic)!, true)!;
             try
             {
+                // A new dataset fingerprint can legitimately retain recovery
+                // records. Give each scenario an independent character/store too.
+                Player = new ScenarioPlayer(((LocalPlayer)Get(fixture, "Player")!).BaseAddress);
+                Styx.WoWInternals.ObjectManager.Me = Player;
                 string root = (string)Get(fixture, "Directory")!;
                 output = Path.Combine(root, "strategy-profile.xml");
                 Write(Descriptor + 636U, completed ? (uint)WoWDescriptorQuestFlags.Completed : 0U);
@@ -256,6 +260,13 @@ internal static class QuestStrategySchedulerRegressionTests
                 && !Xml().Descendants("CustomBehavior").Any(), "independent collection XML was replaced by unsupported custom work");
         }
         public void Dispose() => ((IDisposable)fixture).Dispose();
+    }
+    private sealed class ScenarioPlayer : LocalPlayer
+    {
+        private readonly string scenarioName = "W89-Scheduler-" + Guid.NewGuid().ToString("N");
+        internal ScenarioPlayer(uint address) : base(address) { }
+        public override string Name => scenarioName;
+        public override Styx.Logic.Pathing.WoWPoint Location => new Styx.Logic.Pathing.WoWPoint(10, 10, 10);
     }
     private static object? Get(object value, string name) => value.GetType().GetField(name, Hidden)!.GetValue(value);
     private static void Check(bool condition, string message) { if (!condition) throw new Failure(message); }
