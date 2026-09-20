@@ -104,27 +104,27 @@ namespace WholesomeAQ
                     if (entry.Hotspots == null || entry.Hotspots.Count == 0)
                         continue;
 
-                    QuestStrategyRecipe strategy = FindUseItemOnStrategy(
+                    QuestStrategyRecipe strategy = FindStrategy(
                         strategyPack, entry.Quest.Id, entry.ObjectiveIndex);
                     if (strategy != null)
                     {
-                        XElement strategyGuard = BuildUseItemOnStrategyGuard(entry, strategy);
+                        XElement strategyGuard;
+                        switch (strategy.Kind)
+                        {
+                            case QuestStrategyKind.UseItemOn:
+                                strategyGuard = BuildUseItemOnStrategyGuard(entry, strategy);
+                                break;
+                            case QuestStrategyKind.GossipEvent:
+                                strategyGuard = BuildGossipEventStrategyGuard(entry, strategy);
+                                break;
+                            default:
+                                throw new InvalidDataException(
+                                    $"Quest strategy {entry.Quest.Id}/{entry.ObjectiveIndex} has no implemented executor for Kind {strategy.Kind}; ordinary objective fallback is not permitted.");
+                        }
                         if (strategyGuard == null)
                             throw new InvalidDataException(
                                 $"Quest strategy {entry.Quest.Id}/{entry.ObjectiveIndex} could not be materialized.");
                         questOrder.Add(strategyGuard);
-                        continue;
-                    }
-
-                    QuestStrategyRecipe gossip = FindGossipEventStrategy(
-                        strategyPack, entry.Quest.Id, entry.ObjectiveIndex);
-                    if (gossip != null)
-                    {
-                        XElement gossipGuard = BuildGossipEventStrategyGuard(entry, gossip);
-                        if (gossipGuard == null)
-                            throw new InvalidDataException(
-                                $"Gossip strategy {entry.Quest.Id}/{entry.ObjectiveIndex} could not be materialized.");
-                        questOrder.Add(gossipGuard);
                         continue;
                     }
 
@@ -166,7 +166,7 @@ namespace WholesomeAQ
                         new XAttribute("GiverType", ProfileRelationType(entry.Giver.GiverType)),
                         LocationAttributes(point))));
 
-        private static QuestStrategyRecipe FindUseItemOnStrategy(
+        private static QuestStrategyRecipe FindStrategy(
             QuestStrategyPack strategyPack,
             int questId,
             int objectiveIndex)
@@ -176,37 +176,16 @@ namespace WholesomeAQ
                 strategyPack.Recipes == null)
                 return null;
 
+            // Resolve ownership before choosing an executor. A declared but
+            // unsupported kind is not permission to perform ordinary killing.
             QuestStrategyRecipe[] matches = strategyPack.Recipes
                 .Where(recipe => recipe != null
-                    && recipe.Kind == QuestStrategyKind.UseItemOn
                     && recipe.QuestId == questId
                     && recipe.ObjectiveIndex == objectiveIndex)
                 .ToArray();
             if (matches.Length > 1)
                 throw new InvalidDataException(
-                    $"Multiple UseItemOn strategies own quest {questId} objective {objectiveIndex}.");
-            return matches.SingleOrDefault();
-        }
-
-        private static QuestStrategyRecipe FindGossipEventStrategy(
-            QuestStrategyPack strategyPack,
-            int questId,
-            int objectiveIndex)
-        {
-            if (strategyPack == null ||
-                strategyPack.Status != QuestStrategyPackStatus.DeclaredAndBound ||
-                strategyPack.Recipes == null)
-                return null;
-
-            QuestStrategyRecipe[] matches = strategyPack.Recipes
-                .Where(recipe => recipe != null
-                    && recipe.Kind == QuestStrategyKind.GossipEvent
-                    && recipe.QuestId == questId
-                    && recipe.ObjectiveIndex == objectiveIndex)
-                .ToArray();
-            if (matches.Length > 1)
-                throw new InvalidDataException(
-                    $"Multiple GossipEvent strategies own quest {questId} objective {objectiveIndex}.");
+                    $"Multiple strategies own quest {questId} objective {objectiveIndex}.");
             return matches.SingleOrDefault();
         }
 
@@ -219,6 +198,18 @@ namespace WholesomeAQ
                 strategy.Range <= 0 || strategy.MaxAttempts <= 0)
                 return null;
 
+            if (strategy.TargetType != QuestStrategyTargetType.Creature)
+                throw new InvalidDataException(
+                    $"UseItemOn strategy {strategy.QuestId}/{strategy.ObjectiveIndex} requires an implemented item-target protocol; GameObject/ground actions are not enabled.");
+
+            QuestObjective sourceObjective = entry.Quest.Objectives
+                .FirstOrDefault(value => value.Index == entry.ObjectiveIndex);
+            if (sourceObjective == null ||
+                (sourceObjective.Type != ObjectiveType.KillMob && sourceObjective.Type != ObjectiveType.CollectItem) ||
+                sourceObjective.MobId != strategy.TargetId)
+                throw new InvalidDataException(
+                    $"UseItemOn strategy {strategy.QuestId}/{strategy.ObjectiveIndex} cannot borrow unrelated objective hotspots; creature {strategy.TargetId} requires matching source location authority.");
+
             // The v1 pack records the BelowHp state but not the required percentage.
             // Do not invent a threshold or silently fall back to generic objective work.
             if (strategy.TargetState == QuestStrategyTargetState.BelowHp)
@@ -226,16 +217,13 @@ namespace WholesomeAQ
                     $"UseItemOn strategy {strategy.QuestId}/{strategy.ObjectiveIndex} requires an explicit BelowHp threshold before runtime execution.");
 
             SpawnPoint anchor = entry.Hotspots[0];
-            string mobType = strategy.TargetType == QuestStrategyTargetType.Creature
-                ? "Npc"
-                : "GameObject";
             XElement behavior = new XElement("CustomBehavior",
                 new XAttribute("File", "UseItemOn"),
                 new XAttribute("QuestId", strategy.QuestId),
                 new XAttribute("ObjectiveIndex", strategy.ObjectiveIndex),
                 new XAttribute("ItemId", strategy.ItemId),
                 new XAttribute("MobId", strategy.TargetId),
-                new XAttribute("MobType", mobType),
+                new XAttribute("MobType", "Npc"),
                 new XAttribute("MobState", strategy.TargetState.ToString()),
                 new XAttribute("Range", strategy.Range),
                 new XAttribute("RequireLos", strategy.RequireLos),
