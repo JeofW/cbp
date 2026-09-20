@@ -87,7 +87,7 @@ public sealed class WoWItem
     public uint Entry=>100; public ulong Guid=>200; public bool IsValid=>true;
     public bool TryPickUp(out int bag,out int slot){bag=0;slot=1;throw new InvalidOperationException("Unexpected item admission");}
 }
-public sealed class ProbePlayer { public List<WoWItem> CarriedItems=new List<WoWItem>(); }
+public sealed class ProbePlayer { public ulong Guid=7; public List<WoWItem> CarriedItems=new List<WoWItem>(); }
 public static class StyxWoW { public static ProbePlayer Me=new ProbePlayer(); }
 public static class Lua
 {
@@ -98,6 +98,8 @@ public sealed class PopupProbe
 {
     private bool _isBehaviorDone,_isDisposed,_pendingEquipSubmitted;
     private ulong _pendingEquipGuid;
+    private ProbePlayer _pendingEquipPlayer;
+    private ulong _pendingEquipPlayerGuid;
     private uint _pendingEquipEntry;
     private InventorySlot _pendingEquipSlot;
     private int _pendingSourceBag,_pendingSourceSlot;
@@ -109,6 +111,7 @@ public sealed class PopupProbe
     private bool Retry;
     private int Attempts;
     // Hold actor/runtime valid, but retain the real helper's pending-intent prerequisite.
+    private bool CanEquipNow() => true;
     private bool OwnsPendingEquipContext() => HasPendingEquip;
     private bool IsPendingEquipAcknowledged()=>false;
     private bool ReturnDisplacedCursorToSource()=>false;

@@ -92,13 +92,15 @@ public sealed class WoWItem
     public bool IsValid { get { return true; } }
     public bool TryPickUp(out int bag, out int slot) { bag=0; slot=1; return false; }
 }
-public sealed class ProbePlayer { public List<WoWItem> CarriedItems = new List<WoWItem>(); }
+public sealed class ProbePlayer { public ulong Guid=7; public List<WoWItem> CarriedItems = new List<WoWItem>(); }
 public static class StyxWoW { public static ProbePlayer Me = new ProbePlayer(); }
 public static class Lua { public static void DoString(string format, params object[] args) { throw new InvalidOperationException(""Unexpected item admission""); } }
 public sealed class EquipTimeoutProbe
 {
     private bool _isBehaviorDone, _isDisposed;
     private ulong _pendingEquipGuid;
+    private ProbePlayer _pendingEquipPlayer;
+    private ulong _pendingEquipPlayerGuid;
     private uint _pendingEquipEntry;
     private InventorySlot _pendingEquipSlot = InventorySlot.HeadSlot;
     private int _pendingSourceBag, _pendingSourceSlot;
@@ -111,6 +113,7 @@ public sealed class EquipTimeoutProbe
     private bool HasPendingEquip { get { return _pendingEquipGuid != 0 && _pendingEquipEntry != 0; } }
     private void ConfirmOwnedEquipPopup() { }
     // These existing tests hold actor/runtime admission valid; separate cases mutate it.
+    private bool CanEquipNow() => true;
     private bool OwnsPendingEquipContext() => true;
     private bool IsPendingEquipAcknowledged() { return Ack; }
     private bool ReturnDisplacedCursorToSource() { return Return; }
