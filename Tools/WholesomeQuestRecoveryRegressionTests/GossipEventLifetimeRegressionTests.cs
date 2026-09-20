@@ -174,8 +174,7 @@ public static class GossipLifetimeCases
     }
     private static void Tick()=>Invoke("TickBehavior");
     private static void Check(bool condition,string reason){if(!condition)throw new Failure(reason);}
-}
-namespace Styx.Logic.Inventory.Frames.Gossip
+} namespace Styx.Logic.Inventory.Frames.Gossip
 {
     public sealed class GossipFrame
     {
@@ -184,8 +183,7 @@ namespace Styx.Logic.Inventory.Frames.Gossip
         public void SelectGossipOption(int index){GossipLifetimeCases.Selections++;}
         public void Close(){if(IsVisible)GossipLifetimeCases.Closes++;IsVisible=false;}
     }
-}
-namespace Styx.WoWInternals
+} namespace Styx.WoWInternals
 {
     public static class Lua
     {
