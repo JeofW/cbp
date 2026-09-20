@@ -382,25 +382,35 @@ namespace Styx.Plugins
             // Compiler exceptions deliberately escape. The last valid cache entry
             // remains untouched, so restoring those bytes can reuse it immediately.
             List<HBPlugin> loaded = compiler(path) ?? new List<HBPlugin>();
-            string after = ComputePluginSourceFingerprint(key);
-
-            Type[] completeTypes;
-            if (string.Equals(before, after, StringComparison.Ordinal)
-                && TryGetCompletePluginTypes(loaded, out completeTypes))
+            try
             {
-                lock (PluginSourceCacheLock)
-                {
-                    PluginSourceCache[key] = new PluginSourceCacheEntry
-                    {
-                        Fingerprint = after,
-                        PluginTypes = completeTypes
-                    };
-                }
-            }
+                Type[] completeTypes;
+                bool complete = TryGetCompletePluginTypes(loaded, out completeTypes);
+                if (loaded.Count > 0 && !complete)
+                    throw new InvalidOperationException("Plugin compilation returned an incomplete constructed type set.");
 
-            // If input bytes changed during compilation, this result may be used for
-            // the current refresh but is never reusable for either observed revision.
-            return loaded;
+                string after = ComputePluginSourceFingerprint(key);
+                if (complete && string.Equals(before, after, StringComparison.Ordinal))
+                {
+                    lock (PluginSourceCacheLock)
+                    {
+                        PluginSourceCache[key] = new PluginSourceCacheEntry
+                        {
+                            Fingerprint = after,
+                            PluginTypes = completeTypes
+                        };
+                    }
+                }
+
+                // If input bytes changed during compilation, this result may be used for
+                // the current refresh but is never reusable for either observed revision.
+                return loaded;
+            }
+            catch
+            {
+                DisposeConstructedPlugins(loaded);
+                throw;
+            }
         }
 
         private static bool TryGetCompletePluginTypes(
@@ -446,25 +456,37 @@ namespace Styx.Plugins
             if (types == null)
                 return result;
 
-            foreach (Type type in types)
+            try
             {
-                if (type == null || type.IsAbstract || !typeof(HBPlugin).IsAssignableFrom(type))
-                    continue;
-                try
+                foreach (Type type in types)
                 {
+                    if (type == null || type.IsAbstract || !typeof(HBPlugin).IsAssignableFrom(type))
+                        continue;
                     result.Add((HBPlugin)Activator.CreateInstance(type));
                 }
-                catch (TargetInvocationException ex)
-                {
-                    Logging.Write("Could not construct instance of {0}. Exception was thrown: Exception:", type.Name);
-                    Logging.Write(ex.InnerException == null ? "Unknown" : ex.InnerException.Message);
-                }
-                catch (Exception ex)
-                {
-                    Logging.WriteException(ex);
-                }
+                return result;
             }
-            return result;
+            catch (TargetInvocationException ex) when (ex.InnerException != null)
+            {
+                DisposeConstructedPlugins(result);
+                System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(ex.InnerException).Throw();
+                throw;
+            }
+            catch
+            {
+                DisposeConstructedPlugins(result);
+                throw;
+            }
+        }
+
+        private static void DisposeConstructedPlugins(IEnumerable<HBPlugin> plugins)
+        {
+            // Only the new instances owned by the failed construction are passed here.
+            // Cleanup must not hide the original error or touch the active plugin set.
+            foreach (HBPlugin plugin in plugins)
+            {
+                try { plugin?.Dispose(); } catch { }
+            }
         }
 
         /// <summary>
