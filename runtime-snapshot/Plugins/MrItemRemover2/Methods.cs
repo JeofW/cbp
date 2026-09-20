@@ -122,7 +122,7 @@ namespace MrItemRemover2
                             }
                             if (ItemNameSell.Contains(item.Name))
                             {
-                                Slog("Item Matched List Selling {0}", item.Name);
+                                Slog("Item Matched Selling {0}", item.Name);
                                 item.UseContainerItem();
                             }
 
@@ -208,10 +208,18 @@ namespace MrItemRemover2
             int cursorState = ReadOwnedCursorState(_pendingDeleteEntry);
             if (cursorState == 0)
             {
-                if (!PendingDeleteItemStillObserved())
+                bool? stillObserved = PendingDeleteItemStillObserved();
+                if (!stillObserved.HasValue)
+                    return;
+
+                if (!stillObserved.Value)
                 {
-                    Slog("Confirmed removal of item {0} ({1}).",
-                        _pendingDeleteGuid, _pendingDeleteEntry);
+                    if (_pendingDeleteRequested)
+                        Slog("Requested item {0} ({1}) is no longer observed; ending local delete tracking.",
+                            _pendingDeleteGuid, _pendingDeleteEntry);
+                    else
+                        Dlog("Item {0} ({1}) is no longer observed without a local delete request; revoking pending intent.",
+                            _pendingDeleteGuid, _pendingDeleteEntry);
                     ResetPendingDelete();
                     return;
                 }
@@ -231,17 +239,48 @@ namespace MrItemRemover2
                 TryConfirmPendingDelete();
         }
 
-        private static bool PendingDeleteItemStillObserved()
+        private static bool? PendingDeleteItemStillObserved()
         {
-            if (!HasPendingDelete)
-                return false;
+            // A failed/incomplete read is not an empty inventory. Capture one view
+            // and reject observations that outlive their player or pending item.
+            try
+            {
+                if (!HasPendingDelete)
+                    return null;
 
-            if (Me != null && Me.BagItems != null &&
-                Me.BagItems.Any(item => item != null && item.Guid == _pendingDeleteGuid))
-                return true;
+                LocalPlayer player = Me;
+                if (player == null || !player.IsValid || player.Guid == 0)
+                    return null;
 
-            WoWItem candidate = ObjectManager.GetObjectByGuid<WoWItem>(_pendingDeleteGuid);
-            return candidate != null && candidate.IsValid;
+                ulong playerGuid = player.Guid;
+                ulong expectedGuid = _pendingDeleteGuid;
+                uint expectedEntry = _pendingDeleteEntry;
+                var inventory = player.BagItems;
+                if (inventory == null)
+                    return null;
+
+                WoWItem[] items = inventory.ToArray();
+                bool? observed;
+                if (items.Any(item => item == null || !item.IsValid || item.Guid == 0))
+                    observed = null;
+                else if (items.Any(item => item.Guid == expectedGuid))
+                    observed = true;
+                else
+                {
+                    WoWItem candidate = ObjectManager.GetObjectByGuid<WoWItem>(expectedGuid);
+                    observed = candidate == null ? (bool?)false
+                        : candidate.IsValid && candidate.Guid == expectedGuid ? true : (bool?)null;
+                }
+
+                return ReferenceEquals(Me, player) && player.IsValid && player.Guid == playerGuid &&
+                    _pendingDeleteGuid == expectedGuid && _pendingDeleteEntry == expectedEntry
+                    ? observed : null;
+            }
+            catch (Exception error) when (error is not OperationCanceledException &&
+                error is not System.Threading.ThreadInterruptedException)
+            {
+                return null;
+            }
         }
 
         private static int ReadOwnedCursorState(uint expectedEntry)
