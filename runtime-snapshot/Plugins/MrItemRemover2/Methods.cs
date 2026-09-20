@@ -26,6 +26,18 @@ namespace MrItemRemover2
         private LocalPlayer _pendingDeletePlayer;
         private ulong _pendingDeletePlayerGuid;
 
+        // One trigger owns one finite candidate set. A refused/returned item is
+        // visited once; later arrivals belong to a new independently triggered pass.
+        private sealed class ItemScan
+        {
+            internal LocalPlayer Player;
+            internal ulong PlayerGuid;
+            internal object Lifetime;
+            internal Queue<WoWItem> Remaining;
+        }
+        private ItemScan _itemScan;
+        private bool _isScanningItems;
+
         private bool HasPendingDelete
         {
             get { return _pendingDeleteGuid != 0 && _pendingDeleteEntry != 0; }
@@ -342,6 +354,7 @@ namespace MrItemRemover2
         private void ResetDeleteLifetime(EventArgs args)
         {
             _deleteLifetime = new object();
+            _itemScan = null;
             ResetPendingDelete();
             EnableCheck = false;
             ManualCheckRequested = false;
@@ -517,189 +530,329 @@ namespace MrItemRemover2
 
         public void CheckForItems()
         {
-            if (HasPendingDelete)
-            {
-                TickPendingDelete();
+            if (_isScanningItems)
                 return;
-            }
 
-            //Added to Make sure our list matches what we are looking for. 
-            LoadList(ItemName, _removeListPath);
-            LoadList(BagList, _bagListPath);
-
-            // NB: Since we will be modifying the Me.BagItems list indirectly through WoWclient directives,
-            // we can't use it as our iterator--we must make a copy, instead.
-            List<WoWItem> itemsToVisit = Me.BagItems.ToList();
-
-            foreach (WoWItem item in itemsToVisit)
+            _isScanningItems = true;
+            ItemScan scan = _itemScan;
+            try
             {
-                StyxWoW.SleepForLagDuration();
-
-                if (!item.IsValid)
+                if (HasPendingDelete)
                 {
-                    continue;
-                }
-
-                bool isQuestItem = IsQuestItem(item);
-
-                if (BagList.Contains(item.Name))
-                {
-                    Slog("{0} is a bag, ignoring.", item.Name);
-                    continue;
-                }
-
-                if (OpnList.Contains(item.Name) && item.IsOpenable &&
-                    MrItemRemover2Settings.Instance.EnableOpen == "True")
-                {
-                    Slog("{0} can be opened. Opening.", item.Name);
-                    Lua.DoString("UseItemByName(\"" + item.Name + "\")");
-                }
-
-                if (OpnList.Contains(item.Name) && item.StackCount == 1)
-                {
-                    Slog("{0} can be opened, so we're opening it.", item.Name);
-                    Lua.DoString("UseItemByName(\"" + item.Name + "\")");
-                }
-
-                if (Combine3List.Contains(item.Name) && item.StackCount >= 3)
-                {
-                    uint timesToUse = (uint)(Math.Floor((double)(item.StackCount / 3)));
-                    Slog("{0} can be combined {1} times, so we're combining it.", item.Name, timesToUse);
-                    for (uint timesUsed = 0; timesUsed < timesToUse; timesUsed++)
-                    {
-                        Lua.DoString("UseItemByName(\"" + item.Name + "\")");
-                        Thread.Sleep(SpellManager.GlobalCooldownLeft);
-                    }
-                }
-
-                if (Combine5List.Contains(item.Name) && item.StackCount >= 5)
-                {
-                    uint timesToUse = (uint)(Math.Floor((double)(item.StackCount / 5)));
-                    Slog("{0} can be combined {1} times, so we're combining it.", item.Name, timesToUse);
-                    for (uint timesUsed = 0; timesUsed < timesToUse; timesUsed++)
-                    {
-                        Lua.DoString("UseItemByName(\"" + item.Name + "\")");
-                        Thread.Sleep(SpellManager.GlobalCooldownLeft);
-                    }
-                }
-
-                if (Combine10List.Contains(item.Name) && item.StackCount >= 10)
-                {
-                    uint timesToUse = (uint)(Math.Floor((double)(item.StackCount / 10)));
-                    Slog("{0} can be combined {1} times, so we're combining it.", item.Name, timesToUse);
-                    for (uint timesUsed = 0; timesUsed < timesToUse; timesUsed++)
-                    {
-                        Lua.DoString("UseItemByName(\"" + item.Name + "\")");
-                        Thread.Sleep(SpellManager.GlobalCooldownLeft);
-                    }
-                }
-
-                if (MrItemRemover2Settings.Instance.EnableRemove == "True" &&
-                    MrItemRemover2Settings.Instance.RemoveFood == "True")
-                {
-                    if (!KeepList.Contains(item.Name) && FoodList.Contains(item.Name))
-                    {
-                        Slog("{0} was in the Food List and We want to Remove Food. Removing.", item.Name);
-                        BeginDelete(item);
-                        return;
-                    }
-                }
-
-                if (MrItemRemover2Settings.Instance.EnableRemove == "True" &&
-                    MrItemRemover2Settings.Instance.RemoveDrinks == "True")
-                {
-                    if (!KeepList.Contains(item.Name) && DrinkList.Contains(item.Name))
-                    {
-                        Slog("{0} was in the Drink List and We want to Remove Drinks. Removing.", item.Name);
-                        BeginDelete(item);
-                        return;
-                    }
-                }
-
-                //if item name Matches whats in the text file / the internal list (after load)
-                if (ItemName.Contains(item.Name) && !KeepList.Contains(item.Name))
-                {
-                    //probally not needed, but still user could be messing with thier inventory.
-                    //Printing to the log, and Deleting the Item.
-                    Slog("{0} Found Removing Item", item.Name);
-                    BeginDelete(item);
-                    return;
-                    //a small Sleep, might not be needed. 
-                }
-
-                if (MrItemRemover2Settings.Instance.DeleteQuestItems == "True" && item.ItemInfo.BeginQuestId != 0 &&
-                    !KeepList.Contains(item.Name))
-                {
-                    Slog("{0}'s Began a Quest. Removing", item.Name);
-                    BeginDelete(item);
+                    TickPendingDelete();
                     return;
                 }
 
-                
-
-                //Process all Gray Items if enabled. 
-                if (MrItemRemover2Settings.Instance.DeleteAllGray == "True" && item.Quality == WoWItemQuality.Poor && !BagList.Contains(item.Name))
+                if (scan == null)
                 {
-                    //Gold Format, goes in GXX SXX CXX 
-                    string goldString = MrItemRemover2Settings.Instance.GoldGrays.ToString(CultureInfo.InvariantCulture);
-                    int goldValue = goldString.ToInt32() * 10000;
-                    string silverString =
-                        MrItemRemover2Settings.Instance.SilverGrays.ToString(CultureInfo.InvariantCulture);
-                    int silverValue = silverString.ToInt32() * 100;
-                    string copperString =
-                        MrItemRemover2Settings.Instance.CopperGrays.ToString(CultureInfo.InvariantCulture);
-                    int copperValue = copperString.ToInt32();
-
-                    //slog("Value of input sell string - " + (goldValue + silverValue + copperValue));
-
-                    if (item.BagSlot != -1 && !isQuestItem &&
-                        item.ItemInfo.SellPrice <= (goldValue + silverValue + copperValue) &&
-                        !KeepList.Contains(item.Name) && !BagList.Contains(item.Name))
+                    LocalPlayer player = Me;
+                    scan = new ItemScan
                     {
-                        Slog("{0}'s Item Quality was Poor and only worth {1} copper. Removing.", item.Name,
-                            item.ItemInfo.SellPrice);
-                        BeginDelete(item);
+                        Player = player,
+                        PlayerGuid = player != null ? player.Guid : 0,
+                        Lifetime = _deleteLifetime
+                    };
+                    _itemScan = scan;
+                    if (!OwnsItemScan(scan))
+                    {
+                        EndItemScan(scan);
                         return;
                     }
+
+                    LoadList(ItemName, _removeListPath);
+                    LoadList(BagList, _bagListPath);
+                    var inventory = player.BagItems;
+                    WoWItem[] snapshot = inventory != null ? inventory.ToArray() : null;
+                    if (!OwnsItemScan(scan) || snapshot == null ||
+                        snapshot.Any(item => item == null || !item.IsValid || item.Guid == 0))
+                    {
+                        EndItemScan(scan);
+                        Dlog("Item scan deferred because its inventory snapshot is unavailable or incomplete.");
+                        return;
+                    }
+                    scan.Remaining = new Queue<WoWItem>(snapshot.GroupBy(item => item.Guid).Select(group => group.First()));
                 }
 
-                //Process all White Items if enabled.
-                if (MrItemRemover2Settings.Instance.DeleteAllWhite == "True" && item.Quality == WoWItemQuality.Common && !BagList.Contains(item.Name))
+                while (scan.Remaining != null && scan.Remaining.Count > 0)
                 {
-                    if (item.BagSlot != -1 && !isQuestItem && !KeepList.Contains(item.Name) &&
-                        !BagList.Contains(item.Name) && !FoodList.Contains(item.Name) &&
-                        !DrinkList.Contains(item.Name))
+                    if (!OwnsItemScan(scan))
                     {
-                        Slog("{0}'s Item Quality was Common. Removing.", item.Name);
-                        BeginDelete(item);
+                        EndItemScan(scan);
                         return;
                     }
-                }
+                    WoWItem item = scan.Remaining.Dequeue();
+                    if (item == null || !item.IsValid)
+                        continue;
+                    ulong itemGuid = item.Guid;
+                    uint itemEntry = item.Entry;
+                    StyxWoW.SleepForLagDuration();
+                    if (!OwnsItemScan(scan))
+                    {
+                        EndItemScan(scan);
+                        return;
+                    }
+                    var currentInventory = scan.Player.BagItems;
+                    if (currentInventory == null)
+                    {
+                        EndItemScan(scan);
+                        Dlog("Item scan deferred because current inventory is unavailable.");
+                        return;
+                    }
+                    if (!item.IsValid || item.Guid != itemGuid || item.Entry != itemEntry ||
+                        !currentInventory.Any(candidate => ReferenceEquals(candidate, item)))
+                        continue;
 
-                //Process all Green Items if enabled.
-                if (MrItemRemover2Settings.Instance.DeleteAllGreen == "True" && item.Quality == WoWItemQuality.Uncommon && !BagList.Contains(item.Name))
-                {
-                    if (item.BagSlot != -1 && !isQuestItem &&
-                        !KeepList.Contains(item.Name) && !BagList.Contains(item.Name))
+                    bool isQuestItem = IsQuestItem(item);
+                    if (!OwnsItemScan(scan, item, itemGuid, itemEntry))
                     {
-                        Slog("{0}'s Item Quality was Uncommon. Removing.", item.Name);
-                        BeginDelete(item);
+                        EndItemScan(scan);
                         return;
                     }
-                }
 
-                //Process all Blue Items if enabled.
-                if (MrItemRemover2Settings.Instance.DeleteAllBlue == "True" && item.Quality == WoWItemQuality.Rare && !BagList.Contains(item.Name))
-                {
-                    if (item.BagSlot != -1 && !isQuestItem &&
-                        !KeepList.Contains(item.Name) && !BagList.Contains(item.Name))
+                    if (BagList.Contains(item.Name))
                     {
-                        Slog("{0}'s Item Quality was Rare. Removing.", item.Name);
-                        BeginDelete(item);
+                        Slog("{0} is a bag, ignoring.", item.Name);
+                        continue;
+                    }
+
+                    if (OpnList.Contains(item.Name) && item.IsOpenable &&
+                        MrItemRemover2Settings.Instance.EnableOpen == "True")
+                    {
+                        Slog("{0} can be opened. Opening.", item.Name);
+                        if (!OwnsItemScan(scan, item, itemGuid, itemEntry))
+                        {
+                            EndItemScan(scan);
+                            return;
+                        }
+                        Lua.DoString("UseItemByName(\"" + item.Name + "\")");
+                    }
+
+                    if (OpnList.Contains(item.Name) && item.StackCount == 1)
+                    {
+                        Slog("{0} can be opened, so we're opening it.", item.Name);
+                        if (!OwnsItemScan(scan, item, itemGuid, itemEntry))
+                        {
+                            EndItemScan(scan);
+                            return;
+                        }
+                        Lua.DoString("UseItemByName(\"" + item.Name + "\")");
+                    }
+
+                    if (Combine3List.Contains(item.Name) && item.StackCount >= 3)
+                    {
+                        uint timesToUse = (uint)(Math.Floor((double)(item.StackCount / 3)));
+                        Slog("{0} can be combined {1} times, so we're combining it.", item.Name, timesToUse);
+                        for (uint timesUsed = 0; timesUsed < timesToUse; timesUsed++)
+                        {
+                            if (!OwnsItemScan(scan, item, itemGuid, itemEntry))
+                            {
+                                EndItemScan(scan);
+                                return;
+                            }
+                            Lua.DoString("UseItemByName(\"" + item.Name + "\")");
+                            Thread.Sleep(SpellManager.GlobalCooldownLeft);
+                        }
+                    }
+
+                    if (Combine5List.Contains(item.Name) && item.StackCount >= 5)
+                    {
+                        uint timesToUse = (uint)(Math.Floor((double)(item.StackCount / 5)));
+                        Slog("{0} can be combined {1} times, so we're combining it.", item.Name, timesToUse);
+                        for (uint timesUsed = 0; timesUsed < timesToUse; timesUsed++)
+                        {
+                            if (!OwnsItemScan(scan, item, itemGuid, itemEntry))
+                            {
+                                EndItemScan(scan);
+                                return;
+                            }
+                            Lua.DoString("UseItemByName(\"" + item.Name + "\")");
+                            Thread.Sleep(SpellManager.GlobalCooldownLeft);
+                        }
+                    }
+
+                    if (Combine10List.Contains(item.Name) && item.StackCount >= 10)
+                    {
+                        uint timesToUse = (uint)(Math.Floor((double)(item.StackCount / 10)));
+                        Slog("{0} can be combined {1} times, so we're combining it.", item.Name, timesToUse);
+                        for (uint timesUsed = 0; timesUsed < timesToUse; timesUsed++)
+                        {
+                            if (!OwnsItemScan(scan, item, itemGuid, itemEntry))
+                            {
+                                EndItemScan(scan);
+                                return;
+                            }
+                            Lua.DoString("UseItemByName(\"" + item.Name + "\")");
+                            Thread.Sleep(SpellManager.GlobalCooldownLeft);
+                        }
+                    }
+
+                    if (MrItemRemover2Settings.Instance.EnableRemove == "True" &&
+                        MrItemRemover2Settings.Instance.RemoveFood == "True")
+                    {
+                        if (!KeepList.Contains(item.Name) && FoodList.Contains(item.Name))
+                        {
+                            Slog("{0} was in the Food List and We want to Remove Food. Removing.", item.Name);
+                            TryDeleteScannedItem(scan, item, itemGuid, itemEntry);
+                            return;
+                        }
+                    }
+
+                    if (MrItemRemover2Settings.Instance.EnableRemove == "True" &&
+                        MrItemRemover2Settings.Instance.RemoveDrinks == "True")
+                    {
+                        if (!KeepList.Contains(item.Name) && DrinkList.Contains(item.Name))
+                        {
+                            Slog("{0} was in the Drink List and We want to Remove Drinks. Removing.", item.Name);
+                            TryDeleteScannedItem(scan, item, itemGuid, itemEntry);
+                            return;
+                        }
+                    }
+
+                    //if item name Matches whats in the text file / the internal list (after load)
+                    if (ItemName.Contains(item.Name) && !KeepList.Contains(item.Name))
+                    {
+                        //probally not needed, but still user could be messing with thier inventory.
+                        //Printing to the log, and Deleting the Item.
+                        Slog("{0} Found Removing Item", item.Name);
+                        TryDeleteScannedItem(scan, item, itemGuid, itemEntry);
+                        return;
+                        //a small Sleep, might not be needed. 
+                    }
+
+                    if (MrItemRemover2Settings.Instance.DeleteQuestItems == "True" && item.ItemInfo.BeginQuestId != 0 &&
+                        !KeepList.Contains(item.Name))
+                    {
+                        Slog("{0}'s Began a Quest. Removing", item.Name);
+                        TryDeleteScannedItem(scan, item, itemGuid, itemEntry);
                         return;
                     }
-                }    
+
+                    
+
+                    //Process all Gray Items if enabled. 
+                    if (MrItemRemover2Settings.Instance.DeleteAllGray == "True" && item.Quality == WoWItemQuality.Poor && !BagList.Contains(item.Name))
+                    {
+                        //Gold Format, goes in GXX SXX CXX 
+                        string goldString = MrItemRemover2Settings.Instance.GoldGrays.ToString(CultureInfo.InvariantCulture);
+                        int goldValue = goldString.ToInt32() * 10000;
+                        string silverString =
+                            MrItemRemover2Settings.Instance.SilverGrays.ToString(CultureInfo.InvariantCulture);
+                        int silverValue = silverString.ToInt32() * 100;
+                        string copperString =
+                            MrItemRemover2Settings.Instance.CopperGrays.ToString(CultureInfo.InvariantCulture);
+                        int copperValue = copperString.ToInt32();
+
+                        //slog("Value of input sell string - " + (goldValue + silverValue + copperValue));
+
+                        if (item.BagSlot != -1 && !isQuestItem &&
+                            item.ItemInfo.SellPrice <= (goldValue + silverValue + copperValue) &&
+                            !KeepList.Contains(item.Name) && !BagList.Contains(item.Name))
+                        {
+                            Slog("{0}'s Item Quality was Poor and only worth {1} copper. Removing.", item.Name,
+                                item.ItemInfo.SellPrice);
+                            TryDeleteScannedItem(scan, item, itemGuid, itemEntry);
+                            return;
+                        }
+                    }
+
+                    //Process all White Items if enabled.
+                    if (MrItemRemover2Settings.Instance.DeleteAllWhite == "True" && item.Quality == WoWItemQuality.Common && !BagList.Contains(item.Name))
+                    {
+                        if (item.BagSlot != -1 && !isQuestItem && !KeepList.Contains(item.Name) &&
+                            !BagList.Contains(item.Name) && !FoodList.Contains(item.Name) &&
+                            !DrinkList.Contains(item.Name))
+                        {
+                            Slog("{0}'s Item Quality was Common. Removing.", item.Name);
+                            TryDeleteScannedItem(scan, item, itemGuid, itemEntry);
+                            return;
+                        }
+                    }
+
+                    //Process all Green Items if enabled.
+                    if (MrItemRemover2Settings.Instance.DeleteAllGreen == "True" && item.Quality == WoWItemQuality.Uncommon && !BagList.Contains(item.Name))
+                    {
+                        if (item.BagSlot != -1 && !isQuestItem &&
+                            !KeepList.Contains(item.Name) && !BagList.Contains(item.Name))
+                        {
+                            Slog("{0}'s Item Quality was Uncommon. Removing.", item.Name);
+                            TryDeleteScannedItem(scan, item, itemGuid, itemEntry);
+                            return;
+                        }
+                    }
+
+                    //Process all Blue Items if enabled.
+                    if (MrItemRemover2Settings.Instance.DeleteAllBlue == "True" && item.Quality == WoWItemQuality.Rare && !BagList.Contains(item.Name))
+                    {
+                        if (item.BagSlot != -1 && !isQuestItem &&
+                            !KeepList.Contains(item.Name) && !BagList.Contains(item.Name))
+                        {
+                            Slog("{0}'s Item Quality was Rare. Removing.", item.Name);
+                            TryDeleteScannedItem(scan, item, itemGuid, itemEntry);
+                            return;
+                        }
+                    }    
+
+                }
+                EndItemScan(scan);
             }
+            catch (Exception error) when (error is not OperationCanceledException &&
+                error is not System.Threading.ThreadInterruptedException)
+            {
+                EndItemScan(scan);
+                Dlog("Item scan deferred after an observation failure: {0}", error.Message);
+            }
+            finally
+            {
+                _isScanningItems = false;
+            }
+        }
+
+        private bool OwnsItemScan(ItemScan scan, WoWItem item = null, ulong itemGuid = 0, uint itemEntry = 0)
+        {
+            try
+            {
+                LocalPlayer player = scan != null ? scan.Player : null;
+                if (scan == null || !ReferenceEquals(_itemScan, scan) || !IsInitialized ||
+                    scan.Lifetime == null || !ReferenceEquals(scan.Lifetime, _deleteLifetime) ||
+                    player == null || !ReferenceEquals(Me, player) || !player.IsValid ||
+                    scan.PlayerGuid == 0 || player.Guid != scan.PlayerGuid || !player.IsAlive ||
+                    player.IsGhost || player.Combat || player.IsCasting || !StyxWoW.IsInGame ||
+                    !Styx.Logic.BehaviorTree.TreeRoot.IsRunning || Styx.Logic.BehaviorTree.TreeRoot.IsPaused)
+                    return false;
+
+                if (item != null && (!item.IsValid || itemGuid == 0 || item.Guid != itemGuid ||
+                    item.Entry != itemEntry || player.BagItems == null ||
+                    !player.BagItems.Any(candidate => ReferenceEquals(candidate, item))))
+                    return false;
+
+                return ReferenceEquals(_itemScan, scan) && ReferenceEquals(Me, player) &&
+                    ReferenceEquals(scan.Lifetime, _deleteLifetime) && player.IsValid &&
+                    player.Guid == scan.PlayerGuid && player.IsAlive && !player.IsGhost &&
+                    !player.Combat && !player.IsCasting && IsInitialized && StyxWoW.IsInGame &&
+                    Styx.Logic.BehaviorTree.TreeRoot.IsRunning && !Styx.Logic.BehaviorTree.TreeRoot.IsPaused;
+            }
+            catch (Exception error) when (error is not OperationCanceledException &&
+                error is not System.Threading.ThreadInterruptedException)
+            {
+                return false;
+            }
+        }
+
+        private void EndItemScan(ItemScan scan)
+        {
+            if (ReferenceEquals(_itemScan, scan))
+            {
+                _itemScan = null;
+                EnableCheck = false;
+            }
+        }
+
+        private void TryDeleteScannedItem(ItemScan scan, WoWItem item, ulong itemGuid, uint itemEntry)
+        {
+            // Diagnostics and quest-item observations may have ended this run.
+            // BeginDelete still owns request/confirmation context and eligibility.
+            if (OwnsItemScan(scan, item, itemGuid, itemEntry))
+                BeginDelete(item);
         }
 
         public string GetTime(DateTime input)

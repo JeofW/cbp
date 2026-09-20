@@ -194,9 +194,19 @@ namespace MrItemRemover2
 
         public override void Pulse()
         {
+            if (_isScanningItems)
+                return;
+
             if (HasPendingDelete)
             {
                 TickPendingDelete();
+                return;
+            }
+
+            // Finish the admitted finite pass before consuming another trigger.
+            if (_itemScan != null)
+            {
+                CheckForItems();
                 return;
             }
 
@@ -205,43 +215,16 @@ namespace MrItemRemover2
                 EnableCheck = true;
                 ManualCheckRequested = false;
                 _checkTimer.Reset();
-
-                Slog("Checking Bags Manually.");
-                CheckForItems(); 
             }
-
-            else if (MrItemRemover2Settings.Instance.LootCheck == "False")
+            else if (!EnableCheck && MrItemRemover2Settings.Instance.LootCheck == "False" &&
+                _checkTimer.TimeLeft.Ticks <= 0 && Me != null && !Me.Mounted)
             {
-                if (_checkTimer.TimeLeft.Ticks <= 0)
-                {
-                    if (EnableCheck == false)
-                    {
-                        if (!Me.Mounted)
-                        {
-                            EnableCheck = true;
-                            CheckForItems();
-                            _checkTimer.Reset();
-
-                            Slog("Enabling Check at {0}", GetTime(DateTime.Now));
-                            Dlog(
-                                "Checktimer has Finished its Total wait of {0} Minutes. Checking Items and Enabling Item Check for next Opportunity",
-                                MrItemRemover2Settings.Instance.Time.ToString(CultureInfo.InvariantCulture));
-                            Slog("Will Run Next Check At {0}", GetTime(_checkTimer.EndTime));
-                        }
-                    }
-                }
+                EnableCheck = true;
+                _checkTimer.Reset();
             }
 
-            if (!Me.Combat && !Me.IsCasting && !Me.IsDead && !Me.IsGhost && EnableCheck)
-            {
-                Slog("EnableCheck was Passed!");
-                if (MrItemRemover2Settings.Instance.EnableRemove == "True")
-                {
-                    CheckForItems();
-                }
-                EnableCheck = false;
-                Slog("Turning off Check Since Done!");
-            }
+            if (EnableCheck)
+                CheckForItems();
         }
 
         private void LootEnded(object sender, LuaEventArgs args)
