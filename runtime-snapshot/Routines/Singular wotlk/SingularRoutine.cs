@@ -87,13 +87,17 @@ namespace Singular
 
         public override Composite RestBehavior { get { return _restBehavior; } }
 
+        // W80 R01: contain automatic isolation until actual-route and actor/routine
+        // lifetime integration are verified. Ordinary pulling remains unchanged.
+        private static readonly bool DensePullIsolationValidated = false;
+
         // Dense-pack isolation is deliberately opt-in and narrow. LevelBot owns
         // risk/movement; Singular only exposes a Ret-specific ranged opener.
         public double IsolationPullDistance
         {
             get
             {
-                if (StyxWoW.Me == null ||
+                if (!DensePullIsolationValidated || StyxWoW.Me == null ||
                     CurrentWoWContext != WoWContext.Normal ||
                     TalentManager.CurrentSpec != TalentSpec.RetributionPaladin ||
                     !Styx.Logic.Combat.SpellManager.HasSpell("Exorcism"))
@@ -109,7 +113,7 @@ namespace Singular
 
         public Composite CreateIsolationPullBehavior()
         {
-            if (StyxWoW.Me == null ||
+            if (!DensePullIsolationValidated || StyxWoW.Me == null ||
                 CurrentWoWContext != WoWContext.Normal ||
                 TalentManager.CurrentSpec != TalentSpec.RetributionPaladin ||
                 !Styx.Logic.Combat.SpellManager.HasSpell("Exorcism"))
