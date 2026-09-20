@@ -16,7 +16,7 @@ namespace Styx.Bot.Quest_Behaviors.GossipEvent
 {
     /// <summary>
     /// Source-bound single-option gossip quest action with authoritative progress acknowledgement.
-    /// GossipOptionIndex is zero-based; GossipFrame converts it to WoW's one-based Lua index.
+    /// GossipOptionIndex is zero-based; the guarded request uses WoW's one-based Lua index.
     /// </summary>
     public class GossipEvent : CustomForcedBehavior
     {
@@ -115,6 +115,9 @@ namespace Styx.Bot.Quest_Behaviors.GossipEvent
         private ulong _interactionGuid;
         private LocalPlayer _ownerPlayer;
         private ulong _ownerGuid;
+        private string _observedGossipMenu;
+        private const int MenuSnapshotLimit = 32768;
+        private const int MenuSnapshotChunkSize = 480;
 
         private LocalPlayer Me { get { return ObjectManager.Me; } }
 
@@ -191,7 +194,7 @@ namespace Styx.Bot.Quest_Behaviors.GossipEvent
             try
             {
                 return Lua.GetReturnVal<bool>(
-                    "return UnitGUID('npc') == '" + expected + "'",
+                    "return (UnitGUID('npc') == '" + expected + "') and 1 or 0",
                     0U);
             }
             catch
@@ -261,23 +264,127 @@ namespace Styx.Bot.Quest_Behaviors.GossipEvent
                 StyxWoW.IsInGame;
         }
 
-        private void TryCloseOwnedGossip()
+        // Original 3.3.5 FrameXML consumes option pairs, available-quest groups of
+        // five and active-quest groups of four. Keep raw order, types and counts.
+        // Hex bytes avoid script quoting/UTF-8 length hazards; no lossy hash or
+        // client-global menu lease is introduced. Limits are local safety budgets.
+        private const string MenuObservationLua = @"
+local parts, bytes = {}, 0
+local function add(stride, ...)
+    local n = select('#', ...)
+    if n > 512 or n % stride ~= 0 then return false end
+    parts[#parts+1] = tostring(n)
+    for i = 1, n do
+        local value = select(i, ...)
+        local kind = type(value)
+        if kind ~= 'nil' and kind ~= 'string' and kind ~= 'boolean' and kind ~= 'number' then return false end
+        local text = tostring(value)
+        bytes = bytes + #text
+        if bytes > 16384 then return false end
+        local hex = text:gsub('.', function(c) return string.format('%02x', string.byte(c)) end)
+        parts[#parts+1] = kind .. ':' .. #text .. ':' .. hex
+    end
+    return n
+end
+local greeting = GetGossipText()
+if type(greeting) ~= 'string' or not add(1, greeting) then return 0 end
+local optionValues = add(2, GetGossipOptions())
+if not optionValues or not add(5, GetGossipAvailableQuests()) or not add(4, GetGossipActiveQuests()) then return 0 end
+local optionCount = optionValues / 2
+local observed = table.concat(parts, '|')
+if #observed > 32768 then return 0 end
+";
+
+        private string BuildGossipMenuObservationLua()
+        {
+            string npc = string.Format(System.Globalization.CultureInfo.InvariantCulture,
+                "0x{0:X16}", _interactionGuid);
+            string actor = string.Format(System.Globalization.CultureInfo.InvariantCulture,
+                "0x{0:X16}", _ownerGuid);
+            string context = "if not GossipFrame or not GossipFrame:IsShown() or UnitGUID('npc') ~= '" +
+                npc + "' or UnitGUID('player') ~= '" + actor + "' then return 0 end; ";
+            return context + MenuObservationLua + context;
+        }
+
+        private bool TryCaptureGossipMenu()
         {
             if (!OwnsActor() || _interactionGuid == 0)
-                return;
+                return false;
+            if (_observedGossipMenu != null)
+                return true;
 
-            string expected = string.Format(
-                System.Globalization.CultureInfo.InvariantCulture,
-                "0x{0:X16}", _interactionGuid);
+            ulong interaction = _interactionGuid;
             try
             {
-                // Frame and NPC checks belong to the same client request as close.
-                // No interaction identity means no permission to close visible UI.
-                Lua.GetReturnVal<bool>(
-                    "if GossipFrame and GossipFrame:IsShown() and UnitGUID('npc') == '" +
-                    expected + "' then CloseGossip(); return true end; return false", 0U);
+                // The host reads only 512 bytes per returned string. A bounded
+                // multi-return observation avoids truncation without changing the
+                // shared native bridge; every chunk belongs to this one request.
+                var values = Lua.GetReturnValues(BuildGossipMenuObservationLua() +
+                    "local chunks = {tostring(#observed)}; " +
+                    "for i = 1, #observed, 480 do chunks[#chunks+1] = string.sub(observed, i, i+479) end; " +
+                    "return unpack(chunks)");
+                int length;
+                if (values == null || values.Count < 2 ||
+                    !int.TryParse(values[0], System.Globalization.NumberStyles.None,
+                        System.Globalization.CultureInfo.InvariantCulture, out length) ||
+                    length <= 0 || length > MenuSnapshotLimit ||
+                    values.Count != 1 + (length + MenuSnapshotChunkSize - 1) / MenuSnapshotChunkSize)
+                    return false;
+                for (int i = 1; i < values.Count; i++)
+                {
+                    int expected = Math.Min(MenuSnapshotChunkSize,
+                        length - (i - 1) * MenuSnapshotChunkSize);
+                    string chunk = values[i];
+                    if (chunk == null || chunk.Length != expected ||
+                        chunk.Any(c => c != ':' && c != '|' &&
+                            (c < '0' || c > '9') && (c < 'a' || c > 'z')))
+                        return false;
+                }
+                string observed = string.Concat(values.Skip(1));
+                if (!OwnsActor() || interaction != _interactionGuid)
+                    return false;
+                _observedGossipMenu = observed;
+                return true;
             }
-            catch { }
+            catch { return false; }
+        }
+
+        private bool TrySubmitOwnedGossip(string command)
+        {
+            string observed = _observedGossipMenu;
+            ulong interaction = _interactionGuid;
+            if (!OwnsActor() || interaction == 0 || string.IsNullOrEmpty(observed))
+                return false;
+            try
+            {
+                // Reobserve and compare before mutation in the same client request.
+                // Numeric results survive the host's lua_tolstring return bridge.
+                string request = BuildGossipMenuObservationLua() +
+                    "if observed ~= '" + observed + "' then return 0 end; " + command;
+                if (!OwnsActor() || interaction != _interactionGuid || observed != _observedGossipMenu)
+                    return false;
+                bool submitted = Lua.GetReturnVal<bool>(request, 0U);
+                return submitted && OwnsActor() && interaction == _interactionGuid &&
+                    observed == _observedGossipMenu;
+            }
+            catch { return false; }
+        }
+
+        private bool TrySelectGossipOption(int optionIndex)
+        {
+            if (optionIndex < 0 || optionIndex > 64 || IsDone)
+                return false;
+            return TrySubmitOwnedGossip("if optionCount <= " +
+                optionIndex.ToString(System.Globalization.CultureInfo.InvariantCulture) +
+                " then return 0 end; SelectGossipOption(" +
+                (optionIndex + 1).ToString(System.Globalization.CultureInfo.InvariantCulture) +
+                "); return 1");
+        }
+
+        private void TryCloseOwnedGossip()
+        {
+            // No captured menu means no permission to adopt the currently shown UI.
+            TrySubmitOwnedGossip("CloseGossip(); return 1");
         }
 
         private RunStatus DeferAuthoritativeAttempt(string reason)
@@ -297,6 +404,7 @@ namespace Styx.Bot.Quest_Behaviors.GossipEvent
             _gossipOpenStartedUtc = -1;
             _navigationStartedUtc = -1;
             _interactionGuid = 0;
+            _observedGossipMenu = null;
         }
 
         private RunStatus TickBehavior()
@@ -362,6 +470,9 @@ namespace Styx.Bot.Quest_Behaviors.GossipEvent
                         return RunStatus.Running;
                     }
 
+                    if (!TryCaptureGossipMenu())
+                        return DeferAuthoritativeAttempt("the complete gossip menu could not be observed safely");
+
                     var entries = GossipFrame.Instance.GossipOptionEntries;
                     if (entries != null)
                     {
@@ -379,10 +490,12 @@ namespace Styx.Bot.Quest_Behaviors.GossipEvent
                         if (!IsCurrentGossipNpc(_interactionGuid) || !OwnsActor())
                             return DeferAuthoritativeAttempt("the interacted NPC changed while observing gossip options");
 
-                        GossipFrame.Instance.SelectGossipOption(GossipOptionIndex);
+                        if (!TrySelectGossipOption(GossipOptionIndex))
+                            return DeferAuthoritativeAttempt("the captured gossip menu or interaction changed before selection");
                         _lastSubmissionUtc = UtcNowMilliseconds();
                         _gossipOpenStartedUtc = -1;
                         _interactionGuid = 0;
+                        _observedGossipMenu = null;
                         TreeRoot.StatusText =
                             "Submitted source-bound gossip option; waiting for quest progress";
                         return RunStatus.Running;
@@ -498,6 +611,7 @@ namespace Styx.Bot.Quest_Behaviors.GossipEvent
             if (!OwnsActor())
                 return DeferAuthoritativeAttempt("the player changed before NPC interaction");
 
+            _observedGossipMenu = null;
             target.Interact();
             Counter++;
             _interactionGuid = guid;
@@ -538,6 +652,7 @@ namespace Styx.Bot.Quest_Behaviors.GossipEvent
             _targetWaitStartedUtc = -1;
             _navigationStartedUtc = -1;
             _interactionGuid = 0;
+            _observedGossipMenu = null;
 
             if (!IsAttributeProblem &&
                 SuccessEvidence == SuccessEvidenceType.ObjectiveProgress)
@@ -557,6 +672,7 @@ namespace Styx.Bot.Quest_Behaviors.GossipEvent
             {
                 // Reentrant callbacks cannot continue the old owner during cleanup.
                 _isDisposed = true;
+                _observedGossipMenu = null;
                 try
                 {
                     TreeRoot.GoalText = string.Empty;
