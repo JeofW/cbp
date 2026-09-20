@@ -106,8 +106,7 @@ public sealed class WoWItem
         return accepted;
     }
 }
-public static class StyxWoW { public static LocalPlayer? Me; public static bool IsInGame=true; }
-namespace Styx.Logic.BehaviorTree { public static class TreeRoot { public static bool IsRunning=true,IsPaused; } }
+public static class StyxWoW { public static LocalPlayer? Me; public static bool IsInGame=true; } namespace Styx.Logic.BehaviorTree { public static class TreeRoot { public static bool IsRunning=true,IsPaused; } }
 public static class ObjectManager
 {
     public static T? GetObjectByGuid<T>(ulong guid) where T:class => StyxWoW.Me?.BagItems?.FirstOrDefault(x=>x!=null&&x.Guid==guid) as T;
