@@ -122,7 +122,7 @@ namespace MrItemRemover2
                             }
                             if (ItemNameSell.Contains(item.Name))
                             {
-                                Slog("Item Matched Selling {0}", item.Name);
+                                Slog("Item Matched List Selling {0}", item.Name);
                                 item.UseContainerItem();
                             }
 
