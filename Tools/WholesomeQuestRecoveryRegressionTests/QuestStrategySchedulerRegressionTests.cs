@@ -203,7 +203,7 @@ internal static class QuestStrategySchedulerRegressionTests
                     if (kind == "GossipEvent") recipe["GossipOptionIndex"] = 1;
                     var pack = new Dictionary<string, object>
                     {
-                        ["Schema"] = "copilotbuddy-quest-strategies-v1", ["ClientBuild"] = 12340,
+                        ["Schema"] = "quest-strategy-pack-335-v1", ["ClientBuild"] = 12340,
                         ["QuestDataSha256"] = wrongDigest ? new string('0', 64) : Convert.ToHexString(SHA256.HashData(data)).ToLowerInvariant(),
                         ["SourceKind"] = "curated-profile", ["SourceRevision"] = Guid.NewGuid().ToString("N"),
                         ["Recipes"] = new[] { recipe }
