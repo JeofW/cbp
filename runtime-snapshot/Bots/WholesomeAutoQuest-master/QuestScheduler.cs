@@ -249,7 +249,8 @@ namespace WholesomeAQ
             // Admission precedes recovery selection/marks and navigation probes.
             if (!TryApplyObserved(() => { }))
                 return false;
-            QuestScheduleResult candidate = MaterializeSchedule(
+            QuestStrategyPack strategyPack = _dataLoader.StrategyPack;
+            QuestScheduleResult candidate = MaterializeScheduleCore(
                 db,
                 snapshot,
                 key => QuestRecoveryManager.Instance.Evaluate(key, context),
@@ -263,7 +264,8 @@ namespace WholesomeAQ
                 isKnownUnsafe: point => BlackspotManager.IsBlackspotted(
                     new WoWPoint((float)point.X, (float)point.Y, (float)point.Z)),
                 navigationAssessment: point => AssessNavigation(point, me.Location),
-                reportDataFailure: outcome => QuestRecoveryManager.Instance.Report(outcome, context));
+                reportDataFailure: outcome => QuestRecoveryManager.Instance.Report(outcome, context),
+                strategyPack: strategyPack);
 
             // Preparation can invoke external navigation/player owners. An obsolete
             // continuation must not change a replacement's scan state or output file.
@@ -276,7 +278,7 @@ namespace WholesomeAQ
             {
                 string xml = _profileBuilder.BuildProfileXml(
                     candidate.Plan, db, me.ZoneText, me.Name, me.Level, CurrentVendors,
-                    _dataLoader.StrategyPack);
+                    strategyPack);
                 if (!TryApplyObserved(() => path = _profileBuilder.WriteProfile(xml)))
                     return false;
             }
@@ -388,7 +390,27 @@ namespace WholesomeAQ
             Action<string> log = null,
             Func<SpawnPoint, bool> isKnownUnsafe = null,
             Func<SpawnPoint, SpawnNavigationAssessment> navigationAssessment = null,
-            Action<QuestAttemptOutcome> reportDataFailure = null)
+            Action<QuestAttemptOutcome> reportDataFailure = null) =>
+            MaterializeScheduleCore(db, snapshot, evaluate, maximum, scanThreshold,
+                minQuestLevelOffset, validatedGrindProfilePath, markCompleted, log,
+                isKnownUnsafe, navigationAssessment, reportDataFailure, null);
+
+        // Keep the existing public/reflection contract and no-pack behavior. Only
+        // the loaded scan path supplies its dataset-bound strategy pack here.
+        private static QuestScheduleResult MaterializeScheduleCore(
+            QuestDatabase db,
+            QuestSchedulerSnapshot snapshot,
+            Func<QuestRecoveryKey, QuestRecoveryDecision> evaluate,
+            int maximum,
+            int scanThreshold,
+            int minQuestLevelOffset,
+            string validatedGrindProfilePath,
+            Action<uint> markCompleted,
+            Action<string> log,
+            Func<SpawnPoint, bool> isKnownUnsafe,
+            Func<SpawnPoint, SpawnNavigationAssessment> navigationAssessment,
+            Action<QuestAttemptOutcome> reportDataFailure,
+            QuestStrategyPack strategyPack)
         {
             if (db == null) throw new ArgumentNullException(nameof(db));
             if (snapshot == null) throw new ArgumentNullException(nameof(snapshot));
@@ -471,7 +493,7 @@ namespace WholesomeAQ
                             : QuestWorkStage.Objective,
                         acceptedQuest.ObjectiveCounts,
                         db, snapshot, evaluate, candidates, candidatePlans, exclusions, scanThreshold,
-                        assessNavigation, reportDataFailure);
+                        assessNavigation, reportDataFailure, strategyPack);
                 }
             }
 
@@ -743,7 +765,8 @@ namespace WholesomeAQ
             List<string> exclusions,
             int scanThreshold,
             Func<SpawnPoint, SpawnNavigationAssessment> assessNavigation,
-            Action<QuestAttemptOutcome> reportDataFailure)
+            Action<QuestAttemptOutcome> reportDataFailure,
+            QuestStrategyPack strategyPack)
         {
             var stageKey = QuestRecoveryKey.ForQuestStage((uint)quest.Id, QuestRecoveryStage.Objective);
             QuestRecoveryDecision stageDecision = evaluate(stageKey);
@@ -765,11 +788,40 @@ namespace WholesomeAQ
             var allEndpoints = new List<QuestEndpointCandidate>();
             foreach (QuestObjective objective in quest.Objectives.OrderBy(value => value.Index))
             {
-                // Already-satisfied work does not require usable collection-source
-                // metadata. Do not turn an unused source into a quest-data failure.
-                if (IsObjectiveComplete(objective, objectiveCounts, snapshot.CarriedItemCounts))
+                QuestStrategyRecipe[] strategies = strategyPack?.Recipes
+                    ?.Where(recipe => recipe != null && recipe.QuestId == quest.Id &&
+                        recipe.ObjectiveIndex == objective.Index)
+                    .Take(2).ToArray() ?? Array.Empty<QuestStrategyRecipe>();
+                bool hasDeclaredStrategy = strategies.Length != 0;
+
+                // Dataset indexes do not establish packed-counter slots. A declared
+                // recipe may use independent carried-item completion, but cannot
+                // borrow an unrelated raw count before its action is admitted.
+                bool complete = hasDeclaredStrategy
+                    ? snapshot.CarriedItemCounts != null &&
+                        (objective.Type == ObjectiveType.CollectItem ||
+                         objective.Type == ObjectiveType.CollectFromGameObject) &&
+                        IsObjectiveComplete(objective, null, snapshot.CarriedItemCounts)
+                    : IsObjectiveComplete(objective, objectiveCounts, snapshot.CarriedItemCounts);
+                if (complete)
                     continue;
-                if (!Supported(quest, objective))
+
+                if (hasDeclaredStrategy)
+                {
+                    if (strategies.Length != 1 ||
+                        !CanScheduleWholeQuestStrategy(quest, objective, strategyPack, strategies[0]))
+                    {
+                        var unsupportedKey = QuestRecoveryKey.ForObjective((uint)quest.Id, objective.Index);
+                        QuestRecoveryDecision unsupportedDecision = evaluate(unsupportedKey);
+                        if (unsupportedDecision.MayAttempt)
+                            ReportDataOmission(unsupportedKey, QuestFailureReason.UnsupportedObjective,
+                                "scheduler:unsupported-or-unmapped-strategy", reportDataFailure);
+                        AddObjectiveOmission(quest, workStage, objective.Index,
+                            "unsupported-or-unmapped-strategy", unsupportedDecision.RetryUtc, exclusions);
+                        continue;
+                    }
+                }
+                else if (!Supported(quest, objective))
                 {
                     var unsupportedKey = QuestRecoveryKey.ForObjective((uint)quest.Id, objective.Index);
                     QuestRecoveryDecision unsupportedDecision = evaluate(unsupportedKey);
@@ -1339,6 +1391,37 @@ namespace WholesomeAQ
                 IsKnownReachable = true,
                 SafetyScore = (int)Math.Max(-100000, 1000 - Math.Min(101000, Math.Round(detour)))
             };
+        }
+
+        private static bool CanScheduleWholeQuestStrategy(
+            QuestEntry quest,
+            QuestObjective objective,
+            QuestStrategyPack pack,
+            QuestStrategyRecipe recipe)
+        {
+            // V1 declares a dataset objective index, not a validated raw-counter
+            // mapping. Defer ObjectiveProgress without changing its declared success
+            // condition. Existing QuestComplete recipes do not consume that index.
+            if (pack.Status != QuestStrategyPackStatus.DeclaredAndBound || pack.ClientBuild != 12340 ||
+                recipe.QuestId != quest.Id || recipe.ObjectiveIndex != objective.Index ||
+                recipe.SuccessEvidence != QuestStrategySuccessEvidence.QuestComplete ||
+                recipe.TargetType != QuestStrategyTargetType.Creature || recipe.TargetId <= 0 ||
+                recipe.TargetId != objective.MobId ||
+                (objective.Type != ObjectiveType.KillMob && objective.Type != ObjectiveType.CollectItem) ||
+                double.IsNaN(recipe.Range) || double.IsInfinity(recipe.Range) ||
+                recipe.Range <= 0 || recipe.Range > 100 || recipe.MaxAttempts < 1 || recipe.MaxAttempts > 20)
+                return false;
+
+            // Match the implemented materializers; do not enable an unsupported
+            // action only to abort publication of other valid objective work later.
+            if (recipe.Kind == QuestStrategyKind.UseItemOn)
+                return recipe.ItemId > 0 &&
+                    (recipe.TargetState == QuestStrategyTargetState.Alive ||
+                     recipe.TargetState == QuestStrategyTargetState.Dead ||
+                     recipe.TargetState == QuestStrategyTargetState.DontCare);
+            if (recipe.Kind == QuestStrategyKind.GossipEvent)
+                return recipe.GossipOptionIndex >= 0 && recipe.GossipOptionIndex <= 64;
+            return false;
         }
 
         private static bool Supported(QuestEntry quest) =>
