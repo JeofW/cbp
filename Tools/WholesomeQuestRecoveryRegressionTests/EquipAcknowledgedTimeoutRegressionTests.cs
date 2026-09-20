@@ -110,6 +110,8 @@ public sealed class EquipTimeoutProbe
     private InventorySlot Slot { get { return InventorySlot.HeadSlot; } }
     private bool HasPendingEquip { get { return _pendingEquipGuid != 0 && _pendingEquipEntry != 0; } }
     private void ConfirmOwnedEquipPopup() { }
+    // These existing tests hold actor/runtime admission valid; separate cases mutate it.
+    private bool OwnsPendingEquipContext() => true;
     private bool IsPendingEquipAcknowledged() { return Ack; }
     private bool ReturnDisplacedCursorToSource() { return Return; }
     private void RestoreOwnedCursorToSource() { }

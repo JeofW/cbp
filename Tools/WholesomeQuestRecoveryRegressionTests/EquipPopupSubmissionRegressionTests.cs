@@ -108,6 +108,8 @@ public sealed class PopupProbe
     private bool HasPendingEquip=>_pendingEquipGuid!=0&&_pendingEquipEntry!=0;
     private bool Retry;
     private int Attempts;
+    // These existing tests hold actor/runtime admission valid; separate cases mutate it.
+    private bool OwnsPendingEquipContext() => true;
     private bool IsPendingEquipAcknowledged()=>false;
     private bool ReturnDisplacedCursorToSource()=>false;
     private void RestoreOwnedCursorToSource(){}
