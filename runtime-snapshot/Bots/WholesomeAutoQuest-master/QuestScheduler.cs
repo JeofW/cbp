@@ -811,8 +811,8 @@ namespace WholesomeAQ
                     ? snapshot.CarriedItemCounts != null &&
                         (objective.Type == ObjectiveType.CollectItem ||
                          objective.Type == ObjectiveType.CollectFromGameObject) &&
-                        IsObjectiveComplete(objective, null, snapshot.CarriedItemCounts)
-                    : IsObjectiveComplete(objective, acceptedQuest, snapshot.CarriedItemCounts);
+                        IsAcceptedObjectiveComplete(objective, null, snapshot.CarriedItemCounts)
+                    : IsAcceptedObjectiveComplete(objective, acceptedQuest, snapshot.CarriedItemCounts);
                 if (complete)
                     continue;
 
@@ -1451,7 +1451,16 @@ namespace WholesomeAQ
             (objective.Type == ObjectiveType.CollectFromGameObject && objective.GameObjectId > 0) ||
             objective.Type == ObjectiveType.TurnInOnly;
 
+        // Preserve the existing reflection-used raw-input predicate. Live scans
+        // use the separately named accepted-quest predicate with captured metadata.
         private static bool IsObjectiveComplete(
+            QuestObjective objective,
+            IReadOnlyList<int> objectiveCounts,
+            IReadOnlyDictionary<int, long> carriedItemCounts) =>
+            IsAcceptedObjectiveComplete(objective,
+                new QuestSchedulerAcceptedQuest { ObjectiveCounts = objectiveCounts }, carriedItemCounts);
+
+        private static bool IsAcceptedObjectiveComplete(
             QuestObjective objective,
             QuestSchedulerAcceptedQuest acceptedQuest,
             IReadOnlyDictionary<int, long> carriedItemCounts)
