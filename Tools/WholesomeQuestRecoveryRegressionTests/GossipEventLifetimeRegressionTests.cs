@@ -8,6 +8,8 @@ using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Xml.Linq;
+using Bots.Quest.QuestOrder;
 using Styx.Logic.Questing;
 
 // Complete tracked owners; the quest descriptor reader and behavior base are real.
@@ -15,6 +17,9 @@ using Styx.Logic.Questing;
 // that an identical NPC/menu was not replaced between native client frames.
 // The W88 cases retain the 17 W81 cases and add same-NPC menu-content races.
 // Generated Lua is recorded for separate interpreter verification, not executed here.
+// W90 additionally feeds actual loaded scheduler/CodeNode arguments into complete
+// owners through the retained controlled actor/item/menu boundary. No owner
+// attributes or production source are rewritten to create a successful request.
 internal static class GossipEventLifetimeRegressionTests
 {
     private const BindingFlags Hidden = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance;
@@ -32,8 +37,12 @@ internal static class GossipEventLifetimeRegressionTests
             boundary = boundary.Replace(before, after);
         }
         Replace("public static void SleepForLagDuration(){}", "public static bool IsInGame{get;set;}=true;public static void SleepForLagDuration(){}");
-        Replace("public bool IsAlive{get;set;}=true;", "public bool CanSelect=>true;public void Interact(){GossipLifetimeCases.Interactions++;}public bool IsAlive{get;set;}=true;");
+        Replace("public bool IsAlive{get;set;}=true;", "public bool CanSelect=>true;public void Interact(){GossipLifetimeCases.Interactions++;GossipLifetimeCases.AfterInteract?.Invoke(this);}public bool IsAlive{get;set;}=true;");
         Replace("public Styx.Logic.Questing.PlayerQuest? GetQuestById(uint id)=>null;", "public Styx.Logic.Questing.PlayerQuest? GetQuestById(uint id)=>GossipLifetimeCases.FindQuest(id);");
+        Replace("public bool TryUseContainerItem()=>true;",
+            "public bool TryUseContainerItem()=>GossipLifetimeCases.SubmitItem(this);");
+        Replace("public void Target(){ObjectManager.Me!.CurrentTarget=this;}",
+            "public void Target(){ObjectManager.Me!.CurrentTarget=this;GossipLifetimeCases.AfterTarget?.Invoke();}");
 
         string temp = Path.Combine(Path.GetTempPath(), "cb-gossip-lifetime-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(temp);
@@ -82,6 +91,10 @@ internal static class GossipEventLifetimeRegressionTests
             {
                 assembly.GetType("GossipLifetimeCases", true)!.GetMethod("Run")!.Invoke(null,
                     new object[] { find, (Action)Configure });
+                fixture?.Dispose();
+                fixture = null;
+                observedQuest = null;
+                RunGeneratedDispatch(assembly);
             }
             catch (TargetInvocationException e) when (e.InnerException != null)
             { ExceptionDispatchInfo.Capture(e.InnerException).Throw(); throw; }
@@ -92,6 +105,75 @@ internal static class GossipEventLifetimeRegressionTests
             Styx.Helpers.Logging.FileLogging = priorLogging;
             Directory.Delete(temp, true);
         }
+    }
+
+
+    private static void RunGeneratedDispatch(Assembly assembly)
+    {
+        Type fixtureType = typeof(QuestStrategySchedulerRegressionTests)
+            .GetNestedType("Case", BindingFlags.NonPublic)!;
+        ConstructorInfo constructor = fixtureType.GetConstructors(Hidden).Single();
+        MethodInfo run = assembly.GetType("GossipLifetimeCases", true)!.GetMethod("RunGenerated")!;
+        int passed = 0, assertions = 0, unexpected = 0;
+        foreach (string behavior in new[] { "UseItemOn", "GossipEvent" })
+        foreach (int index in new[] { 0, 3, 17 })
+        foreach (string scenario in new[] { "acknowledgement", "final-ready", "wrong-recipient" })
+        {
+            string name = behavior + " dataset=" + index + " " + scenario;
+            try
+            {
+                object?[] inputs = constructor.GetParameters().Select(p => p.DefaultValue).ToArray();
+                inputs[0] = behavior;
+                inputs[1] = index;
+                using var fixture = (IDisposable)constructor.Invoke(inputs);
+                fixtureType.GetMethod("Scan", Hidden)!.Invoke(fixture, null);
+                var xml = (XDocument)fixtureType.GetMethod("Xml", Hidden)!.Invoke(fixture, null)!;
+                var node = (CodeNode)CodeNode.FromXml(xml.Descendants("CustomBehavior").Single());
+                if (node.Path != behavior || node.Arguments["ObjectiveIndex"] != index.ToString(
+                        System.Globalization.CultureInfo.InvariantCulture) ||
+                    node.Arguments["SuccessEvidence"] != "QuestComplete")
+                    throw new InvalidOperationException("Generated identity/whole-quest contract was not retained");
+                var player = (Styx.WoWInternals.WoWObjects.LocalPlayer)fixtureType
+                    .GetProperty("Player", Hidden)!.GetValue(fixture)!;
+                uint descriptor = (uint)fixtureType.GetProperty("Descriptor", Hidden)!.GetValue(fixture)!;
+                MethodInfo write = fixtureType.GetMethod("Write", Hidden)!;
+                void Observe(string state)
+                {
+                    if (state == "complete")
+                        write.Invoke(fixture, new object[] { descriptor + 636U,
+                            (uint)WoWDescriptorQuestFlags.Completed });
+                    else if (state == "packed")
+                    {
+                        write.Invoke(fixture, new object[] { descriptor + 640U, 0x00090009U });
+                        write.Invoke(fixture, new object[] { descriptor + 644U, 0x00090009U });
+                    }
+                    else throw new InvalidOperationException("Unknown controlled observation: " + state);
+                }
+                Func<uint, PlayerQuest?> find = id => player.QuestLog.GetQuestById(id);
+                run.Invoke(null, new object[] { behavior, node.Arguments, scenario, find,
+                    (Action<string>)Observe, player.Guid });
+                passed++;
+                Console.WriteLine("PASS generated recipient dispatch: " + name);
+            }
+            catch (Exception error)
+            {
+                while (error is TargetInvocationException target && target.InnerException != null)
+                    error = target.InnerException;
+                if (error.GetType().Name == "Failure")
+                {
+                    assertions++;
+                    Console.Error.WriteLine("FAIL generated recipient dispatch: " + name + ": " + error.Message);
+                }
+                else
+                {
+                    unexpected++;
+                    Console.Error.WriteLine("ERROR generated recipient dispatch: " + name + ": " + error);
+                }
+            }
+        }
+        Console.WriteLine($"Generated recipient dispatch scenarios: {passed}/18; assertions={assertions}; unexpected={unexpected}; actual loader/raw QuestLog/scan/scheduler/XML/CodeNode, complete owner constructors/start/retained TreeSharp ticks; controlled actor/item/menu requests; no native Lua, executor or game attached.");
+        if (assertions + unexpected != 0)
+            throw new InvalidOperationException("Generated recipient dispatch regression");
     }
 
     private static string Root()
@@ -109,6 +191,19 @@ public static class GossipLifetimeCases
     public static System.Func<uint,Styx.Logic.Questing.PlayerQuest?> FindQuest=null!;
     private static System.Action configure=null!;
     public static System.Action? OnMenu,BeforeClientRequest;
+    public static System.Action? AfterTarget;
+    public static System.Action<WoWUnit>? AfterInteract;
+    public static int ExpectedOptionNumber=1;
+    private static int itemRequests;
+    private static ulong submittedTarget;
+    private static uint submittedItem;
+    public static bool SubmitItem(WoWItem item)
+    {
+        itemRequests++;
+        submittedTarget=ObjectManager.Me?.CurrentTarget?.Guid??0;
+        submittedItem=item.Entry;
+        return true; // Recording external request boundary, not server acknowledgement.
+    }
     public static string MenuText=null!;
     public static string[] Options=null!;
     public static object?[] Available=null!,Active=null!;
@@ -207,6 +302,122 @@ public static class GossipLifetimeCases
         Console.WriteLine($"Gossip lifetime scenarios: {pass}/{tests.Count}; assertions={assertions}; unexpected={unexpected}; complete tracked owner and real quest reader; controlled actor/UI; no Lua or game execution.");
         if(assertions+unexpected!=0)throw new InvalidOperationException("Gossip lifetime regression");
     }
+
+    public static void RunGenerated(string behavior,Dictionary<string,string> args,string scenario,
+        System.Func<uint,Styx.Logic.Questing.PlayerQuest?> find,System.Action<string> observe,ulong actorGuid)
+    {
+        // External observations only: never borrow Reset's hand-written behavior
+        // arguments, overwrite owner properties, or inject pending/submitted state.
+        FindQuest=find;
+        kind=behavior=="UseItemOn"?typeof(Script):typeof(Styx.Bot.Quest_Behaviors.GossipEvent.GossipEvent);
+        ObjectManager.Me=player=new LocalPlayer{Guid=actorGuid,Location=new WoWPoint(10,10,10),IsMoving=false};
+        var target=new WoWUnit{Guid=2,Entry=70001,Location=new WoWPoint(12,10,10)};
+        ObjectManager.Objects=new List<WoWObject>{target};
+        player.CarriedItems!.Add(new WoWItem{Guid=17,Entry=12345});
+        Styx.StyxWoW.IsInGame=true;
+        OnMenu=BeforeClientRequest=AfterTarget=null;
+        AfterInteract=unit=>{Frame.IsVisible=true;CurrentNpc=unit.Guid;};
+        Selections=Closes=Interactions=itemRequests=0;submittedTarget=0;submittedItem=0;
+        CurrentNpc=2;ClientPlayer=actorGuid;Frame.IsVisible=false;
+        SnapshotKnown=true;ThrowOnSnapshot=false;StringOnlyBridge=true;CaptureFault=null;
+        MenuText="Generated source-bound interaction";
+        Options=new[]{"Not the requested option","gossip","Requested option","gossip"};
+        Available=Array.Empty<object?>();Active=Array.Empty<object?>();
+        ExpectedOptionNumber=behavior=="GossipEvent"?int.Parse(args["GossipOptionIndex"],
+            System.Globalization.CultureInfo.InvariantCulture)+1:1;
+        var retainedArguments=new Dictionary<string,string>(args);
+        var current=(Styx.Logic.Questing.CustomForcedBehavior)Activator.CreateInstance(kind,new object[]{args})!;
+        GC.SuppressFinalize(current);
+        Composite? branch=null;
+        bool running=false;
+        int Requests()=>behavior=="UseItemOn"?itemRequests:Selections;
+        int Counter()=>(int)kind.GetProperty("Counter",Hidden)!.GetValue(current)!;
+        bool Acknowledged()=>(bool)kind.GetMethod("HasAuthoritativeSuccess",Hidden)!.Invoke(current,null)!;
+        void Stop()
+        {
+            if(running&&branch!=null)branch.Stop(null!);
+            running=false;branch=null;
+        }
+        void DisposeOwner()
+        {
+            Stop();
+            if(current is Script use)use.Dispose(true);else current.Dispose();
+        }
+        void Pulse()
+        {
+            var failures=new List<string>();
+            void Record(Styx.Helpers.LogLevel level,string message)
+            {if(message.Contains("Exception")||message.Contains("Object reference not set"))failures.Add(message);}
+            Styx.Helpers.Logging.OnMessageLogged+=Record;
+            try
+            {
+                branch??=(Composite)kind.GetMethod("CreateBehavior",Hidden)!.Invoke(current,null)!;
+                if(!running)branch.Start(null!);
+                running=branch.Tick(null!)==RunStatus.Running;
+                if(!running)branch.Stop(null!);
+                Check(failures.Count==0,"swallowed owner exception: "+string.Join(";",failures));
+            }
+            finally{Styx.Helpers.Logging.OnMessageLogged-=Record;}
+        }
+        try
+        {
+            Check(!current.IsAttributeProblem,"actual owner rejected unchanged CodeNode arguments");
+            current.OnStart();
+            Check(!current.IsDone&&!Acknowledged()&&Counter()==0,
+                "incomplete generated owner was not initially eligible");
+            Check(kind.GetProperty("InitialObjectiveCount",Hidden)!.GetValue(current)==null,
+                "whole-quest owner read an unmapped dataset index as a raw counter");
+            if(scenario=="wrong-recipient")
+            {
+                target.Entry=79999;
+                ObjectManager.Objects.Add(new WoWGameObject{Guid=3,Entry=70001,Location=target.Location});
+                Pulse();Pulse();
+                Check(Requests()==0&&Interactions==0&&Counter()==0&&!current.IsDone&&!Acknowledged(),
+                    "wrong creature or same-entry GameObject acquired request authority");
+                return;
+            }
+            if(scenario=="final-ready")
+            {
+                bool reached=false;
+                void Complete(){reached=true;observe("complete");AfterTarget=null;OnMenu=null;}
+                if(behavior=="UseItemOn")AfterTarget=Complete;else OnMenu=Complete;
+                for(int i=0;i<4&&!reached;i++)Pulse();
+                Check(reached,"generated recipe never reached target/menu setup");
+                Check(Requests()==0&&current.IsDone&&Acknowledged(),
+                    "ready quest was ignored at the generated recipe's last setup boundary");
+                return;
+            }
+            for(int i=0;i<4&&Requests()==0;i++)Pulse();
+            Check(Requests()==1&&Counter()==1&&!current.IsDone&&!Acknowledged(),
+                "matching generated recipe did not submit once without claiming acknowledgement");
+            if(behavior=="UseItemOn")
+                Check(submittedTarget==2&&submittedItem==12345,"generated item request changed recipient or item");
+            else Check(Interactions==1&&ExpectedOptionNumber==2,"generated gossip request lost exact option/interaction");
+            observe("packed");Pulse();
+            Check(Requests()==1&&Counter()==1&&!current.IsDone&&!Acknowledged()&&
+                kind.GetProperty("InitialObjectiveCount",Hidden)!.GetValue(current)==null,
+                "unrelated raw counters acknowledged, repeated or renumbered a whole-quest recipe");
+            observe("complete");
+            Check(current.IsDone&&Acknowledged(),"actual raw quest ready-state did not acknowledge the submitted recipe");
+            Pulse();Check(Requests()==1,"completed owner submitted again");
+            DisposeOwner();
+            current=(Styx.Logic.Questing.CustomForcedBehavior)Activator.CreateInstance(kind,new object[]{args})!;
+            GC.SuppressFinalize(current);current.OnStart();
+            Check(current.IsDone&&Acknowledged()&&Counter()==0,"fresh generated owner repeated an already-ready quest");
+            Pulse();Check(Requests()==1,"fresh owner requested an already-ready quest action");
+        }
+        finally
+        {
+            try{DisposeOwner();}
+            finally
+            {
+                AfterTarget=null;AfterInteract=null;OnMenu=BeforeClientRequest=null;
+                Check(args.Count==retainedArguments.Count&&retainedArguments.All(p=>args.TryGetValue(p.Key,out string? value)&&value==p.Value),
+                    "generated behavior arguments were modified during dispatch");
+            }
+        }
+    }
+
     private static void Reset()
     {
         configure();Styx.StyxWoW.IsInGame=true;
@@ -220,6 +431,7 @@ public static class GossipLifetimeCases
         if(((Styx.Logic.Questing.CustomForcedBehavior)owner).IsAttributeProblem)throw new InvalidOperationException("Actual constructor rejected controlled arguments");
         kind.GetProperty("Location",Hidden)!.SetValue(owner,player.Location);
         Selections=Closes=Interactions=0;OnMenu=BeforeClientRequest=null;CurrentNpc=2;Frame.IsVisible=false;
+        AfterTarget=null;AfterInteract=null;ExpectedOptionNumber=1;itemRequests=0;
         ClientPlayer=player.Guid;SnapshotKnown=true;ThrowOnSnapshot=false;StringOnlyBridge=false;CaptureFault=null;
         MenuText="Source-bound interaction";Options=new[]{"Proceed","gossip","Leave","gossip"};
         Available=new object?[]{"Available quest",10,false,false,false};Active=new object?[]{"Active quest",10,false,false};
@@ -323,7 +535,7 @@ public static class GossipLifetimeCases
                     &&GossipLifetimeCases.ClientContext(script)&&expected.Groups[1].Value==GossipLifetimeCases.Signature();
                 if(own)
                 {
-                    if(select){if(!script.Contains("SelectGossipOption(1)",StringComparison.Ordinal))throw new InvalidOperationException("Original one-based selection contract changed");GossipLifetimeCases.Selections++;}
+                    if(select){if(!script.Contains("SelectGossipOption("+GossipLifetimeCases.ExpectedOptionNumber+")",StringComparison.Ordinal))throw new InvalidOperationException("Original one-based selection contract changed");GossipLifetimeCases.Selections++;}
                     else Styx.Logic.Inventory.Frames.Gossip.GossipFrame.Instance.Close();
                 }
                 return (T)(object)own;
