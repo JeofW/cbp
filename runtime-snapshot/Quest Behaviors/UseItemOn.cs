@@ -114,7 +114,7 @@ namespace Styx.Bot.Quest_Behaviors.UseItemOn
                 IgnoreCombat = GetAttributeAsNullable<bool>("IgnoreCombat", false, null, null) ?? false;
 
                 MobAuraName = (tmpMobHasAuraId != 0) ? AuraNameFromId("HasAuraId", tmpMobHasAuraId) : null;
-                MobAuraMissingName = (tmpMobHasAuraMissingId != 0) ? AuraNameFromId("IsMissingAuraId", tmpMobHasAuraMissingId) : null;
+                MobAuraMissingName = (tmpMobHasAuraMissingId != 0) ? AuraNameFromId("HasAuraId", tmpMobHasAuraMissingId) : null;
             }
 
             catch (Exception except)
