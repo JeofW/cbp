@@ -203,6 +203,15 @@ namespace MrItemRemover2
                 return;
             }
 
+            // A temporary busy state postpones scan work; it must not consume
+            // the trigger or discard candidates already admitted in this run.
+            LocalPlayer player = Me;
+            if (IsInitialized && StyxWoW.IsInGame &&
+                Styx.Logic.BehaviorTree.TreeRoot.IsRunning &&
+                player != null && player.IsValid && player.IsAlive && !player.IsGhost &&
+                (Styx.Logic.BehaviorTree.TreeRoot.IsPaused || player.Combat || player.IsCasting))
+                return;
+
             // Finish the admitted finite pass before consuming another trigger.
             if (_itemScan != null)
             {
