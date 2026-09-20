@@ -1,12 +1,15 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
 using System.Xml.Linq;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Bots.Quest.QuestOrder;
 using Styx.Helpers;
 using Styx.Logic.Profiles.Quest;
@@ -24,6 +27,62 @@ internal static class QuestStrategyConstructorDispatchRegressionTests
     [ModuleInitializer]
     internal static void Run()
     {
+        // Other retained groups deliberately load shadow host types into this
+        // process. The real compiler discovers loaded assemblies, so execute this
+        // check in a fresh process instead of altering its reference selection.
+        string assemblyPath = typeof(QuestStrategyConstructorDispatchRegressionTests).Assembly.Location;
+        string runtime = Environment.ProcessPath ?? throw new InvalidOperationException("Verified dotnet runtime required");
+        if (!string.Equals(Path.GetFileNameWithoutExtension(runtime), "dotnet", StringComparison.OrdinalIgnoreCase))
+            throw new InvalidOperationException("This fixture requires the existing dotnet test runtime");
+        string childPath = Path.Combine(AppContext.BaseDirectory, "constructor-dispatch-" + Guid.NewGuid().ToString("N") + ".dll");
+        const string launcher = "using System;using System.Reflection;public static class Entry{public static int Main(string[] args){try{Assembly.LoadFrom(args[0]).GetType(\"QuestStrategyConstructorDispatchRegressionTests\",true).GetMethod(\"RunIsolated\",BindingFlags.Static|BindingFlags.Public|BindingFlags.NonPublic).Invoke(null,null);return 0;}catch(Exception error){Console.Error.WriteLine(error);return 1;}}}";
+        try
+        {
+            string trusted = (string?)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES")
+                ?? throw new InvalidOperationException("Trusted framework assemblies required");
+            var references = trusted.Split(Path.PathSeparator).Distinct(StringComparer.OrdinalIgnoreCase)
+                .Select(path => MetadataReference.CreateFromFile(path));
+            var compilation = CSharpCompilation.Create(Path.GetFileNameWithoutExtension(childPath),
+                new[] { CSharpSyntaxTree.ParseText(launcher) }, references,
+                new CSharpCompilationOptions(OutputKind.ConsoleApplication, platform: Platform.X86));
+            using (var stream = new FileStream(childPath, FileMode.CreateNew, FileAccess.Write, FileShare.None))
+            {
+                var emit = compilation.Emit(stream);
+                if (!emit.Success) throw new InvalidOperationException("Isolated launcher did not compile: " +
+                    string.Join(";", emit.Diagnostics.Where(d => d.Severity == DiagnosticSeverity.Error)));
+            }
+            var start = new ProcessStartInfo(runtime)
+            {
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                WorkingDirectory = AppContext.BaseDirectory
+            };
+            foreach (string argument in new[] { "exec", "--runtimeconfig", Path.ChangeExtension(assemblyPath, ".runtimeconfig.json"),
+                "--depsfile", Path.ChangeExtension(assemblyPath, ".deps.json"), childPath, assemblyPath })
+                start.ArgumentList.Add(argument);
+            using var child = Process.Start(start) ?? throw new InvalidOperationException("Could not start isolated constructor check");
+            var output = child.StandardOutput.ReadToEndAsync();
+            var error = child.StandardError.ReadToEndAsync();
+            if (!child.WaitForExit(120000))
+            {
+                child.Kill(entireProcessTree: true);
+                child.WaitForExit();
+                throw new InvalidOperationException("Isolated constructor check exceeded its two-minute bound");
+            }
+            Console.Write(output.GetAwaiter().GetResult());
+            Console.Error.Write(error.GetAwaiter().GetResult());
+            if (child.ExitCode != 0) throw new InvalidOperationException("Isolated constructor check failed: " + child.ExitCode);
+        }
+        finally { if (File.Exists(childPath)) File.Delete(childPath); }
+    }
+
+    internal static void RunIsolated()
+    {
+        Check(!AppDomain.CurrentDomain.GetAssemblies().Any(assembly =>
+            assembly.GetName().Name?.StartsWith("cb-", StringComparison.Ordinal) == true),
+            "isolated check inherited earlier shadow fixture assemblies");
+        Console.WriteLine("CONSTRUCTOR_ISOLATION: fresh process; no prior shadow fixture assemblies; compiler references unchanged.");
         string root = Root();
         string behaviorRoot = Path.Combine(Logging.ApplicationPath, "Quest Behaviors");
         bool madeDirectory = !Directory.Exists(behaviorRoot);
