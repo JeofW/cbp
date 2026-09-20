@@ -1,0 +1,237 @@
+{
+  "checkpoint": "W88",
+  "date": "2026-09-20",
+  "timezone": "Asia/Kuala_Lumpur",
+  "repository": "jeofwong/CopilotBuddy-private",
+  "repository_id": 1367174964,
+  "pr": 51,
+  "branch": "audit/next-55-equipment-observation-20260917",
+  "entry_documentation": "2d73392d43009dccc1a01c986fd77288e70c7fef",
+  "last_production_change": "e984fe15f37ab66bcf0bf45d11b58a8fc51fbba0",
+  "final_tested_commit": "f6ee23de269228270d0d12950b47a5a2b53535ef",
+  "final_tested_tree": "a3878575232f508c6561f4f7486bc3c7e44a48ec",
+  "direct_master": "b2324913e2499ba30b239dd67224ca2c655c05cc",
+  "merge_approved_now": false,
+  "game_attached": false,
+  "independent_review": false,
+  "backup_branch": "audit/backup-pr51-before-w88-20260920",
+  "intentionally_red_reference_branch": "audit/next-88-gossip-unchanged-fixture-red-20260920",
+  "archives": [
+    {
+      "file": "w88-gossip-2dc0ed45-red.zip",
+      "kind": "integrated",
+      "sha256": "bad70d2aa3da9e49da45a5b0b122d6361fb3b8118863fb2102c3566344be17a8",
+      "commit": "2dc0ed45234c25f383f940227352fb04a4284c3e",
+      "tree": "784c939c7f2b585ce1f0e35265a79ab191a5ccd9",
+      "run_id": 35506867198,
+      "artifact_id": 10604331374,
+      "integrated_passed": 16,
+      "gossip": [
+        19,
+        52,
+        33,
+        0
+      ]
+    },
+    {
+      "file": "w88-gossip-03c255ff-red.zip",
+      "kind": "integrated",
+      "sha256": "3d34b494a44199d0b8bd08dbd20015f9b60b3c94bdfe6f04298514f11eaf0eca",
+      "commit": "03c255ff40ea8e8f96074706e277e6c31ffe3dc8",
+      "tree": "39eac9d18c495f0e1042a25dedbbb270c436630e",
+      "run_id": 35507198189,
+      "artifact_id": 10604371775,
+      "integrated_passed": 16,
+      "gossip": [
+        21,
+        58,
+        37,
+        0
+      ]
+    },
+    {
+      "file": "w88-gossip-e984fe15-integrated.zip",
+      "kind": "integrated",
+      "sha256": "5315b589fc7982606af85e11b62744d3f2d8eaa4ca0faf8ed76c9d138ef5982a",
+      "commit": "e984fe15f37ab66bcf0bf45d11b58a8fc51fbba0",
+      "tree": "4d69ffda85552f4fc4b1082739ea645666f88ef2",
+      "run_id": 35507445085,
+      "artifact_id": 10604206922,
+      "integrated_passed": 16,
+      "gossip": [
+        58,
+        58,
+        0,
+        0
+      ],
+      "restart_compile_failure": true
+    },
+    {
+      "file": "w88-gossip-e984fe15-host.zip",
+      "kind": "host",
+      "sha256": "04c3711692c0006c3d041077ed719f5246df3021955273b920ceb7ee28e91ab8",
+      "commit": "e984fe15f37ab66bcf0bf45d11b58a8fc51fbba0",
+      "run_id": 35507445039,
+      "artifact_id": 10603982373
+    },
+    {
+      "file": "w88-gossip-f6ee23de-integrated.zip",
+      "kind": "integrated",
+      "sha256": "44c52a249c3bcac58f9ae221a77fbd17fdce2bcb1007bb9983fb61b4cfbcd06f",
+      "commit": "f6ee23de269228270d0d12950b47a5a2b53535ef",
+      "tree": "a3878575232f508c6561f4f7486bc3c7e44a48ec",
+      "run_id": 35507918903,
+      "artifact_id": 10604537448,
+      "integrated_passed": 17,
+      "gossip": [
+        58,
+        58,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "w88-gossip-f6ee23de-host.zip",
+      "kind": "host",
+      "sha256": "3f97a9d6b1c86e27c513a0e0fc44acb2cbf80dfa40e9bbfe85dc99c1da28218f",
+      "commit": "f6ee23de269228270d0d12950b47a5a2b53535ef",
+      "run_id": 35507918907,
+      "artifact_id": 10604851733
+    },
+    {
+      "file": "w88-gossip-8cc504ca-matched-red.zip",
+      "kind": "integrated",
+      "sha256": "591883882814bdc59d4fef3475cd952ce9a36cd82359e8bfb945ff817e2da43c",
+      "commit": "8cc504ca15ebf69d16e735b5ed5ade770915c40b",
+      "tree": "07d5580c4c3bf6a58e74ac778941650cf241b800",
+      "run_id": 35507944742,
+      "artifact_id": 10604921533,
+      "integrated_passed": 16,
+      "gossip": [
+        21,
+        58,
+        37,
+        0
+      ]
+    }
+  ],
+  "verification": {
+    "outer_sha256_and_crc_archives": 7,
+    "integrated_archives": 5,
+    "inner_entries_verified_per_integrated": 197,
+    "normalized_members": 153,
+    "indexed_source_paths": 1835,
+    "comparisons": [
+      {
+        "before": "w88-gossip-03c255ff-red.zip",
+        "after": "w88-gossip-e984fe15-integrated.zip",
+        "normalized_members": 153,
+        "normalized_differences": [],
+        "source_paths": 1835,
+        "source_differences": [
+          "runtime-snapshot/Quest Behaviors/GossipEvent.cs"
+        ],
+        "meaning": "Original production repair with all normalized fixtures unchanged: named gossip cases become green, but retained restart fixture compile mismatch prevents aggregate green."
+      },
+      {
+        "before": "w88-gossip-e984fe15-integrated.zip",
+        "after": "w88-gossip-f6ee23de-integrated.zip",
+        "normalized_members": 153,
+        "normalized_differences": [
+          "normalized/WholesomeQuestRecoveryRegressionTests/W42Normalized/QuestObjectiveRestartRegressionTests.cs",
+          "normalized/WholesomeQuestRecoveryRegressionTests/W42Normalized/normalization-manifest.json"
+        ],
+        "source_paths": 1835,
+        "source_differences": [
+          "Tools/WholesomeQuestRecoveryRegressionTests/QuestObjectiveRestartRegressionTests.cs"
+        ],
+        "meaning": "Fixture-only bridge adaptation, no production change; the original restart cases and assertions remain unchanged. Not a second production fix."
+      },
+      {
+        "before": "w88-gossip-8cc504ca-matched-red.zip",
+        "after": "w88-gossip-f6ee23de-integrated.zip",
+        "normalized_members": 153,
+        "normalized_differences": [],
+        "source_paths": 1835,
+        "source_differences": [
+          "runtime-snapshot/Quest Behaviors/GossipEvent.cs"
+        ],
+        "meaning": "Supplemental complete unchanged-fixture reference pair after the restart boundary adaptation. The isolated red branch is not a deployment or merge candidate."
+      }
+    ]
+  },
+  "final_retained_results": {
+    "gossip_lifetime": "58/58",
+    "objective_restart": "37/37",
+    "mir_finite_scan": "27/27",
+    "mir_context": "82/82",
+    "equipitem_context": "67/67",
+    "autoequip_context": "46/46",
+    "collection_replay": "34/34",
+    "ret_registration": "9/9",
+    "python_analyzers": "89/89"
+  },
+  "lua_probe": {
+    "runtime": "stock Lua5.4",
+    "original_client_executed": false,
+    "cases_passed": 57,
+    "cases_total": 57,
+    "unexpected": 0,
+    "scripts_sha256": {
+      "capture": "37d72f68d407557900ad72c78dc503a883081a7d8a6d517efd5225ff563d5c91",
+      "close": "06d863b5cb891ce759617ffe5f87a1bf5464c4666601f39d6786be40ea657eb8",
+      "npc": "71e77f3dd863b84d727827b615211e33dde94808e9370cb713f4617e104d4f6a",
+      "select": "b8a98661862acbcaaef6abeec9d09e33c06d605695a1d8b7faaaf23b791cf643"
+    },
+    "actual_recorded_script_source": "f6ee23de269228270d0d12950b47a5a2b53535ef",
+    "baseline_numeric_transport_probe": "0/2, two intended assertions, zero unexpected, captured old raw-boolean NPC predicate"
+  },
+  "primary_sources": [
+    {
+      "url": "https://github.com/wowgaming/3.3.5-interface-files/blob/d0339b17b0221db76e6acd2dc2915d224a5b62ca/GossipFrame.lua",
+      "blob": "401f66b9a20f09c873c4dde335410927568855b1",
+      "contract": "original option pairs; available quintets; active quadruplets; greeting; close and one-based selection"
+    },
+    {
+      "url": "https://www.lua.org/manual/5.1/manual.html#lua_tolstring",
+      "contract": "strings and numbers convert; raw booleans do not; source documentation, not runtime execution"
+    },
+    {
+      "path": "Styx/WoWInternals/Lua.cs",
+      "ref": "03c255ff40ea8e8f96074706e277e6c31ffe3dc8",
+      "blob": "4a6873fd1a1200aabbc430e420520e9543a0e2a0"
+    },
+    {
+      "path": "GreenMagic/Memory.cs",
+      "ref": "03c255ff40ea8e8f96074706e277e6c31ffe3dc8",
+      "blob": "47448e65cf92422f14f624ff866e8fcc0833c92c"
+    },
+    {
+      "path": "Styx/Logic/Inventory/Frames/Frame.cs",
+      "ref": "f6ee23de269228270d0d12950b47a5a2b53535ef",
+      "blob": "38b8b2d55a52c13b50d75989023035329801a47f"
+    }
+  ],
+  "history_disclosures": [
+    "e984fe15 integrated archive is not green: gossip58/58 but retained objective-restart fixture lacked controlled GetReturnValues. f6ee23de adapts only that boundary; all37 original assertions stay unchanged.",
+    "8cc504ca supplemental identical-fixture baseline was constructed after production repair. The actual pre-repair assertion-level runs2dc0ed45 and03c255ff remain retained; chronology is not rewritten.",
+    "Auxiliary verifier CRLF locator and empty-list setup syntax corrected. The empty-list failure report53/57 with4 unexpected setup errors is retained; neither harness error is production red.",
+    "Fixture-only adaptation changes one normalized C# member plus its two derived normalization-manifest hashes, not just the C# member.",
+    "Unreferenced blob848fb01c448f8c65fe01484bac73724c46815901 contained an unintended equivalent copy-path expression; checksum mismatch stopped it before any tree/commit/ref. Reviewed replacement51b52a96e35d997be423eb25d5841e3f75005fc5 was used.",
+    "W77 documentation add/revert and W87 duplicate-harness add/remove history and prior exclusions remain disclosed."
+  ],
+  "remaining_gates": [
+    "R03 actual CAST admission/index mapping/dispatch",
+    "R04 physical cursor/popup/lifecycle",
+    "R06 same-content generation identity/native bridge/original-client acceptance",
+    "R07 actual compiler dependencies/static reload/full refresh",
+    "All earlier shared/native/independent/supervised acceptance limits"
+  ],
+  "limits": [
+    "Original WoW3.3.5a/build12340; TC3.3.5 primary/AC WotLK secondary",
+    "Offline Windows x86 C# with controlled world/UI boundaries",
+    "StockLua5.4 auxiliary script execution, not original5.1/client",
+    "No native deletion, server quest acknowledgement or live gameplay acceptance",
+    "No master write, merge, deployment, installed-file replacement or independent reviewer result"
+  ]
+}
