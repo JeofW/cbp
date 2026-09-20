@@ -1,15 +1,32 @@
-# Resume W86 — instance/run-scoped deletion verified; scan continuation next
+# Resume W87 — finite MIR scan verified; remaining merge gates stay open
 
-Repo `jeofwong/CopilotBuddy-private`, draft PR51, branch `audit/next-55-equipment-observation-20260917`. Reconcile live refs before writing. Read W86_CHECKPOINT.md/W86_EVIDENCE.json under docs/audit/2026-09-20, W85–W81 and W80's completed140-commit review. Preserve all four original3.3.5a/core/provenance policies and previous exclusions.
+Repo `jeofwong/CopilotBuddy-private` (1367174964), draft PR51 branch `audit/next-55-equipment-observation-20260917`. Reconcile the live ref before writing. Read `docs/audit/HANDOFF_POLICY.md`, the four original-client/core/provenance policies, `docs/audit/2026-09-20/W87_CHECKPOINT.md`, `W87_EVIDENCE.json`, W86 and W80's completed review/ledger. Do not restart the completed140-commit review after18 September2026 21:58 Malaysia.
 
-**Required every time:** read `docs/audit/HANDOFF_POLICY.md`. Final reply must contain a copy-paste new-chat prompt and downloadable UTF-8 handoff, in addition to updated root pointers. User specifically requested this on20 September2026.
+## Exact tested code
 
-Tested production **73c418210bdfa9a01e611d84a91a428584381c97**, tree **ee724ea1f71a8d36b3b25d4fa294733ef55a5ab4**. Integrated35501234594/art10602552093:17/17, MIR context82/82. Host35501234606/art10602092819:exit0,3344 warnings,0 errors. Offline Windows, no game attached. Documentation successor is not a new production test.
+**db4a16beca29b6decf1b580f53343aa19c4321b7**, tree **1aff8741017c2f7127643e38f7539aeb65219f90**. Documentation successors are not additional tested production revisions.
 
-W86 redae3f1b1d/run35500961319/art10602152292:4/82,78 intended assertions,0unexpected; other16 entries pass. Green fixes private static cross-instance deletion state, captures actor/run/operation identity, resets via existing start/stop events and before disable cleanup, gates mutation on valid current context and removal enabled, and rejects stale callback results. No Lua/selection/timeout/scan-policy change. All152 normalized files identical across the repair; only Methods.cs and MrItemRemover2.cs differ among1834 inputs. Initialc17 harness-normalizer failure and8e5 executedred are distinct retained artifacts; older fixture preparation precedes the unchanged pair.
+Integrated **35503906697/art10602953497**:17/17, MIR finite scan27/27,0 assertions/0 unexpected. Host **35503906699/art10603700944**:exit0,3344 warnings/0 errors, compile only. No game attached. Digests, source identities, original archives and evidence limits are in W87_EVIDENCE.
 
-NEXT: R05 finite multi-candidate pass. Drive real Pulse/CheckForItems with one initial trigger, refused first pickup, local acknowledgement/returned item and later candidates; do not depend on another timer/loot event. Keep eligibility/open/combining rules, capture a bounded pass and actor identity, preserve unknowns. Do not recreate the now-green context/request/observation guards.
+Do not recreate:
+- W86's instance/player/run/operation deletion checks at73c41821 and handoff policy.
+- **7f28d5fd**: one captured finite original inventory queue per trigger, continuation after refusal/returned item/local disappearance, original candidate identity and run/player checks. Existing22-case red6ccba967 was10/22,12 intended assertions,0unexpected ->22/22 and17/17. Only MIR Methods.cs/main Pulse change;153 normalized members unchanged.
+- **0f4a072f -> db4a16be**: five added actual Pulse tests caught the first repair discarding queued/remaining work during combat/casting/pause. Red22/27,5 assertions,0unexpected ->27/27 and17/17. The production repair is one nine-line Pulse guard after existing pending-delete processing. All153 normalized members unchanged across this second pair; only MrItemRemover2.cs changes.
 
-Remaining R03 CAST scheduling/raw-index mapping, R04 physical cursor/popup/full lifetime, R06 same-NPC menu identity, R07 dependency/static reload/full refresh. Keep unsupported recipes rejected; no invented Gordunni/escort action or coordinates. No new feature expansion or AuctionHouse/ProfessionBuddy work.
+The whole6ccba967-to-db4a16be span is not an unchanged-fixture pair: five tests were added between the two production pairs. All22 earlier cases remain unchanged. Fourteen prior deletion/protection/selling method bodies and all existing Lua expressions remain unchanged by W87. Finite candidates do not imply a new wall-clock bound for every legacy sleep/native call.
 
-Merge is already conditionally authorized only when all recorded blockers/final gates are cleared. They are not cleared. Do not ask again or merge on aggregate CI alone. Reconcile refs, backup, exact merge preview/checks and exact-head conditional merge when genuinely ready. No deployment/installed files/live acceptance implied. Direct master last knownb2324913e2499ba30b239dd67224ca2c655c05cc; preserve historical disclosed W77 recovery. Explicit nonempty branch/expected parent or blob/force=false for writes. Original3.3.5a/build12340, TC3.3.5 primary/AC WotLK secondary, no desktop mouse or guessed ABI/Lua.
+Reconciliation correction: e3ed01c0 unnecessarily added a duplicate scan harness; b065b5e0 removed only it and restored entry tree91aac55947fb04a4537409c84ab252cc61b951d4 exactly. Keep the original MrItemRemoverScanRegressionTests; do not re-add the duplicate or hide these history commits.
+
+## Next priority and merge decision
+
+**Next: R06 same-NPC changed-menu identity at final selection/cleanup**, retaining W81 actor/NPC and W78 completion checks. Do not infer unchanged menu contents from an unchanged NPC GUID. Original-client APIs only; no first-option fallback or desktop mouse simulation.
+
+Other blockers: R03 CAST recipe scheduling and dataset/collection/raw-counter mapping/dispatch; R04 physical displaced/foreign cursor and same-slot popup/full lifecycle; R07 actual compiler dependencies/static reload/full refresh. W84/W86/W87 cover named local R05 observation, context and finite-scan cases, not full native inventory/deletion acceptance. Keep all prior provenance, quest/buff/gear/navigation/native/live-acceptance requirements and auction withdrawal. No new Gordunni/escort recipe or guessed coordinates exists.
+
+Conditional merge authorization is already given. Do not ask again, and do not merge this partial state. When all blockers are resolved or explicitly contained with evidence, reconcile direct refs, preserve backup, inspect exact merge preview and final integrated/host evidence, then perform an exact-head conditional merge. Merge is not deployment.
+
+Master last directly verified **b2324913e2499ba30b239dd67224ca2c655c05cc**. W87 did not write master, force-push, merge, deploy or replace installed files. Preserve W77's disclosed historical documentation add/revert, backups and exclusions. All writes require explicit nonempty approved PR branch, expected parent/blob and reviewed content/message, force=false.
+
+Original WoW3.3.5a/build12340; TC3.3.5 primary/AC WotLK secondary; Wholesome questing/navigation/Singular plus related safety. Do not expand AuctionHouse/ProfessionBuddy. No independent reviewer or supervised game acceptance claimed.
+
+**Always end with both a copy-ready new-chat prompt and a downloadable UTF-8 handoff, alongside updated repository pointers.**
