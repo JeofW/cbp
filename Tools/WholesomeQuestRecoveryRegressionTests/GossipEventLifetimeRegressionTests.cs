@@ -13,6 +13,8 @@ using Styx.Logic.Questing;
 // Complete tracked owners; the quest descriptor reader and behavior base are real.
 // World/UI observations are controlled. This does not execute client Lua or prove
 // that an identical NPC/menu was not replaced between native client frames.
+// The W88 cases retain the 17 W81 cases and add same-NPC menu-content races.
+// Generated Lua is recorded for separate interpreter verification, not executed here.
 internal static class GossipEventLifetimeRegressionTests
 {
     private const BindingFlags Hidden = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance;
@@ -106,7 +108,13 @@ public static class GossipLifetimeCases
     private sealed class Failure(string message):Exception(message){}
     public static System.Func<uint,Styx.Logic.Questing.PlayerQuest?> FindQuest=null!;
     private static System.Action configure=null!;
-    public static System.Action? OnMenu;
+    public static System.Action? OnMenu,BeforeClientRequest;
+    public static string MenuText=null!;
+    public static string[] Options=null!;
+    public static object?[] Available=null!,Active=null!;
+    public static bool SnapshotKnown,ThrowOnSnapshot;
+    public static ulong ClientPlayer;
+    public static readonly Dictionary<string,string> GeneratedLua=new();
     public static int Selections,Closes,Interactions;
     public static ulong CurrentNpc;
     private static object owner=null!;
@@ -135,6 +143,45 @@ public static class GossipLifetimeCases
         Add("cleanup with no owned interaction preserves visible UI",()=>{Frame.IsVisible=true;CurrentNpc=2;Invoke("ResetForRetry");Check(Closes==0,"unowned reset closed visible UI");});
         Add("disposed owner cannot perform later deferral cleanup",()=>{Open();Invoke("Dispose");Invoke("DeferAuthoritativeAttempt","controlled");Check(Closes==0,"disposed callback closed UI");});
         Add("cleanup with no visible menu remains a no-op",()=>{Open();Frame.IsVisible=false;Invoke("ResetForRetry");Check(Closes==0,"cleanup mutated hidden UI");});
+        var mutations=new (string Name,System.Action Change)[]{
+            ("option text",()=>Options[0]="A different action"),
+            ("option type",()=>Options[1]="vendor"),
+            ("option order",()=>Options=new[]{Options[2],Options[3],Options[0],Options[1]}),
+            ("option count",()=>Options=Options.Concat(new[]{"Extra","gossip"}).ToArray()),
+            ("greeting",()=>MenuText="A different interaction"),
+            ("available quest",()=>Available[0]="A different available quest"),
+            ("active quest completion",()=>Active[3]=true)
+        };
+        foreach(var mutation in mutations)
+        {
+            var m=mutation;
+            Add("same NPC changed "+m.Name+" during option observation is not selected or closed",()=>{
+                Open();OnMenu=m.Change;Tick();Check(OnMenu==null,"option observation was not reached");
+                Check(Selections==0&&Closes==0,"changed observed menu was mutated");CheckNoSubmission();});
+            Add("same NPC changed "+m.Name+" at final selection is not selected or closed",()=>{
+                Open();BeforeClientRequest=m.Change;Tick();Check(BeforeClientRequest==null,"final request boundary was not reached");
+                Check(Selections==0&&Closes==0,"final request mutated a replacement menu");CheckNoSubmission();});
+            Add("same NPC changed "+m.Name+" before retry cleanup is preserved",()=>{
+                Open();m.Change();Invoke("ResetForRetry");Check(Closes==0,"retry cleanup closed a replacement menu");});
+            Add("same NPC changed "+m.Name+" at deferral cleanup is preserved",()=>{
+                Open();BeforeClientRequest=m.Change;Invoke("DeferAuthoritativeAttempt","controlled");
+                Check(BeforeClientRequest==null,"cleanup request boundary was not reached");Check(Closes==0,"deferral cleanup closed a replacement menu");});
+        }
+        Add("cleanup without a captured menu cannot adopt the currently visible menu",()=>{
+            Open(false);Invoke("ResetForRetry");Check(Closes==0,"cleanup borrowed an unobserved menu");});
+        Add("unknown initial menu observation is not selection authority",()=>{
+            Open(false);SnapshotKnown=false;Tick();Check(Selections==0&&Closes==0,"unknown menu caused a mutation");CheckNoSubmission();});
+        Add("failed initial menu observation is not selection authority",()=>{
+            Open(false);ThrowOnSnapshot=true;Tick();Check(Selections==0&&Closes==0,"failed menu read caused a mutation");CheckNoSubmission();});
+        Add("a changed client player at the final selection request is rejected",()=>{
+            Open();BeforeClientRequest=()=>ClientPlayer=99;Tick();Check(Selections==0&&Closes==0,"final request used a different client player");CheckNoSubmission();});
+        Add("a changed client player at cleanup is rejected",()=>{
+            Open();BeforeClientRequest=()=>ClientPlayer=99;Invoke("ResetForRetry");Check(Closes==0,"cleanup used a different client player");});
+        Add("unchanged quoted unicode multiline menu remains selectable",()=>{
+            MenuText="Quoted ' text \\ and \n新しい会話";Options[0]="Choose 'this' \\ option";Open(false);Tick();
+            Check(Selections==1,"non-ASCII or quoted menu could not be selected");});
+        Add("unchanged quoted unicode multiline menu remains owned for cleanup",()=>{
+            MenuText="Quoted ' text \\ and \n新しい会話";Open();Invoke("ResetForRetry");Check(Closes==1,"quoted menu cleanup was lost");});
         int pass=0,assertions=0,unexpected=0;
         foreach(var test in tests)
         {
@@ -142,6 +189,8 @@ public static class GossipLifetimeCases
             catch(Failure e){assertions++;Console.Error.WriteLine("FAIL gossip lifetime: "+test.Name+": "+e.Message);}
             catch(Exception e){unexpected++;Console.Error.WriteLine("ERROR gossip lifetime: "+test.Name+": "+e);}
         }
+        foreach(var script in GeneratedLua.OrderBy(x=>x.Key))
+            Console.WriteLine("Gossip Lua recorded "+script.Key+": "+Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(script.Value)));
         Console.WriteLine($"Gossip lifetime scenarios: {pass}/{tests.Count}; assertions={assertions}; unexpected={unexpected}; complete tracked owner and real quest reader; controlled actor/UI; no Lua or game execution.");
         if(assertions+unexpected!=0)throw new InvalidOperationException("Gossip lifetime regression");
     }
@@ -157,16 +206,49 @@ public static class GossipLifetimeCases
         GC.SuppressFinalize(owner);
         if(((Styx.Logic.Questing.CustomForcedBehavior)owner).IsAttributeProblem)throw new InvalidOperationException("Actual constructor rejected controlled arguments");
         kind.GetProperty("Location",Hidden)!.SetValue(owner,player.Location);
-        Selections=Closes=Interactions=0;OnMenu=null;CurrentNpc=2;Frame.IsVisible=false;
+        Selections=Closes=Interactions=0;OnMenu=BeforeClientRequest=null;CurrentNpc=2;Frame.IsVisible=false;
+        ClientPlayer=player.Guid;SnapshotKnown=true;ThrowOnSnapshot=false;
+        MenuText="Source-bound interaction";Options=new[]{"Proceed","gossip","Leave","gossip"};
+        Available=new object?[]{"Available quest",10,false,false,false};Active=new object?[]{"Active quest",10,false,false};
         Invoke("OnStart");
         Check(!(bool)kind.GetProperty("IsDone")!.GetValue(owner)!,"fresh incomplete owner unexpectedly done");
     }
-    private static void Open()
+    private static void Open(bool observe=true)
     {
         Frame.IsVisible=true;
         kind.GetField("_gossipOpenStartedUtc",Hidden)!.SetValue(owner,DateTime.UtcNow.Ticks/TimeSpan.TicksPerMillisecond);
         kind.GetField("_interactionGuid",Hidden)!.SetValue(owner,2UL);
+        // Baseline W81 has no capture method. Keeping this optional allows the
+        // unchanged fixture to show its assertion-level red before the repair.
+        if(observe)kind.GetMethod("TryCaptureGossipMenu",Hidden)?.Invoke(owner,null);
     }
+    private static void CheckNoSubmission()=>Check((long)kind.GetField("_lastSubmissionUtc",Hidden)!.GetValue(owner)!<0,"rejected selection was marked submitted");
+    public static void AtClientRequest(){var f=BeforeClientRequest;BeforeClientRequest=null;f?.Invoke();}
+    public static string Signature()
+    {
+        var parts=new List<string>();
+        void Add(params object?[] values)
+        {
+            parts.Add(values.Length.ToString(System.Globalization.CultureInfo.InvariantCulture));
+            foreach(object? value in values)
+            {
+                string type=value==null?"nil":value is string?"string":value is bool?"boolean":"number";
+                string text=value==null?"nil":value is bool b?(b?"true":"false"):Convert.ToString(value,System.Globalization.CultureInfo.InvariantCulture)!;
+                byte[] bytes=System.Text.Encoding.UTF8.GetBytes(text);
+                parts.Add(type+":"+bytes.Length.ToString(System.Globalization.CultureInfo.InvariantCulture)+":"+BitConverter.ToString(bytes).Replace("-","").ToLowerInvariant());
+            }
+        }
+        Add(MenuText);Add(Options.Cast<object?>().ToArray());Add(Available);Add(Active);
+        return string.Join("|",parts);
+    }
+    public static bool ClientContext(string script)
+    {
+        string npc="0x"+CurrentNpc.ToString("X16",System.Globalization.CultureInfo.InvariantCulture);
+        string actor="0x"+ClientPlayer.ToString("X16",System.Globalization.CultureInfo.InvariantCulture);
+        return Frame.IsVisible&&script.Contains("UnitGUID('npc') ~= '"+npc+"'",StringComparison.Ordinal)
+            &&script.Contains("UnitGUID('player') ~= '"+actor+"'",StringComparison.Ordinal);
+    }
+    public static void Record(string name,string script){if(!GeneratedLua.ContainsKey(name))GeneratedLua.Add(name,script);}
     private static object? Invoke(string name,params object[] args)
     {
         try{return kind.GetMethod(name,Hidden)!.Invoke(owner,args);}
@@ -179,8 +261,8 @@ public static class GossipLifetimeCases
     public sealed class GossipFrame
     {
         public static GossipFrame Instance{get;}=new();public bool IsVisible{get;set;}
-        public List<int> GossipOptionEntries{get{var f=GossipLifetimeCases.OnMenu;GossipLifetimeCases.OnMenu=null;f?.Invoke();return new(){1};}}
-        public void SelectGossipOption(int index){GossipLifetimeCases.Selections++;}
+        public List<int> GossipOptionEntries{get{var f=GossipLifetimeCases.OnMenu;GossipLifetimeCases.OnMenu=null;f?.Invoke();return Enumerable.Range(0,GossipLifetimeCases.Options.Length/2).ToList();}}
+        public void SelectGossipOption(int index){GossipLifetimeCases.AtClientRequest();GossipLifetimeCases.Selections++;}
         public void Close(){if(IsVisible)GossipLifetimeCases.Closes++;IsVisible=false;}
     }
 } namespace Styx.WoWInternals
@@ -189,7 +271,32 @@ public static class GossipLifetimeCases
     {
         public static T GetReturnVal<T>(string script,uint index)
         {
-            if(typeof(T)!=typeof(bool)||index!=0)throw new InvalidOperationException("Unexpected return type/index");
+            if(index!=0)throw new InvalidOperationException("Unexpected return index");
+            if(typeof(T)==typeof(string))
+            {
+                foreach(string api in new[]{"GetGossipText()","GetGossipOptions()","GetGossipAvailableQuests()","GetGossipActiveQuests()"})
+                    if(!script.Contains(api,StringComparison.Ordinal))throw new InvalidOperationException("Incomplete original-client menu observation: "+api);
+                GossipLifetimeCases.Record("capture",script);
+                if(GossipLifetimeCases.ThrowOnSnapshot)throw new InvalidOperationException("controlled unreadable menu");
+                return (T)(object)(GossipLifetimeCases.SnapshotKnown&&GossipLifetimeCases.ClientContext(script)?GossipLifetimeCases.Signature():null)!;
+            }
+            if(typeof(T)!=typeof(bool))throw new InvalidOperationException("Unexpected return type");
+            if(script.Contains("local observed",StringComparison.Ordinal))
+            {
+                bool select=script.Contains("SelectGossipOption(",StringComparison.Ordinal);
+                GossipLifetimeCases.Record(select?"select":"close",script);
+                GossipLifetimeCases.AtClientRequest();
+                var expected=System.Text.RegularExpressions.Regex.Match(script,"observed ~= '([^']*)'");
+                if(!expected.Success)throw new InvalidOperationException("Final mutation lacks captured-menu comparison");
+                bool own=GossipLifetimeCases.SnapshotKnown&&!GossipLifetimeCases.ThrowOnSnapshot
+                    &&GossipLifetimeCases.ClientContext(script)&&expected.Groups[1].Value==GossipLifetimeCases.Signature();
+                if(own)
+                {
+                    if(select){if(!script.Contains("SelectGossipOption(1)",StringComparison.Ordinal))throw new InvalidOperationException("Original one-based selection contract changed");GossipLifetimeCases.Selections++;}
+                    else Styx.Logic.Inventory.Frames.Gossip.GossipFrame.Instance.Close();
+                }
+                return (T)(object)own;
+            }
             if(script=="return UnitGUID('npc') == '0x0000000000000002'")return (T)(object)(GossipLifetimeCases.CurrentNpc==2);
             // An ownership-guarded close request remains a controlled boundary,
             // not evidence that this fixture executes a Lua interpreter.
@@ -197,6 +304,7 @@ public static class GossipLifetimeCases
                 &&script.Contains("UnitGUID('npc')",StringComparison.Ordinal)
                 &&script.Contains("0x0000000000000002",StringComparison.Ordinal))
             {
+                GossipLifetimeCases.AtClientRequest();
                 var frame=Styx.Logic.Inventory.Frames.Gossip.GossipFrame.Instance;
                 bool own=frame.IsVisible&&GossipLifetimeCases.CurrentNpc==2;
                 if(own)frame.Close();return (T)(object)own;
