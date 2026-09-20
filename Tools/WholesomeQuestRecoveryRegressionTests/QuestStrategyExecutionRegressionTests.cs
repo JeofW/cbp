@@ -7,10 +7,12 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
+using Styx.Logic.Questing.Recovery;
 using WholesomeAQ;
 
-// Runtime wiring contract for source-bound UseItemOn strategies.
-// Controlled quest-data/strategy files and XML only; no profile is loaded and no game/server is attached.
+// Actual source-bound loader, scheduler and materializer contracts. Controlled
+// files/snapshots/XML only; no generated profile or game is executed.
 internal static class QuestStrategyExecutionRegressionTests
 {
     private sealed class AssertionFailure(string message) : Exception(message) { }
@@ -70,43 +72,31 @@ internal static class QuestStrategyExecutionRegressionTests
                     && xml.Contains("ItemId=\"7586\"", StringComparison.Ordinal)
                     && xml.Contains("MobId=\"2164\"", StringComparison.Ordinal)
                     && xml.Contains("SuccessEvidence=\"ObjectiveProgress\"", StringComparison.Ordinal)
-                    && xml.Contains("MaxAttempts=\"3\"", StringComparison.Ordinal),
+                    && xml.Contains("MaxAttempts=\"3\"", StringComparison.Ordinal)
+                    && xml.Contains("MobType=\"Npc\"", StringComparison.Ordinal)
+                    && xml.Contains("Range=\"5\"", StringComparison.Ordinal)
+                    && xml.Contains("RequireLos=\"true\"", StringComparison.Ordinal),
                     "generated behavior lost authoritative recipe identity");
             }),
-            ("generated UseItemOn preserves explicit LOS range state and source target type", () =>
+            ("GameObject item action cannot borrow a creature anchor", () =>
             {
                 var scenario = Scenario(QuestStrategyKind.UseItemOn, QuestStrategyTargetType.GameObject);
-                string xml = BuildWithStrategies(scenario.Builder, scenario.Plan, scenario.Database, scenario.Pack);
-                Check(xml.Contains("MobType=\"GameObject\"", StringComparison.Ordinal)
-                    && xml.Contains("MobState=\"Alive\"", StringComparison.Ordinal)
-                    && xml.Contains("Range=\"5\"", StringComparison.Ordinal)
-                    && xml.Contains("RequireLos=\"true\"", StringComparison.Ordinal)
-                    && xml.Contains("WaitForNpcs=\"true\"", StringComparison.Ordinal),
-                    "generated behavior discarded explicit target/range/LOS waiting contract");
-                Check(xml.Contains("X=\"10\"", StringComparison.Ordinal)
-                    && xml.Contains("Y=\"20\"", StringComparison.Ordinal)
-                    && xml.Contains("Z=\"30\"", StringComparison.Ordinal),
-                    "generated behavior lost the scheduler-owned search anchor");
+                Throws<InvalidDataException>(() => BuildWithStrategies(scenario.Builder, scenario.Plan, scenario.Database, scenario.Pack),
+                    "unimplemented GameObject item action borrowed a creature hotspot with the same numeric ID");
             }),
             ("missing strategy pack keeps legacy profile output byte-for-byte", () =>
             {
                 var scenario = Scenario(QuestStrategyKind.UseItemOn, QuestStrategyTargetType.Creature);
                 string legacy = scenario.Builder.BuildProfileXml(
                     scenario.Plan, scenario.Database, "zone", "player", 20, null);
-                var missing = new QuestStrategyPack();
-                string wired = BuildWithStrategies(scenario.Builder, scenario.Plan, scenario.Database, missing);
+                string wired = BuildWithStrategies(scenario.Builder, scenario.Plan, scenario.Database, new QuestStrategyPack());
                 Check(wired == legacy, "missing strategy pack changed legacy profile XML");
             }),
-            ("Escort remains non-executable until its separate start/completion lifetime exists", () =>
+            ("declared Escort is rejected rather than silently becoming ordinary work", () =>
             {
                 var scenario = Scenario(QuestStrategyKind.Escort, QuestStrategyTargetType.Creature);
-                string legacy = scenario.Builder.BuildProfileXml(
-                    scenario.Plan, scenario.Database, "zone", "player", 20, null);
-                string wired = BuildWithStrategies(scenario.Builder, scenario.Plan, scenario.Database, scenario.Pack);
-                Check(wired == legacy, "Escort became executable before its separate start/completion lifetime exists");
-                Check(!wired.Contains("File=\"UseItemOn\"", StringComparison.Ordinal)
-                    && !wired.Contains("File=\"GossipEvent\"", StringComparison.Ordinal),
-                    "Escort was rewritten as another strategy kind");
+                Throws<InvalidDataException>(() => BuildWithStrategies(scenario.Builder, scenario.Plan, scenario.Database, scenario.Pack),
+                    "declared unimplemented Escort silently became a KillMob objective");
             }),
             ("recipe ownership is exact quest and objective", () =>
             {
@@ -123,6 +113,70 @@ internal static class QuestStrategyExecutionRegressionTests
                 string xml = BuildWithStrategies(scenario.Builder, scenario.Plan, scenario.Database, scenario.Pack);
                 Check(xml.Contains("AcknowledgementTimeout=\"5000\"", StringComparison.Ordinal),
                     "generated authoritative behavior omitted bounded post-submission acknowledgement");
+            }),
+            ("UseItemOn cannot borrow another creature's objective anchor", () =>
+            {
+                var scenario = Scenario(QuestStrategyKind.UseItemOn, QuestStrategyTargetType.Creature);
+                scenario.Pack.Recipes[0] = CopyRecipe(scenario.Pack.Recipes[0], targetId:9999);
+                Throws<InvalidDataException>(() => BuildWithStrategies(scenario.Builder, scenario.Plan, scenario.Database, scenario.Pack),
+                    "item target borrowed an unrelated source objective's hotspot");
+            }),
+            ("even matching GameObject metadata is not an implemented item protocol", () =>
+            {
+                var scenario = Scenario(QuestStrategyKind.UseItemOn, QuestStrategyTargetType.GameObject);
+                var objective = scenario.Database.Quests[0].Objectives[0];
+                objective.Type = ObjectiveType.CollectFromGameObject;
+                objective.MobId = 0;
+                objective.GameObjectId = 2164;
+                objective.ItemId = 12345;
+                objective.CollectCount = 3;
+                Throws<InvalidDataException>(() => BuildWithStrategies(scenario.Builder, scenario.Plan, scenario.Database, scenario.Pack),
+                    "GameObject item/ground-cursor semantics were inferred from matching target metadata");
+            }),
+            ("undefined programmatic kind cannot bypass the loader's validation", () =>
+            {
+                var scenario = Scenario((QuestStrategyKind)98765, QuestStrategyTargetType.Creature);
+                Throws<InvalidDataException>(() => BuildWithStrategies(scenario.Builder, scenario.Plan, scenario.Database, scenario.Pack),
+                    "undefined in-memory kind silently became ordinary work");
+            }),
+            ("cross-kind duplicate owners are rejected at the public materializer", () =>
+            {
+                var scenario = Scenario(QuestStrategyKind.UseItemOn, QuestStrategyTargetType.Creature);
+                scenario.Pack.Recipes.Add(Scenario(QuestStrategyKind.GossipEvent, QuestStrategyTargetType.Creature).Pack.Recipes[0]);
+                Throws<InvalidDataException>(() => BuildWithStrategies(scenario.Builder, scenario.Plan, scenario.Database, scenario.Pack),
+                    "materializer silently selected one of two recipe owners");
+            }),
+            ("real loader and scheduler cannot turn a declared Escort into kill XML", () =>
+            {
+                using var fixture = new LoaderFixture(includePack:false);
+                fixture.WritePlanningInput(includeEscort:true, castCredit:false);
+                QuestDatabase db = fixture.Loader.Load();
+                QuestScheduleResult schedule = Schedule(db);
+                Check(schedule.Plan.Count == 1, "controlled ordinary-shaped objective did not reach materialization");
+                Throws<InvalidDataException>(() => new ProfileBuilder().BuildProfileXml(
+                    schedule.Plan, db, "zone", "player", 20, null, fixture.Loader.StrategyPack),
+                    "the actual loader/scheduler/materializer pipeline produced ordinary work for declared Escort");
+            }),
+            ("real no-pack scheduler and XML retain ordinary work", () =>
+            {
+                using var fixture = new LoaderFixture(includePack:false);
+                fixture.WritePlanningInput(includeEscort:false, castCredit:false);
+                QuestDatabase db = fixture.Loader.Load();
+                QuestScheduleResult schedule = Schedule(db);
+                Check(schedule.Plan.Count == 1, "ordinary control was not scheduled");
+                var builder = new ProfileBuilder();
+                string xml = builder.BuildProfileXml(schedule.Plan, db, "zone", "player", 20, null, fixture.Loader.StrategyPack);
+                Check(xml == builder.BuildProfileXml(schedule.Plan, db, "zone", "player", 20, null)
+                    && xml.Contains("Type=\"KillMob\"", StringComparison.Ordinal),
+                    "safe ordinary no-pack scheduling/materialization changed");
+            }),
+            ("unsupported CAST work remains excluded without ordinary killing", () =>
+            {
+                using var fixture = new LoaderFixture(includePack:false);
+                fixture.WritePlanningInput(includeEscort:true, castCredit:true);
+                QuestDatabase db = fixture.Loader.Load();
+                Check(Schedule(db).Plan.Count == 0,
+                    "unsupported cast-credit objective became ordinary killing");
             })
         };
 
@@ -133,9 +187,22 @@ internal static class QuestStrategyExecutionRegressionTests
             catch(AssertionFailure e) { assertions++; Console.Error.WriteLine("FAIL quest strategy execution assertion: "+c.Name+": "+e.Message); }
             catch(Exception e) { unexpected++; Console.Error.WriteLine("ERROR quest strategy execution fixture/owner: "+c.Name+": "+e); }
         }
-        Console.WriteLine($"Quest strategy execution scenarios: {passed}/{cases.Count}; assertions={assertions}; unexpected={unexpected}; controlled files/XML; no profile/client/server execution.");
+        Console.WriteLine($"Quest strategy execution scenarios: {passed}/{cases.Count}; assertions={assertions}; unexpected={unexpected}; controlled actual loader/scheduler/XML; no profile/client/server execution.");
         if(assertions+unexpected!=0) throw new InvalidOperationException("Quest strategy execution regression");
     }
+
+    private static QuestScheduleResult Schedule(QuestDatabase db) => QuestScheduler.MaterializeSchedule(
+        db,
+        new QuestSchedulerSnapshot
+        {
+            UtcNow = new DateTime(2026, 9, 20, 0, 0, 0, DateTimeKind.Utc),
+            PlayerLevel = 20, PlayerRaceId = 1, MapId = 1, X = 10, Y = 20,
+            HasCompleteQuestLog = true, HasAuthoritativeCompletions = true,
+            AcceptedQuests = new[] { new QuestSchedulerAcceptedQuest { QuestId = 2118, ObjectiveCounts = new[] { 0 } } },
+            CarriedItemCounts = new Dictionary<int, long>()
+        },
+        _ => new QuestRecoveryDecision { MayAttempt = true },
+        maximum: 5, scanThreshold: 500, minQuestLevelOffset: 10);
 
     private sealed class LoaderFixture : IDisposable
     {
@@ -168,7 +235,34 @@ internal static class QuestStrategyExecutionRegressionTests
                 "\"Recipes\":[]}";
         }
 
-        public void Dispose(){Directory.Delete(Root,true);}
+        internal void WritePlanningInput(bool includeEscort, bool castCredit)
+        {
+            var scenario = Scenario(QuestStrategyKind.Escort, QuestStrategyTargetType.Creature);
+            scenario.Database.Quests[0].SpecialFlags = castCredit ? 0x20 : 0;
+            scenario.Database.CreatureSpawns["2164"] = new List<SpawnPoint>
+            {
+                new SpawnPoint { Map = 1, X = 10, Y = 20, Z = 30, IsKnownReachable = true, IsKnownSafe = true }
+            };
+            File.WriteAllText(DataPath, JsonSerializer.Serialize(scenario.Database), Encoding.UTF8);
+            if (!includeEscort) return;
+            string sha = Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(DataPath))).ToLowerInvariant();
+            File.WriteAllText(StrategyPath, JsonSerializer.Serialize(new
+            {
+                Schema = "quest-strategy-pack-335-v1", ClientBuild = 12340,
+                QuestDataSha256 = sha, SourceKind = "curated-profile", SourceRevision = "controlled-pipeline",
+                Recipes = new[] { new {
+                    QuestId = 2118, ObjectiveIndex = 0, Kind = "Escort", SourceRef = "controlled://escort",
+                    TargetType = "Creature", TargetId = 2164, Range = 5, RequireLos = true,
+                    MaxAttempts = 3, SuccessEvidence = "QuestComplete"
+                } }
+            }), Encoding.UTF8);
+        }
+
+        public void Dispose()
+        {
+            QuestPrerequisiteAuthority.ClearPublishedDependencyAuthority();
+            Directory.Delete(Root,true);
+        }
     }
 
     private sealed record StrategyScenario(
@@ -227,7 +321,7 @@ internal static class QuestStrategyExecutionRegressionTests
         return new StrategyScenario(new ProfileBuilder(),plan,db,pack);
     }
 
-    private static QuestStrategyRecipe CopyRecipe(QuestStrategyRecipe value,int? questId=null) =>
+    private static QuestStrategyRecipe CopyRecipe(QuestStrategyRecipe value,int? questId=null,int? targetId=null) =>
         new QuestStrategyRecipe
         {
             QuestId=questId ?? value.QuestId,
@@ -236,7 +330,7 @@ internal static class QuestStrategyExecutionRegressionTests
             SourceRef=value.SourceRef,
             ItemId=value.ItemId,
             TargetType=value.TargetType,
-            TargetId=value.TargetId,
+            TargetId=targetId ?? value.TargetId,
             TargetState=value.TargetState,
             Range=value.Range,
             RequireLos=value.RequireLos,
