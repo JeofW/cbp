@@ -269,8 +269,9 @@ internal static class QuestStrategyConstructorDispatchRegressionTests
                 "real wrapper lost the generated XML element or rejected its attributes");
             wrapper.OnStart();
             wrapper.OnTick();
-            Check(starts == 1 && (TreeRoot.GoalText?.StartsWith(kind, StringComparison.Ordinal) ?? false),
-                "real wrapper did not start the behavior exactly once");
+            string expectedGoal = kind + ": \"" + ((LocalPlayer)Read(fixture, "Player")!).QuestLog.GetQuestById(867U).Name + "\"";
+            Check(starts == 1 && TreeRoot.GoalText == expectedGoal,
+                "real wrapper did not start once with the actual quest title; expected=" + expectedGoal + "; actual=" + TreeRoot.GoalText);
             Check(!wrapper.IsDone && !wrapper.IsExecutionDeferred && Read(owner, "InitialObjectiveCount") == null,
                 "whole-quest lifecycle was completed/deferred or consumed an unmapped raw counter");
             RunStatus expected = kind == "UseItemOn" ? RunStatus.Success : RunStatus.Running;
