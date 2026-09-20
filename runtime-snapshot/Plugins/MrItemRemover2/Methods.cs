@@ -16,12 +16,17 @@ namespace MrItemRemover2
     public partial class MrItemRemover2
     {
         private static readonly TimeSpan DeleteTimeout = TimeSpan.FromSeconds(10);
-        private static ulong _pendingDeleteGuid;
-        private static uint _pendingDeleteEntry;
-        private static DateTime _pendingDeleteSince;
-        private static bool _pendingDeleteRequested;
+        private ulong _pendingDeleteGuid;
+        private uint _pendingDeleteEntry;
+        private DateTime _pendingDeleteSince;
+        private bool _pendingDeleteRequested;
+        private object _deleteLifetime;
+        private object _pendingDeleteLifetime;
+        private object _pendingDeleteToken;
+        private LocalPlayer _pendingDeletePlayer;
+        private ulong _pendingDeletePlayerGuid;
 
-        private static bool HasPendingDelete
+        private bool HasPendingDelete
         {
             get { return _pendingDeleteGuid != 0 && _pendingDeleteEntry != 0; }
         }
@@ -145,11 +150,12 @@ namespace MrItemRemover2
             }
         }
 
-        private static void DeleteItemConfirmPopup(object sender, LuaEventArgs args)
+        private void DeleteItemConfirmPopup(object sender, LuaEventArgs args)
         {
-            if (!HasPendingDelete)
+            if (!HasPendingDelete || !OwnsPendingDeleteContext())
                 return;
 
+            object token = _pendingDeleteToken;
             try
             {
                 int popup = Lua.GetReturnVal<int>(
@@ -157,11 +163,11 @@ namespace MrItemRemover2
                     "if good and good.which=='DELETE_GOOD_ITEM' then return 2 end; " +
                     "local normal=StaticPopup_FindVisible('DELETE_ITEM'); " +
                     "if normal and normal.which=='DELETE_ITEM' then return 1 end; return 0", 0U);
-                if (popup == 0)
+                if (popup == 0 || !ReferenceEquals(token, _pendingDeleteToken) || !OwnsPendingDeleteContext())
                     return;
 
                 int confirmation = TryConfirmPendingDelete();
-                if (confirmation > 0)
+                if (confirmation > 0 && ReferenceEquals(token, _pendingDeleteToken) && OwnsPendingDeleteContext())
                     Slog("Confirming owned removal for item entry {0}", _pendingDeleteEntry);
             }
             catch (Exception error)
@@ -170,45 +176,92 @@ namespace MrItemRemover2
             }
         }
 
-        private static void BeginDelete(WoWItem item)
+        private void BeginDelete(WoWItem item)
         {
-            if (HasPendingDelete || item == null || !item.IsValid ||
+            if (HasPendingDelete || !CanDeleteNow() || item == null || !item.IsValid ||
                 item.Guid == 0 || item.Entry == 0)
                 return;
 
+            LocalPlayer player = Me;
             ulong expectedGuid = item.Guid;
             uint expectedEntry = item.Entry;
-            if (!item.TryPickUp())
-            {
-                Dlog("Delete pickup refused for {0} ({1}); cursor/slot ownership was not changed.",
-                    item.Name, expectedEntry);
-                return;
-            }
-
+            object token = new object();
+            _pendingDeleteToken = token;
+            _pendingDeleteLifetime = _deleteLifetime;
+            _pendingDeletePlayer = player;
+            _pendingDeletePlayerGuid = player.Guid;
             _pendingDeleteGuid = expectedGuid;
             _pendingDeleteEntry = expectedEntry;
             _pendingDeleteSince = DateTime.UtcNow;
             _pendingDeleteRequested = false;
-            TryIssueDeleteRequest();
+
+            try
+            {
+                if (!OwnsPendingDeleteContext())
+                {
+                    ReleasePendingDelete(token);
+                    return;
+                }
+                if (!item.TryPickUp())
+                {
+                    ReleasePendingDelete(token);
+                    Dlog("Delete pickup refused for {0} ({1}); cursor/slot ownership was not changed.",
+                        item.Name, expectedEntry);
+                    return;
+                }
+                if (!ReferenceEquals(token, _pendingDeleteToken) || !OwnsPendingDeleteContext() ||
+                    !item.IsValid || item.Guid != expectedGuid || item.Entry != expectedEntry)
+                {
+                    ReleasePendingDelete(token);
+                    return;
+                }
+                TryIssueDeleteRequest();
+            }
+            catch
+            {
+                ReleasePendingDelete(token);
+                throw;
+            }
         }
 
-        private static void TickPendingDelete()
+        private void TickPendingDelete()
         {
             if (!HasPendingDelete)
                 return;
+
+            object token = _pendingDeleteToken;
+            if (!OwnsPendingDeleteContext())
+            {
+                ReleasePendingDelete(token);
+                return;
+            }
 
             if (DateTime.UtcNow - _pendingDeleteSince >= DeleteTimeout)
             {
                 Slog("Delete transaction for entry {0} timed out; cursor ownership is left untouched.",
                     _pendingDeleteEntry);
-                ResetPendingDelete();
+                ReleasePendingDelete(token);
                 return;
             }
 
             int cursorState = ReadOwnedCursorState(_pendingDeleteEntry);
+            if (!ReferenceEquals(token, _pendingDeleteToken))
+                return;
+            if (!OwnsPendingDeleteContext())
+            {
+                ReleasePendingDelete(token);
+                return;
+            }
             if (cursorState == 0)
             {
                 bool? stillObserved = PendingDeleteItemStillObserved();
+                if (!ReferenceEquals(token, _pendingDeleteToken))
+                    return;
+                if (!OwnsPendingDeleteContext())
+                {
+                    ReleasePendingDelete(token);
+                    return;
+                }
                 if (!stillObserved.HasValue)
                     return;
 
@@ -220,13 +273,13 @@ namespace MrItemRemover2
                     else
                         Dlog("Item {0} ({1}) is no longer observed without a local delete request; revoking pending intent.",
                             _pendingDeleteGuid, _pendingDeleteEntry);
-                    ResetPendingDelete();
+                    ReleasePendingDelete(token);
                     return;
                 }
 
                 Dlog("Item {0} ({1}) returned to inventory; retry will require a fresh pickup.",
                     _pendingDeleteGuid, _pendingDeleteEntry);
-                ResetPendingDelete();
+                ReleasePendingDelete(token);
                 return;
             }
 
@@ -239,7 +292,62 @@ namespace MrItemRemover2
                 TryConfirmPendingDelete();
         }
 
-        private static bool? PendingDeleteItemStillObserved()
+        private bool CanDeleteNow()
+        {
+            try
+            {
+                LocalPlayer player = Me;
+                object lifetime = _deleteLifetime;
+                if (!IsInitialized || lifetime == null ||
+                    !Styx.Logic.BehaviorTree.TreeRoot.IsRunning || Styx.Logic.BehaviorTree.TreeRoot.IsPaused ||
+                    !StyxWoW.IsInGame || player == null || !player.IsValid || player.Guid == 0 ||
+                    !player.IsAlive || player.IsGhost || player.Combat || player.IsCasting ||
+                    MrItemRemover2Settings.Instance.EnableRemove != "True")
+                    return false;
+
+                ulong guid = player.Guid;
+                return ReferenceEquals(Me, player) && player.IsValid && player.Guid == guid &&
+                    player.IsAlive && !player.IsGhost && !player.Combat && !player.IsCasting &&
+                    IsInitialized && ReferenceEquals(lifetime, _deleteLifetime) &&
+                    Styx.Logic.BehaviorTree.TreeRoot.IsRunning && !Styx.Logic.BehaviorTree.TreeRoot.IsPaused &&
+                    StyxWoW.IsInGame;
+            }
+            catch (Exception error) when (error is not OperationCanceledException &&
+                error is not System.Threading.ThreadInterruptedException)
+            {
+                return false;
+            }
+        }
+
+        private bool OwnsPendingDeleteContext()
+        {
+            object token = _pendingDeleteToken;
+            object lifetime = _pendingDeleteLifetime;
+            LocalPlayer player = _pendingDeletePlayer;
+            ulong guid = _pendingDeletePlayerGuid;
+            return HasPendingDelete && token != null && lifetime != null && player != null && guid != 0 &&
+                ReferenceEquals(lifetime, _deleteLifetime) && CanDeleteNow() &&
+                ReferenceEquals(token, _pendingDeleteToken) && ReferenceEquals(lifetime, _deleteLifetime) &&
+                ReferenceEquals(player, _pendingDeletePlayer) && ReferenceEquals(Me, player) &&
+                player.Guid == guid && _pendingDeletePlayerGuid == guid;
+        }
+
+        private void ReleasePendingDelete(object token)
+        {
+            // A callback result can retire only the operation that requested it.
+            if (token != null && ReferenceEquals(token, _pendingDeleteToken))
+                ResetPendingDelete();
+        }
+
+        private void ResetDeleteLifetime(EventArgs args)
+        {
+            _deleteLifetime = new object();
+            ResetPendingDelete();
+            EnableCheck = false;
+            ManualCheckRequested = false;
+        }
+
+        private bool? PendingDeleteItemStillObserved()
         {
             // A failed/incomplete read is not an empty inventory. Capture one view
             // and reject observations that outlive their player or pending item.
@@ -248,6 +356,7 @@ namespace MrItemRemover2
                 if (!HasPendingDelete)
                     return null;
 
+                object token = _pendingDeleteToken;
                 LocalPlayer player = Me;
                 if (player == null || !player.IsValid || player.Guid == 0)
                     return null;
@@ -272,7 +381,8 @@ namespace MrItemRemover2
                         : candidate.IsValid && candidate.Guid == expectedGuid ? true : (bool?)null;
                 }
 
-                return ReferenceEquals(Me, player) && player.IsValid && player.Guid == playerGuid &&
+                return ReferenceEquals(token, _pendingDeleteToken) &&
+                    ReferenceEquals(Me, player) && player.IsValid && player.Guid == playerGuid &&
                     _pendingDeleteGuid == expectedGuid && _pendingDeleteEntry == expectedEntry
                     ? observed : null;
             }
@@ -305,16 +415,17 @@ namespace MrItemRemover2
             }
         }
 
-        private static void TryIssueDeleteRequest()
+        private void TryIssueDeleteRequest()
         {
-            if (!HasPendingDelete)
+            if (!HasPendingDelete || !OwnsPendingDeleteContext())
                 return;
 
+            object token = _pendingDeleteToken;
             try
             {
                 bool submitted = Lua.GetReturnVal<bool>(
                     BuildOwnedDeleteRequestLua(_pendingDeleteEntry), 0U);
-                if (submitted)
+                if (submitted && ReferenceEquals(token, _pendingDeleteToken) && OwnsPendingDeleteContext())
                     _pendingDeleteRequested = true;
             }
             catch (Exception error)
@@ -323,15 +434,18 @@ namespace MrItemRemover2
             }
         }
 
-        private static int TryConfirmPendingDelete()
+        private int TryConfirmPendingDelete()
         {
-            if (!HasPendingDelete || !_pendingDeleteRequested)
+            if (!HasPendingDelete || !_pendingDeleteRequested || !OwnsPendingDeleteContext())
                 return 0;
 
+            object token = _pendingDeleteToken;
             try
             {
-                return Lua.GetReturnVal<int>(
+                int confirmation = Lua.GetReturnVal<int>(
                     BuildOwnedDeleteConfirmationLua(_pendingDeleteEntry), 0U);
+                return ReferenceEquals(token, _pendingDeleteToken) && OwnsPendingDeleteContext()
+                    ? confirmation : 0;
             }
             catch (Exception error)
             {
@@ -375,8 +489,12 @@ namespace MrItemRemover2
                 expectedEntry);
         }
 
-        private static void ResetPendingDelete()
+        private void ResetPendingDelete()
         {
+            _pendingDeleteToken = null;
+            _pendingDeleteLifetime = null;
+            _pendingDeletePlayer = null;
+            _pendingDeletePlayerGuid = 0;
             _pendingDeleteGuid = 0;
             _pendingDeleteEntry = 0;
             _pendingDeleteSince = DateTime.MinValue;

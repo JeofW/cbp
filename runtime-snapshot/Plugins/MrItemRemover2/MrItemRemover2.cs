@@ -149,7 +149,15 @@ namespace MrItemRemover2
 
         public override void OnEnable()
         {
-            ResetPendingDelete();
+            if (IsInitialized)
+                return;
+
+            ResetDeleteLifetime(EventArgs.Empty);
+            object lifetime = _deleteLifetime;
+            BotEvents.OnBotStart -= ResetDeleteLifetime;
+            BotEvents.OnBotStop -= ResetDeleteLifetime;
+            BotEvents.OnBotStart += ResetDeleteLifetime;
+            BotEvents.OnBotStop += ResetDeleteLifetime;
             Lua.Events.AttachEvent("DELETE_ITEM_CONFIRM", DeleteItemConfirmPopup);
             Lua.Events.AttachEvent("MERCHANT_SHOW", SellVenderItems);
             Lua.Events.AttachEvent("LOOT_CLOSED", LootEnded);
@@ -161,19 +169,24 @@ namespace MrItemRemover2
 
             _checkTimer.Reset(); //should start the timer 
 
-            IsInitialized = true;
+            // A callback that disabled/restarted this instance revokes the old enable.
+            if (ReferenceEquals(lifetime, _deleteLifetime))
+                IsInitialized = true;
         }
 
         public override void OnDisable()
         {
+            bool wasPending = HasPendingDelete;
+            IsInitialized = false;
+            ResetDeleteLifetime(EventArgs.Empty);
+            BotEvents.OnBotStart -= ResetDeleteLifetime;
+            BotEvents.OnBotStop -= ResetDeleteLifetime;
             Lua.Events.DetachEvent("DELETE_ITEM_CONFIRM", DeleteItemConfirmPopup);
             Lua.Events.DetachEvent("MERCHANT_SHOW", SellVenderItems);
             Lua.Events.DetachEvent("LOOT_CLOSED", LootEnded);
 
-            if (HasPendingDelete)
+            if (wasPending)
                 Dlog("Disabling with a pending delete transaction; cursor ownership is left untouched.");
-            ResetPendingDelete();
-            IsInitialized = false;
             MirSave();
 
             Dlog("MIR is now disabled.");
