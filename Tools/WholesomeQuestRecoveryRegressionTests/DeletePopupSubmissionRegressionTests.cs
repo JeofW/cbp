@@ -62,7 +62,7 @@ internal static class DeletePopupSubmissionRegressionTests
                 total++;
                 try
                 {
-                    string[] actual = (string[])execute.Invoke(null, new object[] { c.Guid, c.Entry, c.Actions })!;
+                    string[] actual = (string[])execute.Invoke(Activator.CreateInstance(execute.DeclaringType!), new object[] { c.Guid, c.Entry, c.Actions })!;
                     if (int.Parse(actual[0]) != c.Calls)
                         throw new Failure("confirmation requests=" + actual[0] + "; expected=" + c.Calls);
                     if (c.Calls > 0 && (!actual[1].Contains("tonumber(cursorItemId)~=100", StringComparison.Ordinal)
@@ -104,20 +104,25 @@ public static class Lua
         return (T)(object)1;
     }
 }
-public static class DeleteRequestProbe
+public sealed class DeleteRequestProbe
 {
     private static ulong _pendingDeleteGuid;
     private static uint _pendingDeleteEntry;
     private static DateTime _pendingDeleteSince;
     private static bool _pendingDeleteRequested;
+    private static object? _pendingDeleteToken, _pendingDeleteLifetime, _pendingDeletePlayer;
+    private static ulong _pendingDeletePlayerGuid;
+    // This existing fixture controls runtime admission; W86 exercises the real helper separately.
+    private static bool OwnsPendingDeleteContext() => true;
     private static bool HasPendingDelete=>_pendingDeleteGuid!=0&&_pendingDeleteEntry!=0;
     private static void Dlog(string message,params object[] args){}
     private static void Slog(string message,params object[] args){}
 """;
     private const string Suffix = """
-    public static string[] Execute(ulong guid,uint entry,string actions)
+    public string[] Execute(ulong guid,uint entry,string actions)
     {
         ResetPendingDelete();_pendingDeleteGuid=guid;_pendingDeleteEntry=entry;
+        _pendingDeleteToken=new object();
         _pendingDeleteSince=DateTime.UtcNow;Lua.Confirmations=0;Lua.LastConfirmation="";
         Lua.Submit=false;Lua.ThrowRequest=false;
         foreach(char action in actions)
@@ -140,6 +145,7 @@ public static class DeleteRequestProbe
     private static string Method(string source, string marker)
     {
         int start = source.IndexOf(marker, StringComparison.Ordinal);
+        if (start < 0) start = source.IndexOf(marker.Replace("private static ", "private "), StringComparison.Ordinal);
         if (start < 0) throw new InvalidOperationException("Missing tracked method " + marker);
         int brace = source.IndexOf('{', start), depth = 0;
         // The selected format strings contain balanced braces. Preserve source

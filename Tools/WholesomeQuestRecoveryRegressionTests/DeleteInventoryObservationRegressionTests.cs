@@ -18,13 +18,15 @@ internal static class DeleteInventoryObservationRegressionTests
     {
         string root = Root();
         string source = File.ReadAllText(Path.Combine(root, "runtime-snapshot", "Plugins", "MrItemRemover2", "Methods.cs"));
-        string tick = Method(source, @"private\s+static\s+void\s+TickPendingDelete\s*\(");
-        string observation = Method(source, @"private\s+static\s+bool\??\s+PendingDeleteItemStillObserved\s*\(");
+        string tick = Method(source, @"private\s+(?:static\s+)?void\s+TickPendingDelete\s*\(");
+        string observation = Method(source, @"private\s+(?:static\s+)?bool\??\s+PendingDeleteItemStillObserved\s*\(");
+        string release = Regex.IsMatch(source, @"private\s+(?:static\s+)?void\s+ReleasePendingDelete\s*\(")
+            ? Method(source, @"private\s+(?:static\s+)?void\s+ReleasePendingDelete\s*\(") : string.Empty;
         string directory = Path.Combine(Path.GetTempPath(), "cb-delete-observation-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(directory);
         try
         {
-            File.WriteAllText(Path.Combine(directory, "Probe.cs"), Prefix + tick + "\n" + observation + Cases);
+            File.WriteAllText(Path.Combine(directory, "Probe.cs"), Prefix + tick + "\n" + observation + "\n" + release + Cases);
             Type compilerType = typeof(Styx.StyxWoW).Assembly.GetType("Styx.Loaders.SourceCompiler", true)!;
             object compiler = Activator.CreateInstance(compilerType, new object[] { directory })!;
             foreach (string path in ((string)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES")!).Split(Path.PathSeparator))
@@ -33,7 +35,11 @@ internal static class DeleteInventoryObservationRegressionTests
             string[] errors = result.Errors.Cast<CompilerError>().Where(e => !e.IsWarning).Select(e => e.ToString()).ToArray();
             if (errors.Length != 0) throw new InvalidOperationException("Tracked delete observation compile failed: " + string.Join(";", errors));
             Assembly assembly = (Assembly)compilerType.GetProperty("CompiledAssembly", Hidden)!.GetValue(compiler)!;
-            try { assembly.GetType("DeleteObservationCases", true)!.GetMethod("Run")!.Invoke(null, null); }
+            try
+            {
+                Type cases = assembly.GetType("DeleteObservationCases", true)!;
+                cases.GetMethod("Run")!.Invoke(Activator.CreateInstance(cases), null);
+            }
             catch (TargetInvocationException e) when (e.InnerException != null)
             { ExceptionDispatchInfo.Capture(e.InnerException).Throw(); throw; }
         }
@@ -65,7 +71,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-public static class DeleteObservationCases
+public sealed class DeleteObservationCases
 {
     private sealed class Failure(string message) : Exception(message) { }
     private sealed class ControlledReadFailure : IOException { }
@@ -74,6 +80,9 @@ public static class DeleteObservationCases
     private static uint _pendingDeleteEntry;
     private static DateTime _pendingDeleteSince;
     private static bool _pendingDeleteRequested;
+    private static object _pendingDeleteToken = new object();
+    // This existing fixture controls runtime admission; W86 exercises the real helper separately.
+    private static bool OwnsPendingDeleteContext() => true;
     private static bool HasPendingDelete => _pendingDeleteGuid != 0 && _pendingDeleteEntry != 0;
     private static LocalPlayer Me => Player;
     private static LocalPlayer Player = null!;
@@ -119,7 +128,7 @@ public static class DeleteObservationCases
 """;
 
     private const string Cases = """
-    public static void Run()
+    public void Run()
     {
         var cases = new List<(string Name, Action Test)>();
         void Add(string name, Action test) => cases.Add((name, () => { Reset(); test(); }));
@@ -158,7 +167,7 @@ public static class DeleteObservationCases
         _pendingDeleteGuid=11; _pendingDeleteEntry=22; _pendingDeleteRequested=true;
         _pendingDeleteSince=DateTime.UtcNow;
     }
-    private static void Tick()
+    private void Tick()
     {
         try { TickPendingDelete(); }
         catch(ControlledReadFailure) { throw new Failure("the deliberately injected inventory read error escaped pending observation"); }
