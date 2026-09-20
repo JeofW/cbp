@@ -114,7 +114,7 @@ namespace Styx.Bot.Quest_Behaviors.UseItemOn
                 IgnoreCombat = GetAttributeAsNullable<bool>("IgnoreCombat", false, null, null) ?? false;
 
                 MobAuraName = (tmpMobHasAuraId != 0) ? AuraNameFromId("HasAuraId", tmpMobHasAuraId) : null;
-                MobAuraMissingName = (tmpMobHasAuraMissingId != 0) ? AuraNameFromId("HasAuraId", tmpMobHasAuraMissingId) : null;
+                MobAuraMissingName = (tmpMobHasAuraMissingId != 0) ? AuraNameFromId("IsMissingAuraId", tmpMobHasAuraMissingId) : null;
             }
 
             catch (Exception except)
@@ -567,7 +567,9 @@ namespace Styx.Bot.Quest_Behaviors.UseItemOn
                     new Action(ret =>
                     {
                         TreeRoot.StatusText = "Waiting for authoritative quest acknowledgement";
-                        return RunStatus.Running;
+                        // Yield this pulse so the parent rechecks its deadline.
+                        // A perpetually Running child retains the old admission.
+                        return RunStatus.Success;
                     })),
 
                 new Decorator(
@@ -577,9 +579,9 @@ namespace Styx.Bot.Quest_Behaviors.UseItemOn
                                UtcNowMilliseconds(),
                                _lastSubmissionUtc,
                                AcknowledgementTimeout) &&
-                           Item == null,
+                           (Item == null || CurrentObject == null),
                     new Action(ret => DeferAuthoritativeAttempt(
-                        "the submitted item is no longer available after the bounded acknowledgement window"))),
+                        "the submitted item or an eligible recipient is unavailable after the bounded acknowledgement window"))),
 
                 new Decorator(
                     ret => SuccessEvidence != SuccessEvidenceType.InvocationCount &&
