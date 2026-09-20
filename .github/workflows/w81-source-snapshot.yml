@@ -58,10 +58,10 @@ jobs:
                   path = root / relative
                   if relative.is_absolute() or '..' in relative.parts or not path.resolve().is_relative_to(root):
                       raise RuntimeError('Unsafe source path')
-                  raw = path.read_bytes()
+                  raw = subprocess.check_output(['git', 'cat-file', 'blob', oid])
                   actual = hashlib.sha1(b'blob ' + str(len(raw)).encode() + b'\0' + raw).hexdigest()
                   if actual != oid:
-                      raise RuntimeError('Working source differs from Git blob: ' + name)
+                      raise RuntimeError('Exported source differs from Git blob: ' + name)
                   archive.writestr(name, raw)
                   records.append({'path': name, 'blob': oid, 'sha256': hashlib.sha256(raw).hexdigest(), 'bytes': len(raw)})
           manifest = {'schema': 1, 'repo': 'jeofwong/CopilotBuddy-private', 'commit': head, 'tree': tree,
