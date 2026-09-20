@@ -120,6 +120,7 @@ internal static class QuestStrategySchedulerRegressionTests
         }));
 
         AddNormalCreditCases(tests);
+        AddPublishedCreditCases(tests);
 
         int passed = 0, assertions = 0, unexpected = 0;
         bool logging = Styx.Helpers.Logging.FileLogging;
@@ -215,6 +216,71 @@ internal static class QuestStrategySchedulerRegressionTests
             c.Scan();
             Check(reached == 1, "ordinary work did not reach controlled navigation");
             c.Deferred();
+        }));
+    }
+
+    private static void AddPublishedCreditCases(List<(string Name, Action Test)> tests)
+    {
+        tests.Add(("published credit: unchanged contents retain actual execution permission", () =>
+        {
+            using var c = new Case(null, 17, castCredit: false);
+            c.NormalCredit(new[] {70001,0,0,0}, new[] {1,0,0,0}, new ushort[] {0,0,0,0});
+            Func<bool> permission = c.Publish();
+            c.OrdinaryOnly(17);
+            c.NormalMetadata(new[] {70001,0,0,0}, new[] {1,0,0,0});
+            Check(permission() && ReferenceEquals(permission, c.Permission()),
+                "identical credit contents revoked the current publication");
+        }));
+        var changes = new[]
+        {
+            ("different creature", new[] {70002,0,0,0}, new[] {1,0,0,0}),
+            ("different requirement", new[] {70001,0,0,0}, new[] {2,0,0,0}),
+            ("ambiguous duplicate", new[] {70001,70001,0,0}, new[] {1,1,0,0}),
+            ("missing credit", new[] {0,0,0,0}, new[] {0,0,0,0})
+        };
+        foreach (var change in changes)
+        {
+            var observed = change;
+            tests.Add(("published credit: " + observed.Item1 + " revokes old work and permits fresh recovery", () =>
+            {
+                using var c = new Case(null, 17, castCredit: false);
+                c.NormalCredit(new[] {70001,0,0,0}, new[] {1,0,0,0}, new ushort[] {0,0,0,0});
+                Func<bool> oldPermission = c.Publish();
+                c.NormalMetadata(observed.Item2, observed.Item3);
+                c.Revoked(oldPermission);
+                // A restored observation needs a new accepted publication. The
+                // retained delegate cannot revive or retire replacement work.
+                c.NormalMetadata(new[] {70001,0,0,0}, new[] {1,0,0,0});
+                Check(!oldPermission() && c.Permission() == null,
+                    "restoring metadata revived the revoked publication without a scan");
+                Func<bool> replacement = c.Publish();
+                Check(!ReferenceEquals(oldPermission, replacement) && !oldPermission() && replacement() &&
+                    ReferenceEquals(replacement, c.Permission()),
+                    "an old observation callback borrowed or revoked the fresh publication");
+                c.OrdinaryOnly(17);
+            }));
+        }
+        tests.Add(("published credit: a new successful load replaces the old permission", () =>
+        {
+            using var c = new Case(null, 17, castCredit: false);
+            c.NormalCredit(new[] {70001,0,0,0}, new[] {1,0,0,0}, new ushort[] {0,0,0,0});
+            Func<bool> oldPermission = c.Publish();
+            Func<bool> replacement = c.Publish();
+            Check(!ReferenceEquals(oldPermission, replacement) && !oldPermission() && replacement() &&
+                ReferenceEquals(replacement, c.Permission()),
+                "the replaced publication retained authority or invalidated current work");
+        }));
+        tests.Add(("published credit: raw progress revokes permission before replanning", () =>
+        {
+            using var c = new Case(null, 17, castCredit: false, independent: true);
+            c.NormalCredit(new[] {70001,0,0,0}, new[] {1,0,0,0}, new ushort[] {0,0,0,0});
+            Func<bool> oldPermission = c.Publish();
+            c.Write(c.Descriptor + 640U, 1U);
+            c.Revoked(oldPermission);
+            Func<bool> replacement = c.Publish();
+            c.IndependentOnly();
+            Check(!oldPermission() && replacement() && ReferenceEquals(replacement, c.Permission()),
+                "completed ordinary work retained permission or poisoned independent collection");
         }));
     }
 
@@ -358,6 +424,37 @@ internal static class QuestStrategySchedulerRegressionTests
         {
             try { Scheduler.ScanAndRefresh(Player); }
             catch (InvalidDataException e) { throw new Failure("unsupported strategy reached materialization instead of isolated deferral: " + e.Message); }
+        }
+        internal Func<bool>? Permission() => (Func<bool>?)typeof(QuestScheduler)
+            .GetMethod("CaptureExecutionPermission", Hidden)!.Invoke(Scheduler, null);
+        internal Func<bool> Publish()
+        {
+            // Use the actual host loader and scheduler acceptance callback. Do not
+            // seed PublishedWork or substitute an always-successful load receipt.
+            MethodInfo scan = typeof(QuestScheduler).GetMethod("ScanAndRefresh", Hidden, null,
+                new[] { typeof(LocalPlayer), typeof(string), typeof(Func<Action, bool>), typeof(Func<string, bool>) }, null)!;
+            int loads = 0;
+            Func<string, bool> load = path =>
+            {
+                loads++;
+                Styx.Logic.Profiles.ProfileManager.LoadNew(path, false);
+                return Styx.Logic.Profiles.ProfileManager.XmlLocation == path &&
+                    Styx.Logic.Profiles.ProfileManager.CurrentOuterProfile != null &&
+                    Styx.Logic.Profiles.ProfileManager.CurrentProfile != null;
+            };
+            bool published = (bool)scan.Invoke(Scheduler, new object?[]
+                { Player, null, (Func<Action, bool>)(apply => { apply(); return true; }), load })!;
+            Check(published && loads == 1, "actual scheduler/host did not accept one publication; " + Scheduler.LastStatus);
+            Func<bool>? permission = Permission();
+            Check(permission != null && permission(), "accepted host load did not establish current execution permission");
+            return permission!;
+        }
+        internal void Revoked(Func<bool> permission)
+        {
+            Check(!permission(), "changed credit observation retained execution permission");
+            Check(Permission() == null && Scheduler.LastSchedule.Plan.Count == 0 && Scheduler.CurrentProfilePath == null,
+                "revocation left a current plan or execution owner");
+            // The old XML may remain on disk; its existence is not permission.
         }
         internal XDocument Xml()
         {
