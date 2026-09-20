@@ -33,6 +33,7 @@ namespace Styx.Bot.Plugins.AutoEquip2
         /// <summary>Dispose of this plugin, cleaning up any resources it uses.</summary>
         public override void Dispose()
         {
+            _isDisposed = true;
             Lua.Events.DetachEvent("UNIT_INVENTORY_CHANGED", DoCheck);
             Lua.Events.DetachEvent("LOOT_CLOSED", DoCheck);
             Lua.Events.DetachEvent("START_LOOT_ROLL", HandleLootRoll);
@@ -71,6 +72,9 @@ namespace Styx.Bot.Plugins.AutoEquip2
         private int _pendingSourceSlot = -1;
         private DateTime _pendingEquipSince;
         private bool _pendingEquipSubmitted;
+        private bool _isDisposed;
+        private LocalPlayer _pendingEquipPlayer;
+        private ulong _pendingEquipPlayerGuid;
 
         private bool HasPendingEquip
         {
@@ -81,6 +85,9 @@ namespace Styx.Bot.Plugins.AutoEquip2
         /// </summary>
         public override void Pulse()
         {
+            if (_isDisposed)
+                return;
+
             if (HasPendingEquip)
             {
                 TickPendingEquip();
@@ -179,7 +186,7 @@ namespace Styx.Bot.Plugins.AutoEquip2
                 return;
             }
 
-            if (!TreeRoot.IsRunning || StyxWoW.Me.Combat || StyxWoW.Me.Dead || StyxWoW.Me.IsGhost || Battlegrounds.IsInsideBattleground)
+            if (!CanEquipNow())
             {
                 return;
             }
@@ -756,16 +763,41 @@ namespace Styx.Bot.Plugins.AutoEquip2
             BeginEquip(item, InventorySlot.None, true);
         }
 
+        private bool CanEquipNow()
+        {
+            if (_isDisposed || !TreeRoot.IsRunning || !StyxWoW.IsInGame || Battlegrounds.IsInsideBattleground)
+                return false;
+
+            LocalPlayer player = ObjectManager.Me;
+            return player != null && player.IsValid && player.Guid != 0 && player.IsAlive &&
+                !player.IsGhost && !player.Combat;
+        }
+
+        private bool OwnsPendingEquipContext()
+        {
+            return HasPendingEquip && CanEquipNow() && _pendingEquipPlayer != null &&
+                ReferenceEquals(ObjectManager.Me, _pendingEquipPlayer) &&
+                _pendingEquipPlayerGuid != 0 && _pendingEquipPlayer.Guid == _pendingEquipPlayerGuid;
+        }
+
         private void BeginEquip(WoWItem item, InventorySlot slot, bool autoByName)
         {
-            if (HasPendingEquip || item == null || !item.IsValid || item.Guid == 0 || item.Entry == 0)
+            if (HasPendingEquip || !CanEquipNow() || item == null || !item.IsValid || item.Guid == 0 || item.Entry == 0)
                 return;
 
+            _pendingEquipPlayer = ObjectManager.Me;
+            _pendingEquipPlayerGuid = _pendingEquipPlayer != null ? _pendingEquipPlayer.Guid : 0;
             _pendingEquipGuid = item.Guid;
             _pendingEquipEntry = item.Entry;
             _pendingEquipSlot = slot;
             _pendingEquipSince = DateTime.UtcNow;
             _pendingEquipSubmitted = false;
+
+            if (!OwnsPendingEquipContext())
+            {
+                ResetPendingEquip();
+                return;
+            }
 
             if (autoByName || slot == InventorySlot.None)
             {
@@ -791,6 +823,14 @@ namespace Styx.Bot.Plugins.AutoEquip2
             if (!HasPendingEquip)
                 return;
 
+            // Losing the captured actor or run context revokes managed intent.
+            // Do not try to repair an unidentified cursor in the new context.
+            if (!OwnsPendingEquipContext())
+            {
+                ResetPendingEquip();
+                return;
+            }
+
             if (DateTime.UtcNow - _pendingEquipSince >= EquipTimeout)
             {
                 Log("Equip transaction for entry {0} timed out waiting for equipment/cursor completion.", _pendingEquipEntry);
@@ -800,6 +840,11 @@ namespace Styx.Bot.Plugins.AutoEquip2
             }
 
             ConfirmOwnedEquipPopup();
+            if (!OwnsPendingEquipContext())
+            {
+                ResetPendingEquip();
+                return;
+            }
 
             if (IsPendingEquipAcknowledged())
             {
@@ -817,7 +862,7 @@ namespace Styx.Bot.Plugins.AutoEquip2
 
         private bool SubmitOwnedCursorEquip()
         {
-            if (!HasPendingEquip || _pendingEquipSlot == InventorySlot.None)
+            if (!OwnsPendingEquipContext() || _pendingEquipSlot == InventorySlot.None)
                 return false;
 
             string script = string.Format(
@@ -840,7 +885,7 @@ namespace Styx.Bot.Plugins.AutoEquip2
 
         private void ConfirmOwnedEquipPopup()
         {
-            if (!HasPendingEquip || !_pendingEquipSubmitted || _pendingEquipSlot == InventorySlot.None)
+            if (!OwnsPendingEquipContext() || !_pendingEquipSubmitted || _pendingEquipSlot == InventorySlot.None)
                 return;
 
             try
@@ -860,7 +905,7 @@ namespace Styx.Bot.Plugins.AutoEquip2
 
         private bool IsPendingEquipAcknowledged()
         {
-            if (!HasPendingEquip || ObjectManager.Me == null ||
+            if (!OwnsPendingEquipContext() || ObjectManager.Me == null ||
                 ObjectManager.Me.Inventory == null || ObjectManager.Me.Inventory.Equipped == null)
                 return false;
 
@@ -879,6 +924,9 @@ namespace Styx.Bot.Plugins.AutoEquip2
 
         private bool ReturnDisplacedCursorToSource()
         {
+            if (!OwnsPendingEquipContext())
+                return false;
+
             if (_pendingSourceBag < 0 || _pendingSourceSlot <= 0)
                 return !CursorHasAnyItem();
 
@@ -903,7 +951,7 @@ namespace Styx.Bot.Plugins.AutoEquip2
 
         private void RestoreOwnedCursorToSource()
         {
-            if (_pendingSourceBag < 0 || _pendingSourceSlot <= 0 || _pendingEquipEntry == 0)
+            if (!OwnsPendingEquipContext() || _pendingSourceBag < 0 || _pendingSourceSlot <= 0 || _pendingEquipEntry == 0)
                 return;
             try
             {
@@ -933,6 +981,8 @@ namespace Styx.Bot.Plugins.AutoEquip2
 
         private void ResetPendingEquip()
         {
+            _pendingEquipPlayer = null;
+            _pendingEquipPlayerGuid = 0;
             _pendingEquipGuid = 0;
             _pendingEquipEntry = 0;
             _pendingEquipSlot = InventorySlot.None;
