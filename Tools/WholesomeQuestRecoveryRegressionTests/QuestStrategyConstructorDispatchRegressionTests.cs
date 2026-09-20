@@ -7,6 +7,10 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
+using System.Runtime.InteropServices;
+using System.Text.Json.Nodes;
+using Styx.Logic.Profiles;
+using WholesomeAQ;
 using System.Threading;
 using System.Xml.Linq;
 using Microsoft.CodeAnalysis;
@@ -26,7 +30,9 @@ using TreeSharp;
 // No shadow behavior/world classes, injected assembly result or behavior-property
 // rewriting. The retained Case supplies allocated observations; no game/executor.
 // Lifecycle cases cover missing-recipient wait, raw-counter separation, ready
-// transition and a fresh owner after completion, not a native item/gossip request.
+// transition and a fresh owner after completion. Additional matching-recipient
+// cases execute the real WoWObject.Interact refusal path with no native executor.
+// An interaction attempt is not a submitted request or server acknowledgment.
 internal static class QuestStrategyConstructorDispatchRegressionTests
 {
     private const BindingFlags Hidden = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static;
@@ -100,6 +106,7 @@ internal static class QuestStrategyConstructorDispatchRegressionTests
         object gate = typeof(QuestBehaviorHelper).GetField("_lockObject", Hidden)!.GetValue(null)!;
         bool oldLogging = Logging.FileLogging;
         int passed = 0, assertions = 0, unexpected = 0;
+        int matchingAssertions = 0, matchingUnexpected = 0;
         try
         {
             Logging.FileLogging = false;
@@ -148,6 +155,7 @@ internal static class QuestStrategyConstructorDispatchRegressionTests
                     Console.Error.WriteLine("ERROR quest strategy constructor dispatch: " + name + ": " + e);
                 }
             }
+            (matchingAssertions, matchingUnexpected) = RunMatchingRecipientCases();
         }
         finally
         {
@@ -163,7 +171,8 @@ internal static class QuestStrategyConstructorDispatchRegressionTests
             Logging.FileLogging = oldLogging;
         }
         Console.WriteLine($"Quest strategy constructor dispatch scenarios: {passed}/12; assertions={assertions}; unexpected={unexpected}; actual loader/scheduler/XML/CodeNode/runtime compiler/factory; six constructor and six wrapper/start/branch-tick cases; allocated observations; no native executor, recipient action or game attached.");
-        if (assertions + unexpected != 0) throw new InvalidOperationException("Quest strategy constructor dispatch regression");
+        if (assertions + unexpected + matchingAssertions + matchingUnexpected != 0)
+            throw new InvalidOperationException("Quest strategy constructor dispatch regression");
     }
 
     private static void CheckConstructor(string kind, int datasetIndex, bool lifecycle)
@@ -314,6 +323,221 @@ internal static class QuestStrategyConstructorDispatchRegressionTests
                     TreeRoot.StatusText = status;
                 }
             }
+        }
+    }
+
+
+    private static (int Assertions, int Unexpected) RunMatchingRecipientCases()
+    {
+        var cases = new List<(int Index, string Scenario)>();
+        foreach (int index in new[] { 0, 3, 17 })
+        foreach (string scenario in new[] { "ready", "dispose", "replace-player" })
+            cases.Add((index, scenario));
+        cases.Add((0, "bounded-refusal"));
+        int passed = 0, assertions = 0, unexpected = 0;
+        foreach (var test in cases)
+        {
+            string name = "GossipEvent index " + test.Index + " " + test.Scenario;
+            try
+            {
+                CheckMatchingRecipient(test.Index, test.Scenario);
+                passed++;
+                Console.WriteLine("PASS real matching recipient: " + name);
+            }
+            catch (Failure error)
+            {
+                assertions++;
+                Console.Error.WriteLine("FAIL real matching recipient: " + name + ": " + error.Message);
+            }
+            catch (Exception error)
+            {
+                unexpected++;
+                Console.Error.WriteLine("ERROR real matching recipient: " + name + ": " + error);
+            }
+        }
+        Console.WriteLine($"Real matching recipient scenarios: {passed}/{cases.Count}; assertions={assertions}; unexpected={unexpected}; actual loader/scheduler/XML/compiler/factory/wrapper/WoWUnit/Interact; native executor absent, requests refused, no game attached.");
+        return (assertions, unexpected);
+    }
+
+    private static void CheckMatchingRecipient(int datasetIndex, string scenario)
+    {
+        Type fixtureType = typeof(QuestStrategySchedulerRegressionTests).GetNestedType("Case", BindingFlags.NonPublic)!;
+        ConstructorInfo constructor = fixtureType.GetConstructors(Hidden).Single();
+        object?[] inputs = constructor.GetParameters().Select(parameter => parameter.DefaultValue).ToArray();
+        inputs[0] = "GossipEvent";
+        inputs[1] = datasetIndex;
+        using var fixture = (IDisposable)Invoke(constructor, null, inputs)!;
+        PrepareAlivePlayer(fixtureType, fixture);
+        var player = (LocalPlayer)Read(fixture, "Player")!;
+        object memoryOwner = fixtureType.GetField("fixture", Hidden)!.GetValue(fixture)!;
+        string directory = (string)memoryOwner.GetType().GetField("Directory", Hidden)!.GetValue(memoryOwner)!;
+
+        // Configure the synthetic source BEFORE a fresh real loader is created.
+        // There is no native LOS service here. This explicit optional recipe flag
+        // is not an owner-property rewrite or evidence that native LOS was tested.
+        string packPath = Path.Combine(directory, "quest_strategies.json");
+        JsonNode pack = JsonNode.Parse(File.ReadAllText(packPath))!;
+        pack["Recipes"]![0]!["RequireLos"] = false;
+        File.WriteAllText(packPath, pack.ToJsonString());
+        var loader = new DataLoader(Path.Combine(directory, "quest_data.json"));
+        loader.Load();
+        string output = Path.Combine(directory, "matching-recipient.xml");
+        var scheduler = new QuestScheduler(loader, new ProfileBuilder(output), new WholesomeAQSettings());
+        Check(scheduler.ScanAndRefresh(player), "matching source did not reach actual scheduling");
+        ProfileManager.LoadNew(output, false);
+        Check(ProfileManager.CurrentProfile != null && ProfileManager.XmlLocation == output,
+            "actual host did not accept matching-recipient XML");
+        XElement element = XDocument.Load(output).Descendants("CustomBehavior").Single();
+        var node = (CodeNode)CodeNode.FromXml(element);
+        var arguments = node.Arguments.ToArray();
+        Check((string?)element.Attribute("RequireLos") == "false" &&
+            (string?)element.Attribute("SuccessEvidence") == "QuestComplete",
+            "materialization changed the explicitly supplied source contract");
+        Check(node.AssemblyGetter() != null, "actual compiler could not produce the matching owner");
+
+        using var recipient = new AllocatedRecipient(memoryOwner);
+        string oldGoal = TreeRoot.GoalText, oldStatus = TreeRoot.StatusText;
+        FieldInfo batchField = typeof(ProfileBatchManager).GetField("_currentBatch", Hidden)!;
+        object? oldBatch = batchField.GetValue(null);
+        ForcedCodeBehavior? wrapper = null, restarted = null;
+        int attempts = 0, refusals = 0, deferrals = 0;
+        Action<LogLevel, string> observe = (_, message) =>
+        {
+            if (message.Contains("[Interact] Interacting with object at", StringComparison.Ordinal))
+            {
+                attempts++;
+                // A real host event occurs inside the real interaction method.
+                // Exercise reentrant lifecycle changes without a shadow owner.
+                if (attempts == 1 && scenario == "dispose") wrapper!.Dispose();
+                if (attempts == 1 && scenario == "replace-player")
+                    ObjectManager.Me = new LocalPlayer(player.BaseAddress);
+            }
+            if (message.Contains("[Interact] Invalid executor - cannot interact", StringComparison.Ordinal)) refusals++;
+            if (message.Contains("GossipEvent is deferring without authoritative", StringComparison.Ordinal)) deferrals++;
+        };
+        Logging.OnMessageLogged += observe;
+        try
+        {
+            wrapper = new ForcedCodeBehavior(node);
+            var owner = (CustomForcedBehavior)typeof(ForcedCodeBehavior).GetField("customBehavior", Hidden)!.GetValue(wrapper)!;
+            Check(owner.GetType().FullName == "Styx.Bot.Quest_Behaviors.GossipEvent.GossipEvent" &&
+                ReferenceEquals(owner.Element, node.Element) && node.Element.ToString() == element.ToString() && !owner.IsAttributeProblem,
+                "factory/wrapper did not retain the actual generated owner and element");
+            wrapper.OnStart(); wrapper.OnTick();
+            Check(!wrapper.IsDone && Read(owner, "InitialObjectiveCount") == null,
+                "whole-quest owner borrowed a raw counter or finished before interaction");
+            Tick(wrapper);
+            // Failure to reach the boundary is a setup/runtime error, not an
+            // intended behavioral red assertion about an interaction that never ran.
+            if (attempts != 1 || refusals != 1)
+                throw new InvalidOperationException($"Real interaction/refusal boundary not reached: attempts={attempts}, refusals={refusals}, status={TreeRoot.StatusText}");
+            if (scenario == "dispose" || scenario == "replace-player")
+            {
+                Check((int)Read(owner, "Counter")! == 0 &&
+                    (ulong)owner.GetType().GetField("_interactionGuid", Hidden)!.GetValue(owner)! == 0UL &&
+                    (long)owner.GetType().GetField("_gossipOpenStartedUtc", Hidden)!.GetValue(owner)! == -1L,
+                    "interaction return published pending state after disposal or player replacement");
+            }
+            else
+            {
+                Check(!wrapper.IsDone && (int)Read(owner, "Counter")! == 1 &&
+                    (long)owner.GetType().GetField("_lastSubmissionUtc", Hidden)!.GetValue(owner)! == -1L,
+                    "refused interaction became quest success or a submitted gossip option");
+                if (scenario == "bounded-refusal")
+                {
+                    var clock = Stopwatch.StartNew();
+                    while (!wrapper.IsDone && clock.Elapsed < TimeSpan.FromSeconds(10))
+                    {
+                        wrapper.OnTick(); Tick(wrapper); Thread.Sleep(25);
+                    }
+                    Check(wrapper.IsDone && attempts == 2 && refusals == 2 && deferrals == 1 &&
+                        (int)Read(owner, "Counter")! == 2 && !player.QuestLog.GetQuestById(867U).IsCompleted &&
+                        !(bool)Invoke(owner.GetType().GetMethod("HasAuthoritativeSuccess", Hidden)!, owner, null)!,
+                        "unchanged quest progress did not end in bounded refusal without quest credit");
+                }
+                else
+                {
+                    uint descriptor = (uint)Read(fixture, "Descriptor")!;
+                    MethodInfo write = fixtureType.GetMethod("Write", Hidden)!;
+                    Invoke(write, fixture, new object[] { descriptor + 640U, 0x00090009U });
+                    Invoke(write, fixture, new object[] { descriptor + 644U, 0x00090009U });
+                    wrapper.OnTick(); Tick(wrapper);
+                    Check(!wrapper.IsDone && attempts == 1 && refusals == 1,
+                        "unrelated counts acknowledged or repeated the refused interaction");
+                    Invoke(write, fixture, new object[] { descriptor + 636U, (uint)WoWDescriptorQuestFlags.Completed });
+                    Check(wrapper.IsDone && Tick(wrapper) == RunStatus.Success && attempts == 1,
+                        "authoritative readiness did not stop the existing wrapper");
+                    restarted = new ForcedCodeBehavior(node);
+                    restarted.OnStart(); restarted.OnTick();
+                    Check(restarted.IsDone && Tick(restarted) == RunStatus.Success && attempts == 1,
+                        "fresh wrapper replayed an already-ready quest");
+                }
+            }
+            Check(node.Arguments.SequenceEqual(arguments) && ObjectManager.Executor == null,
+                "generated arguments changed or the offline fixture acquired a native executor");
+        }
+        finally
+        {
+            Logging.OnMessageLogged -= observe;
+            ObjectManager.Me = player;
+            try { restarted?.Dispose(); }
+            finally
+            {
+                try { wrapper?.Dispose(); }
+                finally
+                {
+                    batchField.SetValue(null, oldBatch);
+                    TreeRoot.GoalText = oldGoal; TreeRoot.StatusText = oldStatus;
+                }
+            }
+        }
+    }
+
+    private sealed class AllocatedRecipient : IDisposable
+    {
+        private readonly IntPtr storage = Marshal.AllocHGlobal(16384);
+        private readonly ThreadLocal<Dictionary<IntPtr, byte[]>> cache;
+        private readonly Dictionary<ulong, WoWObject> objects;
+        private readonly WoWUnit unit;
+        private const ulong FixtureGuid = 987654321UL;
+        internal AllocatedRecipient(object memoryOwner)
+        {
+            cache = (ThreadLocal<Dictionary<IntPtr, byte[]>>)memoryOwner.GetType().GetField("cache", Hidden)!.GetValue(memoryOwner)!;
+            objects = (Dictionary<ulong, WoWObject>)typeof(ObjectManager).GetField("_objectList", Hidden)!.GetValue(null)!;
+            try
+            {
+            uint address = unchecked((uint)storage.ToInt32()), descriptor = address + 4096U;
+            Marshal.Copy(new byte[16384], 0, storage, 16384);
+            uint Field(string name) => (uint)typeof(WoWObject).GetField(name, Hidden)!.GetRawConstantValue()!;
+            void Write(uint at, uint value) => Marshal.WriteInt32(new IntPtr(unchecked((int)at)), unchecked((int)value));
+            Write(address + Field("DescriptorOffset"), descriptor);
+            Write(address + Field("TypeOffset"), (uint)WoWObjectType.Unit);
+            Marshal.WriteInt64(new IntPtr(unchecked((int)(address + Field("GuidOffset")))), (long)FixtureGuid);
+            Marshal.WriteInt64(new IntPtr(unchecked((int)descriptor)), (long)FixtureGuid);
+            Write(descriptor + Field("DescEntry") * 4U, 70001U);
+            foreach (WoWUnitFields field in new[] { WoWUnitFields.Health, WoWUnitFields.MaxHealth })
+                Write(descriptor + (uint)field * 4U, 100U);
+            // Existing host fields: WoWUnit.RelativeLocation reads +1944 and
+            // WoWMovementInfo reads the pointer at +216. No new client offsets.
+            Marshal.StructureToPtr(new Styx.Logic.Pathing.WoWPoint(12, 10, 10), IntPtr.Add(storage, 1944), false);
+            Write(address + 216U, address + 8192U);
+            unit = new WoWUnit(address); // Exact host type; GetObjectsOfType defaults to exact types.
+            if (objects.ContainsKey(FixtureGuid)) throw new InvalidOperationException("Synthetic recipient GUID already present");
+            objects.Add(FixtureGuid, unit);
+            if (!unit.IsValid || !unit.IsAlive || !unit.CanSelect || unit.Entry != 70001 ||
+                unit.Location.DistanceSqr(new Styx.Logic.Pathing.WoWPoint(12, 10, 10)) != 0 ||
+                !ObjectManager.GetObjectsOfType<WoWUnit>().Any(value => ReferenceEquals(value, unit)))
+                throw new InvalidOperationException("Allocated matching recipient did not reach the real readers");
+            }
+            catch { Dispose(); throw; }
+        }
+        public void Dispose()
+        {
+            if (objects.TryGetValue(FixtureGuid, out var current) && ReferenceEquals(current, unit)) objects.Remove(FixtureGuid);
+            uint first = unchecked((uint)storage.ToInt32());
+            foreach (IntPtr key in cache.Value!.Keys.Where(key => unchecked((uint)key.ToInt32()) >= first &&
+                unchecked((uint)key.ToInt32()) < first + 16384U).ToArray()) cache.Value.Remove(key);
+            Marshal.FreeHGlobal(storage);
         }
     }
 
