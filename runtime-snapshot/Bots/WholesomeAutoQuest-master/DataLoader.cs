@@ -411,9 +411,7 @@ namespace WholesomeAQ
 
             int questId = RequiredPositiveInt(node, "QuestId");
             int objectiveIndex = RequiredNonNegativeInt(node, "ObjectiveIndex");
-            string kindText = RequiredString(node, "Kind");
-            if (!Enum.TryParse(kindText, ignoreCase: false, out QuestStrategyKind kind))
-                throw new InvalidDataException("Quest strategy recipe has an unsupported Kind.");
+            QuestStrategyKind kind = RequiredEnum<QuestStrategyKind>(node, "Kind");
             string sourceRef = RequiredString(node, "SourceRef", maximumLength: 1024);
             int targetId = RequiredPositiveInt(node, "TargetId");
             QuestStrategyTargetType targetType = RequiredEnum<QuestStrategyTargetType>(node, "TargetType");
