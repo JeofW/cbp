@@ -662,7 +662,7 @@ if #observed > 32768 then return 0 end
             {
                 PlayerQuest quest = Me?.QuestLog?.GetQuestById((uint)QuestId);
                 TreeRoot.GoalText = "GossipEvent: " +
-                    (quest != null ? """ + quest.Name + """ : "In Progress");
+                    (quest != null ? "\"" + quest.Name + "\"" : "In Progress");
             }
         }
 
