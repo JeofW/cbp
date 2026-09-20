@@ -269,14 +269,38 @@ public static class ObjectiveRestartCases
         public void Close(){IsVisible=false;}
     }
 }
-/* Only the existing exact-NPC query is controlled. */ namespace Styx.WoWInternals
+/* Controlled UI bridge only; original restart cases/assertions stay unchanged. */ namespace Styx.WoWInternals
 {
     public static class Lua
     {
+        private const string ObservedMenu="1|string:8:6f62736572766564|2|string:7:50726f63656564|string:6:676f73736970|0|0";
+        private static bool Visible=>Styx.Logic.Inventory.Frames.Gossip.GossipFrame.Instance.IsVisible;
+        private static void RequireMenuRequest(string script)
+        {
+            foreach(string api in new[]{"GetGossipText()","GetGossipOptions()","GetGossipAvailableQuests()","GetGossipActiveQuests()"})
+                if(!script.Contains(api,StringComparison.Ordinal))throw new InvalidOperationException("Unexpected menu observation: "+script);
+            if(!script.Contains("UnitGUID('npc') ~= '0x0000000000000002'",StringComparison.Ordinal)
+                ||!script.Contains("UnitGUID('player') ~= '0x0000000000000001'",StringComparison.Ordinal))
+                throw new InvalidOperationException("Unexpected menu actor/NPC: "+script);
+        }
+        public static List<string> GetReturnValues(string script)
+        {
+            RequireMenuRequest(script);
+            return Visible?new(){ObservedMenu.Length.ToString(System.Globalization.CultureInfo.InvariantCulture),ObservedMenu}:new();
+        }
         public static T GetReturnVal<T>(string script,uint index)
         {
-            if(script=="return UnitGUID('npc') == '0x0000000000000002'"&&index==0&&typeof(T)==typeof(bool))return (T)(object)true;
-            throw new InvalidOperationException("Unexpected native Lua request in offline fixture: "+script);
+            if(index!=0||typeof(T)!=typeof(bool))throw new InvalidOperationException("Unexpected Lua result contract");
+            if(script=="return UnitGUID('npc') == '0x0000000000000002'"
+                ||script=="return (UnitGUID('npc') == '0x0000000000000002') and 1 or 0")return (T)(object)true;
+            RequireMenuRequest(script);
+            if(!script.Contains("observed ~= '"+ObservedMenu+"'",StringComparison.Ordinal))
+                throw new InvalidOperationException("Mutation does not retain the controlled observed menu");
+            if(!Visible)return (T)(object)false;
+            if(script.Contains("SelectGossipOption(1)",StringComparison.Ordinal))ObjectiveRestartCases.Selections++;
+            else if(script.Contains("CloseGossip()",StringComparison.Ordinal))Styx.Logic.Inventory.Frames.Gossip.GossipFrame.Instance.Close();
+            else throw new InvalidOperationException("Unexpected native Lua request in offline fixture: "+script);
+            return (T)(object)true;
         }
     }
 }
