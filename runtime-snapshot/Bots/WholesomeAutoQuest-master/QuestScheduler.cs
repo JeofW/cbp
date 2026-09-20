@@ -13,6 +13,7 @@ using Styx.Logic.Questing;
 using Styx.Logic.Questing.Recovery;
 using Styx.WoWInternals;
 using Styx.WoWInternals.WoWObjects;
+using Styx.WoWInternals.WoWCache;
 
 #nullable disable
 
@@ -1661,23 +1662,25 @@ namespace WholesomeAQ
                 var memory = ObjectManager.Wow;
                 if (memory == null || accepted == null || !log.IsSnapshotCurrent(observation))
                     return false;
-                // Old PlayerQuest handles retain cached metadata. Rehydrate through
-                // the existing cache reader with fresh memory at each publication
-                // boundary, then recheck raw/player ownership after those reads.
-                using (memory.TemporaryCacheState(false))
+                // Resolve through the host's existing cache lookup. Bypass memory
+                // caching only for the resolved metadata contents, not for unrelated
+                // cache-directory or world observations made by other owners.
+                foreach (QuestSchedulerAcceptedQuest captured in accepted)
                 {
-                    foreach (QuestSchedulerAcceptedQuest captured in accepted)
-                    {
-                        Quest current = Quest.FromId(captured.QuestId);
-                        if (current == null || current.Id != captured.QuestId ||
-                            captured.NormalObjectiveIds == null || captured.NormalObjectiveRequiredCounts == null ||
-                            current.NormalObjectiveIDs == null || current.NormalObjectiveRequiredCounts == null ||
-                            !captured.NormalObjectiveIds.SequenceEqual(current.NormalObjectiveIDs) ||
-                            !captured.NormalObjectiveRequiredCounts.SequenceEqual(current.NormalObjectiveRequiredCounts))
-                            return false;
-                    }
-                    return ReferenceEquals(memory, ObjectManager.Wow) && log.IsSnapshotCurrent(observation);
+                    var block = Styx.StyxWoW.Cache[CacheDb.Quest].GetInfoBlockById(captured.QuestId);
+                    if (block == null || block.Address == 0)
+                        return false;
+                    WoWCache.QuestCacheEntry current;
+                    using (memory.TemporaryCacheState(false))
+                        current = block.Quest;
+                    if (current.Id != captured.QuestId ||
+                        captured.NormalObjectiveIds == null || captured.NormalObjectiveRequiredCounts == null ||
+                        current.ObjectiveId == null || current.ObjectiveRequiredCount == null ||
+                        !captured.NormalObjectiveIds.SequenceEqual(current.ObjectiveId) ||
+                        !captured.NormalObjectiveRequiredCounts.SequenceEqual(current.ObjectiveRequiredCount))
+                        return false;
                 }
+                return ReferenceEquals(memory, ObjectManager.Wow) && log.IsSnapshotCurrent(observation);
             }
             catch (Exception error) when (error is not ThreadInterruptedException && error is not OperationCanceledException)
             {
