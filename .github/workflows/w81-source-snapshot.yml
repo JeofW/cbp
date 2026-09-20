@@ -1,0 +1,81 @@
+name: W81 pinned source snapshot
+
+on:
+  push:
+    branches:
+      - audit-support/w81-source-snapshot-20260920
+    paths:
+      - .github/workflows/w81-source-snapshot.yml
+
+permissions:
+  contents: read
+
+env:
+  GIT_LFS_SKIP_SMUDGE: '1'
+  GIT_CONFIG_COUNT: '1'
+  GIT_CONFIG_KEY_0: core.autocrlf
+  GIT_CONFIG_VALUE_0: 'false'
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: e91a08b79cb7bcc606c2fd853df847ecb8841686
+          persist-credentials: false
+          lfs: false
+          fetch-depth: 1
+      - name: Verify and package only tracked source inputs
+        shell: bash
+        run: |
+          python - <<'PY'
+          import hashlib, json, os, pathlib, subprocess, zipfile
+          root = pathlib.Path.cwd().resolve()
+          expected = 'e91a08b79cb7bcc606c2fd853df847ecb8841686'
+          head = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()
+          tree = subprocess.check_output(['git', 'rev-parse', 'HEAD^{tree}'], text=True).strip()
+          if head != expected:
+              raise RuntimeError('Pinned source identity changed')
+          allowed = {'.cs', '.csproj', '.props', '.targets', '.py', '.resx', '.yml'}
+          output = pathlib.Path(os.environ['RUNNER_TEMP']) / 'w81-source-snapshot'
+          output.mkdir()
+          records = []
+          staged = subprocess.check_output(['git', 'ls-files', '--stage', '-z'])
+          with zipfile.ZipFile(output / 'source.zip', 'w', zipfile.ZIP_DEFLATED) as archive:
+              for record in staged.split(b'\0'):
+                  if not record:
+                      continue
+                  metadata, encoded_name = record.split(b'\t', 1)
+                  mode, oid, stage = metadata.decode('ascii').split()
+                  name = encoded_name.decode('utf-8')
+                  relative = pathlib.PurePosixPath(name)
+                  if relative.suffix.lower() not in allowed:
+                      continue
+                  if mode not in {'100644', '100755'} or stage != '0':
+                      raise RuntimeError('Non-regular or unmerged source entry: ' + name)
+                  path = root / relative
+                  if relative.is_absolute() or '..' in relative.parts or not path.resolve().is_relative_to(root):
+                      raise RuntimeError('Unsafe source path')
+                  raw = path.read_bytes()
+                  actual = hashlib.sha1(b'blob ' + str(len(raw)).encode() + b'\0' + raw).hexdigest()
+                  if actual != oid:
+                      raise RuntimeError('Working source differs from Git blob: ' + name)
+                  archive.writestr(name, raw)
+                  records.append({'path': name, 'blob': oid, 'sha256': hashlib.sha256(raw).hexdigest(), 'bytes': len(raw)})
+          manifest = {'schema': 1, 'repo': 'jeofwong/CopilotBuddy-private', 'commit': head, 'tree': tree,
+                      'purpose': 'read-only tracked-source snapshot, not test or game acceptance',
+                      'source_zip_sha256': hashlib.sha256((output / 'source.zip').read_bytes()).hexdigest(),
+                      'files': records}
+          (output / 'source-manifest.json').write_text(json.dumps(manifest, indent=2) + '\n', encoding='utf-8')
+          print('Verified pinned source entries:', len(records))
+          print('Commit:', head)
+          print('Tree:', tree)
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: w81-source-e91a08b7
+          path: ${{ runner.temp }}/w81-source-snapshot/
+          if-no-files-found: error
+          retention-days: 7
