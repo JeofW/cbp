@@ -9,7 +9,7 @@ using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Xml.Linq;
-using Bots.Quest.QuestOrder;
+using Styx.Logic.Profiles.Quest;
 using Styx.Logic.Questing;
 
 // Complete tracked owners; the quest descriptor reader and behavior base are real.
@@ -47,13 +47,30 @@ internal static class GossipEventLifetimeRegressionTests
         string temp = Path.Combine(Path.GetTempPath(), "cb-gossip-lifetime-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(temp);
         bool priorLogging = Styx.Helpers.Logging.FileLogging;
+        var createdBehaviorFiles = new List<string>();
         IDisposable? fixture = null;
         PlayerQuest? observedQuest = null;
         try
         {
             Styx.Helpers.Logging.FileLogging = false;
+            string behaviorDirectory = Path.Combine(Styx.Helpers.Logging.ApplicationPath, "Quest Behaviors");
+            Directory.CreateDirectory(behaviorDirectory);
             foreach (string name in new[] { "UseItemOn", "GossipEvent" })
-                File.Copy(Path.Combine(root, "runtime-snapshot", "Quest Behaviors", name + ".cs"), Path.Combine(temp, name + ".cs"));
+            {
+                string source = Path.Combine(root, "runtime-snapshot", "Quest Behaviors", name + ".cs");
+                File.Copy(source, Path.Combine(temp, name + ".cs"));
+                string runtimeFile = Path.Combine(behaviorDirectory, name + ".cs");
+                if (File.Exists(runtimeFile))
+                {
+                    if (!File.ReadAllBytes(runtimeFile).SequenceEqual(File.ReadAllBytes(source)))
+                        throw new InvalidOperationException("Different runtime behavior must not be overwritten: " + runtimeFile);
+                }
+                else
+                {
+                    File.Copy(source, runtimeFile);
+                    createdBehaviorFiles.Add(runtimeFile);
+                }
+            }
             File.WriteAllText(Path.Combine(temp, "Boundary.cs"), boundary + Cases);
             Type compilerType = typeof(Styx.StyxWoW).Assembly.GetType("Styx.Loaders.SourceCompiler", true)!;
             object compiler = Activator.CreateInstance(compilerType, new object[] { temp })!;
@@ -103,6 +120,7 @@ internal static class GossipEventLifetimeRegressionTests
         {
             fixture?.Dispose();
             Styx.Helpers.Logging.FileLogging = priorLogging;
+            foreach (string path in createdBehaviorFiles) File.Delete(path);
             Directory.Delete(temp, true);
         }
     }
