@@ -86,6 +86,8 @@ namespace Styx.Bot.Quest_Behaviors
         private Composite _root;
         private static readonly TimeSpan EquipTimeout = TimeSpan.FromSeconds(10);
         private ulong _pendingEquipGuid;
+        private LocalPlayer _pendingEquipPlayer;
+        private ulong _pendingEquipPlayerGuid;
         private uint _pendingEquipEntry;
         private InventorySlot _pendingEquipSlot = InventorySlot.None;
         private int _pendingSourceBag = -1;
@@ -147,10 +149,20 @@ namespace Styx.Bot.Quest_Behaviors
         private RunStatus TickPendingEquip()
         {
             if (_isBehaviorDone || _isDisposed)
+            {
+                ResetPendingEquip();
                 return RunStatus.Success;
+            }
 
             if (HasPendingEquip)
             {
+                if (!OwnsPendingEquipContext())
+                {
+                    // Revocation releases only managed intent, not client cursor state.
+                    ResetPendingEquip();
+                    return RunStatus.Success;
+                }
+
                 if (DateTime.UtcNow - _pendingEquipSince >= EquipTimeout)
                 {
                     LogMessage("error",
@@ -182,7 +194,11 @@ namespace Styx.Bot.Quest_Behaviors
                 return RunStatus.Success;
             }
 
-            WoWItem item = StyxWoW.Me.CarriedItems.FirstOrDefault(ret => ret.Entry == ItemId);
+            if (!CanEquipNow())
+                return RunStatus.Success;
+
+            var player = StyxWoW.Me;
+            WoWItem item = player.CarriedItems.FirstOrDefault(ret => ret.Entry == ItemId);
             if (item == null || !item.IsValid)
             {
                 LogMessage("error", "Unable to find a valid carried item with id {0}.", ItemId);
@@ -190,11 +206,19 @@ namespace Styx.Bot.Quest_Behaviors
                 return RunStatus.Success;
             }
 
+            _pendingEquipPlayer = player;
+            _pendingEquipPlayerGuid = player.Guid;
             _pendingEquipGuid = item.Guid;
             _pendingEquipEntry = item.Entry;
             _pendingEquipSlot = Slot;
             _pendingEquipSince = DateTime.UtcNow;
             _pendingEquipSubmitted = false;
+
+            if (!OwnsPendingEquipContext())
+            {
+                ResetPendingEquip();
+                return RunStatus.Success;
+            }
 
             if (Slot == InventorySlot.None)
             {
@@ -216,9 +240,35 @@ namespace Styx.Bot.Quest_Behaviors
             return RunStatus.Success;
         }
 
+        private bool CanEquipNow()
+        {
+            var player = StyxWoW.Me;
+            if (_isDisposed || _isBehaviorDone || !TreeRoot.IsRunning || !StyxWoW.IsInGame ||
+                player == null || !player.IsValid || player.Guid == 0 || !player.IsAlive || player.IsGhost)
+                return false;
+
+            ulong playerGuid = player.Guid;
+            // This explicit profile action may be needed during combat. Retain its
+            // original quest requirements rather than borrowing AutoEquip's policy.
+            return UtilIsProgressRequirementsMet(QuestId, QuestRequirementInLog, QuestRequirementComplete) &&
+                ReferenceEquals(StyxWoW.Me, player) && player.IsValid && player.Guid == playerGuid &&
+                player.IsAlive && !player.IsGhost && TreeRoot.IsRunning && StyxWoW.IsInGame &&
+                !_isDisposed && !_isBehaviorDone;
+        }
+
+        private bool OwnsPendingEquipContext()
+        {
+            if (!HasPendingEquip || !CanEquipNow())
+                return false;
+
+            return _pendingEquipPlayer != null && _pendingEquipPlayerGuid != 0 &&
+                ReferenceEquals(StyxWoW.Me, _pendingEquipPlayer) &&
+                _pendingEquipPlayer.Guid == _pendingEquipPlayerGuid;
+        }
+
         private bool SubmitOwnedCursorEquip()
         {
-            if (!HasPendingEquip || _pendingEquipSlot == InventorySlot.None)
+            if (!HasPendingEquip || !OwnsPendingEquipContext() || _pendingEquipSlot == InventorySlot.None)
                 return false;
 
             string script = string.Format(
@@ -241,7 +291,7 @@ namespace Styx.Bot.Quest_Behaviors
 
         private void ConfirmOwnedEquipPopup()
         {
-            if (!HasPendingEquip || !_pendingEquipSubmitted || _pendingEquipSlot == InventorySlot.None)
+            if (!HasPendingEquip || !OwnsPendingEquipContext() || !_pendingEquipSubmitted || _pendingEquipSlot == InventorySlot.None)
                 return;
 
             try
@@ -334,6 +384,8 @@ namespace Styx.Bot.Quest_Behaviors
 
         private void ResetPendingEquip()
         {
+            _pendingEquipPlayer = null;
+            _pendingEquipPlayerGuid = 0;
             _pendingEquipGuid = 0;
             _pendingEquipEntry = 0;
             _pendingEquipSlot = InventorySlot.None;
