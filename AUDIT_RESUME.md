@@ -1,34 +1,21 @@
-# Resume W80 — fixed-range source review completed; changes requested
+# Resume W81 — recovered fixes and reward selection verified; merge blockers remain
 
-Repository `jeofwong/CopilotBuddy-private` (1367174964), draft PR51, branch `audit/next-55-equipment-observation-20260917`. Reconcile direct live refs before writing. Read `docs/audit/2026-09-20/W80_CHECKPOINT.md`, `W80_COMMIT_LEDGER.md`, `W80_EVIDENCE.json`, then W77–W79 and the four governing original-client/core/provenance policies.
+Repo `jeofwong/CopilotBuddy-private` (1367174964), draft PR51, branch `audit/next-55-equipment-observation-20260917`. Reconcile live refs before every new slice and write. Read the four original-client/core/provenance policies under `docs/audit/`, then `docs/audit/2026-09-20/W81_CHECKPOINT.md`, `W81_EVIDENCE.json`, W80's review/ledger and `NEXT_CHAT_PROMPT.md`.
 
-## Completed review, not completed remediation
+**Verified code/test d72c557691c66563f791f3b9e848a9a1e3355a72; tree bf65dce7dde08e2fd3dade05bafbff18639a2044.** Documentation may be newer. Exact integrated35490438405/art10598957028 passes17/17; host35490438279/art10598314425 exits0 with3344 warnings/0 errors. Reward lifetime18/18; all146 normalized members unchanged from94c1f0c7 red; only ActionSelectReward.cs differs among1828 inputs. Intermediate461bf601 compile failure and its one-line import correction are recorded, not hidden.
 
-The owner prioritised changes after **18 September2026 21:58 Malaysia /13:58 UTC**. Review base **4c6b1b2e75af4dd0eaffde11d38ebbc84a21f4c0**, frozen endpoint **a3bb6940705dedd5f159810f683ed77d2c5d9939**. All140 historical identities are accounted for; changed methods/new files in all30 net non-test production/tool paths were inspected with relevant callers/tests. History-family disposition is not independent certification or a test rerun of all140 transient snapshots.
+W80's140-commit/30-path source review is already complete. Entry94c1f0c7 contained16 later commits and stale W80 pointers. Reconciled/reverified and retained:
+- R01 provider containmentc3a229ec,9/9; not actual-route acceptance.
+- R02 reusable-item acknowledgementbffef4bd + exact unrelated-label restoration1cb478c8,10/10.
+- R05 request-flag admissiona46f4d20,14/14; context/scan work remains.
+- R06 actor/NPC lifetime6fd1b69d + finite-anchor restoratione91a08b7,17/17; final same-NPC menu ownership remains.
+- R04 AutoEquip captured-context346f133b,46/46; retained popup stub correction9d09cb2c is separate, not an unchanged-suite pair.
+- R08 reward-selection461bf601 + using-Styx correctiond72c5576,18/18. Scoring unchanged; final original-client Lua choice-set/request guard added. No quest completion or Lua/game execution in the fixture.
 
-**Fixed-range retained-source review complete; verdict CHANGES REQUESTED.** Do not restart the inventory or call every prior commit individually certified. Eight source-traced finding groups remain unfixed. No new production/test/workflow code or live reproduction was added by W80. The next task is remediation of these findings, not new feature expansion.
+Do not recreate these changes. Five recovered targeted fixtures match their clean red archives byte-for-byte at final W81. Keep earlier Ret9/9, collection34/34, normal objective37/37, timeout10/10, popup18/18 and analyzer89 tests.
 
-## Next priorities
+**Still open:** R03 real loader/scheduler/materializer target/index/unsupported-kind/GameObject contract; R04 EquipItem lifetime and physical displaced-cursor proof; R05 current plugin/player/context, scan continuation and unknown inventory versus removal; R06 final menu generation/selection/cleanup; R07 actual compiler inputs, reload semantics and atomic replacement. Retain all previous original-client, provenance, native/LOS, terrain/Z, buffs, gear/loadout/caps, escort, underwater and remount requirements. No Gordunni recipe/coordinates or auction/ProfessionBuddy expansion.
 
-- R04–R06/P1: pending equip/delete/gossip current actor/context/request/frame admission. AutoEquip services pending work before normal run/combat/death checks. Different cursor entry is not physical displaced-item ownership. MIR delete confirmation lacks its local-request gate; scan continuation needs an explicit bounded continuation. Gossip selection/cleanup must retain the same menu/recipient and lifetime.
-- R02/P1: complete UseItemOn submission -> unacknowledged timeout -> reusable item and one blacklisted recipient. Counter remains below MaxAttempts while WaitForNpcs waits indefinitely. Reproduce the actual owner sequence before a narrow retry/defer fix.
-- R03/P1: loader -> actual scheduler -> XML -> behavior. CAST support gate excludes work before strategy materialization; unsupported kinds/target anchors/raw objective-index namespaces and GameObject dispatch need explicit contracts. Do not fix CAST by allowing ordinary kills or invent Gordunni/escort recipes.
-- R01/P1: contain or explicitly opt in the automatic dense-pull path until actual routed hazards, approach/engagement deadlines, normal pull controls and actor/routine/context changes are covered. Retain normal Ret registration and ordinary combat.
-- R07/P2: cache actual compiler dependencies/reload semantics and atomic plugin replacement. Constructor-error swallowing also existed in old DllLoader; do not misattribute it wholly to this batch.
-- R08/P2: retain complete reward-set observation, but bind final index selection to the same quest/item. Do not alter gear scoring or restore arbitrary first-choice fallback.
+**Merge permission changed:** the user conditionally authorises merging once all review blockers and exact-head verification are green. Do not ask again for that same conditional permission, but its condition is NOT met at W81. Close or explicitly contain the remaining findings, verify final host/integrated evidence and merge preview, preserve a backup ref, then use exact-head merge. CI green alone is not sufficient. Direct master remains b2324913e2499ba30b239dd67224ca2c655c05cc, approved tree552eeab1233c7c282897dca0ed9f4334c5e8ed43. No master writes in W81.
 
-W80_CHECKPOINT records exact source traces, attribution, minimal directions and required tests. These are not claimed new failing Windows runs. Obtain behavioral assertion red, retain the fixture through the smallest justified production change, and inspect exact-head integrated/host artifacts. Keep stronger actual-execution tests; do not present source-token assertions as complete native lifecycle proof.
-
-## Retained tested baseline and prior repairs
-
-Last tested production **96d1259f1d3c7035b85b1fa4bf00d05fe52d4ee6**, tree **bed704f539f0e21697cec2862906096d30139f03**. W80 documentation is newer, not a new tested production revision.
-
-Integrated35456734949/art10587779649:17/17; popup18/18; normal restart37/37; collection34/34; Ret registration9/9; acknowledged equip timeout10/10; analyzers89. Host35456734963/art10588378360:exit0,3344 warnings,0 errors; compile only. W80 reverified ten archived ZIPs and four unchanged-test pairs, not new C# executions. All game_attached=false.
-
-Do not recreate Ret registration06733822, collection guardf0a8b316, normal-counter restart44cfdca7, timeout e22844e8, popup gate96d1259f or auction withdrawald8b6476a. W76 auction next steps are obsolete. The source review does not certify all raw-index mapping, all quests, maximum DPS or current realm/addon identity.
-
-## Boundaries and repository integrity
-
-Original WoW3.3.5a/build12340 only; TC3.3.5 primary/ACWotLK secondary. No assumed Classic/modern API, desktop mouse automation, AuctionHouse/ProfessionBuddy expansion, merge or deployment. Preserve every prior prerequisite, addon/terrain, stronger/exclusive buff, gear/loadout, escort/event, underwater, GatherBuddy/rest/remount, LOS/ABI and original-client acceptance requirement, plus backup/exclusion rules.
-
-Expected direct master **b2324913e2499ba30b239dd67224ca2c655c05cc**, tree552eeab1233c7c282897dca0ed9f4334c5e8ed43. W77 disclosed the earlier empty-document add/revert; those history commits remain. W80 makes no master write. Never rely on cached PR base_sha as the direct ref or submit a blank placeholder write. Every publication needs the exact action schema, explicit nonempty approved branch, reviewed content/message and expected parent/blob; force=false. PR51 stays draft/unmerged. Independent review, remediation and supervised original-client/server acceptance remain open.
+Every write requires an explicit nonempty approved branch, meaningful content/message and current blob/parent identity; force=false. Preserve the disclosed W77 empty-doc add/revert history and earlier backups/exclusions. No installed files, deployment, independent/live/exhaustive acceptance claims.
