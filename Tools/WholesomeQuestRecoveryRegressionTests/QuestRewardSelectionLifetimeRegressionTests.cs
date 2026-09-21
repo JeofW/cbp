@@ -24,6 +24,8 @@ internal static class QuestRewardSelectionLifetimeRegressionTests
         try
         {
             File.WriteAllText(Path.Combine(directory, "Probe.cs"), Prefix + source.Substring(start) + Suffix);
+            RewardLua51Boundary.WriteManagedBridge(directory,
+                File.ReadAllText(Path.Combine(Root(), "Styx/WoWInternals/Lua.cs")));
             Type compilerType = typeof(Styx.StyxWoW).Assembly.GetType("Styx.Loaders.SourceCompiler", true)!;
             object compiler = Activator.CreateInstance(compilerType, new object[] { directory })!;
             var results = (CompilerResults)compilerType.GetMethod("Compile")!.Invoke(compiler, null)!;
@@ -80,6 +82,8 @@ internal static class QuestRewardSelectionLifetimeRegressionTests
             }
             catch (Failure error) { assertions++; Console.Error.WriteLine("FAIL reward selection lifetime: final request: " + error.Message); }
             catch (Exception error) { unexpected++; Console.Error.WriteLine("ERROR reward selection lifetime: final request: " + error); }
+            Console.WriteLine($"RETAINED_REWARD_LIFETIME: {passed}/{total}; assertions={assertions}; unexpected={unexpected}; original cases unchanged.");
+            RewardLua51Boundary.Run(assembly, Root());
         }
         finally { Directory.Delete(directory, true); }
         Console.WriteLine($"Quest reward selection lifetime scenarios: {passed}/{total}; assertions={assertions}; unexpected={unexpected}; complete tracked C# owner; controlled metadata/frame/Lua boundaries; no game attached.");
@@ -127,6 +131,7 @@ public sealed class QuestFrame
 public static class Logging
 {
     public static void Write(string format,params object[] values){if(format=="Choosing {0}")RewardState.Mutate("log");}
+    public static void WriteDebug(string format,params object[] values){Console.WriteLine("REWARD_CONVERSION_LOG: "+string.Format(format,values));}
 }
 public static class Lua
 {
@@ -135,6 +140,7 @@ public static class Lua
         if(typeof(T)==typeof(bool))
         {
             RewardState.Requests.Add(script);
+            if(RewardRecordedBridge.Observe!=null)return RewardRecordedBridge.GetReturnVal<T>(script,index);
             return (T)(object)(RewardState.Mode!="request-refused");
         }
         if(script=="return GetNumQuestChoices()")
