@@ -613,6 +613,10 @@ if #observed > 32768 then return 0 end
 
             _observedGossipMenu = null;
             target.Interact();
+            // Host callbacks can revoke this owner while Interact is running.
+            if (!OwnsActor() || IsDone)
+                return RunStatus.Success;
+
             Counter++;
             _interactionGuid = guid;
             _gossipOpenStartedUtc = UtcNowMilliseconds();
