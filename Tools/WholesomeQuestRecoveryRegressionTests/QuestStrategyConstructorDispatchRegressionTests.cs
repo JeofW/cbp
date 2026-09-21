@@ -511,7 +511,7 @@ internal static class QuestStrategyConstructorDispatchRegressionTests
             uint Field(string name) => (uint)typeof(WoWObject).GetField(name, Hidden)!.GetRawConstantValue()!;
             void Write(uint at, uint value) => Marshal.WriteInt32(new IntPtr(unchecked((int)at)), unchecked((int)value));
             Write(address + Field("DescriptorOffset"), descriptor);
-            Write(address + Field("TypeOffset"), (uint)WoWObjectType.Unit);
+            Write(address + Field("TypeOffset"), (uint)Styx.WoWObjectType.Unit);
             Marshal.WriteInt64(new IntPtr(unchecked((int)(address + Field("GuidOffset")))), (long)FixtureGuid);
             Marshal.WriteInt64(new IntPtr(unchecked((int)descriptor)), (long)FixtureGuid);
             Write(descriptor + Field("DescEntry") * 4U, 70001U);
