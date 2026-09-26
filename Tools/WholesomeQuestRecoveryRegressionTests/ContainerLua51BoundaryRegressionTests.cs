@@ -132,12 +132,12 @@ internal static class ContainerLua51BoundaryRegressionTests
         throw new InvalidOperationException("Tracked checkout required");
     }
     private const string Extra = """
-namespace Styx.WoWInternals.WoWObjects
+/* Embedded controlled observation namespace, not the outer initializer. */ namespace Styx.WoWInternals.WoWObjects
 {
     public sealed class WoWContainer {public ulong[] ItemGuids=new ulong[]{17};}
     public sealed class ContainerInventory {public WoWContainer Backpack=new();}
 }
-namespace Styx.WoWInternals
+/* Embedded controlled observation namespace, not the outer initializer. */ namespace Styx.WoWInternals
 {
     public static class Lua
     {
@@ -146,7 +146,7 @@ namespace Styx.WoWInternals
         public static T ParseLuaValue<T>(string value)=>ContainerParseBridge.ParseLuaValue<T>(value);
     }
 }
-namespace Styx.Logic.Inventory.Frames.Merchant
+/* Embedded controlled observation namespace, not the outer initializer. */ namespace Styx.Logic.Inventory.Frames.Merchant
 {
     public sealed class MerchantFrame {public static MerchantFrame Instance=new();public bool IsVisible=>false;}
 }
