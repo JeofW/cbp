@@ -172,11 +172,12 @@ namespace Styx.Plugins
             if (IsBuildingPlugins)
                 return;
 
+            var replacementPlugins = new List<PluginContainer>();
+            bool replacementsPublished = false;
             try
             {
                 IsBuildingPlugins = true;
                 List<PluginContainer> previousPlugins = Plugins.ToList();
-                var replacementPlugins = new List<PluginContainer>();
                 var requestedEnabled = new HashSet<string>(
                     defaultEnabled ?? Array.Empty<string>(),
                     StringComparer.OrdinalIgnoreCase);
@@ -211,19 +212,11 @@ namespace Styx.Plugins
                 if (!Directory.Exists(pluginsPath))
                 {
                     Directory.CreateDirectory(pluginsPath);
-                    Logging.Write("No plugins found. Place plugins in the Plugins directory.");
-                    return;
                 }
 
                 var files = new List<string>();
                 files.AddRange(Directory.GetFiles(pluginsPath, "*.cs", SearchOption.TopDirectoryOnly));
                 files.AddRange(Directory.GetDirectories(pluginsPath, "*", SearchOption.TopDirectoryOnly));
-
-                if (files.Count == 0)
-                {
-                    Logging.Write("No plugins found. Place plugins in the Plugins directory.");
-                    return;
-                }
 
                 for (int i = 0; i < files.Count; i++)
                 {
@@ -252,13 +245,18 @@ namespace Styx.Plugins
 
                 if (hadLoadErrors && previousPlugins.Count > 0)
                 {
-                    foreach (PluginContainer replacement in replacementPlugins)
-                    {
-                        try { replacement.Plugin.Dispose(); } catch { }
-                    }
                     Logging.Write("Plugin refresh failed; keeping the previous {0} loaded plugins.", previousPlugins.Count);
                     throw new InvalidOperationException("One or more plugins failed to compile or load; the previous plugin set was preserved.");
                 }
+
+                // Plugin metadata is executable code and may throw. Resolve all
+                // enable decisions before retiring the active set, and reuse these
+                // names rather than calling plugin getters after publication.
+                string[] replacementNames = replacementPlugins.Select(p => p.Name).ToArray();
+                bool[] enableReplacements = replacementNames.Select(requestedEnabled.Contains).ToArray();
+                string[] unavailableNames = hadLoadErrors
+                    ? requestedEnabled.Except(replacementNames, StringComparer.OrdinalIgnoreCase).ToArray()
+                    : Array.Empty<string>();
 
                 foreach (PluginContainer previous in previousPlugins)
                 {
@@ -267,21 +265,15 @@ namespace Styx.Plugins
                 }
 
                 Plugins = replacementPlugins;
-                foreach (PluginContainer container in Plugins)
+                replacementsPublished = true;
+                for (int i = 0; i < replacementPlugins.Count; i++)
                 {
-                    if (requestedEnabled.Contains(container.Name))
-                        container.Enabled = true;
+                    if (enableReplacements[i])
+                        replacementPlugins[i].Enabled = true;
                 }
 
                 UnavailableEnabledPlugins.Clear();
-                if (hadLoadErrors)
-                {
-                    foreach (string requestedName in requestedEnabled)
-                    {
-                        if (!Plugins.Any(p => string.Equals(p.Name, requestedName, StringComparison.OrdinalIgnoreCase)))
-                            UnavailableEnabledPlugins.Add(requestedName);
-                    }
-                }
+                UnavailableEnabledPlugins.UnionWith(unavailableNames);
 
                 Logging.Write("Plugin loading complete. {0} plugins loaded.", Plugins.Count);
                 
@@ -298,6 +290,15 @@ namespace Styx.Plugins
             }
             finally
             {
+                // Includes discovery and metadata failures, not just compiler
+                // failures. Never dispose the previous active set on rejection.
+                if (!replacementsPublished)
+                {
+                    foreach (PluginContainer replacement in replacementPlugins)
+                    {
+                        try { replacement.Plugin.Dispose(); } catch { }
+                    }
+                }
                 IsBuildingPlugins = false;
             }
         }
