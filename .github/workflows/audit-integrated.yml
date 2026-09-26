@@ -13,7 +13,7 @@ jobs:
   combined:
     # Owner-authorized public CI; no fork/PR event or arbitrary manual ref.
     if: >-
-      github.repository == 'jeofwong/CopilotBuddy-private' &&
+      github.repository == 'JeofW/cbp' &&
       github.repository_id == '1367174964' &&
       (github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
       github.ref_type == 'branch' &&
