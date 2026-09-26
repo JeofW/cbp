@@ -470,7 +470,7 @@ namespace Styx.WoWInternals.WoWObjects
                 System.Globalization.CultureInfo.InvariantCulture,
                 "local link=GetContainerItemLink({0},{1}); " +
                 "local id=link and tonumber(string.match(link,'item:(%d+)')); " +
-                "if id=={2} then UseContainerItem({0},{1}); return true end return false",
+                "if id=={2} then UseContainerItem({0},{1}); return 1 end return 0",
                 luaBag, luaSlot, expectedEntry);
         }
 
@@ -506,9 +506,9 @@ namespace Styx.WoWInternals.WoWObjects
                 System.Globalization.CultureInfo.InvariantCulture,
                 "local link=GetContainerItemLink({0},{1}); " +
                 "local id=link and tonumber(string.match(link,'item:(%d+)')); " +
-                "if id~={2} then return false,false,0,false end; " +
+                "if id~={2} then return 0,0,0,0 end; " +
                 "local isQuestItem,questId,isActive=GetContainerItemQuestInfo({0},{1}); " +
-                "return true,isQuestItem and true or false,tonumber(questId) or 0,isActive and true or false",
+                "return 1,isQuestItem and 1 or 0,tonumber(questId) or 0,isActive and 1 or 0",
                 luaBag, luaSlot, expectedEntry);
         }
 
@@ -632,7 +632,7 @@ namespace Styx.WoWInternals.WoWObjects
                 luaBag, luaSlot, expectedEntry);
             try
             {
-                return Lua.GetReturnVal<bool>(script, 0U);
+                return Lua.GetReturnVal<int>(script, 0U) == 1;
             }
             catch (Exception ex)
             {
@@ -781,13 +781,17 @@ namespace Styx.WoWInternals.WoWObjects
             try
             {
                 List<string> values = Lua.GetReturnValues(script);
-                if (values == null || values.Count < 4 ||
-                    !Lua.ParseLuaValue<bool>(values[0]))
+                int observedQuestId;
+                if (values == null || values.Count != 4 || values[0] != "1" ||
+                    (values[1] != "0" && values[1] != "1") ||
+                    (values[3] != "0" && values[3] != "1") ||
+                    !int.TryParse(values[2], System.Globalization.NumberStyles.None,
+                        System.Globalization.CultureInfo.InvariantCulture, out observedQuestId))
                     return false;
 
-                isQuestItem = Lua.ParseLuaValue<bool>(values[1]);
-                questId = Lua.ParseLuaValue<int>(values[2]);
-                isActive = Lua.ParseLuaValue<bool>(values[3]);
+                isQuestItem = values[1] == "1";
+                questId = observedQuestId;
+                isActive = values[3] == "1";
                 return true;
             }
             catch (Exception ex)
