@@ -1,3 +1,17 @@
+# W102 continuation — WoW MCP connected; native popup contract corrected
+
+26 September 2026. Read docs/audit/2026-09-26/W102_NATIVE_EQUIPMENT_FINDINGS.md and W102_NATIVE_EVIDENCE.json first. The user manually connected the copied WoW-12340.i64 on http://127.0.0.1:13337/mcp; verify health/input hash before further read-only analysis. Earlier connection failures and blocked-goal paragraphs below are historical. The Goal tool returned no current goal in this continuation; no new goal was created.
+
+New evidence establishes that EQUIP_BIND_CONFIRM carries a reusable pending-operation index, not an equipment slot. Both EquipItem and AutoEquip currently compare popup data with the slot, and a regression fixture enforces that incorrect assumption. The physical cursor GUID is available in this binary, but observation-to-mutation ordering and pending-record reuse still need investigation. No behavior repair or R04 completion is claimed.
+
+Continue the bounded next task in W102: trace remaining record writers and the existing client-thread execution boundary, establish a guarded item/request contract, then repair the slot/index mismatch with meaningful hosted Windows/x86 regressions and normal success preserved. R06 first-menu attribution remains unresolved. Preserve all W101 and earlier repairs and restrictions below. No subagents, local project execution, production CB access or rejected-launch retry.
+
+Reconciled pre-checkpoint local/remote/PR head01991ced2c96c835f88106d2ca20eeed07d5b983; tested source67b4898406a806b2b4a65360ca416a96dff7e1fc; masterb2324913e2499ba30b239dd67224ca2c655c05cc. The containing commit is documentation only. Use external LATEST_CONTINUATION.md and publication receipts for its final SHA. PR51 remains OPEN/DRAFT and the audit is incomplete; no merge/deployment.
+
+---
+
+## Retained W101 handoff — historical checkpoint and restrictions
+
 > **Goal status: BLOCKED, 26 September 2026.** Confirmed by update_goal after three consecutive unchanged-blocker goal turns following W101. The objective remains incomplete. Read docs/audit/2026-09-26/W101_BLOCKED_STATUS.md and external LATEST_CONTINUATION.md. Resume substantive work when supported ownership evidence or a new actionable in-scope source finding is available. W101 evidence and source are preserved.
 
 # Resume W101 — local refusal ownership repaired and verified
