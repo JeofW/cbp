@@ -71,7 +71,9 @@ internal static class GossipEventLifetimeRegressionTests
                     createdBehaviorFiles.Add(runtimeFile);
                 }
             }
-            File.WriteAllText(Path.Combine(temp, "Boundary.cs"), boundary + Cases);
+            File.WriteAllText(Path.Combine(temp, "Boundary.cs"), boundary + Cases +
+                "public static class Logging {public static void WriteDebug(string format,params object[] args){}}\n");
+            RewardLua51Boundary.WriteManagedBridge(temp, File.ReadAllText(Path.Combine(root, "Styx/WoWInternals/Lua.cs")));
             Type compilerType = typeof(Styx.StyxWoW).Assembly.GetType("Styx.Loaders.SourceCompiler", true)!;
             object compiler = Activator.CreateInstance(compilerType, new object[] { temp })!;
             foreach (string path in ((string)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES")!).Split(Path.PathSeparator))
@@ -108,6 +110,7 @@ internal static class GossipEventLifetimeRegressionTests
             {
                 assembly.GetType("GossipLifetimeCases", true)!.GetMethod("Run")!.Invoke(null,
                     new object[] { find, (Action)Configure });
+                GossipLua51Boundary.Run(assembly, root);
                 fixture?.Dispose();
                 fixture = null;
                 observedQuest = null;
@@ -514,6 +517,7 @@ public static class GossipLifetimeCases
     {
         public static List<string> GetReturnValues(string script)
         {
+            if(RewardRecordedBridge.Observe!=null)return RewardRecordedBridge.GetReturnValues(script);
             foreach(string api in new[]{"GetGossipText()","GetGossipOptions()","GetGossipAvailableQuests()","GetGossipActiveQuests()"})
                 if(!script.Contains(api,StringComparison.Ordinal))throw new InvalidOperationException("Incomplete original-client menu observation: "+api);
             GossipLifetimeCases.Record("capture",script);
@@ -532,6 +536,7 @@ public static class GossipLifetimeCases
         }
         public static T GetReturnVal<T>(string script,uint index)
         {
+            if(RewardRecordedBridge.Observe!=null)return RewardRecordedBridge.GetReturnVal<T>(script,index);
             if(index!=0)throw new InvalidOperationException("Unexpected return index");
             if(typeof(T)==typeof(string))
             {
@@ -541,7 +546,7 @@ public static class GossipLifetimeCases
                 if(GossipLifetimeCases.ThrowOnSnapshot)throw new InvalidOperationException("controlled unreadable menu");
                 return (T)(object)(GossipLifetimeCases.SnapshotKnown&&GossipLifetimeCases.ClientContext(script)?GossipLifetimeCases.Signature():null)!;
             }
-            if(typeof(T)!=typeof(bool))throw new InvalidOperationException("Unexpected return type");
+            if(typeof(T)!=typeof(bool)&&typeof(T)!=typeof(int))throw new InvalidOperationException("Unexpected return type");
             if(script.Contains("local observed",StringComparison.Ordinal))
             {
                 bool select=script.Contains("SelectGossipOption(",StringComparison.Ordinal);
@@ -556,7 +561,7 @@ public static class GossipLifetimeCases
                     if(select){if(!script.Contains("SelectGossipOption("+GossipLifetimeCases.ExpectedOptionNumber+")",StringComparison.Ordinal))throw new InvalidOperationException("Original one-based selection contract changed");GossipLifetimeCases.Selections++;}
                     else Styx.Logic.Inventory.Frames.Gossip.GossipFrame.Instance.Close();
                 }
-                return (T)(object)own;
+                return Receipt<T>(own);
             }
             const string oldNpc="return UnitGUID('npc') == '0x0000000000000002'";
             const string numericNpc="return (UnitGUID('npc') == '0x0000000000000002') and 1 or 0";
@@ -565,7 +570,7 @@ public static class GossipLifetimeCases
                 GossipLifetimeCases.Record("npc",script);
                 // lua_tolstring transports numbers/strings, not raw booleans.
                 bool observed=GossipLifetimeCases.CurrentNpc==2&&(!GossipLifetimeCases.StringOnlyBridge||script==numericNpc);
-                return (T)(object)observed;
+                return Receipt<T>(observed);
             }
             // An ownership-guarded close request remains a controlled boundary,
             // not evidence that this fixture executes a Lua interpreter.
@@ -576,10 +581,11 @@ public static class GossipLifetimeCases
                 GossipLifetimeCases.AtClientRequest();
                 var frame=Styx.Logic.Inventory.Frames.Gossip.GossipFrame.Instance;
                 bool own=frame.IsVisible&&GossipLifetimeCases.CurrentNpc==2;
-                if(own)frame.Close();return (T)(object)own;
+                if(own)frame.Close();return Receipt<T>(own);
             }
             throw new InvalidOperationException("Unexpected Lua observation: "+script);
         }
+        private static T Receipt<T>(bool value)=>(T)(typeof(T)==typeof(int)?(object)(value?1:0):value);
     }
 }
 """;

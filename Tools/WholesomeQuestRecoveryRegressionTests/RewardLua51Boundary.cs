@@ -267,6 +267,51 @@ internal static class RewardLua51Boundary
             }
             finally { close(state); }
         }
+        // A retained Lua state lets ownership tests deliver events between actual
+        // capture and mutation requests. Existing isolated Execute stays unchanged.
+        internal Session BeginSession(string setup) => new(this, setup);
+        internal sealed class Session : IDisposable
+        {
+            private readonly StockLua51 runtime;
+            private IntPtr state;
+            internal Session(StockLua51 runtime, string setup)
+            {
+                this.runtime = runtime;
+                state = runtime.create();
+                if (state == IntPtr.Zero) throw new InvalidOperationException("luaL_newstate failed");
+                try
+                {
+                    runtime.open(state);
+                    Observation result = Execute(setup, (uint)Encoding.UTF8.GetByteCount(setup));
+                    if (result.Load != 0 || result.Call != 0) throw new InvalidOperationException("Persistent Lua setup: " + result.Error);
+                }
+                catch { Dispose(); throw; }
+            }
+            internal Observation Execute(string script, uint size)
+            {
+                if (state == IntPtr.Zero) throw new ObjectDisposedException(nameof(Session));
+                runtime.setTop(state, 0);
+                byte[] request = Encoding.UTF8.GetBytes(script);
+                if (size > request.Length) throw new InvalidOperationException("Loader length exceeds request bytes");
+                var result = new Observation { Bytes = request.Length, Size = size };
+                result.Load = runtime.load(state, request, (UIntPtr)size, Name);
+                if (result.Load == 0) result.Call = runtime.call(state, 0, -1, 0);
+                if (result.Load != 0 || result.Call != 0) result.Error = runtime.Read(state, -1);
+                else
+                {
+                    int count = runtime.top(state);
+                    if (count > 80) throw new InvalidOperationException("Unexpected return count");
+                    for (int i = 1; i <= count; i++) result.Values.Add(runtime.Read(state, i));
+                }
+                runtime.getField(state, Globals, Encoding.ASCII.GetBytes("clicks\0"));
+                result.Clicks = runtime.integer(state, -1);
+                return result;
+            }
+            public void Dispose()
+            {
+                if (state != IntPtr.Zero) { runtime.close(state); state = IntPtr.Zero; }
+            }
+        }
         private string Read(IntPtr state, int index)
         {
             IntPtr pointer = text(state, index, out UIntPtr length);
