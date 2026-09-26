@@ -112,6 +112,7 @@ internal static class EquipmentPendingIndexRegressionTests
     private const string Prefix = """
 using System; using System.Collections.Generic; using System.Globalization;
 public enum InventorySlot { None=0, MainHandSlot=16 }
+public static class Logging { public static void WriteDebug(string format,params object[] args){} }
 public static class Lua {
  public static T GetReturnVal<T>(string script,uint index)=>RewardRecordedBridge.GetReturnVal<T>(script,index);
  public static List<string> GetReturnValuesCore(string script,string name,ulong guid)=>RewardRecordedBridge.GetReturnValues(script);
