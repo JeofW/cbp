@@ -1,39 +1,19 @@
-# Resume W93 — reward Lua receipt and UTF-8 size verified offline
+# Resume W94 — plugin refresh preparation verified offline
 
-Canonical repository JeofW/cbp (ID 1367174964), existing open/draft PR51, approved branch audit/next-55-equipment-observation-20260917. Work in D:\Dev\CopilotBuddy-PR51. Reconcile live direct refs before publication.
+JeofW/cbp ID1367174964, existing open/draft PR51, branch audit/next-55-equipment-observation-20260917. Workspace D:\Dev\CopilotBuddy-PR51; evidence D:\Dev\CopilotBuddy-Evidence. Work directly without subagents. The active Goal remains in progress.
 
-Read NEXT_CHAT_PROMPT.md, docs/audit/HANDOFF_POLICY.md, docs/audit/2026-09-26/W93_CHECKPOINT.md and W93_EVIDENCE.json. Retain W92/W91/W90/W89/W88/W87/W86 and W80 checkpoint/evidence/ledger, plus WOTLK_335A_RESEARCH_POLICY.md, TRINITYCORE_335_COMPATIBILITY.md, QUEST_DATA_PROVENANCE_335.md and ADDON_EVIDENCE_335.md. W80's completed 140-commit review and W92 must not restart.
+Read LATEST_CONTINUATION.md in the evidence directory, NEXT_CHAT_PROMPT.md, docs/audit/HANDOFF_POLICY.md, docs/audit/2026-09-26/W94_CHECKPOINT.md and W94_EVIDENCE.json. Retain W93/W92/W91/W90/W89/W88/W87/W86 and W80 checkpoint/evidence/ledger, and WOTLK_335A_RESEARCH_POLICY.md, TRINITYCORE_335_COMPATIBILITY.md, QUEST_DATA_PROVENANCE_335.md, ADDON_EVIDENCE_335.md. Do not restart completed W80 or W92 work.
 
-## Exact tested source
+Exact tested source01bd1eeb1d545da9436cdb3bab155b1183a84b6d, tree08c2c56959f6911be3c898dde8ef66ca7c174109. Test-only parentca750bb535e8785fe6ea7391e3d3ed54c712a38c. Containing handoff publication is documentation-only; resolve its SHA live. Direct masterb2324913e2499ba30b239dd67224ca2c655c05cc is unchanged; cached PR base differs.
 
-Tested source and last production: 069c6e8c2fe06bddd5a6dd36c782d0519fcff69b, tree e2a2533d98b0cfec6ed556c0cef627d82e1fde84. Workflow-only parent 27f2d635ef151e6c65448b504cffa3322209d311. The containing handoff publication is documentation only; resolve its SHA live and keep it distinct from the tested source. Direct master was b2324913e2499ba30b239dd67224ca2c655c05cc; cached PR base metadata differs and is not the live ref.
+W94 repairs empty/missing discovery retaining stale plugins and replacement Name failures altering the old active set. Candidate names/enable choices are prepared before retirement; rejected candidates are disposed. Six actual public refresh/compiler/cache regressions move from2/6 (4 assertions,0 unexpected) to6/6 unchanged. Integrated red36221752016 versus green36222082415:16/17 to17/17. Green host36222082537:0 errors,3344 warnings,compile-only. All hosted Windows/x86. Both integrated archives202 members/201 verified hashes,1839 inputs; only PluginManager.cs differs and all157 normalized fixture members match. Full run/job/artifact/hash receipts are in W94 evidence.
 
-## Completed R08 slice — do not recreate
+Do not recreate W93's numeric1/0 reward receipt, UTF-8 bytes.Length or scoped workflow guards, W91 ordinary matched credit/publication, W92 interaction lifetime, or earlier W89 plugin constructor repairs. W93 Lua33/33 and lifetime18/18 remain green. Preserve backups at aca2f1cd and f7a598ad and all failed/intermediate evidence.
 
-The two preexisting one-line repairs were committed without reapplication: ActionSelectReward's guarded selection receipt now returns numeric 1/0; Lua.GetReturnValues passes UTF-8 bytes.Length to loadbuffer. Scoring, quest/item identity, owner guards and shared raw-boolean conversion remain unchanged. Selection is not quest completion or server acknowledgment.
+Next: reproduce PluginContainer activation failure remaining Enabled and OnDisable failure skipping Dispose through its public lifecycle and RefreshPlugins, then choose a focused regression-backed repair. W94 is preparation rollback, not complete lifecycle/thread atomicity. Actual compiler dependencies/options and static-state reload semantics remain open.
 
-The separate workflow commit corrects only the repository-name literals in audit-integrated.yml and audit-validation.yml to JeofW/cbp, preserving repository-ID/event/branch gates. No broad removal of older private-repository guards.
+R03 special-action credit mapping needs independent source-backed credit identity and native recipient request/ack evidence; strict v1 has no raw mapping field. Keep ObjectiveProgress deferred, QuestComplete admission, CAST refusal and independent collection. R04 physical cursor/same-slot popup/lifecycle, R06 same-content menu generation/native concurrency, R08 native/client/server and retained wider/independent/supervised gates remain open. No full-audit completion claim.
 
-Retained red aca2f1cd: run35572599113/job106247242803/art10626487223, reward lifetime18/18, Lua boundary20/33 with13 intended assertions/0 unexpected, integrated16/17.
+Reconcile live repository identity, branch/parent and direct refs before ordinary fast-forward publication to the approved branch only; read back parents/paths/blobs/trees/head. Historical operation-specific refusals stay recorded; do not replay blocked combined requests. Numeric preparation remains3 used/0 remaining. Documented process-scoped LFS skip is only for proven non-LFS source changes; retain hooks and restore environment.
 
-Verified green069c6e8c: integrated36220559526/job108344896910/art10899430321,17/17, Lua boundary33/33 with0 assertions/0 unexpected, original reward lifetime18/18 and observation12/12. Host36220559518/job108344896825/art10898448690:exit0,3344 warnings,0 errors,tests_run=false. GitHub-hosted Windows/x86; all game_attached=false.
-
-Downloaded green outer hashes matched GitHub metadata. Red/green each have201 archive members/200 verified inner hashes and1838 inputs; only the two production files and two disclosed workflows differ. All156 normalized fixture members are byte-identical. No separate ZIP-CRC claim; host has no inner manifest. Full hashes, receipts and evidence limits are in W93_EVIDENCE.json.
-
-## Next and remaining gates
-
-Next: reconcile R03 special-action credit-mapping obligations against W90_R03_MAPPING_REVIEW.md, W91's completed ordinary-credit/publication repair and W92's completed interaction-lifetime repair, then identify the next source-backed special-action regression. Do not repeat their completed fixes or enable ObjectiveProgress from an in-range dataset index.
-
-R03 successful native matching-recipient request/acknowledgment, R04 physical displaced/foreign cursor/same-slot popup/lifecycle, R06 same-content menu generation/native concurrency, R07 actual compiler inputs/static-state reload/full refresh, and all retained broader Wholesome/navigation/Singular/shared/native/independent/supervised gates remain open. R08's named offline defects are verified, not its native/client/server acceptance. Keep v1 exact fields, ObjectiveProgress deferral, ordinary matched credit, QuestComplete admission, CAST refusal, independent collection and navigation-mutation guards.
-
-## Publication and recovery
-
-Canonical identity/history, PR51, backups and direct refs were reconciled before ordinary fast-forward publication; parents, paths, blob identities, trees and branch head were read back. Origin is https://github.com/JeofW/cbp.git. Pre-W93 backup audit/backup-pr51-before-w93-reward-20260921 preserves aca2f1cd; W92 lifetime backup preserves f7a598ad. Retain earlier backups and failed intermediates.
-
-Newer scoped capability evidence and current ordinary GitHub operations work. Historical operation-specific provider refusals remain recorded; do not replay their exact combined requests. Numeric publication preparation remains3 used/0 new/0 remaining. Do not construct another exhausted numeric request.
-
-The earlier probe caused a large LFS upload. This source-only publication used process-scoped GIT_LFS_SKIP_PUSH=1 after proving no LFS/attribute changes, restored the prior environment value, and retained hooks. No new runtime payload or runtime readiness is implied. Future asset changes require appropriate asset publication.
-
-Current owner requests direct work without subagents. Final source/workflow review was a self-review; independent acceptance remains open. Keep builds/tests on GitHub-hosted Windows/x86 and production untouched. No local bot/C#/Lua execution, guessed recipes/offsets/coordinates, AuctionHouse/ProfessionBuddy expansion, excluded PR25, PR58 recreation, reference/capability-branch merge, force-push, master write, merge or deployment. Original WoW3.3.5a/build12340; TrinityCore3.3.5 primary/AzerothCore WotLK secondary.
-
-Finish each slice with accurate repository pointers, D:\Dev\CopilotBuddy-Evidence\LATEST_CONTINUATION.md, a dated UTF-8 handoff and exact next action. Full audit is not complete merely because offline CI is green.
+No local project builds/tests, production access, guessed recipes/offsets, weakened assertions, PR58 recreation, excluded PR25, force-push, master write, merge or deployment. Original3.3.5a/build12340, TrinityCore3.3.5 primary/AzerothCore WotLK secondary. Checkpoint every verified slice with these root pointers, repository evidence and an external dated UTF-8 handoff; preserve exact tested source separately from documentation successors.
