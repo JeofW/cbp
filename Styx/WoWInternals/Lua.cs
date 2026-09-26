@@ -105,7 +105,7 @@ namespace Styx.WoWInternals
 
                             // 2. luaL_loadbuffer
                             executor.AddLine("push {0}", fileNameOffset);
-                            executor.AddLine("push {0}", lua.Length);
+                            executor.AddLine("push {0}", bytes.Length);
                             executor.AddLine("push {0}", address);
                             executor.AddLine("push {0}", fullState);
                             executor.AddLine("call {0}", (uint)GlobalOffsets.FrameScript_Load);

@@ -218,7 +218,7 @@ public class ActionSelectReward : Action
         script.AppendFormat(CultureInfo.InvariantCulture,
             "local b=_G['QuestInfoItem{0}']; " +
             "if not b or not b:IsShown() or b.type~='choice' or b:GetID()~={0} then return false end; " +
-            "b:Click(); return QuestInfoFrame.itemChoice=={0}", selectedIndex + 1);
+            "b:Click(); return (QuestInfoFrame.itemChoice=={0}) and 1 or 0", selectedIndex + 1);
         return script.ToString();
     }
 
