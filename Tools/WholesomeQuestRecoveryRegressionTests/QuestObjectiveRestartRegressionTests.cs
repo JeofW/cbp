@@ -290,18 +290,19 @@ public static class ObjectiveRestartCases
         }
         public static T GetReturnVal<T>(string script,uint index)
         {
-            if(index!=0||typeof(T)!=typeof(bool))throw new InvalidOperationException("Unexpected Lua result contract");
+            if(index!=0||(typeof(T)!=typeof(bool)&&typeof(T)!=typeof(int)))throw new InvalidOperationException("Unexpected Lua result contract");
             if(script=="return UnitGUID('npc') == '0x0000000000000002'"
-                ||script=="return (UnitGUID('npc') == '0x0000000000000002') and 1 or 0")return (T)(object)true;
+                ||script=="return (UnitGUID('npc') == '0x0000000000000002') and 1 or 0")return Receipt<T>(true);
             RequireMenuRequest(script);
             if(!script.Contains("observed ~= '"+ObservedMenu+"'",StringComparison.Ordinal))
                 throw new InvalidOperationException("Mutation does not retain the controlled observed menu");
-            if(!Visible)return (T)(object)false;
+            if(!Visible)return Receipt<T>(false);
             if(script.Contains("SelectGossipOption(1)",StringComparison.Ordinal))ObjectiveRestartCases.Selections++;
             else if(script.Contains("CloseGossip()",StringComparison.Ordinal))Styx.Logic.Inventory.Frames.Gossip.GossipFrame.Instance.Close();
             else throw new InvalidOperationException("Unexpected native Lua request in offline fixture: "+script);
-            return (T)(object)true;
+            return Receipt<T>(true);
         }
+        private static T Receipt<T>(bool value)=>(T)(typeof(T)==typeof(int)?(object)(value?1:0):value);
     }
 }
 """;
