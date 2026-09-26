@@ -1,31 +1,39 @@
-# Resume W92 - gossip interaction lifetime verified offline
+# Resume W93 — reward Lua receipt and UTF-8 size verified offline
 
-Repository jeofwong/CopilotBuddy-private (1367174964), draft/unmerged PR51, approved branch audit/next-55-equipment-observation-20260917. Reconcile direct refs before work. Read NEXT_CHAT_PROMPT.md, docs/audit/HANDOFF_POLICY.md, docs/audit/2026-09-21/W92_CHECKPOINT.md and W92_EVIDENCE.json, then retain W91/W90/W89/W88/W87/W86 and W80 checkpoint/evidence/ledger plus all four original-client/core/provenance/addon policies. Do not restart W80's completed 140-commit review after 18 September 2026 at 21:58 Malaysia / 13:58 UTC.
+Canonical repository JeofW/cbp (ID 1367174964), existing open/draft PR51, approved branch audit/next-55-equipment-observation-20260917. Work in D:\Dev\CopilotBuddy-PR51. Reconcile live direct refs before publication.
 
-## Exact tested source, not the documentation commit
+Read NEXT_CHAT_PROMPT.md, docs/audit/HANDOFF_POLICY.md, docs/audit/2026-09-26/W93_CHECKPOINT.md and W93_EVIDENCE.json. Retain W92/W91/W90/W89/W88/W87/W86 and W80 checkpoint/evidence/ledger, plus WOTLK_335A_RESEARCH_POLICY.md, TRINITYCORE_335_COMPATIBILITY.md, QUEST_DATA_PROVENANCE_335.md and ADDON_EVIDENCE_335.md. W80's completed 140-commit review and W92 must not restart.
 
-Tested source and last production: 262228f1abf855c0a1e61e6c7eb1c8128c8cf446, tree fb4ffab6fcb16b85407a8d73942bc059472f24db. The containing handoff publication is documentation only; resolve its SHA live and keep it distinct from the tested source. Direct master was b2324913e2499ba30b239dd67224ca2c655c05cc; never substitute cached PR base metadata.
+## Exact tested source
 
-Integrated run35565276547/job106225735651/art10623907327: 17/17, matching-recipient10/10, original constructor/lifecycle12/12, scheduler53/53, gossip58/58, controlled generated dispatch18/18. Host run35565276548/job106225735756/art10623138863: compile exit0,3344 warnings,0 errors, tests_run=false. Seven source-head checks completed successfully. All game_attached=false; no original-client or independent-review acceptance.
+Tested source and last production: 069c6e8c2fe06bddd5a6dd36c782d0519fcff69b, tree e2a2533d98b0cfec6ed556c0cef627d82e1fde84. Workflow-only parent 27f2d635ef151e6c65448b504cffa3322209d311. The containing handoff publication is documentation only; resolve its SHA live and keep it distinct from the tested source. Direct master was b2324913e2499ba30b239dd67224ca2c655c05cc; cached PR base metadata differs and is not the live ref.
 
-## Completed changes - do not recreate
+## Completed R08 slice — do not recreate
 
-Entry e12ab0c6 failed Wholesome compilation with CS0103; its new cases did not run. Fixture-only f7a598ad3a15c2e9b216e965113c255c538e37fc qualifies Styx.WoWObjectType.Unit without changing cases or expectations. Run35564802997/art10624156135 then reproduced matching4/10 with six disposal/player-replacement assertions and zero unexpected matching-case errors; original12/12 and other16 integrated entries passed.
+The two preexisting one-line repairs were committed without reapplication: ActionSelectReward's guarded selection receipt now returns numeric 1/0; Lua.GetReturnValues passes UTF-8 bytes.Length to loadbuffer. Scoring, quest/item identity, owner guards and shared raw-boolean conversion remain unchanged. Selection is not quest completion or server acknowledgment.
 
-Production262228f1 adds four lines only to GossipEvent.cs: recheck OwnsActor/IsDone immediately after target.Interact returns and before publishing Counter, interaction GUID, timestamp or status. The unchanged-owner counter still counts attempts, not submissions or quest credit. Red/green each have1837 input paths; only GossipEvent.cs differs and all155 normalized fixture members are identical. Four original archives and596 inner hashes were verified in W92; no separate ZIP-CRC verification was claimed. Preserve the failed compile and behavioral-red archives.
+The separate workflow commit corrects only the repository-name literals in audit-integrated.yml and audit-validation.yml to JeofW/cbp, preserving repository-ID/event/branch gates. No broad removal of older private-repository guards.
 
-Preserve W91's ordinary-credit metadata repair4d822104 and publication tests e49d92c5, the older mapping red and failed intermediates, and all earlier recorded fixes. W89 compiler, W90 controlled requests, W91 publication permission and W92 real interaction-refusal/lifetime coverage are separate evidence layers, not a combined native end-to-end result.
+Retained red aca2f1cd: run35572599113/job106247242803/art10626487223, reward lifetime18/18, Lua boundary20/33 with13 intended assertions/0 unexpected, integrated16/17.
+
+Verified green069c6e8c: integrated36220559526/job108344896910/art10899430321,17/17, Lua boundary33/33 with0 assertions/0 unexpected, original reward lifetime18/18 and observation12/12. Host36220559518/job108344896825/art10898448690:exit0,3344 warnings,0 errors,tests_run=false. GitHub-hosted Windows/x86; all game_attached=false.
+
+Downloaded green outer hashes matched GitHub metadata. Red/green each have201 archive members/200 verified inner hashes and1838 inputs; only the two production files and two disclosed workflows differ. All156 normalized fixture members are byte-identical. No separate ZIP-CRC claim; host has no inner manifest. Full hashes, receipts and evidence limits are in W93_EVIDENCE.json.
 
 ## Next and remaining gates
 
-Next R08: establish actual-boundary regressions for ActionSelectReward's Lua boolean receipt and the UTF-8 byte-length source finding, then make minimal proven repairs. Do not treat a configured C# boolean as executing the Lua bridge. Preserve quest/item identity, legitimate selection and scoring. Review shared callers before changing a shared bridge. No R08 production fix is claimed by W92.
+Next: reconcile R03 special-action credit-mapping obligations against W90_R03_MAPPING_REVIEW.md, W91's completed ordinary-credit/publication repair and W92's completed interaction-lifetime repair, then identify the next source-backed special-action regression. Do not repeat their completed fixes or enable ObjectiveProgress from an in-range dataset index.
 
-R03 source-backed special-action mapping and successful native recipient/request/acknowledgment; R04 physical displaced/foreign cursor and same-slot popup/lifecycle; R06 same-content menu generation/native concurrency; R07 actual compilation inputs/static state/full refresh; and all retained Wholesome/navigation/Singular/shared/native/independent/supervised acceptance remain open. Preserve v1 exact fields and ObjectiveProgress deferral, ordinary matched credit, QuestComplete admission, CAST ordinary-kill refusal, independent collection and navigation-mutation guards.
+R03 successful native matching-recipient request/acknowledgment, R04 physical displaced/foreign cursor/same-slot popup/lifecycle, R06 same-content menu generation/native concurrency, R07 actual compiler inputs/static-state reload/full refresh, and all retained broader Wholesome/navigation/Singular/shared/native/independent/supervised gates remain open. R08's named offline defects are verified, not its native/client/server acceptance. Keep v1 exact fields, ObjectiveProgress deferral, ordinary matched credit, QuestComplete admission, CAST refusal, independent collection and navigation-mutation guards.
 
-## Publication, recovery and scope
+## Publication and recovery
 
-Official authenticated gh CLI can publish with createCommitOnBranch/expectedHeadOid and download Actions evidence. Core UNKNOWN_TOOL is intermittent; use the outcome/read-back rules in HANDOFF_POLICY. An earlier W92 documentation request was blocked and did not change GitHub; this successor reconciles the missing records without claiming a permanent transport fix.
+Canonical identity/history, PR51, backups and direct refs were reconciled before ordinary fast-forward publication; parents, paths, blob identities, trees and branch head were read back. Origin is https://github.com/JeofW/cbp.git. Pre-W93 backup audit/backup-pr51-before-w93-reward-20260921 preserves aca2f1cd; W92 lifetime backup preserves f7a598ad. Retain earlier backups and failed intermediates.
 
-Backup audit/backup-pr51-before-w92-lifetime-20260921 preserves f7a598ad; retain W91 and older backups. The local CopilotBuddy-pr51-r03-isolated clone has an incomplete checkout/index: do not commit its apparent deletions or use it to publish. Leave the old checkout/installed bot unchanged; builds and offline tests stay on GitHub Windows/x86.
+Newer scoped capability evidence and current ordinary GitHub operations work. Historical operation-specific provider refusals remain recorded; do not replay their exact combined requests. Numeric publication preparation remains3 used/0 new/0 remaining. Do not construct another exhausted numeric request.
 
-Original WoW3.3.5a/build12340, TrinityCore3.3.5 primary/AzerothCore WotLK secondary. No guessed recipes/thresholds/offsets/coordinates or AuctionHouse/ProfessionBuddy expansion. Do not recreate closed PR58 or merge capability branches, excluded PR25 or W88's intentionally red reference. No history rewrite, master write, merge or deployment is authorized by this checkpoint. Conditional merge authority still requires every mandatory gate, backup, direct refs, exact merge preview and exact-head validation. Finish with accurate durable pointers and a downloadable UTF-8 handoff.
+The earlier probe caused a large LFS upload. This source-only publication used process-scoped GIT_LFS_SKIP_PUSH=1 after proving no LFS/attribute changes, restored the prior environment value, and retained hooks. No new runtime payload or runtime readiness is implied. Future asset changes require appropriate asset publication.
+
+Current owner requests direct work without subagents. Final source/workflow review was a self-review; independent acceptance remains open. Keep builds/tests on GitHub-hosted Windows/x86 and production untouched. No local bot/C#/Lua execution, guessed recipes/offsets/coordinates, AuctionHouse/ProfessionBuddy expansion, excluded PR25, PR58 recreation, reference/capability-branch merge, force-push, master write, merge or deployment. Original WoW3.3.5a/build12340; TrinityCore3.3.5 primary/AzerothCore WotLK secondary.
+
+Finish each slice with accurate repository pointers, D:\Dev\CopilotBuddy-Evidence\LATEST_CONTINUATION.md, a dated UTF-8 handoff and exact next action. Full audit is not complete merely because offline CI is green.

@@ -1,0 +1,60 @@
+{
+  "checkpoint": "W93",
+  "date": "2026-09-26",
+  "timezone": "Asia/Kuala_Lumpur",
+  "repository": "JeofW/cbp",
+  "repository_id": 1367174964,
+  "pr": 51,
+  "branch": "audit/next-55-equipment-observation-20260917",
+  "baseline_red": "aca2f1cd75e067aa14a91e3cb615b5c74814c403",
+  "workflow_commit": "27f2d635ef151e6c65448b504cffa3322209d311",
+  "tested_revision": "069c6e8c2fe06bddd5a6dd36c782d0519fcff69b",
+  "tested_tree": "e2a2533d98b0cfec6ed556c0cef627d82e1fde84",
+  "last_production_change": "069c6e8c2fe06bddd5a6dd36c782d0519fcff69b",
+  "direct_master": "b2324913e2499ba30b239dd67224ca2c655c05cc",
+  "backup": {
+    "branch": "audit/backup-pr51-before-w93-reward-20260921",
+    "sha": "aca2f1cd75e067aa14a91e3cb615b5c74814c403"
+  },
+  "production_files": [
+    {"path":"Bots/Quest/Actions/ActionSelectReward.cs","blob":"2a695a5f064b204b6c35ad2940183937706f48f8","sha256":"973ffa0ed36aed5434eba0f1c182d01299166435795da6dd173e28e1e893e677"},
+    {"path":"Styx/WoWInternals/Lua.cs","blob":"d3d9808b575a45d6c715c242c6b7bfb49ae6db83","sha256":"46f7a2c2a2bce45cff446eb8dd0f935dd31d5bc1dea69458d7903c1050be94a1"}
+  ],
+  "red": {"run":35572599113,"job":106247242803,"artifact":10626487223,"original_reward":"18/18","lua_boundary":"20/33","assertions":13,"unexpected":0,"integrated_pass":16,"integrated_total":17},
+  "green": {"run":36220559526,"job":108344896910,"artifact":10899430321,"original_reward":"18/18","reward_observation":"12/12","lua_boundary":"33/33","assertions":0,"unexpected":0,"integrated_pass":17,"integrated_total":17,"runner":"windows-2022","architecture":"x86","game_attached":false,"conclusion":"success"},
+  "host": {"run":36220559518,"job":108344896825,"artifact":10898448690,"exit":0,"warnings":3344,"errors":0,"configuration":"Release","platform":"x86","runner":"windows-latest","tests_run":false,"game_attached":false,"conclusion":"success"},
+  "archives": [
+    {"file":"integrated-aca2f1cd.zip","artifact":10626487223,"bytes":875034,"sha256":"be646dc70779c6e7aa12e8ce86d6ade5bd269d76a8df3693b344fd98e3390734","members":201,"inner_hashes_verified":200,"origin":"retained local archive; old remote archive not downloaded again"},
+    {"file":"integrated-069c6e8c.zip","artifact":10899430321,"bytes":868373,"sha256":"e23a315f1b3732e209d85b24236133a8303508ba49f38a5b5558a01ceebab307","members":201,"inner_hashes_verified":200,"github_metadata_digest_matched":true},
+    {"file":"host-069c6e8c.zip","artifact":10898448690,"bytes":83492,"sha256":"12b0e26072dcf7db96d338ff3df2e2b0b6002a18cfc1b9291dff46daf3e29a77","members":4,"inner_hashes_verified":0,"github_metadata_digest_matched":true}
+  ],
+  "unchanged_fixture_comparison": {
+    "inputs_each":1838,"added":[],"removed":[],
+    "changed":[".github/workflows/audit-integrated.yml",".github/workflows/audit-validation.yml","Bots/Quest/Actions/ActionSelectReward.cs","Styx/WoWInternals/Lua.cs"],
+    "normalized_members_each":156,"normalized_changed":[],"normalized_removed":[],"test_assertions_changed":false
+  },
+  "lua51": {
+    "version":"5.1.5","architecture":"x86",
+    "source_sha256":"2640fc56a795f29d28ef15e13c34a47e223960b0240e8cb0a82d9b0738695333",
+    "build_script_sha256":"96a4cad5a27815526ae839c8d911aa94c9a9b95a350adb0db76a88a23a4bae67",
+    "red_dll_sha256":"09bd54335a204812bf54c841a992952e2cf0df4eff91a20b1aacfd0159a33ee8",
+    "green_dll_sha256":"ee787a1296d3059b7a47b3d52fae982665ae73e3ee9dc7f5bc9b795800a4c13a",
+    "binary_reproducibility_claimed":false
+  },
+  "integrity_limits":"Complete manifest/member coverage checked for both integrated archives; no separate ZIP-CRC claim; host has no inner manifest.",
+  "publisher":"Local Git commits and ordinary fast-forward push; unchanged LFS assets not uploaded; exact remote parents/paths/blobs/trees/head read back.",
+  "provider_history":"Historical refusals preserved. Newer scoped capability evidence and current ordinary GitHub operations succeeded; exact blocked combined requests not replayed.",
+  "numeric_preparation":{"historical":3,"new":0,"remaining":0},
+  "subagents_used_this_continuation":false,
+  "final_review":"Direct self-review of four-line source/workflow delta; independent acceptance gate not satisfied.",
+  "local_project_build_or_test":false,
+  "original_client_acceptance":false,
+  "native_executor_acceptance":false,
+  "server_acknowledgment":false,
+  "independent_acceptance_review":false,
+  "merged":false,
+  "deployed":false,
+  "status":"R08_NAMED_DEFECTS_VERIFIED_OFFLINE; FULL_AUDIT_IN_PROGRESS",
+  "open_gates":["R03 special-action credit mapping and successful native matching-recipient request/acknowledgment","R04 physical displaced/foreign cursor, same-slot popup and remaining lifecycle","R06 same-content menu generation, native bridge concurrency and original-client acceptance","R07 actual compiler inputs, static state reload and atomic full refresh","R08 shared native executor, original-client/server and exhaustive shared-caller acceptance","Retained Wholesome/navigation/Singular/shared/independent/supervised final acceptance"],
+  "documentation_note":"The containing checkpoint commit is documentation only and must remain distinct from tested_revision. Preserve historical W92 and earlier evidence."
+}

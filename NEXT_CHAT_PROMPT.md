@@ -1,70 +1,19 @@
-# Continue W92 - copy-ready prompt
+# Continue W93 — copy-ready prompt
 
-Continue jeofwong/CopilotBuddy-private (1367174964), draft PR51, on
- audit/next-55-equipment-observation-20260917.
+Continue JeofW/cbp (repository ID 1367174964), existing open/draft PR51, approved branch audit/next-55-equipment-observation-20260917, in D:\Dev\CopilotBuddy-PR51. Work directly without subagents.
 
-Reconcile direct refs. Last tested source and last production:
-262228f1abf855c0a1e61e6c7eb1c8128c8cf446,
-tree fb4ffab6fcb16b85407a8d73942bc059472f24db.
-The containing handoff commit is documentation only; resolve publication live.
-Direct master was b2324913e2499ba30b239dd67224ca2c655c05cc.
-Never substitute cached PR base metadata for direct master.
+Read D:\Dev\CopilotBuddy-Evidence\LATEST_CONTINUATION.md, AUDIT_RESUME.md, docs/audit/HANDOFF_POLICY.md, docs/audit/2026-09-26/W93_CHECKPOINT.md and W93_EVIDENCE.json. Retain W92/W91/W90/W89/W88/W87/W86, W80 checkpoint/evidence/ledger, and all four original-client/core/provenance/addon policies. Do not restart W80's completed 140-commit review or W92.
 
-Read AUDIT_RESUME.md, docs/audit/HANDOFF_POLICY.md,
-docs/audit/2026-09-21/W92_CHECKPOINT.md and W92_EVIDENCE.json,
-retained W91/W90/W89/W88/W87/W86, W80 checkpoint/evidence/ledger,
-and all four original-client/core/provenance/addon policies.
-Do not restart W80's completed140-commit retained-source review.
+Reconcile live refs before publication. Tested source/last production is 069c6e8c2fe06bddd5a6dd36c782d0519fcff69b, tree e2a2533d98b0cfec6ed556c0cef627d82e1fde84. The containing handoff commit is documentation-only, not a newly tested source. Direct master was b2324913e2499ba30b239dd67224ca2c655c05cc; ignore stale PR base metadata. Preserve pre-W93 backup at aca2f1cd and W92 lifetime backup at f7a598ad.
 
-Do not recreate f7a598ad or262228f1. The original e12ab0c6 failure was
-CS0103 before Wholesome execution. Fixture-only f7a598ad qualifies the
-existing Styx.WoWObjectType and changes no assertions. Its actual red is
-run35564802997/art10624156135: matching4/10,6 intended assertions,
-0 unexpected matching-case errors; original12/12 and other16 entries pass.
+Do not recreate either R08 repair: ActionSelectReward numeric 1/0 selection receipt and Lua loadbuffer bytes.Length. Tests/assertions/scoring/identity/lifetime gates are unchanged. Separate workflow 27f2d635 corrects only two repository-name guards for the verified move to JeofW/cbp; preserve their repository-ID/event/branch restrictions.
 
-262228f1 adds only the post-Interact owner/completion guard. Verified green:
-integrated35565276547/job106225735651/art10623907327:17/17,
-matching10/10, original12/12, scheduler53/53, gossip58/58, generated18/18.
-Host35565276548/job106225735756/art10623138863:exit0,3344 warnings,
-0 errors, compile only. All155 normalized fixture members are identical
-between red/green; only GossipEvent.cs differs among1837 inputs.
-Four outer digests and596 inner hashes verified; no separate ZIP-CRC claim.
-No native request success, server receipt, game attachment or independent
-review is established by these offline refusal/lifetime tests.
+Retain red aca2f1cd run35572599113/job106247242803/art10626487223:18/18 original reward,20/33 Lua boundary,13 intended assertions,0 unexpected,16/17 integrated. Actual green 069c6e8c integrated36220559526/job108344896910/art10899430321:17/17,33/33 Lua boundary,18/18 original lifetime,12/12 observation,zero named failures. Host36220559518/job108344896825/art10898448690:exit0,3344 warnings,0 errors,tests_run=false.
 
-Next: R08 actual-boundary regression coverage for the reward Lua boolean
-receipt and UTF-8 byte-length findings, followed by minimal proven repairs.
-Preserve identity/scoring and valid behavior. Review shared callers before
-changing the bridge. Keep R03/R04/R06/R07 and all earlier native/server,
-independent and broad subsystem acceptance gates explicit and open.
+Both green archive digests match live metadata. Each integrated archive has 201 members/200 verified hashes; red/green 1838 source paths differ only in the two repairs and two workflows; all 156 normalized members are identical. No separate ZIP-CRC check. Stock Lua controlled-UI evidence does not execute the production native executor/client/server; selection is not server success. Independent acceptance review and supervised acceptance remain open.
 
-Keep v1 exact fields/ObjectiveProgress deferral, matched ordinary credit,
-QuestComplete admission, CAST refusal, independent collection and separate
-dataset/raw/item identities. Preserve W91 and earlier red/green pairs,
-failed intermediates, MIR instance/run/operation guards, dense-pull
-containment, auction withdrawal and all exclusions.
+Next: reconcile remaining R03 source-backed special-action credit mapping with W90 mapping review and the completed W91/W92 work, then add the next meaningful actual-boundary regression without reopening completed fixes. Preserve strict v1 fields and ObjectiveProgress deferral, ordinary matched credit, QuestComplete admission, CAST refusal, independent collection and navigation guards. Continue independent R04/R06/R07 work when a specific R03 source/native prerequisite is unavailable; record the exact dependency.
 
-Authenticated official gh CLI is usable; Core tool dispatch remains
-intermittent. Follow HANDOFF_POLICY's outcome rules: inspect actual state
-before replaying ambiguous writes, poll returned sessions, and never treat
-a test-domain refusal or failure to poll as proof the earlier command failed.
-Stop on explicit safety/auth blocks rather than retrying until accepted.
-Every publication needs the exact approved branch and expected current
-parent/blob; verify returned parent, paths, bytes and direct branch head.
-The first W92 documentation attempt was not published; these repository
-pointers supersede that local-only status, not the recorded refusal event.
+Use local Git for focused commits and ordinary fast-forward publication to the approved PR51 branch only, with exact-parent/head checks and read-back. Newer scoped capability evidence established usable GitHub operations; preserve historical refusal records and do not replay blocked combined requests. Numeric preparation remains 3 used/0 remaining. Avoid unrelated LFS uploads for source-only pushes; only use a process-scoped documented skip after proving no LFS/attribute changes and restore the environment. Keep project builds/tests on GitHub-hosted Windows/x86.
 
-Do not publish from the incomplete local clone/index. Keep old checkout and
-installed files unchanged; no local bot/C# build/run. Original3.3.5a/build12340,
-TC3.3.5 primary, AC WotLK secondary. No guessed recipes/offsets/coordinates,
-new general framework, AuctionHouse/ProfessionBuddy or PR25 expansion.
-Preserve backup audit/backup-pr51-before-w92-lifetime-20260921 at f7a598ad.
-Do not recreate PR58, rewrite history or merge excluded/reference branches.
-
-Continue available authorized steps without routine approval prompts.
-If a hard prerequisite is missing, record the exact blocker and continue
-independent work. Goal is not complete until all recorded mandatory gates
-are met. No merge from green offline CI alone; use the existing conditional
-authority only after exact-source/head checks, independent/native acceptance,
-backup and reviewed merge result. Merge is not deployment.
-Finish with updated durable pointers and a downloadable UTF-8 handoff.
+No production changes, local project execution, W80/W92 restart, PR58 recreation, excluded PR25, weakened assertions, force-push, master write, merge or deployment. Original 3.3.5a/build12340, TrinityCore 3.3.5 primary/AzerothCore WotLK secondary. Full audit and native acceptance remain open. Checkpoint each verified slice in repository and external handoffs, preserving exact tested source separately from later documentation commits.
