@@ -176,6 +176,14 @@ namespace Styx.Bot.Quest_Behaviors
 
                 ConfirmOwnedEquipPopup();
 
+                if (!OwnsPendingEquipContext())
+                {
+                    // Confirmation crosses the client boundary; admission before
+                    // that call does not authorize later observation or cleanup.
+                    ResetPendingEquip();
+                    return RunStatus.Success;
+                }
+
                 if (IsPendingEquipAcknowledged())
                 {
                     if (ReturnDisplacedCursorToSource())
@@ -311,7 +319,7 @@ namespace Styx.Bot.Quest_Behaviors
 
         private bool IsPendingEquipAcknowledged()
         {
-            if (!HasPendingEquip || StyxWoW.Me == null ||
+            if (!OwnsPendingEquipContext() || StyxWoW.Me == null ||
                 StyxWoW.Me.Inventory == null || StyxWoW.Me.Inventory.Equipped == null)
                 return false;
 
@@ -330,6 +338,9 @@ namespace Styx.Bot.Quest_Behaviors
 
         private bool ReturnDisplacedCursorToSource()
         {
+            if (!OwnsPendingEquipContext())
+                return false;
+
             if (_pendingSourceBag < 0 || _pendingSourceSlot <= 0)
                 return !CursorHasAnyItem();
 
@@ -354,7 +365,7 @@ namespace Styx.Bot.Quest_Behaviors
 
         private void RestoreOwnedCursorToSource()
         {
-            if (_pendingSourceBag < 0 || _pendingSourceSlot <= 0 || _pendingEquipEntry == 0)
+            if (!OwnsPendingEquipContext() || _pendingSourceBag < 0 || _pendingSourceSlot <= 0 || _pendingEquipEntry == 0)
                 return;
             try
             {
