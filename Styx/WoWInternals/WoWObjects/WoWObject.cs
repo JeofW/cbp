@@ -384,11 +384,18 @@ namespace Styx.WoWInternals.WoWObjects
         
         public virtual void Interact(bool ignoreTimer)
         {
+            TryInteractCore(ignoreTimer);
+        }
+
+        // This receipt covers local executor completion only. A false receipt
+        // after an exception does not prove that the client made no request.
+        protected bool TryInteractCore(bool ignoreTimer)
+        {
             if (BaseAddress == 0U)
-                return;
+                return false;
                 
             if (!ignoreTimer && !_interactTimer.IsFinished)
-                return;
+                return false;
                 
             _interactTimer.Reset();
             StyxWoW.ResetAfk();
@@ -399,9 +406,10 @@ namespace Styx.WoWInternals.WoWObjects
             if (executor == null)
             {
                 Logging.WriteDebug("[Interact] Invalid executor - cannot interact");
-                return;
+                return false;
             }
             
+            bool completed = false;
             try
             {
                 lock (executor.AssemblyLock)
@@ -419,6 +427,7 @@ namespace Styx.WoWInternals.WoWObjects
                     executor.AddLine("call eax");
                     executor.AddLine("retn");
                     executor.Execute();
+                    completed = true;
                 }
             }
             catch (Exception ex)
@@ -427,6 +436,7 @@ namespace Styx.WoWInternals.WoWObjects
             }
             
             Logging.WriteDebug("[Interact] Done interacting with object at 0x{0:X}", BaseAddress);
+            return completed;
         }
         
         #endregion

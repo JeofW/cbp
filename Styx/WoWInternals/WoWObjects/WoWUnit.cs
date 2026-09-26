@@ -25,6 +25,16 @@ namespace Styx.WoWInternals.WoWObjects
 
         #endregion
 
+        /// <summary>
+        /// Attempts the ordinary throttled unit interaction. True means that the
+        /// local executor completed; it does not attribute a menu or acknowledge
+        /// a server response. False may follow a partially executed request.
+        /// </summary>
+        public bool TryInteract()
+        {
+            return TryInteractCore(ignoreTimer: false);
+        }
+
         #region Static Dictionaries (Reaction Cache)
 
         private static readonly Dictionary<uint, WoWUnitReaction> HardcodedReactions = new Dictionary<uint, WoWUnitReaction>

@@ -653,13 +653,15 @@ if not currentObserver() then return 0 end
                 return DeferAuthoritativeAttempt("the player changed before NPC interaction");
 
             _observedGossipMenu = null;
-            target.Interact();
+            bool interactionCompleted = target.TryInteract();
             // Host callbacks can revoke this owner while Interact is running.
             if (!OwnsActor() || IsDone)
                 return RunStatus.Success;
 
             Counter++;
-            _interactionGuid = guid;
+            // Preserve the bounded attempt even when local execution refuses,
+            // but do not let that attempt adopt a subsequently visible menu.
+            _interactionGuid = interactionCompleted ? guid : 0;
             _gossipOpenStartedUtc = UtcNowMilliseconds();
             TreeRoot.StatusText = "Waiting for source-bound gossip menu";
             return RunStatus.Running;
