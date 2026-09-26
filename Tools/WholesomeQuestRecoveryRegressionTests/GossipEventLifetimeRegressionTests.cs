@@ -37,7 +37,7 @@ internal static class GossipEventLifetimeRegressionTests
             boundary = boundary.Replace(before, after);
         }
         Replace("public static void SleepForLagDuration(){}", "public static bool IsInGame{get;set;}=true;public static void SleepForLagDuration(){}");
-        Replace("public bool IsAlive{get;set;}=true;", "public bool CanSelect=>true;public void Interact(){GossipLifetimeCases.Interactions++;GossipLifetimeCases.AfterInteract?.Invoke(this);}public bool IsAlive{get;set;}=true;");
+        Replace("public bool IsAlive{get;set;}=true;", "public bool CanSelect=>true;public bool TryInteract(){Interact();return GossipLifetimeCases.InteractionAccepted;}public void Interact(){GossipLifetimeCases.Interactions++;GossipLifetimeCases.AfterInteract?.Invoke(this);}public bool IsAlive{get;set;}=true;");
         Replace("public Styx.Logic.Questing.PlayerQuest? GetQuestById(uint id)=>null;", "public Styx.Logic.Questing.PlayerQuest? GetQuestById(uint id)=>GossipLifetimeCases.FindQuest(id);");
         Replace("public bool TryUseContainerItem()=>true;",
             "public bool TryUseContainerItem()=>GossipLifetimeCases.SubmitItem(this);");
@@ -214,6 +214,7 @@ public static class GossipLifetimeCases
     public static System.Action? OnMenu,BeforeClientRequest;
     public static System.Action? AfterTarget;
     public static System.Action<WoWUnit>? AfterInteract;
+    public static bool InteractionAccepted=true;
     public static int ExpectedOptionNumber=1;
     private static int itemRequests;
     private static ulong submittedTarget;
@@ -311,6 +312,14 @@ public static class GossipLifetimeCases
             Add("incomplete menu transport "+f+" is not mutation authority",()=>{
                 Open(false);CaptureFault=f;Tick();Check(Selections==0&&Closes==0,"incomplete menu transport caused a mutation");CheckNoSubmission();});
         }
+        Add("refused interaction cannot adopt a later matching NPC menu",()=>{
+            InteractionAccepted=false;
+            AfterInteract=unit=>{Frame.IsVisible=true;CurrentNpc=unit.Guid;};
+            Tick();Check(Interactions==1,"refused interaction boundary not reached");
+            Tick();Invoke("ResetForRetry");
+            Check(Selections==0&&Closes==0,"refused interaction adopted or closed a matching foreign menu");
+            CheckNoSubmission();
+        });
         int pass=0,assertions=0,unexpected=0;
         foreach(var test in tests)
         {
@@ -337,6 +346,7 @@ public static class GossipLifetimeCases
         player.CarriedItems!.Add(new WoWItem{Guid=17,Entry=12345});
         Styx.StyxWoW.IsInGame=true;
         OnMenu=BeforeClientRequest=AfterTarget=null;
+        InteractionAccepted=true;
         AfterInteract=unit=>{Frame.IsVisible=true;CurrentNpc=unit.Guid;};
         Selections=Closes=Interactions=itemRequests=0;submittedTarget=0;submittedItem=0;
         CurrentNpc=2;ClientPlayer=actorGuid;Frame.IsVisible=false;
@@ -452,7 +462,7 @@ public static class GossipLifetimeCases
         if(((Styx.Logic.Questing.CustomForcedBehavior)owner).IsAttributeProblem)throw new InvalidOperationException("Actual constructor rejected controlled arguments");
         kind.GetProperty("Location",Hidden)!.SetValue(owner,player.Location);
         Selections=Closes=Interactions=0;OnMenu=BeforeClientRequest=null;CurrentNpc=2;Frame.IsVisible=false;
-        AfterTarget=null;AfterInteract=null;ExpectedOptionNumber=1;itemRequests=0;
+        AfterTarget=null;AfterInteract=null;InteractionAccepted=true;ExpectedOptionNumber=1;itemRequests=0;
         ClientPlayer=player.Guid;SnapshotKnown=true;ThrowOnSnapshot=false;StringOnlyBridge=false;CaptureFault=null;
         MenuText="Source-bound interaction";Options=new[]{"Proceed","gossip","Leave","gossip"};
         Available=new object?[]{"Available quest",10,false,false,false};Active=new object?[]{"Active quest",10,false,false};

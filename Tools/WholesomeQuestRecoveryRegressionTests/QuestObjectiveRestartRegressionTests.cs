@@ -31,7 +31,7 @@ internal static class QuestObjectiveRestartRegressionTests
         }
         Replace("public static void SleepForLagDuration(){}", "public static bool IsInGame=>true;public static void SleepForLagDuration(){}");
         Replace("public bool TryUseContainerItem()=>true;", "public bool TryUseContainerItem(){ObjectiveRestartCases.Uses++;return true;}");
-        Replace("public bool IsAlive{get;set;}=true;", "public bool CanSelect=>true;public void Interact(){ObjectiveRestartCases.Interactions++;}public bool IsAlive{get;set;}=true;");
+        Replace("public bool IsAlive{get;set;}=true;", "public bool CanSelect=>true;public bool TryInteract(){Interact();return true;}public void Interact(){ObjectiveRestartCases.Interactions++;}public bool IsAlive{get;set;}=true;");
         Replace("public Styx.Logic.Questing.PlayerQuest? GetQuestById(uint id)=>null;", "public Styx.Logic.Questing.PlayerQuest? GetQuestById(uint id)=>ObjectiveRestartCases.FindQuest(id);");
         Replace("public static void Face(ulong id){}", "public static void Face(ulong id){var f=ObjectiveRestartCases.OnFace;ObjectiveRestartCases.OnFace=null;f?.Invoke();}");
 

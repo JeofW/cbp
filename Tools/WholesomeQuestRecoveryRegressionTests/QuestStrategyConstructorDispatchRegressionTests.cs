@@ -331,7 +331,7 @@ internal static class QuestStrategyConstructorDispatchRegressionTests
     {
         var cases = new List<(int Index, string Scenario)>();
         foreach (int index in new[] { 0, 3, 17 })
-        foreach (string scenario in new[] { "ready", "dispose", "replace-player" })
+        foreach (string scenario in new[] { "ready", "dispose", "replace-player", "refused-ownership" })
             cases.Add((index, scenario));
         cases.Add((0, "bounded-refusal"));
         int passed = 0, assertions = 0, unexpected = 0;
@@ -443,6 +443,11 @@ internal static class QuestStrategyConstructorDispatchRegressionTests
                 Check(!wrapper.IsDone && (int)Read(owner, "Counter")! == 1 &&
                     (long)owner.GetType().GetField("_lastSubmissionUtc", Hidden)!.GetValue(owner)! == -1L,
                     "refused interaction became quest success or a submitted gossip option");
+                if (scenario == "refused-ownership")
+                {
+                    Check((ulong)owner.GetType().GetField("_interactionGuid", Hidden)!.GetValue(owner)! == 0UL,
+                        "known executor refusal granted ownership of a future matching NPC menu");
+                }
                 if (scenario == "bounded-refusal")
                 {
                     var clock = Stopwatch.StartNew();
