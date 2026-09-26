@@ -6,6 +6,8 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.Metadata;
+using System.Reflection.PortableExecutable;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.CodeAnalysis;
@@ -22,6 +24,7 @@ namespace Styx.Loaders
     {
         private readonly long _timestamp;
         private bool _sourcesPrepared;
+        private static readonly MetadataReferenceProperties ReferenceProperties = MetadataReferenceProperties.Assembly;
 
         public SourceCompiler(string path)
         {
@@ -247,7 +250,14 @@ namespace Styx.Loaders
         internal string ComputeCompilationInputFingerprint()
         {
             PrepareSources();
-            var references = ResolveReferences();
+            var references = new List<string>();
+            ResolveReferences<string>(path =>
+            {
+                // Keep rejected image bytes in the identity too. Replacing an
+                // invalid reference must not look like unchanged missing input.
+                references.Add(Path.GetFullPath(path));
+                return ValidateReferencePath(path);
+            }, path => path);
             var parse = CreateParseOptions();
             var options = CreateCompilationOptions();
             using (var manifest = IncrementalHash.CreateHash(HashAlgorithmName.SHA256))
@@ -267,13 +277,13 @@ namespace Styx.Loaders
                 Add(options.OutputKind.ToString());
                 Add(options.OptimizationLevel.ToString());
                 Add(options.Platform.ToString());
-                foreach (MetadataReference reference in references.OrderBy(r => r.Display, StringComparer.Ordinal))
+                Add(ReferenceProperties.Kind.ToString());
+                Add(ReferenceProperties.EmbedInteropTypes.ToString());
+                Add(string.Join("\0", ReferenceProperties.Aliases));
+                foreach (string reference in references.OrderBy(path => path, StringComparer.Ordinal))
                 {
-                    Add(Path.GetFullPath(reference.Display));
-                    Add(reference.Properties.Kind.ToString());
-                    Add(reference.Properties.EmbedInteropTypes.ToString());
-                    Add(string.Join("\0", reference.Properties.Aliases));
-                    using (var stream = File.OpenRead(reference.Display))
+                    Add(reference);
+                    using (var stream = File.OpenRead(reference))
                     {
                         Add(Convert.ToHexString(SHA256.HashData(stream)));
                     }
@@ -282,10 +292,24 @@ namespace Styx.Loaders
             }
         }
 
-        private List<MetadataReference> ResolveReferences()
+        private static string ValidateReferencePath(string path)
+        {
+            // Cache checks must not retain Roslyn's unmanaged metadata blocks.
+            // Validate one image at a time and release it before hashing inputs.
+            using (var stream = File.OpenRead(path))
+            using (var image = new PEReader(stream, PEStreamOptions.PrefetchMetadata))
+            {
+                if (!image.HasMetadata || !image.GetMetadataReader().IsAssembly)
+                    throw new BadImageFormatException("Reference is not a managed assembly.", path);
+            }
+            return Path.GetFullPath(path);
+        }
+
+        private List<TReference> ResolveReferences<TReference>(
+            Func<string, TReference> createReference, Func<TReference, string> getPath)
         {
             // Collect references from loaded assemblies
-            var references = new List<MetadataReference>();
+            var references = new List<TReference>();
             foreach (var assemblyPath in Options.ReferencedAssemblies)
             {
                 try
@@ -322,7 +346,7 @@ namespace Styx.Loaders
                     if (string.IsNullOrWhiteSpace(resolvedPath) || !File.Exists(resolvedPath))
                         continue;
 
-                    references.Add(MetadataReference.CreateFromFile(resolvedPath));
+                    references.Add(createReference(resolvedPath));
                 }
                 catch
                 {
@@ -360,9 +384,9 @@ namespace Styx.Loaders
                 foreach (var refName in essentialRefs)
                 {
                     var refPath = Path.Combine(runtimeDir, refName);
-                    if (File.Exists(refPath) && !references.Any(r => r.Display?.Contains(refName) == true))
+                    if (File.Exists(refPath) && !references.Any(r => getPath(r)?.Contains(refName) == true))
                     {
-                        references.Add(MetadataReference.CreateFromFile(refPath));
+                        references.Add(createReference(refPath));
                     }
                 }
             }
@@ -372,9 +396,9 @@ namespace Styx.Loaders
             if (appDir != null)
             {
                 var drawingCommonPath = Path.Combine(appDir, "System.Drawing.Common.dll");
-                if (File.Exists(drawingCommonPath) && !references.Any(r => r.Display?.Contains("System.Drawing.Common") == true))
+                if (File.Exists(drawingCommonPath) && !references.Any(r => getPath(r)?.Contains("System.Drawing.Common") == true))
                 {
-                    references.Add(MetadataReference.CreateFromFile(drawingCommonPath));
+                    references.Add(createReference(drawingCommonPath));
                 }
 
                 // WCF assemblies ship via NuGet (System.ServiceModel.* packages) and are
@@ -390,9 +414,9 @@ namespace Styx.Loaders
                 foreach (var asmName in wcfAssemblies)
                 {
                     var asmPath = Path.Combine(appDir, asmName);
-                    if (File.Exists(asmPath) && !references.Any(r => r.Display?.Contains(asmName) == true))
+                    if (File.Exists(asmPath) && !references.Any(r => getPath(r)?.Contains(asmName) == true))
                     {
-                        references.Add(MetadataReference.CreateFromFile(asmPath));
+                        references.Add(createReference(asmPath));
                     }
                 }
             }
@@ -438,7 +462,8 @@ namespace Styx.Loaders
                 }
             }
 
-            var references = ResolveReferences();
+            var references = ResolveReferences<MetadataReference>(
+                path => MetadataReference.CreateFromFile(path, ReferenceProperties), reference => reference.Display);
 
             // Create compilation
             var compilation = CSharpCompilation.Create(
