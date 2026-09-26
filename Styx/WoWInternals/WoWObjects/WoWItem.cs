@@ -484,13 +484,13 @@ namespace Styx.WoWInternals.WoWObjects
 
             return string.Format(
                 System.Globalization.CultureInfo.InvariantCulture,
-                "local kind=GetCursorInfo(); if kind then return false end; " +
+                "local kind=GetCursorInfo(); if kind then return 0 end; " +
                 "local link=GetContainerItemLink({0},{1}); " +
                 "local id=link and tonumber(string.match(link,'item:(%d+)')); " +
-                "if id~={2} then return false end; " +
+                "if id~={2} then return 0 end; " +
                 "PickupContainerItem({0},{1}); " +
                 "local cursorType,cursorItemId=GetCursorInfo(); " +
-                "return CursorHasItem() and cursorType=='item' and tonumber(cursorItemId)=={2} and true or false",
+                "return CursorHasItem() and cursorType=='item' and tonumber(cursorItemId)=={2} and 1 or 0",
                 luaBag, luaSlot, expectedEntry);
         }
 
@@ -720,7 +720,7 @@ namespace Styx.WoWInternals.WoWObjects
                 luaBag, luaSlot, expectedEntry);
             try
             {
-                if (Lua.GetReturnVal<bool>(script, 0U))
+                if (Lua.GetReturnVal<int>(script, 0U) == 1)
                     return true;
             }
             catch (Exception ex)

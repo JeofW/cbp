@@ -1,4 +1,4 @@
-﻿// Behavior originally contributed by HighVoltz.
+// Behavior originally contributed by HighVoltz.
 //
 // WIKI DOCUMENTATION:
 //      http://www.thebuddyforum.com/mediawiki/index.php?title=Honorbuddy_Custom_Behavior:_EquipItem
@@ -282,13 +282,13 @@ namespace Styx.Bot.Quest_Behaviors
             string script = string.Format(
                 System.Globalization.CultureInfo.InvariantCulture,
                 "local cursorType,cursorItemId=GetCursorInfo(); " +
-                "if cursorType~='item' or not CursorHasItem() or tonumber(cursorItemId)~={0} then return false end; " +
-                "if not CursorCanGoInSlot({1}) or IsInventoryItemLocked({1}) then return false end; " +
-                "EquipCursorItem({1}); return true",
+                "if cursorType~='item' or not CursorHasItem() or tonumber(cursorItemId)~={0} then return 0 end; " +
+                "if not CursorCanGoInSlot({1}) or IsInventoryItemLocked({1}) then return 0 end; " +
+                "EquipCursorItem({1}); return 1",
                 _pendingEquipEntry, (int)_pendingEquipSlot);
             try
             {
-                return Lua.GetReturnVal<bool>(script, 0U);
+                return Lua.GetReturnVal<int>(script, 0U) == 1;
             }
             catch (Exception error)
             {
@@ -347,15 +347,15 @@ namespace Styx.Bot.Quest_Behaviors
             string script = string.Format(
                 System.Globalization.CultureInfo.InvariantCulture,
                 "local cursorType,cursorItemId=GetCursorInfo(); " +
-                "if not cursorType then return true end; " +
-                "if cursorType~='item' or not CursorHasItem() then return false end; " +
-                "if tonumber(cursorItemId)=={0} then return false end; " +
-                "if GetContainerItemLink({1},{2}) then return false end; " +
-                "PickupContainerItem({1},{2}); return not CursorHasItem()",
+                "if not cursorType then return 1 end; " +
+                "if cursorType~='item' or not CursorHasItem() then return 0 end; " +
+                "if tonumber(cursorItemId)=={0} then return 0 end; " +
+                "if GetContainerItemLink({1},{2}) then return 0 end; " +
+                "PickupContainerItem({1},{2}); return not CursorHasItem() and 1 or 0",
                 _pendingEquipEntry, _pendingSourceBag, _pendingSourceSlot);
             try
             {
-                return Lua.GetReturnVal<bool>(script, 0U);
+                return Lua.GetReturnVal<int>(script, 0U) == 1;
             }
             catch
             {
@@ -385,7 +385,9 @@ namespace Styx.Bot.Quest_Behaviors
         {
             try
             {
-                return Lua.GetReturnVal<bool>("return CursorHasItem()", 0U);
+                // Only receipt 2 proves an observed empty cursor. Missing or invalid
+                // responses become 0 in the bridge and must remain busy/unknown.
+                return Lua.GetReturnVal<int>("return CursorHasItem() and 1 or 2", 0U) != 2;
             }
             catch
             {
