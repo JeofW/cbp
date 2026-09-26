@@ -25,6 +25,16 @@ namespace Styx.WoWInternals.WoWObjects
 
         #endregion
 
+        /// <summary>
+        /// Attempts the ordinary throttled unit interaction. True means that the
+        /// local executor completed; it does not attribute a menu or acknowledge
+        /// a server response. False may follow a partially executed request.
+        /// </summary>
+        public bool TryInteract()
+        {
+            return TryInteractCore(ignoreTimer: false);
+        }
+
         #region Static Dictionaries (Reaction Cache)
 
         private static readonly Dictionary<uint, WoWUnitReaction> HardcodedReactions = new Dictionary<uint, WoWUnitReaction>
@@ -2080,10 +2090,17 @@ namespace Styx.WoWInternals.WoWObjects
             return dict;
         }
 
+        // WotLK client aura slots are uint8-indexed; AzerothCore WotLK
+        // documents MAX_AURAS=255 as the client limit. Validate the resolved
+        // count before any allocation so a transient/stale object read cannot
+        // turn into an unbounded AuraInfo array allocation.
+        internal static bool IsPlausibleAuraCount(int auraCount) =>
+            auraCount >= 0 && auraCount <= 255;
+
         public unsafe WoWAuraCollection GetAllAuras()
         {
             Memory? wow = ObjectManager.Wow;
-            if (wow == null)
+            if (wow == null || BaseAddress == 0)
                 return new WoWAuraCollection(0);
 
             uint auraBase = BaseAddress + 3152;
@@ -2094,6 +2111,17 @@ namespace Styx.WoWInternals.WoWObjects
             {
                 auraBase = wow.Read<uint>(BaseAddress + 3160);
                 auraCount = wow.Read<int>(BaseAddress + 3156);
+            }
+
+            if (!IsPlausibleAuraCount(auraCount))
+            {
+                // A disappearing/non-world object has no authoritative aura set.
+                // During an otherwise valid world observation, do not reinterpret
+                // corrupt memory as "no auras": callers must fail closed instead.
+                if (!StyxWoW.IsInGame || !IsValid)
+                    return new WoWAuraCollection(0);
+                throw new InvalidOperationException(
+                    $"Observed implausible client aura count {auraCount}.");
             }
 
             WoWAura.AuraInfo[] auraInfos = new WoWAura.AuraInfo[auraCount];

@@ -56,6 +56,11 @@ namespace Styx.WoWInternals
         /// </summary>
         public static List<string> GetReturnValues(string lua, string scriptName)
         {
+            return GetReturnValuesCore(lua, scriptName, 0);
+        }
+
+        private static List<string> GetReturnValuesCore(string lua, string scriptName, ulong expectedCursorGuid)
+        {
             var executor = ObjectManager.Executor;
             if (executor == null)
                 return new List<string>();
@@ -85,14 +90,11 @@ namespace Styx.WoWInternals
                     uint address = allocatedMemory.Address;
                     uint fileNameOffset = (uint)(allocatedMemory.Address + bytes.Length + 1);
 
-                    if (_returnBuffer == null)
-                        _returnBuffer = new AllocatedMemory(4000);
-
-                    // Clear buffer (HB 3.3.5a pattern)
-                    _returnBuffer.WriteBytes(0, _luaBuffer);
-
                     lock (executor.AssemblyLock)
                     {
+                        if (_returnBuffer == null)
+                            _returnBuffer = new AllocatedMemory(4000);
+                        _returnBuffer.WriteBytes(0, _luaBuffer);
                         executor.Clear();
 
                             // HB 3.3.5a exact ASM sequence:
@@ -105,13 +107,19 @@ namespace Styx.WoWInternals
 
                             // 2. luaL_loadbuffer
                             executor.AddLine("push {0}", fileNameOffset);
-                            executor.AddLine("push {0}", lua.Length);
+                            executor.AddLine("push {0}", bytes.Length);
                             executor.AddLine("push {0}", address);
                             executor.AddLine("push {0}", fullState);
                             executor.AddLine("call {0}", (uint)GlobalOffsets.FrameScript_Load);
                             executor.AddLine("add esp, 0x10");
                             executor.AddLine("test eax, eax");
                             executor.AddLine("jnz @Finally");
+
+                            // Compare both physical GUID words inside the same
+                            // client-thread dispatch as the Lua operation. A
+                            // managed memory pre-read would leave a race window.
+                            if (expectedCursorGuid != 0)
+                                EmitCursorItemGuard(executor, expectedCursorGuid);
 
                             // 3. lua_pcall with error handler at -2
                             executor.AddLine("push {0}", -2);
@@ -177,34 +185,34 @@ namespace Styx.WoWInternals
                             executor.AddLine("retn");
 
                             executor.Execute();
-                        }
 
-                    // Read result from executor (disable cache like HB)
-                    using (StyxWoW.Memory.TemporaryCacheState(false))
-                    {
-                        int luaStatus = executor.Memory.Read<int>(executor.ReturnPointer);
-                        if (luaStatus == 0)
+                        // Read result from executor (disable cache like HB)
+                        using (StyxWoW.Memory.TemporaryCacheState(false))
                         {
-                            // Success - read return values
-                            int resultCount = _returnBuffer.Read<int>(0);
-                            var results = new List<string>(resultCount);
-                            for (int i = 0; i < resultCount; i++)
+                            int luaStatus = executor.Memory.Read<int>(executor.ReturnPointer);
+                            if (luaStatus == 0)
                             {
-                                uint strPtr = _returnBuffer.Read<uint>((i + 1) * 4);
-                                results.Add(executor.Memory.ReadString(strPtr));
+                                // Success - read return values
+                                int resultCount = _returnBuffer.Read<int>(0);
+                                var results = new List<string>(resultCount);
+                                for (int i = 0; i < resultCount; i++)
+                                {
+                                    uint strPtr = _returnBuffer.Read<uint>((i + 1) * 4);
+                                    results.Add(executor.Memory.ReadString(strPtr));
+                                }
+                                return results;
                             }
-                            return results;
-                        }
-                        else if (luaStatus < 0)
-                        {
-                            // No return values
-                            return new List<string>();
-                        }
-                        else
-                        {
-                            // log the failing script for diagnostics
-                            Logging.WriteDebug("Lua failed! status={0}, script=\"{1}\"", luaStatus, lua);
-                            return new List<string>();
+                            else if (luaStatus < 0)
+                            {
+                                // No return values
+                                return new List<string>();
+                            }
+                            else
+                            {
+                                // log the failing script for diagnostics
+                                Logging.WriteDebug("Lua failed! status={0}, script=\"{1}\"", luaStatus, lua);
+                                return new List<string>();
+                            }
                         }
                     }
                 }
@@ -214,6 +222,76 @@ namespace Styx.WoWInternals
                 Logging.WriteDebug("Exception in GetReturnValues: {0}", ex.Message);
                 return new List<string>();
             }
+        }
+
+        private static void EmitCursorItemGuard(ExecutorRand executor, ulong expectedCursorGuid)
+        {
+            executor.AddLine("cmp dword [{0}], {1}", (uint)GlobalOffsets.CursorKind, 1U);
+            executor.AddLine("jne @FailNoRetValues");
+            executor.AddLine("cmp dword [{0}], {1}", (uint)GlobalOffsets.CursorItemGuid, (uint)expectedCursorGuid);
+            executor.AddLine("jne @FailNoRetValues");
+            executor.AddLine("cmp dword [{0}], {1}", (uint)GlobalOffsets.CursorItemGuid + 4U, (uint)(expectedCursorGuid >> 32));
+            executor.AddLine("jne @FailNoRetValues");
+        }
+
+        /// <summary>
+        /// Submits an explicit-slot equip only for the physical cursor item.
+        /// Any bind confirmation belongs to this synchronous call; no pending
+        /// array index or popup authority survives into the next bot tick.
+        /// A true receipt is local submission, not equipment acknowledgement.
+        /// </summary>
+        public static bool TryEquipCursorItem(ulong itemGuid, uint itemEntry, int inventorySlot)
+        {
+            if (itemGuid == 0 || itemEntry == 0 || inventorySlot < 0 || inventorySlot > 23)
+                return false;
+
+            var values = GetReturnValuesCore(BuildEquipCursorSubmissionLua(itemEntry, inventorySlot),
+                "CopilotBuddy.EquipCursor.lua", itemGuid);
+            return values.Count == 1 && values[0] == "1";
+        }
+
+        private static string BuildEquipCursorSubmissionLua(uint itemEntry, int inventorySlot)
+        {
+            return string.Format(System.Globalization.CultureInfo.InvariantCulture,
+                "local expectedEntry={0}; local slot={1};\n", itemEntry, inventorySlot) + @"
+local kind,entry=GetCursorInfo()
+if kind~='item' or not CursorHasItem() or tonumber(entry)~=expectedEntry then return 0 end
+if not CursorCanGoInSlot(slot) or IsInventoryItemLocked(slot) then return 0 end
+if StaticPopup_FindVisible('EQUIP_BIND') or StaticPopup_FindVisible('AUTOEQUIP_BIND') then return 0 end
+-- Both GetItemInfo and the native equip route consult DBItemCache. Do not
+-- create a deferred pending record whose eventual event has no owned call.
+if not GetItemInfo(expectedEntry) then return 0 end
+local f=_G.CopilotBuddy_EquipSubmissionFrame
+if not f then
+ f=CreateFrame('Frame')
+ _G.CopilotBuddy_EquipSubmissionFrame=f
+end
+if f.busy then return 0 end
+f.busy=true
+local count,index,popupKind,changed=0,nil,nil,false
+local ok,receipt=pcall(function()
+ f:SetScript('OnEvent',function(self,event,value)
+  if event=='CURSOR_UPDATE' then changed=true;return end
+  count=count+1
+  index=tonumber(value)
+  popupKind=event=='EQUIP_BIND_CONFIRM' and 'EQUIP_BIND' or 'AUTOEQUIP_BIND'
+ end)
+ f:RegisterEvent('EQUIP_BIND_CONFIRM')
+ f:RegisterEvent('AUTOEQUIP_BIND_CONFIRM')
+ f:RegisterEvent('CURSOR_UPDATE')
+ EquipCursorItem(slot)
+ -- Build12340 emits the pending index synchronously. Reject nested/replaced
+ -- events and cursor changes; never equate this index with an inventory slot.
+ if count==1 and not changed and index and index>=0 and index==math.floor(index) then
+  local p=StaticPopup_FindVisible(popupKind)
+  if p and p.which==popupKind and tonumber(p.data)==index and p.button1 then p.button1:Click() end
+ end
+ return 1
+end)
+f:UnregisterAllEvents()
+f:SetScript('OnEvent',nil)
+f.busy=nil
+return ok and receipt or 0";
         }
 
         [Obsolete("Use GetReturnValues instead. They do the same.")]

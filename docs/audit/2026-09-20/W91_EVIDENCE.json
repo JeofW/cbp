@@ -1,0 +1,273 @@
+{
+  "checkpoint": "W91",
+  "date": "2026-09-20",
+  "timezone": "Asia/Kuala_Lumpur",
+  "repository": "jeofwong/CopilotBuddy-private",
+  "repository_id": 1367174964,
+  "pr": 51,
+  "branch": "audit/next-55-equipment-observation-20260917",
+  "recovered_entry_head": "4d8221048164f5143fb81c308952727843841d85",
+  "tested_revision": "e49d92c5dcbe7febfd213d525d4684e16cc4e4a5",
+  "tested_tree": "4bd7141b6b2bfc42766f68d81f61b6cd9b12d005",
+  "last_production_change": "4d8221048164f5143fb81c308952727843841d85",
+  "direct_master": "b2324913e2499ba30b239dd67224ca2c655c05cc",
+  "documentation_note": "Containing commit is documentation-only; resolve publication SHA from direct refs. It is not a new tested source revision.",
+  "capability": {
+    "pr": 58,
+    "commit": "3d48849ed1089fa84c69fce66bd4695056abca4d",
+    "state": "closed",
+    "merged": false,
+    "branch": "audit/capability-check-20260920-writes-returned",
+    "repeated": false,
+    "repository_archived": false,
+    "branch_deleted": false
+  },
+  "backup": {
+    "branch": "audit/backup-pr51-before-w91-publication-tests-20260920",
+    "sha": "4d8221048164f5143fb81c308952727843841d85"
+  },
+  "recovered_commits": [
+    "8acfe20a61c3be582c1ecaed2536d6c0d02db1ea",
+    "26f72a74641df79d3b588aca9752bd6c08abf12f",
+    "7a22e985591f50478949671fef16723726b0c056",
+    "4d8221048164f5143fb81c308952727843841d85"
+  ],
+  "recovered_red": {
+    "run": 35515748662,
+    "artifact": 10606648206,
+    "scheduler_pass": 33,
+    "scheduler_total": 46,
+    "assertions": 13,
+    "unexpected": 0,
+    "integrated_pass": 16
+  },
+  "failed_intermediates": [
+    {
+      "commit": "26f72a74641df79d3b588aca9752bd6c08abf12f",
+      "run": 35517634299,
+      "artifact": 10607840779,
+      "scheduler": "12/46;34 assertions;0 unexpected",
+      "requests": "0/18;18 assertions;0 unexpected",
+      "constructor_lifecycle": "0/12;0 assertions;12 unexpected",
+      "inventory": "5/16",
+      "integrated": "16/17",
+      "correction": "Narrow bypass to resolved cache entry; restore cache before raw/player recheck."
+    },
+    {
+      "commit": "7a22e985591f50478949671fef16723726b0c056",
+      "run": 35518487122,
+      "artifact": 10606928748,
+      "scheduler": "46/46",
+      "requests": "18/18",
+      "constructor_lifecycle": "12/12",
+      "inventory": "5/16",
+      "integrated": "16/17",
+      "correction": "Retain reflected legacy completion signature separately from live accepted-metadata predicate."
+    }
+  ],
+  "matched_production_pair": {
+    "base": "w91-8acfe20a-red.zip",
+    "head": "w91-4d822104-integrated.zip",
+    "inputs_each": [
+      1837,
+      1837
+    ],
+    "added_inputs": [],
+    "removed_inputs": [],
+    "changed_inputs": [
+      "runtime-snapshot/Bots/WholesomeAutoQuest-master/QuestScheduler.cs"
+    ],
+    "normalized_each": [
+      155,
+      155
+    ],
+    "normalized_added": [],
+    "normalized_removed": [],
+    "normalized_changed": []
+  },
+  "new_test_commit": {
+    "sha": "e49d92c5dcbe7febfd213d525d4684e16cc4e4a5",
+    "parent": "4d8221048164f5143fb81c308952727843841d85",
+    "path": "Tools/WholesomeQuestRecoveryRegressionTests/QuestStrategySchedulerRegressionTests.cs",
+    "blob": "ad268592568fcd1c388d29f7527195fa99974c70",
+    "additions": 97,
+    "deletions": 0,
+    "previous_cases_retained": 46,
+    "new_cases": 7,
+    "production_changed": false,
+    "passed_case_lines": [
+      "PASS quest strategy scheduler: published credit: unchanged contents retain actual execution permission",
+      "PASS quest strategy scheduler: published credit: different creature revokes old work and permits fresh recovery",
+      "PASS quest strategy scheduler: published credit: different requirement revokes old work and permits fresh recovery",
+      "PASS quest strategy scheduler: published credit: ambiguous duplicate revokes old work and permits fresh recovery",
+      "PASS quest strategy scheduler: published credit: missing credit revokes old work and permits fresh recovery",
+      "PASS quest strategy scheduler: published credit: a new successful load replaces the old permission",
+      "PASS quest strategy scheduler: published credit: raw progress revokes permission before replanning"
+    ]
+  },
+  "new_test_comparison": {
+    "base": "w91-4d822104-integrated.zip",
+    "head": "w91-e49d92c5-integrated.zip",
+    "inputs_each": [
+      1837,
+      1837
+    ],
+    "added_inputs": [],
+    "removed_inputs": [],
+    "changed_inputs": [
+      "Tools/WholesomeQuestRecoveryRegressionTests/QuestStrategySchedulerRegressionTests.cs"
+    ],
+    "normalized_each": [
+      155,
+      155
+    ],
+    "normalized_added": [],
+    "normalized_removed": [],
+    "normalized_changed": [
+      "normalized/WholesomeQuestRecoveryRegressionTests/W42Normalized/QuestStrategySchedulerRegressionTests.cs",
+      "normalized/WholesomeQuestRecoveryRegressionTests/W42Normalized/normalization-manifest.json"
+    ]
+  },
+  "final_integrated": {
+    "run": 35520704343,
+    "job": 106104166109,
+    "artifact": 10608605681,
+    "conclusion": "success",
+    "entries_pass": 17,
+    "entries_total": 17,
+    "scheduler": "53/53",
+    "generated_matching_requests": "18/18",
+    "gossip": "58/58",
+    "constructor_lifecycle": "12/12",
+    "inventory": "16/16",
+    "named_assertions": 0,
+    "named_unexpected": 0,
+    "architecture": "x86",
+    "game_attached": false
+  },
+  "final_host": {
+    "run": 35520704378,
+    "artifact": 10607949414,
+    "conclusion": "success",
+    "exit": 0,
+    "warnings": 3344,
+    "errors": 0,
+    "tests_run": false,
+    "game_attached": false
+  },
+  "archives": [
+    {
+      "file": "w91-8acfe20a-red.zip",
+      "bytes": 862214,
+      "sha256": "b0c32d576f85ea9fa414f15ffd7504f8f16e6c856929b7404b79c4d82e3311dc",
+      "commit": "8acfe20a61c3be582c1ecaed2536d6c0d02db1ea",
+      "run": 35515748662,
+      "artifact": 10606648206,
+      "zip_members": 200,
+      "inner_hashes_verified": 199
+    },
+    {
+      "file": "w91-26f72a74-intermediate.zip",
+      "bytes": 872126,
+      "sha256": "cf20aa615f39d7eb56cd0841696338ff5e80a33d46898faaec519261861065d2",
+      "commit": "26f72a74641df79d3b588aca9752bd6c08abf12f",
+      "run": 35517634299,
+      "artifact": 10607840779,
+      "zip_members": 200,
+      "inner_hashes_verified": 199
+    },
+    {
+      "file": "w91-7a22e985-intermediate.zip",
+      "bytes": 862201,
+      "sha256": "c32e7a2d7ce9154269fa630078bfaf60c45bff038b6c8eb5d055cc11372b8aeb",
+      "commit": "7a22e985591f50478949671fef16723726b0c056",
+      "run": 35518487122,
+      "artifact": 10606928748,
+      "zip_members": 200,
+      "inner_hashes_verified": 199
+    },
+    {
+      "file": "w91-4d822104-integrated.zip",
+      "bytes": 860731,
+      "sha256": "f992d088c8230d71aa138c373c182de43220c35c744664c87af364c7ac08cdd2",
+      "commit": "4d8221048164f5143fb81c308952727843841d85",
+      "run": 35519011748,
+      "artifact": 10607583038,
+      "zip_members": 200,
+      "inner_hashes_verified": 199
+    },
+    {
+      "file": "w91-4d822104-host.zip",
+      "bytes": 86607,
+      "sha256": "f1fcbd5397442e99ff7b9f67a9282b7e5caf9cefbe79ab5a7a63cccda1c157d2",
+      "commit": "4d8221048164f5143fb81c308952727843841d85",
+      "run": 35519011762,
+      "artifact": 10607268580,
+      "zip_members": 4,
+      "inner_hashes_verified": 0
+    },
+    {
+      "file": "w91-e49d92c5-integrated.zip",
+      "bytes": 863155,
+      "sha256": "cebaac98103e38482340db66640ef5e71d73edb44d3462fa3d0523d7f8c8fa3e",
+      "commit": "e49d92c5dcbe7febfd213d525d4684e16cc4e4a5",
+      "run": 35520704343,
+      "artifact": 10608605681,
+      "zip_members": 200,
+      "inner_hashes_verified": 199
+    },
+    {
+      "file": "w91-e49d92c5-host.zip",
+      "bytes": 87351,
+      "sha256": "89eed41acaa5a98a0cbf1275eef2cc52e627192836be85041558956d4d9d6cec",
+      "commit": "e49d92c5dcbe7febfd213d525d4684e16cc4e4a5",
+      "run": 35520704378,
+      "artifact": 10607949414,
+      "zip_members": 4,
+      "inner_hashes_verified": 0
+    }
+  ],
+  "outer_hashes_and_crc_verified": 7,
+  "integrated_inner_hashes_verified": 995,
+  "all_manifest_members_covered": true,
+  "evidence_limits": [
+    "Live ordinary completion identity is verified offline, not a general special-action mapper.",
+    "V1 ObjectiveProgress remains deferred; exact fields unchanged.",
+    "W89 real compiler/wrapper, W90 controlled matching owners and W91 publication permissions are separate layers.",
+    "No native item/Lua request, original client, server receipt or independent reviewer.",
+    "New7 cases are coverage expansion on unchanged production, not a new production red/green pair.",
+    "Legacy pure-snapshot compatibility fallback remains separate and unreachable by live metadata capture."
+  ],
+  "open_gates": [
+    "R03 source-backed recipe mapping and continuous matching compiler/wrapper/request/acknowledgment",
+    "R04 physical cursor/popup/full lifecycle",
+    "R07 compiler dependencies/static-state reload/atomic refresh",
+    "R06 native/original-client acceptance",
+    "All earlier independent/supervised/final acceptance gates"
+  ],
+  "retained_history": [
+    "W90",
+    "W89",
+    "W88",
+    "W87",
+    "W86",
+    "W80_CHECKPOINT",
+    "W80_EVIDENCE",
+    "W80_COMMIT_LEDGER",
+    "All four original-client/core/provenance/addon policies",
+    "HANDOFF_POLICY"
+  ],
+  "w80_review_restarted": false,
+  "original_client": "3.3.5a/build12340",
+  "primary_core": "TrinityCore3.3.5",
+  "secondary_core": "AzerothCore WotLK",
+  "publishing_worked": true,
+  "local_CSharp_execution": false,
+  "assertions_weakened": false,
+  "blind_rerun": false,
+  "merged": false,
+  "master_written": false,
+  "deployed": false,
+  "installed_files_replaced": false,
+  "conditional_merge_authority": "Retained, subject to every final gate, direct refs, backup, exact preview and exact-source/exact-head validation."
+}

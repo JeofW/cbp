@@ -1,4 +1,4 @@
-﻿// Behavior originally contributed by HighVoltz.
+// Behavior originally contributed by HighVoltz.
 //
 // WIKI DOCUMENTATION:
 //      http://www.thebuddyforum.com/mediawiki/index.php?title=Honorbuddy_Custom_Behavior:_EquipItem
@@ -84,6 +84,21 @@ namespace Styx.Bot.Quest_Behaviors
         private bool _isBehaviorDone;
         private bool _isDisposed;
         private Composite _root;
+        private static readonly TimeSpan EquipTimeout = TimeSpan.FromSeconds(10);
+        private ulong _pendingEquipGuid;
+        private LocalPlayer _pendingEquipPlayer;
+        private ulong _pendingEquipPlayerGuid;
+        private uint _pendingEquipEntry;
+        private InventorySlot _pendingEquipSlot = InventorySlot.None;
+        private int _pendingSourceBag = -1;
+        private int _pendingSourceSlot = -1;
+        private DateTime _pendingEquipSince;
+        private bool _pendingEquipSubmitted;
+
+        private bool HasPendingEquip
+        {
+            get { return _pendingEquipGuid != 0 && _pendingEquipEntry != 0; }
+        }
 
         // DON'T EDIT THESE--they are auto-populated by Subversion
         public override string SubversionId { get { return ("$Id: EquipItem.cs 217 2012-02-11 16:52:02Z Nesox $"); } }
@@ -127,24 +142,232 @@ namespace Styx.Bot.Quest_Behaviors
         {
             return _root ??
                 (_root = new PrioritySelector(
-                    new Action(c =>
-                    {
-                        if (Slot == InventorySlot.None)
-                        {
-                            Lua.DoString("EquipItemByName (\"" + ItemId + "\")");
-                        }
-                        else
-                        {
-                            WoWItem item = ObjectManager.Me.BagItems.FirstOrDefault(i => i.Entry == ItemId);
-                            if (item != null)
-                            {
-                                Lua.DoString("PickupContainerItem({0},{1}) EquipCursorItem({2})",
-                                    item.BagIndex + 1, item.BagSlot + 1, (int)Slot);
-                            }
-                        }
-                        _isBehaviorDone = true;
-                    })
+                    new Action(c => TickPendingEquip())
                 ));
+        }
+
+        private RunStatus TickPendingEquip()
+        {
+            if (_isBehaviorDone || _isDisposed)
+            {
+                ResetPendingEquip();
+                return RunStatus.Success;
+            }
+
+            if (HasPendingEquip)
+            {
+                if (!OwnsPendingEquipContext())
+                {
+                    // Revocation releases only managed intent, not client cursor state.
+                    ResetPendingEquip();
+                    return RunStatus.Success;
+                }
+
+                if (DateTime.UtcNow - _pendingEquipSince >= EquipTimeout)
+                {
+                    LogMessage("error",
+                        "EquipItem timed out waiting for equipment/cursor completion for item {0} ({1}), slot {2}.",
+                        _pendingEquipGuid, _pendingEquipEntry, _pendingEquipSlot);
+                    RestoreOwnedCursorToSource();
+                    ResetPendingEquip();
+                    _isBehaviorDone = true;
+                    return RunStatus.Success;
+                }
+
+                if (!OwnsPendingEquipContext())
+                {
+                    // Revalidate admission before observing equipment or cleaning up.
+                    ResetPendingEquip();
+                    return RunStatus.Success;
+                }
+
+                if (IsPendingEquipAcknowledged())
+                {
+                    if (ReturnDisplacedCursorToSource())
+                    {
+                        LogMessage("info", "Equipped item {0} ({1}) successfully.",
+                            _pendingEquipGuid, _pendingEquipEntry);
+                        ResetPendingEquip();
+                        _isBehaviorDone = true;
+                    }
+                    return RunStatus.Success;
+                }
+
+                if (!_pendingEquipSubmitted && _pendingEquipSlot != InventorySlot.None)
+                    _pendingEquipSubmitted = SubmitOwnedCursorEquip();
+
+                return RunStatus.Success;
+            }
+
+            if (!CanEquipNow())
+                return RunStatus.Success;
+
+            var player = StyxWoW.Me;
+            WoWItem item = player.CarriedItems.FirstOrDefault(ret => ret.Entry == ItemId);
+            if (item == null || !item.IsValid)
+            {
+                LogMessage("error", "Unable to find a valid carried item with id {0}.", ItemId);
+                _isBehaviorDone = true;
+                return RunStatus.Success;
+            }
+
+            _pendingEquipPlayer = player;
+            _pendingEquipPlayerGuid = player.Guid;
+            _pendingEquipGuid = item.Guid;
+            _pendingEquipEntry = item.Entry;
+            _pendingEquipSlot = Slot;
+            _pendingEquipSince = DateTime.UtcNow;
+            _pendingEquipSubmitted = false;
+
+            if (!OwnsPendingEquipContext())
+            {
+                ResetPendingEquip();
+                return RunStatus.Success;
+            }
+
+            if (Slot == InventorySlot.None)
+            {
+                Lua.DoString("EquipItemByName(\"{0}\")", ItemId);
+                _pendingEquipSubmitted = true;
+                return RunStatus.Success;
+            }
+
+            int sourceBag, sourceSlot;
+            if (!item.TryPickUp(out sourceBag, out sourceSlot))
+            {
+                ResetPendingEquip();
+                return RunStatus.Success;
+            }
+
+            _pendingSourceBag = sourceBag;
+            _pendingSourceSlot = sourceSlot;
+            _pendingEquipSubmitted = SubmitOwnedCursorEquip();
+            return RunStatus.Success;
+        }
+
+        private bool CanEquipNow()
+        {
+            var player = StyxWoW.Me;
+            if (_isDisposed || _isBehaviorDone || !TreeRoot.IsRunning || !StyxWoW.IsInGame ||
+                player == null || !player.IsValid || player.Guid == 0 || !player.IsAlive || player.IsGhost)
+                return false;
+
+            ulong playerGuid = player.Guid;
+            // This explicit profile action may be needed during combat. Retain its
+            // original quest requirements rather than borrowing AutoEquip's policy.
+            return UtilIsProgressRequirementsMet(QuestId, QuestRequirementInLog, QuestRequirementComplete) &&
+                ReferenceEquals(StyxWoW.Me, player) && player.IsValid && player.Guid == playerGuid &&
+                player.IsAlive && !player.IsGhost && TreeRoot.IsRunning && StyxWoW.IsInGame &&
+                !_isDisposed && !_isBehaviorDone;
+        }
+
+        private bool OwnsPendingEquipContext()
+        {
+            if (!HasPendingEquip || !CanEquipNow())
+                return false;
+
+            return _pendingEquipPlayer != null && _pendingEquipPlayerGuid != 0 &&
+                ReferenceEquals(StyxWoW.Me, _pendingEquipPlayer) &&
+                _pendingEquipPlayer.Guid == _pendingEquipPlayerGuid;
+        }
+
+        private bool SubmitOwnedCursorEquip()
+        {
+            if (!HasPendingEquip || !OwnsPendingEquipContext() || _pendingEquipSlot == InventorySlot.None)
+                return false;
+
+            return Lua.TryEquipCursorItem(_pendingEquipGuid, _pendingEquipEntry, (int)_pendingEquipSlot);
+        }
+
+        private bool IsPendingEquipAcknowledged()
+        {
+            if (!OwnsPendingEquipContext() || StyxWoW.Me == null ||
+                StyxWoW.Me.Inventory == null || StyxWoW.Me.Inventory.Equipped == null)
+                return false;
+
+            WoWItem[] equipped = StyxWoW.Me.Inventory.Equipped.Items;
+            if (equipped == null)
+                return false;
+
+            if (_pendingEquipSlot == InventorySlot.None)
+                return equipped.Any(item => item != null && item.Guid == _pendingEquipGuid);
+
+            int index = (int)_pendingEquipSlot - 1;
+            return index >= 0 && index < equipped.Length &&
+                equipped[index] != null &&
+                equipped[index].Guid == _pendingEquipGuid;
+        }
+
+        private bool ReturnDisplacedCursorToSource()
+        {
+            if (!OwnsPendingEquipContext())
+                return false;
+
+            if (_pendingSourceBag < 0 || _pendingSourceSlot <= 0)
+                return !CursorHasAnyItem();
+
+            string script = string.Format(
+                System.Globalization.CultureInfo.InvariantCulture,
+                "local cursorType,cursorItemId=GetCursorInfo(); " +
+                "if not cursorType then return 1 end; " +
+                "if cursorType~='item' or not CursorHasItem() then return 0 end; " +
+                "if tonumber(cursorItemId)=={0} then return 0 end; " +
+                "if GetContainerItemLink({1},{2}) then return 0 end; " +
+                "PickupContainerItem({1},{2}); return not CursorHasItem() and 1 or 0",
+                _pendingEquipEntry, _pendingSourceBag, _pendingSourceSlot);
+            try
+            {
+                return Lua.GetReturnVal<int>(script, 0U) == 1;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private void RestoreOwnedCursorToSource()
+        {
+            if (!OwnsPendingEquipContext() || _pendingSourceBag < 0 || _pendingSourceSlot <= 0 || _pendingEquipEntry == 0)
+                return;
+            try
+            {
+                Lua.DoString(string.Format(
+                    System.Globalization.CultureInfo.InvariantCulture,
+                    "local cursorType,cursorItemId=GetCursorInfo(); " +
+                    "if cursorType=='item' and CursorHasItem() and tonumber(cursorItemId)=={0} " +
+                    "and not GetContainerItemLink({1},{2}) then PickupContainerItem({1},{2}) end",
+                    _pendingEquipEntry, _pendingSourceBag, _pendingSourceSlot));
+            }
+            catch
+            {
+            }
+        }
+
+        private static bool CursorHasAnyItem()
+        {
+            try
+            {
+                // Only receipt 2 proves an observed empty cursor. Missing or invalid
+                // responses become 0 in the bridge and must remain busy/unknown.
+                return Lua.GetReturnVal<int>("return CursorHasItem() and 1 or 2", 0U) != 2;
+            }
+            catch
+            {
+                return true;
+            }
+        }
+
+        private void ResetPendingEquip()
+        {
+            _pendingEquipPlayer = null;
+            _pendingEquipPlayerGuid = 0;
+            _pendingEquipGuid = 0;
+            _pendingEquipEntry = 0;
+            _pendingEquipSlot = InventorySlot.None;
+            _pendingSourceBag = -1;
+            _pendingSourceSlot = -1;
+            _pendingEquipSince = DateTime.MinValue;
+            _pendingEquipSubmitted = false;
         }
 
 

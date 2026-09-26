@@ -1,0 +1,302 @@
+{
+  "checkpoint": "W95",
+  "date": "2026-09-26",
+  "timezone": "Asia/Kuala_Lumpur",
+  "repository": "JeofW/cbp",
+  "repository_id": 1367174964,
+  "pr": 51,
+  "branch": "audit/next-55-equipment-observation-20260917",
+  "prior_checkpoint": "f9ac86989f465237ccc3391651b1a875bcabbe57",
+  "red_revision": "f0ebc5a5a91802668c4548b21c626ab5d86904d6",
+  "tested_revision": "d917c90c11a0b416d3052bd45531902534f23000",
+  "tested_tree": "dc60e248fe044da93ce70bb34f85d47a72b0b39b",
+  "direct_master": "b2324913e2499ba30b239dd67224ca2c655c05cc",
+  "production_file": {
+    "path": "Styx/Plugins/PluginContainer.cs",
+    "blob": "d2da1657a0d3fb853828d91df3e8e38b7b310863",
+    "sha256": "5a99feb5e3d04592b231eda5541a11b8728e5b11a2f3f6cef64bc13a011c34c7"
+  },
+  "fixture": {
+    "path": "Tools/WholesomeQuestRecoveryRegressionTests/PluginContainerLifecycleRegressionTests.cs",
+    "blob": "284e9681437630d709a0a53be9d723b358c5a25c",
+    "sha256": "e17e38c98af430b33cc956968ba81d06ea56589c1ddf6eab6a11c6ef26bdc25b",
+    "unchanged_red_to_green": true
+  },
+  "comparison": {
+    "inspected_at_utc": "2026-09-26T06:16:48.7291477Z",
+    "red": {
+      "source": "f0ebc5a5a91802668c4548b21c626ab5d86904d6",
+      "tree": "1dd37e4b869a542eb97d869821fd4d493f3ef3cd",
+      "run": 36222740538,
+      "job": 108350921858,
+      "artifact": 10898844556,
+      "sha256": "bfd7e2ebcdcfaa8e86bb56c9e22b6fef3181aa5ffb683744611feca9c7a9e434",
+      "bytes": 875535,
+      "members": 203,
+      "inner_hashes": 202,
+      "inputs": 1840,
+      "passed": 2,
+      "total": 12,
+      "assertions": 10,
+      "unexpected": 0,
+      "aggregate_passed": 16
+    },
+    "green": {
+      "source": "d917c90c11a0b416d3052bd45531902534f23000",
+      "tree": "dc60e248fe044da93ce70bb34f85d47a72b0b39b",
+      "run": 36223013392,
+      "job": 108351682376,
+      "artifact": 10900190012,
+      "sha256": "c5399c58645f930d0bce015d68262832a0d457082e66b17f147c98e2479c6be7",
+      "bytes": 875074,
+      "members": 203,
+      "inner_hashes": 202,
+      "inputs": 1840,
+      "passed": 12,
+      "total": 12,
+      "assertions": 0,
+      "unexpected": 0,
+      "aggregate_passed": 17,
+      "results": [
+        {
+          "build": 0,
+          "suite": "QuestRecoveryRegressionTests",
+          "harness_error": null,
+          "game_attached": false,
+          "architecture": "x86",
+          "run": 0
+        },
+        {
+          "build": 0,
+          "run": 0,
+          "architecture": "x86",
+          "suite": "Singular",
+          "game_attached": false
+        },
+        {
+          "build": 0,
+          "suite": "WholesomeQuestRecoveryRegressionTests",
+          "harness_error": null,
+          "game_attached": false,
+          "architecture": "x86",
+          "run": 0
+        },
+        {
+          "build": 0,
+          "suite": "QuestRecoveryAdapterRegressionTests",
+          "harness_error": null,
+          "game_attached": false,
+          "architecture": "x86",
+          "run": 0
+        },
+        {
+          "build": 0,
+          "suite": "QuestPickupPolicyRegressionTests",
+          "harness_error": null,
+          "game_attached": false,
+          "architecture": "x86",
+          "run": 0
+        },
+        {
+          "build": 0,
+          "suite": "VendorCoreRegressionTests",
+          "harness_error": null,
+          "game_attached": false,
+          "architecture": "x86",
+          "run": 0
+        },
+        {
+          "build": 0,
+          "suite": "NativeContractRegressionTests",
+          "harness_error": null,
+          "game_attached": false,
+          "architecture": "x86",
+          "run": 0
+        },
+        {
+          "build": 0,
+          "suite": "ShutdownBoundaryRegressionTests",
+          "harness_error": null,
+          "game_attached": false,
+          "architecture": "x86",
+          "run": 0
+        },
+        {
+          "build": 0,
+          "suite": "Elevator",
+          "harness_error": null,
+          "game_attached": false,
+          "architecture": "x86",
+          "run": 0
+        },
+        {
+          "build": 0,
+          "suite": "PaladinDecisions",
+          "harness_error": null,
+          "game_attached": false,
+          "architecture": "x86",
+          "run": 0
+        },
+        {
+          "build": 0,
+          "suite": "GroupEngagement",
+          "harness_error": null,
+          "game_attached": false,
+          "architecture": "x86",
+          "run": 0
+        },
+        {
+          "build": 0,
+          "suite": "PaladinSupport",
+          "harness_error": null,
+          "game_attached": false,
+          "architecture": "x86",
+          "run": 0
+        },
+        {
+          "build": 0,
+          "suite": "WholesomeSale",
+          "harness_error": null,
+          "game_attached": false,
+          "architecture": "x86",
+          "run": 0
+        },
+        {
+          "build": 0,
+          "suite": "QuestLogObservationRegressionTests",
+          "harness_error": null,
+          "game_attached": false,
+          "architecture": "x86",
+          "run": 0
+        },
+        {
+          "build": 0,
+          "suite": "QuestCompletionOwnerRegressionTests",
+          "harness_error": null,
+          "game_attached": false,
+          "architecture": "x86",
+          "run": 0
+        },
+        {
+          "build": 0,
+          "suite": "QuestObservationBoundaryRegressionTests",
+          "harness_error": null,
+          "game_attached": false,
+          "architecture": "x86",
+          "run": 0
+        },
+        {
+          "build": 0,
+          "run": 0,
+          "suite": "Analyzers",
+          "game_attached": false
+        }
+      ]
+    },
+    "source_comparison": {
+      "added": [],
+      "removed": [],
+      "changed": [
+        "Styx/Plugins/PluginContainer.cs"
+      ]
+    },
+    "normalized_comparison": {
+      "red_count": 158,
+      "green_count": 158,
+      "changed": [],
+      "removed": []
+    },
+    "retained_log_lines": [
+      "Plugin cached construction scenarios: 7/7; assertions=0; unexpected=0; actual PluginManager methods and separately compiled types; controlled compiler results; no installed plugins or game attached.",
+      "Plugin container lifecycle scenarios: 12/12; assertions=0; unexpected=0; actual container/refresh/pulse and SourceCompiler; generated plugins; no game attached.",
+      "Plugin fresh compilation scenarios: 8/8; assertions=0; unexpected=0; actual public PluginManager and SourceCompiler; temporary source; no installed plugins or game attached.",
+      "Plugin refresh reuse scenarios: 9/9; assertions=0; unexpected=0; production PluginManager boundary with controlled compile delegate; no Roslyn or game attached.",
+      "Plugin refresh preparation scenarios: 6/6; assertions=0; unexpected=0; actual public refresh/compiler/cache; hosted output directory; no game attached.",
+      "RETAINED_REWARD_LIFETIME: 18/18; assertions=0; unexpected=0; original cases unchanged.",
+      "Reward Lua51 boundary scenarios: 33/33; assertions=0; unexpected=0; full tracked reward owner, actual generated Lua, extracted production load-size and verbatim managed conversion; stock Lua5.1 C API; controlled UI; no original client/native hook/server."
+    ],
+    "limits": [
+      "Actual container/refresh/pulse/compiler, generated plugins in hosted test output; no installed plugin or game execution.",
+      "No separate ZIP CRC check; host archives have no inner manifest.",
+      "Settled lifecycle state and cleanup tested; concurrent callbacks, arbitrary side-effect rollback and preservation of previous set after replacement activation failure are not established."
+    ]
+  },
+  "host": {
+    "red": {
+      "verified_at_utc": "2026-09-26T06:08:50.7414135Z",
+      "repository": "JeofW/cbp",
+      "repository_id": 1367174964,
+      "run": 36222740571,
+      "jobs": [
+        {
+          "id": 108350922012,
+          "name": "host-build",
+          "status": "completed",
+          "conclusion": "success",
+          "labels": [
+            "windows-latest"
+          ],
+          "runner_name": "GitHub Actions 1000000452"
+        }
+      ],
+      "run_conclusion": "success",
+      "source": "f0ebc5a5a91802668c4548b21c626ab5d86904d6",
+      "artifact": 10900030678,
+      "artifact_name": "audit-validation-f0ebc5a5a91802668c4548b21c626ab5d86904d6",
+      "archive": "D:\\Dev\\CopilotBuddy-Evidence\\w95-red-host-f0ebc5a5.zip",
+      "sha256": "247e0eca206984c3c24beb2e46891e8a227d5e15bf83f94090bca55b10905db6",
+      "metadata_digest": "sha256:247e0eca206984c3c24beb2e46891e8a227d5e15bf83f94090bca55b10905db6",
+      "bytes": 82419
+    },
+    "green": {
+      "verified_at_utc": "2026-09-26T06:14:19.900346Z",
+      "repository": "JeofW/cbp",
+      "repository_id": 1367174964,
+      "run": 36223013395,
+      "jobs": [
+        {
+          "id": 108351682327,
+          "name": "host-build",
+          "status": "completed",
+          "conclusion": "success",
+          "labels": [
+            "windows-latest"
+          ],
+          "runner_name": "GitHub Actions 1000000453"
+        }
+      ],
+      "run_conclusion": "success",
+      "source": "d917c90c11a0b416d3052bd45531902534f23000",
+      "artifact": 10899199346,
+      "artifact_name": "audit-validation-d917c90c11a0b416d3052bd45531902534f23000",
+      "archive": "D:\\Dev\\CopilotBuddy-Evidence\\w95-green-host-d917c90c.zip",
+      "sha256": "849260b1c9f10e75ac110fc0a0b0dbb3fd2a34ad44421c5d227746b9e9f46d34",
+      "metadata_digest": "sha256:849260b1c9f10e75ac110fc0a0b0dbb3fd2a34ad44421c5d227746b9e9f46d34",
+      "bytes": 82966
+    },
+    "exit": 0,
+    "warnings": 3344,
+    "errors": 0,
+    "tests_run": false,
+    "game_attached": false,
+    "members_each": 4,
+    "inner_manifest": false
+  },
+  "status": "R07_NAMED_LIFECYCLE_FAILURES_VERIFIED_OFFLINE; FULL_AUDIT_IN_PROGRESS",
+  "self_review": "Direct source/fixture review; not independent acceptance",
+  "subagents_used": false,
+  "local_project_execution": false,
+  "merged": false,
+  "deployed": false,
+  "open_gates": [
+    "R07 actual compiler references/effective options and explicit static-state/reload semantics",
+    "R07 concurrent/reentrant lifecycle and previous-set preservation after replacement activation failure; arbitrary side effects are not transactional",
+    "R03 independent special-action credit mapping and native matching-recipient request/ack; preserve ObjectiveProgress deferral",
+    "R04 physical displaced/foreign cursor, same-slot popup and lifecycle",
+    "R06 same-content menu generation and native bridge concurrency",
+    "R08 shared native/client/server and retained broader Wholesome/navigation/Singular/independent/supervised acceptance"
+  ],
+  "next_task": "Reproduce DLL-only cache staleness through public RefreshPlugins using actual compiler references; share actual resolver/effective options for cache identity and explicitly test/document static-state reload policy. Read R07_COMPILER_INPUTS_INVESTIGATION_20260926.md.",
+  "documentation_note": "Containing checkpoint publication is documentation-only, distinct from tested_revision. Preserve W94/W93 and earlier evidence.",
+  "hosted_input_hashes_matched_local_source": 1840
+}

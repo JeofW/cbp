@@ -6,6 +6,10 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.Metadata;
+using System.Reflection.PortableExecutable;
+using System.Security.Cryptography;
+using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
@@ -19,6 +23,8 @@ namespace Styx.Loaders
     internal class SourceCompiler
     {
         private readonly long _timestamp;
+        private bool _sourcesPrepared;
+        private static readonly MetadataReferenceProperties ReferenceProperties = MetadataReferenceProperties.Assembly;
 
         public SourceCompiler(string path)
         {
@@ -222,47 +228,88 @@ namespace Styx.Loaders
             }
         }
 
-        /// <summary>
-        /// Compiles the source files using Roslyn compiler.
-        /// </summary>
-        /// <returns>The compiler results.</returns>
-        public CompilerResults Compile()
+        private void PrepareSources()
         {
+            if (_sourcesPrepared)
+                return;
             CollectSourceFiles();
             ParseCompilerOptions();
+            _sourcesPrepared = true;
+        }
 
-            if (SourceFilePaths.Count == 0)
+        private static CSharpParseOptions CreateParseOptions() => new CSharpParseOptions(LanguageVersion.Latest);
+
+        private CSharpCompilationOptions CreateCompilationOptions() =>
+            new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary)
+                .WithOptimizationLevel(Options.CompilerOptions?.Contains("/optimise") == true
+                    ? OptimizationLevel.Release : OptimizationLevel.Debug)
+                .WithPlatform(Platform.AnyCpu);
+
+        // Cache identity follows the same selected references/options as Compile.
+        // Output paths/timestamps and unused CodeDom settings are not inputs to Roslyn.
+        internal string ComputeCompilationInputFingerprint()
+        {
+            PrepareSources();
+            var references = new List<string>();
+            ResolveReferences<string>(path =>
             {
-                return null;
-            }
-
-            // Add to trusted assemblies list
-            AssemblyVerifier.TrustedAssemblies.Add(Path.GetFileNameWithoutExtension(AssemblyName));
-
-            // Parse all source files into syntax trees
-            var syntaxTrees = new List<SyntaxTree>();
-            foreach (var sourceFile in SourceFilePaths)
+                // Keep rejected image bytes in the identity too. Replacing an
+                // invalid reference must not look like unchanged missing input.
+                references.Add(Path.GetFullPath(path));
+                return ValidateReferencePath(path);
+            }, path => path);
+            var parse = CreateParseOptions();
+            var options = CreateCompilationOptions();
+            using (var manifest = IncrementalHash.CreateHash(HashAlgorithmName.SHA256))
             {
-                try
+                void Add(string value)
                 {
-                    var code = File.ReadAllText(sourceFile);
-                    var syntaxTree = CSharpSyntaxTree.ParseText(code,
-                        path: sourceFile,
-                        options: new CSharpParseOptions(LanguageVersion.Latest));
-                    syntaxTrees.Add(syntaxTree);
+                    byte[] bytes = Encoding.UTF8.GetBytes(value);
+                    manifest.AppendData(BitConverter.GetBytes(bytes.Length));
+                    manifest.AppendData(bytes);
                 }
-                catch (Exception ex)
-                {
-                    // Create error result
-                    var errorResults = new CompilerResults(new TempFileCollection(Path.GetTempPath()));
-                    errorResults.Errors.Add(new CompilerError(sourceFile, 0, 0, "Parse", 
-                        $"Failed to parse source file: {ex.Message}"));
-                    return errorResults;
-                }
-            }
 
+                Add("Roslyn-inputs-v1");
+                Add(parse.LanguageVersion.ToString());
+                Add(parse.Kind.ToString());
+                Add(parse.DocumentationMode.ToString());
+                Add(string.Join("\0", parse.PreprocessorSymbolNames.OrderBy(s => s, StringComparer.Ordinal)));
+                Add(options.OutputKind.ToString());
+                Add(options.OptimizationLevel.ToString());
+                Add(options.Platform.ToString());
+                Add(ReferenceProperties.Kind.ToString());
+                Add(ReferenceProperties.EmbedInteropTypes.ToString());
+                Add(string.Join("\0", ReferenceProperties.Aliases));
+                foreach (string reference in references.OrderBy(path => path, StringComparer.Ordinal))
+                {
+                    Add(reference);
+                    using (var stream = File.OpenRead(reference))
+                    {
+                        Add(Convert.ToHexString(SHA256.HashData(stream)));
+                    }
+                }
+                return Convert.ToHexString(manifest.GetHashAndReset()).ToLowerInvariant();
+            }
+        }
+
+        private static string ValidateReferencePath(string path)
+        {
+            // Cache checks must not retain Roslyn's unmanaged metadata blocks.
+            // Validate one image at a time and release it before hashing inputs.
+            using (var stream = File.OpenRead(path))
+            using (var image = new PEReader(stream, PEStreamOptions.PrefetchMetadata))
+            {
+                if (!image.HasMetadata || !image.GetMetadataReader().IsAssembly)
+                    throw new BadImageFormatException("Reference is not a managed assembly.", path);
+            }
+            return Path.GetFullPath(path);
+        }
+
+        private List<TReference> ResolveReferences<TReference>(
+            Func<string, TReference> createReference, Func<TReference, string> getPath)
+        {
             // Collect references from loaded assemblies
-            var references = new List<MetadataReference>();
+            var references = new List<TReference>();
             foreach (var assemblyPath in Options.ReferencedAssemblies)
             {
                 try
@@ -299,7 +346,7 @@ namespace Styx.Loaders
                     if (string.IsNullOrWhiteSpace(resolvedPath) || !File.Exists(resolvedPath))
                         continue;
 
-                    references.Add(MetadataReference.CreateFromFile(resolvedPath));
+                    references.Add(createReference(resolvedPath));
                 }
                 catch
                 {
@@ -337,9 +384,9 @@ namespace Styx.Loaders
                 foreach (var refName in essentialRefs)
                 {
                     var refPath = Path.Combine(runtimeDir, refName);
-                    if (File.Exists(refPath) && !references.Any(r => r.Display?.Contains(refName) == true))
+                    if (File.Exists(refPath) && !references.Any(r => getPath(r)?.Contains(refName) == true))
                     {
-                        references.Add(MetadataReference.CreateFromFile(refPath));
+                        references.Add(createReference(refPath));
                     }
                 }
             }
@@ -349,9 +396,9 @@ namespace Styx.Loaders
             if (appDir != null)
             {
                 var drawingCommonPath = Path.Combine(appDir, "System.Drawing.Common.dll");
-                if (File.Exists(drawingCommonPath) && !references.Any(r => r.Display?.Contains("System.Drawing.Common") == true))
+                if (File.Exists(drawingCommonPath) && !references.Any(r => getPath(r)?.Contains("System.Drawing.Common") == true))
                 {
-                    references.Add(MetadataReference.CreateFromFile(drawingCommonPath));
+                    references.Add(createReference(drawingCommonPath));
                 }
 
                 // WCF assemblies ship via NuGet (System.ServiceModel.* packages) and are
@@ -367,26 +414,63 @@ namespace Styx.Loaders
                 foreach (var asmName in wcfAssemblies)
                 {
                     var asmPath = Path.Combine(appDir, asmName);
-                    if (File.Exists(asmPath) && !references.Any(r => r.Display?.Contains(asmName) == true))
+                    if (File.Exists(asmPath) && !references.Any(r => getPath(r)?.Contains(asmName) == true))
                     {
-                        references.Add(MetadataReference.CreateFromFile(asmPath));
+                        references.Add(createReference(asmPath));
                     }
                 }
             }
 
-            // Determine optimization level from compiler options
-            var optimizationLevel = Options.CompilerOptions?.Contains("/optimise") == true
-                ? OptimizationLevel.Release
-                : OptimizationLevel.Debug;
+            return references;
+        }
+
+        /// <summary>
+        /// Compiles the source files using Roslyn compiler.
+        /// </summary>
+        /// <returns>The compiler results.</returns>
+        public CompilerResults Compile()
+        {
+            PrepareSources();
+
+            if (SourceFilePaths.Count == 0)
+            {
+                return null;
+            }
+
+            // Add to trusted assemblies list
+            AssemblyVerifier.TrustedAssemblies.Add(Path.GetFileNameWithoutExtension(AssemblyName));
+
+            // Parse all source files into syntax trees
+            var syntaxTrees = new List<SyntaxTree>();
+            foreach (var sourceFile in SourceFilePaths)
+            {
+                try
+                {
+                    var code = File.ReadAllText(sourceFile);
+                    var syntaxTree = CSharpSyntaxTree.ParseText(code,
+                        path: sourceFile,
+                        options: CreateParseOptions());
+                    syntaxTrees.Add(syntaxTree);
+                }
+                catch (Exception ex)
+                {
+                    // Create error result
+                    var errorResults = new CompilerResults(new TempFileCollection(Path.GetTempPath()));
+                    errorResults.Errors.Add(new CompilerError(sourceFile, 0, 0, "Parse",
+                        $"Failed to parse source file: {ex.Message}"));
+                    return errorResults;
+                }
+            }
+
+            var references = ResolveReferences<MetadataReference>(
+                path => MetadataReference.CreateFromFile(path, ReferenceProperties), reference => reference.Display);
 
             // Create compilation
             var compilation = CSharpCompilation.Create(
                 assemblyName: Path.GetFileNameWithoutExtension(AssemblyName),
                 syntaxTrees: syntaxTrees,
                 references: references,
-                options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary)
-                    .WithOptimizationLevel(optimizationLevel)
-                    .WithPlatform(Platform.AnyCpu));
+                options: CreateCompilationOptions());
 
             // Emit to a temp file so the loaded assembly has a valid Location.
             // Assembly.Load(bytes) produces an assembly with empty Location, which breaks any
