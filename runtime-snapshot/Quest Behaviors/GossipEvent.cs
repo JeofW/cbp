@@ -193,9 +193,9 @@ namespace Styx.Bot.Quest_Behaviors.GossipEvent
                 guid);
             try
             {
-                return Lua.GetReturnVal<bool>(
+                return Lua.GetReturnVal<int>(
                     "return (UnitGUID('npc') == '" + expected + "') and 1 or 0",
-                    0U);
+                    0U) == 1;
             }
             catch
             {
@@ -266,8 +266,8 @@ namespace Styx.Bot.Quest_Behaviors.GossipEvent
 
         // Original 3.3.5 FrameXML consumes option pairs, available-quest groups of
         // five and active-quest groups of four. Keep raw order, types and counts.
-        // Hex bytes avoid script quoting/UTF-8 length hazards; no lossy hash or
-        // client-global menu lease is introduced. Limits are local safety budgets.
+        // Hex bytes avoid script quoting/UTF-8 length hazards; no lossy content
+        // hash is used. Limits are local safety budgets.
         private const string MenuObservationLua = @"
 local parts, bytes = {}, 0
 local function add(stride, ...)
@@ -295,7 +295,36 @@ local observed = table.concat(parts, '|')
 if #observed > 32768 then return 0 end
 ";
 
-        private string BuildGossipMenuObservationLua()
+        // One observer per Lua session, reused across behavior instances/retries.
+        // Events revoke the capture token instead of maintaining a wrapping count.
+        // It holds no managed owner, and disposal must not unregister a shared
+        // observer another behavior may already be using. Mutation never creates it.
+        private const string CreateMenuObserverLua = @"
+if observer == nil then
+    observer = CreateFrame('Frame')
+    observer.cbVersion = 1
+    observer.cbInvalidate = function(self) self.cbToken = nil end
+    observer:SetScript('OnEvent', observer.cbInvalidate)
+    observer:RegisterEvent('GOSSIP_SHOW')
+    observer:RegisterEvent('GOSSIP_CLOSED')
+    observer:RegisterEvent('PLAYER_ENTERING_WORLD')
+    CB_GossipObservation = observer
+end
+";
+
+        private const string ValidateMenuObserverLua = @"
+local function currentObserver()
+    return observer and observer.cbVersion == 1 and type(observer.cbInvalidate) == 'function'
+        and observer:GetScript('OnEvent') == observer.cbInvalidate
+        and observer:IsEventRegistered('GOSSIP_SHOW')
+        and observer:IsEventRegistered('GOSSIP_CLOSED')
+        and observer:IsEventRegistered('PLAYER_ENTERING_WORLD')
+        and CB_GossipObservation == observer
+end
+if not currentObserver() then return 0 end
+";
+
+        private string BuildGossipMenuObservationLua(string captureToken = null)
         {
             string npc = string.Format(System.Globalization.CultureInfo.InvariantCulture,
                 "0x{0:X16}", _interactionGuid);
@@ -303,7 +332,18 @@ if #observed > 32768 then return 0 end
                 "0x{0:X16}", _ownerGuid);
             string context = "if not GossipFrame or not GossipFrame:IsShown() or UnitGUID('npc') ~= '" +
                 npc + "' or UnitGUID('player') ~= '" + actor + "' then return 0 end; ";
-            return context + MenuObservationLua + context;
+            string initialize = captureToken == null ? string.Empty : CreateMenuObserverLua;
+            string capture = captureToken == null ? string.Empty :
+                "observer.cbToken = '" + captureToken + "'; ";
+            return context + "local observer = CB_GossipObservation; " + initialize +
+                ValidateMenuObserverLua + capture +
+                "local token = observer.cbToken; " +
+                "if type(token) ~= 'string' or #token ~= 32 or token:find('[^0-9a-f]') then return 0 end; " +
+                "local observerId = tostring(observer):gsub('.', function(c) return string.format('%02x', string.byte(c)) end); " +
+                MenuObservationLua + context +
+                "if not currentObserver() or observer.cbToken ~= token then return 0 end; " +
+                "observed = token .. ':' .. observerId .. '|' .. observed; " +
+                "if #observed > 32768 then return 0 end; ";
         }
 
         private bool TryCaptureGossipMenu()
@@ -319,7 +359,7 @@ if #observed > 32768 then return 0 end
                 // The host reads only 512 bytes per returned string. A bounded
                 // multi-return observation avoids truncation without changing the
                 // shared native bridge; every chunk belongs to this one request.
-                var values = Lua.GetReturnValues(BuildGossipMenuObservationLua() +
+                var values = Lua.GetReturnValues(BuildGossipMenuObservationLua(Guid.NewGuid().ToString("N")) +
                     "local chunks = {tostring(#observed)}; " +
                     "for i = 1, #observed, 480 do chunks[#chunks+1] = string.sub(observed, i, i+479) end; " +
                     "return unpack(chunks)");
@@ -357,13 +397,14 @@ if #observed > 32768 then return 0 end
                 return false;
             try
             {
-                // Reobserve and compare before mutation in the same client request.
+                // Reobserve content, observer identity and the unreplaced capture
+                // token before mutation in the same client request.
                 // Numeric results survive the host's lua_tolstring return bridge.
                 string request = BuildGossipMenuObservationLua() +
                     "if observed ~= '" + observed + "' then return 0 end; " + command;
                 if (!OwnsActor() || interaction != _interactionGuid || observed != _observedGossipMenu)
                     return false;
-                bool submitted = Lua.GetReturnVal<bool>(request, 0U);
+                bool submitted = Lua.GetReturnVal<int>(request, 0U) == 1;
                 return submitted && OwnsActor() && interaction == _interactionGuid &&
                     observed == _observedGossipMenu;
             }
