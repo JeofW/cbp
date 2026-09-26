@@ -46,7 +46,8 @@ namespace Styx.Plugins
         // Assemblies loaded into the default context cannot be unloaded. Recompiling
         // identical source on each manual Refresh permanently retains another plugin
         // assembly. Cache only a fully-constructed compiled type set and create fresh
-        // plugin instances for an unchanged source fingerprint.
+        // plugin instances for unchanged source and compilation inputs. Reused
+        // types retain their static state; this is not an assembly unload/reload.
         private static readonly object PluginSourceCacheLock = new object();
         private static readonly Dictionary<string, PluginSourceCacheEntry> PluginSourceCache =
             new Dictionary<string, PluginSourceCacheEntry>(StringComparer.OrdinalIgnoreCase);
@@ -368,7 +369,7 @@ namespace Styx.Plugins
                 throw new ArgumentNullException(nameof(compiler));
 
             string key = Path.GetFullPath(path);
-            string before = ComputePluginSourceFingerprint(key);
+            string before = ComputePluginCompilationFingerprint(key);
             lock (PluginSourceCacheLock)
             {
                 PluginSourceCacheEntry cached;
@@ -390,7 +391,7 @@ namespace Styx.Plugins
                 if (loaded.Count > 0 && !complete)
                     throw new InvalidOperationException("Plugin compilation returned an incomplete constructed type set.");
 
-                string after = ComputePluginSourceFingerprint(key);
+                string after = ComputePluginCompilationFingerprint(key);
                 if (complete && string.Equals(before, after, StringComparison.Ordinal))
                 {
                     lock (PluginSourceCacheLock)
@@ -412,6 +413,13 @@ namespace Styx.Plugins
                 DisposeConstructedPlugins(loaded);
                 throw;
             }
+        }
+
+        private static string ComputePluginCompilationFingerprint(string path)
+        {
+            string source = ComputePluginSourceFingerprint(path);
+            var compiler = new Styx.Loaders.SourceCompiler(path);
+            return source + ":" + compiler.ComputeCompilationInputFingerprint();
         }
 
         private static bool TryGetCompletePluginTypes(
