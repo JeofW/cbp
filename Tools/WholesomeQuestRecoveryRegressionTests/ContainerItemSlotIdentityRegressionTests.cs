@@ -88,6 +88,7 @@ internal static class ContainerItemSlotIdentityRegressionTests
                 string region=source.Substring(start,Math.Min(3200,source.Length-start));
                 int revalidate=region.IndexOf("IsContainerLocationCurrent",StringComparison.Ordinal);
                 int luaCall=region.IndexOf("Lua.GetReturnVal<bool>",StringComparison.Ordinal);
+                if(luaCall<0)luaCall=region.IndexOf("Lua.GetReturnVal<int>",StringComparison.Ordinal);
                 Check(revalidate>=0&&luaCall>revalidate,
                     "container GUID slot is not revalidated before Lua submission");
             }),
@@ -171,6 +172,7 @@ internal static class ContainerItemSlotIdentityRegressionTests
                 int revalidate=region.IndexOf("IsContainerLocationCurrent",StringComparison.Ordinal);
                 int builder=region.IndexOf("BuildValidatedContainerPickupLua",StringComparison.Ordinal);
                 int luaCall=region.IndexOf("Lua.GetReturnVal<bool>",StringComparison.Ordinal);
+                if(luaCall<0)luaCall=region.IndexOf("Lua.GetReturnVal<int>",StringComparison.Ordinal);
                 Check(resolveCall>=0&&revalidate>resolveCall&&builder>revalidate&&luaCall>builder,
                     "TryPickUp does not retain one validated GUID/slot identity through Lua submission");
             }),

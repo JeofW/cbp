@@ -94,7 +94,7 @@ public static class Lua
         Requests.Add(script);var change=DuringRequest;DuringRequest=null;change?.Invoke();
     }
     public static void DoString(string format,params object[] args){Record(args.Length==0?format:string.Format(format,args));}
-    public static T GetReturnVal<T>(string script,uint index){Record(script);return (T)(object)true;}
+    public static T GetReturnVal<T>(string script,uint index){Record(script);return typeof(T)==typeof(int)?(T)(object)1:(T)(object)true;}
 }
 public sealed class ContinuationProbe
 {

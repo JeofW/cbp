@@ -144,7 +144,7 @@ internal static class RewardLua51Boundary
     private static string Describe(Observation? o) => o == null ? "no request" :
         $"load={o.Load}, call={o.Call}, clicks={o.Clicks}, UTF8-bytes={o.Bytes}, passed-size={o.Size}, error={o.Error}";
     private static void Check(bool value, string message) { if (!value) throw new Failure(message); }
-    private sealed class Observation
+    internal sealed class Observation
     {
         internal int Load, Call, Clicks, Bytes;
         internal uint Size;
@@ -152,7 +152,7 @@ internal static class RewardLua51Boundary
         internal readonly List<string> Values = new();
     }
 
-    private sealed class StockLua51 : IDisposable
+    internal sealed class StockLua51 : IDisposable
     {
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)] private delegate IntPtr NewState();
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)] private delegate void StateAction(IntPtr state);
@@ -231,7 +231,7 @@ internal static class RewardLua51Boundary
             if (process.ExitCode != 0) throw new InvalidOperationException("Lua test preparation failed: " + process.ExitCode);
             return Path.Combine(destination, "lua51.dll");
         }
-        internal Observation Execute(string script, uint size, string mode, string[] links)
+        internal Observation Execute(string script, uint size, string mode, string[] links, string? setupScript = null)
         {
             IntPtr state = create();
             if (state == IntPtr.Zero) throw new InvalidOperationException("luaL_newstate failed");
@@ -246,7 +246,7 @@ internal static class RewardLua51Boundary
                     setField(state, Globals, Encoding.ASCII.GetBytes(key + "\0"));
                 }
                 Global("scenario", mode); Global("link1", links[0]); Global("link2", links[1]);
-                byte[] setup = Encoding.ASCII.GetBytes(Setup);
+                byte[] setup = Encoding.UTF8.GetBytes(setupScript ?? Setup);
                 if (load(state, setup, (UIntPtr)(uint)setup.Length, Name) != 0 || call(state, 0, 0, 0) != 0)
                     throw new InvalidOperationException("Controlled original-frame setup failed: " + Read(state, -1));
                 setTop(state, 0);

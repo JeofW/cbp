@@ -93,7 +93,7 @@ public static class Lua
 {
     public static int Requests;
     public static void DoString(string format,params object[] args){Requests++;}
-    public static T GetReturnVal<T>(string script,uint index){Requests++;return (T)(object)true;}
+    public static T GetReturnVal<T>(string script,uint index){Requests++;return typeof(T)==typeof(int)?(T)(object)1:(T)(object)true;}
 }
 public sealed class EquipItemContextProbe
 {
