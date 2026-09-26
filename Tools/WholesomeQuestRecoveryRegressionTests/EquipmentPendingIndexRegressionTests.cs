@@ -56,6 +56,7 @@ internal static class EquipmentPendingIndexRegressionTests
                 (Mode:"index-seven", Submits:1, Confirms:1),
                 (Mode:"auto-index-zero", Submits:1, Confirms:1),
                 (Mode:"no-bind", Submits:1, Confirms:0),
+                (Mode:"cache-missing", Submits:0, Confirms:0),
                 (Mode:"preexisting", Submits:0, Confirms:0),
                 (Mode:"two-events", Submits:1, Confirms:0),
                 (Mode:"cursor-changed", Submits:1, Confirms:0),
@@ -152,6 +153,7 @@ end
 if scenario=='preexisting' then popup=MakePopup(16) end
 function StaticPopup_FindVisible(kind) if popup and popup.which==kind then return popup end end
 function GetCursorInfo() return 'item',100 end
+function GetItemInfo(entry) assert(entry==100);if scenario~='cache-missing' then return 'item' end end
 function CursorHasItem() return true end
 function CursorCanGoInSlot(slot) assert(slot==16);return true end
 function IsInventoryItemLocked(slot) assert(slot==16);return false end

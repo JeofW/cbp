@@ -19,7 +19,7 @@ internal static class AutoEquipPendingContextRegressionTests
         var markers = new[]
         {
             "private void BeginEquip(", "private void TickPendingEquip()",
-            "private bool SubmitOwnedCursorEquip()", "private void ConfirmOwnedEquipPopup()",
+            "private bool SubmitOwnedCursorEquip()",
             "private void ResetPendingEquip()"
         };
         string methods = string.Join("\n", markers.Select(m => Method(source, m)));
@@ -39,13 +39,13 @@ internal static class AutoEquipPendingContextRegressionTests
             var assembly = (Assembly)compilerType.GetProperty("CompiledAssembly")!.GetValue(compiler)!;
             MethodInfo execute = assembly.GetType("AutoEquipContextProbe", true)!.GetMethod("Execute")!;
             foreach (string state in new[] { "active", "stopped", "combat", "dead", "ghost", "invalid", "world", "battleground", "replacement", "guid", "missing", "disposed" })
-            foreach (string operation in new[] { "tick", "confirm", "submit" })
+            foreach (string operation in new[] { "tick", "submit" })
             {
                 total++;
                 try
                 {
                     int[] actual = (int[])execute.Invoke(null, new object[] { state, operation })!;
-                    int expectedRequests = state == "active" ? 1 : 0;
+                    int expectedRequests = state == "active" && operation == "submit" ? 1 : 0;
                     if (actual[0] != expectedRequests)
                         throw new Failure("Lua requests=" + actual[0] + "; expected=" + expectedRequests);
                     if (operation == "tick" && actual[1] != (state == "active" ? 1 : 0))
@@ -95,6 +95,7 @@ public sealed class WoWItem
 public static class Lua
 {
     public static int Requests;
+    public static bool TryEquipCursorItem(ulong guid,uint entry,int slot){Requests++;return true;}
     public static void DoString(string format,params object[] args){Requests++;}
     public static T GetReturnVal<T>(string script,uint index){Requests++;return typeof(T)==typeof(int)?(T)(object)1:(T)(object)true;}
 }
@@ -148,7 +149,6 @@ public sealed class AutoEquipContextProbe
             if(!owner.HasPendingEquip||!owner._pendingEquipSubmitted)throw new InvalidOperationException("valid admission failed before controlled mutation");
             Lua.Requests=0;owner.Change(state);
             if(operation=="tick")owner.TickPendingEquip();
-            else if(operation=="confirm")owner.ConfirmOwnedEquipPopup();
             else owner.SubmitOwnedCursorEquip();
         }
         return new[]{Lua.Requests,owner.HasPendingEquip?1:0,owner.Restores};

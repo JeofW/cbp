@@ -33,7 +33,10 @@ internal static class EquipmentLua51BoundaryRegressionTests
                 (Path: "runtime-snapshot/Plugins/AutoEquip2/AutoEquip.cs", Name: "AutoEquipProbe") })
                 owners += "public sealed class " + source.Name + " {\n" + OwnerFields +
                     Methods(File.ReadAllText(Path.Combine(root, source.Path)), "SubmitOwnedCursorEquip", "ReturnDisplacedCursorToSource", "CursorHasAnyItem") + OwnerCalls + "}\n";
-            File.WriteAllText(Path.Combine(directory, "Probe.cs"), Prefix + pickup + "}\n" + owners);
+            string equipmentBridge = "public static partial class Lua {\n" +
+                Methods(File.ReadAllText(Path.Combine(root, "Styx/WoWInternals/Lua.cs")),
+                    "TryEquipCursorItem", "BuildEquipCursorSubmissionLua") + "}\n";
+            File.WriteAllText(Path.Combine(directory, "Probe.cs"), Prefix + pickup + "}\n" + owners + equipmentBridge);
             Type compilerType = typeof(Styx.StyxWoW).Assembly.GetType("Styx.Loaders.SourceCompiler", true)!;
             object compiler = Activator.CreateInstance(compilerType, new object[] { directory })!;
             var result = (CompilerResults)compilerType.GetMethod("Compile")!.Invoke(compiler, null)!;
@@ -149,13 +152,17 @@ public sealed class Inventory { public WoWContainer Backpack=new WoWContainer();
 public sealed class LocalPlayer { public Inventory Inventory=new Inventory();public WoWContainer GetBagAtIndex(uint index)=>null; }
 public static class StyxWoW { public static LocalPlayer Me=new LocalPlayer(); }
 public static class Logging { public static void WriteDebug(string format,params object[] args){} }
-public static class Lua { public static T GetReturnVal<T>(string script,uint index)=>RewardRecordedBridge.GetReturnVal<T>(script,index); }
+public static partial class Lua {
+ public static T GetReturnVal<T>(string script,uint index)=>RewardRecordedBridge.GetReturnVal<T>(script,index);
+ public static System.Collections.Generic.List<string> GetReturnValuesCore(string script,string name,ulong guid)=>RewardRecordedBridge.GetReturnValues(script);
+}
 public sealed class PickupProbe
 {
     public ulong Guid=>200;public uint Entry=>100;public bool IsValid=>true;public string Name=>"Probe";
 """;
     private const string OwnerFields = """
     private uint _pendingEquipEntry=100;
+    private ulong _pendingEquipGuid=200;
     private InventorySlot _pendingEquipSlot=InventorySlot.HeadSlot;
     private int _pendingSourceBag=0,_pendingSourceSlot=1;
     private bool HasPendingEquip=>true;
@@ -174,6 +181,11 @@ public sealed class PickupProbe
 """;
     private const string Setup = """
 clicks=0
+function StaticPopup_FindVisible(kind) return nil end
+function GetItemInfo(entry) assert(entry==100);return 'item' end
+function CreateFrame()
+ return {RegisterEvent=function() end,UnregisterAllEvents=function() end,SetScript=function() end}
+end
 local kind,id=nil,nil
 local link=nil
 if string.sub(scenario,1,6)=='pickup' then

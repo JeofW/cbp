@@ -20,7 +20,7 @@ internal static class EquipItemContinuationBoundaryRegressionTests
         {
             "private RunStatus TickPendingEquip()", "private bool CanEquipNow()",
             "private bool OwnsPendingEquipContext()", "private bool SubmitOwnedCursorEquip()",
-            "private void ConfirmOwnedEquipPopup()", "private bool IsPendingEquipAcknowledged()",
+            "private bool IsPendingEquipAcknowledged()",
             "private bool ReturnDisplacedCursorToSource()", "private void RestoreOwnedCursorToSource()",
             "private static bool CursorHasAnyItem()", "private void ResetPendingEquip()"
         }.Select(marker => Method(source, marker)));
@@ -87,6 +87,7 @@ public static class StyxWoW { public static LocalPlayer Me=new LocalPlayer();pub
 public static class TreeRoot { public static bool IsRunning=true; }
 public static class Lua
 {
+    public static bool TryEquipCursorItem(ulong guid,uint entry,int slot){Record("owned cursor submission");return true;}
     public static readonly List<string> Requests=new List<string>();
     public static Action DuringRequest;
     private static void Record(string script)
@@ -176,21 +177,23 @@ public sealed class ContinuationProbe
                 }
             });
         foreach(string state in new[]{"stopped","replacement","quest","world","disposed"})
-            Case(state+" during confirmation",()=>
+            Case(state+" during retry submission",()=>
             {
-                var owner=Fresh();Lua.DuringRequest=()=>owner.Change(state);owner.TickPendingEquip();
-                Check(Lua.Requests.Count==1,"cursor-return request followed revocation during confirmation");
-                Check(LocalPlayer.InventoryReads==0,"equipment was observed after confirmation revoked context");
+                var owner=Fresh();owner._pendingEquipSubmitted=false;owner._pendingEquipGuid=201;
+                Lua.DuringRequest=()=>{owner.Change(state);LocalPlayer.InventoryReads=0;};owner.TickPendingEquip();owner.TickPendingEquip();
+                Check(Lua.Requests.Count==1,"cursor-return request followed revocation during submission");
+                Check(LocalPlayer.InventoryReads==0,"equipment was observed after submission revoked context");
                 Check(!owner.HasPendingEquip&&!owner._isBehaviorDone,"revoked work was retained or marked completed");
             });
         Case("active acknowledged transaction completes",()=>
         {
             var owner=Fresh();owner.TickPendingEquip();
-            Check(owner._isBehaviorDone&&!owner.HasPendingEquip&&Lua.Requests.Count==2,"valid acknowledgement/return lost normal completion");
+            Check(owner._isBehaviorDone&&!owner.HasPendingEquip&&Lua.Requests.Count==1,"valid acknowledgement/return lost normal completion");
         });
-        Case("stop during confirmation allows later readmission",()=>
+        Case("stop during retry submission allows later readmission",()=>
         {
-            var owner=Fresh();Lua.DuringRequest=()=>owner.Change("stopped");owner.TickPendingEquip();
+            var owner=Fresh();owner._pendingEquipSubmitted=false;owner._pendingEquipGuid=201;
+            Lua.DuringRequest=()=>owner.Change("stopped");owner.TickPendingEquip();owner.TickPendingEquip();
             TreeRoot.IsRunning=true;Lua.Requests.Clear();owner.TickPendingEquip();
             Check(!owner._isBehaviorDone&&owner.HasPendingEquip&&Lua.Requests.Count==1,"revocation became permanent completion instead of fresh readmission");
         });

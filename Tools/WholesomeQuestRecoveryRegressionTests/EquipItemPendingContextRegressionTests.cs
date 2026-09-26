@@ -19,7 +19,7 @@ internal static class EquipItemPendingContextRegressionTests
         string methods = string.Join("\n", new[]
         {
             "private RunStatus TickPendingEquip()", "private bool SubmitOwnedCursorEquip()",
-            "private void ConfirmOwnedEquipPopup()", "private void ResetPendingEquip()"
+            "private void ResetPendingEquip()"
         }.Select(marker => Method(source, marker)));
         foreach (string optional in new[] { "private bool CanEquipNow()", "private bool OwnsPendingEquipContext()" })
             if (source.Contains(optional, StringComparison.Ordinal)) methods += "\n" + Method(source, optional);
@@ -92,6 +92,7 @@ public static class TreeRoot { public static bool IsRunning=true; }
 public static class Lua
 {
     public static int Requests;
+    public static bool TryEquipCursorItem(ulong guid,uint entry,int slot){Requests++;return true;}
     public static void DoString(string format,params object[] args){Requests++;}
     public static T GetReturnVal<T>(string script,uint index){Requests++;return typeof(T)==typeof(int)?(T)(object)1:(T)(object)true;}
 }
@@ -163,7 +164,7 @@ public sealed class EquipItemContextProbe
             catch(Exception e){unexpected++;Console.Error.WriteLine("ERROR EquipItem context: "+name+": "+e);}
         }
         foreach(string state in new[]{"active","combat","stopped","dead","ghost","invalid","world","replacement","guid","missing","disposed","finished","quest"})
-        foreach(string operation in new[]{"tick","confirm","submit"})
+        foreach(string operation in new[]{"tick","submit"})
         {
             Case(state+"/"+operation,()=>
             {
@@ -171,10 +172,9 @@ public sealed class EquipItemContextProbe
                 Check(owner.HasPendingEquip&&owner._pendingEquipSubmitted,"valid initial explicit-slot admission failed");
                 Lua.Requests=0;owner.Change(state);
                 if(operation=="tick")owner.Tick();
-                else if(operation=="confirm")owner.ConfirmOwnedEquipPopup();
                 else owner.SubmitOwnedCursorEquip();
                 bool valid=state=="active"||state=="combat";
-                Check(Lua.Requests==(valid?1:0),"request did not retain actor/runtime/quest admission");
+                Check(Lua.Requests==(valid&&operation=="submit"?1:0),"request did not retain actor/runtime/quest admission");
                 if(operation=="tick")Check(owner.HasPendingEquip==valid,"revoked pending identity was retained");
                 Check(owner.Restores==0,"context revocation tried to restore a cursor");
             });

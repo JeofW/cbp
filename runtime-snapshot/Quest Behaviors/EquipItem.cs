@@ -174,12 +174,9 @@ namespace Styx.Bot.Quest_Behaviors
                     return RunStatus.Success;
                 }
 
-                ConfirmOwnedEquipPopup();
-
                 if (!OwnsPendingEquipContext())
                 {
-                    // Confirmation crosses the client boundary; admission before
-                    // that call does not authorize later observation or cleanup.
+                    // Revalidate admission before observing equipment or cleaning up.
                     ResetPendingEquip();
                     return RunStatus.Success;
                 }
@@ -279,42 +276,7 @@ namespace Styx.Bot.Quest_Behaviors
             if (!HasPendingEquip || !OwnsPendingEquipContext() || _pendingEquipSlot == InventorySlot.None)
                 return false;
 
-            string script = string.Format(
-                System.Globalization.CultureInfo.InvariantCulture,
-                "local cursorType,cursorItemId=GetCursorInfo(); " +
-                "if cursorType~='item' or not CursorHasItem() or tonumber(cursorItemId)~={0} then return 0 end; " +
-                "if not CursorCanGoInSlot({1}) or IsInventoryItemLocked({1}) then return 0 end; " +
-                "EquipCursorItem({1}); return 1",
-                _pendingEquipEntry, (int)_pendingEquipSlot);
-            try
-            {
-                return Lua.GetReturnVal<int>(script, 0U) == 1;
-            }
-            catch (Exception error)
-            {
-                LogMessage("warning", "Owned equip submission failed safely: {0}", error.Message);
-                return false;
-            }
-        }
-
-        private void ConfirmOwnedEquipPopup()
-        {
-            if (!HasPendingEquip || !OwnsPendingEquipContext() || !_pendingEquipSubmitted || _pendingEquipSlot == InventorySlot.None)
-                return;
-
-            try
-            {
-                string script = string.Format(
-                    System.Globalization.CultureInfo.InvariantCulture,
-                    "local p=StaticPopup_FindVisible('EQUIP_BIND') or StaticPopup_FindVisible('AUTOEQUIP_BIND'); " +
-                    "if p and tonumber(p.data)=={0} and p.button1 then p.button1:Click() end",
-                    (int)_pendingEquipSlot);
-                Lua.DoString(script);
-            }
-            catch (Exception error)
-            {
-                LogMessage("warning", "Equip confirmation failed safely: {0}", error.Message);
-            }
+            return Lua.TryEquipCursorItem(_pendingEquipGuid, _pendingEquipEntry, (int)_pendingEquipSlot);
         }
 
         private bool IsPendingEquipAcknowledged()

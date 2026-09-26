@@ -28,6 +28,9 @@ namespace Styx.Patchables
         CGInputControl__ToggleControlBit = 6274576, // 0x5FBE10
         
         // Items
+        // Build12340: verified against the native getter at 0x513660 (W102/W103).
+        CursorKind = 0xBD0748,
+        CursorItemGuid = 0xBD0768,
         CGItem_C__Use = 7375904,                // 0x708C20
         CGItem_C__CreateItemLink = 6414992,     // 0x61E290
         CGItem_C__CreateItemLink2 = 6415264,    // 0x61E3A0

@@ -25,8 +25,8 @@ internal static class RewardLua51Boundary
         var owner = root.DescendantNodes().OfType<ClassDeclarationSyntax>()
             .Single(c => c.Identifier.ValueText == "Lua");
         var methods = owner.Members.OfType<MethodDeclarationSyntax>().ToArray();
-        var request = methods.Single(m => m.Identifier.ValueText == "GetReturnValues" &&
-            m.ParameterList.Parameters.Count == 2);
+        var request = methods.SingleOrDefault(m => m.Identifier.ValueText == "GetReturnValuesCore") ??
+            methods.Single(m => m.Identifier.ValueText == "GetReturnValues" && m.ParameterList.Parameters.Count == 2);
         var calls = request.DescendantNodes().OfType<InvocationExpressionSyntax>()
             .Where(i => i.Expression.ToString() == "executor.AddLine").ToArray();
         int first = Array.FindIndex(calls, i => i.ArgumentList.Arguments.Count == 2 &&

@@ -839,7 +839,6 @@ namespace Styx.Bot.Plugins.AutoEquip2
                 return;
             }
 
-            ConfirmOwnedEquipPopup();
             if (!OwnsPendingEquipContext())
             {
                 ResetPendingEquip();
@@ -865,42 +864,7 @@ namespace Styx.Bot.Plugins.AutoEquip2
             if (!OwnsPendingEquipContext() || _pendingEquipSlot == InventorySlot.None)
                 return false;
 
-            string script = string.Format(
-                System.Globalization.CultureInfo.InvariantCulture,
-                "local cursorType,cursorItemId=GetCursorInfo(); " +
-                "if cursorType~='item' or not CursorHasItem() or tonumber(cursorItemId)~={0} then return 0 end; " +
-                "if not CursorCanGoInSlot({1}) or IsInventoryItemLocked({1}) then return 0 end; " +
-                "EquipCursorItem({1}); return 1",
-                _pendingEquipEntry, (int)_pendingEquipSlot);
-            try
-            {
-                return Lua.GetReturnVal<int>(script, 0U) == 1;
-            }
-            catch (Exception error)
-            {
-                LogDebug("Owned equip submission failed safely: {0}", error.Message);
-                return false;
-            }
-        }
-
-        private void ConfirmOwnedEquipPopup()
-        {
-            if (!OwnsPendingEquipContext() || !_pendingEquipSubmitted || _pendingEquipSlot == InventorySlot.None)
-                return;
-
-            try
-            {
-                string script = string.Format(
-                    System.Globalization.CultureInfo.InvariantCulture,
-                    "local p=StaticPopup_FindVisible('EQUIP_BIND') or StaticPopup_FindVisible('AUTOEQUIP_BIND'); " +
-                    "if p and tonumber(p.data)=={0} and p.button1 then p.button1:Click() end",
-                    (int)_pendingEquipSlot);
-                Lua.DoString(script);
-            }
-            catch (Exception error)
-            {
-                LogDebug("Equip confirmation failed safely: {0}", error.Message);
-            }
+            return Lua.TryEquipCursorItem(_pendingEquipGuid, _pendingEquipEntry, (int)_pendingEquipSlot);
         }
 
         private bool IsPendingEquipAcknowledged()
