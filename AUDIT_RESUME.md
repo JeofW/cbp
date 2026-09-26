@@ -1,6 +1,8 @@
+> **Goal status: BLOCKED, 26 September 2026.** Confirmed by update_goal after three consecutive unchanged-blocker goal turns following W101. The objective remains incomplete. Read docs/audit/2026-09-26/W101_BLOCKED_STATUS.md and external LATEST_CONTINUATION.md. Resume substantive work when supported ownership evidence or a new actionable in-scope source finding is available. W101 evidence and source are preserved.
+
 # Resume W101 — local refusal ownership repaired and verified
 
-JeofW/cbp ID1367174964; PR51 OPEN/DRAFT; only branch audit/next-55-equipment-observation-20260917. Workspace D:\Dev\CopilotBuddy-PR51, evidence D:\Dev\CopilotBuddy-Evidence. Active unbudgeted Goal remains incomplete. No subagents.
+JeofW/cbp ID1367174964; PR51 OPEN/DRAFT; only branch audit/next-55-equipment-observation-20260917. Workspace D:\Dev\CopilotBuddy-PR51, evidence D:\Dev\CopilotBuddy-Evidence. Goal is blocked and incomplete. No subagents.
 
 Read external LATEST_CONTINUATION.md, NEXT_CHAT_PROMPT.md, docs/audit/HANDOFF_POLICY.md and docs/audit/2026-09-26/W101_CHECKPOINT.md/W101_EVIDENCE.json/W101_REQUIREMENT_MAPPING.md. Preserve W100–W93 and earlier checkpoints/repairs, W80 ledger and W91/W92 evidence. Do not restart them.
 
