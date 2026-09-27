@@ -158,7 +158,7 @@ public static class Logging
 }
 // A deliberately fake backend address: these controls check unchanged argument
 // order, not the address/ABI of a newly analyzed original-client function.
-namespace Patchables
+public static class Patchables
 {
     public enum GlobalOffsets : uint { Spell_C__CastSpell = 0x00123450 }
 }
