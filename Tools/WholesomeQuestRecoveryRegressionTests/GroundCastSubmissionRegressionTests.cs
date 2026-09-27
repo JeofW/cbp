@@ -72,6 +72,7 @@ public static class SpellManager {
  public static Dictionary<string,WoWSpell> Spells;
  public static bool CanCast(string spell)=>World.CanCast;
  public static bool Cast(string spell){World.Casts++;return World.Accepted;}
+ public static bool ClickRemoteLocation(Point location){LegacySpellManager.ClickRemoteLocation(location);return true;}
 }
 public static class LegacySpellManager {public static void ClickRemoteLocation(Point location){World.Clicks++;}}
 public static class Unit {public static bool IsAreaEffectSafe(string spell,Point location)=>World.Safe;}

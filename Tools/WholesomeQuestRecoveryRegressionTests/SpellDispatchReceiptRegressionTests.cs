@@ -176,6 +176,7 @@ public static class LegacySpellManager
     public static bool CanCast(string name, WoWUnit target, bool checkRange = false) => CanCast(name);
     public static bool CanCast(WoWSpell spell, WoWUnit target, bool checkRange = false) => CanCast(spell.Name);
     private static bool CanCastSpell(string name) => CanCast(name);
+    public static bool ClickRemoteLocation(Point point) { LegacySpellManager.ClickRemoteLocation(point); return true; }
     private static bool GlobalCooldown
     {
         get { World.GlobalCooldownReads++; return false; }
