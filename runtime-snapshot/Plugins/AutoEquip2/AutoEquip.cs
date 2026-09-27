@@ -800,6 +800,12 @@ namespace Styx.Bot.Plugins.AutoEquip2
                 return;
             }
 
+            // A previously selected candidate may already occupy its slot.
+            // Retain pending completion/deadline instead of picking it up again,
+            // and recheck context after observing the equipment.
+            if (IsPendingEquipAcknowledged() || !OwnsPendingEquipContext())
+                return;
+
             if (autoByName || slot == InventorySlot.None)
             {
                 Lua.DoString("EquipItemByName(\"{0}\")", item.Entry);

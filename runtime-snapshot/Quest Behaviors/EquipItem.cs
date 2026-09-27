@@ -226,6 +226,12 @@ namespace Styx.Bot.Quest_Behaviors
                 return RunStatus.Success;
             }
 
+            // CarriedItems includes equipped items. Keep the existing deadline
+            // and let the next pending tick observe cursor release without a
+            // redundant pickup. Recheck context after the equipment observation.
+            if (IsPendingEquipAcknowledged() || !OwnsPendingEquipContext())
+                return RunStatus.Success;
+
             if (Slot == InventorySlot.None)
             {
                 Lua.DoString("EquipItemByName(\"{0}\")", ItemId);
