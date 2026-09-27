@@ -630,8 +630,7 @@ namespace Styx.Logic.Combat
 					castTargetGuid = comboTarget.Guid;
 			}
 
-			CastSpellById(spell.Id, castTargetGuid);
-			return true;
+			return TryCastSpellById(spell.Id, castTargetGuid);
 		}
 
 		/// <summary>Cast a spell by ID on the current target.</summary>
@@ -715,9 +714,8 @@ namespace Styx.Logic.Combat
 			while (list.Count > 0)
 			{
 				int idx = _spellRandom.Next(0, list.Count);
-				if (CanCast(list[idx], target, checkRange))
+				if (CanCast(list[idx], target, checkRange) && Cast(list[idx], target))
 				{
-					Cast(list[idx], target);
 					return true;
 				}
 				list.RemoveAt(idx);
@@ -741,9 +739,8 @@ namespace Styx.Logic.Combat
 			while (list.Count > 0)
 			{
 				int idx = _spellRandom.Next(0, list.Count);
-				if (CanBuff(list[idx], target, checkRange))
+				if (CanBuff(list[idx], target, checkRange) && Buff(list[idx], target))
 				{
-					Buff(list[idx], target);
 					return true;
 				}
 				list.RemoveAt(idx);
@@ -810,13 +807,20 @@ namespace Styx.Logic.Combat
 		/// </summary>
 		public static void CastSpellById(int spellId, ulong targetGuid)
 		{
+			TryCastSpellById(spellId, targetGuid);
+		}
+
+		// A true result records completed local dispatch, not native/server acceptance.
+		// An executor exception also cannot establish that no native effect occurred.
+		private static bool TryCastSpellById(int spellId, ulong targetGuid)
+		{
 			StyxWoW.ResetAfk();
 
 			ExecutorRand? executor = ObjectManager.Executor;
 			if (executor == null)
 			{
 				Logging.WriteDebug("[SpellManager] Invalid executor for CastSpellById");
-				return;
+				return false;
 			}
 
 			// Split 64-bit GUID into two 32-bit halves (HB 4.3.4: Struct72.smethod_4)
@@ -850,10 +854,12 @@ namespace Styx.Logic.Combat
 				long verificationUntil = Environment.TickCount64 + CastAttemptVerificationDelayMs;
 				lock (_cooldownSync)
 					_castVerificationUntilTicks[spellId] = verificationUntil;
+				return true;
 			}
 			catch (Exception ex)
 			{
 				Logging.WriteException(ex);
+				return false;
 			}
 		}
 
@@ -966,7 +972,8 @@ namespace Styx.Logic.Combat
 			if (spell == null)
 				return false;
 
-			CastSpellById(spell.Id, targetGuid);
+			if (!TryCastSpellById(spell.Id, targetGuid))
+				return false;
 
 			if (!returnImmediately)
 			{
