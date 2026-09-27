@@ -1,0 +1,531 @@
+{
+    "checkpoint":  "W105",
+    "verified_at_utc":  "2026-09-27T08:18:50.4514307Z",
+    "status":  "combat_repairs_hosted_verified_remaining_audit_open",
+    "repository":  "JeofW/cbp",
+    "repository_id":  1367174964,
+    "pr":  51,
+    "branch":  "audit/next-55-equipment-observation-20260917",
+    "tested_source":  "500251fc20904b803aed40028c26edc1c8c5da94",
+    "tested_tree":  "e8ef9959a01f39106bd295fa1e229e88a548e997",
+    "production_commit":  "19ac34d3566f94408296b6a1196b02f27f5da943",
+    "behavioral_red":  "538a46c130dda9c37d9c90090e92183042b2f8cf",
+    "master_at_reconciliation":  "b2324913e2499ba30b239dd67224ca2c655c05cc",
+    "artifacts":  [
+                      {
+                          "stage":  "first_test",
+                          "kind":  "integrated",
+                          "source":  "675f787bbafb07f3eb2b8729beda7a0b915562a3",
+                          "run":  36303095404,
+                          "artifact":  10926242534,
+                          "run_conclusion":  "failure",
+                          "jobs":  [
+                                       {
+                                           "id":  108574362587,
+                                           "name":  "combined",
+                                           "status":  "completed",
+                                           "conclusion":  "failure",
+                                           "labels":  [
+                                                          "windows-2022"
+                                                      ],
+                                           "runner_name":  "GitHub Actions 1000000499"
+                                       }
+                                   ],
+                          "archive":  "w105-red-integrated-675f787b.zip",
+                          "bytes":  922871,
+                          "sha256":  "e726f74e0fe3db9d259c607779587f86e817d6f796288c17c0ac17c7111cc780",
+                          "receipt":  "w105-red-integrated-675f787b-receipt.json",
+                          "receipt_sha256":  "1cea63f732f2c87141c8c35067f82ec0375f6c244508b465d035b04e9d47d35f",
+                          "members":  213,
+                          "tree":  "d440e6d93d00edfd2483a068a856fba1869755b9",
+                          "inner_hashes":  212,
+                          "source_inputs":  1850,
+                          "checkout_inputs_matched":  0,
+                          "successful_groups":  16,
+                          "aggregate_groups":  17,
+                          "key_summaries":  [
+                                                "Combat sight movement scenarios: 80/85; assertions=5; unexpected=0; complete tracked Movement and real TreeSharp; controlled world/navigation; no native path or game attached.",
+                                                "Equipment cleanup ownership: 57/57; assertions=0; unexpected=0; actual tracked owners/generated Lua5.1; controlled build12340 cursor transitions and physical dispatch admission; no game/server/native execution.",
+                                                "Equipment physical cursor guard: 8/8; actual generated x86 comparison/branch contract; no game attached or native execution.",
+                                                "Equipment Lua51 boundary scenarios: 87/87; assertions=0; unexpected=0; tracked pickup/equip helpers, actual generated Lua5.1, loader size and verbatim managed conversion; controlled APIs; no physical GUID/client/server proof.",
+                                                "Equipment pending-index scenarios: 24/24; assertions=0; unexpected=0; tracked owner/generated Lua; stock Lua5.1; controlled synchronous events; no native client proof.",
+                                                "Publication scenarios: 21/21; assertions=0; unexpected=0; actual memory/cache/scan/materialization/XML/file/load/running gate; no game attached."
+                                            ],
+                          "failures":  [
+                                           "FAIL aggregate group: AutoAttackStartRegressionTests: System.InvalidOperationException: C:\\Users\\runneradmin\\AppData\\Local\\Temp\\cb-autoattack-start-428d3d683c5f48bca775eecbd9d4bc40\\Probe.cs(8,9) : error CS1028: Unexpected preprocessor directive; C:\\Users\\runneradmin\\AppData\\Local\\Temp\\cb-autoattack-start-428d3d683c5f48bca775eecbd9d4bc40\\Probe.cs(75,2) : error CS1038: #endregion directive expected",
+                                           "FAIL aggregate group: CombatSightMovementRegressionTests: System.InvalidOperationException: Combat sight movement failures"
+                                       ]
+                      },
+                      {
+                          "stage":  "first_test",
+                          "kind":  "host",
+                          "source":  "675f787bbafb07f3eb2b8729beda7a0b915562a3",
+                          "run":  36303095449,
+                          "artifact":  10926466579,
+                          "run_conclusion":  "success",
+                          "jobs":  [
+                                       {
+                                           "id":  108574362812,
+                                           "name":  "host-build",
+                                           "status":  "completed",
+                                           "conclusion":  "success",
+                                           "labels":  [
+                                                          "windows-latest"
+                                                      ],
+                                           "runner_name":  "GitHub Actions 1000000500"
+                                       }
+                                   ],
+                          "archive":  "w105-red-host-675f787b.zip",
+                          "bytes":  82555,
+                          "sha256":  "91547b819dcc4035e9089ccd7d1fc4574f85ba81dfe914de3fafbd45008b172d",
+                          "receipt":  "w105-red-host-675f787b-receipt.json",
+                          "receipt_sha256":  "8a915cd65e91d16ed12a49ee31ec6a233bbcb2ed50a423b468e2ebfbd239db38",
+                          "members":  4,
+                          "result":  {
+                                         "game_attached":  false,
+                                         "tests_run":  false,
+                                         "host_build_exit_code":  0
+                                     },
+                          "build_summary":  [
+                                                "3344 Warning(s)",
+                                                "0 Error(s)"
+                                            ]
+                      },
+                      {
+                          "stage":  "behavioral_red",
+                          "kind":  "integrated",
+                          "source":  "538a46c130dda9c37d9c90090e92183042b2f8cf",
+                          "run":  36303455985,
+                          "artifact":  10926472270,
+                          "run_conclusion":  "failure",
+                          "jobs":  [
+                                       {
+                                           "id":  108575385607,
+                                           "name":  "combined",
+                                           "status":  "completed",
+                                           "conclusion":  "failure",
+                                           "labels":  [
+                                                          "windows-2022"
+                                                      ],
+                                           "runner_name":  "GitHub Actions 1000000502"
+                                       }
+                                   ],
+                          "archive":  "w105-red-integrated-538a46c1.zip",
+                          "bytes":  928457,
+                          "sha256":  "0206fcd89ab111d2837f4d76b2f8102940030e8551cafd4f0341214b12c13ed1",
+                          "receipt":  "w105-red-integrated-538a46c1-receipt.json",
+                          "receipt_sha256":  "219f47c02a7bae1e0c63f70650eda2cc28034790a94b8103f3d240c85be0a460",
+                          "members":  214,
+                          "tree":  "d057906e60b15974ad1719fdc01863d4089ab8df",
+                          "inner_hashes":  213,
+                          "source_inputs":  1851,
+                          "checkout_inputs_matched":  0,
+                          "successful_groups":  16,
+                          "aggregate_groups":  17,
+                          "key_summaries":  [
+                                                "Autoattack startup scenarios: 21/26; assertions=5; unexpected=0; actual Common/LocalPlayer Lua and TreeSharp; stock Lua5.1 with controlled native attack state; no game/server/native execution.",
+                                                "Cast wait facing scenarios: 7/16; assertions=9; unexpected=0; actual WaitForCast overloads and real TreeSharp; controlled cast/facing boundaries; no client/native execution.",
+                                                "Combat sight movement scenarios: 80/85; assertions=5; unexpected=0; complete tracked Movement and real TreeSharp; controlled world/navigation; no native path or game attached.",
+                                                "Equipment cleanup ownership: 57/57; assertions=0; unexpected=0; actual tracked owners/generated Lua5.1; controlled build12340 cursor transitions and physical dispatch admission; no game/server/native execution.",
+                                                "Equipment physical cursor guard: 8/8; actual generated x86 comparison/branch contract; no game attached or native execution.",
+                                                "Equipment Lua51 boundary scenarios: 87/87; assertions=0; unexpected=0; tracked pickup/equip helpers, actual generated Lua5.1, loader size and verbatim managed conversion; controlled APIs; no physical GUID/client/server proof.",
+                                                "Equipment pending-index scenarios: 24/24; assertions=0; unexpected=0; tracked owner/generated Lua; stock Lua5.1; controlled synchronous events; no native client proof.",
+                                                "Publication scenarios: 21/21; assertions=0; unexpected=0; actual memory/cache/scan/materialization/XML/file/load/running gate; no game attached."
+                                            ],
+                          "failures":  [
+                                           "FAIL aggregate group: AutoAttackStartRegressionTests: System.InvalidOperationException: Autoattack startup regression",
+                                           "FAIL aggregate group: CastWaitFacingRegressionTests: System.InvalidOperationException: Cast wait facing regression",
+                                           "FAIL aggregate group: CombatSightMovementRegressionTests: System.InvalidOperationException: Combat sight movement failures"
+                                       ]
+                      },
+                      {
+                          "stage":  "behavioral_red",
+                          "kind":  "host",
+                          "source":  "538a46c130dda9c37d9c90090e92183042b2f8cf",
+                          "run":  36303455974,
+                          "artifact":  10926357398,
+                          "run_conclusion":  "success",
+                          "jobs":  [
+                                       {
+                                           "id":  108575385560,
+                                           "name":  "host-build",
+                                           "status":  "completed",
+                                           "conclusion":  "success",
+                                           "labels":  [
+                                                          "windows-latest"
+                                                      ],
+                                           "runner_name":  "GitHub Actions 1000000501"
+                                       }
+                                   ],
+                          "archive":  "w105-red-host-538a46c1.zip",
+                          "bytes":  83924,
+                          "sha256":  "94bb2a2e8b0e4d1cff4b0752da8e14df402a02e1786cad6e4634b6788bdf847d",
+                          "receipt":  "w105-red-host-538a46c1-receipt.json",
+                          "receipt_sha256":  "84115cf23a221df29883aeaffd37944ec8fa468f733ddf8ca96a87d264e530bf",
+                          "members":  4,
+                          "result":  {
+                                         "tests_run":  false,
+                                         "host_build_exit_code":  0,
+                                         "game_attached":  false
+                                     },
+                          "build_summary":  [
+                                                "3344 Warning(s)",
+                                                "0 Error(s)"
+                                            ]
+                      },
+                      {
+                          "stage":  "production_candidate",
+                          "kind":  "integrated",
+                          "source":  "19ac34d3566f94408296b6a1196b02f27f5da943",
+                          "run":  36303897365,
+                          "artifact":  10926402668,
+                          "run_conclusion":  "failure",
+                          "jobs":  [
+                                       {
+                                           "id":  108576636261,
+                                           "name":  "combined",
+                                           "status":  "completed",
+                                           "conclusion":  "failure",
+                                           "labels":  [
+                                                          "windows-2022"
+                                                      ],
+                                           "runner_name":  "GitHub Actions 1000000503"
+                                       }
+                                   ],
+                          "archive":  "w105-candidate-integrated-19ac34d3.zip",
+                          "bytes":  926004,
+                          "sha256":  "e550eda568990c8de4234e4831bdfd8ddf82f2e9ce1ac681b370fba621375c95",
+                          "receipt":  "w105-candidate-integrated-19ac34d3-receipt.json",
+                          "receipt_sha256":  "2647b08b9fe7b0e347e1e613a7f9baa9fbe41ea56f86f7b9796c714749b09f31",
+                          "members":  214,
+                          "tree":  "2b932189b9ca0adfba574d4ec06ce44d09d155cf",
+                          "inner_hashes":  213,
+                          "source_inputs":  1851,
+                          "checkout_inputs_matched":  0,
+                          "successful_groups":  15,
+                          "aggregate_groups":  17,
+                          "key_summaries":  [
+                                                "Autoattack startup scenarios: 26/26; assertions=0; unexpected=0; actual Common/LocalPlayer Lua and TreeSharp; stock Lua5.1 with controlled native attack state; no game/server/native execution.",
+                                                "Cast wait facing scenarios: 16/16; assertions=0; unexpected=0; actual WaitForCast overloads and real TreeSharp; controlled cast/facing boundaries; no client/native execution.",
+                                                "Combat sight movement scenarios: 85/85; assertions=0; unexpected=0; complete tracked Movement and real TreeSharp; controlled world/navigation; no native path or game attached.",
+                                                "Equipment cleanup ownership: 57/57; assertions=0; unexpected=0; actual tracked owners/generated Lua5.1; controlled build12340 cursor transitions and physical dispatch admission; no game/server/native execution.",
+                                                "Equipment physical cursor guard: 8/8; actual generated x86 comparison/branch contract; no game attached or native execution.",
+                                                "Equipment Lua51 boundary scenarios: 87/87; assertions=0; unexpected=0; tracked pickup/equip helpers, actual generated Lua5.1, loader size and verbatim managed conversion; controlled APIs; no physical GUID/client/server proof.",
+                                                "Equipment pending-index scenarios: 24/24; assertions=0; unexpected=0; tracked owner/generated Lua; stock Lua5.1; controlled synchronous events; no native client proof.",
+                                                "Publication scenarios: 20/21; assertions=1; unexpected=0; actual memory/cache/scan/materialization/XML/file/load/running gate; no game attached."
+                                            ],
+                          "failures":  [
+                                           "FAIL publication assertion: unwritable destination reaches actual file writer rather than failing the fixture: QuestPublicationRegressionTests+AssertionFailure: error was not from real profile file writer",
+                                           "FAIL aggregate group: QuestPublicationRegressionTests: System.InvalidOperationException: Publication regressions: assertions=1; unexpected=0"
+                                       ]
+                      },
+                      {
+                          "stage":  "production_candidate",
+                          "kind":  "host",
+                          "source":  "19ac34d3566f94408296b6a1196b02f27f5da943",
+                          "run":  36303897383,
+                          "artifact":  10927030111,
+                          "run_conclusion":  "success",
+                          "jobs":  [
+                                       {
+                                           "id":  108576636330,
+                                           "name":  "host-build",
+                                           "status":  "completed",
+                                           "conclusion":  "success",
+                                           "labels":  [
+                                                          "windows-latest"
+                                                      ],
+                                           "runner_name":  "GitHub Actions 1000000504"
+                                       }
+                                   ],
+                          "archive":  "w105-candidate-host-19ac34d3.zip",
+                          "bytes":  82630,
+                          "sha256":  "9f710bf473676edb208fc799b27d90f3b432a3ce0ca2704f962681365454747f",
+                          "receipt":  "w105-candidate-host-19ac34d3-receipt.json",
+                          "receipt_sha256":  "fe9c514b869b6612b76f0cb0cdc3718fe312354993354962d6713f84a6601e1c",
+                          "members":  4,
+                          "result":  {
+                                         "game_attached":  false,
+                                         "host_build_exit_code":  0,
+                                         "tests_run":  false
+                                     },
+                          "build_summary":  [
+                                                "3344 Warning(s)",
+                                                "0 Error(s)"
+                                            ]
+                      },
+                      {
+                          "stage":  "validated_source",
+                          "kind":  "integrated",
+                          "source":  "500251fc20904b803aed40028c26edc1c8c5da94",
+                          "run":  36304366416,
+                          "artifact":  10926403153,
+                          "run_conclusion":  "success",
+                          "jobs":  [
+                                       {
+                                           "id":  108577948896,
+                                           "name":  "combined",
+                                           "status":  "completed",
+                                           "conclusion":  "success",
+                                           "labels":  [
+                                                          "windows-2022"
+                                                      ],
+                                           "runner_name":  "GitHub Actions 1000000506"
+                                       }
+                                   ],
+                          "archive":  "w105-green-integrated-500251fc.zip",
+                          "bytes":  926788,
+                          "sha256":  "2310125276d58d288469b7b179a9f7769717998c5e68a87f2e669ae2e4b63d8f",
+                          "receipt":  "w105-green-integrated-500251fc-receipt.json",
+                          "receipt_sha256":  "782135f274fc0cc6bac5f49a88d3de485f8e529d856004d1850b50a3b63245ce",
+                          "members":  214,
+                          "tree":  "e8ef9959a01f39106bd295fa1e229e88a548e997",
+                          "inner_hashes":  213,
+                          "source_inputs":  1851,
+                          "checkout_inputs_matched":  1851,
+                          "successful_groups":  17,
+                          "aggregate_groups":  17,
+                          "key_summaries":  [
+                                                "Autoattack startup scenarios: 26/26; assertions=0; unexpected=0; actual Common/LocalPlayer Lua and TreeSharp; stock Lua5.1 with controlled native attack state; no game/server/native execution.",
+                                                "Cast wait facing scenarios: 16/16; assertions=0; unexpected=0; actual WaitForCast overloads and real TreeSharp; controlled cast/facing boundaries; no client/native execution.",
+                                                "Combat sight movement scenarios: 85/85; assertions=0; unexpected=0; complete tracked Movement and real TreeSharp; controlled world/navigation; no native path or game attached.",
+                                                "Equipment cleanup ownership: 57/57; assertions=0; unexpected=0; actual tracked owners/generated Lua5.1; controlled build12340 cursor transitions and physical dispatch admission; no game/server/native execution.",
+                                                "Equipment physical cursor guard: 8/8; actual generated x86 comparison/branch contract; no game attached or native execution.",
+                                                "Equipment Lua51 boundary scenarios: 87/87; assertions=0; unexpected=0; tracked pickup/equip helpers, actual generated Lua5.1, loader size and verbatim managed conversion; controlled APIs; no physical GUID/client/server proof.",
+                                                "Equipment pending-index scenarios: 24/24; assertions=0; unexpected=0; tracked owner/generated Lua; stock Lua5.1; controlled synchronous events; no native client proof.",
+                                                "Publication scenarios: 21/21; assertions=0; unexpected=0; actual memory/cache/scan/materialization/XML/file/load/running gate; no game attached."
+                                            ],
+                          "failures":  [
+
+                                       ]
+                      },
+                      {
+                          "stage":  "validated_source",
+                          "kind":  "host",
+                          "source":  "500251fc20904b803aed40028c26edc1c8c5da94",
+                          "run":  36304366440,
+                          "artifact":  10925679514,
+                          "run_conclusion":  "success",
+                          "jobs":  [
+                                       {
+                                           "id":  108577949026,
+                                           "name":  "host-build",
+                                           "status":  "completed",
+                                           "conclusion":  "success",
+                                           "labels":  [
+                                                          "windows-latest"
+                                                      ],
+                                           "runner_name":  "GitHub Actions 1000000505"
+                                       }
+                                   ],
+                          "archive":  "w105-green-host-500251fc.zip",
+                          "bytes":  82599,
+                          "sha256":  "40e086d06bbcca6210c99805e856db77177057c3f66831b16f0f0300b0e4ebd5",
+                          "receipt":  "w105-green-host-500251fc-receipt.json",
+                          "receipt_sha256":  "79a428f5ea55789e5998c8e785078ebd105e449a9fbbf097c0905ffc5a3d3b78",
+                          "members":  4,
+                          "result":  {
+                                         "game_attached":  false,
+                                         "host_build_exit_code":  0,
+                                         "tests_run":  false
+                                     },
+                          "build_summary":  [
+                                                "3344 Warning(s)",
+                                                "0 Error(s)"
+                                            ]
+                      }
+                  ],
+    "publications":  [
+                         {
+                             "file":  "W104_REDCOMBAT_PUBLICATION_20260927.json",
+                             "sha256":  "dceeb2131715881e2b1887279a1c60a20f0847ae737ee601802b2fb8c8f0b771",
+                             "commit":  "675f787bbafb07f3eb2b8729beda7a0b915562a3",
+                             "parent":  "5ce1faa4251540027d77d055648d6b2d99c2a8ec",
+                             "tree":  "d440e6d93d00edfd2483a068a856fba1869755b9",
+                             "paths":  [
+                                           "Tools/WholesomeQuestRecoveryRegressionTests/AutoAttackStartRegressionTests.cs",
+                                           "Tools/WholesomeQuestRecoveryRegressionTests/CombatSightMovementRegressionTests.cs",
+                                           "Tools/PaladinDecisionRegressionTests/SharedCommonBoundaryFixture.cs"
+                                       ],
+                             "verified_at_utc":  "2026-09-27T07:26:19.8160473Z"
+                         },
+                         {
+                             "file":  "W104_REDCOMBATFIX_PUBLICATION_20260927.json",
+                             "sha256":  "c08b0756e2ef6ea1454a071a3e549fff57022c410587358087c7df70122d1e26",
+                             "commit":  "538a46c130dda9c37d9c90090e92183042b2f8cf",
+                             "parent":  "675f787bbafb07f3eb2b8729beda7a0b915562a3",
+                             "tree":  "d057906e60b15974ad1719fdc01863d4089ab8df",
+                             "paths":  [
+                                           "Tools/WholesomeQuestRecoveryRegressionTests/AutoAttackStartRegressionTests.cs",
+                                           "Tools/WholesomeQuestRecoveryRegressionTests/CastWaitFacingRegressionTests.cs"
+                                       ],
+                             "verified_at_utc":  "2026-09-27T07:33:16.1999550Z"
+                         },
+                         {
+                             "file":  "W104_GREENCOMBAT_PUBLICATION_20260927.json",
+                             "sha256":  "774f7802865d60d80ebb740f79baa132e89133e3ddd4b4b6cad39150c95b9f39",
+                             "commit":  "19ac34d3566f94408296b6a1196b02f27f5da943",
+                             "parent":  "538a46c130dda9c37d9c90090e92183042b2f8cf",
+                             "tree":  "2b932189b9ca0adfba574d4ec06ce44d09d155cf",
+                             "paths":  [
+                                           "runtime-snapshot/Routines/Singular wotlk/Helpers/Common.cs",
+                                           "runtime-snapshot/Routines/Singular wotlk/Helpers/Movement.cs",
+                                           "runtime-snapshot/Routines/Singular wotlk/Helpers/Spell.cs"
+                                       ],
+                             "verified_at_utc":  "2026-09-27T07:41:55.7260801Z"
+                         },
+                         {
+                             "file":  "W104_COMBATWIRING_PUBLICATION_20260927.json",
+                             "sha256":  "e0b997df055bebd4368da35e19d0475fde161596383c0358224d26904102a84c",
+                             "commit":  "500251fc20904b803aed40028c26edc1c8c5da94",
+                             "parent":  "19ac34d3566f94408296b6a1196b02f27f5da943",
+                             "tree":  "e8ef9959a01f39106bd295fa1e229e88a548e997",
+                             "paths":  [
+                                           "Tools/QuestRecoveryRegressionTests/GroupSafetyWiringRegressionTests.cs",
+                                           "Tools/WholesomeQuestRecoveryRegressionTests/QuestPublicationRegressionTests.cs"
+                                       ],
+                             "verified_at_utc":  "2026-09-27T07:51:01.8067341Z"
+                         }
+                     ],
+    "comparison":  {
+                       "file":  "W105_RED_GREEN_COMPARISON_20260927.json",
+                       "sha256":  "942f4cb99546cecbb3a9216b3ac12cc01b86958666ac5c1099b1058f21c7d4e9",
+                       "value":  {
+                                     "verified_at_utc":  "2026-09-27T07:57:50.0332938Z",
+                                     "red_source":  "538a46c130dda9c37d9c90090e92183042b2f8cf",
+                                     "green_source":  "500251fc20904b803aed40028c26edc1c8c5da94",
+                                     "red_run":  36303455985,
+                                     "green_run":  36304366416,
+                                     "red_inputs":  1851,
+                                     "green_inputs":  1851,
+                                     "changed_inputs":  [
+                                                            "runtime-snapshot/Routines/Singular wotlk/Helpers/Common.cs",
+                                                            "runtime-snapshot/Routines/Singular wotlk/Helpers/Movement.cs",
+                                                            "runtime-snapshot/Routines/Singular wotlk/Helpers/Spell.cs",
+                                                            "Tools/QuestRecoveryRegressionTests/GroupSafetyWiringRegressionTests.cs",
+                                                            "Tools/WholesomeQuestRecoveryRegressionTests/QuestPublicationRegressionTests.cs"
+                                                        ],
+                                     "added_inputs":  [
+
+                                                      ],
+                                     "removed_inputs":  [
+
+                                                        ],
+                                     "normalized_count":  169,
+                                     "changed_normalized":  [
+                                                                "normalized/WholesomeQuestRecoveryRegressionTests/W42Normalized/normalization-manifest.json",
+                                                                "normalized/WholesomeQuestRecoveryRegressionTests/W42Normalized/QuestPublicationRegressionTests.cs"
+                                                            ],
+                                     "added_normalized":  [
+
+                                                          ],
+                                     "removed_normalized":  [
+
+                                                            ],
+                                     "limits":  "Archive integrity and run success are established by separate inspection receipts. This report compares captured source and normalized fixture bytes only."
+                                 }
+                   },
+    "native_input_sha256":  "bf644876709c591acc17c0da8cdf1814edcc9f1e6bc109a8c0d5c38c79dc953c",
+    "native_receipts":  [
+                            {
+                                "file":  "w104-w105-attack-api-names.json",
+                                "sha256":  "6411d0cb95bc41d92438527e67795ca4b3819a0da5c3cfaa4b0f536e6faf2eaf",
+                                "tool":  "find_regex",
+                                "arguments":  {
+                                                  "pattern":  "^AttackTarget$|^StartAttack$|^StopAttack$|^IsCurrentSpell$",
+                                                  "limit":  10
+                                              },
+                                "captured_at_utc":  "2026-09-27T07:17:57.2323509Z"
+                            },
+                            {
+                                "file":  "w104-w105-attack-api-xrefs.json",
+                                "sha256":  "7c50cb0932311dd0ee4ddbed5510d005565585de6a4c0461f52aa32364618e83",
+                                "tool":  "xrefs_to",
+                                "arguments":  {
+                                                  "addrs":  [
+                                                                "0x9FD470",
+                                                                "0x9FD47C",
+                                                                "0x9FE050"
+                                                            ],
+                                                  "limit":  10
+                                              },
+                                "captured_at_utc":  "2026-09-27T07:18:18.5162386Z"
+                            },
+                            {
+                                "file":  "w104-w105-attack-toggle-path.json",
+                                "sha256":  "0a0c04d59461c106b471c16ec8f7a83e51e5b45518076877a31b16c9181469af",
+                                "tool":  "decompile",
+                                "arguments":  {
+                                                  "addr":  "0x72C2B0"
+                                              },
+                                "captured_at_utc":  "2026-09-27T07:20:24.4059408Z"
+                            },
+                            {
+                                "file":  "w104-w105-attack-usage.json",
+                                "sha256":  "d4faa8cdc914b3fb7db89b41693b682d10c68213fdc3fb5b681600eed556f85f",
+                                "tool":  "find_regex",
+                                "arguments":  {
+                                                  "pattern":  "Usage:.*(AttackTarget|StartAttack|StopAttack)|^START_AUTOREPEAT_SPELL$|^PLAYER_ENTER_COMBAT$",
+                                                  "limit":  15
+                                              },
+                                "captured_at_utc":  "2026-09-27T07:19:01.9341493Z"
+                            },
+                            {
+                                "file":  "w104-w105-attacktarget-native.json",
+                                "sha256":  "454a3f9fc430853bab5193e3fd8ee092ee4805046edec7b11ab8a41a4868d473",
+                                "tool":  "decompile",
+                                "arguments":  {
+                                                  "addr":  "0x51A650"
+                                              },
+                                "captured_at_utc":  "2026-09-27T07:19:55.2867221Z"
+                            },
+                            {
+                                "file":  "w104-w105-interruption-resume-health.json",
+                                "sha256":  "3d44b959f7d22e434a328d3348fd8b985ea0559ccd00845cd227db1f6e0bae59",
+                                "tool":  "server_health",
+                                "arguments":  {
+
+                                              },
+                                "captured_at_utc":  "2026-09-27T08:15:05.5776251Z"
+                            },
+                            {
+                                "file":  "w104-w105-startattack-native.json",
+                                "sha256":  "8dae1f5df3745e0acc45105adc8501739210cc2e62deced92037c885ba171777",
+                                "tool":  "decompile",
+                                "arguments":  {
+                                                  "addr":  "0x523090"
+                                              },
+                                "captured_at_utc":  "2026-09-27T07:20:12.2313994Z"
+                            },
+                            {
+                                "file":  "w104-w105-stopattack-native.json",
+                                "sha256":  "466a43ca4da3be352a0e9209cc4ca536853510126c7c811bcaa2d01f32d275c9",
+                                "tool":  "decompile",
+                                "arguments":  {
+                                                  "addr":  "0x51D0B0"
+                                              },
+                                "captured_at_utc":  "2026-09-27T07:20:48.4927356Z"
+                            }
+                        ],
+    "ledger":  {
+                   "file":  "W105_AUDIT_20260927.md",
+                   "sha256":  "f7847ab954490795f7b6e7a24fb1e639e266ab4393e9cb719bf0ab1fc1b6ecb5"
+               },
+    "publication_assertion_note":  "The candidate 19ac34d3 run had one ProfileBuilder.WriteProfile stack-provenance assertion failure. 500251fc changed only the failure diagnostic, preserving the predicate. The later run passes but does not establish that the earlier intermittent failure is repaired; its original exception was not retained. No production publication change is justified by that incomplete diagnosis.",
+    "limits":  [
+                   "Controlled Lua5.1, emitted native contract and TreeSharp observations do not establish live WoW/client/server acceptance",
+                   "No native game execution or new ABI",
+                   "Attack entrypoint locators and function bodies are corroborated; refused registration-table byte/xref calls are not claimed successful",
+                   "Final self-review is not independent or supervised acceptance",
+                   "Remaining questing/navigation and R06 first-menu attribution review continues"
+               ],
+    "no_subagents":  true,
+    "no_local_project_execution":  true,
+    "no_game_or_IDB_mutation":  true,
+    "no_merge":  true,
+    "goal_complete":  false,
+    "numeric_preparation_historical":  3,
+    "numeric_preparation_new":  0,
+    "numeric_preparation_remaining":  0,
+    "documentation_identity":  "Containing commit is documentation only; its final SHA is recorded by the external publication receipt and LATEST_CONTINUATION.md."
+}

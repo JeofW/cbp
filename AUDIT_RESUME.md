@@ -1,4 +1,14 @@
-# W104 verified successor — continue the remaining PR51 audit
+# W105 verified combat successor — remaining audit in progress
+
+27 September 2026. Read `docs/audit/2026-09-27/W105_CHECKPOINT.md` and `W105_EVIDENCE.json` first. Interrupted-response recovery reconciled the existing clean local/remote/draft PR51 at validated source `500251fc20904b803aed40028c26edc1c8c5da94`, tree `e8ef9959a01f39106bd295fa1e229e88a548e997`. Production repair is its parent `19ac34d3566f94408296b6a1196b02f27f5da943`; corrected behavioral red is `538a46c130dda9c37d9c90090e92183042b2f8cf`. Do not recreate W104 or W105 commits.
+
+W105 changes only shared Common/Movement/Spell production owners: start-only autoattack instead of toggling, facing after target-selection acknowledgement, and actual ownership/ticking of the cast-time facing Composite. Hosted integrated36304366416 passes17/17, including autoattack26/26, movement85/85, cast-wait16/16 and retained W104 cleanup57/57/pending24/24/guard8/8. Host36304366440 passes Release/x86 with0 errors/3344 warnings. All214 members/213 inner hashes/1851 final source inputs were freshly verified. Final test-only adaptations retain group dispatch-guard ordering and the unchanged publication stack-provenance predicate; the earlier intermittent publication assertion is retained and is not claimed repaired by a later pass.
+
+The original-client IDA input/hash remains verified, with no game/IDB mutation. The final new behavioral fixtures are unchanged from corrected red; two unrelated normalized members change for the publication diagnostic/manifest. Keep native/client/server and independent/supervised gates explicit. This is a verified implementation slice, not overall goal completion. Continue remaining quest/navigation and R06/by-name/recipe assessment from current evidence; preserve all restrictions below, no merge/subagents/local project execution, and use session_finish only near actual requested completion. The containing commit is documentation only; external latest continuation and publication receipt record its final SHA.
+
+---
+
+# Retained W104 verified successor — equipment repair
 
 27 September 2026. Read `docs/audit/2026-09-27/W104_VERIFIED_CHECKPOINT.md` and `W104_VERIFIED_EVIDENCE.json` first. The historical validation hold below is preserved but superseded for the equipment implementation. Validated production is `6cbabba99ee523cbf2e0902f5b6964027edc410e`, tree `8b585dc4272c18f7c9c82efa95c07119d24b2937`; its unchanged-fixture red parent is `f0e5a502f8fa0afe675f0b3e188e5c46b27397e4`. Original 680d88be tests were recovered and inspected, not recreated. All prior refusals remain recorded accurately.
 

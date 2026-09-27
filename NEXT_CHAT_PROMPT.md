@@ -1,4 +1,14 @@
-# Continue from the verified W104 equipment successor
+# Continue from the verified W105 combat successor
+
+Continue CopilotBuddy PR51 without subagents in `D:\Dev\CopilotBuddy-PR51`, repository `JeofW/cbp`, approved branch `audit/next-55-equipment-observation-20260917` only. Read external `LATEST_CONTINUATION.md` and `docs/audit/2026-09-27/W105_CHECKPOINT.md` / `W105_EVIDENCE.json` before retained W104 and earlier handoffs. Validated source is `500251fc20904b803aed40028c26edc1c8c5da94`; production repair is `19ac34d3566f94408296b6a1196b02f27f5da943`; corrected red is `538a46c130dda9c37d9c90090e92183042b2f8cf`. Reconcile live refs before changes; do not recreate existing tests or repairs.
+
+W104 cursor cleanup/lifetime is fully hosted-verified. W105 additionally fixes start-only autoattack, selection-then-facing and the previously discarded cast-facing child. Final hosted integrated36304366416 passes17/17; autoattack26/26, movement85/85, cast-wait16/16; host36304366440 has0 errors/3344 warnings. All1851 final source inputs/213 inner hashes/214 members matched. Retain failed intermediates, exact refusal history and the still-undiagnosed earlier publication stack-provenance assertion; its predicate was preserved and only its failure diagnostic improved.
+
+Continue currently actionable questing/navigation/combat assessment from the current requirement maps, including R06 first-menu attribution and explicit recipe/by-name limitations. Use the verified build12340 IDA when client behavior is uncertain. Preserve every prior repair, assertion, policy, acceptance and merge gate. No subagents, merge, force-push, master write, production CB access, local project execution, W80/W92 restart, PR58 recreation, excluded PR25 or speculative changes. Numeric preparation remains3 historical/0 new/0 remaining. Historical refusals are not blanket tool unavailability; use focused authorized current-fact reads without replaying or disguising a refused transaction. Overall goal is still in progress; session_finish is only for the requested near-completion stage.
+
+---
+
+# Retained verified W104 equipment successor
 
 Continue CopilotBuddy PR51 without subagents in `D:\Dev\CopilotBuddy-PR51`, repository `JeofW/cbp`, only branch `audit/next-55-equipment-observation-20260917`. Read external `LATEST_CONTINUATION.md`, then `docs/audit/2026-09-27/W104_VERIFIED_CHECKPOINT.md` / `W104_VERIFIED_EVIDENCE.json`, current root handoffs and all original-client/core/provenance policies. Reconcile the current live documentation head from the external publication receipt before changes; do not recreate completed W104 work.
 
