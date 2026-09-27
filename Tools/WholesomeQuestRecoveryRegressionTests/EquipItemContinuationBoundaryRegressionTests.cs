@@ -202,6 +202,9 @@ public sealed class ContinuationProbe
         {
             var owner=Fresh();owner._pendingEquipSubmitted=false;owner._pendingEquipGuid=201;
             Lua.DuringRequest=()=>owner.Change("stopped");owner.TickPendingEquip();owner.TickPendingEquip();
+            // This control requests a fresh equip after restart, so the carried
+            // item must not already occupy the destination when readmitted.
+            StyxWoW.Me.Inventory.Equipped.Items=new[]{new WoWItem{Guid=201}};
             TreeRoot.IsRunning=true;Lua.Requests.Clear();owner.TickPendingEquip();
             Check(!owner._isBehaviorDone&&owner.HasPendingEquip&&Lua.Requests.Count==1,"revocation became permanent completion instead of fresh readmission");
         });
