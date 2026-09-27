@@ -961,7 +961,7 @@ namespace Singular.Helpers
                 (StyxWoW.Me.Location.Distance(onLocation(ret)) <= SpellManager.Spells[spell].MaxRange || SpellManager.Spells[spell].MaxRange == 0),
                 new Sequence(
                     new Action(ret => Logger.Write("Casting {0} at location {1}", spell, onLocation(ret))),
-                    new Action(ret => SpellManager.Cast(spell)),
+                    new Action(ret => SpellManager.Cast(spell) ? RunStatus.Success : RunStatus.Failure),
                     new WaitContinue(
                         1,
                         ret => StyxWoW.Me.HasPendingSpell(spell),
