@@ -1,0 +1,530 @@
+{
+    "schema":  1,
+    "created_utc":  "2026-09-27T14:53:25.2129867Z",
+    "task":  "W110 static original-3.3.5 core evidence expansion",
+    "sources":  [
+                    {
+                        "file":  "TC-SpellInfo.cpp",
+                        "repository":  "TrinityCore/TrinityCore",
+                        "commit":  "8fda442f6c30ca21a622638063ab8b28376f1b25",
+                        "source_path":  "src/server/game/Spells/SpellInfo.cpp",
+                        "url":  "https://raw.githubusercontent.com/TrinityCore/TrinityCore/8fda442f6c30ca21a622638063ab8b28376f1b25/src/server/game/Spells/SpellInfo.cpp",
+                        "sha256":  "f731bdc3b82eea6bb314b1917cfbcd8a709eca1edbd0b034b0b98f93508f685e",
+                        "bytes":  173545,
+                        "retained_mtime_utc":  "2026-09-27T14:26:26.0057341Z",
+                        "read_ranges":  "1406-1455;2047-2225"
+                    },
+                    {
+                        "file":  "TC-SpellMgr.h",
+                        "repository":  "TrinityCore/TrinityCore",
+                        "commit":  "8fda442f6c30ca21a622638063ab8b28376f1b25",
+                        "source_path":  "src/server/game/Spells/SpellMgr.h",
+                        "url":  "https://raw.githubusercontent.com/TrinityCore/TrinityCore/8fda442f6c30ca21a622638063ab8b28376f1b25/src/server/game/Spells/SpellMgr.h",
+                        "sha256":  "dbd82e4960dcb54cb08253b74b9feb4590871fe051b9cf0cb5e7883ca29ad26e",
+                        "bytes":  33853,
+                        "retained_mtime_utc":  "2026-09-27T14:32:10.2668155Z",
+                        "read_ranges":  "full header"
+                    },
+                    {
+                        "file":  "TC-spell_paladin.cpp",
+                        "repository":  "TrinityCore/TrinityCore",
+                        "commit":  "8fda442f6c30ca21a622638063ab8b28376f1b25",
+                        "source_path":  "src/server/scripts/Spells/spell_paladin.cpp",
+                        "url":  "https://raw.githubusercontent.com/TrinityCore/TrinityCore/8fda442f6c30ca21a622638063ab8b28376f1b25/src/server/scripts/Spells/spell_paladin.cpp",
+                        "sha256":  "7094e0a8eaab03b2f4b56e6ff2a574d9662189a10e59d57bca5d0d5491946ca4",
+                        "bytes":  72372,
+                        "retained_mtime_utc":  "2026-09-27T14:32:10.6029840Z",
+                        "read_ranges":  "full source"
+                    },
+                    {
+                        "file":  "TC-SpellMgr.cpp",
+                        "repository":  "TrinityCore/TrinityCore",
+                        "commit":  "8fda442f6c30ca21a622638063ab8b28376f1b25",
+                        "source_path":  "src/server/game/Spells/SpellMgr.cpp",
+                        "url":  "https://raw.githubusercontent.com/TrinityCore/TrinityCore/8fda442f6c30ca21a622638063ab8b28376f1b25/src/server/game/Spells/SpellMgr.cpp",
+                        "sha256":  "ee43276267822901b3bb864aea25062cfce1ab084ae28be8755880a1f974112c",
+                        "bytes":  187471,
+                        "retained_mtime_utc":  "2026-09-27T14:42:58.7067868Z",
+                        "read_ranges":  "365-505;1269-1510"
+                    },
+                    {
+                        "file":  "TC-SpellAuras.cpp",
+                        "repository":  "TrinityCore/TrinityCore",
+                        "commit":  "8fda442f6c30ca21a622638063ab8b28376f1b25",
+                        "source_path":  "src/server/game/Spells/Auras/SpellAuras.cpp",
+                        "url":  "https://raw.githubusercontent.com/TrinityCore/TrinityCore/8fda442f6c30ca21a622638063ab8b28376f1b25/src/server/game/Spells/Auras/SpellAuras.cpp",
+                        "sha256":  "4707b3d7eb64fd10c74dd3d14967ab587790937712219d2bfa636e0b32b8e288",
+                        "bytes":  103870,
+                        "retained_mtime_utc":  "2026-09-27T14:42:59.2550143Z",
+                        "read_ranges":  "1824-2040"
+                    },
+                    {
+                        "file":  "AC-spell_group.sql",
+                        "repository":  "azerothcore/azerothcore-wotlk",
+                        "commit":  "8337a378ac325e62a6a91e00c6a5e944205e8536",
+                        "source_path":  "data/sql/base/db_world/spell_group.sql",
+                        "url":  "https://raw.githubusercontent.com/azerothcore/azerothcore-wotlk/8337a378ac325e62a6a91e00c6a5e944205e8536/data/sql/base/db_world/spell_group.sql",
+                        "sha256":  "740f601e4867c631d124ec9304f802ee9b90535b02ff384ea0e3193cfadf902f",
+                        "bytes":  8739,
+                        "retained_mtime_utc":  "2026-09-27T14:26:26.3328705Z",
+                        "read_ranges":  "full SQL data"
+                    },
+                    {
+                        "file":  "AC-spell_group_stack_rules.sql",
+                        "repository":  "azerothcore/azerothcore-wotlk",
+                        "commit":  "8337a378ac325e62a6a91e00c6a5e944205e8536",
+                        "source_path":  "data/sql/base/db_world/spell_group_stack_rules.sql",
+                        "url":  "https://raw.githubusercontent.com/azerothcore/azerothcore-wotlk/8337a378ac325e62a6a91e00c6a5e944205e8536/data/sql/base/db_world/spell_group_stack_rules.sql",
+                        "sha256":  "c56cb9a08645d1bb75a8e9c70e6fc1de1603cedf8b600fe29b6f5cd5a4728f46",
+                        "bytes":  4080,
+                        "retained_mtime_utc":  "2026-09-27T14:26:26.6342830Z",
+                        "read_ranges":  "full SQL data"
+                    },
+                    {
+                        "file":  "AC-SpellMgr.h",
+                        "repository":  "azerothcore/azerothcore-wotlk",
+                        "commit":  "8337a378ac325e62a6a91e00c6a5e944205e8536",
+                        "source_path":  "src/server/game/Spells/SpellMgr.h",
+                        "url":  "https://raw.githubusercontent.com/azerothcore/azerothcore-wotlk/8337a378ac325e62a6a91e00c6a5e944205e8536/src/server/game/Spells/SpellMgr.h",
+                        "sha256":  "3eef7879fa5da6ffa77b6ab14654274ea2754424a72e603cd2397a93f6988938",
+                        "bytes":  38725,
+                        "retained_mtime_utc":  "2026-09-27T14:32:10.9098796Z",
+                        "read_ranges":  "full header"
+                    }
+                ],
+    "parsed_groups":  113,
+    "parsed_stack_rules":  69,
+    "selected_groups":  [
+                            {
+                                "group":  1002,
+                                "direct_members":  [
+                                                       19740,
+                                                       25782,
+                                                       56520
+                                                   ],
+                                "expanded_first_rank_ids":  [
+                                                                19740,
+                                                                25782,
+                                                                56520
+                                                            ],
+                                "stack_rule":  4,
+                                "pinned_enum_name":  "EXCLUSIVE_HIGHEST"
+                            },
+                            {
+                                "group":  1003,
+                                "direct_members":  [
+                                                       6673
+                                                   ],
+                                "expanded_first_rank_ids":  [
+                                                                6673
+                                                            ],
+                                "stack_rule":  4,
+                                "pinned_enum_name":  "EXCLUSIVE_HIGHEST"
+                            },
+                            {
+                                "group":  1004,
+                                "direct_members":  [
+                                                       -1003,
+                                                       -1002
+                                                   ],
+                                "expanded_first_rank_ids":  [
+                                                                6673,
+                                                                19740,
+                                                                25782,
+                                                                56520
+                                                            ],
+                                "stack_rule":  4,
+                                "pinned_enum_name":  "EXCLUSIVE_HIGHEST"
+                            },
+                            {
+                                "group":  1005,
+                                "direct_members":  [
+                                                       19742,
+                                                       25894,
+                                                       56521
+                                                   ],
+                                "expanded_first_rank_ids":  [
+                                                                19742,
+                                                                25894,
+                                                                56521
+                                                            ],
+                                "stack_rule":  4,
+                                "pinned_enum_name":  "EXCLUSIVE_HIGHEST"
+                            },
+                            {
+                                "group":  1006,
+                                "direct_members":  [
+                                                       20217,
+                                                       25898,
+                                                       26393,
+                                                       43223,
+                                                       56525,
+                                                       58054,
+                                                       72586
+                                                   ],
+                                "expanded_first_rank_ids":  [
+                                                                20217,
+                                                                25898,
+                                                                26393,
+                                                                43223,
+                                                                56525,
+                                                                58054,
+                                                                72586
+                                                            ],
+                                "stack_rule":  1,
+                                "pinned_enum_name":  "EXCLUSIVE"
+                            },
+                            {
+                                "group":  1007,
+                                "direct_members":  [
+                                                       20911,
+                                                       25899
+                                                   ],
+                                "expanded_first_rank_ids":  [
+                                                                20911,
+                                                                25899
+                                                            ],
+                                "stack_rule":  1,
+                                "pinned_enum_name":  "EXCLUSIVE"
+                            },
+                            {
+                                "group":  1010,
+                                "direct_members":  [
+                                                       -1009,
+                                                       -1008,
+                                                       -1007,
+                                                       -1006,
+                                                       -1005,
+                                                       -1002
+                                                   ],
+                                "expanded_first_rank_ids":  [
+                                                                19740,
+                                                                19742,
+                                                                20217,
+                                                                20911,
+                                                                23415,
+                                                                25782,
+                                                                25894,
+                                                                25898,
+                                                                25899,
+                                                                26393,
+                                                                32770,
+                                                                41450,
+                                                                43223,
+                                                                56520,
+                                                                56521,
+                                                                56525,
+                                                                58054,
+                                                                72586
+                                                            ],
+                                "stack_rule":  2,
+                                "pinned_enum_name":  "EXCLUSIVE_FROM_SAME_CASTER"
+                            },
+                            {
+                                "group":  1011,
+                                "direct_members":  [
+                                                       -1091,
+                                                       -1003
+                                                   ],
+                                "expanded_first_rank_ids":  [
+                                                                469,
+                                                                6673
+                                                            ],
+                                "stack_rule":  2,
+                                "pinned_enum_name":  "EXCLUSIVE_FROM_SAME_CASTER"
+                            },
+                            {
+                                "group":  1029,
+                                "direct_members":  [
+                                                       -1028,
+                                                       -1027,
+                                                       -1026
+                                                   ],
+                                "expanded_first_rank_ids":  [
+                                                                19506,
+                                                                30802,
+                                                                53137
+                                                            ],
+                                "stack_rule":  1,
+                                "pinned_enum_name":  "EXCLUSIVE"
+                            },
+                            {
+                                "group":  1038,
+                                "direct_members":  [
+                                                       -1006,
+                                                       67480
+                                                   ],
+                                "expanded_first_rank_ids":  [
+                                                                20217,
+                                                                25898,
+                                                                26393,
+                                                                43223,
+                                                                56525,
+                                                                58054,
+                                                                67480,
+                                                                72586
+                                                            ],
+                                "stack_rule":  3,
+                                "pinned_enum_name":  "EXCLUSIVE_SAME_EFFECT"
+                            },
+                            {
+                                "group":  1083,
+                                "direct_members":  [
+                                                       -1082,
+                                                       -1081,
+                                                       -1080,
+                                                       -1072,
+                                                       -1068
+                                                   ],
+                                "expanded_first_rank_ids":  [
+                                                                1459,
+                                                                8096,
+                                                                23028,
+                                                                61024,
+                                                                61316
+                                                            ],
+                                "stack_rule":  4,
+                                "pinned_enum_name":  "EXCLUSIVE_HIGHEST"
+                            },
+                            {
+                                "group":  1084,
+                                "direct_members":  [
+                                                       -1075,
+                                                       -1074,
+                                                       -1069,
+                                                       23947,
+                                                       23948,
+                                                       72590
+                                                   ],
+                                "expanded_first_rank_ids":  [
+                                                                1243,
+                                                                8099,
+                                                                21562,
+                                                                23947,
+                                                                23948,
+                                                                72590
+                                                            ],
+                                "stack_rule":  4,
+                                "pinned_enum_name":  "EXCLUSIVE_HIGHEST"
+                            },
+                            {
+                                "group":  1085,
+                                "direct_members":  [
+                                                       -1077,
+                                                       -1076,
+                                                       -1070
+                                                   ],
+                                "expanded_first_rank_ids":  [
+                                                                8112,
+                                                                14752,
+                                                                27681
+                                                            ],
+                                "stack_rule":  4,
+                                "pinned_enum_name":  "EXCLUSIVE_HIGHEST"
+                            },
+                            {
+                                "group":  1086,
+                                "direct_members":  [
+                                                       -1071,
+                                                       8072
+                                                   ],
+                                "expanded_first_rank_ids":  [
+                                                                8072,
+                                                                8091
+                                                            ],
+                                "stack_rule":  4,
+                                "pinned_enum_name":  "EXCLUSIVE_HIGHEST"
+                            },
+                            {
+                                "group":  1088,
+                                "direct_members":  [
+                                                       -1067,
+                                                       -1066,
+                                                       -1065,
+                                                       -1064
+                                                   ],
+                                "expanded_first_rank_ids":  [
+                                                                8076,
+                                                                8115,
+                                                                8118,
+                                                                57330
+                                                            ],
+                                "stack_rule":  4,
+                                "pinned_enum_name":  "EXCLUSIVE_HIGHEST"
+                            },
+                            {
+                                "group":  1089,
+                                "direct_members":  [
+                                                       -1079,
+                                                       -1078,
+                                                       16878,
+                                                       24752,
+                                                       39233,
+                                                       72588
+                                                   ],
+                                "expanded_first_rank_ids":  [
+                                                                1126,
+                                                                16878,
+                                                                21849,
+                                                                24752,
+                                                                39233,
+                                                                72588
+                                                            ],
+                                "stack_rule":  4,
+                                "pinned_enum_name":  "EXCLUSIVE_HIGHEST"
+                            },
+                            {
+                                "group":  1093,
+                                "direct_members":  [
+                                                       -1092,
+                                                       -1091
+                                                   ],
+                                "expanded_first_rank_ids":  [
+                                                                469,
+                                                                6307
+                                                            ],
+                                "stack_rule":  4,
+                                "pinned_enum_name":  "EXCLUSIVE_HIGHEST"
+                            },
+                            {
+                                "group":  1094,
+                                "direct_members":  [
+                                                       34123,
+                                                       63514
+                                                   ],
+                                "expanded_first_rank_ids":  [
+                                                                34123,
+                                                                63514
+                                                            ],
+                                "stack_rule":  3,
+                                "pinned_enum_name":  "EXCLUSIVE_SAME_EFFECT"
+                            },
+                            {
+                                "group":  1098,
+                                "direct_members":  [
+                                                       976,
+                                                       27683
+                                                   ],
+                                "expanded_first_rank_ids":  [
+                                                                976,
+                                                                27683
+                                                            ],
+                                "stack_rule":  4,
+                                "pinned_enum_name":  "EXCLUSIVE_HIGHEST"
+                            },
+                            {
+                                "group":  1105,
+                                "direct_members":  [
+                                                       -1005,
+                                                       5677
+                                                   ],
+                                "expanded_first_rank_ids":  [
+                                                                5677,
+                                                                19742,
+                                                                25894,
+                                                                56521
+                                                            ],
+                                "stack_rule":  3,
+                                "pinned_enum_name":  "EXCLUSIVE_SAME_EFFECT"
+                            },
+                            {
+                                "group":  1107,
+                                "direct_members":  [
+                                                       12042,
+                                                       12292,
+                                                       31884,
+                                                       34471,
+                                                       48391,
+                                                       49016,
+                                                       57933
+                                                   ],
+                                "expanded_first_rank_ids":  [
+                                                                12042,
+                                                                12292,
+                                                                31884,
+                                                                34471,
+                                                                48391,
+                                                                49016,
+                                                                57933
+                                                            ],
+                                "stack_rule":  4,
+                                "pinned_enum_name":  "EXCLUSIVE_HIGHEST"
+                            },
+                            {
+                                "group":  1122,
+                                "direct_members":  [
+                                                       2825,
+                                                       10060,
+                                                       32182
+                                                   ],
+                                "expanded_first_rank_ids":  [
+                                                                2825,
+                                                                10060,
+                                                                32182
+                                                            ],
+                                "stack_rule":  3,
+                                "pinned_enum_name":  "EXCLUSIVE_SAME_EFFECT"
+                            },
+                            {
+                                "group":  1123,
+                                "direct_members":  [
+                                                       10060,
+                                                       12042
+                                                   ],
+                                "expanded_first_rank_ids":  [
+                                                                10060,
+                                                                12042
+                                                            ],
+                                "stack_rule":  4,
+                                "pinned_enum_name":  "EXCLUSIVE_HIGHEST"
+                            },
+                            {
+                                "group":  1124,
+                                "direct_members":  [
+                                                       -1115,
+                                                       -1085,
+                                                       -1073
+                                                   ],
+                                "expanded_first_rank_ids":  [
+                                                                8112,
+                                                                14752,
+                                                                27681,
+                                                                46302,
+                                                                54424
+                                                            ],
+                                "stack_rule":  3,
+                                "pinned_enum_name":  "EXCLUSIVE_SAME_EFFECT"
+                            },
+                            {
+                                "group":  1125,
+                                "direct_members":  [
+                                                       -1083,
+                                                       -1073
+                                                   ],
+                                "expanded_first_rank_ids":  [
+                                                                1459,
+                                                                8096,
+                                                                23028,
+                                                                54424,
+                                                                61024,
+                                                                61316
+                                                            ],
+                                "stack_rule":  3,
+                                "pinned_enum_name":  "EXCLUSIVE_SAME_EFFECT"
+                            }
+                        ],
+    "semantics":  [
+                      "TC SpellInfo applies seal/hand/aura/judgement exclusivity per caster, not one aura globally across all paladins.",
+                      "TC SpellMgr normalizes first ranks, expands subgroups, gives a shared nested subgroup precedence, and uses actual strongest absolute amount for matching SAME_EFFECT aura types.",
+                      "SAME_EFFECT does not itself remove the other aura in TC Aura.CanStackWith. Category overlap is not universal whole-buff equivalence.",
+                      "Actual database rows and SpellInfo aura effects are required. A rule enum alone cannot prove a realm category.",
+                      "The pinned AC headers, not the inconsistent current AC wiki flag table, define the numeric rules used for these pinned SQL rows."
+                  ],
+    "boundaries":  [
+                       "Reference TC/AC commits do not identify the user realm, server build, configured world database, custom scripts or active ranks/talents.",
+                       "No current IDA call, client function execution, executable/IDB mutation, SQL execution or local project build/test was performed.",
+                       "The new TC recursive tree-listing provider refusal remains separately preserved and unexecuted; known-path source reads are not a recovered tree listing.",
+                       "No original-client effective aura amount or proc-adjusted cast time is established by these server source files.",
+                       "Absence of a particular direct spell ID in these group rows does not exclude implementation through rank chains, other effects, scripts or actual realm data."
+                   ]
+}
