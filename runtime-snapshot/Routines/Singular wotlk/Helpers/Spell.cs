@@ -117,7 +117,7 @@ namespace Singular.Helpers
         /// <returns></returns>
         public static Composite WaitForCast(bool faceDuring, bool allowLagTollerance)
         {
-            return
+            return new Sequence(
                 new Action(ret =>
                             {
                                 if (!StyxWoW.Me.IsCasting)
@@ -134,11 +134,15 @@ namespace Singular.Helpers
                                 if (allowLagTollerance && castTimeLeft != TimeSpan.Zero && StyxWoW.Me.CurrentCastTimeLeft.TotalMilliseconds < latency)
                                     return RunStatus.Failure;
 
-                                if (faceDuring && StyxWoW.Me.ChanneledCastingSpellId == 0)
-                                    Movement.CreateFaceTargetBehavior();
-
-                                return RunStatus.Success; 
-                            });
+                                return RunStatus.Success;
+                            }),
+                // Own and execute the facing child instead of discarding a
+                // newly constructed Composite. No turn still means keep waiting.
+                new PrioritySelector(
+                    new Decorator(
+                        ret => faceDuring && StyxWoW.Me.ChanneledCastingSpellId == 0,
+                        Movement.CreateFaceTargetBehavior()),
+                    new ActionAlwaysSucceed()));
         }
 
         #endregion

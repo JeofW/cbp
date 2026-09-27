@@ -32,7 +32,9 @@ namespace Singular.Helpers
                     new Action(ret =>
                         {
                             if (!GroupCombatSafety.MayAttackCurrentTarget()) return RunStatus.Failure;
-                            StyxWoW.Me.ToggleAttack();
+                            // Startup may follow a stale inactive observation.
+                            // Build12340 StartAttack checks live state; AttackTarget toggles it.
+                            Lua.DoString("StartAttack()");
                             return RunStatus.Failure;
                         })),
                 new Decorator(

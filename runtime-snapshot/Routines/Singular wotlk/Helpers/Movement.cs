@@ -108,19 +108,23 @@ namespace Singular.Helpers
         }
 
         /// <summary>
-        /// True when a hostile cast target differs from CurrentTarget and needs target/face before casting.
+        /// True when a hostile cast target needs selection or a remaining facing step before casting.
         /// Fixes multi-dot spread (e.g. Balance Moonfire on mob behind player) where CreateFaceTargetBehavior
         /// only faces CurrentTarget. Skips self, friendlies, and in-progress casts.
         /// </summary>
         public static bool NeedsOffTargetCastSetup(WoWUnit unit)
         {
-            if (unit == null || unit.IsMe || unit.IsFriendly)
+            var player = StyxWoW.Me;
+            if (player == null || unit == null || unit.IsMe || unit.IsFriendly)
                 return false;
 
-            if (StyxWoW.Me.IsCasting)
+            if (player.IsCasting)
                 return false;
 
-            return StyxWoW.Me.CurrentTarget != unit;
+            // Acknowledging the target switch does not also acknowledge facing.
+            return player.CurrentTarget != unit ||
+                (!SingularSettings.Instance.DisableAllMovement && !player.IsMoving &&
+                 !player.IsSafelyFacing(unit, 70f));
         }
 
         /// <summary>
@@ -131,16 +135,16 @@ namespace Singular.Helpers
         {
             return new Action(ret =>
             {
-                if (toUnit == null || toUnit(ret) == null)
+                var player = StyxWoW.Me;
+                var unit = toUnit != null ? toUnit(ret) : null;
+                if (player == null || unit == null)
                     return RunStatus.Failure;
-
-                var unit = toUnit(ret);
 
                 if (!NeedsOffTargetCastSetup(unit))
                     return RunStatus.Success;
 
                 // Switch target to the cast unit
-                if (StyxWoW.Me.CurrentTarget != unit)
+                if (player.CurrentTarget != unit)
                 {
                     Logger.WriteDebug("Off-target cast: switching to " + unit.SafeName());
                     unit.Target();
@@ -148,8 +152,8 @@ namespace Singular.Helpers
                 }
 
                 // Face before casting — prevents cast failures on mobs behind the player
-                if (!SingularSettings.Instance.DisableAllMovement && !StyxWoW.Me.IsMoving &&
-                    !StyxWoW.Me.IsSafelyFacing(unit, 70f))
+                if (!SingularSettings.Instance.DisableAllMovement && !player.IsMoving &&
+                    !player.IsSafelyFacing(unit, 70f))
                 {
                     Logger.WriteDebug("Off-target cast: facing " + unit.SafeName());
                     unit.Face();
