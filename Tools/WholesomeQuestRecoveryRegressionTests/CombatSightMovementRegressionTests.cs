@@ -53,7 +53,7 @@ public static class MovementCases
 {
     private sealed class Failure(string text):Exception(text){}
     internal static readonly List<WoWPoint> Moves=new();
-    internal static int Stops, Selections;
+    internal static int Stops, Selections, Faces, TargetRequests;
     internal static MoveResult Result;
     private static WoWUnit Player=>StyxWoW.Me!;
     private static WoWUnit Target=>Player.CurrentTarget!;
@@ -119,6 +119,58 @@ public static class MovementCases
         StopCase("dead target is not casting evidence",()=>Target.IsAlive=false,false);
         StopCase("visible friendly corpse can be a resurrection destination",()=>{Target.IsAlive=false;Target.IsFriendly=true;},true);
         StopCase("owner replaced during sight read cannot stop replacement",()=>Target.OnSight=()=>StyxWoW.Me=new WoWUnit{Guid=99,IsMoving=true},false);
+        void SetupCase(string name,System.Action test)=>cases.Add(("cast facing: "+name,()=>{Reset();test();}));
+        SetupCase("unfaced current hostile still requires setup",()=>{
+            Player.Facing=false;Check(Movement.NeedsOffTargetCastSetup(Target),"newly selected hostile bypassed its facing phase");
+        });
+        SetupCase("already facing current hostile is ready",()=>{
+            Check(!Movement.NeedsOffTargetCastSetup(Target),"ready single target acquired unnecessary setup");
+        });
+        SetupCase("current hostile faces before reporting readiness",()=>{
+            Player.Facing=false;
+            Check(Tick(Movement.CreateEnsureTargetAndFaceBehavior(_=>Target))==RunStatus.Failure&&Faces==1&&TargetRequests==0,
+                "unfaced current target reported cast readiness without facing");
+        });
+        SetupCase("off-target switch then face then ready",()=>{
+            var intended=new WoWUnit{Guid=3};Player.Facing=false;
+            var setup=Movement.CreateEnsureTargetAndFaceBehavior(_=>intended);
+            Check(Tick(setup)==RunStatus.Failure&&TargetRequests==1&&Faces==0&&ReferenceEquals(Player.CurrentTarget,intended),
+                "first setup phase did not select exactly the intended recipient");
+            Check(Movement.NeedsOffTargetCastSetup(intended),"target acknowledgement skipped the remaining facing phase");
+            Check(Tick(setup)==RunStatus.Failure&&Faces==1&&TargetRequests==1,"second phase never faced the selected target");
+            Player.Facing=true;
+            Check(!Movement.NeedsOffTargetCastSetup(intended)&&Tick(setup)==RunStatus.Success&&Faces==1,
+                "completed facing did not release the cast");
+        });
+        SetupCase("disabled movement retains manual facing control",()=>{
+            Player.Facing=false;SingularSettings.Instance.DisableAllMovement=true;
+            Check(!Movement.NeedsOffTargetCastSetup(Target),"manual movement setting was ignored");
+            Tick(Movement.CreateEnsureTargetAndFaceBehavior(_=>Target));Check(Faces==0,"disabled movement still turned");
+        });
+        SetupCase("moving current target setup never forces facing",()=>{
+            Player.Facing=false;Player.IsMoving=true;Check(!Movement.NeedsOffTargetCastSetup(Target),"moving actor acquired a facing action");
+        });
+        SetupCase("self and friendly casts need no hostile setup",()=>{
+            Player.Facing=false;Check(!Movement.NeedsOffTargetCastSetup(Player),"self cast requested target setup");
+            Target.IsFriendly=true;Check(!Movement.NeedsOffTargetCastSetup(Target),"friendly cast requested hostile setup");
+        });
+        SetupCase("in-progress casting retains its target policy",()=>{
+            Player.Facing=false;Player.IsCasting=true;Check(!Movement.NeedsOffTargetCastSetup(new WoWUnit{Guid=3}),"casting actor was retargeted");
+        });
+        SetupCase("one setup decision selects once",()=>{
+            var intended=new WoWUnit{Guid=3};
+            Tick(Movement.CreateEnsureTargetAndFaceBehavior(_=>{Selections++;return intended;}));
+            Check(Selections==1&&TargetRequests==1,"setup repeatedly selected a potentially different recipient");
+        });
+        SetupCase("missing selected unit refuses readiness",()=>{
+            Check(Tick(Movement.CreateEnsureTargetAndFaceBehavior(_=>null!))==RunStatus.Failure&&Faces==0&&TargetRequests==0,
+                "missing target was treated as a completed setup");
+        });
+        SetupCase("missing player refuses setup without swallowed errors",()=>{
+            var intended=new WoWUnit{Guid=3};StyxWoW.Me=null;
+            Check(Tick(Movement.CreateEnsureTargetAndFaceBehavior(_=>intended))==RunStatus.Failure&&Faces==0&&TargetRequests==0,
+                "missing actor was treated as cast readiness");
+        });
         int passed=0,assertions=0,unexpected=0;
         foreach(var c in cases)
         {
@@ -129,8 +181,8 @@ public static class MovementCases
         Console.WriteLine($"Combat sight movement scenarios: {passed}/{cases.Count}; assertions={assertions}; unexpected={unexpected}; complete tracked Movement and real TreeSharp; controlled world/navigation; no native path or game attached.");
         if(assertions+unexpected!=0)throw new InvalidOperationException("Combat sight movement failures");
     }
-    private static void Reset(){StyxWoW.Me=new WoWUnit{Guid=1,CurrentTarget=new WoWUnit{Guid=2,Location=new WoWPoint(20,30,5)}};Moves.Clear();Stops=Selections=0;Result=MoveResult.Moved;SingularSettings.Instance.DisableAllMovement=false;}
-    private static void Tick(Composite tree)
+    private static void Reset(){StyxWoW.Me=new WoWUnit{Guid=1,CurrentTarget=new WoWUnit{Guid=2,Location=new WoWPoint(20,30,5)}};Moves.Clear();Stops=Selections=Faces=TargetRequests=0;Result=MoveResult.Moved;SingularSettings.Instance.DisableAllMovement=false;}
+    private static RunStatus Tick(Composite tree)
     {
         // TreeSharp intentionally logs ordinary owner errors and returns Failure.
         // A no-navigation assertion must not accidentally accept a null dereference.
@@ -140,9 +192,11 @@ public static class MovementCases
         try
         {
             tree.Start(null!);
-            try{int n=0;while(tree.Tick(null!)==RunStatus.Running)if(++n>10)throw new Failure("unbounded helper");}
+            RunStatus status;
+            try{int n=0;while((status=tree.Tick(null!))==RunStatus.Running)if(++n>10)throw new Failure("unbounded helper");}
             finally{tree.Stop(null!);}
             Check(diagnostics.Count==0,"owner produced a swallowed diagnostic: "+string.Join(";",diagnostics));
+            return status;
         }
         finally{Styx.Helpers.Logging.OnMessageLogged-=Record;}
     }
@@ -159,8 +213,9 @@ public static class MovementCases
         private WoWPoint position=new WoWPoint(5,5,5);
         public WoWPoint Location{get{var a=OnLocation;OnLocation=null;a?.Invoke();return position;}set{position=value;}}
         public bool InLineOfSpellSight{get{var a=OnSight;OnSight=null;a?.Invoke();return Sight;}}
-        public bool IsSafelyFacing(WoWUnit target,float angle)=>true;
-        public void Face(){}public void Target(){StyxWoW.Me!.CurrentTarget=this;}public string SafeName()=>"controlled";
+        public bool Facing=true;
+        public bool IsSafelyFacing(WoWUnit target,float angle)=>Facing;
+        public void Face(){MovementCases.Faces++;}public void Target(){MovementCases.TargetRequests++;StyxWoW.Me!.CurrentTarget=this;}public string SafeName()=>"controlled";
     }
 }
 /* Controlled owner and settings observations. */ namespace Styx{public static class StyxWoW{public static WoWUnit? Me;}}

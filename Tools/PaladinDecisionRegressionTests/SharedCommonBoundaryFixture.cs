@@ -41,7 +41,16 @@ namespace Styx.WoWInternals.WoWObjects
 namespace Styx.WoWInternals
 {
     public enum ShapeshiftForm { None, FlightForm, EpicFlightForm }
-    public static class Lua { public static void DoString(string _) => throw new InvalidOperationException("Lua forbidden"); }
+    public static class Lua
+    {
+        public static void DoString(string script)
+        {
+            // The real Common helper may request idempotent attack startup.
+            // Like the legacy toggle stub, submission does not fabricate a flag.
+            if (script == "StartAttack()") { Fixture.Trace.Add("autoattack-start"); return; }
+            throw new InvalidOperationException("Unrelated Lua forbidden");
+        }
+    }
     public static class WoWMovement
     {
         public enum MovementDirection { Descend }
