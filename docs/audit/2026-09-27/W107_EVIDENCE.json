@@ -1,0 +1,817 @@
+{
+    "checkpoint":  "W107",
+    "created_at_utc":  "2026-09-27T10:06:01.5560626Z",
+    "status":  "identified_actionable_repairs_hosted_verified_acceptance_and_explicit_deferrals_remain",
+    "repository":  "JeofW/cbp",
+    "repository_id":  1367174964,
+    "pr":  51,
+    "branch":  "audit/next-55-equipment-observation-20260917",
+    "master":  "b2324913e2499ba30b239dd67224ca2c655c05cc",
+    "tested_source":  "0e5148366a9329b6f14c840bfd7df1edc1f4a5e1",
+    "tested_tree":  "9b0e804927aa9d10fa7a2229f83e9ebf822a6450",
+    "reader_production":  "df3bbf83481e3b4c537d57f05d9aea2ee133ecd4",
+    "reader_behavioral_red":  "37ebf59f295f3216c2000bd791bef96fd099ba5e",
+    "caller_production":  "0e5148366a9329b6f14c840bfd7df1edc1f4a5e1",
+    "caller_behavioral_red":  "9f23968d24bf3b512187cb3ef6063e727978f04e",
+    "validations":  [
+                        {
+                            "stage":  "reader_red",
+                            "kind":  "integrated",
+                            "source":  "37ebf59f295f3216c2000bd791bef96fd099ba5e",
+                            "run":  36309824667,
+                            "jobs":  [
+                                         {
+                                             "id":  108593485109,
+                                             "name":  "combined",
+                                             "status":  "completed",
+                                             "conclusion":  "failure",
+                                             "labels":  [
+                                                            "windows-2022"
+                                                        ],
+                                             "runner_name":  "GitHub Actions 1000000513"
+                                         }
+                                     ],
+                            "artifact":  10929025520,
+                            "conclusion":  "failure",
+                            "archive":  "w107-red-integrated-37ebf59f.zip",
+                            "sha256":  "0a3e1ec158ad758fd2d86d784bcf0dfa603f8f5bc26733d867c793d920369241",
+                            "bytes":  935791,
+                            "receipt":  "w107-red-integrated-37ebf59f-receipt.json",
+                            "receipt_sha256":  "bf2e7e58debfd9e09f996db8e9066b47f6aa42facc4791368262ad571912769f",
+                            "inspection":  "w107-red-integrated-37ebf59f-inspection.json",
+                            "inspection_sha256":  "de3b58c297c9056f2d231cfe1a4209b04c356677127c9862293fc46b3cc58152",
+                            "members":  216,
+                            "tree":  "ae7cdb28e53b3e856fe9811de1b982a64d5534ad",
+                            "aggregate_groups":  17,
+                            "successful_groups":  16,
+                            "inner_hashes":  215,
+                            "source_inputs":  1853,
+                            "checkout_inputs_matched":  1853,
+                            "cases_file":  "w107-red-integrated-37ebf59f-cases.json",
+                            "cases_sha256":  "0bd8822674d566da0eff9ea4e8269718483d62baea7117829b3bc7f3d4c68e66",
+                            "native_summary":  "Native spell observation scenarios: 12/23; assertions=11; unexpected=0; actual property and complete terrain request; controlled build12340 memory/return-register vectors; no native/game execution.",
+                            "native_cases":  [
+                                                 "PASS native spell observation: pending/no-memory",
+                                                 "PASS native spell observation: pending/no-pending",
+                                                 "PASS native spell observation: pending/pointer-overflow",
+                                                 "FAIL native spell observation: pending/legacy-only: pending result used unrelated fields or missed native pointer-relative identity",
+                                                 "FAIL native spell observation: pending/actual-pending: pending result used unrelated fields or missed native pointer-relative identity",
+                                                 "FAIL native spell observation: pending/legacy-conflict: pending result used unrelated fields or missed native pointer-relative identity",
+                                                 "FAIL native spell observation: pending/zero-id: pending result used unrelated fields or missed native pointer-relative identity",
+                                                 "FAIL native spell observation: pending/negative-id: pending result used unrelated fields or missed native pointer-relative identity",
+                                                 "FAIL native spell observation: pending/alias-id: matching current native spell was not observed",
+                                                 "FAIL native spell observation: pending/alias-name: matching current native spell was not observed",
+                                                 "FAIL native spell observation: pending/alias-object: matching current native spell was not observed",
+                                                 "PASS native spell observation: terrain-return/00000000",
+                                                 "PASS native spell observation: terrain-return/00000001",
+                                                 "FAIL native spell observation: terrain-return/00000100: undefined high return-register bits changed the AL boolean result",
+                                                 "PASS native spell observation: terrain-return/00000101",
+                                                 "FAIL native spell observation: terrain-return/12345600: undefined high return-register bits changed the AL boolean result",
+                                                 "FAIL native spell observation: terrain-return/FF000000: undefined high return-register bits changed the AL boolean result",
+                                                 "PASS native spell observation: terrain-return/12345601",
+                                                 "PASS native spell observation: terrain-return/FFFFFFFF",
+                                                 "PASS native spell observation: terrain-failure/no-executor",
+                                                 "PASS native spell observation: terrain-failure/allocation-refused",
+                                                 "PASS native spell observation: terrain-failure/execute-exception",
+                                                 "PASS native spell observation: terrain-failure/read-exception"
+                                             ],
+                            "ground_observation":  null,
+                            "retained_summaries":  [
+                                                       "Aquatic shoreline scenarios: 35/35; assertions=0; unexpected=0; actual cache and public rest owners; no game attached.",
+                                                       "Autoattack startup scenarios: 26/26; assertions=0; unexpected=0; actual Common/LocalPlayer Lua and TreeSharp; stock Lua5.1 with controlled native attack state; no game/server/native execution.",
+                                                       "Cast wait facing scenarios: 16/16; assertions=0; unexpected=0; actual WaitForCast overloads and real TreeSharp; controlled cast/facing boundaries; no client/native execution.",
+                                                       "Combat sight movement scenarios: 85/85; assertions=0; unexpected=0; complete tracked Movement and real TreeSharp; controlled world/navigation; no native path or game attached.",
+                                                       "Equip continuation boundary scenarios: 46/46; assertions=0; unexpected=0; exact tracked C# tick/context/acknowledge/return/restore; controlled actor/inventory/Lua; no physical cursor or client proof.",
+                                                       "Pre-existing equipment acknowledgement: 18/18; assertions=0; unexpected=0; both tracked owners; controlled observations; no game/native/server execution.",
+                                                       "Equipment cleanup ownership: 57/57; assertions=0; unexpected=0; actual tracked owners/generated Lua5.1; controlled build12340 cursor transitions and physical dispatch admission; no game/server/native execution.",
+                                                       "Equipment physical cursor guard: 8/8; actual generated x86 comparison/branch contract; no game attached or native execution.",
+                                                       "Equipment Lua51 boundary scenarios: 87/87; assertions=0; unexpected=0; tracked pickup/equip helpers, actual generated Lua5.1, loader size and verbatim managed conversion; controlled APIs; no physical GUID/client/server proof.",
+                                                       "Equipment pending-index scenarios: 24/24; assertions=0; unexpected=0; tracked owner/generated Lua; stock Lua5.1; controlled synchronous events; no native client proof.",
+                                                       "Public flight-owner scenarios: 83/83; assertions=0; unexpected=0; actual standalone lookup/update/POI owners; controlled feasibility; no game attached.",
+                                                       "Gossip lifetime scenarios: 59/59; assertions=0; unexpected=0; complete tracked owner and real quest reader; controlled actor/UI; no Lua or game execution.",
+                                                       "Gossip Lua51 generation scenarios: 63/63; assertions=0; unexpected=0; full tracked owner, persistent Lua5.1/events, actual conversion; controlled world; no original-client/native concurrency/server proof.",
+                                                       "Mesh clear-ownership scenarios: 45/45; assertions=0; unexpected=0; actual MeshNavigator.Clear; controlled mover/stuck callbacks; no game attached.",
+                                                       "Mesh move-lifetime scenarios: 29/29; assertions=0; unexpected=0; actual MoveTo and backing-owner transitions; no game attached.",
+                                                       "Mesh move-request scenarios: 64/64; assertions=0; unexpected=0; actual MoveTo and controlled observation/mover boundaries; no game attached.",
+                                                       "Mesh transit-reset scenarios: 36/36; assertions=0; unexpected=0; actual transit cleanup owners; no game attached.",
+                                                       "Isolation containment scenarios: 9/9; assertions=0; unexpected=0; verbatim provider members and real TreeSharp; no movement or game attached.",
+                                                       "Quest objective restart scenarios: 37/37; assertions=0; unexpected=0; complete tracked owners, real packed quest reader and OnStart/ticks; controlled metadata/world/UI; no game attached.",
+                                                       "Publication scenarios: 21/21; assertions=0; unexpected=0; actual memory/cache/scan/materialization/XML/file/load/running gate; no game attached.",
+                                                       "Quest strategy scheduler scenarios: 53/53; assertions=0; unexpected=0; actual loader/raw QuestLog/live scan/scheduler/XML; controlled external memory/navigation; no behavior dispatch or game attached."
+                                                   ],
+                            "failures":  [
+                                             "FAIL native spell observation: pending/legacy-only: pending result used unrelated fields or missed native pointer-relative identity",
+                                             "FAIL native spell observation: pending/actual-pending: pending result used unrelated fields or missed native pointer-relative identity",
+                                             "FAIL native spell observation: pending/legacy-conflict: pending result used unrelated fields or missed native pointer-relative identity",
+                                             "FAIL native spell observation: pending/zero-id: pending result used unrelated fields or missed native pointer-relative identity",
+                                             "FAIL native spell observation: pending/negative-id: pending result used unrelated fields or missed native pointer-relative identity",
+                                             "FAIL native spell observation: pending/alias-id: matching current native spell was not observed",
+                                             "FAIL native spell observation: pending/alias-name: matching current native spell was not observed",
+                                             "FAIL native spell observation: pending/alias-object: matching current native spell was not observed",
+                                             "FAIL native spell observation: terrain-return/00000100: undefined high return-register bits changed the AL boolean result",
+                                             "FAIL native spell observation: terrain-return/12345600: undefined high return-register bits changed the AL boolean result",
+                                             "FAIL native spell observation: terrain-return/FF000000: undefined high return-register bits changed the AL boolean result",
+                                             "FAIL aggregate group: NativeSpellObservationRegressionTests: System.InvalidOperationException: Native spell observation regression"
+                                         ]
+                        },
+                        {
+                            "stage":  "reader_red",
+                            "kind":  "host",
+                            "source":  "37ebf59f295f3216c2000bd791bef96fd099ba5e",
+                            "run":  36309824725,
+                            "jobs":  [
+                                         {
+                                             "id":  108593485406,
+                                             "name":  "host-build",
+                                             "status":  "completed",
+                                             "conclusion":  "success",
+                                             "labels":  [
+                                                            "windows-latest"
+                                                        ],
+                                             "runner_name":  "GitHub Actions 1000000514"
+                                         }
+                                     ],
+                            "artifact":  10928373148,
+                            "conclusion":  "success",
+                            "archive":  "w107-red-host-37ebf59f.zip",
+                            "sha256":  "a9d2418379d2e64e4e570e195273a054fa3fcdaa8bbb9011eb164dd77632a2c3",
+                            "bytes":  83118,
+                            "receipt":  "w107-red-host-37ebf59f-receipt.json",
+                            "receipt_sha256":  "4e8112fbf686d2a5b5454488744ebe97c4be211817ba5ab852c7b3afe248f2cc",
+                            "inspection":  "w107-red-host-37ebf59f-inspection.json",
+                            "inspection_sha256":  "98b92cf1c0fb2301bb4ba77c103c20476774cd45d23d0d37d3cb1b334bc6e536",
+                            "members":  4,
+                            "result":  {
+                                           "game_attached":  false,
+                                           "tests_run":  false,
+                                           "host_build_exit_code":  0
+                                       },
+                            "build_summary":  [
+                                                  "3344 Warning(s)",
+                                                  "0 Error(s)"
+                                              ]
+                        },
+                        {
+                            "stage":  "reader_green",
+                            "kind":  "integrated",
+                            "source":  "df3bbf83481e3b4c537d57f05d9aea2ee133ecd4",
+                            "run":  36310352504,
+                            "jobs":  [
+                                         {
+                                             "id":  108594958627,
+                                             "name":  "combined",
+                                             "status":  "completed",
+                                             "conclusion":  "success",
+                                             "labels":  [
+                                                            "windows-2022"
+                                                        ],
+                                             "runner_name":  "GitHub Actions 1000000516"
+                                         }
+                                     ],
+                            "artifact":  10929391038,
+                            "conclusion":  "success",
+                            "archive":  "w107-green-integrated-df3bbf83.zip",
+                            "sha256":  "de12a87c578945307127faa39b6e56c11f45aab9fbf1509c293373d9843830e2",
+                            "bytes":  935200,
+                            "receipt":  "w107-green-integrated-df3bbf83-receipt.json",
+                            "receipt_sha256":  "3e113c02a285d3e3f8878360d05132afffb696d33a2dd4c299906ad325b08f92",
+                            "inspection":  "w107-green-integrated-df3bbf83-inspection.json",
+                            "inspection_sha256":  "92c50c108820163429b1cf62554d3b1d28fc7ff4e508be3986fa8bb947a790cb",
+                            "members":  216,
+                            "tree":  "85e213451e5dbdda1cfe09f8cbb9f186e7e99efa",
+                            "aggregate_groups":  17,
+                            "successful_groups":  17,
+                            "inner_hashes":  215,
+                            "source_inputs":  1853,
+                            "checkout_inputs_matched":  1853,
+                            "cases_file":  "w107-green-integrated-df3bbf83-cases.json",
+                            "cases_sha256":  "8956570ca8f7109666db5381246facce20d36b0ec6d001f37f8f8ec3ccb0b95a",
+                            "native_summary":  "Native spell observation scenarios: 23/23; assertions=0; unexpected=0; actual property and complete terrain request; controlled build12340 memory/return-register vectors; no native/game execution.",
+                            "native_cases":  [
+                                                 "PASS native spell observation: pending/no-memory",
+                                                 "PASS native spell observation: pending/no-pending",
+                                                 "PASS native spell observation: pending/legacy-only",
+                                                 "PASS native spell observation: pending/actual-pending",
+                                                 "PASS native spell observation: pending/legacy-conflict",
+                                                 "PASS native spell observation: pending/zero-id",
+                                                 "PASS native spell observation: pending/negative-id",
+                                                 "PASS native spell observation: pending/pointer-overflow",
+                                                 "PASS native spell observation: pending/alias-id",
+                                                 "PASS native spell observation: pending/alias-name",
+                                                 "PASS native spell observation: pending/alias-object",
+                                                 "PASS native spell observation: terrain-return/00000000",
+                                                 "PASS native spell observation: terrain-return/00000001",
+                                                 "PASS native spell observation: terrain-return/00000100",
+                                                 "PASS native spell observation: terrain-return/00000101",
+                                                 "PASS native spell observation: terrain-return/12345600",
+                                                 "PASS native spell observation: terrain-return/12345601",
+                                                 "PASS native spell observation: terrain-return/FF000000",
+                                                 "PASS native spell observation: terrain-return/FFFFFFFF",
+                                                 "PASS native spell observation: terrain-failure/no-executor",
+                                                 "PASS native spell observation: terrain-failure/allocation-refused",
+                                                 "PASS native spell observation: terrain-failure/execute-exception",
+                                                 "PASS native spell observation: terrain-failure/read-exception"
+                                             ],
+                            "ground_observation":  null,
+                            "retained_summaries":  [
+                                                       "Aquatic shoreline scenarios: 35/35; assertions=0; unexpected=0; actual cache and public rest owners; no game attached.",
+                                                       "Autoattack startup scenarios: 26/26; assertions=0; unexpected=0; actual Common/LocalPlayer Lua and TreeSharp; stock Lua5.1 with controlled native attack state; no game/server/native execution.",
+                                                       "Cast wait facing scenarios: 16/16; assertions=0; unexpected=0; actual WaitForCast overloads and real TreeSharp; controlled cast/facing boundaries; no client/native execution.",
+                                                       "Combat sight movement scenarios: 85/85; assertions=0; unexpected=0; complete tracked Movement and real TreeSharp; controlled world/navigation; no native path or game attached.",
+                                                       "Equip continuation boundary scenarios: 46/46; assertions=0; unexpected=0; exact tracked C# tick/context/acknowledge/return/restore; controlled actor/inventory/Lua; no physical cursor or client proof.",
+                                                       "Pre-existing equipment acknowledgement: 18/18; assertions=0; unexpected=0; both tracked owners; controlled observations; no game/native/server execution.",
+                                                       "Equipment cleanup ownership: 57/57; assertions=0; unexpected=0; actual tracked owners/generated Lua5.1; controlled build12340 cursor transitions and physical dispatch admission; no game/server/native execution.",
+                                                       "Equipment physical cursor guard: 8/8; actual generated x86 comparison/branch contract; no game attached or native execution.",
+                                                       "Equipment Lua51 boundary scenarios: 87/87; assertions=0; unexpected=0; tracked pickup/equip helpers, actual generated Lua5.1, loader size and verbatim managed conversion; controlled APIs; no physical GUID/client/server proof.",
+                                                       "Equipment pending-index scenarios: 24/24; assertions=0; unexpected=0; tracked owner/generated Lua; stock Lua5.1; controlled synchronous events; no native client proof.",
+                                                       "Public flight-owner scenarios: 83/83; assertions=0; unexpected=0; actual standalone lookup/update/POI owners; controlled feasibility; no game attached.",
+                                                       "Gossip lifetime scenarios: 59/59; assertions=0; unexpected=0; complete tracked owner and real quest reader; controlled actor/UI; no Lua or game execution.",
+                                                       "Gossip Lua51 generation scenarios: 63/63; assertions=0; unexpected=0; full tracked owner, persistent Lua5.1/events, actual conversion; controlled world; no original-client/native concurrency/server proof.",
+                                                       "Mesh clear-ownership scenarios: 45/45; assertions=0; unexpected=0; actual MeshNavigator.Clear; controlled mover/stuck callbacks; no game attached.",
+                                                       "Mesh move-lifetime scenarios: 29/29; assertions=0; unexpected=0; actual MoveTo and backing-owner transitions; no game attached.",
+                                                       "Mesh move-request scenarios: 64/64; assertions=0; unexpected=0; actual MoveTo and controlled observation/mover boundaries; no game attached.",
+                                                       "Mesh transit-reset scenarios: 36/36; assertions=0; unexpected=0; actual transit cleanup owners; no game attached.",
+                                                       "Isolation containment scenarios: 9/9; assertions=0; unexpected=0; verbatim provider members and real TreeSharp; no movement or game attached.",
+                                                       "Quest objective restart scenarios: 37/37; assertions=0; unexpected=0; complete tracked owners, real packed quest reader and OnStart/ticks; controlled metadata/world/UI; no game attached.",
+                                                       "Publication scenarios: 21/21; assertions=0; unexpected=0; actual memory/cache/scan/materialization/XML/file/load/running gate; no game attached.",
+                                                       "Quest strategy scheduler scenarios: 53/53; assertions=0; unexpected=0; actual loader/raw QuestLog/live scan/scheduler/XML; controlled external memory/navigation; no behavior dispatch or game attached."
+                                                   ],
+                            "failures":  [
+
+                                         ]
+                        },
+                        {
+                            "stage":  "reader_green",
+                            "kind":  "host",
+                            "source":  "df3bbf83481e3b4c537d57f05d9aea2ee133ecd4",
+                            "run":  36310352527,
+                            "jobs":  [
+                                         {
+                                             "id":  108594958706,
+                                             "name":  "host-build",
+                                             "status":  "completed",
+                                             "conclusion":  "success",
+                                             "labels":  [
+                                                            "windows-latest"
+                                                        ],
+                                             "runner_name":  "GitHub Actions 1000000515"
+                                         }
+                                     ],
+                            "artifact":  10929176305,
+                            "conclusion":  "success",
+                            "archive":  "w107-green-host-df3bbf83.zip",
+                            "sha256":  "3ec66c699d2450e956e1eeca0d6c49e12cc9ee6b1e5732c397496852f4448ef8",
+                            "bytes":  82791,
+                            "receipt":  "w107-green-host-df3bbf83-receipt.json",
+                            "receipt_sha256":  "cdd0741f8882f05d78206011439e8baa74b38b6706aa992e0f1ac4103c7547a1",
+                            "inspection":  "w107-green-host-df3bbf83-inspection.json",
+                            "inspection_sha256":  "2f8820b1c43c5d4ef219556afe63510126217e00a0877208b6ec6eb85a4fabb4",
+                            "members":  4,
+                            "result":  {
+                                           "game_attached":  false,
+                                           "host_build_exit_code":  0,
+                                           "tests_run":  false
+                                       },
+                            "build_summary":  [
+                                                  "3344 Warning(s)",
+                                                  "0 Error(s)"
+                                              ]
+                        },
+                        {
+                            "stage":  "caller_red",
+                            "kind":  "integrated",
+                            "source":  "9f23968d24bf3b512187cb3ef6063e727978f04e",
+                            "run":  36310694489,
+                            "jobs":  [
+                                         {
+                                             "id":  108595906290,
+                                             "name":  "combined",
+                                             "status":  "completed",
+                                             "conclusion":  "failure",
+                                             "labels":  [
+                                                            "windows-2022"
+                                                        ],
+                                             "runner_name":  "GitHub Actions 1000000518"
+                                         }
+                                     ],
+                            "artifact":  10928468758,
+                            "conclusion":  "failure",
+                            "archive":  "w107-caller-red-integrated-9f23968d.zip",
+                            "sha256":  "a164bf657043a298d4b3d15d8aebf7f0582cf068a7b98465caa8d0411f946504",
+                            "bytes":  939162,
+                            "receipt":  "w107-caller-red-integrated-9f23968d-receipt.json",
+                            "receipt_sha256":  "86b000b5002f8941f3d06187e3066db83bb739b25f6ac091c464451492c5c596",
+                            "inspection":  "w107-caller-red-integrated-9f23968d-inspection.json",
+                            "inspection_sha256":  "8fdd4020863e75ed0beec95bcf3e507044b82e6b9112187fef8b129f6b833804",
+                            "members":  217,
+                            "tree":  "4646ea7a9189d0fc02119d5c1bb5131281d0de55",
+                            "aggregate_groups":  17,
+                            "successful_groups":  16,
+                            "inner_hashes":  216,
+                            "source_inputs":  1854,
+                            "checkout_inputs_matched":  1854,
+                            "cases_file":  "w107-caller-red-integrated-9f23968d-cases.json",
+                            "cases_sha256":  "b5a7b603860bbded9c4f1aedd4fd382b986ccd8977e47ad25e6f1d910856568e",
+                            "native_summary":  "Native spell observation scenarios: 23/23; assertions=0; unexpected=0; actual property and complete terrain request; controlled build12340 memory/return-register vectors; no native/game execution.",
+                            "native_cases":  [
+                                                 "PASS native spell observation: pending/no-memory",
+                                                 "PASS native spell observation: pending/no-pending",
+                                                 "PASS native spell observation: pending/legacy-only",
+                                                 "PASS native spell observation: pending/actual-pending",
+                                                 "PASS native spell observation: pending/legacy-conflict",
+                                                 "PASS native spell observation: pending/zero-id",
+                                                 "PASS native spell observation: pending/negative-id",
+                                                 "PASS native spell observation: pending/pointer-overflow",
+                                                 "PASS native spell observation: pending/alias-id",
+                                                 "PASS native spell observation: pending/alias-name",
+                                                 "PASS native spell observation: pending/alias-object",
+                                                 "PASS native spell observation: terrain-return/00000000",
+                                                 "PASS native spell observation: terrain-return/00000001",
+                                                 "PASS native spell observation: terrain-return/00000100",
+                                                 "PASS native spell observation: terrain-return/00000101",
+                                                 "PASS native spell observation: terrain-return/12345600",
+                                                 "PASS native spell observation: terrain-return/12345601",
+                                                 "PASS native spell observation: terrain-return/FF000000",
+                                                 "PASS native spell observation: terrain-return/FFFFFFFF",
+                                                 "PASS native spell observation: terrain-failure/no-executor",
+                                                 "PASS native spell observation: terrain-failure/allocation-refused",
+                                                 "PASS native spell observation: terrain-failure/execute-exception",
+                                                 "PASS native spell observation: terrain-failure/read-exception"
+                                             ],
+                            "ground_observation":  {
+                                                       "summary":  "Ground spell observation scenarios: 4/6; assertions=2; unexpected=0; exact CastOnGround predicate and name-match helper; controlled successive observations; no terrain/native/game execution.",
+                                                       "passed":  4,
+                                                       "total":  6,
+                                                       "assertions":  2,
+                                                       "unexpected":  0,
+                                                       "cases":  [
+                                                                     "PASS ground spell observation: stable-match",
+                                                                     "PASS ground spell observation: stable-foreign",
+                                                                     "PASS ground spell observation: absent",
+                                                                     "PASS ground spell observation: appears-next",
+                                                                     "FAIL ground spell observation: disappears: a later absent observation was dereferenced after checking an earlier non-null spell",
+                                                                     "FAIL ground spell observation: replaced: one predicate mixed different pending-spell observations"
+                                                                 ]
+                                                   },
+                            "retained_summaries":  [
+                                                       "Aquatic shoreline scenarios: 35/35; assertions=0; unexpected=0; actual cache and public rest owners; no game attached.",
+                                                       "Autoattack startup scenarios: 26/26; assertions=0; unexpected=0; actual Common/LocalPlayer Lua and TreeSharp; stock Lua5.1 with controlled native attack state; no game/server/native execution.",
+                                                       "Cast wait facing scenarios: 16/16; assertions=0; unexpected=0; actual WaitForCast overloads and real TreeSharp; controlled cast/facing boundaries; no client/native execution.",
+                                                       "Combat sight movement scenarios: 85/85; assertions=0; unexpected=0; complete tracked Movement and real TreeSharp; controlled world/navigation; no native path or game attached.",
+                                                       "Equip continuation boundary scenarios: 46/46; assertions=0; unexpected=0; exact tracked C# tick/context/acknowledge/return/restore; controlled actor/inventory/Lua; no physical cursor or client proof.",
+                                                       "Pre-existing equipment acknowledgement: 18/18; assertions=0; unexpected=0; both tracked owners; controlled observations; no game/native/server execution.",
+                                                       "Equipment cleanup ownership: 57/57; assertions=0; unexpected=0; actual tracked owners/generated Lua5.1; controlled build12340 cursor transitions and physical dispatch admission; no game/server/native execution.",
+                                                       "Equipment physical cursor guard: 8/8; actual generated x86 comparison/branch contract; no game attached or native execution.",
+                                                       "Equipment Lua51 boundary scenarios: 87/87; assertions=0; unexpected=0; tracked pickup/equip helpers, actual generated Lua5.1, loader size and verbatim managed conversion; controlled APIs; no physical GUID/client/server proof.",
+                                                       "Equipment pending-index scenarios: 24/24; assertions=0; unexpected=0; tracked owner/generated Lua; stock Lua5.1; controlled synchronous events; no native client proof.",
+                                                       "Public flight-owner scenarios: 83/83; assertions=0; unexpected=0; actual standalone lookup/update/POI owners; controlled feasibility; no game attached.",
+                                                       "Gossip lifetime scenarios: 59/59; assertions=0; unexpected=0; complete tracked owner and real quest reader; controlled actor/UI; no Lua or game execution.",
+                                                       "Gossip Lua51 generation scenarios: 63/63; assertions=0; unexpected=0; full tracked owner, persistent Lua5.1/events, actual conversion; controlled world; no original-client/native concurrency/server proof.",
+                                                       "Mesh clear-ownership scenarios: 45/45; assertions=0; unexpected=0; actual MeshNavigator.Clear; controlled mover/stuck callbacks; no game attached.",
+                                                       "Mesh move-lifetime scenarios: 29/29; assertions=0; unexpected=0; actual MoveTo and backing-owner transitions; no game attached.",
+                                                       "Mesh move-request scenarios: 64/64; assertions=0; unexpected=0; actual MoveTo and controlled observation/mover boundaries; no game attached.",
+                                                       "Mesh transit-reset scenarios: 36/36; assertions=0; unexpected=0; actual transit cleanup owners; no game attached.",
+                                                       "Isolation containment scenarios: 9/9; assertions=0; unexpected=0; verbatim provider members and real TreeSharp; no movement or game attached.",
+                                                       "Quest objective restart scenarios: 37/37; assertions=0; unexpected=0; complete tracked owners, real packed quest reader and OnStart/ticks; controlled metadata/world/UI; no game attached.",
+                                                       "Publication scenarios: 21/21; assertions=0; unexpected=0; actual memory/cache/scan/materialization/XML/file/load/running gate; no game attached.",
+                                                       "Quest strategy scheduler scenarios: 53/53; assertions=0; unexpected=0; actual loader/raw QuestLog/live scan/scheduler/XML; controlled external memory/navigation; no behavior dispatch or game attached."
+                                                   ],
+                            "failures":  [
+                                             "FAIL ground spell observation: disappears: a later absent observation was dereferenced after checking an earlier non-null spell",
+                                             "FAIL ground spell observation: replaced: one predicate mixed different pending-spell observations",
+                                             "FAIL aggregate group: GroundSpellObservationConsistencyRegressionTests: System.InvalidOperationException: Ground spell observation regression"
+                                         ]
+                        },
+                        {
+                            "stage":  "caller_red",
+                            "kind":  "host",
+                            "source":  "9f23968d24bf3b512187cb3ef6063e727978f04e",
+                            "run":  36310694482,
+                            "jobs":  [
+                                         {
+                                             "id":  108595906315,
+                                             "name":  "host-build",
+                                             "status":  "completed",
+                                             "conclusion":  "success",
+                                             "labels":  [
+                                                            "windows-latest"
+                                                        ],
+                                             "runner_name":  "GitHub Actions 1000000517"
+                                         }
+                                     ],
+                            "artifact":  10928941523,
+                            "conclusion":  "success",
+                            "archive":  "w107-caller-red-host-9f23968d.zip",
+                            "sha256":  "26d04c899ef77454d50c7d5d52318c56304a7e46a276c60b1d6d7bba11fc8fa4",
+                            "bytes":  83062,
+                            "receipt":  "w107-caller-red-host-9f23968d-receipt.json",
+                            "receipt_sha256":  "df2e243bb9c2d44d3f065a41c02096bdf8a68002dccdf9bd32bc33acbd23d111",
+                            "inspection":  "w107-caller-red-host-9f23968d-inspection.json",
+                            "inspection_sha256":  "3fed19624eeea1222fa0c8ad4ddebf2f74fcf79c8761a545786b886171240893",
+                            "members":  4,
+                            "result":  {
+                                           "tests_run":  false,
+                                           "game_attached":  false,
+                                           "host_build_exit_code":  0
+                                       },
+                            "build_summary":  [
+                                                  "3344 Warning(s)",
+                                                  "0 Error(s)"
+                                              ]
+                        },
+                        {
+                            "stage":  "final_green",
+                            "kind":  "integrated",
+                            "source":  "0e5148366a9329b6f14c840bfd7df1edc1f4a5e1",
+                            "run":  36311065568,
+                            "jobs":  [
+                                         {
+                                             "id":  108596961480,
+                                             "name":  "combined",
+                                             "status":  "completed",
+                                             "conclusion":  "success",
+                                             "labels":  [
+                                                            "windows-2022"
+                                                        ],
+                                             "runner_name":  "GitHub Actions 1000000519"
+                                         }
+                                     ],
+                            "artifact":  10928958282,
+                            "conclusion":  "success",
+                            "archive":  "w107-caller-green-integrated-0e514836.zip",
+                            "sha256":  "922936a4abc247e3506e25e4d1ba50225ecc7fa65df99fac3aedc7b1757bf71a",
+                            "bytes":  938241,
+                            "receipt":  "w107-caller-green-integrated-0e514836-receipt.json",
+                            "receipt_sha256":  "4cfbc42904a02507c6326bdea2c97f3ba2ba714dbfdb87bae9c3f1cd7260e49d",
+                            "inspection":  "w107-caller-green-integrated-0e514836-inspection.json",
+                            "inspection_sha256":  "b66a0d9555948aae2c3fb5bd1365324b7d02c8a915aca011896db93634d1ae60",
+                            "members":  217,
+                            "tree":  "9b0e804927aa9d10fa7a2229f83e9ebf822a6450",
+                            "aggregate_groups":  17,
+                            "successful_groups":  17,
+                            "inner_hashes":  216,
+                            "source_inputs":  1854,
+                            "checkout_inputs_matched":  1854,
+                            "cases_file":  "w107-caller-green-integrated-0e514836-cases.json",
+                            "cases_sha256":  "507c10274b69f643b261a74bf04942d1f428d886ff95906925ee3dae9344242e",
+                            "native_summary":  "Native spell observation scenarios: 23/23; assertions=0; unexpected=0; actual property and complete terrain request; controlled build12340 memory/return-register vectors; no native/game execution.",
+                            "native_cases":  [
+                                                 "PASS native spell observation: pending/no-memory",
+                                                 "PASS native spell observation: pending/no-pending",
+                                                 "PASS native spell observation: pending/legacy-only",
+                                                 "PASS native spell observation: pending/actual-pending",
+                                                 "PASS native spell observation: pending/legacy-conflict",
+                                                 "PASS native spell observation: pending/zero-id",
+                                                 "PASS native spell observation: pending/negative-id",
+                                                 "PASS native spell observation: pending/pointer-overflow",
+                                                 "PASS native spell observation: pending/alias-id",
+                                                 "PASS native spell observation: pending/alias-name",
+                                                 "PASS native spell observation: pending/alias-object",
+                                                 "PASS native spell observation: terrain-return/00000000",
+                                                 "PASS native spell observation: terrain-return/00000001",
+                                                 "PASS native spell observation: terrain-return/00000100",
+                                                 "PASS native spell observation: terrain-return/00000101",
+                                                 "PASS native spell observation: terrain-return/12345600",
+                                                 "PASS native spell observation: terrain-return/12345601",
+                                                 "PASS native spell observation: terrain-return/FF000000",
+                                                 "PASS native spell observation: terrain-return/FFFFFFFF",
+                                                 "PASS native spell observation: terrain-failure/no-executor",
+                                                 "PASS native spell observation: terrain-failure/allocation-refused",
+                                                 "PASS native spell observation: terrain-failure/execute-exception",
+                                                 "PASS native spell observation: terrain-failure/read-exception"
+                                             ],
+                            "ground_observation":  {
+                                                       "summary":  "Ground spell observation scenarios: 6/6; assertions=0; unexpected=0; exact CastOnGround predicate and name-match helper; controlled successive observations; no terrain/native/game execution.",
+                                                       "passed":  6,
+                                                       "total":  6,
+                                                       "assertions":  0,
+                                                       "unexpected":  0,
+                                                       "cases":  [
+                                                                     "PASS ground spell observation: stable-match",
+                                                                     "PASS ground spell observation: stable-foreign",
+                                                                     "PASS ground spell observation: absent",
+                                                                     "PASS ground spell observation: disappears",
+                                                                     "PASS ground spell observation: replaced",
+                                                                     "PASS ground spell observation: appears-next"
+                                                                 ]
+                                                   },
+                            "retained_summaries":  [
+                                                       "Aquatic shoreline scenarios: 35/35; assertions=0; unexpected=0; actual cache and public rest owners; no game attached.",
+                                                       "Autoattack startup scenarios: 26/26; assertions=0; unexpected=0; actual Common/LocalPlayer Lua and TreeSharp; stock Lua5.1 with controlled native attack state; no game/server/native execution.",
+                                                       "Cast wait facing scenarios: 16/16; assertions=0; unexpected=0; actual WaitForCast overloads and real TreeSharp; controlled cast/facing boundaries; no client/native execution.",
+                                                       "Combat sight movement scenarios: 85/85; assertions=0; unexpected=0; complete tracked Movement and real TreeSharp; controlled world/navigation; no native path or game attached.",
+                                                       "Equip continuation boundary scenarios: 46/46; assertions=0; unexpected=0; exact tracked C# tick/context/acknowledge/return/restore; controlled actor/inventory/Lua; no physical cursor or client proof.",
+                                                       "Pre-existing equipment acknowledgement: 18/18; assertions=0; unexpected=0; both tracked owners; controlled observations; no game/native/server execution.",
+                                                       "Equipment cleanup ownership: 57/57; assertions=0; unexpected=0; actual tracked owners/generated Lua5.1; controlled build12340 cursor transitions and physical dispatch admission; no game/server/native execution.",
+                                                       "Equipment physical cursor guard: 8/8; actual generated x86 comparison/branch contract; no game attached or native execution.",
+                                                       "Equipment Lua51 boundary scenarios: 87/87; assertions=0; unexpected=0; tracked pickup/equip helpers, actual generated Lua5.1, loader size and verbatim managed conversion; controlled APIs; no physical GUID/client/server proof.",
+                                                       "Equipment pending-index scenarios: 24/24; assertions=0; unexpected=0; tracked owner/generated Lua; stock Lua5.1; controlled synchronous events; no native client proof.",
+                                                       "Public flight-owner scenarios: 83/83; assertions=0; unexpected=0; actual standalone lookup/update/POI owners; controlled feasibility; no game attached.",
+                                                       "Gossip lifetime scenarios: 59/59; assertions=0; unexpected=0; complete tracked owner and real quest reader; controlled actor/UI; no Lua or game execution.",
+                                                       "Gossip Lua51 generation scenarios: 63/63; assertions=0; unexpected=0; full tracked owner, persistent Lua5.1/events, actual conversion; controlled world; no original-client/native concurrency/server proof.",
+                                                       "Mesh clear-ownership scenarios: 45/45; assertions=0; unexpected=0; actual MeshNavigator.Clear; controlled mover/stuck callbacks; no game attached.",
+                                                       "Mesh move-lifetime scenarios: 29/29; assertions=0; unexpected=0; actual MoveTo and backing-owner transitions; no game attached.",
+                                                       "Mesh move-request scenarios: 64/64; assertions=0; unexpected=0; actual MoveTo and controlled observation/mover boundaries; no game attached.",
+                                                       "Mesh transit-reset scenarios: 36/36; assertions=0; unexpected=0; actual transit cleanup owners; no game attached.",
+                                                       "Isolation containment scenarios: 9/9; assertions=0; unexpected=0; verbatim provider members and real TreeSharp; no movement or game attached.",
+                                                       "Quest objective restart scenarios: 37/37; assertions=0; unexpected=0; complete tracked owners, real packed quest reader and OnStart/ticks; controlled metadata/world/UI; no game attached.",
+                                                       "Publication scenarios: 21/21; assertions=0; unexpected=0; actual memory/cache/scan/materialization/XML/file/load/running gate; no game attached.",
+                                                       "Quest strategy scheduler scenarios: 53/53; assertions=0; unexpected=0; actual loader/raw QuestLog/live scan/scheduler/XML; controlled external memory/navigation; no behavior dispatch or game attached."
+                                                   ],
+                            "failures":  [
+
+                                         ]
+                        },
+                        {
+                            "stage":  "final_green",
+                            "kind":  "host",
+                            "source":  "0e5148366a9329b6f14c840bfd7df1edc1f4a5e1",
+                            "run":  36311065567,
+                            "jobs":  [
+                                         {
+                                             "id":  108596961528,
+                                             "name":  "host-build",
+                                             "status":  "completed",
+                                             "conclusion":  "success",
+                                             "labels":  [
+                                                            "windows-latest"
+                                                        ],
+                                             "runner_name":  "GitHub Actions 1000000520"
+                                         }
+                                     ],
+                            "artifact":  10928573791,
+                            "conclusion":  "success",
+                            "archive":  "w107-caller-green-host-0e514836.zip",
+                            "sha256":  "7681e2ba3bc3a38ae597ac1650538ad07b9ba8fbb75337f57814161e855e6f65",
+                            "bytes":  82334,
+                            "receipt":  "w107-caller-green-host-0e514836-receipt.json",
+                            "receipt_sha256":  "cc6a911841aaf5c7893a4e60d45d19a777abfccde8bd3a34664c3b9977f43279",
+                            "inspection":  "w107-caller-green-host-0e514836-inspection.json",
+                            "inspection_sha256":  "94ead365c33679610c44f7023091dcdaecc6ffce41199f0f058b161f17f979ea",
+                            "members":  4,
+                            "result":  {
+                                           "tests_run":  false,
+                                           "game_attached":  false,
+                                           "host_build_exit_code":  0
+                                       },
+                            "build_summary":  [
+                                                  "3344 Warning(s)",
+                                                  "0 Error(s)"
+                                              ]
+                        }
+                    ],
+    "comparisons":  [
+                        {
+                            "file":  "W107_READER_RED_GREEN_COMPARISON_20260927.json",
+                            "sha256":  "04a7dfd436851cbf61130dd3a77dbdac6d81b35c79afd0a214ab02d5a5979ce6",
+                            "data":  {
+                                         "verified_at_utc":  "2026-09-27T09:51:01.1301984Z",
+                                         "red_source":  "37ebf59f295f3216c2000bd791bef96fd099ba5e",
+                                         "green_source":  "df3bbf83481e3b4c537d57f05d9aea2ee133ecd4",
+                                         "red_run":  36309824667,
+                                         "green_run":  36310352504,
+                                         "red_inputs":  1853,
+                                         "green_inputs":  1853,
+                                         "changed_inputs":  [
+                                                                "Styx/Logic/Combat/SpellManager.cs",
+                                                                "Styx/WoWInternals/WoWObjects/LocalPlayer.cs"
+                                                            ],
+                                         "added_inputs":  [
+
+                                                          ],
+                                         "removed_inputs":  [
+
+                                                            ],
+                                         "normalized_count":  171,
+                                         "changed_normalized":  [
+
+                                                                ],
+                                         "added_normalized":  [
+
+                                                              ],
+                                         "removed_normalized":  [
+
+                                                                ],
+                                         "limits":  "Archive integrity and run success are established by separate inspection receipts. This report compares captured source and normalized fixture bytes only."
+                                     }
+                        },
+                        {
+                            "file":  "W107_CALLER_RED_GREEN_COMPARISON_20260927.json",
+                            "sha256":  "09904064e7b5532494db9574d01c3b4b75183fb168affe5fb35670349f94c387",
+                            "data":  {
+                                         "verified_at_utc":  "2026-09-27T10:05:13.3099997Z",
+                                         "red_source":  "9f23968d24bf3b512187cb3ef6063e727978f04e",
+                                         "green_source":  "0e5148366a9329b6f14c840bfd7df1edc1f4a5e1",
+                                         "red_run":  36310694489,
+                                         "green_run":  36311065568,
+                                         "red_inputs":  1854,
+                                         "green_inputs":  1854,
+                                         "changed_inputs":  [
+                                                                "runtime-snapshot/Routines/Singular wotlk/Helpers/Spell.cs"
+                                                            ],
+                                         "added_inputs":  [
+
+                                                          ],
+                                         "removed_inputs":  [
+
+                                                            ],
+                                         "normalized_count":  172,
+                                         "changed_normalized":  [
+
+                                                                ],
+                                         "added_normalized":  [
+
+                                                              ],
+                                         "removed_normalized":  [
+
+                                                                ],
+                                         "limits":  "Archive integrity and run success are established by separate inspection receipts. This report compares captured source and normalized fixture bytes only."
+                                     }
+                        }
+                    ],
+    "publications":  [
+                         {
+                             "file":  "W104_REDNATIVESPELL_PUBLICATION_20260927.json",
+                             "sha256":  "ca8b8c7e93e49a55a83000e67dad56552f84d8cd03ef78e1c838237c07462028",
+                             "commit":  "37ebf59f295f3216c2000bd791bef96fd099ba5e",
+                             "tree":  "ae7cdb28e53b3e856fe9811de1b982a64d5534ad",
+                             "expected_parent":  "3d54d4172e40b06682a0ca3ef1768aa287ffd3ab",
+                             "paths":  [
+                                           "Tools/WholesomeQuestRecoveryRegressionTests/NativeSpellObservationRegressionTests.cs"
+                                       ],
+                             "verified_at_utc":  "2026-09-27T09:34:51.8719866Z",
+                             "patch_sha256":  "90dccccdb38fa869adf9ad25a35eb571a68ac65b936b98b1ae74d1b9c6c03cfa"
+                         },
+                         {
+                             "file":  "W104_GREENNATIVESPELL_PUBLICATION_20260927.json",
+                             "sha256":  "d55528745bb26ea1e00ab81452c3e9025616c57552e8a13de08fed01324e3712",
+                             "commit":  "df3bbf83481e3b4c537d57f05d9aea2ee133ecd4",
+                             "tree":  "85e213451e5dbdda1cfe09f8cbb9f186e7e99efa",
+                             "expected_parent":  "37ebf59f295f3216c2000bd791bef96fd099ba5e",
+                             "paths":  [
+                                           "Styx/WoWInternals/WoWObjects/LocalPlayer.cs",
+                                           "Styx/Logic/Combat/SpellManager.cs"
+                                       ],
+                             "verified_at_utc":  "2026-09-27T09:44:57.8814465Z",
+                             "patch_sha256":  "5dc30c1fcc644d96b9a7fe845e1f11291887a2cd532a76845dd5f0ebae64d238"
+                         },
+                         {
+                             "file":  "W104_REDPENDINGWAIT_PUBLICATION_20260927.json",
+                             "sha256":  "689273d3adaac0882ce09b34969637413de0db52ff3e5b72125757925bab8898",
+                             "commit":  "9f23968d24bf3b512187cb3ef6063e727978f04e",
+                             "tree":  "4646ea7a9189d0fc02119d5c1bb5131281d0de55",
+                             "expected_parent":  "df3bbf83481e3b4c537d57f05d9aea2ee133ecd4",
+                             "paths":  [
+                                           "Tools/WholesomeQuestRecoveryRegressionTests/GroundSpellObservationConsistencyRegressionTests.cs"
+                                       ],
+                             "verified_at_utc":  "2026-09-27T09:51:26.4961026Z",
+                             "patch_sha256":  "d36f88b4be07f97f713e641d1daa2ee386e4272d887d41c347c6375e19ee95a3"
+                         },
+                         {
+                             "file":  "W104_GREENPENDINGWAIT_PUBLICATION_20260927.json",
+                             "sha256":  "df2856cdb8e8e6c224b7bb6721e16fa21c83c6dd559ae0f5c44e118ea6b1de60",
+                             "commit":  "0e5148366a9329b6f14c840bfd7df1edc1f4a5e1",
+                             "tree":  "9b0e804927aa9d10fa7a2229f83e9ebf822a6450",
+                             "expected_parent":  "9f23968d24bf3b512187cb3ef6063e727978f04e",
+                             "paths":  [
+                                           "runtime-snapshot/Routines/Singular wotlk/Helpers/Spell.cs"
+                                       ],
+                             "verified_at_utc":  "2026-09-27T09:58:57.5182089Z",
+                             "patch_sha256":  "c36a78954177623fb204e1aa39cc501d712a31178f6d49fa095b1a20d60d53e2"
+                         }
+                     ],
+    "native_input_sha256":  "bf644876709c591acc17c0da8cdf1814edcc9f1e6bc109a8c0d5c38c79dc953c",
+    "native_receipts":  [
+                            {
+                                "file":  "w104-w106-pending-getter.json",
+                                "sha256":  "d8ddaffa093112ee742e4411dd1ff36f3c55feb2dc93bff64ca47ff8cabf02c2",
+                                "tool":  "decompile",
+                                "arguments":  {
+                                                  "addr":  "0x7FD630"
+                                              },
+                                "captured_at_utc":  "2026-09-27T07:44:40.9920708Z"
+                            },
+                            {
+                                "file":  "w104-w106-pending-id-callers.json",
+                                "sha256":  "67564288824f1e3171c3701471257dafe13ce99750c7eb11383604a37ef45cc3",
+                                "tool":  "xrefs_to",
+                                "arguments":  {
+                                                  "addrs":  [
+                                                                "0x7FD630"
+                                                            ],
+                                                  "limit":  20
+                                              },
+                                "captured_at_utc":  "2026-09-27T07:46:03.3873366Z"
+                            },
+                            {
+                                "file":  "w104-w106-pending-id-ui-caller.json",
+                                "sha256":  "08dee6d7bcc42a6c86e9430f191b06f3e2d07a78b66752dc6e8f36602edf1a3f",
+                                "tool":  "decompile",
+                                "arguments":  {
+                                                  "addr":  "0x5198A0"
+                                              },
+                                "captured_at_utc":  "2026-09-27T07:46:30.5997808Z"
+                            },
+                            {
+                                "file":  "w104-w106-pending-spell-fields.json",
+                                "sha256":  "63d96e4494a15d27564ea24ea5607b7940dc217aad031af6b921d4370aa5cfad",
+                                "tool":  "xrefs_to",
+                                "arguments":  {
+                                                  "addrs":  [
+                                                                "0xCEC1CC",
+                                                                "0xCEC1D0",
+                                                                "0xD3F4E4"
+                                                            ],
+                                                  "limit":  35
+                                              },
+                                "captured_at_utc":  "2026-09-27T07:44:18.3443404Z"
+                            },
+                            {
+                                "file":  "w104-w106-targeting-api.json",
+                                "sha256":  "f531b868ccff5ab707c1b45efbe5a45fa9845719ecea7809033517033632973d",
+                                "tool":  "decompile",
+                                "arguments":  {
+                                                  "addr":  "0x7FDCD0"
+                                              },
+                                "captured_at_utc":  "2026-09-27T07:45:19.5070082Z"
+                            },
+                            {
+                                "file":  "w104-w106-terrain-click.json",
+                                "sha256":  "2b0d2abfb6818f7f1cbc953d4b7064bd1d1a3f3d342f49b8e255aaf68ac70180",
+                                "tool":  "decompile",
+                                "arguments":  {
+                                                  "addr":  "0x80C340"
+                                              },
+                                "captured_at_utc":  "2026-09-27T07:44:04.1705299Z"
+                            },
+                            {
+                                "file":  "w104-w106-terrain-click-instructions.json",
+                                "sha256":  "f91400eb78a0708d37dbff3811a2069e22e4faeaa8bc9b710cb231d8a0820651",
+                                "tool":  "disasm",
+                                "arguments":  {
+                                                  "addr":  "0x80C340",
+                                                  "max_instructions":  100,
+                                                  "include_total":  true
+                                              },
+                                "captured_at_utc":  "2026-09-27T07:51:38.1333575Z"
+                            },
+                            {
+                                "file":  "w104-w107-resume-health.json",
+                                "sha256":  "9276b6a340a2f73cf50a824a04c2657d45c712d002c8258f959e4ab39ea6ac92",
+                                "tool":  "server_health",
+                                "arguments":  {
+
+                                              },
+                                "captured_at_utc":  "2026-09-27T09:33:27.7283807Z"
+                            }
+                        ],
+    "plan":  {
+                 "file":  "W107_PLAN_20260927.md",
+                 "sha256":  "6128efc0a809b17621a4e46b7d172fce959b9f6cdcbced64fef7ad73836224d0"
+             },
+    "ledger":  {
+                   "file":  "W107_EXECUTION_20260927.md",
+                   "sha256":  "38de57ffd8a6199e615b3f93d7725da2015a021f27d518e2f7094f7b3dbe322c"
+               },
+    "previous_checkpoints":  [
+                                 {
+                                     "path":  "docs/audit/2026-09-27/W104_VERIFIED_EVIDENCE.json",
+                                     "sha256":  "1397d6ab35ec7ad627e768402745103b4359b7dda53d81ef03e7fba6c7ec5753",
+                                     "validated_source":  "6cbabba99ee523cbf2e0902f5b6964027edc410e"
+                                 },
+                                 {
+                                     "path":  "docs/audit/2026-09-27/W105_EVIDENCE.json",
+                                     "sha256":  "bee55b52c682be131fe106ee0adafa5bea6d5777616115c789d0f4bce6e056a2",
+                                     "validated_source":  "500251fc20904b803aed40028c26edc1c8c5da94"
+                                 },
+                                 {
+                                     "path":  "docs/audit/2026-09-27/W106_EVIDENCE.json",
+                                     "sha256":  "8093b261cb47537bbfb9fa62e3f0e7ef40ee8dca9ed15e2511bd5a1078c6334b",
+                                     "validated_source":  "1db1454fa7cccf7daa71dddcf1e99f93ed7c00ad"
+                                 }
+                             ],
+    "identified_actionable_source_repairs_complete":  true,
+    "all_PR51_acceptance_complete":  false,
+    "merge_gates_satisfied":  false,
+    "scope_document":  "docs/audit/2026-09-27/W107_SCOPE_COMPLETION.md",
+    "remaining":  [
+                      "R06 first-response provenance requires verified exclusive interaction lifetime or origin-aware evidence",
+                      "Full ground-spell request/recipient ownership and live terrain execution remain unverified",
+                      "By-name duplicate-copy selection and broader equipment transfers remain explicitly deferred",
+                      "R01 dense-pack retreat stays disabled pending route/lifetime validation",
+                      "R03 unsupported raw-counter/recipient/realm recipe extensions remain explicitly deferred",
+                      "R07 general concurrent/transactional reload extensions remain outside the bounded policy",
+                      "Original-client/server/native/independent/supervised acceptance is still required",
+                      "Earlier intermittent W105 publication assertion has no established cause; retain diagnostic pending recurrence evidence"
+                  ],
+    "no_subagents":  true,
+    "no_local_project_execution":  true,
+    "no_production_CB_access":  true,
+    "no_IDB_or_executable_mutation":  true,
+    "no_merge":  true,
+    "numeric_preparation_historical":  3,
+    "numeric_preparation_new":  0,
+    "numeric_preparation_remaining":  0,
+    "evidence_limits":  "Actual tracked C#/Lua5.1/TreeSharp with controlled observations and generated instruction contracts. Each separate red/green pair retains identical fixtures. This is not native gameplay, server credit, independent acceptance, exclusive request provenance, all-class/quest support or proof of absence of all future defects.",
+    "documentation_identity":  "The containing commit is documentation only; exact identity is recorded externally by publication receipt and LATEST_CONTINUATION.md."
+}

@@ -1,4 +1,16 @@
-# Continue W107 after verified W106 equipment acknowledgement
+# Resume only new evidence or acceptance after verified W107
+
+CopilotBuddy PR51 currently has no remaining identified unimplemented source repair in the recovered request. Read `D:\Dev\CopilotBuddy-Evidence\LATEST_CONTINUATION.md`, `docs/audit/2026-09-27/W107_CHECKPOINT.md`, `W107_EVIDENCE.json`, `W107_SCOPE_COMPLETION.md`, the immutable `W107_EXECUTION_20260927.md`, and the final documentation publication/verification receipts before changes. Reconcile live refs; do not infer state from an interrupted chat or recreate existing commits.
+
+Final validated source/production: **0e5148366a9329b6f14c840bfd7df1edc1f4a5e1**; tree9b0e804927aa9d10fa7a2229f83e9ebf822a6450. Native-reader productiondf3bbf83481e3b4c537d57f05d9aea2ee133ecd4 has behavioral red37ebf59f295f3216c2000bd791bef96fd099ba5e. Final consumer production has behavioral red9f23968d24bf3b512187cb3ef6063e727978f04e. Both red/green pairs retain identical fixtures; final integrated36311065568 is17/17, native23/23, consumer6/6, all1854sourceinputs/216innerhashes/217members verified. Host36311065567 has0errors/3344warnings, compile-only. Retain all W104–W106 fixes and evidence; do not restart them.
+
+The remaining scope is explicitly documented: original-client/server/native/independent/supervised acceptance; R06 first-response and generic ground-request ownership; deliberately deferred by-name exact-copy/broader-transfer, disabled dense-pack retreat, unsupported recipe/raw-counter/recipient materializers and general reload extensions. Earlier W105 intermittent publication provenance failure remains undiagnosed pending recurrence, not declared fixed by later green. Resume a deferred feature only with its required evidence and scope; perform actual acceptance only in an authorized development environment. Use verified build12340 IDA for uncertain client semantics, read/analysis only. Do not invent progress or repeat unchanged CI while awaiting missing acceptance.
+
+Only repositoryJeofW/cbp id1367174964 and approved branchaudit/next-55-equipment-observation-20260917. PR51 must stay draft/unmerged; no force-push/master write, production CB access, local project build/test, IDB/executable mutation, subagents, W80/W92 restart, PR58 recreation, excluded PR25 or weakened assertions/merge gates. Preserve all original3.3.5a/core/provenance policies and numeric budget3historical/0new/0remaining. Historical refusals remain exact records, not a global unavailability claim or permission to evade them. The final documentation SHA and finish outcome are in external LATEST_CONTINUATION/publication/final-verification records; never substitute documentation identity for the tested source above.
+
+---
+
+# Retained W106-to-W107 prompt — work below is historical and completed
 
 Read external `D:\Dev\CopilotBuddy-Evidence\LATEST_CONTINUATION.md`, `W106_PLAN_20260927.md`, immutable `W106_EXECUTION_20260927.md`, and `docs/audit/2026-09-27/W106_CHECKPOINT.md`, `W106_EVIDENCE.json`, `W106_PROTOCOL_AND_SCOPE.md`. Reconcile source `1db1454fa7cccf7daa71dddcf1e99f93ed7c00ad`, production `941667d89eda29f3f66b7ca41d7063ffc5717036`, original red `12ac96f2dc125e1dc1405fca55c1dde47b040b0c`, and the external final documentation receipt. W106 final integrated36307402619 is17/17, acknowledgement18/18 and continuation46/46; host36307402690 is0errors/3344warnings. All1852sourceinputs/214innerhashes/215members verified. Do not recreate existing patches, tests or publication.
 
