@@ -547,21 +547,26 @@ namespace Styx.Logic.Combat
 			if (me == null)
 				return false;
 
+			// Cast time, funnel state and range can depend on current client
+			// state. Use one valid observation, not an ID-only cached default.
+			if (!spell.TryGetCurrentSpellInfo(out var castTime, out var isFunnel, out var minRange, out var maxRange))
+				return false;
+
 			// HB 4.3.4: Range checks
 			if (checkRange && target != null)
 			{
 				if (!target.InLineOfSpellSight)
 					return false;
-				if (spell.MaxRange != 0f && target.Distance > (double)spell.MaxRange)
+				if (maxRange != 0f && target.Distance > (double)maxRange)
 					return false;
-				if (spell.MaxRange == 0f && !target.IsWithinMeleeRange)
+				if (maxRange == 0f && !target.IsWithinMeleeRange)
 					return false;
-				if (spell.MinRange != 0f && target.Distance < (double)spell.MinRange)
+				if (minRange != 0f && target.Distance < (double)minRange)
 					return false;
 			}
 
 			// HB 4.3.4: Movement check (cast time or funnel spells can't be cast while moving)
-			if (checkMovement && (spell.CastTime != 0U || spell.IsFunnel) && me.IsMoving)
+			if (checkMovement && (castTime != 0U || isFunnel) && me.IsMoving)
 				return false;
 
 			// HB 4.3.4: Lag tolerance path
