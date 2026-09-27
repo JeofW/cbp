@@ -966,7 +966,7 @@ namespace Singular.Helpers
                         1,
                         ret => StyxWoW.Me.HasPendingSpell(spell),
                         new ActionAlwaysSucceed()),
-                    new Action(ret => LegacySpellManager.ClickRemoteLocation(onLocation(ret))))
+                    new Action(ret => SpellManager.ClickRemoteLocation(onLocation(ret)) ? RunStatus.Success : RunStatus.Failure))
                 );
         }
 
