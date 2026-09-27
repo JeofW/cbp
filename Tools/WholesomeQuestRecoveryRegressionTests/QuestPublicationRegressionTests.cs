@@ -110,7 +110,7 @@ internal static class QuestPublicationRegressionTests
             {
                 var scheduler = f.Scheduler(f.Directory);
                 try { scheduler.ScanAndRefresh(f.Player); throw new AssertionFailure("directory destination did not fail"); }
-                catch (UnauthorizedAccessException error) { Check(error.StackTrace?.Contains("ProfileBuilder.WriteProfile") == true, "error was not from real profile file writer"); }
+                catch (UnauthorizedAccessException error) { Check(error.StackTrace?.Contains("ProfileBuilder.WriteProfile") == true, "error was not from real profile file writer; actual exception: " + error); }
             })),
             ("actual filesystem write failure cannot authorize the old selected child", () => WithFixture(f =>
             {

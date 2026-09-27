@@ -48,7 +48,11 @@ internal static class GroupSafetyWiringRegressionTests
             }));
         }
         var auto = Method(routine, "Singular.Helpers.Common", "CreateAutoAttack");
-        foreach (string dispatch in new[] { "ToggleAttack", "CastPetAction" })
+        // The start-only owner now uses Lua.StartAttack instead of the legacy
+        // toggle. Keep the compiled ordering assertion for the actual dispatch;
+        // the Lua behavioral fixture checks its exact script and denied path.
+        string attackDispatch = NestedActions(auto, "DoString").Length != 0 ? "DoString" : "ToggleAttack";
+        foreach (string dispatch in new[] { attackDispatch, "CastPetAction" })
         {
             string effect = dispatch;
             checks.Add((effect + " rechecks current enemy permission", () =>
