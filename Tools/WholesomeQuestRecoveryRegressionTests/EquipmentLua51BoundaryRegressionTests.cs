@@ -188,7 +188,9 @@ public sealed class PickupProbe
 clicks=0
 -- Lifetime admission is controlled here; the cleanup suite executes its actual
 -- pickup/cursor event sequence. This suite retains the existing request cases.
-CopilotBuddy_EquipCursorFrame={owner='0123456789abcdef0123456789abcdef',phase=2}
+CopilotBuddy_EquipCursorFrame={owner='0123456789abcdef0123456789abcdef',phase=2,handler=function() end}
+function CopilotBuddy_EquipCursorFrame:GetScript(event) return self.handler end
+function CopilotBuddy_EquipCursorFrame:IsEventRegistered(event) return event=='CURSOR_UPDATE' end
 function StaticPopup_FindVisible(kind) return nil end
 function GetItemInfo(entry) assert(entry==100);return 'item' end
 function CreateFrame()

@@ -134,7 +134,9 @@ public static class Lua {
 clicks=0;submits=0;confirms=0;popup=nil
 -- Cursor lifetime is a separate controlled admission boundary in these
 -- synchronous bind-index tests; its event lifecycle is exercised by W104.
-CopilotBuddy_EquipCursorFrame={owner='0123456789abcdef0123456789abcdef',phase=2}
+CopilotBuddy_EquipCursorFrame={owner='0123456789abcdef0123456789abcdef',phase=2,handler=function() end}
+function CopilotBuddy_EquipCursorFrame:GetScript(event) return self.handler end
+function CopilotBuddy_EquipCursorFrame:IsEventRegistered(event) return event=='CURSOR_UPDATE' end
 local frames={}
 function CreateFrame()
  local f={events={}}

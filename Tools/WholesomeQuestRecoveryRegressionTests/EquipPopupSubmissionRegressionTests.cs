@@ -88,12 +88,14 @@ public static class StyxWoW { public static ProbePlayer Me=new ProbePlayer(); }
 public static class Lua
 {
     public static readonly List<string> Requests=new List<string>();
+    public static bool BeginEquipCursorOwnership(uint entry,string owner){throw new InvalidOperationException("Unexpected cursor admission");}
     public static void DoString(string format,params object[] args){Requests.Add(args.Length==0?format:string.Format(format,args));}
 }
 public sealed class PopupProbe
 {
     private bool _isBehaviorDone,_isDisposed,_pendingEquipSubmitted;
     private ulong _pendingEquipGuid;
+    private string _pendingCursorOwner;
     private ProbePlayer _pendingEquipPlayer;
     private ulong _pendingEquipPlayerGuid;
     private uint _pendingEquipEntry;

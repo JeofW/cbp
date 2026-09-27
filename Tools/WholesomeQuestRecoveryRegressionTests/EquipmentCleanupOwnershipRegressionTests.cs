@@ -78,6 +78,8 @@ internal static class EquipmentCleanupOwnershipRegressionTests
                 (Mode:"timeout-empty", Result:false, Clears:0, Submits:0, Confirms:0),
                 (Mode:"timeout-revoked", Result:false, Clears:0, Submits:0, Confirms:0),
                 (Mode:"timeout-lost-observer", Result:false, Clears:0, Submits:0, Confirms:0),
+                (Mode:"timeout-unregistered-observer", Result:false, Clears:0, Submits:0, Confirms:0),
+                (Mode:"timeout-replaced-handler", Result:false, Clears:0, Submits:0, Confirms:0),
                 (Mode:"timeout-missing-owner", Result:false, Clears:0, Submits:0, Confirms:0),
                 (Mode:"timeout-native-guid-changed", Result:false, Clears:0, Submits:0, Confirms:0),
                 (Mode:"timeout-repeat", Result:false, Clears:1, Submits:0, Confirms:0),
@@ -87,6 +89,8 @@ internal static class EquipmentCleanupOwnershipRegressionTests
                 (Mode:"submit-reselected", Result:false, Clears:0, Submits:0, Confirms:0),
                 (Mode:"submit-foreign-same", Result:false, Clears:0, Submits:0, Confirms:0),
                 (Mode:"submit-lost-observer", Result:false, Clears:0, Submits:0, Confirms:0),
+                (Mode:"submit-unregistered-observer", Result:false, Clears:0, Submits:0, Confirms:0),
+                (Mode:"submit-replaced-handler", Result:false, Clears:0, Submits:0, Confirms:0),
                 (Mode:"submit-missing-transition", Result:false, Clears:0, Submits:0, Confirms:0),
                 (Mode:"submit-extra-transition", Result:false, Clears:0, Submits:0, Confirms:0) })
             {
@@ -209,6 +213,7 @@ local popup=nil
 function CreateFrame()
  local f={events={}}
  function f:RegisterEvent(e) self.events[e]=true end
+ function f:IsEventRegistered(e) return self.events[e] or false end
  function f:UnregisterAllEvents() self.events={} end
  function f:SetScript(e,fn) self.fn=fn end
  function f:GetScript(e) return self.fn end
@@ -260,6 +265,12 @@ function PrepareScenario()
   local f=_G.CopilotBuddy_EquipCursorFrame
   if f then f:UnregisterAllEvents();f:SetScript('OnEvent',nil) end
   _G.CopilotBuddy_EquipCursorFrame=nil
+ elseif string.find(scenario,'unregistered%-observer') then
+  local f=_G.CopilotBuddy_EquipCursorFrame
+  if f then f:UnregisterAllEvents() end
+ elseif string.find(scenario,'replaced%-handler') then
+  local f=_G.CopilotBuddy_EquipCursorFrame
+  if f then f:SetScript('OnEvent',function() end) end
  end
 end
 """;
