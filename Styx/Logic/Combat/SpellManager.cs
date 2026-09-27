@@ -1051,10 +1051,12 @@ namespace Styx.Logic.Combat
 						executor.AddLine("retn");
 						executor.Execute();
 						
-						int result;
+						// Build12340 defines only AL on both return paths.
+						// Undefined high EAX bits must not turn refusal into success.
+						byte result;
 						using (StyxWoW.Memory.TemporaryCacheState(false))
 						{
-							result = executor.Memory.Read<int>(executor.ReturnPointer);
+							result = executor.Memory.Read<byte>(executor.ReturnPointer);
 						}
 						return result != 0;
 					}
