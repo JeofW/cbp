@@ -73,7 +73,7 @@ public sealed class WoWItem
     public uint Entry=100; public ulong Guid=200; public bool IsValid=true;
     public bool TryPickUp(out int bag,out int slot){bag=0;slot=1;return true;}
 }
-public sealed class Equipment { public WoWItem[] Items=new[]{new WoWItem()}; }
+public sealed class Equipment { public WoWItem[] Items=new[]{new WoWItem{Guid=201}}; }
 public sealed class Inventory { public Equipment Equipped=new Equipment(); }
 public sealed class LocalPlayer
 {
@@ -149,6 +149,9 @@ public sealed class ContinuationProbe
         Lua.Requests.Clear();Lua.DuringRequest=null;LocalPlayer.InventoryReads=0;
         var owner=new ContinuationProbe();owner.TickPendingEquip();
         Check(owner.HasPendingEquip&&owner._pendingEquipSubmitted,"initial admission failed");
+        // Initial request starts with another item equipped. Supply the controlled
+        // acknowledgement afterward; an already-equipped item needs no pickup.
+        StyxWoW.Me.Inventory.Equipped.Items=new[]{new WoWItem{Guid=200}};
         Lua.Requests.Clear();LocalPlayer.InventoryReads=0;
         return owner;
     }
