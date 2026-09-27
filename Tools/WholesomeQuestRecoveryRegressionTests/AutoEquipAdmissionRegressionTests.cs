@@ -21,12 +21,14 @@ internal static class AutoEquipAdmissionRegressionTests
         var syntax = CSharpSyntaxTree.ParseText(File.ReadAllText(Path.Combine(root,
             "runtime-snapshot/Plugins/AutoEquip2/AutoEquip.cs"))).GetRoot();
         var names = new HashSet<string> { "CheckAndEquipAmmo", "CanEquipNow", "CursorHasAnyItem", "HandleLootRoll", "FindBestEquipmentSlot" };
+        // Keep the complete declaration/body, but not an outer #region owned
+        // by neighboring declarations that are not part of this probe.
         string methods = string.Join("\n", syntax.DescendantNodes().OfType<MethodDeclarationSyntax>()
-            .Where(m => names.Contains(m.Identifier.ValueText)).Select(m => m.ToFullString()));
+            .Where(m => names.Contains(m.Identifier.ValueText)).Select(m => m.ToString()));
         if (syntax.DescendantNodes().OfType<MethodDeclarationSyntax>().Count(m => names.Contains(m.Identifier.ValueText)) != names.Count)
             throw new InvalidOperationException("Missing complete AutoEquip admission owner");
         string pending = syntax.DescendantNodes().OfType<PropertyDeclarationSyntax>()
-            .Single(p => p.Identifier.ValueText == "HasPendingEquip").ToFullString();
+            .Single(p => p.Identifier.ValueText == "HasPendingEquip").ToString();
         string directory = Path.Combine(Path.GetTempPath(), "cb-auto-admission-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(directory);
         try
