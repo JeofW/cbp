@@ -1,4 +1,14 @@
-# Continue from the verified W105 combat successor
+# Continue W107 after verified W106 equipment acknowledgement
+
+Read external `D:\Dev\CopilotBuddy-Evidence\LATEST_CONTINUATION.md`, `W106_PLAN_20260927.md`, immutable `W106_EXECUTION_20260927.md`, and `docs/audit/2026-09-27/W106_CHECKPOINT.md`, `W106_EVIDENCE.json`, `W106_PROTOCOL_AND_SCOPE.md`. Reconcile source `1db1454fa7cccf7daa71dddcf1e99f93ed7c00ad`, production `941667d89eda29f3f66b7ca41d7063ffc5717036`, original red `12ac96f2dc125e1dc1405fca55c1dde47b040b0c`, and the external final documentation receipt. W106 final integrated36307402619 is17/17, acknowledgement18/18 and continuation46/46; host36307402690 is0errors/3344warnings. All1852sourceinputs/214innerhashes/215members verified. Do not recreate existing patches, tests or publication.
+
+W107 must address the two reader mismatches found in retained original-client receipts: ClickRemoteLocation tests all EAX although0x80C340 defines only AL; LocalPlayer pending-cursor spell uses direct fields different from native getter0x7FD630's pointer0xD3F4E4 and ID+32. Read the retained `w104-w106-pending-*`, `targeting-api`, and `terrain-click*` evidence before further analysis; verify live IDA identity before any new request. Preserve result/cursor ownership limits and prove each repair through hosted Windows/x86 behavioral red/green. This does not authorize speculative full ground-spell ownership or a new ABI.
+
+Keep all original3.3.5a/core/provenance policies, prior repairs/assertions, expected-parent publication and exact remote readback, numeric budget3historical/0new/0remaining and mandatory acceptance/merge gates. No subagents, merge, force-push/master writes, production CB access, local project execution, W80/W92 restart, PR58 recreation, excluded PR25 or speculative changes. Continue the original currently-actionable scope; use session_finish only near actual implementation completion. Full client/server/native/independent/supervised acceptance remains open.
+
+---
+
+# Retained verified W105 combat successor
 
 Continue CopilotBuddy PR51 without subagents in `D:\Dev\CopilotBuddy-PR51`, repository `JeofW/cbp`, approved branch `audit/next-55-equipment-observation-20260917` only. Read external `LATEST_CONTINUATION.md` and `docs/audit/2026-09-27/W105_CHECKPOINT.md` / `W105_EVIDENCE.json` before retained W104 and earlier handoffs. Validated source is `500251fc20904b803aed40028c26edc1c8c5da94`; production repair is `19ac34d3566f94408296b6a1196b02f27f5da943`; corrected red is `538a46c130dda9c37d9c90090e92183042b2f8cf`. Reconcile live refs before changes; do not recreate existing tests or repairs.
 

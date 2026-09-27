@@ -1,0 +1,66 @@
+# PR51 remaining protocol and acceptance boundaries
+
+27 September 2026. Current assessment after W104 equipment cleanup, W105 shared combat repairs and the hosted-verified W106 pre-existing equipment acknowledgement repair. W106 validated source is `1db1454fa7cccf7daa71dddcf1e99f93ed7c00ad`; see its checkpoint for exact red/green evidence. This is a continuation of the retained W80 remediation, not a restart of its completed140-commit review. Passing hosted groups do not authorize merge or establish live gameplay acceptance.
+
+## R06: first gossip response cannot be attributed by menu identity alone
+
+The current `runtime-snapshot/Quest Behaviors/GossipEvent.cs` retains three distinct protections: W101's local interaction-completion receipt, W100's observer identity/capture token, and the complete ordered typed menu observation used again in the final selection/cleanup request. Their actual source was read in this continuation. Pre-existing menus are deferred; actor/reference/GUID and quest lifetime remain checked. These protections are valuable, but start-of-request provenance is a different question from preserving a menu after capture.
+
+The live IDA endpoint served the copied original WoW3.3.5a/build12340 input, SHA256 `bf644876709c591acc17c0da8cdf1814edcc9f1e6bc109a8c0d5c38c79dc953c`, database `D:\Dev\CopilotBuddy-Evidence\Build12340-IDA\WoW-12340.i64`, image base0x400000. Each analysis was preceded by health/path/hash checks. No executable or IDB mutation, game launch or inferred ABI was used.
+
+Read-only evidence:
+
+- Request path `0x6D1E20` builds opcode379 (`0x17B`) with the NPC's two GUID words and sends it. No per-attempt token is added by the inspected path.
+- Response handler `0x58B1B0` reads a GUID, replaces shared gossip state through `0x58A550`, reads the menu ID into `0xC016F8`, the text identifier, options and quests, then calls presentation `0x58AC30`.
+- Presentation `0x58AC30` queries NPC text cache with callback `0x58AAE0`. Missing cache data defers presentation. The ready path ultimately emits event280 with no argument payload. This does not turn the original request into a synchronous menu receipt.
+
+Pinned **TrinityCore3.3.5** `8fda442f6c30ca21a622638063ab8b28376f1b25` corroborates the protocol, with exact bytes retained externally:
+
+| Source | Inspected claim |
+|---|---|
+| `src/server/game/Handlers/NPCHandler.cpp:146-189` | Hello validates packet.Unit, clears menus and calls NPC AI/default menu generation. Default menu identity comes from the creature template. |
+| `src/server/game/Server/Packets/NPCPackets.cpp:46-67` | Hello reads Unit only. GossipMessage writes NPC GUID, menu ID, text ID, options and quests; no per-attempt request token. |
+| `src/server/game/Entities/Creature/GossipDef.cpp:202-251` | Response GossipID is `_gossipMenu.GetMenuId()`, not a client request generation. |
+
+Pinned **AzerothCore WotLK** `8337a378ac325e62a6a91e00c6a5e944205e8536` corroborates Hello's GUID-only payload (`NPCPackets.cpp:20-23`) and the response's GUID/menu/text/options/quests serialization (`Entities/Creature/GossipDef.cpp:193-236`). No server process or realm-specific scripts were executed. These revisions are reference implementations, not proof of the user's realm revision or custom behavior.
+
+**Disposition:** keep first-response causal attribution explicitly unverified. Two identical same-NPC requests can produce responses indistinguishable by these available fields. Counting events, adopting the first visible frame, comparing text or treating the menu ID as a nonce would invent authority. A supported repair requires a verified exclusive interaction/request-lifetime contract, origin-aware development evidence or a separately specified cooperating protocol. Those inputs are not established by the current IDB or hosted fixtures. No blanket suppression of healthy gossip, speculative client hook or fabricated server correlation was added.
+
+The current capture/final-selection guards remain tested at their stated boundary. Their retained green result must not be described as proof that the first menu originated from this behavior. This distinction survives the final checkpoint and blocks any relevant full-acceptance claim.
+
+## R04: explicit cursor transactions and by-name compatibility are distinct
+
+W104 established that an ordinary explicit-slot equip performs a complete slot swap; the server returns the old equipment to the original source, and the client clears its selected cursor. Cleanup now observes cursor release. Timeout cancellation requires the original pickup lifetime and the full physical-GUID guard in the same client dispatch. W103's synchronous pending-index checks and return-buffer lock remain.
+
+The native by-name entrypoint `0x51CDB0` instead resolves the name/entry through item lookup before the auto-equip or explicit-destination helper. That lookup is separate from the managed owner's captured GUID. `CursorCanGoInSlot` at `0x5EA880` has its own slot admission contract and physical-cursor check. The mere existence of these APIs is insufficient to reinterpret automatic by-name selection as an owned bag-to-slot transfer or to substitute slot0 for an unspecified destination.
+
+**Disposition:** preserve the existing by-name compatibility behavior and its bounded acknowledgement/deadline; exact-copy selection among duplicate entries and arbitrary equipped-to-equipped transfer remain explicitly deferred. Expanding the physical cursor protocol into those paths needs a validated original-client selection/destination contract and successful client acceptance. Do not weaken GUID acknowledgement into entry equality or claim by-name coverage from W104's physical guard.
+
+The W106 pre-existing-result repair is narrower and actionable: `LocalPlayer.CarriedItems` includes equipped items. Both owners may encounter their captured GUID already in the requested slot. Reusing their existing acknowledgement before starting pickup avoids repeating a request for an already-satisfied result. It retains normal cursor-empty completion and the original deadline. See `W106_PLAN_20260927.md` and the final W106 checkpoint/evidence for actual red/green results; this protocol assessment alone does not validate that candidate.
+
+## Current remediation disposition
+
+Final recovery review also read seven pending-spell/terrain-click receipts captured during the earlier interrupted turn (07:44–07:51UTC), already hashed in W106_EVIDENCE.json. The x86 body at0x80C340 returns success/failure in AL without defining the other EAX bits. `SpellManager.ClickRemoteLocation` tests the full returned int, which can misreport a false result. The native pending getter0x7FD630 returns the ID at+32 of the pointer stored at0xD3F4E4; the Lua targeting entrypoint0x7FDCD0 tests that same pointer, and UI caller0x5198A0 uses its ID for spell data. `LocalPlayer.CurrentPendingCursorSpell` instead reads0xCEC1CC/0xCEC1D0. These two source-correlated mismatches are actionable W107 follow-up, not deferred acceptance. No absence of xrefs alone is used as proof. The receipts do not establish exclusive ownership of an arbitrary pending ground spell or successful terrain execution.
+
+The following table separates existing source work from deliberate deferrals and mandatory acceptance. It does not promote any outstanding acceptance gate to complete.
+
+| Requirement | Current source disposition | Exact remaining boundary |
+|---|---|---|
+| R01 dense-pack ranged pull/retreat | Contained. Fresh source read confirms `SingularRoutine.cs:92` private readonly `DensePullIsolationValidated=false`, with both distance/factory refusing through that gate. Existing coordinator and containment tests are preserved. | Actual-route risk, actor/routine lifetime, approach/retreat deadlines and live pull ownership are explicitly deferred. A straight segment, fixed Z or configured range is not a validated navigable retreat. Keep provider disabled; do not expand this continuation into a speculative route planner. |
+| R02 reusable quest-item acknowledgement | Retained actual-owner deadline/yield repair and bounded deferral, including ordinary progress/restart controls. No new defect established by this continuation. | Client item effect, authoritative server credit and recipient behavior require original-client/server acceptance. A local use request or counter is not credit. |
+| R03 strategy admission/provenance | Fresh reads of `DataLoader.cs:327-495` and `QuestScheduler.cs:779-841,1406-1446` confirm build12340/dataset-hash binding, declared-recipe admission before generic exclusion, exact creature target matching and implemented-kind checks. Independent collection remains distinct. | V1 data indexes do not map automatically to raw counters. ObjectiveProgress mapping, GameObject/ground-cursor/BelowHp/Escort materializers and missing realm-specific recipes remain deliberately deferred. Unsupported CAST work must not become an ordinary kill. |
+| R04 equipment | W103/W104 explicit-slot synchronous confirmation, GUID/lifetime/cleanup/context protections retained; W106 addresses pre-existing exact equipment acknowledgement. | Native dispatch, server inventory acknowledgement, by-name duplicate-copy semantics and broader transfer paths remain unverified or explicitly deferred as above. |
+| R05 deletion/scan continuation | W84/W86/W87 unknown-observation, owner-context and finite queued-scan repairs retained; one attempted candidate cannot starve the rest of a captured pass. | Native deletion, shared client UI/cursor behavior and supervised item-protection acceptance remain. Unknown inventory is never evidence of successful deletion. |
+| R06 gossip | W100 post-capture menu identity/lifetime and W101 local interaction-refusal protection retained. New protocol analysis narrows the remaining first-response uncertainty. | First-menu causal attribution remains open as described above. Current wire fields do not supply the missing request generation. |
+| R07 compiler/plugin refresh | Retained content-based compiler inputs, replacement preparation and explicit static-state policy; `docs/plugins/REFRESH.md` reread. | Immutable filesystem snapshots, concurrent/reentrant refresh, dependency replacement/unload and arbitrary activation rollback are deliberately outside the bounded implementation. Original-client integration and independent review remain. No broad plugin framework is introduced. |
+| R08 quest reward | Retained complete-choice-set/actor/frame selection ownership and corrected numeric/UTF8 bridge behavior. The historical preparation budget remains3 used/0 new/0 remaining. | Native/client reward selection and later completion/quest credit remain separate acceptance gates. No extra numerical preparation attempt or relaxed assertion was authorized. |
+| Single-target combat | W105's proven start-only autoattack, target-then-facing and actual cast-facing child execution are implemented with hosted behavioral red/green. Existing group, pet, latency, channel and ordinary routine paths remain. | Original-client facing/attack effects, stun/target-gap/threat continuity and full class/spec gameplay remain live acceptance. No maximum-DPS, arbitrary all-class or optimal gear-weight claim. |
+| Quest/navigation integration | Retained mesh movement/clear/transit, flight-path/POI, aquatic/shoreline/breath, escort owner, remount/hotspot and combat-sight checks remain in the integrated gate. W80's completed review is not restarted. | Installed-client terrain/Z, lifts/cliffs/water/LOS, actual taxi reachability/acknowledgement, gathering/remount and realm quest recipes require supervised acceptance with the real client/server/world data. Controlled feasibility and mock world observations are not that acceptance. |
+
+## Review limits and completion rule
+
+All production changes discovered during W104–W106 must have their exact-source hosted integrated and host results inspected and checkpointed before the currently actionable implementation portion is considered complete. The final checkpoint records that decision; an in-progress candidate or one green badge is insufficient.
+
+No additional source repair is justified solely because a live acceptance gate remains open. Conversely, an identified source defect is not converted into a deferral to stop work: the W106 pre-existing-equipment defect received a dedicated behavioral reproduction and minimal repair. The earlier W105 publication stack-provenance assertion failed once without retaining its underlying exception; the unchanged predicate passes in the later run. Its improved diagnostic is retained, and the root cause is explicitly undiagnosed pending an actual recurrence with trace. No speculative production rewrite or claim that the failure was repaired is made.
+
+Mandatory original-client/server, independent and supervised gates remain unsatisfied until executed. Direct self-review is not independent review. PR51 remains draft/unmerged; no source/CI checkpoint authorizes deployment, master writes or weakening acceptance. No subagents, local project execution, production CB access, W80/W92 restart, PR58 recreation, excluded PR25, force-push or merge. Preserve the exact historical refusals and every prior repair/failed intermediate.

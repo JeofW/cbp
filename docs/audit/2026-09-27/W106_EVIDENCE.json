@@ -1,0 +1,649 @@
+{
+    "checkpoint":  "W106",
+    "created_at_utc":  "2026-09-27T09:00:06.2969781Z",
+    "status":  "equipment_acknowledgement_hosted_verified_W107_reader_followup_open",
+    "repository":  "JeofW/cbp",
+    "repository_id":  1367174964,
+    "pr":  51,
+    "branch":  "audit/next-55-equipment-observation-20260917",
+    "tested_source":  "1db1454fa7cccf7daa71dddcf1e99f93ed7c00ad",
+    "tested_tree":  "9ff2fab1a3961b3d837fb01d07bd264a92de0f96",
+    "production_commit":  "941667d89eda29f3f66b7ca41d7063ffc5717036",
+    "behavioral_red":  "12ac96f2dc125e1dc1405fca55c1dde47b040b0c",
+    "validations":  [
+                        {
+                            "stage":  "behavioral_red",
+                            "kind":  "integrated",
+                            "source":  "12ac96f2dc125e1dc1405fca55c1dde47b040b0c",
+                            "run":  36306515764,
+                            "artifact":  10927791680,
+                            "jobs":  [
+                                         {
+                                             "id":  108584127764,
+                                             "name":  "combined",
+                                             "status":  "completed",
+                                             "conclusion":  "failure",
+                                             "labels":  [
+                                                            "windows-2022"
+                                                        ],
+                                             "runner_name":  "GitHub Actions 1000000508"
+                                         }
+                                     ],
+                            "conclusion":  "failure",
+                            "archive":  "w106-red-integrated-12ac96f2.zip",
+                            "sha256":  "e725aab2683e06a7612e3dcd48ce222f9f79048429643058ac6d08e931e286f3",
+                            "bytes":  931545,
+                            "receipt":  "w106-red-integrated-12ac96f2-receipt.json",
+                            "receipt_sha256":  "689df0b678805c4cda79fb99631e5df54848c64eb8435f4a0bfadaf68975a7f2",
+                            "inspection":  "w106-red-integrated-12ac96f2-inspection.json",
+                            "inspection_sha256":  "fb878483fa5b0f4a361f62ffd2cabd01e1a22f1d92e5fac9ead51640bcc69e47",
+                            "members":  215,
+                            "tree":  "59282761dc17c86ef3498e12bf71d54ab3288858",
+                            "successful_groups":  16,
+                            "aggregate_groups":  17,
+                            "inner_hashes":  214,
+                            "source_inputs":  1852,
+                            "checkout_inputs_matched":  1852,
+                            "key_summaries":  [
+                                                  "Autoattack startup scenarios: 26/26; assertions=0; unexpected=0; actual Common/LocalPlayer Lua and TreeSharp; stock Lua5.1 with controlled native attack state; no game/server/native execution.",
+                                                  "AutoEquip pending context scenarios: 37/37; assertions=0; unexpected=0; exact tracked C# capture/tick/request methods; controlled world/Lua; no game attached.",
+                                                  "Cast wait facing scenarios: 16/16; assertions=0; unexpected=0; actual WaitForCast overloads and real TreeSharp; controlled cast/facing boundaries; no client/native execution.",
+                                                  "Combat sight movement scenarios: 85/85; assertions=0; unexpected=0; complete tracked Movement and real TreeSharp; controlled world/navigation; no native path or game attached.",
+                                                  "Equip acknowledged timeout scenarios: 10/10; assertions=0; unexpected=0; exact tracked method control flow; controlled external acknowledgements; no game attached.",
+                                                  "Equip continuation boundary scenarios: 46/46; assertions=0; unexpected=0; exact tracked C# tick/context/acknowledge/return/restore; controlled actor/inventory/Lua; no physical cursor or client proof.",
+                                                  "EquipItem pending context scenarios: 57/57; assertions=0; unexpected=0; exact tracked C# tick/submit/confirm/reset; controlled actor/quest/Lua; no game attached.",
+                                                  "Equipment cleanup ownership: 57/57; assertions=0; unexpected=0; actual tracked owners/generated Lua5.1; controlled build12340 cursor transitions and physical dispatch admission; no game/server/native execution.",
+                                                  "Equipment physical cursor guard: 8/8; actual generated x86 comparison/branch contract; no game attached or native execution.",
+                                                  "Equipment Lua51 boundary scenarios: 87/87; assertions=0; unexpected=0; tracked pickup/equip helpers, actual generated Lua5.1, loader size and verbatim managed conversion; controlled APIs; no physical GUID/client/server proof.",
+                                                  "Equipment pending-index scenarios: 24/24; assertions=0; unexpected=0; tracked owner/generated Lua; stock Lua5.1; controlled synchronous events; no native client proof.",
+                                                  "Equip popup submission scenarios: 18/18; assertions=0; unexpected=0; exact tracked C# confirmation/tick methods; recording Lua boundary only; no game attached."
+                                              ],
+                            "failing_groups":  [
+                                                   "FAIL aggregate group: EquipmentAlreadyAcknowledgedRegressionTests: System.InvalidOperationException: Pre-existing equipment acknowledgement regression"
+                                               ]
+                        },
+                        {
+                            "stage":  "behavioral_red",
+                            "kind":  "host",
+                            "source":  "12ac96f2dc125e1dc1405fca55c1dde47b040b0c",
+                            "run":  36306515768,
+                            "artifact":  10926954752,
+                            "jobs":  [
+                                         {
+                                             "id":  108584127235,
+                                             "name":  "host-build",
+                                             "status":  "completed",
+                                             "conclusion":  "success",
+                                             "labels":  [
+                                                            "windows-latest"
+                                                        ],
+                                             "runner_name":  "GitHub Actions 1000000507"
+                                         }
+                                     ],
+                            "conclusion":  "success",
+                            "archive":  "w106-red-host-12ac96f2.zip",
+                            "sha256":  "182655c5206af74ce654bc37fc3036c8fdf4643a78a37ebc09eeef915f685f86",
+                            "bytes":  83087,
+                            "receipt":  "w106-red-host-12ac96f2-receipt.json",
+                            "receipt_sha256":  "95edfc64eb9f3231b5f91e1e22e43eff75fef8100da44100cc43027ccca12518",
+                            "inspection":  "w106-red-host-12ac96f2-inspection.json",
+                            "inspection_sha256":  "05cc62d534677b13f1523ee1d3e9759fc3cb1b252fee4e53c0bde617922bc2fc",
+                            "members":  4,
+                            "result":  {
+                                           "game_attached":  false,
+                                           "host_build_exit_code":  0,
+                                           "tests_run":  false
+                                       },
+                            "build_summary":  [
+                                                  "3344 Warning(s)",
+                                                  "0 Error(s)"
+                                              ]
+                        },
+                        {
+                            "stage":  "production_candidate",
+                            "kind":  "integrated",
+                            "source":  "941667d89eda29f3f66b7ca41d7063ffc5717036",
+                            "run":  36307025152,
+                            "artifact":  10928041362,
+                            "jobs":  [
+                                         {
+                                             "id":  108585566066,
+                                             "name":  "combined",
+                                             "status":  "completed",
+                                             "conclusion":  "failure",
+                                             "labels":  [
+                                                            "windows-2022"
+                                                        ],
+                                             "runner_name":  "GitHub Actions 1000000509"
+                                         }
+                                     ],
+                            "conclusion":  "failure",
+                            "archive":  "w106-candidate-integrated-941667d8.zip",
+                            "sha256":  "6035f936cff9ab6c3ddf302f8c70108f209e9d048cac63e14a0aa8c395a56838",
+                            "bytes":  932147,
+                            "receipt":  "w106-candidate-integrated-941667d8-receipt.json",
+                            "receipt_sha256":  "63d79e8663019746adf311acc3f51744e4412df5f2ce83c1154e6047c5791ed1",
+                            "inspection":  "w106-candidate-integrated-941667d8-inspection.json",
+                            "inspection_sha256":  "7544830810294e3f330e6e5f1a6a1f689879a431136dfc6be1ba9b960e4a791e",
+                            "members":  215,
+                            "tree":  "c5d4d6346870398b0b5b45cf27cd177cafac88e3",
+                            "successful_groups":  16,
+                            "aggregate_groups":  17,
+                            "inner_hashes":  214,
+                            "source_inputs":  1852,
+                            "checkout_inputs_matched":  1852,
+                            "key_summaries":  [
+                                                  "Autoattack startup scenarios: 26/26; assertions=0; unexpected=0; actual Common/LocalPlayer Lua and TreeSharp; stock Lua5.1 with controlled native attack state; no game/server/native execution.",
+                                                  "AutoEquip pending context scenarios: 37/37; assertions=0; unexpected=0; exact tracked C# capture/tick/request methods; controlled world/Lua; no game attached.",
+                                                  "Cast wait facing scenarios: 16/16; assertions=0; unexpected=0; actual WaitForCast overloads and real TreeSharp; controlled cast/facing boundaries; no client/native execution.",
+                                                  "Combat sight movement scenarios: 85/85; assertions=0; unexpected=0; complete tracked Movement and real TreeSharp; controlled world/navigation; no native path or game attached.",
+                                                  "Equip acknowledged timeout scenarios: 10/10; assertions=0; unexpected=0; exact tracked method control flow; controlled external acknowledgements; no game attached.",
+                                                  "Equip continuation boundary scenarios: 45/46; assertions=1; unexpected=0; exact tracked C# tick/context/acknowledge/return/restore; controlled actor/inventory/Lua; no physical cursor or client proof.",
+                                                  "EquipItem pending context scenarios: 57/57; assertions=0; unexpected=0; exact tracked C# tick/submit/confirm/reset; controlled actor/quest/Lua; no game attached.",
+                                                  "Equipment cleanup ownership: 57/57; assertions=0; unexpected=0; actual tracked owners/generated Lua5.1; controlled build12340 cursor transitions and physical dispatch admission; no game/server/native execution.",
+                                                  "Equipment physical cursor guard: 8/8; actual generated x86 comparison/branch contract; no game attached or native execution.",
+                                                  "Equipment Lua51 boundary scenarios: 87/87; assertions=0; unexpected=0; tracked pickup/equip helpers, actual generated Lua5.1, loader size and verbatim managed conversion; controlled APIs; no physical GUID/client/server proof.",
+                                                  "Equipment pending-index scenarios: 24/24; assertions=0; unexpected=0; tracked owner/generated Lua; stock Lua5.1; controlled synchronous events; no native client proof.",
+                                                  "Equip popup submission scenarios: 18/18; assertions=0; unexpected=0; exact tracked C# confirmation/tick methods; recording Lua boundary only; no game attached."
+                                              ],
+                            "failing_groups":  [
+                                                   "FAIL aggregate group: EquipItemContinuationBoundaryRegressionTests: System.InvalidOperationException: Equip continuation boundary regression"
+                                               ]
+                        },
+                        {
+                            "stage":  "production_candidate",
+                            "kind":  "host",
+                            "source":  "941667d89eda29f3f66b7ca41d7063ffc5717036",
+                            "run":  36307025176,
+                            "artifact":  10928016132,
+                            "jobs":  [
+                                         {
+                                             "id":  108585566157,
+                                             "name":  "host-build",
+                                             "status":  "completed",
+                                             "conclusion":  "success",
+                                             "labels":  [
+                                                            "windows-latest"
+                                                        ],
+                                             "runner_name":  "GitHub Actions 1000000510"
+                                         }
+                                     ],
+                            "conclusion":  "success",
+                            "archive":  "w106-green-host-941667d8.zip",
+                            "sha256":  "bb78562f27d7ce3b69e8a1b00954ea8377cb47274500e739a89276478840a923",
+                            "bytes":  83084,
+                            "receipt":  "w106-green-host-941667d8-receipt.json",
+                            "receipt_sha256":  "5f2ac7ffe0f3e145624e992a698b44b0c1b67833f9106d30420f35152d205aef",
+                            "inspection":  "w106-green-host-941667d8-inspection.json",
+                            "inspection_sha256":  "d73914f4d645f7bd99138e0e6796ce6c6313cbea76cb17ef33570ffad46d327b",
+                            "members":  4,
+                            "result":  {
+                                           "game_attached":  false,
+                                           "tests_run":  false,
+                                           "host_build_exit_code":  0
+                                       },
+                            "build_summary":  [
+                                                  "3344 Warning(s)",
+                                                  "0 Error(s)"
+                                              ]
+                        },
+                        {
+                            "stage":  "validated_source",
+                            "kind":  "integrated",
+                            "source":  "1db1454fa7cccf7daa71dddcf1e99f93ed7c00ad",
+                            "run":  36307402619,
+                            "artifact":  10927807991,
+                            "jobs":  [
+                                         {
+                                             "id":  108586618955,
+                                             "name":  "combined",
+                                             "status":  "completed",
+                                             "conclusion":  "success",
+                                             "labels":  [
+                                                            "windows-2022"
+                                                        ],
+                                             "runner_name":  "GitHub Actions 1000000511"
+                                         }
+                                     ],
+                            "conclusion":  "success",
+                            "archive":  "w106-green-integrated-1db1454f.zip",
+                            "sha256":  "4bedeb551e955b4073da554f0b42616afb93fb35a9c4fcbdb99ff3edf4770ebd",
+                            "bytes":  931001,
+                            "receipt":  "w106-green-integrated-1db1454f-receipt.json",
+                            "receipt_sha256":  "2d2515d968dcd7e8002442780b1a134f628bd53147df640e4813ede624cd73f0",
+                            "inspection":  "w106-green-integrated-1db1454f-inspection.json",
+                            "inspection_sha256":  "3707f022a19153a0e4939f1a3a4123b4c557bbc0b42ef9685514849b8f265d83",
+                            "members":  215,
+                            "tree":  "9ff2fab1a3961b3d837fb01d07bd264a92de0f96",
+                            "successful_groups":  17,
+                            "aggregate_groups":  17,
+                            "inner_hashes":  214,
+                            "source_inputs":  1852,
+                            "checkout_inputs_matched":  1852,
+                            "key_summaries":  [
+                                                  "Autoattack startup scenarios: 26/26; assertions=0; unexpected=0; actual Common/LocalPlayer Lua and TreeSharp; stock Lua5.1 with controlled native attack state; no game/server/native execution.",
+                                                  "AutoEquip pending context scenarios: 37/37; assertions=0; unexpected=0; exact tracked C# capture/tick/request methods; controlled world/Lua; no game attached.",
+                                                  "Cast wait facing scenarios: 16/16; assertions=0; unexpected=0; actual WaitForCast overloads and real TreeSharp; controlled cast/facing boundaries; no client/native execution.",
+                                                  "Combat sight movement scenarios: 85/85; assertions=0; unexpected=0; complete tracked Movement and real TreeSharp; controlled world/navigation; no native path or game attached.",
+                                                  "Equip acknowledged timeout scenarios: 10/10; assertions=0; unexpected=0; exact tracked method control flow; controlled external acknowledgements; no game attached.",
+                                                  "Equip continuation boundary scenarios: 46/46; assertions=0; unexpected=0; exact tracked C# tick/context/acknowledge/return/restore; controlled actor/inventory/Lua; no physical cursor or client proof.",
+                                                  "EquipItem pending context scenarios: 57/57; assertions=0; unexpected=0; exact tracked C# tick/submit/confirm/reset; controlled actor/quest/Lua; no game attached.",
+                                                  "Equipment cleanup ownership: 57/57; assertions=0; unexpected=0; actual tracked owners/generated Lua5.1; controlled build12340 cursor transitions and physical dispatch admission; no game/server/native execution.",
+                                                  "Equipment physical cursor guard: 8/8; actual generated x86 comparison/branch contract; no game attached or native execution.",
+                                                  "Equipment Lua51 boundary scenarios: 87/87; assertions=0; unexpected=0; tracked pickup/equip helpers, actual generated Lua5.1, loader size and verbatim managed conversion; controlled APIs; no physical GUID/client/server proof.",
+                                                  "Equipment pending-index scenarios: 24/24; assertions=0; unexpected=0; tracked owner/generated Lua; stock Lua5.1; controlled synchronous events; no native client proof.",
+                                                  "Equip popup submission scenarios: 18/18; assertions=0; unexpected=0; exact tracked C# confirmation/tick methods; recording Lua boundary only; no game attached."
+                                              ],
+                            "failing_groups":  [
+
+                                               ]
+                        },
+                        {
+                            "stage":  "validated_source",
+                            "kind":  "host",
+                            "source":  "1db1454fa7cccf7daa71dddcf1e99f93ed7c00ad",
+                            "run":  36307402690,
+                            "artifact":  10928196158,
+                            "jobs":  [
+                                         {
+                                             "id":  108586619076,
+                                             "name":  "host-build",
+                                             "status":  "completed",
+                                             "conclusion":  "success",
+                                             "labels":  [
+                                                            "windows-latest"
+                                                        ],
+                                             "runner_name":  "GitHub Actions 1000000512"
+                                         }
+                                     ],
+                            "conclusion":  "success",
+                            "archive":  "w106-green-host-1db1454f.zip",
+                            "sha256":  "23f0e7b20c83e7126bf84f9adcb8f679079a839c159394cf95aeb871b2c0c02c",
+                            "bytes":  83069,
+                            "receipt":  "w106-green-host-1db1454f-receipt.json",
+                            "receipt_sha256":  "c3f0e75699c453c29c609c81d9f7ff2cfa4c22f6d8e6975f6f42ffb1c94878f3",
+                            "inspection":  "w106-green-host-1db1454f-inspection.json",
+                            "inspection_sha256":  "1ad8f9a73c975661b499f34c72ec9f925aa8bff3ec2ee0af4a6a778fe4409a1e",
+                            "members":  4,
+                            "result":  {
+                                           "host_build_exit_code":  0,
+                                           "game_attached":  false,
+                                           "tests_run":  false
+                                       },
+                            "build_summary":  [
+                                                  "3344 Warning(s)",
+                                                  "0 Error(s)"
+                                              ]
+                        }
+                    ],
+    "behavioral_cases":  [
+                             {
+                                 "stage":  "behavioral_red",
+                                 "source":  "12ac96f2dc125e1dc1405fca55c1dde47b040b0c",
+                                 "log_sha256":  "15caaefdcbc84cd3af23010823ec142b1c1be76a43920b7b09de8c56b71dfce5",
+                                 "summaries":  [
+                                                   "Aquatic shoreline scenarios: 35/35; assertions=0; unexpected=0; actual cache and public rest owners; no game attached.",
+                                                   "Combat target-gap scenarios: 26/26; assertions=0; unexpected=0; exact LevelBot combat region and POI decorator; real TreeSharp; controlled routine/world; no game attached.",
+                                                   "Equip continuation boundary scenarios: 46/46; assertions=0; unexpected=0; exact tracked C# tick/context/acknowledge/return/restore; controlled actor/inventory/Lua; no physical cursor or client proof.",
+                                                   "Pre-existing equipment acknowledgement EquipItem: 5/9; assertions=4; unexpected=0; exact tracked admission/tick/ack/context/cleanup helpers; controlled observations; no game/native/server execution.",
+                                                   "Pre-existing equipment acknowledgement AutoEquip: 5/9; assertions=4; unexpected=0; exact tracked admission/tick/ack/context/cleanup helpers; controlled observations; no game/native/server execution.",
+                                                   "Pre-existing equipment acknowledgement: 10/18; assertions=8; unexpected=0; both tracked owners; controlled observations; no game/native/server execution.",
+                                                   "Public flight-owner scenarios: 83/83; assertions=0; unexpected=0; actual standalone lookup/update/POI owners; controlled feasibility; no game attached.",
+                                                   "Gossip lifetime scenarios: 59/59; assertions=0; unexpected=0; complete tracked owner and real quest reader; controlled actor/UI; no Lua or game execution.",
+                                                   "Gossip Lua51 generation scenarios: 63/63; assertions=0; unexpected=0; full tracked owner, persistent Lua5.1/events, actual conversion; controlled world; no original-client/native concurrency/server proof.",
+                                                   "Mesh clear-ownership scenarios: 45/45; assertions=0; unexpected=0; actual MeshNavigator.Clear; controlled mover/stuck callbacks; no game attached.",
+                                                   "Mesh move-lifetime scenarios: 29/29; assertions=0; unexpected=0; actual MoveTo and backing-owner transitions; no game attached.",
+                                                   "Mesh move-request scenarios: 64/64; assertions=0; unexpected=0; actual MoveTo and controlled observation/mover boundaries; no game attached.",
+                                                   "Mesh transit-reset scenarios: 36/36; assertions=0; unexpected=0; actual transit cleanup owners; no game attached.",
+                                                   "Isolation containment scenarios: 9/9; assertions=0; unexpected=0; verbatim provider members and real TreeSharp; no movement or game attached.",
+                                                   "Quest item dispatch scenarios: 78/78; assertions=0; unexpected=0; complete UseItemOn and real TreeSharp; controlled callbacks; no native use or server credit.",
+                                                   "Quest objective restart scenarios: 37/37; assertions=0; unexpected=0; complete tracked owners, real packed quest reader and OnStart/ticks; controlled metadata/world/UI; no game attached.",
+                                                   "Publication scenarios: 21/21; assertions=0; unexpected=0; actual memory/cache/scan/materialization/XML/file/load/running gate; no game attached.",
+                                                   "Quest strategy scheduler scenarios: 53/53; assertions=0; unexpected=0; actual loader/raw QuestLog/live scan/scheduler/XML; controlled external memory/navigation; no behavior dispatch or game attached."
+                                               ],
+                                 "failures":  [
+                                                  "FAIL pre-existing equip: EquipItem/already-exact: already-satisfied or revoked work started a cursor/equip mutation",
+                                                  "FAIL pre-existing equip: EquipItem/already-busy: already-satisfied or revoked work started a cursor/equip mutation",
+                                                  "FAIL pre-existing equip: EquipItem/already-unknown: already-satisfied or revoked work started a cursor/equip mutation",
+                                                  "FAIL pre-existing equip: EquipItem/already-by-name: already-satisfied or revoked work started a cursor/equip mutation",
+                                                  "FAIL pre-existing equip: AutoEquip/already-exact: already-satisfied or revoked work started a cursor/equip mutation",
+                                                  "FAIL pre-existing equip: AutoEquip/already-busy: already-satisfied or revoked work started a cursor/equip mutation",
+                                                  "FAIL pre-existing equip: AutoEquip/already-unknown: already-satisfied or revoked work started a cursor/equip mutation",
+                                                  "FAIL pre-existing equip: AutoEquip/already-by-name: already-satisfied or revoked work started a cursor/equip mutation",
+                                                  "FAIL aggregate group: EquipmentAlreadyAcknowledgedRegressionTests: System.InvalidOperationException: Pre-existing equipment acknowledgement regression"
+                                              ]
+                             },
+                             {
+                                 "stage":  "production_candidate",
+                                 "source":  "941667d89eda29f3f66b7ca41d7063ffc5717036",
+                                 "log_sha256":  "233d55d34489db4a2d4e9380148e8097fd2c0d2c7e7e5200c123f9e67996e8dd",
+                                 "summaries":  [
+                                                   "Aquatic shoreline scenarios: 35/35; assertions=0; unexpected=0; actual cache and public rest owners; no game attached.",
+                                                   "Combat target-gap scenarios: 26/26; assertions=0; unexpected=0; exact LevelBot combat region and POI decorator; real TreeSharp; controlled routine/world; no game attached.",
+                                                   "Equip continuation boundary scenarios: 45/46; assertions=1; unexpected=0; exact tracked C# tick/context/acknowledge/return/restore; controlled actor/inventory/Lua; no physical cursor or client proof.",
+                                                   "Pre-existing equipment acknowledgement EquipItem: 9/9; assertions=0; unexpected=0; exact tracked admission/tick/ack/context/cleanup helpers; controlled observations; no game/native/server execution.",
+                                                   "Pre-existing equipment acknowledgement AutoEquip: 9/9; assertions=0; unexpected=0; exact tracked admission/tick/ack/context/cleanup helpers; controlled observations; no game/native/server execution.",
+                                                   "Pre-existing equipment acknowledgement: 18/18; assertions=0; unexpected=0; both tracked owners; controlled observations; no game/native/server execution.",
+                                                   "Public flight-owner scenarios: 83/83; assertions=0; unexpected=0; actual standalone lookup/update/POI owners; controlled feasibility; no game attached.",
+                                                   "Gossip lifetime scenarios: 59/59; assertions=0; unexpected=0; complete tracked owner and real quest reader; controlled actor/UI; no Lua or game execution.",
+                                                   "Gossip Lua51 generation scenarios: 63/63; assertions=0; unexpected=0; full tracked owner, persistent Lua5.1/events, actual conversion; controlled world; no original-client/native concurrency/server proof.",
+                                                   "Mesh clear-ownership scenarios: 45/45; assertions=0; unexpected=0; actual MeshNavigator.Clear; controlled mover/stuck callbacks; no game attached.",
+                                                   "Mesh move-lifetime scenarios: 29/29; assertions=0; unexpected=0; actual MoveTo and backing-owner transitions; no game attached.",
+                                                   "Mesh move-request scenarios: 64/64; assertions=0; unexpected=0; actual MoveTo and controlled observation/mover boundaries; no game attached.",
+                                                   "Mesh transit-reset scenarios: 36/36; assertions=0; unexpected=0; actual transit cleanup owners; no game attached.",
+                                                   "Isolation containment scenarios: 9/9; assertions=0; unexpected=0; verbatim provider members and real TreeSharp; no movement or game attached.",
+                                                   "Quest item dispatch scenarios: 78/78; assertions=0; unexpected=0; complete UseItemOn and real TreeSharp; controlled callbacks; no native use or server credit.",
+                                                   "Quest objective restart scenarios: 37/37; assertions=0; unexpected=0; complete tracked owners, real packed quest reader and OnStart/ticks; controlled metadata/world/UI; no game attached.",
+                                                   "Publication scenarios: 21/21; assertions=0; unexpected=0; actual memory/cache/scan/materialization/XML/file/load/running gate; no game attached.",
+                                                   "Quest strategy scheduler scenarios: 53/53; assertions=0; unexpected=0; actual loader/raw QuestLog/live scan/scheduler/XML; controlled external memory/navigation; no behavior dispatch or game attached."
+                                               ],
+                                 "failures":  [
+                                                  "FAIL equip continuation: stop during retry submission allows later readmission: revocation became permanent completion instead of fresh readmission",
+                                                  "FAIL aggregate group: EquipItemContinuationBoundaryRegressionTests: System.InvalidOperationException: Equip continuation boundary regression"
+                                              ]
+                             },
+                             {
+                                 "stage":  "validated_source",
+                                 "source":  "1db1454fa7cccf7daa71dddcf1e99f93ed7c00ad",
+                                 "log_sha256":  "c8f4b309078fca895b1805d33ec6f5dd47d141bc7b9267b347d184fdda02387e",
+                                 "summaries":  [
+                                                   "Aquatic shoreline scenarios: 35/35; assertions=0; unexpected=0; actual cache and public rest owners; no game attached.",
+                                                   "Combat target-gap scenarios: 26/26; assertions=0; unexpected=0; exact LevelBot combat region and POI decorator; real TreeSharp; controlled routine/world; no game attached.",
+                                                   "Equip continuation boundary scenarios: 46/46; assertions=0; unexpected=0; exact tracked C# tick/context/acknowledge/return/restore; controlled actor/inventory/Lua; no physical cursor or client proof.",
+                                                   "Pre-existing equipment acknowledgement EquipItem: 9/9; assertions=0; unexpected=0; exact tracked admission/tick/ack/context/cleanup helpers; controlled observations; no game/native/server execution.",
+                                                   "Pre-existing equipment acknowledgement AutoEquip: 9/9; assertions=0; unexpected=0; exact tracked admission/tick/ack/context/cleanup helpers; controlled observations; no game/native/server execution.",
+                                                   "Pre-existing equipment acknowledgement: 18/18; assertions=0; unexpected=0; both tracked owners; controlled observations; no game/native/server execution.",
+                                                   "Public flight-owner scenarios: 83/83; assertions=0; unexpected=0; actual standalone lookup/update/POI owners; controlled feasibility; no game attached.",
+                                                   "Gossip lifetime scenarios: 59/59; assertions=0; unexpected=0; complete tracked owner and real quest reader; controlled actor/UI; no Lua or game execution.",
+                                                   "Gossip Lua51 generation scenarios: 63/63; assertions=0; unexpected=0; full tracked owner, persistent Lua5.1/events, actual conversion; controlled world; no original-client/native concurrency/server proof.",
+                                                   "Mesh clear-ownership scenarios: 45/45; assertions=0; unexpected=0; actual MeshNavigator.Clear; controlled mover/stuck callbacks; no game attached.",
+                                                   "Mesh move-lifetime scenarios: 29/29; assertions=0; unexpected=0; actual MoveTo and backing-owner transitions; no game attached.",
+                                                   "Mesh move-request scenarios: 64/64; assertions=0; unexpected=0; actual MoveTo and controlled observation/mover boundaries; no game attached.",
+                                                   "Mesh transit-reset scenarios: 36/36; assertions=0; unexpected=0; actual transit cleanup owners; no game attached.",
+                                                   "Isolation containment scenarios: 9/9; assertions=0; unexpected=0; verbatim provider members and real TreeSharp; no movement or game attached.",
+                                                   "Quest item dispatch scenarios: 78/78; assertions=0; unexpected=0; complete UseItemOn and real TreeSharp; controlled callbacks; no native use or server credit.",
+                                                   "Quest objective restart scenarios: 37/37; assertions=0; unexpected=0; complete tracked owners, real packed quest reader and OnStart/ticks; controlled metadata/world/UI; no game attached.",
+                                                   "Publication scenarios: 21/21; assertions=0; unexpected=0; actual memory/cache/scan/materialization/XML/file/load/running gate; no game attached.",
+                                                   "Quest strategy scheduler scenarios: 53/53; assertions=0; unexpected=0; actual loader/raw QuestLog/live scan/scheduler/XML; controlled external memory/navigation; no behavior dispatch or game attached."
+                                               ],
+                                 "failures":  [
+
+                                              ]
+                             }
+                         ],
+    "publications":  [
+                         {
+                             "file":  "W104_REDALREADY_PUBLICATION_20260927.json",
+                             "sha256":  "0eb547ef8de08efc270bbbb38c1f8606b2d24cb49c96a48f6fe4d56387c7e604",
+                             "commit":  "12ac96f2dc125e1dc1405fca55c1dde47b040b0c",
+                             "parent":  "f9d73a2852be069e7840955eb8cbccf6908242c9",
+                             "tree":  "59282761dc17c86ef3498e12bf71d54ab3288858",
+                             "paths":  [
+                                           "Tools/WholesomeQuestRecoveryRegressionTests/EquipmentAlreadyAcknowledgedRegressionTests.cs",
+                                           "Tools/WholesomeQuestRecoveryRegressionTests/EquipItemContinuationBoundaryRegressionTests.cs"
+                                       ],
+                             "verified_at_utc":  "2026-09-27T08:32:24.4911649Z"
+                         },
+                         {
+                             "file":  "W104_GREENALREADY_PUBLICATION_20260927.json",
+                             "sha256":  "474bb13b4638fd93f3fc535326dcefa26177d7a77a9b6b04c3b7b2d4b39c46c7",
+                             "commit":  "941667d89eda29f3f66b7ca41d7063ffc5717036",
+                             "parent":  "12ac96f2dc125e1dc1405fca55c1dde47b040b0c",
+                             "tree":  "c5d4d6346870398b0b5b45cf27cd177cafac88e3",
+                             "paths":  [
+                                           "runtime-snapshot/Quest Behaviors/EquipItem.cs",
+                                           "runtime-snapshot/Plugins/AutoEquip2/AutoEquip.cs"
+                                       ],
+                             "verified_at_utc":  "2026-09-27T08:42:09.8761148Z"
+                         },
+                         {
+                             "file":  "W104_ALREADYRESTART_PUBLICATION_20260927.json",
+                             "sha256":  "f233cf62a421370dd00aee10a29edb35a59c9b4724b695a5efa04fc43e502396",
+                             "commit":  "1db1454fa7cccf7daa71dddcf1e99f93ed7c00ad",
+                             "parent":  "941667d89eda29f3f66b7ca41d7063ffc5717036",
+                             "tree":  "9ff2fab1a3961b3d837fb01d07bd264a92de0f96",
+                             "paths":  [
+                                           "Tools/WholesomeQuestRecoveryRegressionTests/EquipItemContinuationBoundaryRegressionTests.cs"
+                                       ],
+                             "verified_at_utc":  "2026-09-27T08:49:16.9786071Z"
+                         }
+                     ],
+    "comparison":  {
+                       "file":  "W106_RED_GREEN_COMPARISON_20260927.json",
+                       "sha256":  "0736f9806be7eb3f29a80a08f9c7e49b2e2de244f38e07a2eaa4ba4aef871ac9",
+                       "data":  {
+                                    "verified_at_utc":  "2026-09-27T08:57:53.1004804Z",
+                                    "red_source":  "12ac96f2dc125e1dc1405fca55c1dde47b040b0c",
+                                    "green_source":  "1db1454fa7cccf7daa71dddcf1e99f93ed7c00ad",
+                                    "red_run":  36306515764,
+                                    "green_run":  36307402619,
+                                    "red_inputs":  1852,
+                                    "green_inputs":  1852,
+                                    "changed_inputs":  [
+                                                           "runtime-snapshot/Plugins/AutoEquip2/AutoEquip.cs",
+                                                           "runtime-snapshot/Quest Behaviors/EquipItem.cs",
+                                                           "Tools/WholesomeQuestRecoveryRegressionTests/EquipItemContinuationBoundaryRegressionTests.cs"
+                                                       ],
+                                    "added_inputs":  [
+
+                                                     ],
+                                    "removed_inputs":  [
+
+                                                       ],
+                                    "normalized_count":  170,
+                                    "changed_normalized":  [
+                                                               "normalized/WholesomeQuestRecoveryRegressionTests/W42Normalized/EquipItemContinuationBoundaryRegressionTests.cs",
+                                                               "normalized/WholesomeQuestRecoveryRegressionTests/W42Normalized/normalization-manifest.json"
+                                                           ],
+                                    "added_normalized":  [
+
+                                                         ],
+                                    "removed_normalized":  [
+
+                                                           ],
+                                    "limits":  "Archive integrity and run success are established by separate inspection receipts. This report compares captured source and normalized fixture bytes only."
+                                }
+                   },
+    "native_input_sha256":  "bf644876709c591acc17c0da8cdf1814edcc9f1e6bc109a8c0d5c38c79dc953c",
+    "native_receipts":  [
+                            {
+                                "file":  "w104-w106-cursor-slot-admission.json",
+                                "sha256":  "c77ae9cdb3cb44bb39a0bd4766dbf0f4ebffdc93da73cc67ed2a0dd5bdd946e9",
+                                "tool":  "decompile",
+                                "arguments":  {
+                                                  "addr":  "0x5EA880"
+                                              },
+                                "captured_at_utc":  "2026-09-27T08:26:26.8685411Z"
+                            },
+                            {
+                                "file":  "w104-w106-equip-by-name.json",
+                                "sha256":  "546a0c8908da38549e55ed13291d59e97e383bf8f430093c385f4e013bb26eaf",
+                                "tool":  "decompile",
+                                "arguments":  {
+                                                  "addr":  "0x51CDB0"
+                                              },
+                                "captured_at_utc":  "2026-09-27T08:26:13.5108372Z"
+                            },
+                            {
+                                "file":  "w104-w106-gossip-api-strings.json",
+                                "sha256":  "c0cdef99d2b2792990861fd322358f599d74eb4f3be8a5a580fa780446960fa5",
+                                "tool":  "find_regex",
+                                "arguments":  {
+                                                  "pattern":  "^GOSSIP_SHOW$|^GOSSIP_CLOSED$|Usage:.*SelectGossipOption|Usage:.*EquipItemByName|^CursorCanGoInSlot$",
+                                                  "limit":  20
+                                              },
+                                "captured_at_utc":  "2026-09-27T08:23:13.9527341Z"
+                            },
+                            {
+                                "file":  "w104-w106-gossip-open.json",
+                                "sha256":  "92e5eeb478bb4311603b00a1d0a7f3b5064e3983fa77cbd6169b89cbbd248daf",
+                                "tool":  "decompile",
+                                "arguments":  {
+                                                  "addr":  "0x6D1E20"
+                                              },
+                                "captured_at_utc":  "2026-09-27T08:23:48.4668545Z"
+                            },
+                            {
+                                "file":  "w104-w106-gossip-presentation.json",
+                                "sha256":  "4d2373ff7b53a2059bb78949fe59636ba08788521a3df361eac15a96ff23ce0d",
+                                "tool":  "decompile",
+                                "arguments":  {
+                                                  "addr":  "0x58AC30"
+                                              },
+                                "captured_at_utc":  "2026-09-27T08:24:10.0796244Z"
+                            },
+                            {
+                                "file":  "w104-w106-gossip-response.json",
+                                "sha256":  "5e8c4774adf626fb94a676f1f9b09fc037884e841ed8f21b534603ed34d94991",
+                                "tool":  "decompile",
+                                "arguments":  {
+                                                  "addr":  "0x58B1B0"
+                                              },
+                                "captured_at_utc":  "2026-09-27T08:23:41.3778494Z"
+                            },
+                            {
+                                "file":  "w104-w106-pending-getter.json",
+                                "sha256":  "d8ddaffa093112ee742e4411dd1ff36f3c55feb2dc93bff64ca47ff8cabf02c2",
+                                "tool":  "decompile",
+                                "arguments":  {
+                                                  "addr":  "0x7FD630"
+                                              },
+                                "captured_at_utc":  "2026-09-27T07:44:40.9920708Z"
+                            },
+                            {
+                                "file":  "w104-w106-pending-id-callers.json",
+                                "sha256":  "67564288824f1e3171c3701471257dafe13ce99750c7eb11383604a37ef45cc3",
+                                "tool":  "xrefs_to",
+                                "arguments":  {
+                                                  "addrs":  [
+                                                                "0x7FD630"
+                                                            ],
+                                                  "limit":  20
+                                              },
+                                "captured_at_utc":  "2026-09-27T07:46:03.3873366Z"
+                            },
+                            {
+                                "file":  "w104-w106-pending-id-ui-caller.json",
+                                "sha256":  "08dee6d7bcc42a6c86e9430f191b06f3e2d07a78b66752dc6e8f36602edf1a3f",
+                                "tool":  "decompile",
+                                "arguments":  {
+                                                  "addr":  "0x5198A0"
+                                              },
+                                "captured_at_utc":  "2026-09-27T07:46:30.5997808Z"
+                            },
+                            {
+                                "file":  "w104-w106-pending-spell-fields.json",
+                                "sha256":  "63d96e4494a15d27564ea24ea5607b7940dc217aad031af6b921d4370aa5cfad",
+                                "tool":  "xrefs_to",
+                                "arguments":  {
+                                                  "addrs":  [
+                                                                "0xCEC1CC",
+                                                                "0xCEC1D0",
+                                                                "0xD3F4E4"
+                                                            ],
+                                                  "limit":  35
+                                              },
+                                "captured_at_utc":  "2026-09-27T07:44:18.3443404Z"
+                            },
+                            {
+                                "file":  "w104-w106-targeting-api.json",
+                                "sha256":  "f531b868ccff5ab707c1b45efbe5a45fa9845719ecea7809033517033632973d",
+                                "tool":  "decompile",
+                                "arguments":  {
+                                                  "addr":  "0x7FDCD0"
+                                              },
+                                "captured_at_utc":  "2026-09-27T07:45:19.5070082Z"
+                            },
+                            {
+                                "file":  "w104-w106-terrain-click-instructions.json",
+                                "sha256":  "f91400eb78a0708d37dbff3811a2069e22e4faeaa8bc9b710cb231d8a0820651",
+                                "tool":  "disasm",
+                                "arguments":  {
+                                                  "addr":  "0x80C340",
+                                                  "max_instructions":  100,
+                                                  "include_total":  true
+                                              },
+                                "captured_at_utc":  "2026-09-27T07:51:38.1333575Z"
+                            },
+                            {
+                                "file":  "w104-w106-terrain-click.json",
+                                "sha256":  "2b0d2abfb6818f7f1cbc953d4b7064bd1d1a3f3d342f49b8e255aaf68ac70180",
+                                "tool":  "decompile",
+                                "arguments":  {
+                                                  "addr":  "0x80C340"
+                                              },
+                                "captured_at_utc":  "2026-09-27T07:44:04.1705299Z"
+                            }
+                        ],
+    "pinned_core_sources":  [
+                                {
+                                    "file":  "w106-tc335-npc-handler.cpp",
+                                    "repository":  "TrinityCore/TrinityCore",
+                                    "commit":  "8fda442f6c30ca21a622638063ab8b28376f1b25",
+                                    "source_path":  "src/server/game/Handlers/NPCHandler.cpp",
+                                    "blob":  "74084ea6c78d30a87815f197d7fa51e06168a633",
+                                    "sha256":  "c45c20043324f7088e859402c64c4abe41601618ad65512b894a79e0250646de"
+                                },
+                                {
+                                    "file":  "w106-tc335-gossip-def.cpp",
+                                    "repository":  "TrinityCore/TrinityCore",
+                                    "commit":  "8fda442f6c30ca21a622638063ab8b28376f1b25",
+                                    "source_path":  "src/server/game/Entities/Creature/GossipDef.cpp",
+                                    "blob":  "50e2a13ea54001ad0f50982df869226b6cbd3316",
+                                    "sha256":  "bebd1198fb51727a981f61f3076a5061dedba3d62d5f6711e8b85286268c1074"
+                                },
+                                {
+                                    "file":  "w106-tc335-npc-packets.cpp",
+                                    "repository":  "TrinityCore/TrinityCore",
+                                    "commit":  "8fda442f6c30ca21a622638063ab8b28376f1b25",
+                                    "source_path":  "src/server/game/Server/Packets/NPCPackets.cpp",
+                                    "blob":  "0feecde35e6b5ca523785255614c34f125290070",
+                                    "sha256":  "6c53fa0f4c11c80a9446e611cc90b72bd88e2a81f2adbb268c42313d6f99593e"
+                                },
+                                {
+                                    "file":  "w106-ac-npc-packets.cpp",
+                                    "repository":  "azerothcore/azerothcore-wotlk",
+                                    "commit":  "8337a378ac325e62a6a91e00c6a5e944205e8536",
+                                    "source_path":  "src/server/game/Server/Packets/NPCPackets.cpp",
+                                    "blob":  "95e2249aaba33bfc497cb2bf41eba6d8bf95e849",
+                                    "sha256":  "9718713cbf38b414f01e68a6fe5e9496ce7329227ac77069b5ffc3d86f6d6810"
+                                },
+                                {
+                                    "file":  "w106-ac-gossip-def.cpp",
+                                    "repository":  "azerothcore/azerothcore-wotlk",
+                                    "commit":  "8337a378ac325e62a6a91e00c6a5e944205e8536",
+                                    "source_path":  "src/server/game/Entities/Creature/GossipDef.cpp",
+                                    "blob":  "8fa590e109ec1a0cb96a395039e82a9c35989105",
+                                    "sha256":  "e71cb9651cbdf7fb32c41f96eeab00d9edff0cf2451400f9f9d6b5297b09cfa1"
+                                }
+                            ],
+    "ledger":  {
+                   "file":  "W106_EXECUTION_20260927.md",
+                   "sha256":  "8fc53e8aea9538fb68b0be7bd4db1bf41fe6c9452eaaeb7da34efd885da97ac9",
+                   "note":  "Includes the exact refused inline local ZIP query and separately successful current hosted-evidence operations; no refused request is relabelled successful."
+               },
+    "scope_document":  "docs/audit/2026-09-27/W106_PROTOCOL_AND_SCOPE.md",
+    "currently_identified_actionable_source_repairs_complete":  false,
+    "all_PR51_acceptance_complete":  false,
+    "merge_gates_satisfied":  false,
+    "remaining":  [
+                      "W107: repair the demonstrated pending-spell observation and terrain-click boolean-width mismatches with hosted red/green evidence",
+                      "R06 first-menu causal provenance requires verified exclusive request lifetime or origin-aware evidence/protocol",
+                      "By-name duplicate physical-copy and broader equipment transfer semantics are explicitly deferred",
+                      "R01 automatic dense-pack retreat remains contained/disabled pending actual-route/lifetime validation",
+                      "R03 raw counter mapping and unsupported recipes/recipients/materializers remain explicitly deferred",
+                      "R07 concurrency/immutable snapshot/dependency unload/rollback extensions remain outside bounded refresh policy",
+                      "Original-client/server/native terrain, quest credit, inventory, combat and independent/supervised acceptance remain",
+                      "Earlier W105 publication stack-provenance assertion has no proven cause; retain improved diagnostic and require actual recurrence evidence before repair"
+                  ],
+    "no_subagents":  true,
+    "no_local_project_execution":  true,
+    "no_production_CB_access":  true,
+    "no_IDB_or_executable_mutation":  true,
+    "no_merge":  true,
+    "numeric_preparation_historical":  3,
+    "numeric_preparation_new":  0,
+    "numeric_preparation_remaining":  0,
+    "evidence_limits":  "Controlled actual C#/Lua5.1/TreeSharp and generated native contracts; not live game/server effects, independent review, maximal support or absence of all future defects. Final one-file restart observation adapter preserves all assertions; the whole red/green fixture set is not byte-identical.",
+    "documentation_identity":  "The containing commit is documentation only; its final identity is recorded in the external publication receipt and LATEST_CONTINUATION.md."
+}

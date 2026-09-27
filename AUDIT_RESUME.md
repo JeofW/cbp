@@ -1,4 +1,12 @@
-# W105 verified combat successor — remaining audit in progress
+# W106 equipment acknowledgement verified — W107 reader follow-up open
+
+27 September 2026. Read `docs/audit/2026-09-27/W106_CHECKPOINT.md`, `W106_EVIDENCE.json` and `W106_PROTOCOL_AND_SCOPE.md` first. Validated source is `1db1454fa7cccf7daa71dddcf1e99f93ed7c00ad`; last production change `941667d89eda29f3f66b7ca41d7063ffc5717036`; test-only red `12ac96f2dc125e1dc1405fca55c1dde47b040b0c`. Both equipment owners recognize a pre-existing exact equipment result before starting another pickup, retaining the existing context/deadline/cursor-empty completion guards. New18cases pass, continuation46assertions remain, final integrated36307402619 is17/17, host36307402690 has0errors/3344warnings. All215members/214innerhashes/1852inputs match. All prior W104/W105 protections remain.
+
+Do not recreate W104–W106 work. Recovery review of seven retained native pending-spell/terrain receipts found two further actionable reader mismatches: terrain click defines AL but wrapper reads EAX; pending spell is pointer0xD3F4E4+IDoffset32 rather than the two fields currently used. Continue as W107 with hosted behavioral red and minimal proven repairs. This is distinct from the remaining first-gossip-response, by-name-copy, recipe and live native/client/server/independent acceptance limitations in the scope document. All restrictions below persist; no subagents/local project execution/merge, and numeric preparation remains3historical/0new/0remaining. This containing commit is documentation only; external latest continuation/publication receipt records its final SHA. No session_finish yet.
+
+---
+
+# Retained W105 verified combat successor
 
 27 September 2026. Read `docs/audit/2026-09-27/W105_CHECKPOINT.md` and `W105_EVIDENCE.json` first. Interrupted-response recovery reconciled the existing clean local/remote/draft PR51 at validated source `500251fc20904b803aed40028c26edc1c8c5da94`, tree `e8ef9959a01f39106bd295fa1e229e88a548e997`. Production repair is its parent `19ac34d3566f94408296b6a1196b02f27f5da943`; corrected behavioral red is `538a46c130dda9c37d9c90090e92183042b2f8cf`. Do not recreate W104 or W105 commits.
 
