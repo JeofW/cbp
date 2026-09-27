@@ -112,8 +112,10 @@ internal static class AutoAttackStartRegressionTests
         Console.WriteLine($"Autoattack startup scenarios: {passed}/{total}; assertions={assertions}; unexpected={unexpected}; actual Common/LocalPlayer Lua and TreeSharp; stock Lua5.1 with controlled native attack state; no game/server/native execution.");
         if (assertions + unexpected != 0) throw new InvalidOperationException("Autoattack startup regression");
     }
+    // Copy the method span verbatim, excluding unrelated surrounding region
+    // directives in leading trivia. No statement inside the owner is rewritten.
     private static string Method(string source, string name) => CSharpSyntaxTree.ParseText(source).GetRoot()
-        .DescendantNodes().OfType<MethodDeclarationSyntax>().Single(m => m.Identifier.ValueText == name).ToFullString();
+        .DescendantNodes().OfType<MethodDeclarationSyntax>().Single(m => m.Identifier.ValueText == name).ToString();
     private static void Check(bool ok, string why) { if (!ok) throw new Failure(why); }
     private static string Root()
     {
