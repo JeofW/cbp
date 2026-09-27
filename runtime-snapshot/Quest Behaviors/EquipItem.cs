@@ -194,7 +194,7 @@ namespace Styx.Bot.Quest_Behaviors
                     return RunStatus.Success;
                 }
 
-                if (!_pendingEquipSubmitted && _pendingEquipSlot != InventorySlot.None)
+                if (!_pendingEquipSubmitted)
                     _pendingEquipSubmitted = SubmitOwnedCursorEquip();
 
                 return RunStatus.Success;
@@ -232,13 +232,8 @@ namespace Styx.Bot.Quest_Behaviors
             if (IsPendingEquipAcknowledged() || !OwnsPendingEquipContext())
                 return RunStatus.Success;
 
-            if (Slot == InventorySlot.None)
-            {
-                Lua.DoString("EquipItemByName(\"{0}\")", ItemId);
-                _pendingEquipSubmitted = true;
-                return RunStatus.Success;
-            }
-
+            // Automatic destination still owns this exact selected item; a
+            // fresh by-name lookup could choose a different same-entry copy.
             _pendingCursorOwner = System.Guid.NewGuid().ToString("N");
             if (!Lua.BeginEquipCursorOwnership(_pendingEquipEntry, _pendingCursorOwner) ||
                 !OwnsPendingEquipContext())
@@ -288,7 +283,7 @@ namespace Styx.Bot.Quest_Behaviors
 
         private bool SubmitOwnedCursorEquip()
         {
-            if (!HasPendingEquip || !OwnsPendingEquipContext() || _pendingEquipSlot == InventorySlot.None)
+            if (!HasPendingEquip || !OwnsPendingEquipContext())
                 return false;
 
             return Lua.TryEquipCursorItem(_pendingEquipGuid, _pendingEquipEntry, (int)_pendingEquipSlot, _pendingCursorOwner);

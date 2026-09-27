@@ -790,7 +790,7 @@ namespace Styx.Bot.Plugins.AutoEquip2
             _pendingEquipPlayerGuid = _pendingEquipPlayer != null ? _pendingEquipPlayer.Guid : 0;
             _pendingEquipGuid = item.Guid;
             _pendingEquipEntry = item.Entry;
-            _pendingEquipSlot = slot;
+            _pendingEquipSlot = autoByName ? InventorySlot.None : slot;
             _pendingEquipSince = DateTime.UtcNow;
             _pendingEquipSubmitted = false;
 
@@ -806,13 +806,8 @@ namespace Styx.Bot.Plugins.AutoEquip2
             if (IsPendingEquipAcknowledged() || !OwnsPendingEquipContext())
                 return;
 
-            if (autoByName || slot == InventorySlot.None)
-            {
-                Lua.DoString("EquipItemByName(\"{0}\")", item.Entry);
-                _pendingEquipSubmitted = true;
-                return;
-            }
-
+            // Keep the chosen physical copy even when the native client/server
+            // selects its destination automatically (including empty bag slots).
             _pendingCursorOwner = System.Guid.NewGuid().ToString("N");
             if (!Lua.BeginEquipCursorOwnership(_pendingEquipEntry, _pendingCursorOwner) ||
                 !OwnsPendingEquipContext())
@@ -870,13 +865,13 @@ namespace Styx.Bot.Plugins.AutoEquip2
                 return;
             }
 
-            if (!_pendingEquipSubmitted && _pendingEquipSlot != InventorySlot.None)
+            if (!_pendingEquipSubmitted)
                 _pendingEquipSubmitted = SubmitOwnedCursorEquip();
         }
 
         private bool SubmitOwnedCursorEquip()
         {
-            if (!OwnsPendingEquipContext() || _pendingEquipSlot == InventorySlot.None)
+            if (!OwnsPendingEquipContext())
                 return false;
 
             return Lua.TryEquipCursorItem(_pendingEquipGuid, _pendingEquipEntry, (int)_pendingEquipSlot, _pendingCursorOwner);

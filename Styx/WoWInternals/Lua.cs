@@ -286,7 +286,8 @@ return 1";
         }
 
         /// <summary>
-        /// Submits an explicit-slot equip only for the original physical selection.
+        /// Submits an equip only for the original physical selection. Inventory
+        /// slot -1 preserves automatic destination selection; 0 remains ammo.
         /// Any bind confirmation belongs to this synchronous call; no pending
         /// array index or popup authority survives into the next bot tick.
         /// A true receipt is local submission, not equipment acknowledgement.
@@ -294,7 +295,7 @@ return 1";
         public static bool TryEquipCursorItem(ulong itemGuid, uint itemEntry, int inventorySlot, string owner)
         {
             Guid identity;
-            if (itemGuid == 0 || itemEntry == 0 || inventorySlot < 0 || inventorySlot > 23 ||
+            if (itemGuid == 0 || itemEntry == 0 || inventorySlot < -1 || inventorySlot > 23 ||
                 !Guid.TryParseExact(owner, "N", out identity) || identity == Guid.Empty ||
                 owner != identity.ToString("N"))
                 return false;
@@ -317,7 +318,7 @@ end
 if not currentCursor() then return 0 end
 local kind,entry=GetCursorInfo()
 if kind~='item' or not CursorHasItem() or tonumber(entry)~=expectedEntry then return 0 end
-if not CursorCanGoInSlot(slot) or IsInventoryItemLocked(slot) then return 0 end
+if slot~=-1 and (not CursorCanGoInSlot(slot) or IsInventoryItemLocked(slot)) then return 0 end
 if StaticPopup_FindVisible('EQUIP_BIND') or StaticPopup_FindVisible('AUTOEQUIP_BIND') then return 0 end
 -- Both GetItemInfo and the native equip route consult DBItemCache. Do not
 -- create a deferred pending record whose eventual event has no owned call.
@@ -341,7 +342,9 @@ local ok,receipt=pcall(function()
  f:RegisterEvent('AUTOEQUIP_BIND_CONFIRM')
  f:RegisterEvent('CURSOR_UPDATE')
  if not currentCursor() then return 0 end
- EquipCursorItem(slot)
+ -- AutoEquipCursorItem retains the build12340 bind check. EquipCursorItem(0)
+ -- is a different native route, not the host's None=-1 destination sentinel.
+ if slot==-1 then AutoEquipCursorItem() else EquipCursorItem(slot) end
  -- Build12340 emits the pending index synchronously. Reject nested/replaced
  -- events and cursor changes; never equate this index with an inventory slot.
  if count==1 and not changed and index and index>=0 and index==math.floor(index) then
