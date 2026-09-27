@@ -92,7 +92,10 @@ public static class TreeRoot { public static bool IsRunning=true; }
 public static class Lua
 {
     public static int Requests;
-    public static bool TryEquipCursorItem(ulong guid,uint entry,int slot){Requests++;return true;}
+    // Observer setup is controlled separately from the mutation-request count.
+    public static Action DuringOwnership;
+    public static bool BeginEquipCursorOwnership(uint entry,string owner){var action=DuringOwnership;DuringOwnership=null;action?.Invoke();return true;}
+    public static bool TryEquipCursorItem(ulong guid,uint entry,int slot,string owner=null){Requests++;return true;}
     public static void DoString(string format,params object[] args){Requests++;}
     public static T GetReturnVal<T>(string script,uint index){Requests++;return typeof(T)==typeof(int)?(T)(object)1:(T)(object)true;}
 }
@@ -101,6 +104,7 @@ public sealed class EquipItemContextProbe
     private sealed class Failure(string message):Exception(message) { }
     private bool _isBehaviorDone,_isDisposed,_pendingEquipSubmitted;
     private ulong _pendingEquipGuid,_pendingEquipPlayerGuid;
+    private string _pendingCursorOwner;
     private uint _pendingEquipEntry;
     private LocalPlayer _pendingEquipPlayer;
     private InventorySlot _pendingEquipSlot=InventorySlot.None;
@@ -144,7 +148,7 @@ public sealed class EquipItemContextProbe
     private static EquipItemContextProbe Fresh()
     {
         StyxWoW.Me=new LocalPlayer();StyxWoW.IsInGame=true;TreeRoot.IsRunning=true;
-        Lua.Requests=0;WoWItem.Pickups=0;WoWItem.PickupAllowed=true;WoWItem.DuringPickup=null;
+        Lua.Requests=0;Lua.DuringOwnership=null;WoWItem.Pickups=0;WoWItem.PickupAllowed=true;WoWItem.DuringPickup=null;
         return new EquipItemContextProbe();
     }
     private void Tick()
@@ -196,6 +200,13 @@ public sealed class EquipItemContextProbe
                 var owner=Fresh();WoWItem.DuringPickup=()=>owner.Change(change);owner.Tick();
                 Check(Lua.Requests==0,"setup callback revoked ownership but equip request still ran");
                 owner.Tick();Check(!owner.HasPendingEquip&&owner.Restores==0,"revoked transaction was not released safely");
+            });
+        foreach(string change in new[]{"replacement","quest","stopped"})
+            Case(change+" during cursor observer setup",()=>
+            {
+                var owner=Fresh();Lua.DuringOwnership=()=>owner.Change(change);owner.Tick();
+                Check(WoWItem.Pickups==0&&Lua.Requests==0&&!owner.HasPendingEquip,
+                    "cursor observer setup did not retain actor/runtime/quest admission before pickup");
             });
         Case("refused pickup stays unsubmitted",()=>
         {

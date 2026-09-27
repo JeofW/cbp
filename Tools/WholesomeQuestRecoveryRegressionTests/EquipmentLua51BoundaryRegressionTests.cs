@@ -109,14 +109,18 @@ internal static class EquipmentLua51BoundaryRegressionTests
                 (Mode:"submit-wrong-slot", Result:false, Mutations:0), (Mode:"submit-locked", Result:false, Mutations:0) })
                 Scenario(owner, "submit", c.Mode, c.Result, c.Mutations);
             foreach (var c in new[] {
-                (Mode:"return-empty", Result:true, Mutations:0), (Mode:"return-displaced", Result:true, Mutations:1),
-                (Mode:"return-refused", Result:false, Mutations:1), (Mode:"return-pending", Result:false, Mutations:0),
+                // Build12340 swaps the old equipment into the source itself.
+                // Any later different-entry cursor is unowned, never a return.
+                (Mode:"return-empty", Result:true, Mutations:0), (Mode:"return-displaced", Result:false, Mutations:0),
+                (Mode:"return-refused", Result:false, Mutations:0), (Mode:"return-pending", Result:false, Mutations:0),
                 (Mode:"return-spell", Result:false, Mutations:0), (Mode:"return-occupied", Result:false, Mutations:0) })
                 Scenario(owner, "return", c.Mode, c.Result, c.Mutations);
             Scenario(owner, "busy", "query-held", true, 0);
             Scenario(owner, "busy", "query-empty", false, 0);
+            Scenario(owner, "busy", "query-spell", true, 0);
             Scenario(owner, "no-source", "query-held", false, 0);
             Scenario(owner, "no-source", "query-empty", true, 0);
+            Scenario(owner, "no-source", "query-spell", false, 0);
             foreach (string transport in new[] { "missing", "nil", "malformed", "raw-boolean", "error" })
             {
                 Scenario(owner, "submit", "submit", false, 0, transport);
@@ -163,6 +167,7 @@ public sealed class PickupProbe
     private const string OwnerFields = """
     private uint _pendingEquipEntry=100;
     private ulong _pendingEquipGuid=200;
+    private string _pendingCursorOwner="0123456789abcdef0123456789abcdef";
     private InventorySlot _pendingEquipSlot=InventorySlot.HeadSlot;
     private int _pendingSourceBag=0,_pendingSourceSlot=1;
     private bool HasPendingEquip=>true;
@@ -181,6 +186,9 @@ public sealed class PickupProbe
 """;
     private const string Setup = """
 clicks=0
+-- Lifetime admission is controlled here; the cleanup suite executes its actual
+-- pickup/cursor event sequence. This suite retains the existing request cases.
+CopilotBuddy_EquipCursorFrame={owner='0123456789abcdef0123456789abcdef',phase=2}
 function StaticPopup_FindVisible(kind) return nil end
 function GetItemInfo(entry) assert(entry==100);return 'item' end
 function CreateFrame()
@@ -199,7 +207,7 @@ elseif string.sub(scenario,1,6)=='submit' then
  if scenario=='submit-foreign' then kind,id='item',999 end
 elseif scenario=='query-held' or scenario=='return-displaced' or scenario=='return-refused' or scenario=='return-occupied' then kind,id='item',99
 elseif scenario=='return-pending' then kind,id='item',100
-elseif scenario=='return-spell' then kind,id='spell',99 end
+elseif scenario=='return-spell' or scenario=='query-spell' then kind,id='spell',99 end
 if scenario=='return-occupied' then link='|Hitem:333:0|h[Occupied]|h' end
 function GetCursorInfo() return kind,id end
 function CursorHasItem() return kind=='item' end

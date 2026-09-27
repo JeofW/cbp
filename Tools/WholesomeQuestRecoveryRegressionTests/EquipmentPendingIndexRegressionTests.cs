@@ -121,6 +121,7 @@ public static class Lua {
 """;
     private const string Fields = """
  private ulong _pendingEquipGuid=200;
+ private string _pendingCursorOwner="0123456789abcdef0123456789abcdef";
  private uint _pendingEquipEntry=100;
  private InventorySlot _pendingEquipSlot=InventorySlot.MainHandSlot;
  private bool _pendingEquipSubmitted=true;
@@ -131,6 +132,9 @@ public static class Lua {
 """;
     private const string Setup = """
 clicks=0;submits=0;confirms=0;popup=nil
+-- Cursor lifetime is a separate controlled admission boundary in these
+-- synchronous bind-index tests; its event lifecycle is exercised by W104.
+CopilotBuddy_EquipCursorFrame={owner='0123456789abcdef0123456789abcdef',phase=2}
 local frames={}
 function CreateFrame()
  local f={events={}}

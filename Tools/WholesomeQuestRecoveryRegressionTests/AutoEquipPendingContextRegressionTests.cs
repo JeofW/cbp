@@ -69,6 +69,19 @@ internal static class AutoEquipPendingContextRegressionTests
                 catch (Failure error) { assertions++; Console.Error.WriteLine("FAIL AutoEquip context: " + state + "/begin: " + error.Message); }
                 catch (Exception error) { unexpected++; Console.Error.WriteLine("ERROR AutoEquip context: " + state + "/begin: " + error); }
             }
+            foreach (string state in new[] { "stopped", "combat", "replacement" })
+            {
+                total++;
+                try
+                {
+                    int[] actual = (int[])execute.Invoke(null, new object[] { state, "setup-change" })!;
+                    if (actual[0] != 0 || actual[1] != 0 || actual[2] != 0)
+                        throw new Failure("cursor observer setup crossed a revoked runtime/actor boundary");
+                    passed++; Console.WriteLine("PASS AutoEquip context: " + state + "/setup-change");
+                }
+                catch (Failure error) { assertions++; Console.Error.WriteLine("FAIL AutoEquip context: " + state + "/setup-change: " + error.Message); }
+                catch (Exception error) { unexpected++; Console.Error.WriteLine("ERROR AutoEquip context: " + state + "/setup-change: " + error); }
+            }
         }
         finally { Directory.Delete(directory, true); }
         Console.WriteLine($"AutoEquip pending context scenarios: {passed}/{total}; assertions={assertions}; unexpected={unexpected}; exact tracked C# capture/tick/request methods; controlled world/Lua; no game attached.");
@@ -95,7 +108,10 @@ public sealed class WoWItem
 public static class Lua
 {
     public static int Requests;
-    public static bool TryEquipCursorItem(ulong guid,uint entry,int slot){Requests++;return true;}
+    // Observer setup is controlled separately from the mutation-request count.
+    public static Action DuringOwnership;
+    public static bool BeginEquipCursorOwnership(uint entry,string owner){var action=DuringOwnership;DuringOwnership=null;action?.Invoke();return true;}
+    public static bool TryEquipCursorItem(ulong guid,uint entry,int slot,string owner=null){Requests++;return true;}
     public static void DoString(string format,params object[] args){Requests++;}
     public static T GetReturnVal<T>(string script,uint index){Requests++;return typeof(T)==typeof(int)?(T)(object)1:(T)(object)true;}
 }
@@ -103,6 +119,7 @@ public sealed class AutoEquipContextProbe
 {
     private bool _isDisposed,_pendingEquipSubmitted;
     private ulong _pendingEquipGuid,_pendingEquipPlayerGuid;
+    private string _pendingCursorOwner;
     private uint _pendingEquipEntry;
     private LocalPlayer _pendingEquipPlayer;
     private InventorySlot _pendingEquipSlot=InventorySlot.None;
@@ -138,10 +155,14 @@ public sealed class AutoEquipContextProbe
     public static int[] Execute(string state,string operation)
     {
         ObjectManager.Me=new LocalPlayer();StyxWoW.IsInGame=true;TreeRoot.IsRunning=true;Battlegrounds.IsInsideBattleground=false;
-        var owner=new AutoEquipContextProbe();Lua.Requests=0;
+        var owner=new AutoEquipContextProbe();Lua.Requests=0;Lua.DuringOwnership=null;
         if(operation=="begin")
         {
             owner.Change(state);owner.BeginEquip(new WoWItem(),InventorySlot.MainHandSlot,false);
+        }
+        else if(operation=="setup-change")
+        {
+            Lua.DuringOwnership=()=>owner.Change(state);owner.BeginEquip(new WoWItem(),InventorySlot.MainHandSlot,false);
         }
         else
         {

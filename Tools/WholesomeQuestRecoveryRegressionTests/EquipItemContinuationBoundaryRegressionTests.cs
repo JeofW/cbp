@@ -87,7 +87,9 @@ public static class StyxWoW { public static LocalPlayer Me=new LocalPlayer();pub
 public static class TreeRoot { public static bool IsRunning=true; }
 public static class Lua
 {
-    public static bool TryEquipCursorItem(ulong guid,uint entry,int slot){Record("owned cursor submission");return true;}
+    public static bool BeginEquipCursorOwnership(uint entry,string owner)=>true;
+    public static bool TryEquipCursorItem(ulong guid,uint entry,int slot,string owner=null){Record("owned cursor submission");return true;}
+    public static bool TryCancelEquipCursorItem(ulong guid,uint entry,string owner){Record("owned cursor cancellation");return true;}
     public static readonly List<string> Requests=new List<string>();
     public static Action DuringRequest;
     private static void Record(string script)
@@ -95,13 +97,16 @@ public static class Lua
         Requests.Add(script);var change=DuringRequest;DuringRequest=null;change?.Invoke();
     }
     public static void DoString(string format,params object[] args){Record(args.Length==0?format:string.Format(format,args));}
-    public static T GetReturnVal<T>(string script,uint index){Record(script);return typeof(T)==typeof(int)?(T)(object)1:(T)(object)true;}
+    // This fixture supplies an observed empty cursor. The legacy return helper
+    // uses receipt 1; the retained busy query uses receipt 2 for that same state.
+    public static T GetReturnVal<T>(string script,uint index){Record(script);return typeof(T)==typeof(int)?(T)(object)(script.Contains("and 1 or 2")?2:1):(T)(object)true;}
 }
 public sealed class ContinuationProbe
 {
     private sealed class Failure(string message):Exception(message) { }
     private bool _isBehaviorDone,_isDisposed,_pendingEquipSubmitted;
     private ulong _pendingEquipGuid,_pendingEquipPlayerGuid;
+    private string _pendingCursorOwner;
     private uint _pendingEquipEntry;
     private LocalPlayer _pendingEquipPlayer;
     private InventorySlot _pendingEquipSlot=InventorySlot.None;

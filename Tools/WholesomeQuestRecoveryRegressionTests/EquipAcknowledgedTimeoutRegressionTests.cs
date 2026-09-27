@@ -94,11 +94,15 @@ public sealed class WoWItem
 }
 public sealed class ProbePlayer { public ulong Guid=7; public List<WoWItem> CarriedItems = new List<WoWItem>(); }
 public static class StyxWoW { public static ProbePlayer Me = new ProbePlayer(); }
-public static class Lua { public static void DoString(string format, params object[] args) { throw new InvalidOperationException(""Unexpected item admission""); } }
+public static class Lua {
+    public static bool BeginEquipCursorOwnership(uint entry,string owner) { throw new InvalidOperationException(""Unexpected item admission""); }
+    public static void DoString(string format, params object[] args) { throw new InvalidOperationException(""Unexpected item admission""); }
+}
 public sealed class EquipTimeoutProbe
 {
     private bool _isBehaviorDone, _isDisposed;
     private ulong _pendingEquipGuid;
+    private string _pendingCursorOwner;
     private ProbePlayer _pendingEquipPlayer;
     private ulong _pendingEquipPlayerGuid;
     private uint _pendingEquipEntry;
