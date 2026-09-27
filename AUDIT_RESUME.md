@@ -1,4 +1,14 @@
-# W103 continuation — synchronous pending-index repair verified
+# W104 continuation — native cleanup findings, test-only validation hold
+
+27 September 2026. Read `docs/audit/2026-09-27/W104_VALIDATION_HOLD.md` and `W104_NATIVE_CLEANUP_FINDINGS.md` first, then the retained W103 checkpoint below. W104 published test-only commit `680d88be7584f321991c99afe5232e5fefe63ac8` (tree `4d6fde1c6e45ea7ba6f02cc14211f5be375e8542`) from W103 docs parent `3c67d844abfb257ca9e400d0ecde3e2baf68e32d`. Exact parent/path/blob/decoded-byte/tree/direct-ref readback succeeded; external receipt `W104_REDCLEANUP_PUBLICATION_20260927.json` records it. W103 `f434f7dd6ed8aad0ae7dd48d7391f1ceda4e3b26` remains the last validated production source. No W104 production repair or observed hosted result is claimed.
+
+Eighteen new live build-12340 IDA receipts establish that normal explicit-slot equip sends a full slot swap and clears the cursor; the old item follow-up is a lock, not a displaced cursor. Pickup leaves the original item in its source slot. Current post-ack cleanup can move a foreign different-entry cursor; current timeout cleanup requires an empty source and uses entry rather than physical/lifetime identity. Pinned TrinityCore 3.3.5 swap code corroborates native protocol behavior. A bounded per-pickup lifetime plus W103 physical-GUID guard is specified in the plan and written fixtures; it is not yet implemented or validated.
+
+The next combined CI/status/remaining-audit read was provider safety-blocked. Its exact payload/error are retained in `W104_VALIDATION_HOLD.md`; no run ID/result or audit-search result was returned. Do not replay, split or reroute that rejected request. File reads and the prior successful publication remain verified; no global read-only/disconnection diagnosis is made. Preserve the tests, obtain supported recovery and actual hosted behavioral evidence before production repair, then continue the original full PR51 objective. No session_finish or goal-completion claim. This containing update is documentation only; external latest continuation/publication receipts identify its final SHA.
+
+---
+
+# Retained W103 continuation — synchronous pending-index repair verified
 
 26 September 2026. Read docs/audit/2026-09-26/W103_CHECKPOINT.md and W103_EVIDENCE.json first. W102's implementation-pending statements below are historical. WoW MCP was verified against the copied WoW-12340.i64/input SHA256 bf644876709c591acc17c0da8cdf1814edcc9f1e6bc109a8c0d5c38c79dc953c. Fourteen additional read-only receipts trace pending writers, callbacks and inline event dispatch. No subagents or local project execution.
 

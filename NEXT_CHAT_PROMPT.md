@@ -1,4 +1,16 @@
-# W103 continuation — synchronous pending-index repair verified
+# Continue W104 validation hold — original PR51 goal remains incomplete
+
+Continue CopilotBuddy PR51 without subagents from published test-only commit `680d88be7584f321991c99afe5232e5fefe63ac8`. Read `D:\Dev\CopilotBuddy-Evidence\LATEST_CONTINUATION.md`, `W104_REDCLEANUP_PUBLICATION_20260927.json`, `W104_IMPLEMENTATION_PLAN_20260927.md`, and `docs/audit/2026-09-27/W104_VALIDATION_HOLD.md` / `W104_NATIVE_CLEANUP_FINDINGS.md` before the retained W103 material below. Preserve all seven published test files; do not recreate their commit. W103 `f434f7dd6ed8aad0ae7dd48d7391f1ceda4e3b26` remains the last fully validated production source; W104 production has not changed and its hosted result is not known.
+
+The live original build-12340 IDA evidence and pinned core source correct the displaced-cursor premise: normal equip swaps both slots and clears the cursor, while pickup only selects/locks the item still present in the source. Current post-ack cleanup can move a foreign cursor, and timeout restoration does not prove physical item/lifetime ownership. The written regression/design work targets observation-only post-ack cleanup, an original pickup lifetime, and same-dispatch GUID-guarded cancellation. Do not turn the design into production until actual hosted behavioral red is established; do not mistake compile failure or unexecuted module initializers for that evidence.
+
+Preserve the new provider-refusal boundary recorded verbatim in the hold. The rejected combined CI/status/audit read returned no result and was not replayed/split/rerouted. Continue after supported recovery, not by sidestepping the refusal. Then implement only proven repairs, validate every production change with the existing hosted Windows/x86 gates, inspect exact-source artifacts/hashes, checkpoint the W103 successor, and continue all remaining actionable wholesome questing/navigation/combat/single-target work from the original request. The broader audit has not been completed or deliberately deferred by this hold.
+
+Keep original 3.3.5a/build12340, TrinityCore3.3.5 primary/AzerothCore secondary, all policies/assertions/acceptance/merge gates, every previous repair and failed intermediate. No subagents, production CB access, local project execution, W80/W92 restart, PR58 recreation, excluded PR25, speculative changes, force-push, master write, merge or deployment. Numeric preparation remains 3 historical / 0 new / 0 remaining. Use session_finish only when the requested implementation is complete and final verification remains; it has not been invoked for this hold. Read external latest continuation for the final documentation SHA; never substitute it for the tested source.
+
+---
+
+# Retained W103 continuation — synchronous pending-index repair verified
 
 26 September 2026. Read docs/audit/2026-09-26/W103_CHECKPOINT.md and W103_EVIDENCE.json first. W102's implementation-pending statements below are historical. WoW MCP was verified against the copied WoW-12340.i64/input SHA256 bf644876709c591acc17c0da8cdf1814edcc9f1e6bc109a8c0d5c38c79dc953c. Fourteen additional read-only receipts trace pending writers, callbacks and inline event dispatch. No subagents or local project execution.
 
