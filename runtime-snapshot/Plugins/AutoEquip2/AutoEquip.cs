@@ -72,6 +72,7 @@ namespace Styx.Bot.Plugins.AutoEquip2
         private int _pendingSourceSlot = -1;
         private DateTime _pendingEquipSince;
         private bool _pendingEquipSubmitted;
+        private string _pendingCursorOwner;
         private bool _isDisposed;
         private LocalPlayer _pendingEquipPlayer;
         private ulong _pendingEquipPlayerGuid;
@@ -806,6 +807,14 @@ namespace Styx.Bot.Plugins.AutoEquip2
                 return;
             }
 
+            _pendingCursorOwner = System.Guid.NewGuid().ToString("N");
+            if (!Lua.BeginEquipCursorOwnership(_pendingEquipEntry, _pendingCursorOwner) ||
+                !OwnsPendingEquipContext())
+            {
+                ResetPendingEquip();
+                return;
+            }
+
             int sourceBag, sourceSlot;
             if (!item.TryPickUp(out sourceBag, out sourceSlot))
             {
@@ -864,7 +873,7 @@ namespace Styx.Bot.Plugins.AutoEquip2
             if (!OwnsPendingEquipContext() || _pendingEquipSlot == InventorySlot.None)
                 return false;
 
-            return Lua.TryEquipCursorItem(_pendingEquipGuid, _pendingEquipEntry, (int)_pendingEquipSlot);
+            return Lua.TryEquipCursorItem(_pendingEquipGuid, _pendingEquipEntry, (int)_pendingEquipSlot, _pendingCursorOwner);
         }
 
         private bool IsPendingEquipAcknowledged()
@@ -891,26 +900,9 @@ namespace Styx.Bot.Plugins.AutoEquip2
             if (!OwnsPendingEquipContext())
                 return false;
 
-            if (_pendingSourceBag < 0 || _pendingSourceSlot <= 0)
-                return !CursorHasAnyItem();
-
-            string script = string.Format(
-                System.Globalization.CultureInfo.InvariantCulture,
-                "local cursorType,cursorItemId=GetCursorInfo(); " +
-                "if not cursorType then return 1 end; " +
-                "if cursorType~='item' or not CursorHasItem() then return 0 end; " +
-                "if tonumber(cursorItemId)=={0} then return 0 end; " +
-                "if GetContainerItemLink({1},{2}) then return 0 end; " +
-                "PickupContainerItem({1},{2}); return not CursorHasItem() and 1 or 0",
-                _pendingEquipEntry, _pendingSourceBag, _pendingSourceSlot);
-            try
-            {
-                return Lua.GetReturnVal<int>(script, 0U) == 1;
-            }
-            catch
-            {
-                return false;
-            }
+            // Build12340 submits the complete slot swap and clears the cursor.
+            // A later held item is not an owned displaced item to move back.
+            return !CursorHasAnyItem();
         }
 
         private void RestoreOwnedCursorToSource()
@@ -919,12 +911,9 @@ namespace Styx.Bot.Plugins.AutoEquip2
                 return;
             try
             {
-                Lua.DoString(string.Format(
-                    System.Globalization.CultureInfo.InvariantCulture,
-                    "local cursorType,cursorItemId=GetCursorInfo(); " +
-                    "if cursorType=='item' and CursorHasItem() and tonumber(cursorItemId)=={0} " +
-                    "and not GetContainerItemLink({1},{2}) then PickupContainerItem({1},{2}) end",
-                    _pendingEquipEntry, _pendingSourceBag, _pendingSourceSlot));
+                // Pickup selects the item still present in its source slot.
+                // Release that exact selection instead of sending another swap.
+                Lua.TryCancelEquipCursorItem(_pendingEquipGuid, _pendingEquipEntry, _pendingCursorOwner);
             }
             catch
             {
@@ -937,7 +926,7 @@ namespace Styx.Bot.Plugins.AutoEquip2
             {
                 // Only receipt 2 proves an observed empty cursor. Missing or invalid
                 // responses become 0 in the bridge and must remain busy/unknown.
-                return Lua.GetReturnVal<int>("return CursorHasItem() and 1 or 2", 0U) != 2;
+                return Lua.GetReturnVal<int>("return (GetCursorInfo() or CursorHasItem()) and 1 or 2", 0U) != 2;
             }
             catch
             {
@@ -956,6 +945,7 @@ namespace Styx.Bot.Plugins.AutoEquip2
             _pendingSourceSlot = -1;
             _pendingEquipSince = DateTime.MinValue;
             _pendingEquipSubmitted = false;
+            _pendingCursorOwner = null;
         }
 
         #endregion

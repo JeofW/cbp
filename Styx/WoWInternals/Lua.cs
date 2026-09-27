@@ -235,25 +235,86 @@ namespace Styx.WoWInternals
         }
 
         /// <summary>
-        /// Submits an explicit-slot equip only for the physical cursor item.
+        /// Arms one cursor-selection lifetime before the caller's validated pickup.
+        /// The ordinary build-12340 pickup emits empty, then selected cursor state.
+        /// Any later cursor change revokes this attempt, even for the same item.
+        /// </summary>
+        public static bool BeginEquipCursorOwnership(uint itemEntry, string owner)
+        {
+            Guid identity;
+            if (itemEntry == 0 || !Guid.TryParseExact(owner, "N", out identity) ||
+                identity == Guid.Empty || owner != identity.ToString("N"))
+                return false;
+
+            var values = GetReturnValues(BuildEquipCursorOwnershipLua(itemEntry, owner));
+            return values.Count == 1 && values[0] == "1";
+        }
+
+        private static string BuildEquipCursorOwnershipLua(uint itemEntry, string owner)
+        {
+            return string.Format(CultureInfo.InvariantCulture,
+                "local expectedEntry={0}; local owner='{1}';\n", itemEntry, owner) + @"
+if GetCursorInfo() or CursorHasItem() then return 0 end
+local f=_G.CopilotBuddy_EquipCursorFrame
+if not f then
+ f=CreateFrame('Frame')
+ _G.CopilotBuddy_EquipCursorFrame=f
+end
+f.owner=nil
+f:UnregisterAllEvents()
+f:SetScript('OnEvent',nil)
+f.phase=0
+f.owner=owner
+f.handler=function(self)
+ if self.owner~=owner then return end
+ local kind,entry=GetCursorInfo()
+ if self.phase==0 and not kind and not CursorHasItem() then
+  self.phase=1
+ elseif self.phase==1 and kind=='item' and CursorHasItem() and tonumber(entry)==expectedEntry then
+  self.phase=2
+ else
+  self.owner=nil
+  self.phase=nil
+  self:UnregisterAllEvents()
+  self:SetScript('OnEvent',nil)
+  self.handler=nil
+ end
+end
+f:SetScript('OnEvent',f.handler)
+f:RegisterEvent('CURSOR_UPDATE')
+return 1";
+        }
+
+        /// <summary>
+        /// Submits an explicit-slot equip only for the original physical selection.
         /// Any bind confirmation belongs to this synchronous call; no pending
         /// array index or popup authority survives into the next bot tick.
         /// A true receipt is local submission, not equipment acknowledgement.
         /// </summary>
-        public static bool TryEquipCursorItem(ulong itemGuid, uint itemEntry, int inventorySlot)
+        public static bool TryEquipCursorItem(ulong itemGuid, uint itemEntry, int inventorySlot, string owner)
         {
-            if (itemGuid == 0 || itemEntry == 0 || inventorySlot < 0 || inventorySlot > 23)
+            Guid identity;
+            if (itemGuid == 0 || itemEntry == 0 || inventorySlot < 0 || inventorySlot > 23 ||
+                !Guid.TryParseExact(owner, "N", out identity) || identity == Guid.Empty ||
+                owner != identity.ToString("N"))
                 return false;
 
-            var values = GetReturnValuesCore(BuildEquipCursorSubmissionLua(itemEntry, inventorySlot),
+            var values = GetReturnValuesCore(BuildEquipCursorSubmissionLua(itemEntry, inventorySlot, owner),
                 "CopilotBuddy.EquipCursor.lua", itemGuid);
             return values.Count == 1 && values[0] == "1";
         }
 
-        private static string BuildEquipCursorSubmissionLua(uint itemEntry, int inventorySlot)
+        private static string BuildEquipCursorSubmissionLua(uint itemEntry, int inventorySlot, string owner)
         {
             return string.Format(System.Globalization.CultureInfo.InvariantCulture,
-                "local expectedEntry={0}; local slot={1};\n", itemEntry, inventorySlot) + @"
+                "local expectedEntry={0}; local slot={1}; local owner='{2}';\n", itemEntry, inventorySlot, owner) + @"
+local cursor=_G.CopilotBuddy_EquipCursorFrame
+local function currentCursor()
+ return cursor and _G.CopilotBuddy_EquipCursorFrame==cursor and cursor.owner==owner
+  and cursor.phase==2 and type(cursor.handler)=='function'
+  and cursor:GetScript('OnEvent')==cursor.handler and cursor:IsEventRegistered('CURSOR_UPDATE')
+end
+if not currentCursor() then return 0 end
 local kind,entry=GetCursorInfo()
 if kind~='item' or not CursorHasItem() or tonumber(entry)~=expectedEntry then return 0 end
 if not CursorCanGoInSlot(slot) or IsInventoryItemLocked(slot) then return 0 end
@@ -279,6 +340,7 @@ local ok,receipt=pcall(function()
  f:RegisterEvent('EQUIP_BIND_CONFIRM')
  f:RegisterEvent('AUTOEQUIP_BIND_CONFIRM')
  f:RegisterEvent('CURSOR_UPDATE')
+ if not currentCursor() then return 0 end
  EquipCursorItem(slot)
  -- Build12340 emits the pending index synchronously. Reject nested/replaced
  -- events and cursor changes; never equate this index with an inventory slot.
@@ -292,6 +354,41 @@ f:UnregisterAllEvents()
 f:SetScript('OnEvent',nil)
 f.busy=nil
 return ok and receipt or 0";
+        }
+
+        /// <summary>
+        /// Releases only the still-owned physical cursor selection. It neither
+        /// moves a bag item nor cancels a reusable pending-equip array index.
+        /// </summary>
+        public static bool TryCancelEquipCursorItem(ulong itemGuid, uint itemEntry, string owner)
+        {
+            Guid identity;
+            if (itemGuid == 0 || itemEntry == 0 || !Guid.TryParseExact(owner, "N", out identity) ||
+                identity == Guid.Empty || owner != identity.ToString("N"))
+                return false;
+
+            var values = GetReturnValuesCore(BuildCancelEquipCursorLua(itemEntry, owner),
+                "CopilotBuddy.CancelEquipCursor.lua", itemGuid);
+            return values.Count == 1 && values[0] == "1";
+        }
+
+        private static string BuildCancelEquipCursorLua(uint itemEntry, string owner)
+        {
+            return string.Format(CultureInfo.InvariantCulture,
+                "local expectedEntry={0}; local owner='{1}';\n", itemEntry, owner) + @"
+local f=_G.CopilotBuddy_EquipCursorFrame
+if not f or f.owner~=owner or f.phase~=2 or type(f.handler)~='function'
+ or f:GetScript('OnEvent')~=f.handler or not f:IsEventRegistered('CURSOR_UPDATE') then return 0 end
+local kind,entry=GetCursorInfo()
+if kind~='item' or not CursorHasItem() or tonumber(entry)~=expectedEntry then return 0 end
+-- Revoke before the client emits its release event or any nested callback.
+f.owner=nil
+f.phase=nil
+f:UnregisterAllEvents()
+f:SetScript('OnEvent',nil)
+f.handler=nil
+ClearCursor()
+return not GetCursorInfo() and not CursorHasItem() and 1 or 0";
         }
 
         [Obsolete("Use GetReturnValues instead. They do the same.")]
