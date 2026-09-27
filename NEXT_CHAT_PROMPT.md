@@ -1,4 +1,16 @@
-# Continue W104 validation hold — original PR51 goal remains incomplete
+# Continue from the verified W104 equipment successor
+
+Continue CopilotBuddy PR51 without subagents in `D:\Dev\CopilotBuddy-PR51`, repository `JeofW/cbp`, only branch `audit/next-55-equipment-observation-20260917`. Read external `LATEST_CONTINUATION.md`, then `docs/audit/2026-09-27/W104_VERIFIED_CHECKPOINT.md` / `W104_VERIFIED_EVIDENCE.json`, current root handoffs and all original-client/core/provenance policies. Reconcile the current live documentation head from the external publication receipt before changes; do not recreate completed W104 work.
+
+Validated production `6cbabba99ee523cbf2e0902f5b6964027edc410e` repairs foreign-cursor cleanup and original-selection timeout ownership. Final red fixture source `f0e5a502f8fa0afe675f0b3e188e5c46b27397e4`; integrated36301825983 passes17/17 with cleanup57/57, Lua87/87, pending24/24 and guard8/8; host36301825975 has0 errors/3344 warnings. All1849 inputs/211 inner hashes/212 members verified; all167 normalized test members identical red-to-green. This is controlled hosted Windows/x86 validation, not native/client/server/independent acceptance.
+
+Continue the remaining evidence-backed wholesome questing/navigation/combat and single-target attack work from the current maps. Use the live build12340 IDA only after health/input/hash verification. Preserve all earlier repairs, W103 confirmation/GUID/lock/context/deadline protections, R01 containment and explicit R03/R07 limits. R06 first-menu attribution and all native/client/server/independent/supervised gates remain open. Historical refused calls stay recorded; use fresh focused authorized current-fact reads under the user's granularity rules without retrying or disguising rejected transactions.
+
+No subagents, merge, force-push, master write, production CB access, local project build/test, W80/W92 restart, PR58 recreation, excluded PR25, weakened assertions or speculative changes. Numeric preparation remains3 used/0 new/0 remaining. Publish only through approved-branch expected-parent/scope/exact-readback checks; validate every production change via hosted Windows/x86. Overall goal remains in progress. Use session_finish only near actual completion, not to report progress or collect tasks.
+
+---
+
+# Historical W104 validation hold — retained interruption record
 
 Continue CopilotBuddy PR51 without subagents from published test-only commit `680d88be7584f321991c99afe5232e5fefe63ac8`. Read `D:\Dev\CopilotBuddy-Evidence\LATEST_CONTINUATION.md`, `W104_REDCLEANUP_PUBLICATION_20260927.json`, `W104_IMPLEMENTATION_PLAN_20260927.md`, and `docs/audit/2026-09-27/W104_VALIDATION_HOLD.md` / `W104_NATIVE_CLEANUP_FINDINGS.md` before the retained W103 material below. Preserve all seven published test files; do not recreate their commit. W103 `f434f7dd6ed8aad0ae7dd48d7391f1ceda4e3b26` remains the last fully validated production source; W104 production has not changed and its hosted result is not known.
 

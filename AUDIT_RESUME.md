@@ -1,4 +1,14 @@
-# W104 continuation — native cleanup findings, test-only validation hold
+# W104 verified successor — continue the remaining PR51 audit
+
+27 September 2026. Read `docs/audit/2026-09-27/W104_VERIFIED_CHECKPOINT.md` and `W104_VERIFIED_EVIDENCE.json` first. The historical validation hold below is preserved but superseded for the equipment implementation. Validated production is `6cbabba99ee523cbf2e0902f5b6964027edc410e`, tree `8b585dc4272c18f7c9c82efa95c07119d24b2937`; its unchanged-fixture red parent is `f0e5a502f8fa0afe675f0b3e188e5c46b27397e4`. Original 680d88be tests were recovered and inspected, not recreated. All prior refusals remain recorded accurately.
+
+Both owners now observe post-equip cursor release without moving a foreign item; timeout cancellation requires the original pickup lifetime, active observer/handler and W103's same-dispatch full physical GUID guard. W103 synchronous pending-index confirmation, return-buffer lock, context/deadline/acknowledgement protections remain. Hosted integrated `36301825983` is 17/17: cleanup57/57, Lua87/87, pending-index24/24, guard8/8. Host `36301825975` compiled Release/x86 with 0 errors/3344 warnings. All212 members/211 inner hashes/1849 source inputs verified; all167 normalized fixture members are identical across the final red/green pair, with exactly three production changes. No native game/server or independent acceptance is claimed.
+
+Next continue the currently actionable wholesome questing/navigation/combat and single-target attack audit from the existing requirement maps. Preserve R01 containment, R02/R05/R08 repairs, R03 explicit recipe/raw-slot deferrals, R07 limits and unresolved R06 first-menu attribution. Do not reopen W80/W92, speculate, merge, run project tests locally, use subagents or touch production CB. Numeric preparation remains3 historical/0 new/0 remaining. Overall goal is still in progress; session_finish has not been called. This containing commit is documentation only; external `LATEST_CONTINUATION.md` and the verified publication receipt record its final SHA.
+
+---
+
+# Historical W104 continuation — native cleanup findings, test-only validation hold
 
 27 September 2026. Read `docs/audit/2026-09-27/W104_VALIDATION_HOLD.md` and `W104_NATIVE_CLEANUP_FINDINGS.md` first, then the retained W103 checkpoint below. W104 published test-only commit `680d88be7584f321991c99afe5232e5fefe63ac8` (tree `4d6fde1c6e45ea7ba6f02cc14211f5be375e8542`) from W103 docs parent `3c67d844abfb257ca9e400d0ecde3e2baf68e32d`. Exact parent/path/blob/decoded-byte/tree/direct-ref readback succeeded; external receipt `W104_REDCLEANUP_PUBLICATION_20260927.json` records it. W103 `f434f7dd6ed8aad0ae7dd48d7391f1ceda4e3b26` remains the last validated production source. No W104 production repair or observed hosted result is claimed.
 
