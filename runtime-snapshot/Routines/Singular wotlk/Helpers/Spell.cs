@@ -964,8 +964,7 @@ namespace Singular.Helpers
                     new Action(ret => SpellManager.Cast(spell)),
                     new WaitContinue(
                         1,
-                        ret => StyxWoW.Me.CurrentPendingCursorSpell != null &&
-                               StyxWoW.Me.CurrentPendingCursorSpell.Name == spell,
+                        ret => StyxWoW.Me.HasPendingSpell(spell),
                         new ActionAlwaysSucceed()),
                     new Action(ret => LegacySpellManager.ClickRemoteLocation(onLocation(ret))))
                 );
