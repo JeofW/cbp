@@ -146,8 +146,8 @@ public sealed class OwnerProbe {
      }
     }else{
      Check(owner.HasPendingEquip,"ordinary new equip was suppressed");
-     bool byName=owner.Slot==InventorySlot.None;
-     Check(World.Pickups==(byName?0:1)&&World.Arms==(byName?0:1)&&World.Submits==(byName?0:1)&&World.ByNames==(byName?1:0),"ordinary request path or GUID-vs-entry admission changed");
+     // W108: default destination must retain the captured physical copy too.
+     Check(World.Pickups==1&&World.Arms==1&&World.Submits==1&&World.ByNames==0,"ordinary request lost owned pickup or performed an independent by-name lookup");
      StyxWoW.Me.Inventory.Equipped.Items=new WoWItem[23];StyxWoW.Me.Inventory.Equipped.Items[destination]=World.Candidate;
      owner.TickPendingEquip();Check(!owner.HasPendingEquip,"new equipment acknowledgement lost normal completion");
     }

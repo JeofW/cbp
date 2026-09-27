@@ -191,7 +191,8 @@ public sealed class EquipItemContextProbe
                 var owner=Fresh();if(byName)owner.Slot=InventorySlot.None;owner.Change(state);owner.Tick();
                 bool valid=state=="active"||state=="combat";
                 Check(Lua.Requests==(valid?1:0)&&owner.HasPendingEquip==valid,"invalid new transaction was admitted");
-                Check(WoWItem.Pickups==(valid&&!byName?1:0),"invalid context crossed item pickup boundary");
+                // Default equipment now requires the same owned pickup boundary.
+                Check(WoWItem.Pickups==(valid?1:0),"invalid context crossed item pickup boundary or default equipment bypassed ownership");
             });
         }
         foreach(string change in new[]{"replacement","quest"})
