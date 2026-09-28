@@ -209,6 +209,11 @@ namespace Singular.Settings
         public int ConsecrationCount => 3;
         public int DivinePleaMana => 30;
         public int RetributionHealHealth => 30;
+        // Existing support cases retain the feature's disabled default.
+        public bool UseSoloSealOfLight => false;
+        public int SoloSealOfLightHealth => 50;
+        public int SoloSealOfLightRecoveryHealth => 75;
+        public int SoloSealOfLightMinimumMana => 30;
     }
     internal class SingularSettings
     {
