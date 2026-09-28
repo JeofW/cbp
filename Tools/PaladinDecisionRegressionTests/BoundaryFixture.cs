@@ -130,7 +130,13 @@ namespace Singular.Settings
         public int DivinePleaMana => 30;
         public int RetributionHealHealth { get; set; } = 30;
         public Singular.ClassSpecific.Paladin.PaladinSeal Seal { get; set; }
-        public void Reset() { Seal = 0; HolyLightHealth = 30; RetributionHealHealth = 30; }
+        public bool UseSoloSealOfLight { get; set; }
+        public int SoloSealOfLightHealth { get; set; } = 50;
+        public int SoloSealOfLightRecoveryHealth { get; set; } = 75;
+        public int SoloSealOfLightMinimumMana { get; set; } = 30;
+        public void Reset() { Seal = 0; HolyLightHealth = 30; RetributionHealHealth = 30;
+            UseSoloSealOfLight = false; SoloSealOfLightHealth = 50;
+            SoloSealOfLightRecoveryHealth = 75; SoloSealOfLightMinimumMana = 30; }
     }
     public sealed class SingularSettings
     {
