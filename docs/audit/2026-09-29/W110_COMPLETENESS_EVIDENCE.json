@@ -1,0 +1,659 @@
+{
+  "schema": "copilotbuddy-w110-completeness-v1",
+  "prepared_utc": "2026-09-28T20:09:48.936758+00:00",
+  "repository": "JeofW/cbp",
+  "repository_id": 1367174964,
+  "pr": {
+    "baseRefName": "master",
+    "headRefName": "audit/next-55-equipment-observation-20260917",
+    "headRefOid": "14950e995a4e8f0994b9cbaed1684bf047dba55f",
+    "isDraft": true,
+    "mergedAt": null,
+    "number": 51,
+    "state": "OPEN"
+  },
+  "branch": "audit/next-55-equipment-observation-20260917",
+  "tested_source": "14950e995a4e8f0994b9cbaed1684bf047dba55f",
+  "source_tree": "dee0f867bf4f5fe57cbdd85c92287a8c428281d5",
+  "source_parent": "e726df8134319072a6337158017489516da8c0ca",
+  "source_publication": {
+    "repository": "JeofW/cbp",
+    "repository_id": 1367174964,
+    "branch": "audit/next-55-equipment-observation-20260917",
+    "expected_parent": "e726df8134319072a6337158017489516da8c0ca",
+    "paths": [
+      "Styx/Logic/FlightPaths.cs",
+      "Styx/WoWInternals/WoWObjects/WoWUnit.cs",
+      "Tools/WholesomeQuestRecoveryRegressionTests/AuraCollectionReadValidityRegressionTests.cs",
+      "Tools/WholesomeQuestRecoveryRegressionTests/TaxiEventOwnershipRegressionTests.cs"
+    ],
+    "patch_sha256": "01d30481bfa16401d3a255460ad7c2fe02562b50ccb50cb0e6b56008a01df48d",
+    "files": [
+      {
+        "path": "Styx/Logic/FlightPaths.cs",
+        "blob": "e4c50d1522106f6a4f8c3c1286a7961793dfa271",
+        "sha256": "47a65e5cfdedd1ba43420b4ce39d297f8fcdad6091babb45eac540e40856d128"
+      },
+      {
+        "path": "Styx/WoWInternals/WoWObjects/WoWUnit.cs",
+        "blob": "5ecaeae05979a614ce8ad41df0d05d6deb56c22e",
+        "sha256": "4e5a7f20353c9ad72c0b0a72140d8890fd9911915bbbf0c2853941b139207ab6"
+      },
+      {
+        "path": "Tools/WholesomeQuestRecoveryRegressionTests/AuraCollectionReadValidityRegressionTests.cs",
+        "blob": "bb1cffde8688bd032ecb97c041850772892f1ace",
+        "sha256": "d53d51fb59baf31b94e735551c894919280ecb9c2b83a169ac041a3ab44f65fb"
+      },
+      {
+        "path": "Tools/WholesomeQuestRecoveryRegressionTests/TaxiEventOwnershipRegressionTests.cs",
+        "blob": "66b29856e78259cfbc560e9468a6581e9fd14b3b",
+        "sha256": "578f344367ed2df8e3b8998a8da1df33317c13c09cc5a317d1ed70133fe47081"
+      }
+    ],
+    "commit": "14950e995a4e8f0994b9cbaed1684bf047dba55f",
+    "tree": "dee0f867bf4f5fe57cbdd85c92287a8c428281d5",
+    "verified_at_utc": "2026-09-28T20:04:29.8539303Z",
+    "direct_refs": [
+      "14950e995a4e8f0994b9cbaed1684bf047dba55f\trefs/heads/audit/next-55-equipment-observation-20260917",
+      "b2324913e2499ba30b239dd67224ca2c655c05cc\trefs/heads/master"
+    ]
+  },
+  "source_publication_sha256": "8e0aa52b333b6de28b48009cb763a751f91365f2a251b7c486967a8e9fe8c82c",
+  "prior_tested_source": "a3c01d48e887745d3b0e478e4018b01cad4f1edf",
+  "prior_published_documentation": "e726df8134319072a6337158017489516da8c0ca",
+  "prior_eight_cycles_preserved": true,
+  "new_cycles": {
+    "verified_utc": "2026-09-28T20:01:42.469283+00:00",
+    "pairs": [
+      {
+        "name": "active aura metadata",
+        "red": "AURAMETADATARED",
+        "green": "AURAMETADATAGREEN",
+        "base_head": "e726df8134319072a6337158017489516da8c0ca",
+        "source_inputs": 1892,
+        "only_changed_input": "Styx/WoWInternals/WoWObjects/WoWUnit.cs",
+        "all_other_source_inputs_identical": true,
+        "fixture_sources_unchanged": true,
+        "red_cases": "Aura collection validity scenarios: 78/93; assertions=15; unexpected=0;",
+        "green_cases": "Aura collection validity scenarios: 93/93; assertions=0; unexpected=0;",
+        "focused_groups": 5,
+        "red_assembly_sha256": "9f90d166aefa99086fc9888a7738d6c28e4e71f177f320e6da27ea9bb11155fe",
+        "green_assembly_sha256": "9f90d166aefa99086fc9888a7738d6c28e4e71f177f320e6da27ea9bb11155fe",
+        "compiled_assemblies_identical": true,
+        "assembly_limit": "Compilation identities are retained separately; source manifest equality proves unchanged fixture sources, not identical binaries.",
+        "green_owner_snapshot": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_AURAMETADATAGREEN_20260929\\WoWUnit.cs.verified-source",
+        "green_owner_sha256": "4e5a7f20353c9ad72c0b0a72140d8890fd9911915bbbf0c2853941b139207ab6",
+        "receipts": [
+          {
+            "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_AURAMETADATARED_20260929\\status.json",
+            "sha256": "2a44faeda0d6098caf1fbf5eb8053936318faa50a5420a7b511c37f897a2f7b1"
+          },
+          {
+            "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_AURAMETADATARED_20260929\\source-before.json",
+            "sha256": "181cab5bc04155aa7439dad9f515de3e323a5a4d2c6b01fb8158a50e9fa0cc75"
+          },
+          {
+            "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_AURAMETADATARED_20260929\\source-after.json",
+            "sha256": "181cab5bc04155aa7439dad9f515de3e323a5a4d2c6b01fb8158a50e9fa0cc75"
+          },
+          {
+            "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_AURAMETADATARED_20260929\\run.log",
+            "sha256": "e35b7efb99edebabb620481bce324470e1c285c6ea4f590c5129a1038d57fbd2"
+          },
+          {
+            "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_AURAMETADATARED_20260929\\run.stderr.log",
+            "sha256": "86e98d0770ffd48e389a0731a36a40ea86fb2463c79094afeacf3a33496aff2b"
+          },
+          {
+            "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_AURAMETADATAGREEN_20260929\\status.json",
+            "sha256": "a2884932b0e85dacab810bfbb97b91d2b5906ff63d3237e39dc7b57c9f422fce"
+          },
+          {
+            "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_AURAMETADATAGREEN_20260929\\source-before.json",
+            "sha256": "6e717d3153a0ec457ce6d6a2e1d9b93c2b39b36f779931215b0a02ece683531d"
+          },
+          {
+            "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_AURAMETADATAGREEN_20260929\\source-after.json",
+            "sha256": "6e717d3153a0ec457ce6d6a2e1d9b93c2b39b36f779931215b0a02ece683531d"
+          },
+          {
+            "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_AURAMETADATAGREEN_20260929\\run.log",
+            "sha256": "9949e60cb295b4ce578a3dd8155ea3ec003975c0ad97b3600d9e27898852aa06"
+          },
+          {
+            "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_AURAMETADATAGREEN_20260929\\run.stderr.log",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ],
+        "game_attached": false
+      },
+      {
+        "name": "taxi event continuity",
+        "red": "TAXIEVENTRED",
+        "green": "TAXIEVENTGREEN",
+        "base_head": "e726df8134319072a6337158017489516da8c0ca",
+        "source_inputs": 1893,
+        "only_changed_input": "Styx/Logic/FlightPaths.cs",
+        "all_other_source_inputs_identical": true,
+        "fixture_sources_unchanged": true,
+        "red_cases": "Taxi event ownership scenarios: 10/72; assertions=62; unexpected=0;",
+        "green_cases": "Taxi event ownership scenarios: 72/72; assertions=0; unexpected=0;",
+        "focused_groups": 5,
+        "red_assembly_sha256": "efcb1861d91a8a80ede539a0c9d7a69afbcdbe7af834e0ee76e95291a64bf3af",
+        "green_assembly_sha256": "b217be40be045ada22f1b8cabfacd83feab72423fcd49e389e82062e6bd59285",
+        "compiled_assemblies_identical": false,
+        "assembly_limit": "Compilation identities are retained separately; source manifest equality proves unchanged fixture sources, not identical binaries.",
+        "green_owner_snapshot": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_TAXIEVENTGREEN_20260929\\FlightPaths.cs.verified-source",
+        "green_owner_sha256": "47a65e5cfdedd1ba43420b4ce39d297f8fcdad6091babb45eac540e40856d128",
+        "receipts": [
+          {
+            "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_TAXIEVENTRED_20260929\\status.json",
+            "sha256": "0d79f2c269d0f0b6a593eb4929027b5d53a410914b91b3c32cad91fbb94edf77"
+          },
+          {
+            "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_TAXIEVENTRED_20260929\\source-before.json",
+            "sha256": "1c882a26646eeb5f800316f549a14c4e6a98d155e61ef0b405037b4a32e303c5"
+          },
+          {
+            "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_TAXIEVENTRED_20260929\\source-after.json",
+            "sha256": "1c882a26646eeb5f800316f549a14c4e6a98d155e61ef0b405037b4a32e303c5"
+          },
+          {
+            "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_TAXIEVENTRED_20260929\\run.log",
+            "sha256": "00eb252a73d4527efeef9dbc7ac2ce720b44c9145e15684eded77814713e38cd"
+          },
+          {
+            "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_TAXIEVENTRED_20260929\\run.stderr.log",
+            "sha256": "a370fefd8f8495e6b6efdfafb053aa868c8d30be4696e948acf4f04ca3d1e603"
+          },
+          {
+            "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_TAXIEVENTGREEN_20260929\\status.json",
+            "sha256": "cec462ad47c99c70c99ea221459f6967ecacdf1e74e0a43f8d9be7cb3b24a2ad"
+          },
+          {
+            "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_TAXIEVENTGREEN_20260929\\source-before.json",
+            "sha256": "14c57e43d926904ee9034c403c2e5bb7fb85c90dcbb6d6cd341f9f52a08f322f"
+          },
+          {
+            "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_TAXIEVENTGREEN_20260929\\source-after.json",
+            "sha256": "14c57e43d926904ee9034c403c2e5bb7fb85c90dcbb6d6cd341f9f52a08f322f"
+          },
+          {
+            "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_TAXIEVENTGREEN_20260929\\run.log",
+            "sha256": "11fa761534263dcae819c06bf83020690632b5d825bb4967d2a71ef75a85b0e4"
+          },
+          {
+            "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_TAXIEVENTGREEN_20260929\\run.stderr.log",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ],
+        "game_attached": false
+      }
+    ],
+    "assertions_weakened": false,
+    "changed_prior_expectation": "The old unknown-active-spell filter expectation was strengthened before red: unavailable active metadata must not authorize a partial collection. New evidence demonstrates erroneous Might permission.",
+    "scope": "Actual managed owners with controlled external leaves; native menu provenance and live acceptance remain open."
+  },
+  "pair_verification_sha256": "50b554be44665cdc8ee0fba374af906d91b1a495adf4287b23270c83c85ca989",
+  "local": {
+    "directory": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_COMPLETENESS_LOCAL_GATE_20260929",
+    "summary": {
+      "completed_utc": "2026-09-28T20:03:08.4137018Z",
+      "base_head": "e726df8134319072a6337158017489516da8c0ca",
+      "source_inputs": 1893,
+      "source_unchanged": true,
+      "successful_groups": 17,
+      "total_groups": 17,
+      "extraction_verified": true,
+      "extraction_source": "002682af0d8b8cc9ab01482eba8598ada0dd763c",
+      "host_build_exit": 0,
+      "lua51_sha256": "06df2510b5780791d17cbb738e42ec28a1ef5add580e127f31a9968bf57630e4",
+      "game_attached": false,
+      "hosted_acceptance": "Pending meaningful publication gate."
+    },
+    "results": [
+      {
+        "suite": "QuestRecoveryRegressionTests",
+        "build": 0,
+        "run": 0,
+        "harness_error": null,
+        "game_attached": false,
+        "architecture": "Windows x86"
+      },
+      {
+        "suite": "Singular",
+        "build": 0,
+        "run": 0,
+        "game_attached": false,
+        "architecture": "Windows x86"
+      },
+      {
+        "suite": "WholesomeQuestRecoveryRegressionTests",
+        "build": 0,
+        "run": 0,
+        "harness_error": null,
+        "game_attached": false,
+        "architecture": "Windows x86"
+      },
+      {
+        "suite": "QuestRecoveryAdapterRegressionTests",
+        "build": 0,
+        "run": 0,
+        "harness_error": null,
+        "game_attached": false,
+        "architecture": "Windows x86"
+      },
+      {
+        "suite": "QuestPickupPolicyRegressionTests",
+        "build": 0,
+        "run": 0,
+        "harness_error": null,
+        "game_attached": false,
+        "architecture": "Windows x86"
+      },
+      {
+        "suite": "VendorCoreRegressionTests",
+        "build": 0,
+        "run": 0,
+        "harness_error": null,
+        "game_attached": false,
+        "architecture": "Windows x86"
+      },
+      {
+        "suite": "NativeContractRegressionTests",
+        "build": 0,
+        "run": 0,
+        "harness_error": null,
+        "game_attached": false,
+        "architecture": "Windows x86"
+      },
+      {
+        "suite": "ShutdownBoundaryRegressionTests",
+        "build": 0,
+        "run": 0,
+        "harness_error": null,
+        "game_attached": false,
+        "architecture": "Windows x86"
+      },
+      {
+        "suite": "ElevatorSafetyRegressionTests",
+        "build": 0,
+        "run": 0,
+        "harness_error": null,
+        "game_attached": false,
+        "architecture": "Windows x86"
+      },
+      {
+        "suite": "PaladinDecisionRegressionTests",
+        "build": 0,
+        "run": 0,
+        "harness_error": null,
+        "game_attached": false,
+        "architecture": "Windows x86"
+      },
+      {
+        "suite": "GroupEngagementRegressionTests",
+        "build": 0,
+        "run": 0,
+        "harness_error": null,
+        "game_attached": false,
+        "architecture": "Windows x86"
+      },
+      {
+        "suite": "PaladinSupportRegressionTests",
+        "build": 0,
+        "run": 0,
+        "harness_error": null,
+        "game_attached": false,
+        "architecture": "Windows x86"
+      },
+      {
+        "suite": "WholesomeSaleRegressionTests",
+        "build": 0,
+        "run": 0,
+        "harness_error": null,
+        "game_attached": false,
+        "architecture": "Windows x86"
+      },
+      {
+        "suite": "QuestLogObservationRegressionTests",
+        "build": 0,
+        "run": 0,
+        "harness_error": null,
+        "game_attached": false,
+        "architecture": "Windows x86"
+      },
+      {
+        "suite": "QuestCompletionOwnerRegressionTests",
+        "build": 0,
+        "run": 0,
+        "harness_error": null,
+        "game_attached": false,
+        "architecture": "Windows x86"
+      },
+      {
+        "suite": "QuestObservationBoundaryRegressionTests",
+        "build": 0,
+        "run": 0,
+        "harness_error": null,
+        "game_attached": false,
+        "architecture": "Windows x86"
+      },
+      {
+        "suite": "Analyzers",
+        "build": 0,
+        "run": 0,
+        "game_attached": false,
+        "architecture": "local Python"
+      }
+    ],
+    "summary_sha256": "73b6e73a22ed13a8decb184eb997fb11301b675f486ca63af569762e49b2666d",
+    "source_manifest_sha256": "768a87915395d13ce578992751c4c26736795d0d0684ba477fb3583b2192111e"
+  },
+  "hosted": {
+    "integrated": {
+      "receipt": {
+        "verified_at_utc": "2026-09-28T20:09:22.5513741Z",
+        "repository": "JeofW/cbp",
+        "repository_id": 1367174964,
+        "run": 36476615077,
+        "source": "14950e995a4e8f0994b9cbaed1684bf047dba55f",
+        "artifact": 10993797913,
+        "artifact_name": "integrated-14950e995a4e8f0994b9cbaed1684bf047dba55f",
+        "archive": "D:\\Dev\\CopilotBuddy-Evidence\\w110-route-integrated-14950e99.zip",
+        "sha256": "345b09df6dac7a0ab6496e37f95c0aba5a0a8e001d365231851eefcdde97fc84",
+        "metadata_digest": "sha256:345b09df6dac7a0ab6496e37f95c0aba5a0a8e001d365231851eefcdde97fc84",
+        "bytes": 1127235,
+        "run_conclusion": "success",
+        "jobs": [
+          {
+            "id": 109111803035,
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ],
+        "game_attached": false
+      },
+      "inspection": {
+        "verified_at_utc": "2026-09-28T20:09:22.6047765Z",
+        "run": 36476615077,
+        "source": "14950e995a4e8f0994b9cbaed1684bf047dba55f",
+        "artifact": 10993797913,
+        "archive_sha256": "345b09df6dac7a0ab6496e37f95c0aba5a0a8e001d365231851eefcdde97fc84",
+        "members": 252,
+        "kind": "integrated",
+        "identity": {
+          "fixture_commit": "14950e995a4e8f0994b9cbaed1684bf047dba55f",
+          "production_tree": "dee0f867bf4f5fe57cbdd85c92287a8c428281d5",
+          "production_commit": "14950e995a4e8f0994b9cbaed1684bf047dba55f",
+          "game_attached": false
+        },
+        "inner_hashes": 251,
+        "source_inputs": 1893,
+        "checkout_inputs_matched": 1893,
+        "results": {
+          "value": [
+            {
+              "game_attached": false,
+              "build": 0,
+              "harness_error": null,
+              "suite": "QuestRecoveryRegressionTests",
+              "run": 0,
+              "architecture": "x86"
+            },
+            {
+              "run": 0,
+              "suite": "Singular",
+              "architecture": "x86",
+              "build": 0,
+              "game_attached": false
+            },
+            {
+              "game_attached": false,
+              "build": 0,
+              "harness_error": null,
+              "suite": "WholesomeQuestRecoveryRegressionTests",
+              "run": 0,
+              "architecture": "x86"
+            },
+            {
+              "game_attached": false,
+              "build": 0,
+              "harness_error": null,
+              "suite": "QuestRecoveryAdapterRegressionTests",
+              "run": 0,
+              "architecture": "x86"
+            },
+            {
+              "game_attached": false,
+              "build": 0,
+              "harness_error": null,
+              "suite": "QuestPickupPolicyRegressionTests",
+              "run": 0,
+              "architecture": "x86"
+            },
+            {
+              "game_attached": false,
+              "build": 0,
+              "harness_error": null,
+              "suite": "VendorCoreRegressionTests",
+              "run": 0,
+              "architecture": "x86"
+            },
+            {
+              "game_attached": false,
+              "build": 0,
+              "harness_error": null,
+              "suite": "NativeContractRegressionTests",
+              "run": 0,
+              "architecture": "x86"
+            },
+            {
+              "game_attached": false,
+              "build": 0,
+              "harness_error": null,
+              "suite": "ShutdownBoundaryRegressionTests",
+              "run": 0,
+              "architecture": "x86"
+            },
+            {
+              "game_attached": false,
+              "build": 0,
+              "harness_error": null,
+              "suite": "Elevator",
+              "run": 0,
+              "architecture": "x86"
+            },
+            {
+              "game_attached": false,
+              "build": 0,
+              "harness_error": null,
+              "suite": "PaladinDecisions",
+              "run": 0,
+              "architecture": "x86"
+            },
+            {
+              "game_attached": false,
+              "build": 0,
+              "harness_error": null,
+              "suite": "GroupEngagement",
+              "run": 0,
+              "architecture": "x86"
+            },
+            {
+              "game_attached": false,
+              "build": 0,
+              "harness_error": null,
+              "suite": "PaladinSupport",
+              "run": 0,
+              "architecture": "x86"
+            },
+            {
+              "game_attached": false,
+              "build": 0,
+              "harness_error": null,
+              "suite": "WholesomeSale",
+              "run": 0,
+              "architecture": "x86"
+            },
+            {
+              "game_attached": false,
+              "build": 0,
+              "harness_error": null,
+              "suite": "QuestLogObservationRegressionTests",
+              "run": 0,
+              "architecture": "x86"
+            },
+            {
+              "game_attached": false,
+              "build": 0,
+              "harness_error": null,
+              "suite": "QuestCompletionOwnerRegressionTests",
+              "run": 0,
+              "architecture": "x86"
+            },
+            {
+              "game_attached": false,
+              "build": 0,
+              "harness_error": null,
+              "suite": "QuestObservationBoundaryRegressionTests",
+              "run": 0,
+              "architecture": "x86"
+            },
+            {
+              "run": 0,
+              "suite": "Analyzers",
+              "build": 0,
+              "game_attached": false
+            }
+          ],
+          "Count": 17
+        },
+        "successful_groups": 17,
+        "key_summaries": [
+          "Autoattack startup scenarios: 26/26; assertions=0; unexpected=0; actual Common/LocalPlayer Lua and TreeSharp; stock Lua5.1 with controlled native attack state; no game/server/native execution.",
+          "AutoEquip pending context scenarios: 37/37; assertions=0; unexpected=0; exact tracked C# capture/tick/request methods; controlled world/Lua; no game attached.",
+          "Cast wait facing scenarios: 16/16; assertions=0; unexpected=0; actual WaitForCast overloads and real TreeSharp; controlled cast/facing boundaries; no client/native execution.",
+          "Combat sight movement scenarios: 85/85; assertions=0; unexpected=0; complete tracked Movement and real TreeSharp; controlled world/navigation; no native path or game attached.",
+          "Equip acknowledged timeout scenarios: 10/10; assertions=0; unexpected=0; exact tracked method control flow; controlled external acknowledgements; no game attached.",
+          "Equip continuation boundary scenarios: 46/46; assertions=0; unexpected=0; exact tracked C# tick/context/acknowledge/return/restore; controlled actor/inventory/Lua; no physical cursor or client proof.",
+          "EquipItem pending context scenarios: 57/57; assertions=0; unexpected=0; exact tracked C# tick/submit/confirm/reset; controlled actor/quest/Lua; no game attached.",
+          "Equipment cleanup ownership: 57/57; assertions=0; unexpected=0; actual tracked owners/generated Lua5.1; controlled build12340 cursor transitions and physical dispatch admission; no game/server/native execution.",
+          "Equipment physical cursor guard: 8/8; actual generated x86 comparison/branch contract; no game attached or native execution.",
+          "Equipment Lua51 boundary scenarios: 87/87; assertions=0; unexpected=0; tracked pickup/equip helpers, actual generated Lua5.1, loader size and verbatim managed conversion; controlled APIs; no physical GUID/client/server proof.",
+          "Equipment pending-index scenarios: 24/24; assertions=0; unexpected=0; tracked owner/generated Lua; stock Lua5.1; controlled synchronous events; no native client proof.",
+          "Equip popup submission scenarios: 18/18; assertions=0; unexpected=0; exact tracked C# confirmation/tick methods; recording Lua boundary only; no game attached."
+        ],
+        "failing_groups": []
+      },
+      "receipt_sha256": "de457d68c3d70cdea704d56aadef4f6bfb3563c10ef38ba2d9ef27be2a473d85",
+      "inspection_sha256": "456145b0feb332a3cb66ee183dd9b6c6afa6ff6e1cebbb92afda8f0c9db1ac68"
+    },
+    "host": {
+      "receipt": {
+        "verified_at_utc": "2026-09-28T20:07:38.6599368Z",
+        "repository": "JeofW/cbp",
+        "repository_id": 1367174964,
+        "run": 36476614915,
+        "source": "14950e995a4e8f0994b9cbaed1684bf047dba55f",
+        "artifact": 10993907368,
+        "artifact_name": "audit-validation-14950e995a4e8f0994b9cbaed1684bf047dba55f",
+        "archive": "D:\\Dev\\CopilotBuddy-Evidence\\w110-route-host-14950e99.zip",
+        "sha256": "55fedad8daad930ce2502215833bac5a8e6787a94216e417e7b679fbc7afcc1e",
+        "metadata_digest": "sha256:55fedad8daad930ce2502215833bac5a8e6787a94216e417e7b679fbc7afcc1e",
+        "bytes": 83241,
+        "run_conclusion": "success",
+        "jobs": [
+          {
+            "id": 109111801716,
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ],
+        "game_attached": false
+      },
+      "inspection": {
+        "verified_at_utc": "2026-09-28T20:07:38.7129871Z",
+        "run": 36476614915,
+        "source": "14950e995a4e8f0994b9cbaed1684bf047dba55f",
+        "artifact": 10993907368,
+        "archive_sha256": "55fedad8daad930ce2502215833bac5a8e6787a94216e417e7b679fbc7afcc1e",
+        "members": 4,
+        "kind": "host",
+        "result": {
+          "tests_run": false,
+          "game_attached": false,
+          "host_build_exit_code": 0
+        },
+        "build_summary": [
+          "3394 Warning(s)",
+          "0 Error(s)"
+        ]
+      },
+      "receipt_sha256": "eceacea973bd7ffd627893044d5a36b8dd77279872da671b1994bd1772a40f2b",
+      "inspection_sha256": "eb8bc6a5fd0ae8a0455ee5dc6a60dde7685372827db32789828e04c8a370da93"
+    }
+  },
+  "important_case_summaries": [
+    "Aura collection validity scenarios: 93/93; assertions=0; unexpected=0; complete tracked collection/Memory typed-byte-raw-cache chain and blessing selector; external transfer/world/spell lookup controlled; no process/native/game/server execution or atomic snapshot proof.",
+    "Cast continuation ownership scenarios: 136/136; assertions=0; unexpected=0; exact tracked Cast/Buff region and real TreeSharp; controlled sight/range/backend; no native obstruction trace or game attached.",
+    "Cast Lua observation scenarios: 52/52; assertions=0; unexpected=0; actual getters/conversion and stock Lua5.1; controlled build12340 native tuples; no game attached.",
+    "Combat control continuity scenarios: 471/471; assertions=0; unexpected=0; complete tracked Movement and real TreeSharp; controlled world/navigation; no native path or game attached.",
+    "Combat movement continuity scenarios: 259/259; assertions=0; unexpected=0; complete tracked Movement and real TreeSharp; controlled world/navigation; no native path or game attached.",
+    "Ground cast continuation scenarios: 59/59; assertions=0; unexpected=0; complete factory, pending observer and real TreeSharp; controlled placement/world; no native request provenance or route acceptance.",
+    "Heal continuation scenarios: 79/79; assertions=0; unexpected=0; all five tracked factories/real TreeSharp; controlled submission and actor state; no native request provenance or game acceptance.",
+    "Quest item movement ownership scenarios: 94/94; assertions=0; unexpected=0; complete tracked owner/real TreeSharp; controlled navigation; no physical route acceptance.",
+    "Reusable item acknowledgement scenarios: 13/13; assertions=0; unexpected=0; complete tracked UseItemOn and retained TreeSharp continuation; actual inherited quest reader; no game attached.",
+    "Shared spell observation scenarios: 109/109; assertions=0; unexpected=0; actual wait/cancel factories, melee policy and named admission; real TreeSharp; controlled observations/commands; no native cast-instance or physical-range acceptance.",
+    "Taxi event ownership scenarios: 72/72; assertions=0; unexpected=0; actual handler/public entry/context observer; controlled nodes/frame/persistence; no native menu ownership or live taxi acceptance."
+  ],
+  "source_inputs_matched_local_hosted_current": 1893,
+  "requirement_rows": 55,
+  "new_provider_refusal": {
+    "operation": "Chat_On_Steroids_Plugins.exec_command",
+    "arguments": {
+      "cmd": "& 'D:\\Dev\\CopilotBuddy-Evidence\\run-w110-final-pass-local-gate-20260929.ps1' -Phase COMPLETENESS",
+      "workdir": "/dev/CopilotBuddy-PR51",
+      "yield_time_ms": 1000
+    },
+    "first_result": "This tool call was blocked by OpenAI because we couldn't determine the safety status of the request.",
+    "second_identical_attempt": {
+      "session_id": 38134,
+      "exit_code": 0,
+      "local_groups": "17/17"
+    },
+    "historical_operations_replayed": false
+  },
+  "review": {
+    "type": "inline actual-source/caller/diff review",
+    "subagents": false,
+    "rejected_hypotheses": [
+      "Host CastingSpellId and IsCasting already include channels; no separate channel fix warranted.",
+      "WoWAura.Spell caches a successful lookup; the reader fix prevents unknown active metadata reaching the existing dispel selector. No speculative second consumer change."
+    ]
+  },
+  "acceptance": {
+    "DensePullIsolationValidated": false,
+    "independent_review_complete": false,
+    "supervised_live_acceptance": false,
+    "game_attached": false,
+    "native_mutation": false,
+    "remaining": [
+      "D1 original-client/native lifetime",
+      "D2 identified server/multiplayer outcomes",
+      "D3 causal UI/cursor/cast/taxi protocols",
+      "D4 realm data and supported recipes",
+      "D5 physical routes/world",
+      "D6 independent/supervised review",
+      "live Hammer of Justice runaway trace",
+      "historical CLR initiating cause"
+    ],
+    "merged": false,
+    "deployed": false,
+    "numeric_preparation": {
+      "historical": 3,
+      "new": 0,
+      "remaining": 0
+    }
+  }
+}
