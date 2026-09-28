@@ -20,8 +20,17 @@ namespace Singular.ClassSpecific.Paladin
         private sealed class SupportAction
         {
             internal string Spell;
+            internal WoWPlayer Caster;
+            internal ulong CasterGuid, TargetGuid;
             internal WoWPlayer Target;
             internal Func<WoWPlayer, string> Revalidate;
+
+            // A selected action belongs to these observed participants. A new
+            // valid actor must make a new decision, not inherit this action.
+            internal bool HasCurrentParticipants => Caster != null && Target != null
+                && CasterGuid != 0 && TargetGuid != 0
+                && ReferenceEquals(StyxWoW.Me, Caster) && Caster.Guid == CasterGuid
+                && Target.Guid == TargetGuid;
         }
 
         private static bool CanMaintainSupport()
@@ -322,11 +331,23 @@ namespace Singular.ClassSpecific.Paladin
 
         private static SupportAction FindSupportAction(bool includeGroup, Func<WoWPlayer, string> choose)
         {
-            if (!CanMaintainSupport()) return null;
+            var caster = StyxWoW.Me;
+            ulong casterGuid = caster?.Guid ?? 0;
+            if (casterGuid == 0 || !CanMaintainSupport()) return null;
             foreach (var player in SupportRecipients(includeGroup))
             {
-                string spell = choose(player);
-                if (spell != null) return new SupportAction { Spell = spell, Target = player, Revalidate = choose };
+                ulong targetGuid = player.Guid;
+                if (targetGuid == 0) continue;
+                var action = new SupportAction
+                {
+                    Caster = caster, CasterGuid = casterGuid, Target = player,
+                    TargetGuid = targetGuid, Revalidate = choose
+                };
+                if (!action.HasCurrentParticipants) return null;
+                action.Spell = choose(player);
+                // Assignment/availability observations may change participants.
+                if (!action.HasCurrentParticipants) return null;
+                if (action.Spell != null) return action;
             }
             return null;
         }
@@ -342,8 +363,9 @@ namespace Singular.ClassSpecific.Paladin
         private static bool ValidSupportAction(object context, string spell)
         {
             var action = context as SupportAction;
-            return action != null && action.Spell == spell && CanMaintainSupport()
-                && IsSupportRecipient(action.Target) && action.Revalidate(action.Target) == spell;
+            return action != null && action.Spell == spell && action.HasCurrentParticipants
+                && CanMaintainSupport() && IsSupportRecipient(action.Target)
+                && action.Revalidate(action.Target) == spell && action.HasCurrentParticipants;
         }
 
         private static string SelectAura(WoWPlayer player)
