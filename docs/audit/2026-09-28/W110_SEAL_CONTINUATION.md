@@ -1,0 +1,11 @@
+# W110 seal and diagnostic source continuation
+
+Latest tested source `a199953f7b465fd91d0ad7faa10252e6605ae8b2`, tree `ca793d49ed77d4d99debf3977379b0955efc9988`. Seal baseline `4ce0f02adcd7a1c3102a342afa415c27340407fa`; implementation `5b41250c8e5568bcd947e544cd6a98745a96e8f0`; diagnostic baseline `a1a330e7b9444d058f8e52a22823101ad94c8a69`. Approved branch `audit/next-55-equipment-observation-20260917`, repository JeofW/cbp, PR51. The external LATEST_CONTINUATION.md and W110_SEAL_FINAL_VERIFICATION_20260928.json record the later documentation commit and actual final state; this file does not invent its own containing commit.
+
+Completed: optional solo Light policy and seal/PvP review, 78/78 after 26 intended red assertions; deterministic optimized writer diagnostic, 13/13 after seven intended assertions including six real error-path failures. Original publication 21/21 and all 17 integrated groups pass; host 0 errors. First candidate 15/17 and missed support-settings fake are preserved as failures, not hidden. The original seal and publication assertions remain byte-identical; two frozen comparison intervals are stated in the evidence manifest.
+
+Defaults: UseSoloSealOfLight=false, entry50/recovery75/minimumMana30, Seal=Auto. Eligible solo Normal nonplayer/nonelite/nonboss only; manual/group/PvP/default damage and emergency guards remain. No live healing/DPS/DR optimum is certified and no configuration was deployed. No proactive control planner is invented.
+
+Read all seven new W110_SEAL*/W110_WRITER_DIAGNOSTIC_FINDINGS documents with the earlier full collection/native/Ret/core/objective records. Exact external native/client/server/realm/world/protocol/independent inputs and all historical frozen refusals remain. Do not repeat old operations, restart W80/W92 or create W111/unchanged CI for progress. Preserve two root edits, master b2324913, PR open/draft/unmerged and numeric budget3/0/0. No local project execution, subagent, productionCB/native/IDB mutation, force-push/master write/merge/deploy.
+
+Near genuine completion, finish follows actual session_finish responses and the prospective exact-retry rule. The actual final handshake is in W110_SEAL_FINISH_STATUS_20260928.json, not assumed from this source snapshot. RELEASED/manualstop controls ordinary final delivery; it does not waive acceptance gates.
