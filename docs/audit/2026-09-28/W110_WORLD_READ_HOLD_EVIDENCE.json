@@ -1,0 +1,646 @@
+{
+  "schema": "w110-new-world-read-validation-hold-v1",
+  "created_utc": "2026-09-28T02:54:28.065303+00:00",
+  "repository": "JeofW/cbp",
+  "repository_id": 1367174964,
+  "pr": 51,
+  "branch": "audit/next-55-equipment-observation-20260917",
+  "published_source_candidate": "450f1fe11af3004667e45f5c511b602a5ecec9a1",
+  "source_tree": "07af127bb4d06530a9516744d4e36155d8271b91",
+  "source_publication": {
+    "repository": "JeofW/cbp",
+    "repository_id": 1367174964,
+    "branch": "audit/next-55-equipment-observation-20260917",
+    "expected_parent": "8b6186d40ee48067d45b843d591fad9bf493be18",
+    "paths": [
+      "Styx/StyxWoW.cs"
+    ],
+    "patch_sha256": "29240f6fd83c74f80f1e9edad14c5412c5f099d6353771f61fb1dd11953942a2",
+    "files": [
+      {
+        "path": "Styx/StyxWoW.cs",
+        "blob": "da5ff7e073f4df8f40b1d5be5acd35a954348661",
+        "sha256": "02ef4463427b005723c2355a8a74f4748c598726e099db9e5be731838fb67469"
+      }
+    ],
+    "commit": "450f1fe11af3004667e45f5c511b602a5ecec9a1",
+    "tree": "07af127bb4d06530a9516744d4e36155d8271b91",
+    "verified_at_utc": "2026-09-28T02:43:42.2134871Z",
+    "direct_refs": [
+      "450f1fe11af3004667e45f5c511b602a5ecec9a1\trefs/heads/audit/next-55-equipment-observation-20260917",
+      "b2324913e2499ba30b239dd67224ca2c655c05cc\trefs/heads/master"
+    ]
+  },
+  "last_independently_integrated_green_source": "bf0becdb2abeabbbe4a26a57921778886cafb407",
+  "address_cycle_integrity": {
+    "verified_at_utc": "2026-09-28T02:31:32.8011703Z",
+    "run": 36368981605,
+    "source": "bf0becdb2abeabbbe4a26a57921778886cafb407",
+    "artifact": 10948856882,
+    "archive_sha256": "43a18056ce132134550747f7d6db6135b5bc8ace1b527d4d89109af2cd059d95",
+    "members": 225,
+    "kind": "integrated",
+    "identity": {
+      "fixture_commit": "bf0becdb2abeabbbe4a26a57921778886cafb407",
+      "game_attached": false,
+      "production_commit": "bf0becdb2abeabbbe4a26a57921778886cafb407",
+      "production_tree": "1d1437bf7a148c4243e1d6bb4b814419be4f4c3b"
+    },
+    "inner_hashes": 224,
+    "source_inputs": 1862,
+    "checkout_inputs_matched": 1862,
+    "results": {
+      "value": [
+        {
+          "harness_error": null,
+          "game_attached": false,
+          "suite": "QuestRecoveryRegressionTests",
+          "architecture": "x86",
+          "run": 0,
+          "build": 0
+        },
+        {
+          "build": 0,
+          "architecture": "x86",
+          "game_attached": false,
+          "run": 0,
+          "suite": "Singular"
+        },
+        {
+          "harness_error": null,
+          "game_attached": false,
+          "suite": "WholesomeQuestRecoveryRegressionTests",
+          "architecture": "x86",
+          "run": 0,
+          "build": 0
+        },
+        {
+          "harness_error": null,
+          "game_attached": false,
+          "suite": "QuestRecoveryAdapterRegressionTests",
+          "architecture": "x86",
+          "run": 0,
+          "build": 0
+        },
+        {
+          "harness_error": null,
+          "game_attached": false,
+          "suite": "QuestPickupPolicyRegressionTests",
+          "architecture": "x86",
+          "run": 0,
+          "build": 0
+        },
+        {
+          "harness_error": null,
+          "game_attached": false,
+          "suite": "VendorCoreRegressionTests",
+          "architecture": "x86",
+          "run": 0,
+          "build": 0
+        },
+        {
+          "harness_error": null,
+          "game_attached": false,
+          "suite": "NativeContractRegressionTests",
+          "architecture": "x86",
+          "run": 0,
+          "build": 0
+        },
+        {
+          "harness_error": null,
+          "game_attached": false,
+          "suite": "ShutdownBoundaryRegressionTests",
+          "architecture": "x86",
+          "run": 0,
+          "build": 0
+        },
+        {
+          "harness_error": null,
+          "game_attached": false,
+          "suite": "Elevator",
+          "architecture": "x86",
+          "run": 0,
+          "build": 0
+        },
+        {
+          "harness_error": null,
+          "game_attached": false,
+          "suite": "PaladinDecisions",
+          "architecture": "x86",
+          "run": 0,
+          "build": 0
+        },
+        {
+          "harness_error": null,
+          "game_attached": false,
+          "suite": "GroupEngagement",
+          "architecture": "x86",
+          "run": 0,
+          "build": 0
+        },
+        {
+          "harness_error": null,
+          "game_attached": false,
+          "suite": "PaladinSupport",
+          "architecture": "x86",
+          "run": 0,
+          "build": 0
+        },
+        {
+          "harness_error": null,
+          "game_attached": false,
+          "suite": "WholesomeSale",
+          "architecture": "x86",
+          "run": 0,
+          "build": 0
+        },
+        {
+          "harness_error": null,
+          "game_attached": false,
+          "suite": "QuestLogObservationRegressionTests",
+          "architecture": "x86",
+          "run": 0,
+          "build": 0
+        },
+        {
+          "harness_error": null,
+          "game_attached": false,
+          "suite": "QuestCompletionOwnerRegressionTests",
+          "architecture": "x86",
+          "run": 0,
+          "build": 0
+        },
+        {
+          "harness_error": null,
+          "game_attached": false,
+          "suite": "QuestObservationBoundaryRegressionTests",
+          "architecture": "x86",
+          "run": 0,
+          "build": 0
+        },
+        {
+          "build": 0,
+          "game_attached": false,
+          "run": 0,
+          "suite": "Analyzers"
+        }
+      ],
+      "Count": 17
+    },
+    "successful_groups": 17,
+    "key_summaries": [
+      "Autoattack startup scenarios: 26/26; assertions=0; unexpected=0; actual Common/LocalPlayer Lua and TreeSharp; stock Lua5.1 with controlled native attack state; no game/server/native execution.",
+      "AutoEquip pending context scenarios: 37/37; assertions=0; unexpected=0; exact tracked C# capture/tick/request methods; controlled world/Lua; no game attached.",
+      "Cast wait facing scenarios: 16/16; assertions=0; unexpected=0; actual WaitForCast overloads and real TreeSharp; controlled cast/facing boundaries; no client/native execution.",
+      "Combat sight movement scenarios: 85/85; assertions=0; unexpected=0; complete tracked Movement and real TreeSharp; controlled world/navigation; no native path or game attached.",
+      "Equip acknowledged timeout scenarios: 10/10; assertions=0; unexpected=0; exact tracked method control flow; controlled external acknowledgements; no game attached.",
+      "Equip continuation boundary scenarios: 46/46; assertions=0; unexpected=0; exact tracked C# tick/context/acknowledge/return/restore; controlled actor/inventory/Lua; no physical cursor or client proof.",
+      "EquipItem pending context scenarios: 57/57; assertions=0; unexpected=0; exact tracked C# tick/submit/confirm/reset; controlled actor/quest/Lua; no game attached.",
+      "Equipment cleanup ownership: 57/57; assertions=0; unexpected=0; actual tracked owners/generated Lua5.1; controlled build12340 cursor transitions and physical dispatch admission; no game/server/native execution.",
+      "Equipment physical cursor guard: 8/8; actual generated x86 comparison/branch contract; no game attached or native execution.",
+      "Equipment Lua51 boundary scenarios: 87/87; assertions=0; unexpected=0; tracked pickup/equip helpers, actual generated Lua5.1, loader size and verbatim managed conversion; controlled APIs; no physical GUID/client/server proof.",
+      "Equipment pending-index scenarios: 24/24; assertions=0; unexpected=0; tracked owner/generated Lua; stock Lua5.1; controlled synchronous events; no native client proof.",
+      "Equip popup submission scenarios: 18/18; assertions=0; unexpected=0; exact tracked C# confirmation/tick methods; recording Lua boundary only; no game attached."
+    ],
+    "failing_groups": []
+  },
+  "address_cycle_normalized_comparison": {
+    "verified_at_utc": "2026-09-28T02:32:17.3221717Z",
+    "red_source": "a3849e687c6b16e4bcb0fa8d85cb86ab812df7ad",
+    "green_source": "bf0becdb2abeabbbe4a26a57921778886cafb407",
+    "red_run": 36368552277,
+    "green_run": 36368981605,
+    "red_inputs": 1862,
+    "green_inputs": 1862,
+    "changed_inputs": [
+      "Styx/GameState.cs",
+      "Styx/StyxWoW.cs"
+    ],
+    "added_inputs": [],
+    "removed_inputs": [],
+    "normalized_count": 180,
+    "changed_normalized": [],
+    "added_normalized": [],
+    "removed_normalized": [],
+    "limits": "Archive integrity and run success are established by separate inspection receipts. This report compares captured source and normalized fixture bytes only."
+  },
+  "read_validity_red": {
+    "source": "8b6186d40ee48067d45b843d591fad9bf493be18",
+    "inspection": {
+      "verified_at_utc": "2026-09-28T02:42:31.2877931Z",
+      "run": 36370413478,
+      "source": "8b6186d40ee48067d45b843d591fad9bf493be18",
+      "artifact": 10949365599,
+      "archive_sha256": "7b8d87f429cb347b7e5f8d7530bf67010c6c51e94f1592adc88dba9b43f200c1",
+      "members": 226,
+      "kind": "integrated",
+      "identity": {
+        "production_commit": "8b6186d40ee48067d45b843d591fad9bf493be18",
+        "fixture_commit": "8b6186d40ee48067d45b843d591fad9bf493be18",
+        "game_attached": false,
+        "production_tree": "3e44681abfe1e66d4330d13704b70831428f8baa"
+      },
+      "inner_hashes": 225,
+      "source_inputs": 1863,
+      "checkout_inputs_matched": 1863,
+      "results": {
+        "value": [
+          {
+            "architecture": "x86",
+            "build": 0,
+            "harness_error": null,
+            "game_attached": false,
+            "suite": "QuestRecoveryRegressionTests",
+            "run": 0
+          },
+          {
+            "architecture": "x86",
+            "run": 0,
+            "build": 0,
+            "game_attached": false,
+            "suite": "Singular"
+          },
+          {
+            "architecture": "x86",
+            "build": 0,
+            "harness_error": null,
+            "game_attached": false,
+            "suite": "WholesomeQuestRecoveryRegressionTests",
+            "run": 1
+          },
+          {
+            "architecture": "x86",
+            "build": 0,
+            "harness_error": null,
+            "game_attached": false,
+            "suite": "QuestRecoveryAdapterRegressionTests",
+            "run": 0
+          },
+          {
+            "architecture": "x86",
+            "build": 0,
+            "harness_error": null,
+            "game_attached": false,
+            "suite": "QuestPickupPolicyRegressionTests",
+            "run": 0
+          },
+          {
+            "architecture": "x86",
+            "build": 0,
+            "harness_error": null,
+            "game_attached": false,
+            "suite": "VendorCoreRegressionTests",
+            "run": 0
+          },
+          {
+            "architecture": "x86",
+            "build": 0,
+            "harness_error": null,
+            "game_attached": false,
+            "suite": "NativeContractRegressionTests",
+            "run": 0
+          },
+          {
+            "architecture": "x86",
+            "build": 0,
+            "harness_error": null,
+            "game_attached": false,
+            "suite": "ShutdownBoundaryRegressionTests",
+            "run": 0
+          },
+          {
+            "architecture": "x86",
+            "build": 0,
+            "harness_error": null,
+            "game_attached": false,
+            "suite": "Elevator",
+            "run": 0
+          },
+          {
+            "architecture": "x86",
+            "build": 0,
+            "harness_error": null,
+            "game_attached": false,
+            "suite": "PaladinDecisions",
+            "run": 0
+          },
+          {
+            "architecture": "x86",
+            "build": 0,
+            "harness_error": null,
+            "game_attached": false,
+            "suite": "GroupEngagement",
+            "run": 0
+          },
+          {
+            "architecture": "x86",
+            "build": 0,
+            "harness_error": null,
+            "game_attached": false,
+            "suite": "PaladinSupport",
+            "run": 0
+          },
+          {
+            "architecture": "x86",
+            "build": 0,
+            "harness_error": null,
+            "game_attached": false,
+            "suite": "WholesomeSale",
+            "run": 0
+          },
+          {
+            "architecture": "x86",
+            "build": 0,
+            "harness_error": null,
+            "game_attached": false,
+            "suite": "QuestLogObservationRegressionTests",
+            "run": 0
+          },
+          {
+            "architecture": "x86",
+            "build": 0,
+            "harness_error": null,
+            "game_attached": false,
+            "suite": "QuestCompletionOwnerRegressionTests",
+            "run": 0
+          },
+          {
+            "architecture": "x86",
+            "build": 0,
+            "harness_error": null,
+            "game_attached": false,
+            "suite": "QuestObservationBoundaryRegressionTests",
+            "run": 0
+          },
+          {
+            "run": 0,
+            "build": 0,
+            "game_attached": false,
+            "suite": "Analyzers"
+          }
+        ],
+        "Count": 17
+      },
+      "successful_groups": 16,
+      "key_summaries": [
+        "Autoattack startup scenarios: 26/26; assertions=0; unexpected=0; actual Common/LocalPlayer Lua and TreeSharp; stock Lua5.1 with controlled native attack state; no game/server/native execution.",
+        "AutoEquip pending context scenarios: 37/37; assertions=0; unexpected=0; exact tracked C# capture/tick/request methods; controlled world/Lua; no game attached.",
+        "Cast wait facing scenarios: 16/16; assertions=0; unexpected=0; actual WaitForCast overloads and real TreeSharp; controlled cast/facing boundaries; no client/native execution.",
+        "Combat sight movement scenarios: 85/85; assertions=0; unexpected=0; complete tracked Movement and real TreeSharp; controlled world/navigation; no native path or game attached.",
+        "Equip acknowledged timeout scenarios: 10/10; assertions=0; unexpected=0; exact tracked method control flow; controlled external acknowledgements; no game attached.",
+        "Equip continuation boundary scenarios: 46/46; assertions=0; unexpected=0; exact tracked C# tick/context/acknowledge/return/restore; controlled actor/inventory/Lua; no physical cursor or client proof.",
+        "EquipItem pending context scenarios: 57/57; assertions=0; unexpected=0; exact tracked C# tick/submit/confirm/reset; controlled actor/quest/Lua; no game attached.",
+        "Equipment cleanup ownership: 57/57; assertions=0; unexpected=0; actual tracked owners/generated Lua5.1; controlled build12340 cursor transitions and physical dispatch admission; no game/server/native execution.",
+        "Equipment physical cursor guard: 8/8; actual generated x86 comparison/branch contract; no game attached or native execution.",
+        "Equipment Lua51 boundary scenarios: 87/87; assertions=0; unexpected=0; tracked pickup/equip helpers, actual generated Lua5.1, loader size and verbatim managed conversion; controlled APIs; no physical GUID/client/server proof.",
+        "Equipment pending-index scenarios: 24/24; assertions=0; unexpected=0; tracked owner/generated Lua; stock Lua5.1; controlled synchronous events; no native client proof.",
+        "Equip popup submission scenarios: 18/18; assertions=0; unexpected=0; exact tracked C# confirmation/tick methods; recording Lua boundary only; no game attached."
+      ],
+      "failing_groups": [
+        "FAIL aggregate group: WorldStateReadValidityRegressionTests: System.InvalidOperationException: World read validity regression"
+      ]
+    },
+    "actual_summary": [
+      "World read validity scenarios: 27/68; assertions=41; unexpected=0; complete tracked Memory typed/byte/cache methods, FastSize, world/flag getters and ammo owners; external transfer/API controlled; no process/native/game/server execution or frame-freshness proof."
+    ],
+    "receipt": {
+      "verified_at_utc": "2026-09-28T02:42:21.5558249Z",
+      "repository": "JeofW/cbp",
+      "repository_id": 1367174964,
+      "run": 36370413478,
+      "jobs": [
+        {
+          "id": 108765370523,
+          "name": "combined",
+          "status": "completed",
+          "conclusion": "failure",
+          "labels": [
+            "windows-2022"
+          ],
+          "runner_name": "GitHub Actions 1000000557"
+        }
+      ],
+      "run_conclusion": "failure",
+      "source": "8b6186d40ee48067d45b843d591fad9bf493be18",
+      "artifact": 10949365599,
+      "artifact_name": "integrated-8b6186d40ee48067d45b843d591fad9bf493be18",
+      "archive": "D:\\Dev\\CopilotBuddy-Evidence\\w110-world-read-red-integrated-8b6186d4.zip",
+      "sha256": "7b8d87f429cb347b7e5f8d7530bf67010c6c51e94f1592adc88dba9b43f200c1",
+      "metadata_digest": "sha256:7b8d87f429cb347b7e5f8d7530bf67010c6c51e94f1592adc88dba9b43f200c1",
+      "bytes": 989998
+    }
+  },
+  "candidate_host": {
+    "receipt": {
+      "verified_at_utc": "2026-09-28T02:52:40.4225353Z",
+      "repository": "JeofW/cbp",
+      "repository_id": 1367174964,
+      "run": 36370924968,
+      "source": "450f1fe11af3004667e45f5c511b602a5ecec9a1",
+      "artifact": 10948414160,
+      "artifact_name": "audit-validation-450f1fe11af3004667e45f5c511b602a5ecec9a1",
+      "archive": "D:\\Dev\\CopilotBuddy-Evidence\\w110-world-read-green-host-450f1fe1.zip",
+      "sha256": "747dcc790cf4e2fc77b3c272dd3b3d86c0054004ef17ce93f042de0b8b5d6fc4",
+      "metadata_digest": "sha256:747dcc790cf4e2fc77b3c272dd3b3d86c0054004ef17ce93f042de0b8b5d6fc4",
+      "bytes": 83930,
+      "metadata_record": "W110_WORLD_READ_ARTIFACT_METADATA_20260928.json",
+      "metadata_record_sha256": "f011fd578f7937f2b8ce477746b41a22a3f3d9365cff0112fd22105423ff37e1",
+      "run_conclusion": null,
+      "jobs": null,
+      "status_endpoint_queried": false,
+      "boundary": "Independent artifact content, not a recovered run-watch/jobs result. The complete test/compile outcome must be inspected from the archive."
+    },
+    "inspection": {
+      "verified_at_utc": "2026-09-28T02:52:55.9970829Z",
+      "run": 36370924968,
+      "source": "450f1fe11af3004667e45f5c511b602a5ecec9a1",
+      "artifact": 10948414160,
+      "archive_sha256": "747dcc790cf4e2fc77b3c272dd3b3d86c0054004ef17ce93f042de0b8b5d6fc4",
+      "members": 4,
+      "kind": "host",
+      "result": {
+        "game_attached": false,
+        "host_build_exit_code": 0,
+        "tests_run": false
+      },
+      "build_summary": [
+        "3344 Warning(s)",
+        "0 Error(s)"
+      ]
+    }
+  },
+  "candidate_integrated_metadata_only": {
+    "observed_session": 70769,
+    "total_count": 1,
+    "id": 10949321798,
+    "name": "integrated-450f1fe11af3004667e45f5c511b602a5ecec9a1",
+    "size_in_bytes": 989604,
+    "digest": "sha256:cc672d035895364e2b0c478a751d4701c91a51d642598be594e0a1780c6f9c05",
+    "expired": false,
+    "workflow_run": {
+      "head_branch": "audit/next-55-equipment-observation-20260917",
+      "head_repository_id": 1367174964,
+      "head_sha": "450f1fe11af3004667e45f5c511b602a5ecec9a1",
+      "id": 36370924943,
+      "repository_id": 1367174964
+    }
+  },
+  "candidate_integrated_zip_downloaded": false,
+  "candidate_integrated_result_verified": false,
+  "candidate_normalized_comparison_verified": false,
+  "candidate_green_claim": false,
+  "expected_missing_outputs": [
+    "w110-world-read-green-integrated-450f1fe1.zip",
+    "w110-world-read-green-integrated-450f1fe1-receipt.json",
+    "W110_WORLD_READ_GREEN_CASES_20260927.json",
+    "W110_WORLD_READ_FIXTURE_COMPARISON_20260927.json"
+  ],
+  "new_refusals": [
+    {
+      "date": "2026-09-28",
+      "tool": "Chat_On_Steroids_Core.exec_command",
+      "arguments": {
+        "cmd": "gh run watch 36370924943 --repo JeofW/cbp --exit-status --interval 30",
+        "workdir": "/dev/CopilotBuddy-PR51",
+        "yield_time_ms": 10000
+      },
+      "error": "This tool call was blocked by OpenAI because we couldn't determine the safety status of the request.",
+      "returned_session_id": null,
+      "returned_result": null,
+      "watch_execution_or_run_completion_verified": false,
+      "retried": false,
+      "fragmented_or_rerouted": false,
+      "last_independent_observation": {
+        "session": 44365,
+        "source": "450f1fe11af3004667e45f5c511b602a5ecec9a1",
+        "integrated_run": 36370924943,
+        "host_run": 36370924968,
+        "status": "in_progress"
+      },
+      "boundary": "Do not retry the watcher or replace it with equivalent run-status polling. No session exists to poll. Independently required source-bound artifact retrieval/content inspection is a different evidence obligation and must leave unreturned run/job conclusions unverified. Do not use an all-in-one helper that repeats run/jobs status for this integrated run. No global CI/Core outage is inferred."
+    },
+    {
+      "date": "2026-09-28",
+      "tool": "Chat_On_Steroids_Core.exec_command",
+      "arguments": {
+        "cmd": "& D:\\Dev\\CopilotBuddy-Evidence\\retain-w110-world-read-artifact.ps1 -Kind integrated",
+        "workdir": "/dev/CopilotBuddy-PR51",
+        "yield_time_ms": 10000
+      },
+      "error": "This tool call was blocked by OpenAI because we couldn't determine the safety status of the request.",
+      "returned_session_id": null,
+      "returned_result": null,
+      "download_execution_or_content_verified": false,
+      "retried": false,
+      "fragmented_or_rerouted": false,
+      "source": "450f1fe11af3004667e45f5c511b602a5ecec9a1",
+      "independently_observed_artifact": {
+        "metadata_session": 70769,
+        "run": 36370924943,
+        "artifact": 10949321798,
+        "bytes": 989604,
+        "digest": "sha256:cc672d035895364e2b0c478a751d4701c91a51d642598be594e0a1780c6f9c05"
+      },
+      "expected_receipt": "w110-world-read-green-integrated-450f1fe1-receipt.json",
+      "expected_archive": "w110-world-read-green-integrated-450f1fe1.zip",
+      "boundary": "Do not reexecute this download, invoke its endpoint through another tool, rename/wrap the helper, or reconstruct equivalent integrated contents to bypass the refusal. Metadata existence/digest is not passing test evidence. No integrated green, final source-input/inner-hash verification or red-green normalized comparison is established for450f1fe1. Host compile artifact is a separate unrefused request, not a substitute for this integrated gate. No global artifact/Core outage is inferred."
+    }
+  ],
+  "supporting_record_hashes": [
+    {
+      "file": "W110_FINAL_RESUMPTION_EXECUTION_20260928.md",
+      "sha256": "7550267d7dfb12528dfd61bbdfb7f91cd66db6bb6b7c73620c3f07816c1f9545",
+      "bytes": 11333
+    },
+    {
+      "file": "W110_WORLD_READ_VALIDITY_SCOPE_20260928.md",
+      "sha256": "6906623b6f9a70062a97f32e7b8b2b516fa3049fb70a97bfce1aa25c8eb76d78",
+      "bytes": 5018
+    },
+    {
+      "file": "W110_WORLD_READ_SELF_REVIEW_20260928.md",
+      "sha256": "0246bd4b69cd966ac9a9f59701634a69a6f6253d28a354e876d4948f10835658",
+      "bytes": 3318
+    },
+    {
+      "file": "W110_WORLD_READ_ARTIFACT_METADATA_20260928.json",
+      "sha256": "f011fd578f7937f2b8ce477746b41a22a3f3d9365cff0112fd22105423ff37e1",
+      "bytes": 1332
+    },
+    {
+      "file": "W110_WORLD_READ_WATCH_REFUSAL_20260928.json",
+      "sha256": "ca5c8febc35527719f79094e3437343a6230fdbc47e6cdfd467d432767937118",
+      "bytes": 1090
+    },
+    {
+      "file": "W110_WORLD_READ_ARTIFACT_DOWNLOAD_REFUSAL_20260928.json",
+      "sha256": "9dc72c02c5da9fd1069321e5c147495deb871653615087726b46a26087d10a75",
+      "bytes": 1424
+    },
+    {
+      "file": "W104_REDWORLDREAD_PUBLICATION_20260927.json",
+      "sha256": "3e7be41d6f59146813a9f3a250260755048837596a7b1cfa9151f033b0518a12",
+      "bytes": 2124
+    },
+    {
+      "file": "W104_GREENWORLDREAD_PUBLICATION_20260927.json",
+      "sha256": "8393ffe716ff8900b7e07ab9dbe8bcf2a8fdf542e88ec0f8b01548487c60cda4",
+      "bytes": 1106
+    },
+    {
+      "file": "W110_WORLD_READ_RED_CASES_20260927.json",
+      "sha256": "7276b3968946ac3b22264e3e4f94ee5c38e721197b99aca86bc0acfb7bce8529",
+      "bytes": 160182
+    },
+    {
+      "file": "w110-world-read-red-integrated-8b6186d4-inspection.json",
+      "sha256": "bde7fc7fd7153561b87624ee2f8558ab183c0b8d5a231f6c95edb513d46439a0",
+      "bytes": 11010
+    },
+    {
+      "file": "w110-world-read-green-host-450f1fe1-inspection.json",
+      "sha256": "ee7532d0bbbcdae6c9ab0eb21300256f4b2314e370ece7546e542b51f6d84d26",
+      "bytes": 618
+    },
+    {
+      "file": "W110_ADDRESS_CURRENT_FIXTURE_COMPARISON_20260927.json",
+      "sha256": "cf0fe79f9297fb32c15e1ca0d35982b58b0dd3e05d195ac64da64e687f05d5e8",
+      "bytes": 950
+    },
+    {
+      "file": "W110_ADDRESS_CURRENT_GREEN_CASES_20260927.json",
+      "sha256": "03eee47ae066f83ea6cf1060810527f8b302db5ffc533e2b91286d0ebd451f49",
+      "bytes": 147911
+    }
+  ],
+  "preserved_root_handoffs": [
+    {
+      "path": "AUDIT_RESUME.md",
+      "sha256": "61fe88ec68578dc422190df3200c6731a46380bd5c324c012a11198ca7893088",
+      "publish": false
+    },
+    {
+      "path": "NEXT_CHAT_PROMPT.md",
+      "sha256": "c591dfe4aaf4de9edc40e3e198327e7d5a2d6d4d04b54418eb184161c1bbb45f",
+      "publish": false
+    }
+  ],
+  "unmet_earlier_gates": [
+    "combined-native-map",
+    "old-eight-document-successor-package",
+    "old-f8-detailed-status-and-case-normalized-comparison",
+    "old-world-final-ref-record"
+  ],
+  "earlier_refused_outputs_reconstructed": false,
+  "green_preparation_script_executed": false,
+  "overall_w110_complete": false,
+  "release_confirmed": false,
+  "independent_or_live_acceptance": false,
+  "numeric_preparation": {
+    "historical": 3,
+    "new": 0,
+    "remaining": 0
+  },
+  "boundary": "New task hold and existing successful records only. Metadata and host compile are not substituted for blocked integrated bytes/results. No refusal is bypassed, and no source/CI churn is authorized to replace missing evidence.",
+  "hold_markdown_sha256": "eebf66b407223c30382759529d92b355ef6f84bd23f127790ac031b714598438"
+}
