@@ -96,9 +96,21 @@ namespace Styx
 
         /// <summary>
         /// FEAT-07: Returns true if the player is in the game world and not zoning.
-        /// HB 4.3.4: IsInGame && GameState != GameState.Zoning
+        /// Retains the existing in-game/non-zoning policy for recognized states.
         /// </summary>
-        public static bool IsInWorld => IsInGame && GameState != GameState.Zoning;
+        public static bool IsInWorld
+        {
+            get
+            {
+                if (!IsInGame)
+                    return false;
+
+                // A failed or undefined observation cannot authorize world work.
+                var state = GameState;
+                return state != GameState.Unknown && state != GameState.Zoning &&
+                    Enum.IsDefined(typeof(GameState), state);
+            }
+        }
 
         /// <summary>
         /// FEAT-19: Gets the current glue (login) screen state.
