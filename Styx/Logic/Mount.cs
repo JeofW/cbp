@@ -58,38 +58,47 @@ namespace Styx.Logic
 
 	public static void Dismount() => Dismount(string.Empty);
 
-	public static void ClearShapeshift()
-	{
-		LocalPlayer? me = Me;
-		if (me == null)
-				return;
+		public static void ClearShapeshift()
+		{
+			LocalPlayer? me = Me;
+			if (me == null) return;
+			ulong guid = me.Guid;
+			ShapeshiftForm shapeshift = me.Shapeshift;
+			bool flight = shapeshift == ShapeshiftForm.FlightForm || shapeshift == ShapeshiftForm.EpicFlightForm;
+			bool CanClear() => guid != 0 && ReferenceEquals(Me, me) && me.Guid == guid
+				&& me.IsValid && me.IsAlive && me.Shapeshift == shapeshift
+				&& (!flight || CanRemoveMount(me, guid))
+				&& ReferenceEquals(Me, me) && me.Guid == guid;
 
-			if (me.Shapeshift != ShapeshiftForm.Normal)
-			{
-				Logging.WriteDebug("Canceling Shapeshift form: {0}", me.Shapeshift);
-				Lua.DoString("CancelShapeshiftForm()");
-			}
+			if (shapeshift == ShapeshiftForm.Normal || !CanClear()) return;
+			Logging.WriteDebug("Canceling Shapeshift form: {0}", shapeshift);
+			if (CanClear()) Lua.DoString("CancelShapeshiftForm()");
 		}
 
 		public static void Dismount(string reason)
 		{
-			LocalPlayer? me = Me;
-			if (me == null) return;
+				LocalPlayer? me = Me;
+				if (me == null) return;
 
-			ShapeshiftForm shapeshift = me.Shapeshift;
-			if (me.Mounted || shapeshift == ShapeshiftForm.FlightForm || shapeshift == ShapeshiftForm.EpicFlightForm)
-			{
+				ulong guid = me.Guid;
+				ShapeshiftForm shapeshift = me.Shapeshift;
+				bool flight = shapeshift == ShapeshiftForm.FlightForm || shapeshift == ShapeshiftForm.EpicFlightForm;
+				bool CanDismount() => CanRemoveMount(me, guid) && me.Shapeshift == shapeshift
+					&& (me.Mounted || flight) && ReferenceEquals(Me, me) && me.Guid == guid;
+				if (CanDismount())
+				{
 				if (string.IsNullOrEmpty(reason))
 					Logging.WriteDebug("Stop and dismount.");
 				else
 					Logging.WriteDebug("Stop and dismount. Reason: {0}", reason);
 
-				// HB 4.3.4: no descent loop — just stop and dismount.
-				// Descent before dismount is the caller's responsibility
-				// (gather [4] already handles it with WoWMovement.Move(Descend) + WaitContinue(!IsFlying)).
-				WoWMovement.MoveStop();
+					// A caller's distance or elapsed descent wait does not prove landing.
+					// Reobserve this actor around setup before removing its mount/form.
+					if (!CanDismount()) return;
+					WoWMovement.MoveStop();
+					if (!CanDismount()) return;
 
-				if (shapeshift == ShapeshiftForm.FlightForm || shapeshift == ShapeshiftForm.EpicFlightForm)
+					if (flight)
 				{
 					Lua.DoString("CancelShapeshiftForm()");
 				}
@@ -98,10 +107,17 @@ namespace Styx.Logic
 					Lua.DoString("Dismount()");
 				}
 
-				// HB 6.2.3: Fire OnDismount event after dismounting
-				RaiseOnDismount(reason);
+					// Preserve the existing dispatch event; it is not server acknowledgement.
+					RaiseOnDismount(reason);
+				}
 			}
-		}
+
+			private static bool CanRemoveMount(LocalPlayer player, ulong guid) =>
+				guid != 0 && ReferenceEquals(Me, player) && player.Guid == guid
+				&& player.IsValid && player.IsAlive
+				&& player.TryGetMovementState(out uint flags, out ulong transport)
+				&& transport == 0 && (flags & 0x02003000u) == 0
+				&& ReferenceEquals(Me, player) && player.Guid == guid && player.IsValid && player.IsAlive;
 
 		/// <summary>
 		/// HB 6.2.3 Mount.smethod_1: Safely raises OnDismount event,
@@ -209,20 +225,22 @@ namespace Styx.Logic
 		}
 
 		[Obsolete("Use MountUp(CanMountDelegate, LocationRetriever) instead.")]
-		public static bool MountUp(CanMountDelegate extra)
-		{
-			if (!extra())
-				return false;
+			public static bool MountUp(CanMountDelegate extra)
+			{
+				LocalPlayer? me = Me;
+				ulong guid = me?.Guid ?? 0;
+				bool SameActor() => me != null && guid != 0 && ReferenceEquals(Me, me) && me.Guid == guid
+					&& me.IsValid && me.IsAlive && !me.IsGhost;
+				if (!SameActor() || !extra() || !SameActor())
+					return false;
 
 			if (!LevelbotSettings.Instance.UseMount)
 				return false;
 
-			// Auto-detect mount if enabled
-			AutoDetectMount();
-
-			LocalPlayer? me = Me;
-			if (me == null)
-				return false;
+				// Auto-detect mount if enabled
+				AutoDetectMount();
+				if (!SameActor())
+					return false;
 
 			if (me.Mounted || me.Dead || me.IsGhost)
 				return false;
@@ -258,22 +276,34 @@ namespace Styx.Logic
 			if (string.IsNullOrEmpty(effectiveMountName))
 				return false;
 
-			if (!CanMount())
-				return false;
+				bool CanContinue()
+				{
+					if (!SameActor() || me.Mounted || !LevelbotSettings.Instance.UseMount || !CanMount()) return false;
+					bool currentCanFly = Flightor.CanFly;
+					string currentFlyingName = CharacterSettings.Instance.FlyingMountName;
+					string currentName = currentCanFly && !string.IsNullOrEmpty(currentFlyingName)
+						? currentFlyingName : LevelbotSettings.Instance.MountName;
+					return currentCanFly == canFly && string.Equals(currentName, effectiveMountName, StringComparison.Ordinal) && SameActor();
+				}
+				if (!CanContinue())
+					return false;
 
-			WoWPoint destination = _currentDestinationRetriever?.Invoke() ?? WoWPoint.Empty;
-			if (!AllowMountAttempt(canFly, effectiveMountName, destination))
+				WoWPoint destination = _currentDestinationRetriever?.Invoke() ?? WoWPoint.Empty;
+				if (!CanContinue() || !AllowMountAttempt(canFly, effectiveMountName, destination))
 			{
 				Logging.WriteDebug("Mount-up request cancelled before casting");
 				return false;
 			}
 
-			WoWMovement.MoveStop();
-			Logging.Write("Mounting: {0}{1}", effectiveMountName, canFly ? " [flying]" : "");
-			StyxWoW.Sleep(200);
+				if (!CanContinue()) return false;
+				WoWMovement.MoveStop();
+				if (!CanContinue()) return false;
+				Logging.Write("Mounting: {0}{1}", effectiveMountName, canFly ? " [flying]" : "");
+				if (!CanContinue()) return false;
+				StyxWoW.Sleep(200);
 
-			DoMount();
-			_mountTimer.Reset();
+				if (!CanContinue() || me.IsMoving || !DoMount(me, guid, effectiveMountName, CanContinue) || !SameActor()) return false;
+				_mountTimer.Reset();
 			return true;
 		}
 
@@ -301,39 +331,22 @@ namespace Styx.Logic
 			return !args.Cancel;
 		}
 
-		private static void DoMount()
-		{
-			LocalPlayer? me = Me;
-			if (me == null) return;
-
-			// Use flying mount in fly zones, ground mount everywhere else.
-			bool canFly = Flightor.CanFly;
-			string flyingMountName = CharacterSettings.Instance.FlyingMountName;
-			string mountName = (canFly && !string.IsNullOrEmpty(flyingMountName))
-				? flyingMountName
-				: LevelbotSettings.Instance.MountName;
-			if (string.IsNullOrEmpty(mountName)) return;
-
-			// Handle Blood Elf Paladin mount name differences
-			if (me.Race == WoWRace.BloodElf && me.Class == WoWClass.Paladin)
+			private static bool DoMount(LocalPlayer me, ulong guid, string mountName, Func<bool> canContinue)
 			{
-				string lowerMount = mountName.ToLowerInvariant();
-				if (lowerMount == "warhorse" || lowerMount == "summon warhorse")
-				{
-					mountName = "Summon Charger";
-				}
-				else if (lowerMount == "charger" || lowerMount == "summon charger")
-				{
-					mountName = "Summon Charger";
-				}
-			}
+				bool SameActor() => me != null && guid != 0 && ReferenceEquals(Me, me) && me.Guid == guid
+					&& me.IsValid && me.IsAlive && !me.IsGhost;
+				if (!SameActor() || !canContinue() || string.IsNullOrEmpty(mountName)) return false;
 
-			string lastError = me.LastRedErrorMessage;
-			Lua.DoString(string.Format("CallCompanion('MOUNT', {0})", GetMountIndex(mountName)));
+				// Resolve the selected name/ID unchanged. A different companion is not
+				// an alias merely because the character belongs to a particular race.
+				string lastError = me.LastRedErrorMessage;
+				int index = GetMountIndex(mountName);
+				if (index <= 0 || !canContinue() || me.IsMoving || !SameActor()) return false;
+				Lua.DoString(string.Format("CallCompanion('MOUNT', {0})", index));
 
 			int startTime = Environment.TickCount;
 
-			while (!me.Mounted && Environment.TickCount - startTime < 6500)
+				while (SameActor() && !me.Mounted && Environment.TickCount - startTime < 6500)
 			{
 				if (me.Combat)
 					break;
@@ -349,8 +362,10 @@ namespace Styx.Logic
 
 			// Mount succeeded — any stale cant-mount spots near this location are now invalid.
 			// (e.g. spots recorded during a previous combat pass at this exact location)
-			if (me.Mounted)
-				RemoveCantMountSpotsNear(me.Location, 10f);
+				if (!SameActor()) return false;
+				if (me.Mounted)
+					RemoveCantMountSpotsNear(me.Location, 10f);
+				return SameActor(); // local dispatch attempted; timeout is not mount acknowledgement
 		}
 
 		/// <summary>
@@ -362,10 +377,14 @@ namespace Styx.Logic
 		/// - Ghost Wolf: 2s cast, no explicit combat ban but interrupted by damage in combat.
 		/// - Travel Form: instant cast, usable in combat (no cast to interrupt).
 		/// </summary>
-		private static bool TryUseShapeshiftSpeedBuff(LocalPlayer me)
-		{
-			// Both spells are outdoors-only in WotLK 3.3.5a.
-			if (!me.IsOutdoors)
+			private static bool TryUseShapeshiftSpeedBuff(LocalPlayer me)
+			{
+				ulong guid = me?.Guid ?? 0;
+				bool SameActor() => me != null && guid != 0 && ReferenceEquals(Me, me) && me.Guid == guid
+					&& me.IsValid && me.IsAlive && !me.IsGhost && !me.Mounted && me.IsOutdoors
+					&& LevelbotSettings.Instance.UseMount;
+				// Both spells are outdoors-only in WotLK 3.3.5a.
+				if (!SameActor())
 				return false;
 
 			// In combat: Travel Form only (instant, won't be interrupted).
@@ -375,8 +394,8 @@ namespace Styx.Logic
 				if (SpellManager.HasSpell("Travel Form"))
 				{
 					Logging.Write("Mounting: Using Travel Form since we are in combat.");
-					SpellManager.Cast("Travel Form");
-					return true;
+						return SameActor() && SpellManager.HasSpell("Travel Form") && !me.HasAura("Travel Form")
+							&& SpellManager.Cast("Travel Form");
 				}
 				return false;
 			}
@@ -385,14 +404,14 @@ namespace Styx.Logic
 			if (SpellManager.HasSpell("Ghost Wolf"))
 			{
 				Logging.Write("Mounting: Using Ghost Wolf since we don't have any mounts yet.");
-				SpellManager.Cast("Ghost Wolf");
-				return true;
+					return SameActor() && !me.Combat && SpellManager.HasSpell("Ghost Wolf") && !me.HasAura("Ghost Wolf")
+						&& SpellManager.Cast("Ghost Wolf");
 			}
 			if (SpellManager.HasSpell("Travel Form"))
 			{
 				Logging.Write("Mounting: Using Travel Form since we don't have any mounts yet.");
-				SpellManager.Cast("Travel Form");
-				return true;
+					return SameActor() && SpellManager.HasSpell("Travel Form") && !me.HasAura("Travel Form")
+						&& SpellManager.Cast("Travel Form");
 			}
 			return false;
 		}

@@ -103,8 +103,8 @@ namespace Styx.Offsets
 		/// <summary>GUID of mouseover target.</summary>
 		public const uint MouseoverGuid = 0x00BD07A0;
 
-		/// <summary>GUID of the active mover (usually player, vehicle when possessed).</summary>
-		public const uint ActiveMoverGuid = 0x00BD07A8;
+			/// <summary>Build12340 input-owner GUID, consumed by 0x5FBBC0 and written by 0x729010/0x717C50.</summary>
+			public const uint ActiveMoverGuid = 0x00CA1238;
 
 		// ==================== In-Game Checks ====================
 		/// <summary>Non-zero when in game world.</summary>

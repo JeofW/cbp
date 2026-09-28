@@ -1064,29 +1064,36 @@ namespace Styx.Logic.Pathing
             /// <summary>
             /// Dismount from flying mount
             /// </summary>
-            public static void Dismount()
+            public static void Dismount() => TryDismount(true);
+
+            // Both entry points require the same actor and complete landing
+            // observation after setup. Dispatch is not a server acknowledgement.
+            private static bool TryDismount(bool waitForLag)
             {
-                if (!Mounted)
-                    return;
-
                 LocalPlayer me = StyxWoW.Me;
+                ulong guid = me?.Guid ?? 0;
+                bool CanRemoveFlight() => me != null && guid != 0 && ReferenceEquals(StyxWoW.Me, me)
+                    && me.Guid == guid && me.IsValid && me.IsAlive
+                    && me.TryGetMovementState(out uint flags, out ulong transportGuid)
+                    && transportGuid == 0 && (flags & 0x02003000U) == 0
+                    && ReferenceEquals(StyxWoW.Me, me) && me.Guid == guid;
 
-                // Stop moving first
+                if (!Mounted || !CanRemoveFlight()) return false;
                 if (me.IsMoving)
                 {
                     WoWMovement.MoveStop();
                     StyxWoW.SleepForLagDuration();
                 }
-
-                if (!me.HasAura("Swift Flight Form") && !me.HasAura("Flight Form") && !me.HasAura("Aquatic Form"))
+                if (!Mounted || !CanRemoveFlight()) return false;
+                bool inForm = me.HasAura("Swift Flight Form") || me.HasAura("Flight Form") || me.HasAura("Aquatic Form");
+                if (!Mounted || !CanRemoveFlight()) return false;
+                Lua.DoString(inForm ? "CancelShapeshiftForm()" : "Dismount()");
+                if (inForm)
                 {
-                    Lua.DoString("Dismount()");
+                    if (waitForLag) StyxWoW.SleepForLagDuration();
+                    else StyxWoW.Sleep(250);
                 }
-                else
-                {
-                    Lua.DoString("CancelShapeshiftForm()");
-                    StyxWoW.SleepForLagDuration();
-                }
+                return true;
             }
 
             /// <summary>
@@ -1096,26 +1103,7 @@ namespace Styx.Logic.Pathing
             {
                 protected override RunStatus Run(object context)
                 {
-                    if (!Mounted)
-                        return RunStatus.Failure;
-
-                    LocalPlayer me = StyxWoW.Me;
-
-                    if (me.IsMoving)
-                    {
-                        WoWMovement.MoveStop();
-                        StyxWoW.SleepForLagDuration();
-                    }
-
-                    if (!me.HasAura("Swift Flight Form") && !me.HasAura("Flight Form") && !me.HasAura("Aquatic Form"))
-                    {
-                        Lua.DoString("Dismount()");
-                        return RunStatus.Success;
-                    }
-
-                    Lua.DoString("CancelShapeshiftForm()");
-                    StyxWoW.Sleep(250);
-                    return RunStatus.Success;
+                    return TryDismount(false) ? RunStatus.Success : RunStatus.Failure;
                 }
             }
         }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Runtime.InteropServices;
 using GreenMagic;
 using Styx.Logic.Pathing;
@@ -428,8 +428,9 @@ namespace Styx.WoWInternals.WoWObjects
         }
 
         /// <summary>
-        /// Movement flags for WoW 3.3.5a.
-        /// Ported from HB 4.3.4.
+        /// Movement flags for original WoW 3.3.5a build12340.
+        /// TC335 UnitDefines.h and the original-client movement writers retain
+        /// the transport bit before disable-gravity, root and falling.
         /// </summary>
         [Flags]
         public enum MovementFlag : uint
@@ -445,21 +446,21 @@ namespace Styx.WoWInternals.WoWObjects
             PitchDown = 0x00000080,
             Walk = 0x00000100,
             Walking = Walk,
-            Levitating = 0x00000200,
-            Root = 0x00000400,
-            Falling = 0x00000800,
-            FallingFar = 0x00001000,
-            PendingStop = 0x00002000,
-            PendingStrafeStop = 0x00004000,
+            OnTransport = 0x00000200,
+            Levitating = 0x00000400,
+            Root = 0x00000800,
+            Falling = 0x00001000,
+            FallingFar = 0x00002000,
+            PendingStop = 0x00004000,
+            PendingStrafeStop = 0x00008000,
             PendingSTrFlagStop = PendingStrafeStop,
-            PendingForward = 0x00008000,
-            PendingBackward = 0x00010000,
-            PendingStrafeLeft = 0x00020000,
+            PendingForward = 0x00010000,
+            PendingBackward = 0x00020000,
+            PendingStrafeLeft = 0x00040000,
             PendingSTrFlagLeft = PendingStrafeLeft,
-            PendingStrafeRight = 0x00040000,
+            PendingStrafeRight = 0x00080000,
             PendingSTrFlagRight = PendingStrafeRight,
-            PendingRoot = 0x00080000,
-            // 0x00100000 unused in 3.3.5a (gap between pending flags and swim/fly flags)
+            PendingRoot = 0x00100000,
             Swimming = 0x00200000,          // IsSwimming_Mask = 0x200000 (Offsets335.txt)
             Ascending = 0x00400000,
             Descending = 0x00800000,

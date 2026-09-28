@@ -67,6 +67,79 @@ namespace Bots.Gatherbuddy
         // WoD: woWObject_1
         private static WoWObject _currentNode;
 
+        // The descent can yield. Its eventual dismount must still belong to
+        // the same observed actor and node; timeout alone is never a landing.
+        private sealed class GatherLandingRequest
+        {
+            private readonly LocalPlayer player = StyxWoW.Me;
+            private readonly WoWObject node = _currentNode;
+            private readonly ulong playerGuid;
+            private readonly ulong nodeGuid;
+            private bool descending;
+
+            internal GatherLandingRequest()
+            {
+                playerGuid = player?.Guid ?? 0;
+                nodeGuid = node?.Guid ?? 0;
+            }
+
+            private bool OwnsPlayer => player != null && playerGuid != 0
+                && ReferenceEquals(StyxWoW.Me, player) && player.Guid == playerGuid;
+
+            private bool OwnsActors => OwnsPlayer && node != null && nodeGuid != 0
+                && ReferenceEquals(_currentNode, node) && node.Guid == nodeGuid;
+
+            private bool TryObserve(out uint flags)
+            {
+                flags = 0;
+                return OwnsActors && player.IsValid && player.IsAlive && node.IsValid
+                    && player.TryGetMovementState(out flags, out ulong transportGuid)
+                    && transportGuid == 0 && (flags & 0x3000U) == 0 && OwnsActors;
+            }
+
+            internal bool CanContinue => TryObserve(out _);
+
+            internal bool CanDismount => TryObserve(out uint flags) && (flags & 0x02000000U) == 0
+                && !node.WithinInteractRange && OwnsActors;
+
+            internal RunStatus StartDescending()
+            {
+                if (!CanContinue) return RunStatus.Failure;
+                descending = true;
+                WoWMovement.Move(WoWMovement.MovementDirection.Descend);
+                return RunStatus.Success;
+            }
+
+            internal void StopDescending()
+            {
+                if (!descending) return;
+                descending = false;
+                // Node loss cancels the attempt, but must still release this
+                // actor's descent. A replacement actor gets no old command.
+                if (OwnsPlayer) WoWMovement.MoveStop(WoWMovement.MovementDirection.Descend);
+            }
+
+            internal void StopMovement()
+            {
+                if (CanContinue) WoWMovement.MoveStop();
+            }
+        }
+
+        private sealed class GatherLandingSequence : Sequence
+        {
+            internal GatherLandingSequence(params Composite[] children) : base(children) { }
+
+            protected override IEnumerable<RunStatus> Execute(object context)
+            {
+                var request = new GatherLandingRequest();
+                try
+                {
+                    foreach (var status in base.Execute(request)) yield return status;
+                }
+                finally { request.StopDescending(); }
+            }
+        }
+
         // GUID of the last node we logged "Flying to" for — prevents per-tick log spam.
         private static ulong _lastLoggedNodeGuid;
 
@@ -1128,35 +1201,29 @@ namespace Bots.Gatherbuddy
                 //     HB 4.3.4 smethod_54/55/63/64 pattern.
                 new Decorator(
                     ctx => StyxWoW.Me.MovementInfo.IsFlying,
-                    new Sequence(
+                    new GatherLandingSequence(
                         new Action(ctx => { _approachPoint = WoWPoint.Zero; return RunStatus.Success; }),
-                        new Action(ctx =>
-                        {
-                            WoWMovement.Move(WoWMovement.MovementDirection.Descend);
-                            return RunStatus.Success;
-                        }),
-                        // HB 6.2.3 method_47: WaitContinue(1, !IsFlying).
-                        // 1s gives time to start descending. The outer Decorator re-evaluates
-                        // each tick if IsFlying=true → Dismount re-attempted until landed.
-                        // WaitContinue(5) was blocking the tree for the full duration → 5-6s delay.
+                        new Action(ctx => ((GatherLandingRequest)ctx).StartDescending()),
+                        // One bounded descent attempt. Expiry permits another
+                        // tree tick; it does not authorize removing flight.
                         new WaitContinue(1,
-                            ctx => !StyxWoW.Me.MovementInfo.IsFlying,
+                            ctx => !((GatherLandingRequest)ctx).CanContinue || !StyxWoW.Me.MovementInfo.IsFlying,
                             new ActionAlwaysSucceed()),
                         // HB 4.3.4 smethod_55: explicitly stop Descend key immediately on landing.
                         // Without this, the key stays held through the dismount step, causing the
                         // character to slide past the node before MoveStop() at the end fires.
-                        new Action(ctx => { WoWMovement.MoveStop(WoWMovement.MovementDirection.Descend); return RunStatus.Success; }),
-                        // Dismount if still airborne or if we overshot and are out of range.
+                        new Action(ctx => ((GatherLandingRequest)ctx).StopDescending()),
+                        // Only a complete, owned non-airborne observation may
+                        // permit dismount after overshooting interaction range.
                         new DecoratorContinue(
-                            ctx => StyxWoW.Me.MovementInfo.IsFlying ||
-                                   (_currentNode != null && !_currentNode.WithinInteractRange),
+                            ctx => ((GatherLandingRequest)ctx).CanDismount,
                             new Action(ctx =>
                             {
                                 Flightor.MountHelper.Dismount();
                                 return RunStatus.Success;
                             })
                         ),
-                        new Action(ctx => { WoWMovement.MoveStop(); return RunStatus.Success; })
+                        new Action(ctx => ((GatherLandingRequest)ctx).StopMovement())
                     )
                 ),
 

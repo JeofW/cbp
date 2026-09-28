@@ -92,3 +92,4 @@ RetributionTacticsRegressionTests.Run();
 SharedPaladinInterruptRegressionTests.Run();
 RetributionPlayerSealRegressionTests.Run();
 RetributionSealRecoveryRegressionTests.Run();
+SharedDismountSafetyRegressionTests.Run();

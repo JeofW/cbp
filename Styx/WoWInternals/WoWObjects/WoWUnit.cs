@@ -465,6 +465,52 @@ namespace Styx.WoWInternals.WoWObjects
             }
         }
 
+        /// <summary>
+        /// Observe this unit's build12340 movement flags and transport identity
+        /// without treating a failed read as a stationary, untransported unit.
+        /// Uses the existing object+0x30,+0xD8 / movement+0x44,+0x08 layout.
+        /// Reads bypass the frame cache and verify raw identity before and after;
+        /// this is not an atomic snapshot, active-vehicle or ground-safety proof.
+        /// </summary>
+        public bool TryGetMovementState(out uint flags, out ulong transportGuid)
+        {
+            flags = 0;
+            transportGuid = 0;
+            try
+            {
+                Memory? wow = ObjectManager.Wow;
+                uint address = BaseAddress;
+                if (wow == null || address == 0 || address > uint.MaxValue - 219 || !IsValid)
+                    return false;
+                ulong guid = Guid;
+                if (guid == 0) return false;
+                // A cached GUID/pointer/zero-flags observation cannot authorize
+                // dismount after object reuse or a later airborne transition.
+                using var observation = wow.TemporaryCacheState(false);
+                var guidBytes = wow.ReadBytes(address + 48, 8);
+                if (guidBytes == null || guidBytes.Length != 8 || BitConverter.ToUInt64(guidBytes, 0) != guid)
+                    return false;
+                var pointerBytes = wow.ReadBytes(address + 216, 4);
+                if (pointerBytes == null || pointerBytes.Length != 4) return false;
+                uint pointer = BitConverter.ToUInt32(pointerBytes, 0);
+                if (pointer == 0 || pointer > uint.MaxValue - 71) return false;
+                var flagBytes = wow.ReadBytes(pointer + 68, 4);
+                var transportBytes = wow.ReadBytes(pointer + 8, 8);
+                var currentPointerBytes = wow.ReadBytes(address + 216, 4);
+                var currentGuidBytes = wow.ReadBytes(address + 48, 8);
+                if (flagBytes == null || flagBytes.Length != 4 || transportBytes == null || transportBytes.Length != 8
+                    || currentPointerBytes == null || currentPointerBytes.Length != 4
+                    || BitConverter.ToUInt32(currentPointerBytes, 0) != pointer
+                    || currentGuidBytes == null || currentGuidBytes.Length != 8 || BitConverter.ToUInt64(currentGuidBytes, 0) != guid
+                    || !ReferenceEquals(ObjectManager.Wow, wow) || BaseAddress != address || Guid != guid || !IsValid)
+                    return false;
+                flags = BitConverter.ToUInt32(flagBytes, 0);
+                transportGuid = BitConverter.ToUInt64(transportBytes, 0);
+                return true;
+            }
+            catch { return false; }
+        }
+
         public bool IsFalling
         {
             get

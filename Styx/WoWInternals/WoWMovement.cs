@@ -258,34 +258,62 @@ namespace Styx.WoWInternals
 		}
 
 		/// <summary>
-		/// FEAT-02: GUID of the active mover (player, or vehicle/possession target).
+			/// Original-build input-owner GUID. Zero means no verified observation.
+			/// Repeated uncached reads detect changes, not a native atomic snapshot.
 		/// </summary>
 		public static ulong ActiveMoverGuid
 		{
 			get
 			{
-				Memory? memory = ObjectManager.Wow;
-				if (memory == null) return 0UL;
-				return memory.Read<ulong>(Styx.Offsets.GlobalOffsets.ActiveMoverGuid);
+					Memory? memory = ObjectManager.Wow;
+					if (memory == null) return 0UL;
+					try
+					{
+						using (memory.TemporaryCacheState(false))
+						{
+							byte[] first = memory.ReadBytes(Styx.Offsets.GlobalOffsets.ActiveMoverGuid, 8);
+							if (first == null || first.Length != 8) return 0UL;
+							ulong guid = BitConverter.ToUInt64(first, 0);
+							if (guid == 0UL) return 0UL;
+							byte[] last = memory.ReadBytes(Styx.Offsets.GlobalOffsets.ActiveMoverGuid, 8);
+							return last != null && last.Length == 8 && BitConverter.ToUInt64(last, 0) == guid
+								&& ReferenceEquals(ObjectManager.Wow, memory) ? guid : 0UL;
+						}
+					}
+					catch { return 0UL; }
 			}
 		}
 
 		/// <summary>
-		/// BUG-02: Returns the active mover as WoWUnit (not WoWPoint).
-		/// Falls back to LocalPlayer if the guid resolves to null.
+			/// Resolve only the observed native input owner. A cleared, unavailable or
+			/// unresolved GUID must not be fabricated as the local player.
 		/// </summary>
 		public static WoWUnit? ActiveMover
 		{
 			get
 			{
-				ulong guid = ActiveMoverGuid;
-				if (guid != 0UL)
-				{
-					var unit = ObjectManager.GetObjectByGuid<WoWUnit>(guid);
-					if (unit != null)
-						return unit;
-				}
-				return ObjectManager.Me;
+					Memory? memory = ObjectManager.Wow;
+					if (memory == null) return null;
+					try
+					{
+						using (memory.TemporaryCacheState(false))
+						{
+							ulong guid = ActiveMoverGuid;
+							if (guid == 0UL) return null;
+							var unit = ObjectManager.GetObjectByGuid<WoWUnit>(guid);
+							if (unit == null || !unit.IsValid || unit.Guid != guid) return null;
+							uint address = unit.BaseAddress;
+							if (address == 0U || address > uint.MaxValue - 55U) return null;
+							// Native object identity at +0x30 is separate from the wrapper's
+							// cached GUID. Object/address reuse cannot authorize a stale actor.
+							byte[] identity = memory.ReadBytes(address + 48U, 8);
+							if (identity == null || identity.Length != 8 || BitConverter.ToUInt64(identity, 0) != guid)
+								return null;
+							return ReferenceEquals(ObjectManager.Wow, memory) && ActiveMoverGuid == guid
+								&& unit.BaseAddress == address && unit.Guid == guid && unit.IsValid ? unit : null;
+						}
+					}
+					catch { return null; }
 			}
 		}
 

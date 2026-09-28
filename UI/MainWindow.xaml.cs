@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -339,9 +339,8 @@ namespace CopilotBuddy.UI
                     try
                     {
                         if (proc.HasExited) continue;
-                        int build = proc.MainModule?.FileVersionInfo.FilePrivatePart ?? 0;
-                        // build == 0 means no version resource (custom/private server client)
-                        if (build == ObjectManager.SupportedBuild || build == 0)
+                        var version = proc.MainModule?.FileVersionInfo;
+                        if (ObjectManager.IsSupportedClientVersion(version))
                             candidates.Add(proc);
                     }
                     catch { /* Access denied or process exited */ }
@@ -358,8 +357,8 @@ namespace CopilotBuddy.UI
                         var proc = Process.GetProcessById(pid);
                         if (!proc.HasExited)
                         {
-                            int build = proc.MainModule?.FileVersionInfo.FilePrivatePart ?? 0;
-                            if (build == ObjectManager.SupportedBuild)
+                            var version = proc.MainModule?.FileVersionInfo;
+                            if (ObjectManager.IsSupportedClientVersion(version))
                                 candidates.Add(proc);
                         }
                     }
