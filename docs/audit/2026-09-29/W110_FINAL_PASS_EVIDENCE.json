@@ -1,0 +1,1987 @@
+{
+    "recorded_utc":  "2026-09-28T18:42:01.2234898Z",
+    "repository":  "JeofW/cbp",
+    "repository_id":  1367174964,
+    "pr":  51,
+    "branch":  "audit/next-55-equipment-observation-20260917",
+    "tested_source":  "a3c01d48e887745d3b0e478e4018b01cad4f1edf",
+    "source_tree":  "18164f54945583570378235bfd8b86c7c95dbfb8",
+    "source_parent":  "9e61f0328a8af610c4e3ff257860ec0578ac5d7f",
+    "documentation_commit":  "Containing documentation-only commit; exact SHA is recorded externally after publication.",
+    "source_publication":  {
+                               "repository":  "JeofW/cbp",
+                               "repository_id":  1367174964,
+                               "branch":  "audit/next-55-equipment-observation-20260917",
+                               "expected_parent":  "9e61f0328a8af610c4e3ff257860ec0578ac5d7f",
+                               "paths":  [
+                                             "Styx/WoWInternals/WoWObjects/WoWUnit.cs",
+                                             "runtime-snapshot/Quest Behaviors/UseItemOn.cs",
+                                             "runtime-snapshot/Routines/Singular wotlk/Helpers/Movement.cs",
+                                             "runtime-snapshot/Routines/Singular wotlk/Helpers/Spell.cs",
+                                             "Tools/QuestRecoveryRegressionTests/CastDispatchRegressionTests.cs",
+                                             "Tools/QuestRecoveryRegressionTests/RoutineBoundaryRegressionTests.cs",
+                                             "Tools/QuestRecoveryRegressionTests/RoutineActorFixture.cs",
+                                             "Tools/WholesomeQuestRecoveryRegressionTests/CastContinuationOwnershipRegressionTests.cs",
+                                             "Tools/WholesomeQuestRecoveryRegressionTests/CastLuaObservationRegressionTests.cs",
+                                             "Tools/WholesomeQuestRecoveryRegressionTests/CastWaitFacingRegressionTests.cs",
+                                             "Tools/WholesomeQuestRecoveryRegressionTests/CombatControlContinuityRegressionTests.cs",
+                                             "Tools/WholesomeQuestRecoveryRegressionTests/CombatMovementContinuityRegressionTests.cs",
+                                             "Tools/WholesomeQuestRecoveryRegressionTests/GroundCastContinuationRegressionTests.cs",
+                                             "Tools/WholesomeQuestRecoveryRegressionTests/GroundCastSubmissionRegressionTests.cs",
+                                             "Tools/WholesomeQuestRecoveryRegressionTests/GroundCommitReceiptRegressionTests.cs",
+                                             "Tools/WholesomeQuestRecoveryRegressionTests/GroundSpellObservationConsistencyRegressionTests.cs",
+                                             "Tools/WholesomeQuestRecoveryRegressionTests/HealContinuationOwnershipRegressionTests.cs",
+                                             "Tools/WholesomeQuestRecoveryRegressionTests/QuestItemMovementOwnershipRegressionTests.cs",
+                                             "Tools/WholesomeQuestRecoveryRegressionTests/QuestItemReusableAcknowledgementRegressionTests.cs",
+                                             "Tools/WholesomeQuestRecoveryRegressionTests/QuestItemTargetSelectionRegressionTests.cs",
+                                             "Tools/WholesomeQuestRecoveryRegressionTests/SharedBuffDispatchRegressionTests.cs",
+                                             "Tools/WholesomeQuestRecoveryRegressionTests/SharedSpellObservationRegressionTests.cs",
+                                             "Tools/WholesomeQuestRecoveryRegressionTests/SpellDispatchReceiptRegressionTests.cs",
+                                             "Tools/WholesomeQuestRecoveryRegressionTests/SpellSightDispatchRegressionTests.cs"
+                                         ],
+                               "patch_sha256":  "9b96ace6736900dc02ab6de2efe44fcfda566f20ced327d8539d0efd0361e173",
+                               "files":  [
+                                             {
+                                                 "path":  "Styx/WoWInternals/WoWObjects/WoWUnit.cs",
+                                                 "blob":  "3f2525d695ca5c3341bbfe36bc7aac9511ca4f41",
+                                                 "sha256":  "bac414c5fb6095edcead6b119c7411d5376e1fd5083bad2eb8f75182b9dc42ff"
+                                             },
+                                             {
+                                                 "path":  "runtime-snapshot/Quest Behaviors/UseItemOn.cs",
+                                                 "blob":  "7a34734b83a1b492629fff3e9df0112e0adeaf21",
+                                                 "sha256":  "ca9ebf80f7676c87ac3be3aa323dda4de47f5ecdccdaea27c83b433acc970f22"
+                                             },
+                                             {
+                                                 "path":  "runtime-snapshot/Routines/Singular wotlk/Helpers/Movement.cs",
+                                                 "blob":  "3c97d9fd136b8d7a72e92a0a3428f54d3627eae0",
+                                                 "sha256":  "167a9fb3916476ad1d9369107590ad474d1e919e1b12de40ef5d425c8ee37dfa"
+                                             },
+                                             {
+                                                 "path":  "runtime-snapshot/Routines/Singular wotlk/Helpers/Spell.cs",
+                                                 "blob":  "9d08ef2cb731fed19a2f926cb3ab555715506107",
+                                                 "sha256":  "ee17d0c4fc9ab0a93092f5aaf44c7ab3826ed8b7f6c467000bca3fb36234a7f1"
+                                             },
+                                             {
+                                                 "path":  "Tools/QuestRecoveryRegressionTests/CastDispatchRegressionTests.cs",
+                                                 "blob":  "18795ee1e80147b454d51fd727939d4645e5b675",
+                                                 "sha256":  "934a87f456e07ce1145d528c8d0287fbabca556b3fa08a98d08112b98962e36a"
+                                             },
+                                             {
+                                                 "path":  "Tools/QuestRecoveryRegressionTests/RoutineBoundaryRegressionTests.cs",
+                                                 "blob":  "136081435a2fdd5940c2469c7ad489c36fcd48b6",
+                                                 "sha256":  "459536b740a3e49bc0b1209c4cee8e5cbca0ebe6debd9f07a376f7a0b3be7b13"
+                                             },
+                                             {
+                                                 "path":  "Tools/QuestRecoveryRegressionTests/RoutineActorFixture.cs",
+                                                 "blob":  "51b35c4f566f97ed22b0f3355734c72c87810e86",
+                                                 "sha256":  "2e740c5c16132d83ba4c2ef131e658326c0eebf535ffe0ab6c0c6e5ea3066190"
+                                             },
+                                             {
+                                                 "path":  "Tools/WholesomeQuestRecoveryRegressionTests/CastContinuationOwnershipRegressionTests.cs",
+                                                 "blob":  "46dbb44c96ad458d89290eb3c624b3d8a77db39d",
+                                                 "sha256":  "10cc158427d6257eed6d7bd804c75e9a394815d63eed39225930c073d7c89c63"
+                                             },
+                                             {
+                                                 "path":  "Tools/WholesomeQuestRecoveryRegressionTests/CastLuaObservationRegressionTests.cs",
+                                                 "blob":  "adf5bd1fdc20266bdc1c29dbc92b9b048558b0a2",
+                                                 "sha256":  "55ecd0502e4d746fe4f66c7e5cc0c6024349f2a6d432b30fc0a446a465059f90"
+                                             },
+                                             {
+                                                 "path":  "Tools/WholesomeQuestRecoveryRegressionTests/CastWaitFacingRegressionTests.cs",
+                                                 "blob":  "55aaf8e527d2f04b932f8908b4e36be141868573",
+                                                 "sha256":  "b489e64ea3363a68add2aaa9dc7466fa8bf31a7a3aab9587ac1fd5becc44fa5e"
+                                             },
+                                             {
+                                                 "path":  "Tools/WholesomeQuestRecoveryRegressionTests/CombatControlContinuityRegressionTests.cs",
+                                                 "blob":  "bfd817074ccaba4acc51c201e63138d2d70374d3",
+                                                 "sha256":  "7fff92fdcf7829d87797e382080a32da0401a702d880248d8f1aa9c32b3a4677"
+                                             },
+                                             {
+                                                 "path":  "Tools/WholesomeQuestRecoveryRegressionTests/CombatMovementContinuityRegressionTests.cs",
+                                                 "blob":  "c1db77306680034e97580908a3e8b9fd43743756",
+                                                 "sha256":  "c32db7fa3539c6890136469b161cb18e5e0b4840ff35720d69e2a45779b9021a"
+                                             },
+                                             {
+                                                 "path":  "Tools/WholesomeQuestRecoveryRegressionTests/GroundCastContinuationRegressionTests.cs",
+                                                 "blob":  "03e7b537252bb5e959df0db158b33c47126b594b",
+                                                 "sha256":  "d03cd404fb4e35f72c7b3f6d3477941e862bf93fafd1c76902ff31224a337e88"
+                                             },
+                                             {
+                                                 "path":  "Tools/WholesomeQuestRecoveryRegressionTests/GroundCastSubmissionRegressionTests.cs",
+                                                 "blob":  "aedc05c64d9c209064fa64decc36bb88fba29bc7",
+                                                 "sha256":  "a7cc2dd15b828ce32d9b58b54c1236201dd0d4ab211e276e8a8e8fb40f5485a7"
+                                             },
+                                             {
+                                                 "path":  "Tools/WholesomeQuestRecoveryRegressionTests/GroundCommitReceiptRegressionTests.cs",
+                                                 "blob":  "714b4fe34ce72d55193d753146ef8ca493dec2aa",
+                                                 "sha256":  "02ee8a59b7dff614e2d527261c210831fab4f964d88011967302677830f1bc77"
+                                             },
+                                             {
+                                                 "path":  "Tools/WholesomeQuestRecoveryRegressionTests/GroundSpellObservationConsistencyRegressionTests.cs",
+                                                 "blob":  "346916da8642522be6984bb8b55cda2d9885e7f6",
+                                                 "sha256":  "cc7031658ce125003d1ea76b5579cc0e4217026568005ae7e650cd6f42f4a026"
+                                             },
+                                             {
+                                                 "path":  "Tools/WholesomeQuestRecoveryRegressionTests/HealContinuationOwnershipRegressionTests.cs",
+                                                 "blob":  "4f1b73c8578297960ea7de08dc9d3f33d63638c7",
+                                                 "sha256":  "7dd8a2f29b3e49b8e627802dbaf7b04137bb54a968a8168588aa8aaa55950c01"
+                                             },
+                                             {
+                                                 "path":  "Tools/WholesomeQuestRecoveryRegressionTests/QuestItemMovementOwnershipRegressionTests.cs",
+                                                 "blob":  "f642cb7afcefc1ca6e85e5d369af0f4bcefbac66",
+                                                 "sha256":  "14d8f984e3f1d1824c249ab7f47b18228fd23f52f10fe4c0ad159bda2d115ab9"
+                                             },
+                                             {
+                                                 "path":  "Tools/WholesomeQuestRecoveryRegressionTests/QuestItemReusableAcknowledgementRegressionTests.cs",
+                                                 "blob":  "4aafecf4bf5ce4baaa0107d45a2bb6991ca99b2d",
+                                                 "sha256":  "d9c704c803977cc129bea76240748670b45bf868974c419ccb4326f6b269a319"
+                                             },
+                                             {
+                                                 "path":  "Tools/WholesomeQuestRecoveryRegressionTests/QuestItemTargetSelectionRegressionTests.cs",
+                                                 "blob":  "dff849b38689b4fc8458804243a51d09fe7318ca",
+                                                 "sha256":  "3375340665c2535ae3ddc8222650d9f7fafc0fbf0882bedbf41a9300f27f230a"
+                                             },
+                                             {
+                                                 "path":  "Tools/WholesomeQuestRecoveryRegressionTests/SharedBuffDispatchRegressionTests.cs",
+                                                 "blob":  "6eef816fccadc62a203e54593ad153c833f1f575",
+                                                 "sha256":  "40757afafa9aa3cee5d1fb57704458134cf79fe270e92c2cfa693c9992465ef5"
+                                             },
+                                             {
+                                                 "path":  "Tools/WholesomeQuestRecoveryRegressionTests/SharedSpellObservationRegressionTests.cs",
+                                                 "blob":  "cb7adb6919a947645f1918fc80cb5b736386d68d",
+                                                 "sha256":  "024fc0476f7c504666062a95d9a37cffe1a739a74ac7fa7a0cc912781fd615e6"
+                                             },
+                                             {
+                                                 "path":  "Tools/WholesomeQuestRecoveryRegressionTests/SpellDispatchReceiptRegressionTests.cs",
+                                                 "blob":  "67b533db93feaa2cfaa831b1e90945b33504382e",
+                                                 "sha256":  "17d3b0906223a9f3bd711cf5952fe15b1a0d6f897d22f115489ef814285aad64"
+                                             },
+                                             {
+                                                 "path":  "Tools/WholesomeQuestRecoveryRegressionTests/SpellSightDispatchRegressionTests.cs",
+                                                 "blob":  "f879ca764a2964dc89a2d365b84ab56c415e3905",
+                                                 "sha256":  "db89ce63181d90b3d58539c7cdb54360f1c3145b1a6905f1befae61cd972e861"
+                                             }
+                                         ],
+                               "commit":  "a3c01d48e887745d3b0e478e4018b01cad4f1edf",
+                               "tree":  "18164f54945583570378235bfd8b86c7c95dbfb8",
+                               "verified_at_utc":  "2026-09-28T18:34:37.1707537Z",
+                               "direct_refs":  [
+                                                   "a3c01d48e887745d3b0e478e4018b01cad4f1edf\trefs/heads/audit/next-55-equipment-observation-20260917",
+                                                   "b2324913e2499ba30b239dd67224ca2c655c05cc\trefs/heads/master"
+                                               ]
+                           },
+    "publication_receipt":  {
+                                "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W104_FINALPASSOWNERS_PUBLICATION_20260927.json",
+                                "bytes":  11149,
+                                "sha256":  "b2ba576299fc2bff94cf6bb1272059a4d7d775fd88cef291492b332d48f9e469"
+                            },
+    "prepublication_receipt":  {
+                                   "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_SOURCE_PREPUBLICATION_20260929.json",
+                                   "bytes":  4095,
+                                   "sha256":  "6e2f8ce6a58d4eda6d37073d1b89c6b35dd04bf840c576923d736948c149e49e"
+                               },
+    "local":  {
+                  "summary":  {
+                                  "completed_utc":  "2026-09-28T18:30:38.7882404Z",
+                                  "base_head":  "9e61f0328a8af610c4e3ff257860ec0578ac5d7f",
+                                  "source_inputs":  1892,
+                                  "source_unchanged":  true,
+                                  "successful_groups":  17,
+                                  "total_groups":  17,
+                                  "extraction_verified":  true,
+                                  "extraction_source":  "002682af0d8b8cc9ab01482eba8598ada0dd763c",
+                                  "host_build_exit":  0,
+                                  "lua51_sha256":  "06df2510b5780791d17cbb738e42ec28a1ef5add580e127f31a9968bf57630e4",
+                                  "game_attached":  false,
+                                  "hosted_acceptance":  "Pending meaningful publication gate."
+                              },
+                  "results":  {
+                                  "value":  [
+                                                {
+                                                    "suite":  "QuestRecoveryRegressionTests",
+                                                    "build":  0,
+                                                    "run":  0,
+                                                    "harness_error":  null,
+                                                    "game_attached":  false,
+                                                    "architecture":  "Windows x86"
+                                                },
+                                                {
+                                                    "suite":  "Singular",
+                                                    "build":  0,
+                                                    "run":  0,
+                                                    "game_attached":  false,
+                                                    "architecture":  "Windows x86"
+                                                },
+                                                {
+                                                    "suite":  "WholesomeQuestRecoveryRegressionTests",
+                                                    "build":  0,
+                                                    "run":  0,
+                                                    "harness_error":  null,
+                                                    "game_attached":  false,
+                                                    "architecture":  "Windows x86"
+                                                },
+                                                {
+                                                    "suite":  "QuestRecoveryAdapterRegressionTests",
+                                                    "build":  0,
+                                                    "run":  0,
+                                                    "harness_error":  null,
+                                                    "game_attached":  false,
+                                                    "architecture":  "Windows x86"
+                                                },
+                                                {
+                                                    "suite":  "QuestPickupPolicyRegressionTests",
+                                                    "build":  0,
+                                                    "run":  0,
+                                                    "harness_error":  null,
+                                                    "game_attached":  false,
+                                                    "architecture":  "Windows x86"
+                                                },
+                                                {
+                                                    "suite":  "VendorCoreRegressionTests",
+                                                    "build":  0,
+                                                    "run":  0,
+                                                    "harness_error":  null,
+                                                    "game_attached":  false,
+                                                    "architecture":  "Windows x86"
+                                                },
+                                                {
+                                                    "suite":  "NativeContractRegressionTests",
+                                                    "build":  0,
+                                                    "run":  0,
+                                                    "harness_error":  null,
+                                                    "game_attached":  false,
+                                                    "architecture":  "Windows x86"
+                                                },
+                                                {
+                                                    "suite":  "ShutdownBoundaryRegressionTests",
+                                                    "build":  0,
+                                                    "run":  0,
+                                                    "harness_error":  null,
+                                                    "game_attached":  false,
+                                                    "architecture":  "Windows x86"
+                                                },
+                                                {
+                                                    "suite":  "ElevatorSafetyRegressionTests",
+                                                    "build":  0,
+                                                    "run":  0,
+                                                    "harness_error":  null,
+                                                    "game_attached":  false,
+                                                    "architecture":  "Windows x86"
+                                                },
+                                                {
+                                                    "suite":  "PaladinDecisionRegressionTests",
+                                                    "build":  0,
+                                                    "run":  0,
+                                                    "harness_error":  null,
+                                                    "game_attached":  false,
+                                                    "architecture":  "Windows x86"
+                                                },
+                                                {
+                                                    "suite":  "GroupEngagementRegressionTests",
+                                                    "build":  0,
+                                                    "run":  0,
+                                                    "harness_error":  null,
+                                                    "game_attached":  false,
+                                                    "architecture":  "Windows x86"
+                                                },
+                                                {
+                                                    "suite":  "PaladinSupportRegressionTests",
+                                                    "build":  0,
+                                                    "run":  0,
+                                                    "harness_error":  null,
+                                                    "game_attached":  false,
+                                                    "architecture":  "Windows x86"
+                                                },
+                                                {
+                                                    "suite":  "WholesomeSaleRegressionTests",
+                                                    "build":  0,
+                                                    "run":  0,
+                                                    "harness_error":  null,
+                                                    "game_attached":  false,
+                                                    "architecture":  "Windows x86"
+                                                },
+                                                {
+                                                    "suite":  "QuestLogObservationRegressionTests",
+                                                    "build":  0,
+                                                    "run":  0,
+                                                    "harness_error":  null,
+                                                    "game_attached":  false,
+                                                    "architecture":  "Windows x86"
+                                                },
+                                                {
+                                                    "suite":  "QuestCompletionOwnerRegressionTests",
+                                                    "build":  0,
+                                                    "run":  0,
+                                                    "harness_error":  null,
+                                                    "game_attached":  false,
+                                                    "architecture":  "Windows x86"
+                                                },
+                                                {
+                                                    "suite":  "QuestObservationBoundaryRegressionTests",
+                                                    "build":  0,
+                                                    "run":  0,
+                                                    "harness_error":  null,
+                                                    "game_attached":  false,
+                                                    "architecture":  "Windows x86"
+                                                },
+                                                {
+                                                    "suite":  "Analyzers",
+                                                    "build":  0,
+                                                    "run":  0,
+                                                    "game_attached":  false,
+                                                    "architecture":  "local Python"
+                                                }
+                                            ],
+                                  "Count":  17
+                              },
+                  "summary_file":  {
+                                       "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_RECOVERED_LOCAL_GATE_20260929\\summary.json",
+                                       "bytes":  565,
+                                       "sha256":  "b83afeb53ed3cebb9436f5b0bcabecf1ba49864fbe4b1e280f9fbd039d09086d"
+                                   },
+                  "source_before":  {
+                                        "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_RECOVERED_LOCAL_GATE_20260929\\working-source-hashes-before.json",
+                                        "bytes":  341284,
+                                        "sha256":  "acd0f475237b674f1e9ae9804172eff32af48ad636f41b87f6a480746ec4b5a7"
+                                    },
+                  "source_after":  {
+                                       "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_RECOVERED_LOCAL_GATE_20260929\\working-source-hashes-after.json",
+                                       "bytes":  341284,
+                                       "sha256":  "acd0f475237b674f1e9ae9804172eff32af48ad636f41b87f6a480746ec4b5a7"
+                                   },
+                  "extraction":  {
+                                     "kind":  "retained extraction with exact current input and output hash verification",
+                                     "source_commit":  "002682af0d8b8cc9ab01482eba8598ada0dd763c",
+                                     "current_base":  "9e61f0328a8af610c4e3ff257860ec0578ac5d7f",
+                                     "source_files":  [
+                                                          "Styx/Logic/Questing/QuestLog.cs",
+                                                          "Styx/Logic/Questing/PlayerQuest.cs",
+                                                          "runtime-snapshot/Bots/WholesomeAutoQuest-master/WholesomeAutoQuest.cs",
+                                                          "Styx/Logic/Profiles/ProtectedItemsManager.cs",
+                                                          "Styx/Helpers/DualHashSet.cs",
+                                                          "Styx/Helpers/ValuePair.cs",
+                                                          "Styx/Logic/Questing/QuestLogSnapshot.cs",
+                                                          "Styx/Logic/Questing/WoWDescriptorQuestFlags.cs"
+                                                      ],
+                                     "generated_files":  {
+                                                             "QuestLogOwner.g.cs":  "851daa493524b48bb088c6a6744ee1eca63ff3c5ac3b8960d79638298136424e",
+                                                             "PlayerQuestOwner.g.cs":  "e447c60b17e0ae8732d28c21ef807ea05b6a8bdc6f4be31daf9e477f0aba0998",
+                                                             "SaleOwner.g.cs":  "5bc0662df83a0385f6016ba152cba4dc7153bef1e2bb407cfdd7f7e0f5290ff6",
+                                                             "ProtectedItemsManager.cs":  "17cae9bc29e06d61d172a55803103070b6e2d75e97cba80bcc9b1ea0b5b24bc3",
+                                                             "DualHashSet.cs":  "630b192cd557c138408265f4f3e97eca82d9cb073a1bf794e05fd5eb35f22b56",
+                                                             "ValuePair.cs":  "63dceb51e58860d55dfd43500554d23f553d7ff4648f7c27185a8ed50c84defc",
+                                                             "QuestLogSnapshot.cs":  "ed190e29061361b5aca77b08b130f57e2ffce79b754ce64a1080dbcb2a4f2fc8",
+                                                             "WoWDescriptorQuestFlags.cs":  "d198d75017d4808982862720ec170eb335690a762ef8d104b2f42ebe4f5b3c7f"
+                                                         },
+                                     "manifest_sha256":  "d0726cf5869d6a77719b12c066608658c648a625c2551eca2608b3078fb7415b",
+                                     "regenerated":  false,
+                                     "game_attached":  false
+                                 },
+                  "scope":  "Original working base plus exact file hashes; no game attached."
+              },
+    "cycles":  [
+                   {
+                       "name":  "combat movement",
+                       "red_phase":  "MOVEMENTRED",
+                       "green_phase":  "MOVEMENTGREEN",
+                       "red_pass":  143,
+                       "total":  259,
+                       "intended_red_failures":  116,
+                       "unexpected_errors":  0,
+                       "green_pass":  259,
+                       "source_inputs":  1884,
+                       "only_changed_input":  [
+                                                  "runtime-snapshot/Routines/Singular wotlk/Helpers/Movement.cs"
+                                              ],
+                       "all_other_source_and_test_inputs_identical":  true,
+                       "red_summaries":  [
+                                             "Assembly SHA256: 5fe35da6ebbf55f3c7182c112d5bcad2e7c77428a786deda65368b71cc6776ce",
+                                             "Pull isolation scenarios: 12/12; assertions=0; unexpected=0; pure policy/source ordering; no game attached.",
+                                             "Combat movement continuity scenarios: 143/259; assertions=116; unexpected=0; complete tracked Movement and real TreeSharp; controlled world/navigation; no native path or game attached.",
+                                             "Combat sight movement scenarios: 85/85; assertions=0; unexpected=0; complete tracked Movement and real TreeSharp; controlled world/navigation; no native path or game attached.",
+                                             "PASS focused group: CombatSightMovementRegressionTests",
+                                             "Cast wait facing scenarios: 16/16; assertions=0; unexpected=0; actual WaitForCast overloads and real TreeSharp; controlled cast/facing boundaries; no client/native execution.",
+                                             "PASS focused group: CastWaitFacingRegressionTests",
+                                             "Combat target-gap scenarios: 26/26; assertions=0; unexpected=0; exact LevelBot combat region and POI decorator; real TreeSharp; controlled routine/world; no game attached.",
+                                             "PASS focused group: CombatTargetGapRegressionTests",
+                                             "Ret rotation registration scenarios: 9/9; assertions=0; unexpected=0; full tracked Singular compilation and CLR attributes; no rotation tick or game attached.",
+                                             "PASS focused group: RetributionRotationRegistrationRegressionTests",
+                                             "Requested focused groups: 5; failures=1. No broad-suite or game acceptance claim."
+                                         ],
+                       "green_summaries":  [
+                                               "Assembly SHA256: 5fe35da6ebbf55f3c7182c112d5bcad2e7c77428a786deda65368b71cc6776ce",
+                                               "Pull isolation scenarios: 12/12; assertions=0; unexpected=0; pure policy/source ordering; no game attached.",
+                                               "Combat movement continuity scenarios: 259/259; assertions=0; unexpected=0; complete tracked Movement and real TreeSharp; controlled world/navigation; no native path or game attached.",
+                                               "PASS focused group: CombatMovementContinuityRegressionTests",
+                                               "Combat sight movement scenarios: 85/85; assertions=0; unexpected=0; complete tracked Movement and real TreeSharp; controlled world/navigation; no native path or game attached.",
+                                               "PASS focused group: CombatSightMovementRegressionTests",
+                                               "Cast wait facing scenarios: 16/16; assertions=0; unexpected=0; actual WaitForCast overloads and real TreeSharp; controlled cast/facing boundaries; no client/native execution.",
+                                               "PASS focused group: CastWaitFacingRegressionTests",
+                                               "Combat target-gap scenarios: 26/26; assertions=0; unexpected=0; exact LevelBot combat region and POI decorator; real TreeSharp; controlled routine/world; no game attached.",
+                                               "PASS focused group: CombatTargetGapRegressionTests",
+                                               "Ret rotation registration scenarios: 9/9; assertions=0; unexpected=0; full tracked Singular compilation and CLR attributes; no rotation tick or game attached.",
+                                               "PASS focused group: RetributionRotationRegistrationRegressionTests",
+                                               "Requested focused groups: 5; failures=0. No broad-suite or game acceptance claim."
+                                           ],
+                       "retained_pair":  {
+                                             "red":  "MOVEMENTRED",
+                                             "green":  "MOVEMENTGREEN",
+                                             "red_scenarios_pass":  143,
+                                             "total":  259,
+                                             "intended_red_assertions":  116,
+                                             "unexpected_red_errors":  0,
+                                             "green_scenarios_pass":  259,
+                                             "focused_groups":  5,
+                                             "normalized_fixtures_unchanged":  192,
+                                             "only_changed_input":  {
+                                                                        "path":  "runtime-snapshot/Routines/Singular wotlk/Helpers/Movement.cs",
+                                                                        "sha256":  "e846e4f43c5177e82add8da49340400ad2d99f96c46395c41046338f73651008"
+                                                                    },
+                                             "fixtures_changed":  false,
+                                             "game_attached":  false
+                                         },
+                       "receipt_files":  [
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_MOVEMENTRED_20260929\\status.json",
+                                                 "bytes":  2443,
+                                                 "sha256":  "a180d6e217273fe755d56e58cb70086dc5ca15a8b894a057d2c1830d35ef2807"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_MOVEMENTRED_20260929\\source-before.json",
+                                                 "bytes":  339635,
+                                                 "sha256":  "748036aa34ccccbc9418862b9fbd902aa7e209a300d23eb7ca8b82e8ea942ad8"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_MOVEMENTRED_20260929\\source-after.json",
+                                                 "bytes":  339635,
+                                                 "sha256":  "748036aa34ccccbc9418862b9fbd902aa7e209a300d23eb7ca8b82e8ea942ad8"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_MOVEMENTRED_20260929\\run.log",
+                                                 "bytes":  55702,
+                                                 "sha256":  "fac5f37a48e1f4a48544e38b53f945ec6e49e6b94f45e66cfc357945ee2a17de"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_MOVEMENTRED_20260929\\run.stderr.log",
+                                                 "bytes":  49710,
+                                                 "sha256":  "01f7d7e47f3686f764431ab9f24acedbf29a14f9b1c8b0027ca2cc8d3aaba5e8"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_MOVEMENTRED_20260929\\build.log",
+                                                 "bytes":  1464736,
+                                                 "sha256":  "b8cfcb277ab58fa0c7d48e5c84567de503066be117d5362fb534dba2412d7dce"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_MOVEMENTGREEN_20260929\\status.json",
+                                                 "bytes":  2529,
+                                                 "sha256":  "3008a9bfb083f69aee9eb5b8013e51aff45048b07b4a4388e07b58ade83eb07a"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_MOVEMENTGREEN_20260929\\source-before.json",
+                                                 "bytes":  339635,
+                                                 "sha256":  "40e6f706797c3a4e072ad10c39b466c7794136508bbc18f8381f45626c510c40"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_MOVEMENTGREEN_20260929\\source-after.json",
+                                                 "bytes":  339635,
+                                                 "sha256":  "40e6f706797c3a4e072ad10c39b466c7794136508bbc18f8381f45626c510c40"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_MOVEMENTGREEN_20260929\\run.log",
+                                                 "bytes":  78556,
+                                                 "sha256":  "69c86c1372944ae429e75a5d0b4c9fcfca19a9a3d4faec653321c62337bdd2d4"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_MOVEMENTGREEN_20260929\\run.stderr.log",
+                                                 "bytes":  0,
+                                                 "sha256":  "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_MOVEMENTGREEN_20260929\\build.log",
+                                                 "bytes":  86712,
+                                                 "sha256":  "a10e63136ec3f2302fa8cdaf7eeabee716889564d9c99d3ff53411020579d725"
+                                             }
+                                         ],
+                       "game_attached":  false
+                   },
+                   {
+                       "name":  "control continuity",
+                       "red_phase":  "CONTROLRED",
+                       "green_phase":  "CONTROLGREEN",
+                       "red_pass":  343,
+                       "total":  471,
+                       "intended_red_failures":  128,
+                       "unexpected_errors":  0,
+                       "green_pass":  471,
+                       "source_inputs":  1885,
+                       "only_changed_input":  [
+                                                  "runtime-snapshot/Routines/Singular wotlk/Helpers/Movement.cs"
+                                              ],
+                       "all_other_source_and_test_inputs_identical":  true,
+                       "red_summaries":  [
+                                             "Assembly SHA256: baaa4e35da23bb1bab60137cba647a3375acdb8d00cc5eaaa16e9a7c4fdc28e0",
+                                             "Pull isolation scenarios: 12/12; assertions=0; unexpected=0; pure policy/source ordering; no game attached.",
+                                             "Combat control continuity scenarios: 343/471; assertions=128; unexpected=0; complete tracked Movement and real TreeSharp; controlled world/navigation; no native path or game attached.",
+                                             "Combat movement continuity scenarios: 259/259; assertions=0; unexpected=0; complete tracked Movement and real TreeSharp; controlled world/navigation; no native path or game attached.",
+                                             "PASS focused group: CombatMovementContinuityRegressionTests",
+                                             "Combat sight movement scenarios: 85/85; assertions=0; unexpected=0; complete tracked Movement and real TreeSharp; controlled world/navigation; no native path or game attached.",
+                                             "PASS focused group: CombatSightMovementRegressionTests",
+                                             "Cast wait facing scenarios: 16/16; assertions=0; unexpected=0; actual WaitForCast overloads and real TreeSharp; controlled cast/facing boundaries; no client/native execution.",
+                                             "PASS focused group: CastWaitFacingRegressionTests",
+                                             "Combat target-gap scenarios: 26/26; assertions=0; unexpected=0; exact LevelBot combat region and POI decorator; real TreeSharp; controlled routine/world; no game attached.",
+                                             "PASS focused group: CombatTargetGapRegressionTests",
+                                             "Ret rotation registration scenarios: 9/9; assertions=0; unexpected=0; full tracked Singular compilation and CLR attributes; no rotation tick or game attached.",
+                                             "PASS focused group: RetributionRotationRegistrationRegressionTests",
+                                             "Requested focused groups: 6; failures=1. No broad-suite or game acceptance claim."
+                                         ],
+                       "green_summaries":  [
+                                               "Assembly SHA256: baaa4e35da23bb1bab60137cba647a3375acdb8d00cc5eaaa16e9a7c4fdc28e0",
+                                               "Pull isolation scenarios: 12/12; assertions=0; unexpected=0; pure policy/source ordering; no game attached.",
+                                               "Combat control continuity scenarios: 471/471; assertions=0; unexpected=0; complete tracked Movement and real TreeSharp; controlled world/navigation; no native path or game attached.",
+                                               "PASS focused group: CombatControlContinuityRegressionTests",
+                                               "Combat movement continuity scenarios: 259/259; assertions=0; unexpected=0; complete tracked Movement and real TreeSharp; controlled world/navigation; no native path or game attached.",
+                                               "PASS focused group: CombatMovementContinuityRegressionTests",
+                                               "Combat sight movement scenarios: 85/85; assertions=0; unexpected=0; complete tracked Movement and real TreeSharp; controlled world/navigation; no native path or game attached.",
+                                               "PASS focused group: CombatSightMovementRegressionTests",
+                                               "Cast wait facing scenarios: 16/16; assertions=0; unexpected=0; actual WaitForCast overloads and real TreeSharp; controlled cast/facing boundaries; no client/native execution.",
+                                               "PASS focused group: CastWaitFacingRegressionTests",
+                                               "Combat target-gap scenarios: 26/26; assertions=0; unexpected=0; exact LevelBot combat region and POI decorator; real TreeSharp; controlled routine/world; no game attached.",
+                                               "PASS focused group: CombatTargetGapRegressionTests",
+                                               "Ret rotation registration scenarios: 9/9; assertions=0; unexpected=0; full tracked Singular compilation and CLR attributes; no rotation tick or game attached.",
+                                               "PASS focused group: RetributionRotationRegistrationRegressionTests",
+                                               "Requested focused groups: 6; failures=0. No broad-suite or game acceptance claim."
+                                           ],
+                       "retained_pair":  {
+                                             "red":  "CONTROLRED",
+                                             "green":  "CONTROLGREEN",
+                                             "red_scenarios_pass":  343,
+                                             "total":  471,
+                                             "intended_red_assertions":  128,
+                                             "unexpected_red_errors":  0,
+                                             "green_scenarios_pass":  471,
+                                             "focused_groups":  6,
+                                             "normalized_fixtures_unchanged":  193,
+                                             "only_changed_input":  {
+                                                                        "path":  "runtime-snapshot/Routines/Singular wotlk/Helpers/Movement.cs",
+                                                                        "sha256":  "167a9fb3916476ad1d9369107590ad474d1e919e1b12de40ef5d425c8ee37dfa"
+                                                                    },
+                                             "fixtures_changed":  false,
+                                             "game_attached":  false
+                                         },
+                       "receipt_files":  [
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_CONTROLRED_20260929\\status.json",
+                                                 "bytes":  2798,
+                                                 "sha256":  "5050ca69af2f5f15d2a619fd44a7db21f5e3db347067ed3ca8a6f362d0b05f63"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_CONTROLRED_20260929\\source-before.json",
+                                                 "bytes":  339844,
+                                                 "sha256":  "7430f0733169ce266e3653f6e33f8c0feba724bcc57d6bc9a46d7f40c3b75f3f"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_CONTROLRED_20260929\\source-after.json",
+                                                 "bytes":  339844,
+                                                 "sha256":  "7430f0733169ce266e3653f6e33f8c0feba724bcc57d6bc9a46d7f40c3b75f3f"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_CONTROLRED_20260929\\run.log",
+                                                 "bytes":  142482,
+                                                 "sha256":  "6ce327cf908ed5393212138f49bf0c4d165cc15d208e8b2cd9cc6591ef820d9c"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_CONTROLRED_20260929\\run.stderr.log",
+                                                 "bytes":  49096,
+                                                 "sha256":  "193a96c4a64d2ddd6254092ee7f7329032ee9f09f949864fa34a37cd57b48ede"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_CONTROLRED_20260929\\build.log",
+                                                 "bytes":  86712,
+                                                 "sha256":  "1428c1d4a93865b3aa5d2d62f705e19219e5741df9422a1525b824cf1909f565"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_CONTROLGREEN_20260929\\status.json",
+                                                 "bytes":  2883,
+                                                 "sha256":  "b944dbd67240bdaf4c4b7eec8adcf6e87c853ce1acb5f07603fdfb912dd5f9e6"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_CONTROLGREEN_20260929\\source-before.json",
+                                                 "bytes":  339844,
+                                                 "sha256":  "adf84742ad3219a24d69d4ab8d2a8bcb9ca505a56560252487c5094c494b3198"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_CONTROLGREEN_20260929\\source-after.json",
+                                                 "bytes":  339844,
+                                                 "sha256":  "adf84742ad3219a24d69d4ab8d2a8bcb9ca505a56560252487c5094c494b3198"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_CONTROLGREEN_20260929\\run.log",
+                                                 "bytes":  163874,
+                                                 "sha256":  "c893c066dd0d689a9de638e8e6509c594e245f0be8d7565f948d044383db59b3"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_CONTROLGREEN_20260929\\run.stderr.log",
+                                                 "bytes":  0,
+                                                 "sha256":  "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_CONTROLGREEN_20260929\\build.log",
+                                                 "bytes":  86712,
+                                                 "sha256":  "d0cde9283a99e2224c3d38d6e932939ee286fc19854cf083914cc743e1302344"
+                                             }
+                                         ],
+                       "game_attached":  false
+                   },
+                   {
+                       "name":  "Lua cast observations",
+                       "red_phase":  "CASTLUARED2",
+                       "green_phase":  "CASTLUAGREEN",
+                       "red_pass":  33,
+                       "total":  52,
+                       "intended_red_failures":  19,
+                       "unexpected_errors":  0,
+                       "green_pass":  52,
+                       "source_inputs":  1886,
+                       "only_changed_input":  [
+                                                  "Styx/WoWInternals/WoWObjects/WoWUnit.cs"
+                                              ],
+                       "all_other_source_and_test_inputs_identical":  true,
+                       "red_summaries":  [
+                                             "Assembly SHA256: 5967ad8a67e1a95e7b009cbb47c7c9ad87c7163d1f1643971034dd7788ee2a52",
+                                             "Pull isolation scenarios: 12/12; assertions=0; unexpected=0; pure policy/source ordering; no game attached.",
+                                             "Cast Lua observation scenarios: 33/52; assertions=19; unexpected=0; actual getters/conversion and stock Lua5.1; controlled build12340 native tuples; no game attached.",
+                                             "Spell metadata admission scenarios: 165/165; assertions=0; unexpected=0; complete tracked metadata owner and actual host movement/range gate; generated requests also run under stock Lua5.1 C conversion; controlled nine-value API/world/readiness; no client/proc/game execution.",
+                                             "PASS focused group: SpellMetadataAdmissionRegressionTests",
+                                             "Cast wait facing scenarios: 16/16; assertions=0; unexpected=0; actual WaitForCast overloads and real TreeSharp; controlled cast/facing boundaries; no client/native execution.",
+                                             "PASS focused group: CastWaitFacingRegressionTests",
+                                             "Combat control continuity scenarios: 471/471; assertions=0; unexpected=0; complete tracked Movement and real TreeSharp; controlled world/navigation; no native path or game attached.",
+                                             "PASS focused group: CombatControlContinuityRegressionTests",
+                                             "Ret rotation registration scenarios: 9/9; assertions=0; unexpected=0; full tracked Singular compilation and CLR attributes; no rotation tick or game attached.",
+                                             "PASS focused group: RetributionRotationRegistrationRegressionTests",
+                                             "Requested focused groups: 5; failures=1. No broad-suite or game acceptance claim."
+                                         ],
+                       "green_summaries":  [
+                                               "Assembly SHA256: 5967ad8a67e1a95e7b009cbb47c7c9ad87c7163d1f1643971034dd7788ee2a52",
+                                               "Pull isolation scenarios: 12/12; assertions=0; unexpected=0; pure policy/source ordering; no game attached.",
+                                               "Cast Lua observation scenarios: 52/52; assertions=0; unexpected=0; actual getters/conversion and stock Lua5.1; controlled build12340 native tuples; no game attached.",
+                                               "PASS focused group: CastLuaObservationRegressionTests",
+                                               "Spell metadata admission scenarios: 165/165; assertions=0; unexpected=0; complete tracked metadata owner and actual host movement/range gate; generated requests also run under stock Lua5.1 C conversion; controlled nine-value API/world/readiness; no client/proc/game execution.",
+                                               "PASS focused group: SpellMetadataAdmissionRegressionTests",
+                                               "Cast wait facing scenarios: 16/16; assertions=0; unexpected=0; actual WaitForCast overloads and real TreeSharp; controlled cast/facing boundaries; no client/native execution.",
+                                               "PASS focused group: CastWaitFacingRegressionTests",
+                                               "Combat control continuity scenarios: 471/471; assertions=0; unexpected=0; complete tracked Movement and real TreeSharp; controlled world/navigation; no native path or game attached.",
+                                               "PASS focused group: CombatControlContinuityRegressionTests",
+                                               "Ret rotation registration scenarios: 9/9; assertions=0; unexpected=0; full tracked Singular compilation and CLR attributes; no rotation tick or game attached.",
+                                               "PASS focused group: RetributionRotationRegistrationRegressionTests",
+                                               "Requested focused groups: 5; failures=0. No broad-suite or game acceptance claim."
+                                           ],
+                       "retained_pair":  {
+                                             "red":  "CASTLUARED2",
+                                             "green":  "CASTLUAGREEN",
+                                             "red_scenarios_pass":  33,
+                                             "total":  52,
+                                             "intended_red_assertions":  19,
+                                             "unexpected_red_errors":  0,
+                                             "green_scenarios_pass":  52,
+                                             "focused_groups":  5,
+                                             "normalized_fixtures_unchanged":  194,
+                                             "only_changed_input":  {
+                                                                        "path":  "Styx/WoWInternals/WoWObjects/WoWUnit.cs",
+                                                                        "sha256":  "bac414c5fb6095edcead6b119c7411d5376e1fd5083bad2eb8f75182b9dc42ff"
+                                                                    },
+                                             "earlier_harness_failure":  "CASTLUARED is compile-only missing logging import; not behavioral red",
+                                             "fixtures_changed":  false,
+                                             "game_attached":  false
+                                         },
+                       "receipt_files":  [
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_CASTLUARED2_20260929\\status.json",
+                                                 "bytes":  2552,
+                                                 "sha256":  "4f4bc0662c9e7e26ec249bc37b23acfc783c6114745d543bb727e8d210f4c4cd"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_CASTLUARED2_20260929\\source-before.json",
+                                                 "bytes":  340048,
+                                                 "sha256":  "3972a166327d896aaeafa572f6d955eeb3a1e87a6600919d10f685f37c5c074f"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_CASTLUARED2_20260929\\source-after.json",
+                                                 "bytes":  340048,
+                                                 "sha256":  "3972a166327d896aaeafa572f6d955eeb3a1e87a6600919d10f685f37c5c074f"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_CASTLUARED2_20260929\\run.log",
+                                                 "bytes":  124152,
+                                                 "sha256":  "f901c0e10be18ac404a82a185483fdc123882d8144ec9f72f5412f281445bcc7"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_CASTLUARED2_20260929\\run.stderr.log",
+                                                 "bytes":  7152,
+                                                 "sha256":  "04b335467742c02e1f3c6d76d3cddf4a6a754dc86554340b85d1874ef7a61ecb"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_CASTLUARED2_20260929\\build.log",
+                                                 "bytes":  86712,
+                                                 "sha256":  "68a11a472ce750dfa632d64325335503da9f3f5573b6a93dc1848156545ed533"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_CASTLUAGREEN_20260929\\status.json",
+                                                 "bytes":  2632,
+                                                 "sha256":  "8d58bb2c1bc37ec00f4c900e1e4d12d029953ace16611b89dc78524f8fcb6c1d"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_CASTLUAGREEN_20260929\\source-before.json",
+                                                 "bytes":  340048,
+                                                 "sha256":  "10ec7115c13c82518781eb81580d29ac6268cd8f936fd0e2c48e0d8f00cba620"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_CASTLUAGREEN_20260929\\source-after.json",
+                                                 "bytes":  340048,
+                                                 "sha256":  "10ec7115c13c82518781eb81580d29ac6268cd8f936fd0e2c48e0d8f00cba620"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_CASTLUAGREEN_20260929\\run.log",
+                                                 "bytes":  127358,
+                                                 "sha256":  "f9c0e58c36c1bf9d872c23165bb402e1f1dd3b635ab328692a62170ef7b2e108"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_CASTLUAGREEN_20260929\\run.stderr.log",
+                                                 "bytes":  0,
+                                                 "sha256":  "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_CASTLUAGREEN_20260929\\build.log",
+                                                 "bytes":  2955312,
+                                                 "sha256":  "fd462867c37b855e3f3a7b0d7e952ece7a5833921cb0272b8b44df276f1ab9c9"
+                                             }
+                                         ],
+                       "game_attached":  false
+                   },
+                   {
+                       "name":  "heal continuation",
+                       "red_phase":  "HEALRED",
+                       "green_phase":  "HEALGREEN",
+                       "red_pass":  36,
+                       "total":  79,
+                       "intended_red_failures":  43,
+                       "unexpected_errors":  0,
+                       "green_pass":  79,
+                       "source_inputs":  1887,
+                       "only_changed_input":  [
+                                                  "runtime-snapshot/Routines/Singular wotlk/Helpers/Spell.cs"
+                                              ],
+                       "all_other_source_and_test_inputs_identical":  true,
+                       "red_summaries":  [
+                                             "Assembly SHA256: ad8e3fdc6e46c8ea9d8d06dc10a05e410930532d2634a730354b0c8875a69989",
+                                             "Pull isolation scenarios: 12/12; assertions=0; unexpected=0; pure policy/source ordering; no game attached.",
+                                             "Heal continuation scenarios: 36/79; assertions=43; unexpected=0; all five tracked factories/real TreeSharp; controlled submission and actor state; no native request provenance or game acceptance.",
+                                             "Cast Lua observation scenarios: 52/52; assertions=0; unexpected=0; actual getters/conversion and stock Lua5.1; controlled build12340 native tuples; no game attached.",
+                                             "PASS focused group: CastLuaObservationRegressionTests",
+                                             "Spell metadata admission scenarios: 165/165; assertions=0; unexpected=0; complete tracked metadata owner and actual host movement/range gate; generated requests also run under stock Lua5.1 C conversion; controlled nine-value API/world/readiness; no client/proc/game execution.",
+                                             "PASS focused group: SpellMetadataAdmissionRegressionTests",
+                                             "Cast wait facing scenarios: 16/16; assertions=0; unexpected=0; actual WaitForCast overloads and real TreeSharp; controlled cast/facing boundaries; no client/native execution.",
+                                             "PASS focused group: CastWaitFacingRegressionTests",
+                                             "Combat control continuity scenarios: 471/471; assertions=0; unexpected=0; complete tracked Movement and real TreeSharp; controlled world/navigation; no native path or game attached.",
+                                             "PASS focused group: CombatControlContinuityRegressionTests",
+                                             "Ret rotation registration scenarios: 9/9; assertions=0; unexpected=0; full tracked Singular compilation and CLR attributes; no rotation tick or game attached.",
+                                             "PASS focused group: RetributionRotationRegistrationRegressionTests",
+                                             "Requested focused groups: 6; failures=1. No broad-suite or game acceptance claim."
+                                         ],
+                       "green_summaries":  [
+                                               "Assembly SHA256: ad8e3fdc6e46c8ea9d8d06dc10a05e410930532d2634a730354b0c8875a69989",
+                                               "Pull isolation scenarios: 12/12; assertions=0; unexpected=0; pure policy/source ordering; no game attached.",
+                                               "Heal continuation scenarios: 79/79; assertions=0; unexpected=0; all five tracked factories/real TreeSharp; controlled submission and actor state; no native request provenance or game acceptance.",
+                                               "PASS focused group: HealContinuationOwnershipRegressionTests",
+                                               "Cast Lua observation scenarios: 52/52; assertions=0; unexpected=0; actual getters/conversion and stock Lua5.1; controlled build12340 native tuples; no game attached.",
+                                               "PASS focused group: CastLuaObservationRegressionTests",
+                                               "Spell metadata admission scenarios: 165/165; assertions=0; unexpected=0; complete tracked metadata owner and actual host movement/range gate; generated requests also run under stock Lua5.1 C conversion; controlled nine-value API/world/readiness; no client/proc/game execution.",
+                                               "PASS focused group: SpellMetadataAdmissionRegressionTests",
+                                               "Cast wait facing scenarios: 16/16; assertions=0; unexpected=0; actual WaitForCast overloads and real TreeSharp; controlled cast/facing boundaries; no client/native execution.",
+                                               "PASS focused group: CastWaitFacingRegressionTests",
+                                               "Combat control continuity scenarios: 471/471; assertions=0; unexpected=0; complete tracked Movement and real TreeSharp; controlled world/navigation; no native path or game attached.",
+                                               "PASS focused group: CombatControlContinuityRegressionTests",
+                                               "Ret rotation registration scenarios: 9/9; assertions=0; unexpected=0; full tracked Singular compilation and CLR attributes; no rotation tick or game attached.",
+                                               "PASS focused group: RetributionRotationRegistrationRegressionTests",
+                                               "Requested focused groups: 6; failures=0. No broad-suite or game acceptance claim."
+                                           ],
+                       "retained_pair":  {
+                                             "red":  "HEALRED",
+                                             "green":  "HEALGREEN",
+                                             "red_scenarios_pass":  36,
+                                             "total":  79,
+                                             "intended_red_assertions":  43,
+                                             "unexpected_red_errors":  0,
+                                             "green_scenarios_pass":  79,
+                                             "focused_groups":  6,
+                                             "normalized_fixtures_unchanged":  195,
+                                             "only_changed_input":  {
+                                                                        "path":  "runtime-snapshot/Routines/Singular wotlk/Helpers/Spell.cs",
+                                                                        "sha256":  "aad4046605a867bc4ba395b16c4027ba56ef330ad1c24034c78a04771da475a9"
+                                                                    },
+                                             "fixtures_changed":  false,
+                                             "game_attached":  false
+                                         },
+                       "receipt_files":  [
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_HEALRED_20260929\\status.json",
+                                                 "bytes":  2913,
+                                                 "sha256":  "92eb40b00f741d41826e32138f1ecc23d5add78f1b52f60bd366ce01bf2aa463"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_HEALRED_20260929\\source-before.json",
+                                                 "bytes":  340259,
+                                                 "sha256":  "d96c27ab5b3a8c002bbe9106b281fc4d3d9c2fccecc28cb6378a8640a8794d03"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_HEALRED_20260929\\source-after.json",
+                                                 "bytes":  340259,
+                                                 "sha256":  "d96c27ab5b3a8c002bbe9106b281fc4d3d9c2fccecc28cb6378a8640a8794d03"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_HEALRED_20260929\\run.log",
+                                                 "bytes":  133052,
+                                                 "sha256":  "1d077f555160f3ed813e0b4d06a29f7130e26e827f6ea4745051b6ba35e6fa00"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_HEALRED_20260929\\run.stderr.log",
+                                                 "bytes":  14002,
+                                                 "sha256":  "fff627b1ebba681620b9fde95d681420a2fa40645b48c0727b2447c33cfae548"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_HEALRED_20260929\\build.log",
+                                                 "bytes":  86712,
+                                                 "sha256":  "35d6d2de863197b6a0d83f9550edbda34287a014d6544c94187a7744960f6fb3"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_HEALGREEN_20260929\\status.json",
+                                                 "bytes":  3001,
+                                                 "sha256":  "fed36f04091763202e864a541ed81321177e39f09489cfe35e9fe53f3d576a3c"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_HEALGREEN_20260929\\source-before.json",
+                                                 "bytes":  340259,
+                                                 "sha256":  "b6e96318bd2d7ad4b005a6026f596f6853a8e15b8fff38e6aa0f6d455ae79259"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_HEALGREEN_20260929\\source-after.json",
+                                                 "bytes":  340259,
+                                                 "sha256":  "b6e96318bd2d7ad4b005a6026f596f6853a8e15b8fff38e6aa0f6d455ae79259"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_HEALGREEN_20260929\\run.log",
+                                                 "bytes":  139238,
+                                                 "sha256":  "e72d7113c5c5a2126878e74b5b62197f86ef58ac89632bb34d393ff051bc383a"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_HEALGREEN_20260929\\run.stderr.log",
+                                                 "bytes":  0,
+                                                 "sha256":  "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_HEALGREEN_20260929\\build.log",
+                                                 "bytes":  86712,
+                                                 "sha256":  "224aad3ac1deb825061f0a06c14b5f63e806f5e3100a1f17680308647286b3a9"
+                                             }
+                                         ],
+                       "game_attached":  false
+                   },
+                   {
+                       "name":  "cast continuation",
+                       "red_phase":  "CASTOWNERRED2",
+                       "green_phase":  "CASTOWNERGREEN",
+                       "red_pass":  61,
+                       "total":  136,
+                       "intended_red_failures":  75,
+                       "unexpected_errors":  0,
+                       "green_pass":  136,
+                       "source_inputs":  1888,
+                       "only_changed_input":  [
+                                                  "runtime-snapshot/Routines/Singular wotlk/Helpers/Spell.cs"
+                                              ],
+                       "all_other_source_and_test_inputs_identical":  true,
+                       "red_summaries":  [
+                                             "Assembly SHA256: d5a81be2725811b137333a43bdbefd3f64eb9b6e77f4180a3efefc7b375b1444",
+                                             "Pull isolation scenarios: 12/12; assertions=0; unexpected=0; pure policy/source ordering; no game attached.",
+                                             "Cast continuation ownership scenarios: 61/136; assertions=75; unexpected=0; exact tracked Cast/Buff region and real TreeSharp; controlled sight/range/backend; no native obstruction trace or game attached.",
+                                             "Spell sight dispatch scenarios: 53/53; assertions=0; unexpected=0; exact tracked Cast/Buff region and real TreeSharp; controlled sight/range/backend; no native obstruction trace or game attached.",
+                                             "PASS focused group: SpellSightDispatchRegressionTests",
+                                             "Shared buff dispatch scenarios: 54/54; assertions=0; unexpected=0; exact Cast/Buff region and real TreeSharp; controlled observations/dispatch; not all class rotations or game effects.",
+                                             "PASS focused group: SharedBuffDispatchRegressionTests",
+                                             "Heal continuation scenarios: 79/79; assertions=0; unexpected=0; all five tracked factories/real TreeSharp; controlled submission and actor state; no native request provenance or game acceptance.",
+                                             "PASS focused group: HealContinuationOwnershipRegressionTests",
+                                             "Cast Lua observation scenarios: 52/52; assertions=0; unexpected=0; actual getters/conversion and stock Lua5.1; controlled build12340 native tuples; no game attached.",
+                                             "PASS focused group: CastLuaObservationRegressionTests",
+                                             "Ret rotation registration scenarios: 9/9; assertions=0; unexpected=0; full tracked Singular compilation and CLR attributes; no rotation tick or game attached.",
+                                             "PASS focused group: RetributionRotationRegistrationRegressionTests",
+                                             "Requested focused groups: 6; failures=1. No broad-suite or game acceptance claim."
+                                         ],
+                       "green_summaries":  [
+                                               "Assembly SHA256: d5a81be2725811b137333a43bdbefd3f64eb9b6e77f4180a3efefc7b375b1444",
+                                               "Pull isolation scenarios: 12/12; assertions=0; unexpected=0; pure policy/source ordering; no game attached.",
+                                               "Cast continuation ownership scenarios: 136/136; assertions=0; unexpected=0; exact tracked Cast/Buff region and real TreeSharp; controlled sight/range/backend; no native obstruction trace or game attached.",
+                                               "PASS focused group: CastContinuationOwnershipRegressionTests",
+                                               "Spell sight dispatch scenarios: 53/53; assertions=0; unexpected=0; exact tracked Cast/Buff region and real TreeSharp; controlled sight/range/backend; no native obstruction trace or game attached.",
+                                               "PASS focused group: SpellSightDispatchRegressionTests",
+                                               "Shared buff dispatch scenarios: 54/54; assertions=0; unexpected=0; exact Cast/Buff region and real TreeSharp; controlled observations/dispatch; not all class rotations or game effects.",
+                                               "PASS focused group: SharedBuffDispatchRegressionTests",
+                                               "Heal continuation scenarios: 79/79; assertions=0; unexpected=0; all five tracked factories/real TreeSharp; controlled submission and actor state; no native request provenance or game acceptance.",
+                                               "PASS focused group: HealContinuationOwnershipRegressionTests",
+                                               "Cast Lua observation scenarios: 52/52; assertions=0; unexpected=0; actual getters/conversion and stock Lua5.1; controlled build12340 native tuples; no game attached.",
+                                               "PASS focused group: CastLuaObservationRegressionTests",
+                                               "Ret rotation registration scenarios: 9/9; assertions=0; unexpected=0; full tracked Singular compilation and CLR attributes; no rotation tick or game attached.",
+                                               "PASS focused group: RetributionRotationRegistrationRegressionTests",
+                                               "Requested focused groups: 6; failures=0. No broad-suite or game acceptance claim."
+                                           ],
+                       "retained_pair":  {
+                                             "red":  "CASTOWNERRED2",
+                                             "green":  "CASTOWNERGREEN",
+                                             "red_scenarios_pass":  61,
+                                             "total":  136,
+                                             "intended_red_assertions":  75,
+                                             "unexpected_red_errors":  0,
+                                             "green_scenarios_pass":  136,
+                                             "focused_groups":  6,
+                                             "normalized_fixtures_unchanged":  196,
+                                             "only_changed_input":  {
+                                                                        "path":  "runtime-snapshot/Routines/Singular wotlk/Helpers/Spell.cs",
+                                                                        "sha256":  "867c3bf8c73248d437712dfd9c53fccecd5deb7bfefe45ec0213349f2a0adc91"
+                                                                    },
+                                             "earlier_harness_failure":  "CASTOWNERRED stopped in normalization before behavioral tests; embedded class literal split preserves normalizer contract",
+                                             "fixtures_changed":  false,
+                                             "game_attached":  false
+                                         },
+                       "receipt_files":  [
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_CASTOWNERRED2_20260929\\status.json",
+                                                 "bytes":  2874,
+                                                 "sha256":  "6e31ce8fca54c402f6c532a57a1d946a87a6772e39675b9f7a54e34124763c78"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_CASTOWNERRED2_20260929\\source-before.json",
+                                                 "bytes":  340470,
+                                                 "sha256":  "aba7abbd3924bbea9574ca84643b2b64d9d09cc1a48af7b9c5b7c484cf351bc8"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_CASTOWNERRED2_20260929\\source-after.json",
+                                                 "bytes":  340470,
+                                                 "sha256":  "aba7abbd3924bbea9574ca84643b2b64d9d09cc1a48af7b9c5b7c484cf351bc8"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_CASTOWNERRED2_20260929\\run.log",
+                                                 "bytes":  53880,
+                                                 "sha256":  "4e8d49fd2276de8c25e3dced865572008487ab81b8a9546c5b0070006869a147"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_CASTOWNERRED2_20260929\\run.stderr.log",
+                                                 "bytes":  19082,
+                                                 "sha256":  "a31f0c23a2766f13d721ea36a37b8cc85e25cf9b79586f8bbe8fbb6572d7cf12"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_CASTOWNERRED2_20260929\\build.log",
+                                                 "bytes":  86712,
+                                                 "sha256":  "f55dafb40714dfd0417ce7086c9682411a4a1c4e12240213fef55fc479e0c0ba"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_CASTOWNERGREEN_20260929\\status.json",
+                                                 "bytes":  2962,
+                                                 "sha256":  "50530507218aea2f413231eda9c15b4f32dd1eee74cfd7a3755cbb4cc0260fab"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_CASTOWNERGREEN_20260929\\source-before.json",
+                                                 "bytes":  340470,
+                                                 "sha256":  "14ec7b40cc503479a8046d5400978a76b5349a649b677ac3efec25be894c87d6"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_CASTOWNERGREEN_20260929\\source-after.json",
+                                                 "bytes":  340470,
+                                                 "sha256":  "14ec7b40cc503479a8046d5400978a76b5349a649b677ac3efec25be894c87d6"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_CASTOWNERGREEN_20260929\\run.log",
+                                                 "bytes":  63616,
+                                                 "sha256":  "740b29d6ada74ab356f662ae0f367cd82e121d06e36cf4003d299dbd6c03a239"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_CASTOWNERGREEN_20260929\\run.stderr.log",
+                                                 "bytes":  0,
+                                                 "sha256":  "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_CASTOWNERGREEN_20260929\\build.log",
+                                                 "bytes":  86712,
+                                                 "sha256":  "5fa3fcc775b3ae50c4d2239879013b24138b301755f2de94db2928301faf78bc"
+                                             }
+                                         ],
+                       "game_attached":  false
+                   },
+                   {
+                       "name":  "quest item and reusable acknowledgement",
+                       "red_phase":  "ITEMOWNERRED",
+                       "green_phase":  "ITEMOWNERGREEN",
+                       "red_pass":  29,
+                       "total":  107,
+                       "intended_red_failures":  78,
+                       "unexpected_errors":  0,
+                       "green_pass":  107,
+                       "source_inputs":  1889,
+                       "only_changed_input":  [
+                                                  "runtime-snapshot/Quest Behaviors/UseItemOn.cs"
+                                              ],
+                       "all_other_source_and_test_inputs_identical":  true,
+                       "red_summaries":  [
+                                             "Assembly SHA256: 8cd3430f821a0cf04742bc2bdb47cee2fcc538e73b469d160f95ec0dd83cf1f9",
+                                             "Pull isolation scenarios: 12/12; assertions=0; unexpected=0; pure policy/source ordering; no game attached.",
+                                             "Quest item movement ownership scenarios: 19/94; assertions=75; unexpected=0; complete tracked owner/real TreeSharp; controlled navigation; no physical route acceptance.",
+                                             "Reusable item acknowledgement scenarios: 10/13; assertions=3; unexpected=0; complete tracked UseItemOn and retained TreeSharp continuation; actual inherited quest reader; no game attached.",
+                                             "Quest item selection scenarios: 44/44; assertions=0; unexpected=0; complete tracked UseItemOn; controlled observations; no native use or automatic recipe mapping.",
+                                             "PASS focused group: QuestItemTargetSelectionRegressionTests",
+                                             "Quest item dispatch scenarios: 78/78; assertions=0; unexpected=0; complete UseItemOn and real TreeSharp; controlled callbacks; no native use or server credit.",
+                                             "PASS focused group: QuestItemDispatchRegressionTests",
+                                             "Quest item progress scenarios: 33/33; assertions=0; unexpected=0; complete UseItemOn/TreeSharp and inherited host quest reader; controlled raw quest bytes/world callbacks; no game attached.",
+                                             "PASS focused group: QuestItemProgressLifetimeRegressionTests",
+                                             "Quest item authoritative-progress scenarios: 11/11; assertions=0; unexpected=0; complete tracked UseItemOn compile; controlled observations; no native/server execution.",
+                                             "PASS focused group: QuestItemAuthoritativeProgressRegressionTests",
+                                             "Quest item acknowledgement-liveness scenarios: 11/11; assertions=0; unexpected=0; complete tracked UseItemOn compile; no game/server execution.",
+                                             "PASS focused group: QuestItemAcknowledgementLivenessRegressionTests",
+                                             "Quest item merchant scenarios: 20/20; assertions=0; unexpected=0; complete UseItemOn and real TreeSharp; controlled merchant/setup/API; no native sale or quest credit.",
+                                             "PASS focused group: QuestItemMerchantContextRegressionTests",
+                                             "Requested focused groups: 8; failures=2. No broad-suite or game acceptance claim."
+                                         ],
+                       "green_summaries":  [
+                                               "Assembly SHA256: 8cd3430f821a0cf04742bc2bdb47cee2fcc538e73b469d160f95ec0dd83cf1f9",
+                                               "Pull isolation scenarios: 12/12; assertions=0; unexpected=0; pure policy/source ordering; no game attached.",
+                                               "Quest item movement ownership scenarios: 94/94; assertions=0; unexpected=0; complete tracked owner/real TreeSharp; controlled navigation; no physical route acceptance.",
+                                               "PASS focused group: QuestItemMovementOwnershipRegressionTests",
+                                               "Reusable item acknowledgement scenarios: 13/13; assertions=0; unexpected=0; complete tracked UseItemOn and retained TreeSharp continuation; actual inherited quest reader; no game attached.",
+                                               "PASS focused group: QuestItemReusableAcknowledgementRegressionTests",
+                                               "Quest item selection scenarios: 44/44; assertions=0; unexpected=0; complete tracked UseItemOn; controlled observations; no native use or automatic recipe mapping.",
+                                               "PASS focused group: QuestItemTargetSelectionRegressionTests",
+                                               "Quest item dispatch scenarios: 78/78; assertions=0; unexpected=0; complete UseItemOn and real TreeSharp; controlled callbacks; no native use or server credit.",
+                                               "PASS focused group: QuestItemDispatchRegressionTests",
+                                               "Quest item progress scenarios: 33/33; assertions=0; unexpected=0; complete UseItemOn/TreeSharp and inherited host quest reader; controlled raw quest bytes/world callbacks; no game attached.",
+                                               "PASS focused group: QuestItemProgressLifetimeRegressionTests",
+                                               "Quest item authoritative-progress scenarios: 11/11; assertions=0; unexpected=0; complete tracked UseItemOn compile; controlled observations; no native/server execution.",
+                                               "PASS focused group: QuestItemAuthoritativeProgressRegressionTests",
+                                               "Quest item acknowledgement-liveness scenarios: 11/11; assertions=0; unexpected=0; complete tracked UseItemOn compile; no game/server execution.",
+                                               "PASS focused group: QuestItemAcknowledgementLivenessRegressionTests",
+                                               "Quest item merchant scenarios: 20/20; assertions=0; unexpected=0; complete UseItemOn and real TreeSharp; controlled merchant/setup/API; no native sale or quest credit.",
+                                               "PASS focused group: QuestItemMerchantContextRegressionTests",
+                                               "Requested focused groups: 8; failures=0. No broad-suite or game acceptance claim."
+                                           ],
+                       "retained_pair":  {
+                                             "red":  "ITEMOWNERRED",
+                                             "green":  "ITEMOWNERGREEN",
+                                             "red_scenarios_pass":  29,
+                                             "total":  107,
+                                             "intended_red_assertions":  78,
+                                             "unexpected_red_errors":  0,
+                                             "green_scenarios_pass":  107,
+                                             "focused_groups":  8,
+                                             "normalized_fixtures_unchanged":  197,
+                                             "only_changed_input":  {
+                                                                        "path":  "runtime-snapshot/Quest Behaviors/UseItemOn.cs",
+                                                                        "sha256":  "ca9ebf80f7676c87ac3be3aa323dda4de47f5ecdccdaea27c83b433acc970f22"
+                                                                    },
+                                             "fixtures_changed":  false,
+                                             "game_attached":  false
+                                         },
+                       "receipt_files":  [
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_ITEMOWNERRED_20260929\\status.json",
+                                                 "bytes":  3427,
+                                                 "sha256":  "5d7e5f1b7c5bad67714641dab9a75a5b18cab89be03650bd7ff96a4e76e23cb2"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_ITEMOWNERRED_20260929\\source-before.json",
+                                                 "bytes":  340682,
+                                                 "sha256":  "1ece8494a4ca53a3644776e79c28cbd89505232f35043fcf4a2a26b340776b8c"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_ITEMOWNERRED_20260929\\source-after.json",
+                                                 "bytes":  340682,
+                                                 "sha256":  "1ece8494a4ca53a3644776e79c28cbd89505232f35043fcf4a2a26b340776b8c"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_ITEMOWNERRED_20260929\\run.log",
+                                                 "bytes":  42100,
+                                                 "sha256":  "213520d9d054458b7b3ca7a792a98c736bb60af7741b58a494aa0e3d1db06b09"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_ITEMOWNERRED_20260929\\run.stderr.log",
+                                                 "bytes":  43344,
+                                                 "sha256":  "f4843fcb363638b2e75bff85e9ea758202eb36c8b15f4e95d67ef94ef84df526"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_ITEMOWNERRED_20260929\\build.log",
+                                                 "bytes":  86712,
+                                                 "sha256":  "5205dfb3410081fbb5605c424aa8844ac072a6063b8d0d6756fdf5352b7516b4"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_ITEMOWNERGREEN_20260929\\status.json",
+                                                 "bytes":  3610,
+                                                 "sha256":  "dd037e26af3784619e0cc5fe219e9166a258ed5d8d23f5d73d539e4b447896ec"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_ITEMOWNERGREEN_20260929\\source-before.json",
+                                                 "bytes":  340682,
+                                                 "sha256":  "04c50c69411fc251ec2f70131135751bb5e0be1a50ad31a573de2e684bf1f99d"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_ITEMOWNERGREEN_20260929\\source-after.json",
+                                                 "bytes":  340682,
+                                                 "sha256":  "04c50c69411fc251ec2f70131135751bb5e0be1a50ad31a573de2e684bf1f99d"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_ITEMOWNERGREEN_20260929\\run.log",
+                                                 "bytes":  55170,
+                                                 "sha256":  "7039d858fe6925c45227ecd3d46fedb1a5736a27c6209e96540b5b613a92c98a"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_ITEMOWNERGREEN_20260929\\run.stderr.log",
+                                                 "bytes":  0,
+                                                 "sha256":  "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_ITEMOWNERGREEN_20260929\\build.log",
+                                                 "bytes":  86712,
+                                                 "sha256":  "59d42595e0f4c7c29b44afb8efa6e40d98ce90f375ff2207cc8cf8f8cf24ec30"
+                                             }
+                                         ],
+                       "game_attached":  false
+                   },
+                   {
+                       "name":  "ground continuation",
+                       "red_phase":  "GROUNDOWNERRED",
+                       "green_phase":  "GROUNDOWNERGREEN3",
+                       "red_pass":  14,
+                       "total":  59,
+                       "intended_red_failures":  45,
+                       "unexpected_errors":  0,
+                       "green_pass":  59,
+                       "source_inputs":  1890,
+                       "only_changed_input":  [
+                                                  "runtime-snapshot/Routines/Singular wotlk/Helpers/Spell.cs"
+                                              ],
+                       "all_other_source_and_test_inputs_identical":  true,
+                       "red_summaries":  [
+                                             "Assembly SHA256: dc7e6942399cd1e906c2bb8c9b0ed5bbf7b96808a0f4f369fb8122564f30f5fb",
+                                             "Pull isolation scenarios: 12/12; assertions=0; unexpected=0; pure policy/source ordering; no game attached.",
+                                             "Ground cast continuation scenarios: 14/59; assertions=45; unexpected=0; complete factory, pending observer and real TreeSharp; controlled placement/world; no native request provenance or route acceptance.",
+                                             "Ground cast submission scenarios: 11/11; assertions=0; unexpected=0; complete tracked factory and real TreeSharp; controlled backend/world; no native/game/server execution.",
+                                             "PASS focused group: GroundCastSubmissionRegressionTests",
+                                             "Cast continuation ownership scenarios: 136/136; assertions=0; unexpected=0; exact tracked Cast/Buff region and real TreeSharp; controlled sight/range/backend; no native obstruction trace or game attached.",
+                                             "PASS focused group: CastContinuationOwnershipRegressionTests",
+                                             "Ret rotation registration scenarios: 9/9; assertions=0; unexpected=0; full tracked Singular compilation and CLR attributes; no rotation tick or game attached.",
+                                             "PASS focused group: RetributionRotationRegistrationRegressionTests",
+                                             "Requested focused groups: 4; failures=1. No broad-suite or game acceptance claim."
+                                         ],
+                       "green_summaries":  [
+                                               "Assembly SHA256: dc7e6942399cd1e906c2bb8c9b0ed5bbf7b96808a0f4f369fb8122564f30f5fb",
+                                               "Pull isolation scenarios: 12/12; assertions=0; unexpected=0; pure policy/source ordering; no game attached.",
+                                               "Ground cast continuation scenarios: 59/59; assertions=0; unexpected=0; complete factory, pending observer and real TreeSharp; controlled placement/world; no native request provenance or route acceptance.",
+                                               "PASS focused group: GroundCastContinuationRegressionTests",
+                                               "Ground cast submission scenarios: 11/11; assertions=0; unexpected=0; complete tracked factory and real TreeSharp; controlled backend/world; no native/game/server execution.",
+                                               "PASS focused group: GroundCastSubmissionRegressionTests",
+                                               "Cast continuation ownership scenarios: 136/136; assertions=0; unexpected=0; exact tracked Cast/Buff region and real TreeSharp; controlled sight/range/backend; no native obstruction trace or game attached.",
+                                               "PASS focused group: CastContinuationOwnershipRegressionTests",
+                                               "Ret rotation registration scenarios: 9/9; assertions=0; unexpected=0; full tracked Singular compilation and CLR attributes; no rotation tick or game attached.",
+                                               "PASS focused group: RetributionRotationRegistrationRegressionTests",
+                                               "Requested focused groups: 4; failures=0. No broad-suite or game acceptance claim."
+                                           ],
+                       "retained_pair":  null,
+                       "receipt_files":  [
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_GROUNDOWNERRED_20260929\\status.json",
+                                                 "bytes":  2186,
+                                                 "sha256":  "2af773927091245982d86d76e82369cb9155f71f024111fb5aac7a85db6b2122"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_GROUNDOWNERRED_20260929\\source-before.json",
+                                                 "bytes":  340890,
+                                                 "sha256":  "c52f832f5d93c9181223251b35e8650ba77551384eda9d153b634e4f89b68c59"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_GROUNDOWNERRED_20260929\\source-after.json",
+                                                 "bytes":  340890,
+                                                 "sha256":  "c52f832f5d93c9181223251b35e8650ba77551384eda9d153b634e4f89b68c59"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_GROUNDOWNERRED_20260929\\run.log",
+                                                 "bytes":  28648,
+                                                 "sha256":  "985d805fcc43fe6e26d5af65cd2a56fa1bf5e9e3ff2d614f1141f43f435aba5b"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_GROUNDOWNERRED_20260929\\run.stderr.log",
+                                                 "bytes":  11032,
+                                                 "sha256":  "1984ebba52856b15efde9c115ad6031cf99b7f7ee7bb62448d8eea671cc1bd21"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_GROUNDOWNERRED_20260929\\build.log",
+                                                 "bytes":  86712,
+                                                 "sha256":  "05b72982cdb5037c6b05ca0d48a59deff6655234cc34472779a811d1070bb541"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_GROUNDOWNERGREEN3_20260929\\status.json",
+                                                 "bytes":  2272,
+                                                 "sha256":  "52bf6bb5823ac61da6d94e9a5156d6aebfed9fede96ecd521e6608be092a778f"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_GROUNDOWNERGREEN3_20260929\\source-before.json",
+                                                 "bytes":  340890,
+                                                 "sha256":  "d10752a171286c3b1a99573c3d8bac2012241ade01dff056ffd876acf2a7d24e"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_GROUNDOWNERGREEN3_20260929\\source-after.json",
+                                                 "bytes":  340890,
+                                                 "sha256":  "d10752a171286c3b1a99573c3d8bac2012241ade01dff056ffd876acf2a7d24e"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_GROUNDOWNERGREEN3_20260929\\run.log",
+                                                 "bytes":  33334,
+                                                 "sha256":  "de983ca8d781bb65dbd791e1d6b2429991a88a12b9bcd371a90452ce6eefd782"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_GROUNDOWNERGREEN3_20260929\\run.stderr.log",
+                                                 "bytes":  0,
+                                                 "sha256":  "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_GROUNDOWNERGREEN3_20260929\\build.log",
+                                                 "bytes":  86712,
+                                                 "sha256":  "02f5ac0ba9a96d975ab5f8042619668ab9f4f9ee2c5c2778f83766a8f669f881"
+                                             }
+                                         ],
+                       "game_attached":  false
+                   },
+                   {
+                       "name":  "shared wait/cancel/melee",
+                       "red_phase":  "SHAREDOBSRED",
+                       "green_phase":  "SHAREDOBSGREEN2",
+                       "red_pass":  26,
+                       "total":  109,
+                       "intended_red_failures":  83,
+                       "unexpected_errors":  0,
+                       "green_pass":  109,
+                       "source_inputs":  1892,
+                       "only_changed_input":  [
+                                                  "runtime-snapshot/Routines/Singular wotlk/Helpers/Spell.cs"
+                                              ],
+                       "all_other_source_and_test_inputs_identical":  true,
+                       "red_summaries":  [
+                                             "Assembly SHA256: 050574e5f4a56a5152384ff69e2cdde9759aad9c0ecdf95d044d275d8ca585eb",
+                                             "Pull isolation scenarios: 12/12; assertions=0; unexpected=0; pure policy/source ordering; no game attached.",
+                                             "Shared spell observation scenarios: 26/109; assertions=83; unexpected=0; actual wait/cancel factories, melee policy and named admission; real TreeSharp; controlled observations/commands; no native cast-instance or physical-range acceptance.",
+                                             "Cast wait facing scenarios: 16/16; assertions=0; unexpected=0; actual WaitForCast overloads and real TreeSharp; controlled cast/facing boundaries; no client/native execution.",
+                                             "PASS focused group: CastWaitFacingRegressionTests",
+                                             "Combat control continuity scenarios: 471/471; assertions=0; unexpected=0; complete tracked Movement and real TreeSharp; controlled world/navigation; no native path or game attached.",
+                                             "PASS focused group: CombatControlContinuityRegressionTests",
+                                             "Cast continuation ownership scenarios: 136/136; assertions=0; unexpected=0; exact tracked Cast/Buff region and real TreeSharp; controlled sight/range/backend; no native obstruction trace or game attached.",
+                                             "PASS focused group: CastContinuationOwnershipRegressionTests",
+                                             "Spell sight dispatch scenarios: 53/53; assertions=0; unexpected=0; exact tracked Cast/Buff region and real TreeSharp; controlled sight/range/backend; no native obstruction trace or game attached.",
+                                             "PASS focused group: SpellSightDispatchRegressionTests",
+                                             "Shared buff dispatch scenarios: 54/54; assertions=0; unexpected=0; exact Cast/Buff region and real TreeSharp; controlled observations/dispatch; not all class rotations or game effects.",
+                                             "PASS focused group: SharedBuffDispatchRegressionTests",
+                                             "Requested focused groups: 6; failures=1. No broad-suite or game acceptance claim."
+                                         ],
+                       "green_summaries":  [
+                                               "Assembly SHA256: 050574e5f4a56a5152384ff69e2cdde9759aad9c0ecdf95d044d275d8ca585eb",
+                                               "Pull isolation scenarios: 12/12; assertions=0; unexpected=0; pure policy/source ordering; no game attached.",
+                                               "Shared spell observation scenarios: 109/109; assertions=0; unexpected=0; actual wait/cancel factories, melee policy and named admission; real TreeSharp; controlled observations/commands; no native cast-instance or physical-range acceptance.",
+                                               "PASS focused group: SharedSpellObservationRegressionTests",
+                                               "Cast wait facing scenarios: 16/16; assertions=0; unexpected=0; actual WaitForCast overloads and real TreeSharp; controlled cast/facing boundaries; no client/native execution.",
+                                               "PASS focused group: CastWaitFacingRegressionTests",
+                                               "Combat control continuity scenarios: 471/471; assertions=0; unexpected=0; complete tracked Movement and real TreeSharp; controlled world/navigation; no native path or game attached.",
+                                               "PASS focused group: CombatControlContinuityRegressionTests",
+                                               "Cast continuation ownership scenarios: 136/136; assertions=0; unexpected=0; exact tracked Cast/Buff region and real TreeSharp; controlled sight/range/backend; no native obstruction trace or game attached.",
+                                               "PASS focused group: CastContinuationOwnershipRegressionTests",
+                                               "Spell sight dispatch scenarios: 53/53; assertions=0; unexpected=0; exact tracked Cast/Buff region and real TreeSharp; controlled sight/range/backend; no native obstruction trace or game attached.",
+                                               "PASS focused group: SpellSightDispatchRegressionTests",
+                                               "Shared buff dispatch scenarios: 54/54; assertions=0; unexpected=0; exact Cast/Buff region and real TreeSharp; controlled observations/dispatch; not all class rotations or game effects.",
+                                               "PASS focused group: SharedBuffDispatchRegressionTests",
+                                               "Ret rotation registration scenarios: 9/9; assertions=0; unexpected=0; full tracked Singular compilation and CLR attributes; no rotation tick or game attached.",
+                                               "PASS focused group: RetributionRotationRegistrationRegressionTests",
+                                               "Requested focused groups: 7; failures=0. No broad-suite or game acceptance claim."
+                                           ],
+                       "retained_pair":  null,
+                       "receipt_files":  [
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_SHAREDOBSRED_20260929\\status.json",
+                                                 "bytes":  2924,
+                                                 "sha256":  "0dcdbde5a093ea5fe9f0c5cf2cd08b4896cfd02732cd191c3324682f01a7d681"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_SHAREDOBSRED_20260929\\source-before.json",
+                                                 "bytes":  341279,
+                                                 "sha256":  "80ad15911634c19f501f19fb67eaa22f96a5a1b1179db1fc73a30a0394973a5d"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_SHAREDOBSRED_20260929\\source-after.json",
+                                                 "bytes":  341279,
+                                                 "sha256":  "80ad15911634c19f501f19fb67eaa22f96a5a1b1179db1fc73a30a0394973a5d"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_SHAREDOBSRED_20260929\\run.log",
+                                                 "bytes":  132064,
+                                                 "sha256":  "2b7b249d14673180ccce82c8ecf2c9d9134c817e1af741260297c6f6b46ddec7"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_SHAREDOBSRED_20260929\\run.stderr.log",
+                                                 "bytes":  21546,
+                                                 "sha256":  "3c3beff53c284710be8880d7ca5fd2df6520d0f706cdde3b3867f089f1e02aef"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_SHAREDOBSRED_20260929\\build.log",
+                                                 "bytes":  86712,
+                                                 "sha256":  "d81abfd0fe25bc22b04c6359707a315d258ab1b5dbb55ef6cf8ce6f20704490c"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_SHAREDOBSGREEN2_20260929\\status.json",
+                                                 "bytes":  3359,
+                                                 "sha256":  "cc88f0e44527faedf5bfcd3a9bbbf187ee05c47fa58cf7f4a7f4e02949fa1d0d"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_SHAREDOBSGREEN2_20260929\\source-before.json",
+                                                 "bytes":  341279,
+                                                 "sha256":  "2a15d6bb09880fb5398dd09370d42db96ddaa19207a908c1e9a5e820dab7b9f4"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_SHAREDOBSGREEN2_20260929\\source-after.json",
+                                                 "bytes":  341279,
+                                                 "sha256":  "2a15d6bb09880fb5398dd09370d42db96ddaa19207a908c1e9a5e820dab7b9f4"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_SHAREDOBSGREEN2_20260929\\run.log",
+                                                 "bytes":  145628,
+                                                 "sha256":  "44f4273f0ec640658d01cec066a69b9db8a02a99db462fb7ba9c6b566736ab19"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_SHAREDOBSGREEN2_20260929\\run.stderr.log",
+                                                 "bytes":  0,
+                                                 "sha256":  "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                                             },
+                                             {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_SHAREDOBSGREEN2_20260929\\build.log",
+                                                 "bytes":  86712,
+                                                 "sha256":  "ef6a1d7471bcb11eaff4cb434a32450f92c121f648fd4f8d6b2378fb4eae782a"
+                                             }
+                                         ],
+                       "game_attached":  false
+                   }
+               ],
+    "later_pair_verification":  {
+                                    "verified_utc":  "2026-09-28T18:32:40.5957352Z",
+                                    "pairs":  [
+                                                  {
+                                                      "name":  "ground continuation",
+                                                      "red":  "GROUNDOWNERRED",
+                                                      "green":  "GROUNDOWNERGREEN3",
+                                                      "base_head":  "9e61f0328a8af610c4e3ff257860ec0578ac5d7f",
+                                                      "source_inputs":  1890,
+                                                      "changed_inputs":  [
+                                                                             "runtime-snapshot/Routines/Singular wotlk/Helpers/Spell.cs"
+                                                                         ],
+                                                      "all_other_source_inputs_identical":  true,
+                                                      "regression_assembly_sha256":  "dc7e6942399cd1e906c2bb8c9b0ed5bbf7b96808a0f4f369fb8122564f30f5fb",
+                                                      "red_cases":  "Ground cast continuation scenarios: 14/59; assertions=45; unexpected=0;",
+                                                      "green_cases":  "Ground cast continuation scenarios: 59/59; assertions=0; unexpected=0;",
+                                                      "receipts":  [
+                                                                       {
+                                                                           "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_GROUNDOWNERRED_20260929\\status.json",
+                                                                           "sha256":  "2af773927091245982d86d76e82369cb9155f71f024111fb5aac7a85db6b2122"
+                                                                       },
+                                                                       {
+                                                                           "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_GROUNDOWNERRED_20260929\\source-before.json",
+                                                                           "sha256":  "c52f832f5d93c9181223251b35e8650ba77551384eda9d153b634e4f89b68c59"
+                                                                       },
+                                                                       {
+                                                                           "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_GROUNDOWNERRED_20260929\\source-after.json",
+                                                                           "sha256":  "c52f832f5d93c9181223251b35e8650ba77551384eda9d153b634e4f89b68c59"
+                                                                       },
+                                                                       {
+                                                                           "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_GROUNDOWNERRED_20260929\\run.log",
+                                                                           "sha256":  "985d805fcc43fe6e26d5af65cd2a56fa1bf5e9e3ff2d614f1141f43f435aba5b"
+                                                                       },
+                                                                       {
+                                                                           "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_GROUNDOWNERRED_20260929\\run.stderr.log",
+                                                                           "sha256":  "1984ebba52856b15efde9c115ad6031cf99b7f7ee7bb62448d8eea671cc1bd21"
+                                                                       },
+                                                                       {
+                                                                           "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_GROUNDOWNERGREEN3_20260929\\status.json",
+                                                                           "sha256":  "52bf6bb5823ac61da6d94e9a5156d6aebfed9fede96ecd521e6608be092a778f"
+                                                                       },
+                                                                       {
+                                                                           "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_GROUNDOWNERGREEN3_20260929\\source-before.json",
+                                                                           "sha256":  "d10752a171286c3b1a99573c3d8bac2012241ade01dff056ffd876acf2a7d24e"
+                                                                       },
+                                                                       {
+                                                                           "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_GROUNDOWNERGREEN3_20260929\\source-after.json",
+                                                                           "sha256":  "d10752a171286c3b1a99573c3d8bac2012241ade01dff056ffd876acf2a7d24e"
+                                                                       },
+                                                                       {
+                                                                           "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_GROUNDOWNERGREEN3_20260929\\run.log",
+                                                                           "sha256":  "de983ca8d781bb65dbd791e1d6b2429991a88a12b9bcd371a90452ce6eefd782"
+                                                                       },
+                                                                       {
+                                                                           "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_GROUNDOWNERGREEN3_20260929\\run.stderr.log",
+                                                                           "sha256":  "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                                                                       }
+                                                                   ],
+                                                      "game_attached":  false
+                                                  },
+                                                  {
+                                                      "name":  "shared wait/cancel/melee observations",
+                                                      "red":  "SHAREDOBSRED",
+                                                      "green":  "SHAREDOBSGREEN2",
+                                                      "base_head":  "9e61f0328a8af610c4e3ff257860ec0578ac5d7f",
+                                                      "source_inputs":  1892,
+                                                      "changed_inputs":  [
+                                                                             "runtime-snapshot/Routines/Singular wotlk/Helpers/Spell.cs"
+                                                                         ],
+                                                      "all_other_source_inputs_identical":  true,
+                                                      "regression_assembly_sha256":  "050574e5f4a56a5152384ff69e2cdde9759aad9c0ecdf95d044d275d8ca585eb",
+                                                      "red_cases":  "Shared spell observation scenarios: 26/109; assertions=83; unexpected=0;",
+                                                      "green_cases":  "Shared spell observation scenarios: 109/109; assertions=0; unexpected=0;",
+                                                      "receipts":  [
+                                                                       {
+                                                                           "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_SHAREDOBSRED_20260929\\status.json",
+                                                                           "sha256":  "0dcdbde5a093ea5fe9f0c5cf2cd08b4896cfd02732cd191c3324682f01a7d681"
+                                                                       },
+                                                                       {
+                                                                           "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_SHAREDOBSRED_20260929\\source-before.json",
+                                                                           "sha256":  "80ad15911634c19f501f19fb67eaa22f96a5a1b1179db1fc73a30a0394973a5d"
+                                                                       },
+                                                                       {
+                                                                           "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_SHAREDOBSRED_20260929\\source-after.json",
+                                                                           "sha256":  "80ad15911634c19f501f19fb67eaa22f96a5a1b1179db1fc73a30a0394973a5d"
+                                                                       },
+                                                                       {
+                                                                           "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_SHAREDOBSRED_20260929\\run.log",
+                                                                           "sha256":  "2b7b249d14673180ccce82c8ecf2c9d9134c817e1af741260297c6f6b46ddec7"
+                                                                       },
+                                                                       {
+                                                                           "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_SHAREDOBSRED_20260929\\run.stderr.log",
+                                                                           "sha256":  "3c3beff53c284710be8880d7ca5fd2df6520d0f706cdde3b3867f089f1e02aef"
+                                                                       },
+                                                                       {
+                                                                           "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_SHAREDOBSGREEN2_20260929\\status.json",
+                                                                           "sha256":  "cc88f0e44527faedf5bfcd3a9bbbf187ee05c47fa58cf7f4a7f4e02949fa1d0d"
+                                                                       },
+                                                                       {
+                                                                           "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_SHAREDOBSGREEN2_20260929\\source-before.json",
+                                                                           "sha256":  "2a15d6bb09880fb5398dd09370d42db96ddaa19207a908c1e9a5e820dab7b9f4"
+                                                                       },
+                                                                       {
+                                                                           "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_SHAREDOBSGREEN2_20260929\\source-after.json",
+                                                                           "sha256":  "2a15d6bb09880fb5398dd09370d42db96ddaa19207a908c1e9a5e820dab7b9f4"
+                                                                       },
+                                                                       {
+                                                                           "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_SHAREDOBSGREEN2_20260929\\run.log",
+                                                                           "sha256":  "44f4273f0ec640658d01cec066a69b9db8a02a99db462fb7ba9c6b566736ab19"
+                                                                       },
+                                                                       {
+                                                                           "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_SHAREDOBSGREEN2_20260929\\run.stderr.log",
+                                                                           "sha256":  "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                                                                       }
+                                                                   ],
+                                                      "game_attached":  false
+                                                  }
+                                              ],
+                                    "scope":  "Two distinct frozen intervals. Later deliberate fixture adapters are outside the ground interval. No archive or native execution is inferred."
+                                },
+    "case_count_warning":  "Overlapping families must not be summed as unique coverage; local red evidence is retained separately from the final published hosted source.",
+    "hosted":  {
+                   "integrated_receipt":  {
+                                              "verified_at_utc":  "2026-09-28T18:40:51.6229208Z",
+                                              "repository":  "JeofW/cbp",
+                                              "repository_id":  1367174964,
+                                              "run":  36466136560,
+                                              "source":  "a3c01d48e887745d3b0e478e4018b01cad4f1edf",
+                                              "artifact":  10989179321,
+                                              "artifact_name":  "integrated-a3c01d48e887745d3b0e478e4018b01cad4f1edf",
+                                              "archive":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-route-integrated-a3c01d48.zip",
+                                              "sha256":  "e0573a6c72a72e7bc4b9e5c4652d36adbd3cb11ac53b0aa1c402ff2f0c28fbcb",
+                                              "metadata_digest":  "sha256:e0573a6c72a72e7bc4b9e5c4652d36adbd3cb11ac53b0aa1c402ff2f0c28fbcb",
+                                              "bytes":  1121493,
+                                              "run_conclusion":  "success",
+                                              "jobs":  [
+                                                           {
+                                                               "id":  109076571119,
+                                                               "status":  "completed",
+                                                               "conclusion":  "success"
+                                                           }
+                                                       ],
+                                              "game_attached":  false
+                                          },
+                   "integrated_inspection":  {
+                                                 "verified_at_utc":  "2026-09-28T18:40:51.6739671Z",
+                                                 "run":  36466136560,
+                                                 "source":  "a3c01d48e887745d3b0e478e4018b01cad4f1edf",
+                                                 "artifact":  10989179321,
+                                                 "archive_sha256":  "e0573a6c72a72e7bc4b9e5c4652d36adbd3cb11ac53b0aa1c402ff2f0c28fbcb",
+                                                 "members":  251,
+                                                 "kind":  "integrated",
+                                                 "identity":  {
+                                                                  "game_attached":  false,
+                                                                  "fixture_commit":  "a3c01d48e887745d3b0e478e4018b01cad4f1edf",
+                                                                  "production_commit":  "a3c01d48e887745d3b0e478e4018b01cad4f1edf",
+                                                                  "production_tree":  "18164f54945583570378235bfd8b86c7c95dbfb8"
+                                                              },
+                                                 "inner_hashes":  250,
+                                                 "source_inputs":  1892,
+                                                 "checkout_inputs_matched":  1892,
+                                                 "results":  {
+                                                                 "value":  [
+                                                                               {
+                                                                                   "run":  0,
+                                                                                   "build":  0,
+                                                                                   "game_attached":  false,
+                                                                                   "suite":  "QuestRecoveryRegressionTests",
+                                                                                   "harness_error":  null,
+                                                                                   "architecture":  "x86"
+                                                                               },
+                                                                               {
+                                                                                   "suite":  "Singular",
+                                                                                   "build":  0,
+                                                                                   "architecture":  "x86",
+                                                                                   "game_attached":  false,
+                                                                                   "run":  0
+                                                                               },
+                                                                               {
+                                                                                   "run":  0,
+                                                                                   "build":  0,
+                                                                                   "game_attached":  false,
+                                                                                   "suite":  "WholesomeQuestRecoveryRegressionTests",
+                                                                                   "harness_error":  null,
+                                                                                   "architecture":  "x86"
+                                                                               },
+                                                                               {
+                                                                                   "run":  0,
+                                                                                   "build":  0,
+                                                                                   "game_attached":  false,
+                                                                                   "suite":  "QuestRecoveryAdapterRegressionTests",
+                                                                                   "harness_error":  null,
+                                                                                   "architecture":  "x86"
+                                                                               },
+                                                                               {
+                                                                                   "run":  0,
+                                                                                   "build":  0,
+                                                                                   "game_attached":  false,
+                                                                                   "suite":  "QuestPickupPolicyRegressionTests",
+                                                                                   "harness_error":  null,
+                                                                                   "architecture":  "x86"
+                                                                               },
+                                                                               {
+                                                                                   "run":  0,
+                                                                                   "build":  0,
+                                                                                   "game_attached":  false,
+                                                                                   "suite":  "VendorCoreRegressionTests",
+                                                                                   "harness_error":  null,
+                                                                                   "architecture":  "x86"
+                                                                               },
+                                                                               {
+                                                                                   "run":  0,
+                                                                                   "build":  0,
+                                                                                   "game_attached":  false,
+                                                                                   "suite":  "NativeContractRegressionTests",
+                                                                                   "harness_error":  null,
+                                                                                   "architecture":  "x86"
+                                                                               },
+                                                                               {
+                                                                                   "run":  0,
+                                                                                   "build":  0,
+                                                                                   "game_attached":  false,
+                                                                                   "suite":  "ShutdownBoundaryRegressionTests",
+                                                                                   "harness_error":  null,
+                                                                                   "architecture":  "x86"
+                                                                               },
+                                                                               {
+                                                                                   "run":  0,
+                                                                                   "build":  0,
+                                                                                   "game_attached":  false,
+                                                                                   "suite":  "Elevator",
+                                                                                   "harness_error":  null,
+                                                                                   "architecture":  "x86"
+                                                                               },
+                                                                               {
+                                                                                   "run":  0,
+                                                                                   "build":  0,
+                                                                                   "game_attached":  false,
+                                                                                   "suite":  "PaladinDecisions",
+                                                                                   "harness_error":  null,
+                                                                                   "architecture":  "x86"
+                                                                               },
+                                                                               {
+                                                                                   "run":  0,
+                                                                                   "build":  0,
+                                                                                   "game_attached":  false,
+                                                                                   "suite":  "GroupEngagement",
+                                                                                   "harness_error":  null,
+                                                                                   "architecture":  "x86"
+                                                                               },
+                                                                               {
+                                                                                   "run":  0,
+                                                                                   "build":  0,
+                                                                                   "game_attached":  false,
+                                                                                   "suite":  "PaladinSupport",
+                                                                                   "harness_error":  null,
+                                                                                   "architecture":  "x86"
+                                                                               },
+                                                                               {
+                                                                                   "run":  0,
+                                                                                   "build":  0,
+                                                                                   "game_attached":  false,
+                                                                                   "suite":  "WholesomeSale",
+                                                                                   "harness_error":  null,
+                                                                                   "architecture":  "x86"
+                                                                               },
+                                                                               {
+                                                                                   "run":  0,
+                                                                                   "build":  0,
+                                                                                   "game_attached":  false,
+                                                                                   "suite":  "QuestLogObservationRegressionTests",
+                                                                                   "harness_error":  null,
+                                                                                   "architecture":  "x86"
+                                                                               },
+                                                                               {
+                                                                                   "run":  0,
+                                                                                   "build":  0,
+                                                                                   "game_attached":  false,
+                                                                                   "suite":  "QuestCompletionOwnerRegressionTests",
+                                                                                   "harness_error":  null,
+                                                                                   "architecture":  "x86"
+                                                                               },
+                                                                               {
+                                                                                   "run":  0,
+                                                                                   "build":  0,
+                                                                                   "game_attached":  false,
+                                                                                   "suite":  "QuestObservationBoundaryRegressionTests",
+                                                                                   "harness_error":  null,
+                                                                                   "architecture":  "x86"
+                                                                               },
+                                                                               {
+                                                                                   "suite":  "Analyzers",
+                                                                                   "build":  0,
+                                                                                   "game_attached":  false,
+                                                                                   "run":  0
+                                                                               }
+                                                                           ],
+                                                                 "Count":  17
+                                                             },
+                                                 "successful_groups":  17,
+                                                 "key_summaries":  [
+                                                                       "Autoattack startup scenarios: 26/26; assertions=0; unexpected=0; actual Common/LocalPlayer Lua and TreeSharp; stock Lua5.1 with controlled native attack state; no game/server/native execution.",
+                                                                       "AutoEquip pending context scenarios: 37/37; assertions=0; unexpected=0; exact tracked C# capture/tick/request methods; controlled world/Lua; no game attached.",
+                                                                       "Cast wait facing scenarios: 16/16; assertions=0; unexpected=0; actual WaitForCast overloads and real TreeSharp; controlled cast/facing boundaries; no client/native execution.",
+                                                                       "Combat sight movement scenarios: 85/85; assertions=0; unexpected=0; complete tracked Movement and real TreeSharp; controlled world/navigation; no native path or game attached.",
+                                                                       "Equip acknowledged timeout scenarios: 10/10; assertions=0; unexpected=0; exact tracked method control flow; controlled external acknowledgements; no game attached.",
+                                                                       "Equip continuation boundary scenarios: 46/46; assertions=0; unexpected=0; exact tracked C# tick/context/acknowledge/return/restore; controlled actor/inventory/Lua; no physical cursor or client proof.",
+                                                                       "EquipItem pending context scenarios: 57/57; assertions=0; unexpected=0; exact tracked C# tick/submit/confirm/reset; controlled actor/quest/Lua; no game attached.",
+                                                                       "Equipment cleanup ownership: 57/57; assertions=0; unexpected=0; actual tracked owners/generated Lua5.1; controlled build12340 cursor transitions and physical dispatch admission; no game/server/native execution.",
+                                                                       "Equipment physical cursor guard: 8/8; actual generated x86 comparison/branch contract; no game attached or native execution.",
+                                                                       "Equipment Lua51 boundary scenarios: 87/87; assertions=0; unexpected=0; tracked pickup/equip helpers, actual generated Lua5.1, loader size and verbatim managed conversion; controlled APIs; no physical GUID/client/server proof.",
+                                                                       "Equipment pending-index scenarios: 24/24; assertions=0; unexpected=0; tracked owner/generated Lua; stock Lua5.1; controlled synchronous events; no native client proof.",
+                                                                       "Equip popup submission scenarios: 18/18; assertions=0; unexpected=0; exact tracked C# confirmation/tick methods; recording Lua boundary only; no game attached."
+                                                                   ],
+                                                 "failing_groups":  [
+
+                                                                    ]
+                                             },
+                   "host_receipt":  {
+                                        "verified_at_utc":  "2026-09-28T18:38:16.6831537Z",
+                                        "repository":  "JeofW/cbp",
+                                        "repository_id":  1367174964,
+                                        "run":  36466136368,
+                                        "source":  "a3c01d48e887745d3b0e478e4018b01cad4f1edf",
+                                        "artifact":  10988963899,
+                                        "artifact_name":  "audit-validation-a3c01d48e887745d3b0e478e4018b01cad4f1edf",
+                                        "archive":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-route-host-a3c01d48.zip",
+                                        "sha256":  "216f4297a9f746a85f6b2287bc8fb51f37e79fa6fa37821fbf877801d01510f5",
+                                        "metadata_digest":  "sha256:216f4297a9f746a85f6b2287bc8fb51f37e79fa6fa37821fbf877801d01510f5",
+                                        "bytes":  83779,
+                                        "run_conclusion":  "success",
+                                        "jobs":  [
+                                                     {
+                                                         "id":  109076569891,
+                                                         "status":  "completed",
+                                                         "conclusion":  "success"
+                                                     }
+                                                 ],
+                                        "game_attached":  false
+                                    },
+                   "host_inspection":  {
+                                           "verified_at_utc":  "2026-09-28T18:38:16.7412070Z",
+                                           "run":  36466136368,
+                                           "source":  "a3c01d48e887745d3b0e478e4018b01cad4f1edf",
+                                           "artifact":  10988963899,
+                                           "archive_sha256":  "216f4297a9f746a85f6b2287bc8fb51f37e79fa6fa37821fbf877801d01510f5",
+                                           "members":  4,
+                                           "kind":  "host",
+                                           "result":  {
+                                                          "tests_run":  false,
+                                                          "game_attached":  false,
+                                                          "host_build_exit_code":  0
+                                                      },
+                                           "build_summary":  [
+                                                                 "3396 Warning(s)",
+                                                                 "0 Error(s)"
+                                                             ]
+                                       },
+                   "case_report":  {
+                                       "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINALPASS_A3C01D48_CASES_20260927.json",
+                                       "bytes":  164587,
+                                       "sha256":  "bbee54cf19f3380eb5d12addc41743caec86d04ef1f7d5bcfc312a585f646664"
+                                   },
+                   "required_case_summaries":  [
+                                                   "Combat movement continuity scenarios: 259/259;",
+                                                   "Combat control continuity scenarios: 471/471;",
+                                                   "Cast Lua observation scenarios: 52/52;",
+                                                   "Heal continuation scenarios: 79/79;",
+                                                   "Cast continuation ownership scenarios: 136/136;",
+                                                   "Quest item movement ownership scenarios: 94/94;",
+                                                   "Ground cast continuation scenarios: 59/59;",
+                                                   "Shared spell observation scenarios: 109/109;"
+                                               ]
+               },
+    "native":  {
+                   "identity":  {
+                                    "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_CAST_IDENTITY_20260929.json",
+                                    "bytes":  10900,
+                                    "sha256":  "a56833a961a7d9577835ef143a2be9935e93591f6e4ecf9c3c508e564b171de2"
+                                },
+                   "metadata":  {
+                                    "path":  "D:\\Dev\\CopilotBuddy-Evidence\\Build12340-IDA\\WoW-12340.i64",
+                                    "module":  "WoW.exe",
+                                    "arch":  "32",
+                                    "base_address":  "0x400000",
+                                    "image_size":  "0x9fd000",
+                                    "md5":  "5758d89ed392e2190c44c5183a6d23a3",
+                                    "sha256":  "bf644876709c591acc17c0da8cdf1814edcc9f1e6bc109a8c0d5c38c79dc953c"
+                                },
+                   "recorded_utc":  "2026-09-28T17:19:46.2629860Z",
+                   "input_sha256":  "bf644876709c591acc17c0da8cdf1814edcc9f1e6bc109a8c0d5c38c79dc953c",
+                   "raw_receipts":  [
+                                        {
+                                            "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-cast-api-strings.json",
+                                            "bytes":  10051,
+                                            "sha256":  "8bf39e14030c8ccfb3a0837847e811f2bb11df9a16487f9d8171d7b0b8aa6c3e"
+                                        },
+                                        {
+                                            "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-cast-api-registration.json",
+                                            "bytes":  6060,
+                                            "sha256":  "a234395ba4cac3faa002a84ede9db6c1a2ab255cfbcd34612ec3b5493484c01a"
+                                        },
+                                        {
+                                            "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-cast-api-pointers.json",
+                                            "bytes":  3605,
+                                            "sha256":  "7c1d1aa82425d5430e3494259fea582ee12b3b7354c77eee0068d859cc7db3cd"
+                                        },
+                                        {
+                                            "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-cast-unitcastinginfo.json",
+                                            "bytes":  9920,
+                                            "sha256":  "c1fb7e8c35e7f421ac35f6585d559f17edc31d71c0d951ec90447c918130d459"
+                                        },
+                                        {
+                                            "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-cast-unitchannelinfo.json",
+                                            "bytes":  6055,
+                                            "sha256":  "c65c20bb6d3484accaa80e6d0e1d2cc941e542361490b4e39b82a1daf9db85ad"
+                                        },
+                                        {
+                                            "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-cast-interruptibility-helper.json",
+                                            "bytes":  3018,
+                                            "sha256":  "906181b0a1eda7fc325bbf2cf04ed7b4e419203f5e994554744db4fdde6b9c2a"
+                                        },
+                                        {
+                                            "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-cast-lua-number-push.json",
+                                            "bytes":  2683,
+                                            "sha256":  "ee0f62b002bb4841e462b27f0a9c73625a9ae58e38275f6762d749efbadfc40b"
+                                        },
+                                        {
+                                            "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-cast-stopcasting.json",
+                                            "bytes":  3704,
+                                            "sha256":  "2fb20ff991f33fbb3ef22a3b4b1493e3ec8a03e6ce29aa7edf3bd04d978b835d"
+                                        }
+                                    ],
+                   "findings":  {
+                                    "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_CAST_NATIVE_FINDINGS_20260929.md",
+                                    "bytes":  2958,
+                                    "sha256":  "7a0c2b2bf497820adeb0a977a5a38701e2e10dfe2eca808d1e5dab787282abc4"
+                                },
+                   "native_execution":  false,
+                   "idb_mutation":  false,
+                   "limit":  "Scoped original-client static API/caller/tuple evidence. No complete native writer-lifetime, request instance or live acceptance."
+               },
+    "intermediates_and_refusals":  [
+                                       {
+                                           "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_SEARCH_REFUSAL_20260929.json",
+                                           "bytes":  1378,
+                                           "sha256":  "87920a222607452f2051f9951499c8d68ae8e8ddb40bce5aaf6ce319cb80544b"
+                                       },
+                                       {
+                                           "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_LAYOUT_RETRY_20260929.json",
+                                           "bytes":  781,
+                                           "sha256":  "ad46a85d33d6b292224906ea7a23fdcfba5319549c06f68baa4965cd37ad21d3"
+                                       },
+                                       {
+                                           "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_TEST_LAYOUT_20260929.json",
+                                           "bytes":  816,
+                                           "sha256":  "201ad450fea8b9d3be6d8b6a2251370f07c03d873adc39540fa75f75953bafe7"
+                                       },
+                                       {
+                                           "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_PAIR_VERIFIER_DIAGNOSTIC_20260929.json",
+                                           "bytes":  1272,
+                                           "sha256":  "ac01e46f02d77381ce321057eb938509de9748e538adce2a6387a1a3efb79c61"
+                                       },
+                                       {
+                                           "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_RECOVERY_PAIR_VERIFICATION_20260929.json",
+                                           "bytes":  9413,
+                                           "sha256":  "995a76659625edadf333b6e507a9043269fdd3dd99748192c001eb72047375b0"
+                                       },
+                                       {
+                                           "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_LOCAL_GATE_20260929\\summary.json",
+                                           "bytes":  565,
+                                           "sha256":  "96cee362ed870c89c7ef53d879be796255229b96b79d8a8b929b73239567c6a5"
+                                       },
+                                       {
+                                           "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_GROUNDCOMPATGREEN_20260929\\status.json",
+                                           "bytes":  3112,
+                                           "sha256":  "a3c6ed9e3e8cc963bb23afcefc2f5e180050857edfc85cc417667f333c70338f"
+                                       },
+                                       {
+                                           "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_QUESTLAYOUTGREEN_20260929\\status.json",
+                                           "bytes":  3537,
+                                           "sha256":  "d8dba46b8eeff8a951aef8d939e06d899b75b9d4f2aec5543960f84d788a6456"
+                                       },
+                                       {
+                                           "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_ROUTINE_ACTOR1_20260929\\summary.json",
+                                           "bytes":  314,
+                                           "sha256":  "a1068abc6b7c30ecfd1e354a3c4607de3fc3e54f6529c529a16425e5ea93a7d7"
+                                       },
+                                       {
+                                           "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_CASTLUARED_20260929\\status.json",
+                                           "bytes":  2358,
+                                           "sha256":  "ae8d967c4c1221399f7cde0a6cf3a5c6874d257f1c371d3fff9f83020359a232"
+                                       },
+                                       {
+                                           "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_CASTOWNERRED_20260929\\status.json",
+                                           "bytes":  847,
+                                           "sha256":  "eaaf90758de20911a861290b1bab0be3cf236fc7db02bffdc4af2f5e388a47bc"
+                                       },
+                                       {
+                                           "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_GROUNDOWNERGREEN_20260929\\status.json",
+                                           "bytes":  1993,
+                                           "sha256":  "c78b3b27a9a6c54b9c454c062d68d43353302a857c5c048e16f8cdd3aa7ad50d"
+                                       },
+                                       {
+                                           "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_GROUNDOWNERGREEN2_20260929\\status.json",
+                                           "bytes":  1994,
+                                           "sha256":  "7bb3db7a4a44a04c59d9aab621eb3aa0a5007a326d21e70bf0d1c81c892ed735"
+                                       },
+                                       {
+                                           "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_SHAREDOBSGREEN_20260929\\status.json",
+                                           "bytes":  3080,
+                                           "sha256":  "29f4c98fde01d8af1f1c9a3c9e0e18a8e11d5d83a8095ed958fe1fe110687d3b"
+                                       }
+                                   ],
+    "requirement_map":  {
+                            "retained_map":  {
+                                                 "path":  "D:\\Dev\\CopilotBuddy-PR51\\docs\\audit\\2026-09-28\\W110_CONTINUOUS_REQUIREMENT_MAP.md",
+                                                 "bytes":  25623,
+                                                 "sha256":  "19dbfab548aad29dc750b66e1bf8150f0a7666e105f56c90abc79e09b80e0516"
+                                             },
+                            "row_count":  55,
+                            "ids":  [
+                                        "C01",
+                                        "C02",
+                                        "C03",
+                                        "C04",
+                                        "C05",
+                                        "C06",
+                                        "C07",
+                                        "N01",
+                                        "N02",
+                                        "N03",
+                                        "N04",
+                                        "N05",
+                                        "N06",
+                                        "N07",
+                                        "N08",
+                                        "N09",
+                                        "N10",
+                                        "Q01",
+                                        "Q02",
+                                        "Q03",
+                                        "Q04",
+                                        "Q05",
+                                        "Q06",
+                                        "Q07",
+                                        "Q08",
+                                        "Q09",
+                                        "Q10",
+                                        "Q11",
+                                        "Q12",
+                                        "Q13",
+                                        "Q14",
+                                        "Q15",
+                                        "Q16",
+                                        "R01",
+                                        "R02",
+                                        "R03",
+                                        "R04",
+                                        "R05",
+                                        "R06",
+                                        "R07",
+                                        "R08",
+                                        "R09",
+                                        "R10",
+                                        "R11",
+                                        "R12",
+                                        "R13",
+                                        "S01",
+                                        "S02",
+                                        "S03",
+                                        "S04",
+                                        "S05",
+                                        "S06",
+                                        "S07",
+                                        "S08",
+                                        "S09"
+                                    ],
+                            "updated_ids":  [
+                                                "C07",
+                                                "N07",
+                                                "N08",
+                                                "Q05",
+                                                "Q12",
+                                                "R02",
+                                                "R03",
+                                                "R11",
+                                                "R13",
+                                                "S04"
+                                            ],
+                            "classes":  [
+                                            "V verified/preserved",
+                                            "R demonstrated/repaired",
+                                            "L source with acceptance limit",
+                                            "D exact external input",
+                                            "U unsupported/fail-closed"
+                                        ]
+                        },
+    "acceptance":  {
+                       "D1":  "Original-client frame/control/lifetime and atomic dispatch evidence",
+                       "D2":  "Identified server/realm scripts, multiplayer and spell/quest outcomes",
+                       "D3":  "Causal menu/cursor/cast request and original-recipient contracts",
+                       "D4":  "Versioned realm data, raw slot and admitted recipe/materializer provenance",
+                       "D5":  "Physical world/route/collision/Z/LOS/hostile-envelope and supervised movement",
+                       "D6":  "Independent review and supervised live acceptance",
+                       "DensePullIsolationValidated":  false,
+                       "supervised_live_acceptance":  false,
+                       "independent_review_complete":  false,
+                       "merge_authorized_in_this_task":  false,
+                       "numeric_preparation":  {
+                                                   "historical":  3,
+                                                   "new":  0,
+                                                   "remaining":  0
+                                               }
+                   },
+    "finish_protocol":  "No RELEASED result is predeclared. Read external W110_FINAL_PASS_FINISH_STATUS_20260929.json for actual completion-stage outcomes."
+}
