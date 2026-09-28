@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
 using System.Threading;
@@ -30,6 +31,7 @@ internal static class QuestScanEntryRegressionTests
             throw new PlatformNotSupportedException("Scan entry owner tests require Windows x86.");
         var tests = new List<(string Name, System.Action Test)>
         {
+            ("compiled vendor bridge owns the position observation", RequireVendorObservationCallChain),
             ("closed memory is unavailable at the actual world guard before identity capture", () => WithWorld((player, memory) =>
             {
                 var scheduler = Scheduler(); Seed(scheduler); CloseMemory(memory);
@@ -271,7 +273,12 @@ internal static class QuestScanEntryRegressionTests
     private static void VendorWasReached(ObservedPlayer player, Exception error)
     {
         Check(player.PositionReads == 1 && player.NameReads == 0, "failure did not precede scheduler identity capture");
-        Check(error.StackTrace?.Contains("VendorDataLoader.GetNearestVendors", StringComparison.Ordinal) == true, "actual vendor discovery is absent from the failure stack");
+        // An optimizing JIT can inline GetNearestVendors. Preserve real-owner
+        // attribution through its compiled call chain plus the observed read,
+        // not the incidental presence of an inlinable frame in a stack string.
+        RequireVendorObservationCallChain();
+        Check(error.StackTrace?.Contains("WholesomeAutoQuest.DoScan", StringComparison.Ordinal) == true,
+            "actual scan entry is absent from the failure stack");
     }
     private static void WorldUnavailable(QuestScheduler scheduler, ObservedPlayer player)
     {
@@ -284,7 +291,61 @@ internal static class QuestScanEntryRegressionTests
     {
         Exception? observed = null; try { call(); } catch (Exception error) { observed = error; }
         Check(ReferenceEquals(observed, expected), "expected exact production-propagated exception, observed " + observed);
-        Check(observed!.StackTrace?.Contains(owner, StringComparison.Ordinal) == true, "expected production owner absent from exception stack: " + observed);
+        if (owner == "VendorDataLoader.GetNearestVendors")
+            VendorWasReached((ObservedPlayer)ObjectManager.Me, observed!);
+        else
+            Check(observed!.StackTrace?.Contains(owner, StringComparison.Ordinal) == true, "expected production owner absent from exception stack: " + observed);
+    }
+
+    private static void RequireVendorObservationCallChain()
+    {
+        var bridge = typeof(VendorDataLoader).GetMethod("GetNearestVendors")!;
+        MethodBase[] bridgeCalls = Calls(bridge).ToArray();
+        int position = Array.FindIndex(bridgeCalls, m => m.Name == "get_Location");
+        int selection = Array.FindIndex(bridgeCalls, m => m.DeclaringType == typeof(VendorDataLoader) && m.Name == "SelectNearestVendors");
+        Check(position >= 0 && bridgeCalls.Count(m => m.Name == "get_Location") == 1 && selection > position,
+            "actual vendor bridge no longer owns one position read before selection");
+        var scans = typeof(WholesomeAutoQuest).GetNestedTypes(BindingFlags.Public | BindingFlags.NonPublic)
+            .SelectMany(t => t.GetMethods(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic))
+            .Where(m => m.Name.StartsWith("<DoScan>b__", StringComparison.Ordinal))
+            .Select(m => Calls(m).ToArray())
+            .Where(c => c.Any(m => m.Module == bridge.Module && m.MetadataToken == bridge.MetadataToken)).ToArray();
+        Check(scans.Length == 1, "compiled DoScan vendor call site is absent or ambiguous");
+        MethodBase[] scan = scans[0];
+        int[] vendors = scan.Select((m, index) => (m, index))
+            .Where(p => p.m.Module == bridge.Module && p.m.MetadataToken == bridge.MetadataToken).Select(p => p.index).ToArray();
+        int scheduler = Array.FindIndex(scan, m => m.DeclaringType == typeof(QuestScheduler) && m.Name == "ScanAndRefreshOwned");
+        Check(vendors.Length == 3 && scheduler > vendors[^1] && !scan.Any(m => m.Name == "get_Location"),
+            "scan bypasses the actual three vendor observations or changed their order before scheduler entry");
+    }
+
+    private static IEnumerable<MethodBase> Calls(MethodInfo method)
+    {
+        byte[] il = method.GetMethodBody()?.GetILAsByteArray() ?? throw new AssertionFailure("Compiled owner IL unavailable");
+        var opcodes = typeof(OpCodes).GetFields(BindingFlags.Public | BindingFlags.Static)
+            .Where(f => f.FieldType == typeof(OpCode)).Select(f => (OpCode)f.GetValue(null)!)
+            .ToDictionary(code => unchecked((ushort)code.Value));
+        for (int at = 0; at < il.Length;)
+        {
+            ushort value = il[at++];
+            if (value == 0xfe) value = (ushort)(0xfe00 | il[at++]);
+            OpCode code = opcodes[value];
+            int bytes = code.OperandType switch
+            {
+                OperandType.InlineNone => 0,
+                OperandType.ShortInlineBrTarget or OperandType.ShortInlineI or OperandType.ShortInlineVar => 1,
+                OperandType.InlineVar => 2,
+                OperandType.InlineI8 or OperandType.InlineR => 8,
+                OperandType.InlineSwitch => checked(4 + 4 * BitConverter.ToInt32(il, at)),
+                _ => 4
+            };
+            Check(at + bytes <= il.Length, "Truncated compiled owner operand");
+            if (code.OperandType == OperandType.InlineMethod)
+                yield return method.Module.ResolveMethod(BitConverter.ToInt32(il, at),
+                    method.DeclaringType?.GetGenericArguments(), method.GetGenericArguments())
+                    ?? throw new AssertionFailure("Unresolved compiled call target");
+            at += bytes;
+        }
     }
     private static object? Invoke(object owner, string method, params object[] arguments)
     {

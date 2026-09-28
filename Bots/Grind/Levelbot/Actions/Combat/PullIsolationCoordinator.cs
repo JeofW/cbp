@@ -31,6 +31,13 @@ namespace Levelbot.Actions.Combat
     /// </summary>
     public static class PullIsolationCoordinator
     {
+        // A routine's ranged spell capability is not physical route acceptance.
+        // Keep this gate at the world/movement owner as well as in Singular.
+        // Enabling requires an actor/control/target-bound plan and current route,
+        // collision/Z/LOS/hostile-envelope/safer-anchor evidence at each dispatch;
+        // the retained geometric helpers below do not establish those contracts.
+        private static readonly bool DensePullIsolationValidated = false;
+
         private const float SocialRadius = 10f;
         private const float AggroPadding = 2f;
         private const float RetreatDistance = 10f;
@@ -144,6 +151,8 @@ namespace Levelbot.Actions.Combat
 
         private static RunStatus TickPreCombat(object context)
         {
+            if (!DensePullIsolationValidated)
+                return RunStatus.Failure;
             LocalPlayer me = StyxWoW.Me;
             if (me == null || !me.IsValid || !me.IsAlive)
             {
@@ -253,6 +262,8 @@ namespace Levelbot.Actions.Combat
 
         private static RunStatus ContinueApproachAndOpen(object context, LocalPlayer me, WoWUnit target)
         {
+            if (!DensePullIsolationValidated)
+                return RunStatus.Failure;
             if (_plan == null || !OwnsTarget(target))
                 return RunStatus.Failure;
 
@@ -311,6 +322,8 @@ namespace Levelbot.Actions.Combat
 
         private static RunStatus TickRetreat(object context)
         {
+            if (!DensePullIsolationValidated)
+                return RunStatus.Failure;
             PullPlan plan = _plan;
             LocalPlayer me = StyxWoW.Me;
             if (plan == null || me == null || !me.IsValid || !me.IsAlive)
@@ -477,6 +490,9 @@ namespace Levelbot.Actions.Combat
             ulong targetGuid,
             IReadOnlyList<PullIsolationObservation> observations)
         {
+            // Reachability and straight-line spacing are not supervised safety.
+            if (!DensePullIsolationValidated)
+                return false;
             if (!IsFinitePoint(from) || !IsFinitePoint(to))
                 return false;
 
@@ -540,6 +556,8 @@ namespace Levelbot.Actions.Combat
 
         private static RunStatus RejectCurrentTarget(object context, WoWUnit target, string reason)
         {
+            if (!DensePullIsolationValidated)
+                return RunStatus.Failure;
             if (target != null && target.Guid != 0)
             {
                 Logging.Write("[PullIsolation] Deferring {0}: {1}.", target.Name, reason);
@@ -557,6 +575,10 @@ namespace Levelbot.Actions.Combat
         {
             PullPlan prior = _plan;
             _plan = null;
+            // With no admitted isolation execution, cleanup owns no opener or
+            // movement. Detach stale local state without commanding newer work.
+            if (!DensePullIsolationValidated)
+                return;
             if (prior?.OpenerStarted == true && prior.Opener != null)
             {
                 try { prior.Opener.Stop(context); }

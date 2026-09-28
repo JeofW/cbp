@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+using System;
+using System.Drawing;
 using System.Linq;
 using CommonBehaviors.Actions;
 using Singular.Settings;
@@ -24,160 +25,132 @@ namespace Singular.Helpers
         /// <returns></returns>
         public static Composite EnsureTarget()
         {
-            return
-                new Decorator(
-                    ret => !SingularSettings.Instance.DisableAllTargeting,
-                    new PrioritySelector(
-                        new Decorator(
-                // DisableTankTargeting is a user-setting. NeedTankTargeting is an internal one. Make sure both are turned on.
-                            ret => !SingularSettings.Instance.DisableTankTargetSwitching && Group.MeIsTank &&
-                                   TankManager.TargetingTimer.IsFinished && StyxWoW.Me.Combat && TankManager.Instance.FirstUnit != null &&
-                                   TankManager.Instance.FirstUnit.IsEligibleDungeonCombatTarget() &&
-                                   (StyxWoW.Me.CurrentTarget == null || StyxWoW.Me.CurrentTarget != TankManager.Instance.FirstUnit),
-                            new Sequence(
-                                new Action(
-                                    ret =>
-                                    {
-                                        Logger.WriteDebug("Targeting first unit of TankTargeting");
-                                        TankManager.Instance.FirstUnit.Target();
-                                    }),
-                                    Helpers.Common.CreateWaitForLagDuration(),
-                                    new Action(ret => TankManager.TargetingTimer.Reset()))),
+            WoWUnit actor = null, displayed = null;
+            ulong actorGuid = 0, displayedGuid = 0;
+            SingularSettings settings = null;
+            bool tank = false, disableTankSwitching = false;
+            bool Current() => actorGuid != 0 && actor != null && actor.IsValid && actor.IsAlive
+                && actor.Guid == actorGuid && ReferenceEquals(actor, StyxWoW.Me)
+                && ReferenceEquals(settings, SingularSettings.Instance) && !settings.DisableAllTargeting
+                && settings.DisableTankTargetSwitching == disableTankSwitching && Group.MeIsTank == tank;
+            bool SameDisplay() => Current() && ReferenceEquals(actor.CurrentTarget, displayed)
+                && (actor.CurrentTarget?.Guid ?? 0) == displayedGuid && Current();
 
-                        new PrioritySelector(
-                            ctx =>
-                            {
-                                // We are making sure we have the proper target in all cases here.
+            WoWUnit Preferred()
+            {
+                if (!Current() || tank && !disableTankSwitching) return null;
+                var target = actor.CurrentTarget;
+                if (target == null || target.Dead) return null;
+                // A stun or an absent victim target does not invalidate an engaged enemy.
+                if ((target.Combat || target.Aggro) && target.IsEligibleDungeonCombatTarget()) return null;
+                if (BotPoi.Current.Type == PoiType.Kill)
+                {
+                    var unit = BotPoi.Current.AsObject as WoWUnit;
+                    if (unit != null && unit.IsEligibleDungeonCombatTarget() && actor.CurrentTarget != unit)
+                        return unit;
+                }
+                var first = Targeting.Instance.FirstUnit;
+                return first != null && first.IsEligibleDungeonCombatTarget() && actor.CurrentTarget != first ? first : null;
+            }
 
-                                // No target switching for tanks. They check for their own stuff above.
-                                if (Group.MeIsTank && !SingularSettings.Instance.DisableTankTargetSwitching)
-                                    return null;
+            WoWUnit Recovery()
+            {
+                if (!Current()) return null;
+                var leader = RaFHelper.Leader;
+                var leaderTarget = leader?.CurrentTarget;
+                if (leader != null && leader.IsValid && !leader.IsMe && leader.Combat
+                    && leaderTarget != null && leaderTarget.IsAlive
+                    && leaderTarget.IsEligibleDungeonCombatTarget() && !Blacklist.Contains(leaderTarget))
+                    return leaderTarget;
+                if (BotPoi.Current.Type == PoiType.Kill)
+                {
+                    var unit = BotPoi.Current.AsObject as WoWUnit;
+                    if (unit != null && unit.IsAlive && !unit.IsMe
+                        && unit.IsEligibleDungeonCombatTarget() && !Blacklist.Contains(unit)) return unit;
+                }
+                var first = Targeting.Instance.FirstUnit;
+                if (first != null && first.IsAlive && !first.IsMe && first.Combat
+                    && first.IsEligibleDungeonCombatTarget() && !Blacklist.Contains(first)) return first;
+                float range = DungeonEngagementPolicy.GetFallbackRange(Unit.IsDungeonCombatBotTargetingRestricted);
+                return ObjectManager.GetObjectsOfType<WoWUnit>(false, false)
+                    .Where(unit => unit != null && !Blacklist.Contains(unit) && unit.IsHostile
+                        && !unit.IsOnTransport && !unit.Dead && !unit.Mounted
+                        && unit.DistanceSqr <= range * range && unit.Combat && unit.IsEligibleDungeonCombatTarget())
+                    .OrderBy(unit => unit.DistanceSqr).FirstOrDefault();
+            }
 
-                                // Go below if current target is null or dead. We have other checks to deal with that
-                                if (StyxWoW.Me.CurrentTarget == null || StyxWoW.Me.CurrentTarget.Dead)
-                                    return null;
+            Composite Switch(Func<WoWUnit> select, string message, bool tankSwitch, bool fallThrough)
+            {
+                WoWUnit selected = null;
+                ulong selectedGuid = 0;
+                object timer = null;
+                bool ParticipantCurrent() => Current() && selectedGuid != 0 && selected != null
+                    && selected.IsValid && selected.IsAlive && !selected.IsMe && selected.Guid == selectedGuid
+                    && selected.IsEligibleDungeonCombatTarget() && Current();
+                bool CanSubmit() => ParticipantCurrent() && SameDisplay()
+                    && ReferenceEquals(select(), selected) && ParticipantCurrent() && SameDisplay();
+                bool Acknowledged() => ParticipantCurrent() && ReferenceEquals(actor.CurrentTarget, selected)
+                    && actor.CurrentTargetGuid == selectedGuid && ParticipantCurrent();
+                return new Sequence(
+                    new Action(ret =>
+                    {
+                        selected = null; selectedGuid = 0;
+                        if (!SameDisplay()) return RunStatus.Failure;
+                        selected = select(); selectedGuid = selected?.Guid ?? 0;
+                        timer = TankManager.TargetingTimer;
+                        return CanSubmit() ? RunStatus.Success : RunStatus.Failure;
+                    }),
+                    new Action(ret => Logger.Write(Color.Orange, message + selected.SafeName() + "!")),
+                    new Action(ret =>
+                    {
+                        // Diagnostics and selectors can replace the actor or selection.
+                        if (!CanSubmit()) return RunStatus.Failure;
+                        selected.Target();
+                        return ParticipantCurrent() ? RunStatus.Success : RunStatus.Failure;
+                    }),
+                    new WaitContinue(2,
+                        ret => !ParticipantCurrent() || !SameDisplay() || Acknowledged(),
+                        new ActionAlwaysSucceed()),
+                    // WaitContinue reports timeout as success. Require actual selection.
+                    new Action(ret => Acknowledged() ? RunStatus.Success : RunStatus.Failure),
+                    tankSwitch ? Helpers.Common.CreateWaitForLagDuration() : new ActionAlwaysSucceed(),
+                    new Action(ret =>
+                    {
+                        if (!Acknowledged()) return RunStatus.Failure;
+                        if (tankSwitch)
+                        {
+                            if (!ReferenceEquals(timer, TankManager.TargetingTimer)) return RunStatus.Failure;
+                            TankManager.TargetingTimer.Reset();
+                        }
+                        return fallThrough ? RunStatus.Failure : RunStatus.Success;
+                    }));
+            }
 
-                                // If the current target is in combat or has aggro towards us, it should be a valid target.
-                                if ((StyxWoW.Me.CurrentTarget.Combat || StyxWoW.Me.CurrentTarget.Aggro) &&
-                                    StyxWoW.Me.CurrentTarget.IsEligibleDungeonCombatTarget())
-                                    return null;
-
-                                // Check botpoi first and make sure our target is set to POI's object.
-                                if (BotPoi.Current.Type == PoiType.Kill)
-                                {
-                                    var obj = BotPoi.Current.AsObject;
-                                    var poiUnit = obj as WoWUnit;
-
-                                    if (poiUnit != null && poiUnit.IsEligibleDungeonCombatTarget())
-                                    {
-                                        if (StyxWoW.Me.CurrentTarget != obj)
-                                            return poiUnit;
-                                    }
-                                }
-
-                                // Make sure we have the proper target from Targeting. 
-                                // The Botbase should give us the best target in targeting.
-                                var firstUnit = Targeting.Instance.FirstUnit;
-
-                                if (firstUnit != null && firstUnit.IsEligibleDungeonCombatTarget())
-                                {
-                                    if (StyxWoW.Me.CurrentTarget != firstUnit)
-                                        return firstUnit;
-                                }
-
-                                return null;
-                            },
-                            new Decorator(
-                                ret => ret != null,
-                                new Sequence(
-                                    new Action(ret => Logger.Write(Color.Orange, "Current target is not the best target. Switching to " + ((WoWUnit)ret).SafeName() + "!")),
-                                    new Action(ret => ((WoWUnit)ret).Target()),
-                                    new WaitContinue(
-                                        2,
-                                        ret => StyxWoW.Me.CurrentTarget != null &&
-                                                StyxWoW.Me.CurrentTarget == (WoWUnit)ret,
-                                        new ActionAlwaysSucceed()),
-                                    // Singular 6.x.x fix: fall through to spell priority after switching
-                                    new ActionAlwaysFail()))),
-                        new Decorator(
-                            ret => StyxWoW.Me.CurrentTarget == null || StyxWoW.Me.CurrentTarget.Dead ||
-                                   !StyxWoW.Me.CurrentTarget.IsEligibleDungeonCombatTarget(),
-                            new PrioritySelector(
-                                ctx =>
-                                {
-                                    // If we have a RaF leader, then use its target.
-                                    var rafLeader = RaFHelper.Leader;
-                                    if (rafLeader != null && rafLeader.IsValid && !rafLeader.IsMe && rafLeader.Combat &&
-                                        rafLeader.CurrentTarget != null && rafLeader.CurrentTarget.IsAlive &&
-                                        rafLeader.CurrentTarget.IsEligibleDungeonCombatTarget() && !Blacklist.Contains(rafLeader.CurrentTarget))
-                                    {
-                                        return rafLeader.CurrentTarget;
-                                    }
-
-                                    // Check bot poi.
-                                    if (BotPoi.Current.Type == PoiType.Kill)
-                                    {
-                                        var unit = BotPoi.Current.AsObject as WoWUnit;
-
-                                        if (unit != null && unit.IsAlive && !unit.IsMe &&
-                                            unit.IsEligibleDungeonCombatTarget() && !Blacklist.Contains(unit))
-                                        {
-                                            return unit;
-                                        }
-                                    }
-
-                                    // Does the target list have anything in it? And is the unit in combat?
-                                    // Make sure we only check target combat, if we're NOT in a BG. (Inside BGs, all targets are valid!!)
-                                    var firstUnit = Targeting.Instance.FirstUnit;
-                                    if (firstUnit != null && firstUnit.IsAlive && !firstUnit.IsMe && firstUnit.Combat &&
-                                        firstUnit.IsEligibleDungeonCombatTarget() &&
-                                        !Blacklist.Contains(firstUnit))
-                                    {
-                                        return firstUnit;
-                                    }
-
-                                    // Cache this query, since we'll be using it for 2 checks. No need to re-query it.
-                                    float fallbackRange = DungeonEngagementPolicy.GetFallbackRange(
-                                        Unit.IsDungeonCombatBotTargetingRestricted);
-                                    var agroMob =
-                                        ObjectManager.GetObjectsOfType<WoWUnit>(false, false).
-                                            Where(p => !Blacklist.Contains(p) && p.IsHostile && !p.IsOnTransport && !p.Dead &&
-                                                        !p.Mounted && p.DistanceSqr <= fallbackRange * fallbackRange && p.Combat &&
-                                                        p.IsEligibleDungeonCombatTarget()).
-                                            OrderBy(u => u.DistanceSqr).
-                                            FirstOrDefault();
-
-                                    if (agroMob != null)
-                                    {
-                                        // Return the closest one to us
-                                        return agroMob;
-                                    }
-
-                                    // And there's nothing left, so just return null, kthx.
-                                    return null;
-                                },
-                // Make sure the target is VALID. If not, then ignore this next part. (Resolves some silly issues!)
-                                new Decorator(
-                                    ret => ret != null,
-                                    new Sequence(
-                                        new Action(ret => Logger.Write(Color.Orange, "Currect target is invalid. Switching to " + ((WoWUnit)ret).SafeName() + "!")),
-                                        new Action(ret => ((WoWUnit)ret).Target()),
-                                        new WaitContinue(
-                                            2,
-                                            ret => StyxWoW.Me.CurrentTarget != null &&
-                                                   StyxWoW.Me.CurrentTarget == (WoWUnit)ret,
-                                            new ActionAlwaysSucceed()))),
-                                // Singular 6.x.x fix: ActionAlwaysFail instead of ActionAlwaysSucceed
-                                // so that when no valid target is found, the behavior tree falls through
-                                // to LootBehavior instead of blocking it with a Success return.
-                                new ActionAlwaysFail())),
-                        // Keep a manually selected, unengaged dungeon target selected, but do not let
-                        // the routine attack it. Once the player initiates, the engagement signals turn true.
-                        new Decorator(
-                            ret => Unit.IsDungeonCombatBotTargetingRestricted &&
-                                   StyxWoW.Me.CurrentTarget != null &&
-                                   !StyxWoW.Me.CurrentTarget.IsEligibleDungeonCombatTarget(),
-                            new ActionAlwaysSucceed())));
+            return new Sequence(
+                new Action(ret =>
+                {
+                    actor = StyxWoW.Me; actorGuid = actor?.Guid ?? 0;
+                    settings = SingularSettings.Instance;
+                    tank = Group.MeIsTank; disableTankSwitching = settings.DisableTankTargetSwitching;
+                    displayed = actor?.CurrentTarget; displayedGuid = displayed?.Guid ?? 0;
+                    return Current() ? RunStatus.Success : RunStatus.Failure;
+                }),
+                new PrioritySelector(
+                    new Decorator(ret => Current() && tank && !disableTankSwitching
+                        && TankManager.TargetingTimer.IsFinished && actor.Combat
+                        && TankManager.Instance.FirstUnit != null
+                        && TankManager.Instance.FirstUnit.IsEligibleDungeonCombatTarget()
+                        && actor.CurrentTarget != TankManager.Instance.FirstUnit,
+                        Switch(() => TankManager.Instance.FirstUnit, "Targeting first unit of TankTargeting: ", true, false)),
+                    // Successful preferred selection still falls through to spell priority.
+                    Switch(Preferred, "Current target is not the best target. Switching to ", false, true),
+                    new Decorator(ret => Current() && (actor.CurrentTarget == null || actor.CurrentTarget.Dead
+                        || !actor.CurrentTarget.IsEligibleDungeonCombatTarget()),
+                        Switch(Recovery, "Current target is invalid. Switching to ", false, false)),
+                    // Preserve the manual unengaged dungeon target without attacking it.
+                    new Decorator(ret => Current() && Unit.IsDungeonCombatBotTargetingRestricted
+                        && actor.CurrentTarget != null && !actor.CurrentTarget.IsEligibleDungeonCombatTarget(),
+                        new ActionAlwaysSucceed())));
         }
     }
 }
