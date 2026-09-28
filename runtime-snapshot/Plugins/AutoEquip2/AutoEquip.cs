@@ -121,7 +121,23 @@ namespace Styx.Bot.Plugins.AutoEquip2
         {
             try
             {
-                if (!TreeRoot.IsRunning || StyxWoW.Me.Combat || StyxWoW.Me.Dead || StyxWoW.Me.IsGhost)
+                if (!CanEquipNow() || TreeRoot.IsPaused || !StyxWoW.IsInWorld || HasPendingEquip ||
+                    !AutoEquipSettings.Instance.AutoEquipItems || AutoEquipSettings.Instance.ProtectedSlots == null ||
+                    AutoEquipSettings.Instance.ProtectedSlots.Contains(InventorySlot.AmmoSlot))
+                    return;
+
+                var player = ObjectManager.Me;
+                if (player == null || player.Guid == 0)
+                    return;
+                ulong playerGuid = player.Guid;
+
+                // The cursor query crosses a client boundary. Recheck the same
+                // actor and current permissions before the separate ammo request.
+                // This is admission, not a physical-copy or server acknowledgement.
+                if (CursorHasAnyItem() || !ReferenceEquals(ObjectManager.Me, player) || player.Guid != playerGuid ||
+                    !CanEquipNow() || TreeRoot.IsPaused || !StyxWoW.IsInWorld || HasPendingEquip ||
+                    !AutoEquipSettings.Instance.AutoEquipItems || AutoEquipSettings.Instance.ProtectedSlots == null ||
+                    AutoEquipSettings.Instance.ProtectedSlots.Contains(InventorySlot.AmmoSlot))
                     return;
 
                 // Everything in Lua: check ammo slot, scan bags, equip
@@ -247,7 +263,7 @@ namespace Styx.Bot.Plugins.AutoEquip2
 
             string rollId = e.Args[0].ToString();
             string itemLink = Lua.GetReturnVal<string>("return GetLootRollItemLink(" + rollId + ")", 0);
-            string[] splitted = itemLink.Split(':');
+            string[] splitted = (itemLink ?? string.Empty).Split(':');
 
             uint itemId;
             if (string.IsNullOrEmpty(itemLink) || (splitted.Length == 0 || splitted.Length < 2) || (!uint.TryParse(splitted[1], out itemId) || itemId == 0))
@@ -514,23 +530,23 @@ namespace Styx.Bot.Plugins.AutoEquip2
             float lowestEquippedItemScore = float.MaxValue;
             foreach (InventorySlot inventorySlot in equipSlots)
             {
-                WoWItem equippedItem = EquippedItems[inventorySlot];
-                if (equippedItem == null)
-                {
-                    lowestItemScore = float.MinValue;
-                    return inventorySlot;
-                }
-
                 if (AutoEquipSettings.Instance.ProtectedSlots.Contains(inventorySlot))
                 {
                     //LogDebug("I'm not equipping into equipment slot {0} as it is protected", inventorySlot);
                     continue;
                 }
 
-                if (!EquippedItems.ContainsKey(inventorySlot))
+                WoWItem equippedItem;
+                if (!EquippedItems.TryGetValue(inventorySlot, out equippedItem))
                 {
                     Log(true, "InventorySlot {0} is unknown! Please report this to MaiN.", inventorySlot);
                     continue;
+                }
+
+                if (equippedItem == null)
+                {
+                    lowestItemScore = float.MinValue;
+                    return inventorySlot;
                 }
 
                 if (!AutoEquipSettings.Instance.ReplaceHeirlooms && equippedItem.Quality == WoWItemQuality.Heirloom)
