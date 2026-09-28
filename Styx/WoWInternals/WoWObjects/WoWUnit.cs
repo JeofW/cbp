@@ -2104,23 +2104,26 @@ namespace Styx.WoWInternals.WoWObjects
                 return new WoWAuraCollection(0);
 
             uint auraBase = BaseAddress + 3152;
-            int auraCount = wow.Read<int>(BaseAddress + 3536);
+            var countBytes = wow.ReadBytes(BaseAddress + 3536, 4);
+            if (countBytes == null || countBytes.Length != 4)
+                return UnavailableAuraObservation("Could not completely observe the client aura count.");
+            int auraCount = BitConverter.ToInt32(countBytes, 0);
 
             // Dynamic auras
             if (auraCount == -1)
             {
-                auraBase = wow.Read<uint>(BaseAddress + 3160);
-                auraCount = wow.Read<int>(BaseAddress + 3156);
+                var pointerBytes = wow.ReadBytes(BaseAddress + 3160, 4);
+                var dynamicCountBytes = wow.ReadBytes(BaseAddress + 3156, 4);
+                if (pointerBytes == null || pointerBytes.Length != 4 ||
+                    dynamicCountBytes == null || dynamicCountBytes.Length != 4)
+                    return UnavailableAuraObservation("Could not completely observe the dynamic client aura header.");
+                auraBase = BitConverter.ToUInt32(pointerBytes, 0);
+                auraCount = BitConverter.ToInt32(dynamicCountBytes, 0);
             }
 
             if (!IsPlausibleAuraCount(auraCount))
             {
-                // A disappearing/non-world object has no authoritative aura set.
-                // During an otherwise valid world observation, do not reinterpret
-                // corrupt memory as "no auras": callers must fail closed instead.
-                if (!StyxWoW.IsInGame || !IsValid)
-                    return new WoWAuraCollection(0);
-                throw new InvalidOperationException(
+                return UnavailableAuraObservation(
                     $"Observed implausible client aura count {auraCount}.");
             }
 
@@ -2128,7 +2131,11 @@ namespace Styx.WoWInternals.WoWObjects
 
             fixed (WoWAura.AuraInfo* ptr = auraInfos)
             {
-                wow.ReadBytes(auraBase, (void*)ptr, 24 * auraCount);
+                // Preserve the existing uncached bulk read, but not its void
+                // wrapper: unavailable/partial bytes are not absent coverage.
+                int expectedBytes = 24 * auraCount;
+                if (wow.ReadRawMemory(wow.ProcessHandle, auraBase, new IntPtr(ptr), expectedBytes) != expectedBytes)
+                    return UnavailableAuraObservation("Could not completely observe the client aura records.");
             }
 
             WoWAuraCollection collection = new WoWAuraCollection(auraCount);
@@ -2140,6 +2147,15 @@ namespace Styx.WoWInternals.WoWObjects
             }
 
             return collection;
+        }
+
+        private WoWAuraCollection UnavailableAuraObservation(string message)
+        {
+            // Preserve the old disappearing/non-world-object disposition while
+            // rejecting unavailable coverage in an otherwise valid world.
+            if (!StyxWoW.IsInGame || !IsValid)
+                return new WoWAuraCollection(0);
+            throw new InvalidOperationException(message);
         }
 
         #endregion
