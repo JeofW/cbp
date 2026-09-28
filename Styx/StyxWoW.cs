@@ -86,7 +86,12 @@ namespace Styx
             {
                 try
                 {
-                    return (GameState)ObjectManager.Wow.Read<uint>(0x00B6AA38);
+                    // Generic Read<uint> maps failed byte reads to zero, which
+                    // is also a valid state. Require a complete observation.
+                    var bytes = ObjectManager.Wow.ReadBytes(0x00B6AA38, 4);
+                    if (bytes == null || bytes.Length != 4)
+                        return GameState.Unknown;
+                    return (GameState)BitConverter.ToUInt32(bytes, 0);
                 }
                 catch
                 {
