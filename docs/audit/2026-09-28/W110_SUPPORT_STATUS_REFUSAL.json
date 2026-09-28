@@ -1,0 +1,25 @@
+{
+  "date": "2026-09-28",
+  "task": "W110 new support-action behavioral baseline status enumeration",
+  "tool": "Chat_On_Steroids_Core.exec_command",
+  "arguments": {
+    "cmd": "gh run list --repo JeofW/cbp --commit f1f0d6859c5b536954e5eca3b546be46ecf5a892 --limit 10 --json databaseId,name,status,conclusion,headSha",
+    "workdir": "/dev/CopilotBuddy-PR51",
+    "yield_time_ms": 10000
+  },
+  "error": "This tool call was blocked by OpenAI because we couldn't determine the safety status of the request.",
+  "returned_session_id": null,
+  "returned_result": null,
+  "execution_or_current_conclusion_verified": false,
+  "retried": false,
+  "fragmented_or_rerouted": false,
+  "last_successful_observation": {
+    "session": 82674,
+    "integrated_run": 36373128910,
+    "integrated_status": "in_progress",
+    "host_run": 36373128944,
+    "host_status": "completed",
+    "host_conclusion": "success"
+  },
+  "boundary": "Stop this status/conclusion enumeration and do not reconstruct its fields through other run/jobs requests. Independently required source-bound artifact contents are a different verification obligation and must never be described as execution or recovery of this refused transaction. Do not use the all-in-one retention helper that queries run/jobs for this integrated run. No production repair is authorized without actual behavioral-red evidence."
+}
