@@ -2193,6 +2193,12 @@ namespace Styx.WoWInternals.WoWObjects
                 WoWAura aura = new WoWAura(auraInfos[i]);
                 if (aura.Spell != null)
                     collection.Add(aura);
+                else if (aura.SpellId != 0 && aura.IsActive)
+                    // Flags prove that an effect exists even when its localized
+                    // metadata is unavailable. Dropping it would falsely authorize
+                    // absent-buff or safe-dispel decisions from a partial collection.
+                    return UnavailableAuraObservation(
+                        $"Could not resolve metadata for active aura {aura.SpellId}.");
             }
 
             return collection;

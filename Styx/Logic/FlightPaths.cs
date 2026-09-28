@@ -788,15 +788,42 @@ namespace Styx.Logic
         /// </summary>
         private static void HandleTaxiMapOpened(object sender, LuaEventArgs e)
         {
+            var player = StyxWoW.Me;
+            var settings = CharacterSettings.Instance;
+            var poi = BotPoi.Current;
+            var reason = Reason;
+            // Rejected events own neither the map nor unrelated navigation work.
+            // Keep this admission outside the cleanup region. Learning is also
+            // legitimate when automatic taxi use is disabled.
+            bool enabled = reason == FlightPathReason.Use
+                ? settings?.UseFlightPaths == true
+                : (reason == FlightPathReason.Learn || reason == FlightPathReason.Update)
+                    && (settings?.UseFlightPaths == true || settings?.LearnFlightPaths == true);
+            if (!enabled || poi == null || poi.Type != PoiType.Fly || player == null
+                || !player.IsValid || !player.IsAlive || player.Guid == 0)
+                return;
+
+            var observation = new FlightContextObservation();
+            var network = XmlNodes;
+            uint entry = poi.Entry;
+            ulong guid = poi.Guid;
+            string originName = TakingPathFrom?.Name;
+            string destinationName = TakingPathTo?.Name;
+            bool CanContinue() => observation.IsCurrent() && ReferenceEquals(StyxWoW.Me, player)
+                && player.IsValid && player.IsAlive && ReferenceEquals(XmlNodes, network) && network != null
+                && ReferenceEquals(BotPoi.Current, poi) && poi.Type == PoiType.Fly
+                && poi.Entry == entry && poi.Guid == guid
+                && TakingPathFrom?.Name == originName && TakingPathTo?.Name == destinationName;
+            if (!CanContinue()) return;
+
             try
             {
-                if (!CharacterSettings.Instance.UseFlightPaths || BotPoi.Current.Type != PoiType.Fly)
-                    return;
-
                 Logging.Write("TaxiMap opened — updating known nodes list.");
+                if (!CanContinue()) return;
 
                 // dword_C0D7EC (0xC0D7EC) — verified via IDA, CGTaxiMap__TaxiNodeType. No Lua needed.
                 var currentDbc = TaxiNodeInfo.GetCurrent();
+                if (!CanContinue()) return;
                 if (currentDbc == null || !currentDbc.IsValid || string.IsNullOrEmpty(currentDbc.Name))
                 {
                     Logging.WriteDebug("HandleTaxiMapOpened: Could not read current taxi node from CGTaxiMap (dword_C0D7EC).");
@@ -804,21 +831,23 @@ namespace Styx.Logic
                 }
 
                 string currentNodeName = currentDbc.Name;
-                WoWPoint currentLocation = currentDbc.Location != WoWPoint.Empty ? currentDbc.Location : StyxWoW.Me.Location;
+                WoWPoint currentLocation = currentDbc.Location != WoWPoint.Empty ? currentDbc.Location : player.Location;
+                if (!CanContinue()) return;
 
                 // Insert or update the current node record.
                 XmlFlightNode currentNode = FindNodeByName(currentNodeName);
                 if (currentNode == null)
                 {
                     currentNode = new XmlFlightNode(
-                        BotPoi.Current.Entry, StyxWoW.Me.Level,
-                        currentNodeName, StyxWoW.Me.MapId, currentLocation);
+                        entry, player.Level,
+                        currentNodeName, player.MapId, currentLocation);
+                    if (!CanContinue()) return;
                     XmlNodes.Add(currentNode);
                 }
                 else
                 {
-                    currentNode.MasterEntry = BotPoi.Current.Entry;
-                    currentNode.UpdateLevel = StyxWoW.Me.Level;
+                    currentNode.MasterEntry = entry;
+                    currentNode.UpdateLevel = player.Level;
                     if (currentNode.Location == WoWPoint.Empty)
                         currentNode.Location = currentLocation;
                 }
@@ -826,12 +855,16 @@ namespace Styx.Logic
                 // Reachability still uses TaxiFrame Lua nodes (frameNodes[i].Reachable),
                 // exactly as HB does with TaxiFrame.Instance.Nodes[(int)num].Reachable.
                 var frameNodes = TaxiFrame.Instance?.Nodes;
+                if (!CanContinue()) return;
                 uint nodeCount = TaxiNodeInfo.GetNodeCount();
+                if (!CanContinue()) return;
                 for (uint i = 0; i < nodeCount; i++)
                 {
                     try
                     {
+                        if (!CanContinue()) return;
                         var nodeDbc = TaxiNodeInfo.GetByTableIndex(i);
+                        if (!CanContinue()) return;
                         if (nodeDbc == null || !nodeDbc.IsValid || string.IsNullOrEmpty(nodeDbc.Name))
                             continue;
 
@@ -843,10 +876,12 @@ namespace Styx.Logic
                         {
                             xmlNode = new XmlFlightNode(nodeDbc.Name, (uint)nodeDbc.MapId,
                                 nodeDbc.Location != WoWPoint.Empty ? nodeDbc.Location : WoWPoint.Empty);
+                            if (!CanContinue()) return;
                             XmlNodes.Add(xmlNode);
                         }
 
                         bool reachable = frameNodes != null && (int)i < frameNodes.Count && frameNodes[(int)i].Reachable;
+                        if (!CanContinue()) return;
                         if (reachable)
                         {
                             currentNode.Connect(xmlNode.Name);
@@ -859,18 +894,18 @@ namespace Styx.Logic
                     }
                 }
 
+                if (!CanContinue()) return;
                 SaveToXml();
+                if (!CanContinue()) return;
 
-                if (Reason == FlightPathReason.Use && TakingPathTo != null)
+                if (reason == FlightPathReason.Use && destinationName != null)
                 {
-                    Logging.Write("Taking flight path to {0} from {1}", TakingPathTo.Name, TakingPathFrom?.Name ?? StyxWoW.Me.Location.ToString());
-                    var target = frameNodes?.FirstOrDefault(n => n.Name == TakingPathTo.Name);
-                    target?.TakeNode();
-                    StyxWoW.SleepForLagDuration();
-                }
-                else
-                {
-                    BotPoi.Clear("Learned/Updated Flight Path Information");
+                    Logging.Write("Taking flight path to {0} from {1}", destinationName, originName ?? player.Location.ToString());
+                    if (!CanContinue()) return;
+                    var target = frameNodes?.FirstOrDefault(n => n.Name == destinationName);
+                    if (!CanContinue() || target == null || !target.Reachable || !CanContinue()) return;
+                    target.TakeNode();
+                    if (CanContinue()) StyxWoW.SleepForLagDuration();
                 }
             }
             catch (Exception ex)
@@ -879,9 +914,15 @@ namespace Styx.Logic
             }
             finally
             {
-                TaxiFrame.Instance?.Hide();
-                if (BotPoi.Current.Type != PoiType.None && Reason != FlightPathReason.Use)
-                    BotPoi.Clear("HandleTaxiMapOpened");
+                // Closing the frame can itself deliver callbacks. Recheck before
+                // clearing only the admitted learning/update work. This is managed
+                // continuity, not proof of causal native menu/request ownership.
+                if (CanContinue())
+                {
+                    TaxiFrame.Instance?.Hide();
+                    if (CanContinue() && reason != FlightPathReason.Use)
+                        BotPoi.Clear("Learned/Updated Flight Path Information");
+                }
             }
         }
 

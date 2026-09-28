@@ -185,7 +185,44 @@ public static class AuraCollectionCases {
   foreach(string condition in new[]{"non-world","invalid-unit"})foreach(string stage in new[]{"count","bulk"})
    Case("unavailable-object-disposition/"+condition+"/"+stage,()=>{Reset();if(condition=="non-world")StyxWoW.IsInGame=false;else World.Target.IsValid=false;Transfer.FaultAddress=stage=="count"?Transfer.Count:Transfer.StaticData;Transfer.Fault=stage=="bulk"?"partial-24":"failed";Check(World.Target.GetAllAuras().Count==0,"unavailable non-world object returned partially valid aura data");});
   foreach(string mode in new[]{"missing-memory","zero-base","unknown-spell"})
-   Case("existing-empty-filter/"+mode,()=>{Reset();if(mode=="missing-memory")ObjectManager.Wow=null;if(mode=="zero-base")World.Target.BaseAddress=0;if(mode=="unknown-spell")World.Names.Remove(7001);Check(World.Target.GetAllAuras().Count==(mode=="unknown-spell"?1:0),"existing missing-object or unknown-spell filter changed");});
+   Case("missing-object-and-metadata/"+mode,()=>{
+    Reset();if(mode=="missing-memory")ObjectManager.Wow=null;if(mode=="zero-base")World.Target.BaseAddress=0;
+    if(mode=="unknown-spell"){
+     World.Names.Remove(7001);
+     Check(Rejected(()=>World.Target.GetAllAuras()),"unresolved active spell metadata became a complete partial collection");
+    }else Check(World.Target.GetAllAuras().Count==0,"existing missing-object disposition changed");
+   });
+  // Raw record flags establish that an effect is active independently of its
+  // localized spell lookup. Missing metadata cannot erase that observation.
+  foreach(bool dynamic in new[]{false,true})foreach(int slot in new[]{0,1})foreach(byte flags in new byte[]{0x31,0x81})
+   Case("active-metadata-loss/"+dynamic+"/"+slot+"/"+flags,()=>{
+    Reset(dynamic);var data=Transfer.Blocks[dynamic?Transfer.DynamicData:Transfer.StaticData];
+    data[slot*24+12]=flags;World.Names.Remove(7000+slot);
+    Check(Rejected(()=>World.Target.GetAllAuras()),"known active record vanished when its metadata lookup failed");
+   });
+  foreach(bool dynamic in new[]{false,true})
+   Case("actual-blessing-consumer-missing-metadata/"+dynamic,()=>{
+    Reset(dynamic);World.Names.Remove(7001);
+    Check(Rejected(()=>SupportProbe.Select(World.Target)),"missing Shout metadata incorrectly authorized Might");
+   });
+  foreach(bool dynamic in new[]{false,true})foreach(string mode in new[]{"inactive","empty"})
+   Case("nonactive-metadata-filter/"+dynamic+"/"+mode,()=>{
+    Reset(dynamic);World.Names.Remove(7001);var data=Transfer.Blocks[dynamic?Transfer.DynamicData:Transfer.StaticData];
+    if(mode=="inactive")data[24+12]=0x80;else Array.Clear(data,24,24);
+    Check(World.Target.GetAllAuras().Count==1,"inactive unknown or genuinely empty slot changed existing collection filtering");
+   });
+  foreach(bool dynamic in new[]{false,true})
+   Case("metadata-recovery-without-reset/"+dynamic,()=>{
+    Reset(dynamic);World.Names.Remove(7001);
+    Check(Rejected(()=>World.Target.GetAllAuras()),"missing metadata was accepted");
+    World.Names[7001]="Battle Shout";
+    Check(World.Target.GetAllAuras().Count==2&&SupportProbe.Select(World.Target)==null,"recovered metadata remained unavailable or lost Shout coverage");
+   });
+  foreach(string condition in new[]{"non-world","invalid-unit"})
+   Case("unknown-metadata-object-disposition/"+condition,()=>{
+    Reset();World.Names.Remove(7001);if(condition=="non-world")StyxWoW.IsInGame=false;else World.Target.IsValid=false;
+    Check(World.Target.GetAllAuras().Count==0,"unavailable object returned a partial apparently usable collection");
+   });
   foreach(bool dynamic in new[]{false,true})foreach(int count in new[]{-2,256,int.MaxValue})
    Case("count-bound-before-allocation/"+dynamic+"/"+count,()=>{Reset(dynamic);Transfer.Blocks[dynamic?Transfer.DynamicCount:Transfer.Count]=BitConverter.GetBytes(count);Check(Rejected(()=>World.Target.GetAllAuras()),"implausible count bypassed bounded allocation guard");});
   foreach(string mode in new[]{"wrong-count-cache","bulk-cache-cannot-mask-failure","complete-count-cache"})
