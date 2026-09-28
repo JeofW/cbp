@@ -32,7 +32,7 @@ internal static class CombatTargetGapRegressionTests
         try
         {
             Styx.Helpers.Logging.FileLogging=false;
-            File.WriteAllText(Path.Combine(temp,"Combat.cs"),"using System;using TreeSharp;using Styx;using Styx.Logic;using Styx.Logic.POI;using Styx.Logic.Pathing;using Styx.WoWInternals;using Styx.WoWInternals.WoWObjects;using CommonBehaviors.Actions;using CommonBehaviors.Decorators;using Levelbot.Actions.Combat;using Mount=Styx.Logic.Pathing.Mount;namespace Bots.Grind{public static class LevelBot{private static RoutineSet Routine=>GapCases.Routine;\n"+region+"\n}}");
+            File.WriteAllText(Path.Combine(temp,"Combat.cs"),"using System;using System.Collections.Generic;using TreeSharp;using Styx;using Styx.Logic;using Styx.Logic.POI;using Styx.Logic.Pathing;using Styx.WoWInternals;using Styx.WoWInternals.WoWObjects;using CommonBehaviors.Actions;using CommonBehaviors.Decorators;using Levelbot.Actions.Combat;using Mount=Styx.Logic.Pathing.Mount;namespace Bots.Grind{public static class LevelBot{private static RoutineSet Routine=>GapCases.Routine;\n"+region+"\n}}");
             File.WriteAllText(Path.Combine(temp,"IsolationBoundary.cs"),"using TreeSharp;namespace Levelbot.Actions.Combat{public static class PullIsolationCoordinator{public static Composite CreatePreCombatBehavior()=>new TreeSharp.Action(_=>RunStatus.Failure);public static Composite CreateRetreatBehavior()=>new TreeSharp.Action(_=>RunStatus.Failure);}}");
             File.Copy(Path.Combine(root,"CommonBehaviors","Decorators","DecoratorIsPoiType.cs"),Path.Combine(temp,"DecoratorIsPoiType.cs"));
             File.WriteAllText(Path.Combine(temp,"Boundary.cs"),Boundary);
@@ -53,6 +53,7 @@ internal static class CombatTargetGapRegressionTests
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Styx;
 using Styx.Logic;
 using Styx.Logic.POI;
@@ -76,8 +77,13 @@ public static class GapCases
     internal static readonly List<string> Trace=new();
     internal static readonly Dictionary<string,RunStatus> Results=new();
     internal static int Fallback,Targets,Dismounts;
+    public static ulong NextGuid;
+    public static string Stage;
+    public static System.Action Callback;
+    public static readonly List<ulong> SelectedTargets=new();
+    public static void Event(string stage){if(Stage==stage){var action=Callback;Stage=null;Callback=null;action?.Invoke();}}
     private static LocalPlayer Me=>StyxWoW.Me;
-    internal static Composite Leaf(string name)=>new TreeSharp.Action(_=>{Trace.Add(name);return Results.TryGetValue(name,out var r)?r:RunStatus.Failure;});
+    internal static Composite Leaf(string name)=>new TreeSharp.Action(_=>{Trace.Add(name);Event(name);return Results.TryGetValue(name,out var r)?r:RunStatus.Failure;});
     public static void Run()
     {
         var cases=new List<(string,System.Action)>();
@@ -134,6 +140,9 @@ public static class GapCases
         Add("empty Kill POI cleanup does not authorize same-tick gathering",()=>{Me.Combat=true;BotPoi.Current=new BotPoi(null,PoiType.Kill);Tick(Build());Check(BotPoi.Current.Type==PoiType.None&&Fallback==0,"POI cleanup fell into gathering");});
         Add("clear-sight ordinary pull still works",()=>{var enemy=new WoWUnit();Me.CurrentTarget=enemy;Targeting.Instance.TargetList.Add(enemy);BotPoi.Current=new BotPoi(enemy,PoiType.Kill);Results["pull"]=RunStatus.Success;Tick(Build());Check(Trace.Contains("pull")&&Fallback==0,"ordinary pull lost");});
         Add("blocked sight still rejects a pull",()=>{var enemy=new WoWUnit{InLineOfSpellSight=false};Me.CurrentTarget=enemy;Targeting.Instance.TargetList.Add(enemy);BotPoi.Current=new BotPoi(enemy,PoiType.Kill);Results["pull"]=RunStatus.Success;Tick(Build());Check(!Trace.Contains("pull"),"blocked target was pulled");});
+        AddPrePullCases(cases);
+        AddCombatContinuationCases(cases);
+        AddGuardReplacementCases(cases);
         int passed=0,assertions=0,unexpected=0;
         foreach(var item in cases)
         {
@@ -145,7 +154,252 @@ public static class GapCases
         if(assertions+unexpected!=0)throw new InvalidOperationException("Combat target-gap regressions");
     }
     private static Composite Build()=>new PrioritySelector(Bots.Grind.LevelBot.CreateCombatBehavior(),new TreeSharp.Action(_=>{Fallback++;return RunStatus.Success;}));
-    private static void Reset(){Trace.Clear();Results.Clear();Fallback=Targets=Dismounts=0;StyxWoW.Me=new LocalPlayer();Targeting.Instance.TargetList.Clear();BotPoi.Current=new BotPoi(null,PoiType.None);Mount.DismountNeeded=false;Routine=new RoutineSet();}
+    private static void Reset(){Stage=null;Callback=null;Trace.Clear();Results.Clear();SelectedTargets.Clear();NextGuid=0;Fallback=Targets=Dismounts=0;StyxWoW.Me=new LocalPlayer();Targeting.Instance.TargetList.Clear();BotPoi.Seed(new BotPoi(null,PoiType.None));Mount.DismountNeeded=false;Routine=new RoutineSet();}
+    private static void AddPrePullCases(List<(string,System.Action)> cases)
+    {
+        var changes=new[]{"actor","actor-guid","actor-invalid","actor-dead","map","poi","poi-type","poi-subject","best","best-dead","best-invalid","display","combat"};
+        void Prepare(out LocalPlayer actor,out WoWUnit selected,out BotPoi poi){
+            Reset();actor=Me;var old=new WoWUnit();selected=new WoWUnit();
+            actor.CurrentTarget=old;Targeting.Instance.TargetList.Add(selected);
+            poi=new BotPoi(old,PoiType.Kill);BotPoi.Seed(poi);Results["pull"]=RunStatus.Success;
+        }
+        void Change(string kind,LocalPlayer actor,WoWUnit selected,BotPoi poi){
+            switch(kind){
+                case "actor":StyxWoW.Me=new LocalPlayer{Guid=actor.Guid,CurrentTarget=actor.CurrentTarget};break;
+                case "actor-guid":actor.Guid++;break;case "actor-invalid":actor.IsValid=false;break;case "actor-dead":actor.IsAlive=false;break;
+                case "map":actor.MapId++;break;
+                case "poi":BotPoi.Seed(new BotPoi(new WoWUnit(),PoiType.Repair));break;
+                case "poi-type":BotPoi.Current.Type=PoiType.Repair;break;
+                case "poi-subject":BotPoi.Current.AsObject=new WoWUnit();break;
+                case "best":Targeting.Instance.TargetList[0]=new WoWUnit();break;
+                case "best-dead":selected.IsAlive=false;break;case "best-invalid":selected.IsValid=false;break;
+                case "display":actor.CurrentTarget=new WoWUnit();break;
+                case "combat":actor.Combat=true;break;
+                default:throw new InvalidOperationException(kind);
+            }
+        }
+        foreach(string stage in new[]{"rest","prebuff","debug","poi"})foreach(string kind in changes){
+            string boundary=stage,mutation=kind;
+            cases.Add(("pre-pull callback "+boundary+" revokes "+mutation,()=>{
+                Prepare(out var actor,out var selected,out var poi);BotPoi replacement=null;bool fired=false;
+                Stage=boundary;Callback=()=>{fired=true;Change(mutation,actor,selected,poi);replacement=BotPoi.Current;};
+                var tree=Build();tree.Start(null);try{var status=Step(tree);
+                    Check(fired,"test did not reach the real pre-pull callback");
+                    Check(Targets==0&&!Trace.Contains("pull"),"obsolete pre-pull callback selected/dispatched another context");
+                    Check(ReferenceEquals(BotPoi.Current,replacement),"old switch replaced newly admitted POI");
+                }finally{tree.Stop(null);}
+            }));
+        }
+        foreach(string stage in new[]{"rest","prebuff"})foreach(string kind in changes){
+            string boundary=stage,mutation=kind;
+            cases.Add(("yielded pre-pull "+boundary+" revokes "+mutation,()=>{
+                Prepare(out var actor,out var selected,out var poi);Results[boundary]=RunStatus.Running;
+                var tree=Build();tree.Start(null);try{
+                    Check(Step(tree)==RunStatus.Running&&Trace.Contains(boundary),"test did not reach yielded routine");
+                    Change(mutation,actor,selected,poi);var replacement=BotPoi.Current;
+                    Results[boundary]=RunStatus.Failure;Trace.Clear();Step(tree);
+                    Check(Targets==0&&!Trace.Contains("pull")&&!Trace.Contains(boundary),"obsolete yielded routine resumed or retargeted without admission");
+                    Check(ReferenceEquals(BotPoi.Current,replacement),"yielded old owner replaced current POI");
+                }finally{tree.Stop(null);}
+            }));
+        }
+        cases.Add(("pre-pull healthy better-target switch",()=>{Prepare(out var actor,out var selected,out var poi);Tick(Build());Check(Targets==1&&SelectedTargets[0]==selected.Guid&&ReferenceEquals(actor.CurrentTarget,selected)&&ReferenceEquals(BotPoi.Current.AsObject,selected),"healthy target switch changed");}));
+        foreach(string stage in new[]{"rest","prebuff"}){string boundary=stage;
+            cases.Add(("pre-pull healthy delayed "+boundary,()=>{Prepare(out var actor,out var selected,out var poi);Results[boundary]=RunStatus.Running;var tree=Build();tree.Start(null);try{Check(Step(tree)==RunStatus.Running,"healthy routine did not yield");Results[boundary]=RunStatus.Failure;Check(Step(tree)==RunStatus.Success&&Targets==1&&ReferenceEquals(actor.CurrentTarget,selected),"healthy continuation lost target selection");}finally{tree.Stop(null);}}));
+        }
+        cases.Add(("pre-pull foreign displayed target is not POI acknowledgement",()=>{Prepare(out var actor,out var selected,out var poi);poi.AsObject=selected;actor.CurrentTarget=new WoWUnit();Tick(Build());Check(!Trace.Contains("pull"),"a foreign displayed target acquired this POI's pull");}));
+        cases.Add(("pre-pull new activation can admit replacement",()=>{Prepare(out var actor,out var selected,out var poi);Stage="debug";Callback=()=>BotPoi.Seed(new BotPoi(new WoWUnit(),PoiType.Repair));Tick(Build());Check(Targets==0,"revoked switch retargeted");BotPoi.Seed(new BotPoi(actor.CurrentTarget,PoiType.Kill));Trace.Clear();Tick(Build());Check(Targets==1&&ReferenceEquals(actor.CurrentTarget,selected),"later valid admission could not recover");}));
+        foreach(string stage in new[]{"sight","distance"})foreach(string kind in new[]{"best","combat","actor","poi","display"}){
+            string boundary=stage,mutation=kind;
+            cases.Add(("pre-pull admission "+boundary+" revokes "+mutation,()=>{
+                Prepare(out var actor,out var selected,out var poi);actor.CurrentTarget=selected;poi.AsObject=selected;
+                bool fired=false;Stage=boundary;Callback=()=>{fired=true;Change(mutation,actor,selected,poi);};
+                Tick(Build());Check(fired&&!Trace.Contains("pull")&&Targets==0,"predicate callback authorized a stale routine dispatch");
+            }));
+        }
+        foreach(string stage in new[]{"rest","prebuff"}){string boundary=stage;
+            cases.Add(("pre-pull revocation releases "+boundary+" once and preserves cleanup replacement",()=>{
+                Prepare(out var actor,out var selected,out var poi);var waiting=new PendingLeaf();
+                if(boundary=="rest")Routine.RestBehavior=waiting;else Routine.PreCombatBuffBehavior=waiting;
+                var tree=Build();tree.Start(null);BotPoi replacement=null;
+                try{Check(Step(tree)==RunStatus.Running&&waiting.Ticks==1,"yielding leaf was not reached once");
+                    waiting.OnStop=()=>{replacement=new BotPoi(new WoWUnit(),PoiType.Repair);BotPoi.Seed(replacement);};
+                    actor.MapId++;Step(tree);Check(waiting.Ticks==1&&waiting.Stops==1&&ReferenceEquals(BotPoi.Current,replacement)&&Targets==0,"revoked leaf resumed, cleanup repeated, or replacement was consumed");
+                }finally{tree.Stop(null);}Check(waiting.Stops==1,"final parent cleanup repeated stopped lifetime");
+            }));
+        }
+        foreach(string kind in new[]{"actor","poi"}){string mutation=kind;
+            cases.Add(("pre-pull target dispatch cannot consume callback "+mutation,()=>{
+                Prepare(out var actor,out var selected,out var poi);BotPoi replacement=null;bool fired=false;
+                Stage="target";Callback=()=>{fired=true;Change(mutation,actor,selected,poi);replacement=BotPoi.Current;};
+                Tick(Build());Check(fired&&Targets==1&&!Trace.Contains("pull")&&ReferenceEquals(BotPoi.Current,replacement),"post-selection callback authorized continuation or replacement cleanup");
+            }));
+        }
+    }
+    private static void AddCombatContinuationCases(List<(string,System.Action)> cases)
+    {
+        void Prepare(out LocalPlayer actor,out WoWUnit selected)
+        {
+            Reset();actor=Me;actor.Combat=true;selected=new WoWUnit();
+            actor.CurrentTarget=selected;Targeting.Instance.TargetList.Add(selected);
+        }
+        void Change(string kind,LocalPlayer actor,WoWUnit selected)
+        {
+            switch(kind)
+            {
+                case "actor":StyxWoW.Me=new LocalPlayer{Guid=actor.Guid,Combat=true,CurrentTarget=selected};break;
+                case "guid":actor.Guid++;break;
+                case "dead":actor.IsAlive=false;break;
+                case "invalid":actor.IsValid=false;break;
+                case "map":actor.MapId++;break;
+                case "mounted":actor.Mounted=true;break;
+                case "combat-ended":actor.Combat=false;break;
+                case "target":Targeting.Instance.TargetList[0]=new WoWUnit();break;
+                case "target-guid":selected.Guid++;break;
+                case "target-dead":selected.IsAlive=false;break;
+                case "target-invalid":selected.IsValid=false;break;
+                case "target-missing":Targeting.Instance.TargetList.Clear();break;
+                default:throw new InvalidOperationException(kind);
+            }
+        }
+        var actorChanges=new[]{"actor","guid","dead","invalid","map","mounted","combat-ended"};
+        foreach(string stage in new[]{"heal","combatbuff","combat"})foreach(string kind in actorChanges)
+        {
+            string boundary=stage,mutation=kind;
+            cases.Add(("yielded combat "+boundary+" revokes "+mutation,()=>
+            {
+                Prepare(out var actor,out var selected);Results[boundary]=RunStatus.Running;
+                var tree=Build();tree.Start(null);
+                try
+                {
+                    Check(Step(tree)==RunStatus.Running&&Trace.Contains(boundary),"combat continuation did not reach yielded leaf");
+                    Change(mutation,actor,selected);Results[boundary]=RunStatus.Failure;Trace.Clear();Step(tree);
+                    Check(Trace.Count==0,"revoked combat owner resumed a routine or dispatched another leaf: "+string.Join(",",Trace));
+                }
+                finally{tree.Stop(null);}
+            }));
+        }
+        foreach(string stage in new[]{"heal","combatbuff"})foreach(string kind in actorChanges)
+        {
+            string boundary=stage,mutation=kind;
+            cases.Add(("combat callback "+boundary+" revokes "+mutation,()=>
+            {
+                Prepare(out var actor,out var selected);bool fired=false;
+                Stage=boundary;Callback=()=>{fired=true;Change(mutation,actor,selected);};
+                Tick(Build());Check(fired&&!Trace.Contains("combat")&&(boundary=="combatbuff"||!Trace.Contains("combatbuff")),"revoked combat callback authorized the next routine");
+            }));
+        }
+        foreach(string stage in new[]{"combatbuff","combat"})foreach(string kind in new[]{"target","target-guid","target-dead","target-invalid","target-missing"})
+        {
+            string boundary=stage,mutation=kind;
+            cases.Add(("yielded offensive "+boundary+" revokes "+mutation,()=>
+            {
+                Prepare(out var actor,out var selected);Results[boundary]=RunStatus.Running;
+                var tree=Build();tree.Start(null);
+                try
+                {
+                    Check(Step(tree)==RunStatus.Running&&Trace.Contains(boundary),"offensive continuation did not reach yielded leaf");
+                    Change(mutation,actor,selected);Results[boundary]=RunStatus.Failure;Trace.Clear();Step(tree);
+                    Check(Trace.Count==0&&Fallback==0,"obsolete offensive routine resumed or released ongoing combat");
+                }
+                finally{tree.Stop(null);}
+            }));
+        }
+        foreach(string stage in new[]{"heal","combatbuff","combat"})
+        {
+            string boundary=stage;
+            cases.Add(("healthy yielded combat "+boundary+" completes",()=>
+            {
+                Prepare(out var actor,out var selected);Results[boundary]=RunStatus.Running;
+                var tree=Build();tree.Start(null);
+                try{Check(Step(tree)==RunStatus.Running,"healthy combat leaf did not yield");Results[boundary]=RunStatus.Success;Trace.Clear();Check(Step(tree)==RunStatus.Success&&Trace.SequenceEqual(new[]{boundary})&&Fallback==0,"healthy yielded combat continuation changed");}
+                finally{tree.Stop(null);}
+            }));
+        }
+        cases.Add(("combat cleanup runs once without consuming replacement POI",()=>
+        {
+            Prepare(out var actor,out var selected);var waiting=new PendingLeaf();Routine.CombatBehavior=waiting;
+            var tree=Build();tree.Start(null);BotPoi replacement=null;
+            try
+            {
+                Check(Step(tree)==RunStatus.Running&&waiting.Ticks==1,"pending combat routine not reached");
+                waiting.OnStop=()=>{replacement=new BotPoi(new WoWUnit(),PoiType.Repair);BotPoi.Seed(replacement);};
+                actor.MapId++;Trace.Clear();Step(tree);
+                Check(waiting.Ticks==1&&waiting.Stops==1&&ReferenceEquals(BotPoi.Current,replacement),"revoked combat routine ticked or cleanup consumed replacement");
+            }
+            finally{tree.Stop(null);}Check(waiting.Stops==1,"combat cleanup was repeated");
+        }));
+        cases.Add(("fresh combat activation recovers after old actor revocation",()=>
+        {
+            Prepare(out var actor,out var selected);Results["combat"]=RunStatus.Running;
+            var tree=Build();tree.Start(null);Check(Step(tree)==RunStatus.Running,"old combat leaf did not yield");
+            Change("actor",actor,selected);Trace.Clear();Step(tree);tree.Stop(null);
+            Check(!Trace.Contains("combat"),"old combat routine resumed on replacement actor");
+            Results["combat"]=RunStatus.Success;Trace.Clear();Tick(tree);
+            Check(Trace.Contains("heal")&&Trace.Contains("combat"),"fresh actor could not obtain new combat admission");
+        }));
+    }
+    private static void AddGuardReplacementCases(List<(string,System.Action)> cases)
+    {
+        foreach(string mode in new[]{"unticked","running","terminal"})
+        {
+            string replacementMode=mode;
+            cases.Add(("guard cleanup preserves "+replacementMode+" replacement",()=>
+            {
+                Reset();bool admitted=true;
+                var leaf=new ReplacementLeaf{TerminalReplacement=replacementMode=="terminal"};
+                var type=typeof(Bots.Grind.LevelBot).GetNestedType("RoutineAdmissionGuard",BindingFlags.NonPublic);
+                var guard=(Composite)Activator.CreateInstance(type,BindingFlags.Instance|BindingFlags.NonPublic|BindingFlags.Public,
+                    null,new object[]{new Func<bool>(()=>admitted),leaf},null);
+                guard.Start(null);Check(Step(guard)==RunStatus.Running,"guard did not start old execution");
+                leaf.Replace=()=>
+                {
+                    admitted=true;guard.Start(null);
+                    if(replacementMode!="unticked")
+                        Check(Step(guard)==(replacementMode=="terminal"?RunStatus.Success:RunStatus.Running),"replacement could not start");
+                };
+                try
+                {
+                    admitted=false;Check(Step(guard)==RunStatus.Failure,"revoked old execution did not fail");
+                    RunStatus? expected=replacementMode=="unticked"?null:replacementMode=="terminal"?RunStatus.Success:RunStatus.Running;
+                    Check(guard.LastStatus==expected,"old guard overwrote replacement status during cleanup");
+                    Check(leaf.Disposals[1]==1&&leaf.Disposals[2]==(replacementMode=="terminal"?1:0),"old cleanup consumed replacement resources");
+                    Check(Step(guard)==(replacementMode=="terminal"?RunStatus.Success:RunStatus.Running),"replacement cannot continue after old guard returned");
+                }
+                finally{leaf.Replace=null;guard.Stop(null);}
+                Check(leaf.Disposals[1]==1&&leaf.Disposals[2]==1,"replacement cleanup missing or repeated");
+            }));
+        }
+    }
+    private sealed class ReplacementLeaf:Composite
+    {
+        internal System.Action Replace;internal bool TerminalReplacement;internal int Starts;
+        internal readonly int[] Disposals=new int[3];
+        protected override IEnumerable<RunStatus> Execute(object context)
+        {
+            int generation=++Starts;
+            try
+            {
+                if(generation==2&&TerminalReplacement){yield return RunStatus.Success;yield break;}
+                while(true)yield return RunStatus.Running;
+            }
+            finally{Disposals[generation]++;if(generation==1)Replace?.Invoke();}
+        }
+    }
+    private sealed class PendingLeaf:Composite
+    {
+        internal int Ticks,Stops;internal System.Action OnStop;
+        protected override IEnumerable<RunStatus> Execute(object context)
+        {try{while(true){Ticks++;yield return RunStatus.Running;}}finally{Stops++;OnStop?.Invoke();}}
+    }
+    private static RunStatus Step(Composite root)
+    {
+        var errors=new List<string>();
+        void Record(Styx.Helpers.LogLevel level,string text){if(text.Contains("Exception")||text.Contains("Object reference not set"))errors.Add(text);}
+        Styx.Helpers.Logging.OnMessageLogged+=Record;
+        try{var result=root.Tick(null);Check(errors.Count==0,"swallowed callback error: "+string.Join(";",errors));return result;}
+        finally{Styx.Helpers.Logging.OnMessageLogged-=Record;}
+    }
     private static void Tick(Composite root)
     {
         var errors=new List<string>();
@@ -159,22 +413,22 @@ public static class GapCases
 /* Embedded fixture namespace, not the initializer scope. */ namespace Styx {public static class StyxWoW{public static LocalPlayer Me=new();}}
 /* Embedded fixture namespace, not the initializer scope. */ namespace Styx.WoWInternals.WoWObjects
 {
-    public class WoWObject{public WoWPoint Location=new(10,10,10);public WoWUnit ToUnit()=>(WoWUnit)this;}
-    public class WoWUnit:WoWObject{public bool IsAlive=true;public bool Dead=>!IsAlive;public bool Combat;public bool InLineOfSpellSight=true;public float Distance=3;public WoWUnit? CurrentTarget;public void Target(){GapCases.Targets++;StyxWoW.Me.CurrentTarget=this;}}
-    public class LocalPlayer:WoWUnit{public bool Mounted;public WoWUnit? Pet;public bool GotAlivePet=>Pet?.IsAlive==true;public bool HasPendingSpell(string name)=>false;}
+    public class WoWObject{public ulong Guid=++GapCases.NextGuid;public uint Entry=100;public bool IsValid=true;public WoWPoint Location=new(10,10,10);public WoWUnit ToUnit()=>(WoWUnit)this;}
+    public class WoWUnit:WoWObject{public bool IsAlive=true;public bool Dead=>!IsAlive;public bool Combat;private bool sight=true;public bool InLineOfSpellSight{get{GapCases.Event("sight");return sight;}set{sight=value;}}private float distance=3;public float Distance{get{GapCases.Event("distance");return distance;}set{distance=value;}}public WoWUnit? CurrentTarget;public ulong CurrentTargetGuid=>CurrentTarget?.Guid??0;public void Target(){GapCases.Targets++;GapCases.SelectedTargets.Add(Guid);StyxWoW.Me.CurrentTarget=this;GapCases.Event("target");}}
+    public class LocalPlayer:WoWUnit{public uint MapId=530;public bool Mounted;public WoWUnit? Pet;public bool GotAlivePet=>Pet?.IsAlive==true;public bool HasPendingSpell(string name)=>false;}
 }
 /* Embedded fixture namespace, not the initializer scope. */ namespace Styx.Logic {public sealed class Targeting{public static Targeting Instance=new();public static float PullDistance=30;public List<WoWUnit> TargetList=new();public WoWUnit? FirstUnit=>TargetList.FirstOrDefault();}}
 /* Embedded fixture namespace, not the initializer scope. */ namespace Styx.Logic.POI
 {
-    public enum PoiType{None,Kill,Skin}
-    public sealed class BotPoi{public static BotPoi Current=new(null,PoiType.None);public WoWObject? AsObject;public PoiType Type;public WoWPoint Location=>AsObject?.Location??WoWPoint.Zero;public BotPoi(WoWObject? subject,PoiType type){AsObject=subject;Type=type;}public static void Clear(string reason){Current=new(null,PoiType.None);}}
+    public enum PoiType{None,Kill,Skin,Repair}
+    public sealed class BotPoi{private static BotPoi current=new(null,PoiType.None);public static BotPoi Current{get=>current;set{current=value;GapCases.Event("poi");}}public static void Seed(BotPoi value)=>current=value;public WoWObject? AsObject;public PoiType Type;public ulong Guid=>AsObject?.Guid??0;public uint Entry=>AsObject?.Entry??0;public WoWPoint Location=>AsObject?.Location??WoWPoint.Zero;public BotPoi(WoWObject? subject,PoiType type){AsObject=subject;Type=type;}public static void Clear(string reason){Current=new(null,PoiType.None);}}
 }
 /* Embedded fixture namespace, not the initializer scope. */ namespace Styx.Logic.Pathing {public static class Mount{public static bool DismountNeeded;public static bool ShouldDismount(WoWPoint p)=>DismountNeeded;public static void Dismount(string reason){GapCases.Dismounts++;StyxWoW.Me.Mounted=false;}}}
 /* Embedded fixture namespace, not the initializer scope. */ namespace Styx.WoWInternals {public static class Lua{public static void DoString(string text){}}}
 /* Embedded fixture namespace, not the initializer scope. */ namespace CommonBehaviors.Actions
 {
     public sealed class ActionClearPoi:TreeSharp.Action{public ActionClearPoi(string reason):base(_=>{BotPoi.Clear(reason);return RunStatus.Success;}){}}
-    public sealed class ActionDebugString:TreeSharp.Action{public ActionDebugString(string text):base(_=>RunStatus.Success){}}
+    public sealed class ActionDebugString:TreeSharp.Action{public ActionDebugString(string text):base(_=>{GapCases.Event("debug");return RunStatus.Success;}){}}
     public sealed class ActionSetPoi:TreeSharp.Action{public ActionSetPoi(bool unused,Func<object,BotPoi> select):base(ctx=>{BotPoi.Current=select(ctx);return RunStatus.Success;}){}}
 }
 """;

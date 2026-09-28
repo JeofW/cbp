@@ -216,60 +216,150 @@ namespace Bots.Grind
                     // Not in combat: Rest, PreCombatBuff, Pull
                     new Decorator(
                         ctx => !IsPlayerOrPetInCombat(),
-                        new PrioritySelector(
-                            Routine.RestBehavior,
-                            Routine.PreCombatBuffBehavior,
-                            new DecoratorIsPoiType(PoiType.Kill, new PrioritySelector(
-                                // Switch target if better one available (HB 4.3.4: two nested decorators)
-                                new Decorator(
-                                    ctx => Targeting.Instance.TargetList.Count != 0,
-                                    new Decorator(
-                                        ctx => BotPoi.Current.AsObject != Targeting.Instance.FirstUnit &&
-                                               BotPoi.Current.Type == PoiType.Kill,
-                                        new Sequence(
-                                            new ActionDebugString("Current POI is not the best pull target. Changing."),
-                                            new ActionSetPoi(true, ctx => new BotPoi(Targeting.Instance.FirstUnit, PoiType.Kill)),
-                                            new TreeSharp.Action(ctx => BotPoi.Current.AsObject.ToUnit().Target())
-                                        )
-                                    )
-                                ),
-                                // Dense-pack isolation is opt-in per routine. It owns only
-                                // the approach/opener/retreat episode; ordinary pulls remain
-                                // the fallback whenever no isolation plan is active.
-                                PullIsolationCoordinator.CreatePreCombatBehavior(),
-                                // Pull if ready
-                                new Decorator(
-                                    ctx => CanPull(),
-                                    Routine.PullBehavior
-                                )
-                            ))
-                        )
+                        CreateOwnedPrePullBehavior()
                     ),
                     // A transient targeting gap does not end observed ground combat.
                     // Retain self-healing and ownership; only offensive leaves need a target.
                     new Decorator(
                         ctx => !StyxWoW.Me.Mounted && IsPlayerOrPetInCombat(),
-                        new PrioritySelector(
-                            new Decorator(
-                                ctx => StyxWoW.Me.Mounted,
-                                new TreeSharp.Action(ctx => Mount.Dismount("Combat"))
-                            ),
-                            Routine.HealBehavior,
-                            // A successful ranged peel owns movement until the target is
-                            // separated or another mob joins. Healing still has priority.
-                            PullIsolationCoordinator.CreateRetreatBehavior(),
-                            new Decorator(
-                                ctx => Targeting.Instance.FirstUnit != null,
-                                new PrioritySelector(
-                                    Routine.CombatBuffBehavior,
-                                    Routine.CombatBehavior
-                                )
-                            ),
-                            new ActionAlwaysSucceed()
-                        )
+                        CreateOwnedGroundCombatBehavior()
                     )
                 )
             );
+        }
+
+        // The ordinary Decorator predicate runs once per activation, not before
+        // every resumed tick. A yielded routine must not inherit a replacement
+        // actor/POI or continue after a synchronous callback revokes admission.
+        private sealed class RoutineAdmissionGuard : Decorator
+        {
+            private readonly Func<bool> current;
+            internal RoutineAdmissionGuard(Func<bool> current, Composite child) : base(child) { this.current = current; }
+            public override RunStatus Tick(object context)
+            {
+                if (current())
+                {
+                    RunStatus result = base.Tick(context);
+                    if (current()) return result;
+                }
+                LastStatus = RunStatus.Failure;
+                // Cleanup may start a new lifetime on this same guard. Publish
+                // the old result before Stop, never over the replacement's status.
+                Stop(context);
+                return RunStatus.Failure;
+            }
+        }
+
+        private static Composite CreateOwnedPrePullBehavior()
+        {
+            LocalPlayer actor = null;
+            WoWUnit best = null, displayed = null;
+            WoWObject subject = null;
+            BotPoi poi = null;
+            object targeting = null;
+            ulong actorGuid = 0, bestGuid = 0, displayedGuid = 0, poiGuid = 0, subjectGuid = 0;
+            uint map = 0, entry = 0;
+            PoiType type = PoiType.None;
+            bool ParticipantsCurrent() => actor != null && actorGuid != 0
+                && ReferenceEquals(StyxWoW.Me, actor) && actor.IsValid && actor.IsAlive
+                && actor.Guid == actorGuid && actor.MapId == map && !IsPlayerOrPetInCombat()
+                && ReferenceEquals(Targeting.Instance, targeting) && ReferenceEquals(Targeting.Instance.FirstUnit, best)
+                && (best == null || bestGuid != 0 && best.IsValid && best.IsAlive && best.Guid == bestGuid);
+            bool PoiCurrent() => ParticipantsCurrent() && ReferenceEquals(BotPoi.Current, poi)
+                && poi != null && poi.Type == type && poi.Guid == poiGuid && poi.Entry == entry
+                && ReferenceEquals(poi.AsObject, subject) && (subject == null || subject.Guid == subjectGuid)
+                && ParticipantsCurrent();
+            bool Current() => PoiCurrent() && ReferenceEquals(actor.CurrentTarget, displayed)
+                && actor.CurrentTargetGuid == displayedGuid && PoiCurrent();
+            void CapturePoi(BotPoi value)
+            {
+                poi = value; type = poi?.Type ?? PoiType.None; poiGuid = poi?.Guid ?? 0; entry = poi?.Entry ?? 0;
+                subject = poi?.AsObject; subjectGuid = subject?.Guid ?? 0;
+            }
+            Composite Guard(Composite child) => new RoutineAdmissionGuard(Current, child);
+
+            return new Sequence(
+                new TreeSharp.Action(ctx =>
+                {
+                    actor = StyxWoW.Me; actorGuid = actor?.Guid ?? 0; map = actor?.MapId ?? 0;
+                    targeting = Targeting.Instance; best = Targeting.Instance.FirstUnit; bestGuid = best?.Guid ?? 0;
+                    displayed = actor?.CurrentTarget; displayedGuid = displayed?.Guid ?? 0;
+                    CapturePoi(BotPoi.Current);
+                    return Current() ? RunStatus.Success : RunStatus.Failure;
+                }),
+                Guard(new PrioritySelector(
+                    Guard(Routine.RestBehavior),
+                    Guard(Routine.PreCombatBuffBehavior),
+                    Guard(new DecoratorIsPoiType(PoiType.Kill, new PrioritySelector(
+                        new Decorator(ctx => Current() && best != null && !ReferenceEquals(subject, best),
+                            new Sequence(
+                                Guard(new ActionDebugString("Current POI is not the best pull target. Changing.")),
+                                new TreeSharp.Action(ctx =>
+                                {
+                                    if (!Current()) return RunStatus.Failure;
+                                    var next = new BotPoi(best, PoiType.Kill);
+                                    if (!Current()) return RunStatus.Failure;
+                                    // Declare only our own publication before its callbacks.
+                                    // Never reread a replacement global POI as the target.
+                                    CapturePoi(next);
+                                    BotPoi.Current = next;
+                                    if (!Current()) return RunStatus.Failure;
+                                    best.Target();
+                                    if (!PoiCurrent() || !ReferenceEquals(actor.CurrentTarget, best)
+                                        || actor.CurrentTargetGuid != bestGuid)
+                                        return RunStatus.Failure;
+                                    displayed = best; displayedGuid = bestGuid;
+                                    return Current() ? RunStatus.Success : RunStatus.Failure;
+                                }))),
+                        Guard(PullIsolationCoordinator.CreatePreCombatBehavior()),
+                        Guard(new Decorator(ctx => CanPull(), Guard(Routine.PullBehavior)))
+                    )))
+                )));
+        }
+
+        private static Composite CreateOwnedGroundCombatBehavior()
+        {
+            LocalPlayer actor = null;
+            WoWUnit candidate = null;
+            object targeting = null;
+            ulong actorGuid = 0, candidateGuid = 0;
+            uint map = 0;
+            bool ActorCurrent() => actor != null && actorGuid != 0
+                && ReferenceEquals(StyxWoW.Me, actor) && actor.IsValid && actor.IsAlive
+                && actor.Guid == actorGuid && actor.MapId == map && !actor.Mounted
+                && IsPlayerOrPetInCombat() && ReferenceEquals(StyxWoW.Me, actor)
+                && actor.Guid == actorGuid;
+            bool TargetCurrent() => ActorCurrent() && candidate != null && candidateGuid != 0
+                && candidate.IsValid && candidate.IsAlive && candidate.Guid == candidateGuid
+                && ReferenceEquals(Targeting.Instance, targeting)
+                && ReferenceEquals(Targeting.Instance.FirstUnit, candidate) && ActorCurrent();
+            Composite ActorGuard(Composite child) => new RoutineAdmissionGuard(ActorCurrent, child);
+            Composite TargetGuard(Composite child) => new RoutineAdmissionGuard(TargetCurrent, child);
+
+            return new Sequence(
+                new TreeSharp.Action(ctx =>
+                {
+                    actor = StyxWoW.Me; actorGuid = actor?.Guid ?? 0; map = actor?.MapId ?? 0;
+                    return ActorCurrent() ? RunStatus.Success : RunStatus.Failure;
+                }),
+                ActorGuard(new PrioritySelector(
+                    // A missing enemy never suppresses this actor's self-heal.
+                    ActorGuard(Routine.HealBehavior),
+                    ActorGuard(PullIsolationCoordinator.CreateRetreatBehavior()),
+                    ActorGuard(new Sequence(
+                        new TreeSharp.Action(ctx =>
+                        {
+                            if (!ActorCurrent()) return RunStatus.Failure;
+                            targeting = Targeting.Instance;
+                            candidate = Targeting.Instance.FirstUnit; candidateGuid = candidate?.Guid ?? 0;
+                            return TargetCurrent() ? RunStatus.Success : RunStatus.Failure;
+                        }),
+                        TargetGuard(new PrioritySelector(
+                            TargetGuard(Routine.CombatBuffBehavior),
+                            TargetGuard(Routine.CombatBehavior))))),
+                    // Target revocation still belongs to ongoing player/pet combat;
+                    // do not release it to gathering just because a routine failed.
+                    new ActionAlwaysSucceed())));
         }
 
         private static bool IsPlayerOrPetInCombat()
@@ -283,12 +373,25 @@ namespace Bots.Grind
 
         private static bool CanPull()
         {
-            WoWUnit currentTarget = StyxWoW.Me.CurrentTarget;
-            if (currentTarget == null)
+            LocalPlayer player = StyxWoW.Me;
+            WoWUnit target = player?.CurrentTarget;
+            BotPoi poi = BotPoi.Current;
+            ulong actorGuid = player?.Guid ?? 0, targetGuid = target?.Guid ?? 0;
+            uint map = player?.MapId ?? 0;
+            bool Current() => player != null && actorGuid != 0 && ReferenceEquals(StyxWoW.Me, player)
+                && player.IsValid && player.IsAlive && player.Guid == actorGuid && player.MapId == map
+                && target != null && targetGuid != 0 && target.IsValid && target.IsAlive && target.Guid == targetGuid
+                && ReferenceEquals(player.CurrentTarget, target) && player.CurrentTargetGuid == targetGuid
+                && ReferenceEquals(BotPoi.Current, poi) && poi != null && poi.Type == PoiType.Kill
+                && ReferenceEquals(poi.AsObject, target) && poi.Guid == targetGuid;
+            if (!Current())
                 return false;
-            if (!currentTarget.InLineOfSpellSight)
+            bool sight = target.InLineOfSpellSight;
+            if (!Current() || !sight)
                 return false;
-            return currentTarget.Distance <= Targeting.PullDistance;
+            double distance = target.Distance, range = Targeting.PullDistance;
+            return Current() && double.IsFinite(distance) && distance >= 0
+                && double.IsFinite(range) && range >= 0 && distance <= range && Current();
         }
 
         #endregion
@@ -1519,21 +1622,59 @@ namespace Bots.Grind
                     })
                 )),
                 // Move closer to target or clear POI if better target
-                new PrioritySelector(
-                    new Decorator(
-                        ctx => RoutineManager.Current?.MoveToTargetBehavior != null,
-                        RoutineManager.Current?.MoveToTargetBehavior
-                    ),
-                    new Decorator(
-                        ctx => ShouldMoveCloserToTarget(),
-                        new ActionMoveToTarget()
-                    ),
-                    new Decorator(
-                        ctx => ShouldClearPoiForBetterTarget(),
-                        new ActionClearPoi("NeedToClearPOI is true #2")
-                    )
-                )
+                CreateOwnedRoamChaseBehavior()
             );
+        }
+
+        private static Composite CreateOwnedRoamChaseBehavior()
+        {
+            LocalPlayer actor = null;
+            WoWUnit target = null, displayed = null;
+            BotPoi poi = null;
+            ulong actorGuid = 0, targetGuid = 0, displayedGuid = 0, poiGuid = 0;
+            uint map = 0, entry = 0;
+            PoiType type = PoiType.None;
+            object targeting = null, provider = null, profile = null;
+            var routine = RoutineManager.Current;
+            var customMove = routine?.MoveToTargetBehavior;
+            bool ParticipantsCurrent() => actor != null && actorGuid != 0
+                && ReferenceEquals(StyxWoW.Me, actor) && actor.IsValid && actor.IsAlive
+                && actor.Guid == actorGuid && actor.MapId == map
+                && !actor.Combat && (!actor.GotAlivePet || actor.Pet?.Combat != true)
+                && !actor.IsCasting && actor.ChanneledCastingSpellId == 0 && !actor.OnTaxi && !actor.IsOnTransport
+                && target != null && targetGuid != 0 && target.IsValid && target.IsAlive && target.Guid == targetGuid
+                && ReferenceEquals(Targeting.Instance, targeting) && ReferenceEquals(Targeting.Instance.FirstUnit, target);
+            bool Current() => ParticipantsCurrent() && ReferenceEquals(BotPoi.Current, poi)
+                && poi != null && poi.Type == type && poi.Guid == poiGuid && poi.Entry == entry
+                && (type == PoiType.None || type == PoiType.Kill)
+                && ReferenceEquals(actor.CurrentTarget, displayed) && actor.CurrentTargetGuid == displayedGuid
+                && ReferenceEquals(Navigator.NavigationProvider, provider)
+                && ReferenceEquals(ProfileManager.CurrentProfile, profile)
+                && ReferenceEquals(RoutineManager.Current, routine) && ReferenceEquals(routine?.MoveToTargetBehavior, customMove)
+                && ParticipantsCurrent();
+            Composite Guard(Composite child) => new RoutineAdmissionGuard(Current, child);
+
+            return new Sequence(
+                new TreeSharp.Action(ctx =>
+                {
+                    actor = StyxWoW.Me; actorGuid = actor?.Guid ?? 0; map = actor?.MapId ?? 0;
+                    targeting = Targeting.Instance; target = Targeting.Instance.FirstUnit; targetGuid = target?.Guid ?? 0;
+                    displayed = actor?.CurrentTarget; displayedGuid = displayed?.Guid ?? 0;
+                    poi = BotPoi.Current; type = poi?.Type ?? PoiType.None; poiGuid = poi?.Guid ?? 0; entry = poi?.Entry ?? 0;
+                    provider = Navigator.NavigationProvider; profile = ProfileManager.CurrentProfile;
+                    return Current() ? RunStatus.Success : RunStatus.Failure;
+                }),
+                new PrioritySelector(
+                    Guard(customMove),
+                    Guard(new Decorator(ctx => ShouldMoveCloserToTarget(), Guard(new ActionMoveToTarget()))),
+                    new Decorator(ctx => Current() && ShouldClearPoiForBetterTarget() && Current(), new TreeSharp.Action(ctx =>
+                    {
+                        if (!Current()) return RunStatus.Failure;
+                        // This action ends its admitted POI. Parent revalidation
+                        // must not clear or chase any replacement created by cleanup.
+                        BotPoi.Clear("NeedToClearPOI is true #2");
+                        return RunStatus.Success;
+                    }))));
         }
 
         private static bool ShouldClearPoiForBetterTarget()

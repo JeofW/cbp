@@ -1,5 +1,6 @@
 using System;
 using System.CodeDom.Compiler;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -25,18 +26,25 @@ internal static class RoamContinuationOwnershipRegressionTests
         var names = new[] { "CreateRoamBehavior", "ShouldClearPoiForBetterTarget", "ShouldMoveToHotspot", "ShouldMoveCloserToTarget" };
         var methods = names.Select(name => parsed.DescendantNodes().OfType<MethodDeclarationSyntax>()
             .Single(m => m.Identifier.ValueText == name).ToString());
+        // Include complete owner helpers when present; the pre-repair source has
+        // no tail owner, so it must still compile for a meaningful behavioral red.
+        var helpers = parsed.DescendantNodes().OfType<MethodDeclarationSyntax>()
+            .Where(m => m.Identifier.ValueText == "CreateOwnedRoamChaseBehavior").Select(m => m.ToString());
+        string guard = parsed.DescendantNodes().OfType<ClassDeclarationSyntax>()
+            .Single(c => c.Identifier.ValueText == "RoutineAdmissionGuard").ToString();
         string temp = Path.Combine(Path.GetTempPath(), "cb-roam-ownership-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(temp);
         bool logging = Styx.Helpers.Logging.FileLogging;
         try
         {
             Styx.Helpers.Logging.FileLogging = false;
-            File.WriteAllText(Path.Combine(temp, "Probe.cs"), Prefix + string.Join("\n", methods) + "}\n" + Boundary);
+            File.WriteAllText(Path.Combine(temp, "Probe.cs"), Prefix + string.Join("\n", methods.Concat(helpers)) + "\n" + guard + "}\n" + Boundary);
             foreach (string path in new[] {
                 "CommonBehaviors/Decorators/DecoratorIsPoiType.cs",
                 "CommonBehaviors/Decorators/DecoratorIsNotPoiType.cs",
                 "Bots/Grind/Levelbot/Decorators/Combat/DecoratorNeedToFindTarget.cs",
                 "CommonBehaviors/Actions/ActionSetPoi.cs",
+                "CommonBehaviors/Actions/ActionClearPoi.cs",
                 "CommonBehaviors/Actions/RetrieveBotPoiDelegate.cs",
                 "CommonBehaviors/Actions/ActionIdle.cs",
                 "CommonBehaviors/Actions/ActionAlwaysSucceed.cs" })
@@ -49,9 +57,18 @@ internal static class RoamContinuationOwnershipRegressionTests
             var errors = result.Errors.Cast<CompilerError>().Where(e => !e.IsWarning).ToArray();
             if (errors.Length != 0) throw new InvalidOperationException("Actual roam compilation: " + string.Join("; ", errors.Select(e => e.ToString())));
             var assembly = (Assembly)type.GetProperty("CompiledAssembly", flags)!.GetValue(compiler)!;
-            try { assembly.GetType("RoamCases", true)!.GetMethod("Run")!.Invoke(null, null); }
+            var swallowed = new List<string>();
+            void Observe(Styx.Helpers.LogLevel level, string text)
+            { if (text.Contains("Exception", StringComparison.Ordinal) || text.Contains("Object reference not set", StringComparison.Ordinal)) swallowed.Add(text); }
+            Styx.Helpers.Logging.OnMessageLogged += Observe;
+            try
+            {
+                assembly.GetType("RoamCases", true)!.GetMethod("Run")!.Invoke(null, null);
+                if (swallowed.Count != 0) throw new InvalidOperationException("Swallowed roam fixture errors: " + string.Join("; ", swallowed));
+            }
             catch (TargetInvocationException error) when (error.InnerException != null)
             { ExceptionDispatchInfo.Capture(error.InnerException).Throw(); throw; }
+            finally { Styx.Helpers.Logging.OnMessageLogged -= Observe; }
         }
         finally { Styx.Helpers.Logging.FileLogging = logging; Directory.Delete(temp, true); }
     }
@@ -71,12 +88,14 @@ public static class RoamCases {
  sealed class Failure(string why):Exception(why){}
  public static LocalPlayer Actor;public static WoWUnit Selected;public static BotPoi OriginalPoi;
  public static bool Acknowledge=true,ShouldMount=true;public static string Stage;public static System.Action Callback;
- public static int Targets,Publications,Mounts,Moves,Clears;public static WoWPoint Moved,Supplied;
+ public static int Targets,Publications,Mounts,Moves,Clears,Chases,RoutineTicks;public static WoWPoint Moved,Supplied;
+ public static RunStatus ChaseReceipt=RunStatus.Failure;
  public static MoveResult Movement=MoveResult.Moved;
  static void Check(bool good,string why){if(!good)throw new Failure(why);}
  public static void Event(string stage){if(Stage==stage){var call=Callback;Stage=null;Callback=null;call?.Invoke();}}
  static void Reset(){
   Stage=null;Callback=null;Targets=Publications=Mounts=Moves=Clears=0;Acknowledge=ShouldMount=true;Movement=MoveResult.Moved;
+  Chases=RoutineTicks=0;ChaseReceipt=RunStatus.Failure;RoutineManager.Current=new Routine();
   Moved=Supplied=WoWPoint.Empty;Actor=new LocalPlayer{Guid=1,MapId=530,Location=new WoWPoint(10,10,10)};StyxWoW.Me=Actor;
   Selected=new WoWUnit{Guid=2,Entry=200,Location=new WoWPoint(15,10,10)};Targeting.Instance=new Targeting{FirstUnit=Selected};
   OriginalPoi=new BotPoi(PoiType.None);BotPoi.Seed(OriginalPoi);Navigator.NavigationProvider=new object();
@@ -137,12 +156,62 @@ public static class RoamCases {
   Case("dead pet does not block healthy roaming",()=>{Actor.Pet=new WoWUnit{Guid=27,Combat=true,IsAlive=false};Check(Once(1)==RunStatus.Success&&Moves==1,"dead pet retained combat movement ownership");});
   foreach(WoWPoint invalid in new[]{WoWPoint.Empty,new WoWPoint(float.PositiveInfinity,10,10),new WoWPoint(10,float.NaN,10),new WoWPoint(10,10,float.NegativeInfinity)}){var point=invalid;Case("invalid hotspot "+point,()=>{StyxWoW.AreaManager.CurrentGrindArea.CurrentHotSpot.Position=point;Check(Once(1)==RunStatus.Failure&&Moves==0&&Mounts==0,"invalid point admitted");});}
   Case("new activation can select its new actor",()=>{Check(Once(0)==RunStatus.Success,"initial selection failed");Reset();Actor.Guid=9;Check(Once(0)==RunStatus.Success&&Targets==1&&BotPoi.Current.Guid==2,"new activation was permanently revoked");});
+  AddTailCases(Case);
   Console.WriteLine($"Roam ownership scenarios: {pass}/{total}; assertions={assertions}; unexpected={unexpected}; complete tracked factory/predicates/admission/POI action and real TreeSharp; controlled world/mount/navigation; no native atomicity or physical-route acceptance.");
   if(assertions+unexpected!=0)throw new InvalidOperationException("Roam ownership regression");
  }
+ static void AddTailCases(System.Action<string,System.Action> Case){
+  foreach(PoiType type in new[]{PoiType.Repair,PoiType.Sell,PoiType.Train,PoiType.Buy,PoiType.Mail,PoiType.Fly})foreach(string mode in new[]{"routine","chase","clear"}){
+   var service=type;string leaf=mode;
+   Case("tail preserves "+service+" before "+leaf,()=>{
+    OriginalPoi.Type=service;Actor.CurrentTarget=new WoWUnit{Guid=9};Selected.ObservedDistance=leaf=="chase"?40:5;
+    if(leaf=="routine")RoutineManager.Current.MoveToTargetBehavior=new TreeSharp.Action(_=>{RoutineTicks++;return RunStatus.Failure;});
+    Once(2);Check(RoutineTicks==0&&Chases==0&&Clears==0&&ReferenceEquals(BotPoi.Current,OriginalPoi),"tail consumed service/taxi work");
+   });
+  }
+  foreach(PoiType type in new[]{PoiType.None,PoiType.Kill}){var intent=type;Case("healthy tail chase "+intent,()=>{
+   OriginalPoi.Type=intent;Actor.CurrentTarget=Selected;Selected.ObservedDistance=40;ChaseReceipt=RunStatus.Success;
+   Check(Once(2)==RunStatus.Success&&Chases==1&&Clears==0,"ordinary tail chase changed");
+  });}
+  Case("healthy tail cleanup",()=>{OriginalPoi.Type=PoiType.Kill;Actor.CurrentTarget=new WoWUnit{Guid=9};Check(Once(2)==RunStatus.Success&&Clears==1&&Chases==0,"valid better-target cleanup changed");});
+  foreach(string stage in new[]{"distance","sight","routine","chase"})foreach(string kind in new[]{"poi","poi-type","actor","map","selection","provider"}){
+   string boundary=stage,change=kind;Case("tail "+boundary+" callback revokes "+change,()=>{
+    OriginalPoi.Type=PoiType.Kill;Actor.CurrentTarget=new WoWUnit{Guid=9};Selected.ObservedDistance=boundary=="chase"?40:5;
+    if(boundary=="routine")RoutineManager.Current.MoveToTargetBehavior=new TreeSharp.Action(_=>{RoutineTicks++;Event("routine");return RunStatus.Failure;});
+    bool fired=false;BotPoi replacement=null;Stage=boundary;Callback=()=>{fired=true;Change(change);replacement=BotPoi.Current;};
+    Once(2);Check(fired,"tail observation callback was not reached");
+    Check(Chases==(boundary=="chase"?1:0)&&Clears==0&&ReferenceEquals(BotPoi.Current,replacement),"revoked tail dispatched chase or consumed replacement POI");
+   });
+  }
+  foreach(string kind in new[]{"actor","actor-guid","actor-dead","actor-invalid","map","selection","target-guid","target-dead","target-invalid","display","poi","poi-type","provider","profile","combat","pet-combat","taxi","transport","cast","channel"}){
+   string change=kind;Case("yielded tail routine revokes "+change,()=>{
+    OriginalPoi.Type=PoiType.Kill;Actor.CurrentTarget=Selected;var pending=new PendingTail();RoutineManager.Current.MoveToTargetBehavior=pending;
+    var tree=Branch(2);tree.Start(null);try{
+     Check(Tick(tree)==RunStatus.Running&&pending.Ticks==1,"tail routine did not yield");Change(change);var replacement=BotPoi.Current;
+     Tick(tree);Check(pending.Ticks==1&&pending.Stops==1&&Chases==0&&Clears==0&&ReferenceEquals(BotPoi.Current,replacement),"revoked tail resumed or consumed replacement work");
+    }finally{tree.Stop(null);}Check(pending.Stops==1,"tail cleanup repeated");
+   });
+  }
+  foreach(string kind in new[]{"combat","pet-combat","taxi","transport","cast","channel","actor-dead","actor-invalid"}){string change=kind;Case("tail initial actor state "+change,()=>{
+   OriginalPoi.Type=PoiType.Kill;Actor.CurrentTarget=Selected;Selected.ObservedDistance=40;Change(change);Once(2);Check(Chases==0&&Clears==0,"ineligible actor acquired roaming chase");
+  });}
+  Case("healthy delayed tail routine",()=>{
+   OriginalPoi.Type=PoiType.Kill;Actor.CurrentTarget=Selected;var pending=new PendingTail();RoutineManager.Current.MoveToTargetBehavior=pending;
+   var tree=Branch(2);tree.Start(null);try{Check(Tick(tree)==RunStatus.Running,"healthy tail did not yield");pending.Complete=true;Check(Tick(tree)==RunStatus.Success&&pending.Ticks==2&&pending.Stops==1&&Chases==0&&Clears==0,"healthy tail continuation changed");}finally{tree.Stop(null);}
+  });
+  Case("tail cleanup preserves its replacement",()=>{
+   OriginalPoi.Type=PoiType.Kill;Actor.CurrentTarget=Selected;var pending=new PendingTail();RoutineManager.Current.MoveToTargetBehavior=pending;
+   BotPoi replacement=null;pending.OnStop=()=>{replacement=new BotPoi(PoiType.Fly);BotPoi.Seed(replacement);};
+   var tree=Branch(2);tree.Start(null);try{Check(Tick(tree)==RunStatus.Running,"tail not pending");Actor.MapId++;Tick(tree);Check(pending.Ticks==1&&pending.Stops==1&&ReferenceEquals(BotPoi.Current,replacement)&&Clears==0,"tail cleanup replaced newer taxi");}finally{tree.Stop(null);}
+  });
+ }
+ sealed class PendingTail:Composite {
+  public int Ticks,Stops;public bool Complete;public System.Action OnStop;
+  protected override IEnumerable<RunStatus> Execute(object context){try{while(true){Ticks++;if(Complete){yield return RunStatus.Success;yield break;}yield return RunStatus.Running;}}finally{Stops++;OnStop?.Invoke();}}
+ }
 }
 /* Controlled world. */ namespace Styx.WoWInternals.WoWObjects {
- public class WoWUnit {public ulong Guid;public uint Entry=200,FactionId=1;public int Level=80;public bool IsValid=true,IsAlive=true,Combat;public bool Dead=>!IsAlive;public WoWPoint Location;public WoWUnit CurrentTarget;public ulong CurrentTargetGuid=>CurrentTarget?.Guid??0;public bool GotTarget=>CurrentTarget!=null;public double Distance=>5;public double DistanceSqr=>25;public bool InLineOfSpellSight=>true;
+ public class WoWUnit {public ulong Guid;public uint Entry=200,FactionId=1;public int Level=80;public bool IsValid=true,IsAlive=true,Combat;public bool Dead=>!IsAlive;public WoWPoint Location;public WoWUnit CurrentTarget;public ulong CurrentTargetGuid=>CurrentTarget?.Guid??0;public bool GotTarget=>CurrentTarget!=null;public double ObservedDistance=5;public double Distance{get{RoamCases.Event("distance");return ObservedDistance;}}public double DistanceSqr=>Distance*Distance;public bool InLineOfSpellSight{get{RoamCases.Event("sight");return true;}}
   public void Target(){RoamCases.Targets++;if(RoamCases.Acknowledge)Styx.StyxWoW.Me.CurrentTarget=this;}
  }
  public class LocalPlayer:WoWUnit {public uint MapId;public bool Mounted,IsCasting,IsOnTransport,OnTaxi;public int ChanneledCastingSpellId;public WoWUnit Pet;public bool GotAlivePet=>Pet?.IsAlive==true;}
@@ -166,8 +235,7 @@ public static class RoamCases {
 /* Controlled external diagnostics/settings. */ namespace Styx.Helpers {public static class Logging {public static void Write(string text,params object[] values){}public static void WriteDebug(string text,params object[] values){}}public class LevelbotSettings {public static LevelbotSettings Instance=new();public bool GroundMountFarmingMode;}}
 /* Controlled status callback. */ namespace Styx.Logic.BehaviorTree {public static class TreeRoot {public static string StatusText {set{RoamCases.Event("status");}}}}
 /* Controlled navigation boundary. */ namespace Styx.Logic.Pathing {public static class Navigator {public static object NavigationProvider;public static MoveResult MoveTo(WoWPoint point){RoamCases.Moves++;RoamCases.Moved=point;return RoamCases.Movement;}public static RunStatus GetRunStatusFromMoveResult(MoveResult result)=>result==MoveResult.Moved||result==MoveResult.ReachedDestination?RunStatus.Success:RunStatus.Failure;}}
-/* Unselected external routine leaf. */ namespace Styx.Logic.Combat {public static class RoutineManager {public static Routine Current=new();}public class Routine {public Composite MoveToTargetBehavior=>null;}}
-/* Unselected chase leaf; tested separately on its real owner. */ namespace Levelbot.Actions.Combat {public class ActionMoveToTarget:TreeSharp.Action {public ActionMoveToTarget():base(_=>RunStatus.Failure){}}}
-/* Unselected final cleanup leaf. */ namespace CommonBehaviors.Actions {public class ActionClearPoi:TreeSharp.Action {public ActionClearPoi(string reason):base(_=>{BotPoi.Clear(reason);return RunStatus.Failure;}){}}}
+/* Controlled external routine leaf. */ namespace Styx.Logic.Combat {public static class RoutineManager {public static Routine Current=new();}public class Routine {public Composite MoveToTargetBehavior;}}
+/* Controlled chase dispatch; the complete chase owner has separate real-owner tests. */ namespace Levelbot.Actions.Combat {public class ActionMoveToTarget:TreeSharp.Action {public ActionMoveToTarget():base(_=>{RoamCases.Chases++;RoamCases.Event("chase");return RoamCases.ChaseReceipt;}){}}}
 """;
 }
