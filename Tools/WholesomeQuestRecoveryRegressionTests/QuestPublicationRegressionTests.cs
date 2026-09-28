@@ -320,6 +320,8 @@ internal static class QuestPublicationRegressionTests
             // assembler/executor exists. Allocated descriptor/cache bytes are owned here.
             Set(memory, "_hProcess", new IntPtr(-1));
             Bytes(0xBD0792, new byte[] { 1 }); Bytes(0xB6A9E0, BitConverter.GetBytes(0u));
+            // Separate numeric lifecycle word; the legacy address is screen text.
+            Bytes(0xB6AA38, BitConverter.GetBytes(0u));
             Bytes(0xBD088C, BitConverter.GetBytes(1u));
             // ZoneText reads a client-global pointer, then an actual 512-byte string.
             // Both observations must belong to this fixture, not arbitrary memory
