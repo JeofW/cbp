@@ -30,6 +30,9 @@ internal static class AuraCountSafetyRegressionTests
                 string source=File.ReadAllText(Path.Combine(Root(),"Styx","WoWInternals","WoWObjects","WoWUnit.cs"));
                 int method=source.IndexOf("public unsafe WoWAuraCollection GetAllAuras()",StringComparison.Ordinal);
                 int dynamicRead=source.IndexOf("auraCount = wow.Read<int>(BaseAddress + 3156);",method,StringComparison.Ordinal);
+                // Both spellings resolve the dynamic count; the assertion below
+                // still requires the same bounded guard before array allocation.
+                dynamicRead=Math.Max(dynamicRead,source.IndexOf("auraCount = BitConverter.ToInt32(dynamicCountBytes, 0);",method,StringComparison.Ordinal));
                 int guardCall=source.IndexOf("IsPlausibleAuraCount(auraCount)",method,StringComparison.Ordinal);
                 int allocation=source.IndexOf("new WoWAura.AuraInfo[auraCount]",method,StringComparison.Ordinal);
                 Check(method>=0&&dynamicRead>method&&guardCall>dynamicRead&&allocation>guardCall,
