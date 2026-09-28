@@ -328,6 +328,33 @@ namespace Singular.ClassSpecific.Paladin
             else
             {
                 var target = me.CurrentTarget;
+                var settings = SingularSettings.Instance.Paladin;
+                // Optional solo sustain is not an emergency heal or a damage
+                // optimum. Keep manual/group/player choices out of this policy.
+                if (settings.UseSoloSealOfLight && SingularRoutine.CurrentWoWContext == WoWContext.Normal
+                    && me.Combat && !me.IsInParty && !me.IsInRaid
+                    && target != null && target.IsValid && target.IsAlive
+                    && !target.IsPlayer && !target.Elite && !target.IsBoss()
+                    && SpellManager.HasSpell("Seal of Light")
+                    && settings.SoloSealOfLightHealth > 0
+                    && settings.SoloSealOfLightHealth < settings.SoloSealOfLightRecoveryHealth
+                    && settings.SoloSealOfLightRecoveryHealth <= 100
+                    && settings.SoloSealOfLightMinimumMana >= 0 && settings.SoloSealOfLightMinimumMana <= 100)
+                {
+                    double health = me.HealthPercent;
+                    if (double.IsNaN(health) || double.IsInfinity(health) || health < 0 || health > 100
+                        || health <= Math.Max(settings.LayOnHandsHealth, settings.RetributionHealHealth))
+                        return null;
+                    // Observe the actual seal as the hysteresis state: no
+                    // unowned timer and no reapplication near the entry edge.
+                    if (me.HasAura("Seal of Light") && health < settings.SoloSealOfLightRecoveryHealth)
+                        return null;
+                    double mana = me.ManaPercent;
+                    if (health <= settings.SoloSealOfLightHealth && target.IsWithinMeleeRange
+                        && !double.IsNaN(mana) && !double.IsInfinity(mana)
+                        && mana >= settings.SoloSealOfLightMinimumMana && mana <= 100)
+                        return "Seal of Light";
+                }
                 // Player combat values immediate damage and controlled CC. The
                 // dungeon area guard is not an arena safety observation. Keep
                 // automatic cleave/DoT seals out when Righteousness is learned;
