@@ -505,6 +505,9 @@ namespace WholesomeAQ
             yield return new XAttribute("Z", point.Z);
         }
 
+        // Preserve this ownership boundary in write-failure diagnostics even
+        // when callers are optimized; do not replace the actual IO exception.
+        [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.NoInlining)]
         public string WriteProfile(string xml)
         {
             if (_profilePath == null)
