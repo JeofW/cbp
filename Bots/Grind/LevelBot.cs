@@ -1413,39 +1413,109 @@ namespace Bots.Grind
         /// </summary>
         public static PrioritySelector CreateRoamBehavior()
         {
+            LocalPlayer selectingActor = null;
+            WoWUnit selected = null, displayed = null;
+            ulong actorGuid = 0, selectedGuid = 0, displayedGuid = 0;
+            uint selectingMap = 0;
+            BotPoi selectingPoi = null;
+            PoiType selectingPoiType = PoiType.None;
+            object selectingTargeting = null, selectingProfile = null;
+            bool ParticipantsCurrent() => selectingActor != null && actorGuid != 0
+                && ReferenceEquals(StyxWoW.Me, selectingActor) && selectingActor.IsValid && selectingActor.IsAlive
+                && selectingActor.Guid == actorGuid && selectingActor.MapId == selectingMap
+                && selected != null && selectedGuid != 0 && selected.IsValid && selected.IsAlive && selected.Guid == selectedGuid
+                && ReferenceEquals(Targeting.Instance, selectingTargeting) && ReferenceEquals(Targeting.Instance.FirstUnit, selected)
+                && ReferenceEquals(ProfileManager.CurrentProfile, selectingProfile);
+            bool SelectionCurrent() => ParticipantsCurrent() && ReferenceEquals(BotPoi.Current, selectingPoi)
+                && selectingPoi != null && selectingPoi.Type == selectingPoiType && ParticipantsCurrent();
+            bool DisplayUnchanged() => SelectionCurrent() && ReferenceEquals(selectingActor.CurrentTarget, displayed)
+                && selectingActor.CurrentTargetGuid == displayedGuid && SelectionCurrent();
+            bool Acknowledged() => SelectionCurrent() && ReferenceEquals(selectingActor.CurrentTarget, selected)
+                && selectingActor.CurrentTargetGuid == selectedGuid && SelectionCurrent();
+
             return new PrioritySelector(
                 // Find target if not looting/killing/vendoring
                 // HB 6.2.3 fix: also exclude Sell/Repair/Train/Buy/Mail to prevent
                 // pulling mobs during vendor runs (overwrites Sell POI with Kill)
                     new DecoratorIsNotPoiType(new[] { PoiType.Kill, PoiType.Loot, PoiType.Skin, PoiType.Harvest,
-                        PoiType.Sell, PoiType.Repair, PoiType.Train, PoiType.Buy, PoiType.Mail },
-                    new DecoratorNeedToFindTarget(new Sequence(
+                        PoiType.Sell, PoiType.Repair, PoiType.Train, PoiType.Buy, PoiType.Mail, PoiType.Fly },
+                    new Sequence(
                         new TreeSharp.Action(ctx =>
-                    {
-                        // HB 4.3.4 smethod_113 — no dead check, trusts Targeting pulse
-                        Targeting.Instance.FirstUnit.Target();
-                    }),
-                        new Wait(5, ctx => StyxWoW.Me.GotTarget, new ActionIdle()),
-                        // HB 4.3.4 smethod_115 — always Kill POI, no dead/loot logic
-                        new ActionSetPoi(ctx => new BotPoi(StyxWoW.Me.CurrentTarget, PoiType.Kill))
-                    ))
+                        {
+                            selectingActor = StyxWoW.Me; actorGuid = selectingActor?.Guid ?? 0;
+                            selectingMap = selectingActor?.MapId ?? 0;
+                            selectingTargeting = Targeting.Instance; selected = Targeting.Instance.FirstUnit;
+                            selectedGuid = selected?.Guid ?? 0;
+                            displayed = selectingActor?.CurrentTarget; displayedGuid = displayed?.Guid ?? 0;
+                            selectingPoi = BotPoi.Current; selectingPoiType = selectingPoi?.Type ?? PoiType.None;
+                            selectingProfile = ProfileManager.CurrentProfile;
+                            return DisplayUnchanged() ? RunStatus.Success : RunStatus.Failure;
+                        }),
+                        new DecoratorNeedToFindTarget(new Sequence(
+                            new TreeSharp.Action(ctx =>
+                            {
+                                if (!DisplayUnchanged()) return RunStatus.Failure;
+                                selected.Target();
+                                return SelectionCurrent() ? RunStatus.Success : RunStatus.Failure;
+                            }),
+                            new Wait(5, ctx => !SelectionCurrent() || Acknowledged() || !DisplayUnchanged(),
+                                new Decorator(ctx => Acknowledged(), new ActionIdle())),
+                            new TreeSharp.Action(ctx =>
+                            {
+                                // A displayed replacement is not this selection's acknowledgement.
+                                // POI construction and publication may also deliver callbacks.
+                                if (!Acknowledged()) return RunStatus.Failure;
+                                var next = new BotPoi(selected, PoiType.Kill);
+                                if (!Acknowledged()) return RunStatus.Failure;
+                                BotPoi.Current = next;
+                                return ParticipantsCurrent() && ReferenceEquals(BotPoi.Current, next)
+                                    ? RunStatus.Success : RunStatus.Failure;
+                            }))))
                 ),
                 // Move to hotspot if needed
-                new DecoratorIsNotPoiType(PoiType.Kill, new Decorator(
+                new DecoratorIsNotPoiType(new[] { PoiType.Kill, PoiType.Sell, PoiType.Repair,
+                    PoiType.Train, PoiType.Buy, PoiType.Mail, PoiType.Fly }, new Decorator(
                     ctx => ShouldMoveToHotspot(),
                     new TreeSharp.Action(ctx =>
                     {
-                        GrindArea grindArea = StyxWoW.AreaManager?.CurrentGrindArea;
-                        if (grindArea == null)
+                        var actor = StyxWoW.Me;
+                        ulong guid = actor?.Guid ?? 0;
+                        uint map = actor?.MapId ?? 0;
+                        var areaManager = StyxWoW.AreaManager;
+                        GrindArea grindArea = areaManager?.CurrentGrindArea;
+                        var poi = BotPoi.Current;
+                        PoiType poiType = poi?.Type ?? PoiType.None;
+                        var profile = ProfileManager.CurrentProfile;
+                        object provider = Navigator.NavigationProvider;
+                        bool ActorCurrent() => actor != null && guid != 0 && ReferenceEquals(StyxWoW.Me, actor)
+                            && actor.IsValid && actor.IsAlive && actor.Guid == guid && actor.MapId == map
+                            && !actor.Combat && (!actor.GotAlivePet || actor.Pet?.Combat != true)
+                            && !actor.IsCasting && actor.ChanneledCastingSpellId == 0 && !actor.OnTaxi && !actor.IsOnTransport;
+                        if (!ActorCurrent() || grindArea == null || poi == null)
                             return RunStatus.Failure;
 
                         Hotspot currentHotSpot = grindArea.CurrentHotSpot;
+                        if (currentHotSpot == null) return RunStatus.Failure;
                         WoWPoint hotspot = currentHotSpot.Position;
-                        if (Mount.ShouldMount(hotspot))
-                            Mount.MountUp(() => hotspot);
+                        bool Current() => ActorCurrent() && ReferenceEquals(BotPoi.Current, poi) && poi.Type == poiType
+                            && ReferenceEquals(Navigator.NavigationProvider, provider) && ReferenceEquals(ProfileManager.CurrentProfile, profile)
+                            && ReferenceEquals(StyxWoW.AreaManager, areaManager) && ReferenceEquals(areaManager.CurrentGrindArea, grindArea)
+                            && ReferenceEquals(grindArea.CurrentHotSpot, currentHotSpot) && currentHotSpot.Position == hotspot && ActorCurrent();
+                        if (!float.IsFinite(hotspot.X) || !float.IsFinite(hotspot.Y) || !float.IsFinite(hotspot.Z) || !Current())
+                            return RunStatus.Failure;
+
+                        bool shouldMount = Mount.ShouldMount(hotspot);
+                        if (!Current()) return RunStatus.Failure;
+                        if (shouldMount)
+                        {
+                            Mount.MountUp(() => Current() ? hotspot : WoWPoint.Empty);
+                            if (!Current()) return RunStatus.Failure;
+                        }
 
                         TreeRoot.StatusText = "Moving to hotspot";
-                        return Navigator.GetRunStatusFromMoveResult(Navigator.MoveTo(hotspot));
+                        if (!Current()) return RunStatus.Failure;
+                        MoveResult movement = Navigator.MoveTo(hotspot);
+                        return Current() ? Navigator.GetRunStatusFromMoveResult(movement) : RunStatus.Failure;
                     })
                 )),
                 // Move closer to target or clear POI if better target
