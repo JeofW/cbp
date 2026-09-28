@@ -76,6 +76,8 @@ internal static class AmmoWorldObservationRegressionTests
 using System;using System.Collections.Generic;using System.Linq;
 public sealed class ProbeMemory {
  public byte InGame=1;public uint State;public bool ThrowState;public int FlagReads,StateReads;
+ // Compatibility adapter preserves this fixture's existing uint observation.
+ public byte[] ReadBytes(uint address,int count){if(count!=4)throw new InvalidOperationException("unexpected state width");return BitConverter.GetBytes(Read<uint>(address));}
  public T Read<T>(uint address) {
   // Type-specific observations exercise the actual getter's read/failure path.
   // No native image is loaded and no new offset/enum provenance is asserted.

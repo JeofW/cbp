@@ -77,6 +77,8 @@ using System;using System.Collections.Generic;using System.Linq;using System.Tex
 public sealed class ProbeMemory {
  public byte InGame=1;public uint NativeState,ScreenWord;
  public bool ThrowFlag,ThrowNative,ThrowScreen;public int FlagReads,NativeReads,ScreenReads,OtherReads;
+ // Preserve the exact address-aware observation and counters for byte callers.
+ public byte[] ReadBytes(uint address,int count){if(count!=4)throw new InvalidOperationException("unexpected state width");return BitConverter.GetBytes(Read<uint>(address));}
  public T Read<T>(uint address){
   if(typeof(T)==typeof(byte)&&address==0xBD0792U){FlagReads++;if(ThrowFlag)throw new InvalidOperationException("controlled in-game read failure");return (T)(object)InGame;}
   if(typeof(T)==typeof(uint)&&address==0xB6AA38U){NativeReads++;if(ThrowNative)throw new InvalidOperationException("controlled numeric-state read failure");return (T)(object)NativeState;}
