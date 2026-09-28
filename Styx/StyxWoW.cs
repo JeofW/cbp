@@ -77,7 +77,8 @@ namespace Styx
 
         /// <summary>
         /// FEAT-07: Gets the current game state from memory.
-        /// WotLK 3.3.5a offset: 0x00B6A9E0
+        /// Build12340 numeric lifecycle word: 0x00B6AA38.
+        /// 0x00B6A9E0 is the separate screen-name string buffer.
         /// </summary>
         public static GameState GameState
         {
@@ -85,7 +86,7 @@ namespace Styx
             {
                 try
                 {
-                    return (GameState)ObjectManager.Wow.Read<uint>(0x00B6A9E0);
+                    return (GameState)ObjectManager.Wow.Read<uint>(0x00B6AA38);
                 }
                 catch
                 {
