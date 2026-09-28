@@ -24,6 +24,10 @@ internal static class GroundSpellObservationConsistencyRegressionTests
         var wait = method.DescendantNodes().OfType<ObjectCreationExpressionSyntax>()
             .Single(n => n.Type.ToString() == "WaitContinue");
         string predicate = wait.ArgumentList!.Arguments[1].Expression.ToString();
+        // Keep the real actor predicate in this extracted continuation. Its
+        // healthy controlled participant supplies state, not replacement logic.
+        string ownership = method.DescendantNodes().OfType<LocalFunctionStatementSyntax>()
+            .Single(function => function.Identifier.ValueText == "IsCurrent").ToFullString();
         var player = CSharpSyntaxTree.ParseText(File.ReadAllText(Path.Combine(root,
             "Styx/WoWInternals/WoWObjects/LocalPlayer.cs"))).GetRoot();
         string helper = player.DescendantNodes().OfType<MethodDeclarationSyntax>().Single(m =>
@@ -34,7 +38,7 @@ internal static class GroundSpellObservationConsistencyRegressionTests
         try
         {
             File.WriteAllText(Path.Combine(directory, "Probe.cs"), Prefix + helper + "}\n" +
-                "public static class Probe { public static bool Evaluate(string spell) { Func<object,bool> test = " +
+                "public static class Probe { public static bool Evaluate(string spell) { var owner=StyxWoW.Me; ulong ownerGuid=owner.Guid; " + ownership + " Func<object,bool> test = " +
                 predicate + "; return test(null); } }\n" + Cases);
             Type compilerType = typeof(Styx.StyxWoW).Assembly.GetType("Styx.Loaders.SourceCompiler", true)!;
             object compiler = Activator.CreateInstance(compilerType, new object[] { directory })!;
@@ -59,6 +63,7 @@ using System;
 public sealed class WoWSpell { public string Name; }
 public static class StyxWoW { public static PlayerProbe Me; }
 public sealed class PlayerProbe {
+ public ulong Guid=1;public bool IsValid=true,IsAlive=true;
  public WoWSpell[] Observations;private int index;
  public WoWSpell CurrentPendingCursorSpell { get {return Observations[Math.Min(index++,Observations.Length-1)];} }
 """;

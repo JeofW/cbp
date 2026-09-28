@@ -66,10 +66,16 @@ internal static class GroundCommitReceiptRegressionTests
     private const string Prefix = """
 using System;using System.Collections.Generic;using System.Linq;using System.Globalization;
 using TreeSharp;using CommonBehaviors.Actions;using Action=TreeSharp.Action;
+using LocalPlayer=Player;
 public delegate WoWPoint LocationRetriever(object context);
 public delegate bool SimpleBooleanDelegate(object context);
 public struct WoWPoint {
  public float X,Y,Z;
+ public static WoWPoint Empty=>default;public static WoWPoint Zero=>default;
+ public static bool operator ==(WoWPoint a,WoWPoint b)=>a.X==b.X&&a.Y==b.Y&&a.Z==b.Z;
+ public static bool operator !=(WoWPoint a,WoWPoint b)=>!(a==b);
+ public override bool Equals(object value)=>value is WoWPoint other&&this==other;
+ public override int GetHashCode()=>HashCode.Combine(X,Y,Z);
  public double Distance(WoWPoint other)=>Math.Sqrt((X-other.X)*(X-other.X)+(Y-other.Y)*(Y-other.Y)+(Z-other.Z)*(Z-other.Z));
 }
 public sealed class WoWSpell {public string Name="Selected";public double MaxRange=40;}
@@ -112,6 +118,7 @@ public static class StyxWoW {
  public static void ResetAfk(){World.Resets++;}
 }
 public sealed class Player {
+ public ulong Guid=1;public bool IsValid=true,IsAlive=true;
  public WoWPoint Location;
  public bool HasPendingSpell(string name){World.PendingReads++;return World.Pending;}
 }

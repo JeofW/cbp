@@ -224,21 +224,39 @@ namespace Styx.Bot.Quest_Behaviors.UseItemOn
             return RunStatus.Success;
         }
 
+        private LocalPlayer _behaviorOwner;
+        private ulong _behaviorOwnerGuid;
+
+        private bool OwnsBehaviorIdentity()
+        {
+            if (_isDisposed) return false;
+            var player = Me;
+            if (player == null || !player.IsValid || player.Guid == 0) return false;
+            if (_behaviorOwner == null)
+            {
+                _behaviorOwner = player;
+                _behaviorOwnerGuid = player.Guid;
+            }
+            // An item attempt, its baseline and its delayed acknowledgement share
+            // one actor lifetime. A later actor must start a new behavior instance.
+            return ReferenceEquals(player, _behaviorOwner) && player.Guid == _behaviorOwnerGuid;
+        }
+
         private int? ReadObjectiveCount()
         {
-            if (QuestId <= 0 || ObjectiveIndex < 0 || ObjectiveIndex > 3)
+            if (QuestId <= 0 || ObjectiveIndex < 0 || ObjectiveIndex > 3 || !OwnsBehaviorIdentity())
                 return null;
             var player = Me;
             PlayerQuest quest = player?.QuestLog?.GetQuestById((uint)QuestId);
             if (quest == null || !quest.GetData(out QuestDescriptorData data) ||
                 data.ObjectivesDone == null || ObjectiveIndex >= data.ObjectivesDone.Length)
                 return null;
-            return data.ObjectivesDone[ObjectiveIndex];
+            return OwnsBehaviorIdentity() ? data.ObjectivesDone[ObjectiveIndex] : (int?)null;
         }
 
         private bool HasAuthoritativeSuccess()
         {
-            if (SuccessEvidence == SuccessEvidenceType.InvocationCount)
+            if (SuccessEvidence == SuccessEvidenceType.InvocationCount || !OwnsBehaviorIdentity())
                 return false;
 
             bool questComplete = QuestId > 0 &&
@@ -248,19 +266,19 @@ namespace Styx.Bot.Quest_Behaviors.UseItemOn
                     QuestCompleteRequirement.Complete);
 
             if (SuccessEvidence == SuccessEvidenceType.QuestComplete)
-                return IsAuthoritativeAcknowledged(SuccessEvidence, 0, null, questComplete);
+                return OwnsBehaviorIdentity() && IsAuthoritativeAcknowledged(SuccessEvidence, 0, null, questComplete);
 
             if (SuccessEvidence == SuccessEvidenceType.ObjectiveProgress && QuestId > 0 &&
                 QuestObjectiveCompletion.IsNormalObjectiveComplete(
                     Me?.QuestLog?.GetQuestById((uint)QuestId), ObjectiveIndex))
-                return true;
+                return OwnsBehaviorIdentity();
 
             return InitialObjectiveCount.HasValue &&
                 IsAuthoritativeAcknowledged(
                     SuccessEvidence,
                     InitialObjectiveCount.Value,
                     ReadObjectiveCount(),
-                    questComplete);
+                    questComplete) && OwnsBehaviorIdentity();
         }
 
         // DON'T EDIT THESE--they are auto-populated by Subversion
@@ -432,7 +450,7 @@ namespace Styx.Bot.Quest_Behaviors.UseItemOn
 
             bool OwnsActorIdentity() => !_isDisposed && !_isBehaviorDone && playerGuid != 0
                 && ReferenceEquals(Me, player) && player.IsValid && player.IsAlive
-                && player.Guid == playerGuid;
+                && player.Guid == playerGuid && OwnsBehaviorIdentity();
 
             // Quest acceptance/completion can change during setup or item use.
             // Reuse the explicit profile's requirements, not a guessed recipe,
@@ -543,12 +561,96 @@ namespace Styx.Bot.Quest_Behaviors.UseItemOn
             return RunStatus.Success;
         }
 
+        private static bool HasFiniteDestination(WoWPoint point) => point != WoWPoint.Empty
+            && point != WoWPoint.Zero && float.IsFinite(point.X) && float.IsFinite(point.Y) && float.IsFinite(point.Z);
+
+        private static RunStatus NavigationStatus(MoveResult result) =>
+            result == MoveResult.Moved || result == MoveResult.PathGenerated
+            || result == MoveResult.UnstuckAttempt || result == MoveResult.ReachedDestination
+                ? RunStatus.Success : RunStatus.Failure;
+
+        private RunStatus ApproachOrUseCurrentObject()
+        {
+            var player = Me;
+            bool CanAct() => !_isBehaviorDone && OwnsBehaviorIdentity()
+                && ReferenceEquals(player, Me) && player.IsAlive
+                && UtilIsProgressRequirementsMet(QuestId, QuestRequirementInLog, QuestRequirementComplete)
+                && OwnsBehaviorIdentity();
+            bool CanMove() => CanAct() && !player.IsCasting && player.ChanneledCastingSpellId == 0;
+            if (!CanAct()) return RunStatus.Failure;
+            var recipient = CurrentObject;
+            if (!CanAct()) return RunStatus.Failure;
+
+            if (recipient != null)
+            {
+                ulong guid = recipient.Guid;
+                uint entry = recipient.Entry;
+                bool CurrentRecipient()
+                {
+                    if (!CanAct() || guid == 0 || !recipient.IsValid || recipient.Guid != guid || recipient.Entry != entry
+                        || !(ObjectManager.GetObjectsOfType<WoWObject>()?.Any(value => ReferenceEquals(value, recipient)) ?? false)
+                        || MobIds == null || !MobIds.Contains((int)entry) || _npcBlacklist.Contains(guid)
+                        || !(recipient.DistanceSqr < CollectionDistance * CollectionDistance)) return false;
+                    if (MobType == ObjectType.GameObject) return recipient is WoWGameObject && CanAct();
+                    if (MobType != ObjectType.Npc || !(recipient is WoWUnit unit)) return false;
+                    return !BehaviorBlacklist.Contains(guid)
+                        && (MobAuraName == null || unit.HasAura(MobAuraName))
+                        && (MobAuraMissingName == null || !unit.HasAura(MobAuraMissingName))
+                        && (NpcState == NpcStateType.DontCare || NpcState == NpcStateType.Dead && unit.Dead
+                            || NpcState == NpcStateType.Alive && unit.IsAlive
+                            || NpcState == NpcStateType.BelowHp && unit.IsAlive && unit.HealthPercent < MobHpPercentLeft)
+                        && (!IgnoreMobsInBlackspots || !Targeting.IsTooNearBlackspot(ProfileManager.CurrentProfile.Blackspots, unit.Location))
+                        && CanAct();
+                }
+
+                if (!CurrentRecipient()) return RunStatus.Failure;
+                if (recipient.DistanceSqr > Range * Range || RequireLos && !recipient.InLineOfSight)
+                {
+                    if (!CanMove()) return RunStatus.Failure;
+                    var destination = recipient.Location;
+                    var mode = NavigationState;
+                    if (!HasFiniteDestination(destination) || !CurrentRecipient()) return RunStatus.Failure;
+                    TreeRoot.StatusText = "Moving to use item on - " + recipient.Name;
+                    if (!CanMove() || !CurrentRecipient() || recipient.Location != destination || NavigationState != mode)
+                        return RunStatus.Failure;
+                    if (mode == NavigationType.CTM)
+                    {
+                        WoWMovement.ClickToMove(destination);
+                        return RunStatus.Success; // local void dispatch, not physical arrival
+                    }
+                    if (mode == NavigationType.Mesh) return NavigationStatus(Navigator.MoveTo(destination));
+                    if (mode == NavigationType.None)
+                    {
+                        _isBehaviorDone = true; // explicit local no-navigation deferral
+                        return RunStatus.Success;
+                    }
+                    return RunStatus.Failure;
+                }
+                var item = Item;
+                if (recipient.DistanceSqr <= Range * Range && item != null && item.Cooldown == 0 && CanAct())
+                    return UseCapturedItem();
+            }
+
+            var location = Location;
+            if (location.DistanceSqr(player.Location) > 2 * 2)
+            {
+                if (!CanMove() || !HasFiniteDestination(location)) return RunStatus.Failure;
+                TreeRoot.StatusText = "Moving to location " + location;
+                if (!CanMove() || Location != location) return RunStatus.Failure;
+                return NavigationStatus(Navigator.MoveTo(location));
+            }
+            if (!CanAct()) return RunStatus.Failure;
+            if (!WaitForNpcs && recipient == null) _isBehaviorDone = true;
+            else TreeRoot.StatusText = "Waiting for object to spawn";
+            return OwnsBehaviorIdentity() && (CanAct() || _isBehaviorDone) ? RunStatus.Success : RunStatus.Failure;
+        }
+
         #region Overrides of CustomForcedBehavior
 
         protected override Composite CreateBehavior()
         {
             return _root ?? (_root =
-            new PrioritySelector(
+            new Decorator(ret => OwnsBehaviorIdentity(), new PrioritySelector(
 
                 new Decorator(
                     ret => SuccessEvidence == SuccessEvidenceType.InvocationCount && Counter >= NumOfTimes,
@@ -608,46 +710,7 @@ namespace Styx.Bot.Quest_Behaviors.UseItemOn
                         return RunStatus.Success;
                     })),
 
-                    new PrioritySelector(
-                        new Decorator(ret => CurrentObject != null &&
-                            (CurrentObject.DistanceSqr > Range * Range ||
-                             RequireLos && !CurrentObject.InLineOfSight),
-                            new Switch<NavigationType>(ret => NavigationState,
-                                new SwitchArgument<NavigationType>(
-                                    NavigationType.CTM,
-                                    new Sequence(
-                                        new Action(ret => { TreeRoot.StatusText = "Moving to use item on - " + CurrentObject.Name; }),
-                                        new Action(ret => WoWMovement.ClickToMove(CurrentObject.Location))
-                                    )),
-                                new SwitchArgument<NavigationType>(
-                                    NavigationType.Mesh,
-                                    new Sequence(
-                                        new Action(delegate { TreeRoot.StatusText = "Moving to use item on \"" + CurrentObject.Name + "\""; }),
-                                        new Action(ret => Navigator.MoveTo(CurrentObject.Location))
-                                        )),
-                                new SwitchArgument<NavigationType>(
-                                    NavigationType.None,
-                                    new Sequence(
-                                        new Action(ret => { TreeRoot.StatusText = "Object is out of range, Skipping - " + CurrentObject.Name + " Distance: " + CurrentObject.Distance; }),
-                                        new Action(ret => _isBehaviorDone = true)
-                                    )))),
-
-                        new Decorator(ret => CurrentObject != null && CurrentObject.DistanceSqr <= Range * Range && Item != null && Item.Cooldown == 0,
-                            new Action(ret => UseCapturedItem())
-                                    ),
-
-                            new Decorator(
-                                ret => Location.DistanceSqr(Me.Location) > 2 * 2,
-                                new Sequence(
-                                    new Action(delegate { TreeRoot.StatusText = "Moving to location " + Location; }),
-                                    new Action(ret => Navigator.MoveTo(Location)))),
-
-                            new Decorator(
-                                 ret => !WaitForNpcs && CurrentObject == null,
-                                 new Action(ret => _isBehaviorDone = true)),
-
-                            new Action(ret => TreeRoot.StatusText = "Waiting for object to spawn")
-                )));
+                new Action(ret => ApproachOrUseCurrentObject()))));
         }
 
 
@@ -663,6 +726,7 @@ namespace Styx.Bot.Quest_Behaviors.UseItemOn
             get
             {
                 return (_isBehaviorDone     // local execution completion/deferral
+                        || (_behaviorOwner != null && !OwnsBehaviorIdentity())
                         || (SuccessEvidence != SuccessEvidenceType.InvocationCount && HasAuthoritativeSuccess())
                         || !UtilIsProgressRequirementsMet(QuestId, QuestRequirementInLog, QuestRequirementComplete));
             }
@@ -674,6 +738,12 @@ namespace Styx.Bot.Quest_Behaviors.UseItemOn
             // We had to defer this action, as the 'profile line number' is not available during the element's
             // constructor call.
             OnStart_HandleAttributeProblem();
+
+            if (!OwnsBehaviorIdentity())
+            {
+                _isBehaviorDone = true;
+                return;
+            }
 
             _lastSubmissionUtc = -1;
             _submissionRefusalUtc = -1;

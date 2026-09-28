@@ -48,7 +48,9 @@ internal static class CastWaitFacingRegressionTests
     }
     private const string Prefix = """
 using System; using System.Collections.Generic; using TreeSharp; using CommonBehaviors.Actions; using Action=TreeSharp.Action;
+using WoWUnit=Player;
 public sealed class Player {
+ public ulong Guid=1;public bool IsValid=true,IsAlive=true;
  public bool IsCasting=true,Wanding;public ulong ChannelObjectGuid;public uint ChanneledCastingSpellId;
  public TimeSpan CurrentCastTimeLeft=TimeSpan.FromSeconds(2);public bool IsWanding()=>Wanding;
 }

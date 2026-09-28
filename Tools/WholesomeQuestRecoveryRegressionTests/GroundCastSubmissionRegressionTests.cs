@@ -53,9 +53,17 @@ internal static class GroundCastSubmissionRegressionTests
     private const string Prefix = """
 using System;using System.Collections.Generic;using TreeSharp;using CommonBehaviors.Actions;
 using Action=TreeSharp.Action;
+using LocalPlayer=Player;using WoWPoint=Point;
 public delegate Point LocationRetriever(object context);
 public delegate bool SimpleBooleanDelegate(object context);
-public sealed class Point {public double X;public double Distance(Point other)=>Math.Abs(X-other.X);}
+public struct Point {
+ public double X,Y,Z;public double Distance(Point other)=>Math.Abs(X-other.X);
+ public static Point Empty=>default;public static Point Zero=>default;
+ public static bool operator ==(Point a,Point b)=>a.X==b.X&&a.Y==b.Y&&a.Z==b.Z;
+ public static bool operator !=(Point a,Point b)=>!(a==b);
+ public override bool Equals(object value)=>value is Point other&&this==other;
+ public override int GetHashCode()=>HashCode.Combine(X,Y,Z);
+}
 public sealed class WoWSpell {public string Name="Selected";public double MaxRange=40;}
 public static class World {
  public static bool CanCast,Accepted,Safe,Requirements;public static string Mode;
@@ -79,6 +87,7 @@ public static class Unit {public static bool IsAreaEffectSafe(string spell,Point
 public static class Logger {public static void Write(string format,params object[] args){}}
 public static class StyxWoW {public static Player Me;}
 public sealed class Player {
+ public ulong Guid=1;public bool IsValid=true,IsAlive=true;
  public Point Location=new Point();
  public WoWSpell CurrentPendingCursorSpell {get{World.PendingReads++;return World.Pending;}}
 """;

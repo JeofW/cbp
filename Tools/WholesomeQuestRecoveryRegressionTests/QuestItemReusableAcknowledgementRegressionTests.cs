@@ -132,6 +132,18 @@ public static class ReusableItemCases
             Set("SuccessEvidence",Script.SuccessEvidenceType.InvocationCount);Set("NumOfTimes",1);
             SubmitOnce();Pulse();Check(owner.IsDone&&used.Count==1&&!Acknowledged(),"legacy invocation was turned into authoritative acknowledgement");
         });
+        foreach(string change in new[]{"reference","guid","missing"})
+        {
+            string replacement=change;
+            Add("later quest completion cannot acknowledge a different actor: "+replacement,()=>{
+                SubmitOnce();Pulse();
+                if(replacement=="reference")ObjectManager.Me=new LocalPlayer{Guid=player.Guid,Location=player.Location,CarriedItems=player.CarriedItems};
+                else if(replacement=="guid")player.Guid=9;
+                else ObjectManager.Me=null;
+                observe("complete");
+                Check(!Acknowledged()&&used.Count==1,"a later actor's completion was attributed to the original item attempt");
+            });
+        }
         int passed=0,assertions=0,unexpected=0;
         try
         {

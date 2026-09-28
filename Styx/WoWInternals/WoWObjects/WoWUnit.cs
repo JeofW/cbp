@@ -1034,11 +1034,14 @@ namespace Styx.WoWInternals.WoWObjects
                 if (string.IsNullOrEmpty(unitId))
                     return false;
 
-                // Check if the spell is interruptible via Lua UnitCastingInfo
-                // notInterruptible is the 8th return value
+                // Build12340: cast counter is value8; noninterruptible is value9.
+                // Channels instead return the flag as value8. Missing/failed Lua
+                // observations must not become affirmative interrupt permission.
                 var result = Lua.GetReturnVal<int>(
-                    $"local n,_,_,_,_,_,_,notInterruptible = UnitCastingInfo('{unitId}'); return notInterruptible and 1 or 0", 0);
-                return result == 0;
+                    $"local n,_,_,_,_,_,_,_,blocked = UnitCastingInfo('{unitId}'); " +
+                    $"if not n then n,_,_,_,_,_,_,blocked = UnitChannelInfo('{unitId}') end; " +
+                    "return type(n) == 'string' and n ~= '' and blocked == false and 1 or 0", 0);
+                return result == 1;
             }
         }
 
@@ -1061,7 +1064,7 @@ namespace Styx.WoWInternals.WoWObjects
                 try
                 {
                     var remaining = Lua.GetReturnVal<double>(
-                        $"local _,_,_,_,endTime = UnitCastingInfo('{unitId}'); if endTime then return (endTime/1000) - GetTime() else return 0 end", 0);
+                        $"local _,_,_,_,_,endTime = UnitCastingInfo('{unitId}'); if type(endTime) == 'number' then return (endTime/1000) - GetTime() else return 0 end", 0);
                     return remaining > 0 ? TimeSpan.FromSeconds(remaining) : TimeSpan.Zero;
                 }
                 catch { return TimeSpan.Zero; }
@@ -1105,7 +1108,7 @@ namespace Styx.WoWInternals.WoWObjects
                 try
                 {
                     var remaining = Lua.GetReturnVal<double>(
-                        $"local _,_,_,_,endTime = UnitChannelInfo('{unitId}'); if endTime then return (endTime/1000) - GetTime() else return 0 end", 0);
+                        $"local _,_,_,_,_,endTime = UnitChannelInfo('{unitId}'); if type(endTime) == 'number' then return (endTime/1000) - GetTime() else return 0 end", 0);
                     return remaining > 0 ? TimeSpan.FromSeconds(remaining) : TimeSpan.Zero;
                 }
                 catch { return TimeSpan.Zero; }

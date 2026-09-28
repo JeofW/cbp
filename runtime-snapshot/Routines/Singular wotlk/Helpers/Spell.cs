@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -7,6 +7,7 @@ using CommonBehaviors.Actions;
 using Styx;
 using Styx.Logic;
 using Styx.Logic.Combat;
+using Styx.Logic.Pathing;
 using Styx.WoWInternals;
 using Styx.WoWInternals.WoWObjects;
 
@@ -87,7 +88,14 @@ namespace Singular.Helpers
         {
             return new PrioritySelector(
                 WaitForCast(),
-                new Decorator(ret => StyxWoW.Me.ChanneledCastingSpellId > 0,
+                new Decorator(ret =>
+                    {
+                        var owner = StyxWoW.Me;
+                        ulong ownerGuid = owner?.Guid ?? 0;
+                        return ownerGuid != 0 && owner != null && owner.IsValid && owner.IsAlive
+                            && owner.ChanneledCastingSpellId > 0 && owner.Guid == ownerGuid
+                            && ReferenceEquals(owner, StyxWoW.Me) && owner.IsValid && owner.IsAlive;
+                    },
                     new ActionAlwaysSucceed()));
         }
 
@@ -117,21 +125,31 @@ namespace Singular.Helpers
         /// <returns></returns>
         public static Composite WaitForCast(bool faceDuring, bool allowLagTollerance)
         {
+            WoWUnit owner = null;
+            ulong ownerGuid = 0;
+            bool IsCurrent() => ownerGuid != 0 && owner != null && owner.IsValid && owner.IsAlive
+                && owner.Guid == ownerGuid && ReferenceEquals(owner, StyxWoW.Me);
             return new Sequence(
                 new Action(ret =>
                             {
-                                if (!StyxWoW.Me.IsCasting)
+                                var castingPlayer = StyxWoW.Me;
+                                owner = castingPlayer;
+                                ownerGuid = owner?.Guid ?? 0;
+                                if (!IsCurrent() || !owner.IsCasting || !IsCurrent())
                                     return RunStatus.Failure;
 
-                                if (StyxWoW.Me.IsWanding())
+                                if (castingPlayer.IsWanding() || !IsCurrent())
                                     return RunStatus.Failure;
 
-                                if (StyxWoW.Me.ChannelObjectGuid > 0) 
+                                if (owner.ChannelObjectGuid > 0 || !IsCurrent())
                                     return RunStatus.Failure;
 
                                 var latency = StyxWoW.WoWClient.Latency * 2;
-                                var castTimeLeft = StyxWoW.Me.CurrentCastTimeLeft;
-                                if (allowLagTollerance && castTimeLeft != TimeSpan.Zero && StyxWoW.Me.CurrentCastTimeLeft.TotalMilliseconds < latency)
+                                if (!IsCurrent()) return RunStatus.Failure;
+                                var castTimeLeft = owner.CurrentCastTimeLeft;
+                                if (!IsCurrent() || !owner.IsCasting || !IsCurrent())
+                                    return RunStatus.Failure;
+                                if (allowLagTollerance && castTimeLeft != TimeSpan.Zero && castTimeLeft.TotalMilliseconds < latency)
                                     return RunStatus.Failure;
 
                                 return RunStatus.Success;
@@ -140,9 +158,12 @@ namespace Singular.Helpers
                 // newly constructed Composite. No turn still means keep waiting.
                 new PrioritySelector(
                     new Decorator(
-                        ret => faceDuring && StyxWoW.Me.ChanneledCastingSpellId == 0,
+                        ret => faceDuring && IsCurrent() && owner.IsCasting && IsCurrent()
+                            && owner.ChanneledCastingSpellId == 0 && IsCurrent(),
                         Movement.CreateFaceTargetBehavior()),
-                    new ActionAlwaysSucceed()));
+                    new ActionAlwaysSucceed()),
+                new Action(ret => IsCurrent() && owner.IsCasting && IsCurrent()
+                    ? RunStatus.Success : RunStatus.Failure));
         }
 
         #endregion
@@ -159,7 +180,7 @@ namespace Singular.Helpers
         /// <returns></returns>
         public static Composite PreventDoubleCast(params string[] spellNames)
         {
-            return PreventDoubleCast(ret => StyxWoW.Me.CurrentTarget, spellNames);
+            return PreventDoubleCast(ret => StyxWoW.Me?.CurrentTarget, spellNames);
         }
 
         /// <summary>
@@ -173,35 +194,89 @@ namespace Singular.Helpers
         /// <returns></returns>
         public static Composite PreventDoubleCast(UnitSelectionDelegate unit, params string[] spellNames)
         {
+            WoWUnit owner = null, subject = null;
+            ulong ownerGuid = 0, subjectGuid = 0;
+            int spellId = 0;
+            bool OwnsActor() => ownerGuid != 0 && owner != null && owner.IsValid && owner.IsAlive
+                && owner.Guid == ownerGuid && ReferenceEquals(owner, StyxWoW.Me);
+            bool OwnsSubject() => OwnsActor() && subjectGuid != 0 && subject != null
+                && subject.IsValid && subject.IsAlive && subject.Guid == subjectGuid;
+            bool SameObservedCast()
+            {
+                if (!OwnsActor() || !owner.IsCasting || !OwnsActor()) return false;
+                var observed = owner.CastingSpell;
+                return observed != null && observed.Id == spellId && spellNames.Contains(observed.Name)
+                    && owner.CastingSpellId == spellId && OwnsActor();
+            }
+            bool HasOwnedDuplicate(object context, bool reselect)
+            {
+                if (!OwnsSubject() || !SameObservedCast()) return false;
+                if (reselect && (!ReferenceEquals(unit(context), subject) || !OwnsSubject())) return false;
+                // The complete collection preserves an owned aura when another
+                // caster has an effect with the same localized name.
+                var auras = subject.GetAllAuras();
+                return auras != null && auras.Any(a => a != null && a.SpellId == spellId
+                    && a.CreatorGuid == ownerGuid && a.IsActive) && OwnsSubject() && SameObservedCast();
+            }
             return
                 new PrioritySelector(
                     new Decorator(
-                        ret => StyxWoW.Me.IsCasting && spellNames.Contains(StyxWoW.Me.CastingSpell.Name) &&
-                               unit != null && unit(ret) != null && unit(ret).Auras.Any(a => a.Value.SpellId == StyxWoW.Me.CastingSpellId &&
-                               a.Value.CreatorGuid == StyxWoW.Me.Guid),
-                        new Action(ret => SpellManager.StopCasting())));
+                        ret =>
+                        {
+                            owner = StyxWoW.Me;
+                            ownerGuid = owner?.Guid ?? 0;
+                            subject = null; subjectGuid = 0; spellId = 0;
+                            if (unit == null || spellNames == null || spellNames.Length == 0 || !OwnsActor())
+                                return false;
+                            var observed = owner.CastingSpell;
+                            if (!OwnsActor() || observed == null || observed.Id <= 0 || !spellNames.Contains(observed.Name))
+                                return false;
+                            spellId = observed.Id;
+                            subject = unit(ret);
+                            subjectGuid = subject?.Guid ?? 0;
+                            return HasOwnedDuplicate(ret, false);
+                        },
+                        new Action(ret =>
+                        {
+                            if (!HasOwnedDuplicate(ret, true)) return RunStatus.Failure;
+                            // These are stable managed observations, not proof of
+                            // a native cast instance or its original recipient.
+                            SpellManager.StopCasting();
+                            return OwnsSubject() ? RunStatus.Success : RunStatus.Failure;
+                        })));
         }
 
         #endregion
 
         #region Cast - by name
 
+        private static float MeleeRangeFor(WoWUnit actor, WoWUnit target)
+        {
+            if (actor == null || target == null) return 0f;
+            if (target.IsPlayer) return 3.5f;
+            float reach = actor.CombatReach + 1.3333334f + target.CombatReach;
+            return float.IsFinite(reach) ? Math.Max(5f, reach) : 0f;
+        }
+
         // Use the same admission before setup and immediately before dispatch.
         // Preserve the existing self/melee/ranged policy instead of introducing
         // a second, subtly different LOS or range calculation at the boundary.
         private static bool CanCastNamedSpell(string name, WoWUnit target,
-            SimpleBooleanDelegate checkMovement, SimpleBooleanDelegate requirements, object ret)
+            SimpleBooleanDelegate checkMovement, SimpleBooleanDelegate requirements, object ret, Func<bool> isCurrent)
         {
             if (string.IsNullOrWhiteSpace(name) || requirements == null || checkMovement == null)
                 return false;
-            if (target == null)
+            if (target == null || !isCurrent())
                 return false;
-            var minReqs = requirements(ret) && Unit.IsCombatActionSafe(name, target);
+            var minReqs = requirements(ret) && isCurrent() && Unit.IsCombatActionSafe(name, target) && isCurrent();
             var canCast = false;
             var inRange = false;
             if (minReqs)
             {
-                canCast = SpellManager.CanCast(name, target, false, checkMovement(ret));
+                bool movementRequired = checkMovement(ret);
+                if (!isCurrent()) return false;
+                canCast = SpellManager.CanCast(name, target, false, movementRequired);
+                if (!isCurrent()) return false;
 
                 if (canCast)
                 {
@@ -219,12 +294,13 @@ namespace Singular.Helpers
                             var minRange = spell.MinRange;
                             var maxRange = spell.MaxRange;
                             var targetDistance = target.Distance;
+                            if (!isCurrent()) return false;
                             // RangeId 1 is "Self Only".
                             if (rangeId == 1)
                                 inRange = true;
                             // RangeId 2 is melee range — no LOS needed.
                             else if (rangeId == 2)
-                                inRange = targetDistance < MeleeRange;
+                                inRange = targetDistance < MeleeRangeFor(StyxWoW.Me, target);
                             else
                             {
                                 // LOS check only for true ranged spells.
@@ -239,7 +315,7 @@ namespace Singular.Helpers
                 }
             }
 
-            return minReqs && canCast && inRange;
+            return minReqs && canCast && inRange && isCurrent();
         }
 
         /// <summary>
@@ -314,21 +390,41 @@ namespace Singular.Helpers
         /// <returns>.</returns>
         public static Composite Cast(string name, SimpleBooleanDelegate checkMovement, UnitSelectionDelegate onUnit, SimpleBooleanDelegate requirements)
         {
+            WoWUnit owner = null, selected = null;
+            ulong ownerGuid = 0, selectedGuid = 0;
+            bool OwnsActor() => ownerGuid != 0 && owner != null && owner.IsValid && owner.IsAlive
+                && owner.Guid == ownerGuid && ReferenceEquals(owner, StyxWoW.Me);
+            bool IsCurrent() => OwnsActor() && selectedGuid != 0 && selected != null
+                && selected.IsValid && selected.Guid == selectedGuid;
+            UnitSelectionDelegate retainedSelection = ret =>
+            {
+                if (!IsCurrent() || onUnit == null) return null;
+                // Re-evaluate caller coverage, but never transfer an admitted
+                // cast to a different recipient after setup or another callback.
+                var current = onUnit(ret);
+                return ReferenceEquals(current, selected) && IsCurrent() ? selected : null;
+            };
             return new Decorator(
                 ret =>
                 {
-                    if (string.IsNullOrWhiteSpace(name) || onUnit == null || requirements == null || checkMovement == null)
+                    owner = StyxWoW.Me;
+                    ownerGuid = owner?.Guid ?? 0;
+                    selected = null;
+                    selectedGuid = 0;
+                    if (string.IsNullOrWhiteSpace(name) || onUnit == null || requirements == null || checkMovement == null || !OwnsActor())
                         return false;
-                    var target = onUnit(ret);
-                    return CanCastNamedSpell(name, target, checkMovement, requirements, ret);
+                    selected = onUnit(ret);
+                    selectedGuid = selected?.Guid ?? 0;
+                    return IsCurrent() && CanCastNamedSpell(name, selected, checkMovement, requirements, ret, IsCurrent)
+                        && retainedSelection(ret) != null && IsCurrent();
                 },
                 new Sequence( 
-                    new DecoratorContinue(ret => StyxWoW.Me.Mounted && !name.Contains("Aura") && !name.Contains("Presence") && !name.Contains("Stance"),
+                    new DecoratorContinue(ret => IsCurrent() && owner.Mounted && !name.Contains("Aura") && !name.Contains("Presence") && !name.Contains("Stance"),
                         Common.CreateDismount("Casting spell")),
                     // Off-target hostile casts only (multi-dot, Seed of Corruption) — skips heals and CurrentTarget casts
                     new DecoratorContinue(
-                        ret => Movement.NeedsOffTargetCastSetup(onUnit(ret)),
-                        Movement.CreateEnsureTargetAndFaceBehavior(onUnit)),
+                        ret => IsCurrent() && Movement.NeedsOffTargetCastSetup(retainedSelection(ret)),
+                        Movement.CreateEnsureTargetAndFaceBehavior(retainedSelection)),
                     new Action(
                         ret =>
                         {
@@ -336,16 +432,18 @@ namespace Singular.Helpers
                             // here, and never turn a rejected submission into tree success.
                             if (string.IsNullOrWhiteSpace(name) || onUnit == null)
                                 return RunStatus.Failure;
-                            var target = onUnit(ret);
+                            var target = retainedSelection(ret);
                             if (target == null || !Unit.IsCombatActionSafe(name, target))
                                 return RunStatus.Failure;
                             Logger.Write("Casting " + name + " on " + target.SafeName());
                             // Dismount/target setup and logging may have changed sight,
                             // range, availability or caller requirements. Do not reselect
                             // a different recipient between this check and submission.
-                            if (!CanCastNamedSpell(name, target, checkMovement, requirements, ret))
+                            if (retainedSelection(ret) == null ||
+                                !CanCastNamedSpell(name, target, checkMovement, requirements, ret, IsCurrent) ||
+                                retainedSelection(ret) == null || !IsCurrent())
                                 return RunStatus.Failure;
-                            return SpellManager.Cast(name, target)
+                            return SpellManager.Cast(name, target) && IsCurrent()
                                 ? RunStatus.Success
                                 : RunStatus.Failure;
 
@@ -362,6 +460,7 @@ namespace Singular.Helpers
                         // changed to WaitContinue to avoid using Thread.Sleep as it freezes Wow momentarily because behaviors are now wrapped in framelock. /highvoltz
                     new WaitContinue(TimeSpan.FromMilliseconds(500), ret => 
                     {
+                        if (!IsCurrent()) return true;
                         WoWSpell spell;
                         if (SpellManager.Spells.TryGetValue(name, out spell))
                         {
@@ -370,7 +469,8 @@ namespace Singular.Helpers
                                 return false;
                         }
                         return true;
-                    }, new ActionAlwaysSucceed()))
+                    }, new ActionAlwaysSucceed()),
+                    new Action(ret => IsCurrent() ? RunStatus.Success : RunStatus.Failure))
                 );
         }
 
@@ -435,18 +535,36 @@ namespace Singular.Helpers
         /// <returns>.</returns>
         public static Composite Cast(int spellId, UnitSelectionDelegate onUnit, SimpleBooleanDelegate requirements)
         {
+            WoWUnit owner = null, selected = null;
+            ulong ownerGuid = 0, selectedGuid = 0;
+            bool OwnsActor() => ownerGuid != 0 && owner != null && owner.IsValid && owner.IsAlive
+                && owner.Guid == ownerGuid && ReferenceEquals(owner, StyxWoW.Me);
+            bool IsCurrent() => OwnsActor() && selectedGuid != 0 && selected != null
+                && selected.IsValid && selected.Guid == selectedGuid;
+            UnitSelectionDelegate retainedSelection = ret =>
+            {
+                if (!IsCurrent() || onUnit == null) return null;
+                var current = onUnit(ret);
+                return ReferenceEquals(current, selected) && IsCurrent() ? selected : null;
+            };
             return new Decorator(
                 ret =>
                 {
-                    if (spellId <= 0 || onUnit == null || requirements == null)
+                    owner = StyxWoW.Me;
+                    ownerGuid = owner?.Guid ?? 0;
+                    selected = null;
+                    selectedGuid = 0;
+                    if (spellId <= 0 || onUnit == null || requirements == null || !OwnsActor())
                         return false;
-                    var target = onUnit(ret);
-                    return target != null && requirements(ret) && Unit.IsCombatActionSafe(spellId, target) && SpellManager.CanCast(spellId, target, true);
+                    selected = onUnit(ret);
+                    selectedGuid = selected?.Guid ?? 0;
+                    return IsCurrent() && requirements(ret) && IsCurrent() && Unit.IsCombatActionSafe(spellId, selected)
+                        && SpellManager.CanCast(spellId, selected, true) && retainedSelection(ret) != null && IsCurrent();
                 },
                 new Sequence(
                     new DecoratorContinue(
-                        ret => Movement.NeedsOffTargetCastSetup(onUnit(ret)),
-                        Movement.CreateEnsureTargetAndFaceBehavior(onUnit)),
+                        ret => IsCurrent() && Movement.NeedsOffTargetCastSetup(retainedSelection(ret)),
+                        Movement.CreateEnsureTargetAndFaceBehavior(retainedSelection)),
                     new Action(
                         ret =>
                         {
@@ -454,16 +572,16 @@ namespace Singular.Helpers
                             // here, and never turn a rejected submission into tree success.
                             if (spellId <= 0 || onUnit == null)
                                 return RunStatus.Failure;
-                            var target = onUnit(ret);
+                            var target = retainedSelection(ret);
                             if (target == null || !Unit.IsCombatActionSafe(spellId, target))
                                 return RunStatus.Failure;
                             Logger.Write("Casting " + spellId + " on " + target.SafeName());
                             // The ID overload retains the host's range/LOS policy.
-                            if (requirements == null || !requirements(ret) ||
+                            if (retainedSelection(ret) == null || requirements == null || !requirements(ret) || !IsCurrent() ||
                                 !Unit.IsCombatActionSafe(spellId, target) ||
-                                !SpellManager.CanCast(spellId, target, true))
+                                !SpellManager.CanCast(spellId, target, true) || retainedSelection(ret) == null || !IsCurrent())
                                 return RunStatus.Failure;
-                            return SpellManager.Cast(spellId, target)
+                            return SpellManager.Cast(spellId, target) && IsCurrent()
                                 ? RunStatus.Success
                                 : RunStatus.Failure;
                         }))
@@ -870,57 +988,86 @@ namespace Singular.Helpers
         /// <returns>.</returns>
         public static Composite Heal(string name, SimpleBooleanDelegate checkMovement, UnitSelectionDelegate onUnit, SimpleBooleanDelegate requirements)
         {
+            WoWUnit owner = null;
+            WoWUnit recipient = null;
+            ulong ownerGuid = 0, recipientGuid = 0;
+            WoWSpell selectedSpell = null;
+            int expectedSpellId = 0;
+            bool observedCast = false;
+            bool IsCurrent() => ownerGuid != 0 && recipientGuid != 0
+                && owner != null && recipient != null && owner.IsValid && owner.IsAlive
+                && recipient.IsValid && recipient.Guid == recipientGuid && owner.Guid == ownerGuid
+                && ReferenceEquals(owner, StyxWoW.Me);
+
             return
                 new Sequence(
-                    Cast(name, checkMovement, onUnit, requirements),
-                // Little bit wait here to catch casting
+                    new Action(ret =>
+                    {
+                        // Reset on each activation; a reused factory cannot retain an
+                        // earlier character, recipient or observed casting state.
+                        recipient = null;
+                        recipientGuid = 0;
+                        selectedSpell = null;
+                        expectedSpellId = 0;
+                        observedCast = false;
+                        owner = StyxWoW.Me;
+                        ownerGuid = owner?.Guid ?? 0;
+                        if (ownerGuid == 0 || owner == null || !owner.IsValid || !owner.IsAlive
+                            || string.IsNullOrWhiteSpace(name) || onUnit == null || requirements == null || checkMovement == null)
+                            return RunStatus.Failure;
+                        recipient = onUnit(ret);
+                        recipientGuid = recipient?.Guid ?? 0;
+                        if (!IsCurrent()) return RunStatus.Failure;
+                        SpellManager.Spells.TryGetValue(name, out selectedSpell);
+                        expectedSpellId = selectedSpell?.Id ?? 0;
+                        return IsCurrent() ? RunStatus.Success : RunStatus.Failure;
+                    }),
+                    Cast(name, checkMovement, ret => IsCurrent() ? recipient : null,
+                        ret => IsCurrent() && requirements(ret) && IsCurrent()),
+                    // A local Cast receipt is not a native cast-instance receipt.
+                    // Observe the expected spell, without adopting a different cast.
                     new WaitContinue(
                         1,
                         ret =>
                         {
-                            WoWSpell spell;
-                            if (SpellManager.Spells.TryGetValue(name, out spell))
+                            if (!IsCurrent()) return true;
+                            bool casting = owner.IsCasting;
+                            int currentSpellId = owner.CastingSpellId;
+                            if (casting && expectedSpellId > 0 && currentSpellId == expectedSpellId)
                             {
-                                if (spell.CastTime == 0)
-                                    return true;
-
-                                return StyxWoW.Me.IsCasting;
+                                observedCast = IsCurrent();
+                                return true;
                             }
-
-                            return true;
+                            return !IsCurrent() || selectedSpell == null || selectedSpell.CastTime == 0
+                                || (casting && currentSpellId != expectedSpellId);
                         },
                         new ActionAlwaysSucceed()),
                     new WaitContinue(
                         10,
                         ret =>
                         {
-                            // Let channeled heals been cast till end.
-                            if (StyxWoW.Me.ChanneledCastingSpellId != 0)
-                            {
-                                return false;
-                            }
+                            if (!IsCurrent() || !observedCast || owner.CastingSpellId != expectedSpellId)
+                                return true;
+                            // Channels still run to completion; never cancel a
+                            // replacement actor's channel to finish this old wait.
+                            if (owner.ChanneledCastingSpellId != 0) return !IsCurrent();
+                            if (!owner.IsCasting) return true;
 
-                            // Interrupted or finished casting. Continue
-                            if (!StyxWoW.Me.IsCasting)
+                            bool needed = requirements(ret);
+                            // Caller code can change actors, recipients or casts.
+                            if (!IsCurrent() || owner.CastingSpellId != expectedSpellId || !owner.IsCasting)
+                                return true;
+                            if (owner.ChanneledCastingSpellId != 0) return !IsCurrent();
+                            if (!needed)
                             {
+                                if (IsCurrent() && owner.CastingSpellId == expectedSpellId)
+                                    SpellManager.StopCasting();
                                 return true;
                             }
-
-                            // 500ms left till cast ends. Shall continue for next spell
-                            //if (StyxWoW.Me.CurrentCastTimeLeft.TotalMilliseconds < 500)
-                            //{
-                            //    return true;
-                            //}
-
-                            // If requirements don't meet anymore, stop casting and let it continue
-                            if (!requirements(ret))
-                            {
-                                SpellManager.StopCasting();
-                                return true;
-                            }
-                            return false;
+                            return !IsCurrent();
                         },
-                        new ActionAlwaysSucceed()));
+                        new ActionAlwaysSucceed()),
+                    new Action(ret => IsCurrent() ? RunStatus.Success : RunStatus.Failure));
         }
 
         #endregion
@@ -954,19 +1101,57 @@ namespace Singular.Helpers
         /// <returns>.</returns>
         public static Composite CastOnGround(string spell, LocationRetriever onLocation, SimpleBooleanDelegate requirements)
         {
+            LocalPlayer owner = null;
+            ulong ownerGuid = 0;
+            WoWPoint destination = WoWPoint.Empty;
+            bool IsCurrent() => ownerGuid != 0 && owner != null && owner.IsValid && owner.IsAlive
+                && owner.Guid == ownerGuid && ReferenceEquals(owner, StyxWoW.Me);
+            bool CanPlace(object context)
+            {
+                if (!IsCurrent() || requirements == null || !requirements(context) || !IsCurrent()
+                    || !Unit.IsAreaEffectSafe(spell, destination) || !IsCurrent()
+                    || !SpellManager.Spells.TryGetValue(spell, out var metadata) || metadata == null)
+                    return false;
+                double maximum = metadata.MaxRange;
+                double distance = owner.Location.Distance(destination);
+                return double.IsFinite(maximum) && maximum >= 0 && double.IsFinite(distance)
+                    && (maximum == 0 || distance <= maximum) && IsCurrent();
+            }
+
             return new Decorator(
                 ret =>
-                requirements(ret) && onLocation != null && Unit.IsAreaEffectSafe(spell, onLocation(ret)) &&
-                SpellManager.CanCast(spell) &&
-                (StyxWoW.Me.Location.Distance(onLocation(ret)) <= SpellManager.Spells[spell].MaxRange || SpellManager.Spells[spell].MaxRange == 0),
+                {
+                    owner = StyxWoW.Me;
+                    ownerGuid = owner?.Guid ?? 0;
+                    destination = WoWPoint.Empty;
+                    if (string.IsNullOrWhiteSpace(spell) || onLocation == null || requirements == null || !IsCurrent())
+                        return false;
+                    // A location selector may follow a changing target. One cast
+                    // retains its admitted point instead of selecting again after a wait.
+                    destination = onLocation(ret);
+                    return destination != WoWPoint.Empty && destination != WoWPoint.Zero
+                        && double.IsFinite(destination.X) && double.IsFinite(destination.Y) && double.IsFinite(destination.Z)
+                        && CanPlace(ret) && SpellManager.CanCast(spell) && IsCurrent();
+                },
                 new Sequence(
-                    new Action(ret => Logger.Write("Casting {0} at location {1}", spell, onLocation(ret))),
-                    new Action(ret => SpellManager.Cast(spell) ? RunStatus.Success : RunStatus.Failure),
+                    new Action(ret => Logger.Write("Casting {0} at location {1}", spell, destination)),
+                    new Action(ret => CanPlace(ret) && SpellManager.CanCast(spell) && IsCurrent()
+                        && SpellManager.Cast(spell) && IsCurrent() ? RunStatus.Success : RunStatus.Failure),
                     new WaitContinue(
                         1,
-                        ret => StyxWoW.Me.HasPendingSpell(spell),
+                        ret => !IsCurrent() || owner.HasPendingSpell(spell),
                         new ActionAlwaysSucceed()),
-                    new Action(ret => SpellManager.ClickRemoteLocation(onLocation(ret)) ? RunStatus.Success : RunStatus.Failure))
+                    new Action(ret =>
+                    {
+                        // Timeout is not pending-cursor permission. The matching
+                        // observation remains necessary, but is not native request provenance.
+                        // CanCast is intentionally not repeated after submission: its
+                        // own GCD/cooldown must not veto a healthy placement continuation.
+                        if (!CanPlace(ret) || !owner.HasPendingSpell(spell) || !IsCurrent())
+                            return RunStatus.Failure;
+                        return SpellManager.ClickRemoteLocation(destination) && IsCurrent()
+                            ? RunStatus.Success : RunStatus.Failure;
+                    }))
                 );
         }
 
@@ -1001,14 +1186,16 @@ namespace Singular.Helpers
         {
             get
             {
-                // If we have no target... then give nothing.
-                if (StyxWoW.Me.CurrentTargetGuid == 0)
+                var owner = StyxWoW.Me;
+                var target = owner?.CurrentTarget;
+                if (owner == null || !owner.IsValid || target == null || !target.IsValid
+                    || target.Guid == 0 || owner.CurrentTargetGuid != target.Guid)
                     return 0f;
 
-                if (StyxWoW.Me.CurrentTarget.IsPlayer)
-                    return 3.5f;
-
-                return Math.Max(5f, StyxWoW.Me.CombatReach + 1.3333334f + StyxWoW.Me.CurrentTarget.CombatReach);
+                float range = MeleeRangeFor(owner, target);
+                return ReferenceEquals(owner, StyxWoW.Me) && ReferenceEquals(target, owner.CurrentTarget)
+                    && owner.CurrentTargetGuid == target.Guid && ReferenceEquals(owner, StyxWoW.Me)
+                    ? range : 0f;
             }
         }
 

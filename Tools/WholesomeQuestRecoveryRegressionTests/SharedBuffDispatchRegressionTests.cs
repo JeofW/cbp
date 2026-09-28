@@ -121,7 +121,8 @@ public static class SharedBuffCases
     public class Aura{public int SpellId;public string Name="";public ulong CreatorGuid;}
     public class WoWUnit
     {
-        public ulong Guid;public WoWUnit? CurrentTarget;public bool Mounted,IsCasting;
+        public ulong Guid;public WoWUnit? CurrentTarget;public bool Mounted,IsCasting;public bool IsValid=true,IsAlive=true;
+        public float CombatReach;public bool IsPlayer;
         public bool IsMe=>ReferenceEquals(this,StyxWoW.Me);public float Distance=>20;public bool InLineOfSpellSight=>true;
         public Dictionary<string,Aura> Auras=new();
         public bool HasAura(string name)=>Auras.ContainsKey(name);

@@ -82,17 +82,24 @@ using System.Linq;
 using TreeSharp;
 using CommonBehaviors.Actions;
 using Action = TreeSharp.Action;
+using WoWPoint = Point;
 
 public delegate Point LocationRetriever(object context);
 public delegate bool SimpleBooleanDelegate(object context);
-public sealed class Point
+public struct Point
 {
-    public double X;
+    public double X,Y,Z;
+    public static Point Empty=>default;public static Point Zero=>default;
+    public static bool operator ==(Point a,Point b)=>a.X==b.X&&a.Y==b.Y&&a.Z==b.Z;
+    public static bool operator !=(Point a,Point b)=>!(a==b);
+    public override bool Equals(object? value)=>value is Point other&&this==other;
+    public override int GetHashCode()=>HashCode.Combine(X,Y,Z);
     public double Distance(Point other) => Math.Abs(X - other.X);
 }
 public class WoWUnit
 {
     public ulong Guid;
+    public bool IsValid=true,IsAlive=true;
     public bool HasAura(string name) => World.Covered;
 }
 public sealed class LocalPlayer : WoWUnit

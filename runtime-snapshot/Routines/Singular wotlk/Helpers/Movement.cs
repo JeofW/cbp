@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using CommonBehaviors.Actions;
 using Singular.Settings;
@@ -28,7 +28,7 @@ namespace Singular.Helpers
         /// <returns>.</returns>
         public static Composite CreateMoveToLosBehavior()
         {
-            return CreateMoveToLosBehavior(ret => StyxWoW.Me.CurrentTarget);
+            return CreateMoveToLosBehavior(null, true);
         }
 
        
@@ -42,9 +42,18 @@ namespace Singular.Helpers
         /// <returns>.</returns>
         public static Composite CreateEnsureMovementStoppedBehavior()
         {
-            return new Decorator(
-                ret => !SingularSettings.Instance.DisableAllMovement && StyxWoW.Me.IsMoving,
-                new Action(ret => Navigator.PlayerMover.MoveStop()));
+            return new Action(ret =>
+            {
+                var player = StyxWoW.Me;
+                ulong playerGuid = player?.Guid ?? 0;
+                if (!IsControlOwnerCurrent(player, playerGuid) || SingularSettings.Instance.DisableAllMovement)
+                    return RunStatus.Failure;
+                bool moving = player.IsMoving;
+                if (!moving || SingularSettings.Instance.DisableAllMovement || !IsControlOwnerCurrent(player, playerGuid))
+                    return RunStatus.Failure;
+                Navigator.PlayerMover.MoveStop();
+                return RunStatus.Success;
+            });
         }
 
         /// <summary>
@@ -56,18 +65,21 @@ namespace Singular.Helpers
             return new Action(ret =>
             {
                 var player = StyxWoW.Me;
-                if (!IsSightOwnerCurrent(player) || !player.IsMoving)
+                ulong playerGuid = player?.Guid ?? 0;
+                if (!float.IsFinite(range) || range < 0 || !IsControlOwnerCurrent(player, playerGuid)
+                    || SingularSettings.Instance.DisableAllMovement || !player.IsMoving)
                     return RunStatus.Failure;
                 var target = player.CurrentTarget;
-                if (!IsSightTargetUsable(target) || !(target.Distance <= range) ||
+                ulong targetGuid = target?.Guid ?? 0;
+                if (!IsControlUnitCurrent(target, targetGuid) || !(target.Distance <= range) ||
                     (!target.IsMe && !target.InLineOfSpellSight))
                     return RunStatus.Failure;
 
                 // Range alone cannot authorize stopping an approach behind a wall.
                 // Sight and target observations must not stop a replacement owner.
-                if (!IsSightTargetUsable(target) || !(target.Distance <= range) ||
-                    !ReferenceEquals(player.CurrentTarget, target) ||
-                    !IsSightOwnerCurrent(player) || !player.IsMoving)
+                if (!IsControlUnitCurrent(target, targetGuid) || !(target.Distance <= range)
+                    || !IsDisplayedTargetCurrent(player, target, targetGuid) || !player.IsMoving
+                    || SingularSettings.Instance.DisableAllMovement || !IsControlOwnerCurrent(player, playerGuid))
                     return RunStatus.Failure;
                 Navigator.PlayerMover.MoveStop();
                 return RunStatus.Success;
@@ -83,28 +95,39 @@ namespace Singular.Helpers
         /// <returns>.</returns>
         public static Composite CreateFaceTargetBehavior()
         {
-            return CreateFaceTargetBehavior(ret => StyxWoW.Me.CurrentTarget);
+            return CreateFaceTargetBehavior(null, true);
         }
 
         public static Composite CreateFaceTargetBehavior(UnitSelectionDelegate toUnit)
         {
-            return new Decorator(
-                ret =>
-                !SingularSettings.Instance.DisableAllMovement && toUnit != null && toUnit(ret) != null && 
-                !StyxWoW.Me.IsMoving && !toUnit(ret).IsMe && 
-                !StyxWoW.Me.IsSafelyFacing(toUnit(ret), 70f),
-                new Action(ret =>
-                               {
-                                   WoWUnit unit = toUnit(ret);
-                                   unit.Face();
+            return CreateFaceTargetBehavior(toUnit, false);
+        }
 
-                                   // Prevent lower-priority cast actions from firing while still turning.
-                                   // This mirrors newer Singular behavior and avoids visible cast-spam on behind targets.
-                                   if (StyxWoW.Me.IsSafelyFacing(unit, 150f))
-                                       return RunStatus.Failure;
-
-                                   return RunStatus.Success;
-                               }));
+        private static Composite CreateFaceTargetBehavior(UnitSelectionDelegate toUnit, bool requireCurrentTarget)
+        {
+            return new Action(ret =>
+            {
+                var player = StyxWoW.Me;
+                ulong playerGuid = player?.Guid ?? 0;
+                if (!IsControlOwnerCurrent(player, playerGuid) || (!requireCurrentTarget && toUnit == null))
+                    return RunStatus.Failure;
+                var unit = requireCurrentTarget ? player.CurrentTarget : toUnit(ret);
+                ulong unitGuid = unit?.Guid ?? 0;
+                // Ordinary cast-time facing is intentional. Channels and movement
+                // still veto turning, and an explicit recipient is not the display target.
+                Func<bool> canTurn = () => IsControlUnitCurrent(unit, unitGuid) && !unit.IsMe
+                    && (!requireCurrentTarget || IsDisplayedTargetCurrent(player, unit, unitGuid))
+                    && !player.IsMoving && player.ChanneledCastingSpellId == 0
+                    && !SingularSettings.Instance.DisableAllMovement && IsControlOwnerCurrent(player, playerGuid);
+                if (!canTurn() || player.IsSafelyFacing(unit, 70f) || !canTurn())
+                    return RunStatus.Failure;
+                unit.Face();
+                if (!canTurn()) return RunStatus.Failure;
+                bool facing = player.IsSafelyFacing(unit, 150f);
+                if (!canTurn()) return RunStatus.Failure;
+                // Preserve the existing turn acknowledgement before lower-priority casts.
+                return facing ? RunStatus.Failure : RunStatus.Success;
+            });
         }
 
         /// <summary>
@@ -115,16 +138,18 @@ namespace Singular.Helpers
         public static bool NeedsOffTargetCastSetup(WoWUnit unit)
         {
             var player = StyxWoW.Me;
-            if (player == null || unit == null || unit.IsMe || unit.IsFriendly)
+            ulong playerGuid = player?.Guid ?? 0;
+            ulong unitGuid = unit?.Guid ?? 0;
+            if (!CanSetUpCast(player, playerGuid) || !IsControlUnitCurrent(unit, unitGuid) || unit.IsMe || unit.IsFriendly)
                 return false;
-
-            if (player.IsCasting)
-                return false;
-
+            var displayed = player.CurrentTarget;
+            ulong displayedGuid = displayed?.Guid ?? 0;
             // Acknowledging the target switch does not also acknowledge facing.
-            return player.CurrentTarget != unit ||
+            bool needed = displayed != unit ||
                 (!SingularSettings.Instance.DisableAllMovement && !player.IsMoving &&
                  !player.IsSafelyFacing(unit, 70f));
+            return needed && IsControlUnitCurrent(unit, unitGuid)
+                && IsDisplayedTargetCurrent(player, displayed, displayedGuid) && CanSetUpCast(player, playerGuid);
         }
 
         /// <summary>
@@ -136,31 +161,37 @@ namespace Singular.Helpers
             return new Action(ret =>
             {
                 var player = StyxWoW.Me;
-                var unit = toUnit != null ? toUnit(ret) : null;
-                if (player == null || unit == null)
+                ulong playerGuid = player?.Guid ?? 0;
+                if (toUnit == null || !CanSetUpCast(player, playerGuid))
                     return RunStatus.Failure;
+                var displayed = player.CurrentTarget;
+                ulong displayedGuid = displayed?.Guid ?? 0;
+                var unit = toUnit(ret);
+                ulong unitGuid = unit?.Guid ?? 0;
+                Func<bool> isCurrent = () => IsControlUnitCurrent(unit, unitGuid)
+                    && IsDisplayedTargetCurrent(player, displayed, displayedGuid) && CanSetUpCast(player, playerGuid);
+                if (!isCurrent()) return RunStatus.Failure;
+                if (unit.IsMe || unit.IsFriendly) return isCurrent() ? RunStatus.Success : RunStatus.Failure;
 
-                if (!NeedsOffTargetCastSetup(unit))
-                    return RunStatus.Success;
-
-                // Switch target to the cast unit
-                if (player.CurrentTarget != unit)
+                if (displayed != unit)
                 {
                     Logger.WriteDebug("Off-target cast: switching to " + unit.SafeName());
+                    if (!isCurrent()) return RunStatus.Failure;
                     unit.Target();
+                    // Target acknowledgement belongs to the next pulse, as before.
                     return RunStatus.Failure;
                 }
-
-                // Face before casting — prevents cast failures on mobs behind the player
-                if (!SingularSettings.Instance.DisableAllMovement && !player.IsMoving &&
-                    !player.IsSafelyFacing(unit, 70f))
-                {
-                    Logger.WriteDebug("Off-target cast: facing " + unit.SafeName());
-                    unit.Face();
+                if (SingularSettings.Instance.DisableAllMovement || player.IsMoving)
+                    return isCurrent() ? RunStatus.Success : RunStatus.Failure;
+                bool facing = player.IsSafelyFacing(unit, 70f);
+                if (!isCurrent() || SingularSettings.Instance.DisableAllMovement || player.IsMoving)
                     return RunStatus.Failure;
-                }
-
-                return RunStatus.Success;
+                if (facing) return RunStatus.Success;
+                Logger.WriteDebug("Off-target cast: facing " + unit.SafeName());
+                if (SingularSettings.Instance.DisableAllMovement || player.IsMoving || !isCurrent())
+                    return RunStatus.Failure;
+                unit.Face();
+                return RunStatus.Failure;
             });
         }
 
@@ -175,7 +206,7 @@ namespace Singular.Helpers
         /// <returns>.</returns>
         public static Composite CreateMoveToTargetBehavior(bool stopInRange, float range)
         {
-            return CreateMoveToTargetBehavior(stopInRange, range, ret => StyxWoW.Me.CurrentTarget);
+            return CreateMoveToUnitBehavior(stopInRange, range, null, true, false);
         }
 
         /// <summary>
@@ -190,10 +221,7 @@ namespace Singular.Helpers
         /// <returns>.</returns>
         public static Composite CreateMoveToTargetBehavior(bool stopInRange, float range, UnitSelectionDelegate onUnit)
         {
-            return 
-                new Decorator(
-                    ret => onUnit != null && onUnit(ret) != null && onUnit(ret) != StyxWoW.Me && !StyxWoW.Me.IsCasting,
-                    CreateMoveToLocationBehavior(ret => onUnit(ret).Location, stopInRange, ret => range));
+            return CreateMoveToUnitBehavior(stopInRange, range, onUnit, false, false);
         }
 
         /// <summary>
@@ -206,17 +234,40 @@ namespace Singular.Helpers
         /// <returns>.</returns>
         public static Composite CreateMoveToMeleeBehavior(bool stopInRange)
         {
-            return new Decorator(
-                ret => StyxWoW.Me.CurrentTarget != null,
-                CreateMoveToMeleeBehavior(ret => StyxWoW.Me.CurrentTarget.Location, stopInRange));
+            return CreateMoveToUnitBehavior(stopInRange, 0f, null, true, true);
         }
 
         public static Composite CreateMoveToMeleeBehavior(LocationRetriever location, bool stopInRange)
         {
-            return 
-                new Decorator(
-                    ret => !StyxWoW.Me.IsCasting,
-                    CreateMoveToLocationBehavior(location, stopInRange, ret => StyxWoW.Me.CurrentTarget?.IsPlayer == true ? 2f : Spell.MeleeRange));
+            return CreateMoveToLocationBehavior(location, stopInRange,
+                ret => StyxWoW.Me.CurrentTarget?.IsPlayer == true ? 2f : Spell.MeleeRange);
+        }
+
+        private static Composite CreateMoveToUnitBehavior(bool stopInRange, float range,
+            UnitSelectionDelegate onUnit, bool requireCurrentTarget, bool melee)
+        {
+            return new Action(ret =>
+            {
+                var player = StyxWoW.Me;
+                ulong playerGuid = player?.Guid ?? 0;
+                if (!IsMovementOwnerCurrent(player, playerGuid) || (!requireCurrentTarget && onUnit == null))
+                    return RunStatus.Failure;
+
+                // A selector may observe the world or run caller code. Resolve it
+                // once and keep both identities through the final move/stop decision.
+                var target = requireCurrentTarget ? player.CurrentTarget : onUnit(ret);
+                ulong targetGuid = target?.Guid ?? 0;
+                Func<bool> isCurrent = () => targetGuid != 0 && IsSightTargetUsable(target)
+                    && !ReferenceEquals(target, player) && target.Guid == targetGuid
+                    && (!requireCurrentTarget || ReferenceEquals(player.CurrentTarget, target))
+                    && IsMovementOwnerCurrent(player, playerGuid);
+                if (!isCurrent()) return RunStatus.Failure;
+
+                var destination = target.Location;
+                if (!isCurrent()) return RunStatus.Failure;
+                float stopRange = stopInRange ? (melee ? (target.IsPlayer ? 2f : Spell.MeleeRange) : range) : 0f;
+                return MoveToObservedLocation(player, destination, stopInRange, stopRange, isCurrent);
+            });
         }
 
         #region Move Behind
@@ -243,24 +294,30 @@ namespace Singular.Helpers
         /// <returns>.</returns>
         public static Composite CreateMoveBehindTargetBehavior(SimpleBooleanDelegate requirements)
         {
-            return 
-                new Decorator(
-                    ret => !SingularSettings.Instance.DisableAllMovement &&
-                            SingularRoutine.CurrentWoWContext != WoWContext.Battlegrounds && 
-                            requirements(ret) && !StyxWoW.Me.IsCasting &&
-                            !Group.MeIsTank && !StyxWoW.Me.CurrentTarget.MeIsBehind &&
-                            StyxWoW.Me.CurrentTarget.IsAlive &&
-                            (StyxWoW.Me.CurrentTarget.CurrentTarget == null || 
-                             StyxWoW.Me.CurrentTarget.CurrentTarget != StyxWoW.Me || 
-                             StyxWoW.Me.CurrentTarget.Stunned),
-                    new Action(ret => Navigator.MoveTo(CalculatePointBehindTarget())));
-        }
+            return new Action(ret =>
+            {
+                var player = StyxWoW.Me;
+                ulong playerGuid = player?.Guid ?? 0;
+                if (requirements == null || !IsMovementOwnerCurrent(player, playerGuid))
+                    return RunStatus.Failure;
+                var target = player.CurrentTarget;
+                ulong targetGuid = target?.Guid ?? 0;
+                Func<bool> isCurrent = () => IsControlUnitCurrent(target, targetGuid) && target.IsAlive
+                    && IsDisplayedTargetCurrent(player, target, targetGuid)
+                    && SingularRoutine.CurrentWoWContext != WoWContext.Battlegrounds && !Group.MeIsTank
+                    && !target.MeIsBehind && (target.CurrentTarget == null || target.CurrentTarget != player || target.Stunned)
+                    && IsMovementOwnerCurrent(player, playerGuid);
+                if (!isCurrent() || !requirements(ret) || !isCurrent()) return RunStatus.Failure;
 
-        private static WoWPoint CalculatePointBehindTarget()
-        {
-            return
-                StyxWoW.Me.CurrentTarget.Location.RayCast(
-                    StyxWoW.Me.CurrentTarget.Rotation + WoWMathHelper.DegreesToRadians(150), Spell.MeleeRange - 2f);
+                var location = target.Location;
+                if (!isCurrent()) return RunStatus.Failure;
+                float rotation = target.Rotation;
+                float distance = Spell.MeleeRange - 2f;
+                if (!float.IsFinite(rotation) || !float.IsFinite(distance) || distance < 0f || !isCurrent())
+                    return RunStatus.Failure;
+                var destination = location.RayCast(rotation + WoWMathHelper.DegreesToRadians(150), distance);
+                return MoveToObservedLocation(player, destination, false, 0f, isCurrent);
+            });
         }
 
         #endregion
@@ -279,62 +336,98 @@ namespace Singular.Helpers
         /// <returns>.</returns>
         public static Composite CreateMoveToLocationBehavior(LocationRetriever location, bool stopInRange, DynamicRangeRetriever range)
         {
-            // Do not fuck with this. It will ensure we stop in range if we're supposed to.
-            // Otherwise it'll stick to the targets ass like flies on dog shit.
-            // Specifying a range of, 2 or so, will ensure we're constantly running to the target. Specifying 0 will cause us to spin in circles around the target
-            // or chase it down like mad. (PVP oriented behavior)
-            return
-                new Decorator( 
-                    // Don't run if the movement is disabled.
-                    ret => !SingularSettings.Instance.DisableAllMovement,
-                    new PrioritySelector(
-                        new Decorator(
-                            // Give it a little more than 1/2 a yard buffer to get it right. CTM is never 'exact' on where we land. So don't expect it to be.
-                            ret => stopInRange && StyxWoW.Me.Location.Distance(location(ret)) < range(ret),
-                            new PrioritySelector(
-                                CreateEnsureMovementStoppedBehavior(),
-                                // In short; if we're not moving, just 'succeed' here, so we break the tree.
-                                new Action(ret => RunStatus.Success)
-                                )
-                            ),
-                        new Action(ret => Navigator.MoveTo(location(ret)))
-                        ));
+            return new Action(ret =>
+            {
+                var player = StyxWoW.Me;
+                ulong playerGuid = player?.Guid ?? 0;
+                if (location == null || (stopInRange && range == null) || !IsMovementOwnerCurrent(player, playerGuid))
+                    return RunStatus.Failure;
+                var destination = location(ret);
+                if (!IsMovementOwnerCurrent(player, playerGuid)) return RunStatus.Failure;
+                // Continuous pursuit has no stop range and must not evaluate an
+                // unused caller delegate. Zero remains a valid never-stop range.
+                float stopRange = stopInRange ? range(ret) : 0f;
+                return MoveToObservedLocation(player, destination, stopInRange, stopRange,
+                    () => IsMovementOwnerCurrent(player, playerGuid));
+            });
+        }
+
+        private static bool IsMovementOwnerCurrent(WoWUnit player, ulong guid) =>
+            guid != 0 && CanRecoverSight(player) && player.Guid == guid
+            && ReferenceEquals(player, StyxWoW.Me);
+
+        private static RunStatus MoveToObservedLocation(WoWUnit player, WoWPoint destination,
+            bool stopInRange, float range, Func<bool> isCurrent)
+        {
+            if (destination == WoWPoint.Empty || destination == WoWPoint.Zero
+                || !float.IsFinite(destination.X) || !float.IsFinite(destination.Y) || !float.IsFinite(destination.Z)
+                || (stopInRange && (!float.IsFinite(range) || range < 0f)) || !isCurrent())
+                return RunStatus.Failure;
+
+            if (stopInRange)
+            {
+                float distance = player.Location.Distance(destination);
+                if (!float.IsFinite(distance) || !isCurrent()) return RunStatus.Failure;
+                if (distance < range)
+                {
+                    bool moving = player.IsMoving;
+                    if (!isCurrent()) return RunStatus.Failure;
+                    if (moving) Navigator.PlayerMover.MoveStop();
+                    return RunStatus.Success;
+                }
+            }
+
+            if (!isCurrent()) return RunStatus.Failure;
+            var result = Navigator.MoveTo(destination);
+            return result == MoveResult.Moved || result == MoveResult.PathGenerated
+                || result == MoveResult.UnstuckAttempt || result == MoveResult.ReachedDestination
+                ? RunStatus.Success : RunStatus.Failure;
         }
 
         #endregion
 
         public static Composite CreateMoveToLosBehavior(UnitSelectionDelegate toUnit)
         {
+            return CreateMoveToLosBehavior(toUnit, false);
+        }
+
+        private static Composite CreateMoveToLosBehavior(UnitSelectionDelegate toUnit, bool requireCurrentTarget)
+        {
             return new Action(ret =>
             {
                 var player = StyxWoW.Me;
-                if (toUnit == null || !CanRecoverSight(player))
+                ulong playerGuid = player?.Guid ?? 0;
+                if ((!requireCurrentTarget && toUnit == null) || !IsMovementOwnerCurrent(player, playerGuid))
                     return RunStatus.Failure;
 
                 // Select once per decision; repeated selectors can observe different
                 // units or needlessly repeat target-list/native observations.
-                var target = toUnit(ret);
-                if (!CanRecoverSight(player) || !IsSightTargetUsable(target) ||
-                    target.IsMe || target.InLineOfSpellSight)
-                    return RunStatus.Failure;
-                if (!CanRecoverSight(player) || !IsSightTargetUsable(target))
+                var target = requireCurrentTarget ? player.CurrentTarget : toUnit(ret);
+                ulong targetGuid = target?.Guid ?? 0;
+                Func<bool> isCurrent = () => IsControlUnitCurrent(target, targetGuid) && !target.IsMe
+                    && (!requireCurrentTarget || IsDisplayedTargetCurrent(player, target, targetGuid))
+                    && IsMovementOwnerCurrent(player, playerGuid);
+                if (!isCurrent() || target.InLineOfSpellSight || !isCurrent())
                     return RunStatus.Failure;
 
                 var destination = target.Location;
-                if (!CanRecoverSight(player) || !IsSightTargetUsable(target) ||
-                    destination == WoWPoint.Empty || destination == WoWPoint.Zero ||
-                    !float.IsFinite(destination.X) || !float.IsFinite(destination.Y) ||
-                    !float.IsFinite(destination.Z))
-                    return RunStatus.Failure;
-
-                var result = Navigator.MoveTo(destination);
-                // A failed path is not handled movement. Let the next eligible
-                // combat/defensive action run; do not spin on a false Success.
-                return result == MoveResult.Moved || result == MoveResult.PathGenerated ||
-                       result == MoveResult.UnstuckAttempt || result == MoveResult.ReachedDestination
-                    ? RunStatus.Success : RunStatus.Failure;
+                return MoveToObservedLocation(player, destination, false, 0f, isCurrent);
             });
         }
+
+        private static bool IsControlOwnerCurrent(WoWUnit player, ulong guid) =>
+            guid != 0 && player != null && ReferenceEquals(player, StyxWoW.Me)
+            && player.IsValid && player.IsAlive && player.Guid == guid && ReferenceEquals(player, StyxWoW.Me);
+
+        private static bool IsControlUnitCurrent(WoWUnit unit, ulong guid) =>
+            guid != 0 && IsSightTargetUsable(unit) && unit.Guid == guid;
+
+        private static bool IsDisplayedTargetCurrent(WoWUnit player, WoWUnit target, ulong guid) =>
+            ReferenceEquals(player.CurrentTarget, target) && (target == null ? guid == 0 : target.Guid == guid);
+
+        private static bool CanSetUpCast(WoWUnit player, ulong guid) =>
+            IsControlOwnerCurrent(player, guid) && !player.IsCasting && player.ChanneledCastingSpellId == 0
+            && IsControlOwnerCurrent(player, guid);
 
         private static bool IsSightOwnerCurrent(WoWUnit player) =>
             player != null && ReferenceEquals(player, StyxWoW.Me) &&

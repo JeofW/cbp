@@ -49,7 +49,10 @@ internal static class CastDispatchRegressionTests
             object?[] arguments = byId
                 ? new[] { identifier ?? MissingId, missingSelector ? null : select, accept }
                 : new[] { identifier ?? MissingSpell, accept, missingSelector ? null : select, accept };
-            return ActualDispatchAction(factory, arguments);
+            // Construct and execute the real factory, including its initialized
+            // actor/recipient captures. An uninitialized compiler closure is not
+            // a valid substitute for a yielded behavior's state.
+            return (Composite)factory.Invoke(null, arguments)!;
         }
         var tests = new List<(string Name, TestAction Run)>();
         foreach (bool byId in new[] { false, true })
@@ -72,7 +75,7 @@ internal static class CastDispatchRegressionTests
                 Failure(Dispatch(id, id ? (object)0 : " "));
                 Check(_selections == 0, "invalid spell metadata must fail before callbacks");
             }));
-            tests.Add(($"{label} dispatch propagates a real SpellManager rejection", () =>
+            tests.Add(($"{label} factory rejects an unknown spell through real admission", () =>
             {
                 Failure(Dispatch(id));
                 Check(_selections == 1, "logging and dispatch must use the same selected object");
@@ -118,10 +121,11 @@ internal static class CastDispatchRegressionTests
         var oldPrevention = new Dictionary<string, DateTime>(prevention);
         bool oldFileLogging = Logging.FileLogging;
         var failures = new List<string>();
+        using var actor = new RoutineActorFixture();
         try
         {
             Logging.FileLogging = false;
-            ObjectManager.Me = new LocalPlayer(0);
+            ObjectManager.Me = actor.Player;
             SpellManager.KnownSpells.Clear();
             foreach (var test in tests)
             {
@@ -157,27 +161,10 @@ internal static class CastDispatchRegressionTests
             foreach (var item in oldPrevention) prevention.Add(item.Key, item.Value);
             _target = null;
         }
-        Console.WriteLine($"Cast dispatch scenarios: {tests.Count - failures.Count}/{tests.Count}; real compiled actions and backend rejection; no game attached.");
+        Console.WriteLine($"Cast dispatch scenarios: {tests.Count - failures.Count}/{tests.Count}; complete tracked factories, actual admission and separate real backend rejection; process-owned actor bytes, no game attached. Late dispatch continuity has separate full-factory coverage.");
         if (failures.Count != 0) throw new InvalidOperationException(string.Join(Environment.NewLine, failures));
     }
 
-    // Factory construction reads client latency in unrelated dismount children.
-    // Follow its real IL to the dispatch action, preserve its actual void/status
-    // delegate contract, and bind the factory captures. No replacement cast logic.
-    private static Composite ActualDispatchAction(MethodInfo factory, object?[] arguments)
-    {
-        var calls = typeof(RoutineBoundaryRegressionTests).GetMethod("CalledMethods", BindingFlags.Static | BindingFlags.NonPublic)!;
-        IEnumerable<MethodBase> Called(MethodBase method) => (IEnumerable<MethodBase>)calls.Invoke(null, new object[] { method })!;
-        MethodInfo action = Called(factory).OfType<MethodInfo>().Single(method => Called(method).Any(callee =>
-            callee.DeclaringType == typeof(SpellManager) && callee.Name == "Cast" && callee.GetParameters().Length == 2));
-        object? owner = action.IsStatic ? null : RuntimeHelpers.GetUninitializedObject(action.DeclaringType!);
-        var parameters = factory.GetParameters();
-        for (int i = 0; i < parameters.Length; i++)
-            action.DeclaringType!.GetField(parameters[i].Name!, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(owner, arguments[i]);
-        return action.ReturnType == typeof(void)
-            ? new TreeSharp.Action((ActionSucceedDelegate)action.CreateDelegate(typeof(ActionSucceedDelegate), owner))
-            : new TreeSharp.Action((ActionDelegate)action.CreateDelegate(typeof(ActionDelegate), owner));
-    }
     private static WoWUnit Select(object _) { _selections++; return _unstableSelector && _selections > 1 ? null! : _target!; }
     private static bool Accept(object _) => true;
     private static RunStatus Tick(Composite root)

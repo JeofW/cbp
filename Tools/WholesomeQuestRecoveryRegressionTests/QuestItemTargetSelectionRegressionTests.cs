@@ -189,7 +189,7 @@ public static class QuestItemSelectionCases
     public class WoWItem:WoWObject { public float Cooldown{get;set;} public bool TryUseContainerItem()=>true; public void UseContainerItem(){TryUseContainerItem();} }
     public class LocalPlayer:WoWPlayer
     {
-        public bool IsMoving{get;set;}public WoWUnit? CurrentTarget{get;set;}
+        public bool IsMoving{get;set;}public WoWUnit? CurrentTarget{get;set;}public bool IsCasting;public uint ChanneledCastingSpellId;
         public List<WoWItem>? CarriedItems{get;set;}=new();public List<WoWPlayer> PartyMembers{get;}=new();
         public FakeQuestLog QuestLog{get;}=new();public void ClearTarget(){CurrentTarget=null;}
     }
