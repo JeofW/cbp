@@ -1,0 +1,1114 @@
+{
+  "prepared_utc": "2026-09-28T22:25:23.438107+00:00",
+  "source": "dcd3c838ee3be470e15e9363cd055ac1aa514c5a",
+  "publication": {
+    "repository": "JeofW/cbp",
+    "repository_id": 1367174964,
+    "branch": "audit/next-55-equipment-observation-20260917",
+    "expected_parent": "6da1c368ed84f3365a4a9eed336d19148a1a4d84",
+    "paths": [
+      "Bots/Grind/LevelBot.cs",
+      "Tools/WholesomeQuestRecoveryRegressionTests/RoamContinuationOwnershipRegressionTests.cs",
+      "Tools/WholesomeQuestRecoveryRegressionTests/QuestPublicationRegressionTests.cs",
+      "Tools/WholesomeQuestRecoveryRegressionTests/PublicationFixtureAccessRegressionTests.cs"
+    ],
+    "patch_sha256": "5b15205942e05dba597126e9066f9e038311b6af3f2e2c7064992aa39e2b0919",
+    "files": [
+      {
+        "path": "Bots/Grind/LevelBot.cs",
+        "blob": "20debccabecb487770589f25bf6ed10327768f95",
+        "sha256": "d561b6c487bdd3ac93a60b1ee8de5e439a8810a1a4b5c99acb430ce693fd18dd"
+      },
+      {
+        "path": "Tools/WholesomeQuestRecoveryRegressionTests/RoamContinuationOwnershipRegressionTests.cs",
+        "blob": "23e98150e399194ca90eb1d6e25cba121b4c14ca",
+        "sha256": "db6ccc7c1256e7f91836df90e397e69523aa261b005396e671e11d345b1a040d"
+      },
+      {
+        "path": "Tools/WholesomeQuestRecoveryRegressionTests/QuestPublicationRegressionTests.cs",
+        "blob": "9c9c71c070520d877f633f78e454e4b25e66f6f8",
+        "sha256": "3c2c2885ebbee6dd5551f996bde24b8cec430b0176f6412f636aae7766e2db3d"
+      },
+      {
+        "path": "Tools/WholesomeQuestRecoveryRegressionTests/PublicationFixtureAccessRegressionTests.cs",
+        "blob": "05923e4a3734d81dc8375fcff6350aa8bcb3feaa",
+        "sha256": "0664459341a37b503901b6389aa3607708df6c7daffdf3bcdf03a0d81ce8b7f1"
+      }
+    ],
+    "commit": "dcd3c838ee3be470e15e9363cd055ac1aa514c5a",
+    "tree": "fc556211dd8c4a4f2d691df2eeb970803f27cc31",
+    "verified_at_utc": "2026-09-28T22:17:18.9582453Z",
+    "direct_refs": [
+      "dcd3c838ee3be470e15e9363cd055ac1aa514c5a\trefs/heads/audit/next-55-equipment-observation-20260917",
+      "b2324913e2499ba30b239dd67224ca2c655c05cc\trefs/heads/master"
+    ]
+  },
+  "local": {
+    "summary": {
+      "completed_utc": "2026-09-28T22:13:52.1027365Z",
+      "base_head": "6da1c368ed84f3365a4a9eed336d19148a1a4d84",
+      "source_inputs": 1900,
+      "source_unchanged": true,
+      "successful_groups": 17,
+      "total_groups": 17,
+      "extraction_verified": true,
+      "extraction_source": "002682af0d8b8cc9ab01482eba8598ada0dd763c",
+      "host_build_exit": 0,
+      "lua51_sha256": "06df2510b5780791d17cbb738e42ec28a1ef5add580e127f31a9968bf57630e4",
+      "game_attached": false,
+      "hosted_acceptance": "Pending meaningful publication gate."
+    },
+    "results": [
+      {
+        "suite": "QuestRecoveryRegressionTests",
+        "build": 0,
+        "run": 0,
+        "harness_error": null,
+        "game_attached": false,
+        "architecture": "Windows x86"
+      },
+      {
+        "suite": "Singular",
+        "build": 0,
+        "run": 0,
+        "game_attached": false,
+        "architecture": "Windows x86"
+      },
+      {
+        "suite": "WholesomeQuestRecoveryRegressionTests",
+        "build": 0,
+        "run": 0,
+        "harness_error": null,
+        "game_attached": false,
+        "architecture": "Windows x86"
+      },
+      {
+        "suite": "QuestRecoveryAdapterRegressionTests",
+        "build": 0,
+        "run": 0,
+        "harness_error": null,
+        "game_attached": false,
+        "architecture": "Windows x86"
+      },
+      {
+        "suite": "QuestPickupPolicyRegressionTests",
+        "build": 0,
+        "run": 0,
+        "harness_error": null,
+        "game_attached": false,
+        "architecture": "Windows x86"
+      },
+      {
+        "suite": "VendorCoreRegressionTests",
+        "build": 0,
+        "run": 0,
+        "harness_error": null,
+        "game_attached": false,
+        "architecture": "Windows x86"
+      },
+      {
+        "suite": "NativeContractRegressionTests",
+        "build": 0,
+        "run": 0,
+        "harness_error": null,
+        "game_attached": false,
+        "architecture": "Windows x86"
+      },
+      {
+        "suite": "ShutdownBoundaryRegressionTests",
+        "build": 0,
+        "run": 0,
+        "harness_error": null,
+        "game_attached": false,
+        "architecture": "Windows x86"
+      },
+      {
+        "suite": "ElevatorSafetyRegressionTests",
+        "build": 0,
+        "run": 0,
+        "harness_error": null,
+        "game_attached": false,
+        "architecture": "Windows x86"
+      },
+      {
+        "suite": "PaladinDecisionRegressionTests",
+        "build": 0,
+        "run": 0,
+        "harness_error": null,
+        "game_attached": false,
+        "architecture": "Windows x86"
+      },
+      {
+        "suite": "GroupEngagementRegressionTests",
+        "build": 0,
+        "run": 0,
+        "harness_error": null,
+        "game_attached": false,
+        "architecture": "Windows x86"
+      },
+      {
+        "suite": "PaladinSupportRegressionTests",
+        "build": 0,
+        "run": 0,
+        "harness_error": null,
+        "game_attached": false,
+        "architecture": "Windows x86"
+      },
+      {
+        "suite": "WholesomeSaleRegressionTests",
+        "build": 0,
+        "run": 0,
+        "harness_error": null,
+        "game_attached": false,
+        "architecture": "Windows x86"
+      },
+      {
+        "suite": "QuestLogObservationRegressionTests",
+        "build": 0,
+        "run": 0,
+        "harness_error": null,
+        "game_attached": false,
+        "architecture": "Windows x86"
+      },
+      {
+        "suite": "QuestCompletionOwnerRegressionTests",
+        "build": 0,
+        "run": 0,
+        "harness_error": null,
+        "game_attached": false,
+        "architecture": "Windows x86"
+      },
+      {
+        "suite": "QuestObservationBoundaryRegressionTests",
+        "build": 0,
+        "run": 0,
+        "harness_error": null,
+        "game_attached": false,
+        "architecture": "Windows x86"
+      },
+      {
+        "suite": "Analyzers",
+        "build": 0,
+        "run": 0,
+        "game_attached": false,
+        "architecture": "local Python"
+      }
+    ],
+    "summary_sha256": "ed5e7844a4794acb0f2bc51b5b18394dfeca1b81c7c0528bf4fe99dfad86cc83"
+  },
+  "optimized": {
+    "status": "complete",
+    "head": "6da1c368ed84f3365a4a9eed336d19148a1a4d84",
+    "started_utc": "2026-09-28T22:14:25.116136+00:00",
+    "completed_utc": "2026-09-28T22:16:03.920199+00:00",
+    "command": [
+      "D:\\Dev\\CopilotBuddy-Evidence\\W110-local-dotnet-x86\\dotnet.exe",
+      "D:\\Dev\\CopilotBuddy-PR51\\Tools\\WholesomeQuestRecoveryRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\WholesomeQuestRecoveryRegressionTests.dll"
+    ],
+    "pid": 40360,
+    "exit": 0,
+    "timed_out": false,
+    "source_inputs": 1900,
+    "source_unchanged": true,
+    "immutable_binaries_unchanged": true,
+    "changed_binaries": [],
+    "summaries": [
+      "Chase ownership scenarios: 73/73; assertions=0; unexpected=0; complete tracked chase/Blacklist/NavigationAction and real TreeSharp; controlled paths; no physical route or live HoJ acceptance.",
+      "Coordinator containment scenarios: 49/49; assertions=0; unexpected=0; complete tracked coordinator/interface and real TreeSharp; positive provider and controlled routes; no physical-world acceptance.",
+      "Forced arrival scenarios: 65/65; assertions=0; unexpected=0; complete tracked ForcedMoveTo/base and real TreeSharp; controlled mount/path/world; no physical landing acceptance.",
+      "Forced materialization scenarios: 12/12; assertions=0; unexpected=0; actual parser/executor/forced owner; no game or navigation execution.",
+      "Real matching recipient scenarios: 13/13; assertions=0; unexpected=0; actual loader/scheduler/XML/compiler/factory/wrapper/WoWUnit/Interact; native executor absent, requests refused, no game attached.",
+      "Quest strategy constructor dispatch scenarios: 12/12; assertions=0; unexpected=0; actual loader/scheduler/XML/CodeNode/runtime compiler/factory; six constructor and six wrapper/start/branch-tick cases; allocated observations; no native executor, recipient action or game attached.",
+      "Target switch ownership scenarios: 90/90; assertions=0; unexpected=0; complete tracked Safers and real TreeSharp; controlled observation/target command; no native or live HoJ proof."
+    ],
+    "failures": [],
+    "ordinary_gate_summary_sha256": "ed5e7844a4794acb0f2bc51b5b18394dfeca1b81c7c0528bf4fe99dfad86cc83",
+    "run_log_sha256": "66b6b2f5ff3754ad981abf3ee481d85578e644f96c7491960a4439eb4c1c6e90",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "runtime_sha256": "9c0da796be0e7c067911dc0e8499e474b523a1c610eba59be19ab6e4ce1dd31a",
+    "lua51_sha256": "06df2510b5780791d17cbb738e42ec28a1ef5add580e127f31a9968bf57630e4",
+    "process_environment": {
+      "DOTNET_TieredCompilation": "0",
+      "COMPlus_TieredCompilation": null,
+      "DOTNET_ReadyToRun": null,
+      "DOTNET_DbgEnableMiniDump": "1",
+      "DOTNET_DbgMiniDumpType": "4",
+      "DOTNET_DbgMiniDumpName": "D:\\Dev\\CopilotBuddy-Evidence\\W110_HIGHRISK_ROAM_OPTIMIZED_20260929\\crash.%p.%t.dmp"
+    },
+    "dumps": [],
+    "interpretation": "Full optimized-runtime diagnostic supplements, never replaces, ordinary local17 acceptance. Green is non-reproduction of the historical CLR fatal crash, not diagnosis of its initiating cause.",
+    "game_attached": false,
+    "runtime_settings_deployed": false,
+    "registry_changed": false
+  },
+  "accepted": {
+    "integrated": {
+      "receipt": {
+        "verified_at_utc": "2026-09-28T22:23:17.1660149Z",
+        "repository": "JeofW/cbp",
+        "repository_id": 1367174964,
+        "run": 36491479613,
+        "source": "dcd3c838ee3be470e15e9363cd055ac1aa514c5a",
+        "artifact": 11001815678,
+        "artifact_name": "integrated-dcd3c838ee3be470e15e9363cd055ac1aa514c5a",
+        "archive": "D:\\Dev\\CopilotBuddy-Evidence\\w110-route-integrated-dcd3c838.zip",
+        "sha256": "8dcb571d5420d343587699f3ac161d3a7ea41c39641d8299de74f4a30e548479",
+        "metadata_digest": "sha256:8dcb571d5420d343587699f3ac161d3a7ea41c39641d8299de74f4a30e548479",
+        "bytes": 1162439,
+        "run_conclusion": "success",
+        "jobs": [
+          {
+            "id": 109160866127,
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ],
+        "game_attached": false
+      },
+      "inspection": {
+        "verified_at_utc": "2026-09-28T22:23:17.2210645Z",
+        "run": 36491479613,
+        "source": "dcd3c838ee3be470e15e9363cd055ac1aa514c5a",
+        "artifact": 11001815678,
+        "archive_sha256": "8dcb571d5420d343587699f3ac161d3a7ea41c39641d8299de74f4a30e548479",
+        "members": 259,
+        "kind": "integrated",
+        "identity": {
+          "fixture_commit": "dcd3c838ee3be470e15e9363cd055ac1aa514c5a",
+          "game_attached": false,
+          "production_tree": "fc556211dd8c4a4f2d691df2eeb970803f27cc31",
+          "production_commit": "dcd3c838ee3be470e15e9363cd055ac1aa514c5a"
+        },
+        "inner_hashes": 258,
+        "source_inputs": 1900,
+        "checkout_inputs_matched": 1900,
+        "results": {
+          "value": [
+            {
+              "run": 0,
+              "game_attached": false,
+              "build": 0,
+              "suite": "QuestRecoveryRegressionTests",
+              "harness_error": null,
+              "architecture": "x86"
+            },
+            {
+              "build": 0,
+              "run": 0,
+              "architecture": "x86",
+              "suite": "Singular",
+              "game_attached": false
+            },
+            {
+              "run": 0,
+              "game_attached": false,
+              "build": 0,
+              "suite": "WholesomeQuestRecoveryRegressionTests",
+              "harness_error": null,
+              "architecture": "x86"
+            },
+            {
+              "run": 0,
+              "game_attached": false,
+              "build": 0,
+              "suite": "QuestRecoveryAdapterRegressionTests",
+              "harness_error": null,
+              "architecture": "x86"
+            },
+            {
+              "run": 0,
+              "game_attached": false,
+              "build": 0,
+              "suite": "QuestPickupPolicyRegressionTests",
+              "harness_error": null,
+              "architecture": "x86"
+            },
+            {
+              "run": 0,
+              "game_attached": false,
+              "build": 0,
+              "suite": "VendorCoreRegressionTests",
+              "harness_error": null,
+              "architecture": "x86"
+            },
+            {
+              "run": 0,
+              "game_attached": false,
+              "build": 0,
+              "suite": "NativeContractRegressionTests",
+              "harness_error": null,
+              "architecture": "x86"
+            },
+            {
+              "run": 0,
+              "game_attached": false,
+              "build": 0,
+              "suite": "ShutdownBoundaryRegressionTests",
+              "harness_error": null,
+              "architecture": "x86"
+            },
+            {
+              "run": 0,
+              "game_attached": false,
+              "build": 0,
+              "suite": "Elevator",
+              "harness_error": null,
+              "architecture": "x86"
+            },
+            {
+              "run": 0,
+              "game_attached": false,
+              "build": 0,
+              "suite": "PaladinDecisions",
+              "harness_error": null,
+              "architecture": "x86"
+            },
+            {
+              "run": 0,
+              "game_attached": false,
+              "build": 0,
+              "suite": "GroupEngagement",
+              "harness_error": null,
+              "architecture": "x86"
+            },
+            {
+              "run": 0,
+              "game_attached": false,
+              "build": 0,
+              "suite": "PaladinSupport",
+              "harness_error": null,
+              "architecture": "x86"
+            },
+            {
+              "run": 0,
+              "game_attached": false,
+              "build": 0,
+              "suite": "WholesomeSale",
+              "harness_error": null,
+              "architecture": "x86"
+            },
+            {
+              "run": 0,
+              "game_attached": false,
+              "build": 0,
+              "suite": "QuestLogObservationRegressionTests",
+              "harness_error": null,
+              "architecture": "x86"
+            },
+            {
+              "run": 0,
+              "game_attached": false,
+              "build": 0,
+              "suite": "QuestCompletionOwnerRegressionTests",
+              "harness_error": null,
+              "architecture": "x86"
+            },
+            {
+              "run": 0,
+              "game_attached": false,
+              "build": 0,
+              "suite": "QuestObservationBoundaryRegressionTests",
+              "harness_error": null,
+              "architecture": "x86"
+            },
+            {
+              "build": 0,
+              "run": 0,
+              "suite": "Analyzers",
+              "game_attached": false
+            }
+          ],
+          "Count": 17
+        },
+        "successful_groups": 17,
+        "key_summaries": [
+          "Autoattack startup scenarios: 26/26; assertions=0; unexpected=0; actual Common/LocalPlayer Lua and TreeSharp; stock Lua5.1 with controlled native attack state; no game/server/native execution.",
+          "AutoEquip pending context scenarios: 37/37; assertions=0; unexpected=0; exact tracked C# capture/tick/request methods; controlled world/Lua; no game attached.",
+          "Cast wait facing scenarios: 16/16; assertions=0; unexpected=0; actual WaitForCast overloads and real TreeSharp; controlled cast/facing boundaries; no client/native execution.",
+          "Combat sight movement scenarios: 85/85; assertions=0; unexpected=0; complete tracked Movement and real TreeSharp; controlled world/navigation; no native path or game attached.",
+          "Equip acknowledged timeout scenarios: 10/10; assertions=0; unexpected=0; exact tracked method control flow; controlled external acknowledgements; no game attached.",
+          "Equip continuation boundary scenarios: 46/46; assertions=0; unexpected=0; exact tracked C# tick/context/acknowledge/return/restore; controlled actor/inventory/Lua; no physical cursor or client proof.",
+          "EquipItem pending context scenarios: 57/57; assertions=0; unexpected=0; exact tracked C# tick/submit/confirm/reset; controlled actor/quest/Lua; no game attached.",
+          "Equipment cleanup ownership: 57/57; assertions=0; unexpected=0; actual tracked owners/generated Lua5.1; controlled build12340 cursor transitions and physical dispatch admission; no game/server/native execution.",
+          "Equipment physical cursor guard: 8/8; actual generated x86 comparison/branch contract; no game attached or native execution.",
+          "Equipment Lua51 boundary scenarios: 87/87; assertions=0; unexpected=0; tracked pickup/equip helpers, actual generated Lua5.1, loader size and verbatim managed conversion; controlled APIs; no physical GUID/client/server proof.",
+          "Equipment pending-index scenarios: 24/24; assertions=0; unexpected=0; tracked owner/generated Lua; stock Lua5.1; controlled synchronous events; no native client proof.",
+          "Equip popup submission scenarios: 18/18; assertions=0; unexpected=0; exact tracked C# confirmation/tick methods; recording Lua boundary only; no game attached."
+        ],
+        "failing_groups": []
+      },
+      "receipt_sha256": "74be688fea9de846d7065ae85e7ed6769ad5e798eacaadae3336f40c034f932e",
+      "inspection_sha256": "6dc9de407008a287dc39fe0a0b41b931ab50e5fdff5c974e77001f8a30060453",
+      "summaries": [
+        "Chase ownership scenarios: 73/73; assertions=0; unexpected=0; complete tracked chase/Blacklist/NavigationAction and real TreeSharp; controlled paths; no physical route or live HoJ acceptance.",
+        "Coordinator containment scenarios: 49/49; assertions=0; unexpected=0; complete tracked coordinator/interface and real TreeSharp; positive provider and controlled routes; no physical-world acceptance.",
+        "Forced arrival scenarios: 65/65; assertions=0; unexpected=0; complete tracked ForcedMoveTo/base and real TreeSharp; controlled mount/path/world; no physical landing acceptance.",
+        "Forced materialization scenarios: 12/12; assertions=0; unexpected=0; actual parser/executor/forced owner; no game or navigation execution.",
+        "Publication fixture access scenarios: 8/8; assertions=0; unexpected=0; actual shared fixture/Memory/native access; only owned canary writes; no client-global write or game attached.",
+        "Scan entry scenarios: 16/16; assertions=0; unexpected=0; actual world/vendor/scan/refresh/execution owners; no game attached.",
+        "Real matching recipient scenarios: 13/13; assertions=0; unexpected=0; actual loader/scheduler/XML/compiler/factory/wrapper/WoWUnit/Interact; native executor absent, requests refused, no game attached.",
+        "Quest strategy constructor dispatch scenarios: 12/12; assertions=0; unexpected=0; actual loader/scheduler/XML/CodeNode/runtime compiler/factory; six constructor and six wrapper/start/branch-tick cases; allocated observations; no native executor, recipient action or game attached.",
+        "Roam ownership scenarios: 111/111; assertions=0; unexpected=0; complete tracked factory/predicates/admission/POI action and real TreeSharp; controlled world/mount/navigation; no native atomicity or physical-route acceptance.",
+        "Target switch ownership scenarios: 90/90; assertions=0; unexpected=0; complete tracked Safers and real TreeSharp; controlled observation/target command; no native or live HoJ proof."
+      ]
+    },
+    "host": {
+      "receipt": {
+        "verified_at_utc": "2026-09-28T22:19:34.0205426Z",
+        "repository": "JeofW/cbp",
+        "repository_id": 1367174964,
+        "run": 36491479581,
+        "source": "dcd3c838ee3be470e15e9363cd055ac1aa514c5a",
+        "artifact": 11001565374,
+        "artifact_name": "audit-validation-dcd3c838ee3be470e15e9363cd055ac1aa514c5a",
+        "archive": "D:\\Dev\\CopilotBuddy-Evidence\\w110-route-host-dcd3c838.zip",
+        "sha256": "b9bcd5e7b7a7d177cf7894bfd73fbad3ef6d02f74d542af926818b50de7f2ef9",
+        "metadata_digest": "sha256:b9bcd5e7b7a7d177cf7894bfd73fbad3ef6d02f74d542af926818b50de7f2ef9",
+        "bytes": 84845,
+        "run_conclusion": "success",
+        "jobs": [
+          {
+            "id": 109160865231,
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ],
+        "game_attached": false
+      },
+      "inspection": {
+        "verified_at_utc": "2026-09-28T22:19:34.0705882Z",
+        "run": 36491479581,
+        "source": "dcd3c838ee3be470e15e9363cd055ac1aa514c5a",
+        "artifact": 11001565374,
+        "archive_sha256": "b9bcd5e7b7a7d177cf7894bfd73fbad3ef6d02f74d542af926818b50de7f2ef9",
+        "members": 4,
+        "kind": "host",
+        "result": {
+          "host_build_exit_code": 0,
+          "game_attached": false,
+          "tests_run": false
+        },
+        "build_summary": [
+          "3434 Warning(s)",
+          "0 Error(s)"
+        ]
+      },
+      "receipt_sha256": "63736043649a4e06efbaae79b3ff08ceaa49e8f87dbff797c41762bfa8426b6a",
+      "inspection_sha256": "766bad2c1ac073ba8f231bc7b2f00a8c2b0cb99a1147439439e638e21ab59654",
+      "summaries": [
+        "3434 Warning(s)",
+        "0 Error(s)"
+      ]
+    }
+  },
+  "pairs": {
+    "recovered": {
+      "verified_utc": "2026-09-28T21:30:45.659539+00:00",
+      "pairs": [
+        {
+          "name": "target selection",
+          "red": "TARGETSWITCHRED4",
+          "green": "TARGETSWITCHGREEN",
+          "base_head": "9a9458db6d89e5b11e961a2e6c67d2cc7f52f607",
+          "source_inputs": 1894,
+          "only_changed_input": "runtime-snapshot/Routines/Singular wotlk/Helpers/Safers.cs",
+          "all_fixture_sources_unchanged": true,
+          "red_summary": "Target switch ownership scenarios: 24/90; assertions=66; unexpected=0;",
+          "green_summary": "Target switch ownership scenarios: 90/90; assertions=0; unexpected=0;",
+          "regression_assembly_observations": [
+            [
+              "Assembly SHA256: cf223f196c95cda5421eee2af7ee3e2ebce697c711c2d718ec5cde10eeed2407"
+            ],
+            [
+              "Assembly SHA256: cf223f196c95cda5421eee2af7ee3e2ebce697c711c2d718ec5cde10eeed2407"
+            ]
+          ],
+          "scope": "Actual tracked owners; controlled external leaves. Source equality does not imply identical linked binaries or live acceptance.",
+          "receipts": [
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_TARGETSWITCHRED4_20260929\\status.json",
+              "sha256": "9a22994e09d46a5e5447dd8ada2dcd14ec15211aebefee2bd0be59917d61ac70"
+            },
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_TARGETSWITCHRED4_20260929\\source-before.json",
+              "sha256": "346f7fa826f6b2074d1977f6fa8494d200839b456cfd1f880f8b1fb7d274c982"
+            },
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_TARGETSWITCHRED4_20260929\\source-after.json",
+              "sha256": "346f7fa826f6b2074d1977f6fa8494d200839b456cfd1f880f8b1fb7d274c982"
+            },
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_TARGETSWITCHRED4_20260929\\run.log",
+              "sha256": "bf83416b07cab8502b53da06efdb028f4d6500356245e5854d8dc82ed2c1f46a"
+            },
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_TARGETSWITCHRED4_20260929\\run.stderr.log",
+              "sha256": "41d48f0a8519aedde468b1e936b6f53220d1fc8e9a5035565e5c9cebd9403f4a"
+            },
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_TARGETSWITCHGREEN_20260929\\status.json",
+              "sha256": "bd4850c699bbeb07150135d0e706c5b3788204ea60f5ac2c61b4381c24d39568"
+            },
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_TARGETSWITCHGREEN_20260929\\source-before.json",
+              "sha256": "cafc5d907d4064129e648acb8dd7dffe1cd8c6da7c447321ab51b6731651a51b"
+            },
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_TARGETSWITCHGREEN_20260929\\source-after.json",
+              "sha256": "cafc5d907d4064129e648acb8dd7dffe1cd8c6da7c447321ab51b6731651a51b"
+            },
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_TARGETSWITCHGREEN_20260929\\run.log",
+              "sha256": "7befa3aa142384d42b2001952ecabe0d205cf82a61b29b7a661e14a6422563e9"
+            },
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_TARGETSWITCHGREEN_20260929\\run.stderr.log",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ]
+        },
+        {
+          "name": "chase ownership",
+          "red": "CHASEOWNERRED2",
+          "green": "CHASEOWNERGREEN",
+          "base_head": "9a9458db6d89e5b11e961a2e6c67d2cc7f52f607",
+          "source_inputs": 1895,
+          "only_changed_input": "Bots/Grind/Levelbot/Actions/Combat/ActionMoveToTarget.cs",
+          "all_fixture_sources_unchanged": true,
+          "red_summary": "Chase ownership scenarios: 7/73; assertions=66; unexpected=0;",
+          "green_summary": "Chase ownership scenarios: 73/73; assertions=0; unexpected=0;",
+          "regression_assembly_observations": [
+            [
+              "Assembly SHA256: cb497bb1f4cb7d488759eca76cb0dc74b6785d696a4633a51f5c92ad853e692b"
+            ],
+            [
+              "Assembly SHA256: 700478289b72eb1365ca2b0d9e651c67a2dee514d36636c1427cfbe4595f406e"
+            ]
+          ],
+          "scope": "Actual tracked owners; controlled external leaves. Source equality does not imply identical linked binaries or live acceptance.",
+          "receipts": [
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_CHASEOWNERRED2_20260929\\status.json",
+              "sha256": "2210e7f9433963ffbad7e83675bc6b953fddbb519689eeb607e58ed7f298f792"
+            },
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_CHASEOWNERRED2_20260929\\source-before.json",
+              "sha256": "1da7553668a7837d5831bc3c52a33d1f8dbf5f8fdd9805f71a55bc80cbbea64b"
+            },
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_CHASEOWNERRED2_20260929\\source-after.json",
+              "sha256": "1da7553668a7837d5831bc3c52a33d1f8dbf5f8fdd9805f71a55bc80cbbea64b"
+            },
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_CHASEOWNERRED2_20260929\\run.log",
+              "sha256": "860895be008e6c91907af85f1f9498414eb618a679f00e03b75aff2322f068f5"
+            },
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_CHASEOWNERRED2_20260929\\run.stderr.log",
+              "sha256": "b4c986ce94aaa372dad6fc29287485186d4fb24e369528cffb7c78cf7bcc2bbc"
+            },
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_CHASEOWNERGREEN_20260929\\status.json",
+              "sha256": "b0544eb1e5a7d70604c0e1df69483abaab35020929219835c227916b4da39c09"
+            },
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_CHASEOWNERGREEN_20260929\\source-before.json",
+              "sha256": "a3f948514c289f623effd4ccd59e9b0d311c9585133336729b0f750b6915d1e2"
+            },
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_CHASEOWNERGREEN_20260929\\source-after.json",
+              "sha256": "a3f948514c289f623effd4ccd59e9b0d311c9585133336729b0f750b6915d1e2"
+            },
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_CHASEOWNERGREEN_20260929\\run.log",
+              "sha256": "75715f7c445d7bae770b4dbedd76f34542b878095afc8338604c51d46d59da19"
+            },
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_CHASEOWNERGREEN_20260929\\run.stderr.log",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ]
+        },
+        {
+          "name": "coordinator containment",
+          "red": "COORDINATORRED",
+          "green": "COORDINATORGREEN",
+          "base_head": "9a9458db6d89e5b11e961a2e6c67d2cc7f52f607",
+          "source_inputs": 1896,
+          "only_changed_input": "Bots/Grind/Levelbot/Actions/Combat/PullIsolationCoordinator.cs",
+          "all_fixture_sources_unchanged": true,
+          "red_summary": "Coordinator containment scenarios: 2/49; assertions=47; unexpected=0;",
+          "green_summary": "Coordinator containment scenarios: 49/49; assertions=0; unexpected=0;",
+          "regression_assembly_observations": [
+            [
+              "Assembly SHA256: 74310ff623f9aed2ea1c8964f81427152b611c4c8354e2b4a9a894bfd2c96471"
+            ],
+            [
+              "Assembly SHA256: 0f7057744ab097606e21759bd1b5c59e681da455488dc94d17da863ac4431345"
+            ]
+          ],
+          "scope": "Actual tracked owners; controlled external leaves. Source equality does not imply identical linked binaries or live acceptance.",
+          "receipts": [
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_COORDINATORRED_20260929\\status.json",
+              "sha256": "915754150de3179bc4f9f2d876197d694c7d3b276bfe2298341c8e82497feccb"
+            },
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_COORDINATORRED_20260929\\source-before.json",
+              "sha256": "bf389535e70513202e718b7c099677eb7c97dd5b1a4aa5f72d830696c2135d79"
+            },
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_COORDINATORRED_20260929\\source-after.json",
+              "sha256": "bf389535e70513202e718b7c099677eb7c97dd5b1a4aa5f72d830696c2135d79"
+            },
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_COORDINATORRED_20260929\\run.log",
+              "sha256": "00bb7b6cc7e911d70d5df4860b97acaf27fe7331ab77979705ff3ae8dc8d626a"
+            },
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_COORDINATORRED_20260929\\run.stderr.log",
+              "sha256": "d9186fbcaaea9a556e5b499fea69f4831665c3b7a302278c552f8b26d393a90e"
+            },
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_COORDINATORGREEN_20260929\\status.json",
+              "sha256": "08a257b6d4eac213cba13bcb4792eb5c8a82ee1cd7a3286f78585f584062aa4a"
+            },
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_COORDINATORGREEN_20260929\\source-before.json",
+              "sha256": "ade5396b54b66a1aade05865508b6e42d37c02cb5271bff31c81f698a712eff7"
+            },
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_COORDINATORGREEN_20260929\\source-after.json",
+              "sha256": "ade5396b54b66a1aade05865508b6e42d37c02cb5271bff31c81f698a712eff7"
+            },
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_COORDINATORGREEN_20260929\\run.log",
+              "sha256": "4835747b70084835d91101a58554f3b62cab3bd7e5893c45b20add2c4bea6df4"
+            },
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_COORDINATORGREEN_20260929\\run.stderr.log",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ]
+        },
+        {
+          "name": "forced waypoint arrival",
+          "red": "FORCEDARRIVALRED",
+          "green": "FORCEDARRIVALGREEN2",
+          "base_head": "9a9458db6d89e5b11e961a2e6c67d2cc7f52f607",
+          "source_inputs": 1897,
+          "only_changed_input": "Bots/Quest/QuestOrder/ForcedMoveTo.cs",
+          "all_fixture_sources_unchanged": true,
+          "red_summary": "Forced arrival scenarios: 7/65; assertions=58; unexpected=0;",
+          "green_summary": "Forced arrival scenarios: 65/65; assertions=0; unexpected=0;",
+          "regression_assembly_observations": [
+            [
+              "Assembly SHA256: ce48e8ef1dfe3a1b5b26bf65e534319f87ebd62d81bbd7fd9298a67855444f47"
+            ],
+            [
+              "Assembly SHA256: cd1f15c6c68f2088da7a472f6ee8a79ba281eb0da2145f6f9a4378808311d9aa"
+            ]
+          ],
+          "scope": "Actual tracked owners; controlled external leaves. Source equality does not imply identical linked binaries or live acceptance.",
+          "receipts": [
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_FORCEDARRIVALRED_20260929\\status.json",
+              "sha256": "a1d7f1aef28a4c9a672fb6c45b730a835b5ee70a5cdf3f39cc1bce6caeb15a76"
+            },
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_FORCEDARRIVALRED_20260929\\source-before.json",
+              "sha256": "a10a148c4ae3017d2bb8af9e21100b944b647ac6731c178c7c347762b5e4457e"
+            },
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_FORCEDARRIVALRED_20260929\\source-after.json",
+              "sha256": "a10a148c4ae3017d2bb8af9e21100b944b647ac6731c178c7c347762b5e4457e"
+            },
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_FORCEDARRIVALRED_20260929\\run.log",
+              "sha256": "a107e200bf1b2c5b7f373e4faeef68b304e3d5336449523f6cb12fbf9ed819b7"
+            },
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_FORCEDARRIVALRED_20260929\\run.stderr.log",
+              "sha256": "426a4b3925a573301b6cd36bfbca74fffd4724f2e71e9297fdde4220f7d35178"
+            },
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_FORCEDARRIVALGREEN2_20260929\\status.json",
+              "sha256": "e52861d616fa968e580608067cb99edbdcf7a1ed8c2bc45a4e72212aa0ba6ff8"
+            },
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_FORCEDARRIVALGREEN2_20260929\\source-before.json",
+              "sha256": "864f42a9fa28d1babd4684cccc1ef77671b90bbbf65b104f1e4fdd41ae938bda"
+            },
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_FORCEDARRIVALGREEN2_20260929\\source-after.json",
+              "sha256": "864f42a9fa28d1babd4684cccc1ef77671b90bbbf65b104f1e4fdd41ae938bda"
+            },
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_FORCEDARRIVALGREEN2_20260929\\run.log",
+              "sha256": "28de2dafbeb05e5d5ba7b14bf7cdddf17cd3f0721cfd5b64d778e65531dd4110"
+            },
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_FORCEDARRIVALGREEN2_20260929\\run.stderr.log",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ]
+        },
+        {
+          "name": "movement mode materialization",
+          "red": "MOVEMATERIALIZERRED2",
+          "green": "MOVEMATERIALIZERGREEN",
+          "base_head": "9a9458db6d89e5b11e961a2e6c67d2cc7f52f607",
+          "source_inputs": 1898,
+          "only_changed_input": "Bots/Quest/Actions/ForcedBehaviorExecutor.cs",
+          "all_fixture_sources_unchanged": true,
+          "red_summary": "Forced materialization scenarios: 4/12; assertions=8; unexpected=0;",
+          "green_summary": "Forced materialization scenarios: 12/12; assertions=0; unexpected=0;",
+          "regression_assembly_observations": [
+            [
+              "Assembly SHA256: 32193674b0f17a1a89ecf384de0a4948cae5347f7409af4ee93a9610abe3cd10"
+            ],
+            [
+              "Assembly SHA256: 32193674b0f17a1a89ecf384de0a4948cae5347f7409af4ee93a9610abe3cd10"
+            ]
+          ],
+          "scope": "Actual tracked owners; controlled external leaves. Source equality does not imply identical linked binaries or live acceptance.",
+          "receipts": [
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_MOVEMATERIALIZERRED2_20260929\\status.json",
+              "sha256": "f4cbac42189408aa2abed0edaa11ef302b638c490bb46fe21761d1a10d0fcc4d"
+            },
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_MOVEMATERIALIZERRED2_20260929\\source-before.json",
+              "sha256": "2d405a83d7e020a2836e440cfcf4eb80bc600f9fc4788a8ec536b7e76e22af99"
+            },
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_MOVEMATERIALIZERRED2_20260929\\source-after.json",
+              "sha256": "2d405a83d7e020a2836e440cfcf4eb80bc600f9fc4788a8ec536b7e76e22af99"
+            },
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_MOVEMATERIALIZERRED2_20260929\\run.log",
+              "sha256": "6a67985d79c133e008c026cc129b2cbd4d7d75b33f4ad5f2c9506f3068d12d9a"
+            },
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_MOVEMATERIALIZERRED2_20260929\\run.stderr.log",
+              "sha256": "4b510b0432e1479d5d08c8059fa040fef004c848d19ed17fb6801f8cf01b4c88"
+            },
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_MOVEMATERIALIZERGREEN_20260929\\status.json",
+              "sha256": "db3024f3dc8cd01008d15cd9d8af12832e1c9a03dcb482c398f223ea91f3f4a4"
+            },
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_MOVEMATERIALIZERGREEN_20260929\\source-before.json",
+              "sha256": "0ed5ac0671a1d7dc619d5247b30d95d441ca112a924e0eb1b7097467b4261611"
+            },
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_MOVEMATERIALIZERGREEN_20260929\\source-after.json",
+              "sha256": "0ed5ac0671a1d7dc619d5247b30d95d441ca112a924e0eb1b7097467b4261611"
+            },
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_MOVEMATERIALIZERGREEN_20260929\\run.log",
+              "sha256": "60165f00aac55f6def9cfa5a9bcb0c4da5b4b0414f375107bfd8fe4927cafbe1"
+            },
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_MOVEMATERIALIZERGREEN_20260929\\run.stderr.log",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ]
+        }
+      ],
+      "assertions_weakened": false,
+      "historical_clr_cause_diagnosed": false,
+      "harness_repair_note": "QuestScanEntry's separately recorded optimized full-run failure is JIT-sensitive stack attribution; exact exceptions/read counts/lease behavior remain, augmented by compiled call-chain checks. It is not a production repair interval."
+    },
+    "roaming": {
+      "verified_utc": "2026-09-28T21:59:51.028076+00:00",
+      "base": "6da1c368ed84f3365a4a9eed336d19148a1a4d84",
+      "pairs": [
+        {
+          "red": "ROAMOWNERRED2",
+          "green": "ROAMOWNERGREEN",
+          "red_summary": "14/98; assertions=84",
+          "green_summary": "98/98; assertions=0",
+          "only_changed_input": "Bots/Grind/LevelBot.cs",
+          "fixture_sources_unchanged": true,
+          "source_inputs": 1899,
+          "receipts": [
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_ROAMOWNERRED2_20260929\\status.json",
+              "sha256": "1391a354395dbe4e3e8b0300763d27443548b3411fd8b9ac336379f17b03c612"
+            },
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_ROAMOWNERRED2_20260929\\source-before.json",
+              "sha256": "1de7c2ecc2f9315396e2702b6ad2e1bc87c0f6b04f534f48511f621031266980"
+            },
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_ROAMOWNERRED2_20260929\\source-after.json",
+              "sha256": "1de7c2ecc2f9315396e2702b6ad2e1bc87c0f6b04f534f48511f621031266980"
+            },
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_ROAMOWNERRED2_20260929\\run.log",
+              "sha256": "9de8038530dad2f0fa9dbb5ddf995ede690493abd0ffad7c737023a839c0e561"
+            },
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_ROAMOWNERRED2_20260929\\run.stderr.log",
+              "sha256": "a5951a520af6d19c9db856332305bb5dceb6fa42687526b1562cb9f27f4d313b"
+            },
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_ROAMOWNERGREEN_20260929\\status.json",
+              "sha256": "31d6a08c77901e5187042fe19c2ce1ef47a75fa6c2a4e2702a94c3ec54337935"
+            },
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_ROAMOWNERGREEN_20260929\\source-before.json",
+              "sha256": "2a96eed1bb0e9e1f2075d1e6bc2c176e339a4d44525d054a1b1dfccd6852538c"
+            },
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_ROAMOWNERGREEN_20260929\\source-after.json",
+              "sha256": "2a96eed1bb0e9e1f2075d1e6bc2c176e339a4d44525d054a1b1dfccd6852538c"
+            },
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_ROAMOWNERGREEN_20260929\\run.log",
+              "sha256": "e36cd00fcbfdb404596a075368be1bd082984e552df17518890a41d8f4448568"
+            },
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_ROAMOWNERGREEN_20260929\\run.stderr.log",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "compiled_binary_equality_not_required": true
+        },
+        {
+          "red": "ROAMCONTEXTRED",
+          "green": "ROAMCONTEXTGREEN",
+          "red_summary": "99/111; assertions=12",
+          "green_summary": "111/111; assertions=0",
+          "only_changed_input": "Bots/Grind/LevelBot.cs",
+          "fixture_sources_unchanged": true,
+          "source_inputs": 1899,
+          "receipts": [
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_ROAMCONTEXTRED_20260929\\status.json",
+              "sha256": "de809a4cef9b81a06d5cb3292d3eacd36ce32bf91c27b799f8b4d0a29e3b6b6c"
+            },
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_ROAMCONTEXTRED_20260929\\source-before.json",
+              "sha256": "fbe16a388e74ae1f017b47f21fe6d5f6025836eaf5b7798ac1aa49f477f36077"
+            },
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_ROAMCONTEXTRED_20260929\\source-after.json",
+              "sha256": "fbe16a388e74ae1f017b47f21fe6d5f6025836eaf5b7798ac1aa49f477f36077"
+            },
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_ROAMCONTEXTRED_20260929\\run.log",
+              "sha256": "be87dd48261b0e204ed4701b4bc4f2b026630383173848a096267e124883c5de"
+            },
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_ROAMCONTEXTRED_20260929\\run.stderr.log",
+              "sha256": "19e5f3609226ed28c277e9b9f048d20e0dd74e8a8f42a06f7c6fad252beed68d"
+            },
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_ROAMCONTEXTGREEN_20260929\\status.json",
+              "sha256": "5cb5506e9ad591c55b9ba8160c3d3c2205aea6fcbd37b169a5ec45eb6645fde9"
+            },
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_ROAMCONTEXTGREEN_20260929\\source-before.json",
+              "sha256": "734c9811e1cb8b732dccc85e6265e945c71440253d0d74d245376723e27e82a8"
+            },
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_ROAMCONTEXTGREEN_20260929\\source-after.json",
+              "sha256": "734c9811e1cb8b732dccc85e6265e945c71440253d0d74d245376723e27e82a8"
+            },
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_ROAMCONTEXTGREEN_20260929\\run.log",
+              "sha256": "a68a6e1a985d6c6c531b511cd12ef92dc2cb2b01f830b6376136be016089b450"
+            },
+            {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_ROAMCONTEXTGREEN_20260929\\run.stderr.log",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "compiled_binary_equality_not_required": true
+        }
+      ],
+      "fixture_compile_failure": "ROAMOWNERRED is a rejected extraction baseline: unpaired region trivia. No production repair preceded the corrected red.",
+      "scope": "Actual complete roam factory and predicates; actual admission/POI decorators/action; real TreeSharp. Native atomicity and physical routes remain unverified.",
+      "assertions_weakened": false,
+      "game_attached": false
+    },
+    "fixture_access": {
+      "verified_utc": "2026-09-28T22:11:30.109842+00:00",
+      "base": "6da1c368ed84f3365a4a9eed336d19148a1a4d84",
+      "red": "3/8; assertions=5; unexpected=0",
+      "green": "8/8; assertions=0; unexpected=0",
+      "only_changed_input": "Tools/WholesomeQuestRecoveryRegressionTests/QuestPublicationRegressionTests.cs",
+      "assertions_unchanged": true,
+      "canary_regression_source_unchanged": true,
+      "source_inputs": 1900,
+      "receipts": [
+        {
+          "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_FIXTUREACCESSRED_20260929\\status.json",
+          "sha256": "826a9eb35dc50507de7f2ae1f4c00a48aa0c4878f8423c8127d76d6e537b5215"
+        },
+        {
+          "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_FIXTUREACCESSRED_20260929\\source-before.json",
+          "sha256": "ff1034f33870f5c234cfa17f34008f8bc68948fa4e58669db0131d76ecea45c6"
+        },
+        {
+          "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_FIXTUREACCESSRED_20260929\\source-after.json",
+          "sha256": "ff1034f33870f5c234cfa17f34008f8bc68948fa4e58669db0131d76ecea45c6"
+        },
+        {
+          "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_FIXTUREACCESSRED_20260929\\run.log",
+          "sha256": "dd899e2ad3d539c682765cb3201e157ea5fb1b54722ef3958481ad79030567f5"
+        },
+        {
+          "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_FIXTUREACCESSRED_20260929\\run.stderr.log",
+          "sha256": "ec5e24de653aaff660f27f0903a8097443ca46a27950c975d6a4bbba8bcf43b7"
+        },
+        {
+          "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_FIXTUREACCESSGREEN_20260929\\status.json",
+          "sha256": "7ccfd8fc14905291db19044a0aa7ff24370d9c7e4b472f433b505057e91fea19"
+        },
+        {
+          "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_FIXTUREACCESSGREEN_20260929\\source-before.json",
+          "sha256": "f5719ed3d998aaf65bcef96e680fe554a831436ebed41409879d9f0cdcfcfdd8"
+        },
+        {
+          "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_FIXTUREACCESSGREEN_20260929\\source-after.json",
+          "sha256": "f5719ed3d998aaf65bcef96e680fe554a831436ebed41409879d9f0cdcfcfdd8"
+        },
+        {
+          "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_FIXTUREACCESSGREEN_20260929\\run.log",
+          "sha256": "d47f4e97403c932bc77c9f16813d6eff3a67edb53e8b9045173bae7bcf86699e"
+        },
+        {
+          "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_FIXTUREACCESSGREEN_20260929\\run.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "production_changed_in_interval": false,
+      "demonstrated_defect": "The shared fixture used a writable self-process pseudo handle. Real Interact invokes ResetAfk before missing-executor refusal; the typed/native write path could change this CLR process at a fixed client address.",
+      "repair": "Use an owned PROCESS_VM_READ-only self-process handle and close it after detaching. Existing allocated setup writes and actual interaction/refusal assertions remain.",
+      "test_boundary": "Typed/native read and write probes address only a freshly allocated four-byte canary; no client-global write is attempted.",
+      "historical_crash_attribution": "Unsafe write capability is deterministic. Limited historical/recurrence dumps do not identify the exact earlier corrupting instruction.",
+      "reference": "https://learn.microsoft.com/en-us/windows/win32/procthread/process-security-and-access-rights",
+      "game_attached": false,
+      "assertions_weakened": false
+    }
+  },
+  "failed_broad_gate": {
+    "completed_utc": "2026-09-28T22:01:27.2709722Z",
+    "base_head": "6da1c368ed84f3365a4a9eed336d19148a1a4d84",
+    "source_inputs": 1899,
+    "source_unchanged": true,
+    "successful_groups": 16,
+    "total_groups": 17,
+    "extraction_verified": true,
+    "extraction_source": "002682af0d8b8cc9ab01482eba8598ada0dd763c",
+    "host_build_exit": 0,
+    "lua51_sha256": "06df2510b5780791d17cbb738e42ec28a1ef5add580e127f31a9968bf57630e4",
+    "game_attached": false,
+    "hosted_acceptance": "Pending meaningful publication gate."
+  },
+  "crash": {
+    "captured_utc": "2026-09-28T22:03:37.9484176Z",
+    "base": "6da1c368ed84f3365a4a9eed336d19148a1a4d84",
+    "dump": "D:\\Dev\\CopilotBuddy-Evidence\\W110_HIGHRISK_ROAM_CLR_RECURRENCE_20260929\\dotnet-10572.dmp",
+    "dump_source": "C:\\Users\\Jeof\\AppData\\Local\\CrashDumps\\dotnet.exe.10572.dmp",
+    "dump_sha256": "cd1df9ca658de0e36186f1edcc4e4c893b35ed6e74b528edcc2f7c9e16b5b9f4",
+    "dump_bytes": 4961587,
+    "pid": 10572,
+    "report_id": "979a0e12-c8d7-404d-908f-779cd7a4a63b",
+    "runtime": [
+      {
+        "Path": "D:\\Dev\\CopilotBuddy-Evidence\\W110-local-dotnet-x86\\shared\\Microsoft.NETCore.App\\10.0.12\\coreclr.dll",
+        "Hash": "486AB39CF4FFBE31A3D08AF71A933E35935F64E8C4ADF44EA00016DE57C9C83F"
+      },
+      {
+        "Path": "D:\\Dev\\CopilotBuddy-Evidence\\W110-local-dotnet-x86\\shared\\Microsoft.NETCore.App\\10.0.12\\mscordaccore.dll",
+        "Hash": "755EA1C9698550278B253961FE7CDE36DC14C32E2432AABB39B22EB472F2985C"
+      },
+      {
+        "Path": "D:\\Dev\\CopilotBuddy-Evidence\\W110-local-dotnet-x86\\shared\\Microsoft.NETCore.App\\10.0.12\\mscordbi.dll",
+        "Hash": "3277830C0853146B125A40D9A9FBB055B3744A73ECB1A3BF061EA6BA2766656F"
+      },
+      {
+        "Path": "D:\\Dev\\CopilotBuddy-Evidence\\W110-local-dotnet-x86\\shared\\Microsoft.NETCore.App\\10.0.12\\System.Private.CoreLib.dll",
+        "Hash": "16FFF00D69B01F77C4345514039C9A1F405F3889847171C59E97BC0649E8D2E7"
+      }
+    ],
+    "binaries": 116,
+    "binary_limit": "Captured immediately after the full run and its final host build; loaded-module identity must still be compared with the dump.",
+    "native_exception": "0xc0000005",
+    "fault_offset": "0x000daadc",
+    "managed_report": "Internal CLR error0x80131506; Gen2GcCallback.Finalize; constructor-isolation child",
+    "game_attached": false,
+    "registry_changed": false,
+    "publication_blocked": true
+  },
+  "evidence_read_retry": {
+    "operation": "new final roaming/canary whole-run membership read",
+    "tool": "Chat_On_Steroids_Plugins.exec_command",
+    "arguments": {
+      "cmds": [
+        "rg -n '^(Publication fixture access scenarios:|Roam ownership scenarios:|PASS aggregate group: (PublicationFixtureAccessRegressionTests|RoamContinuationOwnershipRegressionTests))' 'D:\\Dev\\CopilotBuddy-Evidence\\W110_HIGHRISK_ROAM_OPTIMIZED_20260929\\run.log'",
+        "rg -n '^(Publication fixture access scenarios:|Roam ownership scenarios:|PASS aggregate group: (PublicationFixtureAccessRegressionTests|RoamContinuationOwnershipRegressionTests))' 'D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_HIGHRISKROAMFIXTURE_LOCAL_GATE_20260929\\WholesomeQuestRecoveryRegressionTests-run.txt'"
+      ],
+      "workdir": "/dev/CopilotBuddy-PR51",
+      "yield_time_ms": 1000
+    },
+    "attempts": 2,
+    "first_response": "This tool call was blocked by OpenAI because we couldn't determine the safety status of the request.",
+    "second_call_identical": true,
+    "completed_session_id": 20623,
+    "exit_code": 0,
+    "verified_in_both_logs": [
+      "Publication fixture access scenarios: 8/8; assertions=0; unexpected=0;",
+      "PASS aggregate group: PublicationFixtureAccessRegressionTests",
+      "Roam ownership scenarios: 111/111; assertions=0; unexpected=0;",
+      "PASS aggregate group: RoamContinuationOwnershipRegressionTests"
+    ],
+    "tests_or_ci_executed": false,
+    "source_or_publication_replayed": false,
+    "status": "succeeded on unchanged second attempt; no further retry"
+  },
+  "crash_receipt_sha256": "f2d4b626b28e2e79c87ee6c9348bc4eefc7b40e537cfedee4fa4a3347c011850",
+  "requirement_rows": 55,
+  "source_inputs_matched": 1900,
+  "new_intervals": 8,
+  "prior_evidence_preserved": true,
+  "game_attached": false,
+  "DensePullIsolationValidated": false,
+  "independent_acceptance": false,
+  "live_HoJ_resolved": false,
+  "unsafe_harness_write_repaired": true,
+  "exact_historical_corrupting_instruction_proved": false,
+  "remaining_acceptance": [
+    "D1 original-client/native lifetime and atomicity",
+    "D2 identified server/multiplayer outcomes",
+    "D3 causal UI/cursor/cast/taxi protocols",
+    "D4 source-bound realm recipes",
+    "D5 physical route evidence",
+    "D6 independent supervised acceptance",
+    "synchronized live HoJ trace",
+    "full matching diagnostic if CLR failure recurs"
+  ],
+  "document_preparation": {
+    "invocation_errors": [
+      "Strict UTF8 decoding rejected retained raw console bytes before any document writes.",
+      "The byte-prefix check then detected the ordinary PowerShell log was UTF16; BOM inspection established both actual formats."
+    ],
+    "repair": "Match exact acceptance summaries in each observed encoding; preserve original log bytes and hashes. Hosted console decoding preserves otherwise undecodable bytes reversibly.",
+    "provider_refusal": "This tool call was blocked by OpenAI because we couldn't determine the safety status of the request.",
+    "tool": "Chat_On_Steroids_Plugins.exec_command",
+    "arguments": {
+      "cmd": "python 'D:\\Dev\\CopilotBuddy-Evidence\\prepare-w110-highrisk-final-documents-20260929.py'",
+      "workdir": "/dev/CopilotBuddy-PR51",
+      "yield_time_ms": 1000
+    },
+    "identical_retry_attempts": 2,
+    "successful_session_id": 17247,
+    "tests_or_ci_rerun": false,
+    "source_changed": false,
+    "prior_successful_mutations_replayed": false
+  }
+}
