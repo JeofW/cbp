@@ -57,7 +57,7 @@ namespace Styx.Logic.Combat
             NoCaster = 8,
             /// <summary>The aura can be cancelled by the player.</summary>
             Cancellable = 16,
-            /// <summary>The aura has no duration (permanent until cancelled/removed).</summary>
+            /// <summary>Legacy serialized name for bit 0x20; use HasNoDuration for lifetime interpretation.</summary>
             NoDuration = 32,
             /// <summary>Unknown flag (often indicates passive).</summary>
             Unknown = 64,
@@ -199,9 +199,9 @@ namespace Styx.Logic.Combat
         public bool Cancellable => (Flags & AuraFlags.Cancellable) != 0;
         
         /// <summary>
-        /// Gets whether this aura has no duration (permanent).
+        /// Gets whether the original-client signed duration field is nonpositive (untimed).
         /// </summary>
-        public bool HasNoDuration => (Flags & AuraFlags.NoDuration) != 0;
+        public bool HasNoDuration => unchecked((int)Duration) <= 0;
         
         /// <summary>
         /// Gets whether this aura has a known caster.
