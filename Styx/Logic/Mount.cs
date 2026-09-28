@@ -278,7 +278,7 @@ namespace Styx.Logic
 
 				bool CanContinue()
 				{
-					if (!SameActor() || me.Mounted || !LevelbotSettings.Instance.UseMount || !CanMount()) return false;
+					if (!SameActor() || !extra() || !SameActor() || me.Mounted || !LevelbotSettings.Instance.UseMount || !CanMount()) return false;
 					bool currentCanFly = Flightor.CanFly;
 					string currentFlyingName = CharacterSettings.Instance.FlyingMountName;
 					string currentName = currentCanFly && !string.IsNullOrEmpty(currentFlyingName)
@@ -441,7 +441,11 @@ namespace Styx.Logic
 		public static bool CanMount()
 		{
 			LocalPlayer? me = Me;
-			if (me == null)
+			ulong guid = me?.Guid ?? 0;
+			bool SameActor() => me != null && guid != 0 && ReferenceEquals(Me, me) && me.Guid == guid
+				&& me.IsValid && me.IsAlive && !me.IsGhost && me.Level >= 20
+				&& me.IsOutdoors && !me.IsSwimming && !me.Combat;
+			if (!SameActor())
 				return false;
 
 			// Check if player can use mounts at all
@@ -483,11 +487,11 @@ namespace Styx.Logic
 			WoWPoint aboveHead = headPos + new WoWPoint(0f, 0f, boundingHeight / 2f);
 			if (GameWorld.TraceLine(headPos, aboveHead, GameWorld.CGWorldFrameHitFlags.HitTestLOS))
 			{
-				AddCantMountSpot(location);
+				if (SameActor()) AddCantMountSpot(location);
 				return false;
 			}
 
-			return true;
+			return SameActor();
 		}
 
 		public static bool IsOutdoors

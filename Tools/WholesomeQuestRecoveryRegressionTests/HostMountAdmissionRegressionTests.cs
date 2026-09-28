@@ -22,18 +22,19 @@ internal static class HostMountAdmissionRegressionTests
         var owner = CSharpSyntaxTree.ParseText(File.ReadAllText(Path.Combine(directory.FullName, "Styx/Logic/Mount.cs")))
             .GetRoot().DescendantNodes().OfType<ClassDeclarationSyntax>().Single(c => c.Identifier.ValueText == "Mount");
         var methods = owner.Members.OfType<MethodDeclarationSyntax>().Where(m =>
-            m.Identifier.ValueText == "MountUp" && m.ParameterList.Parameters.Count == 1 && m.ParameterList.Parameters[0].Type?.ToString() == "CanMountDelegate"
+            m.Identifier.ValueText == "MountUp" && m.ParameterList.Parameters.Count == 1 && m.ParameterList.Parameters[0].Type?.ToString() is "CanMountDelegate" or "LocationRetriever"
             || m.Identifier.ValueText is "DoMount" or "GetMountIndex" or "TryUseShapeshiftSpeedBuff").ToArray();
-        if (methods.Length != 4) throw new InvalidOperationException("Complete tracked public and private mount owners required.");
+        if (methods.Length != 5) throw new InvalidOperationException("Complete tracked public/private mount owners and nearby-target wrapper required.");
         string source = Prefix + "\npublic static class HostMountOwner {\n" +
-            "public delegate bool CanMountDelegate();private static LocalPlayer Me=>World.Player;\n" +
-            "private static readonly Timer _mountTimer=new Timer();private static readonly Func<WoWPoint> _currentDestinationRetriever=()=>{World.AfterDestination?.Invoke();return WoWPoint.Empty;};\n" +
+            "public delegate bool CanMountDelegate();public delegate WoWPoint LocationRetriever();private static LocalPlayer Me=>World.Player;private static float MountDistance=>30;\n" +
+            "private static readonly Timer _mountTimer=new Timer();private static LocationRetriever _currentDestinationRetriever=()=>{World.AfterDestination?.Invoke();return WoWPoint.Empty;};\n" +
             "private static void AutoDetectMount()=>World.AfterDetect?.Invoke();\n" +
             "private static bool CanMount()=>World.Ready&&World.Player!=null&&World.Player.IsAlive&&!World.Player.Combat&&!World.Player.IsSwimming&&World.Player.IsOutdoors;\n" +
             "private static bool AllowMountAttempt(bool flying,string name,WoWPoint destination){World.AfterAdmission?.Invoke();return World.AdmissionAllowed;}\n" +
             "private static void AddCantMountSpot(WoWPoint point)=>World.Record(\"cant-mount\");\n" +
             "private static void RemoveCantMountSpotsNear(WoWPoint point,float radius)=>World.Record(\"clear-spots\");\n" +
             "public static bool Invoke()=>MountUp(()=>{World.AfterExtra?.Invoke();return World.ExtraAllowed;});\n" +
+            "public static void InvokeNearby()=>MountUp(new LocationRetriever(()=>{World.AfterDestination?.Invoke();return WoWPoint.Empty;}));\n" +
             string.Join("\n", methods.Select(m => m.ToString())) + "}\n" + Cases;
         var trusted = AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES") as string ?? throw new InvalidOperationException("Runtime references required.");
         var compilation = CSharpCompilation.Create("W110HostMountAdmission_" + Guid.NewGuid().ToString("N"), new[] { CSharpSyntaxTree.ParseText(source) },
@@ -51,6 +52,8 @@ internal static class HostMountAdmissionRegressionTests
 using System;using System.Collections.Generic;using System.Linq;
 public enum WoWRace {Human,BloodElf}
 public enum WoWClass {Paladin,Druid,Shaman}
+public sealed class WoWUnit {public float Distance;}
+public sealed class Targeting {public static Targeting Instance=new Targeting();public WoWUnit FirstUnit;}
 public struct WoWPoint {public static WoWPoint Empty=>default;}
 public sealed class LocalPlayer {
  public ulong Guid=123;public bool IsValid=true,IsAlive=true,IsGhost,Mounted,Combat,IsSwimming,IsMoving,IsOutdoors=true;public int Level=80;
@@ -159,6 +162,27 @@ public static class HostMountAdmissionCases {
   tests.Add(("combat Travel Form control",()=>{World.Reset();World.Player.Combat=true;World.Player.Class=WoWClass.Druid;World.Spells.Add("Travel Form");Check(Invoke()&&World.Commands.Contains("spell-Travel Form:123"),"existing instant combat speed-form control was removed");}));
   tests.Add(("extra veto",()=>{World.Reset();World.ExtraAllowed=false;Check(!Invoke()&&!Submitted,"caller veto ignored");}));
   tests.Add(("mount event veto",()=>{World.Reset();World.AdmissionAllowed=false;Check(!Invoke()&&!Submitted,"mount event veto ignored");}));
+  foreach(string phase in new[]{"detect","destination","admission","stop","log","sleep","lookup"}){
+   string boundary=phase;tests.Add(("caller permission revoked/"+boundary,()=>{World.Reset();System.Action revoke=()=>World.ExtraAllowed=false;
+    switch(boundary){case "detect":World.AfterDetect=revoke;break;case "destination":World.AfterDestination=revoke;break;
+     case "admission":World.AfterAdmission=revoke;break;case "stop":World.AfterStop=revoke;break;case "log":World.AfterLog=revoke;break;
+     case "sleep":World.AfterSleep=ms=>{if(ms==200)revoke();};break;case "lookup":World.AfterLookup=revoke;break;}
+    Check(!Invoke()&&!Submitted&&World.TimerResets==0,"caller permission (including nearby-target veto) survived setup/wait/lookup");
+   }));
+  }
+  foreach(string phase in new[]{"initial","detect","destination","admission","stop","log","sleep","lookup"}){
+   string boundary=phase;tests.Add(("actual nearby-target wrapper/"+boundary,()=>{World.Reset();Targeting.Instance.FirstUnit=null;
+    System.Action approach=()=>Targeting.Instance.FirstUnit=new WoWUnit{Distance=10};
+    switch(boundary){case "initial":approach();break;case "detect":World.AfterDetect=approach;break;
+     case "destination":World.AfterDestination=approach;break;case "admission":World.AfterAdmission=approach;break;
+     case "stop":World.AfterStop=approach;break;case "log":World.AfterLog=approach;break;
+     case "sleep":World.AfterSleep=ms=>{if(ms==200)approach();};break;case "lookup":World.AfterLookup=approach;break;}
+    HostMountOwner.InvokeNearby();Check(!Submitted&&World.TimerResets==0,"real nearby-target veto was not rechecked before native submission");
+    Targeting.Instance.FirstUnit=null;
+   }));
+  }
+  tests.Add(("actual distant-target wrapper keeps normal mounting",()=>{World.Reset();Targeting.Instance.FirstUnit=new WoWUnit{Distance=45};
+   HostMountOwner.InvokeNearby();Check(Submitted&&World.TimerResets==1,"distant target needlessly denied mounting");Targeting.Instance.FirstUnit=null;}));
   int passed=0,assertions=0,unexpected=0;
   foreach(var test in tests){try{test.Body();passed++;Console.WriteLine("PASS host mount admission: "+test.Name);}
    catch(Failure error){assertions++;Console.Error.WriteLine("FAIL host mount admission: "+test.Name+": "+error.Message);}
