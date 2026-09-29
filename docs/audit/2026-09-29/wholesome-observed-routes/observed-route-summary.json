@@ -1,0 +1,16 @@
+{
+  "dataset_sha256": "f2ca79318694afaa4214fc09392e88c3d9d1eae5128f323d0d65b1b9e91a7e3f",
+  "route_rows": 131,
+  "item_quest_rows": 7,
+  "credit_objective_rows": 124,
+  "passed_cases": 1034,
+  "failed_cases": 0,
+  "item_pipelines": 5,
+  "route_results": {
+    "OBSERVED-ITEM-PICKUP-PROVEN": 7,
+    "SCRIPT-ONLY-NO-ACTION-INVENTED": 84,
+    "OBSERVED-ORDINARY-ALIAS-PROVEN": 40
+  },
+  "input_cases_sha256": "2729e636d0576f28d4f8cd8774eee545f92e5f823bc80fc644b6be935a3e9f38",
+  "no_game_attached": true
+}

@@ -1,0 +1,373 @@
+{
+  "read_only": true,
+  "binary_sha256": "bf644876709c591acc17c0da8cdf1814edcc9f1e6bc109a8c0d5c38c79dc953c",
+  "receipts": [
+    {
+      "file": "observed-final-binary-20260929.json",
+      "sha256": "825dd2c5aa6a63fdb45e9aaf6a4b45c7fe57453051527f6289fbcb8aef3d45b1",
+      "receipt": {
+        "utc": "2026-09-29T12:02:07.092690+00:00",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "method": "tools/call",
+          "params": {
+            "name": "survey_binary",
+            "arguments": {
+              "detail_level": "minimal"
+            }
+          }
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "result": {
+            "content": [
+              {
+                "type": "text",
+                "text": "{\n  \"metadata\": {\n    \"path\": \"D:\\\\Dev\\\\CopilotBuddy-Evidence\\\\Build12340-IDA\\\\WoW-12340.i64\",\n    \"module\": \"WoW.exe\",\n    \"arch\": \"32\",\n    \"base_address\": \"0x400000\",\n    \"image_size\": \"0x9fd000\",\n    \"md5\": \"5758d89ed392e2190c44c5183a6d23a3\",\n    \"sha256\": \"bf644876709c591acc17c0da8cdf1814edcc9f1e6bc109a8c0d5c38c79dc953c\"\n  },\n  \"statistics\": {\n    \"total_functions\": 27245,\n    \"named_functions\": 230,\n    \"library_functions\": 658,\n    \"unnamed_functions\": 26357,\n    \"total_strings\": 21327,\n    \"total_segments\": 6\n  },\n  \"segments\": [\n    {\n      \"name\": \".text\",\n      \"start\": \"0x401000\",\n      \"end\": \"0x9df000\",\n      \"size\": \"0x5de000\",\n      \"permissions\": \"rx\"\n    },\n    {\n      \"name\": \".idata\",\n      \"start\": \"0x9df000\",\n      \"end\": \"0x9df79c\",\n      \"size\": \"0x79c\",\n      \"permissions\": \"r\"\n    },\n    {\n      \"name\": \".rdata\",\n      \"start\": \"0x9df79c\",\n      \"end\": \"0xab6000\",\n      \"size\": \"0xd6864\",\n      \"permissions\": \"r\"\n    },\n    {\n      \"name\": \".data\",\n      \"start\": \"0xab6000\",\n      \"end\": \"0xdd1000\",\n      \"size\": \"0x31b000\",\n      \"permissions\": \"rw\"\n    },\n    {\n      \"name\": \".zdata\",\n      \"start\": \"0xdd1000\",\n      \"end\": \"0xdd2000\",\n      \"size\": \"0x1000\",\n      \"permissions\": \"rwx\"\n    },\n    {\n      \"name\": \".tls\",\n      \"start\": \"0xdd2000\",\n      \"end\": \"0xdd3000\",\n      \"size\": \"0x1000\",\n      \"permissions\": \"rw\"\n    }\n  ],\n  \"entrypoints\": [\n    {\n      \"addr\": \"0x8c51d0\",\n      \"name\": \"AssertAndCrash\",\n      \"ordinal\": 1\n    },\n    {\n      \"addr\": \"0x401000\",\n      \"name\": \"start\",\n      \"ordinal\": 4198400\n    }\n  ],\n  \"_note\": \"Binary has 27245 functions; xref analysis was limited to the first 10000 for performance.\"\n}"
+              }
+            ],
+            "structuredContent": {
+              "metadata": {
+                "path": "D:\\Dev\\CopilotBuddy-Evidence\\Build12340-IDA\\WoW-12340.i64",
+                "module": "WoW.exe",
+                "arch": "32",
+                "base_address": "0x400000",
+                "image_size": "0x9fd000",
+                "md5": "5758d89ed392e2190c44c5183a6d23a3",
+                "sha256": "bf644876709c591acc17c0da8cdf1814edcc9f1e6bc109a8c0d5c38c79dc953c"
+              },
+              "statistics": {
+                "total_functions": 27245,
+                "named_functions": 230,
+                "library_functions": 658,
+                "unnamed_functions": 26357,
+                "total_strings": 21327,
+                "total_segments": 6
+              },
+              "segments": [
+                {
+                  "name": ".text",
+                  "start": "0x401000",
+                  "end": "0x9df000",
+                  "size": "0x5de000",
+                  "permissions": "rx"
+                },
+                {
+                  "name": ".idata",
+                  "start": "0x9df000",
+                  "end": "0x9df79c",
+                  "size": "0x79c",
+                  "permissions": "r"
+                },
+                {
+                  "name": ".rdata",
+                  "start": "0x9df79c",
+                  "end": "0xab6000",
+                  "size": "0xd6864",
+                  "permissions": "r"
+                },
+                {
+                  "name": ".data",
+                  "start": "0xab6000",
+                  "end": "0xdd1000",
+                  "size": "0x31b000",
+                  "permissions": "rw"
+                },
+                {
+                  "name": ".zdata",
+                  "start": "0xdd1000",
+                  "end": "0xdd2000",
+                  "size": "0x1000",
+                  "permissions": "rwx"
+                },
+                {
+                  "name": ".tls",
+                  "start": "0xdd2000",
+                  "end": "0xdd3000",
+                  "size": "0x1000",
+                  "permissions": "rw"
+                }
+              ],
+              "entrypoints": [
+                {
+                  "addr": "0x8c51d0",
+                  "name": "AssertAndCrash",
+                  "ordinal": 1
+                },
+                {
+                  "addr": "0x401000",
+                  "name": "start",
+                  "ordinal": 4198400
+                }
+              ],
+              "_note": "Binary has 27245 functions; xref analysis was limited to the first 10000 for performance."
+            },
+            "isError": false
+          },
+          "id": 1
+        },
+        "response_sha256": "231158ca26f9c382e7d63333a1d70b556c2d64fa0ed183f00e4b4efd7f7045a6"
+      }
+    },
+    {
+      "file": "item-start-contract-registration-20260929.json",
+      "sha256": "a2d756839bd902d785dd5ae3459fa53c001802c2f1897b4f4fa6a818c8fb3368",
+      "receipt": {
+        "utc": "2026-09-29T11:29:17.323558+00:00",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "method": "tools/call",
+          "params": {
+            "name": "py_eval",
+            "arguments": {
+              "code": "import idautils\nimport ida_bytes\nimport ida_funcs\nimport json\n\nrows = []\nfor item in idautils.Strings():\n    value = str(item)\n    if value not in ['GetContainerItemQuestInfo', 'GetContainerItemInfo', 'UseContainerItem']:\n        continue\n    refs = []\n    for reference in idautils.XrefsTo(item.ea):\n        target = ida_bytes.get_dword(reference.frm + 4)\n        function = ida_funcs.get_func(target)\n        refs.append({'registration': hex(reference.frm), 'next_dword': hex(target),\n                     'function': hex(function.start_ea) if function else None})\n    rows.append({'string': value, 'address': hex(item.ea), 'references': refs})\nprint(json.dumps({'read_only': True, 'registrations': rows}))\n"
+            }
+          }
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "result": {
+            "content": [
+              {
+                "type": "text",
+                "text": "{\n  \"result\": \"None\",\n  \"stdout\": \"{\\\"read_only\\\": true, \\\"registrations\\\": [{\\\"string\\\": \\\"GetContainerItemQuestInfo\\\", \\\"address\\\": \\\"0xa1aae0\\\", \\\"references\\\": [{\\\"registration\\\": \\\"0xad0df8\\\", \\\"next_dword\\\": \\\"0x5d9400\\\", \\\"function\\\": \\\"0x5d9400\\\"}]}, {\\\"string\\\": \\\"UseContainerItem\\\", \\\"address\\\": \\\"0xa1ac24\\\", \\\"references\\\": [{\\\"registration\\\": \\\"0xad0d90\\\", \\\"next_dword\\\": \\\"0x5d8650\\\", \\\"function\\\": \\\"0x5d8650\\\"}]}, {\\\"string\\\": \\\"GetContainerItemInfo\\\", \\\"address\\\": \\\"0xa1aca8\\\", \\\"references\\\": [{\\\"registration\\\": \\\"0xad0d60\\\", \\\"next_dword\\\": \\\"0x5d7a90\\\", \\\"function\\\": \\\"0x5d7a90\\\"}]}]}\\n\",\n  \"stderr\": \"\"\n}"
+              }
+            ],
+            "structuredContent": {
+              "result": "None",
+              "stdout": "{\"read_only\": true, \"registrations\": [{\"string\": \"GetContainerItemQuestInfo\", \"address\": \"0xa1aae0\", \"references\": [{\"registration\": \"0xad0df8\", \"next_dword\": \"0x5d9400\", \"function\": \"0x5d9400\"}]}, {\"string\": \"UseContainerItem\", \"address\": \"0xa1ac24\", \"references\": [{\"registration\": \"0xad0d90\", \"next_dword\": \"0x5d8650\", \"function\": \"0x5d8650\"}]}, {\"string\": \"GetContainerItemInfo\", \"address\": \"0xa1aca8\", \"references\": [{\"registration\": \"0xad0d60\", \"next_dword\": \"0x5d7a90\", \"function\": \"0x5d7a90\"}]}]}\n",
+              "stderr": ""
+            },
+            "isError": false
+          },
+          "id": 1
+        },
+        "response_sha256": "20d19dbaade9fa1e2483e6d514cd6efe05c2f90b00caaa6a817b374160bb6718"
+      }
+    },
+    {
+      "file": "item-start-quest-info-20260929.json",
+      "sha256": "b0752da320427d7fdb8cc0c00b1d14a7b5f8a3b422c32df4306789f2f311da69",
+      "receipt": {
+        "utc": "2026-09-29T11:30:05.174751+00:00",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "method": "tools/call",
+          "params": {
+            "name": "decompile",
+            "arguments": {
+              "addr": "0x5d9400"
+            }
+          }
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "result": {
+            "content": [
+              {
+                "type": "text",
+                "text": "{\n  \"addr\": \"0x5d9400\",\n  \"code\": \"int __cdecl sub_5D9400(int a1)\\n{\\n  int v1; // eax\\n  int v2; // eax\\n  int v3; // eax\\n  int v4; // esi\\n  int v5; // eax\\n  int v7; // [esp+Ch] [ebp-14h]\\n  int v8; // [esp+10h] [ebp-10h] BYREF\\n  int v9; // [esp+14h] [ebp-Ch] BYREF\\n  _DWORD v10[2]; // [esp+18h] [ebp-8h] BYREF\\n\\n  if ( !sub_84DF20(a1, 1) || !sub_84DF20(a1, 2) )\\n    sub_84F280(a1, \\\"Usage: GetContainerItemQuestInfo(index, slot)\\\", v7);\\n  if ( sub_5D7380(a1, v10, &v9) /*0x5d948e*/\\n    && (v1 = sub_754390(v10[1])) != 0\\n    && (v2 = *(_DWORD *)(v1 + 8), v8 = 0, v9 = 0, v3 = sub_67CA30(*(_DWORD *)(v2 + 12), &v8, 0, 0, 0), (v4 = v3) != 0) )\\n  {\\n    if ( *(_DWORD *)(v3 + 376) == 4 ) /*0x5d9497*/\\n      sub_84E4D0(a1, 1); /*0x5d949c*/\\n    else\\n      sub_84E280(a1); /*0x5d94a7*/\\n    v10[0] = *(_DWORD *)(v4 + 396); /*0x5d94b7*/\\n    if ( v10[0] ) /*0x5d94ba*/\\n    {\\n      sub_84E2A0(a1, (double)v10[0]); /*0x5d94c6*/\\n      v5 = sub_5E11D0(*(_DWORD *)(v4 + 396)); /*0x5d94d2*/\\n      sub_84E4D0(a1, v5); /*0x5d94d9*/\\n    }\\n    else\\n    {\\n      sub_84E280(a1); /*0x5d94ed*/\\n      sub_84E280(a1); /*0x5d94f3*/\\n    }\\n    return 3; /*0x5d94e2*/\\n  }\\n  else\\n  {\\n    sub_84E280(a1); /*0x5d9507*/\\n    sub_84E280(a1); /*0x5d950d*/\\n    sub_84E280(a1); /*0x5d9513*/\\n    return 3; /*0x5d951c*/\\n  }\\n}\"\n}"
+              }
+            ],
+            "structuredContent": {
+              "addr": "0x5d9400",
+              "code": "int __cdecl sub_5D9400(int a1)\n{\n  int v1; // eax\n  int v2; // eax\n  int v3; // eax\n  int v4; // esi\n  int v5; // eax\n  int v7; // [esp+Ch] [ebp-14h]\n  int v8; // [esp+10h] [ebp-10h] BYREF\n  int v9; // [esp+14h] [ebp-Ch] BYREF\n  _DWORD v10[2]; // [esp+18h] [ebp-8h] BYREF\n\n  if ( !sub_84DF20(a1, 1) || !sub_84DF20(a1, 2) )\n    sub_84F280(a1, \"Usage: GetContainerItemQuestInfo(index, slot)\", v7);\n  if ( sub_5D7380(a1, v10, &v9) /*0x5d948e*/\n    && (v1 = sub_754390(v10[1])) != 0\n    && (v2 = *(_DWORD *)(v1 + 8), v8 = 0, v9 = 0, v3 = sub_67CA30(*(_DWORD *)(v2 + 12), &v8, 0, 0, 0), (v4 = v3) != 0) )\n  {\n    if ( *(_DWORD *)(v3 + 376) == 4 ) /*0x5d9497*/\n      sub_84E4D0(a1, 1); /*0x5d949c*/\n    else\n      sub_84E280(a1); /*0x5d94a7*/\n    v10[0] = *(_DWORD *)(v4 + 396); /*0x5d94b7*/\n    if ( v10[0] ) /*0x5d94ba*/\n    {\n      sub_84E2A0(a1, (double)v10[0]); /*0x5d94c6*/\n      v5 = sub_5E11D0(*(_DWORD *)(v4 + 396)); /*0x5d94d2*/\n      sub_84E4D0(a1, v5); /*0x5d94d9*/\n    }\n    else\n    {\n      sub_84E280(a1); /*0x5d94ed*/\n      sub_84E280(a1); /*0x5d94f3*/\n    }\n    return 3; /*0x5d94e2*/\n  }\n  else\n  {\n    sub_84E280(a1); /*0x5d9507*/\n    sub_84E280(a1); /*0x5d950d*/\n    sub_84E280(a1); /*0x5d9513*/\n    return 3; /*0x5d951c*/\n  }\n}"
+            },
+            "isError": false
+          },
+          "id": 1
+        },
+        "response_sha256": "668f5680f4a72f30ffaa7c799c52d649b2d354b1dbd5a90db728a86207eab292"
+      }
+    },
+    {
+      "file": "item-start-active-state-20260929.json",
+      "sha256": "ffdb3d01690b933686318e70ea25c0b35e0ac09e80bf95d0feccdf51e5d256a5",
+      "receipt": {
+        "utc": "2026-09-29T11:30:12.776773+00:00",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "method": "tools/call",
+          "params": {
+            "name": "decompile",
+            "arguments": {
+              "addr": "0x5e11d0"
+            }
+          }
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "result": {
+            "content": [
+              {
+                "type": "text",
+                "text": "{\n  \"addr\": \"0x5e11d0\",\n  \"code\": \"int __cdecl sub_5E11D0(int a1)\\n{\\n  __int64 v1; // rax\\n  int v2; // eax\\n  unsigned int v3; // esi\\n  unsigned int v4; // edx\\n  int *v5; // ecx\\n  int v6; // ecx\\n\\n  v1 = sub_4D3790(); /*0x5e11d3*/\\n  v2 = sub_4D4DB0(v1, 16); /*0x5e11e6*/\\n  if ( !v2 || (*(_DWORD *)(v2 + 188) & 0x10000) != 0 ) /*0x5e11fc*/\\n    return 0; /*0x5e1242*/\\n  v3 = 0; /*0x5e11ff*/\\n  v4 = 40; /*0x5e1205*/\\n  while ( 1 ) /*0x5e120a*/\\n  {\\n    if ( v3 <= 0x19 ) /*0x5e120a*/\\n    {\\n      v5 = (int *)(v4 + *(_DWORD *)(v2 + 4104)); /*0x5e1217*/\\n      if ( v5 ) /*0x5e1219*/\\n      {\\n        v6 = *v5; /*0x5e121b*/\\n        if ( v6 ) /*0x5e121f*/\\n        {\\n          if ( v6 == a1 ) /*0x5e1223*/\\n            break; /*0x5e1223*/\\n        }\\n      }\\n    }\\n    v4 += 20; /*0x5e1225*/\\n    ++v3; /*0x5e1228*/\\n    if ( v4 >= 0x21C ) /*0x5e1231*/\\n      return 0; /*0x5e1238*/\\n  }\\n  return 1; /*0x5e1237*/\\n}\"\n}"
+              }
+            ],
+            "structuredContent": {
+              "addr": "0x5e11d0",
+              "code": "int __cdecl sub_5E11D0(int a1)\n{\n  __int64 v1; // rax\n  int v2; // eax\n  unsigned int v3; // esi\n  unsigned int v4; // edx\n  int *v5; // ecx\n  int v6; // ecx\n\n  v1 = sub_4D3790(); /*0x5e11d3*/\n  v2 = sub_4D4DB0(v1, 16); /*0x5e11e6*/\n  if ( !v2 || (*(_DWORD *)(v2 + 188) & 0x10000) != 0 ) /*0x5e11fc*/\n    return 0; /*0x5e1242*/\n  v3 = 0; /*0x5e11ff*/\n  v4 = 40; /*0x5e1205*/\n  while ( 1 ) /*0x5e120a*/\n  {\n    if ( v3 <= 0x19 ) /*0x5e120a*/\n    {\n      v5 = (int *)(v4 + *(_DWORD *)(v2 + 4104)); /*0x5e1217*/\n      if ( v5 ) /*0x5e1219*/\n      {\n        v6 = *v5; /*0x5e121b*/\n        if ( v6 ) /*0x5e121f*/\n        {\n          if ( v6 == a1 ) /*0x5e1223*/\n            break; /*0x5e1223*/\n        }\n      }\n    }\n    v4 += 20; /*0x5e1225*/\n    ++v3; /*0x5e1228*/\n    if ( v4 >= 0x21C ) /*0x5e1231*/\n      return 0; /*0x5e1238*/\n  }\n  return 1; /*0x5e1237*/\n}"
+            },
+            "isError": false
+          },
+          "id": 1
+        },
+        "response_sha256": "61b1693081e72bc773a411eef55907295bd03af608906431df64212b6e5da9a2"
+      }
+    },
+    {
+      "file": "creature-credit-response-handler-20260929.json",
+      "sha256": "11f68830997227c892525b955c1b24a165f17f36cc0f0edba4b9047e4835d702",
+      "receipt": {
+        "utc": "2026-09-29T11:45:31.198863+00:00",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "method": "tools/call",
+          "params": {
+            "name": "decompile",
+            "arguments": {
+              "addr": "0x635190"
+            }
+          }
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "result": {
+            "content": [
+              {
+                "type": "text",
+                "text": "{\n  \"addr\": \"0x635190\",\n  \"code\": \"int __cdecl sub_635190(int a1, int a2, int a3, int a4)\\n{\\n  sub_67B840(a4, 1); /*0x63519e*/\\n  return 1; /*0x6351a8*/\\n}\"\n}"
+              }
+            ],
+            "structuredContent": {
+              "addr": "0x635190",
+              "code": "int __cdecl sub_635190(int a1, int a2, int a3, int a4)\n{\n  sub_67B840(a4, 1); /*0x63519e*/\n  return 1; /*0x6351a8*/\n}"
+            },
+            "isError": false
+          },
+          "id": 1
+        },
+        "response_sha256": "9162abc71e551b57a7eb2c3e158f6f14956606b57f400e924f0dcb2979f30245"
+      }
+    },
+    {
+      "file": "creature-credit-response-decode-20260929.json",
+      "sha256": "d8d66cbade82b161c00a414f8b7ad601d3b95dfa05a14f037344c2e8b43a490a",
+      "receipt": {
+        "utc": "2026-09-29T11:45:42.380704+00:00",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "method": "tools/call",
+          "params": {
+            "name": "decompile",
+            "arguments": {
+              "addr": "0x67b840"
+            }
+          }
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "result": {
+            "content": [
+              {
+                "type": "text",
+                "text": "{\n  \"addr\": \"0x67b840\",\n  \"code\": \"_BYTE *__thiscall sub_67B840(_DWORD *this, int a2, int a3)\\n{\\n  _BYTE *result; // eax\\n  _DWORD *v5; // edi\\n  char v6; // bl\\n  int v7; // eax\\n  int v8; // esi\\n  int v9; // eax\\n  int v10; // ebx\\n  int v11; // ebx\\n  int v12; // esi\\n  int v13; // eax\\n  int v14; // ebx\\n  bool v15; // zf\\n  int v16; // ebx\\n  _BYTE *v17; // esi\\n  int v18; // [esp+8h] [ebp-4h] BYREF\\n\\n  if ( (_BYTE)a3 ) /*0x67b850*/\\n  {\\n    HIBYTE(a3) = 1; /*0x67b852*/\\n  }\\n  else\\n  {\\n    result = (_BYTE *)sub_47B340((char *)&a3 + 3); /*0x67b85f*/\\n    if ( !HIBYTE(a3) ) /*0x67b868*/\\n      return result; /*0x67b868*/\\n  }\\n  v5 = this + 2; /*0x67b86f*/\\n  do /*0x67ba25*/\\n  {\\n    v6 = 0; /*0x67b87a*/\\n    sub_47B3C0(&v18); /*0x67b87c*/\\n    v7 = v18; /*0x67b881*/\\n    if ( v18 < 0 ) /*0x67b886*/\\n    {\\n      v7 = v18 & 0x7FFFFFFF; /*0x67b888*/\\n      v6 = 1; /*0x67b88d*/\\n      v18 &= ~0x80000000; /*0x67b88f*/\\n    }\\n    result = (_BYTE *)sub_6F6020(v7, (char *)&a3 + 3); /*0x67b899*/\\n    v8 = (int)result; /*0x67b8a0*/\\n    if ( v6 ) /*0x67b8a2*/\\n    {\\n      if ( result ) /*0x67b8a6*/\\n      {\\n        result[153] = 1; /*0x67b8af*/\\n        sub_565030(result); /*0x67b8b6*/\\n        v9 = *(_DWORD *)(v8 + 148); /*0x67b8bb*/\\n        if ( (v9 & 1) != 0 || !v9 ) /*0x67b8c7*/\\n          v9 = 0; /*0x67b8c9*/\\n        while ( (v9 & 1) == 0 && v9 ) /*0x67b8d6*/\\n        {\\n          v10 = *(_DWORD *)(v9 + 4); /*0x67b8db*/\\n          (*(void (__cdecl **)(int, int, _DWORD, _DWORD))(v9 + 8))(v18, v9 + 16, *(_DWORD *)(v9 + 24), 0); /*0x67b8ec*/\\n          v9 = v10; /*0x67b8f1*/\\n        }\\n        *(_BYTE *)(v8 + 153) = 0; /*0x67b8f8*/\\n        sub_565030(v8); /*0x67b8ff*/\\n        result = (_BYTE *)(*(int (__thiscall **)(_DWORD *, int))*v5)(v5, v8); /*0x67b90b*/\\n      }\\n    }\\n    else\\n    {\\n      if ( !result ) /*0x67b914*/\\n      {\\n        v11 = v18; /*0x67b91a*/\\n        if ( v5[9] == -1 ) /*0x67b91d*/\\n          sub_676E50(v5); /*0x67b921*/\\n        v12 = v11 & v5[9]; /*0x67b929*/\\n        if ( sub_6793D0(v12) ) /*0x67b92e*/\\n          v12 = v11 & v5[9]; /*0x67b93a*/\\n        v8 = (*(int (__thiscall **)(_DWORD *, int, _DWORD, _DWORD))(*v5 + 4))(v5, v5[7] + 12 * v12, 0, 0); /*0x67b953*/\\n        sub_6DED60(v8); /*0x67b959*/\\n        *(_DWORD *)v8 = v11; /*0x67b95e*/\\n      }\\n      *(_BYTE *)(v8 + 153) = 1; /*0x67b967*/\\n      sub_98D4C0(a2); /*0x67b96e*/\\n      *(_BYTE *)(v8 + 136) = 1; /*0x67b973*/\\n      *(_DWORD *)(v8 + 132) = v18; /*0x67b97d*/\\n      v13 = *(_DWORD *)(v8 + 148); /*0x67b983*/\\n      if ( (v13 & 1) != 0 || !v13 ) /*0x67b98f*/\\n        v13 = 0; /*0x67b991*/\\n      while ( (v13 & 1) == 0 && v13 ) /*0x67b999*/\\n      {\\n        v14 = *(_DWORD *)(v13 + 4); /*0x67b99e*/\\n        (*(void (__cdecl **)(int, int, _DWORD, int))(v13 + 8))(v18, v13 + 16, *(_DWORD *)(v13 + 24), 1); /*0x67b9af*/\\n        v13 = v14; /*0x67b9b4*/\\n      }\\n      result = (_BYTE *)sub_670070(v8 + 140); /*0x67b9be*/\\n      v15 = *(_BYTE *)(v8 + 154) == 0; /*0x67b9c3*/\\n      *(_BYTE *)(v8 + 153) = 0; /*0x67b9ca*/\\n      if ( !v15 ) /*0x67b9d1*/\\n      {\\n        v16 = v18; /*0x67b9dd*/\\n        result = (_BYTE *)sub_6F6020(v18, (char *)&a3 + 3); /*0x67b9df*/\\n        v17 = result; /*0x67b9e4*/\\n        if ( result ) /*0x67b9e8*/\\n        {\\n          if ( result[136] ) /*0x67b9ea*/\\n          {\\n            if ( result[153] ) /*0x67b9fe*/\\n            {\\n              result[154] = 1; /*0x67ba07*/\\n            }\\n            else\\n            {\\n              sub_565030(result); /*0x67ba13*/\\n              result = (_BYTE *)(*(int (__thiscall **)(_DWORD *, _BYTE *))*v5)(v5, v17); /*0x67ba1f*/\\n            }\\n          }\\n          else\\n          {\\n            result = (_BYTE *)sub_679D90(v16); /*0x67b9f7*/\\n          }\\n        }\\n      }\\n    }\\n    --HIBYTE(a3); /*0x67ba21*/\\n  }\\n  while ( HIBYTE(a3) ); /*0x67ba25*/\\n  return result; /*0x67ba2d*/\\n}\"\n}"
+              }
+            ],
+            "structuredContent": {
+              "addr": "0x67b840",
+              "code": "_BYTE *__thiscall sub_67B840(_DWORD *this, int a2, int a3)\n{\n  _BYTE *result; // eax\n  _DWORD *v5; // edi\n  char v6; // bl\n  int v7; // eax\n  int v8; // esi\n  int v9; // eax\n  int v10; // ebx\n  int v11; // ebx\n  int v12; // esi\n  int v13; // eax\n  int v14; // ebx\n  bool v15; // zf\n  int v16; // ebx\n  _BYTE *v17; // esi\n  int v18; // [esp+8h] [ebp-4h] BYREF\n\n  if ( (_BYTE)a3 ) /*0x67b850*/\n  {\n    HIBYTE(a3) = 1; /*0x67b852*/\n  }\n  else\n  {\n    result = (_BYTE *)sub_47B340((char *)&a3 + 3); /*0x67b85f*/\n    if ( !HIBYTE(a3) ) /*0x67b868*/\n      return result; /*0x67b868*/\n  }\n  v5 = this + 2; /*0x67b86f*/\n  do /*0x67ba25*/\n  {\n    v6 = 0; /*0x67b87a*/\n    sub_47B3C0(&v18); /*0x67b87c*/\n    v7 = v18; /*0x67b881*/\n    if ( v18 < 0 ) /*0x67b886*/\n    {\n      v7 = v18 & 0x7FFFFFFF; /*0x67b888*/\n      v6 = 1; /*0x67b88d*/\n      v18 &= ~0x80000000; /*0x67b88f*/\n    }\n    result = (_BYTE *)sub_6F6020(v7, (char *)&a3 + 3); /*0x67b899*/\n    v8 = (int)result; /*0x67b8a0*/\n    if ( v6 ) /*0x67b8a2*/\n    {\n      if ( result ) /*0x67b8a6*/\n      {\n        result[153] = 1; /*0x67b8af*/\n        sub_565030(result); /*0x67b8b6*/\n        v9 = *(_DWORD *)(v8 + 148); /*0x67b8bb*/\n        if ( (v9 & 1) != 0 || !v9 ) /*0x67b8c7*/\n          v9 = 0; /*0x67b8c9*/\n        while ( (v9 & 1) == 0 && v9 ) /*0x67b8d6*/\n        {\n          v10 = *(_DWORD *)(v9 + 4); /*0x67b8db*/\n          (*(void (__cdecl **)(int, int, _DWORD, _DWORD))(v9 + 8))(v18, v9 + 16, *(_DWORD *)(v9 + 24), 0); /*0x67b8ec*/\n          v9 = v10; /*0x67b8f1*/\n        }\n        *(_BYTE *)(v8 + 153) = 0; /*0x67b8f8*/\n        sub_565030(v8); /*0x67b8ff*/\n        result = (_BYTE *)(*(int (__thiscall **)(_DWORD *, int))*v5)(v5, v8); /*0x67b90b*/\n      }\n    }\n    else\n    {\n      if ( !result ) /*0x67b914*/\n      {\n        v11 = v18; /*0x67b91a*/\n        if ( v5[9] == -1 ) /*0x67b91d*/\n          sub_676E50(v5); /*0x67b921*/\n        v12 = v11 & v5[9]; /*0x67b929*/\n        if ( sub_6793D0(v12) ) /*0x67b92e*/\n          v12 = v11 & v5[9]; /*0x67b93a*/\n        v8 = (*(int (__thiscall **)(_DWORD *, int, _DWORD, _DWORD))(*v5 + 4))(v5, v5[7] + 12 * v12, 0, 0); /*0x67b953*/\n        sub_6DED60(v8); /*0x67b959*/\n        *(_DWORD *)v8 = v11; /*0x67b95e*/\n      }\n      *(_BYTE *)(v8 + 153) = 1; /*0x67b967*/\n      sub_98D4C0(a2); /*0x67b96e*/\n      *(_BYTE *)(v8 + 136) = 1; /*0x67b973*/\n      *(_DWORD *)(v8 + 132) = v18; /*0x67b97d*/\n      v13 = *(_DWORD *)(v8 + 148); /*0x67b983*/\n      if ( (v13 & 1) != 0 || !v13 ) /*0x67b98f*/\n        v13 = 0; /*0x67b991*/\n      while ( (v13 & 1) == 0 && v13 ) /*0x67b999*/\n      {\n        v14 = *(_DWORD *)(v13 + 4); /*0x67b99e*/\n        (*(void (__cdecl **)(int, int, _DWORD, int))(v13 + 8))(v18, v13 + 16, *(_DWORD *)(v13 + 24), 1); /*0x67b9af*/\n        v13 = v14; /*0x67b9b4*/\n      }\n      result = (_BYTE *)sub_670070(v8 + 140); /*0x67b9be*/\n      v15 = *(_BYTE *)(v8 + 154) == 0; /*0x67b9c3*/\n      *(_BYTE *)(v8 + 153) = 0; /*0x67b9ca*/\n      if ( !v15 ) /*0x67b9d1*/\n      {\n        v16 = v18; /*0x67b9dd*/\n        result = (_BYTE *)sub_6F6020(v18, (char *)&a3 + 3); /*0x67b9df*/\n        v17 = result; /*0x67b9e4*/\n        if ( result ) /*0x67b9e8*/\n        {\n          if ( result[136] ) /*0x67b9ea*/\n          {\n            if ( result[153] ) /*0x67b9fe*/\n            {\n              result[154] = 1; /*0x67ba07*/\n            }\n            else\n            {\n              sub_565030(result); /*0x67ba13*/\n              result = (_BYTE *)(*(int (__thiscall **)(_DWORD *, _BYTE *))*v5)(v5, v17); /*0x67ba1f*/\n            }\n          }\n          else\n          {\n            result = (_BYTE *)sub_679D90(v16); /*0x67b9f7*/\n          }\n        }\n      }\n    }\n    --HIBYTE(a3); /*0x67ba21*/\n  }\n  while ( HIBYTE(a3) ); /*0x67ba25*/\n  return result; /*0x67ba2d*/\n}"
+            },
+            "isError": false
+          },
+          "id": 1
+        },
+        "response_sha256": "084cef71ca9ec3405e7e60a28ed62d78f8d6c94b75cc6a53069250d453853b40"
+      }
+    },
+    {
+      "file": "creature-cache-credit-layout-20260929.json",
+      "sha256": "1bdd4fb5084d20aafdf501955840376b4e091c818b8c10c121bc9f1509d35329",
+      "receipt": {
+        "utc": "2026-09-29T11:45:54.922062+00:00",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "method": "tools/call",
+          "params": {
+            "name": "decompile",
+            "arguments": {
+              "addr": "0x98d4c0"
+            }
+          }
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "result": {
+            "content": [
+              {
+                "type": "text",
+                "text": "{\n  \"addr\": \"0x98d4c0\",\n  \"code\": \"int __thiscall sub_98D4C0(int this, int a2)\\n{\\n  void **v3; // ebx\\n  void *v4; // eax\\n  void *v5; // eax\\n  int v6; // ebx\\n  _BYTE v8[1024]; // [esp+Ch] [ebp-404h] BYREF\\n  int v9; // [esp+40Ch] [ebp-4h]\\n\\n  v3 = (void **)(this + 92); /*0x98d4d1*/\\n  v9 = 4; /*0x98d4d4*/\\n  do /*0x98d535*/\\n  {\\n    if ( *v3 ) /*0x98d4e0*/\\n      sub_76E5A0(*v3, (int)\\\".\\\\\\\\CreatureStats.cpp\\\", 47, 0); /*0x98d4f0*/\\n    sub_47B480(v8, 1024); /*0x98d503*/\\n    if ( v8[0] ) /*0x98d50f*/\\n      *v3 = (void *)sub_76F9E0(v8, \\\".\\\\\\\\CreatureStats.cpp\\\", 50); /*0x98d524*/\\n    else\\n      *v3 = nullptr; /*0x98d528*/\\n    ++v3; /*0x98d52e*/\\n    --v9; /*0x98d531*/\\n  }\\n  while ( v9 ); /*0x98d535*/\\n  v4 = *(void **)(this + 4); /*0x98d537*/\\n  if ( v4 ) /*0x98d53c*/\\n    sub_76E5A0(v4, (int)\\\".\\\\\\\\CreatureStats.cpp\\\", 54, 0); /*0x98d548*/\\n  sub_47B480(v8, 1024); /*0x98d55b*/\\n  *(_DWORD *)(this + 4) = sub_76F9E0(v8, \\\".\\\\\\\\CreatureStats.cpp\\\", 56); /*0x98d573*/\\n  v5 = *(void **)(this + 8); /*0x98d576*/\\n  if ( v5 ) /*0x98d57b*/\\n    sub_76E5A0(v5, (int)\\\".\\\\\\\\CreatureStats.cpp\\\", 57, 0); /*0x98d587*/\\n  sub_47B480(v8, 1024); /*0x98d59a*/\\n  *(_DWORD *)(this + 8) = sub_76F9E0(v8, \\\".\\\\\\\\CreatureStats.cpp\\\", 59); /*0x98d5b2*/\\n  sub_47B3C0(this + 12); /*0x98d5bb*/\\n  sub_47B3C0(this + 16); /*0x98d5c6*/\\n  sub_47B3C0(this + 20); /*0x98d5d1*/\\n  sub_47B3C0(this + 24); /*0x98d5dc*/\\n  sub_47B3C0(this + 28); /*0x98d5e7*/\\n  sub_47B3C0(this + 32); /*0x98d5f2*/\\n  sub_47B3C0(this + 36); /*0x98d5fd*/\\n  sub_47B3C0(this + 40); /*0x98d608*/\\n  sub_47B3C0(this + 44); /*0x98d613*/\\n  sub_47B3C0(this + 48); /*0x98d61e*/\\n  sub_47B440(this + 52); /*0x98d629*/\\n  sub_47B440(this + 56); /*0x98d634*/\\n  sub_47B340((char *)&a2 + 3); /*0x98d63f*/\\n  v6 = this + 64; /*0x98d648*/\\n  *(_BYTE *)(this + 60) = HIBYTE(a2) != 0; /*0x98d64e*/\\n  v9 = 6; /*0x98d651*/\\n  do /*0x98d667*/\\n  {\\n    sub_47B3C0(v6); /*0x98d65b*/\\n    v6 += 4; /*0x98d660*/\\n    --v9; /*0x98d663*/\\n  }\\n  while ( v9 ); /*0x98d667*/\\n  return sub_47B3C0(this + 88); /*0x98d674*/\\n}\"\n}"
+              }
+            ],
+            "structuredContent": {
+              "addr": "0x98d4c0",
+              "code": "int __thiscall sub_98D4C0(int this, int a2)\n{\n  void **v3; // ebx\n  void *v4; // eax\n  void *v5; // eax\n  int v6; // ebx\n  _BYTE v8[1024]; // [esp+Ch] [ebp-404h] BYREF\n  int v9; // [esp+40Ch] [ebp-4h]\n\n  v3 = (void **)(this + 92); /*0x98d4d1*/\n  v9 = 4; /*0x98d4d4*/\n  do /*0x98d535*/\n  {\n    if ( *v3 ) /*0x98d4e0*/\n      sub_76E5A0(*v3, (int)\".\\\\CreatureStats.cpp\", 47, 0); /*0x98d4f0*/\n    sub_47B480(v8, 1024); /*0x98d503*/\n    if ( v8[0] ) /*0x98d50f*/\n      *v3 = (void *)sub_76F9E0(v8, \".\\\\CreatureStats.cpp\", 50); /*0x98d524*/\n    else\n      *v3 = nullptr; /*0x98d528*/\n    ++v3; /*0x98d52e*/\n    --v9; /*0x98d531*/\n  }\n  while ( v9 ); /*0x98d535*/\n  v4 = *(void **)(this + 4); /*0x98d537*/\n  if ( v4 ) /*0x98d53c*/\n    sub_76E5A0(v4, (int)\".\\\\CreatureStats.cpp\", 54, 0); /*0x98d548*/\n  sub_47B480(v8, 1024); /*0x98d55b*/\n  *(_DWORD *)(this + 4) = sub_76F9E0(v8, \".\\\\CreatureStats.cpp\", 56); /*0x98d573*/\n  v5 = *(void **)(this + 8); /*0x98d576*/\n  if ( v5 ) /*0x98d57b*/\n    sub_76E5A0(v5, (int)\".\\\\CreatureStats.cpp\", 57, 0); /*0x98d587*/\n  sub_47B480(v8, 1024); /*0x98d59a*/\n  *(_DWORD *)(this + 8) = sub_76F9E0(v8, \".\\\\CreatureStats.cpp\", 59); /*0x98d5b2*/\n  sub_47B3C0(this + 12); /*0x98d5bb*/\n  sub_47B3C0(this + 16); /*0x98d5c6*/\n  sub_47B3C0(this + 20); /*0x98d5d1*/\n  sub_47B3C0(this + 24); /*0x98d5dc*/\n  sub_47B3C0(this + 28); /*0x98d5e7*/\n  sub_47B3C0(this + 32); /*0x98d5f2*/\n  sub_47B3C0(this + 36); /*0x98d5fd*/\n  sub_47B3C0(this + 40); /*0x98d608*/\n  sub_47B3C0(this + 44); /*0x98d613*/\n  sub_47B3C0(this + 48); /*0x98d61e*/\n  sub_47B440(this + 52); /*0x98d629*/\n  sub_47B440(this + 56); /*0x98d634*/\n  sub_47B340((char *)&a2 + 3); /*0x98d63f*/\n  v6 = this + 64; /*0x98d648*/\n  *(_BYTE *)(this + 60) = HIBYTE(a2) != 0; /*0x98d64e*/\n  v9 = 6; /*0x98d651*/\n  do /*0x98d667*/\n  {\n    sub_47B3C0(v6); /*0x98d65b*/\n    v6 += 4; /*0x98d660*/\n    --v9; /*0x98d663*/\n  }\n  while ( v9 ); /*0x98d667*/\n  return sub_47B3C0(this + 88); /*0x98d674*/\n}"
+            },
+            "isError": false
+          },
+          "id": 1
+        },
+        "response_sha256": "9abb0f8f593d7df8399e15c8865c32bf255f38909dbf913c489e03572543b873"
+      }
+    },
+    {
+      "file": "creature-cache-unit-observation-20260929.json",
+      "sha256": "5c8e587c20c9a55375c79fed458bb0480fb0ce03f0b5136a3c390816657202d9",
+      "receipt": {
+        "utc": "2026-09-29T11:45:55.071801+00:00",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "method": "tools/call",
+          "params": {
+            "name": "decompile",
+            "arguments": {
+              "addr": "0x72cde0"
+            }
+          }
+        },
+        "response": {
+          "jsonrpc": "2.0",
+          "result": {
+            "content": [
+              {
+                "type": "text",
+                "text": "{\n  \"addr\": \"0x72cde0\",\n  \"code\": \"int __cdecl sub_72CDE0(int a1, _DWORD *a2)\\n{\\n  int result; // eax\\n  int v3; // ebx\\n  int v4; // eax\\n  int v5; // esi\\n  _DWORD *v6; // edi\\n  _DWORD v7[2]; // [esp+8h] [ebp-8h] BYREF\\n\\n  v7[0] = 0; /*0x72cdfa*/\\n  v7[1] = 0; /*0x72cdfd*/\\n  result = sub_67B6A0(a1, v7, 0, 0, 0); /*0x72ce00*/\\n  v3 = result; /*0x72ce05*/\\n  if ( result ) /*0x72ce09*/\\n  {\\n    v4 = sub_4D4DB0(*(_QWORD *)a2, 8); /*0x72ce26*/\\n    v5 = v4; /*0x72ce2b*/\\n    if ( v4 ) /*0x72ce32*/\\n    {\\n      sub_725840(v4); /*0x72ce36*/\\n      *(_DWORD *)(v5 + 2404) = v3; /*0x72ce3b*/\\n      if ( *(_DWORD *)(v3 + 20) ) /*0x72ce41*/\\n        sub_72CBB0(0); /*0x72ce4b*/\\n      sub_725F50(1, 0); /*0x72ce56*/\\n    }\\n    sub_512B00(a2); /*0x72ce5c*/\\n    sub_60BF10(a2, 148); /*0x72ce67*/\\n    result = sub_5139B0(*a2, a2[1]); /*0x72ce73*/\\n    v6 = (_DWORD *)result; /*0x72ce78*/\\n    if ( result ) /*0x72ce7f*/\\n    {\\n      *(_DWORD *)(result + 16) = sub_72A000(0, 1); /*0x72ce8c*/\\n      return sub_81B530(165, \\\"%d\\\", *v6 + 1); /*0x72ce9f*/\\n    }\\n  }\\n  return result; /*0x72cea8*/\\n}\"\n}"
+              }
+            ],
+            "structuredContent": {
+              "addr": "0x72cde0",
+              "code": "int __cdecl sub_72CDE0(int a1, _DWORD *a2)\n{\n  int result; // eax\n  int v3; // ebx\n  int v4; // eax\n  int v5; // esi\n  _DWORD *v6; // edi\n  _DWORD v7[2]; // [esp+8h] [ebp-8h] BYREF\n\n  v7[0] = 0; /*0x72cdfa*/\n  v7[1] = 0; /*0x72cdfd*/\n  result = sub_67B6A0(a1, v7, 0, 0, 0); /*0x72ce00*/\n  v3 = result; /*0x72ce05*/\n  if ( result ) /*0x72ce09*/\n  {\n    v4 = sub_4D4DB0(*(_QWORD *)a2, 8); /*0x72ce26*/\n    v5 = v4; /*0x72ce2b*/\n    if ( v4 ) /*0x72ce32*/\n    {\n      sub_725840(v4); /*0x72ce36*/\n      *(_DWORD *)(v5 + 2404) = v3; /*0x72ce3b*/\n      if ( *(_DWORD *)(v3 + 20) ) /*0x72ce41*/\n        sub_72CBB0(0); /*0x72ce4b*/\n      sub_725F50(1, 0); /*0x72ce56*/\n    }\n    sub_512B00(a2); /*0x72ce5c*/\n    sub_60BF10(a2, 148); /*0x72ce67*/\n    result = sub_5139B0(*a2, a2[1]); /*0x72ce73*/\n    v6 = (_DWORD *)result; /*0x72ce78*/\n    if ( result ) /*0x72ce7f*/\n    {\n      *(_DWORD *)(result + 16) = sub_72A000(0, 1); /*0x72ce8c*/\n      return sub_81B530(165, \"%d\", *v6 + 1); /*0x72ce9f*/\n    }\n  }\n  return result; /*0x72cea8*/\n}"
+            },
+            "isError": false
+          },
+          "id": 1
+        },
+        "response_sha256": "fe7af4d2b9aaac6a9c4b9b7c701ba58cce4828c17788268ac0cac77e9d3acda3"
+      }
+    }
+  ],
+  "claims": [
+    "Item quest identity: cache+396, not stationery+392",
+    "Item API active state is accepted quest log state",
+    "Creature credit aliases: cache+28/+32; loaded unit cache pointer at+2404"
+  ],
+  "limit": "No server SQL, script or customized realm is proved by client IDA."
+}
