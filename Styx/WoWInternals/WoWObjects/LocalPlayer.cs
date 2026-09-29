@@ -83,7 +83,7 @@ namespace Styx.WoWInternals.WoWObjects
         // Name: inherited from WoWObject.Name → GetObjectName() via vtable.
         // HB 3.3.5a does NOT override Name in LocalPlayer.
         // PlayerNamePtr (0xBD08A8) is NOT a name string — it's used for combo points target GUID.
-        public string RealmName
+        public virtual string RealmName
         {
             get
             {

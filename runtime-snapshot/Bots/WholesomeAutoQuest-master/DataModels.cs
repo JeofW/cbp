@@ -138,6 +138,18 @@ namespace WholesomeAQ
         public int QuestLevel { get; set; }
         public int MinLevel { get; set; }
         public int AllowableRaces { get; set; }
+        // Absent source fields stay unknown. Zero is an explicit unconstrained
+        // value, not a substitute for omitted server-side eligibility metadata.
+        public int? AllowableClasses { get; set; }
+        public int? MaxLevel { get; set; }
+        public int? RequiredSkillID { get; set; }
+        public int? RequiredSkillPoints { get; set; }
+        public int? RequiredMinRepFaction { get; set; }
+        public int? RequiredMinRepValue { get; set; }
+        public int? RequiredMaxRepFaction { get; set; }
+        public int? RequiredMaxRepValue { get; set; }
+        public int? RequiredFactionValue1 { get; set; }
+        public int? RequiredFactionValue2 { get; set; }
         public int Flags { get; set; }
         public int QuestSortID { get; set; }
         public int QuestInfoID { get; set; }

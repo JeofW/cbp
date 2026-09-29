@@ -74,9 +74,34 @@ public class CollectItemObjective : QuestObjective
     {
         get
         {
-            return ObjectManager.Me.CarriedItems
-                .Where(item => (int)item.Entry == this.Objective.ID)
-                .Sum(item => (long)item.StackCount) >= (long)this.Objective.Count;
+            // Carried items alone survive abandonment and failure. Completion is
+            // evidence about this accepted quest and the same actor on both sides
+            // of the inventory read, not permission to execute an old objective.
+            try
+            {
+                var player = ObjectManager.Me;
+                var memory = ObjectManager.Wow;
+                if (player == null || memory == null || !player.IsValid || Quest == null ||
+                    Objective.ID <= 0 || Objective.Count <= 0 || player.Guid == 0)
+                    return false;
+                ulong actor = player.Guid;
+                uint questId = Quest.Id;
+                bool Current() => ReferenceEquals(player, ObjectManager.Me) && ReferenceEquals(memory, ObjectManager.Wow)
+                    && player.IsValid && player.Guid == actor && Quest.Id == questId;
+                bool Accepted(QuestDescriptorData value) => value.Id == questId && questId != 0
+                    && (value.Flags & WoWDescriptorQuestFlags.Failed) == 0;
+                using (memory.TemporaryCacheState(false))
+                {
+                    if (!Current() || !Quest.GetData(out QuestDescriptorData before) || !Accepted(before)) return false;
+                    long count = player.CarriedItems.Where(item => (int)item.Entry == Objective.ID).Sum(item => (long)item.StackCount);
+                    return count >= Objective.Count && Current() && Quest.GetData(out QuestDescriptorData after)
+                        && Accepted(after) && before.Flags == after.Flags && Current();
+                }
+            }
+            catch (Exception error) when (error is not ThreadInterruptedException && error is not OperationCanceledException)
+            {
+                return false;
+            }
         }
     }
 

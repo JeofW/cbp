@@ -1,6 +1,7 @@
 """Read-only data-integrity checks. Missing data never implies a quest is impossible."""
 from collections import Counter, defaultdict
 import math
+from quest_ledger_335 import build_ledger, read_reference_table
 
 SUPPORTED = {'KillMob', 'CollectItem', 'CollectFromGameObject', 'TurnInOnly'}
 
@@ -83,7 +84,8 @@ def audit_database(data):
                     issue('invalid_spawn_map', 'invalid_data', [ptr])
     return dict(coverage='static data only; not live quest completion', quest_count=len(quests),
                 unique_quest_ids=len(ids), spawn_count=spawn_count, objective_types=dict(kinds),
-                issue_counts=dict(Counter(i['code'] for i in issues)), issues=issues)
+                issue_counts=dict(Counter(i['code'] for i in issues)), issues=issues,
+                quest_ledger=build_ledger(data, issues))
 
 
 def compare_zones(canonical, zones):

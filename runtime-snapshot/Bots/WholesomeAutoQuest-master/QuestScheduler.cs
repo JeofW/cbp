@@ -37,9 +37,16 @@ namespace WholesomeAQ
         public DateTime UtcNow { get; init; }
         public int PlayerLevel { get; init; }
         public int PlayerRaceId { get; init; }
+        public int PlayerClassId { get; init; }
+        public ulong PlayerGuid { get; init; }
         public int MapId { get; init; }
         public double X { get; init; }
         public double Y { get; init; }
+        public double Z { get; init; }
+        public IReadOnlyList<QuestGiverObservation> NearbyQuestGivers { get; init; } = Array.Empty<QuestGiverObservation>();
+        public string GiverObservationStatus { get; init; } = "not-captured";
+        public string DatasetFingerprint { get; init; } = "not-supplied";
+        public string DatasetSourceStatus { get; init; } = "unknown";
         // Explicit pure snapshots retain their complete-input default. The live
         // producer below derives this flag from the actual raw/metadata owner.
         public bool HasCompleteQuestLog { get; init; } = true;
@@ -48,9 +55,11 @@ namespace WholesomeAQ
         public IReadOnlyList<QuestSchedulerAcceptedQuest> AcceptedQuests { get; init; } = Array.Empty<QuestSchedulerAcceptedQuest>();
         public int QuestLogCapacity { get; init; } = 25;
         public IReadOnlyDictionary<int, long> CarriedItemCounts { get; init; }
+        public IReadOnlyDictionary<int, int> SkillValues { get; init; }
+        public IReadOnlyDictionary<int, int> ReputationValues { get; init; }
     }
 
-    public class QuestScheduler
+    public partial class QuestScheduler
     {
         private const double EndpointCellSize = 80.0;
         private const string NavigationAssessmentRetry = "navigation-assessment-retry";
@@ -221,14 +230,36 @@ namespace WholesomeAQ
                 accepted.SelectMany(quest => quest.ObjectiveCounts).ToArray());
 
             bool authoritative = me.QuestLog.TryGetAuthoritativeCompletedQuests(out var completed);
+            DateTime observedUtc = DateTime.UtcNow;
+            var nearbyGivers = CaptureNearbyQuestGivers(db, me, observedUtc, out string giverObservationStatus);
+            var requirementObservations = CaptureRequirementObservations(db, me);
+            bool diagnosticsDue = false;
+            tryApplyPublication(() =>
+            {
+                if (DiagnosticLoggingEnabled && (observedUtc - _lastDiagnosticUtc >= DiagnosticInterval || observedUtc < _lastDiagnosticUtc))
+                {
+                    _lastDiagnosticUtc = observedUtc;
+                    diagnosticsDue = true;
+                }
+            });
+            Action<string> diagnosticLog = diagnosticsDue ? message => Logging.WriteDiagnostic($"[WholesomeAQ] {message}") : null;
             var snapshot = new QuestSchedulerSnapshot
             {
-                UtcNow = DateTime.UtcNow,
+                UtcNow = observedUtc,
                 PlayerLevel = me.Level,
                 PlayerRaceId = (int)me.Race,
+                PlayerClassId = (int)me.Class,
+                PlayerGuid = me.Guid,
                 MapId = (int)me.MapId,
                 X = me.Location.X,
                 Y = me.Location.Y,
+                Z = me.Location.Z,
+                NearbyQuestGivers = nearbyGivers,
+                GiverObservationStatus = giverObservationStatus,
+                DatasetFingerprint = _dataLoader.DatasetFingerprint,
+                DatasetSourceStatus = _dataLoader.DatasetSourceIdentity.Status.ToString(),
+                SkillValues = requirementObservations.Skills,
+                ReputationValues = requirementObservations.Reputations,
                 HasCompleteQuestLog = observation.IsComplete,
                 HasAuthoritativeCompletions = authoritative,
                 CompletedQuestIds = authoritative ? completed : Array.Empty<uint>(),
@@ -264,7 +295,12 @@ namespace WholesomeAQ
 
             // Admission precedes recovery selection/marks and navigation probes.
             if (!TryApplyObserved(() => { }))
+            {
+                EmitAdmissionDiagnostics(db, snapshot, new QuestScheduleResult(), null, scanThreshold,
+                    _settings.MinQuestLevelOffset, _dataLoader.StrategyPack, diagnosticLog,
+                    snapshot.HasCompleteQuestLog ? "quest-observation-changed" : "quest-log-incomplete");
                 return false;
+            }
             QuestStrategyPack strategyPack = _dataLoader.StrategyPack;
             QuestScheduleResult candidate = MaterializeScheduleCore(
                 db,
@@ -275,7 +311,7 @@ namespace WholesomeAQ
                 _settings.MinQuestLevelOffset,
                 validatedGrindProfilePath,
                 QuestRecoveryManager.Instance.MarkCompleted,
-                message => Logging.WriteDiagnostic($"[WholesomeAQ] {message}"),
+                diagnosticLog,
                 // Safety vetoes are per hotspot, including points without a native path probe.
                 isKnownUnsafe: point => BlackspotManager.IsBlackspotted(
                     new WoWPoint((float)point.X, (float)point.Y, (float)point.Z)),
@@ -431,14 +467,28 @@ namespace WholesomeAQ
             if (db == null) throw new ArgumentNullException(nameof(db));
             if (snapshot == null) throw new ArgumentNullException(nameof(snapshot));
             if (evaluate == null) throw new ArgumentNullException(nameof(evaluate));
+            var diagnostic = log == null ? null : new AdmissionDiagnosticCapture();
+            if (diagnostic != null)
+            {
+                var originalEvaluate = evaluate;
+                evaluate = key =>
+                {
+                    var decision = originalEvaluate(key);
+                    diagnostic.Record(key, decision);
+                    return decision;
+                };
+            }
             if (!snapshot.HasCompleteQuestLog || snapshot.AcceptedQuests == null)
             {
-                return new QuestScheduleResult
+                var incomplete = new QuestScheduleResult
                 {
                     FallbackMode = QuestFallbackMode.TimedIdle,
                     EarliestRetryUtc = snapshot.UtcNow.Add(ScanCooldown),
                     Status = "Quest observations incomplete; waiting for a fresh scan."
                 };
+                EmitAdmissionDiagnostics(db, snapshot, incomplete, diagnostic, scanThreshold, minQuestLevelOffset,
+                    strategyPack, log, "quest-log-incomplete");
+                return incomplete;
             }
 
             var completed = new HashSet<uint>(snapshot.CompletedQuestIds ?? Array.Empty<uint>());
@@ -460,6 +510,16 @@ namespace WholesomeAQ
             var correctionAncestors = new HashSet<uint>();
             Func<SpawnPoint, SpawnNavigationAssessment> assessNavigation =
                 CreateCachedNavigationAssessment(navigationAssessment, isKnownUnsafe);
+            if (diagnostic != null)
+            {
+                var originalAssessment = assessNavigation;
+                assessNavigation = point =>
+                {
+                    var assessment = originalAssessment(point);
+                    diagnostic.Navigation[DiagnosticPointKey(point)] = assessment;
+                    return assessment;
+                };
+            }
 
             if (snapshot.HasAuthoritativeCompletions && !questLogFull)
             {
@@ -468,7 +528,7 @@ namespace WholesomeAQ
                 {
                     if (accepted.ContainsKey((uint)descendant.Id) || completed.Contains((uint)descendant.Id))
                         continue;
-                    if (!CanRequestPickup(descendant, db, snapshot, scanThreshold, minimumLevel))
+                    if (!CanRequestPickupWithStrategies(descendant, db, snapshot, scanThreshold, minimumLevel, strategyPack))
                         continue;
                     uint ancestor = FindAcceptedIncompleteAncestor(descendant, quests, accepted, completed);
                     if (ancestor == 0)
@@ -480,6 +540,15 @@ namespace WholesomeAQ
 
             foreach (QuestSchedulerAcceptedQuest acceptedQuest in accepted.Values.OrderBy(quest => quest.QuestId))
             {
+                // Failed is an observed lifecycle state, not an invalid endpoint.
+                // A fresh nonfailed snapshot may resume work without a permanent
+                // exclusion or a manufactured recovery failure.
+                if (acceptedQuest.IsFailed)
+                {
+                    diagnostic?.Reject((int)acceptedQuest.QuestId, "accepted-failed");
+                    exclusions.Add($"quest {acceptedQuest.QuestId}: accepted-failed");
+                    continue;
+                }
                 if (!quests.TryGetValue(acceptedQuest.QuestId, out QuestEntry quest))
                 {
                     var missingKey = QuestRecoveryKey.ForQuestStage(
@@ -521,15 +590,24 @@ namespace WholesomeAQ
                 {
                     uint questId = (uint)quest.Id;
                     if (accepted.ContainsKey(questId) || completed.Contains(questId))
+                    {
+                        diagnostic?.Reject(quest.Id, accepted.ContainsKey(questId) ? "already-accepted" : "already-rewarded");
                         continue;
-                    if (snapshot.PlayerLevel < quest.MinLevel ||
-                        (quest.QuestLevel > 0 && (quest.QuestLevel < minimumLevel || quest.QuestLevel > snapshot.PlayerLevel)) ||
-                        !RaceAllowed(quest.AllowableRaces, snapshot.PlayerRaceId) ||
-                        !Supported(quest))
+                    }
+                    string rejection = BasePickupRejection(quest, snapshot, minimumLevel, strategyPack);
+                    if (rejection != null)
+                    {
+                        diagnostic?.Reject(quest.Id, rejection);
                         continue;
-                    if (!PositiveExclusiveGroupAvailable(
-                        quest, db, accepted, completed, claimedPositiveExclusiveGroups))
+                    }
+                    bool exclusiveAvailable = PositiveExclusiveGroupAvailable(
+                        quest, db, accepted, completed, claimedPositiveExclusiveGroups);
+                    diagnostic?.Gate(quest.Id, "positiveExclusiveGroupAvailable", exclusiveAvailable);
+                    if (!exclusiveAvailable)
+                    {
+                        diagnostic?.Reject(quest.Id, "positive-exclusive-group-unavailable");
                         continue;
+                    }
 
                     // TrinityCore 3.3.5 primary: a negative direct PrevQuestID
                     // requires QUEST_STATUS_INCOMPLETE. Accepted ready/completed
@@ -537,16 +615,31 @@ namespace WholesomeAQ
                     // AzerothCore WotLK is broader (non-NONE); keep that
                     // compatibility difference explicit rather than inferring a
                     // source core from the realm or dataset name.
-                    if (quest.PrevQuestID < 0 &&
-                        (quest.PrevQuestID == int.MinValue ||
-                         !accepted.TryGetValue((uint)-quest.PrevQuestID, out QuestSchedulerAcceptedQuest activeParent) ||
-                         activeParent.IsCompleted ||
-                         activeParent.IsFailed))
+                    bool activeParentSatisfied = quest.PrevQuestID >= 0 ||
+                        (quest.PrevQuestID != int.MinValue &&
+                         accepted.TryGetValue((uint)-quest.PrevQuestID, out QuestSchedulerAcceptedQuest activeParent) &&
+                         !activeParent.IsCompleted && !activeParent.IsFailed);
+                    diagnostic?.Gate(quest.Id, "activeParentSatisfied", activeParentSatisfied);
+                    if (!activeParentSatisfied)
+                    {
+                        diagnostic?.Reject(quest.Id, "active-parent-requirement-not-satisfied");
                         continue;
+                    }
 
                     uint ancestor = FindAcceptedIncompleteAncestor(quest, quests, accepted, completed);
-                    if (ancestor != 0 || !PrerequisitesComplete(quest, quests, completed))
+                    diagnostic?.Gate(quest.Id, "acceptedIncompleteAncestor", ancestor);
+                    if (ancestor != 0)
+                    {
+                        diagnostic?.Reject(quest.Id, "accepted-ancestor-incomplete");
                         continue;
+                    }
+                    bool prerequisitesComplete = PrerequisitesComplete(quest, quests, completed);
+                    diagnostic?.Gate(quest.Id, "prerequisitesComplete", prerequisitesComplete);
+                    if (!prerequisitesComplete)
+                    {
+                        diagnostic?.Reject(quest.Id, "prerequisites-not-satisfied");
+                        continue;
+                    }
 
                     int plannedBefore = candidatePlans.Count;
                     AddRelationWork(
@@ -575,6 +668,10 @@ namespace WholesomeAQ
                     ? plan
                     : Array.Empty<QuestPlanEntry>())
                 .ToArray();
+            if (diagnostic != null)
+                foreach (var candidate in candidatePlans.Keys.Where(candidate => !selected.Selected.Contains(candidate)))
+                    diagnostic.SelectionReasons[(int)candidate.QuestId] = candidate.Stage == QuestWorkStage.HalfOpen
+                        ? "half-open-probe-budget" : "scheduler-priority-or-limit";
             string status = selected.Status;
             if (selected.Selected.Count > 0)
             {
@@ -594,7 +691,7 @@ namespace WholesomeAQ
                 if (ordered.Length > 12) status += $" ({ordered.Length - 12} additional exclusions).";
             }
 
-            return new QuestScheduleResult
+            var result = new QuestScheduleResult
             {
                 Selected = selected.Selected,
                 Plan = selectedPlan,
@@ -603,6 +700,8 @@ namespace WholesomeAQ
                 ValidatedGrindProfilePath = selected.ValidatedGrindProfilePath,
                 Status = status
             };
+            EmitAdmissionDiagnostics(db, snapshot, result, diagnostic, scanThreshold, minQuestLevelOffset, strategyPack, log);
+            return result;
         }
 
         public static QuestRecoveryKey EndpointKey(
@@ -1004,7 +1103,7 @@ namespace WholesomeAQ
                     continue;
                 }
 
-                SpawnPoint[] knownSpawns = GetRelationSpawns(relation.Entry, relation.Type, db).ToArray();
+                SpawnPoint[] knownSpawns = GetObservedRelationSpawns(relation.Entry, relation.Type, db, snapshot).ToArray();
                 if (knownSpawns.Length == 0)
                 {
                     ReportDataOmission(relationKey, QuestFailureReason.InvalidQuestData,
@@ -1449,6 +1548,32 @@ namespace WholesomeAQ
         private static bool Supported(QuestEntry quest) =>
             quest.Objectives.Count > 0 && quest.Objectives.All(objective => Supported(quest, objective));
 
+        private static bool SupportedForPickup(QuestEntry quest, QuestStrategyPack pack)
+        {
+            if (quest.Objectives.Count == 0) return false;
+            // TC335 SpecialFlags 0x02 declares exploration/event credit beyond
+            // ordinary counters. A whole-quest recipe must explicitly cover it.
+            // Already accepted ordinary objectives and authoritative turn-in use
+            // their existing paths and remain available independently.
+            bool hasWholeQuestStrategy = false;
+            foreach (QuestObjective objective in quest.Objectives)
+            {
+                var recipes = pack?.Recipes?.Where(recipe => recipe != null && recipe.QuestId == quest.Id &&
+                    recipe.ObjectiveIndex == objective.Index).Take(2).ToArray() ?? Array.Empty<QuestStrategyRecipe>();
+                // The accepted objective owner gives a declared recipe precedence.
+                // Pickup must agree, including an explicitly unsupported recipe.
+                if (recipes.Length == 0)
+                {
+                    if (!Supported(quest, objective)) return false;
+                }
+                else if (recipes.Length != 1 || !CanScheduleWholeQuestStrategy(quest, objective, pack, recipes[0]))
+                    return false;
+                else
+                    hasWholeQuestStrategy = true;
+            }
+            return (quest.SpecialFlags & 0x02) == 0 || hasWholeQuestStrategy;
+        }
+
         private static bool Supported(QuestEntry quest, QuestObjective objective) =>
             Supported(objective) &&
             // Both TrinityCore 3.3.5 and AzerothCore use SpecialFlags 0x20
@@ -1490,25 +1615,29 @@ namespace WholesomeAQ
             IReadOnlyList<int> requirements = acceptedQuest.NormalObjectiveRequiredCounts;
             if (ids != null || requirements != null)
             {
-                // Only an unambiguous creature credit with the same required count
-                // can suppress this ordinary kill row. A dataset index, collection
-                // item or same-numbered GameObject is not a normal creature slot.
-                if (objective.Type != ObjectiveType.KillMob || objective.MobId <= 0 ||
-                    objective.KillCount <= 0 || ids == null || requirements == null ||
+                // Original-client normal slots retain the object namespace: a GO
+                // uses its entry with the high bit set. Match that identity and the
+                // required count, never the compressed dataset/display index.
+                bool creature = objective.Type == ObjectiveType.KillMob && objective.MobId > 0 && objective.KillCount > 0;
+                bool gameObject = objective.Type == ObjectiveType.CollectFromGameObject && objective.ItemId <= 0
+                    && objective.GameObjectId > 0 && objective.CollectCount > 0;
+                if ((!creature && !gameObject) || ids == null || requirements == null ||
                     ids.Count != 4 || requirements.Count != 4 || objectiveCounts == null ||
                     objectiveCounts.Count != 4)
                     return false;
+                int expectedId = creature ? objective.MobId : unchecked((int)0x80000000) | objective.GameObjectId;
+                int expectedCount = creature ? objective.KillCount : objective.CollectCount;
                 int matchedSlot = -1;
                 for (int slot = 0; slot < 4; slot++)
                 {
-                    if (ids[slot] != objective.MobId)
+                    if (ids[slot] != expectedId)
                         continue;
                     if (matchedSlot >= 0)
                         return false;
                     matchedSlot = slot;
                 }
-                return matchedSlot >= 0 && requirements[matchedSlot] == objective.KillCount &&
-                    objectiveCounts[matchedSlot] >= objective.KillCount;
+                return matchedSlot >= 0 && requirements[matchedSlot] == expectedCount &&
+                    objectiveCounts[matchedSlot] >= expectedCount;
             }
 
             // Compatibility for explicitly supplied legacy materializer snapshots.
@@ -1532,15 +1661,15 @@ namespace WholesomeAQ
             QuestDatabase db,
             QuestSchedulerSnapshot snapshot,
             int scanThreshold,
-            int minimumLevel) =>
-            snapshot.PlayerLevel >= quest.MinLevel &&
-            (quest.QuestLevel <= 0 ||
-             (quest.QuestLevel >= minimumLevel && quest.QuestLevel <= snapshot.PlayerLevel)) &&
-            RaceAllowed(quest.AllowableRaces, snapshot.PlayerRaceId) &&
-            Supported(quest) &&
+            int minimumLevel) => CanRequestPickupWithStrategies(quest, db, snapshot, scanThreshold, minimumLevel, null);
+
+        private static bool CanRequestPickupWithStrategies(
+            QuestEntry quest, QuestDatabase db, QuestSchedulerSnapshot snapshot,
+            int scanThreshold, int minimumLevel, QuestStrategyPack strategyPack) =>
+            BasePickupRejection(quest, snapshot, minimumLevel, strategyPack) == null &&
             db.QuestGivers
                 .Where(giver => giver.QuestId == quest.Id)
-                .SelectMany(giver => GetRelationSpawns(giver.GiverId, giver.GiverType, db))
+                .SelectMany(giver => GetObservedRelationSpawns(giver.GiverId, giver.GiverType, db, snapshot))
                 .Any(point => InRange(point, snapshot, scanThreshold));
 
         private static bool PositiveExclusiveGroupAvailable(
@@ -1739,6 +1868,7 @@ namespace WholesomeAQ
             LastStatus = null;
             LastQuestCount = 0;
             _lastScan = DateTime.MinValue;
+            _lastDiagnosticUtc = DateTime.MinValue;
             _lastRecoveryContext = null;
             _lastActivation = null;
             _lastActivationKey = null;

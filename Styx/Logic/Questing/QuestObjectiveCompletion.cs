@@ -13,6 +13,33 @@ namespace Styx.Logic.Questing
     /// </summary>
     public static class QuestObjectiveCompletion
     {
+        /// <summary>
+        /// Resolve the unique typed identity before reading a counter. GetObjectives
+        /// compresses display indexes; TC335 Player::SetQuestSlotCounter keeps the
+        /// four physical slots, including empty slots, at sixteen bits each.
+        /// </summary>
+        public static bool IsTypedNormalObjectiveComplete(Quest? quest, Quest.QuestObjective objective)
+        {
+            if (quest == null || objective.ID <= 0 || objective.Count <= 0 ||
+                (objective.Type != Quest.QuestObjectiveType.KillMob && objective.Type != Quest.QuestObjectiveType.UseGameObject))
+                return false;
+            int expected = objective.Type == Quest.QuestObjectiveType.UseGameObject
+                ? unchecked((int)0x80000000) | objective.ID : objective.ID;
+            int[] ids = quest.NormalObjectiveIDs;
+            int[] counts = quest.NormalObjectiveRequiredCounts;
+            if (ids == null || counts == null || ids.Length != 4 || counts.Length != 4) return false;
+            int slot = -1;
+            for (int index = 0; index < 4; index++)
+            {
+                if (ids[index] != expected) continue;
+                if (slot >= 0) return false;
+                slot = index;
+            }
+            return slot >= 0 && counts[slot] == objective.Count && IsNormalObjectiveComplete(quest, slot)
+                && quest.NormalObjectiveIDs[slot] == expected
+                && quest.NormalObjectiveRequiredCounts[slot] == objective.Count;
+        }
+
         public static bool IsNormalObjectiveComplete(Quest? quest, int rawObjectiveIndex)
         {
             if (quest == null || rawObjectiveIndex < 0 || rawObjectiveIndex >= 4)
