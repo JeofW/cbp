@@ -420,9 +420,8 @@ public class ForcedBehaviorExecutor : Composite
                     case QuestObjectType.Item:
                         if ((WoWObject)StyxWoW.Me.CarriedItems.FirstOrDefault<WoWItem>((Func<WoWItem, bool>)(woWItem => (int)woWItem.Entry == (int)pickUpNode.GiverId)) == (WoWObject)null)
                         {
-                            Logging.Write(Color.Red, "Could not pickup quest from item with id:{0} the item was not found!", (object)pickUpNode.GiverId);
-                            Logging.Write(Color.Red, "CopilotBuddy Stopped!");
-                            TreeRoot.Stop();
+                            Logging.WriteDebug("Quest {0} pickup deferred: carried starter item {1} is absent.", pickUpNode.QuestId, pickUpNode.GiverId);
+                            return null;
                         }
                         giverLocation = WoWPoint.Empty;
                         break;

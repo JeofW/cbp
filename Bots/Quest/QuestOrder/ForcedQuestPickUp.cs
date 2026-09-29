@@ -193,17 +193,17 @@ public class ForcedQuestPickUp : ForcedBehavior
             {
                 QuestObjectType? giverType = this.GiverType;
                 return giverType.GetValueOrDefault() == QuestObjectType.Item && giverType.HasValue;
-            }), (Composite)new Sequence((ContextChangeHandler)(context => (object)ObjectManager.GetObjectsOfType<WoWItem>().FirstOrDefault<WoWItem>((Func<WoWItem, bool>)(woWItem_0 => (int)woWItem_0.Entry == (int)this.GiverId))), new Composite[1]
+            }), (Composite)new Sequence((ContextChangeHandler)(context => (object)Me.CarriedItems.FirstOrDefault(item => item.IsValid && item.Entry == this.GiverId)), new Composite[1]
             {
                 (Composite)new DecoratorContinue((CanRunDecoratorDelegate)(context => context != null && context is WoWItem), (Composite)new Sequence(new Composite[3]
                 {
-                    (Composite)new TreeSharp.Action((ActionSucceedDelegate)(context => this.UseQuestItem((WoWItem)context))),
+                    (Composite)new TreeSharp.Action((ActionDelegate)(context => this.UseQuestItem((WoWItem)context))),
                     (Composite)new WaitContinue(5, new CanRunDecoratorDelegate(this.IsQuestFrameVisible), (Composite)new TreeSharp.Action((ActionDelegate)(context => this.HandleQuestFrame(context)))),
                     (Composite)new WaitContinue(2, (CanRunDecoratorDelegate)(context => false), (Composite)new ActionAlwaysSucceed())
                 }))
             })),
-            (Composite)new Decorator((CanRunDecoratorDelegate)(context => !(BotPoi.Current.AsObject != (WoWObject)null) ? (double)ForcedQuestPickUp.Me.Location.DistanceSqr(BotPoi.Current.Location) > 6.25 : !BotPoi.Current.AsObject.WithinInteractRange), (Composite)new ActionMoveToPoi()),
-            (Composite)new Decorator((CanRunDecoratorDelegate)(context => BotPoi.Current.AsObject != (WoWObject)null && BotPoi.Current.AsObject.WithinInteractRange), (Composite)new Sequence((ContextChangeHandler)(context => (object)BotPoi.Current.AsObject), new Composite[11]
+            (Composite)new Decorator((CanRunDecoratorDelegate)(context => this.GiverType != QuestObjectType.Item && (!(BotPoi.Current.AsObject != (WoWObject)null) ? (double)ForcedQuestPickUp.Me.Location.DistanceSqr(BotPoi.Current.Location) > 6.25 : !BotPoi.Current.AsObject.WithinInteractRange)), (Composite)new ActionMoveToPoi()),
+            (Composite)new Decorator((CanRunDecoratorDelegate)(context => this.GiverType != QuestObjectType.Item && BotPoi.Current.AsObject != (WoWObject)null && BotPoi.Current.AsObject.WithinInteractRange), (Composite)new Sequence((ContextChangeHandler)(context => (object)BotPoi.Current.AsObject), new Composite[11]
             {
                 // HB 4.3.4: 10 elements in sequence
                 (Composite)new ActionMoveStop(),
@@ -244,11 +244,13 @@ public class ForcedQuestPickUp : ForcedBehavior
             !pickup.GiverLocation.Equals(this.GiverLocation);
     }
 
-    private void UseQuestItem(WoWItem item)
+    private RunStatus UseQuestItem(WoWItem item)
     {
+        if (item == null || item.Entry != this.GiverId || !item.TryUseQuestStartingItem(this.QuestId))
+            return RunStatus.Failure;
         _shownTitleUniquelyResolved = false;
         BeginInteractionCycle();
-        item.UseContainerItem();
+        return RunStatus.Success;
     }
 
     private void InteractWithQuestGiver(WoWObject giver)

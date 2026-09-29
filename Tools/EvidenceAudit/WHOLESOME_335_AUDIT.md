@@ -61,6 +61,28 @@ the complete dataset. Keep the full integrated regression gate in addition to
 this focused invocation. The retained source manifests distinguish actual test
 inputs from the current branch name.
 
+## Observed item and creature-credit routes
+
+The continuation adds a route companion for exactly seven item-started quest IDs
+and124 missing-spawn credit-objective rows. `QuestObservedDatasetRoutesRegressionTests`
+uses `CB_QUEST_SIM_DATASET`, `CB_QUEST_ROUTE_CASES` and `CB_QUEST_ROUTE_OUTPUT`.
+Its case file is preserved with the final evidence. Run it through the same
+Windows/x86 focused runner and deny-native boundary as the main sweep.
+
+`extend_quest_routes_335.py --input <reviewed-ledger> --route-results <route.jsonl>
+--route-cases <cases.json> --evidence <pinned-evidence> --output <new-directory>`
+attaches the additional proof while preserving the original static pipeline result.
+It decodes script event types separately from event flags and records linked-script
+and timed-action-list parents. A script giving kill credit does not by itself
+authorize an ordinary kill, item use or gossip action.
+
+An observed item-start association must be current and carried; `StartItem` remains
+distinct from that association. Ordinary alias routing requires a fresh loaded,
+alive/attackable/selectable creature, its observed client credit fields and a unique
+matching current quest objective. A supplied-positive alias test does not prove
+that a real captive, corpse, friendly NPC or vehicle quest can be completed by
+killing. These rows retain their source/realm and whole-quest obligations.
+
 ## Live diagnostic capture
 
 Enable Diagnostic logging in the host. Wholesome emits `quest-audit` JSON lines

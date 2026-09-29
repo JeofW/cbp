@@ -150,6 +150,7 @@ namespace WholesomeAQ
             {
                 case QuestObjectType.Creature: return "Npc";
                 case QuestObjectType.GameObject: return "GameObject";
+                case QuestObjectType.Item: return "Item";
                 default: throw new ArgumentOutOfRangeException(nameof(type), type, "Unsupported quest relation type.");
             }
         }

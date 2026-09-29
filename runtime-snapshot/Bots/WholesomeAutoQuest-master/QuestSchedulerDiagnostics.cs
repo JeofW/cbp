@@ -291,7 +291,9 @@ namespace WholesomeAQ
         {
             if (log == null) return;
             var nearby = snapshot.NearbyQuestGivers ?? Array.Empty<QuestGiverObservation>();
-            if (result.Selected.Count != 0 && nearby.Count == 0 && globalReason == null) return;
+            var itemObservations = snapshot.ItemStarters ?? Array.Empty<QuestItemStarterObservation>();
+            var creditObservations = snapshot.CreatureCredits ?? Array.Empty<QuestCreatureCreditObservation>();
+            if (result.Selected.Count != 0 && nearby.Count == 0 && itemObservations.Count == 0 && creditObservations.Count == 0 && globalReason == null) return;
             try
             {
                 capture ??= new AdmissionDiagnosticCapture();
@@ -300,7 +302,9 @@ namespace WholesomeAQ
                 var completed = new HashSet<uint>(snapshot.CompletedQuestIds ?? Array.Empty<uint>());
                 int minimumLevel = Math.Max(1, snapshot.PlayerLevel - minQuestLevelOffset);
                 var loaded = new HashSet<(QuestObjectType Type, int Entry)>(nearby.Select(value => (value.ObjectType, value.Entry)));
+                var currentItems = ValidItemStarters(snapshot);
                 bool Relevant(QuestEntry quest) => accepted.ContainsKey((uint)quest.Id) ||
+                    itemObservations.Any(value => value != null && value.QuestId == quest.Id) ||
                     db.QuestGivers.Where(giver => giver.QuestId == quest.Id).Any(giver =>
                         loaded.Contains((giver.GiverType, giver.GiverId)) ||
                         GetRelationSpawns(giver.GiverId, giver.GiverType, db).Any(point => InRange(point, snapshot, scanThreshold))) ||
@@ -323,6 +327,7 @@ namespace WholesomeAQ
                     datasetSourceStatus = snapshot.DatasetSourceStatus, strategyFile = "quest_strategies.json",
                     strategyStatus = strategyPack?.Status.ToString() ?? "not-supplied", strategyRecipeCount = strategyPack?.Recipes?.Count ?? 0,
                     selectedCount = result.Selected.Count, relevantQuestCount = relevant.Length, loadedGiverCount = nearby.Count,
+                    observedItemStarterCount = itemObservations.Count, observedCreatureCreditCount = creditObservations.Count,
                     note = "Each relevant quest has a separate bounded JSON row; NPC status is not a quest-specific server offer."
                 });
                 foreach (QuestGiverObservation giver in nearby)
@@ -349,6 +354,19 @@ namespace WholesomeAQ
                             Math.Pow(nearest.X - giver.X, 2) + Math.Pow(nearest.Y - giver.Y, 2) + Math.Pow(nearest.Z - giver.Z, 2)))
                     });
                 }
+                foreach (QuestItemStarterObservation item in itemObservations.Where(value => value != null))
+                    Emit(new { kind = "item-starter", sequence = sequence++, questId = item.QuestId, itemEntry = item.ItemEntry,
+                        itemGuid = item.ItemGuid.ToString("X16", CultureInfo.InvariantCulture),
+                        playerGuid = item.PlayerGuid.ToString("X16", CultureInfo.InvariantCulture), name = DiagnosticText(item.Name),
+                        observedUtc = item.ObservedUtc, mapId = item.MapId, active = item.IsActive,
+                        usableForPlanning = currentItems.Any(value => value.ItemGuid == item.ItemGuid && value.QuestId == item.QuestId && value.ItemEntry == item.ItemEntry),
+                        source = "original-client:GetContainerItemQuestInfo", note = "Observed item association; dispatch revalidates slot, quest, history and capacity." });
+                foreach (QuestCreatureCreditObservation credit in creditObservations.Where(value => value != null))
+                    Emit(new { kind = "creature-credit", sequence = sequence++, entry = credit.Entry, credit1 = credit.Credit1, credit2 = credit.Credit2,
+                        guid = credit.Guid.ToString("X16", CultureInfo.InvariantCulture), playerGuid = credit.PlayerGuid.ToString("X16", CultureInfo.InvariantCulture),
+                        observedUtc = credit.ObservedUtc, mapId = credit.MapId, x = DiagnosticNumber(credit.X), y = DiagnosticNumber(credit.Y), z = DiagnosticNumber(credit.Z),
+                        aliveAttackableSelectable = credit.AliveAttackableSelectable,
+                        source = "original-client:loaded-creature-cache-credits", note = "A cached credit alias is not a scripted-action recipe or live completion proof." });
                 foreach (QuestEntry quest in relevant)
                 {
                     uint id = (uint)quest.Id;
@@ -357,10 +375,13 @@ namespace WholesomeAQ
                     var diagnosticRelations = enderRole
                         ? db.QuestEnders.Where(ender => ender.QuestId == quest.Id).Select(ender => new QuestGiverEntry
                             { QuestId = ender.QuestId, GiverId = ender.EnderId, GiverType = ender.EnderType, GiverName = ender.EnderName })
-                        : db.QuestGivers.Where(giver => giver.QuestId == quest.Id);
+                        : GetPickupRelations(quest.Id, db, snapshot);
                     var relations = diagnosticRelations
                         .GroupBy(giver => (giver.GiverType, giver.GiverId)).Select(group => group.First()).ToArray();
-                    var spawns = relations.SelectMany(giver => GetObservedRelationSpawns(giver.GiverId, giver.GiverType, db, snapshot)).ToArray();
+                    IEnumerable<SpawnPoint> RelationGeometry(QuestGiverEntry giver) => enderRole
+                        ? GetObservedRelationSpawns(giver.GiverId, giver.GiverType, db, snapshot)
+                        : GetObservedPickupSpawns(quest.Id, giver.GiverId, giver.GiverType, db, snapshot);
+                    var spawns = relations.SelectMany(RelationGeometry).ToArray();
                     var recovery = capture.Recovery.Where(value => value.QuestId == id).ToArray();
                     string reason = globalReason;
                     if (reason == null && !snapshot.HasCompleteQuestLog) reason = "quest-log-incomplete";
@@ -424,16 +445,25 @@ namespace WholesomeAQ
                         relations = relations.Select(giver => new
                         {
                             entry = giver.GiverId, objectType = giver.GiverType.ToString(), name = DiagnosticText(giver.GiverName),
-                            source = enderRole ? "quest_data.json:QuestEnders" : "quest_data.json:QuestGivers", loadedNearby = loaded.Contains((giver.GiverType, giver.GiverId)),
+                            source = enderRole ? "quest_data.json:QuestEnders" : giver.GiverType == QuestObjectType.Item
+                                ? "original-client:observed-item-starter" : "quest_data.json:QuestGivers", loadedNearby = loaded.Contains((giver.GiverType, giver.GiverId)),
                             storedSpawnCount = GetRelationSpawns(giver.GiverId, giver.GiverType, db).Count(),
                             nearestStored = DiagnosticPoint(GetRelationSpawns(giver.GiverId, giver.GiverType, db)
                                 .OrderBy(point => point.Map == snapshot.MapId ? 0 : 1).ThenBy(point => Distance(point, snapshot)).FirstOrDefault()),
                             storedInScanRange = GetRelationSpawns(giver.GiverId, giver.GiverType, db).Any(point => InRange(point, snapshot, scanThreshold)),
-                            effectiveSpawnCount = GetObservedRelationSpawns(giver.GiverId, giver.GiverType, db, snapshot).Count(),
-                            effectiveSpawns = GetObservedRelationSpawns(giver.GiverId, giver.GiverType, db, snapshot)
+                            effectiveSpawnCount = RelationGeometry(giver).Count(),
+                            effectiveSpawns = RelationGeometry(giver)
                                 .OrderBy(point => point.Map == snapshot.MapId ? 0 : 1).ThenBy(point => Distance(point, snapshot)).Take(8).Select(DiagnosticPoint).ToArray(),
                             geometrySampleLimit = 8,
-                            effectiveInScanRange = GetObservedRelationSpawns(giver.GiverId, giver.GiverType, db, snapshot).Any(point => InRange(point, snapshot, scanThreshold))
+                            effectiveInScanRange = RelationGeometry(giver).Any(point => InRange(point, snapshot, scanThreshold))
+                        }).ToArray(),
+                        objectiveGeometry = active == null || enderRole ? null : quest.Objectives.Select(objective => new
+                        {
+                            index = objective.Index, kind = objective.Type.ToString(), creditEntry = objective.MobId,
+                            storedSpawnCount = GetObjectiveSpawns(objective, db).Count(),
+                            effectiveSpawnCount = GetObservedObjectiveSpawns(quest, objective, active, db, snapshot).Count(),
+                            effectiveSpawns = GetObservedObjectiveSpawns(quest, objective, active, db, snapshot).Take(8).Select(DiagnosticPoint).ToArray(),
+                            geometrySampleLimit = 8
                         }).ToArray(),
                         navigation = spawns.Where(point => capture.Navigation.ContainsKey(DiagnosticPointKey(point)))
                             .GroupBy(DiagnosticPointKey).Select(group => group.First()).Select(point => new

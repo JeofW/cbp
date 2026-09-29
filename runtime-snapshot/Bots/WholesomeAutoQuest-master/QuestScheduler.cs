@@ -57,6 +57,8 @@ namespace WholesomeAQ
         public IReadOnlyDictionary<int, long> CarriedItemCounts { get; init; }
         public IReadOnlyDictionary<int, int> SkillValues { get; init; }
         public IReadOnlyDictionary<int, int> ReputationValues { get; init; }
+        public IReadOnlyList<QuestItemStarterObservation> ItemStarters { get; init; } = Array.Empty<QuestItemStarterObservation>();
+        public IReadOnlyList<QuestCreatureCreditObservation> CreatureCredits { get; init; } = Array.Empty<QuestCreatureCreditObservation>();
     }
 
     public partial class QuestScheduler
@@ -233,6 +235,8 @@ namespace WholesomeAQ
             DateTime observedUtc = DateTime.UtcNow;
             var nearbyGivers = CaptureNearbyQuestGivers(db, me, observedUtc, out string giverObservationStatus);
             var requirementObservations = CaptureRequirementObservations(db, me);
+            var observedItemStarters = CaptureItemStarters(db, me, observedUtc);
+            var observedCreatureCredits = CaptureCreatureCredits(db, me, observedUtc);
             bool diagnosticsDue = false;
             tryApplyPublication(() =>
             {
@@ -260,6 +264,8 @@ namespace WholesomeAQ
                 DatasetSourceStatus = _dataLoader.DatasetSourceIdentity.Status.ToString(),
                 SkillValues = requirementObservations.Skills,
                 ReputationValues = requirementObservations.Reputations,
+                ItemStarters = observedItemStarters,
+                CreatureCredits = observedCreatureCredits,
                 HasCompleteQuestLog = observation.IsComplete,
                 HasAuthoritativeCompletions = authoritative,
                 CompletedQuestIds = authoritative ? completed : Array.Empty<uint>(),
@@ -644,7 +650,7 @@ namespace WholesomeAQ
                     int plannedBefore = candidatePlans.Count;
                     AddRelationWork(
                         quest, QuestWorkStage.Pickup, QuestRecoveryStage.Pickup,
-                        db.QuestGivers.Where(giver => giver.QuestId == quest.Id)
+                        GetPickupRelations(quest.Id, db, snapshot)
                             .Select(giver => new Relation(giver.GiverId, giver: giver)),
                         db, snapshot, evaluate, candidates, candidatePlans, exclusions, scanThreshold,
                         assessNavigation, reportDataFailure);
@@ -959,7 +965,8 @@ namespace WholesomeAQ
                     continue;
                 }
 
-                SpawnPoint[] knownSpawns = GetObjectiveSpawns(objective, db).ToArray();
+                SpawnPoint[] knownSpawns = (hasDeclaredStrategy ? GetObjectiveSpawns(objective, db)
+                    : GetObservedObjectiveSpawns(quest, objective, acceptedQuest, db, snapshot)).ToArray();
                 if (knownSpawns.Length == 0)
                 {
                     ReportDataOmission(objectiveKey, QuestFailureReason.InvalidQuestData,
@@ -1103,7 +1110,9 @@ namespace WholesomeAQ
                     continue;
                 }
 
-                SpawnPoint[] knownSpawns = GetObservedRelationSpawns(relation.Entry, relation.Type, db, snapshot).ToArray();
+                SpawnPoint[] knownSpawns = (recoveryStage == QuestRecoveryStage.Pickup
+                    ? GetObservedPickupSpawns(quest.Id, relation.Entry, relation.Type, db, snapshot)
+                    : GetObservedRelationSpawns(relation.Entry, relation.Type, db, snapshot)).ToArray();
                 if (knownSpawns.Length == 0)
                 {
                     ReportDataOmission(relationKey, QuestFailureReason.InvalidQuestData,
@@ -1667,9 +1676,8 @@ namespace WholesomeAQ
             QuestEntry quest, QuestDatabase db, QuestSchedulerSnapshot snapshot,
             int scanThreshold, int minimumLevel, QuestStrategyPack strategyPack) =>
             BasePickupRejection(quest, snapshot, minimumLevel, strategyPack) == null &&
-            db.QuestGivers
-                .Where(giver => giver.QuestId == quest.Id)
-                .SelectMany(giver => GetObservedRelationSpawns(giver.GiverId, giver.GiverType, db, snapshot))
+            GetPickupRelations(quest.Id, db, snapshot)
+                .SelectMany(giver => GetObservedPickupSpawns(quest.Id, giver.GiverId, giver.GiverType, db, snapshot))
                 .Any(point => InRange(point, snapshot, scanThreshold));
 
         private static bool PositiveExclusiveGroupAvailable(

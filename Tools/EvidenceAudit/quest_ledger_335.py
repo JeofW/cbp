@@ -222,6 +222,48 @@ def apply_source_review_classification(record: dict) -> None:
         else 'See per-row data, source and execution obligations; a simulation PASS does not override these limitations.')
 
 
+def apply_observed_route_evidence(record: dict, routes: list[dict]) -> None:
+    """Attach exact observed-route evidence without rewriting the static run.
+
+    Only a complete additional item pipeline can discharge the missing pickup
+    route. An alias-objective pass cannot certify the rest of its quest.
+    """
+    if any(route.get('quest_id') != record['quest_id'] for route in routes):
+        raise ValueError('Observed route belongs to a different quest')
+    valid = [route for route in routes if route.get('failed_cases') == 0 and route.get('passed_cases', 0) > 0]
+    whole = any(route.get('route_type') == 'item-starter' and route.get('route_result') == 'OBSERVED-ITEM-PICKUP-PROVEN'
+                and route.get('controlled_pipeline_passed') is True for route in valid)
+    record['observed_route_proof'] = {
+        'routes': routes, 'whole_quest_pipeline': whole,
+        'observation_conditions': ['Fresh actor/item/credit identities', 'Original client observation agrees with the quest',
+                                   'Existing admission, history, navigation and recovery gates pass'],
+        'realm_completion_proven': False, 'static_pipeline_result_unchanged': True,
+    }
+    for route in valid:
+        if route.get('route_result') == 'SCRIPT-ONLY-NO-ACTION-INVENTED':
+            record.setdefault('execution_requirements', []).append('script-credit-needs-explicit-source-backed-strategy')
+    for disposition in record.get('flag_dispositions', []):
+        if disposition.get('flag') == 'missing-giver-relations' and any(
+                route.get('route_result') == 'OBSERVED-ITEM-PICKUP-PROVEN' for route in valid):
+            disposition['previous_disposition'] = disposition['disposition']
+            disposition['disposition'] = 'runtime-observed-item-pickup-supported; static relation remains absent'
+    before = record['classification']
+    if whole and set(record.get('execution_requirements', [])) <= {'pickup-route-unrepresented'} and before == 'DATA-INVALID/INCOMPLETE':
+        record['classification'] = 'GENERIC-PROVEN'
+        # The existing source review still vetoes omitted requirements, conditions
+        # or a nonordinary source contract, independently of supplied acceptance.
+        import copy
+        review = copy.deepcopy(record)
+        review['simulation'] = {'pipeline_status': 'PASS', 'failed_cases': 0}
+        apply_source_review_classification(review)
+        record['classification'] = review['classification']
+        record['source_obligations'] = review['source_obligations']
+        record['execution_requirements'] = review['execution_requirements']
+        record['classification_scope'] = 'Additional observed-item pipeline proves controlled planning/profile/acknowledgement. Original static pipeline remains blocked; actual item possession/association and realm acceptance are required.'
+    record['execution_requirements'] = sorted(set(record.get('execution_requirements', [])))
+    record['observed_route_classification'] = {'before': before, 'after': record['classification']}
+
+
 def read_reference_table(path: Path) -> Iterator[dict]:
     """Read a MySQL text dump with a declared schema and strict tuple widths.
 

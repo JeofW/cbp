@@ -203,7 +203,35 @@ namespace WholesomeAQ
     public enum QuestObjectType
     {
         Creature,
-        GameObject
+        GameObject,
+        Item
+    }
+
+    public sealed class QuestItemStarterObservation
+    {
+        public int QuestId { get; init; }
+        public int ItemEntry { get; init; }
+        public ulong ItemGuid { get; init; }
+        public ulong PlayerGuid { get; init; }
+        public DateTime ObservedUtc { get; init; }
+        public int MapId { get; init; }
+        public string Name { get; init; } = "";
+        public bool IsActive { get; init; }
+    }
+
+    public sealed class QuestCreatureCreditObservation
+    {
+        public int Entry { get; init; }
+        public int Credit1 { get; init; }
+        public int Credit2 { get; init; }
+        public ulong Guid { get; init; }
+        public ulong PlayerGuid { get; init; }
+        public DateTime ObservedUtc { get; init; }
+        public int MapId { get; init; }
+        public double X { get; init; }
+        public double Y { get; init; }
+        public double Z { get; init; }
+        public bool AliveAttackableSelectable { get; init; }
     }
 
     public class SpawnPoint
