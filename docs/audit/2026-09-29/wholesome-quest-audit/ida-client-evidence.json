@@ -1,0 +1,351 @@
+{
+  "read_only": true,
+  "binary_sha256": "bf644876709c591acc17c0da8cdf1814edcc9f1e6bc109a8c0d5c38c79dc953c",
+  "receipts": [
+    {
+      "file": "hellfire-binary-20260929.json",
+      "sha256": "44af53b2ea3bed9374712e2d4190f5e8745723b3926216b6b2fbcd2760c67a6d",
+      "utc": "2026-09-29T09:19:31.694071+00:00",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "method": "tools/call",
+        "params": {
+          "name": "survey_binary",
+          "arguments": {
+            "detail_level": "minimal"
+          }
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\n  \"metadata\": {\n    \"path\": \"D:\\\\Dev\\\\CopilotBuddy-Evidence\\\\Build12340-IDA\\\\WoW-12340.i64\",\n    \"module\": \"WoW.exe\",\n    \"arch\": \"32\",\n    \"base_address\": \"0x400000\",\n    \"image_size\": \"0x9fd000\",\n    \"md5\": \"5758d89ed392e2190c44c5183a6d23a3\",\n    \"sha256\": \"bf644876709c591acc17c0da8cdf1814edcc9f1e6bc109a8c0d5c38c79dc953c\"\n  },\n  \"statistics\": {\n    \"total_functions\": 27245,\n    \"named_functions\": 230,\n    \"library_functions\": 658,\n    \"unnamed_functions\": 26357,\n    \"total_strings\": 21327,\n    \"total_segments\": 6\n  },\n  \"segments\": [\n    {\n      \"name\": \".text\",\n      \"start\": \"0x401000\",\n      \"end\": \"0x9df000\",\n      \"size\": \"0x5de000\",\n      \"permissions\": \"rx\"\n    },\n    {\n      \"name\": \".idata\",\n      \"start\": \"0x9df000\",\n      \"end\": \"0x9df79c\",\n      \"size\": \"0x79c\",\n      \"permissions\": \"r\"\n    },\n    {\n      \"name\": \".rdata\",\n      \"start\": \"0x9df79c\",\n      \"end\": \"0xab6000\",\n      \"size\": \"0xd6864\",\n      \"permissions\": \"r\"\n    },\n    {\n      \"name\": \".data\",\n      \"start\": \"0xab6000\",\n      \"end\": \"0xdd1000\",\n      \"size\": \"0x31b000\",\n      \"permissions\": \"rw\"\n    },\n    {\n      \"name\": \".zdata\",\n      \"start\": \"0xdd1000\",\n      \"end\": \"0xdd2000\",\n      \"size\": \"0x1000\",\n      \"permissions\": \"rwx\"\n    },\n    {\n      \"name\": \".tls\",\n      \"start\": \"0xdd2000\",\n      \"end\": \"0xdd3000\",\n      \"size\": \"0x1000\",\n      \"permissions\": \"rw\"\n    }\n  ],\n  \"entrypoints\": [\n    {\n      \"addr\": \"0x8c51d0\",\n      \"name\": \"AssertAndCrash\",\n      \"ordinal\": 1\n    },\n    {\n      \"addr\": \"0x401000\",\n      \"name\": \"start\",\n      \"ordinal\": 4198400\n    }\n  ],\n  \"_note\": \"Binary has 27245 functions; xref analysis was limited to the first 10000 for performance.\"\n}"
+            }
+          ],
+          "structuredContent": {
+            "metadata": {
+              "path": "D:\\Dev\\CopilotBuddy-Evidence\\Build12340-IDA\\WoW-12340.i64",
+              "module": "WoW.exe",
+              "arch": "32",
+              "base_address": "0x400000",
+              "image_size": "0x9fd000",
+              "md5": "5758d89ed392e2190c44c5183a6d23a3",
+              "sha256": "bf644876709c591acc17c0da8cdf1814edcc9f1e6bc109a8c0d5c38c79dc953c"
+            },
+            "statistics": {
+              "total_functions": 27245,
+              "named_functions": 230,
+              "library_functions": 658,
+              "unnamed_functions": 26357,
+              "total_strings": 21327,
+              "total_segments": 6
+            },
+            "segments": [
+              {
+                "name": ".text",
+                "start": "0x401000",
+                "end": "0x9df000",
+                "size": "0x5de000",
+                "permissions": "rx"
+              },
+              {
+                "name": ".idata",
+                "start": "0x9df000",
+                "end": "0x9df79c",
+                "size": "0x79c",
+                "permissions": "r"
+              },
+              {
+                "name": ".rdata",
+                "start": "0x9df79c",
+                "end": "0xab6000",
+                "size": "0xd6864",
+                "permissions": "r"
+              },
+              {
+                "name": ".data",
+                "start": "0xab6000",
+                "end": "0xdd1000",
+                "size": "0x31b000",
+                "permissions": "rw"
+              },
+              {
+                "name": ".zdata",
+                "start": "0xdd1000",
+                "end": "0xdd2000",
+                "size": "0x1000",
+                "permissions": "rwx"
+              },
+              {
+                "name": ".tls",
+                "start": "0xdd2000",
+                "end": "0xdd3000",
+                "size": "0x1000",
+                "permissions": "rw"
+              }
+            ],
+            "entrypoints": [
+              {
+                "addr": "0x8c51d0",
+                "name": "AssertAndCrash",
+                "ordinal": 1
+              },
+              {
+                "addr": "0x401000",
+                "name": "start",
+                "ordinal": 4198400
+              }
+            ],
+            "_note": "Binary has 27245 functions; xref analysis was limited to the first 10000 for performance."
+          },
+          "isError": false
+        },
+        "id": 1
+      },
+      "response_sha256": "231158ca26f9c382e7d63333a1d70b556c2d64fa0ed183f00e4b4efd7f7045a6"
+    },
+    {
+      "file": "hellfire-quest-message-dispatch-20260929.json",
+      "sha256": "c4c8cf4b35283607fc44ffffcdc8d3f99adbdc6b8225eac7ce5d65dd883e8a1a",
+      "utc": "2026-09-29T09:41:31.334446+00:00",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "method": "tools/call",
+        "params": {
+          "name": "decompile",
+          "arguments": {
+            "addr": "0x6d7f10"
+          }
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\n  \"addr\": \"0x6d7f10\",\n  \"code\": \"int __cdecl sub_6D7F10(int a1, int a2, int a3, int a4)\\n{\\n  __int64 v4; // rax\\n  int result; // eax\\n\\n  v4 = sub_4D3790(); /*0x6d7f13*/\\n  if ( !v4 || !sub_4D4DB0(v4, 16) || a2 > 1048 ) /*0x6d7f4a*/\\n    return 0; /*0x6d7fe9*/\\n  if ( a2 == 1048 ) /*0x6d7f50*/\\n    return sub_6D1230(a4); /*0x6d7fe2*/\\n  switch ( a2 ) /*0x6d7f6b*/\\n  {\\n    case 387: /*0x6d7f6b*/\\n      result = sub_6D11C0(a4); /*0x6d7fc3*/\\n      break; /*0x6d7fc9*/\\n    case 389: /*0x6d7f6b*/\\n      result = sub_6D0240(a4); /*0x6d7f76*/\\n      break; /*0x6d7f7c*/\\n    case 392: /*0x6d7f6b*/\\n      result = sub_6D0460(a4); /*0x6d7f8c*/\\n      break; /*0x6d7f92*/\\n    case 395: /*0x6d7f6b*/\\n      result = sub_6D08F0(a4); /*0x6d7f97*/\\n      break; /*0x6d7f9d*/\\n    case 397: /*0x6d7f6b*/\\n      result = sub_6D0AB0(a4); /*0x6d7fa2*/\\n      break; /*0x6d7fa8*/\\n    case 399: /*0x6d7f6b*/\\n      result = sub_6CD7C0(a4); /*0x6d7f81*/\\n      break; /*0x6d7f87*/\\n    case 401: /*0x6d7f6b*/\\n      result = sub_6D1110(a4); /*0x6d7fad*/\\n      break; /*0x6d7fb3*/\\n    case 402: /*0x6d7f6b*/\\n      result = sub_6CDA70(a4); /*0x6d7fb8*/\\n      break; /*0x6d7fbe*/\\n    case 405: /*0x6d7f6b*/\\n      sub_5216F0(166); /*0x6d7fcf*/\\n      result = 1; /*0x6d7fd7*/\\n      break; /*0x6d7fdd*/\\n    default:\\n      return 0;\\n  }\\n  return result; /*0x6d7f7b*/\\n}\"\n}"
+            }
+          ],
+          "structuredContent": {
+            "addr": "0x6d7f10",
+            "code": "int __cdecl sub_6D7F10(int a1, int a2, int a3, int a4)\n{\n  __int64 v4; // rax\n  int result; // eax\n\n  v4 = sub_4D3790(); /*0x6d7f13*/\n  if ( !v4 || !sub_4D4DB0(v4, 16) || a2 > 1048 ) /*0x6d7f4a*/\n    return 0; /*0x6d7fe9*/\n  if ( a2 == 1048 ) /*0x6d7f50*/\n    return sub_6D1230(a4); /*0x6d7fe2*/\n  switch ( a2 ) /*0x6d7f6b*/\n  {\n    case 387: /*0x6d7f6b*/\n      result = sub_6D11C0(a4); /*0x6d7fc3*/\n      break; /*0x6d7fc9*/\n    case 389: /*0x6d7f6b*/\n      result = sub_6D0240(a4); /*0x6d7f76*/\n      break; /*0x6d7f7c*/\n    case 392: /*0x6d7f6b*/\n      result = sub_6D0460(a4); /*0x6d7f8c*/\n      break; /*0x6d7f92*/\n    case 395: /*0x6d7f6b*/\n      result = sub_6D08F0(a4); /*0x6d7f97*/\n      break; /*0x6d7f9d*/\n    case 397: /*0x6d7f6b*/\n      result = sub_6D0AB0(a4); /*0x6d7fa2*/\n      break; /*0x6d7fa8*/\n    case 399: /*0x6d7f6b*/\n      result = sub_6CD7C0(a4); /*0x6d7f81*/\n      break; /*0x6d7f87*/\n    case 401: /*0x6d7f6b*/\n      result = sub_6D1110(a4); /*0x6d7fad*/\n      break; /*0x6d7fb3*/\n    case 402: /*0x6d7f6b*/\n      result = sub_6CDA70(a4); /*0x6d7fb8*/\n      break; /*0x6d7fbe*/\n    case 405: /*0x6d7f6b*/\n      sub_5216F0(166); /*0x6d7fcf*/\n      result = 1; /*0x6d7fd7*/\n      break; /*0x6d7fdd*/\n    default:\n      return 0;\n  }\n  return result; /*0x6d7f7b*/\n}"
+          },
+          "isError": false
+        },
+        "id": 1
+      },
+      "response_sha256": "22113b1c3cbbb7df41c958b3f91a95cc4ba6d2935a0254974fe164bf790d0ebd"
+    },
+    {
+      "file": "hellfire-status-packet-single-20260929.json",
+      "sha256": "3f2f772c4595ca9b4db84780b11412653c4448d8043599362e9ae92c451198c4",
+      "utc": "2026-09-29T09:41:39.952021+00:00",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "method": "tools/call",
+        "params": {
+          "name": "decompile",
+          "arguments": {
+            "addr": "0x6d11c0"
+          }
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\n  \"addr\": \"0x6d11c0\",\n  \"code\": \"int __stdcall sub_6D11C0(int a1)\\n{\\n  int v1; // eax\\n  __int64 v3; // [esp+4h] [ebp-8h] BYREF\\n\\n  sub_47B400(&v3); /*0x6d11d0*/\\n  sub_47B340((char *)&a1 + 3); /*0x6d11db*/\\n  v1 = sub_4D4DB0(v3, 1); /*0x6d11f4*/\\n  if ( v1 && (*(int (__thiscall **)(int))(*(_DWORD *)v1 + 76))(v1) ) /*0x6d1209*/\\n    sub_744400(HIBYTE(a1)); /*0x6d1216*/\\n  return 1; /*0x6d1220*/\\n}\"\n}"
+            }
+          ],
+          "structuredContent": {
+            "addr": "0x6d11c0",
+            "code": "int __stdcall sub_6D11C0(int a1)\n{\n  int v1; // eax\n  __int64 v3; // [esp+4h] [ebp-8h] BYREF\n\n  sub_47B400(&v3); /*0x6d11d0*/\n  sub_47B340((char *)&a1 + 3); /*0x6d11db*/\n  v1 = sub_4D4DB0(v3, 1); /*0x6d11f4*/\n  if ( v1 && (*(int (__thiscall **)(int))(*(_DWORD *)v1 + 76))(v1) ) /*0x6d1209*/\n    sub_744400(HIBYTE(a1)); /*0x6d1216*/\n  return 1; /*0x6d1220*/\n}"
+          },
+          "isError": false
+        },
+        "id": 1
+      },
+      "response_sha256": "b7e1058e17402fb73978369d7ef8f29d6428d641f23fad11960304008a58f6e9"
+    },
+    {
+      "file": "hellfire-status-packet-multiple-20260929.json",
+      "sha256": "3e8bb2207ae08133d5e03dbb16cc6793ccd884ee2d2eb93dbdcd3eeb89648e4d",
+      "utc": "2026-09-29T09:41:40.085319+00:00",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "method": "tools/call",
+        "params": {
+          "name": "decompile",
+          "arguments": {
+            "addr": "0x6d1230"
+          }
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\n  \"addr\": \"0x6d1230\",\n  \"code\": \"int __stdcall sub_6D1230(int a1)\\n{\\n  unsigned int i; // ebx\\n  int v2; // eax\\n  __int64 v4; // [esp+8h] [ebp-Ch] BYREF\\n  unsigned int v5; // [esp+10h] [ebp-4h] BYREF\\n\\n  sub_47B3C0(&v5); /*0x6d1241*/\\n  for ( i = 0; i < v5; ++i ) /*0x6d124b*/\\n  {\\n    sub_47B400(&v4); /*0x6d1256*/\\n    sub_47B340((char *)&a1 + 3); /*0x6d1261*/\\n    v2 = sub_4D4DB0(v4, 1); /*0x6d127a*/\\n    if ( v2 && (*(int (__thiscall **)(int))(*(_DWORD *)v2 + 76))(v2) ) /*0x6d128f*/\\n      sub_744400(HIBYTE(a1)); /*0x6d129c*/\\n  }\\n  return 1; /*0x6d12aa*/\\n}\"\n}"
+            }
+          ],
+          "structuredContent": {
+            "addr": "0x6d1230",
+            "code": "int __stdcall sub_6D1230(int a1)\n{\n  unsigned int i; // ebx\n  int v2; // eax\n  __int64 v4; // [esp+8h] [ebp-Ch] BYREF\n  unsigned int v5; // [esp+10h] [ebp-4h] BYREF\n\n  sub_47B3C0(&v5); /*0x6d1241*/\n  for ( i = 0; i < v5; ++i ) /*0x6d124b*/\n  {\n    sub_47B400(&v4); /*0x6d1256*/\n    sub_47B340((char *)&a1 + 3); /*0x6d1261*/\n    v2 = sub_4D4DB0(v4, 1); /*0x6d127a*/\n    if ( v2 && (*(int (__thiscall **)(int))(*(_DWORD *)v2 + 76))(v2) ) /*0x6d128f*/\n      sub_744400(HIBYTE(a1)); /*0x6d129c*/\n  }\n  return 1; /*0x6d12aa*/\n}"
+          },
+          "isError": false
+        },
+        "id": 1
+      },
+      "response_sha256": "86d07b71da1e2036b1277a1971e56934568ae2c0f3e169ac9b373bb323c31ddb"
+    },
+    {
+      "file": "hellfire-status-object-field-20260929.json",
+      "sha256": "7f8bec14c1e0258a4ddca748d574f28e7b5ce3ca7e9525c2a47e76004bd9eb46",
+      "utc": "2026-09-29T09:41:54.466536+00:00",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "method": "tools/call",
+        "params": {
+          "name": "decompile",
+          "arguments": {
+            "addr": "0x744400"
+          }
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\n  \"addr\": \"0x744400\",\n  \"code\": \"int __thiscall sub_744400(int *this, int a2)\\n{\\n  int result; // eax\\n  int v3; // esi\\n\\n  result = *(this + 36); /*0x744403*/\\n  if ( a2 != result || dword_A34F5C[a2] && !*(this + 35) ) /*0x74441a*/\\n  {\\n    v3 = dword_A34F5C[a2]; /*0x744424*/\\n    result = v3 != dword_A34F5C[result] || v3 && !*(this + 35); /*0x744441*/\\n    *(this + 36) = a2; /*0x74444c*/\\n    if ( result ) /*0x744453*/\\n      return (*(int (__thiscall **)(int *))(*this + 84))(this); /*0x74445a*/\\n  }\\n  return result; /*0x74445c*/\\n}\"\n}"
+            }
+          ],
+          "structuredContent": {
+            "addr": "0x744400",
+            "code": "int __thiscall sub_744400(int *this, int a2)\n{\n  int result; // eax\n  int v3; // esi\n\n  result = *(this + 36); /*0x744403*/\n  if ( a2 != result || dword_A34F5C[a2] && !*(this + 35) ) /*0x74441a*/\n  {\n    v3 = dword_A34F5C[a2]; /*0x744424*/\n    result = v3 != dword_A34F5C[result] || v3 && !*(this + 35); /*0x744441*/\n    *(this + 36) = a2; /*0x74444c*/\n    if ( result ) /*0x744453*/\n      return (*(int (__thiscall **)(int *))(*this + 84))(this); /*0x74445a*/\n  }\n  return result; /*0x74445c*/\n}"
+          },
+          "isError": false
+        },
+        "id": 1
+      },
+      "response_sha256": "565dd553a448a174cef49a98b479aa63e3e58d3ca8f2d7fe3edf637ec0156c26"
+    },
+    {
+      "file": "hellfire-faction-by-id-20260929.json",
+      "sha256": "de7467e518e1cee6dc2a5eea87cdeb55ceb8216f24301a9ff95ae3a6f140109b",
+      "utc": "2026-09-29T09:39:10.930654+00:00",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "method": "tools/call",
+        "params": {
+          "name": "decompile",
+          "arguments": {
+            "addr": "0x5d11e0"
+          }
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\n  \"addr\": \"0x5d11e0\",\n  \"code\": \"int __cdecl sub_5D11E0(int a1)\\n{\\n  int v2; // [esp+0h] [ebp-10h]\\n\\n  if ( !sub_84DF20(a1, 1) )\\n    sub_84F280(a1, \\\"Usage: GetFactionInfoByID(id)\\\", v2);\\n  sub_84E030(a1, 1); /*0x5d1212*/\\n  return sub_5D0DA0(); /*0x5d123b*/\\n}\"\n}"
+            }
+          ],
+          "structuredContent": {
+            "addr": "0x5d11e0",
+            "code": "int __cdecl sub_5D11E0(int a1)\n{\n  int v2; // [esp+0h] [ebp-10h]\n\n  if ( !sub_84DF20(a1, 1) )\n    sub_84F280(a1, \"Usage: GetFactionInfoByID(id)\", v2);\n  sub_84E030(a1, 1); /*0x5d1212*/\n  return sub_5D0DA0(); /*0x5d123b*/\n}"
+          },
+          "isError": false
+        },
+        "id": 1
+      },
+      "response_sha256": "dcf0692c9c97e9ab49ece1fbf81e28be5ba5e16fbc6d8de66bc843e6103cf04d"
+    },
+    {
+      "file": "hellfire-faction-fields-20260929.json",
+      "sha256": "323a386b67fadf33daff13dcff5f9fb380c30b14ef95a05f405a7f8586f32264",
+      "utc": "2026-09-29T09:39:56.351497+00:00",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "method": "tools/call",
+        "params": {
+          "name": "decompile",
+          "arguments": {
+            "addr": "0x5d0da0"
+          }
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\n  \"addr\": \"0x5d0da0\",\n  \"code\": \"int __usercall sub_5D0DA0@<eax>(int a1@<ebx>, int a2@<esi>)\\n{\\n  int v2; // edi\\n  int v3; // edi\\n  int v4; // edi\\n  unsigned int v6; // edi\\n  _DWORD *v7; // ecx\\n  int v8; // eax\\n  int v9; // [esp+Ch] [ebp-Ch]\\n  int v10; // [esp+10h] [ebp-8h]\\n  int v11; // [esp+14h] [ebp-4h]\\n\\n  if ( a1 < dword_AD3870 /*0x5d0dd2*/\\n    || a1 > dword_AD386C\\n    || (v2 = *(_DWORD *)(dword_AD3880 + 4 * (a1 - dword_AD3870)), (v9 = v2) == 0) )\\n  {\\n    v6 = 0; /*0x5d0fc9*/\\n    if ( !dword_C23470 ) /*0x5d0fcd*/\\n      goto LABEL_37; /*0x5d0fcd*/\\n    while ( 1 ) /*0x5d0fd0*/\\n    {\\n      v7 = (_DWORD *)dword_C23370[v6]; /*0x5d0fd0*/\\n      if ( *v7 == a1 ) /*0x5d0fd9*/\\n        break; /*0x5d0fd9*/\\n      if ( ++v6 >= dword_C23470 ) /*0x5d0fe0*/\\n        goto LABEL_37; /*0x5d0fe0*/\\n    }\\n    if ( v6 >= 0x40 ) /*0x5d0fe7*/\\n      goto LABEL_37; /*0x5d0fe7*/\\n    if ( *v7 == -1 ) /*0x5d0ff0*/\\n    {\\n      v8 = sub_819D40((char)\\\"FACTION_INACTIVE\\\", -1, 0); /*0x5d108e*/\\n    }\\n    else\\n    {\\n      if ( *v7 ) /*0x5d0feb*/\\n      {\\nLABEL_37:\\n        sub_84E280(a2); /*0x5d0ffe*/\\n        sub_84E280(a2); /*0x5d1005*/\\n        sub_84E2A0(a2, 1.0); /*0x5d1010*/\\n        sub_84E2A0(a2, 0.0); /*0x5d101e*/\\n        sub_84E2A0(a2, 0.0); /*0x5d102c*/\\n        sub_84E2A0(a2, 0.0); /*0x5d103a*/\\n        sub_84E280(a2); /*0x5d1040*/\\n        sub_84E280(a2); /*0x5d1046*/\\n        sub_84E280(a2); /*0x5d104c*/\\n        sub_84E280(a2); /*0x5d1052*/\\n        sub_84E280(a2); /*0x5d1058*/\\n        sub_84E280(a2); /*0x5d105e*/\\n        sub_84E280(a2); /*0x5d1064*/\\n        return 13; /*0x5d1075*/\\n      }\\n      v8 = sub_819D40((char)\\\"FACTION_OTHER\\\", -1, 0); /*0x5d1083*/\\n    }\\n    sub_84E350(a2, v8); /*0x5d1095*/\\n    sub_84E350(a2, &byte_9E14FF); /*0x5d10a3*/\\n    sub_84E2A0(a2, 1.0); /*0x5d10ae*/\\n    sub_84E2A0(a2, 0.0); /*0x5d10bc*/\\n    sub_84E2A0(a2, 0.0); /*0x5d10ca*/\\n    sub_84E2A0(a2, 0.0); /*0x5d10d8*/\\n    sub_84E280(a2); /*0x5d10de*/\\n    sub_84E280(a2); /*0x5d10e4*/\\n    sub_84E2A0(a2, 1.0); /*0x5d10f2*/\\n    if ( (dword_AD0AE4 & (1 << v6)) != 0 ) /*0x5d110e*/\\n      sub_84E280(a2); /*0x5d1124*/\\n    else\\n      sub_84E2A0(a2, 1.0); /*0x5d1119*/\\n    sub_84E280(a2); /*0x5d112d*/\\n    sub_84E280(a2); /*0x5d1133*/\\n    sub_84E280(a2); /*0x5d1139*/\\n    return 13; /*0x5d1141*/\\n  }\\n  sub_84E350(a2, *(_DWORD *)(v2 + 92)); /*0x5d0ddd*/\\n  sub_84E350(a2, *(_DWORD *)(v2 + 96)); /*0x5d0de7*/\\n  v3 = sub_5D0600(a1); /*0x5d0df2*/\\n  sub_84E2A0(a2, (double)(v3 + 1)); /*0x5d0e04*/\\n  v10 = dword_A2D300[v3]; /*0x5d0e11*/\\n  v11 = sub_5D05B0(a1); /*0x5d0e23*/\\n  sub_84E2A0(a2, (double)dword_A2D2FC[v3]); /*0x5d0e2a*/\\n  sub_84E2A0(a2, (double)v10); /*0x5d0e39*/\\n  sub_84E2A0(a2, (double)v11); /*0x5d0e48*/\\n  if ( (unsigned __int8)sub_5D04B0(a1) ) /*0x5d0e4e*/\\n    sub_84E2A0(a2, 1.0); /*0x5d0e63*/\\n  else\\n    sub_84E280(a2); /*0x5d0e6e*/\\n  if ( v11 < -3000 || (unsigned __int8)sub_5D0500(a1) ) /*0x5d0e80*/\\n    sub_84E280(a2); /*0x5d0ea0*/\\n  else\\n    sub_84E2A0(a2, 1.0); /*0x5d0e95*/\\n  v4 = 0; /*0x5d0ead*/\\n  if ( !dword_C23470 ) /*0x5d0eb1*/\\n    goto LABEL_14; /*0x5d0eb1*/\\n  while ( *(_DWORD *)dword_C23370[v4] != a1 ) /*0x5d0ebc*/\\n  {\\n    if ( ++v4 >= dword_C23470 ) /*0x5d0ec3*/\\n      goto LABEL_14; /*0x5d0ec3*/\\n  }\\n  if ( v4 >= 0 ) /*0x5d0f03*/\\n  {\\n    sub_84E2A0(a2, 1.0); /*0x5d0f0e*/\\n    if ( (unsigned int)v4 >= 0x40 || (dword_AD0AE4 & (1 << v4)) != 0 ) /*0x5d0f31*/\\n      sub_84E280(a2); /*0x5d0f47*/\\n    else\\n      sub_84E2A0(a2, 1.0); /*0x5d0f3c*/\\n    if ( (unsigned __int8)sub_5D0CE0(v9) ) /*0x5d0f53*/\\n      sub_84E2A0(a2, 1.0); /*0x5d0f68*/\\n    else\\n      sub_84E280(a2); /*0x5d0f73*/\\n  }\\n  else\\n  {\\nLABEL_14:\\n    sub_84E280(a2); /*0x5d0ec5*/\\n    sub_84E280(a2); /*0x5d0ecc*/\\n    sub_84E280(a2); /*0x5d0ed2*/\\n  }\\n  if ( (unsigned __int8)sub_5D0C70(a1) ) /*0x5d0edb*/\\n    sub_84E2A0(a2, 1.0); /*0x5d0ef4*/\\n  else\\n    sub_84E280(a2); /*0x5d0f81*/\\n  if ( (unsigned __int8)sub_5D06E0(a1) ) /*0x5d0f8a*/\\n    sub_84E2A0(a2, 1.0); /*0x5d0f9f*/\\n  else\\n    sub_84E280(a2); /*0x5d0fb2*/\\n  return 13; /*0x5d0fac*/\\n}\"\n}"
+            }
+          ],
+          "structuredContent": {
+            "addr": "0x5d0da0",
+            "code": "int __usercall sub_5D0DA0@<eax>(int a1@<ebx>, int a2@<esi>)\n{\n  int v2; // edi\n  int v3; // edi\n  int v4; // edi\n  unsigned int v6; // edi\n  _DWORD *v7; // ecx\n  int v8; // eax\n  int v9; // [esp+Ch] [ebp-Ch]\n  int v10; // [esp+10h] [ebp-8h]\n  int v11; // [esp+14h] [ebp-4h]\n\n  if ( a1 < dword_AD3870 /*0x5d0dd2*/\n    || a1 > dword_AD386C\n    || (v2 = *(_DWORD *)(dword_AD3880 + 4 * (a1 - dword_AD3870)), (v9 = v2) == 0) )\n  {\n    v6 = 0; /*0x5d0fc9*/\n    if ( !dword_C23470 ) /*0x5d0fcd*/\n      goto LABEL_37; /*0x5d0fcd*/\n    while ( 1 ) /*0x5d0fd0*/\n    {\n      v7 = (_DWORD *)dword_C23370[v6]; /*0x5d0fd0*/\n      if ( *v7 == a1 ) /*0x5d0fd9*/\n        break; /*0x5d0fd9*/\n      if ( ++v6 >= dword_C23470 ) /*0x5d0fe0*/\n        goto LABEL_37; /*0x5d0fe0*/\n    }\n    if ( v6 >= 0x40 ) /*0x5d0fe7*/\n      goto LABEL_37; /*0x5d0fe7*/\n    if ( *v7 == -1 ) /*0x5d0ff0*/\n    {\n      v8 = sub_819D40((char)\"FACTION_INACTIVE\", -1, 0); /*0x5d108e*/\n    }\n    else\n    {\n      if ( *v7 ) /*0x5d0feb*/\n      {\nLABEL_37:\n        sub_84E280(a2); /*0x5d0ffe*/\n        sub_84E280(a2); /*0x5d1005*/\n        sub_84E2A0(a2, 1.0); /*0x5d1010*/\n        sub_84E2A0(a2, 0.0); /*0x5d101e*/\n        sub_84E2A0(a2, 0.0); /*0x5d102c*/\n        sub_84E2A0(a2, 0.0); /*0x5d103a*/\n        sub_84E280(a2); /*0x5d1040*/\n        sub_84E280(a2); /*0x5d1046*/\n        sub_84E280(a2); /*0x5d104c*/\n        sub_84E280(a2); /*0x5d1052*/\n        sub_84E280(a2); /*0x5d1058*/\n        sub_84E280(a2); /*0x5d105e*/\n        sub_84E280(a2); /*0x5d1064*/\n        return 13; /*0x5d1075*/\n      }\n      v8 = sub_819D40((char)\"FACTION_OTHER\", -1, 0); /*0x5d1083*/\n    }\n    sub_84E350(a2, v8); /*0x5d1095*/\n    sub_84E350(a2, &byte_9E14FF); /*0x5d10a3*/\n    sub_84E2A0(a2, 1.0); /*0x5d10ae*/\n    sub_84E2A0(a2, 0.0); /*0x5d10bc*/\n    sub_84E2A0(a2, 0.0); /*0x5d10ca*/\n    sub_84E2A0(a2, 0.0); /*0x5d10d8*/\n    sub_84E280(a2); /*0x5d10de*/\n    sub_84E280(a2); /*0x5d10e4*/\n    sub_84E2A0(a2, 1.0); /*0x5d10f2*/\n    if ( (dword_AD0AE4 & (1 << v6)) != 0 ) /*0x5d110e*/\n      sub_84E280(a2); /*0x5d1124*/\n    else\n      sub_84E2A0(a2, 1.0); /*0x5d1119*/\n    sub_84E280(a2); /*0x5d112d*/\n    sub_84E280(a2); /*0x5d1133*/\n    sub_84E280(a2); /*0x5d1139*/\n    return 13; /*0x5d1141*/\n  }\n  sub_84E350(a2, *(_DWORD *)(v2 + 92)); /*0x5d0ddd*/\n  sub_84E350(a2, *(_DWORD *)(v2 + 96)); /*0x5d0de7*/\n  v3 = sub_5D0600(a1); /*0x5d0df2*/\n  sub_84E2A0(a2, (double)(v3 + 1)); /*0x5d0e04*/\n  v10 = dword_A2D300[v3]; /*0x5d0e11*/\n  v11 = sub_5D05B0(a1); /*0x5d0e23*/\n  sub_84E2A0(a2, (double)dword_A2D2FC[v3]); /*0x5d0e2a*/\n  sub_84E2A0(a2, (double)v10); /*0x5d0e39*/\n  sub_84E2A0(a2, (double)v11); /*0x5d0e48*/\n  if ( (unsigned __int8)sub_5D04B0(a1) ) /*0x5d0e4e*/\n    sub_84E2A0(a2, 1.0); /*0x5d0e63*/\n  else\n    sub_84E280(a2); /*0x5d0e6e*/\n  if ( v11 < -3000 || (unsigned __int8)sub_5D0500(a1) ) /*0x5d0e80*/\n    sub_84E280(a2); /*0x5d0ea0*/\n  else\n    sub_84E2A0(a2, 1.0); /*0x5d0e95*/\n  v4 = 0; /*0x5d0ead*/\n  if ( !dword_C23470 ) /*0x5d0eb1*/\n    goto LABEL_14; /*0x5d0eb1*/\n  while ( *(_DWORD *)dword_C23370[v4] != a1 ) /*0x5d0ebc*/\n  {\n    if ( ++v4 >= dword_C23470 ) /*0x5d0ec3*/\n      goto LABEL_14; /*0x5d0ec3*/\n  }\n  if ( v4 >= 0 ) /*0x5d0f03*/\n  {\n    sub_84E2A0(a2, 1.0); /*0x5d0f0e*/\n    if ( (unsigned int)v4 >= 0x40 || (dword_AD0AE4 & (1 << v4)) != 0 ) /*0x5d0f31*/\n      sub_84E280(a2); /*0x5d0f47*/\n    else\n      sub_84E2A0(a2, 1.0); /*0x5d0f3c*/\n    if ( (unsigned __int8)sub_5D0CE0(v9) ) /*0x5d0f53*/\n      sub_84E2A0(a2, 1.0); /*0x5d0f68*/\n    else\n      sub_84E280(a2); /*0x5d0f73*/\n  }\n  else\n  {\nLABEL_14:\n    sub_84E280(a2); /*0x5d0ec5*/\n    sub_84E280(a2); /*0x5d0ecc*/\n    sub_84E280(a2); /*0x5d0ed2*/\n  }\n  if ( (unsigned __int8)sub_5D0C70(a1) ) /*0x5d0edb*/\n    sub_84E2A0(a2, 1.0); /*0x5d0ef4*/\n  else\n    sub_84E280(a2); /*0x5d0f81*/\n  if ( (unsigned __int8)sub_5D06E0(a1) ) /*0x5d0f8a*/\n    sub_84E2A0(a2, 1.0); /*0x5d0f9f*/\n  else\n    sub_84E280(a2); /*0x5d0fb2*/\n  return 13; /*0x5d0fac*/\n}"
+          },
+          "isError": false
+        },
+        "id": 1
+      },
+      "response_sha256": "ac158fd88cfae85ee093c532c2eb7ce901660bc0521c522cd9b443fbf15f1605"
+    },
+    {
+      "file": "hellfire-gossip-offers-20260929.json",
+      "sha256": "e61fee1bf329de6de93149fb201891f9449bd2605645f6dafdf982ce5be01a7f",
+      "utc": "2026-09-29T09:39:11.087078+00:00",
+      "request": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "method": "tools/call",
+        "params": {
+          "name": "decompile",
+          "arguments": {
+            "addr": "0x58b3a0"
+          }
+        }
+      },
+      "response": {
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\n  \"addr\": \"0x58b3a0\",\n  \"code\": \"int __cdecl sub_58B3A0(int a1)\\n{\\n  int v1; // eax\\n  int v2; // ecx\\n  unsigned int v3; // ebx\\n  int *v4; // esi\\n  unsigned int v6; // [esp+14h] [ebp-8h]\\n  int v7; // [esp+18h] [ebp-4h]\\n\\n  v1 = sub_58A5D0(); /*0x58b3a7*/\\n  v2 = 0; /*0x58b3ac*/\\n  v3 = 0; /*0x58b3ae*/\\n  v6 = v1; /*0x58b3b2*/\\n  v7 = 0; /*0x58b3b5*/\\n  if ( v1 ) /*0x58b3b8*/\\n  {\\n    do /*0x58b474*/\\n    {\\n      v4 = (int *)sub_58A660(v3); /*0x58b3c9*/\\n      if ( v4 ) /*0x58b3d0*/\\n      {\\n        sub_84DAB0(a1, 5); /*0x58b3d9*/\\n        sub_84E350(a1, v4 + 5); /*0x58b3e3*/\\n        sub_84E2A0(a1, (double)v4[1]); /*0x58b3f2*/\\n        if ( sub_58ABA0(v4[1]) ) /*0x58b3fb*/\\n          sub_84E2A0(a1, 1.0); /*0x58b410*/\\n        else\\n          sub_84E280(a1); /*0x58b41b*/\\n        if ( (v4[2] & 0x1000) != 0 ) /*0x58b42a*/\\n          sub_84E2A0(a1, 1.0); /*0x58b435*/\\n        else\\n          sub_84E280(a1); /*0x58b440*/\\n        if ( v4[3] ) /*0x58b448*/\\n          sub_84E2A0(a1, 1.0); /*0x58b457*/\\n        else\\n          sub_84E280(a1); /*0x58b462*/\\n        ++v7; /*0x58b46a*/\\n      }\\n      ++v3; /*0x58b46e*/\\n    }\\n    while ( v3 < v6 ); /*0x58b474*/\\n    v2 = v7; /*0x58b47a*/\\n  }\\n  return 5 * v2; /*0x58b482*/\\n}\"\n}"
+            }
+          ],
+          "structuredContent": {
+            "addr": "0x58b3a0",
+            "code": "int __cdecl sub_58B3A0(int a1)\n{\n  int v1; // eax\n  int v2; // ecx\n  unsigned int v3; // ebx\n  int *v4; // esi\n  unsigned int v6; // [esp+14h] [ebp-8h]\n  int v7; // [esp+18h] [ebp-4h]\n\n  v1 = sub_58A5D0(); /*0x58b3a7*/\n  v2 = 0; /*0x58b3ac*/\n  v3 = 0; /*0x58b3ae*/\n  v6 = v1; /*0x58b3b2*/\n  v7 = 0; /*0x58b3b5*/\n  if ( v1 ) /*0x58b3b8*/\n  {\n    do /*0x58b474*/\n    {\n      v4 = (int *)sub_58A660(v3); /*0x58b3c9*/\n      if ( v4 ) /*0x58b3d0*/\n      {\n        sub_84DAB0(a1, 5); /*0x58b3d9*/\n        sub_84E350(a1, v4 + 5); /*0x58b3e3*/\n        sub_84E2A0(a1, (double)v4[1]); /*0x58b3f2*/\n        if ( sub_58ABA0(v4[1]) ) /*0x58b3fb*/\n          sub_84E2A0(a1, 1.0); /*0x58b410*/\n        else\n          sub_84E280(a1); /*0x58b41b*/\n        if ( (v4[2] & 0x1000) != 0 ) /*0x58b42a*/\n          sub_84E2A0(a1, 1.0); /*0x58b435*/\n        else\n          sub_84E280(a1); /*0x58b440*/\n        if ( v4[3] ) /*0x58b448*/\n          sub_84E2A0(a1, 1.0); /*0x58b457*/\n        else\n          sub_84E280(a1); /*0x58b462*/\n        ++v7; /*0x58b46a*/\n      }\n      ++v3; /*0x58b46e*/\n    }\n    while ( v3 < v6 ); /*0x58b474*/\n    v2 = v7; /*0x58b47a*/\n  }\n  return 5 * v2; /*0x58b482*/\n}"
+          },
+          "isError": false
+        },
+        "id": 1
+      },
+      "response_sha256": "f93b400ca5378d79c2554cb156f6047af2354a6c4f921b004c91784667323779"
+    }
+  ],
+  "claim_limit": "Client ABI/observations only; no server database or realm-equivalence proof."
+}

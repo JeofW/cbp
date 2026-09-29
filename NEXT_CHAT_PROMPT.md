@@ -1,3 +1,15 @@
+# Current Wholesome audit continuation — 29 September 2026
+
+Reconcile the worktree and PR61 before editing. Current tested implementation: `ee1b4df7b06758988745e499554f70842f17d2e1`, workspace `D:\Dev\CopilotBuddy-PostMerge-20260929`, branch `audit/next-postmerge-wholesome-singular-20260929`. Read `docs/audit/2026-09-29/wholesome-quest-audit/REPORT.md`, `verification.json`, `classification-ids.json`, `remaining-category-ids.json`, and `Tools/EvidenceAudit/WHOLESOME_335_AUDIT.md`. The following older W107/PR51 prompts are retained history, not current branch/build instructions.
+
+The full 4335-row classification and simulation sweep is complete at the recorded scope. Counts are1811generic-proven/0strategy-proven/1386data-invalid-or-incomplete/81unsupported-scripted/882source-uncertain/175live-required;246892 checks pass with zero failures. Full optimized Windows/x86 validation passes34stages,142 focused new cases pass, and13runtime components compile. Local build/testing is now user-authorized. Preserve every previous assertion and acceptance gate; do not recreate completed changes or weaken tests to gain coverage.
+
+Production has not been replaced by this audit. The self-contained candidate is `D:\Dev\CopilotBuddy-Wholesome-Candidate-ee1b4df7`. A fresh supervised Hellfire run with Diagnostic logging is needed to correlate the exact loaded NPC/GO identities and rejection reasons; the old log cannot recover them. No strategy/provenance sidecar is installed. Research unresolved categories from their exact ledger IDs and pinned source evidence; do not invent a recipe from StartItem, flags, NPC existence or an unrelated script. Use read-only IDA for original client semantics and primary TC335 source/SQL for server semantics. Secondary AC matches do not establish this realm's configuration.
+
+The containing handoff/evidence commit changes no production/test/tool source from the implementation above. Exact current publication readback belongs in the external final receipt. Keep the PR unmerged pending its acceptance requirements; no W80/W92 restart or blind deployment.
+
+---
+
 # Resume only new evidence or acceptance after verified W107
 
 CopilotBuddy PR51 currently has no remaining identified unimplemented source repair in the recovered request. Read `D:\Dev\CopilotBuddy-Evidence\LATEST_CONTINUATION.md`, `docs/audit/2026-09-27/W107_CHECKPOINT.md`, `W107_EVIDENCE.json`, `W107_SCOPE_COMPLETION.md`, the immutable `W107_EXECUTION_20260927.md`, and the final documentation publication/verification receipts before changes. Reconcile live refs; do not infer state from an interrupted chat or recreate existing commits.

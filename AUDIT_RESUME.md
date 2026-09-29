@@ -1,3 +1,15 @@
+# Current: Wholesome dataset audit — 29 September 2026
+
+Read `docs/audit/2026-09-29/wholesome-quest-audit/REPORT.md` and `verification.json` first. Tested implementation is `ee1b4df7b06758988745e499554f70842f17d2e1` in `D:\Dev\CopilotBuddy-PostMerge-20260929`, branch `audit/next-postmerge-wholesome-singular-20260929`, PR61. The user authorized fast local builds/tests and a full original-build12340 quest audit; the older branch/build restrictions below are historical.
+
+All 4,335 live dataset rows (SHA256 `f2ca79318694afaa4214fc09392e88c3d9d1eae5128f323d0d65b1b9e91a7e3f`) have explicit classifications and source dispositions. Final counts: GENERIC-PROVEN1811, STRATEGY-PROVEN0, DATA-INVALID/INCOMPLETE1386, UNSUPPORTED-SCRIPTED81, SOURCE-UNCERTAIN882, LIVE-ACCEPTANCE-REQUIRED175. The full sweep passes246892 controlled checks;142 focused new cases and the34-stage optimized Windows/x86 gate pass. One of117 analyzer tests is skipped for Windows symlink permissions. All13 candidate runtime components compile.
+
+The isolated candidate is `D:\Dev\CopilotBuddy-Wholesome-Candidate-ee1b4df7`; this audit has not replaced production CB. No live quest completion, native gameplay or exact retrospective NPC attribution is claimed. The original Hellfire log did not record the visible giver identities. Use the gated `quest-audit` diagnostics for a fresh live sample. The complete per-quest ledger, remaining ID/category indexes, pinned TC/AC evidence and read-only IDA receipts are in the report folder; raw evidence remains in `D:\Dev\CopilotBuddy-Evidence\postmerge-20260929\wholesome-dataset-audit`.
+
+Do not replay existing repairs or restart W80/W92. Generic proof is limited to recorded controlled planning/profile/behavior-completion observations. Missing realm conditions, metadata, scripts and unsupported acquisition routes remain explicit obligations. Preserve the original-client, recovery, publication, cancellation and native-dispatch gates. Retained history follows.
+
+---
+
 # W107 verified — identified actionable source scope complete
 
 27 September 2026. Read `docs/audit/2026-09-27/W107_CHECKPOINT.md`, `W107_EVIDENCE.json` and `W107_SCOPE_COMPLETION.md` first. Final validated source/production is **0e5148366a9329b6f14c840bfd7df1edc1f4a5e1**, tree9b0e804927aa9d10fa7a2229f83e9ebf822a6450. Final hosted integrated36311065568/job108596961480/artifact10928958282 is **17/17**, native23/23 and ground-observation6/6; all217members/216innerhashes/1854sourceinputs verified. Host36311065567/job108596961528/artifact10928573791 is Release/x860errors/3344warnings, compile-only. The final archive hashes and all eight red/green archives are recorded in the evidence manifest.
