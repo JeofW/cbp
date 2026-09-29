@@ -43,6 +43,8 @@ internal static class QuestDatasetSimulationRegressionTests
         public object? observations { get; set; }
         public string[] shared_scenario_groups { get; } = new[] { "QuestRootPreemptionRegressionTests", "QuestRootProtectionRegressionTests", "QuestRootOwnerBoundaryRegressionTests", "QuestObjectiveRestartRegressionTests", "QuestLiveGiverGeometryRegressionTests", "QuestEligibilityRequirementRegressionTests" };
         public string structural_classification { get; set; } = "";
+        public string repair_sha256 { get; set; } = "absent";
+        public string execution_fingerprint { get; set; } = "legacy-direct-model";
     }
 
     private sealed class Context
@@ -52,7 +54,9 @@ internal static class QuestDatasetSimulationRegressionTests
         internal uint[] Completed = Array.Empty<uint>();
         internal QuestSchedulerAcceptedQuest[] ActiveParents = Array.Empty<QuestSchedulerAcceptedQuest>();
         internal SpawnPoint Origin = new() { Map = 530, X = 0, Y = 0, Z = 0 };
-        internal int Level, Race;
+        internal int Level, Race, ClassId = 2;
+        internal bool EffectiveModel;
+        internal IReadOnlyDictionary<int,int>? Skills, Reputations;
         internal int[] NormalIds = new int[4], NormalCounts = new int[4], ItemIds = new int[6], ItemCounts = new int[6];
 
         internal QuestScheduleResult Schedule(int? level = null, int? race = null, bool accepted = false, bool failed = false,
@@ -60,8 +64,9 @@ internal static class QuestDatasetSimulationRegressionTests
             int[]? progress = null, Dictionary<int, long>? items = null, SpawnPoint? origin = null,
             QuestRecoveryState state = QuestRecoveryState.Eligible, bool mayAttempt = true, bool? safe = true, bool? reachable = true,
             Action<string>? log = null, bool cancelNavigation = false, DateTime? now = null, bool metadataKnown = true,
-            HashSet<string>? assessed = null, int classId = 2, uint[]? history = null,
-            QuestSchedulerAcceptedQuest[]? activeParents = null)
+            HashSet<string>? assessed = null, int? classId = null, uint[]? history = null,
+            QuestSchedulerAcceptedQuest[]? activeParents = null, bool omitSkills = false, bool omitReputations = false,
+            IReadOnlyDictionary<int,int>? skillOverride = null, IReadOnlyDictionary<int,int>? reputationOverride = null)
         {
             var observations = new List<QuestSchedulerAcceptedQuest>(activeParents ?? ActiveParents);
             if (accepted) observations.Add(new QuestSchedulerAcceptedQuest
@@ -75,10 +80,12 @@ internal static class QuestDatasetSimulationRegressionTests
             var point = origin ?? Origin;
             return QuestScheduler.MaterializeSchedule(Database, new QuestSchedulerSnapshot
             {
-                UtcNow = now ?? Now, PlayerLevel = level ?? Level, PlayerRaceId = race ?? Race, PlayerClassId = classId,
+                UtcNow = now ?? Now, PlayerLevel = level ?? Level, PlayerRaceId = race ?? Race, PlayerClassId = classId ?? ClassId,
                 PlayerGuid = 123, MapId = point.Map, X = point.X, Y = point.Y, Z = point.Z,
                 AcceptedQuests = observations, CompletedQuestIds = rewarded ? (history ?? Completed).Concat(new[] { (uint)Quest.Id }).ToArray() : history ?? Completed,
                 HasAuthoritativeCompletions = authority, HasCompleteQuestLog = logComplete,
+                SkillValues = omitSkills ? null : skillOverride ?? Skills,
+                ReputationValues = omitReputations ? null : reputationOverride ?? Reputations,
                 CarriedItemCounts = items ?? ItemIds.Where(id => id > 0).Distinct().ToDictionary(id => id, _ => 0L)
             }, key => new QuestRecoveryDecision { State = state, MayAttempt = mayAttempt,
                 RetryUtc = mayAttempt ? null : Now.AddMinutes(5), Status = "controlled " + state },
@@ -104,12 +111,24 @@ internal static class QuestDatasetSimulationRegressionTests
         int limit = int.TryParse(Environment.GetEnvironmentVariable("CB_QUEST_SIM_LIMIT"), out int size) ? size : int.MaxValue;
         if (File.Exists(output)) throw new IOException("Simulation evidence is create-only");
         byte[] bytes = File.ReadAllBytes(dataset); string hash = Hash(bytes);
-        var db = JsonSerializer.Deserialize<QuestDatabase>(bytes, Json) ?? throw new InvalidDataException("Empty dataset");
+        bool effectiveModel = Environment.GetEnvironmentVariable("CB_QUEST_SIM_USE_DATA_LOADER") == "1";
+        var loader = effectiveModel ? new DataLoader(dataset) : null;
+        var db = effectiveModel ? loader!.Load() : JsonSerializer.Deserialize<QuestDatabase>(bytes, Json);
+        if (db == null) throw new InvalidDataException("Empty dataset");
+        string repairPath = Path.Combine(Path.GetDirectoryName(Path.GetFullPath(dataset))!, "quest_data.repairs.json");
+        string repairSha = effectiveModel && File.Exists(repairPath) ? Hash(File.ReadAllBytes(repairPath)) : "absent";
         var observations = File.ReadLines(observationsPath).Where(line => !string.IsNullOrWhiteSpace(line))
             .Select(line => JsonDocument.Parse(line).RootElement.Clone()).ToDictionary(row => row.GetProperty("quest_id").GetInt32());
         if (observations.Count != db.Quests.Count || db.Quests.Any(quest => !observations.ContainsKey(quest.Id)) ||
             observations.Values.Any(value => value.GetProperty("dataset_sha256").GetString() != hash))
             throw new InvalidDataException("Observations are not bound one-to-one to this exact dataset");
+        if (effectiveModel)
+        {
+            using var effective = new FileStream(output + ".effective-model.json", FileMode.CreateNew, FileAccess.Write);
+            JsonSerializer.Serialize(effective, db, Json);
+            using var dependencies = new FileStream(output + ".dependency-metadata.json", FileMode.CreateNew, FileAccess.Write);
+            JsonSerializer.Serialize(dependencies, db.DependencyMetadata, Json);
+        }
         Directory.CreateDirectory(Path.GetDirectoryName(output)!);
         using var stream = new StreamWriter(new FileStream(output, FileMode.CreateNew, FileAccess.Write, FileShare.Read));
         using var fixture = new QuestDatasetObservationFixture();
@@ -119,12 +138,14 @@ internal static class QuestDatasetSimulationRegressionTests
         {
             JsonElement evidence = observations[quest.Id];
             var record = new Record { quest_id = quest.Id, dataset_sha256 = hash,
-                structural_classification = evidence.GetProperty("structural_classification").GetString()! };
+                structural_classification = evidence.GetProperty("structural_classification").GetString()!,
+                repair_sha256 = repairSha, execution_fingerprint = loader?.ExecutionFingerprint ?? "legacy-direct-model" };
             try
             {
-                var context = BuildContext(db, quest, evidence);
-                record.observations = new { level = context.Level, race_id = context.Race, class_id = 2,
+                var context = BuildContext(db, quest, evidence, effectiveModel);
+                record.observations = new { level = context.Level, race_id = context.Race, class_id = context.ClassId,
                     origin = context.Origin, authoritative_completed_prerequisites = context.Completed,
+                    skill_values = context.Skills, reputation_values = context.Reputations,
                     active_parent_ids = context.ActiveParents.Select(value => value.QuestId).ToArray(),
                     reference = evidence, normal_slot_encoding = "original-client high-bit GO identities; four physical counters" };
                 record.production_owners.Add("QuestScheduler.MaterializeSchedule");
@@ -189,10 +210,33 @@ internal static class QuestDatasetSimulationRegressionTests
                                 { QuestId = parent.QuestId, IsFailed = true }).ToArray() : Array.Empty<QuestSchedulerAcceptedQuest>();
                             Check(!context.Pickup(context.Schedule(activeParents: unavailable)), "missing/failed active parent admitted pickup");
                         });
-                if (quest.StartItem > 0)
+                if (quest.StartItem > 0 && !QuestDeliveryPolicy.HasContract(quest))
                     Case(record, "provided-StartItem-presence-does-not-invent-pickup-recipe", () =>
                         Check(context.Pickup(context.Schedule(items: new Dictionary<int, long> { [quest.StartItem] = 1 })) == baseline,
                             "a provided-on-acceptance item changed pickup policy"));
+                if (effectiveModel)
+                {
+                    if (quest.RequiredSkillID > 0 && quest.RequiredSkillPoints > 0)
+                    {
+                        Case(record, "required-skill-unknown-defers", () => Check(!context.Pickup(context.Schedule(omitSkills:true)), "unknown skill was treated as sufficient"));
+                        Case(record, "required-skill-below-threshold-defers", () => Check(!context.Pickup(context.Schedule(skillOverride:new Dictionary<int,int>
+                            { [quest.RequiredSkillID.Value] = quest.RequiredSkillPoints.Value - 1 })), "below-threshold skill admitted"));
+                    }
+                    if (quest.RequiredMinRepFaction > 0 || quest.RequiredMaxRepFaction > 0 || quest.RequiredFactionId1 > 0 || quest.RequiredFactionId2 > 0)
+                        Case(record, "required-reputation-unknown-defers", () => Check(!context.Pickup(context.Schedule(omitReputations:true)), "unknown reputation admitted"));
+                    if (quest.RequiredMinRepFaction > 0 && quest.RequiredMinRepValue > int.MinValue)
+                    {
+                        var values=new Dictionary<int,int>(context.Reputations ?? new Dictionary<int,int>())
+                            { [quest.RequiredMinRepFaction.Value] = quest.RequiredMinRepValue.Value - 1 };
+                        Case(record,"minimum-reputation-boundary-defers",()=>Check(!context.Pickup(context.Schedule(reputationOverride:values)),"minimum reputation bypassed"));
+                    }
+                    if (quest.RequiredMaxRepFaction > 0 && quest.RequiredMaxRepValue.HasValue)
+                    {
+                        var values=new Dictionary<int,int>(context.Reputations ?? new Dictionary<int,int>())
+                            { [quest.RequiredMaxRepFaction.Value] = quest.RequiredMaxRepValue.Value };
+                        Case(record,"exclusive-maximum-reputation-boundary-defers",()=>Check(!context.Pickup(context.Schedule(reputationOverride:values)),"maximum reputation bypassed"));
+                    }
+                }
                 Case(record, "explicitly-unreachable-destinations-never-selected", () =>
                 {
                     var assessed = new HashSet<string>();
@@ -244,30 +288,34 @@ internal static class QuestDatasetSimulationRegressionTests
             dataset_total = db.Quests.Count, passed_cases = passed, failed_cases = failed, pipeline_passes = pipelines,
             simulation_scope = "actual production owners with controlled observations; no game attached",
             observation_file_sha256 = Hash(File.ReadAllBytes(observationsPath)),
+            model_mode = effectiveModel ? "actual-DataLoader-with-source-bound-repairs" : "legacy-direct-model",
+            repair_sha256 = repairSha, execution_fingerprint = loader?.ExecutionFingerprint ?? "legacy-direct-model",
             host_binary_sha256 = Hash(File.ReadAllBytes(typeof(StyxWoW).Assembly.Location)) }, new JsonSerializerOptions { WriteIndented = true }));
         if (failed != 0) throw new InvalidOperationException($"Dataset simulation has {failed} failed cases across {rows} rows; retained {output}");
     }
 
-    private static Context BuildContext(QuestDatabase original, QuestEntry quest, JsonElement observations)
+    private static Context BuildContext(QuestDatabase original, QuestEntry quest, JsonElement observations, bool effectiveModel = false)
     {
         var byId = original.Quests.ToDictionary(value => value.Id);
+        var dependencyLookup = effectiveModel ? QuestDependencyCatalog.CreateLookup(original).ToDictionary(p => (int)p.Key, p => p.Value) : byId;
         var closure = new HashSet<int>(); var queue = new Queue<int>(); queue.Enqueue(quest.Id);
         while (queue.Count != 0)
         {
-            int id = queue.Dequeue(); if (!closure.Add(id) || !byId.TryGetValue(id, out var value)) continue;
+            int id = queue.Dequeue(); if (!closure.Add(id) || !dependencyLookup.TryGetValue(id, out var value)) continue;
             foreach (int parent in new[] { Math.Abs(value.PrevQuestID) }.Concat(value.PreviousQuestsIds ?? new()).Where(value => value > 0))
             {
                 queue.Enqueue(parent);
-                if (byId.TryGetValue(parent, out var prior) && prior.ExclusiveGroup < 0)
-                    foreach (var member in original.Quests.Where(item => item.ExclusiveGroup == prior.ExclusiveGroup)) queue.Enqueue(member.Id);
+                if (dependencyLookup.TryGetValue(parent, out var prior) && prior.ExclusiveGroup < 0)
+                    foreach (var member in dependencyLookup.Values.Where(item => item.ExclusiveGroup == prior.ExclusiveGroup)) queue.Enqueue(member.Id);
             }
         }
         var db = new QuestDatabase { Quests = closure.Where(byId.ContainsKey).Select(id => byId[id]).ToList(),
             QuestGivers = original.QuestGivers.Where(value => value.QuestId == quest.Id).ToList(),
             QuestEnders = original.QuestEnders.Where(value => value.QuestId == quest.Id).ToList(),
-            CreatureSpawns = original.CreatureSpawns, GameObjectSpawns = original.GameObjectSpawns };
+            CreatureSpawns = original.CreatureSpawns, GameObjectSpawns = original.GameObjectSpawns,
+            DependencyMetadata = original.DependencyMetadata };
         int active = quest.PrevQuestID < 0 ? -quest.PrevQuestID : 0;
-        var context = new Context { Quest = quest, Database = db, Level = Math.Clamp(quest.MinLevel, 1, 80),
+        var context = new Context { Quest = quest, Database = db, Level = Math.Clamp(quest.MinLevel, 1, 80), EffectiveModel=effectiveModel,
             Race = new[] { 10, 1, 2, 3, 4, 5, 6, 7, 8, 11 }.FirstOrDefault(race => quest.AllowableRaces == 0 || quest.AllowableRaces == -1 || (quest.AllowableRaces & (1 << (race - 1))) != 0),
             Completed = closure.Where(id => id != quest.Id && id != active).Select(id => (uint)id).ToArray(),
             ActiveParents = active > 0 ? new[] { new QuestSchedulerAcceptedQuest { QuestId = (uint)active,
@@ -279,7 +327,48 @@ internal static class QuestDatasetSimulationRegressionTests
             context.NormalIds = Array("normal_ids"); context.NormalCounts = Array("normal_counts");
             context.ItemIds = Array("item_ids"); context.ItemCounts = Array("item_counts");
         }
+        if (effectiveModel)
+        {
+            context.ClassId = new[] { 2, 1, 3, 4, 5, 6, 7, 8, 9, 11 }.FirstOrDefault(id => !quest.AllowableClasses.HasValue ||
+                quest.AllowableClasses == 0 || quest.AllowableClasses == -1 || (quest.AllowableClasses.Value & (1 << (id-1))) != 0);
+            if (observations.TryGetProperty("playable_actor_pairs", out JsonElement pairs))
+            {
+                if (!TrySelectActorPair(quest, pairs, out int legalRace, out int legalClass))
+                    throw new InvalidDataException("No source-declared playable race/class pair satisfies the quest eligibility contract");
+                context.Race = legalRace; context.ClassId = legalClass;
+            }
+            var skills = new Dictionary<int,int>(); var reputation = new Dictionary<int,int>();
+            if (quest.RequiredSkillID > 0 && quest.RequiredSkillPoints >= 0) skills[quest.RequiredSkillID.Value] = quest.RequiredSkillPoints.Value;
+            void Rep(int id,int? value) { if(id>0 && value.HasValue)reputation[id] = Math.Max(reputation.TryGetValue(id,out int old)?old:int.MinValue,value.Value); }
+            Rep(quest.RequiredMinRepFaction ?? 0,quest.RequiredMinRepValue);
+            Rep(quest.RequiredFactionId1,quest.RequiredFactionValue1); Rep(quest.RequiredFactionId2,quest.RequiredFactionValue2);
+            if(quest.RequiredMaxRepFaction>0 && quest.RequiredMaxRepValue>int.MinValue && !reputation.ContainsKey(quest.RequiredMaxRepFaction.Value))
+                reputation[quest.RequiredMaxRepFaction.Value] = quest.RequiredMaxRepValue.Value-1;
+            context.Skills=skills;context.Reputations=reputation;
+        }
         return context;
+    }
+
+    private static bool TrySelectActorPair(QuestEntry quest, JsonElement pairs, out int race, out int playerClass)
+    {
+        race = 0; playerClass = 0;
+        if (pairs.ValueKind != JsonValueKind.Array) return false;
+        var choices = new List<(int Race, int Class)>();
+        foreach (JsonElement pair in pairs.EnumerateArray())
+        {
+            if (!pair.TryGetProperty("race", out var r) || !pair.TryGetProperty("class", out var c) ||
+                !r.TryGetInt32(out int candidateRace) || !c.TryGetInt32(out int candidateClass) ||
+                candidateRace < 1 || candidateRace > 11 || candidateClass < 1 || candidateClass > 11)
+                return false;
+            if (quest.AllowableRaces != 0 && quest.AllowableRaces != -1 && (quest.AllowableRaces & (1 << (candidateRace-1))) == 0) continue;
+            if (quest.AllowableClasses.HasValue && quest.AllowableClasses != 0 && quest.AllowableClasses != -1 &&
+                (quest.AllowableClasses.Value & (1 << (candidateClass-1))) == 0) continue;
+            choices.Add((candidateRace,candidateClass));
+        }
+        if (choices.Count == 0) return false;
+        var selected = choices.OrderBy(p => p.Class == 2 ? 0 : 1).ThenBy(p => p.Race == 10 ? 0 : 1).ThenBy(p => p.Race).ThenBy(p => p.Class).First();
+        race = selected.Race; playerClass = selected.Class;
+        return true;
     }
 
     private static void Pipeline(Context context, Record record, QuestDatasetObservationFixture fixture)
@@ -289,6 +378,7 @@ internal static class QuestDatasetSimulationRegressionTests
         var pickupPlan = pickup.Plan.Where(value => value.Quest.Id == quest.Id && value.Stage == QuestWorkStage.Pickup).ToArray();
         if (pickupPlan.Length == 0) { record.pipeline_blocks.Add("scheduler-pickup-not-admitted:" + pickup.Status); return; }
         fixture.SetQuest(id, quest.Name, context.Level, context.NormalIds, context.NormalCounts, context.ItemIds, context.ItemCounts);
+        if(context.EffectiveModel)fixture.SetRaceClass(context.Race,context.ClassId);
         fixture.SetAccepted(false); fixture.SetHistory(context.Completed);
         var builder = new ProfileBuilder();
         string Xml(IReadOnlyList<QuestPlanEntry> plan)
@@ -327,8 +417,69 @@ internal static class QuestDatasetSimulationRegressionTests
         Case(record, "pipeline-pickup-acknowledges-accepted-log", () => Check(pickupOwner.IsDone, "accepted quest did not finish pickup"));
         var completedCounts = new int[4]; var carried = context.ItemIds.Where(value => value > 0).Distinct().ToDictionary(value => value, _ => 0L);
         int startingFailures = record.failed_cases;
-        foreach (DataObjective objective in quest.Objectives.Where(value => value.Type != DataKind.TurnInOnly))
+        if (context.EffectiveModel && quest.SupplementalSupply != null)
         {
+            var supply = quest.SupplementalSupply;
+            Case(record,"pipeline-supplemental-supply-is-not-an-inventory-receipt",()=>
+                Check(!context.Schedule(accepted:true,complete:true,items:carried).Plan.Any(p=>p.Quest.Id==quest.Id && p.Stage==QuestWorkStage.TurnIn),
+                    "source promise authorized turn-in without an observed required item"));
+            Case(record,"pipeline-supplemental-source-item-observed-after-acceptance",()=>
+            {
+                carried[supply.ItemId]=supply.ProvidedCount;
+                fixture.SetInventory(carried);
+                Check(fixture.Player.CarriedItems.Where(item=>item.Entry==supply.ItemId).Sum(item=>(long)item.StackCount)>=supply.RequiredCount,
+                    "actual inventory owner did not acknowledge the supplied return item");
+            });
+            record.production_owners.Add("supplemental source supply -> actual carried-item observation; no item-use action inferred");
+        }
+        if (QuestDeliveryPolicy.HasContract(quest))
+        {
+            var expected = quest.DeliveryItems!.ToDictionary(item=>item.ItemId,item=>(long)item.Count);
+            var supplied = quest.AcceptanceSupplies!.ToDictionary(item=>item.ItemId,item=>(long)item.Count);
+            Case(record,"pipeline-delivery-source-promise-is-not-receipt",()=>
+            {
+                fixture.SetInventory(new());
+                Check(!context.Schedule(accepted:true,complete:true,items:new()).Plan.Any(p=>p.Quest.Id==quest.Id && p.Stage==QuestWorkStage.TurnIn),"unobserved promised supply authorized turn-in");
+            });
+            foreach(var item in expected)
+            {
+                var partial=new Dictionary<int,long>(expected){[item.Key]=Math.Max(0,item.Value-1)};
+                Case(record,"pipeline-delivery-partial-receipt="+item.Key,()=>Check(!context.Schedule(accepted:true,complete:true,items:partial)
+                    .Plan.Any(p=>p.Quest.Id==quest.Id && p.Stage==QuestWorkStage.TurnIn),"partial delivery receipt authorized turn-in"));
+            }
+            Case(record,"pipeline-delivery-actual-inventory-acknowledgement",()=>
+            {
+                fixture.SetInventory(expected);
+                var observed=fixture.Player.CarriedItems.GroupBy(item=>(int)item.Entry).ToDictionary(g=>g.Key,g=>g.Sum(item=>(long)item.StackCount));
+                Check(QuestDeliveryPolicy.TurnInRejection(quest,observed)==null,"real inventory reader failed delivery acknowledgement");
+                Check(!context.Schedule(accepted:true,items:observed).Plan.Any(p=>p.Quest.Id==quest.Id && p.Stage==QuestWorkStage.TurnIn),"item receipt fabricated server flag");
+            });
+            carried=expected;
+            record.production_owners.Add("QuestDeliveryPolicy source contract -> actual carried inventory -> independent server completed flag");
+        }
+        var provedItems = new HashSet<int>();
+        IEnumerable<DataObjective> pipelineObjectives = quest.Objectives.Where(value => value.Type != DataKind.TurnInOnly);
+        if (context.EffectiveModel)
+            pipelineObjectives = pipelineObjectives.OrderBy(objective =>
+                context.Spawns(objective.Type == DataKind.CollectFromGameObject ? objective.GameObjectId : objective.MobId,
+                    objective.Type == DataKind.CollectFromGameObject ? DataType.GameObject : DataType.Creature).Any() ? 0 : 1)
+                .ThenBy(objective => objective.Index);
+        foreach (DataObjective objective in pipelineObjectives)
+        {
+            bool itemObjective = objective.ItemId > 0 && (objective.Type == DataKind.CollectItem || objective.Type == DataKind.CollectFromGameObject);
+            if (context.EffectiveModel && itemObjective && provedItems.Contains(objective.ItemId) &&
+                carried.TryGetValue(objective.ItemId, out long held) && held >= objective.CollectCount &&
+                Enumerable.Range(0, context.ItemIds.Length).Count(index => context.ItemIds[index] == objective.ItemId && context.ItemCounts[index] == objective.CollectCount) == 1)
+            {
+                Case(record, "pipeline-completed-item-suppresses-alternative=" + objective.Index, () =>
+                {
+                    var observed = fixture.Player.CarriedItems.Where(item => item.Entry == objective.ItemId).Sum(item => (long)item.StackCount);
+                    Check(observed >= objective.CollectCount, "the previously proved route no longer has a real carried receipt");
+                    Check(!context.Schedule(accepted:true, progress:completedCounts, items:carried).Plan.Any(plan => plan.Quest.Id == quest.Id && plan.ObjectiveIndex == objective.Index),
+                        "completed item was rescheduled through another acquisition source");
+                });
+                continue;
+            }
             var targetType = objective.Type == DataKind.CollectFromGameObject ? DataType.GameObject : DataType.Creature;
             int entry = objective.Type == DataKind.CollectFromGameObject ? objective.GameObjectId : objective.MobId;
             SpawnPoint? endpoint = context.Spawns(entry, targetType).FirstOrDefault();
@@ -367,16 +518,44 @@ internal static class QuestDatasetSimulationRegressionTests
             {
                 Progress(0); Check(!owner.IsDone, "stale completion survived regressed observations"); Progress(required);
             });
+            if (context.EffectiveModel && itemObjective && record.failed_cases == startingFailures &&
+                Enumerable.Range(0, context.ItemIds.Length).Count(index => context.ItemIds[index] == objective.ItemId && context.ItemCounts[index] == objective.CollectCount) == 1)
+                provedItems.Add(objective.ItemId);
             fixture.ReleaseOwners();
         }
         if (record.pipeline_blocks.Count != 0) return;
-        foreach (int index in Enumerable.Range(0, 6).Where(index => context.ItemIds[index] > 0)) carried[context.ItemIds[index]] = context.ItemCounts[index];
-        completedCounts = context.NormalCounts.ToArray();
+        if (context.EffectiveModel)
+        {
+            // A positive terminal state must come from the exercised objective
+            // or explicitly observed delivery path, never from filling omitted
+            // requirements merely to reach the turn-in test.
+            foreach (int index in Enumerable.Range(0, 6).Where(index => context.ItemIds[index] > 0))
+                if (!carried.TryGetValue(context.ItemIds[index], out long count) || count < context.ItemCounts[index])
+                    record.pipeline_blocks.Add("unexercised-required-item:" + context.ItemIds[index]);
+            for (int index = 0; index < 4; index++)
+                if (context.NormalIds[index] != 0 && completedCounts[index] < context.NormalCounts[index])
+                    record.pipeline_blocks.Add("unexercised-required-normal-slot:" + index);
+            if (record.pipeline_blocks.Count != 0) return;
+        }
+        else
+        {
+            // Preserve the historical fixture's supplied-terminal-observation
+            // scope; the opt-in effective-data pipeline above is stricter.
+            foreach (int index in Enumerable.Range(0, 6).Where(index => context.ItemIds[index] > 0)) carried[context.ItemIds[index]] = context.ItemCounts[index];
+            completedCounts = context.NormalCounts.ToArray();
+        }
         Case(record, "pipeline-counts-do-not-invent-server-complete-flag", () =>
             Check(!context.Schedule(accepted: true, progress: completedCounts, items: carried).Plan.Any(value => value.Quest.Id == quest.Id && value.Stage == QuestWorkStage.TurnIn), "counts invented server completion"));
         var enderPoint = context.Database.QuestEnders.SelectMany(ender => context.Spawns(ender.EnderId, ender.EnderType)).FirstOrDefault();
         if (enderPoint == null) { record.pipeline_blocks.Add("turn-in-endpoint-unrepresented"); return; }
         var turnIn = context.Schedule(accepted: true, complete: true, progress: completedCounts, items: carried, origin: enderPoint);
+        if (context.EffectiveModel && quest.SupplementalSupply != null)
+            Case(record,"pipeline-supplemental-item-loss-revokes-turn-in",()=>
+            {
+                var missing=new Dictionary<int,long>(carried){[quest.SupplementalSupply.ItemId]=0};
+                Check(!context.Schedule(accepted:true,complete:true,items:missing,origin:enderPoint).Plan.Any(p=>p.Quest.Id==quest.Id && p.Stage==QuestWorkStage.TurnIn),
+                    "normal objective completion bypassed a lost required source-item receipt");
+            });
         var endPlans = turnIn.Plan.Where(value => value.Quest.Id == quest.Id && value.Stage == QuestWorkStage.TurnIn).ToArray();
         if (endPlans.Length == 0) { record.pipeline_blocks.Add("server-complete-not-scheduled-for-turn-in:" + turnIn.Status); return; }
         string turnInXml = Xml(endPlans);

@@ -47,6 +47,7 @@ namespace WholesomeAQ
         public string GiverObservationStatus { get; init; } = "not-captured";
         public string DatasetFingerprint { get; init; } = "not-supplied";
         public string DatasetSourceStatus { get; init; } = "unknown";
+        public string DatasetRepairSource { get; init; } = "absent";
         // Explicit pure snapshots retain their complete-input default. The live
         // producer below derives this flag from the actual raw/metadata owner.
         public bool HasCompleteQuestLog { get; init; } = true;
@@ -262,6 +263,7 @@ namespace WholesomeAQ
                 GiverObservationStatus = giverObservationStatus,
                 DatasetFingerprint = _dataLoader.DatasetFingerprint,
                 DatasetSourceStatus = _dataLoader.DatasetSourceIdentity.Status.ToString(),
+                DatasetRepairSource = _dataLoader.RepairPackSource,
                 SkillValues = requirementObservations.Skills,
                 ReputationValues = requirementObservations.Reputations,
                 ItemStarters = observedItemStarters,
@@ -510,6 +512,7 @@ namespace WholesomeAQ
             int questLogCapacity = Math.Max(1, snapshot.QuestLogCapacity);
             bool questLogFull = accepted.Count >= questLogCapacity;
             var quests = db.Quests.ToDictionary(quest => (uint)quest.Id);
+            var dependencyQuests = QuestDependencyCatalog.CreateLookup(db);
             var candidates = new List<QuestWorkCandidate>();
             var candidatePlans = new Dictionary<QuestWorkCandidate, IReadOnlyList<QuestPlanEntry>>();
             var exclusions = new List<string>();
@@ -536,7 +539,7 @@ namespace WholesomeAQ
                         continue;
                     if (!CanRequestPickupWithStrategies(descendant, db, snapshot, scanThreshold, minimumLevel, strategyPack))
                         continue;
-                    uint ancestor = FindAcceptedIncompleteAncestor(descendant, quests, accepted, completed);
+                    uint ancestor = FindAcceptedIncompleteAncestor(descendant, dependencyQuests, accepted, completed);
                     if (ancestor == 0)
                         continue;
                     correctionAncestors.Add(ancestor);
@@ -568,6 +571,13 @@ namespace WholesomeAQ
                 }
                 if (acceptedQuest.IsCompleted)
                 {
+                    string deliveryRejection = QuestDeliveryPolicy.TurnInRejection(quest, snapshot.CarriedItemCounts);
+                    if (deliveryRejection != null)
+                    {
+                        diagnostic?.Reject(quest.Id, deliveryRejection);
+                        exclusions.Add($"quest {quest.Id}: {deliveryRejection}; awaiting a current delivery receipt");
+                        continue;
+                    }
                     AddRelationWork(
                         quest, QuestWorkStage.TurnIn, QuestRecoveryStage.TurnIn,
                         db.QuestEnders.Where(ender => ender.QuestId == quest.Id)
@@ -632,14 +642,14 @@ namespace WholesomeAQ
                         continue;
                     }
 
-                    uint ancestor = FindAcceptedIncompleteAncestor(quest, quests, accepted, completed);
+                    uint ancestor = FindAcceptedIncompleteAncestor(quest, dependencyQuests, accepted, completed);
                     diagnostic?.Gate(quest.Id, "acceptedIncompleteAncestor", ancestor);
                     if (ancestor != 0)
                     {
                         diagnostic?.Reject(quest.Id, "accepted-ancestor-incomplete");
                         continue;
                     }
-                    bool prerequisitesComplete = PrerequisitesComplete(quest, quests, completed);
+                    bool prerequisitesComplete = PrerequisitesComplete(quest, dependencyQuests, completed);
                     diagnostic?.Gate(quest.Id, "prerequisitesComplete", prerequisitesComplete);
                     if (!prerequisitesComplete)
                     {
@@ -902,6 +912,15 @@ namespace WholesomeAQ
                 AddBlockedCandidate(quest, workStage, stageDecision, candidates, exclusions, stageKey);
                 return;
             }
+            if (QuestDeliveryPolicy.HasContract(quest))
+            {
+                // A delivery has no kill/use hotspot to invent or quarantine.
+                // Inventory and the server's completed flag remain independent.
+                string reason = QuestDeliveryPolicy.TurnInRejection(quest, snapshot.CarriedItemCounts)
+                    ?? "delivery-awaiting-server-completion";
+                exclusions.Add($"quest {quest.Id}: {reason}");
+                return;
+            }
             if (quest.Objectives.Count == 0)
             {
                 ReportDataOmission(stageKey, QuestFailureReason.InvalidQuestData,
@@ -924,7 +943,11 @@ namespace WholesomeAQ
                 // Dataset indexes do not establish packed-counter slots. A declared
                 // recipe may use independent carried-item completion, but cannot
                 // borrow an unrelated raw count before its action is admitted.
-                bool complete = hasDeclaredStrategy
+                bool typedStrategy = strategies.Length == 1 && strategyPack.SchemaVersion == 2 &&
+                    strategies[0].SuccessEvidence == QuestStrategySuccessEvidence.ObjectiveProgress &&
+                    CanScheduleWholeQuestStrategy(quest, objective, strategyPack, strategies[0]) &&
+                    acceptedQuest?.NormalObjectiveIds?.Count == 4 && acceptedQuest.NormalObjectiveRequiredCounts?.Count == 4;
+                bool complete = typedStrategy ? IsAcceptedObjectiveComplete(objective, acceptedQuest, snapshot.CarriedItemCounts) : hasDeclaredStrategy
                     ? snapshot.CarriedItemCounts != null &&
                         (objective.Type == ObjectiveType.CollectItem ||
                          objective.Type == ObjectiveType.CollectFromGameObject) &&
@@ -1529,12 +1552,16 @@ namespace WholesomeAQ
             QuestStrategyPack pack,
             QuestStrategyRecipe recipe)
         {
-            // V1 declares a dataset objective index, not a validated raw-counter
-            // mapping. Defer ObjectiveProgress without changing its declared success
-            // condition. Existing QuestComplete recipes do not consume that index.
+            // V1 indexes remain display/dataset ordinals, not physical counters.
+            // V2 separately binds the typed credit identity and required count.
+            bool typedCredit = pack.SchemaVersion == 2 && recipe.Kind == QuestStrategyKind.UseItemOn &&
+                recipe.SuccessEvidence == QuestStrategySuccessEvidence.ObjectiveProgress &&
+                objective.Type == ObjectiveType.KillMob && recipe.CreditId == objective.MobId &&
+                recipe.CreditCount == objective.KillCount && recipe.CreditCount > 0 && recipe.CreditCount <= ushort.MaxValue &&
+                recipe.WaitTime >= 0 && recipe.WaitTime <= 60000;
             if (pack.Status != QuestStrategyPackStatus.DeclaredAndBound || pack.ClientBuild != 12340 ||
                 recipe.QuestId != quest.Id || recipe.ObjectiveIndex != objective.Index ||
-                recipe.SuccessEvidence != QuestStrategySuccessEvidence.QuestComplete ||
+                (recipe.SuccessEvidence != QuestStrategySuccessEvidence.QuestComplete && !typedCredit) ||
                 recipe.TargetType != QuestStrategyTargetType.Creature || recipe.TargetId <= 0 ||
                 recipe.TargetId != objective.MobId ||
                 (objective.Type != ObjectiveType.KillMob && objective.Type != ObjectiveType.CollectItem) ||
@@ -1577,7 +1604,7 @@ namespace WholesomeAQ
                 }
                 else if (recipes.Length != 1 || !CanScheduleWholeQuestStrategy(quest, objective, pack, recipes[0]))
                     return false;
-                else
+                else if (recipes[0].SuccessEvidence == QuestStrategySuccessEvidence.QuestComplete)
                     hasWholeQuestStrategy = true;
             }
             return (quest.SpecialFlags & 0x02) == 0 || hasWholeQuestStrategy;
@@ -1697,7 +1724,9 @@ namespace WholesomeAQ
                 other.Id > 0 &&
                 other.Id != quest.Id &&
                 other.ExclusiveGroup == group &&
-                (accepted.ContainsKey((uint)other.Id) || completed.Contains((uint)other.Id)));
+                (accepted.ContainsKey((uint)other.Id) || completed.Contains((uint)other.Id))) &&
+                !db.DependencyMetadata.Values.Any(other => other.QuestId != quest.Id && other.ExclusiveGroup == group &&
+                    (accepted.ContainsKey((uint)other.QuestId) || completed.Contains((uint)other.QuestId)));
         }
 
         private static bool PrerequisitesComplete(

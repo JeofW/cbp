@@ -113,6 +113,15 @@ internal sealed class QuestDatasetObservationFixture : IDisposable
         Invalidate();
     }
 
+    internal void SetRaceClass(int race, int playerClass)
+    {
+        if (race <= 0 || race > 11 || playerClass <= 0 || playerClass > 11) throw new ArgumentOutOfRangeException("controlled actor class/race");
+        Type fields = typeof(WoWUnit).Assembly.GetTypes().Single(value => value.IsEnum && value.Name == "UnitFields");
+        Write32(descriptor + Convert.ToUInt32(Enum.Parse(fields, "Bytes0")) * 4, (uint)(race | (playerClass << 8)));
+        Invalidate();
+        if ((int)Player.Race != race || (int)Player.Class != playerClass) throw new InvalidOperationException("Actor fixture disagrees with class/race observations");
+    }
+
     internal void SetProgress(int[] values)
     {
         if (values.Length != 4 || values.Any(value => value < 0 || value > ushort.MaxValue)) throw new ArgumentOutOfRangeException(nameof(values));

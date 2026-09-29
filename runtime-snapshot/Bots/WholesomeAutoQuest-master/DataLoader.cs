@@ -28,6 +28,7 @@ namespace WholesomeAQ
         public string ExecutionFingerprint { get; private set; } = "unknown";
         public QuestDatasetSourceIdentity DatasetSourceIdentity { get; private set; } = new QuestDatasetSourceIdentity();
         public QuestStrategyPack StrategyPack { get; private set; } = new QuestStrategyPack();
+        public string RepairPackSource { get; private set; } = "absent";
 
         public DataLoader()
         {
@@ -94,18 +95,14 @@ namespace WholesomeAQ
             string strategyPath = Path.Combine(
                 Path.GetDirectoryName(Path.GetFullPath(_dataFile)) ?? Environment.CurrentDirectory,
                 "quest_strategies.json");
-            QuestStrategyPack strategyPack = QuestStrategyPackLoader.Load(
-                strategyPath,
-                Digest(snapshot),
-                out string strategyContentSha256);
-            string fingerprint = FingerprintManifest(
-                provenanceSnapshot == null
-                    ? new[] { (Role: LogicalRole(_dataFile), Digest: FingerprintDigest(snapshot)) }
-                    : new[]
-                    {
-                        (Role: LogicalRole(_dataFile), Digest: FingerprintDigest(snapshot)),
-                        (Role: LogicalRole(provenancePath), Digest: FingerprintDigest(provenanceSnapshot))
-                    });
+            string repairPath = Path.Combine(Path.GetDirectoryName(Path.GetFullPath(_dataFile)), "quest_data.repairs.json");
+            byte[] repairSnapshot = File.Exists(repairPath) ? File.ReadAllBytes(repairPath) : null;
+            QuestStrategyPack strategyPack = QuestStrategyPackLoader.Load(strategyPath, Digest(snapshot),
+                Digest(repairSnapshot ?? Array.Empty<byte>()), out string strategyContentSha256);
+            var identityFiles = new List<(string Role, string Digest)> { (LogicalRole(_dataFile), FingerprintDigest(snapshot)) };
+            if (provenanceSnapshot != null) identityFiles.Add((LogicalRole(provenancePath), FingerprintDigest(provenanceSnapshot)));
+            if (repairSnapshot != null) identityFiles.Add((LogicalRole(repairPath), FingerprintDigest(repairSnapshot)));
+            string fingerprint = FingerprintManifest(identityFiles);
             string json;
             using (var stream = new MemoryStream(snapshot, writable: false))
             using (var reader = new StreamReader(stream, Encoding.UTF8, detectEncodingFromByteOrderMarks: true))
@@ -116,6 +113,9 @@ namespace WholesomeAQ
                 return null;
             if (database.Quests == null || database.Quests.Any(quest => quest == null || quest.PreviousQuestsIds == null))
                 throw new InvalidDataException("Quest dependency records cannot be null.");
+            string repairSource = "absent";
+            if (repairSnapshot != null)
+                database = QuestDataRepairPackLoader.Apply(repairSnapshot, Digest(snapshot), database, out repairSource);
 
             // If prerequisite validation/publication throws, a later Load must retry
             // rather than returning a partially initialized cached database.
@@ -126,17 +126,15 @@ namespace WholesomeAQ
                 : CreateExecutionFingerprint(fingerprint, strategyContentSha256);
             DatasetSourceIdentity = sourceIdentity;
             StrategyPack = strategyPack;
+            RepairPackSource = repairSource;
             _database = database;
             return _database;
         }
 
         private static void PublishDependencies(QuestDatabase database)
         {
-            var byId = database.Quests
-                .Where(quest => quest.Id > 0)
-                .GroupBy(quest => quest.Id)
-                .ToDictionary(group => group.Key, group => group.First());
-            var negativeGroups = database.Quests
+            var byId = QuestDependencyCatalog.CreateLookup(database).ToDictionary(pair => (int)pair.Key, pair => pair.Value);
+            var negativeGroups = byId.Values
                 .Where(quest => quest.Id > 0 && quest.ExclusiveGroup < 0)
                 .GroupBy(quest => quest.ExclusiveGroup)
                 .ToDictionary(
@@ -337,6 +335,12 @@ namespace WholesomeAQ
         public static QuestStrategyPack Load(
             string path,
             string expectedQuestDataSha256,
+            out string contentSha256) => Load(path, expectedQuestDataSha256, null, out contentSha256);
+
+        public static QuestStrategyPack Load(
+            string path,
+            string expectedQuestDataSha256,
+            string expectedRepairsSha256,
             out string contentSha256)
         {
             contentSha256 = "";
@@ -358,12 +362,20 @@ namespace WholesomeAQ
             if (root.ValueKind != JsonValueKind.Object)
                 throw new InvalidDataException("Quest strategy pack must be a JSON object.");
 
-            RequireExactFields(root,
-                new[] { "Schema", "ClientBuild", "QuestDataSha256", "SourceKind", "SourceRevision", "Recipes" },
-                "quest strategy pack");
-
-            if (RequiredString(root, "Schema") != "quest-strategy-pack-335-v1")
+            string schema = RequiredString(root, "Schema");
+            bool typed = schema == "quest-strategy-pack-335-v2";
+            string[] rootFields = { "Schema", "ClientBuild", "QuestDataSha256", "SourceKind", "SourceRevision", "Recipes" };
+            RequireExactFields(root, typed ? rootFields.Concat(new[] { "QuestDataRepairsSha256" }) : rootFields, "quest strategy pack");
+            if (schema != "quest-strategy-pack-335-v1" && !typed)
                 throw new InvalidDataException("Unsupported quest strategy pack schema.");
+            string repairBinding = "";
+            if (typed)
+            {
+                repairBinding = RequiredString(root, "QuestDataRepairsSha256").ToLowerInvariant();
+                ValidateSha(repairBinding, "QuestDataRepairsSha256");
+                if (string.IsNullOrEmpty(expectedRepairsSha256) || !string.Equals(repairBinding, expectedRepairsSha256, StringComparison.OrdinalIgnoreCase))
+                    throw new InvalidDataException("Typed strategy pack does not match the exact effective-data repair bytes.");
+            }
             if (!root.GetProperty("ClientBuild").TryGetInt32(out int clientBuild) || clientBuild != 12340)
                 throw new InvalidDataException("Quest strategy pack requires original client build 12340.");
 
@@ -387,7 +399,7 @@ namespace WholesomeAQ
             var owners = new HashSet<(int QuestId, int ObjectiveIndex)>();
             foreach (JsonElement recipeNode in recipesNode.EnumerateArray())
             {
-                QuestStrategyRecipe recipe = ParseRecipe(recipeNode);
+                QuestStrategyRecipe recipe = ParseRecipe(recipeNode, typed);
                 if (!owners.Add((recipe.QuestId, recipe.ObjectiveIndex)))
                     throw new InvalidDataException("Quest strategy pack has duplicate quest/objective owners.");
                 recipes.Add(recipe);
@@ -396,6 +408,8 @@ namespace WholesomeAQ
             return new QuestStrategyPack
             {
                 Status = QuestStrategyPackStatus.DeclaredAndBound,
+                SchemaVersion = typed ? 2 : 1,
+                QuestDataRepairsSha256 = repairBinding,
                 ClientBuild = clientBuild,
                 QuestDataSha256 = questDataSha256,
                 SourceKind = sourceKind,
@@ -404,7 +418,7 @@ namespace WholesomeAQ
             };
         }
 
-        private static QuestStrategyRecipe ParseRecipe(JsonElement node)
+        private static QuestStrategyRecipe ParseRecipe(JsonElement node, bool typed = false)
         {
             if (node.ValueKind != JsonValueKind.Object)
                 throw new InvalidDataException("Quest strategy recipe must be a JSON object.");
@@ -419,14 +433,17 @@ namespace WholesomeAQ
             bool requireLos = RequiredBool(node, "RequireLos");
             int maxAttempts = RequiredBoundedInt(node, "MaxAttempts", 1, 20);
             QuestStrategySuccessEvidence success = RequiredEnum<QuestStrategySuccessEvidence>(node, "SuccessEvidence");
+            if (typed && (kind != QuestStrategyKind.UseItemOn || targetType != QuestStrategyTargetType.Creature ||
+                          success != QuestStrategySuccessEvidence.ObjectiveProgress))
+                throw new InvalidDataException("Typed v2 recipes currently support only explicitly credited creature item interactions.");
 
             QuestStrategyRecipe recipe;
             if (kind == QuestStrategyKind.UseItemOn)
             {
-                RequireExactFields(node,
-                    new[] { "QuestId", "ObjectiveIndex", "Kind", "SourceRef", "ItemId",
+                string[] fields = { "QuestId", "ObjectiveIndex", "Kind", "SourceRef", "ItemId",
                         "TargetType", "TargetId", "TargetState", "Range", "RequireLos",
-                        "MaxAttempts", "SuccessEvidence" },
+                        "MaxAttempts", "SuccessEvidence" };
+                RequireExactFields(node, typed ? fields.Concat(new[] { "CreditId", "CreditCount", "WaitTime" }) : fields,
                     "UseItemOn strategy");
                 recipe = new QuestStrategyRecipe
                 {
@@ -441,7 +458,10 @@ namespace WholesomeAQ
                     Range = range,
                     RequireLos = requireLos,
                     MaxAttempts = maxAttempts,
-                    SuccessEvidence = success
+                    SuccessEvidence = success,
+                    CreditId = typed ? RequiredPositiveInt(node, "CreditId") : 0,
+                    CreditCount = typed ? RequiredBoundedInt(node, "CreditCount", 1, ushort.MaxValue) : 0,
+                    WaitTime = typed ? RequiredBoundedInt(node, "WaitTime", 0, 60000) : 0
                 };
             }
             else if (kind == QuestStrategyKind.GossipEvent)

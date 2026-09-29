@@ -234,6 +234,17 @@ namespace WholesomeAQ
                 new XAttribute("AcknowledgementTimeout", 5000),
                 LocationAttributes(anchor));
 
+            if (strategy.CreditId != 0 || strategy.CreditCount != 0)
+            {
+                if (strategy.SuccessEvidence != QuestStrategySuccessEvidence.ObjectiveProgress ||
+                    sourceObjective.Type != ObjectiveType.KillMob || strategy.CreditId != sourceObjective.MobId ||
+                    strategy.CreditCount != sourceObjective.KillCount || strategy.CreditCount <= 0 || strategy.CreditCount > ushort.MaxValue ||
+                    strategy.WaitTime < 0 || strategy.WaitTime > 60000)
+                    throw new InvalidDataException("Typed item strategy must retain the exact source credit and count.");
+                behavior.Add(new XAttribute("CreditId", strategy.CreditId), new XAttribute("RequiredCreditCount", strategy.CreditCount),
+                    new XAttribute("WaitTime", strategy.WaitTime));
+            }
+
             return new XElement("If",
                 new XAttribute("Condition", BuildObjectiveAdmissionCondition(entry)),
                 BuildFreewindDescentGuard(entry.Hotspots),

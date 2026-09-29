@@ -76,6 +76,9 @@ namespace WholesomeAQ
 
     public sealed class QuestStrategyRecipe
     {
+        public int CreditId { get; init; }
+        public int CreditCount { get; init; }
+        public int WaitTime { get; init; }
         public int QuestId { get; init; }
         public int ObjectiveIndex { get; init; }
         public QuestStrategyKind Kind { get; init; }
@@ -93,6 +96,8 @@ namespace WholesomeAQ
 
     public sealed class QuestStrategyPack
     {
+        public int SchemaVersion { get; init; } = 1;
+        public string QuestDataRepairsSha256 { get; init; } = "";
         public QuestStrategyPackStatus Status { get; init; } = QuestStrategyPackStatus.Missing;
         public int ClientBuild { get; init; }
         public string QuestDataSha256 { get; init; } = "";
@@ -103,6 +108,9 @@ namespace WholesomeAQ
 
     public class QuestDatabase
     {
+        [System.Text.Json.Serialization.JsonIgnore]
+        public IReadOnlyDictionary<int, QuestDependencyMetadata> DependencyMetadata { get; internal set; }
+            = new Dictionary<int, QuestDependencyMetadata>();
         public List<QuestEntry> Quests { get; set; } = new List<QuestEntry>();
         public List<QuestGiverEntry> QuestGivers { get; set; } = new List<QuestGiverEntry>();
         public List<QuestEnderEntry> QuestEnders { get; set; } = new List<QuestEnderEntry>();
@@ -133,6 +141,11 @@ namespace WholesomeAQ
 
     public class QuestEntry
     {
+        // Null means no source-bound delivery contract. These are requirements,
+        // never a claim that acceptance actually supplied an item to this actor.
+        public List<QuestItemRequirement> DeliveryItems { get; set; }
+        public List<QuestItemRequirement> AcceptanceSupplies { get; set; }
+        public QuestSupplementalSupply SupplementalSupply { get; set; }
         public int Id { get; set; }
         public string Name { get; set; }
         public int QuestLevel { get; set; }

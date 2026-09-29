@@ -85,6 +85,8 @@ namespace WholesomeAQ
             if (snapshot.PlayerLevel < quest.MinLevel) return "below-min-level";
             string requirementRejection = DeclaredRequirementRejection(quest, snapshot);
             if (requirementRejection != null) return requirementRejection;
+            string deliveryRejection = QuestDeliveryPolicy.PickupRejection(quest, snapshot.CarriedItemCounts);
+            if (deliveryRejection != null) return deliveryRejection;
             if (quest.QuestLevel > 0 && quest.QuestLevel < minimumLevel) return "below-configured-quest-level";
             if (!RaceAllowed(quest.AllowableRaces, snapshot.PlayerRaceId)) return "race-not-allowed";
             if (!SupportedForPickup(quest, strategyPack)) return "unsupported-objective-or-missing-strategy";
@@ -325,6 +327,7 @@ namespace WholesomeAQ
                     scanThreshold, lowQuestLevelPreference = minimumLevel, nearbyRadius3D = NearbyGiverRadius,
                     giverObservation = snapshot.GiverObservationStatus, datasetFingerprint = snapshot.DatasetFingerprint,
                     datasetSourceStatus = snapshot.DatasetSourceStatus, strategyFile = "quest_strategies.json",
+                    datasetRepairSource = snapshot.DatasetRepairSource,
                     strategyStatus = strategyPack?.Status.ToString() ?? "not-supplied", strategyRecipeCount = strategyPack?.Recipes?.Count ?? 0,
                     selectedCount = result.Selected.Count, relevantQuestCount = relevant.Length, loadedGiverCount = nearby.Count,
                     observedItemStarterCount = itemObservations.Count, observedCreatureCreditCount = creditObservations.Count,
@@ -393,6 +396,9 @@ namespace WholesomeAQ
                     if (reason == null && active == null) reason = BasePickupRejection(quest, snapshot, minimumLevel, strategyPack);
                     if (reason == null && recovery.Any(value => !value.MayAttempt)) reason = "recovery-blocked";
                     if (reason == null && active?.IsFailed == true) reason = "accepted-failed";
+                    if (reason == null && active != null && (QuestDeliveryPolicy.HasContract(quest) || active.IsCompleted && quest.SupplementalSupply != null))
+                        reason = QuestDeliveryPolicy.TurnInRejection(quest, snapshot.CarriedItemCounts)
+                            ?? (active.IsCompleted ? null : "delivery-awaiting-server-completion");
                     if (reason == null && capture.SelectionReasons.TryGetValue(quest.Id, out string selectionReason)) reason = selectionReason;
                     if (reason == null && active != null && !enderRole) reason = "accepted-objective-work-not-selected";
                     if (reason == null && relations.Length == 0) reason = enderRole ? "no-ender-relations" : "no-giver-relations";
@@ -430,6 +436,10 @@ namespace WholesomeAQ
                             requiredMinRepFaction = quest.RequiredMinRepFaction, requiredMinRepValue = quest.RequiredMinRepValue,
                             requiredMaxRepFaction = quest.RequiredMaxRepFaction, requiredMaxRepValue = quest.RequiredMaxRepValue,
                             requiredFactionValue1 = quest.RequiredFactionValue1, requiredFactionValue2 = quest.RequiredFactionValue2,
+                            deliveryRequirements = quest.DeliveryItems, acceptanceSupplies = quest.AcceptanceSupplies,
+                            supplementalSupply = quest.SupplementalSupply,
+                            deliveryStock = quest.DeliveryItems?.Select(item => new { item.ItemId,
+                                carried = snapshot.CarriedItemCounts != null ? (long?)(snapshot.CarriedItemCounts.TryGetValue(item.ItemId, out long stock) ? stock : 0) : null }).ToArray(),
                             skillObservations = snapshot.SkillValues, reputationObservations = snapshot.ReputationValues,
                             optionalRequirementEvidence = "Null means absent/unknown; zero is an explicit source value. Server offer/acceptance remains required.",
                             requiredFactionId1 = quest.RequiredFactionId1, requiredFactionId2 = quest.RequiredFactionId2,
