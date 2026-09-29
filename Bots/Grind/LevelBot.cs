@@ -1107,10 +1107,10 @@ namespace Bots.Grind
                                 || owner.Actor.IsCasting || owner.Actor.ChanneledCastingSpellId != 0
                                 || LootFrame.Instance.IsVisible || !Current()) return RunStatus.Failure;
                             attempted = true;
-                            owner.Subject.Interact();
+                            owner.Subject.Interact(true);
                             return Current() ? RunStatus.Success : RunStatus.Failure;
                         })),
-                        Guard(new WaitLuaEvent("LOOT_OPENED", () => owner.Type == PoiType.Loot ? 3 : 10,
+                        Guard(new WaitLuaEvent("LOOT_OPENED", () => owner.Type == PoiType.Loot || owner.Type == PoiType.Skin ? 3 : 10,
                             new TreeSharp.Action(ctx =>
                             {
                                 if (!Current()) return RunStatus.Failure;
@@ -1128,10 +1128,11 @@ namespace Bots.Grind
                         // but it did not run the callback and is not looted progress.
                         Guard(new TreeSharp.Action(ctx => observedEvent && dispatched ? RunStatus.Success : RunStatus.Failure)),
                         Guard(new DecoratorContinue(
-                            ctx => (CharacterSettings.Instance.SkinMobs || CharacterSettings.Instance.NinjaSkin)
+                            ctx => owner.Type == PoiType.Loot
+                                && (CharacterSettings.Instance.SkinMobs || CharacterSettings.Instance.NinjaSkin)
                                 && owner.Subject is WoWUnit unit && unit.SkinType == WoWCreatureSkinType.Leather
-                                && unit.Level < owner.Actor.CanSkinLevel,
-                            Guard(new WaitContinue(5, ctx => owner.Subject.ToUnit().CanSkin
+                                && unit.Level <= owner.Actor.CanSkinLevel,
+                            Guard(new WaitContinue(2, ctx => owner.Subject.ToUnit().CanSkin
                                 && LootTargeting.Instance.FirstObject != null && LootTargeting.Instance.FirstObject.Guid == owner.Guid,
                                 new ActionAlwaysSucceed())))),
                         Guard(new DecoratorContinue(ctx => owner.Type == PoiType.Loot,

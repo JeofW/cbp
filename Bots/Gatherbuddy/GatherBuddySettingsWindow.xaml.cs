@@ -182,12 +182,6 @@ namespace Bots.Gatherbuddy
             set { _s.PathingType = (PathType)value; OnPropertyChanged(nameof(PathingTypeIndex)); }
         }
 
-        public double NodeDetectionRange
-        {
-            get => _s.NodeDetectionRange;
-            set { _s.NodeDetectionRange = (float)value; OnPropertyChanged(nameof(NodeDetectionRange)); }
-        }
-
         public double HeightModifier
         {
             get => _s.HeightModifier;

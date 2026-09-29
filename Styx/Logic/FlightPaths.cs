@@ -987,11 +987,19 @@ namespace Styx.Logic
             float z = (float?)element.Attribute("Z") ?? 0;
             Location = new WoWPoint(x, y, z);
 
-            var connectionsAttr = (string)element.Attribute("Connections");
-            if (!string.IsNullOrEmpty(connectionsAttr))
+            var connections = element.Element("Connections");
+            if (connections != null)
             {
-                foreach (var conn in connectionsAttr.Split(','))
-                    Connections.Add(conn.Trim());
+                foreach (var connection in connections.Elements("Connection"))
+                    Connect((string)connection.Attribute("name"));
+            }
+            else
+            {
+                // Old comma-joined data cannot distinguish name punctuation from
+                // separators. Keep only an unambiguous singleton; relearn others.
+                var legacy = (string)element.Attribute("Connections");
+                if (!string.IsNullOrEmpty(legacy) && !legacy.Contains(','))
+                    Connect(legacy.Trim());
             }
         }
 
@@ -1011,7 +1019,8 @@ namespace Styx.Logic
                 new XAttribute("X", Location.X),
                 new XAttribute("Y", Location.Y),
                 new XAttribute("Z", Location.Z),
-                new XAttribute("Connections", string.Join(",", Connections))
+                new XElement("Connections", Connections.OrderBy(name => name, StringComparer.Ordinal)
+                    .Select(name => new XElement("Connection", new XAttribute("name", name))))
             );
         }
     }

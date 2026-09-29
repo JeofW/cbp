@@ -46,9 +46,9 @@ namespace Styx.Logic.Profiles.Quest
                 throw new ProfileException("Could not parse X, Y and Z in MoveToNode", ex);
             }
 
-            string locationName = (element.Attribute("Name") ?? element.Attribute("DestName"))?.Value;
+            string locationName = (GetAttributeByAliases(element, "Name") ?? GetAttributeByAliases(element, "DestName"))?.Value;
 
-            var precAttr = element.Attribute("Precision");
+            var precAttr = GetAttributeByAliases(element, "Precision");
             float precision = 1.5f;
             if (precAttr != null)
             {
@@ -56,14 +56,14 @@ namespace Styx.Logic.Profiles.Quest
                     throw new ProfileAttributeExpectedException<float>(precAttr);
             }
 
-            var questAttr = element.Attribute("QuestId");
+            var questAttr = GetAttributeByAliases(element, "QuestId");
             uint questId = 0;
             if (questAttr != null && !uint.TryParse(questAttr.Value, out questId))
                 throw new ProfileAttributeExpectedException<int>(questAttr);
 
             // Nav="Fly" or Nav="Run" — optional. Absent = auto-detect.
             NavType? navType = null;
-            var navAttr = element.Attribute("Nav");
+            var navAttr = GetAttributeByAliases(element, "Nav");
             if (navAttr != null)
             {
                 if (Enum.TryParse<NavType>(navAttr.Value, true, out NavType parsed))
@@ -77,9 +77,9 @@ namespace Styx.Logic.Profiles.Quest
 
         private static WoWPoint ParseLocation(XElement element)
         {
-            var xAttr = element.Attribute("X");
-            var yAttr = element.Attribute("Y");
-            var zAttr = element.Attribute("Z");
+            var xAttr = GetAttributeByAliases(element, "X");
+            var yAttr = GetAttributeByAliases(element, "Y");
+            var zAttr = GetAttributeByAliases(element, "Z");
 
             if (xAttr == null || yAttr == null || zAttr == null)
                 throw new ProfileException("Missing X, Y or Z attribute");

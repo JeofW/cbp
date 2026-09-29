@@ -147,7 +147,7 @@ namespace Styx.Logic.Profiles
                         try
                         {
                             NpcResult nearestNpc = NpcQueries.GetNearestNpc(
-                                StyxWoW.Me.FactionTemplate.Faction,
+                                StyxWoW.Me.FactionTemplate,
                                 StyxWoW.Me.MapId,
                                 StyxWoW.Me.Location,
                                 type.AsNpcFlag(),
@@ -170,7 +170,7 @@ namespace Styx.Logic.Profiles
                 }
 
                 WoWPoint location = ObjectManager.Me.Location;
-                WoWFaction playerFaction = StyxWoW.Me?.FactionTemplate?.Faction;
+                WoWFactionTemplate playerFaction = StyxWoW.Me?.FactionTemplate;
                 return source
                     .OrderByDescending(v => GetProfileVendorFactionPreference(v, playerFaction))
                     .ThenBy(v => location.Distance(v.Location))
@@ -183,7 +183,7 @@ namespace Styx.Logic.Profiles
             }
         }
 
-        private static int GetProfileVendorFactionPreference(Vendor vendor, WoWFaction playerFaction)
+        private static int GetProfileVendorFactionPreference(Vendor vendor, WoWFactionTemplate playerFaction)
         {
             if (vendor == null || playerFaction == null || vendor.Entry <= 0)
                 return 0;
@@ -192,8 +192,8 @@ namespace Styx.Logic.Profiles
             if (npc == null || npc.Faction == 0)
                 return 0;
 
-            return NpcQueries.GetFactionPreference(
-                playerFaction.RelationTo(new WoWFaction(npc.Faction)));
+            return NpcQueries.TryGetNpcReaction(playerFaction, npc.Faction, out var reaction)
+                ? NpcQueries.GetFactionPreference(reaction) : 0;
         }
 
         public IEnumerable<Vendor> GetEligibleVendors(Vendor.VendorType type, WoWClass playerClass)
@@ -208,10 +208,10 @@ namespace Styx.Logic.Profiles
         private bool CanUseAutomaticFallback(Vendor.VendorType type, WoWClass playerClass)
         {
             if (ForcedVendors != null && ForcedVendors.Count > 0) return false;
-            return AllVendors == null || AllVendors.Count == 0 || AllVendors.Any(v =>
+            var applicable = (AllVendors ?? new List<Vendor>()).Where(v =>
                 MatchesVendorType(v, type) &&
-                (type != Vendor.VendorType.Train || v.TrainClass == playerClass) &&
-                IsBlacklisted(v) && IsUsable(v));
+                (type != Vendor.VendorType.Train || v.TrainClass == playerClass)).ToArray();
+            return applicable.Length == 0 || applicable.Any(v => IsBlacklisted(v) && IsUsable(v));
         }
 
         /// <summary>

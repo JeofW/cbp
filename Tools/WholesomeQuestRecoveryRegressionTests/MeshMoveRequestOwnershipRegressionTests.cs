@@ -11,7 +11,8 @@ using Styx.WoWInternals;
 using Styx.WoWInternals.WoWObjects;
 
 // Real MeshNavigator.MoveTo, controlled virtual player observations and counted
-// mover callbacks. Arrival/direct-swim branches avoid native path generation.
+// mover callbacks. Dry/swimming arrival branches avoid native path generation.
+// Swimming must not authorize the removed straight-line navigation bypass.
 // Managed request ownership is not a claim of native frame/session atomicity.
 internal static class MeshMoveRequestOwnershipRegressionTests
 {
@@ -19,7 +20,7 @@ internal static class MeshMoveRequestOwnershipRegressionTests
     private const BindingFlags StaticHidden = BindingFlags.Static | BindingFlags.NonPublic;
     private static readonly WoWPoint Start = new(11, 22, 33), Target = new(44, 55, 66);
     private static readonly WoWPoint OldEnd = new(101, 102, 103), NewStart = new(81, 92, 103), NewEnd = new(84, 95, 106);
-    private enum Boundary { OriginRead, CoreRead, AliveRead, ArrivalRead, ElevatorStop, SwimCommand }
+    private enum Boundary { OriginRead, CoreRead, AliveRead, ArrivalRead, ElevatorStop, SwimArrivalRead }
     private enum Replacement { Path, Clear, Player, Mover, Provider, SameRequest }
     private sealed class AssertionFailure : Exception { internal AssertionFailure(string message) : base(message) { } }
     [ModuleInitializer]
@@ -47,6 +48,7 @@ internal static class MeshMoveRequestOwnershipRegressionTests
         cases.Add(("nonfinite destination retains ordinary rejected outcome", f => f.Rejected(WoWPoint.Empty)));
         cases.Add(("missing player retains ordinary rejected outcome", f => f.MissingPlayer()));
         cases.Add(("one instance cannot invalidate another instance request", f => f.OtherInstance()));
+        cases.Add(("swimming without a mesh route cannot move directly to a distant destination", f => f.UnprovedSwim()));
         int passed = 0, assertions = 0, unexpected = 0;
         foreach (var item in cases)
         {
@@ -64,9 +66,10 @@ internal static class MeshMoveRequestOwnershipRegressionTests
         internal Action? Callback;
         internal int Reads, Trigger;
         internal bool AliveTrigger;
+        internal WoWPoint ObservedLocation = MeshMoveRequestOwnershipRegressionTests.Target;
         internal Player(uint address) : base(address) { }
         internal void Fire() { var callback = Callback; Callback = null; callback?.Invoke(); }
-        public override WoWPoint Location { get { Reads++; if (Reads == Trigger) Fire(); return MeshMoveRequestOwnershipRegressionTests.Target; } }
+        public override WoWPoint Location { get { Reads++; if (Reads == Trigger) Fire(); return ObservedLocation; } }
         public override bool IsAlive { get { if (AliveTrigger) Fire(); return true; } }
     }
     private sealed class Mover : IPlayerMover
@@ -142,15 +145,15 @@ internal static class MeshMoveRequestOwnershipRegressionTests
             player.AliveTrigger = boundary == Boundary.AliveRead;
             player.Callback = callback;
             if (boundary == Boundary.ElevatorStop) { Begin(555UL); player.Callback = null; mover.OnStop = callback; }
-            if (boundary == Boundary.SwimCommand)
+            if (boundary == Boundary.SwimArrivalRead)
             {
-                player.Callback = null;
+                player.Trigger = 3;
                 uint address = player.BaseAddress + 2608;
                 Marshal.WriteInt32(new IntPtr(unchecked((int)address)), 2097152);
                 var cache = (ThreadLocal<Dictionary<IntPtr, byte[]>>)ObjectManager.Wow!.GetType().GetField("_cache", Hidden)!.GetValue(ObjectManager.Wow)!;
                 cache.Value!.Remove(new IntPtr(unchecked((int)address)));
                 if (!player.IsSwimming) throw new InvalidOperationException("Swimming flag was not observed");
-                Set("_usingDirectSwimMovement", true); mover.OnMove = callback;
+                Set("_usingDirectSwimMovement", true);
             }
         }
         internal void Stable(Boundary boundary)
@@ -158,9 +161,9 @@ internal static class MeshMoveRequestOwnershipRegressionTests
             bool invoked = false; long sequence = mesh.LastMoveAttemptSequence;
             Prepare(boundary, () => invoked = true);
             var result = mesh.MoveTo(Target);
-            Check(invoked && result == (boundary == Boundary.SwimCommand ? MoveResult.Moved : MoveResult.ReachedDestination), "ordinary controlled movement result changed");
+            Check(invoked && result == MoveResult.ReachedDestination, "ordinary controlled movement result changed");
             Check(mesh.LastMoveAttemptSequence == sequence + 1 && mesh.LastMoveResult == result && mesh.LastMoveDestination == Target, "ordinary request did not publish one matching outcome");
-            Check(mover.Moves == (boundary == Boundary.SwimCommand ? 1 : 0) && mover.Stops == (boundary == Boundary.ElevatorStop ? 1 : 0), "ordinary request added unexpected movement calls");
+            Check(mover.Moves == 0 && mover.Stops == (boundary == Boundary.ElevatorStop ? 1 : 0), "ordinary request added unexpected movement calls");
         }
         internal void Replace(Boundary boundary, Replacement replacement)
         {
@@ -180,7 +183,7 @@ internal static class MeshMoveRequestOwnershipRegressionTests
                         // Same instance, player and requested point; only the request
                         // lifetime distinguishes this nested real public MoveTo.
                         var inner = mesh.MoveTo(Target);
-                        if (inner != (boundary == Boundary.SwimCommand ? MoveResult.Moved : MoveResult.ReachedDestination))
+                        if (inner != MoveResult.ReachedDestination)
                             throw new InvalidOperationException("Actual nested request did not complete its controlled branch");
                     }
                     newer = new Snapshot(this); stops = mover.Stops; moves = mover.Moves;
@@ -219,6 +222,14 @@ internal static class MeshMoveRequestOwnershipRegressionTests
         {
             var other = new MeshNavigator(); Prepare(Boundary.OriginRead, () => other.OverrideCurrentPath(new[] { NewStart, NewEnd }));
             Check(mesh.MoveTo(Target) == MoveResult.ReachedDestination && other.CurrentPath.SequenceEqual(new[] { NewStart, NewEnd }), "one instance invalidated another movement owner");
+        }
+        internal void UnprovedSwim()
+        {
+            Prepare(Boundary.SwimArrivalRead, () => { });
+            player.ObservedLocation = Start;
+            var result = mesh.MoveTo(Target);
+            Check(mover.Moves == 0 && result != MoveResult.Moved && result != MoveResult.ReachedDestination,
+                "missing route became direct swimming authority");
         }
         public void Dispose()
         {

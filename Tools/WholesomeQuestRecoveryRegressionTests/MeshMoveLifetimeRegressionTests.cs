@@ -8,7 +8,7 @@ using Styx.Logic.Pathing;
 using Styx.WoWInternals;
 using Styx.WoWInternals.WoWObjects;
 
-// Calls the real public MoveTo through the unchanged, already executed W47
+// Calls the real public MoveTo through the retained descriptor-backed W47
 // descriptor-backed fixture. A retained wrapper is not a retained backing owner.
 // No native/game effects; observed changes are not an unobserved ABA guarantee.
 internal static class MeshMoveLifetimeRegressionTests
@@ -25,7 +25,7 @@ internal static class MeshMoveLifetimeRegressionTests
         if (!OperatingSystem.IsWindows() || IntPtr.Size != 4)
             throw new PlatformNotSupportedException("Movement lifetime tests require Windows x86.");
         var cases = new List<(string Name, Action<Fixture> Test)>();
-        foreach (string value in new[] { "OriginRead", "CoreRead", "AliveRead", "ArrivalRead", "ElevatorStop", "SwimCommand" })
+        foreach (string value in new[] { "OriginRead", "CoreRead", "AliveRead", "ArrivalRead", "ElevatorStop", "SwimArrivalRead" })
         {
             var boundary = value;
             cases.Add(($"{boundary}: same-address refresh retains the request", f => f.Stable(boundary, false)));
@@ -116,9 +116,9 @@ internal static class MeshMoveLifetimeRegressionTests
                 else Rebind(player, player.BaseAddress);
             });
             var result = mesh.MoveTo(Destination);
-            Check(invoked && result == (boundary == "SwimCommand" ? MoveResult.Moved : MoveResult.ReachedDestination), "stable backing owner lost ordinary movement result");
+            Check(invoked && result == MoveResult.ReachedDestination, "stable backing owner lost ordinary movement result");
             Check(mesh.LastMoveAttemptSequence == sequence + 1 && mesh.LastMoveResult == result, "stable request lost its single outcome");
-            Check(Moves == (boundary == "SwimCommand" ? 1 : 0) && Stops == (boundary == "ElevatorStop" ? 1 : 0), "stable request added movement effects");
+            Check(Moves == 0 && Stops == (boundary == "ElevatorStop" ? 1 : 0), "stable request added movement effects");
         }
         internal void SameMemory()
         {

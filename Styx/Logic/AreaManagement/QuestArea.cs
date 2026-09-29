@@ -56,21 +56,18 @@ public class QuestArea : GrindArea
         if (HotspotsCreated)
             return;
 
-        for (int i = 0; i < _areaDefinitions.Count; i++)
+        var polys = _areaDefinitions.ConvertAll(lv3 => lv3.ConvertAll(v3 => new Vector2(v3.X, v3.Y)));
+        foreach (var pnt in GenerateHotspots(polys))
         {
-            var polys = _areaDefinitions.ConvertAll(lv3 => lv3.ConvertAll(v3 => new Vector2(v3.X, v3.Y)));
-
-            foreach (var pnt in GenerateHotspots(polys))
-            {
-                WoWPoint woWPoint = new WoWPoint(pnt.X, pnt.Y, pnt.Z);
-                _circularHotspots.Enqueue(woWPoint.ToHotspot());
-                Hotspots.Add(woWPoint);
-            }
+            WoWPoint woWPoint = new WoWPoint(pnt.X, pnt.Y, pnt.Z);
+            _circularHotspots.Enqueue(woWPoint.ToHotspot());
+            Hotspots.Add(woWPoint);
         }
 
         if (_circularHotspots.Count <= 0)
         {
             Logging.Write($"No hotspots created for quest: {Quest.Name}");
+            return;
         }
 
         CircledHotspots = _circularHotspots;
@@ -102,7 +99,7 @@ public class QuestArea : GrindArea
                     var centroid = (v1 + v2 + v3) / 3f;
 
                     var xnaPos = new Tripper.XNAMath.Vector3(centroid.X, centroid.Y, 0f);
-                    if (Navigator.FindMeshHeight(ref xnaPos))
+                    if (Navigator.FindHeight(ref xnaPos) && float.IsFinite(xnaPos.Z))
                     {
                         result.Add(new Vector3(xnaPos.X, xnaPos.Y, xnaPos.Z));
                     }
@@ -114,7 +111,7 @@ public class QuestArea : GrindArea
                 foreach (var point in poly)
                 {
                     var xnaPos = new Tripper.XNAMath.Vector3(point.X, point.Y, 0f);
-                    if (Navigator.FindMeshHeight(ref xnaPos))
+                    if (Navigator.FindHeight(ref xnaPos) && float.IsFinite(xnaPos.Z))
                     {
                         result.Add(new Vector3(xnaPos.X, xnaPos.Y, xnaPos.Z));
                     }

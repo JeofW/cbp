@@ -909,9 +909,16 @@ namespace Bots.Gatherbuddy
             if (ShouldDeferSaleVisit(DateTime.UtcNow, _lastSaleVisitAt))
                 return false;
 
-            uint minFree      = (uint)GatherbuddySettings.Instance.MinFreeBagSlots;
-            bool herbsFull    = !GatherbuddySettings.Instance.GatherHerbs    || BagHelper.EmptyHerbSlots <= minFree;
-            bool mineralsFull = !GatherbuddySettings.Instance.GatherMinerals || BagHelper.EmptyMineSlots <= minFree;
+            return GatherStorageNeedsEmptying();
+        }
+
+        private static bool GatherStorageNeedsEmptying()
+        {
+            var settings = GatherbuddySettings.Instance;
+            if (settings.MinFreeBagSlots < 0 || (!settings.GatherHerbs && !settings.GatherMinerals)) return false;
+            uint minFree = (uint)settings.MinFreeBagSlots;
+            bool herbsFull = !settings.GatherHerbs || BagHelper.EmptyHerbSlots <= minFree;
+            bool mineralsFull = !settings.GatherMinerals || BagHelper.EmptyMineSlots <= minFree;
             return herbsFull && mineralsFull;
         }
 
@@ -944,7 +951,9 @@ namespace Bots.Gatherbuddy
             if (ProfileManager.CurrentProfile.MailboxManager.GetClosestMailbox() == null)
                 return false;
 
-            if (StyxWoW.Me.FreeBagSlots > s.MinFreeBagSlots)
+            // Storage pressure applies to mailing independently of the optional
+            // vendor setting and its cooldown.
+            if (StyxWoW.Me.FreeBagSlots > s.MinFreeBagSlots && !GatherStorageNeedsEmptying())
                 return false;
 
             return GetItemsToMail().Length > 0;

@@ -49,18 +49,18 @@ namespace Styx.Logic.Profiles.Quest
             }
             catch { }
 
-            var turnInIdAttr = element.Attribute("TurnInId");
+            var turnInIdAttr = GetAttributeByAliases(element, "TurnInId");
             int turnInId = 0;
             if (turnInIdAttr != null && !int.TryParse(turnInIdAttr.Value, out turnInId))
                 throw new ProfileAttributeExpectedException<int>(turnInIdAttr);
 
-            string turnInName = element.Attribute("TurnInName")?.Value;
+            string turnInName = GetAttributeByAliases(element, "TurnInName")?.Value;
 
             if (turnInId == 0 && turnInName == null)
                 throw new ProfileMissingAttributeException<int>("TurnInId", element);
 
             QuestObjectType? turnInType = null;
-            var turnInTypeAttr = element.Attribute("TurnInType");
+            var turnInTypeAttr = GetAttributeByAliases(element, "TurnInType");
             if (turnInTypeAttr != null)
             {
                 turnInType = PickUpNode.ParseQuestObjectType(turnInTypeAttr.Value);
@@ -68,21 +68,21 @@ namespace Styx.Logic.Profiles.Quest
                     throw new ProfileAttributeExpectedException(turnInTypeAttr, "Object", "Npc");
             }
 
-            var questIdAttr = element.Attribute("QuestId");
+            var questIdAttr = GetAttributeByAliases(element, "QuestId");
             int questId = 0;
             if (questIdAttr != null)
                 int.TryParse(questIdAttr.Value, out questId);
 
-            string questName = element.Attribute("QuestName")?.Value;
+            string questName = GetAttributeByAliases(element, "QuestName")?.Value;
 
             return new TurnInNode(turnInLocation, (uint)turnInId, turnInName, turnInType, (uint)questId, questName);
         }
 
         private static WoWPoint ParseLocation(XElement element)
         {
-            var xAttr = element.Attribute("X");
-            var yAttr = element.Attribute("Y");
-            var zAttr = element.Attribute("Z");
+            var xAttr = GetAttributeByAliases(element, "X");
+            var yAttr = GetAttributeByAliases(element, "Y");
+            var zAttr = GetAttributeByAliases(element, "Z");
 
             if (xAttr == null || yAttr == null || zAttr == null)
                 throw new ProfileException("Missing X, Y or Z attribute");

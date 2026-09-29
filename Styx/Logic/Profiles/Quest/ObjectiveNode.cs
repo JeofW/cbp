@@ -42,41 +42,44 @@ namespace Styx.Logic.Profiles.Quest
 
         public static ObjectiveNode FromXml(XElement element)
         {
-            var questIdAttr = element.Attribute("QuestId");
-            uint questId = 0;
-            if (questIdAttr != null)
-                uint.TryParse(questIdAttr.Value, out questId);
+            var questIdAttr = GetAttributeByAliases(element, "QuestId", "Quest");
+            if (questIdAttr == null)
+                throw new ProfileMissingAttributeException<int>("QuestId", element);
+            if (!uint.TryParse(questIdAttr.Value, out uint questId) || questId == 0)
+                throw new ProfileAttributeExpectedException<int>(questIdAttr);
 
-            ObjectiveType objectiveType = ObjectiveType.KillMob;
-            var typeAttr = element.Attribute("Type");
-            if (typeAttr != null)
-            {
-                if (!Enum.TryParse<ObjectiveType>(typeAttr.Value, true, out objectiveType))
-                {
-                    objectiveType = ObjectiveType.KillMob;  // Fallback
-                }
-            }
+            var typeAttr = GetAttributeByAliases(element, "Type");
+            if (typeAttr == null)
+                throw new ProfileMissingAttributeException("Type", element);
+            if (!ObjectiveInfo.TryParseObjectiveType(typeAttr.Value, out ObjectiveType objectiveType)
+                || objectiveType == ObjectiveType.TurnIn)
+                throw new ProfileAttributeExpectedException(typeAttr);
 
             // Get objective ID using type-specific aliases (HB 4.3.4: smethod_2)
             string[] idAliases = GetIdAliases(objectiveType);
             var objectiveIdAttr = GetAttributeByAliases(element, idAliases);
             uint objectiveId = 0;
-            if (objectiveIdAttr != null)
-                uint.TryParse(objectiveIdAttr.Value, out objectiveId);
+            if (objectiveIdAttr != null && (!uint.TryParse(objectiveIdAttr.Value, out objectiveId) || objectiveId == 0))
+                throw new ProfileAttributeExpectedException<int>(objectiveIdAttr);
 
-            string objectiveName = element.Attribute("Name")?.Value;
+            string objectiveName = GetAttributeByAliases(element, "Name")?.Value;
 
             // Get count using type-specific aliases (HB 4.3.4: smethod_4)
             string[] countAliases = GetCountAliases(objectiveType);
             var countAttr = GetAttributeByAliases(element, countAliases);
             int objectiveCount = 1;
-            if (countAttr != null)
-                int.TryParse(countAttr.Value, out objectiveCount);
+            if (countAttr != null && (!int.TryParse(countAttr.Value, out objectiveCount) || objectiveCount <= 0))
+                throw new ProfileAttributeExpectedException<int>(countAttr);
 
-            var indexAttr = element.Attribute("Index");
+            var indexAttr = GetAttributeByAliases(element, "Index");
             int objectiveIndex = -1;  // -1 = not specified, will search by ID instead
-            if (indexAttr != null)
-                int.TryParse(indexAttr.Value, out objectiveIndex);
+            if (indexAttr != null && (!int.TryParse(indexAttr.Value, out objectiveIndex) || objectiveIndex < -1))
+                throw new ProfileAttributeExpectedException<int>(indexAttr);
+            // Retain the existing explicit-index profile contract. The executor
+            // resolves it against current quest objectives; absence of both forms
+            // of identity must not turn into an arbitrary kill/collect instruction.
+            if (objectiveIdAttr == null && objectiveIndex < 0)
+                throw new ProfileMissingAttributeException<int>(idAliases[0], element);
 
             return new ObjectiveNode(questId, objectiveType, objectiveId, objectiveName, objectiveCount, objectiveIndex);
         }
@@ -119,19 +122,5 @@ namespace Styx.Logic.Profiles.Quest
             }
         }
 
-        /// <summary>
-        /// Helper to get first matching attribute from array of aliases.
-        /// HB 4.3.4: Class570.smethod_3() - part of obfuscated utilities
-        /// </summary>
-        private static XAttribute GetAttributeByAliases(XElement element, string[] aliases)
-        {
-            foreach (var alias in aliases)
-            {
-                var attr = element.Attribute(alias);
-                if (attr != null)
-                    return attr;
-            }
-            return null;
-        }
     }
 }

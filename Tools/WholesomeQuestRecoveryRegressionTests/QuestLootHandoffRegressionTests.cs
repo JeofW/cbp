@@ -95,6 +95,7 @@ public static class HandoffCases {
  static void Reset(string owner){
   Stage=null;Callback=null;Targets=Publications=Clears=NavClears=0;Ack=true;
   Interactions=Slots=Closes=Stats=Moves=0;FrameGuid=0;Blacklisted.Clear();Lua.Events.Handlers.Clear();
+  CharacterSettings.Instance=new CharacterSettings();
   foreach(string field in new[]{"_lastLootGuid","_lootAttemptCount","_lootFailCount"}){var f=typeof(LevelProbe).GetField(field,BindingFlags.Static|BindingFlags.NonPublic);f.SetValue(null,Activator.CreateInstance(f.FieldType));}
   Actor=new LocalPlayer{Guid=1,IsMoving=true};StyxWoW.Me=Actor;WoWMovement.ActiveMover=Actor;
   ObjectManager.CachedUnits.Clear();ObjectManager.CachedUnits.Add(new WoWUnit{Guid=80,Aggro=true});
@@ -153,6 +154,7 @@ public static class HandoffCases {
   AddLootCompletionCases(cases);
   AddLootAdmissionCases(cases);
   AddCombatObservationCases(cases);
+  AddUpstreamLootCases(cases);
   int passed=0,assertions=0,unexpected=0;foreach(var item in cases){try{item.Item2();passed++;Console.WriteLine("PASS quest loot handoff: "+item.Item1);}catch(Failure e){assertions++;Console.Error.WriteLine("FAIL quest loot handoff: "+item.Item1+": "+e.Message);}catch(Exception e){unexpected++;Console.Error.WriteLine("ERROR quest loot handoff: "+item.Item1+": "+e);}}
   Console.WriteLine($"Quest loot handoff scenarios: {passed}/{cases.Count}; assertions={assertions}; unexpected={unexpected}; actual caller factories/admission/POI actions and real TreeSharp; controlled world/target callbacks; no loot-frame or native acknowledgement provenance.");
   if(assertions+unexpected!=0)throw new InvalidOperationException("Quest loot handoff regression");
@@ -235,10 +237,42 @@ public static class HandoffCases {
    Check(Once(LevelProbe.CreateLootBehavior())==RunStatus.Success&&Publications==1,"actual absence of actor/pet combat incorrectly blocks healthy loot");
   }));}
  }
+ static void AddUpstreamLootCases(List<(string,System.Action)> cases){
+  void Add(string name,System.Action test)=>cases.Add(("upstream loot/"+name,()=>{Reset("loot");Targeting.Instance.FirstUnit=null;Actor.IsMoving=false;test();}));
+  Composite Begin(){var tree=LevelProbe.CreateLootBehavior();tree.Start(null);Check(Tick(tree)==RunStatus.Running&&Interactions==1,"owned attempt failed to submit and wait");return tree;}
+  void Open(){FrameGuid=Loot.Guid;Lua.Events.Fire("LOOT_OPENED");}
+  Add("bounded owned attempt bypasses unrelated interaction throttle",()=>{Loot.TimerReady=false;var tree=Begin();try{Check(Tick(tree)==RunStatus.Running&&Interactions==1,"waiting operation repeated its interaction");}finally{tree.Stop(null);}});
+  foreach(PoiType type in new[]{PoiType.Loot,PoiType.Skin,PoiType.Harvest}){
+   var kind=type;Add("frame deadline "+kind,()=>{
+    if(kind==PoiType.Harvest){Loot=new WoWGameObject{Guid=3,IsHerb=true};Original.AsObject=Loot;LootTargeting.Instance.FirstObject=Loot;}
+    Original.Type=kind;var tree=Begin();try{Check(Walk(tree).OfType<WaitLuaEvent>().Single().Timeout==TimeSpan.FromSeconds(kind==PoiType.Harvest?10:3),"wrong bounded frame wait");}finally{tree.Stop(null);}
+   });
+  }
+  Add("skinning completion does not wait to skin the same corpse again",()=>{
+   Original.Type=PoiType.Skin;CharacterSettings.Instance.SkinMobs=true;var tree=Begin();try{Open();Check(Tick(tree)==RunStatus.Success&&Clears==1&&Stats==0&&Interactions==1,"completed skin operation entered a second post-loot skin wait");}finally{tree.Stop(null);}
+  });
+  Add("exact maximum skinnable level remains eligible",()=>{
+   CharacterSettings.Instance.SkinMobs=true;((WoWUnit)Loot).Level=Actor.CanSkinLevel;var tree=Begin();try{
+    Open();Check(Tick(tree)==RunStatus.Running&&Clears==0&&Stats==0&&Interactions==1,"equal skinnable level skipped the readiness wait");
+    ((WoWUnit)Loot).CanSkin=true;Check(Tick(tree)==RunStatus.Success&&Clears==1&&Stats==1&&Interactions==1,"ready skinning did not release normal loot completion");
+   }finally{tree.Stop(null);}
+  });
+  Add("skin readiness has a two-second bounded wait",()=>{
+   CharacterSettings.Instance.SkinMobs=true;var tree=Begin();try{Open();Check(Tick(tree)==RunStatus.Running,"readiness wait did not start");
+    var pending=Walk(tree).OfType<WaitContinue>().Single(wait=>wait is not WaitLuaEvent&&wait.LastStatus==RunStatus.Running);
+    Check(pending.Timeout==TimeSpan.FromSeconds(2),"old five-second skin wait retained");
+   }finally{tree.Stop(null);}
+  });
+  foreach(string change in new[]{"actor","map","poi","combat","loot-object"}){string mutation=change;Add("skin readiness revokes "+mutation,()=>{
+   CharacterSettings.Instance.SkinMobs=true;var tree=Begin();try{Open();Check(Tick(tree)==RunStatus.Running,"readiness wait did not start");ChangeLoot(mutation);((WoWUnit)Loot).CanSkin=true;
+    Tick(tree);Check(Stats==0&&Clears==0&&Interactions==1&&Blacklisted.Count==0,"skin readiness consumed a revoked owner");
+   }finally{tree.Stop(null);}
+  });}
+ }
 }
 public class ItemInfo {public int UniqueCount,BeginQuestId;}
 /* Controlled observed world. */ namespace Styx.WoWInternals.WoWObjects {
- public class WoWObject {public ulong Guid;public uint Entry=70;public bool IsValid=true;public string Name="controlled";public WoWPoint Location=new(10,10,10);public bool WithinInteractRange=true;public WoWUnit ToUnit()=>this as WoWUnit;public WoWGameObject ToGameObject()=>this as WoWGameObject;public void Interact(){HandoffCases.Interactions++;HandoffCases.Event("interact");}}
+ public class WoWObject {public ulong Guid;public uint Entry=70;public bool IsValid=true,TimerReady=true;public string Name="controlled";public WoWPoint Location=new(10,10,10);public bool WithinInteractRange=true;public WoWUnit ToUnit()=>this as WoWUnit;public WoWGameObject ToGameObject()=>this as WoWGameObject;public void Interact()=>Interact(false);public void Interact(bool ignoreTimer){if(!ignoreTimer&&!TimerReady)return;HandoffCases.Interactions++;HandoffCases.Event("interact");}}
  public class WoWUnit:WoWObject {public bool IsAlive=true,IsHostile=true,IsPlayer,IsMoving,Combat,CanSkin,CanLoot=true,Aggro;private bool withinLootRange=true;public bool WithinLootRange{get{bool observed=withinLootRange;HandoffCases.Event("loot-range");return observed;}set{withinLootRange=value;}}public bool Dead=>!IsAlive;public uint FactionId=1;public int Level=10,Race,Class;public WoWUnit OwnedByUnit,CurrentTarget;public double Range=5;public double Distance=>Range;public double DistanceSqr=>Range*Range;public double MyAggroRange=>15;public bool InLineOfSpellSight=true;public ulong CurrentTargetGuid=>CurrentTarget?.Guid??0;public bool GotTarget=>CurrentTarget!=null;public WoWCreatureSkinType SkinType=>WoWCreatureSkinType.Leather;
   public void Target(){HandoffCases.Targets++;if(HandoffCases.Ack)StyxWoW.Me.CurrentTarget=this;HandoffCases.Event("target");}public void ClearTarget(){CurrentTarget=null;}
  }
