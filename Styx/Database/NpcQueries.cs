@@ -126,12 +126,38 @@ namespace Styx.Database
         /// <returns>The nearest trainer, or null if not found.</returns>
         public static NpcResult GetNearestTrainer(WoWFaction myFaction, uint mapId, WoWPoint searchLocation, WoWClass searchClass)
         {
+            return GetNearestTrainer(ResolvePlayerTemplate(myFaction), mapId, searchLocation, searchClass, null);
+        }
+
+        public static NpcResult GetNearestTrainer(WoWFactionTemplate myFaction, uint mapId, WoWPoint searchLocation, WoWClass searchClass)
+        {
             return GetNearestTrainer(myFaction, mapId, searchLocation, searchClass, null);
         }
 
-        private static NpcResult GetNearestTrainer(WoWFaction myFaction, uint mapId,
+        // Keep the legacy Faction-based ABI used by runtime bots. A Faction.dbc
+        // record is not a faction template; only the matching current player can
+        // supply that missing template identity. Other callers use the overload.
+        private static WoWFactionTemplate ResolvePlayerTemplate(WoWFaction faction)
+        {
+            if (faction == null) return null;
+            var template = StyxWoW.Me?.FactionTemplate;
+            return template != null && faction.Id != 0 && template.Faction?.Id == faction.Id ? template : null;
+        }
+
+        internal static bool TryGetNpcReaction(WoWFactionTemplate faction, uint templateId, out WoWUnitReaction reaction)
+        {
+            reaction = WoWUnitReaction.Neutral;
+            if (faction == null || templateId == 0) return false;
+            var other = WoWFactionTemplate.FromId(templateId);
+            if (other == null) return false;
+            reaction = faction.GetReactionTowards(other);
+            return true;
+        }
+
+        private static NpcResult GetNearestTrainer(WoWFactionTemplate myFaction, uint mapId,
             WoWPoint searchLocation, WoWClass searchClass, Func<NpcResult, bool> extraConditions)
         {
+            if (myFaction == null) return null;
             EnsureInitialized();
             if (_getNearestTrainerCmd == null) return null;
 
@@ -155,8 +181,8 @@ namespace Styx.Database
                 if (Styx.Logic.Profiles.VendorSafetyPolicy.IsRejected(result.Entry) ||
                     (extraConditions != null && !extraConditions(result)))
                     continue;
-                WoWUnitReaction reaction = myFaction.RelationTo(new WoWFaction(result.Faction));
-                if ((result.NpcFlags & 32U) != 0U && reaction >= WoWUnitReaction.Neutral)
+                if ((result.NpcFlags & 32U) != 0U && TryGetNpcReaction(myFaction, result.Faction, out var reaction)
+                    && reaction >= WoWUnitReaction.Neutral)
                 {
                     candidates.Add(result);
                 }
@@ -164,8 +190,9 @@ namespace Styx.Database
 
             foreach (NpcResult result in OrderByFactionPreference(
                          candidates,
-                         candidate => myFaction.RelationTo(new WoWFaction(candidate.Faction))))
+                         candidate => TryGetNpcReaction(myFaction, candidate.Faction, out var reaction) ? reaction : WoWUnitReaction.Hated))
             {
+                if (!TryGetNpcReaction(myFaction, result.Faction, out var reaction) || reaction < WoWUnitReaction.Neutral) continue;
                 if (_trainerNavCache.TryGetValue(result, out bool cached))
                 {
                     if (!cached) continue;
@@ -196,6 +223,17 @@ namespace Styx.Database
             UnitNPCFlags npcFlags,
             Func<NpcResult, bool> extraConditions = null)
         {
+            return GetNearestNpc(ResolvePlayerTemplate(myFaction), mapId, searchLocation, npcFlags, extraConditions);
+        }
+
+        public static NpcResult GetNearestNpc(
+            WoWFactionTemplate myFaction,
+            uint mapId,
+            WoWPoint searchLocation,
+            UnitNPCFlags npcFlags,
+            Func<NpcResult, bool> extraConditions = null)
+        {
+            if (myFaction == null) return null;
             EnsureInitialized();
             if (_getNearestNpcCmd == null) return null;
 
@@ -228,9 +266,8 @@ namespace Styx.Database
                     continue;
                 
                 // Check if class trainer matches our class (if applicable) and faction is friendly
-                WoWUnitReaction reaction = myFaction.RelationTo(new WoWFaction(result.Faction));
                 if (((npcFlags & UnitNPCFlags.ClassTrainer) == UnitNPCFlags.None || result.TrainerClass == (int)myClass) &&
-                    reaction >= WoWUnitReaction.Neutral)
+                    TryGetNpcReaction(myFaction, result.Faction, out var reaction) && reaction >= WoWUnitReaction.Neutral)
                 {
                     if (extraConditions != null && !extraConditions(result))
                         continue;
@@ -240,8 +277,9 @@ namespace Styx.Database
 
             foreach (NpcResult result in OrderByFactionPreference(
                          candidates,
-                         candidate => myFaction.RelationTo(new WoWFaction(candidate.Faction))))
+                         candidate => TryGetNpcReaction(myFaction, candidate.Faction, out var reaction) ? reaction : WoWUnitReaction.Hated))
             {
+                if (!TryGetNpcReaction(myFaction, result.Faction, out var reaction) || reaction < WoWUnitReaction.Neutral) continue;
                 if (_npcNavCache.TryGetValue(result, out bool cached))
                 {
                     if (!cached) continue;

@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Linq;
 
 
@@ -56,6 +57,15 @@ public abstract class OrderNode : IXmlObject
         if (!nullable.HasValue)
             throw new ProfileUnknownElementException(element);
         return _nodeFactories[nullable.Value](element);
+    }
+
+    protected internal static XAttribute GetAttributeByAliases(XElement element, params string[] aliases)
+    {
+        var matches = element.Attributes().Where(attribute => attribute.Name.Namespace == XNamespace.None
+            && aliases.Contains(attribute.Name.LocalName, StringComparer.OrdinalIgnoreCase)).ToArray();
+        if (matches.Select(attribute => attribute.Value).Distinct(StringComparer.Ordinal).Skip(1).Any())
+            throw new ProfileException("Conflicting attribute aliases in " + element.Name + ": " + string.Join(", ", aliases));
+        return matches.FirstOrDefault();
     }
 
     private static OrderNodeType? ParseNodeType(string nodeTypeName)

@@ -547,21 +547,26 @@ namespace Styx.Logic.Combat
 			if (me == null)
 				return false;
 
+			// Cast time, funnel state and range can depend on current client
+			// state. Use one valid observation, not an ID-only cached default.
+			if (!spell.TryGetCurrentSpellInfo(out var castTime, out var isFunnel, out var minRange, out var maxRange))
+				return false;
+
 			// HB 4.3.4: Range checks
 			if (checkRange && target != null)
 			{
 				if (!target.InLineOfSpellSight)
 					return false;
-				if (spell.MaxRange != 0f && target.Distance > (double)spell.MaxRange)
+				if (maxRange != 0f && target.Distance > (double)maxRange)
 					return false;
-				if (spell.MaxRange == 0f && !target.IsWithinMeleeRange)
+				if (maxRange == 0f && !target.IsWithinMeleeRange)
 					return false;
-				if (spell.MinRange != 0f && target.Distance < (double)spell.MinRange)
+				if (minRange != 0f && target.Distance < (double)minRange)
 					return false;
 			}
 
 			// HB 4.3.4: Movement check (cast time or funnel spells can't be cast while moving)
-			if (checkMovement && (spell.CastTime != 0U || spell.IsFunnel) && me.IsMoving)
+			if (checkMovement && (castTime != 0U || isFunnel) && me.IsMoving)
 				return false;
 
 			// HB 4.3.4: Lag tolerance path
@@ -630,8 +635,7 @@ namespace Styx.Logic.Combat
 					castTargetGuid = comboTarget.Guid;
 			}
 
-			CastSpellById(spell.Id, castTargetGuid);
-			return true;
+			return TryCastSpellById(spell.Id, castTargetGuid);
 		}
 
 		/// <summary>Cast a spell by ID on the current target.</summary>
@@ -715,9 +719,8 @@ namespace Styx.Logic.Combat
 			while (list.Count > 0)
 			{
 				int idx = _spellRandom.Next(0, list.Count);
-				if (CanCast(list[idx], target, checkRange))
+				if (CanCast(list[idx], target, checkRange) && Cast(list[idx], target))
 				{
-					Cast(list[idx], target);
 					return true;
 				}
 				list.RemoveAt(idx);
@@ -741,9 +744,8 @@ namespace Styx.Logic.Combat
 			while (list.Count > 0)
 			{
 				int idx = _spellRandom.Next(0, list.Count);
-				if (CanBuff(list[idx], target, checkRange))
+				if (CanBuff(list[idx], target, checkRange) && Buff(list[idx], target))
 				{
-					Buff(list[idx], target);
 					return true;
 				}
 				list.RemoveAt(idx);
@@ -810,13 +812,20 @@ namespace Styx.Logic.Combat
 		/// </summary>
 		public static void CastSpellById(int spellId, ulong targetGuid)
 		{
+			TryCastSpellById(spellId, targetGuid);
+		}
+
+		// A true result records completed local dispatch, not native/server acceptance.
+		// An executor exception also cannot establish that no native effect occurred.
+		private static bool TryCastSpellById(int spellId, ulong targetGuid)
+		{
 			StyxWoW.ResetAfk();
 
 			ExecutorRand? executor = ObjectManager.Executor;
 			if (executor == null)
 			{
 				Logging.WriteDebug("[SpellManager] Invalid executor for CastSpellById");
-				return;
+				return false;
 			}
 
 			// Split 64-bit GUID into two 32-bit halves (HB 4.3.4: Struct72.smethod_4)
@@ -850,10 +859,12 @@ namespace Styx.Logic.Combat
 				long verificationUntil = Environment.TickCount64 + CastAttemptVerificationDelayMs;
 				lock (_cooldownSync)
 					_castVerificationUntilTicks[spellId] = verificationUntil;
+				return true;
 			}
 			catch (Exception ex)
 			{
 				Logging.WriteException(ex);
+				return false;
 			}
 		}
 
@@ -966,7 +977,8 @@ namespace Styx.Logic.Combat
 			if (spell == null)
 				return false;
 
-			CastSpellById(spell.Id, targetGuid);
+			if (!TryCastSpellById(spell.Id, targetGuid))
+				return false;
 
 			if (!returnImmediately)
 			{
@@ -1051,10 +1063,12 @@ namespace Styx.Logic.Combat
 						executor.AddLine("retn");
 						executor.Execute();
 						
-						int result;
+						// Build12340 defines only AL on both return paths.
+						// Undefined high EAX bits must not turn refusal into success.
+						byte result;
 						using (StyxWoW.Memory.TemporaryCacheState(false))
 						{
-							result = executor.Memory.Read<int>(executor.ReturnPointer);
+							result = executor.Memory.Read<byte>(executor.ReturnPointer);
 						}
 						return result != 0;
 					}

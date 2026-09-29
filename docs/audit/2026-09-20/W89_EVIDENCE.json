@@ -1,0 +1,306 @@
+{
+  "checkpoint": "W89",
+  "date": "2026-09-20",
+  "timezone": "Asia/Kuala_Lumpur",
+  "repository": "jeofwong/CopilotBuddy-private",
+  "repository_id": 1367174964,
+  "pr": 51,
+  "branch": "audit/next-55-equipment-observation-20260917",
+  "tested_source": "67cdec20d5ac7b7bc9ae64e9de633252f1ad248a",
+  "tested_tree": "1b73cba2afaa5ddb9efe58964a3bc302f8f65827",
+  "last_production_change": "67cdec20d5ac7b7bc9ae64e9de633252f1ad248a",
+  "last_scheduler_production_change": "040a274d79707a33b1a28b46ac6eef3369ddf521",
+  "direct_master": "b2324913e2499ba30b239dd67224ca2c655c05cc",
+  "documentation_note": "This documentation-only descendant is not an additional tested source revision. Its publication SHA is recorded in PR51 and the downloadable PUBLICATION.json/handoff.",
+  "reconciliation": {
+    "provided_head": "071d3d8bf31190c57b7a8bf1051555b959e3f849",
+    "first_live_head": "76673b224ab4f2f26b22472c8a81f16f0808301f",
+    "subsequent_live_head": "716e7f6b3976c9ba09726a78aee5a489f4367970",
+    "intervening_work_not_authored_here": [
+      "040a274d79707a33b1a28b46ac6eef3369ddf521",
+      "3bf9c9a206a48864f00a7b91a179ca6268eb398d",
+      "76673b224ab4f2f26b22472c8a81f16f0808301f",
+      "716e7f6b3976c9ba09726a78aee5a489f4367970"
+    ]
+  },
+  "own_source_commits": {
+    "ae82b6de7ce31b68d3564fbce02f1ae21f143c77": "Six lifecycle cases added to six retained constructor cases; test only.",
+    "7f344c819890ba96318a0fccc401ca44101c732f": "Exact goal text assertion; test only, recorded9/12 red.",
+    "67cdec20d5ac7b7bc9ae64e9de633252f1ad248a": "GossipEvent quote concatenation plus terminal newline only; fixture unchanged."
+  },
+  "original_scheduler_fixture_blob_unchanged": "c49325edb941ea1f187c80c8cfe60b39a6942822",
+  "final_constructor_fixture_blob": "6edee4ef74cfdf781d215314cd5a77910ad8b7de",
+  "final_gossip_blob": "9ec3346672a5d6c42a3e35284241e7b585e8808a",
+  "integrated_archives": [
+    {
+      "file": "r03-071d3d8b-existing-red-20260920.zip",
+      "bytes": 848342,
+      "sha256": "51428e69c1e015bac51dfc8af333e2b7393e88f0a5a7af5036bea86dddac461f",
+      "members": 199,
+      "inner_hashes_verified": 198,
+      "integrated_entries": 17,
+      "passed_entries": 16,
+      "run": 35509383498,
+      "job": 106074560695,
+      "artifact": 10604384676,
+      "execution_origin": "recovered intervening/existing CI",
+      "source_commit": "071d3d8bf31190c57b7a8bf1051555b959e3f849",
+      "source_tree": "90eb201363b673f654116afe2aabaea9a70003e3",
+      "scenarios": {
+        "scheduler": {
+          "passed": 12,
+          "total": 28,
+          "assertions": 16,
+          "unexpected": 0
+        }
+      }
+    },
+    {
+      "file": "r03-040a274d-scheduler-green.zip",
+      "bytes": 848185,
+      "sha256": "f0f9a36fa80ff9e026b9940eae302c66fb12fbfe9e8b267c3c8f34c5b51ce912",
+      "members": 199,
+      "inner_hashes_verified": 198,
+      "integrated_entries": 17,
+      "passed_entries": 17,
+      "run": 35510085553,
+      "job": 106076353274,
+      "artifact": 10604774990,
+      "execution_origin": "recovered intervening/existing CI",
+      "source_commit": "040a274d79707a33b1a28b46ac6eef3369ddf521",
+      "source_tree": "c2567a1a28f1648e862b5878f22ddbc6ccee9128",
+      "scenarios": {
+        "scheduler": {
+          "passed": 28,
+          "total": 28,
+          "assertions": 0,
+          "unexpected": 0
+        }
+      }
+    },
+    {
+      "file": "r03-76673b22-integrated.zip",
+      "bytes": 853054,
+      "sha256": "75d36f4369a1810b4f58038e2a678b5cf6df7efb4a4150a8edde6ba7db952a6e",
+      "members": 200,
+      "inner_hashes_verified": 199,
+      "integrated_entries": 17,
+      "passed_entries": 16,
+      "run": 35510632685,
+      "job": 106077800603,
+      "artifact": 10605321443,
+      "execution_origin": "recovered intervening/existing CI",
+      "source_commit": "76673b224ab4f2f26b22472c8a81f16f0808301f",
+      "source_tree": "50f8872c1299efb1370cfabca354322392b5cdb6",
+      "scenarios": {
+        "constructor dispatch": {
+          "passed": 0,
+          "total": 6,
+          "assertions": 6,
+          "unexpected": 0
+        },
+        "scheduler": {
+          "passed": 28,
+          "total": 28,
+          "assertions": 0,
+          "unexpected": 0
+        }
+      }
+    },
+    {
+      "file": "r03-716e7f6b-isolated-green.zip",
+      "bytes": 853301,
+      "sha256": "d6558132a7e1702e3610686dd0d286cd9618f41c9ed9fe2c20a400d5ce7e9a43",
+      "members": 200,
+      "inner_hashes_verified": 199,
+      "integrated_entries": 17,
+      "passed_entries": 17,
+      "run": 35510941191,
+      "job": 106078622438,
+      "artifact": 10605616495,
+      "execution_origin": "recovered intervening/existing CI",
+      "source_commit": "716e7f6b3976c9ba09726a78aee5a489f4367970",
+      "source_tree": "cedd9b9721c954580efdf7d47e80e25151595ce0",
+      "scenarios": {
+        "constructor dispatch": {
+          "passed": 6,
+          "total": 6,
+          "assertions": 0,
+          "unexpected": 0
+        },
+        "scheduler": {
+          "passed": 28,
+          "total": 28,
+          "assertions": 0,
+          "unexpected": 0
+        }
+      }
+    },
+    {
+      "file": "r03-ae82b6de-lifecycle-green.zip",
+      "bytes": 857307,
+      "sha256": "df20c718bed40bf5721500db82c46c05a4eade99224b403dfb6c896ad00ba2a2",
+      "members": 200,
+      "inner_hashes_verified": 199,
+      "integrated_entries": 17,
+      "passed_entries": 17,
+      "run": 35511732664,
+      "job": 106080697579,
+      "artifact": 10606091788,
+      "execution_origin": "this continuation",
+      "source_commit": "ae82b6de7ce31b68d3564fbce02f1ae21f143c77",
+      "source_tree": "45b6f03544c607bd32c795b178d6508659d75e9f",
+      "scenarios": {
+        "constructor dispatch": {
+          "passed": 12,
+          "total": 12,
+          "assertions": 0,
+          "unexpected": 0
+        },
+        "scheduler": {
+          "passed": 28,
+          "total": 28,
+          "assertions": 0,
+          "unexpected": 0
+        }
+      }
+    },
+    {
+      "file": "r03-7f344c81-goal-red.zip",
+      "bytes": 857342,
+      "sha256": "95d4e8e37b80e19a4acd6ee70979c11ebd0b40350c474443a975f7e844fdff1e",
+      "members": 200,
+      "inner_hashes_verified": 199,
+      "integrated_entries": 17,
+      "passed_entries": 16,
+      "run": 35511972000,
+      "job": 106081325387,
+      "artifact": 10605118585,
+      "execution_origin": "this continuation",
+      "source_commit": "7f344c819890ba96318a0fccc401ca44101c732f",
+      "source_tree": "b34373ade49d51c69389615b88f84b350f5733f6",
+      "scenarios": {
+        "constructor dispatch": {
+          "passed": 9,
+          "total": 12,
+          "assertions": 3,
+          "unexpected": 0
+        },
+        "scheduler": {
+          "passed": 28,
+          "total": 28,
+          "assertions": 0,
+          "unexpected": 0
+        }
+      }
+    },
+    {
+      "file": "r03-67cdec20-final-green.zip",
+      "bytes": 856862,
+      "sha256": "7af6c0ff4c2f9c15746e4ad1e7d9d2646b023e9e300d54a892bd6192e3f0bcfa",
+      "members": 200,
+      "inner_hashes_verified": 199,
+      "integrated_entries": 17,
+      "passed_entries": 17,
+      "run": 35512279345,
+      "job": 106082137788,
+      "artifact": 10605223925,
+      "execution_origin": "this continuation",
+      "source_commit": "67cdec20d5ac7b7bc9ae64e9de633252f1ad248a",
+      "source_tree": "1b73cba2afaa5ddb9efe58964a3bc302f8f65827",
+      "scenarios": {
+        "constructor dispatch": {
+          "passed": 12,
+          "total": 12,
+          "assertions": 0,
+          "unexpected": 0
+        },
+        "scheduler": {
+          "passed": 28,
+          "total": 28,
+          "assertions": 0,
+          "unexpected": 0
+        }
+      }
+    }
+  ],
+  "host": {
+    "run": 35512279263,
+    "job": 106082137224,
+    "artifact": 10606002826,
+    "bytes": 85148,
+    "sha256": "99917249701ca67a53a0d5a4696c48bb6883c2c91981337f058781a36201f288",
+    "crc_verified": true,
+    "source_commit": "67cdec20d5ac7b7bc9ae64e9de633252f1ad248a",
+    "result": {
+      "game_attached": false,
+      "tests_run": false,
+      "host_build_exit_code": 0
+    },
+    "scope": "Unmodified host build; no tests or game execution",
+    "warnings": 3344,
+    "errors": 0,
+    "job_conclusion": "success"
+  },
+  "matched_scheduler_pair": {
+    "red": "071d3d8b",
+    "green": "040a274d",
+    "identical_normalized_members": 154,
+    "input_counts": [
+      1836,
+      1836
+    ],
+    "changed_inputs": [
+      "runtime-snapshot/Bots/WholesomeAutoQuest-master/QuestScheduler.cs"
+    ]
+  },
+  "matched_goal_pair": {
+    "red": "7f344c81",
+    "green": "67cdec20",
+    "identical_normalized_members": 155,
+    "input_counts": [
+      1837,
+      1837
+    ],
+    "changed_inputs": [
+      "runtime-snapshot/Quest Behaviors/GossipEvent.cs"
+    ]
+  },
+  "verification_scope": "All seven integrated archives: published outer SHA256, ZIP CRC, every inner manifest hash, source identities and actual result logs checked. Host: outer SHA256, CRC, commit/result/build log checked; no inner manifest exists in host archive. No local C# execution.",
+  "coverage": "Loaded data/strategy pack, actual raw QuestLog/live scan/scheduler/XML, actual CodeNode/runtime compiler/factory/ForcedCodeBehavior OnStart/OnTick/Composite ticks with allocated observations; no matching recipient/native executor. The source-bound recipe data is synthetic fixture data, not an authorized game recipe.",
+  "limits": [
+    "No native item/gossip submission or acknowledgment",
+    "No full QuestBot driver or original-client/server acceptance",
+    "No validated raw-counter mapper: v1 ObjectiveProgress recipes remain deferred",
+    "No independent reviewer",
+    "Goal-text fixture uses empty cached name, not localized/nonempty-title matrix",
+    "R04 physical cursor/popup/full lifecycle, R07 compiler/static-state/atomic refresh, R06 native/original-client and all prior final gates remain"
+  ],
+  "historical_w88": {
+    "documentation": "49cbb61f68861ccdf06891c3b424bb8b1b562be9",
+    "tested": "f6ee23de269228270d0d12950b47a5a2b53535ef",
+    "checkpoint": "docs/audit/2026-09-20/W88_CHECKPOINT.md",
+    "evidence": "docs/audit/2026-09-20/W88_EVIDENCE.json",
+    "retained": "Failed intermediate restart compile, boundary-only adapter, matched8cc504ca/f6ee evidence and intentionally red reference remain retained, not overwritten."
+  },
+  "retained_requirements": [
+    "HANDOFF_POLICY.md",
+    "WOTLK_335A_RESEARCH_POLICY.md",
+    "TRINITYCORE_335_COMPATIBILITY.md",
+    "QUEST_DATA_PROVENANCE_335.md",
+    "ADDON_EVIDENCE_335.md",
+    "W87_CHECKPOINT/W87_EVIDENCE: separate scan/busy-state pairs and duplicate-fixture add/remove disclosure",
+    "W86_CHECKPOINT/W86_EVIDENCE",
+    "W80_CHECKPOINT/W80_EVIDENCE/W80_COMMIT_LEDGER: completed140-commit review, do not restart",
+    "W77 documentation add/revert and all prior backups/exclusions"
+  ],
+  "target": "Original WoW3.3.5a/build12340; TC3.3.5 primary/AC WotLK secondary",
+  "publishing": "Native GitHub blob/tree/commit and explicit approved branch non-force ref updates succeeded; expected blob update also succeeded. No duplicate capability probe, missing-write retries or Work/Codex switch was needed.",
+  "merge_authority": "Conditional only after all blockers, direct refs, backup, exact merge preview, final exact-source integrated/host and exact-head conditional merge. Authority is not deployment permission.",
+  "merge": false,
+  "deployment": false,
+  "game_attached": false,
+  "independent_review": false,
+  "all_final_gates_cleared": false,
+  "final_integrated_job_conclusion": "success"
+}

@@ -25,6 +25,16 @@ namespace Styx.WoWInternals.WoWObjects
 
         #endregion
 
+        /// <summary>
+        /// Attempts the ordinary throttled unit interaction. True means that the
+        /// local executor completed; it does not attribute a menu or acknowledge
+        /// a server response. False may follow a partially executed request.
+        /// </summary>
+        public bool TryInteract()
+        {
+            return TryInteractCore(ignoreTimer: false);
+        }
+
         #region Static Dictionaries (Reaction Cache)
 
         private static readonly Dictionary<uint, WoWUnitReaction> HardcodedReactions = new Dictionary<uint, WoWUnitReaction>
@@ -453,6 +463,52 @@ namespace Styx.WoWInternals.WoWObjects
                     return 0;
                 return wow.Read<uint>(BaseAddress + 216, 68);
             }
+        }
+
+        /// <summary>
+        /// Observe this unit's build12340 movement flags and transport identity
+        /// without treating a failed read as a stationary, untransported unit.
+        /// Uses the existing object+0x30,+0xD8 / movement+0x44,+0x08 layout.
+        /// Reads bypass the frame cache and verify raw identity before and after;
+        /// this is not an atomic snapshot, active-vehicle or ground-safety proof.
+        /// </summary>
+        public bool TryGetMovementState(out uint flags, out ulong transportGuid)
+        {
+            flags = 0;
+            transportGuid = 0;
+            try
+            {
+                Memory? wow = ObjectManager.Wow;
+                uint address = BaseAddress;
+                if (wow == null || address == 0 || address > uint.MaxValue - 219 || !IsValid)
+                    return false;
+                ulong guid = Guid;
+                if (guid == 0) return false;
+                // A cached GUID/pointer/zero-flags observation cannot authorize
+                // dismount after object reuse or a later airborne transition.
+                using var observation = wow.TemporaryCacheState(false);
+                var guidBytes = wow.ReadBytes(address + 48, 8);
+                if (guidBytes == null || guidBytes.Length != 8 || BitConverter.ToUInt64(guidBytes, 0) != guid)
+                    return false;
+                var pointerBytes = wow.ReadBytes(address + 216, 4);
+                if (pointerBytes == null || pointerBytes.Length != 4) return false;
+                uint pointer = BitConverter.ToUInt32(pointerBytes, 0);
+                if (pointer == 0 || pointer > uint.MaxValue - 71) return false;
+                var flagBytes = wow.ReadBytes(pointer + 68, 4);
+                var transportBytes = wow.ReadBytes(pointer + 8, 8);
+                var currentPointerBytes = wow.ReadBytes(address + 216, 4);
+                var currentGuidBytes = wow.ReadBytes(address + 48, 8);
+                if (flagBytes == null || flagBytes.Length != 4 || transportBytes == null || transportBytes.Length != 8
+                    || currentPointerBytes == null || currentPointerBytes.Length != 4
+                    || BitConverter.ToUInt32(currentPointerBytes, 0) != pointer
+                    || currentGuidBytes == null || currentGuidBytes.Length != 8 || BitConverter.ToUInt64(currentGuidBytes, 0) != guid
+                    || !ReferenceEquals(ObjectManager.Wow, wow) || BaseAddress != address || Guid != guid || !IsValid)
+                    return false;
+                flags = BitConverter.ToUInt32(flagBytes, 0);
+                transportGuid = BitConverter.ToUInt64(transportBytes, 0);
+                return true;
+            }
+            catch { return false; }
         }
 
         public bool IsFalling
@@ -978,11 +1034,14 @@ namespace Styx.WoWInternals.WoWObjects
                 if (string.IsNullOrEmpty(unitId))
                     return false;
 
-                // Check if the spell is interruptible via Lua UnitCastingInfo
-                // notInterruptible is the 8th return value
+                // Build12340: cast counter is value8; noninterruptible is value9.
+                // Channels instead return the flag as value8. Missing/failed Lua
+                // observations must not become affirmative interrupt permission.
                 var result = Lua.GetReturnVal<int>(
-                    $"local n,_,_,_,_,_,_,notInterruptible = UnitCastingInfo('{unitId}'); return notInterruptible and 1 or 0", 0);
-                return result == 0;
+                    $"local n,_,_,_,_,_,_,_,blocked = UnitCastingInfo('{unitId}'); " +
+                    $"if not n then n,_,_,_,_,_,_,blocked = UnitChannelInfo('{unitId}') end; " +
+                    "return type(n) == 'string' and n ~= '' and blocked == false and 1 or 0", 0);
+                return result == 1;
             }
         }
 
@@ -1005,7 +1064,7 @@ namespace Styx.WoWInternals.WoWObjects
                 try
                 {
                     var remaining = Lua.GetReturnVal<double>(
-                        $"local _,_,_,_,endTime = UnitCastingInfo('{unitId}'); if endTime then return (endTime/1000) - GetTime() else return 0 end", 0);
+                        $"local _,_,_,_,_,endTime = UnitCastingInfo('{unitId}'); if type(endTime) == 'number' then return (endTime/1000) - GetTime() else return 0 end", 0);
                     return remaining > 0 ? TimeSpan.FromSeconds(remaining) : TimeSpan.Zero;
                 }
                 catch { return TimeSpan.Zero; }
@@ -1049,7 +1108,7 @@ namespace Styx.WoWInternals.WoWObjects
                 try
                 {
                     var remaining = Lua.GetReturnVal<double>(
-                        $"local _,_,_,_,endTime = UnitChannelInfo('{unitId}'); if endTime then return (endTime/1000) - GetTime() else return 0 end", 0);
+                        $"local _,_,_,_,_,endTime = UnitChannelInfo('{unitId}'); if type(endTime) == 'number' then return (endTime/1000) - GetTime() else return 0 end", 0);
                     return remaining > 0 ? TimeSpan.FromSeconds(remaining) : TimeSpan.Zero;
                 }
                 catch { return TimeSpan.Zero; }
@@ -2080,27 +2139,52 @@ namespace Styx.WoWInternals.WoWObjects
             return dict;
         }
 
+        // WotLK client aura slots are uint8-indexed; AzerothCore WotLK
+        // documents MAX_AURAS=255 as the client limit. Validate the resolved
+        // count before any allocation so a transient/stale object read cannot
+        // turn into an unbounded AuraInfo array allocation.
+        internal static bool IsPlausibleAuraCount(int auraCount) =>
+            auraCount >= 0 && auraCount <= 255;
+
         public unsafe WoWAuraCollection GetAllAuras()
         {
             Memory? wow = ObjectManager.Wow;
-            if (wow == null)
+            if (wow == null || BaseAddress == 0)
                 return new WoWAuraCollection(0);
 
             uint auraBase = BaseAddress + 3152;
-            int auraCount = wow.Read<int>(BaseAddress + 3536);
+            var countBytes = wow.ReadBytes(BaseAddress + 3536, 4);
+            if (countBytes == null || countBytes.Length != 4)
+                return UnavailableAuraObservation("Could not completely observe the client aura count.");
+            int auraCount = BitConverter.ToInt32(countBytes, 0);
 
             // Dynamic auras
             if (auraCount == -1)
             {
-                auraBase = wow.Read<uint>(BaseAddress + 3160);
-                auraCount = wow.Read<int>(BaseAddress + 3156);
+                var pointerBytes = wow.ReadBytes(BaseAddress + 3160, 4);
+                var dynamicCountBytes = wow.ReadBytes(BaseAddress + 3156, 4);
+                if (pointerBytes == null || pointerBytes.Length != 4 ||
+                    dynamicCountBytes == null || dynamicCountBytes.Length != 4)
+                    return UnavailableAuraObservation("Could not completely observe the dynamic client aura header.");
+                auraBase = BitConverter.ToUInt32(pointerBytes, 0);
+                auraCount = BitConverter.ToInt32(dynamicCountBytes, 0);
+            }
+
+            if (!IsPlausibleAuraCount(auraCount))
+            {
+                return UnavailableAuraObservation(
+                    $"Observed implausible client aura count {auraCount}.");
             }
 
             WoWAura.AuraInfo[] auraInfos = new WoWAura.AuraInfo[auraCount];
 
             fixed (WoWAura.AuraInfo* ptr = auraInfos)
             {
-                wow.ReadBytes(auraBase, (void*)ptr, 24 * auraCount);
+                // Preserve the existing uncached bulk read, but not its void
+                // wrapper: unavailable/partial bytes are not absent coverage.
+                int expectedBytes = 24 * auraCount;
+                if (wow.ReadRawMemory(wow.ProcessHandle, auraBase, new IntPtr(ptr), expectedBytes) != expectedBytes)
+                    return UnavailableAuraObservation("Could not completely observe the client aura records.");
             }
 
             WoWAuraCollection collection = new WoWAuraCollection(auraCount);
@@ -2109,9 +2193,24 @@ namespace Styx.WoWInternals.WoWObjects
                 WoWAura aura = new WoWAura(auraInfos[i]);
                 if (aura.Spell != null)
                     collection.Add(aura);
+                else if (aura.SpellId != 0 && aura.IsActive)
+                    // Flags prove that an effect exists even when its localized
+                    // metadata is unavailable. Dropping it would falsely authorize
+                    // absent-buff or safe-dispel decisions from a partial collection.
+                    return UnavailableAuraObservation(
+                        $"Could not resolve metadata for active aura {aura.SpellId}.");
             }
 
             return collection;
+        }
+
+        private WoWAuraCollection UnavailableAuraObservation(string message)
+        {
+            // Preserve the old disappearing/non-world-object disposition while
+            // rejecting unavailable coverage in an otherwise valid world.
+            if (!StyxWoW.IsInGame || !IsValid)
+                return new WoWAuraCollection(0);
+            throw new InvalidOperationException(message);
         }
 
         #endregion

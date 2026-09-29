@@ -1,0 +1,852 @@
+{
+    "checkpoint":  "W104 verified equipment successor",
+    "created_at_utc":  "2026-09-27T07:10:49.9730000Z",
+    "repository":  "JeofW/cbp",
+    "repository_id":  1367174964,
+    "pr":  51,
+    "branch":  "audit/next-55-equipment-observation-20260917",
+    "prior_production":  "f434f7dd6ed8aad0ae7dd48d7391f1ceda4e3b26",
+    "historical_hold_documentation":  "c25b03f61b94e4507aa6f563ba25f290204603b5",
+    "original_test_source":  "680d88be7584f321991c99afe5232e5fefe63ac8",
+    "final_test_source":  "f0e5a502f8fa0afe675f0b3e188e5c46b27397e4",
+    "tested_source":  "6cbabba99ee523cbf2e0902f5b6964027edc410e",
+    "tested_tree":  "8b585dc4272c18f7c9c82efa95c07119d24b2937",
+    "completion":  "Evidence-backed equipment cleanup/cursor-lifetime repair implemented and hosted-verified. Remaining PR51 audit and acceptance gates remain open.",
+    "overall_goal_complete":  false,
+    "original_red":  {
+                         "receipt":  {
+                                         "verified_at_utc":  "2026-09-27T06:40:13.2415436Z",
+                                         "repository":  "JeofW/cbp",
+                                         "repository_id":  1367174964,
+                                         "run":  36298023144,
+                                         "jobs":  [
+                                                      {
+                                                          "id":  108560384709,
+                                                          "name":  "combined",
+                                                          "status":  "completed",
+                                                          "conclusion":  "failure",
+                                                          "labels":  [
+                                                                         "windows-2022"
+                                                                     ],
+                                                          "runner_name":  "GitHub Actions 1000000494"
+                                                      }
+                                                  ],
+                                         "run_conclusion":  "failure",
+                                         "source":  "680d88be7584f321991c99afe5232e5fefe63ac8",
+                                         "artifact":  10924054292,
+                                         "artifact_name":  "integrated-680d88be7584f321991c99afe5232e5fefe63ac8",
+                                         "archive":  "D:\\Dev\\CopilotBuddy-Evidence\\w104-red-integrated-680d88be.zip",
+                                         "sha256":  "cd12d567949fc69fdfe296104265f5914f3c7e85ec551d04ef015354231b413b",
+                                         "metadata_digest":  "sha256:cd12d567949fc69fdfe296104265f5914f3c7e85ec551d04ef015354231b413b",
+                                         "bytes":  917888
+                                     },
+                         "cleanup":  "20/49;29 intended assertions;0 unexpected",
+                         "other_intended_assertions":  14,
+                         "aggregate_success":  16
+                     },
+    "extended_red":  {
+                         "receipt":  {
+                                         "verified_at_utc":  "2026-09-27T06:59:02.6971593Z",
+                                         "repository":  "JeofW/cbp",
+                                         "repository_id":  1367174964,
+                                         "run":  36301432933,
+                                         "jobs":  [
+                                                      {
+                                                          "id":  108569670078,
+                                                          "name":  "combined",
+                                                          "status":  "completed",
+                                                          "conclusion":  "failure",
+                                                          "labels":  [
+                                                                         "windows-2022"
+                                                                     ],
+                                                          "runner_name":  "GitHub Actions 1000000496"
+                                                      }
+                                                  ],
+                                         "run_conclusion":  "failure",
+                                         "source":  "f0e5a502f8fa0afe675f0b3e188e5c46b27397e4",
+                                         "artifact":  10925622429,
+                                         "artifact_name":  "integrated-f0e5a502f8fa0afe675f0b3e188e5c46b27397e4",
+                                         "archive":  "D:\\Dev\\CopilotBuddy-Evidence\\w104-red-integrated-f0e5a502.zip",
+                                         "sha256":  "dcc52f8f40a470ce65a93385e43180b7467795660dcb8371fc62e5f5055e66ee",
+                                         "metadata_digest":  "sha256:dcc52f8f40a470ce65a93385e43180b7467795660dcb8371fc62e5f5055e66ee",
+                                         "bytes":  918558
+                                     },
+                         "inspection":  {
+                                            "verified_at_utc":  "2026-09-27T06:59:09.2655875Z",
+                                            "run":  36301432933,
+                                            "source":  "f0e5a502f8fa0afe675f0b3e188e5c46b27397e4",
+                                            "artifact":  10925622429,
+                                            "archive_sha256":  "dcc52f8f40a470ce65a93385e43180b7467795660dcb8371fc62e5f5055e66ee",
+                                            "members":  212,
+                                            "kind":  "integrated",
+                                            "identity":  {
+                                                             "production_commit":  "f0e5a502f8fa0afe675f0b3e188e5c46b27397e4",
+                                                             "game_attached":  false,
+                                                             "production_tree":  "b9597fd90030812101308232ca19eaf344be9184",
+                                                             "fixture_commit":  "f0e5a502f8fa0afe675f0b3e188e5c46b27397e4"
+                                                         },
+                                            "inner_hashes":  211,
+                                            "source_inputs":  1849,
+                                            "checkout_inputs_matched":  1849,
+                                            "results":  {
+                                                            "value":  [
+                                                                          {
+                                                                              "harness_error":  null,
+                                                                              "suite":  "QuestRecoveryRegressionTests",
+                                                                              "architecture":  "x86",
+                                                                              "game_attached":  false,
+                                                                              "build":  0,
+                                                                              "run":  0
+                                                                          },
+                                                                          {
+                                                                              "run":  0,
+                                                                              "game_attached":  false,
+                                                                              "build":  0,
+                                                                              "suite":  "Singular",
+                                                                              "architecture":  "x86"
+                                                                          },
+                                                                          {
+                                                                              "harness_error":  null,
+                                                                              "suite":  "WholesomeQuestRecoveryRegressionTests",
+                                                                              "architecture":  "x86",
+                                                                              "game_attached":  false,
+                                                                              "build":  0,
+                                                                              "run":  1
+                                                                          },
+                                                                          {
+                                                                              "harness_error":  null,
+                                                                              "suite":  "QuestRecoveryAdapterRegressionTests",
+                                                                              "architecture":  "x86",
+                                                                              "game_attached":  false,
+                                                                              "build":  0,
+                                                                              "run":  0
+                                                                          },
+                                                                          {
+                                                                              "harness_error":  null,
+                                                                              "suite":  "QuestPickupPolicyRegressionTests",
+                                                                              "architecture":  "x86",
+                                                                              "game_attached":  false,
+                                                                              "build":  0,
+                                                                              "run":  0
+                                                                          },
+                                                                          {
+                                                                              "harness_error":  null,
+                                                                              "suite":  "VendorCoreRegressionTests",
+                                                                              "architecture":  "x86",
+                                                                              "game_attached":  false,
+                                                                              "build":  0,
+                                                                              "run":  0
+                                                                          },
+                                                                          {
+                                                                              "harness_error":  null,
+                                                                              "suite":  "NativeContractRegressionTests",
+                                                                              "architecture":  "x86",
+                                                                              "game_attached":  false,
+                                                                              "build":  0,
+                                                                              "run":  0
+                                                                          },
+                                                                          {
+                                                                              "harness_error":  null,
+                                                                              "suite":  "ShutdownBoundaryRegressionTests",
+                                                                              "architecture":  "x86",
+                                                                              "game_attached":  false,
+                                                                              "build":  0,
+                                                                              "run":  0
+                                                                          },
+                                                                          {
+                                                                              "harness_error":  null,
+                                                                              "suite":  "Elevator",
+                                                                              "architecture":  "x86",
+                                                                              "game_attached":  false,
+                                                                              "build":  0,
+                                                                              "run":  0
+                                                                          },
+                                                                          {
+                                                                              "harness_error":  null,
+                                                                              "suite":  "PaladinDecisions",
+                                                                              "architecture":  "x86",
+                                                                              "game_attached":  false,
+                                                                              "build":  0,
+                                                                              "run":  0
+                                                                          },
+                                                                          {
+                                                                              "harness_error":  null,
+                                                                              "suite":  "GroupEngagement",
+                                                                              "architecture":  "x86",
+                                                                              "game_attached":  false,
+                                                                              "build":  0,
+                                                                              "run":  0
+                                                                          },
+                                                                          {
+                                                                              "harness_error":  null,
+                                                                              "suite":  "PaladinSupport",
+                                                                              "architecture":  "x86",
+                                                                              "game_attached":  false,
+                                                                              "build":  0,
+                                                                              "run":  0
+                                                                          },
+                                                                          {
+                                                                              "harness_error":  null,
+                                                                              "suite":  "WholesomeSale",
+                                                                              "architecture":  "x86",
+                                                                              "game_attached":  false,
+                                                                              "build":  0,
+                                                                              "run":  0
+                                                                          },
+                                                                          {
+                                                                              "harness_error":  null,
+                                                                              "suite":  "QuestLogObservationRegressionTests",
+                                                                              "architecture":  "x86",
+                                                                              "game_attached":  false,
+                                                                              "build":  0,
+                                                                              "run":  0
+                                                                          },
+                                                                          {
+                                                                              "harness_error":  null,
+                                                                              "suite":  "QuestCompletionOwnerRegressionTests",
+                                                                              "architecture":  "x86",
+                                                                              "game_attached":  false,
+                                                                              "build":  0,
+                                                                              "run":  0
+                                                                          },
+                                                                          {
+                                                                              "harness_error":  null,
+                                                                              "suite":  "QuestObservationBoundaryRegressionTests",
+                                                                              "architecture":  "x86",
+                                                                              "game_attached":  false,
+                                                                              "build":  0,
+                                                                              "run":  0
+                                                                          },
+                                                                          {
+                                                                              "run":  0,
+                                                                              "game_attached":  false,
+                                                                              "build":  0,
+                                                                              "suite":  "Analyzers"
+                                                                          }
+                                                                      ],
+                                                            "Count":  17
+                                                        },
+                                            "successful_groups":  16,
+                                            "key_summaries":  [
+                                                                  "AutoEquip pending context scenarios: 34/37; assertions=3; unexpected=0; exact tracked C# capture/tick/request methods; controlled world/Lua; no game attached.",
+                                                                  "Equip acknowledged timeout scenarios: 10/10; assertions=0; unexpected=0; exact tracked method control flow; controlled external acknowledgements; no game attached.",
+                                                                  "Equip continuation boundary scenarios: 46/46; assertions=0; unexpected=0; exact tracked C# tick/context/acknowledge/return/restore; controlled actor/inventory/Lua; no physical cursor or client proof.",
+                                                                  "EquipItem pending context scenarios: 54/57; assertions=3; unexpected=0; exact tracked C# tick/submit/confirm/reset; controlled actor/quest/Lua; no game attached.",
+                                                                  "Equipment cleanup ownership: 20/57; assertions=37; unexpected=0; actual tracked owners/generated Lua5.1; controlled build12340 cursor transitions and physical dispatch admission; no game/server/native execution.",
+                                                                  "Equipment physical cursor guard: 8/8; actual generated x86 comparison/branch contract; no game attached or native execution.",
+                                                                  "Equipment Lua51 boundary scenarios: 79/87; assertions=8; unexpected=0; tracked pickup/equip helpers, actual generated Lua5.1, loader size and verbatim managed conversion; controlled APIs; no physical GUID/client/server proof.",
+                                                                  "Equipment pending-index scenarios: 24/24; assertions=0; unexpected=0; tracked owner/generated Lua; stock Lua5.1; controlled synchronous events; no native client proof.",
+                                                                  "Equip popup submission scenarios: 18/18; assertions=0; unexpected=0; exact tracked C# confirmation/tick methods; recording Lua boundary only; no game attached."
+                                                              ],
+                                            "failing_groups":  [
+                                                                   "FAIL aggregate group: AutoEquipPendingContextRegressionTests: System.InvalidOperationException: AutoEquip pending context regression",
+                                                                   "FAIL aggregate group: EquipItemPendingContextRegressionTests: System.InvalidOperationException: EquipItem pending context regression",
+                                                                   "FAIL aggregate group: EquipmentCleanupOwnershipRegressionTests: System.InvalidOperationException: Equipment cleanup ownership regression",
+                                                                   "FAIL aggregate group: EquipmentLua51BoundaryRegressionTests: System.InvalidOperationException: Equipment Lua51 boundary regression"
+                                                               ]
+                                        },
+                         "cleanup":  "20/57;37 intended assertions;0 unexpected",
+                         "other_intended_assertions":  14
+                     },
+    "green":  {
+                  "integrated_receipt":  {
+                                             "verified_at_utc":  "2026-09-27T07:07:04.9577255Z",
+                                             "repository":  "JeofW/cbp",
+                                             "repository_id":  1367174964,
+                                             "run":  36301825983,
+                                             "jobs":  [
+                                                          {
+                                                              "id":  108570741928,
+                                                              "name":  "combined",
+                                                              "status":  "completed",
+                                                              "conclusion":  "success",
+                                                              "labels":  [
+                                                                             "windows-2022"
+                                                                         ],
+                                                              "runner_name":  "GitHub Actions 1000000497"
+                                                          }
+                                                      ],
+                                             "run_conclusion":  "success",
+                                             "source":  "6cbabba99ee523cbf2e0902f5b6964027edc410e",
+                                             "artifact":  10926102133,
+                                             "artifact_name":  "integrated-6cbabba99ee523cbf2e0902f5b6964027edc410e",
+                                             "archive":  "D:\\Dev\\CopilotBuddy-Evidence\\w104-green-integrated-6cbabba9.zip",
+                                             "sha256":  "3cdaa665ce6e2502480164c03a423ec79a9140493a698b9ed2110112871c5932",
+                                             "metadata_digest":  "sha256:3cdaa665ce6e2502480164c03a423ec79a9140493a698b9ed2110112871c5932",
+                                             "bytes":  917580
+                                         },
+                  "integrated_inspection":  {
+                                                "verified_at_utc":  "2026-09-27T07:07:15.6179676Z",
+                                                "run":  36301825983,
+                                                "source":  "6cbabba99ee523cbf2e0902f5b6964027edc410e",
+                                                "artifact":  10926102133,
+                                                "archive_sha256":  "3cdaa665ce6e2502480164c03a423ec79a9140493a698b9ed2110112871c5932",
+                                                "members":  212,
+                                                "kind":  "integrated",
+                                                "identity":  {
+                                                                 "production_tree":  "8b585dc4272c18f7c9c82efa95c07119d24b2937",
+                                                                 "fixture_commit":  "6cbabba99ee523cbf2e0902f5b6964027edc410e",
+                                                                 "game_attached":  false,
+                                                                 "production_commit":  "6cbabba99ee523cbf2e0902f5b6964027edc410e"
+                                                             },
+                                                "inner_hashes":  211,
+                                                "source_inputs":  1849,
+                                                "checkout_inputs_matched":  1849,
+                                                "results":  {
+                                                                "value":  [
+                                                                              {
+                                                                                  "suite":  "QuestRecoveryRegressionTests",
+                                                                                  "game_attached":  false,
+                                                                                  "run":  0,
+                                                                                  "build":  0,
+                                                                                  "architecture":  "x86",
+                                                                                  "harness_error":  null
+                                                                              },
+                                                                              {
+                                                                                  "architecture":  "x86",
+                                                                                  "run":  0,
+                                                                                  "suite":  "Singular",
+                                                                                  "build":  0,
+                                                                                  "game_attached":  false
+                                                                              },
+                                                                              {
+                                                                                  "suite":  "WholesomeQuestRecoveryRegressionTests",
+                                                                                  "game_attached":  false,
+                                                                                  "run":  0,
+                                                                                  "build":  0,
+                                                                                  "architecture":  "x86",
+                                                                                  "harness_error":  null
+                                                                              },
+                                                                              {
+                                                                                  "suite":  "QuestRecoveryAdapterRegressionTests",
+                                                                                  "game_attached":  false,
+                                                                                  "run":  0,
+                                                                                  "build":  0,
+                                                                                  "architecture":  "x86",
+                                                                                  "harness_error":  null
+                                                                              },
+                                                                              {
+                                                                                  "suite":  "QuestPickupPolicyRegressionTests",
+                                                                                  "game_attached":  false,
+                                                                                  "run":  0,
+                                                                                  "build":  0,
+                                                                                  "architecture":  "x86",
+                                                                                  "harness_error":  null
+                                                                              },
+                                                                              {
+                                                                                  "suite":  "VendorCoreRegressionTests",
+                                                                                  "game_attached":  false,
+                                                                                  "run":  0,
+                                                                                  "build":  0,
+                                                                                  "architecture":  "x86",
+                                                                                  "harness_error":  null
+                                                                              },
+                                                                              {
+                                                                                  "suite":  "NativeContractRegressionTests",
+                                                                                  "game_attached":  false,
+                                                                                  "run":  0,
+                                                                                  "build":  0,
+                                                                                  "architecture":  "x86",
+                                                                                  "harness_error":  null
+                                                                              },
+                                                                              {
+                                                                                  "suite":  "ShutdownBoundaryRegressionTests",
+                                                                                  "game_attached":  false,
+                                                                                  "run":  0,
+                                                                                  "build":  0,
+                                                                                  "architecture":  "x86",
+                                                                                  "harness_error":  null
+                                                                              },
+                                                                              {
+                                                                                  "suite":  "Elevator",
+                                                                                  "game_attached":  false,
+                                                                                  "run":  0,
+                                                                                  "build":  0,
+                                                                                  "architecture":  "x86",
+                                                                                  "harness_error":  null
+                                                                              },
+                                                                              {
+                                                                                  "suite":  "PaladinDecisions",
+                                                                                  "game_attached":  false,
+                                                                                  "run":  0,
+                                                                                  "build":  0,
+                                                                                  "architecture":  "x86",
+                                                                                  "harness_error":  null
+                                                                              },
+                                                                              {
+                                                                                  "suite":  "GroupEngagement",
+                                                                                  "game_attached":  false,
+                                                                                  "run":  0,
+                                                                                  "build":  0,
+                                                                                  "architecture":  "x86",
+                                                                                  "harness_error":  null
+                                                                              },
+                                                                              {
+                                                                                  "suite":  "PaladinSupport",
+                                                                                  "game_attached":  false,
+                                                                                  "run":  0,
+                                                                                  "build":  0,
+                                                                                  "architecture":  "x86",
+                                                                                  "harness_error":  null
+                                                                              },
+                                                                              {
+                                                                                  "suite":  "WholesomeSale",
+                                                                                  "game_attached":  false,
+                                                                                  "run":  0,
+                                                                                  "build":  0,
+                                                                                  "architecture":  "x86",
+                                                                                  "harness_error":  null
+                                                                              },
+                                                                              {
+                                                                                  "suite":  "QuestLogObservationRegressionTests",
+                                                                                  "game_attached":  false,
+                                                                                  "run":  0,
+                                                                                  "build":  0,
+                                                                                  "architecture":  "x86",
+                                                                                  "harness_error":  null
+                                                                              },
+                                                                              {
+                                                                                  "suite":  "QuestCompletionOwnerRegressionTests",
+                                                                                  "game_attached":  false,
+                                                                                  "run":  0,
+                                                                                  "build":  0,
+                                                                                  "architecture":  "x86",
+                                                                                  "harness_error":  null
+                                                                              },
+                                                                              {
+                                                                                  "suite":  "QuestObservationBoundaryRegressionTests",
+                                                                                  "game_attached":  false,
+                                                                                  "run":  0,
+                                                                                  "build":  0,
+                                                                                  "architecture":  "x86",
+                                                                                  "harness_error":  null
+                                                                              },
+                                                                              {
+                                                                                  "run":  0,
+                                                                                  "suite":  "Analyzers",
+                                                                                  "build":  0,
+                                                                                  "game_attached":  false
+                                                                              }
+                                                                          ],
+                                                                "Count":  17
+                                                            },
+                                                "successful_groups":  17,
+                                                "key_summaries":  [
+                                                                      "AutoEquip pending context scenarios: 37/37; assertions=0; unexpected=0; exact tracked C# capture/tick/request methods; controlled world/Lua; no game attached.",
+                                                                      "Equip acknowledged timeout scenarios: 10/10; assertions=0; unexpected=0; exact tracked method control flow; controlled external acknowledgements; no game attached.",
+                                                                      "Equip continuation boundary scenarios: 46/46; assertions=0; unexpected=0; exact tracked C# tick/context/acknowledge/return/restore; controlled actor/inventory/Lua; no physical cursor or client proof.",
+                                                                      "EquipItem pending context scenarios: 57/57; assertions=0; unexpected=0; exact tracked C# tick/submit/confirm/reset; controlled actor/quest/Lua; no game attached.",
+                                                                      "Equipment cleanup ownership: 57/57; assertions=0; unexpected=0; actual tracked owners/generated Lua5.1; controlled build12340 cursor transitions and physical dispatch admission; no game/server/native execution.",
+                                                                      "Equipment physical cursor guard: 8/8; actual generated x86 comparison/branch contract; no game attached or native execution.",
+                                                                      "Equipment Lua51 boundary scenarios: 87/87; assertions=0; unexpected=0; tracked pickup/equip helpers, actual generated Lua5.1, loader size and verbatim managed conversion; controlled APIs; no physical GUID/client/server proof.",
+                                                                      "Equipment pending-index scenarios: 24/24; assertions=0; unexpected=0; tracked owner/generated Lua; stock Lua5.1; controlled synchronous events; no native client proof.",
+                                                                      "Equip popup submission scenarios: 18/18; assertions=0; unexpected=0; exact tracked C# confirmation/tick methods; recording Lua boundary only; no game attached."
+                                                                  ],
+                                                "failing_groups":  [
+
+                                                                   ]
+                                            },
+                  "host_receipt":  {
+                                       "verified_at_utc":  "2026-09-27T07:04:12.7188474Z",
+                                       "repository":  "JeofW/cbp",
+                                       "repository_id":  1367174964,
+                                       "run":  36301825975,
+                                       "jobs":  [
+                                                    {
+                                                        "id":  108570742106,
+                                                        "name":  "host-build",
+                                                        "status":  "completed",
+                                                        "conclusion":  "success",
+                                                        "labels":  [
+                                                                       "windows-latest"
+                                                                   ],
+                                                        "runner_name":  "GitHub Actions 1000000498"
+                                                    }
+                                                ],
+                                       "run_conclusion":  "success",
+                                       "source":  "6cbabba99ee523cbf2e0902f5b6964027edc410e",
+                                       "artifact":  10926016261,
+                                       "artifact_name":  "audit-validation-6cbabba99ee523cbf2e0902f5b6964027edc410e",
+                                       "archive":  "D:\\Dev\\CopilotBuddy-Evidence\\w104-green-host-6cbabba9.zip",
+                                       "sha256":  "a0ba5f9e8a43a27ad0d4b1ef8d2206e31431b0524662327421c9ead67601228a",
+                                       "metadata_digest":  "sha256:a0ba5f9e8a43a27ad0d4b1ef8d2206e31431b0524662327421c9ead67601228a",
+                                       "bytes":  83212
+                                   },
+                  "host_inspection":  {
+                                          "verified_at_utc":  "2026-09-27T07:04:24.3219601Z",
+                                          "run":  36301825975,
+                                          "source":  "6cbabba99ee523cbf2e0902f5b6964027edc410e",
+                                          "artifact":  10926016261,
+                                          "archive_sha256":  "a0ba5f9e8a43a27ad0d4b1ef8d2206e31431b0524662327421c9ead67601228a",
+                                          "members":  4,
+                                          "kind":  "host",
+                                          "result":  {
+                                                         "tests_run":  false,
+                                                         "host_build_exit_code":  0,
+                                                         "game_attached":  false
+                                                     },
+                                          "build_summary":  [
+                                                                "3344 Warning(s)",
+                                                                "0 Error(s)"
+                                                            ]
+                                      },
+                  "required_summaries":  [
+                                             "Equipment cleanup ownership: 57/57; assertions=0; unexpected=0",
+                                             "Equipment pending-index scenarios: 24/24; assertions=0; unexpected=0",
+                                             "Equipment physical cursor guard: 8/8",
+                                             "Equipment Lua51 boundary scenarios: 87/87; assertions=0; unexpected=0",
+                                             "AutoEquip pending context scenarios: 37/37; assertions=0; unexpected=0",
+                                             "EquipItem pending context scenarios: 57/57; assertions=0; unexpected=0",
+                                             "Equip continuation boundary scenarios: 46/46; assertions=0; unexpected=0",
+                                             "Equip acknowledged timeout scenarios: 10/10; assertions=0; unexpected=0",
+                                             "Equip popup submission scenarios: 18/18; assertions=0; unexpected=0"
+                                         ],
+                  "results":  [
+                                  {
+                                      "suite":  "QuestRecoveryRegressionTests",
+                                      "game_attached":  false,
+                                      "run":  0,
+                                      "build":  0,
+                                      "architecture":  "x86",
+                                      "harness_error":  null
+                                  },
+                                  {
+                                      "architecture":  "x86",
+                                      "run":  0,
+                                      "suite":  "Singular",
+                                      "build":  0,
+                                      "game_attached":  false
+                                  },
+                                  {
+                                      "suite":  "WholesomeQuestRecoveryRegressionTests",
+                                      "game_attached":  false,
+                                      "run":  0,
+                                      "build":  0,
+                                      "architecture":  "x86",
+                                      "harness_error":  null
+                                  },
+                                  {
+                                      "suite":  "QuestRecoveryAdapterRegressionTests",
+                                      "game_attached":  false,
+                                      "run":  0,
+                                      "build":  0,
+                                      "architecture":  "x86",
+                                      "harness_error":  null
+                                  },
+                                  {
+                                      "suite":  "QuestPickupPolicyRegressionTests",
+                                      "game_attached":  false,
+                                      "run":  0,
+                                      "build":  0,
+                                      "architecture":  "x86",
+                                      "harness_error":  null
+                                  },
+                                  {
+                                      "suite":  "VendorCoreRegressionTests",
+                                      "game_attached":  false,
+                                      "run":  0,
+                                      "build":  0,
+                                      "architecture":  "x86",
+                                      "harness_error":  null
+                                  },
+                                  {
+                                      "suite":  "NativeContractRegressionTests",
+                                      "game_attached":  false,
+                                      "run":  0,
+                                      "build":  0,
+                                      "architecture":  "x86",
+                                      "harness_error":  null
+                                  },
+                                  {
+                                      "suite":  "ShutdownBoundaryRegressionTests",
+                                      "game_attached":  false,
+                                      "run":  0,
+                                      "build":  0,
+                                      "architecture":  "x86",
+                                      "harness_error":  null
+                                  },
+                                  {
+                                      "suite":  "Elevator",
+                                      "game_attached":  false,
+                                      "run":  0,
+                                      "build":  0,
+                                      "architecture":  "x86",
+                                      "harness_error":  null
+                                  },
+                                  {
+                                      "suite":  "PaladinDecisions",
+                                      "game_attached":  false,
+                                      "run":  0,
+                                      "build":  0,
+                                      "architecture":  "x86",
+                                      "harness_error":  null
+                                  },
+                                  {
+                                      "suite":  "GroupEngagement",
+                                      "game_attached":  false,
+                                      "run":  0,
+                                      "build":  0,
+                                      "architecture":  "x86",
+                                      "harness_error":  null
+                                  },
+                                  {
+                                      "suite":  "PaladinSupport",
+                                      "game_attached":  false,
+                                      "run":  0,
+                                      "build":  0,
+                                      "architecture":  "x86",
+                                      "harness_error":  null
+                                  },
+                                  {
+                                      "suite":  "WholesomeSale",
+                                      "game_attached":  false,
+                                      "run":  0,
+                                      "build":  0,
+                                      "architecture":  "x86",
+                                      "harness_error":  null
+                                  },
+                                  {
+                                      "suite":  "QuestLogObservationRegressionTests",
+                                      "game_attached":  false,
+                                      "run":  0,
+                                      "build":  0,
+                                      "architecture":  "x86",
+                                      "harness_error":  null
+                                  },
+                                  {
+                                      "suite":  "QuestCompletionOwnerRegressionTests",
+                                      "game_attached":  false,
+                                      "run":  0,
+                                      "build":  0,
+                                      "architecture":  "x86",
+                                      "harness_error":  null
+                                  },
+                                  {
+                                      "suite":  "QuestObservationBoundaryRegressionTests",
+                                      "game_attached":  false,
+                                      "run":  0,
+                                      "build":  0,
+                                      "architecture":  "x86",
+                                      "harness_error":  null
+                                  },
+                                  {
+                                      "run":  0,
+                                      "suite":  "Analyzers",
+                                      "build":  0,
+                                      "game_attached":  false
+                                  }
+                              ]
+              },
+    "comparison":  {
+                       "verified_at_utc":  "2026-09-27T07:07:34.7307180Z",
+                       "red_source":  "f0e5a502f8fa0afe675f0b3e188e5c46b27397e4",
+                       "green_source":  "6cbabba99ee523cbf2e0902f5b6964027edc410e",
+                       "red_run":  36301432933,
+                       "green_run":  36301825983,
+                       "red_inputs":  1849,
+                       "green_inputs":  1849,
+                       "changed_inputs":  [
+                                              "runtime-snapshot/Plugins/AutoEquip2/AutoEquip.cs",
+                                              "runtime-snapshot/Quest Behaviors/EquipItem.cs",
+                                              "Styx/WoWInternals/Lua.cs"
+                                          ],
+                       "added_inputs":  [
+
+                                        ],
+                       "removed_inputs":  [
+
+                                          ],
+                       "normalized_count":  167,
+                       "changed_normalized":  [
+
+                                              ],
+                       "added_normalized":  [
+
+                                            ],
+                       "removed_normalized":  [
+
+                                              ],
+                       "limits":  "Archive integrity and run success are established by separate inspection receipts. This report compares captured source and normalized fixture bytes only."
+                   },
+    "source_publication":  {
+                               "repository":  "JeofW/cbp",
+                               "repository_id":  1367174964,
+                               "branch":  "audit/next-55-equipment-observation-20260917",
+                               "expected_parent":  "f0e5a502f8fa0afe675f0b3e188e5c46b27397e4",
+                               "paths":  [
+                                             "Styx/WoWInternals/Lua.cs",
+                                             "runtime-snapshot/Quest Behaviors/EquipItem.cs",
+                                             "runtime-snapshot/Plugins/AutoEquip2/AutoEquip.cs"
+                                         ],
+                               "patch_sha256":  "10cc4d0ff63a23e4b2a5dc5b434222c927e5372ae9968933c78b85f012003d2d",
+                               "files":  [
+                                             {
+                                                 "path":  "Styx/WoWInternals/Lua.cs",
+                                                 "blob":  "f2756012fefc0f2d8164e143151df518b9c7aaa9",
+                                                 "sha256":  "b0a983b3b4cf75dccc4746cafcceb907d4aed04000ddee20e82fca656076a9b2"
+                                             },
+                                             {
+                                                 "path":  "runtime-snapshot/Quest Behaviors/EquipItem.cs",
+                                                 "blob":  "7544d70da52331224ef7e801a9390a1c7341d99c",
+                                                 "sha256":  "ffabba97bcd158b784fa02eed100ae0cca885bb88d7cf1c4e52bccd754617800"
+                                             },
+                                             {
+                                                 "path":  "runtime-snapshot/Plugins/AutoEquip2/AutoEquip.cs",
+                                                 "blob":  "fb2f11d1cedbd42d9b1f4095d12fa6135362d778",
+                                                 "sha256":  "e61d41b6434429ca829ab0e11a4dbe5a41b6e12f6003a00ec142b386080b1f93"
+                                             }
+                                         ],
+                               "commit":  "6cbabba99ee523cbf2e0902f5b6964027edc410e",
+                               "tree":  "8b585dc4272c18f7c9c82efa95c07119d24b2937",
+                               "verified_at_utc":  "2026-09-27T07:01:22.3927241Z",
+                               "direct_refs":  [
+                                                   "6cbabba99ee523cbf2e0902f5b6964027edc410e\trefs/heads/audit/next-55-equipment-observation-20260917",
+                                                   "b2324913e2499ba30b239dd67224ca2c655c05cc\trefs/heads/master"
+                                               ]
+                           },
+    "external_evidence_records":  [
+                                      {
+                                          "file":  "W104_RESUMPTION_20260927.md",
+                                          "sha256":  "fd1e31cac39a9a6aada246c88a38b50754cc1067e4da5aa13fbd0b4c91e844cc",
+                                          "bytes":  9985
+                                      },
+                                      {
+                                          "file":  "W104_REDOBSERVER_PUBLICATION_20260927.json",
+                                          "sha256":  "2062a18d8cd9d18054b095344d2d132862b46492a9d2bd52e8d3ff15b5328e3e",
+                                          "bytes":  2585
+                                      },
+                                      {
+                                          "file":  "W104_GREENCLEANUP_PUBLICATION_20260927.json",
+                                          "sha256":  "bd5e8b231995f49c84eed5871aade4ce938ae623cd6be3d66b78f2d79b22da89",
+                                          "bytes":  1868
+                                      },
+                                      {
+                                          "file":  "w104-red-integrated-680d88be-receipt.json",
+                                          "sha256":  "19676027df8d19096bd4cec9a7b9c2da7560d7fdd20ce894b736bed7cde8aee8",
+                                          "bytes":  1092
+                                      },
+                                      {
+                                          "file":  "w104-red-integrated-680d88be-inspection.json",
+                                          "sha256":  "579614000ae0b8ca2793028276d29c690372add9525bb3aca80e9eb6b799c181",
+                                          "bytes":  10878
+                                      },
+                                      {
+                                          "file":  "w104-red-host-680d88be-receipt.json",
+                                          "sha256":  "271c9a6a614dc0bbbfd093a29be12bb0b32b551420c72eb770f4fa48c753a7fc",
+                                          "bytes":  1095
+                                      },
+                                      {
+                                          "file":  "w104-red-host-680d88be-inspection.json",
+                                          "sha256":  "54dbc0531720ec1ca59b9b56100e934bedec3e740fd2ebdb69d187c32190ecd8",
+                                          "bytes":  618
+                                      },
+                                      {
+                                          "file":  "w104-red-integrated-f0e5a502-receipt.json",
+                                          "sha256":  "0a67e65e58269d0aa9b97bc04110a267cb34cd00600bdbd8e747aa0d22da8357",
+                                          "bytes":  1092
+                                      },
+                                      {
+                                          "file":  "w104-red-integrated-f0e5a502-inspection.json",
+                                          "sha256":  "42fa6dce5f924af98f529660a2e945792d1c5da92afab158c147ea5a5fc372e7",
+                                          "bytes":  10878
+                                      },
+                                      {
+                                          "file":  "w104-red-host-f0e5a502-receipt.json",
+                                          "sha256":  "9a0af81f46f2b8591e2e70ae8aeb432954df1015213438b33cd87580ddcf8e68",
+                                          "bytes":  1095
+                                      },
+                                      {
+                                          "file":  "w104-red-host-f0e5a502-inspection.json",
+                                          "sha256":  "0bc983b61e48aade33116571c4028f31702b86408fe3dba2f5eccdf94fe40be4",
+                                          "bytes":  618
+                                      },
+                                      {
+                                          "file":  "w104-green-integrated-6cbabba9-receipt.json",
+                                          "sha256":  "ca0a0464de2986f16c5c0924c23e53208f951b4b5eb2eb1aaa5014b3e881e9dd",
+                                          "bytes":  1094
+                                      },
+                                      {
+                                          "file":  "w104-green-integrated-6cbabba9-inspection.json",
+                                          "sha256":  "e259d45e969756654e6a6e5478fb2096feb798d580b4252c9527bc6b35a2725e",
+                                          "bytes":  10222
+                                      },
+                                      {
+                                          "file":  "w104-green-host-6cbabba9-receipt.json",
+                                          "sha256":  "d3a6b1fb18bf85ce63e53dff0bc3724e0e1193a8eeee4f235f23d9284adb05e4",
+                                          "bytes":  1097
+                                      },
+                                      {
+                                          "file":  "w104-green-host-6cbabba9-inspection.json",
+                                          "sha256":  "56959f2cc4f1ba35203ed46108d01e1ce3e0442e6981a9aeb3c78f9712115456",
+                                          "bytes":  618
+                                      },
+                                      {
+                                          "file":  "W104_RED_GREEN_COMPARISON_20260927.json",
+                                          "sha256":  "7ffe5e58419e2df1bb2e340ad928523d1983452b587e49532e55e7c53c6e54d7",
+                                          "bytes":  1067
+                                      },
+                                      {
+                                          "file":  "w104-resume-health.json",
+                                          "sha256":  "f4d6ccef04f016ad07b470fc4d0a2e99feb5d1b11d883c826824ea7ca9b24738",
+                                          "bytes":  2479
+                                      },
+                                      {
+                                          "file":  "w104-observer-api-names.json",
+                                          "sha256":  "5bc6696fe62f3a960cbaeaa307249bdbf353870c40d6533541ae7b9f093f4737",
+                                          "bytes":  2998
+                                      },
+                                      {
+                                          "file":  "w104-observer-api-registration.json",
+                                          "sha256":  "8d6caf645cea3ac4aaab80114ab9d237f228c60dfc4971c5c3ab421b410db55f",
+                                          "bytes":  4880
+                                      },
+                                      {
+                                          "file":  "W100_API_PROVENANCE_20260926.json",
+                                          "sha256":  "2d7081cf9c8200bfd583600ab9131b18201c964fa3dc44bf5cf830dc4c41ec90",
+                                          "bytes":  1314
+                                      }
+                                  ],
+    "retained_native_manifest":  {
+                                     "path":  "docs/audit/2026-09-27/W104_EVIDENCE.json",
+                                     "sha256":  "4196f9730643a99c4ebe3d0089f1710facb207eb5661ad1807438659298310cc",
+                                     "native_receipts":  18,
+                                     "pinned_core_sources":  6,
+                                     "status_is_historical":  true
+                                 },
+    "input_sha256":  "bf644876709c591acc17c0da8cdf1814edcc9f1e6bc109a8c0d5c38c79dc953c",
+    "refusal_history":  {
+                            "prior_hold_preserved":  true,
+                            "new_refused_operations":  [
+                                                           "Broad artifact-inspection request",
+                                                           "IDA observer table-byte request"
+                                                       ],
+                            "exact_payloads_and_outputs":  "W104_RESUMPTION_20260927.md",
+                            "historical_requests_not_relabelled_success":  true,
+                            "no_permission_account_or_credential_change":  true,
+                            "current_minimal_authorized_reads_established_current_facts":  true,
+                            "no_global_readonly_diagnosis":  true
+                        },
+    "limits":  [
+                   "Stock Lua5.1 and controlled owner observations do not execute WoW or prove server acknowledgement",
+                   "Existing emitted GUID instructions are contract-tested, not assembled/executed in a live client",
+                   "No authority over delayed/cache/network-originated pending indices or foreign popups",
+                   "By-name equipment remains outside this cursor protocol",
+                   "Self-review does not satisfy independent or supervised acceptance",
+                   "Original-client/native/server acceptance and remaining questing/navigation/combat audit remain open"
+               ],
+    "restrictions":  {
+                         "no_subagents":  true,
+                         "no_local_project_execution":  true,
+                         "no_game_or_IDB_mutation":  true,
+                         "no_production_CB_access":  true,
+                         "no_merge":  true,
+                         "no_master_write":  true,
+                         "no_force_push":  true,
+                         "assertions_preserved":  true,
+                         "numeric_preparation_historical":  3,
+                         "numeric_preparation_new":  0,
+                         "numeric_preparation_remaining":  0,
+                         "session_finish_called":  false
+                     },
+    "documentation_identity":  "This containing documentation commit is distinct from tested_source; its final SHA is recorded in the external publication receipt and LATEST_CONTINUATION.md."
+}

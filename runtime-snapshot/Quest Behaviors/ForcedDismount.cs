@@ -14,7 +14,10 @@
 //
 using System;
 using System.Collections.Generic;
-using System.Threading;
+using System.Threading.Tasks;
+using Buddy.Coroutines;
+using CommonBehaviors.Actions;
+using Styx.CommonBot.Coroutines;
 
 using Styx.Logic;
 using Styx.Logic.BehaviorTree;
@@ -98,39 +101,37 @@ namespace Styx.Bot.Quest_Behaviors
 
         protected override Composite CreateBehavior()
         {
-            return _root ?? (_root =
-                new PrioritySelector(
-                    // If not mounted and not shapeshifted, nothing to do
-                    new Decorator(ret => !Me.Mounted && Me.Shapeshift == ShapeshiftForm.Normal,
-                        new Action(ret => _isBehaviorDone = true)),
+            return _root ?? (_root = new ActionRunCoroutine(ret => ExecuteDismount()));
+        }
 
-                    // Druid flight/travel form → cancel form
-                    new Decorator(ret => Me.Shapeshift != ShapeshiftForm.Normal,
-                        new Action(ret =>
-                        {
-                            TreeRoot.StatusText = "Cancelling shapeshift form";
-                            Lua.DoString("CancelShapeshiftForm()");
-                            Thread.Sleep(1000);
-                            _isBehaviorDone = true;
-                        })),
+        private async Task<bool> ExecuteDismount()
+        {
+            LocalPlayer player = Me;
+            if (player == null) return false;
+            ulong guid = player.Guid;
+            ShapeshiftForm form = player.Shapeshift;
+            bool SameActor() => guid != 0 && ReferenceEquals(Me, player) && player.Guid == guid
+                && player.IsValid && player.IsAlive;
+            if (!SameActor()) return false;
+            if (!player.Mounted && form == ShapeshiftForm.Normal)
+                return _isBehaviorDone = true;
 
-                    // Normal mount → dismount via Lua
-                    new Decorator(ret => Me.Mounted,
-                        new Action(ret =>
-                        {
-                            TreeRoot.StatusText = "Dismounting";
-                            // Stop movement first
-                            if (Me.IsMoving)
-                            {
-                                WoWMovement.MoveStop();
-                                Thread.Sleep(500);
-                            }
+            TreeRoot.StatusText = "Landing and dismounting";
+            if (!SameActor() || player.Shapeshift != form) return false;
+            if (player.Mounted || form == ShapeshiftForm.FlightForm || form == ShapeshiftForm.EpicFlightForm)
+            {
+                if (!await CommonCoroutines.LandAndDismount("ForcedDismount")) return false;
+            }
+            else
+            {
+                Mount.ClearShapeshift();
+                if (!await Coroutine.Wait(4000, () => !SameActor() || player.Shapeshift == ShapeshiftForm.Normal))
+                    return false;
+            }
 
-                            Lua.DoString("Dismount()");
-                            Thread.Sleep(1000);
-                            _isBehaviorDone = true;
-                        }))
-                ));
+            if (!SameActor() || player.Mounted || player.Shapeshift != ShapeshiftForm.Normal) return false;
+            // Only the captured player's observed removal completes this behavior.
+            return _isBehaviorDone = true;
         }
 
 

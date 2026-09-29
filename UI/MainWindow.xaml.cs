@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -74,9 +74,9 @@ namespace CopilotBuddy.UI
 
             // Log version (HB 4.3.4: "Honorbuddy v{0} started.")
             // AssemblyVersion is intentionally not set in .csproj (causes BAML crash under .NET 10).
-            const string BotVersion = "1.6.6";
+            const string BotVersion = "1.6.7.5 PR51";
             Title = $"CopilotBuddy v{BotVersion}";
-            Logging.Write("CopilotBuddy v{0} started. Original HonorBuddy by Apoc, raphus, highvoltz, bobby53, xanathos, chinajade. Ported to WotLK 3.3.5a by Likon69.", BotVersion);
+            Logging.Write("CopilotBuddy v{0} started. Original HonorBuddy by Apoc, raphus, highvoltz, bobby53, xanathos, chinajade, Natfoth. Ported to WotLK 3.3.5a by Likon69.", BotVersion);
         }
 
         #endregion
@@ -339,9 +339,8 @@ namespace CopilotBuddy.UI
                     try
                     {
                         if (proc.HasExited) continue;
-                        int build = proc.MainModule?.FileVersionInfo.FilePrivatePart ?? 0;
-                        // build == 0 means no version resource (custom/private server client)
-                        if (build == ObjectManager.SupportedBuild || build == 0)
+                        var version = proc.MainModule?.FileVersionInfo;
+                        if (ObjectManager.IsSupportedClientVersion(version))
                             candidates.Add(proc);
                     }
                     catch { /* Access denied or process exited */ }
@@ -358,8 +357,8 @@ namespace CopilotBuddy.UI
                         var proc = Process.GetProcessById(pid);
                         if (!proc.HasExited)
                         {
-                            int build = proc.MainModule?.FileVersionInfo.FilePrivatePart ?? 0;
-                            if (build == ObjectManager.SupportedBuild)
+                            var version = proc.MainModule?.FileVersionInfo;
+                            if (ObjectManager.IsSupportedClientVersion(version))
                                 candidates.Add(proc);
                         }
                     }

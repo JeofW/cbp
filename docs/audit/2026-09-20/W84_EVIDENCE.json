@@ -1,0 +1,79 @@
+{
+  "schema": "copilotbuddy-audit-evidence-v1",
+  "checkpoint": "W84",
+  "date": "2026-09-20",
+  "repo": "jeofwong/CopilotBuddy-private",
+  "pr": 51,
+  "branch": "audit/next-55-equipment-observation-20260917",
+  "entry": "f399fb81b6e32663ee34d36381db329f85e6b5c2",
+  "verified_commit": "9f2064769b177eef2ffd43536f6eec35eb2470e4",
+  "verified_tree": "36604b85337e112447c06b65ca57eb88a0502d17",
+  "red": {
+    "commit": "1ab19b625d85a8295b6ae825f821c169f6fc984a",
+    "tree": "ccb0619623c33ef079fa368bf6ae10b21df32e5a",
+    "run": 35497245564,
+    "artifact": 10600602214,
+    "sha256": "7cd8552de54649749f123994950a2cb36977291c76f9536cff2e05f651bca61d",
+    "result": "7/18; assertions=11; unexpected=0; other16 integrated entries pass",
+    "crc_verified": true,
+    "inner_hashes_verified": 194
+  },
+  "production_fix": "cfca67f3f0945e0cc0fdadc81c96a5e3c63fc61b",
+  "unrelated_diagnostic_restoration": "9f2064769b177eef2ffd43536f6eec35eb2470e4",
+  "green": {
+    "run": 35497665080,
+    "artifact": 10601597315,
+    "sha256": "9018e1e5a095ba835da272767e5d9829ee205ebb3d4abedf94e113bcf3d721e2",
+    "result": "18/18; assertions=0; unexpected=0; integrated17/17",
+    "crc_verified": true,
+    "inner_hashes_verified": 194,
+    "game_attached": false
+  },
+  "host": {
+    "run": 35497665006,
+    "artifact": 10601202604,
+    "sha256": "691b06484b7f874fd43dc765a9e4c33604aa21da87119f8f50bef1e4e5d65b48",
+    "crc_verified": true,
+    "inner_manifest_present": false,
+    "build_exit": 0,
+    "warnings": 3344,
+    "errors": 0,
+    "tests_run": false,
+    "game_attached": false
+  },
+  "unchanged_fixture_pair": {
+    "normalized_members_identical": 150,
+    "indexed_inputs_each": 1832,
+    "only_changed_input": "runtime-snapshot/Plugins/MrItemRemover2/Methods.cs",
+    "production_scope": "TickPendingDelete and PendingDeleteItemStillObserved only"
+  },
+  "rechecked_W83_baseline": {
+    "commit": "e518f4a32b3f4517c81a9b7c26b35d39452a102b",
+    "run": 35495595055,
+    "artifact": 10599609800,
+    "sha256": "defc998e34e213cf7865e03d57a106cfa8892fda5be4bd802be8335febe72a38",
+    "integrated": "17/17",
+    "inner_hashes_verified": 193
+  },
+  "retained_results": {
+    "AutoEquipPendingContext": "46/46",
+    "ReusableItemAcknowledgement": "10/10",
+    "DeletePopupRequest": "14/14",
+    "GossipLifetime": "17/17",
+    "RewardSelectionLifetime": "18/18",
+    "StrategyKindAdmission": "9/9",
+    "StrategyExecution": "16/16",
+    "QuestCollectionReplay": "34/34",
+    "QuestObjectiveRestart": "37/37",
+    "RetRegistration": "9/9",
+    "EquipAcknowledgedTimeout": "10/10"
+  },
+  "new_lua_or_native_offsets": false,
+  "physical_deletion_acceptance_claimed": false,
+  "R05_fully_closed": false,
+  "remaining_merge_gates": ["R03 CAST/raw-index strategy execution", "R04 EquipItem lifetime and physical cursor/popup ownership", "R05 plugin/player mutation admission and scan continuation", "R06 same-NPC changed-menu ownership", "R07 compiler dependencies/static reload/full refresh"],
+  "conditional_merge_authorized": true,
+  "merge_conditions_met": false,
+  "merged": false,
+  "deployed": false
+}

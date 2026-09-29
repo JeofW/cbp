@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using GreenMagic;
 
@@ -56,19 +57,14 @@ namespace Styx.WoWInternals.WoWObjects
 			uint threatTableAddr = mob.BaseAddress + 4056;
 			var threatTable = wow.Read<ThreatTable>(threatTableAddr);
 
-			if (threatTable.TargetGuid != 0)
-			{
-				// Try to find unit in threat table
-				if (TryFindInThreatTable(threatTable.HashTable, (uint)unit.Guid, unit.Guid, out uint entryAddr))
-				{
+				bool found = TryFindInThreatTable(threatTable.HashTable, (uint)unit.Guid, unit.Guid, out uint entryAddr);
+				if (threatTable.TargetGuid != 0 && found)
 					return new UnitThreatInfo(wow.Read<ThreatEntry>(entryAddr));
-				}
-			}
 
 			// Not in threat table
 			return new UnitThreatInfo(new ThreatEntry
 			{
-				Status = 0,
+					Status = (byte)(found ? ThreatStatus.NotTanking : ThreatStatus.UnitNotInThreatTable),
 				RawPercent = 0,
 				ThreatValue = 0,
 				TargetGuid = unit.Guid,
@@ -91,7 +87,10 @@ namespace Styx.WoWInternals.WoWObjects
 			var bucket = wow.Read<HashBucket>(table.TablePtr + index * 12);
 
 			uint ptr = bucket.NextPtr;
-			while ((ptr & 1) == 0 && ptr != 0)
+				// Bound observation work and reject corrupt cycles. This is a read
+				// budget, not a declaration of the native threat-table capacity.
+				var visited = new HashSet<uint>();
+				while ((ptr & 1) == 0 && ptr != 0 && visited.Count < 4096 && visited.Add(ptr))
 			{
 				var entry = wow.Read<ThreatEntry>(ptr);
 				if (entry.GuidHash == hash && entry.TargetGuid == guid)

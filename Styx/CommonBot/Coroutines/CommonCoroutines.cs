@@ -120,57 +120,84 @@ namespace Styx.CommonBot.Coroutines
         public static async Task<bool> StopMoving(string? reason = null)
         {
             WoWUnit? mover = WoWMovement.ActiveMover;
-            if (mover == null || !mover.IsMoving)
+            if (mover == null || !mover.IsValid || mover.Guid == 0 || !mover.IsMoving)
                 return false;
+            ulong guid = mover.Guid;
+            bool SameMover() => ReferenceEquals(WoWMovement.ActiveMover, mover)
+                && mover.Guid == guid && mover.IsValid;
+            if (!SameMover()) return false;
 
             WoWMovement.MoveStop();
             string text = (!string.IsNullOrEmpty(reason)) ? (" Reason: " + reason) : string.Empty;
             Logging.WriteDiagnostic("Stopped moving." + text);
 
-            bool stopped = await Coroutine.Wait(4000, () => !mover.IsMoving);
+            bool stopped = await Coroutine.Wait(4000, () => !SameMover() || !mover.IsMoving);
             if (!stopped)
             {
                 Logging.WriteDiagnostic("Unable to stop moving after 4 seconds of attempting to stop");
             }
-            return true;
+            return stopped && SameMover() && !mover.IsMoving;
         }
 
         /// <summary>
-        /// HB 6.2.3: Dismount the character. If flying and descend=true,
-        /// descends until grounded first.
+        /// Dismount one observed player. Optional descent is bounded and cannot
+        /// authorize removal on timeout, stale identity or unreadable movement.
         /// </summary>
         public static async Task<bool> Dismount(string? reason = null, bool descend = true)
         {
-            if (!StyxWoW.Me.Mounted)
-                return false;
+            LocalPlayer? player = StyxWoW.Me;
+            if (player == null) return false;
+            ulong guid = player.Guid;
+            ShapeshiftForm shapeshift = player.Shapeshift;
+            bool IsFlightForm(ShapeshiftForm form) => form == ShapeshiftForm.FlightForm || form == ShapeshiftForm.EpicFlightForm;
+            bool HasMount() => player.Mounted || IsFlightForm(player.Shapeshift);
+            bool SameActor() => guid != 0 && ReferenceEquals(StyxWoW.Me, player) && player.Guid == guid
+                && ReferenceEquals(WoWMovement.ActiveMover, player);
+            bool Observe(out uint flags)
+            {
+                flags = 0;
+                return SameActor() && player.IsValid && player.IsAlive
+                    && player.TryGetMovementState(out flags, out ulong transport)
+                    && transport == 0 && (flags & 0x3000u) == 0
+                    && SameActor() && player.IsValid && player.IsAlive;
+            }
+            if (!Observe(out uint flags) || !HasMount() || (!descend && (flags & 0x02000000u) != 0)) return false;
 
             string text = (!string.IsNullOrEmpty(reason)) ? (" Reason: " + reason) : string.Empty;
             Logging.WriteDiagnostic("Stop and dismount..." + text);
 
+            if (!Observe(out flags) || player.Shapeshift != shapeshift || !HasMount()) return false;
             await StopMoving("Dismounting");
+            if (!Observe(out flags) || player.Shapeshift != shapeshift || !HasMount() || player.IsMoving) return false;
 
-            if (descend && StyxWoW.Me.IsFlying)
+            if ((flags & 0x02000000u) != 0)
             {
+                if (!descend) return false;
+                bool descending = false;
                 try
                 {
+                    if (!Observe(out flags) || player.Shapeshift != shapeshift) return false;
+                    descending = true;
                     WoWMovement.Move(WoWMovement.MovementDirection.Descend);
                     await Coroutine.Sleep(150);
+                    if (!Observe(out flags) || player.Shapeshift != shapeshift) return false;
                     bool landed = await Coroutine.Wait(40000, () =>
-                        !StyxWoW.Me.IsFlying);
+                        !Observe(out uint currentFlags) || player.Shapeshift != shapeshift || (currentFlags & 0x02000000u) == 0);
                     if (!landed)
                     {
                         Logging.WriteDiagnostic("Unable to land after 40 seconds of descending.");
+                        return false;
                     }
                 }
                 finally
                 {
-                    WoWMovement.MoveStop(WoWMovement.MovementDirection.Descend);
+                    if (descending && SameActor())
+                        WoWMovement.MoveStop(WoWMovement.MovementDirection.Descend);
                 }
             }
 
-            // HB 6.2.3: Druid flight form → /cancelform, otherwise Dismount()
-            ShapeshiftForm shapeshift = StyxWoW.Me.Shapeshift;
-            if (shapeshift == ShapeshiftForm.FlightForm || shapeshift == ShapeshiftForm.EpicFlightForm)
+            if (!Observe(out flags) || (flags & 0x02000000u) != 0 || player.Shapeshift != shapeshift || !HasMount()) return false;
+            if (IsFlightForm(shapeshift))
             {
                 Lua.DoString("RunMacroText('/cancelform')");
             }
@@ -179,12 +206,14 @@ namespace Styx.CommonBot.Coroutines
                 Lua.DoString("Dismount()");
             }
 
-            if (!(await Coroutine.Wait(4000, () => !StyxWoW.Me.Mounted)))
+            if (!(await Coroutine.Wait(4000, () => !SameActor() || !HasMount()))
+                || !Observe(out flags) || (flags & 0x02000000u) != 0 || HasMount())
             {
                 return false;
             }
 
-            // HB 6.2.3: Notify mount system of dismount
+            // Notify only after this same player's removal is observed. This is
+            // not an exclusive server acknowledgement or physical-ground proof.
             Styx.Logic.Mount.RaiseOnDismount(reason);
             return true;
         }

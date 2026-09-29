@@ -1,0 +1,633 @@
+{
+  "prepared_utc": "2026-09-28T23:30:49.877333+00:00",
+  "source": "dc545b045af585dedbc02c18b8b39c8cb041f9e6",
+  "tree": "5633b8900fd5e8f4212ed7b32e155aed319e3f00",
+  "parent": "e48988a9d4e1ed9cbec06f59a849ddd4c1ca4530",
+  "source_publication": {
+    "repository": "JeofW/cbp",
+    "repository_id": 1367174964,
+    "branch": "audit/next-55-equipment-observation-20260917",
+    "expected_parent": "e48988a9d4e1ed9cbec06f59a849ddd4c1ca4530",
+    "paths": [
+      "Bots/Grind/LevelBot.cs",
+      "Tools/WholesomeQuestRecoveryRegressionTests/CombatTargetGapRegressionTests.cs",
+      "Tools/WholesomeQuestRecoveryRegressionTests/RoamContinuationOwnershipRegressionTests.cs"
+    ],
+    "patch_sha256": "0d4e9ddea08048577556e3acfa9818f243be3101c7df97c7fcf99c433e952e6c",
+    "files": [
+      {
+        "path": "Bots/Grind/LevelBot.cs",
+        "blob": "d1ff13694fac5f75d60cf75d8246d86b1da0f3a0",
+        "sha256": "b450201ef3b7af8fed0d8d411109c9b20a4dfd0a1add637c83813deff6115865"
+      },
+      {
+        "path": "Tools/WholesomeQuestRecoveryRegressionTests/CombatTargetGapRegressionTests.cs",
+        "blob": "73ec78238af98faa956f27d3586668030e47ee27",
+        "sha256": "5187d6aafc868d083f27133106b906909818737372d42443c39e27d3823768ed"
+      },
+      {
+        "path": "Tools/WholesomeQuestRecoveryRegressionTests/RoamContinuationOwnershipRegressionTests.cs",
+        "blob": "583ff727f10db5461abb5d2cee080c5e431794b4",
+        "sha256": "2b81b315de09ee3c19a89e15be38e2a0847fc82c5d14cf69575304fc9e8873c1"
+      }
+    ],
+    "commit": "dc545b045af585dedbc02c18b8b39c8cb041f9e6",
+    "tree": "5633b8900fd5e8f4212ed7b32e155aed319e3f00",
+    "verified_at_utc": "2026-09-28T23:24:09.3565494Z",
+    "direct_refs": [
+      "dc545b045af585dedbc02c18b8b39c8cb041f9e6\trefs/heads/audit/next-55-equipment-observation-20260917",
+      "b2324913e2499ba30b239dd67224ca2c655c05cc\trefs/heads/master"
+    ]
+  },
+  "local": {
+    "completed_utc": "2026-09-28T23:19:03.2998179Z",
+    "base_head": "e48988a9d4e1ed9cbec06f59a849ddd4c1ca4530",
+    "source_inputs": 1900,
+    "source_unchanged": true,
+    "successful_groups": 17,
+    "total_groups": 17,
+    "extraction_verified": true,
+    "extraction_source": "002682af0d8b8cc9ab01482eba8598ada0dd763c",
+    "host_build_exit": 0,
+    "lua51_sha256": "06df2510b5780791d17cbb738e42ec28a1ef5add580e127f31a9968bf57630e4",
+    "game_attached": false,
+    "hosted_acceptance": "Pending meaningful publication gate."
+  },
+  "optimized": {
+    "status": "complete",
+    "head": "e48988a9d4e1ed9cbec06f59a849ddd4c1ca4530",
+    "started_utc": "2026-09-28T23:19:28.706879+00:00",
+    "completed_utc": "2026-09-28T23:21:07.369571+00:00",
+    "command": [
+      "D:\\Dev\\CopilotBuddy-Evidence\\W110-local-dotnet-x86\\dotnet.exe",
+      "D:\\Dev\\CopilotBuddy-PR51\\Tools\\WholesomeQuestRecoveryRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\WholesomeQuestRecoveryRegressionTests.dll"
+    ],
+    "pid": 37516,
+    "exit": 0,
+    "timed_out": false,
+    "source_inputs": 1900,
+    "source_unchanged": true,
+    "immutable_binaries_unchanged": true,
+    "changed_binaries": [],
+    "summaries": [
+      "Chase ownership scenarios: 73/73; assertions=0; unexpected=0; complete tracked chase/Blacklist/NavigationAction and real TreeSharp; controlled paths; no physical route or live HoJ acceptance.",
+      "Coordinator containment scenarios: 49/49; assertions=0; unexpected=0; complete tracked coordinator/interface and real TreeSharp; positive provider and controlled routes; no physical-world acceptance.",
+      "Forced arrival scenarios: 65/65; assertions=0; unexpected=0; complete tracked ForcedMoveTo/base and real TreeSharp; controlled mount/path/world; no physical landing acceptance.",
+      "Forced materialization scenarios: 12/12; assertions=0; unexpected=0; actual parser/executor/forced owner; no game or navigation execution.",
+      "Real matching recipient scenarios: 13/13; assertions=0; unexpected=0; actual loader/scheduler/XML/compiler/factory/wrapper/WoWUnit/Interact; native executor absent, requests refused, no game attached.",
+      "Quest strategy constructor dispatch scenarios: 12/12; assertions=0; unexpected=0; actual loader/scheduler/XML/CodeNode/runtime compiler/factory; six constructor and six wrapper/start/branch-tick cases; allocated observations; no native executor, recipient action or game attached.",
+      "Target switch ownership scenarios: 90/90; assertions=0; unexpected=0; complete tracked Safers and real TreeSharp; controlled observation/target command; no native or live HoJ proof."
+    ],
+    "failures": [],
+    "ordinary_gate_summary_sha256": "876bf761ee2224f32db1e3fd18937fb92f90a2ed365d07cb962e66e0b35764b2",
+    "run_log_sha256": "ba0255a66cb8fe16309e1616bf5f237b45754fefd75fc97aee1778b5f76ff62a",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "runtime_sha256": "9c0da796be0e7c067911dc0e8499e474b523a1c610eba59be19ab6e4ce1dd31a",
+    "lua51_sha256": "06df2510b5780791d17cbb738e42ec28a1ef5add580e127f31a9968bf57630e4",
+    "process_environment": {
+      "DOTNET_TieredCompilation": "0",
+      "COMPlus_TieredCompilation": null,
+      "DOTNET_ReadyToRun": null,
+      "DOTNET_DbgEnableMiniDump": "1",
+      "DOTNET_DbgMiniDumpType": "4",
+      "DOTNET_DbgMiniDumpName": "D:\\Dev\\CopilotBuddy-Evidence\\W110_COMBAT_ROAM_OPTIMIZED_20260929\\crash.%p.%t.dmp"
+    },
+    "dumps": [],
+    "interpretation": "Full optimized-runtime diagnostic supplements, never replaces, ordinary local17 acceptance. Green is non-reproduction of the historical CLR fatal crash, not diagnosis of its initiating cause.",
+    "game_attached": false,
+    "runtime_settings_deployed": false,
+    "registry_changed": false
+  },
+  "optimized_membership": {
+    "ordinary_and_optimized_groups_identical": true,
+    "groups": [
+      "ActiveMoverObservationRegressionTests",
+      "AmmoWorldObservationRegressionTests",
+      "AquaticObservationRegressionTests",
+      "AquaticShorelineAdmissionRegressionTests",
+      "AuraCancellationRegressionTests",
+      "AuraCollectionReadValidityRegressionTests",
+      "AuraCountSafetyRegressionTests",
+      "AuraDurationObservationRegressionTests",
+      "AutoAttackStartRegressionTests",
+      "AutoEquipAdmissionRegressionTests",
+      "AutoEquipPendingContextRegressionTests",
+      "CastContinuationOwnershipRegressionTests",
+      "CastLuaObservationRegressionTests",
+      "CastWaitFacingRegressionTests",
+      "ChaseContinuationOwnershipRegressionTests",
+      "ClientBuildAdmissionRegressionTests",
+      "CollectThingsBreathRegressionTests",
+      "CombatControlContinuityRegressionTests",
+      "CombatMovementContinuityRegressionTests",
+      "CombatSightMovementRegressionTests",
+      "CombatTargetGapRegressionTests",
+      "CompilerInputIdentityRegressionTests",
+      "CompositeFailureLoggingRegressionTests",
+      "CompositeReentrantCleanupRegressionTests",
+      "ContainerItemSlotIdentityRegressionTests",
+      "ContainerLua51BoundaryRegressionTests",
+      "ContinuationRegressionEntry",
+      "CoroutineDismountRegressionTests",
+      "DatabaseDiscoveryRegressionTests",
+      "DatasetIdentityRegressionTests",
+      "DefaultEquipmentOwnershipRegressionTests",
+      "DeleteInventoryObservationRegressionTests",
+      "DeleteItemsLifecycleRegressionTests",
+      "DeletePopupSubmissionRegressionTests",
+      "DensePullCoordinatorContainmentRegressionTests",
+      "EndpointAssessmentRegressionTests",
+      "EquipAcknowledgedTimeoutRegressionTests",
+      "EquipCursorOwnershipRegressionTests",
+      "EquipItemContinuationBoundaryRegressionTests",
+      "EquipItemPendingContextRegressionTests",
+      "EquipmentAlreadyAcknowledgedRegressionTests",
+      "EquipmentCleanupOwnershipRegressionTests",
+      "EquipmentCursorGuidGuardRegressionTests",
+      "EquipmentHandReplacementRegressionTests",
+      "EquipmentLua51BoundaryRegressionTests",
+      "EquipmentObservationRegressionTests",
+      "EquipmentPendingIndexRegressionTests",
+      "EquipmentSlotAliasRegressionTests",
+      "EquipPopupSubmissionRegressionTests",
+      "EscortBehaviorRegressionTests",
+      "FlightNodePersistenceRegressionTests",
+      "FlightorDismountRegressionTests",
+      "FlightorWaitContinuityRegressionTests",
+      "FlightPathAdmissionRegressionTests",
+      "FlightPathAlternateOriginRegressionTests",
+      "FlightPathCostRegressionTests",
+      "FlightPathFinalObservationRegressionTests",
+      "FlightPathIntentBoundaryRegressionTests",
+      "FlightPathKnownMasterRegressionTests",
+      "FlightPathMerchantOwnershipRegressionTests",
+      "FlightPathPublicationExceptionRegressionTests",
+      "FlightPathPublicationRevocationRegressionTests",
+      "FlightPathPublicOwnerRegressionTests",
+      "FlightPathUpdateProviderRegressionTests",
+      "FlightPoiCompletionRegressionTests",
+      "FlightResetOwnershipRegressionTests",
+      "ForcedDismountBoundaryRegressionTests",
+      "ForcedMoveArrivalOwnershipRegressionTests",
+      "ForcedMoveMaterializationRegressionTests",
+      "GatherbuddyLandingRegressionTests",
+      "GatherbuddyRepairPhaseRegressionTests",
+      "GatherbuddySaleVisitBackoffRegressionTests",
+      "GatherbuddySellPhaseRegressionTests",
+      "GatherLandingLifecycleRegressionTests",
+      "GossipEventLifetimeRegressionTests",
+      "GossipEventStrategyRegressionTests",
+      "GroundCastContinuationRegressionTests",
+      "GroundCastSubmissionRegressionTests",
+      "GroundCommitReceiptRegressionTests",
+      "GroundSpellObservationConsistencyRegressionTests",
+      "HealContinuationOwnershipRegressionTests",
+      "HostMountAdmissionRegressionTests",
+      "HostMountDismountRegressionTests",
+      "InteractionMountBoundaryRegressionTests",
+      "LegacyRestContinuationRegressionTests",
+      "LootConsumerRangeRegressionTests",
+      "MerchantBulkRetryRegressionTests",
+      "MerchantIndexLookupRegressionTests",
+      "MerchantQuestItemLuaRegressionTests",
+      "MerchantSalePendingLivenessRegressionTests",
+      "MerchantSaleRetryRegressionTests",
+      "MerchantStepContextRegressionTests",
+      "MeshClearOwnershipRegressionTests",
+      "MeshMoveLifetimeRegressionTests",
+      "MeshMoveRequestOwnershipRegressionTests",
+      "MeshTransitResetRegressionTests",
+      "MirrorTimerBoundsRegressionTests",
+      "MountBehaviorCompilationRegressionTests",
+      "MountedHotspotTargetRegressionTests",
+      "MountPermissionBoundaryRegressionTests",
+      "MovementFlagLayoutRegressionTests",
+      "MrItemRemoverContextRegressionTests",
+      "MrItemRemoverDeletionLifecycleRegressionTests",
+      "MrItemRemoverScanRegressionTests",
+      "NativeAssemblerBoundaryGuard",
+      "NativeSpellObservationRegressionTests",
+      "NavigationDeferralRegressionTests",
+      "PackedSpellRowRegressionTests",
+      "PaladinTankRoleRegressionTests",
+      "PluginCachedConstructionRegressionTests",
+      "PluginCompilationInputRegressionTests",
+      "PluginContainerLifecycleRegressionTests",
+      "PluginFreshCompilationRegressionTests",
+      "PluginRefreshCompilationReuseRegressionTests",
+      "PluginRefreshPreparationRegressionTests",
+      "PoiObjectSubscriptionRegressionTests",
+      "ProfileItemCultureRegressionTests",
+      "ProfileWriterDiagnosticRegressionTests",
+      "ProtectedItemCultureRegressionTests",
+      "ProtectedItemOwnershipRegressionTests",
+      "ProtectedItemReloadRegressionTests",
+      "PublicationFixtureAccessRegressionTests",
+      "PullIsolationContainmentRegressionTests",
+      "QuestActionFreshnessRegressionTests",
+      "QuestActiveParentRegressionTests",
+      "QuestAddonConflictRegressionTests",
+      "QuestCastCreditCompatibilityRegressionTests",
+      "QuestCleanupSignalRegressionTests",
+      "QuestCollectionReplayRegressionTests",
+      "QuestDatasetProvenanceRegressionTests",
+      "QuestDependencyProtectionRegressionTests",
+      "QuestDependentPreviousAlternativeRegressionTests",
+      "QuestExclusiveGroupRegressionTests",
+      "QuestExecutorOwnershipRegressionTests",
+      "QuestItemAcknowledgementLivenessRegressionTests",
+      "QuestItemAuthoritativeProgressRegressionTests",
+      "QuestItemDispatchRegressionTests",
+      "QuestItemMerchantContextRegressionTests",
+      "QuestItemMovementOwnershipRegressionTests",
+      "QuestItemProgressLifetimeRegressionTests",
+      "QuestItemReusableAcknowledgementRegressionTests",
+      "QuestItemTargetSelectionRegressionTests",
+      "QuestLogCompletenessRegressionTests",
+      "QuestNavigationCancellationRegressionTests",
+      "QuestNegativeExclusiveDependencyRegressionTests",
+      "QuestObjectiveRestartRegressionTests",
+      "QuestPoiTargetIdentityRegressionTests",
+      "QuestPublicationAcceptanceRegressionTests",
+      "QuestPublicationRegressionTests",
+      "QuestRawLogMemoryRegressionTests",
+      "QuestReadyLifecycleRegressionTests",
+      "QuestRewardObservationRegressionTests",
+      "QuestRewardSelectionLifetimeRegressionTests",
+      "QuestRootOwnerBoundaryRegressionTests",
+      "QuestRootPreemptionRegressionTests",
+      "QuestRootProtectionRegressionTests",
+      "QuestScanEntryRegressionTests",
+      "QuestScanFailureRegressionTests",
+      "QuestScanRetryRegressionTests",
+      "QuestScanRevocationRegressionTests",
+      "QuestSchedulerRawPublicationRegressionTests",
+      "QuestStrategyConstructorDispatchRegressionTests",
+      "QuestStrategyExecutionRegressionTests",
+      "QuestStrategyKindValidationRegressionTests",
+      "QuestStrategyPackRegressionTests",
+      "QuestStrategySchedulerRegressionTests",
+      "RelationIdentityRegressionTests",
+      "RestLatencyRegressionTests",
+      "RestOwnershipRegressionTests",
+      "RetributionRotationRegistrationRegressionTests",
+      "RoamContinuationOwnershipRegressionTests",
+      "SharedBuffDispatchRegressionTests",
+      "SharedSpellObservationRegressionTests",
+      "SingularBehaviorCountRegressionTests",
+      "SingularRequiredRegistrationRegressionTests",
+      "SingularTargetSwitchOwnershipRegressionTests",
+      "SmartLootDecisionRegressionTests",
+      "SpellDispatchReceiptRegressionTests",
+      "SpellMetadataAdmissionRegressionTests",
+      "SpellRowLookupRegressionTests",
+      "SpellSightDispatchRegressionTests",
+      "TaxiEventOwnershipRegressionTests",
+      "UnitUpstreamContractRegressionTests",
+      "UpstreamCompatibilityContractRegressionTests",
+      "VendorAuxiliaryCallbackRegressionTests",
+      "VendorBulkContinuationOwnershipRegressionTests",
+      "VendorSaleContinuationOwnershipRegressionTests",
+      "VendorSaleEntryOwnershipRegressionTests",
+      "VendorSaleResultRegressionTests",
+      "VendorSessionBoundaryRegressionTests",
+      "VendorSessionReentrancyRegressionTests",
+      "VendorTravelBackoffRegressionTests",
+      "WeightStatAliasRegressionTests",
+      "WholesomeAquaticPauseRegressionTests",
+      "WorldStateAddressRegressionTests",
+      "WorldStateReadValidityRegressionTests"
+    ],
+    "required_case_summaries": [
+      "Combat target-gap scenarios: 176/176; assertions=0; unexpected=0;",
+      "Roam ownership scenarios: 186/186; assertions=0; unexpected=0;",
+      "Coordinator containment scenarios: 49/49; assertions=0; unexpected=0;",
+      "Publication fixture access scenarios: 8/8; assertions=0; unexpected=0;",
+      "Real matching recipient scenarios: 13/13; assertions=0; unexpected=0;",
+      "Quest strategy constructor dispatch scenarios: 12/12; assertions=0; unexpected=0;"
+    ],
+    "game_attached": false,
+    "ordinary_log_sha256": "7b5e3792b655f8136799b8f7f2edfb66e0934b4e74b0de74071e06091be3bfc4",
+    "optimized_log_sha256": "ba0255a66cb8fe16309e1616bf5f237b45754fefd75fc97aee1778b5f76ff62a",
+    "inspection_recovery": "Native run exited0 with stable source/binaries. Earlier strict UTF8 whole-log decoding failed on non-UTF8 diagnostics. This inspection compares exact ASCII proof/group bytes and the BOM-declared ordinary log, without rewriting either stream or rerunning tests.",
+    "tests_rerun": false
+  },
+  "integrated": {
+    "verified_at_utc": "2026-09-28T23:30:43.8893366Z",
+    "repository": "JeofW/cbp",
+    "repository_id": 1367174964,
+    "run": 36497800550,
+    "source": "dc545b045af585dedbc02c18b8b39c8cb041f9e6",
+    "artifact": 11004650834,
+    "artifact_name": "integrated-dc545b045af585dedbc02c18b8b39c8cb041f9e6",
+    "archive": "D:\\Dev\\CopilotBuddy-Evidence\\w110-route-integrated-dc545b04.zip",
+    "sha256": "8ec7b0fd3e2154e17dc131db476373b07d7b0bb5875fe84685030808c6c4f181",
+    "metadata_digest": "sha256:8ec7b0fd3e2154e17dc131db476373b07d7b0bb5875fe84685030808c6c4f181",
+    "bytes": 1169233,
+    "run_conclusion": "success",
+    "jobs": [
+      {
+        "id": 109181338240,
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ],
+    "game_attached": false
+  },
+  "host": {
+    "verified_at_utc": "2026-09-28T23:28:43.4701008Z",
+    "repository": "JeofW/cbp",
+    "repository_id": 1367174964,
+    "run": 36497800524,
+    "source": "dc545b045af585dedbc02c18b8b39c8cb041f9e6",
+    "artifact": 11004550647,
+    "artifact_name": "audit-validation-dc545b045af585dedbc02c18b8b39c8cb041f9e6",
+    "archive": "D:\\Dev\\CopilotBuddy-Evidence\\w110-route-host-dc545b04.zip",
+    "sha256": "1d8d2c5e29affee017da01d93074e86bf01534ed2f3cbdbf55649d9375ec4845",
+    "metadata_digest": "sha256:1d8d2c5e29affee017da01d93074e86bf01534ed2f3cbdbf55649d9375ec4845",
+    "bytes": 85547,
+    "run_conclusion": "success",
+    "jobs": [
+      {
+        "id": 109181338524,
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ],
+    "game_attached": false
+  },
+  "host_build_summary": [
+    "3486 Warning(s)",
+    "0 Error(s)"
+  ],
+  "members": 259,
+  "inner_hashes": 258,
+  "source_inputs": 1900,
+  "case_summaries": [
+    "Chase ownership scenarios: 73/73; assertions=0; unexpected=0; complete tracked chase/Blacklist/NavigationAction and real TreeSharp; controlled paths; no physical route or live HoJ acceptance.",
+    "Combat target-gap scenarios: 176/176; assertions=0; unexpected=0; exact LevelBot combat region and POI decorator; real TreeSharp; controlled routine/world; no game attached.",
+    "Coordinator containment scenarios: 49/49; assertions=0; unexpected=0; complete tracked coordinator/interface and real TreeSharp; positive provider and controlled routes; no physical-world acceptance.",
+    "Publication fixture access scenarios: 8/8; assertions=0; unexpected=0; actual shared fixture/Memory/native access; only owned canary writes; no client-global write or game attached.",
+    "Real matching recipient scenarios: 13/13; assertions=0; unexpected=0; actual loader/scheduler/XML/compiler/factory/wrapper/WoWUnit/Interact; native executor absent, requests refused, no game attached.",
+    "Quest strategy constructor dispatch scenarios: 12/12; assertions=0; unexpected=0; actual loader/scheduler/XML/CodeNode/runtime compiler/factory; six constructor and six wrapper/start/branch-tick cases; allocated observations; no native executor, recipient action or game attached.",
+    "Roam ownership scenarios: 186/186; assertions=0; unexpected=0; complete tracked factory/predicates/admission/POI action and real TreeSharp; controlled world/mount/navigation; no native atomicity or physical-route acceptance.",
+    "Target switch ownership scenarios: 90/90; assertions=0; unexpected=0; complete tracked Safers and real TreeSharp; controlled observation/target command; no native or live HoJ proof."
+  ],
+  "pairs": {
+    "verified_utc": "2026-09-28T23:16:41.415418+00:00",
+    "new_pairs": [
+      {
+        "red": "COMBATLIFETIMERED",
+        "green": "COMBATLIFETIMEGREEN",
+        "red_cases": "Combat target-gap scenarios: 126/173; assertions=47; unexpected=0;",
+        "green_cases": "Combat target-gap scenarios: 173/173; assertions=0; unexpected=0;",
+        "only_changed_input": "Bots/Grind/LevelBot.cs",
+        "source_inputs": 1900,
+        "fixture_sources_unchanged": true,
+        "assertions_weakened": false,
+        "green_owner_sha256": "72308d6fed0922294fa8f165975f5a6e22875b6a91a03169dd67f3d77ed3571b",
+        "receipts": [
+          {
+            "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_COMBATLIFETIMERED_20260929\\status.json",
+            "sha256": "8b73db367ca3980602cb696bf0152888375c102f5fa2a5471291866205c1afeb"
+          },
+          {
+            "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_COMBATLIFETIMERED_20260929\\source-before.json",
+            "sha256": "518df3428e0aee3c82301f92e0a0ae0f58f4a09b04f1b0a49f31836e2f058d9c"
+          },
+          {
+            "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_COMBATLIFETIMERED_20260929\\source-after.json",
+            "sha256": "518df3428e0aee3c82301f92e0a0ae0f58f4a09b04f1b0a49f31836e2f058d9c"
+          },
+          {
+            "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_COMBATLIFETIMERED_20260929\\run.log",
+            "sha256": "a323dcf53bae8ddba3785644a1857eb5cdcffa6a7b825564deb17a91bdd8da1a"
+          },
+          {
+            "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_COMBATLIFETIMERED_20260929\\run.stderr.log",
+            "sha256": "69fdca1f417793e41b10044527573e568ff1e8c06d23dd6fc038ec814c029546"
+          },
+          {
+            "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_COMBATLIFETIMEGREEN_20260929\\status.json",
+            "sha256": "60623a83e2c10b254b8a933c87f46300d57f1206d3467f46e1f30571370e76f7"
+          },
+          {
+            "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_COMBATLIFETIMEGREEN_20260929\\source-before.json",
+            "sha256": "71c92d9b3354751a9bf84f06e20d8b7399e445fd53a5300d1dec6a215b117100"
+          },
+          {
+            "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_COMBATLIFETIMEGREEN_20260929\\source-after.json",
+            "sha256": "71c92d9b3354751a9bf84f06e20d8b7399e445fd53a5300d1dec6a215b117100"
+          },
+          {
+            "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_COMBATLIFETIMEGREEN_20260929\\run.log",
+            "sha256": "08b0e260a34f1feada78c7e5cdd9e255721b88374559e646489107f888ed0a2a"
+          },
+          {
+            "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_COMBATLIFETIMEGREEN_20260929\\run.stderr.log",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ]
+      },
+      {
+        "red": "ROAMTAILRED",
+        "green": "ROAMTAILGREEN",
+        "red_cases": "Roam ownership scenarios: 119/186; assertions=67; unexpected=0;",
+        "green_cases": "Roam ownership scenarios: 186/186; assertions=0; unexpected=0;",
+        "only_changed_input": "Bots/Grind/LevelBot.cs",
+        "source_inputs": 1900,
+        "fixture_sources_unchanged": true,
+        "assertions_weakened": false,
+        "green_owner_sha256": "91870ec2d0f350e01f3836e54b5b473163ad6149d1baf350c1883b591909a570",
+        "receipts": [
+          {
+            "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_ROAMTAILRED_20260929\\status.json",
+            "sha256": "2d054f6647cd9c11389b2cb4769d7721af7ffa83d66d4d7ebd7e9f5472678851"
+          },
+          {
+            "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_ROAMTAILRED_20260929\\source-before.json",
+            "sha256": "f2b2fc33a4e710f2730c342d41842599ec1a955ccd5b629ef84a67bc805e0a12"
+          },
+          {
+            "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_ROAMTAILRED_20260929\\source-after.json",
+            "sha256": "f2b2fc33a4e710f2730c342d41842599ec1a955ccd5b629ef84a67bc805e0a12"
+          },
+          {
+            "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_ROAMTAILRED_20260929\\run.log",
+            "sha256": "03d3f4cc3af21881ac7e64addcaaee9c4a5feae001b8b5396d3de87f472f7891"
+          },
+          {
+            "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_ROAMTAILRED_20260929\\run.stderr.log",
+            "sha256": "9c6a9c493a59f005bd923b885276a264ad06208c0e71fd8d9142b407aa1695ad"
+          },
+          {
+            "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_ROAMTAILGREEN_20260929\\status.json",
+            "sha256": "59cece2d8e7546c0f81222a955ad6581ce6dae58df51c44fc631070f92d45ec9"
+          },
+          {
+            "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_ROAMTAILGREEN_20260929\\source-before.json",
+            "sha256": "819b14af61da33684c2c12f858dc7babc5e648f11972b819d63f42fc7c8442bb"
+          },
+          {
+            "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_ROAMTAILGREEN_20260929\\source-after.json",
+            "sha256": "819b14af61da33684c2c12f858dc7babc5e648f11972b819d63f42fc7c8442bb"
+          },
+          {
+            "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_ROAMTAILGREEN_20260929\\run.log",
+            "sha256": "f2aa14d87860bf0af338bb56ba3e2cac3f99cc7511fd0509767c902aa9daef5e"
+          },
+          {
+            "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_ROAMTAILGREEN_20260929\\run.stderr.log",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ]
+      },
+      {
+        "red": "GUARDREENTRANTRED2",
+        "green": "GUARDREENTRANTGREEN",
+        "red_cases": "Combat target-gap scenarios: 173/176; assertions=3; unexpected=0;",
+        "green_cases": "Combat target-gap scenarios: 176/176; assertions=0; unexpected=0;",
+        "only_changed_input": "Bots/Grind/LevelBot.cs",
+        "source_inputs": 1900,
+        "fixture_sources_unchanged": true,
+        "assertions_weakened": false,
+        "green_owner_sha256": "b450201ef3b7af8fed0d8d411109c9b20a4dfd0a1add637c83813deff6115865",
+        "receipts": [
+          {
+            "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_GUARDREENTRANTRED2_20260929\\status.json",
+            "sha256": "55b89e19db5ac0bd0be4407715e9076baba3e68bb4b5bda423daa60540ac25aa"
+          },
+          {
+            "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_GUARDREENTRANTRED2_20260929\\source-before.json",
+            "sha256": "2f1ff16b349b7583be5af916faae42a273feec6e31f227aee1ae69667f372bd5"
+          },
+          {
+            "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_GUARDREENTRANTRED2_20260929\\source-after.json",
+            "sha256": "2f1ff16b349b7583be5af916faae42a273feec6e31f227aee1ae69667f372bd5"
+          },
+          {
+            "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_GUARDREENTRANTRED2_20260929\\run.log",
+            "sha256": "3bd4e07043a116e2bb24c4d50aa76c746cfb00dc6c93624d645b7db8f24e502e"
+          },
+          {
+            "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_GUARDREENTRANTRED2_20260929\\run.stderr.log",
+            "sha256": "e118a410299f13013963e306b6061ce9655f2d2c0054e67a24c24cc9afad2a71"
+          },
+          {
+            "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_GUARDREENTRANTGREEN_20260929\\status.json",
+            "sha256": "2d7c19ce2e422529ef0141322397bb146b1fe019403eab20b86a5232e333c926"
+          },
+          {
+            "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_GUARDREENTRANTGREEN_20260929\\source-before.json",
+            "sha256": "f437569ff127226df61059854c2a4bc6e6c7b78d1905a111466714883e4f70bb"
+          },
+          {
+            "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_GUARDREENTRANTGREEN_20260929\\source-after.json",
+            "sha256": "f437569ff127226df61059854c2a4bc6e6c7b78d1905a111466714883e4f70bb"
+          },
+          {
+            "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_GUARDREENTRANTGREEN_20260929\\run.log",
+            "sha256": "27535c0808047ddef32f8d050602351f63362171e810acf053e8d2196ddb8dbb"
+          },
+          {
+            "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_GUARDREENTRANTGREEN_20260929\\run.stderr.log",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ]
+      }
+    ],
+    "recovered_pairs": [
+      {
+        "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_HIGHRISK_PREPULL_PAIR_20260929.json",
+        "sha256": "fb2a605d7375ef3c2052f47c427f38bc1fb5709f5d1d183d3a2b08a170c1867c",
+        "red": "33/109; assertions=76; unexpected=0",
+        "green": "109/109; assertions=0; unexpected=0"
+      },
+      {
+        "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_HIGHRISK_PREPULL_ADMISSION_PAIR_20260929.json",
+        "sha256": "f1a9656c48f69f6651c200e8e3a6fa41ccb75ada4d93df03f0ec013090077d03",
+        "red": "119/123; assertions=4; unexpected=0",
+        "green": "123/123; assertions=0; unexpected=0"
+      }
+    ],
+    "scope": "Distinct actual source intervals. Fixture source equality is per interval, not across later case extensions. Compiled assembly hashes remain individual identities. GUARDREENTRANTRED was a missing-import fixture compilation failure, not behavioral red. No native atomicity or live HoJ attribution.",
+    "game_attached": false,
+    "tests_rerun": false
+  },
+  "preserved_highrisk_verification": {
+    "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_HIGHRISK_FINAL_VERIFICATION_20260929.json",
+    "sha256": "2e7423c82532a3bfbc36ccac9a8fe2a0fb666e27527906cd6453a8f9272a292e"
+  },
+  "source_review": {
+    "changed_production_owners": [
+      "Bots/Grind/LevelBot.cs"
+    ],
+    "requirement_ids": [
+      "C01",
+      "C02",
+      "C03",
+      "C04",
+      "C05",
+      "C06",
+      "C07",
+      "Q01",
+      "Q02",
+      "Q03",
+      "Q04",
+      "Q05",
+      "Q06",
+      "Q07",
+      "Q08",
+      "Q09",
+      "Q10",
+      "Q11",
+      "Q12",
+      "Q13",
+      "Q14",
+      "Q15",
+      "Q16",
+      "N01",
+      "N02",
+      "N03",
+      "N04",
+      "N05",
+      "N06",
+      "N07",
+      "N08",
+      "N09",
+      "N10",
+      "R01",
+      "R02",
+      "R03",
+      "R04",
+      "R05",
+      "R06",
+      "R07",
+      "R08",
+      "R09",
+      "R10",
+      "R11",
+      "R12",
+      "R13",
+      "S01",
+      "S02",
+      "S03",
+      "S04",
+      "S05",
+      "S06",
+      "S07",
+      "S08",
+      "S09"
+    ],
+    "prior_roaming_coverage_corrected": true,
+    "automatic_hand_scope_corrected": true
+  },
+  "game_attached": false,
+  "live_HoJ_resolved": false,
+  "exact_historical_corrupting_instruction_proved": false,
+  "DensePullIsolationValidated": false,
+  "independent_acceptance": false,
+  "merged": false,
+  "deployed": false,
+  "finish_state": "Obtain actual handshake from the external finish record; publication is not release."
+}

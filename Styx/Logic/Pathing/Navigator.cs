@@ -691,13 +691,25 @@ namespace Styx.Logic.Pathing
 		{
 			z = 0f;
 
-			if (!IsNavigatorLoaded)
-				return false;
+				if (!IsNavigatorLoaded || !float.IsFinite(x) || !float.IsFinite(y))
+					return false;
 
-			uint mapId = (uint)(GetCurrentMapId());
-			var position = new Vector3(x, y, 10000f); // Start from high up
+				var actor = StyxWoW.Me;
+				if (actor == null || !actor.IsValid || actor.Guid == 0) return false;
+				uint mapId = actor.MapId;
+				ulong actorGuid = actor.Guid;
+				var navigator = TripperNavigator;
+				bool Current() => ReferenceEquals(actor, StyxWoW.Me) && actor.IsValid
+					&& actor.Guid == actorGuid && actor.MapId == mapId && IsNavigatorLoaded
+					&& ReferenceEquals(navigator, TripperNavigator) && navigator.CurrentMapId == mapId;
+				if (navigator == null || !Current()) return false;
+				var tile = Tripper.Navigation.TileIdentifier.GetByPosition(x, y);
+				bool loaded = navigator.IsTileLoaded(mapId, tile.X, tile.Y);
+				if (!Current() || (!loaded && !navigator.LoadTile(tile)) || !Current()) return false;
+				var position = new Vector3(x, y, 10000f); // Start from high up
 
-			if (TripperNavigator.FindNearestPoint(mapId, position, out Vector3 nearestPoint))
+				if (navigator.FindNearestPoint(mapId, position, out Vector3 nearestPoint) && Current()
+					&& float.IsFinite(nearestPoint.X) && float.IsFinite(nearestPoint.Y) && float.IsFinite(nearestPoint.Z))
 			{
 				z = nearestPoint.Z;
 				return true;

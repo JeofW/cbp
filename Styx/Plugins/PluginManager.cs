@@ -6,6 +6,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Security.Cryptography;
+using System.Text;
 using Styx.Helpers;
 using Styx.Plugins.PluginClass;
 
@@ -35,6 +37,21 @@ namespace Styx.Plugins
         public static List<PluginContainer> Plugins { get; private set; }
         private static readonly Dictionary<string, DateTime> SlowPluginLogTimes =
             new Dictionary<string, DateTime>(StringComparer.Ordinal);
+        private sealed class PluginSourceCacheEntry
+        {
+            internal string Fingerprint;
+            internal Type[] PluginTypes;
+        }
+
+        // Assemblies loaded into the default context cannot be unloaded. Recompiling
+        // identical source on each manual Refresh permanently retains another plugin
+        // assembly. Cache only a fully-constructed compiled type set and create fresh
+        // plugin instances for unchanged source and compilation inputs. Reused
+        // types retain their static state; this is not an assembly unload/reload.
+        private static readonly object PluginSourceCacheLock = new object();
+        private static readonly Dictionary<string, PluginSourceCacheEntry> PluginSourceCache =
+            new Dictionary<string, PluginSourceCacheEntry>(StringComparer.OrdinalIgnoreCase);
+
         private static readonly HashSet<string> UnavailableEnabledPlugins =
             new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
@@ -156,11 +173,12 @@ namespace Styx.Plugins
             if (IsBuildingPlugins)
                 return;
 
+            var replacementPlugins = new List<PluginContainer>();
+            bool replacementsPublished = false;
             try
             {
                 IsBuildingPlugins = true;
                 List<PluginContainer> previousPlugins = Plugins.ToList();
-                var replacementPlugins = new List<PluginContainer>();
                 var requestedEnabled = new HashSet<string>(
                     defaultEnabled ?? Array.Empty<string>(),
                     StringComparer.OrdinalIgnoreCase);
@@ -195,25 +213,18 @@ namespace Styx.Plugins
                 if (!Directory.Exists(pluginsPath))
                 {
                     Directory.CreateDirectory(pluginsPath);
-                    Logging.Write("No plugins found. Place plugins in the Plugins directory.");
-                    return;
                 }
 
                 var files = new List<string>();
                 files.AddRange(Directory.GetFiles(pluginsPath, "*.cs", SearchOption.TopDirectoryOnly));
                 files.AddRange(Directory.GetDirectories(pluginsPath, "*", SearchOption.TopDirectoryOnly));
 
-                if (files.Count == 0)
-                {
-                    Logging.Write("No plugins found. Place plugins in the Plugins directory.");
-                    return;
-                }
-
                 for (int i = 0; i < files.Count; i++)
                 {
                     try
                     {
-                        List<HBPlugin> loadedPlugins = CompileAndLoadFrom(files[i]);
+                        List<HBPlugin> loadedPlugins = LoadPluginPathWithCache(
+                            files[i], CompileAndLoadFrom);
                         foreach (HBPlugin plugin in loadedPlugins)
                         {
                             replacementPlugins.Add(new PluginContainer(plugin, false));
@@ -235,13 +246,18 @@ namespace Styx.Plugins
 
                 if (hadLoadErrors && previousPlugins.Count > 0)
                 {
-                    foreach (PluginContainer replacement in replacementPlugins)
-                    {
-                        try { replacement.Plugin.Dispose(); } catch { }
-                    }
                     Logging.Write("Plugin refresh failed; keeping the previous {0} loaded plugins.", previousPlugins.Count);
                     throw new InvalidOperationException("One or more plugins failed to compile or load; the previous plugin set was preserved.");
                 }
+
+                // Plugin metadata is executable code and may throw. Resolve all
+                // enable decisions before retiring the active set, and reuse these
+                // names rather than calling plugin getters after publication.
+                string[] replacementNames = replacementPlugins.Select(p => p.Name).ToArray();
+                bool[] enableReplacements = replacementNames.Select(requestedEnabled.Contains).ToArray();
+                string[] unavailableNames = hadLoadErrors
+                    ? requestedEnabled.Except(replacementNames, StringComparer.OrdinalIgnoreCase).ToArray()
+                    : Array.Empty<string>();
 
                 foreach (PluginContainer previous in previousPlugins)
                 {
@@ -250,21 +266,15 @@ namespace Styx.Plugins
                 }
 
                 Plugins = replacementPlugins;
-                foreach (PluginContainer container in Plugins)
+                replacementsPublished = true;
+                for (int i = 0; i < replacementPlugins.Count; i++)
                 {
-                    if (requestedEnabled.Contains(container.Name))
-                        container.Enabled = true;
+                    if (enableReplacements[i])
+                        replacementPlugins[i].Enabled = true;
                 }
 
                 UnavailableEnabledPlugins.Clear();
-                if (hadLoadErrors)
-                {
-                    foreach (string requestedName in requestedEnabled)
-                    {
-                        if (!Plugins.Any(p => string.Equals(p.Name, requestedName, StringComparison.OrdinalIgnoreCase)))
-                            UnavailableEnabledPlugins.Add(requestedName);
-                    }
-                }
+                UnavailableEnabledPlugins.UnionWith(unavailableNames);
 
                 Logging.Write("Plugin loading complete. {0} plugins loaded.", Plugins.Count);
                 
@@ -281,7 +291,210 @@ namespace Styx.Plugins
             }
             finally
             {
+                // Includes discovery and metadata failures, not just compiler
+                // failures. Never dispose the previous active set on rejection.
+                if (!replacementsPublished)
+                {
+                    foreach (PluginContainer replacement in replacementPlugins)
+                    {
+                        try { replacement.Plugin.Dispose(); } catch { }
+                    }
+                }
                 IsBuildingPlugins = false;
+            }
+        }
+
+        internal static string ComputePluginSourceFingerprint(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+                throw new ArgumentException("Plugin source path is required.", nameof(path));
+
+            string fullPath = Path.GetFullPath(path);
+            string root;
+            string[] inputs;
+            if (File.Exists(fullPath))
+            {
+                if (!string.Equals(Path.GetExtension(fullPath), ".cs", StringComparison.OrdinalIgnoreCase))
+                    throw new InvalidOperationException("Plugin source file must be C#.");
+                root = Path.GetDirectoryName(fullPath) ?? Environment.CurrentDirectory;
+                inputs = new[] { fullPath };
+            }
+            else if (Directory.Exists(fullPath))
+            {
+                root = fullPath;
+                inputs = Directory.GetFiles(fullPath, "*.cs", SearchOption.AllDirectories)
+                    .Concat(Directory.GetFiles(fullPath, "*.resx", SearchOption.AllDirectories))
+                    .OrderBy(file => Path.GetRelativePath(root, file), StringComparer.OrdinalIgnoreCase)
+                    .ThenBy(file => Path.GetRelativePath(root, file), StringComparer.Ordinal)
+                    .ToArray();
+            }
+            else
+            {
+                throw new FileNotFoundException("Plugin source path was not found.", fullPath);
+            }
+
+            using (var manifest = IncrementalHash.CreateHash(HashAlgorithmName.SHA256))
+            {
+                foreach (string input in inputs)
+                {
+                    string relative = Path.GetRelativePath(root, input)
+                        .Replace(Path.DirectorySeparatorChar, '/')
+                        .Replace(Path.AltDirectorySeparatorChar, '/');
+                    byte[] name = Encoding.UTF8.GetBytes(relative);
+                    manifest.AppendData(BitConverter.GetBytes(name.Length));
+                    manifest.AppendData(name);
+
+                    byte[] digest;
+                    using (var stream = new FileStream(
+                        input, FileMode.Open, FileAccess.Read,
+                        FileShare.ReadWrite | FileShare.Delete))
+                    using (var sha = SHA256.Create())
+                        digest = sha.ComputeHash(stream);
+
+                    manifest.AppendData(BitConverter.GetBytes(digest.Length));
+                    manifest.AppendData(digest);
+                }
+
+                return BitConverter.ToString(manifest.GetHashAndReset())
+                    .Replace("-", string.Empty)
+                    .ToLowerInvariant();
+            }
+        }
+
+        internal static List<HBPlugin> LoadPluginPathWithCache(
+            string path,
+            Func<string, List<HBPlugin>> compiler)
+        {
+            if (compiler == null)
+                throw new ArgumentNullException(nameof(compiler));
+
+            string key = Path.GetFullPath(path);
+            string before = ComputePluginCompilationFingerprint(key);
+            lock (PluginSourceCacheLock)
+            {
+                PluginSourceCacheEntry cached;
+                if (PluginSourceCache.TryGetValue(key, out cached)
+                    && cached != null
+                    && string.Equals(cached.Fingerprint, before, StringComparison.Ordinal))
+                {
+                    return InstantiatePluginTypes(cached.PluginTypes);
+                }
+            }
+
+            // Compiler exceptions deliberately escape. The last valid cache entry
+            // remains untouched, so restoring those bytes can reuse it immediately.
+            List<HBPlugin> loaded = compiler(path) ?? new List<HBPlugin>();
+            try
+            {
+                Type[] completeTypes;
+                bool complete = TryGetCompletePluginTypes(loaded, out completeTypes);
+                if (loaded.Count > 0 && !complete)
+                    throw new InvalidOperationException("Plugin compilation returned an incomplete constructed type set.");
+
+                string after = ComputePluginCompilationFingerprint(key);
+                if (complete && string.Equals(before, after, StringComparison.Ordinal))
+                {
+                    lock (PluginSourceCacheLock)
+                    {
+                        PluginSourceCache[key] = new PluginSourceCacheEntry
+                        {
+                            Fingerprint = after,
+                            PluginTypes = completeTypes
+                        };
+                    }
+                }
+
+                // If input bytes changed during compilation, this result may be used for
+                // the current refresh but is never reusable for either observed revision.
+                return loaded;
+            }
+            catch
+            {
+                DisposeConstructedPlugins(loaded);
+                throw;
+            }
+        }
+
+        private static string ComputePluginCompilationFingerprint(string path)
+        {
+            string source = ComputePluginSourceFingerprint(path);
+            var compiler = new Styx.Loaders.SourceCompiler(path);
+            return source + ":" + compiler.ComputeCompilationInputFingerprint();
+        }
+
+        private static bool TryGetCompletePluginTypes(
+            IList<HBPlugin> loaded,
+            out Type[] pluginTypes)
+        {
+            pluginTypes = Type.EmptyTypes;
+            if (loaded == null || loaded.Count == 0 || loaded.Any(plugin => plugin == null))
+                return false;
+
+            Type[] loadedTypes = loaded.Select(plugin => plugin.GetType()).Distinct().ToArray();
+            try
+            {
+                Type[] declaredTypes = loadedTypes
+                    .Select(type => type.Assembly)
+                    .Distinct()
+                    .SelectMany(assembly => assembly.GetTypes())
+                    .Where(type => type != null && type.IsClass && !type.IsAbstract
+                        && typeof(HBPlugin).IsAssignableFrom(type))
+                    .Distinct()
+                    .ToArray();
+
+                // DllLoader logs constructor failures and omits those instances. Do not
+                // cache a partial type set or an unchanged refresh would stop retrying
+                // the previously failing constructor.
+                if (declaredTypes.Length == 0
+                    || declaredTypes.Length != loadedTypes.Length
+                    || declaredTypes.Except(loadedTypes).Any())
+                    return false;
+
+                pluginTypes = declaredTypes;
+                return true;
+            }
+            catch (ReflectionTypeLoadException)
+            {
+                return false;
+            }
+        }
+
+        private static List<HBPlugin> InstantiatePluginTypes(IEnumerable<Type> types)
+        {
+            var result = new List<HBPlugin>();
+            if (types == null)
+                return result;
+
+            try
+            {
+                foreach (Type type in types)
+                {
+                    if (type == null || type.IsAbstract || !typeof(HBPlugin).IsAssignableFrom(type))
+                        continue;
+                    result.Add((HBPlugin)Activator.CreateInstance(type));
+                }
+                return result;
+            }
+            catch (TargetInvocationException ex) when (ex.InnerException != null)
+            {
+                DisposeConstructedPlugins(result);
+                System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(ex.InnerException).Throw();
+                throw;
+            }
+            catch
+            {
+                DisposeConstructedPlugins(result);
+                throw;
+            }
+        }
+
+        private static void DisposeConstructedPlugins(IEnumerable<HBPlugin> plugins)
+        {
+            // Only the new instances owned by the failed construction are passed here.
+            // Cleanup must not hide the original error or touch the active plugin set.
+            foreach (HBPlugin plugin in plugins)
+            {
+                try { plugin?.Dispose(); } catch { }
             }
         }
 
@@ -292,16 +505,23 @@ namespace Styx.Plugins
         /// <returns>List of loaded plugins.</returns>
         public static List<HBPlugin> CompileAndLoadFrom(string path)
         {
-            var classCollection = new ClassCollection<HBPlugin>();
-            CompilerResults compilerResults;
-            classCollection.CompileAndLoadFrom(path, out compilerResults);
+            if (!Directory.Exists(path) && !File.Exists(path))
+                throw new FileNotFoundException("The specified path was not found.", path);
 
+            // Keep the existing source compiler, but do not let DllLoader turn
+            // failed constructors into an apparently successful partial/empty set.
+            var compiler = new Styx.Loaders.SourceCompiler(path);
+            CompilerResults compilerResults = compiler.Compile();
             if (compilerResults != null && compilerResults.Errors.HasErrors)
-            {
                 throw new CompilerErrorsException(Utilities.FormatCompilerErrors(compilerResults));
-            }
+            if (compilerResults == null)
+                return new List<HBPlugin>();
 
-            return classCollection;
+            Assembly assembly = compiler.CompiledAssembly;
+            if (assembly == null)
+                throw new InvalidOperationException("Plugin compilation did not produce an assembly.");
+            return InstantiatePluginTypes(assembly.GetTypes().Where(type =>
+                type.IsClass && !type.IsAbstract && typeof(HBPlugin).IsAssignableFrom(type)));
         }
     }
 }

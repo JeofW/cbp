@@ -1,0 +1,356 @@
+{
+  "checkpoint": "W98",
+  "date": "2026-09-26",
+  "timezone": "Asia/Kuala_Lumpur",
+  "repository": "JeofW/cbp",
+  "repository_id": 1367174964,
+  "pr": 51,
+  "branch": "audit/next-55-equipment-observation-20260917",
+  "prior_checkpoint": "44e3467fe3cd7ae5c498b5540058e5d308f3e05c",
+  "red_revision": "5a5f4f22428cedd6b0796941766fe98c60b6e7c1",
+  "tested_revision": "cf738542991cba1bdbbbadea90b2ffe4e08d642e",
+  "tested_tree": "89d91cfc6e9fdc657bdb956a8de16e237525d44f",
+  "direct_master": "b2324913e2499ba30b239dd67224ca2c655c05cc",
+  "files": [
+    {
+      "path": "Styx/WoWInternals/WoWObjects/WoWItem.cs",
+      "blob": "63e59a1d624d48f37e013c9f4dadbe5e85900ba2",
+      "sha256": "6ecaf7f09711379a59ea4cf7708c316a9d7f6d886bfcd60e802f0c7932581f63"
+    },
+    {
+      "path": "runtime-snapshot/Quest Behaviors/EquipItem.cs",
+      "blob": "2f126035719bb0c75925171509795e00e61b181f",
+      "sha256": "1f0da2a89e2051934f172c05789131a67dc70f7fa9d6c1cf88ea2fef933144e0"
+    },
+    {
+      "path": "runtime-snapshot/Plugins/AutoEquip2/AutoEquip.cs",
+      "blob": "1df12b1be4a8726f61379fbd267f8de98bf0ef4c",
+      "sha256": "7da438bd962a5520748d97b0814bce41ea351127ea41d5b673bb3fc9ba868026"
+    },
+    {
+      "path": "Tools/WholesomeQuestRecoveryRegressionTests/EquipmentLua51BoundaryRegressionTests.cs",
+      "blob": "abde077efd750adf4956b3002de13ebe41b09f40",
+      "sha256": "4ed01617df73188b3165c03f76bfc687497cdc29931ea39339816175cf0f583b"
+    },
+    {
+      "path": "Tools/WholesomeQuestRecoveryRegressionTests/RewardLua51Boundary.cs",
+      "blob": "727435b099977909964e5af795769d07dd8deeb4",
+      "sha256": "78a07ebf3225da227d69188e74ce37deb8de4afc98011d9dfc2dee15cda6d8ac"
+    }
+  ],
+  "comparison": {
+    "inspected_at_utc": "2026-09-26T07:43:00.3015685Z",
+    "red": {
+      "verified_at_utc": "2026-09-26T07:36:00.7570219Z",
+      "repository": "JeofW/cbp",
+      "repository_id": 1367174964,
+      "run": 36226989412,
+      "jobs": [
+        {
+          "id": 108362809354,
+          "name": "combined",
+          "status": "completed",
+          "conclusion": "failure",
+          "labels": [
+            "windows-2022"
+          ],
+          "runner_name": "GitHub Actions 1000000467"
+        }
+      ],
+      "run_conclusion": "failure",
+      "source": "5a5f4f22428cedd6b0796941766fe98c60b6e7c1",
+      "artifact": 10900464069,
+      "artifact_name": "integrated-5a5f4f22428cedd6b0796941766fe98c60b6e7c1",
+      "archive": "D:\\Dev\\CopilotBuddy-Evidence\\w98-red-integrated-5a5f4f22.zip",
+      "sha256": "6d59c4e3f201deafa8fcdbf28644400d8b62baefbf25c874b3af0345c858c294",
+      "metadata_digest": "sha256:6d59c4e3f201deafa8fcdbf28644400d8b62baefbf25c874b3af0345c858c294",
+      "bytes": 892174
+    },
+    "green": {
+      "verified_at_utc": "2026-09-26T07:42:59.7113651Z",
+      "repository": "JeofW/cbp",
+      "repository_id": 1367174964,
+      "run": 36227312804,
+      "jobs": [
+        {
+          "id": 108363688831,
+          "name": "combined",
+          "status": "completed",
+          "conclusion": "success",
+          "labels": [
+            "windows-2022"
+          ],
+          "runner_name": "GitHub Actions 1000000469"
+        }
+      ],
+      "run_conclusion": "success",
+      "source": "cf738542991cba1bdbbbadea90b2ffe4e08d642e",
+      "artifact": 10900184988,
+      "artifact_name": "integrated-cf738542991cba1bdbbbadea90b2ffe4e08d642e",
+      "archive": "D:\\Dev\\CopilotBuddy-Evidence\\w98-green-integrated-cf738542.zip",
+      "sha256": "0c3430493f415e09b774cc6561e7e55120ba123356f18f111ba7ed5b9a5ad043",
+      "metadata_digest": "sha256:0c3430493f415e09b774cc6561e7e55120ba123356f18f111ba7ed5b9a5ad043",
+      "bytes": 891750
+    },
+    "red_cases": "49/83;34 intended assertions;0 unexpected",
+    "green_cases": "83/83;0 assertions;0 unexpected",
+    "aggregate_green": 17,
+    "members_each": 207,
+    "inner_hashes_each": 206,
+    "inputs": 1844,
+    "hosted_input_hashes_matched_local": 1844,
+    "source_comparison": {
+      "added": [],
+      "removed": [],
+      "changed": [
+        "runtime-snapshot/Plugins/AutoEquip2/AutoEquip.cs",
+        "runtime-snapshot/Quest Behaviors/EquipItem.cs",
+        "Styx/WoWInternals/WoWObjects/WoWItem.cs"
+      ]
+    },
+    "normalized_comparison": {
+      "red_count": 162,
+      "green_count": 162,
+      "changed": []
+    },
+    "green_results": [
+      {
+        "build": 0,
+        "suite": "QuestRecoveryRegressionTests",
+        "run": 0,
+        "architecture": "x86",
+        "game_attached": false,
+        "harness_error": null
+      },
+      {
+        "build": 0,
+        "suite": "Singular",
+        "architecture": "x86",
+        "game_attached": false,
+        "run": 0
+      },
+      {
+        "build": 0,
+        "suite": "WholesomeQuestRecoveryRegressionTests",
+        "run": 0,
+        "architecture": "x86",
+        "game_attached": false,
+        "harness_error": null
+      },
+      {
+        "build": 0,
+        "suite": "QuestRecoveryAdapterRegressionTests",
+        "run": 0,
+        "architecture": "x86",
+        "game_attached": false,
+        "harness_error": null
+      },
+      {
+        "build": 0,
+        "suite": "QuestPickupPolicyRegressionTests",
+        "run": 0,
+        "architecture": "x86",
+        "game_attached": false,
+        "harness_error": null
+      },
+      {
+        "build": 0,
+        "suite": "VendorCoreRegressionTests",
+        "run": 0,
+        "architecture": "x86",
+        "game_attached": false,
+        "harness_error": null
+      },
+      {
+        "build": 0,
+        "suite": "NativeContractRegressionTests",
+        "run": 0,
+        "architecture": "x86",
+        "game_attached": false,
+        "harness_error": null
+      },
+      {
+        "build": 0,
+        "suite": "ShutdownBoundaryRegressionTests",
+        "run": 0,
+        "architecture": "x86",
+        "game_attached": false,
+        "harness_error": null
+      },
+      {
+        "build": 0,
+        "suite": "Elevator",
+        "run": 0,
+        "architecture": "x86",
+        "game_attached": false,
+        "harness_error": null
+      },
+      {
+        "build": 0,
+        "suite": "PaladinDecisions",
+        "run": 0,
+        "architecture": "x86",
+        "game_attached": false,
+        "harness_error": null
+      },
+      {
+        "build": 0,
+        "suite": "GroupEngagement",
+        "run": 0,
+        "architecture": "x86",
+        "game_attached": false,
+        "harness_error": null
+      },
+      {
+        "build": 0,
+        "suite": "PaladinSupport",
+        "run": 0,
+        "architecture": "x86",
+        "game_attached": false,
+        "harness_error": null
+      },
+      {
+        "build": 0,
+        "suite": "WholesomeSale",
+        "run": 0,
+        "architecture": "x86",
+        "game_attached": false,
+        "harness_error": null
+      },
+      {
+        "build": 0,
+        "suite": "QuestLogObservationRegressionTests",
+        "run": 0,
+        "architecture": "x86",
+        "game_attached": false,
+        "harness_error": null
+      },
+      {
+        "build": 0,
+        "suite": "QuestCompletionOwnerRegressionTests",
+        "run": 0,
+        "architecture": "x86",
+        "game_attached": false,
+        "harness_error": null
+      },
+      {
+        "build": 0,
+        "suite": "QuestObservationBoundaryRegressionTests",
+        "run": 0,
+        "architecture": "x86",
+        "game_attached": false,
+        "harness_error": null
+      },
+      {
+        "build": 0,
+        "suite": "Analyzers",
+        "game_attached": false,
+        "run": 0
+      }
+    ],
+    "green_log_lines": [
+      "AutoEquip pending context scenarios: 46/46; assertions=0; unexpected=0; exact tracked C# capture/tick/request methods; controlled world/Lua; no game attached.",
+      "Compiler input identity scenarios: 2/2; assertions=0; unexpected=0; actual SourceCompiler identity/options/compilation; no game attached.",
+      "Container slot identity scenarios: 20/20; assertions=0; unexpected=0; pure GUID snapshots/source wiring; no Lua/game attached.",
+      "Equip acknowledged timeout scenarios: 10/10; assertions=0; unexpected=0; exact tracked method control flow; controlled external acknowledgements; no game attached.",
+      "Equip cursor ownership scenarios: 19/19; assertions=0; unexpected=0; real tracked owner compilation/source contracts; no game attached.",
+      "Equip continuation boundary scenarios: 46/46; assertions=0; unexpected=0; exact tracked C# tick/context/acknowledge/return/restore; controlled actor/inventory/Lua; no physical cursor or client proof.",
+      "EquipItem pending context scenarios: 67/67; assertions=0; unexpected=0; exact tracked C# tick/submit/confirm/reset; controlled actor/quest/Lua; no game attached.",
+      "Equipment Lua51 boundary scenarios: 83/83; assertions=0; unexpected=0; tracked pickup/equip helpers, actual generated Lua5.1, loader size and verbatim managed conversion; controlled APIs; no physical GUID/client/server proof.",
+      "Equip popup submission scenarios: 18/18; assertions=0; unexpected=0; exact tracked C# confirmation/tick methods; recording Lua boundary only; no game attached.",
+      "Plugin cached construction scenarios: 7/7; assertions=0; unexpected=0; actual PluginManager methods and separately compiled types; controlled compiler results; no installed plugins or game attached.",
+      "Plugin compilation input scenarios: 8/8; assertions=0; unexpected=0; actual public refresh/compiler/referenced DLL; optimization compiler control; no game attached.",
+      "Plugin container lifecycle scenarios: 12/12; assertions=0; unexpected=0; actual container/refresh/pulse and SourceCompiler; generated plugins; no game attached.",
+      "Plugin fresh compilation scenarios: 8/8; assertions=0; unexpected=0; actual public PluginManager and SourceCompiler; temporary source; no installed plugins or game attached.",
+      "Plugin refresh reuse scenarios: 9/9; assertions=0; unexpected=0; production PluginManager boundary with controlled compile delegate; no Roslyn or game attached.",
+      "Plugin refresh preparation scenarios: 6/6; assertions=0; unexpected=0; actual public refresh/compiler/cache; hosted output directory; no game attached.",
+      "RETAINED_REWARD_LIFETIME: 18/18; assertions=0; unexpected=0; original cases unchanged.",
+      "Reward Lua51 boundary scenarios: 33/33; assertions=0; unexpected=0; full tracked reward owner, actual generated Lua, extracted production load-size and verbatim managed conversion; stock Lua5.1 C API; controlled UI; no original client/native hook/server."
+    ],
+    "limits": [
+      "Actual generated equipment Lua5.1 and verbatim managed converter, controlled APIs; not physical cursor or original client proof.",
+      "Six-file test-only baseline includes compatible fixture/runtime adapters; original reward case/assertion body unchanged. Red to green all normalized fixtures identical.",
+      "No independent/server/native executor acceptance.",
+      "No separate ZIP CRC check; host archives have no inner manifest."
+    ]
+  },
+  "host": {
+    "red": {
+      "verified_at_utc": "2026-09-26T07:33:26.3783534Z",
+      "repository": "JeofW/cbp",
+      "repository_id": 1367174964,
+      "run": 36226989424,
+      "jobs": [
+        {
+          "id": 108362809535,
+          "name": "host-build",
+          "status": "completed",
+          "conclusion": "success",
+          "labels": [
+            "windows-latest"
+          ],
+          "runner_name": "GitHub Actions 1000000468"
+        }
+      ],
+      "run_conclusion": "success",
+      "source": "5a5f4f22428cedd6b0796941766fe98c60b6e7c1",
+      "artifact": 10900548653,
+      "artifact_name": "audit-validation-5a5f4f22428cedd6b0796941766fe98c60b6e7c1",
+      "archive": "D:\\Dev\\CopilotBuddy-Evidence\\w98-red-host-5a5f4f22.zip",
+      "sha256": "0a7ed70cf630d325571c357f8a66abda263f2735e280252682db40db0f065eac",
+      "metadata_digest": "sha256:0a7ed70cf630d325571c357f8a66abda263f2735e280252682db40db0f065eac",
+      "bytes": 82931
+    },
+    "green": {
+      "verified_at_utc": "2026-09-26T07:39:40.186282Z",
+      "repository": "JeofW/cbp",
+      "repository_id": 1367174964,
+      "run": 36227312800,
+      "jobs": [
+        {
+          "id": 108363689079,
+          "name": "host-build",
+          "status": "completed",
+          "conclusion": "success",
+          "labels": [
+            "windows-latest"
+          ],
+          "runner_name": "GitHub Actions 1000000470"
+        }
+      ],
+      "run_conclusion": "success",
+      "source": "cf738542991cba1bdbbbadea90b2ffe4e08d642e",
+      "artifact": 10901345910,
+      "artifact_name": "audit-validation-cf738542991cba1bdbbbadea90b2ffe4e08d642e",
+      "archive": "D:\\Dev\\CopilotBuddy-Evidence\\w98-green-host-cf738542.zip",
+      "sha256": "d18ac2c994ef149fee9c72d00c64b86c3117df48eabefe8e1c378feb3790e83a",
+      "metadata_digest": "sha256:d18ac2c994ef149fee9c72d00c64b86c3117df48eabefe8e1c378feb3790e83a",
+      "bytes": 82707
+    },
+    "exit": 0,
+    "errors": 0,
+    "warnings": 3344,
+    "configuration": "Release/x86",
+    "tests_run": false,
+    "game_attached": false,
+    "members_each": 4,
+    "inner_manifest": false
+  },
+  "status": "R04_EQUIPMENT_LUA_RECEIPT_BOUNDARY_VERIFIED_OFFLINE; FULL_AUDIT_IN_PROGRESS",
+  "subagents_used": false,
+  "local_project_execution": false,
+  "self_review": "Direct source/fixture review; not independent acceptance",
+  "merged": false,
+  "deployed": false,
+  "next_task": "R03/shared item-use and quest-info actual Lua5.1 receipts; inspect UseItemOn and MrItemRemover consumers; preserve mapping deferral/unknown observation policy. Read R03_SHARED_LUA_RECEIPTS_20260926.md.",
+  "open_gates": [
+    "R03 independent special-action credit mapping/native matching-recipient request and ack; ObjectiveProgress deferred",
+    "R03/shared item-use and quest-info receipt helpers still require actual Lua5.1 reproduction; no global converter change",
+    "R04 physical displaced/foreign/same-entry cursor/same-slot foreign popup ownership and client lifecycle",
+    "R06 same-content close/reopen generation and native bridge concurrency",
+    "R07 immutable-snapshot/runtime reload/concurrent/reentrant/activation rollback limits",
+    "R08 shared native/client/server and wider Wholesome/navigation/Singular/independent/supervised acceptance"
+  ],
+  "fixture_adapter_note": "Six test-only files at red: new equipment fixture; optional shared Lua runtime setup/access, three recording stubs int-compatible and container typed-call ordering adapters. No reward case/assertion body change. All normalized fixtures unchanged red to green.",
+  "documentation_note": "Containing checkpoint publication is documentation-only, distinct from tested_revision."
+}

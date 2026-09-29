@@ -355,7 +355,7 @@ public class ForcedBehaviorExecutor : Composite
                 }));
             case OrderNodeType.MoveTo:
                 MoveToNode moveToNode = (MoveToNode)orderNode;
-                return (ForcedBehavior)new ForcedMoveTo(moveToNode.Location, moveToNode.LocationName, moveToNode.Precision, moveToNode.QuestId);
+                return (ForcedBehavior)new ForcedMoveTo(moveToNode.Location, moveToNode.LocationName, moveToNode.Precision, moveToNode.QuestId, moveToNode.NavType);
             case OrderNodeType.UseItem:
                 UseItemNode useItemNode = (UseItemNode)orderNode;
                 return (ForcedBehavior)new ForcedUseItem(useItemNode.ItemRetriever, useItemNode.TargetRetriever, useItemNode.ForceUse, useItemNode.QuestId, useItemNode.Location);

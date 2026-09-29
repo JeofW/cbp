@@ -1,0 +1,2542 @@
+{
+  "schema": "copilotbuddy-upstream-sync-20260929-v1",
+  "prepared_utc": "2026-09-29T02:06:26.728396+00:00",
+  "source": "9a899fc43bf5218a922f86a1242ec6a488013474",
+  "tree": "ce879ea9077e92bd617452a0b14a963d30293675",
+  "parent": "be16c4578159dbf33a91fb51c3b4d847110c7845",
+  "upstream": "57f37756eba903340f07a2f4160635ffd422862e",
+  "authorization": "Owner explicitly requested selective integration, PR51 master merge, compiled release and production replacement.",
+  "disposition_counts": {
+    "preserved": 25,
+    "not-adopted": 14,
+    "superseded": 3,
+    "adapted": 18,
+    "merge-rollup": 9
+  },
+  "commits": [
+    {
+      "sha": "ed15eea7726524af900e9bdbf8efeeef903a8d79",
+      "parents": "462729050723eaf89cafa0bf3e05ae272431de36",
+      "author_date": "2026-09-04T01:10:07+02:00",
+      "commit_date": "2026-09-04T01:10:07+02:00",
+      "subject": "GatherbuddyBot: NoNinja never fired on ground routes, MountHelper.Mounted is the flying test so count the raw mount flag too, back to HB method_14's 10y radius and log line",
+      "patch_sha256": "7d8b1b1c18465fe5a88ad6fbc7a68058ba8e5d53d1363682d4fc7fe4998dcbf8",
+      "new_since_previous_review": false,
+      "disposition": "preserved",
+      "reason": "Current gather NoNinja checks raw Mounted and Flightor mount state; retain later gather ownership/range controls."
+    },
+    {
+      "sha": "4d6ef716fc83f7aa0e6a443ff63a06fc0cb5f22c",
+      "parents": "ed15eea7726524af900e9bdbf8efeeef903a8d79",
+      "author_date": "2026-09-04T21:14:47+02:00",
+      "commit_date": "2026-09-04T21:14:47+02:00",
+      "subject": "GatherbuddyBot: click-to-move only while swimming and let the mesh drive the rest, the CanNavigateFully gate handed every partial path to click-to-move",
+      "patch_sha256": "6f8ace54037612228daa5eddfad5d16ceb5ad9f2cb0e3b66a4cfaa88f2b6876c",
+      "new_since_previous_review": false,
+      "disposition": "preserved",
+      "reason": "Retain the later audited gather/navigation pipeline; do not restore a broad partial-path/direct-movement fallback."
+    },
+    {
+      "sha": "b74b5d5e92860ff60e5a7ad83e8807acefae35b9",
+      "parents": "4d6ef716fc83f7aa0e6a443ff63a06fc0cb5f22c",
+      "author_date": "2026-09-04T21:14:47+02:00",
+      "commit_date": "2026-09-04T21:14:47+02:00",
+      "subject": "Mount: read the red error before CallCompanion and match \"You can't mount here.\" exactly, any unrelated error raised after the cast blacklisted the spot",
+      "patch_sha256": "03c906583929cc122c6bdf30f2b47a05b194c643bd48cb7be1b80d72bcea9a3e",
+      "new_since_previous_review": false,
+      "disposition": "preserved",
+      "reason": "Current mount admission/permission/observation fixtures supersede the isolated error-string timing patch."
+    },
+    {
+      "sha": "34ca64c2d4d0480884d5e35a3a01b9575e463caf",
+      "parents": "b74b5d5e92860ff60e5a7ad83e8807acefae35b9",
+      "author_date": "2026-09-04T21:14:47+02:00",
+      "commit_date": "2026-09-04T21:14:47+02:00",
+      "subject": "StuckHandler: take the expected distance from SwimSpeed or RunSpeed again instead of CurrentSpeed",
+      "patch_sha256": "68902e48403cd5fe865c66058a8b9683ce6774933d0a66530d0e43daa4d0372b",
+      "new_since_previous_review": false,
+      "disposition": "not-adopted",
+      "reason": "Retain locally tested actual commanded movement/displacement and speed policy; do not replace it solely with nominal run/swim speed."
+    },
+    {
+      "sha": "a06a67dcb1894ec26343b9e8c52b5b4c2b901b46",
+      "parents": "34ca64c2d4d0480884d5e35a3a01b9575e463caf",
+      "author_date": "2026-09-04T21:16:40+02:00",
+      "commit_date": "2026-09-04T21:16:40+02:00",
+      "subject": "bump version 1.6.5 -> 1.6.6",
+      "patch_sha256": "d7d216d99c85a97f9048be0eb3afb75ca0595da2579d2aa91c0026525a0ea88e",
+      "new_since_previous_review": false,
+      "disposition": "superseded",
+      "reason": "Historical version label superseded by the identifiable 1.6.7.5 PR51 release."
+    },
+    {
+      "sha": "1a27e97b9437cef90f9c861898a3097d3d556100",
+      "parents": "a06a67dcb1894ec26343b9e8c52b5b4c2b901b46",
+      "author_date": "2026-09-05T01:11:43+02:00",
+      "commit_date": "2026-09-05T01:11:43+02:00",
+      "subject": "README: single Mega mirror for the v1.6.6 upload",
+      "patch_sha256": "b1d363f159c0625a6f2be4ba8ab337d9fb4d4d63d368aa57ac200853b9efa26e",
+      "new_since_previous_review": false,
+      "disposition": "not-adopted",
+      "reason": "Upstream prebuilt download is not this audited fork release; retain our source/build provenance."
+    },
+    {
+      "sha": "613c6af8dddc35f9dcdce7c39e2f7ce6b8ab1133",
+      "parents": "1a27e97b9437cef90f9c861898a3097d3d556100",
+      "author_date": "2026-09-05T20:41:26+02:00",
+      "commit_date": "2026-09-05T20:41:26+02:00",
+      "subject": "README: drop the 1x1 branch and MaNGOS extractor, 4x4 is the HB standard and the C# extractor is the one to use",
+      "patch_sha256": "68ef45273d1b63d96bd28f60319083b90641c71e3922ef2eadd14dde0d892b7c",
+      "new_since_previous_review": false,
+      "disposition": "not-adopted",
+      "reason": "Distribution/extractor documentation is not evidence authorizing replacement of the user's existing mesh data."
+    },
+    {
+      "sha": "1105b7ef1ec3ac887146c6d0b4f656d51094e9bc",
+      "parents": "613c6af8dddc35f9dcdce7c39e2f7ce6b8ab1133",
+      "author_date": "2026-09-06T00:00:52+02:00",
+      "commit_date": "2026-09-06T00:00:52+02:00",
+      "subject": "ConditionHelper: derive ConditionGlobals from ProfileHelperFunctionsBase and expose the HB helper set, conditions only saw Me, HasQuest and IsQuestCompleted so IsObjectiveComplete and HasItem silently returned false",
+      "patch_sha256": "a69f5f1f0588ff8a562fac21a02455fbda27da0eedf032a0dc55ecd9241dee74",
+      "new_since_previous_review": false,
+      "disposition": "preserved",
+      "reason": "Existing ConditionGlobals/profile helper wiring and retained condition tests cover this; objective Lua repaired separately below."
+    },
+    {
+      "sha": "011ca412ceb6c963a17702a101fca3038ccb923c",
+      "parents": "1105b7ef1ec3ac887146c6d0b4f656d51094e9bc",
+      "author_date": "2026-09-06T00:56:10+02:00",
+      "commit_date": "2026-09-06T00:56:10+02:00",
+      "subject": "DeveloperToolsWindow: bind the WoW objects to the lists like HB DevToolsWindow does, projecting every object into a DTO read six memory properties plus a DBC name for each one and froze the window",
+      "patch_sha256": "5144275e23a6be4822976f06bb810cac86b04843b92f019fe45d210520e992e3",
+      "new_since_previous_review": false,
+      "disposition": "preserved",
+      "reason": "Existing developer-tools changes preserved; no incidental UI/source rollback."
+    },
+    {
+      "sha": "16683fbeaf6b3f80203974507b438ef822bacae4",
+      "parents": "011ca412ceb6c963a17702a101fca3038ccb923c",
+      "author_date": "2026-09-06T03:53:05+02:00",
+      "commit_date": "2026-09-06T03:53:13+02:00",
+      "subject": "WoWMovementInfo: expose SwimmingForwardSpeed, the stock Quest Behaviors read the swim speed under that name and CollectThings, ButtonPressOnAura and ButtonPressOnChat all failed to compile against our SwimSpeed",
+      "patch_sha256": "03893112f2b930be69cb52ed00c09630c1f4c95e81c635ec3ef159f4c6eb36e7",
+      "new_since_previous_review": false,
+      "disposition": "preserved",
+      "reason": "Compatibility aliases and original-client movement observations remain in the validated fork."
+    },
+    {
+      "sha": "7f2aab68fba04115db8a00696bdbb802d677d94b",
+      "parents": "16683fbeaf6b3f80203974507b438ef822bacae4",
+      "author_date": "2026-09-06T14:06:39+02:00",
+      "commit_date": "2026-09-06T14:06:39+02:00",
+      "subject": "QuestBehaviorHelper: hand the compiler every managed assembly the host trusts, HB 4.3.4 passes its whole AppDomain (ns15/Class455 ctor) while our hardcoded four-name WPF filter left HttpClient, Uri and System.Windows.Forms unresolvable, so LoadRemoteCode, RemoteCode and UserDialog could never compile",
+      "patch_sha256": "30020b4899d9c7f32b69fbba7548566862db931795c095af30f043b8aca55ed6",
+      "new_since_previous_review": false,
+      "disposition": "preserved",
+      "reason": "Retain audited runtime reference discovery, compiler input identity and ownership; no upstream wholesale compiler replacement."
+    },
+    {
+      "sha": "71d9d96761b89bf262f8944e3f4745b7fdb3ae61",
+      "parents": "7f2aab68fba04115db8a00696bdbb802d677d94b",
+      "author_date": "2026-09-06T14:06:55+02:00",
+      "commit_date": "2026-09-06T14:06:55+02:00",
+      "subject": "CodeComposition: compile a profile expressions as one batch like HB 6.2.3 does (ns88/Class1208 plus Class1216), If, While, ElseIf and GrindTo now carry a [CompileExpression] DelayCompiledExpression built by DelayCompiledExpression.Condition and ProfileManager compiles the lot once after the load, the old per-condition CSharpScript emitted one assembly per distinct condition and a 32-bit process died of memory exhaustion after about 467 of them while the Kick 68-80 profiles alone hold 1166, the whole pack now binds 6184 conditions in 132 assemblies with none left uncompiled, and the batch gained Styx.Combat.CombatRoutine which the per-condition script had and without which two of Kick conditions failed on WoWClass",
+      "patch_sha256": "973532790c25db4450147730d2d7e3f7c69788dcaf573db3f93fba937badd883",
+      "new_since_previous_review": false,
+      "disposition": "preserved",
+      "reason": "Current batched profile expressions, corelib references, publication ownership and actual batch regression tests remain."
+    },
+    {
+      "sha": "b947c7669f66bcd506dcb451e20ca4a4e7193837",
+      "parents": "71d9d96761b89bf262f8944e3f4745b7fdb3ae61",
+      "author_date": "2026-09-06T14:07:06+02:00",
+      "commit_date": "2026-09-06T14:07:06+02:00",
+      "subject": "Vendor and Mailbox: read the UsableWhen attribute and honour it when picking one, HB 6.2.3 compiles it as a [CompileExpression] and skips the entry when the condition is false, the port parsed neither so the 220 UsableWhen guards of the Spegeli profiles were dropped in silence and a vendor restricted to one continent was offered everywhere",
+      "patch_sha256": "af2a4b3d9c7d1365a0f53ed785735b61a4626faa3f7601a9ba0b119ad1f0bfa2",
+      "new_since_previous_review": false,
+      "disposition": "preserved",
+      "reason": "Current compiled vendor/mailbox UsableWhen and tri-state unknown-completion guards are stronger than the original port."
+    },
+    {
+      "sha": "9e06d2015ecb51fc77837a6fbdafae964d46c894",
+      "parents": "b947c7669f66bcd506dcb451e20ca4a4e7193837",
+      "author_date": "2026-09-06T15:47:54+02:00",
+      "commit_date": "2026-09-06T15:47:54+02:00",
+      "subject": "WoWUnit: expose NpcFlags as the raw mask and add the CharmedByUnitGuid, CharmedByUnit and CreatedByUnitGuid names, the stock Quest Behaviors read the unit under the HB 4.3.4 names while the port only had CharmedByGuid, CharmedBy and CreatedByGuid and kept NpcFlags private, so Battlezone, KitchenSink, ThisMeansWAR, TroggishTroubles, OffTheWall, DroppingTheHammer, the four ArgentTournament behaviors and AnEndToAllThings all failed to compile",
+      "patch_sha256": "bbbdf9f1377c63dbb62e3d1d71f8342b97f314dd5adffb8ead8f6168be6b361c",
+      "new_since_previous_review": false,
+      "disposition": "preserved",
+      "reason": "Retain current native observation contracts and compatibility aliases with their regression coverage."
+    },
+    {
+      "sha": "034f5c3969c8483b9f128139945b3ddce316f7f4",
+      "parents": "9e06d2015ecb51fc77837a6fbdafae964d46c894",
+      "author_date": "2026-09-06T15:47:55+02:00",
+      "commit_date": "2026-09-06T15:47:55+02:00",
+      "subject": "ForcedQuestTurnIn: add the HB 4.3.4 constructor that takes no npc name (ForcedQuestTurnIn.cs:28), SafeQuestTurnin builds the turn-in with four arguments and could not compile against our five argument one",
+      "patch_sha256": "81a8b9f9e4d20b645ab4f03661d3d9f4cfcbc86fbca9cba72b1be79d85f22d41",
+      "new_since_previous_review": false,
+      "disposition": "preserved",
+      "reason": "Four-argument turn-in constructor is already retained and covered by upstream compatibility tests."
+    },
+    {
+      "sha": "4bfb13974f4c4b99b30a9109e326992a8f93e81f",
+      "parents": "034f5c3969c8483b9f128139945b3ddce316f7f4",
+      "author_date": "2026-09-07T13:24:33+02:00",
+      "commit_date": "2026-09-07T13:24:33+02:00",
+      "subject": "version 1.6.7 in CopilotBuddy.csproj FileVersion and MainWindow BotVersion",
+      "patch_sha256": "50ca6c28b3efe103ce6f25eac71b18e5f7095c4d5b414731dbae25f611c78f41",
+      "new_since_previous_review": false,
+      "disposition": "superseded",
+      "reason": "Historical version label superseded by identifiable PR51 release."
+    },
+    {
+      "sha": "cde98cde32193db5c83eb8769e847fd0a84a1b0b",
+      "parents": "4bfb13974f4c4b99b30a9109e326992a8f93e81f",
+      "author_date": "2026-09-08T15:03:55+02:00",
+      "commit_date": "2026-09-08T15:03:55+02:00",
+      "subject": "LocalPlayer/BotEvents: set InstanceDeathLocation on death like HB 4.3.4 and initialise it to Empty, our Empty is NaN so the untouched (0,0,0) read as an instance death and every corpse run navigated to (0,0,0), failed, and left the ghost standing for 41 seconds until the SafeRes timer",
+      "patch_sha256": "097f194b307c3724b2bdd78e85777b590a368c1e3ebe0f845804ad3b4c704f8c",
+      "new_since_previous_review": false,
+      "disposition": "preserved",
+      "reason": "Current death/corpse identity, map/finite-point and entrance observation safeguards supersede the single initialization fix."
+    },
+    {
+      "sha": "dbcf439ea552c5cc5be1c88e7515c9546ef0b608",
+      "parents": "cde98cde32193db5c83eb8769e847fd0a84a1b0b",
+      "author_date": "2026-09-08T15:03:56+02:00",
+      "commit_date": "2026-09-08T15:03:56+02:00",
+      "subject": "LevelBot: pick the POI's gossip option like HB 6.2.3 smethod_25, the gossip window counts as an open vendor frame so innkeepers never got past it and BuyItems ran on a closed MerchantFrame and blacklisted every food vendor",
+      "patch_sha256": "7ebb22a1e9888b1d8a732d581567eb8fb175d902a933a2d1e0f011d1da873c7c",
+      "new_since_previous_review": false,
+      "disposition": "preserved",
+      "reason": "Retain current service-menu ownership and gossip restrictions; visible/name-matched menus alone grant no new authority."
+    },
+    {
+      "sha": "a89ffcb1432f942e68abe021cdbd7234542b5713",
+      "parents": "dbcf439ea552c5cc5be1c88e7515c9546ef0b608",
+      "author_date": "2026-09-08T22:28:07+02:00",
+      "commit_date": "2026-09-08T22:28:07+02:00",
+      "subject": "SpellManager: fix ClickRemoteLocation, 8438592 had been transcribed as 0x80B740 which lands mid-instruction in the usability checker instead of 0x80C340 Spell_C__HandleTerrainClick, the struct put the location where the function reads the guid, and LegacySpellManager drove the mouse with Lua instead of calling it",
+      "patch_sha256": "9e939ead3c1ea578dba5925f8f1acf504fa775098a4d70fe93f1a029cf8a9789",
+      "new_since_previous_review": false,
+      "disposition": "preserved",
+      "reason": "Terrain click address/ABI and receipts already have W107-W109/native/ground-continuation evidence; do not recreate."
+    },
+    {
+      "sha": "c3ed816a214b439982145230a0cfbd8faf353f92",
+      "parents": "a89ffcb1432f942e68abe021cdbd7234542b5713",
+      "author_date": "2026-09-09T11:49:36+02:00",
+      "commit_date": "2026-09-09T11:49:36+02:00",
+      "subject": "Vendors: honour the blacklist in the Data.bin fallback of GetClosestVendor, a blacklisted innkeeper was handed back every tick so the vendor branch never failed and the quest order sitting below it in the PrioritySelector never ran, which is why the Auto-Loader never loaded a profile, and log per item why a merchant is judged to sell no food like HB 4.3.4 does",
+      "patch_sha256": "4a8fc7f9de676c261fc6fac1b2b6d46b090770c6afa9281817cc97b557d1dd3e",
+      "new_since_previous_review": false,
+      "disposition": "preserved",
+      "reason": "Retain vendor rejection, blacklist/backoff, protected inventory and ownership tests."
+    },
+    {
+      "sha": "5aa80a4fd94bc5da0b6586dd64a5c3d06116d23e",
+      "parents": "c3ed816a214b439982145230a0cfbd8faf353f92",
+      "author_date": "2026-09-10T02:02:29+02:00",
+      "commit_date": "2026-09-10T02:02:29+02:00",
+      "subject": "Vendors: wait for the client item cache before judging a food vendor, the merchant list was scanned 30 ms after the frame opened while every never-seen item still had no ItemInfo, so Refreshing Spring Water read as no drink and the vendor got blacklisted, now the unknown ids are queried with GetItemInfo and the scan waits up to 3 seconds for the cache, HB 4.3.4 had the same scan without the wait",
+      "patch_sha256": "9ecd8f56fb73584170bc20bfb01d509b415e15bdace03b5688dc7fcf64481c12",
+      "new_since_previous_review": false,
+      "disposition": "preserved",
+      "reason": "Retain bounded current merchant hydration and unknown-state policy, not the earlier blocking scan implementation."
+    },
+    {
+      "sha": "5bd76ab565c022bcf45b9a858de188371af136a0",
+      "parents": "5aa80a4fd94bc5da0b6586dd64a5c3d06116d23e",
+      "author_date": "2026-09-10T02:02:29+02:00",
+      "commit_date": "2026-09-10T02:02:29+02:00",
+      "subject": "CompileBatch: reference System.Private.CoreLib explicitly like QuestBehaviorHelper does and log the reference set when a batch fails, a user's Auto-Loader load produced 1241 errors that were all System.Object, Boolean and Func<> missing, so corlib was absent from the references on his machine while the same build compiles everything here, the red line now says how many references were gathered, where corlib is and whether it was included",
+      "patch_sha256": "a02d354a24d6953076d15ea3f5a7c4b7d4bc7855c377a4714857d4c2fa1fe8b7",
+      "new_since_previous_review": false,
+      "disposition": "preserved",
+      "reason": "Corelib/batch reference handling and complete compiler/profile regressions remain."
+    },
+    {
+      "sha": "b91a6016a9a7e2a14bd341f286a4fcee85c9db43",
+      "parents": "5bd76ab565c022bcf45b9a858de188371af136a0",
+      "author_date": "2026-09-10T03:05:43+02:00",
+      "commit_date": "2026-09-10T03:05:43+02:00",
+      "subject": "Vendors: size MerchantItemData at the 32 bytes the 3.3.5a merchant table actually uses instead of the 40 byte Cata layout, every entry past the first was read from the wrong offset, buy in packs since BuyMerchantItem counts stacks and not units, fix the off by one between the 0 based memory table and the 1 based Lua index, and only publish CurrentOuterProfile once it compiled so a nested LoadProfile cannot swap it mid announce",
+      "patch_sha256": "b6a016c485adec6b3cee995331a67e35049ec74f2fb38373f55931bc344b7dfe",
+      "new_since_previous_review": false,
+      "disposition": "preserved",
+      "reason": "32-byte merchant layout, Lua index/pack semantics and profile publication guards already adapted and tested."
+    },
+    {
+      "sha": "a225bf3f2e8cffccdbcddf1d5d149aee920c0e9d",
+      "parents": "b91a6016a9a7e2a14bd341f286a4fcee85c9db43",
+      "author_date": "2026-09-14T11:13:39+02:00",
+      "commit_date": "2026-09-14T11:13:39+02:00",
+      "subject": "WoWUnit.InteractRange: CombatReach + 2 like HB 4.3.4, was +4 which let the bot stop 2 yards too far for the client interact check so loot never opened on mobs with large combat reach",
+      "patch_sha256": "05fa3cba2954fb1a5ef4f1124c73ef8170c517982e65bc3d26d511a5e674d994",
+      "new_since_previous_review": false,
+      "disposition": "not-adopted",
+      "reason": "Upstream itself superseded this global InteractRange+2 change; preserve separate loot and NPC interaction ranges."
+    },
+    {
+      "sha": "c0506547acc49f1f17859f1676fa4a815012d75f",
+      "parents": "a225bf3f2e8cffccdbcddf1d5d149aee920c0e9d",
+      "author_date": "2026-09-14T11:26:17+02:00",
+      "commit_date": "2026-09-14T11:26:17+02:00",
+      "subject": "Loot: use the client loot distance formula so the bot walks close enough to loot mobs with large CombatReach, InteractRange stays CombatReach+4 for NPC interaction like HB 3.3.5a, LootRange is max(5, targetCR+playerCR+1.333) from the 3.3.5a client sub_4F5F40 which is tighter for CR>=2 mobs and was the reason Interact fired outside the accepted range",
+      "patch_sha256": "e796ec6e0baff9e8a8f88939e20f749f7ce1c6474e18c71468d7268e179b4d42",
+      "new_since_previous_review": false,
+      "disposition": "preserved",
+      "reason": "Separate loot-range contract and actual consumer36 cases are retained; upstream does not replace current recipient/ownership checks."
+    },
+    {
+      "sha": "87075e05b34e2b30b4753a7f08038a631557dcfd",
+      "parents": "c0506547acc49f1f17859f1676fa4a815012d75f",
+      "author_date": "2026-09-14T11:39:38+02:00",
+      "commit_date": "2026-09-14T11:39:38+02:00",
+      "subject": "WoWDb: fix stale comment, address is 0x6337D0 not 0x633DD0",
+      "patch_sha256": "d515508f37054e47c3d9b4a34c8373216a3aa9eeef54a6adf17b73d195d45381",
+      "new_since_previous_review": false,
+      "disposition": "preserved",
+      "reason": "Native DB comment-only correction; existing identity-bound DB implementation/evidence remains authoritative."
+    },
+    {
+      "sha": "336058825d008c67820da01fc8487cc087b7431d",
+      "parents": "b91a6016a9a7e2a14bd341f286a4fcee85c9db43",
+      "author_date": "2026-05-06T15:51:08+05:00",
+      "commit_date": "2026-09-15T16:08:52+05:00",
+      "subject": "Add support for wine's dxvk EndScene detour",
+      "patch_sha256": "55a69b943c84e7a8b66bd40f4481b5e1aa8e284971822bc01d738ace4a66b864",
+      "new_since_previous_review": true,
+      "disposition": "not-adopted",
+      "reason": "Wine/DXVK detour support lacks matching Windows/runtime native acceptance and would alter audited executor ownership."
+    },
+    {
+      "sha": "b1e6664cdda844999578d891f8634c446da07985",
+      "parents": "336058825d008c67820da01fc8487cc087b7431d",
+      "author_date": "2026-05-06T16:01:10+05:00",
+      "commit_date": "2026-09-15T16:08:52+05:00",
+      "subject": "Fix crash when launching bot second time under wine",
+      "patch_sha256": "3d84e073588c4b2f92844801950fb258f7804d66aa353e8dcc9d0093a7e57e1c",
+      "new_since_previous_review": true,
+      "disposition": "not-adopted",
+      "reason": "Reject reconstructing an assumed DXVK prologue from hardcoded bytes based on an observed jump pattern; no verified original-byte/image contract."
+    },
+    {
+      "sha": "dd58e6f367f5ff06a9c339eaea0465fef9adc4b0",
+      "parents": "b1e6664cdda844999578d891f8634c446da07985",
+      "author_date": "2026-05-06T16:03:15+05:00",
+      "commit_date": "2026-09-15T16:08:52+05:00",
+      "subject": "Add ability to cross compile bot on linux",
+      "patch_sha256": "cff9d280e915aec01d3be76414b89bebcbbf26540ac44ce09de6991b1efe7543",
+      "new_since_previous_review": true,
+      "disposition": "not-adopted",
+      "reason": "Cross-compilation property is unnecessary for the requested Windows-only release; no Linux/Wine compatibility claim."
+    },
+    {
+      "sha": "fd79fa02ce41b495ea371345e759dd9aefabbe75",
+      "parents": "87075e05b34e2b30b4753a7f08038a631557dcfd",
+      "author_date": "2026-09-16T00:35:14+02:00",
+      "commit_date": "2026-09-16T00:35:14+02:00",
+      "subject": "WoWDb: port HB GetLocalizedRow with the ClientDb__Unpack RLE decoder, the 3.3.5a client keeps Spell rows packed while g_isDBCCompressed at 0xC5DEA0 is set so a raw GetRow plus GetStruct shifted every field after the first run, WoWSpell.FromId goes through it like HB and GetStruct reads the local buffer when the row owns it",
+      "patch_sha256": "c352f3d4fcbffe032ff259e390518131532b022ffe978c3dcbb35da7beb0428e",
+      "new_since_previous_review": false,
+      "disposition": "preserved",
+      "reason": "Retain later bounded owned packed-row decoder, DB discovery and spell/aura metadata safeguards; do not copy the original unbounded decoder."
+    },
+    {
+      "sha": "f617176c0a78d4ac4cc12efed08a907bf75d6735",
+      "parents": "fd79fa02ce41b495ea371345e759dd9aefabbe75",
+      "author_date": "2026-09-16T00:35:14+02:00",
+      "commit_date": "2026-09-16T00:35:14+02:00",
+      "subject": "MerchantFrame: skip the bag items GetContainerItemQuestInfo flags in the sell loop, the quality filter alone let the bot vendor quest items",
+      "patch_sha256": "e7ab91228d4ae5a7ee14a657a06dc48dbf3e808b58b9a68786f6b1448f95b1b1",
+      "new_since_previous_review": false,
+      "disposition": "preserved",
+      "reason": "Quest-item merchant preservation is already implemented and exercised by current sale/merchant tests."
+    },
+    {
+      "sha": "4c0595d97d52644b9b64a823c2bb48c30b5c8dfb",
+      "parents": "f617176c0a78d4ac4cc12efed08a907bf75d6735",
+      "author_date": "2026-09-16T00:35:15+02:00",
+      "commit_date": "2026-09-16T00:35:15+02:00",
+      "subject": "bump version 1.6.7 -> 1.6.7.4",
+      "patch_sha256": "8e4edf42e2afc28fcba842a33dfb8373aaf35379848ce392da97daa00b317eac",
+      "new_since_previous_review": false,
+      "disposition": "superseded",
+      "reason": "Historical version label superseded by current PR51 release."
+    },
+    {
+      "sha": "bf0944591d369edab2ef7148754dc85aeadae0c1",
+      "parents": "4c0595d97d52644b9b64a823c2bb48c30b5c8dfb",
+      "author_date": "2026-09-16T00:56:36+02:00",
+      "commit_date": "2026-09-16T00:56:36+02:00",
+      "subject": "README: single Mega mirror for the v1.6.7.4 upload",
+      "patch_sha256": "13a398e8b45d0b18fe63c347325989df863bd4c3662e3c8c9d031d46e95eb5c4",
+      "new_since_previous_review": false,
+      "disposition": "not-adopted",
+      "reason": "Upstream prebuilt binary mirror is not the locally validated fork."
+    },
+    {
+      "sha": "89cccaf1fa8f1c19d7eeb0924beddf2c3991088e",
+      "parents": "bf0944591d369edab2ef7148754dc85aeadae0c1",
+      "author_date": "2026-09-16T16:19:12+02:00",
+      "commit_date": "2026-09-16T16:19:12+02:00",
+      "subject": "Credits: add Natfoth",
+      "patch_sha256": "f4c827c3e024e3577a90f9ed2e2d96f70362b678831f272cf992d9c0f47a5676",
+      "new_since_previous_review": false,
+      "disposition": "adapted",
+      "reason": "Add Natfoth credit to the current startup string without replacing fork version/initialization."
+    },
+    {
+      "sha": "1d2a90a935a3bcd5f3bb047f2d522face6f872ee",
+      "parents": "89cccaf1fa8f1c19d7eeb0924beddf2c3991088e",
+      "author_date": "2026-09-17T21:51:34+02:00",
+      "commit_date": "2026-09-17T21:51:34+02:00",
+      "subject": "GatherBuddy: also trigger mail when gather-type bags are full, not just total FreeBagSlots",
+      "patch_sha256": "f6cb32233b9edf0b4e9e1c71a2ca8fac60d7856ab51fd5ef7df3b4f25917e26b",
+      "new_since_previous_review": true,
+      "disposition": "adapted",
+      "reason": "Mailing uses active gather-type storage pressure independently of vendor enablement/cooldown; preserve mail/combat/recipient gates."
+    },
+    {
+      "sha": "57930f69d7e5c02c96f7db9266bd42a6ce244828",
+      "parents": "1d2a90a935a3bcd5f3bb047f2d522face6f872ee dd58e6f367f5ff06a9c339eaea0465fef9adc4b0",
+      "author_date": "2026-09-17T22:15:47+02:00",
+      "commit_date": "2026-09-17T22:15:47+02:00",
+      "subject": "Merge pull request #7 from Likon69/linux-dxvk-support",
+      "patch_sha256": "531564870ed307036a1a3efa51427e41e95233ad1a71122cb860af6b1ba9d959",
+      "new_since_previous_review": true,
+      "disposition": "merge-rollup",
+      "reason": "Integration marker only; review its individual parent patches, do not merge upstream wholesale."
+    },
+    {
+      "sha": "1c15f0b5f9f9a9e41d58599d42273a7bb8005fd4",
+      "parents": "1d2a90a935a3bcd5f3bb047f2d522face6f872ee",
+      "author_date": "2026-09-17T23:42:39+02:00",
+      "commit_date": "2026-09-17T23:42:39+02:00",
+      "subject": "ForcedQuestPickUp: fix multi-quest gossip loop (WotLK 3-value stride + name fallback)",
+      "patch_sha256": "88bb6d2b71bd2a8e89b2d4a0ee024cd1a1ebacf485a217a109a519471818d6da",
+      "new_since_previous_review": true,
+      "disposition": "not-adopted",
+      "reason": "Three-value original gossip stride is already handled; reject name/singleton fallback as request/menu ownership proof."
+    },
+    {
+      "sha": "901af3e7db2bb8ce28f5b15f21e6e526e1b19732",
+      "parents": "1c15f0b5f9f9a9e41d58599d42273a7bb8005fd4 57930f69d7e5c02c96f7db9266bd42a6ce244828",
+      "author_date": "2026-09-17T23:44:33+02:00",
+      "commit_date": "2026-09-17T23:44:33+02:00",
+      "subject": "Merge branch 'master' of https://github.com/Likon69/CopilotBuddy",
+      "patch_sha256": "ff52e188a18fb3876d8a773fda255c460b977041dd06caf196f0888cbaf94217",
+      "new_since_previous_review": true,
+      "disposition": "merge-rollup",
+      "reason": "Integration marker only; review its individual parent patches, do not merge upstream wholesale."
+    },
+    {
+      "sha": "7b6645bef9ef151bd91358144daf3af7e10fca4c",
+      "parents": "901af3e7db2bb8ce28f5b15f21e6e526e1b19732",
+      "author_date": "2026-09-23T13:03:04+02:00",
+      "commit_date": "2026-09-23T13:03:04+02:00",
+      "subject": "ForcedQuestPickUp: replace Cata HandleQuestFrame with HB 3.3.5a quest frame structure",
+      "patch_sha256": "c0bf220b44b09ebab67a965218a7611315fa6c3337afa94ffcc8ae8a79c00f9f",
+      "new_since_previous_review": true,
+      "disposition": "not-adopted",
+      "reason": "Wholesale pickup replacement would discard current R06 provenance, actor/recipient, bounded retry and acknowledgement safeguards."
+    },
+    {
+      "sha": "ff19a59d5c19e302fb3509399c951c1118278c6d",
+      "parents": "7b6645bef9ef151bd91358144daf3af7e10fca4c",
+      "author_date": "2026-09-26T13:00:49+02:00",
+      "commit_date": "2026-09-26T13:00:58+02:00",
+      "subject": "Protected Items: add Mining Pick 2901, MailToAlt mails every item of a ticked quality that isn't soulbound, conjured or in this list, so with white ticked for the ore the Mining Pick is mailed too and the bot can no longer mine",
+      "patch_sha256": "d2acac83a47840b400f91ff400da46e326ecf09d09d2578ba0e7de14640e7726",
+      "new_since_previous_review": true,
+      "disposition": "adapted",
+      "reason": "Protect Mining Pick2901 in both maintained root and runtime default lists; deployment must merge user additions."
+    },
+    {
+      "sha": "333083c128b60e40a948cb77d6938d4085080bcf",
+      "parents": "7b6645bef9ef151bd91358144daf3af7e10fca4c",
+      "author_date": "2026-09-26T13:50:38+02:00",
+      "commit_date": "2026-09-26T13:50:38+02:00",
+      "subject": "LevelBot: corpse-run timer compares Elapsed.TotalSeconds, Elapsed.Seconds is the 0-59 part of the time so the 40 s SafeRes limit only fired between 41 and 59 s of each minute",
+      "patch_sha256": "56774afaf3fe2ac4d11e4e16320f7f27275bded07bf02647b1ae9082af6119db",
+      "new_since_previous_review": true,
+      "disposition": "preserved",
+      "reason": "Current corpse timeout already uses Elapsed.TotalSeconds>=40; preserve existing recovery identity."
+    },
+    {
+      "sha": "98d5b7395991dfaa1a80e5c1f8eaf80daf2c34e2",
+      "parents": "7b6645bef9ef151bd91358144daf3af7e10fca4c",
+      "author_date": "2026-09-26T13:50:40+02:00",
+      "commit_date": "2026-09-26T13:50:40+02:00",
+      "subject": "Flightor: only mount for ground travel when Mount.ShouldMount allows it and Navigator.MoveTo wouldn't dismount again, near a vendor, trainer or mailbox the bot mounted and dismounted on alternate ticks",
+      "patch_sha256": "5b2785ee95458ec27e4364eb90cb5f063e7e85d3c3e4a9699a0d11a8e7358be4",
+      "new_since_previous_review": true,
+      "disposition": "preserved",
+      "reason": "Current W110 mount permission223/host admission/Flightor controls already prevent mount/dismount oscillation near services."
+    },
+    {
+      "sha": "e9502a65522b1f31ce411ad1e06a55b97cb8dc2c",
+      "parents": "7b6645bef9ef151bd91358144daf3af7e10fca4c",
+      "author_date": "2026-09-26T13:50:40+02:00",
+      "commit_date": "2026-09-26T13:50:40+02:00",
+      "subject": "IsObjectiveComplete: find the quest in the log through GetQuestLogTitle's quest id, GetQuestLogIndexByID doesn't exist on 3.3.5a so the check always returned false and While loops on it never ended",
+      "patch_sha256": "f79a519cea90e1e9a42aab8e7168efce1e421df25feec8e6a2f97955c73c2ab0",
+      "new_since_previous_review": true,
+      "disposition": "adapted",
+      "reason": "Use original GetQuestLogTitle questID9/header5 and leaderboard query in one Lua request, strict true/1 completion and actor/quest post-checks."
+    },
+    {
+      "sha": "cc2f049571bee7691af1c3c4b0390fb5d2e21d58",
+      "parents": "7b6645bef9ef151bd91358144daf3af7e10fca4c",
+      "author_date": "2026-09-27T16:54:20+02:00",
+      "commit_date": "2026-09-27T16:54:20+02:00",
+      "subject": "DungeonBuddy: restore HB 4.3.4 IsBossAlive, CurrentBoss breadcrumbs and boss unit filter, the Gnomeregan escort never started and optional Grubbis was chased with KillOptionalBosses off",
+      "patch_sha256": "0a2b7ef775dbf7b4427e127aaf82dea40f5cef2c53bd42be704c31033fd1d82c",
+      "new_since_previous_review": true,
+      "disposition": "adapted",
+      "reason": "Use BossManager state/current encounter, preserve optional-boss choice, reject missing/invalid/long path distances and empty breadcrumb peeks."
+    },
+    {
+      "sha": "c286f09475a712d15eb42679071e2ff92cc420cd",
+      "parents": "cc2f049571bee7691af1c3c4b0390fb5d2e21d58 ff19a59d5c19e302fb3509399c951c1118278c6d",
+      "author_date": "2026-09-27T16:57:49+02:00",
+      "commit_date": "2026-09-27T16:57:49+02:00",
+      "subject": "Merge pull request #11 from endgor/fix/protect-mining-pick",
+      "patch_sha256": "471091dc90d9759880fa9202400e045529926783dc9a00cac0bb6949d5e0a8de",
+      "new_since_previous_review": true,
+      "disposition": "merge-rollup",
+      "reason": "Integration marker only; review its individual parent patches, do not merge upstream wholesale."
+    },
+    {
+      "sha": "0443c88129504779d16b4680380ca0c4653d8b5b",
+      "parents": "c286f09475a712d15eb42679071e2ff92cc420cd 333083c128b60e40a948cb77d6938d4085080bcf",
+      "author_date": "2026-09-27T16:57:49+02:00",
+      "commit_date": "2026-09-27T16:57:49+02:00",
+      "subject": "Merge pull request #18 from endgor/fix/saferes-total-seconds",
+      "patch_sha256": "ab33f219098e7e439d9cb98d7d7dff7a720fa69d923abf44e1d174323aa52302",
+      "new_since_previous_review": true,
+      "disposition": "merge-rollup",
+      "reason": "Integration marker only; review its individual parent patches, do not merge upstream wholesale."
+    },
+    {
+      "sha": "a2a73f67d292d68c9cff8ef948c6f6d87491d9a7",
+      "parents": "0443c88129504779d16b4680380ca0c4653d8b5b 98d5b7395991dfaa1a80e5c1f8eaf80daf2c34e2",
+      "author_date": "2026-09-27T16:57:49+02:00",
+      "commit_date": "2026-09-27T16:57:49+02:00",
+      "subject": "Merge pull request #20 from endgor/fix/no-remount-at-vendor",
+      "patch_sha256": "217ed19dea0b894662b44dc8a7e7a3c5cb1034b05fd8391acb53710ae8343d6f",
+      "new_since_previous_review": true,
+      "disposition": "merge-rollup",
+      "reason": "Integration marker only; review its individual parent patches, do not merge upstream wholesale."
+    },
+    {
+      "sha": "04b7bb770dc683eabbe0a348c4ad97c82282312e",
+      "parents": "a2a73f67d292d68c9cff8ef948c6f6d87491d9a7 e9502a65522b1f31ce411ad1e06a55b97cb8dc2c",
+      "author_date": "2026-09-27T16:57:50+02:00",
+      "commit_date": "2026-09-27T16:57:50+02:00",
+      "subject": "Merge pull request #21 from endgor/fix/isobjectivecomplete-335",
+      "patch_sha256": "543d881fdfdbd3e1d57415335dca2bcaf5d901bfa321748395b6a3d007924d58",
+      "new_since_previous_review": true,
+      "disposition": "merge-rollup",
+      "reason": "Integration marker only; review its individual parent patches, do not merge upstream wholesale."
+    },
+    {
+      "sha": "f434842f02ee3de839f090c40d115b8951e99557",
+      "parents": "04b7bb770dc683eabbe0a348c4ad97c82282312e",
+      "author_date": "2026-09-27T16:59:00+02:00",
+      "commit_date": "2026-09-27T16:59:00+02:00",
+      "subject": "Remove the comments added by PR #11, #20 and #21",
+      "patch_sha256": "fcd74d0a5d7318a71ab5b79b871b6b2631ac1b8ca5ecd765cfeb705207881b46",
+      "new_since_previous_review": true,
+      "disposition": "not-adopted",
+      "reason": "Retain useful contract/ownership comments and audit provenance; comment removal is not a behavioral improvement."
+    },
+    {
+      "sha": "94c83e280848567804294e2b3a4bd4cac2d50f8d",
+      "parents": "f434842f02ee3de839f090c40d115b8951e99557",
+      "author_date": "2026-09-27T17:12:42+02:00",
+      "commit_date": "2026-09-27T17:12:42+02:00",
+      "subject": "NpcQueries: filter vendors and trainers with the player's WoWFactionTemplate reaction like HB 4.3.4, the WoWFaction built from Faction.dbc had no template so every NPC compared Neutral and an Alliance bot picked Horde vendors",
+      "patch_sha256": "8d31d31a277dafec116e89e45d2fceddabd2509ec7cc2461f432f801bfcd40cf",
+      "new_since_previous_review": true,
+      "disposition": "adapted",
+      "reason": "Compare faction templates, reject unknown templates and preserve old WoWFaction ABI through a matching-player resolver; keep caller veto and friendly preference."
+    },
+    {
+      "sha": "9b37cb34f41675f5b24320e8e52fa0639c9ce6fe",
+      "parents": "94c83e280848567804294e2b3a4bd4cac2d50f8d",
+      "author_date": "2026-09-27T17:15:51+02:00",
+      "commit_date": "2026-09-27T17:15:51+02:00",
+      "subject": "ForcedQuestTurnIn: restore the HB 3.3.5a and 4.3.4 Dispose that adds the turned-in quest to the completed quest cache, IsQuestCompleted stayed false up to a minute after the turn-in",
+      "patch_sha256": "9593277dc1c2e4d5bd994a59fbf03746d78d6fbbbe6c510bdee7e2e6dccdac64",
+      "new_since_previous_review": true,
+      "disposition": "not-adopted",
+      "reason": "Disposal/cancellation cannot authorize completed-quest cache writes. Preserve authoritative server completion semantics."
+    },
+    {
+      "sha": "bbfcaffa8adc7798de8bb46476492c6c8088f6c1",
+      "parents": "9b37cb34f41675f5b24320e8e52fa0639c9ce6fe",
+      "author_date": "2026-09-27T17:18:36+02:00",
+      "commit_date": "2026-09-27T17:18:36+02:00",
+      "subject": "Navigator.FindMeshHeight: load the tile first like HB 3.3.5a, quest area hotspots far from the player got height 0 and the bot looped on Could not generate path",
+      "patch_sha256": "4a13e14b190ab5758083f392e00537530140f2de4aea8c11621dcb9c0ea780c8",
+      "new_since_previous_review": true,
+      "disposition": "adapted",
+      "reason": "Load the query tile before nearest-height observation; failed load, invalid geometry and changed actor/map/provider fail closed."
+    },
+    {
+      "sha": "f1654fef96f3ce4af12c919751d86ab33b9d4564",
+      "parents": "bbfcaffa8adc7798de8bb46476492c6c8088f6c1",
+      "author_date": "2026-09-27T17:21:45+02:00",
+      "commit_date": "2026-09-27T17:21:45+02:00",
+      "subject": "MountHelper: classify flying mounts with the 3.3.5a flight speed auras 207, 208, 209 and 211, the ids 152-156 are detected range, split damage, stealth level and reputation gain so no mount was ever flying and profile CanFly() stayed false",
+      "patch_sha256": "7aca7718e18ad94ed1a8776b16d5deaf876747fed7f9627e3dd128a02b3d8bf0",
+      "new_since_previous_review": true,
+      "disposition": "adapted",
+      "reason": "Use pinned TC335 flight aura IDs207/208/209/211; remove later MiscValueB and speed-magnitude guesses as flight authority."
+    },
+    {
+      "sha": "902c72e85ee3bbe7a76af977c3b8e0de23283c69",
+      "parents": "f1654fef96f3ce4af12c919751d86ab33b9d4564",
+      "author_date": "2026-09-27T17:24:44+02:00",
+      "commit_date": "2026-09-27T17:24:44+02:00",
+      "subject": "FlightPaths: save and load node connections as Connection elements like HB 4.3.4, node names contain a comma so the comma-joined attribute lost every route after a restart",
+      "patch_sha256": "76522f36ebc0f4d9cc20a9ee5ce7bd3579ed165d2b068f0f51b40b288f91ccf8",
+      "new_since_previous_review": true,
+      "disposition": "adapted",
+      "reason": "Structured Connection elements preserve comma-containing names; ambiguous legacy lists grant no invented edges and must be relearned."
+    },
+    {
+      "sha": "44291dbf1b9e5d0a62e7e254ea9b0d50072a1f0c",
+      "parents": "902c72e85ee3bbe7a76af977c3b8e0de23283c69",
+      "author_date": "2026-09-27T17:28:31+02:00",
+      "commit_date": "2026-09-27T17:28:31+02:00",
+      "subject": "ForcedMoveTo: finish on the Navigator MoveResult like HB 6.2.3, ReachedDestination or a failed move ends the step, a RunTo a little above or below the ground left the bot standing at the end of the path forever",
+      "patch_sha256": "497b170d272bfa1146fd0ab7a0df7ffb1ff20d65a4f6313b5a55dcbd307d3b16",
+      "new_since_previous_review": true,
+      "disposition": "not-adopted",
+      "reason": "A failed path is not arrival/completion. Retain forced-arrival65/materialization12 and explicit Run/Fly handling."
+    },
+    {
+      "sha": "3116025f794ca8a752a9b09ba890556b6a584d21",
+      "parents": "44291dbf1b9e5d0a62e7e254ea9b0d50072a1f0c",
+      "author_date": "2026-09-27T17:31:46+02:00",
+      "commit_date": "2026-09-27T17:31:46+02:00",
+      "subject": "VendorManager: fall back to the NPC database whenever the profile has no vendor of the requested type like HB 3.3.5a, a profile with food and repair vendors but no trainer for the class never trained",
+      "patch_sha256": "2de720907dd59775bd059bf3d6eb2c6da19126b95d7e8663f822c1812427e89e",
+      "new_since_previous_review": true,
+      "disposition": "adapted",
+      "reason": "Allow database discovery when no applicable requested vendor/class exists; forced profile suppliers remain authoritative."
+    },
+    {
+      "sha": "482049010d453579f3138ee0773ed1fbbc8502b7",
+      "parents": "3116025f794ca8a752a9b09ba890556b6a584d21",
+      "author_date": "2026-09-27T17:36:20+02:00",
+      "commit_date": "2026-09-27T17:36:20+02:00",
+      "subject": "UnitThreatInfo: always look the unit up in the threat table and report NotTanking when the mob has no victim like HB 3.3.5a, a stunned mob read as UnitNotInThreatTable",
+      "patch_sha256": "e0c25578f0d4630e649362e271d42fe4a5386a317d34cb630f1811bd03cb922c",
+      "new_since_previous_review": true,
+      "disposition": "adapted",
+      "reason": "Retain threat-table membership when victimGUID is zero; return conservative NotTanking and bound cyclic linked-list reads."
+    },
+    {
+      "sha": "ac87f17279c55c306bcb496fb8444bedbb893f70",
+      "parents": "482049010d453579f3138ee0773ed1fbbc8502b7",
+      "author_date": "2026-09-27T17:39:24+02:00",
+      "commit_date": "2026-09-27T17:39:24+02:00",
+      "subject": "GatherBuddy: remove the NodeDetectionRange setting, no HonorBuddy version has it and the node filter never read it",
+      "patch_sha256": "9129b170ab72284116dbe346560b4409859448c703f38d3c48df58cc0747fbde",
+      "new_since_previous_review": true,
+      "disposition": "adapted",
+      "reason": "Remove nonfunctional range slider and viewmodel binding; preserve serialized setting and translation APIs for compatibility."
+    },
+    {
+      "sha": "b1dacd32f56fd41a3d8b801ca513fa2610b30dd0",
+      "parents": "ac87f17279c55c306bcb496fb8444bedbb893f70",
+      "author_date": "2026-09-27T17:55:06+02:00",
+      "commit_date": "2026-09-27T17:55:06+02:00",
+      "subject": "Quest order nodes: read attributes case-insensitively and parse objective types with the HB 4.3.4 aliases, Type=\"Collect\" became a KillMob with id 0 and stopped the bot, an unknown type now raises the HB profile error",
+      "patch_sha256": "17c6df0483048f26aff67e3220877b30eebcd6455ccdcb837f426d2703447e79",
+      "new_since_previous_review": true,
+      "disposition": "adapted",
+      "reason": "Case-insensitive aliases and strict known types/identity/count/index validation, while preserving explicitly indexed legacy objectives and rejecting conflicting aliases."
+    },
+    {
+      "sha": "c1309d8896c7eab7d75bb62050f7fcef67afb368",
+      "parents": "b1dacd32f56fd41a3d8b801ca513fa2610b30dd0",
+      "author_date": "2026-09-27T17:56:54+02:00",
+      "commit_date": "2026-09-27T17:56:54+02:00",
+      "subject": "NpcResult: restore the HB 4.3.4 IEquatable value equality, every query built new results so the navigation caches never hit and each vendor lookup redid up to 25 full path checks",
+      "patch_sha256": "c5ec8f4710b74f06685466f8765020716beea9a166ff741e50a8784c13955c1e",
+      "new_since_previous_review": true,
+      "disposition": "preserved",
+      "reason": "NpcResult already has value equality on stable entry/map/XYZ identity; do not expand keys with mutable descriptive fields."
+    },
+    {
+      "sha": "49588496d58b129851a058dc1098c862286a1ad3",
+      "parents": "c1309d8896c7eab7d75bb62050f7fcef67afb368",
+      "author_date": "2026-09-27T17:59:41+02:00",
+      "commit_date": "2026-09-27T17:59:41+02:00",
+      "subject": "MeshNavigator: remove the swimming MoveTowards shortcut, no HonorBuddy MeshNavigator has it and it headed straight for underwater and off-mesh destinations",
+      "patch_sha256": "bad382377a99a7592ee929eb9b21ad760f8098158af7800532f2d10c277ddd1c",
+      "new_since_previous_review": true,
+      "disposition": "adapted",
+      "reason": "Remove direct-swim bypass; swimming follows the normal path pipeline. Preserve request/backing-owner/clear controls and test missing-route rejection."
+    },
+    {
+      "sha": "6e8dbb81a205c0132637e6d81f5d7619a4d7ab77",
+      "parents": "49588496d58b129851a058dc1098c862286a1ad3",
+      "author_date": "2026-09-27T23:02:26+02:00",
+      "commit_date": "2026-09-27T23:02:26+02:00",
+      "subject": "LevelBot loot: force the loot interact, wait 3 s for a skin window and only wait for the skinnable flag after looting a beast like HB 5.4.8, the 2 s interact timer from the loot swallowed the skin interact, the bot waited 10 s for LOOT_OPENED, then up to 5 s after every loot and 1.5 s after every kill",
+      "patch_sha256": "c632cb0d90b3ebb04b82a167616fd1f272df03a687237e100ec3e871a43e09b5",
+      "new_since_previous_review": true,
+      "disposition": "adapted",
+      "reason": "Owned Interact(true), skin frame3s, post-loot readiness2s only after Loot and at <=CanSkinLevel; keep non-beast eligibility, no post-clear sleep, no duplicated mob-kill delay."
+    },
+    {
+      "sha": "24f1b4d694c62574255eedb1a7eeeea503a367ff",
+      "parents": "49588496d58b129851a058dc1098c862286a1ad3",
+      "author_date": "2026-09-27T23:07:14+02:00",
+      "commit_date": "2026-09-27T23:07:14+02:00",
+      "subject": "NavigatorTerrainHeightProvider: find heights on map 0 like HB 5.4.8, the mapId == 0 guard returned no heights anywhere in Eastern Kingdoms so quest-area objectives, turn-ins placed from quest steps and the corpse-point search found no ground",
+      "patch_sha256": "deac7943925dc7bea1598c5ac7e3f2830506a78b4e8ad56d270bc6f0bbe98cee",
+      "new_since_previous_review": true,
+      "disposition": "adapted",
+      "reason": "Valid map0 terrain queries allowed; missing player is distinct. Retain finite XYZ, actor/map/provider checks and use horizontal boundary distance."
+    },
+    {
+      "sha": "883646c2c2d07f65616d4f72621369fd2b1b5344",
+      "parents": "49588496d58b129851a058dc1098c862286a1ad3",
+      "author_date": "2026-09-28T13:55:38+02:00",
+      "commit_date": "2026-09-28T13:55:38+02:00",
+      "subject": "QuestArea: place hotspots with Navigator.FindHeight like HB 4.3.4, FindMeshHeight searched from Z 10000 with the 20 yd extents, found no polygon and still returned Z 0, so every client quest area hotspot was underground and the bot looped on Could not generate path",
+      "patch_sha256": "4f5d4f43f8833e3354029dc2db3be0a2dab0c382f3364e46f7a38433893ae4c3",
+      "new_since_previous_review": true,
+      "disposition": "adapted",
+      "reason": "Use FindHeight for quest areas, eliminate duplicate all-area generation and allow retry after temporarily unavailable heights."
+    },
+    {
+      "sha": "3886a9924fa8e9047cac6fd819f40a489348e43b",
+      "parents": "49588496d58b129851a058dc1098c862286a1ad3 883646c2c2d07f65616d4f72621369fd2b1b5344",
+      "author_date": "2026-09-28T15:47:33+02:00",
+      "commit_date": "2026-09-28T15:47:33+02:00",
+      "subject": "Merge pull request #26 from endgor/fix/questarea-findheight",
+      "patch_sha256": "c9d3c91e6b00a4170dbbac040ec5a51b64f0cb23c4c90c4a0594f111abba9068",
+      "new_since_previous_review": true,
+      "disposition": "merge-rollup",
+      "reason": "Integration marker only; review its individual parent patches, do not merge upstream wholesale."
+    },
+    {
+      "sha": "df03623b6b5ca570cadd0d031604d641d00c3754",
+      "parents": "3886a9924fa8e9047cac6fd819f40a489348e43b 24f1b4d694c62574255eedb1a7eeeea503a367ff",
+      "author_date": "2026-09-28T15:47:51+02:00",
+      "commit_date": "2026-09-28T15:47:51+02:00",
+      "subject": "Merge pull request #25 from endgor/fix/findheights-eastern-kingdoms",
+      "patch_sha256": "47df0214775085f27d2e896b5bfa52c75088d2c9dcc382b714be71f3e49404e5",
+      "new_since_previous_review": true,
+      "disposition": "merge-rollup",
+      "reason": "Integration marker only; review its individual parent patches, do not merge upstream wholesale."
+    },
+    {
+      "sha": "e03d58d489b3b134a10ab80642862503452f6ab4",
+      "parents": "df03623b6b5ca570cadd0d031604d641d00c3754 6e8dbb81a205c0132637e6d81f5d7619a4d7ab77",
+      "author_date": "2026-09-28T15:48:07+02:00",
+      "commit_date": "2026-09-28T15:48:07+02:00",
+      "subject": "Merge pull request #24 from endgor/fix/levelbot-loot-hb548",
+      "patch_sha256": "2a31091ade29278fd11f692f6c4224b7ef8a2092129ad4a627ae47a5195efb98",
+      "new_since_previous_review": true,
+      "disposition": "merge-rollup",
+      "reason": "Integration marker only; review its individual parent patches, do not merge upstream wholesale."
+    },
+    {
+      "sha": "b594a51be5e1f59177ddbf0aec6e78d5d19d923a",
+      "parents": "e03d58d489b3b134a10ab80642862503452f6ab4",
+      "author_date": "2026-09-28T15:51:03+02:00",
+      "commit_date": "2026-09-28T15:51:03+02:00",
+      "subject": "bump version 1.6.7.4 -> 1.6.7.5",
+      "patch_sha256": "7c7d165f08e1e376546ba4ea421ea6fca9234cc009fad14dc7d535fff1a17526",
+      "new_since_previous_review": true,
+      "disposition": "adapted",
+      "reason": "FileVersion1.6.7.5 and distinct informational/UI PR51 label; AssemblyVersion remains omitted for retained BAML compatibility."
+    },
+    {
+      "sha": "57f37756eba903340f07a2f4160635ffd422862e",
+      "parents": "b594a51be5e1f59177ddbf0aec6e78d5d19d923a",
+      "author_date": "2026-09-28T15:51:03+02:00",
+      "commit_date": "2026-09-28T15:51:03+02:00",
+      "subject": "add CONTRIBUTING.md: follow HB, test in game with a log before a PR, no code comments, one fix per PR, check the runtime-compiled callers in bin",
+      "patch_sha256": "f14101a640ab4a6f377b6b2ebb8fc33b3d3ee3a7f192f2998f5f75266284d437",
+      "new_since_previous_review": true,
+      "disposition": "not-adopted",
+      "reason": "Upstream contribution instructions do not replace user-approved audit/provenance/comment/testing requirements or grant live acceptance."
+    }
+  ],
+  "intervals": {
+    "verified_utc": "2026-09-29T01:46:24.367491+00:00",
+    "base": "be16c4578159dbf33a91fb51c3b4d847110c7845",
+    "intervals": [
+      {
+        "label": "INITIAL",
+        "changed_sources": [
+          "Styx/Logic/FlightPaths.cs",
+          "Styx/Logic/MountHelper.cs",
+          "Styx/Logic/Pathing/NavigatorTerrainHeightProvider.cs",
+          "Styx/Logic/Profiles/Quest/MoveToNode.cs",
+          "Styx/Logic/Profiles/Quest/ObjectiveInfo.cs",
+          "Styx/Logic/Profiles/Quest/ObjectiveNode.cs",
+          "Styx/Logic/Profiles/Quest/OrderNode.cs",
+          "Styx/Logic/Profiles/Quest/PickUpNode.cs",
+          "Styx/Logic/Profiles/Quest/TurnInNode.cs",
+          "Styx/WoWInternals/WoWObjects/UnitThreatInfo.cs"
+        ],
+        "fixture_sources_unchanged": true,
+        "runs": [
+          {
+            "phase": "UPSTREAMINITIALRED",
+            "build": 0,
+            "run": 1,
+            "inputs": 1905,
+            "summaries": [
+              "Upstream September scenarios: 1/25; assertions=24; unexpected=0; actual profile/XML/data; no game attached.",
+              "Upstream observation families: 0/3; failures=3; tracked owners with controlled leaves; no live acceptance.",
+              "PASS focused group: FlightNodePersistenceRegressionTests",
+              "Upstream compatibility scenarios: 24/24; assertions=0; unexpected=0; actual managed readers and constructors, metadata-only terrain ABI; no game attached.",
+              "PASS focused group: UpstreamCompatibilityContractRegressionTests",
+              "Requested focused groups: 4; failures=2. No broad-suite or game acceptance claim."
+            ],
+            "receipts": [
+              {
+                "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMINITIALRED_20260929\\status.json",
+                "sha256": "44bf33b5486f177e2d3f2309278097007d43b931759efcc565f09b8038e78d3c"
+              },
+              {
+                "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMINITIALRED_20260929\\source-before.json",
+                "sha256": "5743385701717371fb501d106fdb38694325f8ce44052b6a7a8f3e5d6f6a947d"
+              },
+              {
+                "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMINITIALRED_20260929\\source-after.json",
+                "sha256": "5743385701717371fb501d106fdb38694325f8ce44052b6a7a8f3e5d6f6a947d"
+              },
+              {
+                "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMINITIALRED_20260929\\run.log",
+                "sha256": "52599225f458b899e4a2f77edd8b10156dad0d5d2bae2772e5ebd2bd028444a2"
+              },
+              {
+                "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMINITIALRED_20260929\\run.stderr.log",
+                "sha256": "ab5505c8a95a43180d6cab5d504c42f6f7ddec31745d83580f6ede91a258e2ef"
+              }
+            ]
+          },
+          {
+            "phase": "UPSTREAMINITIALGREEN",
+            "build": 0,
+            "run": 0,
+            "inputs": 1905,
+            "summaries": [
+              "Upstream September scenarios: 25/25; assertions=0; unexpected=0; actual profile/XML/data; no game attached.",
+              "PASS focused group: UpstreamSeptemberRegressionTests",
+              "Upstream threat cases: 12 assertions passed; complete raw reader; controlled bytes.",
+              "Upstream mount cases: 10 passed; actual wrapper with controlled spellbook.",
+              "Upstream terrain cases: 6 passed; complete provider; controlled native geometry.",
+              "Upstream observation families: 3/3; failures=0; tracked owners with controlled leaves; no live acceptance.",
+              "PASS focused group: UpstreamObservationRegressionTests",
+              "PASS focused group: FlightNodePersistenceRegressionTests",
+              "Upstream compatibility scenarios: 24/24; assertions=0; unexpected=0; actual managed readers and constructors, metadata-only terrain ABI; no game attached.",
+              "PASS focused group: UpstreamCompatibilityContractRegressionTests",
+              "Requested focused groups: 4; failures=0. No broad-suite or game acceptance claim."
+            ],
+            "receipts": [
+              {
+                "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMINITIALGREEN_20260929\\status.json",
+                "sha256": "b705f8dbaff19d0d05e6ac147722fb1f74e0eb5ca6acaed20b908b74f971bd54"
+              },
+              {
+                "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMINITIALGREEN_20260929\\source-before.json",
+                "sha256": "a8820dd3bfe4a4ce7c452ce9b4eb16f12e7f3ce7211cdeeafb89b8f45b7d9b86"
+              },
+              {
+                "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMINITIALGREEN_20260929\\source-after.json",
+                "sha256": "a8820dd3bfe4a4ce7c452ce9b4eb16f12e7f3ce7211cdeeafb89b8f45b7d9b86"
+              },
+              {
+                "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMINITIALGREEN_20260929\\run.log",
+                "sha256": "6ce1a8c6696e818e71bb921392dcb3368355fe0c948854ae5fba6f8637638305"
+              },
+              {
+                "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMINITIALGREEN_20260929\\run.stderr.log",
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "label": "SERVICES",
+        "changed_sources": [
+          "Bots/DungeonBuddy/Helpers/ScriptHelpers.cs",
+          "Bots/Gatherbuddy/GatherbuddyBot.cs",
+          "Styx/Database/NpcQueries.cs",
+          "Styx/Logic/Profiles/VendorManager.cs"
+        ],
+        "fixture_sources_unchanged": true,
+        "runs": [
+          {
+            "phase": "UPSTREAMSERVICESRED",
+            "build": 0,
+            "run": 1,
+            "inputs": 1906,
+            "summaries": [
+              "Upstream service families: 0/4; failures=4; complete owners with controlled database/world; no game acceptance.",
+              "Upstream September scenarios: 25/25; assertions=0; unexpected=0; actual profile/XML/data; no game attached.",
+              "PASS focused group: UpstreamSeptemberRegressionTests",
+              "Upstream threat cases: 12 assertions passed; complete raw reader; controlled bytes.",
+              "Upstream mount cases: 10 passed; actual wrapper with controlled spellbook.",
+              "Upstream terrain cases: 6 passed; complete provider; controlled native geometry.",
+              "Upstream observation families: 3/3; failures=0; tracked owners with controlled leaves; no live acceptance.",
+              "PASS focused group: UpstreamObservationRegressionTests",
+              "Requested focused groups: 3; failures=1. No broad-suite or game acceptance claim."
+            ],
+            "receipts": [
+              {
+                "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMSERVICESRED_20260929\\status.json",
+                "sha256": "aef7e23d3aef1dee657786e80f131bd73e2e471f7fbfaee67a16c18af13a1108"
+              },
+              {
+                "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMSERVICESRED_20260929\\source-before.json",
+                "sha256": "1e2d838e19b6930cd3397fcd5686bb7e818808a01be488176fa5baaf0e93a66b"
+              },
+              {
+                "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMSERVICESRED_20260929\\source-after.json",
+                "sha256": "1e2d838e19b6930cd3397fcd5686bb7e818808a01be488176fa5baaf0e93a66b"
+              },
+              {
+                "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMSERVICESRED_20260929\\run.log",
+                "sha256": "d3300fbf815ba6bd90e422541cf19de3fad378f67eb6e0d882f39cc3fa6e4b12"
+              },
+              {
+                "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMSERVICESRED_20260929\\run.stderr.log",
+                "sha256": "5c8a73e15fb08bf12c8898380ea8cde8d70ba0261a420339c4942ac55ee8c927"
+              }
+            ]
+          },
+          {
+            "phase": "UPSTREAMSERVICESGREEN",
+            "build": 0,
+            "run": 0,
+            "inputs": 1906,
+            "summaries": [
+              "Upstream NPC assertions: 8 passed; actual query/record owners and controlled rows.",
+              "Upstream gather mail cases: 5 passed; actual admission and controlled mailbox/items.",
+              "Upstream boss state cases: 3 passed; actual helper with controlled manager state.",
+              "Upstream service families: 4/4; failures=0; complete owners with controlled database/world; no game acceptance.",
+              "PASS focused group: UpstreamServicesRegressionTests",
+              "Upstream September scenarios: 25/25; assertions=0; unexpected=0; actual profile/XML/data; no game attached.",
+              "PASS focused group: UpstreamSeptemberRegressionTests",
+              "Upstream threat cases: 12 assertions passed; complete raw reader; controlled bytes.",
+              "Upstream mount cases: 10 passed; actual wrapper with controlled spellbook.",
+              "Upstream terrain cases: 6 passed; complete provider; controlled native geometry.",
+              "Upstream observation families: 3/3; failures=0; tracked owners with controlled leaves; no live acceptance.",
+              "PASS focused group: UpstreamObservationRegressionTests",
+              "Requested focused groups: 3; failures=0. No broad-suite or game acceptance claim."
+            ],
+            "receipts": [
+              {
+                "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMSERVICESGREEN_20260929\\status.json",
+                "sha256": "4ea9b97db3116c933d29de26d749f776c72d4453c05282a79ddb40ccf4e8278b"
+              },
+              {
+                "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMSERVICESGREEN_20260929\\source-before.json",
+                "sha256": "01fc74c0b2172368594d20e7b6e9d1cddd677bf1e9cc1a11668f35b2714c9ee3"
+              },
+              {
+                "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMSERVICESGREEN_20260929\\source-after.json",
+                "sha256": "01fc74c0b2172368594d20e7b6e9d1cddd677bf1e9cc1a11668f35b2714c9ee3"
+              },
+              {
+                "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMSERVICESGREEN_20260929\\run.log",
+                "sha256": "05b6d56c51a3ecf20f960ebfddb01b2e1247b9c5ee967c7bdeecac5e5b1b37b4"
+              },
+              {
+                "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMSERVICESGREEN_20260929\\run.stderr.log",
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "label": "WORLD_LUA",
+        "changed_sources": [
+          "Bots/DungeonBuddy/DungeonBuddy.cs",
+          "Styx/Logic/AreaManagement/QuestArea.cs",
+          "Styx/Logic/Pathing/Navigator.cs",
+          "Styx/Logic/Profiles/Quest/ProfileHelperFunctionsBase.cs"
+        ],
+        "fixture_sources_unchanged": true,
+        "runs": [
+          {
+            "phase": "UPSTREAMWORLDLUARED2",
+            "build": 0,
+            "run": 1,
+            "inputs": 1908,
+            "summaries": [
+              "Upstream world families: 0/3; failures=3; actual owners and controlled geometry; no physical-world safety claim.",
+              "Upstream quest Lua scenarios: 9/11; assertions=2; actual condition/transport and stock Lua5.1; no native/server acceptance.",
+              "Upstream NPC assertions: 8 passed; actual query/record owners and controlled rows.",
+              "Upstream gather mail cases: 5 passed; actual admission and controlled mailbox/items.",
+              "Upstream boss state cases: 3 passed; actual helper with controlled manager state.",
+              "Upstream service families: 4/4; failures=0; complete owners with controlled database/world; no game acceptance.",
+              "PASS focused group: UpstreamServicesRegressionTests",
+              "Upstream threat cases: 12 assertions passed; complete raw reader; controlled bytes.",
+              "Upstream mount cases: 10 passed; actual wrapper with controlled spellbook.",
+              "Upstream terrain cases: 6 passed; complete provider; controlled native geometry.",
+              "Upstream observation families: 3/3; failures=0; tracked owners with controlled leaves; no live acceptance.",
+              "PASS focused group: UpstreamObservationRegressionTests",
+              "Requested focused groups: 4; failures=2. No broad-suite or game acceptance claim."
+            ],
+            "receipts": [
+              {
+                "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMWORLDLUARED2_20260929\\status.json",
+                "sha256": "e0e30c33910f128a3d1c310ad58cf42c1df4f1c22c8abf54cd3de803112db4bd"
+              },
+              {
+                "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMWORLDLUARED2_20260929\\source-before.json",
+                "sha256": "568602ea5fddb991f0adc51c69399927496c49322bb70518fc66b8e02ae385a0"
+              },
+              {
+                "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMWORLDLUARED2_20260929\\source-after.json",
+                "sha256": "568602ea5fddb991f0adc51c69399927496c49322bb70518fc66b8e02ae385a0"
+              },
+              {
+                "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMWORLDLUARED2_20260929\\run.log",
+                "sha256": "f429a9664de2380e32a394d5f25ba6f5e823fe2a36d5db7a9671dffb0afbd47f"
+              },
+              {
+                "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMWORLDLUARED2_20260929\\run.stderr.log",
+                "sha256": "7d210430d02216cde5949913bc03e5be5efeda6ca436ec2c7f1c2344c4014d2e"
+              }
+            ]
+          },
+          {
+            "phase": "UPSTREAMWORLDLUAGREEN",
+            "build": 0,
+            "run": 0,
+            "inputs": 1908,
+            "summaries": [
+              "Upstream mesh height cases: 6 passed; actual helper, controlled tile/native reads.",
+              "Upstream quest area cases: 4 passed; complete class with controlled height provider.",
+              "Upstream boss navigation cases: 8 passed; actual selectors and controlled route results.",
+              "Upstream world families: 3/3; failures=0; actual owners and controlled geometry; no physical-world safety claim.",
+              "PASS focused group: UpstreamWorldRegressionTests",
+              "Upstream quest Lua scenarios: 11/11; assertions=0; actual condition/transport and stock Lua5.1; no native/server acceptance.",
+              "PASS focused group: UpstreamQuestLuaRegressionTests",
+              "Upstream NPC assertions: 8 passed; actual query/record owners and controlled rows.",
+              "Upstream gather mail cases: 5 passed; actual admission and controlled mailbox/items.",
+              "Upstream boss state cases: 3 passed; actual helper with controlled manager state.",
+              "Upstream service families: 4/4; failures=0; complete owners with controlled database/world; no game acceptance.",
+              "PASS focused group: UpstreamServicesRegressionTests",
+              "Upstream threat cases: 12 assertions passed; complete raw reader; controlled bytes.",
+              "Upstream mount cases: 10 passed; actual wrapper with controlled spellbook.",
+              "Upstream terrain cases: 6 passed; complete provider; controlled native geometry.",
+              "Upstream observation families: 3/3; failures=0; tracked owners with controlled leaves; no live acceptance.",
+              "PASS focused group: UpstreamObservationRegressionTests",
+              "Requested focused groups: 4; failures=0. No broad-suite or game acceptance claim."
+            ],
+            "receipts": [
+              {
+                "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMWORLDLUAGREEN_20260929\\status.json",
+                "sha256": "9bea2a88e202e9f97aa5b10ca7d0bd298cda4550966e6f43f9ccbd7f96924b1e"
+              },
+              {
+                "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMWORLDLUAGREEN_20260929\\source-before.json",
+                "sha256": "12f979fd3ccd86a20fd29985316e623aa26e9aa285fb14116dc2f6934438a49b"
+              },
+              {
+                "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMWORLDLUAGREEN_20260929\\source-after.json",
+                "sha256": "12f979fd3ccd86a20fd29985316e623aa26e9aa285fb14116dc2f6934438a49b"
+              },
+              {
+                "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMWORLDLUAGREEN_20260929\\run.log",
+                "sha256": "85e1ad2cba107af6e658332c448a86daf8aabd85ec3e437f7f3309afa0a67003"
+              },
+              {
+                "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMWORLDLUAGREEN_20260929\\run.stderr.log",
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "label": "SWIM_BOUNDS",
+        "changed_sources": [
+          "Styx/Logic/MountHelper.cs",
+          "Styx/Logic/Pathing/MeshNavigator.cs",
+          "Styx/WoWInternals/WoWObjects/UnitThreatInfo.cs"
+        ],
+        "fixture_sources_unchanged": true,
+        "runs": [
+          {
+            "phase": "UPSTREAMSWIMBOUNDSRED",
+            "build": 0,
+            "run": 1,
+            "inputs": 1908,
+            "summaries": [
+              "Mesh move-request scenarios: 54/65; assertions=11; unexpected=0; actual MoveTo and controlled observation/mover boundaries; no game attached.",
+              "PASS focused group: MeshClearOwnershipRegressionTests",
+              "Upstream terrain cases: 6 passed; complete provider; controlled native geometry.",
+              "Upstream observation families: 1/3; failures=2; tracked owners with controlled leaves; no live acceptance.",
+              "Upstream mesh height cases: 6 passed; actual helper, controlled tile/native reads.",
+              "Upstream quest area cases: 4 passed; complete class with controlled height provider.",
+              "Upstream boss navigation cases: 8 passed; actual selectors and controlled route results.",
+              "Upstream world families: 3/3; failures=0; actual owners and controlled geometry; no physical-world safety claim.",
+              "PASS focused group: UpstreamWorldRegressionTests",
+              "Requested focused groups: 4; failures=2. No broad-suite or game acceptance claim."
+            ],
+            "receipts": [
+              {
+                "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMSWIMBOUNDSRED_20260929\\status.json",
+                "sha256": "181bdaedfa9d4737e5a34554b466b7042038a19b2e9cb9395d92a0fcd9fa27d8"
+              },
+              {
+                "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMSWIMBOUNDSRED_20260929\\source-before.json",
+                "sha256": "407dc82d5cb8c91e700d5fc3668da33a9d03a87b262b4e36ed9a812515e85871"
+              },
+              {
+                "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMSWIMBOUNDSRED_20260929\\source-after.json",
+                "sha256": "407dc82d5cb8c91e700d5fc3668da33a9d03a87b262b4e36ed9a812515e85871"
+              },
+              {
+                "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMSWIMBOUNDSRED_20260929\\run.log",
+                "sha256": "4d9dbe1fed6db9be6621d2bbe81873ea9fd5d562bd2f061b88e34f36d738b15a"
+              },
+              {
+                "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMSWIMBOUNDSRED_20260929\\run.stderr.log",
+                "sha256": "356484210f10b70fdb478b1f58164923169664a06f3dc596d8e8308cb282d741"
+              }
+            ]
+          },
+          {
+            "phase": "UPSTREAMSWIMBOUNDSGREEN",
+            "build": 0,
+            "run": 0,
+            "inputs": 1908,
+            "summaries": [
+              "Mesh move-request scenarios: 65/65; assertions=0; unexpected=0; actual MoveTo and controlled observation/mover boundaries; no game attached.",
+              "PASS focused group: MeshMoveRequestOwnershipRegressionTests",
+              "PASS focused group: MeshClearOwnershipRegressionTests",
+              "Upstream threat cases: 13 assertions passed; complete raw reader; controlled bytes.",
+              "Upstream mount cases: 13 passed; actual wrapper with controlled spellbook.",
+              "Upstream terrain cases: 6 passed; complete provider; controlled native geometry.",
+              "Upstream observation families: 3/3; failures=0; tracked owners with controlled leaves; no live acceptance.",
+              "PASS focused group: UpstreamObservationRegressionTests",
+              "Upstream mesh height cases: 6 passed; actual helper, controlled tile/native reads.",
+              "Upstream quest area cases: 4 passed; complete class with controlled height provider.",
+              "Upstream boss navigation cases: 8 passed; actual selectors and controlled route results.",
+              "Upstream world families: 3/3; failures=0; actual owners and controlled geometry; no physical-world safety claim.",
+              "PASS focused group: UpstreamWorldRegressionTests",
+              "Requested focused groups: 4; failures=0. No broad-suite or game acceptance claim."
+            ],
+            "receipts": [
+              {
+                "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMSWIMBOUNDSGREEN_20260929\\status.json",
+                "sha256": "524384ebd8837afe0dac0946087b74d7ec13c679efbed2d06b931f914cac42a4"
+              },
+              {
+                "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMSWIMBOUNDSGREEN_20260929\\source-before.json",
+                "sha256": "620d297606fd24715b5d9938334770a6215ef67b002411c71abca0d2e68d3333"
+              },
+              {
+                "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMSWIMBOUNDSGREEN_20260929\\source-after.json",
+                "sha256": "620d297606fd24715b5d9938334770a6215ef67b002411c71abca0d2e68d3333"
+              },
+              {
+                "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMSWIMBOUNDSGREEN_20260929\\run.log",
+                "sha256": "905591302b125ff32569ac9297e6789c970d04e634e98130047de5145761b74e"
+              },
+              {
+                "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMSWIMBOUNDSGREEN_20260929\\run.stderr.log",
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "label": "LOOT",
+        "changed_sources": [
+          "Bots/Grind/LevelBot.cs"
+        ],
+        "fixture_sources_unchanged": true,
+        "runs": [
+          {
+            "phase": "UPSTREAMLOOTRED",
+            "build": 0,
+            "run": 1,
+            "inputs": 1908,
+            "summaries": [
+              "Quest loot handoff scenarios: 293/298; assertions=5; unexpected=0; actual caller factories/admission/POI actions and real TreeSharp; controlled world/target callbacks; no loot-frame or native acknowledgement provenance.",
+              "PASS focused group: CombatTargetGapRegressionTests",
+              "PASS focused group: PoiTravelOwnershipRegressionTests",
+              "Requested focused groups: 3; failures=1. No broad-suite or game acceptance claim."
+            ],
+            "receipts": [
+              {
+                "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMLOOTRED_20260929\\status.json",
+                "sha256": "527f82c629f8e6072efd52069cfb898b11ada4785934abcebe9963e36132675e"
+              },
+              {
+                "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMLOOTRED_20260929\\source-before.json",
+                "sha256": "296b2d3d9f8f3339d1d63022ddf7c876ba87c54488e4a3f38f129423de218ba5"
+              },
+              {
+                "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMLOOTRED_20260929\\source-after.json",
+                "sha256": "296b2d3d9f8f3339d1d63022ddf7c876ba87c54488e4a3f38f129423de218ba5"
+              },
+              {
+                "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMLOOTRED_20260929\\run.log",
+                "sha256": "0bf8d9dd806ee0ad4f32d007ce2d1e4396da37a4de3feaddaedf0a1ae85147a0"
+              },
+              {
+                "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMLOOTRED_20260929\\run.stderr.log",
+                "sha256": "df86c846c67c8d7dc9247ca80e5d75d37d9e8df91bf4444fa6638691059f7273"
+              }
+            ]
+          },
+          {
+            "phase": "UPSTREAMLOOTGREEN",
+            "build": 0,
+            "run": 0,
+            "inputs": 1908,
+            "summaries": [
+              "Quest loot handoff scenarios: 298/298; assertions=0; unexpected=0; actual caller factories/admission/POI actions and real TreeSharp; controlled world/target callbacks; no loot-frame or native acknowledgement provenance.",
+              "PASS focused group: QuestLootHandoffRegressionTests",
+              "PASS focused group: CombatTargetGapRegressionTests",
+              "PASS focused group: PoiTravelOwnershipRegressionTests",
+              "Requested focused groups: 3; failures=0. No broad-suite or game acceptance claim."
+            ],
+            "receipts": [
+              {
+                "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMLOOTGREEN_20260929\\status.json",
+                "sha256": "5b5162c3b20968c9fd7fd10c42384dc11ad62a4488481316e088b78204ed5ac5"
+              },
+              {
+                "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMLOOTGREEN_20260929\\source-before.json",
+                "sha256": "ad712480c6c36b20c4529ffa20d9e734afe440c0a04b1e40c1af9d5f51bca2cd"
+              },
+              {
+                "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMLOOTGREEN_20260929\\source-after.json",
+                "sha256": "ad712480c6c36b20c4529ffa20d9e734afe440c0a04b1e40c1af9d5f51bca2cd"
+              },
+              {
+                "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMLOOTGREEN_20260929\\run.log",
+                "sha256": "d958e35ad64e66440b4a8565f8fd23f135046117e83cfa34b37a11b051f7fedf"
+              },
+              {
+                "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMLOOTGREEN_20260929\\run.stderr.log",
+                "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "input_manifest_scope": "Existing gate captures cs/csproj/props/targets/py/yml. XML assets are covered by actual tests and separate release/source manifests.",
+    "preparation_failure": "UPSTREAMWORLDLUARED failed Lua probe compilation for missing Logging import; valid corrected baseline is UPSTREAMWORLDLUARED2. No production repair was based on that compiler failure.",
+    "swim_fixture_change": "Removed unsafe direct-swim behavior required replacing its positive movement expectation with swimming arrival/ownership and an explicit no-route rejection. All six replacement and three exception boundaries remain.",
+    "tests_replayed": false,
+    "game_attached": false,
+    "DensePullIsolationValidated": false
+  },
+  "compatibility_interval": {
+    "red": "UPSTREAMCOMPATRED",
+    "green": "UPSTREAMCOMPATGREEN",
+    "changed_inputs": [
+      "Styx/Logic/Profiles/Quest/ObjectiveNode.cs"
+    ],
+    "fixture_sources_unchanged": true,
+    "receipts": [
+      {
+        "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMCOMPATRED_20260929\\status.json",
+        "sha256": "965d4d0650840393c56a1509e4fae119215b13aa68d59b355382adb8995c53ce"
+      },
+      {
+        "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMCOMPATRED_20260929\\source-before.json",
+        "sha256": "7df5d335478f4017c5735feeeab60e95bdc7c6e6a23143d3ea295b9b27f8dc6d"
+      },
+      {
+        "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMCOMPATRED_20260929\\source-after.json",
+        "sha256": "7df5d335478f4017c5735feeeab60e95bdc7c6e6a23143d3ea295b9b27f8dc6d"
+      },
+      {
+        "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMCOMPATRED_20260929\\run.log",
+        "sha256": "1c378f0ecf55ccc0ee8273c2aa1351eab92b6469367f34d809282d62258deb9b"
+      },
+      {
+        "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMCOMPATRED_20260929\\run.stderr.log",
+        "sha256": "2495619c4e1ec55056f5f52e622dcfeeaf8b75958f5150488666aa7701b896f4"
+      },
+      {
+        "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMCOMPATGREEN_20260929\\status.json",
+        "sha256": "f0caa1e8bdaec1ee9a429f7433900afc1f9bbff5b8ba1fc1236703b5ffd60c4a"
+      },
+      {
+        "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMCOMPATGREEN_20260929\\source-before.json",
+        "sha256": "7434e38b56c49f25301aa0e7d5897920b995a4638f7d54a9ed814cf16e2bbcd4"
+      },
+      {
+        "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMCOMPATGREEN_20260929\\source-after.json",
+        "sha256": "7434e38b56c49f25301aa0e7d5897920b995a4638f7d54a9ed814cf16e2bbcd4"
+      },
+      {
+        "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMCOMPATGREEN_20260929\\run.log",
+        "sha256": "777287cd309c96efe44fe5711e34ab3f51daee69b4aa1e97528d28bfc448463f"
+      },
+      {
+        "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMCOMPATGREEN_20260929\\run.stderr.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ]
+  },
+  "local_final": {
+    "completed_utc": "2026-09-29T01:53:42.2368900Z",
+    "base_head": "be16c4578159dbf33a91fb51c3b4d847110c7845",
+    "source_inputs": 1908,
+    "source_unchanged": true,
+    "successful_groups": 17,
+    "total_groups": 17,
+    "extraction_verified": true,
+    "extraction_source": "002682af0d8b8cc9ab01482eba8598ada0dd763c",
+    "host_build_exit": 0,
+    "lua51_sha256": "06df2510b5780791d17cbb738e42ec28a1ef5add580e127f31a9968bf57630e4",
+    "game_attached": false,
+    "hosted_acceptance": "Pending meaningful publication gate."
+  },
+  "optimized": {
+    "status": "complete",
+    "head": "be16c4578159dbf33a91fb51c3b4d847110c7845",
+    "started_utc": "2026-09-29T01:54:08.665369+00:00",
+    "completed_utc": "2026-09-29T01:55:50.294218+00:00",
+    "command": [
+      "D:\\Dev\\CopilotBuddy-Evidence\\W110-local-dotnet-x86\\dotnet.exe",
+      "D:\\Dev\\CopilotBuddy-PR51\\Tools\\WholesomeQuestRecoveryRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\WholesomeQuestRecoveryRegressionTests.dll"
+    ],
+    "pid": 42252,
+    "exit": 0,
+    "timed_out": false,
+    "source_inputs": 1908,
+    "source_unchanged": true,
+    "immutable_binaries_unchanged": true,
+    "changed_binaries": [],
+    "summaries": [
+      "Chase ownership scenarios: 73/73; assertions=0; unexpected=0; complete tracked chase/Blacklist/NavigationAction and real TreeSharp; controlled paths; no physical route or live HoJ acceptance.",
+      "Coordinator containment scenarios: 49/49; assertions=0; unexpected=0; complete tracked coordinator/interface and real TreeSharp; positive provider and controlled routes; no physical-world acceptance.",
+      "Forced arrival scenarios: 65/65; assertions=0; unexpected=0; complete tracked ForcedMoveTo/base and real TreeSharp; controlled mount/path/world; no physical landing acceptance.",
+      "Forced materialization scenarios: 12/12; assertions=0; unexpected=0; actual parser/executor/forced owner; no game or navigation execution.",
+      "Real matching recipient scenarios: 13/13; assertions=0; unexpected=0; actual loader/scheduler/XML/compiler/factory/wrapper/WoWUnit/Interact; native executor absent, requests refused, no game attached.",
+      "Quest strategy constructor dispatch scenarios: 12/12; assertions=0; unexpected=0; actual loader/scheduler/XML/CodeNode/runtime compiler/factory; six constructor and six wrapper/start/branch-tick cases; allocated observations; no native executor, recipient action or game attached.",
+      "Target switch ownership scenarios: 90/90; assertions=0; unexpected=0; complete tracked Safers and real TreeSharp; controlled observation/target command; no native or live HoJ proof."
+    ],
+    "failures": [],
+    "ordinary_gate_summary_sha256": "d2fc4147846e0ee307543aa3198d059dcace1fa4a7095aa765ece0e5b23d9d43",
+    "run_log_sha256": "3f0569c78647baffd603c66ce5797e3bcdc76845591f71e94a0d6f1f15fb8a7b",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "runtime_sha256": "9c0da796be0e7c067911dc0e8499e474b523a1c610eba59be19ab6e4ce1dd31a",
+    "lua51_sha256": "06df2510b5780791d17cbb738e42ec28a1ef5add580e127f31a9968bf57630e4",
+    "process_environment": {
+      "DOTNET_TieredCompilation": "0",
+      "COMPlus_TieredCompilation": null,
+      "DOTNET_ReadyToRun": null,
+      "DOTNET_DbgEnableMiniDump": "1",
+      "DOTNET_DbgMiniDumpType": "4",
+      "DOTNET_DbgMiniDumpName": "D:\\Dev\\CopilotBuddy-Evidence\\UPSTREAM_OPTIMIZED_20260929\\crash.%p.%t.dmp"
+    },
+    "dumps": [],
+    "interpretation": "Full optimized-runtime diagnostic supplements, never replaces, ordinary local17 acceptance. Green is non-reproduction of the historical CLR fatal crash, not diagnosis of its initiating cause.",
+    "game_attached": false,
+    "runtime_settings_deployed": false,
+    "registry_changed": false
+  },
+  "whole_membership": {
+    "groups": [
+      "ActiveMoverObservationRegressionTests",
+      "AmmoWorldObservationRegressionTests",
+      "AquaticObservationRegressionTests",
+      "AquaticShorelineAdmissionRegressionTests",
+      "AuraCancellationRegressionTests",
+      "AuraCollectionReadValidityRegressionTests",
+      "AuraCountSafetyRegressionTests",
+      "AuraDurationObservationRegressionTests",
+      "AutoAttackStartRegressionTests",
+      "AutoEquipAdmissionRegressionTests",
+      "AutoEquipPendingContextRegressionTests",
+      "CastContinuationOwnershipRegressionTests",
+      "CastLuaObservationRegressionTests",
+      "CastWaitFacingRegressionTests",
+      "ChaseContinuationOwnershipRegressionTests",
+      "ClientBuildAdmissionRegressionTests",
+      "CollectThingsBreathRegressionTests",
+      "CombatControlContinuityRegressionTests",
+      "CombatMovementContinuityRegressionTests",
+      "CombatSightMovementRegressionTests",
+      "CombatTargetGapRegressionTests",
+      "CompilerInputIdentityRegressionTests",
+      "CompositeFailureLoggingRegressionTests",
+      "CompositeReentrantCleanupRegressionTests",
+      "ContainerItemSlotIdentityRegressionTests",
+      "ContainerLua51BoundaryRegressionTests",
+      "ContinuationRegressionEntry",
+      "CoroutineDismountRegressionTests",
+      "DatabaseDiscoveryRegressionTests",
+      "DatasetIdentityRegressionTests",
+      "DefaultEquipmentOwnershipRegressionTests",
+      "DeleteInventoryObservationRegressionTests",
+      "DeleteItemsLifecycleRegressionTests",
+      "DeletePopupSubmissionRegressionTests",
+      "DensePullCoordinatorContainmentRegressionTests",
+      "EndpointAssessmentRegressionTests",
+      "EquipAcknowledgedTimeoutRegressionTests",
+      "EquipCursorOwnershipRegressionTests",
+      "EquipItemContinuationBoundaryRegressionTests",
+      "EquipItemPendingContextRegressionTests",
+      "EquipmentAlreadyAcknowledgedRegressionTests",
+      "EquipmentCleanupOwnershipRegressionTests",
+      "EquipmentCursorGuidGuardRegressionTests",
+      "EquipmentHandReplacementRegressionTests",
+      "EquipmentLua51BoundaryRegressionTests",
+      "EquipmentObservationRegressionTests",
+      "EquipmentPendingIndexRegressionTests",
+      "EquipmentSlotAliasRegressionTests",
+      "EquipPopupSubmissionRegressionTests",
+      "EscortBehaviorRegressionTests",
+      "FlightNodePersistenceRegressionTests",
+      "FlightorDismountRegressionTests",
+      "FlightorWaitContinuityRegressionTests",
+      "FlightPathAdmissionRegressionTests",
+      "FlightPathAlternateOriginRegressionTests",
+      "FlightPathCostRegressionTests",
+      "FlightPathFinalObservationRegressionTests",
+      "FlightPathIntentBoundaryRegressionTests",
+      "FlightPathKnownMasterRegressionTests",
+      "FlightPathMerchantOwnershipRegressionTests",
+      "FlightPathPublicationExceptionRegressionTests",
+      "FlightPathPublicationRevocationRegressionTests",
+      "FlightPathPublicOwnerRegressionTests",
+      "FlightPathUpdateProviderRegressionTests",
+      "FlightPoiCompletionRegressionTests",
+      "FlightResetOwnershipRegressionTests",
+      "ForcedDismountBoundaryRegressionTests",
+      "ForcedMoveArrivalOwnershipRegressionTests",
+      "ForcedMoveMaterializationRegressionTests",
+      "GatherbuddyLandingRegressionTests",
+      "GatherbuddyRepairPhaseRegressionTests",
+      "GatherbuddySaleVisitBackoffRegressionTests",
+      "GatherbuddySellPhaseRegressionTests",
+      "GatherLandingLifecycleRegressionTests",
+      "GossipEventLifetimeRegressionTests",
+      "GossipEventStrategyRegressionTests",
+      "GroundCastContinuationRegressionTests",
+      "GroundCastSubmissionRegressionTests",
+      "GroundCommitReceiptRegressionTests",
+      "GroundSpellObservationConsistencyRegressionTests",
+      "HealContinuationOwnershipRegressionTests",
+      "HostMountAdmissionRegressionTests",
+      "HostMountDismountRegressionTests",
+      "InteractionMountBoundaryRegressionTests",
+      "LegacyRestContinuationRegressionTests",
+      "LootConsumerRangeRegressionTests",
+      "MerchantBulkRetryRegressionTests",
+      "MerchantIndexLookupRegressionTests",
+      "MerchantQuestItemLuaRegressionTests",
+      "MerchantSalePendingLivenessRegressionTests",
+      "MerchantSaleRetryRegressionTests",
+      "MerchantStepContextRegressionTests",
+      "MeshClearOwnershipRegressionTests",
+      "MeshMoveLifetimeRegressionTests",
+      "MeshMoveRequestOwnershipRegressionTests",
+      "MeshTransitResetRegressionTests",
+      "MirrorTimerBoundsRegressionTests",
+      "MountBehaviorCompilationRegressionTests",
+      "MountedHotspotTargetRegressionTests",
+      "MountPermissionBoundaryRegressionTests",
+      "MovementFlagLayoutRegressionTests",
+      "MrItemRemoverContextRegressionTests",
+      "MrItemRemoverDeletionLifecycleRegressionTests",
+      "MrItemRemoverScanRegressionTests",
+      "NativeAssemblerBoundaryGuard",
+      "NativeSpellObservationRegressionTests",
+      "NavigationDeferralRegressionTests",
+      "PackedSpellRowRegressionTests",
+      "PaladinTankRoleRegressionTests",
+      "PluginCachedConstructionRegressionTests",
+      "PluginCompilationInputRegressionTests",
+      "PluginContainerLifecycleRegressionTests",
+      "PluginFreshCompilationRegressionTests",
+      "PluginRefreshCompilationReuseRegressionTests",
+      "PluginRefreshPreparationRegressionTests",
+      "PoiObjectSubscriptionRegressionTests",
+      "PoiTravelOwnershipRegressionTests",
+      "ProfileItemCultureRegressionTests",
+      "ProfileWriterDiagnosticRegressionTests",
+      "ProtectedItemCultureRegressionTests",
+      "ProtectedItemOwnershipRegressionTests",
+      "ProtectedItemReloadRegressionTests",
+      "PublicationFixtureAccessRegressionTests",
+      "PullIsolationContainmentRegressionTests",
+      "QuestActionFreshnessRegressionTests",
+      "QuestActiveParentRegressionTests",
+      "QuestAddonConflictRegressionTests",
+      "QuestCastCreditCompatibilityRegressionTests",
+      "QuestCleanupSignalRegressionTests",
+      "QuestCollectionReplayRegressionTests",
+      "QuestDatasetProvenanceRegressionTests",
+      "QuestDependencyProtectionRegressionTests",
+      "QuestDependentPreviousAlternativeRegressionTests",
+      "QuestExclusiveGroupRegressionTests",
+      "QuestExecutorOwnershipRegressionTests",
+      "QuestItemAcknowledgementLivenessRegressionTests",
+      "QuestItemAuthoritativeProgressRegressionTests",
+      "QuestItemDispatchRegressionTests",
+      "QuestItemMerchantContextRegressionTests",
+      "QuestItemMovementOwnershipRegressionTests",
+      "QuestItemProgressLifetimeRegressionTests",
+      "QuestItemReusableAcknowledgementRegressionTests",
+      "QuestItemTargetSelectionRegressionTests",
+      "QuestLogCompletenessRegressionTests",
+      "QuestLootHandoffRegressionTests",
+      "QuestNavigationCancellationRegressionTests",
+      "QuestNegativeExclusiveDependencyRegressionTests",
+      "QuestObjectiveRestartRegressionTests",
+      "QuestPoiTargetIdentityRegressionTests",
+      "QuestPublicationAcceptanceRegressionTests",
+      "QuestPublicationRegressionTests",
+      "QuestRawLogMemoryRegressionTests",
+      "QuestReadyLifecycleRegressionTests",
+      "QuestRewardObservationRegressionTests",
+      "QuestRewardSelectionLifetimeRegressionTests",
+      "QuestRootOwnerBoundaryRegressionTests",
+      "QuestRootPreemptionRegressionTests",
+      "QuestRootProtectionRegressionTests",
+      "QuestScanEntryRegressionTests",
+      "QuestScanFailureRegressionTests",
+      "QuestScanRetryRegressionTests",
+      "QuestScanRevocationRegressionTests",
+      "QuestSchedulerRawPublicationRegressionTests",
+      "QuestStrategyConstructorDispatchRegressionTests",
+      "QuestStrategyExecutionRegressionTests",
+      "QuestStrategyKindValidationRegressionTests",
+      "QuestStrategyPackRegressionTests",
+      "QuestStrategySchedulerRegressionTests",
+      "RelationIdentityRegressionTests",
+      "RestLatencyRegressionTests",
+      "RestOwnershipRegressionTests",
+      "RetributionRotationRegistrationRegressionTests",
+      "RoamContinuationOwnershipRegressionTests",
+      "SharedBuffDispatchRegressionTests",
+      "SharedSpellObservationRegressionTests",
+      "SingularBehaviorCountRegressionTests",
+      "SingularRequiredRegistrationRegressionTests",
+      "SingularTargetSwitchOwnershipRegressionTests",
+      "SmartLootDecisionRegressionTests",
+      "SpellDispatchReceiptRegressionTests",
+      "SpellMetadataAdmissionRegressionTests",
+      "SpellRowLookupRegressionTests",
+      "SpellSightDispatchRegressionTests",
+      "TaxiEventOwnershipRegressionTests",
+      "UnitUpstreamContractRegressionTests",
+      "UpstreamCompatibilityContractRegressionTests",
+      "UpstreamObservationRegressionTests",
+      "UpstreamQuestLuaRegressionTests",
+      "UpstreamSeptemberRegressionTests",
+      "UpstreamServicesRegressionTests",
+      "UpstreamWorldRegressionTests",
+      "VendorAuxiliaryCallbackRegressionTests",
+      "VendorBulkContinuationOwnershipRegressionTests",
+      "VendorSaleContinuationOwnershipRegressionTests",
+      "VendorSaleEntryOwnershipRegressionTests",
+      "VendorSaleResultRegressionTests",
+      "VendorSessionBoundaryRegressionTests",
+      "VendorSessionReentrancyRegressionTests",
+      "VendorTravelBackoffRegressionTests",
+      "WeightStatAliasRegressionTests",
+      "WholesomeAquaticPauseRegressionTests",
+      "WorldStateAddressRegressionTests",
+      "WorldStateReadValidityRegressionTests"
+    ],
+    "ordinary_optimized_hosted_identical": true
+  },
+  "runtime_compile": {
+    "completed_utc": "2026-09-29T01:57:17.970542+00:00",
+    "host_sha256": "6c10e625bc4a4b4fe6cf2a8793f614398b20e5e8a11b1d61e28fe8667d69fdab",
+    "host_unchanged": true,
+    "components": [
+      {
+        "source": "runtime-snapshot/Bots/WholesomeAutoQuest-master",
+        "exit": 0,
+        "report": "D:\\Dev\\CopilotBuddy-Evidence\\UPSTREAM_RUNTIME_20260929\\00.json",
+        "report_exists": true,
+        "errors": 0,
+        "source_files": 11,
+        "compiled": true,
+        "report_sha256": "7999cffa48fcade0c154eab226e3f33eb98449e59c6830897c19546788f90837"
+      },
+      {
+        "source": "runtime-snapshot/Routines/Singular wotlk",
+        "exit": 0,
+        "report": "D:\\Dev\\CopilotBuddy-Evidence\\UPSTREAM_RUNTIME_20260929\\01.json",
+        "report_exists": true,
+        "errors": 0,
+        "source_files": 99,
+        "compiled": true,
+        "report_sha256": "9605f2632bdf686cc70392974b9fa217670ff5b667999b4a2a4c942df9c1a61e"
+      },
+      {
+        "source": "runtime-snapshot/Plugins/AutoEquip2",
+        "exit": 0,
+        "report": "D:\\Dev\\CopilotBuddy-Evidence\\UPSTREAM_RUNTIME_20260929\\02.json",
+        "report_exists": true,
+        "errors": 0,
+        "source_files": 4,
+        "compiled": true,
+        "report_sha256": "214a3c9ecbd13b3502c6b5c471404779aadd78be7a75218b0967c590de33ba70"
+      },
+      {
+        "source": "runtime-snapshot/Plugins/MrItemRemover2",
+        "exit": 0,
+        "report": "D:\\Dev\\CopilotBuddy-Evidence\\UPSTREAM_RUNTIME_20260929\\03.json",
+        "report_exists": true,
+        "errors": 0,
+        "source_files": 5,
+        "compiled": true,
+        "report_sha256": "f4550cfc028a4930aed0d1ee80c0dd31d7971803244f4f4099b3c6260a4c0a56"
+      },
+      {
+        "source": "runtime-snapshot/Plugins/SmartLootRoller",
+        "exit": 0,
+        "report": "D:\\Dev\\CopilotBuddy-Evidence\\UPSTREAM_RUNTIME_20260929\\04.json",
+        "report_exists": true,
+        "errors": 0,
+        "source_files": 6,
+        "compiled": true,
+        "report_sha256": "a122c9bacce98133d6411ea22be7f816dd611fd2b318f5895f40b58815eef44c"
+      },
+      {
+        "source": "runtime-snapshot/Quest Behaviors/CollectThings.cs",
+        "exit": 0,
+        "report": "D:\\Dev\\CopilotBuddy-Evidence\\UPSTREAM_RUNTIME_20260929\\05.json",
+        "report_exists": true,
+        "errors": 0,
+        "source_files": 1,
+        "compiled": true,
+        "report_sha256": "9fcd58bcb35651b14a51bb4e24c2ceddcd513d158543f1b5f93896ab1b18c2b6"
+      },
+      {
+        "source": "runtime-snapshot/Quest Behaviors/DeleteItems.cs",
+        "exit": 0,
+        "report": "D:\\Dev\\CopilotBuddy-Evidence\\UPSTREAM_RUNTIME_20260929\\06.json",
+        "report_exists": true,
+        "errors": 0,
+        "source_files": 1,
+        "compiled": true,
+        "report_sha256": "1f20946ef29386a0a0cd940bc4cb75852f6081f1d1660d3748d4bf2afea681ed"
+      },
+      {
+        "source": "runtime-snapshot/Quest Behaviors/EquipItem.cs",
+        "exit": 0,
+        "report": "D:\\Dev\\CopilotBuddy-Evidence\\UPSTREAM_RUNTIME_20260929\\07.json",
+        "report_exists": true,
+        "errors": 0,
+        "source_files": 1,
+        "compiled": true,
+        "report_sha256": "19e36d5459ec64d4abc0a150f42a444eb35667ed76b164047e69bea79a7fc105"
+      },
+      {
+        "source": "runtime-snapshot/Quest Behaviors/ForcedDismount.cs",
+        "exit": 0,
+        "report": "D:\\Dev\\CopilotBuddy-Evidence\\UPSTREAM_RUNTIME_20260929\\08.json",
+        "report_exists": true,
+        "errors": 0,
+        "source_files": 1,
+        "compiled": true,
+        "report_sha256": "19f53b2d461293b35b8a40bb43333fefed605d1dc3ddc8852289e937ac95ad06"
+      },
+      {
+        "source": "runtime-snapshot/Quest Behaviors/GossipEvent.cs",
+        "exit": 0,
+        "report": "D:\\Dev\\CopilotBuddy-Evidence\\UPSTREAM_RUNTIME_20260929\\09.json",
+        "report_exists": true,
+        "errors": 0,
+        "source_files": 1,
+        "compiled": true,
+        "report_sha256": "0232f73a52bf67ec8be1d2d99cc7e1558d8feea10fdba4e99f0013b0a041f90e"
+      },
+      {
+        "source": "runtime-snapshot/Quest Behaviors/InteractWith.cs",
+        "exit": 0,
+        "report": "D:\\Dev\\CopilotBuddy-Evidence\\UPSTREAM_RUNTIME_20260929\\10.json",
+        "report_exists": true,
+        "errors": 0,
+        "source_files": 1,
+        "compiled": true,
+        "report_sha256": "8108daf2fdcd6568113ac4aac49139f4ff2ea01fa9b57d504fc0c99d3e562fd7"
+      },
+      {
+        "source": "runtime-snapshot/Quest Behaviors/UseItemOn.cs",
+        "exit": 0,
+        "report": "D:\\Dev\\CopilotBuddy-Evidence\\UPSTREAM_RUNTIME_20260929\\11.json",
+        "report_exists": true,
+        "errors": 0,
+        "source_files": 1,
+        "compiled": true,
+        "report_sha256": "2886a40b481f743fda5a70e069d5f42cdbd82c7575a72609f470d16d41061b60"
+      }
+    ],
+    "game_attached": false,
+    "behaviors_executed": false,
+    "scope": "Actual host runtime compiler; compile-only compatibility."
+  },
+  "hosted": {
+    "integrated": {
+      "verified_at_utc": "2026-09-29T02:04:51.9923891Z",
+      "run": 36510413222,
+      "source": "9a899fc43bf5218a922f86a1242ec6a488013474",
+      "artifact": 11008259140,
+      "archive_sha256": "89bdd3d85747cc2bdc5120c7b1acd26a65917b49846328ecf0904d704872970a",
+      "members": 266,
+      "kind": "integrated",
+      "identity": {
+        "production_commit": "9a899fc43bf5218a922f86a1242ec6a488013474",
+        "fixture_commit": "9a899fc43bf5218a922f86a1242ec6a488013474",
+        "production_tree": "ce879ea9077e92bd617452a0b14a963d30293675",
+        "game_attached": false
+      },
+      "inner_hashes": 265,
+      "source_inputs": 1908,
+      "checkout_inputs_matched": 1908,
+      "results": {
+        "value": [
+          {
+            "game_attached": false,
+            "harness_error": null,
+            "run": 0,
+            "architecture": "x86",
+            "suite": "QuestRecoveryRegressionTests",
+            "build": 0
+          },
+          {
+            "suite": "Singular",
+            "build": 0,
+            "architecture": "x86",
+            "run": 0,
+            "game_attached": false
+          },
+          {
+            "game_attached": false,
+            "harness_error": null,
+            "run": 0,
+            "architecture": "x86",
+            "suite": "WholesomeQuestRecoveryRegressionTests",
+            "build": 0
+          },
+          {
+            "game_attached": false,
+            "harness_error": null,
+            "run": 0,
+            "architecture": "x86",
+            "suite": "QuestRecoveryAdapterRegressionTests",
+            "build": 0
+          },
+          {
+            "game_attached": false,
+            "harness_error": null,
+            "run": 0,
+            "architecture": "x86",
+            "suite": "QuestPickupPolicyRegressionTests",
+            "build": 0
+          },
+          {
+            "game_attached": false,
+            "harness_error": null,
+            "run": 0,
+            "architecture": "x86",
+            "suite": "VendorCoreRegressionTests",
+            "build": 0
+          },
+          {
+            "game_attached": false,
+            "harness_error": null,
+            "run": 0,
+            "architecture": "x86",
+            "suite": "NativeContractRegressionTests",
+            "build": 0
+          },
+          {
+            "game_attached": false,
+            "harness_error": null,
+            "run": 0,
+            "architecture": "x86",
+            "suite": "ShutdownBoundaryRegressionTests",
+            "build": 0
+          },
+          {
+            "game_attached": false,
+            "harness_error": null,
+            "run": 0,
+            "architecture": "x86",
+            "suite": "Elevator",
+            "build": 0
+          },
+          {
+            "game_attached": false,
+            "harness_error": null,
+            "run": 0,
+            "architecture": "x86",
+            "suite": "PaladinDecisions",
+            "build": 0
+          },
+          {
+            "game_attached": false,
+            "harness_error": null,
+            "run": 0,
+            "architecture": "x86",
+            "suite": "GroupEngagement",
+            "build": 0
+          },
+          {
+            "game_attached": false,
+            "harness_error": null,
+            "run": 0,
+            "architecture": "x86",
+            "suite": "PaladinSupport",
+            "build": 0
+          },
+          {
+            "game_attached": false,
+            "harness_error": null,
+            "run": 0,
+            "architecture": "x86",
+            "suite": "WholesomeSale",
+            "build": 0
+          },
+          {
+            "game_attached": false,
+            "harness_error": null,
+            "run": 0,
+            "architecture": "x86",
+            "suite": "QuestLogObservationRegressionTests",
+            "build": 0
+          },
+          {
+            "game_attached": false,
+            "harness_error": null,
+            "run": 0,
+            "architecture": "x86",
+            "suite": "QuestCompletionOwnerRegressionTests",
+            "build": 0
+          },
+          {
+            "game_attached": false,
+            "harness_error": null,
+            "run": 0,
+            "architecture": "x86",
+            "suite": "QuestObservationBoundaryRegressionTests",
+            "build": 0
+          },
+          {
+            "suite": "Analyzers",
+            "build": 0,
+            "run": 0,
+            "game_attached": false
+          }
+        ],
+        "Count": 17
+      },
+      "successful_groups": 17,
+      "key_summaries": [
+        "Autoattack startup scenarios: 26/26; assertions=0; unexpected=0; actual Common/LocalPlayer Lua and TreeSharp; stock Lua5.1 with controlled native attack state; no game/server/native execution.",
+        "AutoEquip pending context scenarios: 37/37; assertions=0; unexpected=0; exact tracked C# capture/tick/request methods; controlled world/Lua; no game attached.",
+        "Cast wait facing scenarios: 16/16; assertions=0; unexpected=0; actual WaitForCast overloads and real TreeSharp; controlled cast/facing boundaries; no client/native execution.",
+        "Combat sight movement scenarios: 85/85; assertions=0; unexpected=0; complete tracked Movement and real TreeSharp; controlled world/navigation; no native path or game attached.",
+        "Equip acknowledged timeout scenarios: 10/10; assertions=0; unexpected=0; exact tracked method control flow; controlled external acknowledgements; no game attached.",
+        "Equip continuation boundary scenarios: 46/46; assertions=0; unexpected=0; exact tracked C# tick/context/acknowledge/return/restore; controlled actor/inventory/Lua; no physical cursor or client proof.",
+        "EquipItem pending context scenarios: 57/57; assertions=0; unexpected=0; exact tracked C# tick/submit/confirm/reset; controlled actor/quest/Lua; no game attached.",
+        "Equipment cleanup ownership: 57/57; assertions=0; unexpected=0; actual tracked owners/generated Lua5.1; controlled build12340 cursor transitions and physical dispatch admission; no game/server/native execution.",
+        "Equipment physical cursor guard: 8/8; actual generated x86 comparison/branch contract; no game attached or native execution.",
+        "Equipment Lua51 boundary scenarios: 87/87; assertions=0; unexpected=0; tracked pickup/equip helpers, actual generated Lua5.1, loader size and verbatim managed conversion; controlled APIs; no physical GUID/client/server proof.",
+        "Equipment pending-index scenarios: 24/24; assertions=0; unexpected=0; tracked owner/generated Lua; stock Lua5.1; controlled synchronous events; no native client proof.",
+        "Equip popup submission scenarios: 18/18; assertions=0; unexpected=0; exact tracked C# confirmation/tick methods; recording Lua boundary only; no game attached."
+      ],
+      "failing_groups": []
+    },
+    "host": {
+      "verified_at_utc": "2026-09-29T02:03:32.2723013Z",
+      "run": 36510413221,
+      "source": "9a899fc43bf5218a922f86a1242ec6a488013474",
+      "artifact": 11009122107,
+      "archive_sha256": "1220e51fd9bfe0ef576ab4415d85444a2bfb84ac61bee5541a6b873156c77a08",
+      "members": 4,
+      "kind": "host",
+      "result": {
+        "host_build_exit_code": 0,
+        "game_attached": false,
+        "tests_run": false
+      },
+      "build_summary": [
+        "3498 Warning(s)",
+        "0 Error(s)"
+      ]
+    },
+    "receipts": {
+      "integrated": {
+        "verified_at_utc": "2026-09-29T02:04:51.9379953Z",
+        "repository": "JeofW/cbp",
+        "repository_id": 1367174964,
+        "run": 36510413222,
+        "source": "9a899fc43bf5218a922f86a1242ec6a488013474",
+        "artifact": 11008259140,
+        "artifact_name": "integrated-9a899fc43bf5218a922f86a1242ec6a488013474",
+        "archive": "D:\\Dev\\CopilotBuddy-Evidence\\w110-route-integrated-9a899fc4.zip",
+        "sha256": "89bdd3d85747cc2bdc5120c7b1acd26a65917b49846328ecf0904d704872970a",
+        "metadata_digest": "sha256:89bdd3d85747cc2bdc5120c7b1acd26a65917b49846328ecf0904d704872970a",
+        "bytes": 1206572,
+        "run_conclusion": "success",
+        "jobs": [
+          {
+            "id": 109221046627,
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ],
+        "game_attached": false
+      },
+      "host": {
+        "verified_at_utc": "2026-09-29T02:03:32.2094271Z",
+        "repository": "JeofW/cbp",
+        "repository_id": 1367174964,
+        "run": 36510413221,
+        "source": "9a899fc43bf5218a922f86a1242ec6a488013474",
+        "artifact": 11009122107,
+        "artifact_name": "audit-validation-9a899fc43bf5218a922f86a1242ec6a488013474",
+        "archive": "D:\\Dev\\CopilotBuddy-Evidence\\w110-route-host-9a899fc4.zip",
+        "sha256": "1220e51fd9bfe0ef576ab4415d85444a2bfb84ac61bee5541a6b873156c77a08",
+        "metadata_digest": "sha256:1220e51fd9bfe0ef576ab4415d85444a2bfb84ac61bee5541a6b873156c77a08",
+        "bytes": 85598,
+        "run_conclusion": "success",
+        "jobs": [
+          {
+            "id": 109221046675,
+            "status": "completed",
+            "conclusion": "success"
+          }
+        ],
+        "game_attached": false
+      }
+    }
+  },
+  "primary_sources": [
+    {
+      "repository": "TrinityCore/TrinityCore",
+      "ref": "8fda442f6c30ca21a622638063ab8b28376f1b25",
+      "path": "src/server/game/Spells/Auras/SpellAuraDefines.h",
+      "blob": "356b6d45d918118585dbbb7c5abc7e9d031a020f",
+      "sha256": "f083b57e26b285a713059a3fc94331b237f6b402237eee8e7ff9fc1a9c6faed0",
+      "bytes": 27950,
+      "relevant_lines": [
+        {
+          "line": 286,
+          "text": "    SPELL_AURA_MOD_INCREASE_VEHICLE_FLIGHT_SPEED            = 206,"
+        },
+        {
+          "line": 287,
+          "text": "    SPELL_AURA_MOD_INCREASE_MOUNTED_FLIGHT_SPEED            = 207,"
+        },
+        {
+          "line": 288,
+          "text": "    SPELL_AURA_MOD_INCREASE_FLIGHT_SPEED                    = 208,"
+        },
+        {
+          "line": 289,
+          "text": "    SPELL_AURA_MOD_MOUNTED_FLIGHT_SPEED_ALWAYS              = 209,"
+        },
+        {
+          "line": 291,
+          "text": "    SPELL_AURA_MOD_FLIGHT_SPEED_NOT_STACK                   = 211,"
+        }
+      ]
+    },
+    {
+      "repository": "wowgaming/3.3.5-interface-files",
+      "ref": "d0339b17b0221db76e6acd2dc2915d224a5b62ca",
+      "path": "QuestLogFrame.lua",
+      "blob": "0bbdf48d4987b3205c34373e41baf2e0f8ad5885",
+      "sha256": "6ac6ca92b3036417082b88cc2f8b5c9fc8889f51f82aa726fe0bcd44990bc5e2",
+      "bytes": 30037,
+      "relevant_lines": [
+        {
+          "line": 401,
+          "text": "\t\t\ttitle, level, questTag, suggestedGroup, isHeader, isCollapsed, isComplete, isDaily, questID, displayQuestID = GetQuestLogTitle(questIndex);"
+        },
+        {
+          "line": 590,
+          "text": "\tlocal title = GetQuestLogTitle(questIndex);"
+        },
+        {
+          "line": 626,
+          "text": "\tlocal title, level, questTag, suggestedGroup, isHeader, isCollapsed = GetQuestLogTitle(questIndex);"
+        },
+        {
+          "line": 683,
+          "text": "\t\ttitle, level, questTag, suggestedGroup, isHeader, isCollapsed = GetQuestLogTitle(i);"
+        },
+        {
+          "line": 715,
+          "text": "\ttitle, level, questTag, suggestedGroup, isHeader, isCollapsed = GetQuestLogTitle(questIndex);"
+        },
+        {
+          "line": 723,
+          "text": "\ttitle, level, questTag, suggestedGroup, isHeader, isCollapsed = GetQuestLogTitle(questIndex - 1);"
+        }
+      ]
+    }
+  ],
+  "source_publication": {
+    "repository": "JeofW/cbp",
+    "repository_id": 1367174964,
+    "branch": "audit/next-55-equipment-observation-20260917",
+    "expected_parent": "be16c4578159dbf33a91fb51c3b4d847110c7845",
+    "paths": [
+      "Bots/DungeonBuddy/DungeonBuddy.cs",
+      "Bots/DungeonBuddy/Helpers/ScriptHelpers.cs",
+      "Bots/Gatherbuddy/GatherBuddySettingsWindow.xaml",
+      "Bots/Gatherbuddy/GatherBuddySettingsWindow.xaml.cs",
+      "Bots/Gatherbuddy/GatherbuddyBot.cs",
+      "Bots/Grind/LevelBot.cs",
+      "CopilotBuddy.csproj",
+      "Protected Items.xml",
+      "Styx/Database/NpcQueries.cs",
+      "Styx/Logic/AreaManagement/QuestArea.cs",
+      "Styx/Logic/FlightPaths.cs",
+      "Styx/Logic/MountHelper.cs",
+      "Styx/Logic/Pathing/MeshNavigator.cs",
+      "Styx/Logic/Pathing/Navigator.cs",
+      "Styx/Logic/Pathing/NavigatorTerrainHeightProvider.cs",
+      "Styx/Logic/Profiles/Quest/MoveToNode.cs",
+      "Styx/Logic/Profiles/Quest/ObjectiveInfo.cs",
+      "Styx/Logic/Profiles/Quest/ObjectiveNode.cs",
+      "Styx/Logic/Profiles/Quest/OrderNode.cs",
+      "Styx/Logic/Profiles/Quest/PickUpNode.cs",
+      "Styx/Logic/Profiles/Quest/ProfileHelperFunctionsBase.cs",
+      "Styx/Logic/Profiles/Quest/TurnInNode.cs",
+      "Styx/Logic/Profiles/VendorManager.cs",
+      "Styx/WoWInternals/WoWObjects/UnitThreatInfo.cs",
+      "Tools/WholesomeQuestRecoveryRegressionTests/MeshMoveLifetimeRegressionTests.cs",
+      "Tools/WholesomeQuestRecoveryRegressionTests/MeshMoveRequestOwnershipRegressionTests.cs",
+      "Tools/WholesomeQuestRecoveryRegressionTests/QuestLootHandoffRegressionTests.cs",
+      "Tools/WholesomeQuestRecoveryRegressionTests/UpstreamObservationRegressionTests.cs",
+      "Tools/WholesomeQuestRecoveryRegressionTests/UpstreamQuestLuaRegressionTests.cs",
+      "Tools/WholesomeQuestRecoveryRegressionTests/UpstreamSeptemberRegressionTests.cs",
+      "Tools/WholesomeQuestRecoveryRegressionTests/UpstreamServicesRegressionTests.cs",
+      "Tools/WholesomeQuestRecoveryRegressionTests/UpstreamWorldRegressionTests.cs",
+      "UI/MainWindow.xaml.cs",
+      "runtime-snapshot/Protected Items.xml"
+    ],
+    "patch_sha256": "823adf1399f2a052b30dfa8fd7f87160a899839639a50806c55649a00782e443",
+    "files": [
+      {
+        "path": "Bots/DungeonBuddy/DungeonBuddy.cs",
+        "blob": "8374b3e82c40f0e97db2c1af41c380d51acff302",
+        "sha256": "29541b54fd596676ecfafedd4744a87bf3f5145dea4932a0deb965f3e7dce61d"
+      },
+      {
+        "path": "Bots/DungeonBuddy/Helpers/ScriptHelpers.cs",
+        "blob": "e8d3c3ea6be46a2a0036a8a93ccf9aec0d3f80b1",
+        "sha256": "4abe99a2c2c6105a16b69688b4d29d3b98d1c4ca765ce315fc566ec5d9857b4f"
+      },
+      {
+        "path": "Bots/Gatherbuddy/GatherBuddySettingsWindow.xaml",
+        "blob": "1314355f427985a87845788d2719073e93d2502f",
+        "sha256": "7af42a9906a54580b9cfcda0ef59b534e418496f31e0a0c23247a7d1cb2aa297"
+      },
+      {
+        "path": "Bots/Gatherbuddy/GatherBuddySettingsWindow.xaml.cs",
+        "blob": "ba6f9845ef3ec51d72b27c4bafb085ff67b711c7",
+        "sha256": "63f2dc8c80e0a5cbf570eb35eab1d8c098084ad38f857bc5f39a66032c2f0a3e"
+      },
+      {
+        "path": "Bots/Gatherbuddy/GatherbuddyBot.cs",
+        "blob": "8f3b7826a1ffaa8ac6e6c6b078f3fc4f3bb4e70d",
+        "sha256": "a3954dcc0f1d3f5a88901ece2844a3e51be7665f1bf7b5a4e6fa03c94feb2989"
+      },
+      {
+        "path": "Bots/Grind/LevelBot.cs",
+        "blob": "8bd90158fe954489594bef6408b08aabfce9e0b3",
+        "sha256": "5d48c7c1d17b054a40490e1759a23a6c1fa98af004b73b2cfa66c3748a82ec07"
+      },
+      {
+        "path": "CopilotBuddy.csproj",
+        "blob": "b8c25ab0e3ff8d15384a6651c2958bd87dcc2a95",
+        "sha256": "8a3aa69706e5344404dc0da295a1aa47e51247019f0d9f50bf89ee55a4214ee8"
+      },
+      {
+        "path": "Protected Items.xml",
+        "blob": "276a62acc8dd485a7cd4db69a26ae37020db9580",
+        "sha256": "ccfec10a378133fa10b0b00088443640514207152e72b069272015e31152a854"
+      },
+      {
+        "path": "Styx/Database/NpcQueries.cs",
+        "blob": "b1a8beeb05a7a9afb49ca941ab2f20fe4b24e695",
+        "sha256": "ab94496be6233c6ec89caac2255ba45e23a9651e28de873143bee1ad5bb679b4"
+      },
+      {
+        "path": "Styx/Logic/AreaManagement/QuestArea.cs",
+        "blob": "f0081bf60e043345577be95a430dbbc68fc3fe5e",
+        "sha256": "5dff779e1be59480ce8850bad5c2fd9677bb9b312a4ec7829b36864e4ca06a00"
+      },
+      {
+        "path": "Styx/Logic/FlightPaths.cs",
+        "blob": "ae5c8370732fa194cfca262b5b2edd9799b2eef2",
+        "sha256": "fa20a3d942914feb21881b92ed31275e9e5030a403b54e5ef277a9d98c02828d"
+      },
+      {
+        "path": "Styx/Logic/MountHelper.cs",
+        "blob": "1591ecd7c9dfac17e7ac1ede688d37a7d3ff3c7c",
+        "sha256": "d54f2d90c34924f154e1108a75a3ae6b7104f7cf87677554c98f4e7eb97d4da6"
+      },
+      {
+        "path": "Styx/Logic/Pathing/MeshNavigator.cs",
+        "blob": "11306681c4263736fa668f4f233e5a437e45dab3",
+        "sha256": "5f42ef36ef272f9ce15ee8b5e22223099a2e7f5e0f5e375073195178a2581629"
+      },
+      {
+        "path": "Styx/Logic/Pathing/Navigator.cs",
+        "blob": "3415fd07e05d463c781fabe1b14ef814371cc0dd",
+        "sha256": "194716cba8a61d9b4913f53cdc6b59119283ae231b370a949774f0c05c5d0eaf"
+      },
+      {
+        "path": "Styx/Logic/Pathing/NavigatorTerrainHeightProvider.cs",
+        "blob": "01d37d53c6290f34d9ba6242eeda56f5faf43d1c",
+        "sha256": "2b5536e64faa8647ce35c58f7ac53911fbf54d19b0959a1573a913aa66ba39de"
+      },
+      {
+        "path": "Styx/Logic/Profiles/Quest/MoveToNode.cs",
+        "blob": "c6f09b5a1d8763273370e9f5c6f3c0a025f1af35",
+        "sha256": "d2ad22a24e6aee824a398dca7a9a0bdc54ecc9f336ec5a98528b6972420f410d"
+      },
+      {
+        "path": "Styx/Logic/Profiles/Quest/ObjectiveInfo.cs",
+        "blob": "1e16f32ec7f60b4bebe1241a974e9e3f300d20da",
+        "sha256": "09f231bbd3aad2c5c580f81e8a09a3f558f6e842f032ae4eba71f2e6f4eb8bc7"
+      },
+      {
+        "path": "Styx/Logic/Profiles/Quest/ObjectiveNode.cs",
+        "blob": "bbb8eabf5c2db169473f9b470d0818cc42a70365",
+        "sha256": "d641a4df2f2c6d4eee7f92b91058bd8bbb2fa89911754a627f1cb837df41b7d3"
+      },
+      {
+        "path": "Styx/Logic/Profiles/Quest/OrderNode.cs",
+        "blob": "7e9487cc87f385467f00ca176cb78b5aad735b36",
+        "sha256": "89b9a41f7228e3b0c4bc33ee000845d3f06225c95082e750979cc40972af45d7"
+      },
+      {
+        "path": "Styx/Logic/Profiles/Quest/PickUpNode.cs",
+        "blob": "28efe224088dcc18a5e5022872be4292a9580a88",
+        "sha256": "2acc18e44e489c74c6afc2a7ad63ba55efb30a76f618d8c4e75b6a3d4ea69f53"
+      },
+      {
+        "path": "Styx/Logic/Profiles/Quest/ProfileHelperFunctionsBase.cs",
+        "blob": "40b2f64171c41b08e5133f1cc4d8defa27f9f739",
+        "sha256": "c54304654db244a7da4465194fc870725aaa912b7e61b7ddb466dd80ddf4a6a0"
+      },
+      {
+        "path": "Styx/Logic/Profiles/Quest/TurnInNode.cs",
+        "blob": "4436a24fcaea119a3f901595ad6b6042ece9ff23",
+        "sha256": "073750175a3f98acb900eedde03accf3bb3f9802aa5c0d252e0ed8556d717007"
+      },
+      {
+        "path": "Styx/Logic/Profiles/VendorManager.cs",
+        "blob": "b1cb59b3c842677c8514728f41d8b1b8c9e82c0d",
+        "sha256": "46358d7f79d752716ad48ad2b5900cf2a200337ca9885c3eae13aad770c2a085"
+      },
+      {
+        "path": "Styx/WoWInternals/WoWObjects/UnitThreatInfo.cs",
+        "blob": "4a47f0d1600aebe8a731514fae61a6e2715f1c73",
+        "sha256": "4d9d4fe32ed4c008c5b47280776b573a9fa47ba88500e6a0fc9c64be5f5e28a8"
+      },
+      {
+        "path": "Tools/WholesomeQuestRecoveryRegressionTests/MeshMoveLifetimeRegressionTests.cs",
+        "blob": "00bc8c6ed09313212e924b3e9c4b6dc2f95f182c",
+        "sha256": "9a5cd2ff1bd4aeb1f3f321382375c7bfb24448a3e5a5f293343252574a850186"
+      },
+      {
+        "path": "Tools/WholesomeQuestRecoveryRegressionTests/MeshMoveRequestOwnershipRegressionTests.cs",
+        "blob": "d2b95fe1d32dc8552f6079285802dc932f5bebe2",
+        "sha256": "33d033d5ca74a94a12198832e37a4d757c05e324371c2800e9cd789df2f79d4b"
+      },
+      {
+        "path": "Tools/WholesomeQuestRecoveryRegressionTests/QuestLootHandoffRegressionTests.cs",
+        "blob": "130fe36b5fcb688e8e6abcccd0accd445d2f6e2d",
+        "sha256": "f9ff4bb38f131fbc6f9f2906b4f5f82237f8a79fa7aeb81336f627199ad63921"
+      },
+      {
+        "path": "Tools/WholesomeQuestRecoveryRegressionTests/UpstreamObservationRegressionTests.cs",
+        "blob": "6916c53c41683c6e72447280fabcce8f0ec74f8e",
+        "sha256": "fab66be1d5d55411742889f4e0e7da80965ac9d02eb2002ce8725136056ff98d"
+      },
+      {
+        "path": "Tools/WholesomeQuestRecoveryRegressionTests/UpstreamQuestLuaRegressionTests.cs",
+        "blob": "3277777a33db443838f5ce8a1561912af80d08ca",
+        "sha256": "70a6942084ba034227f3ffc635b2bf7f57269fd0cd6d647793c542f3b1cf4bdf"
+      },
+      {
+        "path": "Tools/WholesomeQuestRecoveryRegressionTests/UpstreamSeptemberRegressionTests.cs",
+        "blob": "53795febc30028125c31376c878ea5a2d3cfa751",
+        "sha256": "289cac49a9e014fe58fe66f531400e23dcc85f02707116288401715d4511f8b5"
+      },
+      {
+        "path": "Tools/WholesomeQuestRecoveryRegressionTests/UpstreamServicesRegressionTests.cs",
+        "blob": "6bcb291343b9ef6a58375b6b5fce32dc99cfd9b8",
+        "sha256": "0a8fcc8b8cb13e5fc1c781a9b1847abe29ea5e7bb3e94e6744525e218521e4c3"
+      },
+      {
+        "path": "Tools/WholesomeQuestRecoveryRegressionTests/UpstreamWorldRegressionTests.cs",
+        "blob": "bf0b123d23f083b97cda11b3b32f498cbb204926",
+        "sha256": "983893bd0eedde9cd2ec0cac63fae13fea5154b88689ac9024d46c13d9158b1a"
+      },
+      {
+        "path": "UI/MainWindow.xaml.cs",
+        "blob": "fdff5a9900b52efe2e4bdba036fc24c9df9a808a",
+        "sha256": "e64600cdff565b7e6bdd67bd31a27f66708f68795eba0172ff7d6bbd5bbf7eed"
+      },
+      {
+        "path": "runtime-snapshot/Protected Items.xml",
+        "blob": "eb98115663725b9beb538b8edf83de2b59792f95",
+        "sha256": "b3ea12d0e4faf69b621abb773e5fd890d8012341f8a1430ac1fb401bab7d95ac"
+      }
+    ],
+    "commit": "9a899fc43bf5218a922f86a1242ec6a488013474",
+    "tree": "ce879ea9077e92bd617452a0b14a963d30293675",
+    "verified_at_utc": "2026-09-29T01:58:55.6356663Z",
+    "direct_refs": [
+      "9a899fc43bf5218a922f86a1242ec6a488013474\trefs/heads/audit/next-55-equipment-observation-20260917",
+      "b2324913e2499ba30b239dd67224ca2c655c05cc\trefs/heads/master"
+    ]
+  },
+  "prepublication": {
+    "prepared_utc": "2026-09-29T01:58:28.229475+00:00",
+    "repository": "JeofW/cbp",
+    "branch": "audit/next-55-equipment-observation-20260917",
+    "expected_parent": "be16c4578159dbf33a91fb51c3b4d847110c7845",
+    "upstream": "57f37756eba903340f07a2f4160635ffd422862e",
+    "paths": [
+      "Bots/DungeonBuddy/DungeonBuddy.cs",
+      "Bots/DungeonBuddy/Helpers/ScriptHelpers.cs",
+      "Bots/Gatherbuddy/GatherBuddySettingsWindow.xaml",
+      "Bots/Gatherbuddy/GatherBuddySettingsWindow.xaml.cs",
+      "Bots/Gatherbuddy/GatherbuddyBot.cs",
+      "Bots/Grind/LevelBot.cs",
+      "CopilotBuddy.csproj",
+      "Protected Items.xml",
+      "Styx/Database/NpcQueries.cs",
+      "Styx/Logic/AreaManagement/QuestArea.cs",
+      "Styx/Logic/FlightPaths.cs",
+      "Styx/Logic/MountHelper.cs",
+      "Styx/Logic/Pathing/MeshNavigator.cs",
+      "Styx/Logic/Pathing/Navigator.cs",
+      "Styx/Logic/Pathing/NavigatorTerrainHeightProvider.cs",
+      "Styx/Logic/Profiles/Quest/MoveToNode.cs",
+      "Styx/Logic/Profiles/Quest/ObjectiveInfo.cs",
+      "Styx/Logic/Profiles/Quest/ObjectiveNode.cs",
+      "Styx/Logic/Profiles/Quest/OrderNode.cs",
+      "Styx/Logic/Profiles/Quest/PickUpNode.cs",
+      "Styx/Logic/Profiles/Quest/ProfileHelperFunctionsBase.cs",
+      "Styx/Logic/Profiles/Quest/TurnInNode.cs",
+      "Styx/Logic/Profiles/VendorManager.cs",
+      "Styx/WoWInternals/WoWObjects/UnitThreatInfo.cs",
+      "Tools/WholesomeQuestRecoveryRegressionTests/MeshMoveLifetimeRegressionTests.cs",
+      "Tools/WholesomeQuestRecoveryRegressionTests/MeshMoveRequestOwnershipRegressionTests.cs",
+      "Tools/WholesomeQuestRecoveryRegressionTests/QuestLootHandoffRegressionTests.cs",
+      "Tools/WholesomeQuestRecoveryRegressionTests/UpstreamObservationRegressionTests.cs",
+      "Tools/WholesomeQuestRecoveryRegressionTests/UpstreamQuestLuaRegressionTests.cs",
+      "Tools/WholesomeQuestRecoveryRegressionTests/UpstreamSeptemberRegressionTests.cs",
+      "Tools/WholesomeQuestRecoveryRegressionTests/UpstreamServicesRegressionTests.cs",
+      "Tools/WholesomeQuestRecoveryRegressionTests/UpstreamWorldRegressionTests.cs",
+      "UI/MainWindow.xaml.cs",
+      "runtime-snapshot/Protected Items.xml"
+    ],
+    "files": [
+      {
+        "path": "Bots/DungeonBuddy/DungeonBuddy.cs",
+        "sha256": "29541b54fd596676ecfafedd4744a87bf3f5145dea4932a0deb965f3e7dce61d"
+      },
+      {
+        "path": "Bots/DungeonBuddy/Helpers/ScriptHelpers.cs",
+        "sha256": "4abe99a2c2c6105a16b69688b4d29d3b98d1c4ca765ce315fc566ec5d9857b4f"
+      },
+      {
+        "path": "Bots/Gatherbuddy/GatherBuddySettingsWindow.xaml",
+        "sha256": "7af42a9906a54580b9cfcda0ef59b534e418496f31e0a0c23247a7d1cb2aa297"
+      },
+      {
+        "path": "Bots/Gatherbuddy/GatherBuddySettingsWindow.xaml.cs",
+        "sha256": "63f2dc8c80e0a5cbf570eb35eab1d8c098084ad38f857bc5f39a66032c2f0a3e"
+      },
+      {
+        "path": "Bots/Gatherbuddy/GatherbuddyBot.cs",
+        "sha256": "a3954dcc0f1d3f5a88901ece2844a3e51be7665f1bf7b5a4e6fa03c94feb2989"
+      },
+      {
+        "path": "Bots/Grind/LevelBot.cs",
+        "sha256": "5d48c7c1d17b054a40490e1759a23a6c1fa98af004b73b2cfa66c3748a82ec07"
+      },
+      {
+        "path": "CopilotBuddy.csproj",
+        "sha256": "8a3aa69706e5344404dc0da295a1aa47e51247019f0d9f50bf89ee55a4214ee8"
+      },
+      {
+        "path": "Protected Items.xml",
+        "sha256": "ccfec10a378133fa10b0b00088443640514207152e72b069272015e31152a854"
+      },
+      {
+        "path": "Styx/Database/NpcQueries.cs",
+        "sha256": "ab94496be6233c6ec89caac2255ba45e23a9651e28de873143bee1ad5bb679b4"
+      },
+      {
+        "path": "Styx/Logic/AreaManagement/QuestArea.cs",
+        "sha256": "5dff779e1be59480ce8850bad5c2fd9677bb9b312a4ec7829b36864e4ca06a00"
+      },
+      {
+        "path": "Styx/Logic/FlightPaths.cs",
+        "sha256": "fa20a3d942914feb21881b92ed31275e9e5030a403b54e5ef277a9d98c02828d"
+      },
+      {
+        "path": "Styx/Logic/MountHelper.cs",
+        "sha256": "d54f2d90c34924f154e1108a75a3ae6b7104f7cf87677554c98f4e7eb97d4da6"
+      },
+      {
+        "path": "Styx/Logic/Pathing/MeshNavigator.cs",
+        "sha256": "5f42ef36ef272f9ce15ee8b5e22223099a2e7f5e0f5e375073195178a2581629"
+      },
+      {
+        "path": "Styx/Logic/Pathing/Navigator.cs",
+        "sha256": "194716cba8a61d9b4913f53cdc6b59119283ae231b370a949774f0c05c5d0eaf"
+      },
+      {
+        "path": "Styx/Logic/Pathing/NavigatorTerrainHeightProvider.cs",
+        "sha256": "2b5536e64faa8647ce35c58f7ac53911fbf54d19b0959a1573a913aa66ba39de"
+      },
+      {
+        "path": "Styx/Logic/Profiles/Quest/MoveToNode.cs",
+        "sha256": "d2ad22a24e6aee824a398dca7a9a0bdc54ecc9f336ec5a98528b6972420f410d"
+      },
+      {
+        "path": "Styx/Logic/Profiles/Quest/ObjectiveInfo.cs",
+        "sha256": "09f231bbd3aad2c5c580f81e8a09a3f558f6e842f032ae4eba71f2e6f4eb8bc7"
+      },
+      {
+        "path": "Styx/Logic/Profiles/Quest/ObjectiveNode.cs",
+        "sha256": "d641a4df2f2c6d4eee7f92b91058bd8bbb2fa89911754a627f1cb837df41b7d3"
+      },
+      {
+        "path": "Styx/Logic/Profiles/Quest/OrderNode.cs",
+        "sha256": "89b9a41f7228e3b0c4bc33ee000845d3f06225c95082e750979cc40972af45d7"
+      },
+      {
+        "path": "Styx/Logic/Profiles/Quest/PickUpNode.cs",
+        "sha256": "2acc18e44e489c74c6afc2a7ad63ba55efb30a76f618d8c4e75b6a3d4ea69f53"
+      },
+      {
+        "path": "Styx/Logic/Profiles/Quest/ProfileHelperFunctionsBase.cs",
+        "sha256": "c54304654db244a7da4465194fc870725aaa912b7e61b7ddb466dd80ddf4a6a0"
+      },
+      {
+        "path": "Styx/Logic/Profiles/Quest/TurnInNode.cs",
+        "sha256": "073750175a3f98acb900eedde03accf3bb3f9802aa5c0d252e0ed8556d717007"
+      },
+      {
+        "path": "Styx/Logic/Profiles/VendorManager.cs",
+        "sha256": "46358d7f79d752716ad48ad2b5900cf2a200337ca9885c3eae13aad770c2a085"
+      },
+      {
+        "path": "Styx/WoWInternals/WoWObjects/UnitThreatInfo.cs",
+        "sha256": "4d9d4fe32ed4c008c5b47280776b573a9fa47ba88500e6a0fc9c64be5f5e28a8"
+      },
+      {
+        "path": "Tools/WholesomeQuestRecoveryRegressionTests/MeshMoveLifetimeRegressionTests.cs",
+        "sha256": "9a5cd2ff1bd4aeb1f3f321382375c7bfb24448a3e5a5f293343252574a850186"
+      },
+      {
+        "path": "Tools/WholesomeQuestRecoveryRegressionTests/MeshMoveRequestOwnershipRegressionTests.cs",
+        "sha256": "33d033d5ca74a94a12198832e37a4d757c05e324371c2800e9cd789df2f79d4b"
+      },
+      {
+        "path": "Tools/WholesomeQuestRecoveryRegressionTests/QuestLootHandoffRegressionTests.cs",
+        "sha256": "f9ff4bb38f131fbc6f9f2906b4f5f82237f8a79fa7aeb81336f627199ad63921"
+      },
+      {
+        "path": "Tools/WholesomeQuestRecoveryRegressionTests/UpstreamObservationRegressionTests.cs",
+        "sha256": "fab66be1d5d55411742889f4e0e7da80965ac9d02eb2002ce8725136056ff98d"
+      },
+      {
+        "path": "Tools/WholesomeQuestRecoveryRegressionTests/UpstreamQuestLuaRegressionTests.cs",
+        "sha256": "70a6942084ba034227f3ffc635b2bf7f57269fd0cd6d647793c542f3b1cf4bdf"
+      },
+      {
+        "path": "Tools/WholesomeQuestRecoveryRegressionTests/UpstreamSeptemberRegressionTests.cs",
+        "sha256": "289cac49a9e014fe58fe66f531400e23dcc85f02707116288401715d4511f8b5"
+      },
+      {
+        "path": "Tools/WholesomeQuestRecoveryRegressionTests/UpstreamServicesRegressionTests.cs",
+        "sha256": "0a8fcc8b8cb13e5fc1c781a9b1847abe29ea5e7bb3e94e6744525e218521e4c3"
+      },
+      {
+        "path": "Tools/WholesomeQuestRecoveryRegressionTests/UpstreamWorldRegressionTests.cs",
+        "sha256": "983893bd0eedde9cd2ec0cac63fae13fea5154b88689ac9024d46c13d9158b1a"
+      },
+      {
+        "path": "UI/MainWindow.xaml.cs",
+        "sha256": "e64600cdff565b7e6bdd67bd31a27f66708f68795eba0172ff7d6bbd5bbf7eed"
+      },
+      {
+        "path": "runtime-snapshot/Protected Items.xml",
+        "sha256": "b3ea12d0e4faf69b621abb773e5fd890d8012341f8a1430ac1fb401bab7d95ac"
+      }
+    ],
+    "source_inputs": 1908,
+    "local_groups": 17,
+    "optimized_groups": 203,
+    "runtime_components": 12,
+    "pr": {
+      "baseRefName": "master",
+      "headRefName": "audit/next-55-equipment-observation-20260917",
+      "headRefOid": "be16c4578159dbf33a91fb51c3b4d847110c7845",
+      "isDraft": true,
+      "mergedAt": null,
+      "state": "OPEN"
+    },
+    "refs": {
+      "refs/heads/audit/next-55-equipment-observation-20260917": "be16c4578159dbf33a91fb51c3b4d847110c7845",
+      "refs/heads/master": "b2324913e2499ba30b239dd67224ca2c655c05cc"
+    },
+    "receipts": [
+      {
+        "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMFINAL_LOCAL_GATE_20260929\\summary.json",
+        "sha256": "d2fc4147846e0ee307543aa3198d059dcace1fa4a7095aa765ece0e5b23d9d43"
+      },
+      {
+        "path": "D:\\Dev\\CopilotBuddy-Evidence\\UPSTREAM_OPTIMIZED_20260929\\status.json",
+        "sha256": "d53b69476589dfe5a731b360c3b27d4fb2d26e54cc05a98b9f3f1bf656af5aed"
+      },
+      {
+        "path": "D:\\Dev\\CopilotBuddy-Evidence\\UPSTREAM_OPTIMIZED_20260929\\membership-verification.json",
+        "sha256": "ac49d8d53bfb4011bd43de9d3285560b76ba37e53248c37989c81acb2ddbf729"
+      },
+      {
+        "path": "D:\\Dev\\CopilotBuddy-Evidence\\UPSTREAM_RUNTIME_20260929\\summary.json",
+        "sha256": "ebbb513b6f1d02bdb7a3f1182745baf9883dbd96bc331b13780829f536202ff6"
+      },
+      {
+        "path": "D:\\Dev\\CopilotBuddy-Evidence\\UPSTREAM_REVIEW_20260929\\intervals.json",
+        "sha256": "96fa57dc8df88170c1d2780c3d9774319702f5fe3c99057442ce2ebb8d0db3ac"
+      },
+      {
+        "path": "D:\\Dev\\CopilotBuddy-Evidence\\UPSTREAM_REVIEW_20260929\\dispositions.json",
+        "sha256": "89ddab2d959b5649b4b1f03a8ca0c6acf5ce29742e3132d0a4cb0af3fe13f77e"
+      }
+    ],
+    "compatibility_interval": {
+      "red": "UPSTREAMCOMPATRED",
+      "green": "UPSTREAMCOMPATGREEN",
+      "changed_inputs": [
+        "Styx/Logic/Profiles/Quest/ObjectiveNode.cs"
+      ],
+      "fixture_sources_unchanged": true,
+      "receipts": [
+        {
+          "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMCOMPATRED_20260929\\status.json",
+          "sha256": "965d4d0650840393c56a1509e4fae119215b13aa68d59b355382adb8995c53ce"
+        },
+        {
+          "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMCOMPATRED_20260929\\source-before.json",
+          "sha256": "7df5d335478f4017c5735feeeab60e95bdc7c6e6a23143d3ea295b9b27f8dc6d"
+        },
+        {
+          "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMCOMPATRED_20260929\\source-after.json",
+          "sha256": "7df5d335478f4017c5735feeeab60e95bdc7c6e6a23143d3ea295b9b27f8dc6d"
+        },
+        {
+          "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMCOMPATRED_20260929\\run.log",
+          "sha256": "1c378f0ecf55ccc0ee8273c2aa1351eab92b6469367f34d809282d62258deb9b"
+        },
+        {
+          "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMCOMPATRED_20260929\\run.stderr.log",
+          "sha256": "2495619c4e1ec55056f5f52e622dcfeeaf8b75958f5150488666aa7701b896f4"
+        },
+        {
+          "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMCOMPATGREEN_20260929\\status.json",
+          "sha256": "f0caa1e8bdaec1ee9a429f7433900afc1f9bbff5b8ba1fc1236703b5ffd60c4a"
+        },
+        {
+          "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMCOMPATGREEN_20260929\\source-before.json",
+          "sha256": "7434e38b56c49f25301aa0e7d5897920b995a4638f7d54a9ed814cf16e2bbcd4"
+        },
+        {
+          "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMCOMPATGREEN_20260929\\source-after.json",
+          "sha256": "7434e38b56c49f25301aa0e7d5897920b995a4638f7d54a9ed814cf16e2bbcd4"
+        },
+        {
+          "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMCOMPATGREEN_20260929\\run.log",
+          "sha256": "777287cd309c96efe44fe5711e34ab3f51daee69b4aa1e97528d28bfc448463f"
+        },
+        {
+          "path": "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_PASS_UPSTREAMCOMPATGREEN_20260929\\run.stderr.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ]
+    },
+    "preserved_roots": {
+      "AUDIT_RESUME.md": "ec1027bc9a4f7f951e2dce7e76b4e8b3253b274969094e2feece478ec98e9622",
+      "NEXT_CHAT_PROMPT.md": "bcd75e3a3d50d75f52a85dd25cd8438a4c9621f0fb4e11ff0b16949afda46d23"
+    },
+    "game_attached": false,
+    "DensePullIsolationValidated": false,
+    "hosted_acceptance": "Required after coherent source publication",
+    "production_access": "Denied outside approved CoS roots; no production writes or bypass."
+  },
+  "retained_failed_full_gate": {
+    "completed_utc": "2026-09-29T01:47:39.6194594Z",
+    "base_head": "be16c4578159dbf33a91fb51c3b4d847110c7845",
+    "source_inputs": 1908,
+    "source_unchanged": true,
+    "successful_groups": 15,
+    "total_groups": 17,
+    "extraction_verified": true,
+    "extraction_source": "002682af0d8b8cc9ab01482eba8598ada0dd763c",
+    "host_build_exit": 0,
+    "lua51_sha256": "06df2510b5780791d17cbb738e42ec28a1ef5add580e127f31a9968bf57630e4",
+    "game_attached": false,
+    "hosted_acceptance": "Pending meaningful publication gate."
+  },
+  "provider_refusals": [
+    {
+      "operation": "Interval verification/read batch",
+      "attempts": 2,
+      "successful_session": 84945,
+      "unchanged_retry": true
+    },
+    {
+      "operation": "UPSTREAMFINAL whole local gate launch",
+      "attempts": 2,
+      "successful_session": 99450,
+      "unchanged_retry": true
+    }
+  ],
+  "game_attached": false,
+  "live_HoJ_resolved": false,
+  "DensePullIsolationValidated": false,
+  "production_access": "Explicitly denied by CoS outside /dev,/skills; no bypass or production write.",
+  "merge_status_at_preparation": "PR51 open/draft/unmerged; later actual merge must be read back.",
+  "independent_acceptance": false
+}

@@ -18,7 +18,6 @@ namespace Styx.Plugins
 				if (_enabled != value)
 				{
 					_enabled = value;
-					OnPropertyChanged(nameof(Enabled));
 					
 					if (_enabled)
 					{
@@ -29,25 +28,42 @@ namespace Styx.Plugins
 						}
 						catch (Exception ex)
 						{
-							Helpers.Logging.WriteException(ex);
+							// A partially initialized plugin must not remain eligible
+							// for Pulse or prevent a later explicit enable retry.
+							_enabled = false;
+							try { Helpers.Logging.WriteException(ex); }
+							finally { DisableAndDispose(); }
 						}
 					}
 					else
 					{
-						try
-						{
-							Plugin.OnDisable();
-							Plugin.Dispose();
-						}
-						catch (Exception ex)
-						{
-							Helpers.Logging.WriteException(ex);
-						}
+						DisableAndDispose();
 					}
 					
-					// Update enabled plugins list (no immediate save - HB 4.3.4 pattern)
-					PluginManager.UpdateEnabledPlugins();
+					// Notify the completed state, including a refused enable, so
+					// bindings recover without observers interrupting cleanup.
+					try { OnPropertyChanged(nameof(Enabled)); }
+					finally
+					{
+						// No immediate save - HB 4.3.4 pattern.
+						PluginManager.UpdateEnabledPlugins();
+					}
 				}
+			}
+		}
+
+		private void DisableAndDispose()
+		{
+			try
+			{
+				try { Plugin.OnDisable(); }
+				catch (Exception ex) { Helpers.Logging.WriteException(ex); }
+			}
+			finally
+			{
+				// OnDisable (or its diagnostic handler) cannot skip resource release.
+				try { Plugin.Dispose(); }
+				catch (Exception ex) { Helpers.Logging.WriteException(ex); }
 			}
 		}
 

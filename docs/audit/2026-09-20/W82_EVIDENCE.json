@@ -1,0 +1,88 @@
+{
+  "schema": "copilotbuddy-audit-evidence-v1",
+  "checkpoint": "W82-plugin-construction",
+  "date": "2026-09-20",
+  "repo": "jeofwong/CopilotBuddy-private",
+  "pr": 51,
+  "branch": "audit/next-55-equipment-observation-20260917",
+  "entry": "eb256140e1a70a9e3a25c1d2410e1155412577d4",
+  "verified_commit": "c46ede2c756c56618532c6af89932b73455bb14c",
+  "verified_tree": "62f812bba43f4647cfa889518de24be7c53fcbd4",
+  "cached_pair": {
+    "red": {
+      "sha": "eb256140e1a70a9e3a25c1d2410e1155412577d4",
+      "tree": "d44b0ebb2186def9a55d25725f5c129a697a4694",
+      "run": 35491078980,
+      "artifact": 10599042808,
+      "digest": "cbbb85920178c81e85c64b189b0814c358621d1dc9f5458d01242562285167f0",
+      "result": "1/7; assertions=6; unexpected=0; other16 entries pass"
+    },
+    "green": {
+      "sha": "83190e180e2179e16bab289a27e9547b9cae5187",
+      "tree": "475a3c2d9ce2cc6c7921f26c5f66305e57d1624d",
+      "run": 35492518359,
+      "artifact": 10599980296,
+      "digest": "1e679f7538f31e762ccae1f7790b1426a25fbdc0d78fc55bf09f40bffce27a88",
+      "result": "7/7; assertions=0; unexpected=0; integrated17/17",
+      "host_run": 35492518366,
+      "host_artifact": 10599970237,
+      "host_digest": "ad27ead5b023cbba73542654d57cce7da15197219595697e1461d2c375660f97"
+    },
+    "crc_verified": true,
+    "verified_inner_hashes_per_integrated_archive": 191,
+    "indexed_inputs_per_archive": 1829,
+    "only_changed_input": "Styx/Plugins/PluginManager.cs",
+    "identical_normalized_members": 147,
+    "scope": "Actual cache/construction methods with separately compiled plugin types and controlled compiler results"
+  },
+  "fresh_pair": {
+    "red": {
+      "sha": "0d2029947048a37d852b4d1cb23d83c3d46f3feb",
+      "tree": "5db6649f568c993ac57a90df4d2d3bc5cad471d8",
+      "run": 35492732190,
+      "artifact": 10600120287,
+      "digest": "0f0947ee27a18be268e28c20aae7b1d8049a9df8a47bce3da285fc251e478c80",
+      "result": "5/8; assertions=3; unexpected=0; cached7/7; other16 entries pass"
+    },
+    "green": {
+      "sha": "c46ede2c756c56618532c6af89932b73455bb14c",
+      "tree": "62f812bba43f4647cfa889518de24be7c53fcbd4",
+      "run": 35493042467,
+      "artifact": 10600005968,
+      "digest": "d25814c70c7253f8a4809512992513a7a036cd08d4eca25b6bf7e7c9dbe5a961",
+      "result": "8/8; assertions=0; unexpected=0; cached7/7; integrated17/17",
+      "host_run": 35493042471,
+      "host_artifact": 10599936166,
+      "host_digest": "de5317891f984d7299856db53e92a65ec25181fb632cfe8f45ed3d9fc729b25a"
+    },
+    "crc_verified": true,
+    "verified_inner_hashes_per_integrated_archive": 192,
+    "indexed_inputs_per_archive": 1830,
+    "only_changed_input": "Styx/Plugins/PluginManager.cs",
+    "identical_normalized_members": 148,
+    "scope": "Actual public CompileAndLoadFrom and SourceCompiler on temporary source; no compiler delegate"
+  },
+  "host_builds": {
+    "exit_code": 0,
+    "warnings": 3344,
+    "errors": 0,
+    "matching_commit_files_verified": true,
+    "crc_verified": true,
+    "inner_manifest_present": false,
+    "tests_run": false
+  },
+  "shared_loaders_changed": false,
+  "new_lua_or_game_mechanics": false,
+  "game_attached": false,
+  "master_written": false,
+  "merged": false,
+  "deployed": false,
+  "merge_authorization": "conditional on all review blockers and final verification; condition not yet met",
+  "remaining": {
+    "R03": "loader/scheduler/materializer, raw-slot mapping, target/location authority, kinds and GameObject dispatch",
+    "R04": "EquipItem lifetime and physical displaced/foreign cursor and popup ownership",
+    "R05": "plugin/player context, scan continuation and unknown inventory acknowledgement",
+    "R06": "same-NPC menu and final selection/cleanup ownership",
+    "R07": "compiler dependencies, reload/static state and complete refresh lifecycle"
+  }
+}

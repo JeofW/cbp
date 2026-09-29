@@ -77,7 +77,8 @@ namespace Styx
 
         /// <summary>
         /// FEAT-07: Gets the current game state from memory.
-        /// WotLK 3.3.5a offset: 0x00B6A9E0
+        /// Build12340 numeric lifecycle word: 0x00B6AA38.
+        /// 0x00B6A9E0 is the separate screen-name string buffer.
         /// </summary>
         public static GameState GameState
         {
@@ -85,7 +86,12 @@ namespace Styx
             {
                 try
                 {
-                    return (GameState)ObjectManager.Wow.Read<uint>(0x00B6A9E0);
+                    // Generic Read<uint> maps failed byte reads to zero, which
+                    // is also a valid state. Require a complete observation.
+                    var bytes = ObjectManager.Wow.ReadBytes(0x00B6AA38, 4);
+                    if (bytes == null || bytes.Length != 4)
+                        return GameState.Unknown;
+                    return (GameState)BitConverter.ToUInt32(bytes, 0);
                 }
                 catch
                 {
@@ -96,9 +102,21 @@ namespace Styx
 
         /// <summary>
         /// FEAT-07: Returns true if the player is in the game world and not zoning.
-        /// HB 4.3.4: IsInGame && GameState != GameState.Zoning
+        /// Retains the existing in-game/non-zoning policy for recognized states.
         /// </summary>
-        public static bool IsInWorld => IsInGame && GameState != GameState.Zoning;
+        public static bool IsInWorld
+        {
+            get
+            {
+                if (!IsInGame)
+                    return false;
+
+                // A failed or undefined observation cannot authorize world work.
+                var state = GameState;
+                return state != GameState.Unknown && state != GameState.Zoning &&
+                    Enum.IsDefined(typeof(GameState), state);
+            }
+        }
 
         /// <summary>
         /// FEAT-19: Gets the current glue (login) screen state.

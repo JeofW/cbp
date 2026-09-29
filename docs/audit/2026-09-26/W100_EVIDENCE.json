@@ -1,0 +1,701 @@
+{
+  "tested_source": "9f11a4646e6eeec4d2d15202fc1824719c307f9a",
+  "tested_tree": "15bbd8d42ded5eb294fcc04cb2362c9518f33bb4",
+  "last_production": "c8e7e83a8899116d8102884832a748f78a5be517",
+  "all_archive_receipts": [
+    {
+      "verified_at_utc": "2026-09-26T08:35:47.7967586Z",
+      "repository": "JeofW/cbp",
+      "repository_id": 1367174964,
+      "run": 36230103715,
+      "jobs": [
+        {
+          "id": 108371513171,
+          "name": "host-build",
+          "status": "completed",
+          "conclusion": "success",
+          "labels": [
+            "windows-latest"
+          ],
+          "runner_name": "GitHub Actions 1000000482"
+        }
+      ],
+      "run_conclusion": "success",
+      "source": "9f11a4646e6eeec4d2d15202fc1824719c307f9a",
+      "artifact": 10901948647,
+      "artifact_name": "audit-validation-9f11a4646e6eeec4d2d15202fc1824719c307f9a",
+      "archive": "D:\\Dev\\CopilotBuddy-Evidence\\w100-green-host-9f11a464.zip",
+      "sha256": "5d4b93d28926d9e41a06c43604467b8446bf84329fb5ba020191766ff4957c5a",
+      "metadata_digest": "sha256:5d4b93d28926d9e41a06c43604467b8446bf84329fb5ba020191766ff4957c5a",
+      "bytes": 82063
+    },
+    {
+      "verified_at_utc": "2026-09-26T08:30:03.9137505Z",
+      "repository": "JeofW/cbp",
+      "repository_id": 1367174964,
+      "run": 36229817101,
+      "jobs": [
+        {
+          "id": 108370726548,
+          "name": "host-build",
+          "status": "completed",
+          "conclusion": "success",
+          "labels": [
+            "windows-latest"
+          ],
+          "runner_name": "GitHub Actions 1000000480"
+        }
+      ],
+      "run_conclusion": "success",
+      "source": "c8e7e83a8899116d8102884832a748f78a5be517",
+      "artifact": 10901582490,
+      "artifact_name": "audit-validation-c8e7e83a8899116d8102884832a748f78a5be517",
+      "archive": "D:\\Dev\\CopilotBuddy-Evidence\\w100-green-host-c8e7e83a.zip",
+      "sha256": "c1bd2c2f89619cd6361f2648ff0c8795f1b75c501c12f6eef6480b78d9d22eb0",
+      "metadata_digest": "sha256:c1bd2c2f89619cd6361f2648ff0c8795f1b75c501c12f6eef6480b78d9d22eb0",
+      "bytes": 82972
+    },
+    {
+      "verified_at_utc": "2026-09-26T08:38:22.5848849Z",
+      "repository": "JeofW/cbp",
+      "repository_id": 1367174964,
+      "run": 36230103737,
+      "jobs": [
+        {
+          "id": 108371513114,
+          "name": "combined",
+          "status": "completed",
+          "conclusion": "success",
+          "labels": [
+            "windows-2022"
+          ],
+          "runner_name": "GitHub Actions 1000000481"
+        }
+      ],
+      "run_conclusion": "success",
+      "source": "9f11a4646e6eeec4d2d15202fc1824719c307f9a",
+      "artifact": 10901907622,
+      "artifact_name": "integrated-9f11a4646e6eeec4d2d15202fc1824719c307f9a",
+      "archive": "D:\\Dev\\CopilotBuddy-Evidence\\w100-green-integrated-9f11a464.zip",
+      "sha256": "919b2a457f41db680675ef9e9fb6f23ba67ee2a0e7ed516cd576cf586ca8d77b",
+      "metadata_digest": "sha256:919b2a457f41db680675ef9e9fb6f23ba67ee2a0e7ed516cd576cf586ca8d77b",
+      "bytes": 902143
+    },
+    {
+      "verified_at_utc": "2026-09-26T08:32:06.6732513Z",
+      "repository": "JeofW/cbp",
+      "repository_id": 1367174964,
+      "run": 36229817073,
+      "jobs": [
+        {
+          "id": 108370726364,
+          "name": "combined",
+          "status": "completed",
+          "conclusion": "failure",
+          "labels": [
+            "windows-2022"
+          ],
+          "runner_name": "GitHub Actions 1000000479"
+        }
+      ],
+      "run_conclusion": "failure",
+      "source": "c8e7e83a8899116d8102884832a748f78a5be517",
+      "artifact": 10902387435,
+      "artifact_name": "integrated-c8e7e83a8899116d8102884832a748f78a5be517",
+      "archive": "D:\\Dev\\CopilotBuddy-Evidence\\w100-green-integrated-c8e7e83a.zip",
+      "sha256": "203ad73ef098044c509cf90fba83220a498752209c1cd89b1458aef0ec6febfe",
+      "metadata_digest": "sha256:203ad73ef098044c509cf90fba83220a498752209c1cd89b1458aef0ec6febfe",
+      "bytes": 904396
+    },
+    {
+      "verified_at_utc": "2026-09-26T08:24:01.8984324Z",
+      "repository": "JeofW/cbp",
+      "repository_id": 1367174964,
+      "run": 36229510358,
+      "jobs": [
+        {
+          "id": 108369866558,
+          "name": "host-build",
+          "status": "completed",
+          "conclusion": "success",
+          "labels": [
+            "windows-latest"
+          ],
+          "runner_name": "GitHub Actions 1000000478"
+        }
+      ],
+      "run_conclusion": "success",
+      "source": "31ad3951f9429b1eb605d7f47cb3fcc32bb45fc5",
+      "artifact": 10902471273,
+      "artifact_name": "audit-validation-31ad3951f9429b1eb605d7f47cb3fcc32bb45fc5",
+      "archive": "D:\\Dev\\CopilotBuddy-Evidence\\w100-red-host-31ad3951.zip",
+      "sha256": "49dc966d7b2aa9a341437e95640c75b223facee9faf736c6b41c3361d49f694d",
+      "metadata_digest": "sha256:49dc966d7b2aa9a341437e95640c75b223facee9faf736c6b41c3361d49f694d",
+      "bytes": 82869
+    },
+    {
+      "verified_at_utc": "2026-09-26T08:25:54.3197301Z",
+      "repository": "JeofW/cbp",
+      "repository_id": 1367174964,
+      "run": 36229510333,
+      "jobs": [
+        {
+          "id": 108369866364,
+          "name": "combined",
+          "status": "completed",
+          "conclusion": "failure",
+          "labels": [
+            "windows-2022"
+          ],
+          "runner_name": "GitHub Actions 1000000477"
+        }
+      ],
+      "run_conclusion": "failure",
+      "source": "31ad3951f9429b1eb605d7f47cb3fcc32bb45fc5",
+      "artifact": 10901434236,
+      "artifact_name": "integrated-31ad3951f9429b1eb605d7f47cb3fcc32bb45fc5",
+      "archive": "D:\\Dev\\CopilotBuddy-Evidence\\w100-red-integrated-31ad3951.zip",
+      "sha256": "07920ba26c0f273bbe0ceb9311261b0c8ea7b93c1d58b38eeed772f2355b0719",
+      "metadata_digest": "sha256:07920ba26c0f273bbe0ceb9311261b0c8ea7b93c1d58b38eeed772f2355b0719",
+      "bytes": 902031
+    }
+  ],
+  "comparison": {
+    "inspected_at_utc": "2026-09-26T08:38:23.4622754Z",
+    "red": {
+      "verified_at_utc": "2026-09-26T08:25:54.3197301Z",
+      "repository": "JeofW/cbp",
+      "repository_id": 1367174964,
+      "run": 36229510333,
+      "jobs": [
+        {
+          "id": 108369866364,
+          "name": "combined",
+          "status": "completed",
+          "conclusion": "failure",
+          "labels": [
+            "windows-2022"
+          ],
+          "runner_name": "GitHub Actions 1000000477"
+        }
+      ],
+      "run_conclusion": "failure",
+      "source": "31ad3951f9429b1eb605d7f47cb3fcc32bb45fc5",
+      "artifact": 10901434236,
+      "artifact_name": "integrated-31ad3951f9429b1eb605d7f47cb3fcc32bb45fc5",
+      "archive": "D:\\Dev\\CopilotBuddy-Evidence\\w100-red-integrated-31ad3951.zip",
+      "sha256": "07920ba26c0f273bbe0ceb9311261b0c8ea7b93c1d58b38eeed772f2355b0719",
+      "metadata_digest": "sha256:07920ba26c0f273bbe0ceb9311261b0c8ea7b93c1d58b38eeed772f2355b0719",
+      "bytes": 902031
+    },
+    "failed_intermediate": {
+      "verified_at_utc": "2026-09-26T08:32:06.6732513Z",
+      "repository": "JeofW/cbp",
+      "repository_id": 1367174964,
+      "run": 36229817073,
+      "jobs": [
+        {
+          "id": 108370726364,
+          "name": "combined",
+          "status": "completed",
+          "conclusion": "failure",
+          "labels": [
+            "windows-2022"
+          ],
+          "runner_name": "GitHub Actions 1000000479"
+        }
+      ],
+      "run_conclusion": "failure",
+      "source": "c8e7e83a8899116d8102884832a748f78a5be517",
+      "artifact": 10902387435,
+      "artifact_name": "integrated-c8e7e83a8899116d8102884832a748f78a5be517",
+      "archive": "D:\\Dev\\CopilotBuddy-Evidence\\w100-green-integrated-c8e7e83a.zip",
+      "sha256": "203ad73ef098044c509cf90fba83220a498752209c1cd89b1458aef0ec6febfe",
+      "metadata_digest": "sha256:203ad73ef098044c509cf90fba83220a498752209c1cd89b1458aef0ec6febfe",
+      "bytes": 904396
+    },
+    "green": {
+      "verified_at_utc": "2026-09-26T08:38:22.5848849Z",
+      "repository": "JeofW/cbp",
+      "repository_id": 1367174964,
+      "run": 36230103737,
+      "jobs": [
+        {
+          "id": 108371513114,
+          "name": "combined",
+          "status": "completed",
+          "conclusion": "success",
+          "labels": [
+            "windows-2022"
+          ],
+          "runner_name": "GitHub Actions 1000000481"
+        }
+      ],
+      "run_conclusion": "success",
+      "source": "9f11a4646e6eeec4d2d15202fc1824719c307f9a",
+      "artifact": 10901907622,
+      "artifact_name": "integrated-9f11a4646e6eeec4d2d15202fc1824719c307f9a",
+      "archive": "D:\\Dev\\CopilotBuddy-Evidence\\w100-green-integrated-9f11a464.zip",
+      "sha256": "919b2a457f41db680675ef9e9fb6f23ba67ee2a0e7ed516cd576cf586ca8d77b",
+      "metadata_digest": "sha256:919b2a457f41db680675ef9e9fb6f23ba67ee2a0e7ed516cd576cf586ca8d77b",
+      "bytes": 902143
+    },
+    "generation_red": "27/63;36 intended assertions;0 unexpected",
+    "generation_repair_and_final": "63/63;0 assertions;0 unexpected",
+    "intermediate_restart": "35/37;2 assertions;0 unexpected",
+    "final_restart": "37/37;0 assertions;0 unexpected",
+    "aggregate_green": 17,
+    "members_each": 209,
+    "inner_hashes_each": 208,
+    "inputs": 1846,
+    "hosted_input_hashes_matched_local": 1846,
+    "normalized_count": 164,
+    "red_to_production": {
+      "changed_source_inputs": [
+        "runtime-snapshot/Quest Behaviors/GossipEvent.cs"
+      ],
+      "changed_normalized": []
+    },
+    "production_to_final": {
+      "changed_source_inputs": [
+        "Tools/WholesomeQuestRecoveryRegressionTests/QuestObjectiveRestartRegressionTests.cs"
+      ],
+      "changed_normalized": [
+        "normalized/WholesomeQuestRecoveryRegressionTests/W42Normalized/normalization-manifest.json",
+        "normalized/WholesomeQuestRecoveryRegressionTests/W42Normalized/QuestObjectiveRestartRegressionTests.cs"
+      ]
+    },
+    "results": [
+      {
+        "run": 0,
+        "architecture": "x86",
+        "game_attached": false,
+        "harness_error": null,
+        "build": 0,
+        "suite": "QuestRecoveryRegressionTests"
+      },
+      {
+        "build": 0,
+        "suite": "Singular",
+        "game_attached": false,
+        "run": 0,
+        "architecture": "x86"
+      },
+      {
+        "run": 0,
+        "architecture": "x86",
+        "game_attached": false,
+        "harness_error": null,
+        "build": 0,
+        "suite": "WholesomeQuestRecoveryRegressionTests"
+      },
+      {
+        "run": 0,
+        "architecture": "x86",
+        "game_attached": false,
+        "harness_error": null,
+        "build": 0,
+        "suite": "QuestRecoveryAdapterRegressionTests"
+      },
+      {
+        "run": 0,
+        "architecture": "x86",
+        "game_attached": false,
+        "harness_error": null,
+        "build": 0,
+        "suite": "QuestPickupPolicyRegressionTests"
+      },
+      {
+        "run": 0,
+        "architecture": "x86",
+        "game_attached": false,
+        "harness_error": null,
+        "build": 0,
+        "suite": "VendorCoreRegressionTests"
+      },
+      {
+        "run": 0,
+        "architecture": "x86",
+        "game_attached": false,
+        "harness_error": null,
+        "build": 0,
+        "suite": "NativeContractRegressionTests"
+      },
+      {
+        "run": 0,
+        "architecture": "x86",
+        "game_attached": false,
+        "harness_error": null,
+        "build": 0,
+        "suite": "ShutdownBoundaryRegressionTests"
+      },
+      {
+        "run": 0,
+        "architecture": "x86",
+        "game_attached": false,
+        "harness_error": null,
+        "build": 0,
+        "suite": "Elevator"
+      },
+      {
+        "run": 0,
+        "architecture": "x86",
+        "game_attached": false,
+        "harness_error": null,
+        "build": 0,
+        "suite": "PaladinDecisions"
+      },
+      {
+        "run": 0,
+        "architecture": "x86",
+        "game_attached": false,
+        "harness_error": null,
+        "build": 0,
+        "suite": "GroupEngagement"
+      },
+      {
+        "run": 0,
+        "architecture": "x86",
+        "game_attached": false,
+        "harness_error": null,
+        "build": 0,
+        "suite": "PaladinSupport"
+      },
+      {
+        "run": 0,
+        "architecture": "x86",
+        "game_attached": false,
+        "harness_error": null,
+        "build": 0,
+        "suite": "WholesomeSale"
+      },
+      {
+        "run": 0,
+        "architecture": "x86",
+        "game_attached": false,
+        "harness_error": null,
+        "build": 0,
+        "suite": "QuestLogObservationRegressionTests"
+      },
+      {
+        "run": 0,
+        "architecture": "x86",
+        "game_attached": false,
+        "harness_error": null,
+        "build": 0,
+        "suite": "QuestCompletionOwnerRegressionTests"
+      },
+      {
+        "run": 0,
+        "architecture": "x86",
+        "game_attached": false,
+        "harness_error": null,
+        "build": 0,
+        "suite": "QuestObservationBoundaryRegressionTests"
+      },
+      {
+        "build": 0,
+        "suite": "Analyzers",
+        "game_attached": false,
+        "run": 0
+      }
+    ],
+    "hosts": [
+      {
+        "receipt": {
+          "verified_at_utc": "2026-09-26T08:24:01.8984324Z",
+          "repository": "JeofW/cbp",
+          "repository_id": 1367174964,
+          "run": 36229510358,
+          "jobs": [
+            {
+              "id": 108369866558,
+              "name": "host-build",
+              "status": "completed",
+              "conclusion": "success",
+              "labels": [
+                "windows-latest"
+              ],
+              "runner_name": "GitHub Actions 1000000478"
+            }
+          ],
+          "run_conclusion": "success",
+          "source": "31ad3951f9429b1eb605d7f47cb3fcc32bb45fc5",
+          "artifact": 10902471273,
+          "artifact_name": "audit-validation-31ad3951f9429b1eb605d7f47cb3fcc32bb45fc5",
+          "archive": "D:\\Dev\\CopilotBuddy-Evidence\\w100-red-host-31ad3951.zip",
+          "sha256": "49dc966d7b2aa9a341437e95640c75b223facee9faf736c6b41c3361d49f694d",
+          "metadata_digest": "sha256:49dc966d7b2aa9a341437e95640c75b223facee9faf736c6b41c3361d49f694d",
+          "bytes": 82869
+        },
+        "members": 4,
+        "result": {
+          "game_attached": false,
+          "tests_run": false,
+          "host_build_exit_code": 0
+        },
+        "build_summary": [
+          "    3344 Warning(s)\r",
+          "    0 Error(s)\r"
+        ]
+      },
+      {
+        "receipt": {
+          "verified_at_utc": "2026-09-26T08:30:03.9137505Z",
+          "repository": "JeofW/cbp",
+          "repository_id": 1367174964,
+          "run": 36229817101,
+          "jobs": [
+            {
+              "id": 108370726548,
+              "name": "host-build",
+              "status": "completed",
+              "conclusion": "success",
+              "labels": [
+                "windows-latest"
+              ],
+              "runner_name": "GitHub Actions 1000000480"
+            }
+          ],
+          "run_conclusion": "success",
+          "source": "c8e7e83a8899116d8102884832a748f78a5be517",
+          "artifact": 10901582490,
+          "artifact_name": "audit-validation-c8e7e83a8899116d8102884832a748f78a5be517",
+          "archive": "D:\\Dev\\CopilotBuddy-Evidence\\w100-green-host-c8e7e83a.zip",
+          "sha256": "c1bd2c2f89619cd6361f2648ff0c8795f1b75c501c12f6eef6480b78d9d22eb0",
+          "metadata_digest": "sha256:c1bd2c2f89619cd6361f2648ff0c8795f1b75c501c12f6eef6480b78d9d22eb0",
+          "bytes": 82972
+        },
+        "members": 4,
+        "result": {
+          "game_attached": false,
+          "host_build_exit_code": 0,
+          "tests_run": false
+        },
+        "build_summary": [
+          "    3344 Warning(s)\r",
+          "    0 Error(s)\r"
+        ]
+      },
+      {
+        "receipt": {
+          "verified_at_utc": "2026-09-26T08:35:47.7967586Z",
+          "repository": "JeofW/cbp",
+          "repository_id": 1367174964,
+          "run": 36230103715,
+          "jobs": [
+            {
+              "id": 108371513171,
+              "name": "host-build",
+              "status": "completed",
+              "conclusion": "success",
+              "labels": [
+                "windows-latest"
+              ],
+              "runner_name": "GitHub Actions 1000000482"
+            }
+          ],
+          "run_conclusion": "success",
+          "source": "9f11a4646e6eeec4d2d15202fc1824719c307f9a",
+          "artifact": 10901948647,
+          "artifact_name": "audit-validation-9f11a4646e6eeec4d2d15202fc1824719c307f9a",
+          "archive": "D:\\Dev\\CopilotBuddy-Evidence\\w100-green-host-9f11a464.zip",
+          "sha256": "5d4b93d28926d9e41a06c43604467b8446bf84329fb5ba020191766ff4957c5a",
+          "metadata_digest": "sha256:5d4b93d28926d9e41a06c43604467b8446bf84329fb5ba020191766ff4957c5a",
+          "bytes": 82063
+        },
+        "members": 4,
+        "result": {
+          "game_attached": false,
+          "host_build_exit_code": 0,
+          "tests_run": false
+        },
+        "build_summary": [
+          "    3344 Warning(s)\r",
+          "    0 Error(s)\r"
+        ]
+      }
+    ],
+    "retained_summaries": [
+      "Pull isolation scenarios: 12/12; assertions=0; unexpected=0; pure policy/source ordering; no game attached.\r",
+      "Aquatic observation scenarios: 29/29; assertions=0; unexpected=0; real cache/rest owners; controlled world; no game attached.\r",
+      "Aquatic shoreline scenarios: 35/35; assertions=0; unexpected=0; actual cache and public rest owners; no game attached.\r",
+      "Aura cancellation scenarios: 35/35; assertions=0; unexpected=0; linked actual WoWAura; controlled observation/dispatch; no game attached.\r",
+      "Aura count safety scenarios: 8/8; assertions=0; unexpected=0; actual owner/source; no oversized allocation or game attached.\r",
+      "AutoEquip pending context scenarios: 46/46; assertions=0; unexpected=0; exact tracked C# capture/tick/request methods; controlled world/Lua; no game attached.\r",
+      "CollectThings breath scenarios: 7/7; assertions=0; unexpected=0; exact extracted production helper/source; no game attached.\r",
+      "Combat sight movement scenarios: 74/74; assertions=0; unexpected=0; complete tracked Movement and real TreeSharp; controlled world/navigation; no native path or game attached.\r",
+      "Combat target-gap scenarios: 26/26; assertions=0; unexpected=0; exact LevelBot combat region and POI decorator; real TreeSharp; controlled routine/world; no game attached.\r",
+      "Compiler input identity scenarios: 2/2; assertions=0; unexpected=0; actual SourceCompiler identity/options/compilation; no game attached.\r",
+      "Failure logging scenarios: 18/18; assertions=0; unexpected=0; actual Composite and Logging callbacks; no game attached.\r",
+      "Reentrant cleanup scenarios: 13/13; assertions=0; unexpected=0; actual Composite/GroupComposite lifetimes; no game attached.\r",
+      "Container slot identity scenarios: 20/20; assertions=0; unexpected=0; pure GUID snapshots/source wiring; no Lua/game attached.\r",
+      "Container Lua51 boundary scenarios: 58/58; assertions=0; unexpected=0; actual item methods/full UseItemOn/quest protection, Lua5.1 and converters; controlled observations; no native recipient effect or server credit.\r",
+      "Wholesome inventory/pickup edge scenarios: 16/16; actual scheduler predicate and pickup owner, no client attached.\r",
+      "Database discovery scenarios: 26/26; assertions=0; unexpected=0; actual constructor/indexer and registration fields; no game attached.\r",
+      "Dataset identity scenarios: 12/12; no game attached.\r",
+      "Delete inventory observation scenarios: 18/18; assertions=0; unexpected=0; exact tracked pending and observation methods; controlled inventory/cursor; no game attached.\r",
+      "DeleteItems lifecycle scenarios: 12/12; assertions=0; unexpected=0; real quest-behavior compilation plus tracked source ownership; no Lua/game attached.\r",
+      "Delete popup request scenarios: 14/14; assertions=0; unexpected=0; verbatim C# owner methods; recording Lua only; no game attached.\r",
+      "Endpoint assessment scenarios: 13/13 passed. No game attached.\r",
+      "Equip acknowledged timeout scenarios: 10/10; assertions=0; unexpected=0; exact tracked method control flow; controlled external acknowledgements; no game attached.\r",
+      "Equip cursor ownership scenarios: 19/19; assertions=0; unexpected=0; real tracked owner compilation/source contracts; no game attached.\r",
+      "Equip continuation boundary scenarios: 46/46; assertions=0; unexpected=0; exact tracked C# tick/context/acknowledge/return/restore; controlled actor/inventory/Lua; no physical cursor or client proof.\r",
+      "EquipItem pending context scenarios: 67/67; assertions=0; unexpected=0; exact tracked C# tick/submit/confirm/reset; controlled actor/quest/Lua; no game attached.\r",
+      "Equipment hand scenarios: 38/38; assertions=0; unexpected=0; actual scorer and equip consumer; controlled observations; not class proficiency, gear optimization or live equip.\r",
+      "Equipment Lua51 boundary scenarios: 83/83; assertions=0; unexpected=0; tracked pickup/equip helpers, actual generated Lua5.1, loader size and verbatim managed conversion; controlled APIs; no physical GUID/client/server proof.\r",
+      "Equipment observation scenarios: 65/65; assertions=0; unexpected=0; actual scorer and roll/equip owners; reused controlled observations; no live equip or roll.\r",
+      "Equipment slot scenarios: 71/71; assertions=0; unexpected=0; actual four SmartLoot owners; controlled observations; host slot aliases, not class eligibility or live equip.\r",
+      "Equip popup submission scenarios: 18/18; assertions=0; unexpected=0; exact tracked C# confirmation/tick methods; recording Lua boundary only; no game attached.\r",
+      "Escort observation scenarios: 47/47; assertions=0; unexpected=0; complete tracked Escort and real TreeSharp; controlled world/effects; no automatic quest mapping or game attached.\r",
+      "Flight-node persistence scenarios: 18/18; assertions=0; unexpected=0; actual XML and lookup owners; no game attached.\r",
+      "Flight-path admission scenarios: 22/22; assertions=0; unexpected=0; actual cached connection and publication; no navigation/taxi dispatch or game attached.\r",
+      "Flight-path alternate-origin scenarios: 18/18; assertions=0; unexpected=0; actual cached selection/publication; not native reachability or optimal-route proof.\r",
+      "Flight-path cost scenarios: 31/31; assertions=0; unexpected=0; actual cost owners; no route probing, taxi dispatch or game attached.\r",
+      "Final flight-observation scenarios: 30/30; assertions=0; unexpected=0; actual publication plus virtual observation boundary; no game attached.\r",
+      "Flight intent-boundary scenarios: 22/22; assertions=0; unexpected=0; actual public owners and test-process merchant; controlled provider callbacks; no game attached.\r",
+      "Flight-path known-master scenarios: 12/12; assertions=0; unexpected=0; actual cached selection/publication; no navigation, taxi dispatch or game attached.\r",
+      "Flight merchant-ownership scenarios: 17/17; assertions=0; unexpected=0; actual descriptors, registry, setter and blacklist; controlled feasibility; no game attached.\r",
+      "Flight publication-exception scenarios: 22/22; assertions=0; unexpected=0; actual publication/logger owners; unchanged test-process fixture; no game attached.\r",
+      "Flight publication-revocation scenarios: 21/21; assertions=0; unexpected=0; actual publication and POI callbacks; test-process merchant; no game attached.\r",
+      "Public flight-owner scenarios: 83/83; assertions=0; unexpected=0; actual standalone lookup/update/POI owners; controlled feasibility; no game attached.\r",
+      "Flight update-provider scenarios: 8/8; assertions=0; unexpected=0; actual merchant descriptors and public owners; controlled route feasibility; no game attached.\r",
+      "Flight POI-completion scenarios: 73/73; assertions=0; unexpected=0; actual explicit publication and callback cleanup; no game attached.\r",
+      "Flight reset-ownership scenarios: 48/48; assertions=0; unexpected=0; actual reset/POI/navigation owners; controlled mesh callback; no game attached.\r",
+      "GatherBuddy repair-phase scenarios: 20/20; assertions=0; unexpected=0; actual builder and composites; controlled native leaves; no game attached.\r",
+      "GatherBuddy sale-visit backoff scenarios: 9/9; assertions=0; unexpected=0; actual tracked source and policy; no game attached.\r",
+      "GatherBuddy sell-phase scenarios: 20/20; assertions=0; unexpected=0; actual builder and TreeSharp composites; controlled native leaves; no game attached.\r",
+      "Gossip lifetime scenarios: 58/58; assertions=0; unexpected=0; complete tracked owner and real quest reader; controlled actor/UI; no Lua or game execution.\r",
+      "Gossip Lua51 generation scenarios: 63/63; assertions=0; unexpected=0; full tracked owner, persistent Lua5.1/events, actual conversion; controlled world; no original-client/native concurrency/server proof.\r",
+      "Generated recipient dispatch scenarios: 18/18; assertions=0; unexpected=0; actual loader/raw QuestLog/scan/scheduler/XML/CodeNode, complete owner constructors/start/retained TreeSharp ticks; controlled actor/item/menu requests; no native Lua, executor or game attached.\r",
+      "Gossip strategy scenarios: 14/14; assertions=0; unexpected=0; complete tracked behavior compile plus controlled profile XML; no NPC/gossip/game attached.\r",
+      "Legacy rest continuation scenarios: 54/54; assertions=0; unexpected=0; actual public Feed and logger boundaries; no game attached.\r",
+      "Loot consumer scenarios: 36/36; assertions=0; unexpected=0; actual LevelBot factory/predicate/POI; no movement or game attached.\r",
+      "Bulk sale retry scenarios: 27/27; assertions=0; unexpected=0; actual seller/gate; controlled external query/time; no game attached.\r",
+      "Merchant index scenarios: 21/21; assertions=0; unexpected=0; actual lookup/record reader; controlled observations; no purchase dispatched.\r",
+      "Merchant Lua contract scenarios: 37/37; assertions=0; unexpected=0; actual compiled script producers; no client/item effect.\r",
+      "Merchant pending-liveness scenarios: 12/12; assertions=0; unexpected=0; actual MerchantSaleAttemptGate; controlled query/time; no game attached.\r",
+      "Merchant retry scenarios: 27/27; assertions=0; unexpected=0; actual seller region and emitted exclusions; scripted external query/time; no game attached.\r",
+      "Merchant step-context structure scenarios: 6/6; assertions=0; unexpected=0; actual generated source; structural only, no Lua/native sale.\r",
+      "Mesh clear-ownership scenarios: 45/45; assertions=0; unexpected=0; actual MeshNavigator.Clear; controlled mover/stuck callbacks; no game attached.\r",
+      "Mesh move-lifetime scenarios: 29/29; assertions=0; unexpected=0; actual MoveTo and backing-owner transitions; no game attached.\r",
+      "Mesh move-request scenarios: 64/64; assertions=0; unexpected=0; actual MoveTo and controlled observation/mover boundaries; no game attached.\r",
+      "Mesh transit-reset scenarios: 36/36; assertions=0; unexpected=0; actual transit cleanup owners; no game attached.\r",
+      "Mirror timer bounds scenarios: 14/14; assertions=0; unexpected=0; actual timer and controlled clock; no game attached.\r",
+      "Mounted hotspot scenarios: 16/16; assertions=0; unexpected=0; actual target and dismount admission; no game attached.\r",
+      "MIR deletion context scenarios: 82/82; assertions=0; unexpected=0; tracked state/lifecycle/mutation methods; controlled external observations; no Lua/game execution.\r",
+      "MrItemRemover delete scenarios: 14/14; assertions=0; unexpected=0; real tracked plugin compilation plus destructive-owner source contract; plugin not enabled and no Lua/game attached.\r",
+      "MIR finite scan scenarios: 27/27; assertions=0; unexpected=0; tracked pulse/scan/protection/lifecycle; controlled inventory and client requests; no game attached.\r",
+      "Navigation deferral scenarios: 15/15; real monitor/manager, no game attached.\r",
+      "Packed spell scenarios: 41/41; assertions=0; unexpected=0; actual metadata owners and decoder vectors; no game attached.\r",
+      "Paladin tank-role scenarios: 28/28; assertions=0; unexpected=0; actual full-source Group predicate and host aura readers; no game attached.\r",
+      "Plugin cached construction scenarios: 7/7; assertions=0; unexpected=0; actual PluginManager methods and separately compiled types; controlled compiler results; no installed plugins or game attached.\r",
+      "Plugin compilation input scenarios: 8/8; assertions=0; unexpected=0; actual public refresh/compiler/referenced DLL; optimization compiler control; no game attached.\r",
+      "Plugin container lifecycle scenarios: 12/12; assertions=0; unexpected=0; actual container/refresh/pulse and SourceCompiler; generated plugins; no game attached.\r",
+      "Plugin fresh compilation scenarios: 8/8; assertions=0; unexpected=0; actual public PluginManager and SourceCompiler; temporary source; no installed plugins or game attached.\r",
+      "Plugin refresh reuse scenarios: 9/9; assertions=0; unexpected=0; production PluginManager boundary with controlled compile delegate; no Roslyn or game attached.\r",
+      "Plugin refresh preparation scenarios: 6/6; assertions=0; unexpected=0; actual public refresh/compiler/cache; hosted output directory; no game attached.\r",
+      "POI object-subscription scenarios: 27/27; assertions=0; unexpected=0; actual POI getters and invalidation owner; no game attached.\r",
+      "Profile-item culture scenarios: 16/16; assertions=0; unexpected=0; actual public parser and manager lookups; no game attached.\r",
+      "Protected-item culture scenarios: 14/14; assertions=0; unexpected=0; actual XML and manager; no game attached.\r",
+      "Protected-item ownership scenarios: 12/12; assertions=0; unexpected=0; actual CollectItemObjective and ProtectedItemsManager; no game attached.\r",
+      "Protected-item reload scenarios: 14/14; assertions=0; unexpected=0; actual XML filesystem and manager, including reentrant logging; no game attached.\r",
+      "Isolation containment scenarios: 9/9; assertions=0; unexpected=0; verbatim provider members and real TreeSharp; no movement or game attached.\r",
+      "Quest-action freshness scenarios: 25/25; assertions=0; unexpected=0; actual publication/root/forced executor; controlled support leaves; no game attached.\r",
+      "Active parent prerequisite scenarios: 39/39; assertions=0; unexpected=0; actual MaterializeSchedule; explicit snapshots; no game attached.\r",
+      "Quest addon conflict scenarios: 24/24; assertions=0; unexpected=0; complete PublishedQuestRoot and actual publisher/outer gate/executor; controlled addon-query results; no game attached.\r",
+      "Quest cast-credit compatibility scenarios: 20/20; assertions=0; unexpected=0; actual scheduler/profile writer; controlled imported flags; no server/game attached.\r",
+      "Cleanup signal scenarios: 14/14; assertions=0; unexpected=0; actual Composite/GroupComposite stop and iterator disposal; no game attached.\r",
+      "Quest collection replay scenarios: 34/34; assertions=0; unexpected=0; actual generated condition compilation/execution; controlled acceptance and inventory; no game attached.\r",
+      "Quest dataset provenance scenarios: 10/10; assertions=0; unexpected=0; actual DataLoader; controlled files; no server/network/game attached.\r",
+      "Quest dependency-protection scenarios: 23/23; assertions=0; unexpected=0; actual loader, authority and abandonment policy; controlled guide data; no game attached.\r",
+      "Dependent previous alternative scenarios: 14/14; assertions=0; unexpected=0; actual MaterializeSchedule; pinned TC3.3.5 semantics; controlled data; no game/server attached.\r",
+      "Quest exclusive-group scenarios: 10/10; assertions=0; unexpected=0; actual MaterializeSchedule; controlled core-shaped data; no game/server attached.\r",
+      "Executor ownership scenarios: 23/23; assertions=0; unexpected=0; actual executor/iterators; controlled terminal branch; no game attached.\r",
+      "Quest item acknowledgement-liveness scenarios: 11/11; assertions=0; unexpected=0; complete tracked UseItemOn compile; no game/server execution.\r",
+      "Quest item authoritative-progress scenarios: 11/11; assertions=0; unexpected=0; complete tracked UseItemOn compile; controlled observations; no native/server execution.\r",
+      "Quest item dispatch scenarios: 78/78; assertions=0; unexpected=0; complete UseItemOn and real TreeSharp; controlled callbacks; no native use or server credit.\r",
+      "Quest item merchant scenarios: 20/20; assertions=0; unexpected=0; complete UseItemOn and real TreeSharp; controlled merchant/setup/API; no native sale or quest credit.\r",
+      "Quest item progress scenarios: 33/33; assertions=0; unexpected=0; complete UseItemOn/TreeSharp and inherited host quest reader; controlled raw quest bytes/world callbacks; no game attached.\r",
+      "Reusable item acknowledgement scenarios: 10/10; assertions=0; unexpected=0; complete tracked UseItemOn and retained TreeSharp continuation; actual inherited quest reader; no game attached.\r",
+      "Quest item selection scenarios: 44/44; assertions=0; unexpected=0; complete tracked UseItemOn; controlled observations; no native use or automatic recipe mapping.\r",
+      "Scheduler observation scenarios: 5/5; actual full scheduler and host; no client attached.\r",
+      "Navigation cancellation scenarios: 16/16; assertions=0; unexpected=0; actual assessment/cache/refresh; counted external provider; no game attached.\r",
+      "Negative exclusive dependency scenarios: 10/10; assertions=0; unexpected=0; actual MaterializeSchedule; controlled core-shaped data; no game/server attached.\r",
+      "Quest objective restart scenarios: 37/37; assertions=0; unexpected=0; complete tracked owners, real packed quest reader and OnStart/ticks; controlled metadata/world/UI; no game attached.\r",
+      "Quest POI identity scenarios: 58/58; assertions=0; unexpected=0; actual XML/factory/POI leaf and object lookup; no game attached.\r",
+      "Publication acceptance scenarios: 9/9; assertions=0; unexpected=0; actual compiler/selector/load/scan/running gate; no game attached.\r",
+      "Publication scenarios: 21/21; assertions=0; unexpected=0; actual memory/cache/scan/materialization/XML/file/load/running gate; no game attached.\r",
+      "Raw-memory scenarios: 18/18; assertions=0; missing_contracts=0; unexpected=0; actual Memory.ReadBytes and QuestLog/cache; test-process storage only.\r",
+      "Ready lifecycle scenarios: 3/3; assertions=0; unexpected=0; full production reset and stopped Pulse; no game attached.\r",
+      "Quest reward-observation scenarios: 12/12; assertions=0; unexpected=0; actual ActionSelectReward contract/source; controlled observers; no game attached.\r",
+      "Reward Lua51 boundary scenarios: 33/33; assertions=0; unexpected=0; full tracked reward owner, actual generated Lua, extracted production load-size and verbatim managed conversion; stock Lua5.1 C API; controlled UI; no original client/native hook/server.\r",
+      "Quest reward selection lifetime scenarios: 18/18; assertions=0; unexpected=0; complete tracked C# owner; controlled metadata/frame/Lua boundaries; no game attached.\r",
+      "Root owner-boundary scenarios: 13/13; assertions=0; unexpected=0; actual published root/executor with callback faults and observed lifecycle state; no game attached.\r",
+      "Root preemption scenarios: 31/31; assertions=0; unexpected=0; actual Running-root/publication/executor; counted support and cleanup; no game attached.\r",
+      "Root protection scenarios: 7/7; assertions=0; unexpected=0; actual root and raw player/pet observations; controlled support; no game attached.\r",
+      "Scan entry scenarios: 15/15; assertions=0; unexpected=0; actual world/vendor/scan/refresh/execution owners; no game attached.\r",
+      "Scan failure scenarios: 14/14; assertions=0; unexpected=0; actual host/scan/DoScan/execution owners; controlled cached external observations; no game attached.\r",
+      "Scan retry scenarios: 6/6; actual scheduler and retry owner; controlled deadlines; no attached game.\r",
+      "Scan revocation scenarios: 13/13; actual scheduler, DoScan and execution gate; seeded prior publication; no client or native dispatch.\r",
+      "Scheduler raw-publication scenarios: 23/23; assertions=0; unexpected=0; actual raw memory/scan/XML/load/running gate; no game attached.\r",
+      "Pull isolation scenarios: 12/12; assertions=0; unexpected=0; pure policy/source ordering; no game attached.\r",
+      "Real matching recipient scenarios: 10/10; assertions=0; unexpected=0; actual loader/scheduler/XML/compiler/factory/wrapper/WoWUnit/Interact; native executor absent, requests refused, no game attached.\r",
+      "Quest strategy constructor dispatch scenarios: 12/12; assertions=0; unexpected=0; actual loader/scheduler/XML/CodeNode/runtime compiler/factory; six constructor and six wrapper/start/branch-tick cases; allocated observations; no native executor, recipient action or game attached.\r",
+      "Quest strategy execution scenarios: 16/16; assertions=0; unexpected=0; controlled actual loader/scheduler/XML; no profile/client/server execution.\r",
+      "Strategy kind admission scenarios: 9/9; assertions=0; unexpected=0; actual pack/data loaders; controlled files; no game attached.\r",
+      "Quest strategy-pack scenarios: 12/12; assertions=0; unexpected=0; controlled files; no profile/client/server execution.\r",
+      "Quest strategy scheduler scenarios: 53/53; assertions=0; unexpected=0; actual loader/raw QuestLog/live scan/scheduler/XML; controlled external memory/navigation; no behavior dispatch or game attached.\r",
+      "Ret rotation registration scenarios: 9/9; assertions=0; unexpected=0; full tracked Singular compilation and CLR attributes; no rotation tick or game attached.\r",
+      "Shared buff dispatch scenarios: 54/54; assertions=0; unexpected=0; exact Cast/Buff region and real TreeSharp; controlled observations/dispatch; not all class rotations or game effects.\r",
+      "Singular behavior-count scenarios: 190/190; assertions=0; unexpected=0; full tracked source compilation, actual discovery owner, controlled factories; no game attached.\r",
+      "Singular required-registration scenarios: 189/189; assertions=0; unexpected=0; compiled attributes plus real Restoration builder construction; no rotation tick or game attached.\r",
+      "SmartLoot decision scenarios: 79/79; assertions=0; unexpected=0; actual four tracked owners; controlled world and Lua; no live roll/equip.\r",
+      "Spell row lookup scenarios: 24/24; assertions=0; unexpected=0; actual FromId/table/row/memory; controlled test-process bytes; no game attached.\r",
+      "Spell sight dispatch scenarios: 53/53; assertions=0; unexpected=0; exact tracked Cast/Buff region and real TreeSharp; controlled sight/range/backend; no native obstruction trace or game attached.\r",
+      "Upstream unit scenarios: 52/52; assertions=0; unexpected=0; actual properties/descriptor/registry; controlled geometry; no game attached.\r",
+      "Upstream compatibility scenarios: 24/24; assertions=0; unexpected=0; actual managed readers and constructors, metadata-only terrain ABI; no game attached.\r",
+      "Vendor auxiliary callback scenarios: 13/13; assertions=0; unexpected=0; actual public owners with empty terminal inputs; no mail/purchase/Lua dispatch.\r",
+      "Bulk continuation ownership scenarios: 16/16; assertions=0; unexpected=0; actual public bulk/reset; controlled admission/merchant callbacks; no game attached.\r",
+      "Vendor continuation ownership scenarios: 31/31; assertions=0; unexpected=0; exact continuation/reset; controlled merchant/log callbacks; no game attached.\r",
+      "Vendor sale-entry ownership scenarios: 20/20; assertions=0; unexpected=0; actual host entry/admission/session owners; empty no-quality controls; no merchant request or game attached.\r",
+      "Vendor sale result scenarios: 12/12; assertions=0; unexpected=0; actual continuation/reset; controlled merchant result; no game attached.\r",
+      "Vendor-session boundary scenarios: 16/16; assertions=0; unexpected=0; actual callback and publication owner; no sale/Lua dispatch or game attached.\r",
+      "Vendor-session reentrancy scenarios: 13/13; assertions=0; unexpected=0; actual callback/reset/publication owners; no merchant/Lua dispatch or game attached.\r",
+      "Vendor travel scenarios: 25/25; actual policy/selection plus structural Pulse guard, no game attached.\r",
+      "Weight stat alias scenarios: 20/20; assertions=0; unexpected=0; actual WeightSetEx; no equipment or game effects.\r",
+      "Wholesome aquatic-pause scenarios: 16/16; assertions=0; unexpected=0; actual Pulse; controlled world/mover; no game attached.\r"
+    ],
+    "limits": "Controlled persistent Lua5.1 and managed owner with seeded pending state; no original-client/native/server/first-menu attribution/independent acceptance proof. No local project execution. Initial red to production has identical fixtures; final source includes disclosed one-stub adapter and retains all assertions."
+  },
+  "api_provenance": {
+    "repository": "tekkub/wow-ui-source",
+    "commit": "9640af74c40affd56fd46d6815917f96fc5c9540",
+    "label": "Build 12340 mirrored original-era UI source, not verified against installed owner client",
+    "archive_sha256": "1cfe7da3c14e92cfdb8c0233959eab7fc0a6526f2e439156c760fe6d180b844d",
+    "files": [
+      {
+        "path": "FrameXML/BNet.lua",
+        "sha256": "580bd6b2d44e1bb6a4028822aba7da6f0b531916c14b865cee91c7c89c1de526"
+      },
+      {
+        "path": "FrameXML/FloatingChatFrame.lua",
+        "sha256": "6d1a7ae674088c422098c19a0a7589ea80503caf8c97ec5ed7ea859c0df89a47"
+      },
+      {
+        "path": "FrameXML/GossipFrame.lua",
+        "sha256": "ce4f5d9f2cd745a7ccc0ebefd4490dc8bffce20fff0098587dcc1fa65d421128"
+      },
+      {
+        "path": "FrameXML/UIParent.lua",
+        "sha256": "a48687367d05ba9965bdd7a43bdecb92666c8ba74873bd7d9da08b205b34e177"
+      }
+    ],
+    "evidence": [
+      "BNet.lua line280 calls Frame:IsEventRegistered.",
+      "FloatingChatFrame.lua calls GetScript(\"OnEvent\") and dispatches the handler.",
+      "GossipFrame.lua registers GOSSIP_SHOW/GOSSIP_CLOSED; UIParent.lua registers PLAYER_ENTERING_WORLD."
+    ],
+    "limits": "Mirrored UI code establishes API usage in the pinned revision, not native event delivery ordering, bridge concurrency or original-client acceptance."
+  }
+}

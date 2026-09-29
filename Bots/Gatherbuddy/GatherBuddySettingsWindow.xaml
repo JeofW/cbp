@@ -193,16 +193,6 @@
                                 </DockPanel>
 
                                 <DockPanel Margin="0,4">
-                                    <Label Content="{loc:Resx LblDetectionRange}" Width="120"/>
-                                    <Label Content="{Binding ElementName=sldDetectionRange, Path=Value}"
-                                           ContentStringFormat="{}{0:F0} yds" Width="55" HorizontalContentAlignment="Right"/>
-                                    <Slider x:Name="sldDetectionRange" Minimum="20" Maximum="150"
-                                            TickPlacement="BottomRight" TickFrequency="10"
-                                            AutoToolTipPlacement="TopLeft" SmallChange="5"
-                                            Value="{Binding NodeDetectionRange, Mode=TwoWay}"/>
-                                </DockPanel>
-
-                                <DockPanel Margin="0,4">
                                     <Label Content="{loc:Resx LblHeightModifier}" Width="120"/>
                                     <Label Content="{Binding ElementName=sldHeightModifier, Path=Value}"
                                            ContentStringFormat="{}{0:F0} yds" Width="55" HorizontalContentAlignment="Right"/>

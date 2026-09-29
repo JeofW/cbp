@@ -71,6 +71,7 @@ internal static class RoutineBoundaryRegressionTests
             tests.Add(("yielding and cancellation in "+captured, () => VerifyDelay(DelayReferencedBy(shadow,captured))));
         }
         var failures=new List<string>();
+        using var actor = new RoutineActorFixture();
         foreach(var test in tests)
         {
             _predicates=0; _selections=0;
@@ -106,7 +107,7 @@ internal static class RoutineBoundaryRegressionTests
         return new Decorator(runner,new TreeSharp.Action(_=>RunStatus.Success));
     }
     private static WoWUnit NoTarget(object _) { _selections++; return null!; }
-    private static WoWUnit Unit(object _) { _selections++; return new WoWUnit(0); }
+    private static WoWUnit Unit(object _) { _selections++; return ObjectManager.Me!; }
     private static bool Requirement(object _) { _predicates++; return true; }
     private static bool Reject(object _) { _predicates++; return false; }
     private static bool Movement(object _) => true;

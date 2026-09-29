@@ -24,8 +24,17 @@ namespace Styx
         public int AutoRepeatingSpellId => 0;
         public bool GotAlivePet => false;
         public UnitState Pet => throw new InvalidOperationException("Unexpected pet read");
-        public bool IsFlying => false;
-        public WoWInternals.ShapeshiftForm Shapeshift => WoWInternals.ShapeshiftForm.None;
+        public bool IsFlying { get; set; }
+        public bool IsFalling { get; set; }
+        public bool MovementObservationAvailable { get; set; } = true;
+        public uint? ObservedMovementFlags { get; set; }
+        public bool TryGetMovementState(out uint flags, out ulong transportGuid)
+        {
+            flags = ObservedMovementFlags ?? ((IsFlying ? 0x02000000U : 0U) | (IsFalling ? 0x1000U : 0U));
+            transportGuid = IsOnTransport ? 1UL : 0UL;
+            return MovementObservationAvailable;
+        }
+        public WoWInternals.ShapeshiftForm Shapeshift { get; set; }
         public bool IsWanding() => false;
         // Dispatch does not fabricate a subsequently observed client flag.
         public void ToggleAttack() { Fixture.Trace.Add("autoattack-toggle"); }
@@ -41,13 +50,39 @@ namespace Styx.WoWInternals.WoWObjects
 namespace Styx.WoWInternals
 {
     public enum ShapeshiftForm { None, FlightForm, EpicFlightForm }
-    public static class Lua { public static void DoString(string _) => throw new InvalidOperationException("Lua forbidden"); }
+    public static class Lua
+    {
+        public static void DoString(string script)
+        {
+            // The real Common helper may request idempotent attack startup.
+            // Like the legacy toggle stub, submission does not fabricate a flag.
+            if (script == "StartAttack()") { Fixture.Trace.Add("autoattack-start"); return; }
+            if (DismountBoundary.Enabled && (script == "Dismount()" || script == "RunMacroText('/cancelform')"))
+            { DismountBoundary.Record(script); return; }
+            throw new InvalidOperationException("Unrelated Lua forbidden");
+        }
+    }
     public static class WoWMovement
     {
         public enum MovementDirection { Descend }
-        public static void Move(MovementDirection _) => throw new InvalidOperationException("Movement forbidden");
-        public static void MoveStop() => throw new InvalidOperationException("Movement forbidden");
-        public static void MoveStop(MovementDirection _) => throw new InvalidOperationException("Movement forbidden");
+        public static void Move(MovementDirection _) => DismountBoundary.Record("descend");
+        public static void MoveStop() => DismountBoundary.Record("stop");
+        public static void MoveStop(MovementDirection _) => DismountBoundary.Record("stop-descend");
+    }
+}
+
+// Opt-in recording of command boundaries only. No landing, mounting or actor
+// transition is synthesized by a command; tests supply subsequent observations.
+internal static class DismountBoundary
+{
+    internal static bool Enabled;
+    internal static readonly List<string> Commands = new();
+    internal static System.Action<string>? AfterCommand;
+    internal static void Record(string command)
+    {
+        if (!Enabled) throw new InvalidOperationException("Movement forbidden");
+        Commands.Add(command);
+        AfterCommand?.Invoke(command);
     }
 }
 namespace Styx.Helpers

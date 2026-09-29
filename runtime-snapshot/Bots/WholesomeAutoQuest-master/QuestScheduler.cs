@@ -13,6 +13,7 @@ using Styx.Logic.Questing;
 using Styx.Logic.Questing.Recovery;
 using Styx.WoWInternals;
 using Styx.WoWInternals.WoWObjects;
+using Styx.WoWInternals.WoWCache;
 
 #nullable disable
 
@@ -22,7 +23,13 @@ namespace WholesomeAQ
     {
         public uint QuestId { get; init; }
         public bool IsCompleted { get; init; }
+        public bool IsFailed { get; init; }
         public IReadOnlyList<int> ObjectiveCounts { get; init; } = Array.Empty<int>();
+        // Null retains the public materializer's legacy direct-input contract.
+        // The live producer always supplies both arrays, including empty evidence;
+        // its raw counters must never fall through to dataset-index completion.
+        public IReadOnlyList<int> NormalObjectiveIds { get; init; }
+        public IReadOnlyList<int> NormalObjectiveRequiredCounts { get; init; }
     }
 
     public sealed class QuestSchedulerSnapshot
@@ -63,6 +70,7 @@ namespace WholesomeAQ
             internal LocalPlayer Player;
             internal QuestLog Log;
             internal QuestLogSnapshot Observation;
+            internal IReadOnlyList<QuestSchedulerAcceptedQuest> Accepted;
             internal object OuterProfile, Profile;
             internal string Path;
             internal QuestScheduleResult Schedule;
@@ -90,7 +98,7 @@ namespace WholesomeAQ
             try
             {
                 current = HasPublicationOwner(work)
-                    && work.Log.IsSnapshotCurrent(work.Observation)
+                    && AreNormalObjectivesCurrent(work.Log, work.Observation, work.Accepted)
                     && HasPublicationOwner(work);
             }
             catch (Exception error) when (error is not ThreadInterruptedException && error is not OperationCanceledException)
@@ -187,7 +195,7 @@ namespace WholesomeAQ
             if (!tryApplyPublication(() => InvalidatePublishedWork("Refreshing quest observations; prior work is not authorized.")))
                 return false;
             QuestRecoveryRuntime.EnsureConfigured(
-                _dataLoader.DatasetFingerprint,
+                _dataLoader.ExecutionFingerprint,
                 NavigationProviderFingerprint());
             QuestLog questLog = me.QuestLog;
             QuestLogSnapshot observation = questLog.CaptureSnapshot();
@@ -197,7 +205,10 @@ namespace WholesomeAQ
                 {
                     QuestId = quest.Id,
                     IsCompleted = quest.IsCompleted,
-                    ObjectiveCounts = ReadObjectiveCounts(quest)
+                    IsFailed = observation.FailedQuestIds.Contains(quest.Id),
+                    ObjectiveCounts = ReadObjectiveCounts(quest),
+                    NormalObjectiveIds = quest.NormalObjectiveIDs?.ToArray() ?? Array.Empty<int>(),
+                    NormalObjectiveRequiredCounts = quest.NormalObjectiveRequiredCounts?.ToArray() ?? Array.Empty<int>()
                 })
                 .ToArray();
             QuestRecoveryContext context = QuestRecoveryRuntime.Capture(
@@ -229,7 +240,8 @@ namespace WholesomeAQ
                 bool applied = false;
                 tryApplyPublication(() =>
                 {
-                    bool current = snapshot.HasCompleteQuestLog && questLog.IsSnapshotCurrent(observation);
+                    bool current = snapshot.HasCompleteQuestLog &&
+                        AreNormalObjectivesCurrent(questLog, observation, accepted);
                     tryApplyPublication(() =>
                     {
                         if (!current)
@@ -247,7 +259,8 @@ namespace WholesomeAQ
             // Admission precedes recovery selection/marks and navigation probes.
             if (!TryApplyObserved(() => { }))
                 return false;
-            QuestScheduleResult candidate = MaterializeSchedule(
+            QuestStrategyPack strategyPack = _dataLoader.StrategyPack;
+            QuestScheduleResult candidate = MaterializeScheduleCore(
                 db,
                 snapshot,
                 key => QuestRecoveryManager.Instance.Evaluate(key, context),
@@ -261,7 +274,8 @@ namespace WholesomeAQ
                 isKnownUnsafe: point => BlackspotManager.IsBlackspotted(
                     new WoWPoint((float)point.X, (float)point.Y, (float)point.Z)),
                 navigationAssessment: point => AssessNavigation(point, me.Location),
-                reportDataFailure: outcome => QuestRecoveryManager.Instance.Report(outcome, context));
+                reportDataFailure: outcome => QuestRecoveryManager.Instance.Report(outcome, context),
+                strategyPack: strategyPack);
 
             // Preparation can invoke external navigation/player owners. An obsolete
             // continuation must not change a replacement's scan state or output file.
@@ -273,7 +287,8 @@ namespace WholesomeAQ
             if (candidate.Selected.Count > 0)
             {
                 string xml = _profileBuilder.BuildProfileXml(
-                    candidate.Plan, db, me.ZoneText, me.Name, me.Level, CurrentVendors);
+                    candidate.Plan, db, me.ZoneText, me.Name, me.Level, CurrentVendors,
+                    strategyPack);
                 if (!TryApplyObserved(() => path = _profileBuilder.WriteProfile(xml)))
                     return false;
             }
@@ -307,7 +322,7 @@ namespace WholesomeAQ
                     {
                         var work = new PublishedWork
                         {
-                            Player = me, Log = questLog, Observation = observation,
+                            Player = me, Log = questLog, Observation = observation, Accepted = accepted,
                             OuterProfile = Styx.Logic.Profiles.ProfileManager.CurrentOuterProfile,
                             Profile = Styx.Logic.Profiles.ProfileManager.CurrentProfile,
                             Path = path, Schedule = candidate, LeaseIsCurrent = isPublicationLeaseCurrent
@@ -385,7 +400,27 @@ namespace WholesomeAQ
             Action<string> log = null,
             Func<SpawnPoint, bool> isKnownUnsafe = null,
             Func<SpawnPoint, SpawnNavigationAssessment> navigationAssessment = null,
-            Action<QuestAttemptOutcome> reportDataFailure = null)
+            Action<QuestAttemptOutcome> reportDataFailure = null) =>
+            MaterializeScheduleCore(db, snapshot, evaluate, maximum, scanThreshold,
+                minQuestLevelOffset, validatedGrindProfilePath, markCompleted, log,
+                isKnownUnsafe, navigationAssessment, reportDataFailure, null);
+
+        // Keep the existing public/reflection contract and no-pack behavior. Only
+        // the loaded scan path supplies its dataset-bound strategy pack here.
+        private static QuestScheduleResult MaterializeScheduleCore(
+            QuestDatabase db,
+            QuestSchedulerSnapshot snapshot,
+            Func<QuestRecoveryKey, QuestRecoveryDecision> evaluate,
+            int maximum,
+            int scanThreshold,
+            int minQuestLevelOffset,
+            string validatedGrindProfilePath,
+            Action<uint> markCompleted,
+            Action<string> log,
+            Func<SpawnPoint, bool> isKnownUnsafe,
+            Func<SpawnPoint, SpawnNavigationAssessment> navigationAssessment,
+            Action<QuestAttemptOutcome> reportDataFailure,
+            QuestStrategyPack strategyPack)
         {
             if (db == null) throw new ArgumentNullException(nameof(db));
             if (snapshot == null) throw new ArgumentNullException(nameof(snapshot));
@@ -466,15 +501,16 @@ namespace WholesomeAQ
                         correctionAncestors.Contains(acceptedQuest.QuestId)
                             ? QuestWorkStage.AncestorCorrection
                             : QuestWorkStage.Objective,
-                        acceptedQuest.ObjectiveCounts,
+                        acceptedQuest,
                         db, snapshot, evaluate, candidates, candidatePlans, exclusions, scanThreshold,
-                        assessNavigation, reportDataFailure);
+                        assessNavigation, reportDataFailure, strategyPack);
                 }
             }
 
             if (snapshot.HasAuthoritativeCompletions && !questLogFull)
             {
                 int minimumLevel = Math.Max(1, snapshot.PlayerLevel - minQuestLevelOffset);
+                var claimedPositiveExclusiveGroups = new HashSet<int>();
                 foreach (QuestEntry quest in db.Quests.OrderBy(quest => quest.QuestLevel).ThenBy(quest => quest.Id))
                 {
                     uint questId = (uint)quest.Id;
@@ -485,17 +521,36 @@ namespace WholesomeAQ
                         !RaceAllowed(quest.AllowableRaces, snapshot.PlayerRaceId) ||
                         !Supported(quest))
                         continue;
-
-                    uint ancestor = FindAcceptedIncompleteAncestor(quest, quests, accepted, completed);
-                    if (ancestor != 0 || !PrerequisitesComplete(quest, completed))
+                    if (!PositiveExclusiveGroupAvailable(
+                        quest, db, accepted, completed, claimedPositiveExclusiveGroups))
                         continue;
 
+                    // TrinityCore 3.3.5 primary: a negative direct PrevQuestID
+                    // requires QUEST_STATUS_INCOMPLETE. Accepted ready/completed
+                    // and failed parents do not unlock the child. Pinned
+                    // AzerothCore WotLK is broader (non-NONE); keep that
+                    // compatibility difference explicit rather than inferring a
+                    // source core from the realm or dataset name.
+                    if (quest.PrevQuestID < 0 &&
+                        (quest.PrevQuestID == int.MinValue ||
+                         !accepted.TryGetValue((uint)-quest.PrevQuestID, out QuestSchedulerAcceptedQuest activeParent) ||
+                         activeParent.IsCompleted ||
+                         activeParent.IsFailed))
+                        continue;
+
+                    uint ancestor = FindAcceptedIncompleteAncestor(quest, quests, accepted, completed);
+                    if (ancestor != 0 || !PrerequisitesComplete(quest, quests, completed))
+                        continue;
+
+                    int plannedBefore = candidatePlans.Count;
                     AddRelationWork(
                         quest, QuestWorkStage.Pickup, QuestRecoveryStage.Pickup,
                         db.QuestGivers.Where(giver => giver.QuestId == quest.Id)
                             .Select(giver => new Relation(giver.GiverId, giver: giver)),
                         db, snapshot, evaluate, candidates, candidatePlans, exclusions, scanThreshold,
                         assessNavigation, reportDataFailure);
+                    if (quest.ExclusiveGroup > 0 && candidatePlans.Count > plannedBefore)
+                        claimedPositiveExclusiveGroups.Add(quest.ExclusiveGroup);
                 }
             }
 
@@ -711,7 +766,7 @@ namespace WholesomeAQ
         private static void AddObjectiveWork(
             QuestEntry quest,
             QuestWorkStage workStage,
-            IReadOnlyList<int> objectiveCounts,
+            QuestSchedulerAcceptedQuest acceptedQuest,
             QuestDatabase db,
             QuestSchedulerSnapshot snapshot,
             Func<QuestRecoveryKey, QuestRecoveryDecision> evaluate,
@@ -720,7 +775,8 @@ namespace WholesomeAQ
             List<string> exclusions,
             int scanThreshold,
             Func<SpawnPoint, SpawnNavigationAssessment> assessNavigation,
-            Action<QuestAttemptOutcome> reportDataFailure)
+            Action<QuestAttemptOutcome> reportDataFailure,
+            QuestStrategyPack strategyPack)
         {
             var stageKey = QuestRecoveryKey.ForQuestStage((uint)quest.Id, QuestRecoveryStage.Objective);
             QuestRecoveryDecision stageDecision = evaluate(stageKey);
@@ -742,11 +798,40 @@ namespace WholesomeAQ
             var allEndpoints = new List<QuestEndpointCandidate>();
             foreach (QuestObjective objective in quest.Objectives.OrderBy(value => value.Index))
             {
-                // Already-satisfied work does not require usable collection-source
-                // metadata. Do not turn an unused source into a quest-data failure.
-                if (IsObjectiveComplete(objective, objectiveCounts, snapshot.CarriedItemCounts))
+                QuestStrategyRecipe[] strategies = strategyPack?.Recipes
+                    ?.Where(recipe => recipe != null && recipe.QuestId == quest.Id &&
+                        recipe.ObjectiveIndex == objective.Index)
+                    .Take(2).ToArray() ?? Array.Empty<QuestStrategyRecipe>();
+                bool hasDeclaredStrategy = strategies.Length != 0;
+
+                // Dataset indexes do not establish packed-counter slots. A declared
+                // recipe may use independent carried-item completion, but cannot
+                // borrow an unrelated raw count before its action is admitted.
+                bool complete = hasDeclaredStrategy
+                    ? snapshot.CarriedItemCounts != null &&
+                        (objective.Type == ObjectiveType.CollectItem ||
+                         objective.Type == ObjectiveType.CollectFromGameObject) &&
+                        IsAcceptedObjectiveComplete(objective, null, snapshot.CarriedItemCounts)
+                    : IsAcceptedObjectiveComplete(objective, acceptedQuest, snapshot.CarriedItemCounts);
+                if (complete)
                     continue;
-                if (!Supported(objective))
+
+                if (hasDeclaredStrategy)
+                {
+                    if (strategies.Length != 1 ||
+                        !CanScheduleWholeQuestStrategy(quest, objective, strategyPack, strategies[0]))
+                    {
+                        var unsupportedKey = QuestRecoveryKey.ForObjective((uint)quest.Id, objective.Index);
+                        QuestRecoveryDecision unsupportedDecision = evaluate(unsupportedKey);
+                        if (unsupportedDecision.MayAttempt)
+                            ReportDataOmission(unsupportedKey, QuestFailureReason.UnsupportedObjective,
+                                "scheduler:unsupported-or-unmapped-strategy", reportDataFailure);
+                        AddObjectiveOmission(quest, workStage, objective.Index,
+                            "unsupported-or-unmapped-strategy", unsupportedDecision.RetryUtc, exclusions);
+                        continue;
+                    }
+                }
+                else if (!Supported(quest, objective))
                 {
                     var unsupportedKey = QuestRecoveryKey.ForObjective((uint)quest.Id, objective.Index);
                     QuestRecoveryDecision unsupportedDecision = evaluate(unsupportedKey);
@@ -1318,8 +1403,47 @@ namespace WholesomeAQ
             };
         }
 
+        private static bool CanScheduleWholeQuestStrategy(
+            QuestEntry quest,
+            QuestObjective objective,
+            QuestStrategyPack pack,
+            QuestStrategyRecipe recipe)
+        {
+            // V1 declares a dataset objective index, not a validated raw-counter
+            // mapping. Defer ObjectiveProgress without changing its declared success
+            // condition. Existing QuestComplete recipes do not consume that index.
+            if (pack.Status != QuestStrategyPackStatus.DeclaredAndBound || pack.ClientBuild != 12340 ||
+                recipe.QuestId != quest.Id || recipe.ObjectiveIndex != objective.Index ||
+                recipe.SuccessEvidence != QuestStrategySuccessEvidence.QuestComplete ||
+                recipe.TargetType != QuestStrategyTargetType.Creature || recipe.TargetId <= 0 ||
+                recipe.TargetId != objective.MobId ||
+                (objective.Type != ObjectiveType.KillMob && objective.Type != ObjectiveType.CollectItem) ||
+                double.IsNaN(recipe.Range) || double.IsInfinity(recipe.Range) ||
+                recipe.Range <= 0 || recipe.Range > 100 || recipe.MaxAttempts < 1 || recipe.MaxAttempts > 20)
+                return false;
+
+            // Match the implemented materializers; do not enable an unsupported
+            // action only to abort publication of other valid objective work later.
+            if (recipe.Kind == QuestStrategyKind.UseItemOn)
+                return recipe.ItemId > 0 &&
+                    (recipe.TargetState == QuestStrategyTargetState.Alive ||
+                     recipe.TargetState == QuestStrategyTargetState.Dead ||
+                     recipe.TargetState == QuestStrategyTargetState.DontCare);
+            if (recipe.Kind == QuestStrategyKind.GossipEvent)
+                return recipe.GossipOptionIndex >= 0 && recipe.GossipOptionIndex <= 64;
+            return false;
+        }
+
         private static bool Supported(QuestEntry quest) =>
-            quest.Objectives.Count > 0 && quest.Objectives.All(Supported);
+            quest.Objectives.Count > 0 && quest.Objectives.All(objective => Supported(quest, objective));
+
+        private static bool Supported(QuestEntry quest, QuestObjective objective) =>
+            Supported(objective) &&
+            // Both TrinityCore 3.3.5 and AzerothCore use SpecialFlags 0x20
+            // for cast credit, not a kill. No item/interaction recipe is implied.
+            // Keep the imported row intact; unsupported work is reported by its
+            // existing objective owner, after satisfied counters are considered.
+            (objective.Type != ObjectiveType.KillMob || (quest.SpecialFlags & 0x20) == 0);
 
         private static bool Supported(QuestObjective objective) =>
             (objective.Type == ObjectiveType.KillMob && objective.MobId > 0) ||
@@ -1327,9 +1451,18 @@ namespace WholesomeAQ
             (objective.Type == ObjectiveType.CollectFromGameObject && objective.GameObjectId > 0) ||
             objective.Type == ObjectiveType.TurnInOnly;
 
+        // Preserve the existing reflection-used raw-input predicate. Live scans
+        // use the separately named accepted-quest predicate with captured metadata.
         private static bool IsObjectiveComplete(
             QuestObjective objective,
             IReadOnlyList<int> objectiveCounts,
+            IReadOnlyDictionary<int, long> carriedItemCounts) =>
+            IsAcceptedObjectiveComplete(objective,
+                new QuestSchedulerAcceptedQuest { ObjectiveCounts = objectiveCounts }, carriedItemCounts);
+
+        private static bool IsAcceptedObjectiveComplete(
+            QuestObjective objective,
+            QuestSchedulerAcceptedQuest acceptedQuest,
             IReadOnlyDictionary<int, long> carriedItemCounts)
         {
             // Match CollectItemObjective's completion rule for every source of the item.
@@ -1338,6 +1471,36 @@ namespace WholesomeAQ
                 (objective.Type == ObjectiveType.CollectItem || objective.Type == ObjectiveType.CollectFromGameObject))
                 return objective.CollectCount > 0 &&
                     carriedItemCounts.TryGetValue(objective.ItemId, out long count) && count >= objective.CollectCount;
+            if (acceptedQuest == null)
+                return false;
+            IReadOnlyList<int> objectiveCounts = acceptedQuest.ObjectiveCounts;
+            IReadOnlyList<int> ids = acceptedQuest.NormalObjectiveIds;
+            IReadOnlyList<int> requirements = acceptedQuest.NormalObjectiveRequiredCounts;
+            if (ids != null || requirements != null)
+            {
+                // Only an unambiguous creature credit with the same required count
+                // can suppress this ordinary kill row. A dataset index, collection
+                // item or same-numbered GameObject is not a normal creature slot.
+                if (objective.Type != ObjectiveType.KillMob || objective.MobId <= 0 ||
+                    objective.KillCount <= 0 || ids == null || requirements == null ||
+                    ids.Count != 4 || requirements.Count != 4 || objectiveCounts == null ||
+                    objectiveCounts.Count != 4)
+                    return false;
+                int matchedSlot = -1;
+                for (int slot = 0; slot < 4; slot++)
+                {
+                    if (ids[slot] != objective.MobId)
+                        continue;
+                    if (matchedSlot >= 0)
+                        return false;
+                    matchedSlot = slot;
+                }
+                return matchedSlot >= 0 && requirements[matchedSlot] == objective.KillCount &&
+                    objectiveCounts[matchedSlot] >= objective.KillCount;
+            }
+
+            // Compatibility for explicitly supplied legacy materializer snapshots.
+            // ScanAndRefreshOwned always supplies metadata and cannot enter this path.
             if (objectiveCounts == null || objective.Index < 0 || objective.Index >= objectiveCounts.Count)
                 return false;
             int required = objective.Type == ObjectiveType.KillMob
@@ -1368,11 +1531,108 @@ namespace WholesomeAQ
                 .SelectMany(giver => GetRelationSpawns(giver.GiverId, giver.GiverType, db))
                 .Any(point => InRange(point, snapshot, scanThreshold));
 
-        private static bool PrerequisitesComplete(QuestEntry quest, HashSet<uint> completed)
+        private static bool PositiveExclusiveGroupAvailable(
+            QuestEntry quest,
+            QuestDatabase db,
+            IReadOnlyDictionary<uint, QuestSchedulerAcceptedQuest> accepted,
+            HashSet<uint> completed,
+            HashSet<int> claimed)
         {
-            if (quest.PrevQuestID > 0 && !completed.Contains((uint)quest.PrevQuestID))
+            int group = quest.ExclusiveGroup;
+            if (group <= 0)
+                return true;
+            if (claimed.Contains(group))
                 return false;
-            return quest.PreviousQuestsIds.All(id => id <= 0 || completed.Contains((uint)id));
+
+            return !db.Quests.Any(other =>
+                other.Id > 0 &&
+                other.Id != quest.Id &&
+                other.ExclusiveGroup == group &&
+                (accepted.ContainsKey((uint)other.Id) || completed.Contains((uint)other.Id)));
+        }
+
+        private static bool PrerequisitesComplete(
+            QuestEntry quest,
+            IReadOnlyDictionary<uint, QuestEntry> quests,
+            HashSet<uint> completed) =>
+            BlockingPrerequisiteRoots(quest, quests, completed).Count == 0;
+
+        private static IReadOnlyList<uint> BlockingPrerequisiteRoots(
+            QuestEntry quest,
+            IReadOnlyDictionary<uint, QuestEntry> quests,
+            HashSet<uint> completed)
+        {
+            var blockers = new List<uint>();
+            var seen = new HashSet<uint>();
+
+            // Direct PrevQuestID keeps its own signed 3.3.5 contract. The
+            // negative form is handled by the active-parent gate above; the
+            // positive form independently requires rewarded history.
+            if (quest.PrevQuestID > 0)
+            {
+                uint direct = (uint)quest.PrevQuestID;
+                if (!completed.Contains(direct) && seen.Add(direct))
+                    blockers.Add(direct);
+            }
+
+            // Pinned TrinityCore 3.3.5 treats DependentPreviousQuests as an
+            // ordered OR. A rewarded ordinary/positive-group predecessor
+            // satisfies the dependent gate immediately. A rewarded predecessor
+            // in a negative ExclusiveGroup switches to each-from-all semantics;
+            // a missing member fails that gate immediately rather than falling
+            // through to a later alternative.
+            foreach (int rawId in quest.PreviousQuestsIds)
+            {
+                if (rawId <= 0)
+                    continue;
+
+                uint id = (uint)rawId;
+                if (!completed.Contains(id))
+                    continue;
+
+                // Unknown predecessor metadata cannot prove that this completed
+                // quest is an ordinary alternative. Keep scanning for another
+                // rewarded candidate with known metadata; otherwise fail closed.
+                if (!quests.TryGetValue(id, out QuestEntry predecessor))
+                    continue;
+
+                if (predecessor.ExclusiveGroup >= 0)
+                    return blockers;
+
+                int group = predecessor.ExclusiveGroup;
+                uint[] missingGroupMembers = quests.Values
+                    .Where(candidate =>
+                        candidate.Id > 0 &&
+                        candidate.ExclusiveGroup == group &&
+                        !completed.Contains((uint)candidate.Id))
+                    .Select(candidate => (uint)candidate.Id)
+                    .OrderBy(candidateId => candidateId)
+                    .ToArray();
+
+                if (missingGroupMembers.Length == 0)
+                    return blockers;
+
+                foreach (uint missing in missingGroupMembers)
+                    if (seen.Add(missing))
+                        blockers.Add(missing);
+
+                return blockers;
+            }
+
+            // No known rewarded alternative satisfied the dependent gate.
+            // Preserve source order and keep unknown completed candidates as
+            // blockers: completion without predecessor metadata is not
+            // permission to assume non-negative group semantics.
+            foreach (int rawId in quest.PreviousQuestsIds)
+            {
+                if (rawId <= 0)
+                    continue;
+                uint id = (uint)rawId;
+                if (seen.Add(id))
+                    blockers.Add(id);
+            }
+
+            return blockers;
         }
 
         private static uint FindAcceptedIncompleteAncestor(
@@ -1383,8 +1643,8 @@ namespace WholesomeAQ
         {
             var pending = new Queue<uint>();
             var seen = new HashSet<uint>();
-            foreach (int id in DirectPrerequisites(quest))
-                if (id > 0) pending.Enqueue((uint)id);
+            foreach (uint id in BlockingPrerequisiteRoots(quest, quests, completed))
+                pending.Enqueue(id);
 
             while (pending.Count > 0)
             {
@@ -1395,27 +1655,60 @@ namespace WholesomeAQ
                     return id;
                 if (quests.TryGetValue(id, out QuestEntry ancestor))
                 {
-                    foreach (int previous in DirectPrerequisites(ancestor))
-                        if (previous > 0) pending.Enqueue((uint)previous);
+                    foreach (uint previous in BlockingPrerequisiteRoots(ancestor, quests, completed))
+                        pending.Enqueue(previous);
                 }
             }
             return 0;
         }
 
-        private static IEnumerable<int> DirectPrerequisites(QuestEntry quest)
+        private static bool AreNormalObjectivesCurrent(
+            QuestLog log, QuestLogSnapshot observation,
+            IReadOnlyList<QuestSchedulerAcceptedQuest> accepted)
         {
-            if (quest.PrevQuestID > 0)
-                yield return quest.PrevQuestID;
-            foreach (int id in quest.PreviousQuestsIds.OrderBy(id => id))
-                yield return id;
+            try
+            {
+                var memory = ObjectManager.Wow;
+                if (memory == null || accepted == null || !log.IsSnapshotCurrent(observation))
+                    return false;
+                // Resolve through the host's existing cache lookup. Bypass memory
+                // caching only for the resolved metadata contents, not for unrelated
+                // cache-directory or world observations made by other owners.
+                foreach (QuestSchedulerAcceptedQuest captured in accepted)
+                {
+                    var block = Styx.StyxWoW.Cache[CacheDb.Quest].GetInfoBlockById(captured.QuestId);
+                    if (block == null || block.Address == 0)
+                        return false;
+                    WoWCache.QuestCacheEntry current;
+                    using (memory.TemporaryCacheState(false))
+                        current = block.Quest;
+                    if (current.Id != captured.QuestId ||
+                        captured.NormalObjectiveIds == null || captured.NormalObjectiveRequiredCounts == null ||
+                        current.ObjectiveId == null || current.ObjectiveRequiredCount == null ||
+                        !captured.NormalObjectiveIds.SequenceEqual(current.ObjectiveId) ||
+                        !captured.NormalObjectiveRequiredCounts.SequenceEqual(current.ObjectiveRequiredCount))
+                        return false;
+                }
+                return ReferenceEquals(memory, ObjectManager.Wow) && log.IsSnapshotCurrent(observation);
+            }
+            catch (Exception error) when (error is not ThreadInterruptedException && error is not OperationCanceledException)
+            {
+                return false;
+            }
         }
 
         private static IReadOnlyList<int> ReadObjectiveCounts(PlayerQuest quest)
         {
             try
             {
-                if (quest.GetData(out QuestDescriptorData data) && data.ObjectivesDone != null)
-                    return data.ObjectivesDone.Select(value => (int)value).ToArray();
+                var memory = ObjectManager.Wow;
+                if (memory == null)
+                    return Array.Empty<int>();
+                using (memory.TemporaryCacheState(false))
+                {
+                    if (quest.GetData(out QuestDescriptorData data) && data.Id == quest.Id && data.ObjectivesDone != null)
+                        return data.ObjectivesDone.Select(value => (int)value).ToArray();
+                }
             }
             catch (Exception ex)
             {

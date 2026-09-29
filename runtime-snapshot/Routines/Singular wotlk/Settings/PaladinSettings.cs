@@ -61,6 +61,20 @@ namespace Singular.Settings
         public PaladinBlessings Blessings { get; set; }
 
         [Setting]
+        [DefaultValue(false)]
+        [Category("Common")]
+        [DisplayName("Use Greater Blessings")]
+        [Description("Prefer a learned Greater blessing out of combat only with known reagent availability and compatible same-class group coverage. Otherwise use the normal blessing.")]
+        public bool UseGreaterBlessings { get; set; }
+
+        [Setting]
+        [DefaultValue(false)]
+        [Category("Common")]
+        [DisplayName("Use PallyPower Assignments")]
+        [Description("When PallyPower is loaded in verified Wrath mode, honor its read-only local blessing and aura assignments while Singular is set to Auto. Unknown or incompatible addon state defers rather than guessing; this never writes PallyPower data.")]
+        public bool UsePallyPowerAssignments { get; set; }
+
+        [Setting]
         [DefaultValue(30)]
         [Category("Common")]
         [DisplayName("Lay on Hand Health")]
@@ -138,6 +152,34 @@ namespace Singular.Settings
         [DisplayName("Heal Health")]
         [Description("Healing will be done at this percentage")]
         public int RetributionHealHealth { get; set; }
+
+        [Setting]
+        [DefaultValue(false)]
+        [Category("Retribution")]
+        [DisplayName("Use Solo Seal of Light")]
+        [Description("Opt-in sustain while Seal is Auto, solo in Normal-context combat against a non-player, non-elite, non-boss target. Does not replace emergency healing, group damage or PvP seal choices.")]
+        public bool UseSoloSealOfLight { get; set; }
+
+        [Setting]
+        [DefaultValue(50)]
+        [Category("Retribution")]
+        [DisplayName("Solo Seal of Light Entry Health")]
+        [Description("Start Light at or below this health percentage, above the existing emergency-heal threshold, only in melee with sufficient mana. Policy threshold, not an optimal-DPS guarantee.")]
+        public int SoloSealOfLightHealth { get; set; }
+
+        [Setting]
+        [DefaultValue(75)]
+        [Category("Retribution")]
+        [DisplayName("Solo Seal of Light Recovery Health")]
+        [Description("Keep an observed Light below this percentage; resume the normal damage seal at or above it. Must be greater than Entry Health and at most 100.")]
+        public int SoloSealOfLightRecoveryHealth { get; set; }
+
+        [Setting]
+        [DefaultValue(30)]
+        [Category("Retribution")]
+        [DisplayName("Solo Seal of Light Minimum Mana")]
+        [Description("Minimum observed mana percentage to start Light. The actual spell layer still checks cost, usability and cooldown. Does not repeatedly replace an existing Light as mana drops.")]
+        public int SoloSealOfLightMinimumMana { get; set; }
 
         #endregion
     }

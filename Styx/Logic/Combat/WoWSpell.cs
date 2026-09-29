@@ -1,6 +1,7 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using GreenMagic;
 using Styx.Helpers;
 using Styx.Patchables;
@@ -187,72 +188,27 @@ namespace Styx.Logic.Combat
 
         public int PowerCost
         {
-            get
-            {
-                SpellInfoCache cache;
-                if (_spellInfoCache.TryGetValue(Id, out cache))
-                {
-                    return cache.PowerCost;
-                }
-                _spellInfoCache.Add(Id, GetSpellInfo());
-                return _spellInfoCache[Id].PowerCost;
-            }
+            get { return GetCachedSpellInfo().PowerCost; }
         }
 
         public bool IsFunnel
         {
-            get
-            {
-                SpellInfoCache cache;
-                if (_spellInfoCache.TryGetValue(Id, out cache))
-                {
-                    return cache.IsFunnel;
-                }
-                _spellInfoCache.Add(Id, GetSpellInfo());
-                return _spellInfoCache[Id].IsFunnel;
-            }
+            get { return GetCachedSpellInfo().IsFunnel; }
         }
 
         public uint CastTime
         {
-            get
-            {
-                SpellInfoCache cache;
-                if (_spellInfoCache.TryGetValue(Id, out cache))
-                {
-                    return cache.CastTime;
-                }
-                _spellInfoCache.Add(Id, GetSpellInfo());
-                return _spellInfoCache[Id].CastTime;
-            }
+            get { return GetCachedSpellInfo().CastTime; }
         }
 
         public float MinRange
         {
-            get
-            {
-                SpellInfoCache cache;
-                if (_spellInfoCache.TryGetValue(Id, out cache))
-                {
-                    return cache.MinRange;
-                }
-                _spellInfoCache.Add(Id, GetSpellInfo());
-                return _spellInfoCache[Id].MinRange;
-            }
+            get { return GetCachedSpellInfo().MinRange; }
         }
 
         public float MaxRange
         {
-            get
-            {
-                SpellInfoCache cache;
-                if (_spellInfoCache.TryGetValue(Id, out cache))
-                {
-                    return cache.MaxRange;
-                }
-                _spellInfoCache.Add(Id, GetSpellInfo());
-                return _spellInfoCache[Id].MaxRange;
-            }
+            get { return GetCachedSpellInfo().MaxRange; }
         }
 
         public uint MaxStackCount
@@ -429,23 +385,62 @@ namespace Styx.Logic.Combat
             );
         }
 
+        private SpellInfoCache GetCachedSpellInfo()
+        {
+            lock (_spellInfoCache)
+            {
+                if (_spellInfoCache.TryGetValue(Id, out var cached))
+                    return cached;
+            }
+
+            var observed = GetSpellInfo();
+            if (observed != null)
+            {
+                lock (_spellInfoCache)
+                    _spellInfoCache[Id] = observed;
+            }
+            // Preserve legacy getter defaults without caching a failed read
+            // as valid metadata. Admission uses the explicit current result.
+            return observed ?? new SpellInfoCache();
+        }
+
+        internal bool TryGetCurrentSpellInfo(out uint castTime, out bool isFunnel,
+            out float minRange, out float maxRange)
+        {
+            var observed = GetSpellInfo();
+            lock (_spellInfoCache)
+            {
+                if (observed == null)
+                    _spellInfoCache.Remove(Id);
+                else
+                    _spellInfoCache[Id] = observed;
+            }
+            castTime = observed?.CastTime ?? 0U;
+            isFunnel = observed?.IsFunnel ?? false;
+            minRange = observed?.MinRange ?? 0f;
+            maxRange = observed?.MaxRange ?? 0f;
+            return observed != null;
+        }
+
         private SpellInfoCache GetSpellInfo()
         {
-            var result = Lua.GetReturnValues("return GetSpellInfo(" + Id + ")", "hax.lua");
-            int powerCost = 0;
-            bool isFunnel = false;
-            uint castTime = 0;
-            float minRange = 0f;
-            float maxRange = 0f;
-            
-            if (result != null && result.Count > 8)
-            {
-                int.TryParse(result[3], out powerCost);
-                bool.TryParse(result[4], out isFunnel);
-                uint.TryParse(result[6], out castTime);
-                float.TryParse(result[7], out minRange);
-                float.TryParse(result[8], out maxRange);
-            }
+            // Build12340's fifth return is a Lua boolean. The managed bridge
+            // uses lua_tolstring, which does not convert booleans itself.
+            var result = Lua.GetReturnValues(
+                "if type(GetSpellInfo) ~= 'function' then return end; " +
+                "local name,rank,icon,cost,funnel,power,castTime,minRange,maxRange=GetSpellInfo(" +
+                Id.ToString(CultureInfo.InvariantCulture) + "); " +
+                "if type(funnel) ~= 'boolean' then return end; " +
+                "return name,rank,icon,cost,tostring(funnel),power,castTime,minRange,maxRange", "hax.lua");
+            if (result == null || result.Count < 9 || string.IsNullOrEmpty(result[0]) || result[0] == "nil" ||
+                !int.TryParse(result[3], NumberStyles.Integer, CultureInfo.InvariantCulture, out var powerCost) || powerCost < 0 ||
+                !bool.TryParse(result[4], out var isFunnel) ||
+                !uint.TryParse(result[6], NumberStyles.Integer, CultureInfo.InvariantCulture, out var castTime) ||
+                !float.TryParse(result[7], NumberStyles.Float, CultureInfo.InvariantCulture, out var minRange) ||
+                !float.TryParse(result[8], NumberStyles.Float, CultureInfo.InvariantCulture, out var maxRange) ||
+                float.IsNaN(minRange) || float.IsInfinity(minRange) || minRange < 0f ||
+                float.IsNaN(maxRange) || float.IsInfinity(maxRange) || maxRange < minRange)
+                return null;
 
             return new SpellInfoCache
             {

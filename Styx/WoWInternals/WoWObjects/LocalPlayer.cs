@@ -2443,15 +2443,14 @@ namespace Styx.WoWInternals.WoWObjects
 
         #region Pending Cursor Spell
 
-        // Offsets for pending cursor spell (3.3.5a)
-        // SpellTargetMode - indicates if we're in targeting mode: 0x00CEC1CC
-        // SpellTargetSpellId - the spell ID being targeted: 0x00CEC1D0
-        private const uint SpellTargetModePtr = 0x00CEC1CC;
-        private const uint SpellTargetSpellIdPtr = 0x00CEC1D0;
+        // Build12340 getter 0x7FD630 reads the pending object, then its spell ID.
+        // This is a current observation, not ownership of a targeting request.
+        private const uint PendingCursorSpellPtr = 0x00D3F4E4;
+        private const uint PendingCursorSpellIdOffset = 0x20;
 
         /// <summary>
         /// Gets the spell currently awaiting target selection (null if none).
-        /// Ported from HB 4.3.4.
+        /// Reads the original 3.3.5a pending-spell object.
         /// </summary>
         public WoWSpell? CurrentPendingCursorSpell
         {
@@ -2459,9 +2458,10 @@ namespace Styx.WoWInternals.WoWObjects
             {
                 if (Memory == null)
                     return null;
-                if (Memory.Read<uint>(SpellTargetModePtr) == 0U)
+                uint pendingSpell = Memory.Read<uint>(PendingCursorSpellPtr);
+                if (pendingSpell == 0U || pendingSpell > uint.MaxValue - PendingCursorSpellIdOffset)
                     return null;
-                int spellId = Memory.Read<int>(SpellTargetSpellIdPtr);
+                int spellId = Memory.Read<int>(pendingSpell + PendingCursorSpellIdOffset);
                 if (spellId <= 0)
                     return null;
                 return WoWSpell.FromId(spellId);

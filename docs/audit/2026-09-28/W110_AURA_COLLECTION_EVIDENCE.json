@@ -1,0 +1,833 @@
+{
+  "schema": "w110-collection-calling-closeout-v1",
+  "created_utc": "2026-09-28T06:11:19.190730+00:00",
+  "source": "6f74e3cdf811c19f3445c13bfd626b897fb6b8e9",
+  "tree": "1a51dd739259c0f670556ab22f595e771fac9236",
+  "red_source": "fc7e65308b66a8d4401ce1c39f04d15f0adadc94",
+  "repository": "JeofW/cbp",
+  "repository_id": 1367174964,
+  "branch": "audit/next-55-equipment-observation-20260917",
+  "prior_docs": "2ea5bee770bf58e7e4946165e9dec2180d3f8d07",
+  "current_observations": {
+    "local_session": 56127,
+    "direct_refs_session": 50808,
+    "pr_session": 27586,
+    "head": "6f74e3cdf811c19f3445c13bfd626b897fb6b8e9",
+    "master": "b2324913e2499ba30b239dd67224ca2c655c05cc",
+    "pr_state": "open",
+    "draft": true,
+    "merged": false
+  },
+  "source_verification_file": "W110_COLLECTION_CLOSEOUT_SOURCE_VERIFICATION_20260928.json",
+  "source_verification_sha256": "4a67c82e533d86d5a26893f353e5b28b2097e3010e0d0defc3becacb96fb1aa5",
+  "stages": {
+    "red_integrated": {
+      "receipt": {
+        "verified_at_utc": "2026-09-28T05:40:08.4994099Z",
+        "repository": "JeofW/cbp",
+        "repository_id": 1367174964,
+        "run": 36382368668,
+        "jobs": [
+          {
+            "id": 108800593392,
+            "name": "combined",
+            "status": "completed",
+            "conclusion": "failure",
+            "labels": [
+              "windows-2022"
+            ],
+            "runner_name": "GitHub Actions 1000000569"
+          }
+        ],
+        "run_conclusion": "failure",
+        "source": "fc7e65308b66a8d4401ce1c39f04d15f0adadc94",
+        "artifact": 10952678178,
+        "artifact_name": "integrated-fc7e65308b66a8d4401ce1c39f04d15f0adadc94",
+        "archive": "D:\\Dev\\CopilotBuddy-Evidence\\w110-aura-collection-red-integrated-fc7e6530.zip",
+        "sha256": "0311c1fac76d0ed89925669befe73639ac141d21ae608cc413a80bfd837d23c1",
+        "metadata_digest": "sha256:0311c1fac76d0ed89925669befe73639ac141d21ae608cc413a80bfd837d23c1",
+        "bytes": 1003108
+      },
+      "receipt_file": "w110-aura-collection-red-integrated-fc7e6530-receipt.json",
+      "receipt_sha256": "fc2907abcf27a689a1d64ee20c1ea4c791c528ca1f39c5343d895d675b2671c7",
+      "identity": {
+        "production_commit": "fc7e65308b66a8d4401ce1c39f04d15f0adadc94",
+        "production_tree": "9da61eb27040748d962b4b11675bdc3787d74e17",
+        "fixture_commit": "fc7e65308b66a8d4401ce1c39f04d15f0adadc94",
+        "game_attached": false
+      },
+      "members": 228,
+      "inner_hashes": 227,
+      "source_inputs": 1866,
+      "current_inputs_matched": 0,
+      "groups_passed": 16,
+      "results": [
+        {
+          "suite": "QuestRecoveryRegressionTests",
+          "architecture": "x86",
+          "build": 0,
+          "harness_error": null,
+          "game_attached": false,
+          "run": 0
+        },
+        {
+          "architecture": "x86",
+          "suite": "Singular",
+          "run": 0,
+          "build": 0,
+          "game_attached": false
+        },
+        {
+          "suite": "WholesomeQuestRecoveryRegressionTests",
+          "architecture": "x86",
+          "build": 0,
+          "harness_error": null,
+          "game_attached": false,
+          "run": 1
+        },
+        {
+          "suite": "QuestRecoveryAdapterRegressionTests",
+          "architecture": "x86",
+          "build": 0,
+          "harness_error": null,
+          "game_attached": false,
+          "run": 0
+        },
+        {
+          "suite": "QuestPickupPolicyRegressionTests",
+          "architecture": "x86",
+          "build": 0,
+          "harness_error": null,
+          "game_attached": false,
+          "run": 0
+        },
+        {
+          "suite": "VendorCoreRegressionTests",
+          "architecture": "x86",
+          "build": 0,
+          "harness_error": null,
+          "game_attached": false,
+          "run": 0
+        },
+        {
+          "suite": "NativeContractRegressionTests",
+          "architecture": "x86",
+          "build": 0,
+          "harness_error": null,
+          "game_attached": false,
+          "run": 0
+        },
+        {
+          "suite": "ShutdownBoundaryRegressionTests",
+          "architecture": "x86",
+          "build": 0,
+          "harness_error": null,
+          "game_attached": false,
+          "run": 0
+        },
+        {
+          "suite": "Elevator",
+          "architecture": "x86",
+          "build": 0,
+          "harness_error": null,
+          "game_attached": false,
+          "run": 0
+        },
+        {
+          "suite": "PaladinDecisions",
+          "architecture": "x86",
+          "build": 0,
+          "harness_error": null,
+          "game_attached": false,
+          "run": 0
+        },
+        {
+          "suite": "GroupEngagement",
+          "architecture": "x86",
+          "build": 0,
+          "harness_error": null,
+          "game_attached": false,
+          "run": 0
+        },
+        {
+          "suite": "PaladinSupport",
+          "architecture": "x86",
+          "build": 0,
+          "harness_error": null,
+          "game_attached": false,
+          "run": 0
+        },
+        {
+          "suite": "WholesomeSale",
+          "architecture": "x86",
+          "build": 0,
+          "harness_error": null,
+          "game_attached": false,
+          "run": 0
+        },
+        {
+          "suite": "QuestLogObservationRegressionTests",
+          "architecture": "x86",
+          "build": 0,
+          "harness_error": null,
+          "game_attached": false,
+          "run": 0
+        },
+        {
+          "suite": "QuestCompletionOwnerRegressionTests",
+          "architecture": "x86",
+          "build": 0,
+          "harness_error": null,
+          "game_attached": false,
+          "run": 0
+        },
+        {
+          "suite": "QuestObservationBoundaryRegressionTests",
+          "architecture": "x86",
+          "build": 0,
+          "harness_error": null,
+          "game_attached": false,
+          "run": 0
+        },
+        {
+          "suite": "Analyzers",
+          "run": 0,
+          "build": 0,
+          "game_attached": false
+        }
+      ],
+      "collection_summary": "Aura collection validity scenarios: 27/75; assertions=48; unexpected=0; complete tracked collection/Memory typed-byte-raw-cache chain and blessing selector; external transfer/world/spell lookup controlled; no process/native/game/server execution or atomic snapshot proof.\r",
+      "retained_summaries": [
+        "Ammo world observation scenarios: 8/8; assertions=0; unexpected=0; complete tracked world/in-game getters, host enums and ammo/context/cursor methods; controlled memory/API/actor leaves; no native mapping, game or server acceptance.",
+        "Aura count safety scenarios: 8/8; assertions=0; unexpected=0; actual owner/source; no oversized allocation or game attached.",
+        "Aura duration observation scenarios: 96/96; assertions=0; unexpected=0; complete tracked aura data/timer and actual blessing selector; native signed-duration/expiry vectors; clock/name/world/readiness controlled; no native/game/server execution or magnitude proof.",
+        "Autoattack startup scenarios: 26/26; assertions=0; unexpected=0; actual Common/LocalPlayer Lua and TreeSharp; stock Lua5.1 with controlled native attack state; no game/server/native execution.",
+        "AutoEquip admission scenarios: 51/51; assertions=0; unexpected=0; complete tracked ammo/context/cursor, slot selection and loot handler; controlled world/API/scoring; no native inventory mutation or physical-copy/server acknowledgement.",
+        "Cast wait facing scenarios: 16/16; assertions=0; unexpected=0; actual WaitForCast overloads and real TreeSharp; controlled cast/facing boundaries; no client/native execution.",
+        "Combat sight movement scenarios: 85/85; assertions=0; unexpected=0; complete tracked Movement and real TreeSharp; controlled world/navigation; no native path or game attached.",
+        "Equipment cleanup ownership: 57/57; assertions=0; unexpected=0; actual tracked owners/generated Lua5.1; controlled build12340 cursor transitions and physical dispatch admission; no game/server/native execution.",
+        "Equipment physical cursor guard: 8/8; actual generated x86 comparison/branch contract; no game attached or native execution.",
+        "Equipment Lua51 boundary scenarios: 87/87; assertions=0; unexpected=0; tracked pickup/equip helpers, actual generated Lua5.1, loader size and verbatim managed conversion; controlled APIs; no physical GUID/client/server proof.",
+        "Equipment pending-index scenarios: 24/24; assertions=0; unexpected=0; tracked owner/generated Lua; stock Lua5.1; controlled synchronous events; no native client proof.",
+        "Ground cast submission scenarios: 11/11; assertions=0; unexpected=0; complete tracked factory and real TreeSharp; controlled backend/world; no native/game/server execution.",
+        "Ground commit receipt scenarios: 46/46; assertions=0; unexpected=0; complete tracked ground factory, legacy adapter and core terrain request; real TreeSharp; controlled original AL/XYZ/backend; no current native/game/server or exclusive-origin proof.",
+        "Spell dispatch receipt scenarios: 97/97; assertions=0; unexpected=0; complete tracked manager methods and ground factory; real TreeSharp; controlled executor/world; local completion only, no native/game/server execution.",
+        "Spell metadata admission scenarios: 165/165; assertions=0; unexpected=0; complete tracked metadata owner and actual host movement/range gate; generated requests also run under stock Lua5.1 C conversion; controlled nine-value API/world/readiness; no client/proc/game execution.",
+        "World state address scenarios: 37/37; assertions=0; unexpected=0; complete tracked world/in-game getters, enums and ammo/context/cursor methods; separate build12340 screen-buffer/numeric-word/flag observations; no native/client/server execution.",
+        "World read validity scenarios: 68/68; assertions=0; unexpected=0; complete tracked Memory typed/byte/cache methods, FastSize, world/flag getters and ammo owners; external transfer/API controlled; no process/native/game/server execution or frame-freshness proof."
+      ],
+      "aggregate_failures": [
+        "FAIL aggregate group: AuraCollectionReadValidityRegressionTests: System.InvalidOperationException: Aura collection validity regression\r"
+      ]
+    },
+    "red_host": {
+      "receipt": {
+        "verified_at_utc": "2026-09-28T05:36:50.8936887Z",
+        "repository": "JeofW/cbp",
+        "repository_id": 1367174964,
+        "run": 36382368683,
+        "jobs": [
+          {
+            "id": 108800593788,
+            "name": "host-build",
+            "status": "completed",
+            "conclusion": "success",
+            "labels": [
+              "windows-latest"
+            ],
+            "runner_name": "GitHub Actions 1000000570"
+          }
+        ],
+        "run_conclusion": "success",
+        "source": "fc7e65308b66a8d4401ce1c39f04d15f0adadc94",
+        "artifact": 10953372509,
+        "artifact_name": "audit-validation-fc7e65308b66a8d4401ce1c39f04d15f0adadc94",
+        "archive": "D:\\Dev\\CopilotBuddy-Evidence\\w110-aura-collection-red-host-fc7e6530.zip",
+        "sha256": "560f0aca0f613ede56bea802633cb51684a7a13ef7edc58db8d7ce69439bb2fd",
+        "metadata_digest": "sha256:560f0aca0f613ede56bea802633cb51684a7a13ef7edc58db8d7ce69439bb2fd",
+        "bytes": 82465
+      },
+      "receipt_file": "w110-aura-collection-red-host-fc7e6530-receipt.json",
+      "receipt_sha256": "3f8c8614d714a1a106feda96bd4585625542707af8ff21e22789140e2857b8d6",
+      "inspection_file": "w110-aura-collection-red-host-fc7e6530-inspection.json",
+      "inspection_sha256": "df3d4f4a86766b0a0c0c788b600177aa3086be65f6709acbc7a85220a5d70c12",
+      "inspection": {
+        "verified_at_utc": "2026-09-28T05:37:30.1584471Z",
+        "run": 36382368683,
+        "source": "fc7e65308b66a8d4401ce1c39f04d15f0adadc94",
+        "artifact": 10953372509,
+        "archive_sha256": "560f0aca0f613ede56bea802633cb51684a7a13ef7edc58db8d7ce69439bb2fd",
+        "members": 4,
+        "kind": "host",
+        "result": {
+          "host_build_exit_code": 0,
+          "game_attached": false,
+          "tests_run": false
+        },
+        "build_summary": [
+          "3344 Warning(s)",
+          "0 Error(s)"
+        ]
+      }
+    },
+    "green_integrated": {
+      "receipt": {
+        "verified_at_utc": "2026-09-28T05:49:08.8223273Z",
+        "repository": "JeofW/cbp",
+        "repository_id": 1367174964,
+        "run": 36383055053,
+        "jobs": [
+          {
+            "id": 108802616797,
+            "name": "combined",
+            "status": "completed",
+            "conclusion": "success",
+            "labels": [
+              "windows-2022"
+            ],
+            "runner_name": "GitHub Actions 1000000571"
+          }
+        ],
+        "run_conclusion": "success",
+        "source": "6f74e3cdf811c19f3445c13bfd626b897fb6b8e9",
+        "artifact": 10952634132,
+        "artifact_name": "integrated-6f74e3cdf811c19f3445c13bfd626b897fb6b8e9",
+        "archive": "D:\\Dev\\CopilotBuddy-Evidence\\w110-aura-collection-green-integrated-6f74e3cd.zip",
+        "sha256": "93bdd21f9a085d59ea166e28cd559974d7b30273834c7ea805b0db82f35d1b86",
+        "metadata_digest": "sha256:93bdd21f9a085d59ea166e28cd559974d7b30273834c7ea805b0db82f35d1b86",
+        "bytes": 1001629
+      },
+      "receipt_file": "w110-aura-collection-green-integrated-6f74e3cd-receipt.json",
+      "receipt_sha256": "2b6c92874c654abf8a10f4568c64502e0f98de77ae31665aef5f1c7bbd048976",
+      "identity": {
+        "production_tree": "1a51dd739259c0f670556ab22f595e771fac9236",
+        "production_commit": "6f74e3cdf811c19f3445c13bfd626b897fb6b8e9",
+        "fixture_commit": "6f74e3cdf811c19f3445c13bfd626b897fb6b8e9",
+        "game_attached": false
+      },
+      "members": 228,
+      "inner_hashes": 227,
+      "source_inputs": 1866,
+      "current_inputs_matched": 1866,
+      "groups_passed": 17,
+      "results": [
+        {
+          "suite": "QuestRecoveryRegressionTests",
+          "run": 0,
+          "architecture": "x86",
+          "harness_error": null,
+          "game_attached": false,
+          "build": 0
+        },
+        {
+          "game_attached": false,
+          "build": 0,
+          "suite": "Singular",
+          "architecture": "x86",
+          "run": 0
+        },
+        {
+          "suite": "WholesomeQuestRecoveryRegressionTests",
+          "run": 0,
+          "architecture": "x86",
+          "harness_error": null,
+          "game_attached": false,
+          "build": 0
+        },
+        {
+          "suite": "QuestRecoveryAdapterRegressionTests",
+          "run": 0,
+          "architecture": "x86",
+          "harness_error": null,
+          "game_attached": false,
+          "build": 0
+        },
+        {
+          "suite": "QuestPickupPolicyRegressionTests",
+          "run": 0,
+          "architecture": "x86",
+          "harness_error": null,
+          "game_attached": false,
+          "build": 0
+        },
+        {
+          "suite": "VendorCoreRegressionTests",
+          "run": 0,
+          "architecture": "x86",
+          "harness_error": null,
+          "game_attached": false,
+          "build": 0
+        },
+        {
+          "suite": "NativeContractRegressionTests",
+          "run": 0,
+          "architecture": "x86",
+          "harness_error": null,
+          "game_attached": false,
+          "build": 0
+        },
+        {
+          "suite": "ShutdownBoundaryRegressionTests",
+          "run": 0,
+          "architecture": "x86",
+          "harness_error": null,
+          "game_attached": false,
+          "build": 0
+        },
+        {
+          "suite": "Elevator",
+          "run": 0,
+          "architecture": "x86",
+          "harness_error": null,
+          "game_attached": false,
+          "build": 0
+        },
+        {
+          "suite": "PaladinDecisions",
+          "run": 0,
+          "architecture": "x86",
+          "harness_error": null,
+          "game_attached": false,
+          "build": 0
+        },
+        {
+          "suite": "GroupEngagement",
+          "run": 0,
+          "architecture": "x86",
+          "harness_error": null,
+          "game_attached": false,
+          "build": 0
+        },
+        {
+          "suite": "PaladinSupport",
+          "run": 0,
+          "architecture": "x86",
+          "harness_error": null,
+          "game_attached": false,
+          "build": 0
+        },
+        {
+          "suite": "WholesomeSale",
+          "run": 0,
+          "architecture": "x86",
+          "harness_error": null,
+          "game_attached": false,
+          "build": 0
+        },
+        {
+          "suite": "QuestLogObservationRegressionTests",
+          "run": 0,
+          "architecture": "x86",
+          "harness_error": null,
+          "game_attached": false,
+          "build": 0
+        },
+        {
+          "suite": "QuestCompletionOwnerRegressionTests",
+          "run": 0,
+          "architecture": "x86",
+          "harness_error": null,
+          "game_attached": false,
+          "build": 0
+        },
+        {
+          "suite": "QuestObservationBoundaryRegressionTests",
+          "run": 0,
+          "architecture": "x86",
+          "harness_error": null,
+          "game_attached": false,
+          "build": 0
+        },
+        {
+          "game_attached": false,
+          "build": 0,
+          "suite": "Analyzers",
+          "run": 0
+        }
+      ],
+      "collection_summary": "Aura collection validity scenarios: 75/75; assertions=0; unexpected=0; complete tracked collection/Memory typed-byte-raw-cache chain and blessing selector; external transfer/world/spell lookup controlled; no process/native/game/server execution or atomic snapshot proof.\r",
+      "retained_summaries": [
+        "Ammo world observation scenarios: 8/8; assertions=0; unexpected=0; complete tracked world/in-game getters, host enums and ammo/context/cursor methods; controlled memory/API/actor leaves; no native mapping, game or server acceptance.",
+        "Aura count safety scenarios: 8/8; assertions=0; unexpected=0; actual owner/source; no oversized allocation or game attached.",
+        "Aura duration observation scenarios: 96/96; assertions=0; unexpected=0; complete tracked aura data/timer and actual blessing selector; native signed-duration/expiry vectors; clock/name/world/readiness controlled; no native/game/server execution or magnitude proof.",
+        "Autoattack startup scenarios: 26/26; assertions=0; unexpected=0; actual Common/LocalPlayer Lua and TreeSharp; stock Lua5.1 with controlled native attack state; no game/server/native execution.",
+        "AutoEquip admission scenarios: 51/51; assertions=0; unexpected=0; complete tracked ammo/context/cursor, slot selection and loot handler; controlled world/API/scoring; no native inventory mutation or physical-copy/server acknowledgement.",
+        "Cast wait facing scenarios: 16/16; assertions=0; unexpected=0; actual WaitForCast overloads and real TreeSharp; controlled cast/facing boundaries; no client/native execution.",
+        "Combat sight movement scenarios: 85/85; assertions=0; unexpected=0; complete tracked Movement and real TreeSharp; controlled world/navigation; no native path or game attached.",
+        "Equipment cleanup ownership: 57/57; assertions=0; unexpected=0; actual tracked owners/generated Lua5.1; controlled build12340 cursor transitions and physical dispatch admission; no game/server/native execution.",
+        "Equipment physical cursor guard: 8/8; actual generated x86 comparison/branch contract; no game attached or native execution.",
+        "Equipment Lua51 boundary scenarios: 87/87; assertions=0; unexpected=0; tracked pickup/equip helpers, actual generated Lua5.1, loader size and verbatim managed conversion; controlled APIs; no physical GUID/client/server proof.",
+        "Equipment pending-index scenarios: 24/24; assertions=0; unexpected=0; tracked owner/generated Lua; stock Lua5.1; controlled synchronous events; no native client proof.",
+        "Ground cast submission scenarios: 11/11; assertions=0; unexpected=0; complete tracked factory and real TreeSharp; controlled backend/world; no native/game/server execution.",
+        "Ground commit receipt scenarios: 46/46; assertions=0; unexpected=0; complete tracked ground factory, legacy adapter and core terrain request; real TreeSharp; controlled original AL/XYZ/backend; no current native/game/server or exclusive-origin proof.",
+        "Spell dispatch receipt scenarios: 97/97; assertions=0; unexpected=0; complete tracked manager methods and ground factory; real TreeSharp; controlled executor/world; local completion only, no native/game/server execution.",
+        "Spell metadata admission scenarios: 165/165; assertions=0; unexpected=0; complete tracked metadata owner and actual host movement/range gate; generated requests also run under stock Lua5.1 C conversion; controlled nine-value API/world/readiness; no client/proc/game execution.",
+        "World state address scenarios: 37/37; assertions=0; unexpected=0; complete tracked world/in-game getters, enums and ammo/context/cursor methods; separate build12340 screen-buffer/numeric-word/flag observations; no native/client/server execution.",
+        "World read validity scenarios: 68/68; assertions=0; unexpected=0; complete tracked Memory typed/byte/cache methods, FastSize, world/flag getters and ammo owners; external transfer/API controlled; no process/native/game/server execution or frame-freshness proof."
+      ],
+      "aggregate_failures": []
+    },
+    "green_host": {
+      "receipt": {
+        "verified_at_utc": "2026-09-28T05:49:28.9192947Z",
+        "repository": "JeofW/cbp",
+        "repository_id": 1367174964,
+        "run": 36383055065,
+        "jobs": [
+          {
+            "id": 108802616862,
+            "name": "host-build",
+            "status": "completed",
+            "conclusion": "success",
+            "labels": [
+              "windows-latest"
+            ],
+            "runner_name": "GitHub Actions 1000000572"
+          }
+        ],
+        "run_conclusion": "success",
+        "source": "6f74e3cdf811c19f3445c13bfd626b897fb6b8e9",
+        "artifact": 10952678653,
+        "artifact_name": "audit-validation-6f74e3cdf811c19f3445c13bfd626b897fb6b8e9",
+        "archive": "D:\\Dev\\CopilotBuddy-Evidence\\w110-aura-collection-green-host-6f74e3cd.zip",
+        "sha256": "c3ba385b8d7e21bbfd664c2d71e99fe0713ef1d7f422aae66be2bcb7c5f58fa2",
+        "metadata_digest": "sha256:c3ba385b8d7e21bbfd664c2d71e99fe0713ef1d7f422aae66be2bcb7c5f58fa2",
+        "bytes": 83571
+      },
+      "receipt_file": "w110-aura-collection-green-host-6f74e3cd-receipt.json",
+      "receipt_sha256": "f669466573a23f46764dd3bd687dbe408dd2e01104e04510c8593d66bc05c2ab",
+      "inspection_file": "w110-aura-collection-green-host-6f74e3cd-inspection.json",
+      "inspection_sha256": "a5c8ce5b4da7da82a1998293b8f4d22a9dd223e8f59b20a05b57ab675f010278",
+      "inspection": {
+        "verified_at_utc": "2026-09-28T05:49:58.6798363Z",
+        "run": 36383055065,
+        "source": "6f74e3cdf811c19f3445c13bfd626b897fb6b8e9",
+        "artifact": 10952678653,
+        "archive_sha256": "c3ba385b8d7e21bbfd664c2d71e99fe0713ef1d7f422aae66be2bcb7c5f58fa2",
+        "members": 4,
+        "kind": "host",
+        "result": {
+          "tests_run": false,
+          "host_build_exit_code": 0,
+          "game_attached": false
+        },
+        "build_summary": [
+          "3344 Warning(s)",
+          "0 Error(s)"
+        ]
+      }
+    }
+  },
+  "fixture_comparison": {
+    "verified_at_utc": "2026-09-28T05:50:07.7832302Z",
+    "red_source": "fc7e65308b66a8d4401ce1c39f04d15f0adadc94",
+    "green_source": "6f74e3cdf811c19f3445c13bfd626b897fb6b8e9",
+    "red_run": 36382368668,
+    "green_run": 36383055053,
+    "red_inputs": 1866,
+    "green_inputs": 1866,
+    "changed_inputs": [
+      "Styx/WoWInternals/WoWObjects/WoWUnit.cs"
+    ],
+    "added_inputs": [],
+    "removed_inputs": [],
+    "normalized_count": 183,
+    "changed_normalized": [],
+    "added_normalized": [],
+    "removed_normalized": [],
+    "limits": "Archive integrity and run success are established by separate inspection receipts. This report compares captured source and normalized fixture bytes only."
+  },
+  "native_calling_receipts": [
+    {
+      "file": "w110-aura-entry-call-instructions.json",
+      "sha256": "60e34162beac8b887966dfc3971069853f53f7c994d6f58e95a0c16637d85f66",
+      "address": "0x614d40",
+      "offset": 0,
+      "instructions": 30,
+      "total": 30,
+      "cursor": {
+        "done": true
+      },
+      "source": "retained successful read only; no new native operation"
+    },
+    {
+      "file": "w110-aura-buff-call-instructions.json",
+      "sha256": "01227a12515ed264dc03edf716e7dc9fa45f8f634a0b37f9986265eef1b1a9b0",
+      "address": "0x614ca0",
+      "offset": 0,
+      "instructions": 34,
+      "total": 34,
+      "cursor": {
+        "done": true
+      },
+      "source": "retained successful read only; no new native operation"
+    },
+    {
+      "file": "w110-aura-debuff-call-instructions.json",
+      "sha256": "af48b7bdb548be6cd71b3028fcb9898f0f2b612bcf06f8ec7ce7205b37c26319",
+      "address": "0x614cf0",
+      "offset": 0,
+      "instructions": 34,
+      "total": 34,
+      "cursor": {
+        "done": true
+      },
+      "source": "retained successful read only; no new native operation"
+    },
+    {
+      "file": "w110-aura-output-instructions.json",
+      "sha256": "1450a379a360a2b22a92c0c58035cffb51fce24d46df484ee8ddf8a0bad95ecd",
+      "address": "0x6147c0",
+      "offset": 0,
+      "instructions": 190,
+      "total": 410,
+      "cursor": {
+        "next": 190
+      },
+      "source": "retained successful read only; no new native operation"
+    },
+    {
+      "file": "w110-aura-output-return-instructions.json",
+      "sha256": "dfb71522d8bcc0dcf91742dd1bb9c430549480f22b2e9c9aef570f18d66b1d07",
+      "address": "0x6147c0",
+      "offset": 190,
+      "instructions": 220,
+      "total": 410,
+      "cursor": {
+        "done": true
+      },
+      "source": "retained successful read only; no new native operation"
+    }
+  ],
+  "supporting_records": [
+    {
+      "file": "W110_AURA_COLLECTION_READ_REVIEW_20260928.md",
+      "sha256": "abce9697832ff4ccb0e73c89b3fe02f112989b5ecd8cde0e604d6cfe72ff82b7"
+    },
+    {
+      "file": "W110_AURA_DELIVERED_CONTRACT_SCOPE_20260928.md",
+      "sha256": "a8426956c9e679c6f8f24e8a1fec4e359595cc7b46a0ff93a9bca2b788538af0"
+    },
+    {
+      "file": "W110_AURA_COLLECTION_FIXTURE_COMPARISON_20260927.json",
+      "sha256": "0a9b06b6e918295a64ae5a51df83b7abacae1e815cfb375f302a34b71f7c040c"
+    },
+    {
+      "file": "W104_REDAURACOLLECTION_PUBLICATION_20260927.json",
+      "sha256": "5c280a74227398fcee63963ddbedb7f815cf52387c3ff7907a1ce249e7dfa26e"
+    },
+    {
+      "file": "W104_GREENAURACOLLECTION_PUBLICATION_20260927.json",
+      "sha256": "2c0d51dab5ab79ba51d55ba485e58f3f918e4cef684464a80bbb29cc6bf73116"
+    },
+    {
+      "file": "W110_ACTIVE_GOAL_AMENDMENT_20260928.md",
+      "sha256": "5ee20259f435ba40dce9d5e64e36c1634c16eb17170cc50fcc4f01a89aa5f85a"
+    },
+    {
+      "file": "W110_NEW_OPERATION_RETRY_006_20260928.json",
+      "sha256": "a90ad7602318898567c0391b31bf949b4ebfaebaafd1568e4d9c9489d5818077"
+    },
+    {
+      "file": "W110_NEW_OPERATION_RETRY_007_20260928.json",
+      "sha256": "12b7c5949a9ab20efed3d41c000f8988d8e3fdb345cc7c04d741a17708894d3b"
+    }
+  ],
+  "frozen_historical_records": [
+    {
+      "file": "W109_RESUMPTION_20260927.json",
+      "sha256": "6dd019dc919f28c5e2c55ecae09e4f7ee07c21785273215240b8e3dc05f26175",
+      "replayed": false
+    },
+    {
+      "file": "W109_RESUMPTION_PLAN_REFUSAL_20260927.json",
+      "sha256": "77e6ccfaaf8c7a6859da41d0d4527d9457266dd338c4e571d68d033c7920f050",
+      "replayed": false
+    },
+    {
+      "file": "W110_NATIVE_MAP_PACKAGING_REFUSAL_20260928.json",
+      "sha256": "2902cd0f49c410be17c68114f13476b0ca4af553faac964fc0a75af0a0da2506",
+      "replayed": false
+    },
+    {
+      "file": "W110_AUTO_RUNVIEW_REFUSAL_20260928.json",
+      "sha256": "b792709b842d71e4737f86ddb6c4bb63148b92dc45fb684a1173b220b20157d9",
+      "replayed": false
+    },
+    {
+      "file": "W110_FINAL_CASE_COMPARISON_REFUSAL_20260928.json",
+      "sha256": "d889cb43316487731f5c3f22ac68a4949add641d88141a9f33a340ed81c5255b",
+      "replayed": false
+    },
+    {
+      "file": "W110_SUCCESSOR_PACKAGING_REFUSAL_20260928.json",
+      "sha256": "05533f2897791f41e418f834ce48967e07966af42a132e19938a997481727fa6",
+      "replayed": false
+    },
+    {
+      "file": "W110_WORLD_FINAL_REFS_REFUSAL_20260928.json",
+      "sha256": "7b43382ba60683753c5193abf6769747053a903035a528e99a899670c2fec41d",
+      "replayed": false
+    },
+    {
+      "file": "W110_WORLD_ADDRESS_STATUS_SEARCH_REFUSAL_20260928.json",
+      "sha256": "b7d77d06ced8df7d09b4f176ff1fd969c7f302384746e37c2cc414592525925e",
+      "replayed": false
+    },
+    {
+      "file": "W110_WORLD_READ_WATCH_REFUSAL_20260928.json",
+      "sha256": "ca5c8febc35527719f79094e3437343a6230fdbc47e6cdfd467d432767937118",
+      "replayed": false
+    },
+    {
+      "file": "W110_WORLD_READ_ARTIFACT_DOWNLOAD_REFUSAL_20260928.json",
+      "sha256": "9dc72c02c5da9fd1069321e5c147495deb871653615087726b46a26087d10a75",
+      "replayed": false
+    },
+    {
+      "file": "W110_WORLD_READ_FINISH_REFUSAL_20260928.json",
+      "sha256": "928206fb63f8fef5b6c7b1d7785d94a962e15aa565c1bfbf145c25b6b17efd29",
+      "replayed": false
+    },
+    {
+      "file": "W110_EXTENSION_CI_LIST_REFUSAL_20260927.json",
+      "sha256": "6a7d2e3db91a061142c3cd55e34ed4437acbe0bdfff7a08869ac4d8f313c2f74",
+      "replayed": false
+    },
+    {
+      "file": "W110_TC_TREE_REFUSAL_20260927.json",
+      "sha256": "ad57b74d5e508cacdf6d22d0960a17968044276fd31b3ef71f455af6d1068c0d",
+      "replayed": false
+    }
+  ],
+  "preserved_prior_docs": [
+    {
+      "path": "docs/audit/2026-09-27/W109_CHECKPOINT.md",
+      "sha256": "ff7baf8b6563fbf926b0c6ba7ac72d4d5be85f940a73cfdd4f3430d73ab287ad"
+    },
+    {
+      "path": "docs/audit/2026-09-27/W109_EVIDENCE.json",
+      "sha256": "e073228a151eb955da2765f99a6e52d114c8526de42604231ab3b109a9de266c"
+    },
+    {
+      "path": "docs/audit/2026-09-27/W109_SCOPE_STATUS.md",
+      "sha256": "6d375daacb83f599928ace45a534e114081305a7c2dd0b6a114e51cd49385dff"
+    },
+    {
+      "path": "docs/audit/2026-09-27/W110_CHECKPOINT.md",
+      "sha256": "40515fc8f76d66d48b9aff230962230976cb248f761d8e8953171dbd53e8ce81"
+    },
+    {
+      "path": "docs/audit/2026-09-27/W110_EVIDENCE.json",
+      "sha256": "ab2c7c384d14724f7a681bfe0d2154cb9401d28bdd94e080108992c608f58cba"
+    },
+    {
+      "path": "docs/audit/2026-09-27/W110_SCOPE_STATUS.md",
+      "sha256": "3d1b25009f2b1139443f5949c8c57d2cd5c77b4caa375ab4731d69d3357e673e"
+    },
+    {
+      "path": "docs/audit/2026-09-27/W110_RET_PALADIN_COMPATIBILITY.md",
+      "sha256": "4a3f7ee184f9b08cc71b7bd31b982fd33a9701f70815434e8125a46d2837031b"
+    },
+    {
+      "path": "docs/audit/2026-09-27/W110_CORE_EVIDENCE.json",
+      "sha256": "ff013c6674b3348e485397771e680e20eace8b00e96d6422dd63991152ae7aa9"
+    },
+    {
+      "path": "docs/audit/2026-09-28/W110_AMENDED_GOAL_DISPOSITION.md",
+      "sha256": "a90ed223e2ef772b4a62635ad32f069ab55ed51a0ca55ffd1a761fdab1e85b40"
+    },
+    {
+      "path": "docs/audit/2026-09-28/W110_OBJECTIVE_DISPOSITION.md",
+      "sha256": "e3e73262552ed654b707a6598789939cfcbbe4b81ac46ae407b2580488ca222a"
+    },
+    {
+      "path": "docs/audit/2026-09-28/W110_ACTIVE_GOAL_AMENDMENT.md",
+      "sha256": "5ee20259f435ba40dce9d5e64e36c1634c16eb17170cc50fcc4f01a89aa5f85a"
+    },
+    {
+      "path": "docs/audit/2026-09-28/W110_AURA_NATIVE_CONTRACT.md",
+      "sha256": "b2ca320bc854a7e24f48a40d0369c11aba8d75b5e07611fc344de8f1169d47be"
+    }
+  ],
+  "new_document_payloads": [
+    {
+      "path": "docs/audit/2026-09-28/W110_AURA_COLLECTION_CHECKPOINT.md",
+      "sha256": "b5f33e67f490864eb9fe674ce4f63a2d0ed35208c4bc43381513928df7b74fa9",
+      "bytes": 7412,
+      "external_source": "W110_COLLECTION_CHECKPOINT_20260928.md",
+      "external_source_sha256": "b5f33e67f490864eb9fe674ce4f63a2d0ed35208c4bc43381513928df7b74fa9"
+    },
+    {
+      "path": "docs/audit/2026-09-28/W110_AURA_COLLECTION_EXECUTION.md",
+      "sha256": "8a734ed376698b8894457bd0affa755c7f12b9a6b9d26d2251055d2571f4b7bd",
+      "bytes": 8571,
+      "external_source": "W110_AURA_COLLECTION_EXECUTION_20260928.md",
+      "external_source_sha256": "8a734ed376698b8894457bd0affa755c7f12b9a6b9d26d2251055d2571f4b7bd"
+    },
+    {
+      "path": "docs/audit/2026-09-28/W110_AURA_CALLING_CONTRACTS.md",
+      "sha256": "fe2eeed8ff886b2357596dcc1ea31b962eef559ce2fff20d9b689f9e6b95dce0",
+      "bytes": 12700,
+      "external_source": "W110_AURA_CALLING_CONTRACTS_20260928.md",
+      "external_source_sha256": "fe2eeed8ff886b2357596dcc1ea31b962eef559ce2fff20d9b689f9e6b95dce0"
+    },
+    {
+      "path": "docs/audit/2026-09-28/W110_COLLECTION_GOAL_DISPOSITION.md",
+      "sha256": "2c2fe45620c1fa5c29592a967b01fb22a580e4b472bb2eee5a356c5d750d06f4",
+      "bytes": 8207,
+      "external_source": "W110_COLLECTION_GOAL_DISPOSITION_20260928.md",
+      "external_source_sha256": "2c2fe45620c1fa5c29592a967b01fb22a580e4b472bb2eee5a356c5d750d06f4"
+    },
+    {
+      "path": "docs/audit/2026-09-28/W110_COLLECTION_CONTINUATION.md",
+      "sha256": "eb09d339fc22a2a74262df068e398ae65e9ddf598839ad2bb2bf663daf7fb268",
+      "bytes": 5765,
+      "external_source": "W110_COLLECTION_SOURCE_CONTINUATION_20260928.md",
+      "external_source_sha256": "eb09d339fc22a2a74262df068e398ae65e9ddf598839ad2bb2bf663daf7fb268"
+    }
+  ],
+  "original_policy_hashes": {
+    "WOTLK_335A_RESEARCH_POLICY.md": "0315c49cd209431c5e1d3d6a01654b580d1a165073c0451ae54caa7a72d8e873",
+    "TRINITYCORE_335_COMPATIBILITY.md": "e2ca8873877f40679c1c412231570c880251050774ff4e9af04455da6e6c894d",
+    "QUEST_DATA_PROVENANCE_335.md": "6a448b3eb6d961d12a1ccee2c2ba03328541ad654b4932a56c9faba573421a9a",
+    "ADDON_EVIDENCE_335.md": "d3c52292fcf3c16747924db399279874056054c08fd59c34292f70bd198aff12",
+    "HANDOFF_POLICY.md": "8d1cb357f361934ec01fec8cfb23708e1fba0bdaeca2c8ef6e1a72f33e5c8c2b"
+  },
+  "preserved_root_hashes": {
+    "AUDIT_RESUME.md": "61fe88ec68578dc422190df3200c6731a46380bd5c324c012a11198ca7893088",
+    "NEXT_CHAT_PROMPT.md": "c591dfe4aaf4de9edc40e3e198327e7d5a2d6d4d04b54418eb184161c1bbb45f"
+  },
+  "publication": {
+    "status": "prepared_not_yet_published",
+    "expected_parent": "6f74e3cdf811c19f3445c13bfd626b897fb6b8e9",
+    "receipt": "W104_COLLECTIONCLOSEOUTDOCS_PUBLICATION_20260927.json",
+    "final_record": "W110_COLLECTION_FINAL_VERIFICATION_20260928.json",
+    "containing_docs_not_a_new_tested_source": true
+  },
+  "scope_complete": [
+    "latest collection repair with actual red/green,host,source/archive and unchanged fixtures",
+    "delivered aura caller/return/lifetime/executor/consumer contract",
+    "current full-goal disposition and precise remaining evidence categories"
+  ],
+  "historical_and_external_gates_not_completed": [
+    "frozen historical do-not-replay transactions remain unverified at their own identities",
+    "live native/client/character and effective-aura amount contracts",
+    "actual server/realm recipe and acknowledgement data",
+    "supervised world/routes/physical inventory/protocol origin",
+    "independent review, live acceptance and merge/deployment"
+  ],
+  "numeric_preparation": {
+    "historical": 3,
+    "new": 0,
+    "remaining": 0
+  },
+  "subagents_used": false,
+  "local_project_execution": false,
+  "new_native_mutation_or_game_execution": false,
+  "unchanged_ci_rerun": false,
+  "source_tasks_complete": true,
+  "all_live_or_historical_gates_complete": false,
+  "new_completion_stage_finish_called": false,
+  "release_confirmed": false
+}

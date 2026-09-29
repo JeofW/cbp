@@ -1,0 +1,63 @@
+{
+  "checkpoint": "W86",
+  "repo": "jeofwong/CopilotBuddy-private",
+  "pr": 51,
+  "branch": "audit/next-55-equipment-observation-20260917",
+  "tested_commit": "73c418210bdfa9a01e611d84a91a428584381c97",
+  "tested_tree": "ee724ea1f71a8d36b3b25d4fa294733ef55a5ab4",
+  "red": {
+    "commit": "ae3f1b1d604b839a308b7d1d6b24ad86b9402ecc",
+    "tree": "b07b9f490d1b4413160c92e2aceabf5c588aa038",
+    "run": 35500961319,
+    "artifact": 10602152292,
+    "sha256": "c43488e07fe98633b8849e9562a6904e8844fc9bc1818ddb5c7c869a948236b3",
+    "result": "MIR context4/82; assertions78; unexpected0; other16 integrated entries pass"
+  },
+  "green": {
+    "run": 35501234594,
+    "artifact": 10602552093,
+    "sha256": "2340141d0689c7a91d34d6d8df4e88c5647ce2a0e87fbd37e5abb729fae92b33",
+    "result": "MIR context82/82; assertions0; unexpected0; integrated17/17",
+    "game_attached": false
+  },
+  "host": {
+    "run": 35501234606,
+    "artifact": 10602092819,
+    "sha256": "a169bb0b17d5f73f8316359b23624011f0e1d7bd02b10289b0e895769a3f8179",
+    "exit": 0,
+    "warnings": 3344,
+    "errors": 0,
+    "tests_run": false,
+    "game_attached": false
+  },
+  "initial_harness_failure": {
+    "commit": "c17ad9ac489dd15af3a355c474b9fb5c37c22f59",
+    "run": 35500461891,
+    "artifact": 10602281559,
+    "sha256": "8f42e734b4cb58df694fc44bf96f4305d8f5cd93c9ea2dcdb9a908fb5255b7a8",
+    "reason": "raw-string namespace line rejected by existing normalization guard",
+    "assertion_red": false
+  },
+  "first_executed_red": {
+    "commit": "8e5c9e963871784ef3264a71807b577585cbfff2",
+    "run": 35500720727,
+    "artifact": 10602042257,
+    "sha256": "de3118e1ac2b856309bf70c02aca19bbc7a0460ab6abc35dd1344e3dde562887",
+    "result": "4/82; assertions78; unexpected0"
+  },
+  "unchanged_fixture_pair": {
+    "from": "ae3f1b1d604b839a308b7d1d6b24ad86b9402ecc",
+    "to": "73c418210bdfa9a01e611d84a91a428584381c97",
+    "identical_normalized_members": 152,
+    "indexed_inputs": 1834,
+    "verified_inner_hashes_per_integrated_archive": 196,
+    "changed_inputs": [
+      "runtime-snapshot/Plugins/MrItemRemover2/Methods.cs",
+      "runtime-snapshot/Plugins/MrItemRemover2/MrItemRemover2.cs"
+    ]
+  },
+  "retained_deletion_groups": {"inventory_observation": "18/18", "popup_request": "14/14", "plugin_compilation_source": "14/14"},
+  "remaining": ["R05 finite scan progression and broader lifecycle", "R03 mapping/CAST", "R04 physical cursor/popup", "R06 exact menu", "R07 dependency/reload/refresh"],
+  "merged": false,
+  "deployed": false
+}

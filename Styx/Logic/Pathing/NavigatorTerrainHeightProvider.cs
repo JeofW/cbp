@@ -17,31 +17,43 @@ namespace Styx.Logic.Pathing
         public List<float> FindHeights(float x, float y)
         {
             var heights = new List<float>();
-            if (!Navigator.IsNavigatorLoaded)
+            if (!Navigator.IsNavigatorLoaded || !float.IsFinite(x) || !float.IsFinite(y))
                 return heights;
 
-            uint mapId = StyxWoW.Me?.MapId ?? 0;
-            if (mapId == 0)
+            var actor = StyxWoW.Me;
+            if (actor == null || !actor.IsValid || actor.Guid == 0)
                 return heights;
+            uint mapId = actor.MapId;
+            ulong actorGuid = actor.Guid;
+            var navigator = Navigator.TripperNavigator;
+            bool Current() => ReferenceEquals(actor, StyxWoW.Me) && actor.IsValid
+                && actor.Guid == actorGuid && actor.MapId == mapId && Navigator.IsNavigatorLoaded
+                && ReferenceEquals(navigator, Navigator.TripperNavigator);
+            if (navigator == null || !Current()) return heights;
 
             var center = new Vector3(x, y, 0f);
-            TripperNav.PolygonReference[] polygons = Navigator.TripperNavigator.QueryPolygons(mapId, center, HeightSearchExtents, 256);
+            TripperNav.PolygonReference[] polygons = navigator.QueryPolygons(mapId, center, HeightSearchExtents, 256);
+            if (!Current() || polygons == null) return heights;
             foreach (TripperNav.PolygonReference polygon in polygons)
             {
-                if (!Navigator.TripperNavigator.ClosestPointOnPolyBoundary(mapId, polygon, center, out Vector3 boundaryPoint))
+                if (!Current()) return new List<float>();
+                if (!navigator.ClosestPointOnPolyBoundary(mapId, polygon, center, out Vector3 boundaryPoint))
                     continue;
 
-                if (Vector3.DistanceSquared(boundaryPoint, center) > 0.005f)
+                if (!float.IsFinite(boundaryPoint.X) || !float.IsFinite(boundaryPoint.Y)
+                    || !float.IsFinite(boundaryPoint.Z)
+                    || Vector2.DistanceSquared(new Vector2(boundaryPoint.X, boundaryPoint.Y), new Vector2(x, y)) > 0.005f)
                     continue;
 
-                if (!Navigator.TripperNavigator.GetPolyHeight(mapId, polygon, center, out float height))
+                if (!Current()) return new List<float>();
+                if (!navigator.GetPolyHeight(mapId, polygon, center, out float height) || !float.IsFinite(height))
                     continue;
 
                 if (heights.All(existingHeight => Math.Abs(existingHeight - height) > 1f))
                     heights.Add(height);
             }
 
-            return heights;
+            return Current() ? heights : new List<float>();
         }
     }
 }

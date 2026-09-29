@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
 
 using Singular.Managers;
 using Styx;
@@ -32,7 +33,9 @@ namespace Singular.Helpers
                     new Action(ret =>
                         {
                             if (!GroupCombatSafety.MayAttackCurrentTarget()) return RunStatus.Failure;
-                            StyxWoW.Me.ToggleAttack();
+                            // Startup may follow a stale inactive observation.
+                            // Build12340 StartAttack checks live state; AttackTarget toggles it.
+                            Lua.DoString("StartAttack()");
                             return RunStatus.Failure;
                         })),
                 new Decorator(
@@ -141,38 +144,104 @@ namespace Singular.Helpers
             };
         }
 
+        // A yielded descent belongs to one observed player. Cleanup may release
+        // its own descent command, but must never command a replacement actor.
+        private sealed class DismountRequest
+        {
+            private readonly Func<bool> sameActor;
+            private bool descending;
+
+            internal DismountRequest()
+            {
+                var player = StyxWoW.Me;
+                ulong guid = player?.Guid ?? 0;
+                sameActor = () => player != null && guid != 0
+                    && ReferenceEquals(StyxWoW.Me, player) && player.Guid == guid;
+            }
+
+            internal bool CanContinue => sameActor() && StyxWoW.Me.IsValid && StyxWoW.Me.IsAlive
+                && !StyxWoW.Me.IsOnTransport && !StyxWoW.Me.IsFalling && sameActor();
+
+            internal bool CanRemoveFlight => CanContinue
+                && StyxWoW.Me.TryGetMovementState(out uint flags, out ulong transportGuid)
+                && transportGuid == 0 && (flags & 0x02003000U) == 0 && CanContinue;
+
+            internal RunStatus StartDescending()
+            {
+                if (!CanContinue) return RunStatus.Failure;
+                descending = true;
+                WoWMovement.Move(WoWMovement.MovementDirection.Descend);
+                return RunStatus.Success;
+            }
+
+            internal void StopDescending()
+            {
+                if (!descending) return;
+                descending = false;
+                if (sameActor()) WoWMovement.MoveStop(WoWMovement.MovementDirection.Descend);
+            }
+        }
+
+        private sealed class DismountSequence : Sequence
+        {
+            internal DismountSequence(params Composite[] children) : base(children) { }
+
+            protected override IEnumerable<RunStatus> Execute(object context)
+            {
+                var request = new DismountRequest();
+                try
+                {
+                    foreach (var status in base.Execute(request)) yield return status;
+                }
+                finally { request.StopDescending(); }
+            }
+        }
+
         /// <summary>
-        /// Creates a dismount composite. This down't use thread.Sleep() like the buildin one thus it works nicely with behaviors and framelocks. This will decend until bot lands if flying. 
+        /// Descend before dismounting, without blocking the behavior thread.
+        /// Expiry releases descent; it is not a landing or successful cast setup.
         /// </summary>
         /// <param name="reason">The reason to dismount</param>
         /// <returns></returns>
         public static Composite CreateDismount(string reason)
         {
-            return new Sequence(
+            return new DismountSequence(
+                    new Action(ret => ((DismountRequest)ret).CanContinue ? RunStatus.Success : RunStatus.Failure),
                     new Action(ret => Logging.WriteDebug("Stop and dismount..." + (!string.IsNullOrEmpty(reason) ? (" Reason: " + reason) : string.Empty))),
                 // stop moving 
-                    new DecoratorContinue(ret => StyxWoW.Me.IsMoving,
+                    new DecoratorContinue(ret => ((DismountRequest)ret).CanContinue && StyxWoW.Me.IsMoving,
                         new Sequence(
-                            new Action(ret => WoWMovement.MoveStop()),
+                            new Action(ret =>
+                            {
+                                if (!((DismountRequest)ret).CanContinue) return RunStatus.Failure;
+                                WoWMovement.MoveStop();
+                                return RunStatus.Success;
+                            }),
                             CreateWaitForLagDuration())
                     ),   // Land if we're flying
-                    new DecoratorContinue(ret => StyxWoW.Me.IsFlying,
+                    new DecoratorContinue(ret => ((DismountRequest)ret).CanContinue && StyxWoW.Me.IsFlying,
                         new Sequence(
-                            new Action(ret => WoWMovement.Move(WoWMovement.MovementDirection.Descend)),
-                            new WaitContinue(30, ret => !StyxWoW.Me.IsFlying, new ActionAlwaysSucceed()),
-                            new Action(ret => WoWMovement.MoveStop(WoWMovement.MovementDirection.Descend))
+                            new Action(ret => ((DismountRequest)ret).StartDescending()),
+                            new WaitContinue(30, ret => !((DismountRequest)ret).CanContinue || !StyxWoW.Me.IsFlying, new ActionAlwaysSucceed()),
+                            new Action(ret => ((DismountRequest)ret).StopDescending())
                         )), // and finally dismount - but only if actually mounted!
                    new Action(r =>
                    {
-                       // HB 3.3.5a: Check if actually mounted before calling Dismount()
-                       if (!StyxWoW.Me.Mounted)
-                           return;
-                           
+                       // A timeout, failed descent or changed actor cannot authorize
+                       // removal or let the caller proceed as though landing succeeded.
+                       if (!((DismountRequest)r).CanRemoveFlight)
+                           return RunStatus.Failure;
                        ShapeshiftForm shapeshift = StyxWoW.Me.Shapeshift;
+                       if (!StyxWoW.Me.Mounted && shapeshift != ShapeshiftForm.FlightForm && shapeshift != ShapeshiftForm.EpicFlightForm)
+                           return RunStatus.Success;
+
+                       if (!((DismountRequest)r).CanRemoveFlight)
+                           return RunStatus.Failure;
                        if ((shapeshift != ShapeshiftForm.FlightForm) && (shapeshift != ShapeshiftForm.EpicFlightForm))
                            Lua.DoString("Dismount()");
                        else
                            Lua.DoString("RunMacroText('/cancelform')");
+                       return RunStatus.Success;
                    }));
         }
         /// <summary>

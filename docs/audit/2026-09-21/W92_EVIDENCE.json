@@ -1,0 +1,164 @@
+{
+  "checkpoint": "W92",
+  "date": "2026-09-21",
+  "timezone": "Asia/Kuala_Lumpur",
+  "repository": "jeofwong/CopilotBuddy-private",
+  "repository_id": 1367174964,
+  "pr": 51,
+  "branch": "audit/next-55-equipment-observation-20260917",
+  "entry_head": "e12ab0c60c2b6fe73bd7ec5b063a17d04820b366",
+  "fixture_correction": "f7a598ad3a15c2e9b216e965113c255c538e37fc",
+  "fixture_correction_tree": "d001727e27efdc8d6243c31856b5e69b9eb46b9c",
+  "tested_revision": "262228f1abf855c0a1e61e6c7eb1c8128c8cf446",
+  "tested_tree": "fb4ffab6fcb16b85407a8d73942bc059472f24db",
+  "last_production_change": "262228f1abf855c0a1e61e6c7eb1c8128c8cf446",
+  "production_blob": "9b5e5541b25b9c77c9ee0d5047b5a7705fc6a379",
+  "direct_master": "b2324913e2499ba30b239dd67224ca2c655c05cc",
+  "backup": {
+    "branch": "audit/backup-pr51-before-w92-lifetime-20260921",
+    "sha": "f7a598ad3a15c2e9b216e965113c255c538e37fc"
+  },
+  "compile_failure": {
+    "run": 35545306499,
+    "job": 106170029060,
+    "artifact": 10616277811,
+    "error": "CS0103: WoWObjectType does not exist in the current context, normalized fixture line 514",
+    "wholesome_build": 1,
+    "wholesome_run": null,
+    "other_entries_pass": 16,
+    "behavioral_red": false
+  },
+  "actual_red": {
+    "run": 35564802997,
+    "job": 106224401617,
+    "artifact": 10624156135,
+    "matching": "4/10",
+    "assertions": 6,
+    "unexpected": 0,
+    "constructor_lifecycle": "12/12",
+    "scheduler": "53/53",
+    "entries_pass": 16,
+    "entries_total": 17
+  },
+  "green": {
+    "run": 35565276547,
+    "job": 106225735651,
+    "artifact": 10623907327,
+    "matching": "10/10",
+    "assertions": 0,
+    "unexpected": 0,
+    "constructor_lifecycle": "12/12",
+    "scheduler": "53/53",
+    "gossip_lifetime": "58/58",
+    "generated_recipient_dispatch": "18/18",
+    "gossip_strategy": "14/14",
+    "entries_pass": 17,
+    "entries_total": 17,
+    "architecture": "x86",
+    "game_attached": false,
+    "conclusion": "success"
+  },
+  "host": {
+    "run": 35565276548,
+    "job": 106225735756,
+    "artifact": 10623138863,
+    "exit": 0,
+    "warnings": 3344,
+    "errors": 0,
+    "tests_run": false,
+    "game_attached": false
+  },
+  "unchanged_fixture_comparison": {
+    "inputs_each": 1837,
+    "added": [],
+    "removed": [],
+    "changed": [
+      "runtime-snapshot/Quest Behaviors/GossipEvent.cs"
+    ],
+    "normalized_members_each": 155,
+    "normalized_changed": []
+  },
+  "archives": [
+    {
+      "file": "integrated-e12ab0c6.zip",
+      "artifact": 10616277811,
+      "bytes": 806867,
+      "sha256": "4aa69375c467a34bca4f7290ad63a061c05b94159955978e60d2d7b53deaebcf",
+      "members": 199,
+      "inner_hashes_verified": 198
+    },
+    {
+      "file": "integrated-f7a598ad-red.zip",
+      "artifact": 10624156135,
+      "bytes": 866136,
+      "sha256": "aeb4aac5cee1ca74889d41db1c0b0022f9bfd0984fd0f9a2a6632f3dacbf4ee1",
+      "members": 200,
+      "inner_hashes_verified": 199
+    },
+    {
+      "file": "integrated-262228f1-green.zip",
+      "artifact": 10623907327,
+      "bytes": 864955,
+      "sha256": "f6972be9beeab29da331c14985d63ff4bc8dae89aeef9c10e687a8584b525f8e",
+      "members": 200,
+      "inner_hashes_verified": 199
+    },
+    {
+      "file": "host-262228f1.zip",
+      "artifact": 10623138863,
+      "bytes": 87522,
+      "sha256": "34f8d19ffc78e4028b487a5636f40db6707b8f284567ef0a9c50383e021345b0",
+      "members": 4,
+      "inner_hashes_verified": 0
+    }
+  ],
+  "integrity_limits": "Four downloaded outer digests matched GitHub metadata; 596 inner hashes and manifest membership checked across three integrated archives. No separate ZIP-CRC verification claimed; host has no inner manifest.",
+  "all_seven_checks_at_tested_revision": "success",
+  "local_bot_or_CSharp_build_run": false,
+  "publisher": "Authenticated official gh CLI; GitHub createCommitOnBranch with expectedHeadOid",
+  "native_git_push": false,
+  "incomplete_local_index_used_for_commit": false,
+  "independent_reviewer": false,
+  "original_client_acceptance": false,
+  "merged": false,
+  "deployed": false,
+  "w80_review_restarted": false,
+  "open_gates": [
+    "R03 source-backed special-action mapping and successful native recipient/request/acknowledgment integration",
+    "R04 physical cursor/displaced-item/same-slot popup and remaining lifecycle",
+    "R06 same-content menu generation, native bridge concurrency and original-client acceptance",
+    "R07 actual compiler dependencies/options, static-state reload and atomic full refresh",
+    "R08 numeric Lua receipt and UTF-8 byte-length source findings need appropriate regression evidence and repairs",
+    "All retained Wholesome/navigation/Singular and shared/native/independent/supervised final acceptance gates"
+  ],
+  "status": "NAMED_GOSSIP_DEFECT_VERIFIED_OFFLINE; FULL_AUDIT_IN_PROGRESS",
+  "prior_documentation_publication_attempt": {
+    "attempted": true,
+    "published": false,
+    "result": "This tool call was blocked by OpenAI's safety checks. Please double check what you are sending.",
+    "operation": "Atomic documentation-only update of AUDIT_RESUME.md, NEXT_CHAT_PROMPT.md, and new W92 checkpoint/evidence",
+    "retried_or_bypassed": false
+  },
+  "prior_final_readback": {
+    "head": "262228f1abf855c0a1e61e6c7eb1c8128c8cf446",
+    "master": "b2324913e2499ba30b239dd67224ca2c655c05cc",
+    "pr_state": "OPEN",
+    "draft": true,
+    "all_seven_source_checks": "completed/success",
+    "root_handoff_blob": "309783209e5ec7efe794677ae426d1a7b24a58ef",
+    "next_prompt_blob": "e02adc8670d78f6586b15e243eb3a5ebd4a4fc2f"
+  },
+  "documentation_note": "Containing commit publishes W92 records after a prior blocked attempt. Resolve the documentation SHA live; tested source remains 262228f1. No new CSharp execution or production change is claimed by this publication.",
+  "handoff_reconciliation": {
+    "date": "2026-09-21",
+    "expected_parent": "262228f1abf855c0a1e61e6c7eb1c8128c8cf446",
+    "entry_master": "b2324913e2499ba30b239dd67224ca2c655c05cc",
+    "entry_root_handoff_blob": "309783209e5ec7efe794677ae426d1a7b24a58ef",
+    "entry_next_prompt_blob": "e02adc8670d78f6586b15e243eb3a5ebd4a4fc2f",
+    "prior_hidden_handoff_commit_found": false,
+    "production_changed": false,
+    "CSharp_rerun": false,
+    "CoS_modified": false,
+    "permanent_tool_dispatch_fix_claimed": false
+  }
+}

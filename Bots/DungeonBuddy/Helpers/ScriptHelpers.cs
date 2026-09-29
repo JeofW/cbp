@@ -2200,9 +2200,12 @@ namespace Bots.DungeonBuddy.Helpers
         /// Vérifie si un boss nommé est encore en vie.
         /// Utilisé par Violet Hold, CoS, Gundrak x10+.
         /// </summary>
-        public static bool IsBossAlive(string name) =>
-            ObjectManager.GetObjectsOfType<WoWUnit>()
-                .Any(u => u.Name == name && u.IsAlive && !u.IsFriendly);
+        public static bool IsBossAlive(string name)
+        {
+            if (string.IsNullOrEmpty(name))
+                throw new InvalidOperationException("Name can not be empty or null");
+            return BossManager.BossEncounters.FirstOrDefault(b => b.Name == name)?.IsAlive ?? false;
+        }
 
         // ═══════════════════════════════════════════════════════════
         // OBJECT INTERACTION

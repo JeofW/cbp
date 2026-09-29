@@ -1,0 +1,17 @@
+{
+  "task": "W110 pinned TrinityCore database-path discovery",
+  "tool": "Jeof_Plug.exec_command",
+  "arguments": {
+    "cmd": "gh api repos/TrinityCore/TrinityCore/git/trees/8fda442f6c30ca21a622638063ab8b28376f1b25?recursive=1 --jq '{truncated: .truncated, matching_paths: [.tree[].path | select(test(\"spell_group|stack_rules\"))]}'",
+    "workdir": "/dev/CopilotBuddy-PR51",
+    "yield_time_ms": 10000
+  },
+  "error": "This tool call was blocked by OpenAI because we couldn't determine the safety status of the request.",
+  "returned_session_id": null,
+  "returned_result": null,
+  "execution_or_listing_verified": false,
+  "retried": false,
+  "fragmented_or_rerouted": false,
+  "global_github_or_core_unavailability_inferred": false,
+  "boundary": "Do not repeat or repackage this tree-discovery operation. Retained pinned source reads and distinct current project CI operations remain separate evidence paths; no tree listing is claimed."
+}

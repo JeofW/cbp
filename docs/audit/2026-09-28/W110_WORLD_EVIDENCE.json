@@ -1,0 +1,107 @@
+{
+  "schema": "w110-world-observation-checkpoint-v1",
+  "date": "2026-09-28",
+  "repository": "JeofW/cbp",
+  "repository_id": 1367174964,
+  "pr": 51,
+  "branch": "audit/next-55-equipment-observation-20260917",
+  "client": "original WoW 3.3.5a build 12340",
+  "source": "16f52aa7f328e1297a5f06a9b3a18328639b8b4e",
+  "source_tree": "458c110241d4d60936d4ac06e2a784ae70db3dfd",
+  "red_source": "3d04bbe88e025fd4ee3c3988a608be8eabf05f72",
+  "red_tree": "49905c6c3b9ee7367aea78a4f3f3de250cb23d25",
+  "prior_artifact_green_source": "f8f50616e5c5075bbe60f91a68d4d932114325d0",
+  "prior_published_w110_docs": "f5d49b0eeb05fcc19cc8cf22d64478a93b2ac936",
+  "production_paths": ["Styx/StyxWoW.cs"],
+  "fixture_paths": ["Tools/WholesomeQuestRecoveryRegressionTests/AmmoWorldObservationRegressionTests.cs"],
+  "repair": "Observe existing GameState once and reject Unknown, undefined and Zoning in IsInWorld; preserve in-game short-circuit and existing known non-zoning policy.",
+  "actual_world_cases": {
+    "red": {"passed":3,"total":8,"assertions":5,"unexpected":0},
+    "green": {"passed":8,"total":8,"assertions":0,"unexpected":0},
+    "scenarios": ["healthy-known-state","zoning","not-in-game","explicit-unknown","state-read-failure","undefined-state","unknown-after-cursor","state-read-failure-after-cursor"],
+    "boundary": "Actual tracked getters/consumer/enums with controlled memory/API/actor leaves; not live native mapping or client/server acceptance."
+  },
+  "stages": [
+    {
+      "stage":"red-integrated","source":"3d04bbe88e025fd4ee3c3988a608be8eabf05f72",
+      "run":36363585728,"job":108745451724,"artifact":10946224118,
+      "bytes":977710,"sha256":"20f393af0d5bfb779d85d95eaed4cb339b2b903ec6a1067ed80a2f9ce79565fd",
+      "receipt":"w110-world-red-integrated-3d04bbe8-receipt.json",
+      "inspection":"w110-world-red-integrated-3d04bbe8-inspection.json",
+      "integrated_groups_passed":16,"source_inputs":1861,"inner_hashes":223,"members":224,
+      "game_attached":false
+    },
+    {
+      "stage":"red-host","source":"3d04bbe88e025fd4ee3c3988a608be8eabf05f72",
+      "run":36363585776,"job":108745452051,"artifact":10947035582,
+      "bytes":82958,"sha256":"04007919b9f6cf0dabde2a641727901cd0d4a7c8f75b8d02d6146fcdca089521",
+      "receipt":"w110-world-red-host-3d04bbe8-receipt.json",
+      "inspection":"w110-world-red-host-3d04bbe8-inspection.json",
+      "errors":0,"warnings":3344,"tests_run":false,"game_attached":false
+    },
+    {
+      "stage":"green-integrated","source":"16f52aa7f328e1297a5f06a9b3a18328639b8b4e",
+      "run":36364095453,"job":108746928958,"artifact":10947190554,
+      "bytes":977725,"sha256":"fd76e493d3068afc4d8059ff1ca488772e04a2176b8e11f8156c2a26e68ed7c1",
+      "receipt":"w110-world-green-integrated-16f52aa7-receipt.json",
+      "inspection":"w110-world-green-integrated-16f52aa7-inspection.json",
+      "retention_session":64310,"inspection_session":49179,
+      "integrated_groups_passed":17,"source_inputs":1861,"source_inputs_matched":1861,"inner_hashes":223,"members":224,
+      "game_attached":false
+    },
+    {
+      "stage":"green-host","source":"16f52aa7f328e1297a5f06a9b3a18328639b8b4e",
+      "run":36364095471,"job":108746929261,"artifact":10946309532,
+      "bytes":82916,"sha256":"fd88f33da675cb44fef87914ea55e8d7612e22ca71abf98b87aee1d13e98a7a0",
+      "receipt":"w110-world-green-host-16f52aa7-receipt.json",
+      "inspection":"w110-world-green-host-16f52aa7-inspection.json",
+      "retention_session":53800,"inspection_session":58248,
+      "errors":0,"warnings":3344,"configuration":"Release/x86","tests_run":false,"game_attached":false
+    }
+  ],
+  "green_case_record":"W110_WORLD_GREEN_CASES_20260927.json",
+  "red_case_record":"W110_WORLD_RED_CASES_20260927.json",
+  "current_run_retained_cases":{"autoequip_admission":51,"spell_metadata":165,"spell_dispatch":97,"ground_terrain":46,"w109_ground_submission":11},
+  "retained_case_assertions":0,
+  "retained_case_unexpected_errors":0,
+  "world_cycle_comparison":{
+    "record":"W110_WORLD_FIXTURE_COMPARISON_20260927.json",
+    "session":70363,"normalized_members":179,"changed_normalized":[],"added_normalized":[],"removed_normalized":[],
+    "changed_source_inputs":["Styx/StyxWoW.cs"],"added_source_inputs":[],"removed_source_inputs":[],
+    "applies_only_to":"3d04bbe8-to-16f52aa7; not the earlier refused c9ff142d-to-f8f50616 comparison"
+  },
+  "source_publication_record":"W104_GREENAMMOWORLD_PUBLICATION_20260927.json",
+  "prepublication_observations":{
+    "local_session":94512,"direct_refs_session":36038,"pr_session":70254,
+    "head":"16f52aa7f328e1297a5f06a9b3a18328639b8b4e",
+    "master":"b2324913e2499ba30b239dd67224ca2c655c05cc",
+    "pr_state":"open","pr_draft":true,"pr_merged":false,
+    "preserved_modified_paths":["AUDIT_RESUME.md","NEXT_CHAT_PROMPT.md"],"staging_empty":true
+  },
+  "new_world_publication_intent":{
+    "expected_parent":"16f52aa7f328e1297a5f06a9b3a18328639b8b4e",
+    "paths":["docs/audit/2026-09-28/W110_WORLD_CHECKPOINT.md","docs/audit/2026-09-28/W110_WORLD_EVIDENCE.json"],
+    "status_at_creation":"not_yet_published",
+    "future_actual_receipt":"W104_WORLDDOCS_PUBLICATION_20260927.json",
+    "containing_documentation_commit_is_not_tested_source":true
+  },
+  "unchanged_prior_holds":[
+    {"record":"W110_NATIVE_MAP_PACKAGING_REFUSAL_20260928.json","gate":"combined native-map packaging"},
+    {"record":"W110_AUTO_RUNVIEW_REFUSAL_20260928.json","gate":"earlier f8 detailed run/jobs response"},
+    {"record":"W110_FINAL_CASE_COMPARISON_REFUSAL_20260928.json","gate":"earlier f8 per-case extraction and normalized comparison"},
+    {"record":"W110_SUCCESSOR_PACKAGING_REFUSAL_20260928.json","gate":"earlier eight-document successor package"},
+    {"record":"W110_EXTENSION_CI_LIST_REFUSAL_20260927.json","gate":"576d62d7 CI enumeration"},
+    {"record":"W110_TC_TREE_REFUSAL_20260927.json","gate":"pinned TC recursive tree discovery"},
+    {"record":"W109_RESUMPTION_20260927.json","gate":"original provider-refused fresh IDA-health transaction"}
+  ],
+  "refused_operations_replayed_or_reconstructed":false,
+  "world_task_source_and_hosted_verification_complete":true,
+  "overall_w110_goal_complete":false,
+  "independent_review_supplied":false,
+  "native_client_server_world_acceptance_supplied":false,
+  "merge_ready":false,
+  "restrictions":{"subagents":false,"local_project_build_test":false,"production_cb_access":false,"native_or_idb_mutation":false,"force_push":false,"master_write":false,"merge_or_deployment":false,"unchanged_ci_rerun":false,"numeric_preparation":{"historical":3,"new":0,"remaining":0}},
+  "last_recorded_finish_status":"HELD",
+  "release_confirmed_at_creation":false,
+  "boundary":"Only this newly delivered world-state work is checkpointed. Later CoS release cannot waive historical refused verification/publication, live/independent or merge gates."
+}

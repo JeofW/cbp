@@ -46,10 +46,30 @@ public class ProfileHelperFunctionsBase
 
     protected bool IsObjectiveComplete(int objectiveId, uint questId)
     {
-        if (this.Me.QuestLog.GetQuestById(questId) == null)
+        var player = Me;
+        if (player == null || !player.IsValid || player.Guid == 0 || objectiveId <= 0 || questId == 0
+            || player.QuestLog.GetQuestById(questId) == null)
             return false;
-        int returnVal = Lua.GetReturnVal<int>($"return GetQuestLogIndexByID({questId})", 0U);
-        return Lua.GetReturnVal<bool>($"return GetQuestLogLeaderBoard({objectiveId},{returnVal})", 2U);
+        ulong actorGuid = player.Guid;
+        uint map = player.MapId;
+        // The original client has no GetQuestLogIndexByID convenience API.
+        // Resolve and read in one request, preserving header and objective identity.
+        bool complete = Lua.GetReturnVal<bool>($@"
+            if UnitGUID('player') ~= '0x{actorGuid:X16}' then return 0 end
+            local count = GetNumQuestLogEntries()
+            if type(count) ~= 'number' or count < 0 or count > 1000 then return 0 end
+            for index=1,count do
+                local _,_,_,_,header,_,_,_,id = GetQuestLogTitle(index)
+                if not header and id == {questId} then
+                    local total = GetNumQuestLeaderBoards(index)
+                    if type(total) ~= 'number' or {objectiveId} > total then return 0 end
+                    local text,kind,done = GetQuestLogLeaderBoard({objectiveId},index)
+                    return text and kind and (done == true or done == 1) and 1 or 0
+                end
+            end
+            return 0", 0U);
+        return complete && ReferenceEquals(player, Me) && player.IsValid && player.Guid == actorGuid
+            && player.MapId == map && player.QuestLog.GetQuestById(questId) != null;
     }
 
     protected bool HasMininion(uint entry)

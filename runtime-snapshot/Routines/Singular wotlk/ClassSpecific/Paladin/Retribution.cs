@@ -61,6 +61,32 @@ namespace Singular.ClassSpecific.Paladin
 
         #region Normal Rotation
 
+        // Optional LevelBot dense-pack opener. This is intentionally not part
+        // of the normal Ret rotation: it provides one ranged damage submission,
+        // with no taunt and no melee closing, after LevelBot validates the pull point.
+        public static Composite CreateRetributionPaladinIsolationPull()
+        {
+            return new PrioritySelector(
+                Safers.EnsureTarget(),
+                Spell.WaitForCast(false, false),
+                Movement.CreateMoveToLosBehavior(),
+                Movement.CreateFaceTargetBehavior(),
+                Spell.Cast("Exorcism", ret => IsValidIsolationPullTarget())
+            );
+        }
+
+        private static bool IsValidIsolationPullTarget()
+        {
+            var me = StyxWoW.Me;
+            var target = me?.CurrentTarget;
+            return me != null && target != null &&
+                   SingularRoutine.CurrentWoWContext == WoWContext.Normal &&
+                   TalentManager.CurrentSpec == TalentSpec.RetributionPaladin &&
+                   target.IsValid && target.IsAlive && !target.IsPlayer && !target.Elite &&
+                   !me.IsMoving && !me.IsOnTransport &&
+                   target.Distance >= 7 && target.Distance <= 30;
+        }
+
         [Class(WoWClass.Paladin)]
         [Spec(TalentSpec.RetributionPaladin)]
         [Behavior(BehaviorType.Pull)]
@@ -152,7 +178,6 @@ namespace Singular.ClassSpecific.Paladin
                     Spell.BuffSelf("Divine Protection", ret => StyxWoW.Me.HealthPercent <= SingularSettings.Instance.Paladin.DivineProtectionHealthRet && !StyxWoW.Me.HasAura("Forbearance")),
 
                     //  Buffs
-                    Spell.BuffSelf("Retribution Aura"),
                     CreateRetributionSealBehavior(),
                     CreateManaRecoveryBehavior(),
 
@@ -303,6 +328,33 @@ namespace Singular.ClassSpecific.Paladin
             else
             {
                 var target = me.CurrentTarget;
+                var settings = SingularSettings.Instance.Paladin;
+                // Optional solo sustain is not an emergency heal or a damage
+                // optimum. Keep manual/group/player choices out of this policy.
+                if (settings.UseSoloSealOfLight && SingularRoutine.CurrentWoWContext == WoWContext.Normal
+                    && me.Combat && !me.IsInParty && !me.IsInRaid
+                    && target != null && target.IsValid && target.IsAlive
+                    && !target.IsPlayer && !target.Elite && !target.IsBoss()
+                    && SpellManager.HasSpell("Seal of Light")
+                    && settings.SoloSealOfLightHealth > 0
+                    && settings.SoloSealOfLightHealth < settings.SoloSealOfLightRecoveryHealth
+                    && settings.SoloSealOfLightRecoveryHealth <= 100
+                    && settings.SoloSealOfLightMinimumMana >= 0 && settings.SoloSealOfLightMinimumMana <= 100)
+                {
+                    double health = me.HealthPercent;
+                    if (double.IsNaN(health) || double.IsInfinity(health) || health < 0 || health > 100
+                        || health <= Math.Max(settings.LayOnHandsHealth, settings.RetributionHealHealth))
+                        return null;
+                    // Observe the actual seal as the hysteresis state: no
+                    // unowned timer and no reapplication near the entry edge.
+                    if (me.HasAura("Seal of Light") && health < settings.SoloSealOfLightRecoveryHealth)
+                        return null;
+                    double mana = me.ManaPercent;
+                    if (health <= settings.SoloSealOfLightHealth && target.IsWithinMeleeRange
+                        && !double.IsNaN(mana) && !double.IsInfinity(mana)
+                        && mana >= settings.SoloSealOfLightMinimumMana && mana <= 100)
+                        return "Seal of Light";
+                }
                 // Player combat values immediate damage and controlled CC. The
                 // dungeon area guard is not an arena safety observation. Keep
                 // automatic cleave/DoT seals out when Righteousness is learned;

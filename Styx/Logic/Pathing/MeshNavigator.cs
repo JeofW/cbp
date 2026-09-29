@@ -561,22 +561,8 @@ namespace Styx.Logic.Pathing
 			if (!request.IsCurrent(this))
 				return MoveResult.Failed;
 
-			if (me.IsSwimming)
-			{
-				// Once direct swimming is selected, keep it until land. Re-running a full
-				// ground-path query on every swimming pulse is expensive and can change modes
-				// at the shoreline while the old path still points behind the player.
-				bool useDirectSwimming = _usingDirectSwimMovement
-					|| !HasShortGroundPath(me.Location, destination, 2000f);
-				if (!request.IsCurrent(this))
-					return MoveResult.Failed;
-				UpdateDirectSwimState(isSwimming: true, useDirectSwimming);
-				if (useDirectSwimming)
-				{
-					request.Mover.MoveTowards(destination);
-					return MoveResult.Moved;
-				}
-			}
+				// Swimming follows the same path pipeline as ground travel. Missing
+				// or long paths do not authorize straight-line movement through water.
 
 			float distance = me.Location.Distance(destination);
 			if (!request.IsCurrent(this))
@@ -1495,14 +1481,6 @@ namespace Styx.Logic.Pathing
 		#endregion
 
 		#region Internal — start-index skip (HB 6.2.3 method_14)
-
-		private bool HasShortGroundPath(WoWPoint from, WoWPoint to, float maxLength)
-		{
-			TripperNav.PathFindResult result = FindPath(from, to);
-			if (result.Succeeded && !result.IsPartialPath && result.Points != null)
-				return ComputePathLength(result.Points) <= maxLength;
-			return false;
-		}
 
 		internal bool UpdateDirectSwimState(bool isSwimming, bool useDirectSwimming)
 		{

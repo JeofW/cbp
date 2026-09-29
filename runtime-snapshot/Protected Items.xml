@@ -1,6 +1,7 @@
-﻿<ProtectedItems>
+<ProtectedItems>
   <!-- Water -->
   <Item name="Purified Draenic Water" entry="27860" />
+  <Item name="Mining Pick" entry="2901" />
   <Item name="Melon Juice" entry="1205" />
 
   <!-- Food -->

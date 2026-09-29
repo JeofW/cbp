@@ -236,37 +236,30 @@ namespace Styx.WoWInternals
         #endregion
         
         #region Initialization - API Honorbuddy
+        internal static bool IsSupportedClientVersion(FileVersionInfo? version) =>
+            version != null && version.FileMajorPart == 3 && version.FileMinorPart == 3
+            && version.FileBuildPart == 5 && version.FilePrivatePart == SupportedBuild;
+
         public static void Initialize(Memory memory)
         {
             if (memory == null)
                 throw new ArgumentNullException(nameof(memory));
-            
+
+            // Validate before publishing memory or using any build-specific offset.
+            // Missing metadata and failed process observations are not permission
+            // to continue with the original-client layout.
+            Process process = Process.GetProcesses().FirstOrDefault(p => p.Id == memory.ProcessId)
+                ?? throw new InvalidOperationException("The selected WoW process is no longer available.");
+            if (process.HasExited)
+                throw new InvalidOperationException("The selected WoW process has exited.");
+            FileVersionInfo? version = process.MainModule?.FileVersionInfo;
+            if (!IsSupportedClientVersion(version) || process.HasExited)
+                throw new InvalidOperationException($"Cannot initialize WoW client {version?.FileVersion ?? "unknown"}. Required version: 3.3.5.{SupportedBuild}.");
+
+            process.EnableRaisingEvents = true;
             Wow = memory;
-            
-            // Trouver le processus WoW
-            WoWProcess = Process.GetProcesses()
-                .FirstOrDefault(p => p.Id == memory.ProcessId);
-            
-            if (WoWProcess != null)
-            {
-                WoWProcess.EnableRaisingEvents = true;
-                
-                // Check the build
-                try
-                {
-                    int build = WoWProcess.MainModule?.FileVersionInfo.FilePrivatePart ?? 0;
-                    if (build != SupportedBuild)
-                    {
-                        Logging.Write($"[ObjectManager] Build {build} not supported (expected: {SupportedBuild})");
-                        throw new Exception($"WoW build {build} not supported. Required build: {SupportedBuild}");
-                    }
-                    Logging.WriteDebug($"[ObjectManager] WoW build {build} detected - OK");
-                }
-                catch (Exception ex) when (ex is not InvalidOperationException)
-                {
-                    Logging.WriteDebug($"[ObjectManager] Build verification failed: {ex.Message}");
-                }
-            }
+            WoWProcess = process;
+            Logging.WriteDebug($"[ObjectManager] WoW 3.3.5 build {SupportedBuild} detected - OK");
             
             // Hook EndScene for code execution
             HookEndscene();

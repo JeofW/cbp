@@ -1,0 +1,194 @@
+{
+  "schema": "copilotbuddy-audit-evidence-v1",
+  "checkpoint": "W83",
+  "date": "2026-09-20",
+  "repo": "jeofwong/CopilotBuddy-private",
+  "pr": 51,
+  "branch": "audit/next-55-equipment-observation-20260917",
+  "entry_head": "a46369ed83f96eb075f91a163924b21fc0c93834",
+  "verified_head": "e518f4a32b3f4517c81a9b7c26b35d39452a102b",
+  "verified_tree": "a66eb9543df2b85c4cf980db25f11807bacfd3e9",
+  "last_production_change": "3856b39c45dc19d6296c740e2f565ac0d2bf0989",
+  "final_results": {
+    "integrated": "17/17",
+    "strategy_kind": "9/9; assertions=0; unexpected=0",
+    "strategy_materialization": "16/16; assertions=0; unexpected=0",
+    "gossip_strategy": "14/14; assertions=0; unexpected=0",
+    "retained": {
+      "AutoEquipPendingContext": "46/46",
+      "ReusableItemAcknowledgement": "10/10",
+      "DeletePopupRequest": "14/14",
+      "GossipLifetime": "17/17",
+      "RewardSelectionLifetime": "18/18",
+      "PluginCachedConstruction": "7/7",
+      "PluginFreshCompilation": "8/8",
+      "CollectionReplay": "34/34",
+      "NormalObjectiveRestart": "37/37",
+      "RetRegistration": "9/9",
+      "EquipAcknowledgedTimeout": "10/10",
+      "PythonAnalyzers": "89 tests; OK"
+    },
+    "host_build_exit": 0,
+    "host_warnings": 3344,
+    "host_errors": 0,
+    "host_tests_run": false,
+    "game_attached": false
+  },
+  "artifacts": [
+    {
+      "role": "retained_W82_entry",
+      "commit": "c46ede2c756c56618532c6af89932b73455bb14c",
+      "run": 35493042467,
+      "artifact": 10600005968,
+      "sha256": "d25814c70c7253f8a4809512992513a7a036cd08d4eca25b6bf7e7c9dbe5a961",
+      "integrated": "17/17",
+      "verified_inner_hashes": 192
+    },
+    {
+      "role": "kind_clean_red",
+      "commit": "8efc6592718b7f47b3eafdb82595a6fe97b66e2d",
+      "run": 35494127843,
+      "artifact": 10599987550,
+      "sha256": "d0751cd1204892a7566846a0448f3e4e5b4a76ee536b9ee52042e13cf386b5dc",
+      "targeted": "5/9; assertions=4; unexpected=0",
+      "other_integrated_entries_passed": 16,
+      "verified_inner_hashes": 193
+    },
+    {
+      "role": "kind_green",
+      "commit": "5242d74ff25c62bc900aa15df9ea9e4b2750ad8d",
+      "run": 35494389527,
+      "artifact": 10600137655,
+      "sha256": "887c1cd09eb7576751ab91245187d462aedf9c1bfd43280a4003397d45d0db47",
+      "targeted": "9/9; assertions=0; unexpected=0",
+      "integrated": "17/17",
+      "verified_inner_hashes": 193
+    },
+    {
+      "role": "kind_host",
+      "commit": "5242d74ff25c62bc900aa15df9ea9e4b2750ad8d",
+      "run": 35494389570,
+      "artifact": 10599938125,
+      "sha256": "07b548d9110e992aa38173fdc45bbee23cee8cacac0860353aeaeec3aecd1d72",
+      "build_exit": 0,
+      "warnings": 3344,
+      "errors": 0,
+      "inner_manifest_present": false
+    },
+    {
+      "role": "materialization_clean_red",
+      "commit": "c8604cd7bb716253e59ea9b0334bf73c27d586ca",
+      "run": 35494787101,
+      "artifact": 10600243144,
+      "sha256": "241256cf154bd06b01f8f7ecf90600d95e9da0e8750741cf4164416ffa4fae8a",
+      "targeted": "9/16; assertions=7; unexpected=0",
+      "other_integrated_entries_passed": 16,
+      "verified_inner_hashes": 193
+    },
+    {
+      "role": "materialization_targeted_green_residual_old_test_error",
+      "commit": "3856b39c45dc19d6296c740e2f565ac0d2bf0989",
+      "run": 35495109983,
+      "artifact": 10600273632,
+      "sha256": "2fdcf1eb86d89ae89cf0dfdfe853aa6b5306c862a6e5d6f2235f8bf8eb7ac2d4",
+      "targeted": "16/16; assertions=0; unexpected=0",
+      "gossip_strategy": "13/14; assertions=0; unexpected=1",
+      "integrated": "16/17",
+      "cause": "Retained separate Escort case explicitly expected legacy KillMob XML; safe rejection raised InvalidDataException",
+      "verified_inner_hashes": 193
+    },
+    {
+      "role": "materialization_production_host",
+      "commit": "3856b39c45dc19d6296c740e2f565ac0d2bf0989",
+      "run": 35495109990,
+      "artifact": 10600073782,
+      "sha256": "b42c4cd92c8623d792e654d97228ea0abd3f155fda0adc1a22bc6a95c05a3b46",
+      "build_exit": 0,
+      "warnings": 3344,
+      "errors": 0,
+      "inner_manifest_present": false
+    },
+    {
+      "role": "final_integrated_green",
+      "commit": "e518f4a32b3f4517c81a9b7c26b35d39452a102b",
+      "run": 35495595055,
+      "artifact": 10599609800,
+      "sha256": "defc998e34e213cf7865e03d57a106cfa8892fda5be4bd802be8335febe72a38",
+      "integrated": "17/17",
+      "verified_inner_hashes": 193
+    },
+    {
+      "role": "final_host_green",
+      "commit": "e518f4a32b3f4517c81a9b7c26b35d39452a102b",
+      "run": 35495595061,
+      "artifact": 10600498568,
+      "sha256": "38a3522f3e17dba65596eb6512777c9861ec103517c89b2bd6cbd53e0884b121",
+      "build_exit": 0,
+      "warnings": 3344,
+      "errors": 0,
+      "inner_manifest_present": false
+    }
+  ],
+  "verified_comparisons": [
+    {
+      "base": "8efc6592718b7f47b3eafdb82595a6fe97b66e2d",
+      "head": "5242d74ff25c62bc900aa15df9ea9e4b2750ad8d",
+      "indexed_input_paths": 1831,
+      "only_changed_input": "runtime-snapshot/Bots/WholesomeAutoQuest-master/DataLoader.cs",
+      "identical_normalized_members": 149,
+      "tests_unchanged": true,
+      "overall_green": true
+    },
+    {
+      "base": "c8604cd7bb716253e59ea9b0334bf73c27d586ca",
+      "head": "3856b39c45dc19d6296c740e2f565ac0d2bf0989",
+      "indexed_input_paths": 1831,
+      "only_changed_input": "runtime-snapshot/Bots/WholesomeAutoQuest-master/ProfileBuilder.cs",
+      "identical_normalized_members": 149,
+      "tests_unchanged": true,
+      "targeted_green": true,
+      "overall_green": false
+    },
+    {
+      "base": "3856b39c45dc19d6296c740e2f565ac0d2bf0989",
+      "head": "e518f4a32b3f4517c81a9b7c26b35d39452a102b",
+      "indexed_input_paths": 1831,
+      "only_changed_input": "Tools/WholesomeQuestRecoveryRegressionTests/GossipEventStrategyRegressionTests.cs",
+      "identical_normalized_members": 147,
+      "changed_normalized_members": ["GossipEventStrategyRegressionTests.cs", "normalization-manifest.json"],
+      "tests_unchanged": false,
+      "production_inputs_unchanged": true,
+      "reason": "Correct only the contradictory retained Escort fallback expectation; no production weakening"
+    }
+  ],
+  "net_production_diff_from_entry": {
+    "DataLoader.cs": {"additions": 1, "deletions": 3},
+    "ProfileBuilder.cs": {"additions": 31, "deletions": 43}
+  },
+  "w83_complete_scope": [
+    "undefined numeric recipe Kind rejection using existing strict helper",
+    "unsupported or ambiguous exact-owner recipe does not become ordinary work",
+    "generated item-use target must match creature-source objective anchor",
+    "unimplemented generated GameObject item protocol remains rejected",
+    "real loader/scheduler/materializer ordinary and CAST exclusion controls"
+  ],
+  "open_merge_gates": {
+    "R03": "CAST scheduling authority, dataset/collection/raw-counter namespaces and actual execution contract",
+    "R04": "EquipItem lifetime and physical displaced/foreign cursor/popup ownership",
+    "R05": "MIR plugin/player context, scan continuation and unknown inventory",
+    "R06": "same-NPC changed menu, final selection and cleanup",
+    "R07": "compiler dependencies, static state/reload and complete refresh lifecycle"
+  },
+  "conditional_merge_authorised_by_user": true,
+  "conditional_merge_requirements_met": false,
+  "direct_master": "b2324913e2499ba30b239dd67224ca2c655c05cc",
+  "master_written_in_w83": false,
+  "new_lua_api": false,
+  "new_gordunni_recipe": false,
+  "new_escort_executor": false,
+  "desktop_mouse_automation": false,
+  "independent_review_claimed": false,
+  "merged": false,
+  "deployed": false,
+  "original_client_acceptance_claimed": false
+}

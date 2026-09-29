@@ -1,0 +1,264 @@
+{
+  "checkpoint": "W102",
+  "scope": "Static native evidence only; no source behavior change or new project execution",
+  "input_sha256": "bf644876709c591acc17c0da8cdf1814edcc9f1e6bc109a8c0d5c38c79dc953c",
+  "receipt_root": "D:\\Dev\\CopilotBuddy-Evidence\\Build12340-IDA",
+  "receipts": [
+    {
+      "file": "initial-survey.json",
+      "sha256": "91dfe6ac0036cee082a229132f71ed611df74b8f72bdc4f0005da4c40301925b",
+      "tool": "survey_binary",
+      "arguments": {
+        "detail_level": "minimal"
+      },
+      "captured_at_utc": "2026-09-26T09:50:14.9304471Z"
+    },
+    {
+      "file": "cursor-get-513660.json",
+      "sha256": "fb0bc4fed8b1560e3bc0cb2f924f7cadf68bfe20fd77639a67dd230b69ac1975",
+      "tool": "analyze_function",
+      "arguments": {
+        "addr": "0x513660",
+        "include_asm": true
+      },
+      "captured_at_utc": "2026-09-26T09:50:41.6552019Z"
+    },
+    {
+      "file": "cursor-virtual-5136d0.json",
+      "sha256": "49d8f2414570ffe1bff822fbe63c2df41834bed36c41490d1f4754590d57cd2f",
+      "tool": "analyze_function",
+      "arguments": {
+        "addr": "0x5136D0",
+        "include_asm": true
+      },
+      "captured_at_utc": "2026-09-26T09:50:41.6850293Z"
+    },
+    {
+      "file": "cursor-set-520770.json",
+      "sha256": "581b7a2797f799d40cccb03403d373d7dd6e76abababa35f40cb0da641e62daa",
+      "tool": "analyze_function",
+      "arguments": {
+        "addr": "0x520770",
+        "include_asm": true
+      },
+      "captured_at_utc": "2026-09-26T09:50:41.7428441Z"
+    },
+    {
+      "file": "cursor-clear-519280.json",
+      "sha256": "fc340cfeed04bb3462e31a6be714881bfe0b36f7acc3fad9ae280bfcbdce323a",
+      "tool": "analyze_function",
+      "arguments": {
+        "addr": "0x519280",
+        "include_asm": true
+      },
+      "captured_at_utc": "2026-09-26T09:51:03.1117695Z"
+    },
+    {
+      "file": "lua-cursor-info.json",
+      "sha256": "a9b95e6717c3c0e893d5d6f206b64e9d6f703ca10a185601467140e7f136cda4",
+      "tool": "analyze_function",
+      "arguments": {
+        "addr": "0x515200"
+      },
+      "captured_at_utc": "2026-09-26T09:51:27.1773428Z"
+    },
+    {
+      "file": "object-guid-lookup.json",
+      "sha256": "14f38bebaf966d5673cea905281fed6120d453132650f8954bd362039ca20e16",
+      "tool": "analyze_function",
+      "arguments": {
+        "addr": "0x4D4DB0",
+        "include_asm": true
+      },
+      "captured_at_utc": "2026-09-26T09:57:13.2116392Z"
+    },
+    {
+      "file": "lua-equip-cursor.json",
+      "sha256": "69c1133a3cfef1921634cf10971153456ece96c4d7c03b08f991c38c29a5a79b",
+      "tool": "analyze_function",
+      "arguments": {
+        "addr": "0x51A3D0",
+        "include_asm": true
+      },
+      "captured_at_utc": "2026-09-26T09:51:27.2601923Z"
+    },
+    {
+      "file": "lua-equip-pending.json",
+      "sha256": "74eb610e563e4d6e83c4d9039d7b6c6f214202f78b075cf88686c2834cfa4b87",
+      "tool": "analyze_function",
+      "arguments": {
+        "addr": "0x51A530",
+        "include_asm": true
+      },
+      "captured_at_utc": "2026-09-26T09:51:27.3023406Z"
+    },
+    {
+      "file": "lua-cancel-pending.json",
+      "sha256": "22bcf1a237a8c56240175abba73c606a2d0c85746b083d0476db74fe080fa89d",
+      "tool": "analyze_function",
+      "arguments": {
+        "addr": "0x51A5C0",
+        "include_asm": true
+      },
+      "captured_at_utc": "2026-09-26T09:51:27.3387013Z"
+    },
+    {
+      "file": "pending-equip-resolve.json",
+      "sha256": "f17ef2700edbb58b5f35b239024c92cf0bb9f51a8047ede389e0d0add7a386bf",
+      "tool": "analyze_function",
+      "arguments": {
+        "addr": "0x6E01A0",
+        "include_asm": true
+      },
+      "captured_at_utc": "2026-09-26T09:51:47.1566922Z"
+    },
+    {
+      "file": "equip-item-route.json",
+      "sha256": "9e95e968ef10c192d55412f3483781ce59fc557a539e0cfce6597026f2370fea",
+      "tool": "analyze_function",
+      "arguments": {
+        "addr": "0x6DF890",
+        "include_asm": true
+      },
+      "captured_at_utc": "2026-09-26T09:51:47.4020763Z"
+    },
+    {
+      "file": "equip-item-route-full.json",
+      "sha256": "40997f72bf534472252d130a288cfcac03f3e2e37261244cd2e277eba981da7d",
+      "tool": "decompile",
+      "arguments": {
+        "addr": "0x6DF890"
+      },
+      "captured_at_utc": "2026-09-26T09:52:19.0140583Z"
+    },
+    {
+      "file": "pending-equip-allocate.json",
+      "sha256": "cb41561ca4af1de3a1a320c665b038d82d1d647bfbf2a6415a855af49652516b",
+      "tool": "analyze_function",
+      "arguments": {
+        "addr": "0x6DF850",
+        "include_asm": true
+      },
+      "captured_at_utc": "2026-09-26T09:52:19.053776Z"
+    },
+    {
+      "file": "equip-event-strings.json",
+      "sha256": "0c3829ab03868a33859a761f620b4b868e7c47b5095cdc1114f934445a673628",
+      "tool": "find_regex",
+      "arguments": {
+        "pattern": "^(EQUIP_BIND_CONFIRM|AUTOEQUIP_BIND_CONFIRM|CURSOR_UPDATE)$",
+        "limit": 10
+      },
+      "captured_at_utc": "2026-09-26T09:52:29.7226951Z"
+    },
+    {
+      "file": "equip-event-string-xrefs.json",
+      "sha256": "559693f7a5eaf278b1c84226f17fe6d20a985480c74bcda9ff8123c64d6e2f08",
+      "tool": "xrefs_to",
+      "arguments": {
+        "addrs": [
+          "0xA2203C",
+          "0xA22024",
+          "0xA21FEC"
+        ],
+        "limit": 20
+      },
+      "captured_at_utc": "2026-09-26T09:55:19.9772017Z"
+    },
+    {
+      "file": "event-registration-full.json",
+      "sha256": "bbdfc501d5033642e928d68a08b667db8dec676bb04a686af709e1e511c4fb9d",
+      "tool": "decompile",
+      "arguments": {
+        "addr": "0x608880"
+      },
+      "captured_at_utc": "2026-09-26T09:55:29.4305409Z"
+    },
+    {
+      "file": "event-dispatcher.json",
+      "sha256": "22369978509884e9f292e7e9e178bc642e1dd44b7cc52c22e9e40503eb675e19",
+      "tool": "analyze_function",
+      "arguments": {
+        "addr": "0x81B530",
+        "include_asm": true
+      },
+      "captured_at_utc": "2026-09-26T09:55:55.4806759Z"
+    },
+    {
+      "file": "event-dispatch-core.json",
+      "sha256": "96f0fa5b66a02d1582ca414fc105f6efea328dae2eeb09034ccc5c11566afbf7",
+      "tool": "analyze_function",
+      "arguments": {
+        "addr": "0x81AC90",
+        "include_asm": true
+      },
+      "captured_at_utc": "2026-09-26T09:56:04.6411324Z"
+    },
+    {
+      "file": "event-table-xrefs.json",
+      "sha256": "c5d87b0f162bf76d52f8f27470740b71b86645ff11963fc831ade496c862cc2c",
+      "tool": "xrefs_to",
+      "arguments": {
+        "addrs": [
+          "0xC252EC",
+          "0xC24EB0",
+          "0xD3F7D8"
+        ],
+        "limit": 30
+      },
+      "captured_at_utc": "2026-09-26T09:56:10.0671209Z"
+    },
+    {
+      "file": "event-table-register.json",
+      "sha256": "a190ed7beef5ea8162ef79e319dc2637c890bd81c3868269e183ee330af4c6fd",
+      "tool": "analyze_function",
+      "arguments": {
+        "addr": "0x614300",
+        "include_asm": true
+      },
+      "captured_at_utc": "2026-09-26T09:56:24.2088461Z"
+    },
+    {
+      "file": "event-index-register.json",
+      "sha256": "963b9485c8c53e85cbd7763f76db6a76aea517d38ba67954880def01d0ef0d53",
+      "tool": "analyze_function",
+      "arguments": {
+        "addr": "0x81B5F0",
+        "include_asm": true
+      },
+      "captured_at_utc": "2026-09-26T09:56:24.2892014Z"
+    },
+    {
+      "file": "game-ui-init.json",
+      "sha256": "800210624963bbb4b9c7c99f7326ebdb1d01046c082f3bbd9b8600c53c9da399",
+      "tool": "analyze_function",
+      "arguments": {
+        "addr": "0x52A980",
+        "include_asm": true
+      },
+      "captured_at_utc": "2026-09-26T09:56:35.1412182Z"
+    }
+  ],
+  "framexml_commit": "9640af74c40affd56fd46d6815917f96fc5c9540",
+  "framexml_files": [
+    {
+      "file": "UIParent.lua",
+      "sha256": "a48687367d05ba9965bdd7a43bdecb92666c8ba74873bd7d9da08b205b34e177"
+    },
+    {
+      "file": "StaticPopup.lua",
+      "sha256": "1134b08e87d8577c0353895207eaec24e74e8f669775a49257a82431a4ac3042"
+    }
+  ],
+  "event_indices": {
+    "EQUIP_BIND_CONFIRM": 271,
+    "AUTOEQUIP_BIND_CONFIRM": 272,
+    "CURSOR_UPDATE": 275
+  },
+  "reconciled_parent": "01991ced2c96c835f88106d2ca20eeed07d5b983",
+  "tested_source": "67b4898406a806b2b4a65360ca416a96dff7e1fc",
+  "master": "b2324913e2499ba30b239dd67224ca2c655c05cc",
+  "new_project_tests_run": false,
+  "game_executed": false,
+  "goal_created": false
+}

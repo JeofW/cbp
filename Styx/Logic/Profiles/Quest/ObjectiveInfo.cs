@@ -38,10 +38,10 @@ namespace Styx.Logic.Profiles.Quest
 				}
 				if (text == "objective")
 				{
-					XAttribute? typeAttr = element.Attribute("Type");
+						XAttribute? typeAttr = OrderNode.GetAttributeByAliases(element, "Type");
 					if (typeAttr != null)
 					{
-						if (Enum.TryParse<ObjectiveType>(typeAttr.Value, true, out ObjectiveType objType))
+							if (TryParseObjectiveType(typeAttr.Value, out ObjectiveType objType))
 						{
 							if (_objectiveFactories.TryGetValue(objType, out var factory))
 							{
@@ -63,7 +63,20 @@ namespace Styx.Logic.Profiles.Quest
 					return _objectiveFactories[ObjectiveType.UseObject](element);
 				}
 			}
-			throw new ProfileUnknownElementException(element, "TurnIn", "HandIn", "Objective", "KillMob", "CollectItem", "UseObject");
+				throw new ProfileUnknownElementException(element, "TurnIn", "HandIn", "Objective", "KillMob", "CollectItem", "UseObject");
+			}
+
+		internal static bool TryParseObjectiveType(string value, out ObjectiveType type)
+		{
+			type = (value ?? string.Empty).Trim().ToLowerInvariant() switch
+			{
+				"turnin" or "handin" => ObjectiveType.TurnIn,
+				"grind" or "kill" or "killmob" or "slay" or "slaymob" => ObjectiveType.KillMob,
+				"gather" or "getitem" or "gatheritem" or "collect" or "collectitem" => ObjectiveType.CollectItem,
+				"useobject" or "use" => ObjectiveType.UseObject,
+				_ => ObjectiveType.None
+			};
+			return type != ObjectiveType.None;
 		}
 	}
 }

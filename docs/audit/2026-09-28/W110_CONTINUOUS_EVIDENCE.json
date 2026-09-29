@@ -1,0 +1,1529 @@
+{
+    "schema":  "copilotbuddy-w110-continuous-final-evidence-v1",
+    "recorded_utc":  "2026-09-28T15:53:50.2567601Z",
+    "repository":  "JeofW/cbp",
+    "repository_id":  1367174964,
+    "pull_request":  51,
+    "branch":  "audit/next-55-equipment-observation-20260917",
+    "tested_source":  "f12c57267fa071305085915f4ec2a2bb9e52c144",
+    "source_tree":  "a5023f87ef951ba71d11faa8eb55c0fb3bb37798",
+    "source_parent":  "002682af0d8b8cc9ab01482eba8598ada0dd763c",
+    "prior_continuous_publication":  {
+                                         "repository":  "JeofW/cbp",
+                                         "repository_id":  1367174964,
+                                         "branch":  "audit/next-55-equipment-observation-20260917",
+                                         "expected_parent":  "bd50ded5f15a457976c623354b96d1665f1dbc89",
+                                         "paths":  [
+                                                       "Bots/Gatherbuddy/GatherbuddyBot.cs",
+                                                       "Styx/CommonBot/Coroutines/CommonCoroutines.cs",
+                                                       "Styx/Logic/Mount.cs",
+                                                       "Styx/Logic/Pathing/Flightor.cs",
+                                                       "Styx/Offsets/GlobalOffsets.cs",
+                                                       "Styx/WoWInternals/ObjectManager.cs",
+                                                       "Styx/WoWInternals/WoWMovement.cs",
+                                                       "Styx/WoWInternals/WoWObjects/WoWMovementInfo.cs",
+                                                       "Styx/WoWInternals/WoWObjects/WoWUnit.cs",
+                                                       "Tools/PaladinDecisionRegressionTests/Program.cs",
+                                                       "Tools/PaladinDecisionRegressionTests/SharedCommonBoundaryFixture.cs",
+                                                       "Tools/PaladinDecisionRegressionTests/SharedDismountSafetyRegressionTests.cs",
+                                                       "Tools/WholesomeQuestRecoveryRegressionTests/ActiveMoverObservationRegressionTests.cs",
+                                                       "Tools/WholesomeQuestRecoveryRegressionTests/ClientBuildAdmissionRegressionTests.cs",
+                                                       "Tools/WholesomeQuestRecoveryRegressionTests/CoroutineDismountRegressionTests.cs",
+                                                       "Tools/WholesomeQuestRecoveryRegressionTests/FlightorDismountRegressionTests.cs",
+                                                       "Tools/WholesomeQuestRecoveryRegressionTests/ForcedDismountBoundaryRegressionTests.cs",
+                                                       "Tools/WholesomeQuestRecoveryRegressionTests/GatherLandingLifecycleRegressionTests.cs",
+                                                       "Tools/WholesomeQuestRecoveryRegressionTests/GatherbuddyLandingRegressionTests.cs",
+                                                       "Tools/WholesomeQuestRecoveryRegressionTests/HostMountAdmissionRegressionTests.cs",
+                                                       "Tools/WholesomeQuestRecoveryRegressionTests/HostMountDismountRegressionTests.cs",
+                                                       "Tools/WholesomeQuestRecoveryRegressionTests/InteractionMountBoundaryRegressionTests.cs",
+                                                       "Tools/WholesomeQuestRecoveryRegressionTests/MountBehaviorCompilationRegressionTests.cs",
+                                                       "Tools/WholesomeQuestRecoveryRegressionTests/MovementFlagLayoutRegressionTests.cs",
+                                                       "UI/MainWindow.xaml.cs",
+                                                       "UI/ProcessSelectorWindow.xaml.cs",
+                                                       "runtime-snapshot/Quest Behaviors/ForcedDismount.cs",
+                                                       "runtime-snapshot/Quest Behaviors/InteractWith.cs",
+                                                       "runtime-snapshot/Routines/Singular wotlk/Helpers/Common.cs"
+                                                   ],
+                                         "patch_sha256":  "339de12ee6b0c08dd6d0f24b3bc18ffa4e1f7b8f19125d093143d98e0c35d17b",
+                                         "files":  [
+                                                       {
+                                                           "path":  "Bots/Gatherbuddy/GatherbuddyBot.cs",
+                                                           "blob":  "9384c744eb9d51bd09c40ec5767be4639e64d5b1",
+                                                           "sha256":  "e91de76aa790c888050eb850cc96afbf486aee42354a0d1f91442bd9d67a2854"
+                                                       },
+                                                       {
+                                                           "path":  "Styx/CommonBot/Coroutines/CommonCoroutines.cs",
+                                                           "blob":  "7f87f91d8c5540ff5b67855e53c4a9d827f96546",
+                                                           "sha256":  "bc925d73ccfdc564be1741cac951cbb97d26ed974783a007d2b7c49418e383be"
+                                                       },
+                                                       {
+                                                           "path":  "Styx/Logic/Mount.cs",
+                                                           "blob":  "99cebe3e84c361fc465cf5cd12fc459c48065a17",
+                                                           "sha256":  "a75a75f45c1fe6cf43fc3c51159f9d18a346fed50118f9d1e89b2e9b9bd03267"
+                                                       },
+                                                       {
+                                                           "path":  "Styx/Logic/Pathing/Flightor.cs",
+                                                           "blob":  "b275c9743bb7fd08699c1d3854b73de2ccfaef2a",
+                                                           "sha256":  "bcbc0538c8791a652d4ef32d0fb0192b66271ff2df1667231d2db7362c056ff6"
+                                                       },
+                                                       {
+                                                           "path":  "Styx/Offsets/GlobalOffsets.cs",
+                                                           "blob":  "c6d6f4cdc27eee7bab2f2c5ac1951f5c1a4d6b29",
+                                                           "sha256":  "9e4baa1cabc28e12b8907a3c8bf20bffc2f11edac0adc595732493e9837111ca"
+                                                       },
+                                                       {
+                                                           "path":  "Styx/WoWInternals/ObjectManager.cs",
+                                                           "blob":  "b946a539971a3e8200294fcdefe0dca5c1fcd597",
+                                                           "sha256":  "bc642d120af868cf51405a6bd1077d5b13f7199fc7756ec7a6f33b198b2ee8db"
+                                                       },
+                                                       {
+                                                           "path":  "Styx/WoWInternals/WoWMovement.cs",
+                                                           "blob":  "091314f7e920b6cf6118b9e1f95e8122c6d6369b",
+                                                           "sha256":  "9ccce202bc7a09c3f9da7aa4ec5c101d641024dd3383432444bd3d0d7024b44f"
+                                                       },
+                                                       {
+                                                           "path":  "Styx/WoWInternals/WoWObjects/WoWMovementInfo.cs",
+                                                           "blob":  "da86bc4c2c2f10c9c1320a34d1a83a717eaaa5ee",
+                                                           "sha256":  "a395aa28eba409f83978a2b0b0015c98bb22f7e1fcbfb68eb5a37e75c5d53b56"
+                                                       },
+                                                       {
+                                                           "path":  "Styx/WoWInternals/WoWObjects/WoWUnit.cs",
+                                                           "blob":  "fb18efc3be56167042cce45e30514a0d0664fccc",
+                                                           "sha256":  "d6b0e9abb83f4aa9d0b5236c03c029ff7723b29928838dc29b88dd636ebde5dd"
+                                                       },
+                                                       {
+                                                           "path":  "Tools/PaladinDecisionRegressionTests/Program.cs",
+                                                           "blob":  "b5621f7faae5016323364c811182739b48e543bc",
+                                                           "sha256":  "f7fc702cf186b0d558d3ec9e73623f86e55dd44978500efc665b37cff4160682"
+                                                       },
+                                                       {
+                                                           "path":  "Tools/PaladinDecisionRegressionTests/SharedCommonBoundaryFixture.cs",
+                                                           "blob":  "73d0f0d0418dc10e9459a112070f7fd6494e3dbe",
+                                                           "sha256":  "f95ffd19689bc9992d4ceac74898c8d18895d5380ae6f9b9522ffb46b5c8df36"
+                                                       },
+                                                       {
+                                                           "path":  "Tools/PaladinDecisionRegressionTests/SharedDismountSafetyRegressionTests.cs",
+                                                           "blob":  "6c3038b0d58c7ad542553976d9045d3a33e33b1d",
+                                                           "sha256":  "7309b763581b1f1dbb15779ac3c328e03803224402fcdcf6560c82b0e2fe808a"
+                                                       },
+                                                       {
+                                                           "path":  "Tools/WholesomeQuestRecoveryRegressionTests/ActiveMoverObservationRegressionTests.cs",
+                                                           "blob":  "bd9b7c11fdf4abfbba2ce096e012557aaa12843b",
+                                                           "sha256":  "3e8e7968742ae542d8c92242862c1135b0ba3917efab09f84d8ad6468f5e7c07"
+                                                       },
+                                                       {
+                                                           "path":  "Tools/WholesomeQuestRecoveryRegressionTests/ClientBuildAdmissionRegressionTests.cs",
+                                                           "blob":  "39d29cc27b64a5a21777c0fdc6e597512b6a0a9b",
+                                                           "sha256":  "095c5ec60b5b4e302efd5fa249445c65c1a011541d16b71775550542ac2b745b"
+                                                       },
+                                                       {
+                                                           "path":  "Tools/WholesomeQuestRecoveryRegressionTests/CoroutineDismountRegressionTests.cs",
+                                                           "blob":  "1ac79506a4acfbe58417bf0a81f024a9628bfb11",
+                                                           "sha256":  "7e588e68841a7457b4a9245ae80942645a20577696bfc7c76b0a1cadd32161e1"
+                                                       },
+                                                       {
+                                                           "path":  "Tools/WholesomeQuestRecoveryRegressionTests/FlightorDismountRegressionTests.cs",
+                                                           "blob":  "b115215a6166f57b274e8f5b89bc78ef7a91a138",
+                                                           "sha256":  "c1f28ef28f45ee43672a4fe5eeff2c2e87f2699b6ecf40bb20ca41a16c47a16b"
+                                                       },
+                                                       {
+                                                           "path":  "Tools/WholesomeQuestRecoveryRegressionTests/ForcedDismountBoundaryRegressionTests.cs",
+                                                           "blob":  "7884b93993913dd0270390dd29633dcd5092e6b8",
+                                                           "sha256":  "4e8892c0d3e8ed2170eae00d8fcb6507a288770b42ffe20aa9f9f9032d6b121a"
+                                                       },
+                                                       {
+                                                           "path":  "Tools/WholesomeQuestRecoveryRegressionTests/GatherLandingLifecycleRegressionTests.cs",
+                                                           "blob":  "6667dd3ba75755ebab515bed07e3bc208ddeb446",
+                                                           "sha256":  "8ff097850f1ed89406d773206323f58044b9c8d6fde0a0045f2b3eb94c500c81"
+                                                       },
+                                                       {
+                                                           "path":  "Tools/WholesomeQuestRecoveryRegressionTests/GatherbuddyLandingRegressionTests.cs",
+                                                           "blob":  "d52d360d81f24f8e8be20ca8899840040f381049",
+                                                           "sha256":  "c29c99c71815a54dbfa1decf6b5273638844684ff5578e6b289714088c68600f"
+                                                       },
+                                                       {
+                                                           "path":  "Tools/WholesomeQuestRecoveryRegressionTests/HostMountAdmissionRegressionTests.cs",
+                                                           "blob":  "bca69a451a0874b24ecf43e1932978a0b29ce79c",
+                                                           "sha256":  "acbdc629eb03031048ab12c5799539fb85e678ba7bbab063a0d07d396955a1b2"
+                                                       },
+                                                       {
+                                                           "path":  "Tools/WholesomeQuestRecoveryRegressionTests/HostMountDismountRegressionTests.cs",
+                                                           "blob":  "0295993917faa91705edfc788565c66c5964c96a",
+                                                           "sha256":  "f12f09f0b113d505963f58ec608e3b83794640bd52d30f2382be5170f327b25b"
+                                                       },
+                                                       {
+                                                           "path":  "Tools/WholesomeQuestRecoveryRegressionTests/InteractionMountBoundaryRegressionTests.cs",
+                                                           "blob":  "d2444535b2a06c6b0005f3af10e8a3faadaea59a",
+                                                           "sha256":  "56414564063a51c65f77f486ed2771f4749adbfcd3fdc1fc8bbe816fba183f76"
+                                                       },
+                                                       {
+                                                           "path":  "Tools/WholesomeQuestRecoveryRegressionTests/MountBehaviorCompilationRegressionTests.cs",
+                                                           "blob":  "7edb31248ce872d85e46b8bb777ebdf18bcb1fd5",
+                                                           "sha256":  "48ccf1c1c67e286d2f323818443ad0d1965edd4312793ffc82430a4172772a6a"
+                                                       },
+                                                       {
+                                                           "path":  "Tools/WholesomeQuestRecoveryRegressionTests/MovementFlagLayoutRegressionTests.cs",
+                                                           "blob":  "0b83195dc8d925fccbad9b2997d19c4a666bda57",
+                                                           "sha256":  "002555f66bec1d2c4c9a41e40b05f2652b121202197c338dae0938e86c3d50df"
+                                                       },
+                                                       {
+                                                           "path":  "UI/MainWindow.xaml.cs",
+                                                           "blob":  "3f5f4373427431f9ee2b53c1fcc2c85df5719797",
+                                                           "sha256":  "cf47c3467fa045d812ffb56fdf96d4cd38c898ec73c2f17ae20dfdf9925429a9"
+                                                       },
+                                                       {
+                                                           "path":  "UI/ProcessSelectorWindow.xaml.cs",
+                                                           "blob":  "cfa1c24f68500e70e4a80aa03946f157ed938d51",
+                                                           "sha256":  "58f3c4ee04a27d625184e077f7eecedfe6a952dcf5da9036500df2da0495e5e5"
+                                                       },
+                                                       {
+                                                           "path":  "runtime-snapshot/Quest Behaviors/ForcedDismount.cs",
+                                                           "blob":  "dd173cb30d4a8d95aaa4fc73a86242d989eeea2a",
+                                                           "sha256":  "6a3d449851d39b549b15ecaf5bb6756719197d0d8d3d19668af3272ffc93844d"
+                                                       },
+                                                       {
+                                                           "path":  "runtime-snapshot/Quest Behaviors/InteractWith.cs",
+                                                           "blob":  "4624c5ff514bddab61adf20df4bc6ace0e0b63e2",
+                                                           "sha256":  "79c52e20ea96481ecf6cf044b11d43583977c9399ba591738ab0b114dba4d8fc"
+                                                       },
+                                                       {
+                                                           "path":  "runtime-snapshot/Routines/Singular wotlk/Helpers/Common.cs",
+                                                           "blob":  "d38cfaed88d3597801ef290a7dbf4110220ce6ec",
+                                                           "sha256":  "b969d03c327c452b3d56d4640240694d10f05037982a453885343d0960b6ae11"
+                                                       }
+                                                   ],
+                                         "commit":  "002682af0d8b8cc9ab01482eba8598ada0dd763c",
+                                         "tree":  "c6e70e0dabd47864a46ed88e618f8c1eda49a530",
+                                         "verified_at_utc":  "2026-09-28T14:43:38.6226785Z",
+                                         "direct_refs":  [
+                                                             "002682af0d8b8cc9ab01482eba8598ada0dd763c\trefs/heads/audit/next-55-equipment-observation-20260917",
+                                                             "b2324913e2499ba30b239dd67224ca2c655c05cc\trefs/heads/master"
+                                                         ]
+                                     },
+    "final_source_publication":  {
+                                     "repository":  "JeofW/cbp",
+                                     "repository_id":  1367174964,
+                                     "branch":  "audit/next-55-equipment-observation-20260917",
+                                     "expected_parent":  "002682af0d8b8cc9ab01482eba8598ada0dd763c",
+                                     "paths":  [
+                                                   "Styx/Logic/Mount.cs",
+                                                   "Styx/Logic/Pathing/Flightor.cs",
+                                                   "Tools/WholesomeQuestRecoveryRegressionTests/HostMountAdmissionRegressionTests.cs",
+                                                   "Tools/WholesomeQuestRecoveryRegressionTests/MountPermissionBoundaryRegressionTests.cs",
+                                                   "Tools/WholesomeQuestRecoveryRegressionTests/FlightorWaitContinuityRegressionTests.cs"
+                                               ],
+                                     "patch_sha256":  "f3fb8f9ab3f09ad2db8b6f1ef201984b9b1f9914dd0b0dbf955981de10e2bcf5",
+                                     "files":  [
+                                                   {
+                                                       "path":  "Styx/Logic/Mount.cs",
+                                                       "blob":  "94b94011b43a38983daddae6d78869340d0447e6",
+                                                       "sha256":  "0d28d86fab579ccad31b2705a4ba00d062791e17be8150397758af9867c42c79"
+                                                   },
+                                                   {
+                                                       "path":  "Styx/Logic/Pathing/Flightor.cs",
+                                                       "blob":  "62969581dfd72d03e2b097cc292c9d6d49bcebd9",
+                                                       "sha256":  "715ad85090479ae3827036b4bca1c7392daa008eff12246ec789019f99399031"
+                                                   },
+                                                   {
+                                                       "path":  "Tools/WholesomeQuestRecoveryRegressionTests/HostMountAdmissionRegressionTests.cs",
+                                                       "blob":  "a824a7fb91f2518133fcfd756e3e8e5ddadbef81",
+                                                       "sha256":  "0a3df6ed5f7be6c28c953ab8d6960d2a1c082523cef70a8f15281ccc7d812119"
+                                                   },
+                                                   {
+                                                       "path":  "Tools/WholesomeQuestRecoveryRegressionTests/MountPermissionBoundaryRegressionTests.cs",
+                                                       "blob":  "5ebfe69c94d53584f45ef2bbba58e2a6c90140d5",
+                                                       "sha256":  "e84c29705da0b7ada0e1cb82b7cdc32b6f15c7559fb179f0950a001682d5f5c9"
+                                                   },
+                                                   {
+                                                       "path":  "Tools/WholesomeQuestRecoveryRegressionTests/FlightorWaitContinuityRegressionTests.cs",
+                                                       "blob":  "3300cffa8f8ebc7948df2753c5f84d5132dca56b",
+                                                       "sha256":  "05b9a1b47d48a1c4061f400d5c252eecda3e74cd4a4846267efbf23b54d0ace3"
+                                                   }
+                                               ],
+                                     "commit":  "f12c57267fa071305085915f4ec2a2bb9e52c144",
+                                     "tree":  "a5023f87ef951ba71d11faa8eb55c0fb3bb37798",
+                                     "verified_at_utc":  "2026-09-28T15:45:24.5820999Z",
+                                     "direct_refs":  [
+                                                         "f12c57267fa071305085915f4ec2a2bb9e52c144\trefs/heads/audit/next-55-equipment-observation-20260917",
+                                                         "b2324913e2499ba30b239dd67224ca2c655c05cc\trefs/heads/master"
+                                                     ]
+                                 },
+    "documentation_identity":  "Containing documentation commit; external final publication and verification identify the exact SHA.",
+    "goal_disposition":  "Available source audit and demonstrated repairs complete; D1-D6 and historical CLR diagnostic acceptance inputs remain explicit.",
+    "requirement_count":  55,
+    "requirement_rows":  [
+                             "| C01 | Reject absent/wrong client identity before publishing memory or hooking; all UI selection paths use the same version predicate. | R: `ObjectManager.Initialize`, both UI owners; client-admission38 cases. | Version-resource3.3.5.12340 is not a cryptographic runtime-image check. D1 applies. |",
+                             "| C02 | Unknown/zoning/unreadable world state cannot become valid world permission. | V: retained W110 numeric-address and complete-byte repairs; world8/address37/read-validity68 controls. | Actual lifecycle/server transitions and other fixed-address contracts remain D1/D2. |",
+                             "| C03 | Observe movement flags/transport without cached zero or reused object/pointer authority. | R: `WoWUnit.TryGetMovementState`; actual-object/raw-memory/lifecycle fixture coverage and new hash-bound IDA contract. | Repeated reads are not an atomic frame or an ABA-proof lifetime. D1. |",
+                             "| C04 | Original-client root/fall/far-fall/pending bits; preserve native IsFalling root exclusion. | R: independent layout39 plus gather34, Flightor52, host90, coroutine101 and shared37 final cases; TC/AC/native writers. | Native runtime and unusual control/transport states remain D1. |",
+                             "| C05 | Movement input recipient is distinct from NPC interaction state; missing input owner is unknown, not Me. | R: `ActiveMoverGuid` now0xCA1238; complete getters/raw-identity checks;27 intended red assertions -\u003e28/28, coroutine101 preserved. | Undetected concurrent control switches and dispatch atomicity are D1. |",
+                             "| C06 | Aura array shape, metadata fields, signed duration/expiry and actual managed consumers. | V/L: retained W110 aura metadata165, timer96, collection75 and hash-bound calling/writer/lifetime evidence. | Effective buff magnitudes, live frame consistency and server effects are D1/D2. |",
+                             "| C07 | Cast submission, pending spell observation, terrain return width and ground-cast receipt. | V: W107/W109 native/managed repairs and full-factory fixtures retained. | Generic ground-cursor/request provenance remains D3; a bool submission is not server acknowledgement. |",
+                             "| Q01 | Pickup admission, prerequisites, occupied/raw log identity, recovery ownership and bounded retry. | V/L: scheduler, QuestRecovery, pickup and raw-publication/observation suites; QUEST/LOCAL17. | Exact realm quest data and native/server acknowledgement are D2/D4. |",
+                             "| Q02 | Gossip selection and menu ownership must survive actor/recipient/reload changes. | V/U/D: retained R06 local-request receipt, captured recipient, retry/deadline and owned-menu restrictions. | First-response causal attribution is still unavailable; matching text, IDs, timing or local execution cannot supply it. D3. |",
+                             "| Q03 | Turn-in and reward selection preserve quest/index/physical-selection identity and actual receipts. | V: W80-W110 quest/reward/equipment protections and R08 numeric-selection/UTF8-byte repairs. | Live native/server/realm reward acceptance remains D1/D2/D4. Numeric preparation budget remains exhausted. |",
+                             "| Q04 | Kill objectives use the correct raw descriptor/slot/entry and cannot infer progress from unrelated loot. | V/U: raw slot/type/index and progress lifetime fixtures; scheduler excludes unmapped objective strategies. | Missing raw-slot mappings or realm scripts require D4; no guessed counter ownership. |",
+                             "| Q05 | Quest-item NPC/target identity, alive/dead state, range, LOS, selection acknowledgement, retry and continuation. | V/L: retained UseItemOn dispatch, authoritative/reusable acknowledgement, target-selection and lifetime fixtures; real constructor/lifecycle checks. | A use attempt is not credited progress. Unmapped server conditions are D2/D3/D4. |",
+                             "| Q06 | Game-object/ground item use, health-threshold actions and special recipient protocols. | U: `ProfileBuilder` and scheduler reject unimplemented GameObject/ground item protocols and BelowHp recipes without an explicit threshold. | Need a versioned implemented protocol, source-bound recipe and raw success mapping, not a text match. D4. |",
+                             "| Q07 | Direct NPC/object interactions retain the same target through mount preparation and dispatch. | R: `InteractWith` five distinct strategies, capture/revalidation, actual unit receipt, item physical identity and original-recipient blacklist; final95 cases. | Object/item void APIs remain local-attempt boundaries; later frame provenance is D3. |",
+                             "| Q08 | Interaction cleanup must not clear a replacement target or actor. | R: corrected complete-tree baseline12 intended failures -\u003e95/95; captured submitted request owns cleanup, with manual KeepTargetSelected preserved. | Undetected native target changes between observation/dispatch remain D1; no menu ownership is inferred. |",
+                             "| Q09 | Post-interaction gossip/merchant/quest frames and Counter meaning. | L/D: full changed InteractWith file compiles via the production compiler; Counter remains a local attempt. | Legacy frame visibility cannot prove causal ownership or server credit. R06/D3 remains open, including legacy optional frame actions. |",
+                             "| Q10 | Gather approach, same node/actor, bounded descent, cancellation and actual landing checks. | R: actual Gatherbuddy owner and cleanup; gather34/lifecycle15 and surrounding node/loot controls; no timeout-authorized dismount. | Terrain support, moving nodes, shore/cave/ledge safety and live node/loot events are D1/D5. |",
+                             "| Q11 | Post-gather exit, remount/fly and route continuation; avoid permanent on-foot mode or short-range mount loops. | V/R/L: no-node patrol calls Flightor; shared distance/mount policy chooses walking or mounting. Final host admission158 and permission223 cases include the actual nearby-target wrapper, renewed caller veto and mount setup/wait/receipt boundaries. No permanent on-foot flag is introduced. | Route geometry, mount availability, actual cast acknowledgement and hostile/water/indoor transitions need D1/D5. |",
+                             "| Q12 | Escort identity/follow/combat/failure/completion and recipe admission. | V/U/L: retained EscortBehavior fixtures and admitted explicit strategies; unsupported scripted materializers remain rejected. | Actual NPC script, path/phase, quest-credit semantics and provenance require D2/D4/D5. A generic escort class is not universal support. |",
+                             "| Q13 | Flight-master pickup, including wind-rider NPCs, menu ownership, known path/cost and taxi submission. | V/L: retained FlightPath admission, public-owner, known-master, alternate-origin, cost, intent, final-observation and publication-revocation fixtures. | NPC/menu/server path identity remains D2/D3/D4; visual proximity is not ownership. |",
+                             "| Q14 | Taxi departure/arrival, flight transitions and continuation after travel. | V/L: Taxi/FlightPaths owners and retained current-world/request checks. | Actual flight network, arrival timing, map transition and follow-up movement require D2/D5. |",
+                             "| Q15 | Equipment/reward physical copy, cursor lifetime, bind index, acknowledgement, timeout and cancellation. | V: W103-W109 same-dispatch GUID, return-buffer lock, pending index, owned pickup/autoequip, observation-only cleanup and existing fixtures preserved. | Original-client/server and broader-transfer provenance remain D1/D2/D3. No entry/slot equality substitutes for physical identity. |",
+                             "| Q16 | Vendor/repair/bags/mail interactions, retry backoff, protected items and quest-item preservation. | V: VendorCore, WholesomeSale, Gatherbuddy sale/repair/backoff and merchant ownership/quest-item fixtures; current surrounding vendor travel25. | Actual merchant/mail/server acknowledgement and special realm items remain D2/D3/D4. |",
+                             "| N01 | True3D coordinates, finite input, Z continuity, route invalidation, map/actor ownership and stale async path replies. | R/V/L: retained MeshNavigator request ownership plus Flightor traversal/takeoff caches now bound to player reference/GUID, input-owner reference/GUID, map and life state. Observed missing/invalid ownership revokes prior route authority even if the same wrapper returns. Final Flightor168 includes six context-change and four observation-gap red/green cases and valid same-context reuse. | Repeated reads do not detect unobserved ABA changes or establish atomic dispatch. A valid coordinate or computed mesh route does not prove physical safety. D1/D5. |",
+                             "| N02 | Cliffs/drops, ramps, stairs, bridges, caves and doors. | L/D: source reachability/LOS/Z checks and current route invalidation remain; no new speculative mesh contract. | Need actual geometry/mesh revisions, collision/door state and supervised traversal per route. D5. |",
+                             "| N03 | Lifts/elevators/transports, attachment and world-relative position. | V/L: elevator safety suite, native transport observations and no-flight-while-riding gates. | Moving transport transforms and board/ride/exit acceptance are D1/D5. |",
+                             "| N04 | Swimming, liquid uncertainty, shoreline exit and dry/wet cache invalidation. | V/L: retained aquatic29/shoreline35, rest admission, route/world checks. | Depth, current, breath, shoreline reachability and physical exit remain D1/D5. |",
+                             "| N05 | Mount/dismount/remount across actor change, combat, flight form, taxi, water and indoor/outdoor decisions. | R/V: shared37, gather34, Flightor dismount52, host removal90/admission158, permission223, coroutine101, forced37, interaction95; existing availability/distance/cooldown controls preserved. Actual host/flying permission leaves are now covered separately from dispatch fixtures. | Raw observations do not certify ground support, all vehicle states, or actual mount success. D1/D5. |",
+                             "| N06 | Stop/descent ownership, interrupted coroutine/TreeSharp cleanup and timeout outcome. | R: same actor/GUID, bounded waits, captured active mover and cleanup; StopMoving no longer returns true on timeout. | Native input release is best effort; exclusive atomic dispatch and stuck-key world testing remain D1/D5. |",
+                             "| N07 | Moving NPCs, approach/hotspot unmount and target acknowledgement. | V/R/L: captured interaction actors, range/LOS revalidation and shared target/movement fixes; host mount policy avoids needless nearby mounting. | Actual moving paths/LOS changes, latency and hostile surroundings remain D1/D5. |",
+                             "| N08 | Stuck recovery, safe takeoff/landing and ground-target placement. | R/V/L/D: Flightor MoveTo and anti-stuck waits revalidate the captured actor/control/map/life context before subsequent movement. Recovery-step state is invalidated on observed ownership loss and changed life state, as well as another actor/map. Final168 cases include normal sequence advancement, yielded phases, route continuity and six additional recovery-context cases. Retained terrain/ground-cast checks remain. | These repairs fence ownership; they do not prove an escape direction or takeoff candidate is physically safe. Cursor ownership and route safety remain D1/D3/D5. |",
+                             "| N09 | Dense-pack ranged pull and retreat toward a verified safer place. | U/L: staged context/opener/geometry policy retained, but `DensePullIsolationValidated=false` prevents enabling its capability. | Need observed collision/Z/LOS/hostile-envelope/route safety and supervised pull/retreat evidence. D5. |",
+                             "| N10 | Broader captured legacy helpers and default-profile copies. | U: the2014 `Misc/TargetAndMoveToMob` family depends on absent QuestBehaviorBase/QuestBehaviorCore integration and is not an admitted Wholesome materializer. Its direct nullable ActiveMover use is not claimed supported. | Requires a3.3.5a-proven profile/runtime port and compilation/behavior contract first. Do not enable a later-expansion capture or silently treat unavailable control as in-range completion. D4. |",
+                             "| R01 | Normal/open-world, Instance/group and PvP are separate contexts with target admission. | V/L: actual Ret factories, GROUP safety, RET and current full Singular compilation. | Context transitions/teammate state and live target disposition require D1/D2. |",
+                             "| R02 | FCFS ordering, readiness/GCD, mana/resources, learned spell/rank availability, proc and cooldown gates. | V/L: retained Ret shared-cast/metadata/readiness/rotation tests and pinned TC/AC spell evidence. | Real latency/proc timing, encounter effects and optimum-DPS claims require D1/D2/D6. No universal optimum is claimed. |",
+                             "| R03 | Actor/target GUID, selection acknowledgement, autoattack, range, LOS, facing, movement and cast waiting. | V/R: W105 start-only attack/owned facing/cast-wait, W110 dispatch/target/context controls; new movement-owner correction. | Atomic native target/actor ownership across dispatch is D1. |",
+                             "| R04 | Seal of Command: known spell, multi-target/cleave admission and no uncontrolled twisting. | V/L: retained W110 situational seal policy and78-case seal-recovery fixture, RET; three-target entry/two-target retention and existing area helper remain. | The helper is not universal open-world/PvP CC or obstacle safety. Actual nearby-hostile risk and damage/proc results are D1/D2/D5. |",
+                             "| R05 | Righteousness: player-target preference, manual choice and damage fallback; short-fight crossover reviewed. | V/L/D: current selector uses learned Righteousness for players or when the retained Command/stacking choices are unavailable; explicit manual selection remains. It does not estimate NPC time-to-die or automatically switch every short NPC fight to Righteousness. | A measured short-fight crossover needs character/gear/talent/encounter data and D2/D6. No unsupported optimality rewrite was introduced. |",
+                             "| R06 | Vengeance/Corruption: faction availability, ordinary/sustained NPCs, own-caster stacks and other Paladin stacks. | V/L: retained selector prefers learned Corruption, otherwise Vengeance, for ordinary NPC work under its existing policy. Pinned core evidence distinguishes the caster\u0027s own stack contribution; native aura collection preserves multiple owners. The managed selector does not newly calculate a stack/time-to-die crossover. | Actual stack refresh/expiration, effective damage and realm mechanics remain D1/D2. Another Paladin\u0027s stacks are not proof of our damage contribution. |",
+                             "| R07 | Light: optional health sustain without oscillation or breaking manual choices. | V: OFF by default; Auto only, solo Normal nonplayer/nonelite/nonboss, entry50/recovery75/min-entry-mana30; retained78/78. | Actual incoming damage/heal/mana and boss/elite classification require D1/D2. User settings were not deployed. |",
+                             "| R08 | Wisdom and Justice seals, manual Auto overrides, actual availability and fallback. | V/L: explicit manual/availability/recovery/context cases retained; no invented automatic seal-twisting planner. | Actual resource/control effects are D2. |",
+                             "| R09 | Judgements are evaluated with seals but Justice Judgement remains independent. | V/L: retained shared Judgement choice and mana/health/target/context policies. | Server duration/immunity, other Paladins and effective result remain D1/D2. |",
+                             "| R10 | Crusader Strike, Divine Storm, Consecration, Exorcism, Hammer of Wrath and legitimate Holy Wrath/proc/cooldown use. | V/L: retained context-specific factories, AoE admission, melee/proc Exorcism safety, execute/creature/availability checks, RET/GROUP. | Encounter immunity, actual proc/resources/latency and physically safe AoE remain D1/D2/D5. |",
+                             "| R11 | Prevent Ret using Protection/tank behavior or unusable duplicate/GCD loops. | V: shared interrupt checks actual Protection spec for Avenger\u0027s Shield; Ret gates and source factories preserve role separation. | External unsupported/custom routines are not certified; live stale-state/race observations remain D1. |",
+                             "| R12 | PvP target sticking/chasing, control versus damage, immunities and lockouts. | V/L/D: distinct player seal/Judgement policy, captured interrupt/control target, support/defensive safety and movement checks. | No reliable proactive DR/CC planner is inferred. Actual PvP immunity/DR/chase geometry requires D1/D2/D5. |",
+                             "| R13 | Reported Hammer of Justice target switch/run-away. | V/L/D: source preserves captured interrupt target through selection/facing and isolates actor/target changes; no new source-specific HoJ retarget instruction was demonstrated. | Reproduce with timestamped actor/target/control/native movement and server event trace. A controlled pass does not dismiss the reported live symptom. D1/D2/D5. |",
+                             "| S01 | Kings/Might/Wisdom/Sanctuary, Greater variants, Auto/manual, reagent and available rank. | V/L: retained shared support and original-client rank/metadata checks; SUPPORT/RET. | Actual aura effect/rank/reagent/server results remain D1/D2. |",
+                             "| S02 | Multiple Paladins/PallyPower, complementary buffs and stronger external buffs. | V/U/L: strict retained Wrath-addon assignment schema and caller/recipient binding; unsupported addon payloads fail closed. | Other clients\u0027 current assignment/state and magnitude need D1/D2/D4. |",
+                             "| S03 | Battle Shout versus Might and unknown effective strength. | V/L: conservative retained equivalent-family/unknown-strength policy; no guessed effective magnitude. | Talent/improvement/source strength requires authoritative effective-effect evidence, D1/D2. |",
+                             "| S04 | Roster/death/range/LOS/expiry and recipient revalidation before support dispatch. | V: W110 support63 plus retained regular44 and duration/collection repairs; actor/recipient replacement revokes permission. | Native observation-to-dispatch atomicity and live roster changes remain D1. |",
+                             "| S05 | Devotion/Retribution/Concentration, Fire/Frost/Shadow Resistance and Crusader auras; mounted transitions and single choice. | V/L/U: all seven factory/PallyPower paths retained; actual native enum exposes legacy Resistance as Shadow, not separate manual Fire/Frost selections. No later combined Resistance Aura. | Native manual selection extension is not claimed; addon assignment provenance and live aura application are D2/D4. |",
+                             "| S06 | Hands/Freedom, defensive target validation and control/debuff removal. | V/L: retained captured support recipients, availability, distance/LOS and tactical gates. | Actual control category, immunity, need and cross-client state remain D1/D2. |",
+                             "| S07 | Divine Protection/Shield, Avenging Wrath, Forbearance and Lay on Hands conflicts. | V/L: pinned original-core conflict evidence and retained defensive/availability policy. | Live server spell history, debuff/cooldown and self-versus-other outcomes remain D1/D2. |",
+                             "| S08 | Cleanse/dispels and safe harmful-effect selection. | V/L: shared spell/recipient/availability/LOS safety and retained support tests. | Actual aura category, removal hazards and server outcomes require D1/D2. No speculative debuff list is introduced. |",
+                             "| S09 | Equipment scoring/Ret role, protected gear, mana-stat metadata and adjacent service actions. | V/L: retained AutoEquip metadata/admission51 and protected-slot/equipment tests; no tank-role override or unknown-stat success invented. | Per-realm itemization/effective stats and supervised equipment choices remain D2/D4/D6. |"
+                         ],
+    "final_local_gate":  {
+                             "completed_utc":  "2026-09-28T15:44:59.2157120Z",
+                             "base_head":  "002682af0d8b8cc9ab01482eba8598ada0dd763c",
+                             "source_inputs":  1883,
+                             "source_unchanged":  true,
+                             "successful_groups":  17,
+                             "total_groups":  17,
+                             "extraction_exit":  0,
+                             "host_build_exit":  0,
+                             "lua51_sha256":  "06df2510b5780791d17cbb738e42ec28a1ef5add580e127f31a9968bf57630e4",
+                             "game_attached":  false,
+                             "hosted_acceptance":  "Pending meaningful publication gate."
+                         },
+    "local_history":  [
+                          {
+                              "completed_utc":  "2026-09-28T15:35:17.1119082Z",
+                              "base_head":  "002682af0d8b8cc9ab01482eba8598ada0dd763c",
+                              "source_inputs":  1883,
+                              "source_unchanged":  true,
+                              "successful_groups":  16,
+                              "total_groups":  17,
+                              "extraction_exit":  2,
+                              "lua51_sha256":  "06df2510b5780791d17cbb738e42ec28a1ef5add580e127f31a9968bf57630e4",
+                              "game_attached":  false,
+                              "hosted_acceptance":  "Pending meaningful publication gate."
+                          },
+                          {
+                              "status":  "complete",
+                              "base_head":  "002682af0d8b8cc9ab01482eba8598ada0dd763c",
+                              "initial_gate":  "W110_ROUTE_LOCAL_GATE_20260928",
+                              "initial_successful_groups":  16,
+                              "initial_extraction_exit":  2,
+                              "repeated_successful_groups":  0,
+                              "game_attached":  false,
+                              "generated_source_archive":  "prior-generated",
+                              "source_inputs":  1883,
+                              "completed_utc":  "2026-09-28T15:38:59.7362240Z",
+                              "extraction_exit":  0,
+                              "build_exit":  0,
+                              "run_exit":  0,
+                              "host_build_exit":  0,
+                              "host_compile_only":  true,
+                              "source_unchanged":  true,
+                              "successful_groups":  17,
+                              "total_groups":  17,
+                              "results":  [
+                                              {
+                                                  "suite":  "QuestRecoveryRegressionTests",
+                                                  "build":  0,
+                                                  "run":  0,
+                                                  "harness_error":  null,
+                                                  "game_attached":  false,
+                                                  "architecture":  "Windows x86"
+                                              },
+                                              {
+                                                  "suite":  "Singular",
+                                                  "build":  0,
+                                                  "run":  0,
+                                                  "game_attached":  false,
+                                                  "architecture":  "Windows x86"
+                                              },
+                                              {
+                                                  "suite":  "WholesomeQuestRecoveryRegressionTests",
+                                                  "build":  0,
+                                                  "run":  0,
+                                                  "harness_error":  null,
+                                                  "game_attached":  false,
+                                                  "architecture":  "Windows x86"
+                                              },
+                                              {
+                                                  "suite":  "QuestRecoveryAdapterRegressionTests",
+                                                  "build":  0,
+                                                  "run":  0,
+                                                  "harness_error":  null,
+                                                  "game_attached":  false,
+                                                  "architecture":  "Windows x86"
+                                              },
+                                              {
+                                                  "suite":  "QuestPickupPolicyRegressionTests",
+                                                  "build":  0,
+                                                  "run":  0,
+                                                  "harness_error":  null,
+                                                  "game_attached":  false,
+                                                  "architecture":  "Windows x86"
+                                              },
+                                              {
+                                                  "suite":  "VendorCoreRegressionTests",
+                                                  "build":  0,
+                                                  "run":  0,
+                                                  "harness_error":  null,
+                                                  "game_attached":  false,
+                                                  "architecture":  "Windows x86"
+                                              },
+                                              {
+                                                  "suite":  "NativeContractRegressionTests",
+                                                  "build":  0,
+                                                  "run":  0,
+                                                  "harness_error":  null,
+                                                  "game_attached":  false,
+                                                  "architecture":  "Windows x86"
+                                              },
+                                              {
+                                                  "suite":  "ShutdownBoundaryRegressionTests",
+                                                  "build":  0,
+                                                  "run":  0,
+                                                  "harness_error":  null,
+                                                  "game_attached":  false,
+                                                  "architecture":  "Windows x86"
+                                              },
+                                              {
+                                                  "suite":  "ElevatorSafetyRegressionTests",
+                                                  "build":  0,
+                                                  "run":  0,
+                                                  "harness_error":  null,
+                                                  "game_attached":  false,
+                                                  "architecture":  "Windows x86"
+                                              },
+                                              {
+                                                  "suite":  "PaladinDecisionRegressionTests",
+                                                  "build":  0,
+                                                  "run":  0,
+                                                  "harness_error":  null,
+                                                  "game_attached":  false,
+                                                  "architecture":  "Windows x86"
+                                              },
+                                              {
+                                                  "suite":  "GroupEngagementRegressionTests",
+                                                  "build":  0,
+                                                  "run":  0,
+                                                  "harness_error":  null,
+                                                  "game_attached":  false,
+                                                  "architecture":  "Windows x86"
+                                              },
+                                              {
+                                                  "suite":  "PaladinSupportRegressionTests",
+                                                  "build":  0,
+                                                  "run":  0,
+                                                  "harness_error":  null,
+                                                  "game_attached":  false,
+                                                  "architecture":  "Windows x86"
+                                              },
+                                              {
+                                                  "suite":  "WholesomeSaleRegressionTests",
+                                                  "build":  0,
+                                                  "run":  0,
+                                                  "harness_error":  null,
+                                                  "game_attached":  false,
+                                                  "architecture":  "Windows x86"
+                                              },
+                                              {
+                                                  "suite":  "QuestLogObservationRegressionTests",
+                                                  "build":  0,
+                                                  "run":  0,
+                                                  "harness_error":  null,
+                                                  "game_attached":  false,
+                                                  "architecture":  "Windows x86"
+                                              },
+                                              {
+                                                  "suite":  "QuestCompletionOwnerRegressionTests",
+                                                  "build":  0,
+                                                  "run":  0,
+                                                  "harness_error":  null,
+                                                  "game_attached":  false,
+                                                  "architecture":  "Windows x86"
+                                              },
+                                              {
+                                                  "suite":  "Analyzers",
+                                                  "build":  0,
+                                                  "run":  0,
+                                                  "game_attached":  false,
+                                                  "architecture":  "local Python"
+                                              },
+                                              {
+                                                  "suite":  "QuestObservationBoundaryRegressionTests",
+                                                  "build":  0,
+                                                  "run":  0,
+                                                  "harness_error":  null,
+                                                  "game_attached":  false,
+                                                  "architecture":  "Windows x86",
+                                                  "receipt":  "W110_ROUTE_LOCAL_SUPPLEMENT_20260928/receipt.json"
+                                              }
+                                          ],
+                              "initial_gate_summary_sha256":  "19c5933f41adaeed1133b76ed9a0b038de14d5ee265726cd73f459f479073d15",
+                              "new_source_manifest_sha256":  "d0726cf5869d6a77719b12c066608658c648a625c2551eca2608b3078fb7415b",
+                              "prior_source_manifest_sha256":  "90c211ac4b208af55893d22cc6e83a5b659035b935fdce4db3ee42d1cd936d55"
+                          }
+                      ],
+    "corrected_cycle_fixture_comparisons":  [
+                                                {
+                                                    "cycle":  "original-client-flags",
+                                                    "red_receipt":  "W110_FLAGS_RED_20260928.json",
+                                                    "green_receipt":  "W110_FLAGS_GREEN_20260928.json",
+                                                    "fixture_files":  13,
+                                                    "fixture_hashes_identical":  true,
+                                                    "fixtures":  [
+                                                                     {
+                                                                         "path":  "Tools/PaladinDecisionRegressionTests/Program.cs",
+                                                                         "sha256":  "f7fc702cf186b0d558d3ec9e73623f86e55dd44978500efc665b37cff4160682"
+                                                                     },
+                                                                     {
+                                                                         "path":  "Tools/PaladinDecisionRegressionTests/SharedCommonBoundaryFixture.cs",
+                                                                         "sha256":  "f95ffd19689bc9992d4ceac74898c8d18895d5380ae6f9b9522ffb46b5c8df36"
+                                                                     },
+                                                                     {
+                                                                         "path":  "Tools/PaladinDecisionRegressionTests/SharedDismountSafetyRegressionTests.cs",
+                                                                         "sha256":  "ce941cb53075a44cdc108951cff1bbc34342c1771d55308c1235e4a30ef6719a"
+                                                                     },
+                                                                     {
+                                                                         "path":  "Tools/WholesomeQuestRecoveryRegressionTests/ClientBuildAdmissionRegressionTests.cs",
+                                                                         "sha256":  "095c5ec60b5b4e302efd5fa249445c65c1a011541d16b71775550542ac2b745b"
+                                                                     },
+                                                                     {
+                                                                         "path":  "Tools/WholesomeQuestRecoveryRegressionTests/CoroutineDismountRegressionTests.cs",
+                                                                         "sha256":  "7e588e68841a7457b4a9245ae80942645a20577696bfc7c76b0a1cadd32161e1"
+                                                                     },
+                                                                     {
+                                                                         "path":  "Tools/WholesomeQuestRecoveryRegressionTests/FlightorDismountRegressionTests.cs",
+                                                                         "sha256":  "c1f28ef28f45ee43672a4fe5eeff2c2e87f2699b6ecf40bb20ca41a16c47a16b"
+                                                                     },
+                                                                     {
+                                                                         "path":  "Tools/WholesomeQuestRecoveryRegressionTests/ForcedDismountBoundaryRegressionTests.cs",
+                                                                         "sha256":  "4e8892c0d3e8ed2170eae00d8fcb6507a288770b42ffe20aa9f9f9032d6b121a"
+                                                                     },
+                                                                     {
+                                                                         "path":  "Tools/WholesomeQuestRecoveryRegressionTests/GatherbuddyLandingRegressionTests.cs",
+                                                                         "sha256":  "c29c99c71815a54dbfa1decf6b5273638844684ff5578e6b289714088c68600f"
+                                                                     },
+                                                                     {
+                                                                         "path":  "Tools/WholesomeQuestRecoveryRegressionTests/GatherLandingLifecycleRegressionTests.cs",
+                                                                         "sha256":  "8ff097850f1ed89406d773206323f58044b9c8d6fde0a0045f2b3eb94c500c81"
+                                                                     },
+                                                                     {
+                                                                         "path":  "Tools/WholesomeQuestRecoveryRegressionTests/HostMountAdmissionRegressionTests.cs",
+                                                                         "sha256":  "acbdc629eb03031048ab12c5799539fb85e678ba7bbab063a0d07d396955a1b2"
+                                                                     },
+                                                                     {
+                                                                         "path":  "Tools/WholesomeQuestRecoveryRegressionTests/HostMountDismountRegressionTests.cs",
+                                                                         "sha256":  "f12f09f0b113d505963f58ec608e3b83794640bd52d30f2382be5170f327b25b"
+                                                                     },
+                                                                     {
+                                                                         "path":  "Tools/WholesomeQuestRecoveryRegressionTests/InteractionMountBoundaryRegressionTests.cs",
+                                                                         "sha256":  "febd663f5c2d989d408732622f0e7f4c261ad3a25e3aa36397d8e529e041765a"
+                                                                     },
+                                                                     {
+                                                                         "path":  "Tools/WholesomeQuestRecoveryRegressionTests/MovementFlagLayoutRegressionTests.cs",
+                                                                         "sha256":  "002555f66bec1d2c4c9a41e40b05f2652b121202197c338dae0938e86c3d50df"
+                                                                     }
+                                                                 ]
+                                                },
+                                                {
+                                                    "cycle":  "unmounted-flight-form",
+                                                    "red_receipt":  "W110_SHARED_FORM_RED_20260928.json",
+                                                    "green_receipt":  "W110_SHARED_FORM_GREEN_20260928.json",
+                                                    "fixture_files":  1,
+                                                    "fixture_hashes_identical":  true,
+                                                    "fixtures":  [
+                                                                     {
+                                                                         "path":  "Tools\\PaladinDecisionRegressionTests\\SharedDismountSafetyRegressionTests.cs",
+                                                                         "sha256":  "7309b763581b1f1dbb15779ac3c328e03803224402fcdcf6560c82b0e2fe808a"
+                                                                     }
+                                                                 ]
+                                                },
+                                                {
+                                                    "cycle":  "active-mover",
+                                                    "red_receipt":  "W110_ACTIVE_MOVER_RED_20260928.json",
+                                                    "green_receipt":  "W110_ACTIVE_MOVER_GREEN_20260928.json",
+                                                    "fixture_files":  1,
+                                                    "fixture_hashes_identical":  true,
+                                                    "fixtures":  [
+                                                                     {
+                                                                         "path":  "Tools\\WholesomeQuestRecoveryRegressionTests\\ActiveMoverObservationRegressionTests.cs",
+                                                                         "sha256":  "3e8e7968742ae542d8c92242862c1135b0ba3917efab09f84d8ad6468f5e7c07"
+                                                                     }
+                                                                 ]
+                                                },
+                                                {
+                                                    "cycle":  "interaction-cleanup-corrected",
+                                                    "red_receipt":  "W110_INTERACTION_CLEANUP_BASELINE_20260928.json",
+                                                    "green_receipt":  "W110_INTERACTION_CLEANUP_GREEN_20260928.json",
+                                                    "fixture_files":  1,
+                                                    "fixture_hashes_identical":  true,
+                                                    "fixtures":  [
+                                                                     {
+                                                                         "path":  "Tools\\WholesomeQuestRecoveryRegressionTests\\InteractionMountBoundaryRegressionTests.cs",
+                                                                         "sha256":  "56414564063a51c65f77f486ed2771f4749adbfcd3fdc1fc8bbe816fba183f76"
+                                                                     }
+                                                                 ]
+                                                },
+                                                {
+                                                    "cycle":  "mount-permission",
+                                                    "red_receipt":  "W110_MOUNT_PERMISSION_RED_20260928.json",
+                                                    "green_receipt":  "W110_MOUNT_PERMISSION_GREEN_20260928.json",
+                                                    "fixture_files":  2,
+                                                    "fixture_hashes_identical":  true,
+                                                    "fixtures":  [
+                                                                     {
+                                                                         "path":  "Tools\\WholesomeQuestRecoveryRegressionTests\\HostMountAdmissionRegressionTests.cs",
+                                                                         "sha256":  "49ea9787c0f882822223b7b8ff6352f9cdbd6cef2e64cfee3bce1ef39ffa376a"
+                                                                     },
+                                                                     {
+                                                                         "path":  "Tools\\WholesomeQuestRecoveryRegressionTests\\MountPermissionBoundaryRegressionTests.cs",
+                                                                         "sha256":  "e84c29705da0b7ada0e1cb82b7cdc32b6f15c7559fb179f0950a001682d5f5c9"
+                                                                     }
+                                                                 ]
+                                                },
+                                                {
+                                                    "cycle":  "flightor-waits",
+                                                    "red_receipt":  "W110_MOUNT_PERMISSION_WAITFINALRED_20260928.json",
+                                                    "green_receipt":  "W110_MOUNT_PERMISSION_WAITGREEN_20260928.json",
+                                                    "fixture_files":  3,
+                                                    "fixture_hashes_identical":  true,
+                                                    "fixtures":  [
+                                                                     {
+                                                                         "path":  "Tools\\WholesomeQuestRecoveryRegressionTests\\FlightorWaitContinuityRegressionTests.cs",
+                                                                         "sha256":  "f10ea5e450070acc8c149d8c4518d62ff73533043a5ce493f2d10ca0b2301d70"
+                                                                     },
+                                                                     {
+                                                                         "path":  "Tools\\WholesomeQuestRecoveryRegressionTests\\HostMountAdmissionRegressionTests.cs",
+                                                                         "sha256":  "0a3df6ed5f7be6c28c953ab8d6960d2a1c082523cef70a8f15281ccc7d812119"
+                                                                     },
+                                                                     {
+                                                                         "path":  "Tools\\WholesomeQuestRecoveryRegressionTests\\MountPermissionBoundaryRegressionTests.cs",
+                                                                         "sha256":  "e84c29705da0b7ada0e1cb82b7cdc32b6f15c7559fb179f0950a001682d5f5c9"
+                                                                     }
+                                                                 ]
+                                                },
+                                                {
+                                                    "cycle":  "route-context",
+                                                    "red_receipt":  "W110_MOUNT_PERMISSION_ROUTERED_20260928.json",
+                                                    "green_receipt":  "W110_MOUNT_PERMISSION_ROUTEGREEN_20260928.json",
+                                                    "fixture_files":  3,
+                                                    "fixture_hashes_identical":  true,
+                                                    "fixtures":  [
+                                                                     {
+                                                                         "path":  "Tools\\WholesomeQuestRecoveryRegressionTests\\FlightorWaitContinuityRegressionTests.cs",
+                                                                         "sha256":  "a161ed177c4813f77b1af7f8d3d581cbd5762269b0ea603f6aac02f0f61189fd"
+                                                                     },
+                                                                     {
+                                                                         "path":  "Tools\\WholesomeQuestRecoveryRegressionTests\\HostMountAdmissionRegressionTests.cs",
+                                                                         "sha256":  "0a3df6ed5f7be6c28c953ab8d6960d2a1c082523cef70a8f15281ccc7d812119"
+                                                                     },
+                                                                     {
+                                                                         "path":  "Tools\\WholesomeQuestRecoveryRegressionTests\\MountPermissionBoundaryRegressionTests.cs",
+                                                                         "sha256":  "e84c29705da0b7ada0e1cb82b7cdc32b6f15c7559fb179f0950a001682d5f5c9"
+                                                                     }
+                                                                 ]
+                                                },
+                                                {
+                                                    "cycle":  "route-observation-gap",
+                                                    "red_receipt":  "W110_MOUNT_PERMISSION_CACHEGAPRED_20260928.json",
+                                                    "green_receipt":  "W110_MOUNT_PERMISSION_CACHEGAPGREEN_20260928.json",
+                                                    "fixture_files":  3,
+                                                    "fixture_hashes_identical":  true,
+                                                    "fixtures":  [
+                                                                     {
+                                                                         "path":  "Tools\\WholesomeQuestRecoveryRegressionTests\\FlightorWaitContinuityRegressionTests.cs",
+                                                                         "sha256":  "fb380f408fb6a7b99f1a91dd208841c5378c693a2dcc91d7934edd0ca2b5c5dd"
+                                                                     },
+                                                                     {
+                                                                         "path":  "Tools\\WholesomeQuestRecoveryRegressionTests\\HostMountAdmissionRegressionTests.cs",
+                                                                         "sha256":  "0a3df6ed5f7be6c28c953ab8d6960d2a1c082523cef70a8f15281ccc7d812119"
+                                                                     },
+                                                                     {
+                                                                         "path":  "Tools\\WholesomeQuestRecoveryRegressionTests\\MountPermissionBoundaryRegressionTests.cs",
+                                                                         "sha256":  "e84c29705da0b7ada0e1cb82b7cdc32b6f15c7559fb179f0950a001682d5f5c9"
+                                                                     }
+                                                                 ]
+                                                },
+                                                {
+                                                    "cycle":  "recovery-context",
+                                                    "red_receipt":  "W110_MOUNT_PERMISSION_RECOVERYGAPRED_20260928.json",
+                                                    "green_receipt":  "W110_MOUNT_PERMISSION_RECOVERYGAPGREEN_20260928.json",
+                                                    "fixture_files":  3,
+                                                    "fixture_hashes_identical":  true,
+                                                    "fixtures":  [
+                                                                     {
+                                                                         "path":  "Tools\\WholesomeQuestRecoveryRegressionTests\\FlightorWaitContinuityRegressionTests.cs",
+                                                                         "sha256":  "05b9a1b47d48a1c4061f400d5c252eecda3e74cd4a4846267efbf23b54d0ace3"
+                                                                     },
+                                                                     {
+                                                                         "path":  "Tools\\WholesomeQuestRecoveryRegressionTests\\HostMountAdmissionRegressionTests.cs",
+                                                                         "sha256":  "0a3df6ed5f7be6c28c953ab8d6960d2a1c082523cef70a8f15281ccc7d812119"
+                                                                     },
+                                                                     {
+                                                                         "path":  "Tools\\WholesomeQuestRecoveryRegressionTests\\MountPermissionBoundaryRegressionTests.cs",
+                                                                         "sha256":  "e84c29705da0b7ada0e1cb82b7cdc32b6f15c7559fb179f0950a001682d5f5c9"
+                                                                     }
+                                                                 ]
+                                                }
+                                            ],
+    "integrated_receipt":  {
+                               "verified_at_utc":  "2026-09-28T15:51:34.1598736Z",
+                               "repository":  "JeofW/cbp",
+                               "repository_id":  1367174964,
+                               "run":  36445993077,
+                               "source":  "f12c57267fa071305085915f4ec2a2bb9e52c144",
+                               "artifact":  10981185536,
+                               "artifact_name":  "integrated-f12c57267fa071305085915f4ec2a2bb9e52c144",
+                               "archive":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-route-integrated-f12c5726.zip",
+                               "sha256":  "f750a466619d4a825018c97c483ee28a931dce53b9aa45a7989bb61a25f7632a",
+                               "metadata_digest":  "sha256:f750a466619d4a825018c97c483ee28a931dce53b9aa45a7989bb61a25f7632a",
+                               "bytes":  1076232,
+                               "run_conclusion":  "success",
+                               "jobs":  [
+                                            {
+                                                "id":  109008311449,
+                                                "status":  "completed",
+                                                "conclusion":  "success"
+                                            }
+                                        ],
+                               "game_attached":  false
+                           },
+    "integrated_inspection":  {
+                                  "verified_at_utc":  "2026-09-28T15:51:34.2139218Z",
+                                  "run":  36445993077,
+                                  "source":  "f12c57267fa071305085915f4ec2a2bb9e52c144",
+                                  "artifact":  10981185536,
+                                  "archive_sha256":  "f750a466619d4a825018c97c483ee28a931dce53b9aa45a7989bb61a25f7632a",
+                                  "members":  243,
+                                  "kind":  "integrated",
+                                  "identity":  {
+                                                   "production_commit":  "f12c57267fa071305085915f4ec2a2bb9e52c144",
+                                                   "fixture_commit":  "f12c57267fa071305085915f4ec2a2bb9e52c144",
+                                                   "game_attached":  false,
+                                                   "production_tree":  "a5023f87ef951ba71d11faa8eb55c0fb3bb37798"
+                                               },
+                                  "inner_hashes":  242,
+                                  "source_inputs":  1883,
+                                  "checkout_inputs_matched":  1883,
+                                  "results":  {
+                                                  "value":  [
+                                                                {
+                                                                    "run":  0,
+                                                                    "suite":  "QuestRecoveryRegressionTests",
+                                                                    "harness_error":  null,
+                                                                    "game_attached":  false,
+                                                                    "build":  0,
+                                                                    "architecture":  "x86"
+                                                                },
+                                                                {
+                                                                    "run":  0,
+                                                                    "game_attached":  false,
+                                                                    "build":  0,
+                                                                    "suite":  "Singular",
+                                                                    "architecture":  "x86"
+                                                                },
+                                                                {
+                                                                    "run":  0,
+                                                                    "suite":  "WholesomeQuestRecoveryRegressionTests",
+                                                                    "harness_error":  null,
+                                                                    "game_attached":  false,
+                                                                    "build":  0,
+                                                                    "architecture":  "x86"
+                                                                },
+                                                                {
+                                                                    "run":  0,
+                                                                    "suite":  "QuestRecoveryAdapterRegressionTests",
+                                                                    "harness_error":  null,
+                                                                    "game_attached":  false,
+                                                                    "build":  0,
+                                                                    "architecture":  "x86"
+                                                                },
+                                                                {
+                                                                    "run":  0,
+                                                                    "suite":  "QuestPickupPolicyRegressionTests",
+                                                                    "harness_error":  null,
+                                                                    "game_attached":  false,
+                                                                    "build":  0,
+                                                                    "architecture":  "x86"
+                                                                },
+                                                                {
+                                                                    "run":  0,
+                                                                    "suite":  "VendorCoreRegressionTests",
+                                                                    "harness_error":  null,
+                                                                    "game_attached":  false,
+                                                                    "build":  0,
+                                                                    "architecture":  "x86"
+                                                                },
+                                                                {
+                                                                    "run":  0,
+                                                                    "suite":  "NativeContractRegressionTests",
+                                                                    "harness_error":  null,
+                                                                    "game_attached":  false,
+                                                                    "build":  0,
+                                                                    "architecture":  "x86"
+                                                                },
+                                                                {
+                                                                    "run":  0,
+                                                                    "suite":  "ShutdownBoundaryRegressionTests",
+                                                                    "harness_error":  null,
+                                                                    "game_attached":  false,
+                                                                    "build":  0,
+                                                                    "architecture":  "x86"
+                                                                },
+                                                                {
+                                                                    "run":  0,
+                                                                    "suite":  "Elevator",
+                                                                    "harness_error":  null,
+                                                                    "game_attached":  false,
+                                                                    "build":  0,
+                                                                    "architecture":  "x86"
+                                                                },
+                                                                {
+                                                                    "run":  0,
+                                                                    "suite":  "PaladinDecisions",
+                                                                    "harness_error":  null,
+                                                                    "game_attached":  false,
+                                                                    "build":  0,
+                                                                    "architecture":  "x86"
+                                                                },
+                                                                {
+                                                                    "run":  0,
+                                                                    "suite":  "GroupEngagement",
+                                                                    "harness_error":  null,
+                                                                    "game_attached":  false,
+                                                                    "build":  0,
+                                                                    "architecture":  "x86"
+                                                                },
+                                                                {
+                                                                    "run":  0,
+                                                                    "suite":  "PaladinSupport",
+                                                                    "harness_error":  null,
+                                                                    "game_attached":  false,
+                                                                    "build":  0,
+                                                                    "architecture":  "x86"
+                                                                },
+                                                                {
+                                                                    "run":  0,
+                                                                    "suite":  "WholesomeSale",
+                                                                    "harness_error":  null,
+                                                                    "game_attached":  false,
+                                                                    "build":  0,
+                                                                    "architecture":  "x86"
+                                                                },
+                                                                {
+                                                                    "run":  0,
+                                                                    "suite":  "QuestLogObservationRegressionTests",
+                                                                    "harness_error":  null,
+                                                                    "game_attached":  false,
+                                                                    "build":  0,
+                                                                    "architecture":  "x86"
+                                                                },
+                                                                {
+                                                                    "run":  0,
+                                                                    "suite":  "QuestCompletionOwnerRegressionTests",
+                                                                    "harness_error":  null,
+                                                                    "game_attached":  false,
+                                                                    "build":  0,
+                                                                    "architecture":  "x86"
+                                                                },
+                                                                {
+                                                                    "run":  0,
+                                                                    "suite":  "QuestObservationBoundaryRegressionTests",
+                                                                    "harness_error":  null,
+                                                                    "game_attached":  false,
+                                                                    "build":  0,
+                                                                    "architecture":  "x86"
+                                                                },
+                                                                {
+                                                                    "run":  0,
+                                                                    "game_attached":  false,
+                                                                    "build":  0,
+                                                                    "suite":  "Analyzers"
+                                                                }
+                                                            ],
+                                                  "Count":  17
+                                              },
+                                  "successful_groups":  17,
+                                  "key_summaries":  [
+                                                        "Autoattack startup scenarios: 26/26; assertions=0; unexpected=0; actual Common/LocalPlayer Lua and TreeSharp; stock Lua5.1 with controlled native attack state; no game/server/native execution.",
+                                                        "AutoEquip pending context scenarios: 37/37; assertions=0; unexpected=0; exact tracked C# capture/tick/request methods; controlled world/Lua; no game attached.",
+                                                        "Cast wait facing scenarios: 16/16; assertions=0; unexpected=0; actual WaitForCast overloads and real TreeSharp; controlled cast/facing boundaries; no client/native execution.",
+                                                        "Combat sight movement scenarios: 85/85; assertions=0; unexpected=0; complete tracked Movement and real TreeSharp; controlled world/navigation; no native path or game attached.",
+                                                        "Equip acknowledged timeout scenarios: 10/10; assertions=0; unexpected=0; exact tracked method control flow; controlled external acknowledgements; no game attached.",
+                                                        "Equip continuation boundary scenarios: 46/46; assertions=0; unexpected=0; exact tracked C# tick/context/acknowledge/return/restore; controlled actor/inventory/Lua; no physical cursor or client proof.",
+                                                        "EquipItem pending context scenarios: 57/57; assertions=0; unexpected=0; exact tracked C# tick/submit/confirm/reset; controlled actor/quest/Lua; no game attached.",
+                                                        "Equipment cleanup ownership: 57/57; assertions=0; unexpected=0; actual tracked owners/generated Lua5.1; controlled build12340 cursor transitions and physical dispatch admission; no game/server/native execution.",
+                                                        "Equipment physical cursor guard: 8/8; actual generated x86 comparison/branch contract; no game attached or native execution.",
+                                                        "Equipment Lua51 boundary scenarios: 87/87; assertions=0; unexpected=0; tracked pickup/equip helpers, actual generated Lua5.1, loader size and verbatim managed conversion; controlled APIs; no physical GUID/client/server proof.",
+                                                        "Equipment pending-index scenarios: 24/24; assertions=0; unexpected=0; tracked owner/generated Lua; stock Lua5.1; controlled synchronous events; no native client proof.",
+                                                        "Equip popup submission scenarios: 18/18; assertions=0; unexpected=0; exact tracked C# confirmation/tick methods; recording Lua boundary only; no game attached."
+                                                    ],
+                                  "failing_groups":  [
+
+                                                     ]
+                              },
+    "host_receipt":  {
+                         "verified_at_utc":  "2026-09-28T15:47:57.2889919Z",
+                         "repository":  "JeofW/cbp",
+                         "repository_id":  1367174964,
+                         "run":  36445993109,
+                         "source":  "f12c57267fa071305085915f4ec2a2bb9e52c144",
+                         "artifact":  10980687915,
+                         "artifact_name":  "audit-validation-f12c57267fa071305085915f4ec2a2bb9e52c144",
+                         "archive":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-route-host-f12c5726.zip",
+                         "sha256":  "f90292f3ecd7bce95c335d0ac438b0b6c350ef3f32ca73f1d2733c5fea65cd80",
+                         "metadata_digest":  "sha256:f90292f3ecd7bce95c335d0ac438b0b6c350ef3f32ca73f1d2733c5fea65cd80",
+                         "bytes":  84177,
+                         "run_conclusion":  "success",
+                         "jobs":  [
+                                      {
+                                          "id":  109008312897,
+                                          "status":  "completed",
+                                          "conclusion":  "success"
+                                      }
+                                  ],
+                         "game_attached":  false
+                     },
+    "host_inspection":  {
+                            "verified_at_utc":  "2026-09-28T15:47:57.3517031Z",
+                            "run":  36445993109,
+                            "source":  "f12c57267fa071305085915f4ec2a2bb9e52c144",
+                            "artifact":  10980687915,
+                            "archive_sha256":  "f90292f3ecd7bce95c335d0ac438b0b6c350ef3f32ca73f1d2733c5fea65cd80",
+                            "members":  4,
+                            "kind":  "host",
+                            "result":  {
+                                           "game_attached":  false,
+                                           "host_build_exit_code":  0,
+                                           "tests_run":  false
+                                       },
+                            "build_summary":  [
+                                                  "3396 Warning(s)",
+                                                  "0 Error(s)"
+                                              ]
+                        },
+    "documents":  [
+                      {
+                          "path":  "D:\\Dev\\CopilotBuddy-PR51\\docs\\audit\\2026-09-28\\W110_CONTINUOUS_CHECKPOINT.md",
+                          "bytes":  6322,
+                          "sha256":  "ac5122056e4bca81122db49eb5b37def216055db3ffcdd23f7fa4b47a2cfbc50"
+                      },
+                      {
+                          "path":  "D:\\Dev\\CopilotBuddy-PR51\\docs\\audit\\2026-09-28\\W110_CONTINUOUS_CONTINUATION.md",
+                          "bytes":  2486,
+                          "sha256":  "f36fb240df02a0531ef16efbc1e74a7f1034799f82f74c9441eb0bf077045d94"
+                      },
+                      {
+                          "path":  "D:\\Dev\\CopilotBuddy-PR51\\docs\\audit\\2026-09-28\\W110_CONTINUOUS_REQUIREMENT_MAP.md",
+                          "bytes":  25623,
+                          "sha256":  "19dbfab548aad29dc750b66e1bf8150f0a7666e105f56c90abc79e09b80e0516"
+                      },
+                      {
+                          "path":  "D:\\Dev\\CopilotBuddy-PR51\\docs\\audit\\2026-09-28\\W110_CONTINUOUS_MOVEMENT_CONTRACT.md",
+                          "bytes":  8459,
+                          "sha256":  "e2280486aba9ede32cfafe472411478285298fec12d1d8ece17f4180c6765e4a"
+                      },
+                      {
+                          "path":  "D:\\Dev\\CopilotBuddy-PR51\\docs\\audit\\2026-09-28\\W110_CONTINUOUS_EXECUTION.md",
+                          "bytes":  14721,
+                          "sha256":  "3c33548a21c1204a065614e267bc6baec3695c49b6d005db031e271917db994b"
+                      },
+                      {
+                          "path":  "D:\\Dev\\CopilotBuddy-PR51\\docs\\audit\\2026-09-28\\W110_CONTINUOUS_CLR_CRASH.md",
+                          "bytes":  5366,
+                          "sha256":  "fe3f780f86e299a17d0e7be951e79e84ec53d98c7762a7a425e4374838a50690"
+                      }
+                  ],
+    "local_evidence_index":  [
+                                 {
+                                     "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W104_CONTINUOUSSOURCE_PUBLICATION_20260927.json",
+                                     "bytes":  12266,
+                                     "sha256":  "d3d66687dfb3e65e75c94cb551e95bb4f8e9646f90861793ad6fff1fb394580d"
+                                 },
+                                 {
+                                     "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W104_CONTINUOUSSOURCE_REMOTE_20260927.json",
+                                     "bytes":  272508,
+                                     "sha256":  "6cc9214100bc229122c9a3304d58288b92a8524921a4c92334dbd05770fe1f7f"
+                                 },
+                                 {
+                                     "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W104_ROUTEOWNERS_PUBLICATION_20260927.json",
+                                     "bytes":  2788,
+                                     "sha256":  "bca4a744a7385a0eb51347813a8a869158108b5d3f2c21b79c9062a7fbb9e107"
+                                 },
+                                 {
+                                     "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W104_ROUTEOWNERS_REMOTE_20260927.json",
+                                     "bytes":  80071,
+                                     "sha256":  "6f3ac23386e96f864eb8a0c019d34b0b2e9de1e38cd053303a4f09bc16c7fb9f"
+                                 },
+                                 {
+                                     "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_ACTIVE_MOVER_GREEN_20260928.json",
+                                     "bytes":  2113,
+                                     "sha256":  "737f418809b2b1511aab50aa0b76ce358d14011c8f253634694486aa6c6498c3"
+                                 },
+                                 {
+                                     "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_ACTIVE_MOVER_RED_20260928.json",
+                                     "bytes":  2113,
+                                     "sha256":  "995cc5d15b23c9fa23916576dbd48ae2b172ef014a9fb9aa59d67c37c41f795b"
+                                 },
+                                 {
+                                     "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_CONSTRUCTOR_CRASH_INSPECTION_20260928.json",
+                                     "bytes":  25242,
+                                     "sha256":  "84dd3d4eb0561776ed7f4938c476b90d3ea6ed341bed17969f17bbd3f67a2a42"
+                                 },
+                                 {
+                                     "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_CONTINUOUS_LOCAL_GATE_20260928\\summary.json",
+                                     "bytes":  459,
+                                     "sha256":  "6d0914b4c32f927541b8ac4268e41a690b4d57f94ec83679e1381dbee8864969"
+                                 },
+                                 {
+                                     "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_CONTINUOUS_SOURCE_INTENT_20260928.json",
+                                     "bytes":  11597,
+                                     "sha256":  "b2ffc3abc0e4e7dd9b44c2a621668a7a3e06f311d1fd31101d1fddd9325ce420"
+                                 },
+                                 {
+                                     "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FINAL_DOCUMENT_SERIALIZATION_20260928.json",
+                                     "bytes":  659,
+                                     "sha256":  "af8f6fbc208eaf3a887f9a5aa9643ceccb738aa3076db3ef292606b70e1bd018"
+                                 },
+                                 {
+                                     "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FLAGS_GREEN_20260928.json",
+                                     "bytes":  15821,
+                                     "sha256":  "211a3abd500ed0e5b1dc9ca95036e914d162ec5e0866336342b1204ae9612f4b"
+                                 },
+                                 {
+                                     "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FLAGS_RED_20260928.json",
+                                     "bytes":  15304,
+                                     "sha256":  "480deba0bc2093c1d6c66b6a0fd22fbd34ba4b6772b83842371b850e7bf09e21"
+                                 },
+                                 {
+                                     "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_FULL_MOUNT_COMPILATION_20260928.json",
+                                     "bytes":  1684,
+                                     "sha256":  "7126bc21fa6b99f3e319b0733a7dafdcc7289ec63c72b014d96579a823662c42"
+                                 },
+                                 {
+                                     "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_INTERACTION_CLEANUP_BASELINE_20260928.json",
+                                     "bytes":  1216,
+                                     "sha256":  "114629575d84e5df1fd027f4c6e6d4d815b3248eec27a241939008b91f64ec01"
+                                 },
+                                 {
+                                     "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_INTERACTION_CLEANUP_GREEN_20260928.json",
+                                     "bytes":  1216,
+                                     "sha256":  "2307e4424f5af2b0b043bc59afa9499996b3d1da98eef80ad1d407f56abf6ec0"
+                                 },
+                                 {
+                                     "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_INTERACTION_CLEANUP_HARNESS_CORRECTION_20260928.md",
+                                     "bytes":  1016,
+                                     "sha256":  "be91153d4fe6ef84a1b26b30360248ad9e571a9e5bbadf60d41411b7cd24f2b7"
+                                 },
+                                 {
+                                     "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_MOUNT_PERMISSION_CACHEGAPGREEN_20260928.json",
+                                     "bytes":  2650,
+                                     "sha256":  "d3a190c34085db2f09a4aa10de8e00b042c00acbde785d51f0f6313629aeb304"
+                                 },
+                                 {
+                                     "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_MOUNT_PERMISSION_CACHEGAPRED_20260928.json",
+                                     "bytes":  2650,
+                                     "sha256":  "d916523f5b029635b4974bcf121edb3c9abe8b082141eb8b18465659bff916b0"
+                                 },
+                                 {
+                                     "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_MOUNT_PERMISSION_GREEN_20260928.json",
+                                     "bytes":  2114,
+                                     "sha256":  "c5bb1c9c297f261476a88cc29092cbf5194a72afe873ee4cfd9bef3b8ba4d1ab"
+                                 },
+                                 {
+                                     "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_MOUNT_PERMISSION_RECOVERYGAPGREEN_20260928.json",
+                                     "bytes":  2650,
+                                     "sha256":  "f790591dd5a954462f1fad9513c242de0a9f31536787f50620e1ab8005719a16"
+                                 },
+                                 {
+                                     "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_MOUNT_PERMISSION_RECOVERYGAPRED_20260928.json",
+                                     "bytes":  2650,
+                                     "sha256":  "9c2cd602d748cae62836f0d32f1906f725fcefc8459a746759ab1fd3b03a0ced"
+                                 },
+                                 {
+                                     "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_MOUNT_PERMISSION_RED_20260928.json",
+                                     "bytes":  2114,
+                                     "sha256":  "7ad3fe9a62924cf301da79bcde4bc77eef30bc35cd398c1ce8d0f310b8b7a745"
+                                 },
+                                 {
+                                     "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_MOUNT_PERMISSION_ROUTEGREEN_20260928.json",
+                                     "bytes":  2650,
+                                     "sha256":  "e6b5861d6771b3650bf2e92b1165c8a5bbaba1c36cbbffd1c9fbac5c78bf46be"
+                                 },
+                                 {
+                                     "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_MOUNT_PERMISSION_ROUTERED_20260928.json",
+                                     "bytes":  2650,
+                                     "sha256":  "4a9f969fb63fe3d793e696f93a3fe2e1610e958d30626513c8c2fc399a584e22"
+                                 },
+                                 {
+                                     "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_MOUNT_PERMISSION_WAITFINALRED_20260928.json",
+                                     "bytes":  2650,
+                                     "sha256":  "b83075c5eab79af3ebe9bf240a8d99eba2e6c112d065bba289ce700a6ece9fc1"
+                                 },
+                                 {
+                                     "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_MOUNT_PERMISSION_WAITGREEN_20260928.json",
+                                     "bytes":  2650,
+                                     "sha256":  "e3ba203c556736bf5412887ceb2f2ae935c530ee48482c0743e5112acb869f59"
+                                 },
+                                 {
+                                     "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_MOVEMENT_CORE_ADJACENCY_20260928.json",
+                                     "bytes":  1908,
+                                     "sha256":  "7edd0c37355e775c49db03b01f9f60cabaf0a8fdf6172d9dbaab8b2c497130e1"
+                                 },
+                                 {
+                                     "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_MOVEMENT_FLAGS_REVIEW_IDENTITY_20260928.json",
+                                     "bytes":  10875,
+                                     "sha256":  "e8a1e439e20a86f8638b65a9a185ef9f7f5dffc6b1e165b7dfb976f7f9c2208e"
+                                 },
+                                 {
+                                     "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_ROUTE_FINAL_LOCAL_GATE_20260928\\results.json",
+                                     "bytes":  3610,
+                                     "sha256":  "efa235320d64902a2aa638d4fc96ce2f7361b1f37a022aea2fa42371cc7e913b"
+                                 },
+                                 {
+                                     "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_ROUTE_FINAL_LOCAL_GATE_20260928\\summary.json",
+                                     "bytes":  487,
+                                     "sha256":  "b3b58632c43c8ec88de7729cc6a2198ffcf87c51a847dc9582b22d2c5b4ef981"
+                                 },
+                                 {
+                                     "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_ROUTE_FINAL_LOCAL_GATE_20260928\\working-source-hashes-after.json",
+                                     "bytes":  339430,
+                                     "sha256":  "f887e2236216794ec218654493a372445555d8dfef0fc0560ca761fb1d2d0e62"
+                                 },
+                                 {
+                                     "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_ROUTE_FINAL_LOCAL_GATE_20260928\\working-source-hashes-before.json",
+                                     "bytes":  339430,
+                                     "sha256":  "f887e2236216794ec218654493a372445555d8dfef0fc0560ca761fb1d2d0e62"
+                                 },
+                                 {
+                                     "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_ROUTE_LOCAL_GATE_20260928\\summary.json",
+                                     "bytes":  459,
+                                     "sha256":  "19c5933f41adaeed1133b76ed9a0b038de14d5ee265726cd73f459f479073d15"
+                                 },
+                                 {
+                                     "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_ROUTE_LOCAL_SUPPLEMENT_20260928\\receipt.json",
+                                     "bytes":  6847,
+                                     "sha256":  "be6efb099297608e49d06703ec9192e7606741e38dd3dc5b4edd84279544a250"
+                                 },
+                                 {
+                                     "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_ROUTE_SOURCE_INTENT_20260928.json",
+                                     "bytes":  2695,
+                                     "sha256":  "03d130d55ab4e4d6f2fab059054834f8caf464f496db8ce4c3cfb502a4241721"
+                                 },
+                                 {
+                                     "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_SHARED_FORM_GREEN_20260928.json",
+                                     "bytes":  1374,
+                                     "sha256":  "a2e3b0b5f7cc4e51875774fa5fbc1836ca4650f910d54dec1215b3e5beb8b824"
+                                 },
+                                 {
+                                     "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_SHARED_FORM_RED_20260928.json",
+                                     "bytes":  1379,
+                                     "sha256":  "42993c5d56e6c6a8e0587d167b8d09c5f4b6074cef5564f0011e80dc24d637d2"
+                                 },
+                                 {
+                                     "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110_TC335_MOVEMENT_UNITDEFINES_RECEIPT_20260928.json",
+                                     "bytes":  309,
+                                     "sha256":  "c1ae41903772f4210e40056c4f2f43e1ce98d33a621deaa758137f09c5265727"
+                                 },
+                                 {
+                                     "path":  "D:\\Dev\\CopilotBuddy-Evidence\\W110-constructor-crash-analysis\\receipt.json",
+                                     "bytes":  934,
+                                     "sha256":  "056c17840c6c4819192ef2bd803736f4a76c5733ccd70af5167a0d2c925940b1"
+                                 },
+                                 {
+                                     "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-continuous-host-002682af-inspection.json",
+                                     "bytes":  618,
+                                     "sha256":  "499f8e349aca7ddb40eb00cd655e26e44a44a1dd663c8603fa9e67ca577cb58c"
+                                 },
+                                 {
+                                     "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-continuous-host-002682af-receipt.json",
+                                     "bytes":  1102,
+                                     "sha256":  "3709085e3adc1b7f0481781eb0f8f0ab6b41dabd602b4c3931cbd32848375339"
+                                 },
+                                 {
+                                     "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-continuous-integrated-002682af-inspection.json",
+                                     "bytes":  10856,
+                                     "sha256":  "ad5ced869abd067b1d6438c81a0c2b727338ee564af1880150521f27e544844d"
+                                 },
+                                 {
+                                     "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-continuous-integrated-002682af-receipt.json",
+                                     "bytes":  1100,
+                                     "sha256":  "537923a7602f2e68a88846e4cb8962e918bb845c10c0fd74223fbe126892c459"
+                                 },
+                                 {
+                                     "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-route-host-f12c5726-inspection.json",
+                                     "bytes":  618,
+                                     "sha256":  "047d040471a85e4c89ad3970a9ccd5f33be5c6e9a45482b640b8f50f1d589720"
+                                 },
+                                 {
+                                     "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-route-host-f12c5726-receipt.json",
+                                     "bytes":  890,
+                                     "sha256":  "64a6101865ae10350087f2e9792d0f4d333e920ca344c84124cd3b7a97f535e1"
+                                 },
+                                 {
+                                     "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-route-integrated-f12c5726-inspection.json",
+                                     "bytes":  10856,
+                                     "sha256":  "a571f47ac99abd6a6abb0b6d44895f3ff0a8491e38b0d776b0264dbe855dc2b2"
+                                 },
+                                 {
+                                     "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-route-integrated-f12c5726-receipt.json",
+                                     "bytes":  892,
+                                     "sha256":  "a9e263eb0ea624a1f2dd06e0a6e3c7d15fe0419383d756253f7c673bcf54a2cc"
+                                 }
+                             ],
+    "movement_only_raw_receipt_index":  [
+                                            {
+                                                "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-movement-active-mover-address-reader.json",
+                                                "bytes":  3173,
+                                                "sha256":  "a63c1d41a3b1e5b6cab9210a0ba68372b006ef71dc5d17667b6a938039c74efc"
+                                            },
+                                            {
+                                                "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-movement-active-mover-address-refs.json",
+                                                "bytes":  33086,
+                                                "sha256":  "e6b7162f3ae235dbc36a154338ecd5bada706b8fd34f43fe00e4ca34a0effb10"
+                                            },
+                                            {
+                                                "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-movement-active-mover-address-writer.json",
+                                                "bytes":  4849,
+                                                "sha256":  "a0ddecca215916a9b535a7083893707bdab650fb297e6e3f254a85d7c6a1e2c3"
+                                            },
+                                            {
+                                                "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-movement-base-storage-init.json",
+                                                "bytes":  6068,
+                                                "sha256":  "641abd7b292182dea309ef440545bedc076ea46c21f4f602e8a6365911532df6"
+                                            },
+                                            {
+                                                "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-movement-construction-callers.json",
+                                                "bytes":  7324,
+                                                "sha256":  "264a7b37a6f8215f27c1a64edee2345625c842b3c124201d243339e55fdf5f55"
+                                            },
+                                            {
+                                                "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-movement-controlled-unit-clear-lifetime.json",
+                                                "bytes":  15423,
+                                                "sha256":  "0873342dfce3ba0bf934dff62fdae7d58d53f67f72d895e8e44997f270d5a888"
+                                            },
+                                            {
+                                                "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-movement-controlled-unit-handoff-caller.json",
+                                                "bytes":  4953,
+                                                "sha256":  "f1d9b5f9973f3bcad567be4dff882d17d53f1d7a3e00abb0e45231e3e40e62cc"
+                                            },
+                                            {
+                                                "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-movement-controlled-unit-initialization.json",
+                                                "bytes":  7333,
+                                                "sha256":  "9484556250f8224faf6be66953d0c2e5475b4182da345ee72cc4d1ba0f7fa73b"
+                                            },
+                                            {
+                                                "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-movement-controlled-unit-possession-caller.json",
+                                                "bytes":  11457,
+                                                "sha256":  "6c950f7db9000452143291eb4859b106084d0447038d27e50d486849a4b47336"
+                                            },
+                                            {
+                                                "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-movement-controlled-unit-release-lifetime.json",
+                                                "bytes":  18994,
+                                                "sha256":  "8bf2a71dd0185b32dda31530e3f8f2ed8d3215b6e850987bc1e2bfdebe2198d7"
+                                            },
+                                            {
+                                                "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-movement-controlled-unit-switch.json",
+                                                "bytes":  5164,
+                                                "sha256":  "0984becc4d93b884fd9cd1213fc1f15564f2fb4601556648f0b5d59dcee83f40"
+                                            },
+                                            {
+                                                "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-movement-controlled-unit-switch-callers.json",
+                                                "bytes":  16165,
+                                                "sha256":  "1250cccf281c32d15890289b34d3c087f9c40955b34ad3fcb1d123002019f54a"
+                                            },
+                                            {
+                                                "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-movement-controlled-unit-world-lifetime.json",
+                                                "bytes":  25877,
+                                                "sha256":  "3498d4c8801f3750dc77bdd81d77fb04d1bdac7b39482739caeddbac8f69010d"
+                                            },
+                                            {
+                                                "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-movement-derived-player-initialization.json",
+                                                "bytes":  15559,
+                                                "sha256":  "963b589ecee2b680542acc2ae009cba200397b9e839d09f676ed5b17a634791b"
+                                            },
+                                            {
+                                                "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-movement-dismount-client.json",
+                                                "bytes":  2657,
+                                                "sha256":  "b4706904c747757f030d3e769eea729ae00c766e8f96ae0195e69d873e05b889"
+                                            },
+                                            {
+                                                "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-movement-dismount-dispatch.json",
+                                                "bytes":  5659,
+                                                "sha256":  "75e829b9e1c46db6ffc434b58da68f05309ae6e2fe0209fbd4909048608e7864"
+                                            },
+                                            {
+                                                "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-movement-far-fall-callers.json",
+                                                "bytes":  7864,
+                                                "sha256":  "f07e382e7c5ec58607cc63eef5117dfa41da7174a3409093c7347e7821b6e1e8"
+                                            },
+                                            {
+                                                "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-movement-far-fall-writer.json",
+                                                "bytes":  3209,
+                                                "sha256":  "ee3e6f11dff3890dd6b65217e67f995003588bfa05635f41f5f4b72398bc12c1"
+                                            },
+                                            {
+                                                "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-movement-flight-byte-writes.json",
+                                                "bytes":  4265,
+                                                "sha256":  "cfa00f5ef71b711661e8c9c44bd2ed38eee0b7210d3e927d92d27f1a4e5487d9"
+                                            },
+                                            {
+                                                "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-movement-flight-flag-writes.json",
+                                                "bytes":  4319,
+                                                "sha256":  "5291e4639c4ce46a82acaf92bd30d13a8c94e2a3a5f8eea13cf81c3b5636ae3c"
+                                            },
+                                            {
+                                                "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-movement-input-control.json",
+                                                "bytes":  3250,
+                                                "sha256":  "7e36266a093de6c8d33b94fdac514955157fc8a69498c010fdaa10b00997b163"
+                                            },
+                                            {
+                                                "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-movement-input-dispatch.json",
+                                                "bytes":  9422,
+                                                "sha256":  "b50eb1445429b62d44fec4ebfe32244bee0d4bded930b1e54e144a46e2fe0b09"
+                                            },
+                                            {
+                                                "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-movement-input-owner-direct-writes.json",
+                                                "bytes":  25411,
+                                                "sha256":  "191cdd28e3507ae2a91c2d43f5c6da128efbc36866d24e42f0756395ba47490d"
+                                            },
+                                            {
+                                                "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-movement-input-owner-direct-writes-tail.json",
+                                                "bytes":  12139,
+                                                "sha256":  "9cec0b8b7affa67ae17aae17197962947a8fc22e8d8ef68441e511a96b38ab7b"
+                                            },
+                                            {
+                                                "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-movement-input-owner-getter.json",
+                                                "bytes":  2260,
+                                                "sha256":  "f937ddeed6a1571acd314fcc8930cc5155a37387915af3c6fecbabbdf20b591c"
+                                            },
+                                            {
+                                                "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-movement-input-owner-guid-refs.json",
+                                                "bytes":  103634,
+                                                "sha256":  "6cc8b06318b246ab6a79765c8d0110467345df948187ce182819b5da2426f3e6"
+                                            },
+                                            {
+                                                "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-movement-input-owner-writer.json",
+                                                "bytes":  3898,
+                                                "sha256":  "a247a0e86a6c4149850a3049388a6106f5d62638dff93f03e38a6f353e2bfcee"
+                                            },
+                                            {
+                                                "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-movement-interaction-address-lifetime.json",
+                                                "bytes":  6892,
+                                                "sha256":  "78a3f784e5ea1ee62de742d0803d2e26b6858e1038e8e3149235b1f1f031c049"
+                                            },
+                                            {
+                                                "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-movement-isfalling.json",
+                                                "bytes":  2991,
+                                                "sha256":  "9b5396c7ba173877645c85353f5c8b1714ff580a2072d7a5bd49105c8c39d920"
+                                            },
+                                            {
+                                                "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-movement-isfalling-assembly.json",
+                                                "bytes":  9458,
+                                                "sha256":  "1ecf46f9091616989255ed7440a73c9d3bf7b8fab2e603f500bd7ed70f1f0422"
+                                            },
+                                            {
+                                                "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-movement-isflying.json",
+                                                "bytes":  3379,
+                                                "sha256":  "c1eee2b5492ca993446d8fb5ad1edd4f586ed9b9d63f1d0936330ac95204fcfb"
+                                            },
+                                            {
+                                                "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-movement-network-continuation.json",
+                                                "bytes":  7579,
+                                                "sha256":  "b7463eb3184d5180ef9e3b6c2b403705848aafd6c1a255e520982d32bd0c148f"
+                                            },
+                                            {
+                                                "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-movement-object-base-initialization.json",
+                                                "bytes":  7360,
+                                                "sha256":  "e7fc1c1519b34b0e3eb38cf06d80dbb7542138175f765394c133573b87dc20a5"
+                                            },
+                                            {
+                                                "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-movement-object-guid-publication.json",
+                                                "bytes":  2642,
+                                                "sha256":  "4feb2fb201080638321e08e4555f475e5972c7a5108dd584a48dd82d8e2e2a40"
+                                            },
+                                            {
+                                                "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-movement-object-guid-publisher-assembly.json",
+                                                "bytes":  9444,
+                                                "sha256":  "f0639fa5dad5363b9c56038168554f4ddc071080d680b50dad697209aa6a29ec"
+                                            },
+                                            {
+                                                "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-movement-object-guid-writer.json",
+                                                "bytes":  2822,
+                                                "sha256":  "2384278542d06bde0a30a6b8d64bbff35f17c9c423e23919e8451569f435160b"
+                                            },
+                                            {
+                                                "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-movement-object-guid-writer-assembly.json",
+                                                "bytes":  12067,
+                                                "sha256":  "9516db9a260da4ee30fed33975788b4cbf16401078524667f2188669e390b5f9"
+                                            },
+                                            {
+                                                "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-movement-object-lookup-callers.json",
+                                                "bytes":  33785,
+                                                "sha256":  "2d7a06350e9d593331e0659d323501b5b8bc39db0aee22505ffb980049a72395"
+                                            },
+                                            {
+                                                "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-movement-object-pointer-writes.json",
+                                                "bytes":  8313,
+                                                "sha256":  "f731c9c463a2c4697323ee1e7b5d43a6fb7366201e9fad2c22991123fa012505"
+                                            },
+                                            {
+                                                "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-movement-pitch-dispatch.json",
+                                                "bytes":  4233,
+                                                "sha256":  "042d50b8a79188cb7c3ddde67de59a6c0ce4a0b9075c46a6388462c9afba581a"
+                                            },
+                                            {
+                                                "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-movement-player-construction.json",
+                                                "bytes":  21746,
+                                                "sha256":  "ba3dc2e9da8ea1f8a3ef7ee6ff85d30120574793f33ecc8c0a487b4f07464c62"
+                                            },
+                                            {
+                                                "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-movement-player-guid-getter.json",
+                                                "bytes":  2580,
+                                                "sha256":  "bb77d79e0f28a0fc984d55d70d7c60ba291c616787e542a0b10b240a897fa876"
+                                            },
+                                            {
+                                                "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-movement-pointer-writer-candidates.json",
+                                                "bytes":  6812,
+                                                "sha256":  "626c54a1c8e0444b7bc9720971fee73555507c721cf555d951410a15488c1035"
+                                            },
+                                            {
+                                                "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-movement-registration-records.json",
+                                                "bytes":  4652,
+                                                "sha256":  "2f99d344308362d831a7f41af88f727c21ec906e38922f70ae8b613d01562af1"
+                                            },
+                                            {
+                                                "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-movement-registration-xrefs.json",
+                                                "bytes":  8934,
+                                                "sha256":  "db6ba09ae08e03832a71cbe93e94ec206d1728418c12b0f46a923a6742760b21"
+                                            },
+                                            {
+                                                "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-movement-root-fall-write-candidates.json",
+                                                "bytes":  30015,
+                                                "sha256":  "0d69cf1a20d0ee8361e9143c641a195e7306ff58decf3b61c2745a975114acba"
+                                            },
+                                            {
+                                                "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-movement-script-names.json",
+                                                "bytes":  6194,
+                                                "sha256":  "ed2f30d2dbfa4fa4f8c2f29c94929ec894def03c7fb7085ef7156c1b216a26de"
+                                            },
+                                            {
+                                                "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-movement-state-application.json",
+                                                "bytes":  10822,
+                                                "sha256":  "a87f5803e8e792cc500c9d6bb3fda77e18ba05ddd0d4fb87d10662cb6eeabf81"
+                                            },
+                                            {
+                                                "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-movement-state-publication-writer.json",
+                                                "bytes":  2541,
+                                                "sha256":  "23fb65547a88536d898da9e9e1d85cc67064b6c23a814b98c300f727d91138c2"
+                                            },
+                                            {
+                                                "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-movement-storage-destruction.json",
+                                                "bytes":  5926,
+                                                "sha256":  "5823f454f2e0f08c6d2d9588e1b77528addde9a6c0cdb52e21305b3d31da4638"
+                                            },
+                                            {
+                                                "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-movement-storage-initialization.json",
+                                                "bytes":  5739,
+                                                "sha256":  "28de3631837eb9cd12c555576a893ae960690d8e5b908fb66aef994096701be9"
+                                            },
+                                            {
+                                                "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-movement-transport-application.json",
+                                                "bytes":  12318,
+                                                "sha256":  "6a39d82a7caba2b29b36282fa03b34f98c5938401ede5a55ef992de29278f6eb"
+                                            },
+                                            {
+                                                "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-movement-transport-storage-init.json",
+                                                "bytes":  3342,
+                                                "sha256":  "cc7b44fd95a2069f1bb31229d6fe8e9efa084ec1220a5a2fd7c3c96e9c008e89"
+                                            },
+                                            {
+                                                "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-movement-unit-allocation.json",
+                                                "bytes":  4401,
+                                                "sha256":  "2379d24d490db81303867f9cabc267a7253cba1b0e83cfe5157fe645c241a700"
+                                            },
+                                            {
+                                                "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-movement-unit-construction-candidate.json",
+                                                "bytes":  6856,
+                                                "sha256":  "793248eeb246ba1f8043a682b035ec6a16b464676a0bd1d3fed1c43f2cf9c870"
+                                            },
+                                            {
+                                                "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-movement-unit-destruction.json",
+                                                "bytes":  2519,
+                                                "sha256":  "690f8f71ea225498e4dfb33bb02e5451d3360d822564ba771c9fc7809dc64eee"
+                                            },
+                                            {
+                                                "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-movement-unit-destruction-body.json",
+                                                "bytes":  15405,
+                                                "sha256":  "180db90912d44d03928c3503327ddd4d5bb2c4460aa206f8de68f0a108827209"
+                                            },
+                                            {
+                                                "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-movement-unit-pointer-write-functions.json",
+                                                "bytes":  11211,
+                                                "sha256":  "31aee1a4ee5788ebdb3ef195eb2f70ec4bc9893fb40821f6609b803a032381d8"
+                                            },
+                                            {
+                                                "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-movement-unit-state-update.json",
+                                                "bytes":  4574,
+                                                "sha256":  "8751e4595a4e71ed2a47ace1c35505aa006a721c321c87d09a67a5d46a15c4ac"
+                                            },
+                                            {
+                                                "path":  "D:\\Dev\\CopilotBuddy-Evidence\\w110-movement-unit-virtual-entries.json",
+                                                "bytes":  2790,
+                                                "sha256":  "97f3e5a51ab1ed0c14b231fedf76537e2fdce748011fd94b8a228431911b6eb6"
+                                            }
+                                        ],
+    "native_index_limit":  "Indexed receipts are not automatically complete contracts; see actual result and movement-contract limits. No reconstruction of the frozen combined native map.",
+    "approved_client":  {
+                            "version":  "3.3.5.12340",
+                            "architecture":  "x86",
+                            "sha256":  "bf644876709c591acc17c0da8cdf1814edcc9f1e6bc109a8c0d5c38c79dc953c",
+                            "native_or_idb_mutated":  false,
+                            "game_attached":  false
+                        },
+    "preserved_limits":  [
+                             "D1 original-client/native/runtime/atomicity",
+                             "D2 exact realm/server mechanics",
+                             "D3 causal menu/ground request provenance",
+                             "D4 provenance-backed data/materializers",
+                             "D5 physical world/route safety",
+                             "D6 independent/supervised acceptance",
+                             "DensePullIsolationValidated=false",
+                             "Historical CLR initiating cause unresolved",
+                             "Frozen refused operations",
+                             "Numeric preparation3 historical/0 new/0 remaining",
+                             "No merge/deployment"
+                         ]
+}

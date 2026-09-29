@@ -110,7 +110,7 @@ internal static class QuestPublicationRegressionTests
             {
                 var scheduler = f.Scheduler(f.Directory);
                 try { scheduler.ScanAndRefresh(f.Player); throw new AssertionFailure("directory destination did not fail"); }
-                catch (UnauthorizedAccessException error) { Check(error.StackTrace?.Contains("ProfileBuilder.WriteProfile") == true, "error was not from real profile file writer"); }
+                catch (UnauthorizedAccessException error) { Check(error.StackTrace?.Contains("ProfileBuilder.WriteProfile") == true, "error was not from real profile file writer; actual exception: " + error); }
             })),
             ("actual filesystem write failure cannot authorize the old selected child", () => WithFixture(f =>
             {
@@ -304,6 +304,7 @@ internal static class QuestPublicationRegressionTests
         private readonly ThreadLocal<Dictionary<IntPtr, byte[]>> cache = new ThreadLocal<Dictionary<IntPtr, byte[]>>(() => new());
         private readonly ThreadLocal<bool> enabled = new ThreadLocal<bool>(() => true);
         private readonly IntPtr storage = Marshal.AllocHGlobal(65536);
+        private IntPtr readHandle;
         private readonly uint descriptor;
         private readonly List<(FieldInfo Field, object? Value)> profileState = new();
         private readonly string? previousRememberedPath;
@@ -316,10 +317,17 @@ internal static class QuestPublicationRegressionTests
             Marshal.Copy(new byte[65536], 0, storage, 65536);
             uint start = unchecked((uint)storage.ToInt32()); descriptor = start + 4096;
             Set(memory, "_cache", cache); Set(memory, "_cacheEnabled", enabled);
-            // -1 is this test process only. No process is opened or injected and no
-            // assembler/executor exists. Allocated descriptor/cache bytes are owned here.
-            Set(memory, "_hProcess", new IntPtr(-1));
+            // Real Interact calls ResetAfk before its missing-executor check.
+            // The self-process pseudo handle also permits fixed client-address
+            // writes into this CLR process. Grant observations only; setup still
+            // writes exclusively to our allocated storage through Marshal.
+            readHandle = GreenMagic.Native.Imports.OpenProcess(0x0010, false, Environment.ProcessId);
+            if (readHandle == IntPtr.Zero)
+                throw new InvalidOperationException("Could not open the fixture's read-only self-process handle.");
+            Set(memory, "_hProcess", readHandle);
             Bytes(0xBD0792, new byte[] { 1 }); Bytes(0xB6A9E0, BitConverter.GetBytes(0u));
+            // Separate numeric lifecycle word; the legacy address is screen text.
+            Bytes(0xB6AA38, BitConverter.GetBytes(0u));
             Bytes(0xBD088C, BitConverter.GetBytes(1u));
             // ZoneText reads a client-global pointer, then an actual 512-byte string.
             // Both observations must belong to this fixture, not arbitrary memory
@@ -390,7 +398,13 @@ internal static class QuestPublicationRegressionTests
             if (cacheCaptured) typeof(StyxWoW).GetField("_cache", StaticHidden)!.SetValue(null, previousCache);
             ObjectManager.Me = previousPlayer; ObjectManager.Executor = previousExecutor;
             typeof(ObjectManager).GetProperty("Wow")!.SetValue(null, previousMemory);
-            Set(memory, "_hProcess", IntPtr.Zero); cache.Dispose(); enabled.Dispose(); Marshal.FreeHGlobal(storage);
+            Set(memory, "_hProcess", IntPtr.Zero);
+            if (readHandle != IntPtr.Zero)
+            {
+                GreenMagic.Native.Imports.CloseHandle(readHandle);
+                readHandle = IntPtr.Zero;
+            }
+            cache.Dispose(); enabled.Dispose(); Marshal.FreeHGlobal(storage);
             if (System.IO.Directory.Exists(Directory)) System.IO.Directory.Delete(Directory, true);
         }
     }

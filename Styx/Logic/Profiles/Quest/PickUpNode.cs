@@ -51,18 +51,18 @@ namespace Styx.Logic.Profiles.Quest
             }
             catch { }
 
-            var giverIdAttr = element.Attribute("GiverId");
+            var giverIdAttr = GetAttributeByAliases(element, "GiverId");
             int giverId = 0;
             if (giverIdAttr != null && !int.TryParse(giverIdAttr.Value, out giverId))
                 throw new ProfileAttributeExpectedException<int>(giverIdAttr);
 
-            string giverName = element.Attribute("GiverName")?.Value;
+            string giverName = GetAttributeByAliases(element, "GiverName")?.Value;
 
             if (giverId == 0 && giverName == null)
                 throw new ProfileMissingAttributeException<int>("GiverId", element);
 
             QuestObjectType? giverType = null;
-            var giverTypeAttr = element.Attribute("GiverType");
+            var giverTypeAttr = GetAttributeByAliases(element, "GiverType");
             if (giverTypeAttr != null)
             {
                 giverType = ParseQuestObjectType(giverTypeAttr.Value);
@@ -70,13 +70,13 @@ namespace Styx.Logic.Profiles.Quest
                     throw new ProfileAttributeExpectedException(giverTypeAttr, "Object", "Npc", "Item");
             }
 
-            var questIdAttr = element.Attribute("QuestId");
+            var questIdAttr = GetAttributeByAliases(element, "QuestId");
             if (questIdAttr == null)
                 throw new ProfileMissingAttributeException<int>("QuestId", element);
             if (!int.TryParse(questIdAttr.Value, out int questId))
                 throw new ProfileAttributeExpectedException<int>(questIdAttr);
 
-            string questName = element.Attribute("QuestName")?.Value;
+            string questName = GetAttributeByAliases(element, "QuestName")?.Value;
 
             return new PickUpNode(giverLocation, (uint)giverId, giverName, giverType, (uint)questId, questName);
         }
@@ -102,9 +102,9 @@ namespace Styx.Logic.Profiles.Quest
 
         private static WoWPoint ParseLocation(XElement element)
         {
-            var xAttr = element.Attribute("X");
-            var yAttr = element.Attribute("Y");
-            var zAttr = element.Attribute("Z");
+            var xAttr = GetAttributeByAliases(element, "X");
+            var yAttr = GetAttributeByAliases(element, "Y");
+            var zAttr = GetAttributeByAliases(element, "Z");
 
             if (xAttr == null || yAttr == null || zAttr == null)
                 throw new ProfileException("Missing X, Y or Z attribute");

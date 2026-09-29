@@ -81,14 +81,19 @@ namespace Bots.Grind
         private PrioritySelector _rootBehavior;
 
         // HB 4.3.4 exact: LootAllItems helper
-        private static void LootAllItems()
+        private static bool LootAllItems(Func<bool> current, ulong lootGuid)
         {
+            bool Ready() => current() && lootGuid != 0 && LootFrame.Instance.LootingObjectGuid == lootGuid && current();
+            if (!Ready()) return false;
             using (new FrameLock())
             {
+                if (!Ready()) return false;
                 List<WoWItem> carriedItems = StyxWoW.Me.CarriedItems;
                 for (int slot = 0; slot < LootFrame.Instance.LootItems; ++slot)
                 {
+                    if (!Ready()) return false;
                     uint itemId = LootFrame.Instance.GetItemId(slot);
+                    if (!Ready()) return false;
                     foreach (WoWItem item in carriedItems)
                     {
                         if (item.Entry == itemId)
@@ -96,14 +101,20 @@ namespace Bots.Grind
                             ItemInfo itemInfo = item.ItemInfo;
                             if (itemInfo != null && (itemInfo.UniqueCount == 1 || itemInfo.BeginQuestId != 0))
                             {
-                                Blacklist.Add(BotPoi.Current.Guid, TimeSpan.FromHours(3.0));
+                                if (!Ready()) return false;
+                                Blacklist.Add(lootGuid, TimeSpan.FromHours(3.0));
                                 break;
                             }
                         }
                     }
+                    if (!Ready()) return false;
                     LootFrame.Instance.Loot(slot);
                 }
+                if (!Ready()) return false;
                 Lua.DoString("CloseLoot();");
+                // The frame may disappear because of our own close request.
+                // Continue only for the same managed actor/object/work owner.
+                return current();
             }
         }
 
@@ -144,6 +155,7 @@ namespace Bots.Grind
 
         public override void Start()
         {
+            PullIsolationCoordinator.Reset();
             if (ProfileManager.CurrentOuterProfile == null)
                 throw new HonorbuddyUnableToStartException("You haven't loaded a profile.");
 
@@ -161,6 +173,7 @@ namespace Bots.Grind
 
         public override void Stop()
         {
+            PullIsolationCoordinator.Reset();
             Targeting.Instance.IncludeTargetsFilter -= LevelBotIncludeTargetsFilter;
             LootTargeting.Instance.IncludeTargetsFilter -= LevelbotIncludeLootsFilter;
             Bots.DungeonBuddy.Avoidance.WorldObstacleManager.Shutdown();
@@ -203,7 +216,12 @@ namespace Bots.Grind
                     // POI Kill sanity checks
                     new DecoratorIsPoiType(PoiType.Kill, new PrioritySelector(
                         new Decorator(
-                            ctx => Targeting.Instance.TargetList.Count == 0,
+                            // A filtered targeting gap does not end raw player/pet
+                            // combat or revoke its still-live destination. Keep the
+                            // self-heal/combat branch reachable while selection recovers.
+                            ctx => Targeting.Instance.TargetList.Count == 0
+                                && (!IsPlayerOrPetInCombat()
+                                    || BotPoi.Current.AsObject is not WoWUnit { IsValid: true, IsAlive: true }),
                             new ActionClearPoi("No targets in target list - POI.Kill Sanity Checks")
                         ),
                         new Decorator(
@@ -213,64 +231,183 @@ namespace Bots.Grind
                     )),
                     // Not in combat: Rest, PreCombatBuff, Pull
                     new Decorator(
-                        ctx => !StyxWoW.Me.Combat,
-                        new PrioritySelector(
-                            Routine.RestBehavior,
-                            Routine.PreCombatBuffBehavior,
-                            new DecoratorIsPoiType(PoiType.Kill, new PrioritySelector(
-                                // Switch target if better one available (HB 4.3.4: two nested decorators)
-                                new Decorator(
-                                    ctx => Targeting.Instance.TargetList.Count != 0,
-                                    new Decorator(
-                                        ctx => BotPoi.Current.AsObject != Targeting.Instance.FirstUnit &&
-                                               BotPoi.Current.Type == PoiType.Kill,
-                                        new Sequence(
-                                            new ActionDebugString("Current POI is not the best pull target. Changing."),
-                                            new ActionSetPoi(true, ctx => new BotPoi(Targeting.Instance.FirstUnit, PoiType.Kill)),
-                                            new TreeSharp.Action(ctx => BotPoi.Current.AsObject.ToUnit().Target())
-                                        )
-                                    )
-                                ),
-                                // Pull if ready
-                                new Decorator(
-                                    ctx => CanPull(),
-                                    Routine.PullBehavior
-                                )
-                            ))
-                        )
+                        ctx => !IsPlayerOrPetInCombat(),
+                        CreateOwnedPrePullBehavior()
                     ),
-                    // In combat: Heal, CombatBuff, Combat
-                    // combat branch: only run when we have a valid first target
-                new Decorator(
-                        ctx =>
-                        {
-                            bool combat = StyxWoW.Me.Combat || (StyxWoW.Me.GotAlivePet && StyxWoW.Me.Pet.Combat);
-                            return !StyxWoW.Me.Mounted && combat &&
-                                   Targeting.Instance.FirstUnit != null;
-                        },
-                        new PrioritySelector(
-                            new Decorator(
-                                ctx => StyxWoW.Me.Mounted,
-                                new TreeSharp.Action(ctx => Mount.Dismount("Combat"))
-                            ),
-                            Routine.HealBehavior,
-                            Routine.CombatBuffBehavior,
-                            Routine.CombatBehavior,
-                            new ActionAlwaysSucceed()
-                        )
+                    // A transient targeting gap does not end observed ground combat.
+                    // Retain self-healing and ownership; only offensive leaves need a target.
+                    new Decorator(
+                        ctx => !StyxWoW.Me.Mounted && IsPlayerOrPetInCombat(),
+                        CreateOwnedGroundCombatBehavior()
                     )
                 )
             );
         }
 
+        // The ordinary Decorator predicate runs once per activation, not before
+        // every resumed tick. A yielded routine must not inherit a replacement
+        // actor/POI or continue after a synchronous callback revokes admission.
+        private sealed class RoutineAdmissionGuard : Decorator
+        {
+            private readonly Func<bool> current;
+            internal RoutineAdmissionGuard(Func<bool> current, Composite child) : base(child) { this.current = current; }
+            public override RunStatus Tick(object context)
+            {
+                if (current())
+                {
+                    RunStatus result = base.Tick(context);
+                    if (current()) return result;
+                }
+                LastStatus = RunStatus.Failure;
+                // Cleanup may start a new lifetime on this same guard. Publish
+                // the old result before Stop, never over the replacement's status.
+                Stop(context);
+                return RunStatus.Failure;
+            }
+        }
+
+        private static Composite CreateOwnedPrePullBehavior()
+        {
+            LocalPlayer actor = null;
+            WoWUnit best = null, displayed = null;
+            WoWObject subject = null;
+            BotPoi poi = null;
+            object targeting = null;
+            ulong actorGuid = 0, bestGuid = 0, displayedGuid = 0, poiGuid = 0, subjectGuid = 0;
+            uint map = 0, entry = 0;
+            PoiType type = PoiType.None;
+            bool ParticipantsCurrent() => actor != null && actorGuid != 0
+                && ReferenceEquals(StyxWoW.Me, actor) && actor.IsValid && actor.IsAlive
+                && actor.Guid == actorGuid && actor.MapId == map && !IsPlayerOrPetInCombat()
+                && ReferenceEquals(Targeting.Instance, targeting) && ReferenceEquals(Targeting.Instance.FirstUnit, best)
+                && (best == null || bestGuid != 0 && best.IsValid && best.IsAlive && best.Guid == bestGuid);
+            bool PoiCurrent() => ParticipantsCurrent() && ReferenceEquals(BotPoi.Current, poi)
+                && poi != null && poi.Type == type && poi.Guid == poiGuid && poi.Entry == entry
+                && ReferenceEquals(poi.AsObject, subject) && (subject == null || subject.Guid == subjectGuid)
+                && ParticipantsCurrent();
+            bool Current() => PoiCurrent() && ReferenceEquals(actor.CurrentTarget, displayed)
+                && actor.CurrentTargetGuid == displayedGuid && PoiCurrent();
+            void CapturePoi(BotPoi value)
+            {
+                poi = value; type = poi?.Type ?? PoiType.None; poiGuid = poi?.Guid ?? 0; entry = poi?.Entry ?? 0;
+                subject = poi?.AsObject; subjectGuid = subject?.Guid ?? 0;
+            }
+            Composite Guard(Composite child) => new RoutineAdmissionGuard(Current, child);
+
+            return new Sequence(
+                new TreeSharp.Action(ctx =>
+                {
+                    actor = StyxWoW.Me; actorGuid = actor?.Guid ?? 0; map = actor?.MapId ?? 0;
+                    targeting = Targeting.Instance; best = Targeting.Instance.FirstUnit; bestGuid = best?.Guid ?? 0;
+                    displayed = actor?.CurrentTarget; displayedGuid = displayed?.Guid ?? 0;
+                    CapturePoi(BotPoi.Current);
+                    return Current() ? RunStatus.Success : RunStatus.Failure;
+                }),
+                Guard(new PrioritySelector(
+                    Guard(Routine.RestBehavior),
+                    Guard(Routine.PreCombatBuffBehavior),
+                    Guard(new DecoratorIsPoiType(PoiType.Kill, new PrioritySelector(
+                        new Decorator(ctx => Current() && best != null && !ReferenceEquals(subject, best),
+                            new Sequence(
+                                Guard(new ActionDebugString("Current POI is not the best pull target. Changing.")),
+                                new TreeSharp.Action(ctx =>
+                                {
+                                    if (!Current()) return RunStatus.Failure;
+                                    var next = new BotPoi(best, PoiType.Kill);
+                                    if (!Current()) return RunStatus.Failure;
+                                    // Declare only our own publication before its callbacks.
+                                    // Never reread a replacement global POI as the target.
+                                    CapturePoi(next);
+                                    BotPoi.Current = next;
+                                    if (!Current()) return RunStatus.Failure;
+                                    best.Target();
+                                    if (!PoiCurrent() || !ReferenceEquals(actor.CurrentTarget, best)
+                                        || actor.CurrentTargetGuid != bestGuid)
+                                        return RunStatus.Failure;
+                                    displayed = best; displayedGuid = bestGuid;
+                                    return Current() ? RunStatus.Success : RunStatus.Failure;
+                                }))),
+                        Guard(PullIsolationCoordinator.CreatePreCombatBehavior()),
+                        Guard(new Decorator(ctx => CanPull(), Guard(Routine.PullBehavior)))
+                    )))
+                )));
+        }
+
+        private static Composite CreateOwnedGroundCombatBehavior()
+        {
+            LocalPlayer actor = null;
+            WoWUnit candidate = null;
+            object targeting = null;
+            ulong actorGuid = 0, candidateGuid = 0;
+            uint map = 0;
+            bool ActorCurrent() => actor != null && actorGuid != 0
+                && ReferenceEquals(StyxWoW.Me, actor) && actor.IsValid && actor.IsAlive
+                && actor.Guid == actorGuid && actor.MapId == map && !actor.Mounted
+                && IsPlayerOrPetInCombat() && ReferenceEquals(StyxWoW.Me, actor)
+                && actor.Guid == actorGuid;
+            bool TargetCurrent() => ActorCurrent() && candidate != null && candidateGuid != 0
+                && candidate.IsValid && candidate.IsAlive && candidate.Guid == candidateGuid
+                && ReferenceEquals(Targeting.Instance, targeting)
+                && ReferenceEquals(Targeting.Instance.FirstUnit, candidate) && ActorCurrent();
+            Composite ActorGuard(Composite child) => new RoutineAdmissionGuard(ActorCurrent, child);
+            Composite TargetGuard(Composite child) => new RoutineAdmissionGuard(TargetCurrent, child);
+
+            return new Sequence(
+                new TreeSharp.Action(ctx =>
+                {
+                    actor = StyxWoW.Me; actorGuid = actor?.Guid ?? 0; map = actor?.MapId ?? 0;
+                    return ActorCurrent() ? RunStatus.Success : RunStatus.Failure;
+                }),
+                ActorGuard(new PrioritySelector(
+                    // A missing enemy never suppresses this actor's self-heal.
+                    ActorGuard(Routine.HealBehavior),
+                    ActorGuard(PullIsolationCoordinator.CreateRetreatBehavior()),
+                    ActorGuard(new Sequence(
+                        new TreeSharp.Action(ctx =>
+                        {
+                            if (!ActorCurrent()) return RunStatus.Failure;
+                            targeting = Targeting.Instance;
+                            candidate = Targeting.Instance.FirstUnit; candidateGuid = candidate?.Guid ?? 0;
+                            return TargetCurrent() ? RunStatus.Success : RunStatus.Failure;
+                        }),
+                        TargetGuard(new PrioritySelector(
+                            TargetGuard(Routine.CombatBuffBehavior),
+                            TargetGuard(Routine.CombatBehavior))))),
+                    // Target revocation still belongs to ongoing player/pet combat;
+                    // do not release it to gathering just because a routine failed.
+                    new ActionAlwaysSucceed())));
+        }
+
+        private static bool IsPlayerOrPetInCombat()
+        {
+            var player = StyxWoW.Me;
+            if (player == null)
+                return false;
+            var pet = player.GotAlivePet ? player.Pet : null;
+            return player.Combat || (pet != null && pet.Combat);
+        }
+
         private static bool CanPull()
         {
-            WoWUnit currentTarget = StyxWoW.Me.CurrentTarget;
-            if (currentTarget == null)
+            LocalPlayer player = StyxWoW.Me;
+            WoWUnit target = player?.CurrentTarget;
+            BotPoi poi = BotPoi.Current;
+            ulong actorGuid = player?.Guid ?? 0, targetGuid = target?.Guid ?? 0;
+            uint map = player?.MapId ?? 0;
+            bool Current() => player != null && actorGuid != 0 && ReferenceEquals(StyxWoW.Me, player)
+                && player.IsValid && player.IsAlive && player.Guid == actorGuid && player.MapId == map
+                && target != null && targetGuid != 0 && target.IsValid && target.IsAlive && target.Guid == targetGuid
+                && ReferenceEquals(player.CurrentTarget, target) && player.CurrentTargetGuid == targetGuid
+                && ReferenceEquals(BotPoi.Current, poi) && poi != null && poi.Type == PoiType.Kill
+                && ReferenceEquals(poi.AsObject, target) && poi.Guid == targetGuid;
+            if (!Current())
                 return false;
-            if (!currentTarget.InLineOfSpellSight)
+            bool sight = target.InLineOfSpellSight;
+            if (!Current() || !sight)
                 return false;
-            return currentTarget.Distance <= Targeting.PullDistance;
+            double distance = target.Distance, range = Targeting.PullDistance;
+            return Current() && double.IsFinite(distance) && distance >= 0
+                && double.IsFinite(range) && range >= 0 && distance <= range && Current();
         }
 
         #endregion
@@ -749,6 +886,7 @@ namespace Bots.Grind
         /// </summary>
         public static Composite CreateLootBehavior()
         {
+            LootWorkObservation movementOwner = null;
             // Attach loot events once
             if (!_lootEventsAttached)
             {
@@ -757,7 +895,7 @@ namespace Bots.Grind
             }
 
             return new Decorator(
-                ctx => CanLoot() && !StyxWoW.Me.IsActuallyInCombat,
+                ctx => CanBeginLoot() && CanLoot(),
                 new PrioritySelector(
                     // Handle loot/skin/harvest POI
                     new DecoratorIsPoiType(new[] { PoiType.Loot, PoiType.Skin, PoiType.Harvest },
@@ -771,13 +909,10 @@ namespace Bots.Grind
                                                Targeting.Instance.FirstUnit.IsHostile &&
                                                Targeting.Instance.FirstUnit.Distance < 
                                                Targeting.Instance.FirstUnit.MyAggroRange + 2.0,
-                                        new Sequence(
-                                            new TreeSharp.Action(ctx => Targeting.Instance.FirstUnit.Target()),
-                                            new ActionDebugString("[LB] SetTarget Finished. Waiting."),
-                                            new Wait(5, ctx => StyxWoW.Me.GotTarget, new ActionIdle()),
-                                            new ActionDebugString("[LB] Finished waiting, we got a target."),
-                                            new ActionSetPoi(ctx => new BotPoi(StyxWoW.Me.CurrentTarget, PoiType.Kill))
-                                        )
+                                        new OwnedTargetHandoff(() =>
+                                            (BotPoi.Current.Type == PoiType.Loot || BotPoi.Current.Type == PoiType.Skin || BotPoi.Current.Type == PoiType.Harvest)
+                                            && Targeting.Instance.FirstUnit is { } threat && threat.IsHostile
+                                            && threat.Distance < threat.MyAggroRange + 2.0)
                                     )
                                 ))
                             ),
@@ -786,12 +921,17 @@ namespace Bots.Grind
                                 ctx => _lastLootPoiType == BotPoi.Current.Type && _lastLootGuid == BotPoi.Current.Guid,
                                 new TreeSharp.Action(ctx =>
                                 {
+                                    var owner = new LootWorkObservation();
+                                    if (!owner.Current || owner.Type != _lastLootPoiType || owner.Guid != _lastLootGuid)
+                                        return RunStatus.Success; // End this revoked branch without more loot work.
                                     if (++_lootAttemptCount >= 5)
                                     {
                                         if (++_lootFailCount >= 2)
                                         {
                                             Logging.Write("Blacklisting lootable to avoid useless POI spam, tried looting twice but we still can't loot.");
-                                            Blacklist.Add(BotPoi.Current.Guid, TimeSpan.FromMinutes(15.0));
+                                            if (!owner.Current) return RunStatus.Success;
+                                            Blacklist.Add(owner.Guid, TimeSpan.FromMinutes(15.0));
+                                            if (!owner.Current) return RunStatus.Success;
                                             _lootFailCount = 0;
                                             BotPoi.Clear("Tried to loot more than 2 times");
                                         }
@@ -805,6 +945,7 @@ namespace Bots.Grind
                                     {
                                         BotPoi.Clear("Already looted");
                                     }
+                                    return RunStatus.Success;
                                 })
                             ),
                             // HB 4.3.4 smethod_25/26: "Can't generate a path to lootable" blacklist.
@@ -819,139 +960,207 @@ namespace Bots.Grind
                                 ctx => BotPoi.Current.AsObject == null,
                                 new TreeSharp.Action(ctx =>
                                 {
-                                    Logging.Write("[LB] Loot object 0x{0:X016} no longer in world (despawned), clearing stale POI.", BotPoi.Current.Guid);
-                                    Blacklist.Add(BotPoi.Current.Guid, TimeSpan.FromMinutes(5.0));
+                                    var owner = new LootWorkObservation();
+                                    if (!owner.Current || owner.Subject != null) return RunStatus.Success;
+                                    Logging.Write("[LB] Loot object 0x{0:X016} no longer in world (despawned), clearing stale POI.", owner.Guid);
+                                    if (!owner.Current) return RunStatus.Success;
+                                    Blacklist.Add(owner.Guid, TimeSpan.FromMinutes(5.0));
+                                    if (!owner.Current) return RunStatus.Success;
                                     BotPoi.Clear("Loot object despawned");
+                                    return RunStatus.Success;
                                 })
                             ),
                             // Move to lootable
                             new Decorator(
                                 ctx =>
                                 {
-                                    WoWObject target = BotPoi.Current.AsObject;
+                                    movementOwner = new LootWorkObservation();
+                                    WoWObject target = movementOwner.Subject;
                                     return target != null && (target is WoWUnit unit
                                         ? !unit.WithinLootRange : !target.WithinInteractRange);
                                 },
-                                new ActionMoveToPoi()
+                                new ActionMoveToPoi(() => movementOwner != null && movementOwner.Current)
                             ),
                             // Stop descending if flying
                             new Decorator(
                                 ctx => StyxWoW.Me.IsFlying,
-                                new TreeSharp.Action(ctx => WoWMovement.Move(WoWMovement.MovementDirection.Descend))
+                                new TreeSharp.Action(ctx =>
+                                {
+                                    if (movementOwner != null && movementOwner.Current)
+                                        WoWMovement.Move(WoWMovement.MovementDirection.Descend);
+                                    return RunStatus.Success;
+                                })
                             ),
                             new Decorator(
                                 ctx => StyxWoW.Me.MovementInfo.IsDescending,
-                                new TreeSharp.Action(ctx => WoWMovement.MoveStop(WoWMovement.MovementDirection.Descend))
-                            ),
-                            // Loot sequence
-                            new PrioritySelector(
-                                new Sequence(
-                                    new DecoratorContinue(
-                                        ctx => StyxWoW.Me.IsMoving,
-                                        new Sequence(
-                                            new TreeSharp.Action(ctx => WoWMovement.MoveStop()),
-                                            new TreeSharp.Action(ctx => SleepForLag())
-                                        )
-                                    ),
-                                    new TreeSharp.Action(ctx => BotPoi.Current.AsObject.Interact()),
-                                    new WaitLuaEvent("LOOT_OPENED", 
-                                        () => BotPoi.Current.Type != PoiType.Loot ? 10 : 3,
-                                        new TreeSharp.Action(ctx =>
-                                        {
-                                            WoWObject lootObj = BotPoi.Current.AsObject;
-                                            if (lootObj != null)
-                                            {
-                                                Logging.Write("Looting {0} Guid 0x{1:X016}", lootObj.Name, lootObj.Guid);
-                                            }
-                                            // HB 4.3.4 smethod_37 → smethod_0 (LootAllItems)
-                                            LootAllItems();
-                                        })
-                                    ),
-                                    // Skinning check
-                                    new DecoratorContinue(
-                                        ctx => (CharacterSettings.Instance.SkinMobs || CharacterSettings.Instance.NinjaSkin) &&
-                                               BotPoi.Current.AsObject != null &&
-                                               BotPoi.Current.AsObject is WoWUnit unit &&
-                                               unit.SkinType == WoWCreatureSkinType.Leather &&
-                                               unit.Level < StyxWoW.Me.CanSkinLevel,
-                                        new WaitContinue(5,
-                                            ctx => BotPoi.Current.AsObject.ToUnit().CanSkin &&
-                                                   LootTargeting.Instance.FirstObject != null &&
-                                                   LootTargeting.Instance.FirstObject.Guid == BotPoi.Current.Guid,
-                                            new ActionAlwaysSucceed()
-                                        )
-                                    ),
-                                    // Update stats
-                                    new DecoratorContinue(
-                                        ctx => BotPoi.Current.Type == PoiType.Loot,
-                                        new TreeSharp.Action(ctx => GameStats.LootedMob())
-                                    ),
-                                    // Track last loot
-                                    new TreeSharp.Action(ctx =>
-                                    {
-                                        _lastLootPoiType = BotPoi.Current.Type;
-                                        _lastLootGuid = BotPoi.Current.Guid;
-                                    }),
-                                    new ActionClearPoi("Waiting for loot flag")
-                                ),
-                                // Fallback - check if we can still loot
                                 new TreeSharp.Action(ctx =>
                                 {
-                                    Logging.Write("Loot timer exceeded, blacklisting lootable.");
-                                    SleepForLag();
-                                    bool canStillLoot = BotPoi.Current.Type switch
-                                    {
-                                        PoiType.Harvest => BotPoi.Current.AsObject.ToGameObject().CanLoot,
-                                        PoiType.Skin => BotPoi.Current.AsObject.ToUnit().CanSkin,
-                                        _ => BotPoi.Current.AsObject.ToUnit().CanLoot
-                                    };
-                                    if (canStillLoot)
-                                    {
-                                        Logging.Write("I can't tell if we looted, blacklisting it just to be safe.");
-                                        Blacklist.Add(BotPoi.Current.Guid, new TimeSpan(0, 10, 0));
-                                    }
-                                    else
-                                    {
-                                        Logging.Write("Lootable isn't lootable, blacklisting.");
-                                        Blacklist.Add(BotPoi.Current.Guid, TimeSpan.FromMinutes(5));
-                                    }
-                                    BotPoi.Clear("Done looting");
+                                    if (movementOwner != null && movementOwner.Current)
+                                        WoWMovement.MoveStop(WoWMovement.MovementDirection.Descend);
+                                    return RunStatus.Success;
                                 })
-                            )
+                            ),
+                            CreateOwnedLootInteraction(() => movementOwner != null && movementOwner.Current)
                         )
                     ),
                     // Not currently looting - find something to loot
-                    new DecoratorIsNotPoiType(new[] { PoiType.Loot, PoiType.Skin, PoiType.Harvest, PoiType.Kill },
-                        new PrioritySelector(
-                            // Skinnable
-                            new Decorator(
-                                ctx => BotPoi.Current.Type != PoiType.Skin &&
-                                       LootTargeting.Instance.FirstObject != null &&
-                                       LootTargeting.SkinMobs &&
-                                       LootTargeting.Instance.FirstObject is WoWUnit unit &&
-                                       unit.SkinType == WoWCreatureSkinType.Leather &&
-                                       unit.CanSkin,
-                                new ActionSetPoi(ctx => new BotPoi(LootTargeting.Instance.FirstObject, PoiType.Skin))
-                            ),
-                            // Harvestable (herbs/minerals only — not chests)
-                            new Decorator(
-                                ctx => BotPoi.Current.Type != PoiType.Harvest &&
-                                       LootTargeting.Instance.FirstObject is WoWGameObject harvestObj &&
-                                       (harvestObj.IsHerb && LootTargeting.HarvestHerbs ||
-                                        harvestObj.IsMineral && LootTargeting.HarvestMinerals),
-                                new ActionSetPoi(ctx => new BotPoi(LootTargeting.Instance.FirstObject, PoiType.Harvest))
-                            ),
-                            // Lootable (units and chests)
-                            new Decorator(
-                                ctx => BotPoi.Current.Type != PoiType.Skin &&
-                                       BotPoi.Current.Type != PoiType.Loot &&
-                                       LootTargeting.Instance.FirstObject != null,
-                                new ActionSetPoi(ctx => new BotPoi(LootTargeting.Instance.FirstObject, PoiType.Loot))
-                            )
-                        )
+                    new DecoratorIsPoiType(new[] { PoiType.None, PoiType.Hotspot, PoiType.Quest },
+                        CreateOwnedLootSelection()
                     )
                 )
             );
+        }
+
+        private static Composite CreateOwnedLootSelection() => new TreeSharp.Action(ctx =>
+        {
+            var actor = StyxWoW.Me; ulong actorGuid = actor?.Guid ?? 0; uint map = actor?.MapId ?? 0;
+            var mover = WoWMovement.ActiveMover; ulong moverGuid = mover?.Guid ?? 0;
+            var provider = Navigator.NavigationProvider;
+            var poi = BotPoi.Current; var priorType = poi?.Type ?? PoiType.None;
+            ulong priorGuid = poi?.Guid ?? 0; uint priorEntry = poi?.Entry ?? 0;
+            var targeting = LootTargeting.Instance; var candidate = targeting?.FirstObject;
+            ulong guid = candidate?.Guid ?? 0; bool? alive = candidate?.ToUnit()?.IsAlive;
+            PoiType Kind() => candidate is WoWUnit unit && LootTargeting.SkinMobs && unit.SkinType == WoWCreatureSkinType.Leather && unit.CanSkin ? PoiType.Skin
+                : candidate is WoWGameObject obj && ((obj.IsHerb && LootTargeting.HarvestHerbs) || (obj.IsMineral && LootTargeting.HarvestMinerals))
+                    ? PoiType.Harvest : PoiType.Loot;
+            PoiType type = Kind();
+            bool InputsCurrent() => actor != null && actorGuid != 0 && ReferenceEquals(StyxWoW.Me, actor)
+                && actor.Guid == actorGuid && actor.MapId == map && CanBeginLoot() && CanLoot()
+                && mover != null && moverGuid != 0 && mover.IsValid && mover.Guid == moverGuid
+                && ReferenceEquals(WoWMovement.ActiveMover, mover) && ReferenceEquals(Navigator.NavigationProvider, provider)
+                && candidate != null && guid != 0 && candidate.IsValid && candidate.Guid == guid && candidate.ToUnit()?.IsAlive == alive
+                && ReferenceEquals(LootTargeting.Instance, targeting) && ReferenceEquals(targeting.FirstObject, candidate)
+                && Kind() == type && ReferenceEquals(StyxWoW.Me, actor) && actor.Guid == actorGuid;
+            bool Current() => InputsCurrent() && poi != null && ReferenceEquals(BotPoi.Current, poi)
+                && poi.Type == priorType && poi.Guid == priorGuid && poi.Entry == priorEntry
+                && (priorType == PoiType.None || priorType == PoiType.Hotspot || priorType == PoiType.Quest);
+            if (!Current()) return RunStatus.Failure;
+            var next = new BotPoi(candidate, type);
+            if (!Current()) return RunStatus.Failure;
+            BotPoi.Current = next;
+            return InputsCurrent() && ReferenceEquals(BotPoi.Current, next) && next.Type == type && next.Guid == guid
+                && ReferenceEquals(next.AsObject, candidate) ? RunStatus.Success : RunStatus.Failure;
+        });
+
+        private static bool CanBeginLoot()
+        {
+            var actor = StyxWoW.Me;
+            // A missing cached aggro unit is not proof that combat has ended.
+            return actor != null && actor.IsValid && actor.IsAlive && !IsPlayerOrPetInCombat()
+                && !actor.OnTaxi && !actor.IsOnTransport && !actor.IsCasting && actor.ChanneledCastingSpellId == 0;
+        }
+
+        private sealed class LootWorkObservation
+        {
+            internal readonly LocalPlayer Actor = StyxWoW.Me;
+            internal readonly BotPoi Poi = BotPoi.Current;
+            internal readonly WoWObject Subject;
+            internal readonly ulong Guid;
+            internal readonly PoiType Type;
+            private readonly ulong actorGuid, moverGuid;
+            private readonly uint map, entry;
+            private readonly WoWUnit mover = WoWMovement.ActiveMover;
+            private readonly object provider = Navigator.NavigationProvider;
+            private readonly bool? alive;
+
+            internal LootWorkObservation()
+            {
+                actorGuid = Actor?.Guid ?? 0; map = Actor?.MapId ?? 0; moverGuid = mover?.Guid ?? 0;
+                Guid = Poi?.Guid ?? 0; Type = Poi?.Type ?? PoiType.None; entry = Poi?.Entry ?? 0;
+                Subject = Poi?.AsObject; alive = Subject?.ToUnit()?.IsAlive;
+            }
+
+            internal bool Current => Actor != null && actorGuid != 0 && Actor.IsValid && Actor.IsAlive
+                && ReferenceEquals(StyxWoW.Me, Actor) && Actor.Guid == actorGuid && Actor.MapId == map
+                && !IsPlayerOrPetInCombat() && !Actor.OnTaxi && !Actor.IsOnTransport
+                && mover != null && moverGuid != 0 && mover.IsValid && mover.Guid == moverGuid
+                && ReferenceEquals(WoWMovement.ActiveMover, mover) && ReferenceEquals(Navigator.NavigationProvider, provider)
+                && Poi != null && ReferenceEquals(BotPoi.Current, Poi) && Poi.Type == Type && Poi.Guid == Guid && Poi.Entry == entry
+                && (Type == PoiType.Loot || Type == PoiType.Skin || Type == PoiType.Harvest)
+                && ReferenceEquals(Poi.AsObject, Subject)
+                && (Subject == null || Subject.IsValid && Subject.Guid == Guid && Subject.ToUnit()?.IsAlive == alive);
+
+            internal bool InRange => Current && Subject != null && (Subject is WoWUnit unit
+                ? unit.WithinLootRange : Subject.WithinInteractRange) && Current;
+        }
+
+        private static Composite CreateOwnedLootInteraction(Func<bool> admitted)
+        {
+            LootWorkObservation owner = null;
+            bool attempted = false, observedEvent = false, dispatched = false;
+            bool Current() => owner != null && owner.Current && admitted() && owner.Current;
+            Composite Guard(Composite child) => new RoutineAdmissionGuard(Current, child);
+            return new Sequence(
+                new TreeSharp.Action(ctx =>
+                {
+                    owner = new LootWorkObservation(); attempted = observedEvent = dispatched = false;
+                    return Current() && owner.Subject != null ? RunStatus.Success : RunStatus.Failure;
+                }),
+                new PrioritySelector(
+                    new Sequence(
+                        Guard(new DecoratorContinue(ctx => owner.Actor.IsMoving, new Sequence(
+                            Guard(new TreeSharp.Action(ctx => WoWMovement.MoveStop())),
+                            Guard(new TreeSharp.Action(ctx => SleepForLag()))))),
+                        Guard(new TreeSharp.Action(ctx =>
+                        {
+                            if (!Current() || !owner.InRange || owner.Actor.IsFlying || owner.Actor.MovementInfo.IsDescending
+                                || owner.Actor.IsCasting || owner.Actor.ChanneledCastingSpellId != 0
+                                || LootFrame.Instance.IsVisible || !Current()) return RunStatus.Failure;
+                            attempted = true;
+                            owner.Subject.Interact(true);
+                            return Current() ? RunStatus.Success : RunStatus.Failure;
+                        })),
+                        Guard(new WaitLuaEvent("LOOT_OPENED", () => owner.Type == PoiType.Loot || owner.Type == PoiType.Skin ? 3 : 10,
+                            new TreeSharp.Action(ctx =>
+                            {
+                                if (!Current()) return RunStatus.Failure;
+                                observedEvent = true;
+                                // This is a necessary mismatch veto, not causal
+                                // proof that the native menu belongs to this request.
+                                if (owner.Guid == 0 || LootFrame.Instance.LootingObjectGuid != owner.Guid || !Current())
+                                    return RunStatus.Failure;
+                                Logging.Write("Looting {0} Guid 0x{1:X016}", owner.Subject.Name, owner.Guid);
+                                if (!Current()) return RunStatus.Failure;
+                                dispatched = LootAllItems(Current, owner.Guid);
+                                return dispatched && Current() ? RunStatus.Success : RunStatus.Failure;
+                            }))),
+                        // WaitLuaEvent inherits WaitContinue: timeout is success,
+                        // but it did not run the callback and is not looted progress.
+                        Guard(new TreeSharp.Action(ctx => observedEvent && dispatched ? RunStatus.Success : RunStatus.Failure)),
+                        Guard(new DecoratorContinue(
+                            ctx => owner.Type == PoiType.Loot
+                                && (CharacterSettings.Instance.SkinMobs || CharacterSettings.Instance.NinjaSkin)
+                                && owner.Subject is WoWUnit unit && unit.SkinType == WoWCreatureSkinType.Leather
+                                && unit.Level <= owner.Actor.CanSkinLevel,
+                            Guard(new WaitContinue(2, ctx => owner.Subject.ToUnit().CanSkin
+                                && LootTargeting.Instance.FirstObject != null && LootTargeting.Instance.FirstObject.Guid == owner.Guid,
+                                new ActionAlwaysSucceed())))),
+                        Guard(new DecoratorContinue(ctx => owner.Type == PoiType.Loot,
+                            Guard(new TreeSharp.Action(ctx => GameStats.LootedMob())))),
+                        Guard(new TreeSharp.Action(ctx => { _lastLootPoiType = owner.Type; _lastLootGuid = owner.Guid; })),
+                        // Keep cleanup last; no old work may run after its callbacks.
+                        new Decorator(ctx => Current(), new ActionClearPoi("Waiting for loot flag"))),
+                    new TreeSharp.Action(ctx =>
+                    {
+                        if (!attempted || !Current()) return RunStatus.Failure;
+                        Logging.Write("Loot timer exceeded, blacklisting lootable.");
+                        if (!Current()) return RunStatus.Failure;
+                        SleepForLag();
+                        if (!Current()) return RunStatus.Failure;
+                        bool canStillLoot = owner.Type switch
+                        {
+                            PoiType.Harvest => owner.Subject.ToGameObject()?.CanLoot == true,
+                            PoiType.Skin => owner.Subject.ToUnit()?.CanSkin == true,
+                            _ => owner.Subject.ToUnit()?.CanLoot == true
+                        };
+                        if (!Current()) return RunStatus.Failure;
+                        Logging.Write(canStillLoot ? "I can't tell if we looted, blacklisting it just to be safe." : "Lootable isn't lootable, blacklisting.");
+                        if (!Current()) return RunStatus.Failure;
+                        Blacklist.Add(owner.Guid, TimeSpan.FromMinutes(canStillLoot ? 10 : 5));
+                        if (!Current()) return RunStatus.Failure;
+                        BotPoi.Clear("Done looting");
+                        return RunStatus.Success;
+                    })));
         }
 
         private static bool IsPathBlocked(WoWObject target)
@@ -1395,57 +1604,165 @@ namespace Bots.Grind
         /// </summary>
         public static PrioritySelector CreateRoamBehavior()
         {
+            LocalPlayer selectingActor = null;
+            WoWUnit selected = null, displayed = null;
+            ulong actorGuid = 0, selectedGuid = 0, displayedGuid = 0;
+            uint selectingMap = 0;
+            BotPoi selectingPoi = null;
+            PoiType selectingPoiType = PoiType.None;
+            object selectingTargeting = null, selectingProfile = null;
+            bool ParticipantsCurrent() => selectingActor != null && actorGuid != 0
+                && ReferenceEquals(StyxWoW.Me, selectingActor) && selectingActor.IsValid && selectingActor.IsAlive
+                && selectingActor.Guid == actorGuid && selectingActor.MapId == selectingMap
+                && selected != null && selectedGuid != 0 && selected.IsValid && selected.IsAlive && selected.Guid == selectedGuid
+                && ReferenceEquals(Targeting.Instance, selectingTargeting) && ReferenceEquals(Targeting.Instance.FirstUnit, selected)
+                && ReferenceEquals(ProfileManager.CurrentProfile, selectingProfile);
+            bool SelectionCurrent() => ParticipantsCurrent() && ReferenceEquals(BotPoi.Current, selectingPoi)
+                && selectingPoi != null && selectingPoi.Type == selectingPoiType && ParticipantsCurrent();
+            bool DisplayUnchanged() => SelectionCurrent() && ReferenceEquals(selectingActor.CurrentTarget, displayed)
+                && selectingActor.CurrentTargetGuid == displayedGuid && SelectionCurrent();
+            bool Acknowledged() => SelectionCurrent() && ReferenceEquals(selectingActor.CurrentTarget, selected)
+                && selectingActor.CurrentTargetGuid == selectedGuid && SelectionCurrent();
+
             return new PrioritySelector(
                 // Find target if not looting/killing/vendoring
                 // HB 6.2.3 fix: also exclude Sell/Repair/Train/Buy/Mail to prevent
                 // pulling mobs during vendor runs (overwrites Sell POI with Kill)
                     new DecoratorIsNotPoiType(new[] { PoiType.Kill, PoiType.Loot, PoiType.Skin, PoiType.Harvest,
-                        PoiType.Sell, PoiType.Repair, PoiType.Train, PoiType.Buy, PoiType.Mail },
-                    new DecoratorNeedToFindTarget(new Sequence(
+                        PoiType.Sell, PoiType.Repair, PoiType.Train, PoiType.Buy, PoiType.Mail, PoiType.Fly },
+                    new Sequence(
                         new TreeSharp.Action(ctx =>
-                    {
-                        // HB 4.3.4 smethod_113 — no dead check, trusts Targeting pulse
-                        Targeting.Instance.FirstUnit.Target();
-                    }),
-                        new Wait(5, ctx => StyxWoW.Me.GotTarget, new ActionIdle()),
-                        // HB 4.3.4 smethod_115 — always Kill POI, no dead/loot logic
-                        new ActionSetPoi(ctx => new BotPoi(StyxWoW.Me.CurrentTarget, PoiType.Kill))
-                    ))
+                        {
+                            selectingActor = StyxWoW.Me; actorGuid = selectingActor?.Guid ?? 0;
+                            selectingMap = selectingActor?.MapId ?? 0;
+                            selectingTargeting = Targeting.Instance; selected = Targeting.Instance.FirstUnit;
+                            selectedGuid = selected?.Guid ?? 0;
+                            displayed = selectingActor?.CurrentTarget; displayedGuid = displayed?.Guid ?? 0;
+                            selectingPoi = BotPoi.Current; selectingPoiType = selectingPoi?.Type ?? PoiType.None;
+                            selectingProfile = ProfileManager.CurrentProfile;
+                            return DisplayUnchanged() ? RunStatus.Success : RunStatus.Failure;
+                        }),
+                        new DecoratorNeedToFindTarget(new Sequence(
+                            new TreeSharp.Action(ctx =>
+                            {
+                                if (!DisplayUnchanged()) return RunStatus.Failure;
+                                selected.Target();
+                                return SelectionCurrent() ? RunStatus.Success : RunStatus.Failure;
+                            }),
+                            new Wait(5, ctx => !SelectionCurrent() || Acknowledged() || !DisplayUnchanged(),
+                                new Decorator(ctx => Acknowledged(), new ActionIdle())),
+                            new TreeSharp.Action(ctx =>
+                            {
+                                // A displayed replacement is not this selection's acknowledgement.
+                                // POI construction and publication may also deliver callbacks.
+                                if (!Acknowledged()) return RunStatus.Failure;
+                                var next = new BotPoi(selected, PoiType.Kill);
+                                if (!Acknowledged()) return RunStatus.Failure;
+                                BotPoi.Current = next;
+                                return ParticipantsCurrent() && ReferenceEquals(BotPoi.Current, next)
+                                    ? RunStatus.Success : RunStatus.Failure;
+                            }))))
                 ),
                 // Move to hotspot if needed
-                new DecoratorIsNotPoiType(PoiType.Kill, new Decorator(
+                new DecoratorIsNotPoiType(new[] { PoiType.Kill, PoiType.Sell, PoiType.Repair,
+                    PoiType.Train, PoiType.Buy, PoiType.Mail, PoiType.Fly }, new Decorator(
                     ctx => ShouldMoveToHotspot(),
                     new TreeSharp.Action(ctx =>
                     {
-                        GrindArea grindArea = StyxWoW.AreaManager?.CurrentGrindArea;
-                        if (grindArea == null)
+                        var actor = StyxWoW.Me;
+                        ulong guid = actor?.Guid ?? 0;
+                        uint map = actor?.MapId ?? 0;
+                        var areaManager = StyxWoW.AreaManager;
+                        GrindArea grindArea = areaManager?.CurrentGrindArea;
+                        var poi = BotPoi.Current;
+                        PoiType poiType = poi?.Type ?? PoiType.None;
+                        var profile = ProfileManager.CurrentProfile;
+                        object provider = Navigator.NavigationProvider;
+                        bool ActorCurrent() => actor != null && guid != 0 && ReferenceEquals(StyxWoW.Me, actor)
+                            && actor.IsValid && actor.IsAlive && actor.Guid == guid && actor.MapId == map
+                            && !actor.Combat && (!actor.GotAlivePet || actor.Pet?.Combat != true)
+                            && !actor.IsCasting && actor.ChanneledCastingSpellId == 0 && !actor.OnTaxi && !actor.IsOnTransport;
+                        if (!ActorCurrent() || grindArea == null || poi == null)
                             return RunStatus.Failure;
 
                         Hotspot currentHotSpot = grindArea.CurrentHotSpot;
+                        if (currentHotSpot == null) return RunStatus.Failure;
                         WoWPoint hotspot = currentHotSpot.Position;
-                        if (Mount.ShouldMount(hotspot))
-                            Mount.MountUp(() => hotspot);
+                        bool Current() => ActorCurrent() && ReferenceEquals(BotPoi.Current, poi) && poi.Type == poiType
+                            && ReferenceEquals(Navigator.NavigationProvider, provider) && ReferenceEquals(ProfileManager.CurrentProfile, profile)
+                            && ReferenceEquals(StyxWoW.AreaManager, areaManager) && ReferenceEquals(areaManager.CurrentGrindArea, grindArea)
+                            && ReferenceEquals(grindArea.CurrentHotSpot, currentHotSpot) && currentHotSpot.Position == hotspot && ActorCurrent();
+                        if (!float.IsFinite(hotspot.X) || !float.IsFinite(hotspot.Y) || !float.IsFinite(hotspot.Z) || !Current())
+                            return RunStatus.Failure;
+
+                        bool shouldMount = Mount.ShouldMount(hotspot);
+                        if (!Current()) return RunStatus.Failure;
+                        if (shouldMount)
+                        {
+                            Mount.MountUp(() => Current() ? hotspot : WoWPoint.Empty);
+                            if (!Current()) return RunStatus.Failure;
+                        }
 
                         TreeRoot.StatusText = "Moving to hotspot";
-                        return Navigator.GetRunStatusFromMoveResult(Navigator.MoveTo(hotspot));
+                        if (!Current()) return RunStatus.Failure;
+                        MoveResult movement = Navigator.MoveTo(hotspot);
+                        return Current() ? Navigator.GetRunStatusFromMoveResult(movement) : RunStatus.Failure;
                     })
                 )),
                 // Move closer to target or clear POI if better target
-                new PrioritySelector(
-                    new Decorator(
-                        ctx => RoutineManager.Current?.MoveToTargetBehavior != null,
-                        RoutineManager.Current?.MoveToTargetBehavior
-                    ),
-                    new Decorator(
-                        ctx => ShouldMoveCloserToTarget(),
-                        new ActionMoveToTarget()
-                    ),
-                    new Decorator(
-                        ctx => ShouldClearPoiForBetterTarget(),
-                        new ActionClearPoi("NeedToClearPOI is true #2")
-                    )
-                )
+                CreateOwnedRoamChaseBehavior()
             );
+        }
+
+        private static Composite CreateOwnedRoamChaseBehavior()
+        {
+            LocalPlayer actor = null;
+            WoWUnit target = null, displayed = null;
+            BotPoi poi = null;
+            ulong actorGuid = 0, targetGuid = 0, displayedGuid = 0, poiGuid = 0;
+            uint map = 0, entry = 0;
+            PoiType type = PoiType.None;
+            object targeting = null, provider = null, profile = null;
+            var routine = RoutineManager.Current;
+            var customMove = routine?.MoveToTargetBehavior;
+            bool ParticipantsCurrent() => actor != null && actorGuid != 0
+                && ReferenceEquals(StyxWoW.Me, actor) && actor.IsValid && actor.IsAlive
+                && actor.Guid == actorGuid && actor.MapId == map
+                && !actor.Combat && (!actor.GotAlivePet || actor.Pet?.Combat != true)
+                && !actor.IsCasting && actor.ChanneledCastingSpellId == 0 && !actor.OnTaxi && !actor.IsOnTransport
+                && target != null && targetGuid != 0 && target.IsValid && target.IsAlive && target.Guid == targetGuid
+                && ReferenceEquals(Targeting.Instance, targeting) && ReferenceEquals(Targeting.Instance.FirstUnit, target);
+            bool Current() => ParticipantsCurrent() && ReferenceEquals(BotPoi.Current, poi)
+                && poi != null && poi.Type == type && poi.Guid == poiGuid && poi.Entry == entry
+                && (type == PoiType.None || type == PoiType.Kill)
+                && ReferenceEquals(actor.CurrentTarget, displayed) && actor.CurrentTargetGuid == displayedGuid
+                && ReferenceEquals(Navigator.NavigationProvider, provider)
+                && ReferenceEquals(ProfileManager.CurrentProfile, profile)
+                && ReferenceEquals(RoutineManager.Current, routine) && ReferenceEquals(routine?.MoveToTargetBehavior, customMove)
+                && ParticipantsCurrent();
+            Composite Guard(Composite child) => new RoutineAdmissionGuard(Current, child);
+
+            return new Sequence(
+                new TreeSharp.Action(ctx =>
+                {
+                    actor = StyxWoW.Me; actorGuid = actor?.Guid ?? 0; map = actor?.MapId ?? 0;
+                    targeting = Targeting.Instance; target = Targeting.Instance.FirstUnit; targetGuid = target?.Guid ?? 0;
+                    displayed = actor?.CurrentTarget; displayedGuid = displayed?.Guid ?? 0;
+                    poi = BotPoi.Current; type = poi?.Type ?? PoiType.None; poiGuid = poi?.Guid ?? 0; entry = poi?.Entry ?? 0;
+                    provider = Navigator.NavigationProvider; profile = ProfileManager.CurrentProfile;
+                    return Current() ? RunStatus.Success : RunStatus.Failure;
+                }),
+                new PrioritySelector(
+                    Guard(customMove),
+                    Guard(new Decorator(ctx => ShouldMoveCloserToTarget(), Guard(new ActionMoveToTarget()))),
+                    new Decorator(ctx => Current() && ShouldClearPoiForBetterTarget() && Current(), new TreeSharp.Action(ctx =>
+                    {
+                        if (!Current()) return RunStatus.Failure;
+                        // This action ends its admitted POI. Parent revalidation
+                        // must not clear or chase any replacement created by cleanup.
+                        BotPoi.Clear("NeedToClearPOI is true #2");
+                        return RunStatus.Success;
+                    }))));
         }
 
         private static bool ShouldClearPoiForBetterTarget()

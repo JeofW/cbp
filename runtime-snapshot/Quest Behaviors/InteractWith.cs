@@ -1,4 +1,4 @@
-﻿// Behavior originally contributed by Nesox.
+// Behavior originally contributed by Nesox.
 //
 // DOCUMENTATION:
 //     http://www.thebuddyforum.com/mediawiki/index.php?title=Honorbuddy_Custom_Behavior:_InteractWith
@@ -7,6 +7,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
+using Buddy.Coroutines;
+using CommonBehaviors.Actions;
+using Styx.CommonBot.Coroutines;
 using Styx.Logic;
 using Styx.Logic.BehaviorTree;
 using Styx.Logic.Inventory.Frames.Gossip;
@@ -375,6 +379,147 @@ namespace Styx.Bot.Quest_Behaviors.InteractWith
 
         #region Overrides of CustomForcedBehavior
 
+        private InteractionRequest _submittedInteraction;
+
+        private sealed class InteractionRequest
+        {
+            internal readonly LocalPlayer Player;
+            internal readonly ulong PlayerGuid;
+            internal readonly WoWObject Target;
+            internal readonly ulong TargetGuid;
+            internal readonly MountStrategyType Strategy;
+
+            internal InteractionRequest(LocalPlayer player, WoWObject target, MountStrategyType strategy)
+            {
+                Player = player;
+                PlayerGuid = player == null ? 0 : player.Guid;
+                Target = target;
+                TargetGuid = target == null ? 0 : target.Guid;
+                Strategy = strategy;
+            }
+        }
+
+        private bool HasInteractionActors(InteractionRequest request) =>
+            request != null && request.Player != null && request.Target != null
+            && request.PlayerGuid != 0 && request.TargetGuid != 0
+            && ReferenceEquals(Me, request.Player) && request.Player.Guid == request.PlayerGuid
+            && request.Player.IsValid && request.Player.IsAlive
+            && request.Target.Guid == request.TargetGuid && request.Target.IsValid
+            && PreInteractMountStrategy == request.Strategy;
+
+        private bool CanContinueInteraction(InteractionRequest request)
+        {
+            if (!HasInteractionActors(request)) return false;
+            WoWObject selected = CurrentObject;
+            return ReferenceEquals(selected, request.Target) && Range >= 0 && !double.IsInfinity(Range)
+                && request.Target.Location.DistanceSqr(request.Player.Location) <= Range * Range
+                && (IgnoreLoSToTarget || request.Target.InLineOfSight)
+                && HasInteractionActors(request);
+        }
+
+        private Composite CreatePreInteractionBehavior()
+        {
+            return new Sequence(
+                new ContextChangeHandler(ret =>
+                {
+                    _submittedInteraction = null;
+                    return new InteractionRequest(Me, CurrentObject, PreInteractMountStrategy);
+                }),
+                new ActionRunCoroutine(ret => PrepareInteraction((InteractionRequest)ret)),
+                new Action(ret => SubmitInteraction((InteractionRequest)ret)));
+        }
+
+        private async Task<bool> PrepareInteraction(InteractionRequest request)
+        {
+            if (!CanContinueInteraction(request) || !Enum.IsDefined(typeof(MountStrategyType), request.Strategy)) return false;
+            LocalPlayer player = request.Player;
+            bool FlightForm() => player.Shapeshift == ShapeshiftForm.FlightForm || player.Shapeshift == ShapeshiftForm.EpicFlightForm;
+            if (player.IsMoving && !await CommonCoroutines.StopMoving("Preparing interaction")) return false;
+            if (!CanContinueInteraction(request) || player.IsMoving) return false;
+
+            bool removeMount = request.Strategy == MountStrategyType.Dismount
+                || request.Strategy == MountStrategyType.DismountOrCancelShapeshift;
+            bool clearForm = request.Strategy == MountStrategyType.CancelShapeshift
+                || request.Strategy == MountStrategyType.DismountOrCancelShapeshift;
+            if ((removeMount && (player.Mounted || FlightForm())) || (clearForm && FlightForm()))
+            {
+                if (!await CommonCoroutines.LandAndDismount("Preparing interaction") || !CanContinueInteraction(request)) return false;
+                if (player.Mounted || FlightForm()) return false;
+            }
+            if (clearForm && player.Shapeshift != ShapeshiftForm.Normal)
+            {
+                Mount.ClearShapeshift();
+                if (!await Coroutine.Wait(4000, () => !CanContinueInteraction(request) || player.Shapeshift == ShapeshiftForm.Normal)
+                    || !CanContinueInteraction(request) || player.Shapeshift != ShapeshiftForm.Normal) return false;
+            }
+            if (request.Strategy == MountStrategyType.Mount && !player.Mounted && !FlightForm())
+            {
+                Mount.MountUp();
+                if (!await Coroutine.Wait(10000, () => !CanContinueInteraction(request) || player.Mounted || FlightForm())
+                    || !CanContinueInteraction(request) || (!player.Mounted && !FlightForm())) return false;
+            }
+            return CanContinueInteraction(request);
+        }
+
+        private RunStatus SubmitInteraction(InteractionRequest request)
+        {
+            if (!CanContinueInteraction(request)) return RunStatus.Failure;
+            LocalPlayer player = request.Player;
+            WoWObject target = request.Target;
+            TreeRoot.StatusText = "Interacting with - " + target.Name;
+            if (!CanContinueInteraction(request)) return RunStatus.Failure;
+            if (KeepTargetSelected && target.Type == WoWObjectType.Unit)
+            {
+                WoWUnit selectionUnit = target.ToUnit();
+                if (selectionUnit == null) return RunStatus.Failure;
+                selectionUnit.Target();
+                if (!CanContinueInteraction(request) || player.CurrentTargetGuid != request.TargetGuid) return RunStatus.Failure;
+            }
+
+            if (InteractByUsingItemId > 0)
+            {
+                WoWItem item = player.CarriedItems.FirstOrDefault(i => (int)i.Entry == InteractByUsingItemId);
+                if (item == null || !item.IsValid || item.Guid == 0)
+                {
+                    LogMessage("warning", "Item {0} not available in bags for InteractByUsingItemId", InteractByUsingItemId);
+                    return RunStatus.Failure;
+                }
+                ulong itemGuid = item.Guid;
+                if (!CanContinueInteraction(request) || !item.IsValid || item.Guid != itemGuid
+                    || !player.CarriedItems.Any(i => ReferenceEquals(i, item) && i.Guid == itemGuid)) return RunStatus.Failure;
+                item.Use(request.TargetGuid);
+            }
+            else if (target is WoWUnit interactionUnit)
+            {
+                if (!interactionUnit.TryInteract()) return RunStatus.Failure;
+            }
+            else
+            {
+                target.Interact();
+            }
+
+            // Counter records a local attempt, never server quest credit or menu
+            // ownership. A changed nearest target must not receive this blacklist.
+            _npcBlacklist.Add(request.TargetGuid);
+            Thread.Sleep(2000);
+            if (!ReferenceEquals(Me, player) || player.Guid != request.PlayerGuid || !player.IsValid || !player.IsAlive)
+                return RunStatus.Failure;
+            Counter++;
+            _submittedInteraction = request;
+            return RunStatus.Success;
+        }
+
+        private void ClearSubmittedInteractionTarget()
+        {
+            InteractionRequest request = _submittedInteraction;
+            _submittedInteraction = null;
+            if (!HasInteractionActors(request) || KeepTargetSelected || !(request.Target is WoWUnit)) return;
+            LocalPlayer player = request.Player;
+            if (ReferenceEquals(player.CurrentTarget, request.Target)
+                && player.CurrentTargetGuid == request.TargetGuid && HasInteractionActors(request))
+                player.ClearTarget();
+        }
+
         protected override Composite CreateBehavior()
         {
             return _root ?? (_root =
@@ -412,49 +557,7 @@ namespace Styx.Bot.Quest_Behaviors.InteractWith
 
                                 new Decorator(ret => CurrentObject != null && CurrentObject.Location.DistanceSqr(Me.Location) <= Range * Range,
                                     new Sequence(
-                                        new DecoratorContinue(ret => StyxWoW.Me.IsMoving,
-                                            new Action(ret =>
-                                            {
-                                                WoWMovement.MoveStop();
-                                                StyxWoW.SleepForLagDuration();
-                                            })),
-
-                                        // PreInteractMountStrategy — dismount before interacting
-                                        new DecoratorContinue(
-                                            ret => PreInteractMountStrategy != MountStrategyType.None && Me.Mounted,
-                                            new Action(ret =>
-                                            {
-                                                Lua.DoString("Dismount()");
-                                                Thread.Sleep(1000);
-                                            })),
-
-                                        new Action(ret =>
-                                        {
-                                            TreeRoot.StatusText = "Interacting with - " + CurrentObject.Name;
-
-                                            if (KeepTargetSelected && CurrentObject.Type == WoWObjectType.Unit)
-                                                CurrentObject.ToUnit().Target();
-
-                                            // InteractByUsingItemId — use item on target instead of direct interact
-                                            if (InteractByUsingItemId > 0)
-                                            {
-                                                var item = Me.CarriedItems.FirstOrDefault(i => (int)i.Entry == InteractByUsingItemId);
-                                                if (item != null)
-                                                    item.Use(CurrentObject.Guid);
-                                                else
-                                                    LogMessage("warning", "Item {0} not found in bags for InteractByUsingItemId", InteractByUsingItemId);
-                                            }
-                                            else
-                                            {
-                                                CurrentObject.Interact();
-                                            }
-
-                                            if (CurrentObject != null)
-                                                _npcBlacklist.Add(CurrentObject.Guid);
-
-                                            Thread.Sleep(2000);
-                                            Counter++;
-                                        }),
+                                        CreatePreInteractionBehavior(),
 
                                         new DecoratorContinue(
                                             ret => GossipOptions.Length > 0,
@@ -520,9 +623,7 @@ namespace Styx.Bot.Quest_Behaviors.InteractWith
                                                 Thread.Sleep(1000);
                                             })),
 
-                                        new DecoratorContinue(
-                                            ret => Me.CurrentTarget != null && Me.CurrentTarget == CurrentObject && !KeepTargetSelected,
-                                            new Action(ret => Me.ClearTarget())),
+                                        new Action(ret => ClearSubmittedInteractionTarget()),
 
                                         new Action(ret => Thread.Sleep(WaitTime))
 

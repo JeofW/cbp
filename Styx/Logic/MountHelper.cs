@@ -217,39 +217,22 @@ namespace Styx.Logic
                     CreatureSpell = WoWSpell.FromId(CreatureSpellId);
                     if (CreatureSpell != null)
                     {
-                        // Try Cata+ MiscValueB classification first (Mount.dbc, values 225-248).
-                        int miscValueB = CreatureSpell.SpellEffect1?.MiscValueB ?? 0;
-                        if (Enum.IsDefined(typeof(MountType), miscValueB))
-                        {
-                            Type = (MountType)miscValueB;
-                        }
-                        else
+                        // Original-client flight capability comes from its aura
+                        // types, not later-client categories or speed magnitude.
                         {
                             // WotLK 3.3.5a: no Mount.dbc. Classify by inspecting all spell effects.
                             // WotLK flying mount spells include one of these aura types:
-                            //   152 = SPELL_AURA_MOD_INCREASE_MOUNTED_FLIGHT_SPEED
-                            //   153 = SPELL_AURA_MOD_INCREASE_FLIGHT_SPEED
-                            //   154 = SPELL_AURA_MOUNTED_FLIGHT_SPEED_ALWAYS
-                            //   156 = SPELL_AURA_MOD_MOUNTED_FLIGHT_SPEED_NOT_STACK
-                            // WotLK ground mounts only have aura 32 (MOD_INCREASE_MOUNTED_SPEED)
-                            // with BasePoints ≤ 100 (60% or 100% speed).
-                            // Flying mounts add a *second* speed effect with BasePoints > 100
-                            // (150% for regular flying, 280%/310% for epic/master flying).
+                            //   207 = SPELL_AURA_MOD_INCREASE_MOUNTED_FLIGHT_SPEED
+                            //   208 = SPELL_AURA_MOD_INCREASE_FLIGHT_SPEED
+                            //   209 = SPELL_AURA_MOUNTED_FLIGHT_SPEED_ALWAYS
+                            //   211 = SPELL_AURA_MOD_MOUNTED_FLIGHT_SPEED_NOT_STACK
                             Type = MountType.Ground; // safe default
                             foreach (var effect in CreatureSpell.SpellEffects)
                             {
                                 if (effect == null) continue;
                                 int auraId = (int)effect.AuraType;
                                 // Primary: known flight-speed aura IDs from WotLK DBC.
-                                if (auraId == 152 || auraId == 153 || auraId == 154 || auraId == 156)
-                                {
-                                    Type = MountType.Flying;
-                                    break;
-                                }
-                                // Secondary: speed-modifier aura with BasePoints > 100 → flying speed.
-                                // Ground mounts: 60% (BasePoints=59) or 100% (BasePoints=99).
-                                // Flying mounts have at least 150% extra (BasePoints >= 149).
-                                if ((auraId == 32 || auraId == 129 || auraId == 130) && effect.BasePoints >= 149)
+                                if (auraId == 207 || auraId == 208 || auraId == 209 || auraId == 211)
                                 {
                                     Type = MountType.Flying;
                                     break;

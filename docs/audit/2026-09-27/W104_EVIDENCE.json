@@ -1,0 +1,369 @@
+{
+    "checkpoint":  "W104",
+    "status":  "validation_hold_test_only",
+    "goal_complete":  false,
+    "created_at_utc":  "2026-09-27T05:51:06.2007214Z",
+    "repository":  "JeofW/cbp",
+    "repository_id":  1367174964,
+    "pull_request":  51,
+    "branch":  "audit/next-55-equipment-observation-20260917",
+    "last_validated_production":  "f434f7dd6ed8aad0ae7dd48d7391f1ceda4e3b26",
+    "last_validated_production_tree":  "81b87f073d566731e0f878fa8c28275e32d481f4",
+    "prior_documentation_head":  "3c67d844abfb257ca9e400d0ecde3e2baf68e32d",
+    "published_test_commit":  "680d88be7584f321991c99afe5232e5fefe63ac8",
+    "published_test_tree":  "4d6fde1c6e45ea7ba6f02cc14211f5be375e8542",
+    "master_at_successful_publication_readback":  "b2324913e2499ba30b239dd67224ca2c655c05cc",
+    "publication":  {
+                        "file":  "W104_REDCLEANUP_PUBLICATION_20260927.json",
+                        "sha256":  "d34c425c26e4df0b685588f8989f2dcbf54ebda4479c59b7c7b4d195ddec8dac",
+                        "verified_at_utc":  "2026-09-27T05:43:32.3348396Z",
+                        "patch_sha256":  "4d9bbabf4cf5c171c5422812bd919ab2e010c21bd9fd8324afcba0443cfb682e",
+                        "changed_files":  [
+                                              {
+                                                  "path":  "Tools/WholesomeQuestRecoveryRegressionTests/EquipmentCleanupOwnershipRegressionTests.cs",
+                                                  "blob":  "4c28ade437dc28c7107eb3fc25bcaacc1d34d203",
+                                                  "sha256":  "69a9d38b2287d4e091229b9449b58a85ef982c4b867d9da2216dd33a0bc0d960"
+                                              },
+                                              {
+                                                  "path":  "Tools/WholesomeQuestRecoveryRegressionTests/EquipmentLua51BoundaryRegressionTests.cs",
+                                                  "blob":  "6e8d4b2bbe7d6f549fb7880a12c44acd21f6b1a1",
+                                                  "sha256":  "b7b16f036a21030dfb4fb052370016f182d1d33157ad55b55a8a5a3e34ab543a"
+                                              },
+                                              {
+                                                  "path":  "Tools/WholesomeQuestRecoveryRegressionTests/EquipmentPendingIndexRegressionTests.cs",
+                                                  "blob":  "5b6ca334bab99cf259bc0312a14e388daa4074c3",
+                                                  "sha256":  "86c25f68b2fdf8e4e79de989e98c815e74dacbb18209d8a49e1029124ace44bb"
+                                              },
+                                              {
+                                                  "path":  "Tools/WholesomeQuestRecoveryRegressionTests/EquipItemContinuationBoundaryRegressionTests.cs",
+                                                  "blob":  "eb5da582f3f5b7e4d10a77ef42a51540a62fc52f",
+                                                  "sha256":  "aa55e726132639365037e289ef60f6423f0fade79168ee81df40ac567f037fd4"
+                                              },
+                                              {
+                                                  "path":  "Tools/WholesomeQuestRecoveryRegressionTests/EquipAcknowledgedTimeoutRegressionTests.cs",
+                                                  "blob":  "8c3fd6993b0f6e6ab48e77b94bf3b7b56bcf2a42",
+                                                  "sha256":  "0b8edbddc693dddd95b5bdcec162ccc9aa70a9b854cdbdbe56cf6d2ce29f154c"
+                                              },
+                                              {
+                                                  "path":  "Tools/WholesomeQuestRecoveryRegressionTests/AutoEquipPendingContextRegressionTests.cs",
+                                                  "blob":  "1745d45a145c7d61dc32ef214a49a9f3e878082e",
+                                                  "sha256":  "c74f3b0bfbf97213d16ce6622406526bd2f66cf06c4fab7fb63213dc05cd5c35"
+                                              },
+                                              {
+                                                  "path":  "Tools/WholesomeQuestRecoveryRegressionTests/EquipItemPendingContextRegressionTests.cs",
+                                                  "blob":  "d647153b49ad9daa267c0f4456ebabd982577601",
+                                                  "sha256":  "32b5a715f63e0f1de3249265a038bdd3ecc7871232f1b67322ede7d18088a9b8"
+                                              }
+                                          ]
+                    },
+    "new_production_changes":  [
+
+                               ],
+    "new_hosted_result_known":  false,
+    "new_hosted_run_id":  null,
+    "new_hosted_conclusion":  null,
+    "new_cleanup_cases_written":  49,
+    "new_cleanup_cases_executed":  null,
+    "native":  {
+                   "input_sha256":  "bf644876709c591acc17c0da8cdf1814edcc9f1e6bc109a8c0d5c38c79dc953c",
+                   "module":  "WoW.exe",
+                   "image_base":  "0x400000",
+                   "input_path":  "D:\\Dev\\CopilotBuddy-Evidence\\Build12340-IDA\\WoW.exe",
+                   "database_path":  "D:\\Dev\\CopilotBuddy-Evidence\\Build12340-IDA\\WoW-12340.i64",
+                   "receipts":  [
+                                    {
+                                        "file":  "w104-equip-cursor.json",
+                                        "sha256":  "5cbfb396aa12da217b273bffb3a765a59e52743539b7a8ccbdb2f6e913efc2aa",
+                                        "bytes":  5034,
+                                        "captured_at_utc":  "2026-09-27T05:26:49.7771546Z",
+                                        "tool":  "decompile",
+                                        "arguments":  {
+                                                          "addr":  "0x51A3D0"
+                                                      }
+                                    },
+                                    {
+                                        "file":  "w104-item-swap.json",
+                                        "sha256":  "0b79ae19884f99d04dd0a86f852e549f953282580f2247334e82089ecfc2011f",
+                                        "bytes":  12556,
+                                        "captured_at_utc":  "2026-09-27T05:26:49.8442152Z",
+                                        "tool":  "decompile",
+                                        "arguments":  {
+                                                          "addr":  "0x6DF890"
+                                                      }
+                                    },
+                                    {
+                                        "file":  "w104-cursor-set.json",
+                                        "sha256":  "9210b262e14c7143d6e6446a050aef7f5cec236f1c6f83f81d91d60a79858e91",
+                                        "bytes":  4306,
+                                        "captured_at_utc":  "2026-09-27T05:26:49.8868772Z",
+                                        "tool":  "decompile",
+                                        "arguments":  {
+                                                          "addr":  "0x520770"
+                                                      }
+                                    },
+                                    {
+                                        "file":  "w104-container-api-strings.json",
+                                        "sha256":  "c3140480c7dc0829ddfa1d854fd850b273383fa956f0939b564163d403074442",
+                                        "bytes":  2710,
+                                        "captured_at_utc":  "2026-09-27T05:26:49.9419269Z",
+                                        "tool":  "find_regex",
+                                        "arguments":  {
+                                                          "pattern":  "Usage:.*(PickupContainerItem|ClearCursor|PutItemInBag|GetContainerNumSlots)",
+                                                          "limit":  20
+                                                      }
+                                    },
+                                    {
+                                        "file":  "w104-displaced-followup.json",
+                                        "sha256":  "c7c8656c11fe34963a4b25b7c8aaa0ef9812361f1cdcaa9375cd6a102ac80267",
+                                        "bytes":  1866,
+                                        "captured_at_utc":  "2026-09-27T05:26:59.4804855Z",
+                                        "tool":  "decompile",
+                                        "arguments":  {
+                                                          "addr":  "0x513740"
+                                                      }
+                                    },
+                                    {
+                                        "file":  "w104-cursor-clear.json",
+                                        "sha256":  "be3de035dfcec41d8e165ffa45a564bce5bfccbe34c3a92301f33ca00917e847",
+                                        "bytes":  7496,
+                                        "captured_at_utc":  "2026-09-27T05:26:59.5362611Z",
+                                        "tool":  "decompile",
+                                        "arguments":  {
+                                                          "addr":  "0x519280"
+                                                      }
+                                    },
+                                    {
+                                        "file":  "w104-pending-cancel.json",
+                                        "sha256":  "30d386c474aee8f941ee9a7e436329c8c2cece9365616a6620433e47d6b8d333",
+                                        "bytes":  7348,
+                                        "captured_at_utc":  "2026-09-27T05:26:59.5792913Z",
+                                        "tool":  "decompile",
+                                        "arguments":  {
+                                                          "addr":  "0x6E01A0"
+                                                      }
+                                    },
+                                    {
+                                        "file":  "w104-container-pickup-xrefs.json",
+                                        "sha256":  "8ec172d8af78480e038435d4005c616eadf1e4b778423399660a77ee7790d1bd",
+                                        "bytes":  35322,
+                                        "captured_at_utc":  "2026-09-27T05:26:59.6243315Z",
+                                        "tool":  "xrefs_to",
+                                        "arguments":  {
+                                                          "addrs":  [
+                                                                        "0xA1AF3C",
+                                                                        "0xBD0770",
+                                                                        "0xBD0768"
+                                                                    ],
+                                                          "limit":  60
+                                                      }
+                                    },
+                                    {
+                                        "file":  "w104-container-pickup.json",
+                                        "sha256":  "b36dfc9fade34e5f66b0b0d4c7c2b9ae00ca62e18b1f8c57234a28d32095dd9b",
+                                        "bytes":  16746,
+                                        "captured_at_utc":  "2026-09-27T05:27:19.6031676Z",
+                                        "tool":  "decompile",
+                                        "arguments":  {
+                                                          "addr":  "0x5D7FF0"
+                                                      }
+                                    },
+                                    {
+                                        "file":  "w104-displaced-item-lock.json",
+                                        "sha256":  "bda6aaded78821619c64276b9263b7104d8203dc765c9186b656372dc2e473fb",
+                                        "bytes":  2122,
+                                        "captured_at_utc":  "2026-09-27T05:27:19.6512115Z",
+                                        "tool":  "decompile",
+                                        "arguments":  {
+                                                          "addr":  "0x706FE0"
+                                                      }
+                                    },
+                                    {
+                                        "file":  "w104-cursor-release-item.json",
+                                        "sha256":  "0891666b38ad6f61f2b51b01b1c5568ea904c55b234e928329394271d08490af",
+                                        "bytes":  1850,
+                                        "captured_at_utc":  "2026-09-27T05:27:19.6912480Z",
+                                        "tool":  "decompile",
+                                        "arguments":  {
+                                                          "addr":  "0x513770"
+                                                      }
+                                    },
+                                    {
+                                        "file":  "w104-clear-cursor-registration.json",
+                                        "sha256":  "ec054a4b3508412bfb7a2e23b950884a0c1e65364108e3d6efda672572000b1f",
+                                        "bytes":  2566,
+                                        "captured_at_utc":  "2026-09-27T05:27:19.7352955Z",
+                                        "tool":  "find_regex",
+                                        "arguments":  {
+                                                          "pattern":  "^ClearCursor$|^CursorHasItem$",
+                                                          "limit":  20
+                                                      }
+                                    },
+                                    {
+                                        "file":  "w104-clear-api-xrefs.json",
+                                        "sha256":  "e0879c91453e103fe69c006aed30015c7065bda6305c6102c8b73ac770542365",
+                                        "bytes":  3750,
+                                        "captured_at_utc":  "2026-09-27T05:30:37.7392816Z",
+                                        "tool":  "xrefs_to",
+                                        "arguments":  {
+                                                          "addrs":  [
+                                                                        "0x9FE22C",
+                                                                        "0x9FE21C"
+                                                                    ],
+                                                          "limit":  20
+                                                      }
+                                    },
+                                    {
+                                        "file":  "w104-item-unlock.json",
+                                        "sha256":  "64ca429b25827d39ed2ef6bc61b7d231859a4e19d55ddc8f5cecd4dcdf3db34b",
+                                        "bytes":  2150,
+                                        "captured_at_utc":  "2026-09-27T05:30:37.7843214Z",
+                                        "tool":  "decompile",
+                                        "arguments":  {
+                                                          "addr":  "0x707020"
+                                                      }
+                                    },
+                                    {
+                                        "file":  "w104-clear-api-table.json",
+                                        "sha256":  "0a0639f4b069894ab10be8fcfa371b91b2fe2f1b9fc4b3d9b9f507a4cfef82bb",
+                                        "bytes":  2124,
+                                        "captured_at_utc":  "2026-09-27T05:32:07.3961450Z",
+                                        "tool":  "get_bytes",
+                                        "arguments":  {
+                                                          "regions":  [
+                                                                          {
+                                                                              "addr":  "0xAC8270",
+                                                                              "size":  16
+                                                                          }
+                                                                      ]
+                                                      }
+                                    },
+                                    {
+                                        "file":  "w104-equip-cursor-instructions.json",
+                                        "sha256":  "ab88c0ae7e15657e017e1944127d8fd8b0f8be16ffb666070ad94bd646e618f1",
+                                        "bytes":  17082,
+                                        "captured_at_utc":  "2026-09-27T05:32:07.4461935Z",
+                                        "tool":  "disasm",
+                                        "arguments":  {
+                                                          "addr":  "0x51A3D0",
+                                                          "max_instructions":  160,
+                                                          "include_total":  true
+                                                      }
+                                    },
+                                    {
+                                        "file":  "w104-clear-cursor-api.json",
+                                        "sha256":  "7d80dbe4d60d3ab00a9a363d773b0a770d8d9a11dfec440da38767e7d4fd9303",
+                                        "bytes":  1724,
+                                        "captured_at_utc":  "2026-09-27T05:34:04.1158639Z",
+                                        "tool":  "decompile",
+                                        "arguments":  {
+                                                          "addr":  "0x51A3B0"
+                                                      }
+                                    },
+                                    {
+                                        "file":  "w104-cursor-set-instructions.json",
+                                        "sha256":  "850a115d7b6324f922fa63089086d051a7953c4965cd9c445e34b7114ad50514",
+                                        "bytes":  17320,
+                                        "captured_at_utc":  "2026-09-27T05:34:04.1879478Z",
+                                        "tool":  "disasm",
+                                        "arguments":  {
+                                                          "addr":  "0x520770",
+                                                          "max_instructions":  120,
+                                                          "include_total":  true
+                                                      }
+                                    }
+                                ],
+                   "native_execution_performed":  false,
+                   "official_pristine_provenance_independently_established":  false
+               },
+    "pinned_sources":  [
+                           {
+                               "file":  "w104-tc335-item-handler.cpp",
+                               "repository":  "TrinityCore/TrinityCore",
+                               "commit":  "8fda442f6c30ca21a622638063ab8b28376f1b25",
+                               "repository_path":  "src/server/game/Handlers/ItemHandler.cpp",
+                               "blob":  "25b051b06fa09d947f41f4f91065d61a15fa34a1",
+                               "sha256":  "22e9fb30b64b52c92e7886931f28caf419fd8ba1fe3b56049a00a735fd2ffbbf",
+                               "bytes":  42795
+                           },
+                           {
+                               "file":  "w104-tc335-player.cpp",
+                               "repository":  "TrinityCore/TrinityCore",
+                               "commit":  "8fda442f6c30ca21a622638063ab8b28376f1b25",
+                               "repository_path":  "src/server/game/Entities/Player/Player.cpp",
+                               "blob":  "2a0865ab2df0d3e72a08070c64ed9f58e83ebfff",
+                               "sha256":  "8c24f658f5a80b981d23fb005dd5b19d4fdc84c8d1d96cdec7560c8f7c047bcc",
+                               "bytes":  982829
+                           },
+                           {
+                               "file":  "w104-tc335-opcodes.cpp",
+                               "repository":  "TrinityCore/TrinityCore",
+                               "commit":  "8fda442f6c30ca21a622638063ab8b28376f1b25",
+                               "repository_path":  "src/server/game/Server/Protocol/Opcodes.h",
+                               "blob":  "f5409bb9fdd52d8dd20588ec19d7530beb56c3fe",
+                               "sha256":  "6be90b3e9b9703622b239585dcb7350b8c285d9a7d762ef795faf7dcc072746f",
+                               "bytes":  86670
+                           },
+                           {
+                               "file":  "w104-ac-item-handler.cpp",
+                               "repository":  "azerothcore/azerothcore-wotlk",
+                               "commit":  "8337a378ac325e62a6a91e00c6a5e944205e8536",
+                               "repository_path":  "src/server/game/Handlers/ItemHandler.cpp",
+                               "blob":  "93430dbe967336eb08017ab378fb96b6f0011a87",
+                               "sha256":  "1130a485a280ae2a24736692bee737ab973cf928cdd960e03f8028bb6fed9717",
+                               "bytes":  54695
+                           },
+                           {
+                               "file":  "w104-ac-player.cpp",
+                               "repository":  "azerothcore/azerothcore-wotlk",
+                               "commit":  "8337a378ac325e62a6a91e00c6a5e944205e8536",
+                               "repository_path":  "src/server/game/Entities/Player/Player.cpp",
+                               "blob":  "453fe7492dcb9ee6ae571d211cd54a3e2806cbc0",
+                               "sha256":  "fd9909e05abd6b25c63f833e815298134409e9d185d577cd59b7e055ec2e310d",
+                               "bytes":  616365
+                           },
+                           {
+                               "file":  "w104-ac-opcodes.cpp",
+                               "repository":  "azerothcore/azerothcore-wotlk",
+                               "commit":  "8337a378ac325e62a6a91e00c6a5e944205e8536",
+                               "repository_path":  "src/server/game/Server/Protocol/Opcodes.h",
+                               "blob":  "0b34344c425c477833b28b7e3ab1f2537e40783e",
+                               "sha256":  "9109ea4d2abd098883acd1e6b552104adf8965544478439811c75426315aa447",
+                               "bytes":  86727
+                           }
+                       ],
+    "provider_refusal":  {
+                             "tool":  "Jeof_Plug.exec_command",
+                             "error":  "This tool call was blocked by OpenAI because we couldn\u0027t determine the safety status of the request.",
+                             "workdir":  "/dev/CopilotBuddy-PR51",
+                             "yield_time_ms":  10000,
+                             "cmds":  [
+                                          "gh run list --repo JeofW/cbp --commit 680d88be7584f321991c99afe5232e5fefe63ac8 --json databaseId,name,status,conclusion,headSha,url --limit 8",
+                                          "git status --short --branch",
+                                          "rg -n -i -g \u0027*.md\u0027 -g \u0027*.json\u0027 -g \u0027!W103_EVIDENCE.json\u0027 -e \u0027single.target\u0027 -e \u0027wholesome\u0027 -e \u0027highest.value\u0027 -e \u0027remaining.*(combat|navigation|quest)\u0027 docs/audit/2026-09-26 docs/audit/2026-09-21 AUDIT_RESUME.md NEXT_CHAT_PROMPT.md"
+                                      ],
+                             "result_available":  false,
+                             "session_id":  null,
+                             "replayed_or_rerouted":  false,
+                             "cause_diagnosed":  false,
+                             "does_not_establish_global_read_only":  true
+                         },
+    "remaining":  [
+                      "Obtain actual hosted behavioral evidence after supported recovery",
+                      "Implement and hosted-validate evidence-backed cleanup/cursor-lifetime repair",
+                      "Checkpoint fully validated W103 successor",
+                      "Continue remaining actionable wholesome questing/navigation/combat/single-target PR51 audit",
+                      "Retain native/client/server/independent/supervised acceptance"
+                  ],
+    "restrictions":  {
+                         "no_subagents":  true,
+                         "no_local_project_execution":  true,
+                         "no_production_CB_access":  true,
+                         "no_merge":  true,
+                         "assertions_not_weakened":  true,
+                         "numeric_preparation_historical":  3,
+                         "numeric_preparation_new":  0,
+                         "numeric_preparation_remaining":  0,
+                         "session_finish_called":  false
+                     },
+    "documentation_identity_note":  "This containing commit is documentation only; its exact SHA is recorded by the external publication receipt and LATEST_CONTINUATION.md, not substituted for test or production identity."
+}

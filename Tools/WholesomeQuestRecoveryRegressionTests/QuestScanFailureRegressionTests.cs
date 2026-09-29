@@ -178,6 +178,8 @@ internal static class QuestScanFailureRegressionTests
         void Bytes(uint address, byte[] bytes) => cache.Value![new IntPtr(unchecked((int)address))] = bytes;
         void UInt(uint address, uint value) => Bytes(address, BitConverter.GetBytes(value));
         Bytes(0xBD0792, new byte[] { 1 }); UInt(0xB6A9E0, 0); UInt(0xBD088C, 1);
+        // Keep the healthy numeric observation explicit for the actual reader.
+        UInt(0xB6AA38, 0);
         UInt(0x1000 + 0x14, 4); UInt(0x1000 + 0xBC, 0); UInt(0x1000 + 8, 0x2000);
         for (uint slot = 0; slot < 25; slot++) UInt(0x2000 + (158 + slot * 5) * 4, 0);
         var player = new ObservedPlayer();

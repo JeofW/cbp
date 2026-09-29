@@ -1,3 +1,4 @@
+using System;
 using Styx.Helpers;
 using Styx.Logic;
 using Styx.Logic.Pathing;
@@ -9,110 +10,74 @@ using TreeSharp;
 namespace CommonBehaviors.Actions
 {
 	/// <summary>
-	/// HB MoP/WoD style ActionMoveToPoi with anti-spam logging.
-	/// Tracks last target GUID and location to avoid spamming logs.
+		/// Moves toward the currently owned POI. Cached values suppress duplicate
+		/// diagnostics; they never supply a destination for a later world context.
 	/// </summary>
 	public class ActionMoveToPoi : NavigationAction
 	{
 		private WoWPoint _lastLocation = WoWPoint.Empty;
 		private ulong _lastGuid;
-		private bool _hasLoggedMove;
+			private bool _hasLoggedMove;
+			private readonly Func<bool>? _callerCurrent;
 
-		protected override RunStatus Run(object context)
-		{
-			BotPoi botPoi = BotPoi.Current;
+			public ActionMoveToPoi() { }
 
-			if (botPoi.Location == WoWPoint.Zero)
+			public ActionMoveToPoi(Func<bool> callerCurrent)
 			{
-				Logging.Write("I don't want to move to (0, 0, 0).");
-				_hasLoggedMove = false;
-				return RunStatus.Failure;
+				_callerCurrent = callerCurrent ?? throw new ArgumentNullException(nameof(callerCurrent));
 			}
 
-			// HB MoP/WoD: Track target unit for moving targets
-			WoWObject? asObject = botPoi.AsObject;
-			WoWUnit? unit = asObject?.ToUnit();
-			bool targetChanged = false;
-
-			if (unit != null)
+			protected override RunStatus Run(object context)
 			{
-				ulong guid = unit.Guid;
-				WoWPoint location = unit.Location;
+				if (_callerCurrent != null && !_callerCurrent()) return RunStatus.Failure;
+				LocalPlayer? actor = ObjectManager.Me;
+				WoWUnit? mover = WoWMovement.ActiveMover;
+				BotPoi poi = BotPoi.Current;
+				ulong actorGuid = actor?.Guid ?? 0, moverGuid = mover?.Guid ?? 0;
+				uint map = actor?.MapId ?? 0;
+				var provider = Navigator.NavigationProvider;
+				PoiType type = poi?.Type ?? PoiType.None;
+				ulong poiGuid = poi?.Guid ?? 0;
+				uint entry = poi?.Entry ?? 0;
+				bool ContextCurrent() => actor != null && actorGuid != 0 && mover != null && moverGuid != 0
+					&& ReferenceEquals(ObjectManager.Me, actor) && actor.Guid == actorGuid && actor.MapId == map
+					&& actor.IsValid && actor.IsAlive && !actor.OnTaxi && !actor.IsOnTransport
+					&& !actor.IsCasting && actor.ChanneledCastingSpellId == 0
+					&& ReferenceEquals(WoWMovement.ActiveMover, mover) && mover.IsValid && mover.Guid == moverGuid
+					&& poi != null && ReferenceEquals(BotPoi.Current, poi) && poi.Type == type
+					&& poi.Guid == poiGuid && poi.Entry == entry && ReferenceEquals(Navigator.NavigationProvider, provider);
+				if (!ContextCurrent()) { _hasLoggedMove = false; return RunStatus.Failure; }
 
-				// If target is moving, update location only if significantly changed
-				if (unit.IsMoving)
+				WoWObject? subject = poi.AsObject;
+				WoWUnit? unit = subject?.ToUnit();
+				ulong subjectGuid = subject?.Guid ?? 0;
+				bool? alive = unit?.IsAlive;
+				WoWPoint destination = subject != null ? subject.Location : poi.Location;
+					bool Current() => ContextCurrent() && (_callerCurrent?.Invoke() ?? true) && ContextCurrent()
+						&& ReferenceEquals(poi.AsObject, subject)
+					&& (subject == null || subjectGuid != 0 && subject.IsValid && subject.Guid == subjectGuid
+						&& (poiGuid == 0 || poiGuid == subjectGuid) && unit?.IsAlive == alive)
+					&& (subject != null ? subject.Location : poi.Location).Equals(destination) && ContextCurrent();
+				if (!Finite(destination) || !Current()) { _hasLoggedMove = false; return RunStatus.Failure; }
+
+				if (!_hasLoggedMove || _lastGuid != subjectGuid || !_lastLocation.Equals(destination))
 				{
-					LocalPlayer? me = ObjectManager.Me;
-					if (_lastLocation == WoWPoint.Empty || _lastGuid != guid || 
-					    (me != null && _lastLocation.DistanceSqr(me.Location) < 900f))
-					{
-						targetChanged = (_lastGuid != guid);
-						_lastGuid = guid;
-						_lastLocation = location;
-					}
+					Logging.Write("Moving to {0}", poi);
+					if (!Current()) { _hasLoggedMove = false; return RunStatus.Failure; }
+					_lastGuid = subjectGuid;
+					_lastLocation = destination;
+					_hasLoggedMove = true;
 				}
-				else
-				{
-					// Target stopped, update if changed
-					if (_lastGuid != guid || _lastLocation != location)
-					{
-						targetChanged = (_lastGuid != guid);
-						_lastGuid = guid;
-						_lastLocation = location;
-					}
-				}
-			}
-			else
-			{
-				// No unit target, use POI location
-				if (_lastGuid != 0UL || _lastLocation != botPoi.Location)
-				{
-					targetChanged = true;
-				}
-				_lastGuid = 0UL;
-				_lastLocation = botPoi.Location;
+				if (!Current()) return RunStatus.Failure;
+				Flightor.MoveTo(destination);
+				// The void Flightor API only establishes dispatch. A handled tick is
+				// not physical arrival or a successful native/mesh route receipt.
+				return Current() ? RunStatus.Success : RunStatus.Failure;
 			}
 
-			// Log only once when target changes (not every tick)
-			if (targetChanged || !_hasLoggedMove)
-			{
-				Logging.Write("Moving to {0}", BotPoi.Current);
-				_hasLoggedMove = true;
-			}
-
-			// Mount if needed
-			float precision = 40f;
-			switch (botPoi.Type)
-			{
-				case PoiType.Hotspot:
-				case PoiType.Kill:
-					precision = 15f;
-					break;
-				case PoiType.Loot:
-				case PoiType.Skin:
-				case PoiType.Harvest:
-					precision = 4.5f;  // Close enough to interact
-					break;
-				case PoiType.Quest:
-				case PoiType.QuestPickUp:
-				case PoiType.QuestTurnIn:
-					precision = 5f;  // Quest interactions need close range
-					break;
-				case PoiType.Sell:
-				case PoiType.Buy:
-				case PoiType.Mail:
-				case PoiType.Repair:
-				case PoiType.Train:  // Trainer needs close range like vendors
-				case PoiType.Fly:    // Flight master needs close range
-					precision = 4f;  // Close enough to interact
-					break;
-			}
-
-			// HB 6.2.3 pattern: movement always goes through Flightor, which dispatches to
-			// Navigator internally when ground nav is needed (ShouldWalk / IsInNoFlyZone).
-			// FlightPaths still owns flight-master POIs; Flightor must not override that.
-			Flightor.MoveTo(_lastLocation);
-			return RunStatus.Success;
-		}
+			private static bool Finite(WoWPoint point) => point != WoWPoint.Zero && point != WoWPoint.Empty
+				&& !float.IsNaN(point.X) && !float.IsInfinity(point.X)
+				&& !float.IsNaN(point.Y) && !float.IsInfinity(point.Y)
+				&& !float.IsNaN(point.Z) && !float.IsInfinity(point.Z);
 	}
 }

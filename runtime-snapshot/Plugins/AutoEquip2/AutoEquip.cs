@@ -1,4 +1,4 @@
-﻿#define TIMERS
+#define TIMERS
 
 using System;
 using System.Collections.Generic;
@@ -33,11 +33,15 @@ namespace Styx.Bot.Plugins.AutoEquip2
         /// <summary>Dispose of this plugin, cleaning up any resources it uses.</summary>
         public override void Dispose()
         {
+            _isDisposed = true;
             Lua.Events.DetachEvent("UNIT_INVENTORY_CHANGED", DoCheck);
             Lua.Events.DetachEvent("LOOT_CLOSED", DoCheck);
             Lua.Events.DetachEvent("START_LOOT_ROLL", HandleLootRoll);
             Lua.Events.DetachEvent("CONFIRM_LOOT_ROLL", HandleConfirmLootRoll);
             Lua.Events.DetachEvent("CONFIRM_DISENCHANT_ROLL", HandleConfirmLootRoll);
+            if (HasPendingEquip)
+                LogDebug("Disposing with a pending equip transaction; cursor ownership is left untouched.");
+            ResetPendingEquip();
         }
 
         /// <summary>
@@ -60,11 +64,37 @@ namespace Styx.Bot.Plugins.AutoEquip2
 
         private readonly WaitTimer _itemCheckTimer = WaitTimer.TenSeconds;
         private readonly WaitTimer _ammoCheckTimer = WaitTimer.TenSeconds;
+        private static readonly TimeSpan EquipTimeout = TimeSpan.FromSeconds(10);
+        private ulong _pendingEquipGuid;
+        private uint _pendingEquipEntry;
+        private InventorySlot _pendingEquipSlot = InventorySlot.None;
+        private int _pendingSourceBag = -1;
+        private int _pendingSourceSlot = -1;
+        private DateTime _pendingEquipSince;
+        private bool _pendingEquipSubmitted;
+        private string _pendingCursorOwner;
+        private bool _isDisposed;
+        private LocalPlayer _pendingEquipPlayer;
+        private ulong _pendingEquipPlayerGuid;
+
+        private bool HasPendingEquip
+        {
+            get { return _pendingEquipGuid != 0 && _pendingEquipEntry != 0; }
+        }
         /// <summary>
         /// Called everytime the engine pulses.
         /// </summary>
         public override void Pulse()
         {
+            if (_isDisposed)
+                return;
+
+            if (HasPendingEquip)
+            {
+                TickPendingEquip();
+                return;
+            }
+
             if (!_itemCheckTimer.IsFinished)
                 return;
 
@@ -91,7 +121,23 @@ namespace Styx.Bot.Plugins.AutoEquip2
         {
             try
             {
-                if (!TreeRoot.IsRunning || StyxWoW.Me.Combat || StyxWoW.Me.Dead || StyxWoW.Me.IsGhost)
+                if (!CanEquipNow() || TreeRoot.IsPaused || !StyxWoW.IsInWorld || HasPendingEquip ||
+                    !AutoEquipSettings.Instance.AutoEquipItems || AutoEquipSettings.Instance.ProtectedSlots == null ||
+                    AutoEquipSettings.Instance.ProtectedSlots.Contains(InventorySlot.AmmoSlot))
+                    return;
+
+                var player = ObjectManager.Me;
+                if (player == null || player.Guid == 0)
+                    return;
+                ulong playerGuid = player.Guid;
+
+                // The cursor query crosses a client boundary. Recheck the same
+                // actor and current permissions before the separate ammo request.
+                // This is admission, not a physical-copy or server acknowledgement.
+                if (CursorHasAnyItem() || !ReferenceEquals(ObjectManager.Me, player) || player.Guid != playerGuid ||
+                    !CanEquipNow() || TreeRoot.IsPaused || !StyxWoW.IsInWorld || HasPendingEquip ||
+                    !AutoEquipSettings.Instance.AutoEquipItems || AutoEquipSettings.Instance.ProtectedSlots == null ||
+                    AutoEquipSettings.Instance.ProtectedSlots.Contains(InventorySlot.AmmoSlot))
                     return;
 
                 // Everything in Lua: check ammo slot, scan bags, equip
@@ -145,13 +191,19 @@ namespace Styx.Bot.Plugins.AutoEquip2
 
         private void DoCheck(object sender, LuaEventArgs e)
         {
+            if (HasPendingEquip)
+            {
+                TickPendingEquip();
+                return;
+            }
+
             if (_weightSet == null)
             {
                 LogDebug("No weight set was found for your character.{0}Ensure that the 'Data\\Weight Sets\\' folder exists and has valid weight sets.", Environment.NewLine);
                 return;
             }
 
-            if (!TreeRoot.IsRunning || StyxWoW.Me.Combat || StyxWoW.Me.Dead || StyxWoW.Me.IsGhost || Battlegrounds.IsInsideBattleground)
+            if (!CanEquipNow())
             {
                 return;
             }
@@ -211,7 +263,7 @@ namespace Styx.Bot.Plugins.AutoEquip2
 
             string rollId = e.Args[0].ToString();
             string itemLink = Lua.GetReturnVal<string>("return GetLootRollItemLink(" + rollId + ")", 0);
-            string[] splitted = itemLink.Split(':');
+            string[] splitted = (itemLink ?? string.Empty).Split(':');
 
             uint itemId;
             if (string.IsNullOrEmpty(itemLink) || (splitted.Length == 0 || splitted.Length < 2) || (!uint.TryParse(splitted[1], out itemId) || itemId == 0))
@@ -298,7 +350,6 @@ namespace Styx.Bot.Plugins.AutoEquip2
                 other1 = StatTypes.Strength;
                 other2 = StatTypes.Agility;
             }
-
 
             //Now check and make sure the item has our stat on it.
             if (!newstats.Stats.ContainsKey(primary) && (newstats.Stats.ContainsKey(other1) || newstats.Stats.ContainsKey(other2)) && rollItemInfo.EquipSlot != InventoryType.Ranged)
@@ -479,23 +530,23 @@ namespace Styx.Bot.Plugins.AutoEquip2
             float lowestEquippedItemScore = float.MaxValue;
             foreach (InventorySlot inventorySlot in equipSlots)
             {
-                WoWItem equippedItem = EquippedItems[inventorySlot];
+                if (AutoEquipSettings.Instance.ProtectedSlots.Contains(inventorySlot))
+                {
+                    //LogDebug("I'm not equipping into equipment slot {0} as it is protected", inventorySlot);
+                    continue;
+                }
+
+                WoWItem equippedItem;
+                if (!EquippedItems.TryGetValue(inventorySlot, out equippedItem))
+                {
+                    Log(true, "InventorySlot {0} is unknown! Please report this to MaiN.", inventorySlot);
+                    continue;
+                }
+
                 if (equippedItem == null)
                 {
                     lowestItemScore = float.MinValue;
                     return inventorySlot;
-                }
-
-                if (AutoEquipSettings.Instance.ProtectedSlots.Contains(inventorySlot))
-                {
-                    //Log(true, "I'm not equipping into equipment slot {0} as it is protected", inventorySlot);
-                    continue;
-                }
-
-                if (!EquippedItems.ContainsKey(inventorySlot))
-                {
-                    Log(true, "InventorySlot {0} is unknown! Please report this to MaiN.", inventorySlot);
-                    continue;
                 }
 
                 if (!AutoEquipSettings.Instance.ReplaceHeirlooms && equippedItem.Quality == WoWItemQuality.Heirloom)
@@ -719,21 +770,199 @@ namespace Styx.Bot.Plugins.AutoEquip2
 
         #region Equip Item
 
-        private static void EquipItem(int bagIndex, int bagSlot, int targetSlot)
+        private void EquipItemIntoSlot(WoWItem item, InventorySlot slot)
         {
-            Lua.DoString(
-                "ClearCursor(); PickupContainerItem({0}, {1}); EquipCursorItem({2}); if StaticPopup1Button1 and StaticPopup1Button1:IsVisible() then StaticPopup1Button1:Click(); end;",
-                bagIndex + 1, bagSlot + 1, targetSlot);
+            BeginEquip(item, slot, false);
         }
 
-        private static void EquipItemIntoSlot(WoWItem item, InventorySlot slot)
+        private void EquipItem(WoWItem item)
         {
-            EquipItem(item.BagIndex, item.BagSlot, (int)slot);
+            BeginEquip(item, InventorySlot.None, true);
         }
 
-        private static void EquipItem(WoWItem item)
+        private bool CanEquipNow()
         {
-            EquipItem(item.BagIndex, item.BagSlot, (int)item.ItemInfo.EquipSlot);
+            if (_isDisposed || !TreeRoot.IsRunning || !StyxWoW.IsInGame || Battlegrounds.IsInsideBattleground)
+                return false;
+
+            LocalPlayer player = ObjectManager.Me;
+            return player != null && player.IsValid && player.Guid != 0 && player.IsAlive &&
+                !player.IsGhost && !player.Combat;
+        }
+
+        private bool OwnsPendingEquipContext()
+        {
+            return HasPendingEquip && CanEquipNow() && _pendingEquipPlayer != null &&
+                ReferenceEquals(ObjectManager.Me, _pendingEquipPlayer) &&
+                _pendingEquipPlayerGuid != 0 && _pendingEquipPlayer.Guid == _pendingEquipPlayerGuid;
+        }
+
+        private void BeginEquip(WoWItem item, InventorySlot slot, bool autoByName)
+        {
+            if (HasPendingEquip || !CanEquipNow() || item == null || !item.IsValid || item.Guid == 0 || item.Entry == 0)
+                return;
+
+            _pendingEquipPlayer = ObjectManager.Me;
+            _pendingEquipPlayerGuid = _pendingEquipPlayer != null ? _pendingEquipPlayer.Guid : 0;
+            _pendingEquipGuid = item.Guid;
+            _pendingEquipEntry = item.Entry;
+            _pendingEquipSlot = autoByName ? InventorySlot.None : slot;
+            _pendingEquipSince = DateTime.UtcNow;
+            _pendingEquipSubmitted = false;
+
+            if (!OwnsPendingEquipContext())
+            {
+                ResetPendingEquip();
+                return;
+            }
+
+            // A previously selected candidate may already occupy its slot.
+            // Retain pending completion/deadline instead of picking it up again,
+            // and recheck context after observing the equipment.
+            if (IsPendingEquipAcknowledged() || !OwnsPendingEquipContext())
+                return;
+
+            // Keep the chosen physical copy even when the native client/server
+            // selects its destination automatically (including empty bag slots).
+            _pendingCursorOwner = System.Guid.NewGuid().ToString("N");
+            if (!Lua.BeginEquipCursorOwnership(_pendingEquipEntry, _pendingCursorOwner) ||
+                !OwnsPendingEquipContext())
+            {
+                ResetPendingEquip();
+                return;
+            }
+
+            int sourceBag, sourceSlot;
+            if (!item.TryPickUp(out sourceBag, out sourceSlot))
+            {
+                ResetPendingEquip();
+                return;
+            }
+
+            _pendingSourceBag = sourceBag;
+            _pendingSourceSlot = sourceSlot;
+            _pendingEquipSubmitted = SubmitOwnedCursorEquip();
+        }
+
+        private void TickPendingEquip()
+        {
+            if (!HasPendingEquip)
+                return;
+
+            // Losing the captured actor or run context revokes managed intent.
+            // Do not try to repair an unidentified cursor in the new context.
+            if (!OwnsPendingEquipContext())
+            {
+                ResetPendingEquip();
+                return;
+            }
+
+            if (DateTime.UtcNow - _pendingEquipSince >= EquipTimeout)
+            {
+                Log("Equip transaction for entry {0} timed out waiting for equipment/cursor completion.", _pendingEquipEntry);
+                RestoreOwnedCursorToSource();
+                ResetPendingEquip();
+                return;
+            }
+
+            if (!OwnsPendingEquipContext())
+            {
+                ResetPendingEquip();
+                return;
+            }
+
+            if (IsPendingEquipAcknowledged())
+            {
+                if (ReturnDisplacedCursorToSource())
+                {
+                    Log("Equipped item entry {0} into {1}", _pendingEquipEntry, _pendingEquipSlot);
+                    ResetPendingEquip();
+                }
+                return;
+            }
+
+            if (!_pendingEquipSubmitted)
+                _pendingEquipSubmitted = SubmitOwnedCursorEquip();
+        }
+
+        private bool SubmitOwnedCursorEquip()
+        {
+            if (!OwnsPendingEquipContext())
+                return false;
+
+            return Lua.TryEquipCursorItem(_pendingEquipGuid, _pendingEquipEntry, (int)_pendingEquipSlot, _pendingCursorOwner);
+        }
+
+        private bool IsPendingEquipAcknowledged()
+        {
+            if (!OwnsPendingEquipContext() || ObjectManager.Me == null ||
+                ObjectManager.Me.Inventory == null || ObjectManager.Me.Inventory.Equipped == null)
+                return false;
+
+            WoWItem[] equipped = ObjectManager.Me.Inventory.Equipped.Items;
+            if (equipped == null)
+                return false;
+
+            if (_pendingEquipSlot == InventorySlot.None)
+                return equipped.Any(item => item != null && item.Guid == _pendingEquipGuid);
+
+            int index = (int)_pendingEquipSlot - 1;
+            return index >= 0 && index < equipped.Length &&
+                equipped[index] != null &&
+                equipped[index].Guid == _pendingEquipGuid;
+        }
+
+        private bool ReturnDisplacedCursorToSource()
+        {
+            if (!OwnsPendingEquipContext())
+                return false;
+
+            // Build12340 submits the complete slot swap and clears the cursor.
+            // A later held item is not an owned displaced item to move back.
+            return !CursorHasAnyItem();
+        }
+
+        private void RestoreOwnedCursorToSource()
+        {
+            if (!OwnsPendingEquipContext() || _pendingSourceBag < 0 || _pendingSourceSlot <= 0 || _pendingEquipEntry == 0)
+                return;
+            try
+            {
+                // Pickup selects the item still present in its source slot.
+                // Release that exact selection instead of sending another swap.
+                Lua.TryCancelEquipCursorItem(_pendingEquipGuid, _pendingEquipEntry, _pendingCursorOwner);
+            }
+            catch
+            {
+            }
+        }
+
+        private static bool CursorHasAnyItem()
+        {
+            try
+            {
+                // Only receipt 2 proves an observed empty cursor. Missing or invalid
+                // responses become 0 in the bridge and must remain busy/unknown.
+                return Lua.GetReturnVal<int>("return (GetCursorInfo() or CursorHasItem()) and 1 or 2", 0U) != 2;
+            }
+            catch
+            {
+                return true;
+            }
+        }
+
+        private void ResetPendingEquip()
+        {
+            _pendingEquipPlayer = null;
+            _pendingEquipPlayerGuid = 0;
+            _pendingEquipGuid = 0;
+            _pendingEquipEntry = 0;
+            _pendingEquipSlot = InventorySlot.None;
+            _pendingSourceBag = -1;
+            _pendingSourceSlot = -1;
+            _pendingEquipSince = DateTime.MinValue;
+            _pendingEquipSubmitted = false;
+            _pendingCursorOwner = null;
         }
 
         #endregion
