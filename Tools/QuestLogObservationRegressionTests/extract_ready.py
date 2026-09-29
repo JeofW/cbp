@@ -2,12 +2,16 @@
 from pathlib import Path
 import hashlib,sys
 root=Path(__file__).resolve().parents[2]
+sys.path.insert(0,str(root/'Tools/QuestObservationBoundaryRegressionTests'))
+from extract_owners import extract_block
 path=root/'runtime-snapshot/Bots/WholesomeAutoQuest-master/WholesomeAutoQuest.cs'
 s=path.read_text(encoding='utf-8-sig')
 marker='        private bool ObserveReadyQuestLog()'
 if marker in s:
-    start=s.index(marker);end=s.index('        private void ObserveRecoveryActivation()',start)
-    body=s[start:end]
+    # A neighboring method can be inserted without becoming part of this owner.
+    # Retain the complete actual declaration/body using the existing bounded
+    # lexical extractor; do not silently include unrelated rest/navigation code.
+    body=extract_block(s,'private bool ObserveReadyQuestLog()')
     fields='private QuestLogSnapshot _lastReadyQuestSnapshot;'
     wrapper='public void RunReady(){ ObserveReadyQuestLog(); }'
 else:

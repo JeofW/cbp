@@ -87,7 +87,7 @@ public static class RoamProbe {
 public static class RoamCases {
  sealed class Failure(string why):Exception(why){}
  public static LocalPlayer Actor;public static WoWUnit Selected;public static BotPoi OriginalPoi;
- public static bool Acknowledge=true,ShouldMount=true;public static string Stage;public static System.Action Callback;
+ public static bool Acknowledge=true,ShouldMount=true,CanFly;public static int FlightMoves;public static string Stage;public static System.Action Callback;
  public static int Targets,Publications,Mounts,Moves,Clears,Chases,RoutineTicks;public static WoWPoint Moved,Supplied;
  public static RunStatus ChaseReceipt=RunStatus.Failure;
  public static MoveResult Movement=MoveResult.Moved;
@@ -95,6 +95,7 @@ public static class RoamCases {
  public static void Event(string stage){if(Stage==stage){var call=Callback;Stage=null;Callback=null;call?.Invoke();}}
  static void Reset(){
   Stage=null;Callback=null;Targets=Publications=Mounts=Moves=Clears=0;Acknowledge=ShouldMount=true;Movement=MoveResult.Moved;
+  CanFly=false;FlightMoves=0;
   Chases=RoutineTicks=0;ChaseReceipt=RunStatus.Failure;RoutineManager.Current=new Routine();
   Moved=Supplied=WoWPoint.Empty;Actor=new LocalPlayer{Guid=1,MapId=530,Location=new WoWPoint(10,10,10)};StyxWoW.Me=Actor;
   Selected=new WoWUnit{Guid=2,Entry=200,Location=new WoWPoint(15,10,10)};Targeting.Instance=new Targeting{FirstUnit=Selected};
@@ -148,6 +149,10 @@ public static class RoamCases {
   Case("target idle callback revokes",()=>{Stage="idle";Callback=()=>Change("poi");Once(0);Check(Publications==0&&BotPoi.Current.Type==PoiType.Repair,"acknowledgement leaf callback replaced newer work");});
   Case("healthy mounted hotspot dispatch",()=>{var expected=StyxWoW.AreaManager.CurrentGrindArea.CurrentHotSpot.Position;Check(Once(1)==RunStatus.Success&&Mounts==1&&Moves==1&&Moved==expected,"healthy mount/move changed");});
   Case("healthy unmounted hotspot dispatch",()=>{ShouldMount=false;Check(Once(1)==RunStatus.Success&&Mounts==0&&Moves==1,"ordinary no-mount route changed");});
+  Case("passing aggro retains existing mounted hotspot travel",()=>{ShouldMount=false;Actor.Mounted=true;Actor.Combat=true;Check(Once(1)==RunStatus.Success&&Mounts==0&&Moves==1,"mounted escape was denied by ground combat admission");});
+  Case("forced dismount during mounted hotspot observation revokes travel",()=>{ShouldMount=false;Actor.Mounted=true;Actor.Combat=true;Stage="status";Callback=()=>Actor.Mounted=false;Check(Once(1)==RunStatus.Failure&&Moves==0,"forcibly dismounted actor continued traveling instead of fighting");});
+  Case("eligible flight uses the shared flight owner",()=>{CanFly=true;Check(Once(1)==RunStatus.Success&&FlightMoves==1&&Mounts==0&&Moves==0,"flying capability was routed into ground-only movement");});
+  foreach(string kind in new[]{"actor","actor-guid","actor-dead","map","poi","provider","area","hotspot","profile"}){string change=kind;Case("flight observation revokes "+change,()=>{CanFly=true;Stage="flight-query";Callback=()=>Change(change);Check(Once(1)==RunStatus.Failure&&FlightMoves==0&&Moves==0&&Mounts==0,"flight query authorized obsolete travel");});}
   foreach(MoveResult value in new[]{MoveResult.Failed,MoveResult.PathGenerationFailed,MoveResult.Moved,MoveResult.ReachedDestination}){var result=value;Case("navigation receipt "+result,()=>{Movement=result;Check(Once(1)==Navigator.GetRunStatusFromMoveResult(result)&&Moves==1,"move receipt was ignored");});}
   foreach(string stage in new[]{"mount-query","mount","status"})foreach(string kind in new[]{"actor","actor-missing","actor-guid","actor-dead","actor-invalid","map","cast","channel","combat","pet-combat","taxi","transport","poi","poi-type","provider","area-manager","area","hotspot","hotspot-position","profile"}){
    string boundary=stage,change=kind;Case("hotspot "+boundary+" revokes "+change,()=>{Stage=boundary;Callback=()=>Change(change);Check(Once(1)==RunStatus.Failure&&Moves==0,"revoked hotspot reached movement");if(boundary=="mount-query")Check(Mounts==0,"revoked mount query still mounted");if(boundary=="mount")Check(Supplied==WoWPoint.Empty,"mount supplier retained stale destination");});
@@ -234,7 +239,7 @@ public static class RoamCases {
 }
 /* Controlled external diagnostics/settings. */ namespace Styx.Helpers {public static class Logging {public static void Write(string text,params object[] values){}public static void WriteDebug(string text,params object[] values){}}public class LevelbotSettings {public static LevelbotSettings Instance=new();public bool GroundMountFarmingMode;}}
 /* Controlled status callback. */ namespace Styx.Logic.BehaviorTree {public static class TreeRoot {public static string StatusText {set{RoamCases.Event("status");}}}}
-/* Controlled navigation boundary. */ namespace Styx.Logic.Pathing {public static class Navigator {public static object NavigationProvider;public static MoveResult MoveTo(WoWPoint point){RoamCases.Moves++;RoamCases.Moved=point;return RoamCases.Movement;}public static RunStatus GetRunStatusFromMoveResult(MoveResult result)=>result==MoveResult.Moved||result==MoveResult.ReachedDestination?RunStatus.Success:RunStatus.Failure;}}
+/* Controlled navigation boundary. */ namespace Styx.Logic.Pathing {public static class Navigator {public static object NavigationProvider;public static MoveResult MoveTo(WoWPoint point){RoamCases.Moves++;RoamCases.Moved=point;return RoamCases.Movement;}public static RunStatus GetRunStatusFromMoveResult(MoveResult result)=>result==MoveResult.Moved||result==MoveResult.ReachedDestination?RunStatus.Success:RunStatus.Failure;}public static class Flightor{public static bool CanFly{get{RoamCases.Event("flight-query");return RoamCases.CanFly;}}public static void MoveTo(WoWPoint point){RoamCases.FlightMoves++;RoamCases.Moved=point;}}}
 /* Controlled external routine leaf. */ namespace Styx.Logic.Combat {public static class RoutineManager {public static Routine Current=new();}public class Routine {public Composite MoveToTargetBehavior;}}
 /* Controlled chase dispatch; the complete chase owner has separate real-owner tests. */ namespace Levelbot.Actions.Combat {public class ActionMoveToTarget:TreeSharp.Action {public ActionMoveToTarget():base(_=>{RoamCases.Chases++;RoamCases.Event("chase");return RoamCases.ChaseReceipt;}){}}}
 """;

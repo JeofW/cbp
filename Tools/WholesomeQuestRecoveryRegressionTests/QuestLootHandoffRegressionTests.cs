@@ -89,12 +89,12 @@ public static class HandoffCases {
  sealed class Failure(string why):Exception(why){}
  public static LocalPlayer Actor;public static WoWUnit Selected;public static WoWObject Loot;public static BotPoi Original;
  public static int Targets,Publications,Clears,NavClears;public static bool Ack=true;public static string Stage;public static System.Action Callback;
- public static int Interactions,Slots,Closes,Stats,Moves;public static ulong FrameGuid;public static readonly List<ulong> Blacklisted=new();
+ public static int Interactions,Slots,Closes,Stats,Moves;public static ulong FrameGuid;public static bool AutoCloseFinalSlot;public static readonly List<ulong> Blacklisted=new();
  static void Check(bool ok,string why){if(!ok)throw new Failure(why);}
  public static void Event(string stage){if(Stage==stage){var action=Callback;Stage=null;Callback=null;action?.Invoke();}}
  static void Reset(string owner){
   Stage=null;Callback=null;Targets=Publications=Clears=NavClears=0;Ack=true;
-  Interactions=Slots=Closes=Stats=Moves=0;FrameGuid=0;Blacklisted.Clear();Lua.Events.Handlers.Clear();
+  Interactions=Slots=Closes=Stats=Moves=0;FrameGuid=0;AutoCloseFinalSlot=false;Blacklisted.Clear();Lua.Events.Handlers.Clear();
   CharacterSettings.Instance=new CharacterSettings();
   foreach(string field in new[]{"_lastLootGuid","_lootAttemptCount","_lootFailCount"}){var f=typeof(LevelProbe).GetField(field,BindingFlags.Static|BindingFlags.NonPublic);f.SetValue(null,Activator.CreateInstance(f.FieldType));}
   Actor=new LocalPlayer{Guid=1,IsMoving=true};StyxWoW.Me=Actor;WoWMovement.ActiveMover=Actor;
@@ -164,6 +164,8 @@ public static class HandoffCases {
   Composite Begin(){var tree=LevelProbe.CreateLootBehavior();tree.Start(null);Check(Tick(tree)==RunStatus.Running&&Interactions==1,"loot did not submit one interaction and await an event");return tree;}
   void Open(){FrameGuid=Loot.Guid;Lua.Events.Fire("LOOT_OPENED");}
   Add("healthy observed event keeps final cleanup",()=>{var tree=Begin();try{Open();Check(Tick(tree)==RunStatus.Success&&Slots==2&&Closes==1&&Stats==1&&Clears==1&&BotPoi.Current.Type==PoiType.None,"healthy loot completion changed");}finally{tree.Stop(null);}});
+  Add("client closing the exact frame after the final slot completes",()=>{AutoCloseFinalSlot=true;var tree=Begin();try{Open();Check(Tick(tree)==RunStatus.Success&&Slots==2&&Closes==0&&Stats==1&&Clears==1&&Blacklisted.Count==0,"normal final-slot closure was treated as a timeout or touched a closed frame");}finally{tree.Stop(null);}});
+  Add("replacement frame after the final slot is never closed",()=>{var tree=Begin();try{Open();Stage="slot";Callback=()=>FrameGuid=99;Tick(tree);Check(Slots==1&&Closes==0&&Stats==0,"foreign frame inherited slot or close authority");}finally{tree.Stop(null);}});
   Add("timeout is not a looted mob",()=>{var tree=Begin();try{foreach(var waiter in Walk(tree).OfType<Wait>())typeof(Wait).GetField("End",BindingFlags.Instance|BindingFlags.NonPublic).SetValue(waiter,DateTime.MinValue);Tick(tree);Check(Slots==0&&Closes==0&&Stats==0,"missing event became successful loot statistics/close");}finally{tree.Stop(null);}});
   foreach(string frame in new[]{"missing","foreign"}){string observation=frame;Add("event with "+observation+" frame",()=>{var tree=Begin();try{FrameGuid=observation=="missing"?0UL:99UL;Lua.Events.Fire("LOOT_OPENED");Tick(tree);Check(Slots==0&&Closes==0&&Stats==0,"event borrowed missing/foreign frame authority");}finally{tree.Stop(null);}});}
   Add("pre-existing frame is left alone",()=>{FrameGuid=99;Once(LevelProbe.CreateLootBehavior());Check(Interactions==0&&Slots==0&&Closes==0&&Stats==0&&Blacklisted.Count==0,"pre-existing frame was adopted or replaced");});
@@ -291,6 +293,6 @@ public class ItemInfo {public int UniqueCount,BeginQuestId;}
 /* Controlled status. */ namespace Styx.Logic.BehaviorTree {public static class TreeRoot{public static string StatusText{set{HandoffCases.Event("status");}}}}
 /* Controlled navigation. */ namespace Styx.Logic.Pathing {public static class Navigator{public static object NavigationProvider;public static void Clear(){HandoffCases.NavClears++;HandoffCases.Event("nav-clear");}public static MoveResult MoveTo(WoWPoint point)=>throw new InvalidOperationException("unexpected base movement");public static RunStatus GetRunStatusFromMoveResult(MoveResult value)=>RunStatus.Failure;}public static class Flightor{public static void MoveTo(WoWPoint point){HandoffCases.Moves++;HandoffCases.Event("move");}}}
 /* Controlled statistics. */ namespace Styx.Logic.Combat {public static class GameStats{public static void LootedMob(){HandoffCases.Stats++;HandoffCases.Event("stats");}}}
-/* Controlled frame observation and slot dispatch. */ namespace Styx.Logic.Inventory.Frames.LootFrame {public class LootFrame{public static readonly LootFrame Instance=new();public ulong LootingObjectGuid=>HandoffCases.FrameGuid;public bool IsVisible=>LootingObjectGuid!=0;public int LootItems=>2;public uint GetItemId(int slot)=>(uint)(100+slot);public void Loot(int slot){HandoffCases.Slots++;HandoffCases.Event("slot");}}}
+/* Controlled frame observation and slot dispatch. */ namespace Styx.Logic.Inventory.Frames.LootFrame {public class LootFrame{public static readonly LootFrame Instance=new();public ulong LootingObjectGuid=>HandoffCases.FrameGuid;public bool IsVisible=>LootingObjectGuid!=0;public int LootItems=>2;public uint GetItemId(int slot)=>(uint)(100+slot);public void Loot(int slot){HandoffCases.Slots++;HandoffCases.Event("slot");if(HandoffCases.AutoCloseFinalSlot&&HandoffCases.Slots==2)HandoffCases.FrameGuid=0;}}}
 """;
 }

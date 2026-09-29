@@ -49,6 +49,18 @@ internal static class QuestRootPreemptionRegressionTests
             { c.EnableCombat(); Check(c.Step() == RunStatus.Success && c.Combat.Effects == 1 && c.Behavior.Body.Effects == 0, "initial combat was denied"); })),
             ("real combat arrival preempts a running quest before the support effect", () => With(c =>
             { c.StartQuest(); c.EnableCombat(); c.ExpectSupport(c.Combat); })),
+            ("passing aggro cannot stop a healthy mounted quest lifetime", () => With(c =>
+            {
+                c.SetMounted(true); BotPoi.Current = new BotPoi(new WoWPoint(210, 20, 30), PoiType.QuestTurnIn);
+                c.StartQuest(); c.EnableCombat(); c.Step();
+                Check(c.Behavior.Body.Effects == 2 && c.Behavior.Body.Cleanups == 0 && c.Combat.Effects == 0,
+                    "combat preemption stopped healthy mounted travel before its escape policy ran");
+            })),
+            ("forced dismount immediately restores protective ground combat", () => With(c =>
+            {
+                c.SetMounted(true); BotPoi.Current = new BotPoi(new WoWPoint(210, 20, 30), PoiType.QuestTurnIn);
+                c.StartQuest(); c.EnableCombat(); c.Step(); c.SetMounted(false); c.ExpectSupport(c.Combat);
+            })),
             ("combat arrival and stale raw progress still clean quest before combat", () => With(c =>
             { c.StartQuest(); c.RawProgress(1); c.EnableCombat(); c.ExpectSupport(c.Combat); c.Protected(); })),
             ("service POI arrival preempts nonexclusive running quest before service", () => With(c =>
@@ -273,6 +285,7 @@ internal static class QuestRootPreemptionRegressionTests
                 // quest control must be alive, not a zero-health death observation.
                 Type fields = typeof(WoWUnit).Assembly.GetTypes().Single(t => t.IsEnum && t.Name == "UnitFields");
                 Write(Descriptor + Convert.ToUInt32(Enum.Parse(fields, "Health")) * 4, 100);
+                Write(Descriptor + Convert.ToUInt32(Enum.Parse(fields, "MaxHealth")) * 4, 100);
                 Check(Player.IsAlive && !Player.IsGhost, "root control requires an actual alive descriptor");
                 Scheduler = (QuestScheduler)Call(fixture, "Scheduler", Output)!;
                 Bot = NewBot(Scheduler); Gate = (RefreshGate)Get(Bot, "_refreshGate")!; Gate.Start(); Rescan(); AssertPublished();
@@ -326,6 +339,12 @@ internal static class QuestRootPreemptionRegressionTests
             Type fields = typeof(WoWUnit).Assembly.GetTypes().Single(t => t.IsEnum && t.Name == "UnitFields");
             Type flags = typeof(WoWUnit).Assembly.GetTypes().Single(t => t.IsEnum && t.Name == "UnitFlags");
             Write(Descriptor + Convert.ToUInt32(Enum.Parse(fields, "Flags")) * 4, active ? Convert.ToUInt32(Enum.Parse(flags, "InCombat")) : 0);
+        }
+        internal void SetMounted(bool mounted)
+        {
+            Type fields = typeof(WoWUnit).Assembly.GetTypes().Single(t => t.IsEnum && t.Name == "UnitFields");
+            Write(Descriptor + Convert.ToUInt32(Enum.Parse(fields, "MountDisplayId")) * 4, mounted ? 123U : 0U);
+            Check(Player.Mounted == mounted, "controlled mount descriptor did not change");
         }
         private void Write(uint address, uint value)
         {

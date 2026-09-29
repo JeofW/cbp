@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0-windows7.0</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../WholesomeQuestRecoveryRegressionTests/WholesomeQuestRecoveryRegressionTests.csproj" />
+  </ItemGroup>
+  <Import Project="../WholesomeQuestRecoveryRegressionTests/NativeBoundary/OfflineBoundary.targets" />
+</Project>

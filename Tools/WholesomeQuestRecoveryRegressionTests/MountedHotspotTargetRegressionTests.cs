@@ -40,6 +40,8 @@ internal static class MountedHotspotTargetRegressionTests
             ("empty target list remains harmless", f => { f.Targets.Clear(); f.Expect(false); }),
             ("nearby selected Kill POI already requests dismount", f => { BotPoi.Current=new BotPoi(f.Target.Position,PoiType.Kill); Check(Mount.ShouldDismount(f.Target.Position),"existing Kill dismount control failed"); }),
             ("nearby hotspot with target already requests dismount", f => { BotPoi.Current=new BotPoi(f.Player.Location,PoiType.Hotspot); Check(Mount.ShouldDismount(f.Player.Location),"existing hotspot dismount control failed"); }),
+            ("nearby hotspot incidental target does not request a pull", f => { f.Area.MobIDs.Clear(); BotPoi.Current=new BotPoi(f.Player.Location,PoiType.Hotspot); Check(!Mount.ShouldDismount(f.Player.Location),"incidental hotspot target forced dismount"); }),
+            ("hotspot objective outside pull range does not dismount early", f => { f.Target.Position=new WoWPoint(80,20,30); BotPoi.Current=new BotPoi(f.Player.Location,PoiType.Hotspot); Check(!Mount.ShouldDismount(f.Player.Location),"remote objective forced an early dismount"); }),
             ("distant Kill POI does not dismount early", f => { var p=new WoWPoint(300,20,30); BotPoi.Current=new BotPoi(p,PoiType.Kill); Check(!Mount.ShouldDismount(p),"distant transit was dismounted"); })
         };
         int passed=0, assertions=0, unexpected=0;

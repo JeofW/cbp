@@ -1,0 +1,709 @@
+{
+  "client_build": 12340,
+  "talent_dbc_sha256": "23aefff3add151bf504c4d0bab247e2e622f9cf29a473d091cb9f11127d99d68",
+  "entries": [
+    {
+      "id": 1432,
+      "tab": 1,
+      "name": "Spiritual Focus",
+      "tier": 0,
+      "maximum": 5,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 1463,
+      "tab": 1,
+      "name": "Seals of the Pure",
+      "tier": 0,
+      "maximum": 5,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 1444,
+      "tab": 1,
+      "name": "Healing Light",
+      "tier": 1,
+      "maximum": 3,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 1449,
+      "tab": 1,
+      "name": "Divine Intellect",
+      "tier": 1,
+      "maximum": 5,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 1628,
+      "tab": 1,
+      "name": "Unyielding Faith",
+      "tier": 1,
+      "maximum": 2,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 1435,
+      "tab": 1,
+      "name": "Aura Mastery",
+      "tier": 2,
+      "maximum": 1,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 1461,
+      "tab": 1,
+      "name": "Illumination",
+      "tier": 2,
+      "maximum": 5,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 1443,
+      "tab": 1,
+      "name": "Improved Lay on Hands",
+      "tier": 2,
+      "maximum": 2,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 1450,
+      "tab": 1,
+      "name": "Improved Concentration Aura",
+      "tier": 3,
+      "maximum": 3,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 1446,
+      "tab": 1,
+      "name": "Improved Blessing of Wisdom",
+      "tier": 3,
+      "maximum": 2,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 2198,
+      "tab": 1,
+      "name": "Blessed Hands",
+      "tier": 3,
+      "maximum": 2,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 1742,
+      "tab": 1,
+      "name": "Pure of Heart",
+      "tier": 4,
+      "maximum": 2,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 1433,
+      "tab": 1,
+      "name": "Divine Favor",
+      "tier": 4,
+      "maximum": 1,
+      "prerequisite": 1461,
+      "prerequisite_rank_zero_based": 4
+    },
+    {
+      "id": 1465,
+      "tab": 1,
+      "name": "Sanctified Light",
+      "tier": 4,
+      "maximum": 3,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 1743,
+      "tab": 1,
+      "name": "Purifying Power",
+      "tier": 5,
+      "maximum": 2,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 1627,
+      "tab": 1,
+      "name": "Holy Power",
+      "tier": 5,
+      "maximum": 5,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 1745,
+      "tab": 1,
+      "name": "Light's Grace",
+      "tier": 6,
+      "maximum": 3,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 1502,
+      "tab": 1,
+      "name": "Holy Shock",
+      "tier": 6,
+      "maximum": 1,
+      "prerequisite": 1433,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 1744,
+      "tab": 1,
+      "name": "Blessed Life",
+      "tier": 6,
+      "maximum": 3,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 2190,
+      "tab": 1,
+      "name": "Sacred Cleansing",
+      "tier": 7,
+      "maximum": 3,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 1746,
+      "tab": 1,
+      "name": "Holy Guidance",
+      "tier": 7,
+      "maximum": 5,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 1747,
+      "tab": 1,
+      "name": "Divine Illumination",
+      "tier": 8,
+      "maximum": 1,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 2199,
+      "tab": 1,
+      "name": "Judgements of the Pure",
+      "tier": 8,
+      "maximum": 5,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 2193,
+      "tab": 1,
+      "name": "Infusion of Light",
+      "tier": 9,
+      "maximum": 2,
+      "prerequisite": 1502,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 2191,
+      "tab": 1,
+      "name": "Enlightened Judgements",
+      "tier": 9,
+      "maximum": 2,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 2192,
+      "tab": 1,
+      "name": "Beacon of Light",
+      "tier": 10,
+      "maximum": 1,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 1442,
+      "tab": 2,
+      "name": "Divinity",
+      "tier": 0,
+      "maximum": 5,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 2185,
+      "tab": 2,
+      "name": "Divine Strength",
+      "tier": 0,
+      "maximum": 5,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 1748,
+      "tab": 2,
+      "name": "Stoicism",
+      "tier": 1,
+      "maximum": 3,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 1425,
+      "tab": 2,
+      "name": "Guardian's Favor",
+      "tier": 1,
+      "maximum": 2,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 1629,
+      "tab": 2,
+      "name": "Anticipation",
+      "tier": 1,
+      "maximum": 5,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 2280,
+      "tab": 2,
+      "name": "Divine Sacrifice",
+      "tier": 2,
+      "maximum": 1,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 1501,
+      "tab": 2,
+      "name": "Improved Righteous Fury",
+      "tier": 2,
+      "maximum": 3,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 1423,
+      "tab": 2,
+      "name": "Toughness",
+      "tier": 2,
+      "maximum": 5,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 2281,
+      "tab": 2,
+      "name": "Divine Guardian",
+      "tier": 3,
+      "maximum": 2,
+      "prerequisite": 2280,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 1521,
+      "tab": 2,
+      "name": "Improved Hammer of Justice",
+      "tier": 3,
+      "maximum": 2,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 1422,
+      "tab": 2,
+      "name": "Improved Devotion Aura",
+      "tier": 3,
+      "maximum": 3,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 1431,
+      "tab": 2,
+      "name": "Blessing of Sanctuary",
+      "tier": 4,
+      "maximum": 1,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 1426,
+      "tab": 2,
+      "name": "Reckoning",
+      "tier": 4,
+      "maximum": 5,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 1750,
+      "tab": 2,
+      "name": "Sacred Duty",
+      "tier": 5,
+      "maximum": 2,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 1429,
+      "tab": 2,
+      "name": "One-Handed Weapon Specialization",
+      "tier": 5,
+      "maximum": 3,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 2282,
+      "tab": 2,
+      "name": "Spiritual Attunement",
+      "tier": 6,
+      "maximum": 2,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 1430,
+      "tab": 2,
+      "name": "Holy Shield",
+      "tier": 6,
+      "maximum": 1,
+      "prerequisite": 1431,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 1751,
+      "tab": 2,
+      "name": "Ardent Defender",
+      "tier": 6,
+      "maximum": 3,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 1421,
+      "tab": 2,
+      "name": "Redoubt",
+      "tier": 7,
+      "maximum": 3,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 1753,
+      "tab": 2,
+      "name": "Combat Expertise",
+      "tier": 7,
+      "maximum": 3,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 2195,
+      "tab": 2,
+      "name": "Touched by the Light",
+      "tier": 8,
+      "maximum": 3,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 1754,
+      "tab": 2,
+      "name": "Avenger's Shield",
+      "tier": 8,
+      "maximum": 1,
+      "prerequisite": 1430,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 2194,
+      "tab": 2,
+      "name": "Guarded by the Light",
+      "tier": 8,
+      "maximum": 2,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 2204,
+      "tab": 2,
+      "name": "Shield of the Templar",
+      "tier": 9,
+      "maximum": 3,
+      "prerequisite": 1754,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 2200,
+      "tab": 2,
+      "name": "Judgements of the Just",
+      "tier": 9,
+      "maximum": 2,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 2196,
+      "tab": 2,
+      "name": "Hammer of the Righteous",
+      "tier": 10,
+      "maximum": 1,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 1403,
+      "tab": 3,
+      "name": "Deflection",
+      "tier": 0,
+      "maximum": 5,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 1407,
+      "tab": 3,
+      "name": "Benediction",
+      "tier": 0,
+      "maximum": 5,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 1631,
+      "tab": 3,
+      "name": "Improved Judgements",
+      "tier": 1,
+      "maximum": 2,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 1464,
+      "tab": 3,
+      "name": "Heart of the Crusader",
+      "tier": 1,
+      "maximum": 3,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 1401,
+      "tab": 3,
+      "name": "Improved Blessing of Might",
+      "tier": 1,
+      "maximum": 2,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 1633,
+      "tab": 3,
+      "name": "Vindication",
+      "tier": 2,
+      "maximum": 2,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 1411,
+      "tab": 3,
+      "name": "Conviction",
+      "tier": 2,
+      "maximum": 5,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 1481,
+      "tab": 3,
+      "name": "Seal of Command",
+      "tier": 2,
+      "maximum": 1,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 1634,
+      "tab": 3,
+      "name": "Pursuit of Justice",
+      "tier": 2,
+      "maximum": 2,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 1632,
+      "tab": 3,
+      "name": "Eye for an Eye",
+      "tier": 3,
+      "maximum": 2,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 1761,
+      "tab": 3,
+      "name": "Sanctity of Battle",
+      "tier": 3,
+      "maximum": 3,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 1755,
+      "tab": 3,
+      "name": "Crusade",
+      "tier": 3,
+      "maximum": 3,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 1410,
+      "tab": 3,
+      "name": "Two-Handed Weapon Specialization",
+      "tier": 4,
+      "maximum": 3,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 1756,
+      "tab": 3,
+      "name": "Sanctified Retribution",
+      "tier": 4,
+      "maximum": 1,
+      "prerequisite": 1409,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 1402,
+      "tab": 3,
+      "name": "Vengeance",
+      "tier": 5,
+      "maximum": 3,
+      "prerequisite": 1411,
+      "prerequisite_rank_zero_based": 4
+    },
+    {
+      "id": 1757,
+      "tab": 3,
+      "name": "Divine Purpose",
+      "tier": 5,
+      "maximum": 2,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 2176,
+      "tab": 3,
+      "name": "The Art of War",
+      "tier": 6,
+      "maximum": 2,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 1441,
+      "tab": 3,
+      "name": "Repentance",
+      "tier": 6,
+      "maximum": 1,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 1758,
+      "tab": 3,
+      "name": "Judgements of the Wise",
+      "tier": 6,
+      "maximum": 3,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 1759,
+      "tab": 3,
+      "name": "Fanaticism",
+      "tier": 7,
+      "maximum": 3,
+      "prerequisite": 1441,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 2147,
+      "tab": 3,
+      "name": "Sanctified Wrath",
+      "tier": 7,
+      "maximum": 2,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 2148,
+      "tab": 3,
+      "name": "Swift Retribution",
+      "tier": 8,
+      "maximum": 3,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 1823,
+      "tab": 3,
+      "name": "Crusader Strike",
+      "tier": 8,
+      "maximum": 1,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 2179,
+      "tab": 3,
+      "name": "Sheath of Light",
+      "tier": 8,
+      "maximum": 3,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 2149,
+      "tab": 3,
+      "name": "Righteous Vengeance",
+      "tier": 9,
+      "maximum": 3,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    },
+    {
+      "id": 2150,
+      "tab": 3,
+      "name": "Divine Storm",
+      "tier": 10,
+      "maximum": 1,
+      "prerequisite": 0,
+      "prerequisite_rank_zero_based": 0
+    }
+  ],
+  "qualification": "A missing historical prerequisite row is recorded as unknown. Live GetTalentInfo.meetsPrereq remains mandatory."
+}

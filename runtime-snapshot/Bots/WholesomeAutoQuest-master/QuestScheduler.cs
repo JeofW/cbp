@@ -122,6 +122,12 @@ namespace WholesomeAQ
         public List<VendorEntry> CurrentVendors { get; set; }
         public QuestScheduleResult LastSchedule { get; private set; } = new QuestScheduleResult();
         public DateTime? EarliestRetryUtc => LastSchedule?.EarliestRetryUtc;
+        // Recovery eligibility belongs to each endpoint. An empty scheduler must
+        // still observe newly available quests, delayed history and changed paths
+        // without waiting hours for an unrelated quarantined endpoint to retry.
+        public DateTime? NextObservationRetryUtc => _lastScan != DateTime.MinValue
+            && LastSchedule?.FallbackMode == QuestFallbackMode.TimedIdle && LastSchedule.Selected.Count == 0
+                ? _lastScan.ToUniversalTime().Add(ScanCooldown) : (DateTime?)null;
 
         public QuestScheduler(DataLoader dataLoader, ProfileBuilder profileBuilder, WholesomeAQSettings settings)
         {
@@ -580,7 +586,13 @@ namespace WholesomeAQ
             if (questLogFull)
                 status += $" quest-log-full={accepted.Count}/{questLogCapacity}; deferred new pickups while retaining accepted quest work.";
             if (exclusions.Count > 0)
-                status += " " + string.Join(" ", exclusions.OrderBy(value => value, StringComparer.Ordinal));
+            {
+                // Activity text is emitted every pulse. Bound the examples while
+                // preserving the exclusion count and the selected work above.
+                var ordered = exclusions.OrderBy(value => value, StringComparer.Ordinal).ToArray();
+                status += $" excluded={ordered.Length}; " + string.Join(" ", ordered.Take(12));
+                if (ordered.Length > 12) status += $" ({ordered.Length - 12} additional exclusions).";
+            }
 
             return new QuestScheduleResult
             {

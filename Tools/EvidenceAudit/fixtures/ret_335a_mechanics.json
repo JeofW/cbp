@@ -1,0 +1,173 @@
+{
+  "schema_version": 1,
+  "client_build": 12340,
+  "spell_dbc_sha256": "d5cce1a83550dcfa9eb2f0251dbb11fd24c272534b2b1a9b230924a44d817ab3",
+  "primary_core": "TrinityCore/TrinityCore@8fda442f6c30ca21a622638063ab8b28376f1b25",
+  "secondary_core": "azerothcore/azerothcore-wotlk@8337a378ac325e62a6a91e00c6a5e944205e8536",
+  "sources": {
+    "primary_scripts": "src/server/scripts/Spells/spell_paladin.cpp",
+    "primary_units": "src/server/game/Entities/Unit/Unit.cpp",
+    "primary_spell_corrections": "src/server/game/Spells/SpellMgr.cpp",
+    "secondary_coefficients": "data/sql/base/db_world/spell_bonus_data.sql"
+  },
+  "qualifications": [
+    "Numeric original-client facts with explicit pinned core corrections; the user realm may apply additional server overrides.",
+    "Damage coefficients below are corroborated by the pinned secondary core. Simulator gear, regeneration, incoming damage and proc realizations are assumptions, not measurements."
+  ],
+  "rules": {
+    "art_of_war_partial_id": 53489,
+    "art_of_war_partial_reduction_seconds": 0.75,
+    "art_of_war_instant_id": 59578,
+    "divine_storm_cap": 4,
+    "divine_storm_healing_fraction": 0.25,
+    "holy_wrath_stun_seconds": 3,
+    "judgements_wise_base_mana_fraction": 0.25,
+    "seal_cast_base_mana_fraction": 0.14,
+    "command_weapon_fraction": 0.36,
+    "command_cleave_cap": 3,
+    "vengeance_stacks": 5,
+    "consecration_period_seconds": 1,
+    "divine_plea_healing_multiplier": 0.5
+  },
+  "coefficients": {
+    "Exorcism": {
+      "attack_power": 0.15,
+      "spell_power": 0.15
+    },
+    "Holy Wrath": {
+      "attack_power": 0.07,
+      "spell_power": 0.07
+    },
+    "Hammer of Wrath": {
+      "attack_power": 0.15,
+      "spell_power": 0.15
+    },
+    "Consecration": {
+      "attack_power": 0.04,
+      "spell_power": 0.04
+    }
+  },
+  "spells": [
+    {
+      "id": 10314,
+      "name": "Exorcism",
+      "level": 60,
+      "cost_base_percent": 8,
+      "cooldown_seconds": 15.0,
+      "cast_seconds": 1.5,
+      "duration_seconds": 0.0,
+      "base_average": 596.0,
+      "gcd_seconds": 1.5
+    },
+    {
+      "id": 10318,
+      "name": "Holy Wrath",
+      "level": 60,
+      "cost_base_percent": 20,
+      "cooldown_seconds": 30.0,
+      "cast_seconds": 0.0,
+      "duration_seconds": 3.0,
+      "base_average": 600.0,
+      "gcd_seconds": 1.5
+    },
+    {
+      "id": 20924,
+      "name": "Consecration",
+      "level": 60,
+      "cost_base_percent": 22,
+      "cooldown_seconds": 8.0,
+      "cast_seconds": 0.0,
+      "duration_seconds": 8.0,
+      "base_average": 56.0,
+      "gcd_seconds": 1.5
+    },
+    {
+      "id": 24239,
+      "name": "Hammer of Wrath",
+      "level": 60,
+      "cost_base_percent": 12,
+      "cooldown_seconds": 6.0,
+      "cast_seconds": 0.0,
+      "duration_seconds": 0.0,
+      "base_average": 599.0,
+      "gcd_seconds": 1.5
+    },
+    {
+      "id": 35395,
+      "name": "Crusader Strike",
+      "level": 50,
+      "cost_base_percent": 5,
+      "cooldown_seconds": 4.0,
+      "cast_seconds": 0.0,
+      "duration_seconds": 0.001,
+      "base_average": 0.0,
+      "gcd_seconds": 1.5
+    },
+    {
+      "id": 48801,
+      "name": "Exorcism",
+      "level": 79,
+      "cost_base_percent": 8,
+      "cooldown_seconds": 15.0,
+      "cast_seconds": 1.5,
+      "duration_seconds": 0.0,
+      "base_average": 1087.0,
+      "gcd_seconds": 1.5
+    },
+    {
+      "id": 48806,
+      "name": "Hammer of Wrath",
+      "level": 80,
+      "cost_base_percent": 12,
+      "cooldown_seconds": 6.0,
+      "cast_seconds": 0.0,
+      "duration_seconds": 0.0,
+      "base_average": 1198.0,
+      "gcd_seconds": 1.5
+    },
+    {
+      "id": 48817,
+      "name": "Holy Wrath",
+      "level": 78,
+      "cost_base_percent": 20,
+      "cooldown_seconds": 30.0,
+      "cast_seconds": 0.0,
+      "duration_seconds": 3.0,
+      "base_average": 1142.0,
+      "gcd_seconds": 1.5
+    },
+    {
+      "id": 48819,
+      "name": "Consecration",
+      "level": 80,
+      "cost_base_percent": 22,
+      "cooldown_seconds": 8.0,
+      "cast_seconds": 0.0,
+      "duration_seconds": 8.0,
+      "base_average": 113.0,
+      "gcd_seconds": 1.5
+    },
+    {
+      "id": 53385,
+      "name": "Divine Storm",
+      "level": 60,
+      "cost_base_percent": 12,
+      "cooldown_seconds": 10.0,
+      "cast_seconds": 0.0,
+      "duration_seconds": 0.0,
+      "base_average": 110.0,
+      "gcd_seconds": 1.5
+    },
+    {
+      "id": 54428,
+      "name": "Divine Plea",
+      "level": 71,
+      "cost_base_percent": 0,
+      "cooldown_seconds": 60.0,
+      "cast_seconds": 0.0,
+      "duration_seconds": 15.0,
+      "base_average": 5.0,
+      "gcd_seconds": 1.5
+    }
+  ]
+}

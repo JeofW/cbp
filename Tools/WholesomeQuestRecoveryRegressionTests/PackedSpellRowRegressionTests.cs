@@ -21,10 +21,25 @@ internal static class PackedSpellRowRegressionTests
     [ModuleInitializer]
     internal static void Run()
     {
-        Console.WriteLine("Packed spell fixture: managed prefix="+Marshal.SizeOf<SpellEntry>()+"; native decoded record=704.");
+        Console.WriteLine("Packed spell fixture: managed record="+Marshal.SizeOf<SpellEntry>()+"; IDA build-12340 decoded record=680.");
         var cases = new List<(string Name, Action Test)>();
         void Add(string name, Action<Fixture> test) => cases.Add((name, () => { using var f = new Fixture(); test(f); }));
         Add("uncompressed current FromId control", f => f.ExpectSpell(77));
+        // Read-only IDA of the pinned build-12340 executable: 4CFD20 and
+        // 61DC30 copy/decode 0x2A8 (680) bytes; 5AAC00 uses the same Spell table.
+        // The unrelated bytes after a record must never decide its validity.
+        Add("native 680-byte packed record stops before the next record", f =>
+        {
+            f.Pack(680, poisonFollowingRecord: true);
+            f.ExpectSpell(77);
+        });
+        Add("native raw record does not expose the following record", f =>
+        {
+            f.SetFollowingRecordSentinel();
+            var row = f.Localized();
+            Check(row != null && row.GetField<uint>(170) == 0,
+                "localized Spell snapshot includes bytes beyond the native 680-byte record");
+        });
         foreach (uint level in new uint[] {1, 17, 77, 255})
         {
             uint wanted = level;
@@ -67,7 +82,7 @@ internal static class PackedSpellRowRegressionTests
         Vector("missing repeated-run count",new byte[]{5,5},2,null);
         Vector("truncated distinct literal stream",new byte[]{1,2},3,null);
         Vector("repeat crosses output boundary",new byte[]{5,5,4},5,null);
-        foreach(int size in new[]{0,-1,705,int.MaxValue})
+        foreach(int size in new[]{0,-1,681,704,705,int.MaxValue})
         { int n=size; cases.Add(("invalid output size "+size,()=>{int reads=0;Check(Decode(_=>{reads++;return 1;},n)==null && reads==0,"invalid size read or allocated input");})); }
         cases.Add(("complete decode does not read the following record",()=>{var result=Decode(i=>i<4?(byte?)(i+1):throw new AssertionFailure("read next record"),4);Check(result!.SequenceEqual(new byte[]{1,2,3,4}),"bad literals");}));
         foreach(Exception error in new Exception[]{new OperationCanceledException("decoder stop"),new ThreadInterruptedException("decoder stop")})
@@ -104,7 +119,7 @@ internal static class PackedSpellRowRegressionTests
                 memory=ObjectManager.Wow!;
                 cache=((ThreadLocal<Dictionary<IntPtr,byte[]>>)typeof(Memory).GetField("_cache",Hidden)!.GetValue(memory)!).Value!;
                 int prefix=Marshal.SizeOf<SpellEntry>();
-                if(prefix<=0 || prefix>704) throw new InvalidOperationException("Managed SpellEntry exceeds the supplied 704-byte native record contract: "+prefix);
+                if(prefix!=680) throw new InvalidOperationException("Managed SpellEntry differs from the verified 680-byte native record: "+prefix);
                 Flag(0);Publish(77);
             }
             catch { rows.Dispose(); throw; }
@@ -124,9 +139,14 @@ internal static class PackedSpellRowRegressionTests
             var address=Address;Marshal.Copy(new byte[2048],0,address,2048);Marshal.Copy(value,0,address,value.Length);
             InvalidatePayload();
         }
-        internal void Pack()
+        internal void SetFollowingRecordSentinel()
         {
-            byte[] raw=new byte[704];Marshal.Copy(Address,raw,0,raw.Length);
+            Marshal.WriteInt32(Address,680,unchecked((int)0xDEADBEEF));
+            InvalidatePayload();
+        }
+        internal void Pack(int size = 680, bool poisonFollowingRecord = false)
+        {
+            byte[] raw=new byte[size];Marshal.Copy(Address,raw,0,raw.Length);
             var encoded=new List<byte>{raw[0]};int i=1;
             while(i<raw.Length)
             {
@@ -137,6 +157,7 @@ internal static class PackedSpellRowRegressionTests
                     encoded.Add(repeat);if(i<raw.Length)encoded.Add(raw[i++]);
                 }
             }
+            if(poisonFollowingRecord)encoded.AddRange(new byte[]{254,254,255});
             Payload(encoded.ToArray());Flag(1);
         }
         internal void Header(string name,int value)

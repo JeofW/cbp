@@ -27,7 +27,16 @@ internal static class RestOwnershipRegressionTests
                     ?? throw new InvalidOperationException("Missing observed owner: " + name);
                 Check(!Calls(method).Any(call => call.Name == "get_IsResting" && call.DeclaringType == typeof(WoWPlayer)),
                     "WoWPlayer.IsResting reads PLAYER_FLAGS bit 0x20 (area/rested-XP status), not Food/Drink or routine rest ownership");
-                Check(Calls(method).Any(call => call.Name == "HasAura"), "actual aura observation must not be removed along with the wrong area flag");
+                MethodBase auraOwner = method;
+                if (name == "Pulse")
+                {
+                    auraOwner = Calls(method).FirstOrDefault(call => call.Name == "RetryRestConsumables"
+                        && call.DeclaringType == typeof(WholesomeAutoQuest))
+                        ?? throw new InvalidOperationException("Pulse must call the shared rest admission owner");
+                    Check(!Calls(auraOwner).Any(call => call.Name == "get_IsResting" && call.DeclaringType == typeof(WoWPlayer)),
+                        "delegating rest must not restore the area flag in the shared admission owner");
+                }
+                Check(Calls(auraOwner).Any(call => call.Name == "HasAura"), "actual aura observation must not be removed along with the wrong area flag");
             }));
         }
         cases.Add(("active owned pickup remains eligible", () => Check(Active(false, false), "ordinary owned work must be active")));

@@ -293,7 +293,7 @@ namespace Styx.WoWInternals.WoWObjects
                 {
                     var spell = GetSpell(i);
                     if (spell == null || !spell.IsValid)
-                        break;
+                        continue; // The five native effect slots are not a terminated list.
                     list.Add(spell);
                 }
                 return list;

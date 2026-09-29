@@ -48,7 +48,7 @@ internal static class Fixture
 }
 namespace Styx
 {
-    public class Aura { public string Name { get; set; } = ""; public ulong CreatorGuid { get; set; } public bool IsActive { get; set; } = true; public TimeSpan TimeLeft { get; set; } = TimeSpan.FromSeconds(20); }
+    public class Aura { public string Name { get; set; } = ""; public int SpellId { get; set; } public ulong CreatorGuid { get; set; } public bool IsActive { get; set; } = true; public TimeSpan TimeLeft { get; set; } = TimeSpan.FromSeconds(20); }
     public partial class UnitState
     {
         public uint Entry { get; set; } = 1;

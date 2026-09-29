@@ -710,7 +710,9 @@ namespace Styx.WoWInternals.WoWObjects
                 WoWSkill? skill = GetSkillByIndex(i);
                 if (skill == null) break;         // Memory failure — stop.
                 if (!skill.IsValid) continue;     // Empty slot — keep scanning.
-                if ((uint)skill.Id == skillLineId) return skill;
+                // The descriptor already contains the stable skill-line ID.
+                // A missing localized SkillLine row must not hide trained riding.
+                if ((uint)skill.SkillLineId == skillLineId) return skill;
             }
             return null;
         }

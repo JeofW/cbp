@@ -60,6 +60,29 @@ internal static class QuestScanRetryRegressionTests
                 var bot = Bot(scheduler); Set(bot, "_stopped", true);
                 Invoke(bot, "MaybeRequestTimedRetry");
                 Check(!Gate(bot).Begin().HasValue, "a stopped bot accepted retry work");
+            })),
+            ("idle observation refresh is independent of endpoint quarantine", () => WithoutPlayer(() =>
+            {
+                var scheduler = Scheduler(); DateTime quarantine = DateTime.UtcNow.AddHours(1);
+                SetDeadline(scheduler, quarantine); Set(scheduler, "_lastScan", DateTime.Now.AddSeconds(-11));
+                var bot = Bot(scheduler); Invoke(bot, "MaybeRequestTimedRetry");
+                Check(Gate(bot).Begin().HasValue, "idle observations waited for an unrelated endpoint quarantine");
+                Check(scheduler.EarliestRetryUtc == quarantine && scheduler.LastSchedule.Selected.Count == 0,
+                    "observation refresh erased quarantine or authorized unselected work");
+            })),
+            ("fresh idle observation retains its scan cooldown", () => WithoutPlayer(() =>
+            {
+                var scheduler = Scheduler(); SetDeadline(scheduler, DateTime.UtcNow.AddHours(1));
+                Set(scheduler, "_lastScan", DateTime.Now); var bot = Bot(scheduler);
+                Invoke(bot, "MaybeRequestTimedRetry"); Check(!Gate(bot).Begin().HasValue, "fresh idle scan immediately repeated");
+            })),
+            ("active work is not interrupted by an idle observation timer", () => WithoutPlayer(() =>
+            {
+                var scheduler = Scheduler(); Set(scheduler, "_lastScan", DateTime.Now.AddMinutes(-1));
+                Set(scheduler, "<LastSchedule>k__BackingField", new QuestScheduleResult
+                { FallbackMode = QuestFallbackMode.None, Selected = new[] { new QuestWorkCandidate { QuestId = 867, Stage = QuestWorkStage.TurnIn } } });
+                var bot = Bot(scheduler); Invoke(bot, "MaybeRequestTimedRetry");
+                Check(!Gate(bot).Begin().HasValue, "active work inherited an idle observation refresh");
             }))
         };
         int failed = 0;

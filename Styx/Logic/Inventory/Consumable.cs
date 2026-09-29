@@ -16,10 +16,13 @@ namespace Styx.Logic.Inventory
         /// </summary>
         public static List<WoWItem> GetFood()
         {
-            return ObjectManager.Me.BagItems
+            var player = ObjectManager.Me;
+            if (player == null) return new List<WoWItem>();
+            var result = player.BagItems
                 .Where(IsFood)
                 .Distinct()
                 .ToList();
+            return ReferenceEquals(player, ObjectManager.Me) ? result : new List<WoWItem>();
         }
 
         /// <summary>
@@ -27,10 +30,13 @@ namespace Styx.Logic.Inventory
         /// </summary>
         public static List<WoWItem> GetDrinks()
         {
-            return ObjectManager.Me.BagItems
+            var player = ObjectManager.Me;
+            if (player == null) return new List<WoWItem>();
+            var result = player.BagItems
                 .Where(IsDrink)
                 .Distinct()
                 .ToList();
+            return ReferenceEquals(player, ObjectManager.Me) ? result : new List<WoWItem>();
         }
 
         /// <summary>
@@ -46,12 +52,14 @@ namespace Styx.Logic.Inventory
         /// <param name="includeSpecialtyItems">Include items with special effects.</param>
         public static WoWItem GetBestFood(bool includeSpecialtyItems)
         {
+            var player = ObjectManager.Me;
+            if (player == null) return null;
             var food = GetFood();
             if (food.Count == 0)
                 return null;
 
             WoWItem bestItem = null;
-            int playerLevel = StyxWoW.Me.Level;
+            int playerLevel = player.Level;
 
             foreach (var item in food)
             {
@@ -69,7 +77,7 @@ namespace Styx.Logic.Inventory
                 }
             }
 
-            return bestItem;
+            return ReferenceEquals(player, ObjectManager.Me) ? bestItem : null;
         }
 
         /// <summary>
@@ -80,12 +88,14 @@ namespace Styx.Logic.Inventory
         /// <param name="includeSpecialtyItems">Include items with special effects.</param>
         public static WoWItem GetBestDrink(bool includeSpecialtyItems)
         {
+            var player = ObjectManager.Me;
+            if (player == null) return null;
             var drinks = GetDrinks();
             if (drinks.Count == 0)
                 return null;
 
             WoWItem bestItem = null;
-            int playerLevel = StyxWoW.Me.Level;
+            int playerLevel = player.Level;
 
             foreach (var item in drinks)
             {
@@ -103,7 +113,7 @@ namespace Styx.Logic.Inventory
                 }
             }
 
-            return bestItem;
+            return ReferenceEquals(player, ObjectManager.Me) ? bestItem : null;
         }
 
         /// <summary>
@@ -113,12 +123,13 @@ namespace Styx.Logic.Inventory
         /// </summary>
         private static bool IsFood(WoWItem item)
         {
-            if ((int)item.ItemInfo.ItemClass != (int)WoWItemClass.Consumable)
+            if (item == null || !item.IsValid || item.StackCount == 0 || item.ItemInfo == null
+                || (int)item.ItemInfo.ItemClass != (int)WoWItemClass.Consumable)
                 return false;
 
             return item.ItemSpells.Any(s =>
-                s.ActualSpell != null &&
-                (s.ActualSpell.Name == "Food" || s.ActualSpell.Name == "Refreshment"));
+                s?.ActualSpell is { } actual &&
+                (actual.Name == "Food" || actual.Name == "Refreshment"));
         }
 
         /// <summary>
@@ -128,14 +139,15 @@ namespace Styx.Logic.Inventory
         /// </summary>
         private static bool IsDrink(WoWItem item)
         {
-            if ((int)item.ItemInfo.ItemClass != (int)WoWItemClass.Consumable)
+            if (item == null || !item.IsValid || item.StackCount == 0 || item.ItemInfo == null
+                || (int)item.ItemInfo.ItemClass != (int)WoWItemClass.Consumable)
                 return false;
 
             return item.ItemSpells.Any(s =>
-                s.ActualSpell != null &&
-                (s.ActualSpell.Name == "Drink" ||
-                 s.ActualSpell.Name == "Starfire Espresso" ||
-                 s.ActualSpell.Name == "Refreshment"));
+                s?.ActualSpell is { } actual &&
+                (actual.Name == "Drink" ||
+                 actual.Name == "Starfire Espresso" ||
+                 actual.Name == "Refreshment"));
         }
 
         /// <summary>
@@ -143,7 +155,10 @@ namespace Styx.Logic.Inventory
         /// </summary>
         private static bool IsBasicFoodOrDrink(WoWItem.WoWItemSpell spell)
         {
-            return spell.ActualSpell.Name == "Food" || spell.ActualSpell.Name == "Drink" || spell.ActualSpell.Name == "Refreshment";
+            // Unhydrated secondary metadata cannot prove that an item has no
+            // specialty effects. Skip this observation and retry fresh next time.
+            var actual = spell?.ActualSpell;
+            return actual != null && (actual.Name == "Food" || actual.Name == "Drink" || actual.Name == "Refreshment");
         }
     }
 }

@@ -37,6 +37,16 @@ internal static class ExorcismDecisionRegressionTests
             { Ready("Exorcism"); Fixture.Known.Add("The Art of War"); StyxWoW.Me.CurrentTarget!.Distance = 20; Tick(factory.Make()); Expect("movement"); });
             Case(factory.Name + " actual proc is usable even if talent discovery is incomplete", () =>
             { Ready("Exorcism"); Proc(); Tick(factory.Make()); Expect("Exorcism"); });
+            Case(factory.Name + " rank-one reduction is not a moving instant", () =>
+            { Ready("Exorcism"); Proc(53489); StyxWoW.Me.IsMoving=true; Tick(factory.Make()); Expect("movement"); });
+            Case(factory.Name + " rank-one stationary reduction remains a filler", () =>
+            { Ready("Exorcism"); Proc(53489); Tick(factory.Make()); Expect("Exorcism"); });
+            Case(factory.Name + " unknown same-name aura cannot promise an instant", () =>
+            { Ready("Exorcism"); Proc(0); StyxWoW.Me.IsMoving=true; Tick(factory.Make()); Expect("movement"); });
+            Case(factory.Name + " expired proc cannot promise an instant", () =>
+            { Ready("Exorcism"); Proc(); StyxWoW.Me.Auras["The Art of War"].IsActive=false; StyxWoW.Me.IsMoving=true; Tick(factory.Make()); Expect("movement"); });
+            Case(factory.Name + " rank-one undead filler cannot preempt a ready melee strike", () =>
+            { Ready("Exorcism","Crusader Strike"); Proc(53489); StyxWoW.Me.CurrentTarget!.UndeadOrDemon=true; Tick(factory.Make()); Expect("Crusader Strike"); });
             Case(factory.Name + " ready melee strike precedes non-proc Exorcism", () =>
             { Ready("Exorcism", "Crusader Strike"); Tick(factory.Make()); Expect("Crusader Strike"); });
             Case(factory.Name + " ready judgement precedes a non-proc ranged filler", () =>
@@ -81,7 +91,7 @@ internal static class ExorcismDecisionRegressionTests
         if (failures.Count != 0) throw new InvalidOperationException(string.Join(Environment.NewLine, failures));
     }
     private static void Ready(params string[] spells) { Fixture.Known.UnionWith(spells); Fixture.Ready.UnionWith(spells); }
-    private static void Proc() => StyxWoW.Me.Auras["The Art of War"] = new Aura { Name = "The Art of War" };
+    private static void Proc(int id=59578) => StyxWoW.Me.Auras["The Art of War"] = new Aura { Name = "The Art of War", SpellId=id };
     private static void Check(bool ok, string message) { if (!ok) throw new InvalidOperationException(message); }
     private static void Expect(string expected) => Check(Fixture.Selected == expected,
         $"expected {expected}, observed {Fixture.Selected}; trace={string.Join(",", Fixture.Trace)}");

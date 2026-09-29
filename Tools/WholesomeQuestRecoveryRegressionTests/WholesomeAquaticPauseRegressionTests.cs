@@ -38,6 +38,9 @@ internal static class WholesomeAquaticPauseRegressionTests
         cases.Add(("dry recovery releases the pause normally", f => f.Recovered()));
         cases.Add(("dry timeout preserves its ordinary cooldown", f => f.Timeout()));
         cases.Add(("returning to an observed dry location can rest again", f => f.ReturnDry()));
+        cases.Add(("paused health recovery retries a fresh food observation", f => f.PendingRetry(false)));
+        cases.Add(("paused mana recovery retries a fresh drink observation", f => f.PendingRetry(true)));
+        cases.Add(("session restart cannot retain an old rest pause", f => f.ResetSession()));
         int passed = 0, assertions = 0, unexpected = 0;
         foreach (var c in cases)
         {
@@ -143,6 +146,28 @@ internal static class WholesomeAquaticPauseRegressionTests
             WorldCall("Swim", true); bot.Pulse(); Check(!Paused, "water control was not released");
             WorldCall("Swim", false); Prime(); bot.Pulse();
             Check(Paused && mover.Stops == 1, "dry reentry failed to restore ordinary rest");
+        }
+        internal void PendingRetry(bool drinking)
+        {
+            if (drinking) LowMana();
+            SeedPause(); Prime();
+            var timer = drinking ? drink : food;
+            timer.Stop(); DateTime oldStart = timer.StartTime;
+            bot.Pulse();
+            Check(Paused && timer.StartTime != oldStart && !timer.IsFinished &&
+                (drinking ? CoreRest.NoDrink : CoreRest.NoFood),
+                "an already-paused recovery never retried current inventory");
+            DateTime attemptedAt = timer.StartTime;
+            bot.Pulse();
+            Check(timer.StartTime == attemptedAt, "each pulse renewed the consumable throttle");
+        }
+        internal void ResetSession()
+        {
+            SeedPause(); Set("_restTimeoutEnd", DateTime.Now.AddSeconds(10));
+            typeof(WholesomeAutoQuest).GetMethod("ResetRecoveryLifecycleState", Hidden)!.Invoke(bot, null);
+            Check(!Paused && Get<DateTime>("_restStartTime") == DateTime.MinValue &&
+                Get<DateTime>("_restTimeoutEnd") == DateTime.MinValue,
+                "a previous run retained authority to pause or defer recovery");
         }
         public void Dispose()
         {
