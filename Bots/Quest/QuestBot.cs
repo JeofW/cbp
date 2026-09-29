@@ -179,8 +179,6 @@ public class QuestBot : BotBase
 
         CanRunDecoratorDelegate isMoving = context => StyxWoW.Me.IsMoving;
         CanRunDecoratorDelegate notInCombat = context => !StyxWoW.Me.Combat;
-        CanRunDecoratorDelegate hasTarget = context => StyxWoW.Me.CurrentTarget != null;
-        RetrieveBotPoiDelegate buildKillPoi = context => new BotPoi(StyxWoW.Me.CurrentTarget, PoiType.Kill);
 
         return (Composite)new Decorator(isMoving,
             (Composite)new Decorator(
@@ -188,11 +186,9 @@ public class QuestBot : BotBase
                     BotPoi.Current.Type, StyxWoW.Me.Mounted),
             (Composite)new Decorator(notInCombat,
             (Composite)new DecoratorNeedToFindTarget(
-                (Composite)new Sequence(new Composite[]
-                {
-                    new ActionSetTarget(),
-                    new Wait(5, hasTarget, new ActionSetPoi(buildKillPoi))
-                })))));
+                new OwnedTargetHandoff(() => StyxWoW.Me != null && !StyxWoW.Me.Mounted
+                    && !StyxWoW.Me.Combat && !ShouldSuppressOpportunisticTargeting(BotPoi.Current.Type),
+                    clearNavigation: true)))));
     }
 
     private static PrioritySelector CreateQuestOrderBehavior()
@@ -228,7 +224,8 @@ public class QuestBot : BotBase
                poiType == PoiType.Repair ||
                poiType == PoiType.Train ||
                poiType == PoiType.Buy ||
-               poiType == PoiType.Mail;
+               poiType == PoiType.Mail ||
+               poiType == PoiType.Fly;
     }
 
     public static void QuestIncludeTargetsFilter(

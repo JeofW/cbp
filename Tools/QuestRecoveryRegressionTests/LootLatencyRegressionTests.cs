@@ -42,10 +42,15 @@ internal static class LootLatencyRegressionTests
         ActionClearPoi confirmedLootClear = Descendants(lootBehavior)
             .OfType<ActionClearPoi>()
             .Single(action => (string)reasonField.GetValue(action)! == "Waiting for loot flag");
-        GroupComposite completionSequence = confirmedLootClear.Parent as GroupComposite
-            ?? throw new InvalidOperationException("confirmed loot clear must belong to a sequence");
+        // An admission decorator around cleanup must not make the old last-action
+        // assertion vacuous: walk through single-child wrappers to its sequence.
+        Composite terminal = confirmedLootClear;
+        while (terminal.Parent is Decorator admission && admission.Children.Count == 1)
+            terminal = admission;
+        Sequence completionSequence = terminal.Parent as Sequence
+            ?? throw new InvalidOperationException("confirmed loot clear must end its completion sequence");
 
-        Assert(completionSequence.Children.IndexOf(confirmedLootClear)
+        Assert(completionSequence.Children.IndexOf(terminal)
                == completionSequence.Children.Count - 1,
             "confirmed loot must return on the next pulse immediately after clearing its POI");
     }

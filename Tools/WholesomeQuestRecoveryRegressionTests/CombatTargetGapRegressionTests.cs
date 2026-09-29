@@ -143,6 +143,7 @@ public static class GapCases
         AddPrePullCases(cases);
         AddCombatContinuationCases(cases);
         AddGuardReplacementCases(cases);
+        AddLiveCombatPoiCases(cases);
         int passed=0,assertions=0,unexpected=0;
         foreach(var item in cases)
         {
@@ -370,6 +371,54 @@ public static class GapCases
                 Check(leaf.Disposals[1]==1&&leaf.Disposals[2]==1,"replacement cleanup missing or repeated");
             }));
         }
+    }
+    private static void AddLiveCombatPoiCases(List<(string,System.Action)> cases)
+    {
+        foreach(bool petOnly in new[]{false,true})foreach(bool displayed in new[]{false,true})
+        {
+            bool pet=petOnly,hasDisplay=displayed;
+            cases.Add(("live Kill POI survives empty targeting/"+pet+"/"+hasDisplay,()=>
+            {
+                Reset();Me.Combat=!pet;Me.Pet=new WoWUnit{IsAlive=true,Combat=pet};
+                var enemy=new WoWUnit{Combat=true,CurrentTarget=null};
+                Me.CurrentTarget=hasDisplay?enemy:null;
+                var poi=new BotPoi(enemy,PoiType.Kill);BotPoi.Seed(poi);
+                Results["heal"]=RunStatus.Success;
+                Tick(Build());
+                Check(ReferenceEquals(BotPoi.Current,poi)&&Fallback==0&&Targets==0,
+                    "empty filtered target list discarded a live combat destination");
+                Check(Trace.SequenceEqual(new[]{"heal"}),"live combat POI cleanup displaced self-healing");
+            }));
+        }
+        foreach(string state in new[]{"idle","dead-subject","missing-subject"})
+        {
+            string condition=state;
+            cases.Add(("empty targeting retains legitimate cleanup/"+condition,()=>
+            {
+                Reset();Me.Combat=condition!="idle";
+                var enemy=condition=="missing-subject"?null:new WoWUnit{IsAlive=condition!="dead-subject"};
+                BotPoi.Seed(new BotPoi(enemy,PoiType.Kill));
+                Tick(Build());Check(BotPoi.Current.Type==PoiType.None&&Fallback==0,
+                    "empty idle/dead/missing work no longer clears without same-tick patrol");
+            }));
+        }
+        cases.Add(("live Kill POI resumes after filtered candidate returns",()=>
+        {
+            Reset();Me.Combat=true;var enemy=new WoWUnit{Combat=true};Me.CurrentTarget=enemy;
+            var poi=new BotPoi(enemy,PoiType.Kill);BotPoi.Seed(poi);var tree=Build();
+            Tick(tree);Check(ReferenceEquals(BotPoi.Current,poi)&&Fallback==0,"initial gap discarded combat work");
+            Trace.Clear();Targeting.Instance.TargetList.Add(enemy);Results["combat"]=RunStatus.Success;
+            Tick(tree);Check(ReferenceEquals(BotPoi.Current,poi)&&Trace.Contains("combat")&&Fallback==0,
+                "restored candidate did not resume the retained combat work");
+        }));
+        cases.Add(("ended raw combat releases empty Kill POI",()=>
+        {
+            Reset();Me.Combat=true;var enemy=new WoWUnit{Combat=true};Me.CurrentTarget=enemy;
+            var poi=new BotPoi(enemy,PoiType.Kill);BotPoi.Seed(poi);var tree=Build();
+            Tick(tree);Check(ReferenceEquals(BotPoi.Current,poi),"initial combat work was lost");
+            Me.Combat=false;Tick(tree);Check(BotPoi.Current.Type==PoiType.None,
+                "retained live subject permanently prevented cleanup after combat ended");
+        }));
     }
     private sealed class ReplacementLeaf:Composite
     {
