@@ -1,3 +1,15 @@
+# Current: complete inventory observation continuation — 30 September 2026
+
+Recovery update: the separate condition transaction succeeded through the normal tool at 09:14 UTC. Its preserved implementation is `814a01b47c554fff3e74ae10086a83ddf643e2aa`; documentation candidate `0722b9c4d7e2d958a23c0986e05864f2f6b68a0a` is receiving clean-commit validation. That sibling remains based on PR65 and is not included here. Earlier blocked/unpublished wording below records the previous checkpoint; consult the external receipts for current acceptance and publication.
+
+PR66 is published/ready/validated at009556052d0e156587e2bd0e5916a4efd24bc299. Active independent worktreeD:/Dev/CB-QuestInventoryObservation-20260930, branchaudit/next-quest-inventory-observation-20260930. Read docs/audit/2026-09-30/inventory-observation/REPORT.md, source-contracts.json, focused-test-receipts.json and classification-preservation.json. Resolve its final containing commit and local/hosted/publication receipts from external INVENTORY_* files before claiming acceptance.
+
+The new complete carried-inventory observer preserves unknown counts and exact player/Memory/item/container identities. Original-client trade item slots can be stale after close; require both dialogBFA658 and sessionCA0FE8 partners closed instead. Stock-sensitive delivery/supplemental work rechecks actual counts at publication and execution. Keep source promises separate from carried items and authoritative quest readiness. Final focused cases59snapshot/14admission allpass;300analyzers haveoneexpectedskip. The unchanged4335-ID ledger remains2964generic/2strategy/932data/364source/16live/57scripted with1369remaining; dataset258493/strategy39 outputs remain identical.
+
+PR61 remains deployed master3bc97e1e, PR62–65 are separately validated, and this branch includesPR66. The original condition worktree remains unpublished and preserved at its modifiedPR65 parent; do not reroute its blocked transaction or borrow its1334-ID ledger. Continue remaining condition/data/source families with exact build12340 read-only IDA and pinnedTC335 evidence. Do not finish at this checkpoint or use session_finish while implementation remains.
+
+---
+
 # Current: eligibility metadata continuation after PR65 — 30 September 2026
 
 PR61 remains merged/deployed at master3bc97e1e0b446aede269f7414c0c7c6358fdc192; retain its reviewed head3f5715b6 and verified production manifest. PR62 at3662a8f5, PR63 at763c51e4, PR64 atcda91e35 and PR65 atd36bddce5600bb67418c8180a38fdb8c40346f61 are separately published and validated. Do not recreate or redeploy completed work. Active worktree D:/Dev/CB-QuestEligibility-20260930, branch audit/next-quest-eligibility-20260930, starts at PR65. Resolve the final containing SHA and publication/acceptance from external ELIGIBILITY_* receipts under D:/Dev/CopilotBuddy-Evidence/postmerge-20260930-pr61.
