@@ -41,7 +41,9 @@ class AvailabilityItemSourceTests(unittest.TestCase):
     def test_bank_or_unknown_extra_predicate_cannot_be_dropped(self):
         h,d,t,r=self.fixture();r['ConditionValue3']=1
         self.assertEqual(h.run_export(d,t)[0],[])
-        r['ConditionValue3']=0;t['conditions'].append(dict(r,ConditionTypeOrReference=25,ConditionValue2=0))
+        # Positive spell25 now has a separate verified owner; phase26 remains
+        # unsupported and must still prevent exporting a partial item group.
+        r['ConditionValue3']=0;t['conditions'].append(dict(r,ConditionTypeOrReference=26,ConditionValue2=0))
         self.assertEqual(h.run_export(d,t)[0],[])
 
     def test_missing_item_or_table_remains_source_uncertain(self):

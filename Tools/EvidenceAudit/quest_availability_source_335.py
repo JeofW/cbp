@@ -18,7 +18,7 @@ import re
 from quest_repair_pack_335 import BASE_FIELDS, ADDON_FIELDS, digest, encoded, indexed, load_verified_tables
 
 SOURCE_TYPE = 19
-SUPPORTED_TYPES = {2, 8, 9, 14, 23, 27, 28, 43, 47}
+SUPPORTED_TYPES = {2, 8, 9, 14, 23, 25, 27, 28, 43, 47}
 STATUS_MASK = (1 << 0) | (1 << 1) | (1 << 3) | (1 << 5) | (1 << 6)
 SEASONAL_SORTS = {-22, -284, -366, -369, -370, -374, -376}
 
@@ -71,7 +71,7 @@ def build_contracts(data, tables, source):
         elif (any(field in template and quest.get(field) != template[field] for field in BASE_FIELDS)
               or any(quest.get(field) != addon.get(field, 0) for field in ADDON_FIELDS)):
             problems.append('subject-primary-field-conflict')
-        groups = defaultdict(list); refs = {}; item_refs = {}; keys = set(); evidence = []
+        groups = defaultdict(list); refs = {}; item_refs = {}; spell_refs = {}; keys = set(); evidence = []
         for row in rows:
             evidence.append(dict(reference('conditions', row), row=row))
             fields = ('SourceGroup', 'SourceId', 'ElseGroup', 'ConditionTypeOrReference', 'ConditionTarget',
@@ -86,6 +86,8 @@ def build_contracts(data, tables, source):
                 problems.append('unsupported-condition-type:' + str(kind)); continue
             if kind == 2 and row['ConditionValue3'] != 0:
                 problems.append('bank-inventory-observation-unavailable'); continue
+            if kind == 25 and row['NegativeCondition'] != 0:
+                problems.append('negative-spell-absence-not-proven'); continue
             if (row['NegativeCondition'] not in (0, 1) or value <= 0 or value > 2**31 - 1
                     or row['ConditionValue3'] != 0 or (kind not in (2, 27, 47) and row['ConditionValue2'] != 0)
                     or (kind == 2 and not 0 < row['ConditionValue2'] <= 2**31 - 1)
@@ -97,6 +99,10 @@ def build_contracts(data, tables, source):
                 if item is None or type(item.get('entry')) is not int or item['entry'] != value:
                     problems.append('referenced-item-template-absent-or-invalid:' + str(value)); continue
                 item_refs[value] = {'ItemId': value, 'SourceRef': prefix + ':item_template:' + str(value) + ':' + digest(item)}
+            elif kind == 25:
+                # The exact primary condition is the source of this query ID.
+                # A client list is not an invented complete server spell table.
+                spell_refs[value] = {'SpellId': value, 'SourceRef': prefix + ':conditions:spell=' + str(value)}
             elif kind not in (23, 27):
                 referenced = templates.get(value); referenced_addon = addons.get(value, {})
                 if referenced is None:
@@ -128,6 +134,8 @@ def build_contracts(data, tables, source):
                         (item['Type'], item['Value1'], item['Value2'], item['Negative']))} for group, values in sorted(groups.items())]}
         if item_refs:
             contract['ReferencedItems'] = [item_refs[key] for key in sorted(item_refs)]
+        if spell_refs:
+            contract['ReferencedSpells'] = [spell_refs[key] for key in sorted(spell_refs)]
         if supported:
             contracts.append(contract)
         reviews.append({'quest_id': ident, 'supported': supported, 'remaining': sorted(set(problems)),
@@ -153,7 +161,7 @@ def main():
     expected = {'CONDITION_SOURCE_TYPE_QUEST_AVAILABLE': SOURCE_TYPE, 'CONDITION_QUESTREWARDED': 8,
                 'CONDITION_QUESTTAKEN': 9, 'CONDITION_QUEST_NONE': 14, 'CONDITION_QUEST_COMPLETE': 28,
                 'CONDITION_QUESTSTATE': 47, 'CONDITION_LEVEL': 27, 'CONDITION_AREAID': 23,
-                'CONDITION_DAILY_QUEST_DONE': 43, 'CONDITION_ITEM': 2}
+                'CONDITION_DAILY_QUEST_DONE': 43, 'CONDITION_ITEM': 2, 'CONDITION_SPELL': 25}
     for name, value in expected.items():
         match = re.search(r'\b' + name + r'\s*=\s*(0x[0-9a-fA-F]+|\d+)\s*,', header)
         if not match or int(match[1], 0) != value:

@@ -1,0 +1,79 @@
+{
+  "parent": "f546a4e88b9de2bb842d68289ff01bb2a89c0254",
+  "previous_checks": 259616,
+  "current_checks": 259630,
+  "added_cases": [
+    {
+      "quest_id": 13418,
+      "case": "availability-fixture-constrained-by-source-and-prerequisites",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 13418,
+      "case": "availability-missing-observation-revokes-publication",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 13418,
+      "case": "availability-spell=54197:observed=empty",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 13418,
+      "case": "availability-spell=54197:observed=known",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 13418,
+      "case": "availability-spell=54197:observed=lost",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 13418,
+      "case": "availability-spell=54197:observed=other",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 13418,
+      "case": "availability-spell=54197:observed=unknown",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 13419,
+      "case": "availability-fixture-constrained-by-source-and-prerequisites",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 13419,
+      "case": "availability-missing-observation-revokes-publication",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 13419,
+      "case": "availability-spell=54197:observed=empty",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 13419,
+      "case": "availability-spell=54197:observed=known",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 13419,
+      "case": "availability-spell=54197:observed=lost",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 13419,
+      "case": "availability-spell=54197:observed=other",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 13419,
+      "case": "availability-spell=54197:observed=unknown",
+      "status": "PASS"
+    }
+  ],
+  "removed_cases": [],
+  "reason": "Each of two positive-spell contracts adds five spell observations and two contract/publication cases."
+}

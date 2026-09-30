@@ -91,7 +91,7 @@ def validate_availability_result(contract, simulation):
             or type(receipt.get('fixture_satisfiable')) is not bool):
         raise ValueError('Availability receipt does not match the exact successful contract owner')
     predicates = [predicate for group in contract['Groups'] for predicate in group['Conditions']]
-    references = {predicate['Value1'] for predicate in predicates if predicate['Type'] not in (2, 23, 27, 43)}
+    references = {predicate['Value1'] for predicate in predicates if predicate['Type'] not in (2, 23, 25, 27, 43)}
     expected = {f'availability-reference={ident}:state={state}' for ident in references for state in (0, 1, 3, 5, 6)}
     for predicate in predicates:
         if predicate['Type'] != 2:
@@ -107,6 +107,8 @@ def validate_availability_result(contract, simulation):
         expected.update(f'availability-area={area}:observed={observed}' for observed in ('unknown', str(area), str(other)))
     for daily in {predicate['Value1'] for predicate in predicates if predicate['Type'] == 43}:
         expected.update(f'availability-daily={daily}:observed={observed}' for observed in ('unknown', 'absent', 'present', 'reset'))
+    for spell in {predicate['Value1'] for predicate in predicates if predicate['Type'] == 25}:
+        expected.update(f'availability-spell={spell}:observed={observed}' for observed in ('unknown', 'empty', 'other', 'known', 'lost'))
     expected.update({'availability-missing-observation-revokes-publication',
                      'availability-fixture-constrained-by-source-and-prerequisites'})
     cases = [row for row in simulation.get('cases', []) if row.get('name', '').startswith('availability-')]

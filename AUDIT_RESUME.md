@@ -1,4 +1,20 @@
-# Current: reproduced combined availability candidate — 30 September 2026
+# Current: recovered positive-spell availability candidate
+
+The original supported staging request recovered without splitting or rerouting it. The preserved positive-only self-spell observer and condition25 now reproduce81 complete contracts/146predicates,259630dataset/39strategy checks. All79 earlier contracts and every other repair remain. The exact primary partition is3011generic/2strategy/932data/317source/16live/57scripted=4335,1322remaining. Only13418/13419 gain generic proof;14namedtests added,none removed. Read docs/audit/2026-09-30/availability-spells/REPORT.md and exact fixture/ledger/correlation/source files.
+
+Resolve the final containing commit, local and downloaded hosted Windows/x86 acceptance and publication from external SPELL_* receipts. These working-tree comparisons alone are not final acceptance. Parentf546a4e8 is the reviewed PR75 head, already integrated into validated masterfbc61433 with the same tree. Do not replay earlier PR62–75 integration or PR61 deployment. Continue remaining source/data families, including source-consistent complete predecessor alternatives, while retaining unknown/negative spell, bank, source conflicts and explicit scripted/live obligations.
+
+---
+
+# Current: positive spell implementation preserved under provider hold — 30 September 2026
+
+Read `SPELL_PUBLICATION_HOLD.md` and external `SPELL_STAGING_PROVIDER_BLOCK.json`. The new positive-only self-spell observer, type25 contract and exact spell receipt validation pass36+23 runtime cases and368 analyzers(oneexpectedskip), but the original knowledge-staging/reproduction request was blocked twice and stopped. The81-contract external export is not installed; the current79-contract knowledge and parent ledger must not be relabelled as a new dataset result. This worktree remains uncommitted atf546a4e8. Preserve its source/tests and readback before any supported recovery; do not split or reroute the blocked operation.
+
+PR75 is now merged and master isfbc614334b3f1888e607fb8846b9f722e54b845c with the exact reviewed tree. Continue independent offline primary-source/data investigations from that master, preserving this separate feature and the PR61 production deployment. The checkpoint below records the completed PR75 work.
+
+---
+
+# Preserved: reproduced combined availability candidate — 30 September 2026
 
 The pending local merge now reproduces all79 contracts/144 predicates,259616 dataset checks and39 strategy checks. Exact primary counts3009/2/932/319/16/57=4335 leave1324 remaining IDs. Six source gaps close;62 named cases were added and none removed. Read docs/audit/2026-09-30/availability-combined/REPORT.md, its exact fixture/ledger/source/remaining files and external AVAILABILITY_COMBINATION_* receipts. Resolve final containing Git SHA, complete local/hosted acceptance and publication from actual receipts before claiming delivery. All prior runtime/knowledge protections and PR61 production remain preserved. Continue the remaining availability/data/source audit after this small scope.
 

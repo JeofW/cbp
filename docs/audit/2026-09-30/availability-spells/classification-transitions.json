@@ -1,0 +1,20 @@
+[
+  {
+    "quest_id": 13418,
+    "before": "SOURCE-UNCERTAIN",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "absent-eligibility-metadata",
+      "source-positive-spell-availability"
+    ]
+  },
+  {
+    "quest_id": 13419,
+    "before": "SOURCE-UNCERTAIN",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "absent-eligibility-metadata",
+      "source-positive-spell-availability"
+    ]
+  }
+]
