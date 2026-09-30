@@ -1,0 +1,103 @@
+{
+  "eligibility-exporter-red": {
+    "command": [
+      "python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "Tools/EvidenceAudit",
+      "-p",
+      "test_quest_eligibility_metadata_335.py",
+      "-v"
+    ],
+    "exit": 1,
+    "started_utc": "2026-09-30T06:28:25.293875+00:00",
+    "finished_utc": "2026-09-30T06:28:25.470598+00:00",
+    "head": "d36bddce5600bb67418c8180a38fdb8c40346f61",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr.log": "061151311eb2097e01757550f77734bf6d37a1adc1c6d7ba448da92d5badfcd4"
+    }
+  },
+  "eligibility-exporter-red-v2": {
+    "command": [
+      "python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "Tools/EvidenceAudit",
+      "-p",
+      "test_quest_eligibility_metadata_335.py",
+      "-v"
+    ],
+    "exit": 1,
+    "started_utc": "2026-09-30T06:29:05.287280+00:00",
+    "finished_utc": "2026-09-30T06:29:05.429132+00:00",
+    "head": "d36bddce5600bb67418c8180a38fdb8c40346f61",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr.log": "cc890d890fa9392883eafede1b552e9172bd538c763cb6812c08fb35b042a81e"
+    }
+  },
+  "eligibility-exporter-green": {
+    "command": [
+      "python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "Tools/EvidenceAudit",
+      "-p",
+      "test_*.py",
+      "-v"
+    ],
+    "exit": 0,
+    "started_utc": "2026-09-30T06:29:44.452276+00:00",
+    "finished_utc": "2026-09-30T06:29:49.925042+00:00",
+    "head": "d36bddce5600bb67418c8180a38fdb8c40346f61",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr.log": "03cd1e01956ca51af87681b8ed484b07036c6b7c79491792bf3c23f8f30a97be"
+    }
+  },
+  "reputation-runtime-red": {
+    "command": [
+      "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+      "Tools/PostMergeAuditRegressionTests/bin/x86/Release/net10.0-windows7.0/PostMergeAuditRegressionTests.dll",
+      "QuestReputationKnowledgeRegressionTests"
+    ],
+    "exit": 1,
+    "started_utc": "2026-09-30T06:28:41.208370+00:00",
+    "finished_utc": "2026-09-30T06:28:42.132138+00:00",
+    "head": "d36bddce5600bb67418c8180a38fdb8c40346f61",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "a3280de6dc9ef263f0befcf7168ba17bc5126fd3c016de615bb72b2d9bc9c300",
+      "stderr.log": "a8654617037c8e2236c007ef9347dabc5fbb0633ceba3f2fe2e7d12c3bb5805e"
+    }
+  },
+  "reputation-runtime-green": {
+    "command": [
+      "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+      "Tools/PostMergeAuditRegressionTests/bin/x86/Release/net10.0-windows7.0/PostMergeAuditRegressionTests.dll",
+      "QuestReputationKnowledgeRegressionTests",
+      "QuestKnowledgeBundleRegressionTests",
+      "QuestDataRepairPackRegressionTests",
+      "QuestExternalDependencyRegressionTests"
+    ],
+    "exit": 0,
+    "started_utc": "2026-09-30T06:33:21.014637+00:00",
+    "finished_utc": "2026-09-30T06:33:23.136899+00:00",
+    "head": "d36bddce5600bb67418c8180a38fdb8c40346f61",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "4ce8e0088a3f44886e3d53a896c6999ef20733e0045a2e8669c26c9fa505ba0e",
+      "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}
