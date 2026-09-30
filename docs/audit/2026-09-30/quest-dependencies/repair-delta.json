@@ -1,0 +1,119 @@
+{
+  "base_master": "3bc97e1e0b446aede269f7414c0c7c6358fdc192",
+  "previous_repair_sha256": "d3693d83616526576408c92dfed2c4fceb94291e9a686c9c86043e94ae17a534",
+  "repair_sha256": "b5e5fecc374eae028eaab322b3209a29bf640e3758f89571894214872b0165e2",
+  "existing_records_preserved": 358,
+  "added_records": [
+    {
+      "ExclusiveGroup": -1222,
+      "GroupMembers": [
+        1222,
+        1258
+      ],
+      "QuestId": 1222,
+      "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:1222"
+    },
+    {
+      "ExclusiveGroup": -1222,
+      "GroupMembers": [
+        1222,
+        1258
+      ],
+      "QuestId": 1258,
+      "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:1258"
+    },
+    {
+      "ExclusiveGroup": -3129,
+      "GroupMembers": [
+        3127,
+        3128
+      ],
+      "QuestId": 3127,
+      "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:3127"
+    },
+    {
+      "ExclusiveGroup": -3129,
+      "GroupMembers": [
+        3127,
+        3128
+      ],
+      "QuestId": 3128,
+      "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:3128"
+    },
+    {
+      "ExclusiveGroup": 0,
+      "GroupMembers": [],
+      "QuestId": 3380,
+      "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:3380"
+    },
+    {
+      "ExclusiveGroup": -11494,
+      "GroupMembers": [
+        11494,
+        11495
+      ],
+      "QuestId": 11494,
+      "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:11494"
+    },
+    {
+      "ExclusiveGroup": -11494,
+      "GroupMembers": [
+        11494,
+        11495
+      ],
+      "QuestId": 11495,
+      "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:11495"
+    },
+    {
+      "ExclusiveGroup": -12281,
+      "GroupMembers": [
+        12281,
+        12321
+      ],
+      "QuestId": 12281,
+      "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:12281"
+    },
+    {
+      "ExclusiveGroup": -12281,
+      "GroupMembers": [
+        12281,
+        12321
+      ],
+      "QuestId": 12321,
+      "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:12321"
+    },
+    {
+      "ExclusiveGroup": -12576,
+      "GroupMembers": [
+        12575,
+        12576
+      ],
+      "QuestId": 12575,
+      "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:12575"
+    },
+    {
+      "ExclusiveGroup": -12576,
+      "GroupMembers": [
+        12575,
+        12576
+      ],
+      "QuestId": 12576,
+      "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:12576"
+    }
+  ],
+  "total_dependency_records": 369,
+  "all_other_repair_families_identical": true,
+  "base_dataset_unchanged": true,
+  "strategy_recipes_sha256": "fef7c8fe1e07daa695bcd2e8d9a9a36cc582435ded3a30b7511d094b12efb6e0",
+  "strategy_recipes_unchanged": true,
+  "target_quest_ids": [
+    1271,
+    3129,
+    3444,
+    11501,
+    12325,
+    12577
+  ],
+  "metadata_not_schedulable_quests": true,
+  "live_completion_proven": false
+}

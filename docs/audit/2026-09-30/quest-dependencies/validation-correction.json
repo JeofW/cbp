@@ -1,0 +1,36 @@
+{
+  "initial_candidate": "31d1079514ad5879fcdfb46b8fbb4cd3f1d18e13",
+  "failed_run": 36659789834,
+  "failed_job": 109711778464,
+  "failure_count": 2,
+  "affected_suite": "Analyzers",
+  "failures": [
+    "test_legacy_knowledge_retains_its_existing_fixture",
+    "test_new_fixture_directory_is_selected_from_the_actual_knowledge_manifest"
+  ],
+  "root_cause": "Expected temporary paths retained Windows 8.3 aliases while the actual contract returns resolved paths.",
+  "correction": "Compare exact resolved expected paths; containment and traversal assertions are unchanged.",
+  "raw_failed_analyzer_sha256": "e401f1e542284e043f0605aab567a651edc5929b2572dcbce901198fbfde27d8",
+  "generator_reproduction": {
+    "identical_ledger_and_indexes": true,
+    "generator_sha256": "402147bd0728172eafc44549dec5b88fb881e488c00dc420b182dc68a08e9421",
+    "previous_generator_sha256": "4e42f8244fd3ef647906e4ecfb0466c460ff4a107067875fde8fe69d3ec62390",
+    "summary_change_only_generator_identity": true,
+    "files": {
+      "classification-ids.json": "89bd1d46c68cf41bee8bf88c9000aea452008440273fb71904800f9a142e8572",
+      "classification-transitions.json": "d7c9b05ef5c82ef993dc6b918215e7fbf09cfa84366b58a02aefd7cb03df6616",
+      "coverage.json": "32978b0cb0c80e44a68f26ca9abf984e78dcdf30120036b014ccd499a9cfb9c3",
+      "primary-table-receipts.json": "ce48962543c5925e1202d4b3c66ac1948b666ff62fc40b8a2fde257e8a183fdf",
+      "quest-ledger.jsonl.gz": "7409a7060ad734411e4d4f86b49fa7752e3a8c7bf047bdd077bde2b163e9b5e0",
+      "remaining-category-ids.json": "bac2d87420e91e2a990493205e2e07ae6ff68d84c586def8394aa682d5e7eb4b",
+      "summary.json": "028e83f6dc0d9efd65ec09e5fb04da3388764b3f506b595a3657a440a0ab8665"
+    }
+  },
+  "runtime_changes": false,
+  "knowledge_changes": false,
+  "classification_changes": false,
+  "actual_hosted_workflows": 3,
+  "hosted_integrated_suites": 17,
+  "owner_job_path_filter_matches": false,
+  "owner_suite_retained_in_integrated": true
+}

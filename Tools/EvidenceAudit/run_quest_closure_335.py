@@ -10,7 +10,7 @@ from datetime import datetime, timezone
 import gzip
 import json
 import os
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 import subprocess
 import time
 
@@ -30,6 +30,17 @@ def read_rows(path: Path):
     return [json.loads(line) for line in raw.decode('utf-8-sig').splitlines() if line.strip()]
 
 
+def closure_evidence_directory(repo: Path, knowledge_manifest: dict) -> Path:
+    value = knowledge_manifest.get('closure_evidence_directory', EVIDENCE.as_posix())
+    if (not isinstance(value, str) or not value.startswith('docs/audit/') or '\\' in value
+            or ':' in value or '..' in PurePosixPath(value).parts):
+        raise ValueError('The closure evidence directory must be a retained repository audit path')
+    candidate = (repo / value).resolve()
+    if not candidate.is_relative_to(repo.resolve() / 'docs/audit'):
+        raise ValueError('The closure evidence directory resolves outside the repository audit root')
+    return candidate
+
+
 def run(args) -> None:
     repo = args.repo.resolve()
     if os.name != 'nt':
@@ -40,12 +51,13 @@ def run(args) -> None:
     before = source_inputs(repo)
     write_json(output / 'source-identity.json', identity)
     write_json(output / 'source-before.json', before)
-    fixture = read_json(repo / EVIDENCE / 'closure-fixture-manifest.json')
     knowledge = repo / KNOWLEDGE
+    evidence = closure_evidence_directory(repo, read_json(knowledge / 'quest_knowledge_manifest.json'))
+    fixture = read_json(evidence / 'closure-fixture-manifest.json')
     for name, expected in fixture['knowledge_sha256'].items():
         if Path(name).name != name or file_sha256(knowledge / name) != expected:
             raise ValueError('Shipped knowledge differs from the reviewed fixture: ' + name)
-    observations = gzip.decompress((repo / EVIDENCE / 'simulation-observations.jsonl.gz').read_bytes())
+    observations = gzip.decompress((evidence / 'simulation-observations.jsonl.gz').read_bytes())
     (output / 'observations.jsonl').write_bytes(observations)
     if file_sha256(output / 'observations.jsonl') != fixture['observations_sha256']:
         raise ValueError('Controlled observation fixture hash differs')
@@ -83,7 +95,7 @@ def run(args) -> None:
         command('dataset', [str(args.runtime.resolve()), str(assemblies[0]), 'QuestDatasetSimulationRegressionTests'])
         command('strategies', [str(args.runtime.resolve()), str(assemblies[0]), 'QuestVettedStrategyPipelineRegressionTests'])
         data = read_json(knowledge / 'quest_data.json')
-        ledger = read_rows(repo / EVIDENCE / 'quest-ledger.jsonl.gz')
+        ledger = read_rows(evidence / 'quest-ledger.jsonl.gz')
         rows = read_rows(output / 'quest-simulation.jsonl')
         _, _, simulations = validate_closure_inputs(ledger, data['Quests'], rows)
         if any(row.get('failed_cases', 1) != 0 or row.get('passed_cases', 0) <= 0 for row in rows):

@@ -1,0 +1,442 @@
+{
+  "base_master": "3bc97e1e0b446aede269f7414c0c7c6358fdc192",
+  "new_proven_quests": [
+    1271,
+    3129,
+    3444,
+    11501,
+    12325,
+    12577
+  ],
+  "reopened_quests": [
+    1106,
+    9837,
+    11123,
+    11313,
+    11613,
+    11978,
+    12188,
+    12224,
+    12225,
+    12328
+  ],
+  "classification_counts": {
+    "GENERIC-PROVEN": 3000,
+    "STRATEGY-PROVEN": 2,
+    "DATA-INVALID/INCOMPLETE": 945,
+    "UNSUPPORTED-SCRIPTED": 58,
+    "SOURCE-UNCERTAIN": 314,
+    "LIVE-ACCEPTANCE-REQUIRED": 16
+  },
+  "remaining_ids": 1333,
+  "source_dependency_disagreement_ids": [
+    1,
+    5,
+    11,
+    46,
+    148,
+    297,
+    427,
+    443,
+    466,
+    501,
+    509,
+    639,
+    680,
+    919,
+    930,
+    931,
+    1011,
+    1079,
+    1080,
+    1106,
+    1127,
+    1276,
+    1420,
+    2038,
+    2873,
+    3761,
+    3787,
+    3788,
+    3903,
+    5041,
+    5149,
+    5211,
+    6135,
+    6136,
+    6144,
+    6341,
+    7816,
+    8465,
+    8490,
+    8520,
+    8748,
+    9143,
+    9280,
+    9549,
+    9558,
+    9704,
+    9751,
+    9837,
+    9899,
+    9927,
+    9928,
+    9931,
+    9932,
+    9934,
+    9968,
+    10050,
+    10141,
+    10160,
+    10189,
+    10243,
+    10554,
+    10571,
+    10641,
+    10668,
+    10669,
+    10816,
+    10935,
+    11030,
+    11038,
+    11039,
+    11123,
+    11149,
+    11159,
+    11203,
+    11204,
+    11286,
+    11292,
+    11298,
+    11311,
+    11313,
+    11316,
+    11319,
+    11526,
+    11613,
+    11696,
+    11978,
+    11984,
+    11999,
+    12034,
+    12039,
+    12044,
+    12056,
+    12096,
+    12100,
+    12174,
+    12188,
+    12224,
+    12225,
+    12255,
+    12328,
+    12434,
+    12446,
+    12487,
+    12545,
+    12622,
+    12662,
+    12664,
+    12683,
+    12805,
+    12823,
+    12904,
+    13005,
+    13035,
+    13140,
+    13152,
+    13211,
+    13230,
+    13359,
+    13398,
+    13664,
+    13697,
+    13714,
+    13715,
+    13716,
+    13717,
+    13718,
+    13719,
+    13720,
+    13721,
+    13722
+  ],
+  "source_dependency_disagreements": 130,
+  "remaining_secondary_family_counts": {
+    "data:objective-geometry-missing": 555,
+    "data:delivery-acquisition-route-missing": 153,
+    "data:auxiliary-or-mismatched-item-objective": 133,
+    "source:dependent-previous-membership-mismatch": 130,
+    "data:primary-item-requirement-unrepresented": 127,
+    "source:server-condition-not-modeled": 125,
+    "data:giver-relation-unrepresented": 105,
+    "data:ender-relation-unrepresented": 103,
+    "script:cast-credit-no-strategy": 97,
+    "source:primary-field-conflict:PrevQuestID": 95,
+    "data:giver-geometry-missing": 58,
+    "source:primary-field-conflict:ExclusiveGroup": 52,
+    "source:primary-field-conflict:AllowableRaces": 49,
+    "source:primary-field-conflict:NextQuestID": 47,
+    "source:primary-field-conflict:SpecialFlags": 46,
+    "data:ender-geometry-missing": 43,
+    "source:primary-field-conflict:ExclusiveGroup,NextQuestID": 36,
+    "source:unrepresented-eligibility:RequiredMinRepFaction": 30,
+    "source:unrepresented-eligibility:RequiredMinRepValue": 27,
+    "live:timed-route-deadline-acceptance": 16,
+    "source:external-predecessor-contract-missing": 13,
+    "source:primary-field-conflict:ExclusiveGroup,PrevQuestID": 10,
+    "source:primary-field-conflict:AllowableRaces,NextQuestID": 10,
+    "live:required-money-observation-and-reward-acceptance": 8,
+    "source:primary-field-conflict:AllowableRaces,PrevQuestID": 4,
+    "script:player-kill-objective-owner-unrepresented": 3,
+    "source:primary-field-conflict:NextQuestID,PrevQuestID": 3,
+    "source:primary-field-conflict:ExclusiveGroup,NextQuestID,PrevQuestID": 3,
+    "source:primary-field-conflict:AllowableRaces,ExclusiveGroup": 2,
+    "source:primary-field-conflict:Flags,PrevQuestID,SpecialFlags": 1,
+    "source:primary-field-conflict:PrevQuestID,SpecialFlags": 1,
+    "source:primary-field-conflict:Flags": 1,
+    "source:primary-field-conflict:AllowableRaces,ExclusiveGroup,PrevQuestID": 1,
+    "live:recorded-pipeline-remains-blocked": 1,
+    "data:primary-normal-requirement-unrepresented": 1,
+    "data:normal-objective-identity-or-count-unrepresented": 1,
+    "source:unrepresented-eligibility:RequiredSkillPoints": 1,
+    "source:unrepresented-eligibility:RequiredSkillID": 1,
+    "script:exploration-or-event-no-strategy": 1
+  },
+  "new_proven_receipts": [
+    {
+      "quest_id": 1271,
+      "pipeline_status": "PASS",
+      "failed_cases": 0,
+      "remaining_obligations": [],
+      "source_membership": {
+        "edges": [
+          {
+            "child": 1271,
+            "kind": "incoming-next",
+            "parent": 1222,
+            "source_line": 4451,
+            "table_row": 1222
+          },
+          {
+            "child": 1271,
+            "kind": "incoming-next",
+            "parent": 1258,
+            "source_line": 4451,
+            "table_row": 1258
+          }
+        ],
+        "matches": true,
+        "missing_primary_dependencies": [],
+        "ordering_proven": false,
+        "primary_dependent_ids": [
+          1222,
+          1258
+        ],
+        "quest_id": 1271,
+        "recorded_previous_ids": [
+          1222,
+          1258
+        ],
+        "runtime_relations_changed": false,
+        "unconfirmed_model_dependencies": []
+      }
+    },
+    {
+      "quest_id": 3129,
+      "pipeline_status": "PASS",
+      "failed_cases": 0,
+      "remaining_obligations": [],
+      "source_membership": {
+        "edges": [
+          {
+            "child": 3129,
+            "kind": "incoming-next",
+            "parent": 3127,
+            "source_line": 4451,
+            "table_row": 3127
+          },
+          {
+            "child": 3129,
+            "kind": "incoming-next",
+            "parent": 3128,
+            "source_line": 4451,
+            "table_row": 3128
+          }
+        ],
+        "matches": true,
+        "missing_primary_dependencies": [],
+        "ordering_proven": false,
+        "primary_dependent_ids": [
+          3127,
+          3128
+        ],
+        "quest_id": 3129,
+        "recorded_previous_ids": [
+          3127,
+          3128
+        ],
+        "runtime_relations_changed": false,
+        "unconfirmed_model_dependencies": []
+      }
+    },
+    {
+      "quest_id": 3444,
+      "pipeline_status": "PASS",
+      "failed_cases": 0,
+      "remaining_obligations": [],
+      "source_membership": {
+        "edges": [
+          {
+            "child": 3444,
+            "kind": "incoming-next",
+            "parent": 3380,
+            "source_line": 4451,
+            "table_row": 3380
+          },
+          {
+            "child": 3444,
+            "kind": "incoming-next",
+            "parent": 3445,
+            "source_line": 4451,
+            "table_row": 3445
+          }
+        ],
+        "matches": true,
+        "missing_primary_dependencies": [],
+        "ordering_proven": false,
+        "primary_dependent_ids": [
+          3380,
+          3445
+        ],
+        "quest_id": 3444,
+        "recorded_previous_ids": [
+          3380,
+          3445
+        ],
+        "runtime_relations_changed": false,
+        "unconfirmed_model_dependencies": []
+      }
+    },
+    {
+      "quest_id": 11501,
+      "pipeline_status": "PASS",
+      "failed_cases": 0,
+      "remaining_obligations": [],
+      "source_membership": {
+        "edges": [
+          {
+            "child": 11501,
+            "kind": "incoming-next",
+            "parent": 11494,
+            "source_line": 4451,
+            "table_row": 11494
+          },
+          {
+            "child": 11501,
+            "kind": "incoming-next",
+            "parent": 11495,
+            "source_line": 4451,
+            "table_row": 11495
+          }
+        ],
+        "matches": true,
+        "missing_primary_dependencies": [],
+        "ordering_proven": false,
+        "primary_dependent_ids": [
+          11494,
+          11495
+        ],
+        "quest_id": 11501,
+        "recorded_previous_ids": [
+          11494,
+          11495
+        ],
+        "runtime_relations_changed": false,
+        "unconfirmed_model_dependencies": []
+      }
+    },
+    {
+      "quest_id": 12325,
+      "pipeline_status": "PASS",
+      "failed_cases": 0,
+      "remaining_obligations": [],
+      "source_membership": {
+        "edges": [
+          {
+            "child": 12325,
+            "kind": "incoming-next",
+            "parent": 12281,
+            "source_line": 4451,
+            "table_row": 12281
+          },
+          {
+            "child": 12325,
+            "kind": "incoming-next",
+            "parent": 12321,
+            "source_line": 4451,
+            "table_row": 12321
+          }
+        ],
+        "matches": true,
+        "missing_primary_dependencies": [],
+        "ordering_proven": false,
+        "primary_dependent_ids": [
+          12281,
+          12321
+        ],
+        "quest_id": 12325,
+        "recorded_previous_ids": [
+          12281,
+          12321
+        ],
+        "runtime_relations_changed": false,
+        "unconfirmed_model_dependencies": []
+      }
+    },
+    {
+      "quest_id": 12577,
+      "pipeline_status": "PASS",
+      "failed_cases": 0,
+      "remaining_obligations": [],
+      "source_membership": {
+        "edges": [
+          {
+            "child": 12577,
+            "kind": "incoming-next",
+            "parent": 12575,
+            "source_line": 4451,
+            "table_row": 12575
+          },
+          {
+            "child": 12577,
+            "kind": "incoming-next",
+            "parent": 12576,
+            "source_line": 4451,
+            "table_row": 12576
+          }
+        ],
+        "matches": true,
+        "missing_primary_dependencies": [],
+        "ordering_proven": false,
+        "primary_dependent_ids": [
+          12575,
+          12576
+        ],
+        "quest_id": 12577,
+        "recorded_previous_ids": [
+          12575,
+          12576
+        ],
+        "runtime_relations_changed": false,
+        "unconfirmed_model_dependencies": []
+      }
+    }
+  ],
+  "simulation_checks": 258269,
+  "strategy_checks": 39,
+  "repair_records_before": 358,
+  "repair_records_after": 369,
+  "all_other_repair_families_unchanged": true,
+  "live_completion_proven": false
+}

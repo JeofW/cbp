@@ -1,4 +1,14 @@
-# Current: PR61 primary closure recovery — 30 September 2026
+# Current: smaller prerequisite continuation after deployed PR61 — 30 September 2026
+
+PR61 is merged and deployed: reviewed head `3f5715b6cc292b2086946a80471c4145471cbdd7`, master `3bc97e1e0b446aede269f7414c0c7c6358fdc192`. Canonical master is `D:/Dev/CB-Master-20260930`. All 429 deployed payload files and 2,004 preserved local files were verified; all 13 actual production components compiled. Read the completed deployment/production receipts in `docs/audit/2026-09-30/quest-dependencies` and the raw external results under `D:/Dev/CopilotBuddy-Evidence/postmerge-20260930-pr61`. Do not repeat that merge or deployment.
+
+Active worktree `D:/Dev/CB-QuestDependencies-20260930`, branch `audit/next-quest-dependencies-20260930`, starts at the deployed master. Read `docs/audit/2026-09-30/quest-dependencies/REPORT.md`, `dependency-closure-review.json`, `repair-delta.json`, current fixture and exact remaining-ID files. The protected-baseline dependency omission is repaired with 11 metadata-only records; all original 358 records and every other repair family are unchanged. Six source-confirmed quests become generic-proven; a complete predecessor-membership check reopens ten formerly proven rows and records all 130 source disagreements.
+
+Current categories are 3000 generic, 2 strategy, 945 data, 314 source, 16 live and 58 scripted, totaling exactly 4335 with 1333 remaining IDs. These are continuation counts; deployed PR61 retains its documented 3004/2/945/310/16/58 milestone. Actual diagnostic owners completed 258269 dataset and 39 strategy checks, and 237 analyzer tests completed with one expected skip. Exact final clean-commit local/hosted acceptance and PR publication must be read from their external receipts, not inferred from this pointer. Keep this continuation in its smaller PR and leave production at the verified PR61 master until a later explicit gated release.
+
+---
+
+# Retained: PR61 primary closure recovery — 30 September 2026
 
 Read `docs/audit/2026-09-29/wholesome-primary-closure/REPORT.md`, `closure-fixture-manifest.json`, `coverage.json` and `reconciliation.json` first. The containing commit is the candidate identity; resolve it from Git and require fresh exact-commit acceptance. Initial recovery found local `450aea3a00bdf060af8670bd460aabc9e7043e09`, remote PR61 `12a6fb40c9adc932ea1c65dd4098355833d3fb90`, unpublished source/knowledge files, a wrong full-SHA checkpoint guard and a nonexistent hard-coded 925ba02d release identity. Do not replay the old checkpoint or release scripts as-is.
 

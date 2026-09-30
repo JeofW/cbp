@@ -1,4 +1,14 @@
-# Current PR61 closure and smaller-PR continuation — 30 September 2026
+# Current smaller prerequisite audit continuation — 30 September 2026
+
+PR61 is already merged and selectively deployed. Reviewed head is `3f5715b6cc292b2086946a80471c4145471cbdd7`; deployed master is `3bc97e1e0b446aede269f7414c0c7c6358fdc192`. Verified production has 429 matching payload files, 2,004 unchanged protected files and 13 successfully compiled actual runtime components. Read completed receipts in `docs/audit/2026-09-30/quest-dependencies` and external `D:/Dev/CopilotBuddy-Evidence/postmerge-20260930-pr61`; never replay completed merge/deployment actions.
+
+Continue from `D:/Dev/CB-QuestDependencies-20260930` on `audit/next-quest-dependencies-20260930`, not PR61. Read the new REPORT, repair-delta, dependency-closure-review, current fixture, exact classification/remaining IDs and all source correlations. Current coverage is 3000 GENERIC, 2 STRATEGY, 945 DATA, 314 SOURCE, 16 LIVE and 58 SCRIPTED: exactly 4335 quests, 1333 remaining. This includes six newly proven quests after eleven metadata-only dependency additions and ten formerly proven quests reopened by the full primary predecessor graph; all 130 source disagreements are explicit. Preserve the original 358 records, all other repair families, exact dataset/repair/strategy binding and only vetted strategies 9066/9447. Do not revert to the older 1329 remaining IDs or interpret the reopening as duplicate accounting.
+
+The current implementation and comparison fixtures reproduce 258269 actual dataset checks and 39 strategy checks; 237 analyzer tests ran with one expected skip. Read actual external final-candidate/hosted/publication receipts to resolve the current SHA and smaller PR number before acting. Continue remaining offline source/model/acquisition/geometry/scripted work in coherent smaller PRs with failing-before regressions; keep genuine realm/IDA evidence dependencies explicit. Do not overwrite customized base relations simply because a reference differs, synthesize production observations, or claim live completion from controlled simulations. Leave the verified deployed PR61 master unchanged until a later gated release is authorized.
+
+---
+
+# Retained PR61 closure and smaller-PR continuation — 30 September 2026
 
 Recover the actual Git/PR61 and external `D:/Dev/CopilotBuddy-Evidence/postmerge-20260930-pr61` receipts before acting. Read `docs/audit/2026-09-29/wholesome-primary-closure/REPORT.md`, `closure-fixture-manifest.json`, `coverage.json` and the exact classification/remaining/correlation files. Do not assume 925ba02d exists: the checkpoint guard used the wrong full 450aea3a parent and the old package wrapper hard-coded an unresolvable commit. The correct retained/reproduced six-category counts are 3004/2/945/310/16/58 in generic/strategy/data/source/live/script order, totaling 4335, with 1329 remaining IDs and separate secondary obligations. No duplicate top-level rows existed in v3.
 

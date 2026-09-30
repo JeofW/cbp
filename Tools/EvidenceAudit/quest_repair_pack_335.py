@@ -13,6 +13,7 @@ import hashlib
 import json
 import math
 from pathlib import Path
+from quest_dependency_source_335 import primary_dependency_index, dependency_membership
 
 REQUIRED_TABLES = {
     'quest_template', 'quest_template_addon', 'creature', 'gameobject',
@@ -153,6 +154,19 @@ def build_repairs(data: dict, primary: dict, protected_ids: set[int], source: di
     for row in primary['quest_template_addon']:
         if row.get('ExclusiveGroup', 0) < 0:
             negative_groups[row['ExclusiveGroup']].add(row['ID'])
+    primary_dependencies, dependency_edges = primary_dependency_index(templates, addons)
+
+    def request_dependency_metadata(quest, record):
+        external = {p for p in quest.get('PreviousQuestsIds', []) if p > 0 and p not in base}
+        requested_dependencies.update(external)
+        for member in external:
+            if member not in templates:
+                record['remaining'].append('external-predecessor-absent-from-primary:' + str(member))
+        group = quest.get('ExclusiveGroup', 0)
+        if group > 0:
+            requested_dependencies.update(r['ID'] for r in primary['quest_template_addon']
+                                          if r.get('ExclusiveGroup') == group and r['ID'] not in base)
+
     for quest in sorted(data['Quests'], key=lambda q: q['Id']):
         ident = quest['Id']
         record = {'quest_id': ident, 'protected_baseline': ident in protected_ids, 'changes': [], 'remaining': [], 'evidence': []}
@@ -166,8 +180,6 @@ def build_repairs(data: dict, primary: dict, protected_ids: set[int], source: di
         record['evidence'].append(evidence('quest_template_addon', addon, 'ID') if addon else {
             'source_ref': source_ref('quest_template_addon', ident), 'absent': True,
             'default_contract': f"TrinityCore/{source['CoreRevision']}/src/server/game/Quests/QuestDef.h:zero-initialized-addon-fields"})
-        if ident in protected_ids:
-            continue
         conflicts = {field: {'base': quest.get(field), 'primary': template[field]}
                      for field in BASE_FIELDS if field in template and quest.get(field) != template[field]}
         conflicts.update({field: {'base': quest.get(field), 'primary': addon.get(field, 0)}
@@ -175,6 +187,17 @@ def build_repairs(data: dict, primary: dict, protected_ids: set[int], source: di
         if conflicts:
             record['remaining'].append('primary-field-conflict')
             record['conflicts'] = conflicts
+            continue
+        if ident in protected_ids:
+            membership = dependency_membership(quest, primary_dependencies, dependency_edges)
+            record['dependency_source_membership'] = membership
+            if membership['matches']:
+                # External group facts neither modify a protected quest nor
+                # create executable work. Existing runtime history gates still
+                # require authoritative rewarded/active observations.
+                request_dependency_metadata(quest, record)
+            else:
+                record['remaining'].append('dependent-previous-membership-mismatch')
             continue
         normal = [(template[f'RequiredNpcOrGo{i}'], template[f'RequiredNpcOrGoCount{i}'])
                   for i in range(1, 5) if template[f'RequiredNpcOrGo{i}']]
@@ -270,14 +293,7 @@ def build_repairs(data: dict, primary: dict, protected_ids: set[int], source: di
                         add_geometry(kind, relation[entry_key], record)
                     elif not data.get(kind + 'Spawns', {}).get(str(relation[entry_key])):
                         record['remaining'].append('primary-' + role.lower() + '-relation-unconfirmed:' + str(relation[entry_key]))
-        external = {p for p in quest.get('PreviousQuestsIds', []) if p > 0 and p not in base}
-        requested_dependencies.update(external)
-        for member in external:
-            if member not in templates:
-                record['remaining'].append('external-predecessor-absent-from-primary:' + str(member))
-        group = quest.get('ExclusiveGroup', 0)
-        if group > 0:
-            requested_dependencies.update(r['ID'] for r in primary['quest_template_addon'] if r.get('ExclusiveGroup') == group and r['ID'] not in base)
+        request_dependency_metadata(quest, record)
 
     for ident in sorted(requested_dependencies):
         if ident not in templates:
