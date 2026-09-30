@@ -32,6 +32,8 @@ namespace WholesomeAQ
 
         private static string StockRejection(QuestEntry quest, IReadOnlyDictionary<int, long> carried, bool beforeAcceptance)
         {
+            string requiredStock = QuestRequiredStockPolicy.Rejection(quest, carried);
+            if (requiredStock != null) return requiredStock;
             var supplemental = quest?.SupplementalSupply;
             if (supplemental != null)
             {

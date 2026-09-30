@@ -1,0 +1,216 @@
+[
+  {
+    "quest_id": 565,
+    "classification": "DATA-INVALID/INCOMPLETE",
+    "required_stock": {
+      "acquisition_limit": "Must already be carried; no acquisition action is exported.",
+      "acquisition_proven": false,
+      "contract_sha256": null,
+      "emitted": false,
+      "existing_matching_contract": true,
+      "item_row_sha256": {
+        "2321": "6dea54ae72029e867461f020ebab3ba088514c60b583bd854047c6dc60bdd35a",
+        "2997": "8783250463871b8c21a0fee1688d71d6bf7a84059ebec1c7f932c6356fef922a",
+        "3719": "85126419f5a29bdbcd85f3a09892c54da4a5b9fef0f6c454aa96c4f9e80fe1c6",
+        "3720": "6bb0d79748f9e4cdb74b47e0b05036d48582d2f446f1163a3ccb4e659c526d86"
+      },
+      "live_completion_proven": false,
+      "primary_addon_row_sha256": null,
+      "primary_quest_row_sha256": "391c6217a3655a223c97e48cbdafd905e7b64e4dbb9ed2f42f2c08c40652e2d4",
+      "primary_required_items": {
+        "2321": 1,
+        "2997": 1,
+        "3719": 1,
+        "3720": 10
+      },
+      "quest_id": 565,
+      "remaining": [],
+      "represented_items": {
+        "3720": 10
+      },
+      "required_stock_items": [
+        {
+          "Count": 1,
+          "ItemId": 2321
+        },
+        {
+          "Count": 1,
+          "ItemId": 2997
+        },
+        {
+          "Count": 1,
+          "ItemId": 3719
+        }
+      ]
+    },
+    "remaining_obligations": [
+      "data:required-stock-acquisition-route-missing"
+    ]
+  },
+  {
+    "quest_id": 2746,
+    "classification": "DATA-INVALID/INCOMPLETE",
+    "required_stock": {
+      "acquisition_limit": "Must already be carried; no acquisition action is exported.",
+      "acquisition_proven": false,
+      "contract_sha256": null,
+      "emitted": false,
+      "existing_matching_contract": true,
+      "item_row_sha256": {
+        "4306": "fec76d613edb612c423c39d48dbceb8dd9765de354199fbca23ef22e018d59c9",
+        "8683": "67d167a7f5a8afa5135ceceb14099a9197d59b03e5e9c457fe89d037c8f524f5"
+      },
+      "live_completion_proven": false,
+      "primary_addon_row_sha256": "404ba6450411cd09611288f11a22d9d51a940088f0be92b5c3c292a7f9d17297",
+      "primary_quest_row_sha256": "155a73bded254856c69e395ad77b98398643b94bb1b2364046e73e46026f5b10",
+      "primary_required_items": {
+        "4306": 3,
+        "8683": 2
+      },
+      "quest_id": 2746,
+      "remaining": [],
+      "represented_items": {
+        "4306": 3
+      },
+      "required_stock_items": [
+        {
+          "Count": 2,
+          "ItemId": 8683
+        }
+      ]
+    },
+    "remaining_obligations": [
+      "data:required-stock-acquisition-route-missing"
+    ]
+  },
+  {
+    "quest_id": 10757,
+    "classification": "DATA-INVALID/INCOMPLETE",
+    "required_stock": {
+      "acquisition_limit": "Must already be carried; no acquisition action is exported.",
+      "acquisition_proven": false,
+      "contract_sha256": null,
+      "emitted": false,
+      "existing_matching_contract": true,
+      "item_row_sha256": {
+        "22445": "5881baa93574a2fac7db3fe316c60cdc03fbd5bcaa0422aba90865778c729e06",
+        "22574": "0d109918ca0784b4f49b9f0ab79983a41b5a8eb178ab41e27ee17eece4575dcc",
+        "23445": "deb2970bfbfcefc2302dbc2c7e67a112efdd4bd6c5ae986cd96a5afbfbbe1f1a"
+      },
+      "live_completion_proven": false,
+      "primary_addon_row_sha256": "b677ee7700470cafc0101762108af5b4fa1d2909dd1fac453afbce6f9163c3ff",
+      "primary_quest_row_sha256": "418ce985c8c5b9f806b62e1e0a1fee55a76aa44012aee9db560dd1eb3a7742bd",
+      "primary_required_items": {
+        "22445": 2,
+        "22574": 4,
+        "23445": 4
+      },
+      "quest_id": 10757,
+      "remaining": [],
+      "represented_items": {
+        "22574": 4
+      },
+      "required_stock_items": [
+        {
+          "Count": 2,
+          "ItemId": 22445
+        },
+        {
+          "Count": 4,
+          "ItemId": 23445
+        }
+      ]
+    },
+    "remaining_obligations": [
+      "data:required-stock-acquisition-route-missing"
+    ]
+  },
+  {
+    "quest_id": 10763,
+    "classification": "DATA-INVALID/INCOMPLETE",
+    "required_stock": {
+      "acquisition_limit": "Must already be carried; no acquisition action is exported.",
+      "acquisition_proven": false,
+      "contract_sha256": null,
+      "emitted": false,
+      "existing_matching_contract": true,
+      "item_row_sha256": {
+        "22445": "5881baa93574a2fac7db3fe316c60cdc03fbd5bcaa0422aba90865778c729e06",
+        "22574": "0d109918ca0784b4f49b9f0ab79983a41b5a8eb178ab41e27ee17eece4575dcc",
+        "23445": "deb2970bfbfcefc2302dbc2c7e67a112efdd4bd6c5ae986cd96a5afbfbbe1f1a"
+      },
+      "live_completion_proven": false,
+      "primary_addon_row_sha256": "1aaec132fa81c63bede8d3179b4e300ae071022159ae960cc7c4aaea5b0de631",
+      "primary_quest_row_sha256": "258e344646b2a6eb88bbe5b8b7b827f8a2a7efa6cd738e94e93f5843da7bf173",
+      "primary_required_items": {
+        "22445": 2,
+        "22574": 4,
+        "23445": 4
+      },
+      "quest_id": 10763,
+      "remaining": [],
+      "represented_items": {
+        "22574": 4
+      },
+      "required_stock_items": [
+        {
+          "Count": 2,
+          "ItemId": 22445
+        },
+        {
+          "Count": 4,
+          "ItemId": 23445
+        }
+      ]
+    },
+    "remaining_obligations": [
+      "data:required-stock-acquisition-route-missing"
+    ]
+  },
+  {
+    "quest_id": 13906,
+    "classification": "DATA-INVALID/INCOMPLETE",
+    "required_stock": {
+      "acquisition_limit": "Must already be carried; no acquisition action is exported.",
+      "acquisition_proven": false,
+      "contract_sha256": null,
+      "emitted": false,
+      "existing_matching_contract": true,
+      "item_row_sha256": {
+        "14047": "2f001d01039521230595793dc0daaf777f84a45b7961bbe618bc04bd8ea628d6",
+        "46362": "e2de94b3f6f442032cf0f051b47b2a0dd7fd415de054943a4ec285bee20586a5",
+        "47196": "fd9950661f24e0f90453709844fa38b92a40f51f0a40055577f653ba5262a4d8",
+        "8170": "d626b6606452adfa26b6b114970810f4d29fe7e8ae43f93edcc6aafb8dbe68f1"
+      },
+      "live_completion_proven": false,
+      "primary_addon_row_sha256": "cc5c726bd70b0c0bcddf019108b8169d63b292e5fd0b7971caef364d19d826b0",
+      "primary_quest_row_sha256": "a9b5752c96acb8b309763bae75caa8f1c1d6ab709186198bfbc7542dcc754070",
+      "primary_required_items": {
+        "8170": 20,
+        "14047": 20,
+        "46362": 1,
+        "47196": 20
+      },
+      "quest_id": 13906,
+      "remaining": [],
+      "represented_items": {
+        "14047": 20,
+        "46362": 1
+      },
+      "required_stock_items": [
+        {
+          "Count": 20,
+          "ItemId": 8170
+        },
+        {
+          "Count": 20,
+          "ItemId": 47196
+        }
+      ]
+    },
+    "remaining_obligations": [
+      "data:required-stock-acquisition-route-missing",
+      "live:required-money-observation-and-reward-acceptance"
+    ]
+  }
+]

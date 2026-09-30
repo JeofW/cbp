@@ -16,9 +16,9 @@ namespace WholesomeAQ
             // Source-supplied pickup can require no already-carried stock. Its
             // promise still never supplies the later turn-in inventory receipt.
             var constrained = plan.Where(entry => entry != null && entry.Quest != null &&
-                (entry.Stage == QuestWorkStage.Pickup && QuestDeliveryPolicy.HasContract(entry.Quest) &&
+                (entry.Stage == QuestWorkStage.Pickup && (QuestDeliveryPolicy.HasContract(entry.Quest) || QuestRequiredStockPolicy.HasContract(entry.Quest)) &&
                     QuestDeliveryPolicy.PickupRejection(entry.Quest, null) != null ||
-                 entry.Stage == QuestWorkStage.TurnIn && (QuestDeliveryPolicy.HasContract(entry.Quest) || entry.Quest.SupplementalSupply != null)))
+                 entry.Stage == QuestWorkStage.TurnIn && (QuestDeliveryPolicy.HasContract(entry.Quest) || entry.Quest.SupplementalSupply != null || QuestRequiredStockPolicy.HasContract(entry.Quest))))
                 .ToArray();
             if (constrained.Length == 0) return null;
             if (capture == null) throw new ArgumentNullException(nameof(capture));

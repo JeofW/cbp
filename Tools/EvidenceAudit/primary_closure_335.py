@@ -119,6 +119,36 @@ def validate_availability_result(contract, simulation):
     return True
 
 
+def validate_required_stock_result(quest, simulation):
+    """Validate stock observations without promoting them to acquisition proof."""
+    receipt = simulation.get('required_stock_validation')
+    if receipt is None:
+        return False
+    items = quest.get('RequiredStockItems')
+    if (not isinstance(items, list) or not 1 <= len(items) <= 6
+            or any(not isinstance(item, dict) or set(item) != {'ItemId', 'Count'}
+                   or type(item['ItemId']) is not int or item['ItemId'] <= 0
+                   or type(item['Count']) is not int or item['Count'] <= 0 for item in items)
+            or len({item['ItemId'] for item in items}) != len(items)
+            or not isinstance(receipt, dict) or receipt.get('quest_id') != quest.get('Id')
+            or simulation.get('quest_id') != quest.get('Id') or receipt.get('items') != items
+            or type(simulation.get('failed_cases')) is not int or simulation['failed_cases'] != 0
+            or type(receipt.get('failed_cases')) is not int or receipt['failed_cases'] != 0
+            or type(receipt.get('passed_cases')) is not int or receipt['passed_cases'] <= 0
+            or receipt.get('acquisition_proven') is not False):
+        raise ValueError('Required-stock receipt does not identify the exact successful observation contract')
+    expected = {f'required-stock-item={item["ItemId"]}:observed={state}' for item in items
+                for state in ('unknown', 'zero', 'partial', 'full', 'lost')}
+    expected.update({'required-stock-missing-observation-withholds-pickup',
+                     'required-stock-held-items-not-server-ready', 'required-stock-keeps-ordinary-objectives'})
+    cases = [row for row in simulation.get('cases', []) if row.get('name', '').startswith('required-stock-')]
+    names = [row.get('name') for row in cases]
+    if (len(names) != len(set(names)) or set(names) != expected or receipt['passed_cases'] != len(expected)
+            or any(row.get('status') != 'PASS' for row in cases)):
+        raise ValueError('Required-stock receipt lacks unique passing quantity, unknown or completion cases')
+    return True
+
+
 def final_classification(obligations, simulation, strategy_status='MISSING', baseline='DATA-INVALID/INCOMPLETE'):
     if any(value.startswith('data:') for value in obligations):
         return 'DATA-INVALID/INCOMPLETE'
@@ -218,6 +248,7 @@ def main():
     from quest_dependency_source_335 import primary_dependency_index, dependency_membership
     from quest_collection_source_335 import CollectionSourceIndex
     from quest_credit_source_335 import validate_loaded_sources
+    from quest_required_stock_335 import build_contracts as review_required_stock
     from quest_availability_source_335 import build_contracts
     tables, table_receipts = load_verified_tables(args.reference)
     old_rows = [json.loads(line) for line in gzip.decompress(args.baseline.read_bytes()).splitlines()]
@@ -249,6 +280,12 @@ def main():
     qt = {row['ID']: row for row in tables['quest_template']}
     qa = {row['ID']: row for row in tables['quest_template_addon']}
     primary_dependencies, dependency_edges = primary_dependency_index(qt, qa)
+    stock_subjects = {ident for ident, quest in model.items() if quest.get('RequiredStockItems') is not None}
+    _, stock_reviews = review_required_stock(effective, tables, {
+        'CoreRevision': revision, 'DatabaseRevision': source.get('release', ''),
+        'SourceSqlSha256': source_sql, 'QuestDataSha256': next(iter(simulations.values()))['dataset_sha256']
+    }, stock_subjects) if stock_subjects else ([], [])
+    stock_reviews = {row['quest_id']: row for row in stock_reviews}
     actors = {'Creature': {row['entry']: row for row in tables['creature_template']},
               'GameObject': {row['entry']: row for row in tables['gameobject_template']}}
     primary_relations = defaultdict(list)
@@ -416,6 +453,16 @@ def main():
                     obligations.append('data:supplemental-supply-contract-disagrees-with-primary')
             if any(pair not in represented_normals for pair in normal):
                 obligations.append('data:primary-normal-requirement-unrepresented')
+            if ident in stock_reviews:
+                stock_review = stock_reviews[ident]
+                if stock_review['remaining'] or not stock_review['existing_matching_contract']:
+                    obligations.append('source:required-stock-contract-disagrees-with-primary')
+                elif not validate_required_stock_result(quest, sim):
+                    obligations.append('data:required-stock-owner-validation-missing')
+                else:
+                    represented_items.update({item['ItemId']: item['Count'] for item in quest['RequiredStockItems']})
+                    # A controlled starting inventory is not an acquisition route.
+                    obligations.append('data:required-stock-acquisition-route-missing')
             if any(represented_items.get(item) != count for item, count in required.items()):
                 obligations.append('data:primary-item-requirement-unrepresented')
             for role, collection, entry_name, type_name in [('giver', 'QuestGivers', 'GiverId', 'GiverType'), ('ender', 'QuestEnders', 'EnderId', 'EnderType')]:
@@ -460,6 +507,7 @@ def main():
             'primary_direct_quest_scripts': [script_ref(s) for s in direct_quests[ident]],
             'primary_objective_actors': related_actors, 'secondary_evidence_retained': retained_secondary_evidence(prior),
             'primary_collection_sources': acquisition,
+            'primary_required_stock': stock_reviews.get(ident),
             'primary_credit_search_sources': [source for index in range(len(quest['Objectives'])) for source in credit_sources.get((ident, index), [])],
             'primary_dependency_membership': dependency_review,
             'strategy': {'status': strategy_status, 'evidence': strategy},

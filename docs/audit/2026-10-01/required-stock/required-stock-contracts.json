@@ -1,0 +1,72 @@
+[
+  {
+    "QuestId": 565,
+    "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template:required-items:565",
+    "Items": [
+      {
+        "ItemId": 2321,
+        "Count": 1
+      },
+      {
+        "ItemId": 2997,
+        "Count": 1
+      },
+      {
+        "ItemId": 3719,
+        "Count": 1
+      }
+    ]
+  },
+  {
+    "QuestId": 2746,
+    "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template:required-items:2746",
+    "Items": [
+      {
+        "ItemId": 8683,
+        "Count": 2
+      }
+    ]
+  },
+  {
+    "QuestId": 10757,
+    "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template:required-items:10757",
+    "Items": [
+      {
+        "ItemId": 22445,
+        "Count": 2
+      },
+      {
+        "ItemId": 23445,
+        "Count": 4
+      }
+    ]
+  },
+  {
+    "QuestId": 10763,
+    "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template:required-items:10763",
+    "Items": [
+      {
+        "ItemId": 22445,
+        "Count": 2
+      },
+      {
+        "ItemId": 23445,
+        "Count": 4
+      }
+    ]
+  },
+  {
+    "QuestId": 13906,
+    "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template:required-items:13906",
+    "Items": [
+      {
+        "ItemId": 8170,
+        "Count": 20
+      },
+      {
+        "ItemId": 47196,
+        "Count": 20
+      }
+    ]
+  }
+]

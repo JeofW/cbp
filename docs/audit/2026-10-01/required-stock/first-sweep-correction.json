@@ -1,0 +1,37 @@
+{
+  "failed_summary": {
+    "dataset_sha256": "f2ca79318694afaa4214fc09392e88c3d9d1eae5128f323d0d65b1b9e91a7e3f",
+    "quest_count": 4335,
+    "dataset_total": 4335,
+    "passed_cases": 261304,
+    "failed_cases": 1,
+    "pipeline_passes": 3372,
+    "simulation_scope": "actual production owners with controlled observations; no game attached",
+    "observation_file_sha256": "bcda857eb5652ee3d83a5fddbcf2f8098164b601817d6fb1c4d46dd856f2cf28",
+    "model_mode": "actual-DataLoader-with-source-bound-repairs",
+    "repair_sha256": "80b61339b259a7fdb5be7d50dc8bd13af7681f4f959de3f040557b4edec3918a",
+    "execution_fingerprint": "4f8edefbed10ab28ced5cdbdd6a4d07fedf4e0c3cb8772cfc1378eccbb2a563c",
+    "host_binary_sha256": "63411ebf865b214c48654031b77d27cfa1ef785cd7f5449480d23f18db260a47"
+  },
+  "raw_failure_log_sha256": "461629dbc3d55feca037b7bc500ae15d932a036a443b7b0d4234c9fb91bbbd93",
+  "quest_id": 13906,
+  "case": "provided-StartItem-presence-does-not-invent-pickup-recipe",
+  "cause": "The old fixture replaced every observed item with the start item while comparing against a baseline with other required stock.",
+  "correction": "Preserve the baseline stock and change only StartItem presence; retain the original equality assertion and add a separate start-item-only rejection case.",
+  "assertion_removed": false,
+  "corrected_sweep": {
+    "base": "5036010ee45ca0daa5c54723d916c9a9b4e1d973",
+    "working_tree_modified": true,
+    "source_stable": true,
+    "stages": 4,
+    "failed": [],
+    "quest_count": 4335,
+    "checks": 261306,
+    "strategy_checks": 39,
+    "dependency_records": 369,
+    "new_comparison_fixture_only": true,
+    "exact_clean_candidate_validation_required": true,
+    "live_completion_proven": false,
+    "finished_utc": "2026-09-30T18:52:46.138278+00:00"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "base_commit": "5036010ee45ca0daa5c54723d916c9a9b4e1d973",
+  "contracts": 5,
+  "item_requirements": 10,
+  "quest_ids": [
+    565,
+    2746,
+    10757,
+    10763,
+    13906
+  ],
+  "old_knowledge_sha256": {
+    "quest_data.json": "f2ca79318694afaa4214fc09392e88c3d9d1eae5128f323d0d65b1b9e91a7e3f",
+    "quest_data.repairs.json": "f82c4f938928f55fd5ffad221b5cb5db0c2b8725cae3c79f1a275ce03df9b3a1",
+    "quest_strategies.json": "c9284a9f9d5ca7ba8eba1037f07d14c24925347a96070ed721aac9bd59a5357d"
+  },
+  "new_knowledge_sha256": {
+    "quest_data.json": "f2ca79318694afaa4214fc09392e88c3d9d1eae5128f323d0d65b1b9e91a7e3f",
+    "quest_data.repairs.json": "80b61339b259a7fdb5be7d50dc8bd13af7681f4f959de3f040557b4edec3918a",
+    "quest_strategies.json": "e4598474ce607cde2301cded9c2d5b9bd721ab5c8feaaeb0b655a46212ec401a"
+  },
+  "all_other_repair_fields_preserved": true,
+  "acquisition_proven": false,
+  "classification_reproduction_pending": true,
+  "created_utc": "2026-09-30T18:46:58.127653+00:00"
+}

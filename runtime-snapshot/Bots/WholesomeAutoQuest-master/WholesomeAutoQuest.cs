@@ -2512,6 +2512,22 @@ namespace WholesomeAQ
                 if (quest.StartItem > 0) protectedIds.Add((uint)quest.StartItem);
                 foreach (var obj in quest.Objectives)
                     if (obj.ItemId > 0) protectedIds.Add((uint)obj.ItemId);
+                // Pure deliveries and source-bound stock requirements may have
+                // no collection objective. Protect them while this quest is
+                // accepted or scheduled, including before pickup and at turn-in.
+                var materials = (quest.DeliveryItems ?? Enumerable.Empty<QuestItemRequirement>())
+                    .Concat(quest.AcceptanceSupplies ?? Enumerable.Empty<QuestItemRequirement>())
+                    .Concat(quest.RequiredStockItems ?? Enumerable.Empty<QuestItemRequirement>());
+                foreach (var material in materials)
+                {
+                    if (material == null || material.ItemId <= 0 || material.Count <= 0) return;
+                    protectedIds.Add((uint)material.ItemId);
+                }
+                if (quest.SupplementalSupply != null)
+                {
+                    if (quest.SupplementalSupply.ItemId <= 0 || quest.SupplementalSupply.RequiredCount <= 0) return;
+                    protectedIds.Add((uint)quest.SupplementalSupply.ItemId);
+                }
             }
 
             var bestFood = Consumable.GetBestFood(false);

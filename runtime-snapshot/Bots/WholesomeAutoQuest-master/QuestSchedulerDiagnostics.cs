@@ -404,7 +404,7 @@ namespace WholesomeAQ
                     if (reason == null && active == null) reason = BasePickupRejection(quest, snapshot, minimumLevel, strategyPack);
                     if (reason == null && recovery.Any(value => !value.MayAttempt)) reason = "recovery-blocked";
                     if (reason == null && active?.IsFailed == true) reason = "accepted-failed";
-                    if (reason == null && active != null && (QuestDeliveryPolicy.HasContract(quest) || active.IsCompleted && quest.SupplementalSupply != null))
+                    if (reason == null && active != null && (QuestDeliveryPolicy.HasContract(quest) || active.IsCompleted && (quest.SupplementalSupply != null || QuestRequiredStockPolicy.HasContract(quest))))
                         reason = QuestDeliveryPolicy.TurnInRejection(quest, snapshot.CarriedItemCounts)
                             ?? (active.IsCompleted ? null : "delivery-awaiting-server-completion");
                     if (reason == null && capture.SelectionReasons.TryGetValue(quest.Id, out string selectionReason)) reason = selectionReason;
@@ -447,6 +447,9 @@ namespace WholesomeAQ
                             requiredFactionValue1 = quest.RequiredFactionValue1, requiredFactionValue2 = quest.RequiredFactionValue2,
                             deliveryRequirements = quest.DeliveryItems, acceptanceSupplies = quest.AcceptanceSupplies,
                             supplementalSupply = quest.SupplementalSupply,
+                            requiredStockItems = quest.RequiredStockItems,
+                            requiredStock = quest.RequiredStockItems?.Select(item => new { item.ItemId, required = item.Count,
+                                carried = snapshot.CarriedItemCounts != null ? (long?)(snapshot.CarriedItemCounts.TryGetValue(item.ItemId, out long stock) ? stock : 0) : null }).ToArray(),
                             deliveryStock = quest.DeliveryItems?.Select(item => new { item.ItemId,
                                 carried = snapshot.CarriedItemCounts != null ? (long?)(snapshot.CarriedItemCounts.TryGetValue(item.ItemId, out long stock) ? stock : 0) : null }).ToArray(),
                             skillObservations = snapshot.SkillValues, reputationObservations = snapshot.ReputationValues,
