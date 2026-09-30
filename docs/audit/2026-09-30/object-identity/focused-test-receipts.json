@@ -1,0 +1,134 @@
+{
+  "object-identity-exporter-red": {
+    "command": [
+      "python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "Tools/EvidenceAudit",
+      "-p",
+      "test_quest_object_identity_335.py",
+      "-v"
+    ],
+    "exit": 1,
+    "started_utc": "2026-09-30T05:03:46.834279+00:00",
+    "finished_utc": "2026-09-30T05:03:46.972573+00:00",
+    "head": "763c51e47b916f8303d10b6f77595d7a1feb3820",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr.log": "852d5ccc23fc2de79664bf3b8941016519d1ebda824c941868914693808578af"
+    },
+    "receipt_sha256": "557deb2e49f57d1ada9bd10630d6f7f4eb0447a6435718923c6f00079296dc1d"
+  },
+  "object-identity-runtime-red": {
+    "command": [
+      "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+      "Tools/PostMergeAuditRegressionTests/bin/x86/Release/net10.0-windows7.0/PostMergeAuditRegressionTests.dll",
+      "QuestGameObjectIdentityRepairRegressionTests"
+    ],
+    "exit": 1,
+    "started_utc": "2026-09-30T05:04:03.344693+00:00",
+    "finished_utc": "2026-09-30T05:04:03.782616+00:00",
+    "head": "763c51e47b916f8303d10b6f77595d7a1feb3820",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "be6e0cc16f5e14b678274186945c5a2b636895c9433f98d2e1ae94b22e36f6af",
+      "stderr.log": "7d3d5002cb27eb898f296202edef214f20beecd8a42723adf329a075d47e7a3f"
+    },
+    "receipt_sha256": "963a0994178d9923a1f718ea8a40df11c622c31f4efeef97a8b311389df30d95"
+  },
+  "object-identity-runtime-red-build": {
+    "command": [
+      "dotnet",
+      "build",
+      "Tools/PostMergeAuditRegressionTests/PostMergeAuditRegressionTests.csproj",
+      "-c",
+      "Release",
+      "-p:",
+      "Platform=x86",
+      "-p:",
+      "PlatformTarget=x86",
+      "-v",
+      "quiet"
+    ],
+    "exit": 0,
+    "started_utc": "2026-09-30T05:03:47.179818+00:00",
+    "finished_utc": "2026-09-30T05:04:03.180546+00:00",
+    "head": "763c51e47b916f8303d10b6f77595d7a1feb3820",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "b3ca833672e425aa63bc7351c5c43b1e9a4bcbfcf76f78ef2e3fbfdf687d5212",
+      "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "receipt_sha256": "0a3a465a08a0655d4667d11785ecbeb93e08e806c5b316a4674b072389775084"
+  },
+  "object-identity-analyzers-green": {
+    "command": [
+      "python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "Tools/EvidenceAudit",
+      "-p",
+      "test_*.py",
+      "-v"
+    ],
+    "exit": 0,
+    "started_utc": "2026-09-30T05:06:04.181731+00:00",
+    "finished_utc": "2026-09-30T05:06:09.547317+00:00",
+    "head": "763c51e47b916f8303d10b6f77595d7a1feb3820",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr.log": "1746b535d49e68e068d09ec0080e3e404c7548eaf09c6951e2761e648e45ca51"
+    },
+    "receipt_sha256": "ba6a425dae88b384d3c3897183d4093a182ca481480084bcdb4d0512d9f9a405"
+  },
+  "object-identity-runtime-green": {
+    "command": [
+      "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+      "Tools/PostMergeAuditRegressionTests/bin/x86/Release/net10.0-windows7.0/PostMergeAuditRegressionTests.dll",
+      "QuestGameObjectIdentityRepairRegressionTests",
+      "QuestDataRepairPackRegressionTests",
+      "QuestKnowledgeBundleRegressionTests",
+      "QuestSupplementalSupplyRegressionTests",
+      "QuestDeliveryPolicyRegressionTests"
+    ],
+    "exit": 0,
+    "started_utc": "2026-09-30T05:06:14.848741+00:00",
+    "finished_utc": "2026-09-30T05:06:16.566370+00:00",
+    "head": "763c51e47b916f8303d10b6f77595d7a1feb3820",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "664cd68827e27c77ecfb8326b136ba227b83599c008b05f6502318ed55c67a2e",
+      "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "receipt_sha256": "4242346ee1217ecd50927d4a8e8e5ecb7cb52278fb8bb27542de10b4d1d416c9"
+  },
+  "object-identity-runtime-green-build": {
+    "command": [
+      "dotnet",
+      "build",
+      "Tools/PostMergeAuditRegressionTests/PostMergeAuditRegressionTests.csproj",
+      "-c",
+      "Release",
+      "-p:Platform=x86",
+      "-p:PlatformTarget=x86",
+      "-v",
+      "quiet"
+    ],
+    "exit": 0,
+    "started_utc": "2026-09-30T05:06:09.720020+00:00",
+    "finished_utc": "2026-09-30T05:06:14.690597+00:00",
+    "head": "763c51e47b916f8303d10b6f77595d7a1feb3820",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "c23cb447aaf33aebf7f5d215e7fcc5bea8aa5e56b02a4973666c21be8a5a5c2c",
+      "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "receipt_sha256": "d0d39ba4388a5585546dcaee8d8d20d31c4d10968ceeb647ca37d2f0ee138767"
+  }
+}

@@ -1,3 +1,15 @@
+# Current: object identity continuation after PR63 — 30 September 2026
+
+PR61 is already merged and selectively deployed: reviewed head 3f5715b6cc292b2086946a80471c4145471cbdd7, master 3bc97e1e0b446aede269f7414c0c7c6358fdc192. Preserve that production milestone and its completed deployment receipts. PR62 remains at 3662a8f5a47178fc982e2891a45f5a3ac9a7b3ed; PR63 is fully published/validated at 763c51e47b916f8303d10b6f77595d7a1feb3820. Do not repeat their implementation, publication or deployment.
+
+Active worktree D:/Dev/CB-QuestObjectIdentity-20260930, branch audit/next-quest-object-identity-20260930, starts from PR63. Read docs/audit/2026-09-30/object-identity/REPORT.md, closure-review.json, exact remaining/classification IDs, object-identity-patch.json and ida-api-review.json. The containing commit implements 46 conservative chest identity corrections across 35 quests and adds 212 points over 40 entries. All previous repairs remain; 26 source gaps close, nine repaired quests retain other obligations.
+
+Current exclusive counts: 2950 generic, 2 strategy, 945 data, 365 source, 16 live and 57 scripted = 4335; exact remaining IDs 1383. Spawn totals730entries/14293points,369metadata-onlydependencies,645deliveries,154supplementalcontracts,2relations. Only strategies9066/9447 remain vetted. Actual diagnostic owners passed258279dataset/39strategy checks;268analyzers ran with one expected skip. Resolve final clean SHA, smaller PR and local/hosted acceptance from D:/Dev/CopilotBuddy-Evidence/postmerge-20260930-pr61/OBJECT_IDENTITY_* receipts before publication or completion claims.
+
+IDA is now enabled and was reverified against original build12340 SHA256 bf644876709c591acc17c0da8cdf1814edcc9f1e6bc109a8c0d5c38c79dc953c. Read the new API contract review: quest ID is GetQuestLogTitle's ninth result; current code already uses it. Money zero can mean missing cache; completable is dialog/item gated; special-item third result is not assumed to be a stack count. No new unproven ABI was added. Retain read-only IDA, pinned TC335 primary, AC secondary, exact inventory/progress/menu ownership and live acceptance limits. Continue the remaining source/acquisition/geometry/script work in small coherent PRs. Simulation is not live completion.
+
+---
+
 # Current: smaller prerequisite continuation after deployed PR61 — 30 September 2026
 
 PR61 is merged and deployed: reviewed head `3f5715b6cc292b2086946a80471c4145471cbdd7`, master `3bc97e1e0b446aede269f7414c0c7c6358fdc192`. Canonical master is `D:/Dev/CB-Master-20260930`. All 429 deployed payload files and 2,004 preserved local files were verified; all 13 actual production components compiled. Read the completed deployment/production receipts in `docs/audit/2026-09-30/quest-dependencies` and the raw external results under `D:/Dev/CopilotBuddy-Evidence/postmerge-20260930-pr61`. Do not repeat that merge or deployment.

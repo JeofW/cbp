@@ -1,0 +1,176 @@
+{
+  "base_commit": "763c51e47b916f8303d10b6f77595d7a1feb3820",
+  "classification_counts": {
+    "GENERIC-PROVEN": 2950,
+    "STRATEGY-PROVEN": 2,
+    "DATA-INVALID/INCOMPLETE": 945,
+    "UNSUPPORTED-SCRIPTED": 57,
+    "SOURCE-UNCERTAIN": 365,
+    "LIVE-ACCEPTANCE-REQUIRED": 16
+  },
+  "remaining_quests": 1383,
+  "newly_generic_quest_ids": [
+    49,
+    53,
+    64,
+    134,
+    299,
+    335,
+    347,
+    365,
+    399,
+    450,
+    517,
+    529,
+    580,
+    662,
+    666,
+    689,
+    978,
+    1187,
+    1188,
+    1197,
+    5062,
+    5065,
+    8503,
+    9802,
+    9882,
+    12930
+  ],
+  "repaired_quests_with_other_obligations": [
+    {
+      "quest_id": 207,
+      "classification": "SOURCE-UNCERTAIN",
+      "remaining_obligations": [
+        "source:collection-objective-owner-unproven:1"
+      ]
+    },
+    {
+      "quest_id": 1026,
+      "classification": "DATA-INVALID/INCOMPLETE",
+      "remaining_obligations": [
+        "data:auxiliary-or-mismatched-item-objective:1",
+        "data:objective-geometry-missing:1"
+      ]
+    },
+    {
+      "quest_id": 1089,
+      "classification": "DATA-INVALID/INCOMPLETE",
+      "remaining_obligations": [
+        "data:auxiliary-or-mismatched-item-objective:3"
+      ]
+    },
+    {
+      "quest_id": 2948,
+      "classification": "DATA-INVALID/INCOMPLETE",
+      "remaining_obligations": [
+        "data:primary-item-requirement-unrepresented",
+        "live:required-money-observation-and-reward-acceptance"
+      ]
+    },
+    {
+      "quest_id": 2950,
+      "classification": "DATA-INVALID/INCOMPLETE",
+      "remaining_obligations": [
+        "data:primary-item-requirement-unrepresented",
+        "live:required-money-observation-and-reward-acceptance"
+      ]
+    },
+    {
+      "quest_id": 9949,
+      "classification": "DATA-INVALID/INCOMPLETE",
+      "remaining_obligations": [
+        "data:ender-relation-unrepresented",
+        "data:giver-relation-unrepresented",
+        "data:objective-geometry-missing:1",
+        "data:primary-item-requirement-unrepresented",
+        "source:collection-objective-owner-unproven:1"
+      ]
+    },
+    {
+      "quest_id": 9950,
+      "classification": "DATA-INVALID/INCOMPLETE",
+      "remaining_obligations": [
+        "data:ender-relation-unrepresented",
+        "data:giver-relation-unrepresented",
+        "data:objective-geometry-missing:0",
+        "data:primary-item-requirement-unrepresented",
+        "source:collection-objective-owner-unproven:0"
+      ]
+    },
+    {
+      "quest_id": 12870,
+      "classification": "SOURCE-UNCERTAIN",
+      "remaining_obligations": [
+        "source:collection-objective-owner-unproven:0"
+      ]
+    },
+    {
+      "quest_id": 12882,
+      "classification": "SOURCE-UNCERTAIN",
+      "remaining_obligations": [
+        "source:collection-objective-owner-unproven:0"
+      ]
+    }
+  ],
+  "remaining_family_counts": {
+    "data:objective-geometry-missing": 554,
+    "data:collection-source-geometry-missing": 164,
+    "data:delivery-acquisition-route-missing": 153,
+    "data:auxiliary-or-mismatched-item-objective": 133,
+    "source:dependent-previous-membership-mismatch": 130,
+    "data:primary-item-requirement-unrepresented": 127,
+    "source:server-condition-not-modeled": 125,
+    "source:collection-objective-owner-unproven": 124,
+    "data:giver-relation-unrepresented": 105,
+    "data:ender-relation-unrepresented": 103,
+    "script:cast-credit-no-strategy": 97,
+    "source:primary-field-conflict:PrevQuestID": 95,
+    "data:giver-geometry-missing": 58,
+    "source:primary-field-conflict:ExclusiveGroup": 52,
+    "source:primary-field-conflict:AllowableRaces": 49,
+    "source:primary-field-conflict:NextQuestID": 47,
+    "source:primary-field-conflict:SpecialFlags": 46,
+    "data:ender-geometry-missing": 43,
+    "source:primary-field-conflict:ExclusiveGroup,NextQuestID": 36,
+    "source:unrepresented-eligibility:RequiredMinRepFaction": 30,
+    "source:unrepresented-eligibility:RequiredMinRepValue": 27,
+    "live:timed-route-deadline-acceptance": 16,
+    "source:external-predecessor-contract-missing": 13,
+    "source:collection-loot-condition-unmodeled": 12,
+    "source:primary-field-conflict:ExclusiveGroup,PrevQuestID": 10,
+    "source:primary-field-conflict:AllowableRaces,NextQuestID": 10,
+    "live:required-money-observation-and-reward-acceptance": 8,
+    "source:primary-field-conflict:AllowableRaces,PrevQuestID": 4,
+    "script:player-kill-objective-owner-unrepresented": 3,
+    "source:primary-field-conflict:NextQuestID,PrevQuestID": 3,
+    "source:primary-field-conflict:ExclusiveGroup,NextQuestID,PrevQuestID": 3,
+    "source:primary-field-conflict:AllowableRaces,ExclusiveGroup": 2,
+    "source:primary-field-conflict:Flags,PrevQuestID,SpecialFlags": 1,
+    "source:primary-field-conflict:PrevQuestID,SpecialFlags": 1,
+    "source:primary-field-conflict:Flags": 1,
+    "source:primary-field-conflict:AllowableRaces,ExclusiveGroup,PrevQuestID": 1,
+    "live:recorded-pipeline-remains-blocked": 1,
+    "data:primary-normal-requirement-unrepresented": 1,
+    "data:normal-objective-identity-or-count-unrepresented": 1,
+    "source:unrepresented-eligibility:RequiredSkillPoints": 1,
+    "source:unrepresented-eligibility:RequiredSkillID": 1,
+    "script:exploration-or-event-no-strategy": 1
+  },
+  "runtime_tests": {
+    "new_cases": 20,
+    "red_intended_assertions": 4,
+    "red_unexpected": 0,
+    "green_focused_groups": 5
+  },
+  "analyzer_tests": {
+    "tests": 268,
+    "failures": 0,
+    "expected_permission_skip": 1
+  },
+  "python_red_fixture_note": "The initial missing-exporter red had ten assertions. The synthetic loot fixture subsequently gained explicit LootMode/QuestRequired fields for the strict source contract; do not claim byte-identical Python red/green fixtures.",
+  "simulation_checks": 258279,
+  "strategy_checks": 39,
+  "unchanged_runtime_inputs_verified": 4077,
+  "live_completion_proven": false
+}

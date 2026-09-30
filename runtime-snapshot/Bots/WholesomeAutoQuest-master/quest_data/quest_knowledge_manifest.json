@@ -7,8 +7,8 @@
   "source_sql_sha256": "e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9",
   "files": {
     "quest_data.json": "f2ca79318694afaa4214fc09392e88c3d9d1eae5128f323d0d65b1b9e91a7e3f",
-    "quest_data.repairs.json": "07c913fd13dcff37c9d1b16c788346ac63f56708a52fcd3187db489b8d64f543",
-    "quest_strategies.json": "bbc087e4917c8000c20f883f7c3ed4913b81b7d3abb7c4b30a3f1341390b3870"
+    "quest_data.repairs.json": "753bb1d909facb4936301e737742a95806a1f3d669e644bbaa5169c1b43ef21b",
+    "quest_strategies.json": "3a739b7657db1cedb653f677176ebde5041236cd455ed0c2b7338f5ffea9803e"
   },
   "quest_count": 4335,
   "strategy_quests": [
@@ -16,10 +16,10 @@
     9447
   ],
   "strategy_recipes": 3,
-  "repair_evidence": "docs/audit/2026-09-30/chest-acquisition/repair-evidence.json.gz",
-  "strategy_evidence": "docs/audit/2026-09-30/chest-acquisition/strategy-evidence.json.gz",
+  "repair_evidence": "docs/audit/2026-09-30/object-identity/repair-evidence.json.gz",
+  "strategy_evidence": "docs/audit/2026-09-30/object-identity/strategy-evidence.json.gz",
   "realm_equivalence_proven": false,
   "live_completion_proven": false,
   "production_replaced": false,
-  "closure_evidence_directory": "docs/audit/2026-09-30/chest-acquisition"
+  "closure_evidence_directory": "docs/audit/2026-09-30/object-identity"
 }
