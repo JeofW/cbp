@@ -38,7 +38,9 @@ The actual tracked knowledge loader/scheduler fixture first produced13 intended 
 
 Thirteen Python exporter regressions cover protected nondefault requirements, default-only preservation, signed reputation thresholds, matching and conflicting paired fields, source/base conflicts, invalid types, separate maximum reputation, class/level/skill requirements and preservation of prior facts. The corrected red run has10 intended failures and0errors; an earlier red had8 assertion failures plus2 test KeyErrors, retained separately. The full analyzer suite now has300tests, zero failures and one expected Windows permission skip.
 
-The actual controlled dataset sweep passes258497 checks across4335rows; both vetted strategies pass39 lifecycle checks. Dirty-tree outputs are comparison fixtures only. Final clean-commit local34-command acceptance, exact four-stage closure reproduction and applicable hosted Windows/x86 workflows must pass at the containing candidate SHA. Full raw run/job/status/artifact and source-identity receipts stay external. These tests prove behavior for supplied observations, not live quest completion, customized-realm rules or path availability.
+The actual controlled dataset sweep passes258493 checks across4335rows; both vetted strategies pass39 lifecycle checks. Dirty-tree outputs are comparison fixtures only. Final clean-commit local34-command acceptance, exact four-stage closure reproduction and applicable hosted Windows/x86 workflows must pass at the containing candidate SHA. Full raw run/job/status/artifact and source-identity receipts stay external. These tests prove behavior for supplied observations, not live quest completion, customized-realm rules or path availability.
+
+Count correction during publication recovery: the earlier prose stated258497. Both the retained per-quest case records and the exact clean-commit reproduction total258493; their complete output hashes match. Four tests were not removed or skipped. The erroneous number was in this report and handoff prose, while summary.json and closure-review.json already contained the correct sum.
 
 ## Continued audit
 
