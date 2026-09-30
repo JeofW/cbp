@@ -1,3 +1,13 @@
+# Current: direct live-objective observation continuation — 30 September 2026
+
+This branch starts at ready/validated PR68 `af74d52837889acfacf6eb0572785a32fa6f168f`. PR67 conditions remain a separate ready sibling at `0722b9c4d7e2d958a23c0986e05864f2f6b68a0a`; PR66 is already published at00955605. Do not repeat their implementation/publication, the PR61 deployment, or any successful commit. Master/production remain3bc97e1e.
+
+Read `docs/audit/2026-09-30/live-objectives/REPORT.md`, source contracts/frontier and focused receipts. The containing candidate fixes direct loaded kill-objective identity matching without requiring an alias cache. Corrected red10assertions/0unexpected; green42focused cases and336 source-consistent objective rows; exact-commit local/hosted receipts remain external under `D:/Dev/CopilotBuddy-Evidence/postmerge-20260930-pr61`. No quest classification changes:2964/2/932/364/16/57=4335,1369remaining. Only9066/9447 strategies remain. The condition sibling's ledger must stay separate until validated integration.
+
+The earlier availability-input worktree creation and guarded PR62 dependency merge were each provider-blocked twice and stopped; no bypass or reroute was attempted. Consult `RECOVERY_PASS2_20260930.md` and live Git/remote state before further supported operations. Continue independent source/IDA audit work while preserving every ownership, inventory, unknown-state, navigation/recovery and source-authority boundary. No live completion is claimed.
+
+---
+
 # Current: complete inventory observation continuation — 30 September 2026
 
 Recovery update: the separate condition transaction succeeded through the normal tool at 09:14 UTC. Its preserved implementation is `814a01b47c554fff3e74ae10086a83ddf643e2aa`; documentation candidate `0722b9c4d7e2d958a23c0986e05864f2f6b68a0a` is receiving clean-commit validation. That sibling remains based on PR65 and is not included here. Earlier blocked/unpublished wording below records the previous checkpoint; consult the external receipts for current acceptance and publication.

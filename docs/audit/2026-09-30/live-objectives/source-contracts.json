@@ -1,0 +1,36 @@
+{
+  "client_build": 12340,
+  "client_architecture": "x86",
+  "client_sha256": "bf644876709c591acc17c0da8cdf1814edcc9f1e6bc109a8c0d5c38c79dc953c",
+  "primary_revision": "95657f54779467effea8a1749a61ff93abc1d707",
+  "database": "TDB335.25101",
+  "source_sql_sha256": "e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9",
+  "primary_kill_credit": {
+    "path": "src/server/game/Entities/Player/Player.cpp",
+    "sha256": "36a817da38b318740ee5aa31f256518175dfdd02d1dd7a68ebb0805fc43275d8",
+    "lines": [
+      16190,
+      16261
+    ],
+    "meaning": "Ordinary direct entry credit and optional KillCredit aliases are separate; the runtime must retain exact required objective identity and count."
+  },
+  "existing_host_contract": {
+    "path": "Bots/Quest/Objectives/GrindObjective.cs",
+    "sha256": "2df814806f8a46d5234c4494c79e2698023469be6cc72f6630ed7a655e7c7a96",
+    "lines": [
+      235,
+      244
+    ],
+    "meaning": "Direct entry matches independently of optional creature cache; otherwise cached GroupID/GroupID2 can match."
+  },
+  "ida_readonly_receipts_sha256": {
+    "resumed-pass2-health-20260930.json": "13fa991cf751d87be53f9dc3158d5d66e18a081c4a13afe8a6633f242ffb31f1",
+    "resumed-pass2-binary-20260930.json": "25d2b831db2ccfb64b05f8e21915c55d95a9e63c5d09689230de3e9fe968a53d",
+    "resumed-pass2-daily-spell-state-20260930.json": "450af26dd00835e9cadbccf84e309d71b0b48e7311576dc6b5b86c440dd18c57",
+    "resumed-pass2-direct-unit-accessors-v3-20260930.json": "3d4cad71abe9af0d0e6790f4990536f4b21c421a15ce7545f470207e320e6e19"
+  },
+  "new_native_api_added": false,
+  "native_search_limit": "The narrow accessor search returned a virtual dispatch thunk, not an established new Entry API. No candidate from that search was adopted. Existing loaded Entry/GUID/location/cache owners remain unchanged.",
+  "reference_is_configured_realm_proof": false,
+  "live_completion_proven": false
+}

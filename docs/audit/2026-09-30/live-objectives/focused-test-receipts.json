@@ -1,0 +1,71 @@
+{
+  "live-objective-red": {
+    "command": [
+      "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+      "Tools/PostMergeAuditRegressionTests/bin/x86/Release/net10.0-windows7.0/PostMergeAuditRegressionTests.dll",
+      "QuestLiveObjectiveRegressionTests"
+    ],
+    "exit": 1,
+    "started_utc": "2026-09-30T09:56:14.215843+00:00",
+    "finished_utc": "2026-09-30T09:56:14.675905+00:00",
+    "head": "af74d52837889acfacf6eb0572785a32fa6f168f",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "7a2fa8321d3cb7a4fbb3cc4dfc8f0ef38809c00114fa0c6e61cc943aa826219a",
+      "stderr.log": "52c599741fbbd16252b4ec48f5f6ed4fc2466184b63538040f71ad657328544d"
+    }
+  },
+  "live-objective-red-v2": {
+    "command": [
+      "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+      "Tools/PostMergeAuditRegressionTests/bin/x86/Release/net10.0-windows7.0/PostMergeAuditRegressionTests.dll",
+      "QuestLiveObjectiveRegressionTests"
+    ],
+    "exit": 1,
+    "started_utc": "2026-09-30T09:57:25.927043+00:00",
+    "finished_utc": "2026-09-30T09:57:26.437056+00:00",
+    "head": "af74d52837889acfacf6eb0572785a32fa6f168f",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "bfc8afa4e172f5a14954c8227b0bd2bc46087e1ff005765ff6ea99c11ad9b36f",
+      "stderr.log": "8f993376e896a5f227fafd147d72ff8a26fde83e2a50659bbe5b5c3b54429ecd"
+    }
+  },
+  "live-objective-green": {
+    "command": [
+      "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+      "Tools/PostMergeAuditRegressionTests/bin/x86/Release/net10.0-windows7.0/PostMergeAuditRegressionTests.dll",
+      "QuestLiveObjectiveRegressionTests",
+      "QuestCreditSourceGeometryRegressionTests",
+      "QuestLiveGiverGeometryRegressionTests",
+      "QuestSchedulerRawPublicationRegressionTests",
+      "QuestPublicationAcceptanceRegressionTests"
+    ],
+    "exit": 0,
+    "started_utc": "2026-09-30T09:58:37.306024+00:00",
+    "finished_utc": "2026-09-30T09:58:40.992995+00:00",
+    "head": "af74d52837889acfacf6eb0572785a32fa6f168f",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "732cea0be05b62417bdc21a7185d3c48f5a49d8b9a82015d580ce994fb79cb0f",
+      "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "live-objective-source-green": {
+    "command": [
+      "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+      "Tools/PostMergeAuditRegressionTests/bin/x86/Release/net10.0-windows7.0/PostMergeAuditRegressionTests.dll",
+      "QuestLiveObjectiveDatasetRegressionTests",
+      "QuestLiveObjectiveRegressionTests"
+    ],
+    "exit": 0,
+    "started_utc": "2026-09-30T10:04:42.272316+00:00",
+    "finished_utc": "2026-09-30T10:04:43.741374+00:00",
+    "head": "af74d52837889acfacf6eb0572785a32fa6f168f",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "91495b9ea2434d75dddfc5747d569cf6303ff45e202c8d2cdd4f489427e684f0",
+      "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}
