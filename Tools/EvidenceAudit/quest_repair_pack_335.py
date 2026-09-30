@@ -33,6 +33,35 @@ BASE_FIELDS = ('MinLevel', 'QuestLevel', 'AllowableRaces', 'Flags', 'QuestSortID
 ADDON_FIELDS = ('PrevQuestID', 'NextQuestID', 'ExclusiveGroup', 'SpecialFlags')
 
 
+def missing_eligibility_fields(quest, template, addon, include_defaults):
+    """Keep paired requirement identities/values together and preserve known facts."""
+    groups = [('AllowableClasses',), ('MaxLevel',), ('RequiredSkillID', 'RequiredSkillPoints'),
+              ('RequiredMinRepFaction', 'RequiredMinRepValue'), ('RequiredMaxRepFaction', 'RequiredMaxRepValue'),
+              ('RequiredFactionValue1',), ('RequiredFactionValue2',)]
+    nonnegative = {'MaxLevel', 'RequiredSkillID', 'RequiredSkillPoints', 'RequiredMinRepFaction', 'RequiredMaxRepFaction'}
+    fields = {}
+    unresolved = []
+    for group in groups:
+        values = {field: template.get(field, addon.get(field, 0)) for field in group}
+        if any(type(value) is not int or not -(2**31) <= value < 2**31
+               or (field in nonnegative and value < 0) or (field == 'AllowableClasses' and value < -1)
+               for field, value in values.items()):
+            unresolved.append('invalid-primary-eligibility:' + ','.join(group))
+            continue
+        conflicts = [field for field in group if quest.get(field) is not None and
+                     (type(quest[field]) is not int or quest[field] != values[field])]
+        if conflicts:
+            unresolved.append('primary-optional-field-conflict:' + ','.join(conflicts))
+            continue
+        first = group[0]
+        active = values[first] not in (0, -1) if first == 'AllowableClasses' else values[first] > 0
+        if first in ('RequiredFactionValue1', 'RequiredFactionValue2'):
+            active = template.get('RequiredFactionId' + first[-1], 0) > 0
+        if include_defaults or active:
+            fields.update({field: value for field, value in values.items() if quest.get(field) is None})
+    return fields, unresolved
+
+
 def encoded(value):
     return json.dumps(value, sort_keys=True, separators=(',', ':'), ensure_ascii=True, allow_nan=False).encode()
 
@@ -198,6 +227,15 @@ def build_repairs(data: dict, primary: dict, protected_ids: set[int], source: di
                 request_dependency_metadata(quest, record)
             else:
                 record['remaining'].append('dependent-previous-membership-mismatch')
+            fields, unresolved = missing_eligibility_fields(quest, template, addon, include_defaults=False)
+            record['remaining'].extend(unresolved)
+            if fields:
+                # A prior generic label is not evidence that an explicit primary
+                # acceptance requirement can be omitted. Fill only absent,
+                # non-default contracts, never protected objectives or geometry.
+                pack['QuestMetadata'].append({'QuestId': ident, 'SourceRef': source_ref('quest_template+addon', ident),
+                    'Fields': fields, 'DeliveryItems': None, 'AcceptanceSupplies': None, 'SupplementalSupply': None})
+                record['changes'].append('absent-eligibility-metadata')
             continue
         normal = [(template[f'RequiredNpcOrGo{i}'], template[f'RequiredNpcOrGoCount{i}'])
                   for i in range(1, 5) if template[f'RequiredNpcOrGo{i}']]
@@ -207,7 +245,8 @@ def build_repairs(data: dict, primary: dict, protected_ids: set[int], source: di
         if len(required) != len(required_pairs) or any(k <= 0 or v <= 0 for k, v in required_pairs):
             record['remaining'].append('ambiguous-primary-item-requirements')
             continue
-        fields = {field: template.get(field, addon.get(field, 0)) for field in OPTIONAL_FIELDS if quest.get(field) is None}
+        fields, unresolved = missing_eligibility_fields(quest, template, addon, include_defaults=True)
+        record['remaining'].extend(unresolved)
         delivery = supplies = None
         if quest['Objectives'] and all(o['Type'] == 'TurnInOnly' for o in quest['Objectives']) and required and not normal and not addon.get('SpecialFlags', 0) & 0x22:
             if all(item in items for item in required):

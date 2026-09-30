@@ -1,0 +1,23 @@
+{
+  "base_commit": "d36bddce5600bb67418c8180a38fdb8c40346f61",
+  "metadata_quests": 4,
+  "required_faction": 922,
+  "minimum_values": {
+    "9145": 3000,
+    "9155": 3000,
+    "9173": 9000,
+    "9192": 3000
+  },
+  "all_other_repair_fields_unchanged": true,
+  "global_spawn_entries": 730,
+  "global_spawn_points": 14293,
+  "objective_credit_sources": 56,
+  "credit_hint_points": 1237,
+  "object_identity_repairs": 46,
+  "dependency_records": 369,
+  "strategy_recipes_unchanged": true,
+  "base_dataset_sha256": "f2ca79318694afaa4214fc09392e88c3d9d1eae5128f323d0d65b1b9e91a7e3f",
+  "new_repair_sha256": "61c0b29373f1bb80f179389735f3d8b0fb16e91bb3beed3f67bdbda4b8237f90",
+  "live_completion_proven": false,
+  "created_utc": "2026-09-30T06:33:20.497544+00:00"
+}

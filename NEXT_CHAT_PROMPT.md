@@ -1,3 +1,15 @@
+# Current: eligibility metadata continuation after PR65 — 30 September 2026
+
+PR61 remains merged/deployed at master3bc97e1e0b446aede269f7414c0c7c6358fdc192; retain its reviewed head3f5715b6 and verified production manifest. PR62 at3662a8f5, PR63 at763c51e4, PR64 atcda91e35 and PR65 atd36bddce5600bb67418c8180a38fdb8c40346f61 are separately published and validated. Do not recreate or redeploy completed work. Active worktree D:/Dev/CB-QuestEligibility-20260930, branch audit/next-quest-eligibility-20260930, starts at PR65. Resolve the final containing SHA and publication/acceptance from external ELIGIBILITY_* receipts under D:/Dev/CopilotBuddy-Evidence/postmerge-20260930-pr61.
+
+Read docs/audit/2026-09-30/eligibility-metadata/REPORT.md, metadata-delta.json, reputation-closure-review.json, source-contracts.json and exact ledger/remaining/correlation files. The protected-baseline early return no longer hides explicit absent eligibility. Paired identities/thresholds reject source conflicts. Applied source contracts are faction922 minimum3000 for9145/9155/9192 and9000 for9173; all prior repairs stay unchanged. Actual GetFactionInfoByID/sixth-result semantics were reverified through enabled read-only IDA at5D11E0/5D0DA0/5D05B0; the existing player-bound capture is already correct.
+
+Current exclusive counts2964generic/2strategy/932data/364source/16live/57scripted=4335, with1369remaining. Only9173 gains generic proof; the other three repaired rows keep other obligations. Actual diagnostic owners pass258493dataset/39strategy checks;34real reputation cases and300analyzers pass with one expected skip. The previous258497 prose was an overcount; retained rows and fresh clean reproduction both total258493 with identical output hashes. Clean final commit/local/hosted acceptance is recorded separately; do not claim it from the diagnostic fixtures.
+
+The user explicitly extended work beyond green milestones. Next implement only evidence-backed quest availability condition semantics from the125quest/263row frontier, checking player target, OR-of-AND groups, negation, reference IDs and exact rewarded/taken/complete/none/state behavior. Unknown negated observations cannot become true; unsupported condition rows cannot be dropped. Keep source/core/realm distinctions, actual inventory/history/progress, originalbuild12340/TC335primary/ACsecondary, debug-only bounded diagnostics and small PRs. Do not repeat the held session_finish call for progress or the added task.
+
+---
+
 # Current: ordinary credit-source geometry continuation — 30 September 2026
 
 PR61 remains merged and verified in production at master3bc97e1e0b446aede269f7414c0c7c6358fdc192 (reviewed head3f5715b6cc292b2086946a80471c4145471cbdd7). Do not repeat deployment. PR62 at3662a8f5, PR63 at763c51e4 and PR64 atcda91e357d3c1922311b4a0c8ba8768cf31978ca are separate published/validated slices. Current worktree D:/Dev/CB-QuestGeometry-20260930, branch audit/next-quest-geometry-20260930, is based on PR64. Resolve the containing commit and final acceptance/publication receipts from D:/Dev/CopilotBuddy-Evidence/postmerge-20260930-pr61/CREDIT_SOURCE_* before claiming a final tested SHA.

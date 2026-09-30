@@ -7,8 +7,8 @@
   "source_sql_sha256": "e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9",
   "files": {
     "quest_data.json": "f2ca79318694afaa4214fc09392e88c3d9d1eae5128f323d0d65b1b9e91a7e3f",
-    "quest_data.repairs.json": "943fd6647ab4639c0496d6f412e271532d327a43b172b638b18ceed891478292",
-    "quest_strategies.json": "0ed141b82b7b841832fdd71257ff99a81758eb1bbf2ced57ebfe1b51e16861d2"
+    "quest_data.repairs.json": "61c0b29373f1bb80f179389735f3d8b0fb16e91bb3beed3f67bdbda4b8237f90",
+    "quest_strategies.json": "ae44929174c1924723aa6a6c163550254db81deae0497870cb460dce3ae98531"
   },
   "quest_count": 4335,
   "strategy_quests": [
@@ -16,10 +16,10 @@
     9447
   ],
   "strategy_recipes": 3,
-  "repair_evidence": "docs/audit/2026-09-30/credit-geometry/repair-evidence.json.gz",
-  "strategy_evidence": "docs/audit/2026-09-30/credit-geometry/strategy-evidence.json.gz",
+  "repair_evidence": "docs/audit/2026-09-30/eligibility-metadata/repair-evidence.json.gz",
+  "strategy_evidence": "docs/audit/2026-09-30/eligibility-metadata/strategy-evidence.json.gz",
   "realm_equivalence_proven": false,
   "live_completion_proven": false,
   "production_replaced": false,
-  "closure_evidence_directory": "docs/audit/2026-09-30/credit-geometry"
+  "closure_evidence_directory": "docs/audit/2026-09-30/eligibility-metadata"
 }
