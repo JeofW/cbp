@@ -13,6 +13,7 @@
     <Compile Include="..\..\runtime-snapshot\Bots\WholesomeAutoQuest-master\DataModels.cs" Link="DataModels.cs" />
     <Compile Include="..\..\runtime-snapshot\Bots\WholesomeAutoQuest-master\DataLoader.cs" Link="DataLoader.cs" />
     <Compile Include="..\..\runtime-snapshot\Bots\WholesomeAutoQuest-master\QuestDataRepairPack.cs" Link="QuestDataRepairPack.cs" />
+    <Compile Include="..\..\runtime-snapshot\Bots\WholesomeAutoQuest-master\QuestAvailabilityPolicy.cs" Link="QuestAvailabilityPolicy.cs" />
     <Compile Include="..\..\runtime-snapshot\Bots\WholesomeAutoQuest-master\QuestDeliveryPolicy.cs" Link="QuestDeliveryPolicy.cs" />
     <Compile Include="..\..\runtime-snapshot\Bots\WholesomeAutoQuest-master\QuestDependencyCatalog.cs" Link="QuestDependencyCatalog.cs" />
     <Compile Include="..\..\runtime-snapshot\Bots\WholesomeAutoQuest-master\ProfileBuilder.cs" Link="ProfileBuilder.cs" />

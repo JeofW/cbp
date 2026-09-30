@@ -85,6 +85,8 @@ namespace WholesomeAQ
             if (snapshot.PlayerLevel < quest.MinLevel) return "below-min-level";
             string requirementRejection = DeclaredRequirementRejection(quest, snapshot);
             if (requirementRejection != null) return requirementRejection;
+            string availabilityRejection = QuestAvailabilityPolicy.Evaluate(quest, snapshot).Rejection;
+            if (availabilityRejection != null) return availabilityRejection;
             string deliveryRejection = QuestDeliveryPolicy.PickupRejection(quest, snapshot.CarriedItemCounts);
             if (deliveryRejection != null) return deliveryRejection;
             if (quest.QuestLevel > 0 && quest.QuestLevel < minimumLevel) return "below-configured-quest-level";
@@ -431,6 +433,7 @@ namespace WholesomeAQ
                             basePickupRejection = BasePickupRejection(quest, snapshot, minimumLevel, strategyPack),
                             allowableRaces = quest.AllowableRaces, raceAllowed = RaceAllowed(quest.AllowableRaces, snapshot.PlayerRaceId),
                             declaredRequirementRejection = DeclaredRequirementRejection(quest, snapshot),
+                            availabilityConditions = QuestAvailabilityPolicy.Evaluate(quest, snapshot),
                             allowableClasses = quest.AllowableClasses, maxLevel = quest.MaxLevel,
                             requiredSkillId = quest.RequiredSkillID, requiredSkillPoints = quest.RequiredSkillPoints,
                             requiredMinRepFaction = quest.RequiredMinRepFaction, requiredMinRepValue = quest.RequiredMinRepValue,

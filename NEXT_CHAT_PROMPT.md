@@ -1,3 +1,19 @@
+# Current: source-bound availability conditions after PR65 — 30 September 2026
+
+Start with `docs/audit/2026-09-30/quest-conditions/PUBLICATION_HOLD.md` and the external exact provider-error receipts. The condition code, 58 contracts, 259156/39 diagnostic output and 1334 remaining IDs are preserved locally at parent d36bddce; they are not a published candidate. Its commit and later full-suite launch were each blocked twice and stopped. Eligibility is a separate blocked sibling. Do not reroute these rejected operations or repeat earlier completed PR61/PR62–65 work. Reconcile supported provider recovery and actual Git state before any new publication claim; keep dirty comparison evidence distinct from clean-SHA local/hosted acceptance.
+
+Active worktree D:/Dev/CB-QuestConditions-20260930, branch audit/next-quest-conditions-20260930, parent d36bddce5600bb67418c8180a38fdb8c40346f61. Read docs/audit/2026-09-30/quest-conditions/REPORT.md, closure-review.json, source-contracts.json, exact ledger/remaining/correlations and external CONDITIONS_* acceptance/publication receipts before continuing. The containing candidate SHA must be resolved through Git; comparison fixtures alone are not exact clean-commit acceptance.
+
+PR61 is already merged/deployed: reviewed3f5715b6cc292b2086946a80471c4145471cbdd7, master3bc97e1e0b446aede269f7414c0c7c6358fdc192. Preserve verified production and PR62–65. Do not repeat completed deployment or previous acquisition, GameObject identity or credit-geometry fixes.
+
+The new contract covers58quests/115predicates, preserving OR-of-AND groups, tri-state negation, exact raw accepted status and authoritative permanent history. Typed loader validation, fresh scan/publication/running permission checks, full debug rejection details and accepted turn-in preservation are implemented. Only ordinary nonrepeatable/nonseasonal QuestType2 references are supported; no new native API, bank/daily observation or scripted action is invented. Read-only IDA is now enabled and binary/hash verified; GetQuestLogTitle ninth ID/computed completion and GetItemCount semantics were inspected.
+
+The exact partition is2999generic/2strategy/932data/329source/16live/57scripted=4335, with1334remaining IDs and36new generic closures. Current diagnostics pass259156dataset checks,39strategy checks,40typed cases,7actual observation/publication cases and305analyzers with one expected skip. Final clean/local/hosted/publication status must come from its exact external receipt.
+
+The eligibility sibling at D:/Dev/CB-QuestEligibility-20260930 remains dirty atPR65 with4completed reputation repairs. Its commit transaction received the same provider safety-status rejection twice and was stopped; the exact payload/error are in ELIGIBILITY_COMMIT_PROVIDER_BLOCK_20260930.json. Do not reroute that operation, mix sibling counts, or claim it was committed. Continue independent authorized audit work, preserve the original source/observation/ownership/recovery/navigation gates and explicit remaining obligations. session_finish was already held in the earlier continuation; do not repeat it for added work or progress.
+
+---
+
 # Current: ordinary credit-source geometry continuation — 30 September 2026
 
 PR61 remains merged and verified in production at master3bc97e1e0b446aede269f7414c0c7c6358fdc192 (reviewed head3f5715b6cc292b2086946a80471c4145471cbdd7). Do not repeat deployment. PR62 at3662a8f5, PR63 at763c51e4 and PR64 atcda91e357d3c1922311b4a0c8ba8768cf31978ca are separate published/validated slices. Current worktree D:/Dev/CB-QuestGeometry-20260930, branch audit/next-quest-geometry-20260930, is based on PR64. Resolve the containing commit and final acceptance/publication receipts from D:/Dev/CopilotBuddy-Evidence/postmerge-20260930-pr61/CREDIT_SOURCE_* before claiming a final tested SHA.

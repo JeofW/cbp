@@ -1,0 +1,114 @@
+{
+  "primary": [
+    {
+      "revision": "95657f54779467effea8a1749a61ff93abc1d707",
+      "path": "src/server/game/Conditions/ConditionMgr.cpp",
+      "sha256": "0b16a2b37477b2272503af39ddb6e99d32d41476eee6d48333b5b4a860afaf36",
+      "lines": [
+        [
+          190,
+          315
+        ],
+        [
+          455,
+          562
+        ],
+        [
+          805,
+          895
+        ]
+      ],
+      "url": "https://github.com/TrinityCore/TrinityCore/blob/95657f54779467effea8a1749a61ff93abc1d707/src/server/game/Conditions/ConditionMgr.cpp"
+    },
+    {
+      "revision": "95657f54779467effea8a1749a61ff93abc1d707",
+      "path": "src/server/game/Conditions/ConditionMgr.h",
+      "sha256": "48184c43405ae56d66fbcda7b47b2998d2d9c75403f84b0fe4e56e5e96c8f884",
+      "lines": [
+        [
+          40,
+          155
+        ]
+      ],
+      "url": "https://github.com/TrinityCore/TrinityCore/blob/95657f54779467effea8a1749a61ff93abc1d707/src/server/game/Conditions/ConditionMgr.h"
+    },
+    {
+      "revision": "95657f54779467effea8a1749a61ff93abc1d707",
+      "path": "src/server/game/Entities/Player/Player.cpp",
+      "sha256": "36a817da38b318740ee5aa31f256518175dfdd02d1dd7a68ebb0805fc43275d8",
+      "lines": [
+        [
+          14860,
+          14910
+        ],
+        [
+          15105,
+          15132
+        ],
+        [
+          15460,
+          15490
+        ],
+        [
+          15688,
+          15718
+        ]
+      ],
+      "url": "https://github.com/TrinityCore/TrinityCore/blob/95657f54779467effea8a1749a61ff93abc1d707/src/server/game/Entities/Player/Player.cpp"
+    },
+    {
+      "revision": "95657f54779467effea8a1749a61ff93abc1d707",
+      "path": "src/server/game/Quests/QuestDef.h",
+      "sha256": "4c81f70c4f537a005b190d20665ca706eacaed9207504dc0e4a80d50ee80a0e0",
+      "lines": [
+        [
+          90,
+          120
+        ],
+        [
+          275,
+          310
+        ]
+      ],
+      "url": "https://github.com/TrinityCore/TrinityCore/blob/95657f54779467effea8a1749a61ff93abc1d707/src/server/game/Quests/QuestDef.h"
+    },
+    {
+      "revision": "95657f54779467effea8a1749a61ff93abc1d707",
+      "path": "src/server/shared/SharedDefines.h",
+      "sha256": "74bfa9fe95d60671c0cd7d09b25758a862f8c7dedbc1e4fc34a7e49ba7cee7d6",
+      "lines": [
+        [
+          2875,
+          2935
+        ]
+      ],
+      "url": "https://github.com/TrinityCore/TrinityCore/blob/95657f54779467effea8a1749a61ff93abc1d707/src/server/shared/SharedDefines.h"
+    }
+  ],
+  "client": {
+    "build": 12340,
+    "binary_sha256": "bf644876709c591acc17c0da8cdf1814edcc9f1e6bc109a8c0d5c38c79dc953c",
+    "receipts": {
+      "resume-eligibility-health-20260930-r1.json": "521fc0ca6f97eaef22dc15830ea32e425132f1606cb66cf465d0bbe73e897753",
+      "resume-eligibility-binary-20260930-r1.json": "73a15553a747cd265f463fccbcbf5a3c370265b992e81032858b517b40c67999",
+      "availability-registered-apis-20260930-r1.json": "4e4cbb76bc570f0c749387fa22869c3c53e9f7d5a5d994d1f0e83ddef1eb0808",
+      "availability-quest-title-semantics-20260930-r1.json": "5c104acce426ad8d4c8b9376fee913a2ccac6c9048c7b5e223a564181976cf4d",
+      "availability-item-count-semantics-20260930-r1.json": "526c91280c2f3fb6b9515cd9173c803c81ceabcdb3d3122b7f0b9449e6f3366b"
+    },
+    "new_native_entrypoints_added": false,
+    "get_quest_log_title": {
+      "address": "0x5E5CC0",
+      "quest_id_return": 9,
+      "completion_limit": "Failed is prioritized, but the complete result can call a computed helper. The availability owner uses raw descriptor flags instead."
+    },
+    "get_item_count": {
+      "address": "0x51C2E0",
+      "limit": "Bank/charge options and zero-with-no-player prevent unreviewed use as authoritative item-condition evidence."
+    },
+    "unregistered_exact_names": [
+      "GetQuestID",
+      "GetQuestLogIndexByID"
+    ]
+  },
+  "realm_configuration_proven": false
+}

@@ -147,6 +147,10 @@ namespace WholesomeAQ
 
     public class QuestEntry
     {
+        // Only a validated repair pack may supply this server-side contract.
+        // Base JSON cannot inject availability predicates or observed quest state.
+        [System.Text.Json.Serialization.JsonIgnore]
+        public QuestAvailabilityContract AvailabilityConditions { get; internal set; }
         // Null means no source-bound delivery contract. These are requirements,
         // never a claim that acceptance actually supplied an item to this actor.
         public List<QuestItemRequirement> DeliveryItems { get; set; }

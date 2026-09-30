@@ -14,7 +14,7 @@ from pathlib import Path, PurePosixPath
 import subprocess
 import time
 
-from primary_closure_335 import classification_partition, validate_closure_inputs, validate_strategy_results
+from primary_closure_335 import classification_partition, validate_closure_inputs, validate_strategy_results, validate_availability_result
 from release_evidence_335 import file_sha256, source_identity, source_inputs, write_json
 
 EVIDENCE = Path('docs/audit/2026-09-29/wholesome-primary-closure')
@@ -107,6 +107,14 @@ def run(args) -> None:
             raise ValueError('Every declared strategy needs its own exact lifecycle receipt')
         if any(row.get('pipeline_status') != 'PASS' or row.get('failed_cases', 1) != 0 for row in strategies.values()):
             raise ValueError('A vetted strategy lifecycle did not pass')
+        loaded_model = read_json(output / 'quest-simulation.jsonl.effective-model.json')
+        availability = loaded_model.get('QuestAvailabilityConditions', [])
+        declared_availability = read_json(knowledge / 'quest_data.repairs.json').get('QuestAvailabilityConditions', [])
+        if availability != declared_availability:
+            raise ValueError('Loaded availability contracts differ from the shipped repair pack')
+        for contract in availability:
+            if not validate_availability_result(contract, simulations[contract['QuestId']]):
+                raise ValueError('Every availability contract requires actual status and publication owner cases')
         ids = classification_partition(ledger, [quest['Id'] for quest in data['Quests']])
         counts = {category: len(values) for category, values in ids.items()}
         if counts != fixture['classification_counts']:
@@ -123,6 +131,8 @@ def run(args) -> None:
                         'simulation_checks': sum(row['passed_cases'] for row in rows),
                         'strategy_checks': sum(row['passed_cases'] for row in strategies.values()),
                         'strategy_quest_ids': sorted(strategies), 'failed_cases': 0,
+                        'availability_condition_quests': len(availability),
+                        'availability_condition_checks': sum(simulations[contract['QuestId']]['availability_condition_validation']['passed_cases'] for contract in availability),
                         'output_sha256': output_hashes, 'live_completion_proven': False,
                         'claim_limit': 'Actual owners under controlled source-bound observations; no game attachment.'}
         write_json(output / 'verification.json', verification)
