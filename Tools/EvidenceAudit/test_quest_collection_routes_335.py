@@ -17,6 +17,8 @@ class CollectionRouteExporterTests(unittest.TestCase):
                                           RequiredItemId1=301, RequiredItemCount1=2)
         tables['item_template'] = [{'entry':301,'name':'Required item','startquest':0,'__source_line':30}]
         tables['creature_loot_template'] = [self.loot(201)]
+        tables['creature_template'][0].update(unit_flags=0,unit_flags2=2048,dynamicflags=0,
+            npcflag=0,type=7,faction=14,minlevel=1,maxlevel=2)
         tables['creature_template'].append({'entry':900,'name':'Unproved old owner','lootid':900,'AIName':'','ScriptName':''})
         tables['creature_template'].append({'entry':901,'name':'Giver','lootid':0,'AIName':'','ScriptName':''})
         data['QuestGivers'] = [{'QuestId':101,'GiverId':901,'GiverType':'Creature','GiverName':'Giver'}]
@@ -143,6 +145,34 @@ class CollectionRouteExporterTests(unittest.TestCase):
     def test_duplicate_primary_actor_identity_is_rejected(self):
         data,tables=self.fixture();tables['creature_template'].append(copy.deepcopy(tables['creature_template'][0]))
         with self.assertRaises(ValueError):self.derive(data,tables)
+
+    def test_nonordinary_donor_flags_cannot_become_a_new_collection_route(self):
+        for field,value in (('unit_flags',2),('unit_flags',0x100),('unit_flags',0x40),
+                            ('unit_flags',0x02000000),('unit_flags2',1),('unit_flags2',0x1000),
+                            ('dynamicflags',1),('npcflag',2),('type',8)):
+            with self.subTest(field=field,value=value):
+                data,tables=self.fixture();tables['creature_template'][0][field]=value
+                self.assertEqual(self.derive(data,tables)[0]['CollectionRouteRepairs'],[])
+
+    def test_missing_or_malformed_donor_state_is_unknown_not_an_ordinary_zero(self):
+        for field in ('unit_flags','unit_flags2','dynamicflags','npcflag','type','faction','minlevel','maxlevel'):
+            for value in (None,True,-1):
+                with self.subTest(field=field,value=value):
+                    data,tables=self.fixture()
+                    if value is None:tables['creature_template'][0].pop(field)
+                    else:tables['creature_template'][0][field]=value
+                    self.assertEqual(self.derive(data,tables)[0]['CollectionRouteRepairs'],[])
+
+    def test_swimming_and_power_regeneration_are_supported_donor_states(self):
+        for flags in (0,0x8000):
+            for flags2 in (0,0x800):
+                data,tables=self.fixture();tables['creature_template'][0].update(unit_flags=flags,unit_flags2=flags2)
+                self.assertEqual(self.derive(data,tables)[0]['CollectionRouteRepairs'][0]['CreatureId'],201)
+
+    def test_invalid_donor_level_or_faction_does_not_create_a_source(self):
+        for change in ({'faction':0},{'minlevel':0},{'maxlevel':0},{'minlevel':3,'maxlevel':2}):
+            data,tables=self.fixture();tables['creature_template'][0].update(change)
+            self.assertEqual(self.derive(data,tables)[0]['CollectionRouteRepairs'],[])
 
 
 if __name__=='__main__':unittest.main()

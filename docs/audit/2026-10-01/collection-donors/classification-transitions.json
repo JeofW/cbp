@@ -1,0 +1,166 @@
+[
+  {
+    "quest_id": 429,
+    "before": "SOURCE-UNCERTAIN",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "absent-eligibility-metadata",
+      "geometry:Creature:1765",
+      "source-reviewed-ordinary-collection-route"
+    ]
+  },
+  {
+    "quest_id": 714,
+    "before": "DATA-INVALID/INCOMPLETE",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "absent-eligibility-metadata",
+      "source-reviewed-ordinary-collection-route"
+    ]
+  },
+  {
+    "quest_id": 2821,
+    "before": "DATA-INVALID/INCOMPLETE",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "absent-eligibility-metadata",
+      "source-reviewed-ordinary-collection-route"
+    ]
+  },
+  {
+    "quest_id": 2822,
+    "before": "DATA-INVALID/INCOMPLETE",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "absent-eligibility-metadata",
+      "source-reviewed-ordinary-collection-route"
+    ]
+  },
+  {
+    "quest_id": 3128,
+    "before": "DATA-INVALID/INCOMPLETE",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "absent-eligibility-metadata",
+      "geometry:Creature:2927",
+      "geometry:Creature:5276",
+      "geometry:Creature:7584",
+      "source-reviewed-ordinary-collection-route"
+    ]
+  },
+  {
+    "quest_id": 3501,
+    "before": "DATA-INVALID/INCOMPLETE",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "absent-eligibility-metadata",
+      "source-reviewed-ordinary-collection-route"
+    ]
+  },
+  {
+    "quest_id": 3521,
+    "before": "SOURCE-UNCERTAIN",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "absent-eligibility-metadata",
+      "geometry:Creature:1986",
+      "source-reviewed-ordinary-collection-route"
+    ]
+  },
+  {
+    "quest_id": 4061,
+    "before": "DATA-INVALID/INCOMPLETE",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "absent-eligibility-metadata",
+      "source-reviewed-ordinary-collection-route"
+    ]
+  },
+  {
+    "quest_id": 4449,
+    "before": "SOURCE-UNCERTAIN",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "absent-eligibility-metadata",
+      "geometry:Creature:10758",
+      "source-reviewed-ordinary-collection-route"
+    ]
+  },
+  {
+    "quest_id": 6031,
+    "before": "SOURCE-UNCERTAIN",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "absent-eligibility-metadata",
+      "source-reviewed-ordinary-collection-route"
+    ]
+  },
+  {
+    "quest_id": 8310,
+    "before": "DATA-INVALID/INCOMPLETE",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "absent-eligibility-metadata",
+      "geometry:Creature:11725",
+      "geometry:Creature:11730",
+      "source-reviewed-ordinary-collection-route"
+    ]
+  },
+  {
+    "quest_id": 8549,
+    "before": "SOURCE-UNCERTAIN",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "absent-eligibility-metadata",
+      "geometry:Creature:5881",
+      "source-reviewed-ordinary-collection-route"
+    ]
+  },
+  {
+    "quest_id": 8580,
+    "before": "SOURCE-UNCERTAIN",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "absent-eligibility-metadata",
+      "geometry:Creature:1812",
+      "source-reviewed-ordinary-collection-route"
+    ]
+  },
+  {
+    "quest_id": 8586,
+    "before": "DATA-INVALID/INCOMPLETE",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "absent-eligibility-metadata",
+      "geometry:Creature:8447",
+      "source-reviewed-ordinary-collection-route"
+    ]
+  },
+  {
+    "quest_id": 10420,
+    "before": "DATA-INVALID/INCOMPLETE",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "absent-eligibility-metadata",
+      "source-reviewed-ordinary-collection-route"
+    ]
+  },
+  {
+    "quest_id": 10618,
+    "before": "DATA-INVALID/INCOMPLETE",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "absent-eligibility-metadata",
+      "source-reviewed-ordinary-collection-route"
+    ]
+  },
+  {
+    "quest_id": 13092,
+    "before": "DATA-INVALID/INCOMPLETE",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "absent-eligibility-metadata",
+      "source-reviewed-ordinary-collection-route"
+    ]
+  }
+]

@@ -1,3 +1,13 @@
+# Current: reviewed ordinary collection donors after PR78
+
+Active worktree D:/Dev/CB-QuestCollectionDonors-20261001, branch audit/next-quest-collection-donors-20261001, parent1366dd14a489b3bad499457872156c143d39d128. PR78 is already fully validated and merged at master19a09fc15afc021c4920d3546567d36e3268adeb; do not replay that merge or any PR61–77 work. Read docs/audit/2026-10-01/collection-donors/REPORT.md, exact ledger/fixture/remaining IDs, route-patch.json and source-review-recovery.json. Resolve the final candidate and local/hosted/publication/integration from external DONOR_* receipts before claiming acceptance.
+
+The donor flag review recovered normally. Unknown/static-special states are rejected;8924/15591 are excluded. The applied source-bound delta is24routes/22quests/19spawnentries/262points, preserving all previous repairs,81availabilitycontracts/146predicates and only9066/9447strategies. All25actual knowledge/profile/behavior cases and19exporter tests pass after their retained red failures. Dataset261209/strategy39 checks reproduce. Exact counts3028generic/2strategy/921data/311source/16live/57scripted=4335;1305remaining. Seventeen quests gain generic proof, five repaired quests retain other obligations; scenario count changes are explicitly accounted for.
+
+Bank source probing, aggregate loot-group review and remaining source-conflict inspection are stopped after their original supported requests and identical retries were provider-blocked. Preserve the exact payload/error receipts; do not split or reroute them. Original build12340 read-only IDA remains enabled and other successful calls are retained, but no bank absence or negative-spell authority is invented. Production stays at PR61 master3bc97e1e and is not changed by source integration. Remaining offline work is not declared exhausted merely because the conservative exporters return no further delta. Continue independently justified work only with allowed evidence and actual failing-before/green checks; keep unknown observations, item receipts, history and live/script limits intact.
+
+---
+
 # Current: selected collection-source handoff and guarded route framework
 
 Worktree D:/Dev/CB-QuestCollectionRoutes-20261001, branch audit/next-quest-collection-routes-20261001, parent feeff2ac3aec9bcaa2c8632bf56eb0f402c44167. Read docs/audit/2026-10-01/collection-sources/REPORT.md, its exact fixture/ledger, source-review-provider-holds.json and remaining-frontier-disposition.json. Resolve the containing candidate and local/hosted publication/integration from external COLLECTION_* receipts; do not replay the completed PR77 merge or older scopes.

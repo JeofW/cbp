@@ -1,0 +1,19 @@
+{
+  "tool": "Chat_On_Steroids_Plugins.exec_command",
+  "payload": {
+    "cmds": [
+      "rg --files Tools/WholesomeQuestRecoveryRegressionTests Tools/EvidenceAudit | rg '(ItemCondition|Availability|InventorySnapshot|Bank)'",
+      "python D:\\Dev\\CopilotBuddy-Evidence\\postmerge-20260929\\ida_read.py decompile --addr 0x753A50 --label bank-slot-mode-selector-20261001",
+      "python -c \"import pathlib,urllib.request,hashlib,json; p=pathlib.Path(r'D:\\Dev\\CopilotBuddy-Evidence\\postmerge-20260930-pr61\\condition-source-contracts\\Bag.cpp'); u='https://raw.githubusercontent.com/TrinityCore/TrinityCore/95657f54779467effea8a1749a61ff93abc1d707/src/server/game/Entities/Item/Container/Bag.cpp'; data=urllib.request.urlopen(u,timeout=30).read(); assert not p.exists() or p.read_bytes()==data; p.write_bytes(data) if not p.exists() else None; print(json.dumps({'path':str(p),'source':u,'sha256':hashlib.sha256(data).hexdigest()}))\""
+    ],
+    "workdir": "/dev/CB-QuestBankObservation-20261001",
+    "yield_time_ms": 10000
+  },
+  "attempt_results": [
+    "This tool call was blocked by OpenAI because we couldn't determine the safety status of the request.",
+    "This tool call was blocked by OpenAI because we couldn't determine the safety status of the request."
+  ],
+  "executed": false,
+  "session_id": null,
+  "disposition": "Stopped after one identical retry; no split or alternative route. Prior successful IDA registration/enumerator and Player source reads remain evidence at their stated scope. No bank-inclusive runtime observation or negative bank condition is implemented or claimed."
+}
