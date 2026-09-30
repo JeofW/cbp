@@ -1,0 +1,71 @@
+{
+  "contracts": [
+    {
+      "path": "src/server/game/Conditions/ConditionMgr.h",
+      "file": "ConditionMgr.h",
+      "url": "https://raw.githubusercontent.com/TrinityCore/TrinityCore/95657f54779467effea8a1749a61ff93abc1d707/src/server/game/Conditions/ConditionMgr.h",
+      "revision": "95657f54779467effea8a1749a61ff93abc1d707",
+      "sha256": "48184c43405ae56d66fbcda7b47b2998d2d9c75403f84b0fe4e56e5e96c8f884",
+      "bytes": 21513
+    },
+    {
+      "path": "src/server/game/Loot/LootMgr.cpp",
+      "file": "LootMgr.cpp",
+      "url": "https://raw.githubusercontent.com/TrinityCore/TrinityCore/95657f54779467effea8a1749a61ff93abc1d707/src/server/game/Loot/LootMgr.cpp",
+      "revision": "95657f54779467effea8a1749a61ff93abc1d707",
+      "sha256": "5a021ae53ed248c60d53eaca2e127afb16eab3c52fcb7d99776043ce138445a1",
+      "bytes": 44269
+    },
+    {
+      "path": "src/server/game/Entities/GameObject/GameObjectData.h",
+      "file": "GameObjectData.h",
+      "url": "https://raw.githubusercontent.com/TrinityCore/TrinityCore/95657f54779467effea8a1749a61ff93abc1d707/src/server/game/Entities/GameObject/GameObjectData.h",
+      "revision": "95657f54779467effea8a1749a61ff93abc1d707",
+      "sha256": "a559290103ab93909d435bbb9d4116e214e2e839b7e8d0b3875b578823e180cf",
+      "bytes": 33017
+    }
+  ],
+  "code_sha256": {
+    "quest_collection_source_335.py": "7318afc1331a441b458cc185a8cefc047ac03638281a4d9a1ab93abd286a07c3",
+    "primary_closure_335.py": "fa2696541a016091c8dff644b50b812ab6c53717a65a68a170d5d01a7877b3d1",
+    "quest_remaining_correlations_335.py": "7829c7858c5012f55239f33ff7dd01b5f9ca22d6ee135536eb16b633822c7eb7",
+    "quest_repair_pack_335.py": "d6543be4d8f3f7460ded97b5a7efc97e1e26598c3eb19e28c58f79acba25aa48"
+  },
+  "contract_lines": {
+    "GameObjectData.h": [
+      [
+        86,
+        102
+      ],
+      [
+        552,
+        559
+      ]
+    ],
+    "LootMgr.cpp": [
+      [
+        297,
+        343
+      ],
+      [
+        375,
+        401
+      ],
+      [
+        562,
+        603
+      ],
+      [
+        713,
+        768
+      ]
+    ],
+    "ConditionMgr.h": [
+      [
+        124,
+        144
+      ]
+    ]
+  },
+  "reference_is_not_configured_realm": true
+}
