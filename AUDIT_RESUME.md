@@ -1,3 +1,21 @@
+# Current: reproduced combined quest candidate — 30 September 2026
+
+The local integration's actual owners and primary-source ledger are now reproduced: 3003 generic / 2 strategy / 932 data / 325 source / 16 live / 57 scripted = 4335, with 1330 exact remaining IDs. Dataset259164 and strategy39 checks pass. Preserve both publication guards, all58 condition contracts/115predicates and allfour reputation contracts. Read docs/audit/2026-09-30/quest-integration/REPORT.md and its fixture/ledger/correlations. Final containing commit, clean local and hosted acceptance must be resolved from Git and external COMBINED_* receipts. Do not replay the pending local merge or a successful later commit. The older entries below preserve the sequence of work.
+
+---
+
+# Current: local combined quest integration candidate — 30 September 2026
+
+Current recovery update: read `docs/audit/2026-09-30/quest-integration/PUBLICATION_HOLD.md`. The combined external ledger/correlations are complete at 3003/2/932/325/16/57=4335 with1330remaining; final evidence staging was provider-blocked twice and stopped. The local merge remains pending. Independent normal guarded merges completed PR62–66,68,69 in dependency order. Canonical master is now `b91c548ba8a773ed60d6f138f1439180916ecc79`, matching reviewed PR69's tree; production is still deployed PR61 `3bc97e1e0b446aede269f7414c0c7c6358fdc192`. PR67 remains open. Earlier present-tense master/merge-hold wording below is historical. Reconcile external `validated-chain-integration-20260930`, `availability-frontier-v3` and final master validation receipts before any new claim.
+
+This isolated branch `audit/next-quest-integration-20260930` combines reviewed PR69 `fdc5262c8aca90778565eb28e84b562ba1b1b071` with condition PR67 `0722b9c4d7e2d958a23c0986e05864f2f6b68a0a`. Both parents have complete clean local and downloaded hosted Windows/x86 acceptance. The local merge is pending until source/knowledge reconciliation and actual owner evidence are complete. Read `docs/audit/2026-09-30/quest-integration/integration-sources.json` and external `LOCAL_SIBLING_INTEGRATION_PREPARED.json`, `COMBINED_KNOWLEDGE_STAGED.json` and subsequent combined receipts before acting.
+
+Preserve both AvailabilityCurrent and InventoryCurrent at profile publication and continuing execution, all58 condition contracts/115predicates, allfour reputation repairs and PR69 direct live objective handling. All prior repair families, strategies9066/9447, source bindings, inventory promises versus observed stock, raw/ready/failed/rewarded distinctions and navigation/recovery/ownership gates remain. Combined counts must come from a new actual simulation/primary ledger, not from adding sibling results.
+
+The guarded PR62 master merge remains provider-held and unexecuted. This separate local candidate does not merge a GitHub PR or update master/production. Canonical master/production remainPR61 `3bc97e1e0b446aede269f7414c0c7c6358fdc192`. Continue preserving the stopped availability-input branch request and exact provider receipts; no reroute is authorized by this local preparation. No live completion is claimed.
+
+---
+
 # Current: direct live-objective observation continuation — 30 September 2026
 
 This branch starts at ready/validated PR68 `af74d52837889acfacf6eb0572785a32fa6f168f`. PR67 conditions remain a separate ready sibling at `0722b9c4d7e2d958a23c0986e05864f2f6b68a0a`; PR66 is already published at00955605. Do not repeat their implementation/publication, the PR61 deployment, or any successful commit. Master/production remain3bc97e1e.

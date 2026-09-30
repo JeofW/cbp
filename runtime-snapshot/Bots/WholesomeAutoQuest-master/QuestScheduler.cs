@@ -59,6 +59,9 @@ namespace WholesomeAQ
         public string InventoryObservationStatus { get; init; } = "not-captured";
         public IReadOnlyDictionary<int, int> SkillValues { get; init; }
         public IReadOnlyDictionary<int, int> ReputationValues { get; init; }
+        // Exact raw accepted states (complete=1, incomplete=3, failed=5), not
+        // native/computed inventory readiness. Null means the sample is unknown.
+        public IReadOnlyDictionary<uint, int> RawQuestStates { get; init; }
         public IReadOnlyList<QuestItemStarterObservation> ItemStarters { get; init; } = Array.Empty<QuestItemStarterObservation>();
         public IReadOnlyList<QuestCreatureCreditObservation> CreatureCredits { get; init; } = Array.Empty<QuestCreatureCreditObservation>();
     }
@@ -90,6 +93,7 @@ namespace WholesomeAQ
             internal Func<bool> LeaseIsCurrent;
             internal Func<bool> InventoryCurrent;
             internal Func<bool> Check;
+            internal Func<bool> AvailabilityCurrent;
         }
 
         // A stable delegate is the identity of one completed publication, not of
@@ -114,6 +118,7 @@ namespace WholesomeAQ
                 current = HasPublicationOwner(work)
                     && AreNormalObjectivesCurrent(work.Log, work.Observation, work.Accepted)
                     && (work.InventoryCurrent == null || work.InventoryCurrent())
+                    && (work.AvailabilityCurrent == null || work.AvailabilityCurrent())
                     && HasPublicationOwner(work);
             }
             catch (Exception error) when (error is not ThreadInterruptedException && error is not OperationCanceledException)
@@ -270,6 +275,7 @@ namespace WholesomeAQ
                 DatasetRepairSource = _dataLoader.RepairPackSource,
                 SkillValues = requirementObservations.Skills,
                 ReputationValues = requirementObservations.Reputations,
+                RawQuestStates = QuestAvailabilityPolicy.RawStates(observation),
                 ItemStarters = observedItemStarters,
                 CreatureCredits = observedCreatureCredits,
                 HasCompleteQuestLog = observation.IsComplete,
@@ -285,6 +291,7 @@ namespace WholesomeAQ
             // nested lease check also protects replacement work from reentrant
             // player/world observations; an obsolete failure must not revoke it.
             Func<bool> inventoryCurrent = null;
+            Func<bool> availabilityCurrent = null;
             bool TryApplyObserved(Action apply)
             {
                 bool applied = false;
@@ -292,7 +299,8 @@ namespace WholesomeAQ
                 {
                     bool current = snapshot.HasCompleteQuestLog &&
                         AreNormalObjectivesCurrent(questLog, observation, accepted) &&
-                        (inventoryCurrent == null || inventoryCurrent());
+                        (inventoryCurrent == null || inventoryCurrent()) &&
+                        (availabilityCurrent == null || availabilityCurrent());
                     tryApplyPublication(() =>
                     {
                         if (!current)
@@ -333,6 +341,7 @@ namespace WholesomeAQ
                 reportDataFailure: outcome => QuestRecoveryManager.Instance.Report(outcome, context),
                 strategyPack: strategyPack);
             inventoryCurrent = CreateInventoryRequirementGuard(candidate.Plan, () => QuestInventorySnapshot.Capture(me));
+            availabilityCurrent = CreateAvailabilityGuard(candidate.Plan, me, questLog);
 
             // Preparation can invoke external navigation/player owners. An obsolete
             // continuation must not change a replacement's scan state or output file.
@@ -383,7 +392,8 @@ namespace WholesomeAQ
                             OuterProfile = Styx.Logic.Profiles.ProfileManager.CurrentOuterProfile,
                             Profile = Styx.Logic.Profiles.ProfileManager.CurrentProfile,
                             Path = path, Schedule = candidate, LeaseIsCurrent = isPublicationLeaseCurrent,
-                            InventoryCurrent = inventoryCurrent
+                            InventoryCurrent = inventoryCurrent,
+                            AvailabilityCurrent = availabilityCurrent
                         };
                         work.Check = () => IsPublicationCurrent(work);
                         _publishedWork = work; // Continuing execution permission is published last.

@@ -1,0 +1,49 @@
+{
+  "combined-focused-green": {
+    "command": [
+      "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+      "Tools/PostMergeAuditRegressionTests/bin/x86/Release/net10.0-windows7.0/PostMergeAuditRegressionTests.dll",
+      "QuestCombinedGuardRegressionTests",
+      "QuestAvailabilityConditionRegressionTests",
+      "QuestAvailabilityObservationRegressionTests",
+      "QuestInventorySnapshotRegressionTests",
+      "QuestInventoryAdmissionRegressionTests",
+      "QuestReputationKnowledgeRegressionTests",
+      "QuestLiveObjectiveRegressionTests",
+      "QuestLiveObjectiveDatasetRegressionTests",
+      "QuestSchedulerRawPublicationRegressionTests",
+      "QuestPublicationAcceptanceRegressionTests"
+    ],
+    "exit": 0,
+    "started_utc": "2026-09-30T10:27:23.624439+00:00",
+    "finished_utc": "2026-09-30T10:27:30.562011+00:00",
+    "head": "fdc5262c8aca90778565eb28e84b562ba1b1b071",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "f6b47af3d22a244b344b64f43a5e0c4a0cfa8dd9d25c703c0e1f247f3b9de84c",
+      "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "combined-analyzers-green": {
+    "command": [
+      "python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "Tools/EvidenceAudit",
+      "-p",
+      "test_*.py",
+      "-v"
+    ],
+    "exit": 0,
+    "started_utc": "2026-09-30T10:28:22.989628+00:00",
+    "finished_utc": "2026-09-30T10:28:28.358713+00:00",
+    "head": "fdc5262c8aca90778565eb28e84b562ba1b1b071",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr.log": "adca9f41e693eff78c6f96a35033da785416b1b48cc29aaa10f996094bdc0ad9"
+    }
+  }
+}
