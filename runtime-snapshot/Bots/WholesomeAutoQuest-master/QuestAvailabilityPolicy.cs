@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading;
 using Styx.Logic.Questing;
 using Styx.WoWInternals;
@@ -37,11 +38,20 @@ namespace WholesomeAQ
         public string SourceRef { get; init; }
     }
 
+    public sealed class QuestAvailabilityItemReference
+    {
+        public int ItemId { get; init; }
+        public string SourceRef { get; init; }
+    }
+
     public sealed class QuestAvailabilityContract
     {
         public int QuestId { get; init; }
         public string SourceRef { get; init; }
         public IReadOnlyList<QuestAvailabilityReference> ReferencedQuests { get; init; }
+        // Preserve the exact legacy non-item contract representation.
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public IReadOnlyList<QuestAvailabilityItemReference> ReferencedItems { get; init; }
         public IReadOnlyList<QuestAvailabilityGroup> Groups { get; init; }
     }
 
@@ -56,6 +66,9 @@ namespace WholesomeAQ
         public bool? Met { get; init; }
         public int? RawAcceptedState { get; init; }
         public bool? PermanentlyRewarded { get; init; }
+        public int? ItemId { get; init; }
+        public int? RequiredItemCount { get; init; }
+        public long? ObservedItemCount { get; init; }
         public string SourceRef { get; init; }
     }
 
@@ -96,8 +109,11 @@ namespace WholesomeAQ
                     bool? rewarded = snapshot.HasAuthoritativeCompletions && snapshot.CompletedQuestIds != null
                         ? snapshot.CompletedQuestIds.Contains(id) : (bool?)null;
                     int? state = State(snapshot, id);
+                    long? carried = condition.Type == 2 ? CarriedCount(snapshot.CarriedItemCounts, condition.Value1) : null;
                     bool? value = condition.Type switch
                     {
+                        2 => condition.Value2 > 0 && condition.Value3 == 0 && carried.HasValue
+                            ? carried >= condition.Value2 : null,
                         8 => rewarded,
                         9 => state.HasValue ? state == 3 : null,
                         14 => state.HasValue ? state == 0 : null,
@@ -112,10 +128,14 @@ namespace WholesomeAQ
                     if (condition.Negative && value.HasValue) value = !value.Value;
                     met.Add(value);
                     results.Add(new QuestAvailabilityPredicateResult { ElseGroup = group.ElseGroup, PredicateIndex = index,
-                        Type = condition.Type, ReferencedQuestId = condition.Value1, StateMask = condition.Value2,
+                        Type = condition.Type, ReferencedQuestId = condition.Type == 2 ? 0 : condition.Value1,
+                        StateMask = condition.Type == 2 ? 0 : condition.Value2,
                         Negative = condition.Negative, Met = value,
-                        RawAcceptedState = snapshot.RawQuestStates != null && snapshot.RawQuestStates.TryGetValue(id, out int raw) ? raw : null,
-                        PermanentlyRewarded = rewarded, SourceRef = condition.SourceRef });
+                        RawAcceptedState = condition.Type != 2 && snapshot.RawQuestStates != null && snapshot.RawQuestStates.TryGetValue(id, out int raw) ? raw : null,
+                        PermanentlyRewarded = condition.Type == 2 ? null : rewarded,
+                        ItemId = condition.Type == 2 ? condition.Value1 : null,
+                        RequiredItemCount = condition.Type == 2 ? condition.Value2 : null,
+                        ObservedItemCount = carried, SourceRef = condition.SourceRef });
                 }
                 groupResults.Add(All(met));
             }
@@ -123,6 +143,12 @@ namespace WholesomeAQ
             return new QuestAvailabilityDecision { Status = passed == true ? "satisfied" : passed == false ? "not-satisfied" : "observation-unknown",
                 Rejection = passed == true ? null : passed == false ? "availability-condition-not-satisfied" : "availability-condition-observation-unknown",
                 SourceRef = contract.SourceRef, Predicates = results.AsReadOnly() };
+        }
+
+        private static long? CarriedCount(IReadOnlyDictionary<int, long> counts, int item)
+        {
+            if (counts == null || item <= 0 || counts.Any(pair => pair.Key <= 0 || pair.Value < 0)) return null;
+            return counts.TryGetValue(item, out long held) ? held : 0;
         }
 
         private static int? State(QuestSchedulerSnapshot snapshot, uint id)
@@ -165,7 +191,9 @@ namespace WholesomeAQ
             var subjects = new HashSet<int>();
             foreach (JsonElement row in Rows(root, "QuestAvailabilityConditions", 10000))
             {
-                Exact(row, "QuestId", "SourceRef", "ReferencedQuests", "Groups");
+                bool hasItems = row.TryGetProperty("ReferencedItems", out _);
+                Exact(row, hasItems ? new[] { "QuestId", "SourceRef", "ReferencedQuests", "Groups", "ReferencedItems" }
+                    : new[] { "QuestId", "SourceRef", "ReferencedQuests", "Groups" });
                 int id = Positive(row, "QuestId"); string source = Text(row, "SourceRef");
                 if (!subjects.Add(id) || !quests.TryGetValue(id, out QuestEntry quest) || quest.AvailabilityConditions != null)
                     throw new InvalidDataException("Availability conditions require a unique existing quest.");
@@ -182,6 +210,17 @@ namespace WholesomeAQ
                     references.Add(new QuestAvailabilityReference { QuestId = referencedId, QuestType = method,
                         SpecialFlags = flags, QuestSortID = sort, SourceRef = Text(reference, "SourceRef") });
                 }
+                var itemReferences = new List<QuestAvailabilityItemReference>(); var itemIds = new HashSet<int>();
+                if (hasItems)
+                {
+                    foreach (JsonElement item in Rows(row, "ReferencedItems", 256))
+                    {
+                        Exact(item, "ItemId", "SourceRef"); int itemId = Positive(item, "ItemId");
+                        if (!itemIds.Add(itemId)) throw new InvalidDataException("Availability item source is duplicated.");
+                        itemReferences.Add(new QuestAvailabilityItemReference { ItemId = itemId, SourceRef = Text(item, "SourceRef") });
+                    }
+                    if (itemReferences.Count == 0) throw new InvalidDataException("Availability item sources cannot be an empty declaration.");
+                }
                 var groups = new List<QuestAvailabilityGroup>(); var groupIds = new HashSet<int>(); int total = 0;
                 foreach (JsonElement group in Rows(row, "Groups", 32))
                 {
@@ -197,8 +236,9 @@ namespace WholesomeAQ
                         if (negativeKind is not (JsonValueKind.True or JsonValueKind.False))
                             throw new InvalidDataException("Availability negation must be an explicit boolean.");
                         bool negative = condition.GetProperty("Negative").GetBoolean();
-                        if (type is not (8 or 9 or 14 or 28 or 47) || !ids.Contains(value1) || value3 != 0 ||
-                            (type == 47 ? value2 <= 0 || (value2 & ~107) != 0 : value2 != 0) ||
+                        bool referenceValid = type == 2 ? itemIds.Contains(value1) : ids.Contains(value1);
+                        bool valuesInvalid = type == 2 ? value2 <= 0 : type == 47 ? value2 <= 0 || (value2 & ~107) != 0 : value2 != 0;
+                        if (type is not (2 or 8 or 9 or 14 or 28 or 47) || !referenceValid || value3 != 0 || valuesInvalid ||
                             !keys.Add((type, value1, value2, negative)) || ++total > 256)
                             throw new InvalidDataException("Availability predicate is unsupported, ambiguous or missing its source reference.");
                         conditions.Add(new QuestAvailabilityPredicate { Type = type, Value1 = value1, Value2 = value2,
@@ -209,7 +249,8 @@ namespace WholesomeAQ
                 }
                 if (groups.Count == 0) throw new InvalidDataException("An availability contract needs all of its source groups.");
                 quest.AvailabilityConditions = new QuestAvailabilityContract { QuestId = id, SourceRef = source,
-                    ReferencedQuests = references.AsReadOnly(), Groups = groups.AsReadOnly() };
+                    ReferencedQuests = references.AsReadOnly(), ReferencedItems = hasItems ? itemReferences.AsReadOnly() : null,
+                    Groups = groups.AsReadOnly() };
             }
         }
     }
@@ -220,10 +261,17 @@ namespace WholesomeAQ
         {
             QuestPlanEntry[] constrained = plan.Where(entry => entry.Stage == QuestWorkStage.Pickup && entry.Quest.AvailabilityConditions != null).ToArray();
             if (constrained.Length == 0) return null;
-            return () => QuestAvailabilityPolicy.RequirementsCurrent(constrained, CaptureAvailabilitySnapshot(me, log));
+            bool needsInventory = constrained.Any(entry => entry.Quest.AvailabilityConditions.Groups
+                .Any(group => group.Conditions.Any(predicate => predicate.Type == 2)));
+            return () => QuestAvailabilityPolicy.RequirementsCurrent(constrained,
+                CaptureAvailabilitySnapshotForInputs(me, log, needsInventory));
         }
 
-        private static QuestSchedulerSnapshot CaptureAvailabilitySnapshot(LocalPlayer me, QuestLog log)
+        // Preserve the existing observation-only reflection/caller contract.
+        private static QuestSchedulerSnapshot CaptureAvailabilitySnapshot(LocalPlayer me, QuestLog log) =>
+            CaptureAvailabilitySnapshotForInputs(me, log, false);
+
+        private static QuestSchedulerSnapshot CaptureAvailabilitySnapshotForInputs(LocalPlayer me, QuestLog log, bool needsInventory)
         {
             var memory = ObjectManager.Wow;
             try
@@ -235,9 +283,14 @@ namespace WholesomeAQ
                 QuestLogSnapshot raw = log.CaptureSnapshot();
                 var states = QuestAvailabilityPolicy.RawStates(raw);
                 bool authoritative = log.TryGetAuthoritativeCompletedQuests(out var rewarded);
+                // An ordinary history-only predicate must not scan every bag at
+                // each permission check. Item constraints use the complete owner.
+                QuestInventorySnapshot inventory = needsInventory ? QuestInventorySnapshot.Capture(me) : null;
                 var snapshot = new QuestSchedulerSnapshot { PlayerGuid = guid, UtcNow = DateTime.UtcNow,
                     HasCompleteQuestLog = raw.IsIdentityComplete, RawQuestStates = states,
                     HasAuthoritativeCompletions = authoritative,
+                    CarriedItemCounts = inventory?.IsCurrent() == true ? inventory.ItemCounts : null,
+                    InventoryObservationStatus = inventory?.Status ?? "not-required-for-availability",
                     CompletedQuestIds = authoritative ? rewarded.ToArray() : Array.Empty<uint>() };
                 return states != null && ReferenceEquals(me, ObjectManager.Me) && ReferenceEquals(memory, ObjectManager.Wow) &&
                     Styx.StyxWoW.IsInWorld && me.IsValid && me.Guid == guid && log.IsSnapshotCurrent(raw) ? snapshot : null;

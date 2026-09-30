@@ -1,3 +1,13 @@
+# Current: carried-item availability continuation — 30 September 2026
+
+Active worktreeD:/Dev/CB-QuestItemConditions-20260930, branchaudit/next-quest-item-conditions-20260930, parent master51107859f48d2f4eb4fe6bfb74cd979480930b8c. Read docs/audit/2026-09-30/availability-items/REPORT.md, source-contracts.json, item-contract-obligations.json, simulation-count-delta.json and exact ledgers. Resolve final commit/local/hosted/publication from Git and externalITEM_CONDITION_* receipts. Preserve all already completed work.
+
+The item slice adds15complete source contracts, total73contracts/130predicates. Type2 requires exact positive item/quantity and Value3=0; bank and unknown state remain unproven. ReferencedItems is separate from quest IDs. Current complete inventory is recaptured only for item-dependent availability; both inventory and availability guards remain active, accepted work stays independent, and source promises never become held stock. Dataset259554/strategy39/availability776 checks pass in diagnostic fixtures;390newnamedcases,none removed. Counts3003/2/932/325/16/57=4335 remain unchanged,1330remaining. All15 repaired quests still need an acquisition route.
+
+PR73 daily is fully validated/ready at2dc6ef85 on areaPR72 and scalarPR70. Its ledger is a separate lineage. Integrate only validated scopes, preserve all observation guards and source metadata, and regenerate combined ledgers. Production remainsPR61 master3bc97e1e. Continue genuine offline-resolvable source/data work and retain explicit unresolved source/live/script evidence; no live completion claim. Do not use session_finish while implementation remains.
+
+---
+
 # Current: reproduced combined quest candidate — 30 September 2026
 
 The local integration's actual owners and primary-source ledger are now reproduced: 3003 generic / 2 strategy / 932 data / 325 source / 16 live / 57 scripted = 4335, with 1330 exact remaining IDs. Dataset259164 and strategy39 checks pass. Preserve both publication guards, all58 condition contracts/115predicates and allfour reputation contracts. Read docs/audit/2026-09-30/quest-integration/REPORT.md and its fixture/ledger/correlations. Final containing commit, clean local and hosted acceptance must be resolved from Git and external COMBINED_* receipts. Do not replay the pending local merge or a successful later commit. The older entries below preserve the sequence of work.

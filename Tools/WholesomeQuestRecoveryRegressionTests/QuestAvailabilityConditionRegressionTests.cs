@@ -88,7 +88,7 @@ internal static class QuestAvailabilityConditionRegressionTests
     }
     private static void Check(bool value, string message) { if (!value) throw new Failure(message); }
 
-    private sealed class Fixture : IDisposable
+    internal sealed class Fixture : IDisposable
     {
         internal readonly QuestDataRepairPackRegressionTests.Fixture F = new();
         internal JsonObject Contract, Condition;

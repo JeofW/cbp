@@ -1,0 +1,77 @@
+{
+  "primary_revision": "95657f54779467effea8a1749a61ff93abc1d707",
+  "server": {
+    "predicate": "CONDITION_ITEM=2; Value1 is item ID, Value2 positive quantity, Value3 bank flag",
+    "condition_lines": [
+      149,
+      158
+    ],
+    "condition_source_sha256": "0b16a2b37477b2272503af39ddb6e99d32d41476eee6d48333b5b4a860afaf36",
+    "quantity_lines": [
+      9836,
+      9906
+    ],
+    "player_source_sha256": "36a817da38b318740ee5aa31f256518175dfdd02d1dd7a68ebb0805fc43275d8",
+    "quantity_rule": "HasItemCount counts matching carried equipment/backpack/keyring/currency/bag contents, excludes in-trade items and includes bank only on explicit request."
+  },
+  "client": {
+    "build": 12340,
+    "architecture": "x86",
+    "binary_sha256": "bf644876709c591acc17c0da8cdf1814edcc9f1e6bc109a8c0d5c38c79dc953c",
+    "ida_receipts_sha256": {
+      "pass5-item-condition-count-20260930.json": "3d894787e6db291f1017ccfe561045ce712b42c5d8d226803a3a24892b4edcde",
+      "pass5-item-condition-enumerator-20260930.json": "551a6c8d27e58a590132e1bb2245a1573090e0aa13868dc88290084f11184585"
+    },
+    "prior_inventory_contracts": {
+      "client_build": 12340,
+      "architecture": "x86",
+      "binary_sha256": "bf644876709c591acc17c0da8cdf1814edcc9f1e6bc109a8c0d5c38c79dc953c",
+      "client_evidence_receipts_sha256": {
+        "resumed-audit-binary-20260930-0808.json": "9d230b548cd5758c9e6d77fdf30c48c451c60c6713f3004db1adbc807e6d681e",
+        "remaining-condition-apis-20260930-0810.json": "e7d18ce340ead831b080512cdfa6d7d633b7675c610d96232e8429debd6f4d09",
+        "remaining-itemcount-selector-20260930-0818.json": "8485816f32c3f1d2d3b44d4273f427c13d9e62dcd2434b14c070ff15c07a8c79",
+        "remaining-itemcount-reader-20260930-0818.json": "49aff4b13f0f41fe657f5c70fadcb22a033b11d93d27cf45320504646f708c8f",
+        "remaining-item-enumerator-20260930-0820.json": "163a98919ccc0797627747ef2c6a438209553b939a73189542acb08989a72435",
+        "remaining-item-stack-20260930-0820.json": "e2c338983431304d1d631c9b3be61a551b6a720314816077b215efef636cc2c2",
+        "inventory-trade-contracts-20260930-0826.json": "6722a9861e049fe0e1e0ca3bd5d7408d94c8418f5893601c42ab014b3cff79a3",
+        "trade-lifecycle-semantics-20260930-0852.json": "f1fe52a69cdb3b680888b270bcb9dc3a7a4be054e0aa0733d87e295c78ae898a",
+        "trade-cleanup-region-20260930-0857.json": "489fa9ed2d0b18416d23aaf36e5a537feba4ca8bce8bdd60bfe1e78e437edcbc",
+        "trade-status-item-cleanup-20260930-0858.json": "8c83253f232703900988fe814040a6675fb4e31e1964357a01285d58ca50da83",
+        "trade-partner-state-20260930-0900.json": "046808008759ef0e51fff7d56e34d2d7cfa925bb1aec46bfa540ff5467192635",
+        "trade-partner-lifecycle-20260930-0902.json": "5304e7fb78ae91638a5d69f81c747bdce83bdf9890b8736c409885fcbb3b541d"
+      },
+      "contracts": {
+        "inventory": "Existing player inventory header+6384, container header+1888; carried slots0..38 and86..149, equipped bag contents; bank/buyback excluded.",
+        "quantity": "Original GetItemCount51C2E0 ->754D00/754D50 ->7546F0/754560; full descriptor+12 item identity and+56 stack. API numeric zero without a player is not inventory completeness.",
+        "trade": "UI partnerBFA658 and session partnerCA0FE8 must both be observed zero. CloseTrade587940 and server callback5870A0 retain item-slot GUIDs;7044A0 clears session partner after terminal status handling. Stale seven-slot contents are deliberately not treated as active trade.",
+        "maximum_container_slots": 36,
+        "observation": "Read-only complete byte ranges and loaded object identities, repeated readback, same player and Memory wrapper. Unknown observations publish null counts. These are samples, not an atomic transaction or ABA proof."
+      },
+      "server_contract": {
+        "revision": "95657f54779467effea8a1749a61ff93abc1d707",
+        "database": "TDB335.25101",
+        "source_sql_sha256": "e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9",
+        "path": "src/server/game/Entities/Player/Player.cpp",
+        "function": "Player::HasItemCount",
+        "file_sha256": "36a817da38b318740ee5aa31f256518175dfdd02d1dd7a68ebb0805fc43275d8",
+        "limit": "Source excludes in-trade items and includes bank only when requested. This observer withholds all quantities during a pending/active trade and does not certify bank inventory or customized-realm rules."
+      },
+      "code_sha256": {
+        "Styx/Logic/Questing/QuestInventorySnapshot.cs": "8e8e7f43f269b43a226cf0ca6cc7ca3093e83994f5d3b133972e4d02e2c85633",
+        "runtime-snapshot/Bots/WholesomeAutoQuest-master/QuestSchedulerInventory.cs": "b0ee973ba32038ae1943a34e42ddc2eece2bc1687cf2951e7c333640d63d271c",
+        "runtime-snapshot/Bots/WholesomeAutoQuest-master/QuestScheduler.cs": "d9dd58a7ae0e9c9fbfa7ca848b97354d4d77f4166ebcbf52d1202804c4f101f3",
+        "runtime-snapshot/Bots/WholesomeAutoQuest-master/QuestSchedulerDiagnostics.cs": "870cda50a1e19aacf0e1ad9f4e63821fc1b753799ac37d0545a38a1be96580c3",
+        "Tools/WholesomeQuestRecoveryRegressionTests/QuestInventorySnapshotRegressionTests.cs": "b2452da6423aa0a22e91880b5e1e433c8cd42384b7a5ed24e95e5ed4059532da",
+        "Tools/WholesomeQuestRecoveryRegressionTests/QuestInventoryAdmissionRegressionTests.cs": "1994c7aaf8514235b19b068920baae16c64aa0d609190cdbcfab04b45bd3e133",
+        "Tools/WholesomeQuestRecoveryRegressionTests/WholesomeQuestRecoveryRegressionTests.csproj": "1eeab1f896f30a14b3daf811d291166b7f62abc02ad3e95949b1f1da7059becc"
+      },
+      "read_only_ida": true,
+      "new_native_dispatch": false,
+      "live_completion_proven": false
+    },
+    "observation": "Reuse the validated complete QuestInventorySnapshot. Null means unknown; numeric Lua zero is not completeness. Only item-constrained availability plans recapture inventory at permission checks.",
+    "new_native_dispatch": false,
+    "read_only_ida": true
+  },
+  "limits": "No bank completeness, acquisition route, realm equivalence, native transaction or live completion is inferred."
+}
