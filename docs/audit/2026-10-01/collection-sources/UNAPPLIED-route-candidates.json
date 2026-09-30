@@ -1,0 +1,2116 @@
+{
+  "CollectionRouteRepairs": [
+    {
+      "Operation": "Replace",
+      "QuestId": 429,
+      "RowIndex": 1,
+      "ObjectiveIndex": 1,
+      "ExpectedObjectiveType": "CollectFromGameObject",
+      "ExpectedTargetId": 1570,
+      "ItemId": 3164,
+      "RequiredCount": 6,
+      "CreatureId": 1923,
+      "NewObjectiveIndex": 1,
+      "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:collection_route:429:1:creature=1923"
+    },
+    {
+      "Operation": "Append",
+      "QuestId": 565,
+      "RowIndex": 0,
+      "ObjectiveIndex": 0,
+      "ExpectedObjectiveType": "CollectItem",
+      "ExpectedTargetId": 4504,
+      "ItemId": 3720,
+      "RequiredCount": 10,
+      "CreatureId": 2248,
+      "NewObjectiveIndex": 1,
+      "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:collection_route:565:0:creature=2248"
+    },
+    {
+      "Operation": "Replace",
+      "QuestId": 714,
+      "RowIndex": 0,
+      "ObjectiveIndex": 0,
+      "ExpectedObjectiveType": "CollectItem",
+      "ExpectedTargetId": 9676,
+      "ItemId": 4389,
+      "RequiredCount": 1,
+      "CreatureId": 4260,
+      "NewObjectiveIndex": 0,
+      "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:collection_route:714:0:creature=4260"
+    },
+    {
+      "Operation": "Replace",
+      "QuestId": 2746,
+      "RowIndex": 1,
+      "ObjectiveIndex": 1,
+      "ExpectedObjectiveType": "CollectFromGameObject",
+      "ExpectedTargetId": 2177,
+      "ItemId": 4306,
+      "RequiredCount": 3,
+      "CreatureId": 7055,
+      "NewObjectiveIndex": 1,
+      "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:collection_route:2746:1:creature=7055"
+    },
+    {
+      "Operation": "Append",
+      "QuestId": 2821,
+      "RowIndex": 0,
+      "ObjectiveIndex": 0,
+      "ExpectedObjectiveType": "CollectItem",
+      "ExpectedTargetId": 7848,
+      "ItemId": 8973,
+      "RequiredCount": 10,
+      "CreatureId": 5293,
+      "NewObjectiveIndex": 1,
+      "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:collection_route:2821:0:creature=5293"
+    },
+    {
+      "Operation": "Append",
+      "QuestId": 2822,
+      "RowIndex": 0,
+      "ObjectiveIndex": 0,
+      "ExpectedObjectiveType": "CollectItem",
+      "ExpectedTargetId": 7848,
+      "ItemId": 8973,
+      "RequiredCount": 10,
+      "CreatureId": 5292,
+      "NewObjectiveIndex": 1,
+      "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:collection_route:2822:0:creature=5292"
+    },
+    {
+      "Operation": "Append",
+      "QuestId": 3128,
+      "RowIndex": 2,
+      "ObjectiveIndex": 2,
+      "ExpectedObjectiveType": "CollectItem",
+      "ExpectedTargetId": 7808,
+      "ItemId": 9591,
+      "RequiredCount": 20,
+      "CreatureId": 5300,
+      "NewObjectiveIndex": 4,
+      "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:collection_route:3128:2:creature=5300"
+    },
+    {
+      "Operation": "Append",
+      "QuestId": 3501,
+      "RowIndex": 0,
+      "ObjectiveIndex": 0,
+      "ExpectedObjectiveType": "CollectItem",
+      "ExpectedTargetId": 8297,
+      "ItemId": 10593,
+      "RequiredCount": 1,
+      "CreatureId": 5983,
+      "NewObjectiveIndex": 1,
+      "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:collection_route:3501:0:creature=5983"
+    },
+    {
+      "Operation": "Replace",
+      "QuestId": 3521,
+      "RowIndex": 0,
+      "ObjectiveIndex": 0,
+      "ExpectedObjectiveType": "CollectItem",
+      "ExpectedTargetId": 1988,
+      "ItemId": 10639,
+      "RequiredCount": 7,
+      "CreatureId": 1989,
+      "NewObjectiveIndex": 0,
+      "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:collection_route:3521:0:creature=1989"
+    },
+    {
+      "Operation": "Append",
+      "QuestId": 4061,
+      "RowIndex": 0,
+      "ObjectiveIndex": 0,
+      "ExpectedObjectiveType": "CollectItem",
+      "ExpectedTargetId": 8981,
+      "ItemId": 11266,
+      "RequiredCount": 10,
+      "CreatureId": 7032,
+      "NewObjectiveIndex": 1,
+      "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:collection_route:4061:0:creature=7032"
+    },
+    {
+      "Operation": "Replace",
+      "QuestId": 4449,
+      "RowIndex": 2,
+      "ObjectiveIndex": 2,
+      "ExpectedObjectiveType": "CollectFromGameObject",
+      "ExpectedTargetId": 2177,
+      "ItemId": 4306,
+      "RequiredCount": 15,
+      "CreatureId": 2944,
+      "NewObjectiveIndex": 2,
+      "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:collection_route:4449:2:creature=2944"
+    },
+    {
+      "Operation": "Replace",
+      "QuestId": 6031,
+      "RowIndex": 0,
+      "ObjectiveIndex": 0,
+      "ExpectedObjectiveType": "CollectItem",
+      "ExpectedTargetId": 7939,
+      "ItemId": 14047,
+      "RequiredCount": 30,
+      "CreatureId": 11516,
+      "NewObjectiveIndex": 0,
+      "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:collection_route:6031:0:creature=11516"
+    },
+    {
+      "Operation": "Replace",
+      "QuestId": 6031,
+      "RowIndex": 1,
+      "ObjectiveIndex": 1,
+      "ExpectedObjectiveType": "CollectFromGameObject",
+      "ExpectedTargetId": 17259,
+      "ItemId": 14047,
+      "RequiredCount": 30,
+      "CreatureId": 11553,
+      "NewObjectiveIndex": 1,
+      "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:collection_route:6031:1:creature=11553"
+    },
+    {
+      "Operation": "Append",
+      "QuestId": 8310,
+      "RowIndex": 0,
+      "ObjectiveIndex": 0,
+      "ExpectedObjectiveType": "CollectItem",
+      "ExpectedTargetId": 13301,
+      "ItemId": 20457,
+      "RequiredCount": 1,
+      "CreatureId": 11724,
+      "NewObjectiveIndex": 3,
+      "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:collection_route:8310:0:creature=11724"
+    },
+    {
+      "Operation": "Replace",
+      "QuestId": 8549,
+      "RowIndex": 1,
+      "ObjectiveIndex": 1,
+      "ExpectedObjectiveType": "CollectFromGameObject",
+      "ExpectedTargetId": 1570,
+      "ItemId": 2447,
+      "RequiredCount": 20,
+      "CreatureId": 3931,
+      "NewObjectiveIndex": 1,
+      "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:collection_route:8549:1:creature=3931"
+    },
+    {
+      "Operation": "Replace",
+      "QuestId": 8580,
+      "RowIndex": 1,
+      "ObjectiveIndex": 1,
+      "ExpectedObjectiveType": "CollectFromGameObject",
+      "ExpectedTargetId": 2177,
+      "ItemId": 4625,
+      "RequiredCount": 20,
+      "CreatureId": 7138,
+      "NewObjectiveIndex": 1,
+      "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:collection_route:8580:1:creature=7138"
+    },
+    {
+      "Operation": "Append",
+      "QuestId": 8586,
+      "RowIndex": 1,
+      "ObjectiveIndex": 1,
+      "ExpectedObjectiveType": "CollectItem",
+      "ExpectedTargetId": 14351,
+      "ItemId": 8150,
+      "RequiredCount": 20,
+      "CreatureId": 9396,
+      "NewObjectiveIndex": 2,
+      "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:collection_route:8586:1:creature=9396"
+    },
+    {
+      "Operation": "Append",
+      "QuestId": 9131,
+      "RowIndex": 0,
+      "ObjectiveIndex": 0,
+      "ExpectedObjectiveType": "CollectItem",
+      "ExpectedTargetId": 15692,
+      "ItemId": 22528,
+      "RequiredCount": 30,
+      "CreatureId": 8924,
+      "NewObjectiveIndex": 1,
+      "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:collection_route:9131:0:creature=8924"
+    },
+    {
+      "Operation": "Append",
+      "QuestId": 10420,
+      "RowIndex": 0,
+      "ObjectiveIndex": 0,
+      "ExpectedObjectiveType": "CollectItem",
+      "ExpectedTargetId": 21249,
+      "ItemId": 29740,
+      "RequiredCount": 1,
+      "CreatureId": 18661,
+      "NewObjectiveIndex": 1,
+      "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:collection_route:10420:0:creature=18661"
+    },
+    {
+      "Operation": "Append",
+      "QuestId": 10618,
+      "RowIndex": 0,
+      "ObjectiveIndex": 0,
+      "ExpectedObjectiveType": "CollectItem",
+      "ExpectedTargetId": 21373,
+      "ItemId": 30792,
+      "RequiredCount": 12,
+      "CreatureId": 21839,
+      "NewObjectiveIndex": 1,
+      "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:collection_route:10618:0:creature=21839"
+    },
+    {
+      "Operation": "Append",
+      "QuestId": 10757,
+      "RowIndex": 0,
+      "ObjectiveIndex": 0,
+      "ExpectedObjectiveType": "CollectItem",
+      "ExpectedTargetId": 17870,
+      "ItemId": 22574,
+      "RequiredCount": 4,
+      "CreatureId": 22311,
+      "NewObjectiveIndex": 1,
+      "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:collection_route:10757:0:creature=22311"
+    },
+    {
+      "Operation": "Append",
+      "QuestId": 10763,
+      "RowIndex": 0,
+      "ObjectiveIndex": 0,
+      "ExpectedObjectiveType": "CollectItem",
+      "ExpectedTargetId": 17870,
+      "ItemId": 22574,
+      "RequiredCount": 4,
+      "CreatureId": 22311,
+      "NewObjectiveIndex": 1,
+      "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:collection_route:10763:0:creature=22311"
+    },
+    {
+      "Operation": "Append",
+      "QuestId": 13092,
+      "RowIndex": 0,
+      "ObjectiveIndex": 0,
+      "ExpectedObjectiveType": "CollectItem",
+      "ExpectedTargetId": 29738,
+      "ItemId": 43089,
+      "RequiredCount": 15,
+      "CreatureId": 32505,
+      "NewObjectiveIndex": 1,
+      "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:collection_route:13092:0:creature=32505"
+    },
+    {
+      "Operation": "Replace",
+      "QuestId": 13906,
+      "RowIndex": 0,
+      "ObjectiveIndex": 0,
+      "ExpectedObjectiveType": "CollectItem",
+      "ExpectedTargetId": 7939,
+      "ItemId": 14047,
+      "RequiredCount": 20,
+      "CreatureId": 12199,
+      "NewObjectiveIndex": 0,
+      "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:collection_route:13906:0:creature=12199"
+    },
+    {
+      "Operation": "Replace",
+      "QuestId": 13906,
+      "RowIndex": 1,
+      "ObjectiveIndex": 1,
+      "ExpectedObjectiveType": "CollectFromGameObject",
+      "ExpectedTargetId": 17259,
+      "ItemId": 14047,
+      "RequiredCount": 20,
+      "CreatureId": 15591,
+      "NewObjectiveIndex": 1,
+      "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:collection_route:13906:1:creature=15591"
+    }
+  ],
+  "SpawnAdditions": [
+    {
+      "ObjectType": "Creature",
+      "Entry": 1923,
+      "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:collection_route:429:1:creature=1923",
+      "Points": [
+        {
+          "Map": 0,
+          "X": -709.184,
+          "Y": 1340.15,
+          "Z": 45.0187
+        },
+        {
+          "Map": 0,
+          "X": -691.049,
+          "Y": 1363.66,
+          "Z": 33.2018
+        },
+        {
+          "Map": 0,
+          "X": -645.012,
+          "Y": 1374.01,
+          "Z": 29.1305
+        },
+        {
+          "Map": 0,
+          "X": -628.259,
+          "Y": 1395.75,
+          "Z": 21.7743
+        },
+        {
+          "Map": 0,
+          "X": -625.002,
+          "Y": 1246.08,
+          "Z": 71.2473
+        },
+        {
+          "Map": 0,
+          "X": -595.76,
+          "Y": 1403.48,
+          "Z": 19.1661
+        },
+        {
+          "Map": 0,
+          "X": -595.596,
+          "Y": 1455.91,
+          "Z": 9.30226
+        },
+        {
+          "Map": 0,
+          "X": -592.858,
+          "Y": 1577.36,
+          "Z": 9.8251
+        },
+        {
+          "Map": 0,
+          "X": -582.64,
+          "Y": 1416.73,
+          "Z": 16.929
+        },
+        {
+          "Map": 0,
+          "X": -581.999,
+          "Y": 1138.87,
+          "Z": 78.6239
+        },
+        {
+          "Map": 0,
+          "X": -558.62,
+          "Y": 1279.91,
+          "Z": 55.817
+        },
+        {
+          "Map": 0,
+          "X": -554.754,
+          "Y": 1521.37,
+          "Z": 13.4616
+        },
+        {
+          "Map": 0,
+          "X": -522.316,
+          "Y": 1259.1,
+          "Z": 67.192
+        },
+        {
+          "Map": 0,
+          "X": -514.948,
+          "Y": 1288.37,
+          "Z": 53.547
+        },
+        {
+          "Map": 0,
+          "X": -508.56,
+          "Y": 1359.29,
+          "Z": 37.7463
+        },
+        {
+          "Map": 0,
+          "X": -498.437,
+          "Y": 1422.29,
+          "Z": 31.5416
+        },
+        {
+          "Map": 0,
+          "X": -492.366,
+          "Y": 1489.22,
+          "Z": 22.1323
+        },
+        {
+          "Map": 0,
+          "X": -480.753,
+          "Y": 1274.21,
+          "Z": 46.4167
+        },
+        {
+          "Map": 0,
+          "X": -473.697,
+          "Y": 1349.23,
+          "Z": 36.1245
+        },
+        {
+          "Map": 0,
+          "X": -473.138,
+          "Y": 1283.93,
+          "Z": 43.4618
+        },
+        {
+          "Map": 0,
+          "X": -443.381,
+          "Y": 1363.99,
+          "Z": 36.9669
+        },
+        {
+          "Map": 0,
+          "X": -404.406,
+          "Y": 1357.07,
+          "Z": 36.5356
+        }
+      ]
+    },
+    {
+      "ObjectType": "Creature",
+      "Entry": 1989,
+      "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:collection_route:3521:0:creature=1989",
+      "Points": [
+        {
+          "Map": 1,
+          "X": 10311.9,
+          "Y": 1037.79,
+          "Z": 1342.98
+        },
+        {
+          "Map": 1,
+          "X": 10326.4,
+          "Y": 1026.73,
+          "Z": 1338.66
+        },
+        {
+          "Map": 1,
+          "X": 10331.6,
+          "Y": 1053.41,
+          "Z": 1342.78
+        },
+        {
+          "Map": 1,
+          "X": 10332.2,
+          "Y": 1030.51,
+          "Z": 1339.14
+        },
+        {
+          "Map": 1,
+          "X": 10333.7,
+          "Y": 1018.79,
+          "Z": 1337.75
+        },
+        {
+          "Map": 1,
+          "X": 10335.8,
+          "Y": 1037.91,
+          "Z": 1339.39
+        },
+        {
+          "Map": 1,
+          "X": 10336.2,
+          "Y": 1032.97,
+          "Z": 1339.37
+        },
+        {
+          "Map": 1,
+          "X": 10343.9,
+          "Y": 1036.44,
+          "Z": 1339.39
+        },
+        {
+          "Map": 1,
+          "X": 10352.5,
+          "Y": 1044.33,
+          "Z": 1342.77
+        },
+        {
+          "Map": 1,
+          "X": 10354.7,
+          "Y": 1020.85,
+          "Z": 1337.37
+        },
+        {
+          "Map": 1,
+          "X": 10356.5,
+          "Y": 1030.9,
+          "Z": 1340.11
+        },
+        {
+          "Map": 1,
+          "X": 10397.7,
+          "Y": 548.002,
+          "Z": 1328.88
+        },
+        {
+          "Map": 1,
+          "X": 10481.3,
+          "Y": 1019.15,
+          "Z": 1326.35
+        },
+        {
+          "Map": 1,
+          "X": 10482.5,
+          "Y": 1065.16,
+          "Z": 1327.28
+        },
+        {
+          "Map": 1,
+          "X": 10493.1,
+          "Y": 1044.5,
+          "Z": 1326.41
+        },
+        {
+          "Map": 1,
+          "X": 10496.6,
+          "Y": 1052.56,
+          "Z": 1325.55
+        },
+        {
+          "Map": 1,
+          "X": 10496.9,
+          "Y": 1058.33,
+          "Z": 1325.55
+        },
+        {
+          "Map": 1,
+          "X": 10500.3,
+          "Y": 1053.14,
+          "Z": 1325.54
+        },
+        {
+          "Map": 1,
+          "X": 10501.3,
+          "Y": 1055.98,
+          "Z": 1325.54
+        },
+        {
+          "Map": 1,
+          "X": 10507.8,
+          "Y": 1064.2,
+          "Z": 1325.92
+        },
+        {
+          "Map": 1,
+          "X": 10512.3,
+          "Y": 1050.71,
+          "Z": 1323.92
+        },
+        {
+          "Map": 1,
+          "X": 10513.5,
+          "Y": 662.947,
+          "Z": 1322.2
+        },
+        {
+          "Map": 1,
+          "X": 10514.5,
+          "Y": 1019.4,
+          "Z": 1319.38
+        },
+        {
+          "Map": 1,
+          "X": 10523.2,
+          "Y": 955.057,
+          "Z": 1316.61
+        },
+        {
+          "Map": 1,
+          "X": 10525.7,
+          "Y": 1030.28,
+          "Z": 1321.88
+        },
+        {
+          "Map": 1,
+          "X": 10528.7,
+          "Y": 1064.25,
+          "Z": 1321.79
+        },
+        {
+          "Map": 1,
+          "X": 10620.9,
+          "Y": 642.277,
+          "Z": 1330
+        },
+        {
+          "Map": 1,
+          "X": 10640.6,
+          "Y": 688.396,
+          "Z": 1327.81
+        },
+        {
+          "Map": 1,
+          "X": 10642.3,
+          "Y": 778.098,
+          "Z": 1319.05
+        },
+        {
+          "Map": 1,
+          "X": 10656.8,
+          "Y": 947.191,
+          "Z": 1323.44
+        },
+        {
+          "Map": 1,
+          "X": 10698.1,
+          "Y": 851.926,
+          "Z": 1323.18
+        }
+      ]
+    },
+    {
+      "ObjectType": "Creature",
+      "Entry": 2248,
+      "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:collection_route:565:0:creature=2248",
+      "Points": [
+        {
+          "Map": 0,
+          "X": -325.532,
+          "Y": -417.112,
+          "Z": 60.3643
+        },
+        {
+          "Map": 0,
+          "X": -324.579,
+          "Y": -386.79,
+          "Z": 63.7155
+        },
+        {
+          "Map": 0,
+          "X": -316.08,
+          "Y": -381.482,
+          "Z": 64.9481
+        },
+        {
+          "Map": 0,
+          "X": -307.798,
+          "Y": -279.125,
+          "Z": 45.6518
+        },
+        {
+          "Map": 0,
+          "X": -296.635,
+          "Y": -302.209,
+          "Z": 43.4465
+        },
+        {
+          "Map": 0,
+          "X": -284.565,
+          "Y": -448.78,
+          "Z": 64.1373
+        },
+        {
+          "Map": 0,
+          "X": -281.666,
+          "Y": -284.934,
+          "Z": 51.7172
+        },
+        {
+          "Map": 0,
+          "X": -280.869,
+          "Y": -414.088,
+          "Z": 67.7671
+        },
+        {
+          "Map": 0,
+          "X": -277.779,
+          "Y": -304.297,
+          "Z": 42.0171
+        },
+        {
+          "Map": 0,
+          "X": -266.408,
+          "Y": -382.354,
+          "Z": 66.6331
+        },
+        {
+          "Map": 0,
+          "X": -265.727,
+          "Y": -358.975,
+          "Z": 66.5851
+        },
+        {
+          "Map": 0,
+          "X": -258.67,
+          "Y": -449.997,
+          "Z": 65.2176
+        },
+        {
+          "Map": 0,
+          "X": -252.654,
+          "Y": -419.58,
+          "Z": 69.8955
+        },
+        {
+          "Map": 0,
+          "X": -226.257,
+          "Y": -358.954,
+          "Z": 48.4258
+        },
+        {
+          "Map": 0,
+          "X": -204.441,
+          "Y": -368.95,
+          "Z": 72.9635
+        },
+        {
+          "Map": 0,
+          "X": -183.579,
+          "Y": -340.009,
+          "Z": 53.1782
+        },
+        {
+          "Map": 0,
+          "X": -135.186,
+          "Y": -370.751,
+          "Z": 52.7954
+        }
+      ]
+    },
+    {
+      "ObjectType": "Creature",
+      "Entry": 4260,
+      "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:collection_route:714:0:creature=4260",
+      "Points": [
+        {
+          "Map": 0,
+          "X": -12154.6,
+          "Y": -580.235,
+          "Z": 13.4685
+        },
+        {
+          "Map": 0,
+          "X": -12150.7,
+          "Y": -699.341,
+          "Z": 17.3149
+        },
+        {
+          "Map": 0,
+          "X": -12014.1,
+          "Y": -742.021,
+          "Z": 15.2867
+        }
+      ]
+    },
+    {
+      "ObjectType": "Creature",
+      "Entry": 5292,
+      "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:collection_route:2822:0:creature=5292",
+      "Points": [
+        {
+          "Map": 1,
+          "X": -5091.67,
+          "Y": 1558.33,
+          "Z": 53.6518
+        },
+        {
+          "Map": 1,
+          "X": -5050.73,
+          "Y": 1809.56,
+          "Z": 77.0301
+        },
+        {
+          "Map": 1,
+          "X": -5032.98,
+          "Y": 1791.99,
+          "Z": 71.7165
+        },
+        {
+          "Map": 1,
+          "X": -5018.71,
+          "Y": 1779.82,
+          "Z": 67.6576
+        },
+        {
+          "Map": 1,
+          "X": -5017.49,
+          "Y": 1548.14,
+          "Z": 56.4633
+        },
+        {
+          "Map": 1,
+          "X": -5015.63,
+          "Y": 1582.54,
+          "Z": 59.7013
+        },
+        {
+          "Map": 1,
+          "X": -5009.25,
+          "Y": 1772.63,
+          "Z": 64.761
+        },
+        {
+          "Map": 1,
+          "X": -4984.72,
+          "Y": 1513.5,
+          "Z": 57.075
+        },
+        {
+          "Map": 1,
+          "X": -4982.96,
+          "Y": 1580.84,
+          "Z": 61.2149
+        },
+        {
+          "Map": 1,
+          "X": -4982.55,
+          "Y": 1547.75,
+          "Z": 62.2749
+        },
+        {
+          "Map": 1,
+          "X": -4981.15,
+          "Y": 1752.4,
+          "Z": 64.0426
+        },
+        {
+          "Map": 1,
+          "X": -4976.62,
+          "Y": 1617.72,
+          "Z": 63.4002
+        },
+        {
+          "Map": 1,
+          "X": -4968.76,
+          "Y": 1643.84,
+          "Z": 64.3893
+        },
+        {
+          "Map": 1,
+          "X": -4947.9,
+          "Y": 1581.3,
+          "Z": 62.7082
+        },
+        {
+          "Map": 1,
+          "X": -4944.41,
+          "Y": 1668.73,
+          "Z": 63.8914
+        },
+        {
+          "Map": 1,
+          "X": -4918.46,
+          "Y": 1585.73,
+          "Z": 66.2957
+        }
+      ]
+    },
+    {
+      "ObjectType": "Creature",
+      "Entry": 5293,
+      "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:collection_route:2821:0:creature=5293",
+      "Points": [
+        {
+          "Map": 1,
+          "X": -5198.91,
+          "Y": 1807.56,
+          "Z": 115.954
+        },
+        {
+          "Map": 1,
+          "X": -5185.96,
+          "Y": 1834.2,
+          "Z": 115.83
+        },
+        {
+          "Map": 1,
+          "X": -5169.55,
+          "Y": 1783.2,
+          "Z": 95.151
+        },
+        {
+          "Map": 1,
+          "X": -5154.06,
+          "Y": 1874.6,
+          "Z": 102.49
+        },
+        {
+          "Map": 1,
+          "X": -5149.86,
+          "Y": 1810.74,
+          "Z": 94.2589
+        },
+        {
+          "Map": 1,
+          "X": -5146.85,
+          "Y": 1747.68,
+          "Z": 78.3566
+        },
+        {
+          "Map": 1,
+          "X": -5129.39,
+          "Y": 1778.84,
+          "Z": 78.2473
+        },
+        {
+          "Map": 1,
+          "X": -5098.25,
+          "Y": 1931.42,
+          "Z": 88.2029
+        },
+        {
+          "Map": 1,
+          "X": -5090.03,
+          "Y": 1942.21,
+          "Z": 88.6154
+        },
+        {
+          "Map": 1,
+          "X": -5081.06,
+          "Y": 1835.27,
+          "Z": 77.8807
+        },
+        {
+          "Map": 1,
+          "X": -5063.38,
+          "Y": 1926.24,
+          "Z": 88.631
+        },
+        {
+          "Map": 1,
+          "X": -5018.05,
+          "Y": 1839.29,
+          "Z": 77.2048
+        }
+      ]
+    },
+    {
+      "ObjectType": "Creature",
+      "Entry": 5300,
+      "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:collection_route:3128:2:creature=5300",
+      "Points": [
+        {
+          "Map": 1,
+          "X": -5368.82,
+          "Y": 1599.03,
+          "Z": 44.9101
+        },
+        {
+          "Map": 1,
+          "X": -5332.57,
+          "Y": 1486.3,
+          "Z": 32.844
+        },
+        {
+          "Map": 1,
+          "X": -5316.55,
+          "Y": 1533.11,
+          "Z": 41.9386
+        },
+        {
+          "Map": 1,
+          "X": -5296.65,
+          "Y": 1580.01,
+          "Z": 53.9369
+        },
+        {
+          "Map": 1,
+          "X": -5277.58,
+          "Y": 1411.84,
+          "Z": 34.9486
+        },
+        {
+          "Map": 1,
+          "X": -5274.45,
+          "Y": 1573.35,
+          "Z": 60.2023
+        },
+        {
+          "Map": 1,
+          "X": -5250.35,
+          "Y": 1479.61,
+          "Z": 38.0318
+        },
+        {
+          "Map": 1,
+          "X": -5249.4,
+          "Y": 1585.78,
+          "Z": 56.998
+        },
+        {
+          "Map": 1,
+          "X": -5247.73,
+          "Y": 1521.11,
+          "Z": 44.1291
+        },
+        {
+          "Map": 1,
+          "X": -5225.08,
+          "Y": 1557.74,
+          "Z": 54.0511
+        },
+        {
+          "Map": 1,
+          "X": -5213.82,
+          "Y": 1617.04,
+          "Z": 68.415
+        },
+        {
+          "Map": 1,
+          "X": -5199.29,
+          "Y": 1597.33,
+          "Z": 59.1829
+        },
+        {
+          "Map": 1,
+          "X": -5184.62,
+          "Y": 1624.39,
+          "Z": 77.3243
+        }
+      ]
+    },
+    {
+      "ObjectType": "Creature",
+      "Entry": 5983,
+      "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:collection_route:3501:0:creature=5983",
+      "Points": [
+        {
+          "Map": 0,
+          "X": -11563.2,
+          "Y": -3081.59,
+          "Z": 6.19427
+        },
+        {
+          "Map": 0,
+          "X": -11555,
+          "Y": -3073.87,
+          "Z": 7.31927
+        },
+        {
+          "Map": 0,
+          "X": -11439.2,
+          "Y": -3036.04,
+          "Z": 1.03353
+        },
+        {
+          "Map": 0,
+          "X": -11377.2,
+          "Y": -3065.98,
+          "Z": -4.3938
+        },
+        {
+          "Map": 0,
+          "X": -11361,
+          "Y": -2763.36,
+          "Z": 6.37436
+        }
+      ]
+    },
+    {
+      "ObjectType": "Creature",
+      "Entry": 7032,
+      "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:collection_route:4061:0:creature=7032",
+      "Points": [
+        {
+          "Map": 0,
+          "X": -8251.78,
+          "Y": -1872.77,
+          "Z": 143.699
+        },
+        {
+          "Map": 0,
+          "X": -8248.07,
+          "Y": -1117.93,
+          "Z": 141.206
+        },
+        {
+          "Map": 0,
+          "X": -8223.49,
+          "Y": -1311.3,
+          "Z": 141.734
+        },
+        {
+          "Map": 0,
+          "X": -7988.23,
+          "Y": -1891.53,
+          "Z": 129.745
+        },
+        {
+          "Map": 0,
+          "X": -7883.22,
+          "Y": -1558.22,
+          "Z": 131.612
+        },
+        {
+          "Map": 0,
+          "X": -7880.42,
+          "Y": -1470.08,
+          "Z": 141.189
+        },
+        {
+          "Map": 0,
+          "X": -7652.39,
+          "Y": -2080.91,
+          "Z": 124.189
+        },
+        {
+          "Map": 0,
+          "X": -7647.09,
+          "Y": -2210.02,
+          "Z": 131.844
+        }
+      ]
+    },
+    {
+      "ObjectType": "Creature",
+      "Entry": 7055,
+      "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:collection_route:2746:1:creature=7055",
+      "Points": [
+        {
+          "Map": 0,
+          "X": -8172.86,
+          "Y": -1706.69,
+          "Z": 140.054
+        },
+        {
+          "Map": 0,
+          "X": -8163.94,
+          "Y": -1572.7,
+          "Z": 133.097
+        },
+        {
+          "Map": 0,
+          "X": -8156.33,
+          "Y": -1693.23,
+          "Z": 136.154
+        },
+        {
+          "Map": 0,
+          "X": -8095.52,
+          "Y": -1399.87,
+          "Z": 130.93
+        },
+        {
+          "Map": 0,
+          "X": -8087.78,
+          "Y": -1898.13,
+          "Z": 134.175
+        },
+        {
+          "Map": 0,
+          "X": -8073.71,
+          "Y": -1761.39,
+          "Z": 133.408
+        }
+      ]
+    },
+    {
+      "ObjectType": "Creature",
+      "Entry": 8924,
+      "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:collection_route:9131:0:creature=8924",
+      "Points": [
+        {
+          "Map": 0,
+          "X": -7404.57,
+          "Y": -894.073,
+          "Z": 171.873
+        }
+      ]
+    },
+    {
+      "ObjectType": "Creature",
+      "Entry": 9396,
+      "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:collection_route:8586:1:creature=9396",
+      "Points": [
+        {
+          "Map": 1,
+          "X": -7151.29,
+          "Y": -3214.17,
+          "Z": 12.7312
+        },
+        {
+          "Map": 1,
+          "X": -7038.69,
+          "Y": -4030.47,
+          "Z": 10.6303
+        }
+      ]
+    },
+    {
+      "ObjectType": "Creature",
+      "Entry": 11516,
+      "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:collection_route:6031:0:creature=11516",
+      "Points": [
+        {
+          "Map": 1,
+          "X": 6879.96,
+          "Y": -2107.38,
+          "Z": 618.405
+        },
+        {
+          "Map": 1,
+          "X": 6919.41,
+          "Y": -2091.9,
+          "Z": 617.412
+        },
+        {
+          "Map": 1,
+          "X": 6951.14,
+          "Y": -2262.22,
+          "Z": 590.666
+        },
+        {
+          "Map": 1,
+          "X": 6985.3,
+          "Y": -2061.78,
+          "Z": 608.094
+        },
+        {
+          "Map": 1,
+          "X": 6988.59,
+          "Y": -2080.7,
+          "Z": 608.748
+        },
+        {
+          "Map": 1,
+          "X": 6997.42,
+          "Y": -2183.03,
+          "Z": 587.644
+        },
+        {
+          "Map": 1,
+          "X": 7002.13,
+          "Y": -2201.5,
+          "Z": 586.974
+        },
+        {
+          "Map": 1,
+          "X": 7019.37,
+          "Y": -2099.3,
+          "Z": 601.546
+        },
+        {
+          "Map": 1,
+          "X": 7021.73,
+          "Y": -2113.71,
+          "Z": 587.076
+        },
+        {
+          "Map": 1,
+          "X": 7021.83,
+          "Y": -2128.33,
+          "Z": 586.66
+        },
+        {
+          "Map": 1,
+          "X": 7033.93,
+          "Y": -2113.89,
+          "Z": 587.397
+        },
+        {
+          "Map": 1,
+          "X": 7034,
+          "Y": -2122.26,
+          "Z": 587.611
+        },
+        {
+          "Map": 1,
+          "X": 7151.84,
+          "Y": -2170.72,
+          "Z": 566.615
+        },
+        {
+          "Map": 1,
+          "X": 7165.77,
+          "Y": -2153.57,
+          "Z": 565.828
+        },
+        {
+          "Map": 1,
+          "X": 7194.13,
+          "Y": -2196.03,
+          "Z": 565.399
+        },
+        {
+          "Map": 1,
+          "X": 7202.31,
+          "Y": -2180.13,
+          "Z": 566.095
+        }
+      ]
+    },
+    {
+      "ObjectType": "Creature",
+      "Entry": 11553,
+      "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:collection_route:6031:1:creature=11553",
+      "Points": [
+        {
+          "Map": 1,
+          "X": 6961.41,
+          "Y": -2077.73,
+          "Z": 610.675
+        },
+        {
+          "Map": 1,
+          "X": 6991.29,
+          "Y": -2208.1,
+          "Z": 586.293
+        },
+        {
+          "Map": 1,
+          "X": 7095.02,
+          "Y": -2120.98,
+          "Z": 579.485
+        },
+        {
+          "Map": 1,
+          "X": 7215.2,
+          "Y": -2189.85,
+          "Z": 565.78
+        },
+        {
+          "Map": 1,
+          "X": 7291.5,
+          "Y": -2149.29,
+          "Z": 551.815
+        }
+      ]
+    },
+    {
+      "ObjectType": "Creature",
+      "Entry": 11724,
+      "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:collection_route:8310:0:creature=11724",
+      "Points": [
+        {
+          "Map": 1,
+          "X": -7214.51,
+          "Y": 681.893,
+          "Z": 7.01653
+        },
+        {
+          "Map": 1,
+          "X": -7197.61,
+          "Y": 650.787,
+          "Z": 6.88988
+        },
+        {
+          "Map": 1,
+          "X": -7179.93,
+          "Y": 723.522,
+          "Z": 11.0836
+        },
+        {
+          "Map": 1,
+          "X": -7162.5,
+          "Y": 684.315,
+          "Z": 7.44698
+        },
+        {
+          "Map": 1,
+          "X": -7154.5,
+          "Y": 624.587,
+          "Z": 8.85214
+        },
+        {
+          "Map": 1,
+          "X": -7153.2,
+          "Y": 823.863,
+          "Z": 10.9397
+        },
+        {
+          "Map": 1,
+          "X": -7153.18,
+          "Y": 735.62,
+          "Z": 6.0272
+        },
+        {
+          "Map": 1,
+          "X": -7123.16,
+          "Y": 658.707,
+          "Z": 16.7101
+        },
+        {
+          "Map": 1,
+          "X": -7118,
+          "Y": 848.767,
+          "Z": 6.8043
+        },
+        {
+          "Map": 1,
+          "X": -7085.63,
+          "Y": 618.684,
+          "Z": 2.68607
+        },
+        {
+          "Map": 1,
+          "X": -7083.6,
+          "Y": 889.732,
+          "Z": 8.7268
+        },
+        {
+          "Map": 1,
+          "X": -7059.49,
+          "Y": 590.298,
+          "Z": 9.55395
+        },
+        {
+          "Map": 1,
+          "X": -7051.78,
+          "Y": 849.116,
+          "Z": 8.11459
+        },
+        {
+          "Map": 1,
+          "X": -7008.37,
+          "Y": 624.816,
+          "Z": 8.3554
+        },
+        {
+          "Map": 1,
+          "X": -6971.98,
+          "Y": 675.246,
+          "Z": 9.64555
+        },
+        {
+          "Map": 1,
+          "X": -6953.11,
+          "Y": 620.775,
+          "Z": 5.96879
+        },
+        {
+          "Map": 1,
+          "X": -6951.67,
+          "Y": 814.732,
+          "Z": 9.74711
+        },
+        {
+          "Map": 1,
+          "X": -6914,
+          "Y": 662.485,
+          "Z": 9.18236
+        },
+        {
+          "Map": 1,
+          "X": -6892.45,
+          "Y": 669.888,
+          "Z": 6.53788
+        },
+        {
+          "Map": 1,
+          "X": -6741.15,
+          "Y": 959.5,
+          "Z": 5.36262
+        },
+        {
+          "Map": 1,
+          "X": -6696.25,
+          "Y": 1037.64,
+          "Z": 3.19627
+        },
+        {
+          "Map": 1,
+          "X": -6623.93,
+          "Y": 928.33,
+          "Z": -53.0604
+        },
+        {
+          "Map": 1,
+          "X": -6609.95,
+          "Y": 1115.11,
+          "Z": -47.1556
+        },
+        {
+          "Map": 1,
+          "X": -6606.32,
+          "Y": 821.787,
+          "Z": 2.40453
+        },
+        {
+          "Map": 1,
+          "X": -6605.43,
+          "Y": 1060.89,
+          "Z": -39.6763
+        },
+        {
+          "Map": 1,
+          "X": -6592.47,
+          "Y": 762.209,
+          "Z": -52.3829
+        },
+        {
+          "Map": 1,
+          "X": -6591.47,
+          "Y": 989.618,
+          "Z": 2.00111
+        },
+        {
+          "Map": 1,
+          "X": -6551.77,
+          "Y": 1159.41,
+          "Z": -1.36306
+        },
+        {
+          "Map": 1,
+          "X": -6541.72,
+          "Y": 864.142,
+          "Z": -29.3741
+        },
+        {
+          "Map": 1,
+          "X": -6515.45,
+          "Y": 987.786,
+          "Z": 1.1157
+        },
+        {
+          "Map": 1,
+          "X": -6487.9,
+          "Y": 1012.36,
+          "Z": 3.55581
+        },
+        {
+          "Map": 1,
+          "X": -6483.29,
+          "Y": 900.981,
+          "Z": -41.9619
+        },
+        {
+          "Map": 1,
+          "X": -6475.72,
+          "Y": 878.386,
+          "Z": 4.78633
+        },
+        {
+          "Map": 1,
+          "X": -6471.85,
+          "Y": 834.988,
+          "Z": 6.09751
+        },
+        {
+          "Map": 1,
+          "X": -6442.34,
+          "Y": 1100.02,
+          "Z": 1.10783
+        },
+        {
+          "Map": 1,
+          "X": -6426.86,
+          "Y": 874.586,
+          "Z": 0.922683
+        },
+        {
+          "Map": 1,
+          "X": -6343.94,
+          "Y": 1009.67,
+          "Z": -33.0385
+        },
+        {
+          "Map": 1,
+          "X": -6310.54,
+          "Y": 1124.59,
+          "Z": -20.5221
+        },
+        {
+          "Map": 1,
+          "X": -6294.4,
+          "Y": 1172.78,
+          "Z": -20.5936
+        },
+        {
+          "Map": 1,
+          "X": -6280.98,
+          "Y": 1187.34,
+          "Z": -20.7682
+        },
+        {
+          "Map": 1,
+          "X": -6275.57,
+          "Y": 966.738,
+          "Z": -41.6991
+        },
+        {
+          "Map": 1,
+          "X": -6254.89,
+          "Y": 1150.03,
+          "Z": -24.7402
+        },
+        {
+          "Map": 1,
+          "X": -6232.18,
+          "Y": 1173.01,
+          "Z": -14.8858
+        },
+        {
+          "Map": 1,
+          "X": -6220.64,
+          "Y": 987.282,
+          "Z": -45.893
+        },
+        {
+          "Map": 1,
+          "X": -6219.85,
+          "Y": 952.518,
+          "Z": -42.6154
+        }
+      ]
+    },
+    {
+      "ObjectType": "Creature",
+      "Entry": 12199,
+      "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:collection_route:13906:0:creature=12199",
+      "Points": [
+        {
+          "Map": 1,
+          "X": -7114.15,
+          "Y": 352.771,
+          "Z": 26.3781
+        }
+      ]
+    },
+    {
+      "ObjectType": "Creature",
+      "Entry": 15591,
+      "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:collection_route:13906:1:creature=15591",
+      "Points": [
+        {
+          "Map": 1,
+          "X": -2684.26,
+          "Y": -5038.07,
+          "Z": 21.8013
+        },
+        {
+          "Map": 1,
+          "X": -2678.41,
+          "Y": -5036.98,
+          "Z": 21.7699
+        },
+        {
+          "Map": 1,
+          "X": -2658.89,
+          "Y": -5057.21,
+          "Z": 23.0051
+        },
+        {
+          "Map": 1,
+          "X": -2656.57,
+          "Y": -5057.34,
+          "Z": 23.0198
+        },
+        {
+          "Map": 1,
+          "X": -2652.23,
+          "Y": -5047.31,
+          "Z": 23.0175
+        },
+        {
+          "Map": 1,
+          "X": -2635.61,
+          "Y": -5050.42,
+          "Z": 33.827
+        },
+        {
+          "Map": 1,
+          "X": -2632.83,
+          "Y": -5052.68,
+          "Z": 25.6692
+        },
+        {
+          "Map": 1,
+          "X": -2632.54,
+          "Y": -5040.4,
+          "Z": 33.827
+        },
+        {
+          "Map": 1,
+          "X": -2632.03,
+          "Y": -5036.22,
+          "Z": 22.9473
+        },
+        {
+          "Map": 1,
+          "X": -2630.13,
+          "Y": -5037.75,
+          "Z": 22.9544
+        }
+      ]
+    },
+    {
+      "ObjectType": "Creature",
+      "Entry": 18661,
+      "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:collection_route:10420:0:creature=18661",
+      "Points": [
+        {
+          "Map": 530,
+          "X": -2767.4,
+          "Y": 8334.96,
+          "Z": -88.7724
+        },
+        {
+          "Map": 530,
+          "X": -2725.76,
+          "Y": 8320.45,
+          "Z": -83.3241
+        },
+        {
+          "Map": 530,
+          "X": -2710.19,
+          "Y": 8339.99,
+          "Z": -83.3241
+        },
+        {
+          "Map": 530,
+          "X": -2676.53,
+          "Y": 8341.16,
+          "Z": -77.6729
+        },
+        {
+          "Map": 530,
+          "X": -2675.31,
+          "Y": 8335.14,
+          "Z": -77.7456
+        },
+        {
+          "Map": 530,
+          "X": -2655.17,
+          "Y": 8320.86,
+          "Z": -71.9772
+        },
+        {
+          "Map": 530,
+          "X": -2628.72,
+          "Y": 8320.46,
+          "Z": -65.946
+        },
+        {
+          "Map": 530,
+          "X": -2597.17,
+          "Y": 8320.1,
+          "Z": -54.8976
+        }
+      ]
+    },
+    {
+      "ObjectType": "Creature",
+      "Entry": 21839,
+      "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:collection_route:10618:0:creature=21839",
+      "Points": [
+        {
+          "Map": 530,
+          "X": 1653.07,
+          "Y": 4782.23,
+          "Z": 143.727
+        },
+        {
+          "Map": 530,
+          "X": 1681.86,
+          "Y": 4783.61,
+          "Z": 142.388
+        },
+        {
+          "Map": 530,
+          "X": 1695.64,
+          "Y": 4816.96,
+          "Z": 147.824
+        },
+        {
+          "Map": 530,
+          "X": 1785.86,
+          "Y": 4767.26,
+          "Z": 145.577
+        },
+        {
+          "Map": 530,
+          "X": 1822.11,
+          "Y": 4805.62,
+          "Z": 146.885
+        },
+        {
+          "Map": 530,
+          "X": 1869.55,
+          "Y": 4921.42,
+          "Z": 147.661
+        },
+        {
+          "Map": 530,
+          "X": 1884.81,
+          "Y": 4877.72,
+          "Z": 144.636
+        },
+        {
+          "Map": 530,
+          "X": 1913.89,
+          "Y": 4736.14,
+          "Z": 142.625
+        },
+        {
+          "Map": 530,
+          "X": 1970.95,
+          "Y": 4916.71,
+          "Z": 142.878
+        },
+        {
+          "Map": 530,
+          "X": 1997.37,
+          "Y": 4842.61,
+          "Z": 144.408
+        },
+        {
+          "Map": 530,
+          "X": 2013.29,
+          "Y": 4938.56,
+          "Z": 138.913
+        },
+        {
+          "Map": 530,
+          "X": 2014.75,
+          "Y": 4798.06,
+          "Z": 145.32
+        },
+        {
+          "Map": 530,
+          "X": 2024.7,
+          "Y": 4905.79,
+          "Z": 140.883
+        },
+        {
+          "Map": 530,
+          "X": 2077.85,
+          "Y": 4918.75,
+          "Z": 148.948
+        },
+        {
+          "Map": 530,
+          "X": 2154.45,
+          "Y": 4902.69,
+          "Z": 147.832
+        },
+        {
+          "Map": 530,
+          "X": 2203.51,
+          "Y": 4863.22,
+          "Z": 152.513
+        }
+      ]
+    },
+    {
+      "ObjectType": "Creature",
+      "Entry": 22311,
+      "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:collection_route:10757:0:creature=22311",
+      "Points": [
+        {
+          "Map": 530,
+          "X": -828.827,
+          "Y": 6551.46,
+          "Z": 169.875
+        },
+        {
+          "Map": 530,
+          "X": -816.867,
+          "Y": 6556.56,
+          "Z": 170.379
+        },
+        {
+          "Map": 530,
+          "X": -815.928,
+          "Y": 6551.43,
+          "Z": 170.632
+        },
+        {
+          "Map": 530,
+          "X": -787.178,
+          "Y": 6642.7,
+          "Z": 180.565
+        },
+        {
+          "Map": 530,
+          "X": -770.436,
+          "Y": 6625.45,
+          "Z": 173.976
+        },
+        {
+          "Map": 530,
+          "X": -768.337,
+          "Y": 6592.08,
+          "Z": 171.431
+        },
+        {
+          "Map": 530,
+          "X": -752.711,
+          "Y": 6571.91,
+          "Z": 171.757
+        },
+        {
+          "Map": 530,
+          "X": -746.829,
+          "Y": 6587.57,
+          "Z": 171.198
+        },
+        {
+          "Map": 530,
+          "X": -717.695,
+          "Y": 6570.38,
+          "Z": 171.123
+        },
+        {
+          "Map": 530,
+          "X": -715.85,
+          "Y": 6515.86,
+          "Z": 171.593
+        },
+        {
+          "Map": 530,
+          "X": -715.3,
+          "Y": 6545.61,
+          "Z": 171.684
+        }
+      ]
+    },
+    {
+      "ObjectType": "Creature",
+      "Entry": 32505,
+      "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:collection_route:13092:0:creature=32505",
+      "Points": [
+        {
+          "Map": 571,
+          "X": 6878.15,
+          "Y": 2796.39,
+          "Z": 429.124
+        },
+        {
+          "Map": 571,
+          "X": 6883.13,
+          "Y": 2639.75,
+          "Z": 410.082
+        },
+        {
+          "Map": 571,
+          "X": 6888.48,
+          "Y": 2697.03,
+          "Z": 411.527
+        },
+        {
+          "Map": 571,
+          "X": 6899.02,
+          "Y": 2432,
+          "Z": 424.557
+        },
+        {
+          "Map": 571,
+          "X": 6901.7,
+          "Y": 2433.74,
+          "Z": 424.406
+        },
+        {
+          "Map": 571,
+          "X": 6935.35,
+          "Y": 2573.76,
+          "Z": 406.227
+        },
+        {
+          "Map": 571,
+          "X": 6940,
+          "Y": 2676.74,
+          "Z": 407.001
+        },
+        {
+          "Map": 571,
+          "X": 6940.12,
+          "Y": 2569.96,
+          "Z": 406.102
+        },
+        {
+          "Map": 571,
+          "X": 6940.73,
+          "Y": 2584.81,
+          "Z": 404.852
+        },
+        {
+          "Map": 571,
+          "X": 6955.33,
+          "Y": 2554.41,
+          "Z": 406.268
+        },
+        {
+          "Map": 571,
+          "X": 6973.37,
+          "Y": 2624.82,
+          "Z": 400.345
+        },
+        {
+          "Map": 571,
+          "X": 6983.42,
+          "Y": 2787.78,
+          "Z": 412.216
+        },
+        {
+          "Map": 571,
+          "X": 6983.89,
+          "Y": 2500.4,
+          "Z": 412.852
+        },
+        {
+          "Map": 571,
+          "X": 6987.12,
+          "Y": 2782.44,
+          "Z": 410.966
+        },
+        {
+          "Map": 571,
+          "X": 6989.91,
+          "Y": 2515.39,
+          "Z": 410.977
+        },
+        {
+          "Map": 571,
+          "X": 6994.51,
+          "Y": 2553.37,
+          "Z": 405.196
+        },
+        {
+          "Map": 571,
+          "X": 6997.08,
+          "Y": 2554.82,
+          "Z": 405.196
+        },
+        {
+          "Map": 571,
+          "X": 6997.16,
+          "Y": 2476.59,
+          "Z": 417.654
+        },
+        {
+          "Map": 571,
+          "X": 6998.52,
+          "Y": 2473.93,
+          "Z": 418.529
+        },
+        {
+          "Map": 571,
+          "X": 6998.78,
+          "Y": 2468.91,
+          "Z": 419.404
+        },
+        {
+          "Map": 571,
+          "X": 6999.96,
+          "Y": 2466.35,
+          "Z": 420.227
+        },
+        {
+          "Map": 571,
+          "X": 7001.02,
+          "Y": 2470.49,
+          "Z": 419.318
+        },
+        {
+          "Map": 571,
+          "X": 7007.39,
+          "Y": 2471.07,
+          "Z": 416.193
+        },
+        {
+          "Map": 571,
+          "X": 7037.27,
+          "Y": 2709.35,
+          "Z": 404.488
+        },
+        {
+          "Map": 571,
+          "X": 7045.53,
+          "Y": 2720.39,
+          "Z": 405.238
+        }
+      ]
+    }
+  ]
+}

@@ -16,10 +16,10 @@
     9447
   ],
   "strategy_recipes": 3,
-  "repair_evidence": "docs/audit/2026-09-30/previous-membership/repair-evidence.json.gz",
-  "strategy_evidence": "docs/audit/2026-09-30/previous-membership/strategy-evidence.json.gz",
+  "repair_evidence": "docs/audit/2026-10-01/collection-sources/repair-evidence.json.gz",
+  "strategy_evidence": "docs/audit/2026-10-01/collection-sources/strategy-evidence.json.gz",
   "realm_equivalence_proven": false,
   "live_completion_proven": false,
   "production_replaced": false,
-  "closure_evidence_directory": "docs/audit/2026-09-30/previous-membership"
+  "closure_evidence_directory": "docs/audit/2026-10-01/collection-sources"
 }

@@ -1,0 +1,111 @@
+{
+  "prior": {
+    "prior": {
+      "client_build": 12340,
+      "architecture": "x86",
+      "binary_sha256": "bf644876709c591acc17c0da8cdf1814edcc9f1e6bc109a8c0d5c38c79dc953c",
+      "client_receipt_sha256": {
+        "resume-pass8-binary-20260930.json": "e658014297ada74ef44ad4d571fe5159408ebac898cb23ac5c3d0999ac1fde26",
+        "pass8-positive-spell-api-20260930.json": "98fefbca965aa47b208af3ff67f51b8f0a6e70270c1a9bdd3131b7454abe932d",
+        "pass8-initial-spell-list-handler-20260930.json": "3f594a83bdc5fe782a6beca40a34088d8290f60c18914199b1a6688afc5815b5",
+        "pass8-owned-learned-spell-activation-20260930.json": "72546b968bb77d9a8400a6f764ea38232ad3cbd57ea6b20604bba337b0120521",
+        "pass8-spell-staging-remove-20260930.json": "2229c827013679b26f79fa1f90fc2954ad36f25c067449a439e26ea747286759",
+        "pass8-spell-staging-cleanup-20260930.json": "3d5a20c09e217d1d50a8c1a316d5f0784ffba9a474b1a9da0441e9de5b4a1c04"
+      },
+      "self_spell_api": {
+        "registered_name": "IsSpellKnown",
+        "address": "0x53C3A0",
+        "membership": "0x53B4E0",
+        "isPet": false,
+        "contract": "Literal true from the exact self query is positive evidence. False/nil/nonboolean/empty observations remain unknown; no complete negative server spell list is inferred."
+      },
+      "primary": {
+        "revision": "95657f54779467effea8a1749a61ff93abc1d707",
+        "database": "TDB335.25101",
+        "sql_sha256": "e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9",
+        "player_source_sha256": "36a817da38b318740ee5aa31f256518175dfdd02d1dd7a68ebb0805fc43275d8",
+        "HasSpell_lines": [
+          3864,
+          3868
+        ],
+        "SendInitialSpells_lines": [
+          2708,
+          2737
+        ],
+        "LearnSpell_lines": [
+          3364,
+          3379
+        ],
+        "reason_negative_is_unsupported": "The initial client spell list excludes inactive records while HasSpell checks nonremoved/nondisabled membership without requiring active."
+      },
+      "transport": "Existing checked Lua.GetReturnValues transport; exact player GUID before and after the generated request and full managed raw player/Memory owner readback.",
+      "read_only_ida": true,
+      "new_native_dispatch_address": false,
+      "configured_realm_equivalence_proven": false
+    },
+    "predecessors": {
+      "revision": "95657f54779467effea8a1749a61ff93abc1d707",
+      "database": "TDB335.25101",
+      "source_sql_sha256": "e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9",
+      "ObjectMgr.cpp": {
+        "sha256": "67884417a66f8ce294f73e4cb88f728316bba02309b365d69104e40c0b3f8f69",
+        "lines": [
+          5328,
+          5347
+        ]
+      },
+      "Player.cpp": {
+        "sha256": "36a817da38b318740ee5aa31f256518175dfdd02d1dd7a68ebb0805fc43275d8",
+        "lines": [
+          15232,
+          15320
+        ]
+      },
+      "contract": "Independent signed direct predecessor plus complete OR of nonnegative-group dependent predecessors; no change to unknown history or negative-group ordering."
+    },
+    "new_native_api": false,
+    "live_completion_proven": false
+  },
+  "profile_handoff": {
+    "original_commit": "feeff2ac3aec9bcaa2c8632bf56eb0f402c44167",
+    "producer": "runtime-snapshot/Bots/WholesomeAutoQuest-master/ProfileBuilder.cs",
+    "consumer": "Bots/Quest/Objectives/CollectItemObjective.cs:55-69,515-565",
+    "parser": "Styx/Logic/Profiles/Quest/CollectItemObjectiveInfo.cs:69-107",
+    "selection": "QuestInfo.FindCollectItem reads the first item definition. Creature hints must be in CollectFrom, and selected equal-count alternatives must share that definition.",
+    "runtime_fallback_policy_changed": false,
+    "declared_creature_cache_gate": "Explicit source hints no longer require optional creature query metadata. Nonzero matching GUIDs, unit type, enabled object and existing combat/loot owners remain required. Undeclared sources retain their prior cache/database logic."
+  },
+  "client": {
+    "build": 12340,
+    "architecture": "x86",
+    "binary_sha256": "bf644876709c591acc17c0da8cdf1814edcc9f1e6bc109a8c0d5c38c79dc953c",
+    "read_only": true,
+    "new_native_api": false,
+    "receipt_sha256": {
+      "resume-pass9-health-20261001.json": "f73c4e49452060b62bf6176b6452db7e5239925928f95ec645100df3e439b00b",
+      "resume-pass9-binary-20261001.json": "f558dce3f1bfd02e6b070102c409bd5bab7c717287014709529047a8e96ff66a",
+      "collection-profile-progress-20261001.json": "0697eddd481c84f6097cafa90c14a4661a717317c9b70fda4127ae29a5477833",
+      "collection-profile-item-count-20261001.json": "09c557a8df4864892b9868162dee8a222a4b4afa61df7f6f72e388c7af25966b"
+    },
+    "limit": "GetQuestLogLeaderBoard can return three nil values; GetItemCount has bank/charge options and a no-player zero. Existing complete inventory and raw/history owners are retained."
+  },
+  "prospective_data": {
+    "applied": false,
+    "route_records": 25,
+    "quests": 23,
+    "source_review_blocked": true,
+    "runtime_knowledge_sha256": {
+      "quest_data.json": "f2ca79318694afaa4214fc09392e88c3d9d1eae5128f323d0d65b1b9e91a7e3f",
+      "quest_data.repairs.json": "67a372cb548c9bcdb97b7bcc82fcc87253ae0778220b70f7960b6f0f001d96e3",
+      "quest_strategies.json": "10ef767236c0ad2c0151f6b56b9abe6f4e102e1512d650c3313aae750da1f498"
+    },
+    "limit": "Candidate loot/geometry paths do not prove donor flags, attackability, grouped loot availability, configured realm or completion."
+  },
+  "live_completion_proven": false,
+  "code_sha256": {
+    "Bots/Quest/Objectives/CollectItemObjective.cs": "64b9e1f40d0c893ce17b218518178a60a9de29346af44fafb90f544b9bda3314",
+    "runtime-snapshot/Bots/WholesomeAutoQuest-master/ProfileBuilder.cs": "ab07264ab3bd44af6ab853725d82b3ae8fabd21bdab490a9f4779d24ea96206a",
+    "runtime-snapshot/Bots/WholesomeAutoQuest-master/QuestCollectionRouteRepairs.cs": "1bd153c851645e6b83e8f839671580bf86bdd8fcb0b183114284a0ac17f562bd",
+    "Tools/EvidenceAudit/quest_collection_routes_335.py": "05d545661cc58d67610567e98979e34fb33d0568ccc8f019f07ae100a6400031"
+  }
+}

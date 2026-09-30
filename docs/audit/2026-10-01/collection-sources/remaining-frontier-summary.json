@@ -1,0 +1,84 @@
+{
+  "reference_model_parent": "feeff2ac3aec9bcaa2c8632bf56eb0f402c44167",
+  "source_files_stable": true,
+  "input_sha256": {
+    "D:\\Dev\\CB-QuestCollectionRoutes-20261001\\Tools\\EvidenceAudit\\primary_closure_335.py": "6d7b56261fab51080f15cee7aafb04c5523002f069409452b7359a7f2322e5de",
+    "D:\\Dev\\CB-QuestCollectionRoutes-20261001\\Tools\\EvidenceAudit\\quest_repair_pack_335.py": "0dea3ce9f9e19beae1fd3c31820ef552b09c95b1938de34a0d6d5e4aaf4d46ce",
+    "D:\\Dev\\CB-QuestCollectionRoutes-20261001\\Tools\\EvidenceAudit\\quest_availability_source_335.py": "c171e785599a9e69540f6d62e82e19b613befac129ebde31b8015dc411185462",
+    "D:\\Dev\\CB-QuestCollectionRoutes-20261001\\Tools\\EvidenceAudit\\quest_dependency_source_335.py": "d48439e2df26ac7538a8104ecd0aa6b919e2560ab1da91af026ca877e5e9b143",
+    "D:\\Dev\\CB-QuestCollectionRoutes-20261001\\Tools\\EvidenceAudit\\quest_collection_source_335.py": "7318afc1331a441b458cc185a8cefc047ac03638281a4d9a1ab93abd286a07c3",
+    "D:\\Dev\\CopilotBuddy-Evidence\\postmerge-20260930-pr61\\collection-profile-observations-v1\\quest-simulation.jsonl.effective-model.json": "b4eca07c7a74eed87cbf3bf0e1c7be449efa8a6b5c350111572370f81689d7b0",
+    "D:\\Dev\\CopilotBuddy-Evidence\\postmerge-20260930-pr61\\collection-profile-ledger-v1\\quest-ledger.jsonl.gz": "732b29bc484562f0891091e8e60e09f02ace135b6d5335019c4283af1232125a",
+    "D:\\Dev\\CopilotBuddy-Evidence\\postmerge-20260929\\closure-2519\\primary-reference\\source-receipt.json": "d88c940cbdd49997c4dff19c6587e8eb46a0f419458e92ef544b3033b17d4ecb"
+  },
+  "primary_source": {
+    "CoreRevision": "95657f54779467effea8a1749a61ff93abc1d707",
+    "DatabaseRevision": "TDB335.25101",
+    "SourceSqlSha256": "e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9",
+    "QuestDataSha256": "f2ca79318694afaa4214fc09392e88c3d9d1eae5128f323d0d65b1b9e91a7e3f"
+  },
+  "quest_count": 4335,
+  "remaining_quest_count": 1322,
+  "classification_counts": {
+    "GENERIC-PROVEN": 3011,
+    "STRATEGY-PROVEN": 2,
+    "DATA-INVALID/INCOMPLETE": 932,
+    "UNSUPPORTED-SCRIPTED": 57,
+    "SOURCE-UNCERTAIN": 317,
+    "LIVE-ACCEPTANCE-REQUIRED": 16
+  },
+  "loaded_availability_contracts_reproduced": 81,
+  "unresolved_availability_quests": 44,
+  "availability_reasons_overlapping": {
+    "subject-primary-field-conflict": 43,
+    "bank-inventory-observation-unavailable": 4,
+    "negative-spell-absence-not-proven": 1
+  },
+  "availability_without_subject_conflict": [
+    {
+      "quest_id": 4023,
+      "reasons": [
+        "bank-inventory-observation-unavailable"
+      ],
+      "conditions": [
+        {
+          "SourceTypeOrReferenceId": 19,
+          "SourceGroup": 0,
+          "SourceEntry": 4023,
+          "SourceId": 0,
+          "ElseGroup": 0,
+          "ConditionTypeOrReference": 2,
+          "ConditionTarget": 0,
+          "ConditionValue1": 10575,
+          "ConditionValue2": 1,
+          "ConditionValue3": 1,
+          "NegativeCondition": 1,
+          "ErrorType": 0,
+          "ErrorTextId": 0,
+          "ScriptName": "",
+          "Comment": "Quest 'A Taste of Flame (2)' can only be taken if player does not have item 'Black Dragonflight Molt'",
+          "__source_line": 552,
+          "__source_table": "conditions"
+        }
+      ]
+    }
+  ],
+  "missing_metadata_candidates": 34,
+  "missing_relation_candidates": 0,
+  "missing_spawn_entry_candidates": 0,
+  "count_candidates": 0,
+  "conflicting_primary_quests": 361,
+  "conflict_fields_overlapping": {
+    "PrevQuestID": 118,
+    "AllowableRaces": 66,
+    "ExclusiveGroup": 104,
+    "Flags": 2,
+    "SpecialFlags": 48,
+    "NextQuestID": 99
+  },
+  "classification_changes": 0,
+  "runtime_data_changed": false,
+  "live_completion_proven": false,
+  "scope_limit": "All remaining IDs were reviewed through existing source-bound exporters. This does not prove exhaustion of unmodeled scripted, crafting, vendor or realm-specific behavior. Prospective collection donors and group-capacity review remain separately provider-blocked.",
+  "created_utc": "2026-09-30T17:29:48.113543+00:00"
+}
