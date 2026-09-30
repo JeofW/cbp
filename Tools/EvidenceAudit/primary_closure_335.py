@@ -79,6 +79,29 @@ def validate_strategy_results(rows, simulations, strategy_sha256):
     return strategies
 
 
+def validate_availability_result(contract, simulation):
+    """Require actual per-contract status and publication cases, not a label."""
+    receipt = simulation.get('availability_condition_validation')
+    if receipt is None:
+        return False
+    if (not isinstance(receipt, dict) or simulation.get('quest_id') != contract.get('QuestId')
+            or receipt.get('contract') != contract or simulation.get('failed_cases') != 0
+            or type(receipt.get('failed_cases')) is not int or receipt['failed_cases'] != 0
+            or type(receipt.get('passed_cases')) is not int or receipt['passed_cases'] <= 0
+            or type(receipt.get('fixture_satisfiable')) is not bool):
+        raise ValueError('Availability receipt does not match the exact successful contract owner')
+    references = {predicate['Value1'] for group in contract['Groups'] for predicate in group['Conditions']}
+    expected = {f'availability-reference={ident}:state={state}' for ident in references for state in (0, 1, 3, 5, 6)}
+    expected.update({'availability-missing-observation-revokes-publication',
+                     'availability-fixture-constrained-by-source-and-prerequisites'})
+    cases = [row for row in simulation.get('cases', []) if row.get('name', '').startswith('availability-')]
+    names = [row.get('name') for row in cases]
+    if (len(names) != len(set(names)) or set(names) != expected
+            or receipt['passed_cases'] != len(expected) or any(row.get('status') != 'PASS' for row in cases)):
+        raise ValueError('Availability receipt is missing a unique passing status or publication case')
+    return True
+
+
 def final_classification(obligations, simulation, strategy_status='MISSING', baseline='DATA-INVALID/INCOMPLETE'):
     if any(value.startswith('data:') for value in obligations):
         return 'DATA-INVALID/INCOMPLETE'
@@ -178,6 +201,7 @@ def main():
     from quest_dependency_source_335 import primary_dependency_index, dependency_membership
     from quest_collection_source_335 import CollectionSourceIndex
     from quest_credit_source_335 import validate_loaded_sources
+    from quest_availability_source_335 import build_contracts
     tables, table_receipts = load_verified_tables(args.reference)
     old_rows = [json.loads(line) for line in gzip.decompress(args.baseline.read_bytes()).splitlines()]
     simulation_rows = list(map(json.loads, args.simulation.read_text(encoding='utf-8').splitlines()))
@@ -194,6 +218,13 @@ def main():
     source = json.loads((args.reference / 'source-receipt.json').read_text())
     source_sql = source['members'][0]['sha256']
     revision = source['release_commit']
+    availability = unique_quest_index(effective.get('QuestAvailabilityConditions', []), key='QuestId', label='availability contracts')
+    expected_availability, availability_reviews = build_contracts(effective, tables, {
+        'CoreRevision': revision, 'DatabaseRevision': source.get('release', ''), 'SourceSqlSha256': source_sql})
+    expected_availability = unique_quest_index(expected_availability, key='QuestId', label='primary availability contracts')
+    for ident, contract in availability.items():
+        if ident not in model or expected_availability.get(ident) != contract:
+            raise ValueError(f'Loaded availability contract {ident} differs from complete pinned primary evidence')
     input_hashes = {name: _sha(getattr(args, name)) for name in
                     ['baseline', 'simulation', 'effective', 'dependencies', 'repair_evidence']}
     input_hashes.update({name: _sha(getattr(args, name)) for name in
@@ -277,7 +308,7 @@ def main():
     output_rows = []; transitions = []
     for ident in sorted(old):
         prior = old[ident]; quest = model[ident]; sim = simulations[ident]; template = qt.get(ident); addon = qa.get(ident, {})
-        obligations = []; source_evidence = []; related_actors = []; acquisition = None
+        obligations = []; source_evidence = []; related_actors = []; acquisition = None; availability_validated = False
         dependency_review = dependency_membership(quest, primary_dependencies, dependency_edges)
         before_class = prior['classification']; strategy = strategies.get(ident)
         strategy_validated = bool(strategy and strategy.get('pipeline_status') == 'PASS' and strategy.get('failed_cases') == 0)
@@ -302,7 +333,11 @@ def main():
                 if value and quest.get(field) != value:
                     obligations.append('source:unrepresented-eligibility:' + field)
             if conditions[ident]:
-                obligations.append('source:server-condition-not-modeled')
+                availability_validated = ident in availability and validate_availability_result(availability[ident], sim)
+                if not availability_validated:
+                    obligations.append('source:server-condition-not-modeled')
+                elif not sim['availability_condition_validation']['fixture_satisfiable']:
+                    obligations.append('source:availability-prerequisite-state-conflict')
             if template.get('RewardMoney', 0) < 0:
                 obligations.append('live:required-money-observation-and-reward-acceptance')
             if template.get('TimeAllowed', 0) > 0:
@@ -403,6 +438,8 @@ def main():
             'primary_source_revision': revision, 'primary_database_sha256': source_sql,
             'primary_evidence': source_evidence, 'repair_disposition': repair_rows[ident],
             'primary_relations': primary_relations[ident], 'primary_conditions': conditions[ident],
+            'primary_availability_contract': availability.get(ident),
+            'availability_owner_validated': availability_validated,
             'primary_direct_quest_scripts': [script_ref(s) for s in direct_quests[ident]],
             'primary_objective_actors': related_actors, 'secondary_evidence_retained': retained_secondary_evidence(prior),
             'primary_collection_sources': acquisition,

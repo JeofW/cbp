@@ -1,0 +1,453 @@
+{
+  "base_commit": "fdc5262c8aca90778565eb28e84b562ba1b1b071",
+  "classification_counts": {
+    "GENERIC-PROVEN": 3003,
+    "STRATEGY-PROVEN": 2,
+    "DATA-INVALID/INCOMPLETE": 932,
+    "UNSUPPORTED-SCRIPTED": 57,
+    "SOURCE-UNCERTAIN": 325,
+    "LIVE-ACCEPTANCE-REQUIRED": 16
+  },
+  "remaining_quests": 1330,
+  "newly_proven_ids": [
+    247,
+    1061,
+    1301,
+    3765,
+    9145,
+    9149,
+    9150,
+    9152,
+    9155,
+    9171,
+    9192,
+    9513,
+    9523,
+    9693,
+    9933,
+    10302,
+    10635,
+    11585,
+    11586,
+    11595,
+    11606,
+    11916,
+    12181,
+    12528,
+    12828,
+    13044,
+    13068,
+    13118,
+    13122,
+    13125,
+    13130,
+    13135,
+    13139,
+    13172,
+    13174,
+    13224,
+    13225,
+    13258,
+    13386
+  ],
+  "classification_changes": [
+    {
+      "quest_id": 247,
+      "before": "SOURCE-UNCERTAIN",
+      "after": "GENERIC-PROVEN",
+      "repair_changes": [
+        "absent-eligibility-metadata",
+        "source-availability-conditions"
+      ]
+    },
+    {
+      "quest_id": 1061,
+      "before": "SOURCE-UNCERTAIN",
+      "after": "GENERIC-PROVEN",
+      "repair_changes": [
+        "source-availability-conditions"
+      ]
+    },
+    {
+      "quest_id": 1301,
+      "before": "SOURCE-UNCERTAIN",
+      "after": "GENERIC-PROVEN",
+      "repair_changes": [
+        "source-availability-conditions"
+      ]
+    },
+    {
+      "quest_id": 3765,
+      "before": "SOURCE-UNCERTAIN",
+      "after": "GENERIC-PROVEN",
+      "repair_changes": [
+        "source-availability-conditions"
+      ]
+    },
+    {
+      "quest_id": 9145,
+      "before": "SOURCE-UNCERTAIN",
+      "after": "GENERIC-PROVEN",
+      "repair_changes": [
+        "absent-eligibility-metadata",
+        "source-availability-conditions"
+      ]
+    },
+    {
+      "quest_id": 9149,
+      "before": "SOURCE-UNCERTAIN",
+      "after": "GENERIC-PROVEN",
+      "repair_changes": [
+        "absent-eligibility-metadata",
+        "geometry:Creature:16402",
+        "source-availability-conditions"
+      ]
+    },
+    {
+      "quest_id": 9150,
+      "before": "SOURCE-UNCERTAIN",
+      "after": "GENERIC-PROVEN",
+      "repair_changes": [
+        "absent-eligibility-metadata",
+        "geometry:Creature:16310",
+        "source-availability-conditions"
+      ]
+    },
+    {
+      "quest_id": 9152,
+      "before": "SOURCE-UNCERTAIN",
+      "after": "GENERIC-PROVEN",
+      "repair_changes": [
+        "source-availability-conditions"
+      ]
+    },
+    {
+      "quest_id": 9155,
+      "before": "SOURCE-UNCERTAIN",
+      "after": "GENERIC-PROVEN",
+      "repair_changes": [
+        "absent-eligibility-metadata",
+        "source-availability-conditions"
+      ]
+    },
+    {
+      "quest_id": 9171,
+      "before": "SOURCE-UNCERTAIN",
+      "after": "GENERIC-PROVEN",
+      "repair_changes": [
+        "absent-eligibility-metadata",
+        "geometry:Creature:16350",
+        "source-availability-conditions"
+      ]
+    },
+    {
+      "quest_id": 9192,
+      "before": "SOURCE-UNCERTAIN",
+      "after": "GENERIC-PROVEN",
+      "repair_changes": [
+        "absent-eligibility-metadata",
+        "source-availability-conditions"
+      ]
+    },
+    {
+      "quest_id": 9513,
+      "before": "SOURCE-UNCERTAIN",
+      "after": "GENERIC-PROVEN",
+      "repair_changes": [
+        "source-availability-conditions"
+      ]
+    },
+    {
+      "quest_id": 9523,
+      "before": "SOURCE-UNCERTAIN",
+      "after": "GENERIC-PROVEN",
+      "repair_changes": [
+        "source-availability-conditions"
+      ]
+    },
+    {
+      "quest_id": 9693,
+      "before": "SOURCE-UNCERTAIN",
+      "after": "GENERIC-PROVEN",
+      "repair_changes": [
+        "source-availability-conditions"
+      ]
+    },
+    {
+      "quest_id": 9933,
+      "before": "SOURCE-UNCERTAIN",
+      "after": "GENERIC-PROVEN",
+      "repair_changes": [
+        "absent-eligibility-metadata",
+        "explicit-delivery-contract",
+        "source-availability-conditions"
+      ]
+    },
+    {
+      "quest_id": 10302,
+      "before": "SOURCE-UNCERTAIN",
+      "after": "GENERIC-PROVEN",
+      "repair_changes": [
+        "source-availability-conditions"
+      ]
+    },
+    {
+      "quest_id": 10635,
+      "before": "SOURCE-UNCERTAIN",
+      "after": "GENERIC-PROVEN",
+      "repair_changes": [
+        "absent-eligibility-metadata",
+        "geometry:Creature:21815",
+        "source-availability-conditions"
+      ]
+    },
+    {
+      "quest_id": 11585,
+      "before": "SOURCE-UNCERTAIN",
+      "after": "GENERIC-PROVEN",
+      "repair_changes": [
+        "absent-eligibility-metadata",
+        "source-availability-conditions"
+      ]
+    },
+    {
+      "quest_id": 11586,
+      "before": "SOURCE-UNCERTAIN",
+      "after": "GENERIC-PROVEN",
+      "repair_changes": [
+        "absent-eligibility-metadata",
+        "source-availability-conditions"
+      ]
+    },
+    {
+      "quest_id": 11595,
+      "before": "SOURCE-UNCERTAIN",
+      "after": "GENERIC-PROVEN",
+      "repair_changes": [
+        "absent-eligibility-metadata",
+        "source-availability-conditions"
+      ]
+    },
+    {
+      "quest_id": 11606,
+      "before": "SOURCE-UNCERTAIN",
+      "after": "GENERIC-PROVEN",
+      "repair_changes": [
+        "absent-eligibility-metadata",
+        "geometry:Creature:24566",
+        "source-availability-conditions"
+      ]
+    },
+    {
+      "quest_id": 11916,
+      "before": "SOURCE-UNCERTAIN",
+      "after": "GENERIC-PROVEN",
+      "repair_changes": [
+        "absent-eligibility-metadata",
+        "source-availability-conditions"
+      ]
+    },
+    {
+      "quest_id": 12181,
+      "before": "SOURCE-UNCERTAIN",
+      "after": "GENERIC-PROVEN",
+      "repair_changes": [
+        "absent-eligibility-metadata",
+        "explicit-delivery-contract",
+        "source-availability-conditions"
+      ]
+    },
+    {
+      "quest_id": 12528,
+      "before": "SOURCE-UNCERTAIN",
+      "after": "GENERIC-PROVEN",
+      "repair_changes": [
+        "source-availability-conditions"
+      ]
+    },
+    {
+      "quest_id": 12828,
+      "before": "SOURCE-UNCERTAIN",
+      "after": "GENERIC-PROVEN",
+      "repair_changes": [
+        "source-availability-conditions"
+      ]
+    },
+    {
+      "quest_id": 13044,
+      "before": "SOURCE-UNCERTAIN",
+      "after": "GENERIC-PROVEN",
+      "repair_changes": [
+        "absent-eligibility-metadata",
+        "source-availability-conditions"
+      ]
+    },
+    {
+      "quest_id": 13068,
+      "before": "SOURCE-UNCERTAIN",
+      "after": "GENERIC-PROVEN",
+      "repair_changes": [
+        "absent-eligibility-metadata",
+        "source-availability-conditions"
+      ]
+    },
+    {
+      "quest_id": 13118,
+      "before": "SOURCE-UNCERTAIN",
+      "after": "GENERIC-PROVEN",
+      "repair_changes": [
+        "absent-eligibility-metadata",
+        "source-availability-conditions"
+      ]
+    },
+    {
+      "quest_id": 13122,
+      "before": "SOURCE-UNCERTAIN",
+      "after": "GENERIC-PROVEN",
+      "repair_changes": [
+        "absent-eligibility-metadata",
+        "source-availability-conditions"
+      ]
+    },
+    {
+      "quest_id": 13125,
+      "before": "SOURCE-UNCERTAIN",
+      "after": "GENERIC-PROVEN",
+      "repair_changes": [
+        "absent-eligibility-metadata",
+        "source-availability-conditions"
+      ]
+    },
+    {
+      "quest_id": 13130,
+      "before": "SOURCE-UNCERTAIN",
+      "after": "GENERIC-PROVEN",
+      "repair_changes": [
+        "absent-eligibility-metadata",
+        "source-availability-conditions"
+      ]
+    },
+    {
+      "quest_id": 13135,
+      "before": "SOURCE-UNCERTAIN",
+      "after": "GENERIC-PROVEN",
+      "repair_changes": [
+        "absent-eligibility-metadata",
+        "geometry:Creature:30856",
+        "source-availability-conditions"
+      ]
+    },
+    {
+      "quest_id": 13139,
+      "before": "SOURCE-UNCERTAIN",
+      "after": "GENERIC-PROVEN",
+      "repair_changes": [
+        "absent-eligibility-metadata",
+        "explicit-delivery-contract",
+        "source-availability-conditions"
+      ]
+    },
+    {
+      "quest_id": 13172,
+      "before": "SOURCE-UNCERTAIN",
+      "after": "GENERIC-PROVEN",
+      "repair_changes": [
+        "absent-eligibility-metadata",
+        "source-availability-conditions"
+      ]
+    },
+    {
+      "quest_id": 13174,
+      "before": "SOURCE-UNCERTAIN",
+      "after": "GENERIC-PROVEN",
+      "repair_changes": [
+        "absent-eligibility-metadata",
+        "source-availability-conditions"
+      ]
+    },
+    {
+      "quest_id": 13224,
+      "before": "SOURCE-UNCERTAIN",
+      "after": "GENERIC-PROVEN",
+      "repair_changes": [
+        "absent-eligibility-metadata",
+        "source-availability-conditions"
+      ]
+    },
+    {
+      "quest_id": 13225,
+      "before": "SOURCE-UNCERTAIN",
+      "after": "GENERIC-PROVEN",
+      "repair_changes": [
+        "absent-eligibility-metadata",
+        "source-availability-conditions"
+      ]
+    },
+    {
+      "quest_id": 13258,
+      "before": "SOURCE-UNCERTAIN",
+      "after": "GENERIC-PROVEN",
+      "repair_changes": [
+        "absent-eligibility-metadata",
+        "source-availability-conditions"
+      ]
+    },
+    {
+      "quest_id": 13386,
+      "before": "SOURCE-UNCERTAIN",
+      "after": "GENERIC-PROVEN",
+      "repair_changes": [
+        "absent-eligibility-metadata",
+        "source-availability-conditions"
+      ]
+    }
+  ],
+  "remaining_family_counts": {
+    "data:objective-geometry-missing": 541,
+    "data:collection-source-geometry-missing": 164,
+    "data:delivery-acquisition-route-missing": 153,
+    "data:auxiliary-or-mismatched-item-objective": 133,
+    "source:dependent-previous-membership-mismatch": 130,
+    "data:primary-item-requirement-unrepresented": 127,
+    "source:collection-objective-owner-unproven": 124,
+    "data:giver-relation-unrepresented": 105,
+    "data:ender-relation-unrepresented": 103,
+    "script:cast-credit-no-strategy": 97,
+    "source:primary-field-conflict:PrevQuestID": 95,
+    "source:server-condition-not-modeled": 67,
+    "data:giver-geometry-missing": 58,
+    "source:primary-field-conflict:ExclusiveGroup": 52,
+    "source:primary-field-conflict:AllowableRaces": 49,
+    "source:primary-field-conflict:NextQuestID": 47,
+    "source:primary-field-conflict:SpecialFlags": 46,
+    "data:ender-geometry-missing": 43,
+    "source:primary-field-conflict:ExclusiveGroup,NextQuestID": 36,
+    "source:unrepresented-eligibility:RequiredMinRepFaction": 26,
+    "source:unrepresented-eligibility:RequiredMinRepValue": 23,
+    "live:timed-route-deadline-acceptance": 16,
+    "source:external-predecessor-contract-missing": 13,
+    "source:collection-loot-condition-unmodeled": 12,
+    "source:primary-field-conflict:ExclusiveGroup,PrevQuestID": 10,
+    "source:primary-field-conflict:AllowableRaces,NextQuestID": 10,
+    "live:required-money-observation-and-reward-acceptance": 8,
+    "source:primary-field-conflict:AllowableRaces,PrevQuestID": 4,
+    "script:player-kill-objective-owner-unrepresented": 3,
+    "source:primary-field-conflict:NextQuestID,PrevQuestID": 3,
+    "source:primary-field-conflict:ExclusiveGroup,NextQuestID,PrevQuestID": 3,
+    "source:primary-field-conflict:AllowableRaces,ExclusiveGroup": 2,
+    "source:primary-field-conflict:Flags,PrevQuestID,SpecialFlags": 1,
+    "source:primary-field-conflict:PrevQuestID,SpecialFlags": 1,
+    "source:primary-field-conflict:Flags": 1,
+    "source:primary-field-conflict:AllowableRaces,ExclusiveGroup,PrevQuestID": 1,
+    "live:recorded-pipeline-remains-blocked": 1,
+    "data:normal-objective-identity-or-count-unrepresented": 1,
+    "data:primary-normal-requirement-unrepresented": 1,
+    "source:unrepresented-eligibility:RequiredSkillPoints": 1,
+    "source:unrepresented-eligibility:RequiredSkillID": 1,
+    "script:exploration-or-event-no-strategy": 1
+  },
+  "simulation_checks": 259164,
+  "strategy_checks": 39,
+  "runtime_inputs_verified": 4090,
+  "live_completion_proven": false
+}

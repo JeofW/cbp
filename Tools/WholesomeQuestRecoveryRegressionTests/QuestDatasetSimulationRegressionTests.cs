@@ -45,6 +45,7 @@ internal static class QuestDatasetSimulationRegressionTests
         public string structural_classification { get; set; } = "";
         public string repair_sha256 { get; set; } = "absent";
         public string execution_fingerprint { get; set; } = "legacy-direct-model";
+        public object? availability_condition_validation { get; set; }
     }
 
     private sealed class Context
@@ -57,6 +58,8 @@ internal static class QuestDatasetSimulationRegressionTests
         internal int Level, Race, ClassId = 2;
         internal bool EffectiveModel;
         internal IReadOnlyDictionary<int,int>? Skills, Reputations;
+        internal Dictionary<uint,int>? AvailabilityFixtureStates;
+        internal bool AvailabilityFixtureSatisfiable;
         internal int[] NormalIds = new int[4], NormalCounts = new int[4], ItemIds = new int[6], ItemCounts = new int[6];
 
         internal QuestScheduleResult Schedule(int? level = null, int? race = null, bool accepted = false, bool failed = false,
@@ -84,6 +87,8 @@ internal static class QuestDatasetSimulationRegressionTests
                 PlayerGuid = 123, MapId = point.Map, X = point.X, Y = point.Y, Z = point.Z,
                 AcceptedQuests = observations, CompletedQuestIds = rewarded ? (history ?? Completed).Concat(new[] { (uint)Quest.Id }).ToArray() : history ?? Completed,
                 HasAuthoritativeCompletions = authority, HasCompleteQuestLog = logComplete,
+                RawQuestStates = QuestAvailabilityPolicy.FromRawFlags(observations.Select(q => q.QuestId),
+                    observations.Where(q => q.IsCompleted).Select(q => q.QuestId), observations.Where(q => q.IsFailed).Select(q => q.QuestId)),
                 SkillValues = omitSkills ? null : skillOverride ?? Skills,
                 ReputationValues = omitReputations ? null : reputationOverride ?? Reputations,
                 CarriedItemCounts = items ?? ItemIds.Where(id => id > 0).Distinct().ToDictionary(id => id, _ => 0L)
@@ -111,9 +116,11 @@ internal static class QuestDatasetSimulationRegressionTests
     {
         // The base schema deliberately ignores validated catalog metadata. The
         // audit exporter includes it explicitly without enabling JSON injection.
-        if (database.ObjectiveCreditSources.Count == 0) return JsonSerializer.Serialize(database, Json);
+        var conditions = database.Quests.Where(quest => quest.AvailabilityConditions != null).Select(quest => quest.AvailabilityConditions).ToArray();
+        if (database.ObjectiveCreditSources.Count == 0 && conditions.Length == 0) return JsonSerializer.Serialize(database, Json);
         var model = JsonSerializer.SerializeToNode(database, Json)!.AsObject();
         model["ObjectiveCreditSources"] = JsonSerializer.SerializeToNode(database.ObjectiveCreditSources, Json);
+        if (conditions.Length != 0) model["QuestAvailabilityConditions"] = JsonSerializer.SerializeToNode(conditions, Json);
         return model.ToJsonString(Json);
     }
 
@@ -162,8 +169,11 @@ internal static class QuestDatasetSimulationRegressionTests
                     origin = context.Origin, authoritative_completed_prerequisites = context.Completed,
                     skill_values = context.Skills, reputation_values = context.Reputations,
                     active_parent_ids = context.ActiveParents.Select(value => value.QuestId).ToArray(),
+                    availability_fixture_states = context.AvailabilityFixtureStates,
+                    availability_fixture_satisfiable = context.AvailabilityFixtureSatisfiable,
                     reference = evidence, normal_slot_encoding = "original-client high-bit GO identities; four physical counters" };
                 record.production_owners.Add("QuestScheduler.MaterializeSchedule");
+                if (quest.AvailabilityConditions != null) AvailabilityCases(context, record);
                 bool baseline = context.Pickup(context.Schedule());
                 Case(record, "repeat-same-observations-stable-plan", () => Check(Signature(context.Schedule()) == Signature(context.Schedule()), "same observations changed the selected plan"));
                 Case(record, "incomplete-log-withholds-work", () => Check(!context.AnyWork(context.Schedule(logComplete: false)), "incomplete log published work"));
@@ -360,8 +370,99 @@ internal static class QuestDatasetSimulationRegressionTests
             if(quest.RequiredMaxRepFaction>0 && quest.RequiredMaxRepValue>int.MinValue && !reputation.ContainsKey(quest.RequiredMaxRepFaction.Value))
                 reputation[quest.RequiredMaxRepFaction.Value] = quest.RequiredMaxRepValue.Value-1;
             context.Skills=skills;context.Reputations=reputation;
+            if (quest.AvailabilityConditions != null) SeedAvailability(context);
         }
         return context;
+    }
+
+    // Controlled test inputs are selected from the pinned server's status truth
+    // table, not by asking the production evaluator which inputs make it pass.
+    // Existing prerequisite/history requirements remain hard constraints.
+    private static int SourceStatusMask(QuestAvailabilityPredicate condition)
+    {
+        int mask = condition.Type switch { 8 => 64, 9 => 8, 14 => 1, 28 => 2, 47 => condition.Value2,
+            _ => throw new InvalidDataException("Unsupported source condition in test fixture") };
+        return condition.Negative ? 107 ^ mask : mask;
+    }
+
+    private static void SeedAvailability(Context context)
+    {
+        var contract = context.Quest.AvailabilityConditions!;
+        var history = new HashSet<uint>(context.Completed);
+        var active = context.ActiveParents.ToDictionary(q => q.QuestId, q => q.IsFailed ? 5 : q.IsCompleted ? 1 : 3);
+        foreach (var group in contract.Groups)
+        {
+            var choice = new Dictionary<uint,int>(); bool possible = true;
+            foreach (var predicates in group.Conditions.GroupBy(p => (uint)p.Value1))
+            {
+                int mask = predicates.Aggregate(107, (allowed, predicate) => allowed & SourceStatusMask(predicate));
+                IEnumerable<int> domain = predicates.Key == (uint)context.Quest.Id ? new[] { 0 }
+                    : active.TryGetValue(predicates.Key, out int accepted) ? new[] { accepted }
+                    : history.Contains(predicates.Key) ? new[] { 6 } : new[] { 0, 1, 3, 5, 6 };
+                int[] options = domain.Where(state => (mask & (1 << state)) != 0).ToArray();
+                if (options.Length == 0) { possible = false; break; }
+                choice[predicates.Key] = options[0];
+            }
+            if (!possible) continue;
+            var selectedHistory = new HashSet<uint>(history); var selectedActive = new Dictionary<uint,int>(active);
+            foreach (var pair in choice)
+            {
+                selectedHistory.Remove(pair.Key); selectedActive.Remove(pair.Key);
+                if (pair.Value == 6) selectedHistory.Add(pair.Key);
+                else if (pair.Value is 1 or 3 or 5) selectedActive[pair.Key] = pair.Value;
+            }
+            if (selectedActive.Count >= 25) continue;
+            context.Completed = selectedHistory.OrderBy(id => id).ToArray();
+            context.ActiveParents = selectedActive.OrderBy(row => row.Key).Select(row => new QuestSchedulerAcceptedQuest
+                { QuestId = row.Key, IsCompleted = row.Value == 1, IsFailed = row.Value == 5,
+                  ObjectiveCounts = new int[4], NormalObjectiveIds = new int[4], NormalObjectiveRequiredCounts = new int[4] }).ToArray();
+            context.AvailabilityFixtureSatisfiable = true;
+            break;
+        }
+        context.AvailabilityFixtureStates = contract.ReferencedQuests.ToDictionary(r => (uint)r.QuestId, r =>
+        {
+            var accepted = context.ActiveParents.FirstOrDefault(a => a.QuestId == (uint)r.QuestId);
+            return accepted != null ? accepted.IsFailed ? 5 : accepted.IsCompleted ? 1 : 3 : context.Completed.Contains((uint)r.QuestId) ? 6 : 0;
+        });
+    }
+
+    private static void AvailabilityCases(Context context, Record record)
+    {
+        QuestAvailabilityContract contract = context.Quest.AvailabilityConditions!;
+        int startingPasses = record.passed_cases, startingFailures = record.failed_cases;
+        var states = context.AvailabilityFixtureStates!;
+        var plan = new[] { new QuestPlanEntry { Quest = context.Quest, Stage = QuestWorkStage.Pickup } };
+        QuestSchedulerSnapshot Observe(IReadOnlyDictionary<uint,int> values, bool history = true, bool raw = true) => new()
+        {
+            PlayerGuid = 123, UtcNow = Now, HasCompleteQuestLog = true, HasAuthoritativeCompletions = history,
+            CompletedQuestIds = values.Where(pair => pair.Value == 6).Select(pair => pair.Key).ToArray(),
+            RawQuestStates = raw ? values.Where(pair => pair.Value is 1 or 3 or 5).ToDictionary(pair => pair.Key, pair => pair.Value) : null
+        };
+        bool Expected(IReadOnlyDictionary<uint,int> values) => contract.Groups.Any(group =>
+            group.Conditions.All(predicate => (SourceStatusMask(predicate) & (1 << values[(uint)predicate.Value1])) != 0));
+        foreach (uint referenced in states.Keys.OrderBy(id => id))
+            foreach (int state in new[] { 0, 1, 3, 5, 6 })
+            {
+                uint capturedId = referenced; int capturedState = state;
+                Case(record, $"availability-reference={capturedId}:state={capturedState}", () =>
+                {
+                    var changed = new Dictionary<uint,int>(states) { [capturedId] = capturedState };
+                    bool expected = Expected(changed); var observation = Observe(changed);
+                    Check((QuestAvailabilityPolicy.Evaluate(context.Quest, observation).Rejection == null) == expected,
+                        "condition policy differs from pinned status/group/negation truth table");
+                    Check(QuestAvailabilityPolicy.RequirementsCurrent(plan, observation) == expected,
+                        "publication condition gate retained the previous state");
+                });
+            }
+        Case(record, "availability-missing-observation-revokes-publication", () =>
+            Check(!QuestAvailabilityPolicy.RequirementsCurrent(plan, null!), "missing current observation retained pickup"));
+        Case(record, "availability-fixture-constrained-by-source-and-prerequisites", () =>
+            Check(!context.AvailabilityFixtureSatisfiable || Expected(states), "fixture claims a satisfying source assignment without one"));
+        record.availability_condition_validation = new { contract, passed_cases = record.passed_cases - startingPasses,
+            failed_cases = record.failed_cases - startingFailures, fixture_satisfiable = context.AvailabilityFixtureSatisfiable,
+            observed_reference_states = states, source_oracle = "TC335 ConditionMgr.cpp predicates 8/9/14/28/47; nonrepeatable/nonseasonal ordinary references; all five original states; OR-of-AND groups",
+            live_completion_proven = false };
+        record.production_owners.Add("QuestAvailabilityPolicy.Evaluate and RequirementsCurrent with each source reference in all five original quest states");
     }
 
     private static bool TrySelectActorPair(QuestEntry quest, JsonElement pairs, out int race, out int playerClass)

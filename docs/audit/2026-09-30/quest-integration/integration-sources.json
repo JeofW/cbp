@@ -1,0 +1,37 @@
+{
+  "first_parent": "fdc5262c8aca90778565eb28e84b562ba1b1b071",
+  "second_parent": "0722b9c4d7e2d958a23c0986e05864f2f6b68a0a",
+  "common_reviewed_parent": "d36bddce5600bb67418c8180a38fdb8c40346f61",
+  "condition_contracts": 58,
+  "condition_predicates": 115,
+  "reputation_quest_ids": [
+    9145,
+    9155,
+    9173,
+    9192
+  ],
+  "all_other_repair_fields_preserved": true,
+  "strategy_recipes_identical": true,
+  "source_contracts": {
+    "condition": {
+      "path": "docs/audit/2026-09-30/quest-conditions/source-contracts.json",
+      "sha256": "42a41c0e0e9c2b2f7cdfd73703edd48b23470acd3bedeeed069334841a1e9f57"
+    },
+    "reputation": {
+      "path": "docs/audit/2026-09-30/eligibility-metadata/source-contracts.json",
+      "sha256": "ddaba93fcc6695c6303da625c0f78eec01685ee3420a779393879fc8725ffe94"
+    },
+    "inventory": {
+      "path": "docs/audit/2026-09-30/inventory-observation/source-contracts.json",
+      "sha256": "491868166f2e3932ca86fd8cc07cd818c6c4ec0df93763ae470008c6ca20444d"
+    },
+    "live_objective": {
+      "path": "docs/audit/2026-09-30/live-objectives/source-contracts.json",
+      "sha256": "908720adac0e68fb6d14e99a647e53c986a100640a4dfae63009055a9d85af7e"
+    }
+  },
+  "classification_counts_pending_actual_reproduction": true,
+  "remote_or_master_merge_performed": false,
+  "production_changed": false,
+  "live_completion_proven": false
+}
