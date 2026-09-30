@@ -176,6 +176,7 @@ def main():
         raise FileExistsError('Closure ledgers are create-only')
     from quest_repair_pack_335 import load_verified_tables, digest, BASE_FIELDS, ADDON_FIELDS, OPTIONAL_FIELDS
     from quest_dependency_source_335 import primary_dependency_index, dependency_membership
+    from quest_collection_source_335 import CollectionSourceIndex
     tables, table_receipts = load_verified_tables(args.reference)
     old_rows = [json.loads(line) for line in gzip.decompress(args.baseline.read_bytes()).splitlines()]
     simulation_rows = list(map(json.loads, args.simulation.read_text(encoding='utf-8').splitlines()))
@@ -209,6 +210,7 @@ def main():
                                                        'table': table + '_quest' + role})
     conditions = defaultdict(list)
     condition_codes = _constants(args.reference / 'contracts/ConditionMgr.h', 'CONDITION_SOURCE_TYPE_')
+    collection_sources = CollectionSourceIndex(tables, condition_codes)
     available_code = next(key for key, value in condition_codes.items() if value['name'] == 'CONDITION_SOURCE_TYPE_QUEST_AVAILABLE')
     for row in tables['conditions']:
         if row['SourceTypeOrReferenceId'] == available_code:
@@ -272,7 +274,7 @@ def main():
     output_rows = []; transitions = []
     for ident in sorted(old):
         prior = old[ident]; quest = model[ident]; sim = simulations[ident]; template = qt.get(ident); addon = qa.get(ident, {})
-        obligations = []; source_evidence = []; related_actors = []
+        obligations = []; source_evidence = []; related_actors = []; acquisition = None
         dependency_review = dependency_membership(quest, primary_dependencies, dependency_edges)
         before_class = prior['classification']; strategy = strategies.get(ident)
         strategy_validated = bool(strategy and strategy.get('pipeline_status') == 'PASS' and strategy.get('failed_cases') == 0)
@@ -311,6 +313,8 @@ def main():
                 obligations.append('script:exploration-or-event-no-strategy')
             normal = [(template[f'RequiredNpcOrGo{i}'], template[f'RequiredNpcOrGoCount{i}']) for i in range(1, 5) if template[f'RequiredNpcOrGo{i}']]
             required = {template[f'RequiredItemId{i}']: template[f'RequiredItemCount{i}'] for i in range(1, 7) if template[f'RequiredItemId{i}']}
+            acquisition = collection_sources.review(quest, effective, required)
+            obligations.extend(acquisition['obligations'])
             represented_normals = set(); represented_items = {}; objectives = quest['Objectives']
             for index, objective in enumerate(objectives):
                 kind = objective['Type']
@@ -397,6 +401,7 @@ def main():
             'primary_relations': primary_relations[ident], 'primary_conditions': conditions[ident],
             'primary_direct_quest_scripts': [script_ref(s) for s in direct_quests[ident]],
             'primary_objective_actors': related_actors, 'secondary_evidence_retained': retained_secondary_evidence(prior),
+            'primary_collection_sources': acquisition,
             'primary_dependency_membership': dependency_review,
             'strategy': {'status': strategy_status, 'evidence': strategy},
             'simulation': sim, 'final_simulation_disposition': chosen_simulation,

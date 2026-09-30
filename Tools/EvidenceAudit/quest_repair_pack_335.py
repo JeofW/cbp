@@ -263,7 +263,7 @@ def build_repairs(data: dict, primary: dict, protected_ids: set[int], source: di
             if item > 0:
                 # GO loot selectors depend on type-specific union fields; do not
                 # interpret those as creature loot IDs or invent an item source.
-                loot_id = actor.get('lootid', 0) if object_type == 'Creature' else actor.get('data1', 0) if actor.get('type') == 3 else 0
+                loot_id = actor.get('lootid', 0) if object_type == 'Creature' else actor.get('Data1', 0) if actor.get('type') == 3 else 0
                 path = loot_route('creature_loot_template' if object_type == 'Creature' else 'gameobject_loot_template', loot_id, item)
                 if not path:
                     record['remaining'].append('primary-loot-route-unproven:' + str(objective.get('Index')))

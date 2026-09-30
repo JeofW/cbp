@@ -69,6 +69,10 @@ def main():
             return 'Resolve the exact primary-versus-dataset field conflict against the configured realm/export. No unreviewed overwrite or guessed prerequisite/flag semantics.'
         if obligation.startswith('source:server-condition'):
             return 'A source-bound condition model and its live player/world inputs are required; direct availability and unrelated quest-reference conditions must remain distinct.'
+        if obligation.startswith('source:collection-objective-owner-unproven'):
+            return 'Resolve this exact modeled actor/item pair against the primary typed loot graph or an explicit supported acquisition strategy. Coordinates, another alternative, carried inventory and a simulated progress receipt do not certify this actor.'
+        if obligation.startswith('source:collection-loot-condition-unmodeled'):
+            return 'The exact item-source path carries a primary loot condition. Bind its condition/reference semantics and authoritative inputs before treating that route as ordinary acquisition.'
         if obligation.startswith('data:'):
             return 'The named acquisition, objective or relation/geometry contract remains unrepresented by a proved supported route. A source join alone cannot supply missing travel, item acquisition or scripted actions.'
         if obligation.startswith('script:'):
@@ -102,6 +106,7 @@ def main():
         output.append({'quest_id':ident,'classification':ledger['classification'],'ledger_record_sha256':digest(ledger),
             'primary_quest_template':q,'primary_quest_addon':addon,'actors':actor_records,'items':item_records,
             'quest_availability_conditions':ledger['primary_conditions'],'direct_quest_scripts':ledger['primary_direct_quest_scripts'],
+            'collection_source_evidence':ledger.get('primary_collection_sources'),
             'existing_profile_evidence':{'nodes':profile.get('profile_nodes',[]),'parse_failures':profile.get('profile_parse_failures',[]),
                 'authority_limit':'Existing profiles are historical candidates. Only independently corroborated original TC335 actions were admitted to the shipped strategy pack.'},
             'eventai_table_status':'No creature_ai_scripts table in this pinned primary database; no secondary EventAI behavior is imported as primary fact.',

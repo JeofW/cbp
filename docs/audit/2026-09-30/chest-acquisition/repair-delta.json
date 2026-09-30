@@ -1,0 +1,43 @@
+{
+  "base_commit": "3662a8f5a47178fc982e2891a45f5a3ac9a7b3ed",
+  "old_spawn_entries": 689,
+  "old_spawn_points": 14080,
+  "new_spawn_entries": 1,
+  "new_spawn_points": 1,
+  "total_spawn_entries": 690,
+  "total_spawn_points": 14081,
+  "new_gameobject_entries": [
+    194341
+  ],
+  "affected_quest_ids": [
+    13634
+  ],
+  "all_previous_repairs_preserved": true,
+  "dependency_records": 369,
+  "delivery_contracts": 645,
+  "supplemental_contracts": 154,
+  "relations": 2,
+  "strategy_recipes_unchanged": true,
+  "new_pack_sha256": "07c913fd13dcff37c9d1b16c788346ac63f56708a52fcd3187db489b8d64f543",
+  "source_contract": {
+    "path": "src/server/game/Entities/GameObject/GameObjectData.h",
+    "file": "GameObjectData.h",
+    "url": "https://raw.githubusercontent.com/TrinityCore/TrinityCore/95657f54779467effea8a1749a61ff93abc1d707/src/server/game/Entities/GameObject/GameObjectData.h",
+    "revision": "95657f54779467effea8a1749a61ff93abc1d707",
+    "sha256": "a559290103ab93909d435bbb9d4116e214e2e839b7e8d0b3875b578823e180cf",
+    "bytes": 33017
+  },
+  "source_contract_lines": [
+    [
+      86,
+      97
+    ],
+    [
+      552,
+      559
+    ]
+  ],
+  "original_dataset_sha256": "f2ca79318694afaa4214fc09392e88c3d9d1eae5128f323d0d65b1b9e91a7e3f",
+  "live_completion_proven": false,
+  "controlled_observation_validation_pending": true
+}
