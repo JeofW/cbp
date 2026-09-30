@@ -1,8 +1,8 @@
 """Export complete original-TC335 quest availability contracts for current owners.
 
-Only permanent, ordinary quest history/state predicates are implemented here.
-Unsupported target, reference, script, bank, seasonal and repeatable semantics
-remain explicit obligations; a partial condition list is never exported.
+Permanent ordinary quest predicates and verified carried-item quantities are
+implemented here. Unsupported target, reference, script, bank, seasonal and
+repeatable semantics remain explicit; a partial condition list is never exported.
 """
 from __future__ import annotations
 
@@ -17,7 +17,7 @@ import re
 from quest_repair_pack_335 import BASE_FIELDS, ADDON_FIELDS, digest, encoded, indexed, load_verified_tables
 
 SOURCE_TYPE = 19
-SUPPORTED_TYPES = {8, 9, 14, 28, 47}
+SUPPORTED_TYPES = {2, 8, 9, 14, 28, 47}
 STATUS_MASK = (1 << 0) | (1 << 1) | (1 << 3) | (1 << 5) | (1 << 6)
 SEASONAL_SORTS = {-22, -284, -366, -369, -370, -374, -376}
 
@@ -35,6 +35,7 @@ def build_contracts(data, tables, source):
     base = indexed(data['Quests'], 'Id')
     templates = indexed(tables['quest_template'], 'ID')
     addons = indexed(tables['quest_template_addon'], 'ID')
+    items = indexed(tables.get('item_template', []), 'entry')
     conditions = defaultdict(list)
     for row in tables['conditions']:
         if row.get('SourceTypeOrReferenceId') == SOURCE_TYPE and row.get('SourceEntry') in base:
@@ -53,7 +54,7 @@ def build_contracts(data, tables, source):
         elif (any(field in template and quest.get(field) != template[field] for field in BASE_FIELDS)
               or any(quest.get(field) != addon.get(field, 0) for field in ADDON_FIELDS)):
             problems.append('subject-primary-field-conflict')
-        groups = defaultdict(list); refs = {}; keys = set(); evidence = []
+        groups = defaultdict(list); refs = {}; item_refs = {}; keys = set(); evidence = []
         for row in rows:
             evidence.append(dict(reference('conditions', row), row=row))
             fields = ('SourceGroup', 'SourceId', 'ElseGroup', 'ConditionTypeOrReference', 'ConditionTarget',
@@ -66,27 +67,36 @@ def build_contracts(data, tables, source):
                 problems.append('unsupported-condition-scope-target-or-script'); continue
             if kind not in SUPPORTED_TYPES:
                 problems.append('unsupported-condition-type:' + str(kind)); continue
+            if kind == 2 and row['ConditionValue3'] != 0:
+                problems.append('bank-inventory-observation-unavailable'); continue
             if (row['NegativeCondition'] not in (0, 1) or value <= 0 or value > 2**31 - 1
-                    or row['ConditionValue3'] != 0 or (kind != 47 and row['ConditionValue2'] != 0)
+                    or row['ConditionValue3'] != 0 or (kind not in (2, 47) and row['ConditionValue2'] != 0)
+                    or (kind == 2 and not 0 < row['ConditionValue2'] <= 2**31 - 1)
                     or (kind == 47 and (row['ConditionValue2'] <= 0 or row['ConditionValue2'] & ~STATUS_MASK))):
                 problems.append('invalid-condition-values'); continue
-            referenced = templates.get(value); referenced_addon = addons.get(value, {})
-            if referenced is None:
-                problems.append('referenced-quest-absent:' + str(value)); continue
-            if not permanent_reference(referenced, referenced_addon):
-                problems.append('referenced-history-not-ordinary-permanent:' + str(value)); continue
-            if value in base and (base[value].get('QuestSortID') != referenced['QuestSortID']
-                                  or base[value].get('SpecialFlags') != referenced_addon.get('SpecialFlags', 0)):
-                problems.append('referenced-quest-source-conflict:' + str(value)); continue
+            if kind == 2:
+                item = items.get(value)
+                if item is None or type(item.get('entry')) is not int or item['entry'] != value:
+                    problems.append('referenced-item-template-absent-or-invalid:' + str(value)); continue
+                item_refs[value] = {'ItemId': value, 'SourceRef': prefix + ':item_template:' + str(value) + ':' + digest(item)}
+            else:
+                referenced = templates.get(value); referenced_addon = addons.get(value, {})
+                if referenced is None:
+                    problems.append('referenced-quest-absent:' + str(value)); continue
+                if not permanent_reference(referenced, referenced_addon):
+                    problems.append('referenced-history-not-ordinary-permanent:' + str(value)); continue
+                if value in base and (base[value].get('QuestSortID') != referenced['QuestSortID']
+                                      or base[value].get('SpecialFlags') != referenced_addon.get('SpecialFlags', 0)):
+                    problems.append('referenced-quest-source-conflict:' + str(value)); continue
+                refs[value] = {'QuestId': value, 'QuestType': referenced['QuestType'],
+                               'SpecialFlags': referenced_addon.get('SpecialFlags', 0),
+                               'QuestSortID': referenced['QuestSortID'],
+                               'SourceRef': prefix + ':quest_template+addon:' + str(value)}
             key = tuple(row[field] for field in ('ElseGroup', 'ConditionTypeOrReference', 'ConditionValue1',
                                                 'ConditionValue2', 'ConditionValue3', 'NegativeCondition'))
             if key in keys:
                 problems.append('duplicate-condition'); continue
             keys.add(key)
-            refs[value] = {'QuestId': value, 'QuestType': referenced['QuestType'],
-                           'SpecialFlags': referenced_addon.get('SpecialFlags', 0),
-                           'QuestSortID': referenced['QuestSortID'],
-                           'SourceRef': prefix + ':quest_template+addon:' + str(value)}
             groups[row['ElseGroup']].append({'Type': kind, 'Value1': value, 'Value2': row['ConditionValue2'],
                 'Value3': 0, 'Negative': bool(row['NegativeCondition']),
                 'SourceRef': prefix + ':conditions:' + str(ident) + ':' + digest(row)})
@@ -97,6 +107,8 @@ def build_contracts(data, tables, source):
                     'ReferencedQuests': [refs[key] for key in sorted(refs)],
                     'Groups': [{'ElseGroup': group, 'Conditions': sorted(values, key=lambda item:
                         (item['Type'], item['Value1'], item['Value2'], item['Negative']))} for group, values in sorted(groups.items())]}
+        if item_refs:
+            contract['ReferencedItems'] = [item_refs[key] for key in sorted(item_refs)]
         if supported:
             contracts.append(contract)
         reviews.append({'quest_id': ident, 'supported': supported, 'remaining': sorted(set(problems)),
@@ -104,6 +116,9 @@ def build_contracts(data, tables, source):
                 'addon': reference('quest_template_addon', addons[key]) if key in addons else {'absent': True},
                 'contract': value} for key, value in sorted(refs.items())],
             'contract_sha256': digest(contract) if supported else None, 'live_completion_proven': False})
+        if item_refs:
+            reviews[-1]['referenced_primary_items'] = [{'item': reference('item_template', items[key]), 'contract': value}
+                                                       for key, value in sorted(item_refs.items())]
     return contracts, reviews
 
 
@@ -118,7 +133,7 @@ def main():
     header = (args.reference / 'contracts/ConditionMgr.h').read_text(encoding='utf-8')
     expected = {'CONDITION_SOURCE_TYPE_QUEST_AVAILABLE': SOURCE_TYPE, 'CONDITION_QUESTREWARDED': 8,
                 'CONDITION_QUESTTAKEN': 9, 'CONDITION_QUEST_NONE': 14, 'CONDITION_QUEST_COMPLETE': 28,
-                'CONDITION_QUESTSTATE': 47}
+                'CONDITION_QUESTSTATE': 47, 'CONDITION_ITEM': 2}
     for name, value in expected.items():
         match = re.search(r'\b' + name + r'\s*=\s*(0x[0-9a-fA-F]+|\d+)\s*,', header)
         if not match or int(match[1], 0) != value:

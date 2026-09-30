@@ -1,0 +1,35 @@
+{
+  "base_commit": "51107859f48d2f4eb4fe6bfb74cd979480930b8c",
+  "new_contract_ids": [
+    24823,
+    24825,
+    24826,
+    24827,
+    24828,
+    24829,
+    24830,
+    24831,
+    24832,
+    24833,
+    24834,
+    24835,
+    25239,
+    25240,
+    25242
+  ],
+  "condition_contracts": 73,
+  "condition_predicates": 130,
+  "prior_58_contracts_unchanged": true,
+  "all_other_repairs_unchanged": true,
+  "strategy_recipes_unchanged": true,
+  "repair_sha256": "6230eefa48a8ef65278feda788c03247fb904ca307c316bbded2a5f361044e8c",
+  "source": {
+    "CoreRevision": "95657f54779467effea8a1749a61ff93abc1d707",
+    "DatabaseRevision": "TDB335.25101",
+    "QuestDataSha256": "f2ca79318694afaa4214fc09392e88c3d9d1eae5128f323d0d65b1b9e91a7e3f",
+    "SourceSqlSha256": "e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9"
+  },
+  "daily_scalar_area_sibling_included": false,
+  "live_completion_proven": false,
+  "created_utc": "2026-09-30T13:49:00.881863+00:00"
+}

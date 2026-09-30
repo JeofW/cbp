@@ -59,6 +59,7 @@ internal static class QuestDatasetSimulationRegressionTests
         internal bool EffectiveModel;
         internal IReadOnlyDictionary<int,int>? Skills, Reputations;
         internal Dictionary<uint,int>? AvailabilityFixtureStates;
+        internal Dictionary<int,long>? AvailabilityItemCounts;
         internal bool AvailabilityFixtureSatisfiable;
         internal int[] NormalIds = new int[4], NormalCounts = new int[4], ItemIds = new int[6], ItemCounts = new int[6];
 
@@ -69,7 +70,8 @@ internal static class QuestDatasetSimulationRegressionTests
             Action<string>? log = null, bool cancelNavigation = false, DateTime? now = null, bool metadataKnown = true,
             HashSet<string>? assessed = null, int? classId = null, uint[]? history = null,
             QuestSchedulerAcceptedQuest[]? activeParents = null, bool omitSkills = false, bool omitReputations = false,
-            IReadOnlyDictionary<int,int>? skillOverride = null, IReadOnlyDictionary<int,int>? reputationOverride = null)
+            IReadOnlyDictionary<int,int>? skillOverride = null, IReadOnlyDictionary<int,int>? reputationOverride = null,
+            bool omitInventory = false)
         {
             var observations = new List<QuestSchedulerAcceptedQuest>(activeParents ?? ActiveParents);
             if (accepted) observations.Add(new QuestSchedulerAcceptedQuest
@@ -91,7 +93,7 @@ internal static class QuestDatasetSimulationRegressionTests
                     observations.Where(q => q.IsCompleted).Select(q => q.QuestId), observations.Where(q => q.IsFailed).Select(q => q.QuestId)),
                 SkillValues = omitSkills ? null : skillOverride ?? Skills,
                 ReputationValues = omitReputations ? null : reputationOverride ?? Reputations,
-                CarriedItemCounts = items ?? ItemIds.Where(id => id > 0).Distinct().ToDictionary(id => id, _ => 0L)
+                CarriedItemCounts = omitInventory ? null : items ?? InitialCarriedCounts()
             }, key => new QuestRecoveryDecision { State = state, MayAttempt = mayAttempt,
                 RetryUtc = mayAttempt ? null : Now.AddMinutes(5), Status = "controlled " + state },
                 50, 250, 80, log: log, navigationAssessment: point =>
@@ -100,6 +102,12 @@ internal static class QuestDatasetSimulationRegressionTests
                     assessed?.Add(PointKey(point));
                     return new SpawnNavigationAssessment { IsKnownSafe = safe, IsKnownReachable = reachable };
                 });
+        }
+        internal Dictionary<int,long> InitialCarriedCounts()
+        {
+            var counts = ItemIds.Where(id => id > 0).Distinct().ToDictionary(id => id, _ => 0L);
+            if (AvailabilityItemCounts != null) foreach (var item in AvailabilityItemCounts) counts[item.Key] = item.Value;
+            return counts;
         }
         internal bool Pickup(QuestScheduleResult result) => result.Plan.Any(value => value.Quest.Id == Quest.Id && value.Stage == QuestWorkStage.Pickup);
         internal bool AnyWork(QuestScheduleResult result) => result.Plan.Any(value => value.Quest.Id == Quest.Id);
@@ -392,8 +400,17 @@ internal static class QuestDatasetSimulationRegressionTests
         var active = context.ActiveParents.ToDictionary(q => q.QuestId, q => q.IsFailed ? 5 : q.IsCompleted ? 1 : 3);
         foreach (var group in contract.Groups)
         {
+            var quantities = new Dictionary<int,long>(); bool possibleItems = true;
+            foreach (var predicates in group.Conditions.Where(p => p.Type == 2).GroupBy(p => p.Value1))
+            {
+                long minimum = predicates.Where(p => !p.Negative).Select(p => (long)p.Value2).DefaultIfEmpty(0).Max();
+                long maximum = predicates.Where(p => p.Negative).Select(p => (long)p.Value2 - 1).DefaultIfEmpty(long.MaxValue).Min();
+                if (minimum > maximum) { possibleItems = false; break; }
+                quantities[predicates.Key] = minimum;
+            }
+            if (!possibleItems) continue;
             var choice = new Dictionary<uint,int>(); bool possible = true;
-            foreach (var predicates in group.Conditions.GroupBy(p => (uint)p.Value1))
+            foreach (var predicates in group.Conditions.Where(p => p.Type != 2).GroupBy(p => (uint)p.Value1))
             {
                 int mask = predicates.Aggregate(107, (allowed, predicate) => allowed & SourceStatusMask(predicate));
                 IEnumerable<int> domain = predicates.Key == (uint)context.Quest.Id ? new[] { 0 }
@@ -413,13 +430,15 @@ internal static class QuestDatasetSimulationRegressionTests
             }
             if (selectedActive.Count >= 25) continue;
             context.Completed = selectedHistory.OrderBy(id => id).ToArray();
+            context.AvailabilityItemCounts = contract.Groups.SelectMany(g => g.Conditions).Any(p => p.Type == 2) ? quantities : null;
             context.ActiveParents = selectedActive.OrderBy(row => row.Key).Select(row => new QuestSchedulerAcceptedQuest
                 { QuestId = row.Key, IsCompleted = row.Value == 1, IsFailed = row.Value == 5,
                   ObjectiveCounts = new int[4], NormalObjectiveIds = new int[4], NormalObjectiveRequiredCounts = new int[4] }).ToArray();
             context.AvailabilityFixtureSatisfiable = true;
             break;
         }
-        context.AvailabilityFixtureStates = contract.ReferencedQuests.ToDictionary(r => (uint)r.QuestId, r =>
+        var stateIds = contract.Groups.SelectMany(g => g.Conditions).Where(p => p.Type != 2).Select(p => p.Value1).ToHashSet();
+        context.AvailabilityFixtureStates = contract.ReferencedQuests.Where(r => stateIds.Contains(r.QuestId)).ToDictionary(r => (uint)r.QuestId, r =>
         {
             var accepted = context.ActiveParents.FirstOrDefault(a => a.QuestId == (uint)r.QuestId);
             return accepted != null ? accepted.IsFailed ? 5 : accepted.IsCompleted ? 1 : 3 : context.Completed.Contains((uint)r.QuestId) ? 6 : 0;
@@ -432,14 +451,23 @@ internal static class QuestDatasetSimulationRegressionTests
         int startingPasses = record.passed_cases, startingFailures = record.failed_cases;
         var states = context.AvailabilityFixtureStates!;
         var plan = new[] { new QuestPlanEntry { Quest = context.Quest, Stage = QuestWorkStage.Pickup } };
-        QuestSchedulerSnapshot Observe(IReadOnlyDictionary<uint,int> values, bool history = true, bool raw = true) => new()
+        QuestSchedulerSnapshot Observe(IReadOnlyDictionary<uint,int> values, bool history = true, bool raw = true,
+            Dictionary<int,long>? items = null, bool unknownItems = false) => new()
         {
             PlayerGuid = 123, UtcNow = Now, HasCompleteQuestLog = true, HasAuthoritativeCompletions = history,
             CompletedQuestIds = values.Where(pair => pair.Value == 6).Select(pair => pair.Key).ToArray(),
-            RawQuestStates = raw ? values.Where(pair => pair.Value is 1 or 3 or 5).ToDictionary(pair => pair.Key, pair => pair.Value) : null
+            RawQuestStates = raw ? values.Where(pair => pair.Value is 1 or 3 or 5).ToDictionary(pair => pair.Key, pair => pair.Value) : null,
+            CarriedItemCounts = unknownItems ? null : items ?? context.InitialCarriedCounts()
         };
-        bool Expected(IReadOnlyDictionary<uint,int> values) => contract.Groups.Any(group =>
-            group.Conditions.All(predicate => (SourceStatusMask(predicate) & (1 << values[(uint)predicate.Value1])) != 0));
+        bool ItemMatches(QuestAvailabilityPredicate predicate, IReadOnlyDictionary<int,long>? items)
+        {
+            if (items == null) return false;
+            long count = items.TryGetValue(predicate.Value1, out long held) ? held : 0;
+            return predicate.Negative ? count < predicate.Value2 : count >= predicate.Value2;
+        }
+        bool Expected(IReadOnlyDictionary<uint,int> values, IReadOnlyDictionary<int,long>? items) => contract.Groups.Any(group =>
+            group.Conditions.All(predicate => predicate.Type == 2 ? ItemMatches(predicate, items)
+                : (SourceStatusMask(predicate) & (1 << values[(uint)predicate.Value1])) != 0));
         foreach (uint referenced in states.Keys.OrderBy(id => id))
             foreach (int state in new[] { 0, 1, 3, 5, 6 })
             {
@@ -447,20 +475,50 @@ internal static class QuestDatasetSimulationRegressionTests
                 Case(record, $"availability-reference={capturedId}:state={capturedState}", () =>
                 {
                     var changed = new Dictionary<uint,int>(states) { [capturedId] = capturedState };
-                    bool expected = Expected(changed); var observation = Observe(changed);
+                    bool expected = Expected(changed, context.InitialCarriedCounts()); var observation = Observe(changed);
                     Check((QuestAvailabilityPolicy.Evaluate(context.Quest, observation).Rejection == null) == expected,
                         "condition policy differs from pinned status/group/negation truth table");
                     Check(QuestAvailabilityPolicy.RequirementsCurrent(plan, observation) == expected,
                         "publication condition gate retained the previous state");
                 });
             }
+        foreach (var item in contract.Groups.SelectMany(g => g.Conditions).Where(p => p.Type == 2).GroupBy(p => p.Value1).OrderBy(g => g.Key))
+        {
+            int itemId = item.Key;
+            var cases = item.SelectMany(p => new[] { 0L, (long)p.Value2 - 1, (long)p.Value2, (long)p.Value2 + 1 })
+                .Distinct().OrderBy(value => value).Select(value => value.ToString(System.Globalization.CultureInfo.InvariantCulture))
+                .Concat(new[] { "unknown", "lost" });
+            foreach (string scenario in cases)
+            {
+                string captured = scenario;
+                Case(record, $"availability-item={itemId}:observed={captured}", () =>
+                {
+                    var counts = context.InitialCarriedCounts(); bool unknown = captured == "unknown";
+                    if (captured == "lost")
+                    {
+                        _ = QuestAvailabilityPolicy.RequirementsCurrent(plan, Observe(states));
+                        counts.Remove(itemId);
+                    }
+                    else if (!unknown) counts[itemId] = long.Parse(captured, System.Globalization.CultureInfo.InvariantCulture);
+                    bool expected = Expected(states, unknown ? null : counts);
+                    var observed = Observe(states, items: counts, unknownItems: unknown);
+                    Check((QuestAvailabilityPolicy.Evaluate(context.Quest, observed).Rejection == null) == expected,
+                        "item availability differs from the source quantity threshold/negation");
+                    Check(QuestAvailabilityPolicy.RequirementsCurrent(plan, observed) == expected,
+                        "item availability publication kept stale or unobserved stock");
+                    if (!expected) Check(!context.Pickup(context.Schedule(items: counts, omitInventory: unknown)),
+                        "actual scheduler admitted an unsatisfied item condition");
+                });
+            }
+        }
         Case(record, "availability-missing-observation-revokes-publication", () =>
             Check(!QuestAvailabilityPolicy.RequirementsCurrent(plan, null!), "missing current observation retained pickup"));
         Case(record, "availability-fixture-constrained-by-source-and-prerequisites", () =>
-            Check(!context.AvailabilityFixtureSatisfiable || Expected(states), "fixture claims a satisfying source assignment without one"));
+            Check(!context.AvailabilityFixtureSatisfiable || Expected(states, context.InitialCarriedCounts()), "fixture claims a satisfying source assignment without one"));
         record.availability_condition_validation = new { contract, passed_cases = record.passed_cases - startingPasses,
             failed_cases = record.failed_cases - startingFailures, fixture_satisfiable = context.AvailabilityFixtureSatisfiable,
-            observed_reference_states = states, source_oracle = "TC335 ConditionMgr.cpp predicates 8/9/14/28/47; nonrepeatable/nonseasonal ordinary references; all five original states; OR-of-AND groups",
+            observed_reference_states = states, observed_carried_item_counts = context.AvailabilityItemCounts,
+            source_oracle = "TC335 ConditionMgr.cpp predicates 2/8/9/14/28/47; complete current carried item quantities separately from nonrepeatable/nonseasonal history; all five original quest states; OR-of-AND groups",
             live_completion_proven = false };
         record.production_owners.Add("QuestAvailabilityPolicy.Evaluate and RequirementsCurrent with each source reference in all five original quest states");
     }
@@ -496,6 +554,15 @@ internal static class QuestDatasetSimulationRegressionTests
         fixture.SetQuest(id, quest.Name, context.Level, context.NormalIds, context.NormalCounts, context.ItemIds, context.ItemCounts);
         if(context.EffectiveModel)fixture.SetRaceClass(context.Race,context.ClassId);
         fixture.SetAccepted(false); fixture.SetHistory(context.Completed);
+        if (quest.AvailabilityConditions?.Groups.SelectMany(g => g.Conditions).Any(p => p.Type == 2) == true)
+            Case(record, "pipeline-carried-availability-observation", () =>
+            {
+                fixture.SetInventory(context.InitialCarriedCounts());
+                var observed = fixture.Player.CarriedItems.GroupBy(item => (int)item.Entry)
+                    .ToDictionary(group => group.Key, group => group.Sum(item => (long)item.StackCount));
+                Check(context.Pickup(context.Schedule(items: observed)),
+                    "actual controlled inventory reader did not preserve the source-constrained pickup");
+            });
         var builder = new ProfileBuilder();
         string Xml(IReadOnlyList<QuestPlanEntry> plan)
         {

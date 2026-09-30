@@ -90,8 +90,15 @@ def validate_availability_result(contract, simulation):
             or type(receipt.get('passed_cases')) is not int or receipt['passed_cases'] <= 0
             or type(receipt.get('fixture_satisfiable')) is not bool):
         raise ValueError('Availability receipt does not match the exact successful contract owner')
-    references = {predicate['Value1'] for group in contract['Groups'] for predicate in group['Conditions']}
+    predicates = [predicate for group in contract['Groups'] for predicate in group['Conditions']]
+    references = {predicate['Value1'] for predicate in predicates if predicate['Type'] != 2}
     expected = {f'availability-reference={ident}:state={state}' for ident in references for state in (0, 1, 3, 5, 6)}
+    for predicate in predicates:
+        if predicate['Type'] != 2:
+            continue
+        item, count = predicate['Value1'], predicate['Value2']
+        expected.update(f'availability-item={item}:observed={value}' for value in
+                        ('unknown', 'lost', '0', str(max(0, count - 1)), str(count), str(count + 1)))
     expected.update({'availability-missing-observation-revokes-publication',
                      'availability-fixture-constrained-by-source-and-prerequisites'})
     cases = [row for row in simulation.get('cases', []) if row.get('name', '').startswith('availability-')]
