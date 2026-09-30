@@ -1,0 +1,244 @@
+[
+  {
+    "QuestId": 5149,
+    "ExpectedPrevQuestId": 0,
+    "ExpectedPreviousQuestIds": [],
+    "PreviousQuestIds": [
+      5142,
+      5601
+    ],
+    "ReferencedQuestGroups": [
+      {
+        "QuestId": 5142,
+        "ExclusiveGroup": 5142,
+        "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:5142"
+      },
+      {
+        "QuestId": 5601,
+        "ExclusiveGroup": 5142,
+        "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:5601"
+      }
+    ],
+    "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:dependent_previous:5149"
+  },
+  {
+    "QuestId": 13697,
+    "ExpectedPrevQuestId": 0,
+    "ExpectedPreviousQuestIds": [],
+    "PreviousQuestIds": [
+      13691,
+      13707
+    ],
+    "ReferencedQuestGroups": [
+      {
+        "QuestId": 13691,
+        "ExclusiveGroup": 0,
+        "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:13691"
+      },
+      {
+        "QuestId": 13707,
+        "ExclusiveGroup": 0,
+        "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:13707"
+      }
+    ],
+    "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:dependent_previous:13697"
+  },
+  {
+    "QuestId": 13714,
+    "ExpectedPrevQuestId": 0,
+    "ExpectedPreviousQuestIds": [],
+    "PreviousQuestIds": [
+      13685,
+      13703
+    ],
+    "ReferencedQuestGroups": [
+      {
+        "QuestId": 13685,
+        "ExclusiveGroup": 0,
+        "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:13685"
+      },
+      {
+        "QuestId": 13703,
+        "ExclusiveGroup": 0,
+        "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:13703"
+      }
+    ],
+    "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:dependent_previous:13714"
+  },
+  {
+    "QuestId": 13715,
+    "ExpectedPrevQuestId": 0,
+    "ExpectedPreviousQuestIds": [],
+    "PreviousQuestIds": [
+      13688,
+      13704
+    ],
+    "ReferencedQuestGroups": [
+      {
+        "QuestId": 13688,
+        "ExclusiveGroup": 0,
+        "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:13688"
+      },
+      {
+        "QuestId": 13704,
+        "ExclusiveGroup": 0,
+        "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:13704"
+      }
+    ],
+    "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:dependent_previous:13715"
+  },
+  {
+    "QuestId": 13716,
+    "ExpectedPrevQuestId": 0,
+    "ExpectedPreviousQuestIds": [],
+    "PreviousQuestIds": [
+      13690,
+      13705
+    ],
+    "ReferencedQuestGroups": [
+      {
+        "QuestId": 13690,
+        "ExclusiveGroup": 0,
+        "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:13690"
+      },
+      {
+        "QuestId": 13705,
+        "ExclusiveGroup": 0,
+        "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:13705"
+      }
+    ],
+    "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:dependent_previous:13716"
+  },
+  {
+    "QuestId": 13717,
+    "ExpectedPrevQuestId": 0,
+    "ExpectedPreviousQuestIds": [],
+    "PreviousQuestIds": [
+      13689,
+      13706
+    ],
+    "ReferencedQuestGroups": [
+      {
+        "QuestId": 13689,
+        "ExclusiveGroup": 0,
+        "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:13689"
+      },
+      {
+        "QuestId": 13706,
+        "ExclusiveGroup": 0,
+        "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:13706"
+      }
+    ],
+    "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:dependent_previous:13717"
+  },
+  {
+    "QuestId": 13718,
+    "ExpectedPrevQuestId": 0,
+    "ExpectedPreviousQuestIds": [],
+    "PreviousQuestIds": [
+      13593,
+      13684
+    ],
+    "ReferencedQuestGroups": [
+      {
+        "QuestId": 13593,
+        "ExclusiveGroup": 0,
+        "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:13593"
+      },
+      {
+        "QuestId": 13684,
+        "ExclusiveGroup": 0,
+        "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:13684"
+      }
+    ],
+    "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:dependent_previous:13718"
+  },
+  {
+    "QuestId": 13719,
+    "ExpectedPrevQuestId": 0,
+    "ExpectedPreviousQuestIds": [],
+    "PreviousQuestIds": [
+      13693,
+      13708
+    ],
+    "ReferencedQuestGroups": [
+      {
+        "QuestId": 13693,
+        "ExclusiveGroup": 0,
+        "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:13693"
+      },
+      {
+        "QuestId": 13708,
+        "ExclusiveGroup": 0,
+        "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:13708"
+      }
+    ],
+    "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:dependent_previous:13719"
+  },
+  {
+    "QuestId": 13720,
+    "ExpectedPrevQuestId": 0,
+    "ExpectedPreviousQuestIds": [],
+    "PreviousQuestIds": [
+      13694,
+      13709
+    ],
+    "ReferencedQuestGroups": [
+      {
+        "QuestId": 13694,
+        "ExclusiveGroup": 0,
+        "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:13694"
+      },
+      {
+        "QuestId": 13709,
+        "ExclusiveGroup": 0,
+        "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:13709"
+      }
+    ],
+    "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:dependent_previous:13720"
+  },
+  {
+    "QuestId": 13721,
+    "ExpectedPrevQuestId": 0,
+    "ExpectedPreviousQuestIds": [],
+    "PreviousQuestIds": [
+      13695,
+      13710
+    ],
+    "ReferencedQuestGroups": [
+      {
+        "QuestId": 13695,
+        "ExclusiveGroup": 0,
+        "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:13695"
+      },
+      {
+        "QuestId": 13710,
+        "ExclusiveGroup": 0,
+        "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:13710"
+      }
+    ],
+    "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:dependent_previous:13721"
+  },
+  {
+    "QuestId": 13722,
+    "ExpectedPrevQuestId": 0,
+    "ExpectedPreviousQuestIds": [],
+    "PreviousQuestIds": [
+      13696,
+      13711
+    ],
+    "ReferencedQuestGroups": [
+      {
+        "QuestId": 13696,
+        "ExclusiveGroup": 0,
+        "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:13696"
+      },
+      {
+        "QuestId": 13711,
+        "ExclusiveGroup": 0,
+        "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:13711"
+      }
+    ],
+    "SourceRef": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:dependent_previous:13722"
+  }
+]

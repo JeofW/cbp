@@ -1,0 +1,26 @@
+{
+  "base_commit": "2f52ec3b2f21df9a5cdd18097cd20fb50ed96937",
+  "quest_count": 11,
+  "added_memberships": 22,
+  "quest_ids": [
+    5149,
+    13697,
+    13714,
+    13715,
+    13716,
+    13717,
+    13718,
+    13719,
+    13720,
+    13721,
+    13722
+  ],
+  "all_other_repair_fields_unchanged": true,
+  "negative_groups_unchanged": true,
+  "existing_nonempty_lists_unchanged": true,
+  "strategy_recipes_unchanged": true,
+  "base_dataset_sha256": "f2ca79318694afaa4214fc09392e88c3d9d1eae5128f323d0d65b1b9e91a7e3f",
+  "repair_sha256": "67a372cb548c9bcdb97b7bcc82fcc87253ae0778220b70f7960b6f0f001d96e3",
+  "live_completion_proven": false,
+  "created_utc": "2026-09-30T16:20:51.032124+00:00"
+}

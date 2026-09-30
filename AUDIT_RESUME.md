@@ -1,3 +1,13 @@
+# Current: complete source-bound predecessor repair continuation
+
+The preserved predecessor work is verified and ready for exact-commit acceptance. Active worktree D:/Dev/CB-QuestPredecessorRepairs-20260930, branch audit/next-quest-predecessor-repairs-20260930, parent2f52ec3b2f21df9a5cdd18097cd20fb50ed96937. Read docs/audit/2026-09-30/previous-membership/REPORT.md, previous-patch.json, repaired-quest-obligations.json and its exact ledger/fixture/correlations. Resolve the containing commit and final local/hosted/publication from external PREVIOUS_* receipts before repeating any operation.
+
+Eleven complete empty predecessor lists receive22 source-backed memberships; all old nonempty lists, signed direct gates, negative groups, external-metadata boundaries and other knowledge stay unchanged. Existing runtime owners pass259630dataset/39strategy checks; the six classes remain3011/2/932/317/16/57=4335 with1322remaining. Each repaired quest keeps explicit acquisition/objective obligations. No live completion is inferred.
+
+PR62–76 work has already been published and integrated through validated dependency scopes; latest recovered master7da6696d equals PR76's tested tree. PR61 production remains3bc97e1e and all429 payload hashes match. Do not recreate old provider-held or already recovered transactions. Continue the21 ordinary item-source candidates, remaining source conflicts/availability inputs and exact data families in small validated PRs. Use read-only IDA build12340 and pinned TC335 reference data with the existing ownership/navigation/recovery/inventory/history protections. Historical checkpoints below preserve the earlier sequence.
+
+---
+
 # Current: recovered positive-spell availability candidate
 
 The original supported staging request recovered without splitting or rerouting it. The preserved positive-only self-spell observer and condition25 now reproduce81 complete contracts/146predicates,259630dataset/39strategy checks. All79 earlier contracts and every other repair remain. The exact primary partition is3011generic/2strategy/932data/317source/16live/57scripted=4335,1322remaining. Only13418/13419 gain generic proof;14namedtests added,none removed. Read docs/audit/2026-09-30/availability-spells/REPORT.md and exact fixture/ledger/correlation/source files.

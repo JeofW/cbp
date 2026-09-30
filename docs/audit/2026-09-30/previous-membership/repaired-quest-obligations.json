@@ -1,0 +1,82 @@
+[
+  {
+    "quest_id": 5149,
+    "classification": "DATA-INVALID/INCOMPLETE",
+    "remaining_obligations": [
+      "data:auxiliary-or-mismatched-item-objective:0",
+      "data:auxiliary-or-mismatched-item-objective:1",
+      "data:auxiliary-or-mismatched-item-objective:2",
+      "data:primary-item-requirement-unrepresented"
+    ]
+  },
+  {
+    "quest_id": 13697,
+    "classification": "DATA-INVALID/INCOMPLETE",
+    "remaining_obligations": [
+      "data:delivery-acquisition-route-missing"
+    ]
+  },
+  {
+    "quest_id": 13714,
+    "classification": "DATA-INVALID/INCOMPLETE",
+    "remaining_obligations": [
+      "data:delivery-acquisition-route-missing"
+    ]
+  },
+  {
+    "quest_id": 13715,
+    "classification": "DATA-INVALID/INCOMPLETE",
+    "remaining_obligations": [
+      "data:delivery-acquisition-route-missing"
+    ]
+  },
+  {
+    "quest_id": 13716,
+    "classification": "DATA-INVALID/INCOMPLETE",
+    "remaining_obligations": [
+      "data:delivery-acquisition-route-missing"
+    ]
+  },
+  {
+    "quest_id": 13717,
+    "classification": "DATA-INVALID/INCOMPLETE",
+    "remaining_obligations": [
+      "data:delivery-acquisition-route-missing"
+    ]
+  },
+  {
+    "quest_id": 13718,
+    "classification": "DATA-INVALID/INCOMPLETE",
+    "remaining_obligations": [
+      "data:delivery-acquisition-route-missing"
+    ]
+  },
+  {
+    "quest_id": 13719,
+    "classification": "DATA-INVALID/INCOMPLETE",
+    "remaining_obligations": [
+      "data:delivery-acquisition-route-missing"
+    ]
+  },
+  {
+    "quest_id": 13720,
+    "classification": "DATA-INVALID/INCOMPLETE",
+    "remaining_obligations": [
+      "data:delivery-acquisition-route-missing"
+    ]
+  },
+  {
+    "quest_id": 13721,
+    "classification": "DATA-INVALID/INCOMPLETE",
+    "remaining_obligations": [
+      "data:delivery-acquisition-route-missing"
+    ]
+  },
+  {
+    "quest_id": 13722,
+    "classification": "DATA-INVALID/INCOMPLETE",
+    "remaining_obligations": [
+      "data:delivery-acquisition-route-missing"
+    ]
+  }
+]

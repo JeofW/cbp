@@ -1,0 +1,122 @@
+{
+  "previous-runtime-red-v2": {
+    "command": [
+      "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+      "Tools/PostMergeAuditRegressionTests/bin/x86/Release/net10.0-windows7.0/PostMergeAuditRegressionTests.dll",
+      "QuestPreviousRepairRegressionTests"
+    ],
+    "exit": 1,
+    "started_utc": "2026-09-30T16:15:37.073111+00:00",
+    "finished_utc": "2026-09-30T16:15:37.457370+00:00",
+    "head": "2f52ec3b2f21df9a5cdd18097cd20fb50ed96937",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "1fcf50807b8a3bf8a19791b2dbce5c24a03e5fd9466cf5d9129a0beba9f61439",
+      "stderr.log": "30bbd36595702c84b90ccf4c10f867ee8a57e11d8bf8e18609d15676864aa312"
+    }
+  },
+  "previous-exporter-red-v2": {
+    "command": [
+      "python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "Tools/EvidenceAudit",
+      "-p",
+      "test_quest_previous_repairs_335.py",
+      "-v"
+    ],
+    "exit": 1,
+    "started_utc": "2026-09-30T16:15:31.398259+00:00",
+    "finished_utc": "2026-09-30T16:15:31.529468+00:00",
+    "head": "2f52ec3b2f21df9a5cdd18097cd20fb50ed96937",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr.log": "a5645748289d6c9da3958a0e268fb5169b38207a663813c6b58bd1888bf64a7c"
+    }
+  },
+  "previous-exporter-green": {
+    "command": [
+      "python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "Tools/EvidenceAudit",
+      "-p",
+      "test_quest_previous_repairs_335.py",
+      "-v"
+    ],
+    "exit": 0,
+    "started_utc": "2026-09-30T16:18:36.667149+00:00",
+    "finished_utc": "2026-09-30T16:18:36.822413+00:00",
+    "head": "2f52ec3b2f21df9a5cdd18097cd20fb50ed96937",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr.log": "2aa5c4a68e3bca7690e1d315d3bdfe247acc321001a9ab2986c7391009f91f04"
+    }
+  },
+  "previous-runtime-green": {
+    "command": [
+      "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+      "Tools/PostMergeAuditRegressionTests/bin/x86/Release/net10.0-windows7.0/PostMergeAuditRegressionTests.dll",
+      "QuestPreviousRepairRegressionTests",
+      "QuestExternalDependencyRegressionTests",
+      "QuestNegativeExclusiveDependencyRegressionTests",
+      "QuestDependencyProtectionRegressionTests"
+    ],
+    "exit": 0,
+    "started_utc": "2026-09-30T16:18:42.553743+00:00",
+    "finished_utc": "2026-09-30T16:18:43.481319+00:00",
+    "head": "2f52ec3b2f21df9a5cdd18097cd20fb50ed96937",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "6a8a95adb9bb4afa205929005c3b8fc33125cbe385bf0337384eb78439eadfd2",
+      "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "previous-resume-focused-01": {
+    "command": [
+      "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+      "Tools/PostMergeAuditRegressionTests/bin/x86/Release/net10.0-windows7.0/PostMergeAuditRegressionTests.dll",
+      "QuestPreviousRepairRegressionTests",
+      "QuestExternalDependencyRegressionTests",
+      "QuestNegativeExclusiveDependencyRegressionTests",
+      "QuestDependencyProtectionRegressionTests"
+    ],
+    "exit": 0,
+    "started_utc": "2026-09-30T16:44:32.380249+00:00",
+    "finished_utc": "2026-09-30T16:44:33.323227+00:00",
+    "head": "2f52ec3b2f21df9a5cdd18097cd20fb50ed96937",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "6a8a95adb9bb4afa205929005c3b8fc33125cbe385bf0337384eb78439eadfd2",
+      "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "previous-resume-analyzers-01": {
+    "command": [
+      "python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "Tools/EvidenceAudit",
+      "-p",
+      "test_*.py",
+      "-v"
+    ],
+    "exit": 0,
+    "started_utc": "2026-09-30T16:45:30.079345+00:00",
+    "finished_utc": "2026-09-30T16:45:35.215802+00:00",
+    "head": "2f52ec3b2f21df9a5cdd18097cd20fb50ed96937",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr.log": "b383897677a4ff39fba5a048eec49ec06d27d872b6bcc5f09f082ca2e38815be"
+    }
+  }
+}

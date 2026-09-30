@@ -117,10 +117,12 @@ namespace WholesomeAQ
                 bool hasObjectRepairs = root.ValueKind == JsonValueKind.Object && root.TryGetProperty("GameObjectObjectiveRepairs", out _);
                 bool hasCreditSources = root.ValueKind == JsonValueKind.Object && root.TryGetProperty("ObjectiveCreditSources", out _);
                 bool hasAvailability = root.ValueKind == JsonValueKind.Object && root.TryGetProperty("QuestAvailabilityConditions", out _);
+                bool hasPreviousRepairs = root.ValueKind == JsonValueKind.Object && root.TryGetProperty("DependentPreviousQuestRepairs", out _);
                 if (hasCountRepairs) fields = fields.Concat(new[] { "ObjectiveCountRepairs" }).ToArray();
                 if (hasObjectRepairs) fields = fields.Concat(new[] { "GameObjectObjectiveRepairs" }).ToArray();
                 if (hasCreditSources) fields = fields.Concat(new[] { "ObjectiveCreditSources" }).ToArray();
                 if (hasAvailability) fields = fields.Concat(new[] { "QuestAvailabilityConditions" }).ToArray();
+                if (hasPreviousRepairs) fields = fields.Concat(new[] { "DependentPreviousQuestRepairs" }).ToArray();
                 Exact(root, fields);
                 if (Text(root, "Schema") != "quest-data-repair-pack-335-v1" || Integer(root, "ClientBuild") != 12340 ||
                     Text(root, "SourceCore") != "trinitycore-3.3.5")
@@ -345,6 +347,7 @@ namespace WholesomeAQ
                     }
                 result.ObjectiveCreditSources = creditSources.AsReadOnly();
                 result.DependencyMetadata = new ReadOnlyDictionary<int, QuestDependencyMetadata>(dependencies);
+                if (hasPreviousRepairs) ApplyDependentPreviousQuestRepairs(root, result);
                 if (hasAvailability) ApplyAvailabilityConditions(root, quests);
                 source = "trinitycore-3.3.5:" + revision + ":" + database + ":" + sql;
                 return result;
