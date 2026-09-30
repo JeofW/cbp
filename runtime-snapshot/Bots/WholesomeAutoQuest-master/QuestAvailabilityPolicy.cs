@@ -44,6 +44,12 @@ namespace WholesomeAQ
         public string SourceRef { get; init; }
     }
 
+    public sealed class QuestAvailabilitySpellReference
+    {
+        public int SpellId { get; init; }
+        public string SourceRef { get; init; }
+    }
+
     public sealed class QuestAvailabilityContract
     {
         public int QuestId { get; init; }
@@ -52,6 +58,8 @@ namespace WholesomeAQ
         // Preserve the exact legacy non-item contract representation.
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public IReadOnlyList<QuestAvailabilityItemReference> ReferencedItems { get; init; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public IReadOnlyList<QuestAvailabilitySpellReference> ReferencedSpells { get; init; }
         public IReadOnlyList<QuestAvailabilityGroup> Groups { get; init; }
     }
 
@@ -75,6 +83,8 @@ namespace WholesomeAQ
         public int? RequiredAreaId { get; init; }
         public int? ObservedAreaId { get; init; }
         public bool? DailyCompleted { get; init; }
+        public int? RequiredSpellId { get; init; }
+        public bool? SpellPositivelyKnown { get; init; }
         public string SourceRef { get; init; }
     }
 
@@ -124,6 +134,7 @@ namespace WholesomeAQ
                         9 => state.HasValue ? state == 3 : null,
                         14 => state.HasValue ? state == 0 : null,
                         23 => snapshot.PlayerAreaId > 0 ? snapshot.PlayerAreaId == condition.Value1 : null,
+                        25 => !condition.Negative ? PositiveSpell(snapshot.ConfirmedSpellIds, id) : null,
                         27 => snapshot.PlayerLevel > 0 ? CompareLevel(snapshot.PlayerLevel, condition.Value1, condition.Value2) : null,
                         28 => state.HasValue ? state != 1 ? false : rewarded.HasValue ? !rewarded.Value : null : null,
                         43 => DailyMembership(snapshot.DailyQuestIds, id),
@@ -137,11 +148,11 @@ namespace WholesomeAQ
                     if (condition.Negative && value.HasValue) value = !value.Value;
                     met.Add(value);
                     results.Add(new QuestAvailabilityPredicateResult { ElseGroup = group.ElseGroup, PredicateIndex = index,
-                        Type = condition.Type, ReferencedQuestId = condition.Type is 2 or 23 or 27 ? 0 : condition.Value1,
+                        Type = condition.Type, ReferencedQuestId = condition.Type is 2 or 23 or 25 or 27 ? 0 : condition.Value1,
                         StateMask = condition.Type == 47 ? condition.Value2 : 0,
                         Negative = condition.Negative, Met = value,
-                        RawAcceptedState = condition.Type is not (2 or 23 or 27 or 43) && snapshot.RawQuestStates != null && snapshot.RawQuestStates.TryGetValue(id, out int raw) ? raw : null,
-                        PermanentlyRewarded = condition.Type is 2 or 23 or 27 or 43 ? null : rewarded,
+                        RawAcceptedState = condition.Type is not (2 or 23 or 25 or 27 or 43) && snapshot.RawQuestStates != null && snapshot.RawQuestStates.TryGetValue(id, out int raw) ? raw : null,
+                        PermanentlyRewarded = condition.Type is 2 or 23 or 25 or 27 or 43 ? null : rewarded,
                         ItemId = condition.Type == 2 ? condition.Value1 : null,
                         RequiredItemCount = condition.Type == 2 ? condition.Value2 : null,
                         ObservedItemCount = carried,
@@ -151,6 +162,8 @@ namespace WholesomeAQ
                         RequiredAreaId = condition.Type == 23 ? condition.Value1 : null,
                         ObservedAreaId = condition.Type == 23 && snapshot.PlayerAreaId > 0 ? snapshot.PlayerAreaId : null,
                         DailyCompleted = condition.Type == 43 ? DailyMembership(snapshot.DailyQuestIds, id) : null,
+                        RequiredSpellId = condition.Type == 25 ? condition.Value1 : null,
+                        SpellPositivelyKnown = condition.Type == 25 ? PositiveSpell(snapshot.ConfirmedSpellIds, id) : null,
                         SourceRef = condition.SourceRef });
                 }
                 groupResults.Add(All(met));
@@ -159,6 +172,13 @@ namespace WholesomeAQ
             return new QuestAvailabilityDecision { Status = passed == true ? "satisfied" : passed == false ? "not-satisfied" : "observation-unknown",
                 Rejection = passed == true ? null : passed == false ? "availability-condition-not-satisfied" : "availability-condition-observation-unknown",
                 SourceRef = contract.SourceRef, Predicates = results.AsReadOnly() };
+        }
+
+        private static bool? PositiveSpell(IReadOnlyCollection<uint> ids, uint id)
+        {
+            if (ids == null || ids.Count > 64 || ids.Any(value => value == 0 || value > int.MaxValue) ||
+                ids.Distinct().Count() != ids.Count) return null;
+            return ids.Contains(id) ? true : null;
         }
 
         private static long? CarriedCount(IReadOnlyDictionary<int, long> counts, int item)
@@ -222,8 +242,11 @@ namespace WholesomeAQ
             foreach (JsonElement row in Rows(root, "QuestAvailabilityConditions", 10000))
             {
                 bool hasItems = row.TryGetProperty("ReferencedItems", out _);
-                Exact(row, hasItems ? new[] { "QuestId", "SourceRef", "ReferencedQuests", "Groups", "ReferencedItems" }
-                    : new[] { "QuestId", "SourceRef", "ReferencedQuests", "Groups" });
+                bool hasSpells = row.TryGetProperty("ReferencedSpells", out _);
+                var fields = new List<string> { "QuestId", "SourceRef", "ReferencedQuests", "Groups" };
+                if (hasItems) fields.Add("ReferencedItems");
+                if (hasSpells) fields.Add("ReferencedSpells");
+                Exact(row, fields.ToArray());
                 int id = Positive(row, "QuestId"); string source = Text(row, "SourceRef");
                 if (!subjects.Add(id) || !quests.TryGetValue(id, out QuestEntry quest) || quest.AvailabilityConditions != null)
                     throw new InvalidDataException("Availability conditions require a unique existing quest.");
@@ -250,6 +273,17 @@ namespace WholesomeAQ
                     }
                     if (itemReferences.Count == 0) throw new InvalidDataException("Availability item sources cannot be an empty declaration.");
                 }
+                var spellReferences = new List<QuestAvailabilitySpellReference>(); var spellIds = new HashSet<int>();
+                if (hasSpells)
+                {
+                    foreach (JsonElement spell in Rows(row, "ReferencedSpells", 64))
+                    {
+                        Exact(spell, "SpellId", "SourceRef"); int spellId = Positive(spell, "SpellId");
+                        if (!spellIds.Add(spellId)) throw new InvalidDataException("Availability spell reference is duplicated.");
+                        spellReferences.Add(new QuestAvailabilitySpellReference { SpellId = spellId, SourceRef = Text(spell, "SourceRef") });
+                    }
+                    if (spellReferences.Count == 0) throw new InvalidDataException("Availability spell sources cannot be empty.");
+                }
                 var groups = new List<QuestAvailabilityGroup>(); var groupIds = new HashSet<int>(); int total = 0;
                 foreach (JsonElement group in Rows(row, "Groups", 32))
                 {
@@ -270,11 +304,12 @@ namespace WholesomeAQ
                             !new[] { -22, -284, -366, -369, -370, -374, -376 }.Contains(referenced.QuestSortID);
                         // Daily membership has its own current-reset-cycle observation.
                         // It does not grant permanent history to any other predicate.
-                        bool referenceValid = type == 2 ? itemIds.Contains(value1) : type is 23 or 27 || referenced != null &&
+                        bool referenceValid = type == 2 ? itemIds.Contains(value1) : type == 25 ? spellIds.Contains(value1) : type is 23 or 27 || referenced != null &&
                             (type == 43 || permanent && (type == 8 || referenced.QuestType == 2));
                         bool valuesInvalid = type == 2 ? value2 <= 0 : type == 47 ? value2 <= 0 || (value2 & ~107) != 0
                             : type == 27 ? value2 < 0 || value2 > 4 : value2 != 0;
-                        if (type is not (2 or 8 or 9 or 14 or 23 or 27 or 28 or 43 or 47) || !referenceValid || value3 != 0 || valuesInvalid ||
+                        if (type is not (2 or 8 or 9 or 14 or 23 or 25 or 27 or 28 or 43 or 47) || !referenceValid || value3 != 0 || valuesInvalid ||
+                            (type == 25 && negative) ||
                             !keys.Add((type, value1, value2, negative)) || ++total > 256)
                             throw new InvalidDataException("Availability predicate is unsupported, ambiguous or missing its source reference.");
                         conditions.Add(new QuestAvailabilityPredicate { Type = type, Value1 = value1, Value2 = value2,
@@ -286,6 +321,7 @@ namespace WholesomeAQ
                 if (groups.Count == 0) throw new InvalidDataException("An availability contract needs all of its source groups.");
                 quest.AvailabilityConditions = new QuestAvailabilityContract { QuestId = id, SourceRef = source,
                     ReferencedQuests = references.AsReadOnly(), ReferencedItems = hasItems ? itemReferences.AsReadOnly() : null,
+                    ReferencedSpells = hasSpells ? spellReferences.AsReadOnly() : null,
                     Groups = groups.AsReadOnly() };
             }
         }
@@ -299,15 +335,25 @@ namespace WholesomeAQ
             if (constrained.Length == 0) return null;
             bool needsInventory = constrained.Any(entry => entry.Quest.AvailabilityConditions.Groups
                 .Any(group => group.Conditions.Any(predicate => predicate.Type == 2)));
+            int[] spells = RequiredSpellQueries(constrained.Select(entry => entry.Quest));
             return () => QuestAvailabilityPolicy.RequirementsCurrent(constrained,
-                CaptureAvailabilitySnapshotForInputs(me, log, needsInventory));
+                CaptureAvailabilitySnapshotForSpellInputs(me, log, needsInventory, spells));
         }
 
         // Preserve the existing observation-only reflection/caller contract.
         private static QuestSchedulerSnapshot CaptureAvailabilitySnapshot(LocalPlayer me, QuestLog log) =>
             CaptureAvailabilitySnapshotForInputs(me, log, false);
 
-        private static QuestSchedulerSnapshot CaptureAvailabilitySnapshotForInputs(LocalPlayer me, QuestLog log, bool needsInventory)
+        private static QuestSchedulerSnapshot CaptureAvailabilitySnapshotForInputs(LocalPlayer me, QuestLog log, bool needsInventory) =>
+            CaptureAvailabilitySnapshotForSpellInputs(me, log, needsInventory, Array.Empty<int>());
+
+        private static int[] RequiredSpellQueries(IEnumerable<QuestEntry> quests) => quests
+            .Where(quest => quest.AvailabilityConditions != null)
+            .SelectMany(quest => quest.AvailabilityConditions.Groups).SelectMany(group => group.Conditions)
+            .Where(predicate => predicate.Type == 25 && !predicate.Negative).Select(predicate => predicate.Value1)
+            .Distinct().OrderBy(id => id).Take(65).ToArray();
+
+        private static QuestSchedulerSnapshot CaptureAvailabilitySnapshotForSpellInputs(LocalPlayer me, QuestLog log, bool needsInventory, int[] requestedSpells)
         {
             var memory = ObjectManager.Wow;
             try
@@ -325,6 +371,7 @@ namespace WholesomeAQ
                 // An ordinary history-only predicate must not scan every bag at
                 // each permission check. Item constraints use the complete owner.
                 QuestInventorySnapshot inventory = needsInventory ? QuestInventorySnapshot.Capture(me) : null;
+                QuestSpellKnowledgeSnapshot spells = requestedSpells.Length != 0 ? QuestSpellKnowledgeSnapshot.Capture(me, requestedSpells) : null;
                 var snapshot = new QuestSchedulerSnapshot { PlayerGuid = guid, PlayerLevel = level, UtcNow = DateTime.UtcNow,
                     PlayerAreaId = area.IsCurrent() && area.MapId == (int)me.MapId ? area.AreaId : null,
                     AreaObservationStatus = area.Status,
@@ -334,6 +381,8 @@ namespace WholesomeAQ
                     HasAuthoritativeCompletions = authoritative,
                     CarriedItemCounts = inventory?.IsCurrent() == true ? inventory.ItemCounts : null,
                     InventoryObservationStatus = inventory?.Status ?? "not-required-for-availability",
+                    ConfirmedSpellIds = spells?.ConfirmedSpellIds,
+                    SpellObservationStatus = spells?.Status ?? "not-required-for-availability",
                     CompletedQuestIds = authoritative ? rewarded.ToArray() : Array.Empty<uint>() };
                 return states != null && ReferenceEquals(me, ObjectManager.Me) && ReferenceEquals(memory, ObjectManager.Wow) &&
                     Styx.StyxWoW.IsInWorld && me.IsValid && me.Guid == guid && me.Level == level && log.IsSnapshotCurrent(raw) ? snapshot : null;

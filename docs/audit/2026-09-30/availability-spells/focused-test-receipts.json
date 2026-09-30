@@ -1,0 +1,105 @@
+{
+  "spell-runtime-red": {
+    "command": [
+      "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+      "Tools/PostMergeAuditRegressionTests/bin/x86/Release/net10.0-windows7.0/PostMergeAuditRegressionTests.dll",
+      "QuestSpellKnowledgeSnapshotRegressionTests",
+      "QuestAvailabilitySpellRegressionTests"
+    ],
+    "exit": 1,
+    "started_utc": "2026-09-30T15:14:33.340127+00:00",
+    "finished_utc": "2026-09-30T15:14:33.961295+00:00",
+    "head": "f546a4e88b9de2bb842d68289ff01bb2a89c0254",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "51f4a16f8d9a269a2571d6a240f3f4815fc7bc1b135d86fbfbc52f98d58789d7",
+      "stderr.log": "431679d3f453fafd1eb5b68e8275316b4f12a7e4a0cfc6859a53fcb22b8fe3ca"
+    }
+  },
+  "spell-exporter-red": {
+    "command": [
+      "python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "Tools/EvidenceAudit",
+      "-p",
+      "test_availability_spell_source_335.py",
+      "-v"
+    ],
+    "exit": 1,
+    "started_utc": "2026-09-30T15:09:49.337737+00:00",
+    "finished_utc": "2026-09-30T15:09:49.532432+00:00",
+    "head": "f546a4e88b9de2bb842d68289ff01bb2a89c0254",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr.log": "d1f5115ad6c254b94155a50668356b7ba47f1c9b87faa393bee69bb560b1fa39"
+    }
+  },
+  "spell-receipt-red-v2": {
+    "command": [
+      "python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "Tools/EvidenceAudit",
+      "-p",
+      "test_availability_spell_receipts_335.py",
+      "-v"
+    ],
+    "exit": 1,
+    "started_utc": "2026-09-30T15:19:34.188700+00:00",
+    "finished_utc": "2026-09-30T15:19:34.328833+00:00",
+    "head": "f546a4e88b9de2bb842d68289ff01bb2a89c0254",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr.log": "0a07478223089eaae6f80b75cd343744f0ef9f0a944a460d4385f881c3ea0922"
+    }
+  },
+  "spell-analyzers-green-v2": {
+    "command": [
+      "python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "Tools/EvidenceAudit",
+      "-p",
+      "test_*.py",
+      "-v"
+    ],
+    "exit": 0,
+    "started_utc": "2026-09-30T15:22:15.153726+00:00",
+    "finished_utc": "2026-09-30T15:22:20.456117+00:00",
+    "head": "f546a4e88b9de2bb842d68289ff01bb2a89c0254",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr.log": "64c87f4b07d2f020c09801223db040951958d1a2e4bdf5d9772ce6f8f8a1796d"
+    }
+  },
+  "spell-resumed-focused": {
+    "command": [
+      "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+      "Tools/PostMergeAuditRegressionTests/bin/x86/Release/net10.0-windows7.0/PostMergeAuditRegressionTests.dll",
+      "QuestSpellKnowledgeSnapshotRegressionTests",
+      "QuestAvailabilitySpellRegressionTests",
+      "QuestAvailabilityConditionRegressionTests",
+      "QuestInventoryAdmissionRegressionTests",
+      "QuestSchedulerRawPublicationRegressionTests"
+    ],
+    "exit": 0,
+    "started_utc": "2026-09-30T15:55:10.293307+00:00",
+    "finished_utc": "2026-09-30T15:55:13.851213+00:00",
+    "head": "f546a4e88b9de2bb842d68289ff01bb2a89c0254",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "0eea9f8a9cb56eeb7ce6844cc30cd4be094f0078a27dff2a67faa1999b27e19f",
+      "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  }
+}

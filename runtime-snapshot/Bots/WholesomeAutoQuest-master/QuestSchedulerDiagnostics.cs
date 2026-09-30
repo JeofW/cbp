@@ -331,6 +331,8 @@ namespace WholesomeAQ
                     inventoryObservation = snapshot.InventoryObservationStatus,
                     currentAreaId = snapshot.PlayerAreaId, areaObservation = snapshot.AreaObservationStatus,
                     dailyObservation = snapshot.DailyObservationStatus,
+                    spellObservation = snapshot.SpellObservationStatus,
+                    positivelyKnownSpellIds = snapshot.ConfirmedSpellIds,
                     dailyCompletedQuestIds = snapshot.DailyQuestIds,
                     datasetSourceStatus = snapshot.DatasetSourceStatus, strategyFile = "quest_strategies.json",
                     datasetRepairSource = snapshot.DatasetRepairSource,

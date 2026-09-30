@@ -58,6 +58,7 @@ internal static class QuestDatasetSimulationRegressionTests
         internal int Level, Race, ClassId = 2;
         internal int? Area;
         internal uint[]? DailyIds;
+        internal uint[]? ConfirmedSpells;
         internal bool EffectiveModel;
         internal IReadOnlyDictionary<int,int>? Skills, Reputations;
         internal Dictionary<uint,int>? AvailabilityFixtureStates;
@@ -74,7 +75,8 @@ internal static class QuestDatasetSimulationRegressionTests
             QuestSchedulerAcceptedQuest[]? activeParents = null, bool omitSkills = false, bool omitReputations = false,
             IReadOnlyDictionary<int,int>? skillOverride = null, IReadOnlyDictionary<int,int>? reputationOverride = null,
             bool omitInventory = false,
-            int? areaOverride = null, bool omitArea = false, uint[]? dailyOverride = null, bool omitDaily = false)
+            int? areaOverride = null, bool omitArea = false, uint[]? dailyOverride = null, bool omitDaily = false,
+            uint[]? spellOverride = null, bool omitSpells = false)
         {
             var observations = new List<QuestSchedulerAcceptedQuest>(activeParents ?? ActiveParents);
             if (accepted) observations.Add(new QuestSchedulerAcceptedQuest
@@ -91,6 +93,7 @@ internal static class QuestDatasetSimulationRegressionTests
                 UtcNow = now ?? Now, PlayerLevel = level ?? Level, PlayerRaceId = race ?? Race, PlayerClassId = classId ?? ClassId,
                 PlayerAreaId = omitArea ? null : areaOverride ?? Area,
                 DailyQuestIds = omitDaily ? null : dailyOverride ?? DailyIds,
+                ConfirmedSpellIds = omitSpells ? null : spellOverride ?? ConfirmedSpells,
                 PlayerGuid = 123, MapId = point.Map, X = point.X, Y = point.Y, Z = point.Z,
                 AcceptedQuests = observations, CompletedQuestIds = rewarded ? (history ?? Completed).Concat(new[] { (uint)Quest.Id }).ToArray() : history ?? Completed,
                 HasAuthoritativeCompletions = authority, HasCompleteQuestLog = logComplete,
@@ -208,7 +211,7 @@ internal static class QuestDatasetSimulationRegressionTests
                         {
                             bool sourceAllows = quest.AvailabilityConditions == null ||
                                 SourceAvailabilityExpected(quest.AvailabilityConditions, context.AvailabilityFixtureStates!, level, context.Area,
-                                    context.DailyIds, context.InitialCarriedCounts());
+                                    context.DailyIds, context.InitialCarriedCounts(), context.ConfirmedSpells);
                             Check(actual == sourceAllows, "level admission differs from the explicit source requirement");
                         }
                     });
@@ -428,11 +431,12 @@ internal static class QuestDatasetSimulationRegressionTests
     }
 
     private static bool SourceAvailabilityExpected(QuestAvailabilityContract contract, IReadOnlyDictionary<uint,int> states, int level, int? area,
-        IReadOnlyCollection<uint>? daily, IReadOnlyDictionary<int,long>? items) =>
+        IReadOnlyCollection<uint>? daily, IReadOnlyDictionary<int,long>? items, IReadOnlyCollection<uint>? spells) =>
         contract.Groups.Any(group => group.Conditions.All(predicate => predicate.Type == 27 ? SourceLevel(predicate, level)
             : predicate.Type == 23 ? SourceArea(predicate, area)
             : predicate.Type == 43 ? SourceDaily(predicate, daily)
             : predicate.Type == 2 ? SourceItem(predicate, items)
+            : predicate.Type == 25 ? !predicate.Negative && spells?.Contains((uint)predicate.Value1) == true
             : (SourceStatusMask(predicate) & (1 << states[(uint)predicate.Value1])) != 0));
 
     private static void SeedAvailability(Context context)
@@ -469,8 +473,12 @@ internal static class QuestDatasetSimulationRegressionTests
             if (dailyGroups.Any(g => g.Select(p => p.Negative).Distinct().Count() > 1)) continue;
             var selectedDaily = dailyGroups.Where(g => !g.First().Negative).Select(g => g.Key).OrderBy(id => id).ToArray();
             if (selectedDaily.Length > 25) continue;
+            var spellPredicates = group.Conditions.Where(p => p.Type == 25).ToArray();
+            if (spellPredicates.Any(p => p.Negative)) continue;
+            var selectedSpells = spellPredicates.Select(p => (uint)p.Value1).Distinct().OrderBy(id => id).ToArray();
+            if (selectedSpells.Length > 64) continue;
             var choice = new Dictionary<uint,int>(); bool possible = true;
-            foreach (var predicates in group.Conditions.Where(p => p.Type is not (2 or 23 or 27 or 43)).GroupBy(p => (uint)p.Value1))
+            foreach (var predicates in group.Conditions.Where(p => p.Type is not (2 or 23 or 25 or 27 or 43)).GroupBy(p => (uint)p.Value1))
             {
                 int mask = predicates.Aggregate(107, (allowed, predicate) => allowed & SourceStatusMask(predicate));
                 IEnumerable<int> domain = predicates.Key == (uint)context.Quest.Id ? new[] { 0 }
@@ -492,6 +500,7 @@ internal static class QuestDatasetSimulationRegressionTests
             context.Level = legalLevels[0];
             context.Area = selectedArea;
             context.DailyIds = contract.Groups.SelectMany(g => g.Conditions).Any(p => p.Type == 43) ? selectedDaily : null;
+            context.ConfirmedSpells = contract.Groups.SelectMany(g => g.Conditions).Any(p => p.Type == 25) ? selectedSpells : null;
             context.Completed = selectedHistory.OrderBy(id => id).ToArray();
             context.AvailabilityItemCounts = contract.Groups.SelectMany(g => g.Conditions).Any(p => p.Type == 2) ? quantities : null;
             context.ActiveParents = selectedActive.OrderBy(row => row.Key).Select(row => new QuestSchedulerAcceptedQuest
@@ -500,7 +509,7 @@ internal static class QuestDatasetSimulationRegressionTests
             context.AvailabilityFixtureSatisfiable = true;
             break;
         }
-        var stateReferences = contract.Groups.SelectMany(g => g.Conditions).Where(p => p.Type is not (2 or 23 or 27 or 43)).Select(p => p.Value1).ToHashSet();
+        var stateReferences = contract.Groups.SelectMany(g => g.Conditions).Where(p => p.Type is not (2 or 23 or 25 or 27 or 43)).Select(p => p.Value1).ToHashSet();
         context.AvailabilityFixtureStates = contract.ReferencedQuests.Where(r => stateReferences.Contains(r.QuestId)).ToDictionary(r => (uint)r.QuestId, r =>
         {
             var accepted = context.ActiveParents.FirstOrDefault(a => a.QuestId == (uint)r.QuestId);
@@ -516,17 +525,18 @@ internal static class QuestDatasetSimulationRegressionTests
         var plan = new[] { new QuestPlanEntry { Quest = context.Quest, Stage = QuestWorkStage.Pickup } };
         QuestSchedulerSnapshot Observe(IReadOnlyDictionary<uint,int> values, bool history = true, bool raw = true, int? level = null,
             int? area = null, bool unknownArea = false, uint[]? daily = null, bool unknownDaily = false,
-            Dictionary<int,long>? items = null, bool unknownItems = false) => new()
+            Dictionary<int,long>? items = null, bool unknownItems = false, uint[]? spells = null, bool unknownSpells = false) => new()
         {
             PlayerGuid = 123, PlayerLevel = level ?? context.Level, UtcNow = Now, HasCompleteQuestLog = true, HasAuthoritativeCompletions = history,
             PlayerAreaId = unknownArea ? null : area ?? context.Area,
             DailyQuestIds = unknownDaily ? null : daily ?? context.DailyIds,
+            ConfirmedSpellIds = unknownSpells ? null : spells ?? context.ConfirmedSpells,
             CompletedQuestIds = values.Where(pair => pair.Value == 6).Select(pair => pair.Key).ToArray(),
             RawQuestStates = raw ? values.Where(pair => pair.Value is 1 or 3 or 5).ToDictionary(pair => pair.Key, pair => pair.Value) : null,
             CarriedItemCounts = unknownItems ? null : items ?? context.InitialCarriedCounts()
         };
         bool Expected(IReadOnlyDictionary<uint,int> values, IReadOnlyDictionary<int,long>? items) =>
-            SourceAvailabilityExpected(contract, values, context.Level, context.Area, context.DailyIds, items);
+            SourceAvailabilityExpected(contract, values, context.Level, context.Area, context.DailyIds, items, context.ConfirmedSpells);
         foreach (uint referenced in states.Keys.OrderBy(id => id))
             foreach (int state in new[] { 0, 1, 3, 5, 6 })
             {
@@ -577,7 +587,7 @@ internal static class QuestDatasetSimulationRegressionTests
                 Case(record, $"availability-level={threshold}:observed={captured}", () =>
                 {
                     var observation = Observe(states, level: captured);
-                    bool expected = SourceAvailabilityExpected(contract, states, captured, context.Area, context.DailyIds, context.InitialCarriedCounts());
+                    bool expected = SourceAvailabilityExpected(contract, states, captured, context.Area, context.DailyIds, context.InitialCarriedCounts(), context.ConfirmedSpells);
                     Check((QuestAvailabilityPolicy.Evaluate(context.Quest, observation).Rejection == null) == expected,
                         "level condition differs from pinned comparison and negation");
                     Check(QuestAvailabilityPolicy.RequirementsCurrent(plan, observation) == expected,
@@ -592,7 +602,7 @@ internal static class QuestDatasetSimulationRegressionTests
                 Case(record, $"availability-area={requiredArea}:observed={captured?.ToString() ?? "unknown"}", () =>
                 {
                     var observation = Observe(states, area: captured, unknownArea: !captured.HasValue);
-                    bool expected = SourceAvailabilityExpected(contract, states, context.Level, captured, context.DailyIds, context.InitialCarriedCounts());
+                    bool expected = SourceAvailabilityExpected(contract, states, context.Level, captured, context.DailyIds, context.InitialCarriedCounts(), context.ConfirmedSpells);
                     Check((QuestAvailabilityPolicy.Evaluate(context.Quest, observation).Rejection == null) == expected,
                         "area predicate differs from primary equality and unknown-preserving negation");
                     Check(QuestAvailabilityPolicy.RequirementsCurrent(plan, observation) == expected,
@@ -618,13 +628,40 @@ internal static class QuestDatasetSimulationRegressionTests
                     }
                     bool unknown = captured == "unknown";
                     var observation = Observe(states, daily: daily.ToArray(), unknownDaily: unknown);
-                    bool expected = SourceAvailabilityExpected(contract, states, context.Level, context.Area, unknown ? null : daily, context.InitialCarriedCounts());
+                    bool expected = SourceAvailabilityExpected(contract, states, context.Level, context.Area, unknown ? null : daily, context.InitialCarriedCounts(), context.ConfirmedSpells);
                     Check((QuestAvailabilityPolicy.Evaluate(context.Quest, observation).Rejection == null) == expected,
                         "daily predicate differs from current per-ID membership and unknown-preserving negation");
                     Check(QuestAvailabilityPolicy.RequirementsCurrent(plan, observation) == expected,
                         "daily publication guard retained old membership after reset or uncertainty");
                     if (!expected) Check(!context.Pickup(context.Schedule(dailyOverride: daily.ToArray(), omitDaily: unknown)),
                         "actual scheduler ignored an unavailable or unsatisfied daily condition");
+                });
+            }
+        foreach (uint spell in contract.Groups.SelectMany(g => g.Conditions).Where(p => p.Type == 25).Select(p => (uint)p.Value1).Distinct().OrderBy(id => id))
+            foreach (string scenario in new[] { "unknown", "empty", "other", "known", "lost" })
+            {
+                uint capturedId = spell; string captured = scenario;
+                Case(record, $"availability-spell={capturedId}:observed={captured}", () =>
+                {
+                    var confirmed = new HashSet<uint>(context.ConfirmedSpells ?? Array.Empty<uint>());
+                    if (captured == "known") confirmed.Add(capturedId);
+                    else if (captured == "lost")
+                    {
+                        _ = QuestAvailabilityPolicy.RequirementsCurrent(plan, Observe(states, spells: new[] { capturedId }));
+                        confirmed.Remove(capturedId);
+                    }
+                    else confirmed.Clear();
+                    if (captured == "other") confirmed.Add(capturedId == int.MaxValue ? 1 : capturedId + 1);
+                    bool unknown = captured == "unknown";
+                    var observation = Observe(states, spells: confirmed.ToArray(), unknownSpells: unknown);
+                    bool expected = SourceAvailabilityExpected(contract, states, context.Level, context.Area, context.DailyIds,
+                        context.InitialCarriedCounts(), unknown ? null : confirmed);
+                    Check((QuestAvailabilityPolicy.Evaluate(context.Quest, observation).Rejection == null) == expected,
+                        "positive spell predicate borrowed unknown, absent or another spell's evidence");
+                    Check(QuestAvailabilityPolicy.RequirementsCurrent(plan, observation) == expected,
+                        "spell publication guard retained a stale positive result");
+                    if (!expected) Check(!context.Pickup(context.Schedule(spellOverride: confirmed.ToArray(), omitSpells: unknown)),
+                        "actual scheduler ignored an unconfirmed spell condition");
                 });
             }
         Case(record, "availability-missing-observation-revokes-publication", () =>
@@ -635,7 +672,8 @@ internal static class QuestDatasetSimulationRegressionTests
             failed_cases = record.failed_cases - startingFailures, fixture_satisfiable = context.AvailabilityFixtureSatisfiable,
             observed_reference_states = states, observed_daily_ids = context.DailyIds,
             observed_carried_item_counts = context.AvailabilityItemCounts,
-            source_oracle = "TC335 ConditionMgr.cpp predicates 2/8/9/14/23/27/28/43/47 and Util.h comparisons; separate complete carried quantities, permanent reward history, ordinary raw states, current daily IDs, level and nullable area; OR-of-AND groups",
+            observed_positive_spell_ids = context.ConfirmedSpells,
+            source_oracle = "TC335 ConditionMgr.cpp predicates 2/8/9/14/23/25/27/28/43/47 and Util.h comparisons; separate complete carried quantities, permanent reward history, ordinary raw states, current daily IDs, positive-only self spells, level and nullable area; OR-of-AND groups",
             live_completion_proven = false };
         record.production_owners.Add("QuestAvailabilityPolicy.Evaluate and RequirementsCurrent with each source reference in all five original quest states");
     }

@@ -40,6 +40,9 @@ namespace WholesomeAQ
         public string AreaObservationStatus { get; init; } = "not-captured";
         public IReadOnlyCollection<uint> DailyQuestIds { get; init; }
         public string DailyObservationStatus { get; init; } = "not-captured";
+        // Positive self observations only. Missing IDs are unknown, not absence.
+        public IReadOnlyCollection<uint> ConfirmedSpellIds { get; init; }
+        public string SpellObservationStatus { get; init; } = "not-captured";
         public int PlayerRaceId { get; init; }
         public int PlayerClassId { get; init; }
         public ulong PlayerGuid { get; init; }
@@ -253,6 +256,8 @@ namespace WholesomeAQ
             var inventoryObservation = QuestInventorySnapshot.Capture(me);
             var areaObservation = QuestAreaSnapshot.Capture(me);
             var dailyObservation = QuestDailySnapshot.Capture(me);
+            int[] requestedSpells = RequiredSpellQueries(db.Quests);
+            var spellObservation = requestedSpells.Length != 0 ? QuestSpellKnowledgeSnapshot.Capture(me, requestedSpells) : null;
             bool diagnosticsDue = false;
             tryApplyPublication(() =>
             {
@@ -271,6 +276,8 @@ namespace WholesomeAQ
                 AreaObservationStatus = areaObservation.Status,
                 DailyQuestIds = dailyObservation.IsCurrent() ? dailyObservation.QuestIds : null,
                 DailyObservationStatus = dailyObservation.Status,
+                ConfirmedSpellIds = spellObservation?.ConfirmedSpellIds,
+                SpellObservationStatus = spellObservation?.Status ?? "not-required-for-availability",
                 PlayerRaceId = (int)me.Race,
                 PlayerClassId = (int)me.Class,
                 PlayerGuid = me.Guid,
