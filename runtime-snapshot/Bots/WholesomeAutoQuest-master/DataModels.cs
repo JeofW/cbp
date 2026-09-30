@@ -76,6 +76,9 @@ namespace WholesomeAQ
 
     public sealed class QuestStrategyRecipe
     {
+        public int CreditId { get; init; }
+        public int CreditCount { get; init; }
+        public int WaitTime { get; init; }
         public int QuestId { get; init; }
         public int ObjectiveIndex { get; init; }
         public QuestStrategyKind Kind { get; init; }
@@ -93,6 +96,8 @@ namespace WholesomeAQ
 
     public sealed class QuestStrategyPack
     {
+        public int SchemaVersion { get; init; } = 1;
+        public string QuestDataRepairsSha256 { get; init; } = "";
         public QuestStrategyPackStatus Status { get; init; } = QuestStrategyPackStatus.Missing;
         public int ClientBuild { get; init; }
         public string QuestDataSha256 { get; init; } = "";
@@ -103,6 +108,9 @@ namespace WholesomeAQ
 
     public class QuestDatabase
     {
+        [System.Text.Json.Serialization.JsonIgnore]
+        public IReadOnlyDictionary<int, QuestDependencyMetadata> DependencyMetadata { get; internal set; }
+            = new Dictionary<int, QuestDependencyMetadata>();
         public List<QuestEntry> Quests { get; set; } = new List<QuestEntry>();
         public List<QuestGiverEntry> QuestGivers { get; set; } = new List<QuestGiverEntry>();
         public List<QuestEnderEntry> QuestEnders { get; set; } = new List<QuestEnderEntry>();
@@ -133,11 +141,28 @@ namespace WholesomeAQ
 
     public class QuestEntry
     {
+        // Null means no source-bound delivery contract. These are requirements,
+        // never a claim that acceptance actually supplied an item to this actor.
+        public List<QuestItemRequirement> DeliveryItems { get; set; }
+        public List<QuestItemRequirement> AcceptanceSupplies { get; set; }
+        public QuestSupplementalSupply SupplementalSupply { get; set; }
         public int Id { get; set; }
         public string Name { get; set; }
         public int QuestLevel { get; set; }
         public int MinLevel { get; set; }
         public int AllowableRaces { get; set; }
+        // Absent source fields stay unknown. Zero is an explicit unconstrained
+        // value, not a substitute for omitted server-side eligibility metadata.
+        public int? AllowableClasses { get; set; }
+        public int? MaxLevel { get; set; }
+        public int? RequiredSkillID { get; set; }
+        public int? RequiredSkillPoints { get; set; }
+        public int? RequiredMinRepFaction { get; set; }
+        public int? RequiredMinRepValue { get; set; }
+        public int? RequiredMaxRepFaction { get; set; }
+        public int? RequiredMaxRepValue { get; set; }
+        public int? RequiredFactionValue1 { get; set; }
+        public int? RequiredFactionValue2 { get; set; }
         public int Flags { get; set; }
         public int QuestSortID { get; set; }
         public int QuestInfoID { get; set; }
@@ -191,7 +216,35 @@ namespace WholesomeAQ
     public enum QuestObjectType
     {
         Creature,
-        GameObject
+        GameObject,
+        Item
+    }
+
+    public sealed class QuestItemStarterObservation
+    {
+        public int QuestId { get; init; }
+        public int ItemEntry { get; init; }
+        public ulong ItemGuid { get; init; }
+        public ulong PlayerGuid { get; init; }
+        public DateTime ObservedUtc { get; init; }
+        public int MapId { get; init; }
+        public string Name { get; init; } = "";
+        public bool IsActive { get; init; }
+    }
+
+    public sealed class QuestCreatureCreditObservation
+    {
+        public int Entry { get; init; }
+        public int Credit1 { get; init; }
+        public int Credit2 { get; init; }
+        public ulong Guid { get; init; }
+        public ulong PlayerGuid { get; init; }
+        public DateTime ObservedUtc { get; init; }
+        public int MapId { get; init; }
+        public double X { get; init; }
+        public double Y { get; init; }
+        public double Z { get; init; }
+        public bool AliveAttackableSelectable { get; init; }
     }
 
     public class SpawnPoint

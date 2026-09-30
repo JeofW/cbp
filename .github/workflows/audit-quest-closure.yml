@@ -1,0 +1,64 @@
+name: Audit exact quest closure Windows x86
+on:
+  push:
+    branches: ['master', 'audit/next-*']
+    paths:
+      - '**.cs'
+      - '**.csproj'
+      - 'Tools/EvidenceAudit/**'
+      - 'runtime-snapshot/Bots/WholesomeAutoQuest-master/quest_data/**'
+      - 'docs/audit/2026-09-29/wholesome-primary-closure/**'
+      - '.github/workflows/audit-quest-closure.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: quest-closure-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  closure:
+    if: >-
+      github.repository == 'JeofW/cbp' &&
+      github.repository_id == '1367174964' &&
+      (github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
+      github.ref_type == 'branch' &&
+      (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/audit/next-'))
+    runs-on: windows-2022
+    timeout-minutes: 25
+    env:
+      GIT_CONFIG_COUNT: '2'
+      GIT_CONFIG_KEY_0: core.longpaths
+      GIT_CONFIG_VALUE_0: 'true'
+      GIT_CONFIG_KEY_1: core.autocrlf
+      GIT_CONFIG_VALUE_1: 'false'
+      GIT_LFS_SKIP_SMUDGE: '1'
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+          lfs: false
+          fetch-depth: 0
+      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9
+        with:
+          dotnet-version: '10.0.x'
+      - name: Execute dataset and strategy lifecycles against the shipped knowledge
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $installer = Join-Path (Split-Path $env:RUNNER_WORKSPACE) '_actions/actions/setup-dotnet/67a3573c9a986a3f9c594539f4ab511d57bb3ce9/externals/install-dotnet.ps1'
+          $destination = Join-Path $env:RUNNER_TEMP 'quest-closure-dotnet-x86'
+          foreach ($framework in @('dotnet', 'windowsdesktop')) {
+            & pwsh -NoProfile -File $installer -Channel '10.0' -Runtime $framework -Architecture x86 -InstallDir $destination -NoPath
+            if ($LASTEXITCODE -ne 0) { throw "x86 $framework installation failed" }
+          }
+          $runtime = Join-Path $destination 'dotnet.exe'
+          python Tools/EvidenceAudit/run_quest_closure_335.py --repo . --runtime $runtime --output (Join-Path $env:RUNNER_TEMP 'quest-closure-results')
+          exit $LASTEXITCODE
+      - name: Retain full source identities and per-quest receipts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: quest-closure-${{ github.sha }}
+          path: ${{ runner.temp }}/quest-closure-results/
+          retention-days: 14
+          if-no-files-found: error

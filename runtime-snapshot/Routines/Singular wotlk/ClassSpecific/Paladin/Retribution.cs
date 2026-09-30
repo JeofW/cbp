@@ -439,8 +439,24 @@ namespace Singular.ClassSpecific.Paladin
                 ? "Consecration" : null;
         }
 
-        private static bool HasHolyWrathTarget() =>
-            Unit.NearbyUnfriendlyUnits.Any(u => u.IsValid && u.IsAlive && u.Distance <= 10 && u.IsUndeadOrDemon());
+        private static bool HasHolyWrathTarget()
+        {
+            var me = StyxWoW.Me;
+            if (me == null || !me.IsValid || !me.IsAlive || me.Mounted || me.IsOnTransport
+                || me.IsCasting || me.IsChanneling)
+                return false;
+            double mana = me.ManaPercent, health = me.HealthPercent;
+            if (double.IsNaN(mana) || double.IsInfinity(mana) || mana < 0 || mana > 100
+                || double.IsNaN(health) || double.IsInfinity(health) || health < 0 || health > 100)
+                return false;
+            // Twenty percent base mana is expensive as a damage-only filler.
+            // Preserve the configured recovery reserve, but retain the original
+            // undead/demon stun when health pressure gives it defensive value.
+            var settings = SingularSettings.Instance.Paladin;
+            return (mana > settings.DivinePleaMana || health <= 70)
+                && Unit.NearbyUnfriendlyUnits.Any(u => u.IsValid && u.IsAlive
+                    && u.Distance <= 10 && u.IsUndeadOrDemon());
+        }
 
         private static int GetRetributionHealThreshold(int configured)
         {
@@ -474,11 +490,15 @@ namespace Singular.ClassSpecific.Paladin
                 var target = player?.CurrentTarget;
                 if (target == null)
                     return false;
-                bool proc = player.ActiveAuras.ContainsKey("The Art of War");
+                // Original rank-one proc 53489 removes 750 ms. Only rank-two
+                // 59578 removes 100%; the shared name cannot promise an instant.
+                var auras = player.ActiveAuras.Values;
+                bool proc = auras.Any(aura => aura != null && aura.IsActive && aura.SpellId == 59578);
+                bool reducedCast = auras.Any(aura => aura != null && aura.IsActive && aura.SpellId == 53489);
                 return proc == requireProc
                        && (!undeadOrDemon.HasValue || target.IsUndeadOrDemon() == undeadOrDemon.Value)
                        && (proc || !player.IsMoving)
-                       && ShouldCastExorcism(SpellManager.HasSpell("The Art of War"), proc,
+                       && ShouldCastExorcism(SpellManager.HasSpell("The Art of War"), proc || reducedCast,
                            target.IsWithinMeleeRange, player.IsAutoAttacking);
             }));
         }

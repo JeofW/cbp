@@ -1,5 +1,6 @@
 #nullable enable
 using System;
+using System.Linq;
 using System.Threading;
 using Styx.WoWInternals;
 
@@ -13,6 +14,84 @@ namespace Styx.Logic.Questing
     /// </summary>
     public static class QuestObjectiveCompletion
     {
+        /// <summary>
+        /// Observe a source-declared typed normal objective without treating an
+        /// imported/display index as a physical slot. A successful zero is known
+        /// progress; false remains unknown and is never permission to dispatch.
+        /// </summary>
+        public static bool TryReadTypedNormalObjectiveProgress(Quest? quest, int typedObjectiveId, int expectedRequired, out int progress)
+        {
+            progress = 0;
+            if (quest == null || typedObjectiveId == 0 || typedObjectiveId == int.MinValue || expectedRequired <= 0 || expectedRequired > ushort.MaxValue)
+                return false;
+            try
+            {
+                var player = ObjectManager.Me;
+                var memory = ObjectManager.Wow;
+                if (player == null || memory == null || !player.IsValid || player.Guid == 0 || player.BaseAddress == 0 || quest.Id == 0)
+                    return false;
+                uint questId = quest.Id, address = player.BaseAddress;
+                ulong actor = player.Guid;
+                int[]? ids = quest.NormalObjectiveIDs?.ToArray(), requirements = quest.NormalObjectiveRequiredCounts?.ToArray();
+                if (ids == null || requirements == null || ids.Length != 4 || requirements.Length != 4)
+                    return false;
+                int slot = -1;
+                for (int index = 0; index < 4; index++)
+                    if (ids[index] == typedObjectiveId)
+                    {
+                        if (slot >= 0) return false;
+                        slot = index;
+                    }
+                if (slot < 0 || requirements[slot] != expectedRequired) return false;
+                bool SameOwner() => ReferenceEquals(player, ObjectManager.Me) && ReferenceEquals(memory, ObjectManager.Wow)
+                    && player.IsValid && player.Guid == actor && player.BaseAddress == address && quest.Id == questId;
+                bool Valid(QuestDescriptorData data) => data.Id == questId && (data.Flags & WoWDescriptorQuestFlags.Failed) == 0
+                    && data.ObjectivesDone != null && data.ObjectivesDone.Length == 4;
+                using (memory.TemporaryCacheState(false))
+                {
+                    if (!SameOwner() || !quest.GetData(out QuestDescriptorData before) || !Valid(before) ||
+                        !SameOwner() || !quest.GetData(out QuestDescriptorData after) || !Valid(after) ||
+                        before.Flags != after.Flags || before.ObjectivesDone[slot] != after.ObjectivesDone[slot] ||
+                        !ids.SequenceEqual(quest.NormalObjectiveIDs ?? Array.Empty<int>()) ||
+                        !requirements.SequenceEqual(quest.NormalObjectiveRequiredCounts ?? Array.Empty<int>()) || !SameOwner())
+                        return false;
+                    progress = after.ObjectivesDone[slot];
+                    return true;
+                }
+            }
+            catch (Exception error) when (error is not ThreadInterruptedException && error is not OperationCanceledException)
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Resolve the unique typed identity before reading a counter. GetObjectives
+        /// compresses display indexes; TC335 Player::SetQuestSlotCounter keeps the
+        /// four physical slots, including empty slots, at sixteen bits each.
+        /// </summary>
+        public static bool IsTypedNormalObjectiveComplete(Quest? quest, Quest.QuestObjective objective)
+        {
+            if (quest == null || objective.ID <= 0 || objective.Count <= 0 ||
+                (objective.Type != Quest.QuestObjectiveType.KillMob && objective.Type != Quest.QuestObjectiveType.UseGameObject))
+                return false;
+            int expected = objective.Type == Quest.QuestObjectiveType.UseGameObject
+                ? unchecked((int)0x80000000) | objective.ID : objective.ID;
+            int[] ids = quest.NormalObjectiveIDs;
+            int[] counts = quest.NormalObjectiveRequiredCounts;
+            if (ids == null || counts == null || ids.Length != 4 || counts.Length != 4) return false;
+            int slot = -1;
+            for (int index = 0; index < 4; index++)
+            {
+                if (ids[index] != expected) continue;
+                if (slot >= 0) return false;
+                slot = index;
+            }
+            return slot >= 0 && counts[slot] == objective.Count && IsNormalObjectiveComplete(quest, slot)
+                && quest.NormalObjectiveIDs[slot] == expected
+                && quest.NormalObjectiveRequiredCounts[slot] == objective.Count;
+        }
+
         public static bool IsNormalObjectiveComplete(Quest? quest, int rawObjectiveIndex)
         {
             if (quest == null || rawObjectiveIndex < 0 || rawObjectiveIndex >= 4)

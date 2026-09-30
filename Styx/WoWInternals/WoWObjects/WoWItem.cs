@@ -293,7 +293,7 @@ namespace Styx.WoWInternals.WoWObjects
                 {
                     var spell = GetSpell(i);
                     if (spell == null || !spell.IsValid)
-                        break;
+                        continue; // The five native effect slots are not a terminated list.
                     list.Add(spell);
                 }
                 return list;
@@ -512,6 +512,22 @@ namespace Styx.WoWInternals.WoWObjects
                 luaBag, luaSlot, expectedEntry);
         }
 
+        internal static string BuildValidatedQuestStartingItemLua(
+            int luaBag, int luaSlot, uint expectedEntry, uint expectedQuestId, ulong playerGuid)
+        {
+            if (luaBag < 0 || luaBag > 4 || luaSlot <= 0 || expectedEntry == 0 || expectedQuestId == 0 ||
+                expectedQuestId > int.MaxValue || playerGuid == 0)
+                throw new ArgumentOutOfRangeException("carried quest-starting item identity");
+            return string.Format(System.Globalization.CultureInfo.InvariantCulture,
+                "if UnitGUID('player')~='0x{4:X16}' or type(GetContainerItemQuestInfo)~='function' or " +
+                "type(GetNumQuestLogEntries)~='function' then return 0 end; " +
+                "local link=GetContainerItemLink({0},{1}); local id=link and tonumber(string.match(link,'item:(%d+)')); " +
+                "if id~={2} then return 0 end; local _,questId,isActive=GetContainerItemQuestInfo({0},{1}); " +
+                "if type(questId)~='number' or questId~={3} or isActive~=false then return 0 end; " +
+                "local _,count=GetNumQuestLogEntries(); if type(count)~='number' or count<0 or count>=25 or count%1~=0 then return 0 end; " +
+                "UseContainerItem({0},{1}); return 1", luaBag, luaSlot, expectedEntry, expectedQuestId, playerGuid);
+        }
+
         private static string CreateItemLink(uint itemId, int quality, int enchantId, int[]? gemIds, uint suffixId)
         {
             return $"|cff{GetQualityColor(quality)}|Hitem:{itemId}:0:0:0:0:0:{suffixId}:0|h[Item]|h|r";
@@ -639,6 +655,51 @@ namespace Styx.WoWInternals.WoWObjects
                 Logging.WriteDebug(
                     "UseContainerItem refused {0} ({1}) after slot validation: {2}",
                     Name, expectedEntry, ex.Message);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Open the quest belonging to this current carried item. A submission
+        /// receipt does not mean the quest was accepted; the normal quest dialog
+        /// owner still validates the shown quest and waits for log acknowledgement.
+        /// </summary>
+        public bool TryUseQuestStartingItem(uint expectedQuestId)
+        {
+            if (expectedQuestId == 0 || expectedQuestId > int.MaxValue) return false;
+            try
+            {
+                LocalPlayer me = StyxWoW.Me;
+                var memory = ObjectManager.Wow;
+                ulong itemGuid = Guid; uint itemEntry = Entry;
+                if (me == null || memory == null || !me.IsValid || me.Guid == 0 || !IsValid ||
+                    itemGuid == 0 || itemEntry == 0 || me.Inventory?.Backpack == null) return false;
+                ulong playerGuid = me.Guid;
+                var log = me.QuestLog;
+                var snapshot = log.CaptureSnapshot();
+                if (!snapshot.IsComplete || snapshot.AcceptedQuestIds.Count >= 25 || snapshot.AcceptedQuestIds.Contains(expectedQuestId) ||
+                    !log.TryGetAuthoritativeCompletedQuests(out var completed) || completed.Contains(expectedQuestId)) return false;
+                ulong[] backpack = me.Inventory.Backpack.ItemGuids;
+                var bags = new ulong[4][];
+                for (uint index = 0; index < 4; index++)
+                {
+                    var bag = me.GetBagAtIndex(index);
+                    bags[index] = bag == null ? Array.Empty<ulong>() : bag.ItemGuids;
+                }
+                if (!TryResolveContainerLocation(itemGuid, backpack, bags, out int luaBag, out int luaSlot)) return false;
+                bool Current() => ReferenceEquals(me, ObjectManager.Me) && ReferenceEquals(memory, ObjectManager.Wow) &&
+                    me.IsValid && me.Guid == playerGuid && IsValid && Guid == itemGuid && Entry == itemEntry &&
+                    IsContainerLocationCurrent(me, luaBag, luaSlot, itemGuid);
+                if (!Current() || !log.IsSnapshotCurrent(snapshot) ||
+                    !log.TryGetAuthoritativeCompletedQuests(out var latestCompleted) || latestCompleted.Contains(expectedQuestId) || !Current()) return false;
+                // The original client API validates the item->quest association,
+                // accepted state and capacity in the same Lua request as use.
+                string script = BuildValidatedQuestStartingItemLua(luaBag, luaSlot, itemEntry, expectedQuestId, playerGuid);
+                return Lua.GetReturnVal<int>(script, 0U) == 1;
+            }
+            catch (Exception error) when (error is not System.Threading.ThreadInterruptedException && error is not OperationCanceledException)
+            {
+                Logging.WriteDebug("Quest-starting item request deferred for quest {0}: {1}", expectedQuestId, error.GetType().Name);
                 return false;
             }
         }

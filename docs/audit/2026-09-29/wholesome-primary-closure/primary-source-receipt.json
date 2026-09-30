@@ -1,0 +1,19 @@
+{
+  "role": "primary-reference-database",
+  "release": "TDB335.25101",
+  "release_commit": "95657f54779467effea8a1749a61ff93abc1d707",
+  "url": "https://github.com/TrinityCore/TrinityCore/releases/download/TDB335.25101/TDB_full_world_335.25101_2025_10_21.7z",
+  "asset_id": 306993022,
+  "asset_sha256": "b426641e6ce8da02e4109b40e570c2db75f89c228a412b3113f82eb3c8725299",
+  "bytes": 47379963,
+  "retrieved_utc": "2026-09-29T12:19:00.255106+00:00",
+  "sql_executed": false,
+  "realm_equivalence_proven": false,
+  "members": [
+    {
+      "name": "TDB_full_world_335.25101_2025_10_21.sql",
+      "bytes": 292616788,
+      "sha256": "e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9"
+    }
+  ]
+}

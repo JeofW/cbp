@@ -172,6 +172,10 @@ public static class Rest
     /// <summary>Immediately uses drink without waiting, on a current dry owner only.</summary>
     public static void DrinkImmediate() => UseImmediate(true);
 
+    /// <summary>Returns submission success, not a server Food/Drink aura acknowledgement.</summary>
+    public static bool TryFeedImmediate() => UseImmediate(false);
+    public static bool TryDrinkImmediate() => UseImmediate(true);
+
     private static bool CanUseConsumables(LocalPlayer? player, bool requireStationary = true)
     {
         return player != null && ReferenceEquals(ObjectManager.Me, player)
@@ -182,11 +186,11 @@ public static class Rest
             && ReferenceEquals(ObjectManager.Me, player);
     }
 
-    private static void UseImmediate(bool drinking)
+    private static bool UseImmediate(bool drinking)
     {
         var timer = drinking ? _drinkTimer : _feedTimer;
         if (!timer.IsFinished)
-            return;
+            return false;
         var player = ObjectManager.Me;
         var memory = ObjectManager.Wow;
         uint address = player?.BaseAddress ?? 0U;
@@ -194,11 +198,11 @@ public static class Rest
             && (player?.BaseAddress ?? 0U) == address && CanUseConsumables(player)
             && ReferenceEquals(ObjectManager.Wow, memory) && player!.BaseAddress == address;
         if (!StillAdmitted())
-            return;
+            return false;
 
         WoWItem? item = drinking ? Consumable.GetBestDrink(false) : Consumable.GetBestFood(false);
         if (!StillAdmitted())
-            return;
+            return false;
         // An ineligible environment is not missing inventory and must not spend
         // the retry interval. Both public entry points share the same admission.
         timer.Reset();
@@ -206,16 +210,23 @@ public static class Rest
         {
             string name = item.Name;
             if (!StillAdmitted())
-                return;
+                return false;
+            // A previous empty or unhydrated observation is not permanent.
+            if (drinking) NoDrink = false; else NoFood = false;
             Logging.Write(drinking ? "Drinking {0}" : "Eating {0}", name);
             // Logging/inventory observation can reenter or change the world.
-            if (StillAdmitted())
-                item.Use();
+            if (!StillAdmitted()) return false;
+            bool submitted = item.Use();
+            if (!submitted)
+                Logging.WriteDebug("Rest item request was declined; retry remains bounded by the consumable timer.");
+            return submitted && ReferenceEquals(ObjectManager.Me, player)
+                && ReferenceEquals(ObjectManager.Wow, memory) && player!.BaseAddress == address;
         }
         else
         {
             if (drinking) NoDrink = true; else NoFood = true;
             Logging.Write(drinking ? "Could not find any water to drink." : "Could not find any food to eat.");
         }
+        return false;
     }
 }

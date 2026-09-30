@@ -1,9 +1,9 @@
 <Project>
-  <ItemGroup Condition="'$(MSBuildProjectName)' == 'WholesomeQuestRecoveryRegressionTests'">
+  <ItemGroup Condition="'$(MSBuildProjectName)' == 'WholesomeQuestRecoveryRegressionTests' Or '$(MSBuildProjectName)' == 'PostMergeAuditRegressionTests' Or '$(MSBuildProjectName)' == 'QuestRecoveryRegressionTests'">
     <Compile Remove="NativeBoundary/**/*.cs" />
     <ProjectReference Include="$(MSBuildThisFileDirectory)OfflineAssemblerBoundary.csproj" ReferenceOutputAssembly="false" PrivateAssets="all" />
   </ItemGroup>
-  <Target Name="InstallWholesomeOfflineAssemblerBoundary" AfterTargets="Build" Condition="'$(MSBuildProjectName)' == 'WholesomeQuestRecoveryRegressionTests'">
+  <Target Name="InstallWholesomeOfflineAssemblerBoundary" AfterTargets="Build" Condition="'$(MSBuildProjectName)' == 'WholesomeQuestRecoveryRegressionTests' Or '$(MSBuildProjectName)' == 'PostMergeAuditRegressionTests' Or '$(MSBuildProjectName)' == 'QuestRecoveryRegressionTests'">
     <MSBuild Projects="$(MSBuildThisFileDirectory)OfflineAssemblerBoundary.csproj" Targets="GetTargetPath" Properties="Configuration=$(Configuration);Platform=$(Platform)">
       <Output TaskParameter="TargetOutputs" ItemName="WholesomeOfflineAssemblerOutput" />
     </MSBuild>

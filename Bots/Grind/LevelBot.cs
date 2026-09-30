@@ -89,7 +89,9 @@ namespace Bots.Grind
             {
                 if (!Ready()) return false;
                 List<WoWItem> carriedItems = StyxWoW.Me.CarriedItems;
-                for (int slot = 0; slot < LootFrame.Instance.LootItems; ++slot)
+                int slotCount = LootFrame.Instance.LootItems;
+                if (!Ready()) return false;
+                for (int slot = 0; slot < slotCount; ++slot)
                 {
                     if (!Ready()) return false;
                     uint itemId = LootFrame.Instance.GetItemId(slot);
@@ -110,6 +112,11 @@ namespace Bots.Grind
                     if (!Ready()) return false;
                     LootFrame.Instance.Loot(slot);
                 }
+                // A client can close the exact frame while processing our final
+                // slot. All observed slots were submitted; there is no frame left
+                // to close. A replacement nonzero GUID must never inherit authority.
+                if (slotCount > 0 && current() && LootFrame.Instance.LootingObjectGuid == 0 && current())
+                    return true;
                 if (!Ready()) return false;
                 Lua.DoString("CloseLoot();");
                 // The frame may disappear because of our own close request.
@@ -1143,7 +1150,9 @@ namespace Bots.Grind
                     new TreeSharp.Action(ctx =>
                     {
                         if (!attempted || !Current()) return RunStatus.Failure;
-                        Logging.Write("Loot timer exceeded, blacklisting lootable.");
+                        Logging.Write(observedEvent
+                            ? "Loot frame or slot processing changed after LOOT_OPENED; deferring this lootable."
+                            : "Loot window did not open before the bounded wait; deferring this lootable.");
                         if (!Current()) return RunStatus.Failure;
                         SleepForLag();
                         if (!Current()) return RunStatus.Failure;
@@ -1680,7 +1689,7 @@ namespace Bots.Grind
                         object provider = Navigator.NavigationProvider;
                         bool ActorCurrent() => actor != null && guid != 0 && ReferenceEquals(StyxWoW.Me, actor)
                             && actor.IsValid && actor.IsAlive && actor.Guid == guid && actor.MapId == map
-                            && !actor.Combat && (!actor.GotAlivePet || actor.Pet?.Combat != true)
+                            && (!actor.Combat || actor.Mounted) && (!actor.GotAlivePet || actor.Pet?.Combat != true || actor.Mounted)
                             && !actor.IsCasting && actor.ChanneledCastingSpellId == 0 && !actor.OnTaxi && !actor.IsOnTransport;
                         if (!ActorCurrent() || grindArea == null || poi == null)
                             return RunStatus.Failure;
@@ -1695,6 +1704,15 @@ namespace Bots.Grind
                         if (!float.IsFinite(hotspot.X) || !float.IsFinite(hotspot.Y) || !float.IsFinite(hotspot.Z) || !Current())
                             return RunStatus.Failure;
 
+                        bool canFly = Flightor.CanFly;
+                        if (!Current()) return RunStatus.Failure;
+                        if (canFly)
+                        {
+                            TreeRoot.StatusText = "Flying to hotspot";
+                            if (!Current()) return RunStatus.Failure;
+                            Flightor.MoveTo(hotspot);
+                            return Current() ? RunStatus.Success : RunStatus.Failure;
+                        }
                         bool shouldMount = Mount.ShouldMount(hotspot);
                         if (!Current()) return RunStatus.Failure;
                         if (shouldMount)

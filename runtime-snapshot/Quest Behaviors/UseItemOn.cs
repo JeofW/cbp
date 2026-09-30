@@ -93,6 +93,8 @@ namespace Styx.Bot.Quest_Behaviors.UseItemOn
                 NumOfTimes = GetAttributeAsNullable<int>("NumOfTimes", false, ConstrainAs.RepeatCount, null) ?? 1;
                 SuccessEvidence = GetAttributeAsNullable<SuccessEvidenceType>("SuccessEvidence", false, null, null) ?? SuccessEvidenceType.InvocationCount;
                 ObjectiveIndex = GetAttributeAsNullable<int>("ObjectiveIndex", false, null, null) ?? -1;
+                CreditId = GetAttributeAsNullable<int>("CreditId", false, null, null) ?? 0;
+                RequiredCreditCount = GetAttributeAsNullable<int>("RequiredCreditCount", false, null, null) ?? 0;
                 MaxAttempts = GetAttributeAsNullable<int>("MaxAttempts", false, ConstrainAs.RepeatCount, null) ?? NumOfTimes;
                 AcknowledgementTimeout = GetAttributeAsNullable<int>("AcknowledgementTimeout", false, ConstrainAs.Milliseconds, null) ?? 5000;
                 SubmissionRefusalTimeout = GetAttributeAsNullable<int>("SubmissionRefusalTimeout", false, ConstrainAs.Milliseconds, null) ?? 5000;
@@ -104,7 +106,12 @@ namespace Styx.Bot.Quest_Behaviors.UseItemOn
                 Range = GetAttributeAsNullable<double>("Range", false, ConstrainAs.Range, null) ?? 4;
                 RequireLos = GetAttributeAsNullable<bool>("RequireLos", false, null, null) ?? false;
                 QuestId = GetAttributeAsNullable<int>("QuestId", false, ConstrainAs.QuestId(this), null) ?? 0;
-                if (SuccessEvidence == SuccessEvidenceType.ObjectiveProgress &&
+                bool typedCredit = CreditId != 0 || RequiredCreditCount != 0;
+                if (typedCredit && (QuestId <= 0 || CreditId <= 0 || RequiredCreditCount <= 0 || RequiredCreditCount > ushort.MaxValue ||
+                    SuccessEvidence != SuccessEvidenceType.ObjectiveProgress || MobType != ObjectType.Npc ||
+                    MobIds == null || MobIds.Length != 1 || MobIds[0] != CreditId))
+                    IsAttributeProblem = true;
+                if (!typedCredit && SuccessEvidence == SuccessEvidenceType.ObjectiveProgress &&
                     (QuestId <= 0 || ObjectiveIndex < 0 || ObjectiveIndex > 3))
                     IsAttributeProblem = true;
                 QuestRequirementComplete = GetAttributeAsNullable<QuestCompleteRequirement>("QuestCompleteRequirement", false, null, null) ?? QuestCompleteRequirement.NotComplete;
@@ -146,6 +153,8 @@ namespace Styx.Bot.Quest_Behaviors.UseItemOn
         public int NumOfTimes { get; private set; }
         public SuccessEvidenceType SuccessEvidence { get; private set; }
         public int ObjectiveIndex { get; private set; }
+        public int CreditId { get; private set; }
+        public int RequiredCreditCount { get; private set; }
         public int MaxAttempts { get; private set; }
         public int AcknowledgementTimeout { get; private set; }
         public int SubmissionRefusalTimeout { get; private set; }
@@ -244,10 +253,17 @@ namespace Styx.Bot.Quest_Behaviors.UseItemOn
 
         private int? ReadObjectiveCount()
         {
-            if (QuestId <= 0 || ObjectiveIndex < 0 || ObjectiveIndex > 3 || !OwnsBehaviorIdentity())
+            if (QuestId <= 0 || !OwnsBehaviorIdentity())
                 return null;
             var player = Me;
             PlayerQuest quest = player?.QuestLog?.GetQuestById((uint)QuestId);
+            if (CreditId != 0 || RequiredCreditCount != 0)
+            {
+                return CreditId > 0 && RequiredCreditCount > 0 &&
+                    QuestObjectiveCompletion.TryReadTypedNormalObjectiveProgress(quest, CreditId, RequiredCreditCount, out int progress)
+                    && OwnsBehaviorIdentity() ? progress : (int?)null;
+            }
+            if (ObjectiveIndex < 0 || ObjectiveIndex > 3) return null;
             if (quest == null || !quest.GetData(out QuestDescriptorData data) ||
                 data.ObjectivesDone == null || ObjectiveIndex >= data.ObjectivesDone.Length)
                 return null;
@@ -267,6 +283,14 @@ namespace Styx.Bot.Quest_Behaviors.UseItemOn
 
             if (SuccessEvidence == SuccessEvidenceType.QuestComplete)
                 return OwnsBehaviorIdentity() && IsAuthoritativeAcknowledged(SuccessEvidence, 0, null, questComplete);
+
+            if (CreditId != 0 || RequiredCreditCount != 0)
+            {
+                int? current = ReadObjectiveCount();
+                return current.HasValue && RequiredCreditCount > 0 && OwnsBehaviorIdentity() &&
+                    (current.Value >= RequiredCreditCount || InitialObjectiveCount.HasValue &&
+                     IsAuthoritativeAcknowledged(SuccessEvidence, InitialObjectiveCount.Value, current, false));
+            }
 
             if (SuccessEvidence == SuccessEvidenceType.ObjectiveProgress && QuestId > 0 &&
                 QuestObjectiveCompletion.IsNormalObjectiveComplete(
@@ -461,6 +485,8 @@ namespace Styx.Bot.Quest_Behaviors.UseItemOn
 
             bool Admitted(bool requireSelectedTarget)
             {
+                if ((CreditId != 0 || RequiredCreditCount != 0) && !ReadObjectiveCount().HasValue)
+                    return false;
                 if (!OwnsActor() || recipientGuid == 0 || itemGuid == 0
                     || !recipient.IsValid || recipient.Guid != recipientGuid || recipient.Entry != recipientEntry
                     || !item.IsValid || item.Guid != itemGuid || item.Entry != ItemId || item.Cooldown != 0

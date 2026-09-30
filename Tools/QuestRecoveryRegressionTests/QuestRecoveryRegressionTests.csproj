@@ -11,4 +11,5 @@
   <ItemGroup>
     <ProjectReference Include="..\..\CopilotBuddy.csproj" />
   </ItemGroup>
+  <Import Project="../WholesomeQuestRecoveryRegressionTests/NativeBoundary/OfflineBoundary.targets" />
 </Project>

@@ -1,0 +1,110 @@
+{
+  "source_commit": "ee1b4df7b06758988745e499554f70842f17d2e1",
+  "components": [
+    {
+      "component": "Bots/WholesomeAutoQuest-master",
+      "exit": 0,
+      "compiled": true,
+      "errors": 0,
+      "inputs": 12,
+      "report_sha256": "bbf091b7c79c07af5ec4f9693c3be04cc365f85f7b0bd61a4eeda246227c16f6"
+    },
+    {
+      "component": "Routines/Singular wotlk",
+      "exit": 0,
+      "compiled": true,
+      "errors": 0,
+      "inputs": 99,
+      "report_sha256": "88c1887d20d9ea6fbd6362ae388311ecd9593070600e78befb111844f691e181"
+    },
+    {
+      "component": "Plugins/AutoEquip2",
+      "exit": 0,
+      "compiled": true,
+      "errors": 0,
+      "inputs": 4,
+      "report_sha256": "6f7559186afc09a00996d48ce8f49e3e2fcf03e68e0a81c03a4fb9573b66b8ed"
+    },
+    {
+      "component": "Plugins/MrItemRemover2",
+      "exit": 0,
+      "compiled": true,
+      "errors": 0,
+      "inputs": 5,
+      "report_sha256": "96fa83ceb0ffea49b35f7aee9a2180da8a522659b4f42b1ef23e6ce347d83c9d"
+    },
+    {
+      "component": "Plugins/SmartLootRoller",
+      "exit": 0,
+      "compiled": true,
+      "errors": 0,
+      "inputs": 6,
+      "report_sha256": "8ae9f64620d21e374e006b169675cefcb37bd73ed1f0a4d5dd52234a20f94c2c"
+    },
+    {
+      "component": "Plugins/Talented",
+      "exit": 0,
+      "compiled": true,
+      "errors": 0,
+      "inputs": 7,
+      "report_sha256": "7b6c046ab6fece1b2159115017f03ea3486b9646cf8d7f96cf6b517fd69fdf66"
+    },
+    {
+      "component": "Quest Behaviors/CollectThings.cs",
+      "exit": 0,
+      "compiled": true,
+      "errors": 0,
+      "inputs": 1,
+      "report_sha256": "731bc69792a05c1b4433bdfde01f57198b662f65989bae6adc278da68aa4d161"
+    },
+    {
+      "component": "Quest Behaviors/DeleteItems.cs",
+      "exit": 0,
+      "compiled": true,
+      "errors": 0,
+      "inputs": 1,
+      "report_sha256": "5e75d53626c6cdccc84576c051266d363f9162b9f9e775979dce14b5847e59de"
+    },
+    {
+      "component": "Quest Behaviors/EquipItem.cs",
+      "exit": 0,
+      "compiled": true,
+      "errors": 0,
+      "inputs": 1,
+      "report_sha256": "0b09576bd7ad23bf18a185e4c368178b1e0346c515d04d55b3f1a1a68a628dd3"
+    },
+    {
+      "component": "Quest Behaviors/ForcedDismount.cs",
+      "exit": 0,
+      "compiled": true,
+      "errors": 0,
+      "inputs": 1,
+      "report_sha256": "2605a42b52be4e2e976681b209937cf2a46ae8e25090ea96fdd1456fabb964e0"
+    },
+    {
+      "component": "Quest Behaviors/GossipEvent.cs",
+      "exit": 0,
+      "compiled": true,
+      "errors": 0,
+      "inputs": 1,
+      "report_sha256": "55017a0529e55d91b0a9b3be8d7be733bcf809955e7d257ec2aa85956d0b9171"
+    },
+    {
+      "component": "Quest Behaviors/InteractWith.cs",
+      "exit": 0,
+      "compiled": true,
+      "errors": 0,
+      "inputs": 1,
+      "report_sha256": "d3b197f0043c1fad9649addaf98adc956c7151690aaa19a810bb81b343646e8b"
+    },
+    {
+      "component": "Quest Behaviors/UseItemOn.cs",
+      "exit": 0,
+      "compiled": true,
+      "errors": 0,
+      "inputs": 1,
+      "report_sha256": "7e0928f347f9910496ef3671298d1e4843253ff18382ced4321c60730138b65d"
+    }
+  ],
+  "game_attached": false
+}

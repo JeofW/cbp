@@ -1,3 +1,25 @@
+# Current: PR61 primary closure recovery — 30 September 2026
+
+Read `docs/audit/2026-09-29/wholesome-primary-closure/REPORT.md`, `closure-fixture-manifest.json`, `coverage.json` and `reconciliation.json` first. The containing commit is the candidate identity; resolve it from Git and require fresh exact-commit acceptance. Initial recovery found local `450aea3a00bdf060af8670bd460aabc9e7043e09`, remote PR61 `12a6fb40c9adc932ea1c65dd4098355833d3fb90`, unpublished source/knowledge files, a wrong full-SHA checkpoint guard and a nonexistent hard-coded 925ba02d release identity. Do not replay the old checkpoint or release scripts as-is.
+
+The regenerated 4,335-ID partition is 3,004 GENERIC-PROVEN, 2 STRATEGY-PROVEN, 945 DATA-INVALID/INCOMPLETE, 310 SOURCE-UNCERTAIN, 16 LIVE-ACCEPTANCE-REQUIRED and 58 UNSUPPORTED-SCRIPTED. It exactly matches the actual retained v3 ledger; the 4,337 total came from mismatched reported counts, not duplicate top-level rows. All 1,329 remaining IDs now have primary-source correlations. `run_quest_closure_335.py` reproduces 258,269 dataset checks and 39 strategy checks using the exact shipped knowledge; its final clean-SHA receipts are required before merge.
+
+The user now explicitly authorizes local Windows/x86 iteration, publication, gated PR61 merge, merged-master build and selective deployment to CB, followed immediately by a fresh smaller continuation PR. Older no-merge/no-local/no-deploy instructions below are historical. Preserve configuration/state, original-build12340 evidence, source-bound repairs and only vetted strategies 9066/9447. Read external `D:/Dev/CopilotBuddy-Evidence/postmerge-20260930-pr61` receipts for the latest publication, hosted run, package and deployment status. No such outcome should be assumed from this pre-acceptance pointer. IDA localhost:13337 refused the fresh read-only request; no new unverified API was added.
+
+---
+
+# Retained: Wholesome dataset audit — 29 September 2026
+
+Read `docs/audit/2026-09-29/wholesome-observed-routes/REPORT.md` and `verification.json` first. Tested implementation is `370fa0ef56fd03385a80aba14688fe7ece8753f1` in `D:\Dev\CopilotBuddy-PostMerge-20260929`, branch `audit/next-postmerge-wholesome-singular-20260929`, PR61. The earlier `ee1b4df7` implementation and `9b6a816a` evidence remain preserved in `wholesome-quest-audit`. The user authorized fast local builds/tests and the full original-build12340 audit; older branch/build restrictions below are historical.
+
+All 4,335 installed dataset rows (SHA256 `f2ca79318694afaa4214fc09392e88c3d9d1eae5128f323d0d65b1b9e91a7e3f`) have explicit classifications and source dispositions. Final counts: GENERIC-PROVEN 1,816; STRATEGY-PROVEN 0; DATA-INVALID/INCOMPLETE 1,381; UNSUPPORTED-SCRIPTED 81; SOURCE-UNCERTAIN 882; LIVE-ACCEPTANCE-REQUIRED 175. The full sweep passes 246,892 checks; the exact seven-item/124-credit companion passes 1,034 more, with zero failures. All 202 focused new cases and 34 optimized Windows/x86 stages pass against 1,945 stable inputs. Analyzer results: 125 passes and one Windows symlink-permission skip. All 13 candidate runtime components compile.
+
+The isolated candidate is `D:\Dev\CopilotBuddy-Wholesome-Candidate-370fa0ef`; this audit has not replaced production CB. All seven item pickup routes are covered under current original-client observations; IDs 136, 594, 624, 4881 and 9672 also complete their controlled acknowledgement pipelines. Forty credit rows support observed ordinary aliases; 84 script-only rows retain explicit trigger/link/recipe obligations. No live completion or native gameplay is claimed. The old Hellfire log omitted the visible giver identities; use Diagnostic `quest-audit` snapshots for fresh live attribution. The full ledger, remaining ID/category indexes, pinned TC/AC sources and read-only IDA receipts are in the new report folder. Raw evidence remains in `D:\Dev\CopilotBuddy-Evidence\postmerge-20260929\wholesome-dataset-audit`.
+
+Do not replay existing repairs or restart W80/W92. Generic proof is limited to recorded controlled planning/profile/behavior-completion observations. Missing realm conditions, metadata, scripts and unsupported acquisition routes remain explicit obligations. Preserve the original-client, recovery, publication, cancellation and native-dispatch gates. Retained history follows.
+
+---
+
 # W107 verified — identified actionable source scope complete
 
 27 September 2026. Read `docs/audit/2026-09-27/W107_CHECKPOINT.md`, `W107_EVIDENCE.json` and `W107_SCOPE_COMPLETION.md` first. Final validated source/production is **0e5148366a9329b6f14c840bfd7df1edc1f4a5e1**, tree9b0e804927aa9d10fa7a2229f83e9ebf822a6450. Final hosted integrated36311065568/job108596961480/artifact10928958282 is **17/17**, native23/23 and ground-observation6/6; all217members/216innerhashes/1854sourceinputs verified. Host36311065567/job108596961528/artifact10928573791 is Release/x860errors/3344warnings, compile-only. The final archive hashes and all eight red/green archives are recorded in the evidence manifest.

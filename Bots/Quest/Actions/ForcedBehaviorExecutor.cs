@@ -420,9 +420,8 @@ public class ForcedBehaviorExecutor : Composite
                     case QuestObjectType.Item:
                         if ((WoWObject)StyxWoW.Me.CarriedItems.FirstOrDefault<WoWItem>((Func<WoWItem, bool>)(woWItem => (int)woWItem.Entry == (int)pickUpNode.GiverId)) == (WoWObject)null)
                         {
-                            Logging.Write(Color.Red, "Could not pickup quest from item with id:{0} the item was not found!", (object)pickUpNode.GiverId);
-                            Logging.Write(Color.Red, "CopilotBuddy Stopped!");
-                            TreeRoot.Stop();
+                            Logging.WriteDebug("Quest {0} pickup deferred: carried starter item {1} is absent.", pickUpNode.QuestId, pickUpNode.GiverId);
+                            return null;
                         }
                         giverLocation = WoWPoint.Empty;
                         break;
@@ -500,15 +499,28 @@ public class ForcedBehaviorExecutor : Composite
     {
         // Generated dataset rows can describe alternative sources for one item.
         // Their row index need not equal the live quest's objective index.
+        bool MatchesType(Styx.Logic.Questing.Quest.QuestObjective objective) => node.ObjectiveType switch
+        {
+            Styx.Logic.Profiles.Quest.ObjectiveType.KillMob => objective.Type == Styx.Logic.Questing.Quest.QuestObjectiveType.KillMob,
+            Styx.Logic.Profiles.Quest.ObjectiveType.UseObject => objective.Type == Styx.Logic.Questing.Quest.QuestObjectiveType.UseGameObject,
+            Styx.Logic.Profiles.Quest.ObjectiveType.CollectItem => objective.Type == Styx.Logic.Questing.Quest.QuestObjectiveType.CollectItem
+                || objective.Type == Styx.Logic.Questing.Quest.QuestObjectiveType.CollectIntermediateItem,
+            _ => false
+        };
         int index = node.ObjectiveIndex;
         if (index >= 0 && index < objectives.Count &&
+            MatchesType(objectives[index]) &&
             (node.ObjectiveId == 0 || objectives[index].ID == node.ObjectiveId))
             return index;
+        int matchingIndex = -1;
         if (node.ObjectiveId != 0)
             for (int i = 0; i < objectives.Count; i++)
-                if (objectives[i].ID == node.ObjectiveId)
-                    return i;
-        return -1;
+                if (MatchesType(objectives[i]) && objectives[i].ID == node.ObjectiveId)
+                {
+                    if (matchingIndex >= 0) return -1;
+                    matchingIndex = i;
+                }
+        return matchingIndex;
     }
     private static Bots.Quest.Objectives.QuestObjective CreateQuestObjective(ObjectiveNode objectiveNode)
     {

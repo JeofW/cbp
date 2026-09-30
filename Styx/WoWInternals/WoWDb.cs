@@ -124,9 +124,10 @@ namespace Styx.WoWInternals
 
         #endregion
 
-        // Original 3.3.5a localized Spell record contract from Likon fd79fa02.
-        // The current managed SpellEntry consumes only its 680-byte prefix.
-        private const int LocalizedSpellRecordSize = 704;
+        // Build 12340: the native Spell readers at 0x4CFD20 and 0x61DC30
+        // copy/decode exactly 0x2A8 bytes. Reading 704 crosses the record boundary
+        // and makes valid packed rows depend on unrelated following bytes.
+        private const int LocalizedSpellRecordSize = 680;
         private const uint ClientDbIsCompressed = 0xC5DEA0;
 
         // A repeated pair is followed by an additional-repeat count, then a

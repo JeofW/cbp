@@ -1,0 +1,28 @@
+{
+  "observed_utc": "2026-09-30T00:29:29.861321+00:00",
+  "head": "450aea3a00bdf060af8670bd460aabc9e7043e09",
+  "branch": "audit/next-postmerge-wholesome-singular-20260929",
+  "uncommitted_files": {
+    "Tools/EvidenceAudit/primary_closure_335.py": "b8b7e5a8f63b275cccd46ab1472c2665986c2f278366c8fa866094c610aa5a49",
+    "Tools/EvidenceAudit/quest_remaining_correlations_335.py": "23e7b916c491fba67886db53509c4e2e6e9fa2609b3d41195a6e763a26962ba6",
+    "Tools/EvidenceAudit/quest_repair_pack_335.py": "86a66bed398d81a9d049c5a9a68a6381aace7c38fd9a519ee404956f49fce6ad",
+    "Tools/EvidenceAudit/test_primary_closure_335.py": "129a415bf18f17761ccb3699567efb3cf286e4af4e0cbc15f5735330a85503c0",
+    "Tools/WholesomeQuestRecoveryRegressionTests/QuestKnowledgeBundleRegressionTests.cs": "7e0756a49c1a31016e6ed07830e498a445fe713b29774198908257e2ad67738e",
+    "Tools/WholesomeQuestRecoveryRegressionTests/QuestVettedStrategyPipelineRegressionTests.cs": "03a72b6685ce707f601de72387fe5987dd9357c4da65fe18a1f9427af130b640",
+    "runtime-snapshot/Bots/WholesomeAutoQuest-master/quest_data/quest_data.repairs.json": "d3693d83616526576408c92dfed2c4fceb94291e9a686c9c86043e94ae17a534",
+    "runtime-snapshot/Bots/WholesomeAutoQuest-master/quest_data/quest_knowledge_manifest.json": "3df5229bd54c68c3ddee02481b843ec78c0b0f1ac9daae007ac0151a0fadc6d4",
+    "runtime-snapshot/Bots/WholesomeAutoQuest-master/quest_data/quest_strategies.json": "7cd1b5af21a9ea0c395c0b70cebe5931aae2931c84a2e7674a8363341f59da82"
+  },
+  "dataset_count": 4335,
+  "dataset_sha256": "f2ca79318694afaa4214fc09392e88c3d9d1eae5128f323d0d65b1b9e91a7e3f",
+  "reported_provisional_counts": {
+    "GENERIC-PROVEN": 3004,
+    "STRATEGY-PROVEN": 2,
+    "DATA-INVALID/INCOMPLETE": 871,
+    "SOURCE-UNCERTAIN": 374,
+    "LIVE-ACCEPTANCE-REQUIRED": 64,
+    "UNSUPPORTED-SCRIPTED": 22
+  },
+  "requested_correlation_directory_exists": false,
+  "final_source_checkpoint_exists": false
+}

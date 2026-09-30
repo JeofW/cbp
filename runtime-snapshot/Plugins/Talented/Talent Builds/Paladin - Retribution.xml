@@ -1,31 +1,31 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<!-- http://www.wowhead.com/talent#sbhMZMZcdGsdkszfk -->
+<?xml version='1.0' encoding='utf-8'?>
 <TalentTree Specialization="3" Name="Paladin - Retribution" Class="Paladin">
-
-  <!-- Retribution Talents -->
-  <Talent Tab="3" Index="1" Count="2" Name="Eye for an Eye" />
-  <Talent Tab="3" Index="2" Count="3" Name="Crusade" />
-  <Talent Tab="3" Index="3" Count="2" Name="Improved Judgement" />
-  <Talent Tab="3" Index="5" Count="3" Name="Rule of Law" />
-  <Talent Tab="3" Index="6" Count="2" Name="Pursuit of Justice" />
-  <Talent Tab="3" Index="7" Count="1" Name="Communion" />
-  <Talent Tab="3" Index="8" Count="3" Name="The Art of War" />
-  <Talent Tab="3" Index="9" Count="2" Name="Long Arm of the Law" />  
-  <Talent Tab="3" Index="10" Count="1" Name="Divine Storm" />
-  <Talent Tab="3" Index="11" Count="1" Name="Sacred Shield" />
-  <Talent Tab="3" Index="12" Count="1" Name="Sancity of Battle" />
-  <Talent Tab="3" Index="13" Count="1" Name="Seals of Command" />
-  <Talent Tab="3" Index="14" Count="3" Name="Sanctified Wrath" />
-  <Talent Tab="3" Index="16" Count="1" Name="Repentance" />
-  <Talent Tab="3" Index="17" Count="2" Name="Divine Purpose" />
-  <Talent Tab="3" Index="18" Count="3" Name="Inquiry of Faith" />
-  <Talent Tab="3" Index="19" Count="1" Name="Acts of Sacrifice" />
-  <Talent Tab="3" Index="20" Count="1" Name="Zealotry" />
-
-  <!-- Holy Talents-->
-  <Talent Tab="1" Index="1" Count="2" Name="Arbiter of Light" />
-  <Talent Tab="1" Index="3" Count="3" Name="Judgements of the Pure" />
-  <Talent Tab="1" Index="6" Count="2" Name="Blazing Light" />
-  <!-- Protection Talents -->
-  <Talent Tab="2" Index="2" Count="1" Name="Seals of the Pure" />
+  <!-- Original 3.3.5a build 12340; 5/5/61 leveling target. Index 0 resolves the exact live name within its tree. Milestones precede fillers. Existing points are never reset. -->
+  <Talent Tab="3" Index="0" Count="1" Name="Divine Storm" />
+  <Talent Tab="3" Index="0" Count="1" Name="Crusader Strike" />
+  <Talent Tab="3" Index="0" Count="2" Name="The Art of War" />
+  <Talent Tab="3" Index="0" Count="3" Name="Judgements of the Wise" />
+  <Talent Tab="3" Index="0" Count="5" Name="Benediction" />
+  <Talent Tab="3" Index="0" Count="2" Name="Improved Judgements" />
+  <Talent Tab="3" Index="0" Count="3" Name="Heart of the Crusader" />
+  <Talent Tab="3" Index="0" Count="1" Name="Seal of Command" />
+  <Talent Tab="3" Index="0" Count="5" Name="Conviction" />
+  <Talent Tab="3" Index="0" Count="3" Name="Sanctity of Battle" />
+  <Talent Tab="3" Index="0" Count="3" Name="Crusade" />
+  <Talent Tab="3" Index="0" Count="3" Name="Two-Handed Weapon Specialization" />
+  <Talent Tab="3" Index="0" Count="1" Name="Sanctified Retribution" />
+  <Talent Tab="3" Index="0" Count="3" Name="Vengeance" />
+  <Talent Tab="3" Index="0" Count="2" Name="Pursuit of Justice" />
+  <Talent Tab="3" Index="0" Count="1" Name="Repentance" />
+  <Talent Tab="3" Index="0" Count="3" Name="Fanaticism" />
+  <Talent Tab="3" Index="0" Count="2" Name="Sanctified Wrath" />
+  <Talent Tab="3" Index="0" Count="3" Name="Sheath of Light" />
+  <Talent Tab="3" Index="0" Count="3" Name="Swift Retribution" />
+  <Talent Tab="3" Index="0" Count="3" Name="Righteous Vengeance" />
+  <Talent Tab="2" Index="0" Count="5" Name="Divine Strength" />
+  <Talent Tab="1" Index="0" Count="5" Name="Seals of the Pure" />
+  <Talent Tab="3" Index="0" Count="2" Name="Improved Blessing of Might" />
+  <Talent Tab="3" Index="0" Count="2" Name="Vindication" />
+  <Talent Tab="3" Index="0" Count="2" Name="Divine Purpose" />
+  <Talent Tab="3" Index="0" Count="2" Name="Eye for an Eye" />
 </TalentTree>

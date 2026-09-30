@@ -1,0 +1,157 @@
+{
+  "contracts": {
+    "TC-PLAYER": {
+      "role": "primary-server-contract",
+      "revision": "8fda442f6c30ca21a622638063ab8b28376f1b25",
+      "url": "https://github.com/TrinityCore/TrinityCore/blob/8fda442f6c30ca21a622638063ab8b28376f1b25/src/server/game/Entities/Player/Player.cpp",
+      "claims": [
+        "MinLevel/MaxLevel admission; QuestLevel is not an upper admission limit",
+        "class/skill/reputation predicates and exclusive-group/previous-quest semantics"
+      ]
+    },
+    "TC-QUEST": {
+      "role": "primary-server-contract",
+      "revision": "8fda442f6c30ca21a622638063ab8b28376f1b25",
+      "url": "https://github.com/TrinityCore/TrinityCore/blob/8fda442f6c30ca21a622638063ab8b28376f1b25/src/server/game/Quests/QuestDef.h",
+      "claims": [
+        "SpecialFlags bit 0x20 requires cast rather than ordinary kill credit",
+        "primary allowed DB special flags are bits 0x01 through 0x20"
+      ]
+    },
+    "TC-LOADER": {
+      "role": "primary-server-contract",
+      "revision": "8fda442f6c30ca21a622638063ab8b28376f1b25",
+      "url": "https://github.com/TrinityCore/TrinityCore/blob/8fda442f6c30ca21a622638063ab8b28376f1b25/src/server/game/Globals/ObjectMgr.cpp",
+      "claims": [
+        "invalid special flags are masked by the primary reference loader; database identity still matters"
+      ]
+    },
+    "AC-QUEST": {
+      "role": "secondary-server-contract",
+      "revision": "8337a378ac325e62a6a91e00c6a5e944205e8536",
+      "url": "https://github.com/azerothcore/azerothcore-wotlk/blob/8337a378ac325e62a6a91e00c6a5e944205e8536/src/server/game/Quests/QuestDef.h",
+      "claims": [
+        "AzerothCore bit 0x40 means NO_REP_SPILLOVER, unlike the primary source allowance"
+      ]
+    }
+  },
+  "reference_files": [
+    {
+      "file": "ac-conditions.sql",
+      "role": "secondary-reference-data",
+      "url": "https://raw.githubusercontent.com/azerothcore/azerothcore-wotlk/8337a378ac325e62a6a91e00c6a5e944205e8536/data/sql/base/db_world/conditions.sql",
+      "claim_limit": "A reference core/database snapshot is not proof of the configured realm.",
+      "sha256": "1a40806e454211118e0b459e09eb70e0e09807987ead6b321bbd371b93ffeb7d",
+      "bytes": 1213953,
+      "parsed_rows": 14630
+    },
+    {
+      "file": "ac-creature_questender.sql",
+      "role": "secondary-reference-data",
+      "url": "https://raw.githubusercontent.com/azerothcore/azerothcore-wotlk/8337a378ac325e62a6a91e00c6a5e944205e8536/data/sql/base/db_world/creature_questender.sql",
+      "claim_limit": "A reference core/database snapshot is not proof of the configured realm.",
+      "sha256": "926b56956cba585f14b9fb2fa9ea5ba52096fc18182b9a3dab02fc9a0462bb72",
+      "bytes": 112487,
+      "parsed_rows": 7901
+    },
+    {
+      "file": "ac-creature_queststarter.sql",
+      "role": "secondary-reference-data",
+      "url": "https://raw.githubusercontent.com/azerothcore/azerothcore-wotlk/8337a378ac325e62a6a91e00c6a5e944205e8536/data/sql/base/db_world/creature_queststarter.sql",
+      "claim_limit": "A reference core/database snapshot is not proof of the configured realm.",
+      "sha256": "9c9598115adbc69d8c2d152e0fdb92fbbc727a42417837443d1cee5f3eee0a0a",
+      "bytes": 105851,
+      "parsed_rows": 7447
+    },
+    {
+      "file": "ac-creature_template.sql",
+      "role": "secondary-reference-data",
+      "url": "https://raw.githubusercontent.com/azerothcore/azerothcore-wotlk/8337a378ac325e62a6a91e00c6a5e944205e8536/data/sql/base/db_world/creature_template.sql",
+      "claim_limit": "A reference core/database snapshot is not proof of the configured realm.",
+      "sha256": "0066e4fd35b809986dd325487515087f5a95f4ffe50ea03846c8d8bf5196870a",
+      "bytes": 5423056,
+      "parsed_rows": 29947
+    },
+    {
+      "file": "ac-gameobject_questender.sql",
+      "role": "secondary-reference-data",
+      "url": "https://raw.githubusercontent.com/azerothcore/azerothcore-wotlk/8337a378ac325e62a6a91e00c6a5e944205e8536/data/sql/base/db_world/gameobject_questender.sql",
+      "claim_limit": "A reference core/database snapshot is not proof of the configured realm.",
+      "sha256": "4e0c371a8f47ee53bac822753389c54d734d9e0aeb0e73b73b1eb124745e7e4b",
+      "bytes": 8820,
+      "parsed_rows": 457
+    },
+    {
+      "file": "ac-gameobject_queststarter.sql",
+      "role": "secondary-reference-data",
+      "url": "https://raw.githubusercontent.com/azerothcore/azerothcore-wotlk/8337a378ac325e62a6a91e00c6a5e944205e8536/data/sql/base/db_world/gameobject_queststarter.sql",
+      "claim_limit": "A reference core/database snapshot is not proof of the configured realm.",
+      "sha256": "5d497aeacadf10c0fa077590a0020ac9048e259445355e74954cb77d7b38d39b",
+      "bytes": 8732,
+      "parsed_rows": 457
+    },
+    {
+      "file": "ac-gameobject_template.sql",
+      "role": "secondary-reference-data",
+      "url": "https://raw.githubusercontent.com/azerothcore/azerothcore-wotlk/8337a378ac325e62a6a91e00c6a5e944205e8536/data/sql/base/db_world/gameobject_template.sql",
+      "claim_limit": "A reference core/database snapshot is not proof of the configured realm.",
+      "sha256": "5878b10d2ad512f9385be22a44e6f62f45fb59b7cca0187c13a64e2d14c79140",
+      "bytes": 2347184,
+      "parsed_rows": 21581
+    },
+    {
+      "file": "ac-item_template.sql",
+      "role": "secondary-reference-data",
+      "url": "https://raw.githubusercontent.com/azerothcore/azerothcore-wotlk/8337a378ac325e62a6a91e00c6a5e944205e8536/data/sql/base/db_world/item_template.sql",
+      "claim_limit": "A reference core/database snapshot is not proof of the configured realm.",
+      "sha256": "bd4859be01946ca1521f7896f558f665e1e1d98890757a3df30e717b62768cc6",
+      "bytes": 16159418,
+      "parsed_rows": 46096
+    },
+    {
+      "file": "ac-quest_offer_reward.sql",
+      "role": "secondary-reference-data",
+      "url": "https://raw.githubusercontent.com/azerothcore/azerothcore-wotlk/8337a378ac325e62a6a91e00c6a5e944205e8536/data/sql/base/db_world/quest_offer_reward.sql",
+      "claim_limit": "A reference core/database snapshot is not proof of the configured realm.",
+      "sha256": "9e605b2e37501b9ee9644faa46a888591b5cdf79823d5556e4e8ab766daa85b6",
+      "bytes": 1965994,
+      "parsed_rows": 8660
+    },
+    {
+      "file": "ac-quest_request_items.sql",
+      "role": "secondary-reference-data",
+      "url": "https://raw.githubusercontent.com/azerothcore/azerothcore-wotlk/8337a378ac325e62a6a91e00c6a5e944205e8536/data/sql/base/db_world/quest_request_items.sql",
+      "claim_limit": "A reference core/database snapshot is not proof of the configured realm.",
+      "sha256": "40d907f580e590797bb33c29f8ee4021c0e942be718353ea4ad1069ec4c55858",
+      "bytes": 784156,
+      "parsed_rows": 7757
+    },
+    {
+      "file": "ac-quest_template.sql",
+      "role": "secondary-reference-data",
+      "url": "https://raw.githubusercontent.com/azerothcore/azerothcore-wotlk/8337a378ac325e62a6a91e00c6a5e944205e8536/data/sql/base/db_world/quest_template.sql",
+      "claim_limit": "A reference core/database snapshot is not proof of the configured realm.",
+      "sha256": "5dc7e6c92ea6875a5fc68cf5d3e33150e86cda5819a11af0c59217b24c63a37f",
+      "bytes": 7033399,
+      "parsed_rows": 9464
+    },
+    {
+      "file": "ac-quest_template_addon.sql",
+      "role": "secondary-reference-data",
+      "url": "https://raw.githubusercontent.com/azerothcore/azerothcore-wotlk/8337a378ac325e62a6a91e00c6a5e944205e8536/data/sql/base/db_world/quest_template_addon.sql",
+      "claim_limit": "A reference core/database snapshot is not proof of the configured realm.",
+      "sha256": "ca1081203af9dc5ab9b948d94652a66674d116ce387f629595ec38f89c4af5d2",
+      "bytes": 430713,
+      "parsed_rows": 9464
+    },
+    {
+      "file": "ac-smart_scripts.sql",
+      "role": "secondary-reference-data",
+      "url": "https://raw.githubusercontent.com/azerothcore/azerothcore-wotlk/8337a378ac325e62a6a91e00c6a5e944205e8536/data/sql/base/db_world/smart_scripts.sql",
+      "claim_limit": "A reference core/database snapshot is not proof of the configured realm.",
+      "sha256": "622b5865f171b0b7a4dd93ecba55afd673c393c579485c17f827b31cb6e47dd2",
+      "bytes": 7307820,
+      "parsed_rows": 52768
+    }
+  ]
+}

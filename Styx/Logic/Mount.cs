@@ -20,6 +20,7 @@ namespace Styx.Logic
 		private static CanMountDelegate? _defaultCanMount;
 		private static bool _wasMounted;
 		private static LocationRetriever? _currentDestinationRetriever;
+		private static readonly MountedTravelProgress _mountedTravelProgress = new();
 
 		/// <summary>
 		/// Fired when the player mounts up (HB 4.3.4 compatibility).
@@ -36,6 +37,7 @@ namespace Styx.Logic
 		static Mount()
 		{
 			BotEvents.Player.OnMobKilled += OnMobKilled;
+			BotEvents.OnBotStop += _ => _mountedTravelProgress.Reset();
 		}
 
 		private static void OnMobKilled(BotEvents.Player.MobKilledEventArgs args)
@@ -587,18 +589,32 @@ namespace Styx.Logic
 		public static bool ShouldDismount(WoWPoint travelingTo)
 		{
 			LocalPlayer? me = Me;
-			if (me == null)
-				return false;
+			if (me == null || !me.Mounted) { _mountedTravelProgress.Reset(); return false; }
+			ulong guid = me.Guid;
+			uint map = me.MapId;
+			object memory = ObjectManager.Wow;
+			var poi = BotPoi.Current;
+			var kind = poi.Type;
+			bool Current() => guid != 0 && ReferenceEquals(Me, me) && me.Guid == guid
+				&& me.MapId == map && me.IsValid && me.IsAlive && !me.IsGhost && me.Mounted
+				&& !me.IsOnTransport && !me.OnTaxi && !me.InVehicle
+				&& ReferenceEquals(ObjectManager.Wow, memory)
+				&& ReferenceEquals(BotPoi.Current, poi) && poi.Type == kind;
+			if (!Current() || me.IsFlying) { _mountedTravelProgress.Reset(); return false; }
 
-			if (!me.Mounted)
-				return false;
-
-			// Dismount if in combat and not moving
-			if (me.Combat && !me.IsMoving)
+			if (me.Combat)
 			{
-				Logging.WriteDebug("Dismount for attacker.");
-				return true;
+				bool stop = _mountedTravelProgress.ShouldStop(me, memory, guid, map,
+					Environment.TickCount64, me.Location, travelingTo, me.HealthPercent,
+					me.Rooted, me.Stunned, out string reason);
+				if (!Current()) return false;
+				if (stop)
+				{
+					Logging.WriteDebug("Mounted escape yielded to combat: {0}.", reason);
+					return Current();
+				}
 			}
+			else _mountedTravelProgress.Reset();
 
 			if (travelingTo == WoWPoint.Empty)
 				return false;
@@ -607,22 +623,23 @@ namespace Styx.Logic
 			float distance = location.Distance(travelingTo);
 
 			// If at a hotspot and there's a target nearby
-			if (BotPoi.Current.Type == PoiType.Hotspot)
+			if (kind == PoiType.Hotspot)
 			{
-				if (distance <= 100f && Targeting.Instance.FirstUnit != null)
+				if (distance <= 100f && Levelbot.Decorators.Combat.DecoratorNeedToFindTarget
+					.IsRequestedMountedTarget(Targeting.Instance.FirstUnit) && Current())
 				{
 					Logging.WriteDebug("Dismount to pull near hotspot.");
-					return true;
+					return Current();
 				}
 			}
 
 			// If at a kill POI and we're close
-			if (BotPoi.Current.Type == PoiType.Kill)
+			if (kind == PoiType.Kill)
 			{
 				if (distance <= CharacterSettings.Instance.PullDistance)
 				{
 					Logging.WriteDebug("Dismount to kill bot poi.");
-					return true;
+					return Current();
 				}
 			}
 
@@ -638,7 +655,7 @@ namespace Styx.Logic
 				if (distance <= 10f)
 				{
 					Logging.WriteDebug("Dismount for interaction.");
-					return true;
+					return Current();
 				}
 			}
 

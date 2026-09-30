@@ -1,0 +1,46 @@
+{
+  "input": "D:\\Dev\\CopilotBuddy-Evidence\\postmerge-20260929\\wholesome-dataset-audit\\ledger-ee1b4df7-base",
+  "output": "D:\\Dev\\CopilotBuddy-Evidence\\postmerge-20260929\\wholesome-dataset-audit\\ledger-ee1b4df7-final",
+  "quest_rows": 4335,
+  "source_headers": [
+    {
+      "file": "tc-ConditionMgr.h",
+      "url": "https://raw.githubusercontent.com/TrinityCore/TrinityCore/8fda442f6c30ca21a622638063ab8b28376f1b25/src/server/game/Conditions/ConditionMgr.h",
+      "revision": "8fda442f6c30ca21a622638063ab8b28376f1b25",
+      "sha256": "f6228ecf126d437349d93d19c19d5f676b79b45699afe13fe19258247da356f6",
+      "bytes": 22546
+    },
+    {
+      "file": "tc-SmartScriptMgr.h",
+      "url": "https://raw.githubusercontent.com/TrinityCore/TrinityCore/8fda442f6c30ca21a622638063ab8b28376f1b25/src/server/game/AI/SmartScripts/SmartScriptMgr.h",
+      "revision": "8fda442f6c30ca21a622638063ab8b28376f1b25",
+      "sha256": "15a3f1332fa709965e74cf00def7ab4802c237d3eb433d3b79eb23da1f4012a3",
+      "bytes": 66847
+    },
+    {
+      "file": "ac-ConditionMgr.h",
+      "url": "https://raw.githubusercontent.com/azerothcore/azerothcore-wotlk/8337a378ac325e62a6a91e00c6a5e944205e8536/src/server/game/Conditions/ConditionMgr.h",
+      "revision": "8337a378ac325e62a6a91e00c6a5e944205e8536",
+      "sha256": "bbed6e138e4f546d23569ada54d5fa99bd30d2a253800e2bd9168c8078398500",
+      "bytes": 18981
+    },
+    {
+      "file": "ac-SmartScriptMgr.h",
+      "url": "https://raw.githubusercontent.com/azerothcore/azerothcore-wotlk/8337a378ac325e62a6a91e00c6a5e944205e8536/src/server/game/AI/SmartScripts/SmartScriptMgr.h",
+      "revision": "8337a378ac325e62a6a91e00c6a5e944205e8536",
+      "sha256": "445de54fccfd5e0b17ea38887ea1ec6f99dbd1e08a28da4e9a78a447be80cf68",
+      "bytes": 83133
+    }
+  ],
+  "script_sha256": "6e1625a32958964eb556b73bc94438b6112392cb8fc48b87bb05b000b71b0d80",
+  "counts": {
+    "no-ordinary-giver-or-item-starter-in-reference": 105,
+    "missing-objective-without-credit-source-evidence": 1512,
+    "quests-with-reference-availability-conditions": 100,
+    "quests-with-direct-reference-script-joins": 238,
+    "item-started-route-not-implemented": 7,
+    "missing-objective-with-credit-source-evidence": 124
+  },
+  "classification_changes": 156,
+  "action_recipes_invented": 0
+}

@@ -1,0 +1,27 @@
+# Post-merge Wholesome and Singular audit
+
+Specification: the owner's complete 29 September 2026 post-PR51 request. This is a new audit of merged master, not continuation of the deleted PR51 branch. Baseline: `9b0c3318224be4353cf9243928f8267790b963fa`. Workspace: `D:\Dev\CopilotBuddy-PostMerge-20260929`. Runtime evidence: the existing production `CB` installation, especially `2026-09-29_1159_8924.log`, plus logs from September 22 onward. Local builds/tests, coherent publication and validated deployment are explicitly authorized; historical instructions forbidding those operations are superseded for this task. Preserve historical evidence and unrelated working-tree changes.
+
+## Execution and acceptance
+
+1. Verify the baseline and isolate the source. Read current production configuration, source provenance and all original-client evidence policies. Preserve both edited handoffs in the old PR51 checkout.
+2. Reconstruct the chronological anomaly inventory. Investigate every meaningful family against its source owner, distinguishing completed rebuilds from inert queues, successful dispatch from acknowledgement, and missing metadata from missing items. Keep raw logs and identifying runtime evidence outside the public source tree.
+3. Add deterministic regressions before repairing shared metadata, recovery ownership, rest admission, loot completion and mounted travel. Use the existing real-owner Windows/x86 fixtures wherever practical. Preserve unknown-observation, generation, actor, cursor, target and publication safeguards.
+4. Verify original build-12340 mechanics and compare Ret policies across target count, duration, movement, mana/health pressure, enemy type, PvE/PvP, talents, seals and Judgements. Read the actual runtime priorities; do not infer effectiveness from cast frequency or make unavailable spells mandatory. Use IDA only for unsettled client contracts and retain exact input hashes/receipts.
+5. Exercise Wholesome families: pickup/chains, kill/collect/use/interact/escort/gather/loot, mount/flight/taxi/water/vertical travel, combat interruption, death, full bags, missing or blacklisted targets, navigation recovery, multiple quests, delayed UI/log observations, turn-in and reselection. Existing unsupported strategies remain explicitly unsupported. Run focused, broad and runtime-compilation checks against the final source; publish the verified source and useful final CI evidence.
+6. Build and compare the exact deployment manifest, back up replacements, preserve settings and persistent quest/user data, deploy only proven host/runtime/supporting outputs and verify installed hashes. Distinguish offline validation from unperformed supervised realm acceptance. `session_finish` is reserved for completed implementation with final verification remaining.
+
+## Findings and decisions ledger
+
+- Baseline and live remote master match; the new worktree is isolated. No applicable AGENTS.md was found. The old checkout's two modified root handoffs remain untouched.
+- The September 29 log contains 386,329 lines, including 40,122 failures resolving active aura 61988. Rest and combat both use the shared aura collection. Unknown aura coverage must not be converted to absent buffs; investigate the metadata producer first.
+- The 12:56 rebuild executes, but its schedule excludes quest 10220 as already Attempting. Scheduler publication invalidation clears activation bookkeeping without relinquishing the owned recovery generation. A subsequent empty schedule prevents the ordinary activation cleanup path.
+- Wholesome's rest path calls the void immediate-use API before stopping movement, then claims food/drink use and pauses even when the API rejects moving or mounted actors. Rest admission and actual use need distinguishable results while preserving existing public void entrypoints.
+- Loot logs report a timeout only 132 ms after LOOT_OPENED. The same fallback handles failed post-event processing, so the wording does not prove a timer expiry. Audit frame disappearance and request ownership before changing blacklisting.
+- Mounted combat currently dismounts on a single stationary combat observation; hotspot proximity is a separate intentional-pull trigger. Travel grace must be bounded and must yield to real escape failure, low health and intentional work.
+- The first external baseline runner failed before any test because recursive enumeration traversed a Windows overlong profile path. The corrected runner hashes Git's explicit source list with extended-length file access; the preparation failure remains retained separately from behavioral tests.
+- IDA MCP identity was verified against the copied original `WoW.exe`: SHA256 `bf644876709c591acc17c0da8cdf1814edcc9f1e6bc109a8c0d5c38c79dc953c`, x86, image base `0x400000`. Read-only receipts are retained outside the repository.
+
+## Shared interfaces and review focus
+
+Metadata affects aura admission, mount classification and consumable classification; never paper over incomplete reads in those consumers. Recovery invalidation, loot completion and quest-log mutation all affect next-task selection; release only the exact obsolete attempt after revoking its execution permission. Rest and mounted travel both affect movement/combat admission; failed use must not claim a rest state, and escape grace must not suppress forced ground combat. Final review must exercise stale callbacks, same-key newer generations, foreign loot frames, actor/world replacement, packed-record boundaries, missing consumables, failed casts and restart state.

@@ -75,39 +75,51 @@ namespace Styx.Logic.Pathing
         {
             get
             {
+                LocalPlayer player = StyxWoW.Me;
                 WoWUnit activeMover = WoWMovement.ActiveMover;
-                if (activeMover == null) return false;
-                if (!activeMover.IsMe || StyxWoW.Me.InVehicle) return false;
+                if (player == null || activeMover == null) return false;
+                ulong guid = player.Guid;
+                uint mapId = player.MapId;
+                object memory = ObjectManager.Wow;
+                bool Current() => guid != 0 && ReferenceEquals(StyxWoW.Me, player)
+                    && player.Guid == guid && player.MapId == mapId && player.IsValid
+                    && ReferenceEquals(WoWMovement.ActiveMover, activeMover) && activeMover.IsMe
+                    && !player.InVehicle && !player.OnTaxi && !player.IsOnTransport
+                    && ReferenceEquals(ObjectManager.Wow, memory);
+                if (!Current()) return false;
 
                 // If the player is already airborne, CanFly is true by definition.
                 // This prevents RemoveLootFilter from calling CanNavigateWithin (→ CalculatePathEx)
                 // from mid-air when mount classification fails to populate FlyingMounts.
-                if (StyxWoW.Me.MovementInfo.IsFlying) return true;
+                if (player.MovementInfo.IsFlying) return Current();
 
                 // WotLK 3.3.5a: flying is ONLY valid in Outland (530) or Northrend (571).
                 // Explicit map guard prevents aerial path attempts in old world zones even when
                 // the private server's IsFlyableArea() incorrectly returns true outside those maps.
-                uint mapId = StyxWoW.Me.MapId;
                 if (mapId != 530U && mapId != 571U)
+                    return false;
+                if (!player.IsAlive || player.IsGhost || !player.IsOutdoors || player.IsSwimming)
                     return false;
 
                 // NOTE: do NOT add MovementInfo.CanFly fast-path here.
                 // That bypasses IsFlyableArea() and causes Navigator→Flightor→Navigator recursion
                 // when the player is already airborne in a no-fly zone (Dalaran etc.).
-                bool hasFlyingRiding = SpellManager.HasSpell("Expert Riding") ||
-                                       SpellManager.HasSpell("Artisan Riding") ||
-                                       SpellManager.HasSpell("Master Riding");
-                bool hasDruidFlightForm = StyxWoW.Me.Class == WoWClass.Druid &&
+                // Original-client riding spells teach SKILL_RIDING; they need not
+                // remain in the castable spellbook. TC 3.3.5 uses base skill225/300.
+                bool hasFlyingRiding = (player.GetSkill(SkillLine.Riding)?.CurrentValue ?? 0) >= 225;
+                bool hasDruidFlightForm = player.Class == WoWClass.Druid &&
                                           (SpellManager.HasSpell("Swift Flight Form") ||
                                            SpellManager.HasSpell("Flight Form"));
 
                 return (hasFlyingRiding || hasDruidFlightForm)
-                    && !StyxWoW.Me.IsSwimming
+                    && Current()
                     && Lua.GetReturnVal<bool>("return IsFlyableArea()", 0U)
+                    && Current()
                     && MountHelper.FlyingMount != null
-                    && (StyxWoW.Me.Level >= 60 || StyxWoW.Me.Class == WoWClass.Druid)
-                    && (StyxWoW.Me.Level >= 58 || StyxWoW.Me.Class != WoWClass.Druid)
-                    && (mapId != 571U || SpellManager.HasSpell("Cold Weather Flying"));
+                    && (player.Level >= 60 || player.Class == WoWClass.Druid)
+                    && (player.Level >= 58 || player.Class != WoWClass.Druid)
+                    && (mapId != 571U || SpellManager.HasSpell("Cold Weather Flying"))
+                    && Current();
             }
         }
 
@@ -119,9 +131,13 @@ namespace Styx.Logic.Pathing
         {
             get
             {
-                if (SpellManager.HasSpell("Master Riding"))  return 4.1f;
-                if (SpellManager.HasSpell("Artisan Riding")) return 3.8f;
-                if (SpellManager.HasSpell("Expert Riding"))  return 2.5f;
+                var player = StyxWoW.Me;
+                int riding = player?.GetSkill(SkillLine.Riding)?.CurrentValue ?? 0;
+                if (!ReferenceEquals(StyxWoW.Me, player)) return 0f;
+                // Conservative travel estimate: individual 310-percent mounts
+                // do not imply a later-expansion Master Riding skill.
+                if (riding >= 300) return 3.8f;
+                if (riding >= 225) return 2.5f;
                 return 0f;
             }
         }

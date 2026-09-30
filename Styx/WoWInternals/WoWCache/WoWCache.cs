@@ -323,9 +323,9 @@ namespace Styx.WoWInternals.WoWCache
             public int BookTextId;
             public int BookPages;
             public int BookStationaryId;
-            // HonorBuddy-compatible alias: some plugins expect StartQuestId
-            public int StartQuestId { get { return this.BookStationaryId; } }
-            // Note: HB decompiled had StartQuestId in ItemSparseEntry; map to BookStationaryId here
+            // Original build12340 GetContainerItemQuestInfo reads this quest
+            // identity at cache+396; stationery at+392 is a different field.
+            public int StartQuestId { get { return this.BeginQuestId; } }
             public int BeginQuestId;
             public int LockPickSkillRequired;
             public int MaterialId;

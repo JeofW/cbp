@@ -1121,6 +1121,9 @@ namespace WholesomeAQ
 
         internal void ResetRecoveryLifecycleState()
         {
+            _restingPaused = false;
+            _restStartTime = DateTime.MinValue;
+            _restTimeoutEnd = DateTime.MinValue;
             _lastReadyQuestIds = null;
             _lastReadyQuestSnapshot = null;
             _progressMonitor.Reset();
@@ -1159,6 +1162,11 @@ namespace WholesomeAQ
                         if (!_refreshGate.TryApply(lease, () =>
                         {
                             scheduler.InvalidatePublishedWork("Refreshing quest observations; waiting for vendor and quest data.");
+                            // Revocation removes execution permission first. The next
+                            // schedule must not exclude our own obsolete Attempting
+                            // generation; an empty schedule cannot reach activation cleanup.
+                            FinalizeChangedOwner(_attemptOwnership, null,
+                                QuestRecoveryManager.Instance.AbandonAttempt);
                             _lastScanTime = DateTime.Now;
                         }))
                             return false;
@@ -1256,6 +1264,8 @@ namespace WholesomeAQ
             DateTime? retryUtc = _scheduler?.EarliestRetryUtc;
             if (retryUtc.HasValue && DateTime.UtcNow >= retryUtc.Value)
                 RequestRefresh("Quest recovery retry is due; queuing one scheduler rebuild.");
+            else if (_scheduler?.NextObservationRetryUtc is DateTime observationUtc && DateTime.UtcNow >= observationUtc)
+                RequestRefresh("Idle quest observations are due for refresh; recovery quarantine deadlines remain unchanged.");
         }
 
         public override void Pulse()
@@ -1295,7 +1305,9 @@ namespace WholesomeAQ
                 // Consumables cannot start in water or an unknown liquid observation.
                 // Release only the routine rest pause so movement/air recovery is not
                 // held behind a thirty-second wait for an impossible food/drink aura.
-                bool canRestHere = !LiquidEnvironment.IsPlayerInLiquid(StyxWoW.Me);
+                bool canRestHere = !StyxWoW.Me.Dead && !StyxWoW.Me.IsGhost
+                    && !StyxWoW.Me.IsOnTransport && !StyxWoW.Me.IsFlying
+                    && !LiquidEnvironment.IsPlayerInLiquid(StyxWoW.Me);
                 if (!canRestHere)
                     _restingPaused = false;
 
@@ -1328,6 +1340,10 @@ namespace WholesomeAQ
                     }
                     else
                     {
+                        // Movement, mount state, item hydration and cooldown may have
+                        // changed since rest began. Do not hold the quest root for
+                        // thirty seconds without revisiting the actual use request.
+                        RetryRestConsumables(StyxWoW.Me, ObjectManager.Wow);
                         return;
                     }
                 }
@@ -1357,38 +1373,16 @@ namespace WholesomeAQ
                             hasImmediateThreat,
                             _settings))
                     {
-                        bool lowHealth = StyxWoW.Me.HealthPercent <= _settings.RestHealthPercent;
-                        bool lowMana = usesMana && StyxWoW.Me.ManaPercent <= _settings.RestManaPercent;
                         if (StyxWoW.Me.Dead || StyxWoW.Me.IsGhost)
                             return;
-
-                        bool usedFood = false;
-                        bool usedDrink = false;
-
-                        if (lowHealth && !StyxWoW.Me.HasAura("Food"))
-                        {
-                            var food = Consumable.GetBestFood(false);
-                            if (food != null)
-                            {
-                                Rest.FeedImmediate();
-                                usedFood = true;
-                            }
-                        }
-
-                        if (lowMana && !StyxWoW.Me.HasAura("Drink"))
-                        {
-                            var drink = Consumable.GetBestDrink(false);
-                            if (drink != null)
-                            {
-                                Rest.DrinkImmediate();
-                                usedDrink = true;
-                            }
-                        }
-
+                        var restActor = StyxWoW.Me;
+                        var restMemory = ObjectManager.Wow;
                         _restStartTime = DateTime.Now;
                         _restingPaused = true;
                         Navigator.PlayerMover.MoveStop();
-                        Log($"Rest: HP={StyxWoW.Me.HealthPercent:F0}% MP={StyxWoW.Me.ManaPercent:F0}% — paused{(usedFood ? " (ate)" : "")}{(usedDrink ? " (drank)" : "")}");
+                        RetryRestConsumables(restActor, restMemory);
+                        if (_restingPaused)
+                            Log($"Rest: HP={restActor.HealthPercent:F0}% MP={restActor.ManaPercent:F0}% — recovering; consumable requests retry while stationary.");
                         return;
                     }
                 }
@@ -1541,6 +1535,39 @@ namespace WholesomeAQ
             Log($"Previously ready quest(s) left the observed log: {string.Join(",", departed)} — triggering rescan");
             RequestRefresh("Previously ready quest left the observed log; queuing one scheduler rebuild.");
             return true;
+        }
+
+        private void RetryRestConsumables(Styx.WoWInternals.WoWObjects.LocalPlayer actor, object memory)
+        {
+            uint address = actor?.BaseAddress ?? 0;
+            bool Current() => !_stopped && _restingPaused && actor != null
+                && ReferenceEquals(StyxWoW.Me, actor) && ReferenceEquals(ObjectManager.Wow, memory)
+                && actor.BaseAddress == address && actor.IsValid && actor.IsAlive && !actor.IsGhost
+                && !actor.Combat && !actor.IsOnTransport && !actor.IsFlying
+                && !LiquidEnvironment.IsPlayerInLiquid(actor)
+                && ReferenceEquals(StyxWoW.Me, actor) && ReferenceEquals(ObjectManager.Wow, memory);
+            if (!Current()) { _restingPaused = false; return; }
+            if (actor.Mounted)
+            {
+                Styx.Logic.Mount.Dismount("Stationary rest recovery");
+                return;
+            }
+            if (actor.IsMoving)
+            {
+                Navigator.PlayerMover.MoveStop();
+                if (!Current()) { _restingPaused = false; return; }
+            }
+            if (actor.HealthPercent <= _settings.RestHealthPercent && !actor.HasAura("Food") && Current())
+            {
+                if (Rest.TryFeedImmediate() && Current())
+                    Log("Rest food request submitted; awaiting its aura.");
+            }
+            if (Current() && actor.MaxMana > 0 && actor.ManaPercent <= _settings.RestManaPercent
+                && !actor.HasAura("Drink") && Current())
+            {
+                if (Rest.TryDrinkImmediate() && Current())
+                    Log("Rest drink request submitted; awaiting its aura.");
+            }
         }
 
         private void ObserveRecoveryActivation()

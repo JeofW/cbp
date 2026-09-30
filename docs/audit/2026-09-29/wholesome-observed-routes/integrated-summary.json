@@ -1,0 +1,10 @@
+{
+  "base": "370fa0ef56fd03385a80aba14688fe7ece8753f1",
+  "source_inputs": 1945,
+  "source_stable": true,
+  "stages": 34,
+  "failed": [],
+  "game_attached": false,
+  "optimized": true,
+  "completed_utc": "2026-09-29T11:59:00.045900+00:00"
+}

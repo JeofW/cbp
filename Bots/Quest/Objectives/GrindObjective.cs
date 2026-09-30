@@ -86,8 +86,7 @@ public class GrindObjective : QuestObjective
     {
         get
         {
-            WoWDescriptorQuest data;
-            return this.Quest.GetData(out data) && (int)data.ObjectivesDone[this.Objective.Index] >= this.Objective.Count;
+            return QuestObjectiveCompletion.IsTypedNormalObjectiveComplete(this.Quest, this.Objective);
         }
     }
 

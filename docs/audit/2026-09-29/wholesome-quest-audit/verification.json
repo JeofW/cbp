@@ -1,0 +1,557 @@
+{
+  "schema": "wholesome-final-evidence-v1",
+  "utc": "2026-09-29T11:18:21.466862+00:00",
+  "source_commit": "ee1b4df7b06758988745e499554f70842f17d2e1",
+  "dataset_sha256": "f2ca79318694afaa4214fc09392e88c3d9d1eae5128f323d0d65b1b9e91a7e3f",
+  "quest_count": 4335,
+  "classification_counts": {
+    "GENERIC-PROVEN": 1811,
+    "STRATEGY-PROVEN": 0,
+    "DATA-INVALID/INCOMPLETE": 1386,
+    "UNSUPPORTED-SCRIPTED": 81,
+    "SOURCE-UNCERTAIN": 882,
+    "LIVE-ACCEPTANCE-REQUIRED": 175
+  },
+  "simulation_passed_cases": 246892,
+  "simulation_failed_cases": 0,
+  "controlled_pipeline_passes": 2561,
+  "new_focused_cases": {
+    "pickup_level": 14,
+    "admission_diagnostics": 6,
+    "live_giver_geometry": 26,
+    "eligibility_requirements": 35,
+    "failed_strategy_event_admission": 16,
+    "objective_identity": 22,
+    "gameobject_progress": 9,
+    "collected_item_lifecycle": 6,
+    "diagnostic_boundaries": 8
+  },
+  "new_focused_case_total": 142,
+  "integrated_stage_count": 34,
+  "integrated_stage_results": [
+    {
+      "stage": "QuestRecoveryRegressionTests-build",
+      "exit": 0,
+      "command": [
+        "dotnet",
+        "build",
+        "Tools/QuestRecoveryRegressionTests/QuestRecoveryRegressionTests.csproj",
+        "-c",
+        "Release",
+        "-p:Platform=x86",
+        "-p:PlatformTarget=x86",
+        "-v",
+        "quiet"
+      ],
+      "started_utc": "2026-09-29T11:08:09.087090+00:00",
+      "log_sha256": "f8a08e5775f4a0426f6f932cf4b639ae37e65772c12298761ebb4e09c8a0fdda",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "stage": "QuestRecoveryRegressionTests-run",
+      "exit": 0,
+      "command": [
+        "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+        "D:\\Dev\\CopilotBuddy-PostMerge-20260929\\Tools\\QuestRecoveryRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\QuestRecoveryRegressionTests.dll"
+      ],
+      "started_utc": "2026-09-29T11:08:13.410156+00:00",
+      "log_sha256": "52133963f5ccfd8249923636fb091d6c9d0353e7ba88362be39379b947eefce3",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "stage": "SingularCompatibility",
+      "exit": 0,
+      "command": [
+        "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+        "D:\\Dev\\CopilotBuddy-PostMerge-20260929\\Tools\\QuestRecoveryRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\QuestRecoveryRegressionTests.dll",
+        "--routine-compatibility"
+      ],
+      "started_utc": "2026-09-29T11:08:23.651758+00:00",
+      "log_sha256": "d1103608bf694def4c9fe93ed56ece8faa6d783d47f27f86a9b217c25d4a4f58",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "stage": "WholesomeQuestRecoveryRegressionTests-build",
+      "exit": 0,
+      "command": [
+        "dotnet",
+        "build",
+        "Tools/WholesomeQuestRecoveryRegressionTests/WholesomeQuestRecoveryRegressionTests.csproj",
+        "-c",
+        "Release",
+        "-p:Platform=x86",
+        "-p:PlatformTarget=x86",
+        "-v",
+        "quiet"
+      ],
+      "started_utc": "2026-09-29T11:08:29.365231+00:00",
+      "log_sha256": "d8103d988ef819ba3a13d3b5de244857520d69c2d9dadb945f07574903908b21",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "stage": "WholesomeQuestRecoveryRegressionTests-run",
+      "exit": 0,
+      "command": [
+        "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+        "D:\\Dev\\CopilotBuddy-PostMerge-20260929\\Tools\\WholesomeQuestRecoveryRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\WholesomeQuestRecoveryRegressionTests.dll"
+      ],
+      "started_utc": "2026-09-29T11:08:33.242056+00:00",
+      "log_sha256": "a290f9d9de5deb51b624019587d5eee1e3aff9f69214cc2f945be2f2785dbc27",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "stage": "QuestRecoveryAdapterRegressionTests-build",
+      "exit": 0,
+      "command": [
+        "dotnet",
+        "build",
+        "Tools/QuestRecoveryAdapterRegressionTests/QuestRecoveryAdapterRegressionTests.csproj",
+        "-c",
+        "Release",
+        "-p:Platform=x86",
+        "-p:PlatformTarget=x86",
+        "-v",
+        "quiet"
+      ],
+      "started_utc": "2026-09-29T11:10:21.082306+00:00",
+      "log_sha256": "b3a2f8ae8f6aa7d7dbd85d960d57ff8ea0fd061371b49bbf5d6575ea709edc30",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "stage": "QuestRecoveryAdapterRegressionTests-run",
+      "exit": 0,
+      "command": [
+        "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+        "D:\\Dev\\CopilotBuddy-PostMerge-20260929\\Tools\\QuestRecoveryAdapterRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\QuestRecoveryAdapterRegressionTests.dll"
+      ],
+      "started_utc": "2026-09-29T11:10:23.696417+00:00",
+      "log_sha256": "7f97d276a77dd4735dfc28b0204f2124401614d74df9c8bc022851f1d2526a55",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "stage": "QuestPickupPolicyRegressionTests-build",
+      "exit": 0,
+      "command": [
+        "dotnet",
+        "build",
+        "Tools/QuestPickupPolicyRegressionTests/QuestPickupPolicyRegressionTests.csproj",
+        "-c",
+        "Release",
+        "-p:Platform=x86",
+        "-p:PlatformTarget=x86",
+        "-v",
+        "quiet"
+      ],
+      "started_utc": "2026-09-29T11:10:24.275708+00:00",
+      "log_sha256": "6e2770efe92b6d56d39ce0ed13abc8301af5d4ef172ab5c65501890c4ec2bbab",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "stage": "QuestPickupPolicyRegressionTests-run",
+      "exit": 0,
+      "command": [
+        "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+        "D:\\Dev\\CopilotBuddy-PostMerge-20260929\\Tools\\QuestPickupPolicyRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\QuestPickupPolicyRegressionTests.dll"
+      ],
+      "started_utc": "2026-09-29T11:10:26.784820+00:00",
+      "log_sha256": "d16e282042d0c21bf93f3eef3bd402299bdbab3571c7e79d25854918663019a3",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "stage": "VendorCoreRegressionTests-build",
+      "exit": 0,
+      "command": [
+        "dotnet",
+        "build",
+        "Tools/VendorCoreRegressionTests/VendorCoreRegressionTests.csproj",
+        "-c",
+        "Release",
+        "-p:Platform=x86",
+        "-p:PlatformTarget=x86",
+        "-v",
+        "quiet"
+      ],
+      "started_utc": "2026-09-29T11:10:26.913795+00:00",
+      "log_sha256": "bd1430a0b833f9bdf843a30d8b3b8d8d90239f6bbe5b6d3a53e1bd4e20e5c20b",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "stage": "VendorCoreRegressionTests-run",
+      "exit": 0,
+      "command": [
+        "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+        "D:\\Dev\\CopilotBuddy-PostMerge-20260929\\Tools\\VendorCoreRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\VendorCoreRegressionTests.dll"
+      ],
+      "started_utc": "2026-09-29T11:10:29.465302+00:00",
+      "log_sha256": "8df45df483ab594addcd91ec8db87835545a203aabb472923567161360789b49",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "stage": "NativeContractRegressionTests-build",
+      "exit": 0,
+      "command": [
+        "dotnet",
+        "build",
+        "Tools/NativeContractRegressionTests/NativeContractRegressionTests.csproj",
+        "-c",
+        "Release",
+        "-p:Platform=x86",
+        "-p:PlatformTarget=x86",
+        "-v",
+        "quiet"
+      ],
+      "started_utc": "2026-09-29T11:10:29.734511+00:00",
+      "log_sha256": "7d4ad2be25294785e4c70abb9af2ad4dd0ba477a00b088917bca724637c3959a",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "stage": "NativeContractRegressionTests-run",
+      "exit": 0,
+      "command": [
+        "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+        "D:\\Dev\\CopilotBuddy-PostMerge-20260929\\Tools\\NativeContractRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\NativeContractRegressionTests.dll"
+      ],
+      "started_utc": "2026-09-29T11:10:32.232274+00:00",
+      "log_sha256": "b7fab9accb52bf6b064953c97271b8d792ab396229a2d15d6afbcec6a33bd8aa",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "stage": "ShutdownBoundaryRegressionTests-build",
+      "exit": 0,
+      "command": [
+        "dotnet",
+        "build",
+        "Tools/ShutdownBoundaryRegressionTests/ShutdownBoundaryRegressionTests.csproj",
+        "-c",
+        "Release",
+        "-p:Platform=x86",
+        "-p:PlatformTarget=x86",
+        "-v",
+        "quiet"
+      ],
+      "started_utc": "2026-09-29T11:10:32.621929+00:00",
+      "log_sha256": "9721a41879fa52d0c935e9d47c8dbac9762db8667e8dcd1092795f7c74756f9b",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "stage": "ShutdownBoundaryRegressionTests-run",
+      "exit": 0,
+      "command": [
+        "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+        "D:\\Dev\\CopilotBuddy-PostMerge-20260929\\Tools\\ShutdownBoundaryRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\ShutdownBoundaryRegressionTests.dll"
+      ],
+      "started_utc": "2026-09-29T11:10:35.154405+00:00",
+      "log_sha256": "be253e2c87c749b18a05e1b4569c90e8ce36ad7a56b26951e620cd89211ae791",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "stage": "ElevatorSafetyRegressionTests-build",
+      "exit": 0,
+      "command": [
+        "dotnet",
+        "build",
+        "Tools/ElevatorSafetyRegressionTests/ElevatorSafetyRegressionTests.csproj",
+        "-c",
+        "Release",
+        "-p:Platform=x86",
+        "-p:PlatformTarget=x86",
+        "-v",
+        "quiet"
+      ],
+      "started_utc": "2026-09-29T11:10:35.359471+00:00",
+      "log_sha256": "abaa11d582b334cd94f1205c125fd21f0e3bd423f31c4728b7bc7f6f838051b4",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "stage": "ElevatorSafetyRegressionTests-run",
+      "exit": 0,
+      "command": [
+        "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+        "D:\\Dev\\CopilotBuddy-PostMerge-20260929\\Tools\\ElevatorSafetyRegressionTests\\bin\\x86\\Release\\net10.0\\ElevatorSafetyRegressionTests.dll"
+      ],
+      "started_utc": "2026-09-29T11:10:37.120863+00:00",
+      "log_sha256": "34f1ff6700b0e015db8f3b70e93d06a1766c29c17336152bb37ade309b7b261b",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "stage": "PaladinDecisionRegressionTests-build",
+      "exit": 0,
+      "command": [
+        "dotnet",
+        "build",
+        "Tools/PaladinDecisionRegressionTests/PaladinDecisionRegressionTests.csproj",
+        "-c",
+        "Release",
+        "-p:Platform=x86",
+        "-p:PlatformTarget=x86",
+        "-v",
+        "quiet"
+      ],
+      "started_utc": "2026-09-29T11:10:37.248329+00:00",
+      "log_sha256": "38c7fece60dac4944eff55bee4586631668d677eb838f55da615b545227e82fa",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "stage": "PaladinDecisionRegressionTests-run",
+      "exit": 0,
+      "command": [
+        "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+        "D:\\Dev\\CopilotBuddy-PostMerge-20260929\\Tools\\PaladinDecisionRegressionTests\\bin\\x86\\Release\\net10.0\\PaladinDecisionRegressionTests.dll"
+      ],
+      "started_utc": "2026-09-29T11:10:39.056333+00:00",
+      "log_sha256": "5d9c03f6982fa23e6e6ba78d29924328aee6afb2beaf0e0115e1c81c506e5d61",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "stage": "GroupEngagementRegressionTests-build",
+      "exit": 0,
+      "command": [
+        "dotnet",
+        "build",
+        "Tools/GroupEngagementRegressionTests/GroupEngagementRegressionTests.csproj",
+        "-c",
+        "Release",
+        "-p:Platform=x86",
+        "-p:PlatformTarget=x86",
+        "-v",
+        "quiet"
+      ],
+      "started_utc": "2026-09-29T11:10:39.321002+00:00",
+      "log_sha256": "c7ad98193d83fa2f6b2efcda78bafd1d848b55b57b2c6e7731d74602d5b705ad",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "stage": "GroupEngagementRegressionTests-run",
+      "exit": 0,
+      "command": [
+        "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+        "D:\\Dev\\CopilotBuddy-PostMerge-20260929\\Tools\\GroupEngagementRegressionTests\\bin\\x86\\Release\\net10.0\\GroupEngagementRegressionTests.dll"
+      ],
+      "started_utc": "2026-09-29T11:10:41.084249+00:00",
+      "log_sha256": "756f8be7fdbaca4227b2d724ee5599a4088360b5fdd9fe1f49440c9378d04e46",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "stage": "PaladinSupportRegressionTests-build",
+      "exit": 0,
+      "command": [
+        "dotnet",
+        "build",
+        "Tools/PaladinSupportRegressionTests/PaladinSupportRegressionTests.csproj",
+        "-c",
+        "Release",
+        "-p:Platform=x86",
+        "-p:PlatformTarget=x86",
+        "-v",
+        "quiet"
+      ],
+      "started_utc": "2026-09-29T11:10:41.201396+00:00",
+      "log_sha256": "a95455ee23a962ff4e6db82515b875241e6f638c90434172aaa493e0f7ec5955",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "stage": "PaladinSupportRegressionTests-run",
+      "exit": 0,
+      "command": [
+        "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+        "D:\\Dev\\CopilotBuddy-PostMerge-20260929\\Tools\\PaladinSupportRegressionTests\\bin\\x86\\Release\\net10.0\\PaladinSupportRegressionTests.dll"
+      ],
+      "started_utc": "2026-09-29T11:10:42.962826+00:00",
+      "log_sha256": "c2b7fa2ffd74850a5810efe3f19643b97f14d658ba06af71b86ed1d3038a2800",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "stage": "WholesomeSaleRegressionTests-build",
+      "exit": 0,
+      "command": [
+        "dotnet",
+        "build",
+        "Tools/WholesomeSaleRegressionTests/WholesomeSaleRegressionTests.csproj",
+        "-c",
+        "Release",
+        "-p:Platform=x86",
+        "-p:PlatformTarget=x86",
+        "-v",
+        "quiet"
+      ],
+      "started_utc": "2026-09-29T11:10:43.241219+00:00",
+      "log_sha256": "91355c1118890f8133ca8dd54d60133e0b6d0ec300129bec0148f3477d352983",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "stage": "WholesomeSaleRegressionTests-run",
+      "exit": 0,
+      "command": [
+        "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+        "D:\\Dev\\CopilotBuddy-PostMerge-20260929\\Tools\\WholesomeSaleRegressionTests\\bin\\x86\\Release\\net10.0\\WholesomeSaleRegressionTests.dll"
+      ],
+      "started_utc": "2026-09-29T11:10:45.087657+00:00",
+      "log_sha256": "8df0ee9e1bba74fb498a43918596dc296315e8a471026aa7d5ae9b006e8acd13",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "stage": "QuestLogObservationRegressionTests-build",
+      "exit": 0,
+      "command": [
+        "dotnet",
+        "build",
+        "Tools/QuestLogObservationRegressionTests/QuestLogObservationRegressionTests.csproj",
+        "-c",
+        "Release",
+        "-p:Platform=x86",
+        "-p:PlatformTarget=x86",
+        "-v",
+        "quiet"
+      ],
+      "started_utc": "2026-09-29T11:10:45.206713+00:00",
+      "log_sha256": "6bd8111f29cbf3108320458f563a663729d251c34050c97b3a30a41225171c8c",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "stage": "QuestLogObservationRegressionTests-run",
+      "exit": 0,
+      "command": [
+        "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+        "D:\\Dev\\CopilotBuddy-PostMerge-20260929\\Tools\\QuestLogObservationRegressionTests\\bin\\x86\\Release\\net10.0\\QuestLogObservationRegressionTests.dll"
+      ],
+      "started_utc": "2026-09-29T11:10:47.318090+00:00",
+      "log_sha256": "4cbc7b3dee9c4ef9067d625ad41a7b105e1f055d2261b0c027314966859b4077",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "stage": "QuestCompletionOwnerRegressionTests-build",
+      "exit": 0,
+      "command": [
+        "dotnet",
+        "build",
+        "Tools/QuestCompletionOwnerRegressionTests/QuestCompletionOwnerRegressionTests.csproj",
+        "-c",
+        "Release",
+        "-p:Platform=x86",
+        "-p:PlatformTarget=x86",
+        "-v",
+        "quiet"
+      ],
+      "started_utc": "2026-09-29T11:10:47.518761+00:00",
+      "log_sha256": "69d572ee9ee0bbc99dce0c1e11be37fc73ccd1a4915f3c5bf442090972d62f96",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "stage": "QuestCompletionOwnerRegressionTests-run",
+      "exit": 0,
+      "command": [
+        "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+        "D:\\Dev\\CopilotBuddy-PostMerge-20260929\\Tools\\QuestCompletionOwnerRegressionTests\\bin\\x86\\Release\\net10.0\\QuestCompletionOwnerRegressionTests.dll",
+        "D:\\Dev\\CopilotBuddy-Evidence\\postmerge-20260929\\wholesome-final-integrated-ee1b4df7-20260929\\completion-cases.json",
+        "D:\\Dev\\CopilotBuddy-Evidence\\postmerge-20260929\\wholesome-final-integrated-ee1b4df7-20260929\\source-identity.json"
+      ],
+      "started_utc": "2026-09-29T11:10:49.319694+00:00",
+      "log_sha256": "f2064297e7622362c58b7c2e74e770374db1386f7f7cbb48a16c4797dc44960a",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "stage": "ObservationBoundary-extract",
+      "exit": 0,
+      "command": [
+        "D:\\Dev\\CopilotBuddy-Evidence\\postmerge-20260929\\wholesome-audit-venv\\Scripts\\python.exe",
+        "Tools/QuestObservationBoundaryRegressionTests/extract_owners.py",
+        "--repo",
+        "D:\\Dev\\CopilotBuddy-PostMerge-20260929",
+        "--ref",
+        "ee1b4df7b06758988745e499554f70842f17d2e1",
+        "--out",
+        "D:\\Dev\\CopilotBuddy-PostMerge-20260929\\Tools\\QuestObservationBoundaryRegressionTests\\Generated"
+      ],
+      "started_utc": "2026-09-29T11:10:49.480854+00:00",
+      "log_sha256": "433078fdfa9582b5e8de90eb93462829c5d8b065667f59cd6526e3fb2f76fe51",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "stage": "QuestObservationBoundaryRegressionTests-build",
+      "exit": 0,
+      "command": [
+        "dotnet",
+        "build",
+        "Tools/QuestObservationBoundaryRegressionTests/QuestObservationBoundaryRegressionTests.csproj",
+        "-c",
+        "Release",
+        "-p:Platform=x86",
+        "-p:PlatformTarget=x86",
+        "-v",
+        "quiet"
+      ],
+      "started_utc": "2026-09-29T11:10:49.971603+00:00",
+      "log_sha256": "1ee225c942adb89fa4456e61d5210de25c52f68e7f7029c7c4a2bba288a09044",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "stage": "QuestObservationBoundaryRegressionTests-run",
+      "exit": 0,
+      "command": [
+        "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+        "D:\\Dev\\CopilotBuddy-PostMerge-20260929\\Tools\\QuestObservationBoundaryRegressionTests\\bin\\x86\\Release\\net10.0\\QuestObservationBoundaryRegressionTests.dll",
+        "D:\\Dev\\CopilotBuddy-Evidence\\postmerge-20260929\\wholesome-final-integrated-ee1b4df7-20260929\\boundary-cases.json"
+      ],
+      "started_utc": "2026-09-29T11:10:51.751889+00:00",
+      "log_sha256": "f587ede1f0e97889d86552f08b7c902b013a6fa7373d49ea63cfb4a584447825",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "stage": "Host",
+      "exit": 0,
+      "command": [
+        "dotnet",
+        "build",
+        "CopilotBuddy.csproj",
+        "-c",
+        "Release",
+        "-p:Platform=x86",
+        "-p:PlatformTarget=x86",
+        "-v",
+        "quiet"
+      ],
+      "started_utc": "2026-09-29T11:10:51.946878+00:00",
+      "log_sha256": "a9357018e340c78031d58dd4b943e028753ea81a495893f5458cfeea4e4e5474",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "stage": "Analyzers",
+      "exit": 0,
+      "command": [
+        "D:\\Dev\\CopilotBuddy-Evidence\\postmerge-20260929\\wholesome-audit-venv\\Scripts\\python.exe",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "Tools/EvidenceAudit",
+        "-p",
+        "test_*.py",
+        "-v"
+      ],
+      "started_utc": "2026-09-29T11:10:54.235421+00:00",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "6a701dd7a8c04ae7434bfbe98a6f325f760aa07a474b74e44c398748b40007a6"
+    }
+  ],
+  "source_input_count": 1938,
+  "analyzer_tests": {
+    "run": 117,
+    "passed": 116,
+    "skipped": 1,
+    "skip_reason": "OS does not permit symlink creation"
+  },
+  "candidate": {
+    "path": "D:\\Dev\\CopilotBuddy-Wholesome-Candidate-ee1b4df7",
+    "manifest_sha256": "fab20790402995fa8784f7649dac8ddc6c04ca1ae8d0c9b303c66ace09ff1059",
+    "host_sha256": "a49e9f2f8de1ecc9ebc3dbd1e433a0659e8848939a15b61011b57c362e1022c4",
+    "runtime_components_compiled": 13,
+    "rid": "win-x86",
+    "self_contained": true
+  },
+  "production_deployed": false,
+  "live_quest_completions_proven": 0,
+  "original_visible_npc_attribution": "not recoverable from the old log",
+  "independent_review": "not performed; inline source review and regression evidence are recorded",
+  "ledger_sha256": "60581fe5913cf83c39b53a9b9f4f15fd6c23ad9c668e312cd47fc8631468d726",
+  "ledger_gzip_sha256": "2a366f07584ec2266b08c45b405eb44f2424aff0d8e15f9c57acecd07860b562"
+}

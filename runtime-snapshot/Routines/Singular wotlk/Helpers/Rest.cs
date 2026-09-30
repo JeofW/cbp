@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using System.Threading;
 
 using CommonBehaviors.Actions;
@@ -117,7 +117,7 @@ namespace Singular.Helpers
                                 RestConsumablePolicy.CanDrink(CharacterSettings.Instance.DrinkAmount)) &&
                             !StyxWoW.Me.CurrentMap.IsBattleground,
                             new Sequence(
-                                new Action(ret => Logger.Write("We have no food/drink. Waiting to recover our health/mana back")),
+                                new Action(ret => Logger.Write("Waiting for health/mana recovery; no food/drink action was admitted this pulse.")),
                                 new WaitContinue(3, ret => StyxWoW.Me.Combat || (StyxWoW.Me.HealthPercent >= 85 && StyxWoW.Me.ManaPercent >= 85), new ActionAlwaysSucceed())))
                         ));
         }

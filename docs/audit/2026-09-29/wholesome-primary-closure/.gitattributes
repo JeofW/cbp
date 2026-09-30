@@ -1,0 +1,4 @@
+# Preserve retained evidence bytes, including native Windows line endings.
+# A carriage return belonging to CRLF is not trailing data whitespace.
+*.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+*.gz -text

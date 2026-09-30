@@ -63,6 +63,71 @@ internal static class QuestPublicationRegressionTests
                 Check(ProfileManager.XmlLocation == f.Output && ProfileManager.CurrentProfile != null,
                     "normal DoScan did not load its generated output");
             })),
+            ("refresh releases its obsolete attempt before materializing the next profile", () => WithFixture(f =>
+            {
+                var scheduler = f.Scheduler(f.Output);
+                Check(scheduler.ScanAndRefresh(f.Player), "initial profile was not built");
+                var bot = Bot(scheduler);
+                var ownership = (WholesomeAttemptOwnership)typeof(WholesomeAutoQuest).GetField("_attemptOwnership", Hidden)!.GetValue(bot)!;
+                var key = QuestRecoveryKey.ForNpc(867, QuestRecoveryStage.TurnIn, 77);
+                var context = (QuestRecoveryContext)typeof(QuestScheduler).GetField("_lastRecoveryContext", Hidden)!.GetValue(scheduler)!;
+                var manager = QuestRecoveryManager.Instance;
+                var claim = manager.TryBeginAttempt(key, context);
+                Check(claim.MayAttempt && claim.AttemptGeneration > 0, "initial attempt was not claimed");
+                ownership.Begin(new object(), key, claim);
+                try
+                {
+                    Invoke(bot, "DoScan", scheduler, Lease(bot));
+                    Generated(f, scheduler);
+                    Check(!manager.OwnsAttempt(key, claim.AttemptGeneration) && !ownership.TryGet(out _, out _),
+                        "obsolete attempt survived refresh and excluded the bot's own quest");
+                }
+                finally { manager.AbandonAttempt(key, claim.AttemptGeneration); Gate(bot).Stop(); }
+            })),
+            ("refresh cannot abandon a newer same-key attempt owned elsewhere", () => WithFixture(f =>
+            {
+                var scheduler = f.Scheduler(f.Output);
+                Check(scheduler.ScanAndRefresh(f.Player), "initial profile was not built");
+                var bot = Bot(scheduler);
+                var ownership = (WholesomeAttemptOwnership)typeof(WholesomeAutoQuest).GetField("_attemptOwnership", Hidden)!.GetValue(bot)!;
+                var key = QuestRecoveryKey.ForNpc(867, QuestRecoveryStage.TurnIn, 77);
+                var context = (QuestRecoveryContext)typeof(QuestScheduler).GetField("_lastRecoveryContext", Hidden)!.GetValue(scheduler)!;
+                var manager = QuestRecoveryManager.Instance;
+                var old = manager.TryBeginAttempt(key, context);
+                Check(old.MayAttempt, "old attempt was not claimed");
+                ownership.Begin(new object(), key, old);
+                Check(manager.AbandonAttempt(key, old.AttemptGeneration), "old attempt was not replaced");
+                var current = manager.TryBeginAttempt(key, context);
+                Check(current.MayAttempt && current.AttemptGeneration != old.AttemptGeneration, "replacement generation was not claimed");
+                try
+                {
+                    Invoke(bot, "DoScan", scheduler, Lease(bot));
+                    Check(manager.OwnsAttempt(key, current.AttemptGeneration), "refresh abandoned another owner's newer generation");
+                    Check(!ownership.TryGet(out _, out _), "obsolete local ownership was retained after refresh");
+                }
+                finally { manager.AbandonAttempt(key, current.AttemptGeneration); Gate(bot).Stop(); }
+            })),
+            ("an obsolete refresh lease cannot release current recovery ownership", () => WithFixture(f =>
+            {
+                var scheduler = f.Scheduler(f.Output);
+                Check(scheduler.ScanAndRefresh(f.Player), "initial profile was not built");
+                var bot = Bot(scheduler); var lease = Lease(bot);
+                var ownership = (WholesomeAttemptOwnership)typeof(WholesomeAutoQuest).GetField("_attemptOwnership", Hidden)!.GetValue(bot)!;
+                var key = QuestRecoveryKey.ForNpc(867, QuestRecoveryStage.TurnIn, 77);
+                var context = (QuestRecoveryContext)typeof(QuestScheduler).GetField("_lastRecoveryContext", Hidden)!.GetValue(scheduler)!;
+                var manager = QuestRecoveryManager.Instance;
+                var claim = manager.TryBeginAttempt(key, context);
+                Check(claim.MayAttempt, "current attempt was not claimed");
+                ownership.Begin(new object(), key, claim);
+                Gate(bot).Stop(); Gate(bot).Start();
+                try
+                {
+                    Invoke(bot, "DoScan", scheduler, lease);
+                    Check(manager.OwnsAttempt(key, claim.AttemptGeneration) && ownership.TryGet(out _, out _),
+                        "obsolete refresh changed current recovery ownership");
+                }
+                finally { manager.AbandonAttempt(key, claim.AttemptGeneration); Gate(bot).Stop(); }
+            })),
             ("host rejects a generated profile outside the current player level", () => WithFixture(f =>
             {
                 var scheduler = f.Scheduler(f.Output);

@@ -11,6 +11,12 @@ using Styx.WoWInternals;
 using Styx.WoWInternals.WoWObjects;
 using System.Globalization;
 
+var nativeBoundary = System.Reflection.Assembly.Load("fasmdll_managed");
+if (!nativeBoundary.GetCustomAttributes(typeof(System.Reflection.AssemblyMetadataAttribute), false)
+    .Cast<System.Reflection.AssemblyMetadataAttribute>().Any(value =>
+        value.Key == "OfflineBoundary" && value.Value == "deny-native-dispatch"))
+    throw new InvalidOperationException("Offline recovery tests require the existing deny-native-dispatch assembler boundary.");
+
 if (args.Contains("--routine-compatibility"))
 {
     try { RoutineCompilationRegression.Run(); }

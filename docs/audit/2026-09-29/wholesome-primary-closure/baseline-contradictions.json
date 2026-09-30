@@ -1,0 +1,2362 @@
+{
+  "source_review_sha256": "1a6b41e5123a8f14203748c9582481c11b37bb8e86333df80eb29e3ad5848a7d",
+  "reopen": [
+    {
+      "quest_id": 1038,
+      "reason": "New pinned primary SQL requires return of the acceptance-supplied item; old model omitted that independent item requirement.",
+      "primary_template_line": 4405,
+      "primary_addon_line": 4451,
+      "source_revision": "95657f54779467effea8a1749a61ff93abc1d707",
+      "source_sql_sha256": "e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9",
+      "item_id": 5521,
+      "required_count": 1,
+      "provided_count": 1
+    },
+    {
+      "quest_id": 5901,
+      "reason": "New pinned primary SQL requires return of the acceptance-supplied item; old model omitted that independent item requirement.",
+      "primary_template_line": 4406,
+      "primary_addon_line": 4451,
+      "source_revision": "95657f54779467effea8a1749a61ff93abc1d707",
+      "source_sql_sha256": "e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9",
+      "item_id": 15042,
+      "required_count": 1,
+      "provided_count": 1
+    },
+    {
+      "quest_id": 5903,
+      "reason": "New pinned primary SQL requires return of the acceptance-supplied item; old model omitted that independent item requirement.",
+      "primary_template_line": 4406,
+      "primary_addon_line": 4451,
+      "source_revision": "95657f54779467effea8a1749a61ff93abc1d707",
+      "source_sql_sha256": "e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9",
+      "item_id": 15042,
+      "required_count": 1,
+      "provided_count": 1
+    },
+    {
+      "quest_id": 6381,
+      "reason": "New pinned primary SQL requires return of the acceptance-supplied item; old model omitted that independent item requirement.",
+      "primary_template_line": 4407,
+      "primary_addon_line": 4451,
+      "source_revision": "95657f54779467effea8a1749a61ff93abc1d707",
+      "source_sql_sha256": "e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9",
+      "item_id": 16208,
+      "required_count": 1,
+      "provided_count": 1
+    },
+    {
+      "quest_id": 8889,
+      "reason": "New pinned primary SQL requires return of the acceptance-supplied item; old model omitted that independent item requirement.",
+      "primary_template_line": 4407,
+      "primary_addon_line": 4451,
+      "source_revision": "95657f54779467effea8a1749a61ff93abc1d707",
+      "source_sql_sha256": "e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9",
+      "item_id": 24337,
+      "required_count": 1,
+      "provided_count": 1
+    },
+    {
+      "quest_id": 9164,
+      "reason": "New pinned primary SQL requires return of the acceptance-supplied item; old model omitted that independent item requirement.",
+      "primary_template_line": 4408,
+      "primary_addon_line": 4451,
+      "source_revision": "95657f54779467effea8a1749a61ff93abc1d707",
+      "source_sql_sha256": "e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9",
+      "item_id": 22628,
+      "required_count": 1,
+      "provided_count": 1
+    },
+    {
+      "quest_id": 9391,
+      "reason": "New pinned primary SQL requires return of the acceptance-supplied item; old model omitted that independent item requirement.",
+      "primary_template_line": 4408,
+      "primary_addon_line": 4451,
+      "source_revision": "95657f54779467effea8a1749a61ff93abc1d707",
+      "source_sql_sha256": "e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9",
+      "item_id": 23480,
+      "required_count": 1,
+      "provided_count": 1
+    },
+    {
+      "quest_id": 9531,
+      "reason": "New pinned primary SQL requires return of the acceptance-supplied item; old model omitted that independent item requirement.",
+      "primary_template_line": 4408,
+      "primary_addon_line": 4451,
+      "source_revision": "95657f54779467effea8a1749a61ff93abc1d707",
+      "source_sql_sha256": "e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9",
+      "item_id": 23792,
+      "required_count": 1,
+      "provided_count": 1
+    },
+    {
+      "quest_id": 9849,
+      "reason": "New pinned primary SQL requires return of the acceptance-supplied item; old model omitted that independent item requirement.",
+      "primary_template_line": 4408,
+      "primary_addon_line": 4451,
+      "source_revision": "95657f54779467effea8a1749a61ff93abc1d707",
+      "source_sql_sha256": "e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9",
+      "item_id": 24501,
+      "required_count": 1,
+      "provided_count": 1
+    },
+    {
+      "quest_id": 9931,
+      "reason": "New pinned primary SQL requires return of the acceptance-supplied item; old model omitted that independent item requirement.",
+      "primary_template_line": 4408,
+      "primary_addon_line": 4451,
+      "source_revision": "95657f54779467effea8a1749a61ff93abc1d707",
+      "source_sql_sha256": "e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9",
+      "item_id": 25555,
+      "required_count": 1,
+      "provided_count": 1
+    },
+    {
+      "quest_id": 9932,
+      "reason": "New pinned primary SQL requires return of the acceptance-supplied item; old model omitted that independent item requirement.",
+      "primary_template_line": 4408,
+      "primary_addon_line": 4451,
+      "source_revision": "95657f54779467effea8a1749a61ff93abc1d707",
+      "source_sql_sha256": "e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9",
+      "item_id": 25658,
+      "required_count": 1,
+      "provided_count": 1
+    },
+    {
+      "quest_id": 10047,
+      "reason": "New pinned primary SQL requires return of the acceptance-supplied item; old model omitted that independent item requirement.",
+      "primary_template_line": 4408,
+      "primary_addon_line": 4451,
+      "source_revision": "95657f54779467effea8a1749a61ff93abc1d707",
+      "source_sql_sha256": "e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9",
+      "item_id": 25889,
+      "required_count": 1,
+      "provided_count": 1
+    },
+    {
+      "quest_id": 10221,
+      "reason": "New pinned primary SQL requires return of the acceptance-supplied item; old model omitted that independent item requirement.",
+      "primary_template_line": 4408,
+      "primary_addon_line": 4451,
+      "source_revision": "95657f54779467effea8a1749a61ff93abc1d707",
+      "source_sql_sha256": "e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9",
+      "item_id": 29429,
+      "required_count": 1,
+      "provided_count": 1
+    },
+    {
+      "quest_id": 10427,
+      "reason": "New pinned primary SQL requires return of the acceptance-supplied item; old model omitted that independent item requirement.",
+      "primary_template_line": 4408,
+      "primary_addon_line": 4451,
+      "source_revision": "95657f54779467effea8a1749a61ff93abc1d707",
+      "source_sql_sha256": "e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9",
+      "item_id": 29817,
+      "required_count": 1,
+      "provided_count": 1
+    },
+    {
+      "quest_id": 10457,
+      "reason": "New pinned primary SQL requires return of the acceptance-supplied item; old model omitted that independent item requirement.",
+      "primary_template_line": 4409,
+      "primary_addon_line": 4451,
+      "source_revision": "95657f54779467effea8a1749a61ff93abc1d707",
+      "source_sql_sha256": "e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9",
+      "item_id": 29952,
+      "required_count": 1,
+      "provided_count": 1
+    },
+    {
+      "quest_id": 10458,
+      "reason": "New pinned primary SQL requires return of the acceptance-supplied item; old model omitted that independent item requirement.",
+      "primary_template_line": 4409,
+      "primary_addon_line": 4451,
+      "source_revision": "95657f54779467effea8a1749a61ff93abc1d707",
+      "source_sql_sha256": "e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9",
+      "item_id": 30094,
+      "required_count": 1,
+      "provided_count": 1
+    },
+    {
+      "quest_id": 10480,
+      "reason": "New pinned primary SQL requires return of the acceptance-supplied item; old model omitted that independent item requirement.",
+      "primary_template_line": 4409,
+      "primary_addon_line": 4451,
+      "source_revision": "95657f54779467effea8a1749a61ff93abc1d707",
+      "source_sql_sha256": "e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9",
+      "item_id": 30094,
+      "required_count": 1,
+      "provided_count": 1
+    },
+    {
+      "quest_id": 10481,
+      "reason": "New pinned primary SQL requires return of the acceptance-supplied item; old model omitted that independent item requirement.",
+      "primary_template_line": 4409,
+      "primary_addon_line": 4451,
+      "source_revision": "95657f54779467effea8a1749a61ff93abc1d707",
+      "source_sql_sha256": "e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9",
+      "item_id": 30094,
+      "required_count": 1,
+      "provided_count": 1
+    },
+    {
+      "quest_id": 10506,
+      "reason": "New pinned primary SQL requires return of the acceptance-supplied item; old model omitted that independent item requirement.",
+      "primary_template_line": 4409,
+      "primary_addon_line": 4451,
+      "source_revision": "95657f54779467effea8a1749a61ff93abc1d707",
+      "source_sql_sha256": "e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9",
+      "item_id": 30251,
+      "required_count": 1,
+      "provided_count": 1
+    },
+    {
+      "quest_id": 10625,
+      "reason": "New pinned primary SQL requires return of the acceptance-supplied item; old model omitted that independent item requirement.",
+      "primary_template_line": 4409,
+      "primary_addon_line": 4451,
+      "source_revision": "95657f54779467effea8a1749a61ff93abc1d707",
+      "source_sql_sha256": "e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9",
+      "item_id": 30719,
+      "required_count": 1,
+      "provided_count": 1
+    },
+    {
+      "quest_id": 10643,
+      "reason": "New pinned primary SQL requires return of the acceptance-supplied item; old model omitted that independent item requirement.",
+      "primary_template_line": 4409,
+      "primary_addon_line": 4451,
+      "source_revision": "95657f54779467effea8a1749a61ff93abc1d707",
+      "source_sql_sha256": "e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9",
+      "item_id": 30719,
+      "required_count": 1,
+      "provided_count": 1
+    },
+    {
+      "quest_id": 10720,
+      "reason": "New pinned primary SQL requires return of the acceptance-supplied item; old model omitted that independent item requirement.",
+      "primary_template_line": 4409,
+      "primary_addon_line": 4451,
+      "source_revision": "95657f54779467effea8a1749a61ff93abc1d707",
+      "source_sql_sha256": "e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9",
+      "item_id": 31141,
+      "required_count": 1,
+      "provided_count": 1
+    },
+    {
+      "quest_id": 10771,
+      "reason": "New pinned primary SQL requires return of the acceptance-supplied item; old model omitted that independent item requirement.",
+      "primary_template_line": 4409,
+      "primary_addon_line": 4451,
+      "source_revision": "95657f54779467effea8a1749a61ff93abc1d707",
+      "source_sql_sha256": "e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9",
+      "item_id": 31300,
+      "required_count": 1,
+      "provided_count": 1
+    },
+    {
+      "quest_id": 10791,
+      "reason": "New pinned primary SQL requires return of the acceptance-supplied item; old model omitted that independent item requirement.",
+      "primary_template_line": 4409,
+      "primary_addon_line": 4451,
+      "source_revision": "95657f54779467effea8a1749a61ff93abc1d707",
+      "source_sql_sha256": "e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9",
+      "item_id": 31344,
+      "required_count": 1,
+      "provided_count": 1
+    },
+    {
+      "quest_id": 10800,
+      "reason": "New pinned primary SQL requires return of the acceptance-supplied item; old model omitted that independent item requirement.",
+      "primary_template_line": 4409,
+      "primary_addon_line": 4451,
+      "source_revision": "95657f54779467effea8a1749a61ff93abc1d707",
+      "source_sql_sha256": "e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9",
+      "item_id": 31403,
+      "required_count": 1,
+      "provided_count": 1
+    },
+    {
+      "quest_id": 10857,
+      "reason": "New pinned primary SQL requires return of the acceptance-supplied item; old model omitted that independent item requirement.",
+      "primary_template_line": 4409,
+      "primary_addon_line": 4451,
+      "source_revision": "95657f54779467effea8a1749a61ff93abc1d707",
+      "source_sql_sha256": "e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9",
+      "item_id": 31678,
+      "required_count": 1,
+      "provided_count": 1
+    },
+    {
+      "quest_id": 10877,
+      "reason": "New pinned primary SQL requires return of the acceptance-supplied item; old model omitted that independent item requirement.",
+      "primary_template_line": 4409,
+      "primary_addon_line": 4451,
+      "source_revision": "95657f54779467effea8a1749a61ff93abc1d707",
+      "source_sql_sha256": "e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9",
+      "item_id": 31705,
+      "required_count": 1,
+      "provided_count": 1
+    },
+    {
+      "quest_id": 10912,
+      "reason": "New pinned primary SQL requires return of the acceptance-supplied item; old model omitted that independent item requirement.",
+      "primary_template_line": 4409,
+      "primary_addon_line": 4451,
+      "source_revision": "95657f54779467effea8a1749a61ff93abc1d707",
+      "source_sql_sha256": "e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9",
+      "item_id": 31809,
+      "required_count": 1,
+      "provided_count": 1
+    },
+    {
+      "quest_id": 11133,
+      "reason": "New pinned primary SQL requires return of the acceptance-supplied item; old model omitted that independent item requirement.",
+      "primary_template_line": 4409,
+      "primary_addon_line": 4451,
+      "source_revision": "95657f54779467effea8a1749a61ff93abc1d707",
+      "source_sql_sha256": "e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9",
+      "item_id": 33015,
+      "required_count": 1,
+      "provided_count": 1
+    },
+    {
+      "quest_id": 11146,
+      "reason": "New pinned primary SQL requires return of the acceptance-supplied item; old model omitted that independent item requirement.",
+      "primary_template_line": 4409,
+      "primary_addon_line": 4451,
+      "source_revision": "95657f54779467effea8a1749a61ff93abc1d707",
+      "source_sql_sha256": "e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9",
+      "item_id": 33069,
+      "required_count": 1,
+      "provided_count": 1
+    },
+    {
+      "quest_id": 11174,
+      "reason": "New pinned primary SQL requires return of the acceptance-supplied item; old model omitted that independent item requirement.",
+      "primary_template_line": 4409,
+      "primary_addon_line": 4451,
+      "source_revision": "95657f54779467effea8a1749a61ff93abc1d707",
+      "source_sql_sha256": "e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9",
+      "item_id": 33108,
+      "required_count": 1,
+      "provided_count": 1
+    },
+    {
+      "quest_id": 11715,
+      "reason": "New pinned primary SQL requires return of the acceptance-supplied item; old model omitted that independent item requirement.",
+      "primary_template_line": 4410,
+      "primary_addon_line": 4451,
+      "source_revision": "95657f54779467effea8a1749a61ff93abc1d707",
+      "source_sql_sha256": "e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9",
+      "item_id": 34975,
+      "required_count": 1,
+      "provided_count": 1
+    },
+    {
+      "quest_id": 11983,
+      "reason": "New pinned primary SQL requires return of the acceptance-supplied item; old model omitted that independent item requirement.",
+      "primary_template_line": 4410,
+      "primary_addon_line": 4451,
+      "source_revision": "95657f54779467effea8a1749a61ff93abc1d707",
+      "source_sql_sha256": "e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9",
+      "item_id": 35784,
+      "required_count": 1,
+      "provided_count": 1
+    },
+    {
+      "quest_id": 12184,
+      "reason": "New pinned primary SQL requires return of the acceptance-supplied item; old model omitted that independent item requirement.",
+      "primary_template_line": 4410,
+      "primary_addon_line": 4451,
+      "source_revision": "95657f54779467effea8a1749a61ff93abc1d707",
+      "source_sql_sha256": "e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9",
+      "item_id": 37045,
+      "required_count": 1,
+      "provided_count": 1
+    },
+    {
+      "quest_id": 12202,
+      "reason": "New pinned primary SQL requires return of the acceptance-supplied item; old model omitted that independent item requirement.",
+      "primary_template_line": 4410,
+      "primary_addon_line": 4451,
+      "source_revision": "95657f54779467effea8a1749a61ff93abc1d707",
+      "source_sql_sha256": "e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9",
+      "item_id": 37125,
+      "required_count": 1,
+      "provided_count": 1
+    },
+    {
+      "quest_id": 12683,
+      "reason": "New pinned primary SQL requires return of the acceptance-supplied item; old model omitted that independent item requirement.",
+      "primary_template_line": 4410,
+      "primary_addon_line": 4451,
+      "source_revision": "95657f54779467effea8a1749a61ff93abc1d707",
+      "source_sql_sha256": "e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9",
+      "item_id": 39164,
+      "required_count": 1,
+      "provided_count": 1
+    },
+    {
+      "quest_id": 12686,
+      "reason": "New pinned primary SQL requires return of the acceptance-supplied item; old model omitted that independent item requirement.",
+      "primary_template_line": 4410,
+      "primary_addon_line": 4451,
+      "source_revision": "95657f54779467effea8a1749a61ff93abc1d707",
+      "source_sql_sha256": "e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9",
+      "item_id": 39206,
+      "required_count": 1,
+      "provided_count": 1
+    },
+    {
+      "quest_id": 13048,
+      "reason": "New pinned primary SQL requires return of the acceptance-supplied item; old model omitted that independent item requirement.",
+      "primary_template_line": 4410,
+      "primary_addon_line": 4451,
+      "source_revision": "95657f54779467effea8a1749a61ff93abc1d707",
+      "source_sql_sha256": "e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9",
+      "item_id": 42839,
+      "required_count": 1,
+      "provided_count": 1
+    },
+    {
+      "quest_id": 13320,
+      "reason": "New pinned primary SQL requires return of the acceptance-supplied item; old model omitted that independent item requirement.",
+      "primary_template_line": 4411,
+      "primary_addon_line": 4451,
+      "source_revision": "95657f54779467effea8a1749a61ff93abc1d707",
+      "source_sql_sha256": "e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9",
+      "item_id": 44251,
+      "required_count": 1,
+      "provided_count": 1
+    },
+    {
+      "quest_id": 13355,
+      "reason": "New pinned primary SQL requires return of the acceptance-supplied item; old model omitted that independent item requirement.",
+      "primary_template_line": 4411,
+      "primary_addon_line": 4451,
+      "source_revision": "95657f54779467effea8a1749a61ff93abc1d707",
+      "source_sql_sha256": "e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9",
+      "item_id": 44251,
+      "required_count": 1,
+      "provided_count": 1
+    }
+  ],
+  "other_baseline_obligations": [
+    {
+      "quest_id": 5,
+      "name": "Jitters' Growling Gut",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:PrevQuestID"
+      ]
+    },
+    {
+      "quest_id": 46,
+      "name": "Bounty on Murlocs",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:PrevQuestID"
+      ]
+    },
+    {
+      "quest_id": 90,
+      "name": "Seasoned Wolf Kabobs",
+      "pipeline": "PASS",
+      "obligations": [
+        "data:primary-item-requirement-unrepresented"
+      ]
+    },
+    {
+      "quest_id": 136,
+      "name": "Captain Sanders' Hidden Treasure",
+      "pipeline": "BLOCKED",
+      "obligations": [
+        "data:giver-relation-unrepresented"
+      ]
+    },
+    {
+      "quest_id": 148,
+      "name": "Supplies from Darkshire",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:PrevQuestID"
+      ]
+    },
+    {
+      "quest_id": 215,
+      "name": "Jungle Secrets",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:server-condition-not-modeled"
+      ]
+    },
+    {
+      "quest_id": 364,
+      "name": "The Mindless Ones",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:AllowableRaces"
+      ]
+    },
+    {
+      "quest_id": 427,
+      "name": "At War With The Scarlet Crusade",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:PrevQuestID"
+      ]
+    },
+    {
+      "quest_id": 509,
+      "name": "Elixir of Agony",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:PrevQuestID"
+      ]
+    },
+    {
+      "quest_id": 573,
+      "name": "Mok'thardin's Enchantment",
+      "pipeline": "PASS",
+      "obligations": [
+        "data:primary-item-requirement-unrepresented"
+      ]
+    },
+    {
+      "quest_id": 594,
+      "name": "Message in a Bottle",
+      "pipeline": "BLOCKED",
+      "obligations": [
+        "data:giver-relation-unrepresented"
+      ]
+    },
+    {
+      "quest_id": 624,
+      "name": "Cortello's Riddle",
+      "pipeline": "BLOCKED",
+      "obligations": [
+        "data:giver-relation-unrepresented"
+      ]
+    },
+    {
+      "quest_id": 730,
+      "name": "Trouble In Darkshore?",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:AllowableRaces"
+      ]
+    },
+    {
+      "quest_id": 787,
+      "name": "The New Horde",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:ExclusiveGroup"
+      ]
+    },
+    {
+      "quest_id": 849,
+      "name": "Revenge of Gann",
+      "pipeline": "PASS",
+      "obligations": [
+        "script:cast-credit-no-strategy"
+      ]
+    },
+    {
+      "quest_id": 919,
+      "name": "Timberling Sprouts",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:PrevQuestID"
+      ]
+    },
+    {
+      "quest_id": 936,
+      "name": "Assisting Arch Druid Runetotem",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:ExclusiveGroup"
+      ]
+    },
+    {
+      "quest_id": 1011,
+      "name": "Forsaken Diseases",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:PrevQuestID"
+      ]
+    },
+    {
+      "quest_id": 1038,
+      "name": "Velinde's Effects",
+      "pipeline": "PASS",
+      "obligations": [
+        "data:primary-item-requirement-unrepresented"
+      ]
+    },
+    {
+      "quest_id": 1061,
+      "name": "The Spirits of Stonetalon",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:server-condition-not-modeled"
+      ]
+    },
+    {
+      "quest_id": 1079,
+      "name": "Covert Ops - Alpha",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:PrevQuestID",
+        "source:server-condition-not-modeled"
+      ]
+    },
+    {
+      "quest_id": 1080,
+      "name": "Covert Ops - Beta",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:PrevQuestID",
+        "source:server-condition-not-modeled"
+      ]
+    },
+    {
+      "quest_id": 1268,
+      "name": "Suspicious Hoofprints",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:ExclusiveGroup,NextQuestID"
+      ]
+    },
+    {
+      "quest_id": 1271,
+      "name": "Feast at the Blue Recluse",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:external-predecessor-contract-missing:1222"
+      ]
+    },
+    {
+      "quest_id": 1282,
+      "name": "They Call Him Smiling Jim",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:ExclusiveGroup,NextQuestID",
+        "source:server-condition-not-modeled"
+      ]
+    },
+    {
+      "quest_id": 1301,
+      "name": "James Hyal",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:server-condition-not-modeled"
+      ]
+    },
+    {
+      "quest_id": 1302,
+      "name": "James Hyal",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:ExclusiveGroup,NextQuestID"
+      ]
+    },
+    {
+      "quest_id": 1323,
+      "name": "The Black Shield",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:ExclusiveGroup,NextQuestID"
+      ]
+    },
+    {
+      "quest_id": 2038,
+      "name": "Bingles' Missing Supplies",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:PrevQuestID"
+      ]
+    },
+    {
+      "quest_id": 2399,
+      "name": "The Sprouted Fronds",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:Flags"
+      ]
+    },
+    {
+      "quest_id": 2873,
+      "name": "Stoley's Shipment",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:PrevQuestID"
+      ]
+    },
+    {
+      "quest_id": 3129,
+      "name": "Weapons of Spirit",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:external-predecessor-contract-missing:3127"
+      ]
+    },
+    {
+      "quest_id": 3444,
+      "name": "The Stone Circle",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:external-predecessor-contract-missing:3380"
+      ]
+    },
+    {
+      "quest_id": 3483,
+      "name": "Signal for Pickup",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:SpecialFlags"
+      ]
+    },
+    {
+      "quest_id": 3762,
+      "name": "Assisting Arch Druid Runetotem",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:ExclusiveGroup"
+      ]
+    },
+    {
+      "quest_id": 3763,
+      "name": "Assisting Arch Druid Staghelm",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:ExclusiveGroup"
+      ]
+    },
+    {
+      "quest_id": 3765,
+      "name": "The Corruption Abroad",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:server-condition-not-modeled"
+      ]
+    },
+    {
+      "quest_id": 3784,
+      "name": "Assisting Arch Druid Runetotem",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:ExclusiveGroup"
+      ]
+    },
+    {
+      "quest_id": 3787,
+      "name": "Jonespyre's Request",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:AllowableRaces,ExclusiveGroup,PrevQuestID"
+      ]
+    },
+    {
+      "quest_id": 3788,
+      "name": "Jonespyre's Request",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:ExclusiveGroup,PrevQuestID"
+      ]
+    },
+    {
+      "quest_id": 3789,
+      "name": "Assisting Arch Druid Staghelm",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:ExclusiveGroup"
+      ]
+    },
+    {
+      "quest_id": 3790,
+      "name": "Assisting Arch Druid Staghelm",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:ExclusiveGroup"
+      ]
+    },
+    {
+      "quest_id": 3825,
+      "name": "Ogre Head On A Stick = Party",
+      "pipeline": "PASS",
+      "obligations": [
+        "script:cast-credit-no-strategy"
+      ]
+    },
+    {
+      "quest_id": 3901,
+      "name": "Rattling the Rattlecages",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:AllowableRaces"
+      ]
+    },
+    {
+      "quest_id": 3903,
+      "name": "Milly Osworth",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:PrevQuestID"
+      ]
+    },
+    {
+      "quest_id": 4641,
+      "name": "Your Place In The World",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:ExclusiveGroup"
+      ]
+    },
+    {
+      "quest_id": 4881,
+      "name": "Assassination Plot",
+      "pipeline": "BLOCKED",
+      "obligations": [
+        "data:giver-relation-unrepresented"
+      ]
+    },
+    {
+      "quest_id": 5041,
+      "name": "Supplies for the Crossroads",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:PrevQuestID"
+      ]
+    },
+    {
+      "quest_id": 5066,
+      "name": "A Call to Arms: The Plaguelands!",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:ExclusiveGroup",
+        "source:server-condition-not-modeled"
+      ]
+    },
+    {
+      "quest_id": 5090,
+      "name": "A Call to Arms: The Plaguelands!",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:ExclusiveGroup",
+        "source:server-condition-not-modeled"
+      ]
+    },
+    {
+      "quest_id": 5091,
+      "name": "A Call to Arms: The Plaguelands!",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:ExclusiveGroup",
+        "source:server-condition-not-modeled"
+      ]
+    },
+    {
+      "quest_id": 5093,
+      "name": "A Call to Arms: The Plaguelands!",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:ExclusiveGroup",
+        "source:server-condition-not-modeled"
+      ]
+    },
+    {
+      "quest_id": 5094,
+      "name": "A Call to Arms: The Plaguelands!",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:ExclusiveGroup",
+        "source:server-condition-not-modeled"
+      ]
+    },
+    {
+      "quest_id": 5095,
+      "name": "A Call to Arms: The Plaguelands!",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:ExclusiveGroup",
+        "source:server-condition-not-modeled"
+      ]
+    },
+    {
+      "quest_id": 5142,
+      "name": "Little Pamela",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:NextQuestID"
+      ]
+    },
+    {
+      "quest_id": 5165,
+      "name": "Dousing the Flames of Protection",
+      "pipeline": "PASS",
+      "obligations": [
+        "script:cast-credit-no-strategy"
+      ]
+    },
+    {
+      "quest_id": 5249,
+      "name": "To Winterspring!",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:ExclusiveGroup"
+      ]
+    },
+    {
+      "quest_id": 5250,
+      "name": "Starfall",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:ExclusiveGroup"
+      ]
+    },
+    {
+      "quest_id": 5401,
+      "name": "Argent Dawn Commission",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:AllowableRaces,ExclusiveGroup"
+      ]
+    },
+    {
+      "quest_id": 5405,
+      "name": "Argent Dawn Commission",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:AllowableRaces,ExclusiveGroup"
+      ]
+    },
+    {
+      "quest_id": 5503,
+      "name": "Argent Dawn Commission",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:ExclusiveGroup"
+      ]
+    },
+    {
+      "quest_id": 5601,
+      "name": "Sister Pamela",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:NextQuestID"
+      ]
+    },
+    {
+      "quest_id": 5901,
+      "name": "A Plague Upon Thee",
+      "pipeline": "PASS",
+      "obligations": [
+        "data:primary-item-requirement-unrepresented"
+      ]
+    },
+    {
+      "quest_id": 5903,
+      "name": "A Plague Upon Thee",
+      "pipeline": "PASS",
+      "obligations": [
+        "data:primary-item-requirement-unrepresented"
+      ]
+    },
+    {
+      "quest_id": 6042,
+      "name": "Un-Life's Little Annoyances",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:ExclusiveGroup,NextQuestID"
+      ]
+    },
+    {
+      "quest_id": 6133,
+      "name": "The Ranger Lord's Behest",
+      "pipeline": "PASS",
+      "obligations": [
+        "data:primary-item-requirement-unrepresented",
+        "source:primary-field-conflict:ExclusiveGroup,NextQuestID"
+      ]
+    },
+    {
+      "quest_id": 6144,
+      "name": "The Call to Command",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:ExclusiveGroup,NextQuestID"
+      ]
+    },
+    {
+      "quest_id": 6381,
+      "name": "New Life",
+      "pipeline": "PASS",
+      "obligations": [
+        "data:primary-item-requirement-unrepresented",
+        "script:cast-credit-no-strategy"
+      ]
+    },
+    {
+      "quest_id": 6571,
+      "name": "Warsong Supplies",
+      "pipeline": "PASS",
+      "obligations": [
+        "data:primary-item-requirement-unrepresented"
+      ]
+    },
+    {
+      "quest_id": 6805,
+      "name": "Stormers and Rumblers",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:ExclusiveGroup,NextQuestID"
+      ]
+    },
+    {
+      "quest_id": 8275,
+      "name": "Taking Back Silithus",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:ExclusiveGroup"
+      ]
+    },
+    {
+      "quest_id": 8276,
+      "name": "Taking Back Silithus",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:ExclusiveGroup"
+      ]
+    },
+    {
+      "quest_id": 8465,
+      "name": "Speak to Salfa",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:PrevQuestID"
+      ]
+    },
+    {
+      "quest_id": 8889,
+      "name": "Deactivating the Spire",
+      "pipeline": "PASS",
+      "obligations": [
+        "data:primary-item-requirement-unrepresented",
+        "script:cast-credit-no-strategy"
+      ]
+    },
+    {
+      "quest_id": 8921,
+      "name": "The Ectoplasmic Distiller",
+      "pipeline": "PASS",
+      "obligations": [
+        "data:primary-item-requirement-unrepresented",
+        "live:required-money-observation-and-reward-acceptance"
+      ]
+    },
+    {
+      "quest_id": 9145,
+      "name": "Help Ranger Valanna!",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:server-condition-not-modeled",
+        "source:unrepresented-eligibility:RequiredMinRepFaction",
+        "source:unrepresented-eligibility:RequiredMinRepValue"
+      ]
+    },
+    {
+      "quest_id": 9152,
+      "name": "Tomber's Supplies",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:server-condition-not-modeled"
+      ]
+    },
+    {
+      "quest_id": 9155,
+      "name": "Down the Dead Scar",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:server-condition-not-modeled",
+        "source:unrepresented-eligibility:RequiredMinRepFaction",
+        "source:unrepresented-eligibility:RequiredMinRepValue"
+      ]
+    },
+    {
+      "quest_id": 9164,
+      "name": "Captives at Deatholme",
+      "pipeline": "PASS",
+      "obligations": [
+        "data:primary-item-requirement-unrepresented"
+      ]
+    },
+    {
+      "quest_id": 9173,
+      "name": "Retaking Windrunner Spire",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:unrepresented-eligibility:RequiredMinRepFaction",
+        "source:unrepresented-eligibility:RequiredMinRepValue"
+      ]
+    },
+    {
+      "quest_id": 9192,
+      "name": "Trouble at the Underlight Mines",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:server-condition-not-modeled",
+        "source:unrepresented-eligibility:RequiredMinRepFaction",
+        "source:unrepresented-eligibility:RequiredMinRepValue"
+      ]
+    },
+    {
+      "quest_id": 9275,
+      "name": "A Little Dash of Seasoning",
+      "pipeline": "PASS",
+      "obligations": [
+        "script:cast-credit-no-strategy"
+      ]
+    },
+    {
+      "quest_id": 9294,
+      "name": "Healing the Lake",
+      "pipeline": "PASS",
+      "obligations": [
+        "script:cast-credit-no-strategy"
+      ]
+    },
+    {
+      "quest_id": 9391,
+      "name": "Marking the Path",
+      "pipeline": "PASS",
+      "obligations": [
+        "data:primary-item-requirement-unrepresented",
+        "script:cast-credit-no-strategy"
+      ]
+    },
+    {
+      "quest_id": 9432,
+      "name": "Travel to Astranaar",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:ExclusiveGroup"
+      ]
+    },
+    {
+      "quest_id": 9474,
+      "name": "The Mark of the Lightbringer",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:AllowableRaces"
+      ]
+    },
+    {
+      "quest_id": 9513,
+      "name": "Reclaiming the Ruins",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:server-condition-not-modeled"
+      ]
+    },
+    {
+      "quest_id": 9523,
+      "name": "Precious and Fragile Things Need Special Handling",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:server-condition-not-modeled"
+      ]
+    },
+    {
+      "quest_id": 9526,
+      "name": "Reclaiming Felfire Hill",
+      "pipeline": "PASS",
+      "obligations": [
+        "script:cast-credit-no-strategy"
+      ]
+    },
+    {
+      "quest_id": 9531,
+      "name": "Tree's Company",
+      "pipeline": "PASS",
+      "obligations": [
+        "data:primary-item-requirement-unrepresented"
+      ]
+    },
+    {
+      "quest_id": 9558,
+      "name": "The Longbeards",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:PrevQuestID"
+      ]
+    },
+    {
+      "quest_id": 9672,
+      "name": "The Bloodcurse Legacy",
+      "pipeline": "BLOCKED",
+      "obligations": [
+        "data:giver-relation-unrepresented"
+      ]
+    },
+    {
+      "quest_id": 9693,
+      "name": "What Argus Means to Me",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:server-condition-not-modeled"
+      ]
+    },
+    {
+      "quest_id": 9704,
+      "name": "Slain by the Wretched",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:PrevQuestID"
+      ]
+    },
+    {
+      "quest_id": 9751,
+      "name": "The Bloodcurse Legacy",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:PrevQuestID"
+      ]
+    },
+    {
+      "quest_id": 9770,
+      "name": "Menacing Marshfangs",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:AllowableRaces"
+      ]
+    },
+    {
+      "quest_id": 9771,
+      "name": "Searching for Scout Jyoba",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:AllowableRaces"
+      ]
+    },
+    {
+      "quest_id": 9772,
+      "name": "Jyoba's Report",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:AllowableRaces"
+      ]
+    },
+    {
+      "quest_id": 9774,
+      "name": "Thick Hydra Scales",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:AllowableRaces"
+      ]
+    },
+    {
+      "quest_id": 9776,
+      "name": "The Orebor Harborage",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:AllowableRaces"
+      ]
+    },
+    {
+      "quest_id": 9781,
+      "name": "Too Many Mouths to Feed",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:AllowableRaces"
+      ]
+    },
+    {
+      "quest_id": 9782,
+      "name": "The Dead Mire",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:AllowableRaces"
+      ]
+    },
+    {
+      "quest_id": 9783,
+      "name": "An Unnatural Drought",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:AllowableRaces"
+      ]
+    },
+    {
+      "quest_id": 9814,
+      "name": "Burstcap Mushrooms, Mon!",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:AllowableRaces"
+      ]
+    },
+    {
+      "quest_id": 9816,
+      "name": "Have You Ever Seen One of These?",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:AllowableRaces"
+      ]
+    },
+    {
+      "quest_id": 9822,
+      "name": "Impending Attack",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:AllowableRaces"
+      ]
+    },
+    {
+      "quest_id": 9823,
+      "name": "Us or Them",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:AllowableRaces"
+      ]
+    },
+    {
+      "quest_id": 9830,
+      "name": "Stinger Venom",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:AllowableRaces"
+      ]
+    },
+    {
+      "quest_id": 9833,
+      "name": "Lines of Communication",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:AllowableRaces"
+      ]
+    },
+    {
+      "quest_id": 9841,
+      "name": "Stinging the Stingers",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:AllowableRaces"
+      ]
+    },
+    {
+      "quest_id": 9842,
+      "name": "The Sharpest Blades",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:AllowableRaces"
+      ]
+    },
+    {
+      "quest_id": 9849,
+      "name": "Shattering the Veil",
+      "pipeline": "PASS",
+      "obligations": [
+        "data:primary-item-requirement-unrepresented"
+      ]
+    },
+    {
+      "quest_id": 9867,
+      "name": "Murkblood Leaders...",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:AllowableRaces"
+      ]
+    },
+    {
+      "quest_id": 9878,
+      "name": "Solving the Problem",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:AllowableRaces"
+      ]
+    },
+    {
+      "quest_id": 9899,
+      "name": "A Job Undone",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:AllowableRaces,PrevQuestID"
+      ]
+    },
+    {
+      "quest_id": 9902,
+      "name": "The Terror of Marshlight Lake",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:AllowableRaces"
+      ]
+    },
+    {
+      "quest_id": 9905,
+      "name": "Maktu's Revenge",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:AllowableRaces"
+      ]
+    },
+    {
+      "quest_id": 9931,
+      "name": "Returning the Favor",
+      "pipeline": "PASS",
+      "obligations": [
+        "data:primary-item-requirement-unrepresented",
+        "source:primary-field-conflict:ExclusiveGroup,PrevQuestID",
+        "source:server-condition-not-modeled"
+      ]
+    },
+    {
+      "quest_id": 9932,
+      "name": "Body of Evidence",
+      "pipeline": "PASS",
+      "obligations": [
+        "data:primary-item-requirement-unrepresented",
+        "source:primary-field-conflict:ExclusiveGroup,PrevQuestID",
+        "source:server-condition-not-modeled"
+      ]
+    },
+    {
+      "quest_id": 9956,
+      "name": "The Ravaged Caravan",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:AllowableRaces"
+      ]
+    },
+    {
+      "quest_id": 9960,
+      "name": "What's Wrong at Cenarion Thicket?",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:ExclusiveGroup,NextQuestID"
+      ]
+    },
+    {
+      "quest_id": 9961,
+      "name": "What's Wrong at Cenarion Thicket?",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:ExclusiveGroup,NextQuestID"
+      ]
+    },
+    {
+      "quest_id": 9971,
+      "name": "Clues in the Thicket",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:ExclusiveGroup"
+      ]
+    },
+    {
+      "quest_id": 10047,
+      "name": "The Path of Glory",
+      "pipeline": "PASS",
+      "obligations": [
+        "data:primary-item-requirement-unrepresented"
+      ]
+    },
+    {
+      "quest_id": 10050,
+      "name": "Unyielding Souls",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:PrevQuestID"
+      ]
+    },
+    {
+      "quest_id": 10104,
+      "name": "Concerns About Tuurem",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:AllowableRaces"
+      ]
+    },
+    {
+      "quest_id": 10105,
+      "name": "News for Rakoria",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:AllowableRaces"
+      ]
+    },
+    {
+      "quest_id": 10115,
+      "name": "Daggerfen Deviance",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:AllowableRaces"
+      ]
+    },
+    {
+      "quest_id": 10118,
+      "name": "Message to the Daggerfen",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:AllowableRaces"
+      ]
+    },
+    {
+      "quest_id": 10141,
+      "name": "The Legion Reborn",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:PrevQuestID"
+      ]
+    },
+    {
+      "quest_id": 10160,
+      "name": "Know your Enemy",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:PrevQuestID"
+      ]
+    },
+    {
+      "quest_id": 10221,
+      "name": "Dr. Boom!",
+      "pipeline": "PASS",
+      "obligations": [
+        "data:primary-item-requirement-unrepresented"
+      ]
+    },
+    {
+      "quest_id": 10302,
+      "name": "Volatile Mutations",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:server-condition-not-modeled"
+      ]
+    },
+    {
+      "quest_id": 10373,
+      "name": "A Call to Arms: The Plaguelands!",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:ExclusiveGroup",
+        "source:server-condition-not-modeled"
+      ]
+    },
+    {
+      "quest_id": 10374,
+      "name": "A Call to Arms: The Plaguelands!",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:ExclusiveGroup",
+        "source:server-condition-not-modeled"
+      ]
+    },
+    {
+      "quest_id": 10389,
+      "name": "The Agony and the Darkness",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:external-predecessor-contract-missing:10393",
+        "source:primary-field-conflict:PrevQuestID"
+      ]
+    },
+    {
+      "quest_id": 10427,
+      "name": "Creatures of the Eco-Domes",
+      "pipeline": "PASS",
+      "obligations": [
+        "data:primary-item-requirement-unrepresented"
+      ]
+    },
+    {
+      "quest_id": 10457,
+      "name": "Protecting Our Own",
+      "pipeline": "PASS",
+      "obligations": [
+        "data:primary-item-requirement-unrepresented"
+      ]
+    },
+    {
+      "quest_id": 10458,
+      "name": "Enraged Spirits of Fire and Earth",
+      "pipeline": "PASS",
+      "obligations": [
+        "data:primary-item-requirement-unrepresented"
+      ]
+    },
+    {
+      "quest_id": 10480,
+      "name": "Enraged Spirits of Water",
+      "pipeline": "PASS",
+      "obligations": [
+        "data:primary-item-requirement-unrepresented"
+      ]
+    },
+    {
+      "quest_id": 10481,
+      "name": "Enraged Spirits of Air",
+      "pipeline": "PASS",
+      "obligations": [
+        "data:primary-item-requirement-unrepresented"
+      ]
+    },
+    {
+      "quest_id": 10506,
+      "name": "A Dire Situation",
+      "pipeline": "BLOCKED",
+      "obligations": [
+        "data:normal-objective-identity-or-count-unrepresented:0",
+        "data:primary-item-requirement-unrepresented",
+        "data:primary-normal-requirement-unrepresented"
+      ]
+    },
+    {
+      "quest_id": 10520,
+      "name": "Assisting Arch Druid Staghelm",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:ExclusiveGroup"
+      ]
+    },
+    {
+      "quest_id": 10625,
+      "name": "Spectrecles",
+      "pipeline": "PASS",
+      "obligations": [
+        "data:primary-item-requirement-unrepresented"
+      ]
+    },
+    {
+      "quest_id": 10643,
+      "name": "Harbingers of Shadowmoon",
+      "pipeline": "PASS",
+      "obligations": [
+        "data:primary-item-requirement-unrepresented"
+      ]
+    },
+    {
+      "quest_id": 10720,
+      "name": "The Smallest Creatures",
+      "pipeline": "PASS",
+      "obligations": [
+        "data:primary-item-requirement-unrepresented"
+      ]
+    },
+    {
+      "quest_id": 10771,
+      "name": "From the Ashes",
+      "pipeline": "PASS",
+      "obligations": [
+        "data:primary-item-requirement-unrepresented",
+        "script:cast-credit-no-strategy"
+      ]
+    },
+    {
+      "quest_id": 10791,
+      "name": "Welcoming the Wolf Spirit",
+      "pipeline": "PASS",
+      "obligations": [
+        "data:primary-item-requirement-unrepresented"
+      ]
+    },
+    {
+      "quest_id": 10800,
+      "name": "Goodnight, Gronn",
+      "pipeline": "PASS",
+      "obligations": [
+        "data:primary-item-requirement-unrepresented"
+      ]
+    },
+    {
+      "quest_id": 10857,
+      "name": "Teleport This!",
+      "pipeline": "PASS",
+      "obligations": [
+        "data:primary-item-requirement-unrepresented"
+      ]
+    },
+    {
+      "quest_id": 10877,
+      "name": "The Dread Relic",
+      "pipeline": "PASS",
+      "obligations": [
+        "data:primary-item-requirement-unrepresented"
+      ]
+    },
+    {
+      "quest_id": 10912,
+      "name": "The Hound-Master",
+      "pipeline": "PASS",
+      "obligations": [
+        "data:primary-item-requirement-unrepresented"
+      ]
+    },
+    {
+      "quest_id": 10916,
+      "name": "Digging for Prayer Beads",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:ExclusiveGroup,NextQuestID"
+      ]
+    },
+    {
+      "quest_id": 11039,
+      "name": "Report to Spymaster Thalodien",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:ExclusiveGroup,PrevQuestID",
+        "source:unrepresented-eligibility:RequiredMinRepFaction",
+        "source:unrepresented-eligibility:RequiredMinRepValue"
+      ]
+    },
+    {
+      "quest_id": 11042,
+      "name": "A Mystifying Vision",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:ExclusiveGroup"
+      ]
+    },
+    {
+      "quest_id": 11133,
+      "name": "Discrediting the Deserters",
+      "pipeline": "PASS",
+      "obligations": [
+        "data:primary-item-requirement-unrepresented"
+      ]
+    },
+    {
+      "quest_id": 11146,
+      "name": "Raptor Captor",
+      "pipeline": "PASS",
+      "obligations": [
+        "data:primary-item-requirement-unrepresented"
+      ]
+    },
+    {
+      "quest_id": 11149,
+      "name": "Tabetha's Assistance",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:PrevQuestID"
+      ]
+    },
+    {
+      "quest_id": 11160,
+      "name": "Banner of the Stonemaul",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:ExclusiveGroup,NextQuestID"
+      ]
+    },
+    {
+      "quest_id": 11174,
+      "name": "Corrosion Prevention",
+      "pipeline": "PASS",
+      "obligations": [
+        "data:primary-item-requirement-unrepresented"
+      ]
+    },
+    {
+      "quest_id": 11177,
+      "name": "The Hermit of Swamplight Manor",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:ExclusiveGroup"
+      ]
+    },
+    {
+      "quest_id": 11203,
+      "name": "Seek Out Tabetha",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:PrevQuestID"
+      ]
+    },
+    {
+      "quest_id": 11204,
+      "name": "Return to Krog",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:external-predecessor-contract-missing:1273",
+        "source:primary-field-conflict:PrevQuestID"
+      ]
+    },
+    {
+      "quest_id": 11211,
+      "name": "Help for Mudsprocket",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:ExclusiveGroup"
+      ]
+    },
+    {
+      "quest_id": 11214,
+      "name": "Mission to Mudsprocket",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:ExclusiveGroup"
+      ]
+    },
+    {
+      "quest_id": 11215,
+      "name": "Help Mudsprocket",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:ExclusiveGroup"
+      ]
+    },
+    {
+      "quest_id": 11225,
+      "name": "The Hermit of Witch Hill",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:ExclusiveGroup"
+      ]
+    },
+    {
+      "quest_id": 11298,
+      "name": "What's in That Brew?",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:PrevQuestID"
+      ]
+    },
+    {
+      "quest_id": 11302,
+      "name": "The Enigmatic Frost Nymphs",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:ExclusiveGroup,NextQuestID"
+      ]
+    },
+    {
+      "quest_id": 11311,
+      "name": "Suppressing the Elements",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:PrevQuestID"
+      ]
+    },
+    {
+      "quest_id": 11312,
+      "name": "The Frozen Glade",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:ExclusiveGroup,NextQuestID"
+      ]
+    },
+    {
+      "quest_id": 11314,
+      "name": "The Fallen Sisters",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:NextQuestID"
+      ]
+    },
+    {
+      "quest_id": 11315,
+      "name": "Wild Vines",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:NextQuestID"
+      ]
+    },
+    {
+      "quest_id": 11316,
+      "name": "Spawn of the Twisted Glade",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:PrevQuestID",
+        "source:server-condition-not-modeled"
+      ]
+    },
+    {
+      "quest_id": 11319,
+      "name": "Seeds of the Blacksouled Keepers",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:PrevQuestID",
+        "source:server-condition-not-modeled"
+      ]
+    },
+    {
+      "quest_id": 11324,
+      "name": "Alpha Worg",
+      "pipeline": "PASS",
+      "obligations": [
+        "data:primary-item-requirement-unrepresented"
+      ]
+    },
+    {
+      "quest_id": 11326,
+      "name": "Alpha Worg",
+      "pipeline": "PASS",
+      "obligations": [
+        "data:primary-item-requirement-unrepresented"
+      ]
+    },
+    {
+      "quest_id": 11481,
+      "name": "Crisis at the Sunwell",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:ExclusiveGroup"
+      ]
+    },
+    {
+      "quest_id": 11482,
+      "name": "Duty Calls",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:ExclusiveGroup"
+      ]
+    },
+    {
+      "quest_id": 11501,
+      "name": "News From the East",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:external-predecessor-contract-missing:11495"
+      ]
+    },
+    {
+      "quest_id": 11658,
+      "name": "Plan B",
+      "pipeline": "PASS",
+      "obligations": [
+        "data:primary-item-requirement-unrepresented"
+      ]
+    },
+    {
+      "quest_id": 11662,
+      "name": "Seek Out Karuk!",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:NextQuestID"
+      ]
+    },
+    {
+      "quest_id": 11715,
+      "name": "Fueling the Project",
+      "pipeline": "PASS",
+      "obligations": [
+        "data:primary-item-requirement-unrepresented"
+      ]
+    },
+    {
+      "quest_id": 11920,
+      "name": "Cultists Among Us",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:PrevQuestID",
+        "source:server-condition-not-modeled"
+      ]
+    },
+    {
+      "quest_id": 11979,
+      "name": "The Taunka and the Tauren",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:ExclusiveGroup,NextQuestID"
+      ]
+    },
+    {
+      "quest_id": 11983,
+      "name": "Blood Oath of the Horde",
+      "pipeline": "PASS",
+      "obligations": [
+        "data:primary-item-requirement-unrepresented"
+      ]
+    },
+    {
+      "quest_id": 12034,
+      "name": "Victory Nears...",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:PrevQuestID"
+      ]
+    },
+    {
+      "quest_id": 12039,
+      "name": "Black Blood of Yogg-Saron",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:PrevQuestID"
+      ]
+    },
+    {
+      "quest_id": 12056,
+      "name": "Marked for Death: High Cultist Zangus",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:PrevQuestID"
+      ]
+    },
+    {
+      "quest_id": 12072,
+      "name": "Blightbeasts be Damned!",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:ExclusiveGroup,NextQuestID"
+      ]
+    },
+    {
+      "quest_id": 12140,
+      "name": "All Hail Roanauk!",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:ExclusiveGroup,NextQuestID"
+      ]
+    },
+    {
+      "quest_id": 12141,
+      "name": "A Diplomatic Mission",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:NextQuestID"
+      ]
+    },
+    {
+      "quest_id": 12161,
+      "name": "Ruuna the Blind",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:NextQuestID"
+      ]
+    },
+    {
+      "quest_id": 12184,
+      "name": "Cultivating an Image",
+      "pipeline": "PASS",
+      "obligations": [
+        "data:primary-item-requirement-unrepresented"
+      ]
+    },
+    {
+      "quest_id": 12189,
+      "name": "Imbeciles Abound!",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:ExclusiveGroup,NextQuestID"
+      ]
+    },
+    {
+      "quest_id": 12202,
+      "name": "Cultivating an Image",
+      "pipeline": "PASS",
+      "obligations": [
+        "data:primary-item-requirement-unrepresented"
+      ]
+    },
+    {
+      "quest_id": 12208,
+      "name": "Good Troll Hunting",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:NextQuestID"
+      ]
+    },
+    {
+      "quest_id": 12210,
+      "name": "Troll Season!",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:ExclusiveGroup,NextQuestID"
+      ]
+    },
+    {
+      "quest_id": 12223,
+      "name": "Thinning the Ranks",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:NextQuestID"
+      ]
+    },
+    {
+      "quest_id": 12255,
+      "name": "The Thane of Voldrune",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:PrevQuestID"
+      ]
+    },
+    {
+      "quest_id": 12310,
+      "name": "A Swift Response",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:PrevQuestID"
+      ]
+    },
+    {
+      "quest_id": 12325,
+      "name": "Into Hostile Territory",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:external-predecessor-contract-missing:12321"
+      ]
+    },
+    {
+      "quest_id": 12425,
+      "name": "Ruuna the Blind",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:NextQuestID"
+      ]
+    },
+    {
+      "quest_id": 12487,
+      "name": "To Conquest Hold, But Be Careful!",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:PrevQuestID"
+      ]
+    },
+    {
+      "quest_id": 12528,
+      "name": "Playing Along",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:server-condition-not-modeled"
+      ]
+    },
+    {
+      "quest_id": 12577,
+      "name": "Home Time!",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:external-predecessor-contract-missing:12575"
+      ]
+    },
+    {
+      "quest_id": 12583,
+      "name": "Crashed Sprayer",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:NextQuestID,PrevQuestID"
+      ]
+    },
+    {
+      "quest_id": 12597,
+      "name": "Something for the Pain",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:PrevQuestID",
+        "source:server-condition-not-modeled"
+      ]
+    },
+    {
+      "quest_id": 12598,
+      "name": "Throwing Down",
+      "pipeline": "PASS",
+      "obligations": [
+        "script:cast-credit-no-strategy",
+        "source:primary-field-conflict:SpecialFlags",
+        "source:server-condition-not-modeled"
+      ]
+    },
+    {
+      "quest_id": 12599,
+      "name": "Creature Comforts",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:PrevQuestID",
+        "source:server-condition-not-modeled"
+      ]
+    },
+    {
+      "quest_id": 12683,
+      "name": "Burning to Help",
+      "pipeline": "PASS",
+      "obligations": [
+        "data:primary-item-requirement-unrepresented",
+        "source:primary-field-conflict:PrevQuestID"
+      ]
+    },
+    {
+      "quest_id": 12686,
+      "name": "Zero Tolerance",
+      "pipeline": "PASS",
+      "obligations": [
+        "data:primary-item-requirement-unrepresented"
+      ]
+    },
+    {
+      "quest_id": 12828,
+      "name": "Ample Inspiration",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:server-condition-not-modeled"
+      ]
+    },
+    {
+      "quest_id": 12898,
+      "name": "The Shadow Vault",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:ExclusiveGroup"
+      ]
+    },
+    {
+      "quest_id": 12899,
+      "name": "The Shadow Vault",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:ExclusiveGroup"
+      ]
+    },
+    {
+      "quest_id": 13035,
+      "name": "Loken's Lackeys",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:ExclusiveGroup,NextQuestID,PrevQuestID"
+      ]
+    },
+    {
+      "quest_id": 13048,
+      "name": "Where Time Went Wrong",
+      "pipeline": "PASS",
+      "obligations": [
+        "data:primary-item-requirement-unrepresented"
+      ]
+    },
+    {
+      "quest_id": 13134,
+      "name": "Spill Their Blood",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:NextQuestID,PrevQuestID"
+      ]
+    },
+    {
+      "quest_id": 13144,
+      "name": "Killing Two Scourge With One Skeleton",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:PrevQuestID"
+      ]
+    },
+    {
+      "quest_id": 13226,
+      "name": "Judgment Day Comes!",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:ExclusiveGroup"
+      ]
+    },
+    {
+      "quest_id": 13320,
+      "name": "Cannot Reproduce",
+      "pipeline": "PASS",
+      "obligations": [
+        "data:primary-item-requirement-unrepresented"
+      ]
+    },
+    {
+      "quest_id": 13334,
+      "name": "Bloodspattered Banners",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:ExclusiveGroup,NextQuestID"
+      ]
+    },
+    {
+      "quest_id": 13355,
+      "name": "Cannot Reproduce",
+      "pipeline": "PASS",
+      "obligations": [
+        "data:primary-item-requirement-unrepresented"
+      ]
+    },
+    {
+      "quest_id": 13684,
+      "name": "A Valiant Of Stormwind",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:NextQuestID"
+      ]
+    },
+    {
+      "quest_id": 13685,
+      "name": "A Valiant Of Ironforge",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:NextQuestID"
+      ]
+    },
+    {
+      "quest_id": 13688,
+      "name": "A Valiant Of Gnomeregan",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:NextQuestID"
+      ]
+    },
+    {
+      "quest_id": 13689,
+      "name": "A Valiant Of Darnassus",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:NextQuestID"
+      ]
+    },
+    {
+      "quest_id": 13690,
+      "name": "A Valiant Of The Exodar",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:NextQuestID"
+      ]
+    },
+    {
+      "quest_id": 13691,
+      "name": "A Valiant Of Orgrimmar",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:NextQuestID"
+      ]
+    },
+    {
+      "quest_id": 13693,
+      "name": "A Valiant Of Sen'jin",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:NextQuestID"
+      ]
+    },
+    {
+      "quest_id": 13694,
+      "name": "A Valiant Of Thunder Bluff",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:NextQuestID"
+      ]
+    },
+    {
+      "quest_id": 13695,
+      "name": "A Valiant Of Undercity",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:NextQuestID"
+      ]
+    },
+    {
+      "quest_id": 13696,
+      "name": "A Valiant Of Silvermoon",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:NextQuestID"
+      ]
+    },
+    {
+      "quest_id": 13887,
+      "name": "Venomhide Eggs",
+      "pipeline": "PASS",
+      "obligations": [
+        "source:primary-field-conflict:NextQuestID"
+      ]
+    }
+  ],
+  "policy": "Retain all baseline test evidence. Only these explicitly contradicted source-item records may receive new data additions; other new primary conflicts remain classified as source/data/live obligations, not silently repaired."
+}
