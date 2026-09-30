@@ -1,0 +1,38 @@
+{
+  "first_parent": "1c7077abdb6f5c75da1bc2dd87966b8653010d8b",
+  "second_parent": "2dc6ef853c0bd365aba0bb1b8b76e4500f2a880b",
+  "new_contract_ids": [
+    215,
+    11596,
+    11597,
+    12692,
+    12695,
+    25286
+  ],
+  "contracts": 79,
+  "predicates": 144,
+  "existing_shared_contracts_identical": true,
+  "nonavailability_repair_fields_preserved": true,
+  "strategy_recipes_unchanged": true,
+  "source_contracts": {
+    "items": {
+      "path": "docs/audit/2026-09-30/availability-items/source-contracts.json",
+      "sha256": "794583d55abddd6b5b0621ca2d569ad633060f892a7650796f1fe9b9db251203"
+    },
+    "daily": {
+      "path": "docs/audit/2026-09-30/availability-daily/source-contracts.json",
+      "sha256": "e24feccdc4a0b3ce97ec08c584f00bfdc698ab3638d0d422f13113918189da7e"
+    },
+    "area": {
+      "path": "docs/audit/2026-09-30/availability-area/source-contracts.json",
+      "sha256": "df9c8e2d74a908ef2263e01e9e2a93b180c31f931bd300f3d79907bda814e011"
+    },
+    "scalars": {
+      "path": "docs/audit/2026-09-30/availability-scalars/source-contracts.json",
+      "sha256": "26d33892c720a319a9577b3c9da7628d5dd1fd58431c2ee6b0a115cefa78f3a5"
+    }
+  },
+  "classification_counts_pending_actual_reproduction": true,
+  "production_changed": false,
+  "live_completion_proven": false
+}

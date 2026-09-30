@@ -50,13 +50,19 @@ class QuestAvailabilitySourceTests(unittest.TestCase):
         self.assertEqual(contracts, [])
         self.assertFalse(review[0]['supported'])
 
-    def test_repeatable_seasonal_and_autocomplete_history_are_not_permanent(self):
-        for changes in ({'SpecialFlags': 1}, {'QuestSortID': -22}, {'QuestType': 0}):
+    def test_repeatable_and_seasonal_reward_history_are_not_permanent(self):
+        for changes in ({'SpecialFlags': 1}, {'QuestSortID': -22}):
             with self.subTest(changes=changes):
                 data, tables, _ = self.fixture()
                 for table in ('quest_template', 'quest_template_addon'):
                     tables[table][1].update(changes)
                 self.assertEqual(self.run_export(data, tables)[0], [])
+
+    def test_autocomplete_does_not_supply_ordinary_raw_quest_state(self):
+        data, tables, row = self.fixture()
+        tables['quest_template'][1]['QuestType'] = 0
+        row['ConditionTypeOrReference'] = 9
+        self.assertEqual(self.run_export(data, tables)[0], [])
 
     def test_incorrect_target_script_reference_or_extra_values_are_not_guessed(self):
         for changes in ({'ConditionTarget': 1}, {'ScriptName': 'custom'}, {'ConditionTypeOrReference': -7},

@@ -1,3 +1,19 @@
+# Current: reproduced combined availability candidate — 30 September 2026
+
+The pending local merge now reproduces all79 contracts/144 predicates,259616 dataset checks and39 strategy checks. Exact primary counts3009/2/932/319/16/57=4335 leave1324 remaining IDs. Six source gaps close;62 named cases were added and none removed. Read docs/audit/2026-09-30/availability-combined/REPORT.md, its exact fixture/ledger/source/remaining files and external AVAILABILITY_COMBINATION_* receipts. Resolve final containing Git SHA, complete local/hosted acceptance and publication from actual receipts before claiming delivery. All prior runtime/knowledge protections and PR61 production remain preserved. Continue the remaining availability/data/source audit after this small scope.
+
+---
+
+# Current: local combined availability candidate — 30 September 2026
+
+The isolated branch `audit/next-quest-availability-combined-20260930` at `D:/Dev/CB-QuestAvailabilityCombined-20260930` combines merged/validated PR74 master `1c7077abdb6f5c75da1bc2dd87966b8653010d8b` with validated PR73 `2dc6ef853c0bd365aba0bb1b8b76e4500f2a880b` (including PR70/72). Both parents have complete local and downloaded Windows/x86 acceptance. The merge is pending until the combined owners and exact 4335-ID ledger are reproduced. Read `docs/audit/2026-09-30/availability-combined/source-contracts.json` and external `AVAILABILITY_COMBINATION_*` receipts before acting.
+
+Preserve all79 contracts/144predicates, separate carried/area/level/daily/raw/permanent observations, both inventory and availability publication/execution guards, allfour reputation repairs, direct live-objective identity, and every prior repair and strategy. Primary classifications must come from new combined evidence. Parent ledgers remain separate records. Production is still verified PR61 `3bc97e1e0b446aede269f7414c0c7c6358fdc192`; this operation changes no production file.
+
+Continue remaining source/data/availability families after scoped publication, using pinned TC335/TDB335.25101 and checked read-only IDA build12340. Do not repeat completed merges or provider-blocked transactions. No live completion or clean-commit acceptance is inferred from a pending merge.
+
+---
+
 # Current: carried-item availability continuation — 30 September 2026
 
 Active worktreeD:/Dev/CB-QuestItemConditions-20260930, branchaudit/next-quest-item-conditions-20260930, parent master51107859f48d2f4eb4fe6bfb74cd979480930b8c. Read docs/audit/2026-09-30/availability-items/REPORT.md, source-contracts.json, item-contract-obligations.json, simulation-count-delta.json and exact ledgers. Resolve final commit/local/hosted/publication from Git and externalITEM_CONDITION_* receipts. Preserve all already completed work.

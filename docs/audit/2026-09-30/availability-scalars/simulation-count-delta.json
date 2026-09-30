@@ -1,0 +1,77 @@
+{
+  "before": 259156,
+  "after": 259201,
+  "delta": 45,
+  "quests": [
+    {
+      "quest_id": 11596,
+      "before": 58,
+      "after": 80,
+      "added_case_names": [
+        "availability-reference=7784:state=0",
+        "availability-reference=7784:state=1",
+        "availability-reference=7784:state=3",
+        "availability-reference=7784:state=5",
+        "availability-reference=7784:state=6",
+        "availability-reference=8743:state=0",
+        "availability-reference=8743:state=1",
+        "availability-reference=8743:state=3",
+        "availability-reference=8743:state=5",
+        "availability-reference=8743:state=6",
+        "availability-reference=11585:state=0",
+        "availability-reference=11585:state=1",
+        "availability-reference=11585:state=3",
+        "availability-reference=11585:state=5",
+        "availability-reference=11585:state=6",
+        "availability-reference=11586:state=0",
+        "availability-reference=11586:state=1",
+        "availability-reference=11586:state=3",
+        "availability-reference=11586:state=5",
+        "availability-reference=11586:state=6",
+        "availability-missing-observation-revokes-publication",
+        "availability-fixture-constrained-by-source-and-prerequisites"
+      ],
+      "removed_case_names": []
+    },
+    {
+      "quest_id": 11597,
+      "before": 58,
+      "after": 75,
+      "added_case_names": [
+        "availability-reference=8743:state=0",
+        "availability-reference=8743:state=1",
+        "availability-reference=8743:state=3",
+        "availability-reference=8743:state=5",
+        "availability-reference=8743:state=6",
+        "availability-reference=11585:state=0",
+        "availability-reference=11585:state=1",
+        "availability-reference=11585:state=3",
+        "availability-reference=11585:state=5",
+        "availability-reference=11585:state=6",
+        "availability-reference=11586:state=0",
+        "availability-reference=11586:state=1",
+        "availability-reference=11586:state=3",
+        "availability-reference=11586:state=5",
+        "availability-reference=11586:state=6",
+        "availability-missing-observation-revokes-publication",
+        "availability-fixture-constrained-by-source-and-prerequisites"
+      ],
+      "removed_case_names": []
+    },
+    {
+      "quest_id": 25286,
+      "before": 58,
+      "after": 64,
+      "added_case_names": [
+        "availability-level=75:observed=0",
+        "availability-level=75:observed=74",
+        "availability-level=75:observed=75",
+        "availability-level=75:observed=76",
+        "availability-missing-observation-revokes-publication",
+        "availability-fixture-constrained-by-source-and-prerequisites"
+      ],
+      "removed_case_names": []
+    }
+  ],
+  "availability_checks": 716
+}

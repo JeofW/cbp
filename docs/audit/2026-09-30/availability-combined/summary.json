@@ -1,0 +1,44 @@
+{
+  "before": {
+    "GENERIC-PROVEN": 3003,
+    "STRATEGY-PROVEN": 2,
+    "DATA-INVALID/INCOMPLETE": 932,
+    "UNSUPPORTED-SCRIPTED": 57,
+    "SOURCE-UNCERTAIN": 325,
+    "LIVE-ACCEPTANCE-REQUIRED": 16
+  },
+  "after": {
+    "GENERIC-PROVEN": 3009,
+    "STRATEGY-PROVEN": 2,
+    "DATA-INVALID/INCOMPLETE": 932,
+    "UNSUPPORTED-SCRIPTED": 57,
+    "SOURCE-UNCERTAIN": 319,
+    "LIVE-ACCEPTANCE-REQUIRED": 16
+  },
+  "quest_count": 4335,
+  "classification_changes": 6,
+  "new_proven_quests": 6,
+  "previously_proven_reclassified_on_new_primary_evidence": 0,
+  "simulation_checks": 259616,
+  "simulation_failures": 0,
+  "primary_source_revision": "95657f54779467effea8a1749a61ff93abc1d707",
+  "primary_database_sha256": "e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9",
+  "ledger_uncompressed_sha256": "8a08404e6461104868b1b06ff5687a91844b8dc78e604054d9ce82aec289f0cc",
+  "baseline_ledger_sha256": "0178579256385c97c596dc7bc919ecd4c490f154ccdd8acfdca2b6730ece630f",
+  "simulation_sha256": "67e361fb19de1495c95886fca6a7fa89d555d4a3fd80f39301fe2ee2c82779de",
+  "effective_model_sha256": "7f175e00040862620589e98f2f31328e90f6736e9e2befb76ba95ab1cfbe9efd",
+  "dependency_metadata_sha256": "59f7dd7142d76ba948e6a62f824be0d32f7a6c2d6a3e79614a81a87ce97f4bf8",
+  "repair_evidence_sha256": "f2a5fc621f3b1676011b1f10bb1148a3587e8aa0c10fee88d6364a4815c980ed",
+  "tool_sha256": "73201ee4a8284cad78a2fd6d48aec75fb82b8dd54e5257cf9d41471554a13429",
+  "input_sha256": {
+    "baseline": "0178579256385c97c596dc7bc919ecd4c490f154ccdd8acfdca2b6730ece630f",
+    "simulation": "67e361fb19de1495c95886fca6a7fa89d555d4a3fd80f39301fe2ee2c82779de",
+    "effective": "7f175e00040862620589e98f2f31328e90f6736e9e2befb76ba95ab1cfbe9efd",
+    "dependencies": "59f7dd7142d76ba948e6a62f824be0d32f7a6c2d6a3e79614a81a87ce97f4bf8",
+    "repair_evidence": "f2a5fc621f3b1676011b1f10bb1148a3587e8aa0c10fee88d6364a4815c980ed",
+    "strategy_results": "6b1dcdb9da8210e5feae1be2fbb78b95def7e33446172224091cc39ad07a401c",
+    "strategy_pack": "38ea3911b40f74b5bb7388b0cddb9d969d5daa768fadd4d5eada5a5f3c3d4ff0",
+    "retained_routes": "afd39cce4a65413248a60e8b66c1ebf27ae96937b883db0ffdc6ba53c4b024f4"
+  },
+  "no_live_completion_claim": true
+}
