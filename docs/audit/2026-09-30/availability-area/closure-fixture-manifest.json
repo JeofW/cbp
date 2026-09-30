@@ -1,0 +1,36 @@
+{
+  "schema": "controlled-quest-closure-fixture-335-v1",
+  "client_build": 12340,
+  "primary_revision": "95657f54779467effea8a1749a61ff93abc1d707",
+  "quest_count": 4335,
+  "knowledge_sha256": {
+    "quest_data.json": "f2ca79318694afaa4214fc09392e88c3d9d1eae5128f323d0d65b1b9e91a7e3f",
+    "quest_data.repairs.json": "d9cea572d9220b89de6256a6ff70e911cc677aa67096a73710a8167be424ea27",
+    "quest_strategies.json": "9538f26a5a1b97d9df4642678a0fac26671a70578550eb07d144092792af9716",
+    "quest_knowledge_manifest.json": "3abffd8a9ada60ce7251d4cdb83d17de14daa7acdfc4eab4a5c22e0c4eb091b7"
+  },
+  "observations_sha256": "bcda857eb5652ee3d83a5fddbcf2f8098164b601817d6fb1c4d46dd856f2cf28",
+  "classification_counts": {
+    "GENERIC-PROVEN": 3003,
+    "STRATEGY-PROVEN": 2,
+    "DATA-INVALID/INCOMPLETE": 932,
+    "UNSUPPORTED-SCRIPTED": 57,
+    "SOURCE-UNCERTAIN": 325,
+    "LIVE-ACCEPTANCE-REQUIRED": 16
+  },
+  "strategy_quest_ids": [
+    9066,
+    9447
+  ],
+  "expected_output_sha256": {
+    "simulation_sha256": "b8fe0f1c2c72eefc60f4325e09b5a5dccacf413693d4f30cf00f02cd3115e5e5",
+    "effective_model_sha256": "9cf4220e1b34ed969e4a69c8ec7a45b83138a0dd952fbf19da1cb42a6beb2a20",
+    "dependency_metadata_sha256": "59f7dd7142d76ba948e6a62f824be0d32f7a6c2d6a3e79614a81a87ce97f4bf8",
+    "strategy_results_sha256": "a4021996328c0b230b8e59db86cc613f1297a81daeb1a750f47de41b6ef77aa4"
+  },
+  "baseline_evidence_commit": "034c75d9fe93f27103133341345647eaaefe92af",
+  "baseline_ledger_sha256": "bede8793f3422356c391755fa2339832ac40f43c8382b2e9d2e170b6f6fd8bdd",
+  "diagnostic_receipt_working_tree_modified": true,
+  "provenance_note": "Actual current owner outputs are comparison fixtures. Exact clean-commit acceptance must reproduce them locally and on hosted Windows/x86.",
+  "live_completion_proven": false
+}

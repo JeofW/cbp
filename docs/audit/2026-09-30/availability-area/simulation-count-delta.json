@@ -1,0 +1,22 @@
+{
+  "before": 259201,
+  "after": 259206,
+  "delta": 5,
+  "quests": [
+    {
+      "quest_id": 215,
+      "before": 58,
+      "after": 63,
+      "added_case_names": [
+        "availability-area=99:observed=100",
+        "availability-area=99:observed=99",
+        "availability-area=99:observed=unknown",
+        "availability-fixture-constrained-by-source-and-prerequisites",
+        "availability-missing-observation-revokes-publication"
+      ],
+      "removed_case_names": []
+    }
+  ],
+  "availability_checks": 721,
+  "observation_format_change": "Nullable controlled area identity and explicit area oracle added; non-area case membership is preserved."
+}

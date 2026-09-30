@@ -1,0 +1,29 @@
+[
+  {
+    "quest_id": 11596,
+    "before": "SOURCE-UNCERTAIN",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "absent-eligibility-metadata",
+      "source-availability-conditions"
+    ]
+  },
+  {
+    "quest_id": 11597,
+    "before": "SOURCE-UNCERTAIN",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "absent-eligibility-metadata",
+      "source-availability-conditions"
+    ]
+  },
+  {
+    "quest_id": 25286,
+    "before": "SOURCE-UNCERTAIN",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "absent-eligibility-metadata",
+      "source-availability-conditions"
+    ]
+  }
+]

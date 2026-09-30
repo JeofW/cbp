@@ -58,6 +58,97 @@ class AvailabilityClosureReceiptTests(unittest.TestCase):
         contract, simulation = self.fixture(); simulation['availability_condition_validation']['failed_cases'] = 1
         with self.assertRaises(ValueError): self.validate(contract, simulation)
 
+    def level_fixture(self):
+        contract, simulation = self.fixture()
+        contract['ReferencedQuests'] = []
+        predicate = contract['Groups'][0]['Conditions'][0]
+        predicate.update(Type=27, Value1=75, Value2=3)
+        names = [f'availability-level=75:observed={level}' for level in (0, 74, 75, 76)] + [
+            'availability-missing-observation-revokes-publication', 'availability-fixture-constrained-by-source-and-prerequisites']
+        simulation['cases'] = [{'name': name, 'status': 'PASS'} for name in names]
+        simulation['availability_condition_validation'].update(contract=copy.deepcopy(contract), passed_cases=len(names))
+        return contract, simulation
+
+    def test_numeric_level_requires_level_observations_not_quest_status_receipts(self):
+        contract, simulation = self.level_fixture()
+        try:
+            accepted = self.validate(contract, simulation)
+        except ValueError:
+            accepted = False
+        self.assertTrue(accepted, 'Complete level boundary receipts must be recognized')
+
+    def test_quest_status_receipts_cannot_certify_a_numeric_level(self):
+        contract, simulation = self.level_fixture()
+        names = [f'availability-reference=75:state={state}' for state in (0, 1, 3, 5, 6)] + [
+            'availability-missing-observation-revokes-publication', 'availability-fixture-constrained-by-source-and-prerequisites']
+        simulation['cases'] = [{'name': name, 'status': 'PASS'} for name in names]
+        simulation['availability_condition_validation']['passed_cases'] = len(names)
+        with self.assertRaises(ValueError): self.validate(contract, simulation)
+
+    def test_unknown_and_threshold_level_observations_are_both_required(self):
+        for missing in (0, 2):
+            with self.subTest(missing=missing):
+                contract, simulation = self.level_fixture()
+                simulation['cases'].pop(missing)
+                simulation['availability_condition_validation']['passed_cases'] -= 1
+                with self.assertRaises(ValueError): self.validate(contract, simulation)
+
+    def area_fixture(self):
+        contract, simulation = self.level_fixture()
+        contract['Groups'][0]['Conditions'][0].update(Type=23, Value1=99, Value2=0)
+        names = [f'availability-area=99:observed={area}' for area in ('unknown', '99', '100')] + [
+            'availability-missing-observation-revokes-publication', 'availability-fixture-constrained-by-source-and-prerequisites']
+        simulation['cases'] = [{'name': name, 'status': 'PASS'} for name in names]
+        simulation['availability_condition_validation'].update(contract=copy.deepcopy(contract), passed_cases=len(names))
+        return contract, simulation
+
+    def test_area_requires_area_observations_instead_of_quest_status(self):
+        contract, simulation = self.area_fixture()
+        try:
+            valid = self.validate(contract, simulation)
+        except ValueError:
+            valid = False
+        self.assertTrue(valid, 'Complete current-area boundary receipts must be recognized')
+
+    def test_area_requires_unknown_matching_and_other_observations(self):
+        for missing in range(3):
+            with self.subTest(missing=missing):
+                contract, simulation = self.area_fixture()
+                simulation['cases'].pop(missing)
+                simulation['availability_condition_validation']['passed_cases'] -= 1
+                with self.assertRaises(ValueError): self.validate(contract, simulation)
+
+    def daily_fixture(self):
+        contract, simulation = self.fixture()
+        contract['Groups'][0]['Conditions'][0]['Type'] = 43
+        contract['ReferencedQuests'][0]['SpecialFlags'] = 1
+        names = [f'availability-daily=201:observed={state}' for state in ('unknown', 'absent', 'present', 'reset')] + [
+            'availability-missing-observation-revokes-publication', 'availability-fixture-constrained-by-source-and-prerequisites']
+        simulation['cases'] = [{'name': name, 'status': 'PASS'} for name in names]
+        simulation['availability_condition_validation'].update(contract=copy.deepcopy(contract), passed_cases=len(names))
+        return contract, simulation
+
+    def test_daily_requires_membership_unknown_and_reset_receipts(self):
+        contract, simulation = self.daily_fixture()
+        try:
+            valid = self.validate(contract, simulation)
+        except ValueError:
+            valid = False
+        self.assertTrue(valid, 'Complete daily membership/reset receipts must be recognized')
+
+    def test_permanent_status_receipts_cannot_certify_daily_membership(self):
+        contract, simulation = self.daily_fixture()
+        old_contract, old_simulation = self.fixture()
+        simulation['cases'] = old_simulation['cases']
+        simulation['availability_condition_validation']['passed_cases'] = len(simulation['cases'])
+        with self.assertRaises(ValueError): self.validate(contract, simulation)
+
+    def test_missing_daily_reset_receipt_stays_unproven(self):
+        contract, simulation = self.daily_fixture()
+        simulation['cases'].pop(3)
+        simulation['availability_condition_validation']['passed_cases'] -= 1
+        with self.assertRaises(ValueError): self.validate(contract, simulation)
+
 
 if __name__ == '__main__':
     unittest.main()

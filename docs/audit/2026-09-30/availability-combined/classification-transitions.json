@@ -1,0 +1,57 @@
+[
+  {
+    "quest_id": 215,
+    "before": "SOURCE-UNCERTAIN",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "source-availability-conditions"
+    ]
+  },
+  {
+    "quest_id": 11596,
+    "before": "SOURCE-UNCERTAIN",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "absent-eligibility-metadata",
+      "source-availability-conditions"
+    ]
+  },
+  {
+    "quest_id": 11597,
+    "before": "SOURCE-UNCERTAIN",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "absent-eligibility-metadata",
+      "source-availability-conditions"
+    ]
+  },
+  {
+    "quest_id": 12692,
+    "before": "SOURCE-UNCERTAIN",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "absent-eligibility-metadata",
+      "geometry:Creature:28668",
+      "source-availability-conditions"
+    ]
+  },
+  {
+    "quest_id": 12695,
+    "before": "SOURCE-UNCERTAIN",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "absent-eligibility-metadata",
+      "geometry:Creature:28667",
+      "source-availability-conditions"
+    ]
+  },
+  {
+    "quest_id": 25286,
+    "before": "SOURCE-UNCERTAIN",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "absent-eligibility-metadata",
+      "source-availability-conditions"
+    ]
+  }
+]

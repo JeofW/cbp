@@ -1,0 +1,46 @@
+{
+  "primary_revision": "95657f54779467effea8a1749a61ff93abc1d707",
+  "prior_source_contract": {
+    "path": "docs/audit/2026-09-30/quest-conditions/source-contracts.json",
+    "sha256": "42a41c0e0e9c2b2f7cdfd73703edd48b23470acd3bedeeed069334841a1e9f57"
+  },
+  "level_comparison": {
+    "path": "src/common/Utilities/Util.h",
+    "lines": [
+      521,
+      553
+    ],
+    "sha256": "85d62210ca67d2c10ec5e4748a6ef462ef4137b1708b3c1245e5b498be1c8579",
+    "values": {
+      "equal": 0,
+      "greater": 1,
+      "less": 2,
+      "greater_or_equal": 3,
+      "less_or_equal": 4
+    }
+  },
+  "reward_history": {
+    "path": "src/server/game/Entities/Player/Player.cpp",
+    "lines": [
+      15688,
+      15715
+    ],
+    "sha256": "36a817da38b318740ee5aa31f256518175dfdd02d1dd7a68ebb0805fc43275d8",
+    "claim": "Reward history tests repeatable/seasonal lifecycle; QuestType0 does not imply nonpermanent reward. Raw-state predicates remain limited to QuestType2."
+  },
+  "client": {
+    "build": 12340,
+    "architecture": "x86",
+    "sha256": "bf644876709c591acc17c0da8cdf1814edcc9f1e6bc109a8c0d5c38c79dc953c",
+    "new_native_dispatch": false,
+    "level_owner": "Existing LocalPlayer.Level descriptor observation, now included and rechecked in the availability snapshot.",
+    "ida_receipt_sha256": {
+      "pass3-inputs-health-20260930.json": "18a4601c8196b791a798dde99a9cee1842383093b8304986ca6b2b24efa743e5",
+      "pass3-inputs-binary-20260930.json": "a8c03eaa67f8dd9fbc1fd8f55f985be700a3d70dbb35b72240ce4e35b10911e1",
+      "pass3-daily-count-20260930.json": "f3cdea9387ef58e55b8659a1b945be2dde710e183f5300cb70062b7e370bd137",
+      "pass3-known-spell-20260930.json": "48ce4ead8ec86bcff00d3cab10cd5590b99a43bb2e41f878d842239d5b77b627"
+    },
+    "remaining_api_limit": "Inspected daily-count and known-spell functions are not implemented as new quest-condition APIs or per-quest daily authority."
+  },
+  "realm_equivalence_or_live_completion_proven": false
+}

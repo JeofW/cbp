@@ -1,8 +1,9 @@
 """Export complete original-TC335 quest availability contracts for current owners.
 
-Permanent ordinary quest predicates and verified carried-item quantities are
-implemented here. Unsupported target, reference, script, bank, seasonal and
-repeatable semantics remain explicit; a partial condition list is never exported.
+Permanent quest reward history, ordinary active state, carried-item quantities,
+level, area and daily membership use their separate verified owners. Unsupported
+targets, references, scripts, bank and other seasonal/repeatable semantics remain
+explicit obligations; a partial condition list is never exported.
 """
 from __future__ import annotations
 
@@ -17,15 +18,31 @@ import re
 from quest_repair_pack_335 import BASE_FIELDS, ADDON_FIELDS, digest, encoded, indexed, load_verified_tables
 
 SOURCE_TYPE = 19
-SUPPORTED_TYPES = {2, 8, 9, 14, 28, 47}
+SUPPORTED_TYPES = {2, 8, 9, 14, 23, 27, 28, 43, 47}
 STATUS_MASK = (1 << 0) | (1 << 1) | (1 << 3) | (1 << 5) | (1 << 6)
 SEASONAL_SORTS = {-22, -284, -366, -369, -370, -374, -376}
 
 
+def permanent_reward_reference(template, addon):
+    """GetQuestRewardStatus depends on repeatable/seasonal lifecycle, not auto-completion."""
+    method, flags, sort = template.get('QuestType'), addon.get('SpecialFlags', 0), template.get('QuestSortID')
+    return (type(method) is int and method in (0, 2) and type(flags) is int and flags >= 0
+            and not flags & 1 and type(sort) is int and sort not in SEASONAL_SORTS)
+
+
 def permanent_reference(template, addon):
-    """Player::GetQuestRewardStatus is not lifetime history for other kinds."""
-    return (template.get('QuestType') == 2 and type(addon.get('SpecialFlags', 0)) is int
-            and not addon.get('SpecialFlags', 0) & 1 and template.get('QuestSortID') not in SEASONAL_SORTS)
+    """Raw accepted-state inference remains limited to ordinary quests."""
+    return template.get('QuestType') == 2 and permanent_reward_reference(template, addon)
+
+
+def daily_reference(template, addon):
+    """IsDailyQuestDone checks an existing template against the daily ID array.
+
+    Its membership observation is separate from repeatable/seasonal reward history.
+    """
+    return (type(template.get('QuestType')) is int and template['QuestType'] in (0, 2)
+            and type(addon.get('SpecialFlags', 0)) is int and addon.get('SpecialFlags', 0) >= 0
+            and type(template.get('QuestSortID')) is int)
 
 
 def build_contracts(data, tables, source):
@@ -70,8 +87,9 @@ def build_contracts(data, tables, source):
             if kind == 2 and row['ConditionValue3'] != 0:
                 problems.append('bank-inventory-observation-unavailable'); continue
             if (row['NegativeCondition'] not in (0, 1) or value <= 0 or value > 2**31 - 1
-                    or row['ConditionValue3'] != 0 or (kind not in (2, 47) and row['ConditionValue2'] != 0)
+                    or row['ConditionValue3'] != 0 or (kind not in (2, 27, 47) and row['ConditionValue2'] != 0)
                     or (kind == 2 and not 0 < row['ConditionValue2'] <= 2**31 - 1)
+                    or (kind == 27 and not 0 <= row['ConditionValue2'] <= 4)
                     or (kind == 47 and (row['ConditionValue2'] <= 0 or row['ConditionValue2'] & ~STATUS_MASK))):
                 problems.append('invalid-condition-values'); continue
             if kind == 2:
@@ -79,11 +97,12 @@ def build_contracts(data, tables, source):
                 if item is None or type(item.get('entry')) is not int or item['entry'] != value:
                     problems.append('referenced-item-template-absent-or-invalid:' + str(value)); continue
                 item_refs[value] = {'ItemId': value, 'SourceRef': prefix + ':item_template:' + str(value) + ':' + digest(item)}
-            else:
+            elif kind not in (23, 27):
                 referenced = templates.get(value); referenced_addon = addons.get(value, {})
                 if referenced is None:
                     problems.append('referenced-quest-absent:' + str(value)); continue
-                if not permanent_reference(referenced, referenced_addon):
+                valid_reference = daily_reference if kind == 43 else permanent_reward_reference if kind == 8 else permanent_reference
+                if not valid_reference(referenced, referenced_addon):
                     problems.append('referenced-history-not-ordinary-permanent:' + str(value)); continue
                 if value in base and (base[value].get('QuestSortID') != referenced['QuestSortID']
                                       or base[value].get('SpecialFlags') != referenced_addon.get('SpecialFlags', 0)):
@@ -133,7 +152,8 @@ def main():
     header = (args.reference / 'contracts/ConditionMgr.h').read_text(encoding='utf-8')
     expected = {'CONDITION_SOURCE_TYPE_QUEST_AVAILABLE': SOURCE_TYPE, 'CONDITION_QUESTREWARDED': 8,
                 'CONDITION_QUESTTAKEN': 9, 'CONDITION_QUEST_NONE': 14, 'CONDITION_QUEST_COMPLETE': 28,
-                'CONDITION_QUESTSTATE': 47, 'CONDITION_ITEM': 2}
+                'CONDITION_QUESTSTATE': 47, 'CONDITION_LEVEL': 27, 'CONDITION_AREAID': 23,
+                'CONDITION_DAILY_QUEST_DONE': 43, 'CONDITION_ITEM': 2}
     for name, value in expected.items():
         match = re.search(r'\b' + name + r'\s*=\s*(0x[0-9a-fA-F]+|\d+)\s*,', header)
         if not match or int(match[1], 0) != value:

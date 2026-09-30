@@ -1,0 +1,319 @@
+{
+  "parent": "1c7077abdb6f5c75da1bc2dd87966b8653010d8b",
+  "previous_checks": 259554,
+  "current_checks": 259616,
+  "added_cases": [
+    {
+      "quest_id": 215,
+      "case": "availability-area=99:observed=100",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 215,
+      "case": "availability-area=99:observed=99",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 215,
+      "case": "availability-area=99:observed=unknown",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 215,
+      "case": "availability-fixture-constrained-by-source-and-prerequisites",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 215,
+      "case": "availability-missing-observation-revokes-publication",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 11596,
+      "case": "availability-fixture-constrained-by-source-and-prerequisites",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 11596,
+      "case": "availability-missing-observation-revokes-publication",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 11596,
+      "case": "availability-reference=11585:state=0",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 11596,
+      "case": "availability-reference=11585:state=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 11596,
+      "case": "availability-reference=11585:state=3",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 11596,
+      "case": "availability-reference=11585:state=5",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 11596,
+      "case": "availability-reference=11585:state=6",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 11596,
+      "case": "availability-reference=11586:state=0",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 11596,
+      "case": "availability-reference=11586:state=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 11596,
+      "case": "availability-reference=11586:state=3",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 11596,
+      "case": "availability-reference=11586:state=5",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 11596,
+      "case": "availability-reference=11586:state=6",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 11596,
+      "case": "availability-reference=7784:state=0",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 11596,
+      "case": "availability-reference=7784:state=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 11596,
+      "case": "availability-reference=7784:state=3",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 11596,
+      "case": "availability-reference=7784:state=5",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 11596,
+      "case": "availability-reference=7784:state=6",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 11596,
+      "case": "availability-reference=8743:state=0",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 11596,
+      "case": "availability-reference=8743:state=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 11596,
+      "case": "availability-reference=8743:state=3",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 11596,
+      "case": "availability-reference=8743:state=5",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 11596,
+      "case": "availability-reference=8743:state=6",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 11597,
+      "case": "availability-fixture-constrained-by-source-and-prerequisites",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 11597,
+      "case": "availability-missing-observation-revokes-publication",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 11597,
+      "case": "availability-reference=11585:state=0",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 11597,
+      "case": "availability-reference=11585:state=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 11597,
+      "case": "availability-reference=11585:state=3",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 11597,
+      "case": "availability-reference=11585:state=5",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 11597,
+      "case": "availability-reference=11585:state=6",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 11597,
+      "case": "availability-reference=11586:state=0",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 11597,
+      "case": "availability-reference=11586:state=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 11597,
+      "case": "availability-reference=11586:state=3",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 11597,
+      "case": "availability-reference=11586:state=5",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 11597,
+      "case": "availability-reference=11586:state=6",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 11597,
+      "case": "availability-reference=8743:state=0",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 11597,
+      "case": "availability-reference=8743:state=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 11597,
+      "case": "availability-reference=8743:state=3",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 11597,
+      "case": "availability-reference=8743:state=5",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 11597,
+      "case": "availability-reference=8743:state=6",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 12692,
+      "case": "availability-daily=12582:observed=absent",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 12692,
+      "case": "availability-daily=12582:observed=present",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 12692,
+      "case": "availability-daily=12582:observed=reset",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 12692,
+      "case": "availability-daily=12582:observed=unknown",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 12692,
+      "case": "availability-fixture-constrained-by-source-and-prerequisites",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 12692,
+      "case": "availability-missing-observation-revokes-publication",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 12695,
+      "case": "availability-daily=12689:observed=absent",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 12695,
+      "case": "availability-daily=12689:observed=present",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 12695,
+      "case": "availability-daily=12689:observed=reset",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 12695,
+      "case": "availability-daily=12689:observed=unknown",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 12695,
+      "case": "availability-fixture-constrained-by-source-and-prerequisites",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 12695,
+      "case": "availability-missing-observation-revokes-publication",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 25286,
+      "case": "availability-fixture-constrained-by-source-and-prerequisites",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 25286,
+      "case": "availability-level=75:observed=0",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 25286,
+      "case": "availability-level=75:observed=74",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 25286,
+      "case": "availability-level=75:observed=75",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 25286,
+      "case": "availability-level=75:observed=76",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 25286,
+      "case": "availability-missing-observation-revokes-publication",
+      "status": "PASS"
+    }
+  ],
+  "removed_cases": [],
+  "reason": "Retained scalar/area/daily source contracts contribute 62 named checks; item and reputation coverage is preserved."
+}

@@ -1,0 +1,145 @@
+{
+  "scalar-source-red": {
+    "command": [
+      "python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "Tools/EvidenceAudit",
+      "-p",
+      "test_availability_scalar_source_335.py",
+      "-v"
+    ],
+    "exit": 1,
+    "started_utc": "2026-09-30T11:32:24.878475+00:00",
+    "finished_utc": "2026-09-30T11:32:25.065261+00:00",
+    "head": "0722b9c4d7e2d958a23c0986e05864f2f6b68a0a",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr.log": "69d27105ae84fa492945b55183f984bf7e19b4edceea22a008d91f4d3c25f654"
+    }
+  },
+  "scalar-runtime-red": {
+    "command": [
+      "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+      "Tools/PostMergeAuditRegressionTests/bin/x86/Release/net10.0-windows7.0/PostMergeAuditRegressionTests.dll",
+      "QuestAvailabilityScalarRegressionTests"
+    ],
+    "exit": 1,
+    "started_utc": "2026-09-30T11:32:52.662514+00:00",
+    "finished_utc": "2026-09-30T11:32:53.407027+00:00",
+    "head": "0722b9c4d7e2d958a23c0986e05864f2f6b68a0a",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "9f91f2d8f271bf28077197630690bac136a3038e581e470fe72a143dc91ccafb",
+      "stderr.log": "1f92c8e3a03157bcef24e74fadb468495c746ad2dc3e7bda138a166e4e3e3bc5"
+    }
+  },
+  "scalar-receipt-red": {
+    "command": [
+      "python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "Tools/EvidenceAudit",
+      "-p",
+      "test_availability_closure_receipts_335.py",
+      "-v"
+    ],
+    "exit": 1,
+    "started_utc": "2026-09-30T11:35:55.489450+00:00",
+    "finished_utc": "2026-09-30T11:35:55.630936+00:00",
+    "head": "0722b9c4d7e2d958a23c0986e05864f2f6b68a0a",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr.log": "bef866070d37511b8539d01f775303ecd2679fbb7a261f31d7d085b6899e9ae5"
+    }
+  },
+  "scalar-source-green": {
+    "command": [
+      "python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "Tools/EvidenceAudit",
+      "-p",
+      "test_availability_scalar_source_335.py",
+      "-v"
+    ],
+    "exit": 0,
+    "started_utc": "2026-09-30T11:34:01.223072+00:00",
+    "finished_utc": "2026-09-30T11:34:01.396236+00:00",
+    "head": "0722b9c4d7e2d958a23c0986e05864f2f6b68a0a",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr.log": "1d8ec42943a596eb7dea0e383446149cf5c82fc5e234cd7f19be7b240b14f14a"
+    }
+  },
+  "scalar-runtime-green": {
+    "command": [
+      "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+      "Tools/PostMergeAuditRegressionTests/bin/x86/Release/net10.0-windows7.0/PostMergeAuditRegressionTests.dll",
+      "QuestAvailabilityScalarRegressionTests",
+      "QuestAvailabilityConditionRegressionTests",
+      "QuestAvailabilityObservationRegressionTests",
+      "QuestSchedulerRawPublicationRegressionTests"
+    ],
+    "exit": 0,
+    "started_utc": "2026-09-30T11:35:15.673135+00:00",
+    "finished_utc": "2026-09-30T11:35:19.584698+00:00",
+    "head": "0722b9c4d7e2d958a23c0986e05864f2f6b68a0a",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "af26c84b072d72ef7f4798e16f84d0aa0918c7af1605aad1d5f79fe21419e461",
+      "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "scalar-loaded-focused-green": {
+    "command": [
+      "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+      "Tools/PostMergeAuditRegressionTests/bin/x86/Release/net10.0-windows7.0/PostMergeAuditRegressionTests.dll",
+      "QuestAvailabilityScalarRegressionTests",
+      "QuestAvailabilityConditionRegressionTests",
+      "QuestAvailabilityObservationRegressionTests",
+      "QuestDataRepairPackRegressionTests",
+      "QuestKnowledgeBundleRegressionTests"
+    ],
+    "exit": 0,
+    "started_utc": "2026-09-30T11:38:32.375125+00:00",
+    "finished_utc": "2026-09-30T11:38:37.028734+00:00",
+    "head": "0722b9c4d7e2d958a23c0986e05864f2f6b68a0a",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "96ec6e83a5ef452aaf487881def4edbbf47d173340b0e69c9fee83b817b9bd45",
+      "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "scalar-analyzers-green": {
+    "command": [
+      "python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "Tools/EvidenceAudit",
+      "-p",
+      "test_*.py",
+      "-v"
+    ],
+    "exit": 0,
+    "started_utc": "2026-09-30T11:36:43.950474+00:00",
+    "finished_utc": "2026-09-30T11:36:49.324279+00:00",
+    "head": "0722b9c4d7e2d958a23c0986e05864f2f6b68a0a",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr.log": "bcd612e30984ed918b50db8469bf44bc99ecb6526b2e891b144202ae84a333e2"
+    }
+  }
+}
