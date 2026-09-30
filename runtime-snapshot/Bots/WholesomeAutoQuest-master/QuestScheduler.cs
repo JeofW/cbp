@@ -1399,7 +1399,10 @@ namespace WholesomeAQ
         {
             double x = point.X - snapshot.X;
             double y = point.Y - snapshot.Y;
-            return Math.Sqrt(x * x + y * y);
+            double z = point.Z - snapshot.Z;
+            // The scan radius and endpoint ordering use world-space distance.
+            // Navigation still decides whether another floor is reachable.
+            return Math.Sqrt(x * x + y * y + z * z);
         }
 
         private static Func<SpawnPoint, SpawnNavigationAssessment> CreateCachedNavigationAssessment(

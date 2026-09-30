@@ -1,0 +1,119 @@
+[
+  {
+    "quest_id": 9935,
+    "before": "DATA-INVALID/INCOMPLETE",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "absent-eligibility-metadata",
+      "credit-source-search:1"
+    ]
+  },
+  {
+    "quest_id": 9936,
+    "before": "DATA-INVALID/INCOMPLETE",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "absent-eligibility-metadata",
+      "credit-source-search:1"
+    ]
+  },
+  {
+    "quest_id": 10482,
+    "before": "DATA-INVALID/INCOMPLETE",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "absent-eligibility-metadata",
+      "credit-source-search:0"
+    ]
+  },
+  {
+    "quest_id": 10702,
+    "before": "DATA-INVALID/INCOMPLETE",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "absent-eligibility-metadata",
+      "credit-source-search:0"
+    ]
+  },
+  {
+    "quest_id": 10703,
+    "before": "DATA-INVALID/INCOMPLETE",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "absent-eligibility-metadata",
+      "credit-source-search:0"
+    ]
+  },
+  {
+    "quest_id": 10836,
+    "before": "DATA-INVALID/INCOMPLETE",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "absent-eligibility-metadata",
+      "credit-source-search:0"
+    ]
+  },
+  {
+    "quest_id": 10864,
+    "before": "DATA-INVALID/INCOMPLETE",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "absent-eligibility-metadata",
+      "credit-source-search:0"
+    ]
+  },
+  {
+    "quest_id": 11283,
+    "before": "DATA-INVALID/INCOMPLETE",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "absent-eligibility-metadata",
+      "credit-source-search:0"
+    ]
+  },
+  {
+    "quest_id": 11598,
+    "before": "DATA-INVALID/INCOMPLETE",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "absent-eligibility-metadata",
+      "credit-source-search:0"
+    ]
+  },
+  {
+    "quest_id": 11938,
+    "before": "DATA-INVALID/INCOMPLETE",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "absent-eligibility-metadata",
+      "credit-source-search:0"
+    ]
+  },
+  {
+    "quest_id": 12462,
+    "before": "DATA-INVALID/INCOMPLETE",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "absent-eligibility-metadata",
+      "credit-source-search:2"
+    ]
+  },
+  {
+    "quest_id": 12476,
+    "before": "DATA-INVALID/INCOMPLETE",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "absent-eligibility-metadata",
+      "credit-source-search:0"
+    ]
+  },
+  {
+    "quest_id": 12546,
+    "before": "DATA-INVALID/INCOMPLETE",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "absent-eligibility-metadata",
+      "credit-source-search:0"
+    ]
+  }
+]

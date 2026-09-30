@@ -1,0 +1,16 @@
+{
+  "raw_review_sha256": "e1d9f3e2dcfb0d044455c522e8fd625cf6ab06b71ea2eea6ffd11d84cf48f4ea",
+  "geometry_targets_reviewed": 784,
+  "direct_safe_geometry_candidates": 0,
+  "matching_ordinary_targets_with_quest_source_conflicts": 33,
+  "missing_role_rows_reviewed": 208,
+  "missing_roles_with_primary_relations": 2,
+  "unresolved_relation_quest_id": 13908,
+  "conditional_or_missing_geometry_is_not_promoted": true,
+  "raw_credit_contract_review_sha256": "e4bfc10cb4c8c26ff280e0594b1bdd57c00f81e9d94f40c3c2bf46fdaf32fe56",
+  "explicitly_excluded_scripted_or_state_trigger_quests": [
+    11255,
+    11270,
+    12237
+  ]
+}

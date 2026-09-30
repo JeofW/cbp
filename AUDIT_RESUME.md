@@ -1,3 +1,15 @@
+# Current: ordinary credit-source geometry continuation — 30 September 2026
+
+PR61 remains merged and verified in production at master3bc97e1e0b446aede269f7414c0c7c6358fdc192 (reviewed head3f5715b6cc292b2086946a80471c4145471cbdd7). Do not repeat deployment. PR62 at3662a8f5, PR63 at763c51e4 and PR64 atcda91e357d3c1922311b4a0c8ba8768cf31978ca are separate published/validated slices. Current worktree D:/Dev/CB-QuestGeometry-20260930, branch audit/next-quest-geometry-20260930, is based on PR64. Resolve the containing commit and final acceptance/publication receipts from D:/Dev/CopilotBuddy-Evidence/postmerge-20260930-pr61/CREDIT_SOURCE_* before claiming a final tested SHA.
+
+Read docs/audit/2026-09-30/credit-geometry/REPORT.md, closure-review.json, credit-source-patch.json, credit-source-review.json.gz and exact ledger/remaining/correlation files. The implementation adds56 quest-scoped producer records for17quests with1237searchpoints, preserving actual credit identity and all730global spawn entries/14293points,46GOrepairs,645deliveries,154supplementalcontracts,369metadata-onlydependencies,2relations and only strategies9066/9447. It also repairs scheduler scan distance to include Z after ordinary pickup/objective/turn-in regression failures. Do not replace this with planar range or synthesize native observations.
+
+Current categories2963generic/2strategy/932data/365source/16live/57scripted total4335, with1370 exact remaining IDs. Thirteen quests gain generic controlled proof; four repaired quests retain other obligations. Actual diagnostic owners pass258485dataset/39strategy checks;33credit cases,15world-space range cases and287analyzers pass with one expected skip. Final clean-commit local/hosted acceptance remains separate from precommit evidence and is recorded externally.
+
+The current user explicitly extended work past every green milestone. Continue the next high-confidence omission: reputation requirements for quests9145,9155,9173,9192 have null modeled fields despite matching primary metadata. Review source protection and test real admission below/at/above/unknown reputation. Auxiliary keys/bait/crafting inputs cannot be discarded merely because they are not final required items. Continue remaining acquisition/eligibility/prerequisite/condition/script contracts in small PRs. Keep original build12340 read-only IDA (nowenabled), pinnedTC335primary/ACsecondary, exact hash/source/inventory/completion ownership and live acceptance limits. The earlier session_finish was held and new work extends the task; do not call it again as progress or to collect messages.
+
+---
+
 # Current: object identity continuation after PR63 — 30 September 2026
 
 PR61 is already merged and selectively deployed: reviewed head 3f5715b6cc292b2086946a80471c4145471cbdd7, master 3bc97e1e0b446aede269f7414c0c7c6358fdc192. Preserve that production milestone and its completed deployment receipts. PR62 remains at 3662a8f5a47178fc982e2891a45f5a3ac9a7b3ed; PR63 is fully published/validated at 763c51e47b916f8303d10b6f77595d7a1feb3820. Do not repeat their implementation, publication or deployment.

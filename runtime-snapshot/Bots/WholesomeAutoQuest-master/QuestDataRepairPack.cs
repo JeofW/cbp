@@ -33,6 +33,57 @@ namespace WholesomeAQ
         public string SourceRef { get; init; } = "";
     }
 
+    public sealed class QuestCreditSourcePoint
+    {
+        public int Map { get; init; }
+        public double X { get; init; }
+        public double Y { get; init; }
+        public double Z { get; init; }
+    }
+
+    public sealed class QuestCreditSource
+    {
+        public int QuestId { get; init; }
+        public int RowIndex { get; init; }
+        public int ObjectiveIndex { get; init; }
+        public int CreditId { get; init; }
+        public int RequiredCount { get; init; }
+        public int CreatureId { get; init; }
+        public string CreditField { get; init; } = "";
+        public string SourceRef { get; init; } = "";
+        public IReadOnlyList<QuestCreditSourcePoint> Points { get; init; } = Array.Empty<QuestCreditSourcePoint>();
+    }
+
+    public static class QuestCreditSourceCatalog
+    {
+        public static IEnumerable<QuestCreditSource> ForObjective(QuestEntry quest, QuestObjective objective, QuestDatabase database)
+        {
+            if (quest == null || objective == null || database == null || objective.Type != ObjectiveType.KillMob ||
+                objective.MobId <= 0 || objective.KillCount <= 0 || objective.ItemId != 0 || objective.GameObjectId != 0 ||
+                (quest.SpecialFlags & 0x22) != 0 || quest.Objectives == null || database.ObjectiveCreditSources == null)
+                return Enumerable.Empty<QuestCreditSource>();
+            return database.ObjectiveCreditSources.Where(source => source != null && source.QuestId == quest.Id &&
+                source.RowIndex >= 0 && source.RowIndex < quest.Objectives.Count &&
+                ReferenceEquals(quest.Objectives[source.RowIndex], objective) && source.ObjectiveIndex == objective.Index &&
+                source.CreditId == objective.MobId && source.RequiredCount == objective.KillCount);
+        }
+
+        public static IEnumerable<SpawnPoint> Locations(QuestEntry quest, QuestObjective objective, QuestDatabase database)
+        {
+            foreach (QuestCreditSource source in ForObjective(quest, objective, database))
+                foreach (QuestCreditSourcePoint point in source.Points)
+                {
+                    var prior = new[] { source.CreditId, source.CreatureId }.SelectMany(entry =>
+                        database.CreatureSpawns.TryGetValue(entry.ToString(), out var points) && points != null
+                            ? points : Enumerable.Empty<SpawnPoint>()).Where(p => p != null && p.Map == point.Map &&
+                                p.X == point.X && p.Y == point.Y && p.Z == point.Z).ToArray();
+                    yield return new SpawnPoint { Map = point.Map, X = point.X, Y = point.Y, Z = point.Z,
+                        IsKnownReachable = prior.Any(p => p.IsKnownReachable == false) ? false : null,
+                        IsKnownSafe = prior.Any(p => p.IsKnownSafe == false) ? false : null };
+                }
+        }
+    }
+
     /// <summary>
     /// Applies a fully validated data-only patch to an isolated model. Source
     /// declarations are auditable reference knowledge, not realm equivalence,
@@ -64,8 +115,10 @@ namespace WholesomeAQ
                     "SourceSqlSha256", "QuestMetadata", "SpawnAdditions", "RelationAdditions", "DependencyMetadata" };
                 bool hasCountRepairs = root.ValueKind == JsonValueKind.Object && root.TryGetProperty("ObjectiveCountRepairs", out _);
                 bool hasObjectRepairs = root.ValueKind == JsonValueKind.Object && root.TryGetProperty("GameObjectObjectiveRepairs", out _);
+                bool hasCreditSources = root.ValueKind == JsonValueKind.Object && root.TryGetProperty("ObjectiveCreditSources", out _);
                 if (hasCountRepairs) fields = fields.Concat(new[] { "ObjectiveCountRepairs" }).ToArray();
                 if (hasObjectRepairs) fields = fields.Concat(new[] { "GameObjectObjectiveRepairs" }).ToArray();
+                if (hasCreditSources) fields = fields.Concat(new[] { "ObjectiveCreditSources" }).ToArray();
                 Exact(root, fields);
                 if (Text(root, "Schema") != "quest-data-repair-pack-335-v1" || Integer(root, "ClientBuild") != 12340 ||
                     Text(root, "SourceCore") != "trinitycore-3.3.5")
@@ -255,6 +308,40 @@ namespace WholesomeAQ
                     if (quests.Values.Any(q => q.ExclusiveGroup == item.ExclusiveGroup && !item.GroupMembers.Contains(q.Id)))
                         throw new InvalidDataException("Dependency catalog omitted a known negative-group member.");
                 }
+                var creditSources = new List<QuestCreditSource>();
+                var creditOwners = new HashSet<(int Quest, int Row, int Creature)>();
+                int creditPointCount = 0;
+                if (hasCreditSources)
+                    foreach (JsonElement row in Rows(root, "ObjectiveCreditSources", 30000))
+                    {
+                        Exact(row, "QuestId", "RowIndex", "ObjectiveIndex", "CreditId", "RequiredCount", "CreatureId", "CreditField", "SourceRef", "Points");
+                        int id = Positive(row, "QuestId"), ordinal = Integer(row, "RowIndex"), index = Integer(row, "ObjectiveIndex");
+                        int credit = Positive(row, "CreditId"), count = Positive(row, "RequiredCount"), creature = Positive(row, "CreatureId");
+                        string field = Text(row, "CreditField"), reference = Text(row, "SourceRef");
+                        if (!quests.TryGetValue(id, out QuestEntry quest) || !creditOwners.Add((id, ordinal, creature)) ||
+                            ordinal < 0 || quest.Objectives == null || ordinal >= quest.Objectives.Count || index < 0 ||
+                            credit == creature || (field != "KillCredit1" && field != "KillCredit2") || (quest.SpecialFlags & 0x22) != 0)
+                            throw new InvalidDataException("Credit source is not bound to a unique ordinary quest objective.");
+                        QuestObjective objective = quest.Objectives[ordinal];
+                        if (objective == null || objective.Type != ObjectiveType.KillMob || objective.Index != index ||
+                            objective.MobId != credit || objective.KillCount != count || objective.ItemId != 0 || objective.GameObjectId != 0)
+                            throw new InvalidDataException("Credit source expected objective identity or count changed.");
+                        var points = new List<QuestCreditSourcePoint>(); var unique = new HashSet<(int, double, double, double)>();
+                        foreach (JsonElement position in Rows(row, "Points", 10000))
+                        {
+                            Exact(position, "Map", "X", "Y", "Z");
+                            int map = Integer(position, "Map");
+                            double x = Coordinate(position, "X"), y = Coordinate(position, "Y"), z = Coordinate(position, "Z");
+                            if (map < 0 || !unique.Add((map, x, y, z)) || ++creditPointCount > 200000)
+                                throw new InvalidDataException("Credit source positions are invalid, duplicated or oversized.");
+                            points.Add(new QuestCreditSourcePoint { Map = map, X = x, Y = y, Z = z });
+                        }
+                        if (points.Count == 0) throw new InvalidDataException("Credit source has no reference search locations.");
+                        creditSources.Add(new QuestCreditSource { QuestId = id, RowIndex = ordinal, ObjectiveIndex = index,
+                            CreditId = credit, RequiredCount = count, CreatureId = creature, CreditField = field,
+                            SourceRef = reference, Points = points.AsReadOnly() });
+                    }
+                result.ObjectiveCreditSources = creditSources.AsReadOnly();
                 result.DependencyMetadata = new ReadOnlyDictionary<int, QuestDependencyMetadata>(dependencies);
                 source = "trinitycore-3.3.5:" + revision + ":" + database + ":" + sql;
                 return result;

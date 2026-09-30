@@ -111,6 +111,12 @@ namespace WholesomeAQ
         [System.Text.Json.Serialization.JsonIgnore]
         public IReadOnlyDictionary<int, QuestDependencyMetadata> DependencyMetadata { get; internal set; }
             = new Dictionary<int, QuestDependencyMetadata>();
+
+        // Validated repair-pack metadata only; never a placeholder spawn or a
+        // source of authoritative observations supplied through base JSON.
+        [System.Text.Json.Serialization.JsonIgnore]
+        public IReadOnlyList<QuestCreditSource> ObjectiveCreditSources { get; internal set; }
+            = Array.Empty<QuestCreditSource>();
         public List<QuestEntry> Quests { get; set; } = new List<QuestEntry>();
         public List<QuestGiverEntry> QuestGivers { get; set; } = new List<QuestGiverEntry>();
         public List<QuestEnderEntry> QuestEnders { get; set; } = new List<QuestEnderEntry>();
