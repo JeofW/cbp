@@ -1,0 +1,50 @@
+{
+  "base_commit": "1366dd14a489b3bad499457872156c143d39d128",
+  "route_repairs": 24,
+  "quest_ids": [
+    429,
+    565,
+    714,
+    2746,
+    2821,
+    2822,
+    3128,
+    3501,
+    3521,
+    4061,
+    4449,
+    6031,
+    8310,
+    8549,
+    8580,
+    8586,
+    10420,
+    10618,
+    10757,
+    10763,
+    13092,
+    13906
+  ],
+  "operations": {
+    "Replace": 11,
+    "Append": 13
+  },
+  "spawn_entries_added": 19,
+  "spawn_points_added": 262,
+  "old_knowledge_sha256": {
+    "quest_data.json": "f2ca79318694afaa4214fc09392e88c3d9d1eae5128f323d0d65b1b9e91a7e3f",
+    "quest_data.repairs.json": "67a372cb548c9bcdb97b7bcc82fcc87253ae0778220b70f7960b6f0f001d96e3",
+    "quest_strategies.json": "10ef767236c0ad2c0151f6b56b9abe6f4e102e1512d650c3313aae750da1f498"
+  },
+  "new_knowledge_sha256": {
+    "quest_data.json": "f2ca79318694afaa4214fc09392e88c3d9d1eae5128f323d0d65b1b9e91a7e3f",
+    "quest_data.repairs.json": "f82c4f938928f55fd5ffad221b5cb5db0c2b8725cae3c79f1a275ce03df9b3a1",
+    "quest_strategies.json": "c9284a9f9d5ca7ba8eba1037f07d14c24925347a96070ed721aac9bd59a5357d"
+  },
+  "all_prior_repair_records_preserved": true,
+  "availability_contracts_unchanged": true,
+  "strategy_recipes_unchanged": true,
+  "classification_reproduction_pending": true,
+  "live_completion_proven": false,
+  "created_utc": "2026-09-30T18:11:51.081716+00:00"
+}

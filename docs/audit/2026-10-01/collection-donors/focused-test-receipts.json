@@ -1,0 +1,125 @@
+{
+  "donor-flags-exporter-red": {
+    "command": [
+      "python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "Tools/EvidenceAudit",
+      "-p",
+      "test_quest_collection_routes_335.py",
+      "-v"
+    ],
+    "exit": 1,
+    "started_utc": "2026-09-30T18:03:31.692559+00:00",
+    "finished_utc": "2026-09-30T18:03:31.936780+00:00",
+    "head": "1366dd14a489b3bad499457872156c143d39d128",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr.log": "eca9760c3a928063393533ff570c18fad0f1ae6b049aa5fee90d32844429ab96"
+    }
+  },
+  "donor-flags-exporter-green": {
+    "command": [
+      "python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "Tools/EvidenceAudit",
+      "-p",
+      "test_quest_collection_routes_335.py",
+      "-v"
+    ],
+    "exit": 0,
+    "started_utc": "2026-09-30T18:04:11.855999+00:00",
+    "finished_utc": "2026-09-30T18:04:12.038787+00:00",
+    "head": "1366dd14a489b3bad499457872156c143d39d128",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr.log": "a82ff1cbe25562783e8ef451cd6ba0f43501e056155ed30d2c298e724b71f4b4"
+    }
+  },
+  "donor-knowledge-red-build": {
+    "command": [
+      "dotnet",
+      "build",
+      "Tools/PostMergeAuditRegressionTests/PostMergeAuditRegressionTests.csproj",
+      "-c",
+      "Release",
+      "-p:Platform=x86",
+      "-p:PlatformTarget=x86",
+      "-v",
+      "quiet"
+    ],
+    "exit": 0,
+    "started_utc": "2026-09-30T18:07:49.575622+00:00",
+    "finished_utc": "2026-09-30T18:08:11.614759+00:00",
+    "head": "1366dd14a489b3bad499457872156c143d39d128",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "a49af49048fcce289b3781e1004559ca3e1c57b152ef825b2f43d4e8eca35a74",
+      "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "donor-knowledge-red": {
+    "command": [
+      "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+      "Tools/PostMergeAuditRegressionTests/bin/x86/Release/net10.0-windows7.0/PostMergeAuditRegressionTests.dll",
+      "QuestReviewedDonorKnowledgeRegressionTests"
+    ],
+    "exit": 1,
+    "started_utc": "2026-09-30T18:08:39.775599+00:00",
+    "finished_utc": "2026-09-30T18:08:40.616000+00:00",
+    "head": "1366dd14a489b3bad499457872156c143d39d128",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "09fd590fc6d724541e00e32832451286521724f7503f54a73077efa9fd53565e",
+      "stderr.log": "5e05ade524cb615e42f558ae422b51e0472440c87461a780f5baad4e501a676e"
+    }
+  },
+  "donor-knowledge-green": {
+    "command": [
+      "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+      "Tools/PostMergeAuditRegressionTests/bin/x86/Release/net10.0-windows7.0/PostMergeAuditRegressionTests.dll",
+      "QuestReviewedDonorKnowledgeRegressionTests",
+      "QuestCollectionRouteRegressionTests",
+      "QuestCollectionProfileSourceRegressionTests",
+      "QuestInventoryAdmissionRegressionTests"
+    ],
+    "exit": 0,
+    "started_utc": "2026-09-30T18:11:51.216378+00:00",
+    "finished_utc": "2026-09-30T18:11:54.675761+00:00",
+    "head": "1366dd14a489b3bad499457872156c143d39d128",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "653ca8cc4b3157bfaa6bf909982cf83cbf784f0d469274496073dbf2c15a2654",
+      "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "donor-analyzers-green": {
+    "command": [
+      "python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "Tools/EvidenceAudit",
+      "-p",
+      "test_*.py",
+      "-v"
+    ],
+    "exit": 0,
+    "started_utc": "2026-09-30T18:12:14.557596+00:00",
+    "finished_utc": "2026-09-30T18:12:20.250252+00:00",
+    "head": "1366dd14a489b3bad499457872156c143d39d128",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr.log": "08a223db9d35b44e1fc0706518bee458c206fbc7e5254bf3f36b3dffead5ca6a"
+    }
+  }
+}

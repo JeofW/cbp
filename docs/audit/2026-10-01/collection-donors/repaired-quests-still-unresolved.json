@@ -1,0 +1,38 @@
+[
+  {
+    "quest_id": 565,
+    "classification": "DATA-INVALID/INCOMPLETE",
+    "obligations": [
+      "data:primary-item-requirement-unrepresented"
+    ]
+  },
+  {
+    "quest_id": 2746,
+    "classification": "DATA-INVALID/INCOMPLETE",
+    "obligations": [
+      "data:primary-item-requirement-unrepresented"
+    ]
+  },
+  {
+    "quest_id": 10757,
+    "classification": "DATA-INVALID/INCOMPLETE",
+    "obligations": [
+      "data:primary-item-requirement-unrepresented"
+    ]
+  },
+  {
+    "quest_id": 10763,
+    "classification": "DATA-INVALID/INCOMPLETE",
+    "obligations": [
+      "data:primary-item-requirement-unrepresented"
+    ]
+  },
+  {
+    "quest_id": 13906,
+    "classification": "DATA-INVALID/INCOMPLETE",
+    "obligations": [
+      "data:primary-item-requirement-unrepresented",
+      "live:required-money-observation-and-reward-acceptance"
+    ]
+  }
+]

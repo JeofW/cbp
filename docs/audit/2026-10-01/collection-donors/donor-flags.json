@@ -1,0 +1,554 @@
+[
+  {
+    "state": {
+      "entry": 1923,
+      "name": "Bloodsnout Worg",
+      "unit_flags": 0,
+      "unit_flags2": 2048,
+      "dynamicflags": 0,
+      "npcflag": 0,
+      "type": 1,
+      "faction": 38,
+      "minlevel": 16,
+      "maxlevel": 17
+    },
+    "allowed_by_reviewed_policy": true,
+    "source": {
+      "table": "creature_template",
+      "key": {
+        "entry": 1923
+      },
+      "source_line": 1110,
+      "row_sha256": "9bd863e43f2591d129c972bff7550e4693bd8292f41122a6413098191f5c379f"
+    }
+  },
+  {
+    "state": {
+      "entry": 1989,
+      "name": "Grellkin",
+      "unit_flags": 0,
+      "unit_flags2": 2048,
+      "dynamicflags": 0,
+      "npcflag": 0,
+      "type": 3,
+      "faction": 189,
+      "minlevel": 3,
+      "maxlevel": 4
+    },
+    "allowed_by_reviewed_policy": true,
+    "source": {
+      "table": "creature_template",
+      "key": {
+        "entry": 1989
+      },
+      "source_line": 1110,
+      "row_sha256": "c69d272eebfbcb23e2dbd5585c78af03245808f399299ba2a5a125d83aad11a7"
+    }
+  },
+  {
+    "state": {
+      "entry": 2248,
+      "name": "Cave Yeti",
+      "unit_flags": 0,
+      "unit_flags2": 2048,
+      "dynamicflags": 0,
+      "npcflag": 0,
+      "type": 7,
+      "faction": 16,
+      "minlevel": 30,
+      "maxlevel": 31
+    },
+    "allowed_by_reviewed_policy": true,
+    "source": {
+      "table": "creature_template",
+      "key": {
+        "entry": 2248
+      },
+      "source_line": 1110,
+      "row_sha256": "f271e0ee5439aa04e9d105a6b382c50d9f0081d75d2e11e9ad74a806cf6ac9cb"
+    }
+  },
+  {
+    "state": {
+      "entry": 2944,
+      "name": "Boss Tho'grun",
+      "unit_flags": 0,
+      "unit_flags2": 2048,
+      "dynamicflags": 0,
+      "npcflag": 0,
+      "type": 7,
+      "faction": 45,
+      "minlevel": 41,
+      "maxlevel": 42
+    },
+    "allowed_by_reviewed_policy": true,
+    "source": {
+      "table": "creature_template",
+      "key": {
+        "entry": 2944
+      },
+      "source_line": 1110,
+      "row_sha256": "348d445cdfafc6e4a94b52103a0c84d4ac33a577cf61507266630ba0183b47f3"
+    }
+  },
+  {
+    "state": {
+      "entry": 3931,
+      "name": "Shadethicket Oracle",
+      "unit_flags": 0,
+      "unit_flags2": 2048,
+      "dynamicflags": 0,
+      "npcflag": 0,
+      "type": 4,
+      "faction": 16,
+      "minlevel": 30,
+      "maxlevel": 30
+    },
+    "allowed_by_reviewed_policy": true,
+    "source": {
+      "table": "creature_template",
+      "key": {
+        "entry": 3931
+      },
+      "source_line": 1110,
+      "row_sha256": "46bf6ee66d73692889aee8bbf3eccac951492bf6c8ec3106f5e4331a1a404226"
+    }
+  },
+  {
+    "state": {
+      "entry": 4260,
+      "name": "Venture Co. Shredder",
+      "unit_flags": 0,
+      "unit_flags2": 2048,
+      "dynamicflags": 0,
+      "npcflag": 0,
+      "type": 9,
+      "faction": 47,
+      "minlevel": 37,
+      "maxlevel": 37
+    },
+    "allowed_by_reviewed_policy": true,
+    "source": {
+      "table": "creature_template",
+      "key": {
+        "entry": 4260
+      },
+      "source_line": 1110,
+      "row_sha256": "35deab5fa0a5737adbe639f6336edb3b2c03ca8fe77de7fb93f7faeab43bbd6b"
+    }
+  },
+  {
+    "state": {
+      "entry": 5292,
+      "name": "Feral Scar Yeti",
+      "unit_flags": 0,
+      "unit_flags2": 2048,
+      "dynamicflags": 0,
+      "npcflag": 0,
+      "type": 7,
+      "faction": 16,
+      "minlevel": 43,
+      "maxlevel": 44
+    },
+    "allowed_by_reviewed_policy": true,
+    "source": {
+      "table": "creature_template",
+      "key": {
+        "entry": 5292
+      },
+      "source_line": 1110,
+      "row_sha256": "e8089b1c4f419548becbacba581efd486247b59638f2fb04441480018ce74302"
+    }
+  },
+  {
+    "state": {
+      "entry": 5293,
+      "name": "Hulking Feral Scar",
+      "unit_flags": 0,
+      "unit_flags2": 2048,
+      "dynamicflags": 0,
+      "npcflag": 0,
+      "type": 7,
+      "faction": 16,
+      "minlevel": 45,
+      "maxlevel": 46
+    },
+    "allowed_by_reviewed_policy": true,
+    "source": {
+      "table": "creature_template",
+      "key": {
+        "entry": 5293
+      },
+      "source_line": 1110,
+      "row_sha256": "8bd61e9dd5a437c2739c70351078762a192cede224ca293b852febc162d72437"
+    }
+  },
+  {
+    "state": {
+      "entry": 5300,
+      "name": "Frayfeather Hippogryph",
+      "unit_flags": 0,
+      "unit_flags2": 2048,
+      "dynamicflags": 0,
+      "npcflag": 0,
+      "type": 1,
+      "faction": 16,
+      "minlevel": 43,
+      "maxlevel": 44
+    },
+    "allowed_by_reviewed_policy": true,
+    "source": {
+      "table": "creature_template",
+      "key": {
+        "entry": 5300
+      },
+      "source_line": 1110,
+      "row_sha256": "8e03a1c9bc65e55c5e260d862733d383026972761300a55176fb3ab2394348ff"
+    }
+  },
+  {
+    "state": {
+      "entry": 5983,
+      "name": "Bonepicker",
+      "unit_flags": 0,
+      "unit_flags2": 2048,
+      "dynamicflags": 0,
+      "npcflag": 0,
+      "type": 1,
+      "faction": 73,
+      "minlevel": 49,
+      "maxlevel": 50
+    },
+    "allowed_by_reviewed_policy": true,
+    "source": {
+      "table": "creature_template",
+      "key": {
+        "entry": 5983
+      },
+      "source_line": 1110,
+      "row_sha256": "a9cb8664a2e95d82d3f6f24c0f122385fecfc9cde37d78a527541098a73141fc"
+    }
+  },
+  {
+    "state": {
+      "entry": 7032,
+      "name": "Greater Obsidian Elemental",
+      "unit_flags": 0,
+      "unit_flags2": 2048,
+      "dynamicflags": 0,
+      "npcflag": 0,
+      "type": 4,
+      "faction": 91,
+      "minlevel": 55,
+      "maxlevel": 57
+    },
+    "allowed_by_reviewed_policy": true,
+    "source": {
+      "table": "creature_template",
+      "key": {
+        "entry": 7032
+      },
+      "source_line": 1111,
+      "row_sha256": "2cfda225dd61ebc4a41321fce367a86db6c545aba2315949aecb1629c2e8f409"
+    }
+  },
+  {
+    "state": {
+      "entry": 7055,
+      "name": "Blackrock Worg",
+      "unit_flags": 0,
+      "unit_flags2": 2048,
+      "dynamicflags": 0,
+      "npcflag": 0,
+      "type": 1,
+      "faction": 40,
+      "minlevel": 54,
+      "maxlevel": 55
+    },
+    "allowed_by_reviewed_policy": true,
+    "source": {
+      "table": "creature_template",
+      "key": {
+        "entry": 7055
+      },
+      "source_line": 1111,
+      "row_sha256": "3c1bcdfaeb3986cb229e010f55a753a1a1132ad5ff3c15e32075cf5babdcc323"
+    }
+  },
+  {
+    "state": {
+      "entry": 7138,
+      "name": "Irontree Wanderer",
+      "unit_flags": 0,
+      "unit_flags2": 2048,
+      "dynamicflags": 0,
+      "npcflag": 0,
+      "type": 4,
+      "faction": 91,
+      "minlevel": 52,
+      "maxlevel": 53
+    },
+    "allowed_by_reviewed_policy": true,
+    "source": {
+      "table": "creature_template",
+      "key": {
+        "entry": 7138
+      },
+      "source_line": 1111,
+      "row_sha256": "79eae5c16f7aa76b6488980eb16a1a639d54740b87d13012724db19f4e6f8779"
+    }
+  },
+  {
+    "state": {
+      "entry": 8924,
+      "name": "The Behemoth",
+      "unit_flags": 64,
+      "unit_flags2": 2048,
+      "dynamicflags": 0,
+      "npcflag": 0,
+      "type": 7,
+      "faction": 54,
+      "minlevel": 50,
+      "maxlevel": 50
+    },
+    "allowed_by_reviewed_policy": false,
+    "source": {
+      "table": "creature_template",
+      "key": {
+        "entry": 8924
+      },
+      "source_line": 1111,
+      "row_sha256": "eb39ec48f89d877fcf3e0726a5b432c153ce5e1aa8439ed4efa8c8c2f0b3aa51"
+    }
+  },
+  {
+    "state": {
+      "entry": 9396,
+      "name": "Ground Pounder",
+      "unit_flags": 0,
+      "unit_flags2": 2048,
+      "dynamicflags": 0,
+      "npcflag": 0,
+      "type": 4,
+      "faction": 91,
+      "minlevel": 41,
+      "maxlevel": 43
+    },
+    "allowed_by_reviewed_policy": true,
+    "source": {
+      "table": "creature_template",
+      "key": {
+        "entry": 9396
+      },
+      "source_line": 1111,
+      "row_sha256": "365227b1a23e44af2e54182b166c73c5542074d8c08909eb7c4761cc66c95858"
+    }
+  },
+  {
+    "state": {
+      "entry": 11516,
+      "name": "Timbermaw Warder",
+      "unit_flags": 0,
+      "unit_flags2": 2048,
+      "dynamicflags": 0,
+      "npcflag": 0,
+      "type": 7,
+      "faction": 414,
+      "minlevel": 53,
+      "maxlevel": 54
+    },
+    "allowed_by_reviewed_policy": true,
+    "source": {
+      "table": "creature_template",
+      "key": {
+        "entry": 11516
+      },
+      "source_line": 1111,
+      "row_sha256": "21a11cb6e7b369f79c3fabaaeb02f4f74d58a98e4d0d0dc3ce1cc912188d48f8"
+    }
+  },
+  {
+    "state": {
+      "entry": 11553,
+      "name": "Timbermaw Woodbender",
+      "unit_flags": 0,
+      "unit_flags2": 2048,
+      "dynamicflags": 0,
+      "npcflag": 0,
+      "type": 7,
+      "faction": 414,
+      "minlevel": 52,
+      "maxlevel": 53
+    },
+    "allowed_by_reviewed_policy": true,
+    "source": {
+      "table": "creature_template",
+      "key": {
+        "entry": 11553
+      },
+      "source_line": 1111,
+      "row_sha256": "301afc19626cac07ef9d6db25bfaf7afd8d52d3d12b7f0a8602f57bc566a12b7"
+    }
+  },
+  {
+    "state": {
+      "entry": 11724,
+      "name": "Hive'Ashi Swarmer",
+      "unit_flags": 0,
+      "unit_flags2": 2048,
+      "dynamicflags": 0,
+      "npcflag": 0,
+      "type": 10,
+      "faction": 310,
+      "minlevel": 57,
+      "maxlevel": 58
+    },
+    "allowed_by_reviewed_policy": true,
+    "source": {
+      "table": "creature_template",
+      "key": {
+        "entry": 11724
+      },
+      "source_line": 1111,
+      "row_sha256": "6d4bcb7fdb1702b4629da5edfc773c79db58584a4c9c1ce094c6b2036e32a42c"
+    }
+  },
+  {
+    "state": {
+      "entry": 12199,
+      "name": "Shade of Ambermoon",
+      "unit_flags": 32768,
+      "unit_flags2": 2048,
+      "dynamicflags": 0,
+      "npcflag": 0,
+      "type": 6,
+      "faction": 21,
+      "minlevel": 58,
+      "maxlevel": 58
+    },
+    "allowed_by_reviewed_policy": true,
+    "source": {
+      "table": "creature_template",
+      "key": {
+        "entry": 12199
+      },
+      "source_line": 1111,
+      "row_sha256": "ab746849fd9a95a91a1d5c28f5ec0ad3e3481897213120a23daf5794d7b166b2"
+    }
+  },
+  {
+    "state": {
+      "entry": 15591,
+      "name": "Minion of Weavil",
+      "unit_flags": 32832,
+      "unit_flags2": 2048,
+      "dynamicflags": 0,
+      "npcflag": 0,
+      "type": 7,
+      "faction": 14,
+      "minlevel": 60,
+      "maxlevel": 61
+    },
+    "allowed_by_reviewed_policy": false,
+    "source": {
+      "table": "creature_template",
+      "key": {
+        "entry": 15591
+      },
+      "source_line": 1111,
+      "row_sha256": "7d2e4c0a48703463dd1a828ff8b3940531e1d22785e1a98308cfeb249ec80849"
+    }
+  },
+  {
+    "state": {
+      "entry": 18661,
+      "name": "Terrorguard",
+      "unit_flags": 0,
+      "unit_flags2": 2048,
+      "dynamicflags": 0,
+      "npcflag": 0,
+      "type": 3,
+      "faction": 90,
+      "minlevel": 67,
+      "maxlevel": 68
+    },
+    "allowed_by_reviewed_policy": true,
+    "source": {
+      "table": "creature_template",
+      "key": {
+        "entry": 18661
+      },
+      "source_line": 1112,
+      "row_sha256": "3dc79254c7aa60bf5613bf94e2a97057a953a13c395aee22676d58723dc6b5f8"
+    }
+  },
+  {
+    "state": {
+      "entry": 21839,
+      "name": "Mature Silkwing",
+      "unit_flags": 0,
+      "unit_flags2": 2048,
+      "dynamicflags": 0,
+      "npcflag": 0,
+      "type": 1,
+      "faction": 14,
+      "minlevel": 65,
+      "maxlevel": 66
+    },
+    "allowed_by_reviewed_policy": true,
+    "source": {
+      "table": "creature_template",
+      "key": {
+        "entry": 21839
+      },
+      "source_line": 1112,
+      "row_sha256": "8382806dba6120347916a9568fe2f98f1267bebbd04e5afb219e7732e273bcfe"
+    }
+  },
+  {
+    "state": {
+      "entry": 22311,
+      "name": "Raging Fire-Soul",
+      "unit_flags": 0,
+      "unit_flags2": 2048,
+      "dynamicflags": 0,
+      "npcflag": 0,
+      "type": 4,
+      "faction": 16,
+      "minlevel": 70,
+      "maxlevel": 71
+    },
+    "allowed_by_reviewed_policy": true,
+    "source": {
+      "table": "creature_template",
+      "key": {
+        "entry": 22311
+      },
+      "source_line": 1113,
+      "row_sha256": "faebe953eccce75221da2cbc14c32a31ced9a26913c6dfd1528d50baaa39b075"
+    }
+  },
+  {
+    "state": {
+      "entry": 32505,
+      "name": "Vargul Wanderer",
+      "unit_flags": 32768,
+      "unit_flags2": 2048,
+      "dynamicflags": 0,
+      "npcflag": 0,
+      "type": 6,
+      "faction": 1885,
+      "minlevel": 80,
+      "maxlevel": 80
+    },
+    "allowed_by_reviewed_policy": true,
+    "source": {
+      "table": "creature_template",
+      "key": {
+        "entry": 32505
+      },
+      "source_line": 1114,
+      "row_sha256": "fce829d9102c21cf63053ded2fd1e4093e34d4e2f79e9474aa996963b30faa70"
+    }
+  }
+]

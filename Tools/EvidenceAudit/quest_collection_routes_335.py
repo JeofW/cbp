@@ -12,6 +12,24 @@ from quest_collection_source_335 import CollectionSourceIndex, row_evidence, usa
 from quest_repair_pack_335 import BASE_FIELDS, ADDON_FIELDS
 
 
+def ordinary_donor_state(actor):
+    """A conservative reference-state allowance, never live attack permission.
+
+    TC335 95657f54779467effea8a1749a61ff93abc1d707 UnitDefines.h:
+    CAN_SWIM=0x8000 and REGENERATE_POWER=0x800. Unknown flags and special
+    static NPC/dynamic states require their own source review. In particular,
+    a default from a missing field is not evidence of an ordinary creature.
+    """
+    fields = ('unit_flags', 'unit_flags2', 'dynamicflags', 'npcflag',
+              'type', 'faction', 'minlevel', 'maxlevel')
+    if any(type(actor.get(field)) is not int or actor[field] < 0 for field in fields):
+        return False
+    return (actor['unit_flags'] & ~0x8000 == 0 and actor['unit_flags2'] & ~0x800 == 0
+            and actor['dynamicflags'] == 0 and actor['npcflag'] == 0
+            and actor['type'] in (1, 2, 3, 4, 5, 6, 7, 9, 10)
+            and actor['faction'] > 0 and 0 < actor['minlevel'] <= actor['maxlevel'])
+
+
 def derive(data, tables, previous, condition_codes, source, eligible_ids):
     index = CollectionSourceIndex(tables, condition_codes)
     quests = unique_index(data['Quests'], 'Id')
@@ -90,7 +108,8 @@ def derive(data, tables, previous, condition_codes, source, eligible_ids):
             if paths['search_bounded'] or not clear: continue
             for actor in sorted(creatures_by_loot[selector], key=lambda row: row['entry']):
                 entry = actor['entry']; existing = geometry('Creature', entry)
-                if actor.get('ScriptName') or actor.get('AIName') or (0, entry) in scripts or veto(existing): continue
+                if (not ordinary_donor_state(actor) or actor.get('ScriptName') or actor.get('AIName')
+                        or (0, entry) in scripts or veto(existing)): continue
                 points = primary_spawns[entry]
                 if not points: continue
                 primary_keys = {source_point(row) for row in points}
@@ -180,6 +199,9 @@ def derive(data, tables, previous, condition_codes, source, eligible_ids):
                 subject_source=row_evidence('quest_template',template,'ID'),
                 old_actor_source=row_evidence('creature_template' if kind=='Creature' else 'gameobject_template',old_actor,'entry') if old_actor else None,
                 target_source=row_evidence('creature_template',selected['actor'],'entry'),
+                target_static_state={field: selected['actor'][field] for field in
+                    ('unit_flags', 'unit_flags2', 'dynamicflags', 'npcflag', 'type', 'faction', 'minlevel', 'maxlevel')},
+                target_state_limit='Ordinary reference state only; actual hostility, attackability, phase, access and combat success remain live observations.',
                 item_source=row_evidence('item_template',index.items[item],'entry'),
                 loot_paths=selected['paths'], spawn_sources=[row_evidence('creature',row,'guid') for row in selected['spawn_rows']],
                 retained_original_source=valid_old, selection='nearest matching-map reference giver anchor, then creature ID',

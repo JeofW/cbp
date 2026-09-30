@@ -1,0 +1,19 @@
+{
+  "earlier_hold": "D:\\Dev\\CB-QuestCollectionDonors-20261001\\docs\\audit\\2026-10-01\\collection-sources\\source-review-provider-holds.json",
+  "donor_read": {
+    "original_payload_succeeded": true,
+    "completed_session_id": 66079,
+    "raw_source_reproduced_in": "donor-flags.json",
+    "source_revision": "95657f54779467effea8a1749a61ff93abc1d707"
+  },
+  "aggregate_loot_group_review": {
+    "executed": false,
+    "identical_retry_failed": true,
+    "payload_reference": "../collection-sources/source-review-provider-holds.json",
+    "new_routes_use_grouped_loot": false
+  },
+  "bank_source_probe": "BANK_SOURCE_PROBE_BLOCK_20261001.json",
+  "other_source_review": "DONOR_PASS_SOURCE_REVIEW_BLOCKS_20261001.json",
+  "blocked_requests_rerouted": false,
+  "remaining_offline_work_declared_exhausted": false
+}

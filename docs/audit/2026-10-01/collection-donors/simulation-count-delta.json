@@ -1,0 +1,1012 @@
+{
+  "before_checks": 261057,
+  "after_checks": 261209,
+  "net_added": 152,
+  "added_cases": [
+    {
+      "quest_id": 565,
+      "case": "pipeline-collection-source-handoff:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 565,
+      "case": "pipeline-completed-item-suppresses-alternative=0",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 565,
+      "case": "pipeline-objective-complete:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 565,
+      "case": "pipeline-objective-partial:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 565,
+      "case": "pipeline-objective-zero:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 565,
+      "case": "pipeline-observation-regression-resumes-objective:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 565,
+      "case": "pipeline-scheduler-acknowledges-objective:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 714,
+      "case": "pipeline-collection-source-handoff:index=0",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 714,
+      "case": "pipeline-counts-do-not-invent-server-complete-flag",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 714,
+      "case": "pipeline-generated-turn-in-profile",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 714,
+      "case": "pipeline-next-scheduling-retains-rewarded-history",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 714,
+      "case": "pipeline-objective-complete:index=0",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 714,
+      "case": "pipeline-objective-partial:index=0",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 714,
+      "case": "pipeline-objective-zero:index=0",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 714,
+      "case": "pipeline-observation-regression-resumes-objective:index=0",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 714,
+      "case": "pipeline-scheduler-acknowledges-objective:index=0",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 714,
+      "case": "pipeline-turn-in-acknowledges-rewarded-removal",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 714,
+      "case": "pipeline-turn-in-awaits-reward",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 2821,
+      "case": "pipeline-collection-source-handoff:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 2821,
+      "case": "pipeline-completed-item-suppresses-alternative=0",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 2821,
+      "case": "pipeline-counts-do-not-invent-server-complete-flag",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 2821,
+      "case": "pipeline-generated-turn-in-profile",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 2821,
+      "case": "pipeline-next-scheduling-retains-rewarded-history",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 2821,
+      "case": "pipeline-objective-complete:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 2821,
+      "case": "pipeline-objective-partial:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 2821,
+      "case": "pipeline-objective-zero:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 2821,
+      "case": "pipeline-observation-regression-resumes-objective:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 2821,
+      "case": "pipeline-scheduler-acknowledges-objective:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 2821,
+      "case": "pipeline-turn-in-acknowledges-rewarded-removal",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 2821,
+      "case": "pipeline-turn-in-awaits-reward",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 2822,
+      "case": "pipeline-collection-source-handoff:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 2822,
+      "case": "pipeline-completed-item-suppresses-alternative=0",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 2822,
+      "case": "pipeline-counts-do-not-invent-server-complete-flag",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 2822,
+      "case": "pipeline-generated-turn-in-profile",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 2822,
+      "case": "pipeline-next-scheduling-retains-rewarded-history",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 2822,
+      "case": "pipeline-objective-complete:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 2822,
+      "case": "pipeline-objective-partial:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 2822,
+      "case": "pipeline-objective-zero:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 2822,
+      "case": "pipeline-observation-regression-resumes-objective:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 2822,
+      "case": "pipeline-scheduler-acknowledges-objective:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 2822,
+      "case": "pipeline-turn-in-acknowledges-rewarded-removal",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 2822,
+      "case": "pipeline-turn-in-awaits-reward",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 3128,
+      "case": "pipeline-collection-source-handoff:index=4",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 3128,
+      "case": "pipeline-completed-item-suppresses-alternative=2",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 3128,
+      "case": "pipeline-counts-do-not-invent-server-complete-flag",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 3128,
+      "case": "pipeline-generated-turn-in-profile",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 3128,
+      "case": "pipeline-next-scheduling-retains-rewarded-history",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 3128,
+      "case": "pipeline-objective-complete:index=4",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 3128,
+      "case": "pipeline-objective-partial:index=4",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 3128,
+      "case": "pipeline-objective-zero:index=4",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 3128,
+      "case": "pipeline-observation-regression-resumes-objective:index=4",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 3128,
+      "case": "pipeline-scheduler-acknowledges-objective:index=4",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 3128,
+      "case": "pipeline-turn-in-acknowledges-rewarded-removal",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 3128,
+      "case": "pipeline-turn-in-awaits-reward",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 3501,
+      "case": "pipeline-collection-source-handoff:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 3501,
+      "case": "pipeline-completed-item-suppresses-alternative=0",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 3501,
+      "case": "pipeline-counts-do-not-invent-server-complete-flag",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 3501,
+      "case": "pipeline-generated-turn-in-profile",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 3501,
+      "case": "pipeline-next-scheduling-retains-rewarded-history",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 3501,
+      "case": "pipeline-objective-complete:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 3501,
+      "case": "pipeline-objective-partial:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 3501,
+      "case": "pipeline-objective-zero:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 3501,
+      "case": "pipeline-observation-regression-resumes-objective:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 3501,
+      "case": "pipeline-scheduler-acknowledges-objective:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 3501,
+      "case": "pipeline-turn-in-acknowledges-rewarded-removal",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 3501,
+      "case": "pipeline-turn-in-awaits-reward",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 4061,
+      "case": "pipeline-collection-source-handoff:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 4061,
+      "case": "pipeline-completed-item-suppresses-alternative=0",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 4061,
+      "case": "pipeline-counts-do-not-invent-server-complete-flag",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 4061,
+      "case": "pipeline-generated-turn-in-profile",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 4061,
+      "case": "pipeline-next-scheduling-retains-rewarded-history",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 4061,
+      "case": "pipeline-objective-complete:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 4061,
+      "case": "pipeline-objective-partial:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 4061,
+      "case": "pipeline-objective-zero:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 4061,
+      "case": "pipeline-observation-regression-resumes-objective:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 4061,
+      "case": "pipeline-scheduler-acknowledges-objective:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 4061,
+      "case": "pipeline-turn-in-acknowledges-rewarded-removal",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 4061,
+      "case": "pipeline-turn-in-awaits-reward",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 6031,
+      "case": "pipeline-collection-source-handoff:index=0",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 6031,
+      "case": "pipeline-completed-item-suppresses-alternative=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 6031,
+      "case": "pipeline-objective-complete:index=0",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 6031,
+      "case": "pipeline-objective-partial:index=0",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 6031,
+      "case": "pipeline-objective-zero:index=0",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 6031,
+      "case": "pipeline-observation-regression-resumes-objective:index=0",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 6031,
+      "case": "pipeline-scheduler-acknowledges-objective:index=0",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 8310,
+      "case": "pipeline-collection-source-handoff:index=3",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 8310,
+      "case": "pipeline-completed-item-suppresses-alternative=0",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 8310,
+      "case": "pipeline-counts-do-not-invent-server-complete-flag",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 8310,
+      "case": "pipeline-generated-turn-in-profile",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 8310,
+      "case": "pipeline-next-scheduling-retains-rewarded-history",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 8310,
+      "case": "pipeline-objective-complete:index=3",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 8310,
+      "case": "pipeline-objective-partial:index=3",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 8310,
+      "case": "pipeline-objective-zero:index=3",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 8310,
+      "case": "pipeline-observation-regression-resumes-objective:index=3",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 8310,
+      "case": "pipeline-scheduler-acknowledges-objective:index=3",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 8310,
+      "case": "pipeline-turn-in-acknowledges-rewarded-removal",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 8310,
+      "case": "pipeline-turn-in-awaits-reward",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 8586,
+      "case": "pipeline-collection-source-handoff:index=2",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 8586,
+      "case": "pipeline-completed-item-suppresses-alternative=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 8586,
+      "case": "pipeline-counts-do-not-invent-server-complete-flag",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 8586,
+      "case": "pipeline-generated-turn-in-profile",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 8586,
+      "case": "pipeline-next-scheduling-retains-rewarded-history",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 8586,
+      "case": "pipeline-objective-complete:index=2",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 8586,
+      "case": "pipeline-objective-partial:index=2",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 8586,
+      "case": "pipeline-objective-zero:index=2",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 8586,
+      "case": "pipeline-observation-regression-resumes-objective:index=2",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 8586,
+      "case": "pipeline-scheduler-acknowledges-objective:index=2",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 8586,
+      "case": "pipeline-turn-in-acknowledges-rewarded-removal",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 8586,
+      "case": "pipeline-turn-in-awaits-reward",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10420,
+      "case": "pipeline-collection-source-handoff:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10420,
+      "case": "pipeline-completed-item-suppresses-alternative=0",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10420,
+      "case": "pipeline-counts-do-not-invent-server-complete-flag",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10420,
+      "case": "pipeline-generated-turn-in-profile",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10420,
+      "case": "pipeline-next-scheduling-retains-rewarded-history",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10420,
+      "case": "pipeline-objective-complete:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10420,
+      "case": "pipeline-objective-partial:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10420,
+      "case": "pipeline-objective-zero:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10420,
+      "case": "pipeline-observation-regression-resumes-objective:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10420,
+      "case": "pipeline-scheduler-acknowledges-objective:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10420,
+      "case": "pipeline-turn-in-acknowledges-rewarded-removal",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10420,
+      "case": "pipeline-turn-in-awaits-reward",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10618,
+      "case": "pipeline-collection-source-handoff:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10618,
+      "case": "pipeline-completed-item-suppresses-alternative=0",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10618,
+      "case": "pipeline-counts-do-not-invent-server-complete-flag",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10618,
+      "case": "pipeline-generated-turn-in-profile",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10618,
+      "case": "pipeline-next-scheduling-retains-rewarded-history",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10618,
+      "case": "pipeline-objective-complete:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10618,
+      "case": "pipeline-objective-partial:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10618,
+      "case": "pipeline-objective-zero:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10618,
+      "case": "pipeline-observation-regression-resumes-objective:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10618,
+      "case": "pipeline-scheduler-acknowledges-objective:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10618,
+      "case": "pipeline-turn-in-acknowledges-rewarded-removal",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10618,
+      "case": "pipeline-turn-in-awaits-reward",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10757,
+      "case": "pipeline-collection-source-handoff:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10757,
+      "case": "pipeline-completed-item-suppresses-alternative=0",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10757,
+      "case": "pipeline-objective-complete:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10757,
+      "case": "pipeline-objective-partial:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10757,
+      "case": "pipeline-objective-zero:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10757,
+      "case": "pipeline-observation-regression-resumes-objective:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10757,
+      "case": "pipeline-scheduler-acknowledges-objective:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10763,
+      "case": "pipeline-collection-source-handoff:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10763,
+      "case": "pipeline-completed-item-suppresses-alternative=0",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10763,
+      "case": "pipeline-objective-complete:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10763,
+      "case": "pipeline-objective-partial:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10763,
+      "case": "pipeline-objective-zero:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10763,
+      "case": "pipeline-observation-regression-resumes-objective:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10763,
+      "case": "pipeline-scheduler-acknowledges-objective:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 13092,
+      "case": "pipeline-collection-source-handoff:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 13092,
+      "case": "pipeline-completed-item-suppresses-alternative=0",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 13092,
+      "case": "pipeline-counts-do-not-invent-server-complete-flag",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 13092,
+      "case": "pipeline-generated-turn-in-profile",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 13092,
+      "case": "pipeline-next-scheduling-retains-rewarded-history",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 13092,
+      "case": "pipeline-objective-complete:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 13092,
+      "case": "pipeline-objective-partial:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 13092,
+      "case": "pipeline-objective-zero:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 13092,
+      "case": "pipeline-observation-regression-resumes-objective:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 13092,
+      "case": "pipeline-scheduler-acknowledges-objective:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 13092,
+      "case": "pipeline-turn-in-acknowledges-rewarded-removal",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 13092,
+      "case": "pipeline-turn-in-awaits-reward",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 13906,
+      "case": "pipeline-collection-source-handoff:index=0",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 13906,
+      "case": "pipeline-completed-item-suppresses-alternative=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 13906,
+      "case": "pipeline-objective-complete:index=0",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 13906,
+      "case": "pipeline-objective-partial:index=0",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 13906,
+      "case": "pipeline-objective-zero:index=0",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 13906,
+      "case": "pipeline-observation-regression-resumes-objective:index=0",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 13906,
+      "case": "pipeline-scheduler-acknowledges-objective:index=0",
+      "status": "PASS"
+    }
+  ],
+  "no_longer_emitted_names": [
+    {
+      "quest_id": 6031,
+      "case": "pipeline-collection-source-handoff:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 6031,
+      "case": "pipeline-completed-item-suppresses-alternative=0",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 6031,
+      "case": "pipeline-objective-complete:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 6031,
+      "case": "pipeline-objective-partial:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 6031,
+      "case": "pipeline-objective-zero:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 6031,
+      "case": "pipeline-observation-regression-resumes-objective:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 6031,
+      "case": "pipeline-scheduler-acknowledges-objective:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 13906,
+      "case": "pipeline-collection-source-handoff:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 13906,
+      "case": "pipeline-completed-item-suppresses-alternative=0",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 13906,
+      "case": "pipeline-objective-complete:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 13906,
+      "case": "pipeline-objective-partial:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 13906,
+      "case": "pipeline-objective-zero:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 13906,
+      "case": "pipeline-observation-regression-resumes-objective:index=1",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 13906,
+      "case": "pipeline-scheduler-acknowledges-objective:index=1",
+      "status": "PASS"
+    }
+  ],
+  "equivalent_renamed_execution_cases": [
+    {
+      "quest_id": 6031,
+      "before": "pipeline-completed-item-suppresses-alternative=0",
+      "after": "pipeline-completed-item-suppresses-alternative=1",
+      "after_status": "PASS",
+      "reason": "Both reviewed collectors now have valid geometry; deterministic execution uses index0 before suppressing the completed same-item index1 alternative."
+    },
+    {
+      "quest_id": 6031,
+      "before": "pipeline-objective-partial:index=1",
+      "after": "pipeline-objective-partial:index=0",
+      "after_status": "PASS",
+      "reason": "Both reviewed collectors now have valid geometry; deterministic execution uses index0 before suppressing the completed same-item index1 alternative."
+    },
+    {
+      "quest_id": 6031,
+      "before": "pipeline-observation-regression-resumes-objective:index=1",
+      "after": "pipeline-observation-regression-resumes-objective:index=0",
+      "after_status": "PASS",
+      "reason": "Both reviewed collectors now have valid geometry; deterministic execution uses index0 before suppressing the completed same-item index1 alternative."
+    },
+    {
+      "quest_id": 6031,
+      "before": "pipeline-objective-zero:index=1",
+      "after": "pipeline-objective-zero:index=0",
+      "after_status": "PASS",
+      "reason": "Both reviewed collectors now have valid geometry; deterministic execution uses index0 before suppressing the completed same-item index1 alternative."
+    },
+    {
+      "quest_id": 6031,
+      "before": "pipeline-scheduler-acknowledges-objective:index=1",
+      "after": "pipeline-scheduler-acknowledges-objective:index=0",
+      "after_status": "PASS",
+      "reason": "Both reviewed collectors now have valid geometry; deterministic execution uses index0 before suppressing the completed same-item index1 alternative."
+    },
+    {
+      "quest_id": 6031,
+      "before": "pipeline-objective-complete:index=1",
+      "after": "pipeline-objective-complete:index=0",
+      "after_status": "PASS",
+      "reason": "Both reviewed collectors now have valid geometry; deterministic execution uses index0 before suppressing the completed same-item index1 alternative."
+    },
+    {
+      "quest_id": 6031,
+      "before": "pipeline-collection-source-handoff:index=1",
+      "after": "pipeline-collection-source-handoff:index=0",
+      "after_status": "PASS",
+      "reason": "Both reviewed collectors now have valid geometry; deterministic execution uses index0 before suppressing the completed same-item index1 alternative."
+    },
+    {
+      "quest_id": 13906,
+      "before": "pipeline-completed-item-suppresses-alternative=0",
+      "after": "pipeline-completed-item-suppresses-alternative=1",
+      "after_status": "PASS",
+      "reason": "Both reviewed collectors now have valid geometry; deterministic execution uses index0 before suppressing the completed same-item index1 alternative."
+    },
+    {
+      "quest_id": 13906,
+      "before": "pipeline-objective-partial:index=1",
+      "after": "pipeline-objective-partial:index=0",
+      "after_status": "PASS",
+      "reason": "Both reviewed collectors now have valid geometry; deterministic execution uses index0 before suppressing the completed same-item index1 alternative."
+    },
+    {
+      "quest_id": 13906,
+      "before": "pipeline-observation-regression-resumes-objective:index=1",
+      "after": "pipeline-observation-regression-resumes-objective:index=0",
+      "after_status": "PASS",
+      "reason": "Both reviewed collectors now have valid geometry; deterministic execution uses index0 before suppressing the completed same-item index1 alternative."
+    },
+    {
+      "quest_id": 13906,
+      "before": "pipeline-objective-zero:index=1",
+      "after": "pipeline-objective-zero:index=0",
+      "after_status": "PASS",
+      "reason": "Both reviewed collectors now have valid geometry; deterministic execution uses index0 before suppressing the completed same-item index1 alternative."
+    },
+    {
+      "quest_id": 13906,
+      "before": "pipeline-scheduler-acknowledges-objective:index=1",
+      "after": "pipeline-scheduler-acknowledges-objective:index=0",
+      "after_status": "PASS",
+      "reason": "Both reviewed collectors now have valid geometry; deterministic execution uses index0 before suppressing the completed same-item index1 alternative."
+    },
+    {
+      "quest_id": 13906,
+      "before": "pipeline-objective-complete:index=1",
+      "after": "pipeline-objective-complete:index=0",
+      "after_status": "PASS",
+      "reason": "Both reviewed collectors now have valid geometry; deterministic execution uses index0 before suppressing the completed same-item index1 alternative."
+    },
+    {
+      "quest_id": 13906,
+      "before": "pipeline-collection-source-handoff:index=1",
+      "after": "pipeline-collection-source-handoff:index=0",
+      "after_status": "PASS",
+      "reason": "Both reviewed collectors now have valid geometry; deterministic execution uses index0 before suppressing the completed same-item index1 alternative."
+    }
+  ],
+  "same_named_status_changes": [],
+  "simulation_implementation_changed": false,
+  "reason": "Repaired data activates additional pipelines and changes the deterministic first valid collector for two same-item alternatives. No test source or assertion is deleted."
+}
