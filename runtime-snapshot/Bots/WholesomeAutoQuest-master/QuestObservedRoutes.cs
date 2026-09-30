@@ -94,10 +94,25 @@ namespace WholesomeAQ
                     if (unit is WoWPlayer || !unit.IsValid || unit.Guid == 0 || unit.Entry == 0 ||
                         !unit.IsAlive || !unit.Attackable || !unit.CanSelect || unit.MyReaction > WoWUnitReaction.Neutral) continue;
                     ulong guid = unit.Guid; uint entry = unit.Entry; var point = unit.Location;
-                    if (!Finite(point.X) || !Finite(point.Y) || !Finite(point.Z) || origin.Distance(point) > NearbyGiverRadius ||
-                        !unit.GetCachedInfo(out var cache)) continue;
-                    int first = checked((int)cache.GroupID), second = checked((int)cache.GroupID2);
-                    if (!wanted.Contains(first) && !wanted.Contains(second)) continue;
+                    if (!Finite(point.X) || !Finite(point.Y) || !Finite(point.Z) || origin.Distance(point) > NearbyGiverRadius) continue;
+                    bool direct = entry <= int.MaxValue && wanted.Contains((int)entry);
+                    int first = 0, second = 0;
+                    try
+                    {
+                        if (unit.GetCachedInfo(out var cache))
+                        {
+                            first = checked((int)cache.GroupID);
+                            second = checked((int)cache.GroupID2);
+                        }
+                    }
+                    catch (Exception error) when (error is not ThreadInterruptedException && error is not OperationCanceledException)
+                    {
+                        // Optional alias metadata cannot hide an independently
+                        // observed direct entry. Partial alias reads prove nothing.
+                        first = second = 0;
+                        if (!direct) continue;
+                    }
+                    if (!direct && !wanted.Contains(first) && !wanted.Contains(second)) continue;
                     if (!unit.IsValid || unit.Guid != guid || unit.Entry != entry) continue;
                     values.Add(new QuestCreatureCreditObservation { Entry = checked((int)entry), Credit1 = first, Credit2 = second,
                         Guid = guid, PlayerGuid = player, ObservedUtc = now, MapId = map,
@@ -123,13 +138,14 @@ namespace WholesomeAQ
             if (slots.Length != 1 || accepted.NormalObjectiveRequiredCounts[slots[0]] != objective.KillCount) return stored;
             var observed = (snapshot.CreatureCredits ?? Array.Empty<QuestCreatureCreditObservation>())
                 .Where(value => value != null && value.Entry > 0 && value.Guid != 0 && value.AliveAttackableSelectable &&
-                    (value.Credit1 == objective.MobId || value.Credit2 == objective.MobId) &&
+                    (value.Entry == objective.MobId || value.Credit1 == objective.MobId || value.Credit2 == objective.MobId) &&
                     snapshot.PlayerGuid != 0 && value.PlayerGuid == snapshot.PlayerGuid && value.ObservedUtc == snapshot.UtcNow &&
                     value.MapId == snapshot.MapId && Finite(value.X) && Finite(value.Y) && Finite(value.Z) &&
                     Math.Pow(value.X - snapshot.X, 2) + Math.Pow(value.Y - snapshot.Y, 2) + Math.Pow(value.Z - snapshot.Z, 2)
                         <= NearbyGiverRadius * NearbyGiverRadius)
                 .Select(value => new SpawnPoint { Map = value.MapId, X = value.X, Y = value.Y, Z = value.Z }).ToArray();
-            // The host's GrindObjective already recognizes cached GroupID/GroupID2.
+            // Match the existing GrindObjective: direct entry first, then the
+            // independently observed cache GroupID/GroupID2 alternatives.
             // Add observed locations without rewriting the credit ID or inventing a
             // script action. Exact stored safety vetoes survive the added geometry.
             foreach (var point in observed)

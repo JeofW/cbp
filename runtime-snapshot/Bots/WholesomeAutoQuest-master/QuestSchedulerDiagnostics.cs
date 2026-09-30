@@ -370,7 +370,7 @@ namespace WholesomeAQ
                         guid = credit.Guid.ToString("X16", CultureInfo.InvariantCulture), playerGuid = credit.PlayerGuid.ToString("X16", CultureInfo.InvariantCulture),
                         observedUtc = credit.ObservedUtc, mapId = credit.MapId, x = DiagnosticNumber(credit.X), y = DiagnosticNumber(credit.Y), z = DiagnosticNumber(credit.Z),
                         aliveAttackableSelectable = credit.AliveAttackableSelectable,
-                        source = "original-client:loaded-creature-cache-credits", note = "A cached credit alias is not a scripted-action recipe or live completion proof." });
+                        source = "original-client:loaded-creature-entry-and-cache-credits", note = "A direct entry or cached credit alias identifies an observed actor; neither proves a scripted action, navigation or completion." });
                 foreach (QuestEntry quest in relevant)
                 {
                     uint id = (uint)quest.Id;
