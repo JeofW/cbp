@@ -118,6 +118,37 @@ class AvailabilityClosureReceiptTests(unittest.TestCase):
                 simulation['availability_condition_validation']['passed_cases'] -= 1
                 with self.assertRaises(ValueError): self.validate(contract, simulation)
 
+    def daily_fixture(self):
+        contract, simulation = self.fixture()
+        contract['Groups'][0]['Conditions'][0]['Type'] = 43
+        contract['ReferencedQuests'][0]['SpecialFlags'] = 1
+        names = [f'availability-daily=201:observed={state}' for state in ('unknown', 'absent', 'present', 'reset')] + [
+            'availability-missing-observation-revokes-publication', 'availability-fixture-constrained-by-source-and-prerequisites']
+        simulation['cases'] = [{'name': name, 'status': 'PASS'} for name in names]
+        simulation['availability_condition_validation'].update(contract=copy.deepcopy(contract), passed_cases=len(names))
+        return contract, simulation
+
+    def test_daily_requires_membership_unknown_and_reset_receipts(self):
+        contract, simulation = self.daily_fixture()
+        try:
+            valid = self.validate(contract, simulation)
+        except ValueError:
+            valid = False
+        self.assertTrue(valid, 'Complete daily membership/reset receipts must be recognized')
+
+    def test_permanent_status_receipts_cannot_certify_daily_membership(self):
+        contract, simulation = self.daily_fixture()
+        old_contract, old_simulation = self.fixture()
+        simulation['cases'] = old_simulation['cases']
+        simulation['availability_condition_validation']['passed_cases'] = len(simulation['cases'])
+        with self.assertRaises(ValueError): self.validate(contract, simulation)
+
+    def test_missing_daily_reset_receipt_stays_unproven(self):
+        contract, simulation = self.daily_fixture()
+        simulation['cases'].pop(3)
+        simulation['availability_condition_validation']['passed_cases'] -= 1
+        with self.assertRaises(ValueError): self.validate(contract, simulation)
+
 
 if __name__ == '__main__':
     unittest.main()

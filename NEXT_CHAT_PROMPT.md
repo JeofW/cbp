@@ -1,3 +1,13 @@
+# Current: checked daily availability continuation — 30 September 2026
+
+Active worktreeD:/Dev/CB-QuestDailyObservation-20260930, branchaudit/next-quest-daily-observation-20260930, parentPR72 0d29bab9fca2ff87a522c414cf38f0abc49b1055. Read docs/audit/2026-09-30/availability-daily/REPORT.md, source-contracts.json, simulation-count-delta.json and exact ledger/correlations. The containing final commit, complete local/hosted acceptance and publication are resolved from Git and externalDAILY_* receipts. Do not repeat already committed/published work.
+
+New source contracts12692→daily12582 and12695→daily12689 use checked current25slot daily membership. Total64contracts/129predicates, prior62unchanged. Preserve null unknown, separate permanent/raw/daily states, complete groups/negation, source metadata and accepted work. Diagnostics259218dataset/39strategy/733availability checks pass;12newcases,none removed. Counts3005/2/932/323/16/57=4335;1328remaining;61source condition obligations. These are the area/daily lineage, not merged master's different ledger.
+
+Canonical master51107859 includes validatedPR71; its initial local Wholesome timeout is retained separately and the same unchanged suite passed on recheck. Exact master closure and downloaded hosted checks are green. PR72 is validated/ready. Production remainsPR61 at3bc97e1e. Continue the largest remaining availability/data/source families, integrate only fully validated scopes and retain source/live/script blockers. Only9066/9447 strategies are vetted. No session_finish while implementation remains.
+
+---
+
 # Current: checked area availability continuation — 30 September 2026
 
 Active worktree D:/Dev/CB-QuestAreaObservation-20260930, branch audit/next-quest-area-observation-20260930, parent PR70 034c75d9fe93f27103133341345647eaaefe92af. Read docs/audit/2026-09-30/availability-area/REPORT.md, source-contracts.json, simulation-count-delta.json and exact ledger/correlations. The containing final SHA and clean local/hosted/publication status must be resolved from Git and external AREA_* receipts.

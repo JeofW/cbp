@@ -17,7 +17,7 @@ import re
 from quest_repair_pack_335 import BASE_FIELDS, ADDON_FIELDS, digest, encoded, indexed, load_verified_tables
 
 SOURCE_TYPE = 19
-SUPPORTED_TYPES = {8, 9, 14, 23, 27, 28, 47}
+SUPPORTED_TYPES = {8, 9, 14, 23, 27, 28, 43, 47}
 STATUS_MASK = (1 << 0) | (1 << 1) | (1 << 3) | (1 << 5) | (1 << 6)
 SEASONAL_SORTS = {-22, -284, -366, -369, -370, -374, -376}
 
@@ -32,6 +32,16 @@ def permanent_reward_reference(template, addon):
 def permanent_reference(template, addon):
     """Raw accepted-state inference remains limited to ordinary quests."""
     return template.get('QuestType') == 2 and permanent_reward_reference(template, addon)
+
+
+def daily_reference(template, addon):
+    """IsDailyQuestDone checks an existing template against the daily ID array.
+
+    Its membership observation is separate from repeatable/seasonal reward history.
+    """
+    return (type(template.get('QuestType')) is int and template['QuestType'] in (0, 2)
+            and type(addon.get('SpecialFlags', 0)) is int and addon.get('SpecialFlags', 0) >= 0
+            and type(template.get('QuestSortID')) is int)
 
 
 def build_contracts(data, tables, source):
@@ -81,7 +91,7 @@ def build_contracts(data, tables, source):
                 referenced = templates.get(value); referenced_addon = addons.get(value, {})
                 if referenced is None:
                     problems.append('referenced-quest-absent:' + str(value)); continue
-                valid_reference = permanent_reward_reference if kind == 8 else permanent_reference
+                valid_reference = daily_reference if kind == 43 else permanent_reward_reference if kind == 8 else permanent_reference
                 if not valid_reference(referenced, referenced_addon):
                     problems.append('referenced-history-not-ordinary-permanent:' + str(value)); continue
                 if value in base and (base[value].get('QuestSortID') != referenced['QuestSortID']
@@ -128,7 +138,8 @@ def main():
     header = (args.reference / 'contracts/ConditionMgr.h').read_text(encoding='utf-8')
     expected = {'CONDITION_SOURCE_TYPE_QUEST_AVAILABLE': SOURCE_TYPE, 'CONDITION_QUESTREWARDED': 8,
                 'CONDITION_QUESTTAKEN': 9, 'CONDITION_QUEST_NONE': 14, 'CONDITION_QUEST_COMPLETE': 28,
-                'CONDITION_QUESTSTATE': 47, 'CONDITION_LEVEL': 27, 'CONDITION_AREAID': 23}
+                'CONDITION_QUESTSTATE': 47, 'CONDITION_LEVEL': 27, 'CONDITION_AREAID': 23,
+                'CONDITION_DAILY_QUEST_DONE': 43}
     for name, value in expected.items():
         match = re.search(r'\b' + name + r'\s*=\s*(0x[0-9a-fA-F]+|\d+)\s*,', header)
         if not match or int(match[1], 0) != value:

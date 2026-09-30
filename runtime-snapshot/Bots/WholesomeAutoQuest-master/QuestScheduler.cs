@@ -38,6 +38,8 @@ namespace WholesomeAQ
         public int PlayerLevel { get; init; }
         public int? PlayerAreaId { get; init; }
         public string AreaObservationStatus { get; init; } = "not-captured";
+        public IReadOnlyCollection<uint> DailyQuestIds { get; init; }
+        public string DailyObservationStatus { get; init; } = "not-captured";
         public int PlayerRaceId { get; init; }
         public int PlayerClassId { get; init; }
         public ulong PlayerGuid { get; init; }
@@ -246,6 +248,7 @@ namespace WholesomeAQ
             var observedItemStarters = CaptureItemStarters(db, me, observedUtc);
             var observedCreatureCredits = CaptureCreatureCredits(db, me, observedUtc);
             var areaObservation = QuestAreaSnapshot.Capture(me);
+            var dailyObservation = QuestDailySnapshot.Capture(me);
             bool diagnosticsDue = false;
             tryApplyPublication(() =>
             {
@@ -262,6 +265,8 @@ namespace WholesomeAQ
                 PlayerLevel = me.Level,
                 PlayerAreaId = areaObservation.IsCurrent() && areaObservation.MapId == (int)me.MapId ? areaObservation.AreaId : null,
                 AreaObservationStatus = areaObservation.Status,
+                DailyQuestIds = dailyObservation.IsCurrent() ? dailyObservation.QuestIds : null,
+                DailyObservationStatus = dailyObservation.Status,
                 PlayerRaceId = (int)me.Race,
                 PlayerClassId = (int)me.Class,
                 PlayerGuid = me.Guid,

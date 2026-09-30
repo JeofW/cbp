@@ -1,0 +1,38 @@
+{
+  "before": 259206,
+  "after": 259218,
+  "delta": 12,
+  "quests": [
+    {
+      "quest_id": 12692,
+      "before": 56,
+      "after": 62,
+      "added_case_names": [
+        "availability-daily=12582:observed=absent",
+        "availability-daily=12582:observed=present",
+        "availability-daily=12582:observed=reset",
+        "availability-daily=12582:observed=unknown",
+        "availability-fixture-constrained-by-source-and-prerequisites",
+        "availability-missing-observation-revokes-publication"
+      ],
+      "removed_case_names": []
+    },
+    {
+      "quest_id": 12695,
+      "before": 56,
+      "after": 62,
+      "added_case_names": [
+        "availability-daily=12689:observed=absent",
+        "availability-daily=12689:observed=present",
+        "availability-daily=12689:observed=reset",
+        "availability-daily=12689:observed=unknown",
+        "availability-fixture-constrained-by-source-and-prerequisites",
+        "availability-missing-observation-revokes-publication"
+      ],
+      "removed_case_names": []
+    }
+  ],
+  "availability_checks": 733,
+  "oracle_correction": "The first dataset run omitted current daily IDs in the expected level-boundary input. The second run supplies the same daily assignment and requires that argument explicitly; six retained assertions now pass. No assertion was removed or weakened.",
+  "format_change": "Per-contract daily observations are recorded separately from permanent/raw quest state; existing non-daily case names are preserved."
+}

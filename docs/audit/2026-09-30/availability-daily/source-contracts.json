@@ -1,0 +1,36 @@
+{
+  "primary_revision": "95657f54779467effea8a1749a61ff93abc1d707",
+  "server": {
+    "predicate": "CONDITION_DAILY_QUEST_DONE=43; existing quest template and exact current daily ID array membership",
+    "condition_source_sha256": "0b16a2b37477b2272503af39ddb6e99d32d41476eee6d48333b5b4a860afaf36",
+    "player_source_sha256": "36a817da38b318740ee5aa31f256518175dfdd02d1dd7a68ebb0805fc43275d8",
+    "condition_lines": [
+      467,
+      471
+    ],
+    "player_lines": [
+      23038,
+      23053
+    ]
+  },
+  "client": {
+    "build": 12340,
+    "architecture": "x86",
+    "binary_sha256": "bf644876709c591acc17c0da8cdf1814edcc9f1e6bc109a8c0d5c38c79dc953c",
+    "daily_count_api": "0x58DB30 reads25 current daily IDs, but its aggregate return cannot identify one quest",
+    "descriptor_binding": "0x6D1CF0 binds object+4104 to base descriptor+592; daily offset4528 from there gives base descriptor+0x1400;0x70CBA0/0x743640 establish the shared base descriptor",
+    "new_api": "QuestDailySnapshot validates complete25slot bytes and current raw player/descriptor/Memory ownership, rereads and preserves null unknown",
+    "ida_receipts_sha256": {
+      "pass5-daily-binary-20260930.json": "753279d512f54ede7e4233dd8fa287a0e9480ddd45a9cd0b3bdc350833b5b5e4",
+      "pass5-daily-reader-20260930.json": "046e7fb9d4cb40962ceea804d6ea01196443ca876bc5c7af90e27022e5393157",
+      "pass4-daily-slot-reader-20260930.json": "3e5dcf0cb429e7848611b2cf31f70e1fc7ef76e6bcc0b2145ceaeb0506ed4dc8",
+      "pass4-player-descriptor-pointer-20260930.json": "d3670daa99ea216c22b7f64c9ce5a35484ea3936e7f076b7bcfc375b65432642",
+      "pass4-player-descriptor-bind-20260930.json": "9d82b08a6870724f432a85ded8aeb8c0d841799b1ab56cb15cbba786fa87e594",
+      "pass4-unit-descriptor-bind-20260930.json": "da3db8c6b671172fc0372da648a076a7da9818db717d52b58163cac4cdeae4f4",
+      "pass4-object-descriptor-bind-20260930.json": "64329065e4a2fbd41b6324f2b930cdfe1b7df498502feb42fb564f2a0c933588"
+    },
+    "new_native_dispatch": false,
+    "read_only_ida": true
+  },
+  "limits": "Current client samples do not prove an atomic transaction, absence of ABA, a custom realm reset policy or live completion. No permanent reward or wall-clock reset is substituted."
+}

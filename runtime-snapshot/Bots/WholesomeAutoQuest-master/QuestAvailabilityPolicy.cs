@@ -61,6 +61,7 @@ namespace WholesomeAQ
         public int? LevelComparison { get; init; }
         public int? RequiredAreaId { get; init; }
         public int? ObservedAreaId { get; init; }
+        public bool? DailyCompleted { get; init; }
         public string SourceRef { get; init; }
     }
 
@@ -109,6 +110,7 @@ namespace WholesomeAQ
                         23 => snapshot.PlayerAreaId > 0 ? snapshot.PlayerAreaId == condition.Value1 : null,
                         27 => snapshot.PlayerLevel > 0 ? CompareLevel(snapshot.PlayerLevel, condition.Value1, condition.Value2) : null,
                         28 => state.HasValue ? state != 1 ? false : rewarded.HasValue ? !rewarded.Value : null : null,
+                        43 => DailyMembership(snapshot.DailyQuestIds, id),
                         47 => Any(new[] {
                             (condition.Value2 & 64) != 0 ? rewarded : (bool?)false,
                             (condition.Value2 & (1 | 2 | 8 | 32)) != 0
@@ -122,13 +124,14 @@ namespace WholesomeAQ
                         Type = condition.Type, ReferencedQuestId = condition.Type is 23 or 27 ? 0 : condition.Value1,
                         StateMask = condition.Type == 47 ? condition.Value2 : 0,
                         Negative = condition.Negative, Met = value,
-                        RawAcceptedState = condition.Type is not (23 or 27) && snapshot.RawQuestStates != null && snapshot.RawQuestStates.TryGetValue(id, out int raw) ? raw : null,
-                        PermanentlyRewarded = condition.Type is 23 or 27 ? null : rewarded,
+                        RawAcceptedState = condition.Type is not (23 or 27 or 43) && snapshot.RawQuestStates != null && snapshot.RawQuestStates.TryGetValue(id, out int raw) ? raw : null,
+                        PermanentlyRewarded = condition.Type is 23 or 27 or 43 ? null : rewarded,
                         RequiredLevel = condition.Type == 27 ? condition.Value1 : null,
                         ObservedLevel = condition.Type == 27 && snapshot.PlayerLevel > 0 ? snapshot.PlayerLevel : null,
                         LevelComparison = condition.Type == 27 ? condition.Value2 : null,
                         RequiredAreaId = condition.Type == 23 ? condition.Value1 : null,
                         ObservedAreaId = condition.Type == 23 && snapshot.PlayerAreaId > 0 ? snapshot.PlayerAreaId : null,
+                        DailyCompleted = condition.Type == 43 ? DailyMembership(snapshot.DailyQuestIds, id) : null,
                         SourceRef = condition.SourceRef });
                 }
                 groupResults.Add(All(met));
@@ -137,6 +140,13 @@ namespace WholesomeAQ
             return new QuestAvailabilityDecision { Status = passed == true ? "satisfied" : passed == false ? "not-satisfied" : "observation-unknown",
                 Rejection = passed == true ? null : passed == false ? "availability-condition-not-satisfied" : "availability-condition-observation-unknown",
                 SourceRef = contract.SourceRef, Predicates = results.AsReadOnly() };
+        }
+
+        private static bool? DailyMembership(IReadOnlyCollection<uint> ids, uint id)
+        {
+            if (ids == null || ids.Count > 25 || ids.Any(value => value == 0 || value > int.MaxValue) ||
+                ids.Distinct().Count() != ids.Count) return null;
+            return ids.Contains(id);
         }
 
         // Pinned TC335 Util.h CompareValues: equality, greater, less, >=, <=.
@@ -196,10 +206,9 @@ namespace WholesomeAQ
                     Exact(reference, "QuestId", "QuestType", "SpecialFlags", "QuestSortID", "SourceRef");
                     int referencedId = Positive(reference, "QuestId"), method = Integer(reference, "QuestType"),
                         flags = Integer(reference, "SpecialFlags"), sort = Integer(reference, "QuestSortID");
-                    if (!ids.Add(referencedId) || method is not (0 or 2) || flags < 0 || (flags & 1) != 0 ||
-                        new[] { -22, -284, -366, -369, -370, -374, -376 }.Contains(sort) ||
+                    if (!ids.Add(referencedId) || method is not (0 or 2) || flags < 0 ||
                         quests.TryGetValue(referencedId, out QuestEntry existing) && (existing.SpecialFlags != flags || existing.QuestSortID != sort))
-                        throw new InvalidDataException("Availability reference does not establish permanent quest reward history.");
+                        throw new InvalidDataException("Availability reference is invalid or disagrees with the source-bound quest.");
                     references.Add(new QuestAvailabilityReference { QuestId = referencedId, QuestType = method,
                         SpecialFlags = flags, QuestSortID = sort, SourceRef = Text(reference, "SourceRef") });
                 }
@@ -218,11 +227,16 @@ namespace WholesomeAQ
                         if (negativeKind is not (JsonValueKind.True or JsonValueKind.False))
                             throw new InvalidDataException("Availability negation must be an explicit boolean.");
                         bool negative = condition.GetProperty("Negative").GetBoolean();
-                        bool referenceValid = type is 23 or 27 || ids.Contains(value1) &&
-                            (type == 8 || references.Single(reference => reference.QuestId == value1).QuestType == 2);
+                        QuestAvailabilityReference referenced = references.FirstOrDefault(reference => reference.QuestId == value1);
+                        bool permanent = referenced != null && (referenced.SpecialFlags & 1) == 0 &&
+                            !new[] { -22, -284, -366, -369, -370, -374, -376 }.Contains(referenced.QuestSortID);
+                        // Daily membership has its own current-reset-cycle observation.
+                        // It does not grant permanent history to any other predicate.
+                        bool referenceValid = type is 23 or 27 || referenced != null &&
+                            (type == 43 || permanent && (type == 8 || referenced.QuestType == 2));
                         bool valuesInvalid = type == 47 ? value2 <= 0 || (value2 & ~107) != 0
                             : type == 27 ? value2 < 0 || value2 > 4 : value2 != 0;
-                        if (type is not (8 or 9 or 14 or 23 or 27 or 28 or 47) || !referenceValid || value3 != 0 || valuesInvalid ||
+                        if (type is not (8 or 9 or 14 or 23 or 27 or 28 or 43 or 47) || !referenceValid || value3 != 0 || valuesInvalid ||
                             !keys.Add((type, value1, value2, negative)) || ++total > 256)
                             throw new InvalidDataException("Availability predicate is unsupported, ambiguous or missing its source reference.");
                         conditions.Add(new QuestAvailabilityPredicate { Type = type, Value1 = value1, Value2 = value2,
@@ -258,12 +272,15 @@ namespace WholesomeAQ
                 if (guid == 0) return null;
                 int level = me.Level;
                 QuestAreaSnapshot area = QuestAreaSnapshot.Capture(me);
+                QuestDailySnapshot daily = QuestDailySnapshot.Capture(me);
                 QuestLogSnapshot raw = log.CaptureSnapshot();
                 var states = QuestAvailabilityPolicy.RawStates(raw);
                 bool authoritative = log.TryGetAuthoritativeCompletedQuests(out var rewarded);
                 var snapshot = new QuestSchedulerSnapshot { PlayerGuid = guid, PlayerLevel = level, UtcNow = DateTime.UtcNow,
                     PlayerAreaId = area.IsCurrent() && area.MapId == (int)me.MapId ? area.AreaId : null,
                     AreaObservationStatus = area.Status,
+                    DailyQuestIds = daily.IsCurrent() ? daily.QuestIds : null,
+                    DailyObservationStatus = daily.Status,
                     HasCompleteQuestLog = raw.IsIdentityComplete, RawQuestStates = states,
                     HasAuthoritativeCompletions = authoritative,
                     CompletedQuestIds = authoritative ? rewarded.ToArray() : Array.Empty<uint>() };

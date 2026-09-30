@@ -1,0 +1,21 @@
+{
+  "base_commit": "0d29bab9fca2ff87a522c414cf38f0abc49b1055",
+  "new_contract_ids": [
+    12692,
+    12695
+  ],
+  "condition_contracts": 64,
+  "condition_predicates": 129,
+  "prior_62_contracts_unchanged": true,
+  "all_other_repairs_unchanged": true,
+  "strategy_recipes_unchanged": true,
+  "repair_sha256": "25f055a3a8492029b260307a18108b8899844a570db13958127404296eec3647",
+  "source": {
+    "CoreRevision": "95657f54779467effea8a1749a61ff93abc1d707",
+    "DatabaseRevision": "TDB335.25101",
+    "QuestDataSha256": "f2ca79318694afaa4214fc09392e88c3d9d1eae5128f323d0d65b1b9e91a7e3f",
+    "SourceSqlSha256": "e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9"
+  },
+  "live_completion_proven": false,
+  "created_utc": "2026-09-30T13:21:39.644982+00:00"
+}
