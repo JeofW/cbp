@@ -7,8 +7,8 @@
   "source_sql_sha256": "e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9",
   "files": {
     "quest_data.json": "f2ca79318694afaa4214fc09392e88c3d9d1eae5128f323d0d65b1b9e91a7e3f",
-    "quest_data.repairs.json": "9ed595952713eab989b87ff6fdf0978e2d602b1149a0df8f357f501250308bd9",
-    "quest_strategies.json": "889cfce22f87a96cb6f47d7173a906464d39e33690ea0f9bc79131e2e12ee713"
+    "quest_data.repairs.json": "6b38f8e39004bc19675491499ddd8f56c27c231f12b1c2c42e108b82f65323f0",
+    "quest_strategies.json": "bc2e0fa6b1e016e8c4a4e3358d10ae9aa77cc3f6d6f6d4c88771d6d7fddfb96a"
   },
   "quest_count": 4335,
   "strategy_quests": [
@@ -16,10 +16,10 @@
     9447
   ],
   "strategy_recipes": 3,
-  "repair_evidence": "docs/audit/2026-09-30/quest-conditions/repair-evidence.json.gz",
-  "strategy_evidence": "docs/audit/2026-09-30/quest-conditions/strategy-evidence.json.gz",
+  "repair_evidence": "docs/audit/2026-09-30/availability-scalars/repair-evidence.json.gz",
+  "strategy_evidence": "docs/audit/2026-09-30/availability-scalars/strategy-evidence.json.gz",
   "realm_equivalence_proven": false,
   "live_completion_proven": false,
   "production_replaced": false,
-  "closure_evidence_directory": "docs/audit/2026-09-30/quest-conditions"
+  "closure_evidence_directory": "docs/audit/2026-09-30/availability-scalars"
 }

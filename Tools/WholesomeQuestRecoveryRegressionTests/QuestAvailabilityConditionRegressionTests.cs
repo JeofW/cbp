@@ -88,7 +88,7 @@ internal static class QuestAvailabilityConditionRegressionTests
     }
     private static void Check(bool value, string message) { if (!value) throw new Failure(message); }
 
-    private sealed class Fixture : IDisposable
+    internal sealed class Fixture : IDisposable
     {
         internal readonly QuestDataRepairPackRegressionTests.Fixture F = new();
         internal JsonObject Contract, Condition;
@@ -129,13 +129,13 @@ internal static class QuestAvailabilityConditionRegressionTests
             catch (InvalidDataException e) { throw new Failure("supported condition was not loaded: " + e.Message); }
         }
         internal QuestSchedulerSnapshot Snapshot(bool history = true, uint[]? rewarded = null,
-            Dictionary<uint, int>? states = null, bool rawAvailable = true, bool computedCompleted = false, bool subjectReady = false)
+            Dictionary<uint, int>? states = null, bool rawAvailable = true, bool computedCompleted = false, bool subjectReady = false, int level = 1)
         {
             states ??= new();
             var accepted = states.Select(row => new QuestSchedulerAcceptedQuest { QuestId = row.Key,
                 IsCompleted = computedCompleted || row.Value == 1, IsFailed = row.Value == 5 }).ToList();
             if (subjectReady) accepted.Add(new QuestSchedulerAcceptedQuest { QuestId = Subject, IsCompleted = true });
-            var snapshot = new QuestSchedulerSnapshot { UtcNow = Now, PlayerGuid = 42, PlayerLevel = 1,
+            var snapshot = new QuestSchedulerSnapshot { UtcNow = Now, PlayerGuid = 42, PlayerLevel = level,
                 PlayerRaceId = 1, PlayerClassId = 2, MapId = 530, X = 10, Y = 20, Z = 37,
                 HasCompleteQuestLog = true, HasAuthoritativeCompletions = history,
                 CompletedQuestIds = rewarded ?? Array.Empty<uint>(), AcceptedQuests = accepted,
@@ -161,7 +161,7 @@ internal static class QuestAvailabilityConditionRegressionTests
                 case "missing-reference": Contract["ReferencedQuests"] = new JsonArray(); break;
                 case "repeatable-reference": Contract["ReferencedQuests"]![0]!["SpecialFlags"] = 1; break;
                 case "seasonal-reference": Contract["ReferencedQuests"]![0]!["QuestSortID"] = -22; break;
-                case "auto-complete-reference": Contract["ReferencedQuests"]![0]!["QuestType"] = 0; break;
+                case "auto-complete-reference": Contract["ReferencedQuests"]![0]!["QuestType"] = 0; Condition["Type"] = 9; break;
                 case "bad-mask": Condition["Type"] = 47; Condition["Value2"] = 4; break;
                 case "foreign-target-field": Condition["Target"] = 1; break;
                 case "negative-not-bool": Condition["Negative"] = 1; break;

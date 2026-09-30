@@ -56,6 +56,9 @@ namespace WholesomeAQ
         public bool? Met { get; init; }
         public int? RawAcceptedState { get; init; }
         public bool? PermanentlyRewarded { get; init; }
+        public int? RequiredLevel { get; init; }
+        public int? ObservedLevel { get; init; }
+        public int? LevelComparison { get; init; }
         public string SourceRef { get; init; }
     }
 
@@ -101,6 +104,7 @@ namespace WholesomeAQ
                         8 => rewarded,
                         9 => state.HasValue ? state == 3 : null,
                         14 => state.HasValue ? state == 0 : null,
+                        27 => snapshot.PlayerLevel > 0 ? CompareLevel(snapshot.PlayerLevel, condition.Value1, condition.Value2) : null,
                         28 => state.HasValue ? state != 1 ? false : rewarded.HasValue ? !rewarded.Value : null : null,
                         47 => Any(new[] {
                             (condition.Value2 & 64) != 0 ? rewarded : (bool?)false,
@@ -112,10 +116,14 @@ namespace WholesomeAQ
                     if (condition.Negative && value.HasValue) value = !value.Value;
                     met.Add(value);
                     results.Add(new QuestAvailabilityPredicateResult { ElseGroup = group.ElseGroup, PredicateIndex = index,
-                        Type = condition.Type, ReferencedQuestId = condition.Value1, StateMask = condition.Value2,
+                        Type = condition.Type, ReferencedQuestId = condition.Type == 27 ? 0 : condition.Value1,
+                        StateMask = condition.Type == 47 ? condition.Value2 : 0,
                         Negative = condition.Negative, Met = value,
-                        RawAcceptedState = snapshot.RawQuestStates != null && snapshot.RawQuestStates.TryGetValue(id, out int raw) ? raw : null,
-                        PermanentlyRewarded = rewarded, SourceRef = condition.SourceRef });
+                        RawAcceptedState = condition.Type != 27 && snapshot.RawQuestStates != null && snapshot.RawQuestStates.TryGetValue(id, out int raw) ? raw : null,
+                        PermanentlyRewarded = condition.Type == 27 ? null : rewarded,
+                        RequiredLevel = condition.Type == 27 ? condition.Value1 : null,
+                        ObservedLevel = condition.Type == 27 && snapshot.PlayerLevel > 0 ? snapshot.PlayerLevel : null,
+                        LevelComparison = condition.Type == 27 ? condition.Value2 : null, SourceRef = condition.SourceRef });
                 }
                 groupResults.Add(All(met));
             }
@@ -124,6 +132,13 @@ namespace WholesomeAQ
                 Rejection = passed == true ? null : passed == false ? "availability-condition-not-satisfied" : "availability-condition-observation-unknown",
                 SourceRef = contract.SourceRef, Predicates = results.AsReadOnly() };
         }
+
+        // Pinned TC335 Util.h CompareValues: equality, greater, less, >=, <=.
+        private static bool? CompareLevel(int observed, int required, int comparison) => comparison switch
+        {
+            0 => observed == required, 1 => observed > required, 2 => observed < required,
+            3 => observed >= required, 4 => observed <= required, _ => null
+        };
 
         private static int? State(QuestSchedulerSnapshot snapshot, uint id)
         {
@@ -175,10 +190,10 @@ namespace WholesomeAQ
                     Exact(reference, "QuestId", "QuestType", "SpecialFlags", "QuestSortID", "SourceRef");
                     int referencedId = Positive(reference, "QuestId"), method = Integer(reference, "QuestType"),
                         flags = Integer(reference, "SpecialFlags"), sort = Integer(reference, "QuestSortID");
-                    if (!ids.Add(referencedId) || method != 2 || flags < 0 || (flags & 1) != 0 ||
+                    if (!ids.Add(referencedId) || method is not (0 or 2) || flags < 0 || (flags & 1) != 0 ||
                         new[] { -22, -284, -366, -369, -370, -374, -376 }.Contains(sort) ||
                         quests.TryGetValue(referencedId, out QuestEntry existing) && (existing.SpecialFlags != flags || existing.QuestSortID != sort))
-                        throw new InvalidDataException("Availability reference does not establish ordinary permanent quest history.");
+                        throw new InvalidDataException("Availability reference does not establish permanent quest reward history.");
                     references.Add(new QuestAvailabilityReference { QuestId = referencedId, QuestType = method,
                         SpecialFlags = flags, QuestSortID = sort, SourceRef = Text(reference, "SourceRef") });
                 }
@@ -197,8 +212,11 @@ namespace WholesomeAQ
                         if (negativeKind is not (JsonValueKind.True or JsonValueKind.False))
                             throw new InvalidDataException("Availability negation must be an explicit boolean.");
                         bool negative = condition.GetProperty("Negative").GetBoolean();
-                        if (type is not (8 or 9 or 14 or 28 or 47) || !ids.Contains(value1) || value3 != 0 ||
-                            (type == 47 ? value2 <= 0 || (value2 & ~107) != 0 : value2 != 0) ||
+                        bool referenceValid = type == 27 || ids.Contains(value1) &&
+                            (type == 8 || references.Single(reference => reference.QuestId == value1).QuestType == 2);
+                        bool valuesInvalid = type == 47 ? value2 <= 0 || (value2 & ~107) != 0
+                            : type == 27 ? value2 < 0 || value2 > 4 : value2 != 0;
+                        if (type is not (8 or 9 or 14 or 27 or 28 or 47) || !referenceValid || value3 != 0 || valuesInvalid ||
                             !keys.Add((type, value1, value2, negative)) || ++total > 256)
                             throw new InvalidDataException("Availability predicate is unsupported, ambiguous or missing its source reference.");
                         conditions.Add(new QuestAvailabilityPredicate { Type = type, Value1 = value1, Value2 = value2,
@@ -232,15 +250,16 @@ namespace WholesomeAQ
                     !Styx.StyxWoW.IsInWorld || !me.IsValid) return null;
                 ulong guid = me.Guid;
                 if (guid == 0) return null;
+                int level = me.Level;
                 QuestLogSnapshot raw = log.CaptureSnapshot();
                 var states = QuestAvailabilityPolicy.RawStates(raw);
                 bool authoritative = log.TryGetAuthoritativeCompletedQuests(out var rewarded);
-                var snapshot = new QuestSchedulerSnapshot { PlayerGuid = guid, UtcNow = DateTime.UtcNow,
+                var snapshot = new QuestSchedulerSnapshot { PlayerGuid = guid, PlayerLevel = level, UtcNow = DateTime.UtcNow,
                     HasCompleteQuestLog = raw.IsIdentityComplete, RawQuestStates = states,
                     HasAuthoritativeCompletions = authoritative,
                     CompletedQuestIds = authoritative ? rewarded.ToArray() : Array.Empty<uint>() };
                 return states != null && ReferenceEquals(me, ObjectManager.Me) && ReferenceEquals(memory, ObjectManager.Wow) &&
-                    Styx.StyxWoW.IsInWorld && me.IsValid && me.Guid == guid && log.IsSnapshotCurrent(raw) ? snapshot : null;
+                    Styx.StyxWoW.IsInWorld && me.IsValid && me.Guid == guid && me.Level == level && log.IsSnapshotCurrent(raw) ? snapshot : null;
             }
             catch (Exception error) when (error is not ThreadInterruptedException && error is not OperationCanceledException) { return null; }
         }

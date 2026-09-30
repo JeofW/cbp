@@ -1,3 +1,13 @@
+# Current: source-backed level and permanent-reward conditions — 30 September 2026
+
+Active branch audit/next-quest-availability-inputs-20260930 at D:/Dev/CB-QuestAvailabilityInputs-20260930 starts from PR67 0722b9c4d7e2d958a23c0986e05864f2f6b68a0a. Read docs/audit/2026-09-30/availability-scalars/REPORT.md, source-contracts.json, simulation-count-delta.json and exact ledger/correlations. Resolve final containing commit/local/hosted/publication from external SCALAR_* receipts before claiming acceptance.
+
+Three complete contracts11596/11597/25286 were added: total61contracts/126predicates, preserving the prior58. Type8 permits source-confirmed permanent auto-complete reward history; raw-state types9/14/28/47 still require ordinary references. Condition27 uses actual player-level comparisons, unknown-preserving negation and current-level publication checks. Actual diagnostics259201dataset/39strategy/716availability checks pass, with exactly45new dataset cases and none removed. Classes3002generic/2strategy/932data/326source/16live/57scripted=4335;1331remaining. Do not substitute this sibling ledger for the combined integration's1330 or master's1369.
+
+PR62–66,68,69 are merged; canonical masterb91c548ba8a773ed60d6f138f1439180916ecc79 is separately local/hosted validated. Production remains deployed PR61 3bc97e1e0b446aede269f7414c0c7c6358fdc192. The pending integration worktree retains both inventory and availability guards, but its final stage_combined_closure.py request was blocked twice and stopped; preserve its recovery archive and do not reroute that operation. Continue64remaining availability quests and other exact source/data obligations through supported independent scopes. Original build12340 read-only IDA, TC335/TDB335.25101, existing safety gates and only9066/9447strategies remain mandatory. Do not use session_finish while implementation remains.
+
+---
+
 # Current: condition publication recovery — 30 September 2026
 
 The original supported commit request succeeded at 09:14 UTC. Commit `814a01b47c554fff3e74ae10086a83ddf643e2aa` contains the preserved 58 contracts / 115 predicates and all 44 archived implementation/evidence files, verified against their working bytes. No rejected transaction was rerouted. The containing final candidate must receive fresh complete local and hosted Windows/x86 validation before acceptance. Read `CONDITIONS_CANDIDATE_COMMIT.json` and subsequent external receipts in `D:/Dev/CopilotBuddy-Evidence/postmerge-20260930-pr61`.

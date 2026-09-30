@@ -190,7 +190,12 @@ internal static class QuestDatasetSimulationRegressionTests
                     {
                         bool actual = context.Pickup(context.Schedule(level: level));
                         if (level < quest.MinLevel) Check(!actual, "minimum-level barrier failed");
-                        else if (baseline && !(quest.MaxLevel > 0 && level > quest.MaxLevel)) Check(actual, "QuestLevel or another level boundary changed eligible pickup");
+                        else if (baseline && !(quest.MaxLevel > 0 && level > quest.MaxLevel))
+                        {
+                            bool sourceAllows = quest.AvailabilityConditions == null ||
+                                SourceAvailabilityExpected(quest.AvailabilityConditions, context.AvailabilityFixtureStates!, level);
+                            Check(actual == sourceAllows, "level admission differs from the explicit source requirement");
+                        }
                     });
                 foreach (int race in new[] { 1, 2, 3, 4, 5, 6, 7, 8, 10, 11 })
                     Case(record, "race=" + race, () =>
@@ -385,6 +390,19 @@ internal static class QuestDatasetSimulationRegressionTests
         return condition.Negative ? 107 ^ mask : mask;
     }
 
+    private static bool SourceLevel(QuestAvailabilityPredicate condition, int observed)
+    {
+        if (observed <= 0) return false; // No predicate, including negation, proves an unknown observation.
+        bool comparison = condition.Value2 switch { 0 => observed == condition.Value1, 1 => observed > condition.Value1,
+            2 => observed < condition.Value1, 3 => observed >= condition.Value1, 4 => observed <= condition.Value1,
+            _ => throw new InvalidDataException("Unsupported source level comparison") };
+        return condition.Negative ? !comparison : comparison;
+    }
+
+    private static bool SourceAvailabilityExpected(QuestAvailabilityContract contract, IReadOnlyDictionary<uint,int> states, int level) =>
+        contract.Groups.Any(group => group.Conditions.All(predicate => predicate.Type == 27 ? SourceLevel(predicate, level)
+            : (SourceStatusMask(predicate) & (1 << states[(uint)predicate.Value1])) != 0));
+
     private static void SeedAvailability(Context context)
     {
         var contract = context.Quest.AvailabilityConditions!;
@@ -392,8 +410,13 @@ internal static class QuestDatasetSimulationRegressionTests
         var active = context.ActiveParents.ToDictionary(q => q.QuestId, q => q.IsFailed ? 5 : q.IsCompleted ? 1 : 3);
         foreach (var group in contract.Groups)
         {
+            int[] legalLevels = Enumerable.Range(1, 80).Where(level => level >= context.Quest.MinLevel &&
+                !(context.Quest.MaxLevel > 0 && level > context.Quest.MaxLevel) &&
+                group.Conditions.Where(p => p.Type == 27).All(p => SourceLevel(p, level)))
+                .OrderBy(level => level == context.Level ? 0 : 1).ThenBy(level => level).ToArray();
+            if (legalLevels.Length == 0) continue;
             var choice = new Dictionary<uint,int>(); bool possible = true;
-            foreach (var predicates in group.Conditions.GroupBy(p => (uint)p.Value1))
+            foreach (var predicates in group.Conditions.Where(p => p.Type != 27).GroupBy(p => (uint)p.Value1))
             {
                 int mask = predicates.Aggregate(107, (allowed, predicate) => allowed & SourceStatusMask(predicate));
                 IEnumerable<int> domain = predicates.Key == (uint)context.Quest.Id ? new[] { 0 }
@@ -412,6 +435,7 @@ internal static class QuestDatasetSimulationRegressionTests
                 else if (pair.Value is 1 or 3 or 5) selectedActive[pair.Key] = pair.Value;
             }
             if (selectedActive.Count >= 25) continue;
+            context.Level = legalLevels[0];
             context.Completed = selectedHistory.OrderBy(id => id).ToArray();
             context.ActiveParents = selectedActive.OrderBy(row => row.Key).Select(row => new QuestSchedulerAcceptedQuest
                 { QuestId = row.Key, IsCompleted = row.Value == 1, IsFailed = row.Value == 5,
@@ -432,14 +456,13 @@ internal static class QuestDatasetSimulationRegressionTests
         int startingPasses = record.passed_cases, startingFailures = record.failed_cases;
         var states = context.AvailabilityFixtureStates!;
         var plan = new[] { new QuestPlanEntry { Quest = context.Quest, Stage = QuestWorkStage.Pickup } };
-        QuestSchedulerSnapshot Observe(IReadOnlyDictionary<uint,int> values, bool history = true, bool raw = true) => new()
+        QuestSchedulerSnapshot Observe(IReadOnlyDictionary<uint,int> values, bool history = true, bool raw = true, int? level = null) => new()
         {
-            PlayerGuid = 123, UtcNow = Now, HasCompleteQuestLog = true, HasAuthoritativeCompletions = history,
+            PlayerGuid = 123, PlayerLevel = level ?? context.Level, UtcNow = Now, HasCompleteQuestLog = true, HasAuthoritativeCompletions = history,
             CompletedQuestIds = values.Where(pair => pair.Value == 6).Select(pair => pair.Key).ToArray(),
             RawQuestStates = raw ? values.Where(pair => pair.Value is 1 or 3 or 5).ToDictionary(pair => pair.Key, pair => pair.Value) : null
         };
-        bool Expected(IReadOnlyDictionary<uint,int> values) => contract.Groups.Any(group =>
-            group.Conditions.All(predicate => (SourceStatusMask(predicate) & (1 << values[(uint)predicate.Value1])) != 0));
+        bool Expected(IReadOnlyDictionary<uint,int> values) => SourceAvailabilityExpected(contract, values, context.Level);
         foreach (uint referenced in states.Keys.OrderBy(id => id))
             foreach (int state in new[] { 0, 1, 3, 5, 6 })
             {
@@ -454,13 +477,28 @@ internal static class QuestDatasetSimulationRegressionTests
                         "publication condition gate retained the previous state");
                 });
             }
+        foreach (int threshold in contract.Groups.SelectMany(group => group.Conditions).Where(p => p.Type == 27).Select(p => p.Value1).Distinct().OrderBy(x => x))
+            foreach (int observed in new[] { 0, Math.Max(1, threshold - 1), threshold, threshold == int.MaxValue ? threshold : threshold + 1 }.Distinct())
+            {
+                int captured = observed;
+                Case(record, $"availability-level={threshold}:observed={captured}", () =>
+                {
+                    var observation = Observe(states, level: captured);
+                    bool expected = SourceAvailabilityExpected(contract, states, captured);
+                    Check((QuestAvailabilityPolicy.Evaluate(context.Quest, observation).Rejection == null) == expected,
+                        "level condition differs from pinned comparison and negation");
+                    Check(QuestAvailabilityPolicy.RequirementsCurrent(plan, observation) == expected,
+                        "current-level publication guard retained an earlier observation");
+                    if (!expected) Check(!context.Pickup(context.Schedule(level: captured)), "actual scheduler ignored a rejected level condition");
+                });
+            }
         Case(record, "availability-missing-observation-revokes-publication", () =>
             Check(!QuestAvailabilityPolicy.RequirementsCurrent(plan, null!), "missing current observation retained pickup"));
         Case(record, "availability-fixture-constrained-by-source-and-prerequisites", () =>
             Check(!context.AvailabilityFixtureSatisfiable || Expected(states), "fixture claims a satisfying source assignment without one"));
         record.availability_condition_validation = new { contract, passed_cases = record.passed_cases - startingPasses,
             failed_cases = record.failed_cases - startingFailures, fixture_satisfiable = context.AvailabilityFixtureSatisfiable,
-            observed_reference_states = states, source_oracle = "TC335 ConditionMgr.cpp predicates 8/9/14/28/47; nonrepeatable/nonseasonal ordinary references; all five original states; OR-of-AND groups",
+            observed_reference_states = states, source_oracle = "TC335 ConditionMgr.cpp predicates 8/9/14/27/28/47 and Util.h comparisons; permanent reward history separately from ordinary raw states; OR-of-AND groups",
             live_completion_proven = false };
         record.production_owners.Add("QuestAvailabilityPolicy.Evaluate and RequirementsCurrent with each source reference in all five original quest states");
     }
