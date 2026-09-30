@@ -471,6 +471,15 @@ namespace WholesomeAQ
                         {
                             index = objective.Index, kind = objective.Type.ToString(), creditEntry = objective.MobId,
                             storedSpawnCount = GetObjectiveSpawns(objective, db).Count(),
+                            sourceCreditProducerCount = QuestCreditSourceCatalog.ForObjective(quest, objective, db).Count(),
+                            sourceCreditProducers = QuestCreditSourceCatalog.ForObjective(quest, objective, db).Take(8)
+                                .Select(source => new { source.CreatureId, source.CreditId, source.CreditField, source.SourceRef,
+                                    searchPointCount = source.Points.Count,
+                                    liveActorObserved = (snapshot.CreatureCredits ?? Array.Empty<QuestCreatureCreditObservation>()).Any(value =>
+                                        value.Entry == source.CreatureId && value.Guid != 0 && value.PlayerGuid == snapshot.PlayerGuid &&
+                                        value.MapId == snapshot.MapId && value.ObservedUtc == snapshot.UtcNow && value.AliveAttackableSelectable &&
+                                        (value.Credit1 == source.CreditId || value.Credit2 == source.CreditId)),
+                                    sourcePointsAreSearchHints = true }).ToArray(),
                             effectiveSpawnCount = GetObservedObjectiveSpawns(quest, objective, active, db, snapshot).Count(),
                             effectiveSpawns = GetObservedObjectiveSpawns(quest, objective, active, db, snapshot).Take(8).Select(DiagnosticPoint).ToArray(),
                             geometrySampleLimit = 8

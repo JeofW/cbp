@@ -101,6 +101,20 @@ internal static class QuestDatasetSimulationRegressionTests
         internal IEnumerable<SpawnPoint> Spawns(int entry, DataType type) =>
             (type == DataType.Creature ? Database.CreatureSpawns : Database.GameObjectSpawns).TryGetValue(entry.ToString(), out var points)
                 ? points.Where(Valid) : Enumerable.Empty<SpawnPoint>();
+        internal IEnumerable<SpawnPoint> ObjectiveSpawns(DataObjective objective) =>
+            Spawns(objective.Type == DataKind.CollectFromGameObject ? objective.GameObjectId : objective.MobId,
+                objective.Type == DataKind.CollectFromGameObject ? DataType.GameObject : DataType.Creature)
+            .Concat(QuestCreditSourceCatalog.Locations(Quest, objective, Database)).Where(Valid);
+    }
+
+    private static string SerializeEffectiveModel(QuestDatabase database)
+    {
+        // The base schema deliberately ignores validated catalog metadata. The
+        // audit exporter includes it explicitly without enabling JSON injection.
+        if (database.ObjectiveCreditSources.Count == 0) return JsonSerializer.Serialize(database, Json);
+        var model = JsonSerializer.SerializeToNode(database, Json)!.AsObject();
+        model["ObjectiveCreditSources"] = JsonSerializer.SerializeToNode(database.ObjectiveCreditSources, Json);
+        return model.ToJsonString(Json);
     }
 
     internal static void Run()
@@ -125,7 +139,8 @@ internal static class QuestDatasetSimulationRegressionTests
         if (effectiveModel)
         {
             using var effective = new FileStream(output + ".effective-model.json", FileMode.CreateNew, FileAccess.Write);
-            JsonSerializer.Serialize(effective, db, Json);
+            byte[] modelBytes = System.Text.Encoding.UTF8.GetBytes(SerializeEffectiveModel(db));
+            effective.Write(modelBytes);
             using var dependencies = new FileStream(output + ".dependency-metadata.json", FileMode.CreateNew, FileAccess.Write);
             JsonSerializer.Serialize(dependencies, db.DependencyMetadata, Json);
         }
@@ -313,7 +328,7 @@ internal static class QuestDatasetSimulationRegressionTests
             QuestGivers = original.QuestGivers.Where(value => value.QuestId == quest.Id).ToList(),
             QuestEnders = original.QuestEnders.Where(value => value.QuestId == quest.Id).ToList(),
             CreatureSpawns = original.CreatureSpawns, GameObjectSpawns = original.GameObjectSpawns,
-            DependencyMetadata = original.DependencyMetadata };
+            DependencyMetadata = original.DependencyMetadata, ObjectiveCreditSources = original.ObjectiveCreditSources };
         int active = quest.PrevQuestID < 0 ? -quest.PrevQuestID : 0;
         var context = new Context { Quest = quest, Database = db, Level = Math.Clamp(quest.MinLevel, 1, 80), EffectiveModel=effectiveModel,
             Race = new[] { 10, 1, 2, 3, 4, 5, 6, 7, 8, 11 }.FirstOrDefault(race => quest.AllowableRaces == 0 || quest.AllowableRaces == -1 || (quest.AllowableRaces & (1 << (race - 1))) != 0),
@@ -461,8 +476,7 @@ internal static class QuestDatasetSimulationRegressionTests
         IEnumerable<DataObjective> pipelineObjectives = quest.Objectives.Where(value => value.Type != DataKind.TurnInOnly);
         if (context.EffectiveModel)
             pipelineObjectives = pipelineObjectives.OrderBy(objective =>
-                context.Spawns(objective.Type == DataKind.CollectFromGameObject ? objective.GameObjectId : objective.MobId,
-                    objective.Type == DataKind.CollectFromGameObject ? DataType.GameObject : DataType.Creature).Any() ? 0 : 1)
+                context.ObjectiveSpawns(objective).Any() ? 0 : 1)
                 .ThenBy(objective => objective.Index);
         foreach (DataObjective objective in pipelineObjectives)
         {
@@ -482,7 +496,7 @@ internal static class QuestDatasetSimulationRegressionTests
             }
             var targetType = objective.Type == DataKind.CollectFromGameObject ? DataType.GameObject : DataType.Creature;
             int entry = objective.Type == DataKind.CollectFromGameObject ? objective.GameObjectId : objective.MobId;
-            SpawnPoint? endpoint = context.Spawns(entry, targetType).FirstOrDefault();
+            SpawnPoint? endpoint = context.ObjectiveSpawns(objective).FirstOrDefault();
             if (endpoint == null) { record.pipeline_blocks.Add("objective-static-spawn-missing:index=" + objective.Index); continue; }
             var active = context.Schedule(accepted: true, progress: completedCounts, items: carried, origin: endpoint);
             var plan = active.Plan.Where(value => value.Quest.Id == quest.Id && value.ObjectiveIndex == objective.Index &&
@@ -503,6 +517,17 @@ internal static class QuestDatasetSimulationRegressionTests
             fixture.SetAccepted(true); fixture.SetProgress(completedCounts); fixture.SetInventory(carried);
             var owner = fixture.CreateObjective(ObjectiveNode.FromXml(element));
             record.production_owners.Add("ForcedBehaviorExecutor.ResolveQuestObjectiveIndex -> QuestManager.CreateQuestObjective -> ForcedQuestObjective.IsDone:" + objective.Type);
+            foreach (QuestCreditSource source in QuestCreditSourceCatalog.ForObjective(quest, objective, context.Database))
+            {
+                QuestCreditSource current = source;
+                Case(record, "pipeline-original-client-credit-producer=" + current.CreatureId, () =>
+                {
+                    Check(owner.Objective is Bots.Quest.Objectives.GrindObjective, "credit hint did not retain the ordinary kill owner");
+                    typeof(QuestObservedDatasetRoutesRegressionTests).GetMethod("CheckActualAliasTarget", BindingFlags.NonPublic | BindingFlags.Static)!
+                        .Invoke(null, new object[] { (Bots.Quest.Objectives.GrindObjective)owner.Objective, current.CreatureId, current.CreditId });
+                    Check(!owner.IsDone, "native credit identity or source location fabricated progress");
+                });
+            }
             void Progress(int count)
             {
                 if (item) carried[objective.ItemId] = count; else completedCounts[slots[0]] = count;

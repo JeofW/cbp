@@ -177,6 +177,7 @@ def main():
     from quest_repair_pack_335 import load_verified_tables, digest, BASE_FIELDS, ADDON_FIELDS, OPTIONAL_FIELDS
     from quest_dependency_source_335 import primary_dependency_index, dependency_membership
     from quest_collection_source_335 import CollectionSourceIndex
+    from quest_credit_source_335 import validate_loaded_sources
     tables, table_receipts = load_verified_tables(args.reference)
     old_rows = [json.loads(line) for line in gzip.decompress(args.baseline.read_bytes()).splitlines()]
     simulation_rows = list(map(json.loads, args.simulation.read_text(encoding='utf-8').splitlines()))
@@ -217,6 +218,8 @@ def main():
             conditions[row['SourceEntry']].append(row)
     events = _constants(args.reference / 'contracts/SmartScriptMgr.h', 'SMART_EVENT_')
     actions = _constants(args.reference / 'contracts/SmartScriptMgr.h', 'SMART_ACTION_')
+    credit_sources = validate_loaded_sources(effective, tables, events, actions, {
+        'CoreRevision': revision, 'DatabaseRevision': source.get('release', ''), 'SourceSqlSha256': source_sql})
     script_index = defaultdict(list); credit_scripts = defaultdict(list); direct_quests = defaultdict(list)
     action_quest_fields = {'SMART_ACTION_FAIL_QUEST': 'action_param1', 'SMART_ACTION_OFFER_QUEST': 'action_param1',
         'SMART_ACTION_CALL_AREAEXPLOREDOREVENTHAPPENS': 'action_param1', 'SMART_ACTION_CALL_GROUPEVENTHAPPENS': 'action_param1',
@@ -343,7 +346,8 @@ def main():
                         obligations.append('data:normal-objective-identity-or-count-unrepresented:' + str(index))
                     else:
                         represented_normals.add(pair)
-                if not valid_points(actor_kind, entry) and not has_collection_alternative_geometry(quest, objective, effective, required):
+                if (not valid_points(actor_kind, entry) and not credit_sources.get((ident, index))
+                        and not has_collection_alternative_geometry(quest, objective, effective, required)):
                     obligations.append('data:objective-geometry-missing:' + str(index))
             if quest.get('DeliveryItems'):
                 represented_items.update({item['ItemId']: item['Count'] for item in quest['DeliveryItems']})
@@ -402,6 +406,7 @@ def main():
             'primary_direct_quest_scripts': [script_ref(s) for s in direct_quests[ident]],
             'primary_objective_actors': related_actors, 'secondary_evidence_retained': retained_secondary_evidence(prior),
             'primary_collection_sources': acquisition,
+            'primary_credit_search_sources': [source for index in range(len(quest['Objectives'])) for source in credit_sources.get((ident, index), [])],
             'primary_dependency_membership': dependency_review,
             'strategy': {'status': strategy_status, 'evidence': strategy},
             'simulation': sim, 'final_simulation_disposition': chosen_simulation,

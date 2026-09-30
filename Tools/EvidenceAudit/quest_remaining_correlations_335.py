@@ -83,6 +83,7 @@ def main():
         if ledger['classification'] in ('GENERIC-PROVEN','STRATEGY-PROVEN'):continue
         ident=ledger['quest_id'];q=qt.get(ident);addon=qa.get(ident,{})
         actor_ids={(a['type'],a['entry']) for a in ledger['primary_objective_actors']}
+        actor_ids.update(('Creature', source['CreatureId']) for source in ledger.get('primary_credit_search_sources', []))
         actor_ids.update((r['object_type'],r['row']['id']) for r in ledger['primary_relations'])
         actor_records=[]
         for kind,entry in sorted(actor_ids):
@@ -106,6 +107,7 @@ def main():
         output.append({'quest_id':ident,'classification':ledger['classification'],'ledger_record_sha256':digest(ledger),
             'primary_quest_template':q,'primary_quest_addon':addon,'actors':actor_records,'items':item_records,
             'quest_availability_conditions':ledger['primary_conditions'],'direct_quest_scripts':ledger['primary_direct_quest_scripts'],
+            'credit_search_sources':ledger.get('primary_credit_search_sources', []),
             'collection_source_evidence':ledger.get('primary_collection_sources'),
             'existing_profile_evidence':{'nodes':profile.get('profile_nodes',[]),'parse_failures':profile.get('profile_parse_failures',[]),
                 'authority_limit':'Existing profiles are historical candidates. Only independently corroborated original TC335 actions were admitted to the shipped strategy pack.'},

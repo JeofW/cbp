@@ -138,7 +138,16 @@ namespace WholesomeAQ
                 if (exact.Any(value => value.IsKnownSafe == false)) point.IsKnownSafe = false;
                 if (exact.Any(value => value.IsKnownReachable == false)) point.IsKnownReachable = false;
             }
-            return stored.Concat(observed).DistinctBy(value => (value.Map, value.X, value.Y, value.Z));
+            // Reference producers are search hints for this exact accepted
+            // objective. They never become giver spawns or live credit samples.
+            return stored.Concat(QuestCreditSourceCatalog.Locations(quest, objective, db)).Concat(observed)
+                .GroupBy(point => (point.Map, point.X, point.Y, point.Z)).Select(group =>
+                {
+                    SpawnPoint first = group.First();
+                    return new SpawnPoint { Map = first.Map, X = first.X, Y = first.Y, Z = first.Z,
+                        IsKnownReachable = group.Any(point => point.IsKnownReachable == false) ? false : first.IsKnownReachable,
+                        IsKnownSafe = group.Any(point => point.IsKnownSafe == false) ? false : first.IsKnownSafe };
+                });
         }
     }
 }
