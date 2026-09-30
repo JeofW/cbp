@@ -1,0 +1,231 @@
+[
+  {
+    "quest_id": 49,
+    "before": "SOURCE-UNCERTAIN",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "object-identity:0:3840:50936",
+      "object-identity:1:3841:50935",
+      "object-identity:2:3842:50937"
+    ]
+  },
+  {
+    "quest_id": 53,
+    "before": "SOURCE-UNCERTAIN",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "object-identity:0:3844:50982"
+    ]
+  },
+  {
+    "quest_id": 64,
+    "before": "SOURCE-UNCERTAIN",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "object-identity:0:1687:290"
+    ]
+  },
+  {
+    "quest_id": 134,
+    "before": "SOURCE-UNCERTAIN",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "object-identity:0:1688:119"
+    ]
+  },
+  {
+    "quest_id": 299,
+    "before": "SOURCE-UNCERTAIN",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "object-identity:0:1678:35252",
+      "object-identity:1:1679:334",
+      "object-identity:2:1680:333",
+      "object-identity:3:1681:331"
+    ]
+  },
+  {
+    "quest_id": 335,
+    "before": "SOURCE-UNCERTAIN",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "object-identity:0:1699:321",
+      "object-identity:1:1700:2084"
+    ]
+  },
+  {
+    "quest_id": 347,
+    "before": "SOURCE-UNCERTAIN",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "absent-eligibility-metadata",
+      "geometry:Creature:580",
+      "object-identity:1:1735:2055"
+    ]
+  },
+  {
+    "quest_id": 365,
+    "before": "SOURCE-UNCERTAIN",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "object-identity:0:1694:375"
+    ]
+  },
+  {
+    "quest_id": 399,
+    "before": "SOURCE-UNCERTAIN",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "object-identity:0:1693:1166"
+    ]
+  },
+  {
+    "quest_id": 450,
+    "before": "SOURCE-UNCERTAIN",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "object-identity:0:1698:1594"
+    ]
+  },
+  {
+    "quest_id": 517,
+    "before": "SOURCE-UNCERTAIN",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "object-identity:0:1702:1727"
+    ]
+  },
+  {
+    "quest_id": 529,
+    "before": "SOURCE-UNCERTAIN",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "object-identity:2:1705:1736"
+    ]
+  },
+  {
+    "quest_id": 580,
+    "before": "SOURCE-UNCERTAIN",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "object-identity:0:1743:2068"
+    ]
+  },
+  {
+    "quest_id": 662,
+    "before": "SOURCE-UNCERTAIN",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "object-identity:0:2140:2707",
+      "object-identity:1:2141:2709",
+      "object-identity:2:2142:2708",
+      "object-identity:3:2143:2710"
+    ]
+  },
+  {
+    "quest_id": 666,
+    "before": "SOURCE-UNCERTAIN",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "absent-eligibility-metadata",
+      "object-identity:0:2139:2712",
+      "supplemental-required-acceptance-item"
+    ]
+  },
+  {
+    "quest_id": 689,
+    "before": "SOURCE-UNCERTAIN",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "object-identity:0:2145:2714"
+    ]
+  },
+  {
+    "quest_id": 978,
+    "before": "SOURCE-UNCERTAIN",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "object-identity:0:12901:175407"
+    ]
+  },
+  {
+    "quest_id": 1187,
+    "before": "SOURCE-UNCERTAIN",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "object-identity:0:3314:20727"
+    ]
+  },
+  {
+    "quest_id": 1188,
+    "before": "SOURCE-UNCERTAIN",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "object-identity:0:3314:20727"
+    ]
+  },
+  {
+    "quest_id": 1197,
+    "before": "SOURCE-UNCERTAIN",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "object-identity:0:3315:20807"
+    ]
+  },
+  {
+    "quest_id": 5062,
+    "before": "SOURCE-UNCERTAIN",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "object-identity:0:13360:175928"
+    ]
+  },
+  {
+    "quest_id": 5065,
+    "before": "SOURCE-UNCERTAIN",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "absent-eligibility-metadata",
+      "object-identity:0:12904:175487"
+    ]
+  },
+  {
+    "quest_id": 8503,
+    "before": "SOURCE-UNCERTAIN",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "absent-eligibility-metadata",
+      "geometry:Creature:8384",
+      "object-identity:1:1733:2045"
+    ]
+  },
+  {
+    "quest_id": 9802,
+    "before": "SOURCE-UNCERTAIN",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "absent-eligibility-metadata",
+      "geometry:Creature:17723",
+      "object-identity:1:19627:183043"
+    ]
+  },
+  {
+    "quest_id": 9882,
+    "before": "SOURCE-UNCERTAIN",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "absent-eligibility-metadata",
+      "geometry:Creature:17149",
+      "object-identity:1:19264:182258"
+    ]
+  },
+  {
+    "quest_id": 12930,
+    "before": "SOURCE-UNCERTAIN",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": [
+      "absent-eligibility-metadata",
+      "object-identity:2:24556:190663"
+    ]
+  }
+]

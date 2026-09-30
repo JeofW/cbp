@@ -63,7 +63,10 @@ namespace WholesomeAQ
                 string[] fields = { "Schema", "ClientBuild", "QuestDataSha256", "SourceCore", "CoreRevision", "DatabaseRevision",
                     "SourceSqlSha256", "QuestMetadata", "SpawnAdditions", "RelationAdditions", "DependencyMetadata" };
                 bool hasCountRepairs = root.ValueKind == JsonValueKind.Object && root.TryGetProperty("ObjectiveCountRepairs", out _);
-                Exact(root, hasCountRepairs ? fields.Concat(new[] { "ObjectiveCountRepairs" }).ToArray() : fields);
+                bool hasObjectRepairs = root.ValueKind == JsonValueKind.Object && root.TryGetProperty("GameObjectObjectiveRepairs", out _);
+                if (hasCountRepairs) fields = fields.Concat(new[] { "ObjectiveCountRepairs" }).ToArray();
+                if (hasObjectRepairs) fields = fields.Concat(new[] { "GameObjectObjectiveRepairs" }).ToArray();
+                Exact(root, fields);
                 if (Text(root, "Schema") != "quest-data-repair-pack-335-v1" || Integer(root, "ClientBuild") != 12340 ||
                     Text(root, "SourceCore") != "trinitycore-3.3.5")
                     throw new InvalidDataException("Quest repair pack requires its supported original TC335 schema.");
@@ -152,6 +155,31 @@ namespace WholesomeAQ
                               kind == "CollectFromGameObject" && objective.Type == ObjectiveType.CollectFromGameObject && objective.GameObjectId == targetId))
                             throw new InvalidDataException("Collection count repair expected identity or old value changed.");
                         objective.CollectCount = after;
+                    }
+
+                var objectOwners = new HashSet<(int, int)>();
+                if (hasObjectRepairs)
+                    foreach (JsonElement row in Rows(root, "GameObjectObjectiveRepairs", 30000))
+                    {
+                        Exact(row, "QuestId", "RowIndex", "ObjectiveIndex", "ObjectiveType", "ExpectedGameObjectId",
+                            "GameObjectId", "ItemId", "RequiredCount", "SourceRef");
+                        int id = Positive(row, "QuestId"), rowIndex = Integer(row, "RowIndex"), objectiveIndex = Integer(row, "ObjectiveIndex");
+                        int before = Positive(row, "ExpectedGameObjectId"), after = Positive(row, "GameObjectId");
+                        int item = Positive(row, "ItemId"), count = Positive(row, "RequiredCount");
+                        string kind = Text(row, "ObjectiveType"); _ = Text(row, "SourceRef");
+                        if (!quests.TryGetValue(id, out QuestEntry quest) || !objectOwners.Add((id, rowIndex)) ||
+                            countOwners.Contains((id, rowIndex)) || kind != "CollectFromGameObject" || before == after ||
+                            objectiveIndex < 0 || quest.Objectives == null || rowIndex < 0 || rowIndex >= quest.Objectives.Count ||
+                            (quest.SpecialFlags & 0x22) != 0)
+                            throw new InvalidDataException("GameObject identity repair is not bound to a unique ordinary source row.");
+                        QuestObjective objective = quest.Objectives[rowIndex];
+                        if (objective == null || objective.Type != ObjectiveType.CollectFromGameObject || objective.Index != objectiveIndex ||
+                            objective.GameObjectId != before || objective.MobId != 0 || objective.KillCount != 0 ||
+                            objective.ItemId != item || objective.CollectCount != count ||
+                            quest.Objectives.Any(other => other != objective && other != null &&
+                                other.Type == ObjectiveType.CollectFromGameObject && other.GameObjectId == after && other.ItemId == item))
+                            throw new InvalidDataException("GameObject identity repair expected objective changed or would duplicate another owner.");
+                        objective.GameObjectId = after;
                     }
 
                 var spawnOwners = new HashSet<(QuestObjectType, int)>();

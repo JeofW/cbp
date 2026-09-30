@@ -1,0 +1,94 @@
+{
+  "client_build": 12340,
+  "binary_sha256": "bf644876709c591acc17c0da8cdf1814edcc9f1e6bc109a8c0d5c38c79dc953c",
+  "architecture": "32-bit",
+  "image_base": "0x400000",
+  "analysis_read_only": true,
+  "new_production_apis_added": 0,
+  "receipts": [
+    {
+      "file": "resumed-enabled-health-20260930.json",
+      "sha256": "4eaadeec07a8c057e598f0d95c0aa67763f47e7578761a52c86b28158c7d845a"
+    },
+    {
+      "file": "resumed-enabled-binary-20260930.json",
+      "sha256": "f8a868e591d5c913d1db697ac9edbe777e37c2789a88fe28bfade934384a0f71"
+    },
+    {
+      "file": "enabled-quest-api-registration-20260930.json",
+      "sha256": "4e4eda14297ba554c928fc46f29297a1f762d9e94af021497b35e154c490816a"
+    },
+    {
+      "file": "enabled-quest-api-semantics-v2-20260930.json",
+      "sha256": "d148cfc3819f79402d4ef452907e2c77e205180f90e83efe8e7f5e97d73089fd"
+    },
+    {
+      "file": "enabled-special-item-owner-20260930.json",
+      "sha256": "5e691f843720814a59277bee4a6f0d9108427ba4fbbfa188562079606c0dd110"
+    },
+    {
+      "file": "enabled-quest-completable-owner-20260930.json",
+      "sha256": "828d8a62c8fe8a88a1820ff296c5c24d74c10a9b21c58261a434aa7bbc99b0ef"
+    },
+    {
+      "file": "enabled-special-item-third-return-20260930.json",
+      "sha256": "50b05f45c7f15cfb29a3a884dc1961332c72608a2a14fd3c59fc0c8510fd541d"
+    },
+    {
+      "file": "enabled-special-item-inventory-lookup-20260930.json",
+      "sha256": "ce8a7874d493226379458b80c7f49ef6fe6ef0ac7411eb1287fc5fb4eda0b458"
+    },
+    {
+      "file": "enabled-quest-log-title-contract-20260930.json",
+      "sha256": "45fe300681a98dd1d15d24181abb2a483df257e3650b6cab654094aff6c54590"
+    }
+  ],
+  "contracts": [
+    {
+      "api": "GetQuestLogTitle",
+      "address": "0x5E5CC0",
+      "result": "Nine ordinary return values; questId is ninth; an optional tenth is controlled by displayQuestID. The existing ProfileHelperFunctionsBase consumer and regression fixture already use the ninth field."
+    },
+    {
+      "api": "GetAvailableQuestInfo",
+      "address": "0x58DBC0",
+      "result": "Three flags for a one-based offered-list index. No returned quest ID; cannot replace exact offer identity or ownership."
+    },
+    {
+      "api": "GetGossipAvailableQuests",
+      "address": "0x58B3A0",
+      "result": "Five fields per available quest. No returned quest ID; the registered pointer matches the retained original-client decompilation."
+    },
+    {
+      "api": "IsQuestCompletable",
+      "address": "0x58D5D0 -> 0x58CBB0",
+      "result": "Current dialog completion flag plus live player required-item counts. Not a global per-quest completion-history API; inventory and dialog attribution remain necessary."
+    },
+    {
+      "api": "GetQuestLogRequiredMoney",
+      "address": "0x5DF460",
+      "result": "Reads the negative reward-money field from the selected or indexed quest cache; zero also occurs for missing or invalid cache identity. Candidate diagnostic input only until an independent identity/cache witness exists."
+    },
+    {
+      "api": "GetQuestLogCompletionText",
+      "address": "0x5E06D0",
+      "result": "Returns quest text from cache; it is not a Boolean completion observation."
+    },
+    {
+      "api": "GetQuestLogSpecialItemInfo",
+      "address": "0x5E52D0 -> 0x5E0DA0",
+      "result": "Resolves a special item for a one-based accepted-log index, then returns item link, icon and an item field through 0x707DC0. That third value is not adopted as ordinary inventory count. No guessed raw ABI or automatic use-item recipe is introduced."
+    }
+  ],
+  "absent_from_inspected_exact_registration_strings": [
+    "GetQuestID",
+    "GetQuestLogIndexByID"
+  ],
+  "mapping_address_note": "The current numeric GO mapping constant 10710832 is 0xA36F30, containing plausible table records. Its 0xA38F90 comments are inconsistent; 0xA38F90 contains diagnostic text. No executable address was changed without consumer/ABI proof.",
+  "retained_failed_probe": {
+    "file": "enabled-quest-api-semantics-20260930.json",
+    "sha256": "0c6cec19c8ba9f718ff28794f985e6138833f79b31e620121133b029218d65a7",
+    "error": "The IDA Python evaluation raised NameError for a list-comprehension scope; corrected explicit-loop probe v2 succeeded."
+  },
+  "limits": "Static original-client analysis establishes these inspected contracts, not live realm SQL, scripted quest recipes, menu ownership, fresh game state or completion."
+}
