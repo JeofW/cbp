@@ -120,6 +120,13 @@ def category_index(rows):
     return {name: sorted(ids) for name, ids in sorted(categories.items())}
 
 
+def retained_secondary_evidence(previous):
+    names = [name for name in ('secondary_reference', 'secondary_evidence_retained') if name in previous]
+    if not names or any(previous[name] != previous[names[0]] for name in names):
+        raise ValueError('A prior ledger must retain one unambiguous secondary evidence record')
+    return copy.deepcopy(previous[names[0]])
+
+
 def retained_item_route_matches(route, quest_id, primary, base_sha):
     if (not route or route.get('route_type') != 'item-starter' or route.get('quest_id') != quest_id
             or route.get('dataset_sha256') != base_sha or route.get('failed_cases') != 0
@@ -158,12 +165,17 @@ def main():
     parser.add_argument('--strategy-results', type=Path)
     parser.add_argument('--strategy-pack', type=Path)
     parser.add_argument('--retained-routes', type=Path)
+    parser.add_argument('--baseline-evidence-commit', required=True,
+                        help='Exact full Git commit containing the retained baseline ledger')
     args = parser.parse_args()
+    if not re.fullmatch(r'[0-9a-f]{40}', args.baseline_evidence_commit):
+        parser.error('--baseline-evidence-commit must be the full 40-character Git identity')
     if bool(args.strategy_results) != bool(args.strategy_pack):
         parser.error('--strategy-results and --strategy-pack must identify the same validated run')
     if args.output.exists():
         raise FileExistsError('Closure ledgers are create-only')
     from quest_repair_pack_335 import load_verified_tables, digest, BASE_FIELDS, ADDON_FIELDS, OPTIONAL_FIELDS
+    from quest_dependency_source_335 import primary_dependency_index, dependency_membership
     tables, table_receipts = load_verified_tables(args.reference)
     old_rows = [json.loads(line) for line in gzip.decompress(args.baseline.read_bytes()).splitlines()]
     simulation_rows = list(map(json.loads, args.simulation.read_text(encoding='utf-8').splitlines()))
@@ -186,6 +198,7 @@ def main():
                         ['strategy_results', 'strategy_pack', 'retained_routes'] if getattr(args, name)})
     qt = {row['ID']: row for row in tables['quest_template']}
     qa = {row['ID']: row for row in tables['quest_template_addon']}
+    primary_dependencies, dependency_edges = primary_dependency_index(qt, qa)
     actors = {'Creature': {row['entry']: row for row in tables['creature_template']},
               'GameObject': {row['entry']: row for row in tables['gameobject_template']}}
     primary_relations = defaultdict(list)
@@ -260,6 +273,7 @@ def main():
     for ident in sorted(old):
         prior = old[ident]; quest = model[ident]; sim = simulations[ident]; template = qt.get(ident); addon = qa.get(ident, {})
         obligations = []; source_evidence = []; related_actors = []
+        dependency_review = dependency_membership(quest, primary_dependencies, dependency_edges)
         before_class = prior['classification']; strategy = strategies.get(ident)
         strategy_validated = bool(strategy and strategy.get('pipeline_status') == 'PASS' and strategy.get('failed_cases') == 0)
         if template is None:
@@ -272,6 +286,12 @@ def main():
             conflicts += [field for field in ADDON_FIELDS if quest.get(field) != addon.get(field, 0)]
             if conflicts:
                 obligations.append('source:primary-field-conflict:' + ','.join(sorted(conflicts)))
+            if not dependency_review['matches']:
+                obligations.append('source:dependent-previous-membership-mismatch')
+            for edge in dependency_review['edges']:
+                reference = row_ref('quest_template_addon', qa[edge['table_row']], 'ID')
+                if reference not in source_evidence:
+                    source_evidence.append(reference)
             for field in OPTIONAL_FIELDS:
                 value = template.get(field, addon.get(field, 0))
                 if value and quest.get(field) != value:
@@ -369,14 +389,15 @@ def main():
         row = {'schema': 'primary-closure-quest-v1', 'quest_id': ident, 'name': quest['Name'],
             'classification': classification, 'before_classification': before_class,
             'baseline_record_sha256': digest(prior), 'baseline_ledger_sha256': input_hashes['baseline'],
-            'baseline_evidence_commit': '12a6fb40c9adc932ea1c65dd4098355833d3fb90',
+            'baseline_evidence_commit': args.baseline_evidence_commit,
             'effective_model_sha256': input_hashes['effective'], 'model_record_sha256': digest(quest),
             'repair_sha256': sim.get('repair_sha256'), 'execution_fingerprint': sim.get('execution_fingerprint'),
             'primary_source_revision': revision, 'primary_database_sha256': source_sql,
             'primary_evidence': source_evidence, 'repair_disposition': repair_rows[ident],
             'primary_relations': primary_relations[ident], 'primary_conditions': conditions[ident],
             'primary_direct_quest_scripts': [script_ref(s) for s in direct_quests[ident]],
-            'primary_objective_actors': related_actors, 'secondary_evidence_retained': prior['secondary_reference'],
+            'primary_objective_actors': related_actors, 'secondary_evidence_retained': retained_secondary_evidence(prior),
+            'primary_dependency_membership': dependency_review,
             'strategy': {'status': strategy_status, 'evidence': strategy},
             'simulation': sim, 'final_simulation_disposition': chosen_simulation,
             'retained_item_route_primary_matched': retained_matches,

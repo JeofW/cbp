@@ -1,0 +1,234 @@
+{
+  "status": "deployed-and-hash-verified",
+  "source_commit": "3bc97e1e0b446aede269f7414c0c7c6358fdc192",
+  "package_manifest_sha256": "e560ebae09f1774756424ec48a2b06ce7eb9d375ba69e88da1c1fc80c68ecb81",
+  "host_sha256": "292ed8827055368a79fa7449f852593b6103d8ffe51063a11679b854f74d6e68",
+  "backup": "D:\\Dev\\CopilotBuddy-Production-Backup-PostMerge-20260930-092832",
+  "changed_files": [
+    {
+      "path": "Bots/WholesomeAutoQuest-master/DataLoader.cs",
+      "before_sha256": "5a624ae53d7e4c0657b53b9cb572301a6280799225ec737574c5ee188324d0ee",
+      "after_sha256": "2dce69754b892a7e7129440ed6a44cecb1c6a5534c8c0bdbff4e7d940e542c8b",
+      "bytes": 30884,
+      "runtime_source": true
+    },
+    {
+      "path": "Bots/WholesomeAutoQuest-master/DataModels.cs",
+      "before_sha256": "2dc31f6331e6e1a0fc7ca4534de9dcd41729d9ad121d85d1e9a6ebedf26ecdfe",
+      "after_sha256": "bb9358b7fb5be67f62710447f6b2226f3d97a0cbd583ad0ee78823d69dd61dac",
+      "bytes": 11941,
+      "runtime_source": true
+    },
+    {
+      "path": "Bots/WholesomeAutoQuest-master/ProfileBuilder.cs",
+      "before_sha256": "5b4aececb7b4d3e1f7369f55e5496e0a7339d1d7054a2ea4b4c64dc732c5b62d",
+      "after_sha256": "713d36a874028b42dd415518b1e8e55e64501f92330b0191f6e7b7115638a1df",
+      "bytes": 28222,
+      "runtime_source": true
+    },
+    {
+      "path": "Bots/WholesomeAutoQuest-master/quest_data/quest_data.repairs.json",
+      "before_sha256": null,
+      "after_sha256": "d3693d83616526576408c92dfed2c4fceb94291e9a686c9c86043e94ae17a534",
+      "bytes": 2101635,
+      "runtime_source": true
+    },
+    {
+      "path": "Bots/WholesomeAutoQuest-master/quest_data/quest_knowledge_manifest.json",
+      "before_sha256": null,
+      "after_sha256": "3df5229bd54c68c3ddee02481b843ec78c0b0f1ac9daae007ac0151a0fadc6d4",
+      "bytes": 1003,
+      "runtime_source": true
+    },
+    {
+      "path": "Bots/WholesomeAutoQuest-master/quest_data/quest_strategies.json",
+      "before_sha256": null,
+      "after_sha256": "7cd1b5af21a9ea0c395c0b70cebe5931aae2931c84a2e7674a8363341f59da82",
+      "bytes": 1658,
+      "runtime_source": true
+    },
+    {
+      "path": "Bots/WholesomeAutoQuest-master/QuestDataRepairPack.cs",
+      "before_sha256": null,
+      "after_sha256": "c59346f55af8269e9b7a1e62c98c12f54bd5f75904cf27e05970ddfd789e4fe6",
+      "bytes": 20977,
+      "runtime_source": true
+    },
+    {
+      "path": "Bots/WholesomeAutoQuest-master/QuestDeliveryPolicy.cs",
+      "before_sha256": null,
+      "after_sha256": "4ff19fd748981bdc6d60faf184517333e0be64f664005602b701477550cd1964",
+      "bytes": 3925,
+      "runtime_source": true
+    },
+    {
+      "path": "Bots/WholesomeAutoQuest-master/QuestDependencyCatalog.cs",
+      "before_sha256": null,
+      "after_sha256": "9f984cf35124267a0195eec576a51c58612007a366c5105bb58dbacb8b682292",
+      "bytes": 1519,
+      "runtime_source": true
+    },
+    {
+      "path": "Bots/WholesomeAutoQuest-master/QuestObservedRoutes.cs",
+      "before_sha256": null,
+      "after_sha256": "b1d3ee098839912551cbd8a28ef615a763d1eeb05dff8753608f9d816b17566f",
+      "bytes": 10362,
+      "runtime_source": true
+    },
+    {
+      "path": "Bots/WholesomeAutoQuest-master/QuestScheduler.cs",
+      "before_sha256": "cd01095759adb7827bcc9bdf0f3faaa4423a8491afbbe47b9cf8da2a53267f30",
+      "after_sha256": "8d14ac95ce1e99f45bac9aafac0346f1bb3a47f07b0ad6c46fd7cbe0e5086fd2",
+      "bytes": 98862,
+      "runtime_source": true
+    },
+    {
+      "path": "Bots/WholesomeAutoQuest-master/QuestSchedulerDiagnostics.cs",
+      "before_sha256": null,
+      "after_sha256": "1a8be4cef9d634bee85406221ca6ae2bda4dccb78e7e233422916928d6768c38",
+      "bytes": 38960,
+      "runtime_source": true
+    },
+    {
+      "path": "CopilotBuddy.dll",
+      "before_sha256": "c1d8712b60bcb39c6533bea9f4890b18ee5965442ee17f863375df35603a2243",
+      "after_sha256": "292ed8827055368a79fa7449f852593b6103d8ffe51063a11679b854f74d6e68",
+      "bytes": 2595328,
+      "runtime_source": false
+    },
+    {
+      "path": "CopilotBuddy.exe",
+      "before_sha256": "fd5b1ab6e259aea12cad5e747e08efa7b9e0c71f64dec9e78c86e5445e527bf4",
+      "after_sha256": "cffb3071f8bf3d9c64a5bc228171d5e6cdcc6692b648b4a79fae85857b12824f",
+      "bytes": 159232,
+      "runtime_source": false
+    },
+    {
+      "path": "cs-CZ/CopilotBuddy.resources.dll",
+      "before_sha256": "e95bd74d489e690ffe1b29f22ee579939934d6274d8dbc2ad95764c39a21ee84",
+      "after_sha256": "012021b5945b0ddce1100979f8fbb10ce917dca7f7348cd9a7835ccd4faccf53",
+      "bytes": 13824,
+      "runtime_source": false
+    },
+    {
+      "path": "de-DE/CopilotBuddy.resources.dll",
+      "before_sha256": "1e47b0473d30693bec898edcb3659757ea11a0e1fb0a4c8c55d47216a6a7f9b4",
+      "after_sha256": "7306501e44095b31fc0d856ba60f074160940ee157e4d182528c828ac8d14328",
+      "bytes": 13824,
+      "runtime_source": false
+    },
+    {
+      "path": "es-ES/CopilotBuddy.resources.dll",
+      "before_sha256": "654377a979440229cd113b3fd19032e12118dcbb20bec39325b00ebff8d3f366",
+      "after_sha256": "5f3210281b45b32385776a62aef8911d9b2c1df49bf086b9ddde74f324fe8d7b",
+      "bytes": 13824,
+      "runtime_source": false
+    },
+    {
+      "path": "fr-FR/CopilotBuddy.resources.dll",
+      "before_sha256": "faa69c51b732e7c19646617dc693c340ac5767bb347c94c2d303c86464e4d805",
+      "after_sha256": "5faf1170ece17c2c37a084e4620ae176b1ba565dc3b74002a667d8e3f52e1a86",
+      "bytes": 14848,
+      "runtime_source": false
+    },
+    {
+      "path": "it-IT/CopilotBuddy.resources.dll",
+      "before_sha256": "228bb07649356f0f6abe3c67371c862eb0cd9ec5d3b0d6c73c415153a88077a5",
+      "after_sha256": "594ce57ff68a6e7a115aeee628218bfa93f46980739127d1ecfbfd0531129065",
+      "bytes": 13824,
+      "runtime_source": false
+    },
+    {
+      "path": "ja-JP/CopilotBuddy.resources.dll",
+      "before_sha256": "0c049aafe9b0b54745f5d7e92db7db487ffb44d8a1baac964a0f8febd862c2fd",
+      "after_sha256": "57ff715bcb7545bbee8ee6a1c17410b5b12abbce9dd7121141fcf2a2bd05b823",
+      "bytes": 13824,
+      "runtime_source": false
+    },
+    {
+      "path": "ko-KR/CopilotBuddy.resources.dll",
+      "before_sha256": "bde3083792ee21c9118a9b5f3e48e2c3765fc5d15cfdf9196fa84098b9af2ab9",
+      "after_sha256": "8606c56f097cc1f75aab61e01661789d14d6ac258a118dda657cd8b08d146179",
+      "bytes": 13824,
+      "runtime_source": false
+    },
+    {
+      "path": "nl-NL/CopilotBuddy.resources.dll",
+      "before_sha256": "0f5abcf6bc566d362243e609928414cd7b015744bd2415b1a32a0e89330a516d",
+      "after_sha256": "3b77f04d4d3ddf1ec952c99b9703957d7f77f5a58f54e94b0245d784e12837a7",
+      "bytes": 13824,
+      "runtime_source": false
+    },
+    {
+      "path": "pl-PL/CopilotBuddy.resources.dll",
+      "before_sha256": "8e4a69a57830eb53bcfb4567633379ad9b755628de50d366eeb0b438d2a73704",
+      "after_sha256": "39437bbe1f815935a0ebed801aa94a89c72703e5f3b074855cf4115a9d9123a8",
+      "bytes": 13824,
+      "runtime_source": false
+    },
+    {
+      "path": "pt-PT/CopilotBuddy.resources.dll",
+      "before_sha256": "b93b983c2bb9dfca107a88e3260ccb39a5ad0a4582c8f5689c88c2e4ac17d907",
+      "after_sha256": "c4ea1bc363c815746351a941f9a2ac8d4d98de55d60582a5ef344d68dbe6594d",
+      "bytes": 13824,
+      "runtime_source": false
+    },
+    {
+      "path": "Quest Behaviors/UseItemOn.cs",
+      "before_sha256": "ca9ebf80f7676c87ac3be3aa323dda4de47f5ecdccdaea27c83b433acc970f22",
+      "after_sha256": "19853ab25b4c73d384d57654c3c0ec3063b85d9a1259ef583e2d558096f1cdfd",
+      "bytes": 41312,
+      "runtime_source": true
+    },
+    {
+      "path": "ru-RU/CopilotBuddy.resources.dll",
+      "before_sha256": "d741f163fec666eec0c2f4a51ea6675bc03e52f1dec69b79685936a5ec4271b6",
+      "after_sha256": "1290ed38254a7ad2f0f9dc7dfe394d8edbb6f68999e83f40a4ef4724ba206a66",
+      "bytes": 16384,
+      "runtime_source": false
+    },
+    {
+      "path": "tr-TR/CopilotBuddy.resources.dll",
+      "before_sha256": "d5ad9cf1b6a690cfff7f4d66cfc65c7ba6f0323f11d480c07fec8f28722cb67d",
+      "after_sha256": "9b9e869cb6c052da6b7d5299d43972cb3f9e3828a61ff9d6149f115f7f137bad",
+      "bytes": 13824,
+      "runtime_source": false
+    },
+    {
+      "path": "zh-Hans/CopilotBuddy.resources.dll",
+      "before_sha256": "0a9d69a20f227ec09c9b290601b7beedef4625c85bfe65b9f456ed5345770bf4",
+      "after_sha256": "4828281f8b3dc9990bbe055e47efe42820a0b9c7bafabd44b6b6ede5b253eef1",
+      "bytes": 14336,
+      "runtime_source": false
+    },
+    {
+      "path": "zh-Hant/CopilotBuddy.resources.dll",
+      "before_sha256": "345fd0eb75ec6d7c2600c810220bf8d6233a4084e4e6e75795d9455c4fcc2cf7",
+      "after_sha256": "84d77421375b3b9b4df10c4d110ab054ff60086827446bff637a84b796f104a6",
+      "bytes": 13824,
+      "runtime_source": false
+    }
+  ],
+  "verified_payload_files": 429,
+  "unchanged_files": 400,
+  "protected_files_verified": 2004,
+  "navigation_sha256": "702038dfbb52fed104c946a8ba666d5b93ee35e4c257e3e5dbd68ac977f7d875",
+  "copilotbuddy_was_closed": true,
+  "game_launched_or_automated": false,
+  "live_quest_acceptance": "not performed",
+  "completed_utc": "2026-09-30T01:28:35.035336+00:00",
+  "pr_number": 61,
+  "reviewed_pr_head": "3f5715b6cc292b2086946a80471c4145471cbdd7",
+  "merge_master_sha": "3bc97e1e0b446aede269f7414c0c7c6358fdc192",
+  "destination": "D:\\World of Warcraft 3.3.5a\\CB",
+  "package_archive": "D:\\Dev\\CB-Package-master-3bc97e1e\\runtime-3bc97e1e0b446aede269f7414c0c7c6358fdc192.zip",
+  "package_archive_sha256": "efef84bf6683a803b21184770aac7b5707e1ab940d1212002fae3d0acbbdc661",
+  "build_result": {
+    "self_contained_win_x86": true,
+    "runtime_components_compiled": 13,
+    "local_full_pipeline": "34 successful commands",
+    "hosted_workflows": 3
+  },
+  "generator_sha256": "b835636f79d27518dd68730012b10a234f811e4a3af7a3e2ef77643ae5bb9e70",
+  "deployment_transaction_sha256": "df048a24b4092c08683d6c3ed06addb650d50c942107d4c4aa079d62768ee820"
+}

@@ -1,0 +1,113 @@
+[
+  {
+    "quest_id": 1106,
+    "before": "GENERIC-PROVEN",
+    "after": "SOURCE-UNCERTAIN",
+    "repair_changes": [
+      "absent-eligibility-metadata",
+      "explicit-delivery-contract"
+    ]
+  },
+  {
+    "quest_id": 1271,
+    "before": "SOURCE-UNCERTAIN",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": []
+  },
+  {
+    "quest_id": 3129,
+    "before": "SOURCE-UNCERTAIN",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": []
+  },
+  {
+    "quest_id": 3444,
+    "before": "SOURCE-UNCERTAIN",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": []
+  },
+  {
+    "quest_id": 9837,
+    "before": "GENERIC-PROVEN",
+    "after": "SOURCE-UNCERTAIN",
+    "repair_changes": [
+      "absent-eligibility-metadata"
+    ]
+  },
+  {
+    "quest_id": 11123,
+    "before": "GENERIC-PROVEN",
+    "after": "SOURCE-UNCERTAIN",
+    "repair_changes": []
+  },
+  {
+    "quest_id": 11313,
+    "before": "GENERIC-PROVEN",
+    "after": "SOURCE-UNCERTAIN",
+    "repair_changes": [
+      "absent-eligibility-metadata",
+      "geometry:Creature:23919"
+    ]
+  },
+  {
+    "quest_id": 11501,
+    "before": "SOURCE-UNCERTAIN",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": []
+  },
+  {
+    "quest_id": 11613,
+    "before": "GENERIC-PROVEN",
+    "after": "SOURCE-UNCERTAIN",
+    "repair_changes": []
+  },
+  {
+    "quest_id": 11978,
+    "before": "GENERIC-PROVEN",
+    "after": "SOURCE-UNCERTAIN",
+    "repair_changes": [
+      "absent-eligibility-metadata"
+    ]
+  },
+  {
+    "quest_id": 12188,
+    "before": "GENERIC-PROVEN",
+    "after": "SOURCE-UNCERTAIN",
+    "repair_changes": []
+  },
+  {
+    "quest_id": 12224,
+    "before": "GENERIC-PROVEN",
+    "after": "SOURCE-UNCERTAIN",
+    "repair_changes": [
+      "absent-eligibility-metadata"
+    ]
+  },
+  {
+    "quest_id": 12225,
+    "before": "GENERIC-PROVEN",
+    "after": "SOURCE-UNCERTAIN",
+    "repair_changes": []
+  },
+  {
+    "quest_id": 12325,
+    "before": "SOURCE-UNCERTAIN",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": []
+  },
+  {
+    "quest_id": 12328,
+    "before": "GENERIC-PROVEN",
+    "after": "SOURCE-UNCERTAIN",
+    "repair_changes": [
+      "absent-eligibility-metadata",
+      "geometry:Creature:27421"
+    ]
+  },
+  {
+    "quest_id": 12577,
+    "before": "SOURCE-UNCERTAIN",
+    "after": "GENERIC-PROVEN",
+    "repair_changes": []
+  }
+]

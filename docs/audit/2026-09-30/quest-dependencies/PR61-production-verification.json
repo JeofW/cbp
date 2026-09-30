@@ -1,0 +1,135 @@
+{
+  "pr_head": "3f5715b6cc292b2086946a80471c4145471cbdd7",
+  "merge_master_sha": "3bc97e1e0b446aede269f7414c0c7c6358fdc192",
+  "destination": "D:\\World of Warcraft 3.3.5a\\CB",
+  "components": [
+    {
+      "component": "Bots/WholesomeAutoQuest-master",
+      "exit": 0,
+      "compiled": true,
+      "errors": 0,
+      "source_files": 16,
+      "host_sha256": "292ed8827055368a79fa7449f852593b6103d8ffe51063a11679b854f74d6e68",
+      "report_sha256": "ad136e02c9350716782c29f04c98b6a86486b339706264eb71aeea7dffd24eca"
+    },
+    {
+      "component": "Routines/Singular wotlk",
+      "exit": 0,
+      "compiled": true,
+      "errors": 0,
+      "source_files": 99,
+      "host_sha256": "292ed8827055368a79fa7449f852593b6103d8ffe51063a11679b854f74d6e68",
+      "report_sha256": "69d1ac437b96e8445de557814347ae62ed47cd4a230160bdf76a14b5d406fca2"
+    },
+    {
+      "component": "Plugins/AutoEquip2",
+      "exit": 0,
+      "compiled": true,
+      "errors": 0,
+      "source_files": 4,
+      "host_sha256": "292ed8827055368a79fa7449f852593b6103d8ffe51063a11679b854f74d6e68",
+      "report_sha256": "a08c20d0ca5811d69cb47361b6a72836942bfce4ad80fbeccab50f153ccfab86"
+    },
+    {
+      "component": "Plugins/MrItemRemover2",
+      "exit": 0,
+      "compiled": true,
+      "errors": 0,
+      "source_files": 5,
+      "host_sha256": "292ed8827055368a79fa7449f852593b6103d8ffe51063a11679b854f74d6e68",
+      "report_sha256": "26697523f991d2af56d5e557b747a92562e102a7a9b563b2acd45a0fc90e2c7c"
+    },
+    {
+      "component": "Plugins/SmartLootRoller",
+      "exit": 0,
+      "compiled": true,
+      "errors": 0,
+      "source_files": 6,
+      "host_sha256": "292ed8827055368a79fa7449f852593b6103d8ffe51063a11679b854f74d6e68",
+      "report_sha256": "a14a8149529245a4e1114c9a91868dd00a44dbf298546463543ee2c244203b7a"
+    },
+    {
+      "component": "Plugins/Talented",
+      "exit": 0,
+      "compiled": true,
+      "errors": 0,
+      "source_files": 7,
+      "host_sha256": "292ed8827055368a79fa7449f852593b6103d8ffe51063a11679b854f74d6e68",
+      "report_sha256": "d0d70c0036f3475f13b15237d158ca93a869870b98d63d0640e699cde405ad40"
+    },
+    {
+      "component": "Quest Behaviors/CollectThings.cs",
+      "exit": 0,
+      "compiled": true,
+      "errors": 0,
+      "source_files": 1,
+      "host_sha256": "292ed8827055368a79fa7449f852593b6103d8ffe51063a11679b854f74d6e68",
+      "report_sha256": "00e178bdca3beccae045078c0c2c799621c8273ecf591a95e9e0c619595041fc"
+    },
+    {
+      "component": "Quest Behaviors/DeleteItems.cs",
+      "exit": 0,
+      "compiled": true,
+      "errors": 0,
+      "source_files": 1,
+      "host_sha256": "292ed8827055368a79fa7449f852593b6103d8ffe51063a11679b854f74d6e68",
+      "report_sha256": "052b65c5fb3b9d6191ce96525845042378f65eaa005b1d1d59c3257f39c3f13c"
+    },
+    {
+      "component": "Quest Behaviors/EquipItem.cs",
+      "exit": 0,
+      "compiled": true,
+      "errors": 0,
+      "source_files": 1,
+      "host_sha256": "292ed8827055368a79fa7449f852593b6103d8ffe51063a11679b854f74d6e68",
+      "report_sha256": "d08865e7d341233e185edefd41a08e8bc9352d2f9d979a60c533a05c61b633e4"
+    },
+    {
+      "component": "Quest Behaviors/ForcedDismount.cs",
+      "exit": 0,
+      "compiled": true,
+      "errors": 0,
+      "source_files": 1,
+      "host_sha256": "292ed8827055368a79fa7449f852593b6103d8ffe51063a11679b854f74d6e68",
+      "report_sha256": "a51062283f4a5c3a1f8a9b0519b9581df5bfe830495c1c7074c3401686f81d95"
+    },
+    {
+      "component": "Quest Behaviors/GossipEvent.cs",
+      "exit": 0,
+      "compiled": true,
+      "errors": 0,
+      "source_files": 1,
+      "host_sha256": "292ed8827055368a79fa7449f852593b6103d8ffe51063a11679b854f74d6e68",
+      "report_sha256": "d51953b4a95034a48937e8bb9a492f127f7371256893eea1f960699c590f4ad2"
+    },
+    {
+      "component": "Quest Behaviors/InteractWith.cs",
+      "exit": 0,
+      "compiled": true,
+      "errors": 0,
+      "source_files": 1,
+      "host_sha256": "292ed8827055368a79fa7449f852593b6103d8ffe51063a11679b854f74d6e68",
+      "report_sha256": "ca2ccd47400824df3144eb203c9eeefcb6f50e747565ffa72a79b5a44eaaafd7"
+    },
+    {
+      "component": "Quest Behaviors/UseItemOn.cs",
+      "exit": 0,
+      "compiled": true,
+      "errors": 0,
+      "source_files": 1,
+      "host_sha256": "292ed8827055368a79fa7449f852593b6103d8ffe51063a11679b854f74d6e68",
+      "report_sha256": "580cdc4eaafc3413dee06876b810510ebbb1fe637d1cafa5309faad261bd5249"
+    }
+  ],
+  "all_13_compiled": true,
+  "payload_files_verified": 429,
+  "payload_unchanged_during_smoke": true,
+  "protected_files_verified": 2004,
+  "protected_mismatches": [],
+  "package_archive_sha256": "efef84bf6683a803b21184770aac7b5707e1ab940d1212002fae3d0acbbdc661",
+  "game_attached": false,
+  "bot_started": false,
+  "live_quest_completion_proven": false,
+  "probe_sha256": "3869b3ad201586dcb8be17a7304181fda2789ce25fcca16c3131e2efd965df7a",
+  "created_utc": "2026-09-30T01:29:20.725850+00:00"
+}
