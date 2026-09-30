@@ -91,11 +91,14 @@ def validate_availability_result(contract, simulation):
             or type(receipt.get('fixture_satisfiable')) is not bool):
         raise ValueError('Availability receipt does not match the exact successful contract owner')
     predicates = [predicate for group in contract['Groups'] for predicate in group['Conditions']]
-    references = {predicate['Value1'] for predicate in predicates if predicate['Type'] != 27}
+    references = {predicate['Value1'] for predicate in predicates if predicate['Type'] not in (23, 27)}
     expected = {f'availability-reference={ident}:state={state}' for ident in references for state in (0, 1, 3, 5, 6)}
     for threshold in {predicate['Value1'] for predicate in predicates if predicate['Type'] == 27}:
         expected.update(f'availability-level={threshold}:observed={level}' for level in
                         {0, max(1, threshold - 1), threshold, min(2**31 - 1, threshold + 1)})
+    for area in {predicate['Value1'] for predicate in predicates if predicate['Type'] == 23}:
+        other = 1 if area == 2**31 - 1 else area + 1
+        expected.update(f'availability-area={area}:observed={observed}' for observed in ('unknown', str(area), str(other)))
     expected.update({'availability-missing-observation-revokes-publication',
                      'availability-fixture-constrained-by-source-and-prerequisites'})
     cases = [row for row in simulation.get('cases', []) if row.get('name', '').startswith('availability-')]

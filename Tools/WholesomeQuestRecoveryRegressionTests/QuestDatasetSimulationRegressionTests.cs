@@ -56,6 +56,7 @@ internal static class QuestDatasetSimulationRegressionTests
         internal QuestSchedulerAcceptedQuest[] ActiveParents = Array.Empty<QuestSchedulerAcceptedQuest>();
         internal SpawnPoint Origin = new() { Map = 530, X = 0, Y = 0, Z = 0 };
         internal int Level, Race, ClassId = 2;
+        internal int? Area;
         internal bool EffectiveModel;
         internal IReadOnlyDictionary<int,int>? Skills, Reputations;
         internal Dictionary<uint,int>? AvailabilityFixtureStates;
@@ -69,7 +70,8 @@ internal static class QuestDatasetSimulationRegressionTests
             Action<string>? log = null, bool cancelNavigation = false, DateTime? now = null, bool metadataKnown = true,
             HashSet<string>? assessed = null, int? classId = null, uint[]? history = null,
             QuestSchedulerAcceptedQuest[]? activeParents = null, bool omitSkills = false, bool omitReputations = false,
-            IReadOnlyDictionary<int,int>? skillOverride = null, IReadOnlyDictionary<int,int>? reputationOverride = null)
+            IReadOnlyDictionary<int,int>? skillOverride = null, IReadOnlyDictionary<int,int>? reputationOverride = null,
+            int? areaOverride = null, bool omitArea = false)
         {
             var observations = new List<QuestSchedulerAcceptedQuest>(activeParents ?? ActiveParents);
             if (accepted) observations.Add(new QuestSchedulerAcceptedQuest
@@ -84,6 +86,7 @@ internal static class QuestDatasetSimulationRegressionTests
             return QuestScheduler.MaterializeSchedule(Database, new QuestSchedulerSnapshot
             {
                 UtcNow = now ?? Now, PlayerLevel = level ?? Level, PlayerRaceId = race ?? Race, PlayerClassId = classId ?? ClassId,
+                PlayerAreaId = omitArea ? null : areaOverride ?? Area,
                 PlayerGuid = 123, MapId = point.Map, X = point.X, Y = point.Y, Z = point.Z,
                 AcceptedQuests = observations, CompletedQuestIds = rewarded ? (history ?? Completed).Concat(new[] { (uint)Quest.Id }).ToArray() : history ?? Completed,
                 HasAuthoritativeCompletions = authority, HasCompleteQuestLog = logComplete,
@@ -168,6 +171,7 @@ internal static class QuestDatasetSimulationRegressionTests
                 record.observations = new { level = context.Level, race_id = context.Race, class_id = context.ClassId,
                     origin = context.Origin, authoritative_completed_prerequisites = context.Completed,
                     skill_values = context.Skills, reputation_values = context.Reputations,
+                    area_id = context.Area,
                     active_parent_ids = context.ActiveParents.Select(value => value.QuestId).ToArray(),
                     availability_fixture_states = context.AvailabilityFixtureStates,
                     availability_fixture_satisfiable = context.AvailabilityFixtureSatisfiable,
@@ -193,7 +197,7 @@ internal static class QuestDatasetSimulationRegressionTests
                         else if (baseline && !(quest.MaxLevel > 0 && level > quest.MaxLevel))
                         {
                             bool sourceAllows = quest.AvailabilityConditions == null ||
-                                SourceAvailabilityExpected(quest.AvailabilityConditions, context.AvailabilityFixtureStates!, level);
+                                SourceAvailabilityExpected(quest.AvailabilityConditions, context.AvailabilityFixtureStates!, level, context.Area);
                             Check(actual == sourceAllows, "level admission differs from the explicit source requirement");
                         }
                     });
@@ -399,8 +403,12 @@ internal static class QuestDatasetSimulationRegressionTests
         return condition.Negative ? !comparison : comparison;
     }
 
-    private static bool SourceAvailabilityExpected(QuestAvailabilityContract contract, IReadOnlyDictionary<uint,int> states, int level) =>
+    private static bool SourceArea(QuestAvailabilityPredicate predicate, int? area) =>
+        area > 0 && (predicate.Negative ? area != predicate.Value1 : area == predicate.Value1);
+
+    private static bool SourceAvailabilityExpected(QuestAvailabilityContract contract, IReadOnlyDictionary<uint,int> states, int level, int? area) =>
         contract.Groups.Any(group => group.Conditions.All(predicate => predicate.Type == 27 ? SourceLevel(predicate, level)
+            : predicate.Type == 23 ? SourceArea(predicate, area)
             : (SourceStatusMask(predicate) & (1 << states[(uint)predicate.Value1])) != 0));
 
     private static void SeedAvailability(Context context)
@@ -415,8 +423,17 @@ internal static class QuestDatasetSimulationRegressionTests
                 group.Conditions.Where(p => p.Type == 27).All(p => SourceLevel(p, level)))
                 .OrderBy(level => level == context.Level ? 0 : 1).ThenBy(level => level).ToArray();
             if (legalLevels.Length == 0) continue;
+            var areaPredicates = group.Conditions.Where(p => p.Type == 23).ToArray();
+            // Controlled source assignments only. These values never populate a
+            // production snapshot or claim that a live player is in that area.
+            var areaDomain = new List<int> { 1 };
+            areaDomain.AddRange(areaPredicates.Select(p => p.Value1));
+            areaDomain.AddRange(areaPredicates.Select(p => p.Value1 == int.MaxValue ? 1 : p.Value1 + 1));
+            int? selectedArea = areaPredicates.Length == 0 ? null : areaDomain.Distinct()
+                .Where(area => areaPredicates.All(p => SourceArea(p, area))).Select(area => (int?)area).FirstOrDefault();
+            if (areaPredicates.Length != 0 && !selectedArea.HasValue) continue;
             var choice = new Dictionary<uint,int>(); bool possible = true;
-            foreach (var predicates in group.Conditions.Where(p => p.Type != 27).GroupBy(p => (uint)p.Value1))
+            foreach (var predicates in group.Conditions.Where(p => p.Type is not (23 or 27)).GroupBy(p => (uint)p.Value1))
             {
                 int mask = predicates.Aggregate(107, (allowed, predicate) => allowed & SourceStatusMask(predicate));
                 IEnumerable<int> domain = predicates.Key == (uint)context.Quest.Id ? new[] { 0 }
@@ -436,6 +453,7 @@ internal static class QuestDatasetSimulationRegressionTests
             }
             if (selectedActive.Count >= 25) continue;
             context.Level = legalLevels[0];
+            context.Area = selectedArea;
             context.Completed = selectedHistory.OrderBy(id => id).ToArray();
             context.ActiveParents = selectedActive.OrderBy(row => row.Key).Select(row => new QuestSchedulerAcceptedQuest
                 { QuestId = row.Key, IsCompleted = row.Value == 1, IsFailed = row.Value == 5,
@@ -456,13 +474,15 @@ internal static class QuestDatasetSimulationRegressionTests
         int startingPasses = record.passed_cases, startingFailures = record.failed_cases;
         var states = context.AvailabilityFixtureStates!;
         var plan = new[] { new QuestPlanEntry { Quest = context.Quest, Stage = QuestWorkStage.Pickup } };
-        QuestSchedulerSnapshot Observe(IReadOnlyDictionary<uint,int> values, bool history = true, bool raw = true, int? level = null) => new()
+        QuestSchedulerSnapshot Observe(IReadOnlyDictionary<uint,int> values, bool history = true, bool raw = true, int? level = null,
+            int? area = null, bool unknownArea = false) => new()
         {
             PlayerGuid = 123, PlayerLevel = level ?? context.Level, UtcNow = Now, HasCompleteQuestLog = true, HasAuthoritativeCompletions = history,
+            PlayerAreaId = unknownArea ? null : area ?? context.Area,
             CompletedQuestIds = values.Where(pair => pair.Value == 6).Select(pair => pair.Key).ToArray(),
             RawQuestStates = raw ? values.Where(pair => pair.Value is 1 or 3 or 5).ToDictionary(pair => pair.Key, pair => pair.Value) : null
         };
-        bool Expected(IReadOnlyDictionary<uint,int> values) => SourceAvailabilityExpected(contract, values, context.Level);
+        bool Expected(IReadOnlyDictionary<uint,int> values) => SourceAvailabilityExpected(contract, values, context.Level, context.Area);
         foreach (uint referenced in states.Keys.OrderBy(id => id))
             foreach (int state in new[] { 0, 1, 3, 5, 6 })
             {
@@ -484,12 +504,28 @@ internal static class QuestDatasetSimulationRegressionTests
                 Case(record, $"availability-level={threshold}:observed={captured}", () =>
                 {
                     var observation = Observe(states, level: captured);
-                    bool expected = SourceAvailabilityExpected(contract, states, captured);
+                    bool expected = SourceAvailabilityExpected(contract, states, captured, context.Area);
                     Check((QuestAvailabilityPolicy.Evaluate(context.Quest, observation).Rejection == null) == expected,
                         "level condition differs from pinned comparison and negation");
                     Check(QuestAvailabilityPolicy.RequirementsCurrent(plan, observation) == expected,
                         "current-level publication guard retained an earlier observation");
                     if (!expected) Check(!context.Pickup(context.Schedule(level: captured)), "actual scheduler ignored a rejected level condition");
+                });
+            }
+        foreach (int requiredArea in contract.Groups.SelectMany(g => g.Conditions).Where(p => p.Type == 23).Select(p => p.Value1).Distinct().OrderBy(x => x))
+            foreach (int? observed in new int?[] { null, requiredArea, requiredArea == int.MaxValue ? 1 : requiredArea + 1 })
+            {
+                int? captured = observed;
+                Case(record, $"availability-area={requiredArea}:observed={captured?.ToString() ?? "unknown"}", () =>
+                {
+                    var observation = Observe(states, area: captured, unknownArea: !captured.HasValue);
+                    bool expected = SourceAvailabilityExpected(contract, states, context.Level, captured);
+                    Check((QuestAvailabilityPolicy.Evaluate(context.Quest, observation).Rejection == null) == expected,
+                        "area predicate differs from primary equality and unknown-preserving negation");
+                    Check(QuestAvailabilityPolicy.RequirementsCurrent(plan, observation) == expected,
+                        "current-area publication guard retained an earlier observation");
+                    if (!expected) Check(!context.Pickup(context.Schedule(areaOverride: captured, omitArea: !captured.HasValue)),
+                        "actual scheduler ignored an unknown or rejected area");
                 });
             }
         Case(record, "availability-missing-observation-revokes-publication", () =>
@@ -498,7 +534,7 @@ internal static class QuestDatasetSimulationRegressionTests
             Check(!context.AvailabilityFixtureSatisfiable || Expected(states), "fixture claims a satisfying source assignment without one"));
         record.availability_condition_validation = new { contract, passed_cases = record.passed_cases - startingPasses,
             failed_cases = record.failed_cases - startingFailures, fixture_satisfiable = context.AvailabilityFixtureSatisfiable,
-            observed_reference_states = states, source_oracle = "TC335 ConditionMgr.cpp predicates 8/9/14/27/28/47 and Util.h comparisons; permanent reward history separately from ordinary raw states; OR-of-AND groups",
+            observed_reference_states = states, source_oracle = "TC335 ConditionMgr.cpp predicates 8/9/14/23/27/28/47 and Util.h comparisons; permanent reward history separately from ordinary raw states; nullable current area; OR-of-AND groups",
             live_completion_proven = false };
         record.production_owners.Add("QuestAvailabilityPolicy.Evaluate and RequirementsCurrent with each source reference in all five original quest states");
     }

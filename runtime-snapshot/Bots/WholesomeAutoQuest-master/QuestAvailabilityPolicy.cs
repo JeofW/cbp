@@ -59,6 +59,8 @@ namespace WholesomeAQ
         public int? RequiredLevel { get; init; }
         public int? ObservedLevel { get; init; }
         public int? LevelComparison { get; init; }
+        public int? RequiredAreaId { get; init; }
+        public int? ObservedAreaId { get; init; }
         public string SourceRef { get; init; }
     }
 
@@ -104,6 +106,7 @@ namespace WholesomeAQ
                         8 => rewarded,
                         9 => state.HasValue ? state == 3 : null,
                         14 => state.HasValue ? state == 0 : null,
+                        23 => snapshot.PlayerAreaId > 0 ? snapshot.PlayerAreaId == condition.Value1 : null,
                         27 => snapshot.PlayerLevel > 0 ? CompareLevel(snapshot.PlayerLevel, condition.Value1, condition.Value2) : null,
                         28 => state.HasValue ? state != 1 ? false : rewarded.HasValue ? !rewarded.Value : null : null,
                         47 => Any(new[] {
@@ -116,14 +119,17 @@ namespace WholesomeAQ
                     if (condition.Negative && value.HasValue) value = !value.Value;
                     met.Add(value);
                     results.Add(new QuestAvailabilityPredicateResult { ElseGroup = group.ElseGroup, PredicateIndex = index,
-                        Type = condition.Type, ReferencedQuestId = condition.Type == 27 ? 0 : condition.Value1,
+                        Type = condition.Type, ReferencedQuestId = condition.Type is 23 or 27 ? 0 : condition.Value1,
                         StateMask = condition.Type == 47 ? condition.Value2 : 0,
                         Negative = condition.Negative, Met = value,
-                        RawAcceptedState = condition.Type != 27 && snapshot.RawQuestStates != null && snapshot.RawQuestStates.TryGetValue(id, out int raw) ? raw : null,
-                        PermanentlyRewarded = condition.Type == 27 ? null : rewarded,
+                        RawAcceptedState = condition.Type is not (23 or 27) && snapshot.RawQuestStates != null && snapshot.RawQuestStates.TryGetValue(id, out int raw) ? raw : null,
+                        PermanentlyRewarded = condition.Type is 23 or 27 ? null : rewarded,
                         RequiredLevel = condition.Type == 27 ? condition.Value1 : null,
                         ObservedLevel = condition.Type == 27 && snapshot.PlayerLevel > 0 ? snapshot.PlayerLevel : null,
-                        LevelComparison = condition.Type == 27 ? condition.Value2 : null, SourceRef = condition.SourceRef });
+                        LevelComparison = condition.Type == 27 ? condition.Value2 : null,
+                        RequiredAreaId = condition.Type == 23 ? condition.Value1 : null,
+                        ObservedAreaId = condition.Type == 23 && snapshot.PlayerAreaId > 0 ? snapshot.PlayerAreaId : null,
+                        SourceRef = condition.SourceRef });
                 }
                 groupResults.Add(All(met));
             }
@@ -212,11 +218,11 @@ namespace WholesomeAQ
                         if (negativeKind is not (JsonValueKind.True or JsonValueKind.False))
                             throw new InvalidDataException("Availability negation must be an explicit boolean.");
                         bool negative = condition.GetProperty("Negative").GetBoolean();
-                        bool referenceValid = type == 27 || ids.Contains(value1) &&
+                        bool referenceValid = type is 23 or 27 || ids.Contains(value1) &&
                             (type == 8 || references.Single(reference => reference.QuestId == value1).QuestType == 2);
                         bool valuesInvalid = type == 47 ? value2 <= 0 || (value2 & ~107) != 0
                             : type == 27 ? value2 < 0 || value2 > 4 : value2 != 0;
-                        if (type is not (8 or 9 or 14 or 27 or 28 or 47) || !referenceValid || value3 != 0 || valuesInvalid ||
+                        if (type is not (8 or 9 or 14 or 23 or 27 or 28 or 47) || !referenceValid || value3 != 0 || valuesInvalid ||
                             !keys.Add((type, value1, value2, negative)) || ++total > 256)
                             throw new InvalidDataException("Availability predicate is unsupported, ambiguous or missing its source reference.");
                         conditions.Add(new QuestAvailabilityPredicate { Type = type, Value1 = value1, Value2 = value2,
@@ -251,10 +257,13 @@ namespace WholesomeAQ
                 ulong guid = me.Guid;
                 if (guid == 0) return null;
                 int level = me.Level;
+                QuestAreaSnapshot area = QuestAreaSnapshot.Capture(me);
                 QuestLogSnapshot raw = log.CaptureSnapshot();
                 var states = QuestAvailabilityPolicy.RawStates(raw);
                 bool authoritative = log.TryGetAuthoritativeCompletedQuests(out var rewarded);
                 var snapshot = new QuestSchedulerSnapshot { PlayerGuid = guid, PlayerLevel = level, UtcNow = DateTime.UtcNow,
+                    PlayerAreaId = area.IsCurrent() && area.MapId == (int)me.MapId ? area.AreaId : null,
+                    AreaObservationStatus = area.Status,
                     HasCompleteQuestLog = raw.IsIdentityComplete, RawQuestStates = states,
                     HasAuthoritativeCompletions = authoritative,
                     CompletedQuestIds = authoritative ? rewarded.ToArray() : Array.Empty<uint>() };

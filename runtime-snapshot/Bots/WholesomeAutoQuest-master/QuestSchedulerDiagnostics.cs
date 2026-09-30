@@ -328,6 +328,7 @@ namespace WholesomeAQ
                     completionCountAuthority = snapshot.HasAuthoritativeCompletions ? "authoritative" : "unknown",
                     scanThreshold, lowQuestLevelPreference = minimumLevel, nearbyRadius3D = NearbyGiverRadius,
                     giverObservation = snapshot.GiverObservationStatus, datasetFingerprint = snapshot.DatasetFingerprint,
+                    currentAreaId = snapshot.PlayerAreaId, areaObservation = snapshot.AreaObservationStatus,
                     datasetSourceStatus = snapshot.DatasetSourceStatus, strategyFile = "quest_strategies.json",
                     datasetRepairSource = snapshot.DatasetRepairSource,
                     strategyStatus = strategyPack?.Status.ToString() ?? "not-supplied", strategyRecipeCount = strategyPack?.Recipes?.Count ?? 0,

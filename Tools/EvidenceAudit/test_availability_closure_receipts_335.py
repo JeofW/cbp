@@ -93,6 +93,31 @@ class AvailabilityClosureReceiptTests(unittest.TestCase):
                 simulation['availability_condition_validation']['passed_cases'] -= 1
                 with self.assertRaises(ValueError): self.validate(contract, simulation)
 
+    def area_fixture(self):
+        contract, simulation = self.level_fixture()
+        contract['Groups'][0]['Conditions'][0].update(Type=23, Value1=99, Value2=0)
+        names = [f'availability-area=99:observed={area}' for area in ('unknown', '99', '100')] + [
+            'availability-missing-observation-revokes-publication', 'availability-fixture-constrained-by-source-and-prerequisites']
+        simulation['cases'] = [{'name': name, 'status': 'PASS'} for name in names]
+        simulation['availability_condition_validation'].update(contract=copy.deepcopy(contract), passed_cases=len(names))
+        return contract, simulation
+
+    def test_area_requires_area_observations_instead_of_quest_status(self):
+        contract, simulation = self.area_fixture()
+        try:
+            valid = self.validate(contract, simulation)
+        except ValueError:
+            valid = False
+        self.assertTrue(valid, 'Complete current-area boundary receipts must be recognized')
+
+    def test_area_requires_unknown_matching_and_other_observations(self):
+        for missing in range(3):
+            with self.subTest(missing=missing):
+                contract, simulation = self.area_fixture()
+                simulation['cases'].pop(missing)
+                simulation['availability_condition_validation']['passed_cases'] -= 1
+                with self.assertRaises(ValueError): self.validate(contract, simulation)
+
 
 if __name__ == '__main__':
     unittest.main()

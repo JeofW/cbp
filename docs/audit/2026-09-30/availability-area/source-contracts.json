@@ -1,0 +1,38 @@
+{
+  "primary_revision": "95657f54779467effea8a1749a61ff93abc1d707",
+  "server": {
+    "path": "src/server/game/Conditions/ConditionMgr.cpp",
+    "lines": [
+      279,
+      280
+    ],
+    "sha256": "0b16a2b37477b2272503af39ddb6e99d32d41476eee6d48333b5b4a860afaf36",
+    "predicate": "23 compares object GetAreaId with ConditionValue1; negation retained"
+  },
+  "prior_source_contract": {
+    "path": "docs/audit/2026-09-30/availability-scalars/source-contracts.json",
+    "sha256": "26d33892c720a319a9577b3c9da7628d5dd1fd58431c2ee6b0a115cefa78f3a5"
+  },
+  "client": {
+    "build": 12340,
+    "architecture": "x86",
+    "binary_sha256": "bf644876709c591acc17c0da8cdf1814edcc9f1e6bc109a8c0d5c38c79dc953c",
+    "area": "0xBD0810",
+    "parent_zone": "0xBD080C",
+    "map": "0xBD088C",
+    "read_only_ida": true,
+    "update": "0x5204C0 receives separate parent zone and area IDs from 0x78F020",
+    "area_lookup": "0x5167E0",
+    "teardown": "0x529160 clears the area and zone",
+    "ida_receipts_sha256": {
+      "pass4-binary-20260930.json": "e03a1ecae34c3412bbd5e4a9b7502a83252c1367ba02b6b9e48ee0b9666f0454",
+      "pass3-current-area-read-20260930.json": "a214fe53f7cfa0eb79fef9089bf10fd0ced81f9d31146c087315ff281e77bee1",
+      "pass3-current-area-update-20260930.json": "3a6c09d794e93579af7b5e1f1016e7ec529d0d9a0b72285557509d2f9b695f4d",
+      "pass3-current-area-reset-20260930.json": "8818f0178a59b4f4dd6f02971411d309897ed71b414a53bc6524b058e3399fb3",
+      "pass4-area-update-callers-fixed-20260930.json": "b4552009380940df55f7adc27086dfdc7cff67d60089527e6a959527fb91cda9"
+    },
+    "new_api": "QuestAreaSnapshot: checked read-only area/map/player/descriptor observation, null when unavailable",
+    "new_native_dispatch": false
+  },
+  "limits": "A matching complete client sample does not certify an atomic transaction, absence of ABA, server phase, configured-realm equivalence or live completion."
+}

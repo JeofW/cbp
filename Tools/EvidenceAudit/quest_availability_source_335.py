@@ -1,6 +1,6 @@
 """Export complete original-TC335 quest availability contracts for current owners.
 
-Only permanent quest reward history, ordinary active state and level predicates are implemented here.
+Only permanent quest reward history, ordinary active state, level and area predicates are implemented here.
 Unsupported target, reference, script, bank, seasonal and repeatable semantics
 remain explicit obligations; a partial condition list is never exported.
 """
@@ -17,7 +17,7 @@ import re
 from quest_repair_pack_335 import BASE_FIELDS, ADDON_FIELDS, digest, encoded, indexed, load_verified_tables
 
 SOURCE_TYPE = 19
-SUPPORTED_TYPES = {8, 9, 14, 27, 28, 47}
+SUPPORTED_TYPES = {8, 9, 14, 23, 27, 28, 47}
 STATUS_MASK = (1 << 0) | (1 << 1) | (1 << 3) | (1 << 5) | (1 << 6)
 SEASONAL_SORTS = {-22, -284, -366, -369, -370, -374, -376}
 
@@ -77,7 +77,7 @@ def build_contracts(data, tables, source):
                     or (kind == 27 and not 0 <= row['ConditionValue2'] <= 4)
                     or (kind == 47 and (row['ConditionValue2'] <= 0 or row['ConditionValue2'] & ~STATUS_MASK))):
                 problems.append('invalid-condition-values'); continue
-            if kind != 27:
+            if kind not in (23, 27):
                 referenced = templates.get(value); referenced_addon = addons.get(value, {})
                 if referenced is None:
                     problems.append('referenced-quest-absent:' + str(value)); continue
@@ -92,7 +92,7 @@ def build_contracts(data, tables, source):
             if key in keys:
                 problems.append('duplicate-condition'); continue
             keys.add(key)
-            if kind != 27:
+            if kind not in (23, 27):
                 refs[value] = {'QuestId': value, 'QuestType': referenced['QuestType'],
                                'SpecialFlags': referenced_addon.get('SpecialFlags', 0),
                                'QuestSortID': referenced['QuestSortID'],
@@ -128,7 +128,7 @@ def main():
     header = (args.reference / 'contracts/ConditionMgr.h').read_text(encoding='utf-8')
     expected = {'CONDITION_SOURCE_TYPE_QUEST_AVAILABLE': SOURCE_TYPE, 'CONDITION_QUESTREWARDED': 8,
                 'CONDITION_QUESTTAKEN': 9, 'CONDITION_QUEST_NONE': 14, 'CONDITION_QUEST_COMPLETE': 28,
-                'CONDITION_QUESTSTATE': 47, 'CONDITION_LEVEL': 27}
+                'CONDITION_QUESTSTATE': 47, 'CONDITION_LEVEL': 27, 'CONDITION_AREAID': 23}
     for name, value in expected.items():
         match = re.search(r'\b' + name + r'\s*=\s*(0x[0-9a-fA-F]+|\d+)\s*,', header)
         if not match or int(match[1], 0) != value:

@@ -1,3 +1,13 @@
+# Current: checked area availability continuation — 30 September 2026
+
+Active worktree D:/Dev/CB-QuestAreaObservation-20260930, branch audit/next-quest-area-observation-20260930, parent PR70 034c75d9fe93f27103133341345647eaaefe92af. Read docs/audit/2026-09-30/availability-area/REPORT.md, source-contracts.json, simulation-count-delta.json and exact ledger/correlations. The containing final SHA and clean local/hosted/publication status must be resolved from Git and external AREA_* receipts.
+
+Source contract215 excludes area99. Checked QuestAreaSnapshot and condition23 preserve unknown reads, current player/Memory/map/area identity, OR-of-AND/negation and accepted work. Total62contracts/127predicates, all prior61unchanged. Actual diagnostic259206dataset/39strategy/721availability checks pass, five new cases for215 and none removed. Classes3003/2/932/325/16/57=4335 with1330remaining;63availability contracts remain. This is the PR67/70 lineage, separate from PR71 combined integration despite coincident total counts. Do not conflate the ledgers.
+
+PR71 integration staging recovered through its original supported request, committed3c0b6c7a and passed complete local tests. Inspect its hosted/publication receipts before integration. Preserve deployedPR61 and completed PR62–66/68/69 merges. Continue the remaining carried/bank item, daily, spell and source/data families with exact build12340 read-only IDA and pinned TC335. Use only9066/9447 vetted strategies. No live-completion claim and no session_finish while implementation remains. The earlier entries below are historical checkpoints.
+
+---
+
 # Current: source-backed level and permanent-reward conditions — 30 September 2026
 
 Active branch audit/next-quest-availability-inputs-20260930 at D:/Dev/CB-QuestAvailabilityInputs-20260930 starts from PR67 0722b9c4d7e2d958a23c0986e05864f2f6b68a0a. Read docs/audit/2026-09-30/availability-scalars/REPORT.md, source-contracts.json, simulation-count-delta.json and exact ledger/correlations. Resolve final containing commit/local/hosted/publication from external SCALAR_* receipts before claiming acceptance.
