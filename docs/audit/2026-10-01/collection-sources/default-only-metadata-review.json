@@ -1,0 +1,580 @@
+[
+  {
+    "quest_id": 50,
+    "fields": {
+      "AllowableClasses": 0,
+      "MaxLevel": 0,
+      "RequiredSkillID": 0,
+      "RequiredSkillPoints": 0,
+      "RequiredMinRepFaction": 0,
+      "RequiredMinRepValue": 0,
+      "RequiredMaxRepFaction": 0,
+      "RequiredMaxRepValue": 0,
+      "RequiredFactionValue1": 0,
+      "RequiredFactionValue2": 0
+    },
+    "contracts": {},
+    "source_ref": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:50"
+  },
+  {
+    "quest_id": 70,
+    "fields": {
+      "AllowableClasses": 0,
+      "MaxLevel": 0,
+      "RequiredSkillID": 0,
+      "RequiredSkillPoints": 0,
+      "RequiredMinRepFaction": 0,
+      "RequiredMinRepValue": 0,
+      "RequiredMaxRepFaction": 0,
+      "RequiredMaxRepValue": 0,
+      "RequiredFactionValue1": 0,
+      "RequiredFactionValue2": 0
+    },
+    "contracts": {},
+    "source_ref": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:70"
+  },
+  {
+    "quest_id": 75,
+    "fields": {
+      "AllowableClasses": 0,
+      "MaxLevel": 0,
+      "RequiredSkillID": 0,
+      "RequiredSkillPoints": 0,
+      "RequiredMinRepFaction": 0,
+      "RequiredMinRepValue": 0,
+      "RequiredMaxRepFaction": 0,
+      "RequiredMaxRepValue": 0,
+      "RequiredFactionValue1": 0,
+      "RequiredFactionValue2": 0
+    },
+    "contracts": {},
+    "source_ref": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:75"
+  },
+  {
+    "quest_id": 78,
+    "fields": {
+      "AllowableClasses": 0,
+      "MaxLevel": 0,
+      "RequiredSkillID": 0,
+      "RequiredSkillPoints": 0,
+      "RequiredMinRepFaction": 0,
+      "RequiredMinRepValue": 0,
+      "RequiredMaxRepFaction": 0,
+      "RequiredMaxRepValue": 0,
+      "RequiredFactionValue1": 0,
+      "RequiredFactionValue2": 0
+    },
+    "contracts": {},
+    "source_ref": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:78"
+  },
+  {
+    "quest_id": 90,
+    "fields": {
+      "AllowableClasses": 0,
+      "MaxLevel": 0,
+      "RequiredSkillID": 0,
+      "RequiredSkillPoints": 0,
+      "RequiredMinRepFaction": 0,
+      "RequiredMinRepValue": 0,
+      "RequiredMaxRepFaction": 0,
+      "RequiredMaxRepValue": 0,
+      "RequiredFactionValue1": 0,
+      "RequiredFactionValue2": 0
+    },
+    "contracts": {},
+    "source_ref": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:90"
+  },
+  {
+    "quest_id": 204,
+    "fields": {
+      "AllowableClasses": 0,
+      "MaxLevel": 0,
+      "RequiredSkillID": 0,
+      "RequiredSkillPoints": 0,
+      "RequiredMinRepFaction": 0,
+      "RequiredMinRepValue": 0,
+      "RequiredMaxRepFaction": 0,
+      "RequiredMaxRepValue": 0,
+      "RequiredFactionValue1": 0,
+      "RequiredFactionValue2": 0
+    },
+    "contracts": {},
+    "source_ref": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:204"
+  },
+  {
+    "quest_id": 207,
+    "fields": {
+      "AllowableClasses": 0,
+      "MaxLevel": 0,
+      "RequiredSkillID": 0,
+      "RequiredSkillPoints": 0,
+      "RequiredMinRepFaction": 0,
+      "RequiredMinRepValue": 0,
+      "RequiredMaxRepFaction": 0,
+      "RequiredMaxRepValue": 0,
+      "RequiredFactionValue1": 0,
+      "RequiredFactionValue2": 0
+    },
+    "contracts": {},
+    "source_ref": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:207"
+  },
+  {
+    "quest_id": 422,
+    "fields": {
+      "AllowableClasses": 0,
+      "MaxLevel": 0,
+      "RequiredSkillID": 0,
+      "RequiredSkillPoints": 0,
+      "RequiredMinRepFaction": 0,
+      "RequiredMinRepValue": 0,
+      "RequiredMaxRepFaction": 0,
+      "RequiredMaxRepValue": 0,
+      "RequiredFactionValue1": 0,
+      "RequiredFactionValue2": 0
+    },
+    "contracts": {},
+    "source_ref": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:422"
+  },
+  {
+    "quest_id": 573,
+    "fields": {
+      "AllowableClasses": 0,
+      "MaxLevel": 0,
+      "RequiredSkillID": 0,
+      "RequiredSkillPoints": 0,
+      "RequiredMinRepFaction": 0,
+      "RequiredMinRepValue": 0,
+      "RequiredMaxRepFaction": 0,
+      "RequiredMaxRepValue": 0,
+      "RequiredFactionValue1": 0,
+      "RequiredFactionValue2": 0
+    },
+    "contracts": {},
+    "source_ref": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:573"
+  },
+  {
+    "quest_id": 585,
+    "fields": {
+      "AllowableClasses": 0,
+      "MaxLevel": 0,
+      "RequiredSkillID": 0,
+      "RequiredSkillPoints": 0,
+      "RequiredMinRepFaction": 0,
+      "RequiredMinRepValue": 0,
+      "RequiredMaxRepFaction": 0,
+      "RequiredMaxRepValue": 0,
+      "RequiredFactionValue1": 0,
+      "RequiredFactionValue2": 0
+    },
+    "contracts": {},
+    "source_ref": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:585"
+  },
+  {
+    "quest_id": 627,
+    "fields": {
+      "AllowableClasses": 0,
+      "MaxLevel": 0,
+      "RequiredSkillID": 0,
+      "RequiredSkillPoints": 0,
+      "RequiredMinRepFaction": 0,
+      "RequiredMinRepValue": 0,
+      "RequiredMaxRepFaction": 0,
+      "RequiredMaxRepValue": 0,
+      "RequiredFactionValue1": 0,
+      "RequiredFactionValue2": 0
+    },
+    "contracts": {},
+    "source_ref": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:627"
+  },
+  {
+    "quest_id": 629,
+    "fields": {
+      "AllowableClasses": 0,
+      "MaxLevel": 0,
+      "RequiredSkillID": 0,
+      "RequiredSkillPoints": 0,
+      "RequiredMinRepFaction": 0,
+      "RequiredMinRepValue": 0,
+      "RequiredMaxRepFaction": 0,
+      "RequiredMaxRepValue": 0,
+      "RequiredFactionValue1": 0,
+      "RequiredFactionValue2": 0
+    },
+    "contracts": {},
+    "source_ref": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:629"
+  },
+  {
+    "quest_id": 651,
+    "fields": {
+      "AllowableClasses": 0,
+      "MaxLevel": 0,
+      "RequiredSkillID": 0,
+      "RequiredSkillPoints": 0,
+      "RequiredMinRepFaction": 0,
+      "RequiredMinRepValue": 0,
+      "RequiredMaxRepFaction": 0,
+      "RequiredMaxRepValue": 0,
+      "RequiredFactionValue1": 0,
+      "RequiredFactionValue2": 0
+    },
+    "contracts": {},
+    "source_ref": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:651"
+  },
+  {
+    "quest_id": 696,
+    "fields": {
+      "AllowableClasses": 0,
+      "MaxLevel": 0,
+      "RequiredSkillID": 0,
+      "RequiredSkillPoints": 0,
+      "RequiredMinRepFaction": 0,
+      "RequiredMinRepValue": 0,
+      "RequiredMaxRepFaction": 0,
+      "RequiredMaxRepValue": 0,
+      "RequiredFactionValue1": 0,
+      "RequiredFactionValue2": 0
+    },
+    "contracts": {},
+    "source_ref": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:696"
+  },
+  {
+    "quest_id": 849,
+    "fields": {
+      "AllowableClasses": 0,
+      "MaxLevel": 0,
+      "RequiredSkillID": 0,
+      "RequiredSkillPoints": 0,
+      "RequiredMinRepFaction": 0,
+      "RequiredMinRepValue": 0,
+      "RequiredMaxRepFaction": 0,
+      "RequiredMaxRepValue": 0,
+      "RequiredFactionValue1": 0,
+      "RequiredFactionValue2": 0
+    },
+    "contracts": {},
+    "source_ref": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:849"
+  },
+  {
+    "quest_id": 1027,
+    "fields": {
+      "AllowableClasses": 0,
+      "MaxLevel": 0,
+      "RequiredSkillID": 0,
+      "RequiredSkillPoints": 0,
+      "RequiredMinRepFaction": 0,
+      "RequiredMinRepValue": 0,
+      "RequiredMaxRepFaction": 0,
+      "RequiredMaxRepValue": 0,
+      "RequiredFactionValue1": 0,
+      "RequiredFactionValue2": 0
+    },
+    "contracts": {},
+    "source_ref": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:1027"
+  },
+  {
+    "quest_id": 3825,
+    "fields": {
+      "AllowableClasses": 0,
+      "MaxLevel": 0,
+      "RequiredSkillID": 0,
+      "RequiredSkillPoints": 0,
+      "RequiredMinRepFaction": 0,
+      "RequiredMinRepValue": 0,
+      "RequiredMaxRepFaction": 0,
+      "RequiredMaxRepValue": 0,
+      "RequiredFactionValue1": 0,
+      "RequiredFactionValue2": 0
+    },
+    "contracts": {},
+    "source_ref": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:3825"
+  },
+  {
+    "quest_id": 5165,
+    "fields": {
+      "AllowableClasses": 0,
+      "MaxLevel": 0,
+      "RequiredSkillID": 0,
+      "RequiredSkillPoints": 0,
+      "RequiredMinRepFaction": 0,
+      "RequiredMinRepValue": 0,
+      "RequiredMaxRepFaction": 0,
+      "RequiredMaxRepValue": 0,
+      "RequiredFactionValue1": 0,
+      "RequiredFactionValue2": 0
+    },
+    "contracts": {},
+    "source_ref": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:5165"
+  },
+  {
+    "quest_id": 6571,
+    "fields": {
+      "AllowableClasses": 0,
+      "MaxLevel": 0,
+      "RequiredSkillID": 0,
+      "RequiredSkillPoints": 0,
+      "RequiredMinRepFaction": 0,
+      "RequiredMinRepValue": 0,
+      "RequiredMaxRepFaction": 0,
+      "RequiredMaxRepValue": 0,
+      "RequiredFactionValue1": 0,
+      "RequiredFactionValue2": 0
+    },
+    "contracts": {},
+    "source_ref": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:6571"
+  },
+  {
+    "quest_id": 8528,
+    "fields": {
+      "AllowableClasses": 0,
+      "MaxLevel": 0,
+      "RequiredSkillID": 0,
+      "RequiredSkillPoints": 0,
+      "RequiredMinRepFaction": 0,
+      "RequiredMinRepValue": 0,
+      "RequiredMaxRepFaction": 0,
+      "RequiredMaxRepValue": 0,
+      "RequiredFactionValue1": 0,
+      "RequiredFactionValue2": 0
+    },
+    "contracts": {},
+    "source_ref": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:8528"
+  },
+  {
+    "quest_id": 8613,
+    "fields": {
+      "AllowableClasses": 0,
+      "MaxLevel": 0,
+      "RequiredSkillID": 0,
+      "RequiredSkillPoints": 0,
+      "RequiredMinRepFaction": 0,
+      "RequiredMinRepValue": 0,
+      "RequiredMaxRepFaction": 0,
+      "RequiredMaxRepValue": 0,
+      "RequiredFactionValue1": 0,
+      "RequiredFactionValue2": 0
+    },
+    "contracts": {},
+    "source_ref": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:8613"
+  },
+  {
+    "quest_id": 8921,
+    "fields": {
+      "AllowableClasses": 0,
+      "MaxLevel": 0,
+      "RequiredSkillID": 0,
+      "RequiredSkillPoints": 0,
+      "RequiredMinRepFaction": 0,
+      "RequiredMinRepValue": 0,
+      "RequiredMaxRepFaction": 0,
+      "RequiredMaxRepValue": 0,
+      "RequiredFactionValue1": 0,
+      "RequiredFactionValue2": 0
+    },
+    "contracts": {},
+    "source_ref": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:8921"
+  },
+  {
+    "quest_id": 9275,
+    "fields": {
+      "AllowableClasses": 0,
+      "MaxLevel": 0,
+      "RequiredSkillID": 0,
+      "RequiredSkillPoints": 0,
+      "RequiredMinRepFaction": 0,
+      "RequiredMinRepValue": 0,
+      "RequiredMaxRepFaction": 0,
+      "RequiredMaxRepValue": 0,
+      "RequiredFactionValue1": 0,
+      "RequiredFactionValue2": 0
+    },
+    "contracts": {},
+    "source_ref": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:9275"
+  },
+  {
+    "quest_id": 9294,
+    "fields": {
+      "AllowableClasses": 0,
+      "MaxLevel": 0,
+      "RequiredSkillID": 0,
+      "RequiredSkillPoints": 0,
+      "RequiredMinRepFaction": 0,
+      "RequiredMinRepValue": 0,
+      "RequiredMaxRepFaction": 0,
+      "RequiredMaxRepValue": 0,
+      "RequiredFactionValue1": 0,
+      "RequiredFactionValue2": 0
+    },
+    "contracts": {},
+    "source_ref": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:9294"
+  },
+  {
+    "quest_id": 9526,
+    "fields": {
+      "AllowableClasses": 0,
+      "MaxLevel": 0,
+      "RequiredSkillID": 0,
+      "RequiredSkillPoints": 0,
+      "RequiredMinRepFaction": 0,
+      "RequiredMinRepValue": 0,
+      "RequiredMaxRepFaction": 0,
+      "RequiredMaxRepValue": 0,
+      "RequiredFactionValue1": 0,
+      "RequiredFactionValue2": 0
+    },
+    "contracts": {},
+    "source_ref": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:9526"
+  },
+  {
+    "quest_id": 11123,
+    "fields": {
+      "AllowableClasses": 0,
+      "MaxLevel": 0,
+      "RequiredSkillID": 0,
+      "RequiredSkillPoints": 0,
+      "RequiredMinRepFaction": 0,
+      "RequiredMinRepValue": 0,
+      "RequiredMaxRepFaction": 0,
+      "RequiredMaxRepValue": 0,
+      "RequiredFactionValue1": 0,
+      "RequiredFactionValue2": 0
+    },
+    "contracts": {},
+    "source_ref": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:11123"
+  },
+  {
+    "quest_id": 11324,
+    "fields": {
+      "AllowableClasses": 0,
+      "MaxLevel": 0,
+      "RequiredSkillID": 0,
+      "RequiredSkillPoints": 0,
+      "RequiredMinRepFaction": 0,
+      "RequiredMinRepValue": 0,
+      "RequiredMaxRepFaction": 0,
+      "RequiredMaxRepValue": 0,
+      "RequiredFactionValue1": 0,
+      "RequiredFactionValue2": 0
+    },
+    "contracts": {},
+    "source_ref": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:11324"
+  },
+  {
+    "quest_id": 11326,
+    "fields": {
+      "AllowableClasses": 0,
+      "MaxLevel": 0,
+      "RequiredSkillID": 0,
+      "RequiredSkillPoints": 0,
+      "RequiredMinRepFaction": 0,
+      "RequiredMinRepValue": 0,
+      "RequiredMaxRepFaction": 0,
+      "RequiredMaxRepValue": 0,
+      "RequiredFactionValue1": 0,
+      "RequiredFactionValue2": 0
+    },
+    "contracts": {},
+    "source_ref": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:11326"
+  },
+  {
+    "quest_id": 11613,
+    "fields": {
+      "AllowableClasses": 0,
+      "MaxLevel": 0,
+      "RequiredSkillID": 0,
+      "RequiredSkillPoints": 0,
+      "RequiredMinRepFaction": 0,
+      "RequiredMinRepValue": 0,
+      "RequiredMaxRepFaction": 0,
+      "RequiredMaxRepValue": 0,
+      "RequiredFactionValue1": 0,
+      "RequiredFactionValue2": 0
+    },
+    "contracts": {},
+    "source_ref": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:11613"
+  },
+  {
+    "quest_id": 11649,
+    "fields": {
+      "AllowableClasses": 0,
+      "MaxLevel": 0,
+      "RequiredSkillID": 0,
+      "RequiredSkillPoints": 0,
+      "RequiredMinRepFaction": 0,
+      "RequiredMinRepValue": 0,
+      "RequiredMaxRepFaction": 0,
+      "RequiredMaxRepValue": 0,
+      "RequiredFactionValue1": 0,
+      "RequiredFactionValue2": 0
+    },
+    "contracts": {},
+    "source_ref": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:11649"
+  },
+  {
+    "quest_id": 11658,
+    "fields": {
+      "AllowableClasses": 0,
+      "MaxLevel": 0,
+      "RequiredSkillID": 0,
+      "RequiredSkillPoints": 0,
+      "RequiredMinRepFaction": 0,
+      "RequiredMinRepValue": 0,
+      "RequiredMaxRepFaction": 0,
+      "RequiredMaxRepValue": 0,
+      "RequiredFactionValue1": 0,
+      "RequiredFactionValue2": 0
+    },
+    "contracts": {},
+    "source_ref": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:11658"
+  },
+  {
+    "quest_id": 11866,
+    "fields": {
+      "AllowableClasses": 0,
+      "MaxLevel": 0,
+      "RequiredSkillID": 0,
+      "RequiredSkillPoints": 0,
+      "RequiredMinRepFaction": 0,
+      "RequiredMinRepValue": 0,
+      "RequiredMaxRepFaction": 0,
+      "RequiredMaxRepValue": 0,
+      "RequiredFactionValue1": 0,
+      "RequiredFactionValue2": 0
+    },
+    "contracts": {},
+    "source_ref": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:11866"
+  },
+  {
+    "quest_id": 12188,
+    "fields": {
+      "AllowableClasses": 0,
+      "MaxLevel": 0,
+      "RequiredSkillID": 0,
+      "RequiredSkillPoints": 0,
+      "RequiredMinRepFaction": 0,
+      "RequiredMinRepValue": 0,
+      "RequiredMaxRepFaction": 0,
+      "RequiredMaxRepValue": 0,
+      "RequiredFactionValue1": 0,
+      "RequiredFactionValue2": 0
+    },
+    "contracts": {},
+    "source_ref": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:12188"
+  },
+  {
+    "quest_id": 12225,
+    "fields": {
+      "AllowableClasses": 0,
+      "MaxLevel": 0,
+      "RequiredSkillID": 0,
+      "RequiredSkillPoints": 0,
+      "RequiredMinRepFaction": 0,
+      "RequiredMinRepValue": 0,
+      "RequiredMaxRepFaction": 0,
+      "RequiredMaxRepValue": 0,
+      "RequiredFactionValue1": 0,
+      "RequiredFactionValue2": 0
+    },
+    "contracts": {},
+    "source_ref": "tc335:95657f54779467effea8a1749a61ff93abc1d707:TDB335.25101:e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9:quest_template+addon:12225"
+  }
+]

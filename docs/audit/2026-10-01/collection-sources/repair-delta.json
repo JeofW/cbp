@@ -1,0 +1,40 @@
+{
+  "base_commit": "feeff2ac3aec9bcaa2c8632bf56eb0f402c44167",
+  "runtime_route_records_applied": 0,
+  "runtime_knowledge_unchanged": true,
+  "knowledge_sha256": {
+    "quest_data.json": "f2ca79318694afaa4214fc09392e88c3d9d1eae5128f323d0d65b1b9e91a7e3f",
+    "quest_data.repairs.json": "67a372cb548c9bcdb97b7bcc82fcc87253ae0778220b70f7960b6f0f001d96e3",
+    "quest_strategies.json": "10ef767236c0ad2c0151f6b56b9abe6f4e102e1512d650c3313aae750da1f498"
+  },
+  "new_optional_schema": "CollectionRouteRepairs",
+  "behavior_change": "Generated item definitions preserve selected creature hints and merge equal-count alternatives by item within a quest.",
+  "pending_route_records": 25,
+  "pending_quest_ids": [
+    429,
+    565,
+    714,
+    2746,
+    2821,
+    2822,
+    3128,
+    3501,
+    3521,
+    4061,
+    4449,
+    6031,
+    8310,
+    8549,
+    8580,
+    8586,
+    9131,
+    10420,
+    10618,
+    10757,
+    10763,
+    13092,
+    13906
+  ],
+  "source_review_provider_holds": "source-review-provider-holds.json",
+  "live_completion_proven": false
+}

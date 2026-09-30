@@ -514,26 +514,38 @@ public class CollectItemObjective : QuestObjective
 
     private bool IsValidMobTarget(WoWUnit unit)
     {
+        // This predicate establishes a known item source, not attack permission.
+        // Preserve object invalidation even after memoizing its template identity.
+        if (unit == null || unit.BaseAddress == 0 || unit.IsDisabled || unit.Type != WoWObjectType.Unit ||
+            unit.Guid == 0 || unit.DescriptorGuid != unit.Guid)
+            return false;
         uint entry = unit.Entry;
+        if (entry == 0)
+            return false;
         if (this._excludedMobs.Contains(entry))
             return false;
         if (!this._includedMobs.Contains(entry))
         {
-            Styx.WoWInternals.WoWCache.WoWCache.CreatureCacheEntry info;
-            if (!unit.GetCachedInfo(out info))
-                return false;
             CollectFromCollection collectFrom = this._collectItemInfo?.OverridedCollectFrom;
-            if ((collectFrom == null || collectFrom.Count <= 0 || !collectFrom.ContainsMob(entry)) && 
-                !DropDatabase.UnitDropsItem(entry, (uint)this.Objective.ID) && 
-                !ItemLootQueries.UnitDropsItem(entry, (uint)this.Objective.ID) &&
-                !info.QuestItems.Contains((uint)this.Objective.ID))
+            bool declaredSource = collectFrom?.ContainsMob(entry) == true;
+            if (!declaredSource)
             {
-                this._excludedMobs.Add(entry);
+                Styx.WoWInternals.WoWCache.WoWCache.CreatureCacheEntry info;
+                if (!unit.GetCachedInfo(out info))
+                    return false;
+                if (!DropDatabase.UnitDropsItem(entry, (uint)this.Objective.ID) &&
+                    !ItemLootQueries.UnitDropsItem(entry, (uint)this.Objective.ID) &&
+                    !info.QuestItems.Contains((uint)this.Objective.ID))
+                {
+                    this._excludedMobs.Add(entry);
+                    return false;
+                }
             }
-            else
-            {
-                this._includedMobs.Add(entry);
-            }
+            // A selected explicit profile source does not need optional query
+            // metadata to repeat that same relation. Undeclared targets retain
+            // the previous cache/database checks; all combat and loot gates stay
+            // with their existing owners.
+            this._includedMobs.Add(entry);
         }
         return this._includedMobs.Contains(entry);
     }

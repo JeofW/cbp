@@ -132,7 +132,7 @@ namespace WholesomeAQ
                     XElement guard = BuildObjectiveGuard(entry);
                     if (definition == null || guard == null)
                         continue;
-                    questDefinition.Add(definition);
+                    AddObjectiveDefinition(questDefinition, definition);
                     questOrder.Add(guard);
                     continue;
                 }
@@ -410,6 +410,43 @@ namespace WholesomeAQ
                         new XAttribute("TurnInType", ProfileRelationType(entry.Ender.EnderType)),
                         LocationAttributes(point))));
 
+        private static void AddObjectiveDefinition(XElement questDefinition, XElement definition)
+        {
+            // The runtime finds one item override by ItemId. Keep all selected
+            // alternatives in that definition instead of shadowing later sources.
+            // Different quantities remain separate unresolved contracts; do not
+            // silently choose a new requirement while combining source hints.
+            XElement existing = (string)definition.Attribute("Type") == "CollectItem"
+                ? questDefinition.Elements("Objective").FirstOrDefault(value =>
+                    (string)value.Attribute("Type") == "CollectItem" &&
+                    (string)value.Attribute("ItemId") == (string)definition.Attribute("ItemId") &&
+                    (string)value.Attribute("CollectCount") == (string)definition.Attribute("CollectCount"))
+                : null;
+            if (existing == null)
+            {
+                questDefinition.Add(definition);
+                return;
+            }
+            foreach (string name in new[] { "CollectFrom", "Hotspots" })
+            {
+                XElement incoming = definition.Element(name);
+                if (incoming == null) continue;
+                XElement target = existing.Element(name);
+                if (target == null)
+                {
+                    existing.Add(new XElement(incoming));
+                    continue;
+                }
+                foreach (XElement child in incoming.Elements())
+                {
+                    bool duplicate = name == "CollectFrom"
+                        ? target.Elements(child.Name).Any(value => (string)value.Attribute("Id") == (string)child.Attribute("Id"))
+                        : target.Elements(child.Name).Any(value => XNode.DeepEquals(value, child));
+                    if (!duplicate) target.Add(new XElement(child));
+                }
+            }
+        }
+
         private static XElement BuildObjectiveDefinition(
             QuestObjective objective,
             IReadOnlyList<SpawnPoint> hotspots)
@@ -428,6 +465,10 @@ namespace WholesomeAQ
                     new XAttribute("Type", "CollectItem"),
                     new XAttribute("ItemId", objective.ItemId),
                     new XAttribute("CollectCount", objective.CollectCount));
+                // CollectItemObjective consumes this definition, not the MobId
+                // attribute on the order node. Preserve the modeled creature hint.
+                if (objective.MobId > 0)
+                    node.Add(new XElement("CollectFrom", new XElement("Mob", new XAttribute("Id", objective.MobId))));
             }
             else if (objective.Type == ObjectiveType.CollectFromGameObject && objective.GameObjectId > 0)
             {

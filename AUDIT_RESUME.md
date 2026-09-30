@@ -1,3 +1,13 @@
+# Current: selected collection-source handoff and guarded route framework
+
+Worktree D:/Dev/CB-QuestCollectionRoutes-20261001, branch audit/next-quest-collection-routes-20261001, parent feeff2ac3aec9bcaa2c8632bf56eb0f402c44167. Read docs/audit/2026-10-01/collection-sources/REPORT.md, its exact fixture/ledger, source-review-provider-holds.json and remaining-frontier-disposition.json. Resolve the containing candidate and local/hosted publication/integration from external COLLECTION_* receipts; do not replay the completed PR77 merge or older scopes.
+
+Selected creature sources now reach the real runtime quest definition; equal-count item alternatives are merged without cross-item/quest leakage. Explicit hints no longer depend on optional creature query metadata, with nonzero matching Unit identity and invalidation checks retained. The optional collection route schema is tested, but all25 proposed data records for23quests remain UNAPPLIED after provider-blocked source reviews. Runtime knowledge and strategies are unchanged.
+
+Current actual dataset261057/strategy39 checks reproduce;1427 new assertions cover the real source handoff. Counts3011/2/932/317/16/57=4335;1322 remaining IDs. The existing exporters reviewed every remaining ID: no additional functional metadata/relation/spawn/count repair;34 defaults are unnecessary zeros. Remaining44 availability subjects need43 source conflicts resolved or a complete bank-inclusive observation contract. Continue that original-build12340 read-only IDA and pinned TC335 research; never substitute GetItemCount's numeric zero for complete absence or borrow negative spell absence. PR61 production remains3bc97e1e; reviewed PR77 integrated at453f500b.
+
+---
+
 # Current: complete source-bound predecessor repair continuation
 
 The preserved predecessor work is verified and ready for exact-commit acceptance. Active worktree D:/Dev/CB-QuestPredecessorRepairs-20260930, branch audit/next-quest-predecessor-repairs-20260930, parent2f52ec3b2f21df9a5cdd18097cd20fb50ed96937. Read docs/audit/2026-09-30/previous-membership/REPORT.md, previous-patch.json, repaired-quest-obligations.json and its exact ledger/fixture/correlations. Resolve the containing commit and final local/hosted/publication from external PREVIOUS_* receipts before repeating any operation.

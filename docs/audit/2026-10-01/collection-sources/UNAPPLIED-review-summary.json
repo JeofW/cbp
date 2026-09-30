@@ -1,0 +1,49 @@
+{
+  "base_commit": "feeff2ac3aec9bcaa2c8632bf56eb0f402c44167",
+  "quest_ids": [
+    429,
+    565,
+    714,
+    2746,
+    2821,
+    2822,
+    3128,
+    3501,
+    3521,
+    4061,
+    4449,
+    6031,
+    8310,
+    8549,
+    8580,
+    8586,
+    9131,
+    10420,
+    10618,
+    10757,
+    10763,
+    13092,
+    13906
+  ],
+  "route_repairs": 25,
+  "operations": {
+    "Replace": 11,
+    "Append": 14
+  },
+  "spawn_entries": 21,
+  "spawn_points": 273,
+  "reviewed_rows": 832,
+  "review_dispositions": {
+    "subject-source-script-or-index-conflict": 256,
+    "old-source-needs-script-or-loot-review": 51,
+    "no-ungrouped-ordinary-source-with-matching-giver-map": 167,
+    "preserved-valid-source": 159,
+    "nonfinal-item-ambiguous-row-or-existing-repair": 174,
+    "ordinary-collection-route-repair": 25
+  },
+  "patch_sha256": "78faa90766ae8eb7399ae78ba74ed1160c1d6ec16a8d9ac9467651829eaf23cd",
+  "review_sha256": "837f3a58d22dab11d46e981b979c92a4515a45599ad338b4fc61221bd1992039",
+  "knowledge_changed": false,
+  "live_completion_proven": false,
+  "created_utc": "2026-09-30T17:04:07.110661+00:00"
+}

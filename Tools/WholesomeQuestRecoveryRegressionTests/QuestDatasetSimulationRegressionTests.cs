@@ -839,6 +839,15 @@ internal static class QuestDatasetSimulationRegressionTests
             { record.pipeline_blocks.Add("runtime-objective-identity-not-matched:index=" + objective.Index); continue; }
             fixture.SetAccepted(true); fixture.SetProgress(completedCounts); fixture.SetInventory(carried);
             var owner = fixture.CreateObjective(ObjectiveNode.FromXml(element));
+            if (item)
+                Case(record, "pipeline-collection-source-handoff:index=" + objective.Index, () =>
+                {
+                    var definition = Styx.Logic.Profiles.ProfileManager.CurrentProfile.FindQuest(id)?.FindCollectItem((uint)objective.ItemId);
+                    bool bound = targetType == DataType.GameObject
+                        ? definition?.OverridedCollectFrom?.ContainsGameObject((uint)entry) == true
+                        : definition?.OverridedCollectFrom?.ContainsMob((uint)entry) == true;
+                    Check(bound, "the generated runtime item definition lost the selected collection source");
+                });
             record.production_owners.Add("ForcedBehaviorExecutor.ResolveQuestObjectiveIndex -> QuestManager.CreateQuestObjective -> ForcedQuestObjective.IsDone:" + objective.Type);
             foreach (QuestCreditSource source in QuestCreditSourceCatalog.ForObjective(quest, objective, context.Database))
             {

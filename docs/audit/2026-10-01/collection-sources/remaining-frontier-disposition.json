@@ -1,0 +1,20 @@
+{
+  "all_remaining_ids_reviewed": 1322,
+  "additional_functional_metadata_repairs": 0,
+  "default_only_metadata_rows": 34,
+  "additional_supported_relation_repairs": 0,
+  "additional_supported_spawn_repairs": 0,
+  "additional_count_repairs": 0,
+  "availability_complete_contracts": 81,
+  "availability_predicates": 146,
+  "unresolved_availability_subjects": 44,
+  "availability_subject_conflicts": 43,
+  "bank_inclusive_subject_without_other_source_conflict": 4023,
+  "bank_and_negative_spell_observation_semantics_require_separate_evidence": true,
+  "prospective_collection_routes": 25,
+  "prospective_collection_quests": 23,
+  "prospective_routes_shipped": false,
+  "blocked_donor_and_group_reviews": "source-review-provider-holds.json",
+  "scope_limit": "The conservative existing exporters have no additional functional delta. This does not declare novel scripted, crafting, vendor or unresolved client contracts exhausted.",
+  "live_completion_proven": false
+}
