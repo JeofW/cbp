@@ -1,4 +1,10 @@
-# Verified local implementation; publication held
+# Historical publication hold; supported commit recovered
+
+Recovery on 30 September 2026 at 09:14 UTC: the original command below succeeded through the normal `exec_command` tool without payload alteration or another route. Actual commit `814a01b47c554fff3e74ae10086a83ddf643e2aa` has parent `d36bddce5600bb67418c8180a38fdb8c40346f61`; all 44 intended files matched committed bytes and the worktree was clean. `CONDITIONS_CANDIDATE_COMMIT.json` records that successful result. Final containing-commit local validation, remote publication and hosted acceptance require their own subsequent receipts.
+
+The eligibility sibling is separately published/validated as PR66 at `009556052d0e156587e2bd0e5916a4efd24bc299`, with the four reputation contracts. It has not been integrated into this condition branch. The following original hold is retained unchanged as historical evidence; its present-tense uncommitted and unpublished statements are superseded by this entry.
+
+## Original hold
 
 The condition implementation remains uncommitted in `D:/Dev/CB-QuestConditions-20260930`, branch `audit/next-quest-conditions-20260930`, based on `d36bddce5600bb67418c8180a38fdb8c40346f61`. Fresh Git/remote readback after the failed transactions found no staged commit, no remote condition branch and no condition PR. The separate eligibility worktree is also unpublished.
 

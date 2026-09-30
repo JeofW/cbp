@@ -1,4 +1,14 @@
-# Current: source-bound availability conditions after PR65 — 30 September 2026
+# Current: condition publication recovery — 30 September 2026
+
+The original supported commit request succeeded at 09:14 UTC. Commit `814a01b47c554fff3e74ae10086a83ddf643e2aa` contains the preserved 58 contracts / 115 predicates and all 44 archived implementation/evidence files, verified against their working bytes. No rejected transaction was rerouted. The containing final candidate must receive fresh complete local and hosted Windows/x86 validation before acceptance. Read `CONDITIONS_CANDIDATE_COMMIT.json` and subsequent external receipts in `D:/Dev/CopilotBuddy-Evidence/postmerge-20260930-pr61`.
+
+The eligibility sibling is now published and validated as PR66 at `009556052d0e156587e2bd0e5916a4efd24bc299`. This condition branch still starts at PR65 and contains none of that sibling's four reputation repairs. Its exclusive ledger remains 2999 generic / 2 strategy / 932 data / 329 source / 16 live / 57 scripted = 4335; 1334 remaining IDs. Integrate source knowledge and regenerate the ledger only after both scopes pass their own exact-commit gates. An independent inventory-observation continuation is in `D:/Dev/CB-QuestInventoryObservation-20260930`; inspect its current receipts before repeating work. PR61 production remains verified master `3bc97e1e0b446aede269f7414c0c7c6358fdc192`.
+
+The checkpoint below records the earlier provider hold; its uncommitted/blocked status statements are historical and superseded by this recovery entry. Continue remaining availability/data/source audit work after scoped publication. No new native dispatch or live-completion claim is established.
+
+---
+
+# Preserved checkpoint: source-bound availability conditions after PR65 — 30 September 2026
 
 Publication is held after actual provider failures. Read `docs/audit/2026-09-30/quest-conditions/PUBLICATION_HOLD.md` first. Both the condition commit and the independent full local diagnostic launch returned the provider safety-status block twice; no commit, full-suite run, hosted validation or remote condition PR was produced. The exact errors and unchanged Git state are retained externally. Focused tests and the 259156/39 four-stage precommit closure succeeded with an explicitly modified working tree. Preserve this local work and the separate blocked eligibility worktree; do not reroute the rejected transactions or treat PR65's SHA as this uncommitted implementation.
 

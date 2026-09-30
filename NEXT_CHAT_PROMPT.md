@@ -1,4 +1,12 @@
-# Current: source-bound availability conditions after PR65 — 30 September 2026
+# Current: condition publication recovery — 30 September 2026
+
+The original supported commit request succeeded at 09:14 UTC, creating `814a01b47c554fff3e74ae10086a83ddf643e2aa` with all preserved 58 contracts / 115 predicates and reviewed evidence. Resolve the final containing candidate, complete local and hosted Windows/x86 acceptance and remote publication from Git and the external `CONDITIONS_*` receipts. The prior provider failures remain historical evidence; they do not describe this successful request. Do not replay the completed commit.
+
+PR66 eligibility is already published and validated at `009556052d0e156587e2bd0e5916a4efd24bc299`; this condition branch remains based on PR65, with no sibling reputation changes. Keep the two ledgers separate until a reviewed integration regenerates exact outputs. Preserve the independent inventory-observation worktree and its receipts. Continue original build12340 read-only IDA and pinned TC335/TDB335.25101 work on the remaining availability/data/source families. PR61 deployed master and published PR62–65 remain completed milestones. The checkpoint below records the superseded hold.
+
+---
+
+# Preserved checkpoint: source-bound availability conditions after PR65 — 30 September 2026
 
 Start with `docs/audit/2026-09-30/quest-conditions/PUBLICATION_HOLD.md` and the external exact provider-error receipts. The condition code, 58 contracts, 259156/39 diagnostic output and 1334 remaining IDs are preserved locally at parent d36bddce; they are not a published candidate. Its commit and later full-suite launch were each blocked twice and stopped. Eligibility is a separate blocked sibling. Do not reroute these rejected operations or repeat earlier completed PR61/PR62–65 work. Reconcile supported provider recovery and actual Git state before any new publication claim; keep dirty comparison evidence distinct from clean-SHA local/hosted acceptance.
 
