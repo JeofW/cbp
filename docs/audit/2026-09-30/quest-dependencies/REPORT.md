@@ -46,7 +46,9 @@ The actual Windows/x86 dataset owner completed **258,269 checks** over all 4,335
 python Tools/EvidenceAudit/run_quest_closure_335.py --repo . --runtime 'D:\World of Warcraft 3.3.5a\CB\.dotnet-sdk\dotnet.exe' --output <new-external-result-directory>
 ```
 
-The hosted Windows/x86 full-quest workflow runs the same owner checks. Preserve complete source identities, exact run/job/SHA/results and the full integrated checkpoint. The full local pipeline has 34 commands with a fresh W42 extraction; hosted integrated validation has 17 suite records, plus separate host/observation-owner/quest-closure workflows on this audit branch. A final green claim requires those actual receipts at the containing candidate commit.
+The hosted Windows/x86 full-quest workflow runs the same owner checks. Preserve complete source identities, exact run/job/SHA/results and the full integrated checkpoint. The full local pipeline has 34 commands with a fresh W42 extraction; hosted integrated validation has 17 suite records. This Python/knowledge-only continuation triggers three workflows: integrated, host and quest closure. The separate observation-owner workflow also requires matching C# or owner-test paths, which this change does not touch; that owner suite still runs inside integrated validation. A final green claim requires actual receipts at the containing candidate commit.
+
+The first exact candidate, `31d1079514ad5879fcdfb46b8fbb4cd3f1d18e13`, passed all 34 local commands and the hosted host/quest-closure jobs. Hosted integrated run `36659789834`, job `109711778464`, passed every C# suite but exposed two fixture assertions comparing resolved paths against Windows short-name aliases (`RUNNER~1` versus `runneradmin`). Both expected paths now use the same canonical path identity as the function contract. Path containment, traversal rejection and runtime behavior are unchanged. The failed run and raw analyzer output remain retained; final acceptance is rerun at the corrected commit.
 
 ## Remaining audit work
 

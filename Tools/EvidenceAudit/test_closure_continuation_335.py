@@ -44,13 +44,13 @@ class ClosureContinuationTests(unittest.TestCase):
             root = Path(folder)
             result = self.operation('run_quest_closure_335.py', 'closure_evidence_directory')(
                 root, {'closure_evidence_directory': 'docs/audit/2026-09-30/quest-dependencies'})
-            self.assertEqual(result, root / 'docs/audit/2026-09-30/quest-dependencies')
+            self.assertEqual(result, (root / 'docs/audit/2026-09-30/quest-dependencies').resolve())
 
     def test_legacy_knowledge_retains_its_existing_fixture(self):
         with tempfile.TemporaryDirectory() as folder:
             root = Path(folder)
             result = self.operation('run_quest_closure_335.py', 'closure_evidence_directory')(root, {})
-            self.assertEqual(result, root / 'docs/audit/2026-09-29/wholesome-primary-closure')
+            self.assertEqual(result, (root / 'docs/audit/2026-09-29/wholesome-primary-closure').resolve())
 
     def test_fixture_path_cannot_escape_the_repo_or_come_from_a_live_folder(self):
         for relative in ['../external', '/external', 'D:/external', 'runtime-snapshot/Bots', 'docs/audit/../../../external']:
