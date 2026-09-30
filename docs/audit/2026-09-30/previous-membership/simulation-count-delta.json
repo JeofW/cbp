@@ -1,0 +1,9 @@
+{
+  "parent": "2f52ec3b2f21df9a5cdd18097cd20fb50ed96937",
+  "previous_checks": 259630,
+  "current_checks": 259630,
+  "added_cases": [],
+  "removed_cases": [],
+  "status_changes": [],
+  "reason": "Existing deterministic prerequisite cases consume the repaired membership. Focused source/loader tests separately prove both alternatives and preservation of independent gates."
+}

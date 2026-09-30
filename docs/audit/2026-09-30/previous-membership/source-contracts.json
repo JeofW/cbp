@@ -1,0 +1,67 @@
+{
+  "prior": {
+    "client_build": 12340,
+    "architecture": "x86",
+    "binary_sha256": "bf644876709c591acc17c0da8cdf1814edcc9f1e6bc109a8c0d5c38c79dc953c",
+    "client_receipt_sha256": {
+      "resume-pass8-binary-20260930.json": "e658014297ada74ef44ad4d571fe5159408ebac898cb23ac5c3d0999ac1fde26",
+      "pass8-positive-spell-api-20260930.json": "98fefbca965aa47b208af3ff67f51b8f0a6e70270c1a9bdd3131b7454abe932d",
+      "pass8-initial-spell-list-handler-20260930.json": "3f594a83bdc5fe782a6beca40a34088d8290f60c18914199b1a6688afc5815b5",
+      "pass8-owned-learned-spell-activation-20260930.json": "72546b968bb77d9a8400a6f764ea38232ad3cbd57ea6b20604bba337b0120521",
+      "pass8-spell-staging-remove-20260930.json": "2229c827013679b26f79fa1f90fc2954ad36f25c067449a439e26ea747286759",
+      "pass8-spell-staging-cleanup-20260930.json": "3d5a20c09e217d1d50a8c1a316d5f0784ffba9a474b1a9da0441e9de5b4a1c04"
+    },
+    "self_spell_api": {
+      "registered_name": "IsSpellKnown",
+      "address": "0x53C3A0",
+      "membership": "0x53B4E0",
+      "isPet": false,
+      "contract": "Literal true from the exact self query is positive evidence. False/nil/nonboolean/empty observations remain unknown; no complete negative server spell list is inferred."
+    },
+    "primary": {
+      "revision": "95657f54779467effea8a1749a61ff93abc1d707",
+      "database": "TDB335.25101",
+      "sql_sha256": "e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9",
+      "player_source_sha256": "36a817da38b318740ee5aa31f256518175dfdd02d1dd7a68ebb0805fc43275d8",
+      "HasSpell_lines": [
+        3864,
+        3868
+      ],
+      "SendInitialSpells_lines": [
+        2708,
+        2737
+      ],
+      "LearnSpell_lines": [
+        3364,
+        3379
+      ],
+      "reason_negative_is_unsupported": "The initial client spell list excludes inactive records while HasSpell checks nonremoved/nondisabled membership without requiring active."
+    },
+    "transport": "Existing checked Lua.GetReturnValues transport; exact player GUID before and after the generated request and full managed raw player/Memory owner readback.",
+    "read_only_ida": true,
+    "new_native_dispatch_address": false,
+    "configured_realm_equivalence_proven": false
+  },
+  "predecessors": {
+    "revision": "95657f54779467effea8a1749a61ff93abc1d707",
+    "database": "TDB335.25101",
+    "source_sql_sha256": "e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9",
+    "ObjectMgr.cpp": {
+      "sha256": "67884417a66f8ce294f73e4cb88f728316bba02309b365d69104e40c0b3f8f69",
+      "lines": [
+        5328,
+        5347
+      ]
+    },
+    "Player.cpp": {
+      "sha256": "36a817da38b318740ee5aa31f256518175dfdd02d1dd7a68ebb0805fc43275d8",
+      "lines": [
+        15232,
+        15320
+      ]
+    },
+    "contract": "Independent signed direct predecessor plus complete OR of nonnegative-group dependent predecessors; no change to unknown history or negative-group ordering."
+  },
+  "new_native_api": false,
+  "live_completion_proven": false
+}
