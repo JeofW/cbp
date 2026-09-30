@@ -1,0 +1,27 @@
+{
+  "base_commit": "009556052d0e156587e2bd0e5916a4efd24bc299",
+  "knowledge_directory": "runtime-snapshot/Bots/WholesomeAutoQuest-master/quest_data",
+  "knowledge_manifest_sha256": "febbb4732a9d679929dd39361fd016667a4acf7d584cc565c46fcfc71e9b72ca",
+  "ledger_path": "docs/audit/2026-09-30/eligibility-metadata/quest-ledger.jsonl.gz",
+  "ledger_sha256": "030f69baae203e4f0036e5adf74e6f7aecd0cc61d58351c416c08fae811debf3",
+  "classification_counts": {
+    "GENERIC-PROVEN": 2964,
+    "STRATEGY-PROVEN": 2,
+    "DATA-INVALID/INCOMPLETE": 932,
+    "UNSUPPORTED-SCRIPTED": 57,
+    "SOURCE-UNCERTAIN": 364,
+    "LIVE-ACCEPTANCE-REQUIRED": 16
+  },
+  "unique_quest_ids": 4335,
+  "remaining_quests": 1369,
+  "classification_changes": [],
+  "same_dataset_and_strategy_outputs": {
+    "simulation_sha256": "ea7202036521a6a6c78452e52a63b90f64c2a01e8a63ca3baa60af4fd3fd1a13",
+    "effective_model_sha256": "f2b9754a2fdc3b0cbd16befef67c181806350f6872b8f1e1b6f34329e3acccc1",
+    "dependency_metadata_sha256": "59f7dd7142d76ba948e6a62f824be0d32f7a6c2d6a3e79614a81a87ce97f4bf8",
+    "strategy_results_sha256": "08dcdd8f36bdd36c2eb9610775f547942cf9fcffb76a82dc942086945ca60cca"
+  },
+  "precommit_receipt_scope": "Modified-tree comparison only. Final clean candidate must reproduce these outputs again.",
+  "condition_sibling_included": false,
+  "live_completion_proven": false
+}

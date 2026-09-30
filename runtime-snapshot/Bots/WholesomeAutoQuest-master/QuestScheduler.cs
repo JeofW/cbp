@@ -56,6 +56,7 @@ namespace WholesomeAQ
         public IReadOnlyList<QuestSchedulerAcceptedQuest> AcceptedQuests { get; init; } = Array.Empty<QuestSchedulerAcceptedQuest>();
         public int QuestLogCapacity { get; init; } = 25;
         public IReadOnlyDictionary<int, long> CarriedItemCounts { get; init; }
+        public string InventoryObservationStatus { get; init; } = "not-captured";
         public IReadOnlyDictionary<int, int> SkillValues { get; init; }
         public IReadOnlyDictionary<int, int> ReputationValues { get; init; }
         public IReadOnlyList<QuestItemStarterObservation> ItemStarters { get; init; } = Array.Empty<QuestItemStarterObservation>();
@@ -87,6 +88,7 @@ namespace WholesomeAQ
             internal string Path;
             internal QuestScheduleResult Schedule;
             internal Func<bool> LeaseIsCurrent;
+            internal Func<bool> InventoryCurrent;
             internal Func<bool> Check;
         }
 
@@ -111,6 +113,7 @@ namespace WholesomeAQ
             {
                 current = HasPublicationOwner(work)
                     && AreNormalObjectivesCurrent(work.Log, work.Observation, work.Accepted)
+                    && (work.InventoryCurrent == null || work.InventoryCurrent())
                     && HasPublicationOwner(work);
             }
             catch (Exception error) when (error is not ThreadInterruptedException && error is not OperationCanceledException)
@@ -238,6 +241,7 @@ namespace WholesomeAQ
             var requirementObservations = CaptureRequirementObservations(db, me);
             var observedItemStarters = CaptureItemStarters(db, me, observedUtc);
             var observedCreatureCredits = CaptureCreatureCredits(db, me, observedUtc);
+            var inventoryObservation = QuestInventorySnapshot.Capture(me);
             bool diagnosticsDue = false;
             tryApplyPublication(() =>
             {
@@ -272,21 +276,23 @@ namespace WholesomeAQ
                 HasAuthoritativeCompletions = authoritative,
                 CompletedQuestIds = authoritative ? completed : Array.Empty<uint>(),
                 AcceptedQuests = accepted,
-                CarriedItemCounts = me.CarriedItems.GroupBy(item => (int)item.Entry)
-                    .ToDictionary(group => group.Key, group => group.Sum(item => (long)item.StackCount))
+                CarriedItemCounts = inventoryObservation.ItemCounts,
+                InventoryObservationStatus = inventoryObservation.Status
             };
 
             // Raw observations are samples, not a native transaction/session lease.
             // Recheck the same sample at each fallible publication boundary. The
             // nested lease check also protects replacement work from reentrant
             // player/world observations; an obsolete failure must not revoke it.
+            Func<bool> inventoryCurrent = null;
             bool TryApplyObserved(Action apply)
             {
                 bool applied = false;
                 tryApplyPublication(() =>
                 {
                     bool current = snapshot.HasCompleteQuestLog &&
-                        AreNormalObjectivesCurrent(questLog, observation, accepted);
+                        AreNormalObjectivesCurrent(questLog, observation, accepted) &&
+                        (inventoryCurrent == null || inventoryCurrent());
                     tryApplyPublication(() =>
                     {
                         if (!current)
@@ -326,6 +332,7 @@ namespace WholesomeAQ
                 navigationAssessment: point => AssessNavigation(point, me.Location),
                 reportDataFailure: outcome => QuestRecoveryManager.Instance.Report(outcome, context),
                 strategyPack: strategyPack);
+            inventoryCurrent = CreateInventoryRequirementGuard(candidate.Plan, () => QuestInventorySnapshot.Capture(me));
 
             // Preparation can invoke external navigation/player owners. An obsolete
             // continuation must not change a replacement's scan state or output file.
@@ -375,7 +382,8 @@ namespace WholesomeAQ
                             Player = me, Log = questLog, Observation = observation, Accepted = accepted,
                             OuterProfile = Styx.Logic.Profiles.ProfileManager.CurrentOuterProfile,
                             Profile = Styx.Logic.Profiles.ProfileManager.CurrentProfile,
-                            Path = path, Schedule = candidate, LeaseIsCurrent = isPublicationLeaseCurrent
+                            Path = path, Schedule = candidate, LeaseIsCurrent = isPublicationLeaseCurrent,
+                            InventoryCurrent = inventoryCurrent
                         };
                         work.Check = () => IsPublicationCurrent(work);
                         _publishedWork = work; // Continuing execution permission is published last.

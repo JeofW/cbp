@@ -1,0 +1,252 @@
+{
+  "inventory-snapshot-red": {
+    "command": [
+      "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+      "Tools/PostMergeAuditRegressionTests/bin/x86/Release/net10.0-windows7.0/PostMergeAuditRegressionTests.dll",
+      "QuestInventorySnapshotRegressionTests"
+    ],
+    "exit": 1,
+    "started_utc": "2026-09-30T08:34:04.750406+00:00",
+    "finished_utc": "2026-09-30T08:34:05.094512+00:00",
+    "head": "009556052d0e156587e2bd0e5916a4efd24bc299",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "2392a940c3f15231f5ea794713b45d3800649dbc7eb69710ac668b82e6d61529",
+      "stderr.log": "0b34f210d6082e172da57a7d60ec080460f159c792557b99fcf52a53a9853f1a"
+    },
+    "scenario_summaries": [
+      "Pull isolation scenarios: 12/12; assertions=0; unexpected=0; pure policy/source ordering; no game attached.",
+      "Inventory snapshot scenarios: 0/52; assertions=52; unexpected=0; allocated item/bag memory, fixed-global transport fixture, no game.",
+      "Focused groups: 0/1; no game attached; full aggregate remains required."
+    ],
+    "receipt_sha256": "c58bd318cd75794013d320cd9f53724264eed7b6ecaca02b8e1908238e14c6f6"
+  },
+  "inventory-snapshot-green": {
+    "command": [
+      "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+      "Tools/PostMergeAuditRegressionTests/bin/x86/Release/net10.0-windows7.0/PostMergeAuditRegressionTests.dll",
+      "QuestInventorySnapshotRegressionTests"
+    ],
+    "exit": 0,
+    "started_utc": "2026-09-30T08:37:32.108775+00:00",
+    "finished_utc": "2026-09-30T08:37:32.413596+00:00",
+    "head": "009556052d0e156587e2bd0e5916a4efd24bc299",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "bdabda054598ba23af19decc47b6e9206f7544d4cdcb53112ba15dc1649b600d",
+      "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "scenario_summaries": [
+      "Pull isolation scenarios: 12/12; assertions=0; unexpected=0; pure policy/source ordering; no game attached.",
+      "Inventory snapshot scenarios: 52/52; assertions=0; unexpected=0; allocated item/bag memory, fixed-global transport fixture, no game.",
+      "Focused groups: 1/1; no game attached; full aggregate remains required."
+    ],
+    "receipt_sha256": "9cb62191009a86d4ef0c3007461eed97641d03c5261741eab43810de1c9e912e"
+  },
+  "inventory-owner-red": {
+    "command": [
+      "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+      "Tools/PostMergeAuditRegressionTests/bin/x86/Release/net10.0-windows7.0/PostMergeAuditRegressionTests.dll",
+      "QuestInventorySnapshotRegressionTests"
+    ],
+    "exit": 1,
+    "started_utc": "2026-09-30T08:39:49.331648+00:00",
+    "finished_utc": "2026-09-30T08:39:49.650956+00:00",
+    "head": "009556052d0e156587e2bd0e5916a4efd24bc299",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "736031a1476674ac0f5bc8686d67ca0430743991e4c584c1ce97c49efafae9c8",
+      "stderr.log": "e7704e2642c71e08b98b51596333a6ebef8311da7ca21cda1ef4e6a45d97006b"
+    },
+    "scenario_summaries": [
+      "Pull isolation scenarios: 12/12; assertions=0; unexpected=0; pure policy/source ordering; no game attached.",
+      "Inventory snapshot scenarios: 52/53; assertions=1; unexpected=0; allocated item/bag memory, fixed-global transport fixture, no game.",
+      "Focused groups: 0/1; no game attached; full aggregate remains required."
+    ],
+    "receipt_sha256": "678eebc5141693cb8451cccd6596bb1294d0ba6aa417458b4ef8c67c773a69c8"
+  },
+  "inventory-admission-red-build": {
+    "command": [
+      "dotnet",
+      "build",
+      "Tools/PostMergeAuditRegressionTests/PostMergeAuditRegressionTests.csproj",
+      "-c",
+      "Release",
+      "-p:Platform=x86",
+      "-p:PlatformTarget=x86",
+      "-v",
+      "quiet"
+    ],
+    "exit": 1,
+    "started_utc": "2026-09-30T08:43:47.904788+00:00",
+    "finished_utc": "2026-09-30T08:43:54.777360+00:00",
+    "head": "009556052d0e156587e2bd0e5916a4efd24bc299",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "654b62d69083e1907abe86bba3dc9301decde1073879405c677a4c46aaf7b27c",
+      "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "scenario_summaries": [],
+    "receipt_sha256": "96100fd661190aa0fbf3edff1f0bbc9b109d86cdeba32c0caec400d55e208290",
+    "scope_note": "Earlier fixture compile failure: missing namespace import. Not behavioral regression evidence."
+  },
+  "inventory-admission-red": {
+    "command": [
+      "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+      "Tools/PostMergeAuditRegressionTests/bin/x86/Release/net10.0-windows7.0/PostMergeAuditRegressionTests.dll",
+      "QuestInventorySnapshotRegressionTests",
+      "QuestInventoryAdmissionRegressionTests"
+    ],
+    "exit": 3762504530,
+    "started_utc": "2026-09-30T08:43:54.974268+00:00",
+    "finished_utc": "2026-09-30T08:43:55.876753+00:00",
+    "head": "009556052d0e156587e2bd0e5916a4efd24bc299",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "5f722875b1089cafb07b63918225f2280a2662c64363c944db553fe048d643a6",
+      "stderr.log": "7a4e80331b166ae9ebd3129c17f0dd9a29dd2117aa359a4a33cbcb08e318e805"
+    },
+    "scenario_summaries": [
+      "Pull isolation scenarios: 12/12; assertions=0; unexpected=0; pure policy/source ordering; no game attached.",
+      "Inventory snapshot scenarios: 52/53; assertions=1; unexpected=0; allocated item/bag memory, fixed-global transport fixture, no game."
+    ],
+    "receipt_sha256": "63c613cc1b45e0e1d968beb22b8dd7a570820bc93aa79705094c5ff009c713c7",
+    "scope_note": "Earlier dependent run used prior build output after that compile failure. Not accepted red or green proof; corrected guarded build/run v2 is the behavioral red."
+  },
+  "inventory-admission-red-v2": {
+    "command": [
+      "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+      "Tools/PostMergeAuditRegressionTests/bin/x86/Release/net10.0-windows7.0/PostMergeAuditRegressionTests.dll",
+      "QuestInventorySnapshotRegressionTests",
+      "QuestInventoryAdmissionRegressionTests"
+    ],
+    "exit": 1,
+    "started_utc": "2026-09-30T08:44:56.627650+00:00",
+    "finished_utc": "2026-09-30T08:44:59.191908+00:00",
+    "head": "009556052d0e156587e2bd0e5916a4efd24bc299",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "db97ca08e1600c58bea3a014e9ae6e1e8cf44ca0251a5f89cd4a49281f64014c",
+      "stderr.log": "57597e610a319894405e6024f22fb7ffec22cc6b79cda26d83f671c6a580ed27"
+    },
+    "scenario_summaries": [
+      "Pull isolation scenarios: 12/12; assertions=0; unexpected=0; pure policy/source ordering; no game attached.",
+      "Inventory snapshot scenarios: 53/53; assertions=0; unexpected=0; allocated item/bag memory, fixed-global transport fixture, no game.",
+      "Inventory admission scenarios: 0/14; assertions=14; unexpected=0; actual inventory/scheduler/profile/behavior/publication owners, no game.",
+      "Focused groups: 1/2; no game attached; full aggregate remains required."
+    ],
+    "receipt_sha256": "07a18c86687827238f004bc7010ea5ba079a9cbb54f3ddb07077462b73d7bc29"
+  },
+  "inventory-admission-green": {
+    "command": [
+      "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+      "Tools/PostMergeAuditRegressionTests/bin/x86/Release/net10.0-windows7.0/PostMergeAuditRegressionTests.dll",
+      "QuestInventorySnapshotRegressionTests",
+      "QuestInventoryAdmissionRegressionTests",
+      "QuestSchedulerRawPublicationRegressionTests",
+      "QuestPublicationAcceptanceRegressionTests",
+      "QuestDeliveryPolicyRegressionTests",
+      "QuestSupplementalSupplyRegressionTests"
+    ],
+    "exit": 0,
+    "started_utc": "2026-09-30T08:47:44.906235+00:00",
+    "finished_utc": "2026-09-30T08:47:48.458400+00:00",
+    "head": "009556052d0e156587e2bd0e5916a4efd24bc299",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "705bcf46a95a54f25375c0bb2ea4f72c534cdaab6689f860f1aaffb13c6c1a4a",
+      "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "scenario_summaries": [
+      "Pull isolation scenarios: 12/12; assertions=0; unexpected=0; pure policy/source ordering; no game attached.",
+      "Inventory snapshot scenarios: 53/53; assertions=0; unexpected=0; allocated item/bag memory, fixed-global transport fixture, no game.",
+      "Inventory admission scenarios: 14/14; assertions=0; unexpected=0; actual inventory/scheduler/profile/behavior/publication owners, no game.",
+      "Scheduler raw-publication scenarios: 23/23; assertions=0; unexpected=0; actual raw memory/scan/XML/load/running gate; no game attached.",
+      "Publication acceptance scenarios: 9/9; assertions=0; unexpected=0; actual compiler/selector/load/scan/running gate; no game attached.",
+      "Delivery policy scenarios: 29/29; assertions=0; unexpected=0; actual scheduler, controlled stock/source contract; no game.",
+      "Supplemental supply scenarios: 19/19; assertions=0; unexpected=0; actual loader/scheduler; source promise separate from inventory and normal credit; no game.",
+      "Focused groups: 6/6; no game attached; full aggregate remains required."
+    ],
+    "receipt_sha256": "faf7dbd017a87256a48e54b3f110a9178dd5bb4b8db53c5c4f12003c79b4305a"
+  },
+  "inventory-trade-lifecycle-red": {
+    "command": [
+      "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+      "Tools/PostMergeAuditRegressionTests/bin/x86/Release/net10.0-windows7.0/PostMergeAuditRegressionTests.dll",
+      "QuestInventorySnapshotRegressionTests",
+      "QuestInventoryAdmissionRegressionTests"
+    ],
+    "exit": 1,
+    "started_utc": "2026-09-30T08:56:19.917029+00:00",
+    "finished_utc": "2026-09-30T08:56:22.450724+00:00",
+    "head": "009556052d0e156587e2bd0e5916a4efd24bc299",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "9751a1f793cce4a203b732db9c062d4d9573ddd66a8e620dd3d16914ca61d36c",
+      "stderr.log": "8a5788d80c9cad0c5a24cf9a4ee69d78efd21f640b8bba105cb764492a13aec6"
+    },
+    "scenario_summaries": [
+      "Pull isolation scenarios: 12/12; assertions=0; unexpected=0; pure policy/source ordering; no game attached.",
+      "Inventory snapshot scenarios: 53/58; assertions=5; unexpected=0; allocated item/bag memory, fixed-global transport fixture, no game.",
+      "Inventory admission scenarios: 13/14; assertions=1; unexpected=0; actual inventory/scheduler/profile/behavior/publication owners, no game.",
+      "Focused groups: 0/2; no game attached; full aggregate remains required."
+    ],
+    "receipt_sha256": "91ee4965312acbff2a678662c80707baa10aa01c4067fdbc512154679d03f988"
+  },
+  "inventory-trade-lifecycle-green": {
+    "command": [
+      "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+      "Tools/PostMergeAuditRegressionTests/bin/x86/Release/net10.0-windows7.0/PostMergeAuditRegressionTests.dll",
+      "QuestInventorySnapshotRegressionTests",
+      "QuestInventoryAdmissionRegressionTests",
+      "QuestSchedulerRawPublicationRegressionTests",
+      "QuestPublicationAcceptanceRegressionTests",
+      "QuestDeliveryPolicyRegressionTests",
+      "QuestSupplementalSupplyRegressionTests"
+    ],
+    "exit": 0,
+    "started_utc": "2026-09-30T08:57:41.197458+00:00",
+    "finished_utc": "2026-09-30T08:57:44.678302+00:00",
+    "head": "009556052d0e156587e2bd0e5916a4efd24bc299",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "e036973c784e1018e7c7566402184964b4ec5e7a3e3d0027ad5985caff53915d",
+      "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "scenario_summaries": [
+      "Pull isolation scenarios: 12/12; assertions=0; unexpected=0; pure policy/source ordering; no game attached.",
+      "Inventory snapshot scenarios: 59/59; assertions=0; unexpected=0; allocated item/bag memory, fixed-global transport fixture, no game.",
+      "Inventory admission scenarios: 14/14; assertions=0; unexpected=0; actual inventory/scheduler/profile/behavior/publication owners, no game.",
+      "Scheduler raw-publication scenarios: 23/23; assertions=0; unexpected=0; actual raw memory/scan/XML/load/running gate; no game attached.",
+      "Publication acceptance scenarios: 9/9; assertions=0; unexpected=0; actual compiler/selector/load/scan/running gate; no game attached.",
+      "Delivery policy scenarios: 29/29; assertions=0; unexpected=0; actual scheduler, controlled stock/source contract; no game.",
+      "Supplemental supply scenarios: 19/19; assertions=0; unexpected=0; actual loader/scheduler; source promise separate from inventory and normal credit; no game.",
+      "Focused groups: 6/6; no game attached; full aggregate remains required."
+    ],
+    "receipt_sha256": "83a4157e8fdee15b43a7c2cd69499562a7b243b5c32a415b75081e6c92f53e3d"
+  },
+  "inventory-analyzers-green": {
+    "command": [
+      "python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "Tools/EvidenceAudit",
+      "-p",
+      "test_*.py",
+      "-v"
+    ],
+    "exit": 0,
+    "started_utc": "2026-09-30T08:53:44.152597+00:00",
+    "finished_utc": "2026-09-30T08:53:49.411181+00:00",
+    "head": "009556052d0e156587e2bd0e5916a4efd24bc299",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr.log": "1977fa4dd93c4b5e743554bbdd4221e0a0123f114d577c94224960646c1eb341"
+    },
+    "scenario_summaries": [],
+    "receipt_sha256": "de0f16fbc3ddfa0c9f960b776881f482a2066406133a2c59253917b89b8f8829"
+  }
+}
