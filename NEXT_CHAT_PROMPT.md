@@ -1,4 +1,14 @@
-# Current Wholesome audit continuation — 29 September 2026
+# Current PR61 closure and smaller-PR continuation — 30 September 2026
+
+Recover the actual Git/PR61 and external `D:/Dev/CopilotBuddy-Evidence/postmerge-20260930-pr61` receipts before acting. Read `docs/audit/2026-09-29/wholesome-primary-closure/REPORT.md`, `closure-fixture-manifest.json`, `coverage.json` and the exact classification/remaining/correlation files. Do not assume 925ba02d exists: the checkpoint guard used the wrong full 450aea3a parent and the old package wrapper hard-coded an unresolvable commit. The correct retained/reproduced six-category counts are 3004/2/945/310/16/58 in generic/strategy/data/source/live/script order, totaling 4335, with 1329 remaining IDs and separate secondary obligations. No duplicate top-level rows existed in v3.
+
+Preserve and publish all intended repair/strategy implementation and knowledge files. Require fresh focused tests, the exact-data 258269-check sweep and 39 strategy checks, complete source hashes, hosted Windows/x86 validation and a verified reproducible package at the actual final candidate SHA. The local full pipeline is 34 commands with fresh extraction or 33 with verified reused extraction; the hosted integrated result is 17 suite records, plus separate host and four-stage quest-closure jobs. Keep those accounting units distinct. Only merge when remote PR61 head equals the exact tested/package commit and all gates pass.
+
+The user authorized merge, build and selective deployment after those gates. Build the merged master, preserve unrelated CB settings/credentials/logs/cache/state, verify the deployed runtime and knowledge files against the merged package, and retain the deployment manifest. Immediately create a fresh smaller branch/PR from merged master and continue the exact remaining audit IDs; do not finish merely after PR61 deployment. Use pinned TC335 primary and exact original build12340 client evidence, never fabricate scripted actions or live completion. The current IDA endpoint refused connection; retain established receipts and require actual ABI proof before adding client APIs. Prior branch/build/merge restrictions below are retained history superseded by this user instruction.
+
+---
+
+# Retained Wholesome audit continuation — 29 September 2026
 
 Reconcile the worktree and PR61 before editing. Current tested implementation: `370fa0ef56fd03385a80aba14688fe7ece8753f1`, workspace `D:\Dev\CopilotBuddy-PostMerge-20260929`, branch `audit/next-postmerge-wholesome-singular-20260929`. Read `docs/audit/2026-09-29/wholesome-observed-routes/REPORT.md`, `verification.json`, `classification-ids.json`, `remaining-category-ids.json`, `credit-script-dispositions.json`, and `Tools/EvidenceAudit/WHOLESOME_335_AUDIT.md`. The prior ee1b4df7/9b6a816a checkpoint remains in `wholesome-quest-audit`. The following W107/PR51 prompts are retained history, not current branch/build instructions.
 

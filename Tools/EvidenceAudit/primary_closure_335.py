@@ -19,6 +19,66 @@ CLASSIFICATIONS = ('GENERIC-PROVEN', 'STRATEGY-PROVEN', 'DATA-INVALID/INCOMPLETE
                    'UNSUPPORTED-SCRIPTED', 'SOURCE-UNCERTAIN', 'LIVE-ACCEPTANCE-REQUIRED')
 
 
+def unique_quest_index(rows, key='quest_id', label='quest evidence'):
+    """Reject ambiguity before a dictionary could silently discard evidence."""
+    result = {}
+    for row in rows:
+        ident = row.get(key)
+        if type(ident) is not int or ident <= 0:
+            raise ValueError(f'{label}: {key} must be a positive integer: {ident!r}')
+        if ident in result:
+            raise ValueError(f'{label}: duplicate quest ID {ident}')
+        result[ident] = row
+    return result
+
+
+def validate_closure_inputs(baseline_rows, model_rows, simulation_rows, expected_count=4335):
+    baseline = unique_quest_index(baseline_rows, label='baseline')
+    model = unique_quest_index(model_rows, key='Id', label='effective model')
+    simulations = unique_quest_index(simulation_rows, label='simulation')
+    if len(model) != expected_count:
+        raise ValueError(f'Effective model count must be {expected_count}, found {len(model)}')
+    for label, index in [('baseline', baseline), ('simulation', simulations)]:
+        if set(index) != set(model):
+            raise ValueError(f'{label} membership differs: missing={sorted(set(model) - set(index))}, '
+                             f'phantom={sorted(set(index) - set(model))}')
+    return baseline, model, simulations
+
+
+def classification_partition(rows, expected_ids, expected_count=4335):
+    index = unique_quest_index(rows, label='classification ledger')
+    expected = list(expected_ids)
+    if (len(expected) != expected_count or len(set(expected)) != expected_count
+            or any(type(ident) is not int or ident <= 0 for ident in expected)):
+        raise ValueError(f'Expected dataset must contain {expected_count} unique positive integer IDs')
+    if set(index) != set(expected):
+        raise ValueError(f'Classification membership differs: missing={sorted(set(expected) - set(index))}, '
+                         f'phantom={sorted(set(index) - set(expected))}')
+    result = {name: [] for name in CLASSIFICATIONS}
+    for ident, row in sorted(index.items()):
+        category = row.get('classification')
+        if category not in result:
+            raise ValueError(f'Unknown classification for quest {ident}: {category!r}')
+        result[category].append(ident)
+    if sum(map(len, result.values())) != expected_count:
+        raise ValueError('Classification partition count differs from the original dataset')
+    return result
+
+
+def validate_strategy_results(rows, simulations, strategy_sha256):
+    strategies = unique_quest_index(rows, label='strategy receipt')
+    for ident, receipt in strategies.items():
+        if ident not in simulations:
+            raise ValueError(f'Strategy receipt names unknown quest {ident}')
+        for field in ('dataset_sha256', 'repair_sha256', 'execution_fingerprint'):
+            expected = simulations[ident].get(field)
+            if not expected or receipt.get(field) != expected:
+                raise ValueError(f'Strategy receipt {ident} has mismatched {field}')
+        if not strategy_sha256 or receipt.get('strategy_sha256') != strategy_sha256:
+            raise ValueError(f'Strategy receipt {ident} has mismatched strategy_sha256')
+    return strategies
+
+
 def final_classification(obligations, simulation, strategy_status='MISSING', baseline='DATA-INVALID/INCOMPLETE'):
     if any(value.startswith('data:') for value in obligations):
         return 'DATA-INVALID/INCOMPLETE'
@@ -29,6 +89,8 @@ def final_classification(obligations, simulation, strategy_status='MISSING', bas
     if (any(value.startswith('live:') for value in obligations)
             or simulation.get('failed_cases', 1) != 0 or simulation.get('pipeline_status') != 'PASS'):
         return 'LIVE-ACCEPTANCE-REQUIRED'
+    if strategy_status not in ('MISSING', 'VALIDATED-PIPELINE'):
+        return 'UNSUPPORTED-SCRIPTED'
     return 'STRATEGY-PROVEN' if strategy_status == 'VALIDATED-PIPELINE' else 'GENERIC-PROVEN'
 
 
@@ -58,6 +120,20 @@ def category_index(rows):
     return {name: sorted(ids) for name, ids in sorted(categories.items())}
 
 
+def retained_item_route_matches(route, quest_id, primary, base_sha):
+    if (not route or route.get('route_type') != 'item-starter' or route.get('quest_id') != quest_id
+            or route.get('dataset_sha256') != base_sha or route.get('failed_cases') != 0
+            or route.get('controlled_pipeline_passed') is not True or not primary):
+        return False
+    observation = route.get('source_observations', {}).get('observation', {})
+    normal = [primary[f'RequiredNpcOrGo{i}'] for i in range(1, 5)]
+    normal = [value if value >= 0 else -(2**31) | abs(value) for value in normal]
+    return (observation.get('normal_ids') == normal
+            and observation.get('normal_counts') == [primary[f'RequiredNpcOrGoCount{i}'] for i in range(1, 5)]
+            and observation.get('item_ids') == [primary[f'RequiredItemId{i}'] for i in range(1, 7)]
+            and observation.get('item_counts') == [primary[f'RequiredItemCount{i}'] for i in range(1, 7)])
+
+
 def _encoded(value):
     return json.dumps(value, ensure_ascii=True, sort_keys=True, separators=(',', ':'), allow_nan=False).encode()
 
@@ -80,21 +156,25 @@ def main():
     for name in ['baseline', 'simulation', 'effective', 'dependencies', 'repair_evidence', 'reference', 'output']:
         parser.add_argument('--' + name.replace('_', '-'), type=Path, required=True)
     parser.add_argument('--strategy-results', type=Path)
+    parser.add_argument('--strategy-pack', type=Path)
+    parser.add_argument('--retained-routes', type=Path)
     args = parser.parse_args()
+    if bool(args.strategy_results) != bool(args.strategy_pack):
+        parser.error('--strategy-results and --strategy-pack must identify the same validated run')
     if args.output.exists():
         raise FileExistsError('Closure ledgers are create-only')
     from quest_repair_pack_335 import load_verified_tables, digest, BASE_FIELDS, ADDON_FIELDS, OPTIONAL_FIELDS
     tables, table_receipts = load_verified_tables(args.reference)
     old_rows = [json.loads(line) for line in gzip.decompress(args.baseline.read_bytes()).splitlines()]
-    old = {row['quest_id']: row for row in old_rows}
-    simulations = {row['quest_id']: row for row in map(json.loads, args.simulation.read_text(encoding='utf-8').splitlines())}
+    simulation_rows = list(map(json.loads, args.simulation.read_text(encoding='utf-8').splitlines()))
     effective = json.loads(args.effective.read_text(encoding='utf-8'))
-    model = {row['Id']: row for row in effective['Quests']}
+    old, model, simulations = validate_closure_inputs(old_rows, effective['Quests'], simulation_rows)
+    baseline_ids = classification_partition(old_rows, model)
     dependencies = {int(key): value for key, value in json.loads(args.dependencies.read_text()).items()}
     repair = json.loads(gzip.decompress(args.repair_evidence.read_bytes()))
-    repair_rows = {row['quest_id']: row for row in repair['quests']}
-    if set(old) != set(model) or set(old) != set(simulations) or len(old_rows) != len(old) or len(old) != 4335:
-        raise ValueError('Every original quest must occur exactly once in each closure input')
+    repair_rows = unique_quest_index(repair['quests'], label='repair evidence')
+    if set(repair_rows) != set(model):
+        raise ValueError('Repair evidence membership differs from the original dataset')
     if any(row['failed_cases'] for row in simulations.values()):
         raise ValueError('A failing dataset sweep cannot become a closure ledger')
     source = json.loads((args.reference / 'source-receipt.json').read_text())
@@ -102,6 +182,8 @@ def main():
     revision = source['release_commit']
     input_hashes = {name: _sha(getattr(args, name)) for name in
                     ['baseline', 'simulation', 'effective', 'dependencies', 'repair_evidence']}
+    input_hashes.update({name: _sha(getattr(args, name)) for name in
+                        ['strategy_results', 'strategy_pack', 'retained_routes'] if getattr(args, name)})
     qt = {row['ID']: row for row in tables['quest_template']}
     qa = {row['ID']: row for row in tables['quest_template_addon']}
     actors = {'Creature': {row['entry']: row for row in tables['creature_template']},
@@ -147,7 +229,15 @@ def main():
                     'declaration_lines': [i for i, line in enumerate(text.splitlines(), 1) if name in line]})
     strategies = {}
     if args.strategy_results:
-        strategies = {row['quest_id']: row for row in map(json.loads, args.strategy_results.read_text().splitlines())}
+        strategies = validate_strategy_results(map(json.loads, args.strategy_results.read_text(encoding='utf-8').splitlines()),
+                                               simulations, input_hashes['strategy_pack'])
+    retained_routes = {}
+    if args.retained_routes:
+        retained_routes = unique_quest_index((row for row in map(json.loads,
+            args.retained_routes.read_text(encoding='utf-8').splitlines()) if row.get('route_type') == 'item-starter'),
+            label='retained item route')
+        if not set(retained_routes).issubset(model):
+            raise ValueError('Retained item routes contain unknown quest IDs')
     source_ref = lambda table, key: f"tc335:{revision}:{source_sql}:{table}:{key}"
 
     def row_ref(table, row, key):
@@ -166,11 +256,12 @@ def main():
                 if point and point.get('Map', -1) >= 0 and all(isinstance(point.get(axis), (int, float))
                     and math.isfinite(point[axis]) for axis in ['X', 'Y', 'Z'])]
 
-    output_rows = []; categories = defaultdict(list); transitions = []
+    output_rows = []; transitions = []
     for ident in sorted(old):
         prior = old[ident]; quest = model[ident]; sim = simulations[ident]; template = qt.get(ident); addon = qa.get(ident, {})
         obligations = []; source_evidence = []; related_actors = []
         before_class = prior['classification']; strategy = strategies.get(ident)
+        strategy_validated = bool(strategy and strategy.get('pipeline_status') == 'PASS' and strategy.get('failed_cases') == 0)
         if template is None:
             obligations.append('source:primary-quest-template-absent')
         else:
@@ -194,9 +285,9 @@ def main():
             if template.get('RequiredPlayerKills', 0) > 0:
                 obligations.append('script:player-kill-objective-owner-unrepresented')
             special = addon.get('SpecialFlags', 0)
-            if special & 0x20 and not strategy:
+            if special & 0x20 and not strategy_validated:
                 obligations.append('script:cast-credit-no-strategy')
-            if special & 0x02 and not strategy:
+            if special & 0x02 and not strategy_validated:
                 obligations.append('script:exploration-or-event-no-strategy')
             normal = [(template[f'RequiredNpcOrGo{i}'], template[f'RequiredNpcOrGoCount{i}']) for i in range(1, 5) if template[f'RequiredNpcOrGo{i}']]
             required = {template[f'RequiredItemId{i}']: template[f'RequiredItemCount{i}'] for i in range(1, 7) if template[f'RequiredItemId{i}']}
@@ -256,20 +347,25 @@ def main():
             for parent in quest.get('PreviousQuestsIds') or []:
                 if parent > 0 and parent not in model and parent not in dependencies:
                     obligations.append('source:external-predecessor-contract-missing:' + str(parent))
+        retained_route = retained_routes.get(ident)
+        retained_matches = retained_item_route_matches(retained_route, ident, template, sim['dataset_sha256'])
+        if retained_matches:
+            # Preserve the separately proved carried-item pickup path, not a
+            # blanket grandfathering of old generic labels. New primary item,
+            # normal, eligibility or script conflicts remain real obligations.
+            obligations = [value for value in obligations if value not in
+                           ('data:giver-relation-unrepresented', 'data:giver-geometry-missing')]
         obligations = sorted(set(obligations))
         strategy_status = 'MISSING'
         chosen_simulation = sim
         if strategy:
-            strategy_status = 'VALIDATED-PIPELINE' if strategy.get('pipeline_status') == 'PASS' and strategy.get('failed_cases') == 0 else 'DECLARED'
+            strategy_status = 'VALIDATED-PIPELINE' if strategy_validated else 'DECLARED'
             chosen_simulation = strategy
+        elif retained_matches:
+            chosen_simulation = {'pipeline_status': 'PASS', 'failed_cases': 0,
+                'evidence': 'retained actual carried-item route with primary requirements matched', 'route_result': retained_route}
         classification = final_classification(obligations, chosen_simulation, strategy_status, before_class)
         protected = before_class in ('GENERIC-PROVEN', 'STRATEGY-PROVEN')
-        # The baseline includes five separately proved observed-item routes that
-        # intentionally lack ordinary static givers. Preserve their evidence;
-        # this primary-static sweep is additional, not a replacement for those
-        # actual observed-route tests. Any new contradiction is retained below.
-        if protected:
-            classification = before_class
         row = {'schema': 'primary-closure-quest-v1', 'quest_id': ident, 'name': quest['Name'],
             'classification': classification, 'before_classification': before_class,
             'baseline_record_sha256': digest(prior), 'baseline_ledger_sha256': input_hashes['baseline'],
@@ -282,35 +378,46 @@ def main():
             'primary_direct_quest_scripts': [script_ref(s) for s in direct_quests[ident]],
             'primary_objective_actors': related_actors, 'secondary_evidence_retained': prior['secondary_reference'],
             'strategy': {'status': strategy_status, 'evidence': strategy},
-            'simulation': sim, 'remaining_obligations': [] if protected else obligations,
+            'simulation': sim, 'final_simulation_disposition': chosen_simulation,
+            'retained_item_route_primary_matched': retained_matches,
+            'remaining_obligations': obligations,
             'additional_primary_obligations_for_baseline_review': obligations if protected else [],
-            'protected_baseline_retained': protected, 'live_completion_proven': False,
+            'protected_baseline_retained': protected and classification == before_class,
+            'baseline_has_new_contradicting_evidence': protected and classification != before_class, 'live_completion_proven': False,
             'claim_limit': 'Recorded controlled production-owner behavior under source-bound reference observations; not realm travel/combat/credit or live completion.'}
-        if not protected and classification not in ('GENERIC-PROVEN', 'STRATEGY-PROVEN') and not obligations:
-            row['remaining_obligations'] = ['live:recorded-pipeline-remains-blocked']
+        if classification not in ('GENERIC-PROVEN', 'STRATEGY-PROVEN') and not obligations:
+            row['remaining_obligations'] = ['script:strategy-pipeline-not-validated' if classification == 'UNSUPPORTED-SCRIPTED'
+                                            else 'live:recorded-pipeline-remains-blocked']
         output_rows.append(row)
         if classification != before_class:
             transitions.append({'quest_id': ident, 'before': before_class, 'after': classification,
                                 'repair_changes': repair_rows[ident]['changes']})
-        for obligation in row['remaining_obligations']:
-            categories[obligation.rsplit(':', 1)[0] if obligation.rsplit(':', 1)[-1].isdigit() else obligation].append(ident)
+    ids = classification_partition(output_rows, model)
+    unique_quest_index(transitions, label='classification transition')
+    remaining_ids = sorted(row['quest_id'] for row in output_rows
+                           if row['classification'] not in ('GENERIC-PROVEN', 'STRATEGY-PROVEN'))
+    coverage = {'expected_quests': 4335, 'unique_quest_ids': len(output_rows),
+                'classification_total': sum(map(len, ids.values())), 'missing_ids': [], 'phantom_ids': [],
+                'duplicate_ids': [], 'remaining_quest_ids': remaining_ids, 'remaining_quests': len(remaining_ids),
+                'secondary_obligations_are_separate': True, 'input_sha256': input_hashes}
     args.output.mkdir(parents=True)
     ledger_bytes = b'\n'.join(_encoded(row) for row in output_rows) + b'\n'
     with (args.output / 'quest-ledger.jsonl.gz').open('xb') as output:
         with gzip.GzipFile(fileobj=output, mode='wb', mtime=0) as stream:
             stream.write(ledger_bytes)
-    ids = {name: [row['quest_id'] for row in output_rows if row['classification'] == name] for name in CLASSIFICATIONS}
-    summary = {'before': {name: sum(row['classification'] == name for row in old_rows) for name in CLASSIFICATIONS},
+    summary = {'before': {name: len(values) for name, values in baseline_ids.items()},
         'after': {name: len(values) for name, values in ids.items()}, 'quest_count': len(output_rows),
         'classification_changes': len(transitions), 'new_proven_quests': sum(t['after'] in ('GENERIC-PROVEN', 'STRATEGY-PROVEN') for t in transitions),
+        'previously_proven_reclassified_on_new_primary_evidence': sum(t['before'] in ('GENERIC-PROVEN', 'STRATEGY-PROVEN') and t['after'] not in ('GENERIC-PROVEN', 'STRATEGY-PROVEN') for t in transitions),
         'simulation_checks': sum(row['passed_cases'] for row in simulations.values()), 'simulation_failures': 0,
         'primary_source_revision': revision, 'primary_database_sha256': source_sql,
         'ledger_uncompressed_sha256': hashlib.sha256(ledger_bytes).hexdigest(), 'baseline_ledger_sha256': input_hashes['baseline'],
         'simulation_sha256': input_hashes['simulation'], 'effective_model_sha256': input_hashes['effective'],
         'dependency_metadata_sha256': input_hashes['dependencies'], 'repair_evidence_sha256': input_hashes['repair_evidence'],
-        'tool_sha256': _sha(Path(__file__)), 'no_live_completion_claim': True}
+        'tool_sha256': _sha(Path(__file__)), 'input_sha256': input_hashes, 'no_live_completion_claim': True}
     for name, content in [('summary.json', summary), ('classification-ids.json', ids), ('classification-transitions.json', transitions),
-                           ('remaining-category-ids.json', category_index(output_rows)), ('primary-table-receipts.json', table_receipts)]:
+                           ('remaining-category-ids.json', category_index(output_rows)), ('primary-table-receipts.json', table_receipts),
+                           ('coverage.json', coverage)]:
         (args.output / name).write_text(json.dumps(content, indent=2) + '\n', encoding='utf-8')
     print(json.dumps(summary, indent=2))
 

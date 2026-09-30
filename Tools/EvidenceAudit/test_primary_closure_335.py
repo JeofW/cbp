@@ -71,4 +71,24 @@ class PrimaryClosureClassificationTests(unittest.TestCase):
         self.assertEqual(callback([{'quest_id':1,'remaining_obligations':['data:geometry:0','data:geometry:1']},
                                    {'quest_id':2,'remaining_obligations':['data:geometry:0']}]),{'data:geometry':[1,2]})
 
+    def retained(self, **changes):
+        callback=getattr(self.module(),'retained_item_route_matches',None)
+        self.assertTrue(callable(callback),'Retained item proof must be matched to the current primary requirements')
+        route={'route_type':'item-starter','quest_id':1,'dataset_sha256':'a'*64,'failed_cases':0,'controlled_pipeline_passed':True,
+               'source_observations':{'observation':{'normal_ids':[0]*4,'normal_counts':[0]*4,'item_ids':[0]*6,'item_counts':[0]*6}}}
+        route.update(changes)
+        primary={**{f'RequiredNpcOrGo{i}':0 for i in range(1,5)},**{f'RequiredNpcOrGoCount{i}':0 for i in range(1,5)},
+                 **{f'RequiredItemId{i}':0 for i in range(1,7)},**{f'RequiredItemCount{i}':0 for i in range(1,7)}}
+        return callback(route,1,primary,'a'*64)
+
+    def test_retained_whole_item_pipeline_can_cover_ordinary_giver_absence(self):self.assertTrue(self.retained())
+    def test_another_quest_cannot_borrow_retained_pipeline(self):self.assertFalse(self.retained(quest_id=2))
+    def test_changed_dataset_cannot_borrow_retained_pipeline(self):self.assertFalse(self.retained(dataset_sha256='b'*64))
+    def test_partial_item_pickup_never_covers_whole_pipeline(self):self.assertFalse(self.retained(controlled_pipeline_passed=False))
+    def test_failed_retained_pipeline_is_not_proof(self):self.assertFalse(self.retained(failed_cases=1))
+    def test_changed_required_metadata_invalidates_retained_pipeline(self):
+        self.assertFalse(self.retained(source_observations={'observation':{'normal_ids':[0]*4,'normal_counts':[0]*4,'item_ids':[99,0,0,0,0,0],'item_counts':[1,0,0,0,0,0]}}))
+    def test_prior_generic_label_does_not_override_new_primary_conflict(self):
+        self.assertEqual(self.classify(['source:primary-field-conflict'],baseline='GENERIC-PROVEN'),'SOURCE-UNCERTAIN')
+
 if __name__=='__main__':unittest.main()

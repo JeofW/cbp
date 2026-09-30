@@ -326,6 +326,7 @@ def main():
     parser.add_argument('--reference', type=Path, required=True)
     parser.add_argument('--baseline-ledger', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--reopen-evidence', type=Path)
     args = parser.parse_args()
     if args.output.exists():
         raise FileExistsError('Repair evidence output must be new')
@@ -339,9 +340,19 @@ def main():
     source = {'CoreRevision': source_receipt['release_commit'], 'DatabaseRevision': source_receipt['release'],
               'SourceSqlSha256': source_receipt['members'][0]['sha256'], 'QuestDataSha256': hashlib.sha256(raw).hexdigest()}
     protected = {r['quest_id'] for r in old if r['classification'] in ('GENERIC-PROVEN', 'STRATEGY-PROVEN')}
+    reopened = []
+    if args.reopen_evidence:
+        reopened = json.loads(args.reopen_evidence.read_text(encoding='utf-8'))['reopen']
+        if (any(r['quest_id'] not in protected or r['source_revision'] != source['CoreRevision']
+                or r['source_sql_sha256'] != source['SourceSqlSha256'] or not r.get('reason') for r in reopened)
+                or len({r['quest_id'] for r in reopened}) != len(reopened)):
+            raise ValueError('Reopened baseline records require unique, concrete evidence from this pinned primary source')
+        protected -= {r['quest_id'] for r in reopened}
     pack, review = build_repairs(data, tables, protected, source)
     review.update(baseline_ledger_sha256=hashlib.sha256(old_bytes).hexdigest(), verified_reference_tables=receipts,
                   exporter_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest())
+    review['reopened_baseline_evidence'] = reopened
+    review['reopened_evidence_sha256'] = hashlib.sha256(args.reopen_evidence.read_bytes()).hexdigest() if args.reopen_evidence else None
     args.output.mkdir(parents=True)
     (args.output / 'quest_data.repairs.json').write_bytes(encoded(pack) + b'\n')
     with (args.output / 'repair-evidence.json.gz').open('xb') as output:

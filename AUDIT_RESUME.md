@@ -1,4 +1,14 @@
-# Current: Wholesome dataset audit — 29 September 2026
+# Current: PR61 primary closure recovery — 30 September 2026
+
+Read `docs/audit/2026-09-29/wholesome-primary-closure/REPORT.md`, `closure-fixture-manifest.json`, `coverage.json` and `reconciliation.json` first. The containing commit is the candidate identity; resolve it from Git and require fresh exact-commit acceptance. Initial recovery found local `450aea3a00bdf060af8670bd460aabc9e7043e09`, remote PR61 `12a6fb40c9adc932ea1c65dd4098355833d3fb90`, unpublished source/knowledge files, a wrong full-SHA checkpoint guard and a nonexistent hard-coded 925ba02d release identity. Do not replay the old checkpoint or release scripts as-is.
+
+The regenerated 4,335-ID partition is 3,004 GENERIC-PROVEN, 2 STRATEGY-PROVEN, 945 DATA-INVALID/INCOMPLETE, 310 SOURCE-UNCERTAIN, 16 LIVE-ACCEPTANCE-REQUIRED and 58 UNSUPPORTED-SCRIPTED. It exactly matches the actual retained v3 ledger; the 4,337 total came from mismatched reported counts, not duplicate top-level rows. All 1,329 remaining IDs now have primary-source correlations. `run_quest_closure_335.py` reproduces 258,269 dataset checks and 39 strategy checks using the exact shipped knowledge; its final clean-SHA receipts are required before merge.
+
+The user now explicitly authorizes local Windows/x86 iteration, publication, gated PR61 merge, merged-master build and selective deployment to CB, followed immediately by a fresh smaller continuation PR. Older no-merge/no-local/no-deploy instructions below are historical. Preserve configuration/state, original-build12340 evidence, source-bound repairs and only vetted strategies 9066/9447. Read external `D:/Dev/CopilotBuddy-Evidence/postmerge-20260930-pr61` receipts for the latest publication, hosted run, package and deployment status. No such outcome should be assumed from this pre-acceptance pointer. IDA localhost:13337 refused the fresh read-only request; no new unverified API was added.
+
+---
+
+# Retained: Wholesome dataset audit — 29 September 2026
 
 Read `docs/audit/2026-09-29/wholesome-observed-routes/REPORT.md` and `verification.json` first. Tested implementation is `370fa0ef56fd03385a80aba14688fe7ece8753f1` in `D:\Dev\CopilotBuddy-PostMerge-20260929`, branch `audit/next-postmerge-wholesome-singular-20260929`, PR61. The earlier `ee1b4df7` implementation and `9b6a816a` evidence remain preserved in `wholesome-quest-audit`. The user authorized fast local builds/tests and the full original-build12340 audit; older branch/build restrictions below are historical.
 

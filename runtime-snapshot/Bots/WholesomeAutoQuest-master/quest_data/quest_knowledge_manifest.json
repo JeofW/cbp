@@ -1,0 +1,24 @@
+{
+  "schema": "quest-knowledge-bundle-335-v1",
+  "client_build": 12340,
+  "source_core": "trinitycore-3.3.5",
+  "source_revision": "95657f54779467effea8a1749a61ff93abc1d707",
+  "source_database": "TDB335.25101",
+  "source_sql_sha256": "e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9",
+  "files": {
+    "quest_data.json": "f2ca79318694afaa4214fc09392e88c3d9d1eae5128f323d0d65b1b9e91a7e3f",
+    "quest_data.repairs.json": "d3693d83616526576408c92dfed2c4fceb94291e9a686c9c86043e94ae17a534",
+    "quest_strategies.json": "7cd1b5af21a9ea0c395c0b70cebe5931aae2931c84a2e7674a8363341f59da82"
+  },
+  "quest_count": 4335,
+  "strategy_quests": [
+    9066,
+    9447
+  ],
+  "strategy_recipes": 3,
+  "repair_evidence": "docs/audit/2026-09-29/wholesome-primary-closure/repair-evidence.json.gz",
+  "strategy_evidence": "docs/audit/2026-09-29/wholesome-primary-closure/strategy-evidence.json.gz",
+  "realm_equivalence_proven": false,
+  "live_completion_proven": false,
+  "production_replaced": false
+}
