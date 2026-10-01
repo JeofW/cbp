@@ -114,7 +114,8 @@ namespace Singular.ClassSpecific.Rogue
                            (StyxWoW.Me.CurrentTarget.HasMyAura("Rupture") || StyxWoW.Me.CurrentTarget.HasMyAura("Garrote"))),
                 Spell.BuffSelf("Cold Blood",
                     ret => StyxWoW.Me.ComboPoints >= 4 && StyxWoW.Me.CurrentTarget.HealthPercent >= 35 ||
-                           StyxWoW.Me.ComboPoints == 5 || !SpellManager.HasSpell("Envenom")),
+                           StyxWoW.Me.ComboPoints == 5 ||
+                           (!SpellManager.HasSpell("Envenom") && StyxWoW.Me.ComboPoints >= 4)),
 
                 Spell.Cast("Eviscerate",
                     ret => StyxWoW.Me.CurrentTarget.HealthPercent <= 40 && StyxWoW.Me.ComboPoints >= 2),
@@ -130,8 +131,10 @@ namespace Singular.ClassSpecific.Rogue
                 // WotLK QC: Removed Backstab sub-35% logic (Cata "Murderous Intent" talent doesn't exist in WotLK)
                 // Assassination rogues always use Mutilate as their builder in WotLK
                 // Fallback to Sinister Strike if Mutilate is unavailable (low level / no daggers)
-                Spell.Cast("Mutilate", ret => SpellManager.HasSpell("Mutilate") && !StyxWoW.Me.HasAura("Cold Blood")),
-                Spell.Cast("Sinister Strike", ret => !StyxWoW.Me.HasAura("Cold Blood")))),
+                // Finishers above retain priority. A persisted Cold Blood aura
+                // must not freeze builders after a target/combo-point reset.
+                Spell.Cast("Mutilate", ret => SpellManager.HasSpell("Mutilate")),
+                Spell.Cast("Sinister Strike"))),
 
                 Movement.CreateMoveToMeleeBehavior(true)
                 );
@@ -216,7 +219,8 @@ namespace Singular.ClassSpecific.Rogue
                            (StyxWoW.Me.CurrentTarget.HasMyAura("Rupture") || StyxWoW.Me.CurrentTarget.HasMyAura("Garrote"))),
                 Spell.BuffSelf("Cold Blood",
                     ret => StyxWoW.Me.ComboPoints >= 4 && StyxWoW.Me.CurrentTarget.HealthPercent >= 35 ||
-                           StyxWoW.Me.ComboPoints == 5 || !SpellManager.HasSpell("Envenom")),
+                           StyxWoW.Me.ComboPoints == 5 ||
+                           (!SpellManager.HasSpell("Envenom") && StyxWoW.Me.ComboPoints >= 4)),
                 Spell.Cast("Eviscerate",
                     ret => (StyxWoW.Me.CurrentTarget.HealthPercent <= 40 || !SpellManager.HasSpell("Envenom")) && StyxWoW.Me.ComboPoints >= 4),
                 Spell.Cast("Kidney Shot",
@@ -227,8 +231,8 @@ namespace Singular.ClassSpecific.Rogue
                     ret => StyxWoW.Me.CurrentTarget.HealthPercent < 35 && StyxWoW.Me.ComboPoints == 5),
                 // QC3: Removed Murderous Intent (Cata-only) Backstab sub-35% logic — WotLK Assassination always uses Mutilate
                 // Fallback to Sinister Strike if Mutilate unavailable (low level / no daggers)
-                Spell.Cast("Mutilate", ret => SpellManager.HasSpell("Mutilate") && !StyxWoW.Me.HasAura("Cold Blood")),
-                Spell.Cast("Sinister Strike", ret => !StyxWoW.Me.HasAura("Cold Blood")))),
+                Spell.Cast("Mutilate", ret => SpellManager.HasSpell("Mutilate")),
+                Spell.Cast("Sinister Strike"))),
 
                 Movement.CreateMoveToMeleeBehavior(true)
                 );
@@ -327,7 +331,8 @@ namespace Singular.ClassSpecific.Rogue
                            (StyxWoW.Me.CurrentTarget.HasMyAura("Rupture") || StyxWoW.Me.CurrentTarget.HasMyAura("Garrote"))),
                 Spell.BuffSelf("Cold Blood",
                     ret => StyxWoW.Me.ComboPoints >= 4 && StyxWoW.Me.CurrentTarget.HealthPercent >= 35 ||
-                           StyxWoW.Me.ComboPoints == 5 || !SpellManager.HasSpell("Envenom")),
+                           StyxWoW.Me.ComboPoints == 5 ||
+                           (!SpellManager.HasSpell("Envenom") && StyxWoW.Me.ComboPoints >= 4)),
                 Spell.Cast("Eviscerate", 
                     ret => (!StyxWoW.Me.CurrentTarget.Elite || !SpellManager.HasSpell("Envenom")) && StyxWoW.Me.ComboPoints >= 4),
                 Spell.Cast("Envenom",
@@ -336,8 +341,8 @@ namespace Singular.ClassSpecific.Rogue
                     ret => StyxWoW.Me.CurrentTarget.HealthPercent < 35 && StyxWoW.Me.ComboPoints == 5),
                 // WotLK QC: Removed Backstab sub-35% (Cata Murderous Intent). Assassination always uses Mutilate.
                 // Fallback to Sinister Strike if Mutilate unavailable (low level / no daggers)
-                Spell.Cast("Mutilate", ret => SpellManager.HasSpell("Mutilate") && !StyxWoW.Me.HasAura("Cold Blood")),
-                Spell.Cast("Sinister Strike", ret => !StyxWoW.Me.HasAura("Cold Blood")))),
+                Spell.Cast("Mutilate", ret => SpellManager.HasSpell("Mutilate")),
+                Spell.Cast("Sinister Strike"))),
 
                 Movement.CreateMoveToMeleeBehavior(true)
                 );

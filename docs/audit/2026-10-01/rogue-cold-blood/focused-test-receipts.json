@@ -1,0 +1,122 @@
+{
+  "corrected_red": {
+    "immutable_owner_commit": "45700ca39d65690b01d077ccb3409abbc5bad3f4",
+    "corrected_cases": 189,
+    "passed_controls": 111,
+    "intended_assertions": 78,
+    "unexpected_errors": 0,
+    "results": [
+      {
+        "stage": "build",
+        "exit": 0,
+        "command": [
+          "dotnet",
+          "build",
+          "D:\\Dev\\CopilotBuddy-Evidence\\postmerge-20260930-pr61\\rogue-corrected-baseline-20261001\\source\\Tools\\PaladinSupportRegressionTests\\PaladinSupportRegressionTests.csproj",
+          "-c",
+          "Release",
+          "-p:Platform=x86",
+          "-p:PlatformTarget=x86",
+          "-v",
+          "quiet"
+        ],
+        "stdout_sha256": "2d76802b702360009f95aad6ea2e16d1983f24fcb4e622d8289dddd6180857a6",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "stage": "run",
+        "exit": 3762504530,
+        "command": [
+          "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+          "D:\\Dev\\CopilotBuddy-Evidence\\postmerge-20260930-pr61\\rogue-corrected-baseline-20261001\\source\\Tools\\PaladinSupportRegressionTests\\bin\\x86\\Release\\net10.0\\PaladinSupportRegressionTests.dll"
+        ],
+        "stdout_sha256": "0f9a556387cc2420e249d32ceba63bc114a19f50b7e628a3c64993ccf3d08e98",
+        "stderr_sha256": "2be13a57ef6add9e39d9247c8155702f8de6859938060033f3347517c15616a6"
+      }
+    ],
+    "working_repair_untouched": true,
+    "source_manifest_sha256": "5bfdcaf43a5684b02f24f5cb37b2b36f3b025e2401ee39f5b5f9830ac991a222",
+    "corrected_test_sha256": "28a1dc95eb8ce6e0d6c309d1baa1fd90d4e1bc99055052c1db46ead7d6eefb71",
+    "created_utc": "2026-10-01T06:15:32.442327+00:00"
+  },
+  "corrected_red_summary_sha256": "7ee5be03cd6e0f14707f2f94701fb8a9155f10be8f9b31091358adf8f4bb6719",
+  "corrected_green": {
+    "identity": {
+      "production_commit": "45700ca39d65690b01d077ccb3409abbc5bad3f4",
+      "production_tree": "5ced7f1bb576079d826c6c9cf54c0b335a17804a",
+      "fixture_commit": "45700ca39d65690b01d077ccb3409abbc5bad3f4",
+      "working_tree_modified": true,
+      "game_attached": false
+    },
+    "source_stable": true,
+    "results": [
+      {
+        "stage": "build",
+        "exit": 0,
+        "command": [
+          "dotnet",
+          "build",
+          "Tools/PaladinSupportRegressionTests/PaladinSupportRegressionTests.csproj",
+          "-c",
+          "Release",
+          "-p:Platform=x86",
+          "-p:PlatformTarget=x86",
+          "-v",
+          "quiet"
+        ],
+        "stdout_sha256": "ca6d241466fc7c0c89801988779237644ca6d47d03e4c8506fa71fb16e5bb345",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "stage": "run",
+        "exit": 0,
+        "command": [
+          "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+          "D:\\Dev\\CB-RogueColdBlood-20261001\\Tools\\PaladinSupportRegressionTests\\bin\\x86\\Release\\net10.0\\PaladinSupportRegressionTests.dll"
+        ],
+        "stdout_sha256": "939498be235d5c8a1cb782b65f4975511ec766438e6db57c76a5a43890afab2a",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ],
+    "game_attached": false,
+    "completed_utc": "2026-10-01T06:17:31.252910+00:00"
+  },
+  "corrected_green_summary_sha256": "493e765ff18a127167b304fccd3edaf1ce2810d4df82b92f22e1712643f2f800",
+  "scenario_summaries": [
+    "Blessing contribution scenarios: 63/63; assertions=0; unexpected=0; actual linked support owner; no game or DPS benchmark.",
+    "Death Knight contract scenarios: 180/180; assertions=0; unexpected=0; complete four classes, actual TreeSharp; controlled external boundaries; no game.",
+    "Greater blessing scenarios: 87/87; assertions=0; unexpected=0; linked policy; controlled metadata/roster/dispatch; no game attached.",
+    "Lowbie aura coordination scenarios: 10/10; assertions=0; unexpected=0; linked full Lowbie; controlled observations; no game attached.",
+    "Paladin aura coordination scenarios: 70/70; assertions=0; unexpected=0; linked production selectors/trees; controlled observations; no game attached.",
+    "Paladin emergency scenarios: 94/94; assertions=0; unexpected=0; linked complete Holy/Protection; controlled observations/dispatch; no game attached.",
+    "PallyPower assignment scenarios: 19/19; assertions=0; unexpected=0; linked Paladin support; controlled read-only Lua observation; no addon/client attached.",
+    "Protection recovery scenarios: 53/53; assertions=0; unexpected=0; linked complete Protection; controlled dispatch/default-rest; no game attached.",
+    "Rogue Cold Blood scenarios: 189/189; assertions=0; unexpected=0; complete Assassination owners, real TreeSharp, controlled observations, no game.",
+    "Support action ownership scenarios: 63/63; assertions=0; unexpected=0; linked actual support selection/revalidation and blessing trees; controlled actor/roster/PallyPower response/dispatch; no native/frame/server proof.",
+    "Paladin support scenarios: 44/44; linked production decisions; controlled external observations/dispatch; no client attached."
+  ],
+  "test_assumption_correction": {
+    "original_test_sha256": "6dc0b66ead4578c549d971b394964838cb33e06f2af48a8b37c8721dcf04255e",
+    "preserved_test": "D:\\Dev\\CopilotBuddy-Evidence\\postmerge-20260930-pr61\\RogueColdBloodRegressionTests-v1-diagnostic.cs",
+    "original_red": "rogue-cold-blood-red-20261001",
+    "first_repaired_run": "rogue-cold-blood-green-20261001",
+    "invalid_expectations": [
+      "Battleground Vanish suspension remains",
+      "Instance Vanish suspension remains"
+    ],
+    "source_evidence": "Assassination normal lines79-82 explicitly suspend under Vanish. Battleground lines202-208 and instance lines307-313 deliberately allow Garrote under Vanish/stealth; no equivalent whole-rotation suspension exists there.",
+    "correction": "Provide the learned Garrote observation in the Vanish controls and assert the existing per-context policy: normal suspends; battleground/instance dispatch Garrote before builders. Add a separate identical control without Cold Blood to demonstrate the prior behavior independently.",
+    "runtime_patch_changed_for_this_correction": false,
+    "earlier_paladin_or_deathknight_assertions_changed": false,
+    "corrected_baseline_and_green_required": true,
+    "created_utc": "2026-10-01T04:05:25.464932+00:00"
+  },
+  "old_inputs_preserved": true,
+  "current_base_fast_forward": {
+    "from": "45700ca39d65690b01d077ccb3409abbc5bad3f4",
+    "to": "eae93b1f7207a965fed0bef958905e40476ac282",
+    "repair_and_test_bytes_unchanged": true
+  },
+  "clean_final_commit_acceptance_pending": true,
+  "live_game_completion_proven": false
+}
