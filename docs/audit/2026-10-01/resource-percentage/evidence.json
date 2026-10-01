@@ -1,0 +1,789 @@
+{
+  "base_master": "d6d2e303574bc80c39a5305e4362853e85c7b37e",
+  "recorded_utc": "2026-10-01T02:42:53.679709+00:00",
+  "runs": [
+    {
+      "label": "resource-percent-red-20261001",
+      "summary_sha256": "bbe944ef328af3f45be9b29abc6e65356f1589164ab357d8b27a183808897326",
+      "source_before_sha256": "4524bbf550c8c6eeee8346ca9720020909da6ee725f1b0d37231a31dddb5b10e",
+      "source_after_sha256": "4524bbf550c8c6eeee8346ca9720020909da6ee725f1b0d37231a31dddb5b10e",
+      "source_stable": true,
+      "stages": [
+        {
+          "stage": "build",
+          "exit": 0,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PostMergeAuditRegressionTests/PostMergeAuditRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "ca1e4ebe464b6c66d1937a83fb95ea92493ef7b3d537e8140d9ea0d3faae507e",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "run",
+          "exit": 1,
+          "command": [
+            "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+            "D:\\Dev\\CB-ResourcePercent-20261001\\Tools\\PostMergeAuditRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\PostMergeAuditRegressionTests.dll",
+            "ResourcePercentageRegressionTests"
+          ],
+          "stdout_sha256": "9f4fc05fd4727e55576ea14e141ac2c871d42186842c031f5cdff7ceea7dd6c9",
+          "stderr_sha256": "8e9eb9f884758c87b2a7150638eb2a72b267d3026f3bfebc4f958d306fda32b6"
+        }
+      ],
+      "scenarios": "Resource percentage scenarios: 59/125; assertions=66; unexpected=0; actual WoWUnit descriptors/Memory, read-only self-process, no game."
+    },
+    {
+      "label": "resource-percent-green-20261001",
+      "summary_sha256": "83188dd2c050f54b50d83e814441fc8a9456d9207d2ecd3ea9f46e62530de281",
+      "source_before_sha256": "cb65e5ccc54f1e12386db6080f1ed4678d0f26d7560c527afef6071dee732311",
+      "source_after_sha256": "cb65e5ccc54f1e12386db6080f1ed4678d0f26d7560c527afef6071dee732311",
+      "source_stable": true,
+      "stages": [
+        {
+          "stage": "build",
+          "exit": 0,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PostMergeAuditRegressionTests/PostMergeAuditRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "6e3bf7c004522bb87cbaf0c8c53a6620980ca3a4608df22737c382c70ac55f03",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "run",
+          "exit": 0,
+          "command": [
+            "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+            "D:\\Dev\\CB-ResourcePercent-20261001\\Tools\\PostMergeAuditRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\PostMergeAuditRegressionTests.dll",
+            "ResourcePercentageRegressionTests"
+          ],
+          "stdout_sha256": "01bbe5f2b220e5eb89bcfcf2e447c03d9cef34aba656da5dd5d67f9d05076564",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "scenarios": "Resource percentage scenarios: 125/125; assertions=0; unexpected=0; actual WoWUnit descriptors/Memory, read-only self-process, no game."
+    }
+  ],
+  "actual_owners": [
+    "Styx/WoWInternals/WoWObjects/WoWUnit.cs:GetCurrentPower/GetMaxPower/GetPowerPercent",
+    "Styx/WoWInternals/WoWObjects/WoWObject.cs:GetDescriptorField",
+    "GreenMagic.Memory read-only self-process observations"
+  ],
+  "descriptor_contract": {
+    "path": "Styx/Offsets/WoWUnitFields.cs",
+    "sha256": "7fc5bc6b0be1d61a147db9abca3395e139e3c86a347b350447a5e1b68ac143ac",
+    "new_offset_or_api_added": false
+  },
+  "shared_scope": {
+    "power_kinds": [
+      "Health",
+      "Mana",
+      "Rage",
+      "Focus",
+      "Energy",
+      "Happiness",
+      "Runes",
+      "RunicPower"
+    ],
+    "directly_referencing_classes": [
+      "DeathKnight",
+      "Druid",
+      "Hunter",
+      "Mage",
+      "Paladin",
+      "Priest",
+      "Rogue",
+      "Shaman",
+      "Warlock",
+      "Warrior"
+    ],
+    "source_reference_inventory": [
+      {
+        "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/DeathKnight/Blood.cs",
+        "sha256": "82fb83e1d095de8c749fc75c1e992f2da9af537546652cc51e18c11a8717d258",
+        "reference_count": 27,
+        "examples": [
+          {
+            "line": 57,
+            "text": "ret => StyxWoW.Me.HealthPercent < SingularSettings.Instance.DeathKnight.PetSacrificePercent &&"
+          },
+          {
+            "line": 60,
+            "text": "ret => StyxWoW.Me.HealthPercent < 90 && StyxWoW.Me.HasAura(\"Will of the Necropolis\")),"
+          }
+        ]
+      },
+      {
+        "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/DeathKnight/Frost.cs",
+        "sha256": "87cbccf9e3d63e67a9ceec1a30c438ff9d9014cac20d96d29d157f546c27f935",
+        "reference_count": 10,
+        "examples": [
+          {
+            "line": 52,
+            "text": "ret => StyxWoW.Me.HealthPercent < SingularSettings.Instance.DeathKnight.IceboundFortitudePercent &&"
+          },
+          {
+            "line": 56,
+            "text": "StyxWoW.Me.HealthPercent < SingularSettings.Instance.DeathKnight.LichbornePercent)),"
+          }
+        ]
+      },
+      {
+        "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/DeathKnight/Unholy.cs",
+        "sha256": "0e9d9ba95f82ce6e6c848d9e90159c51586b107996cc584b87bfbae123e0ca4f",
+        "reference_count": 9,
+        "examples": [
+          {
+            "line": 54,
+            "text": "ret => StyxWoW.Me.HealthPercent < SingularSettings.Instance.DeathKnight.IceboundFortitudePercent &&"
+          },
+          {
+            "line": 58,
+            "text": "StyxWoW.Me.HealthPercent < SingularSettings.Instance.DeathKnight.LichbornePercent)),"
+          }
+        ]
+      },
+      {
+        "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Druid/Balance.cs",
+        "sha256": "89253ccb3aea0eff3adca172796ac309a4190ed5a26c1a63d421b76394ec3e6a",
+        "reference_count": 6,
+        "examples": [
+          {
+            "line": 66,
+            "text": "Spell.Buff(\"Innervate\", ret => StyxWoW.Me.ManaPercent <= SingularSettings.Instance.Druid.InnervateMana),"
+          },
+          {
+            "line": 72,
+            "text": "StyxWoW.Me.HealthPercent <= SingularSettings.Instance.Druid.BalanceBarkskinHealth),"
+          }
+        ]
+      },
+      {
+        "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Druid/Common.cs",
+        "sha256": "6f6a8afcfe221a1c68380abab3f518fe1e6bc8960cbe28313d84bee2c6f12983",
+        "reference_count": 14,
+        "examples": [
+          {
+            "line": 161,
+            "text": "StyxWoW.Me.HealthPercent <= SingularSettings.Instance.Druid.NonRestoprocc &&"
+          },
+          {
+            "line": 165,
+            "text": "StyxWoW.Me.HealthPercent <= SingularSettings.Instance.Druid.NonRestoprocc &&"
+          }
+        ]
+      },
+      {
+        "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Druid/Feral.cs",
+        "sha256": "542215175d4cd209cee509d252d70a473f82eda4e9d3a2ac5572ce986094b4f4",
+        "reference_count": 36,
+        "examples": [
+          {
+            "line": 213,
+            "text": "Spell.BuffSelf(\"Barkskin\", ret => StyxWoW.Me.HealthPercent < Settings.FeralBarkskin),"
+          },
+          {
+            "line": 214,
+            "text": "Spell.BuffSelf(\"Survival Instincts\", ret => StyxWoW.Me.HealthPercent < Settings.SurvivalInstinctsHealth),"
+          }
+        ]
+      },
+      {
+        "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Druid/Lowbie.cs",
+        "sha256": "0e1d8ef927e0bebf212a26e2a51f19d622183320c1892b471d17d4c47d623d69",
+        "reference_count": 2,
+        "examples": [
+          {
+            "line": 49,
+            "text": "Spell.BuffSelf(\"Rejuvenation\", ret => StyxWoW.Me.HealthPercent <= 60),"
+          },
+          {
+            "line": 57,
+            "text": "StyxWoW.Me.ComboPoints > 1 && StyxWoW.Me.CurrentTarget.HealthPercent < 40),"
+          }
+        ]
+      },
+      {
+        "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Druid/Resto.cs",
+        "sha256": "092c1703b193b01e732b4107f2cb58063b0bb02ea96348dd28f90dcf03ecba48",
+        "reference_count": 12,
+        "examples": [
+          {
+            "line": 75,
+            "text": "((WoWUnit)ret).HealthPercent > 60 &&"
+          },
+          {
+            "line": 88,
+            "text": "p.IsAlive && p.HealthPercent <= SingularSettings.Instance.Druid.TranquilityHealth && p.Distance <= 30) >="
+          }
+        ]
+      },
+      {
+        "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Generic.cs",
+        "sha256": "9d5f564c0001e294e46310a1623d66a699cbd6b355deb83e892d4c84820837ba",
+        "reference_count": 2,
+        "examples": [
+          {
+            "line": 66,
+            "text": "ret => StyxWoW.Me.HealthPercent < SingularSettings.Instance.GiftNaaruHP),"
+          },
+          {
+            "line": 82,
+            "text": "ret => StyxWoW.Me.IsInCombat && SpellManager.CanCast(\"Lifeblood\") && StyxWoW.Me.HealthPercent < SingularSettings.Instance.LifebloodHP,"
+          }
+        ]
+      },
+      {
+        "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Hunter/BeastMaster.cs",
+        "sha256": "cd3c8807ea87e156cbea0cbe984b9129e90515a4fc3d237e68e43b55af1ed589",
+        "reference_count": 18,
+        "examples": [
+          {
+            "line": 48,
+            "text": "Spell.BuffSelf(\"Aspect of the Viper\", ret => StyxWoW.Me.ManaPercent <= SingularSettings.Instance.Hunter.ViperManaPercent),"
+          },
+          {
+            "line": 49,
+            "text": "Spell.BuffSelf(\"Aspect of the Dragonhawk\", ret => StyxWoW.Me.ManaPercent >= SingularSettings.Instance.Hunter.ViperResumeManaPercent && StyxWoW.Me.HasAura(\"Aspect of the Viper\")),"
+          }
+        ]
+      },
+      {
+        "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Hunter/Common.cs",
+        "sha256": "9302bf0526d840533bb3486b9e9f7768be767ef7cfdacc48c0b5196d3702522e",
+        "reference_count": 1,
+        "examples": [
+          {
+            "line": 66,
+            "text": "Spell.Cast(\"Mend Pet\", ret => StyxWoW.Me.GotAlivePet && (StyxWoW.Me.Pet.HealthPercent < 70 || (StyxWoW.Me.Pet.HappinessPercent < 90 && TalentManager.HasGlyph(\"Mend Pet\"))) && !StyxWoW.Me.Pet.HasAura(\"Mend Pet\"))"
+          }
+        ]
+      },
+      {
+        "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Hunter/Lowbie.cs",
+        "sha256": "650504446ffcb9d61d7e8ecae1caa4d9b2b36fed7a68b9c79332b7c832fee491",
+        "reference_count": 1,
+        "examples": [
+          {
+            "line": 33,
+            "text": "Spell.Cast(\"Mend Pet\", ret => StyxWoW.Me.GotAlivePet && StyxWoW.Me.Pet.HealthPercent < 70 && !StyxWoW.Me.Pet.HasAura(\"Mend Pet\")),"
+          }
+        ]
+      },
+      {
+        "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Hunter/Marksman.cs",
+        "sha256": "aebdaacdca9d010e81cbcc3581302b61fbd8e2fc66cb2a50adba31868e3a8aab",
+        "reference_count": 16,
+        "examples": [
+          {
+            "line": 58,
+            "text": "Spell.BuffSelf(\"Aspect of the Viper\", ret => StyxWoW.Me.ManaPercent <= SingularSettings.Instance.Hunter.ViperManaPercent),"
+          },
+          {
+            "line": 59,
+            "text": "Spell.BuffSelf(\"Aspect of the Dragonhawk\", ret => StyxWoW.Me.ManaPercent >= SingularSettings.Instance.Hunter.ViperResumeManaPercent && StyxWoW.Me.HasAura(\"Aspect of the Viper\")),"
+          }
+        ]
+      },
+      {
+        "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Hunter/Survival.cs",
+        "sha256": "cbadc212553e973dee4f16afcb44bdb9789633f4123086bbdb1e31227e9b8c5c",
+        "reference_count": 17,
+        "examples": [
+          {
+            "line": 48,
+            "text": "Spell.BuffSelf(\"Aspect of the Viper\", ret => StyxWoW.Me.ManaPercent <= SingularSettings.Instance.Hunter.ViperManaPercent),"
+          },
+          {
+            "line": 49,
+            "text": "Spell.BuffSelf(\"Aspect of the Dragonhawk\", ret => StyxWoW.Me.ManaPercent >= SingularSettings.Instance.Hunter.ViperResumeManaPercent && StyxWoW.Me.HasAura(\"Aspect of the Viper\")),"
+          }
+        ]
+      },
+      {
+        "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Mage/Arcane.cs",
+        "sha256": "ede470a355d605f61715da0a4e41c5f35e84de77c0c21e5a09b5da77572223f6",
+        "reference_count": 18,
+        "examples": [
+          {
+            "line": 66,
+            "text": "Spell.BuffSelf(\"Ice Block\", ret => StyxWoW.Me.HealthPercent < 10 && !StyxWoW.Me.ActiveAuras.ContainsKey(\"Hypothermia\")),"
+          },
+          {
+            "line": 67,
+            "text": "Spell.BuffSelf(\"Mana Shield\", ret => StyxWoW.Me.HealthPercent <= 75),"
+          }
+        ]
+      },
+      {
+        "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Mage/Common.cs",
+        "sha256": "3464aa6c6ed7926b6355b76dc7e85cae2ccb974849beb0d9df95cdf257524f4e",
+        "reference_count": 1,
+        "examples": [
+          {
+            "line": 209,
+            "text": "ret => ret != null && StyxWoW.Me.ManaPercent < 100 && ((WoWItem)ret).Cooldown == 0 && requirements(ret),"
+          }
+        ]
+      },
+      {
+        "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Mage/Fire.cs",
+        "sha256": "acf62feeaee7b1e5835e1235c035e7a7da446ce07a116e3ec7a9c14bd1fb5eed",
+        "reference_count": 17,
+        "examples": [
+          {
+            "line": 65,
+            "text": "Spell.BuffSelf(\"Ice Block\", ret => StyxWoW.Me.HealthPercent < 20 && !StyxWoW.Me.ActiveAuras.ContainsKey(\"Hypothermia\")),"
+          },
+          {
+            "line": 69,
+            "text": "ret => StyxWoW.Me.ManaPercent < 30 || (TalentManager.HasGlyph(\"Evocation\") && StyxWoW.Me.HealthPercent < 50)),"
+          }
+        ]
+      },
+      {
+        "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Mage/Frost.cs",
+        "sha256": "22c7825ba94950c6b450fd6e4e0556c647c76d9dd2b0d0ff9b94cb2e1c8ce3e7",
+        "reference_count": 16,
+        "examples": [
+          {
+            "line": 79,
+            "text": "Spell.BuffSelf(\"Ice Block\", ret => StyxWoW.Me.HealthPercent < 20 && !StyxWoW.Me.ActiveAuras.ContainsKey(\"Hypothermia\")),"
+          },
+          {
+            "line": 83,
+            "text": "ret => StyxWoW.Me.ManaPercent < 30 || (TalentManager.HasGlyph(\"Evocation\") && StyxWoW.Me.HealthPercent < 50)),"
+          }
+        ]
+      },
+      {
+        "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Mage/Lowbie.cs",
+        "sha256": "20f1f7bb72d92f4ce7408c4f23535b1d0e27bd6884ef66950e9b81f1b04e8812",
+        "reference_count": 1,
+        "examples": [
+          {
+            "line": 39,
+            "text": "Spell.Cast(\"Fire Blast\", ret => StyxWoW.Me.CurrentTarget.HealthPercent < 10),"
+          }
+        ]
+      },
+      {
+        "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Paladin/Holy.cs",
+        "sha256": "184312fc353cb10af1120d30252f38b09ccdf6468c1969f36c29650655c98454",
+        "reference_count": 5,
+        "examples": [
+          {
+            "line": 54,
+            "text": "ret => StyxWoW.Me.ManaPercent <= SingularSettings.Instance.Paladin.DivinePleaMana)"
+          },
+          {
+            "line": 142,
+            "text": "((WoWUnit)ret).HealthPercent <= SingularSettings.Instance.Paladin.LayOnHandsHealth),"
+          }
+        ]
+      },
+      {
+        "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Paladin/Lowbie.cs",
+        "sha256": "7ee5d9810046c7992d14fffadf5ca03175f80deedf1bfb3fafc44126b9919de1",
+        "reference_count": 1,
+        "examples": [
+          {
+            "line": 56,
+            "text": "Spell.Heal(\"Holy Light\", ret => StyxWoW.Me, ret => StyxWoW.Me.HealthPercent < 40)"
+          }
+        ]
+      },
+      {
+        "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Paladin/Protection.cs",
+        "sha256": "a7f595fe03b7125f12a84b887d6c90f42728943b2a72bb5680e20b3b88fa1837",
+        "reference_count": 14,
+        "examples": [
+          {
+            "line": 51,
+            "text": "&& StyxWoW.Me.HealthPercent <= SingularSettings.Instance.Paladin.HolyLightHealth),"
+          },
+          {
+            "line": 54,
+            "text": "&& StyxWoW.Me.HealthPercent <= SingularSettings.Instance.Paladin.FlashOfLightHealth),"
+          }
+        ]
+      },
+      {
+        "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Paladin/Retribution.cs",
+        "sha256": "445639f86ee5d9a60400b408bf22741702be0d894e510d00a313593326a5e085",
+        "reference_count": 20,
+        "examples": [
+          {
+            "line": 35,
+            "text": "ret => StyxWoW.Me.HealthPercent <= SingularSettings.Instance.Paladin.LayOnHandsHealth &&"
+          },
+          {
+            "line": 40,
+            "text": "ret => StyxWoW.Me.HealthPercent <= GetRetributionHealThreshold(SingularSettings.Instance.Paladin.HolyLightHealth)),"
+          }
+        ]
+      },
+      {
+        "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Priest/Discipline.cs",
+        "sha256": "ea7f0ed66fcc4ecaae93c2d7b8d870d78bbb81199621913d64628df56361b34b",
+        "reference_count": 14,
+        "examples": [
+          {
+            "line": 63,
+            "text": "//Spell.Buff(\"Renew\", ret => HealTargeting.Instance.TargetList.FirstOrDefault(u => !u.HasAura(\"Renew\") && u.HealthPercent < 90) != null, ret => HealTargeting.Instance.TargetList.FirstOrDefault(u => !u.HasAura(\"Renew\") && u.HealthPercent < 90)),"
+          },
+          {
+            "line": 69,
+            "text": "ret => !((WoWUnit)ret).HasAura(\"Weakened Soul\") && ((WoWUnit)ret).Combat && ((WoWUnit)ret).HealthPercent < SingularSettings.Instance.Priest.PowerWordShield),"
+          }
+        ]
+      },
+      {
+        "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Priest/Holy.cs",
+        "sha256": "a96dd9fecd2c4c84540acab527598cbbb6c588ca93995f3b4f701732f0d8657c",
+        "reference_count": 11,
+        "examples": [
+          {
+            "line": 65,
+            "text": "Spell.Cast(\"Shadowfiend\", ret => StyxWoW.Me.ManaPercent <= 80 && StyxWoW.Me.GotTarget),"
+          },
+          {
+            "line": 67,
+            "text": "Spell.BuffSelf(\"Desperate Prayer\", ret => StyxWoW.Me.HealthPercent <= 50),"
+          }
+        ]
+      },
+      {
+        "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Priest/Lowbie.cs",
+        "sha256": "93d90292c87fe9a5a80ca1bfc48ce2a049794b913e9fb3e895f660d613cf8fc5",
+        "reference_count": 1,
+        "examples": [
+          {
+            "line": 28,
+            "text": "Spell.Heal(\"Flash Heal\", ret => StyxWoW.Me, ret => StyxWoW.Me.HealthPercent <= 40),"
+          }
+        ]
+      },
+      {
+        "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Priest/Shadow.cs",
+        "sha256": "cfe6580505bec8013ca7b093153df3b7a6c50226f6bc0886fd280e08e7210a45",
+        "reference_count": 17,
+        "examples": [
+          {
+            "line": 83,
+            "text": "StyxWoW.Me.HealthPercent <= SingularSettings.Instance.Priest.ShieldHealthPercent),"
+          },
+          {
+            "line": 84,
+            "text": "Spell.BuffSelf(\"Dispersion\", ret => StyxWoW.Me.ManaPercent < SingularSettings.Instance.Priest.DispersionMana),"
+          }
+        ]
+      },
+      {
+        "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Rogue/Assassination.cs",
+        "sha256": "d3bbb231cc1a39605bf2537edf137793b823895e57f26207eeab2704318db704",
+        "reference_count": 13,
+        "examples": [
+          {
+            "line": 105,
+            "text": "ret => StyxWoW.Me.HealthPercent < 20),"
+          },
+          {
+            "line": 116,
+            "text": "ret => StyxWoW.Me.ComboPoints >= 4 && StyxWoW.Me.CurrentTarget.HealthPercent >= 35 ||"
+          }
+        ]
+      },
+      {
+        "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Rogue/Combat.cs",
+        "sha256": "a71c030889fda68dcdeb5805627e53ab636e429e98efbc440e15bd2501563968",
+        "reference_count": 3,
+        "examples": [
+          {
+            "line": 91,
+            "text": "ret => StyxWoW.Me.HealthPercent < 20),"
+          },
+          {
+            "line": 111,
+            "text": "ret => StyxWoW.Me.CurrentTarget.HealthPercent < 40 && StyxWoW.Me.ComboPoints >= 2),"
+          }
+        ]
+      },
+      {
+        "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Rogue/Lowbie.cs",
+        "sha256": "bffcb3cbef080830fea37c040e8db500cc9ab409cf618caf26e1e64e835659c5",
+        "reference_count": 1,
+        "examples": [
+          {
+            "line": 38,
+            "text": "Spell.Cast(\"Eviscerate\", ret => StyxWoW.Me.CurrentTarget != null && (StyxWoW.Me.ComboPoints == 5 || StyxWoW.Me.CurrentTarget.HealthPercent <= 40 && StyxWoW.Me.ComboPoints >= 2)),"
+          }
+        ]
+      },
+      {
+        "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Rogue/Subtlety.cs",
+        "sha256": "8bd8cb025c23d1a854746fb6a13cbccd5d5fa0dec3c77ecbb262b7e8ae0928a4",
+        "reference_count": 3,
+        "examples": [
+          {
+            "line": 93,
+            "text": "ret => StyxWoW.Me.HealthPercent < 20),"
+          },
+          {
+            "line": 97,
+            "text": "StyxWoW.Me.HealthPercent < 25),"
+          }
+        ]
+      },
+      {
+        "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Shaman/Elemental.cs",
+        "sha256": "c7417b22f74fd6cf9df01a92fbd320057bec05b3d74b58d3ae929b3e8e61a0d5",
+        "reference_count": 2,
+        "examples": [
+          {
+            "line": 83,
+            "text": "ret => !SpellManager.HasSpell(\"Lesser Healing Wave\") && StyxWoW.Me.HealthPercent <= 60),"
+          },
+          {
+            "line": 87,
+            "text": "ret => StyxWoW.Me.HealthPercent <= 60)))"
+          }
+        ]
+      },
+      {
+        "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Shaman/Enhancement.cs",
+        "sha256": "c4bb2f41aaabdfb7b046b8b3131aed694e3b87a940402f06d51acfbc39b77815",
+        "reference_count": 3,
+        "examples": [
+          {
+            "line": 106,
+            "text": "ret => !SpellManager.HasSpell(\"Lesser Healing Wave\") && StyxWoW.Me.HealthPercent <= 60),"
+          },
+          {
+            "line": 110,
+            "text": "ret => StyxWoW.Me.HealthPercent <= 60)))"
+          }
+        ]
+      },
+      {
+        "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Shaman/Lowbie.cs",
+        "sha256": "c6c8457a3df2a7b842431641a385548f178e00903a38dab744095e3a924095d4",
+        "reference_count": 1,
+        "examples": [
+          {
+            "line": 67,
+            "text": "Spell.Heal(\"Healing Wave\", ret => StyxWoW.Me, ret => StyxWoW.Me.HealthPercent < 60)"
+          }
+        ]
+      },
+      {
+        "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Shaman/Restoration.cs",
+        "sha256": "23be64d0f5ef4c974b9747fe4e90a2cd85617f1132b8163219a588cadd6dc5aa",
+        "reference_count": 7,
+        "examples": [
+          {
+            "line": 124,
+            "text": "Spell.Cast(\"Mana Tide Totem\", ret => StyxWoW.Me.ManaPercent < 80),"
+          },
+          {
+            "line": 137,
+            "text": "Spell.BuffSelf(\"Nature's Swiftness\", ret => ((WoWUnit)ret).HealthPercent < 15),"
+          }
+        ]
+      },
+      {
+        "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Warlock/Affliction.cs",
+        "sha256": "c439ee56191c7ac716cbca957822df87ee10eb58ea73a976ab1e93fb086924a4",
+        "reference_count": 9,
+        "examples": [
+          {
+            "line": 93,
+            "text": "Spell.Cast(\"Death Coil\", ret => StyxWoW.Me.HealthPercent <= 70),"
+          },
+          {
+            "line": 101,
+            "text": "Spell.Buff(\"Fear\", ret => StyxWoW.Me.HealthPercent < 80),"
+          }
+        ]
+      },
+      {
+        "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Warlock/Common.cs",
+        "sha256": "b62631ffe0567e0a14ee87729e648a158b3196fcb27b484e4361788b24763d5a",
+        "reference_count": 3,
+        "examples": [
+          {
+            "line": 68,
+            "text": "Spell.BuffSelf(\"Health Funnel\", ret => StyxWoW.Me.GotAlivePet && PetManager.PetTimer.IsFinished && StyxWoW.Me.Pet.HealthPercent < 60 && StyxWoW.Me.HealthPercent > 40)"
+          },
+          {
+            "line": 82,
+            "text": "Spell.BuffSelf(\"Life Tap\", ret => StyxWoW.Me.ManaPercent < 20 && StyxWoW.Me.HealthPercent > 40),"
+          }
+        ]
+      },
+      {
+        "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Warlock/Demonology.cs",
+        "sha256": "2709c488b0b49db316c15ff869c723723aa2b0cfde27081eca4d434759433be2",
+        "reference_count": 5,
+        "examples": [
+          {
+            "line": 71,
+            "text": "Spell.Cast(\"Death Coil\", ret => StyxWoW.Me.HealthPercent <= 70),"
+          },
+          {
+            "line": 120,
+            "text": "Spell.Cast(\"Death Coil\", ret => StyxWoW.Me.HealthPercent <= 70),"
+          }
+        ]
+      },
+      {
+        "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Warlock/Destruction.cs",
+        "sha256": "ab5a73b64861aa3a2c697106014f6ce5d8b185908f1063b52526dfddcf6658a4",
+        "reference_count": 7,
+        "examples": [
+          {
+            "line": 71,
+            "text": "Spell.Cast(\"Death Coil\", ret => StyxWoW.Me.HealthPercent <= 70),"
+          },
+          {
+            "line": 79,
+            "text": "Spell.Buff(\"Fear\", ret => StyxWoW.Me.HealthPercent < 80),"
+          }
+        ]
+      },
+      {
+        "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Warlock/Lowbie.cs",
+        "sha256": "3ffccbb7b9a36f7e24ba30f2c0b00341f1fee6219ca7b5d2edb86b80a3340e16",
+        "reference_count": 2,
+        "examples": [
+          {
+            "line": 46,
+            "text": "Spell.Cast(\"Life Tap\", ret => StyxWoW.Me.ManaPercent < 50 && StyxWoW.Me.HealthPercent > 70),"
+          },
+          {
+            "line": 47,
+            "text": "Spell.Cast(\"Drain Life\", ret => StyxWoW.Me.HealthPercent < 70),"
+          }
+        ]
+      },
+      {
+        "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Warrior/Arms.cs",
+        "sha256": "a0f8ac9f9161d586911cd186934dc29f1ae626042f3f070b6326908facd69b1b",
+        "reference_count": 27,
+        "examples": [
+          {
+            "line": 19,
+            "text": "// WotLK compatibility: RagePercent property doesn't exist, so calculate it manually"
+          },
+          {
+            "line": 20,
+            "text": "private static double RagePercent { get { return (StyxWoW.Me.CurrentRage / (double)StyxWoW.Me.MaxRage) * 100; } }"
+          }
+        ]
+      },
+      {
+        "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Warrior/Fury.cs",
+        "sha256": "ecde4936c79f3bc08ceeb93f1062595f2f3b2691a7b504978842333223b557f4",
+        "reference_count": 17,
+        "examples": [
+          {
+            "line": 23,
+            "text": "// WotLK compatibility: RagePercent property doesn't exist, so calculate it manually"
+          },
+          {
+            "line": 24,
+            "text": "private static double RagePercent { get { return (StyxWoW.Me.CurrentRage / (double)StyxWoW.Me.MaxRage) * 100; } }"
+          }
+        ]
+      },
+      {
+        "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Warrior/Lowbie.cs",
+        "sha256": "128323d1147a68b5db6c2be2502a7c61b66c15a48017602ee1d283e21b3f3220",
+        "reference_count": 3,
+        "examples": [
+          {
+            "line": 15,
+            "text": "// WotLK compatibility: RagePercent property doesn't exist, so calculate it manually"
+          },
+          {
+            "line": 16,
+            "text": "private static double RagePercent { get { return (StyxWoW.Me.CurrentRage / (double)StyxWoW.Me.MaxRage) * 100; } }"
+          }
+        ]
+      },
+      {
+        "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Warrior/Protection.cs",
+        "sha256": "8cceae841b01415831cc4b440c04ae9070b2718a22f0289c8f14dad4572c5715",
+        "reference_count": 18,
+        "examples": [
+          {
+            "line": 16,
+            "text": "// WotLK compatibility: RagePercent property doesn't exist, so calculate it manually"
+          },
+          {
+            "line": 17,
+            "text": "private static double RagePercent { get { return (StyxWoW.Me.CurrentRage / (double)StyxWoW.Me.MaxRage) * 100; } }"
+          }
+        ]
+      }
+    ],
+    "reference_inventory_is_execution_proof": false
+  },
+  "client_binding": {
+    "build": 12340,
+    "file_version": "3.3.5.12340",
+    "binary_sha256": "bf644876709c591acc17c0da8cdf1814edcc9f1e6bc109a8c0d5c38c79dc953c",
+    "read_only_ida_receipt_sha256": "f0cd3d03c0fbe547ab9000c67a37949093bebe801e34119caf96587031cb0f6c",
+    "client_api_replaced": false
+  },
+  "preserved_semantics": [
+    "zero maximum returns0",
+    "upper bound remains100",
+    "rage/runic raw-tenths normalization",
+    "unsupported enum exceptions",
+    "all preexisting test assertions and routine priorities"
+  ],
+  "limits": [
+    "Positive signed-int samples are tested; no new unsigned observation contract is introduced.",
+    "Unavailable raw reads retain legacy behavior; this does not establish complete/live resource observations.",
+    "Very large non-health values are numerical-boundary tests, not assertions about attainable live resources.",
+    "No actual boss, PvP encounter, race/class combination or quest was completed."
+  ],
+  "production": {
+    "source_commit": "d6d2e303574bc80c39a5305e4362853e85c7b37e",
+    "manifest": "D:\\World of Warcraft 3.3.5a\\CB\\ReleaseData\\Deployment-PR80-d6d2e303-20261001.json",
+    "manifest_sha256": "8421aed2d39b46a763c01212a4f3f39244102eb0cdf06e471adc12cb01a47255",
+    "intentional_metadata_addition_only": true,
+    "existing_protected_files_unchanged": 2004,
+    "payload_hashes_verified": 434,
+    "all_13_deployed_components_compiled": true,
+    "ready_for_user_live_test": true,
+    "game_started_by_audit": false,
+    "completed_utc": "2026-10-01T02:32:35.188396+00:00"
+  },
+  "independent_ready_pr81": {
+    "baseRefName": "master",
+    "headRefOid": "08c7ebd820a452f0b21bd64f2d5f30c8afcdb7bd",
+    "isDraft": false,
+    "number": 81,
+    "state": "OPEN",
+    "url": "https://github.com/JeofW/cbp/pull/81"
+  },
+  "exact_final_candidate_acceptance_pending": true,
+  "live_completion_proven": false
+}

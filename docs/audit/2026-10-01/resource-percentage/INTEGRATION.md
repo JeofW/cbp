@@ -1,0 +1,7 @@
+# Resource percentage integration with accepted master
+
+The original PR82 source `0678537b1f3b8720dac6d00c493053eda73332ea` and its red/green and complete acceptance receipts remain unchanged and reachable. Current master `45700ca39d65690b01d077ccb3409abbc5bad3f4` includes the separately accepted PR81 Holy/Protection emergency scope and PR83 Death Knight contracts. Merge them into this existing PR rather than introducing a second resource repair or replacing any previous work.
+
+The only intersecting paths are AUDIT_RESUME.md and NEXT_CHAT_PROMPT.md. Both complete earlier histories are retained, with a new current-state heading. Every resource implementation/test/evidence path outside those notes is byte-identical to the original accepted PR82 candidate. Every incoming implementation/test/evidence path outside those notes is byte-identical to accepted master. The source checkpoints and this document describe lineage, not an invented future final SHA.
+
+The original66 failing-before resource assertions,125 green resource cases,94 Paladin emergency cases and180 Death Knight cases remain. Regenerate full local, dataset/strategy and applicable hosted acceptance at the new combined SHA before replacing the remote PR head's acceptance claims or merging PR82. The six quest classes still total4335 exactly; the retained1305 unresolved IDs are not restarted or promoted from simulated to live completion. Deployment uses a separately validated merged master and preserves all user-local state.

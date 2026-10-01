@@ -1,3 +1,28 @@
+# Current: PR82 integration after accepted Paladin and Death Knight merges — 1 October 2026
+
+Canonical master is `45700ca39d65690b01d077ccb3409abbc5bad3f4` after PR81 and PR83. Their reviewed heads are `08c7ebd820a452f0b21bd64f2d5f30c8afcdb7bd` and `b84aecbc6d999013235015ca25b8e1c6b51488e9`; each merge preserves its accepted source tree. PR83 passed180 Death Knight scenarios, all34 derived local stages, four quest-closure stages and three applicable hosted workflows with17 integrated suites and11266 matching versioned inputs.
+
+Current worktree is D:/Dev/CB-ResourcePercent-20261001 on audit/next-resource-percent-20261001. PR82's preserved candidate `0678537b1f3b8720dac6d00c493053eda73332ea` already passed125 actual-memory percentage cases after66 intended red assertions. This merge adds current accepted master without changing either runtime repair or any assertion. Read docs/audit/2026-10-01/resource-percentage/INTEGRATION.md. The new exact candidate and its independent combined acceptance/publication are recorded in RESOURCE_PERCENT_COMBINED_CANDIDATE_20261001.json and subsequent external receipts; do not treat the prior sibling test SHA as the new combined proof.
+
+Production remains the verified PR80 `d6d2e303574bc80c39a5305e4362853e85c7b37e` until a later accepted master package is selectively deployed. All434 payload and2004 protected hashes matched fresh recovery. Preserve that baseline, all settings/local state and the exact1305 unresolved quest IDs. No live combat or quest completion is proven. The wider53-file Singular action-name inventory is diagnostic only; preserve existing source-review holds, including RET_SOURCE_REVIEW_BLOCK_20261001.json, without rerouting them. No new Ret restriction patch is claimed.
+
+## Preserved resource-scope checkpoint
+
+# Current: shared percentage continuation after verified production deployment — 1 October 2026
+
+Production and canonical master are `d6d2e303574bc80c39a5305e4362853e85c7b37e` from merged PR80, whose reviewed head is `58ea11df3852da21b315b3a8dffb4403e45cc313`. All 34 local commands, 4 quest stages, 3 applicable hosted workflows / 17 integrated suites, and 13 packaged plus 13 deployed runtime compilations passed. All 434 payload hashes match; 32 files changed and 2,004 protected files were preserved. Full production manifest: `D:/World of Warcraft 3.3.5a/CB/ReleaseData/Deployment-PR80-d6d2e303-20261001.json`, SHA256 `8421aed2d39b46a763c01212a4f3f39244102eb0cdf06e471adc12cb01a47255`. No game or live acceptance was performed.
+
+PR81 is ready, open and fully verified at `08c7ebd820a452f0b21bd64f2d5f30c8afcdb7bd` in `D:/Dev/CB-SingularEmergency-20261001`. Its 12-file Holy/Protection scope has 94 passing focused scenarios and unchanged optimized Ret source; all applicable hosted artifacts match 11,261 versioned inputs. It is not merged or deployed. Read its singular-emergency report and the 10-class/30-spec frontier there.
+
+Current independent scope: `D:/Dev/CB-ResourcePercent-20261001`, branch `audit/next-resource-percent-20261001`, based on `d6d2e303`. Read `docs/audit/2026-10-01/resource-percentage/REPORT.md` and `evidence.json`. The one-expression percentage overflow repair has 125 passing actual-memory scenarios after 66 failing-before assertions. Final exact candidate, publication and hosted state belongs to external `RESOURCE_PERCENT_CANDIDATE_20261001.json` and later receipts; do not infer those gates from this precommit note.
+
+Retain the exact 1,305 quest IDs in `docs/audit/2026-10-01/required-stock/remaining-category-ids.json`. Counts of 3,028 generic / 2 strategy / 921 data / 311 uncertain / 16 live / 57 unsupported total 4,335; the 261,306 dataset and 39 strategy checks are controlled owner proof. Preserve the historical source-review holds and exact evidence requirements; remaining offline work and the exhaustive class/race audit are not declared exhausted. Do not replay completed PR61–80 work or production replacement.
+
+## Preserved earlier handoff
+
+
+## Preserved merged-master checkpoints
+
 # Current: preserved Death Knight contracts — 1 October 2026
 
 Continue D:/Dev/CB-DeathKnightContracts-20261001, branch audit/next-deathknight-contracts-20261001, from the recovered PR81 base08c7ebd820a452f0b21bd64f2d5f30c8afcdb7bd. Read docs/audit/2026-10-01/deathknight-contracts/REPORT.md and its source, test, review and frontier receipts. The preserved180-case repair was independently rerun during recovery; retained red has58 intended assertions and zero fixture errors. No prior work was discarded. Final candidate SHA, hosted acceptance and later integration/deployment must be read from live refs and external evidence; this source checkpoint does not invent a future commit identity.

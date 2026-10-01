@@ -1,0 +1,13 @@
+# Shared health and resource percentage overflow
+
+`WoWUnit.GetPowerPercent` multiplied `current * 100` as a signed 32-bit integer before converting to `double`. With 60 million current health and 120 million maximum, the actual owner returned 14.208605866666666 instead of 50. A full 120-million-health sample returned -7.3741824 instead of 100. Those values can cross the wrong low-health or execute thresholds before any class-specific priority executes.
+
+Move the conversion before multiplication. The change is one production expression plus its explanatory comment. Keep the existing descriptor mappings, raw-tenths rage/runic normalization, zero-max return, upper cap of 100, unsupported-enum exceptions and all routine priorities. No client API, native offset, server script or quest strategy is introduced.
+
+The 125 new cases use the actual WoWUnit getters and public percentage properties with the existing allocated-storage fixture and real read-only Memory access. They cover all 8 supported generic power kinds, first/last overflow boundaries, ordinary fractions, zero/full/capped observations, positive signed-int limits, monotonicity, real property callers and large-health threshold distinctions. The unchanged implementation compiled and failed 66 assertions with zero unexpected errors. After the one-expression repair all 125 cases pass. All prior assertions remain intact. Final clean-candidate aggregate and hosted validation is an independent required gate.
+
+`evidence.json` binds red/green logs and source snapshots, unchanged descriptor definitions and the prior read-only IDA health evidence for the installed 32-bit build 3.3.5.12340. Its source-reference inventory identifies shared class consumers without claiming all of their rotations were executed. Large non-health fixtures are numerical-boundary coverage; they do not assert a live character can have those resources. Legacy missing-read behavior and unsigned quantities beyond the positive signed range are not redesigned in this scope.
+
+This small branch is independent of ready PR81's Holy/Protection emergency changes. Both start from merged master `d6d2e303574bc80c39a5305e4362853e85c7b37e`. That master is already deployed: 32 changed files, 434 verified payload files, 2,004 protected files preserved, and 13 deployed components compiled offline. Its production manifest is `ReleaseData/Deployment-PR80-d6d2e303-20261001.json`. Do not substitute this unmerged branch for that deployed identity.
+
+Wholesome retains exactly 1,305 unresolved IDs and all 4,335 exclusive classifications in the required-stock checkpoint. Continue those IDs and the separate 10-class/30-spec frontier in PR81; registration/reference inventories are not exhaustive combat or live-realm proof.
