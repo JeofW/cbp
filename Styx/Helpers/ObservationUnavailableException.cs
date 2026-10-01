@@ -1,5 +1,7 @@
 using System;
 using System.Reflection;
+using System.Runtime.ExceptionServices;
+using System.Threading;
 
 namespace Styx.Helpers
 {
@@ -28,6 +30,16 @@ namespace Styx.Helpers
                 error = wrapped.InnerException;
             }
             return null;
+        }
+
+        internal static void RethrowCancellation(Exception error)
+        {
+            // DynamicInvoke can wrap a stop at several observer boundaries.
+            // Preserve the original signal and stack, not a failed observation.
+            while (error is TargetInvocationException { InnerException: not null } wrapped)
+                error = wrapped.InnerException;
+            if (error is OperationCanceledException or ThreadInterruptedException)
+                ExceptionDispatchInfo.Capture(error).Throw();
         }
     }
 }

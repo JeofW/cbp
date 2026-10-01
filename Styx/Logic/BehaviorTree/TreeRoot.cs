@@ -91,6 +91,13 @@ namespace Styx.Logic.BehaviorTree
 		/// <summary>HB 5.4.8: True when the calling thread is the bot worker thread.</summary>
 		public static bool CurrentThreadIsBotThread => Thread.CurrentThread == _workerThread;
 
+		internal static void VerifyPulseOwner(BotBase? observedBot, bool ownedByCurrentThread)
+		{
+			if (ownedByCurrentThread && (!CurrentThreadIsBotThread || !ReferenceEquals(Current, observedBot)
+				|| State is TreeRootState.Stopping or TreeRootState.Stopped))
+				throw new OperationCanceledException("The pulse's worker/bot ownership was revoked.");
+		}
+
 		/// <summary>HB 6.2.3: true when State == Paused.</summary>
 		public static bool IsPaused => State == TreeRootState.Paused;
 
@@ -323,22 +330,23 @@ namespace Styx.Logic.BehaviorTree
 				action();
 				return true;
 			}
-				catch (ThreadInterruptedException)
-				{
-					// WorkerThread owns stop cleanup. Never turn this into branch failure.
-					throw;
-				}
-				catch (OperationCanceledException)
-				{
-					throw;
-				}
-				catch (Exception ex) when (ObservationUnavailableException.Find(ex) is not null)
-				{
-					ObservationFailureDiagnostics.Report(ObservationUnavailableException.Find(ex)!, name);
-					return false;
-				}
+			catch (ThreadInterruptedException)
+			{
+				// WorkerThread owns stop cleanup. Never turn this into branch failure.
+				throw;
+			}
+			catch (OperationCanceledException)
+			{
+				throw;
+			}
+			catch (Exception ex) when (ObservationUnavailableException.Find(ex) is not null)
+			{
+				ObservationFailureDiagnostics.Report(ObservationUnavailableException.Find(ex)!, name);
+				return false;
+			}
 			catch (Exception ex)
 			{
+				ObservationUnavailableException.RethrowCancellation(ex);
 				Logging.WriteDiagnostic("Exception was thrown in {0}", name);
 				Logging.WriteDiagnostic(ex.ToString());
 				if (stopOnError)
@@ -682,6 +690,7 @@ namespace Styx.Logic.BehaviorTree
 			// Never let a stale entry mutate or tear down a different run.
 			if (!ReferenceEquals(_workerThread, owner))
 				return;
+			BotBase? ownedBot = Current;
 
 			try
 			{
@@ -696,9 +705,10 @@ namespace Styx.Logic.BehaviorTree
 						return;
 					State = TreeRootState.Running;
 				}
-					BotEvents.RaiseBotStarted();
-					ObservationFailureDiagnostics.BeginSession();
-				while (State == TreeRootState.Running || State == TreeRootState.Paused)
+				BotEvents.RaiseBotStarted();
+				ObservationFailureDiagnostics.BeginSession();
+				while (ReferenceEquals(_workerThread, owner) && ReferenceEquals(Current, ownedBot)
+					&& (State == TreeRootState.Running || State == TreeRootState.Paused))
 					Tick();
 			}
 			catch (ThreadInterruptedException)
@@ -714,8 +724,8 @@ namespace Styx.Logic.BehaviorTree
 				if (ReferenceEquals(_workerThread, owner))
 				{
 					// Preserve the established cleanup order, without holding a frame.
-					try { Current?.Stop(); } catch { }
-					try { Current?.Root?.Stop(null); } catch { }
+					try { ownedBot?.Stop(); } catch { }
+					try { ownedBot?.Root?.Stop(null); } catch { }
 					try { Navigator.Clear(); } catch { }
 					try { BotPoi.Clear(); } catch { }
 					try { BotEvents.RaiseBotStopped(); } catch { }
@@ -724,8 +734,8 @@ namespace Styx.Logic.BehaviorTree
 						if (ReferenceEquals(_workerThread, owner))
 							State = TreeRootState.Stopped;
 					}
-						ObservationFailureDiagnostics.EndSession();
-						Logging.WriteDebug("Worker thread exited cleanly");
+					ObservationFailureDiagnostics.EndSession();
+					Logging.WriteDebug("Worker thread exited cleanly");
 				}
 			}
 		}

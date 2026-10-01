@@ -45,15 +45,22 @@ namespace Styx
 
 		public static void PulseEvents()
 		{
+			var owner = TreeRoot.Current;
+			bool workerOwned = TreeRoot.CurrentThreadIsBotThread;
 			foreach (Action action in _eventCheckers)
 			{
+				TreeRoot.VerifyPulseOwner(owner, workerOwned);
 				try
 				{
 					action();
 				}
 				catch (Exception ex)
 				{
-					Logging.WriteDebug("Event checker {0} threw exception: {1}", action.Method.Name, ex.Message);
+					ObservationUnavailableException.RethrowCancellation(ex);
+					if (ObservationUnavailableException.Find(ex) is { } unavailable)
+						ObservationFailureDiagnostics.Report(unavailable,
+							action.Method.DeclaringType?.FullName + "." + action.Method.Name);
+					else Logging.WriteDebug("Event checker {0} threw exception: {1}", action.Method.Name, ex.Message);
 				}
 			}
 		}

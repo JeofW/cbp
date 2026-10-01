@@ -107,6 +107,7 @@ namespace Styx.Helpers
             try { Logging.WriteDiagnostic(summary); }
             catch (Exception error) when (error is not OperationCanceledException && error is not ThreadInterruptedException)
             {
+                ObservationUnavailableException.RethrowCancellation(error);
                 // An ordinary UI/log subscriber failure cannot convert UNKNOWN
                 // into worker termination. Retain the evidence through the file sink.
                 Debug.WriteLine(summary);

@@ -77,6 +77,26 @@ internal static class AuraWorkerLivenessRegressionTests
                 f.Run();
                 Check(f.Bot.Pulses == 1 && f.Bot.RootTicks == 0, "Stop allowed root side effects later in the tick");
             }),
+            ("reflection-wrapped cancellation stops the worker exactly once", f =>
+            {
+                f.Bot.BeforePulse = () => throw new TargetInvocationException(new OperationCanceledException("wrapped pulse cancellation"));
+                f.Run();
+                Check(f.Bot.Pulses == 1 && f.Bot.RootTicks == 0, "wrapped cancellation was converted into repeated failed pulses");
+            }),
+            ("reflection-wrapped interruption stops the worker exactly once", f =>
+            {
+                f.Bot.BeforePulse = () => throw new TargetInvocationException(new ThreadInterruptedException("wrapped pulse interruption"));
+                f.Run();
+                Check(f.Bot.Pulses == 1 && f.Bot.RootTicks == 0, "wrapped interruption was converted into repeated failed pulses");
+            }),
+            ("bot replacement stops the old owner without stopping the new bot", f =>
+            {
+                var replacement = new ProbeBot();
+                f.Aura(0); f.Bot.BeforePulse = () => BotManager.Instance.SetCurrent(replacement);
+                f.Run();
+                Check(f.Bot.Pulses == 1 && f.Bot.RootTicks == 0 && replacement.Stops == 0 && replacement.Pulses == 0,
+                    "cleanup or pulse ownership crossed into the replacement bot");
+            }),
             ("SafeAction preserves operation cancellation", f =>
             {
                 var signal = new OperationCanceledException("controlled safe action cancellation");
