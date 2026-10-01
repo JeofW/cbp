@@ -6,6 +6,7 @@ does not establish client collision, physical movement or live quest acceptance.
 from __future__ import annotations
 import argparse
 from datetime import datetime, timezone
+import gzip
 import hashlib
 import json
 import math
@@ -123,7 +124,8 @@ def validate_quest_route_cases(repo: Path, document: dict) -> list[dict]:
             raise ValueError('Case source is missing or outside the selected checkout')
         if not isinstance(expected,str) or not HASH.fullmatch(expected) or digest(path)!=expected:
             raise ValueError('Case source bytes do not match the declared identity')
-        source[kind]=json.loads(path.read_bytes())
+        raw=path.read_bytes()
+        source[kind]=json.loads(gzip.decompress(raw) if path.suffix=='.gz' else raw)
     expected=build_quest_route_cases(source['family'],source['dataset'])
     if document.get('cases')!=expected:
         raise ValueError('Route membership or endpoints differ from the bound source rows')

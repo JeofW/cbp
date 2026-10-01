@@ -1,5 +1,6 @@
 """Source-bound route-case gates, not proof that a route or quest was travelled."""
 import copy
+import gzip
 import hashlib
 import importlib.util
 import json
@@ -83,5 +84,12 @@ class NativeQuestRouteTests(unittest.TestCase):
     def test_source_paths_cannot_escape_the_pinned_checkout(self):
         data=self.bound();data['family_file']='../elsewhere.json'
         with self.assertRaises(ValueError):self.verify(data)
+
+    def test_compressed_source_keeps_exact_semantics_and_stored_identity(self):
+        data=self.bound();raw=(self.root/'family.json').read_bytes()
+        compressed=gzip.compress(raw,mtime=0)
+        (self.root/'family.json.gz').write_bytes(compressed);(self.root/'family.json').unlink()
+        data['family_file']='family.json.gz';data['family_sha256']=hashlib.sha256(compressed).hexdigest()
+        self.assertEqual(self.verify(data),data['cases'])
 
 if __name__=='__main__':unittest.main()

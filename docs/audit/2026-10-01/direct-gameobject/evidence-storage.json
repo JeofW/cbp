@@ -1,0 +1,28 @@
+{
+  "uncompressed_source_commit": "7e73707647a3a116e18e03facbdb23f6d09df967",
+  "stored_evidence": {
+    "family-source.json": {
+      "stored_file": "family-source.json.gz",
+      "logical_sha256": "314d1dcb3f33c6f0d022fda1dfde1de366745d97c9ce75e9e313554c0faab841",
+      "stored_sha256": "fc10dbdc9b25dc703c2a455879bd9b7570aa0f9bebb8eeee4c73092d939b3269",
+      "logical_bytes": 597099,
+      "stored_bytes": 41204
+    },
+    "controlled-traces.json": {
+      "stored_file": "controlled-traces.json.gz",
+      "logical_sha256": "052c265e06bfbb3c60973f65933222b7baedd3600eb0765589d19253b57014fa",
+      "stored_sha256": "a2c3d719e8e4e9887968bd5f50b4925b115f2eb5266a3795af0939db7c8f9d51",
+      "logical_bytes": 164725,
+      "stored_bytes": 8013
+    }
+  },
+  "all_decompressed_bytes_identical": true,
+  "native_route_cases_identical": true,
+  "prior_native_input_sha256": "d211fefff0f97419d8fffaf037632df4a0f369f152b5637c9c86c8c130fcbb55",
+  "current_native_input_sha256": "f48d025fc2f7b38ba26dd790ad56f07646f9b9bed0da7d91ca365588128518f9",
+  "native_query_output_regenerated": false,
+  "detailed_route_hold_rerouted": false,
+  "format_only_note": "The earlier native run used the uncompressed source representation. Current loaders verify compressed stored identity and the same logical source/case bytes. No new native result or physical acceptance is inferred.",
+  "runtime_implementation_changed": false,
+  "created_utc": "2026-10-01T13:13:46.292862+00:00"
+}

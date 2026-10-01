@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -45,8 +46,16 @@ internal static class DirectGameObjectPipelineRegressionTests
     internal static void Run()
     {
         string root = Root();
-        string sourcePath = Path.Combine(root, "docs/audit/2026-10-01/direct-gameobject/family-source.json");
-        using var source = JsonDocument.Parse(File.ReadAllBytes(sourcePath));
+        string sourcePath = Path.Combine(root, "docs/audit/2026-10-01/direct-gameobject/family-source.json.gz");
+        using var compressedSource = File.OpenRead(sourcePath);
+        using var decompressor = new GZipStream(compressedSource, CompressionMode.Decompress);
+        using var logicalSource = new MemoryStream();
+        decompressor.CopyTo(logicalSource);
+        byte[] sourceBytes = logicalSource.ToArray();
+        Check(Convert.ToHexString(SHA256.HashData(sourceBytes)).ToLowerInvariant()
+            == "314d1dcb3f33c6f0d022fda1dfde1de366745d97c9ce75e9e313554c0faab841",
+            "Compressed family source no longer contains the exact reviewed semantic bytes");
+        using var source = JsonDocument.Parse(sourceBytes);
         var candidates = source.RootElement.GetProperty("candidate_replay_ids").EnumerateArray().Select(row => row.GetUInt32()).ToArray();
         Check(candidates.SequenceEqual(new uint[] { 953, 1043, 2988, 8345, 10874, 11900, 11965, 12559, 12613, 13034, 13084 }),
             "Source-bound candidate membership changed; review exact family obligations before extending this replay");

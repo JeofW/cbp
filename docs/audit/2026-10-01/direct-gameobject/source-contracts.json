@@ -87,5 +87,8 @@
     "Styx/WoWInternals/WoWObjects/WoWSubObject.cs": "09556f39e09d2361847fa6b763b5ce6dea316a87ad5882cb111b971d825c57b5",
     "Styx/WoWInternals/WoWObjects/WoWGameObject.cs": "64034dcc564b18f355ad34c486e2e0489a7b4630c0427be490cdde4e2f432bc5"
   },
-  "customized_realm_scripts_inferred": false
+  "customized_realm_scripts_inferred": false,
+  "family_source_hash_scope": "logical UTF-8 bytes before gzip storage",
+  "family_source_file": "family-source.json.gz",
+  "family_source_stored_sha256": "fc10dbdc9b25dc703c2a455879bd9b7570aa0f9bebb8eeee4c73092d939b3269"
 }
