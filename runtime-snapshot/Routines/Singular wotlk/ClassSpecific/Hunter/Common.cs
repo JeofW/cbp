@@ -129,48 +129,48 @@ namespace Singular.ClassSpecific.Hunter
 
         public static Composite CreateHunterTrapBehavior(string trapName, bool useLauncher, UnitSelectionDelegate onUnit)
         {
-            // WotLK 3.3.5a: Traps are cast at hunter's feet, no Trap Launcher
-            return new PrioritySelector(
-                new Decorator(
-                    ret => onUnit != null && onUnit(ret) != null && onUnit(ret).DistanceSqr < 40 * 40 &&
-                           SpellManager.HasSpell(trapName) && !SpellManager.Spells[trapName].Cooldown,
-                    new Switch<string>(() => trapName,
-                        new SwitchArgument<string>("Immolation Trap",
-                            new Action(ret => LegacySpellManager.CastSpellById(49056))), // WotLK Rank 8
-                        new SwitchArgument<string>("Freezing Trap",
-                            new Action(ret => LegacySpellManager.CastSpellById(14311))), // WotLK Rank 3
-                        new SwitchArgument<string>("Explosive Trap",
-                            new Action(ret => LegacySpellManager.CastSpellById(49067))), // WotLK Rank 6
-                        new SwitchArgument<string>("Frost Trap",
-                            new Action(ret => LegacySpellManager.CastSpellById(13809))), // WotLK Frost Trap
-                        new SwitchArgument<string>("Snake Trap",
-                            new Action(ret => LegacySpellManager.CastSpellById(34600)))  // WotLK Snake Trap
-                        )));
+            // Original-client traps are placed at the hunter, not launched at
+            // the selected enemy. Keep the compatibility parameter and the
+            // existing pre-placement range policy; neither promises trap credit.
+            WoWUnit actor = null, subject = null;
+            ulong actorGuid = 0, subjectGuid = 0;
+            bool Current(object context) => actor != null && actorGuid != 0
+                && ReferenceEquals(StyxWoW.Me, actor) && actor.IsValid && actor.IsAlive && actor.Guid == actorGuid
+                && IsHunterTrapCandidate(subject) && subject.Guid == subjectGuid
+                && onUnit != null && ReferenceEquals(onUnit(context), subject)
+                && IsHunterTrapCandidate(subject) && subject.Guid == subjectGuid
+                && Unit.IsCombatActionSafe(trapName, subject)
+                && ReferenceEquals(StyxWoW.Me, actor) && actor.Guid == actorGuid && actor.IsAlive;
+            return new Sequence(
+                new Action(context =>
+                {
+                    actor = StyxWoW.Me; actorGuid = actor?.Guid ?? 0;
+                    subject = null; subjectGuid = 0;
+                    if (!IsHunterTrapName(trapName) || onUnit == null || actor == null || actorGuid == 0
+                        || !actor.IsValid || !actor.IsAlive) return RunStatus.Failure;
+                    subject = onUnit(context); subjectGuid = subject?.Guid ?? 0;
+                    return Current(context) ? RunStatus.Success : RunStatus.Failure;
+                }),
+                // The shared path checks readiness/GCD/resources and owns any
+                // yielded dismount/setup. SpellManager selects the learned rank
+                // and returns whether local executor dispatch completed.
+                Spell.Cast(trapName, context => actor, Current));
         }
 
         public static Composite CreateHunterTrapOnAddBehavior(string trapName)
         {
-            // WotLK 3.3.5a: Traps are cast at hunter's feet, no Trap Launcher
-            return new PrioritySelector(
-                ctx => Unit.NearbyUnfriendlyUnits.OrderBy(u => u.DistanceSqr).
-                                                  FirstOrDefault(
-                                                        u => u.Combat && u != StyxWoW.Me.CurrentTarget &&
-                                                             (!u.IsMoving || u.IsPlayer) && u.DistanceSqr < 40 * 40),
-                new Decorator(
-                    ret => ret != null && SpellManager.HasSpell(trapName) && !SpellManager.Spells[trapName].Cooldown,
-                    new Switch<string>(() => trapName,
-                        new SwitchArgument<string>("Immolation Trap",
-                            new Action(ret => LegacySpellManager.CastSpellById(49056))), // WotLK Rank 8
-                        new SwitchArgument<string>("Freezing Trap",
-                            new Action(ret => LegacySpellManager.CastSpellById(14311))), // WotLK Rank 3
-                        new SwitchArgument<string>("Explosive Trap",
-                            new Action(ret => LegacySpellManager.CastSpellById(49067))), // WotLK Rank 6
-                        new SwitchArgument<string>("Frost Trap",
-                            new Action(ret => LegacySpellManager.CastSpellById(13809))), // WotLK Frost Trap
-                        new SwitchArgument<string>("Snake Trap",
-                            new Action(ret => LegacySpellManager.CastSpellById(34600)))  // WotLK Snake Trap
-                        )));
+            return CreateHunterTrapBehavior(trapName, false, context => Unit.NearbyUnfriendlyUnits
+                .Where(unit => IsHunterTrapCandidate(unit) && unit.Combat && unit != StyxWoW.Me.CurrentTarget
+                    && (!unit.IsMoving || unit.IsPlayer))
+                .OrderBy(unit => unit.DistanceSqr).FirstOrDefault());
         }
+
+        private static bool IsHunterTrapName(string name) => name == "Immolation Trap" || name == "Freezing Trap"
+            || name == "Explosive Trap" || name == "Frost Trap" || name == "Snake Trap";
+
+        private static bool IsHunterTrapCandidate(WoWUnit unit) => unit != null && unit.IsValid && unit.IsAlive
+            && unit.Guid != 0 && !unit.IsMe && !unit.IsFriendly && float.IsFinite(unit.DistanceSqr)
+            && unit.DistanceSqr < 40 * 40;
 
         public static Composite CreateHunterCallPetBehavior(bool reviveInCombat)
         {
