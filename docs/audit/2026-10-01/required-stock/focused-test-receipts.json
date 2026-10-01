@@ -1,0 +1,250 @@
+{
+  "required-stock-red": {
+    "command": [
+      "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+      "Tools/PostMergeAuditRegressionTests/bin/x86/Release/net10.0-windows7.0/PostMergeAuditRegressionTests.dll",
+      "QuestRequiredStockRegressionTests"
+    ],
+    "exit": 1,
+    "started_utc": "2026-09-30T18:31:53.620945+00:00",
+    "finished_utc": "2026-09-30T18:31:54.171641+00:00",
+    "head": "5036010ee45ca0daa5c54723d916c9a9b4e1d973",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "e5d58b5c0e4db705dc9b903d4a33da06ec6e5348072c0ecfa9cbb2964573d61b",
+      "stderr.log": "64cd73c3e3994e9f1d1ab84f619234ef70d0e5f9cafdcf9b8c69bd01596b10f6"
+    }
+  },
+  "required-stock-red-v2": {
+    "command": [
+      "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+      "Tools/PostMergeAuditRegressionTests/bin/x86/Release/net10.0-windows7.0/PostMergeAuditRegressionTests.dll",
+      "QuestRequiredStockRegressionTests"
+    ],
+    "exit": 1,
+    "started_utc": "2026-09-30T18:33:05.042749+00:00",
+    "finished_utc": "2026-09-30T18:33:05.481723+00:00",
+    "head": "5036010ee45ca0daa5c54723d916c9a9b4e1d973",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "d41cc39253a1f55a1566d6d7d912e6932da229823b8f5ee6eed16c5293e99076",
+      "stderr.log": "567b35b8c4cefe5c10ebf204716eabff0a871d024a96b38beef73e8d05ab6534"
+    }
+  },
+  "required-stock-green-v1": {
+    "command": [
+      "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+      "Tools/PostMergeAuditRegressionTests/bin/x86/Release/net10.0-windows7.0/PostMergeAuditRegressionTests.dll",
+      "QuestRequiredStockRegressionTests",
+      "QuestDeliveryPolicyRegressionTests",
+      "QuestSupplementalSupplyRegressionTests",
+      "QuestInventoryAdmissionRegressionTests"
+    ],
+    "exit": 1,
+    "started_utc": "2026-09-30T18:36:44.649114+00:00",
+    "finished_utc": "2026-09-30T18:36:47.479098+00:00",
+    "head": "5036010ee45ca0daa5c54723d916c9a9b4e1d973",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "bbe004a4767a22f3aa10df63c43bdd28c53354d8e3da5c88b70268f97d5f5b8e",
+      "stderr.log": "57ee6b17a016e2a9ea00e90936bb05ee994711bacae2cce21d8f9437683f226f"
+    }
+  },
+  "required-stock-green-v2": {
+    "command": [
+      "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+      "Tools/PostMergeAuditRegressionTests/bin/x86/Release/net10.0-windows7.0/PostMergeAuditRegressionTests.dll",
+      "QuestRequiredStockRegressionTests",
+      "QuestDeliveryPolicyRegressionTests",
+      "QuestSupplementalSupplyRegressionTests",
+      "QuestInventoryAdmissionRegressionTests",
+      "QuestDataRepairPackRegressionTests"
+    ],
+    "exit": 0,
+    "started_utc": "2026-09-30T18:41:16.975087+00:00",
+    "finished_utc": "2026-09-30T18:41:19.941023+00:00",
+    "head": "5036010ee45ca0daa5c54723d916c9a9b4e1d973",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "b7365076976eee0fe0dd332ec285393007f6ae54f921906037a93c181f6f3aff",
+      "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "required-stock-focused-final": {
+    "command": [
+      "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+      "Tools/PostMergeAuditRegressionTests/bin/x86/Release/net10.0-windows7.0/PostMergeAuditRegressionTests.dll",
+      "QuestRequiredStockKnowledgeRegressionTests",
+      "QuestRequiredStockRegressionTests",
+      "QuestDeliveryPolicyRegressionTests",
+      "QuestSupplementalSupplyRegressionTests",
+      "QuestInventoryAdmissionRegressionTests",
+      "QuestCollectionProfileSourceRegressionTests"
+    ],
+    "exit": 0,
+    "started_utc": "2026-09-30T18:47:38.033423+00:00",
+    "finished_utc": "2026-09-30T18:47:41.382633+00:00",
+    "head": "5036010ee45ca0daa5c54723d916c9a9b4e1d973",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "f5325a1183dcc035f088b963103b600a40038834a4aaf5e65f29f5db9e1d9f70",
+      "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "required-stock-knowledge-red": {
+    "command": [
+      "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+      "Tools/PostMergeAuditRegressionTests/bin/x86/Release/net10.0-windows7.0/PostMergeAuditRegressionTests.dll",
+      "QuestRequiredStockKnowledgeRegressionTests"
+    ],
+    "exit": 1,
+    "started_utc": "2026-09-30T18:43:13.575199+00:00",
+    "finished_utc": "2026-09-30T18:43:14.401475+00:00",
+    "head": "5036010ee45ca0daa5c54723d916c9a9b4e1d973",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "0be12440294ca4c7ab8c23229d23c5f2f124d36a25198dc8072305940dbdeda3",
+      "stderr.log": "6ae5218032df02cd34bb0a5d76b9fa8917b2720fc9df83ff658366750e6e4bfb"
+    }
+  },
+  "required-stock-sale-red": {
+    "command": [
+      "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+      "Tools/WholesomeSaleRegressionTests/bin/x86/Release/net10.0/WholesomeSaleRegressionTests.dll"
+    ],
+    "exit": 1,
+    "started_utc": "2026-09-30T18:31:54.356496+00:00",
+    "finished_utc": "2026-09-30T18:31:54.467320+00:00",
+    "head": "5036010ee45ca0daa5c54723d916c9a9b4e1d973",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "4a29cf0b1d7791f01ea7aa75ab23e55cfd9cc3c11e0166c4cec1d4a2be202be0",
+      "stderr.log": "a2a14ad71b2e5a86a02cb6351eeeafa431f3e1bda8062fe1858998481d1b4fe5"
+    }
+  },
+  "required-stock-sale-green": {
+    "command": [
+      "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+      "Tools/WholesomeSaleRegressionTests/bin/x86/Release/net10.0/WholesomeSaleRegressionTests.dll"
+    ],
+    "exit": 0,
+    "started_utc": "2026-09-30T18:36:49.231026+00:00",
+    "finished_utc": "2026-09-30T18:36:49.336687+00:00",
+    "head": "5036010ee45ca0daa5c54723d916c9a9b4e1d973",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "40d91bca9db537597a65da1be0bde796b0e3d50f8d9b2d9084c59d90ed12f24a",
+      "stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "required-stock-exporter-red": {
+    "command": [
+      "python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "Tools/EvidenceAudit",
+      "-p",
+      "test_quest_required_stock_335.py",
+      "-v"
+    ],
+    "exit": 1,
+    "started_utc": "2026-09-30T18:31:54.641069+00:00",
+    "finished_utc": "2026-09-30T18:31:54.779938+00:00",
+    "head": "5036010ee45ca0daa5c54723d916c9a9b4e1d973",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr.log": "72db1c276a45dc8f0289aa2913c251cdf6c12190b785f10006fc455b6cdc9e0b"
+    }
+  },
+  "required-stock-exporter-green": {
+    "command": [
+      "python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "Tools/EvidenceAudit",
+      "-p",
+      "test_quest_required_stock_335.py",
+      "-v"
+    ],
+    "exit": 0,
+    "started_utc": "2026-09-30T18:35:36.437054+00:00",
+    "finished_utc": "2026-09-30T18:35:36.599782+00:00",
+    "head": "5036010ee45ca0daa5c54723d916c9a9b4e1d973",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr.log": "4890facc2705e6d7eaba258d3a0ced926cf98b08bed3c50a68f3cae016b58c07"
+    }
+  },
+  "required-stock-receipt-red": {
+    "command": [
+      "python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "Tools/EvidenceAudit",
+      "-p",
+      "test_required_stock_receipts_335.py",
+      "-v"
+    ],
+    "exit": 1,
+    "started_utc": "2026-09-30T18:42:32.343133+00:00",
+    "finished_utc": "2026-09-30T18:42:32.488219+00:00",
+    "head": "5036010ee45ca0daa5c54723d916c9a9b4e1d973",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr.log": "03a83a06c97be57fc7ed2d9b82d493770e5cfa135aa970f0cdcae4367eff325e"
+    }
+  },
+  "required-stock-receipt-green": {
+    "command": [
+      "python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "Tools/EvidenceAudit",
+      "-p",
+      "test_required_stock_receipts_335.py",
+      "-v"
+    ],
+    "exit": 0,
+    "started_utc": "2026-09-30T18:45:39.429319+00:00",
+    "finished_utc": "2026-09-30T18:45:39.564462+00:00",
+    "head": "5036010ee45ca0daa5c54723d916c9a9b4e1d973",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr.log": "cfd454163d1315f8261c31faddec83b908dc0f0265e51b8ea7902d61aa44f490"
+    }
+  },
+  "required-stock-analyzers-green": {
+    "command": [
+      "python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "Tools/EvidenceAudit",
+      "-p",
+      "test_*.py",
+      "-v"
+    ],
+    "exit": 0,
+    "started_utc": "2026-09-30T18:47:41.562817+00:00",
+    "finished_utc": "2026-09-30T18:47:47.274783+00:00",
+    "head": "5036010ee45ca0daa5c54723d916c9a9b4e1d973",
+    "working_tree_modified": true,
+    "files": {
+      "stdout.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr.log": "a7d2a6b08fb739c501eee0d24c6da8cdce68d50185e81a2a56fa9df59da8d1e8"
+    }
+  }
+}

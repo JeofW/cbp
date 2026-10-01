@@ -1,0 +1,13 @@
+{
+  "held_source_requests": {
+    "BANK_SOURCE_PROBE_BLOCK_20261001.json": "1260f7e65e13b7323b6c17a1bdd72781874babb5b2791c9581dc4f0ba0860953",
+    "DONOR_PASS_SOURCE_REVIEW_BLOCKS_20261001.json": "6199d558b0f860453f024f2f48860b4023a37860c21c3dd8748ee548c56976d5",
+    "REMAINING_DATA_FAMILY_PROBE_BLOCK_20261001.json": "61902d354c90b4b1870a292177baf5ba8ad51098e4076bb6ee76146c7bb2fe18"
+  },
+  "records_directory": "D:/Dev/CopilotBuddy-Evidence/postmerge-20260930-pr61",
+  "original_payloads_also_retained_in_parent": "../collection-donors",
+  "aggregate_loot_group_hold": "../collection-sources/source-review-provider-holds.json",
+  "current_scope_independent_evidence": "Five specific primary item contracts inspected successfully in completed session69711; no aggregate-source reroute.",
+  "remaining_offline_work_exhausted": false,
+  "provider_requests_rerouted": false
+}

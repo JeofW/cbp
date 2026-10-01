@@ -119,12 +119,14 @@ namespace WholesomeAQ
                 bool hasAvailability = root.ValueKind == JsonValueKind.Object && root.TryGetProperty("QuestAvailabilityConditions", out _);
                 bool hasPreviousRepairs = root.ValueKind == JsonValueKind.Object && root.TryGetProperty("DependentPreviousQuestRepairs", out _);
                 bool hasCollectionRoutes = root.ValueKind == JsonValueKind.Object && root.TryGetProperty("CollectionRouteRepairs", out _);
+                bool hasRequiredStock = root.ValueKind == JsonValueKind.Object && root.TryGetProperty("QuestRequiredStock", out _);
                 if (hasCountRepairs) fields = fields.Concat(new[] { "ObjectiveCountRepairs" }).ToArray();
                 if (hasObjectRepairs) fields = fields.Concat(new[] { "GameObjectObjectiveRepairs" }).ToArray();
                 if (hasCreditSources) fields = fields.Concat(new[] { "ObjectiveCreditSources" }).ToArray();
                 if (hasAvailability) fields = fields.Concat(new[] { "QuestAvailabilityConditions" }).ToArray();
                 if (hasPreviousRepairs) fields = fields.Concat(new[] { "DependentPreviousQuestRepairs" }).ToArray();
                 if (hasCollectionRoutes) fields = fields.Concat(new[] { "CollectionRouteRepairs" }).ToArray();
+                if (hasRequiredStock) fields = fields.Concat(new[] { "QuestRequiredStock" }).ToArray();
                 Exact(root, fields);
                 if (Text(root, "Schema") != "quest-data-repair-pack-335-v1" || Integer(root, "ClientBuild") != 12340 ||
                     Text(root, "SourceCore") != "trinitycore-3.3.5")
@@ -352,6 +354,7 @@ namespace WholesomeAQ
                 if (hasPreviousRepairs) ApplyDependentPreviousQuestRepairs(root, result);
                 if (hasCollectionRoutes) ApplyCollectionRouteRepairs(root, result, countOwners, objectOwners);
                 if (hasAvailability) ApplyAvailabilityConditions(root, quests);
+                if (hasRequiredStock) ApplyRequiredStock(root, quests);
                 source = "trinitycore-3.3.5:" + revision + ":" + database + ":" + sql;
                 return result;
             }
@@ -403,7 +406,7 @@ namespace WholesomeAQ
             if (value.Length != length || value.Any(c => !Uri.IsHexDigit(c))) throw new InvalidDataException("Invalid repair digest: " + name);
             return value.ToLowerInvariant();
         }
-        private static int Integer(JsonElement row, string name) => row.GetProperty(name).TryGetInt32(out int value)
+        private static int Integer(JsonElement row, string name) => row.GetProperty(name).ValueKind == JsonValueKind.Number && row.GetProperty(name).TryGetInt32(out int value)
             ? value : throw new InvalidDataException("Invalid repair integer: " + name);
         private static int Positive(JsonElement row, string name)
         {

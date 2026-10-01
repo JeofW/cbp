@@ -34,6 +34,14 @@ Test("configured quality mask is preserved",b=>{b._settings.SellGreen=b._setting
 Test("food drink and special inventory remain protected",b=>{Consumable.Food=new Item{Entry=610};Consumable.Drink=new Item{Entry=611};for(int i=1;i<=4;i++)StyxWoW.Me!.BagItems.Add(new Item{Entry=(uint)(611+i),ItemClass=(WoWItemClass)i});b.RunSale();Sent();for(uint id=610;id<=615;id++)Protect(id);});
 Test("inventory needed by a newly accepted quest is reconsidered on next call",b=>{AddQuest(b,867,620,false,false);b.RunSale();StyxWoW.Me!.QuestLog.Quests!.Add(new AcceptedQuest{Id=867});MerchantFrame.Instance=new();b.RunSale();Sent();Protect(620);});
 Test("thread cancellation is not swallowed or followed by a sale",b=>{StyxWoW.Me!.QuestLog.Failure=new System.Threading.ThreadInterruptedException();try{b.RunSale();throw new InvalidOperationException("cancellation swallowed");}catch(System.Threading.ThreadInterruptedException){}NoSale();});
+Test("accepted delivery materials are protected without a collection objective",b=>{AddQuest(b,867,0,false,true);b._dataLoader.Database!.Quests![0].DeliveryItems=new(){new(){ItemId=701,Count=2}};b.RunSale();Sent();Protect(701);});
+Test("scheduled delivery materials are protected before acceptance",b=>{AddQuest(b,867,0,true,false);b._dataLoader.Database!.Quests![0].DeliveryItems=new(){new(){ItemId=702,Count=2}};b.RunSale();Sent();Protect(702);});
+Test("accepted completed required stock remains protected",b=>{AddQuest(b,867,0,false,true,true);b._dataLoader.Database!.Quests![0].RequiredStockItems=new[]{new QuestItemRequirement{ItemId=703,Count=3}};b.RunSale();Sent();Protect(703);});
+Test("scheduled required stock remains protected",b=>{AddQuest(b,867,0,true,false);b._dataLoader.Database!.Quests![0].RequiredStockItems=new[]{new QuestItemRequirement{ItemId=704,Count=3}};b.RunSale();Sent();Protect(704);});
+Test("supplemental and acceptance material IDs are retained",b=>{AddQuest(b,867,0,false,true);var q=b._dataLoader.Database!.Quests![0];q.AcceptanceSupplies=new(){new(){ItemId=705,Count=1}};q.SupplementalSupply=new(){ItemId=706,RequiredCount=1,ProvidedCount=1};b.RunSale();Sent();Protect(705);Protect(706);});
+Test("unrelated inactive required stock does not freeze selling",b=>{AddQuest(b,867,0,false,false);b._dataLoader.Database!.Quests![0].RequiredStockItems=new[]{new QuestItemRequirement{ItemId=707,Count=3}};b.RunSale();Sent();Check(!MerchantFrame.Instance.Ids.Contains(707),"inactive stock was blanket protected");});
+Test("invalid required-stock metadata cannot authorize sale",b=>{AddQuest(b,867,0,false,true);b._dataLoader.Database!.Quests![0].RequiredStockItems=new[]{new QuestItemRequirement{ItemId=708,Count=0}};b.RunSale();NoSale();});
+Test("null accepted delivery material cannot be silently skipped",b=>{AddQuest(b,867,0,false,true);b._dataLoader.Database!.Quests![0].DeliveryItems=new(){null!};b.RunSale();NoSale();});
 var errors=new List<string>();
 foreach(var t in cases)
 {

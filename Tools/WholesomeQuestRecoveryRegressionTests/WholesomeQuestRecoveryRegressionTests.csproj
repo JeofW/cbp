@@ -17,6 +17,7 @@
     <Compile Include="..\..\runtime-snapshot\Bots\WholesomeAutoQuest-master\QuestDependentPreviousRepairs.cs" Link="QuestDependentPreviousRepairs.cs" />
     <Compile Include="..\..\runtime-snapshot\Bots\WholesomeAutoQuest-master\QuestAvailabilityPolicy.cs" Link="QuestAvailabilityPolicy.cs" />
     <Compile Include="..\..\runtime-snapshot\Bots\WholesomeAutoQuest-master\QuestDeliveryPolicy.cs" Link="QuestDeliveryPolicy.cs" />
+    <Compile Include="..\..\runtime-snapshot\Bots\WholesomeAutoQuest-master\QuestRequiredStockPolicy.cs" Link="QuestRequiredStockPolicy.cs" />
     <Compile Include="..\..\runtime-snapshot\Bots\WholesomeAutoQuest-master\QuestDependencyCatalog.cs" Link="QuestDependencyCatalog.cs" />
     <Compile Include="..\..\runtime-snapshot\Bots\WholesomeAutoQuest-master\ProfileBuilder.cs" Link="ProfileBuilder.cs" />
     <Compile Include="..\..\runtime-snapshot\Bots\WholesomeAutoQuest-master\QuestScheduler.cs" Link="QuestScheduler.cs" />

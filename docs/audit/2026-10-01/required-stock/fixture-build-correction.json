@@ -1,0 +1,13 @@
+{
+  "first_candidate": "05e59ef5f576c68298f091dff0eeda1ddfdf09c0",
+  "initial_attempt_directory": "D:/Dev/CopilotBuddy-Evidence/postmerge-20260929/required-stock-05e59ef5-20261001",
+  "source_stable": true,
+  "executed_commands": 31,
+  "failed_builds": ["QuestLogObservationRegressionTests-build", "QuestCompletionOwnerRegressionTests-build", "QuestObservationBoundaryRegressionTests-build"],
+  "root_cause": "The extracted real sale owner now reads material lists. Two data-only boundary QuestEntry types lacked DeliveryItems, AcceptanceSupplies, SupplementalSupply, RequiredStockItems and their quantity DTOs. The completion suite shares the log-observation boundary, accounting for three failed builds from two stale fixtures.",
+  "correction": "Add only those data fields and quantity DTOs to the two existing boundary fixtures, matching the already updated sale fixture. Keep exact owner extraction, existing assertions and production source unchanged.",
+  "assertions_removed": false,
+  "production_code_changed_by_correction": false,
+  "fresh_full_candidate_acceptance_required": true,
+  "why_31_instead_of_34": "Each failed build prevented its following run command. The complete fresh pipeline still expects the original 34 logical commands, not a forced reinterpretation of the failed attempt."
+}

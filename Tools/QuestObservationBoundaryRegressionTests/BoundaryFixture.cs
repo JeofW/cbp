@@ -138,7 +138,11 @@ namespace WholesomeAQ
         }
     }
     public sealed class Objective { public int ItemId; }
-    public sealed class QuestEntry { public int Id, StartItem; public List<Objective> Objectives = new(); }
+    // Data-only fields required by the exact extracted sale owner. No decision
+    // method or source-extraction assertion is replaced by this boundary.
+    public sealed class QuestItemRequirement { public int ItemId, Count; }
+    public sealed class QuestSupplementalSupply { public int ItemId, RequiredCount, ProvidedCount; }
+    public sealed class QuestEntry { public int Id, StartItem; public List<Objective> Objectives = new(); public List<QuestItemRequirement> DeliveryItems, AcceptanceSupplies; public IReadOnlyList<QuestItemRequirement> RequiredStockItems; public QuestSupplementalSupply SupplementalSupply; }
     public sealed class Database { public List<QuestEntry> Quests = new(); }
     public sealed class Loader { public Database Database = new(); }
     public sealed class Scheduler { public HashSet<int> ActiveQuestIds { get; set; } = new(); }

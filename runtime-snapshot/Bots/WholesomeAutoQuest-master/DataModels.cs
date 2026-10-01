@@ -151,6 +151,10 @@ namespace WholesomeAQ
         // Base JSON cannot inject availability predicates or observed quest state.
         [System.Text.Json.Serialization.JsonIgnore]
         public QuestAvailabilityContract AvailabilityConditions { get; internal set; }
+        // Additional required materials with no acquisition owner. Only a
+        // validated source-bound repair may declare them; never observed stock.
+        [System.Text.Json.Serialization.JsonIgnore]
+        public IReadOnlyList<QuestItemRequirement> RequiredStockItems { get; internal set; }
         // Null means no source-bound delivery contract. These are requirements,
         // never a claim that acceptance actually supplied an item to this actor.
         public List<QuestItemRequirement> DeliveryItems { get; set; }

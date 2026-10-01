@@ -46,6 +46,8 @@ internal static class QuestDatasetSimulationRegressionTests
         public string repair_sha256 { get; set; } = "absent";
         public string execution_fingerprint { get; set; } = "legacy-direct-model";
         public object? availability_condition_validation { get; set; }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public object? required_stock_validation { get; set; }
     }
 
     private sealed class Context
@@ -115,6 +117,9 @@ internal static class QuestDatasetSimulationRegressionTests
         {
             var counts = ItemIds.Where(id => id > 0).Distinct().ToDictionary(id => id, _ => 0L);
             if (AvailabilityItemCounts != null) foreach (var item in AvailabilityItemCounts) counts[item.Key] = item.Value;
+            // Explicit controlled starting inventory, never an acquisition or
+            // source-supply claim. Production only reads actual carried stock.
+            if (Quest.RequiredStockItems != null) foreach (var item in Quest.RequiredStockItems) counts[item.ItemId] = item.Count;
             return counts;
         }
         internal bool Pickup(QuestScheduleResult result) => result.Plan.Any(value => value.Quest.Id == Quest.Id && value.Stage == QuestWorkStage.Pickup);
@@ -133,10 +138,14 @@ internal static class QuestDatasetSimulationRegressionTests
         // The base schema deliberately ignores validated catalog metadata. The
         // audit exporter includes it explicitly without enabling JSON injection.
         var conditions = database.Quests.Where(quest => quest.AvailabilityConditions != null).Select(quest => quest.AvailabilityConditions).ToArray();
-        if (database.ObjectiveCreditSources.Count == 0 && conditions.Length == 0) return JsonSerializer.Serialize(database, Json);
+        var stock = database.Quests.Where(quest => quest.RequiredStockItems != null).ToDictionary(quest => quest.Id, quest => quest.RequiredStockItems);
+        if (database.ObjectiveCreditSources.Count == 0 && conditions.Length == 0 && stock.Count == 0) return JsonSerializer.Serialize(database, Json);
         var model = JsonSerializer.SerializeToNode(database, Json)!.AsObject();
         model["ObjectiveCreditSources"] = JsonSerializer.SerializeToNode(database.ObjectiveCreditSources, Json);
         if (conditions.Length != 0) model["QuestAvailabilityConditions"] = JsonSerializer.SerializeToNode(conditions, Json);
+        foreach (var quest in model["Quests"]!.AsArray())
+            if (stock.TryGetValue(quest!["Id"]!.GetValue<int>(), out var requirements))
+                quest["RequiredStockItems"] = JsonSerializer.SerializeToNode(requirements, Json);
         return model.ToJsonString(Json);
     }
 
@@ -191,6 +200,7 @@ internal static class QuestDatasetSimulationRegressionTests
                     reference = evidence, normal_slot_encoding = "original-client high-bit GO identities; four physical counters" };
                 record.production_owners.Add("QuestScheduler.MaterializeSchedule");
                 if (quest.AvailabilityConditions != null) AvailabilityCases(context, record);
+                if (quest.RequiredStockItems != null) RequiredStockCases(context, record, fixture);
                 bool baseline = context.Pickup(context.Schedule());
                 Case(record, "repeat-same-observations-stable-plan", () => Check(Signature(context.Schedule()) == Signature(context.Schedule()), "same observations changed the selected plan"));
                 Case(record, "incomplete-log-withholds-work", () => Check(!context.AnyWork(context.Schedule(logComplete: false)), "incomplete log published work"));
@@ -259,9 +269,20 @@ internal static class QuestDatasetSimulationRegressionTests
                             Check(!context.Pickup(context.Schedule(activeParents: unavailable)), "missing/failed active parent admitted pickup");
                         });
                 if (quest.StartItem > 0 && !QuestDeliveryPolicy.HasContract(quest))
+                {
                     Case(record, "provided-StartItem-presence-does-not-invent-pickup-recipe", () =>
-                        Check(context.Pickup(context.Schedule(items: new Dictionary<int, long> { [quest.StartItem] = 1 })) == baseline,
-                            "a provided-on-acceptance item changed pickup policy"));
+                    {
+                        // Change only the source item being tested. Keep other
+                        // observed availability/required-stock facts unchanged.
+                        var held = context.InitialCarriedCounts(); held[quest.StartItem] = 1;
+                        Check(context.Pickup(context.Schedule(items: held)) == baseline,
+                            "a provided-on-acceptance item changed pickup policy");
+                    });
+                    if (quest.RequiredStockItems != null)
+                        Case(record, "provided-StartItem-cannot-replace-required-stock", () =>
+                            Check(!context.Pickup(context.Schedule(items: new Dictionary<int,long> { [quest.StartItem] = 1 })),
+                                "a source item replaced unrelated required carried materials"));
+                }
                 if (effectiveModel)
                 {
                     if (quest.RequiredSkillID > 0 && quest.RequiredSkillPoints > 0)
@@ -678,6 +699,71 @@ internal static class QuestDatasetSimulationRegressionTests
         record.production_owners.Add("QuestAvailabilityPolicy.Evaluate and RequirementsCurrent with each source reference in all five original quest states");
     }
 
+    private static void RequiredStockCases(Context context, Record record, QuestDatasetObservationFixture fixture)
+    {
+        var quest = context.Quest; var requirements = quest.RequiredStockItems!;
+        int startingPasses = record.passed_cases, startingFailures = record.failed_cases;
+        fixture.SetQuest((uint)quest.Id, quest.Name, context.Level, context.NormalIds, context.NormalCounts, context.ItemIds, context.ItemCounts);
+        fixture.SetRaceClass(context.Race, context.ClassId); fixture.SetAccepted(false); fixture.SetHistory(context.Completed);
+        var initial = context.InitialCarriedCounts();
+        bool baseline = context.Pickup(context.Schedule(items: initial));
+        Dictionary<int,long> ReadCarried() => fixture.Player.CarriedItems.GroupBy(item => (int)item.Entry)
+            .ToDictionary(group => group.Key, group => group.Sum(item => (long)item.StackCount));
+        foreach (var requirement in requirements)
+        {
+            int item = requirement.ItemId, needed = requirement.Count;
+            foreach (string state in new[] { "unknown", "zero", "partial", "full", "lost" })
+            {
+                string observedState = state;
+                Case(record, "required-stock-item=" + item + ":observed=" + observedState, () =>
+                {
+                    if (observedState == "unknown")
+                    {
+                        Check(QuestRequiredStockPolicy.Rejection(quest, null) != null && !context.Pickup(context.Schedule(omitInventory: true)),
+                            "unknown inventory satisfied a required-stock contract");
+                        return;
+                    }
+                    var supplied = new Dictionary<int,long>(initial);
+                    if (observedState == "lost") { fixture.SetInventory(supplied); supplied.Remove(item); }
+                    else supplied[item] = observedState == "full" ? needed : observedState == "partial" ? needed - 1 : 0;
+                    fixture.SetInventory(supplied); var actual = ReadCarried();
+                    if (observedState == "full")
+                    {
+                        Check(QuestRequiredStockPolicy.Rejection(quest, actual) == null,
+                            "real inventory reader failed the declared stock quantity");
+                        Check(context.Pickup(context.Schedule(items: actual)) == baseline,
+                            "actual stock receipt changed otherwise identical pickup admission");
+                    }
+                    else
+                    {
+                        Check(QuestRequiredStockPolicy.Rejection(quest, actual) != null && !context.Pickup(context.Schedule(items: actual)),
+                            "missing or partial required stock authorized pickup");
+                        Check(!context.Schedule(accepted: true, complete: true, items: actual).Plan.Any(entry => entry.Quest.Id == quest.Id && entry.Stage == QuestWorkStage.TurnIn),
+                            "server-ready status replaced a required material receipt");
+                    }
+                });
+            }
+        }
+        Case(record, "required-stock-missing-observation-withholds-pickup", () =>
+            Check(!context.Pickup(context.Schedule(omitInventory: true)), "unknown inventory authorized stock-sensitive pickup"));
+        Case(record, "required-stock-held-items-not-server-ready", () =>
+        {
+            fixture.SetInventory(initial); var actual = ReadCarried();
+            Check(QuestRequiredStockPolicy.Rejection(quest, actual) == null &&
+                !context.Schedule(accepted: true, items: actual).Plan.Any(entry => entry.Quest.Id == quest.Id && entry.Stage == QuestWorkStage.TurnIn),
+                "observed starting materials fabricated completion of ordinary objectives");
+        });
+        Case(record, "required-stock-keeps-ordinary-objectives", () =>
+            Check(quest.Objectives.Any(objective => objective.Type != DataKind.TurnInOnly) &&
+                requirements.All(item => item.ItemId != quest.StartItem && item.ItemId != quest.SupplementalSupply?.ItemId &&
+                    quest.Objectives.All(objective => objective.ItemId != item.ItemId)),
+                "required stock replaced an ordinary or supplied-item owner"));
+        record.required_stock_validation = new { quest_id = quest.Id, items = requirements,
+            passed_cases = record.passed_cases - startingPasses, failed_cases = record.failed_cases - startingFailures,
+            acquisition_proven = false, observation_limit = "Explicit starting inventory in the test process; acquisition remains unmodeled." };
+        record.production_owners.Add("QuestRequiredStockPolicy and actual inventory readers -> scheduler pickup/turn-in stock gates; acquisition unresolved");
+    }
+
     private static bool TrySelectActorPair(QuestEntry quest, JsonElement pairs, out int race, out int playerClass)
     {
         race = 0; playerClass = 0;
@@ -709,6 +795,14 @@ internal static class QuestDatasetSimulationRegressionTests
         fixture.SetQuest(id, quest.Name, context.Level, context.NormalIds, context.NormalCounts, context.ItemIds, context.ItemCounts);
         if(context.EffectiveModel)fixture.SetRaceClass(context.Race,context.ClassId);
         fixture.SetAccepted(false); fixture.SetHistory(context.Completed);
+        if (quest.RequiredStockItems != null)
+            Case(record, "pipeline-required-stock-observed-before-pickup", () =>
+            {
+                fixture.SetInventory(context.InitialCarriedCounts());
+                var observed = fixture.Player.CarriedItems.GroupBy(item => (int)item.Entry)
+                    .ToDictionary(group => group.Key, group => group.Sum(item => (long)item.StackCount));
+                Check(context.Pickup(context.Schedule(items: observed)), "required starting materials did not reach actual pickup admission");
+            });
         if (quest.AvailabilityConditions?.Groups.SelectMany(g => g.Conditions).Any(p => p.Type == 2) == true)
             Case(record, "pipeline-carried-availability-observation", () =>
             {
@@ -754,6 +848,7 @@ internal static class QuestDatasetSimulationRegressionTests
         fixture.SetAccepted(true);
         Case(record, "pipeline-pickup-acknowledges-accepted-log", () => Check(pickupOwner.IsDone, "accepted quest did not finish pickup"));
         var completedCounts = new int[4]; var carried = context.ItemIds.Where(value => value > 0).Distinct().ToDictionary(value => value, _ => 0L);
+        if (quest.RequiredStockItems != null) foreach (var item in quest.RequiredStockItems) carried[item.ItemId] = item.Count;
         int startingFailures = record.failed_cases;
         if (context.EffectiveModel && quest.SupplementalSupply != null)
         {

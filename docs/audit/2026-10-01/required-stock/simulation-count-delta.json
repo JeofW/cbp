@@ -1,0 +1,580 @@
+{
+  "before_checks": 261209,
+  "after_checks": 261306,
+  "added_cases": [
+    {
+      "quest_id": 565,
+      "case": "pipeline-counts-do-not-invent-server-complete-flag",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 565,
+      "case": "pipeline-generated-turn-in-profile",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 565,
+      "case": "pipeline-next-scheduling-retains-rewarded-history",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 565,
+      "case": "pipeline-required-stock-observed-before-pickup",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 565,
+      "case": "pipeline-turn-in-acknowledges-rewarded-removal",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 565,
+      "case": "pipeline-turn-in-awaits-reward",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 565,
+      "case": "required-stock-held-items-not-server-ready",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 565,
+      "case": "required-stock-item=2321:observed=full",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 565,
+      "case": "required-stock-item=2321:observed=lost",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 565,
+      "case": "required-stock-item=2321:observed=partial",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 565,
+      "case": "required-stock-item=2321:observed=unknown",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 565,
+      "case": "required-stock-item=2321:observed=zero",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 565,
+      "case": "required-stock-item=2997:observed=full",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 565,
+      "case": "required-stock-item=2997:observed=lost",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 565,
+      "case": "required-stock-item=2997:observed=partial",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 565,
+      "case": "required-stock-item=2997:observed=unknown",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 565,
+      "case": "required-stock-item=2997:observed=zero",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 565,
+      "case": "required-stock-item=3719:observed=full",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 565,
+      "case": "required-stock-item=3719:observed=lost",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 565,
+      "case": "required-stock-item=3719:observed=partial",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 565,
+      "case": "required-stock-item=3719:observed=unknown",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 565,
+      "case": "required-stock-item=3719:observed=zero",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 565,
+      "case": "required-stock-keeps-ordinary-objectives",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 565,
+      "case": "required-stock-missing-observation-withholds-pickup",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 2746,
+      "case": "pipeline-counts-do-not-invent-server-complete-flag",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 2746,
+      "case": "pipeline-generated-turn-in-profile",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 2746,
+      "case": "pipeline-next-scheduling-retains-rewarded-history",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 2746,
+      "case": "pipeline-required-stock-observed-before-pickup",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 2746,
+      "case": "pipeline-turn-in-acknowledges-rewarded-removal",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 2746,
+      "case": "pipeline-turn-in-awaits-reward",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 2746,
+      "case": "required-stock-held-items-not-server-ready",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 2746,
+      "case": "required-stock-item=8683:observed=full",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 2746,
+      "case": "required-stock-item=8683:observed=lost",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 2746,
+      "case": "required-stock-item=8683:observed=partial",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 2746,
+      "case": "required-stock-item=8683:observed=unknown",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 2746,
+      "case": "required-stock-item=8683:observed=zero",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 2746,
+      "case": "required-stock-keeps-ordinary-objectives",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 2746,
+      "case": "required-stock-missing-observation-withholds-pickup",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10757,
+      "case": "pipeline-counts-do-not-invent-server-complete-flag",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10757,
+      "case": "pipeline-generated-turn-in-profile",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10757,
+      "case": "pipeline-next-scheduling-retains-rewarded-history",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10757,
+      "case": "pipeline-required-stock-observed-before-pickup",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10757,
+      "case": "pipeline-turn-in-acknowledges-rewarded-removal",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10757,
+      "case": "pipeline-turn-in-awaits-reward",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10757,
+      "case": "required-stock-held-items-not-server-ready",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10757,
+      "case": "required-stock-item=22445:observed=full",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10757,
+      "case": "required-stock-item=22445:observed=lost",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10757,
+      "case": "required-stock-item=22445:observed=partial",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10757,
+      "case": "required-stock-item=22445:observed=unknown",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10757,
+      "case": "required-stock-item=22445:observed=zero",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10757,
+      "case": "required-stock-item=23445:observed=full",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10757,
+      "case": "required-stock-item=23445:observed=lost",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10757,
+      "case": "required-stock-item=23445:observed=partial",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10757,
+      "case": "required-stock-item=23445:observed=unknown",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10757,
+      "case": "required-stock-item=23445:observed=zero",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10757,
+      "case": "required-stock-keeps-ordinary-objectives",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10757,
+      "case": "required-stock-missing-observation-withholds-pickup",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10763,
+      "case": "pipeline-counts-do-not-invent-server-complete-flag",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10763,
+      "case": "pipeline-generated-turn-in-profile",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10763,
+      "case": "pipeline-next-scheduling-retains-rewarded-history",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10763,
+      "case": "pipeline-required-stock-observed-before-pickup",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10763,
+      "case": "pipeline-turn-in-acknowledges-rewarded-removal",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10763,
+      "case": "pipeline-turn-in-awaits-reward",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10763,
+      "case": "required-stock-held-items-not-server-ready",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10763,
+      "case": "required-stock-item=22445:observed=full",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10763,
+      "case": "required-stock-item=22445:observed=lost",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10763,
+      "case": "required-stock-item=22445:observed=partial",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10763,
+      "case": "required-stock-item=22445:observed=unknown",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10763,
+      "case": "required-stock-item=22445:observed=zero",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10763,
+      "case": "required-stock-item=23445:observed=full",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10763,
+      "case": "required-stock-item=23445:observed=lost",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10763,
+      "case": "required-stock-item=23445:observed=partial",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10763,
+      "case": "required-stock-item=23445:observed=unknown",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10763,
+      "case": "required-stock-item=23445:observed=zero",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10763,
+      "case": "required-stock-keeps-ordinary-objectives",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 10763,
+      "case": "required-stock-missing-observation-withholds-pickup",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 13906,
+      "case": "pipeline-counts-do-not-invent-server-complete-flag",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 13906,
+      "case": "pipeline-generated-turn-in-profile",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 13906,
+      "case": "pipeline-next-scheduling-retains-rewarded-history",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 13906,
+      "case": "pipeline-required-stock-observed-before-pickup",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 13906,
+      "case": "pipeline-supplemental-item-loss-revokes-turn-in",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 13906,
+      "case": "pipeline-turn-in-acknowledges-rewarded-removal",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 13906,
+      "case": "pipeline-turn-in-awaits-reward",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 13906,
+      "case": "provided-StartItem-cannot-replace-required-stock",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 13906,
+      "case": "required-stock-held-items-not-server-ready",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 13906,
+      "case": "required-stock-item=47196:observed=full",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 13906,
+      "case": "required-stock-item=47196:observed=lost",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 13906,
+      "case": "required-stock-item=47196:observed=partial",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 13906,
+      "case": "required-stock-item=47196:observed=unknown",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 13906,
+      "case": "required-stock-item=47196:observed=zero",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 13906,
+      "case": "required-stock-item=8170:observed=full",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 13906,
+      "case": "required-stock-item=8170:observed=lost",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 13906,
+      "case": "required-stock-item=8170:observed=partial",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 13906,
+      "case": "required-stock-item=8170:observed=unknown",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 13906,
+      "case": "required-stock-item=8170:observed=zero",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 13906,
+      "case": "required-stock-keeps-ordinary-objectives",
+      "status": "PASS"
+    },
+    {
+      "quest_id": 13906,
+      "case": "required-stock-missing-observation-withholds-pickup",
+      "status": "PASS"
+    }
+  ],
+  "removed_cases": [],
+  "same_name_status_changes": [],
+  "stock_receipts": {
+    "565": {
+      "quest_id": 565,
+      "items": [
+        {
+          "ItemId": 2321,
+          "Count": 1
+        },
+        {
+          "ItemId": 2997,
+          "Count": 1
+        },
+        {
+          "ItemId": 3719,
+          "Count": 1
+        }
+      ],
+      "passed_cases": 18,
+      "failed_cases": 0,
+      "acquisition_proven": false,
+      "observation_limit": "Explicit starting inventory in the test process; acquisition remains unmodeled."
+    },
+    "2746": {
+      "quest_id": 2746,
+      "items": [
+        {
+          "ItemId": 8683,
+          "Count": 2
+        }
+      ],
+      "passed_cases": 8,
+      "failed_cases": 0,
+      "acquisition_proven": false,
+      "observation_limit": "Explicit starting inventory in the test process; acquisition remains unmodeled."
+    },
+    "10757": {
+      "quest_id": 10757,
+      "items": [
+        {
+          "ItemId": 22445,
+          "Count": 2
+        },
+        {
+          "ItemId": 23445,
+          "Count": 4
+        }
+      ],
+      "passed_cases": 13,
+      "failed_cases": 0,
+      "acquisition_proven": false,
+      "observation_limit": "Explicit starting inventory in the test process; acquisition remains unmodeled."
+    },
+    "10763": {
+      "quest_id": 10763,
+      "items": [
+        {
+          "ItemId": 22445,
+          "Count": 2
+        },
+        {
+          "ItemId": 23445,
+          "Count": 4
+        }
+      ],
+      "passed_cases": 13,
+      "failed_cases": 0,
+      "acquisition_proven": false,
+      "observation_limit": "Explicit starting inventory in the test process; acquisition remains unmodeled."
+    },
+    "13906": {
+      "quest_id": 13906,
+      "items": [
+        {
+          "ItemId": 8170,
+          "Count": 20
+        },
+        {
+          "ItemId": 47196,
+          "Count": 20
+        }
+      ],
+      "passed_cases": 13,
+      "failed_cases": 0,
+      "acquisition_proven": false,
+      "observation_limit": "Explicit starting inventory in the test process; acquisition remains unmodeled."
+    }
+  }
+}
