@@ -1,0 +1,270 @@
+{
+  "runs": [
+    {
+      "label": "singular-priority-baseline-20261001",
+      "summary_sha256": "968bdbdb48da39b4c8d23bc396ad298466618322e41d622e41038530f25d29d6",
+      "source_manifest_sha256": "baae9a0e8d308e4bc37ae1d5d0abe9a2a6941bf031cc28e1b3f8e4f8d0fedb2a",
+      "source_stable": true,
+      "stages": [
+        {
+          "stage": "build",
+          "exit": 0,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PaladinSupportRegressionTests/PaladinSupportRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "e1a720e63b225ecc6de58e288b62098a366febcef81df6087960055049b2e835",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "run",
+          "exit": 0,
+          "command": [
+            "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+            "D:\\Dev\\CB-SingularEmergency-20261001\\Tools\\PaladinSupportRegressionTests\\bin\\x86\\Release\\net10.0\\PaladinSupportRegressionTests.dll"
+          ],
+          "stdout_sha256": "c2b7fa2ffd74850a5810efe3f19643b97f14d658ba06af71b86ed1d3038a2800",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "scenario_summaries": [
+        "Blessing contribution scenarios: 63/63; assertions=0; unexpected=0; actual linked support owner; no game or DPS benchmark.",
+        "Greater blessing scenarios: 87/87; assertions=0; unexpected=0; linked policy; controlled metadata/roster/dispatch; no game attached.",
+        "Lowbie aura coordination scenarios: 10/10; assertions=0; unexpected=0; linked full Lowbie; controlled observations; no game attached.",
+        "Paladin aura coordination scenarios: 70/70; assertions=0; unexpected=0; linked production selectors/trees; controlled observations; no game attached.",
+        "PallyPower assignment scenarios: 19/19; assertions=0; unexpected=0; linked Paladin support; controlled read-only Lua observation; no addon/client attached.",
+        "Protection recovery scenarios: 53/53; assertions=0; unexpected=0; linked complete Protection; controlled dispatch/default-rest; no game attached.",
+        "Support action ownership scenarios: 63/63; assertions=0; unexpected=0; linked actual support selection/revalidation and blessing trees; controlled actor/roster/PallyPower response/dispatch; no native/frame/server proof.",
+        "Paladin support scenarios: 44/44; linked production decisions; controlled external observations/dispatch; no client attached."
+      ]
+    },
+    {
+      "label": "singular-priority-red-20261001",
+      "summary_sha256": "3265e957d8f6f78c6a530e274c0ebbd26a57e0a13494b6281d50cb3b45b798ab",
+      "source_manifest_sha256": "341c73716ac66587583654b4a1bea9e82432c20f4e622c3c9d7e7664c37838ab",
+      "source_stable": true,
+      "stages": [
+        {
+          "stage": "build",
+          "exit": 0,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PaladinSupportRegressionTests/PaladinSupportRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "9d961ee2a89075342ed17aa76a6d8fde6a1b9eb0ff06f9c99edba519a2a325dd",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "run",
+          "exit": 3762504530,
+          "command": [
+            "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+            "D:\\Dev\\CB-SingularEmergency-20261001\\Tools\\PaladinSupportRegressionTests\\bin\\x86\\Release\\net10.0\\PaladinSupportRegressionTests.dll"
+          ],
+          "stdout_sha256": "2944b7a7e6eb5ff33a29066cd7aa191c624eb2d17e6c737f8c75ae853d1bfefc",
+          "stderr_sha256": "f645c3b83a5baa6ee513d0160d67a9f9afaaed0259996afa799ea9bd420aafd8"
+        }
+      ],
+      "scenario_summaries": [
+        "Blessing contribution scenarios: 63/63; assertions=0; unexpected=0; actual linked support owner; no game or DPS benchmark.",
+        "Greater blessing scenarios: 87/87; assertions=0; unexpected=0; linked policy; controlled metadata/roster/dispatch; no game attached.",
+        "Lowbie aura coordination scenarios: 10/10; assertions=0; unexpected=0; linked full Lowbie; controlled observations; no game attached.",
+        "Paladin aura coordination scenarios: 70/70; assertions=0; unexpected=0; linked production selectors/trees; controlled observations; no game attached.",
+        "Paladin emergency scenarios: 16/39; assertions=23; unexpected=0; linked complete Holy/Protection; controlled observations/dispatch; no game attached."
+      ]
+    },
+    {
+      "label": "singular-priority-green-20261001",
+      "summary_sha256": "8b8cd6d19323de8a5f63e315402a6da53d3a6990211183f337d870f635f437b5",
+      "source_manifest_sha256": "ed1dd9d5350524442b8c32746557d46579e2f1c5d1b30282f66fd161e93f2d81",
+      "source_stable": true,
+      "stages": [
+        {
+          "stage": "build",
+          "exit": 0,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PaladinSupportRegressionTests/PaladinSupportRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "f50cd3ae8a3abe34b42cc2c2310482549f1297c456733a79cecfa736107124d0",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "run",
+          "exit": 0,
+          "command": [
+            "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+            "D:\\Dev\\CB-SingularEmergency-20261001\\Tools\\PaladinSupportRegressionTests\\bin\\x86\\Release\\net10.0\\PaladinSupportRegressionTests.dll"
+          ],
+          "stdout_sha256": "f80c9e0dace24e9a57bede604262ed3d5c379a19690b50a6b30c9f53da036f17",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "scenario_summaries": [
+        "Blessing contribution scenarios: 63/63; assertions=0; unexpected=0; actual linked support owner; no game or DPS benchmark.",
+        "Greater blessing scenarios: 87/87; assertions=0; unexpected=0; linked policy; controlled metadata/roster/dispatch; no game attached.",
+        "Lowbie aura coordination scenarios: 10/10; assertions=0; unexpected=0; linked full Lowbie; controlled observations; no game attached.",
+        "Paladin aura coordination scenarios: 70/70; assertions=0; unexpected=0; linked production selectors/trees; controlled observations; no game attached.",
+        "Paladin emergency scenarios: 39/39; assertions=0; unexpected=0; linked complete Holy/Protection; controlled observations/dispatch; no game attached.",
+        "PallyPower assignment scenarios: 19/19; assertions=0; unexpected=0; linked Paladin support; controlled read-only Lua observation; no addon/client attached.",
+        "Protection recovery scenarios: 53/53; assertions=0; unexpected=0; linked complete Protection; controlled dispatch/default-rest; no game attached.",
+        "Support action ownership scenarios: 63/63; assertions=0; unexpected=0; linked actual support selection/revalidation and blessing trees; controlled actor/roster/PallyPower response/dispatch; no native/frame/server proof.",
+        "Paladin support scenarios: 44/44; linked production decisions; controlled external observations/dispatch; no client attached."
+      ]
+    },
+    {
+      "label": "singular-priority-forbearance-red-20261001",
+      "summary_sha256": "969a9d4ddb55f9e416bed04be0d6f43ffb4b8a6cf3dad26cd68c4263c0687ae3",
+      "source_manifest_sha256": "fe910f69cf27969916c48fa02d3d534bbced9e5f1cc2271785ae2e9a2a0eb7c3",
+      "source_stable": true,
+      "stages": [
+        {
+          "stage": "build",
+          "exit": 0,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PaladinSupportRegressionTests/PaladinSupportRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "e80b2cf05bea6fc402249aa2533d395a8d355d06a2e99fb47c4f512dc82ad513",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "run",
+          "exit": 3762504530,
+          "command": [
+            "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+            "D:\\Dev\\CB-SingularEmergency-20261001\\Tools\\PaladinSupportRegressionTests\\bin\\x86\\Release\\net10.0\\PaladinSupportRegressionTests.dll"
+          ],
+          "stdout_sha256": "2804e823b322be9b6cadcaaeb6da13b1be5aed818bbd339801a0bffac53b7da3",
+          "stderr_sha256": "046401d896d3715612d113820b24d14aa2f9c5bacc4f10709ecb9932e0b5a7f1"
+        }
+      ],
+      "scenario_summaries": [
+        "Blessing contribution scenarios: 63/63; assertions=0; unexpected=0; actual linked support owner; no game or DPS benchmark.",
+        "Greater blessing scenarios: 87/87; assertions=0; unexpected=0; linked policy; controlled metadata/roster/dispatch; no game attached.",
+        "Lowbie aura coordination scenarios: 10/10; assertions=0; unexpected=0; linked full Lowbie; controlled observations; no game attached.",
+        "Paladin aura coordination scenarios: 70/70; assertions=0; unexpected=0; linked production selectors/trees; controlled observations; no game attached.",
+        "Paladin emergency scenarios: 83/84; assertions=1; unexpected=0; linked complete Holy/Protection; controlled observations/dispatch; no game attached."
+      ]
+    },
+    {
+      "label": "singular-priority-markers-red-20261001",
+      "summary_sha256": "25cb4123d881d0d716d8a46758acbd3e136ddf0693c2dcacea7c18eab5a9ae30",
+      "source_manifest_sha256": "b52a457bb151f0ce438fe1ec697d5b325fb0e7f211aae80f9d2ef436e6b8b05c",
+      "source_stable": true,
+      "stages": [
+        {
+          "stage": "build",
+          "exit": 0,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PaladinSupportRegressionTests/PaladinSupportRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "4fd127f02c0e44f9a498cd38ce9f1e9b7136a0be989da0843e51d464520c4efc",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "run",
+          "exit": 3762504530,
+          "command": [
+            "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+            "D:\\Dev\\CB-SingularEmergency-20261001\\Tools\\PaladinSupportRegressionTests\\bin\\x86\\Release\\net10.0\\PaladinSupportRegressionTests.dll"
+          ],
+          "stdout_sha256": "89a4d81707f1c4aa0d1aef0fdc408aedf2c0d9baf5a27a15c82aad1e54c97a27",
+          "stderr_sha256": "c7cb5be03bb2d2106205affbbe6ec48357a688e2689bc9cc53400b2c135eb1df"
+        }
+      ],
+      "scenario_summaries": [
+        "Blessing contribution scenarios: 63/63; assertions=0; unexpected=0; actual linked support owner; no game or DPS benchmark.",
+        "Greater blessing scenarios: 87/87; assertions=0; unexpected=0; linked policy; controlled metadata/roster/dispatch; no game attached.",
+        "Lowbie aura coordination scenarios: 10/10; assertions=0; unexpected=0; linked full Lowbie; controlled observations; no game attached.",
+        "Paladin aura coordination scenarios: 70/70; assertions=0; unexpected=0; linked production selectors/trees; controlled observations; no game attached.",
+        "Paladin emergency scenarios: 87/94; assertions=7; unexpected=0; linked complete Holy/Protection; controlled observations/dispatch; no game attached."
+      ]
+    },
+    {
+      "label": "singular-priority-markers-green-20261001",
+      "summary_sha256": "e901101d6d91738e1ace21e174ecafff038b307fc187766143b97ed285e3b788",
+      "source_manifest_sha256": "52237900e7c469ff127c60b60376312c7741a87c3c74b9603bad65974e4a21ee",
+      "source_stable": true,
+      "stages": [
+        {
+          "stage": "build",
+          "exit": 0,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PaladinSupportRegressionTests/PaladinSupportRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "e0578a1a3fa5cf3b53360603fd61494cc07862355d6d594554c78f2e8facdda7",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "run",
+          "exit": 0,
+          "command": [
+            "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+            "D:\\Dev\\CB-SingularEmergency-20261001\\Tools\\PaladinSupportRegressionTests\\bin\\x86\\Release\\net10.0\\PaladinSupportRegressionTests.dll"
+          ],
+          "stdout_sha256": "083842af18a3dc40adb30baaa2930c1439ebaaf9b789e50c711274a7aba9b2f8",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "scenario_summaries": [
+        "Blessing contribution scenarios: 63/63; assertions=0; unexpected=0; actual linked support owner; no game or DPS benchmark.",
+        "Greater blessing scenarios: 87/87; assertions=0; unexpected=0; linked policy; controlled metadata/roster/dispatch; no game attached.",
+        "Lowbie aura coordination scenarios: 10/10; assertions=0; unexpected=0; linked full Lowbie; controlled observations; no game attached.",
+        "Paladin aura coordination scenarios: 70/70; assertions=0; unexpected=0; linked production selectors/trees; controlled observations; no game attached.",
+        "Paladin emergency scenarios: 94/94; assertions=0; unexpected=0; linked complete Holy/Protection; controlled observations/dispatch; no game attached.",
+        "PallyPower assignment scenarios: 19/19; assertions=0; unexpected=0; linked Paladin support; controlled read-only Lua observation; no addon/client attached.",
+        "Protection recovery scenarios: 53/53; assertions=0; unexpected=0; linked complete Protection; controlled dispatch/default-rest; no game attached.",
+        "Support action ownership scenarios: 63/63; assertions=0; unexpected=0; linked actual support selection/revalidation and blessing trees; controlled actor/roster/PallyPower response/dispatch; no native/frame/server proof.",
+        "Paladin support scenarios: 44/44; linked production decisions; controlled external observations/dispatch; no client attached."
+      ]
+    }
+  ],
+  "note": "The initial new ally-Forbearance expectation was corrected after primary-source review; the later red result proves the stricter, source-correct Lay-on-Hands action. All preexisting assertions remain unchanged.",
+  "exact_final_commit_acceptance_pending": true,
+  "live_completion_proven": false
+}

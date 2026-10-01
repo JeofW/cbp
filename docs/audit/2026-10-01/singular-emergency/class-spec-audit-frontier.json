@@ -1,0 +1,1362 @@
+{
+  "class_count": 10,
+  "spec_count": 30,
+  "specs": [
+    {
+      "class": "DeathKnight",
+      "spec": "BloodDeathKnight",
+      "talent_tree_index": 0,
+      "source_files": [
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/DeathKnight/Blood.cs",
+          "sha256": "82fb83e1d095de8c749fc75c1e992f2da9af537546652cc51e18c11a8717d258"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/DeathKnight/Common.cs",
+          "sha256": "ce66e30017bb0a2206a16b4626eeebb82ba39ef44dd74ee76980c865d5f56f99"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/DeathKnight/Frost.cs",
+          "sha256": "87cbccf9e3d63e67a9ceec1a30c438ff9d9014cac20d96d29d157f546c27f935"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/DeathKnight/Lowbie.cs",
+          "sha256": "330be55ddaaced3cc778c13f0ee172bf84752ae29ed7a3499ff658846bd8859e"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/DeathKnight/Unholy.cs",
+          "sha256": "0e9d9ba95f82ce6e6c848d9e90159c51586b107996cc584b87bfbae123e0ca4f"
+        }
+      ],
+      "required_contexts": [
+        "Normal",
+        "Instances",
+        "Battlegrounds"
+      ],
+      "existing_registration_test": "SingularRequiredRegistrationRegressionTests: actual compiled attributes for all30specs and all3contexts; this is declaration coverage, not rotation validation.",
+      "current_scope": "Existing compiled registration and shared-owner coverage retained; exhaustive class execution audit remains open",
+      "race_class_playability_verified_by_this_scope": false,
+      "remaining_dimensions": [
+        "valid original-era race/class combinations and learned racials",
+        "DPS/tank/healer priorities and resource observation",
+        "spell ranks, talents, glyphs and cooldown restrictions",
+        "interrupt/CC/defensive/heal/triage/threat behavior",
+        "pet/form/stance/presence transitions where applicable",
+        "LoS/range/positioning/pull/add/boss/group/PvP decisions",
+        "rest, food, drink, death and vendor/travel ownership"
+      ]
+    },
+    {
+      "class": "DeathKnight",
+      "spec": "FrostDeathKnight",
+      "talent_tree_index": 1,
+      "source_files": [
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/DeathKnight/Blood.cs",
+          "sha256": "82fb83e1d095de8c749fc75c1e992f2da9af537546652cc51e18c11a8717d258"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/DeathKnight/Common.cs",
+          "sha256": "ce66e30017bb0a2206a16b4626eeebb82ba39ef44dd74ee76980c865d5f56f99"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/DeathKnight/Frost.cs",
+          "sha256": "87cbccf9e3d63e67a9ceec1a30c438ff9d9014cac20d96d29d157f546c27f935"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/DeathKnight/Lowbie.cs",
+          "sha256": "330be55ddaaced3cc778c13f0ee172bf84752ae29ed7a3499ff658846bd8859e"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/DeathKnight/Unholy.cs",
+          "sha256": "0e9d9ba95f82ce6e6c848d9e90159c51586b107996cc584b87bfbae123e0ca4f"
+        }
+      ],
+      "required_contexts": [
+        "Normal",
+        "Instances",
+        "Battlegrounds"
+      ],
+      "existing_registration_test": "SingularRequiredRegistrationRegressionTests: actual compiled attributes for all30specs and all3contexts; this is declaration coverage, not rotation validation.",
+      "current_scope": "Existing compiled registration and shared-owner coverage retained; exhaustive class execution audit remains open",
+      "race_class_playability_verified_by_this_scope": false,
+      "remaining_dimensions": [
+        "valid original-era race/class combinations and learned racials",
+        "DPS/tank/healer priorities and resource observation",
+        "spell ranks, talents, glyphs and cooldown restrictions",
+        "interrupt/CC/defensive/heal/triage/threat behavior",
+        "pet/form/stance/presence transitions where applicable",
+        "LoS/range/positioning/pull/add/boss/group/PvP decisions",
+        "rest, food, drink, death and vendor/travel ownership"
+      ]
+    },
+    {
+      "class": "DeathKnight",
+      "spec": "UnholyDeathKnight",
+      "talent_tree_index": 2,
+      "source_files": [
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/DeathKnight/Blood.cs",
+          "sha256": "82fb83e1d095de8c749fc75c1e992f2da9af537546652cc51e18c11a8717d258"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/DeathKnight/Common.cs",
+          "sha256": "ce66e30017bb0a2206a16b4626eeebb82ba39ef44dd74ee76980c865d5f56f99"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/DeathKnight/Frost.cs",
+          "sha256": "87cbccf9e3d63e67a9ceec1a30c438ff9d9014cac20d96d29d157f546c27f935"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/DeathKnight/Lowbie.cs",
+          "sha256": "330be55ddaaced3cc778c13f0ee172bf84752ae29ed7a3499ff658846bd8859e"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/DeathKnight/Unholy.cs",
+          "sha256": "0e9d9ba95f82ce6e6c848d9e90159c51586b107996cc584b87bfbae123e0ca4f"
+        }
+      ],
+      "required_contexts": [
+        "Normal",
+        "Instances",
+        "Battlegrounds"
+      ],
+      "existing_registration_test": "SingularRequiredRegistrationRegressionTests: actual compiled attributes for all30specs and all3contexts; this is declaration coverage, not rotation validation.",
+      "current_scope": "Existing compiled registration and shared-owner coverage retained; exhaustive class execution audit remains open",
+      "race_class_playability_verified_by_this_scope": false,
+      "remaining_dimensions": [
+        "valid original-era race/class combinations and learned racials",
+        "DPS/tank/healer priorities and resource observation",
+        "spell ranks, talents, glyphs and cooldown restrictions",
+        "interrupt/CC/defensive/heal/triage/threat behavior",
+        "pet/form/stance/presence transitions where applicable",
+        "LoS/range/positioning/pull/add/boss/group/PvP decisions",
+        "rest, food, drink, death and vendor/travel ownership"
+      ]
+    },
+    {
+      "class": "Druid",
+      "spec": "BalanceDruid",
+      "talent_tree_index": 0,
+      "source_files": [
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Druid/Balance.cs",
+          "sha256": "89253ccb3aea0eff3adca172796ac309a4190ed5a26c1a63d421b76394ec3e6a"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Druid/Common.cs",
+          "sha256": "6f6a8afcfe221a1c68380abab3f518fe1e6bc8960cbe28313d84bee2c6f12983"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Druid/Feral.cs",
+          "sha256": "542215175d4cd209cee509d252d70a473f82eda4e9d3a2ac5572ce986094b4f4"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Druid/Lowbie.cs",
+          "sha256": "0e1d8ef927e0bebf212a26e2a51f19d622183320c1892b471d17d4c47d623d69"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Druid/Resto.cs",
+          "sha256": "092c1703b193b01e732b4107f2cb58063b0bb02ea96348dd28f90dcf03ecba48"
+        }
+      ],
+      "required_contexts": [
+        "Normal",
+        "Instances",
+        "Battlegrounds"
+      ],
+      "existing_registration_test": "SingularRequiredRegistrationRegressionTests: actual compiled attributes for all30specs and all3contexts; this is declaration coverage, not rotation validation.",
+      "current_scope": "Existing compiled registration and shared-owner coverage retained; exhaustive class execution audit remains open",
+      "race_class_playability_verified_by_this_scope": false,
+      "remaining_dimensions": [
+        "valid original-era race/class combinations and learned racials",
+        "DPS/tank/healer priorities and resource observation",
+        "spell ranks, talents, glyphs and cooldown restrictions",
+        "interrupt/CC/defensive/heal/triage/threat behavior",
+        "pet/form/stance/presence transitions where applicable",
+        "LoS/range/positioning/pull/add/boss/group/PvP decisions",
+        "rest, food, drink, death and vendor/travel ownership"
+      ]
+    },
+    {
+      "class": "Druid",
+      "spec": "FeralDruid",
+      "talent_tree_index": 1,
+      "source_files": [
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Druid/Balance.cs",
+          "sha256": "89253ccb3aea0eff3adca172796ac309a4190ed5a26c1a63d421b76394ec3e6a"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Druid/Common.cs",
+          "sha256": "6f6a8afcfe221a1c68380abab3f518fe1e6bc8960cbe28313d84bee2c6f12983"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Druid/Feral.cs",
+          "sha256": "542215175d4cd209cee509d252d70a473f82eda4e9d3a2ac5572ce986094b4f4"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Druid/Lowbie.cs",
+          "sha256": "0e1d8ef927e0bebf212a26e2a51f19d622183320c1892b471d17d4c47d623d69"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Druid/Resto.cs",
+          "sha256": "092c1703b193b01e732b4107f2cb58063b0bb02ea96348dd28f90dcf03ecba48"
+        }
+      ],
+      "required_contexts": [
+        "Normal",
+        "Instances",
+        "Battlegrounds"
+      ],
+      "existing_registration_test": "SingularRequiredRegistrationRegressionTests: actual compiled attributes for all30specs and all3contexts; this is declaration coverage, not rotation validation.",
+      "current_scope": "Existing compiled registration and shared-owner coverage retained; exhaustive class execution audit remains open",
+      "race_class_playability_verified_by_this_scope": false,
+      "remaining_dimensions": [
+        "valid original-era race/class combinations and learned racials",
+        "DPS/tank/healer priorities and resource observation",
+        "spell ranks, talents, glyphs and cooldown restrictions",
+        "interrupt/CC/defensive/heal/triage/threat behavior",
+        "pet/form/stance/presence transitions where applicable",
+        "LoS/range/positioning/pull/add/boss/group/PvP decisions",
+        "rest, food, drink, death and vendor/travel ownership"
+      ]
+    },
+    {
+      "class": "Druid",
+      "spec": "RestorationDruid",
+      "talent_tree_index": 2,
+      "source_files": [
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Druid/Balance.cs",
+          "sha256": "89253ccb3aea0eff3adca172796ac309a4190ed5a26c1a63d421b76394ec3e6a"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Druid/Common.cs",
+          "sha256": "6f6a8afcfe221a1c68380abab3f518fe1e6bc8960cbe28313d84bee2c6f12983"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Druid/Feral.cs",
+          "sha256": "542215175d4cd209cee509d252d70a473f82eda4e9d3a2ac5572ce986094b4f4"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Druid/Lowbie.cs",
+          "sha256": "0e1d8ef927e0bebf212a26e2a51f19d622183320c1892b471d17d4c47d623d69"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Druid/Resto.cs",
+          "sha256": "092c1703b193b01e732b4107f2cb58063b0bb02ea96348dd28f90dcf03ecba48"
+        }
+      ],
+      "required_contexts": [
+        "Normal",
+        "Instances",
+        "Battlegrounds"
+      ],
+      "existing_registration_test": "SingularRequiredRegistrationRegressionTests: actual compiled attributes for all30specs and all3contexts; this is declaration coverage, not rotation validation.",
+      "current_scope": "Existing compiled registration and shared-owner coverage retained; exhaustive class execution audit remains open",
+      "race_class_playability_verified_by_this_scope": false,
+      "remaining_dimensions": [
+        "valid original-era race/class combinations and learned racials",
+        "DPS/tank/healer priorities and resource observation",
+        "spell ranks, talents, glyphs and cooldown restrictions",
+        "interrupt/CC/defensive/heal/triage/threat behavior",
+        "pet/form/stance/presence transitions where applicable",
+        "LoS/range/positioning/pull/add/boss/group/PvP decisions",
+        "rest, food, drink, death and vendor/travel ownership"
+      ]
+    },
+    {
+      "class": "Hunter",
+      "spec": "BeastMasteryHunter",
+      "talent_tree_index": 0,
+      "source_files": [
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Hunter/BeastMaster.cs",
+          "sha256": "cd3c8807ea87e156cbea0cbe984b9129e90515a4fc3d237e68e43b55af1ed589"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Hunter/Common.cs",
+          "sha256": "9302bf0526d840533bb3486b9e9f7768be767ef7cfdacc48c0b5196d3702522e"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Hunter/Lowbie.cs",
+          "sha256": "650504446ffcb9d61d7e8ecae1caa4d9b2b36fed7a68b9c79332b7c832fee491"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Hunter/Marksman.cs",
+          "sha256": "aebdaacdca9d010e81cbcc3581302b61fbd8e2fc66cb2a50adba31868e3a8aab"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Hunter/Survival.cs",
+          "sha256": "cbadc212553e973dee4f16afcb44bdb9789633f4123086bbdb1e31227e9b8c5c"
+        }
+      ],
+      "required_contexts": [
+        "Normal",
+        "Instances",
+        "Battlegrounds"
+      ],
+      "existing_registration_test": "SingularRequiredRegistrationRegressionTests: actual compiled attributes for all30specs and all3contexts; this is declaration coverage, not rotation validation.",
+      "current_scope": "Existing compiled registration and shared-owner coverage retained; exhaustive class execution audit remains open",
+      "race_class_playability_verified_by_this_scope": false,
+      "remaining_dimensions": [
+        "valid original-era race/class combinations and learned racials",
+        "DPS/tank/healer priorities and resource observation",
+        "spell ranks, talents, glyphs and cooldown restrictions",
+        "interrupt/CC/defensive/heal/triage/threat behavior",
+        "pet/form/stance/presence transitions where applicable",
+        "LoS/range/positioning/pull/add/boss/group/PvP decisions",
+        "rest, food, drink, death and vendor/travel ownership"
+      ]
+    },
+    {
+      "class": "Hunter",
+      "spec": "MarksmanshipHunter",
+      "talent_tree_index": 1,
+      "source_files": [
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Hunter/BeastMaster.cs",
+          "sha256": "cd3c8807ea87e156cbea0cbe984b9129e90515a4fc3d237e68e43b55af1ed589"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Hunter/Common.cs",
+          "sha256": "9302bf0526d840533bb3486b9e9f7768be767ef7cfdacc48c0b5196d3702522e"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Hunter/Lowbie.cs",
+          "sha256": "650504446ffcb9d61d7e8ecae1caa4d9b2b36fed7a68b9c79332b7c832fee491"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Hunter/Marksman.cs",
+          "sha256": "aebdaacdca9d010e81cbcc3581302b61fbd8e2fc66cb2a50adba31868e3a8aab"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Hunter/Survival.cs",
+          "sha256": "cbadc212553e973dee4f16afcb44bdb9789633f4123086bbdb1e31227e9b8c5c"
+        }
+      ],
+      "required_contexts": [
+        "Normal",
+        "Instances",
+        "Battlegrounds"
+      ],
+      "existing_registration_test": "SingularRequiredRegistrationRegressionTests: actual compiled attributes for all30specs and all3contexts; this is declaration coverage, not rotation validation.",
+      "current_scope": "Existing compiled registration and shared-owner coverage retained; exhaustive class execution audit remains open",
+      "race_class_playability_verified_by_this_scope": false,
+      "remaining_dimensions": [
+        "valid original-era race/class combinations and learned racials",
+        "DPS/tank/healer priorities and resource observation",
+        "spell ranks, talents, glyphs and cooldown restrictions",
+        "interrupt/CC/defensive/heal/triage/threat behavior",
+        "pet/form/stance/presence transitions where applicable",
+        "LoS/range/positioning/pull/add/boss/group/PvP decisions",
+        "rest, food, drink, death and vendor/travel ownership"
+      ]
+    },
+    {
+      "class": "Hunter",
+      "spec": "SurvivalHunter",
+      "talent_tree_index": 2,
+      "source_files": [
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Hunter/BeastMaster.cs",
+          "sha256": "cd3c8807ea87e156cbea0cbe984b9129e90515a4fc3d237e68e43b55af1ed589"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Hunter/Common.cs",
+          "sha256": "9302bf0526d840533bb3486b9e9f7768be767ef7cfdacc48c0b5196d3702522e"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Hunter/Lowbie.cs",
+          "sha256": "650504446ffcb9d61d7e8ecae1caa4d9b2b36fed7a68b9c79332b7c832fee491"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Hunter/Marksman.cs",
+          "sha256": "aebdaacdca9d010e81cbcc3581302b61fbd8e2fc66cb2a50adba31868e3a8aab"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Hunter/Survival.cs",
+          "sha256": "cbadc212553e973dee4f16afcb44bdb9789633f4123086bbdb1e31227e9b8c5c"
+        }
+      ],
+      "required_contexts": [
+        "Normal",
+        "Instances",
+        "Battlegrounds"
+      ],
+      "existing_registration_test": "SingularRequiredRegistrationRegressionTests: actual compiled attributes for all30specs and all3contexts; this is declaration coverage, not rotation validation.",
+      "current_scope": "Existing compiled registration and shared-owner coverage retained; exhaustive class execution audit remains open",
+      "race_class_playability_verified_by_this_scope": false,
+      "remaining_dimensions": [
+        "valid original-era race/class combinations and learned racials",
+        "DPS/tank/healer priorities and resource observation",
+        "spell ranks, talents, glyphs and cooldown restrictions",
+        "interrupt/CC/defensive/heal/triage/threat behavior",
+        "pet/form/stance/presence transitions where applicable",
+        "LoS/range/positioning/pull/add/boss/group/PvP decisions",
+        "rest, food, drink, death and vendor/travel ownership"
+      ]
+    },
+    {
+      "class": "Mage",
+      "spec": "ArcaneMage",
+      "talent_tree_index": 0,
+      "source_files": [
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Mage/Arcane.cs",
+          "sha256": "ede470a355d605f61715da0a4e41c5f35e84de77c0c21e5a09b5da77572223f6"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Mage/Common.cs",
+          "sha256": "3464aa6c6ed7926b6355b76dc7e85cae2ccb974849beb0d9df95cdf257524f4e"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Mage/Fire.cs",
+          "sha256": "acf62feeaee7b1e5835e1235c035e7a7da446ce07a116e3ec7a9c14bd1fb5eed"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Mage/Frost.cs",
+          "sha256": "22c7825ba94950c6b450fd6e4e0556c647c76d9dd2b0d0ff9b94cb2e1c8ce3e7"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Mage/Lowbie.cs",
+          "sha256": "20f1f7bb72d92f4ce7408c4f23535b1d0e27bd6884ef66950e9b81f1b04e8812"
+        }
+      ],
+      "required_contexts": [
+        "Normal",
+        "Instances",
+        "Battlegrounds"
+      ],
+      "existing_registration_test": "SingularRequiredRegistrationRegressionTests: actual compiled attributes for all30specs and all3contexts; this is declaration coverage, not rotation validation.",
+      "current_scope": "Existing compiled registration and shared-owner coverage retained; exhaustive class execution audit remains open",
+      "race_class_playability_verified_by_this_scope": false,
+      "remaining_dimensions": [
+        "valid original-era race/class combinations and learned racials",
+        "DPS/tank/healer priorities and resource observation",
+        "spell ranks, talents, glyphs and cooldown restrictions",
+        "interrupt/CC/defensive/heal/triage/threat behavior",
+        "pet/form/stance/presence transitions where applicable",
+        "LoS/range/positioning/pull/add/boss/group/PvP decisions",
+        "rest, food, drink, death and vendor/travel ownership"
+      ]
+    },
+    {
+      "class": "Mage",
+      "spec": "FireMage",
+      "talent_tree_index": 1,
+      "source_files": [
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Mage/Arcane.cs",
+          "sha256": "ede470a355d605f61715da0a4e41c5f35e84de77c0c21e5a09b5da77572223f6"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Mage/Common.cs",
+          "sha256": "3464aa6c6ed7926b6355b76dc7e85cae2ccb974849beb0d9df95cdf257524f4e"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Mage/Fire.cs",
+          "sha256": "acf62feeaee7b1e5835e1235c035e7a7da446ce07a116e3ec7a9c14bd1fb5eed"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Mage/Frost.cs",
+          "sha256": "22c7825ba94950c6b450fd6e4e0556c647c76d9dd2b0d0ff9b94cb2e1c8ce3e7"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Mage/Lowbie.cs",
+          "sha256": "20f1f7bb72d92f4ce7408c4f23535b1d0e27bd6884ef66950e9b81f1b04e8812"
+        }
+      ],
+      "required_contexts": [
+        "Normal",
+        "Instances",
+        "Battlegrounds"
+      ],
+      "existing_registration_test": "SingularRequiredRegistrationRegressionTests: actual compiled attributes for all30specs and all3contexts; this is declaration coverage, not rotation validation.",
+      "current_scope": "Existing compiled registration and shared-owner coverage retained; exhaustive class execution audit remains open",
+      "race_class_playability_verified_by_this_scope": false,
+      "remaining_dimensions": [
+        "valid original-era race/class combinations and learned racials",
+        "DPS/tank/healer priorities and resource observation",
+        "spell ranks, talents, glyphs and cooldown restrictions",
+        "interrupt/CC/defensive/heal/triage/threat behavior",
+        "pet/form/stance/presence transitions where applicable",
+        "LoS/range/positioning/pull/add/boss/group/PvP decisions",
+        "rest, food, drink, death and vendor/travel ownership"
+      ]
+    },
+    {
+      "class": "Mage",
+      "spec": "FrostMage",
+      "talent_tree_index": 2,
+      "source_files": [
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Mage/Arcane.cs",
+          "sha256": "ede470a355d605f61715da0a4e41c5f35e84de77c0c21e5a09b5da77572223f6"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Mage/Common.cs",
+          "sha256": "3464aa6c6ed7926b6355b76dc7e85cae2ccb974849beb0d9df95cdf257524f4e"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Mage/Fire.cs",
+          "sha256": "acf62feeaee7b1e5835e1235c035e7a7da446ce07a116e3ec7a9c14bd1fb5eed"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Mage/Frost.cs",
+          "sha256": "22c7825ba94950c6b450fd6e4e0556c647c76d9dd2b0d0ff9b94cb2e1c8ce3e7"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Mage/Lowbie.cs",
+          "sha256": "20f1f7bb72d92f4ce7408c4f23535b1d0e27bd6884ef66950e9b81f1b04e8812"
+        }
+      ],
+      "required_contexts": [
+        "Normal",
+        "Instances",
+        "Battlegrounds"
+      ],
+      "existing_registration_test": "SingularRequiredRegistrationRegressionTests: actual compiled attributes for all30specs and all3contexts; this is declaration coverage, not rotation validation.",
+      "current_scope": "Existing compiled registration and shared-owner coverage retained; exhaustive class execution audit remains open",
+      "race_class_playability_verified_by_this_scope": false,
+      "remaining_dimensions": [
+        "valid original-era race/class combinations and learned racials",
+        "DPS/tank/healer priorities and resource observation",
+        "spell ranks, talents, glyphs and cooldown restrictions",
+        "interrupt/CC/defensive/heal/triage/threat behavior",
+        "pet/form/stance/presence transitions where applicable",
+        "LoS/range/positioning/pull/add/boss/group/PvP decisions",
+        "rest, food, drink, death and vendor/travel ownership"
+      ]
+    },
+    {
+      "class": "Paladin",
+      "spec": "HolyPaladin",
+      "talent_tree_index": 0,
+      "source_files": [
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Paladin/Common.cs",
+          "sha256": "dd82dd04a57a7006d407779e021f0d756891454856b12c707d28f5096b21476f"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Paladin/Holy.cs",
+          "sha256": "e5c9bc832bfbfc790c789f8b38941f1c96fea16d594dc1175dad21dc30562cf3"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Paladin/Lowbie.cs",
+          "sha256": "7ee5d9810046c7992d14fffadf5ca03175f80deedf1bfb3fafc44126b9919de1"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Paladin/PaladinSupport.cs",
+          "sha256": "c0191d2b7f7f70af26e9d3b21b6bc076670fdab418bd285bc21de899333e2119"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Paladin/Protection.cs",
+          "sha256": "c15ea120f49a50da4f3bc204ec1a3e85c54d4f141fd5cfe82efa450e018f7cde"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Paladin/Retribution.cs",
+          "sha256": "445639f86ee5d9a60400b408bf22741702be0d894e510d00a313593326a5e085"
+        }
+      ],
+      "required_contexts": [
+        "Normal",
+        "Instances",
+        "Battlegrounds"
+      ],
+      "existing_registration_test": "SingularRequiredRegistrationRegressionTests: actual compiled attributes for all30specs and all3contexts; this is declaration coverage, not rotation validation.",
+      "current_scope": "94-case Holy/Protection emergency factory coverage",
+      "race_class_playability_verified_by_this_scope": false,
+      "remaining_dimensions": [
+        "valid original-era race/class combinations and learned racials",
+        "DPS/tank/healer priorities and resource observation",
+        "spell ranks, talents, glyphs and cooldown restrictions",
+        "interrupt/CC/defensive/heal/triage/threat behavior",
+        "pet/form/stance/presence transitions where applicable",
+        "LoS/range/positioning/pull/add/boss/group/PvP decisions",
+        "rest, food, drink, death and vendor/travel ownership"
+      ]
+    },
+    {
+      "class": "Paladin",
+      "spec": "ProtectionPaladin",
+      "talent_tree_index": 1,
+      "source_files": [
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Paladin/Common.cs",
+          "sha256": "dd82dd04a57a7006d407779e021f0d756891454856b12c707d28f5096b21476f"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Paladin/Holy.cs",
+          "sha256": "e5c9bc832bfbfc790c789f8b38941f1c96fea16d594dc1175dad21dc30562cf3"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Paladin/Lowbie.cs",
+          "sha256": "7ee5d9810046c7992d14fffadf5ca03175f80deedf1bfb3fafc44126b9919de1"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Paladin/PaladinSupport.cs",
+          "sha256": "c0191d2b7f7f70af26e9d3b21b6bc076670fdab418bd285bc21de899333e2119"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Paladin/Protection.cs",
+          "sha256": "c15ea120f49a50da4f3bc204ec1a3e85c54d4f141fd5cfe82efa450e018f7cde"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Paladin/Retribution.cs",
+          "sha256": "445639f86ee5d9a60400b408bf22741702be0d894e510d00a313593326a5e085"
+        }
+      ],
+      "required_contexts": [
+        "Normal",
+        "Instances",
+        "Battlegrounds"
+      ],
+      "existing_registration_test": "SingularRequiredRegistrationRegressionTests: actual compiled attributes for all30specs and all3contexts; this is declaration coverage, not rotation validation.",
+      "current_scope": "94-case Holy/Protection emergency factory coverage",
+      "race_class_playability_verified_by_this_scope": false,
+      "remaining_dimensions": [
+        "valid original-era race/class combinations and learned racials",
+        "DPS/tank/healer priorities and resource observation",
+        "spell ranks, talents, glyphs and cooldown restrictions",
+        "interrupt/CC/defensive/heal/triage/threat behavior",
+        "pet/form/stance/presence transitions where applicable",
+        "LoS/range/positioning/pull/add/boss/group/PvP decisions",
+        "rest, food, drink, death and vendor/travel ownership"
+      ]
+    },
+    {
+      "class": "Paladin",
+      "spec": "RetributionPaladin",
+      "talent_tree_index": 2,
+      "source_files": [
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Paladin/Common.cs",
+          "sha256": "dd82dd04a57a7006d407779e021f0d756891454856b12c707d28f5096b21476f"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Paladin/Holy.cs",
+          "sha256": "e5c9bc832bfbfc790c789f8b38941f1c96fea16d594dc1175dad21dc30562cf3"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Paladin/Lowbie.cs",
+          "sha256": "7ee5d9810046c7992d14fffadf5ca03175f80deedf1bfb3fafc44126b9919de1"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Paladin/PaladinSupport.cs",
+          "sha256": "c0191d2b7f7f70af26e9d3b21b6bc076670fdab418bd285bc21de899333e2119"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Paladin/Protection.cs",
+          "sha256": "c15ea120f49a50da4f3bc204ec1a3e85c54d4f141fd5cfe82efa450e018f7cde"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Paladin/Retribution.cs",
+          "sha256": "445639f86ee5d9a60400b408bf22741702be0d894e510d00a313593326a5e085"
+        }
+      ],
+      "required_contexts": [
+        "Normal",
+        "Instances",
+        "Battlegrounds"
+      ],
+      "existing_registration_test": "SingularRequiredRegistrationRegressionTests: actual compiled attributes for all30specs and all3contexts; this is declaration coverage, not rotation validation.",
+      "current_scope": "Ret policy/support/decision regressions retained; remaining mechanics review required",
+      "race_class_playability_verified_by_this_scope": false,
+      "remaining_dimensions": [
+        "valid original-era race/class combinations and learned racials",
+        "DPS/tank/healer priorities and resource observation",
+        "spell ranks, talents, glyphs and cooldown restrictions",
+        "interrupt/CC/defensive/heal/triage/threat behavior",
+        "pet/form/stance/presence transitions where applicable",
+        "LoS/range/positioning/pull/add/boss/group/PvP decisions",
+        "rest, food, drink, death and vendor/travel ownership"
+      ]
+    },
+    {
+      "class": "Priest",
+      "spec": "DisciplinePriest",
+      "talent_tree_index": 0,
+      "source_files": [
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Priest/Common.cs",
+          "sha256": "30a1a3a28e34eb931db5d9cd241f69801f60a8c5a839aafd1c3f871851496c17"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Priest/Discipline.cs",
+          "sha256": "ea7f0ed66fcc4ecaae93c2d7b8d870d78bbb81199621913d64628df56361b34b"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Priest/Holy.cs",
+          "sha256": "a96dd9fecd2c4c84540acab527598cbbb6c588ca93995f3b4f701732f0d8657c"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Priest/Lowbie.cs",
+          "sha256": "93d90292c87fe9a5a80ca1bfc48ce2a049794b913e9fb3e895f660d613cf8fc5"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Priest/Shadow.cs",
+          "sha256": "cfe6580505bec8013ca7b093153df3b7a6c50226f6bc0886fd280e08e7210a45"
+        }
+      ],
+      "required_contexts": [
+        "Normal",
+        "Instances",
+        "Battlegrounds"
+      ],
+      "existing_registration_test": "SingularRequiredRegistrationRegressionTests: actual compiled attributes for all30specs and all3contexts; this is declaration coverage, not rotation validation.",
+      "current_scope": "Existing compiled registration and shared-owner coverage retained; exhaustive class execution audit remains open",
+      "race_class_playability_verified_by_this_scope": false,
+      "remaining_dimensions": [
+        "valid original-era race/class combinations and learned racials",
+        "DPS/tank/healer priorities and resource observation",
+        "spell ranks, talents, glyphs and cooldown restrictions",
+        "interrupt/CC/defensive/heal/triage/threat behavior",
+        "pet/form/stance/presence transitions where applicable",
+        "LoS/range/positioning/pull/add/boss/group/PvP decisions",
+        "rest, food, drink, death and vendor/travel ownership"
+      ]
+    },
+    {
+      "class": "Priest",
+      "spec": "HolyPriest",
+      "talent_tree_index": 1,
+      "source_files": [
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Priest/Common.cs",
+          "sha256": "30a1a3a28e34eb931db5d9cd241f69801f60a8c5a839aafd1c3f871851496c17"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Priest/Discipline.cs",
+          "sha256": "ea7f0ed66fcc4ecaae93c2d7b8d870d78bbb81199621913d64628df56361b34b"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Priest/Holy.cs",
+          "sha256": "a96dd9fecd2c4c84540acab527598cbbb6c588ca93995f3b4f701732f0d8657c"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Priest/Lowbie.cs",
+          "sha256": "93d90292c87fe9a5a80ca1bfc48ce2a049794b913e9fb3e895f660d613cf8fc5"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Priest/Shadow.cs",
+          "sha256": "cfe6580505bec8013ca7b093153df3b7a6c50226f6bc0886fd280e08e7210a45"
+        }
+      ],
+      "required_contexts": [
+        "Normal",
+        "Instances",
+        "Battlegrounds"
+      ],
+      "existing_registration_test": "SingularRequiredRegistrationRegressionTests: actual compiled attributes for all30specs and all3contexts; this is declaration coverage, not rotation validation.",
+      "current_scope": "Existing compiled registration and shared-owner coverage retained; exhaustive class execution audit remains open",
+      "race_class_playability_verified_by_this_scope": false,
+      "remaining_dimensions": [
+        "valid original-era race/class combinations and learned racials",
+        "DPS/tank/healer priorities and resource observation",
+        "spell ranks, talents, glyphs and cooldown restrictions",
+        "interrupt/CC/defensive/heal/triage/threat behavior",
+        "pet/form/stance/presence transitions where applicable",
+        "LoS/range/positioning/pull/add/boss/group/PvP decisions",
+        "rest, food, drink, death and vendor/travel ownership"
+      ]
+    },
+    {
+      "class": "Priest",
+      "spec": "ShadowPriest",
+      "talent_tree_index": 2,
+      "source_files": [
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Priest/Common.cs",
+          "sha256": "30a1a3a28e34eb931db5d9cd241f69801f60a8c5a839aafd1c3f871851496c17"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Priest/Discipline.cs",
+          "sha256": "ea7f0ed66fcc4ecaae93c2d7b8d870d78bbb81199621913d64628df56361b34b"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Priest/Holy.cs",
+          "sha256": "a96dd9fecd2c4c84540acab527598cbbb6c588ca93995f3b4f701732f0d8657c"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Priest/Lowbie.cs",
+          "sha256": "93d90292c87fe9a5a80ca1bfc48ce2a049794b913e9fb3e895f660d613cf8fc5"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Priest/Shadow.cs",
+          "sha256": "cfe6580505bec8013ca7b093153df3b7a6c50226f6bc0886fd280e08e7210a45"
+        }
+      ],
+      "required_contexts": [
+        "Normal",
+        "Instances",
+        "Battlegrounds"
+      ],
+      "existing_registration_test": "SingularRequiredRegistrationRegressionTests: actual compiled attributes for all30specs and all3contexts; this is declaration coverage, not rotation validation.",
+      "current_scope": "Existing compiled registration and shared-owner coverage retained; exhaustive class execution audit remains open",
+      "race_class_playability_verified_by_this_scope": false,
+      "remaining_dimensions": [
+        "valid original-era race/class combinations and learned racials",
+        "DPS/tank/healer priorities and resource observation",
+        "spell ranks, talents, glyphs and cooldown restrictions",
+        "interrupt/CC/defensive/heal/triage/threat behavior",
+        "pet/form/stance/presence transitions where applicable",
+        "LoS/range/positioning/pull/add/boss/group/PvP decisions",
+        "rest, food, drink, death and vendor/travel ownership"
+      ]
+    },
+    {
+      "class": "Rogue",
+      "spec": "AssasinationRogue",
+      "talent_tree_index": 0,
+      "source_files": [
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Rogue/Assassination.cs",
+          "sha256": "d3bbb231cc1a39605bf2537edf137793b823895e57f26207eeab2704318db704"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Rogue/Combat.cs",
+          "sha256": "a71c030889fda68dcdeb5805627e53ab636e429e98efbc440e15bd2501563968"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Rogue/Common.cs",
+          "sha256": "ee04a72053f21b651c00820dffb01ac0fbce19ab54ef8f15d11cb041342a13b5"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Rogue/Lowbie.cs",
+          "sha256": "bffcb3cbef080830fea37c040e8db500cc9ab409cf618caf26e1e64e835659c5"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Rogue/Poisons.cs",
+          "sha256": "b3761318d50aa92e185bc1500df4555be217f93ebdef136b52e106b529832d74"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Rogue/Subtlety.cs",
+          "sha256": "8bd8cb025c23d1a854746fb6a13cbccd5d5fa0dec3c77ecbb262b7e8ae0928a4"
+        }
+      ],
+      "required_contexts": [
+        "Normal",
+        "Instances",
+        "Battlegrounds"
+      ],
+      "existing_registration_test": "SingularRequiredRegistrationRegressionTests: actual compiled attributes for all30specs and all3contexts; this is declaration coverage, not rotation validation.",
+      "current_scope": "Existing compiled registration and shared-owner coverage retained; exhaustive class execution audit remains open",
+      "race_class_playability_verified_by_this_scope": false,
+      "remaining_dimensions": [
+        "valid original-era race/class combinations and learned racials",
+        "DPS/tank/healer priorities and resource observation",
+        "spell ranks, talents, glyphs and cooldown restrictions",
+        "interrupt/CC/defensive/heal/triage/threat behavior",
+        "pet/form/stance/presence transitions where applicable",
+        "LoS/range/positioning/pull/add/boss/group/PvP decisions",
+        "rest, food, drink, death and vendor/travel ownership"
+      ]
+    },
+    {
+      "class": "Rogue",
+      "spec": "CombatRogue",
+      "talent_tree_index": 1,
+      "source_files": [
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Rogue/Assassination.cs",
+          "sha256": "d3bbb231cc1a39605bf2537edf137793b823895e57f26207eeab2704318db704"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Rogue/Combat.cs",
+          "sha256": "a71c030889fda68dcdeb5805627e53ab636e429e98efbc440e15bd2501563968"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Rogue/Common.cs",
+          "sha256": "ee04a72053f21b651c00820dffb01ac0fbce19ab54ef8f15d11cb041342a13b5"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Rogue/Lowbie.cs",
+          "sha256": "bffcb3cbef080830fea37c040e8db500cc9ab409cf618caf26e1e64e835659c5"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Rogue/Poisons.cs",
+          "sha256": "b3761318d50aa92e185bc1500df4555be217f93ebdef136b52e106b529832d74"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Rogue/Subtlety.cs",
+          "sha256": "8bd8cb025c23d1a854746fb6a13cbccd5d5fa0dec3c77ecbb262b7e8ae0928a4"
+        }
+      ],
+      "required_contexts": [
+        "Normal",
+        "Instances",
+        "Battlegrounds"
+      ],
+      "existing_registration_test": "SingularRequiredRegistrationRegressionTests: actual compiled attributes for all30specs and all3contexts; this is declaration coverage, not rotation validation.",
+      "current_scope": "Existing compiled registration and shared-owner coverage retained; exhaustive class execution audit remains open",
+      "race_class_playability_verified_by_this_scope": false,
+      "remaining_dimensions": [
+        "valid original-era race/class combinations and learned racials",
+        "DPS/tank/healer priorities and resource observation",
+        "spell ranks, talents, glyphs and cooldown restrictions",
+        "interrupt/CC/defensive/heal/triage/threat behavior",
+        "pet/form/stance/presence transitions where applicable",
+        "LoS/range/positioning/pull/add/boss/group/PvP decisions",
+        "rest, food, drink, death and vendor/travel ownership"
+      ]
+    },
+    {
+      "class": "Rogue",
+      "spec": "SubtletyRogue",
+      "talent_tree_index": 2,
+      "source_files": [
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Rogue/Assassination.cs",
+          "sha256": "d3bbb231cc1a39605bf2537edf137793b823895e57f26207eeab2704318db704"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Rogue/Combat.cs",
+          "sha256": "a71c030889fda68dcdeb5805627e53ab636e429e98efbc440e15bd2501563968"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Rogue/Common.cs",
+          "sha256": "ee04a72053f21b651c00820dffb01ac0fbce19ab54ef8f15d11cb041342a13b5"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Rogue/Lowbie.cs",
+          "sha256": "bffcb3cbef080830fea37c040e8db500cc9ab409cf618caf26e1e64e835659c5"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Rogue/Poisons.cs",
+          "sha256": "b3761318d50aa92e185bc1500df4555be217f93ebdef136b52e106b529832d74"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Rogue/Subtlety.cs",
+          "sha256": "8bd8cb025c23d1a854746fb6a13cbccd5d5fa0dec3c77ecbb262b7e8ae0928a4"
+        }
+      ],
+      "required_contexts": [
+        "Normal",
+        "Instances",
+        "Battlegrounds"
+      ],
+      "existing_registration_test": "SingularRequiredRegistrationRegressionTests: actual compiled attributes for all30specs and all3contexts; this is declaration coverage, not rotation validation.",
+      "current_scope": "Existing compiled registration and shared-owner coverage retained; exhaustive class execution audit remains open",
+      "race_class_playability_verified_by_this_scope": false,
+      "remaining_dimensions": [
+        "valid original-era race/class combinations and learned racials",
+        "DPS/tank/healer priorities and resource observation",
+        "spell ranks, talents, glyphs and cooldown restrictions",
+        "interrupt/CC/defensive/heal/triage/threat behavior",
+        "pet/form/stance/presence transitions where applicable",
+        "LoS/range/positioning/pull/add/boss/group/PvP decisions",
+        "rest, food, drink, death and vendor/travel ownership"
+      ]
+    },
+    {
+      "class": "Shaman",
+      "spec": "ElementalShaman",
+      "talent_tree_index": 0,
+      "source_files": [
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Shaman/Elemental.cs",
+          "sha256": "c7417b22f74fd6cf9df01a92fbd320057bec05b3d74b58d3ae929b3e8e61a0d5"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Shaman/Enhancement.cs",
+          "sha256": "c4bb2f41aaabdfb7b046b8b3131aed694e3b87a940402f06d51acfbc39b77815"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Shaman/Lowbie.cs",
+          "sha256": "c6c8457a3df2a7b842431641a385548f178e00903a38dab744095e3a924095d4"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Shaman/Restoration.cs",
+          "sha256": "23be64d0f5ef4c974b9747fe4e90a2cd85617f1132b8163219a588cadd6dc5aa"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Shaman/Totems.cs",
+          "sha256": "71521958497c7e72f58e66f8c8a85d36881b24916df3952b0c175ef8dff4629a"
+        }
+      ],
+      "required_contexts": [
+        "Normal",
+        "Instances",
+        "Battlegrounds"
+      ],
+      "existing_registration_test": "SingularRequiredRegistrationRegressionTests: actual compiled attributes for all30specs and all3contexts; this is declaration coverage, not rotation validation.",
+      "current_scope": "Existing compiled registration and shared-owner coverage retained; exhaustive class execution audit remains open",
+      "race_class_playability_verified_by_this_scope": false,
+      "remaining_dimensions": [
+        "valid original-era race/class combinations and learned racials",
+        "DPS/tank/healer priorities and resource observation",
+        "spell ranks, talents, glyphs and cooldown restrictions",
+        "interrupt/CC/defensive/heal/triage/threat behavior",
+        "pet/form/stance/presence transitions where applicable",
+        "LoS/range/positioning/pull/add/boss/group/PvP decisions",
+        "rest, food, drink, death and vendor/travel ownership"
+      ]
+    },
+    {
+      "class": "Shaman",
+      "spec": "EnhancementShaman",
+      "talent_tree_index": 1,
+      "source_files": [
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Shaman/Elemental.cs",
+          "sha256": "c7417b22f74fd6cf9df01a92fbd320057bec05b3d74b58d3ae929b3e8e61a0d5"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Shaman/Enhancement.cs",
+          "sha256": "c4bb2f41aaabdfb7b046b8b3131aed694e3b87a940402f06d51acfbc39b77815"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Shaman/Lowbie.cs",
+          "sha256": "c6c8457a3df2a7b842431641a385548f178e00903a38dab744095e3a924095d4"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Shaman/Restoration.cs",
+          "sha256": "23be64d0f5ef4c974b9747fe4e90a2cd85617f1132b8163219a588cadd6dc5aa"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Shaman/Totems.cs",
+          "sha256": "71521958497c7e72f58e66f8c8a85d36881b24916df3952b0c175ef8dff4629a"
+        }
+      ],
+      "required_contexts": [
+        "Normal",
+        "Instances",
+        "Battlegrounds"
+      ],
+      "existing_registration_test": "SingularRequiredRegistrationRegressionTests: actual compiled attributes for all30specs and all3contexts; this is declaration coverage, not rotation validation.",
+      "current_scope": "Existing compiled registration and shared-owner coverage retained; exhaustive class execution audit remains open",
+      "race_class_playability_verified_by_this_scope": false,
+      "remaining_dimensions": [
+        "valid original-era race/class combinations and learned racials",
+        "DPS/tank/healer priorities and resource observation",
+        "spell ranks, talents, glyphs and cooldown restrictions",
+        "interrupt/CC/defensive/heal/triage/threat behavior",
+        "pet/form/stance/presence transitions where applicable",
+        "LoS/range/positioning/pull/add/boss/group/PvP decisions",
+        "rest, food, drink, death and vendor/travel ownership"
+      ]
+    },
+    {
+      "class": "Shaman",
+      "spec": "RestorationShaman",
+      "talent_tree_index": 2,
+      "source_files": [
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Shaman/Elemental.cs",
+          "sha256": "c7417b22f74fd6cf9df01a92fbd320057bec05b3d74b58d3ae929b3e8e61a0d5"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Shaman/Enhancement.cs",
+          "sha256": "c4bb2f41aaabdfb7b046b8b3131aed694e3b87a940402f06d51acfbc39b77815"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Shaman/Lowbie.cs",
+          "sha256": "c6c8457a3df2a7b842431641a385548f178e00903a38dab744095e3a924095d4"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Shaman/Restoration.cs",
+          "sha256": "23be64d0f5ef4c974b9747fe4e90a2cd85617f1132b8163219a588cadd6dc5aa"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Shaman/Totems.cs",
+          "sha256": "71521958497c7e72f58e66f8c8a85d36881b24916df3952b0c175ef8dff4629a"
+        }
+      ],
+      "required_contexts": [
+        "Normal",
+        "Instances",
+        "Battlegrounds"
+      ],
+      "existing_registration_test": "SingularRequiredRegistrationRegressionTests: actual compiled attributes for all30specs and all3contexts; this is declaration coverage, not rotation validation.",
+      "current_scope": "Existing compiled registration and shared-owner coverage retained; exhaustive class execution audit remains open",
+      "race_class_playability_verified_by_this_scope": false,
+      "remaining_dimensions": [
+        "valid original-era race/class combinations and learned racials",
+        "DPS/tank/healer priorities and resource observation",
+        "spell ranks, talents, glyphs and cooldown restrictions",
+        "interrupt/CC/defensive/heal/triage/threat behavior",
+        "pet/form/stance/presence transitions where applicable",
+        "LoS/range/positioning/pull/add/boss/group/PvP decisions",
+        "rest, food, drink, death and vendor/travel ownership"
+      ]
+    },
+    {
+      "class": "Warlock",
+      "spec": "AfflictionWarlock",
+      "talent_tree_index": 0,
+      "source_files": [
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Warlock/Affliction.cs",
+          "sha256": "c439ee56191c7ac716cbca957822df87ee10eb58ea73a976ab1e93fb086924a4"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Warlock/Common.cs",
+          "sha256": "b62631ffe0567e0a14ee87729e648a158b3196fcb27b484e4361788b24763d5a"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Warlock/Demonology.cs",
+          "sha256": "2709c488b0b49db316c15ff869c723723aa2b0cfde27081eca4d434759433be2"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Warlock/Destruction.cs",
+          "sha256": "ab5a73b64861aa3a2c697106014f6ce5d8b185908f1063b52526dfddcf6658a4"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Warlock/Lowbie.cs",
+          "sha256": "3ffccbb7b9a36f7e24ba30f2c0b00341f1fee6219ca7b5d2edb86b80a3340e16"
+        }
+      ],
+      "required_contexts": [
+        "Normal",
+        "Instances",
+        "Battlegrounds"
+      ],
+      "existing_registration_test": "SingularRequiredRegistrationRegressionTests: actual compiled attributes for all30specs and all3contexts; this is declaration coverage, not rotation validation.",
+      "current_scope": "Existing compiled registration and shared-owner coverage retained; exhaustive class execution audit remains open",
+      "race_class_playability_verified_by_this_scope": false,
+      "remaining_dimensions": [
+        "valid original-era race/class combinations and learned racials",
+        "DPS/tank/healer priorities and resource observation",
+        "spell ranks, talents, glyphs and cooldown restrictions",
+        "interrupt/CC/defensive/heal/triage/threat behavior",
+        "pet/form/stance/presence transitions where applicable",
+        "LoS/range/positioning/pull/add/boss/group/PvP decisions",
+        "rest, food, drink, death and vendor/travel ownership"
+      ]
+    },
+    {
+      "class": "Warlock",
+      "spec": "DemonologyWarlock",
+      "talent_tree_index": 1,
+      "source_files": [
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Warlock/Affliction.cs",
+          "sha256": "c439ee56191c7ac716cbca957822df87ee10eb58ea73a976ab1e93fb086924a4"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Warlock/Common.cs",
+          "sha256": "b62631ffe0567e0a14ee87729e648a158b3196fcb27b484e4361788b24763d5a"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Warlock/Demonology.cs",
+          "sha256": "2709c488b0b49db316c15ff869c723723aa2b0cfde27081eca4d434759433be2"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Warlock/Destruction.cs",
+          "sha256": "ab5a73b64861aa3a2c697106014f6ce5d8b185908f1063b52526dfddcf6658a4"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Warlock/Lowbie.cs",
+          "sha256": "3ffccbb7b9a36f7e24ba30f2c0b00341f1fee6219ca7b5d2edb86b80a3340e16"
+        }
+      ],
+      "required_contexts": [
+        "Normal",
+        "Instances",
+        "Battlegrounds"
+      ],
+      "existing_registration_test": "SingularRequiredRegistrationRegressionTests: actual compiled attributes for all30specs and all3contexts; this is declaration coverage, not rotation validation.",
+      "current_scope": "Existing compiled registration and shared-owner coverage retained; exhaustive class execution audit remains open",
+      "race_class_playability_verified_by_this_scope": false,
+      "remaining_dimensions": [
+        "valid original-era race/class combinations and learned racials",
+        "DPS/tank/healer priorities and resource observation",
+        "spell ranks, talents, glyphs and cooldown restrictions",
+        "interrupt/CC/defensive/heal/triage/threat behavior",
+        "pet/form/stance/presence transitions where applicable",
+        "LoS/range/positioning/pull/add/boss/group/PvP decisions",
+        "rest, food, drink, death and vendor/travel ownership"
+      ]
+    },
+    {
+      "class": "Warlock",
+      "spec": "DestructionWarlock",
+      "talent_tree_index": 2,
+      "source_files": [
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Warlock/Affliction.cs",
+          "sha256": "c439ee56191c7ac716cbca957822df87ee10eb58ea73a976ab1e93fb086924a4"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Warlock/Common.cs",
+          "sha256": "b62631ffe0567e0a14ee87729e648a158b3196fcb27b484e4361788b24763d5a"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Warlock/Demonology.cs",
+          "sha256": "2709c488b0b49db316c15ff869c723723aa2b0cfde27081eca4d434759433be2"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Warlock/Destruction.cs",
+          "sha256": "ab5a73b64861aa3a2c697106014f6ce5d8b185908f1063b52526dfddcf6658a4"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Warlock/Lowbie.cs",
+          "sha256": "3ffccbb7b9a36f7e24ba30f2c0b00341f1fee6219ca7b5d2edb86b80a3340e16"
+        }
+      ],
+      "required_contexts": [
+        "Normal",
+        "Instances",
+        "Battlegrounds"
+      ],
+      "existing_registration_test": "SingularRequiredRegistrationRegressionTests: actual compiled attributes for all30specs and all3contexts; this is declaration coverage, not rotation validation.",
+      "current_scope": "Existing compiled registration and shared-owner coverage retained; exhaustive class execution audit remains open",
+      "race_class_playability_verified_by_this_scope": false,
+      "remaining_dimensions": [
+        "valid original-era race/class combinations and learned racials",
+        "DPS/tank/healer priorities and resource observation",
+        "spell ranks, talents, glyphs and cooldown restrictions",
+        "interrupt/CC/defensive/heal/triage/threat behavior",
+        "pet/form/stance/presence transitions where applicable",
+        "LoS/range/positioning/pull/add/boss/group/PvP decisions",
+        "rest, food, drink, death and vendor/travel ownership"
+      ]
+    },
+    {
+      "class": "Warrior",
+      "spec": "ArmsWarrior",
+      "talent_tree_index": 0,
+      "source_files": [
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Warrior/Arms.cs",
+          "sha256": "a0f8ac9f9161d586911cd186934dc29f1ae626042f3f070b6326908facd69b1b"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Warrior/Common.cs",
+          "sha256": "8762c909fc8d7c07ad84386e4bcbf19ec2edcc6a876fc6e9dcdfb32958be6409"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Warrior/Fury.cs",
+          "sha256": "ecde4936c79f3bc08ceeb93f1062595f2f3b2691a7b504978842333223b557f4"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Warrior/Lowbie.cs",
+          "sha256": "128323d1147a68b5db6c2be2502a7c61b66c15a48017602ee1d283e21b3f3220"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Warrior/Protection.cs",
+          "sha256": "8cceae841b01415831cc4b440c04ae9070b2718a22f0289c8f14dad4572c5715"
+        }
+      ],
+      "required_contexts": [
+        "Normal",
+        "Instances",
+        "Battlegrounds"
+      ],
+      "existing_registration_test": "SingularRequiredRegistrationRegressionTests: actual compiled attributes for all30specs and all3contexts; this is declaration coverage, not rotation validation.",
+      "current_scope": "Existing compiled registration and shared-owner coverage retained; exhaustive class execution audit remains open",
+      "race_class_playability_verified_by_this_scope": false,
+      "remaining_dimensions": [
+        "valid original-era race/class combinations and learned racials",
+        "DPS/tank/healer priorities and resource observation",
+        "spell ranks, talents, glyphs and cooldown restrictions",
+        "interrupt/CC/defensive/heal/triage/threat behavior",
+        "pet/form/stance/presence transitions where applicable",
+        "LoS/range/positioning/pull/add/boss/group/PvP decisions",
+        "rest, food, drink, death and vendor/travel ownership"
+      ]
+    },
+    {
+      "class": "Warrior",
+      "spec": "FuryWarrior",
+      "talent_tree_index": 1,
+      "source_files": [
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Warrior/Arms.cs",
+          "sha256": "a0f8ac9f9161d586911cd186934dc29f1ae626042f3f070b6326908facd69b1b"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Warrior/Common.cs",
+          "sha256": "8762c909fc8d7c07ad84386e4bcbf19ec2edcc6a876fc6e9dcdfb32958be6409"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Warrior/Fury.cs",
+          "sha256": "ecde4936c79f3bc08ceeb93f1062595f2f3b2691a7b504978842333223b557f4"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Warrior/Lowbie.cs",
+          "sha256": "128323d1147a68b5db6c2be2502a7c61b66c15a48017602ee1d283e21b3f3220"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Warrior/Protection.cs",
+          "sha256": "8cceae841b01415831cc4b440c04ae9070b2718a22f0289c8f14dad4572c5715"
+        }
+      ],
+      "required_contexts": [
+        "Normal",
+        "Instances",
+        "Battlegrounds"
+      ],
+      "existing_registration_test": "SingularRequiredRegistrationRegressionTests: actual compiled attributes for all30specs and all3contexts; this is declaration coverage, not rotation validation.",
+      "current_scope": "Existing compiled registration and shared-owner coverage retained; exhaustive class execution audit remains open",
+      "race_class_playability_verified_by_this_scope": false,
+      "remaining_dimensions": [
+        "valid original-era race/class combinations and learned racials",
+        "DPS/tank/healer priorities and resource observation",
+        "spell ranks, talents, glyphs and cooldown restrictions",
+        "interrupt/CC/defensive/heal/triage/threat behavior",
+        "pet/form/stance/presence transitions where applicable",
+        "LoS/range/positioning/pull/add/boss/group/PvP decisions",
+        "rest, food, drink, death and vendor/travel ownership"
+      ]
+    },
+    {
+      "class": "Warrior",
+      "spec": "ProtectionWarrior",
+      "talent_tree_index": 2,
+      "source_files": [
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Warrior/Arms.cs",
+          "sha256": "a0f8ac9f9161d586911cd186934dc29f1ae626042f3f070b6326908facd69b1b"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Warrior/Common.cs",
+          "sha256": "8762c909fc8d7c07ad84386e4bcbf19ec2edcc6a876fc6e9dcdfb32958be6409"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Warrior/Fury.cs",
+          "sha256": "ecde4936c79f3bc08ceeb93f1062595f2f3b2691a7b504978842333223b557f4"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Warrior/Lowbie.cs",
+          "sha256": "128323d1147a68b5db6c2be2502a7c61b66c15a48017602ee1d283e21b3f3220"
+        },
+        {
+          "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Warrior/Protection.cs",
+          "sha256": "8cceae841b01415831cc4b440c04ae9070b2718a22f0289c8f14dad4572c5715"
+        }
+      ],
+      "required_contexts": [
+        "Normal",
+        "Instances",
+        "Battlegrounds"
+      ],
+      "existing_registration_test": "SingularRequiredRegistrationRegressionTests: actual compiled attributes for all30specs and all3contexts; this is declaration coverage, not rotation validation.",
+      "current_scope": "Existing compiled registration and shared-owner coverage retained; exhaustive class execution audit remains open",
+      "race_class_playability_verified_by_this_scope": false,
+      "remaining_dimensions": [
+        "valid original-era race/class combinations and learned racials",
+        "DPS/tank/healer priorities and resource observation",
+        "spell ranks, talents, glyphs and cooldown restrictions",
+        "interrupt/CC/defensive/heal/triage/threat behavior",
+        "pet/form/stance/presence transitions where applicable",
+        "LoS/range/positioning/pull/add/boss/group/PvP decisions",
+        "rest, food, drink, death and vendor/travel ownership"
+      ]
+    }
+  ],
+  "shared_racial_owner": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Generic.cs",
+  "all_classes_exhaustively_verified": false,
+  "new_source_review_followups": [
+    {
+      "owner": "Styx/WoWInternals/WoWObjects/WoWUnit.cs:GetPowerPercent",
+      "observation": "current*100 is evaluated as int before conversion to double; prove the large-health boundary against the real owner before repair."
+    },
+    {
+      "owner": "Retribution self-defense predicates",
+      "observation": "Extend numeric61987/61988 restriction coverage with failing-before tests before changing the retained optimized rotation."
+    }
+  ]
+}
