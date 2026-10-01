@@ -1,0 +1,33 @@
+{
+  "review_type": "direct full-diff and source-contract self-review; no independent reviewer agent",
+  "base_commit": "08c7ebd820a452f0b21bd64f2d5f30c8afcdb7bd",
+  "reviewed_owners": [
+    "Common",
+    "Blood",
+    "Frost",
+    "Unholy"
+  ],
+  "reviewed_shared_helpers": [
+    "Spell.Buff overloads and recipient revalidation",
+    "TalentManager.HasGlyph"
+  ],
+  "blocking_findings": [],
+  "rulings": [
+    "Retain existing presence choices; changing an opener requires a separately evidenced policy.",
+    "Do not claim the fixture generic range boundary proves spell-specific native range or live casts.",
+    "Use corrected EffectMiscValue fields only; preserve the original mislabelled diagnostic and its correction."
+  ],
+  "remaining_audit_dimensions": [
+    "presence/opener ownership",
+    "full rotation priorities and resources",
+    "exact native aura/glyph observations and localized names",
+    "spell-specific range and moving-pet lifetime",
+    "Pestilence geometry and crowd control safety",
+    "threat, tank/DPS role selection and interrupts",
+    "race/class availability and racials",
+    "live PvE/PvP performance"
+  ],
+  "quest_frontier": "../required-stock/remaining-category-ids.json",
+  "remaining_quest_ids": 1305,
+  "all_class_spec_race_combinations_exhaustively_verified": false
+}

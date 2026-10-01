@@ -1,0 +1,83 @@
+{
+  "input_sha256": "bf644876709c591acc17c0da8cdf1814edcc9f1e6bc109a8c0d5c38c79dc953c",
+  "file_version": "3.3.5.12340",
+  "architecture": "x86",
+  "read_only": true,
+  "new_client_api_added": false,
+  "raw_identity_receipt_sha256": "07531d106f0c794ec23957022c22b877fdc2651b249b345f4c3f691d1681d4ed",
+  "raw_health_probe_sha256": "f0cd3d03c0fbe547ab9000c67a37949093bebe801e34119caf96587031cb0f6c",
+  "registered_functions": [
+    {
+      "api": "GetSpellCooldown",
+      "entries": [
+        {
+          "table_entry": "0xaccd18",
+          "function": "0x540e80",
+          "function_end": "0x54100c",
+          "function_bytes_sha256": "1a3b40fa6554e826758d4f3b84acebcf6450145a6d6c2614284e674ab554f640"
+        }
+      ]
+    },
+    {
+      "api": "UnitAura",
+      "entries": [
+        {
+          "table_entry": "0xad2418",
+          "function": "0x614d40",
+          "function_end": "0x614d83",
+          "function_bytes_sha256": "e722208941c112cfbc2054fe6f3dedb270c5f00d9ba0b8c8eb177cdd6b036504"
+        }
+      ]
+    },
+    {
+      "api": "UnitIsDeadOrGhost",
+      "entries": [
+        {
+          "table_entry": "0xad2350",
+          "function": "0x60f680",
+          "function_end": "0x60f783",
+          "function_bytes_sha256": "2203b4e081be5c512cae7ff3bb5d29d79cb0faf8ccd0904db80fa2804caa6182"
+        }
+      ]
+    },
+    {
+      "api": "UnitHealthMax",
+      "entries": [
+        {
+          "table_entry": "0xad2300",
+          "function": "0x60ec60",
+          "function_end": "0x60ed37",
+          "function_bytes_sha256": "370eeaa814ca8cf21930ab382013d9b0a479934ee567e1a21323f34117ae83ba"
+        }
+      ]
+    },
+    {
+      "api": "UnitHealth",
+      "entries": [
+        {
+          "table_entry": "0xad22f8",
+          "function": "0x60eb60",
+          "function_end": "0x60ec57",
+          "function_bytes_sha256": "1b65bab8f5720dff7541669a1037de86a82d99eb1fa865a0418d2ceb53df126b"
+        }
+      ]
+    },
+    {
+      "api": "UnitCanAssist",
+      "entries": [
+        {
+          "table_entry": "0xad2298",
+          "function": "0x60d690",
+          "function_end": "0x60d728",
+          "function_bytes_sha256": "4447fbea6fdd6150cfdf5b1a91709ac18c7c64d69c014347372da577f4d44b7a"
+        }
+      ]
+    }
+  ],
+  "findings": [
+    "UnitHealth and UnitHealthMax accept a unit token and resolve loaded-unit or cached records; missing observations can return0.",
+    "UnitAura delegates to a separate implementation; this wrapper alone is not an aura-semantics proof.",
+    "GetSpellCooldown returns three values and converts two millisecond values to seconds.",
+    "Client wrappers do not establish server spell scripts, realm overrides, optimal thresholds or completed encounters."
+  ]
+}

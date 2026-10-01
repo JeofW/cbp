@@ -1,0 +1,180 @@
+{
+  "primary_server": {
+    "url": "https://raw.githubusercontent.com/TrinityCore/TrinityCore/8fda442f6c30ca21a622638063ab8b28376f1b25/src/server/scripts/Spells/spell_paladin.cpp",
+    "file": "TC-spell_paladin.cpp",
+    "bytes": 72372,
+    "sha256": "7094e0a8eaab03b2f4b56e6ff2a574d9662189a10e59d57bca5d0d5491946ca4"
+  },
+  "dbc_schema": {
+    "url": "https://raw.githubusercontent.com/TrinityCore/TrinityCore/8fda442f6c30ca21a622638063ab8b28376f1b25/src/server/shared/DataStores/DBCStructure.h",
+    "file": "TC-DBCStructure.h",
+    "bytes": 93151,
+    "sha256": "82de42b23241e10bc736065ba90b071eed332d78fbfd3b96e913d65d1b794bf8"
+  },
+  "client_spell_dbc_sha256": "d5cce1a83550dcfa9eb2f0251dbb11fd24c272534b2b1a9b230924a44d817ab3",
+  "selected_client_records": [
+    {
+      "id": 498,
+      "name": "Divine Protection",
+      "spell_family": 10,
+      "caster_aura_state": 0,
+      "target_aura_state": 0,
+      "exclude_caster_aura_state": 0,
+      "exclude_target_aura_state": 0,
+      "caster_aura_spell": 0,
+      "target_aura_spell": 0,
+      "exclude_caster_aura_spell": 61988,
+      "exclude_target_aura_spell": 0
+    },
+    {
+      "id": 633,
+      "name": "Lay on Hands",
+      "spell_family": 10,
+      "caster_aura_state": 0,
+      "target_aura_state": 0,
+      "exclude_caster_aura_state": 0,
+      "exclude_target_aura_state": 0,
+      "caster_aura_spell": 0,
+      "target_aura_spell": 0,
+      "exclude_caster_aura_spell": 0,
+      "exclude_target_aura_spell": 0
+    },
+    {
+      "id": 2800,
+      "name": "Lay on Hands",
+      "spell_family": 10,
+      "caster_aura_state": 0,
+      "target_aura_state": 0,
+      "exclude_caster_aura_state": 0,
+      "exclude_target_aura_state": 0,
+      "caster_aura_spell": 0,
+      "target_aura_spell": 0,
+      "exclude_caster_aura_spell": 0,
+      "exclude_target_aura_spell": 0
+    },
+    {
+      "id": 10310,
+      "name": "Lay on Hands",
+      "spell_family": 10,
+      "caster_aura_state": 0,
+      "target_aura_state": 0,
+      "exclude_caster_aura_state": 0,
+      "exclude_target_aura_state": 0,
+      "caster_aura_spell": 0,
+      "target_aura_spell": 0,
+      "exclude_caster_aura_spell": 0,
+      "exclude_target_aura_spell": 0
+    },
+    {
+      "id": 20233,
+      "name": "Lay on Hands",
+      "spell_family": 10,
+      "caster_aura_state": 0,
+      "target_aura_state": 0,
+      "exclude_caster_aura_state": 0,
+      "exclude_target_aura_state": 0,
+      "caster_aura_spell": 0,
+      "target_aura_spell": 0,
+      "exclude_caster_aura_spell": 0,
+      "exclude_target_aura_spell": 0
+    },
+    {
+      "id": 20236,
+      "name": "Lay on Hands",
+      "spell_family": 10,
+      "caster_aura_state": 0,
+      "target_aura_state": 0,
+      "exclude_caster_aura_state": 0,
+      "exclude_target_aura_state": 0,
+      "caster_aura_spell": 0,
+      "target_aura_spell": 0,
+      "exclude_caster_aura_spell": 0,
+      "exclude_target_aura_spell": 0
+    },
+    {
+      "id": 25771,
+      "name": "Forbearance",
+      "spell_family": 10,
+      "caster_aura_state": 0,
+      "target_aura_state": 0,
+      "exclude_caster_aura_state": 0,
+      "exclude_target_aura_state": 0,
+      "caster_aura_spell": 0,
+      "target_aura_spell": 0,
+      "exclude_caster_aura_spell": 0,
+      "exclude_target_aura_spell": 0
+    },
+    {
+      "id": 27154,
+      "name": "Lay on Hands",
+      "spell_family": 10,
+      "caster_aura_state": 0,
+      "target_aura_state": 0,
+      "exclude_caster_aura_state": 0,
+      "exclude_target_aura_state": 0,
+      "caster_aura_spell": 0,
+      "target_aura_spell": 0,
+      "exclude_caster_aura_spell": 0,
+      "exclude_target_aura_spell": 0
+    },
+    {
+      "id": 48788,
+      "name": "Lay on Hands",
+      "spell_family": 10,
+      "caster_aura_state": 0,
+      "target_aura_state": 0,
+      "exclude_caster_aura_state": 0,
+      "exclude_target_aura_state": 0,
+      "caster_aura_spell": 0,
+      "target_aura_spell": 0,
+      "exclude_caster_aura_spell": 0,
+      "exclude_target_aura_spell": 0
+    },
+    {
+      "id": 53563,
+      "name": "Beacon of Light",
+      "spell_family": 10,
+      "caster_aura_state": 0,
+      "target_aura_state": 0,
+      "exclude_caster_aura_state": 0,
+      "exclude_target_aura_state": 0,
+      "caster_aura_spell": 0,
+      "target_aura_spell": 0,
+      "exclude_caster_aura_spell": 0,
+      "exclude_target_aura_spell": 0
+    },
+    {
+      "id": 54428,
+      "name": "Divine Plea",
+      "spell_family": 10,
+      "caster_aura_state": 0,
+      "target_aura_state": 0,
+      "exclude_caster_aura_state": 0,
+      "exclude_target_aura_state": 0,
+      "caster_aura_spell": 0,
+      "target_aura_spell": 0,
+      "exclude_caster_aura_spell": 0,
+      "exclude_target_aura_spell": 0
+    },
+    {
+      "id": 61987,
+      "name": "Avenging Wrath Marker",
+      "spell_family": 0,
+      "caster_aura_state": 0,
+      "target_aura_state": 0,
+      "exclude_caster_aura_state": 0,
+      "exclude_target_aura_state": 0,
+      "caster_aura_spell": 0,
+      "target_aura_spell": 0,
+      "exclude_caster_aura_spell": 0,
+      "exclude_target_aura_spell": 0
+    }
+  ],
+  "rules": {
+    "immunity_check": "TC spell_paladin.cpp lines936\u2013983: Forbearance25771 and AvengingWrath marker61987 reject Divine Protection.",
+    "lay_on_hands_check": "TC spell_paladin.cpp lines1381\u20131422: only self-casts are rejected by25771/61987/61988.",
+    "beacon": "TC spell_paladin.cpp lines1425\u20131473 retains caster-specific Beacon ownership.",
+    "plea": "Original-client54428 effect1 has base_points=-51, die_sides=1, aura108 and explicit spell-class mask; existing healing penalty is not inferred from IDA."
+  },
+  "primary_server_is_live_realm_proof": false
+}
