@@ -1,3 +1,11 @@
+# Current: ground collection delivery after PR85 — 1 October 2026
+
+Canonical master is `b105583b7643772006db89858feb42f9ea7da88b` after accepted PR84 and PR85. Continue D:/Dev/CB-GroundCollection-20261001 on audit/next-ground-collection-20261001. Read docs/audit/2026-10-01/ground-collection/REPORT.md and its source, test, execution-scope and review receipts. Preserve all existing work: the actual shipped quest10161 and four-source control now run through30separate acknowledged items and real turn-in/reward owners with separately supplied server replies;348shared loot,11turn-in,13watchdog and33diagnostic-field checks pass. Full diagnostic source/log evidence is retained externally. Candidate/clean-final/hosted/merge/deployment states are established by GROUND_COLLECTION_CANDIDATE_V14_20261001.json and later receipts, never by guessing a future commit hash.
+
+Production last verified at PR82eae93b1f7207a965fed0bef958905e40476ac282 with434matching payload and2007unchanged protected files; later replacement requires the accepted merged build. PR85 includes the189-case Rogue builder repair; PR84 withdraws3030unsupported lifecycle claims. Keep the exact4335execution population and all primary-source/script/live obligations; legacy simulationPASS is observation coverage. All open PRs were empty after PR85 integration, with obsolete67/70/72/73/1 and experiment25closed and branches/worktrees preserved. Recheck live refs before any mutation or repeat.
+
+## Preserved earlier handoff
+
 # Current: preserved Rogue repair after PR84 — 1 October 2026
 
 PR84 is merged at `60f01529e3753b96db0a22e5396f3795ca1731dc`. The execution ledger withdraws 3,030 full-lifecycle claims; earlier 4,335-row observation tests remain useful but are not end-to-end certificates. Read docs/audit/2026-10-01/execution-coverage/REPORT.md and the exact primitive membership matrix.

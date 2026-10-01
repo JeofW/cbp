@@ -219,6 +219,8 @@ public class CollectItemObjective : QuestObjective
                         area = autoArea;
                 }
             }
+            area.RequiresGroundInteraction = this._collectItemInfo?.OverridedCollectFrom?
+                .Any(source => source.Type == CollectFromType.GameObject) == true;
             StyxWoW.AreaManager.SetArea(area);
             
             this._behaviorTree = (Composite)new PrioritySelector(new Composite[3]
@@ -552,26 +554,35 @@ public class CollectItemObjective : QuestObjective
 
     private bool IsValidGameObjectTarget(WoWGameObject gameObject)
     {
+        // A profile source relation does not depend on the optional query cache.
+        // The currently loaded object must still be a valid, matching GameObject;
+        // never memoize its dynamic lootability or borrow a creature's entry.
+        if (gameObject == null || gameObject.BaseAddress == 0 || gameObject.IsDisabled ||
+            gameObject.Type != WoWObjectType.GameObject || gameObject.Guid == 0 ||
+            gameObject.DescriptorGuid != gameObject.Guid)
+            return false;
         uint entry = gameObject.Entry;
+        if (entry == 0)
+            return false;
         if (this._excludedGameObjects.Contains(entry))
             return false;
         if (!this._includedGameObjects.Contains(entry))
         {
-            Styx.WoWInternals.WoWCache.WoWCache.GameObjectCacheEntry info;
-            if (!gameObject.GetCachedInfo(out info))
-                return false;
             CollectFromCollection collectFrom = this._collectItemInfo?.OverridedCollectFrom;
-            if ((collectFrom == null || collectFrom.Count <= 0 || !collectFrom.ContainsGameObject(entry)) && 
-                !DropDatabase.GameObjectDropsItem(entry, (uint)this.Objective.ID) && 
-                !ItemLootQueries.GameObjectDropsItem(entry, (uint)this.Objective.ID) &&
-                !info.QuestItems.Contains(this.Objective.ID))
+            if (collectFrom?.ContainsGameObject(entry) != true)
             {
-                this._excludedGameObjects.Add(entry);
+                Styx.WoWInternals.WoWCache.WoWCache.GameObjectCacheEntry info;
+                if (!gameObject.GetCachedInfo(out info))
+                    return false;
+                if (!DropDatabase.GameObjectDropsItem(entry, (uint)this.Objective.ID) &&
+                    !ItemLootQueries.GameObjectDropsItem(entry, (uint)this.Objective.ID) &&
+                    !info.QuestItems.Contains(this.Objective.ID))
+                {
+                    this._excludedGameObjects.Add(entry);
+                    return false;
+                }
             }
-            else
-            {
-                this._includedGameObjects.Add(entry);
-            }
+            this._includedGameObjects.Add(entry);
         }
         return this._includedGameObjects.Contains(entry) && gameObject.CanLoot;
     }

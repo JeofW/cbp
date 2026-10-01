@@ -6,6 +6,7 @@ reference. This proves reproducible bot behavior, never actual realm completion.
 from __future__ import annotations
 
 import argparse
+from collections import Counter
 from datetime import datetime, timezone
 import gzip
 import json
@@ -16,9 +17,27 @@ import time
 
 from primary_closure_335 import classification_partition, validate_closure_inputs, validate_strategy_results, validate_availability_result, validate_required_stock_result
 from release_evidence_335 import file_sha256, source_identity, source_inputs, write_json
+from execution_coverage_335 import population
 
 EVIDENCE = Path('docs/audit/2026-09-29/wholesome-primary-closure')
 KNOWLEDGE = Path('runtime-snapshot/Bots/WholesomeAutoQuest-master/quest_data')
+
+
+def execution_scope_report(groups: dict) -> dict:
+    """This runner checks observations/declared owners, not full quest execution.
+
+    Keep historical categories reproducible, but do not grant a complete-family
+    certificate from their names. The separate execution-coverage validator must
+    verify exact semantics and causal action-to-turnin traces for such a claim.
+    """
+    members = population(groups)
+    counts = Counter('EXECUTION-UNVERIFIED' if category in ('GENERIC-PROVEN', 'STRATEGY-PROVEN')
+                     else category for category in members.values())
+    return {'evidence_scope': 'controlled-observation-and-declared-owner-checks',
+            'classification_count_scope': 'legacy-observation-ledger-only',
+            'execution_classification_counts': dict(sorted(counts.items())),
+            'end_to_end_proven_quest_ids': [], 'live_completion_proven': False,
+            'execution_grade_authority': 'execution_coverage_335.py: exact semantic membership and verified causal lifecycle artifacts'}
 
 
 def read_json(path: Path):
@@ -145,6 +164,7 @@ def run(args) -> None:
                         'required_stock_checks': sum(simulations[ident]['required_stock_validation']['passed_cases'] for ident in stock_model),
                         'output_sha256': output_hashes, 'live_completion_proven': False,
                         'claim_limit': 'Actual owners under controlled source-bound observations; no game attachment.'}
+        verification.update(execution_scope_report(ids))
         write_json(output / 'verification.json', verification)
         results.append({'stage': 'evidence-validation', 'exit': 0})
     except Exception as error:

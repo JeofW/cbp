@@ -1,5 +1,6 @@
 using Styx.WoWInternals;
 using System;
+using System.Collections.Generic;
 using TreeSharp;
 
 namespace CommonBehaviors
@@ -8,6 +9,18 @@ namespace CommonBehaviors
     {
         private readonly string _luaEvent;
         private bool _eventFired;
+        private readonly Func<bool> _beginAfterSubscription;
+        private bool _beginAccepted = true;
+
+        // Subscribe before a request that can synchronously raise its reply.
+        // Existing constructors retain their original behavior and deadlines.
+        public WaitLuaEvent(string luaEvent, WaitGetTimeoutDelegate timeoutRetriever,
+            Func<bool> beginAfterSubscription, Composite child)
+            : base(timeoutRetriever, child)
+        {
+            _luaEvent = luaEvent;
+            _beginAfterSubscription = beginAfterSubscription ?? throw new ArgumentNullException(nameof(beginAfterSubscription));
+        }
 
         public WaitLuaEvent(string luaEvent, int timeoutSeconds, Composite child)
             : base(timeoutSeconds, child)
@@ -41,8 +54,31 @@ namespace CommonBehaviors
 
         public override void Start(object context)
         {
+            _eventFired = false;
+            _beginAccepted = true;
             Lua.Events.AttachEvent(_luaEvent, OnLuaEvent);
-            base.Start(context);
+            try
+            {
+                base.Start(context);
+                _beginAccepted = _beginAfterSubscription?.Invoke() ?? true;
+            }
+            catch
+            {
+                Lua.Events.DetachEvent(_luaEvent, OnLuaEvent);
+                _eventFired = false;
+                throw;
+            }
+        }
+
+        protected override IEnumerable<RunStatus> Execute(object context)
+        {
+            if (!_beginAccepted)
+            {
+                yield return RunStatus.Failure;
+                yield break;
+            }
+            foreach (RunStatus status in base.Execute(context))
+                yield return status;
         }
 
         private void OnLuaEvent(object sender, LuaEventArgs e)

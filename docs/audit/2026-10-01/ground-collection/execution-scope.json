@@ -1,0 +1,180 @@
+{
+  "exact_representative_quest_ids_executed": [
+    10161
+  ],
+  "variants": [
+    {
+      "name": "actual-shipped-10161-model",
+      "gameobject_entries": [
+        183394
+      ],
+      "required_item_count": 30
+    },
+    {
+      "name": "primary-supported-source-alternatives",
+      "gameobject_entries": [
+        183394,
+        183395,
+        183396,
+        183397
+      ],
+      "required_item_count": 30
+    }
+  ],
+  "executed_stages": [
+    "admission",
+    "plan",
+    "travel",
+    "live-acquisition",
+    "safe-approach",
+    "action-dispatch",
+    "action-acknowledgement",
+    "authoritative-progress",
+    "partial-progress-and-reacquisition",
+    "bounded-recovery",
+    "objective-completion",
+    "ender-travel",
+    "turnin-dispatch",
+    "turnin-acknowledgement",
+    "next-scheduling"
+  ],
+  "actual_owners": [
+    "QuestScheduler.MaterializeSchedule",
+    "ProfileBuilder.BuildProfileXml",
+    "CollectItemObjective and allocated descriptor source predicate",
+    "LevelBot owned loot selection and interaction",
+    "GroundLootApproach",
+    "WaitLuaEvent",
+    "QuestInventorySnapshot and QuestProgressObservation",
+    "QuestScheduler.ApplyScanExpansionBeforeFallback",
+    "ForcedQuestTurnIn",
+    "ActionSelectQuest",
+    "ActionSelectReward",
+    "QuestFrame and actual generated Lua5.1",
+    "authoritative history reader and next scheduler"
+  ],
+  "controlled_boundaries": [
+    "world and collision observations",
+    "navigation/native interaction dispatch",
+    "loot-window observations and slot transport",
+    "server inventory and completion responses",
+    "quest UI widgets, gossip observation, reward prices and delayed server reply"
+  ],
+  "progress_requires_separate_reply_after_action": true,
+  "family_population_automatically_promoted": false,
+  "current_formally_accepted_lifecycle_contract_count": 0,
+  "formal_contract_limit": "Current representative executable regressions are source-bound test receipts, not an imported per-member causal trace contract for the entire family. Keep the strict execution ledger unchanged pending that separate artifact gate.",
+  "dataset_population": 4335,
+  "execution_classification_counts": {
+    "DATA-INVALID/INCOMPLETE": 921,
+    "SOURCE-UNCERTAIN": 311,
+    "EXECUTION-UNVERIFIED": 3030,
+    "LIVE-ACCEPTANCE-REQUIRED": 16,
+    "UNSUPPORTED-SCRIPTED": 57
+  },
+  "exact_all_family_membership_file": "../execution-coverage/objective-primitive-ids.json",
+  "exact_all_family_membership_sha256": "3725151e04f31f3405c1f82f61dbf4e809a1357833058e41d5ca78c982e901e6",
+  "exact_quest10161_requirements": {
+    "all_required_stages": [
+      "admission",
+      "plan",
+      "travel",
+      "live-acquisition",
+      "safe-approach",
+      "action-dispatch",
+      "action-acknowledgement",
+      "authoritative-progress",
+      "partial-progress-and-reacquisition",
+      "bounded-recovery",
+      "objective-completion",
+      "ender-travel",
+      "turnin-dispatch",
+      "turnin-acknowledgement",
+      "next-scheduling"
+    ],
+    "classification": "EXECUTION-UNVERIFIED",
+    "covered_primitive_count": 0,
+    "item_source_alternatives": [
+      {
+        "alternatives_are_or": true,
+        "item_id": 28116,
+        "objective_key": "item:0",
+        "required_count": 30,
+        "selected_runtime_acquisition_path_verified": false,
+        "source_options": [
+          {
+            "primitive": "ground-gameobject-loot",
+            "source_entries": [
+              183394,
+              183395,
+              183396,
+              183397
+            ]
+          }
+        ]
+      }
+    ],
+    "legacy_observation_classification": "GENERIC-PROVEN",
+    "live_completion_proven": false,
+    "missing_primitive_keys": [
+      [
+        10161,
+        "item-acquisition-unresolved",
+        "item:0",
+        "cbcb05323b833a04bbbb39b33a20490869a977fbc6192acef319506f59056e54"
+      ],
+      [
+        10161,
+        "quest-turnin",
+        "turnin",
+        "4e790c47edea4c1774a4823f064d0d5d51c8439886b2a2541cb9c859cae9f753"
+      ]
+    ],
+    "primary_name": "In Case of Emergency...",
+    "quest_id": 10161,
+    "required_primitive_count": 2,
+    "required_primitives": [
+      {
+        "objective_key": "item:0",
+        "primary_semantics": {
+          "candidate_sources": [
+            {
+              "primitive": "ground-gameobject-loot",
+              "source_entries": [
+                183394,
+                183395,
+                183396,
+                183397
+              ]
+            }
+          ],
+          "item_id": 28116,
+          "required_count": 30,
+          "source_options_do_not_prove_runtime_dispatch": true
+        },
+        "primitive": "item-acquisition-unresolved",
+        "quest_id": 10161,
+        "semantics_sha256": "cbcb05323b833a04bbbb39b33a20490869a977fbc6192acef319506f59056e54"
+      },
+      {
+        "objective_key": "turnin",
+        "primary_semantics": {
+          "authoritative_reward_acknowledgement_required": true,
+          "enders": [
+            {
+              "entry": 19367,
+              "type": "Creature"
+            }
+          ]
+        },
+        "primitive": "quest-turnin",
+        "quest_id": 10161,
+        "semantics_sha256": "4e790c47edea4c1774a4823f064d0d5d51c8439886b2a2541cb9c859cae9f753"
+      }
+    ],
+    "runtime_plan_and_native_execution_not_inferred": true,
+    "source_notes": []
+  },
+  "receipt_reporting_correction": "The normal closure verification now labels its legacy classifications as observation-only and explicitly reports3030 execution-unverified rows and no end-to-end proven IDs.",
+  "live_completion_proven": false
+}

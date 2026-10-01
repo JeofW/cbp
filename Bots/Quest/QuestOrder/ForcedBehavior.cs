@@ -15,6 +15,9 @@ namespace Bots.Quest.QuestOrder
     {
         private Composite _branch;
 
+        /// <summary>Observe an existing tree without creating or starting work.</summary>
+        public Composite ExistingBranch => _branch;
+
         /// <summary>
         /// The behavior tree branch for this forced behavior.
         /// Created lazily on first access.
