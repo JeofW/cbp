@@ -61,7 +61,7 @@
   },
   "population_sha256": "fc0053d7c143223bdce78a15df8fb69bb24d4c6e74ce1bbc70d9fde25781023c",
   "accepted_contracts": 0,
-  "generator_sha256": "7a7e026bfbde418a5a72197ca01a110641086d632c3926b6cd819aa284187771",
+  "generator_sha256": "27074f61fbce17e4990d7b46c8b98f2e54d3fda73b49bd3763efd3d0b649c85c",
   "contract_artifact_verification": [],
   "unavailable_primary_tables": [
     "npc_vendor"
@@ -69,9 +69,8 @@
   "unavailable_table_is_not_empty_source_authority": true,
   "execution_evidence_gate": "exact primitive semantics and full action-to-turnin lifecycle; legacy PASS is not enough",
   "output_sha256": {
-    "execution-ledger.jsonl": "49d357956eece83466dc93c1fd359339bc625eba39b2f6f95ef4300aa495762d",
-    "objective-primitive-ids.json": "3725151e04f31f3405c1f82f61dbf4e809a1357833058e41d5ca78c982e901e6",
-    "execution-classification-ids.json": "e72fcf471c08474489211d9833e6e99d77d32e848938f313674c247361478555"
-  },
-  "output_encoding": "UTF-8; LF line endings; logical hashes are computed before optional gzip storage"
+    "execution-ledger.jsonl": "c9588390d6267f56108acca02e844ca8e960345dd9906ee1dbaf08cc624b5a31",
+    "objective-primitive-ids.json": "4ce7ec5cb577ef6e9ece84da1ca998ed39267433d8f6675ca3b142552d593706",
+    "execution-classification-ids.json": "2890e4a430b18aa3c7320b9b13ec342e926adb2e9c50673b0f329bb4e5bdd544"
+  }
 }

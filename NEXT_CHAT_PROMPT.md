@@ -1,3 +1,13 @@
+# Current: audit inventory receipt integrity after PR86 — 1 October 2026
+
+Merged runtime milestone `840d91162321a79d73caac3ade0900666c4d0ef7` contains PR86 Ground collection, PR85 Rogue and all earlier Paladin/Death Knight/resource fixes. Its deployment status is established only by GROUND_DEPLOYMENT_DELIVERY_V14_20261001.json and the production manifest. Do not redeploy or repeat any prior commit based on this precommit note.
+
+Continue D:/Dev/CB-ExecutionReceipt-20261001 on `audit/next-execution-receipts-20261001`. Read docs/audit/2026-10-01/execution-receipts/REPORT.md and its original/corrected hash, published verification and test receipts. The canonical-byte writer and full published-membership verifier preserve all4335 semantic records and classifications.468 Python tests pass with one expected skip;12 new tests reproduce13 assertion failures before repair. The exact new SHA/publication/hosted state belongs to EXECUTION_RECEIPTS_CANDIDATE_V15_20261001.json and later receipts. No runtime or live-acceptance change is implied.
+
+Continue the exact execution frontier and original source holds:3030 execution-unverified plus921data/311source/16live/57scripted. The two representative quest10161 coupled regressions do not certify unrelated family members. Preserve all existing source-backed repairs and observed-action/acknowledgement constraints; no inferred server scripts or modern-client substitutions.
+
+## Preserved earlier handoff
+
 # Current: ground collection delivery after PR85 — 1 October 2026
 
 Canonical master is `b105583b7643772006db89858feb42f9ea7da88b` after accepted PR84 and PR85. Continue D:/Dev/CB-GroundCollection-20261001 on audit/next-ground-collection-20261001. Read docs/audit/2026-10-01/ground-collection/REPORT.md and its source, test, execution-scope and review receipts. Preserve all existing work: the actual shipped quest10161 and four-source control now run through30separate acknowledged items and real turn-in/reward owners with separately supplied server replies;348shared loot,11turn-in,13watchdog and33diagnostic-field checks pass. Full diagnostic source/log evidence is retained externally. Candidate/clean-final/hosted/merge/deployment states are established by GROUND_COLLECTION_CANDIDATE_V14_20261001.json and later receipts, never by guessing a future commit hash.

@@ -1,0 +1,33 @@
+{
+  "base_master": "840d91162321a79d73caac3ade0900666c4d0ef7",
+  "original_published_summary_sha256": "03f8c6b86fbf77e8cf354aec09db53417a200325110a97527dfc9993c2e5f8e4",
+  "outputs": [
+    {
+      "logical_output": "execution-ledger.jsonl",
+      "historical_generated_sha256": "c9588390d6267f56108acca02e844ca8e960345dd9906ee1dbaf08cc624b5a31",
+      "prior_published_logical_sha256": "c9588390d6267f56108acca02e844ca8e960345dd9906ee1dbaf08cc624b5a31",
+      "canonical_lf_sha256": "49d357956eece83466dc93c1fd359339bc625eba39b2f6f95ef4300aa495762d",
+      "only_line_endings_changed": true
+    },
+    {
+      "logical_output": "objective-primitive-ids.json",
+      "historical_generated_sha256": "4ce7ec5cb577ef6e9ece84da1ca998ed39267433d8f6675ca3b142552d593706",
+      "prior_published_logical_sha256": "3725151e04f31f3405c1f82f61dbf4e809a1357833058e41d5ca78c982e901e6",
+      "canonical_lf_sha256": "3725151e04f31f3405c1f82f61dbf4e809a1357833058e41d5ca78c982e901e6",
+      "only_line_endings_changed": true
+    },
+    {
+      "logical_output": "execution-classification-ids.json",
+      "historical_generated_sha256": "2890e4a430b18aa3c7320b9b13ec342e926adb2e9c50673b0f329bb4e5bdd544",
+      "prior_published_logical_sha256": "e72fcf471c08474489211d9833e6e99d77d32e848938f313674c247361478555",
+      "canonical_lf_sha256": "e72fcf471c08474489211d9833e6e99d77d32e848938f313674c247361478555",
+      "only_line_endings_changed": true
+    }
+  ],
+  "all_4335_semantic_rows_unchanged": true,
+  "exact_family_and_partition_membership_unchanged": true,
+  "original_primary_hashes_unchanged": true,
+  "execution_promotions": [],
+  "explanation": "The original Windows generator used text-mode CRLF. Git normalized the two plain JSON outputs to LF, while compressed ledger bytes retained CRLF. Canonical binary UTF-8/LF output and explicit stored/logical verification remove that ambiguity; the original summary remains preserved.",
+  "recorded_utc": "2026-10-01T09:27:27.174865+00:00"
+}

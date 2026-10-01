@@ -313,14 +313,150 @@ def inventory(tables: dict[str, list[dict]], ids: dict[int, str], contracts: lis
             'execution_proven_ids': [row['quest_id'] for row in rows if row['classification'] in ('GENERIC-PROVEN', 'STRATEGY-PROVEN')]}
 
 
+OUTPUT_NAMES = ('execution-ledger.jsonl', 'objective-primitive-ids.json', 'execution-classification-ids.json')
+
+
+def _project_inventory_rows(rows: list[dict]) -> tuple[dict, dict, dict, dict, list[int]]:
+    """Reconcile serialized membership; this does not establish action evidence."""
+    if not isinstance(rows, list) or not rows:
+        raise ValueError('A nonempty exact execution population is required')
+    seen = set(); partition = defaultdict(list); old_counts = Counter(); proven = []
+    families = {family: {'required_ids': set(), 'candidate_source_ids': set(), 'tested_exact_ids': set()}
+                for family in PRIMITIVES}
+    for row in rows:
+        ident = row.get('quest_id')
+        old = row.get('legacy_observation_classification'); category = row.get('classification')
+        if type(ident) is not int or ident <= 0 or ident in seen or old not in LEGACY:
+            raise ValueError('Ledger contains duplicate/invalid quest identity or legacy class')
+        seen.add(ident)
+        if category not in (*LEGACY, 'EXECUTION-UNVERIFIED'):
+            raise ValueError('Unknown execution classification')
+        requirements = row.get('required_primitives')
+        if not isinstance(requirements, list): raise ValueError('Missing required primitive records')
+        required = set()
+        for member in requirements:
+            key = requirement_key(member)
+            if key[0] != ident or key in required or not isinstance(member.get('primary_semantics'), dict):
+                raise ValueError('Primitive identity does not match its owning quest')
+            expected = semantics(ident, key[1], key[2], member['primary_semantics'])
+            if expected['semantics_sha256'] != key[3]:
+                raise ValueError('Primitive semantics differ from their hash')
+            required.add(key); families[key[1]]['required_ids'].add(ident)
+        declared_missing = row.get('missing_primitive_keys')
+        if not isinstance(declared_missing, list) or any(not isinstance(key, list) or len(key) != 4 for key in declared_missing):
+            raise ValueError('Invalid missing-primitive membership')
+        missing = {tuple(key) for key in declared_missing}
+        if len(missing) != len(declared_missing) or not missing <= required:
+            raise ValueError('Missing primitives are not a unique subset of requirements')
+        if row.get('required_primitive_count') != len(required) or row.get('covered_primitive_count') != len(required - missing):
+            raise ValueError('Primitive counts disagree with exact membership')
+        expected_category = ('EXECUTION-UNVERIFIED' if old in ('GENERIC-PROVEN', 'STRATEGY-PROVEN')
+                             and (not required or missing) else old)
+        if category != expected_category:
+            raise ValueError('Execution class is inconsistent with missing requirements')
+        for key in required - missing: families[key[1]]['tested_exact_ids'].add(ident)
+        alternatives = row.get('item_source_alternatives', [])
+        if not isinstance(alternatives, list): raise ValueError('Invalid candidate source alternatives')
+        for alternative in alternatives:
+            if alternative.get('alternatives_are_or') is not True:
+                raise ValueError('Candidate sources must retain OR semantics')
+            for option in alternative.get('source_options', []):
+                family = option.get('primitive')
+                entries = option.get('source_entries')
+                if family not in families or not isinstance(entries, list) or not entries:
+                    raise ValueError('Invalid candidate source family')
+                if any(type(entry) is not int or entry <= 0 for entry in entries) or len(entries) != len(set(entries)):
+                    raise ValueError('Invalid candidate source entries')
+                families[family]['candidate_source_ids'].add(ident)
+        partition[category].append(ident); old_counts[old] += 1
+        if category in ('GENERIC-PROVEN', 'STRATEGY-PROVEN'): proven.append(ident)
+    return ({name: sorted(ids) for name, ids in partition.items()},
+            {name: {key: sorted(ids) for key, ids in values.items()} for name, values in families.items()},
+            {name: len(ids) for name, ids in partition.items()}, dict(old_counts), sorted(proven))
+
+
+def verify_inventory_outputs(directory: Path) -> dict:
+    """Check exact published bytes and cross-file population consistency.
+
+    Hash and membership agreement is an integrity check, never an independent
+    gameplay certificate. Actual execution contracts still require source and
+    causal trace validation through verify_artifacts before inventory generation.
+    """
+    directory = directory.resolve()
+    summary = json.loads((directory / 'summary.json').read_bytes())
+    hashes = summary.get('output_sha256', {})
+    if set(hashes) != set(OUTPUT_NAMES) or any(not isinstance(value, str) or not HASH.fullmatch(value) for value in hashes.values()):
+        raise ValueError('Only the exact three inventory output identities are allowed')
+    logical = {}; stored = {}; values = {}
+    for name in OUTPUT_NAMES:
+        candidates = [path for path in (directory / name, directory / (name + '.gz')) if path.is_file()]
+        if len(candidates) != 1:
+            raise ValueError('Each logical output needs one unambiguous stored representation: ' + name)
+        path = candidates[0]
+        if path.is_symlink() or path.resolve().parent != directory:
+            raise ValueError('Inventory outputs must remain within their directory')
+        raw = path.read_bytes(); stored[path.name] = hashlib.sha256(raw).hexdigest()
+        content = gzip.decompress(raw) if path.suffix == '.gz' else raw
+        logical[name] = hashlib.sha256(content).hexdigest()
+        if logical[name] != hashes[name]:
+            raise ValueError('Published logical output does not match its recorded bytes: ' + name)
+        values[name] = ([json.loads(line) for line in content.decode('utf-8').splitlines() if line.strip()]
+                        if name.endswith('.jsonl') else json.loads(content))
+    rows = values['execution-ledger.jsonl']
+    partition, families, counts, old_counts, proven = _project_inventory_rows(rows)
+    if values['execution-classification-ids.json'] != partition or values['objective-primitive-ids.json'] != families:
+        raise ValueError('Published partition or primitive family membership differs from the ledger')
+    if (summary.get('quest_count') != len(rows) or summary.get('classification_counts') != counts
+            or summary.get('legacy_counts') != old_counts or summary.get('execution_proven_ids') != proven):
+        raise ValueError('Summary counts or proven IDs disagree with exact ledger membership')
+    contracts = summary.get('accepted_contracts')
+    if type(contracts) is not int or contracts < 0 or contracts == 0 and any(row['covered_primitive_count'] for row in rows):
+        raise ValueError('Covered primitive claims lack any declared execution contract')
+    return {'quest_count': len(rows), 'classification_counts': counts, 'accepted_contracts': contracts,
+            'logical_sha256': logical, 'stored_sha256': stored,
+            'integrity_only_not_gameplay_proof': True}
+
+
+def write_inventory_outputs(directory: Path, result: dict) -> dict:
+    """Write canonical UTF-8/LF bytes without modifying the supplied result."""
+    names = (*OUTPUT_NAMES, 'summary.json')
+    if any((directory / name).exists() or (directory / (name + '.gz')).exists() for name in names):
+        raise FileExistsError('Preserve existing inventory evidence before creating a new output')
+    rows, families = result['rows'], result['families']
+    partition, expected_families, counts, old_counts, proven = _project_inventory_rows(rows)
+    if (families != expected_families or result.get('quest_count') != len(rows)
+            or result.get('classification_counts') != counts or result.get('legacy_counts') != old_counts
+            or result.get('execution_proven_ids') != proven):
+        raise ValueError('Export source contains inconsistent exact population membership')
+    payload = {'execution-ledger.jsonl': ''.join(json.dumps(row, sort_keys=True) + '\n' for row in rows).encode('utf-8'),
+               'objective-primitive-ids.json': (json.dumps(families, indent=2) + '\n').encode('utf-8'),
+               'execution-classification-ids.json': (json.dumps(partition, indent=2) + '\n').encode('utf-8')}
+    summary = {key: value for key, value in result.items() if key not in ('rows', 'families')}
+    summary['output_sha256'] = {name: hashlib.sha256(raw).hexdigest() for name, raw in payload.items()}
+    summary['output_encoding'] = 'UTF-8; LF line endings; logical hashes are computed before optional gzip storage'
+    payload['summary.json'] = (json.dumps(summary, indent=2) + '\n').encode('utf-8')
+    directory.mkdir(parents=True, exist_ok=True)
+    for name, raw in payload.items():
+        with (directory / name).open('xb') as stream: stream.write(raw)
+    return verify_inventory_outputs(directory)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--primary', type=Path, required=True)
-    parser.add_argument('--population', type=Path, required=True)
-    parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--primary', type=Path)
+    parser.add_argument('--population', type=Path)
+    parser.add_argument('--output', type=Path)
+    parser.add_argument('--verify-output', type=Path)
     parser.add_argument('--contracts', type=Path)
     parser.add_argument('--artifact-root', type=Path)
     args = parser.parse_args()
+    if args.verify_output is not None:
+        if any(value is not None for value in (args.primary, args.population, args.output, args.contracts, args.artifact_root)):
+            parser.error('--verify-output cannot be combined with generation arguments')
+        print(json.dumps(verify_inventory_outputs(args.verify_output), indent=2))
+        return
+    if any(value is None for value in (args.primary, args.population, args.output)):
+        parser.error('generation requires --primary, --population and --output')
     if args.output.exists(): raise FileExistsError('Preserve an existing coverage run; do not overwrite evidence')
     index = {row['table']: row for row in json.loads((args.primary / 'parsed-summary.json').read_bytes())}
     source = json.loads((args.primary / 'source-receipt.json').read_bytes())
@@ -354,16 +490,7 @@ def main():
                   contract_artifact_verification=contract_checks, unavailable_primary_tables=unavailable,
                   unavailable_table_is_not_empty_source_authority=True,
                   execution_evidence_gate='exact primitive semantics and full action-to-turnin lifecycle; legacy PASS is not enough')
-    args.output.mkdir(parents=True, exist_ok=False)
-    rows = result.pop('rows'); families = result.pop('families')
-    (args.output / 'execution-ledger.jsonl').write_text(''.join(json.dumps(row, sort_keys=True) + '\n' for row in rows), encoding='utf-8')
-    (args.output / 'objective-primitive-ids.json').write_text(json.dumps(families, indent=2) + '\n', encoding='utf-8')
-    partition = defaultdict(list)
-    for row in rows: partition[row['classification']].append(row['quest_id'])
-    (args.output / 'execution-classification-ids.json').write_text(json.dumps(dict(partition), indent=2) + '\n', encoding='utf-8')
-    result['output_sha256'] = {name: hashlib.sha256((args.output / name).read_bytes()).hexdigest()
-                              for name in ('execution-ledger.jsonl', 'objective-primitive-ids.json', 'execution-classification-ids.json')}
-    (args.output / 'summary.json').write_text(json.dumps(result, indent=2) + '\n', encoding='utf-8')
+    write_inventory_outputs(args.output, result)
     print(json.dumps({key: result[key] for key in ('quest_count', 'legacy_counts', 'classification_counts', 'accepted_contracts', 'execution_proven_ids')}, indent=2))
 
 
