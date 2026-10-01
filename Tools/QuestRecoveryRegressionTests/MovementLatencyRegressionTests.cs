@@ -127,6 +127,7 @@ internal static class MovementLatencyRegressionTests
 
     private static void TestConfirmedLiveCollisionClearsPathAndAddsBlackspot()
     {
+        using var actor = new RoutineActorFixture();
         var navigator = new MeshNavigator();
         var obstruction = new WoWPoint(12345.25f, -23456.5f, 78f);
         var insideExistingCoverage = obstruction.Add(2.9f, 0f, 0f);

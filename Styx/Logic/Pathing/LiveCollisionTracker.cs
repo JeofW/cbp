@@ -21,6 +21,8 @@ namespace Styx.Logic.Pathing
         {
             if (!traceHit
                 || hitPoint == WoWPoint.Zero
+                || !float.IsFinite(hitPoint.X) || !float.IsFinite(hitPoint.Y) || !float.IsFinite(hitPoint.Z)
+                || !float.IsFinite(hitDistance) || !float.IsFinite(probeDistance)
                 || hitDistance < MinimumHitDistance
                 || probeDistance - hitDistance < EndpointClearance)
             {
@@ -29,7 +31,7 @@ namespace Styx.Logic.Pathing
             }
 
             _consistentHitCount = _lastHit != WoWPoint.Zero
-                && _lastHit.Distance2DSqr(hitPoint) <= ConsistencyRadiusSqr
+                && _lastHit.DistanceSqr(hitPoint) <= ConsistencyRadiusSqr
                     ? _consistentHitCount + 1
                     : 1;
             _lastHit = hitPoint;
