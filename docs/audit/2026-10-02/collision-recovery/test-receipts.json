@@ -1,0 +1,256 @@
+{
+  "schema": "collision-recovery-review-v1",
+  "base": "c2f70e4c74a4c524f2e1075e51d571c4153a370a",
+  "preserved_commit": "a2c07d21c7ad9573feb9a42d30d681bf18cefa6f",
+  "reconciliation_commit": "75cdf42216a3f42d5a2e16829fba80165c0c6875",
+  "receipts": [
+    {
+      "label": "collision-owner-boundaries-red-20261002",
+      "cases": 47,
+      "passed": 32,
+      "intended_assertions": 15,
+      "unexpected_errors": 0,
+      "source_stable": true,
+      "identity": {
+        "production_commit": "75cdf42216a3f42d5a2e16829fba80165c0c6875",
+        "production_tree": "359ea718246b25a1a5fae368c001b5323085a60c",
+        "fixture_commit": "75cdf42216a3f42d5a2e16829fba80165c0c6875",
+        "working_tree_modified": true,
+        "game_attached": false
+      },
+      "files_sha256": {
+        "summary.json": "cb4f6d6c0c8115bace33a0065f84ac7b54b51e7338d11c4dc1fa446889c8f364",
+        "source-before.json": "14dd98ad06769ebe07a1bce63f93628286131aaf62b53a31021534767e9a93a9",
+        "source-after.json": "14dd98ad06769ebe07a1bce63f93628286131aaf62b53a31021534767e9a93a9",
+        "run.stdout.log": "efeb235be51bd9072e9b758fca2aeff9e133fb42399dcfac5e08c4c3ac91fc1a",
+        "run.stderr.log": "67ff70002e13491b9e188e08c6b47f6ecb6dc0cc0c289d48aee76208882dad31"
+      },
+      "assertions": [
+        "FAIL blackspot lifetime explicit global region replaces temporary ownership: temporary collision suppressed explicit permanent registration",
+        "FAIL blackspot lifetime removed owner after original-flags read cannot mark: native read callback revoked the owner but marking continued",
+        "FAIL blackspot lifetime removed owner during native mark restores its unowned polygon: native mark callback left an unowned avoidance polygon",
+        "FAIL blackspot lifetime removed owner across native ensure: revoked region was marked after ensure",
+        "FAIL blackspot lifetime removed owner across native query: revoked region was marked after query",
+        "FAIL blackspot lifetime removed owner across native read-area: revoked region was marked after read-area",
+        "FAIL blackspot lifetime world owner changes across original read / actor: revoked world observation authorized a mark",
+        "FAIL blackspot lifetime world owner changes across original read / map: revoked world observation authorized a mark",
+        "FAIL blackspot lifetime world owner changes across original read / provider: revoked world observation authorized a mark",
+        "FAIL blackspot lifetime identical global region survives temporary expiry: expiry restored an independently owned global polygon",
+        "FAIL blackspot lifetime removing local owner retains identical global ownership: local removal erased global ownership",
+        "FAIL blackspot lifetime removing global owner retains identical local ownership: global removal erased local ownership",
+        "FAIL blackspot lifetime global snapshots remain stable after registration: global snapshot mutated after lock release",
+        "FAIL blackspot lifetime native cancellation propagates / wrapped=False: cancellation was swallowed or authorized marking",
+        "FAIL blackspot lifetime native cancellation propagates / wrapped=True: cancellation was swallowed or authorized marking"
+      ],
+      "proof_limit": "Actual managed owners with controlled native/world/time inputs; no live terrain or game attachment."
+    },
+    {
+      "label": "collision-owner-boundaries-green1-20261002",
+      "cases": 47,
+      "passed": 47,
+      "intended_assertions": 0,
+      "unexpected_errors": 0,
+      "source_stable": true,
+      "identity": {
+        "production_commit": "75cdf42216a3f42d5a2e16829fba80165c0c6875",
+        "production_tree": "359ea718246b25a1a5fae368c001b5323085a60c",
+        "fixture_commit": "75cdf42216a3f42d5a2e16829fba80165c0c6875",
+        "working_tree_modified": true,
+        "game_attached": false
+      },
+      "files_sha256": {
+        "summary.json": "7e2b5450d827a43e9f482c0a2ce5b7536b8100c57ffc39e9479b388dd858ade7",
+        "source-before.json": "595eda137931945eef358cf0fdbfc36c8ea2899d57e35caae0b64dbf54a2f1a5",
+        "source-after.json": "595eda137931945eef358cf0fdbfc36c8ea2899d57e35caae0b64dbf54a2f1a5",
+        "run.stdout.log": "18f9f6c122e8b6c957e87db8516fe0f76b352edc5a11692ec3d0afd6aea28c95",
+        "run.stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "assertions": [],
+      "proof_limit": "Actual managed owners with controlled native/world/time inputs; no live terrain or game attachment."
+    },
+    {
+      "label": "collision-context-cancellation-red-20261002",
+      "cases": 65,
+      "passed": 48,
+      "intended_assertions": 17,
+      "unexpected_errors": 0,
+      "source_stable": true,
+      "identity": {
+        "production_commit": "75cdf42216a3f42d5a2e16829fba80165c0c6875",
+        "production_tree": "359ea718246b25a1a5fae368c001b5323085a60c",
+        "fixture_commit": "75cdf42216a3f42d5a2e16829fba80165c0c6875",
+        "working_tree_modified": true,
+        "game_attached": false
+      },
+      "files_sha256": {
+        "summary.json": "745970352f78f3f11f9fb5c40852bb9da1e11238ce4a1df533db029782c39605",
+        "source-before.json": "583b8a0fc008f105fa0cb9c2aebb98e6deb9279463b5eda793a4f3210b78cb08",
+        "source-after.json": "583b8a0fc008f105fa0cb9c2aebb98e6deb9279463b5eda793a4f3210b78cb08",
+        "run.stdout.log": "365bd30db9937cf80499d78b05e4db8827f838ac0f4b773db204e60c557691f7",
+        "run.stderr.log": "67ff70002e13491b9e188e08c6b47f6ecb6dc0cc0c289d48aee76208882dad31"
+      },
+      "assertions": [
+        "FAIL blackspot lifetime outer cancellation / tile / wrapped=False: outer owner swallowed cancellation",
+        "FAIL blackspot lifetime outer cancellation / profile-add / wrapped=False: outer owner swallowed cancellation",
+        "FAIL blackspot lifetime outer cancellation / profile-remove / wrapped=False: outer owner swallowed cancellation",
+        "FAIL blackspot lifetime outer cancellation / cost / wrapped=False: outer owner swallowed cancellation",
+        "FAIL blackspot lifetime outer cancellation / tile / wrapped=True: outer owner swallowed cancellation",
+        "FAIL blackspot lifetime outer cancellation / profile-add / wrapped=True: outer owner swallowed cancellation",
+        "FAIL blackspot lifetime outer cancellation / profile-remove / wrapped=True: outer owner swallowed cancellation",
+        "FAIL blackspot lifetime outer cancellation / cost / wrapped=True: outer owner swallowed cancellation",
+        "FAIL blackspot lifetime temporary context change / actor: temporary avoidance survived its context",
+        "FAIL blackspot lifetime temporary context change / provider: temporary avoidance survived its context",
+        "FAIL blackspot lifetime temporary context change / profile: temporary avoidance survived its context",
+        "FAIL blackspot lifetime temporary context changes during mark / actor: revoked native mark remained registered",
+        "FAIL blackspot lifetime temporary context changes during mark / map: revoked native mark remained registered",
+        "FAIL blackspot lifetime temporary context changes during mark / provider: revoked native mark remained registered",
+        "FAIL blackspot lifetime temporary context changes during mark / profile: revoked native mark remained registered",
+        "FAIL blackspot lifetime temporary context changes during mark / expiry: revoked native mark remained registered",
+        "FAIL blackspot lifetime temporary context cleanup retains permanent overlap: context cleanup removed permanent ownership"
+      ],
+      "proof_limit": "Actual managed owners with controlled native/world/time inputs; no live terrain or game attachment."
+    },
+    {
+      "label": "collision-context-cancellation-green1-20261002",
+      "cases": 65,
+      "passed": 65,
+      "intended_assertions": 0,
+      "unexpected_errors": 0,
+      "source_stable": true,
+      "identity": {
+        "production_commit": "75cdf42216a3f42d5a2e16829fba80165c0c6875",
+        "production_tree": "359ea718246b25a1a5fae368c001b5323085a60c",
+        "fixture_commit": "75cdf42216a3f42d5a2e16829fba80165c0c6875",
+        "working_tree_modified": true,
+        "game_attached": false
+      },
+      "files_sha256": {
+        "summary.json": "1752981c719dcbd615f1870ad6d2e2a50b8a8cb0fabddc1a7d9f36ff6aae67aa",
+        "source-before.json": "7f0651b1e72204c0a3c3c48b01cee731e589ca77c1bc04c998c0086a85e27149",
+        "source-after.json": "7f0651b1e72204c0a3c3c48b01cee731e589ca77c1bc04c998c0086a85e27149",
+        "run.stdout.log": "71ce54bfc65f75cb7e9f00f1965cbba4d183e72750f32bd81f3f2691587bdcf4",
+        "run.stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "assertions": [],
+      "proof_limit": "Actual managed owners with controlled native/world/time inputs; no live terrain or game attachment."
+    },
+    {
+      "label": "collision-wrapped-reset-red-20261002",
+      "cases": 22,
+      "passed": 21,
+      "intended_assertions": 1,
+      "unexpected_errors": 0,
+      "source_stable": true,
+      "identity": {
+        "production_commit": "75cdf42216a3f42d5a2e16829fba80165c0c6875",
+        "production_tree": "359ea718246b25a1a5fae368c001b5323085a60c",
+        "fixture_commit": "75cdf42216a3f42d5a2e16829fba80165c0c6875",
+        "working_tree_modified": true,
+        "game_attached": false
+      },
+      "files_sha256": {
+        "summary.json": "caf1b2285c0f8f58f037698d0b0ac85e1e9ecf76346829c24709bb3eb81d49ae",
+        "source-before.json": "0e39d893cc175a75e157132e1a531313ecc2bad096ce021ac59c784a4e70e55b",
+        "source-after.json": "0e39d893cc175a75e157132e1a531313ecc2bad096ce021ac59c784a4e70e55b",
+        "run.stdout.log": "992f4f5f117a7c81401a68396658d392c2e2924f8cd562f289aa64d5fc03bc1b",
+        "run.stderr.log": "101be5adaa70a846841360e4bdc14200f2d7ef06fd2d35dd6644232ad22f94fa"
+      },
+      "assertions": [
+        "FAIL collision ownership wrapped collision observer cancellation propagates: collision recovery swallowed cancellation"
+      ],
+      "proof_limit": "Actual managed owners with controlled native/world/time inputs; no live terrain or game attachment."
+    },
+    {
+      "label": "collision-wrapped-reset-green-20261002",
+      "cases": 22,
+      "passed": 22,
+      "intended_assertions": 0,
+      "unexpected_errors": 0,
+      "source_stable": true,
+      "identity": {
+        "production_commit": "75cdf42216a3f42d5a2e16829fba80165c0c6875",
+        "production_tree": "359ea718246b25a1a5fae368c001b5323085a60c",
+        "fixture_commit": "75cdf42216a3f42d5a2e16829fba80165c0c6875",
+        "working_tree_modified": true,
+        "game_attached": false
+      },
+      "files_sha256": {
+        "summary.json": "962697e70b10e31b31509c5f8183267dda0b7edd53f313363c33fdd0b07233d6",
+        "source-before.json": "5470f03936c30627659fbedd18e20b69c579c19e5be1a590ee2932bfe31094b7",
+        "source-after.json": "5470f03936c30627659fbedd18e20b69c579c19e5be1a590ee2932bfe31094b7",
+        "run.stdout.log": "4d2b5cdb108c5c13385be848f6668d721299a38ffa529b4f5749ab789d0bdebe",
+        "run.stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "assertions": [],
+      "proof_limit": "Actual managed owners with controlled native/world/time inputs; no live terrain or game attachment."
+    },
+    {
+      "label": "collision-final-review-red-20261002",
+      "cases": 70,
+      "passed": 65,
+      "intended_assertions": 5,
+      "unexpected_errors": 0,
+      "source_stable": true,
+      "identity": {
+        "production_commit": "75cdf42216a3f42d5a2e16829fba80165c0c6875",
+        "production_tree": "359ea718246b25a1a5fae368c001b5323085a60c",
+        "fixture_commit": "75cdf42216a3f42d5a2e16829fba80165c0c6875",
+        "working_tree_modified": true,
+        "game_attached": false
+      },
+      "files_sha256": {
+        "summary.json": "604237b9d727c50c29331e8d380ecb984f249cafa5318064a5742ffa611e7de1",
+        "source-before.json": "f4f9cc8fcf914cbaac7c77e58de85ff5e280ee308eef70466d8f8fa37c6af06b",
+        "source-after.json": "f4f9cc8fcf914cbaac7c77e58de85ff5e280ee308eef70466d8f8fa37c6af06b",
+        "run.stdout.log": "036f2ef5dc2725eebd676255922f236689c1bf216e8a9b4fae4e91aa97661483",
+        "run.stderr.log": "67ff70002e13491b9e188e08c6b47f6ecb6dc0cc0c289d48aee76208882dad31"
+      },
+      "assertions": [
+        "FAIL blackspot lifetime expired collision does not answer current coverage: expired region still authorizes an avoidance decision",
+        "FAIL blackspot lifetime revoked collision does not answer current coverage: revoked context still authorizes an avoidance decision",
+        "FAIL blackspot lifetime expired lookup admits a fresh collision report: the caller's coverage guard suppressed a new collision lease",
+        "FAIL blackspot lifetime native cleanup cannot replace cancellation / wrapped=False: native cleanup masked the original cancellation",
+        "FAIL blackspot lifetime native cleanup cannot replace cancellation / wrapped=True: native cleanup masked the original cancellation"
+      ],
+      "proof_limit": "Actual managed owners with controlled native/world/time inputs; no live terrain or game attachment."
+    },
+    {
+      "label": "collision-final-review-green-20261002",
+      "cases": 70,
+      "passed": 70,
+      "intended_assertions": 0,
+      "unexpected_errors": 0,
+      "source_stable": true,
+      "identity": {
+        "production_commit": "75cdf42216a3f42d5a2e16829fba80165c0c6875",
+        "production_tree": "359ea718246b25a1a5fae368c001b5323085a60c",
+        "fixture_commit": "75cdf42216a3f42d5a2e16829fba80165c0c6875",
+        "working_tree_modified": true,
+        "game_attached": false
+      },
+      "files_sha256": {
+        "summary.json": "94bfc52323fc7001cb37cb1b19d10757c38563490fe124720319dc5ccdb85e41",
+        "source-before.json": "07d2dd83376b6197bc7bae1775bb1ffab12e397076573c835591d761302a0fab",
+        "source-after.json": "07d2dd83376b6197bc7bae1775bb1ffab12e397076573c835591d761302a0fab",
+        "run.stdout.log": "7a466fe5e8fe5f947a6cd0d3d6976876c19a0cd12110d98b3e74abcdf2d95206",
+        "run.stderr.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "assertions": [],
+      "proof_limit": "Actual managed owners with controlled native/world/time inputs; no live terrain or game attachment."
+    }
+  ],
+  "source_files": {
+    "Styx/Logic/Pathing/BlackspotManager.cs": "689ae30ec5362525ba6e5c71bca55681afcfe8d68f2e04c2af6ab08b01778ec2",
+    "Styx/Logic/Pathing/LiveCollisionTracker.cs": "690aa80158c2a08e8a271dec329b504fcbeafef6e1946a9d640580f7d1197d52",
+    "Styx/Logic/Pathing/MeshNavigator.cs": "1f0d066331cf9c693749743fa838ce883214edfe3d18400a580be5383bef1931",
+    "Tools/WholesomeQuestRecoveryRegressionTests/CollisionBlackspotLifetimeFixture.cs": "1b77bd8cf9f10c7fb3a1ada3aca201c89ccf4fe1ff68b7723637f903c6758da4",
+    "Tools/WholesomeQuestRecoveryRegressionTests/CollisionBlackspotLifetimeRegressionTests.cs": "4861e54f78cdabc0eef2b1399d0f29a771e7295aeff94ad6b0230ccba24942d5",
+    "Tools/QuestRecoveryRegressionTests/CollisionObservationOwnershipRegressionTests.cs": "810a5db2d17adffe601ec5634e6347a3696104780791b5fbc11322e7be6e22dd",
+    "Tools/QuestRecoveryRegressionTests/MovementLatencyRegressionTests.cs": "357f8c55c60123409fa9e29b4d43f5a79e0500213c87fcd9073e25faa213d661"
+  },
+  "review_mode": "inline complete source/caller and diff review; no independent reviewer was dispatched",
+  "quest_classification_changes": [],
+  "native_engine_changed": false,
+  "live_acceptance": false,
+  "created_utc": "2026-10-01T21:09:22.613276+00:00"
+}

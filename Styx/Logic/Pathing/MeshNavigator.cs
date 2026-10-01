@@ -1106,7 +1106,7 @@ namespace Styx.Logic.Pathing
 			_currentPathIndex = 0;
 			_cachedPushAheadIndex = -1;
 				try { handler.Reset(); }
-				catch (Exception error) when (error is not OperationCanceledException && error is not ThreadInterruptedException) { }
+					catch (Exception error) { ObservationUnavailableException.RethrowCancellation(error); }
 		}
 
 		/// <summary>

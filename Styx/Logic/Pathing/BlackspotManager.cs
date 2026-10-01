@@ -27,6 +27,9 @@ namespace Styx.Logic.Pathing
         private static readonly Dictionary<Blackspot, List<PolyKey>> _blackspotPolygons = new Dictionary<Blackspot, List<PolyKey>>();
         private static readonly Dictionary<PolyKey, byte> _originalPolyAreas = new Dictionary<PolyKey, byte>();
         private static readonly Dictionary<PolyKey, ushort> _originalPolyFlags = new Dictionary<PolyKey, ushort>();
+        // A callback may remove an owner while a native write is still on the
+        // stack. Keep its original bytes until that write has returned.
+        private static readonly Dictionary<PolyKey, int> _pendingPolygonWrites = new Dictionary<PolyKey, int>();
         private static readonly List<TemporaryBlackspot> _temporaryBlackspots = new List<TemporaryBlackspot>();
         private static readonly object _lock = new object();
 
@@ -35,8 +38,10 @@ namespace Styx.Logic.Pathing
             internal readonly Blackspot Spot;
             internal readonly uint MapId;
             internal readonly long CreatedAt, ExpiresAt;
-            internal TemporaryBlackspot(Blackspot spot, uint mapId, long createdAt, long expiresAt)
-            { Spot = spot; MapId = mapId; CreatedAt = createdAt; ExpiresAt = expiresAt; }
+            private readonly Func<bool> _contextCurrent;
+            internal TemporaryBlackspot(Blackspot spot, uint mapId, long createdAt, long expiresAt, Func<bool> contextCurrent)
+            { Spot = spot; MapId = mapId; CreatedAt = createdAt; ExpiresAt = expiresAt; _contextCurrent = contextCurrent; }
+            internal bool IsCurrent(long now) => now >= CreatedAt && now < ExpiresAt && _contextCurrent();
         }
 
         private readonly struct PolyKey : IEquatable<PolyKey>
@@ -154,7 +159,7 @@ namespace Styx.Logic.Pathing
                     Logging.WriteDebug($"[Blackspot] Removed {args.OldProfile.Blackspots.Count} blackspots from old profile");
                 }
             }
-            catch (Exception) { }
+            catch (Exception error) { ObservationUnavailableException.RethrowCancellation(error); }
 
             try
             {
@@ -168,6 +173,7 @@ namespace Styx.Logic.Pathing
             }
             catch (Exception ex)
             {
+                ObservationUnavailableException.RethrowCancellation(ex);
                 Logging.WriteDebug($"[Blackspot] Error loading profile blackspots: {ex.Message}");
             }
         }
@@ -239,6 +245,7 @@ namespace Styx.Logic.Pathing
             }
             catch (Exception ex)
             {
+                ObservationUnavailableException.RethrowCancellation(ex);
                 Logging.WriteDebug($"[Blackspot] OnTileLoaded error: {ex.Message}");
             }
         }
@@ -266,7 +273,7 @@ namespace Styx.Logic.Pathing
             {
                 lock (_lock)
                 {
-                    return _globalBlackspots.AsReadOnly();
+                    return _globalBlackspots.ToList().AsReadOnly();
                 }
             }
         }
@@ -282,8 +289,14 @@ namespace Styx.Logic.Pathing
             lock (_lock)
             {
                 // Check profile blackspots
+                long now = Environment.TickCount64;
                 foreach (var spot in _blackspots)
                 {
+                    // Coverage is also queried before the next pathfinding
+                    // maintenance pulse. An expired lease must not suppress a
+                    // fresh collision report or authorize a stale avoidance.
+                    if (_temporaryBlackspots.Any(value => value.Spot.Equals(spot) && !value.IsCurrent(now)))
+                        continue;
                     if (IsInBlackspot(location, spot, radius))
                         return true;
                 }
@@ -342,17 +355,24 @@ namespace Styx.Logic.Pathing
                 throw new ArgumentException("Finite collision coordinates and positive radius/height are required", nameof(spot));
             var actor = StyxWoW.Me;
             if (actor == null || actor.MapId != mapId) return;
+            var provider = Navigator.NavigationProvider;
+            var navigator = Navigator.TripperNavigator;
+            var profile = ProfileManager.CurrentProfile;
+            bool ContextCurrent() => ReferenceEquals(StyxWoW.Me, actor) && actor.MapId == mapId
+                && ReferenceEquals(Navigator.NavigationProvider, provider)
+                && ReferenceEquals(Navigator.TripperNavigator, navigator)
+                && ReferenceEquals(ProfileManager.CurrentProfile, profile);
             EnsureAreaCostInitialized();
-            if (!ReferenceEquals(StyxWoW.Me, actor) || actor.MapId != mapId) return;
+            if (!ContextCurrent()) return;
             lock (_lock)
             {
                 long now = Environment.TickCount64;
                 ExpireTemporaryBlackspots(mapId, now);
-                if (!ReferenceEquals(StyxWoW.Me, actor) || actor.MapId != mapId) return;
+                if (!ContextCurrent()) return;
                 if (_blackspots.Contains(spot) || _globalBlackspots.Any(value => value.MapId == mapId && value.Blackspot.Equals(spot)))
                     return;
                 long expiresAt = checked(now + (long)Math.Ceiling(lifetime.TotalMilliseconds));
-                _temporaryBlackspots.Add(new TemporaryBlackspot(spot, mapId, now, expiresAt));
+                _temporaryBlackspots.Add(new TemporaryBlackspot(spot, mapId, now, expiresAt, ContextCurrent));
                 _blackspots.Add(spot);
                 MarkBlackspotPolygons(spot, mapId);
             }
@@ -362,7 +382,7 @@ namespace Styx.Logic.Pathing
         // native restoration; its exact original bytes remain retryable.
         private static void ExpireTemporaryBlackspots(uint? currentMap, long now)
         {
-            var expired = _temporaryBlackspots.Where(value => now < value.CreatedAt || now >= value.ExpiresAt
+            var expired = _temporaryBlackspots.Where(value => !value.IsCurrent(now)
                 || currentMap.HasValue && currentMap.Value != value.MapId).ToArray();
             foreach (var lease in expired)
             {
@@ -419,6 +439,7 @@ namespace Styx.Logic.Pathing
             }
             catch (Exception ex)
             {
+                ObservationUnavailableException.RethrowCancellation(ex);
                 Logging.WriteDebug($"[Blackspot] Failed to set area cost: {ex.Message}");
             }
         }
@@ -520,13 +541,31 @@ namespace Styx.Logic.Pathing
         private static void MarkBlackspotPolygons(Blackspot spot, uint mapId, bool ensureTiles)
         {
             IntPtr polyRefsPtr = IntPtr.Zero;
+            bool failed = false;
             try
             {
+                var actor = StyxWoW.Me;
+                var navigator = Navigator.TripperNavigator;
+                if (actor == null || actor.MapId != mapId || !HasBlackspotRegistration(spot, mapId))
+                    return;
+                if (!_blackspotPolygons.TryGetValue(spot, out List<PolyKey>? affectedPolys))
+                {
+                    affectedPolys = new List<PolyKey>();
+                    _blackspotPolygons[spot] = affectedPolys;
+                }
+                // The list is the registration generation, including replacement
+                // by an equal-valued region from a reentrant native callback.
+                bool OwnsMark() => ReferenceEquals(StyxWoW.Me, actor) && actor.MapId == mapId
+                    && ReferenceEquals(Navigator.TripperNavigator, navigator)
+                    && HasBlackspotRegistration(spot, mapId)
+                    && _blackspotPolygons.TryGetValue(spot, out var current)
+                    && ReferenceEquals(current, affectedPolys);
                 if (ensureTiles)
                 {
                     // Ensure tiles are loaded at blackspot location
                     var centerXyz = new NativeMethods.XYZ(spot.Location.X, spot.Location.Y, spot.Location.Z);
                     NativeMethods.EnsureTiles(mapId, centerXyz, 1); // Load 3x3 tiles around blackspot
+                    if (!OwnsMark()) return;
                 }
 
                 // Convert WoWPoint to navmesh coordinates
@@ -552,6 +591,7 @@ namespace Styx.Logic.Pathing
                 
                 // Query all polygons in the blackspot zone
                 int polyCount = NativeMethods.QueryPolygons(mapId, center, extents, polyRefsPtr, MaxPolygonsPerBlackspot);
+                if (!OwnsMark()) return;
                 
                 if (polyCount <= 0)
                 {
@@ -561,23 +601,22 @@ namespace Styx.Logic.Pathing
                     return;
                 }
                 
-                if (polyCount >= MaxPolygonsPerBlackspot)
+                if (polyCount > MaxPolygonsPerBlackspot)
                 {
                     Logging.Write($"[Blackspot] Warning: Max polygon count ({MaxPolygonsPerBlackspot}) exceeded at {spot.Location}. " +
                         "Consider using multiple smaller blackspots.");
+                    _failedBlackspotMarks.Add(spot);
+                    return;
                 }
                 
                 // Mark each polygon with the blackspot area type
                 int markedCount = 0;
-                if (!_blackspotPolygons.TryGetValue(spot, out List<PolyKey>? affectedPolys))
-                {
-                    affectedPolys = new List<PolyKey>(polyCount);
-                    _blackspotPolygons[spot] = affectedPolys;
-                }
 
                 for (int i = 0; i < polyCount; i++)
                 {
+                    if (!OwnsMark()) return;
                     ulong polyRef = (ulong)Marshal.ReadInt64(polyRefsPtr, i * sizeof(ulong));
+                    if (polyRef == 0) continue;
                     PolyKey key = new PolyKey(mapId, polyRef);
 
                     // Both originals are required before changing the native
@@ -585,18 +624,36 @@ namespace Styx.Logic.Pathing
                     if (!_originalPolyAreas.ContainsKey(key) || !_originalPolyFlags.ContainsKey(key))
                     {
                         uint areaStatus = NativeMethods.GetPolyArea(mapId, polyRef, out byte originalArea);
+                        if (!OwnsMark()) return;
                         uint flagStatus = NativeMethods.GetPolyFlags(mapId, polyRef, out ushort originalFlags);
+                        if (!OwnsMark()) return;
                         if ((areaStatus & 0x40000000) == 0 || (flagStatus & 0x40000000) == 0)
                             continue;
-                        _originalPolyAreas[key] = originalArea;
-                        _originalPolyFlags[key] = originalFlags;
+                        // Another owner can acquire the polygon during a read.
+                        // Its saved originals must not be overwritten by ours.
+                        if (!_originalPolyAreas.ContainsKey(key)) _originalPolyAreas[key] = originalArea;
+                        if (!_originalPolyFlags.ContainsKey(key)) _originalPolyFlags[key] = originalFlags;
                     }
 
-                    uint status = NativeMethods.SetPolyArea(mapId, polyRef, BlackspotAreaType);
+                    bool newlyOwned = !affectedPolys.Contains(key);
+                    if (newlyOwned) affectedPolys.Add(key);
+                    _pendingPolygonWrites.TryGetValue(key, out int pending);
+                    _pendingPolygonWrites[key] = pending + 1;
+                    uint status = 0;
+                    try
+                    {
+                        status = NativeMethods.SetPolyArea(mapId, polyRef, BlackspotAreaType);
+                    }
+                    finally
+                    {
+                        if (_pendingPolygonWrites[key] == 1) _pendingPolygonWrites.Remove(key);
+                        else _pendingPolygonWrites[key]--;
+                        if ((status & 0x40000000) == 0 && newlyOwned) affectedPolys.Remove(key);
+                    }
+                    if (!IsPolyStillBlackspotted(key)) TryRestoreUnownedPolygon(key);
+                    if (!OwnsMark()) return;
                     if ((status & 0x40000000) != 0) // DT_SUCCESS
                     {
-                        if (!affectedPolys.Contains(key))
-                            affectedPolys.Add(key);
                         markedCount++;
                     }
                 }
@@ -616,6 +673,8 @@ namespace Styx.Logic.Pathing
             }
             catch (Exception ex)
             {
+                failed = true;
+                ObservationUnavailableException.RethrowCancellation(ex);
                 Logging.WriteDebug($"[Blackspot] Error marking polygons: {ex.Message}");
             }
             finally
@@ -624,6 +683,11 @@ namespace Styx.Logic.Pathing
                 {
                     Marshal.FreeHGlobal(polyRefsPtr);
                 }
+                // A lease can be revoked or expire inside a native callback.
+                // Retire it after the write returns, retaining pending restores.
+                // Do not invoke fallible native cleanup while unwinding an
+                // exception: retain originals for the next maintenance pulse.
+                if (!failed) ExpireTemporaryBlackspots(StyxWoW.Me?.MapId, Environment.TickCount64);
             }
         }
 
@@ -640,12 +704,17 @@ namespace Styx.Logic.Pathing
                 return;
             }
 
-            _blackspotPolygons.Remove(spot);
-            _markedBlackspots.Remove(spot);
-            _failedBlackspotMarks.Remove(spot);
+            var unowned = affectedPolys.Where(key => !HasBlackspotRegistration(spot, key.MapId)).Distinct().ToArray();
+            affectedPolys.RemoveAll(key => unowned.Contains(key));
+            if (affectedPolys.Count == 0)
+            {
+                _blackspotPolygons.Remove(spot);
+                _markedBlackspots.Remove(spot);
+                _failedBlackspotMarks.Remove(spot);
+            }
 
             int restoredCount = 0;
-            foreach (var key in affectedPolys.Distinct())
+            foreach (var key in unowned)
             {
                 if (IsPolyStillBlackspotted(key))
                     continue;
@@ -670,6 +739,13 @@ namespace Styx.Logic.Pathing
             return false;
         }
 
+        private static bool HasBlackspotRegistration(Blackspot spot, uint mapId)
+        {
+            var temporary = _temporaryBlackspots.FirstOrDefault(value => value.Spot.Equals(spot));
+            return (_blackspots.Contains(spot) && (temporary == null || temporary.IsCurrent(Environment.TickCount64)))
+                || _globalBlackspots.Any(value => value.MapId == mapId && value.Blackspot.Equals(spot));
+        }
+
         private static void RetryUnownedPolygonRestorations()
         {
             foreach (var key in _originalPolyAreas.Keys.ToArray())
@@ -678,7 +754,7 @@ namespace Styx.Logic.Pathing
 
         private static bool TryRestoreUnownedPolygon(PolyKey key)
         {
-            if (IsPolyStillBlackspotted(key) || !_originalPolyAreas.TryGetValue(key, out byte originalArea)
+            if (_pendingPolygonWrites.ContainsKey(key) || IsPolyStillBlackspotted(key) || !_originalPolyAreas.TryGetValue(key, out byte originalArea)
                 || !_originalPolyFlags.TryGetValue(key, out ushort originalFlags)) return false;
             if ((NativeMethods.SetPolyArea(key.MapId, key.PolyRef, originalArea) & 0x40000000) == 0) return false;
             if (IsPolyStillBlackspotted(key)) return false;
@@ -713,13 +789,13 @@ namespace Styx.Logic.Pathing
             lock (_lock)
             {
                 var spotList = spots.ToList();
+                _blackspots.RemoveAll(s => spotList.Contains(s));
+                _temporaryBlackspots.RemoveAll(value => spotList.Contains(value.Spot));
                 foreach (var spot in spotList)
                 {
                     RestoreBlackspotPolygons(spot);
                 }
 
-                _blackspots.RemoveAll(s => spotList.Contains(s));
-                _temporaryBlackspots.RemoveAll(value => spotList.Contains(value.Spot));
             }
         }
 
@@ -730,13 +806,14 @@ namespace Styx.Logic.Pathing
         {
             lock (_lock)
             {
-                foreach (var spot in _blackspots.ToList())
+                var removed = _blackspots.ToArray();
+                _blackspots.Clear();
+                _temporaryBlackspots.Clear();
+                foreach (var spot in removed)
                 {
                     RestoreBlackspotPolygons(spot);
                 }
 
-                _blackspots.Clear();
-                _temporaryBlackspots.Clear();
             }
         }
 
@@ -765,9 +842,8 @@ namespace Styx.Logic.Pathing
                 if (_globalBlackspots.Contains(blackspot))
                     return;
 
-                if (IsBlackspotted(blackspot.Blackspot.Location, blackspot.Blackspot.Radius))
-                    return;
-
+                // Temporary or partially overlapping regions do not satisfy an
+                // explicit persistent registration. Exact global duplicates do.
                 _globalBlackspots.Add(blackspot);
 
                 // Mark polygon if on current map
@@ -814,12 +890,13 @@ namespace Styx.Logic.Pathing
                 var loaded = GlobalBlackspot.GetBlackspotsFromXml(root);
                 lock (_lock)
                 {
-                    foreach (var spot in _globalBlackspots)
+                    var removed = _globalBlackspots.ToArray();
+                    _globalBlackspots.Clear();
+                    foreach (var spot in removed)
                     {
                         RestoreBlackspotPolygons(spot.Blackspot);
                     }
 
-                    _globalBlackspots.Clear();
                     _globalBlackspots.AddRange(loaded);
                 }
 

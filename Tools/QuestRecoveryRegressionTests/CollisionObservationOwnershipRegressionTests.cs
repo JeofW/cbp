@@ -68,7 +68,8 @@ internal static class CollisionObservationOwnershipRegressionTests
         foreach (string change in new[] { "path", "player", "map", "mover", "provider", "stuck-handler" })
             Case("collision log callback replacement / " + change, () => MutationGuard(change));
         Case("unchanged collision retains bounded route recovery", () => MutationGuard(null));
-        Case("collision observer cancellation propagates", () => ResetCancellation());
+        Case("collision observer cancellation propagates", () => ResetCancellation(false));
+        Case("wrapped collision observer cancellation propagates", () => ResetCancellation(true));
         Console.WriteLine($"Collision observation/ownership cases: {passed}/{cases}; assertions={assertions}; unexpected={unexpected}; actual tracker and MeshNavigator owner with controlled observations; no game.");
         if (assertions != 0 || unexpected != 0) throw new InvalidOperationException("Collision observation/ownership regression failures");
     }
@@ -131,14 +132,14 @@ internal static class CollisionObservationOwnershipRegressionTests
         }
     }
 
-    private static void ResetCancellation()
+    private static void ResetCancellation(bool wrapped)
     {
         using var actor = new RoutineActorFixture();
         var navigator = new MeshNavigator();
         navigator.OverrideCurrentPath(new[] { new WoWPoint(10, 10, 10), new WoWPoint(40, 10, 10) });
         var spot = new WoWPoint(16001, -22001, 50);
         var saved = BlackspotManager.Blackspots.ToArray();
-        Set(navigator, "_stuckHandler", new CancellingStuck());
+        Set(navigator, "_stuckHandler", new CancellingStuck { Wrapped = wrapped });
         try
         {
             bool cancelled = false;
@@ -177,7 +178,13 @@ internal static class CollisionObservationOwnershipRegressionTests
     }
     private sealed class CancellingStuck : RecordingStuck
     {
-        public override void Reset() => throw new OperationCanceledException("controlled collision cancellation");
+        internal bool Wrapped;
+        public override void Reset()
+        {
+            var failure = new OperationCanceledException("controlled collision cancellation");
+            if (Wrapped) throw new TargetInvocationException(failure);
+            throw failure;
+        }
     }
     private sealed class RecordingMover : IPlayerMover
     {

@@ -10,6 +10,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Xml.Linq;
+using Styx.Helpers;
 using Styx.Logic.Pathing;
 using Styx.Logic.Profiles;
 using Tripper.Navigation;
@@ -48,6 +49,7 @@ public sealed class NativeNavigator
 public static class Navigator
 {
  public static NativeNavigator TripperNavigator=new NativeNavigator();
+ public static object NavigationProvider=new object();
  public static event EventHandler<NavigationProviderChangedEventArgs<NavigationProvider>> OnNavigationProviderChanged;
 }
 public static class NativeState
@@ -68,12 +70,12 @@ public static class NativeState
 public static class NativeMethods
 {
  public struct XYZ { public float X,Y,Z;public XYZ(float x,float y,float z){X=x;Y=y;Z=z;} }
- public static void SetAreaCost(uint map,int area,float cost){NativeState.Calls.Add(("cost",map,0,area));}
- public static void EnsureTiles(uint map,XYZ center,int radius){NativeState.Calls.Add(("ensure",map,0,radius));}
+ public static void SetAreaCost(uint map,int area,float cost){NativeState.Calls.Add(("cost",map,0,area));NativeState.Pulse("cost");}
+ public static void EnsureTiles(uint map,XYZ center,int radius){NativeState.Calls.Add(("ensure",map,0,radius));NativeState.Pulse("ensure");}
  public static int QueryPolygons(uint map,XYZ center,XYZ extent,IntPtr target,int maximum)
- {NativeState.Calls.Add(("query",map,0,NativeState.QueryCount));if(NativeState.QueryCount==1)Marshal.WriteInt64(target,101);return NativeState.QueryCount;}
+ {NativeState.Calls.Add(("query",map,0,NativeState.QueryCount));if(NativeState.QueryCount==1)Marshal.WriteInt64(target,101);NativeState.Pulse("query");return NativeState.QueryCount;}
  public static uint GetPolyArea(uint map,ulong poly,out byte area)
- {area=NativeState.Area(map,poly);NativeState.Calls.Add(("read-area",map,poly,area));return NativeState.AreaKnown?NativeState.Success:NativeState.Failure;}
+ {area=NativeState.Area(map,poly);NativeState.Calls.Add(("read-area",map,poly,area));NativeState.Pulse("read-area");return NativeState.AreaKnown?NativeState.Success:NativeState.Failure;}
  public static uint GetPolyFlags(uint map,ulong poly,out ushort flags)
  {flags=NativeState.Flag(map,poly);NativeState.Calls.Add(("read-flags",map,poly,flags));NativeState.Pulse("read-flags");return NativeState.FlagsKnown?NativeState.Success:NativeState.Failure;}
  public static uint SetPolyArea(uint map,ulong poly,byte area)
@@ -86,6 +88,8 @@ public static class Cases
  private static readonly Blackspot A=new(new WoWPoint(10,10,4),3,4),B=new(new WoWPoint(12,10,4),3,4);
  private static int passed,failed,unexpected;
  private static readonly BindingFlags Hidden=BindingFlags.Static|BindingFlags.NonPublic|BindingFlags.Public;
+ private static readonly NativeNavigator OriginalNavigator=Navigator.TripperNavigator;
+ private static readonly object OriginalProvider=Navigator.NavigationProvider;
  public static void Run(string folder)
  {
   Logging.ApplicationPath=folder;
@@ -109,13 +113,59 @@ public static class Cases
   Case("expired lease can be replaced by a fresh collision",()=>{Temporary(A,0,TimeSpan.FromSeconds(30));NativeState.Now=31000;BlackspotManager.EnsureBlackspotsMarked();Temporary(A,0,TimeSpan.FromSeconds(30));NativeState.Now=40000;BlackspotManager.EnsureBlackspotsMarked();Check(BlackspotManager.Blackspots.Contains(A),"a fresh collision inherited an expired lease");NativeState.Now=61000;BlackspotManager.EnsureBlackspotsMarked();Check(!BlackspotManager.Blackspots.Contains(A),"new collision lost its own deadline");});
   Case("bot stop clears transient leases",()=>{Temporary(A,0,TimeSpan.FromSeconds(30));BotEvents.Stop();Check(!BlackspotManager.Blackspots.Contains(A)&&NativeState.Area(0,101)==3,"bot stop retained temporary ownership");NativeState.Now=2000;BlackspotManager.AddBlackspots(new[]{A});NativeState.Now=40000;BlackspotManager.EnsureBlackspotsMarked();Check(BlackspotManager.Blackspots.Contains(A),"stale lease removed a later permanent region");});
   Case("expired polygon restoration can recover after a native failure",()=>{Temporary(A,0,TimeSpan.FromSeconds(30));NativeState.RejectAreaRestore=true;NativeState.Now=31000;BlackspotManager.EnsureBlackspotsMarked();Check(!BlackspotManager.Blackspots.Contains(A)&&NativeState.Area(0,101)==17,"expiry control did not keep failed native state explicit");NativeState.RejectAreaRestore=false;BlackspotManager.EnsureBlackspotsMarked();Check(NativeState.Area(0,101)==3,"expired native restoration cannot retry");});
-  Case("explicit global region replaces temporary ownership",()=>{Temporary(A,0,TimeSpan.FromSeconds(30));BlackspotManager.AddGlobalBlackspot(A.Location,A.Radius,0,"Explicit permanent rule");NativeState.Now=31000;BlackspotManager.EnsureBlackspotsMarked();Check(BlackspotManager.GlobalBlackspots.Any(value=>value.MapId==0&&value.Blackspot.Location==A.Location)&&BlackspotManager.IsBlackspotted(A.Location),"temporary collision suppressed explicit permanent registration");});
+  Case("explicit global region replaces temporary ownership",()=>{Temporary(A,0,TimeSpan.FromSeconds(30));BlackspotManager.AddGlobalBlackspot(A.Location,A.Radius,0);NativeState.Now=31000;BlackspotManager.EnsureBlackspotsMarked();Check(BlackspotManager.GlobalBlackspots.Any(value=>value.MapId==0&&value.Blackspot.Location==A.Location)&&BlackspotManager.IsBlackspotted(A.Location),"temporary collision suppressed explicit permanent registration");});
   Case("caller snapshots do not mutate after later registration",()=>{var saved=BlackspotManager.Blackspots;BlackspotManager.AddBlackspots(new[]{A});Check(saved.Count==0,"read-only snapshot changed after lock release");});
   Case("foreign-map collision observation cannot register",()=>{Temporary(A,530,TimeSpan.FromSeconds(30));Check(!BlackspotManager.Blackspots.Any()&&!NativeState.Calls.Any(call=>call.Kind=="write-area"),"foreign map observation created a current-world region");});
   Case("removed owner after original-flags read cannot mark",()=>{NativeState.CallbackStage="read-flags";NativeState.Callback=()=>BlackspotManager.RemoveBlackspot(A);BlackspotManager.AddBlackspots(new[]{A});Check(!BlackspotManager.Blackspots.Contains(A)&&NativeState.Area(0,101)==3,"native read callback revoked the owner but marking continued");});
   Case("removed owner during native mark restores its unowned polygon",()=>{NativeState.CallbackStage="mark-area";NativeState.Callback=()=>BlackspotManager.RemoveBlackspot(A);BlackspotManager.AddBlackspots(new[]{A});Check(!BlackspotManager.Blackspots.Contains(A)&&NativeState.Area(0,101)==3,"native mark callback left an unowned avoidance polygon");});
   Case("replacement native owner survives a revoked mark",()=>{NativeState.CallbackStage="mark-area";NativeState.Callback=()=>{BlackspotManager.RemoveBlackspot(A);BlackspotManager.AddBlackspots(new[]{B});};BlackspotManager.AddBlackspots(new[]{A});Check(!BlackspotManager.Blackspots.Contains(A)&&BlackspotManager.Blackspots.Contains(B)&&NativeState.Area(0,101)==17,"old mark erased replacement native ownership");BlackspotManager.RemoveBlackspot(B);Check(NativeState.Area(0,101)==3&&NativeState.Flag(0,101)==0x22,"replacement could not recover original state");});
   Case("new owner during native restore prevents stale flags write",()=>{BlackspotManager.AddBlackspots(new[]{A});NativeState.CallbackStage="restore-area";NativeState.Callback=()=>BlackspotManager.AddBlackspots(new[]{B});NativeState.Calls.Clear();BlackspotManager.RemoveBlackspot(A);Check(NativeState.Area(0,101)==17&&!NativeState.Calls.Any(call=>call.Kind=="write-flags"),"stale restore wrote after replacement ownership");BlackspotManager.RemoveBlackspot(B);Check(NativeState.Area(0,101)==3,"replacement restore failed");});
+  foreach(string stage in new[]{"ensure","query","read-area"})
+   Case("removed owner across native "+stage,()=>{NativeState.CallbackStage=stage;NativeState.Callback=()=>BlackspotManager.RemoveBlackspot(A);BlackspotManager.AddBlackspots(new[]{A});Check(!BlackspotManager.Blackspots.Contains(A)&&!NativeState.Calls.Any(call=>call.Kind=="write-area"&&call.Value==17),"revoked region was marked after "+stage);});
+  foreach(string stage in new[]{"read-flags","mark-area"})
+   Case("same region replacement across native "+stage,()=>{NativeState.CallbackStage=stage;NativeState.Callback=()=>{BlackspotManager.RemoveBlackspot(A);BlackspotManager.AddBlackspots(new[]{A});};BlackspotManager.AddBlackspots(new[]{A});Check(BlackspotManager.Blackspots.Contains(A)&&NativeState.Area(0,101)==17,"old operation cleared replacement region");BlackspotManager.RemoveBlackspot(A);Check(NativeState.Area(0,101)==3&&NativeState.Flag(0,101)==0x22,"same-value replacement lost original native bytes");});
+  foreach(string change in new[]{"actor","map","provider"})
+   Case("world owner changes across original read / "+change,()=>{NativeState.CallbackStage="read-flags";NativeState.Callback=()=>{if(change=="actor")StyxWoW.Me=new Actor{MapId=0};else if(change=="map")StyxWoW.Me.MapId=530;else Navigator.TripperNavigator=new NativeNavigator();};BlackspotManager.AddBlackspots(new[]{A});Check(!NativeState.Calls.Any(call=>call.Kind=="write-area"&&call.Value==17),"revoked world observation authorized a mark");});
+  Case("identical global region survives temporary expiry",()=>{Temporary(A,0,TimeSpan.FromSeconds(30));BlackspotManager.AddGlobalBlackspot(A.Location,A.Radius,A.Height);NativeState.Now=31000;BlackspotManager.EnsureBlackspotsMarked();Check(BlackspotManager.IsBlackspotted(A.Location)&&NativeState.Area(0,101)==17,"expiry restored an independently owned global polygon");});
+  Case("removing local owner retains identical global ownership",()=>{BlackspotManager.AddBlackspots(new[]{A});BlackspotManager.AddGlobalBlackspot(A.Location,A.Radius,A.Height);BlackspotManager.RemoveBlackspot(A);Check(BlackspotManager.IsBlackspotted(A.Location)&&NativeState.Area(0,101)==17,"local removal erased global ownership");});
+  Case("removing global owner retains identical local ownership",()=>{var global=new BlackspotManager.GlobalBlackspot(A.Location,A.Radius,A.Height,0);BlackspotManager.AddGlobalBlackspot(global);BlackspotManager.AddBlackspots(new[]{A});BlackspotManager.RemoveGlobalBlackspot(global);Check(BlackspotManager.Blackspots.Contains(A)&&NativeState.Area(0,101)==17,"global removal erased local ownership");BlackspotManager.RemoveBlackspot(A);Check(NativeState.Area(0,101)==3,"last local owner could not restore");});
+  Case("global snapshots remain stable after registration",()=>{var snapshot=BlackspotManager.GlobalBlackspots;BlackspotManager.AddGlobalBlackspot(A.Location,A.Radius,A.Height);Check(snapshot.Count==0,"global snapshot mutated after lock release");});
+  foreach(bool wrapped in new[]{false,true})
+   Case("native cancellation propagates / wrapped="+wrapped,()=>{NativeState.CallbackStage="read-flags";NativeState.Callback=()=>{if(wrapped)throw new TargetInvocationException(new OperationCanceledException("controlled cancellation"));throw new OperationCanceledException("controlled cancellation");};bool cancelled=false;try{BlackspotManager.AddBlackspots(new[]{A});}catch(OperationCanceledException){cancelled=true;}Check(cancelled&&!NativeState.Calls.Any(call=>call.Kind=="write-area"),"cancellation was swallowed or authorized marking");});
+  foreach(bool wrapped in new[]{false,true})
+   foreach(string boundary in new[]{"tile","profile-add","profile-remove","cost"})
+    Case("outer cancellation / "+boundary+" / wrapped="+wrapped,()=>{
+     if(boundary=="tile"||boundary=="profile-remove")BlackspotManager.AddBlackspots(new[]{A});
+     if(boundary=="cost")typeof(BlackspotManager).GetField("_areaCostInitialized",Hidden).SetValue(null,false);
+     NativeState.CallbackStage=boundary=="tile"?"mark-area":boundary=="profile-remove"?"restore-area":boundary=="cost"?"cost":"read-flags";
+     NativeState.Callback=()=>{if(wrapped)throw new TargetInvocationException(new OperationCanceledException("outer cancellation"));throw new OperationCanceledException("outer cancellation");};
+     bool cancelled=false;try{
+      if(boundary=="tile")Navigator.TripperNavigator.Load(0,A.Location);
+      else if(boundary=="profile-add")BotEvents.Profile.Change(null,new ProfileValue{Blackspots=new(){A}});
+      else if(boundary=="profile-remove")BotEvents.Profile.Change(new ProfileValue{Blackspots=new(){A}},new ProfileValue{Blackspots=new(){B}});
+      else BlackspotManager.AddBlackspots(new[]{A});
+     }catch(OperationCanceledException){cancelled=true;}
+     Check(cancelled,"outer owner swallowed cancellation");
+     if(boundary=="profile-remove")Check(!BlackspotManager.Blackspots.Contains(B),"cancelled removal proceeded to a new profile");
+    });
+  foreach(string change in new[]{"actor","map","provider","profile"})
+   Case("temporary context change / "+change,()=>{Temporary(A,0,TimeSpan.FromSeconds(30));ChangeOwner(change);BlackspotManager.EnsureBlackspotsMarked();Check(!BlackspotManager.Blackspots.Contains(A)&&NativeState.Area(0,101)==3,"temporary avoidance survived its context");});
+  foreach(string change in new[]{"actor","map","provider","profile","expiry"})
+   Case("temporary context changes during mark / "+change,()=>{NativeState.CallbackStage="mark-area";NativeState.Callback=()=>ChangeOwner(change);Temporary(A,0,TimeSpan.FromSeconds(30));Check(!BlackspotManager.Blackspots.Contains(A)&&NativeState.Area(0,101)==3,"revoked native mark remained registered");});
+  Case("temporary context cleanup retains permanent overlap",()=>{Temporary(A,0,TimeSpan.FromSeconds(30));BlackspotManager.AddGlobalBlackspot(A.Location,A.Radius,A.Height);ChangeOwner("actor");BlackspotManager.EnsureBlackspotsMarked();Check(!BlackspotManager.Blackspots.Contains(A)&&NativeState.Area(0,101)==17,"context cleanup removed permanent ownership");});
+  Case("expired collision does not answer current coverage",()=>{Temporary(A,0,TimeSpan.FromSeconds(30));NativeState.Now=31000;Check(!BlackspotManager.IsBlackspotted(A.Location),"expired region still authorizes an avoidance decision");});
+  Case("revoked collision does not answer current coverage",()=>{Temporary(A,0,TimeSpan.FromSeconds(30));ChangeOwner("actor");Check(!BlackspotManager.IsBlackspotted(A.Location),"revoked context still authorizes an avoidance decision");});
+  Case("expired lookup admits a fresh collision report",()=>{Temporary(A,0,TimeSpan.FromSeconds(30));NativeState.Now=31000;if(!BlackspotManager.IsBlackspotted(A.Location))Temporary(A,0,TimeSpan.FromSeconds(30));BlackspotManager.EnsureBlackspotsMarked();Check(BlackspotManager.Blackspots.Contains(A)&&NativeState.Area(0,101)==17,"the caller's coverage guard suppressed a new collision lease");});
+  foreach(bool wrapped in new[]{false,true})
+   Case("native cleanup cannot replace cancellation / wrapped="+wrapped,()=>{
+    NativeState.CallbackStage="mark-area";NativeState.Callback=()=>{
+     BlackspotManager.RemoveBlackspot(A);NativeState.CallbackStage="restore-area";NativeState.Callback=()=>throw new InvalidOperationException("cleanup failed");
+     var cancellation=new OperationCanceledException("cancel during native write");if(wrapped)throw new TargetInvocationException(cancellation);throw cancellation;
+    };
+    bool cancelled=false;try{BlackspotManager.AddBlackspots(new[]{A});}catch(OperationCanceledException){cancelled=true;}catch(InvalidOperationException){}
+    Check(cancelled,"native cleanup masked the original cancellation");
+    NativeState.Callback=null;NativeState.CallbackStage=null;BlackspotManager.EnsureBlackspotsMarked();Check(NativeState.Area(0,101)==3&&NativeState.Flag(0,101)==0x22,"cancelled native ownership lost its retryable originals");
+   });
   foreach(var duration in new[]{TimeSpan.Zero,TimeSpan.FromMilliseconds(-1),TimeSpan.FromMinutes(6)})
    Case("invalid temporary duration "+duration,()=>{bool rejected=false;try{Temporary(A,0,duration);}catch(ArgumentOutOfRangeException){rejected=true;}Check(rejected&&!BlackspotManager.Blackspots.Contains(A),"invalid lifetime authorized a persistent region");});
   foreach(float bad in new[]{float.NaN,float.PositiveInfinity,float.NegativeInfinity})
@@ -142,6 +192,7 @@ public static class Cases
  }
  private static void Reset()
  {
+  NativeState.Callback=null;NativeState.CallbackStage=null;
   NativeState.RejectAreaRestore=NativeState.RejectFlagsRestore=false;NativeState.AreaKnown=NativeState.FlagsKnown=true;
   BlackspotManager.ClearBlackspots();
   foreach(var field in typeof(BlackspotManager).GetFields(Hidden))
@@ -149,7 +200,15 @@ public static class Cases
    if(field.Name=="_globalBlackspots"||field.Name=="_blackspotPolygons"||field.Name=="_originalPolyAreas"||field.Name=="_originalPolyFlags"||field.Name=="_temporaryBlackspots")
    {var value=field.GetValue(null);value?.GetType().GetMethod("Clear",Type.EmptyTypes)?.Invoke(value,null);}
   }
-  NativeState.Reset();StyxWoW.Me=new Actor{MapId=0};ProfileManager.CurrentProfile=null;Logging.Messages.Clear();
+  NativeState.Reset();StyxWoW.Me=new Actor{MapId=0};ProfileManager.CurrentProfile=null;Logging.Messages.Clear();Navigator.TripperNavigator=OriginalNavigator;Navigator.NavigationProvider=OriginalProvider;
+ }
+ private static void ChangeOwner(string change)
+ {
+  if(change=="actor")StyxWoW.Me=new Actor{MapId=0};
+  else if(change=="map")StyxWoW.Me.MapId=530;
+  else if(change=="provider")Navigator.NavigationProvider=new object();
+  else if(change=="profile")ProfileManager.CurrentProfile=new ProfileValue();
+  else if(change=="expiry")NativeState.Now=31000;
  }
  private static void Check(bool value,string message){if(!value)throw new ExpectedFailure(message);}
  private sealed class ExpectedFailure:Exception{public ExpectedFailure(string message):base(message){}}

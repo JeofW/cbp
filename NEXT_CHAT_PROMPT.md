@@ -1,3 +1,13 @@
+# Current: preserved collision recovery after deployed PR90 — 2 October 2026
+
+Recover live disk/Git/GitHub/production first. PR90 merge `c2f70e4c74a4c524f2e1075e51d571c4153a370a` was installed with 434 verified payload files, 2,012 protected files and 13 compiled deployed components; verify `D:/Dev/CopilotBuddy-Evidence/aura-liveness-20261002/DEPLOYMENT_VERIFIED.json` instead of repeating it. Exact historical aura metadata failure and live acceptance remain open.
+
+The collision continuation is `D:/Dev/CB-CollisionRecovery-20261001` on `audit/next-collision-recovery-20261001`. Its original seven files are retained in `a2c07d21c7ad9573feb9a42d30d681bf18cefa6f`; PR90 reconciliation is `75cdf42216a3f42d5a2e16829fba80165c0c6875`. Read `docs/audit/2026-10-02/collision-recovery/REPORT.md`, `test-receipts.json`, the worktree progress ledger and newer `collision-resume-20261002` receipts. The recorded focused gates pass 70 manager and 22 actual collision/route-owner cases; recover the current candidate, complete 34-stage/closure/hosted gates, PR and deployment before doing another edit, publication or release.
+
+Continue the incident lane after each verified delivery: shared action acknowledgements and heal/defensive/consumable arbitration, quest10161 authoritative progress and travel/combat reacquisition, food/drink admission, death recovery and quarantine starvation. Keep UNKNOWN conservative, cancellation intact, all 4,335 execution rows exact, and simulation/native/live proof separate. No successful milestone ends the continuous audit.
+
+## Preserved previous checkpoint
+
 # Current: direct GameObject execution and native route continuation — 1 October 2026
 
 Continue D:/Dev/CB-DirectGameObject-20261001 on audit/next-direct-gameobject-execution-20261001, based on accepted Hunter master `1e891aae50371b51393a866f85950e00f552a738`. Read docs/audit/2026-10-01/direct-gameobject/REPORT.md and its exact source, execution, navigation and red/green receipts. The preserved direct repair now has62 controller cases,13 diagnostic cases and16 actual-memory usability cases;11 source-bound quest lifecycles execute22 objectives and31 separate use/credit replies. Actual native/MeshNavigator replay made792 calls using3610 hydrated assets:33of44 source legs have complete endpoints and11 remain unresolved. Detailed native triage is held in NATIVE_ROUTE_DETAIL_REVIEW_BLOCK_V18_20261001.json; do not reroute it. Formal per-member execution promotions remain empty.
