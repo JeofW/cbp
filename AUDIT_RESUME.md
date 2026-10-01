@@ -1,4 +1,18 @@
-# Current: required quest stock and sale protection after PR79
+# Current: required-stock publication recovery — 1 October 2026
+
+The new session inspected the live repository and confirmed PR61 through PR79 are already merged. Canonical local/remote master is363f096764c61e1faf050fd6a638867f901e8dfd; the preserved required-stock implementation is05e59ef5f576c68298f091dff0eeda1ddfdf09c0. The two existing data-only observation fixture corrections and all recovery notes are being retained in one corrected candidate. Resolve the actual candidate and subsequent clean local/hosted/publication status from external REQUIRED_STOCK_FINAL_CANDIDATE.json and later receipts; this checkpoint does not itself claim those gates passed. Continue the exact1305 remaining IDs and the separate Singular audit. Do not replay PR61 deployment or any completed PR62–79 work.
+
+## Historical hold: required-stock corrected verification
+
+Read `docs/audit/2026-10-01/required-stock/PUBLICATION_HOLD.md` first. Existing implementation05e59ef5f576c68298f091dff0eeda1ddfdf09c0 is committed locally; two data-only fixture corrections and these recovery notes remain uncommitted after the normal correction-commit request was provider-blocked twice and stopped. The complete corrected diagnostic passes33 commands using the verified existing owner extraction; the corrected four-stage closure passes261306dataset/39strategy cases. Neither is labelled clean final-SHA acceptance. Preserve the code, all51 original implementation/evidence files, the corrected fixtures and their failure/success receipts. No stock branch or PR has been published.
+
+Master is the already merged PR79 revision363f096764c61e1faf050fd6a638867f901e8dfd, with independent post-merge verification receipts under `D:/Dev/CopilotBuddy-Evidence/postmerge-20260930-pr61`. Production remains verifiedPR61 master3bc97e1e;429 payload hashes matched again. Current classes3028/2/921/311/16/57 total4335 with1305remaining. Five stock contracts preserve acquisition obligations;81availability contracts/146predicates and strategies9066/9447 remain.
+
+Recovered bank/source-conflict/loot-group reads do not authorize guessed repairs. Bank initialization, broader data-family inspection and creation of the dedicated predecessor-implication worktree have their own retained provider holds. The bank worktree remains clean at363f0967 with no new API. Do not reroute those transactions or declare the offline frontier exhausted. The checkpoint below is preserved history; use current Git state and external receipts before any supported recovery action. Do not use session_finish while implementation/publication remains incomplete.
+
+---
+
+# Preserved checkpoint: required quest stock and sale protection after PR79
 
 Supported recovery update: the required-stock precommit runner reproduced all261306dataset/39strategy checks with five validated stock contracts and65stock-specific checks. The original bank, availability-conflict and aggregate loot-group reads recovered;2004groups were reviewed with zero saturated equal-chance groups. The broad data-family request remained provider-blocked twice and was stopped. Read `docs/audit/2026-10-01/required-stock/source-review-recovery-20261001.json`; older hold statements below describe the earlier checkpoint. No speculative prerequisite equivalence or bank-absence authority was added by these reads.
 

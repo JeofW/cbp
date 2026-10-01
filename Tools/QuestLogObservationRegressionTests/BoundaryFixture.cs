@@ -129,7 +129,11 @@ namespace WholesomeAQ
  public enum WoWItemClass {Miscellaneous,Projectile,Quiver,Reagent,Key}
  public sealed class Item {public uint Entry;public WoWItemClass ItemClass;}
  public sealed class Objective {public int ItemId;}
- public sealed class QuestEntry {public int Id,StartItem;public List<Objective>? Objectives=new();}
+ // Data-only boundary mirrors the material fields read by the extracted sale
+ // owner. The actual owner and every existing observation assertion are unchanged.
+ public sealed class QuestItemRequirement { public int ItemId,Count; }
+ public sealed class QuestSupplementalSupply { public int ItemId,RequiredCount,ProvidedCount; }
+ public sealed class QuestEntry {public int Id,StartItem;public List<Objective>? Objectives=new(); public List<QuestItemRequirement>? DeliveryItems,AcceptanceSupplies; public IReadOnlyList<QuestItemRequirement>? RequiredStockItems; public QuestSupplementalSupply? SupplementalSupply;}
  public sealed class Database {public List<QuestEntry>? Quests=new();}
  public sealed class Loader {public Database? Database=new();}
  public sealed class Scheduler {public HashSet<int> ActiveQuestIds {get;set;}=new();}

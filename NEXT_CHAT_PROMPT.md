@@ -1,4 +1,18 @@
-# Current: required quest stock and sale protection after PR79
+# Current: required-stock publication recovery — 1 October 2026
+
+The new session inspected the live repository and confirmed PR61 through PR79 are already merged. Canonical local/remote master is363f096764c61e1faf050fd6a638867f901e8dfd; the preserved required-stock implementation is05e59ef5f576c68298f091dff0eeda1ddfdf09c0. The two existing data-only observation fixture corrections and all recovery notes are being retained in one corrected candidate. Resolve the actual candidate and subsequent clean local/hosted/publication status from external REQUIRED_STOCK_FINAL_CANDIDATE.json and later receipts; this checkpoint does not itself claim those gates passed. Continue the exact1305 remaining IDs and the separate Singular audit. Do not replay PR61 deployment or any completed PR62–79 work.
+
+## Historical hold: required-stock corrected verification
+
+Resume the actual required-stock worktree at05e59ef5f576c68298f091dff0eeda1ddfdf09c0. Read `docs/audit/2026-10-01/required-stock/PUBLICATION_HOLD.md` and the external `REQUIRED_STOCK_FIXTURE_COMMIT_BLOCK_20261001.json` before mutation. Two shared observation fixtures now supply the material DTOs read by the exact extracted sale owner; the complete corrected33-command diagnostic and four-stage261306/39 closure pass. The correction commit was blocked twice, so those fixtures and recovery notes are uncommitted and no stock PR exists. Preserve them; do not recreate, discard, reroute publication or claim clean acceptance from diagnostics.
+
+The original conditions/eligibility/inventory and subsequent work are already integrated through PR79 master363f096764c61e1faf050fd6a638867f901e8dfd. Consult its separate post-merge receipts before repeating tests. Production staysPR61 master3bc97e1e with429 matching payloads. Keep3028generic/2strategy/921data/311source/16live/57scripted=4335 and1305remaining, with secondary obligations separate. Required stock does not prove acquisition or live completion.
+
+After actual supported recovery, reconcile the full current diff and commit only the intended correction/checkpoint, then run fresh full local and required hosted Windows/x86 checks at that exact final SHA, verify remote diff and integrate in order. Continue the remaining availability/data/source frontier. Original bank and source-conflict reads recovered, but further bank initialization and data-family reads and the implication-worktree creation remain separately blocked; preserve exact outcomes rather than routing around them. No bank API or prerequisite-equivalence repair is yet established. Keep exact originalbuild12340 read-only IDA and pinnedTC335 evidence, unknown history/inventory semantics, both existing strategies and all ownership/navigation/recovery gates. The checkpoint below is historical.
+
+---
+
+# Preserved checkpoint: required quest stock and sale protection after PR79
 
 Supported recovery update: the required-stock precommit runner reproduced all261306dataset/39strategy checks with five validated stock contracts and65stock-specific checks. The original bank, availability-conflict and aggregate loot-group reads recovered;2004groups were reviewed with zero saturated equal-chance groups. The broad data-family request remained provider-blocked twice and was stopped. Read `docs/audit/2026-10-01/required-stock/source-review-recovery-20261001.json`; older hold statements below describe the earlier checkpoint. No speculative prerequisite equivalence or bank-absence authority was added by these reads.
 
