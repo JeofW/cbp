@@ -1,3 +1,13 @@
+# Current: corrected Rogue continuation on PR82 master — 1 October 2026
+
+Canonical master is `eae93b1f7207a965fed0bef958905e40476ac282` after merged PR82 candidate71ce4cce30b7a1843d915c5e6bef338eea2c354b. PR81/83 Paladin and Death Knight work is already included; do not recreate it. Current isolated source is D:/Dev/CB-RogueColdBlood-20261001, branch audit/next-rogue-cold-blood-20261001. The preserved Cold Blood liveness patch passes189 corrected linked-owner cases after78 assertion failures against immutable old source. Read docs/audit/2026-10-01/rogue-cold-blood/REPORT.md and its exact source/test/review receipts. Resolve the new commit and final acceptance/publication from external ROGUE_COLD_BLOOD_* receipts and live Git, not this precommit note.
+
+The independent D:/Dev/CB-GroundCollection-20261001 branch addresses source discovery, 3D arrival, guarded landing/dismount, acknowledged loot, item progress and diagnostics. Its newest coupled test request was provider-held before execution and that branch is not release-ready. Do not reroute the held test, IDA/cleanup, or local-data queries. Its new primary execution ledger retains all4335 exact IDs but withdraws3030 old Generic/Strategy end-to-end claims until complete bound lifecycle evidence exists. Historical observation results are preserved separately; this is not3030 newly demonstrated gameplay failures.
+
+Production remains the last verified PR80 d6d2e303 release. Never replace a running CopilotBuddy process or infer deployment from a source merge. Preserve user settings, profiles, state and navigation assets. PR73/72/70 were observed closed as already integrated; remaining PR67/1 cleanup and fresh ground IDA evidence have separate retained tool holds. PR25 is intentional experiment/evidence, not a merge target.
+
+## Preserved earlier checkpoint
+
 # Current: PR82 integration after accepted Paladin and Death Knight merges — 1 October 2026
 
 Canonical master is `45700ca39d65690b01d077ccb3409abbc5bad3f4` after PR81 and PR83. Their reviewed heads are `08c7ebd820a452f0b21bd64f2d5f30c8afcdb7bd` and `b84aecbc6d999013235015ca25b8e1c6b51488e9`; each merge preserves its accepted source tree. PR83 passed180 Death Knight scenarios, all34 derived local stages, four quest-closure stages and three applicable hosted workflows with17 integrated suites and11266 matching versioned inputs.

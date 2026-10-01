@@ -1,0 +1,11 @@
+# Assassination Cold Blood builder liveness
+
+Cold Blood's missing-Envenom fallback could run at zero combo points. Once the aura existed, both Mutilate and Sinister Strike were excluded, so an unavailable finisher or target/combo-point reset could leave no builder. All three existing combat contexts now retain the four-point threshold on that fallback and allow learned builders after the earlier finisher opportunities. This does not prescribe optimal damage timing or change other classes.
+
+The complete tracked Assassination source executes with real TreeSharp. Only external units, spell availability/dispatch, settings, movement and talent observations are controlled. Corrected tests compile against immutable old owners in a separate source tree and reproduce 78 intended assertions across 189 cases, with no fixture errors. The preserved repair then passes 189/189 and all earlier Paladin/Death Knight cases. The corrected baseline never reverted or overwrote the working patch.
+
+Two initially added Vanish expectations were incorrect: normal combat suspends, while battleground/instance owners deliberately allow Garrote under Vanish. The original test bytes and failed repaired run are retained; corrected tests explicitly preserve those existing policies with and without Cold Blood. No earlier Paladin or Death Knight assertion was weakened. The test build retains 165 existing nullable warnings, not a warning-free claim.
+
+Pinned original build12340 client data and the TC335 schema bind Cold Blood14177 and the relevant Rogue abilities. No native API, offset, client hook, coefficient or server recipe was added. The reviewed working bytes were preserved while the isolated branch fast-forwarded from PR83 master45700ca3 to PR82 mastereae93b1f. Fresh final-commit local/hosted acceptance is recorded separately after this checkpoint.
+
+Quest observation tests and end-to-end execution proof remain distinct. The earlier 4335-row dataset and 261306/39 observation checks are not proof of every native acquisition and turn-in lifecycle. The independent ground-collection work has introduced a stricter execution ledger; it must not be replaced by the old optimistic wording. No game, full race/spec matrix or live quest completion is claimed here.

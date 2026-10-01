@@ -16,11 +16,13 @@ internal static class Fixture
     internal static Func<string, List<string>>? LuaResult;
     internal static int DefaultRestCalls;
     internal static RunStatus DefaultRestResult = RunStatus.Failure;
+    internal static bool GlobalCooldown;
     internal static void Reset()
     {
         Known.Clear(); Unavailable.Clear(); Attempts.Clear(); Errors.Clear(); Metadata.Clear();
         LuaQueries.Clear(); LuaResult = null;
         DefaultRestCalls = 0; DefaultRestResult = RunStatus.Failure;
+        GlobalCooldown = false;
         Singular.Managers.TankManager.Instance.FirstUnit = null;
         Singular.Managers.TankManager.Instance.NeedToTaunt.Clear();
         Singular.Managers.HealerManager.Instance.FirstUnit = null;
@@ -30,6 +32,7 @@ internal static class Fixture
         Styx.StyxWoW.Me = new LocalPlayer { Guid = 1, Class = WoWClass.Paladin, Name = "SelfPaladin" };
         Singular.Settings.SingularSettings.Instance.Paladin = new();
         Singular.Settings.SingularSettings.Instance.DeathKnight = new();
+        Singular.Settings.SingularSettings.Instance.Rogue = new();
         Singular.Managers.TalentManager.Glyphs.Clear();
         Singular.Managers.TalentManager.CurrentSpec = Singular.Managers.TalentSpec.RetributionPaladin;
         Singular.Helpers.Unit.NearbyUnfriendlyUnits.Clear();
@@ -128,12 +131,20 @@ namespace Styx.WoWInternals.WoWObjects
         public bool IsInCombat => Combat;
         public bool IsChanneling { get; set; }
         public bool IsMoving { get; set; }
+        public bool IsFlying { get; set; }
+        public bool MeIsBehind { get; set; } = true;
+        public bool IsTargetingMeOrPet { get; set; }
+        public bool StunnedObservation { get; set; }
         public bool IsPlayer { get; set; }
         public bool Elite { get; set; }
         public bool Fleeing { get; set; }
         public bool IsAutoAttacking { get; set; }
         public float Distance { get; set; } = 5;
         public float DistanceSqr => Distance * Distance;
+        public float Distance2DSqr => DistanceSqr;
+        public float Z { get; set; }
+        public Styx.WoWPowerType PowerType { get; set; }
+        public ThreatObservation ThreatInfo { get; } = new();
         public Styx.WoWPoint Location { get; set; }
         public bool InLineOfSpellSight { get; set; } = true;
         public bool IsWithinMeleeRange => Distance <= 5;
@@ -154,6 +165,9 @@ namespace Styx.WoWInternals.WoWObjects
         public IEnumerable<WoWAura> GetAllAuras() => ObservedAuras;
         public bool HasAura(string name) => ObservedAuras.Any(a => a.Name == name && a.IsActive);
         public bool HasMyAura(string name) => ObservedAuras.Any(a => a.Name == name && a.IsActive && a.CreatorGuid == Styx.StyxWoW.Me.Guid);
+        public TimeSpan GetAuraTimeLeft(string name, bool mine) => ObservedAuras
+            .FirstOrDefault(a => a.Name == name && a.IsActive && (!mine || a.CreatorGuid == Styx.StyxWoW.Me.Guid))?.TimeLeft ?? TimeSpan.Zero;
+        public bool IsStunned() => StunnedObservation;
         public bool HasAuraWithMechanic(params WoWSpellMechanic[] _) => false;
         public bool IsImmune(Styx.WoWSpellSchool school) => false;
         public bool IsCrowdControlled() => false;
@@ -169,6 +183,8 @@ namespace Styx.WoWInternals.WoWObjects
     }
     public sealed class LocalPlayer : WoWPlayer
     {
+        public int ComboPoints { get; set; }
+        public bool IsStealthed { get; set; }
         public WoWUnit? Pet { get; set; }
         public bool GotAlivePet => Pet != null && Pet.IsValid && Pet.IsAlive;
         public int BloodRuneCount { get; set; }
@@ -179,6 +195,7 @@ namespace Styx.WoWInternals.WoWObjects
         public Dictionary<uint, int> ItemCounts { get; } = new();
         public int GetCarriedItemCount(uint id) => ItemCounts.TryGetValue(id, out int count) ? count : 0;
     }
+    public sealed class ThreatObservation { public double RawPercent { get; set; } }
 }
 namespace Styx
 {
@@ -225,12 +242,13 @@ namespace Styx.Helpers
 }
 namespace Singular.Managers
 {
-    public enum TalentSpec { RetributionPaladin, HolyPaladin, ProtectionPaladin, Lowbie, BloodDeathKnight, FrostDeathKnight, UnholyDeathKnight }
+    public enum TalentSpec { RetributionPaladin, HolyPaladin, ProtectionPaladin, Lowbie, BloodDeathKnight, FrostDeathKnight, UnholyDeathKnight, AssasinationRogue }
     public static class TalentManager
     {
         public static TalentSpec CurrentSpec { get; set; }
         public static HashSet<string> Glyphs { get; } = new(StringComparer.Ordinal);
         public static bool HasGlyph(string name) => Glyphs.Contains(name);
+        public static int GetCount(int tab, int talent) => 0;
     }
     public sealed class HealerManager
     {
@@ -252,6 +270,11 @@ namespace Singular.Dynamics
 }
 namespace Singular.Settings
 {
+    internal sealed class RogueSettings
+    {
+        public bool UseStealthOnPull { get; set; }
+        public bool UseTricksOfTheTrade { get; set; }
+    }
     internal sealed class DeathKnightSettings
     {
         public bool UseDeathAndDecay { get; set; }
@@ -310,11 +333,13 @@ namespace Singular.Settings
         public static SingularSettings Instance { get; } = new();
         public PaladinSettings Paladin { get; set; } = new();
         public DeathKnightSettings DeathKnight { get; set; } = new();
+        public RogueSettings Rogue { get; set; } = new();
         public bool EnableTaunting { get; set; }
     }
 }
 namespace Singular.Helpers
 {
+    public static class Item { public static bool RangedIsType(Styx.WoWItemWeaponClass kind) => false; }
     public static class Unit
     {
         public static List<WoWUnit> NearbyUnfriendlyUnits { get; } = new();
@@ -348,6 +373,8 @@ namespace Singular.Helpers
     {
         public const float MeleeRange = 5;
         public static Composite WaitForCast(bool _ = true, bool __ = true) => Fixture.Nothing();
+        public static Composite WaitForCastOrChannel() => Fixture.Nothing();
+        public static bool IsGlobalCooldown() => Fixture.GlobalCooldown;
         public static Composite Resurrect(string _) => Fixture.Nothing();
         public static Composite Cast(string name, Func<object, bool>? requires = null) => Fixture.Submit(name, _ => Styx.StyxWoW.Me.CurrentTarget, requires);
         public static Composite Cast(string name, Func<object, WoWUnit?> select, Func<object, bool> requires) => Fixture.Submit(name, select, requires);
@@ -366,5 +393,16 @@ namespace Singular.Helpers
             => Fixture.Submit(name, select, context => requires(context)
                 && select(context) is WoWUnit target && !target.HasAura(name));
         public static Composite Heal(string name, Func<object, WoWUnit?> select, Func<object, bool> requires) => Fixture.Submit(name, select, requires);
+    }
+}
+
+// These unrelated Rogue helpers are external boundaries for the complete
+// Assassination decision owner. No Blind/Tricks implementation is claimed here.
+namespace Singular.ClassSpecific.Rogue
+{
+    public static class Common
+    {
+        public static Composite CreateRogueBlindOnAddBehavior() => Fixture.Nothing();
+        public static WoWUnit? BestTricksTarget => null;
     }
 }

@@ -1,0 +1,3636 @@
+{
+  "schema": {
+    "url": "https://raw.githubusercontent.com/TrinityCore/TrinityCore/8fda442f6c30ca21a622638063ab8b28376f1b25/src/server/shared/DataStores/DBCStructure.h",
+    "file": "TC-DBCStructure.h",
+    "bytes": 93151,
+    "sha256": "82de42b23241e10bc736065ba90b071eed332d78fbfd3b96e913d65d1b794bf8"
+  },
+  "dbc_provenance": {
+    "Spell": {
+      "table": "Spell",
+      "archive": "D:\\World of Warcraft 3.3.5a\\Data\\enUS\\patch-enUS-3.MPQ",
+      "archive_bytes": 100373935,
+      "archive_mtime_ns": 1784778867950642000,
+      "dbc_bytes": 48967121,
+      "dbc_sha256": "d5cce1a83550dcfa9eb2f0251dbb11fd24c272534b2b1a9b230924a44d817ab3",
+      "records": 49839,
+      "fields": 234,
+      "record_size": 936
+    },
+    "Talent": {
+      "table": "Talent",
+      "archive": "D:\\World of Warcraft 3.3.5a\\Data\\enUS\\patch-enUS-2.MPQ",
+      "archive_bytes": 225570171,
+      "archive_mtime_ns": 1784778867982071400,
+      "dbc_bytes": 82085,
+      "dbc_sha256": "23aefff3add151bf504c4d0bab247e2e622f9cf29a473d091cb9f11127d99d68",
+      "records": 892,
+      "fields": 23,
+      "record_size": 92
+    },
+    "SkillLineAbility": {
+      "table": "SkillLineAbility",
+      "archive": "D:\\World of Warcraft 3.3.5a\\Data\\enUS\\patch-enUS-3.MPQ",
+      "archive_bytes": 100373935,
+      "archive_mtime_ns": 1784778867950642000,
+      "dbc_bytes": 572285,
+      "dbc_sha256": "4154b833d6a26b9b9ce53851d56cb594f0813c0936a72ec89f933cc69abe42c3",
+      "records": 10219,
+      "fields": 14,
+      "record_size": 56
+    }
+  },
+  "selected_spell_records": [
+    {
+      "id": 14177,
+      "name": "Cold Blood",
+      "rank_text": "",
+      "spell_family": 8,
+      "attributes": [
+        33882128,
+        32,
+        0,
+        67108864,
+        0,
+        0,
+        0,
+        0
+      ],
+      "level": 0,
+      "duration_index": 21,
+      "recovery_ms": 180000,
+      "power_type_raw": 0,
+      "power_cost": 0,
+      "proc_charges": 1,
+      "effects": [
+        {
+          "effect": 6,
+          "aura": 107,
+          "base_points_raw": 99,
+          "die_sides_raw": 1,
+          "target_a": 1,
+          "misc_raw": 7
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        }
+      ],
+      "talent_ranks": [
+        {
+          "talent_id": 280,
+          "tab_id": 182,
+          "tier": 4,
+          "column": 1,
+          "rank": 1
+        }
+      ],
+      "skill_line_records": [
+        {
+          "record_id": 7799,
+          "skill_line": 253,
+          "race_mask": 0,
+          "class_mask": 0,
+          "raw_exclude_race": 0,
+          "raw_exclude_class": 0,
+          "minimum_skill_rank": 1,
+          "superseded_by_spell": 0,
+          "acquire_method": 0
+        }
+      ]
+    },
+    {
+      "id": 32645,
+      "name": "Envenom",
+      "rank_text": "Rank 1",
+      "spell_family": 8,
+      "attributes": [
+        327696,
+        1049088,
+        0,
+        1024,
+        9,
+        0,
+        0,
+        0
+      ],
+      "level": 62,
+      "duration_index": 285,
+      "recovery_ms": 0,
+      "power_type_raw": 3,
+      "power_cost": 35,
+      "proc_charges": 0,
+      "effects": [
+        {
+          "effect": 2,
+          "aura": 0,
+          "base_points_raw": 117,
+          "die_sides_raw": 1,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 6,
+          "aura": 108,
+          "base_points_raw": 74,
+          "die_sides_raw": 1,
+          "target_a": 1,
+          "misc_raw": 26
+        },
+        {
+          "effect": 6,
+          "aura": 107,
+          "base_points_raw": 14,
+          "die_sides_raw": 1,
+          "target_a": 1,
+          "misc_raw": 18
+        }
+      ],
+      "talent_ranks": [],
+      "skill_line_records": [
+        {
+          "record_id": 14908,
+          "skill_line": 253,
+          "race_mask": 0,
+          "class_mask": 8,
+          "raw_exclude_race": 0,
+          "raw_exclude_class": 0,
+          "minimum_skill_rank": 1,
+          "superseded_by_spell": 32684,
+          "acquire_method": 0
+        }
+      ]
+    },
+    {
+      "id": 32684,
+      "name": "Envenom",
+      "rank_text": "Rank 2",
+      "spell_family": 8,
+      "attributes": [
+        327696,
+        1049088,
+        0,
+        1024,
+        9,
+        0,
+        0,
+        0
+      ],
+      "level": 69,
+      "duration_index": 285,
+      "recovery_ms": 0,
+      "power_type_raw": 3,
+      "power_cost": 35,
+      "proc_charges": 0,
+      "effects": [
+        {
+          "effect": 2,
+          "aura": 0,
+          "base_points_raw": 147,
+          "die_sides_raw": 1,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 6,
+          "aura": 108,
+          "base_points_raw": 74,
+          "die_sides_raw": 1,
+          "target_a": 1,
+          "misc_raw": 26
+        },
+        {
+          "effect": 6,
+          "aura": 107,
+          "base_points_raw": 14,
+          "die_sides_raw": 1,
+          "target_a": 1,
+          "misc_raw": 18
+        }
+      ],
+      "talent_ranks": [],
+      "skill_line_records": [
+        {
+          "record_id": 14909,
+          "skill_line": 253,
+          "race_mask": 0,
+          "class_mask": 8,
+          "raw_exclude_race": 0,
+          "raw_exclude_class": 0,
+          "minimum_skill_rank": 1,
+          "superseded_by_spell": 57992,
+          "acquire_method": 0
+        }
+      ]
+    },
+    {
+      "id": 39967,
+      "name": "Envenom",
+      "rank_text": "Rank 2",
+      "spell_family": 8,
+      "attributes": [
+        327696,
+        512,
+        0,
+        1024,
+        9,
+        0,
+        0,
+        0
+      ],
+      "level": 69,
+      "duration_index": 0,
+      "recovery_ms": 0,
+      "power_type_raw": 3,
+      "power_cost": 35,
+      "proc_charges": 0,
+      "effects": [
+        {
+          "effect": 2,
+          "aura": 0,
+          "base_points_raw": 152,
+          "die_sides_raw": 1,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        }
+      ],
+      "talent_ranks": [],
+      "skill_line_records": []
+    },
+    {
+      "id": 57992,
+      "name": "Envenom",
+      "rank_text": "Rank 3",
+      "spell_family": 8,
+      "attributes": [
+        327696,
+        1049088,
+        0,
+        1024,
+        9,
+        0,
+        0,
+        0
+      ],
+      "level": 74,
+      "duration_index": 285,
+      "recovery_ms": 0,
+      "power_type_raw": 3,
+      "power_cost": 35,
+      "proc_charges": 0,
+      "effects": [
+        {
+          "effect": 2,
+          "aura": 0,
+          "base_points_raw": 175,
+          "die_sides_raw": 1,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 6,
+          "aura": 108,
+          "base_points_raw": 74,
+          "die_sides_raw": 1,
+          "target_a": 1,
+          "misc_raw": 26
+        },
+        {
+          "effect": 6,
+          "aura": 107,
+          "base_points_raw": 14,
+          "die_sides_raw": 1,
+          "target_a": 1,
+          "misc_raw": 18
+        }
+      ],
+      "talent_ranks": [],
+      "skill_line_records": [
+        {
+          "record_id": 19966,
+          "skill_line": 253,
+          "race_mask": 0,
+          "class_mask": 8,
+          "raw_exclude_race": 0,
+          "raw_exclude_class": 0,
+          "minimum_skill_rank": 1,
+          "superseded_by_spell": 57993,
+          "acquire_method": 0
+        }
+      ]
+    },
+    {
+      "id": 57993,
+      "name": "Envenom",
+      "rank_text": "Rank 4",
+      "spell_family": 8,
+      "attributes": [
+        327696,
+        1049088,
+        0,
+        1024,
+        9,
+        0,
+        0,
+        0
+      ],
+      "level": 80,
+      "duration_index": 285,
+      "recovery_ms": 0,
+      "power_type_raw": 3,
+      "power_cost": 35,
+      "proc_charges": 0,
+      "effects": [
+        {
+          "effect": 2,
+          "aura": 0,
+          "base_points_raw": 215,
+          "die_sides_raw": 1,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 6,
+          "aura": 108,
+          "base_points_raw": 74,
+          "die_sides_raw": 1,
+          "target_a": 1,
+          "misc_raw": 26
+        },
+        {
+          "effect": 6,
+          "aura": 107,
+          "base_points_raw": 14,
+          "die_sides_raw": 1,
+          "target_a": 1,
+          "misc_raw": 18
+        }
+      ],
+      "talent_ranks": [],
+      "skill_line_records": [
+        {
+          "record_id": 19967,
+          "skill_line": 253,
+          "race_mask": 0,
+          "class_mask": 8,
+          "raw_exclude_race": 0,
+          "raw_exclude_class": 0,
+          "minimum_skill_rank": 1,
+          "superseded_by_spell": 0,
+          "acquire_method": 0
+        }
+      ]
+    },
+    {
+      "id": 2098,
+      "name": "Eviscerate",
+      "rank_text": "Rank 1",
+      "spell_family": 8,
+      "attributes": [
+        327696,
+        1049088,
+        0,
+        1024,
+        8,
+        0,
+        0,
+        0
+      ],
+      "level": 1,
+      "duration_index": 0,
+      "recovery_ms": 0,
+      "power_type_raw": 3,
+      "power_cost": 35,
+      "proc_charges": 0,
+      "effects": [
+        {
+          "effect": 2,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 5,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 3,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 1,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        }
+      ],
+      "talent_ranks": [],
+      "skill_line_records": [
+        {
+          "record_id": 4033,
+          "skill_line": 253,
+          "race_mask": 0,
+          "class_mask": 8,
+          "raw_exclude_race": 0,
+          "raw_exclude_class": 0,
+          "minimum_skill_rank": 1,
+          "superseded_by_spell": 6760,
+          "acquire_method": 2
+        }
+      ]
+    },
+    {
+      "id": 6760,
+      "name": "Eviscerate",
+      "rank_text": "Rank 2",
+      "spell_family": 8,
+      "attributes": [
+        327696,
+        1049088,
+        0,
+        1024,
+        8,
+        0,
+        0,
+        0
+      ],
+      "level": 8,
+      "duration_index": 0,
+      "recovery_ms": 0,
+      "power_type_raw": 3,
+      "power_cost": 35,
+      "proc_charges": 0,
+      "effects": [
+        {
+          "effect": 2,
+          "aura": 0,
+          "base_points_raw": 2,
+          "die_sides_raw": 9,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 3,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 1,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        }
+      ],
+      "talent_ranks": [],
+      "skill_line_records": [
+        {
+          "record_id": 4050,
+          "skill_line": 253,
+          "race_mask": 0,
+          "class_mask": 8,
+          "raw_exclude_race": 0,
+          "raw_exclude_class": 0,
+          "minimum_skill_rank": 1,
+          "superseded_by_spell": 6761,
+          "acquire_method": 0
+        }
+      ]
+    },
+    {
+      "id": 6761,
+      "name": "Eviscerate",
+      "rank_text": "Rank 3",
+      "spell_family": 8,
+      "attributes": [
+        327696,
+        1049088,
+        0,
+        1024,
+        8,
+        0,
+        0,
+        0
+      ],
+      "level": 16,
+      "duration_index": 0,
+      "recovery_ms": 0,
+      "power_type_raw": 3,
+      "power_cost": 35,
+      "proc_charges": 0,
+      "effects": [
+        {
+          "effect": 2,
+          "aura": 0,
+          "base_points_raw": 5,
+          "die_sides_raw": 15,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 3,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 1,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        }
+      ],
+      "talent_ranks": [],
+      "skill_line_records": [
+        {
+          "record_id": 4051,
+          "skill_line": 253,
+          "race_mask": 0,
+          "class_mask": 8,
+          "raw_exclude_race": 0,
+          "raw_exclude_class": 0,
+          "minimum_skill_rank": 1,
+          "superseded_by_spell": 6762,
+          "acquire_method": 0
+        }
+      ]
+    },
+    {
+      "id": 6762,
+      "name": "Eviscerate",
+      "rank_text": "Rank 4",
+      "spell_family": 8,
+      "attributes": [
+        327696,
+        1049088,
+        0,
+        1024,
+        8,
+        0,
+        0,
+        0
+      ],
+      "level": 24,
+      "duration_index": 0,
+      "recovery_ms": 0,
+      "power_type_raw": 3,
+      "power_cost": 35,
+      "proc_charges": 0,
+      "effects": [
+        {
+          "effect": 2,
+          "aura": 0,
+          "base_points_raw": 9,
+          "die_sides_raw": 21,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 3,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 1,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        }
+      ],
+      "talent_ranks": [],
+      "skill_line_records": [
+        {
+          "record_id": 4052,
+          "skill_line": 253,
+          "race_mask": 0,
+          "class_mask": 8,
+          "raw_exclude_race": 0,
+          "raw_exclude_class": 0,
+          "minimum_skill_rank": 1,
+          "superseded_by_spell": 8623,
+          "acquire_method": 0
+        }
+      ]
+    },
+    {
+      "id": 8623,
+      "name": "Eviscerate",
+      "rank_text": "Rank 5",
+      "spell_family": 8,
+      "attributes": [
+        327696,
+        1049088,
+        0,
+        1024,
+        8,
+        0,
+        0,
+        0
+      ],
+      "level": 32,
+      "duration_index": 0,
+      "recovery_ms": 0,
+      "power_type_raw": 3,
+      "power_cost": 35,
+      "proc_charges": 0,
+      "effects": [
+        {
+          "effect": 2,
+          "aura": 0,
+          "base_points_raw": 14,
+          "die_sides_raw": 31,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 3,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 1,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        }
+      ],
+      "talent_ranks": [],
+      "skill_line_records": [
+        {
+          "record_id": 4770,
+          "skill_line": 253,
+          "race_mask": 0,
+          "class_mask": 8,
+          "raw_exclude_race": 0,
+          "raw_exclude_class": 0,
+          "minimum_skill_rank": 1,
+          "superseded_by_spell": 8624,
+          "acquire_method": 0
+        }
+      ]
+    },
+    {
+      "id": 8624,
+      "name": "Eviscerate",
+      "rank_text": "Rank 6",
+      "spell_family": 8,
+      "attributes": [
+        327696,
+        1049088,
+        0,
+        1024,
+        8,
+        0,
+        0,
+        0
+      ],
+      "level": 40,
+      "duration_index": 0,
+      "recovery_ms": 0,
+      "power_type_raw": 3,
+      "power_cost": 35,
+      "proc_charges": 0,
+      "effects": [
+        {
+          "effect": 2,
+          "aura": 0,
+          "base_points_raw": 21,
+          "die_sides_raw": 45,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 3,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 1,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        }
+      ],
+      "talent_ranks": [],
+      "skill_line_records": [
+        {
+          "record_id": 4771,
+          "skill_line": 253,
+          "race_mask": 0,
+          "class_mask": 8,
+          "raw_exclude_race": 0,
+          "raw_exclude_class": 0,
+          "minimum_skill_rank": 1,
+          "superseded_by_spell": 11299,
+          "acquire_method": 0
+        }
+      ]
+    },
+    {
+      "id": 11299,
+      "name": "Eviscerate",
+      "rank_text": "Rank 7",
+      "spell_family": 8,
+      "attributes": [
+        327696,
+        1049088,
+        0,
+        1024,
+        8,
+        0,
+        0,
+        0
+      ],
+      "level": 48,
+      "duration_index": 0,
+      "recovery_ms": 0,
+      "power_type_raw": 3,
+      "power_cost": 35,
+      "proc_charges": 0,
+      "effects": [
+        {
+          "effect": 2,
+          "aura": 0,
+          "base_points_raw": 33,
+          "die_sides_raw": 69,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 3,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 1,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        }
+      ],
+      "talent_ranks": [],
+      "skill_line_records": [
+        {
+          "record_id": 5945,
+          "skill_line": 253,
+          "race_mask": 0,
+          "class_mask": 8,
+          "raw_exclude_race": 0,
+          "raw_exclude_class": 0,
+          "minimum_skill_rank": 1,
+          "superseded_by_spell": 11300,
+          "acquire_method": 0
+        }
+      ]
+    },
+    {
+      "id": 11300,
+      "name": "Eviscerate",
+      "rank_text": "Rank 8",
+      "spell_family": 8,
+      "attributes": [
+        327696,
+        1049088,
+        0,
+        1024,
+        8,
+        0,
+        0,
+        0
+      ],
+      "level": 56,
+      "duration_index": 0,
+      "recovery_ms": 0,
+      "power_type_raw": 3,
+      "power_cost": 35,
+      "proc_charges": 0,
+      "effects": [
+        {
+          "effect": 2,
+          "aura": 0,
+          "base_points_raw": 47,
+          "die_sides_raw": 97,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 3,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 1,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        }
+      ],
+      "talent_ranks": [],
+      "skill_line_records": [
+        {
+          "record_id": 5946,
+          "skill_line": 253,
+          "race_mask": 0,
+          "class_mask": 8,
+          "raw_exclude_race": 0,
+          "raw_exclude_class": 0,
+          "minimum_skill_rank": 1,
+          "superseded_by_spell": 31016,
+          "acquire_method": 0
+        }
+      ]
+    },
+    {
+      "id": 15691,
+      "name": "Eviscerate",
+      "rank_text": "",
+      "spell_family": 8,
+      "attributes": [
+        851984,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "level": 20,
+      "duration_index": 0,
+      "recovery_ms": 0,
+      "power_type_raw": 3,
+      "power_cost": 0,
+      "proc_charges": 0,
+      "effects": [
+        {
+          "effect": 2,
+          "aura": 0,
+          "base_points_raw": 64,
+          "die_sides_raw": 1,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        }
+      ],
+      "talent_ranks": [],
+      "skill_line_records": []
+    },
+    {
+      "id": 15692,
+      "name": "Eviscerate",
+      "rank_text": "",
+      "spell_family": 8,
+      "attributes": [
+        851984,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "level": 20,
+      "duration_index": 0,
+      "recovery_ms": 0,
+      "power_type_raw": 3,
+      "power_cost": 0,
+      "proc_charges": 0,
+      "effects": [
+        {
+          "effect": 2,
+          "aura": 0,
+          "base_points_raw": 97,
+          "die_sides_raw": 1,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        }
+      ],
+      "talent_ranks": [],
+      "skill_line_records": []
+    },
+    {
+      "id": 26865,
+      "name": "Eviscerate",
+      "rank_text": "Rank 10",
+      "spell_family": 8,
+      "attributes": [
+        327696,
+        1049088,
+        0,
+        1024,
+        8,
+        0,
+        0,
+        0
+      ],
+      "level": 64,
+      "duration_index": 0,
+      "recovery_ms": 0,
+      "power_type_raw": 3,
+      "power_cost": 35,
+      "proc_charges": 0,
+      "effects": [
+        {
+          "effect": 2,
+          "aura": 0,
+          "base_points_raw": 59,
+          "die_sides_raw": 121,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 3,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 1,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        }
+      ],
+      "talent_ranks": [],
+      "skill_line_records": [
+        {
+          "record_id": 13711,
+          "skill_line": 253,
+          "race_mask": 0,
+          "class_mask": 8,
+          "raw_exclude_race": 0,
+          "raw_exclude_class": 0,
+          "minimum_skill_rank": 1,
+          "superseded_by_spell": 48667,
+          "acquire_method": 0
+        }
+      ]
+    },
+    {
+      "id": 27611,
+      "name": "Eviscerate",
+      "rank_text": "",
+      "spell_family": 8,
+      "attributes": [
+        851984,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "level": 20,
+      "duration_index": 0,
+      "recovery_ms": 0,
+      "power_type_raw": 3,
+      "power_cost": 0,
+      "proc_charges": 0,
+      "effects": [
+        {
+          "effect": 2,
+          "aura": 0,
+          "base_points_raw": 194,
+          "die_sides_raw": 1,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        }
+      ],
+      "talent_ranks": [],
+      "skill_line_records": []
+    },
+    {
+      "id": 31016,
+      "name": "Eviscerate",
+      "rank_text": "Rank 9",
+      "spell_family": 8,
+      "attributes": [
+        327696,
+        1049088,
+        0,
+        1024,
+        8,
+        0,
+        0,
+        0
+      ],
+      "level": 60,
+      "duration_index": 0,
+      "recovery_ms": 0,
+      "power_type_raw": 3,
+      "power_cost": 35,
+      "proc_charges": 0,
+      "effects": [
+        {
+          "effect": 2,
+          "aura": 0,
+          "base_points_raw": 53,
+          "die_sides_raw": 109,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 3,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 1,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        }
+      ],
+      "talent_ranks": [],
+      "skill_line_records": [
+        {
+          "record_id": 14489,
+          "skill_line": 253,
+          "race_mask": 0,
+          "class_mask": 8,
+          "raw_exclude_race": 0,
+          "raw_exclude_class": 0,
+          "minimum_skill_rank": 1,
+          "superseded_by_spell": 26865,
+          "acquire_method": 0
+        }
+      ]
+    },
+    {
+      "id": 41177,
+      "name": "Eviscerate",
+      "rank_text": "",
+      "spell_family": 8,
+      "attributes": [
+        327696,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "level": 70,
+      "duration_index": 0,
+      "recovery_ms": 0,
+      "power_type_raw": 3,
+      "power_cost": 0,
+      "proc_charges": 0,
+      "effects": [
+        {
+          "effect": 2,
+          "aura": 0,
+          "base_points_raw": 1496,
+          "die_sides_raw": 207,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        }
+      ],
+      "talent_ranks": [],
+      "skill_line_records": []
+    },
+    {
+      "id": 46189,
+      "name": "Eviscerate",
+      "rank_text": "",
+      "spell_family": 8,
+      "attributes": [
+        851984,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "level": 20,
+      "duration_index": 0,
+      "recovery_ms": 0,
+      "power_type_raw": 3,
+      "power_cost": 0,
+      "proc_charges": 0,
+      "effects": [
+        {
+          "effect": 2,
+          "aura": 0,
+          "base_points_raw": 324,
+          "die_sides_raw": 1,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        }
+      ],
+      "talent_ranks": [],
+      "skill_line_records": []
+    },
+    {
+      "id": 48667,
+      "name": "Eviscerate",
+      "rank_text": "Rank 11",
+      "spell_family": 8,
+      "attributes": [
+        327696,
+        1049088,
+        0,
+        1024,
+        8,
+        0,
+        0,
+        0
+      ],
+      "level": 73,
+      "duration_index": 0,
+      "recovery_ms": 0,
+      "power_type_raw": 3,
+      "power_cost": 35,
+      "proc_charges": 0,
+      "effects": [
+        {
+          "effect": 2,
+          "aura": 0,
+          "base_points_raw": 103,
+          "die_sides_raw": 209,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 3,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 1,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        }
+      ],
+      "talent_ranks": [],
+      "skill_line_records": [
+        {
+          "record_id": 16682,
+          "skill_line": 253,
+          "race_mask": 0,
+          "class_mask": 8,
+          "raw_exclude_race": 0,
+          "raw_exclude_class": 0,
+          "minimum_skill_rank": 1,
+          "superseded_by_spell": 48668,
+          "acquire_method": 0
+        }
+      ]
+    },
+    {
+      "id": 48668,
+      "name": "Eviscerate",
+      "rank_text": "Rank 12",
+      "spell_family": 8,
+      "attributes": [
+        327696,
+        1049088,
+        0,
+        1024,
+        8,
+        0,
+        0,
+        0
+      ],
+      "level": 79,
+      "duration_index": 0,
+      "recovery_ms": 0,
+      "power_type_raw": 3,
+      "power_cost": 35,
+      "proc_charges": 0,
+      "effects": [
+        {
+          "effect": 2,
+          "aura": 0,
+          "base_points_raw": 126,
+          "die_sides_raw": 255,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 3,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 1,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        }
+      ],
+      "talent_ranks": [],
+      "skill_line_records": [
+        {
+          "record_id": 16683,
+          "skill_line": 253,
+          "race_mask": 0,
+          "class_mask": 8,
+          "raw_exclude_race": 0,
+          "raw_exclude_class": 0,
+          "minimum_skill_rank": 1,
+          "superseded_by_spell": 0,
+          "acquire_method": 0
+        }
+      ]
+    },
+    {
+      "id": 57641,
+      "name": "Eviscerate",
+      "rank_text": "",
+      "spell_family": 8,
+      "attributes": [
+        327696,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "level": 0,
+      "duration_index": 0,
+      "recovery_ms": 0,
+      "power_type_raw": 3,
+      "power_cost": 0,
+      "proc_charges": 0,
+      "effects": [
+        {
+          "effect": 2,
+          "aura": 0,
+          "base_points_raw": 471,
+          "die_sides_raw": 57,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        }
+      ],
+      "talent_ranks": [],
+      "skill_line_records": []
+    },
+    {
+      "id": 60008,
+      "name": "Eviscerate",
+      "rank_text": "",
+      "spell_family": 8,
+      "attributes": [
+        327696,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "level": 0,
+      "duration_index": 0,
+      "recovery_ms": 0,
+      "power_type_raw": 3,
+      "power_cost": 0,
+      "proc_charges": 0,
+      "effects": [
+        {
+          "effect": 2,
+          "aura": 0,
+          "base_points_raw": 2356,
+          "die_sides_raw": 287,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        }
+      ],
+      "talent_ranks": [],
+      "skill_line_records": []
+    },
+    {
+      "id": 71933,
+      "name": "Eviscerate",
+      "rank_text": "",
+      "spell_family": 8,
+      "attributes": [
+        327696,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "level": 0,
+      "duration_index": 0,
+      "recovery_ms": 0,
+      "power_type_raw": 3,
+      "power_cost": 0,
+      "proc_charges": 0,
+      "effects": [
+        {
+          "effect": 2,
+          "aura": 0,
+          "base_points_raw": 4712,
+          "die_sides_raw": 575,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        }
+      ],
+      "talent_ranks": [],
+      "skill_line_records": []
+    },
+    {
+      "id": 1329,
+      "name": "Mutilate",
+      "rank_text": "Rank 1",
+      "spell_family": 8,
+      "attributes": [
+        327696,
+        134218240,
+        1048576,
+        16843776,
+        0,
+        0,
+        0,
+        0
+      ],
+      "level": 40,
+      "duration_index": 0,
+      "recovery_ms": 0,
+      "power_type_raw": 3,
+      "power_cost": 60,
+      "proc_charges": 0,
+      "effects": [
+        {
+          "effect": 80,
+          "aura": 0,
+          "base_points_raw": 1,
+          "die_sides_raw": 1,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 64,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 64,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 6,
+          "misc_raw": 0
+        }
+      ],
+      "talent_ranks": [
+        {
+          "talent_id": 1719,
+          "tab_id": 182,
+          "tier": 8,
+          "column": 1,
+          "rank": 1
+        }
+      ],
+      "skill_line_records": [
+        {
+          "record_id": 14895,
+          "skill_line": 253,
+          "race_mask": 0,
+          "class_mask": 8,
+          "raw_exclude_race": 0,
+          "raw_exclude_class": 0,
+          "minimum_skill_rank": 1,
+          "superseded_by_spell": 34411,
+          "acquire_method": 0
+        }
+      ]
+    },
+    {
+      "id": 5374,
+      "name": "Mutilate",
+      "rank_text": "Rank 1",
+      "spell_family": 8,
+      "attributes": [
+        327696,
+        0,
+        0,
+        1536,
+        1,
+        0,
+        0,
+        58720256
+      ],
+      "level": 1,
+      "duration_index": 0,
+      "recovery_ms": 0,
+      "power_type_raw": 3,
+      "power_cost": 0,
+      "proc_charges": 0,
+      "effects": [
+        {
+          "effect": 121,
+          "aura": 0,
+          "base_points_raw": 43,
+          "die_sides_raw": 1,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        }
+      ],
+      "talent_ranks": [],
+      "skill_line_records": []
+    },
+    {
+      "id": 27576,
+      "name": "Mutilate",
+      "rank_text": "Rank 1",
+      "spell_family": 8,
+      "attributes": [
+        327696,
+        0,
+        0,
+        16777728,
+        0,
+        0,
+        0,
+        58720256
+      ],
+      "level": 1,
+      "duration_index": 0,
+      "recovery_ms": 0,
+      "power_type_raw": 3,
+      "power_cost": 0,
+      "proc_charges": 0,
+      "effects": [
+        {
+          "effect": 121,
+          "aura": 0,
+          "base_points_raw": 43,
+          "die_sides_raw": 1,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        }
+      ],
+      "talent_ranks": [],
+      "skill_line_records": []
+    },
+    {
+      "id": 34411,
+      "name": "Mutilate",
+      "rank_text": "Rank 2",
+      "spell_family": 8,
+      "attributes": [
+        327696,
+        134218240,
+        1048576,
+        16843776,
+        0,
+        0,
+        0,
+        0
+      ],
+      "level": 50,
+      "duration_index": 0,
+      "recovery_ms": 0,
+      "power_type_raw": 3,
+      "power_cost": 60,
+      "proc_charges": 0,
+      "effects": [
+        {
+          "effect": 80,
+          "aura": 0,
+          "base_points_raw": 1,
+          "die_sides_raw": 1,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 64,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 64,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 6,
+          "misc_raw": 0
+        }
+      ],
+      "talent_ranks": [],
+      "skill_line_records": [
+        {
+          "record_id": 15168,
+          "skill_line": 253,
+          "race_mask": 0,
+          "class_mask": 8,
+          "raw_exclude_race": 0,
+          "raw_exclude_class": 0,
+          "minimum_skill_rank": 1,
+          "superseded_by_spell": 34412,
+          "acquire_method": 0
+        }
+      ]
+    },
+    {
+      "id": 34412,
+      "name": "Mutilate",
+      "rank_text": "Rank 3",
+      "spell_family": 8,
+      "attributes": [
+        327696,
+        134218240,
+        1048576,
+        16843776,
+        0,
+        0,
+        0,
+        0
+      ],
+      "level": 60,
+      "duration_index": 0,
+      "recovery_ms": 0,
+      "power_type_raw": 3,
+      "power_cost": 60,
+      "proc_charges": 0,
+      "effects": [
+        {
+          "effect": 80,
+          "aura": 0,
+          "base_points_raw": 1,
+          "die_sides_raw": 1,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 64,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 64,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 6,
+          "misc_raw": 0
+        }
+      ],
+      "talent_ranks": [],
+      "skill_line_records": [
+        {
+          "record_id": 15169,
+          "skill_line": 253,
+          "race_mask": 0,
+          "class_mask": 8,
+          "raw_exclude_race": 0,
+          "raw_exclude_class": 0,
+          "minimum_skill_rank": 1,
+          "superseded_by_spell": 34413,
+          "acquire_method": 0
+        }
+      ]
+    },
+    {
+      "id": 34413,
+      "name": "Mutilate",
+      "rank_text": "Rank 4",
+      "spell_family": 8,
+      "attributes": [
+        327696,
+        134218240,
+        1048576,
+        16843776,
+        0,
+        0,
+        0,
+        0
+      ],
+      "level": 70,
+      "duration_index": 0,
+      "recovery_ms": 0,
+      "power_type_raw": 3,
+      "power_cost": 60,
+      "proc_charges": 0,
+      "effects": [
+        {
+          "effect": 80,
+          "aura": 0,
+          "base_points_raw": 1,
+          "die_sides_raw": 1,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 64,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 64,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 6,
+          "misc_raw": 0
+        }
+      ],
+      "talent_ranks": [],
+      "skill_line_records": [
+        {
+          "record_id": 15170,
+          "skill_line": 253,
+          "race_mask": 0,
+          "class_mask": 8,
+          "raw_exclude_race": 0,
+          "raw_exclude_class": 0,
+          "minimum_skill_rank": 1,
+          "superseded_by_spell": 48663,
+          "acquire_method": 0
+        }
+      ]
+    },
+    {
+      "id": 34414,
+      "name": "Mutilate",
+      "rank_text": "Rank 2",
+      "spell_family": 8,
+      "attributes": [
+        327696,
+        0,
+        0,
+        1536,
+        1,
+        0,
+        0,
+        58720256
+      ],
+      "level": 1,
+      "duration_index": 0,
+      "recovery_ms": 0,
+      "power_type_raw": 3,
+      "power_cost": 0,
+      "proc_charges": 0,
+      "effects": [
+        {
+          "effect": 121,
+          "aura": 0,
+          "base_points_raw": 62,
+          "die_sides_raw": 1,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        }
+      ],
+      "talent_ranks": [],
+      "skill_line_records": []
+    },
+    {
+      "id": 34415,
+      "name": "Mutilate",
+      "rank_text": "Rank 2",
+      "spell_family": 8,
+      "attributes": [
+        327696,
+        0,
+        0,
+        16777728,
+        1,
+        0,
+        0,
+        58720256
+      ],
+      "level": 1,
+      "duration_index": 0,
+      "recovery_ms": 0,
+      "power_type_raw": 3,
+      "power_cost": 0,
+      "proc_charges": 0,
+      "effects": [
+        {
+          "effect": 121,
+          "aura": 0,
+          "base_points_raw": 62,
+          "die_sides_raw": 1,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        }
+      ],
+      "talent_ranks": [],
+      "skill_line_records": []
+    },
+    {
+      "id": 34416,
+      "name": "Mutilate",
+      "rank_text": "Rank 3",
+      "spell_family": 8,
+      "attributes": [
+        327696,
+        0,
+        0,
+        1536,
+        1,
+        0,
+        0,
+        58720256
+      ],
+      "level": 1,
+      "duration_index": 0,
+      "recovery_ms": 0,
+      "power_type_raw": 3,
+      "power_cost": 0,
+      "proc_charges": 0,
+      "effects": [
+        {
+          "effect": 121,
+          "aura": 0,
+          "base_points_raw": 87,
+          "die_sides_raw": 1,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        }
+      ],
+      "talent_ranks": [],
+      "skill_line_records": []
+    },
+    {
+      "id": 34417,
+      "name": "Mutilate",
+      "rank_text": "Rank 3",
+      "spell_family": 8,
+      "attributes": [
+        327696,
+        0,
+        0,
+        16777728,
+        1,
+        0,
+        0,
+        58720256
+      ],
+      "level": 1,
+      "duration_index": 0,
+      "recovery_ms": 0,
+      "power_type_raw": 3,
+      "power_cost": 0,
+      "proc_charges": 0,
+      "effects": [
+        {
+          "effect": 121,
+          "aura": 0,
+          "base_points_raw": 87,
+          "die_sides_raw": 1,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        }
+      ],
+      "talent_ranks": [],
+      "skill_line_records": []
+    },
+    {
+      "id": 34418,
+      "name": "Mutilate",
+      "rank_text": "Rank 4",
+      "spell_family": 8,
+      "attributes": [
+        327696,
+        0,
+        0,
+        16777728,
+        1,
+        0,
+        0,
+        58720256
+      ],
+      "level": 1,
+      "duration_index": 0,
+      "recovery_ms": 0,
+      "power_type_raw": 3,
+      "power_cost": 0,
+      "proc_charges": 0,
+      "effects": [
+        {
+          "effect": 121,
+          "aura": 0,
+          "base_points_raw": 100,
+          "die_sides_raw": 1,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        }
+      ],
+      "talent_ranks": [],
+      "skill_line_records": []
+    },
+    {
+      "id": 34419,
+      "name": "Mutilate",
+      "rank_text": "Rank 4",
+      "spell_family": 8,
+      "attributes": [
+        327696,
+        0,
+        0,
+        1536,
+        1,
+        0,
+        0,
+        58720256
+      ],
+      "level": 1,
+      "duration_index": 0,
+      "recovery_ms": 0,
+      "power_type_raw": 3,
+      "power_cost": 0,
+      "proc_charges": 0,
+      "effects": [
+        {
+          "effect": 121,
+          "aura": 0,
+          "base_points_raw": 100,
+          "die_sides_raw": 1,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        }
+      ],
+      "talent_ranks": [],
+      "skill_line_records": []
+    },
+    {
+      "id": 48661,
+      "name": "Mutilate",
+      "rank_text": "Rank 5",
+      "spell_family": 8,
+      "attributes": [
+        327696,
+        0,
+        0,
+        16777728,
+        1,
+        0,
+        0,
+        58720256
+      ],
+      "level": 1,
+      "duration_index": 0,
+      "recovery_ms": 0,
+      "power_type_raw": 3,
+      "power_cost": 0,
+      "proc_charges": 0,
+      "effects": [
+        {
+          "effect": 121,
+          "aura": 0,
+          "base_points_raw": 152,
+          "die_sides_raw": 1,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        }
+      ],
+      "talent_ranks": [],
+      "skill_line_records": []
+    },
+    {
+      "id": 48662,
+      "name": "Mutilate",
+      "rank_text": "Rank 5",
+      "spell_family": 8,
+      "attributes": [
+        327696,
+        0,
+        0,
+        1536,
+        1,
+        0,
+        0,
+        58720256
+      ],
+      "level": 1,
+      "duration_index": 0,
+      "recovery_ms": 0,
+      "power_type_raw": 3,
+      "power_cost": 0,
+      "proc_charges": 0,
+      "effects": [
+        {
+          "effect": 121,
+          "aura": 0,
+          "base_points_raw": 152,
+          "die_sides_raw": 1,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        }
+      ],
+      "talent_ranks": [],
+      "skill_line_records": []
+    },
+    {
+      "id": 48663,
+      "name": "Mutilate",
+      "rank_text": "Rank 5",
+      "spell_family": 8,
+      "attributes": [
+        327696,
+        134218240,
+        1048576,
+        16843776,
+        0,
+        0,
+        0,
+        0
+      ],
+      "level": 75,
+      "duration_index": 0,
+      "recovery_ms": 0,
+      "power_type_raw": 3,
+      "power_cost": 60,
+      "proc_charges": 0,
+      "effects": [
+        {
+          "effect": 80,
+          "aura": 0,
+          "base_points_raw": 1,
+          "die_sides_raw": 1,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 64,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 64,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 6,
+          "misc_raw": 0
+        }
+      ],
+      "talent_ranks": [],
+      "skill_line_records": [
+        {
+          "record_id": 16680,
+          "skill_line": 253,
+          "race_mask": 0,
+          "class_mask": 8,
+          "raw_exclude_race": 0,
+          "raw_exclude_class": 0,
+          "minimum_skill_rank": 1,
+          "superseded_by_spell": 48666,
+          "acquire_method": 0
+        }
+      ]
+    },
+    {
+      "id": 48664,
+      "name": "Mutilate",
+      "rank_text": "Rank 6",
+      "spell_family": 8,
+      "attributes": [
+        327696,
+        0,
+        0,
+        16777728,
+        1,
+        0,
+        0,
+        58720256
+      ],
+      "level": 1,
+      "duration_index": 0,
+      "recovery_ms": 0,
+      "power_type_raw": 3,
+      "power_cost": 0,
+      "proc_charges": 0,
+      "effects": [
+        {
+          "effect": 121,
+          "aura": 0,
+          "base_points_raw": 180,
+          "die_sides_raw": 1,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        }
+      ],
+      "talent_ranks": [],
+      "skill_line_records": []
+    },
+    {
+      "id": 48665,
+      "name": "Mutilate",
+      "rank_text": "Rank 6",
+      "spell_family": 8,
+      "attributes": [
+        327696,
+        0,
+        0,
+        1536,
+        1,
+        0,
+        0,
+        58720256
+      ],
+      "level": 1,
+      "duration_index": 0,
+      "recovery_ms": 0,
+      "power_type_raw": 3,
+      "power_cost": 0,
+      "proc_charges": 0,
+      "effects": [
+        {
+          "effect": 121,
+          "aura": 0,
+          "base_points_raw": 180,
+          "die_sides_raw": 1,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        }
+      ],
+      "talent_ranks": [],
+      "skill_line_records": []
+    },
+    {
+      "id": 48666,
+      "name": "Mutilate",
+      "rank_text": "Rank 6",
+      "spell_family": 8,
+      "attributes": [
+        327696,
+        134218240,
+        1048576,
+        16843776,
+        0,
+        0,
+        0,
+        0
+      ],
+      "level": 80,
+      "duration_index": 0,
+      "recovery_ms": 0,
+      "power_type_raw": 3,
+      "power_cost": 60,
+      "proc_charges": 0,
+      "effects": [
+        {
+          "effect": 80,
+          "aura": 0,
+          "base_points_raw": 1,
+          "die_sides_raw": 1,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 64,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 64,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 6,
+          "misc_raw": 0
+        }
+      ],
+      "talent_ranks": [],
+      "skill_line_records": [
+        {
+          "record_id": 16681,
+          "skill_line": 253,
+          "race_mask": 0,
+          "class_mask": 8,
+          "raw_exclude_race": 0,
+          "raw_exclude_class": 0,
+          "minimum_skill_rank": 1,
+          "superseded_by_spell": 0,
+          "acquire_method": 0
+        }
+      ]
+    },
+    {
+      "id": 1752,
+      "name": "Sinister Strike",
+      "rank_text": "Rank 1",
+      "spell_family": 8,
+      "attributes": [
+        327696,
+        134218240,
+        0,
+        1024,
+        0,
+        0,
+        0,
+        0
+      ],
+      "level": 1,
+      "duration_index": 0,
+      "recovery_ms": 0,
+      "power_type_raw": 3,
+      "power_cost": 45,
+      "proc_charges": 0,
+      "effects": [
+        {
+          "effect": 121,
+          "aura": 0,
+          "base_points_raw": 2,
+          "die_sides_raw": 1,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 80,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 1,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        }
+      ],
+      "talent_ranks": [],
+      "skill_line_records": [
+        {
+          "record_id": 3395,
+          "skill_line": 38,
+          "race_mask": 0,
+          "class_mask": 8,
+          "raw_exclude_race": 0,
+          "raw_exclude_class": 0,
+          "minimum_skill_rank": 1,
+          "superseded_by_spell": 1757,
+          "acquire_method": 2
+        }
+      ]
+    },
+    {
+      "id": 1757,
+      "name": "Sinister Strike",
+      "rank_text": "Rank 2",
+      "spell_family": 8,
+      "attributes": [
+        327696,
+        134218240,
+        0,
+        1024,
+        0,
+        0,
+        0,
+        0
+      ],
+      "level": 6,
+      "duration_index": 0,
+      "recovery_ms": 0,
+      "power_type_raw": 3,
+      "power_cost": 45,
+      "proc_charges": 0,
+      "effects": [
+        {
+          "effect": 121,
+          "aura": 0,
+          "base_points_raw": 5,
+          "die_sides_raw": 1,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 80,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 1,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        }
+      ],
+      "talent_ranks": [],
+      "skill_line_records": [
+        {
+          "record_id": 3396,
+          "skill_line": 38,
+          "race_mask": 0,
+          "class_mask": 8,
+          "raw_exclude_race": 0,
+          "raw_exclude_class": 0,
+          "minimum_skill_rank": 1,
+          "superseded_by_spell": 1758,
+          "acquire_method": 0
+        }
+      ]
+    },
+    {
+      "id": 1758,
+      "name": "Sinister Strike",
+      "rank_text": "Rank 3",
+      "spell_family": 8,
+      "attributes": [
+        327696,
+        134218240,
+        0,
+        1024,
+        0,
+        0,
+        0,
+        0
+      ],
+      "level": 14,
+      "duration_index": 0,
+      "recovery_ms": 0,
+      "power_type_raw": 3,
+      "power_cost": 45,
+      "proc_charges": 0,
+      "effects": [
+        {
+          "effect": 121,
+          "aura": 0,
+          "base_points_raw": 9,
+          "die_sides_raw": 1,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 80,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 1,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        }
+      ],
+      "talent_ranks": [],
+      "skill_line_records": [
+        {
+          "record_id": 3397,
+          "skill_line": 38,
+          "race_mask": 0,
+          "class_mask": 8,
+          "raw_exclude_race": 0,
+          "raw_exclude_class": 0,
+          "minimum_skill_rank": 1,
+          "superseded_by_spell": 1759,
+          "acquire_method": 0
+        }
+      ]
+    },
+    {
+      "id": 1759,
+      "name": "Sinister Strike",
+      "rank_text": "Rank 4",
+      "spell_family": 8,
+      "attributes": [
+        327696,
+        134218240,
+        0,
+        1024,
+        0,
+        0,
+        0,
+        0
+      ],
+      "level": 22,
+      "duration_index": 0,
+      "recovery_ms": 0,
+      "power_type_raw": 3,
+      "power_cost": 45,
+      "proc_charges": 0,
+      "effects": [
+        {
+          "effect": 121,
+          "aura": 0,
+          "base_points_raw": 14,
+          "die_sides_raw": 1,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 80,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 1,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        }
+      ],
+      "talent_ranks": [],
+      "skill_line_records": [
+        {
+          "record_id": 3398,
+          "skill_line": 38,
+          "race_mask": 0,
+          "class_mask": 8,
+          "raw_exclude_race": 0,
+          "raw_exclude_class": 0,
+          "minimum_skill_rank": 1,
+          "superseded_by_spell": 1760,
+          "acquire_method": 0
+        }
+      ]
+    },
+    {
+      "id": 1760,
+      "name": "Sinister Strike",
+      "rank_text": "Rank 5",
+      "spell_family": 8,
+      "attributes": [
+        327696,
+        134218240,
+        0,
+        1024,
+        0,
+        0,
+        0,
+        0
+      ],
+      "level": 30,
+      "duration_index": 0,
+      "recovery_ms": 0,
+      "power_type_raw": 3,
+      "power_cost": 45,
+      "proc_charges": 0,
+      "effects": [
+        {
+          "effect": 121,
+          "aura": 0,
+          "base_points_raw": 21,
+          "die_sides_raw": 1,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 80,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 1,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        }
+      ],
+      "talent_ranks": [],
+      "skill_line_records": [
+        {
+          "record_id": 3399,
+          "skill_line": 38,
+          "race_mask": 0,
+          "class_mask": 8,
+          "raw_exclude_race": 0,
+          "raw_exclude_class": 0,
+          "minimum_skill_rank": 1,
+          "superseded_by_spell": 8621,
+          "acquire_method": 0
+        }
+      ]
+    },
+    {
+      "id": 8621,
+      "name": "Sinister Strike",
+      "rank_text": "Rank 6",
+      "spell_family": 8,
+      "attributes": [
+        327696,
+        134218240,
+        0,
+        1024,
+        0,
+        0,
+        0,
+        0
+      ],
+      "level": 38,
+      "duration_index": 0,
+      "recovery_ms": 0,
+      "power_type_raw": 3,
+      "power_cost": 45,
+      "proc_charges": 0,
+      "effects": [
+        {
+          "effect": 121,
+          "aura": 0,
+          "base_points_raw": 32,
+          "die_sides_raw": 1,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 80,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 1,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        }
+      ],
+      "talent_ranks": [],
+      "skill_line_records": [
+        {
+          "record_id": 4769,
+          "skill_line": 38,
+          "race_mask": 0,
+          "class_mask": 8,
+          "raw_exclude_race": 0,
+          "raw_exclude_class": 0,
+          "minimum_skill_rank": 1,
+          "superseded_by_spell": 11293,
+          "acquire_method": 0
+        }
+      ]
+    },
+    {
+      "id": 11293,
+      "name": "Sinister Strike",
+      "rank_text": "Rank 7",
+      "spell_family": 8,
+      "attributes": [
+        327696,
+        134218240,
+        0,
+        1024,
+        0,
+        0,
+        0,
+        0
+      ],
+      "level": 46,
+      "duration_index": 0,
+      "recovery_ms": 0,
+      "power_type_raw": 3,
+      "power_cost": 45,
+      "proc_charges": 0,
+      "effects": [
+        {
+          "effect": 121,
+          "aura": 0,
+          "base_points_raw": 51,
+          "die_sides_raw": 1,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 80,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 1,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        }
+      ],
+      "talent_ranks": [],
+      "skill_line_records": [
+        {
+          "record_id": 5936,
+          "skill_line": 38,
+          "race_mask": 0,
+          "class_mask": 8,
+          "raw_exclude_race": 0,
+          "raw_exclude_class": 0,
+          "minimum_skill_rank": 1,
+          "superseded_by_spell": 11294,
+          "acquire_method": 0
+        }
+      ]
+    },
+    {
+      "id": 11294,
+      "name": "Sinister Strike",
+      "rank_text": "Rank 8",
+      "spell_family": 8,
+      "attributes": [
+        327696,
+        134218240,
+        0,
+        1024,
+        0,
+        0,
+        0,
+        0
+      ],
+      "level": 54,
+      "duration_index": 0,
+      "recovery_ms": 0,
+      "power_type_raw": 3,
+      "power_cost": 45,
+      "proc_charges": 0,
+      "effects": [
+        {
+          "effect": 121,
+          "aura": 0,
+          "base_points_raw": 67,
+          "die_sides_raw": 1,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 80,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 1,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        }
+      ],
+      "talent_ranks": [],
+      "skill_line_records": [
+        {
+          "record_id": 5937,
+          "skill_line": 38,
+          "race_mask": 0,
+          "class_mask": 8,
+          "raw_exclude_race": 0,
+          "raw_exclude_class": 0,
+          "minimum_skill_rank": 1,
+          "superseded_by_spell": 26861,
+          "acquire_method": 0
+        }
+      ]
+    },
+    {
+      "id": 14873,
+      "name": "Sinister Strike",
+      "rank_text": "",
+      "spell_family": 8,
+      "attributes": [
+        327696,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "level": 20,
+      "duration_index": 0,
+      "recovery_ms": 0,
+      "power_type_raw": 3,
+      "power_cost": 0,
+      "proc_charges": 0,
+      "effects": [
+        {
+          "effect": 58,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 1,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        }
+      ],
+      "talent_ranks": [],
+      "skill_line_records": []
+    },
+    {
+      "id": 15581,
+      "name": "Sinister Strike",
+      "rank_text": "",
+      "spell_family": 8,
+      "attributes": [
+        327696,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "level": 20,
+      "duration_index": 0,
+      "recovery_ms": 0,
+      "power_type_raw": 3,
+      "power_cost": 0,
+      "proc_charges": 0,
+      "effects": [
+        {
+          "effect": 58,
+          "aura": 0,
+          "base_points_raw": 2,
+          "die_sides_raw": 1,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        }
+      ],
+      "talent_ranks": [],
+      "skill_line_records": []
+    },
+    {
+      "id": 15667,
+      "name": "Sinister Strike",
+      "rank_text": "",
+      "spell_family": 8,
+      "attributes": [
+        327696,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "level": 20,
+      "duration_index": 0,
+      "recovery_ms": 0,
+      "power_type_raw": 3,
+      "power_cost": 0,
+      "proc_charges": 0,
+      "effects": [
+        {
+          "effect": 58,
+          "aura": 0,
+          "base_points_raw": 832,
+          "die_sides_raw": 135,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        }
+      ],
+      "talent_ranks": [],
+      "skill_line_records": []
+    },
+    {
+      "id": 19472,
+      "name": "Sinister Strike",
+      "rank_text": "",
+      "spell_family": 8,
+      "attributes": [
+        327696,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "level": 20,
+      "duration_index": 0,
+      "recovery_ms": 0,
+      "power_type_raw": 3,
+      "power_cost": 0,
+      "proc_charges": 0,
+      "effects": [
+        {
+          "effect": 58,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 1,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        }
+      ],
+      "talent_ranks": [],
+      "skill_line_records": []
+    },
+    {
+      "id": 26861,
+      "name": "Sinister Strike",
+      "rank_text": "Rank 9",
+      "spell_family": 8,
+      "attributes": [
+        327696,
+        134218240,
+        0,
+        1024,
+        0,
+        0,
+        0,
+        0
+      ],
+      "level": 62,
+      "duration_index": 0,
+      "recovery_ms": 0,
+      "power_type_raw": 3,
+      "power_cost": 45,
+      "proc_charges": 0,
+      "effects": [
+        {
+          "effect": 121,
+          "aura": 0,
+          "base_points_raw": 79,
+          "die_sides_raw": 1,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 80,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 1,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        }
+      ],
+      "talent_ranks": [],
+      "skill_line_records": [
+        {
+          "record_id": 13707,
+          "skill_line": 38,
+          "race_mask": 0,
+          "class_mask": 8,
+          "raw_exclude_race": 0,
+          "raw_exclude_class": 0,
+          "minimum_skill_rank": 1,
+          "superseded_by_spell": 26862,
+          "acquire_method": 0
+        }
+      ]
+    },
+    {
+      "id": 26862,
+      "name": "Sinister Strike",
+      "rank_text": "Rank 10",
+      "spell_family": 8,
+      "attributes": [
+        327696,
+        134218240,
+        0,
+        1024,
+        0,
+        0,
+        0,
+        0
+      ],
+      "level": 70,
+      "duration_index": 0,
+      "recovery_ms": 0,
+      "power_type_raw": 3,
+      "power_cost": 45,
+      "proc_charges": 0,
+      "effects": [
+        {
+          "effect": 121,
+          "aura": 0,
+          "base_points_raw": 97,
+          "die_sides_raw": 1,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 80,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 1,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        }
+      ],
+      "talent_ranks": [],
+      "skill_line_records": [
+        {
+          "record_id": 13708,
+          "skill_line": 38,
+          "race_mask": 0,
+          "class_mask": 8,
+          "raw_exclude_race": 0,
+          "raw_exclude_class": 0,
+          "minimum_skill_rank": 1,
+          "superseded_by_spell": 48637,
+          "acquire_method": 0
+        }
+      ]
+    },
+    {
+      "id": 48637,
+      "name": "Sinister Strike",
+      "rank_text": "Rank 11",
+      "spell_family": 8,
+      "attributes": [
+        327696,
+        134218240,
+        0,
+        1024,
+        0,
+        0,
+        0,
+        0
+      ],
+      "level": 76,
+      "duration_index": 0,
+      "recovery_ms": 0,
+      "power_type_raw": 3,
+      "power_cost": 45,
+      "proc_charges": 0,
+      "effects": [
+        {
+          "effect": 121,
+          "aura": 0,
+          "base_points_raw": 149,
+          "die_sides_raw": 1,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 80,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 1,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        }
+      ],
+      "talent_ranks": [],
+      "skill_line_records": [
+        {
+          "record_id": 16670,
+          "skill_line": 38,
+          "race_mask": 0,
+          "class_mask": 8,
+          "raw_exclude_race": 0,
+          "raw_exclude_class": 0,
+          "minimum_skill_rank": 1,
+          "superseded_by_spell": 48638,
+          "acquire_method": 0
+        }
+      ]
+    },
+    {
+      "id": 48638,
+      "name": "Sinister Strike",
+      "rank_text": "Rank 12",
+      "spell_family": 8,
+      "attributes": [
+        327696,
+        134218240,
+        0,
+        1024,
+        0,
+        0,
+        0,
+        0
+      ],
+      "level": 80,
+      "duration_index": 0,
+      "recovery_ms": 0,
+      "power_type_raw": 3,
+      "power_cost": 45,
+      "proc_charges": 0,
+      "effects": [
+        {
+          "effect": 121,
+          "aura": 0,
+          "base_points_raw": 179,
+          "die_sides_raw": 1,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 80,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 1,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        }
+      ],
+      "talent_ranks": [],
+      "skill_line_records": [
+        {
+          "record_id": 16671,
+          "skill_line": 38,
+          "race_mask": 0,
+          "class_mask": 8,
+          "raw_exclude_race": 0,
+          "raw_exclude_class": 0,
+          "minimum_skill_rank": 1,
+          "superseded_by_spell": 0,
+          "acquire_method": 0
+        }
+      ]
+    },
+    {
+      "id": 57640,
+      "name": "Sinister Strike",
+      "rank_text": "",
+      "spell_family": 8,
+      "attributes": [
+        327696,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "level": 0,
+      "duration_index": 0,
+      "recovery_ms": 0,
+      "power_type_raw": 3,
+      "power_cost": 0,
+      "proc_charges": 0,
+      "effects": [
+        {
+          "effect": 31,
+          "aura": 0,
+          "base_points_raw": 124,
+          "die_sides_raw": 1,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        }
+      ],
+      "talent_ranks": [],
+      "skill_line_records": []
+    },
+    {
+      "id": 59409,
+      "name": "Sinister Strike",
+      "rank_text": "",
+      "spell_family": 8,
+      "attributes": [
+        327696,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "level": 20,
+      "duration_index": 0,
+      "recovery_ms": 0,
+      "power_type_raw": 3,
+      "power_cost": 0,
+      "proc_charges": 0,
+      "effects": [
+        {
+          "effect": 58,
+          "aura": 0,
+          "base_points_raw": 1664,
+          "die_sides_raw": 271,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        }
+      ],
+      "talent_ranks": [],
+      "skill_line_records": []
+    },
+    {
+      "id": 60195,
+      "name": "Sinister Strike",
+      "rank_text": "",
+      "spell_family": 8,
+      "attributes": [
+        327696,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "level": 20,
+      "duration_index": 0,
+      "recovery_ms": 0,
+      "power_type_raw": 3,
+      "power_cost": 45,
+      "proc_charges": 0,
+      "effects": [
+        {
+          "effect": 58,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 1,
+          "target_a": 6,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points_raw": 0,
+          "die_sides_raw": 0,
+          "target_a": 0,
+          "misc_raw": 0
+        }
+      ],
+      "talent_ranks": [],
+      "skill_line_records": []
+    }
+  ],
+  "raw_fact_receipt_sha256": "3bf6465f5f82c2ac4a23c2847eaa986831051e114482cfaad7c6a4a04b9d04e7",
+  "client_build": 12340,
+  "server_schema_reference": "8fda442f6c30ca21a622638063ab8b28376f1b25",
+  "policy": "Retain existing high-combo finisher priority. Missing Envenom cannot spend Cold Blood at zero combo points, and a retained Cold Blood aura cannot prohibit every learned builder.",
+  "optimal_damage_rotation_or_native_acknowledgement_proven": false
+}

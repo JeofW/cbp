@@ -14,9 +14,12 @@
     <Compile Include="../../runtime-snapshot/Routines/Singular wotlk/ClassSpecific/DeathKnight/Blood.cs" Link="Production/DeathKnight/Blood.cs" />
     <Compile Include="../../runtime-snapshot/Routines/Singular wotlk/ClassSpecific/DeathKnight/Frost.cs" Link="Production/DeathKnight/Frost.cs" />
     <Compile Include="../../runtime-snapshot/Routines/Singular wotlk/ClassSpecific/DeathKnight/Unholy.cs" Link="Production/DeathKnight/Unholy.cs" />
+    <Compile Include="../../runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Rogue/Assassination.cs" Link="Production/Rogue/Assassination.cs" />
     <Compile Include="../../runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Paladin/PaladinSupport.cs" Link="Production/PaladinSupport.cs" Condition="Exists('../../runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Paladin/PaladinSupport.cs')" />
     <Compile Include="../../runtime-snapshot/Routines/Singular wotlk/Dynamics/Attributes.cs" Link="Production/Attributes.cs" />
     <Compile Include="../../runtime-snapshot/Routines/Singular wotlk/Helpers/Throttle.cs" Link="Production/Throttle.cs" />
     <Compile Include="../../Styx/Logic/Combat/WoWDispelType.cs" Link="Production/WoWDispelType.cs" />
+    <Compile Include="../../Styx/WoWItemWeaponClass.cs" Link="Production/WoWItemWeaponClass.cs" />
+    <Compile Include="../../Styx/WoWPowerType.cs" Link="Production/WoWPowerType.cs" />
   </ItemGroup>
 </Project>

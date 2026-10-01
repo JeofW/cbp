@@ -1,0 +1,18 @@
+{
+  "review": "direct self-review; no independent reviewer agent",
+  "preserved_priorities": [
+    "normal Vanish suspension",
+    "battleground/instance Garrote opener",
+    "high-combo finishers before builders",
+    "spell availability and existing dispatch admission"
+  ],
+  "test_correction": "Two newly introduced Vanish expectations were wrong. Complete source review established distinct context policies; the corrected tests reran against immutable old owners in a separate source tree, failing 78 intended assertions without touching the working repair.",
+  "unchanged_assertions_outside_new_rogue_fixture": true,
+  "no_new_client_api_or_offset": true,
+  "remaining": [
+    "complete native action acknowledgement",
+    "all Rogue talents/races/encounters and resources",
+    "broader other-class frontier",
+    "ground collection branch remains independently unaccepted"
+  ]
+}
