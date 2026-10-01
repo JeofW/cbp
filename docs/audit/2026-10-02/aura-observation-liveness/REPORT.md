@@ -36,6 +36,8 @@ Six permanent regression groups contain 96 scenarios: 12 actual worker cases, se
 
 Eight additional cases extend the existing aquatic-rest group, covering unavailable loot/combat observations on dry/wet ground with and without an existing pause. This brings the new scenarios in this iteration to 104. The first full 34-stage run at b784223a exposed this rest dependency; 33 stages passed and the failing Wholesome group was retained. The focused reproduction passed its 19 healthy controls and failed eight assertions before the repair (`aura-rest-target-red-20261002`); the repair passed all 27 aquatic cases and all six selected groups (`aura-rest-target-green-20261002`). That focused result is not a replacement for the subsequent complete gate.
 
+The next full gate at 5b4dd466 passed the rest cases but retained one unexpected initial-publication fixture failure in `QuestRootOwnerBoundaryRegressionTests`, before its preemption assertion; its other 33 stages passed. The assertion remains unchanged and now includes up to eight captured scan-error diagnostics on failure. The affected group and its root/publication controls passed the focused diagnosis, then both root groups passed ten fresh-process replays without a failure. The cause of that single setup failure has not been established; retain it as an intermittent-test incident and require fresh complete local and hosted gates rather than treating the focused passes as a substitute.
+
 Retained failing-before/repair receipts are under `D:/Dev/CopilotBuddy-Evidence/postmerge-20260930-pr61`:
 
 | Failure family | Behavioral red receipt | Repair receipt |
