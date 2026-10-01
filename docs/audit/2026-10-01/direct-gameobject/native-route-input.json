@@ -1,0 +1,889 @@
+{
+  "family_file": "docs/audit/2026-10-01/direct-gameobject/family-source.json",
+  "family_sha256": "314d1dcb3f33c6f0d022fda1dfde1de366745d97c9ce75e9e313554c0faab841",
+  "dataset_file": "runtime-snapshot/Bots/WholesomeAutoQuest-master/quest_data/quest_data.json",
+  "dataset_sha256": "f2ca79318694afaa4214fc09392e88c3d9d1eae5128f323d0d65b1b9e91a7e3f",
+  "cases": [
+    {
+      "case_id": "953:0:origin-to-giver",
+      "quest_id": 953,
+      "map_id": 1,
+      "leg": "origin-to-giver",
+      "start": [
+        5715.03,
+        301.931,
+        21.0405
+      ],
+      "end": [
+        5725.03,
+        301.931,
+        21.0405
+      ],
+      "start_entry": null,
+      "end_entry": 3639,
+      "start_authority": "synthetic-near-giver-control",
+      "end_authority": "shipped-npc-coordinate"
+    },
+    {
+      "case_id": "953:1:giver-to-objective",
+      "quest_id": 953,
+      "map_id": 1,
+      "leg": "giver-to-objective",
+      "start": [
+        5725.03,
+        301.931,
+        21.0405
+      ],
+      "end": [
+        5771.17,
+        105.759,
+        35.0185
+      ],
+      "start_entry": 3639,
+      "end_entry": 17188,
+      "start_authority": "shipped-npc-coordinate",
+      "end_authority": "primary-object-coordinate"
+    },
+    {
+      "case_id": "953:2:objective-to-objective",
+      "quest_id": 953,
+      "map_id": 1,
+      "leg": "objective-to-objective",
+      "start": [
+        5771.17,
+        105.759,
+        35.0185
+      ],
+      "end": [
+        5576.07,
+        147.814,
+        28.9071
+      ],
+      "start_entry": 17188,
+      "end_entry": 17189,
+      "start_authority": "primary-object-coordinate",
+      "end_authority": "primary-object-coordinate"
+    },
+    {
+      "case_id": "953:3:objective-to-ender",
+      "quest_id": 953,
+      "map_id": 1,
+      "leg": "objective-to-ender",
+      "start": [
+        5576.07,
+        147.814,
+        28.9071
+      ],
+      "end": [
+        5725.03,
+        301.931,
+        21.0405
+      ],
+      "start_entry": 17189,
+      "end_entry": 3639,
+      "start_authority": "primary-object-coordinate",
+      "end_authority": "shipped-npc-coordinate"
+    },
+    {
+      "case_id": "1043:0:origin-to-giver",
+      "quest_id": 1043,
+      "map_id": 0,
+      "leg": "origin-to-giver",
+      "start": [
+        -10609.1,
+        -1200.37,
+        28.4932
+      ],
+      "end": [
+        -10599.1,
+        -1200.37,
+        28.4932
+      ],
+      "start_entry": null,
+      "end_entry": 661,
+      "start_authority": "synthetic-near-giver-control",
+      "end_authority": "shipped-npc-coordinate"
+    },
+    {
+      "case_id": "1043:1:giver-to-objective",
+      "quest_id": 1043,
+      "map_id": 0,
+      "leg": "giver-to-objective",
+      "start": [
+        -10599.1,
+        -1200.37,
+        28.4932
+      ],
+      "end": [
+        -11141.2,
+        -1151.89,
+        43.4364
+      ],
+      "start_entry": 661,
+      "end_entry": 19030,
+      "start_authority": "shipped-npc-coordinate",
+      "end_authority": "primary-object-coordinate"
+    },
+    {
+      "case_id": "1043:2:objective-to-ender",
+      "quest_id": 1043,
+      "map_id": 0,
+      "leg": "objective-to-ender",
+      "start": [
+        -11141.2,
+        -1151.89,
+        43.4364
+      ],
+      "end": [
+        -10599.1,
+        -1200.37,
+        28.4932
+      ],
+      "start_entry": 19030,
+      "end_entry": 661,
+      "start_authority": "primary-object-coordinate",
+      "end_authority": "shipped-npc-coordinate"
+    },
+    {
+      "case_id": "2988:0:origin-to-giver",
+      "quest_id": 2988,
+      "map_id": 0,
+      "leg": "origin-to-giver",
+      "start": [
+        315.182,
+        -1950.5,
+        197.708
+      ],
+      "end": [
+        325.182,
+        -1950.5,
+        197.708
+      ],
+      "start_entry": null,
+      "end_entry": 5636,
+      "start_authority": "synthetic-near-giver-control",
+      "end_authority": "shipped-npc-coordinate"
+    },
+    {
+      "case_id": "2988:1:giver-to-objective",
+      "quest_id": 2988,
+      "map_id": 0,
+      "leg": "giver-to-objective",
+      "start": [
+        325.182,
+        -1950.5,
+        197.708
+      ],
+      "end": [
+        -42.8271,
+        -2471.28,
+        119.413
+      ],
+      "start_entry": 5636,
+      "end_entry": 144066,
+      "start_authority": "shipped-npc-coordinate",
+      "end_authority": "primary-object-coordinate"
+    },
+    {
+      "case_id": "2988:2:objective-to-objective",
+      "quest_id": 2988,
+      "map_id": 0,
+      "leg": "objective-to-objective",
+      "start": [
+        -42.8271,
+        -2471.28,
+        119.413
+      ],
+      "end": [
+        -43.0674,
+        -2465.5,
+        119.377
+      ],
+      "start_entry": 144066,
+      "end_entry": 144067,
+      "start_authority": "primary-object-coordinate",
+      "end_authority": "primary-object-coordinate"
+    },
+    {
+      "case_id": "2988:3:objective-to-objective",
+      "quest_id": 2988,
+      "map_id": 0,
+      "leg": "objective-to-objective",
+      "start": [
+        -43.0674,
+        -2465.5,
+        119.377
+      ],
+      "end": [
+        -4.31662,
+        -2806.49,
+        125.207
+      ],
+      "start_entry": 144067,
+      "end_entry": 144068,
+      "start_authority": "primary-object-coordinate",
+      "end_authority": "primary-object-coordinate"
+    },
+    {
+      "case_id": "2988:4:objective-to-ender",
+      "quest_id": 2988,
+      "map_id": 0,
+      "leg": "objective-to-ender",
+      "start": [
+        -4.31662,
+        -2806.49,
+        125.207
+      ],
+      "end": [
+        325.182,
+        -1950.5,
+        197.708
+      ],
+      "start_entry": 144068,
+      "end_entry": 5636,
+      "start_authority": "primary-object-coordinate",
+      "end_authority": "shipped-npc-coordinate"
+    },
+    {
+      "case_id": "8345:0:origin-to-giver",
+      "quest_id": 8345,
+      "map_id": 530,
+      "leg": "origin-to-giver",
+      "start": [
+        10396.0,
+        -6396.24,
+        52.1757
+      ],
+      "end": [
+        10406.0,
+        -6396.24,
+        52.1757
+      ],
+      "start_entry": null,
+      "end_entry": 15295,
+      "start_authority": "synthetic-near-giver-control",
+      "end_authority": "shipped-npc-coordinate"
+    },
+    {
+      "case_id": "8345:1:giver-to-objective",
+      "quest_id": 8345,
+      "map_id": 530,
+      "leg": "giver-to-objective",
+      "start": [
+        10406.0,
+        -6396.24,
+        52.1757
+      ],
+      "end": [
+        10405.8,
+        -5946.01,
+        42.5082
+      ],
+      "start_entry": 15295,
+      "end_entry": 180516,
+      "start_authority": "shipped-npc-coordinate",
+      "end_authority": "primary-object-coordinate"
+    },
+    {
+      "case_id": "8345:2:objective-to-ender",
+      "quest_id": 8345,
+      "map_id": 530,
+      "leg": "objective-to-ender",
+      "start": [
+        10405.8,
+        -5946.01,
+        42.5082
+      ],
+      "end": [
+        10406.0,
+        -6396.24,
+        52.1757
+      ],
+      "start_entry": 180516,
+      "end_entry": 15295,
+      "start_authority": "primary-object-coordinate",
+      "end_authority": "shipped-npc-coordinate"
+    },
+    {
+      "case_id": "10874:0:origin-to-giver",
+      "quest_id": 10874,
+      "map_id": 530,
+      "leg": "origin-to-giver",
+      "start": [
+        -2865.43,
+        5053.92,
+        -19.3265
+      ],
+      "end": [
+        -2855.43,
+        5053.92,
+        -19.3265
+      ],
+      "start_entry": null,
+      "end_entry": 22272,
+      "start_authority": "synthetic-near-giver-control",
+      "end_authority": "shipped-npc-coordinate"
+    },
+    {
+      "case_id": "10874:1:giver-to-objective",
+      "quest_id": 10874,
+      "map_id": 530,
+      "leg": "giver-to-objective",
+      "start": [
+        -2855.43,
+        5053.92,
+        -19.3265
+      ],
+      "end": [
+        -3419.71,
+        4103.8,
+        62.6395
+      ],
+      "start_entry": 22272,
+      "end_entry": 185216,
+      "start_authority": "shipped-npc-coordinate",
+      "end_authority": "primary-object-coordinate"
+    },
+    {
+      "case_id": "10874:2:objective-to-objective",
+      "quest_id": 10874,
+      "map_id": 530,
+      "leg": "objective-to-objective",
+      "start": [
+        -3419.71,
+        4103.8,
+        62.6395
+      ],
+      "end": [
+        -3511.7,
+        4088.58,
+        92.8825
+      ],
+      "start_entry": 185216,
+      "end_entry": 185217,
+      "start_authority": "primary-object-coordinate",
+      "end_authority": "primary-object-coordinate"
+    },
+    {
+      "case_id": "10874:3:objective-to-objective",
+      "quest_id": 10874,
+      "map_id": 530,
+      "leg": "objective-to-objective",
+      "start": [
+        -3511.7,
+        4088.58,
+        92.8825
+      ],
+      "end": [
+        -3491.6,
+        4025.17,
+        113.117
+      ],
+      "start_entry": 185217,
+      "end_entry": 185218,
+      "start_authority": "primary-object-coordinate",
+      "end_authority": "primary-object-coordinate"
+    },
+    {
+      "case_id": "10874:4:objective-to-objective",
+      "quest_id": 10874,
+      "map_id": 530,
+      "leg": "objective-to-objective",
+      "start": [
+        -3491.6,
+        4025.17,
+        113.117
+      ],
+      "end": [
+        -3609.84,
+        4051.85,
+        111.999
+      ],
+      "start_entry": 185218,
+      "end_entry": 185219,
+      "start_authority": "primary-object-coordinate",
+      "end_authority": "primary-object-coordinate"
+    },
+    {
+      "case_id": "10874:5:objective-to-ender",
+      "quest_id": 10874,
+      "map_id": 530,
+      "leg": "objective-to-ender",
+      "start": [
+        -3609.84,
+        4051.85,
+        111.999
+      ],
+      "end": [
+        -2855.43,
+        5053.92,
+        -19.3265
+      ],
+      "start_entry": 185219,
+      "end_entry": 22272,
+      "start_authority": "primary-object-coordinate",
+      "end_authority": "shipped-npc-coordinate"
+    },
+    {
+      "case_id": "11900:0:origin-to-giver",
+      "quest_id": 11900,
+      "map_id": 571,
+      "leg": "origin-to-giver",
+      "start": [
+        3565.61,
+        6671.72,
+        195.267
+      ],
+      "end": [
+        3575.61,
+        6671.72,
+        195.267
+      ],
+      "start_entry": null,
+      "end_entry": 25314,
+      "start_authority": "synthetic-near-giver-control",
+      "end_authority": "shipped-npc-coordinate"
+    },
+    {
+      "case_id": "11900:1:giver-to-objective",
+      "quest_id": 11900,
+      "map_id": 571,
+      "leg": "giver-to-objective",
+      "start": [
+        3575.61,
+        6671.72,
+        195.267
+      ],
+      "end": [
+        3803.97,
+        6938.72,
+        107.795
+      ],
+      "start_entry": 25314,
+      "end_entry": 188100,
+      "start_authority": "shipped-npc-coordinate",
+      "end_authority": "primary-object-coordinate"
+    },
+    {
+      "case_id": "11900:2:objective-to-objective",
+      "quest_id": 11900,
+      "map_id": 571,
+      "leg": "objective-to-objective",
+      "start": [
+        3803.97,
+        6938.72,
+        107.795
+      ],
+      "end": [
+        3550.88,
+        6942.12,
+        174.011
+      ],
+      "start_entry": 188100,
+      "end_entry": 188101,
+      "start_authority": "primary-object-coordinate",
+      "end_authority": "primary-object-coordinate"
+    },
+    {
+      "case_id": "11900:3:objective-to-objective",
+      "quest_id": 11900,
+      "map_id": 571,
+      "leg": "objective-to-objective",
+      "start": [
+        3550.88,
+        6942.12,
+        174.011
+      ],
+      "end": [
+        4107.4,
+        6742.06,
+        172.122
+      ],
+      "start_entry": 188101,
+      "end_entry": 188102,
+      "start_authority": "primary-object-coordinate",
+      "end_authority": "primary-object-coordinate"
+    },
+    {
+      "case_id": "11900:4:objective-to-objective",
+      "quest_id": 11900,
+      "map_id": 571,
+      "leg": "objective-to-objective",
+      "start": [
+        4107.4,
+        6742.06,
+        172.122
+      ],
+      "end": [
+        3997.89,
+        7266.8,
+        178.765
+      ],
+      "start_entry": 188102,
+      "end_entry": 188103,
+      "start_authority": "primary-object-coordinate",
+      "end_authority": "primary-object-coordinate"
+    },
+    {
+      "case_id": "11900:5:objective-to-ender",
+      "quest_id": 11900,
+      "map_id": 571,
+      "leg": "objective-to-ender",
+      "start": [
+        3997.89,
+        7266.8,
+        178.765
+      ],
+      "end": [
+        3575.61,
+        6671.72,
+        195.267
+      ],
+      "start_entry": 188103,
+      "end_entry": 25314,
+      "start_authority": "primary-object-coordinate",
+      "end_authority": "shipped-npc-coordinate"
+    },
+    {
+      "case_id": "11965:0:origin-to-giver",
+      "quest_id": 11965,
+      "map_id": 571,
+      "leg": "origin-to-giver",
+      "start": [
+        2473.26,
+        5215.05,
+        30.2763
+      ],
+      "end": [
+        2483.26,
+        5215.05,
+        30.2763
+      ],
+      "start_entry": null,
+      "end_entry": 26083,
+      "start_authority": "synthetic-near-giver-control",
+      "end_authority": "shipped-npc-coordinate"
+    },
+    {
+      "case_id": "11965:1:giver-to-objective",
+      "quest_id": 11965,
+      "map_id": 571,
+      "leg": "giver-to-objective",
+      "start": [
+        2483.26,
+        5215.05,
+        30.2763
+      ],
+      "end": [
+        2614.84,
+        5266.78,
+        52.2882
+      ],
+      "start_entry": 26083,
+      "end_entry": 188163,
+      "start_authority": "shipped-npc-coordinate",
+      "end_authority": "primary-object-coordinate"
+    },
+    {
+      "case_id": "11965:2:objective-to-ender",
+      "quest_id": 11965,
+      "map_id": 571,
+      "leg": "objective-to-ender",
+      "start": [
+        2614.84,
+        5266.78,
+        52.2882
+      ],
+      "end": [
+        2483.26,
+        5215.05,
+        30.2763
+      ],
+      "start_entry": 188163,
+      "end_entry": 26083,
+      "start_authority": "primary-object-coordinate",
+      "end_authority": "shipped-npc-coordinate"
+    },
+    {
+      "case_id": "12559:0:origin-to-giver",
+      "quest_id": 12559,
+      "map_id": 571,
+      "leg": "origin-to-giver",
+      "start": [
+        5866.06,
+        4116.53,
+        -85.4289
+      ],
+      "end": [
+        5876.06,
+        4116.53,
+        -85.4289
+      ],
+      "start_entry": null,
+      "end_entry": 27801,
+      "start_authority": "synthetic-near-giver-control",
+      "end_authority": "shipped-npc-coordinate"
+    },
+    {
+      "case_id": "12559:1:giver-to-objective",
+      "quest_id": 12559,
+      "map_id": 571,
+      "leg": "giver-to-objective",
+      "start": [
+        5876.06,
+        4116.53,
+        -85.4289
+      ],
+      "end": [
+        6256.69,
+        5786.75,
+        -6.13097
+      ],
+      "start_entry": 27801,
+      "end_entry": 190508,
+      "start_authority": "shipped-npc-coordinate",
+      "end_authority": "primary-object-coordinate"
+    },
+    {
+      "case_id": "12559:2:objective-to-ender",
+      "quest_id": 12559,
+      "map_id": 571,
+      "leg": "objective-to-ender",
+      "start": [
+        6256.69,
+        5786.75,
+        -6.13097
+      ],
+      "end": [
+        5876.06,
+        4116.53,
+        -85.4289
+      ],
+      "start_entry": 190508,
+      "end_entry": 27801,
+      "start_authority": "primary-object-coordinate",
+      "end_authority": "shipped-npc-coordinate"
+    },
+    {
+      "case_id": "12613:0:origin-to-giver",
+      "quest_id": 12613,
+      "map_id": 571,
+      "leg": "origin-to-giver",
+      "start": [
+        5866.06,
+        4116.53,
+        -85.4289
+      ],
+      "end": [
+        5876.06,
+        4116.53,
+        -85.4289
+      ],
+      "start_entry": null,
+      "end_entry": 27801,
+      "start_authority": "synthetic-near-giver-control",
+      "end_authority": "shipped-npc-coordinate"
+    },
+    {
+      "case_id": "12613:1:giver-to-objective",
+      "quest_id": 12613,
+      "map_id": 571,
+      "leg": "giver-to-objective",
+      "start": [
+        5876.06,
+        4116.53,
+        -85.4289
+      ],
+      "end": [
+        5751.16,
+        3048.88,
+        287.986
+      ],
+      "start_entry": 27801,
+      "end_entry": 190509,
+      "start_authority": "shipped-npc-coordinate",
+      "end_authority": "primary-object-coordinate"
+    },
+    {
+      "case_id": "12613:2:objective-to-ender",
+      "quest_id": 12613,
+      "map_id": 571,
+      "leg": "objective-to-ender",
+      "start": [
+        5751.16,
+        3048.88,
+        287.986
+      ],
+      "end": [
+        5876.06,
+        4116.53,
+        -85.4289
+      ],
+      "start_entry": 190509,
+      "end_entry": 27801,
+      "start_authority": "primary-object-coordinate",
+      "end_authority": "shipped-npc-coordinate"
+    },
+    {
+      "case_id": "13034:0:origin-to-giver",
+      "quest_id": 13034,
+      "map_id": 571,
+      "leg": "origin-to-giver",
+      "start": [
+        7749.75,
+        -2836.43,
+        1216.85
+      ],
+      "end": [
+        7759.75,
+        -2836.43,
+        1216.85
+      ],
+      "start_entry": null,
+      "end_entry": 30381,
+      "start_authority": "synthetic-near-giver-control",
+      "end_authority": "shipped-npc-coordinate"
+    },
+    {
+      "case_id": "13034:1:giver-to-objective",
+      "quest_id": 13034,
+      "map_id": 571,
+      "leg": "giver-to-objective",
+      "start": [
+        7759.75,
+        -2836.43,
+        1216.85
+      ],
+      "end": [
+        7807.12,
+        -2839.54,
+        1221.3
+      ],
+      "start_entry": 30381,
+      "end_entry": 192493,
+      "start_authority": "shipped-npc-coordinate",
+      "end_authority": "primary-object-coordinate"
+    },
+    {
+      "case_id": "13034:2:objective-to-objective",
+      "quest_id": 13034,
+      "map_id": 571,
+      "leg": "objective-to-objective",
+      "start": [
+        7807.12,
+        -2839.54,
+        1221.3
+      ],
+      "end": [
+        7822.25,
+        -2912.6,
+        1242.31
+      ],
+      "start_entry": 192493,
+      "end_entry": 192494,
+      "start_authority": "primary-object-coordinate",
+      "end_authority": "primary-object-coordinate"
+    },
+    {
+      "case_id": "13034:3:objective-to-objective",
+      "quest_id": 13034,
+      "map_id": 571,
+      "leg": "objective-to-objective",
+      "start": [
+        7822.25,
+        -2912.6,
+        1242.31
+      ],
+      "end": [
+        7799.72,
+        -2958.82,
+        1259.91
+      ],
+      "start_entry": 192494,
+      "end_entry": 192495,
+      "start_authority": "primary-object-coordinate",
+      "end_authority": "primary-object-coordinate"
+    },
+    {
+      "case_id": "13034:4:objective-to-ender",
+      "quest_id": 13034,
+      "map_id": 571,
+      "leg": "objective-to-ender",
+      "start": [
+        7799.72,
+        -2958.82,
+        1259.91
+      ],
+      "end": [
+        7759.75,
+        -2836.43,
+        1216.85
+      ],
+      "start_entry": 192495,
+      "end_entry": 30381,
+      "start_authority": "primary-object-coordinate",
+      "end_authority": "shipped-npc-coordinate"
+    },
+    {
+      "case_id": "13084:0:origin-to-giver",
+      "quest_id": 13084,
+      "map_id": 571,
+      "leg": "origin-to-giver",
+      "start": [
+        8566.94,
+        2643.16,
+        652.437
+      ],
+      "end": [
+        8576.94,
+        2643.16,
+        652.437
+      ],
+      "start_entry": null,
+      "end_entry": 30002,
+      "start_authority": "synthetic-near-giver-control",
+      "end_authority": "shipped-npc-coordinate"
+    },
+    {
+      "case_id": "13084:1:giver-to-objective",
+      "quest_id": 13084,
+      "map_id": 571,
+      "leg": "giver-to-objective",
+      "start": [
+        8576.94,
+        2643.16,
+        652.437
+      ],
+      "end": [
+        6959.37,
+        4441.43,
+        663.227
+      ],
+      "start_entry": 30002,
+      "end_entry": 191820,
+      "start_authority": "shipped-npc-coordinate",
+      "end_authority": "primary-object-coordinate"
+    },
+    {
+      "case_id": "13084:2:objective-to-ender",
+      "quest_id": 13084,
+      "map_id": 571,
+      "leg": "objective-to-ender",
+      "start": [
+        6959.37,
+        4441.43,
+        663.227
+      ],
+      "end": [
+        8576.94,
+        2643.16,
+        652.437
+      ],
+      "start_entry": 191820,
+      "end_entry": 30002,
+      "start_authority": "primary-object-coordinate",
+      "end_authority": "shipped-npc-coordinate"
+    }
+  ],
+  "scope": "source-bound candidate ground chains; synthetic origin is labelled; no runtime plan or travel inferred"
+}

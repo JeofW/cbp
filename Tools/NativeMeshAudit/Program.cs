@@ -5,9 +5,9 @@ using System.Text.Json;
 using Tripper.Navigation;
 using NativeNavigator = Tripper.Navigation.Navigator;
 
-if (args.Length != 2)
+if (args.Length is < 2 or > 3)
 {
-    Console.Error.WriteLine("Usage: NativeMeshAudit <repository-root> <results-directory>");
+    Console.Error.WriteLine("Usage: NativeMeshAudit <repository-root> <results-directory> [bound-quest-routes.json]");
     return 2;
 }
 string root = Path.GetFullPath(args[0]);
@@ -109,6 +109,7 @@ try
         nearest.Add(new { requested = XYZ(point), found, polygon = polygon.Id.ToString(), location = found ? XYZ(location) : null });
     }
     Save("nearest-polygons.json", nearest);
+    if (args.Length == 3) QuestRouteReplay.Run(navigator, args[2], output);
     Save("result.json", new { game_attached = false, native_calls = samples.Count, paths_produced = pathsProduced,
         asset_compatibility_demonstrated = pathsProduced > 0, live_route_acceptance = false });
     if (pathsProduced == 0)

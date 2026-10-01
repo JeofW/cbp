@@ -1,0 +1,91 @@
+{
+  "client_build": 12340,
+  "original_client_sha256": "bf644876709c591acc17c0da8cdf1814edcc9f1e6bc109a8c0d5c38c79dc953c",
+  "primary_source": {
+    "role": "primary-reference-database",
+    "release": "TDB335.25101",
+    "release_commit": "95657f54779467effea8a1749a61ff93abc1d707",
+    "url": "https://github.com/TrinityCore/TrinityCore/releases/download/TDB335.25101/TDB_full_world_335.25101_2025_10_21.7z",
+    "asset_id": 306993022,
+    "asset_sha256": "b426641e6ce8da02e4109b40e570c2db75f89c228a412b3113f82eb3c8725299",
+    "bytes": 47379963,
+    "retrieved_utc": "2026-09-29T12:19:00.255106+00:00",
+    "sql_executed": false,
+    "realm_equivalence_proven": false,
+    "members": [
+      {
+        "name": "TDB_full_world_335.25101_2025_10_21.sql",
+        "bytes": 292616788,
+        "sha256": "e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9"
+      }
+    ]
+  },
+  "table_sha256": {
+    "quest_template": "85002c4d200965b58c72a79ac3bd4a9cf2faa0b3f1705534ec99b5b87c810b1b",
+    "quest_template_addon": "8a1a624f7a6d602b36bc11d8db90090f5eae734f3b697c3a68664009f6d35026",
+    "gameobject_template": "530d21859d096e227e20090768dfb765e15671a14f48db4b02b6c192c5c5723f",
+    "gameobject": "6512ec2a18a39d91dbaa4b069532ee4cc9dbe9083359fac2c5eed8de29da01ea",
+    "creature": "9298b0016597876ed8f16c67328f5f3f2dd0f405e91e71a6f87135e573eae688",
+    "creature_queststarter": "0042a223ff41ae5ba1257fb1ae8edf32673b9e62f96cc4b9120b788d8c7fe122",
+    "creature_questender": "b8cf8e0a7cd2a30e984e12312351793fb3f8591fa8556e0c9f6d3b781a082a1e",
+    "gameobject_questender": "04db9c9c6a6a36d3d2c52895800dd993b09a0c84cc2070a360225b889d1df9ea"
+  },
+  "family_source_sha256": "314d1dcb3f33c6f0d022fda1dfde1de366745d97c9ce75e9e313554c0faab841",
+  "existing_client_wrapper_evidence": {
+    "direct-object-wrappers-v17-20261001.json": {
+      "sha256": "001f65bff3299fed0e3aeb1f813c627b4550a4e882025bcdb2e26369e77f0cdb",
+      "read_only": true,
+      "inspected_wrappers": [
+        "0x70b930",
+        "0x70b960",
+        "0x70b9a0",
+        "0x70b9e0",
+        "0x70ba00",
+        "0x70ba10",
+        "0x70ba30",
+        "0x70ba40"
+      ],
+      "inspected_vtable_methods": []
+    },
+    "goober-readiness-v17-20261001.json": {
+      "sha256": "6b800230a12bd96c1a43d70d41ba7ea63bfb85ef1586a61032685c6c2647a075",
+      "read_only": true,
+      "inspected_wrappers": [],
+      "inspected_vtable_methods": [
+        {
+          "slot": "0x18",
+          "function": "0x7112a0",
+          "name": "sub_7112A0"
+        },
+        {
+          "slot": "0x1c",
+          "function": "0x711470",
+          "name": "sub_711470"
+        },
+        {
+          "slot": "0x20",
+          "function": "0x70fa70",
+          "name": "sub_70FA70"
+        },
+        {
+          "slot": "0x24",
+          "function": "0x7116c0",
+          "name": "sub_7116C0"
+        }
+      ]
+    }
+  },
+  "client_semantics": [
+    "Goober CanUse slot0x18 and CanUseNow slot0x1c return a byte in AL.",
+    "The existing CanUseNow wrapper supplies three null optional output pointers.",
+    "CanUse reports object eligibility; CanUseNow adds actor/range admission. Neither is quest credit.",
+    "Only the CanUse return-byte cache lifetime changes. No client address, vtable index or native ABI is added."
+  ],
+  "existing_execute_and_memory_sources": {
+    "GreenMagic/ExecutorRand.cs": "017b4f31b8bc17f0b50e35c25fec1a35ae0de9add004e79205963138cef9a46b",
+    "GreenMagic/Memory.cs": "c82f7e3e89473b7aa57357408f456b18eb248aecf84cec42e9a1010c5d00f4e9",
+    "Styx/WoWInternals/WoWObjects/WoWSubObject.cs": "09556f39e09d2361847fa6b763b5ce6dea316a87ad5882cb111b971d825c57b5",
+    "Styx/WoWInternals/WoWObjects/WoWGameObject.cs": "64034dcc564b18f355ad34c486e2e0489a7b4630c0427be490cdde4e2f432bc5"
+  },
+  "customized_realm_scripts_inferred": false
+}
