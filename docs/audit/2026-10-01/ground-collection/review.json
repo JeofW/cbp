@@ -1,0 +1,30 @@
+{
+  "review_type": "direct implementation, caller and evidence self-review; no independent reviewer agent",
+  "reviewed_scope": [
+    "explicit live source identity and optional-cache independence",
+    "grounded3D arrival, owned collision-supported descent, dismount and final approach",
+    "late ownership/state revalidation, bounded timeout/retry and event-subscription order",
+    "separate slot dispatch/inventory/completion/turn-in acknowledgements",
+    "actual watchdog caller and read-only state diagnostics",
+    "source-scope reporting and exact quest membership"
+  ],
+  "blocking_findings": [],
+  "policy_choices": [
+    "Use the existing finite10-second harvesting wait for ground objects; corpse waiting remains3seconds. A10-second client cast plus latency or realm override can still exceed this budget and must defer safely.",
+    "Require collision-supported descent near the live object floor. Unknown support does not authorize falling, dismounting or blind interaction.",
+    "Keep the strict execution ledger conservative; one tested quest does not certify unrelated source/script/action semantics."
+  ],
+  "remaining_acceptance": [
+    "exact clean final-SHA aggregate and hosted verification",
+    "merged-master build/package and selective deployment",
+    "actual original-client realm reproduction and live completion"
+  ],
+  "unchanged_scopes": [
+    "all accepted Paladin and Death Knight fixes",
+    "PR82 resource percentages",
+    "PR85 Rogue repair",
+    "all quest repair/strategy JSON",
+    "installed native navigation engine and maps"
+  ],
+  "new_client_api_added": false
+}

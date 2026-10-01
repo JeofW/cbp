@@ -32,7 +32,15 @@ namespace Styx.Logic.Inventory.Frames.Quest
 
         public void CompleteQuest()
         {
-            Lua.DoString("CompleteQuest() if QuestFrameCompleteQuestButton:IsVisible() or QuestFrameCompleteButton:IsVisible() then QuestFrameCompleteQuestButton:Click() QuestFrameCompleteButton:Click() end QuestFrameCompleteQuestButton:Click() QuestFrameCompleteButton:Click()");
+            // Original3.3.5 separates the progress button (CompleteQuest) from
+            // the reward button (GetQuestReward). Dispatch one visible action;
+            // the caller must still wait for its own quest/server acknowledgement.
+            Lua.DoString("if not QuestFrame or not QuestFrame:IsVisible() then return end " +
+                "local reward=QuestFrameCompleteQuestButton " +
+                "local progress=QuestFrameCompleteButton " +
+                "if reward and reward:IsVisible() then " +
+                "if reward:IsEnabled() then reward:Click() end " +
+                "elseif progress and progress:IsVisible() and progress:IsEnabled() then progress:Click() end");
         }
 
         public void DeclineQuest()

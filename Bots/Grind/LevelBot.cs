@@ -977,6 +977,11 @@ namespace Bots.Grind
                                     return RunStatus.Success;
                                 })
                             ),
+                            // GameObjects require a ground approach, confirmed
+                            // landing and dismount before ordinary loot can run.
+                            // Keep this ahead of the generic out-of-range branch
+                            // so aerial travel cannot starve the descent state.
+                            new GroundLootApproach(() => CanBeginLoot() && CanLoot()),
                             // Move to lootable
                             new Decorator(
                                 ctx =>
@@ -1108,16 +1113,21 @@ namespace Bots.Grind
                         Guard(new DecoratorContinue(ctx => owner.Actor.IsMoving, new Sequence(
                             Guard(new TreeSharp.Action(ctx => WoWMovement.MoveStop())),
                             Guard(new TreeSharp.Action(ctx => SleepForLag()))))),
-                        Guard(new TreeSharp.Action(ctx =>
+                        // A ground object's opening action can outlast the
+                        // ordinary corpse wait. Keep the existing finite
+                        // harvesting budget and subscribe before native dispatch.
+                        Guard(new WaitLuaEvent("LOOT_OPENED", () => owner.Subject is WoWGameObject
+                            || owner.Type == PoiType.Harvest ? 10 : 3, () =>
                         {
                             if (!Current() || !owner.InRange || owner.Actor.IsFlying || owner.Actor.MovementInfo.IsDescending
                                 || owner.Actor.IsCasting || owner.Actor.ChanneledCastingSpellId != 0
-                                || LootFrame.Instance.IsVisible || !Current()) return RunStatus.Failure;
+                                || LootFrame.Instance.IsVisible || !CanLoot()
+                                || !GroundLootApproach.CanInteractNow(owner.Subject, Current) || !Current()) return false;
                             attempted = true;
+                            GroundLootApproach.ObserveInteraction(owner.Subject, "interaction-issued", "native-request-not-acknowledged");
                             owner.Subject.Interact(true);
-                            return Current() ? RunStatus.Success : RunStatus.Failure;
-                        })),
-                        Guard(new WaitLuaEvent("LOOT_OPENED", () => owner.Type == PoiType.Loot || owner.Type == PoiType.Skin ? 3 : 10,
+                            return Current();
+                        },
                             new TreeSharp.Action(ctx =>
                             {
                                 if (!Current()) return RunStatus.Failure;
@@ -1129,6 +1139,8 @@ namespace Bots.Grind
                                 Logging.Write("Looting {0} Guid 0x{1:X016}", owner.Subject.Name, owner.Guid);
                                 if (!Current()) return RunStatus.Failure;
                                 dispatched = LootAllItems(Current, owner.Guid);
+                                if (dispatched && Current())
+                                    GroundLootApproach.ObserveInteraction(owner.Subject, "loot-slots-dispatched", "awaiting-authoritative-item-or-objective-increment");
                                 return dispatched && Current() ? RunStatus.Success : RunStatus.Failure;
                             }))),
                         // WaitLuaEvent inherits WaitContinue: timeout is success,
@@ -1142,7 +1154,7 @@ namespace Bots.Grind
                             Guard(new WaitContinue(2, ctx => owner.Subject.ToUnit().CanSkin
                                 && LootTargeting.Instance.FirstObject != null && LootTargeting.Instance.FirstObject.Guid == owner.Guid,
                                 new ActionAlwaysSucceed())))),
-                        Guard(new DecoratorContinue(ctx => owner.Type == PoiType.Loot,
+                        Guard(new DecoratorContinue(ctx => owner.Type == PoiType.Loot && owner.Subject is WoWUnit,
                             Guard(new TreeSharp.Action(ctx => GameStats.LootedMob())))),
                         Guard(new TreeSharp.Action(ctx => { _lastLootPoiType = owner.Type; _lastLootGuid = owner.Guid; })),
                         // Keep cleanup last; no old work may run after its callbacks.
@@ -1150,6 +1162,8 @@ namespace Bots.Grind
                     new TreeSharp.Action(ctx =>
                     {
                         if (!attempted || !Current()) return RunStatus.Failure;
+                        GroundLootApproach.ObserveInteraction(owner.Subject, "interaction-not-acknowledged", observedEvent
+                            ? "loot-window-or-slot-ownership-changed" : "loot-window-timeout");
                         Logging.Write(observedEvent
                             ? "Loot frame or slot processing changed after LOOT_OPENED; deferring this lootable."
                             : "Loot window did not open before the bounded wait; deferring this lootable.");
@@ -1160,12 +1174,13 @@ namespace Bots.Grind
                         {
                             PoiType.Harvest => owner.Subject.ToGameObject()?.CanLoot == true,
                             PoiType.Skin => owner.Subject.ToUnit()?.CanSkin == true,
-                            _ => owner.Subject.ToUnit()?.CanLoot == true
+                            _ => owner.Subject is WoWGameObject gameObject ? gameObject.CanLoot : owner.Subject.ToUnit()?.CanLoot == true
                         };
                         if (!Current()) return RunStatus.Failure;
                         Logging.Write(canStillLoot ? "I can't tell if we looted, blacklisting it just to be safe." : "Lootable isn't lootable, blacklisting.");
                         if (!Current()) return RunStatus.Failure;
-                        Blacklist.Add(owner.Guid, TimeSpan.FromMinutes(canStillLoot ? 10 : 5));
+                        Blacklist.Add(owner.Guid, owner.Subject is WoWGameObject
+                            ? TimeSpan.FromSeconds(15) : TimeSpan.FromMinutes(canStillLoot ? 10 : 5));
                         if (!Current()) return RunStatus.Failure;
                         BotPoi.Clear("Done looting");
                         return RunStatus.Success;

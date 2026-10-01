@@ -65,6 +65,10 @@ namespace Styx.Logic.AreaManagement
 
 		public int? MaximumHotspotTime { get; set; }
 
+		// Explicit ground-object collection must reach the usable floor, not just
+		// the horizontal map pin. Other roaming policies retain their old contract.
+		public bool RequiresGroundInteraction { get; set; }
+
 		public Hotspot LastHotSpot { get; set; }
 
 		public bool HotspotChanged => CurrentHotSpot != LastHotSpot;
@@ -121,8 +125,14 @@ namespace Styx.Logic.AreaManagement
 				throw new UserException("No grind or quest hotspots have been defined.");
 			}
 
-			float dist = ObjectManager.Me?.Location.Distance2D(_currentHotspot.Position) ?? float.MaxValue;
-			if ((WoWPoint)_currentHotspot != WoWPoint.Zero && dist <= Navigator.PathPrecision)
+				var actor = ObjectManager.Me;
+				float dist = actor == null ? float.MaxValue : RequiresGroundInteraction
+					? actor.Location.Distance(_currentHotspot.Position)
+					: actor.Location.Distance2D(_currentHotspot.Position);
+				bool groundConfirmed = !RequiresGroundInteraction || actor != null
+					&& actor.TryGetMovementState(out uint flags, out ulong transport)
+					&& transport == 0 && (flags & 0x02003000u) == 0 && !actor.IsFlying;
+				if ((WoWPoint)_currentHotspot != WoWPoint.Zero && dist <= Navigator.PathPrecision && groundConfirmed)
 			{
 				LastHotSpot = _currentHotspot;
 				_hotspotTimer.Reset();

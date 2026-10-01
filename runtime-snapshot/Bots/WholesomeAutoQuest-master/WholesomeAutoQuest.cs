@@ -466,6 +466,21 @@ namespace WholesomeAQ
 
             DateTime now = _clock.UtcNow;
             EnsureAttempt(sample.Key, sample.AttemptGeneration, sample.ObjectiveCounts, now);
+            var observed = sample.ObjectiveCounts ?? Array.Empty<int>();
+            if (observed.Count == 0 || observed.Any(value => value < 0))
+            {
+                // A missing observation is not empty stock, progress or elapsed
+                // failed work. A later known sample starts a new baseline.
+                _counts = Array.Empty<int>();
+                _lastSampleUtc = now; _previousSampleActive = false;
+                return new QuestProgressUpdate();
+            }
+            if (_counts.Count != observed.Count)
+            {
+                _counts = observed.ToArray();
+                ResetEpisodeState(now);
+                return new QuestProgressUpdate();
+            }
             if (HasProgress(sample.ObjectiveCounts))
             {
                 _counts = sample.ObjectiveCounts.ToArray();
@@ -476,6 +491,9 @@ namespace WholesomeAQ
                     ObjectiveCounts = _counts
                 };
             }
+            // Retain the latest known quantities, not a lifetime high-water mark.
+            // Losing an item then reacquiring it must remain observable progress.
+            _counts = observed.ToArray();
 
             if (sample.IsActiveWork && sample.EndpointPathFailed &&
                 WholesomeAutoQuest.IsUnresolvedNavigationFailure(sample.NavigationFailure))
@@ -836,6 +854,7 @@ namespace WholesomeAQ
         private readonly RefreshGate _refreshGate = new();
         private readonly WholesomeLifecycleGate _lifecycle;
         private readonly WholesomeProgressMonitor _progressMonitor = new();
+        private readonly QuestExecutionWatchdog _executionWatchdog = new();
         private Func<Styx.Logic.AreaManagement.GrindArea> _activeGrindArea = () => StyxWoW.AreaManager.CurrentGrindArea;
         private readonly WholesomePickupMonitor _pickupMonitor = new();
         private readonly WholesomeDeathMonitor _deathMonitor = new();
@@ -1127,6 +1146,7 @@ namespace WholesomeAQ
             _lastReadyQuestIds = null;
             _lastReadyQuestSnapshot = null;
             _progressMonitor.Reset();
+            _executionWatchdog.Reset();
             _pickupMonitor.Reset();
             _deathMonitor.Reset();
             _attemptOwnership.Clear();
@@ -1442,7 +1462,19 @@ namespace WholesomeAQ
                         else if (!_stuckLogged)
                         {
                             _stuckLogged = true;
-                            Log($"Bot running but not moving for {stuckSec:F0}s");
+                            var activeObjective = QuestOrder.Instance?.CurrentBehavior as ForcedQuestObjective;
+                            if (activeObjective?.Objective?.Quest != null &&
+                                !_attemptOwnership.TryGet(activeObjective, out _, out _))
+                            {
+                                var observed = ReadObjectiveCounts(activeObjective.Objective.Quest);
+                                Log($"[Execution] Stationary for {stuckSec:F0}s, but no owned progress timer is available; "
+                                    + "stationary time is not a no-progress receipt. "
+                                    + QuestExecutionDiagnostics.Capture(activeObjective, observed, observed, 0, 0));
+                            }
+                            else if (activeObjective?.Objective?.Quest == null)
+                                Log($"[Execution] No movement for {stuckSec:F0}s; no active typed objective. "
+                                    + $"behavior={QuestOrder.Instance?.CurrentBehavior?.GetType().FullName ?? "none"}, "
+                                    + $"poi={BotPoi.Current.Type}; stage-specific observation is required.");
                         }
                     }
                 }
@@ -1676,8 +1708,56 @@ namespace WholesomeAQ
                 return;
 
             QuestWorkSample sample = CreateLiveWorkSample(behavior, ownerKey, attemptGeneration);
+            var diagnostic = _executionWatchdog.Sample(behavior, attemptGeneration,
+                sample.ObjectiveCounts, sample.IsActiveWork, DateTime.UtcNow);
+            if (diagnostic.ShouldLog)
+                Log("[Execution] " + QuestExecutionDiagnostics.Capture(behavior, diagnostic.Before,
+                    diagnostic.Current, diagnostic.NoProgressSeconds, diagnostic.RecoveryRequests));
+            if (diagnostic.MayRecover)
+                TryBoundedObjectiveRescan(behavior, ownerKey, attemptGeneration, sample.ObjectiveCounts);
             QuestProgressUpdate update = _progressMonitor.Sample(sample);
             ProcessProgressUpdate(behavior, sample, update);
+        }
+
+        private bool TryBoundedObjectiveRescan(ForcedQuestObjective behavior, QuestRecoveryKey key,
+            long generation, IReadOnlyList<int> counts)
+        {
+            var actor = StyxWoW.Me;
+            var area = StyxWoW.AreaManager.CurrentGrindArea;
+            var poi = BotPoi.Current;
+            var provider = Navigator.NavigationProvider;
+            bool Safe() => actor != null && !_stopped && !TreeRoot.IsPaused
+                && StyxWoW.IsInWorld && actor.IsValid && actor.IsAlive && !actor.IsGhost
+                && !actor.IsActuallyInCombat && !actor.PetInCombat && !actor.IsFlying && !actor.IsMoving
+                && !actor.IsCasting && actor.ChanneledCastingSpellId == 0 && !actor.OnTaxi && !actor.IsOnTransport
+                && !_restingPaused && !actor.HasAura("Food") && !actor.HasAura("Drink")
+                && actor.FreeNormalBagSlots > 0 && poi.Type == PoiType.None
+                && !Styx.Logic.Inventory.Frames.LootFrame.LootFrame.Instance.IsVisible
+                && !MerchantFrame.Instance.IsVisible && !TrainerFrame.Instance.IsVisible
+                && !Styx.Logic.Inventory.Frames.Gossip.GossipFrame.Instance.IsVisible
+                && actor.TryGetMovementState(out uint flags, out ulong transport)
+                && transport == 0 && (flags & 0x02003000u) == 0
+                && !(provider is MeshNavigator mesh && mesh.IsRidingElevator);
+            if (area == null || counts.Count == 0 || !Safe())
+                return false;
+            ulong guid = actor.Guid;
+            uint map = actor.MapId;
+            bool Current() => ReferenceEquals(StyxWoW.Me, actor) && actor.Guid == guid && actor.MapId == map
+                && ReferenceEquals(QuestOrder.Instance?.CurrentBehavior, behavior)
+                && ReferenceEquals(StyxWoW.AreaManager.CurrentGrindArea, area) && ReferenceEquals(BotPoi.Current, poi)
+                && ReferenceEquals(Navigator.NavigationProvider, provider)
+                && _attemptOwnership.TryGet(behavior, out var currentKey, out long currentGeneration)
+                && key.Equals(currentKey) && currentGeneration == generation
+                && QuestRecoveryManager.Instance.OwnsAttempt(key, generation) && Safe();
+            if (!Current() || !counts.SequenceEqual(ReadObjectiveCounts(behavior.Objective.Quest)) || !Current())
+                return false;
+            bool advanced = area.TryAdvanceCurrentHotspot(out var previous, out var next);
+            if (advanced)
+                Log($"[Execution] Bounded objective rescan: quest={key.QuestId}, generation={generation}, "
+                    + $"previous={previous}, next={next}; no quest completion or interaction acknowledgement inferred.");
+            else
+                Log($"[Execution] quest={key.QuestId}: no alternative hotspot; waiting for live sources without fabricating a route or resetting the existing recovery deadline.");
+            return advanced;
         }
 
         private QuestWorkSample CreateLiveWorkSample(
@@ -2275,16 +2355,7 @@ namespace WholesomeAQ
 
         private static IReadOnlyList<int> ReadObjectiveCounts(PlayerQuest quest)
         {
-            try
-            {
-                if (quest != null && quest.GetData(out QuestDescriptorData data) && data.ObjectivesDone != null)
-                    return data.ObjectivesDone.Select(value => (int)value).ToArray();
-            }
-            catch (Exception ex)
-            {
-                Logging.WriteDiagnostic($"[WholesomeAQ] Objective progress capture failed for quest {quest?.Id}: {ex.Message}");
-            }
-            return Array.Empty<int>();
+            return QuestProgressObservation.Capture(quest);
         }
 
         internal static bool TryClearDeniedRecoveryPoi(

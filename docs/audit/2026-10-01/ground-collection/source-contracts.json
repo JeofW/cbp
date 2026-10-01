@@ -1,0 +1,277 @@
+{
+  "client_build": 12340,
+  "primary_reference_revision": "95657f54779467effea8a1749a61ff93abc1d707",
+  "primary_database_release": "TDB335.25101",
+  "primary_record_receipt_sha256": "cf224248d2ce32af9674307aadf714dd6f27ab1f1f772d4f085659da75a805d3",
+  "quest_id": 10161,
+  "quest_name": "In Case of Emergency...",
+  "item_id": 28116,
+  "required_count": 30,
+  "primary_gameobjects": [
+    {
+      "entry": 183394,
+      "type": 3,
+      "name": "Zeppelin Debris",
+      "Data0": 57,
+      "Data1": 19885,
+      "Data3": 1,
+      "Data4": 0,
+      "Data7": 0,
+      "ScriptName": "",
+      "AIName": ""
+    },
+    {
+      "entry": 183395,
+      "type": 3,
+      "name": "Zeppelin Debris",
+      "Data0": 57,
+      "Data1": 19885,
+      "Data3": 1,
+      "Data4": 0,
+      "Data7": 0,
+      "ScriptName": "",
+      "AIName": ""
+    },
+    {
+      "entry": 183396,
+      "type": 3,
+      "name": "Zeppelin Debris",
+      "Data0": 57,
+      "Data1": 19885,
+      "Data3": 1,
+      "Data4": 0,
+      "Data7": 0,
+      "ScriptName": "",
+      "AIName": ""
+    },
+    {
+      "entry": 183397,
+      "type": 3,
+      "name": "Zeppelin Debris",
+      "Data0": 57,
+      "Data1": 19885,
+      "Data3": 1,
+      "Data4": 0,
+      "Data7": 0,
+      "ScriptName": "",
+      "AIName": ""
+    }
+  ],
+  "primary_loot": [
+    {
+      "Entry": 19885,
+      "Item": 28116,
+      "Reference": 0,
+      "Chance": 100,
+      "QuestRequired": 1,
+      "LootMode": 1,
+      "GroupId": 0,
+      "MinCount": 1,
+      "MaxCount": 1,
+      "Comment": null,
+      "__source_line": 2042,
+      "__source_table": "gameobject_loot_template"
+    }
+  ],
+  "primary_starters": [
+    {
+      "id": 19367,
+      "quest": 10161,
+      "__source_line": 996,
+      "__source_table": "creature_queststarter"
+    }
+  ],
+  "primary_enders": [
+    {
+      "id": 19367,
+      "quest": 10161,
+      "__source_line": 946,
+      "__source_table": "creature_questender"
+    }
+  ],
+  "spawn_count": 52,
+  "maps": [
+    530
+  ],
+  "creature_loot_source_count": 0,
+  "item_container_loot_source_count": 0,
+  "shipped_quest_model": {
+    "DeliveryItems": null,
+    "AcceptanceSupplies": null,
+    "SupplementalSupply": null,
+    "Id": 10161,
+    "Name": "In Case of Emergency...",
+    "QuestLevel": 61,
+    "MinLevel": 58,
+    "AllowableRaces": 0,
+    "AllowableClasses": null,
+    "MaxLevel": null,
+    "RequiredSkillID": null,
+    "RequiredSkillPoints": null,
+    "RequiredMinRepFaction": null,
+    "RequiredMinRepValue": null,
+    "RequiredMaxRepFaction": null,
+    "RequiredMaxRepValue": null,
+    "RequiredFactionValue1": null,
+    "RequiredFactionValue2": null,
+    "Flags": 136,
+    "QuestSortID": 3483,
+    "QuestInfoID": 0,
+    "RequiredFactionId1": 0,
+    "RequiredFactionId2": 0,
+    "PrevQuestID": 0,
+    "NextQuestID": 9351,
+    "ExclusiveGroup": 0,
+    "SpecialFlags": 0,
+    "StartItem": 0,
+    "PreviousQuestsIds": [],
+    "Objectives": [
+      {
+        "Type": "CollectFromGameObject",
+        "MobId": 0,
+        "ItemId": 28116,
+        "GameObjectId": 183394,
+        "GameObjectName": "Zeppelin Debris",
+        "KillCount": 0,
+        "CollectCount": 30,
+        "Index": 0
+      }
+    ]
+  },
+  "shipped_effective_model_sha256": "7a1a96a917202f326ca0d8e9f3689831b6a55ec684ec3da18ad2c8df3f4dfb4e",
+  "source_files": [
+    {
+      "repository": "TrinityCore/TrinityCore",
+      "revision": "95657f54779467effea8a1749a61ff93abc1d707",
+      "path": "src/server/game/Entities/GameObject/GameObject.cpp",
+      "file": "TC-GameObject.cpp",
+      "bytes": 107958,
+      "blob_sha1": "962efe036c58dc8ef4aad24118bc93aebe744c43",
+      "sha256": "c49ed5aa9da03ef1ac4598af8974006b8aa5d65652281d4f60cd9bd0f4f6bc74"
+    },
+    {
+      "repository": "TrinityCore/TrinityCore",
+      "revision": "95657f54779467effea8a1749a61ff93abc1d707",
+      "path": "src/server/game/Handlers/SpellHandler.cpp",
+      "file": "TC-SpellHandler.cpp",
+      "bytes": 24540,
+      "blob_sha1": "c532bfc695b498abab8a601c62884adc758ca07b",
+      "sha256": "5f818b6324bc068969e8645c021256873002deb19c5e0e589ee3cef5e21c61f4"
+    },
+    {
+      "repository": "TrinityCore/TrinityCore",
+      "revision": "95657f54779467effea8a1749a61ff93abc1d707",
+      "path": "src/server/game/Spells/SpellEffects.cpp",
+      "file": "TC-SpellEffects.cpp",
+      "bytes": 204983,
+      "blob_sha1": "6b4192efaef59ac662d303f0ef6e8b59ee5fc312",
+      "sha256": "a847f292154c33e4062fa7b81fdced66aa0cf78fe222cbaeb44727a8aa88c57b"
+    },
+    {
+      "repository": "TrinityCore/TrinityCore",
+      "revision": "95657f54779467effea8a1749a61ff93abc1d707",
+      "path": "src/server/game/Handlers/LootHandler.cpp",
+      "file": "TC-LootHandler.cpp",
+      "bytes": 16373,
+      "blob_sha1": "73ae6746f4d0c8acd7864da6f394e252d97655dc",
+      "sha256": "5f76fe0f80fd609bba3942a45ae68af9eac21538d772cb81ffc282552c4abd48"
+    },
+    {
+      "repository": "wowgaming/3.3.5-interface-files",
+      "revision": "d0339b17b0221db76e6acd2dc2915d224a5b62ca",
+      "path": "QuestFrame.lua",
+      "file": "Original-QuestFrame.lua",
+      "bytes": 13760,
+      "blob_sha1": "a5802c3f2f1f56c22dd78b0b55916b3f9ce25491",
+      "sha256": "4b2221da7f962535796ed500fbd1fc2adf95020e4564217ef457c1be7f9935f9"
+    },
+    {
+      "repository": "wowgaming/3.3.5-interface-files",
+      "revision": "d0339b17b0221db76e6acd2dc2915d224a5b62ca",
+      "path": "QuestFrame.xml",
+      "file": "Original-QuestFrame.xml",
+      "bytes": 22148,
+      "blob_sha1": "e80ab6acadfb92b0d95190041c29fa5bc5ff4d5c",
+      "sha256": "1d5f50ab803551ad608abb22f90ae3959c37ff4e2fec80f78b05786b6bee0380"
+    }
+  ],
+  "selected_opening_records": [
+    {
+      "id": 3365,
+      "name": "Opening",
+      "cast_time_index": 4,
+      "base_cast_time_ms": 1000,
+      "effects": [
+        33,
+        0,
+        0
+      ],
+      "targets": [
+        23,
+        0,
+        0
+      ],
+      "spell_family": 0
+    },
+    {
+      "id": 3366,
+      "name": "Opening",
+      "cast_time_index": 6,
+      "base_cast_time_ms": 5000,
+      "effects": [
+        33,
+        0,
+        0
+      ],
+      "targets": [
+        23,
+        0,
+        0
+      ],
+      "spell_family": 0
+    },
+    {
+      "id": 21651,
+      "name": "Opening",
+      "cast_time_index": 170,
+      "base_cast_time_ms": 8000,
+      "effects": [
+        33,
+        0,
+        0
+      ],
+      "targets": [
+        23,
+        0,
+        0
+      ],
+      "spell_family": 0
+    },
+    {
+      "id": 68398,
+      "name": "Opening",
+      "cast_time_index": 7,
+      "base_cast_time_ms": 10000,
+      "effects": [
+        33,
+        0,
+        0
+      ],
+      "targets": [
+        23,
+        0,
+        0
+      ],
+      "spell_family": 0
+    }
+  ],
+  "opening_record_receipt_sha256": "9eebde67f2d329ea73295c6d5ccded1b03d3ffae9977e9d3016558f24c7049a4",
+  "client_identity_sha256": "bf644876709c591acc17c0da8cdf1814edcc9f1e6bc109a8c0d5c38c79dc953c",
+  "readonly_ida_receipt_sha256": "7c2fdd81f17137b9bcf3ed30bed14f0e4aa880f4a919f4ce29e454f86257c496",
+  "source_limits": [
+    "Primary reference source is not proof of customized live realm overrides.",
+    "The client Opening family includes different durations; the exact live spell used on this object was not captured.",
+    "Read-only IDA confirmed the exact x86 image and GameObject callers; it did not certify a new interact ABI.",
+    "The existing native interaction, movement, collision and descriptor interfaces are reused; no new client API/offset was added."
+  ]
+}

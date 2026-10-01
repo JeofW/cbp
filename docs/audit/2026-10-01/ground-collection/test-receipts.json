@@ -1,0 +1,1303 @@
+{
+  "retained_runs": [
+    {
+      "label": "ground-source-focused-red-20261001",
+      "summary_sha256": "1f77ceb4e3e5ab13c62b186d196f7d539535a9cd4762561e77233a18d4243e62",
+      "source_before_sha256": "ab3093e241a5625a98834d4c0f5b5c571a122d27b2d3861e6e17e191dce0761e",
+      "source_stable": true,
+      "identity": {
+        "production_commit": "eae93b1f7207a965fed0bef958905e40476ac282",
+        "production_tree": "e1b3f99f1f87853b352c11ee67799dc9dab555ec",
+        "fixture_commit": "eae93b1f7207a965fed0bef958905e40476ac282",
+        "working_tree_modified": true,
+        "game_attached": false
+      },
+      "stages": [
+        {
+          "stage": "build",
+          "exit": 0,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PostMergeAuditRegressionTests/PostMergeAuditRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "454418cb2028434684ea9f2ad2e03cace8f500f9417b45c654fddac680f58fc6",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "run",
+          "exit": 1,
+          "command": [
+            "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+            "D:\\Dev\\CB-GroundCollection-20261001\\Tools\\PostMergeAuditRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\PostMergeAuditRegressionTests.dll",
+            "GroundCollectionSourceRegressionTests"
+          ],
+          "stdout_sha256": "37c35b5460c113d68ba5d1647a3b96e71e776174058dbc55a40364e6df7283bf",
+          "stderr_sha256": "ab61d99b5add2f71f601f879c4804f44c6c457d49a163fc3efc4e5eb9859fd50"
+        }
+      ],
+      "messages": [
+        "Pull isolation scenarios: 12/12; assertions=0; unexpected=0; pure policy/source ordering; no game attached.",
+        "Ground collection source scenarios: 10/15; assertions=4; unexpected=1; actual source predicate and allocated descriptors; no live execution proof.",
+        "FAIL ground source: declared gameobject source survives missing optional query cache: declared live source was rejected by optional cache absence",
+        "FAIL ground source: memoized source cannot outlive invalidation: source control failed",
+        "FAIL ground source: memoized entry does not bypass current dynamic availability: source control failed",
+        "FAIL ground source: zero progress is not completed by source selection: source control failed",
+        "FAIL focused group: GroundCollectionSourceRegressionTests: System.InvalidOperationException: Ground collection source regressions"
+      ]
+    },
+    {
+      "label": "ground-source-green-arrival-red-v2-20261001",
+      "summary_sha256": "f71c62e7aee9a9be09885ad99de0b172eaaf158c1b25d7bd1130525e40e4d701",
+      "source_before_sha256": "5974d13f5351cff07a6e76adbcb065d352c74312bedf49ae24df302e1e31e6a0",
+      "source_stable": true,
+      "identity": {
+        "production_commit": "eae93b1f7207a965fed0bef958905e40476ac282",
+        "production_tree": "e1b3f99f1f87853b352c11ee67799dc9dab555ec",
+        "fixture_commit": "eae93b1f7207a965fed0bef958905e40476ac282",
+        "working_tree_modified": true,
+        "game_attached": false
+      },
+      "stages": [
+        {
+          "stage": "build",
+          "exit": 0,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PostMergeAuditRegressionTests/PostMergeAuditRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "ba55949d24db6558eb576035c345ec6a0738ffa01fdd1e6763a1c4f03c9a8dd1",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "run",
+          "exit": 1,
+          "command": [
+            "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+            "D:\\Dev\\CB-GroundCollection-20261001\\Tools\\PostMergeAuditRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\PostMergeAuditRegressionTests.dll",
+            "GroundCollectionSourceRegressionTests",
+            "GroundHotspotArrivalRegressionTests"
+          ],
+          "stdout_sha256": "cc458951b553a9cc804921ac264af8a635f625481dde4b28258cb2b56da7bb40",
+          "stderr_sha256": "e880cbce8d1d8184e4d76e227368fd9327120422d3044e69e1e021f422a424f3"
+        }
+      ],
+      "messages": [
+        "Pull isolation scenarios: 12/12; assertions=0; unexpected=0; pure policy/source ordering; no game attached.",
+        "Ground collection source scenarios: 15/15; assertions=0; unexpected=0; actual source predicate and allocated descriptors; no live execution proof.",
+        "FAIL focused group: GroundHotspotArrivalRegressionTests: System.InvalidOperationException: Ground collection falsely arrived forty units above its objective using only horizontal distance"
+      ]
+    },
+    {
+      "label": "ground-loot-corrected-red-20261001",
+      "summary_sha256": "4f9fb24459499f45dd12fc95e927cbe73cc778e3ec0802017bb13e03a378fd79",
+      "source_before_sha256": "4f7a24b8e45bfe4ef6f56afdd4f654e43d222262f136c3711f0f60ffee840d1d",
+      "source_stable": true,
+      "identity": {
+        "production_commit": "eae93b1f7207a965fed0bef958905e40476ac282",
+        "production_tree": "e1b3f99f1f87853b352c11ee67799dc9dab555ec",
+        "fixture_commit": "eae93b1f7207a965fed0bef958905e40476ac282",
+        "working_tree_modified": true,
+        "game_attached": false
+      },
+      "stages": [
+        {
+          "stage": "build",
+          "exit": 0,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PostMergeAuditRegressionTests/PostMergeAuditRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "82e61f1003fced30d8975f9509f7c5c64b2936b4263b7b46b3eac0b542302ee5",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "run",
+          "exit": 1,
+          "command": [
+            "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+            "D:\\Dev\\CB-GroundCollection-20261001\\Tools\\PostMergeAuditRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\PostMergeAuditRegressionTests.dll",
+            "QuestLootHandoffRegressionTests"
+          ],
+          "stdout_sha256": "cca137c8fe47b6d4b206fcf83d61a3406e7278e0297910a91286c295f6625a12",
+          "stderr_sha256": "2f013d248757bf8c8b331d4f4ee4ad79056c2cd74ce26e1b5c8fc33384be3418"
+        }
+      ],
+      "messages": [
+        "Pull isolation scenarios: 12/12; assertions=0; unexpected=0; pure policy/source ordering; no game attached.",
+        "Quest loot handoff scenarios: 310/331; assertions=21; unexpected=0; actual caller factories/admission/POI actions and real TreeSharp; controlled world/target callbacks; no loot-frame or native acknowledgement provenance.",
+        "FAIL quest loot handoff: ground collection/mounted ground object waits for a dismount observation: mounted object interacted before observed dismount",
+        "FAIL quest loot handoff: ground collection/vertical arrival descends before an out-of-range travel branch: out-of-range flight dispatch starved ground descent",
+        "FAIL quest loot handoff: ground collection/owned descent releases on actor: descent did not begin",
+        "FAIL quest loot handoff: ground collection/owned descent releases on actor-guid: descent did not begin",
+        "FAIL quest loot handoff: ground collection/owned descent releases on map: descent did not begin",
+        "FAIL quest loot handoff: ground collection/owned descent releases on dead: descent did not begin",
+        "FAIL quest loot handoff: ground collection/owned descent releases on invalid: descent did not begin",
+        "FAIL quest loot handoff: ground collection/owned descent releases on combat: descent did not begin",
+        "FAIL quest loot handoff: ground collection/owned descent releases on control: descent did not begin",
+        "FAIL quest loot handoff: ground collection/owned descent releases on poi: descent did not begin",
+        "FAIL quest loot handoff: ground collection/owned descent releases on poi-type: descent did not begin",
+        "FAIL quest loot handoff: ground collection/owned descent releases on loot-object: descent did not begin",
+        "FAIL quest loot handoff: ground collection/owned descent releases on loot-despawn: descent did not begin",
+        "FAIL quest loot handoff: ground collection/owned descent releases on transport: descent did not begin",
+        "FAIL quest loot handoff: ground collection/owned descent releases on provider: descent did not begin",
+        "FAIL quest loot handoff: ground collection/stopping a pending descent releases its input: descent did not begin",
+        "FAIL quest loot handoff: ground collection/expired approach performs a bounded rescan instead of endless Running: no bounded ground approach owner exists",
+        "FAIL quest loot handoff: ground collection/ground approach does not remount a nearby object: ground collection returned to flying-mount travel",
+        "FAIL quest loot handoff: ground collection/a remount during interaction setup revokes the dispatch: late mount state was ignored by the interaction gate",
+        "FAIL quest loot handoff: ground collection/an object consumed before interaction is not used: consumed object was interacted after setup",
+        "FAIL quest loot handoff: ground collection/thirty distinct objects require thirty actual interaction and loot dispatches: complete collection bypassed actions, duplicated GUID credit or inflated mob statistics",
+        "FAIL focused group: QuestLootHandoffRegressionTests: System.InvalidOperationException: Quest loot handoff regression"
+      ]
+    },
+    {
+      "label": "ground-approach-revalidation-red-20261001",
+      "summary_sha256": "9a4b4c731d0f91a8bfb7496fbce4a603960ca57d87f437392e00434614112010",
+      "source_before_sha256": "7e088642db0aab98716240d958fd5227de480156d3a42152e8dbc9336f55f4e0",
+      "source_stable": true,
+      "identity": {
+        "production_commit": "eae93b1f7207a965fed0bef958905e40476ac282",
+        "production_tree": "e1b3f99f1f87853b352c11ee67799dc9dab555ec",
+        "fixture_commit": "eae93b1f7207a965fed0bef958905e40476ac282",
+        "working_tree_modified": true,
+        "game_attached": false
+      },
+      "stages": [
+        {
+          "stage": "build",
+          "exit": 0,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PostMergeAuditRegressionTests/PostMergeAuditRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "82ae6564f485ed3dfe38c1fd7b94242139c3b0686746b326f052fb62e3752f0b",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "run",
+          "exit": 1,
+          "command": [
+            "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+            "D:\\Dev\\CB-GroundCollection-20261001\\Tools\\PostMergeAuditRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\PostMergeAuditRegressionTests.dll",
+            "QuestLootHandoffRegressionTests"
+          ],
+          "stdout_sha256": "2c240cc615ab707a9cf2eda063974b7be425c24a600053450156a3867ccd33d6",
+          "stderr_sha256": "e9394d362bcd2421917ab98a47fbf580ad1a6ee51aa69f6f7ef60d5af40c87ae"
+        }
+      ],
+      "messages": [
+        "Pull isolation scenarios: 12/12; assertions=0; unexpected=0; pure policy/source ordering; no game attached.",
+        "Quest loot handoff scenarios: 331/344; assertions=13; unexpected=0; actual caller factories/admission/POI actions and real TreeSharp; controlled world/target callbacks; no loot-frame or native acknowledgement provenance.",
+        "FAIL quest loot handoff: ground collection/changed landing observation releases descent: support-unknown: lost landing evidence left descent input active",
+        "FAIL quest loot handoff: ground collection/changed landing observation releases descent: wrong-floor: lost landing evidence left descent input active",
+        "FAIL quest loot handoff: ground collection/changed landing observation releases descent: line-of-sight: lost landing evidence left descent input active",
+        "FAIL quest loot handoff: ground collection/changed landing observation releases descent: movement-unknown: lost landing evidence left descent input active",
+        "FAIL quest loot handoff: ground collection/changed landing observation releases descent: falling: lost landing evidence left descent input active",
+        "FAIL quest loot handoff: ground collection/changed landing observation releases descent: zero-range: lost landing evidence left descent input active",
+        "FAIL quest loot handoff: ground collection/object origin above its support does not cancel valid final descent: valid landing below an object's origin restarted flight before reaching support",
+        "FAIL quest loot handoff: ground collection/ground navigation dispatch is rate bounded without observed movement: unchanged position flooded ground path requests",
+        "FAIL quest loot handoff: ground collection/final sight callback cannot donate stale interaction permission: falling: final collision observation bypassed fresh movement/range/position checks",
+        "FAIL quest loot handoff: ground collection/final sight callback cannot donate stale interaction permission: moving: final collision observation bypassed fresh movement/range/position checks",
+        "FAIL quest loot handoff: ground collection/final sight callback cannot donate stale interaction permission: movement-unknown: final collision observation bypassed fresh movement/range/position checks",
+        "FAIL quest loot handoff: ground collection/final sight callback cannot donate stale interaction permission: range: final collision observation bypassed fresh movement/range/position checks",
+        "FAIL quest loot handoff: ground collection/final sight callback cannot donate stale interaction permission: object-location: final collision observation bypassed fresh movement/range/position checks",
+        "FAIL focused group: QuestLootHandoffRegressionTests: System.InvalidOperationException: Quest loot handoff regression"
+      ]
+    },
+    {
+      "label": "ground-execution-reviewed-green-20261001",
+      "summary_sha256": "21ed27e6d6202293aec2f5c2df3f8d51e371ba1af0e3bf2a19a380bd7edb8337",
+      "source_before_sha256": "d9550f8dae741644a70d0f09b6043a3c2412484e62f4ae09dffba35825efc6ca",
+      "source_stable": true,
+      "identity": {
+        "production_commit": "eae93b1f7207a965fed0bef958905e40476ac282",
+        "production_tree": "e1b3f99f1f87853b352c11ee67799dc9dab555ec",
+        "fixture_commit": "eae93b1f7207a965fed0bef958905e40476ac282",
+        "working_tree_modified": true,
+        "game_attached": false
+      },
+      "stages": [
+        {
+          "stage": "build",
+          "exit": 0,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PostMergeAuditRegressionTests/PostMergeAuditRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "d72bd1a216a2a0e4a3e4808138f09f70b390592097996f945cc8da700df516ae",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "run",
+          "exit": 0,
+          "command": [
+            "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+            "D:\\Dev\\CB-GroundCollection-20261001\\Tools\\PostMergeAuditRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\PostMergeAuditRegressionTests.dll",
+            "ObjectiveRescanOwnershipRegressionTests",
+            "ExecutionDiagnosticCaptureRegressionTests",
+            "QuestItemProgressObservationRegressionTests",
+            "ExecutionWatchdogRegressionTests",
+            "GroundCollectionSourceRegressionTests",
+            "GroundHotspotArrivalRegressionTests",
+            "QuestLootHandoffRegressionTests"
+          ],
+          "stdout_sha256": "0bda0ec45b5f6d1f17b9dde172f6862a79a3e86620eddcc6769ab34a1d650691",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "messages": [
+        "Pull isolation scenarios: 12/12; assertions=0; unexpected=0; pure policy/source ordering; no game attached.",
+        "Execution diagnostic fields: 33/33; actual quest/profile/player capture; null inventory remains unknown; no tree created or game action.",
+        "Quest item progress scenarios: 18/18; assertions=0; unexpected=0; actual inventory/quest readers and progress monitor; no live realm.",
+        "Execution watchdog scenarios: 12/12; failed=0; actual episode clock and recovery budget; no client side effects.",
+        "Ground collection source scenarios: 15/15; assertions=0; unexpected=0; actual source predicate and allocated descriptors; no live execution proof.",
+        "Quest loot handoff scenarios: 344/344; assertions=0; unexpected=0; actual caller factories/admission/POI actions and real TreeSharp; controlled world/target callbacks; no loot-frame or native acknowledgement provenance."
+      ]
+    },
+    {
+      "label": "item-progress-corrected-red-20261001",
+      "summary_sha256": "8c966dcbb51c1738c09a9961b0e6df16dd4f32bd3b4100e5534de0b9b8618649",
+      "source_before_sha256": "de652880ee36ca3dbeaa74d637447fc12e3c10ab9ade2b829a301222322eab8d",
+      "source_stable": true,
+      "identity": {
+        "production_commit": "eae93b1f7207a965fed0bef958905e40476ac282",
+        "production_tree": "e1b3f99f1f87853b352c11ee67799dc9dab555ec",
+        "fixture_commit": "eae93b1f7207a965fed0bef958905e40476ac282",
+        "working_tree_modified": true,
+        "game_attached": false
+      },
+      "stages": [
+        {
+          "stage": "build",
+          "exit": 0,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PostMergeAuditRegressionTests/PostMergeAuditRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "d5894eddfb2948425ef99a846e19141f13a56dd0340db0ccc179bac42b39b0bf",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "run",
+          "exit": 1,
+          "command": [
+            "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+            "D:\\Dev\\CB-GroundCollection-20261001\\Tools\\PostMergeAuditRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\PostMergeAuditRegressionTests.dll",
+            "QuestItemProgressObservationRegressionTests"
+          ],
+          "stdout_sha256": "7fea92761d64bacbb585cae81d13d80aa1250f4981ad9ce8c069e6405fb7e4fc",
+          "stderr_sha256": "b247115fba26eaf6ef8a0abc8b9e6cf8c910b956aaf4c3c01faa92dc670d7f1e"
+        }
+      ],
+      "messages": [
+        "Pull isolation scenarios: 12/12; assertions=0; unexpected=0; pure policy/source ordering; no game attached.",
+        "Quest item progress scenarios: 2/18; assertions=16; unexpected=0; actual inventory/quest readers and progress monitor; no live realm.",
+        "FAIL focused group: QuestItemProgressObservationRegressionTests: System.InvalidOperationException: Item progress observation regressions"
+      ]
+    },
+    {
+      "label": "item-progress-green-20261001",
+      "summary_sha256": "30a3e4249b893865f2baa116675d0272f8907228add9d943defc9e0e936d6236",
+      "source_before_sha256": "8fa886e82716715193b872d8482321aaa7d64a2e2e6e8728169eba7fec798733",
+      "source_stable": true,
+      "identity": {
+        "production_commit": "eae93b1f7207a965fed0bef958905e40476ac282",
+        "production_tree": "e1b3f99f1f87853b352c11ee67799dc9dab555ec",
+        "fixture_commit": "eae93b1f7207a965fed0bef958905e40476ac282",
+        "working_tree_modified": true,
+        "game_attached": false
+      },
+      "stages": [
+        {
+          "stage": "build",
+          "exit": 0,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PostMergeAuditRegressionTests/PostMergeAuditRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "d43efad1bba733f014a5d52315dd6f6659f06e6f8f904bd3bc9ea1bad7108083",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "run",
+          "exit": 1,
+          "command": [
+            "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+            "D:\\Dev\\CB-GroundCollection-20261001\\Tools\\PostMergeAuditRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\PostMergeAuditRegressionTests.dll",
+            "QuestItemProgressObservationRegressionTests",
+            "NavigationDeferralRegressionTests",
+            "QuestInventorySnapshotRegressionTests"
+          ],
+          "stdout_sha256": "14d5167de549274b66db1ddc7bb42897f84280164e53234d302ac29165994ff9",
+          "stderr_sha256": "007e862cb1ca7e1157b6d9a9b3c53386c6cce8e6127e1b7b96f1165b68b5aa8a"
+        }
+      ],
+      "messages": [
+        "Pull isolation scenarios: 12/12; assertions=0; unexpected=0; pure policy/source ordering; no game attached.",
+        "Quest item progress scenarios: 12/18; assertions=6; unexpected=0; actual inventory/quest readers and progress monitor; no live realm.",
+        "Navigation deferral scenarios: 15/15; real monitor/manager, no game attached.",
+        "Inventory snapshot scenarios: 59/59; assertions=0; unexpected=0; allocated item/bag memory, fixed-global transport fixture, no game.",
+        "FAIL focused group: QuestItemProgressObservationRegressionTests: System.InvalidOperationException: Item progress observation regressions"
+      ]
+    },
+    {
+      "label": "objective-rescan-ownership-red-20261001",
+      "summary_sha256": "11da4282f10901a6824eb2d824a0838236bbb75a9f80d250c251b9ebb72f8bea",
+      "source_before_sha256": "c767f883dd2c7ffaf5775d93bb3c335c391618d69e78a94b4c0b037b709de4f5",
+      "source_stable": true,
+      "identity": {
+        "production_commit": "eae93b1f7207a965fed0bef958905e40476ac282",
+        "production_tree": "e1b3f99f1f87853b352c11ee67799dc9dab555ec",
+        "fixture_commit": "eae93b1f7207a965fed0bef958905e40476ac282",
+        "working_tree_modified": true,
+        "game_attached": false
+      },
+      "stages": [
+        {
+          "stage": "build",
+          "exit": 1,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PostMergeAuditRegressionTests/PostMergeAuditRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "2c226c9b8d71badecd1a25fab463f0ecd6e28efe4b30ee0565e3ef7468b5d4c9",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "messages": []
+    },
+    {
+      "label": "execution-watchdog-budget-red-20261001",
+      "summary_sha256": "287c5f82f5c548f5016651796425dbfbe063ef2ad748bd6f0a99bd212b8d3082",
+      "source_before_sha256": "cd1e4bcc303ffebac32bed2dcab10330efb475a381a0ce427c666b8fce8336d5",
+      "source_stable": true,
+      "identity": {
+        "production_commit": "eae93b1f7207a965fed0bef958905e40476ac282",
+        "production_tree": "e1b3f99f1f87853b352c11ee67799dc9dab555ec",
+        "fixture_commit": "eae93b1f7207a965fed0bef958905e40476ac282",
+        "working_tree_modified": true,
+        "game_attached": false
+      },
+      "stages": [
+        {
+          "stage": "build",
+          "exit": 0,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PostMergeAuditRegressionTests/PostMergeAuditRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "ffe01b3b0dd8acda8a314de62fe089dd583f1a99e8b061a18b8a31f6ebb8c794",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "run",
+          "exit": 1,
+          "command": [
+            "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+            "D:\\Dev\\CB-GroundCollection-20261001\\Tools\\PostMergeAuditRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\PostMergeAuditRegressionTests.dll",
+            "ExecutionWatchdogRegressionTests"
+          ],
+          "stdout_sha256": "efadbfdadfcdb7743dceb7fc2d8159eb30098026bb4b0ec7a5502a58b7ac662e",
+          "stderr_sha256": "c6668da5016e49b4166c29cb3dc11f211808c6cb75aa4ef656e0e70d636507c3"
+        }
+      ],
+      "messages": [
+        "Pull isolation scenarios: 12/12; assertions=0; unexpected=0; pure policy/source ordering; no game attached.",
+        "Execution watchdog scenarios: 12/13; failed=1; actual episode clock and recovery budget; no client side effects.",
+        "FAIL focused group: ExecutionWatchdogRegressionTests: System.InvalidOperationException: Execution watchdog regressions"
+      ]
+    },
+    {
+      "label": "ground-ack-pipeline-index-corrected-v4-20261001",
+      "summary_sha256": "e2d47c6d750a4afe66f3fb04e2dac6a1ad3ed4250fc0491f6a48f481bafa7cba",
+      "source_before_sha256": "713fc8eb3451e5d56f8c7ca2f00575513bda142e619c547fd998fa814f21ae81",
+      "source_stable": true,
+      "identity": {
+        "production_commit": "eae93b1f7207a965fed0bef958905e40476ac282",
+        "production_tree": "e1b3f99f1f87853b352c11ee67799dc9dab555ec",
+        "fixture_commit": "eae93b1f7207a965fed0bef958905e40476ac282",
+        "working_tree_modified": true,
+        "game_attached": false
+      },
+      "stages": [
+        {
+          "stage": "build",
+          "exit": 0,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PostMergeAuditRegressionTests/PostMergeAuditRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "332bfa7ad7269934450e932772619a5bd6e0b570f5582700ce322b7baa7cf3ac",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "run",
+          "exit": 0,
+          "command": [
+            "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+            "D:\\Dev\\CB-GroundCollection-20261001\\Tools\\PostMergeAuditRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\PostMergeAuditRegressionTests.dll",
+            "GroundCollectionAcknowledgementPipelineRegressionTests",
+            "ExecutionWatchdogRegressionTests",
+            "QuestLootHandoffRegressionTests"
+          ],
+          "stdout_sha256": "fe75e60fb1ada2696213f028549be690b125a2d04cf00ce47068d61c8ff230b3",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "messages": [
+        "Pull isolation scenarios: 12/12; assertions=0; unexpected=0; pure policy/source ordering; no game attached.",
+        "Quest loot handoff scenarios: 1/1; assertions=0; unexpected=0; actual caller factories/admission/POI actions and real TreeSharp; controlled world/target callbacks; no loot-frame or native acknowledgement provenance.",
+        "Acknowledged ground pipeline: scheduler/profile -> actual loot dispatch x30 -> complete carried inventory -> partial/full objective -> separate server-ready observation -> ender plan. Native turn-in/reward acknowledgement and shipped-dataset/real-geometry equivalence remain UNPROVEN.",
+        "Execution watchdog scenarios: 13/13; failed=0; actual episode clock and recovery budget; no client side effects.",
+        "Quest loot handoff scenarios: 344/344; assertions=0; unexpected=0; actual caller factories/admission/POI actions and real TreeSharp; controlled world/target callbacks; no loot-frame or native acknowledgement provenance."
+      ]
+    },
+    {
+      "label": "ground-turnin-dispatch-red-v6-20261001",
+      "summary_sha256": "c26f7bd53a02f98ff27bc8979dcd1ee881e98e698709681aac1f02e7c39f5b32",
+      "source_before_sha256": "238f234385651e433c9301cfbb96c60a87f8a66431bfeeb5fda39166c0b7af7f",
+      "source_stable": true,
+      "identity": {
+        "production_commit": "60f01529e3753b96db0a22e5396f3795ca1731dc",
+        "production_tree": "db0070184f3def61049ca25b86fd41f82f78fa7e",
+        "fixture_commit": "60f01529e3753b96db0a22e5396f3795ca1731dc",
+        "working_tree_modified": true,
+        "game_attached": false
+      },
+      "stages": [
+        {
+          "stage": "build",
+          "exit": 0,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PostMergeAuditRegressionTests/PostMergeAuditRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "8baca9f6b68bb96b6f6611f67815b39783a52bd82dddd8ee7db17884e83da686",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "run",
+          "exit": 1,
+          "command": [
+            "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+            "D:\\Dev\\CB-GroundCollection-20261001\\Tools\\PostMergeAuditRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\PostMergeAuditRegressionTests.dll",
+            "QuestTurnInExecutionRegressionTests"
+          ],
+          "stdout_sha256": "a7db317da40d1741f5478c9f17a15f797eb9e564a62824dc54017d37a89bb4a4",
+          "stderr_sha256": "8f58b93869365fcd1a27b7a1c6e8fb4b49d3cf40f69a7d505ff89c298eb4111e"
+        }
+      ],
+      "messages": [
+        "Pull isolation scenarios: 12/12; assertions=0; unexpected=0; pure policy/source ordering; no game attached.",
+        "FAIL focused group: QuestTurnInExecutionRegressionTests: System.InvalidOperationException: one reward operation must issue exactly one completion request; actual=2"
+      ]
+    },
+    {
+      "label": "ground-turnin-boundaries-red-v7-20261001",
+      "summary_sha256": "e22fb35b59748b8fa9000931438d229f6a02be750fa7c43bec0ac2acae7c9568",
+      "source_before_sha256": "2b668dab403a491c3fdea9addc3508b86664331d9929f9f0ba2055a5597026d3",
+      "source_stable": true,
+      "identity": {
+        "production_commit": "60f01529e3753b96db0a22e5396f3795ca1731dc",
+        "production_tree": "db0070184f3def61049ca25b86fd41f82f78fa7e",
+        "fixture_commit": "60f01529e3753b96db0a22e5396f3795ca1731dc",
+        "working_tree_modified": true,
+        "game_attached": false
+      },
+      "stages": [
+        {
+          "stage": "build",
+          "exit": 0,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PostMergeAuditRegressionTests/PostMergeAuditRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "be279f69a4f1287d9bd548715d302443199b104554107d8bfe8efe9f6c7df41b",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "run",
+          "exit": 1,
+          "command": [
+            "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+            "D:\\Dev\\CB-GroundCollection-20261001\\Tools\\PostMergeAuditRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\PostMergeAuditRegressionTests.dll",
+            "QuestTurnInExecutionRegressionTests"
+          ],
+          "stdout_sha256": "a7db317da40d1741f5478c9f17a15f797eb9e564a62824dc54017d37a89bb4a4",
+          "stderr_sha256": "1e28d26cb3787b2efd622950df2bfc4324d504a3f2b1b2dd91d3478d34e6729a"
+        }
+      ],
+      "messages": [
+        "Pull isolation scenarios: 12/12; assertions=0; unexpected=0; pure policy/source ordering; no game attached.",
+        "FAIL focused group: QuestTurnInExecutionRegressionTests: System.InvalidOperationException: Quest frame submission boundaries: reward panel submits once: expected progress/reward=0/1, got 1/2; progress panel advances once: expected progress/reward=1/0, got 1/2; closed dialog: expected progress/reward=0/0, got 1/0; disabled reward: expected progress/reward=0/0, got 1/0; disabled continue: expected progress/reward=0/0, got 1/0; missing reward button: Actual UI Lua failed: [string \"reward-boundary.lua\"]:1: attempt to index global 'QuestFrameCompleteQuestButton' (a nil value); missing dialog: expected progress/reward=0/0, got 1/0; selected reward remains exact: expected progress/reward=0/1, got 1/2; choice absent cannot complete: expected progress/reward=0/0, got 1/0"
+      ]
+    },
+    {
+      "label": "ground-turnin-boundaries-green-v8-20261001",
+      "summary_sha256": "4912991bc07e3e80f5e2b77413fd6c4dd5d86fa1c4db51239adc016d1adbb0d3",
+      "source_before_sha256": "146c3054aa2793c3be8b13199d4544cfc8b9f7730a1dbd8e4f551435cb7ea1ca",
+      "source_stable": true,
+      "identity": {
+        "production_commit": "60f01529e3753b96db0a22e5396f3795ca1731dc",
+        "production_tree": "db0070184f3def61049ca25b86fd41f82f78fa7e",
+        "fixture_commit": "60f01529e3753b96db0a22e5396f3795ca1731dc",
+        "working_tree_modified": true,
+        "game_attached": false
+      },
+      "stages": [
+        {
+          "stage": "build",
+          "exit": 0,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PostMergeAuditRegressionTests/PostMergeAuditRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "78e4379740e89f097a6b9f56fa8542b5e028184c675211e43eddb76ad091acde",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "run",
+          "exit": 0,
+          "command": [
+            "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+            "D:\\Dev\\CB-GroundCollection-20261001\\Tools\\PostMergeAuditRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\PostMergeAuditRegressionTests.dll",
+            "QuestTurnInExecutionRegressionTests",
+            "QuestRewardObservationRegressionTests",
+            "QuestRewardSelectionLifetimeRegressionTests"
+          ],
+          "stdout_sha256": "4012850998e782882f62908132c456004080fbc2ce65284121c67c7ca82575d1",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "messages": [
+        "Pull isolation scenarios: 12/12; assertions=0; unexpected=0; pure policy/source ordering; no game attached.",
+        "Turn-in execution scenarios: 11/11; complete turn-in/reward/frame owners, actual Lua5.1, explicit delayed server observations; no client connection.",
+        "Quest reward-observation scenarios: 12/12; assertions=0; unexpected=0; actual ActionSelectReward contract/source; controlled observers; no game attached.",
+        "Reward Lua51 boundary scenarios: 33/33; assertions=0; unexpected=0; full tracked reward owner, actual generated Lua, extracted production load-size and verbatim managed conversion; stock Lua5.1 C API; controlled UI; no original client/native hook/server.",
+        "Quest reward selection lifetime scenarios: 18/18; assertions=0; unexpected=0; complete tracked C# owner; controlled metadata/frame/Lua boundaries; no game attached."
+      ]
+    },
+    {
+      "label": "ground-event-order-and-opening-red-v11-20261001",
+      "summary_sha256": "053545b718f7baceae47a9d197f08ae744c8e24c609ea82443bcefca279fdc81",
+      "source_before_sha256": "98389a1844e420b432d4c58dd60a2936e1a3eadadac877577ee3324f6d4c6e50",
+      "source_stable": true,
+      "identity": {
+        "production_commit": "b105583b7643772006db89858feb42f9ea7da88b",
+        "production_tree": "c02ac15c28dc1a9394bf9f71a7f9f31bdf98fe5a",
+        "fixture_commit": "b105583b7643772006db89858feb42f9ea7da88b",
+        "working_tree_modified": true,
+        "game_attached": false
+      },
+      "stages": [
+        {
+          "stage": "build",
+          "exit": 0,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PostMergeAuditRegressionTests/PostMergeAuditRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "3025eee299972f2453daa0ef045cec9fe9acaf2633317ff0f05d541dcc498206",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "run",
+          "exit": 1,
+          "command": [
+            "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+            "D:\\Dev\\CB-GroundCollection-20261001\\Tools\\PostMergeAuditRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\PostMergeAuditRegressionTests.dll",
+            "QuestLootHandoffRegressionTests",
+            "GroundCollectionAcknowledgementPipelineRegressionTests"
+          ],
+          "stdout_sha256": "2cb86f01b2253bee916928ce44997fa671ada6953338de16900816834d72b17f",
+          "stderr_sha256": "ce1135f84e1451960dec1f1d49d0fd36e057c3bdb694c6c31a105e8c5d3e55e5"
+        }
+      ],
+      "messages": [
+        "Pull isolation scenarios: 12/12; assertions=0; unexpected=0; pure policy/source ordering; no game attached.",
+        "Quest loot handoff scenarios: 346/348; assertions=2; unexpected=0; actual caller factories/admission/POI actions and real TreeSharp; controlled world/target callbacks; no loot-frame or native acknowledgement provenance.",
+        "Quest loot handoff scenarios: 1/1; assertions=0; unexpected=0; actual caller factories/admission/POI actions and real TreeSharp; controlled world/target callbacks; no loot-frame or native acknowledgement provenance.",
+        "Acknowledged ground pipeline four source alternatives: scheduler/profile -> actual source predicate/acquisition -> supported landing/dismount -> owned interaction/loot x30 -> separate delayed inventory replies -> partial/full objective -> separate server-ready -> ender travel/interaction -> actual reward selection/one submission -> separate history reply -> next scheduling. Native world, collision, live UI/server timing and realm completion remain UNPROVEN.",
+        "Quest loot handoff scenarios: 1/1; assertions=0; unexpected=0; actual caller factories/admission/POI actions and real TreeSharp; controlled world/target callbacks; no loot-frame or native acknowledgement provenance.",
+        "Acknowledged ground pipeline shipped10161 model: scheduler/profile -> actual source predicate/acquisition -> supported landing/dismount -> owned interaction/loot x30 -> separate delayed inventory replies -> partial/full objective -> separate server-ready -> ender travel/interaction -> actual reward selection/one submission -> separate history reply -> next scheduling. Native world, collision, live UI/server timing and realm completion remain UNPROVEN.",
+        "FAIL quest loot handoff: ground collection/an immediate owned loot event is captured before interaction returns: native interaction completed before the event listener was attached",
+        "FAIL quest loot handoff: ground collection/ground opening can outlast the corpse acknowledgement budget: valid delayed ground loot was discarded at the shorter corpse deadline",
+        "FAIL focused group: QuestLootHandoffRegressionTests: System.InvalidOperationException: Quest loot handoff regression"
+      ]
+    },
+    {
+      "label": "ground-event-order-opening-green-v12-20261001",
+      "summary_sha256": "45e693cbe04a022ab62660b8f1855f94e52d31bf5ccc75f492608c7ed80d349e",
+      "source_before_sha256": "574ba9388c89a6331907aeda333f90b35529b84cb93ac21c7667e8f830d1b942",
+      "source_stable": true,
+      "identity": {
+        "production_commit": "b105583b7643772006db89858feb42f9ea7da88b",
+        "production_tree": "c02ac15c28dc1a9394bf9f71a7f9f31bdf98fe5a",
+        "fixture_commit": "b105583b7643772006db89858feb42f9ea7da88b",
+        "working_tree_modified": true,
+        "game_attached": false
+      },
+      "stages": [
+        {
+          "stage": "build",
+          "exit": 0,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PostMergeAuditRegressionTests/PostMergeAuditRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "3947fb844b8c809616b07af06266d25188b9788355e62fb781e613546970064f",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "run",
+          "exit": 0,
+          "command": [
+            "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+            "D:\\Dev\\CB-GroundCollection-20261001\\Tools\\PostMergeAuditRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\PostMergeAuditRegressionTests.dll",
+            "QuestLootHandoffRegressionTests",
+            "GroundCollectionAcknowledgementPipelineRegressionTests",
+            "QuestTurnInExecutionRegressionTests",
+            "ExecutionWatchdogRegressionTests",
+            "ExecutionDiagnosticCaptureRegressionTests"
+          ],
+          "stdout_sha256": "0c679bd1a08ab7208df82e3d9e5a5ad4b6966ad3b29e76d15becad59485c9b63",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "messages": [
+        "Pull isolation scenarios: 12/12; assertions=0; unexpected=0; pure policy/source ordering; no game attached.",
+        "Quest loot handoff scenarios: 348/348; assertions=0; unexpected=0; actual caller factories/admission/POI actions and real TreeSharp; controlled world/target callbacks; no loot-frame or native acknowledgement provenance.",
+        "Quest loot handoff scenarios: 1/1; assertions=0; unexpected=0; actual caller factories/admission/POI actions and real TreeSharp; controlled world/target callbacks; no loot-frame or native acknowledgement provenance.",
+        "Acknowledged ground pipeline four source alternatives: scheduler/profile -> actual source predicate/acquisition -> supported landing/dismount -> owned interaction/loot x30 -> separate delayed inventory replies -> partial/full objective -> separate server-ready -> ender travel/interaction -> actual reward selection/one submission -> separate history reply -> next scheduling. Native world, collision, live UI/server timing and realm completion remain UNPROVEN.",
+        "Quest loot handoff scenarios: 1/1; assertions=0; unexpected=0; actual caller factories/admission/POI actions and real TreeSharp; controlled world/target callbacks; no loot-frame or native acknowledgement provenance.",
+        "Acknowledged ground pipeline shipped10161 model: scheduler/profile -> actual source predicate/acquisition -> supported landing/dismount -> owned interaction/loot x30 -> separate delayed inventory replies -> partial/full objective -> separate server-ready -> ender travel/interaction -> actual reward selection/one submission -> separate history reply -> next scheduling. Native world, collision, live UI/server timing and realm completion remain UNPROVEN.",
+        "Turn-in execution scenarios: 11/11; complete turn-in/reward/frame owners, actual Lua5.1, explicit delayed server observations; no client connection.",
+        "Execution watchdog scenarios: 13/13; failed=0; actual episode clock and recovery budget; no client side effects.",
+        "Execution diagnostic fields: 33/33; actual quest/profile/player capture; null inventory remains unknown; no tree created or game action."
+      ]
+    }
+  ],
+  "current_complete_diagnostic": {
+    "phase": "ground-complete-precommit-resume-v13-20261001",
+    "base_commit": "b105583b7643772006db89858feb42f9ea7da88b",
+    "working_tree_modified": true,
+    "source_before_sha256": "574ba9388c89a6331907aeda333f90b35529b84cb93ac21c7667e8f830d1b942",
+    "summary_sha256": "292cfc5c5e1f67571ad4753b325176c8d7ac4122b7b53d9876801cf7b9643945",
+    "actual_commands": 33,
+    "results": [
+      {
+        "stage": "QuestRecoveryRegressionTests-build",
+        "exit": 0,
+        "command": [
+          "dotnet",
+          "build",
+          "Tools/QuestRecoveryRegressionTests/QuestRecoveryRegressionTests.csproj",
+          "-c",
+          "Release",
+          "-p:Platform=x86",
+          "-p:PlatformTarget=x86",
+          "-v",
+          "quiet"
+        ],
+        "started_utc": "2026-10-01T08:47:12.139031+00:00",
+        "log_sha256": "83c2003cbae0edc9d15855edb186ebe350f6edb8e9790b7758e9608f0f1fac9c",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "stage": "QuestRecoveryRegressionTests-run",
+        "exit": 0,
+        "command": [
+          "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+          "D:\\Dev\\CB-GroundCollection-20261001\\Tools\\QuestRecoveryRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\QuestRecoveryRegressionTests.dll"
+        ],
+        "started_utc": "2026-10-01T08:47:15.478332+00:00",
+        "log_sha256": "52133963f5ccfd8249923636fb091d6c9d0353e7ba88362be39379b947eefce3",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "stage": "SingularCompatibility",
+        "exit": 0,
+        "command": [
+          "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+          "D:\\Dev\\CB-GroundCollection-20261001\\Tools\\QuestRecoveryRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\QuestRecoveryRegressionTests.dll",
+          "--routine-compatibility"
+        ],
+        "started_utc": "2026-10-01T08:47:25.772492+00:00",
+        "log_sha256": "c51d4a32c451c9e85b073067e8e6671ec5005c79e34db691e1287883be52f8e0",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "stage": "WholesomeQuestRecoveryRegressionTests-build",
+        "exit": 0,
+        "command": [
+          "dotnet",
+          "build",
+          "Tools/WholesomeQuestRecoveryRegressionTests/WholesomeQuestRecoveryRegressionTests.csproj",
+          "-c",
+          "Release",
+          "-p:Platform=x86",
+          "-p:PlatformTarget=x86",
+          "-v",
+          "quiet"
+        ],
+        "started_utc": "2026-10-01T08:47:31.457028+00:00",
+        "log_sha256": "37042d1605fc52c3921c42bd296036e22ce6a9a8e2ea9cbc78a1d30470fe48bc",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "stage": "WholesomeQuestRecoveryRegressionTests-run",
+        "exit": 0,
+        "command": [
+          "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+          "D:\\Dev\\CB-GroundCollection-20261001\\Tools\\WholesomeQuestRecoveryRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\WholesomeQuestRecoveryRegressionTests.dll"
+        ],
+        "started_utc": "2026-10-01T08:47:37.143271+00:00",
+        "log_sha256": "c658e9955c10877a7d3a0ecf5731e55ddca3799fabca0b1aab27215217922c4e",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "stage": "QuestRecoveryAdapterRegressionTests-build",
+        "exit": 0,
+        "command": [
+          "dotnet",
+          "build",
+          "Tools/QuestRecoveryAdapterRegressionTests/QuestRecoveryAdapterRegressionTests.csproj",
+          "-c",
+          "Release",
+          "-p:Platform=x86",
+          "-p:PlatformTarget=x86",
+          "-v",
+          "quiet"
+        ],
+        "started_utc": "2026-10-01T08:49:36.040121+00:00",
+        "log_sha256": "0019312370ce975df2737eb2a34517ca1a06b3e6691e52d6db1fa9ea6fdc8e7d",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "stage": "QuestRecoveryAdapterRegressionTests-run",
+        "exit": 0,
+        "command": [
+          "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+          "D:\\Dev\\CB-GroundCollection-20261001\\Tools\\QuestRecoveryAdapterRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\QuestRecoveryAdapterRegressionTests.dll"
+        ],
+        "started_utc": "2026-10-01T08:49:38.633853+00:00",
+        "log_sha256": "7f97d276a77dd4735dfc28b0204f2124401614d74df9c8bc022851f1d2526a55",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "stage": "QuestPickupPolicyRegressionTests-build",
+        "exit": 0,
+        "command": [
+          "dotnet",
+          "build",
+          "Tools/QuestPickupPolicyRegressionTests/QuestPickupPolicyRegressionTests.csproj",
+          "-c",
+          "Release",
+          "-p:Platform=x86",
+          "-p:PlatformTarget=x86",
+          "-v",
+          "quiet"
+        ],
+        "started_utc": "2026-10-01T08:49:39.208037+00:00",
+        "log_sha256": "b737cf5aecff8ca11fccf2a971fd30e75f41c123a23d09833a614591e852a1b3",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "stage": "QuestPickupPolicyRegressionTests-run",
+        "exit": 0,
+        "command": [
+          "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+          "D:\\Dev\\CB-GroundCollection-20261001\\Tools\\QuestPickupPolicyRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\QuestPickupPolicyRegressionTests.dll"
+        ],
+        "started_utc": "2026-10-01T08:49:41.691021+00:00",
+        "log_sha256": "d16e282042d0c21bf93f3eef3bd402299bdbab3571c7e79d25854918663019a3",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "stage": "VendorCoreRegressionTests-build",
+        "exit": 0,
+        "command": [
+          "dotnet",
+          "build",
+          "Tools/VendorCoreRegressionTests/VendorCoreRegressionTests.csproj",
+          "-c",
+          "Release",
+          "-p:Platform=x86",
+          "-p:PlatformTarget=x86",
+          "-v",
+          "quiet"
+        ],
+        "started_utc": "2026-10-01T08:49:41.810787+00:00",
+        "log_sha256": "8bd2c96542362c6d42ddb751aa8a7749785fe218c5100e0aac27aced6602dcd4",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "stage": "VendorCoreRegressionTests-run",
+        "exit": 0,
+        "command": [
+          "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+          "D:\\Dev\\CB-GroundCollection-20261001\\Tools\\VendorCoreRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\VendorCoreRegressionTests.dll"
+        ],
+        "started_utc": "2026-10-01T08:49:44.367761+00:00",
+        "log_sha256": "8df45df483ab594addcd91ec8db87835545a203aabb472923567161360789b49",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "stage": "NativeContractRegressionTests-build",
+        "exit": 0,
+        "command": [
+          "dotnet",
+          "build",
+          "Tools/NativeContractRegressionTests/NativeContractRegressionTests.csproj",
+          "-c",
+          "Release",
+          "-p:Platform=x86",
+          "-p:PlatformTarget=x86",
+          "-v",
+          "quiet"
+        ],
+        "started_utc": "2026-10-01T08:49:44.638710+00:00",
+        "log_sha256": "0ca97aa375cb38b387e4fdd108c9e10eead7ac45bed741aaeb3e8448e4f1297a",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "stage": "NativeContractRegressionTests-run",
+        "exit": 0,
+        "command": [
+          "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+          "D:\\Dev\\CB-GroundCollection-20261001\\Tools\\NativeContractRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\NativeContractRegressionTests.dll"
+        ],
+        "started_utc": "2026-10-01T08:49:47.153034+00:00",
+        "log_sha256": "66c3b51f8e9fcc962ddc8c5c1b3914a6f5d7de6d881ebe84305dc6479831ec17",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "stage": "ShutdownBoundaryRegressionTests-build",
+        "exit": 0,
+        "command": [
+          "dotnet",
+          "build",
+          "Tools/ShutdownBoundaryRegressionTests/ShutdownBoundaryRegressionTests.csproj",
+          "-c",
+          "Release",
+          "-p:Platform=x86",
+          "-p:PlatformTarget=x86",
+          "-v",
+          "quiet"
+        ],
+        "started_utc": "2026-10-01T08:49:47.538780+00:00",
+        "log_sha256": "9fc6cfdc31b28fef54aa17bd8dd0531d8a9cf62dbba0e7f9fb3a9b9196be128c",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "stage": "ShutdownBoundaryRegressionTests-run",
+        "exit": 0,
+        "command": [
+          "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+          "D:\\Dev\\CB-GroundCollection-20261001\\Tools\\ShutdownBoundaryRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\ShutdownBoundaryRegressionTests.dll"
+        ],
+        "started_utc": "2026-10-01T08:49:50.062899+00:00",
+        "log_sha256": "be253e2c87c749b18a05e1b4569c90e8ce36ad7a56b26951e620cd89211ae791",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "stage": "ElevatorSafetyRegressionTests-build",
+        "exit": 0,
+        "command": [
+          "dotnet",
+          "build",
+          "Tools/ElevatorSafetyRegressionTests/ElevatorSafetyRegressionTests.csproj",
+          "-c",
+          "Release",
+          "-p:Platform=x86",
+          "-p:PlatformTarget=x86",
+          "-v",
+          "quiet"
+        ],
+        "started_utc": "2026-10-01T08:49:50.263949+00:00",
+        "log_sha256": "b12c8e2e9137997626cd34e4d1001e90175ba93f40a3726f3371c96f0bcc120f",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "stage": "ElevatorSafetyRegressionTests-run",
+        "exit": 0,
+        "command": [
+          "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+          "D:\\Dev\\CB-GroundCollection-20261001\\Tools\\ElevatorSafetyRegressionTests\\bin\\x86\\Release\\net10.0\\ElevatorSafetyRegressionTests.dll"
+        ],
+        "started_utc": "2026-10-01T08:49:51.827004+00:00",
+        "log_sha256": "34f1ff6700b0e015db8f3b70e93d06a1766c29c17336152bb37ade309b7b261b",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "stage": "PaladinDecisionRegressionTests-build",
+        "exit": 0,
+        "command": [
+          "dotnet",
+          "build",
+          "Tools/PaladinDecisionRegressionTests/PaladinDecisionRegressionTests.csproj",
+          "-c",
+          "Release",
+          "-p:Platform=x86",
+          "-p:PlatformTarget=x86",
+          "-v",
+          "quiet"
+        ],
+        "started_utc": "2026-10-01T08:49:51.949664+00:00",
+        "log_sha256": "342c0f905c35cd2946e87cbb045eec1fb63f49653c247672e50fccd60a28777b",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "stage": "PaladinDecisionRegressionTests-run",
+        "exit": 0,
+        "command": [
+          "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+          "D:\\Dev\\CB-GroundCollection-20261001\\Tools\\PaladinDecisionRegressionTests\\bin\\x86\\Release\\net10.0\\PaladinDecisionRegressionTests.dll"
+        ],
+        "started_utc": "2026-10-01T08:49:53.506416+00:00",
+        "log_sha256": "5d9c03f6982fa23e6e6ba78d29924328aee6afb2beaf0e0115e1c81c506e5d61",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "stage": "GroupEngagementRegressionTests-build",
+        "exit": 0,
+        "command": [
+          "dotnet",
+          "build",
+          "Tools/GroupEngagementRegressionTests/GroupEngagementRegressionTests.csproj",
+          "-c",
+          "Release",
+          "-p:Platform=x86",
+          "-p:PlatformTarget=x86",
+          "-v",
+          "quiet"
+        ],
+        "started_utc": "2026-10-01T08:49:53.760941+00:00",
+        "log_sha256": "342c0f905c35cd2946e87cbb045eec1fb63f49653c247672e50fccd60a28777b",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "stage": "GroupEngagementRegressionTests-run",
+        "exit": 0,
+        "command": [
+          "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+          "D:\\Dev\\CB-GroundCollection-20261001\\Tools\\GroupEngagementRegressionTests\\bin\\x86\\Release\\net10.0\\GroupEngagementRegressionTests.dll"
+        ],
+        "started_utc": "2026-10-01T08:49:55.304085+00:00",
+        "log_sha256": "756f8be7fdbaca4227b2d724ee5599a4088360b5fdd9fe1f49440c9378d04e46",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "stage": "PaladinSupportRegressionTests-build",
+        "exit": 0,
+        "command": [
+          "dotnet",
+          "build",
+          "Tools/PaladinSupportRegressionTests/PaladinSupportRegressionTests.csproj",
+          "-c",
+          "Release",
+          "-p:Platform=x86",
+          "-p:PlatformTarget=x86",
+          "-v",
+          "quiet"
+        ],
+        "started_utc": "2026-10-01T08:49:55.417035+00:00",
+        "log_sha256": "45006f66327cff01b8cc4da4c7b4cc60edebb6d0cb5c7af0c033503f111adec3",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "stage": "PaladinSupportRegressionTests-run",
+        "exit": 0,
+        "command": [
+          "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+          "D:\\Dev\\CB-GroundCollection-20261001\\Tools\\PaladinSupportRegressionTests\\bin\\x86\\Release\\net10.0\\PaladinSupportRegressionTests.dll"
+        ],
+        "started_utc": "2026-10-01T08:49:56.994955+00:00",
+        "log_sha256": "939498be235d5c8a1cb782b65f4975511ec766438e6db57c76a5a43890afab2a",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "stage": "WholesomeSaleRegressionTests-build",
+        "exit": 0,
+        "command": [
+          "dotnet",
+          "build",
+          "Tools/WholesomeSaleRegressionTests/WholesomeSaleRegressionTests.csproj",
+          "-c",
+          "Release",
+          "-p:Platform=x86",
+          "-p:PlatformTarget=x86",
+          "-v",
+          "quiet"
+        ],
+        "started_utc": "2026-10-01T08:49:57.399773+00:00",
+        "log_sha256": "ceaef8bb3ee64b8d8af029f4afa0e2febdf5841a660653eb7b654b67326efb19",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "stage": "WholesomeSaleRegressionTests-run",
+        "exit": 0,
+        "command": [
+          "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+          "D:\\Dev\\CB-GroundCollection-20261001\\Tools\\WholesomeSaleRegressionTests\\bin\\x86\\Release\\net10.0\\WholesomeSaleRegressionTests.dll"
+        ],
+        "started_utc": "2026-10-01T08:49:59.186499+00:00",
+        "log_sha256": "40d91bca9db537597a65da1be0bde796b0e3d50f8d9b2d9084c59d90ed12f24a",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "stage": "QuestLogObservationRegressionTests-build",
+        "exit": 0,
+        "command": [
+          "dotnet",
+          "build",
+          "Tools/QuestLogObservationRegressionTests/QuestLogObservationRegressionTests.csproj",
+          "-c",
+          "Release",
+          "-p:Platform=x86",
+          "-p:PlatformTarget=x86",
+          "-v",
+          "quiet"
+        ],
+        "started_utc": "2026-10-01T08:49:59.310115+00:00",
+        "log_sha256": "e81a1aaacb2c1860277ff3cb6700ef89c61b999f51bc4e0e06fc2a5261895d68",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "stage": "QuestLogObservationRegressionTests-run",
+        "exit": 0,
+        "command": [
+          "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+          "D:\\Dev\\CB-GroundCollection-20261001\\Tools\\QuestLogObservationRegressionTests\\bin\\x86\\Release\\net10.0\\QuestLogObservationRegressionTests.dll"
+        ],
+        "started_utc": "2026-10-01T08:50:01.392300+00:00",
+        "log_sha256": "4cbc7b3dee9c4ef9067d625ad41a7b105e1f055d2261b0c027314966859b4077",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "stage": "QuestCompletionOwnerRegressionTests-build",
+        "exit": 0,
+        "command": [
+          "dotnet",
+          "build",
+          "Tools/QuestCompletionOwnerRegressionTests/QuestCompletionOwnerRegressionTests.csproj",
+          "-c",
+          "Release",
+          "-p:Platform=x86",
+          "-p:PlatformTarget=x86",
+          "-v",
+          "quiet"
+        ],
+        "started_utc": "2026-10-01T08:50:01.598827+00:00",
+        "log_sha256": "ba85eb0eb026b30c46ccc526fda037698b4fb58cde3ddc94fb18e16f50b9466b",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "stage": "QuestCompletionOwnerRegressionTests-run",
+        "exit": 0,
+        "command": [
+          "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+          "D:\\Dev\\CB-GroundCollection-20261001\\Tools\\QuestCompletionOwnerRegressionTests\\bin\\x86\\Release\\net10.0\\QuestCompletionOwnerRegressionTests.dll",
+          "D:\\Dev\\CopilotBuddy-Evidence\\postmerge-20260929\\ground-complete-precommit-resume-v13-20261001\\completion-cases.json",
+          "D:\\Dev\\CopilotBuddy-Evidence\\postmerge-20260929\\ground-complete-precommit-resume-v13-20261001\\source-identity.json"
+        ],
+        "started_utc": "2026-10-01T08:50:03.387066+00:00",
+        "log_sha256": "f2064297e7622362c58b7c2e74e770374db1386f7f7cbb48a16c4797dc44960a",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "stage": "QuestObservationBoundaryRegressionTests-build",
+        "exit": 0,
+        "command": [
+          "dotnet",
+          "build",
+          "Tools/QuestObservationBoundaryRegressionTests/QuestObservationBoundaryRegressionTests.csproj",
+          "-c",
+          "Release",
+          "-p:Platform=x86",
+          "-p:PlatformTarget=x86",
+          "-v",
+          "quiet"
+        ],
+        "started_utc": "2026-10-01T08:50:03.554026+00:00",
+        "log_sha256": "26abbd998a169f4e9c86c58d4a59f7dfa1f1e400f48ece9db4ac3e7860c98c21",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "stage": "QuestObservationBoundaryRegressionTests-run",
+        "exit": 0,
+        "command": [
+          "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+          "D:\\Dev\\CB-GroundCollection-20261001\\Tools\\QuestObservationBoundaryRegressionTests\\bin\\x86\\Release\\net10.0\\QuestObservationBoundaryRegressionTests.dll",
+          "D:\\Dev\\CopilotBuddy-Evidence\\postmerge-20260929\\ground-complete-precommit-resume-v13-20261001\\boundary-cases.json"
+        ],
+        "started_utc": "2026-10-01T08:50:05.092107+00:00",
+        "log_sha256": "f587ede1f0e97889d86552f08b7c902b013a6fa7373d49ea63cfb4a584447825",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "stage": "Host",
+        "exit": 0,
+        "command": [
+          "dotnet",
+          "build",
+          "CopilotBuddy.csproj",
+          "-c",
+          "Release",
+          "-p:Platform=x86",
+          "-p:PlatformTarget=x86",
+          "-v",
+          "quiet"
+        ],
+        "started_utc": "2026-10-01T08:50:05.269052+00:00",
+        "log_sha256": "4ba623d015888ce42dd748f10345de1a0f7bd176bedcd20854f0a47e5ccb4d65",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "stage": "Analyzers",
+        "exit": 0,
+        "command": [
+          "C:\\Users\\Jeof\\scoop\\apps\\python311\\current\\python.exe",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "Tools/EvidenceAudit",
+          "-p",
+          "test_*.py",
+          "-v"
+        ],
+        "started_utc": "2026-10-01T08:50:07.497992+00:00",
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderr_sha256": "395503137d8f0c14756cc0df972476e3a9e1798cb14a70958e1fba05c50b493e"
+      }
+    ],
+    "scoped_summary_lines": [
+      "Execution diagnostic fields: 33/33; actual quest/profile/player capture; null inventory remains unknown; no tree created or game action.",
+      "Execution watchdog scenarios: 13/13; failed=0; actual episode clock and recovery budget; no client side effects.",
+      "Quest loot handoff scenarios: 1/1; assertions=0; unexpected=0; actual caller factories/admission/POI actions and real TreeSharp; controlled world/target callbacks; no loot-frame or native acknowledgement provenance.",
+      "Acknowledged ground pipeline four source alternatives: scheduler/profile -> actual source predicate/acquisition -> supported landing/dismount -> owned interaction/loot x30 -> separate delayed inventory replies -> partial/full objective -> separate server-ready -> ender travel/interaction -> actual reward selection/one submission -> separate history reply -> next scheduling. Native world, collision, live UI/server timing and realm completion remain UNPROVEN.",
+      "Quest loot handoff scenarios: 1/1; assertions=0; unexpected=0; actual caller factories/admission/POI actions and real TreeSharp; controlled world/target callbacks; no loot-frame or native acknowledgement provenance.",
+      "Acknowledged ground pipeline shipped10161 model: scheduler/profile -> actual source predicate/acquisition -> supported landing/dismount -> owned interaction/loot x30 -> separate delayed inventory replies -> partial/full objective -> separate server-ready -> ender travel/interaction -> actual reward selection/one submission -> separate history reply -> next scheduling. Native world, collision, live UI/server timing and realm completion remain UNPROVEN.",
+      "Ground collection source scenarios: 15/15; assertions=0; unexpected=0; actual source predicate and allocated descriptors; no live execution proof.",
+      "Ground hotspot arrival: 3/3; actual collection factory and area owner; no physical travel or live completion claim.",
+      "Quest item progress scenarios: 33/33; assertions=0; unexpected=0; complete UseItemOn/TreeSharp and inherited host quest reader; controlled raw quest bytes/world callbacks; no game attached.",
+      "Quest item progress scenarios: 18/18; assertions=0; unexpected=0; actual inventory/quest readers and progress monitor; no live realm.",
+      "Quest loot handoff scenarios: 348/348; assertions=0; unexpected=0; actual caller factories/admission/POI actions and real TreeSharp; controlled world/target callbacks; no loot-frame or native acknowledgement provenance.",
+      "Turn-in execution scenarios: 11/11; complete turn-in/reward/frame owners, actual Lua5.1, explicit delayed server observations; no client connection."
+    ]
+  },
+  "historical_corrections": [
+    "Four alternative source rows initially reused Index0. Unique alternative indices0..3 preserve the native item slot0 distinction; the original fixture and failed receipt remain retained.",
+    "The actual shipped model has one source183394; a separate test loads its exact JSON/repairs/relations/spawns and records all four input hashes.",
+    "The real ender lies beyond the initial250-yard scan. The corrected fixture executes the existing bounded250-to1000 radius expansion rather than changing source coordinates or production scheduling.",
+    "The complete turn-in fixture initially had build-only dependency and raw-string aggregation errors. Those are not counted as behavioral failing-before evidence.",
+    "Earlier run labels containing green may contain failures. The preserved result and exit status, not the label, are authoritative."
+  ],
+  "exact_final_commit_acceptance_pending": true,
+  "live_completion_proven": false
+}
