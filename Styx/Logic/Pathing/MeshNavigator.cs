@@ -982,12 +982,18 @@ namespace Styx.Logic.Pathing
 			return true;
 		}
 
-		private bool TryRepathAroundLiveCollision(
+			private bool TryRepathAroundLiveCollision(
 			LocalPlayer me,
 			WoWPoint clickPoint,
 			bool isFinalMovePoint)
-		{
-			if (!_liveCollisionProbeTimer.IsFinished)
+			{
+				var request = new MovementRequestObservation(this);
+				if (!ReferenceEquals(request.Player, me) || !request.IsCurrent(this) || !me.IsValid || !me.IsAlive)
+					return false;
+				ulong actorGuid = me.Guid;
+				uint mapId = me.MapId;
+				bool Current() => request.IsCurrent(this) && me.IsValid && me.IsAlive && me.Guid == actorGuid && me.MapId == mapId;
+				if (!_liveCollisionProbeTimer.IsFinished)
 				return false;
 			_liveCollisionProbeTimer.Reset();
 
@@ -1002,7 +1008,9 @@ namespace Styx.Logic.Pathing
 				return false;
 			}
 
-			WoWPoint location = me.Location;
+				WoWPoint location = me.Location;
+				if (!Current() || !IsFiniteRoutePoint(location) || !IsFiniteRoutePoint(clickPoint))
+					return false;
 			float clickDistance = location.Distance2D(clickPoint);
 			float probeDistance = Math.Min(LiveCollisionProbeDistance, clickDistance);
 			if (probeDistance < 2f)
@@ -1018,24 +1026,26 @@ namespace Styx.Logic.Pathing
 				location.Z + (clickPoint.Z - location.Z) * scale);
 			WoWPoint probeStartRaised = location.Add(0f, 0f, 1.2f);
 			WoWPoint probeEndRaised = probeEnd.Add(0f, 0f, 1.2f);
-			bool traceHit = GameWorld.TraceLine(
+				bool traceHit = GameWorld.TraceLine(
 				probeStartRaised,
 				probeEndRaised,
 				GameWorld.CGWorldFrameHitFlags.HitTestWMO
 					| GameWorld.CGWorldFrameHitFlags.HitTestBoundingModels,
-				out WoWPoint raisedHitPoint);
+					out WoWPoint raisedHitPoint);
+				if (!Current()) return false;
 			float hitDistance = traceHit
 				? probeStartRaised.Distance2D(raisedHitPoint)
 				: 0f;
 			if (traceHit && ObjectManager.GetObjectsOfType<WoWGameObject>(false, false)
 					.Any(go => IsOpenableDoor(go, me)
 						&& go.Location.Distance2DSqr(raisedHitPoint) <= 16f))
-			{
-				_liveCollisionTracker.Reset();
-				return false;
-			}
+				{
+					if (Current()) _liveCollisionTracker.Reset();
+					return false;
+				}
 
-			if (!_liveCollisionTracker.Observe(
+				if (!Current()) return false;
+				if (!_liveCollisionTracker.Observe(
 					traceHit,
 					raisedHitPoint,
 					hitDistance,
@@ -1064,19 +1074,39 @@ namespace Styx.Logic.Pathing
 				&& (!isFinalMovePoint || destinationDistanceSqr > 100f);
 		}
 
-		internal void ApplyConfirmedLiveCollision(WoWPoint obstruction, float hitDistance)
-		{
-			Logging.WriteDiagnostic(
+			internal void ApplyConfirmedLiveCollision(WoWPoint obstruction, float hitDistance)
+			{
+				var request = new MovementRequestObservation(this);
+				var actor = request.Player;
+				if (actor == null || !actor.IsValid || !actor.IsAlive || !IsFiniteRoutePoint(obstruction)
+					|| !float.IsFinite(hitDistance) || hitDistance < 0 || !request.IsCurrent(this)) return;
+				ulong actorGuid = actor.Guid;
+				uint mapId = actor.MapId;
+				var handler = StuckHandler;
+				var path = _currentPath.ToArray();
+				int index = _currentPathIndex;
+				bool Current() => request.IsCurrent(this) && actor.IsValid && actor.IsAlive && actor.Guid == actorGuid
+					&& actor.MapId == mapId && ReferenceEquals(StuckHandler, handler)
+					&& _currentPathIndex == index && _currentPath.SequenceEqual(path);
+				if (!Current()) return;
+				Logging.WriteDiagnostic(
 				"[Nav] Confirmed live collision {0:F1}y ahead at {1}; blackspotting and regenerating path.",
-				hitDistance,
-				obstruction);
-			if (!BlackspotManager.IsBlackspotted(obstruction))
-				BlackspotManager.AddBlackspot(obstruction, 3f, 4f, "LiveCollision");
+					hitDistance,
+					obstruction);
+				if (!Current()) return;
+				if (!BlackspotManager.IsBlackspotted(obstruction))
+				{
+					if (!Current()) return;
+					BlackspotManager.AddTemporaryCollisionBlackspot(
+						new Styx.Logic.Profiles.Blackspot(obstruction, 3f, 4f), mapId, TimeSpan.FromSeconds(30));
+				}
+				if (!Current()) return;
 			_liveCollisionRepathTimer.Reset();
 			_currentPath.Clear();
 			_currentPathIndex = 0;
 			_cachedPushAheadIndex = -1;
-			try { StuckHandler.Reset(); } catch { }
+				try { handler.Reset(); }
+					catch (Exception error) { ObservationUnavailableException.RethrowCancellation(error); }
 		}
 
 		/// <summary>
