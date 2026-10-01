@@ -16,6 +16,8 @@ Full logs, current deployment hashes, protected settings/state hashes, IDA captu
 
 Wholesome's rest, pickup, rescan, vendor, progress and pre-death consumers defer decisions requiring unavailable aura coverage. An unknown rest observation suspends active quest-time accounting and clears stale death attribution; it cannot charge a failure episode or become proof that the character is not eating/drinking. A later complete observation resumes sampling. Existing grounded GameObject, quest progress and recovery ownership contracts remain in place.
 
+Missing loot/combat-target coverage also prevents rest admission. The routine releases its own pause independently of those observations so an invalid water-rest pause cannot starve movement or air recovery. It does not relabel missing threat/loot observations as an empty safe area. Existing dry/wet rest cases retain their assertions; the fixture now explicitly supplies a complete empty target observation for its healthy controls.
+
 The worker contains understood optional observation failures from the bot pulse and allows independent root/death/recovery decisions to run. It rechecks run and bot ownership before subsequent root actions. Explicit Stop and direct or reflection-wrapped cancellation/interruption propagate. Cleanup uses the bot owned at worker entry, so changing bots cannot stop the replacement bot.
 
 Target filtering now publishes only after every required filter completes. Readers reject a not-yet-observed, in-flight, failed or missing-world publication instead of using an old, partially filtered or manufactured-empty target list. A filter failure aborts subsequent filters. Clearing candidates does not convert UNKNOWN into a complete observation. Shared targeting/healing pulses and individual event checkers contain understood unavailable observations while allowing independent later observation owners to run. Stop fences prevent later pulse/event work after run ownership is revoked.
@@ -32,6 +34,8 @@ The historical logs did not record the actual Spell table header, sparse slot, c
 
 Six permanent regression groups contain 96 scenarios: 12 actual worker cases, seven consumer-deferral cases, 16 metadata-diagnostic cases, 21 shared pulse/event cases, 27 targeting-publication cases, and 13 diagnostic-lifecycle cases. The worker and consumer tests use actual runtime owners with controlled allocated test-process memory; the target publication test executes the extracted production filter/publication/readers with a controlled frame/world boundary. No game process or native/game dispatch is installed by these tests.
 
+Eight additional cases extend the existing aquatic-rest group, covering unavailable loot/combat observations on dry/wet ground with and without an existing pause. This brings the new scenarios in this iteration to 104. The first full 34-stage run at b784223a exposed this rest dependency; 33 stages passed and the failing Wholesome group was retained. The focused reproduction passed its 19 healthy controls and failed eight assertions before the repair (`aura-rest-target-red-20261002`); the repair passed all 27 aquatic cases and all six selected groups (`aura-rest-target-green-20261002`). That focused result is not a replacement for the subsequent complete gate.
+
 Retained failing-before/repair receipts are under `D:/Dev/CopilotBuddy-Evidence/postmerge-20260930-pr61`:
 
 | Failure family | Behavioral red receipt | Repair receipt |
@@ -47,6 +51,8 @@ Earlier fixture compilation/setup errors are retained but are not counted as beh
 ## Continuing incidents and limits
 
 The 21:11 timeline proves initial flight selection, debris183395 acquisition, landing/dismount attempts, combat with a Bonestripper Buzzard, a later `Looting Zeppelin Debris` submission, and selection of distinct debris183397 before another aura failure. It also records Holy Light at21:14:57.743 and eating Smoked Talbuk Venison at21:14:58.777. It does not by itself prove 30 authoritative debris increments or completion/turn-in. The two Divine Protection requests at21:12:52.889 and21:12:55.897 remain an action-acknowledgement/arbitration incident, not evidence that both casts succeeded.
+
+The separately preserved recovery record adds evidence absent from the short log excerpts: quest10161 recorded “Objective counter or required item count increased” at 21:15:15.409 local, with count vector `[0,0,0,0,14,0,0,0,0,0,0,0,0,0]`. The unchanged deployed `QuestProgressObservation` places required carried-item quantities after four normal counters, so the recorded 14 is in its first required-item slot. The original runtime item-ID array and immediately preceding count vector were not retained in that record; it is evidence of recognized inventory/counter progress, not a complete per-object interaction acknowledgement or proof of all 30 pieces.
 
 The preserved recovery ledger has 369 records. Its 65 invalid-data quarantines have six-hour probe deadlines; 13 `LegacyUnknown` quest-stage quarantines come from imported `quest_blacklist.txt` evidence and have no probe deadline. No cross-quest `SourceKey` was found in the persisted evidence. These are distinct provenance families needing scope/context/retry review; the observations neither establish nor rule out scheduler starvation. No recovery state was deleted or rewritten during this pass.
 

@@ -1311,25 +1311,15 @@ namespace WholesomeAQ
             RunPendingRefresh();
             if (StyxWoW.IsInGame && StyxWoW.Me != null)
             {
-                PoiType poiType = BotPoi.Current.Type;
-                bool hasPendingLoot = poiType == PoiType.Loot
-                    || poiType == PoiType.Skin
-                    || poiType == PoiType.Harvest
-                    || Styx.Logic.LootTargeting.Instance.FirstObject != null;
-                var immediateTarget = Styx.Logic.Targeting.Instance.FirstUnit;
-                bool hasImmediateThreat = WholesomeRestPolicy.HasImmediateThreat(
-                    StyxWoW.Me.Combat,
-                    immediateTarget != null
-                    && immediateTarget.IsHostile
-                    && immediateTarget.IsTargetingMeOrPet);
-
                 // Consumables cannot start in water or an unknown liquid observation.
                 // Release only the routine rest pause so movement/air recovery is not
                 // held behind a thirty-second wait for an impossible food/drink aura.
                 bool canRestHere = !StyxWoW.Me.Dead && !StyxWoW.Me.IsGhost
                     && !StyxWoW.Me.IsOnTransport && !StyxWoW.Me.IsFlying
                     && !LiquidEnvironment.IsPlayerInLiquid(StyxWoW.Me);
-                if (!canRestHere)
+                bool hasPendingLoot = false, hasImmediateThreat = false;
+                bool restWorkKnown = canRestHere && TryObserveRestWork(out hasPendingLoot, out hasImmediateThreat);
+                if (!canRestHere || !restWorkKnown)
                     _restingPaused = false;
 
                 if (_restingPaused)
@@ -1383,7 +1373,7 @@ namespace WholesomeAQ
                     _lastFacingLog = DateTime.Now;
                 }
 
-                if (canRestHere && !_restingPaused && !StyxWoW.Me.Combat && DateTime.Now > _restTimeoutEnd)
+                if (canRestHere && restWorkKnown && !_restingPaused && !StyxWoW.Me.Combat && DateTime.Now > _restTimeoutEnd)
                 {
                     bool usesMana = StyxWoW.Me.MaxMana > 0;
                     if (WholesomeRestPolicy.ShouldStartRest(
@@ -1568,6 +1558,28 @@ namespace WholesomeAQ
             Log($"Previously ready quest(s) left the observed log: {string.Join(",", departed)} — triggering rescan");
             RequestRefresh("Previously ready quest left the observed log; queuing one scheduler rebuild.");
             return true;
+        }
+
+        private static bool TryObserveRestWork(out bool hasPendingLoot, out bool hasImmediateThreat)
+        {
+            hasPendingLoot = hasImmediateThreat = false;
+            try
+            {
+                PoiType poiType = BotPoi.Current.Type;
+                hasPendingLoot = poiType == PoiType.Loot || poiType == PoiType.Skin || poiType == PoiType.Harvest
+                    || Styx.Logic.LootTargeting.Instance.FirstObject != null;
+                var target = Styx.Logic.Targeting.Instance.FirstUnit;
+                hasImmediateThreat = WholesomeRestPolicy.HasImmediateThreat(StyxWoW.Me.Combat,
+                    target != null && target.IsHostile && target.IsTargetingMeOrPet);
+                return true;
+            }
+            catch (ObservationUnavailableException error)
+            {
+                // Releasing this routine's pause is independent of proving the
+                // area clear or loot absent. No rest action is admitted on UNKNOWN.
+                Logging.WriteException(error);
+                return false;
+            }
         }
 
         internal static bool TryObserveRestAuras(Styx.WoWInternals.WoWObjects.LocalPlayer actor,

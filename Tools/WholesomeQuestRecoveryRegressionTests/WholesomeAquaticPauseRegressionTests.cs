@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
 using System.Threading;
 using Styx.Helpers;
+using Styx.Logic;
 using Styx.Logic.BehaviorTree;
 using Styx.Logic.Pathing;
 using Styx.Logic.POI;
@@ -41,6 +42,14 @@ internal static class WholesomeAquaticPauseRegressionTests
         cases.Add(("paused health recovery retries a fresh food observation", f => f.PendingRetry(false)));
         cases.Add(("paused mana recovery retries a fresh drink observation", f => f.PendingRetry(true)));
         cases.Add(("session restart cannot retain an old rest pause", f => f.ResetSession()));
+        foreach (bool loot in new[] { false, true })
+        foreach (bool wet in new[] { false, true })
+        foreach (bool existing in new[] { false, true })
+        {
+            bool lootUnknown = loot, inWater = wet, paused = existing;
+            cases.Add(($"unknown {(lootUnknown ? "loot" : "combat")} observation: wet={inWater} existing={paused}",
+                f => f.UnknownTargets(lootUnknown, inWater, paused)));
+        }
         int passed = 0, assertions = 0, unexpected = 0;
         foreach (var c in cases)
         {
@@ -67,12 +76,23 @@ internal static class WholesomeAquaticPauseRegressionTests
         private readonly FieldInfo moverField = typeof(Navigator).GetField("_playerMover", Static)!;
         private readonly FieldInfo poiField = typeof(BotPoi).GetField("_current", Static)!;
         private readonly object? previousMover, previousPoi;
+        private readonly Targeting previousTargets = Targeting.Instance;
+        private readonly FieldInfo lootField = typeof(LootTargeting).GetField("_instance", Static)!;
+        private readonly object? previousLoot;
+        private readonly Targeting targets = new();
+        private readonly LootTargeting lootTargets = (LootTargeting)Activator.CreateInstance(typeof(LootTargeting), true)!;
         private readonly WaitTimer food = (WaitTimer)typeof(CoreRest).GetField("_feedTimer", Static)!.GetValue(null)!;
         private readonly WaitTimer drink = (WaitTimer)typeof(CoreRest).GetField("_drinkTimer", Static)!.GetValue(null)!;
         internal Fixture()
         {
             world = Activator.CreateInstance(typeof(AquaticObservationRegressionTests).GetNestedType("Fixture", BindingFlags.NonPublic)!, true)!;
             player = ObjectManager.Me;
+            previousLoot = lootField.GetValue(null);
+            // Supply complete observations at the fixture's world boundary. The
+            // actual Targeting readers still enforce unavailable publications.
+            typeof(Targeting).GetProperty("ObjectList", Hidden)!.SetValue(targets, new List<WoWObject>());
+            typeof(Targeting).GetProperty("ObjectList", Hidden)!.SetValue(lootTargets, new List<WoWObject>());
+            Targeting.Instance = targets; lootField.SetValue(null, lootTargets);
             previousMover = moverField.GetValue(null); previousPoi = poiField.GetValue(null);
             moverField.SetValue(null, mover); poiField.SetValue(null, new BotPoi(PoiType.None));
             Set("_stopped", false);
@@ -169,8 +189,27 @@ internal static class WholesomeAquaticPauseRegressionTests
                 Get<DateTime>("_restTimeoutEnd") == DateTime.MinValue,
                 "a previous run retained authority to pause or defer recovery");
         }
+        internal void UnknownTargets(bool loot, bool wet, bool existing)
+        {
+            if (existing) SeedPause();
+            if (wet) WorldCall("Swim", true); else Prime();
+            var owner = loot ? (Targeting)lootTargets : targets;
+            typeof(Targeting).GetMethod("MarkObservationUnavailable", Hidden)!
+                .Invoke(owner, new object[] { "controlled unavailable rest-work observation" });
+            DateTime feedStart = food.StartTime, drinkStart = drink.StartTime;
+            try { bot.Pulse(); }
+            catch (ObservationUnavailableException error)
+            { throw new AssertionFailure("optional target observation blocked rest lifecycle: " + error.Message); }
+            Check(!Paused && mover.Stops == 0, "UNKNOWN target work held or authorized a routine rest pause");
+            Check(food.StartTime == feedStart && drink.StartTime == drinkStart,
+                "unknown threat/loot observations authorized a consumable request");
+            bool stillUnknown = false;
+            try { _ = owner.TargetList; } catch (ObservationUnavailableException) { stillUnknown = true; }
+            Check(stillUnknown, "rest handling relabeled incomplete target coverage as known empty");
+        }
         public void Dispose()
         {
+            Targeting.Instance = previousTargets; lootField.SetValue(null, previousLoot);
             moverField.SetValue(null, previousMover); poiField.SetValue(null, previousPoi);
             ((IDisposable)world).Dispose();
         }
