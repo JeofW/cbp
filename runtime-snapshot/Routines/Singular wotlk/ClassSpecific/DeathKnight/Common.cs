@@ -1,4 +1,4 @@
-﻿using CommonBehaviors.Actions;
+using CommonBehaviors.Actions;
 using Singular.Dynamics;
 using Singular.Helpers;
 using Singular.Managers;
@@ -7,6 +7,7 @@ using Styx;
 using Styx.Combat.CombatRoutine;
 using Styx.Logic.Pathing;
 using TreeSharp;
+using Action = TreeSharp.Action;
 
 namespace Singular.ClassSpecific.DeathKnight
 {
@@ -91,7 +92,10 @@ namespace Singular.ClassSpecific.DeathKnight
                         ret => TalentManager.CurrentSpec == TalentSpec.UnholyDeathKnight || TalentManager.CurrentSpec == TalentSpec.FrostDeathKnight),
                     Spell.BuffSelf(
                         "Horn of Winter",
-                        ret => !StyxWoW.Me.HasAura("Horn of Winter") && !StyxWoW.Me.HasAura("Battle Shout"))
+                        // Original-era Horn/Strength of Earth cover Strength and
+                        // Agility; Battle Shout covers attack power. Preserve an
+                        // observed equivalent stat buff without guessing its rank.
+                        ret => !StyxWoW.Me.HasAura("Horn of Winter") && !StyxWoW.Me.HasAura("Strength of Earth"))
                     );
         }
 

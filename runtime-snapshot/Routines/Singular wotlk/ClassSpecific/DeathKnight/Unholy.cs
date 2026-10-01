@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using CommonBehaviors.Actions;
 using Singular.Dynamics;
 using Singular.Helpers;
@@ -9,6 +9,7 @@ using Styx.Combat.CombatRoutine;
 using Styx.Logic.Combat;
 using Styx.Logic.Pathing;
 using TreeSharp;
+using Action = TreeSharp.Action;
 
 namespace Singular.ClassSpecific.DeathKnight
 {
@@ -74,10 +75,10 @@ namespace Singular.ClassSpecific.DeathKnight
                                         ret => StyxWoW.Me.CurrentTarget.HasMyAura("Blood Plague") &&
                                             StyxWoW.Me.CurrentTarget.HasMyAura("Frost Fever") &&
                                             Unit.NearbyUnfriendlyUnits.Count(u =>
-                                                    u.DistanceSqr < 10 * 10 && !u.HasMyAura("Blood Plague") &&
-                                                    !u.HasMyAura("Frost Fever")) > 0),
+                                                    u.DistanceSqr < 10 * 10 && (!u.HasMyAura("Blood Plague") ||
+                                                    !u.HasMyAura("Frost Fever"))) > 0),
                             // WotLK: Ghoul Frenzy for pet damage buff
-                            Spell.Cast("Ghoul Frenzy",
+                            Spell.Buff("Ghoul Frenzy", ret => StyxWoW.Me.Pet,
                                         ret => StyxWoW.Me.GotAlivePet && SpellManager.HasSpell("Ghoul Frenzy")),
                             // WotLK: Summon Gargoyle (major DPS cooldown)
                             Spell.Cast("Summon Gargoyle", ret => SingularSettings.Instance.DeathKnight.UseSummonGargoyle && StyxWoW.Me.CurrentTarget.IsBoss()),
@@ -98,7 +99,7 @@ namespace Singular.ClassSpecific.DeathKnight
 
                // WotLK Single Target Priority: D&D > Blood Strike > Scourge Strike > Death Coil
                // Ghoul Frenzy for pet buff
-               Spell.Cast("Ghoul Frenzy",
+               Spell.Buff("Ghoul Frenzy", ret => StyxWoW.Me.Pet,
                            ret => StyxWoW.Me.GotAlivePet && SpellManager.HasSpell("Ghoul Frenzy")),
                
                // Death and Decay (primary Frost+Unholy rune spender)
@@ -182,7 +183,8 @@ namespace Singular.ClassSpecific.DeathKnight
                Spell.Cast("Summon Gargoyle", ret => SingularSettings.Instance.DeathKnight.UseSummonGargoyle),
                
                // WotLK: Ghoul Frenzy for pet buff
-               Spell.Cast("Ghoul Frenzy", ret => StyxWoW.Me.GotAlivePet && SpellManager.HasSpell("Ghoul Frenzy")),
+               Spell.Buff("Ghoul Frenzy", ret => StyxWoW.Me.Pet,
+                          ret => StyxWoW.Me.GotAlivePet && SpellManager.HasSpell("Ghoul Frenzy")),
 
                // WotLK QC: Removed duplicate Lichborne — already handled above (lines 168-173) with proper settings guards
                
@@ -235,10 +237,10 @@ namespace Singular.ClassSpecific.DeathKnight
                                         ret => StyxWoW.Me.CurrentTarget.HasMyAura("Blood Plague") &&
                                             StyxWoW.Me.CurrentTarget.HasMyAura("Frost Fever") &&
                                             Unit.UnfriendlyUnitsNearTarget(10f).Count(u =>
-                                                    !u.HasMyAura("Blood Plague") &&
+                                                    !u.HasMyAura("Blood Plague") ||
                                                     !u.HasMyAura("Frost Fever")) > 0),
                             // WotLK: Ghoul Frenzy for AoE pet buff
-                            Spell.Cast("Ghoul Frenzy",
+                            Spell.Buff("Ghoul Frenzy", ret => StyxWoW.Me.Pet,
                                         ret => StyxWoW.Me.GotAlivePet && SpellManager.HasSpell("Ghoul Frenzy")),
                             Spell.CastOnGround("Death and Decay",
                                 ret => StyxWoW.Me.CurrentTarget.Location,
@@ -257,7 +259,8 @@ namespace Singular.ClassSpecific.DeathKnight
                Spell.Cast("Summon Gargoyle", ret => SingularSettings.Instance.DeathKnight.UseSummonGargoyle && StyxWoW.Me.CurrentTarget.IsBoss()),
                
                // WotLK: Ghoul Frenzy for single target
-               Spell.Cast("Ghoul Frenzy", ret => StyxWoW.Me.GotAlivePet && SpellManager.HasSpell("Ghoul Frenzy")),
+               Spell.Buff("Ghoul Frenzy", ret => StyxWoW.Me.Pet,
+                          ret => StyxWoW.Me.GotAlivePet && SpellManager.HasSpell("Ghoul Frenzy")),
                
                // WotLK Single Target: D&D > Blood Strike > Scourge Strike > Death Coil
                Spell.CastOnGround("Death and Decay",

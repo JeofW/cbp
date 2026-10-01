@@ -8,6 +8,7 @@ using Styx;
 using Styx.Combat.CombatRoutine;
 using Styx.Logic.Combat;
 using Styx.Logic.Pathing;
+using Styx.WoWInternals.WoWObjects;
 using TreeSharp;
 using Action = TreeSharp.Action;
 
@@ -15,6 +16,23 @@ namespace Singular.ClassSpecific.DeathKnight
 {
     public class Frost
     {
+        private static bool ShouldRefreshOwnDiseases()
+        {
+            // TC335 refreshes the primary victim only with Glyph of Disease.
+            // Observe our own active applications: a name-keyed dictionary can
+            // otherwise supply another Death Knight's expiry time.
+            if (!TalentManager.HasGlyph("Disease")) return false;
+            var me = StyxWoW.Me;
+            WoWUnit target = me == null ? null : me.CurrentTarget;
+            if (target == null || !target.IsValid || !target.IsAlive) return false;
+            var owned = target.GetAllAuras()
+                .Where(a => a != null && a.IsActive && a.CreatorGuid == me.Guid).ToArray();
+            var fever = owned.FirstOrDefault(a => a.Name == "Frost Fever");
+            var plague = owned.FirstOrDefault(a => a.Name == "Blood Plague");
+            return fever != null && plague != null
+                && (fever.TimeLeft.TotalSeconds < 3 || plague.TimeLeft.TotalSeconds < 3);
+        }
+
         #region Normal Rotations
 
         [Class(WoWClass.DeathKnight)]
@@ -75,7 +93,8 @@ namespace Singular.ClassSpecific.DeathKnight
                                   Spell.Cast("Pestilence",
                                         ret => StyxWoW.Me.CurrentTarget.HasMyAura("Frost Fever") &&
                                                StyxWoW.Me.CurrentTarget.HasMyAura("Blood Plague") &&
-                                               Unit.NearbyUnfriendlyUnits.Count(u => u.DistanceSqr < 10 * 10 && !u.HasMyAura("Frost Fever")) > 0),
+                                               Unit.NearbyUnfriendlyUnits.Count(u => u.DistanceSqr < 10 * 10 &&
+                                                   (!u.HasMyAura("Frost Fever") || !u.HasMyAura("Blood Plague"))) > 0),
                                   // Spam Howling Blast for AoE damage
                                   Spell.Cast("Howling Blast",
                                              ret => !StyxWoW.Me.CurrentTarget.IsImmune(WoWSpellSchool.Frost)),
@@ -96,9 +115,7 @@ namespace Singular.ClassSpecific.DeathKnight
                 
                 // Pestilence to refresh diseases (WotLK: Glyph of Disease)
                 Spell.Cast("Pestilence",
-                    ret => StyxWoW.Me.CurrentTarget.HasMyAura("Frost Fever") &&
-                           StyxWoW.Me.CurrentTarget.HasMyAura("Blood Plague") &&
-                           StyxWoW.Me.CurrentTarget.Auras["Frost Fever"].TimeLeft.TotalSeconds < 3),
+                    ret => ShouldRefreshOwnDiseases()),
                 
                 // Blood Strike if diseases need refresh or no Oblit
                 Spell.Cast("Blood Strike",
@@ -235,7 +252,8 @@ namespace Singular.ClassSpecific.DeathKnight
                                   Spell.Cast("Pestilence",
                                         ret => StyxWoW.Me.CurrentTarget.HasMyAura("Frost Fever") &&
                                                StyxWoW.Me.CurrentTarget.HasMyAura("Blood Plague") &&
-                                               Unit.NearbyUnfriendlyUnits.Count(u => u.DistanceSqr < 10 * 10 && !u.HasMyAura("Frost Fever")) > 0),
+                                               Unit.NearbyUnfriendlyUnits.Count(u => u.DistanceSqr < 10 * 10 &&
+                                                   (!u.HasMyAura("Frost Fever") || !u.HasMyAura("Blood Plague"))) > 0),
                                   Spell.Cast("Howling Blast",
                                              ret => !StyxWoW.Me.CurrentTarget.IsImmune(WoWSpellSchool.Frost)),
                                   Spell.CastOnGround("Death and Decay",
@@ -259,9 +277,7 @@ namespace Singular.ClassSpecific.DeathKnight
                 
                 // Pestilence for disease refresh
                 Spell.Cast("Pestilence",
-                    ret => StyxWoW.Me.CurrentTarget.HasMyAura("Frost Fever") &&
-                           StyxWoW.Me.CurrentTarget.HasMyAura("Blood Plague") &&
-                           StyxWoW.Me.CurrentTarget.Auras["Frost Fever"].TimeLeft.TotalSeconds < 3),
+                    ret => ShouldRefreshOwnDiseases()),
                 
                 Spell.Cast("Blood Strike", ret => !SpellManager.HasSpell("Obliterate")),
                 
