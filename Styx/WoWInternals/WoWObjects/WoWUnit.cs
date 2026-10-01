@@ -584,7 +584,9 @@ namespace Styx.WoWInternals.WoWObjects
             int max = GetMaxPower(p);
             if (max == 0)
                 return 0;
-            return Math.Min((double)(current * 100) / max, 100.0);
+            // Convert before multiplication: valid large-health observations can
+            // overflow int even though both descriptor values fit individually.
+            return Math.Min((double)current * 100 / max, 100.0);
         }
 
         public int CurrentHealth => GetCurrentPower(WoWPowerType.Health);

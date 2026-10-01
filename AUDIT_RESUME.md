@@ -1,3 +1,15 @@
+# Current: shared percentage continuation after verified production deployment — 1 October 2026
+
+Production and canonical master are `d6d2e303574bc80c39a5305e4362853e85c7b37e` from merged PR80, whose reviewed head is `58ea11df3852da21b315b3a8dffb4403e45cc313`. All 34 local commands, 4 quest stages, 3 applicable hosted workflows / 17 integrated suites, and 13 packaged plus 13 deployed runtime compilations passed. All 434 payload hashes match; 32 files changed and 2,004 protected files were preserved. Full production manifest: `D:/World of Warcraft 3.3.5a/CB/ReleaseData/Deployment-PR80-d6d2e303-20261001.json`, SHA256 `8421aed2d39b46a763c01212a4f3f39244102eb0cdf06e471adc12cb01a47255`. No game or live acceptance was performed.
+
+PR81 is ready, open and fully verified at `08c7ebd820a452f0b21bd64f2d5f30c8afcdb7bd` in `D:/Dev/CB-SingularEmergency-20261001`. Its 12-file Holy/Protection scope has 94 passing focused scenarios and unchanged optimized Ret source; all applicable hosted artifacts match 11,261 versioned inputs. It is not merged or deployed. Read its singular-emergency report and the 10-class/30-spec frontier there.
+
+Current independent scope: `D:/Dev/CB-ResourcePercent-20261001`, branch `audit/next-resource-percent-20261001`, based on `d6d2e303`. Read `docs/audit/2026-10-01/resource-percentage/REPORT.md` and `evidence.json`. The one-expression percentage overflow repair has 125 passing actual-memory scenarios after 66 failing-before assertions. Final exact candidate, publication and hosted state belongs to external `RESOURCE_PERCENT_CANDIDATE_20261001.json` and later receipts; do not infer those gates from this precommit note.
+
+Retain the exact 1,305 quest IDs in `docs/audit/2026-10-01/required-stock/remaining-category-ids.json`. Counts of 3,028 generic / 2 strategy / 921 data / 311 uncertain / 16 live / 57 unsupported total 4,335; the 261,306 dataset and 39 strategy checks are controlled owner proof. Preserve the historical source-review holds and exact evidence requirements; remaining offline work and the exhaustive class/race audit are not declared exhausted. Do not replay completed PR61–80 work or production replacement.
+
+## Preserved earlier handoff
+
 # Current: required-stock publication recovery — 1 October 2026
 
 The new session inspected the live repository and confirmed PR61 through PR79 are already merged. Canonical local/remote master is363f096764c61e1faf050fd6a638867f901e8dfd; the preserved required-stock implementation is05e59ef5f576c68298f091dff0eeda1ddfdf09c0. The two existing data-only observation fixture corrections and all recovery notes are being retained in one corrected candidate. Resolve the actual candidate and subsequent clean local/hosted/publication status from external REQUIRED_STOCK_FINAL_CANDIDATE.json and later receipts; this checkpoint does not itself claim those gates passed. Continue the exact1305 remaining IDs and the separate Singular audit. Do not replay PR61 deployment or any completed PR62–79 work.
