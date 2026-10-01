@@ -1,3 +1,11 @@
+# Current: preserved Death Knight contracts — 1 October 2026
+
+Continue D:/Dev/CB-DeathKnightContracts-20261001, branch audit/next-deathknight-contracts-20261001, from the recovered PR81 base08c7ebd820a452f0b21bd64f2d5f30c8afcdb7bd. Read docs/audit/2026-10-01/deathknight-contracts/REPORT.md and its source, test, review and frontier receipts. The preserved180-case repair was independently rerun during recovery; retained red has58 intended assertions and zero fixture errors. No prior work was discarded. Final candidate SHA, hosted acceptance and later integration/deployment must be read from live refs and external evidence; this source checkpoint does not invent a future commit identity.
+
+PR61 is already merged at3bc97e1e0b446aede269f7414c0c7c6358fdc192 from3f5715b6cc292b2086946a80471c4145471cbdd7. Fresh recovery verified canonical master and production atPR80 d6d2e303574bc80c39a5305e4362853e85c7b37e:434 payload hashes and2004 protected files match. The real historical450aea3a commit resolves;925ba02d does not. Published PR81 and PR82 are separately validated continuation scopes; inspect current refs before integration. Keep exactly1305 unresolved quest IDs, all prior protections and source/live limits. Continue Ret restriction-marker, shared resource, Death Knight and other-class audit work in focused PRs.
+
+## Preserved earlier handoff
+
 # Current: focused Singular emergency continuation — 1 October 2026
 
 PR80 is merged atd6d2e303574bc80c39a5305e4362853e85c7b37e after exact58ea11df local/hosted validation. Continue from D:/Dev/CB-SingularEmergency-20261001 on audit/next-singular-emergency-priority-20261001. Read docs/audit/2026-10-01/singular-emergency/REPORT.md and its focused-test/source/client/frontier evidence. The Holy/Protection fix has94 passing controlled factory scenarios and preserves all preexisting assertions and Ret source. Final candidate identity, local/hosted publication and deployment status belong to the external current-session receipts; do not infer them from this checkpoint.

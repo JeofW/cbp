@@ -1,0 +1,173 @@
+{
+  "runs": [
+    {
+      "label": "deathknight-contracts-red-20261001",
+      "summary_sha256": "ecce193a39a6794df0ede9ec529a7a4e1e0056f158c398201db6979125316663",
+      "source_manifest_sha256": "b5ac6f280fbda90702533f0754f61da9a28b09be3e8c62c3ed8e9795f762cbb5",
+      "source_identity": {
+        "production_commit": "08c7ebd820a452f0b21bd64f2d5f30c8afcdb7bd",
+        "production_tree": "6cd40826d5a94ff171fd6d1f30b5e28e2b9575c0",
+        "fixture_commit": "08c7ebd820a452f0b21bd64f2d5f30c8afcdb7bd",
+        "working_tree_modified": true,
+        "game_attached": false
+      },
+      "stages": [
+        {
+          "stage": "build",
+          "exit": 0,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PaladinSupportRegressionTests/PaladinSupportRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "ed3465e7c117c154549d7846ac7b6703789cd4213158a57fa30cbd3e5c487c91",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "run",
+          "exit": 3762504530,
+          "command": [
+            "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+            "D:\\Dev\\CB-DeathKnightContracts-20261001\\Tools\\PaladinSupportRegressionTests\\bin\\x86\\Release\\net10.0\\PaladinSupportRegressionTests.dll"
+          ],
+          "stdout_sha256": "975faf986e06675f31b5c43a5df4287845783dc601231d861fd6e4c8f843e094",
+          "stderr_sha256": "9171848f28cca7cb56171deb09172cefb67ede514726ca0a3eee8ee6b3bb4091"
+        }
+      ],
+      "scenario_summaries": [
+        "Blessing contribution scenarios: 63/63; assertions=0; unexpected=0; actual linked support owner; no game or DPS benchmark.",
+        "Death Knight contract scenarios: 122/180; assertions=58; unexpected=0; complete four classes, actual TreeSharp; controlled external boundaries; no game."
+      ]
+    },
+    {
+      "label": "deathknight-contracts-green-20261001",
+      "summary_sha256": "bc3854f50dcd80b315e551aff84229fab4ddecf7dada648da711d8fae3967d51",
+      "source_manifest_sha256": "180d166b8c4206d9481ddd7745a16a2477fbc2895154117cbb6cb80b14d7ef1f",
+      "source_identity": {
+        "production_commit": "08c7ebd820a452f0b21bd64f2d5f30c8afcdb7bd",
+        "production_tree": "6cd40826d5a94ff171fd6d1f30b5e28e2b9575c0",
+        "fixture_commit": "08c7ebd820a452f0b21bd64f2d5f30c8afcdb7bd",
+        "working_tree_modified": true,
+        "game_attached": false
+      },
+      "stages": [
+        {
+          "stage": "build",
+          "exit": 0,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PaladinSupportRegressionTests/PaladinSupportRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "5d8c4ea13a9cc0018674af836cf5962335010131b682b81c6ebac85107fc243c",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "run",
+          "exit": 0,
+          "command": [
+            "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+            "D:\\Dev\\CB-DeathKnightContracts-20261001\\Tools\\PaladinSupportRegressionTests\\bin\\x86\\Release\\net10.0\\PaladinSupportRegressionTests.dll"
+          ],
+          "stdout_sha256": "2b30526ce673637a80c9eea2d96af98e6720aa2c63f4de346753c62862a6d567",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "scenario_summaries": [
+        "Blessing contribution scenarios: 63/63; assertions=0; unexpected=0; actual linked support owner; no game or DPS benchmark.",
+        "Death Knight contract scenarios: 180/180; assertions=0; unexpected=0; complete four classes, actual TreeSharp; controlled external boundaries; no game.",
+        "Greater blessing scenarios: 87/87; assertions=0; unexpected=0; linked policy; controlled metadata/roster/dispatch; no game attached.",
+        "Lowbie aura coordination scenarios: 10/10; assertions=0; unexpected=0; linked full Lowbie; controlled observations; no game attached.",
+        "Paladin aura coordination scenarios: 70/70; assertions=0; unexpected=0; linked production selectors/trees; controlled observations; no game attached.",
+        "Paladin emergency scenarios: 94/94; assertions=0; unexpected=0; linked complete Holy/Protection; controlled observations/dispatch; no game attached.",
+        "PallyPower assignment scenarios: 19/19; assertions=0; unexpected=0; linked Paladin support; controlled read-only Lua observation; no addon/client attached.",
+        "Protection recovery scenarios: 53/53; assertions=0; unexpected=0; linked complete Protection; controlled dispatch/default-rest; no game attached.",
+        "Support action ownership scenarios: 63/63; assertions=0; unexpected=0; linked actual support selection/revalidation and blessing trees; controlled actor/roster/PallyPower response/dispatch; no native/frame/server proof.",
+        "Paladin support scenarios: 44/44; linked production decisions; controlled external observations/dispatch; no client attached."
+      ]
+    },
+    {
+      "label": "deathknight-resume-verified-20261001",
+      "summary_sha256": "7e2540f1e8f30e3cb28edd8d2a665a7662ac358f77328cedf304b78b132630b3",
+      "source_manifest_sha256": "180d166b8c4206d9481ddd7745a16a2477fbc2895154117cbb6cb80b14d7ef1f",
+      "source_identity": {
+        "production_commit": "08c7ebd820a452f0b21bd64f2d5f30c8afcdb7bd",
+        "production_tree": "6cd40826d5a94ff171fd6d1f30b5e28e2b9575c0",
+        "fixture_commit": "08c7ebd820a452f0b21bd64f2d5f30c8afcdb7bd",
+        "working_tree_modified": true,
+        "game_attached": false
+      },
+      "stages": [
+        {
+          "stage": "build",
+          "exit": 0,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PaladinSupportRegressionTests/PaladinSupportRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "71f0f18d680accf7f4a21e98ea40176423057087e408bf515e48bd59bb766239",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "run",
+          "exit": 0,
+          "command": [
+            "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+            "D:\\Dev\\CB-DeathKnightContracts-20261001\\Tools\\PaladinSupportRegressionTests\\bin\\x86\\Release\\net10.0\\PaladinSupportRegressionTests.dll"
+          ],
+          "stdout_sha256": "2b30526ce673637a80c9eea2d96af98e6720aa2c63f4de346753c62862a6d567",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "scenario_summaries": [
+        "Blessing contribution scenarios: 63/63; assertions=0; unexpected=0; actual linked support owner; no game or DPS benchmark.",
+        "Death Knight contract scenarios: 180/180; assertions=0; unexpected=0; complete four classes, actual TreeSharp; controlled external boundaries; no game.",
+        "Greater blessing scenarios: 87/87; assertions=0; unexpected=0; linked policy; controlled metadata/roster/dispatch; no game attached.",
+        "Lowbie aura coordination scenarios: 10/10; assertions=0; unexpected=0; linked full Lowbie; controlled observations; no game attached.",
+        "Paladin aura coordination scenarios: 70/70; assertions=0; unexpected=0; linked production selectors/trees; controlled observations; no game attached.",
+        "Paladin emergency scenarios: 94/94; assertions=0; unexpected=0; linked complete Holy/Protection; controlled observations/dispatch; no game attached.",
+        "PallyPower assignment scenarios: 19/19; assertions=0; unexpected=0; linked Paladin support; controlled read-only Lua observation; no addon/client attached.",
+        "Protection recovery scenarios: 53/53; assertions=0; unexpected=0; linked complete Protection; controlled dispatch/default-rest; no game attached.",
+        "Support action ownership scenarios: 63/63; assertions=0; unexpected=0; linked actual support selection/revalidation and blessing trees; controlled actor/roster/PallyPower response/dispatch; no native/frame/server proof.",
+        "Paladin support scenarios: 44/44; linked production decisions; controlled external observations/dispatch; no client attached."
+      ]
+    }
+  ],
+  "test_inputs_unchanged_between_red_and_green": true,
+  "test_input_sha256": {
+    "Tools/PaladinSupportRegressionTests/BlessingContributionRegressionTests.cs": "b82f32d6463db1cb0cc3270607178d21d8b2649d1fccf313add3ff8d6f51c3ec",
+    "Tools/PaladinSupportRegressionTests/BoundaryFixture.cs": "841581731ecfe9ed29f68616cc4186451351650a6d66b6786f51e6f0ff57f156",
+    "Tools/PaladinSupportRegressionTests/DeathKnightContractRegressionTests.cs": "c28a01bbfdef6a267019c3bad59b99b898c16a548253a074e9751b20321d770d",
+    "Tools/PaladinSupportRegressionTests/GreaterBlessingRegressionTests.cs": "2e0b3c03270efcbe047b30f10aa04b65bb421134075d21433331a503721b4021",
+    "Tools/PaladinSupportRegressionTests/LowbieAuraCoordinationRegressionTests.cs": "b7ea532a9de9003e045ac02deb8d9e828417547f2c5ff91af1ad75523c5bee0c",
+    "Tools/PaladinSupportRegressionTests/PaladinAuraCoordinationRegressionTests.cs": "f124f5a563745be31131ff430b9eb64ab550faedf9e5884bdf266f2d96b63012",
+    "Tools/PaladinSupportRegressionTests/PaladinEmergencyPriorityRegressionTests.cs": "e1c5895441f2284fada60dbc58c1298f137be92af72c86557135ac1d8c77a5f3",
+    "Tools/PaladinSupportRegressionTests/PaladinSupportRegressionTests.csproj": "79b0795dcb6d88e9469e2d3e66ea3910baeeeb72a96b7f01a15c00e202d30258",
+    "Tools/PaladinSupportRegressionTests/PallyPowerAssignmentRegressionTests.cs": "81d7f40d4a161b9446f6e95995662e4dd5767002c1513a5e57272bd29fcf79b3",
+    "Tools/PaladinSupportRegressionTests/Program.cs": "a87e2ad5dbce6c6b66add340863c943ead62a243fda29019546e411b4405a356",
+    "Tools/PaladinSupportRegressionTests/ProtectionRecoveryRegressionTests.cs": "b35f450e1d36234359b20ccb92a2eb2a62ca440b4600cee4fe2cef9a4a4dfae7",
+    "Tools/PaladinSupportRegressionTests/SupportActionOwnershipRegressionTests.cs": "b8ca6ef1cfcb333c116c8920a87b9217a87d5f1618270f028212ae8a7063ea9a"
+  },
+  "source_matches_fresh_resumed_run": true,
+  "exact_final_commit_acceptance_pending": true,
+  "live_completion_proven": false
+}

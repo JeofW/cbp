@@ -1,0 +1,4861 @@
+{
+  "client_build": 12340,
+  "primary_server": {
+    "repository": "TrinityCore/TrinityCore",
+    "reference": "8fda442f6c30ca21a622638063ab8b28376f1b25",
+    "path": "src/server/scripts/Spells/spell_dk.cpp",
+    "github_blob_sha1": "9c1dc4ba8389823349587dc0f455323d7068c9c0",
+    "content_sha256": "c8cffae736da46bc1aeb70a6f390e9e8e5dd98178973bc16d67c8d0406bf200a",
+    "bytes": 96743,
+    "retrieved_utc": "2026-10-01T02:52:19.123809+00:00",
+    "server_source_is_customized_live_realm_proof": false
+  },
+  "target_stat_enum": {
+    "repository": "TrinityCore/TrinityCore",
+    "reference": "8fda442f6c30ca21a622638063ab8b28376f1b25",
+    "path": "src/server/shared/SharedDefines.h",
+    "content_sha256": "b856c76d1743776e042acc21c9c3e9d3d24ac7b8d24542f0779b19c6b7007a54",
+    "github_blob_sha1": "19c6be643abd3f091bf328a8b1dd74bb6dcc104b",
+    "target_unit_pet": 5,
+    "retrieved_utc": "2026-10-01T03:05:54.283931+00:00",
+    "supporting_lines": [
+      {
+        "line": 1499,
+        "text": "TARGET_UNIT_PET                    = 5,"
+      }
+    ]
+  },
+  "aura_enum": {
+    "repository": "TrinityCore/TrinityCore",
+    "reference": "8fda442f6c30ca21a622638063ab8b28376f1b25",
+    "path": "src/server/game/Spells/Auras/SpellAuraDefines.h",
+    "github_blob_sha1": "356b6d45d918118585dbbb7c5abc7e9d031a020f",
+    "content_sha256": "f083b57e26b285a713059a3fc94331b237f6b402237eee8e7ff9fc1a9c6faed0",
+    "retrieved_utc": "2026-10-01T03:30:01.985590+00:00"
+  },
+  "client_fact_sha256": "0ddfdd7c82605689ba61d809634122ea25697af69fac25c0ef9916c5cc1d2cbc",
+  "dbc_schema": {
+    "url": "https://raw.githubusercontent.com/TrinityCore/TrinityCore/8fda442f6c30ca21a622638063ab8b28376f1b25/src/server/shared/DataStores/DBCStructure.h",
+    "file": "TC-DBCStructure.h",
+    "bytes": 93151,
+    "sha256": "82de42b23241e10bc736065ba90b071eed332d78fbfd3b96e913d65d1b794bf8"
+  },
+  "dbc_provenance": {
+    "Spell": {
+      "table": "Spell",
+      "archive": "D:\\World of Warcraft 3.3.5a\\Data\\enUS\\patch-enUS-3.MPQ",
+      "archive_bytes": 100373935,
+      "archive_mtime_ns": 1784778867950642000,
+      "dbc_bytes": 48967121,
+      "dbc_sha256": "d5cce1a83550dcfa9eb2f0251dbb11fd24c272534b2b1a9b230924a44d817ab3",
+      "records": 49839,
+      "fields": 234,
+      "record_size": 936
+    },
+    "SpellDuration": {
+      "table": "SpellDuration",
+      "archive": "D:\\World of Warcraft 3.3.5a\\Data\\enUS\\patch-enUS-3.MPQ",
+      "archive_bytes": 100373935,
+      "archive_mtime_ns": 1784778867950642000,
+      "dbc_bytes": 2101,
+      "dbc_sha256": "caa2cbec7fa711bba180af10c253ab0d111609ec2bda1c354fef09e54bc279e4",
+      "records": 130,
+      "fields": 4,
+      "record_size": 16
+    },
+    "Talent": {
+      "table": "Talent",
+      "archive": "D:\\World of Warcraft 3.3.5a\\Data\\enUS\\patch-enUS-2.MPQ",
+      "archive_bytes": 225570171,
+      "archive_mtime_ns": 1784778867982071400,
+      "dbc_bytes": 82085,
+      "dbc_sha256": "23aefff3add151bf504c4d0bab247e2e622f9cf29a473d091cb9f11127d99d68",
+      "records": 892,
+      "fields": 23,
+      "record_size": 92
+    }
+  },
+  "selected_records": [
+    {
+      "id": 2048,
+      "name": "Battle Shout",
+      "rank": "Rank 8",
+      "spell_family": 4,
+      "spell_level": 69,
+      "attributes": [
+        327696,
+        0,
+        0,
+        0,
+        0,
+        0,
+        67108864,
+        268435456
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 120000,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 6,
+          "aura": 99,
+          "base_points": 304,
+          "die_sides": 1,
+          "implicit_target_a": 56,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 6,
+          "aura": 124,
+          "base_points": 304,
+          "die_sides": 1,
+          "implicit_target_a": 56,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 5242,
+      "name": "Battle Shout",
+      "rank": "Rank 2",
+      "spell_family": 4,
+      "spell_level": 12,
+      "attributes": [
+        327696,
+        0,
+        0,
+        0,
+        0,
+        0,
+        67108864,
+        268435456
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 120000,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 6,
+          "aura": 99,
+          "base_points": 34,
+          "die_sides": 1,
+          "implicit_target_a": 56,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 6,
+          "aura": 124,
+          "base_points": 34,
+          "die_sides": 1,
+          "implicit_target_a": 56,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 6192,
+      "name": "Battle Shout",
+      "rank": "Rank 3",
+      "spell_family": 4,
+      "spell_level": 22,
+      "attributes": [
+        327696,
+        0,
+        0,
+        0,
+        0,
+        0,
+        67108864,
+        268435456
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 120000,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 6,
+          "aura": 99,
+          "base_points": 54,
+          "die_sides": 1,
+          "implicit_target_a": 56,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 6,
+          "aura": 124,
+          "base_points": 54,
+          "die_sides": 1,
+          "implicit_target_a": 56,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 6673,
+      "name": "Battle Shout",
+      "rank": "Rank 1",
+      "spell_family": 4,
+      "spell_level": 1,
+      "attributes": [
+        327696,
+        0,
+        0,
+        0,
+        0,
+        0,
+        67108864,
+        268435456
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 120000,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 6,
+          "aura": 99,
+          "base_points": 14,
+          "die_sides": 1,
+          "implicit_target_a": 56,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 6,
+          "aura": 124,
+          "base_points": 14,
+          "die_sides": 1,
+          "implicit_target_a": 56,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 8076,
+      "name": "Strength of Earth",
+      "rank": "Rank 1",
+      "spell_family": 11,
+      "spell_level": 10,
+      "attributes": [
+        320,
+        0,
+        0,
+        0,
+        0,
+        0,
+        67108864,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 0,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 65,
+          "aura": 29,
+          "base_points": 9,
+          "die_sides": 1,
+          "implicit_target_a": 1,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 65,
+          "aura": 29,
+          "base_points": 9,
+          "die_sides": 1,
+          "implicit_target_a": 1,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 1
+        },
+        {
+          "effect": 65,
+          "aura": 52,
+          "base_points": -1,
+          "die_sides": 1,
+          "implicit_target_a": 1,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 8162,
+      "name": "Strength of Earth",
+      "rank": "Rank 2",
+      "spell_family": 11,
+      "spell_level": 24,
+      "attributes": [
+        320,
+        0,
+        0,
+        0,
+        0,
+        0,
+        67108864,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 0,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 65,
+          "aura": 29,
+          "base_points": 19,
+          "die_sides": 1,
+          "implicit_target_a": 1,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 65,
+          "aura": 29,
+          "base_points": 19,
+          "die_sides": 1,
+          "implicit_target_a": 1,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 1
+        },
+        {
+          "effect": 65,
+          "aura": 52,
+          "base_points": -1,
+          "die_sides": 1,
+          "implicit_target_a": 1,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 8163,
+      "name": "Strength of Earth",
+      "rank": "Rank 3",
+      "spell_family": 11,
+      "spell_level": 38,
+      "attributes": [
+        320,
+        0,
+        0,
+        0,
+        0,
+        0,
+        67108864,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 0,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 65,
+          "aura": 29,
+          "base_points": 35,
+          "die_sides": 1,
+          "implicit_target_a": 1,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 65,
+          "aura": 29,
+          "base_points": 35,
+          "die_sides": 1,
+          "implicit_target_a": 1,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 1
+        },
+        {
+          "effect": 65,
+          "aura": 52,
+          "base_points": -1,
+          "die_sides": 1,
+          "implicit_target_a": 1,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 9128,
+      "name": "Battle Shout",
+      "rank": "",
+      "spell_family": 0,
+      "spell_level": 1,
+      "attributes": [
+        327696,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 120000,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 6,
+          "aura": 99,
+          "base_points": 3,
+          "die_sides": 1,
+          "implicit_target_a": 20,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 10441,
+      "name": "Strength of Earth",
+      "rank": "Rank 4",
+      "spell_family": 11,
+      "spell_level": 52,
+      "attributes": [
+        320,
+        0,
+        0,
+        0,
+        0,
+        0,
+        67108864,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 0,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 65,
+          "aura": 29,
+          "base_points": 60,
+          "die_sides": 1,
+          "implicit_target_a": 1,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 65,
+          "aura": 29,
+          "base_points": 60,
+          "die_sides": 1,
+          "implicit_target_a": 1,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 1
+        },
+        {
+          "effect": 65,
+          "aura": 52,
+          "base_points": -1,
+          "die_sides": 1,
+          "implicit_target_a": 1,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 11549,
+      "name": "Battle Shout",
+      "rank": "Rank 4",
+      "spell_family": 4,
+      "spell_level": 32,
+      "attributes": [
+        327696,
+        0,
+        0,
+        0,
+        0,
+        0,
+        67108864,
+        268435456
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 120000,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 6,
+          "aura": 99,
+          "base_points": 84,
+          "die_sides": 1,
+          "implicit_target_a": 56,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 6,
+          "aura": 124,
+          "base_points": 84,
+          "die_sides": 1,
+          "implicit_target_a": 56,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 11550,
+      "name": "Battle Shout",
+      "rank": "Rank 5",
+      "spell_family": 4,
+      "spell_level": 42,
+      "attributes": [
+        327696,
+        0,
+        0,
+        0,
+        0,
+        0,
+        67108864,
+        268435456
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 120000,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 6,
+          "aura": 99,
+          "base_points": 129,
+          "die_sides": 1,
+          "implicit_target_a": 56,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 6,
+          "aura": 124,
+          "base_points": 129,
+          "die_sides": 1,
+          "implicit_target_a": 56,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 11551,
+      "name": "Battle Shout",
+      "rank": "Rank 6",
+      "spell_family": 4,
+      "spell_level": 52,
+      "attributes": [
+        327696,
+        0,
+        0,
+        0,
+        0,
+        0,
+        67108864,
+        268435456
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 120000,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 6,
+          "aura": 99,
+          "base_points": 184,
+          "die_sides": 1,
+          "implicit_target_a": 56,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 6,
+          "aura": 124,
+          "base_points": 184,
+          "die_sides": 1,
+          "implicit_target_a": 56,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 24438,
+      "name": "Battle Shout",
+      "rank": "",
+      "spell_family": 0,
+      "spell_level": 1,
+      "attributes": [
+        327696,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 20000,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 6,
+          "aura": 13,
+          "base_points": 199,
+          "die_sides": 1,
+          "implicit_target_a": 20,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 1
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 25101,
+      "name": "Battle Shout",
+      "rank": "",
+      "spell_family": 0,
+      "spell_level": 52,
+      "attributes": [
+        272,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 900000,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 6,
+          "aura": 99,
+          "base_points": 399,
+          "die_sides": 1,
+          "implicit_target_a": 22,
+          "implicit_target_b": 30,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 25289,
+      "name": "Battle Shout",
+      "rank": "Rank 7",
+      "spell_family": 4,
+      "spell_level": 60,
+      "attributes": [
+        327696,
+        0,
+        0,
+        0,
+        0,
+        0,
+        67108864,
+        268435456
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 120000,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 6,
+          "aura": 99,
+          "base_points": 231,
+          "die_sides": 1,
+          "implicit_target_a": 56,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 6,
+          "aura": 124,
+          "base_points": 231,
+          "die_sides": 1,
+          "implicit_target_a": 56,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 25362,
+      "name": "Strength of Earth",
+      "rank": "Rank 5",
+      "spell_family": 11,
+      "spell_level": 60,
+      "attributes": [
+        320,
+        0,
+        0,
+        0,
+        0,
+        0,
+        67108864,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 0,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 65,
+          "aura": 29,
+          "base_points": 76,
+          "die_sides": 1,
+          "implicit_target_a": 1,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 65,
+          "aura": 29,
+          "base_points": 76,
+          "die_sides": 1,
+          "implicit_target_a": 1,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 1
+        },
+        {
+          "effect": 65,
+          "aura": 52,
+          "base_points": -1,
+          "die_sides": 1,
+          "implicit_target_a": 1,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 25527,
+      "name": "Strength of Earth",
+      "rank": "Rank 6",
+      "spell_family": 11,
+      "spell_level": 65,
+      "attributes": [
+        320,
+        0,
+        0,
+        0,
+        0,
+        0,
+        67108864,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 0,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 65,
+          "aura": 29,
+          "base_points": 85,
+          "die_sides": 1,
+          "implicit_target_a": 1,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 65,
+          "aura": 29,
+          "base_points": 85,
+          "die_sides": 1,
+          "implicit_target_a": 1,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 1
+        },
+        {
+          "effect": 65,
+          "aura": 52,
+          "base_points": -1,
+          "die_sides": 1,
+          "implicit_target_a": 1,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 26043,
+      "name": "Battle Shout",
+      "rank": "",
+      "spell_family": 0,
+      "spell_level": 61,
+      "attributes": [
+        327696,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 30000,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 6,
+          "aura": 13,
+          "base_points": 199,
+          "die_sides": 1,
+          "implicit_target_a": 30,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 1
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 26099,
+      "name": "Battle Shout",
+      "rank": "",
+      "spell_family": 0,
+      "spell_level": 61,
+      "attributes": [
+        327696,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 30000,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 6,
+          "aura": 79,
+          "base_points": 99,
+          "die_sides": 1,
+          "implicit_target_a": 22,
+          "implicit_target_b": 30,
+          "trigger_spell": 0,
+          "misc_value": 1
+        },
+        {
+          "effect": 6,
+          "aura": 138,
+          "base_points": 19,
+          "die_sides": 1,
+          "implicit_target_a": 22,
+          "implicit_target_b": 30,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 27578,
+      "name": "Battle Shout",
+      "rank": "Rank 6",
+      "spell_family": 4,
+      "spell_level": 52,
+      "attributes": [
+        327696,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 120000,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 6,
+          "aura": 99,
+          "base_points": 184,
+          "die_sides": 1,
+          "implicit_target_a": 20,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 30635,
+      "name": "Battle Shout",
+      "rank": "",
+      "spell_family": 0,
+      "spell_level": 1,
+      "attributes": [
+        851984,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 120000,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 6,
+          "aura": 99,
+          "base_points": 3,
+          "die_sides": 1,
+          "implicit_target_a": 1,
+          "implicit_target_b": 30,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 30833,
+      "name": "Battle Shout",
+      "rank": "",
+      "spell_family": 0,
+      "spell_level": 1,
+      "attributes": [
+        851984,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 120000,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 6,
+          "aura": 99,
+          "base_points": 3,
+          "die_sides": 1,
+          "implicit_target_a": 22,
+          "implicit_target_b": 30,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 30931,
+      "name": "Battle Shout",
+      "rank": "",
+      "spell_family": 0,
+      "spell_level": 1,
+      "attributes": [
+        327696,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 20000,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 6,
+          "aura": 99,
+          "base_points": 3,
+          "die_sides": 1,
+          "implicit_target_a": 22,
+          "implicit_target_b": 30,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 31403,
+      "name": "Battle Shout",
+      "rank": "",
+      "spell_family": 0,
+      "spell_level": 1,
+      "attributes": [
+        327696,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 120000,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 6,
+          "aura": 99,
+          "base_points": 7,
+          "die_sides": 1,
+          "implicit_target_a": 22,
+          "implicit_target_b": 30,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 31634,
+      "name": "Strength of Earth",
+      "rank": "Rank 1",
+      "spell_family": 11,
+      "spell_level": 10,
+      "attributes": [
+        320,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": -1,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 128,
+          "aura": 29,
+          "base_points": 19,
+          "die_sides": 1,
+          "implicit_target_a": 1,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 32064,
+      "name": "Battle Shout",
+      "rank": "",
+      "spell_family": 0,
+      "spell_level": 1,
+      "attributes": [
+        327696,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 120000,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 6,
+          "aura": 99,
+          "base_points": 3,
+          "die_sides": 1,
+          "implicit_target_a": 22,
+          "implicit_target_b": 30,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 38232,
+      "name": "Battle Shout",
+      "rank": "",
+      "spell_family": 0,
+      "spell_level": 1,
+      "attributes": [
+        327696,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 20000,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 6,
+          "aura": 99,
+          "base_points": 3,
+          "die_sides": 1,
+          "implicit_target_a": 22,
+          "implicit_target_b": 30,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 42247,
+      "name": "Battle Shout",
+      "rank": "",
+      "spell_family": 0,
+      "spell_level": 1,
+      "attributes": [
+        327696,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 120000,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 6,
+          "aura": 99,
+          "base_points": 3,
+          "die_sides": 1,
+          "implicit_target_a": 22,
+          "implicit_target_b": 7,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 46763,
+      "name": "Battle Shout",
+      "rank": "",
+      "spell_family": 0,
+      "spell_level": 61,
+      "attributes": [
+        327696,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 30000,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 6,
+          "aura": 79,
+          "base_points": 59,
+          "die_sides": 1,
+          "implicit_target_a": 22,
+          "implicit_target_b": 30,
+          "trigger_spell": 0,
+          "misc_value": 1
+        },
+        {
+          "effect": 6,
+          "aura": 138,
+          "base_points": 19,
+          "die_sides": 1,
+          "implicit_target_a": 22,
+          "implicit_target_b": 30,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 47436,
+      "name": "Battle Shout",
+      "rank": "Rank 9",
+      "spell_family": 4,
+      "spell_level": 78,
+      "attributes": [
+        327696,
+        0,
+        0,
+        0,
+        0,
+        0,
+        67108864,
+        268435456
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 120000,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 6,
+          "aura": 99,
+          "base_points": 547,
+          "die_sides": 1,
+          "implicit_target_a": 56,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 6,
+          "aura": 124,
+          "base_points": 547,
+          "die_sides": 1,
+          "implicit_target_a": 56,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 48982,
+      "name": "Rune Tap",
+      "rank": "",
+      "spell_family": 15,
+      "spell_level": 55,
+      "attributes": [
+        65536,
+        0,
+        570425344,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "cooldown_ms": 60000,
+      "duration_ms": 0,
+      "talent_ranks": [
+        {
+          "talent_id": 1941,
+          "tab": 398,
+          "tier": 2,
+          "rank": 1
+        }
+      ],
+      "effects": [
+        {
+          "effect": 136,
+          "aura": 0,
+          "base_points": 9,
+          "die_sides": 1,
+          "implicit_target_a": 1,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 49189,
+      "name": "Will of the Necropolis",
+      "rank": "Rank 1",
+      "spell_family": 15,
+      "spell_level": 0,
+      "attributes": [
+        400,
+        2147614720,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 0,
+      "talent_ranks": [
+        {
+          "talent_id": 1959,
+          "tab": 398,
+          "tier": 8,
+          "rank": 1
+        }
+      ],
+      "effects": [
+        {
+          "effect": 3,
+          "aura": 0,
+          "base_points": 34,
+          "die_sides": 1,
+          "implicit_target_a": 1,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 36,
+          "aura": 0,
+          "base_points": 14,
+          "die_sides": 1,
+          "implicit_target_a": 1,
+          "implicit_target_b": 0,
+          "trigger_spell": 52284,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 4,
+          "die_sides": 1,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 49724,
+      "name": "Battle Shout",
+      "rank": "",
+      "spell_family": 0,
+      "spell_level": 1,
+      "attributes": [
+        327696,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 30000,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 6,
+          "aura": 99,
+          "base_points": 349,
+          "die_sides": 1,
+          "implicit_target_a": 1,
+          "implicit_target_b": 30,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": -1,
+          "die_sides": 1,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 50149,
+      "name": "Will of the Necropolis",
+      "rank": "Rank 2",
+      "spell_family": 15,
+      "spell_level": 55,
+      "attributes": [
+        400,
+        2147614720,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 0,
+      "talent_ranks": [
+        {
+          "talent_id": 1959,
+          "tab": 398,
+          "tier": 8,
+          "rank": 2
+        }
+      ],
+      "effects": [
+        {
+          "effect": 3,
+          "aura": 0,
+          "base_points": 34,
+          "die_sides": 1,
+          "implicit_target_a": 1,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 36,
+          "aura": 0,
+          "base_points": 14,
+          "die_sides": 1,
+          "implicit_target_a": 1,
+          "implicit_target_b": 0,
+          "trigger_spell": 52285,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 4,
+          "die_sides": 1,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 50150,
+      "name": "Will of the Necropolis",
+      "rank": "Rank 3",
+      "spell_family": 15,
+      "spell_level": 55,
+      "attributes": [
+        400,
+        2147614720,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 0,
+      "talent_ranks": [
+        {
+          "talent_id": 1959,
+          "tab": 398,
+          "tier": 8,
+          "rank": 3
+        }
+      ],
+      "effects": [
+        {
+          "effect": 3,
+          "aura": 0,
+          "base_points": 34,
+          "die_sides": 1,
+          "implicit_target_a": 1,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 36,
+          "aura": 0,
+          "base_points": 14,
+          "die_sides": 1,
+          "implicit_target_a": 1,
+          "implicit_target_b": 0,
+          "trigger_spell": 52286,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 4,
+          "die_sides": 1,
+          "implicit_target_a": 1,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 50842,
+      "name": "Pestilence",
+      "rank": "",
+      "spell_family": 15,
+      "spell_level": 56,
+      "attributes": [
+        0,
+        134217728,
+        0,
+        0,
+        0,
+        4096,
+        0,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 0,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 3,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 6,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 3,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 47,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 77,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 87,
+          "implicit_target_b": 16,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 51426,
+      "name": "Pestilence",
+      "rank": "Rank 2",
+      "spell_family": 15,
+      "spell_level": 62,
+      "attributes": [
+        0,
+        134217728,
+        0,
+        0,
+        0,
+        4096,
+        0,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 0,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 3,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 6,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 2,
+          "aura": 0,
+          "base_points": 31,
+          "die_sides": 7,
+          "implicit_target_a": 53,
+          "implicit_target_b": 16,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 77,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 53,
+          "implicit_target_b": 16,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 51427,
+      "name": "Pestilence",
+      "rank": "Rank 3",
+      "spell_family": 15,
+      "spell_level": 68,
+      "attributes": [
+        0,
+        134217728,
+        0,
+        0,
+        0,
+        4096,
+        0,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 0,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 3,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 6,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 2,
+          "aura": 0,
+          "base_points": 40,
+          "die_sides": 9,
+          "implicit_target_a": 53,
+          "implicit_target_b": 16,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 77,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 53,
+          "implicit_target_b": 16,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 51428,
+      "name": "Pestilence",
+      "rank": "Rank 4",
+      "spell_family": 15,
+      "spell_level": 74,
+      "attributes": [
+        0,
+        134217728,
+        0,
+        0,
+        0,
+        4096,
+        0,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 0,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 3,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 6,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 2,
+          "aura": 0,
+          "base_points": 53,
+          "die_sides": 13,
+          "implicit_target_a": 53,
+          "implicit_target_b": 16,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 77,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 53,
+          "implicit_target_b": 16,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 51429,
+      "name": "Pestilence",
+      "rank": "Rank 5",
+      "spell_family": 15,
+      "spell_level": 79,
+      "attributes": [
+        0,
+        134217728,
+        0,
+        0,
+        0,
+        4096,
+        0,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 0,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 3,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 6,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 2,
+          "aura": 0,
+          "base_points": 64,
+          "die_sides": 15,
+          "implicit_target_a": 53,
+          "implicit_target_b": 16,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 77,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 53,
+          "implicit_target_b": 16,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 52284,
+      "name": "Will of the Necropolis",
+      "rank": "Rank 1",
+      "spell_family": 15,
+      "spell_level": 0,
+      "attributes": [
+        464,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 0,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 6,
+          "aura": 69,
+          "base_points": 4,
+          "die_sides": 1,
+          "implicit_target_a": 1,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 127
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": -1,
+          "die_sides": 1,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": -1,
+          "die_sides": 1,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 52285,
+      "name": "Will of the Necropolis",
+      "rank": "Rank 2",
+      "spell_family": 15,
+      "spell_level": 55,
+      "attributes": [
+        464,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 0,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 6,
+          "aura": 69,
+          "base_points": 9,
+          "die_sides": 1,
+          "implicit_target_a": 1,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 127
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": -1,
+          "die_sides": 1,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": -1,
+          "die_sides": 1,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 52286,
+      "name": "Will of the Necropolis",
+      "rank": "Rank 3",
+      "spell_family": 15,
+      "spell_level": 55,
+      "attributes": [
+        464,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 0,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 6,
+          "aura": 69,
+          "base_points": 14,
+          "die_sides": 1,
+          "implicit_target_a": 1,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 127
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": -1,
+          "die_sides": 1,
+          "implicit_target_a": 1,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": -1,
+          "die_sides": 1,
+          "implicit_target_a": 1,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 55078,
+      "name": "Blood Plague",
+      "rank": "",
+      "spell_family": 15,
+      "spell_level": 0,
+      "attributes": [
+        16,
+        0,
+        4,
+        262144,
+        8388608,
+        0,
+        0,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 15000,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 6,
+          "aura": 3,
+          "base_points": -1,
+          "die_sides": 1,
+          "implicit_target_a": 6,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 127
+        },
+        {
+          "effect": 6,
+          "aura": 4,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 6,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 55095,
+      "name": "Frost Fever",
+      "rank": "",
+      "spell_family": 15,
+      "spell_level": 0,
+      "attributes": [
+        16,
+        0,
+        0,
+        262144,
+        9437184,
+        0,
+        0,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 15000,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 6,
+          "aura": 3,
+          "base_points": -1,
+          "die_sides": 1,
+          "implicit_target_a": 6,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 127
+        },
+        {
+          "effect": 6,
+          "aura": 138,
+          "base_points": -15,
+          "die_sides": 1,
+          "implicit_target_a": 6,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 6,
+          "aura": 140,
+          "base_points": -15,
+          "die_sides": 1,
+          "implicit_target_a": 6,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 55264,
+      "name": "Blood Plague",
+      "rank": "",
+      "spell_family": 0,
+      "spell_level": 0,
+      "attributes": [
+        16,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 12000,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 6,
+          "aura": 3,
+          "base_points": 1999,
+          "die_sides": 1,
+          "implicit_target_a": 6,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 55322,
+      "name": "Blood Plague",
+      "rank": "",
+      "spell_family": 0,
+      "spell_level": 0,
+      "attributes": [
+        16,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 12000,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 6,
+          "aura": 3,
+          "base_points": 4999,
+          "die_sides": 1,
+          "implicit_target_a": 6,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 55973,
+      "name": "Blood Plague",
+      "rank": "",
+      "spell_family": 0,
+      "spell_level": 0,
+      "attributes": [
+        16,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 12000,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 6,
+          "aura": 3,
+          "base_points": 499,
+          "die_sides": 1,
+          "implicit_target_a": 6,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 57330,
+      "name": "Horn of Winter",
+      "rank": "Rank 1",
+      "spell_family": 15,
+      "spell_level": 65,
+      "attributes": [
+        327696,
+        0,
+        0,
+        0,
+        0,
+        0,
+        67108864,
+        268435456
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 120000,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 6,
+          "aura": 29,
+          "base_points": 85,
+          "die_sides": 1,
+          "implicit_target_a": 56,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 6,
+          "aura": 29,
+          "base_points": 85,
+          "die_sides": 1,
+          "implicit_target_a": 1,
+          "implicit_target_b": 56,
+          "trigger_spell": 0,
+          "misc_value": 1
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 44,
+          "die_sides": 1,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 57601,
+      "name": "Blood Plague",
+      "rank": "",
+      "spell_family": 0,
+      "spell_level": 0,
+      "attributes": [
+        16,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 12000,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 6,
+          "aura": 3,
+          "base_points": 94,
+          "die_sides": 11,
+          "implicit_target_a": 6,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 127
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": -1,
+          "die_sides": 1,
+          "implicit_target_a": 6,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 57621,
+      "name": "Strength of Earth",
+      "rank": "Rank 7",
+      "spell_family": 11,
+      "spell_level": 75,
+      "attributes": [
+        320,
+        0,
+        0,
+        0,
+        0,
+        0,
+        67108864,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 0,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 65,
+          "aura": 29,
+          "base_points": 114,
+          "die_sides": 1,
+          "implicit_target_a": 1,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 65,
+          "aura": 29,
+          "base_points": 114,
+          "die_sides": 1,
+          "implicit_target_a": 1,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 1
+        },
+        {
+          "effect": 65,
+          "aura": 52,
+          "base_points": -1,
+          "die_sides": 1,
+          "implicit_target_a": 1,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 57623,
+      "name": "Horn of Winter",
+      "rank": "Rank 2",
+      "spell_family": 15,
+      "spell_level": 75,
+      "attributes": [
+        327696,
+        0,
+        0,
+        0,
+        0,
+        0,
+        67108864,
+        268435456
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 120000,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 6,
+          "aura": 29,
+          "base_points": 154,
+          "die_sides": 1,
+          "implicit_target_a": 56,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 6,
+          "aura": 29,
+          "base_points": 154,
+          "die_sides": 1,
+          "implicit_target_a": 1,
+          "implicit_target_b": 56,
+          "trigger_spell": 0,
+          "misc_value": 1
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 44,
+          "die_sides": 1,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 58646,
+      "name": "Strength of Earth",
+      "rank": "Rank 8",
+      "spell_family": 11,
+      "spell_level": 80,
+      "attributes": [
+        320,
+        0,
+        0,
+        0,
+        0,
+        0,
+        67108864,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 0,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 65,
+          "aura": 29,
+          "base_points": 154,
+          "die_sides": 1,
+          "implicit_target_a": 1,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 65,
+          "aura": 29,
+          "base_points": 154,
+          "die_sides": 1,
+          "implicit_target_a": 1,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 1
+        },
+        {
+          "effect": 65,
+          "aura": 52,
+          "base_points": -1,
+          "die_sides": 1,
+          "implicit_target_a": 1,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 58840,
+      "name": "Blood Plague",
+      "rank": "",
+      "spell_family": 0,
+      "spell_level": 0,
+      "attributes": [
+        16,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 12000,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 6,
+          "aura": 3,
+          "base_points": 282,
+          "die_sides": 35,
+          "implicit_target_a": 6,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 127
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 58844,
+      "name": "Blood Plague",
+      "rank": "",
+      "spell_family": 0,
+      "spell_level": 0,
+      "attributes": [
+        16,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 12000,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 6,
+          "aura": 3,
+          "base_points": 1178,
+          "die_sides": 143,
+          "implicit_target_a": 6,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 127
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 59614,
+      "name": "Battle Shout",
+      "rank": "",
+      "spell_family": 0,
+      "spell_level": 1,
+      "attributes": [
+        327696,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 20000,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 6,
+          "aura": 99,
+          "base_points": 499,
+          "die_sides": 1,
+          "implicit_target_a": 22,
+          "implicit_target_b": 30,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 59754,
+      "name": "Rune Tap",
+      "rank": "",
+      "spell_family": 15,
+      "spell_level": 1,
+      "attributes": [
+        65536,
+        1024,
+        570425344,
+        0,
+        0,
+        0,
+        67108864,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 0,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 136,
+          "aura": 0,
+          "base_points": 9,
+          "die_sides": 1,
+          "implicit_target_a": 20,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 9,
+          "die_sides": 1,
+          "implicit_target_a": 1,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 59879,
+      "name": "Blood Plague",
+      "rank": "Passive",
+      "spell_family": 15,
+      "spell_level": 0,
+      "attributes": [
+        336,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 0,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 6,
+          "aura": 4,
+          "base_points": -1,
+          "die_sides": 1,
+          "implicit_target_a": 6,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 127
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": -1,
+          "die_sides": 1,
+          "implicit_target_a": 6,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 59921,
+      "name": "Frost Fever",
+      "rank": "Passive",
+      "spell_family": 15,
+      "spell_level": 0,
+      "attributes": [
+        336,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 0,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 6,
+          "aura": 4,
+          "base_points": -1,
+          "die_sides": 1,
+          "implicit_target_a": 6,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 127
+        },
+        {
+          "effect": 3,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 6,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 3,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 6,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 59984,
+      "name": "Blood Plague",
+      "rank": "",
+      "spell_family": 0,
+      "spell_level": 0,
+      "attributes": [
+        16,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 12000,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 6,
+          "aura": 3,
+          "base_points": 424,
+          "die_sides": 51,
+          "implicit_target_a": 6,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 127
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": -1,
+          "die_sides": 1,
+          "implicit_target_a": 6,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 60950,
+      "name": "Blood Plague",
+      "rank": "",
+      "spell_family": 0,
+      "spell_level": 0,
+      "attributes": [
+        16,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 12000,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 6,
+          "aura": 3,
+          "base_points": 329,
+          "die_sides": 41,
+          "implicit_target_a": 6,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 127
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": -1,
+          "die_sides": 1,
+          "implicit_target_a": 6,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 61111,
+      "name": "Blood Plague",
+      "rank": "",
+      "spell_family": 0,
+      "spell_level": 0,
+      "attributes": [
+        16,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 12000,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 6,
+          "aura": 3,
+          "base_points": 471,
+          "die_sides": 57,
+          "implicit_target_a": 6,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 127
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": -1,
+          "die_sides": 1,
+          "implicit_target_a": 6,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 61601,
+      "name": "Blood Plague",
+      "rank": "",
+      "spell_family": 0,
+      "spell_level": 0,
+      "attributes": [
+        16,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 12000,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 6,
+          "aura": 3,
+          "base_points": 471,
+          "die_sides": 57,
+          "implicit_target_a": 6,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 127
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": -1,
+          "die_sides": 1,
+          "implicit_target_a": 6,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 63334,
+      "name": "Glyph of Disease",
+      "rank": "",
+      "spell_family": 15,
+      "spell_level": 0,
+      "attributes": [
+        192,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 0,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 6,
+          "aura": 4,
+          "base_points": 99,
+          "die_sides": 1,
+          "implicit_target_a": 1,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 14
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 63560,
+      "name": "Ghoul Frenzy",
+      "rank": "",
+      "spell_family": 15,
+      "spell_level": 26,
+      "attributes": [
+        0,
+        0,
+        0,
+        0,
+        64,
+        0,
+        0,
+        0
+      ],
+      "cooldown_ms": 10000,
+      "duration_ms": 30000,
+      "talent_ranks": [
+        {
+          "talent_id": 2085,
+          "tab": 400,
+          "tier": 6,
+          "rank": 1
+        }
+      ],
+      "effects": [
+        {
+          "effect": 6,
+          "aura": 20,
+          "base_points": 5,
+          "die_sides": 1,
+          "implicit_target_a": 5,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 6,
+          "aura": 138,
+          "base_points": 24,
+          "die_sides": 1,
+          "implicit_target_a": 5,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 63959,
+      "name": "Glyph of Disease",
+      "rank": "",
+      "spell_family": 0,
+      "spell_level": 0,
+      "attributes": [
+        268435456,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 0,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 74,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 772
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 64062,
+      "name": "Battle Shout",
+      "rank": "",
+      "spell_family": 0,
+      "spell_level": 0,
+      "attributes": [
+        327696,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 30000,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 6,
+          "aura": 79,
+          "base_points": 99,
+          "die_sides": 1,
+          "implicit_target_a": 22,
+          "implicit_target_b": 30,
+          "trigger_spell": 0,
+          "misc_value": 1
+        },
+        {
+          "effect": 6,
+          "aura": 138,
+          "base_points": 19,
+          "die_sides": 1,
+          "implicit_target_a": 22,
+          "implicit_target_b": 30,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 64267,
+      "name": "Glyph of Disease",
+      "rank": "",
+      "spell_family": 0,
+      "spell_level": 0,
+      "attributes": [
+        65568,
+        1024,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 0,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 24,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 1,
+          "implicit_target_a": 1,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 67719,
+      "name": "Frost Fever",
+      "rank": "",
+      "spell_family": 0,
+      "spell_level": 0,
+      "attributes": [
+        0,
+        0,
+        0,
+        256,
+        0,
+        0,
+        0,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 15000,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 6,
+          "aura": 3,
+          "base_points": 1949,
+          "die_sides": 101,
+          "implicit_target_a": 6,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 127
+        },
+        {
+          "effect": 6,
+          "aura": 138,
+          "base_points": -26,
+          "die_sides": 1,
+          "implicit_target_a": 6,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 6,
+          "aura": 140,
+          "base_points": -26,
+          "die_sides": 1,
+          "implicit_target_a": 6,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 67722,
+      "name": "Blood Plague",
+      "rank": "",
+      "spell_family": 0,
+      "spell_level": 0,
+      "attributes": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 12000,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 6,
+          "aura": 3,
+          "base_points": 1754,
+          "die_sides": 91,
+          "implicit_target_a": 6,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 67767,
+      "name": "Frost Fever",
+      "rank": "",
+      "spell_family": 0,
+      "spell_level": 0,
+      "attributes": [
+        16,
+        0,
+        0,
+        0,
+        1048576,
+        0,
+        0,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 15000,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 6,
+          "aura": 3,
+          "base_points": 1387,
+          "die_sides": 225,
+          "implicit_target_a": 6,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 127
+        },
+        {
+          "effect": 6,
+          "aura": 138,
+          "base_points": -15,
+          "die_sides": 1,
+          "implicit_target_a": 6,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 6,
+          "aura": 140,
+          "base_points": -15,
+          "die_sides": 1,
+          "implicit_target_a": 6,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 67878,
+      "name": "Frost Fever",
+      "rank": "",
+      "spell_family": 0,
+      "spell_level": 0,
+      "attributes": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 15000,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 6,
+          "aura": 3,
+          "base_points": 3412,
+          "die_sides": 175,
+          "implicit_target_a": 6,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 127
+        },
+        {
+          "effect": 6,
+          "aura": 138,
+          "base_points": -26,
+          "die_sides": 1,
+          "implicit_target_a": 6,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 6,
+          "aura": 140,
+          "base_points": -26,
+          "die_sides": 1,
+          "implicit_target_a": 6,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 67885,
+      "name": "Blood Plague",
+      "rank": "",
+      "spell_family": 0,
+      "spell_level": 0,
+      "attributes": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 12000,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 6,
+          "aura": 3,
+          "base_points": 3509,
+          "die_sides": 181,
+          "implicit_target_a": 6,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 67932,
+      "name": "Frost Fever",
+      "rank": "",
+      "spell_family": 0,
+      "spell_level": 0,
+      "attributes": [
+        16,
+        0,
+        0,
+        0,
+        1048576,
+        0,
+        0,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 15000,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 6,
+          "aura": 3,
+          "base_points": 1849,
+          "die_sides": 301,
+          "implicit_target_a": 6,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 127
+        },
+        {
+          "effect": 6,
+          "aura": 138,
+          "base_points": -15,
+          "die_sides": 1,
+          "implicit_target_a": 6,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 6,
+          "aura": 140,
+          "base_points": -15,
+          "die_sides": 1,
+          "implicit_target_a": 6,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 67933,
+      "name": "Frost Fever",
+      "rank": "",
+      "spell_family": 0,
+      "spell_level": 0,
+      "attributes": [
+        16,
+        0,
+        0,
+        0,
+        1048576,
+        0,
+        0,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 15000,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 6,
+          "aura": 3,
+          "base_points": 1849,
+          "die_sides": 301,
+          "implicit_target_a": 6,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 127
+        },
+        {
+          "effect": 6,
+          "aura": 138,
+          "base_points": -15,
+          "die_sides": 1,
+          "implicit_target_a": 6,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 6,
+          "aura": 140,
+          "base_points": -15,
+          "die_sides": 1,
+          "implicit_target_a": 6,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 67934,
+      "name": "Frost Fever",
+      "rank": "",
+      "spell_family": 0,
+      "spell_level": 0,
+      "attributes": [
+        16,
+        0,
+        0,
+        0,
+        1048576,
+        0,
+        0,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 15000,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 6,
+          "aura": 3,
+          "base_points": 2774,
+          "die_sides": 451,
+          "implicit_target_a": 6,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 127
+        },
+        {
+          "effect": 6,
+          "aura": 138,
+          "base_points": -15,
+          "die_sides": 1,
+          "implicit_target_a": 6,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 6,
+          "aura": 140,
+          "base_points": -15,
+          "die_sides": 1,
+          "implicit_target_a": 6,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 69911,
+      "name": "Blood Plague",
+      "rank": "",
+      "spell_family": 0,
+      "spell_level": 0,
+      "attributes": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 12000,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 6,
+          "aura": 3,
+          "base_points": 1124,
+          "die_sides": 751,
+          "implicit_target_a": 6,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 69917,
+      "name": "Frost Fever",
+      "rank": "",
+      "spell_family": 0,
+      "spell_level": 0,
+      "attributes": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 15000,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 6,
+          "aura": 3,
+          "base_points": 1424,
+          "die_sides": 151,
+          "implicit_target_a": 6,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 6,
+          "aura": 138,
+          "base_points": -15,
+          "die_sides": 1,
+          "implicit_target_a": 6,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 6,
+          "aura": 140,
+          "base_points": -15,
+          "die_sides": 1,
+          "implicit_target_a": 6,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 70750,
+      "name": "Battle Shout",
+      "rank": "",
+      "spell_family": 0,
+      "spell_level": 0,
+      "attributes": [
+        327696,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 30000,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 6,
+          "aura": 79,
+          "base_points": 49,
+          "die_sides": 1,
+          "implicit_target_a": 22,
+          "implicit_target_b": 30,
+          "trigger_spell": 0,
+          "misc_value": 1
+        },
+        {
+          "effect": 6,
+          "aura": 138,
+          "base_points": 19,
+          "die_sides": 1,
+          "implicit_target_a": 22,
+          "implicit_target_b": 30,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 71119,
+      "name": "Blood Plague",
+      "rank": "",
+      "spell_family": 0,
+      "spell_level": 0,
+      "attributes": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 12000,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 6,
+          "aura": 3,
+          "base_points": 2249,
+          "die_sides": 501,
+          "implicit_target_a": 6,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 71129,
+      "name": "Frost Fever",
+      "rank": "",
+      "spell_family": 0,
+      "spell_level": 0,
+      "attributes": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 15000,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 6,
+          "aura": 3,
+          "base_points": 2374,
+          "die_sides": 251,
+          "implicit_target_a": 6,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 6,
+          "aura": 138,
+          "base_points": -15,
+          "die_sides": 1,
+          "implicit_target_a": 6,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 6,
+          "aura": 140,
+          "base_points": -15,
+          "die_sides": 1,
+          "implicit_target_a": 6,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    },
+    {
+      "id": 71923,
+      "name": "Blood Plague",
+      "rank": "",
+      "spell_family": 0,
+      "spell_level": 0,
+      "attributes": [
+        16,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "cooldown_ms": 0,
+      "duration_ms": 12000,
+      "talent_ranks": [],
+      "effects": [
+        {
+          "effect": 6,
+          "aura": 3,
+          "base_points": 942,
+          "die_sides": 115,
+          "implicit_target_a": 6,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 127
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": -1,
+          "die_sides": 1,
+          "implicit_target_a": 6,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        },
+        {
+          "effect": 0,
+          "aura": 0,
+          "base_points": 0,
+          "die_sides": 0,
+          "implicit_target_a": 0,
+          "implicit_target_b": 0,
+          "trigger_spell": 0,
+          "misc_value": 0
+        }
+      ]
+    }
+  ],
+  "extractor_correction": {
+    "initial_diagnostic_sha256": "f6aba083612a76162105970fe12c0df472e5085a61fb815593cdd8a6a0f3958e",
+    "corrected_utc": "2026-10-01T03:05:52.481554+00:00",
+    "field": "EffectMiscValue",
+    "correct_columns": [
+      110,
+      111,
+      112
+    ],
+    "initial_columns": [
+      104,
+      105,
+      106
+    ],
+    "explanation": "Initial metadata labeled EffectChainTargets as misc_value. Raw DBC and other fields are unchanged. The corrected stat selectors bind Strength0 and Agility1; the original diagnostic is retained and must not be cited for this field.",
+    "changed_values": [
+      {
+        "spell_id": 8075,
+        "effect_index": 0,
+        "diagnostic_value": 0,
+        "corrected_value": 5874
+      },
+      {
+        "spell_id": 8076,
+        "effect_index": 1,
+        "diagnostic_value": 0,
+        "corrected_value": 1
+      },
+      {
+        "spell_id": 8160,
+        "effect_index": 0,
+        "diagnostic_value": 0,
+        "corrected_value": 5921
+      },
+      {
+        "spell_id": 8161,
+        "effect_index": 0,
+        "diagnostic_value": 0,
+        "corrected_value": 5922
+      },
+      {
+        "spell_id": 8162,
+        "effect_index": 1,
+        "diagnostic_value": 0,
+        "corrected_value": 1
+      },
+      {
+        "spell_id": 8163,
+        "effect_index": 1,
+        "diagnostic_value": 0,
+        "corrected_value": 1
+      },
+      {
+        "spell_id": 10441,
+        "effect_index": 1,
+        "diagnostic_value": 0,
+        "corrected_value": 1
+      },
+      {
+        "spell_id": 10442,
+        "effect_index": 0,
+        "diagnostic_value": 0,
+        "corrected_value": 7403
+      },
+      {
+        "spell_id": 24438,
+        "effect_index": 0,
+        "diagnostic_value": 0,
+        "corrected_value": 1
+      },
+      {
+        "spell_id": 25361,
+        "effect_index": 0,
+        "diagnostic_value": 0,
+        "corrected_value": 15464
+      },
+      {
+        "spell_id": 25362,
+        "effect_index": 1,
+        "diagnostic_value": 0,
+        "corrected_value": 1
+      },
+      {
+        "spell_id": 25527,
+        "effect_index": 1,
+        "diagnostic_value": 0,
+        "corrected_value": 1
+      },
+      {
+        "spell_id": 25528,
+        "effect_index": 0,
+        "diagnostic_value": 0,
+        "corrected_value": 15479
+      },
+      {
+        "spell_id": 26043,
+        "effect_index": 0,
+        "diagnostic_value": 0,
+        "corrected_value": 1
+      },
+      {
+        "spell_id": 26099,
+        "effect_index": 0,
+        "diagnostic_value": 0,
+        "corrected_value": 1
+      },
+      {
+        "spell_id": 31633,
+        "effect_index": 0,
+        "diagnostic_value": 0,
+        "corrected_value": 21992
+      },
+      {
+        "spell_id": 46283,
+        "effect_index": 0,
+        "diagnostic_value": 5,
+        "corrected_value": 0
+      },
+      {
+        "spell_id": 46283,
+        "effect_index": 1,
+        "diagnostic_value": 5,
+        "corrected_value": 0
+      },
+      {
+        "spell_id": 46763,
+        "effect_index": 0,
+        "diagnostic_value": 0,
+        "corrected_value": 1
+      },
+      {
+        "spell_id": 48263,
+        "effect_index": 0,
+        "diagnostic_value": 0,
+        "corrected_value": 1
+      },
+      {
+        "spell_id": 48263,
+        "effect_index": 1,
+        "diagnostic_value": 0,
+        "corrected_value": 127
+      },
+      {
+        "spell_id": 48263,
+        "effect_index": 2,
+        "diagnostic_value": 0,
+        "corrected_value": 127
+      },
+      {
+        "spell_id": 48265,
+        "effect_index": 1,
+        "diagnostic_value": 0,
+        "corrected_value": 21
+      },
+      {
+        "spell_id": 48265,
+        "effect_index": 2,
+        "diagnostic_value": 0,
+        "corrected_value": 127
+      },
+      {
+        "spell_id": 48266,
+        "effect_index": 0,
+        "diagnostic_value": 0,
+        "corrected_value": 127
+      },
+      {
+        "spell_id": 48266,
+        "effect_index": 1,
+        "diagnostic_value": 0,
+        "corrected_value": 127
+      },
+      {
+        "spell_id": 48266,
+        "effect_index": 2,
+        "diagnostic_value": 0,
+        "corrected_value": 127
+      },
+      {
+        "spell_id": 50688,
+        "effect_index": 1,
+        "diagnostic_value": 0,
+        "corrected_value": 127
+      },
+      {
+        "spell_id": 50689,
+        "effect_index": 0,
+        "diagnostic_value": 0,
+        "corrected_value": 127
+      },
+      {
+        "spell_id": 52284,
+        "effect_index": 0,
+        "diagnostic_value": 0,
+        "corrected_value": 127
+      },
+      {
+        "spell_id": 52285,
+        "effect_index": 0,
+        "diagnostic_value": 0,
+        "corrected_value": 127
+      },
+      {
+        "spell_id": 52286,
+        "effect_index": 0,
+        "diagnostic_value": 0,
+        "corrected_value": 127
+      },
+      {
+        "spell_id": 52373,
+        "effect_index": 1,
+        "diagnostic_value": 0,
+        "corrected_value": 127
+      },
+      {
+        "spell_id": 53694,
+        "effect_index": 1,
+        "diagnostic_value": 0,
+        "corrected_value": 127
+      },
+      {
+        "spell_id": 54469,
+        "effect_index": 1,
+        "diagnostic_value": 0,
+        "corrected_value": 127
+      },
+      {
+        "spell_id": 54469,
+        "effect_index": 2,
+        "diagnostic_value": 0,
+        "corrected_value": 350
+      },
+      {
+        "spell_id": 54476,
+        "effect_index": 0,
+        "diagnostic_value": 0,
+        "corrected_value": 127
+      },
+      {
+        "spell_id": 55078,
+        "effect_index": 0,
+        "diagnostic_value": 0,
+        "corrected_value": 127
+      },
+      {
+        "spell_id": 55095,
+        "effect_index": 0,
+        "diagnostic_value": 0,
+        "corrected_value": 127
+      },
+      {
+        "spell_id": 55212,
+        "effect_index": 0,
+        "diagnostic_value": 0,
+        "corrected_value": 127
+      },
+      {
+        "spell_id": 55973,
+        "effect_index": 0,
+        "diagnostic_value": 10,
+        "corrected_value": 0
+      },
+      {
+        "spell_id": 56361,
+        "effect_index": 1,
+        "diagnostic_value": 0,
+        "corrected_value": 127
+      },
+      {
+        "spell_id": 57330,
+        "effect_index": 1,
+        "diagnostic_value": 0,
+        "corrected_value": 1
+      },
+      {
+        "spell_id": 57601,
+        "effect_index": 0,
+        "diagnostic_value": 0,
+        "corrected_value": 127
+      },
+      {
+        "spell_id": 57621,
+        "effect_index": 1,
+        "diagnostic_value": 0,
+        "corrected_value": 1
+      },
+      {
+        "spell_id": 57622,
+        "effect_index": 0,
+        "diagnostic_value": 0,
+        "corrected_value": 30647
+      },
+      {
+        "spell_id": 57623,
+        "effect_index": 1,
+        "diagnostic_value": 0,
+        "corrected_value": 1
+      },
+      {
+        "spell_id": 58643,
+        "effect_index": 0,
+        "diagnostic_value": 0,
+        "corrected_value": 31129
+      },
+      {
+        "spell_id": 58646,
+        "effect_index": 1,
+        "diagnostic_value": 0,
+        "corrected_value": 1
+      },
+      {
+        "spell_id": 58840,
+        "effect_index": 0,
+        "diagnostic_value": 0,
+        "corrected_value": 127
+      },
+      {
+        "spell_id": 58844,
+        "effect_index": 0,
+        "diagnostic_value": 0,
+        "corrected_value": 127
+      },
+      {
+        "spell_id": 59133,
+        "effect_index": 1,
+        "diagnostic_value": 0,
+        "corrected_value": 127
+      },
+      {
+        "spell_id": 59309,
+        "effect_index": 0,
+        "diagnostic_value": 0,
+        "corrected_value": 6
+      },
+      {
+        "spell_id": 59311,
+        "effect_index": 0,
+        "diagnostic_value": 0,
+        "corrected_value": 553
+      },
+      {
+        "spell_id": 59879,
+        "effect_index": 0,
+        "diagnostic_value": 0,
+        "corrected_value": 127
+      },
+      {
+        "spell_id": 59921,
+        "effect_index": 0,
+        "diagnostic_value": 0,
+        "corrected_value": 127
+      },
+      {
+        "spell_id": 59984,
+        "effect_index": 0,
+        "diagnostic_value": 0,
+        "corrected_value": 127
+      },
+      {
+        "spell_id": 60186,
+        "effect_index": 1,
+        "diagnostic_value": 0,
+        "corrected_value": 127
+      },
+      {
+        "spell_id": 60950,
+        "effect_index": 0,
+        "diagnostic_value": 0,
+        "corrected_value": 127
+      },
+      {
+        "spell_id": 61111,
+        "effect_index": 0,
+        "diagnostic_value": 0,
+        "corrected_value": 127
+      },
+      {
+        "spell_id": 61261,
+        "effect_index": 0,
+        "diagnostic_value": 0,
+        "corrected_value": 2
+      },
+      {
+        "spell_id": 61261,
+        "effect_index": 1,
+        "diagnostic_value": 0,
+        "corrected_value": 2
+      },
+      {
+        "spell_id": 61601,
+        "effect_index": 0,
+        "diagnostic_value": 0,
+        "corrected_value": 127
+      },
+      {
+        "spell_id": 63334,
+        "effect_index": 0,
+        "diagnostic_value": 0,
+        "corrected_value": 14
+      },
+      {
+        "spell_id": 63959,
+        "effect_index": 0,
+        "diagnostic_value": 0,
+        "corrected_value": 772
+      },
+      {
+        "spell_id": 64062,
+        "effect_index": 0,
+        "diagnostic_value": 0,
+        "corrected_value": 1
+      },
+      {
+        "spell_id": 65991,
+        "effect_index": 0,
+        "diagnostic_value": 0,
+        "corrected_value": 31129
+      },
+      {
+        "spell_id": 67719,
+        "effect_index": 0,
+        "diagnostic_value": 0,
+        "corrected_value": 127
+      },
+      {
+        "spell_id": 67767,
+        "effect_index": 0,
+        "diagnostic_value": 0,
+        "corrected_value": 127
+      },
+      {
+        "spell_id": 67878,
+        "effect_index": 0,
+        "diagnostic_value": 0,
+        "corrected_value": 127
+      },
+      {
+        "spell_id": 67932,
+        "effect_index": 0,
+        "diagnostic_value": 0,
+        "corrected_value": 127
+      },
+      {
+        "spell_id": 67933,
+        "effect_index": 0,
+        "diagnostic_value": 0,
+        "corrected_value": 127
+      },
+      {
+        "spell_id": 67934,
+        "effect_index": 0,
+        "diagnostic_value": 0,
+        "corrected_value": 127
+      },
+      {
+        "spell_id": 70750,
+        "effect_index": 0,
+        "diagnostic_value": 0,
+        "corrected_value": 1
+      },
+      {
+        "spell_id": 71923,
+        "effect_index": 0,
+        "diagnostic_value": 0,
+        "corrected_value": 127
+      }
+    ],
+    "runtime_or_test_assertions_changed_by_correction": false
+  },
+  "server_rules": {
+    "pestilence": "spell_dk.cpp lines1439-1506: primary victim refresh requires Glyph of Disease; each disease is read for the caster GUID and propagated separately.",
+    "will_of_the_necropolis": "spell_dk.cpp lines2169-2223: passive absorption; not a prerequisite aura for learning or submitting Rune Tap."
+  },
+  "policies": {
+    "horn": "Conservatively retain observed Strength of Earth; unknown effective strength is not a proven upgrade. Combat resource-filler behavior is outside this change.",
+    "disease_admission": "Retain both owned primary diseases and existing pack/range thresholds; detect either missing owned recipient disease.",
+    "refresh": "Keep the existing less-than-three-second threshold; require the glyph and own active disease timers.",
+    "pet": "Select the current owned living pet explicitly; preserve shared spell admission and buff coverage.",
+    "presence": "Preserve existing precombat and combat choices; no optimal opener or damage policy is claimed."
+  },
+  "server_source_proves_customized_live_realm": false,
+  "new_client_api_added": false
+}

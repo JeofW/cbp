@@ -57,7 +57,7 @@ namespace Singular.ClassSpecific.DeathKnight
                                     ret => StyxWoW.Me.HealthPercent < SingularSettings.Instance.DeathKnight.PetSacrificePercent &&
                                            StyxWoW.Me.GotAlivePet),
                     Spell.BuffSelf("Rune Tap",
-                                    ret => StyxWoW.Me.HealthPercent < 90 && StyxWoW.Me.HasAura("Will of the Necropolis")),
+                                    ret => StyxWoW.Me.HealthPercent < 90),
                     Spell.BuffSelf("Death Coil",
                                 ret => StyxWoW.Me.HealthPercent < 70 && StyxWoW.Me.HasAura("Lichborne")),
                     Spell.Cast("Dancing Rune Weapon",
@@ -125,7 +125,7 @@ namespace Singular.ClassSpecific.DeathKnight
                                 ret => StyxWoW.Me.CurrentTarget.HasMyAura("Blood Plague") && 
                                         StyxWoW.Me.CurrentTarget.HasMyAura("Frost Fever") &&
                                         Unit.UnfriendlyUnitsNearTarget(10f).Count(u => 
-                                                !u.HasMyAura("Blood Plague") && 
+                                                !u.HasMyAura("Blood Plague") ||
                                                 !u.HasMyAura("Frost Fever")) > 0),
                             new Sequence(
                                 Spell.Cast("Death Strike", ret => DeathStrikeTimer.IsFinished),
@@ -192,7 +192,7 @@ namespace Singular.ClassSpecific.DeathKnight
                                     ret => StyxWoW.Me.HealthPercent < SingularSettings.Instance.DeathKnight.PetSacrificePercent &&
                                            StyxWoW.Me.GotAlivePet),
                     Spell.BuffSelf("Rune Tap",
-                                    ret => StyxWoW.Me.HealthPercent < 90 && StyxWoW.Me.HasAura("Will of the Necropolis")),
+                                    ret => StyxWoW.Me.HealthPercent < 90),
                     Spell.BuffSelf("Death Coil",
                                 ret => StyxWoW.Me.HealthPercent < 70 && StyxWoW.Me.HasAura("Lichborne")),
                     Spell.Cast("Dancing Rune Weapon",
@@ -327,7 +327,7 @@ namespace Singular.ClassSpecific.DeathKnight
                                     ret => StyxWoW.Me.HealthPercent < SingularSettings.Instance.DeathKnight.PetSacrificePercent &&
                                            StyxWoW.Me.GotAlivePet),
                     Spell.BuffSelf("Rune Tap",
-                                    ret => StyxWoW.Me.HealthPercent < 90 && StyxWoW.Me.HasAura("Will of the Necropolis")),
+                                    ret => StyxWoW.Me.HealthPercent < 90),
                     Spell.BuffSelf("Death Coil",
                                 ret => StyxWoW.Me.HealthPercent < 70 && StyxWoW.Me.HasAura("Lichborne")),
                     Spell.Cast("Dancing Rune Weapon",
@@ -398,7 +398,7 @@ namespace Singular.ClassSpecific.DeathKnight
                                 ret => StyxWoW.Me.CurrentTarget.HasMyAura("Blood Plague") &&
                                         StyxWoW.Me.CurrentTarget.HasMyAura("Frost Fever") &&
                                         Unit.UnfriendlyUnitsNearTarget(10f).Count(u =>
-                                                !u.HasMyAura("Blood Plague") &&
+                                                !u.HasMyAura("Blood Plague") ||
                                                 !u.HasMyAura("Frost Fever")) > 0),
                             new Sequence(
                                 Spell.Cast("Death Strike", ret => DeathStrikeTimer.IsFinished),
