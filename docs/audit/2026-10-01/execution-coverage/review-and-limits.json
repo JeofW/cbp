@@ -1,0 +1,173 @@
+{
+  "review_type": "direct separate self-review; no independent reviewer agent",
+  "fixed_receipt_defects": [
+    "member stages borrowed between cases",
+    "acknowledgement borrowed from another case",
+    "unexecuted declared case names",
+    "stage prerequisites out of order",
+    "duplicate or disconnected counter transitions",
+    "repeat acquisition dispatch without fresh live-target and approach receipts"
+  ],
+  "source_supported_population": 4335,
+  "accepted_execution_contracts": 0,
+  "family_counts": {
+    "creature-kill": {
+      "required_ids": 1057,
+      "candidate_source_ids": 0,
+      "tested_exact_ids": 0
+    },
+    "player-kill": {
+      "required_ids": 3,
+      "candidate_source_ids": 0,
+      "tested_exact_ids": 0
+    },
+    "creature-loot-item": {
+      "required_ids": 0,
+      "candidate_source_ids": 1002,
+      "tested_exact_ids": 0
+    },
+    "ground-gameobject-loot": {
+      "required_ids": 0,
+      "candidate_source_ids": 532,
+      "tested_exact_ids": 0
+    },
+    "direct-gameobject-interaction": {
+      "required_ids": 57,
+      "candidate_source_ids": 0,
+      "tested_exact_ids": 0
+    },
+    "npc-interaction": {
+      "required_ids": 0,
+      "candidate_source_ids": 0,
+      "tested_exact_ids": 0
+    },
+    "ordinary-delivery": {
+      "required_ids": 1034,
+      "candidate_source_ids": 0,
+      "tested_exact_ids": 0
+    },
+    "quest-turnin": {
+      "required_ids": 4335,
+      "candidate_source_ids": 0,
+      "tested_exact_ids": 0
+    },
+    "inventory-start-item": {
+      "required_ids": 8,
+      "candidate_source_ids": 0,
+      "tested_exact_ids": 0
+    },
+    "acceptance-supplied-item": {
+      "required_ids": 1133,
+      "candidate_source_ids": 0,
+      "tested_exact_ids": 0
+    },
+    "item-acquisition-unresolved": {
+      "required_ids": 2226,
+      "candidate_source_ids": 0,
+      "tested_exact_ids": 0
+    },
+    "item-container-loot": {
+      "required_ids": 0,
+      "candidate_source_ids": 75,
+      "tested_exact_ids": 0
+    },
+    "vendor-item-acquisition": {
+      "required_ids": 0,
+      "candidate_source_ids": 0,
+      "tested_exact_ids": 0
+    },
+    "spell-cast-credit": {
+      "required_ids": 99,
+      "candidate_source_ids": 0,
+      "tested_exact_ids": 0
+    },
+    "use-item-self": {
+      "required_ids": 0,
+      "candidate_source_ids": 0,
+      "tested_exact_ids": 0
+    },
+    "use-item-unit": {
+      "required_ids": 0,
+      "candidate_source_ids": 0,
+      "tested_exact_ids": 0
+    },
+    "use-item-gameobject": {
+      "required_ids": 0,
+      "candidate_source_ids": 0,
+      "tested_exact_ids": 0
+    },
+    "use-item-location": {
+      "required_ids": 0,
+      "candidate_source_ids": 0,
+      "tested_exact_ids": 0
+    },
+    "use-item-target-unresolved": {
+      "required_ids": 0,
+      "candidate_source_ids": 0,
+      "tested_exact_ids": 0
+    },
+    "gossip-dialogue": {
+      "required_ids": 0,
+      "candidate_source_ids": 0,
+      "tested_exact_ids": 0
+    },
+    "escort-follow": {
+      "required_ids": 0,
+      "candidate_source_ids": 0,
+      "tested_exact_ids": 0
+    },
+    "explore-area-trigger": {
+      "required_ids": 0,
+      "candidate_source_ids": 0,
+      "tested_exact_ids": 0
+    },
+    "exploration-or-scripted-event": {
+      "required_ids": 1,
+      "candidate_source_ids": 0,
+      "tested_exact_ids": 0
+    },
+    "scripted-behaviour-unresolved": {
+      "required_ids": 0,
+      "candidate_source_ids": 0,
+      "tested_exact_ids": 0
+    },
+    "vehicle": {
+      "required_ids": 0,
+      "candidate_source_ids": 0,
+      "tested_exact_ids": 0
+    },
+    "transport": {
+      "required_ids": 0,
+      "candidate_source_ids": 0,
+      "tested_exact_ids": 0
+    },
+    "reputation-objective": {
+      "required_ids": 0,
+      "candidate_source_ids": 0,
+      "tested_exact_ids": 0
+    },
+    "required-money": {
+      "required_ids": 8,
+      "candidate_source_ids": 0,
+      "tested_exact_ids": 0
+    },
+    "timed-deadline": {
+      "required_ids": 16,
+      "candidate_source_ids": 0,
+      "tested_exact_ids": 0
+    },
+    "unrepresented-primary-record": {
+      "required_ids": 0,
+      "candidate_source_ids": 0,
+      "tested_exact_ids": 0
+    }
+  },
+  "limitations": [
+    "A hash or self-declared authoritative field is not external proof that a run occurred; review the real producing owner and test boundary.",
+    "The primary inventory does not infer source-supported scripts, precise item target types or every runtime acquisition route.",
+    "No current contract covers native turn-in, realm overrides or complete navigation.",
+    "New C# ground collection runtime/tests and the staged Rogue patch remain in their independent worktrees with explicit holds."
+  ],
+  "historical_observation_ledger_preserved": true,
+  "ground_csharp_test_executed_or_rerouted": false
+}

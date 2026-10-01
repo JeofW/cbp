@@ -1,3 +1,13 @@
+# Current: preserved Rogue repair after PR84 — 1 October 2026
+
+PR84 is merged at `60f01529e3753b96db0a22e5396f3795ca1731dc`. The execution ledger withdraws 3,030 full-lifecycle claims; earlier 4,335-row observation tests remain useful but are not end-to-end certificates. Read docs/audit/2026-10-01/execution-coverage/REPORT.md and the exact primitive membership matrix.
+
+Continue D:/Dev/CB-RogueColdBlood-20261001 on audit/next-rogue-cold-blood-20261001. The already preserved and committed Rogue repair `345a327f35df99faf09a84b2575dbcc0d699ca37` retains 189 passing complete-source controlled cases after 78 intentional baseline failures. This integration changes no Rogue, Paladin, Death Knight or shared runtime implementation/test bytes; both handoff histories are preserved below. Resolve the new candidate and final exact-SHA acceptance from ROGUE_COLD_BLOOD_ALIGNED_CANDIDATE_V2_20261001.json and later receipts before publication or merge.
+
+Production is independently verified at PR82 `eae93b1f7207a965fed0bef958905e40476ac282` with 434 matching payload files and 2,007 unchanged protected files. Ground collection is a separate ongoing fix; its recovered four-alternative fixture now has unique row indices, distinct from the shipped quest10161 single-source model. Do not infer native completion or deployed ground/Rogue changes from these notes.
+
+## Preserved Rogue checkpoint
+
 # Current: corrected Rogue continuation on PR82 master — 1 October 2026
 
 Canonical master is `eae93b1f7207a965fed0bef958905e40476ac282` after merged PR82 candidate71ce4cce30b7a1843d915c5e6bef338eea2c354b. PR81/83 Paladin and Death Knight work is already included; do not recreate it. Current isolated source is D:/Dev/CB-RogueColdBlood-20261001, branch audit/next-rogue-cold-blood-20261001. The preserved Cold Blood liveness patch passes189 corrected linked-owner cases after78 assertion failures against immutable old source. Read docs/audit/2026-10-01/rogue-cold-blood/REPORT.md and its exact source/test/review receipts. Resolve the new commit and final acceptance/publication from external ROGUE_COLD_BLOOD_* receipts and live Git, not this precommit note.
@@ -5,6 +15,19 @@ Canonical master is `eae93b1f7207a965fed0bef958905e40476ac282` after merged PR82
 The independent D:/Dev/CB-GroundCollection-20261001 branch addresses source discovery, 3D arrival, guarded landing/dismount, acknowledged loot, item progress and diagnostics. Its newest coupled test request was provider-held before execution and that branch is not release-ready. Do not reroute the held test, IDA/cleanup, or local-data queries. Its new primary execution ledger retains all4335 exact IDs but withdraws3030 old Generic/Strategy end-to-end claims until complete bound lifecycle evidence exists. Historical observation results are preserved separately; this is not3030 newly demonstrated gameplay failures.
 
 Production remains the last verified PR80 d6d2e303 release. Never replace a running CopilotBuddy process or infer deployment from a source merge. Preserve user settings, profiles, state and navigation assets. PR73/72/70 were observed closed as already integrated; remaining PR67/1 cleanup and fresh ground IDA evidence have separate retained tool holds. PR25 is intentional experiment/evidence, not a merge target.
+
+## Preserved earlier checkpoint
+
+
+## Preserved execution-evidence checkpoint
+
+# Current: execution proof correction — 1 October 2026
+
+Read `docs/audit/2026-10-01/execution-coverage/REPORT.md`, its exact primitive-ID matrix, execution ledger and test receipts first. The old4,335-quest ledger is historical structural/observation evidence. All3,030 old Generic/Strategy end-to-end claims are now EXECUTION-UNVERIFIED;921 data,311 source,16 live and57 scripted holds remain. This does not undo their source repairs or prove new runtime failures. There are currently zero accepted complete execution contracts. Do not present the old1,305 data/source frontier as the entire execution frontier.
+
+This independent worktree is `D:/Dev/CB-ExecutionEvidence-20261001` on `audit/next-execution-evidence-20261001`, based on merged PR82 `eae93b1f7207a965fed0bef958905e40476ac282`. It includes only Python receipt validation, tests and evidence. Nine causal-validation failures were reproduced;31 focused and452 total Python tests pass with one expected skip. Final candidate/publication/hosted identities must be read from current refs and the external EXECUTION_EVIDENCE receipts. No future SHA is claimed by this precommit note.
+
+The preserved ground runtime work is D:/Dev/CB-GroundCollection-20261001. Its corrected coupled C# lifecycle run was blocked after the exact retry, and native turn-in/reward acknowledgement has not been completed. Do not use this branch to reroute that test or claim deployment. The independent Rogue worktree retains189 passing corrected cases, but its commit request was blocked twice. PR67/70/72/73 are closed as integrated via PR75 and PR1 as obsolete; all branches remain, and draft PR25 is intentionally retained experiment evidence. Production was last hash-verified at PR80 d6d2e303 and has not been updated by this evidence correction.
 
 ## Preserved earlier checkpoint
 
