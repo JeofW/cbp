@@ -1,3 +1,13 @@
+# Current: execution proof correction — 1 October 2026
+
+Read `docs/audit/2026-10-01/execution-coverage/REPORT.md`, its exact primitive-ID matrix, execution ledger and test receipts first. The old4,335-quest ledger is historical structural/observation evidence. All3,030 old Generic/Strategy end-to-end claims are now EXECUTION-UNVERIFIED;921 data,311 source,16 live and57 scripted holds remain. This does not undo their source repairs or prove new runtime failures. There are currently zero accepted complete execution contracts. Do not present the old1,305 data/source frontier as the entire execution frontier.
+
+This independent worktree is `D:/Dev/CB-ExecutionEvidence-20261001` on `audit/next-execution-evidence-20261001`, based on merged PR82 `eae93b1f7207a965fed0bef958905e40476ac282`. It includes only Python receipt validation, tests and evidence. Nine causal-validation failures were reproduced;31 focused and452 total Python tests pass with one expected skip. Final candidate/publication/hosted identities must be read from current refs and the external EXECUTION_EVIDENCE receipts. No future SHA is claimed by this precommit note.
+
+The preserved ground runtime work is D:/Dev/CB-GroundCollection-20261001. Its corrected coupled C# lifecycle run was blocked after the exact retry, and native turn-in/reward acknowledgement has not been completed. Do not use this branch to reroute that test or claim deployment. The independent Rogue worktree retains189 passing corrected cases, but its commit request was blocked twice. PR67/70/72/73 are closed as integrated via PR75 and PR1 as obsolete; all branches remain, and draft PR25 is intentionally retained experiment evidence. Production was last hash-verified at PR80 d6d2e303 and has not been updated by this evidence correction.
+
+## Preserved earlier checkpoint
+
 # Current: PR82 integration after accepted Paladin and Death Knight merges — 1 October 2026
 
 Canonical master is `45700ca39d65690b01d077ccb3409abbc5bad3f4` after PR81 and PR83. Their reviewed heads are `08c7ebd820a452f0b21bd64f2d5f30c8afcdb7bd` and `b84aecbc6d999013235015ca25b8e1c6b51488e9`; each merge preserves its accepted source tree. PR83 passed180 Death Knight scenarios, all34 derived local stages, four quest-closure stages and three applicable hosted workflows with17 integrated suites and11266 matching versioned inputs.

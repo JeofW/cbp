@@ -1,0 +1,37 @@
+{
+  "source_base": "eae93b1f7207a965fed0bef958905e40476ac282",
+  "population_count": 4335,
+  "files": {
+    "execution-classification-ids.json": "e72fcf471c08474489211d9833e6e99d77d32e848938f313674c247361478555",
+    "execution-ledger.jsonl.gz": "ae4ddb6c5c9bcd97a3195ddc4891546455271c5bf061ce188a08990dca13713c",
+    "focused-test-receipts.json": "7a9bc6a6b084259761a99f79cfbe8e3da8135d0a8871b20cba7e29a2e6b90948",
+    "objective-primitive-ids.json": "3725151e04f31f3405c1f82f61dbf4e809a1357833058e41d5ca78c982e901e6",
+    "summary.json": "03f8c6b86fbf77e8cf354aec09db53417a200325110a97527dfc9993c2e5f8e4"
+  },
+  "ledger_uncompressed_sha256": "c9588390d6267f56108acca02e844ca8e960345dd9906ee1dbaf08cc624b5a31",
+  "matrix_scope": "Primary required semantics and explicitly labeled candidate acquisition alternatives; no hidden tested population.",
+  "no_runtime_or_knowledge_pack_changes": true,
+  "publication_serialization": {
+    "normalized_json_files": [
+      {
+        "path": "docs/audit/2026-10-01/execution-coverage/execution-classification-ids.json",
+        "before_sha256": "2890e4a430b18aa3c7320b9b13ec342e926adb2e9c50673b0f329bb4e5bdd544",
+        "after_sha256": "e72fcf471c08474489211d9833e6e99d77d32e848938f313674c247361478555",
+        "json_values_unchanged": true
+      },
+      {
+        "path": "docs/audit/2026-10-01/execution-coverage/objective-primitive-ids.json",
+        "before_sha256": "4ce7ec5cb577ef6e9ece84da1ca998ed39267433d8f6675ca3b142552d593706",
+        "after_sha256": "3725151e04f31f3405c1f82f61dbf4e809a1357833058e41d5ca78c982e901e6",
+        "json_values_unchanged": true
+      },
+      {
+        "path": "docs/audit/2026-10-01/execution-coverage/summary.json",
+        "before_sha256": "32e782db82adeeea34410c381852b7b9247a99fd1cf1715e92b7537b830bc449",
+        "after_sha256": "03f8c6b86fbf77e8cf354aec09db53417a200325110a97527dfc9993c2e5f8e4",
+        "json_values_unchanged": true
+      }
+    ],
+    "note": "summary.json output_sha256 identifies the retained original generator outputs. This manifest identifies published copies; only CRLF-to-LF serialization differs for the three listed JSON files. The compressed ledger preserves the original uncompressed bytes."
+  }
+}
