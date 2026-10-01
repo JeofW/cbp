@@ -1,3 +1,11 @@
+# Current: direct GameObject execution and native route continuation — 1 October 2026
+
+Continue D:/Dev/CB-DirectGameObject-20261001 on audit/next-direct-gameobject-execution-20261001, based on accepted Hunter master `1e891aae50371b51393a866f85950e00f552a738`. Read docs/audit/2026-10-01/direct-gameobject/REPORT.md and its exact source, execution, navigation and red/green receipts. The preserved direct repair now has62 controller cases,13 diagnostic cases and16 actual-memory usability cases;11 source-bound quest lifecycles execute22 objectives and31 separate use/credit replies. Actual native/MeshNavigator replay made792 calls using3610 hydrated assets:33of44 source legs have complete endpoints and11 remain unresolved. Detailed native triage is held in NATIVE_ROUTE_DETAIL_REVIEW_BLOCK_V18_20261001.json; do not reroute it. Formal per-member execution promotions remain empty.
+
+PR87 is already merged/deployed atd949ff16d6396fdda788268648799ac04349b89d. Recovery rehashed434 payload files and2010 protected files. PR88 Hunter atbe5d1d3b83fc06ced0b9a30aedfbd2642f7c85a9 merged as1e891aae50371b51393a866f85950e00f552a738; its582-case traps/dispatch work and exact merged Windows/x86 gates are green. Current production changes require a separately validated merged package; this note does not claim Hunter/direct deployment. Preserve all prior work and actual refs. Final direct candidate SHA, publication and integration state belong to subsequent DIRECT_GAMEOBJECT_V18 receipts and live Git, not an invented future commit hash. Keep the exact4335 execution population, source/script/live limitations and all original build12340/TrinityCore335 constraints. Continue temporary collision blackspots/ownership and the retained adjacent-class dispatch frontier in small scopes.
+
+## Preserved previous checkpoint
+
 # Current: Hunter trap dispatch after merged and deployed PR87 — 1 October 2026
 
 Canonical master is d949ff16d6396fdda788268648799ac04349b89d after accepted PR87 head2d28f0c30ead94cc892af656721265d189468c7d. PR87 now has exact merged local/hosted/package/deployment evidence; read PR87_DEPLOYMENT_DELIVERY_V17_20261001.json before any deployment repeat. The target CB installation is distinct from the owner's running CB - Copy instance, which is preserved.

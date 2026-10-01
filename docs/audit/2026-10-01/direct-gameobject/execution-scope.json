@@ -1,0 +1,776 @@
+{
+  "exact_source_population": [
+    498,
+    633,
+    786,
+    900,
+    953,
+    957,
+    1022,
+    1043,
+    1140,
+    1172,
+    2988,
+    2995,
+    3463,
+    3701,
+    8345,
+    9388,
+    9389,
+    9740,
+    9971,
+    10021,
+    10047,
+    10056,
+    10158,
+    10203,
+    10238,
+    10397,
+    10457,
+    10515,
+    10861,
+    10874,
+    11244,
+    11602,
+    11605,
+    11900,
+    11904,
+    11936,
+    11965,
+    11993,
+    12058,
+    12265,
+    12307,
+    12550,
+    12559,
+    12613,
+    12627,
+    12660,
+    12790,
+    12925,
+    12965,
+    13034,
+    13058,
+    13084,
+    13117,
+    13120,
+    13134,
+    13152,
+    13643
+  ],
+  "source_family_quest_count": 57,
+  "exact_controlled_lifecycle_quest_ids": [
+    953,
+    1043,
+    2988,
+    8345,
+    10874,
+    11900,
+    11965,
+    12559,
+    12613,
+    13034,
+    13084
+  ],
+  "executed_members": [
+    {
+      "quest_id": 953,
+      "required_primitives": [
+        {
+          "objective_key": "normal:0",
+          "primary_semantics": {
+            "required_count": 1,
+            "special_flags": 0,
+            "typed_entry": -17188
+          },
+          "primitive": "direct-gameobject-interaction",
+          "quest_id": 953,
+          "semantics_sha256": "5433fa142da8dc2aa24aca8c7d55f624e27cba7b148f83425eea262b694ad47d"
+        },
+        {
+          "objective_key": "normal:1",
+          "primary_semantics": {
+            "required_count": 1,
+            "special_flags": 0,
+            "typed_entry": -17189
+          },
+          "primitive": "direct-gameobject-interaction",
+          "quest_id": 953,
+          "semantics_sha256": "fce761b152b34294ef9bfc3d35bf0894702728962312959286bf2cd33f96a025"
+        },
+        {
+          "objective_key": "turnin",
+          "primary_semantics": {
+            "authoritative_reward_acknowledgement_required": true,
+            "enders": [
+              {
+                "entry": 3639,
+                "type": "Creature"
+              }
+            ]
+          },
+          "primitive": "quest-turnin",
+          "quest_id": 953,
+          "semantics_sha256": "74d0d5f82532cf6e6b92dfa2690104bc9180b7f152a0edaa4c5a3fc700b0cb73"
+        }
+      ],
+      "actual_objective_owners": 2,
+      "actual_use_requests": 2,
+      "executed_event_types": [
+        "action-dispatch",
+        "admission",
+        "authoritative-progress",
+        "ender-plan",
+        "live-acquisition-safe-approach",
+        "next-scheduling",
+        "objective-completion",
+        "owner-observation",
+        "profile-action",
+        "server-completed-state",
+        "travel",
+        "turnin-acknowledgement",
+        "turnin-dispatch",
+        "waiting-for-acknowledgement"
+      ],
+      "controlled_trace_sha256": "c9ead2fcc347df82f79ef311653abc2bba39c78b98d0792507aeb88fcd838342"
+    },
+    {
+      "quest_id": 1043,
+      "required_primitives": [
+        {
+          "objective_key": "normal:0",
+          "primary_semantics": {
+            "required_count": 1,
+            "special_flags": 0,
+            "typed_entry": -19030
+          },
+          "primitive": "direct-gameobject-interaction",
+          "quest_id": 1043,
+          "semantics_sha256": "2a688e5c0c49aa9a838e3263a3ac20cfc30d680e0522355bc8964b696984132b"
+        },
+        {
+          "objective_key": "turnin",
+          "primary_semantics": {
+            "authoritative_reward_acknowledgement_required": true,
+            "enders": [
+              {
+                "entry": 661,
+                "type": "Creature"
+              }
+            ]
+          },
+          "primitive": "quest-turnin",
+          "quest_id": 1043,
+          "semantics_sha256": "ce1e98de1e140d24f58ece31c182ebef51d730a685382356ace6fa963f9247c8"
+        }
+      ],
+      "actual_objective_owners": 1,
+      "actual_use_requests": 1,
+      "executed_event_types": [
+        "action-dispatch",
+        "admission",
+        "authoritative-progress",
+        "bounded-scan-expansion",
+        "ender-plan",
+        "live-acquisition-safe-approach",
+        "next-scheduling",
+        "objective-completion",
+        "owner-observation",
+        "profile-action",
+        "server-completed-state",
+        "travel",
+        "turnin-acknowledgement",
+        "turnin-dispatch",
+        "waiting-for-acknowledgement"
+      ],
+      "controlled_trace_sha256": "a3ecfffc292415380b6fb6441c5aa4f70d98b78ea375923c42783eb856be80ee"
+    },
+    {
+      "quest_id": 2988,
+      "required_primitives": [
+        {
+          "objective_key": "normal:0",
+          "primary_semantics": {
+            "required_count": 1,
+            "special_flags": 0,
+            "typed_entry": -144066
+          },
+          "primitive": "direct-gameobject-interaction",
+          "quest_id": 2988,
+          "semantics_sha256": "a2ba908c2dcd801052b2758b9f1c54a361cf190b6573d2da2d15ea75286244cf"
+        },
+        {
+          "objective_key": "normal:1",
+          "primary_semantics": {
+            "required_count": 1,
+            "special_flags": 0,
+            "typed_entry": -144067
+          },
+          "primitive": "direct-gameobject-interaction",
+          "quest_id": 2988,
+          "semantics_sha256": "6bc1ea29141798bd405b97353d5d706cd4c28f227764a8082c5e3483d75cf512"
+        },
+        {
+          "objective_key": "normal:2",
+          "primary_semantics": {
+            "required_count": 1,
+            "special_flags": 0,
+            "typed_entry": -144068
+          },
+          "primitive": "direct-gameobject-interaction",
+          "quest_id": 2988,
+          "semantics_sha256": "e90e70a29f0ad493f0517091b09dd86a1ef593b723bb0fa408d399b55ce90e15"
+        },
+        {
+          "objective_key": "turnin",
+          "primary_semantics": {
+            "authoritative_reward_acknowledgement_required": true,
+            "enders": [
+              {
+                "entry": 5636,
+                "type": "Creature"
+              }
+            ]
+          },
+          "primitive": "quest-turnin",
+          "quest_id": 2988,
+          "semantics_sha256": "f6a7e16fbfb8c5c879b7856964c981011cca86a13451dba80f9694317cda4192"
+        }
+      ],
+      "actual_objective_owners": 3,
+      "actual_use_requests": 3,
+      "executed_event_types": [
+        "action-dispatch",
+        "admission",
+        "authoritative-progress",
+        "bounded-scan-expansion",
+        "ender-plan",
+        "live-acquisition-safe-approach",
+        "next-scheduling",
+        "objective-completion",
+        "owner-observation",
+        "profile-action",
+        "server-completed-state",
+        "travel",
+        "turnin-acknowledgement",
+        "turnin-dispatch",
+        "waiting-for-acknowledgement"
+      ],
+      "controlled_trace_sha256": "d89e4402ad31413ef798ad75859de65e8347a1fdb7ff13e98360e25e9d33796c"
+    },
+    {
+      "quest_id": 8345,
+      "required_primitives": [
+        {
+          "objective_key": "normal:0",
+          "primary_semantics": {
+            "required_count": 1,
+            "special_flags": 4,
+            "typed_entry": -180516
+          },
+          "primitive": "direct-gameobject-interaction",
+          "quest_id": 8345,
+          "semantics_sha256": "c3aca837b10631e88a846e1303dcf2495708400fc7fdb0b9562b2c226bd699e3"
+        },
+        {
+          "objective_key": "turnin",
+          "primary_semantics": {
+            "authoritative_reward_acknowledgement_required": true,
+            "enders": [
+              {
+                "entry": 15295,
+                "type": "Creature"
+              }
+            ]
+          },
+          "primitive": "quest-turnin",
+          "quest_id": 8345,
+          "semantics_sha256": "7fac5cb89e86651d75a744604853a9ccc4e2f6914a4550879ac200b11f1349ee"
+        }
+      ],
+      "actual_objective_owners": 1,
+      "actual_use_requests": 1,
+      "executed_event_types": [
+        "action-dispatch",
+        "admission",
+        "authoritative-progress",
+        "bounded-scan-expansion",
+        "ender-plan",
+        "live-acquisition-safe-approach",
+        "next-scheduling",
+        "objective-completion",
+        "owner-observation",
+        "profile-action",
+        "server-completed-state",
+        "travel",
+        "turnin-acknowledgement",
+        "turnin-dispatch",
+        "waiting-for-acknowledgement"
+      ],
+      "controlled_trace_sha256": "30aaa63d5e6c20526ffcc144b93ae2d2e603514e5ded3dce5ab59d84c273fd35"
+    },
+    {
+      "quest_id": 10874,
+      "required_primitives": [
+        {
+          "objective_key": "normal:0",
+          "primary_semantics": {
+            "required_count": 1,
+            "special_flags": 0,
+            "typed_entry": -185216
+          },
+          "primitive": "direct-gameobject-interaction",
+          "quest_id": 10874,
+          "semantics_sha256": "f4fcb1db807ade518d24347a7dc603fe79aff67fe1b50e01f217ea24ec5b1210"
+        },
+        {
+          "objective_key": "normal:1",
+          "primary_semantics": {
+            "required_count": 1,
+            "special_flags": 0,
+            "typed_entry": -185217
+          },
+          "primitive": "direct-gameobject-interaction",
+          "quest_id": 10874,
+          "semantics_sha256": "477cc913cb08e87743bcef211f3e71ff056943f49cc37a56377bdb55183d0ee7"
+        },
+        {
+          "objective_key": "normal:2",
+          "primary_semantics": {
+            "required_count": 1,
+            "special_flags": 0,
+            "typed_entry": -185218
+          },
+          "primitive": "direct-gameobject-interaction",
+          "quest_id": 10874,
+          "semantics_sha256": "3e6d950cd0c105407901f856d2d62c79031ad3e1724f8847cf49fb2524cdef8c"
+        },
+        {
+          "objective_key": "normal:3",
+          "primary_semantics": {
+            "required_count": 1,
+            "special_flags": 0,
+            "typed_entry": -185219
+          },
+          "primitive": "direct-gameobject-interaction",
+          "quest_id": 10874,
+          "semantics_sha256": "f09bcd8c51f1d2dd0dfc39b49ad8bbea7df210620c914511e1c4b7c02c047f6a"
+        },
+        {
+          "objective_key": "turnin",
+          "primary_semantics": {
+            "authoritative_reward_acknowledgement_required": true,
+            "enders": [
+              {
+                "entry": 22272,
+                "type": "Creature"
+              }
+            ]
+          },
+          "primitive": "quest-turnin",
+          "quest_id": 10874,
+          "semantics_sha256": "8107b8ecf68b18fc909dfe3b158c5f876d29777abeb639a1f71c0187428cf83f"
+        }
+      ],
+      "actual_objective_owners": 4,
+      "actual_use_requests": 4,
+      "executed_event_types": [
+        "action-dispatch",
+        "admission",
+        "authoritative-progress",
+        "bounded-scan-expansion",
+        "ender-plan",
+        "live-acquisition-safe-approach",
+        "next-scheduling",
+        "objective-completion",
+        "owner-observation",
+        "profile-action",
+        "server-completed-state",
+        "travel",
+        "turnin-acknowledgement",
+        "turnin-dispatch",
+        "waiting-for-acknowledgement"
+      ],
+      "controlled_trace_sha256": "d9a01c1a85e4608d2c949076a000cd868ee72bafa784d04b4e499386413bdf1f"
+    },
+    {
+      "quest_id": 11900,
+      "required_primitives": [
+        {
+          "objective_key": "normal:0",
+          "primary_semantics": {
+            "required_count": 1,
+            "special_flags": 0,
+            "typed_entry": -188100
+          },
+          "primitive": "direct-gameobject-interaction",
+          "quest_id": 11900,
+          "semantics_sha256": "ac65e2443020b6986d17e61815bafb35892de96d6df4f7b3916c895a4e7f5fdd"
+        },
+        {
+          "objective_key": "normal:1",
+          "primary_semantics": {
+            "required_count": 1,
+            "special_flags": 0,
+            "typed_entry": -188101
+          },
+          "primitive": "direct-gameobject-interaction",
+          "quest_id": 11900,
+          "semantics_sha256": "bc49a39371d85938a7c001e9ef673b5740a8413fc917a7adc9a82e946f5f8f43"
+        },
+        {
+          "objective_key": "normal:2",
+          "primary_semantics": {
+            "required_count": 1,
+            "special_flags": 0,
+            "typed_entry": -188102
+          },
+          "primitive": "direct-gameobject-interaction",
+          "quest_id": 11900,
+          "semantics_sha256": "1514605139ed78f5ad50cd464a0be8efcc5d9c18b82c1fd5ee82d3c73c8e7b27"
+        },
+        {
+          "objective_key": "normal:3",
+          "primary_semantics": {
+            "required_count": 1,
+            "special_flags": 0,
+            "typed_entry": -188103
+          },
+          "primitive": "direct-gameobject-interaction",
+          "quest_id": 11900,
+          "semantics_sha256": "ae6d7fd14b62139f33717529d75ecf59fcb573ae6129e74dbace398df2f0f8d4"
+        },
+        {
+          "objective_key": "turnin",
+          "primary_semantics": {
+            "authoritative_reward_acknowledgement_required": true,
+            "enders": [
+              {
+                "entry": 25314,
+                "type": "Creature"
+              }
+            ]
+          },
+          "primitive": "quest-turnin",
+          "quest_id": 11900,
+          "semantics_sha256": "d90b0daee03223629ec8e27d4fed513b4d8a7a7c84ad9c60c3f19f71fb8eff81"
+        }
+      ],
+      "actual_objective_owners": 4,
+      "actual_use_requests": 4,
+      "executed_event_types": [
+        "action-dispatch",
+        "admission",
+        "authoritative-progress",
+        "bounded-scan-expansion",
+        "ender-plan",
+        "live-acquisition-safe-approach",
+        "next-scheduling",
+        "objective-completion",
+        "owner-observation",
+        "profile-action",
+        "server-completed-state",
+        "travel",
+        "turnin-acknowledgement",
+        "turnin-dispatch",
+        "waiting-for-acknowledgement"
+      ],
+      "controlled_trace_sha256": "9aabc058539f11a1ef4af5ff7dc9e0d01ad73b9f8232a3be09823aed4044e793"
+    },
+    {
+      "quest_id": 11965,
+      "required_primitives": [
+        {
+          "objective_key": "normal:0",
+          "primary_semantics": {
+            "required_count": 1,
+            "special_flags": 0,
+            "typed_entry": -188163
+          },
+          "primitive": "direct-gameobject-interaction",
+          "quest_id": 11965,
+          "semantics_sha256": "74268065c1815d55ba5adbe4f97c190fce9c9b3fcb14b7fa84acadaa0a81e887"
+        },
+        {
+          "objective_key": "turnin",
+          "primary_semantics": {
+            "authoritative_reward_acknowledgement_required": true,
+            "enders": [
+              {
+                "entry": 26083,
+                "type": "Creature"
+              }
+            ]
+          },
+          "primitive": "quest-turnin",
+          "quest_id": 11965,
+          "semantics_sha256": "baad10167fe889c9c01e8ad398edf5df5b9d78ea527e8c07e98c76cf02b4ca38"
+        }
+      ],
+      "actual_objective_owners": 1,
+      "actual_use_requests": 1,
+      "executed_event_types": [
+        "action-dispatch",
+        "admission",
+        "authoritative-progress",
+        "ender-plan",
+        "live-acquisition-safe-approach",
+        "next-scheduling",
+        "objective-completion",
+        "owner-observation",
+        "profile-action",
+        "server-completed-state",
+        "travel",
+        "turnin-acknowledgement",
+        "turnin-dispatch",
+        "waiting-for-acknowledgement"
+      ],
+      "controlled_trace_sha256": "146b0f2742ee1026f83048393280cd1cb526034d6cc9201e12aa89c41644158b"
+    },
+    {
+      "quest_id": 12559,
+      "required_primitives": [
+        {
+          "objective_key": "normal:0",
+          "primary_semantics": {
+            "required_count": 1,
+            "special_flags": 0,
+            "typed_entry": -190508
+          },
+          "primitive": "direct-gameobject-interaction",
+          "quest_id": 12559,
+          "semantics_sha256": "51a81b804b89cf2d106ef06c82e808a6aad9b04ec79470e2459ee27fbb4636d4"
+        },
+        {
+          "objective_key": "turnin",
+          "primary_semantics": {
+            "authoritative_reward_acknowledgement_required": true,
+            "enders": [
+              {
+                "entry": 27801,
+                "type": "Creature"
+              }
+            ]
+          },
+          "primitive": "quest-turnin",
+          "quest_id": 12559,
+          "semantics_sha256": "cdc679b9425f4db47031d3117033c2d20745ddd2b92d0cbc9a1dd00ce8a37005"
+        }
+      ],
+      "actual_objective_owners": 1,
+      "actual_use_requests": 1,
+      "executed_event_types": [
+        "action-dispatch",
+        "admission",
+        "authoritative-progress",
+        "bounded-scan-expansion",
+        "ender-plan",
+        "live-acquisition-safe-approach",
+        "next-scheduling",
+        "objective-completion",
+        "owner-observation",
+        "profile-action",
+        "server-completed-state",
+        "travel",
+        "turnin-acknowledgement",
+        "turnin-dispatch",
+        "waiting-for-acknowledgement"
+      ],
+      "controlled_trace_sha256": "615b26af7988549fe96e433e4084fc60c1e30fc8982403852f4b69d9fe2df70e"
+    },
+    {
+      "quest_id": 12613,
+      "required_primitives": [
+        {
+          "objective_key": "normal:0",
+          "primary_semantics": {
+            "required_count": 1,
+            "special_flags": 0,
+            "typed_entry": -190509
+          },
+          "primitive": "direct-gameobject-interaction",
+          "quest_id": 12613,
+          "semantics_sha256": "641139fc1632760c4a03450d45cd0a9527d73e429fe10d80322fc5bae9479752"
+        },
+        {
+          "objective_key": "turnin",
+          "primary_semantics": {
+            "authoritative_reward_acknowledgement_required": true,
+            "enders": [
+              {
+                "entry": 27801,
+                "type": "Creature"
+              }
+            ]
+          },
+          "primitive": "quest-turnin",
+          "quest_id": 12613,
+          "semantics_sha256": "cdc679b9425f4db47031d3117033c2d20745ddd2b92d0cbc9a1dd00ce8a37005"
+        }
+      ],
+      "actual_objective_owners": 1,
+      "actual_use_requests": 1,
+      "executed_event_types": [
+        "action-dispatch",
+        "admission",
+        "authoritative-progress",
+        "bounded-scan-expansion",
+        "ender-plan",
+        "live-acquisition-safe-approach",
+        "next-scheduling",
+        "objective-completion",
+        "owner-observation",
+        "profile-action",
+        "server-completed-state",
+        "travel",
+        "turnin-acknowledgement",
+        "turnin-dispatch",
+        "waiting-for-acknowledgement"
+      ],
+      "controlled_trace_sha256": "e8e731e0f4e0d88af3ffe7c66eee25240e01ff4881edf86bd01669ed376e3489"
+    },
+    {
+      "quest_id": 13034,
+      "required_primitives": [
+        {
+          "objective_key": "normal:0",
+          "primary_semantics": {
+            "required_count": 1,
+            "special_flags": 0,
+            "typed_entry": -192493
+          },
+          "primitive": "direct-gameobject-interaction",
+          "quest_id": 13034,
+          "semantics_sha256": "2138a605f5548b4168801704318e9e56f7f55a901a6d670e0d75386ad6add878"
+        },
+        {
+          "objective_key": "normal:1",
+          "primary_semantics": {
+            "required_count": 1,
+            "special_flags": 0,
+            "typed_entry": -192494
+          },
+          "primitive": "direct-gameobject-interaction",
+          "quest_id": 13034,
+          "semantics_sha256": "722db9c0e6e7db4ba2769e1bf2275267d2963e56a660db70d24ee70e7765adc7"
+        },
+        {
+          "objective_key": "normal:2",
+          "primary_semantics": {
+            "required_count": 1,
+            "special_flags": 0,
+            "typed_entry": -192495
+          },
+          "primitive": "direct-gameobject-interaction",
+          "quest_id": 13034,
+          "semantics_sha256": "41afda2ca5883c02c4ba8c237bf8b9667096c95cec1cc3c41e768b69b1b8773f"
+        },
+        {
+          "objective_key": "turnin",
+          "primary_semantics": {
+            "authoritative_reward_acknowledgement_required": true,
+            "enders": [
+              {
+                "entry": 30381,
+                "type": "Creature"
+              }
+            ]
+          },
+          "primitive": "quest-turnin",
+          "quest_id": 13034,
+          "semantics_sha256": "5e0b90a979ccaf353d580d15e1d1fe24e4adc331b45b681f90b1814cf4c9b2bc"
+        }
+      ],
+      "actual_objective_owners": 3,
+      "actual_use_requests": 3,
+      "executed_event_types": [
+        "action-dispatch",
+        "admission",
+        "authoritative-progress",
+        "ender-plan",
+        "live-acquisition-safe-approach",
+        "next-scheduling",
+        "objective-completion",
+        "owner-observation",
+        "profile-action",
+        "server-completed-state",
+        "travel",
+        "turnin-acknowledgement",
+        "turnin-dispatch",
+        "waiting-for-acknowledgement"
+      ],
+      "controlled_trace_sha256": "529a3ca4dcaa5a258de7bd5e7cd6a4f8b5bc7ab83cb94aae96bccbaaecbe296c"
+    },
+    {
+      "quest_id": 13084,
+      "required_primitives": [
+        {
+          "objective_key": "normal:0",
+          "primary_semantics": {
+            "required_count": 10,
+            "special_flags": 0,
+            "typed_entry": -191820
+          },
+          "primitive": "direct-gameobject-interaction",
+          "quest_id": 13084,
+          "semantics_sha256": "56bf2f4c0481ee28759aca2bd89be6b1514165b957b0b826bc584fc132ddfb7c"
+        },
+        {
+          "objective_key": "turnin",
+          "primary_semantics": {
+            "authoritative_reward_acknowledgement_required": true,
+            "enders": [
+              {
+                "entry": 30002,
+                "type": "Creature"
+              }
+            ]
+          },
+          "primitive": "quest-turnin",
+          "quest_id": 13084,
+          "semantics_sha256": "02dc51997085a63424ad96ee8f6f7237bbaa3aaef6f24eab4ff0ffed570a36ab"
+        }
+      ],
+      "actual_objective_owners": 1,
+      "actual_use_requests": 10,
+      "executed_event_types": [
+        "action-dispatch",
+        "admission",
+        "authoritative-progress",
+        "bounded-scan-expansion",
+        "ender-plan",
+        "live-acquisition-safe-approach",
+        "next-scheduling",
+        "objective-completion",
+        "owner-observation",
+        "profile-action",
+        "server-completed-state",
+        "travel",
+        "turnin-acknowledgement",
+        "turnin-dispatch",
+        "waiting-for-acknowledgement"
+      ],
+      "controlled_trace_sha256": "896427bbe4237b1c47081e8ccdda9ba7ff03c4b01650b51d251131e0a9ad2630"
+    }
+  ],
+  "controlled_objective_owners": 22,
+  "separately_acknowledged_use_requests": 31,
+  "ordinary_turnin_lifecycles": 11,
+  "controlled_boundaries": [
+    "world and native movement/interaction",
+    "separately supplied typed credit and completion replies",
+    "quest UI widgets, price observations and delayed rewarded history"
+  ],
+  "source_coordinate_chains_grounded_without_inferred_riding_permission": true,
+  "diagnostic_selection_receipts_are_timestamped_not_new_live_acquisition": true,
+  "formal_execution_promotions": [],
+  "formal_execution_contracts_accepted": 0,
+  "classification_counts": {
+    "EXECUTION-UNVERIFIED": 3030,
+    "DATA-INVALID/INCOMPLETE": 921,
+    "SOURCE-UNCERTAIN": 311,
+    "LIVE-ACCEPTANCE-REQUIRED": 16,
+    "UNSUPPORTED-SCRIPTED": 57
+  },
+  "claim_limit": "Coupled actual-owner traces with controlled native/server boundaries. No unreviewed full-family promotion, physical collision certificate or live acceptance is inferred."
+}

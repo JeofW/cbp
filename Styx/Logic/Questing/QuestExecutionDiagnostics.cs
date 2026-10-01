@@ -38,6 +38,10 @@ public static class QuestExecutionDiagnostics
             ["live_coordinates"] = null, ["player_coordinates"] = null, ["map_id"] = null, ["z_delta"] = null,
             ["mounted"] = null, ["flying"] = null, ["moving"] = null, ["movement_flags"] = null, ["movement_known"] = false,
             ["navigation_destination"] = null, ["navigation_result"] = "unavailable", ["interaction_range"] = null,
+            ["path_waypoint_index"] = null, ["path_waypoint_count"] = null, ["path_waypoint"] = null,
+            ["collision_observation"] = "no-bound-collision-receipt", ["blackspot_observation"] = null,
+            ["swimming"] = null, ["falling"] = null, ["pending_acknowledgement"] = null,
+            ["selection_observation_source"] = "no-selected-object-observation",
             ["within_interaction_range"] = null, ["line_of_sight"] = null, ["inventory_status"] = "unavailable",
             ["inventory_count"] = null, ["free_normal_bag_slots"] = null, ["blacklisted"] = null,
             ["retry_state"] = new { watchdog_requests = recoveryRequests }, ["blocking_node"] = ExistingNode(behavior?.ExistingBranch),
@@ -61,6 +65,8 @@ public static class QuestExecutionDiagnostics
             row["mounted"] = actor.Mounted;
             row["flying"] = actor.IsFlying;
             row["moving"] = actor.IsMoving;
+            row["swimming"] = actor.IsSwimming;
+            row["falling"] = actor.IsFalling;
             row["shapeshift"] = actor.Shapeshift.ToString();
             row["combat"] = actor.IsActuallyInCombat || actor.PetInCombat;
             row["dead"] = !actor.IsAlive;
@@ -104,6 +110,12 @@ public static class QuestExecutionDiagnostics
                 else if (QuestObjectiveCompletion.TryReadTypedNormalObjectiveProgress(owner.Quest,
                     owner is UseGameObjectObjective ? unchecked((int)0x80000000) | objective.ID : objective.ID,
                     objective.Count, out int progress)) row["objective_counter"] = progress;
+                if (owner is UseGameObjectObjective)
+                {
+                    sources = new[] { new CollectFrom((uint)objective.ID, null, CollectFromType.GameObject) };
+                    var directProfile = owner.OverridedQuestInfo?.FindUseGameObject((uint)objective.ID);
+                    if (directProfile?.OverridedHotspots != null) staticPoints.AddRange(directProfile.OverridedHotspots);
+                }
             }
             row["declared_sources"] = sources.Take(64).Select(source => new { entry = source.ID, type = source.Type.ToString() }).ToArray();
             row["declared_source_count"] = sources.Length;
@@ -119,6 +131,19 @@ public static class QuestExecutionDiagnostics
                 row["navigation_failure"] = navigation.LastRouteFailure.ToString();
                 row["navigation_attempt_utc"] = navigation.LastMoveAttemptUtc;
                 row["active_path"] = navigation.HasActivePath;
+                var path = navigation.CurrentPath;
+                int index = navigation.CurrentPathIndex, count = path.Count;
+                row["path_waypoint_index"] = index;
+                row["path_waypoint_count"] = count;
+                row["path_waypoint"] = index >= 0 && index < count ? Point(path[index]) : null;
+                row["navigation_request_sequence"] = navigation.LastMoveAttemptSequence;
+                row["riding_elevator"] = navigation.IsRidingElevator;
+                // These are existing registered avoidance regions, not evidence
+                // of a fresh TraceLine hit or a safe physical detour.
+                var spots = BlackspotManager.Blackspots.ToArray();
+                row["blackspot_observation"] = new { count = spots.Length, truncated = spots.Length > 16,
+                    regions = spots.Take(16).Select(spot => new { coordinates = Point(spot.Location),
+                        radius = Number(spot.Radius), height = Number(spot.Height) }).ToArray() };
             }
             row["poi_type"] = poi?.Type.ToString();
             row["poi_coordinates"] = poi == null ? null : Point(poi.Location);
@@ -129,6 +154,7 @@ public static class QuestExecutionDiagnostics
             if (live)
             {
                 row["selected_guid"] = subjectGuid;
+                row["selection_observation_source"] = "current-poi-object";
                 row["selected_entry"] = subject!.Entry;
                 row["source_type"] = subject is WoWGameObject ? "GameObject" : subject is WoWUnit ? "Creature" : subject.GetType().Name;
                 var location = subject.Location;
@@ -158,10 +184,51 @@ public static class QuestExecutionDiagnostics
                     coordinates = Point(go.Location), can_loot = go.CanLoot, blacklisted = Blacklist.Contains(go.Guid) }).ToArray();
             }
             var receipt = GroundLootApproach.LastObservation;
+            var directReceipt = (owner as UseGameObjectObjective)?.ExecutionObservation;
+            bool directMatched = directReceipt != null && typed.HasValue && owner is UseGameObjectObjective
+                && directReceipt.QuestId == questId && directReceipt.ObjectiveIndex == typed.Value.Index
+                && directReceipt.ObjectiveEntry == typed.Value.ID && directReceipt.Required == typed.Value.Count
+                && directReceipt.PlayerGuid == actorGuid && directReceipt.MapId == map
+                && (DateTime.UtcNow - directReceipt.ObservedUtc).TotalSeconds is >= 0 and <= 15;
             bool matched = receipt != null && receipt.PlayerGuid == actorGuid && receipt.MapId == map
                 && receipt.ObjectGuid == subjectGuid && live && receipt.ObjectEntry == subject!.Entry
                 && (DateTime.UtcNow - receipt.ObservedUtc).TotalSeconds is >= 0 and <= 15;
-            if (matched)
+            if (directMatched)
+            {
+                // Direct interaction keeps its own subject while the loot POI
+                // remains idle. Preserve its timestamped state without claiming
+                // that a historical selection is a fresh live acquisition.
+                var direct = directReceipt!;
+                row["selection_observation_source"] = "direct-objective-receipt";
+                row["selection_observed_utc"] = direct.ObservedUtc;
+                row["selected_guid"] = direct.ObjectGuid;
+                row["selected_entry"] = direct.ObjectEntry;
+                row["source_type"] = "GameObject";
+                row["live_coordinates"] = direct.ObjectXYZ;
+                row["action_player_coordinates"] = direct.PlayerXYZ;
+                row["distance"] = direct.Distance.HasValue ? Number(direct.Distance.Value) : null;
+                row["z_delta"] = direct.ZDelta.HasValue ? Number(direct.ZDelta.Value) : null;
+                row["interaction_range"] = direct.InteractRange.HasValue ? Number(direct.InteractRange.Value) : null;
+                row["action_progress_before"] = direct.Before;
+                row["action_progress_current"] = direct.Current;
+                row["pending_acknowledgement"] = direct.PendingAcknowledgement;
+                row["phase"] = direct.Phase;
+                row["reason"] = direct.Reason;
+                row["blocking_node"] = direct.Node;
+                row["navigation_result"] = direct.NavigationResult;
+                row["last_interaction"] = direct.LastInteraction;
+                row["last_interaction_utc"] = direct.LastInteractionUtc;
+                row["retry_state"] = new { watchdog_requests = recoveryRequests,
+                    episode_dispatches = direct.EpisodeDispatches, subject_attempts = direct.SubjectAttempts,
+                    static_route_failures = direct.StaticRouteFailures, static_route_replans = direct.StaticRouteReplans,
+                    static_no_progress_seconds = direct.StaticNoProgressSeconds, static_travel_stopped = direct.StaticTravelStopped };
+                row["blacklisted"] = direct.ObjectGuid.HasValue ? Blacklist.Contains(direct.ObjectGuid.Value) : null;
+                // An unrelated POI cannot supply interaction/range/LoS facts
+                // for the direct owner's subject. Unknown remains explicit.
+                row["within_interaction_range"] = null;
+                row["line_of_sight"] = null;
+            }
+            else if (matched)
             {
                 row["phase"] = receipt!.Phase;
                 row["reason"] = receipt.Reason;

@@ -86,11 +86,21 @@ internal static class QuestTurnInExecutionRegressionTests
         {
             uint quest = (uint)generated.Attribute("QuestId")!, ender = (uint)generated.Attribute("TurnInId")!;
             Check(quest == 10161 && ender == 19367, "The source-bound fixture must consume the generated quest/ender identity");
+            ExecuteBound(generated, choices, quest, ender, acknowledge, beforeAcknowledgement);
+        }
+
+        internal void ExecuteBound(XElement generated, bool choices, uint expectedQuest, uint expectedEnder,
+            System.Action acknowledge, System.Action beforeAcknowledgement, uint expectedMap = 530)
+        {
+            uint quest = (uint)generated.Attribute("QuestId")!, ender = (uint)generated.Attribute("TurnInId")!;
+            Check(quest != 0 && ender != 0 && quest == expectedQuest && ender == expectedEnder,
+                "Generated turn-in differs from the independently supplied source identity");
             ExecutedRequests.Clear();
             _session?.Dispose();
-            _session = _lua.BeginSession(UiSetup + "\nchoiceCount=" + (choices ? "3" : "0") + "\n");
+            _session = _lua.BeginSession(UiSetup + "\nchoiceCount=" + (choices ? "3" : "0") + "\nshownQuest=" + quest + "\n");
             _observe.SetValue(null, new Func<string, List<string>>(Observe));
-            Call("Reset", quest, ender, (float)generated.Attribute("X")!, (float)generated.Attribute("Y")!, (float)generated.Attribute("Z")!);
+            Call("Reset", quest, ender, (float)generated.Attribute("X")!, (float)generated.Attribute("Y")!, (float)generated.Attribute("Z")!, expectedMap);
+            Check(ReadInt("Map") == expectedMap, "Turn-in fixture did not preserve the independently supplied source map");
             // Installing a new POI legitimately consumes the first selector
             // pulse. Advance a bounded number of real ticks to travel, keeping
             // the no-interaction/no-reward assertions throughout setup.
@@ -230,14 +240,14 @@ public static class TurnInState {
  public static int Moves,Interactions,Clears; public static readonly List<Exception> Errors=new();
  public static uint Quest=10161;public static WoWUnit Npc;
  public static int ReadInt(string name)=>name switch {
-  "Moves"=>Moves,"Interactions"=>Interactions,"Clears"=>Clears,
+  "Moves"=>Moves,"Interactions"=>Interactions,"Clears"=>Clears,"Map"=>(int)StyxWoW.Me.MapId,
   "CompletionRequests"=>Lua.GetReturnVal<int>("return requests",0),
   "SelectedChoice"=>Lua.GetReturnVal<int>("return QuestInfoFrame.itemChoice",0),_=>throw new InvalidOperationException(name)};
 }
 public static class TurnInDriver {
  static ForcedQuestTurnIn owner; static Composite tree;
- public static void Reset(uint quest,uint ender,float x,float y,float z){Stop();TurnInState.Moves=TurnInState.Interactions=TurnInState.Clears=0;TurnInState.Errors.Clear();TurnInState.Quest=quest;
-  StyxWoW.Me=new LocalPlayer{Guid=1,MapId=530,Location=new WoWPoint(x-30,y,z)};WoWMovement.ActiveMover=StyxWoW.Me;
+ public static void Reset(uint quest,uint ender,float x,float y,float z,uint map){Stop();TurnInState.Moves=TurnInState.Interactions=TurnInState.Clears=0;TurnInState.Errors.Clear();TurnInState.Quest=quest;
+  StyxWoW.Me=new LocalPlayer{Guid=1,MapId=map,Location=new WoWPoint(x-30,y,z)};WoWMovement.ActiveMover=StyxWoW.Me;
   TurnInState.Npc=new WoWUnit{Guid=77,Entry=ender,Location=new WoWPoint(x,y,z)};BotPoi.Current=new BotPoi(PoiType.None);
   owner=new ForcedQuestTurnIn(quest,"In Case of Emergency...",ender,"Screed",new WoWPoint(x,y,z),QuestObjectType.Npc);tree=owner.Branch;tree.Start(null);
  }

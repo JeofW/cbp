@@ -22,6 +22,7 @@ namespace CommonBehaviors.Actions;
 public sealed class GroundLootApproach : TreeSharp.Action
 {
     private readonly Func<bool> _admitted;
+    private readonly Func<WoWGameObject?>? _directSubject;
     private LocalPlayer? _actor;
     private WoWUnit? _mover;
     private WoWGameObject? _subject;
@@ -40,6 +41,11 @@ public sealed class GroundLootApproach : TreeSharp.Action
 
     public GroundLootApproach(Func<bool> admitted) => _admitted = admitted ?? throw new ArgumentNullException(nameof(admitted));
 
+    // A typed direct objective owns its subject without publishing a loot POI.
+    // Both modes reuse the same observed support/landing/dismount boundary.
+    public GroundLootApproach(Func<bool> admitted, Func<WoWGameObject?> directSubject) : this(admitted)
+        => _directSubject = directSubject ?? throw new ArgumentNullException(nameof(directSubject));
+
     // An immutable diagnostic receipt, not authority for later movement or loot.
     public sealed record Observation(DateTime ObservedUtc, ulong PlayerGuid, uint MapId,
         ulong ObjectGuid, uint ObjectEntry, string Phase, string Node, string Reason,
@@ -53,14 +59,17 @@ public sealed class GroundLootApproach : TreeSharp.Action
     public override void Start(object context)
     {
         var poi = BotPoi.Current;
-        if (!ReferenceEquals(poi, _poi))
+        var direct = _directSubject?.Invoke();
+        if (!ReferenceEquals(poi, _poi) || _directSubject != null && !ReferenceEquals(direct, _subject))
         {
             ReleaseDescent();
             _poi = poi; _actor = ObjectManager.Me; _mover = WoWMovement.ActiveMover;
-            _subject = poi?.AsObject as WoWGameObject;
+            _subject = _directSubject == null ? poi?.AsObject as WoWGameObject : direct;
             _provider = Navigator.NavigationProvider;
             _actorGuid = _actor?.Guid ?? 0; _moverGuid = _mover?.Guid ?? 0;
-            _guid = poi?.Guid ?? 0; _entry = poi?.Entry ?? 0; _type = poi?.Type ?? PoiType.None;
+            _guid = _directSubject == null ? poi?.Guid ?? 0 : direct?.Guid ?? 0;
+            _entry = _directSubject == null ? poi?.Entry ?? 0 : direct?.Entry ?? 0;
+            _type = poi?.Type ?? PoiType.None;
             _map = _actor?.MapId ?? 0; _destination = _subject?.Location ?? WoWPoint.Empty;
             _startedUtc = _lastProgressUtc = DateTime.UtcNow; _lastDismountUtc = _lastMoveUtc = DateTime.MinValue;
             _dismountAttempts = _routeRetries = 0; _bestDistance = double.PositiveInfinity;
@@ -74,16 +83,20 @@ public sealed class GroundLootApproach : TreeSharp.Action
         && _mover != null && _moverGuid == _actorGuid && _mover.IsValid && _mover.Guid == _moverGuid
         && ReferenceEquals(WoWMovement.ActiveMover, _mover) && ReferenceEquals(_mover, _actor)
         && ReferenceEquals(Navigator.NavigationProvider, _provider)
-        && _poi != null && ReferenceEquals(BotPoi.Current, _poi) && _poi.Guid == _guid
-        && _poi.Entry == _entry && _poi.Type == _type && (_type == PoiType.Loot || _type == PoiType.Harvest)
-        && _subject != null && _guid != 0 && _entry != 0 && ReferenceEquals(_poi.AsObject, _subject)
+        && _poi != null && ReferenceEquals(BotPoi.Current, _poi) && _poi.Type == _type
+        && (_directSubject == null ? _poi.Guid == _guid && _poi.Entry == _entry
+            && (_type == PoiType.Loot || _type == PoiType.Harvest) && ReferenceEquals(_poi.AsObject, _subject)
+            : (_type == PoiType.None || _type == PoiType.Hotspot || _type == PoiType.Quest)
+                && ReferenceEquals(_directSubject(), _subject))
+        && _subject != null && _guid != 0 && _entry != 0
         && _subject.IsValid && !_subject.IsDisabled && _subject.Guid == _guid && _subject.Entry == _entry
         && _subject.Location.Equals(_destination) && _admitted()
         && ReferenceEquals(ObjectManager.Me, _actor) && _actor.Guid == _actorGuid;
 
     protected override RunStatus Run(object context)
     {
-        if (_subject == null || (_type != PoiType.Loot && _type != PoiType.Harvest)) return RunStatus.Failure;
+        if (_subject == null || _directSubject == null && _type != PoiType.Loot && _type != PoiType.Harvest)
+            return RunStatus.Failure;
         try
         {
             if (!Current()) { ReleaseDescent(); return RunStatus.Success; }
@@ -111,7 +124,7 @@ public sealed class GroundLootApproach : TreeSharp.Action
                 return Defer("no-approach-progress");
             }
             if (Blacklist.Contains(_guid)) return Defer("selected-object-is-blacklisted", alreadyBlacklisted: true);
-            if (!target.CanLoot) return Defer("object-not-currently-lootable-or-consumed");
+            if (_directSubject == null && !target.CanLoot) return Defer("object-not-currently-lootable-or-consumed");
             if (!Current()) return RunStatus.Success;
             if (!actor.TryGetMovementState(out uint flags, out ulong transport) || transport != 0)
                 return Pending("cannot-approach", "movement-or-transport-observation-unavailable");
@@ -212,6 +225,12 @@ public sealed class GroundLootApproach : TreeSharp.Action
     }
 
     public static bool CanInteractNow(WoWObject subject, Func<bool> current)
+        => CanInteractNowCore(subject, current, false);
+
+    public static bool CanInteractDirectlyNow(WoWGameObject subject, Func<bool> current)
+        => CanInteractNowCore(subject, current, true);
+
+    private static bool CanInteractNowCore(WoWObject subject, Func<bool> current, bool directUse)
     {
         if (subject is not WoWGameObject target) return true;
         try
@@ -227,7 +246,8 @@ public sealed class GroundLootApproach : TreeSharp.Action
                 && actor.TryGetMovementState(out uint flags, out ulong transport) && transport == 0
                 && (flags & 0x02003000u) == 0 && !actor.MovementInfo.IsDescending
                 && target.IsValid && !target.IsDisabled && objectGuid != 0 && target.Guid == objectGuid
-                && !Blacklist.Contains(objectGuid) && target.CanLoot && float.IsFinite(target.InteractRange) && target.InteractRange > 0
+                && !Blacklist.Contains(objectGuid) && (directUse || target.CanLoot)
+                && float.IsFinite(target.InteractRange) && target.InteractRange > 0
                 && target.WithinInteractRange && Finite(position) && Finite(destination)
                 && actor.Location.Equals(position) && target.Location.Equals(destination) && current();
             if (!Ready()) return false;
@@ -268,7 +288,7 @@ public sealed class GroundLootApproach : TreeSharp.Action
         ReleaseDescent();
         if (!Current()) return RunStatus.Success;
         if (!alreadyBlacklisted) Blacklist.Add(_guid, TimeSpan.FromSeconds(15));
-        if (Current()) BotPoi.Clear("Ground collection bounded recovery: " + reason);
+        if (_directSubject == null && Current()) BotPoi.Clear("Ground collection bounded recovery: " + reason);
         return RunStatus.Success;
     }
 
