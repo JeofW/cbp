@@ -259,6 +259,8 @@ internal static class QuestRootPreemptionRegressionTests
         private readonly OrderNodeCollection previousNodes;
         private readonly ForcedBehavior? previousBehavior;
         private readonly BotPoi previousPoi;
+        private readonly Queue<string> scanDiagnostics = new();
+        private readonly Styx.Helpers.Logging.LogMessageDelegate diagnosticListener;
         internal readonly List<string> Events = new();
         internal readonly QuestScheduler Scheduler = null!;
         internal readonly WholesomeAutoQuest Bot = null!;
@@ -276,6 +278,16 @@ internal static class QuestRootPreemptionRegressionTests
             fixture = Activator.CreateInstance(typeof(QuestPublicationRegressionTests).GetNestedType("Fixture", BindingFlags.NonPublic)!, true)!;
             Order = QuestState.Instance.Order; previousNodes = Order.Nodes; previousBehavior = Order.CurrentBehavior;
             previousRoot = sharedRoot.GetValue(null); previousPoi = BotPoi.Current;
+            diagnosticListener = batch =>
+            {
+                foreach (var line in batch)
+                    if (line.Message.Contains("Scan error:", StringComparison.Ordinal))
+                    {
+                        if (scanDiagnostics.Count == 8) scanDiagnostics.Dequeue();
+                        scanDiagnostics.Enqueue(line.Message);
+                    }
+            };
+            Styx.Helpers.Logging.OnLogMessage += diagnosticListener;
             Output = (string)fixture.GetType().GetProperty("Output", I)!.GetValue(fixture)!;
             Combat = new ProbeLeaf("combat", Events); Service = new ProbeLeaf("service", Events); Roam = new ProbeLeaf("roam", Events) { Status = RunStatus.Success };
             try
@@ -329,7 +341,8 @@ internal static class QuestRootPreemptionRegressionTests
             int effects = Behavior.Body.Effects;
             Check(Step() == RunStatus.Success && Behavior.Body.Effects == effects && Behavior.Body.Cleanups == 1 && Roam.Effects == 0, "denied quest did not cleanly yield to the idle shield");
         }
-        internal void AssertPublished() => Check(Scheduler.LastSchedule.Selected.Any(q => q.QuestId == 867) && Scheduler.CurrentProfilePath == Output && ProfileManager.XmlLocation == Output, "real publication failed: " + Scheduler.LastStatus);
+        internal void AssertPublished() => Check(Scheduler.LastSchedule.Selected.Any(q => q.QuestId == 867) && Scheduler.CurrentProfilePath == Output && ProfileManager.XmlLocation == Output,
+            "real publication failed: " + Scheduler.LastStatus + "; scan diagnostics=" + string.Join(" | ", scanDiagnostics));
         internal void AssertDeferred() => Check(Scheduler.LastSchedule.Selected.Count == 0 && Scheduler.CurrentProfilePath == null, "failed scan did not revoke publication");
         internal void Protected() => Check(Scheduler.ActiveQuestIds.Contains(867), "uncertain publication released item protection");
         internal void RawProgress(uint value) => Write(Descriptor + 640, value);
@@ -354,7 +367,7 @@ internal static class QuestRootPreemptionRegressionTests
         public void Dispose()
         {
             try { Root?.Stop(Context); Behavior?.Branch.Stop(Context); }
-            finally { Gate?.Stop(); Order.Nodes = previousNodes; Order.CurrentBehavior = previousBehavior; sharedRoot.SetValue(null, previousRoot); BotPoi.Current = previousPoi; ((IDisposable)fixture).Dispose(); }
+            finally { Styx.Helpers.Logging.OnLogMessage -= diagnosticListener; Gate?.Stop(); Order.Nodes = previousNodes; Order.CurrentBehavior = previousBehavior; sharedRoot.SetValue(null, previousRoot); BotPoi.Current = previousPoi; ((IDisposable)fixture).Dispose(); }
         }
     }
     private static IEnumerable<Composite> All(Composite root)

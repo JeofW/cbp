@@ -142,7 +142,7 @@ public static class AuraCases
 }
 /* Compiled fixture namespace, not the enclosing initializer. */ namespace Styx.Logic.Combat
 {
-    public class WoWSpell{public string Name=>"Righteous Fury";public string Rank=>"";public Effect? SpellEffect1=>null;public static WoWSpell FromId(int id)=>new();}
+    public class WoWSpell{public string Name=>"Righteous Fury";public string Rank=>"";public Effect? SpellEffect1=>null;public static WoWSpell ObserveFromId(int id,out string failure){failure="";return new();}}
     public class Effect{public WoWApplyAuraType AuraType=>WoWApplyAuraType.None;}
 }
 """;

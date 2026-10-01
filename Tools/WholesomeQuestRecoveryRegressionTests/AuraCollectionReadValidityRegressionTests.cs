@@ -40,7 +40,7 @@ internal static class AuraCollectionReadValidityRegressionTests
             throw new InvalidOperationException("Actual collection owner required");
         var aura = Parse("Styx/Logic/Combat/WoWAura.cs").DescendantNodes().OfType<ClassDeclarationSyntax>()
             .Single(c => c.Identifier.ValueText == "WoWAura");
-        var auraProperties = new HashSet<string> { "SpellId", "CreatorGuid", "Flags", "Duration", "EndTime", "IsActive", "HasNoDuration", "TimeLeft", "Spell", "Name" };
+        var auraProperties = new HashSet<string> { "SpellId", "CreatorGuid", "Flags", "Duration", "EndTime", "IsActive", "HasNoDuration", "TimeLeft", "Spell", "Name", "MetadataFailure" };
         string auraMembers = string.Join("\n", aura.Members.Where(m =>
             m is StructDeclarationSyntax || m is EnumDeclarationSyntax || m is FieldDeclarationSyntax ||
             m is ConstructorDeclarationSyntax c && c.ParameterList.Parameters.Count == 1 ||
@@ -60,7 +60,8 @@ internal static class AuraCollectionReadValidityRegressionTests
         var references = trusted.Split(Path.PathSeparator).Distinct(StringComparer.OrdinalIgnoreCase)
             .Select(path => MetadataReference.CreateFromFile(path));
         var compilation = CSharpCompilation.Create("W110AuraCollection_" + Guid.NewGuid().ToString("N"),
-            new[] { CSharpSyntaxTree.ParseText(source) }, references,
+            new[] { CSharpSyntaxTree.ParseText(source), CSharpSyntaxTree.ParseText(File.ReadAllText(
+                Path.Combine(root, "Styx/Helpers/ObservationUnavailableException.cs"))) }, references,
             new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary).WithAllowUnsafe(true));
         using var output = new MemoryStream();
         var result = compilation.Emit(output);
@@ -116,7 +117,7 @@ public sealed class WoWPlayer:WoWUnit {
 }
 public sealed class WoWAuraCollection:List<WoWAura> {public WoWAuraCollection(int capacity):base(capacity){}}
 public sealed class WoWSpell {
- public string Name;public static WoWSpell FromId(int id)=>World.Names.TryGetValue(id,out var name)?new WoWSpell{Name=name}:null;
+ public string Name;public static WoWSpell ObserveFromId(int id,out string failure){bool known=World.Names.TryGetValue(id,out var name);failure=known?"":"controlled-metadata-unavailable";return known?new WoWSpell{Name=name}:null;}
 }
 public sealed class Clock {public uint PerformanceCounter()=>1000U;}
 public static class ObjectManager {public static Memory Wow;}

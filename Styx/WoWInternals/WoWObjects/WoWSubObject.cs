@@ -90,8 +90,14 @@ namespace Styx.WoWInternals.WoWObjects
                 Memory? wow = ObjectManager.Wow;
                 if (wow == null) return false;
 
-                byte result = wow.Read<byte>(executor.ReturnPointer);
-                return result != 0;
+                // The shared executor return slot can already be cached by an
+                // earlier query in this frame. Only this completed query's AL
+                // supplies current usability; preserve the caller's cache state.
+                using (wow.TemporaryCacheState(false))
+                {
+                    byte result = wow.Read<byte>(executor.ReturnPointer);
+                    return result != 0;
+                }
             }
         }
 

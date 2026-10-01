@@ -1,0 +1,32 @@
+{
+  "review_type": "direct source/caller/test self-review; no independent reviewer",
+  "reviewed_owners": [
+    "UseGameObjectObjective",
+    "QuestGameObjectInteraction",
+    "GroundLootApproach",
+    "QuestExecutionDiagnostics",
+    "WoWSubObject.CanUse",
+    "actual Memory return-byte caching",
+    "native source-case binding",
+    "MeshNavigator query calls",
+    "complete turn-in test driver"
+  ],
+  "blocking_direct_scope_findings": [],
+  "policy_choices": [
+    "Three known failed static-route submissions stop blind travel until live discovery or typed progress.",
+    "Fifteen active no-displacement seconds permit one recomputation; a second interval stops static requests.",
+    "Measured approach progress permits a long route; combat/unknown observation time does not replenish attempts.",
+    "Every static travel hold continues live acquisition; movement return is never quest credit.",
+    "Recent direct-owner observations carry timestamps and do not borrow an unrelated loot POI range/LoS."
+  ],
+  "remaining_dimensions": [
+    "Formal per-member causal contract ingestion for dataset promotion.",
+    "The other46 direct-object quests retain their exact source/script/data/extra-primitive obligations.",
+    "Detailed native route triage remains provider-held;11source legs retain unresolved connectivity.",
+    "Physical collision, temporary blackspot lifetime/map ownership and stale callbacks need a separate focused pass.",
+    "Existing typed transports and complex geometry retain their current controls; this scope does not certify them.",
+    "Hunter pet/conjure/weapon-enchant dispatch and all remaining class/spec/race dimensions remain explicit."
+  ],
+  "source_hold_rerouted": false,
+  "new_client_abi": false
+}

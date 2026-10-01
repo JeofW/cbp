@@ -36,6 +36,7 @@ namespace Styx.Logic
         private bool _includeElites;
         private bool _displayTargetingExceptions;
         private List<WoWObject> _objectList;
+        private string _observationFailure = "Target provider has not completed an observation.";
         private int _maxTargets;
         private static Converter<WoWObject, WoWUnit> _objectToUnitConverter;
         private static Func<WoWObject, bool> _unitOrPlayerPredicate;
@@ -48,7 +49,7 @@ namespace Styx.Logic
         public Targeting()
         {
             this.DisplayTargetingExceptions = true;
-            this.ObjectList = new List<WoWObject>();
+            this._objectList = new List<WoWObject>();
             this.MaxTargets = 5;
             this.InitializeFilters();
         }
@@ -221,8 +222,13 @@ namespace Styx.Logic
 
         protected List<WoWObject> ObjectList
         {
-            get { return this._objectList; }
-            private set { this._objectList = value; }
+            get
+            {
+                if (_observationFailure != null)
+                    throw new ObservationUnavailableException("targeting", _observationFailure);
+                return this._objectList;
+            }
+            private set { this._objectList = value; _observationFailure = null; }
         }
 
         public int MaxTargets
@@ -352,10 +358,14 @@ namespace Styx.Logic
 
         public void Clear()
         {
-            if (this.ObjectList != null)
-            {
-                this.ObjectList.Clear();
-            }
+            // Cleanup may discard old candidates; it cannot prove that an
+            // incomplete observation found no targets.
+            this._objectList?.Clear();
+        }
+
+        internal void MarkObservationUnavailable(string reason)
+        {
+            _observationFailure = reason;
         }
 
         protected virtual List<WoWObject> GetInitialObjectList()
@@ -391,6 +401,7 @@ namespace Styx.Logic
 
         public virtual void Pulse()
         {
+            MarkObservationUnavailable("Target observation is in progress.");
             try
             {
                 using (StyxWoW.Memory.AcquireFrame())
@@ -437,13 +448,18 @@ namespace Styx.Logic
                             this._targetListUpdateFinishedHandlers(Targeting._blacklistedMobNames);
                         }
                     }
+                    else MarkObservationUnavailable("Target actor/world observation is unavailable.");
                 }
             }
             catch (Exception ex)
             {
+                MarkObservationUnavailable("Target observation did not complete: " +
+                    (ObservationUnavailableException.Find(ex)?.Message ?? ex.GetBaseException().Message));
+                ObservationUnavailableException.RethrowCancellation(ex);
                 if (this.DisplayTargetingExceptions)
                 {
-                    Logging.WriteException(ex);
+                    ObservationFailureDiagnostics.Report(new ObservationUnavailableException("targeting",
+                        _observationFailure), GetType().FullName + ".Pulse");
                 }
             }
         }
@@ -454,17 +470,9 @@ namespace Styx.Logic
             {
                 foreach (Delegate @delegate in e.GetInvocationList())
                 {
-                    try
-                    {
-                        @delegate.DynamicInvoke(args);
-                    }
-                    catch (Exception ex)
-                    {
-                        if (this.DisplayTargetingExceptions)
-                        {
-                            Logging.WriteException(ex);
-                        }
-                    }
+                    // A filter can mutate its input before throwing. Aborting the
+                    // complete publication is the only conservative result.
+                    @delegate.DynamicInvoke(args);
                 }
             }
         }

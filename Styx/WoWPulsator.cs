@@ -4,6 +4,7 @@ using Styx.CommonBot;
 using Styx.CommonBot.Routines;
 using Styx.Helpers;
 using Styx.Logic;
+using Styx.Logic.BehaviorTree;
 using Styx.Logic.Combat;
 using Styx.Plugins;
 using Styx.WoWInternals;
@@ -34,8 +35,11 @@ namespace Styx
 
 		public static void Pulse(PulseFlags flags)
 		{
+			var owner = TreeRoot.Current;
+			bool workerOwned = TreeRoot.CurrentThreadIsBotThread;
 			try
 			{
+				TreeRoot.VerifyPulseOwner(owner, workerOwned);
 				var totalTimer = Stopwatch.StartNew();
 				var stageTimer = Stopwatch.StartNew();
 
@@ -43,14 +47,17 @@ namespace Styx
 				WoWMovement.Pulse();
 				long movementMilliseconds = stageTimer.ElapsedMilliseconds;
 
+				TreeRoot.VerifyPulseOwner(owner, workerOwned);
 				stageTimer.Restart();
 				if ((flags & PulseFlags.Objects) != (PulseFlags)0U)
 				{
 					ObjectManager.Update();
+					TreeRoot.VerifyPulseOwner(owner, workerOwned);
 					Blacklist.Flush();
 				}
 				long objectsMilliseconds = stageTimer.ElapsedMilliseconds;
 
+				TreeRoot.VerifyPulseOwner(owner, workerOwned);
 				stageTimer.Restart();
 				if ((flags & PulseFlags.Lua) != (PulseFlags)0U)
 				{
@@ -58,6 +65,7 @@ namespace Styx
 				}
 				long luaMilliseconds = stageTimer.ElapsedMilliseconds;
 
+				TreeRoot.VerifyPulseOwner(owner, workerOwned);
 				stageTimer.Restart();
 				if ((flags & PulseFlags.InfoPanel) != (PulseFlags)0U)
 				{
@@ -65,6 +73,7 @@ namespace Styx
 				}
 				long infoPanelMilliseconds = stageTimer.ElapsedMilliseconds;
 
+				TreeRoot.VerifyPulseOwner(owner, workerOwned);
 				stageTimer.Restart();
 				if ((flags & PulseFlags.Looting) != (PulseFlags)0U)
 				{
@@ -72,14 +81,17 @@ namespace Styx
 				}
 				long lootingMilliseconds = stageTimer.ElapsedMilliseconds;
 
+				TreeRoot.VerifyPulseOwner(owner, workerOwned);
 				stageTimer.Restart();
 				if ((flags & PulseFlags.Targeting) != (PulseFlags)0U)
 				{
-					Targeting.Instance.Pulse();
-					HealTargeting.Instance.Pulse();
+					ObserveTargets(Targeting.Instance);
+					TreeRoot.VerifyPulseOwner(owner, workerOwned);
+					ObserveTargets(HealTargeting.Instance);
 				}
 				long targetingMilliseconds = stageTimer.ElapsedMilliseconds;
 
+				TreeRoot.VerifyPulseOwner(owner, workerOwned);
 				stageTimer.Restart();
 				if ((flags & PulseFlags.BotEvents) != (PulseFlags)0U)
 				{
@@ -87,6 +99,7 @@ namespace Styx
 				}
 				long botEventsMilliseconds = stageTimer.ElapsedMilliseconds;
 
+				TreeRoot.VerifyPulseOwner(owner, workerOwned);
 				stageTimer.Restart();
 				if ((flags & PulseFlags.Plugins) != (PulseFlags)0U)
 				{
@@ -94,10 +107,12 @@ namespace Styx
 				}
 				long pluginsMilliseconds = stageTimer.ElapsedMilliseconds;
 
+				TreeRoot.VerifyPulseOwner(owner, workerOwned);
 				stageTimer.Restart();
 				if (RoutineManager.Current != null)
 				{
 					CapabilityManager.Instance.Pulse();
+					TreeRoot.VerifyPulseOwner(owner, workerOwned);
 					RoutineManager.Current.Pulse();
 				}
 				long routineMilliseconds = stageTimer.ElapsedMilliseconds;
@@ -116,7 +131,19 @@ namespace Styx
 			}
 			catch (Exception ex)
 			{
+				ObservationUnavailableException.RethrowCancellation(ex);
 				Logging.WriteException(ex);
+			}
+		}
+
+		private static void ObserveTargets(Targeting provider)
+		{
+			try { provider.Pulse(); }
+			catch (Exception error) when (ObservationUnavailableException.Find(error) is { })
+			{
+				var unavailable = ObservationUnavailableException.Find(error)!;
+				provider.MarkObservationUnavailable(unavailable.Message);
+				ObservationFailureDiagnostics.Report(unavailable, provider.GetType().FullName + ".Pulse");
 			}
 		}
 

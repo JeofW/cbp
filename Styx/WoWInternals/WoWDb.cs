@@ -232,33 +232,52 @@ namespace Styx.WoWInternals
             /// managed snapshot. Unknown compression/read state is not raw permission.
             /// Other DBC tables retain their existing GetRow contract.
             /// </summary>
-            public Row? GetLocalizedRow(int index)
+            public Row? GetLocalizedRow(int index) => ObserveLocalizedRow(index, out _);
+
+            // The failure belongs to this individual lookup. It is not a negative
+            // cache or global last-error slot, and successful observations allocate
+            // no diagnostic text.
+            internal Row? ObserveLocalizedRow(int index, out string failure)
             {
+                failure = string.Empty;
                 var memory = ObjectManager.Wow;
-                if (memory == null || index <= 0 || IntPtr.Size != 4)
-                    return null;
+                if (memory == null) { failure = "memory-unavailable"; return null; }
+                if (index <= 0 || IntPtr.Size != 4) { failure = $"invalid-request id={index} pointer-size={IntPtr.Size}"; return null; }
+                string stage = "header";
                 try
                 {
                     uint tableAddress = unchecked((uint)_tablePtr.ToInt32());
-                    if (tableAddress < 24) return null;
+                    if (tableAddress < 24) { failure = $"header-address-invalid table=0x{tableAddress:X8}"; return null; }
                     uint headerAddress = tableAddress - 24;
                     byte[]? headerBytes = ReadExact(memory, headerAddress, Marshal.SizeOf<DbTableHeader>());
-                    if (headerBytes == null) return null;
+                    if (headerBytes == null) { failure = $"header-unavailable table=0x{tableAddress:X8}"; return null; }
                     headerBytes = (byte[])headerBytes.Clone();
                     var header = (DbTableHeader)ReadManagedValue(headerBytes, typeof(DbTableHeader), 0)!;
                     if (header.IsLoaded == 0 || header.NumRows <= 0 || header.MinIndex < 0
-                        || header.MaxIndex < header.MinIndex || index < header.MinIndex || index > header.MaxIndex)
+                        || header.MaxIndex < header.MinIndex)
+                    {
+                        failure = $"header-invalid table=0x{tableAddress:X8} loaded={header.IsLoaded} rows={header.NumRows} min={header.MinIndex} max={header.MaxIndex}";
                         return null;
+                    }
+                    if (index < header.MinIndex || index > header.MaxIndex)
+                    {
+                        failure = $"id-out-of-range id={index} min={header.MinIndex} max={header.MaxIndex} table=0x{tableAddress:X8}";
+                        return null;
+                    }
+                    stage = "sparse-slot";
                     uint array = unchecked((uint)header.RowArrayPtr.ToInt32());
                     ulong offset = (ulong)array + (ulong)((long)index - header.MinIndex) * 4;
-                    if (array == 0 || offset > uint.MaxValue - 3) return null;
+                    if (array == 0 || offset > uint.MaxValue - 3) { failure = $"row-array-invalid array=0x{array:X8} slot=0x{offset:X}"; return null; }
                     byte[]? pointer = ReadExact(memory, (uint)offset, 4);
                     byte[]? mode = ReadExact(memory, ClientDbIsCompressed, 1);
-                    if (pointer == null || mode == null || mode[0] > 1) return null;
+                    if (pointer == null) { failure = $"row-slot-unavailable slot=0x{offset:X}"; return null; }
+                    if (mode == null) { failure = "compression-observation-unavailable"; return null; }
+                    if (mode[0] > 1) { failure = $"compression-mode-unknown mode={mode[0]}"; return null; }
                     pointer = (byte[])pointer.Clone();
                     mode = (byte[])mode.Clone();
                     uint address = BitConverter.ToUInt32(pointer, 0);
-                    if (address == 0) return null;
+                    if (address == 0) { failure = $"row-missing id={index} slot=0x{offset:X} mode={mode[0]}"; return null; }
+                    stage = mode[0] == 0 ? "raw-row" : "packed-row";
                     byte[]? data;
                     if (mode[0] == 0)
                         data = ReadExact(memory, address, LocalizedSpellRecordSize);
@@ -270,24 +289,32 @@ namespace Styx.WoWInternals
                             byte[]? value = ReadExact(memory, (uint)next, 1);
                             return value == null ? null : value[0];
                         }, LocalizedSpellRecordSize);
-                    if (data == null) return null;
+                    if (data == null) { failure = $"{stage}-unavailable address=0x{address:X8} decoded-size={LocalizedSpellRecordSize}"; return null; }
                     data = (byte[])data.Clone();
                     if (BitConverter.ToUInt32(data, 0) != (uint)index)
+                    {
+                        failure = $"row-id-mismatch requested={index} observed={BitConverter.ToUInt32(data, 0)} address=0x{address:X8} mode={mode[0]}";
                         return null;
+                    }
 
                     // Recheck observed metadata at publication. This deliberately
                     // does not claim to replace Memory's frame/cache lifetime.
+                    stage = "publication";
                     byte[]? currentHeader = ReadExact(memory, headerAddress, headerBytes.Length);
                     byte[]? currentPointer = ReadExact(memory, (uint)offset, 4);
                     byte[]? currentMode = ReadExact(memory, ClientDbIsCompressed, 1);
                     if (currentHeader == null || currentPointer == null || currentMode == null
                         || !headerBytes.AsSpan().SequenceEqual(currentHeader)
                         || !pointer.AsSpan().SequenceEqual(currentPointer) || currentMode[0] != mode[0])
+                    {
+                        failure = $"observation-changed id={index} table=0x{tableAddress:X8} slot=0x{offset:X} row=0x{address:X8}";
                         return null;
+                    }
                     return new Row(data, memory);
                 }
                 catch (Exception error) when (error is not OperationCanceledException && error is not ThreadInterruptedException)
                 {
+                    failure = $"metadata-read-unavailable stage={stage} exception={error.GetType().Name}";
                     return null;
                 }
             }
