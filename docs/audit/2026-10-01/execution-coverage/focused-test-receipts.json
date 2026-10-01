@@ -1,0 +1,97 @@
+{
+  "runs": [
+    {
+      "command": [
+        "C:\\Users\\Jeof\\scoop\\apps\\python311\\current\\python.exe",
+        "-m",
+        "unittest",
+        "test_execution_coverage_335",
+        "test_execution_trace_integrity_335",
+        "-v"
+      ],
+      "exit": 1,
+      "source_sha256": {
+        "execution_coverage_335.py": "c49803283b8748c071bff2e23e71651e5734b96467196ec9c73274cb30afcab2",
+        "test_execution_coverage_335.py": "a3e489a1e2a215853aae1e2300a83063c8c69ade7d7d76e511737bde74dfda60",
+        "test_execution_trace_integrity_335.py": "563008fd04a271d30e5685c42280392614e35d50627db067941b74939aff3810"
+      },
+      "source_stable": true,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "d8c603f7623792fb0fb15493f7516e009beb677181d735f8e4b882efce38219e",
+      "game_or_csharp_collection_tests_executed": false,
+      "completed_utc": "2026-10-01T06:45:42.844706+00:00",
+      "label": "execution-trace-integrity-red-resume-20261001",
+      "executed_python_tests": 31,
+      "summary_sha256": "2132133a50b6090dd80c494793a6a84eaa25dd731749c1ce7cb8ecec6210031e",
+      "result_lines": [
+        "Ran 31 tests in 0.128s",
+        "",
+        "FAILED (failures=9)"
+      ]
+    },
+    {
+      "command": [
+        "C:\\Users\\Jeof\\scoop\\apps\\python311\\current\\python.exe",
+        "-m",
+        "unittest",
+        "test_execution_coverage_335",
+        "test_execution_trace_integrity_335",
+        "-v"
+      ],
+      "exit": 0,
+      "source_sha256": {
+        "execution_coverage_335.py": "27074f61fbce17e4990d7b46c8b98f2e54d3fda73b49bd3763efd3d0b649c85c",
+        "test_execution_coverage_335.py": "a3e489a1e2a215853aae1e2300a83063c8c69ade7d7d76e511737bde74dfda60",
+        "test_execution_trace_integrity_335.py": "563008fd04a271d30e5685c42280392614e35d50627db067941b74939aff3810"
+      },
+      "source_stable": true,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "0f4a5f908d3d576852a7cc3368ca73e1406490ae6787f2a9a984df2886772407",
+      "game_or_csharp_collection_tests_executed": false,
+      "completed_utc": "2026-10-01T06:49:37.425058+00:00",
+      "label": "execution-trace-integrity-green-resume-20261001",
+      "executed_python_tests": 31,
+      "summary_sha256": "bb72d1691dc91c0a50c5371dad7db7407db2bf85c41a9f9c1533a5d8d9bfb82e",
+      "result_lines": [
+        "Ran 31 tests in 0.072s",
+        "",
+        "OK"
+      ]
+    },
+    {
+      "command": [
+        "C:\\Users\\Jeof\\scoop\\apps\\python311\\current\\python.exe",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        ".",
+        "-p",
+        "test_*.py",
+        "-v"
+      ],
+      "exit": 0,
+      "source_sha256": {
+        "execution_coverage_335.py": "27074f61fbce17e4990d7b46c8b98f2e54d3fda73b49bd3763efd3d0b649c85c",
+        "test_execution_coverage_335.py": "a3e489a1e2a215853aae1e2300a83063c8c69ade7d7d76e511737bde74dfda60",
+        "test_execution_trace_integrity_335.py": "563008fd04a271d30e5685c42280392614e35d50627db067941b74939aff3810"
+      },
+      "source_stable": true,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "170d367476190c1d09aee28ebc5a8aad23a1b6a97dfc70103222c4a32fa6e8c0",
+      "game_or_csharp_collection_tests_executed": false,
+      "completed_utc": "2026-10-01T06:50:04.711357+00:00",
+      "label": "execution-trace-all-python-resume-20261001",
+      "executed_python_tests": 452,
+      "summary_sha256": "256324accf2477467535340d68e631b6c9236a5fdb2b33c857a40381b40cb3bd",
+      "result_lines": [
+        "Ran 452 tests in 5.459s",
+        "",
+        "OK (skipped=1)"
+      ]
+    }
+  ],
+  "unchanged_focused_test_bytes_between_red_green": true,
+  "evidence_limit": "Synthetic validator tests establish receipt validation behavior, not a quest or native client execution.",
+  "clean_candidate_full_acceptance_pending": true
+}

@@ -1,0 +1,76 @@
+{
+  "classification_counts": {
+    "DATA-INVALID/INCOMPLETE": 921,
+    "SOURCE-UNCERTAIN": 311,
+    "EXECUTION-UNVERIFIED": 3030,
+    "LIVE-ACCEPTANCE-REQUIRED": 16,
+    "UNSUPPORTED-SCRIPTED": 57
+  },
+  "legacy_counts": {
+    "GENERIC-PROVEN": 3028,
+    "STRATEGY-PROVEN": 2,
+    "DATA-INVALID/INCOMPLETE": 921,
+    "UNSUPPORTED-SCRIPTED": 57,
+    "SOURCE-UNCERTAIN": 311,
+    "LIVE-ACCEPTANCE-REQUIRED": 16
+  },
+  "quest_count": 4335,
+  "semantic_family_mapping_limit": "Required source records plus explicitly labelled possible acquisition alternatives. Unseen runtime selections, gossip/escort/item target/vehicle/transport scripts remain unresolved, never guessed.",
+  "unmapped_script_dimensions": [
+    "use-item-self",
+    "use-item-unit",
+    "use-item-gameobject",
+    "use-item-location",
+    "gossip-dialogue",
+    "escort-follow",
+    "vehicle",
+    "transport"
+  ],
+  "execution_proven_ids": [],
+  "primary_source": {
+    "role": "primary-reference-database",
+    "release": "TDB335.25101",
+    "release_commit": "95657f54779467effea8a1749a61ff93abc1d707",
+    "url": "https://github.com/TrinityCore/TrinityCore/releases/download/TDB335.25101/TDB_full_world_335.25101_2025_10_21.7z",
+    "asset_id": 306993022,
+    "asset_sha256": "b426641e6ce8da02e4109b40e570c2db75f89c228a412b3113f82eb3c8725299",
+    "bytes": 47379963,
+    "retrieved_utc": "2026-09-29T12:19:00.255106+00:00",
+    "sql_executed": false,
+    "realm_equivalence_proven": false,
+    "members": [
+      {
+        "name": "TDB_full_world_335.25101_2025_10_21.sql",
+        "bytes": 292616788,
+        "sha256": "e72c0105ca27779ea3b08792b247210a44d9004fc6ab55cd1b0099d3b10779a9"
+      }
+    ]
+  },
+  "table_sha256": {
+    "quest_template": "85002c4d200965b58c72a79ac3bd4a9cf2faa0b3f1705534ec99b5b87c810b1b",
+    "quest_template_addon": "8a1a624f7a6d602b36bc11d8db90090f5eae734f3b697c3a68664009f6d35026",
+    "creature_template": "326a38a12f7662109f40f48a4498c69f65cfdc09b65f5d16dd4a80b90e5755b4",
+    "gameobject_template": "530d21859d096e227e20090768dfb765e15671a14f48db4b02b6c192c5c5723f",
+    "creature_loot_template": "313570ddc2b4cdb962b1e43a9c15612c4864447301ee9a7ca34ddc82a3c65029",
+    "gameobject_loot_template": "a48f031a7550a9954a703da0824adc41ee924241025ab14c0410817f45a12906",
+    "item_template": "399023150509979389fd76487d317eecf82a88827499b285d3ca9bafb7299364",
+    "item_loot_template": "0006ee4cbbf41866cc7b2a1113eb7f107f6b9e756773108e94e5f742d0cf7962",
+    "creature_questender": "b8cf8e0a7cd2a30e984e12312351793fb3f8591fa8556e0c9f6d3b781a082a1e",
+    "gameobject_questender": "04db9c9c6a6a36d3d2c52895800dd993b09a0c84cc2070a360225b889d1df9ea",
+    "areatrigger_involvedrelation": "77db9981d54bd754dc16aae6cd0d41d6413818746e9ebed018d451262bb516fe"
+  },
+  "population_sha256": "fc0053d7c143223bdce78a15df8fb69bb24d4c6e74ce1bbc70d9fde25781023c",
+  "accepted_contracts": 0,
+  "generator_sha256": "27074f61fbce17e4990d7b46c8b98f2e54d3fda73b49bd3763efd3d0b649c85c",
+  "contract_artifact_verification": [],
+  "unavailable_primary_tables": [
+    "npc_vendor"
+  ],
+  "unavailable_table_is_not_empty_source_authority": true,
+  "execution_evidence_gate": "exact primitive semantics and full action-to-turnin lifecycle; legacy PASS is not enough",
+  "output_sha256": {
+    "execution-ledger.jsonl": "c9588390d6267f56108acca02e844ca8e960345dd9906ee1dbaf08cc624b5a31",
+    "objective-primitive-ids.json": "4ce7ec5cb577ef6e9ece84da1ca998ed39267433d8f6675ca3b142552d593706",
+    "execution-classification-ids.json": "2890e4a430b18aa3c7320b9b13ec342e926adb2e9c50673b0f329bb4e5bdd544"
+  }
+}
