@@ -1770,7 +1770,8 @@
     "Styx/Logic/Combat/SpellManager.cs": "417406ff76ec3503ca675c9215b3bea0ed6b4d2da07c9b8736afd53f1d16b405",
     "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Mage/Common.cs": "3464aa6c6ed7926b6355b76dc7e85cae2ccb974849beb0d9df95cdf257524f4e",
     "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Shaman/Elemental.cs": "c7417b22f74fd6cf9df01a92fbd320057bec05b3d74b58d3ae929b3e8e61a0d5",
-    "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Shaman/Enhancement.cs": "c4bb2f41aaabdfb7b046b8b3131aed694e3b87a940402f06d51acfbc39b77815"
+    "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Shaman/Enhancement.cs": "c4bb2f41aaabdfb7b046b8b3131aed694e3b87a940402f06d51acfbc39b77815",
+    "Styx/WoWInternals/WoWObjects/WoWObject.cs": "57197866f0d0da2abc7c2df84bccd21dfc4aaaeabe9ff6afc67bc3be3773b173"
   },
   "policies": {
     "placement": "Existing original-client self/ground trap placement; no Trap Launcher.",
@@ -1779,5 +1780,10 @@
     "local_acknowledgement": "A completed local executor request is recorded separately from any server cast or trap trigger."
   },
   "new_native_abi_or_offset": false,
-  "live_cast_or_trigger_proven": false
+  "live_cast_or_trigger_proven": false,
+  "public_observation_types": {
+    "Distance": "System.Double",
+    "DistanceSqr": "System.Double",
+    "verified_by_compiled_fixture_reflection": true
+  }
 }

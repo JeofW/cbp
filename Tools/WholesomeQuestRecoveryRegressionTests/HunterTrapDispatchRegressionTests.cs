@@ -19,6 +19,9 @@ internal static class HunterTrapDispatchRegressionTests
     [ModuleInitializer]
     internal static void Run()
     {
+        if (typeof(Styx.WoWInternals.WoWObjects.WoWObject).GetProperty("Distance")!.PropertyType != typeof(double)
+            || typeof(Styx.WoWInternals.WoWObjects.WoWObject).GetProperty("DistanceSqr")!.PropertyType != typeof(double))
+            throw new InvalidOperationException("The controlled distance boundary must match the actual public double-valued observation");
         string root = Root();
         string Load(string name) => File.ReadAllText(Path.Combine(root, name));
         var common = CSharpSyntaxTree.ParseText(Load("runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Hunter/Common.cs")).GetRoot();
@@ -100,13 +103,13 @@ public delegate bool SimpleBooleanDelegate(object context);
 public class WoWUnit
 {
     public ulong Guid; public bool IsValid=true,IsAlive=true,IsFriendly,IsMoving,IsPlayer,Combat=true,Mounted,IsCasting;
-    public WoWUnit? CurrentTarget; public float Distance=3,CombatReach=1; public bool Sight=true,IsTargetingMeOrPet;
+    public WoWUnit? CurrentTarget; public double Distance=3; public float CombatReach=1; public bool Sight=true,IsTargetingMeOrPet;
     public double ManaPercent=100,HealthPercent=100,HappinessPercent=100;
     public System.Numerics.Vector3 Location=new(10,10,10);
     public ulong CurrentTargetGuid=>CurrentTarget?.Guid??0;
     public bool HasAura(string name)=>false;
     public bool HasAnyAura(params string[] names)=>false;
-    public float DistanceSqr=>Distance*Distance;
+    public double DistanceSqr=>Distance*Distance;
     public bool IsMe=>ReferenceEquals(this,StyxWoW.Me);
     public bool InLineOfSpellSight=>Sight;
     public string SafeName()=>"controlled unit";

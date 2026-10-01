@@ -169,7 +169,7 @@ namespace Singular.ClassSpecific.Hunter
             || name == "Explosive Trap" || name == "Frost Trap" || name == "Snake Trap";
 
         private static bool IsHunterTrapCandidate(WoWUnit unit) => unit != null && unit.IsValid && unit.IsAlive
-            && unit.Guid != 0 && !unit.IsMe && !unit.IsFriendly && float.IsFinite(unit.DistanceSqr)
+            && unit.Guid != 0 && !unit.IsMe && !unit.IsFriendly && double.IsFinite(unit.DistanceSqr)
             && unit.DistanceSqr < 40 * 40;
 
         public static Composite CreateHunterCallPetBehavior(bool reviveInCombat)

@@ -228,6 +228,58 @@
         "Spell dispatch receipt scenarios: 97/97; assertions=0; unexpected=0; complete tracked manager methods and ground factory; real TreeSharp; controlled executor/world; local completion only, no native/game/server execution.",
         "Spell sight dispatch scenarios: 53/53; assertions=0; unexpected=0; exact tracked Cast/Buff region and real TreeSharp; controlled sight/range/backend; no native obstruction trace or game attached."
       ]
+    },
+    {
+      "label": "hunter-trap-distance-corrected-v17-20261001",
+      "summary_sha256": "488954ccc6d34dc160e6a0de2627a94e223dc92dbf9c947313e403481fe3f99f",
+      "source_manifest_sha256": "34bb732618c28af8d6996248829b3161f375e14bc018e4f55ff80353482bb6a0",
+      "source_stable": true,
+      "identity": {
+        "production_commit": "1a690878211592001cfc63f8dc09645cbc6410eb",
+        "production_tree": "df017845ab5045453dbe895ea049962a159261c2",
+        "fixture_commit": "1a690878211592001cfc63f8dc09645cbc6410eb",
+        "working_tree_modified": true,
+        "game_attached": false
+      },
+      "results": [
+        {
+          "stage": "build",
+          "exit": 0,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PostMergeAuditRegressionTests/PostMergeAuditRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "a1093e25f8702e3ae1fe1ab6232220613700900b3b5352c5e61daccbdb7a4843",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "run",
+          "exit": 0,
+          "command": [
+            "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+            "D:\\Dev\\CB-HunterDispatch-20261001\\Tools\\PostMergeAuditRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\PostMergeAuditRegressionTests.dll",
+            "HunterTrapDispatchRegressionTests",
+            "SpellDispatchReceiptRegressionTests",
+            "SpellSightDispatchRegressionTests"
+          ],
+          "stdout_sha256": "efbcdd3347482585bc9cec3a9fe12386931b8690dfe65216cae6810228621fd7",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "scenario_summaries": [
+        "Pull isolation scenarios: 12/12; assertions=0; unexpected=0; pure policy/source ordering; no game attached.",
+        "Complete Hunter specialization trap consumers: 144 scenarios across 9 unchanged normal/battleground/instance factories; actual shared spell and executor path; unrelated pet/buff/navigation boundaries controlled.",
+        "Hunter trap dispatch scenarios: 582/582; assertions=0; unexpected=0; complete trap/named-cast/manager owners and actual executor arguments; controlled readiness/world/backend; no native or server acceptance.",
+        "Spell dispatch receipt scenarios: 97/97; assertions=0; unexpected=0; complete tracked manager methods and ground factory; real TreeSharp; controlled executor/world; local completion only, no native/game/server execution.",
+        "Spell sight dispatch scenarios: 53/53; assertions=0; unexpected=0; exact tracked Cast/Buff region and real TreeSharp; controlled sight/range/backend; no native obstruction trace or game attached."
+      ]
     }
   ],
   "core_test_bytes_identical_between_red_and_first_green": true,
@@ -243,9 +295,23 @@
   ],
   "fixture_errors_are_not_runtime_red_proof": true,
   "current_runtime_and_fixture_sha256": {
-    "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Hunter/Common.cs": "65feaab331161ba7d0050e105beac5ad124b57364f039bd9241dcce969c59967",
-    "Tools/WholesomeQuestRecoveryRegressionTests/HunterTrapDispatchRegressionTests.cs": "4113937362f79cec58e9000ae147de075d09cb878c475fad5cb2c44a36ab25a9",
+    "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Hunter/Common.cs": "fe812a6e5eaa07408576f787f4a15e05cd588c62b6ad9c44aac5a69b41788ec7",
+    "Tools/WholesomeQuestRecoveryRegressionTests/HunterTrapDispatchRegressionTests.cs": "814b71f4002931a6cb9fb7f9fe502480b1df80c6eb5576b398f162a89c015f4c",
     "Tools/WholesomeQuestRecoveryRegressionTests/HunterTrapSpecializationFixture.cs": "b292f2006331d4ed3080adf06cb828d8982156b6b37ca3d0eeb5ef91bd36dc2b"
   },
-  "final_exact_candidate_acceptance_pending": true
+  "final_exact_candidate_acceptance_pending": true,
+  "full_gate_correction": {
+    "failed_candidate": "1a690878211592001cfc63f8dc09645cbc6410eb",
+    "failed_summary_sha256": "dc7c30275f293f7376563e666e4b359f177f387653278e64a7ead792254f63b1",
+    "failed_stages": [
+      "SingularCompatibility",
+      "WholesomeQuestRecoveryRegressionTests-run"
+    ],
+    "compiler_diagnostic_sha256": "f2dd3e3d9bff36e1125d2c6806e2d464898f51a6e339ab57d6e22a4ef76496cb",
+    "actual_public_distance_type": "System.Double",
+    "repair": "Use double.IsFinite and a double-valued controlled observation; assert the real property types through reflection.",
+    "source_of_truth": "Styx/WoWInternals/WoWObjects/WoWObject.cs Distance and DistanceSqr public properties",
+    "fixture_mismatch_was_not_accepted_as_gameplay_evidence": true,
+    "final_clean_gate_pending": true
+  }
 }
