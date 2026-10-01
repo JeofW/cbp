@@ -1,0 +1,317 @@
+{
+  "runs": [
+    {
+      "label": "hunter-trap-dispatch-red-v17-20261001",
+      "summary_sha256": "ecf51d0405ec082046482a1969ebd7588365c11be20e57afcd3d74f8bcc4ba7c",
+      "source_manifest_sha256": "bfae96fefc8933e9fd0be7b2a2a8c39ae91b74c919ade4645be57ea887fc570d",
+      "identity": {
+        "production_commit": "d949ff16d6396fdda788268648799ac04349b89d",
+        "production_tree": "cc7a7dd7ab1ca73b49c69acaa3205a072b069b9a",
+        "fixture_commit": "d949ff16d6396fdda788268648799ac04349b89d",
+        "working_tree_modified": true,
+        "game_attached": false
+      },
+      "source_stable": true,
+      "results": [
+        {
+          "stage": "build",
+          "exit": 0,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PostMergeAuditRegressionTests/PostMergeAuditRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "9fe5916447ba55dee3cb8e1539636f44b9c5609d32cb956dc767d6f4460dc182",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "run",
+          "exit": 1,
+          "command": [
+            "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+            "D:\\Dev\\CB-HunterDispatch-20261001\\Tools\\PostMergeAuditRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\PostMergeAuditRegressionTests.dll",
+            "HunterTrapDispatchRegressionTests"
+          ],
+          "stdout_sha256": "e0dbd7c719d1628d2d28e0c157f38a9726847e960a116b849bb9e199dc81e092",
+          "stderr_sha256": "17ff126a56780b1337642a428a225202df6bad88bb589c17204d397352179742"
+        }
+      ],
+      "scenario_summaries": [
+        "Pull isolation scenarios: 12/12; assertions=0; unexpected=0; pure policy/source ordering; no game attached."
+      ]
+    },
+    {
+      "label": "hunter-trap-dispatch-red-v17b-20261001",
+      "summary_sha256": "c85779c20e5b645d21d3b485a2efc239ec113a78f03b52faad84919230f117ff",
+      "source_manifest_sha256": "cc1d27a261f5767d482b7971d5e501b9ae8f0e09833f9717d9c57f5256476454",
+      "identity": {
+        "production_commit": "d949ff16d6396fdda788268648799ac04349b89d",
+        "production_tree": "cc7a7dd7ab1ca73b49c69acaa3205a072b069b9a",
+        "fixture_commit": "d949ff16d6396fdda788268648799ac04349b89d",
+        "working_tree_modified": true,
+        "game_attached": false
+      },
+      "source_stable": true,
+      "results": [
+        {
+          "stage": "build",
+          "exit": 0,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PostMergeAuditRegressionTests/PostMergeAuditRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "0332426c4210e0eae1e70a4143e571833f721d6fb7aeabdc287d78dcfd4b45d3",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "run",
+          "exit": 1,
+          "command": [
+            "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+            "D:\\Dev\\CB-HunterDispatch-20261001\\Tools\\PostMergeAuditRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\PostMergeAuditRegressionTests.dll",
+            "HunterTrapDispatchRegressionTests"
+          ],
+          "stdout_sha256": "b533f22f0a70e3a000fbdf2f3cf05f801e219479efe274f544294e4933993a1a",
+          "stderr_sha256": "b113e2c434a9c71a265cf4865795ee7debddc8358ec54821c5a830fb2f8d1201"
+        }
+      ],
+      "scenario_summaries": [
+        "Pull isolation scenarios: 12/12; assertions=0; unexpected=0; pure policy/source ordering; no game attached.",
+        "Hunter trap dispatch scenarios: 62/438; assertions=376; unexpected=0; complete trap/named-cast/manager owners and actual executor arguments; controlled readiness/world/backend; no native or server acceptance."
+      ]
+    },
+    {
+      "label": "hunter-trap-dispatch-green-v17-20261001",
+      "summary_sha256": "66c76e0cd8a799b1da7af544a005a19995790753ddbf41f862f36d8ad24bb932",
+      "source_manifest_sha256": "e04887dfa45a6f4f0c57c408fe48f143ccac29051f3e1c139f7fcfbf53e97521",
+      "identity": {
+        "production_commit": "d949ff16d6396fdda788268648799ac04349b89d",
+        "production_tree": "cc7a7dd7ab1ca73b49c69acaa3205a072b069b9a",
+        "fixture_commit": "d949ff16d6396fdda788268648799ac04349b89d",
+        "working_tree_modified": true,
+        "game_attached": false
+      },
+      "source_stable": true,
+      "results": [
+        {
+          "stage": "build",
+          "exit": 0,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PostMergeAuditRegressionTests/PostMergeAuditRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "cca30285840a508f047486f99d3e778ad5d8d6f7d8c8619ef50401832275e54a",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "run",
+          "exit": 0,
+          "command": [
+            "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+            "D:\\Dev\\CB-HunterDispatch-20261001\\Tools\\PostMergeAuditRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\PostMergeAuditRegressionTests.dll",
+            "HunterTrapDispatchRegressionTests",
+            "SpellDispatchReceiptRegressionTests",
+            "SpellSightDispatchRegressionTests"
+          ],
+          "stdout_sha256": "1e932b0d4277cda56f55f3bfd4fcb548a6dcf36aaf00ce54fc6afe62f8de0247",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "scenario_summaries": [
+        "Pull isolation scenarios: 12/12; assertions=0; unexpected=0; pure policy/source ordering; no game attached.",
+        "Hunter trap dispatch scenarios: 438/438; assertions=0; unexpected=0; complete trap/named-cast/manager owners and actual executor arguments; controlled readiness/world/backend; no native or server acceptance.",
+        "Spell dispatch receipt scenarios: 97/97; assertions=0; unexpected=0; complete tracked manager methods and ground factory; real TreeSharp; controlled executor/world; local completion only, no native/game/server execution.",
+        "Spell sight dispatch scenarios: 53/53; assertions=0; unexpected=0; exact tracked Cast/Buff region and real TreeSharp; controlled sight/range/backend; no native obstruction trace or game attached."
+      ]
+    },
+    {
+      "label": "hunter-trap-specializations-green-v17-20261001",
+      "summary_sha256": "3fd441a537a91953cc452ef557357910debc851aaa7606e07b94ce8039495310",
+      "source_manifest_sha256": "c747d8166d037838ebb8069a0ce154cea72268e049f5dc6a00109551e45979f2",
+      "identity": {
+        "production_commit": "d949ff16d6396fdda788268648799ac04349b89d",
+        "production_tree": "cc7a7dd7ab1ca73b49c69acaa3205a072b069b9a",
+        "fixture_commit": "d949ff16d6396fdda788268648799ac04349b89d",
+        "working_tree_modified": true,
+        "game_attached": false
+      },
+      "source_stable": true,
+      "results": [
+        {
+          "stage": "build",
+          "exit": 1,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PostMergeAuditRegressionTests/PostMergeAuditRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "c024c8f42a6b9c50f73f28b89e08e6fe34b27778de5ab43c180edef0d81901ca",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "scenario_summaries": []
+    },
+    {
+      "label": "hunter-trap-specializations-green-v17b-20261001",
+      "summary_sha256": "c2573f51f66d7ce375b6b51f0b19e2de11ccf8bf4ec2cb2f1c9b2d6aee41ec44",
+      "source_manifest_sha256": "5f6231c85594481d948350e3c5668dcf609bed552fe3b9a33a178b05db63378f",
+      "identity": {
+        "production_commit": "d949ff16d6396fdda788268648799ac04349b89d",
+        "production_tree": "cc7a7dd7ab1ca73b49c69acaa3205a072b069b9a",
+        "fixture_commit": "d949ff16d6396fdda788268648799ac04349b89d",
+        "working_tree_modified": true,
+        "game_attached": false
+      },
+      "source_stable": true,
+      "results": [
+        {
+          "stage": "build",
+          "exit": 0,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PostMergeAuditRegressionTests/PostMergeAuditRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "baa88d3fbb2cb9e511ff543b8cf4002f6e62a19253b81a77a9c6308c76f87584",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "run",
+          "exit": 0,
+          "command": [
+            "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+            "D:\\Dev\\CB-HunterDispatch-20261001\\Tools\\PostMergeAuditRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\PostMergeAuditRegressionTests.dll",
+            "HunterTrapDispatchRegressionTests",
+            "SpellDispatchReceiptRegressionTests",
+            "SpellSightDispatchRegressionTests"
+          ],
+          "stdout_sha256": "aa3c71308047369ea10305c9676b8abfb9410cf1f3476436ed6206b23c46f3c9",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "scenario_summaries": [
+        "Pull isolation scenarios: 12/12; assertions=0; unexpected=0; pure policy/source ordering; no game attached.",
+        "Complete Hunter specialization trap consumers: 144 scenarios across 9 unchanged normal/battleground/instance factories; actual shared spell and executor path; unrelated pet/buff/navigation boundaries controlled.",
+        "Hunter trap dispatch scenarios: 582/582; assertions=0; unexpected=0; complete trap/named-cast/manager owners and actual executor arguments; controlled readiness/world/backend; no native or server acceptance.",
+        "Spell dispatch receipt scenarios: 97/97; assertions=0; unexpected=0; complete tracked manager methods and ground factory; real TreeSharp; controlled executor/world; local completion only, no native/game/server execution.",
+        "Spell sight dispatch scenarios: 53/53; assertions=0; unexpected=0; exact tracked Cast/Buff region and real TreeSharp; controlled sight/range/backend; no native obstruction trace or game attached."
+      ]
+    },
+    {
+      "label": "hunter-trap-distance-corrected-v17-20261001",
+      "summary_sha256": "488954ccc6d34dc160e6a0de2627a94e223dc92dbf9c947313e403481fe3f99f",
+      "source_manifest_sha256": "34bb732618c28af8d6996248829b3161f375e14bc018e4f55ff80353482bb6a0",
+      "source_stable": true,
+      "identity": {
+        "production_commit": "1a690878211592001cfc63f8dc09645cbc6410eb",
+        "production_tree": "df017845ab5045453dbe895ea049962a159261c2",
+        "fixture_commit": "1a690878211592001cfc63f8dc09645cbc6410eb",
+        "working_tree_modified": true,
+        "game_attached": false
+      },
+      "results": [
+        {
+          "stage": "build",
+          "exit": 0,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PostMergeAuditRegressionTests/PostMergeAuditRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "a1093e25f8702e3ae1fe1ab6232220613700900b3b5352c5e61daccbdb7a4843",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "run",
+          "exit": 0,
+          "command": [
+            "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+            "D:\\Dev\\CB-HunterDispatch-20261001\\Tools\\PostMergeAuditRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\PostMergeAuditRegressionTests.dll",
+            "HunterTrapDispatchRegressionTests",
+            "SpellDispatchReceiptRegressionTests",
+            "SpellSightDispatchRegressionTests"
+          ],
+          "stdout_sha256": "efbcdd3347482585bc9cec3a9fe12386931b8690dfe65216cae6810228621fd7",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "scenario_summaries": [
+        "Pull isolation scenarios: 12/12; assertions=0; unexpected=0; pure policy/source ordering; no game attached.",
+        "Complete Hunter specialization trap consumers: 144 scenarios across 9 unchanged normal/battleground/instance factories; actual shared spell and executor path; unrelated pet/buff/navigation boundaries controlled.",
+        "Hunter trap dispatch scenarios: 582/582; assertions=0; unexpected=0; complete trap/named-cast/manager owners and actual executor arguments; controlled readiness/world/backend; no native or server acceptance.",
+        "Spell dispatch receipt scenarios: 97/97; assertions=0; unexpected=0; complete tracked manager methods and ground factory; real TreeSharp; controlled executor/world; local completion only, no native/game/server execution.",
+        "Spell sight dispatch scenarios: 53/53; assertions=0; unexpected=0; exact tracked Cast/Buff region and real TreeSharp; controlled sight/range/backend; no native obstruction trace or game attached."
+      ]
+    }
+  ],
+  "core_test_bytes_identical_between_red_and_first_green": true,
+  "core_test_sha256": "1df4aa28a024b9dea9443919e9a373c11dfd53ea754c71155314ee39c200279b",
+  "expanded_case_count": 582,
+  "core_case_count": 438,
+  "new_complete_caller_cases": 144,
+  "complete_specialization_factories": 9,
+  "scenario_preservation": "Core checks remain; expanded file adds complete caller conformance cases. The expanded582-case file is not labelled the original438-case baseline file.",
+  "retained_fixture_corrections": [
+    "Original extraction contained an unmatched editor region; strip region trivia only.",
+    "Existing aggregate rejects namespace declarations inside initializer files even in raw strings; place dynamic fixture text in a separate non-initializer file. The normalizer and all older tests remain unchanged."
+  ],
+  "fixture_errors_are_not_runtime_red_proof": true,
+  "current_runtime_and_fixture_sha256": {
+    "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Hunter/Common.cs": "fe812a6e5eaa07408576f787f4a15e05cd588c62b6ad9c44aac5a69b41788ec7",
+    "Tools/WholesomeQuestRecoveryRegressionTests/HunterTrapDispatchRegressionTests.cs": "814b71f4002931a6cb9fb7f9fe502480b1df80c6eb5576b398f162a89c015f4c",
+    "Tools/WholesomeQuestRecoveryRegressionTests/HunterTrapSpecializationFixture.cs": "b292f2006331d4ed3080adf06cb828d8982156b6b37ca3d0eeb5ef91bd36dc2b"
+  },
+  "final_exact_candidate_acceptance_pending": true,
+  "full_gate_correction": {
+    "failed_candidate": "1a690878211592001cfc63f8dc09645cbc6410eb",
+    "failed_summary_sha256": "dc7c30275f293f7376563e666e4b359f177f387653278e64a7ead792254f63b1",
+    "failed_stages": [
+      "SingularCompatibility",
+      "WholesomeQuestRecoveryRegressionTests-run"
+    ],
+    "compiler_diagnostic_sha256": "f2dd3e3d9bff36e1125d2c6806e2d464898f51a6e339ab57d6e22a4ef76496cb",
+    "actual_public_distance_type": "System.Double",
+    "repair": "Use double.IsFinite and a double-valued controlled observation; assert the real property types through reflection.",
+    "source_of_truth": "Styx/WoWInternals/WoWObjects/WoWObject.cs Distance and DistanceSqr public properties",
+    "fixture_mismatch_was_not_accepted_as_gameplay_evidence": true,
+    "final_clean_gate_pending": true
+  }
+}

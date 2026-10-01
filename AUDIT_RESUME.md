@@ -1,3 +1,13 @@
+# Current: Hunter trap dispatch after merged and deployed PR87 — 1 October 2026
+
+Canonical master is d949ff16d6396fdda788268648799ac04349b89d after accepted PR87 head2d28f0c30ead94cc892af656721265d189468c7d. PR87 now has exact merged local/hosted/package/deployment evidence; read PR87_DEPLOYMENT_DELIVERY_V17_20261001.json before any deployment repeat. The target CB installation is distinct from the owner's running CB - Copy instance, which is preserved.
+
+Continue D:/Dev/CB-HunterDispatch-20261001 on audit/next-hunter-trap-dispatch-20261001. Read docs/audit/2026-10-01/hunter-trap-dispatch/REPORT.md, source-contracts.json, test-receipts.json and adjacent-dispatch-frontier.json. The preserved trap repair passes582 complete-owner/executor cases, including144 cases through nine unchanged Hunter specialization factories. The original438-case baseline had376 intended assertions; no native/server trap completion is claimed. Exact final candidate/publication/gates belong to HUNTER_TRAP_* external receipts and live refs, not an invented future SHA.
+
+The independent D:/Dev/CB-DirectGameObject-20261001 branch addresses the57 exact direct-GameObject primitive members and actual offline navigation. Its corrected native runner verifies1790 hydrated LFS files and the installed engine hash and resolves DLL-relative mmaps. Twenty actual queries produce paths;12 remain partial and only8 local controls are complete. Collision/physical navigation/live acceptance remain distinct and unproven. Preserve the complete4335 execution population,3030 execution-unverified rows,921data/311source/16live/57scripted holds and all prior game/runtime fixes. Do not equate the new Hunter dispatch evidence or native paths with quest completion.
+
+## Preserved earlier handoff
+
 # Current: audit inventory receipt integrity after PR86 — 1 October 2026
 
 Merged runtime milestone `840d91162321a79d73caac3ade0900666c4d0ef7` contains PR86 Ground collection, PR85 Rogue and all earlier Paladin/Death Knight/resource fixes. Its deployment status is established only by GROUND_DEPLOYMENT_DELIVERY_V14_20261001.json and the production manifest. Do not redeploy or repeat any prior commit based on this precommit note.

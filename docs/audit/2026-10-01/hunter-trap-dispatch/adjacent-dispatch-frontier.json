@@ -1,0 +1,50 @@
+{
+  "review_type": "direct source, caller and test self-review; no independent reviewer",
+  "shared_patterns_inspected": [
+    {
+      "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Mage/Common.cs",
+      "sites": [
+        "Ritual of Refreshment",
+        "Conjure Food",
+        "Conjure Water",
+        "Summon Water Elemental"
+      ],
+      "finding": "Existing prechecks/finite waits exist, but Action discards the bool cast result. Additional conjure/pet acknowledgement and continuation tests are required before a separate fix."
+    },
+    {
+      "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Shaman/Elemental.cs",
+      "sites": [
+        "Flametongue Weapon"
+      ],
+      "finding": "Weapon admission/cancel-enchantment/dispatch spans several observations; bool result is discarded. Do not change weapon routing or enchantments without their complete owner tests."
+    },
+    {
+      "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Shaman/Enhancement.cs",
+      "sites": [
+        "Windfury Weapon",
+        "Flametongue main hand",
+        "Flametongue off hand"
+      ],
+      "finding": "Same discarded-result family, with slot-specific effects and stale/null equipment observations requiring a separate scoped repair."
+    },
+    {
+      "path": "runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Hunter/Common.cs",
+      "sites": [
+        "Dismiss Pet"
+      ],
+      "finding": "Pet-disable helper still uses a void Action around a bool cast; this trap-only repair does not claim dismissal acknowledgement."
+    }
+  ],
+  "remaining_hunter_dimensions": [
+    "trap placement/arming/trigger effectiveness and exact geometry",
+    "pet summon/dismiss/heal lifecycle",
+    "Marksmanship steady-shot priority and proc policy",
+    "all other cooldown/defensive/aspect/racial priorities",
+    "native readiness/collision/live server cast acknowledgement"
+  ],
+  "quest_population": 4335,
+  "execution_unverified": 3030,
+  "quest_execution_promotions": [],
+  "all_class_spec_race_combinations_verified": false,
+  "blocking_scope_findings": []
+}
