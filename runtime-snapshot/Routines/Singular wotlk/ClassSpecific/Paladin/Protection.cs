@@ -29,8 +29,8 @@ namespace Singular.ClassSpecific.Paladin
         }
 
 
-        // Tank hard-casts during combat are deliberately not introduced here.
-        // The combat defensive owner remains responsible for emergency cooldowns.
+        // Only instant defenses are admitted during combat. Hard-cast recovery
+        // remains out of combat, and every entrypoint shares the same defenses.
         private static bool CanRecoverOutOfCombat()
         {
             var me = StyxWoW.Me;
@@ -46,6 +46,8 @@ namespace Singular.ClassSpecific.Paladin
         public static Composite CreateProtectionPaladinHeal()
         {
             return new PrioritySelector(
+                new Decorator(ret => StyxWoW.Me != null && StyxWoW.Me.Combat,
+                    CreateProtectionEmergencyDefenses()),
                 Spell.Heal("Holy Light", ret => StyxWoW.Me,
                     ret => CanRecoverOutOfCombat()
                         && StyxWoW.Me.HealthPercent <= SingularSettings.Instance.Paladin.HolyLightHealth),
@@ -56,6 +58,30 @@ namespace Singular.ClassSpecific.Paladin
                 Spell.BuffSelf("Divine Plea", ret => CanRecoverOutOfCombat()
                     && StyxWoW.Me.HealthPercent >= 95
                     && StyxWoW.Me.ManaPercent < SingularSettings.Instance.Paladin.DivinePleaMana));
+        }
+
+        private static bool CanUseProtectionEmergencyDefense(bool layOnHands)
+        {
+            var me = StyxWoW.Me;
+            return me != null && me.IsValid && me.IsAlive && !me.IsGhost
+                && !me.Mounted && !me.IsOnTransport && !me.IsCasting && !me.IsChanneling
+                && double.IsFinite(me.HealthPercent) && me.HealthPercent >= 0 && me.HealthPercent <= 100
+                && !me.HasAura("Forbearance")
+                // Pinned TC335 immunities/LoH scripts: recent Avenging Wrath
+                // blocks both; Immune Shield Marker additionally blocks self LoH.
+                && !me.GetAllAuras().Any(a => a != null && a.IsActive
+                    && (a.SpellId == 61987 || layOnHands && a.SpellId == 61988));
+        }
+
+        private static Composite CreateProtectionEmergencyDefenses()
+        {
+            return new PrioritySelector(
+                Spell.BuffSelf("Lay on Hands", ret => CanUseProtectionEmergencyDefense(true)
+                    && StyxWoW.Me.HealthPercent <= SingularSettings.Instance.Paladin.LayOnHandsHealth),
+                // Ardent Defender is passive in this client era. Keep the learned
+                // active defense and the existing configured threshold instead.
+                Spell.BuffSelf("Divine Protection", ret => CanUseProtectionEmergencyDefense(false)
+                    && StyxWoW.Me.HealthPercent <= SingularSettings.Instance.Paladin.DivineProtectionHealthProt));
         }
 
 
@@ -151,18 +177,12 @@ namespace Singular.ClassSpecific.Paladin
         {
             return
                 new PrioritySelector(
+                    CreateProtectionEmergencyDefenses(),
                     Spell.Cast(
                         "Hand of Reckoning",
                         ret => TankManager.Instance.NeedToTaunt.FirstOrDefault(),
                         ret => SingularSettings.Instance.EnableTaunting && TankManager.Instance.NeedToTaunt.Count != 0),
-                    Spell.BuffSelf("Avenging Wrath"),
-                    Spell.BuffSelf(
-                        "Lay on Hands",
-                        ret => StyxWoW.Me.HealthPercent <= SingularSettings.Instance.Paladin.LayOnHandsHealth && !StyxWoW.Me.HasAura("Forbearance")),
-                    // WotLK: Ardent Defender is a passive talent, not an active cooldown (became active in Cata)
-                    Spell.BuffSelf(
-                        "Divine Protection",
-                        ret => StyxWoW.Me.HealthPercent <= SingularSettings.Instance.Paladin.DivineProtectionHealthProt)
+                    Spell.BuffSelf("Avenging Wrath")
                     );
         }
 

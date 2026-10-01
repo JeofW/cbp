@@ -9,6 +9,7 @@
     <Compile Include="../../runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Paladin/Retribution.cs" Link="Production/Retribution.cs" />
     <Compile Include="../../runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Paladin/Lowbie.cs" Link="Production/Lowbie.cs" />
     <Compile Include="../../runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Paladin/Protection.cs" Link="Production/Protection.cs" />
+    <Compile Include="../../runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Paladin/Holy.cs" Link="Production/Holy.cs" />
     <Compile Include="../../runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Paladin/PaladinSupport.cs" Link="Production/PaladinSupport.cs" Condition="Exists('../../runtime-snapshot/Routines/Singular wotlk/ClassSpecific/Paladin/PaladinSupport.cs')" />
     <Compile Include="../../runtime-snapshot/Routines/Singular wotlk/Dynamics/Attributes.cs" Link="Production/Attributes.cs" />
     <Compile Include="../../runtime-snapshot/Routines/Singular wotlk/Helpers/Throttle.cs" Link="Production/Throttle.cs" />

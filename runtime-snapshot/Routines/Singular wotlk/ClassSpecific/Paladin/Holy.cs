@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using Singular.Dynamics;
 using Singular.Helpers;
 using Singular.Managers;
@@ -51,8 +51,45 @@ namespace Singular.ClassSpecific.Paladin
                 new PrioritySelector(
                     Spell.BuffSelf(
                         "Divine Plea",
-                        ret => StyxWoW.Me.ManaPercent <= SingularSettings.Instance.Paladin.DivinePleaMana)
+                        ret => CanStartHolyManaRecovery())
                     );
+        }
+
+        private static bool IsOutsideEmergencyWindow(WoWUnit unit)
+        {
+            if (unit == null || !unit.IsValid || !unit.IsAlive || unit.IsGhost)
+                return false;
+            double health = unit.HealthPercent;
+            return double.IsFinite(health) && health >= 0 && health <= 100
+                && health > SingularSettings.Instance.Paladin.LayOnHandsHealth;
+        }
+
+        private static bool CanStartHolyManaRecovery()
+        {
+            var me = StyxWoW.Me;
+            if (!IsOutsideEmergencyWindow(me) || me.Mounted || me.IsOnTransport
+                || me.IsCasting || me.IsChanneling)
+                return false;
+            double mana = me.ManaPercent;
+            if (!double.IsFinite(mana) || mana < 0 || mana > 100
+                || mana > SingularSettings.Instance.Paladin.DivinePleaMana)
+                return false;
+            // Plea reduces healing. Do not start it while the observed self or
+            // selected healing recipient is inside the existing emergency window.
+            // This does not predict unobserved damage or claim optimal mana timing.
+            var recipient = HealerManager.Instance.FirstUnit;
+            return recipient == null || IsOutsideEmergencyWindow(recipient);
+        }
+
+        private static bool CanUseHolyLayOnHands(WoWUnit recipient)
+        {
+            if (recipient == null) return false;
+            // Pinned TC335 spell_pal_lay_on_hands applies these restrictions to
+            // self-casts only. An ally's Forbearance must not suppress its rescue.
+            // Numeric markers also work when their aura names are localized.
+            return !recipient.IsMe || !recipient.HasAura("Forbearance")
+                && !recipient.GetAllAuras().Any(a => a != null && a.IsActive
+                    && (a.SpellId == 61987 || a.SpellId == 61988));
         }
 
         [Class(WoWClass.Paladin)]
@@ -131,15 +168,19 @@ namespace Singular.ClassSpecific.Paladin
                             new Decorator(
                                 ret => moveInRange,
                                 Movement.CreateMoveToLosBehavior(ret => (WoWUnit)ret)),
-                            Spell.Cast(
-                                "Beacon of Light",
-                                ret => (WoWUnit)ret,
-                                ret => ret is WoWPlayer && Group.Tanks.Contains((WoWPlayer)ret) && Group.Tanks.All(t => !t.HasMyAura("Beacon of Light"))),
                             Spell.Heal(
                                 "Lay on Hands",
                                 ret => (WoWUnit)ret,
-                                ret => StyxWoW.Me.Combat && !((WoWUnit)ret).HasAura("Forbearance") &&
+                                ret => StyxWoW.Me.Combat && CanUseHolyLayOnHands((WoWUnit)ret) &&
                                        ((WoWUnit)ret).HealthPercent <= SingularSettings.Instance.Paladin.LayOnHandsHealth),
+                            Spell.Cast(
+                                "Beacon of Light",
+                                ret => (WoWUnit)ret,
+                                // A missing/unavailable emergency cooldown must
+                                // still leave ordinary healing ahead of maintenance.
+                                ret => ret is WoWPlayer && IsOutsideEmergencyWindow((WoWUnit)ret)
+                                    && Group.Tanks.Contains((WoWPlayer)ret)
+                                    && Group.Tanks.All(t => !t.HasMyAura("Beacon of Light"))),
                             Spell.Heal(
                                 "Holy Shock",
                                 ret => (WoWUnit)ret,

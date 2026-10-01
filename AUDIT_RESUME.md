@@ -1,3 +1,11 @@
+# Current: focused Singular emergency continuation — 1 October 2026
+
+PR80 is merged atd6d2e303574bc80c39a5305e4362853e85c7b37e after exact58ea11df local/hosted validation. Continue from D:/Dev/CB-SingularEmergency-20261001 on audit/next-singular-emergency-priority-20261001. Read docs/audit/2026-10-01/singular-emergency/REPORT.md and its focused-test/source/client/frontier evidence. The Holy/Protection fix has94 passing controlled factory scenarios and preserves all preexisting assertions and Ret source. Final candidate identity, local/hosted publication and deployment status belong to the external current-session receipts; do not infer them from this checkpoint.
+
+The quest frontier remains exactly1305 IDs in docs/audit/2026-10-01/required-stock/remaining-category-ids.json:3028generic,2strategy,921data,311uncertain,16live,57unsupported total4335. PR61 was already merged/deployed; the current session independently verified all429 prior payload and2004 protected-file hashes before continuing. Preserve all earlier worktrees and local state. Follow the shared health/resource overflow observation and Ret restriction-marker evidence in a separate small scope, then the recorded all-class/race frontier; do not call registration coverage exhaustive combat proof.
+
+## Preserved earlier handoff
+
 # Current: required-stock publication recovery — 1 October 2026
 
 The new session inspected the live repository and confirmed PR61 through PR79 are already merged. Canonical local/remote master is363f096764c61e1faf050fd6a638867f901e8dfd; the preserved required-stock implementation is05e59ef5f576c68298f091dff0eeda1ddfdf09c0. The two existing data-only observation fixture corrections and all recovery notes are being retained in one corrected candidate. Resolve the actual candidate and subsequent clean local/hosted/publication status from external REQUIRED_STOCK_FINAL_CANDIDATE.json and later receipts; this checkpoint does not itself claim those gates passed. Continue the exact1305 remaining IDs and the separate Singular audit. Do not replay PR61 deployment or any completed PR62–79 work.

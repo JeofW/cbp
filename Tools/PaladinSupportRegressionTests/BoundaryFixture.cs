@@ -23,6 +23,9 @@ internal static class Fixture
         DefaultRestCalls = 0; DefaultRestResult = RunStatus.Failure;
         Singular.Managers.TankManager.Instance.FirstUnit = null;
         Singular.Managers.TankManager.Instance.NeedToTaunt.Clear();
+        Singular.Managers.HealerManager.Instance.FirstUnit = null;
+        Singular.Managers.HealerManager.NeedHealTargeting = false;
+        Singular.Helpers.Group.Tanks.Clear();
         Singular.Settings.SingularSettings.Instance.EnableTaunting = false;
         Styx.StyxWoW.Me = new LocalPlayer { Guid = 1, Class = WoWClass.Paladin, Name = "SelfPaladin" };
         Singular.Settings.SingularSettings.Instance.Paladin = new();
@@ -76,7 +79,7 @@ namespace Styx.Logic.Combat
 {
     public enum WoWSpellMechanic { Dazed, Disoriented, Frozen, Incapacitated, Rooted, Slowed, Snared }
     public sealed class SpellRecord { public int[]? Reagent = new int[8]; public uint[]? ReagentCount = new uint[8]; }
-    public class WoWSpell { public WoWDispelType DispelType { get; set; } public SpellRecord InternalInfo { get; } = new(); }
+    public class WoWSpell { public WoWDispelType DispelType { get; set; } public SpellRecord InternalInfo { get; } = new(); public float MaxRange { get; set; } = 30; }
     public class WoWAura
     {
         public string Name { get; set; } = "";
@@ -133,6 +136,10 @@ namespace Styx.WoWInternals.WoWObjects
         public int Level { get; set; } = 80;
         public WoWClass Class { get; set; }
         public WoWUnit? CurrentTarget { get; set; }
+        public bool GotTarget => CurrentTarget != null;
+        public bool IsInMyPartyOrRaid => IsMe || Styx.StyxWoW.Me.PartyMembers.Any(p => p.Guid == Guid)
+            || Styx.StyxWoW.Me.RaidMembers.Any(p => p.Guid == Guid);
+        public bool IsSafelyFacing(WoWUnit target) => true;
         public List<WoWAura> ObservedAuras { get; } = new();
         public Dictionary<string, WoWAura> Auras => ObservedAuras.GroupBy(a => a.Name).ToDictionary(g => g.Key, g => g.Last());
         public Dictionary<string, WoWAura> ActiveAuras => Auras;
@@ -175,7 +182,12 @@ namespace Singular.Managers
 {
     public enum TalentSpec { RetributionPaladin, HolyPaladin, ProtectionPaladin, Lowbie }
     public static class TalentManager { public static TalentSpec CurrentSpec { get; set; } }
-    public static class HealerManager { public static bool NeedHealTargeting { get; set; } }
+    public sealed class HealerManager
+    {
+        public static HealerManager Instance { get; } = new();
+        public static bool NeedHealTargeting { get; set; }
+        public WoWUnit? FirstUnit { get; set; }
+    }
     public sealed class TankManager
     {
         public static TankManager Instance { get; } = new();
@@ -201,6 +213,7 @@ namespace Singular.Settings
         public bool DispelParty { get; set; } = true;
         public int LayOnHandsHealth => 15;
         public int HolyLightHealth { get; set; } = 30;
+        public int HolyShockHealth { get; set; } = 90;
         public int FlashOfLightHealth => 50;
         public int DivineProtectionHealthRet => 20;
         public int DivineProtectionHealthProt => 20;
@@ -224,7 +237,14 @@ namespace Singular.Settings
 }
 namespace Singular.Helpers
 {
-    public static class Unit { public static List<WoWUnit> NearbyUnfriendlyUnits { get; } = new(); public static IEnumerable<WoWUnit> UnfriendlyUnitsNearTarget(float range) => NearbyUnfriendlyUnits; public static bool IsAreaEffectSafe(string name, WoWUnit target) => true; }
+    public static class Unit
+    {
+        public static List<WoWUnit> NearbyUnfriendlyUnits { get; } = new();
+        public static IEnumerable<WoWUnit> UnfriendlyUnitsNearTarget(float range) => NearbyUnfriendlyUnits;
+        public static bool IsAreaEffectSafe(string name, WoWUnit target) => true;
+        public static IEnumerable<WoWPlayer> NearbyFriendlyPlayers => Styx.StyxWoW.Me.PartyMembers.Concat(Styx.StyxWoW.Me.RaidMembers);
+    }
+    public static class Group { public static List<WoWPlayer> Tanks { get; } = new(); }
     public static class Safers { public static Composite EnsureTarget() => Fixture.Nothing(); }
     public static class Common
     {
@@ -234,9 +254,11 @@ namespace Singular.Helpers
     public static class Movement
     {
         public static Composite CreateMoveToLosBehavior() => Fixture.Nothing();
+        public static Composite CreateMoveToLosBehavior(Func<object, WoWUnit?> select) => Fixture.Nothing();
         public static Composite CreateFaceTargetBehavior() => Fixture.Nothing();
         public static Composite CreateMoveToMeleeBehavior(bool _) => Fixture.Nothing();
         public static Composite CreateMoveToTargetBehavior(bool _, float range) => Fixture.Nothing();
+        public static Composite CreateMoveToTargetBehavior(bool _, float range, Func<object, WoWUnit?> select) => Fixture.Nothing();
     }
     public static class Rest
     {
@@ -251,6 +273,7 @@ namespace Singular.Helpers
         public static Composite Cast(string name, Func<object, bool>? requires = null) => Fixture.Submit(name, _ => Styx.StyxWoW.Me.CurrentTarget, requires);
         public static Composite Cast(string name, Func<object, WoWUnit?> select, Func<object, bool> requires) => Fixture.Submit(name, select, requires);
         public static Composite BuffSelf(string name, Func<object, bool>? requires = null) => Fixture.Submit(name, _ => Styx.StyxWoW.Me, requires, true);
+        public static Composite Buff(string name, Func<object, bool>? requires = null) => Fixture.Submit(name, _ => Styx.StyxWoW.Me.CurrentTarget, requires, true);
         public static Composite Heal(string name, Func<object, WoWUnit?> select, Func<object, bool> requires) => Fixture.Submit(name, select, requires);
     }
 }
