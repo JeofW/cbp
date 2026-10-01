@@ -1,0 +1,22 @@
+{
+  "quest_count": 4335,
+  "classification_counts": {
+    "DATA-INVALID/INCOMPLETE": 921,
+    "SOURCE-UNCERTAIN": 311,
+    "EXECUTION-UNVERIFIED": 3030,
+    "LIVE-ACCEPTANCE-REQUIRED": 16,
+    "UNSUPPORTED-SCRIPTED": 57
+  },
+  "accepted_contracts": 0,
+  "logical_sha256": {
+    "execution-ledger.jsonl": "49d357956eece83466dc93c1fd359339bc625eba39b2f6f95ef4300aa495762d",
+    "objective-primitive-ids.json": "3725151e04f31f3405c1f82f61dbf4e809a1357833058e41d5ca78c982e901e6",
+    "execution-classification-ids.json": "e72fcf471c08474489211d9833e6e99d77d32e848938f313674c247361478555"
+  },
+  "stored_sha256": {
+    "execution-ledger.jsonl.gz": "3a559008823c8c7ed7941202d41efd94946e4f1e3788f8b6a56f0bb096b32c84",
+    "objective-primitive-ids.json": "3725151e04f31f3405c1f82f61dbf4e809a1357833058e41d5ca78c982e901e6",
+    "execution-classification-ids.json": "e72fcf471c08474489211d9833e6e99d77d32e848938f313674c247361478555"
+  },
+  "integrity_only_not_gameplay_proof": true
+}

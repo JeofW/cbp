@@ -1,0 +1,60 @@
+{
+  "retained_red": {
+    "identity": {
+      "production_commit": "840d91162321a79d73caac3ade0900666c4d0ef7",
+      "production_tree": "042fe30744b73ee8582a533c07556fbdf1afa8c0",
+      "fixture_commit": "840d91162321a79d73caac3ade0900666c4d0ef7",
+      "working_tree_modified": true,
+      "game_attached": false
+    },
+    "source_stable": true,
+    "command": [
+      "C:\\Users\\Jeof\\scoop\\apps\\python311\\current\\python.exe",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "Tools/EvidenceAudit",
+      "-p",
+      "test_execution_inventory_integrity_335.py",
+      "-v"
+    ],
+    "exit": 1,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "0b6188122dca1e6ec534a73213c1c3f7fdb68e0c9687fd41fafa5a41aa4b960a",
+    "recorded_utc": "2026-10-01T09:23:59.154289+00:00"
+  },
+  "complete_python_green": {
+    "identity": {
+      "production_commit": "840d91162321a79d73caac3ade0900666c4d0ef7",
+      "production_tree": "042fe30744b73ee8582a533c07556fbdf1afa8c0",
+      "fixture_commit": "840d91162321a79d73caac3ade0900666c4d0ef7",
+      "working_tree_modified": true,
+      "game_attached": false
+    },
+    "source_stable": true,
+    "command": [
+      "C:\\Users\\Jeof\\scoop\\apps\\python311\\current\\python.exe",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "Tools/EvidenceAudit",
+      "-p",
+      "test_*.py",
+      "-v"
+    ],
+    "exit": 0,
+    "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stderr_sha256": "1b1521265e6aec615971d6d3018ad6d0f10af3040b4bc48f6787106075386bf3",
+    "recorded_utc": "2026-10-01T09:28:17.537982+00:00"
+  },
+  "red_stderr_sha256": "0b6188122dca1e6ec534a73213c1c3f7fdb68e0c9687fd41fafa5a41aa4b960a",
+  "green_stderr_sha256": "1b1521265e6aec615971d6d3018ad6d0f10af3040b4bc48f6787106075386bf3",
+  "unchanged_test_sha256": "a55eefc54702c7638cfcf09787b51c0b5f06ec337a50318f3e96f8b6b0637bc1",
+  "red_result": "12 tests produced13 intended assertion failures, including two actual published-file hash mismatches; zero unittest errors.",
+  "green_result": "468 tests pass with one expected skip, including the12 new output/inventory integrity tests.",
+  "review_type": "Direct full-diff and cross-file self-review; no separate reviewer agent.",
+  "execution_or_live_coverage_added": false,
+  "final_exact_commit_acceptance_pending": true
+}
