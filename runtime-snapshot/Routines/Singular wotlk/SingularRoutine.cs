@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Reflection;
 
@@ -163,7 +163,8 @@ namespace Singular
                         }
                         catch (Exception ex)
                         {
-                            Logger.WriteDebug("Error reading target info: " + ex.Message);
+                            Styx.Helpers.ObservationUnavailableException.RethrowCancellation(ex);
+                            Styx.Helpers.Logging.WriteException(ex);
                         }
                     }
                 }
@@ -194,8 +195,8 @@ namespace Singular
             }
             catch (Exception ex)
             {
-                Logger.Write("ERROR in Pulse(): " + ex.Message);
-                Logger.Write("Stack trace: " + ex.StackTrace);
+                Styx.Helpers.ObservationUnavailableException.RethrowCancellation(ex);
+                Styx.Helpers.Logging.WriteException(ex);
             }
         }
 

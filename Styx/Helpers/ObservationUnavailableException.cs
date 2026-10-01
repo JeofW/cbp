@@ -32,7 +32,11 @@ namespace Styx.Helpers
             return null;
         }
 
-        internal static void RethrowCancellation(Exception error)
+        /// <summary>
+        /// Preserve direct or reflection-wrapped cancellation across runtime
+        /// routine/plugin observation boundaries. Ordinary failures return.
+        /// </summary>
+        public static void RethrowCancellation(Exception error)
         {
             // DynamicInvoke can wrap a stop at several observer boundaries.
             // Preserve the original signal and stack, not a failed observation.
