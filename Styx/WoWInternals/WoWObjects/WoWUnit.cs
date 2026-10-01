@@ -2200,10 +2200,46 @@ namespace Styx.WoWInternals.WoWObjects
                     // metadata is unavailable. Dropping it would falsely authorize
                     // absent-buff or safe-dispel decisions from a partial collection.
                     return UnavailableAuraObservation(
-                        $"Could not resolve metadata for active aura {aura.SpellId}.");
+                        $"Could not resolve metadata for active aura {aura.SpellId}. actor=0x{BaseAddress:X8} lookup={aura.MetadataFailure}");
             }
 
             return collection;
+        }
+
+        /// <summary>
+        /// Observes complete aura coverage without using an empty collection for
+        /// UNKNOWN. Check the result before making presence/absence decisions.
+        /// Cancellation and unrelated failures retain their semantics.
+        /// </summary>
+        public bool TryGetAllAuras(out WoWAuraCollection? collection, [CallerMemberName] string consumer = "")
+        {
+            collection = null;
+            var memory = ObjectManager.Wow;
+            uint address = BaseAddress;
+            if (memory == null || address == 0 || !StyxWoW.IsInGame || !IsValid)
+            {
+                ObservationFailureDiagnostics.Report(new ObservationUnavailableException("auras",
+                    "Actor/world ownership is unavailable."), consumer);
+                return false;
+            }
+            try
+            {
+                var observed = GetAllAuras();
+                if (!ReferenceEquals(memory, ObjectManager.Wow) || address != BaseAddress
+                    || !StyxWoW.IsInGame || !IsValid)
+                {
+                    ObservationFailureDiagnostics.Report(new ObservationUnavailableException("auras",
+                        "Actor/world ownership changed during observation."), consumer);
+                    return false;
+                }
+                collection = observed;
+                return true;
+            }
+            catch (ObservationUnavailableException error)
+            {
+                ObservationFailureDiagnostics.Report(error, consumer);
+                return false;
+            }
         }
 
         private WoWAuraCollection UnavailableAuraObservation(string message)
@@ -2212,7 +2248,7 @@ namespace Styx.WoWInternals.WoWObjects
             // rejecting unavailable coverage in an otherwise valid world.
             if (!StyxWoW.IsInGame || !IsValid)
                 return new WoWAuraCollection(0);
-            throw new InvalidOperationException(message);
+            throw new Styx.Helpers.ObservationUnavailableException("auras", message);
         }
 
         #endregion

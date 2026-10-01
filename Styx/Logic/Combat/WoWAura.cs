@@ -221,13 +221,16 @@ namespace Styx.Logic.Combat
         /// <summary>
         /// Gets the spell associated with this aura.
         /// </summary>
+        internal string MetadataFailure { get; private set; } = "not-observed";
+
         public WoWSpell? Spell
         {
             get
             {
                 if (_spell == null && SpellId > 0)
                 {
-                    _spell = WoWSpell.FromId(SpellId);
+                    _spell = WoWSpell.ObserveFromId(SpellId, out string failure);
+                    MetadataFailure = failure;
                 }
                 return _spell;
             }

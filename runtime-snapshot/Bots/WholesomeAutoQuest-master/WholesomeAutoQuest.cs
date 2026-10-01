@@ -288,6 +288,7 @@ namespace WholesomeAQ
         public QuestRecoveryKey ClusterKey { get; init; }
         public IReadOnlyList<QuestRecoveryKey> KnownEndpointKeys { get; init; } = Array.Empty<QuestRecoveryKey>();
         public bool IsActiveWork { get; init; }
+        public bool ActivityObservationKnown { get; init; } = true;
         public bool EndpointPathFailed { get; init; }
         public RouteFailureReason NavigationFailure { get; init; }
         public bool AllHotspotsUnavailable { get; init; }
@@ -1490,7 +1491,8 @@ namespace WholesomeAQ
                         out QuestRecoveryKey pickupOwner,
                         out long pickupGeneration))
                 {
-                    bool activePickup = IsPickupRecoveryActive(
+                    bool restKnown = TryObserveActivityRest(StyxWoW.Me, out bool pickupResting);
+                    bool activePickup = restKnown && IsPickupRecoveryActive(
                         pickup,
                         pickupOwner,
                         pickupGeneration,
@@ -1503,8 +1505,7 @@ namespace WholesomeAQ
                         StyxWoW.Me.IsGhost,
                         StyxWoW.Me.OnTaxi,
                         StyxWoW.Me.IsOnTransport,
-                        _restingPaused ||
-                            StyxWoW.Me.HasAura("Food") || StyxWoW.Me.HasAura("Drink"),
+                        pickupResting,
                         TreeRoot.IsPaused && !_restingPaused,
                         StyxWoW.Me.Combat);
                     if (pickup.TryConsumeOutcome(out QuestAttemptOutcome producedOutcome))
@@ -1569,6 +1570,35 @@ namespace WholesomeAQ
             return true;
         }
 
+        internal static bool TryObserveRestAuras(Styx.WoWInternals.WoWObjects.LocalPlayer actor,
+            out bool food, out bool drink,
+            [System.Runtime.CompilerServices.CallerMemberName] string consumer = "")
+        {
+            food = drink = false;
+            if (actor == null || !actor.TryGetAllAuras(out var auras, "WholesomeAutoQuest." + consumer))
+                return false;
+            food = auras.Any(aura => aura.Name == "Food");
+            drink = auras.Any(aura => aura.Name == "Drink");
+            return true;
+        }
+
+        private bool TryObserveActivityRest(Styx.WoWInternals.WoWObjects.LocalPlayer actor,
+            out bool resting, [System.Runtime.CompilerServices.CallerMemberName] string consumer = "")
+        {
+            resting = _restingPaused;
+            if (resting) return true;
+            if (TryObserveRestAuras(actor, out bool food, out bool drink, consumer))
+            {
+                resting = food || drink;
+                return true;
+            }
+            // Unknown rest coverage cannot accrue stationary travel-failure time.
+            // Progress and pre-death consumers separately suspend their own samples.
+            _lastMovedTime = DateTime.UtcNow;
+            _lastVendorObservationUtc = DateTime.MinValue;
+            return false;
+        }
+
         private void RetryRestConsumables(Styx.WoWInternals.WoWObjects.LocalPlayer actor, object memory)
         {
             uint address = actor?.BaseAddress ?? 0;
@@ -1579,6 +1609,7 @@ namespace WholesomeAQ
                 && !LiquidEnvironment.IsPlayerInLiquid(actor)
                 && ReferenceEquals(StyxWoW.Me, actor) && ReferenceEquals(ObjectManager.Wow, memory);
             if (!Current()) { _restingPaused = false; return; }
+            if (!TryObserveRestAuras(actor, out bool food, out bool drink) || !Current()) return;
             if (actor.Mounted)
             {
                 Styx.Logic.Mount.Dismount("Stationary rest recovery");
@@ -1589,13 +1620,13 @@ namespace WholesomeAQ
                 Navigator.PlayerMover.MoveStop();
                 if (!Current()) { _restingPaused = false; return; }
             }
-            if (actor.HealthPercent <= _settings.RestHealthPercent && !actor.HasAura("Food") && Current())
+            if (actor.HealthPercent <= _settings.RestHealthPercent && !food && Current())
             {
                 if (Rest.TryFeedImmediate() && Current())
                     Log("Rest food request submitted; awaiting its aura.");
             }
             if (Current() && actor.MaxMana > 0 && actor.ManaPercent <= _settings.RestManaPercent
-                && !actor.HasAura("Drink") && Current())
+                && TryObserveRestAuras(actor, out _, out drink) && !drink && Current())
             {
                 if (Rest.TryDrinkImmediate() && Current())
                     Log("Rest drink request submitted; awaiting its aura.");
@@ -1730,7 +1761,8 @@ namespace WholesomeAQ
                 && StyxWoW.IsInWorld && actor.IsValid && actor.IsAlive && !actor.IsGhost
                 && !actor.IsActuallyInCombat && !actor.PetInCombat && !actor.IsFlying && !actor.IsMoving
                 && !actor.IsCasting && actor.ChanneledCastingSpellId == 0 && !actor.OnTaxi && !actor.IsOnTransport
-                && !_restingPaused && !actor.HasAura("Food") && !actor.HasAura("Drink")
+                && !_restingPaused && TryObserveRestAuras(actor, out bool food, out bool drink)
+                && !food && !drink
                 && actor.FreeNormalBagSlots > 0 && poi.Type == PoiType.None
                 && !Styx.Logic.Inventory.Frames.LootFrame.LootFrame.Instance.IsVisible
                 && !MerchantFrame.Instance.IsVisible && !TrainerFrame.Instance.IsVisible
@@ -1815,7 +1847,7 @@ namespace WholesomeAQ
                             }
                         }
                     }
-                    catch (Exception ex)
+                    catch (Exception ex) when (ex is not OperationCanceledException && ex is not System.Threading.ThreadInterruptedException)
                     {
                         Log($"Active objective endpoint assessment unavailable: {ex.Message}");
                     }
@@ -1823,6 +1855,7 @@ namespace WholesomeAQ
             }
 
             bool questCombat = me?.Combat == true && IsQuestCombatTarget(questId, me.CurrentTarget?.Entry ?? 0);
+            bool restKnown = TryObserveActivityRest(me, out bool resting);
             return CreateWorkSample(
                 behavior,
                 ownerKey,
@@ -1833,7 +1866,7 @@ namespace WholesomeAQ
                 me?.OnTaxi == true,
                 me?.IsOnTransport == true ||
                     Navigator.NavigationProvider is MeshNavigator transit && transit.IsRidingElevator,
-                _restingPaused || me?.HasAura("Food") == true || me?.HasAura("Drink") == true,
+                resting,
                 TreeRoot.IsPaused && !_restingPaused,
                 me?.Combat == true,
                 questCombat,
@@ -1844,7 +1877,8 @@ namespace WholesomeAQ
                 allHotspotsUnavailable,
                 deathAttributable: false,
                 attemptGeneration,
-                navigationFailure);
+                navigationFailure,
+                activityObservationKnown: restKnown);
         }
 
         internal static bool HasFailedActiveEndpoint(
@@ -1958,7 +1992,7 @@ namespace WholesomeAQ
             if (me == null || poi == null || poi.Entry > int.MaxValue || !VendorSafetyPolicy.IsService(poi.Type)
                 || Navigator.NavigationProvider is not MeshNavigator mesh)
                 return false;
-            bool intentionalRest = _restingPaused || me.HasAura("Food") || me.HasAura("Drink");
+            if (!TryObserveActivityRest(me, out bool intentionalRest)) return false;
             bool frameOpen = MerchantFrame.Instance.IsVisible || TrainerFrame.Instance.IsVisible
                 || Styx.Logic.Inventory.Frames.Gossip.GossipFrame.Instance.IsVisible;
             if (intentionalRest || frameOpen) _lastMovedTime = DateTime.UtcNow;
@@ -1995,8 +2029,7 @@ namespace WholesomeAQ
             var me = StyxWoW.Me;
             if (_stopped || me == null || !StyxWoW.IsInWorld || TreeRoot.IsPaused ||
                 me.Dead || me.IsGhost || me.OnTaxi || me.IsOnTransport ||
-                meshNavigator.IsRidingElevator || _restingPaused ||
-                me.HasAura("Food") || me.HasAura("Drink"))
+                meshNavigator.IsRidingElevator || !TryObserveActivityRest(me, out bool resting) || resting)
                 return false;
 
             BotPoi poi = BotPoi.Current;
@@ -2330,6 +2363,11 @@ namespace WholesomeAQ
             bool questCombat = me.Combat && IsQuestCombatTarget(
                 behavior.Objective.Quest.Id,
                 me.CurrentTarget?.Entry ?? 0);
+            if (!TryObserveActivityRest(me, out bool resting))
+            {
+                _deathMonitor.Reset();
+                return;
+            }
             QuestWorkSample sample = CreateWorkSample(
                 behavior,
                 ownerKey,
@@ -2339,7 +2377,7 @@ namespace WholesomeAQ
                 me.IsGhost,
                 me.OnTaxi,
                 me.IsOnTransport,
-                _restingPaused || me.HasAura("Food") || me.HasAura("Drink"),
+                resting,
                 TreeRoot.IsPaused && !_restingPaused,
                 me.Combat,
                 questCombat,
@@ -2451,7 +2489,8 @@ namespace WholesomeAQ
             bool allHotspotsUnavailable,
             bool deathAttributable,
             long attemptGeneration = 0,
-            RouteFailureReason navigationFailure = RouteFailureReason.None)
+            RouteFailureReason navigationFailure = RouteFailureReason.None,
+            bool activityObservationKnown = true)
         {
             QuestRecoveryKey activeKey = QuestScheduler.ActivationKey(currentBehavior);
             bool exactObjectiveOwner = activeKey != null &&
@@ -2460,7 +2499,7 @@ namespace WholesomeAQ
             PoiType poiType = currentPoi?.Type ?? PoiType.None;
             bool excludedPoi = poiType is PoiType.Buy or PoiType.Sell or PoiType.Repair or
                 PoiType.Train or PoiType.Mail or PoiType.Fly or PoiType.InnKeeper or PoiType.Corpse;
-            bool active = exactObjectiveOwner && inWorld && !dead && !ghost && !onTaxi &&
+            bool active = activityObservationKnown && exactObjectiveOwner && inWorld && !dead && !ghost && !onTaxi &&
                 !onTransport && !resting && !userPaused && !excludedPoi &&
                 (!inCombat || combatOwnedByQuest);
 
@@ -2472,12 +2511,13 @@ namespace WholesomeAQ
                 ClusterKey = clusterKey,
                 KnownEndpointKeys = knownEndpointKeys ?? Array.Empty<QuestRecoveryKey>(),
                 IsActiveWork = active,
+                ActivityObservationKnown = activityObservationKnown,
                 CombatOwnedByQuest = exactObjectiveOwner && active && combatOwnedByQuest,
                 EndpointPathFailed = exactObjectiveOwner && endpointPathFailed,
                 NavigationFailure = exactObjectiveOwner && endpointPathFailed
                     ? navigationFailure : RouteFailureReason.None,
                 AllHotspotsUnavailable = exactObjectiveOwner && allHotspotsUnavailable,
-                DeathAttributable = exactObjectiveOwner && deathAttributable && !excludedPoi
+                DeathAttributable = activityObservationKnown && exactObjectiveOwner && deathAttributable && !excludedPoi
             };
         }
 

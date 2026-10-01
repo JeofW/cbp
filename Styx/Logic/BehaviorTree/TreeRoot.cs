@@ -323,11 +323,20 @@ namespace Styx.Logic.BehaviorTree
 				action();
 				return true;
 			}
-			catch (ThreadInterruptedException)
-			{
-				// WorkerThread owns stop cleanup. Never turn this into branch failure.
-				throw;
-			}
+				catch (ThreadInterruptedException)
+				{
+					// WorkerThread owns stop cleanup. Never turn this into branch failure.
+					throw;
+				}
+				catch (OperationCanceledException)
+				{
+					throw;
+				}
+				catch (Exception ex) when (ObservationUnavailableException.Find(ex) is not null)
+				{
+					ObservationFailureDiagnostics.Report(ObservationUnavailableException.Find(ex)!, name);
+					return false;
+				}
 			catch (Exception ex)
 			{
 				Logging.WriteDiagnostic("Exception was thrown in {0}", name);
@@ -486,18 +495,35 @@ namespace Styx.Logic.BehaviorTree
 			}
 			_wasFalling = isFalling;
 
-			Current?.Pulse();
+				var bot = Current;
+				if (bot == null)
+					return;
+				// Pulse maintains optional observations independently of the root's
+				// death/combat/recovery branches. Abort the failed observation, then
+				// allow those branches to apply their own authoritative admission.
+				if (!SafeAction(() =>
+				{
+					try { bot.Pulse(); }
+					catch (Exception error) when (ObservationUnavailableException.Find(error) is not null)
+					{
+						ObservationFailureDiagnostics.Report(ObservationUnavailableException.Find(error)!,
+							bot.GetType().FullName + ".Pulse");
+					}
+				}, "BotBase.Pulse", false)) return;
+				bool CurrentRun() => State == TreeRootState.Running
+					&& ReferenceEquals(_workerThread, Thread.CurrentThread) && ReferenceEquals(Current, bot);
+				if (!CurrentRun()) return;
+				Composite? root = null;
+				if (!SafeAction(() => root = bot.Root, "BotBase.Root", false) || root == null || !CurrentRun()) return;
 
-			if (Current?.Root == null)
-				return;
-
-			if (Current.Root.LastStatus != RunStatus.Running)
-			{
-				Current.Root.Start(null);
-			}
-			var rootTickStopwatch = Stopwatch.StartNew();
-			bool rootTickSucceeded = SafeAction(
-				() => Current!.Root.Tick(null),
+				if (root.LastStatus != RunStatus.Running)
+				{
+					if (!SafeAction(() => root.Start(null), "BotBase.Root.Start", false)) return;
+				}
+				if (!CurrentRun()) return;
+				var rootTickStopwatch = Stopwatch.StartNew();
+				bool rootTickSucceeded = SafeAction(
+					() => root.Tick(null),
 				"BotBase.Root.Tick",
 				false);
 			rootTickStopwatch.Stop();
@@ -513,12 +539,12 @@ namespace Styx.Logic.BehaviorTree
 			if (!rootTickSucceeded)
 			{
 				BotPoi.Clear("Exception in Root.Tick");
-				Current.Root.Stop(null);
+					root.Stop(null);
 				return;
 			}
-			if (Current.Root.LastStatus != RunStatus.Running)
-			{
-				Current.Root.Stop(null);
+				if (root.LastStatus != RunStatus.Running)
+				{
+					root.Stop(null);
 			}
 		}
 
@@ -670,7 +696,8 @@ namespace Styx.Logic.BehaviorTree
 						return;
 					State = TreeRootState.Running;
 				}
-				BotEvents.RaiseBotStarted();
+					BotEvents.RaiseBotStarted();
+					ObservationFailureDiagnostics.BeginSession();
 				while (State == TreeRootState.Running || State == TreeRootState.Paused)
 					Tick();
 			}
@@ -697,7 +724,8 @@ namespace Styx.Logic.BehaviorTree
 						if (ReferenceEquals(_workerThread, owner))
 							State = TreeRootState.Stopped;
 					}
-					Logging.WriteDebug("Worker thread exited cleanly");
+						ObservationFailureDiagnostics.EndSession();
+						Logging.WriteDebug("Worker thread exited cleanly");
 				}
 			}
 		}

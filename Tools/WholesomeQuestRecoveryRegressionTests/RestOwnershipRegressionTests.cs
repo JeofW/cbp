@@ -36,7 +36,11 @@ internal static class RestOwnershipRegressionTests
                     Check(!Calls(auraOwner).Any(call => call.Name == "get_IsResting" && call.DeclaringType == typeof(WoWPlayer)),
                         "delegating rest must not restore the area flag in the shared admission owner");
                 }
-                Check(Calls(auraOwner).Any(call => call.Name == "HasAura"), "actual aura observation must not be removed along with the wrong area flag");
+                var observationChain = ObservationCalls(auraOwner).ToArray();
+                Check(!observationChain.Any(call => call.Name == "get_IsResting" && call.DeclaringType == typeof(WoWPlayer)),
+                    "a shared observation helper restored the area/rested-XP flag");
+                Check(observationChain.Any(call => call.Name == "TryGetAllAuras" && call.DeclaringType == typeof(WoWUnit)),
+                    "the compiled activity/rest owner must reach the real complete-coverage aura observation API");
             }));
         }
         cases.Add(("active owned pickup remains eligible", () => Check(Active(false, false), "ordinary owned work must be active")));
@@ -66,6 +70,23 @@ internal static class RestOwnershipRegressionTests
             resting: rest, userPaused: pause, inCombat: false);
     }
     private static void Check(bool value, string message) { if (!value) throw new InvalidOperationException(message); }
+    private static IEnumerable<MethodBase> ObservationCalls(MethodBase owner)
+    {
+        var seen = new HashSet<MethodBase>();
+        var pending = new Queue<MethodBase>();
+        pending.Enqueue(owner);
+        while (pending.Count != 0)
+        {
+            var method = pending.Dequeue();
+            if (!seen.Add(method)) continue;
+            foreach (var call in Calls(method))
+            {
+                yield return call;
+                if (call.DeclaringType == typeof(WholesomeAutoQuest) &&
+                    call.Name is "TryObserveActivityRest" or "TryObserveRestAuras") pending.Enqueue(call);
+            }
+        }
+    }
     private static IEnumerable<MethodBase> Calls(MethodBase method)
     {
         var codes = typeof(OpCodes).GetFields(BindingFlags.Public | BindingFlags.Static)

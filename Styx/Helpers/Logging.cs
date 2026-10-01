@@ -282,6 +282,11 @@ namespace Styx.Helpers
 
         public static void WriteException(LogLevel logLevel, WpfColor color, Exception ex)
         {
+            if (ObservationUnavailableException.Find(ex) is { } unavailable)
+            {
+                ObservationFailureDiagnostics.Report(unavailable);
+                return;
+            }
             Write(logLevel, color, ex.ToString());
         }
 
