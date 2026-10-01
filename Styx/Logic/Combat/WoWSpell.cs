@@ -457,7 +457,9 @@ namespace Styx.Logic.Combat
             SpellManager.CastSpellById(Id);
         }
 
-        public static WoWSpell FromId(int id)
+        public static WoWSpell FromId(int id) => ObserveFromId(id, out _);
+
+        internal static WoWSpell? ObserveFromId(int id, out string failure)
         {
             // A spell ID is not a lifetime for its native row address. Resolve
             // the currently published table and row each time; Memory retains
@@ -465,7 +467,8 @@ namespace Styx.Logic.Combat
             // Missing rows must remain retryable, and
             // removed/replaced rows must not inherit an old ID-only entry.
             var table = StyxWoW.Db[ClientDb.Spell];
-            var row = table?.GetLocalizedRow(id);
+            if (table == null) { failure = $"table-unavailable id={id}"; return null; }
+            var row = table.ObserveLocalizedRow(id, out failure);
             return row == null ? null : new WoWSpell(id, row);
         }
 

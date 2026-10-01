@@ -219,15 +219,19 @@ namespace Styx.Logic.Combat
         public string Rank => Spell?.Rank ?? string.Empty;
         
         /// <summary>
-        /// Gets the spell associated with this aura.
+        /// Gets the most recent unavailable metadata lookup reason.
         /// </summary>
+        internal string MetadataFailure { get; private set; } = "not-observed";
+
+        /// <summary>Gets the spell associated with this aura, retrying unavailable metadata.</summary>
         public WoWSpell? Spell
         {
             get
             {
                 if (_spell == null && SpellId > 0)
                 {
-                    _spell = WoWSpell.FromId(SpellId);
+                    _spell = WoWSpell.ObserveFromId(SpellId, out string failure);
+                    MetadataFailure = failure;
                 }
                 return _spell;
             }

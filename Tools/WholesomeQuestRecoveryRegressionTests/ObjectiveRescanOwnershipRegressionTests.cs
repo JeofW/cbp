@@ -18,11 +18,12 @@ internal static class ObjectiveRescanOwnershipRegressionTests
         if(root==null)throw new InvalidOperationException("Tracked checkout required");
         var syntax=CSharpSyntaxTree.ParseText(File.ReadAllText(Path.Combine(root.FullName,"runtime-snapshot/Bots/WholesomeAutoQuest-master/WholesomeAutoQuest.cs"))).GetRoot();
         var method=syntax.DescendantNodes().OfType<MethodDeclarationSyntax>().Single(m=>m.Identifier.ValueText=="TryBoundedObjectiveRescan").ToString();
+        var rest=syntax.DescendantNodes().OfType<MethodDeclarationSyntax>().Single(m=>m.Identifier.ValueText=="TryObserveRestAuras").ToString();
         string folder=Path.Combine(Path.GetTempPath(),"cb-rescan-owner-"+Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(folder);
         try
         {
-            File.WriteAllText(Path.Combine(folder,"Probe.cs"),Prefix+method+Suffix);
+            File.WriteAllText(Path.Combine(folder,"Probe.cs"),Prefix+method+"\n"+rest+Suffix);
             const BindingFlags flags=BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance|BindingFlags.Static;
             Type compilerType=typeof(Styx.StyxWoW).Assembly.GetType("Styx.Loaders.SourceCompiler",true)!;
             object compiler=Activator.CreateInstance(compilerType,new object[]{folder})!;
@@ -54,7 +55,11 @@ public class Probe {
 """;
     private const string Suffix="""
 }
-public class Actor{public ulong Guid=1;public uint MapId=530,FreeNormalBagSlots=20;public bool IsValid=true,IsAlive=true,IsGhost,IsActuallyInCombat,PetInCombat,IsFlying,IsMoving,IsCasting,OnTaxi,IsOnTransport,Food,Drink,MovementKnown=true;public int ChanneledCastingSpellId;public uint Flags;public bool HasAura(string name)=>name=="Food"?Food:name=="Drink"&&Drink;public bool TryGetMovementState(out uint flags,out ulong transport){flags=Flags;transport=IsOnTransport?1UL:0UL;return MovementKnown;}}
+public class Aura{public string Name;}
+/* Controlled actor observation boundary. */ namespace Styx.WoWInternals.WoWObjects {
+public class LocalPlayer{public ulong Guid=1;public uint MapId=530,FreeNormalBagSlots=20;public bool IsValid=true,IsAlive=true,IsGhost,IsActuallyInCombat,PetInCombat,IsFlying,IsMoving,IsCasting,OnTaxi,IsOnTransport,Food,Drink,MovementKnown=true,AurasKnown=true;public int ChanneledCastingSpellId;public uint Flags;public bool TryGetAllAuras(out List<global::Aura> auras,string consumer){auras=null;if(!AurasKnown)return false;auras=new();if(Food)auras.Add(new global::Aura{Name="Food"});if(Drink)auras.Add(new global::Aura{Name="Drink"});return true;}public bool TryGetMovementState(out uint flags,out ulong transport){flags=Flags;transport=IsOnTransport?1UL:0UL;return MovementKnown;}}
+}
+public class Actor:Styx.WoWInternals.WoWObjects.LocalPlayer{}
 public static class StyxWoW{public static Actor Me=new();public static bool IsInWorld=true;public static AreaManager AreaManager=new();}
 public class AreaManager{public Area CurrentGrindArea=new();}
 public class Area{public int Calls;public bool TryAdvanceCurrentHotspot(out int previous,out int next){Calls++;previous=0;next=1;return true;}}
@@ -85,6 +90,7 @@ public static class Cases{
  case "flying":actor.IsFlying=true;break;case "moving":actor.IsMoving=true;break;case "casting":actor.IsCasting=true;break;
  case "channel":actor.ChanneledCastingSpellId=2;break;case "taxi":actor.OnTaxi=true;break;case "transport":actor.IsOnTransport=true;break;
  case "rest":probe._restingPaused=true;break;case "food":actor.Food=true;break;case "drink":actor.Drink=true;break;
+ case "auras-unknown":actor.AurasKnown=false;break;
  case "full":actor.FreeNormalBagSlots=0;break;case "poi-type":BotPoi.Current.Type=PoiType.Loot;break;
  case "loot-frame":Styx.Logic.Inventory.Frames.LootFrame.LootFrame.Instance.IsVisible=true;break;
  case "gossip":Styx.Logic.Inventory.Frames.Gossip.GossipFrame.Instance.IsVisible=true;break;
@@ -100,7 +106,7 @@ public static class Cases{
  case "provider":Navigator.NavigationProvider=new object();break;case "poi":BotPoi.Current=new BotPoi();break;
  default:throw new Exception(name);}}
  public static void Run(){int passed=0,failed=0;Reset();if(!probe.Run(behavior,key)||area.Calls!=1)throw new Exception("healthy actual rescan missing");passed++;
- string[] cases={"combat","pet-combat","flying","moving","casting","channel","taxi","transport","rest","food","drink","full","poi-type","loot-frame","gossip","merchant","trainer","movement-unknown","falling","invalid","dead","ghost","pause","stopped","outside-world","elevator","actor","guid","map","owner","generation","key","counts","attempt","area","provider","poi"};
+ string[] cases={"combat","pet-combat","flying","moving","casting","channel","taxi","transport","rest","food","drink","auras-unknown","full","poi-type","loot-frame","gossip","merchant","trainer","movement-unknown","falling","invalid","dead","ghost","pause","stopped","outside-world","elevator","actor","guid","map","owner","generation","key","counts","attempt","area","provider","poi"};
  foreach(string name in cases){Reset();AfterRead=()=>Change(name);bool result=probe.Run(behavior,key);if(result||area.Calls!=0){failed++;Console.WriteLine("FAIL rescan late "+name+": result="+result+", advances="+area.Calls);}else passed++;}
  Console.WriteLine("Objective rescan ownership: "+passed+"/"+(passed+failed)+"; failures="+failed+"; exact runtime caller with controlled observation boundaries.");if(failed!=0)throw new Exception("Rescan ownership failures");}
 }
