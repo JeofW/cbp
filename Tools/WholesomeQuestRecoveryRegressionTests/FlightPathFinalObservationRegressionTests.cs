@@ -83,11 +83,12 @@ internal static class FlightPathFinalObservationRegressionTests
         {
             source = Activator.CreateInstance(typeof(FlightPathMerchantOwnershipRegressionTests).GetNestedType("Fixture", BindingFlags.NonPublic)!, true)!;
             original = ObjectManager.Me; player = new ObservedPlayer(original.BaseAddress); guid = original.Guid;
+            uint observedMap = original.MapId;
             try
             {
                 origin = (XmlFlightNode)Get(source, "Origin");
                 ObjectManager.Me = player;
-                if (!player.IsValid || player.Guid != guid || player.MapId != original.MapId)
+                if (!player.IsValid || player.Guid != guid || player.MapId != observedMap)
                     throw new InvalidOperationException("Virtual-observation fixture did not retain the descriptor-backed player");
             }
             catch { Dispose(); throw; }

@@ -4,6 +4,9 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using System.Threading;
+using GreenMagic;
 using Styx.Combat.CombatRoutine;
 using Styx.Logic.Pathing;
 using Styx.Logic.POI;
@@ -164,21 +167,56 @@ internal static class VendorTravelBackoffRegressionTests
     });
     private static void CoreSelection() => WithOwner(owner =>
     {
-        var original = ObjectManager.Me;
-        try
-        {
-            ObjectManager.Me = new LocalPlayer(0);
-            DateTime now = DateTime.UtcNow;
-            Defer(owner, Sample(("NowUtc", now), ("LastMoveAttemptUtc", now)));
-            var manager = new VendorManager();
-            var blocked = new Vendor(Entry, "Deferred", Vendor.VendorType.Repair, Destination);
-            var available = new Vendor(Entry + 1, "Available", Vendor.VendorType.Repair, new WoWPoint(110, 100, 30));
-            manager.AllVendors.AddRange(new[] { blocked, available });
-            Check(manager.IsBlacklisted(blocked) && !manager.IsBlacklisted(available), "core fallback exclusion predicate ignored endpoint backoff");
-            Check(manager.GetEligibleVendors(Vendor.VendorType.Repair, WoWClass.None).Single() == available, "profile selection bypassed temporary exclusions");
-        }
-        finally { ObjectManager.Me = original; }
+        using var world = new KnownMapFixture();
+        DateTime now = DateTime.UtcNow;
+        Defer(owner, Sample(("NowUtc", now), ("LastMoveAttemptUtc", now)));
+        var manager = new VendorManager();
+        var blocked = new Vendor(Entry, "Deferred", Vendor.VendorType.Repair, Destination);
+        var available = new Vendor(Entry + 1, "Available", Vendor.VendorType.Repair, new WoWPoint(110, 100, 30));
+        manager.AllVendors.AddRange(new[] { blocked, available });
+        Check(manager.IsBlacklisted(blocked) && !manager.IsBlacklisted(available), "core fallback exclusion predicate ignored endpoint backoff");
+        Check(manager.GetEligibleVendors(Vendor.VendorType.Repair, WoWClass.None).Single() == available, "profile selection bypassed temporary exclusions");
     });
+
+    // A complete current map-zero observation replaces the old zero-address
+    // player/default-read stand-in. Actual VendorManager assertions stay intact.
+    private sealed class KnownMapFixture : IDisposable
+    {
+        private const BindingFlags Hidden = BindingFlags.Instance | BindingFlags.NonPublic;
+        private readonly LocalPlayer original = ObjectManager.Me;
+        private readonly Memory previousMemory = ObjectManager.Wow;
+        private readonly Memory memory = (Memory)RuntimeHelpers.GetUninitializedObject(typeof(Memory));
+        private readonly ThreadLocal<Dictionary<IntPtr, byte[]>> cache = new(() => new());
+        private readonly ThreadLocal<bool> enabled = new(() => true);
+        private readonly IntPtr storage;
+        internal KnownMapFixture()
+        {
+            if (!OperatingSystem.IsWindows() || IntPtr.Size != 4 || ObjectManager.Executor != null)
+                throw new InvalidOperationException("Vendor map fixture requires an unattached Windows/x86 test process.");
+            storage = Marshal.AllocHGlobal(4096);
+            try
+            {
+                Marshal.Copy(new byte[4096], 0, storage, 4096);
+                Marshal.WriteInt32(storage, 0x14, 4);
+                Marshal.WriteInt32(storage, 0xBC, 0);
+                Set("_cache", cache); Set("_cacheEnabled", enabled); Set("_hProcess", new IntPtr(-1));
+                cache.Value![new IntPtr(0xBD088C)] = BitConverter.GetBytes(0u);
+                typeof(ObjectManager).GetProperty("Wow")!.SetValue(null, memory);
+                ObjectManager.Me = new LocalPlayer(unchecked((uint)storage.ToInt32()));
+                Check(ObjectManager.Me.IsValid && ObjectManager.Me.MapId == 0, "complete map-zero fixture was unavailable");
+            }
+            catch { Dispose(); throw; }
+        }
+        private void Set(string field, object value) => typeof(Memory).GetField(field, Hidden)!.SetValue(memory, value);
+        public void Dispose()
+        {
+            ObjectManager.Me = original;
+            typeof(ObjectManager).GetProperty("Wow")!.SetValue(null, previousMemory);
+            Set("_hProcess", IntPtr.Zero);
+            cache.Dispose(); enabled.Dispose();
+            if (storage != IntPtr.Zero) Marshal.FreeHGlobal(storage);
+        }
+    }
     private static void WholesomeSelection() => WithOwner(owner =>
     {
         DateTime now = DateTime.UtcNow;

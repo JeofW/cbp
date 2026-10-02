@@ -71,8 +71,24 @@ internal static class TerminalRouteOwnershipRegressionTests
 
     private static void Set(MeshNavigator nav, string name, object value) =>
         (typeof(MeshNavigator).GetField(name, Private) ?? throw new InvalidOperationException("Missing owner state: " + name)).SetValue(nav, value);
-    private static MoveResult Finish(MeshNavigator nav, WoWPoint? position = null) =>
-        (MoveResult)typeof(MeshNavigator).GetMethod("CompletePathOrRecover", Private)!.Invoke(nav, new object[] { new Player(position ?? Origin) })!;
+    private static MoveResult Finish(MeshNavigator nav, WoWPoint? position = null)
+    {
+        using var world = new RoutineActorFixture();
+        var memory = ObjectManager.Wow;
+        var cache = (ThreadLocal<Dictionary<IntPtr, byte[]>>)typeof(GreenMagic.Memory)
+            .GetField("_cache", Private)!.GetValue(memory)!;
+        // The terminal route was observed on real map zero. Supply a complete
+        // current-world observation instead of borrowing a default from base0.
+        cache.Value![new IntPtr(0xBD088C)] = BitConverter.GetBytes(0u);
+        var player = new Player(world.Player.BaseAddress, position ?? Origin);
+        ObjectManager.Me = player;
+        try
+        {
+            return (MoveResult)typeof(MeshNavigator).GetMethod("CompletePathOrRecover", Private)!
+                .Invoke(nav, new object[] { player })!;
+        }
+        finally { ObjectManager.Me = world.Player; }
+    }
     private static DateTime Deadline(MeshNavigator nav) => (DateTime)(typeof(MeshNavigator).GetProperty("NextRouteRetryUtc")
         ?? throw new InvalidOperationException("Terminal retry deadline is not observable")).GetValue(nav)!;
     private static bool Deferred(MeshNavigator nav, WoWPoint origin, WoWPoint target, uint map, DateTime now) =>
@@ -149,7 +165,7 @@ internal static class TerminalRouteOwnershipRegressionTests
     private sealed class Player : LocalPlayer
     {
         private readonly WoWPoint _position;
-        internal Player(WoWPoint point) : base(0) { _position = point; }
+        internal Player(uint address, WoWPoint point) : base(address) { _position = point; }
         public override WoWPoint Location => _position;
     }
     private sealed class SpyStuck : StuckHandler

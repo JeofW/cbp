@@ -173,11 +173,24 @@ namespace Styx.WoWInternals.WoWObjects
         }
         public uint MapId
         {
-            get
-            {
-                if (Memory == null) return 0U;
-                return Memory.Read<uint>(MapIdPtr);
-            }
+            get { return ReadCurrentMapId(); }
+        }
+
+        private uint ReadCurrentMapId()
+        {
+            var memory = Memory;
+            uint ownerAddress = BaseAddress;
+            RequireMapOwner(memory, ownerAddress);
+            uint mapId = ReadObservedUInt32(MapIdPtr);
+            RequireMapOwner(memory, ownerAddress);
+            return mapId;
+        }
+
+        private void RequireMapOwner(object memory, uint ownerAddress)
+        {
+            if (memory == null || ownerAddress == 0U || !ReferenceEquals(Memory, memory)
+                || BaseAddress != ownerAddress || !ReferenceEquals(ObjectManager.Me, this))
+                throw new ObservationUnavailableException("map", "The current map observation owner is unavailable or replaced.");
         }
 
         /// <summary>
@@ -226,12 +239,23 @@ namespace Styx.WoWInternals.WoWObjects
         {
             get
             {
+                var memory = Memory;
+                uint ownerAddress = BaseAddress;
                 uint mapId = MapId;
+                RequireMapOwner(memory, ownerAddress);
                 
                 // Cache the Map object and invalidate if mapId changes
                 if (_currentMap == null || _currentMapCachedId != mapId)
                 {
-                    _currentMap = new Map(mapId);
+                    var observedMap = new Map(mapId);
+                    RequireMapOwner(memory, ownerAddress);
+                    if (MapId != mapId)
+                        throw new ObservationUnavailableException("map", "The world changed while its map metadata was being observed.");
+                    // A nested observation may already have published this map
+                    // while the metadata constructor was running. Retain it.
+                    if (_currentMap != null && _currentMapCachedId == mapId)
+                        return _currentMap;
+                    _currentMap = observedMap;
                     _currentMapCachedId = mapId;
                 }
                 
