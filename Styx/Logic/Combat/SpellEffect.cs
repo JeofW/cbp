@@ -72,6 +72,9 @@ namespace Styx.Logic.Combat
         /// </summary>
         public int BasePoints { get; }
 
+        /// <summary>Original DBC die-sides: zero and one differ for fixed-value effects.</summary>
+        public int DieSides { get; internal init; }
+
         /// <summary>
         /// Mechanic type of the effect (stun, root, etc.).
         /// </summary>

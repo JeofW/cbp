@@ -68,7 +68,7 @@ public sealed class MovementInfo {public bool IsFlying=>World.Player.IsFlying;}
 public sealed class LocalPlayer:WoWUnit {public bool Mounted,IsOutdoors=true,Combat;public WoWClass Class;public MovementInfo MovementInfo=new MovementInfo();public bool HasAura(string name)=>World.ReadName?.Invoke(name)??World.SeaLegs;public bool HasAura(int id)=>World.ReadId?.Invoke(id)??false;public WoWPoint GetTraceLinePos()=>Location;}
 public static class ObjectManager {public static object Wow=new object(),Executor=new object();}
 public static class StyxWoW {public static LocalPlayer Me=>World.Player;public static void Sleep(int ms){World.Record("sleep-"+ms);World.Hit("sleep");}}
-public static class Mount {public static bool IsInCantMountSpot(WoWPoint p)=>false;public static bool ShouldMount(WoWPoint p)=>false;public static void MountUp()=>World.Record("ground-mount");}
+public static class Mount {public static bool IsInCantMountSpot(WoWPoint p)=>false;public static bool ShouldMount(WoWPoint p)=>false;public static void MountUp()=>World.Record("ground-mount");public static bool MountUp(Func<bool> admitted,Func<WoWPoint> destination){if(!admitted())return false;_=destination();if(!admitted())return false;World.Record("ground-mount");return true;}}
 public static class GameWorld {
  public enum CGWorldFrameHitFlags {HitTestLiquid}
  public static bool IsInLineOfSight(WoWPoint a,WoWPoint b)=>true;

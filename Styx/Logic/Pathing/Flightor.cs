@@ -220,9 +220,6 @@ namespace Styx.Logic.Pathing
 
         private static bool ShouldWalk(WoWPoint destination)
         {
-            if (BotPoi.Current.Type == PoiType.Loot && BotPoi.Current.AsObject is WoWGameObject subject
-                && !StyxWoW.Me.IsFlying && !StyxWoW.Me.MovementInfo.IsFlying)
-                return !PreferFlightForGroundInteraction(destination, subject.InteractRange);
             if (HasSeaLegs(StyxWoW.Me)) return false;
             if (MountHelper.Mounted)             return false;
             // Raw WoW mount flag covers ground mounts and the CanFly-flag timing window
@@ -235,49 +232,14 @@ namespace Styx.Logic.Pathing
             if (StyxWoW.Me.IsSwimming)           return false;
             if (!CanFly)                         return true;
 
-            double dist = destination.Distance(StyxWoW.Me.Location);
-            if (BotPoi.Current.Type == PoiType.Kill)
-            {
-                if (dist < Targeting.PullDistance) return true;
-                dist -= Targeting.PullDistance;
-            }
-
-            float flyMult = FlySpeedMultiplier;
-            if (flyMult <= 0f) return false;  // no riding skill — don't walk
-
-            // WoD smethod_9: reads cast time from mount spell (WoWSpell_0.CastTime / 1000.0)
-            WoWSpell mountSpell = MountHelper.FlyingMount;
-            double mountCastTime = mountSpell != null ? mountSpell.CastTime / 1000.0 : 3.0;
-            double walkTime = dist / StyxWoW.Me.MovementInfo.RunSpeed;
-            // flyTime + mountCastTime + 2 s fudge > walkTime  →  faster to walk
-            return walkTime / flyMult + mountCastTime + 2.0 > walkTime
-                && Navigator.CanNavigateWithin(StyxWoW.Me.Location, destination, 5f);
+            double stopRange = BotPoi.Current.Type == PoiType.Kill ? Math.Max(0, Targeting.PullDistance) : 0;
+            return !TravelTimeEstimator.PreferFlight(destination, stopRange, MountHelper.FlyingMount, alreadyMounted: false);
         }
 
         internal static bool PreferFlightForGroundInteraction(WoWPoint destination, float interactionRange)
         {
-            var actor = StyxWoW.Me;
-            if (actor == null || !CanFly || Navigator.IsInNoFlyZone || Navigator.IsRidingElevator) return false;
-            WoWPoint origin = actor.Location;
-            double distance = origin.Distance(destination);
-            if (!double.IsFinite(distance) || distance <= Math.Max(20.0, interactionRange * 3.0)) return false;
-            // Compare the available mesh route, not only the straight-line
-            // separation. An incomplete/unavailable route supplies no shortcut;
-            // its straight-line lower bound remains the conservative estimate.
-            var route = Navigator.GeneratePath(origin, destination);
-            double groundDistance = distance;
-            if (route.Length > 0 && route[route.Length - 1].Distance(destination) <= 5f)
-            {
-                double length = origin.Distance(route[0]);
-                for (int i = 1; i < route.Length; i++) length += route[i - 1].Distance(route[i]);
-                length += route[route.Length - 1].Distance(destination);
-                if (double.IsFinite(length)) groundDistance = Math.Max(distance, length);
-            }
-            var spell = MountHelper.FlyingMount;
-            if (spell == null) return false;
-            double castSeconds = MountHelper.Mounted ? 0 : spell.CastTime / 1000.0;
-            return IsFlightTravelCheaper(distance, groundDistance, actor.MovementInfo.RunSpeed,
-                7.0 * FlySpeedMultiplier, castSeconds);
+            return CanFly && TravelTimeEstimator.PreferFlight(destination, interactionRange,
+                MountHelper.FlyingMount, MountHelper.Mounted);
         }
 
         internal static bool IsFlightTravelCheaper(double distance, double groundDistance,
@@ -442,7 +404,9 @@ namespace Styx.Logic.Pathing
                         CanFly,
                         StyxWoW.Me.Mounted,
                         Mount.ShouldMount(destination)))
-                    if (CanContinue()) Mount.MountUp();
+                    if (CanContinue()) Mount.MountUp(
+                        () => CanContinue() && (StyxWoW.Me.Mounted || Mount.ShouldMount(destination)),
+                        () => destination);
                 if (CanContinue()) Navigator.MoveTo(destination);
                 return;
             }
