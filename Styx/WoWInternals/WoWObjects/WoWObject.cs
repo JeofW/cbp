@@ -116,7 +116,7 @@ namespace Styx.WoWInternals.WoWObjects
             get
             {
                 if (BaseAddress == 0U) return 0U;
-                return Memory?.Read<uint>(BaseAddress + ObjectFlagsOffset) ?? 0U;
+                return ReadObservedUInt32(BaseAddress + ObjectFlagsOffset);
             }
         }
         public virtual ulong DescriptorGuid
@@ -153,18 +153,10 @@ namespace Styx.WoWInternals.WoWObjects
                 if (BaseAddress == 0U) return false;
                 if (IsDisabled) return false;
                 
-                // Basic check - the address must be readable
-                try
-                {
-                    if (Memory == null) return false;
-                    // Try to read the type to verify the address is valid
-                    uint type = Memory.Read<uint>(BaseAddress + TypeOffset);
-                    return type > 0 && type <= 10; // Types valides: 1-10
-                }
-                catch
-                {
-                    return false;
-                }
+                // A complete invalid type is false; an unavailable read is
+                // UNKNOWN and must not become valid flags or swallow Stop.
+                uint type = ReadObservedUInt32(BaseAddress + TypeOffset);
+                return type > 0 && type <= 10;
             }
         }
         public bool IsDisabled
@@ -490,6 +482,35 @@ namespace Styx.WoWInternals.WoWObjects
         #endregion
         
         #region Helper Methods
+        /// <summary>
+        /// Observe a complete scalar without changing legacy Memory.Read defaults.
+        /// The object and memory owner must survive the external byte transfer.
+        /// </summary>
+        protected uint ReadObservedUInt32(uint address)
+        {
+            var memory = Memory;
+            uint ownerAddress = BaseAddress;
+            if (memory == null || ownerAddress == 0U)
+                throw new ObservationUnavailableException("object-scalar", "The scalar observation owner is unavailable.");
+            IntPtr process = memory.ProcessHandle;
+            byte[] bytes;
+            try { bytes = memory.ReadBytes(address, sizeof(uint)); }
+            catch (Exception error)
+            {
+                ObservationUnavailableException.RethrowCancellation(error);
+                throw;
+            }
+            if (!ReferenceEquals(Memory, memory) || BaseAddress != ownerAddress)
+                throw new ObservationUnavailableException("object-scalar", "The scalar reply belongs to a replaced object or memory owner.");
+            if (memory.ProcessHandle == IntPtr.Zero)
+                throw new InvalidOperationException("Process handle is not open");
+            if (memory.ProcessHandle != process)
+                throw new ObservationUnavailableException("object-scalar", "The scalar reply belongs to a replaced process handle.");
+            if (bytes == null || bytes.Length != sizeof(uint))
+                throw new ObservationUnavailableException("object-scalar", $"A complete scalar read at 0x{address:X8} is unavailable.");
+            return BitConverter.ToUInt32(bytes, 0);
+        }
+
         public WoWPoint GetPosition() => Location;
         
         /// <summary>

@@ -1,0 +1,277 @@
+{
+  "source_files": {
+    "Styx/WoWInternals/WoWObjects/WoWObject.cs": "b29532ec06bd69b7622605c9acf7fd68a7a3c22ad45714921b044abb43246342",
+    "Styx/WoWInternals/WoWObjects/LocalPlayer.cs": "b5ba8699e6eec25df6dfd1c1eaf1a0748b32380d1d45efac38cb03d6199f6ef0",
+    "Tools/WholesomeQuestRecoveryRegressionTests/NativeScalarObservationRegressionTests.cs": "e18c39c1f7502b2151999727763709e26f09fbd2a424d6957de48749f45aa106",
+    "Tools/WholesomeQuestRecoveryRegressionTests/FlightPathFinalObservationRegressionTests.cs": "a097d2e5d825253e15a8bd5a291bc6f8a4481fe5dc15fb664a825ce55899a663",
+    "Tools/WholesomeQuestRecoveryRegressionTests/VendorTravelBackoffRegressionTests.cs": "f5cae339c93172267806901215b5c1444273a83ed114dd4a381457bf5e79149b"
+  },
+  "receipts": [
+    {
+      "label": "native-scalar-red-daf1afd9",
+      "path": "D:\\Dev\\CopilotBuddy-Evidence\\scalar-observation-20261002\\native-scalar-red-daf1afd9",
+      "summary_sha256": "7f77ba0f4be7c2d8d5c81374d082c9a4090635e558b7e54b57c3113070fe1817",
+      "source_manifest_sha256": "5b6dd955c9b09c68da5ca40392a73c58f342af1b58ce28c2979ab72d55f81d0d",
+      "stages": [
+        {
+          "stage": "build",
+          "exit": 0,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PostMergeAuditRegressionTests/PostMergeAuditRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "09b5ff1db7e38506a96acf57e09015dbeb4619f97164467ed61cb7b9b25ea7e5",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "run",
+          "exit": 1,
+          "command": [
+            "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+            "D:\\Dev\\CB-ScalarObservation-20261002\\Tools\\PostMergeAuditRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\PostMergeAuditRegressionTests.dll",
+            "NativeScalarObservationRegressionTests"
+          ],
+          "stdout_sha256": "603717820f059e8791532abf3baf4ac92643329b4c491e16854ecc6f5ba4ac92",
+          "stderr_sha256": "8d5fcda314c2c7a082c08e081b606dfb966d44c5a008f6fe9a52a78b80768c10"
+        }
+      ],
+      "results": [
+        "Native scalar observation cases: 25/91; assertions=66; unexpected=0; actual byte/typed/getter/cache owners; no game.",
+        "Focused groups: 0/1; no game attached; full aggregate remains required."
+      ]
+    },
+    {
+      "label": "native-scalar-green1-daf1afd9",
+      "path": "D:\\Dev\\CopilotBuddy-Evidence\\scalar-observation-20261002\\native-scalar-green1-daf1afd9",
+      "summary_sha256": "245c2e890502e8530bd3bf11ea41fa1b4c69ac7bbba69d68db8b40b126ec6aa2",
+      "source_manifest_sha256": "ded555c03e5157c1d2560b641e7a02862ec3cc2339f19e1aa724796cc415e97d",
+      "stages": [
+        {
+          "stage": "build",
+          "exit": 0,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PostMergeAuditRegressionTests/PostMergeAuditRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "06b8d416701199efb0d4bcdb13135516a61ed05070a15357b59d0f12acb7c877",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "run",
+          "exit": 0,
+          "command": [
+            "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+            "D:\\Dev\\CB-ScalarObservation-20261002\\Tools\\PostMergeAuditRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\PostMergeAuditRegressionTests.dll",
+            "NativeScalarObservationRegressionTests",
+            "WorldStateReadValidityRegressionTests",
+            "AuraWorkerLivenessRegressionTests",
+            "ItemCooldownObservationRegressionTests",
+            "SpellCooldownObservationRegressionTests"
+          ],
+          "stdout_sha256": "8647e672e33cd5cecf234fe99aff06aef681c2cf8feba7f2195af313e4683ce5",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "results": [
+        "Native scalar observation cases: 91/91; assertions=0; unexpected=0; actual byte/typed/getter/cache owners; no game.",
+        "Item cooldown observation cases: 161/161; assertions=0; unexpected=0; actual item readers and generated Lua5.1; no item use or game.",
+        "Spell cooldown observation cases: 280/280; assertions=0; unexpected=0; exact tracked readers/parser/admission and generated Lua5.1 plus production conversion; controlled APIs/native failures; no game attached.",
+        "Focused groups: 5/5; no game attached; full aggregate remains required."
+      ]
+    },
+    {
+      "label": "native-scalar-publication-red-daf1afd9",
+      "path": "D:\\Dev\\CopilotBuddy-Evidence\\scalar-observation-20261002\\native-scalar-publication-red-daf1afd9",
+      "summary_sha256": "e609fb9dd8d3043d1910408f78dfc902b3eb73a5c738544fb19d373f4b684584",
+      "source_manifest_sha256": "ef2aa9d039068a799a40f5ba592933646f98b373ad6e914c3f940eff07ca7b3c",
+      "stages": [
+        {
+          "stage": "build",
+          "exit": 0,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PostMergeAuditRegressionTests/PostMergeAuditRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "72998dfdc481c2b0df99abebbae4470d1e954bc9db97882a73e6e35010e84da0",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "run",
+          "exit": 1,
+          "command": [
+            "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+            "D:\\Dev\\CB-ScalarObservation-20261002\\Tools\\PostMergeAuditRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\PostMergeAuditRegressionTests.dll",
+            "NativeScalarObservationRegressionTests"
+          ],
+          "stdout_sha256": "ef4d5bd83a71b66397fa6b247bfb4ae7d68f657cf08c31aa022245f8b779f53a",
+          "stderr_sha256": "2d0676cf72a779d689de7578d1788e4dbf648e21de79f2f5c85fd8cc8e785901"
+        }
+      ],
+      "results": [
+        "Native scalar observation cases: 93/102; assertions=9; unexpected=0; actual byte/typed/getter/cache owners; no game.",
+        "Focused groups: 0/1; no game attached; full aggregate remains required."
+      ]
+    },
+    {
+      "label": "native-scalar-publication-green-daf1afd9",
+      "path": "D:\\Dev\\CopilotBuddy-Evidence\\scalar-observation-20261002\\native-scalar-publication-green-daf1afd9",
+      "summary_sha256": "506a93ee48f20990d503d2f911a6f5b499417d15a1a64764dabf8a26fc9700ea",
+      "source_manifest_sha256": "ccd62da3d04f71a2015894b996f72950178473c9fdb007ad0caae605a6441865",
+      "stages": [
+        {
+          "stage": "build",
+          "exit": 0,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PostMergeAuditRegressionTests/PostMergeAuditRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "ae41f4d21a0267ad85aedc84f97b27bbfc2df6f3b47c14e51933a0059c4758c8",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "run",
+          "exit": 0,
+          "command": [
+            "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+            "D:\\Dev\\CB-ScalarObservation-20261002\\Tools\\PostMergeAuditRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\PostMergeAuditRegressionTests.dll",
+            "NativeScalarObservationRegressionTests",
+            "WorldStateReadValidityRegressionTests",
+            "AuraWorkerLivenessRegressionTests",
+            "ItemCooldownObservationRegressionTests",
+            "SpellCooldownObservationRegressionTests"
+          ],
+          "stdout_sha256": "ad84eae33b82f3f242ec230de1955250fba0e018ad0b39d27dc07255c4b8800a",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "results": [
+        "Native scalar observation cases: 102/102; assertions=0; unexpected=0; actual byte/typed/getter/cache owners; no game.",
+        "Item cooldown observation cases: 161/161; assertions=0; unexpected=0; actual item readers and generated Lua5.1; no item use or game.",
+        "Spell cooldown observation cases: 280/280; assertions=0; unexpected=0; exact tracked readers/parser/admission and generated Lua5.1 plus production conversion; controlled APIs/native failures; no game attached.",
+        "Focused groups: 5/5; no game attached; full aggregate remains required."
+      ]
+    },
+    {
+      "label": "native-scalar-full-precommit-daf1afd9",
+      "path": "D:\\Dev\\CopilotBuddy-Evidence\\scalar-observation-20261002\\native-scalar-full-precommit-daf1afd9",
+      "summary_sha256": "61ef347ee5ec9cf87432c455b864ad2cd457843de6a8e8c65c961ce3fbb3902c",
+      "source_manifest_sha256": "b6bc21ea9de6fb3051de62ae060ff4288e8091a723f6cf17420f7801d623b9a2",
+      "stages": [
+        {
+          "stage": "build",
+          "exit": 0,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/WholesomeQuestRecoveryRegressionTests/WholesomeQuestRecoveryRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "f97bd80579d080178168db18660e01c4d5d25731527c3972ddf451e6f75ab844",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "run",
+          "exit": 1,
+          "command": [
+            "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+            "D:\\Dev\\CB-ScalarObservation-20261002\\Tools\\WholesomeQuestRecoveryRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\WholesomeQuestRecoveryRegressionTests.dll"
+          ],
+          "stdout_sha256": "f35d3b38d9155338c3d8d0d8a7d3ca6a3ffcd0b13e81027fbd18da5196de1fad",
+          "stderr_sha256": "078ad9e3052a84af29208926348c949b1fa75706902052cb8a132efeebc653a2"
+        }
+      ],
+      "results": [
+        "Final flight-observation scenarios: 0/30; assertions=0; unexpected=30; actual publication plus virtual observation boundary; no game attached.",
+        "Item cooldown observation cases: 161/161; assertions=0; unexpected=0; actual item readers and generated Lua5.1; no item use or game.",
+        "Native scalar observation cases: 102/102; assertions=0; unexpected=0; actual byte/typed/getter/cache owners; no game.",
+        "Spell cooldown observation cases: 280/280; assertions=0; unexpected=0; exact tracked readers/parser/admission and generated Lua5.1 plus production conversion; controlled APIs/native failures; no game attached.",
+        "Vendor travel scenarios: 24/25; actual policy/selection plus structural Pulse guard, no game attached."
+      ]
+    },
+    {
+      "label": "native-scalar-fixture-integration-daf1afd9",
+      "path": "D:\\Dev\\CopilotBuddy-Evidence\\scalar-observation-20261002\\native-scalar-fixture-integration-daf1afd9",
+      "summary_sha256": "d9c4a232224ffea8964354dab5e4524ea31ad97e309bf23e4d90b137d544e390",
+      "source_manifest_sha256": "81226db11856c35a32c995d24de43de1c87903a0f1073f38f4da7494cb6b4ca7",
+      "stages": [
+        {
+          "stage": "build",
+          "exit": 0,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PostMergeAuditRegressionTests/PostMergeAuditRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "36dbdd3a80c3849644d9cf064ddc7f19e73bb966c54f2001fca93066ff5cc56e",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "run",
+          "exit": 0,
+          "command": [
+            "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+            "D:\\Dev\\CB-ScalarObservation-20261002\\Tools\\PostMergeAuditRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\PostMergeAuditRegressionTests.dll",
+            "NativeScalarObservationRegressionTests",
+            "FlightPathFinalObservationRegressionTests",
+            "VendorTravelBackoffRegressionTests",
+            "AuraWorkerLivenessRegressionTests"
+          ],
+          "stdout_sha256": "36ec58e09c934b51acc36fa724a4e94a213cbfcf6ace17dc325b43727599ae10",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "results": [
+        "Native scalar observation cases: 102/102; assertions=0; unexpected=0; actual byte/typed/getter/cache owners; no game.",
+        "Final flight-observation scenarios: 30/30; assertions=0; unexpected=0; actual publication plus virtual observation boundary; no game attached.",
+        "Vendor travel scenarios: 25/25; actual policy/selection plus structural Pulse guard, no game attached.",
+        "Focused groups: 4/4; no game attached; full aggregate remains required."
+      ]
+    }
+  ],
+  "scalar_cases": 102,
+  "latest_focused_groups": 4,
+  "review": "Self-review; actual source readers and callers inspected; no separate reviewer agent.",
+  "generic_reader_contract_changed": false,
+  "game_attached": false,
+  "full_gate_required": true,
+  "created_utc": "2026-10-02T02:06:11.287659+00:00"
+}
