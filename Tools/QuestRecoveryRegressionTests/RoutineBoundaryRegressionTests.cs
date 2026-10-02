@@ -92,7 +92,8 @@ internal static class RoutineBoundaryRegressionTests
     // This proves the input boundary, not complete client-bound cast composition.
     private static Composite ProbePredicate(MethodInfo factory, object?[] arguments)
     {
-        MethodInfo condition=CalledMethods(factory).OfType<MethodInfo>().First(method =>
+        MethodInfo implementation = ResolveCastImplementation(factory);
+        MethodInfo condition=CalledMethods(implementation).OfType<MethodInfo>().First(method =>
             method.ReturnType==typeof(bool) && method.GetParameters().Length==1
             && method.GetParameters()[0].ParameterType==typeof(object)
             && method.DeclaringType?.GetField("onUnit",BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic)!=null);
@@ -105,6 +106,15 @@ internal static class RoutineBoundaryRegressionTests
         }
         var runner=(CanRunDecoratorDelegate)condition.CreateDelegate(typeof(CanRunDecoratorDelegate),owner);
         return new Decorator(runner,new TreeSharp.Action(_=>RunStatus.Success));
+    }
+    // Public Cast overloads now forward to the shared recovery-aware factory.
+    // Follow that exact compiled call while retaining the public argument binding.
+    internal static MethodInfo ResolveCastImplementation(MethodInfo factory)
+    {
+        if (factory.Name != "Cast") return factory;
+        return CalledMethods(factory).OfType<MethodInfo>().Single(method =>
+            method.DeclaringType == factory.DeclaringType && method.Name == "CastWithRecovery"
+            && method.GetParameters()[0].ParameterType == factory.GetParameters()[0].ParameterType);
     }
     private static WoWUnit NoTarget(object _) { _selections++; return null!; }
     private static WoWUnit Unit(object _) { _selections++; return ObjectManager.Me!; }

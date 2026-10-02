@@ -40,12 +40,50 @@ internal static class GroupSafetyWiringRegressionTests
             var factory = spell.GetMethods(BindingFlags.Static | BindingFlags.Public)
                 .Single(m => m.Name == "Cast" && m.GetParameters()[0].ParameterType == identifier
                     && m.GetParameters().Length == (identifier == typeof(string) ? 4 : 3));
+            MethodInfo dispatch = typeof(RecoveryActions).GetMethods(BindingFlags.Static | BindingFlags.Public)
+                .Single(m => m.Name == nameof(RecoveryActions.TryCast) && m.GetParameters()[0].ParameterType == identifier);
+            MethodInfo guard = routine.GetType("Singular.Helpers.Unit", true)!
+                .GetMethods(BindingFlags.Static | BindingFlags.Public)
+                .Single(m => m.Name == "IsCombatActionSafe" && m.GetParameters()[0].ParameterType == identifier);
+            MethodBase[] DispatchCalls()
+            {
+                // Recovery now owns both ordinary and recovery spell submission.
+                // Match its exact overload, not any unrelated method named Cast.
+                var implementation = RoutineBoundaryRegressionTests.ResolveCastImplementation(factory);
+                var actions = Calls(implementation).OfType<MethodInfo>()
+                    .Where(m => Calls(m).Contains(dispatch)).ToArray();
+                if (actions.Length != 1) throw new InvalidOperationException("Expected one actual recovery dispatch action");
+                return Calls(actions[0]);
+            }
+            void RequireGuardedRecovery(MethodBase[] calls)
+            {
+                int guarded = Array.IndexOf(calls, guard);
+                int submitted = Array.IndexOf(calls, dispatch);
+                if (guarded < 0 || submitted < 0 || guarded >= submitted || calls.Count(c => c == dispatch) != 1)
+                    throw new InvalidOperationException("The matching combat guard must precede exactly one owned recovery dispatch");
+                if (calls.Any(c => c.Name == "Cast" &&
+                    (c.DeclaringType == typeof(SpellManager) || c.DeclaringType == typeof(LegacySpellManager))))
+                    throw new InvalidOperationException("The factory bypasses recovery ownership with a direct cast");
+            }
+            void MustReject(MethodBase[] calls)
+            {
+                try { RequireGuardedRecovery(calls); }
+                catch (InvalidOperationException) { return; }
+                throw new InvalidOperationException("The compiled ordering check accepted a broken dispatch contract");
+            }
             checks.Add((identifier.Name + " cast dispatch rechecks target and AoE permission", () =>
             {
-                var actions = NestedActions(factory, "Cast");
-                if (actions.Length != 1) throw new InvalidOperationException("Expected one actual dispatch action");
-                Before(actions[0], "IsCombatActionSafe", "Cast");
+                RequireGuardedRecovery(DispatchCalls());
             }));
+            checks.Add((identifier.Name + " compiled check rejects a missing combat guard", () =>
+                MustReject(DispatchCalls().Where(c => c != guard).ToArray())));
+            checks.Add((identifier.Name + " compiled check rejects dispatch before the guard", () =>
+                MustReject(new MethodBase[] { dispatch, guard })));
+            checks.Add((identifier.Name + " compiled check rejects duplicate dispatch", () =>
+                MustReject(DispatchCalls().Append(dispatch).ToArray())));
+            checks.Add((identifier.Name + " compiled check rejects a direct cast bypass", () =>
+                MustReject(DispatchCalls().Append(typeof(SpellManager).GetMethods()
+                    .First(m => m.Name == "Cast")).ToArray())));
         }
         var auto = Method(routine, "Singular.Helpers.Common", "CreateAutoAttack");
         // The start-only owner now uses Lua.StartAttack instead of the legacy
