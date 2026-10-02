@@ -1,0 +1,1420 @@
+{
+  "baseline": "c106a721612c4729d8a7b2d0e88c468c0ffa0be2",
+  "reviewed_working_source": {
+    "Styx/Logic/BehaviorTree/TreeRoot.cs": "a47d5b7d960677e82454a8c3cabdad636d61c3985e8033180dcbb9fcfe15ab72",
+    "Styx/Logic/Combat/LegacySpellManager.cs": "a64088902e532c994057c547b2fec8eac45c132c0ef15c0b45dbb19278746b78",
+    "Styx/Logic/Combat/SpellManager.cs": "15552090ecf2852e9062c7a99a6c2052a523f07ce8151fdeae9251be74b24db1",
+    "Styx/Logic/Combat/WoWSpell.cs": "5f2551f43f16c0cceca02b5ad20b8213588d5f701ab51c263819266630749175",
+    "Styx/WoWInternals/Lua.cs": "be6d30d26a233f38749386916f68e870dbadd8fd26e2148eb8569c0213502f0d",
+    "Tools/QuestRecoveryRegressionTests/SpellLifecycleRegressionTests.cs": "18a0f47597eddd8b60d4910e2f3b9fb7d7b77158169eff4a1d780b0e01e865b5",
+    "Tools/WholesomeQuestRecoveryRegressionTests/LuaObservationCancellationRegressionTests.cs": "fdec97d47c8414bb9086f141587709cea67664a2a7a9f8aae6f2a3fa51af28d9",
+    "Tools/WholesomeQuestRecoveryRegressionTests/RewardLua51Boundary.cs": "ccbdfd46709289c7a51a133c6fef78caeb427798e7d01a21ff91b0e0ecb86c98",
+    "Tools/WholesomeQuestRecoveryRegressionTests/SpellCooldownObservationRegressionTests.cs": "e6bdd618b41d30ed6fa602d1db8c2701c31e42b90487db3e403c339871a9b364",
+    "Tools/WholesomeQuestRecoveryRegressionTests/SpellDispatchReceiptRegressionTests.cs": "8c5354b1f3311ba17f7a0b1c21ddff4230d6bc6cdc9beef15bfb7a404e008efe",
+    "Tools/WholesomeQuestRecoveryRegressionTests/SpellSightDispatchRegressionTests.cs": "1996f65f5111e74307c7914b8c857de9c29f31a131f880fc1a0396e3de38676d",
+    "runtime-snapshot/Routines/Singular wotlk/Helpers/Spell.cs": "da287d60f9676b3156d36a1def9fee4062dcf7fd8d968d9b8214b783be7a8980"
+  },
+  "final_focused_receipt": "D:\\Dev\\CopilotBuddy-Evidence\\action-acknowledgement-20261002\\spell-observation-review-final-c106a721",
+  "focused_groups": 9,
+  "cooldown_cases": 280,
+  "lua_transport_cases": 152,
+  "independent_dispatch_receipt_controls": 97,
+  "receipts": [
+    {
+      "label": "action-owner-baseline-c2f70e4c",
+      "path": "D:\\Dev\\CopilotBuddy-Evidence\\action-acknowledgement-20261002\\action-owner-baseline-c2f70e4c",
+      "summary_sha256": "712d231aa97215512673e79b7a792d461ef27894372dd7eaaba32262a47d8b32",
+      "source_manifest_sha256": "481e43da534dad0eb532491e313c7e1f2a6a410db17f13de7b57f99fe18daaa0",
+      "working_tree_modified": false,
+      "stages": [
+        {
+          "stage": "build",
+          "exit": 0,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PostMergeAuditRegressionTests/PostMergeAuditRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "6bb2181bafa8b1993c30a2fbd16f8dd49e0cb5b9df62b829f0b72ab36dc50639",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "run",
+          "exit": 0,
+          "command": [
+            "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+            "D:\\Dev\\CB-ActionAcknowledgement-20261002\\Tools\\PostMergeAuditRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\PostMergeAuditRegressionTests.dll",
+            "SpellDispatchReceiptRegressionTests",
+            "SharedBuffDispatchRegressionTests",
+            "SpellMetadataAdmissionRegressionTests"
+          ],
+          "stdout_sha256": "23fdb05360ce325a45d002b9b4d4698961b6a80e92c05613003b085b769048b7",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "reported_results": [
+        "Spell dispatch receipt scenarios: 97/97; assertions=0; unexpected=0; complete tracked manager methods and ground factory; real TreeSharp; controlled executor/world; local completion only, no native/game/server execution.",
+        "Focused groups: 3/3; no game attached; full aggregate remains required."
+      ]
+    },
+    {
+      "label": "cooldown-context-green1-c106a721",
+      "path": "D:\\Dev\\CopilotBuddy-Evidence\\action-acknowledgement-20261002\\cooldown-context-green1-c106a721",
+      "summary_sha256": "36011d6951127026d199e4b380b7d778d1c270d949d3cb7842d0ce320c13ecd0",
+      "source_manifest_sha256": "53d146ba5179e051940b0f39d1877e0ba6980382065090fde06de6ac6adcaab8",
+      "working_tree_modified": true,
+      "stages": [
+        {
+          "stage": "build",
+          "exit": 0,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PostMergeAuditRegressionTests/PostMergeAuditRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "c86b15d74a5983066c1705ac391424bcee93ffa1e4d688e53c1622a45d3a5d00",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "run",
+          "exit": 0,
+          "command": [
+            "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+            "D:\\Dev\\CB-ActionAcknowledgement-20261002\\Tools\\PostMergeAuditRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\PostMergeAuditRegressionTests.dll",
+            "SpellCooldownObservationRegressionTests",
+            "SpellDispatchReceiptRegressionTests"
+          ],
+          "stdout_sha256": "969a517818f34a0cb4e866969d52ad2d9585800c8a327a42ad0d2f197396f966",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "reported_results": [
+        "Spell cooldown observation cases: 229/229; assertions=0; unexpected=0; exact tracked readers/parser/admission and generated Lua5.1 plus production conversion; controlled APIs/native failures; no game attached.",
+        "Spell dispatch receipt scenarios: 97/97; assertions=0; unexpected=0; complete tracked manager methods and ground factory; real TreeSharp; controlled executor/world; local completion only, no native/game/server execution.",
+        "Focused groups: 2/2; no game attached; full aggregate remains required."
+      ]
+    },
+    {
+      "label": "cooldown-context-red-c106a721",
+      "path": "D:\\Dev\\CopilotBuddy-Evidence\\action-acknowledgement-20261002\\cooldown-context-red-c106a721",
+      "summary_sha256": "8e8017c94678e06f8328c9dfef076f886cf8882cbb81de1552826915150948e7",
+      "source_manifest_sha256": "33b2199a910d3c2ebc344bb1bc12cb5332a645717425c1d38ec37dcaebee37c3",
+      "working_tree_modified": true,
+      "stages": [
+        {
+          "stage": "build",
+          "exit": 0,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PostMergeAuditRegressionTests/PostMergeAuditRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "e2fecadd42b32fb2a2376e84390cf6c1026ac85f576a41ec550e4372d28eb8ce",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "run",
+          "exit": 1,
+          "command": [
+            "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+            "D:\\Dev\\CB-ActionAcknowledgement-20261002\\Tools\\PostMergeAuditRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\PostMergeAuditRegressionTests.dll",
+            "SpellCooldownObservationRegressionTests"
+          ],
+          "stdout_sha256": "03f837a7b13c1f2f8bd0f1cc96c6da79263b6f97ce51f72ae34fe9d2fb54caa5",
+          "stderr_sha256": "7b8abf744f6fe92f7b2824a9f7322994841e72e794f81561721d4697c5061b98"
+        }
+      ],
+      "reported_results": [
+        "Spell cooldown observation cases: 138/229; assertions=91; unexpected=0; exact tracked readers/parser/admission and generated Lua5.1 plus production conversion; controlled APIs/native failures; no game attached.",
+        "Focused groups: 0/1; no game attached; full aggregate remains required.",
+        "FAIL cooldown observation: revoked numeric/manager/actor: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/manager/guid: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/manager/address: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/manager/map: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/manager/memory: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/manager/executor: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/manager/bot: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/manager/running: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/manager/session: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/manager/clock: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/spell/actor: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/spell/guid: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/spell/address: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/spell/map: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/spell/memory: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/spell/executor: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/spell/bot: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/spell/running: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/spell/session: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/spell/clock: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/singular/actor: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/singular/guid: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/singular/address: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/singular/map: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/singular/memory: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/singular/executor: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/singular/bot: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/singular/running: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/singular/session: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/singular/clock: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/legacy/actor: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/legacy/guid: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/legacy/address: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/legacy/map: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/legacy/memory: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/legacy/executor: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/legacy/bot: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/legacy/running: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/legacy/session: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/legacy/clock: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked admission/actor: revoked reply authorized admission",
+        "FAIL cooldown observation: revoked admission/guid: revoked reply authorized admission",
+        "FAIL cooldown observation: revoked admission/address: revoked reply authorized admission",
+        "FAIL cooldown observation: revoked admission/map: revoked reply authorized admission",
+        "FAIL cooldown observation: revoked admission/memory: revoked reply authorized admission",
+        "FAIL cooldown observation: revoked admission/executor: revoked reply authorized admission",
+        "FAIL cooldown observation: revoked admission/bot: revoked reply authorized admission",
+        "FAIL cooldown observation: revoked admission/running: revoked reply authorized admission",
+        "FAIL cooldown observation: revoked admission/session: revoked reply authorized admission",
+        "FAIL cooldown observation: revoked admission/clock: revoked reply authorized admission",
+        "FAIL cooldown observation: cached cooldown/actor: old context cooldown denied the replacement",
+        "FAIL cooldown observation: cached cooldown/guid: old context cooldown denied the replacement",
+        "FAIL cooldown observation: cached cooldown/address: old context cooldown denied the replacement",
+        "FAIL cooldown observation: cached cooldown/map: old context cooldown denied the replacement",
+        "FAIL cooldown observation: cached cooldown/memory: old context cooldown denied the replacement",
+        "FAIL cooldown observation: cached cooldown/executor: old context cooldown denied the replacement",
+        "FAIL cooldown observation: cached cooldown/bot: old context cooldown denied the replacement",
+        "FAIL cooldown observation: cached cooldown/running: old context cooldown denied the replacement",
+        "FAIL cooldown observation: cached cooldown/session: old context cooldown denied the replacement",
+        "FAIL cooldown observation: cached cooldown/clock: old context cooldown denied the replacement",
+        "FAIL cooldown observation: missing context/manager/actor: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: missing context/spell/actor: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: missing context/singular/actor: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: missing context/legacy/actor: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: missing context/manager/guid: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: missing context/spell/guid: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: missing context/singular/guid: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: missing context/legacy/guid: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: missing context/manager/memory: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: missing context/spell/memory: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: missing context/singular/memory: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: missing context/legacy/memory: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: missing context/manager/executor: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: missing context/spell/executor: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: missing context/singular/executor: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: missing context/legacy/executor: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: missing context/manager/validity: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: missing context/spell/validity: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: missing context/singular/validity: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: missing context/legacy/validity: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: known ready observation clears previous cooldown: known cooldown reset retained old deadline",
+        "FAIL cooldown observation: Stop during query remains cancellation: explicit Stop was relabeled as an observation",
+        "FAIL cooldown observation: native result ownership/actor: revoked native observation returned readiness or fell through",
+        "FAIL cooldown observation: native result ownership/guid: revoked native observation returned readiness or fell through",
+        "FAIL cooldown observation: native result ownership/address: revoked native observation returned readiness or fell through",
+        "FAIL cooldown observation: native result ownership/map: revoked native observation returned readiness or fell through",
+        "FAIL cooldown observation: native result ownership/memory: revoked native observation returned readiness or fell through",
+        "FAIL cooldown observation: native result ownership/executor: revoked native observation returned readiness or fell through",
+        "FAIL cooldown observation: native result ownership/bot: revoked native observation returned readiness or fell through",
+        "FAIL cooldown observation: native result ownership/running: revoked native observation returned readiness or fell through",
+        "FAIL cooldown observation: native result ownership/session: revoked native observation returned readiness or fell through"
+      ]
+    },
+    {
+      "label": "cooldown-context-red2-c106a721",
+      "path": "D:\\Dev\\CopilotBuddy-Evidence\\action-acknowledgement-20261002\\cooldown-context-red2-c106a721",
+      "summary_sha256": "90f4447bdb702531525585aa53d9c73d3d885bec598cd817fa9d4a2e03883fd3",
+      "source_manifest_sha256": "fdbd1957548ca0db157a5a4c3848deff61369db7e4efcd723e72a3fb13526b71",
+      "working_tree_modified": true,
+      "stages": [
+        {
+          "stage": "build",
+          "exit": 0,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PostMergeAuditRegressionTests/PostMergeAuditRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "50ac0baf4567efa667e79697aa6879a445cc31db739280b480ab908ee727eabe",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "run",
+          "exit": 1,
+          "command": [
+            "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+            "D:\\Dev\\CB-ActionAcknowledgement-20261002\\Tools\\PostMergeAuditRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\PostMergeAuditRegressionTests.dll",
+            "SpellCooldownObservationRegressionTests"
+          ],
+          "stdout_sha256": "670fbf7c0c29d7dc7ac7773ff87263a1b62932248dd4b244d51b02584515db04",
+          "stderr_sha256": "7b8abf744f6fe92f7b2824a9f7322994841e72e794f81561721d4697c5061b98"
+        }
+      ],
+      "reported_results": [
+        "Spell cooldown observation cases: 138/229; assertions=91; unexpected=0; exact tracked readers/parser/admission and generated Lua5.1 plus production conversion; controlled APIs/native failures; no game attached.",
+        "Focused groups: 0/1; no game attached; full aggregate remains required.",
+        "FAIL cooldown observation: revoked numeric/manager/actor: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/manager/guid: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/manager/address: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/manager/map: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/manager/memory: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/manager/executor: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/manager/bot: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/manager/running: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/manager/session: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/manager/clock: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/spell/actor: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/spell/guid: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/spell/address: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/spell/map: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/spell/memory: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/spell/executor: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/spell/bot: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/spell/running: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/spell/session: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/spell/clock: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/singular/actor: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/singular/guid: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/singular/address: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/singular/map: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/singular/memory: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/singular/executor: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/singular/bot: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/singular/running: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/singular/session: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/singular/clock: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/legacy/actor: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/legacy/guid: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/legacy/address: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/legacy/map: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/legacy/memory: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/legacy/executor: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/legacy/bot: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/legacy/running: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/legacy/session: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/legacy/clock: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked admission/actor: revoked reply authorized admission",
+        "FAIL cooldown observation: revoked admission/guid: revoked reply authorized admission",
+        "FAIL cooldown observation: revoked admission/address: revoked reply authorized admission",
+        "FAIL cooldown observation: revoked admission/map: revoked reply authorized admission",
+        "FAIL cooldown observation: revoked admission/memory: revoked reply authorized admission",
+        "FAIL cooldown observation: revoked admission/executor: revoked reply authorized admission",
+        "FAIL cooldown observation: revoked admission/bot: revoked reply authorized admission",
+        "FAIL cooldown observation: revoked admission/running: revoked reply authorized admission",
+        "FAIL cooldown observation: revoked admission/session: revoked reply authorized admission",
+        "FAIL cooldown observation: revoked admission/clock: revoked reply authorized admission",
+        "FAIL cooldown observation: cached cooldown/actor: old context cooldown denied the replacement",
+        "FAIL cooldown observation: cached cooldown/guid: old context cooldown denied the replacement",
+        "FAIL cooldown observation: cached cooldown/address: old context cooldown denied the replacement",
+        "FAIL cooldown observation: cached cooldown/map: old context cooldown denied the replacement",
+        "FAIL cooldown observation: cached cooldown/memory: old context cooldown denied the replacement",
+        "FAIL cooldown observation: cached cooldown/executor: old context cooldown denied the replacement",
+        "FAIL cooldown observation: cached cooldown/bot: old context cooldown denied the replacement",
+        "FAIL cooldown observation: cached cooldown/running: old context cooldown denied the replacement",
+        "FAIL cooldown observation: cached cooldown/session: old context cooldown denied the replacement",
+        "FAIL cooldown observation: cached cooldown/clock: old context cooldown denied the replacement",
+        "FAIL cooldown observation: missing context/manager/actor: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: missing context/spell/actor: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: missing context/singular/actor: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: missing context/legacy/actor: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: missing context/manager/guid: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: missing context/spell/guid: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: missing context/singular/guid: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: missing context/legacy/guid: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: missing context/manager/memory: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: missing context/spell/memory: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: missing context/singular/memory: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: missing context/legacy/memory: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: missing context/manager/executor: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: missing context/spell/executor: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: missing context/singular/executor: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: missing context/legacy/executor: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: missing context/manager/validity: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: missing context/spell/validity: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: missing context/singular/validity: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: missing context/legacy/validity: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: known ready observation clears previous cooldown: known cooldown reset retained old deadline",
+        "FAIL cooldown observation: Stop during query remains cancellation: explicit Stop was relabeled as an observation",
+        "FAIL cooldown observation: native result ownership/actor: revoked native observation returned readiness or fell through",
+        "FAIL cooldown observation: native result ownership/guid: revoked native observation returned readiness or fell through",
+        "FAIL cooldown observation: native result ownership/address: revoked native observation returned readiness or fell through",
+        "FAIL cooldown observation: native result ownership/map: revoked native observation returned readiness or fell through",
+        "FAIL cooldown observation: native result ownership/memory: revoked native observation returned readiness or fell through",
+        "FAIL cooldown observation: native result ownership/executor: revoked native observation returned readiness or fell through",
+        "FAIL cooldown observation: native result ownership/bot: revoked native observation returned readiness or fell through",
+        "FAIL cooldown observation: native result ownership/running: revoked native observation returned readiness or fell through",
+        "FAIL cooldown observation: native result ownership/session: revoked native observation returned readiness or fell through"
+      ]
+    },
+    {
+      "label": "cooldown-delay-green1-c106a721",
+      "path": "D:\\Dev\\CopilotBuddy-Evidence\\action-acknowledgement-20261002\\cooldown-delay-green1-c106a721",
+      "summary_sha256": "0ecc10e3a063cf459387ca9f3e6f40b94a87c36096c8b9b9b45ce3367f1cacce",
+      "source_manifest_sha256": "7ab9da23d1454e4d4077b1bad4ab3fdfa3457137ecd53b1d5ecc5b39ac02716e",
+      "working_tree_modified": true,
+      "stages": [
+        {
+          "stage": "build",
+          "exit": 0,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PostMergeAuditRegressionTests/PostMergeAuditRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "a0dda26519773d8b527f2e5e1adc0f4eeaedd6adedc36fa4a3b2d3e3d9802703",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "run",
+          "exit": 0,
+          "command": [
+            "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+            "D:\\Dev\\CB-ActionAcknowledgement-20261002\\Tools\\PostMergeAuditRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\PostMergeAuditRegressionTests.dll",
+            "SpellCooldownObservationRegressionTests",
+            "LuaObservationCancellationRegressionTests"
+          ],
+          "stdout_sha256": "ce76aa084607fb4878902258a17d496c15bd73d85722056eb61fbdb00b8e676a",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "reported_results": [
+        "Spell cooldown observation cases: 232/232; assertions=0; unexpected=0; exact tracked readers/parser/admission and generated Lua5.1 plus production conversion; controlled APIs/native failures; no game attached.",
+        "Lua observation cancellation cases: 152/152; assertions=0; unexpected=0; complete transport and conversion owners; controlled allocation/memory/executor failures; no native/game execution.",
+        "Focused groups: 2/2; no game attached; full aggregate remains required."
+      ]
+    },
+    {
+      "label": "cooldown-delay-red-c106a721",
+      "path": "D:\\Dev\\CopilotBuddy-Evidence\\action-acknowledgement-20261002\\cooldown-delay-red-c106a721",
+      "summary_sha256": "18b3ad5db357b71a3b64cc790f8d416554fcaebaaea991d3caeb8f49a3ab06ad",
+      "source_manifest_sha256": "17e2f9b89959cae075f4a4f48ae46e45141bb090a6b86b9119816ed21bc9fde9",
+      "working_tree_modified": true,
+      "stages": [
+        {
+          "stage": "build",
+          "exit": 0,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PostMergeAuditRegressionTests/PostMergeAuditRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "3fd494f7f270e997503e6c0672d77c348059e09bcb27955d9f0789d830370857",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "run",
+          "exit": 1,
+          "command": [
+            "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+            "D:\\Dev\\CB-ActionAcknowledgement-20261002\\Tools\\PostMergeAuditRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\PostMergeAuditRegressionTests.dll",
+            "SpellCooldownObservationRegressionTests"
+          ],
+          "stdout_sha256": "8d93aaecaba4d57aaa1e77795d23fa6dc79623e02013fd53d55ae373ce14297a",
+          "stderr_sha256": "dbb992e736f8b454c9f4946e3fddc38471affb739471f407238d963b7b92f8a4"
+        }
+      ],
+      "reported_results": [
+        "Spell cooldown observation cases: 229/232; assertions=3; unexpected=0; exact tracked readers/parser/admission and generated Lua5.1 plus production conversion; controlled APIs/native failures; no game attached.",
+        "Focused groups: 0/1; no game attached; full aggregate remains required.",
+        "FAIL cooldown observation: delayed reply retains its observed remaining cooldown/numeric=False: query latency shortened the observed remaining cooldown",
+        "FAIL cooldown observation: delayed reply retains its observed remaining cooldown/numeric=True: query latency shortened the observed remaining cooldown",
+        "FAIL cooldown observation: clock rollback after delayed publication clears the old context: rollback after query completion retained an obsolete deadline"
+      ]
+    },
+    {
+      "label": "cooldown-native-zero-green1-c106a721",
+      "path": "D:\\Dev\\CopilotBuddy-Evidence\\action-acknowledgement-20261002\\cooldown-native-zero-green1-c106a721",
+      "summary_sha256": "d7d9999444d696d89e9a16f97517b90b5c1122f346250e07c184255c55e7e8f1",
+      "source_manifest_sha256": "9a37ec8c690333c64487461414984180ad1aee1889225d9a091cd9749ef91c49",
+      "working_tree_modified": true,
+      "stages": [
+        {
+          "stage": "build",
+          "exit": 0,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PostMergeAuditRegressionTests/PostMergeAuditRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "12008702da87dfa2edd0e94dff848f42debf7a04790aa2e5a3ee8c4aeeb27d3a",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "run",
+          "exit": 0,
+          "command": [
+            "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+            "D:\\Dev\\CB-ActionAcknowledgement-20261002\\Tools\\PostMergeAuditRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\PostMergeAuditRegressionTests.dll",
+            "SpellCooldownObservationRegressionTests",
+            "LuaObservationCancellationRegressionTests",
+            "SpellSightDispatchRegressionTests",
+            "SharedSpellObservationRegressionTests",
+            "SpellDispatchReceiptRegressionTests"
+          ],
+          "stdout_sha256": "d33e986f722b1178b8f8f1e3a423d81c5cfe03d2f00b4f853e0d9f76cfb5cee0",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "reported_results": [
+        "Spell cooldown observation cases: 261/261; assertions=0; unexpected=0; exact tracked readers/parser/admission and generated Lua5.1 plus production conversion; controlled APIs/native failures; no game attached.",
+        "Lua observation cancellation cases: 152/152; assertions=0; unexpected=0; complete transport and conversion owners; controlled allocation/memory/executor failures; no native/game execution.",
+        "Spell dispatch receipt scenarios: 97/97; assertions=0; unexpected=0; complete tracked manager methods and ground factory; real TreeSharp; controlled executor/world; local completion only, no native/game/server execution.",
+        "Focused groups: 5/5; no game attached; full aggregate remains required."
+      ]
+    },
+    {
+      "label": "cooldown-native-zero-red-resume-c106a721",
+      "path": "D:\\Dev\\CopilotBuddy-Evidence\\action-acknowledgement-20261002\\cooldown-native-zero-red-resume-c106a721",
+      "summary_sha256": "1ac83e284a027371a6189cf4e199690f7452c7961b61995c336ff03651771328",
+      "source_manifest_sha256": "62026cd0b344d379d00e3d054f903c75e19db1d967b018ece0591b5d36c69fbf",
+      "working_tree_modified": true,
+      "stages": [
+        {
+          "stage": "build",
+          "exit": 0,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PostMergeAuditRegressionTests/PostMergeAuditRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "b50b45c9b2334194e551a9456d07cb0229acbd86e2d3dca97f914408b1a57813",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "run",
+          "exit": 1,
+          "command": [
+            "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+            "D:\\Dev\\CB-ActionAcknowledgement-20261002\\Tools\\PostMergeAuditRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\PostMergeAuditRegressionTests.dll",
+            "SpellCooldownObservationRegressionTests"
+          ],
+          "stdout_sha256": "f971ea2b3ed2351325b3e6c4dbe2115b6f59fcb6df3339c89c3abad20b168926",
+          "stderr_sha256": "d23aa8754a80f5557a459c61099a1cd84ee8389909d14de64932454ebc7d20b0"
+        }
+      ],
+      "reported_results": [
+        "Spell cooldown observation cases: 234/261; assertions=27; unexpected=0; exact tracked readers/parser/admission and generated Lua5.1 plus production conversion; controlled APIs/native failures; no game attached.",
+        "Focused groups: 0/1; no game attached; full aggregate remains required.",
+        "FAIL cooldown observation: invalid admission identity/0: invalid spell identity reached admission observation",
+        "FAIL cooldown observation: invalid native identity/0: invalid spell identity reached native cooldown dispatch",
+        "FAIL cooldown observation: invalid admission identity/-1: invalid spell identity reached admission observation",
+        "FAIL cooldown observation: invalid native identity/-1: invalid spell identity reached native cooldown dispatch",
+        "FAIL cooldown observation: native zero needs complete readiness/missing-name: native zero became ready without complete metadata/cooldown",
+        "FAIL cooldown observation: native zero needs complete readiness/name-type: native zero became ready without complete metadata/cooldown",
+        "FAIL cooldown observation: native zero needs complete readiness/name-empty: native zero became ready without complete metadata/cooldown",
+        "FAIL cooldown observation: native zero needs complete readiness/missing-start: native zero became ready without complete metadata/cooldown",
+        "FAIL cooldown observation: native zero needs complete readiness/missing-duration: native zero became ready without complete metadata/cooldown",
+        "FAIL cooldown observation: native zero needs complete readiness/missing-enabled: native zero became ready without complete metadata/cooldown",
+        "FAIL cooldown observation: native zero needs complete readiness/disabled: native zero became ready without complete metadata/cooldown",
+        "FAIL cooldown observation: native zero needs complete readiness/enabled-type: native zero became ready without complete metadata/cooldown",
+        "FAIL cooldown observation: native zero needs complete readiness/nan-start: native zero became ready without complete metadata/cooldown",
+        "FAIL cooldown observation: native zero needs complete readiness/nan-duration: native zero became ready without complete metadata/cooldown",
+        "FAIL cooldown observation: native zero needs complete readiness/infinite-start: native zero became ready without complete metadata/cooldown",
+        "FAIL cooldown observation: native zero needs complete readiness/infinite-duration: native zero became ready without complete metadata/cooldown",
+        "FAIL cooldown observation: native zero needs complete readiness/negative-start: native zero became ready without complete metadata/cooldown",
+        "FAIL cooldown observation: native zero needs complete readiness/negative-duration: native zero became ready without complete metadata/cooldown",
+        "FAIL cooldown observation: native zero needs complete readiness/negative-now: native zero became ready without complete metadata/cooldown",
+        "FAIL cooldown observation: native zero needs complete readiness/nan-now: native zero became ready without complete metadata/cooldown",
+        "FAIL cooldown observation: native zero needs complete readiness/infinite-now: native zero became ready without complete metadata/cooldown",
+        "FAIL cooldown observation: native zero needs complete readiness/string-duration: native zero became ready without complete metadata/cooldown",
+        "FAIL cooldown observation: native zero needs complete readiness/overflow-duration: native zero became ready without complete metadata/cooldown",
+        "FAIL cooldown observation: native zero is confirmed by the later complete reply/ready: native zero skipped complete cooldown confirmation",
+        "FAIL cooldown observation: native zero is confirmed by the later complete reply/active: native zero skipped complete cooldown confirmation",
+        "FAIL cooldown observation: positive sub-millisecond legacy cooldown cannot become zero: integer conversion declared a positive cooldown ready",
+        "FAIL cooldown observation: unrepresentable legacy cooldown remains unavailable: incomplete observation became a numeric cooldown: 24.20:31:23.6470000"
+      ]
+    },
+    {
+      "label": "cooldown-observation-green1-c106a721",
+      "path": "D:\\Dev\\CopilotBuddy-Evidence\\action-acknowledgement-20261002\\cooldown-observation-green1-c106a721",
+      "summary_sha256": "888cadc703dcaa3fd51f02679f3905ce41a0152d2fad65d39c7b58eb7d86a5bb",
+      "source_manifest_sha256": "6b0c616f4a412bf300c79e5e519b49330fcdf9dfbf99283ba3c2d32c90bc1b1b",
+      "working_tree_modified": true,
+      "stages": [
+        {
+          "stage": "build",
+          "exit": 0,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PostMergeAuditRegressionTests/PostMergeAuditRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "e9e8136a88d1e10133d45430dc0168212139fec49005bf5752975f300cc72d68",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "run",
+          "exit": 0,
+          "command": [
+            "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+            "D:\\Dev\\CB-ActionAcknowledgement-20261002\\Tools\\PostMergeAuditRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\PostMergeAuditRegressionTests.dll",
+            "SpellCooldownObservationRegressionTests",
+            "SpellDispatchReceiptRegressionTests",
+            "SharedBuffDispatchRegressionTests",
+            "SpellMetadataAdmissionRegressionTests"
+          ],
+          "stdout_sha256": "35822c94a74dd206d497738ca78bfbf2afab65f1933bcd865c4a566346252f66",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "reported_results": [
+        "Spell cooldown observation cases: 138/138; assertions=0; unexpected=0; exact tracked readers/parser/admission and generated Lua5.1 plus production conversion; controlled APIs/native failures; no game attached.",
+        "Spell dispatch receipt scenarios: 97/97; assertions=0; unexpected=0; complete tracked manager methods and ground factory; real TreeSharp; controlled executor/world; local completion only, no native/game/server execution.",
+        "Focused groups: 4/4; no game attached; full aggregate remains required."
+      ]
+    },
+    {
+      "label": "cooldown-observation-red-c106a721",
+      "path": "D:\\Dev\\CopilotBuddy-Evidence\\action-acknowledgement-20261002\\cooldown-observation-red-c106a721",
+      "summary_sha256": "afd5034015a96a9d05e977d61bd4e5a9e4b4af9908b7f94472d8424d0ed1ec0b",
+      "source_manifest_sha256": "d270a4e87926949d9e7a0668d89aa8397e1c49975de06f75b4c6a7e84ead46b9",
+      "working_tree_modified": true,
+      "stages": [
+        {
+          "stage": "build",
+          "exit": 0,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PostMergeAuditRegressionTests/PostMergeAuditRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "65d99bc13310e540e8b5d7c56e6ed3eb4c58d9040035905226e90bc2c025f95e",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "run",
+          "exit": 1,
+          "command": [
+            "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+            "D:\\Dev\\CB-ActionAcknowledgement-20261002\\Tools\\PostMergeAuditRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\PostMergeAuditRegressionTests.dll",
+            "SpellCooldownObservationRegressionTests"
+          ],
+          "stdout_sha256": "d87bb67043deae5c1675ec2443fe7831c440bb8c0ebb085442e1dcfcf23d4e10",
+          "stderr_sha256": "1cbcf20e0b227b012d4ab687a4bc505439fea8a3396409c96f0bfa37a8795e82"
+        }
+      ],
+      "reported_results": [
+        "Focused groups: 0/1; no game attached; full aggregate remains required."
+      ]
+    },
+    {
+      "label": "cooldown-observation-red2-c106a721",
+      "path": "D:\\Dev\\CopilotBuddy-Evidence\\action-acknowledgement-20261002\\cooldown-observation-red2-c106a721",
+      "summary_sha256": "3937dd9d2a20675811ef0ea560c9da6f6300c18e101607a25f4088a498c92951",
+      "source_manifest_sha256": "6999833fc0fb1893430a648ce9b175f45afd2b40360676777d9757e1b01ce2a5",
+      "working_tree_modified": true,
+      "stages": [
+        {
+          "stage": "build",
+          "exit": 0,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PostMergeAuditRegressionTests/PostMergeAuditRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "59e8e5efdae81ae6bfb7a916bba970a5fd39fa555f46ea13f9783ab14c9393f6",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "run",
+          "exit": 1,
+          "command": [
+            "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+            "D:\\Dev\\CB-ActionAcknowledgement-20261002\\Tools\\PostMergeAuditRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\PostMergeAuditRegressionTests.dll",
+            "SpellCooldownObservationRegressionTests"
+          ],
+          "stdout_sha256": "e65467c141f2815c434f15b7e6f419780353d60fb0d54142df130300838b8870",
+          "stderr_sha256": "cbb5865177d571ff1024ab33b000e55529d4efcadf5e1231d6a3bf5bee5d1655"
+        }
+      ],
+      "reported_results": [
+        "Spell cooldown observation cases: 34/138; assertions=104; unexpected=0; exact tracked readers/parser/admission and generated Lua5.1 plus production conversion; controlled APIs/native failures; no game attached.",
+        "Focused groups: 0/1; no game attached; full aggregate remains required.",
+        "FAIL cooldown observation: unknown/manager/missing-name: incomplete observation became a numeric cooldown: 10675199.02:48:05.4775807",
+        "FAIL cooldown observation: unknown/manager/name-type: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: unknown/manager/name-empty: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: unknown/manager/missing-start: incomplete observation became a numeric cooldown: 10675199.02:48:05.4775807",
+        "FAIL cooldown observation: unknown/manager/missing-duration: incomplete observation became a numeric cooldown: 10675199.02:48:05.4775807",
+        "FAIL cooldown observation: unknown/manager/missing-enabled: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: unknown/manager/disabled: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: unknown/manager/enabled-type: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: unknown/manager/nan-start: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: unknown/manager/nan-duration: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: unknown/manager/infinite-start: incomplete observation became a numeric cooldown: 10675199.02:48:05.4775807",
+        "FAIL cooldown observation: unknown/manager/infinite-duration: incomplete observation became a numeric cooldown: 10675199.02:48:05.4775807",
+        "FAIL cooldown observation: unknown/manager/negative-start: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: unknown/manager/negative-duration: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: unknown/manager/negative-now: incomplete observation became a numeric cooldown: 00:00:01",
+        "FAIL cooldown observation: unknown/manager/nan-now: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: unknown/manager/infinite-now: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: unknown/manager/string-duration: incomplete observation became a numeric cooldown: 10675199.02:48:05.4775807",
+        "FAIL cooldown observation: unknown/manager/overflow-duration: uncontrolled OverflowException escaped manager",
+        "FAIL cooldown observation: unknown/spell/missing-name: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: unknown/spell/name-type: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: unknown/spell/name-empty: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: unknown/spell/missing-start: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: unknown/spell/missing-duration: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: unknown/spell/missing-enabled: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: unknown/spell/disabled: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: unknown/spell/enabled-type: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: unknown/spell/nan-start: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: unknown/spell/nan-duration: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: unknown/spell/infinite-start: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: unknown/spell/infinite-duration: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: unknown/spell/negative-start: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: unknown/spell/negative-duration: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: unknown/spell/negative-now: incomplete observation became a numeric cooldown: 00:00:01",
+        "FAIL cooldown observation: unknown/spell/nan-now: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: unknown/spell/infinite-now: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: unknown/spell/string-duration: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: unknown/spell/overflow-duration: uncontrolled OverflowException escaped spell",
+        "FAIL cooldown observation: unknown/singular/missing-name: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: unknown/singular/name-type: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: unknown/singular/name-empty: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: unknown/singular/missing-start: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: unknown/singular/missing-duration: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: unknown/singular/missing-enabled: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: unknown/singular/disabled: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: unknown/singular/enabled-type: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: unknown/singular/nan-start: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: unknown/singular/nan-duration: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: unknown/singular/infinite-start: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: unknown/singular/infinite-duration: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: unknown/singular/negative-start: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: unknown/singular/negative-duration: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: unknown/singular/negative-now: incomplete observation became a numeric cooldown: 00:00:01",
+        "FAIL cooldown observation: unknown/singular/nan-now: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: unknown/singular/infinite-now: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: unknown/singular/string-duration: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: unknown/singular/overflow-duration: uncontrolled OverflowException escaped singular",
+        "FAIL cooldown observation: unknown/legacy/missing-name: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: unknown/legacy/name-type: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: unknown/legacy/name-empty: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: unknown/legacy/missing-start: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: unknown/legacy/missing-duration: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: unknown/legacy/missing-enabled: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: unknown/legacy/disabled: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: unknown/legacy/enabled-type: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: unknown/legacy/nan-start: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: unknown/legacy/nan-duration: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: unknown/legacy/infinite-start: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: unknown/legacy/infinite-duration: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: unknown/legacy/negative-start: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: unknown/legacy/negative-duration: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: unknown/legacy/negative-now: incomplete observation became a numeric cooldown: 00:00:01",
+        "FAIL cooldown observation: unknown/legacy/nan-now: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: unknown/legacy/infinite-now: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: unknown/legacy/string-duration: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: unknown/legacy/overflow-duration: uncontrolled OverflowException escaped legacy",
+        "FAIL cooldown observation: admission/name-type: unknown observation authorized cast admission",
+        "FAIL cooldown observation: admission/name-empty: unknown observation authorized cast admission",
+        "FAIL cooldown observation: admission/missing-enabled: unknown observation authorized cast admission",
+        "FAIL cooldown observation: admission/enabled-type: unknown observation authorized cast admission",
+        "FAIL cooldown observation: admission/nan-start: unknown observation authorized cast admission",
+        "FAIL cooldown observation: admission/nan-duration: unknown observation authorized cast admission",
+        "FAIL cooldown observation: admission/negative-start: unknown observation authorized cast admission",
+        "FAIL cooldown observation: admission/negative-duration: unknown observation authorized cast admission",
+        "FAIL cooldown observation: admission/nan-now: unknown observation authorized cast admission",
+        "FAIL cooldown observation: admission/infinite-now: unknown observation authorized cast admission",
+        "FAIL cooldown observation: admission/overflow-duration: uncontrolled admission OverflowException",
+        "FAIL cooldown observation: marked parser/NaN: malformed duration accepted by shared parser",
+        "FAIL cooldown observation: marked parser/Infinity: malformed duration accepted by shared parser",
+        "FAIL cooldown observation: marked parser/-Infinity: malformed duration accepted by shared parser",
+        "FAIL cooldown observation: marked parser/1e300: malformed duration accepted by shared parser",
+        "FAIL cooldown observation: marked parser/-2: malformed duration accepted by shared parser",
+        "FAIL cooldown observation: marked parser/9.223372036854776e11: malformed duration accepted by shared parser",
+        "FAIL cooldown observation: marked parser shape/ok|0|unexpected: partial/ambiguous observation accepted",
+        "FAIL cooldown observation: empty transport/manager: incomplete observation became a numeric cooldown: 10675199.02:48:05.4775807",
+        "FAIL cooldown observation: empty transport/spell: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: empty transport/singular: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: empty transport/legacy: incomplete observation became a numeric cooldown: 00:00:00",
+        "FAIL cooldown observation: dispatch hold is not observed cooldown: local submitted call masqueraded as authoritative cooldown acknowledgement",
+        "FAIL cooldown observation: native cancellation/cancel: cancelled native observation fell through to another query",
+        "FAIL cooldown observation: native cancellation/wrapped-cancel: cancelled native observation fell through to another query",
+        "FAIL cooldown observation: native ordinary failure remains unknown: failed native and unavailable fallback became ready",
+        "FAIL cooldown observation: missing named spell/singular: missing spell became a numeric cooldown",
+        "FAIL cooldown observation: missing named spell/legacy: missing spell became a numeric cooldown"
+      ]
+    },
+    {
+      "label": "cooldown-worker-generation-red-c106a721",
+      "path": "D:\\Dev\\CopilotBuddy-Evidence\\action-acknowledgement-20261002\\cooldown-worker-generation-red-c106a721",
+      "summary_sha256": "f6ffdbccd76590cb8a13c58ad28f6f8017513a671c932b9ed0f70409bc403302",
+      "source_manifest_sha256": "20dfc5343f935f9867830c9a3233d7382498ea5938417cbdd57067a49ea816cd",
+      "working_tree_modified": true,
+      "stages": [
+        {
+          "stage": "build",
+          "exit": 0,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PostMergeAuditRegressionTests/PostMergeAuditRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "8a47020b9bdc40f38661358b68e8e20a006888e87a550787b711955c292ff889",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "run",
+          "exit": 1,
+          "command": [
+            "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+            "D:\\Dev\\CB-ActionAcknowledgement-20261002\\Tools\\PostMergeAuditRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\PostMergeAuditRegressionTests.dll",
+            "SpellCooldownObservationRegressionTests"
+          ],
+          "stdout_sha256": "4141bbb530b61fa5e8dfbdb1169d5a055c4abbbdb3b6fa2ffe35dd8ee80d6070",
+          "stderr_sha256": "6a98c249268309d1da446caf43920a103d5d777b9d9d4c51a2a29058e853abf6"
+        }
+      ],
+      "reported_results": [
+        "Spell cooldown observation cases: 261/268; assertions=7; unexpected=0; exact tracked readers/parser/admission and generated Lua5.1 plus production conversion; controlled APIs/native failures; no game attached.",
+        "Focused groups: 0/1; no game attached; full aggregate remains required.",
+        "FAIL cooldown observation: revoked numeric/manager/worker: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/spell/worker: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/singular/worker: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked numeric/legacy/worker: incomplete observation became a numeric cooldown: 00:00:05",
+        "FAIL cooldown observation: revoked admission/worker: revoked reply authorized admission",
+        "FAIL cooldown observation: cached cooldown/worker: old context cooldown denied the replacement",
+        "FAIL cooldown observation: native result ownership/worker: revoked native observation returned readiness or fell through"
+      ]
+    },
+    {
+      "label": "lua-cancellation-green1-c106a721",
+      "path": "D:\\Dev\\CopilotBuddy-Evidence\\action-acknowledgement-20261002\\lua-cancellation-green1-c106a721",
+      "summary_sha256": "42bb6bcdc732a38663f137b9d1094283116178bbbd64f8353459510aff1fe72e",
+      "source_manifest_sha256": "8b9c22d606107102da8c994a4babc0254827145e0c2a757078db59b3844f3cee",
+      "working_tree_modified": true,
+      "stages": [
+        {
+          "stage": "build",
+          "exit": 0,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PostMergeAuditRegressionTests/PostMergeAuditRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "5dd14f852affc455eedc356f3811ff089fb0e03c67cff167c7478657ba81a02c",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "run",
+          "exit": 0,
+          "command": [
+            "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+            "D:\\Dev\\CB-ActionAcknowledgement-20261002\\Tools\\PostMergeAuditRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\PostMergeAuditRegressionTests.dll",
+            "LuaObservationCancellationRegressionTests",
+            "SpellCooldownObservationRegressionTests",
+            "EquipmentCursorGuidGuardRegressionTests",
+            "EquipmentLua51BoundaryRegressionTests",
+            "SpellDispatchReceiptRegressionTests"
+          ],
+          "stdout_sha256": "2146c8ae72b656b0f56c08f2f2dbc5b337030ba8afd8a5fac045bd2331cedefb",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "reported_results": [
+        "Lua observation cancellation cases: 152/152; assertions=0; unexpected=0; complete transport and conversion owners; controlled allocation/memory/executor failures; no native/game execution.",
+        "Spell cooldown observation cases: 229/229; assertions=0; unexpected=0; exact tracked readers/parser/admission and generated Lua5.1 plus production conversion; controlled APIs/native failures; no game attached.",
+        "Spell dispatch receipt scenarios: 97/97; assertions=0; unexpected=0; complete tracked manager methods and ground factory; real TreeSharp; controlled executor/world; local completion only, no native/game/server execution.",
+        "Focused groups: 5/5; no game attached; full aggregate remains required."
+      ]
+    },
+    {
+      "label": "lua-cancellation-red-c106a721",
+      "path": "D:\\Dev\\CopilotBuddy-Evidence\\action-acknowledgement-20261002\\lua-cancellation-red-c106a721",
+      "summary_sha256": "90f864ac16e91bfae7d18a74e7aa7bb367d620d83115322ab783221b106c2b35",
+      "source_manifest_sha256": "af7ef5412e0b2d264d0535db9f46948cbf74970cfd646f6558f7051763659c6e",
+      "working_tree_modified": true,
+      "stages": [
+        {
+          "stage": "build",
+          "exit": 1,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PostMergeAuditRegressionTests/PostMergeAuditRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "34c1d1e2567dcd519240d6fee1bcb35171f08731217cf13060a3f42cdcfa33c8",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "reported_results": []
+    },
+    {
+      "label": "lua-cancellation-red2-c106a721",
+      "path": "D:\\Dev\\CopilotBuddy-Evidence\\action-acknowledgement-20261002\\lua-cancellation-red2-c106a721",
+      "summary_sha256": "da652d30606cd8e28fd66a1a54aee40dc868f0ca3c6e04a0aeab8539a15340db",
+      "source_manifest_sha256": "38a7c2902a706070aa9692ff50cfc2ca73683d9964026a5f1a5d068f635525da",
+      "working_tree_modified": true,
+      "stages": [
+        {
+          "stage": "build",
+          "exit": 0,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PostMergeAuditRegressionTests/PostMergeAuditRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "d5c095fd538ac881298b0952c3f2798175cecf189f29715cd394e97d7dbb67a2",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "run",
+          "exit": 1,
+          "command": [
+            "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+            "D:\\Dev\\CB-ActionAcknowledgement-20261002\\Tools\\PostMergeAuditRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\PostMergeAuditRegressionTests.dll",
+            "LuaObservationCancellationRegressionTests"
+          ],
+          "stdout_sha256": "0735ade43725edb54dbac22df6d64fe4bc6dee166e3c336555f2efb3d03f4194",
+          "stderr_sha256": "694e47497573b165ef0cbc990c05f6408ae2d766f73ab2bd2042970d30335252"
+        }
+      ],
+      "reported_results": [
+        "FAIL Lua cancellation: state/cancel/numeric=False: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: state/wrapped-cancel/numeric=False: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: state/interrupt/numeric=False: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: state/wrapped-interrupt/numeric=False: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: allocation/cancel/numeric=False: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: allocation/wrapped-cancel/numeric=False: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: allocation/interrupt/numeric=False: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: allocation/wrapped-interrupt/numeric=False: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: argument-write/cancel/numeric=False: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: argument-write/wrapped-cancel/numeric=False: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: argument-write/interrupt/numeric=False: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: argument-write/wrapped-interrupt/numeric=False: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: result-allocation/cancel/numeric=False: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: result-allocation/wrapped-cancel/numeric=False: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: result-allocation/interrupt/numeric=False: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: result-allocation/wrapped-interrupt/numeric=False: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: result-write/cancel/numeric=False: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: result-write/wrapped-cancel/numeric=False: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: result-write/interrupt/numeric=False: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: result-write/wrapped-interrupt/numeric=False: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: clear/cancel/numeric=False: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: clear/wrapped-cancel/numeric=False: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: clear/interrupt/numeric=False: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: clear/wrapped-interrupt/numeric=False: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: emit/cancel/numeric=False: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: emit/wrapped-cancel/numeric=False: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: emit/interrupt/numeric=False: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: emit/wrapped-interrupt/numeric=False: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: execute/cancel/numeric=False: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: execute/wrapped-cancel/numeric=False: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: execute/interrupt/numeric=False: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: execute/wrapped-interrupt/numeric=False: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: cache/cancel/numeric=False: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: cache/wrapped-cancel/numeric=False: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: cache/interrupt/numeric=False: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: cache/wrapped-interrupt/numeric=False: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: status/cancel/numeric=False: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: status/wrapped-cancel/numeric=False: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: status/interrupt/numeric=False: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: status/wrapped-interrupt/numeric=False: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: count/cancel/numeric=False: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: count/wrapped-cancel/numeric=False: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: count/interrupt/numeric=False: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: count/wrapped-interrupt/numeric=False: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: pointer/cancel/numeric=False: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: pointer/wrapped-cancel/numeric=False: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: pointer/interrupt/numeric=False: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: pointer/wrapped-interrupt/numeric=False: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: string/cancel/numeric=False: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: string/wrapped-cancel/numeric=False: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: string/interrupt/numeric=False: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: string/wrapped-interrupt/numeric=False: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: cache-dispose/cancel/numeric=False: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: cache-dispose/wrapped-cancel/numeric=False: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: cache-dispose/interrupt/numeric=False: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: cache-dispose/wrapped-interrupt/numeric=False: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: argument-dispose/cancel/numeric=False: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: argument-dispose/wrapped-cancel/numeric=False: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: argument-dispose/interrupt/numeric=False: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: argument-dispose/wrapped-interrupt/numeric=False: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: state/cancel/numeric=True: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: state/wrapped-cancel/numeric=True: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: state/interrupt/numeric=True: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: state/wrapped-interrupt/numeric=True: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: allocation/cancel/numeric=True: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: allocation/wrapped-cancel/numeric=True: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: allocation/interrupt/numeric=True: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: allocation/wrapped-interrupt/numeric=True: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: argument-write/cancel/numeric=True: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: argument-write/wrapped-cancel/numeric=True: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: argument-write/interrupt/numeric=True: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: argument-write/wrapped-interrupt/numeric=True: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: result-allocation/cancel/numeric=True: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: result-allocation/wrapped-cancel/numeric=True: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: result-allocation/interrupt/numeric=True: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: result-allocation/wrapped-interrupt/numeric=True: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: result-write/cancel/numeric=True: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: result-write/wrapped-cancel/numeric=True: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: result-write/interrupt/numeric=True: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: result-write/wrapped-interrupt/numeric=True: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: clear/cancel/numeric=True: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: clear/wrapped-cancel/numeric=True: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: clear/interrupt/numeric=True: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: clear/wrapped-interrupt/numeric=True: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: emit/cancel/numeric=True: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: emit/wrapped-cancel/numeric=True: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: emit/interrupt/numeric=True: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: emit/wrapped-interrupt/numeric=True: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: execute/cancel/numeric=True: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: execute/wrapped-cancel/numeric=True: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: execute/interrupt/numeric=True: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: execute/wrapped-interrupt/numeric=True: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: cache/cancel/numeric=True: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: cache/wrapped-cancel/numeric=True: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: cache/interrupt/numeric=True: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: cache/wrapped-interrupt/numeric=True: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: status/cancel/numeric=True: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: status/wrapped-cancel/numeric=True: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: status/interrupt/numeric=True: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: status/wrapped-interrupt/numeric=True: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: count/cancel/numeric=True: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: count/wrapped-cancel/numeric=True: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: count/interrupt/numeric=True: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: count/wrapped-interrupt/numeric=True: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: pointer/cancel/numeric=True: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: pointer/wrapped-cancel/numeric=True: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: pointer/interrupt/numeric=True: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: pointer/wrapped-interrupt/numeric=True: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: string/cancel/numeric=True: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: string/wrapped-cancel/numeric=True: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: string/interrupt/numeric=True: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: string/wrapped-interrupt/numeric=True: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: cache-dispose/cancel/numeric=True: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: cache-dispose/wrapped-cancel/numeric=True: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: cache-dispose/interrupt/numeric=True: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: cache-dispose/wrapped-interrupt/numeric=True: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: argument-dispose/cancel/numeric=True: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: argument-dispose/wrapped-cancel/numeric=True: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: argument-dispose/interrupt/numeric=True: the owned signal became an empty/default result or another exception",
+        "FAIL Lua cancellation: argument-dispose/wrapped-interrupt/numeric=True: the owned signal became an empty/default result or another exception",
+        "Lua observation cancellation cases: 32/152; assertions=120; unexpected=0; complete transport and conversion owners; controlled allocation/memory/executor failures; no native/game execution.",
+        "Focused groups: 0/1; no game attached; full aggregate remains required."
+      ]
+    },
+    {
+      "label": "spell-context-owner-suite-c106a721",
+      "path": "D:\\Dev\\CopilotBuddy-Evidence\\action-acknowledgement-20261002\\spell-context-owner-suite-c106a721",
+      "summary_sha256": "c9525118b4ec19b7827a469980eeab5db07fb49e51b33a2b8eebc070a15c85fc",
+      "source_manifest_sha256": "8d58749e6cf42a9d047cb4878516d1289780dbaad48602ed7688357a401aa6f8",
+      "working_tree_modified": true,
+      "stages": [
+        {
+          "stage": "build",
+          "exit": 0,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/QuestRecoveryRegressionTests/QuestRecoveryRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "4619fb83ee2bad5e9bac2458c0c45964dd6b256839b5e36f3613aa7ba4d3436c",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "run",
+          "exit": 0,
+          "command": [
+            "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+            "D:\\Dev\\CB-ActionAcknowledgement-20261002\\Tools\\QuestRecoveryRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\QuestRecoveryRegressionTests.dll"
+          ],
+          "stdout_sha256": "093892b617270104c081a31d0c6929e581ed8082b802ebf65695adeb4176a489",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "reported_results": []
+    },
+    {
+      "label": "spell-dispatch-context-review-green1-c106a721",
+      "path": "D:\\Dev\\CopilotBuddy-Evidence\\action-acknowledgement-20261002\\spell-dispatch-context-review-green1-c106a721",
+      "summary_sha256": "b26c1a736812a524c0b7518b792bd42037c2c8b056633b2c0614fcddf6c2bc72",
+      "source_manifest_sha256": "0ae3cf6cbc0534554eeac6410c1cc95c6b2f2be60b0e0c7acf21e0b11dc8d858",
+      "working_tree_modified": true,
+      "stages": [
+        {
+          "stage": "build",
+          "exit": 0,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PostMergeAuditRegressionTests/PostMergeAuditRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "88753e9c491c8aa5479ee19f62f47e284f0b08540e65a9c14398701148c81783",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "run",
+          "exit": 0,
+          "command": [
+            "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+            "D:\\Dev\\CB-ActionAcknowledgement-20261002\\Tools\\PostMergeAuditRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\PostMergeAuditRegressionTests.dll",
+            "SpellCooldownObservationRegressionTests"
+          ],
+          "stdout_sha256": "5b8e548ef9bde238e8139f88c39363937c837d4a0224e2bc88928943159b15e2",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "reported_results": [
+        "Spell cooldown observation cases: 279/279; assertions=0; unexpected=0; exact tracked readers/parser/admission and generated Lua5.1 plus production conversion; controlled APIs/native failures; no game attached.",
+        "Focused groups: 1/1; no game attached; full aggregate remains required."
+      ]
+    },
+    {
+      "label": "spell-dispatch-context-review-red-c106a721",
+      "path": "D:\\Dev\\CopilotBuddy-Evidence\\action-acknowledgement-20261002\\spell-dispatch-context-review-red-c106a721",
+      "summary_sha256": "c795b42f69bd13cbc49ad9c1319c1c146b8c3a9187b08b74a8cf53254e46275d",
+      "source_manifest_sha256": "0fab564a354f573c21a98781a6b6b090e2b6b799a92672d06d7765ab2aef8fda",
+      "working_tree_modified": true,
+      "stages": [
+        {
+          "stage": "build",
+          "exit": 0,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PostMergeAuditRegressionTests/PostMergeAuditRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "c768b43d408ea246822afd570872caeb14fa05de364cba222f711a7ee1939294",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "run",
+          "exit": 1,
+          "command": [
+            "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+            "D:\\Dev\\CB-ActionAcknowledgement-20261002\\Tools\\PostMergeAuditRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\PostMergeAuditRegressionTests.dll",
+            "SpellCooldownObservationRegressionTests"
+          ],
+          "stdout_sha256": "78ed25c967cc953cf590fae10c331c164a19a8b0e8e87036cddf9682da8d1d66",
+          "stderr_sha256": "19d961bb216caec29a87bdaf6a054be437e7d447670ec812f629160b68239732"
+        }
+      ],
+      "reported_results": [
+        "Spell cooldown observation cases: 268/279; assertions=11; unexpected=0; exact tracked readers/parser/admission and generated Lua5.1 plus production conversion; controlled APIs/native failures; no game attached.",
+        "Focused groups: 0/1; no game attached; full aggregate remains required.",
+        "FAIL cooldown observation: actual dispatch guard without prior query/numeric=False: first observation erased the actual local-dispatch hold",
+        "FAIL cooldown observation: actual dispatch guard without prior query/numeric=True: first observation erased the actual local-dispatch hold",
+        "FAIL cooldown observation: actual dispatch reply after owner change/actor: revoked dispatch published completed-owner success",
+        "FAIL cooldown observation: actual dispatch reply after owner change/map: revoked dispatch published completed-owner success",
+        "FAIL cooldown observation: actual dispatch reply after owner change/memory: revoked dispatch published completed-owner success",
+        "FAIL cooldown observation: actual dispatch reply after owner change/executor: revoked dispatch published completed-owner success",
+        "FAIL cooldown observation: actual dispatch reply after owner change/bot: revoked dispatch published completed-owner success",
+        "FAIL cooldown observation: actual dispatch reply after owner change/worker: revoked dispatch published completed-owner success",
+        "FAIL cooldown observation: actual dispatch reply after owner change/session: revoked dispatch published completed-owner success",
+        "FAIL cooldown observation: actual dispatch cancellation/cancel: actual dispatch swallowed cancellation",
+        "FAIL cooldown observation: actual dispatch cancellation/wrapped-cancel: actual dispatch swallowed cancellation"
+      ]
+    },
+    {
+      "label": "spell-dispatch-nested-review-red-c106a721",
+      "path": "D:\\Dev\\CopilotBuddy-Evidence\\action-acknowledgement-20261002\\spell-dispatch-nested-review-red-c106a721",
+      "summary_sha256": "17d033a77cde328f124f72e1d22d96976e5c148a88cb37bed326dd00e9c17db2",
+      "source_manifest_sha256": "ec436a23b98943e58f2790ff62f35320c4e8cb01e8e8a1899c91688a3f6dee66",
+      "working_tree_modified": true,
+      "stages": [
+        {
+          "stage": "build",
+          "exit": 0,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PostMergeAuditRegressionTests/PostMergeAuditRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "6c6d355ecf0fc885929b9a08f0bcc0254418cab3aff6b4140aea1a6d9ab0293b",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "run",
+          "exit": 1,
+          "command": [
+            "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+            "D:\\Dev\\CB-ActionAcknowledgement-20261002\\Tools\\PostMergeAuditRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\PostMergeAuditRegressionTests.dll",
+            "SpellCooldownObservationRegressionTests",
+            "SpellDispatchReceiptRegressionTests"
+          ],
+          "stdout_sha256": "e18b0f3238428936e1854629ea35611b50d644b01be1430dac5ccf2430eb2912",
+          "stderr_sha256": "f1d60264ef0e7adb7dd5cbb00f5a76af48e23da743a604f15d9f2161181b8cdc"
+        }
+      ],
+      "reported_results": [
+        "Spell cooldown observation cases: 279/280; assertions=1; unexpected=0; exact tracked readers/parser/admission and generated Lua5.1 plus production conversion; controlled APIs/native failures; no game attached.",
+        "Spell dispatch receipt scenarios: 97/97; assertions=0; unexpected=0; complete tracked manager methods and ground factory; real TreeSharp; controlled executor/world; local completion only, no native/game/server execution.",
+        "Focused groups: 1/2; no game attached; full aggregate remains required.",
+        "FAIL cooldown observation: dispatch retains a later same-owner cooldown observation: older dispatch registration erased the newer authoritative cooldown"
+      ]
+    },
+    {
+      "label": "spell-observation-final-focused-c106a721",
+      "path": "D:\\Dev\\CopilotBuddy-Evidence\\action-acknowledgement-20261002\\spell-observation-final-focused-c106a721",
+      "summary_sha256": "b068a8213c229b5873f896b375cfb3048fd8581e0a97237956abb9be06e99597",
+      "source_manifest_sha256": "62025094590b41dfb616be2908f966de97df902c59e12c790cdc3098d752765d",
+      "working_tree_modified": true,
+      "stages": [
+        {
+          "stage": "build",
+          "exit": 0,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PostMergeAuditRegressionTests/PostMergeAuditRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "cfb715611c6982b9c82e9a79bd4248400431d73106dd5117ab3c39c478c7c9d0",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "run",
+          "exit": 0,
+          "command": [
+            "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+            "D:\\Dev\\CB-ActionAcknowledgement-20261002\\Tools\\PostMergeAuditRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\PostMergeAuditRegressionTests.dll",
+            "SpellCooldownObservationRegressionTests",
+            "LuaObservationCancellationRegressionTests",
+            "SpellSightDispatchRegressionTests",
+            "SharedSpellObservationRegressionTests",
+            "SpellDispatchReceiptRegressionTests",
+            "AuraWorkerLivenessRegressionTests",
+            "SpellMetadataAdmissionRegressionTests",
+            "EquipmentLua51BoundaryRegressionTests",
+            "EquipmentCursorGuidGuardRegressionTests"
+          ],
+          "stdout_sha256": "55d90a3216a944a788c59143dad738092669e53793fa268cb36debb2c7acbe72",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "reported_results": [
+        "Spell cooldown observation cases: 268/268; assertions=0; unexpected=0; exact tracked readers/parser/admission and generated Lua5.1 plus production conversion; controlled APIs/native failures; no game attached.",
+        "Lua observation cancellation cases: 152/152; assertions=0; unexpected=0; complete transport and conversion owners; controlled allocation/memory/executor failures; no native/game execution.",
+        "Spell dispatch receipt scenarios: 97/97; assertions=0; unexpected=0; complete tracked manager methods and ground factory; real TreeSharp; controlled executor/world; local completion only, no native/game/server execution.",
+        "Focused groups: 9/9; no game attached; full aggregate remains required."
+      ]
+    },
+    {
+      "label": "spell-observation-recovered-focused-c106a721",
+      "path": "D:\\Dev\\CopilotBuddy-Evidence\\action-acknowledgement-20261002\\spell-observation-recovered-focused-c106a721",
+      "summary_sha256": "8a0ac0d5956161c610d5ede0fd0dbc8ea151cd71f24e17a9f79652e4f46f55af",
+      "source_manifest_sha256": "62025094590b41dfb616be2908f966de97df902c59e12c790cdc3098d752765d",
+      "working_tree_modified": true,
+      "stages": [
+        {
+          "stage": "build",
+          "exit": 0,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PostMergeAuditRegressionTests/PostMergeAuditRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "0eff036dfbb4339b6b972a1838fca8530ecbe62c4d9eeec7a06c8151128d3f62",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "run",
+          "exit": 0,
+          "command": [
+            "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+            "D:\\Dev\\CB-ActionAcknowledgement-20261002\\Tools\\PostMergeAuditRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\PostMergeAuditRegressionTests.dll",
+            "SpellCooldownObservationRegressionTests",
+            "LuaObservationCancellationRegressionTests",
+            "SpellSightDispatchRegressionTests",
+            "SharedSpellObservationRegressionTests",
+            "SpellDispatchReceiptRegressionTests",
+            "AuraWorkerLivenessRegressionTests",
+            "SpellMetadataAdmissionRegressionTests",
+            "EquipmentLua51BoundaryRegressionTests",
+            "EquipmentCursorGuidGuardRegressionTests"
+          ],
+          "stdout_sha256": "55d90a3216a944a788c59143dad738092669e53793fa268cb36debb2c7acbe72",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "reported_results": [
+        "Spell cooldown observation cases: 268/268; assertions=0; unexpected=0; exact tracked readers/parser/admission and generated Lua5.1 plus production conversion; controlled APIs/native failures; no game attached.",
+        "Lua observation cancellation cases: 152/152; assertions=0; unexpected=0; complete transport and conversion owners; controlled allocation/memory/executor failures; no native/game execution.",
+        "Spell dispatch receipt scenarios: 97/97; assertions=0; unexpected=0; complete tracked manager methods and ground factory; real TreeSharp; controlled executor/world; local completion only, no native/game/server execution.",
+        "Focused groups: 9/9; no game attached; full aggregate remains required."
+      ]
+    },
+    {
+      "label": "spell-observation-review-final-c106a721",
+      "path": "D:\\Dev\\CopilotBuddy-Evidence\\action-acknowledgement-20261002\\spell-observation-review-final-c106a721",
+      "summary_sha256": "c113faf5ad4ac2cedfcdbfbad65b0a29cc332ade183e30ff0cfc2eb25b0f3305",
+      "source_manifest_sha256": "9cd6a8421e9d825a61025ac658e9a2859cf51d1eb6da17dcdf01991d2fa75b95",
+      "working_tree_modified": true,
+      "stages": [
+        {
+          "stage": "build",
+          "exit": 0,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PostMergeAuditRegressionTests/PostMergeAuditRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "265a96f51afd2012e9785a9385fc60b501a7f3118d7ab3d1647fecc6507d97e6",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "run",
+          "exit": 0,
+          "command": [
+            "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+            "D:\\Dev\\CB-ActionAcknowledgement-20261002\\Tools\\PostMergeAuditRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\PostMergeAuditRegressionTests.dll",
+            "SpellCooldownObservationRegressionTests",
+            "LuaObservationCancellationRegressionTests",
+            "SpellSightDispatchRegressionTests",
+            "SharedSpellObservationRegressionTests",
+            "SpellDispatchReceiptRegressionTests",
+            "AuraWorkerLivenessRegressionTests",
+            "SpellMetadataAdmissionRegressionTests",
+            "EquipmentLua51BoundaryRegressionTests",
+            "EquipmentCursorGuidGuardRegressionTests"
+          ],
+          "stdout_sha256": "c5199a4a69a26c03b06bd5c65170ea540c5a8fab6bcb1cfde9804409f200890d",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "reported_results": [
+        "Spell cooldown observation cases: 280/280; assertions=0; unexpected=0; exact tracked readers/parser/admission and generated Lua5.1 plus production conversion; controlled APIs/native failures; no game attached.",
+        "Lua observation cancellation cases: 152/152; assertions=0; unexpected=0; complete transport and conversion owners; controlled allocation/memory/executor failures; no native/game execution.",
+        "Spell dispatch receipt scenarios: 97/97; assertions=0; unexpected=0; complete tracked manager methods and ground factory; real TreeSharp; controlled executor/world; local completion only, no native/game/server execution.",
+        "Focused groups: 9/9; no game attached; full aggregate remains required."
+      ]
+    }
+  ],
+  "review": "Self-review of actual dispatch, observation, publication and cancellation owners; no reviewer-agent tool exposed.",
+  "full_local_and_hosted_publication_gates": "required on the committed final candidate",
+  "live_game_or_server_acceptance": false,
+  "created_utc": "2026-10-02T00:36:07.588599+00:00"
+}

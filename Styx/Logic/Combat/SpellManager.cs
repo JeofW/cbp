@@ -32,6 +32,104 @@ namespace Styx.Logic.Combat
 		private const int CastAttemptVerificationDelayMs = 250;
 		private const int UnavailableProbeBackoffMs = 250;
 		private const int FailedProbeBackoffMs = 500;
+		private static SpellObservationContext? _cooldownContext;
+		private static long _cooldownEpoch, _lastCooldownObservationTicks;
+
+		internal sealed class SpellObservationContext
+		{
+			private readonly object _actor, _memory, _executor;
+			private readonly object? _bot, _run;
+			private readonly ulong _guid;
+			private readonly uint _address, _map;
+			private readonly bool _running;
+			private readonly long _epoch;
+			private readonly Func<bool> _current;
+			internal readonly long ObservedAt;
+
+			internal SpellObservationContext(object actor, object memory, object executor, object? bot, object? run,
+				ulong guid, uint address, uint map, bool running, long epoch, long observedAt, Func<bool> current)
+			{
+				_actor = actor; _memory = memory; _executor = executor; _bot = bot; _run = run;
+				_guid = guid; _address = address; _map = map; _running = running;
+				_epoch = epoch; ObservedAt = observedAt; _current = current;
+			}
+
+			internal bool SameOwner(SpellObservationContext other) => ReferenceEquals(_actor, other._actor)
+				&& ReferenceEquals(_memory, other._memory) && ReferenceEquals(_executor, other._executor)
+				&& ReferenceEquals(_bot, other._bot) && ReferenceEquals(_run, other._run)
+				&& _guid == other._guid && _address == other._address
+				&& _map == other._map && _running == other._running && _epoch == other._epoch;
+
+			internal void RequireCurrent()
+			{
+				if (!_current()) throw new ObservationUnavailableException("spell-cooldown",
+					"The actor, world, executor, run or clock changed during the spell observation.");
+			}
+		}
+
+		internal static SpellObservationContext CaptureSpellObservation()
+		{
+			var actor = StyxWoW.Me;
+			var memory = ObjectManager.Wow;
+			var executor = ObjectManager.Executor;
+			var bot = TreeRoot.Current;
+			var run = TreeRoot.RunIdentity;
+			bool worker = TreeRoot.CurrentThreadIsBotThread, running = TreeRoot.IsRunning;
+			TreeRoot.VerifyPulseOwner(bot, worker);
+			long epoch;
+			lock (_cooldownSync) epoch = _cooldownEpoch;
+			long now = Environment.TickCount64;
+			if (actor == null || memory == null || executor == null || !actor.IsValid || now < 0)
+				throw new ObservationUnavailableException("spell-cooldown", "A complete current spell observation context is unavailable.");
+			ulong guid = actor.Guid;
+			uint address = actor.BaseAddress, map = actor.MapId;
+			if (guid == 0 || address == 0)
+				throw new ObservationUnavailableException("spell-cooldown", "The spell observation has no valid actor identity.");
+			bool Current()
+			{
+				TreeRoot.VerifyPulseOwner(bot, worker);
+				lock (_cooldownSync)
+					return epoch == _cooldownEpoch && Environment.TickCount64 >= now
+						&& ReferenceEquals(StyxWoW.Me, actor) && ReferenceEquals(ObjectManager.Wow, memory)
+						&& ReferenceEquals(ObjectManager.Executor, executor) && ReferenceEquals(TreeRoot.Current, bot)
+						&& ReferenceEquals(TreeRoot.RunIdentity, run)
+						&& TreeRoot.IsRunning == running && actor.IsValid && actor.Guid == guid
+						&& actor.BaseAddress == address && actor.MapId == map;
+			}
+			var observation = new SpellObservationContext(actor, memory, executor, bot, run, guid, address, map, running, epoch, now, Current);
+			observation.RequireCurrent();
+			return observation;
+		}
+
+		private static void PrepareCooldownContext(SpellObservationContext observation)
+		{
+			lock (_cooldownSync)
+			{
+				observation.RequireCurrent();
+				if (_cooldownContext == null || !_cooldownContext.SameOwner(observation)
+					|| observation.ObservedAt < _lastCooldownObservationTicks)
+				{
+					_cooldownReadyAtTicks.Clear();
+					_castVerificationUntilTicks.Clear();
+					_readinessProbeNotBeforeTicks.Clear();
+				}
+				_cooldownContext = observation;
+				_lastCooldownObservationTicks = observation.ObservedAt;
+			}
+		}
+
+		private static void ResetCooldownObservations()
+		{
+			lock (_cooldownSync)
+			{
+				_cooldownEpoch++;
+				_cooldownContext = null;
+				_lastCooldownObservationTicks = 0;
+				_cooldownReadyAtTicks.Clear();
+				_castVerificationUntilTicks.Clear();
+				_readinessProbeNotBeforeTicks.Clear();
+			}
+		}
 
 		public static Dictionary<string, WoWSpell> KnownSpells => _knownSpells;
 
@@ -266,11 +364,33 @@ namespace Styx.Logic.Combat
 		{
 			availabilitySeconds = -1;
 			return values != null &&
-			       values.Count >= 2 &&
+			       values.Count == 2 &&
 			       string.Equals(values[0], "ok", StringComparison.Ordinal) &&
 			       double.TryParse(
 				       values[1], NumberStyles.Float, CultureInfo.InvariantCulture,
-				       out availabilitySeconds);
+				       out availabilitySeconds) &&
+			       double.IsFinite(availabilitySeconds) &&
+			       (availabilitySeconds == -1 || availabilitySeconds >= 0) &&
+			       availabilitySeconds < TimeSpan.MaxValue.TotalSeconds;
+		}
+
+		private static string CreateCooldownQuery(int spellId, bool requireUsable)
+		{
+			// Validate components before arithmetic: NaN makes `left > 0` false,
+			// which must not turn an incomplete observation into a ready spell.
+			string query = "local function finite(v) return type(v)=='number' and v==v and v~=math.huge and v~=-math.huge end " +
+				"local n=GetSpellInfo(" + spellId.ToString(CultureInfo.InvariantCulture) + "); " +
+				"if type(n)~='string' or n=='' then return 'unknown-name',-1 end " +
+				"local s,d,e=GetSpellCooldown(n); " +
+				"if not finite(s) or not finite(d) or s<0 or d<0 or (e~=0 and e~=1) then return 'unknown-cooldown',-1 end " +
+				"if e==0 then return 'disabled',-1 end " +
+				"local now=GetTime(); if not finite(now) or now<0 then return 'unknown-clock',-1 end " +
+				"local left=s+d-now; if not finite(left) then return 'unknown-duration',-1 end " +
+				"if left>0 then return 'ok',left end ";
+			if (requireUsable)
+				query += "local usable=IsUsableSpell(n); if not usable then return 'ok',-1 end " +
+					"if usable~=true and usable~=1 then return 'unknown-usability',-1 end ";
+			return query + "return 'ok',0";
 		}
 
 		private static TimeSpan GetTrackedCooldownTimeLeft(
@@ -290,23 +410,35 @@ namespace Styx.Logic.Combat
 			}
 		}
 
-		private static void TrackCooldown(int spellId, TimeSpan duration, long currentTicks)
+		private static void TrackCooldown(int spellId, TimeSpan duration, long currentTicks, SpellObservationContext? observation = null)
 		{
-			if (duration <= TimeSpan.Zero)
-				return;
-
-			TrackDeadline(_cooldownReadyAtTicks, spellId, duration, currentTicks);
+			TrackDeadline(_cooldownReadyAtTicks, spellId, duration, currentTicks, observation);
 		}
 
 		private static void TrackDeadline(
 			Dictionary<int, long> deadlines,
 			int spellId,
 			TimeSpan duration,
-			long currentTicks)
+			long currentTicks, SpellObservationContext? observation = null)
 		{
-			long deadline = currentTicks + (long)Math.Ceiling(duration.TotalMilliseconds);
 			lock (_cooldownSync)
-				deadlines[spellId] = deadline;
+			{
+				if (observation != null)
+				{
+					observation.RequireCurrent();
+					if (!ReferenceEquals(_cooldownContext, observation))
+						throw new ObservationUnavailableException("spell-cooldown", "A later observation superseded this cooldown reply.");
+					// The returned duration is still remaining at the client query.
+					// Starting it before a delayed dispatch would expire it too early.
+					currentTicks = Environment.TickCount64;
+					_lastCooldownObservationTicks = currentTicks;
+				}
+				if (duration <= TimeSpan.Zero) { deadlines.Remove(spellId); return; }
+				double milliseconds = Math.Ceiling(duration.TotalMilliseconds);
+				if (currentTicks < 0 || milliseconds >= long.MaxValue - currentTicks)
+					throw new ObservationUnavailableException("spell-cooldown", "The observed cooldown deadline is not representable.");
+				deadlines[spellId] = currentTicks + (long)milliseconds;
+			}
 		}
 
 		private static bool IsSpellAvailable(
@@ -314,81 +446,73 @@ namespace Styx.Logic.Combat
 			uint lagToleranceMs,
 			bool accountForLagTolerance)
 		{
-			long currentTicks = Environment.TickCount64;
-			TimeSpan verification = GetTrackedCooldownTimeLeft(
-				_castVerificationUntilTicks, spell.Id, currentTicks);
-			if (IsTrackedCooldownBlocking(
-				verification, lagToleranceMs, accountForLagTolerance, true))
-				return false;
-
-			TimeSpan tracked = GetTrackedCooldownTimeLeft(
-				_cooldownReadyAtTicks, spell.Id, currentTicks);
-			if (IsTrackedCooldownBlocking(
-				tracked, lagToleranceMs, accountForLagTolerance, false))
-				return false;
-
-			TimeSpan probeBackoff = GetTrackedCooldownTimeLeft(
-				_readinessProbeNotBeforeTicks, spell.Id, currentTicks);
-			if (probeBackoff > TimeSpan.Zero)
-				return false;
-
-			// One localized client query replaces the former cooldown-list walk plus
-			// separate IsUsableSpell call. The explicit marker distinguishes a genuine
-			// ready value (zero) from Lua.GetReturnValues' empty failure result.
-			List<string> values = Lua.GetReturnValues(string.Format(
-				"local n=GetSpellInfo({0}); if not n then return 'ok',-1 end " +
-				"local s,d,e=GetSpellCooldown(n); if not s or not d or e==0 then return 'ok',-1 end " +
-				"local left=s+d-GetTime(); if left>0 then return 'ok',left end " +
-				"local usable=IsUsableSpell(n); if not usable then return 'ok',-1 end return 'ok',0",
-				spell.Id));
-
-			if (!TryParseAvailability(values, out double availabilitySeconds))
+			if (spell == null || spell.Id <= 0) return false;
+			try
 			{
-				TrackDeadline(
-					_readinessProbeNotBeforeTicks, spell.Id,
-					TimeSpan.FromMilliseconds(FailedProbeBackoffMs), currentTicks);
-				return false;
+				var observation = CaptureSpellObservation();
+				PrepareCooldownContext(observation);
+				long currentTicks = Environment.TickCount64;
+				TimeSpan verification = GetTrackedCooldownTimeLeft(
+					_castVerificationUntilTicks, spell.Id, currentTicks);
+				if (IsTrackedCooldownBlocking(
+					verification, lagToleranceMs, accountForLagTolerance, true))
+					return false;
+
+				TimeSpan tracked = GetTrackedCooldownTimeLeft(
+					_cooldownReadyAtTicks, spell.Id, currentTicks);
+				if (IsTrackedCooldownBlocking(
+					tracked, lagToleranceMs, accountForLagTolerance, false))
+					return false;
+
+				TimeSpan probeBackoff = GetTrackedCooldownTimeLeft(
+					_readinessProbeNotBeforeTicks, spell.Id, currentTicks);
+				if (probeBackoff > TimeSpan.Zero)
+					return false;
+
+				// One localized query retains readiness and usability together.
+				// Its marker distinguishes a ready value from transport failure.
+				List<string> values = Lua.GetReturnValues(CreateCooldownQuery(spell.Id, true));
+				observation.RequireCurrent();
+
+				if (!TryParseAvailability(values, out double availabilitySeconds))
+				{
+					TrackDeadline(
+						_readinessProbeNotBeforeTicks, spell.Id,
+						TimeSpan.FromMilliseconds(FailedProbeBackoffMs), currentTicks, observation);
+					return false;
+				}
+
+				if (availabilitySeconds >= 0)
+					TrackCooldown(spell.Id, TimeSpan.FromSeconds(availabilitySeconds), currentTicks, observation);
+				else
+					TrackDeadline(
+						_readinessProbeNotBeforeTicks, spell.Id,
+						TimeSpan.FromMilliseconds(UnavailableProbeBackoffMs), currentTicks, observation);
+
+				return IsCooldownReady(
+					availabilitySeconds, lagToleranceMs, accountForLagTolerance);
 			}
-
-			if (availabilitySeconds > 0)
-				TrackCooldown(spell.Id, TimeSpan.FromSeconds(availabilitySeconds), currentTicks);
-			else if (availabilitySeconds < 0)
-				TrackDeadline(
-					_readinessProbeNotBeforeTicks, spell.Id,
-					TimeSpan.FromMilliseconds(UnavailableProbeBackoffMs), currentTicks);
-
-			return IsCooldownReady(
-				availabilitySeconds, lagToleranceMs, accountForLagTolerance);
+			catch (ObservationUnavailableException) { return false; }
 		}
 
 		public static TimeSpan GetSpellCooldownTimeLeft(int spellId)
 		{
-			long currentTicks = Environment.TickCount64;
-			TimeSpan verification = GetTrackedCooldownTimeLeft(
-				_castVerificationUntilTicks, spellId, currentTicks);
-			if (verification > TimeSpan.Zero)
-				return verification;
-
-			TimeSpan tracked = GetTrackedCooldownTimeLeft(
-				_cooldownReadyAtTicks, spellId, currentTicks);
-			if (tracked > TimeSpan.Zero)
-				return tracked;
-
-			WoWSpell? spell = _knownSpells.Values.FirstOrDefault(candidate => candidate.Id == spellId);
-			if (spell == null)
-				return TimeSpan.MaxValue;
-
-			List<string> values = Lua.GetReturnValues(string.Format(
-				"local n=GetSpellInfo({0}); if not n then return 'ok',-1 end " +
-				"local s,d=GetSpellCooldown(n); if not s or not d then return 'ok',-1 end " +
-				"local left=s+d-GetTime(); if left>0 then return 'ok',left end return 'ok',0",
-				spell.Id));
+			if (spellId <= 0)
+				throw new ObservationUnavailableException("spell-cooldown", "Invalid spell identity for cooldown observation.");
+			var observation = CaptureSpellObservation();
+			PrepareCooldownContext(observation);
+			// Numeric readers are also used in positive comparisons and for action
+			// acknowledgement. Neither a sentinel nor a local submission hold is an
+			// observed cooldown. Read the authoritative query independently.
+			List<string> values = Lua.GetReturnValues(CreateCooldownQuery(spellId, false));
+			observation.RequireCurrent();
 			if (!TryParseAvailability(values, out double availabilitySeconds) ||
 			    availabilitySeconds < 0)
-				return TimeSpan.MaxValue;
+				throw new ObservationUnavailableException("spell-cooldown",
+					"Cooldown unavailable for spell " + spellId.ToString(CultureInfo.InvariantCulture) + ".");
 
 			TimeSpan observed = TimeSpan.FromSeconds(availabilitySeconds);
-			TrackCooldown(spellId, observed, currentTicks);
+			TrackCooldown(spellId, observed, observation.ObservedAt, observation);
 			return observed;
 		}
 
@@ -832,12 +956,14 @@ namespace Styx.Logic.Combat
 			uint guidLow = (uint)(targetGuid & 0xFFFFFFFF);
 			uint guidHigh = (uint)(targetGuid >> 32);
 
-			Logging.WriteDebug("Spell_C::CastSpell({0}, 0, 0x{1:X}, 0)", spellId, targetGuid);
-
 			try
 			{
+				var observation = CaptureSpellObservation();
+				PrepareCooldownContext(observation);
+				Logging.WriteDebug("Spell_C::CastSpell({0}, 0, 0x{1:X}, 0)", spellId, targetGuid);
 				lock (executor.AssemblyLock)
 				{
+					observation.RequireCurrent();
 					executor.Clear();
 					// HB 4.3.4 exact push order (8 args, right-to-left):
 					executor.AddLine("push 0");                // arg8: unk3
@@ -851,18 +977,28 @@ namespace Styx.Logic.Combat
 					executor.AddLine("call {0}", (uint)Patchables.GlobalOffsets.Spell_C__CastSpell);
 					executor.AddLine("add esp, 0x20");         // cdecl cleanup: 8 * 4 = 32 = 0x20
 					executor.AddLine("retn");
+					observation.RequireCurrent();
 					executor.Execute();
 				}
 
 				// The client cooldown can arrive a frame after the native call. Hold this
-				// spell briefly, then let the authoritative probe cache its real deadline.
-				long verificationUntil = Environment.TickCount64 + CastAttemptVerificationDelayMs;
+				// spell briefly in the dispatch owner's context. A first numeric read
+				// must not erase the hold; a replacement run must not inherit it.
 				lock (_cooldownSync)
-					_castVerificationUntilTicks[spellId] = verificationUntil;
+				{
+					observation.RequireCurrent();
+					if (_cooldownContext == null || !_cooldownContext.SameOwner(observation))
+						throw new ObservationUnavailableException("spell-cooldown", "The cast submission owner was replaced.");
+					// An independent query may have completed during native dispatch.
+					// Keep that newer publication and its observed cooldowns intact.
+					TrackDeadline(_castVerificationUntilTicks, spellId,
+						TimeSpan.FromMilliseconds(CastAttemptVerificationDelayMs), Environment.TickCount64, _cooldownContext);
+				}
 				return true;
 			}
 			catch (Exception ex)
 			{
+				ObservationUnavailableException.RethrowCancellation(ex);
 				Logging.WriteException(ex);
 				return false;
 			}
@@ -1094,6 +1230,7 @@ namespace Styx.Logic.Combat
 		/// </summary>
 		internal static void Initialize()
 		{
+			ResetCooldownObservations();
 			_knownSpells.Clear();
 			RefreshSpellsAndBindLuaEvents();
 			Logging.WriteDebug("[SpellManager] Initialize — refreshed and bound owned Lua events");
@@ -1105,6 +1242,7 @@ namespace Styx.Logic.Combat
 		/// </summary>
 		internal static void Shutdown()
 		{
+			ResetCooldownObservations();
 			_knownSpells.Clear();
 			_lastKnownSpellCount = 0;
 			Lua.Events.DetachEvent("LEARNED_SPELL_IN_TAB", new LuaEventHandlerDelegate(OnSpellBookChanged));
@@ -1136,6 +1274,7 @@ namespace Styx.Logic.Combat
 		/// </summary>
 		private static void OnSpellBookChanged(object sender, LuaEventArgs e)
 		{
+			ResetCooldownObservations();
 			Logging.Write("[SpellManager] Spellbook change detected ({0}) \u2014 rebuilding", e.EventName);
 			_lastKnownSpellCount = 0;
 			Refresh();

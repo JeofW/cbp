@@ -249,6 +249,9 @@ namespace Styx.Logic.Combat
         {
             get
             {
+                if (Id <= 0)
+                    throw new ObservationUnavailableException("spell-cooldown", "Invalid spell identity for native cooldown observation.");
+                var observation = SpellManager.CaptureSpellObservation();
                 // Primary: ASM call to Spell_C__GetSpellCooldown — HB 3.3.5a method_0 pattern.
                 // Language-independent, no Lua involved, no timing race.
                 // ecx = SpellCooldownPtr (0xD3F5AC), args: push 0,0,0,0,spellId; call 0x807980
@@ -268,17 +271,26 @@ namespace Styx.Logic.Combat
                             executor.AddLine("mov ecx, {0}", 0xD3F5ACU); // SpellCooldownPtr
                             executor.AddLine("call {0}", 8419712U);       // Spell_C__GetSpellCooldown = 0x807980
                             executor.AddLine("retn");
+                            observation.RequireCurrent();
                             executor.Execute();
+                            observation.RequireCurrent();
                             int result = executor.Memory.Read<int>(executor.ReturnPointer);
-                            return result != 0;
+                            observation.RequireCurrent();
+                            if (result != 0) return true;
+                            // Original build12340 also returns zero when its
+                            // Spell-table lookup fails. A zero needs a complete
+                            // current metadata/cooldown reply before it is ready.
                         }
                     }
                 }
-                catch
+                catch (ObservationUnavailableException) { throw; }
+                catch (Exception error)
                 {
+                    ObservationUnavailableException.RethrowCancellation(error);
                     // Fall through to Lua-based check
                 }
-                // Fallback: Lua (may be unreliable on non-English clients or slow machines)
+                // A localized, marked reply separates zero from unavailable.
+                observation.RequireCurrent();
                 return CooldownTimeLeft.TotalMilliseconds > 0.0;
             }
         }
@@ -294,13 +306,7 @@ namespace Styx.Logic.Combat
         {
             get
             {
-                // GetSpellInfo(id) returns the localized spell name regardless of client language.
-                // GetSpellCooldown(localizedName) then works on ALL clients.
-                double returnVal = Lua.GetReturnVal<double>(
-                    string.Format("local n=GetSpellInfo({0}); if not n then return 0 end; local x,y=GetSpellCooldown(n); if not x then return 0 end; return x+y-GetTime()", Id), 0U);
-                if (returnVal <= 0.0)
-                    return TimeSpan.Zero;
-                return TimeSpan.FromSeconds(returnVal);
+                return SpellManager.GetSpellCooldownTimeLeft(Id);
             }
         }
 

@@ -44,7 +44,7 @@ internal static class RewardLua51Boundary
             "GetReturnVal" or "IsLuaIntegerType" or "ParseInteger").ToArray();
         if (conversions.Length != 4)
             throw new InvalidOperationException("Unrecognized production managed-conversion methods");
-        string bridge = "using System; using System.Collections.Generic; using System.Globalization; using System.Text;\n" +
+        string bridge = "using System; using System.Collections.Generic; using System.Globalization; using System.Text; using Styx.Helpers;\n" +
             "public static class RewardRecordedBridge {\n" +
             "public static Func<string,List<string>> Observe;\n" +
             "public static List<string> GetReturnValues(string lua) { return Observe(lua); }\n" +

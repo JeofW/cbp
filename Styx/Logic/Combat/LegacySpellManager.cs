@@ -122,9 +122,14 @@ namespace Styx.Logic.Combat
             if (spell != null)
             {
                 var cooldownTime = spell.CooldownTimeLeft;
-                return (int)cooldownTime.TotalMilliseconds;
+                double milliseconds = Math.Ceiling(cooldownTime.TotalMilliseconds);
+                if (!double.IsFinite(milliseconds) || milliseconds < 0 || milliseconds > int.MaxValue)
+                    throw new Styx.Helpers.ObservationUnavailableException("spell-cooldown",
+                        "The observed cooldown cannot be represented by the legacy millisecond API.");
+                return (int)milliseconds;
             }
-            return 0;
+            throw new Styx.Helpers.ObservationUnavailableException("spell-cooldown",
+                "No current known spell for the named legacy cooldown observation.");
         }
 
         /// <summary>

@@ -219,6 +219,7 @@ namespace Styx.WoWInternals
             }
             catch (Exception ex)
             {
+                ObservationUnavailableException.RethrowCancellation(ex);
                 Logging.WriteDebug("Exception in GetReturnValues: {0}", ex.Message);
                 return new List<string>();
             }
@@ -443,6 +444,7 @@ return not GetCursorInfo() and not CursorHasItem() and 1 or 0";
             }
             catch (Exception ex)
             {
+                ObservationUnavailableException.RethrowCancellation(ex);
                 Logging.WriteDebug("Exception in GetReturnVal<{0}>: {1}", typeof(T).Name, ex.Message);
                 return default(T)!;
             }

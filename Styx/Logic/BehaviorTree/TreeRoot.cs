@@ -91,6 +91,10 @@ namespace Styx.Logic.BehaviorTree
 		/// <summary>HB 5.4.8: True when the calling thread is the bot worker thread.</summary>
 		public static bool CurrentThreadIsBotThread => Thread.CurrentThread == _workerThread;
 
+		// Observation owners may outlive a Stop/Start pair with the same bot.
+		// The worker object distinguishes those runs without another mutable counter.
+		internal static object? RunIdentity => _workerThread;
+
 		internal static void VerifyPulseOwner(BotBase? observedBot, bool ownedByCurrentThread)
 		{
 			if (ownedByCurrentThread && (!CurrentThreadIsBotThread || !ReferenceEquals(Current, observedBot)
