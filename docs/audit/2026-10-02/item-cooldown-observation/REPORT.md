@@ -1,0 +1,21 @@
+# Item cooldown observation
+
+The public item cooldown readers previously accepted missing or malformed Lua observations as numeric zero. The enabled DrinkPotions plugin compares the legacy float property with zero, so unavailable metadata could authorize an item. The remaining-time property also swallowed cancellation and ignored the returned enabled flag. A reply could outlive its item, actor, map, memory, executor or worker.
+
+The repair preserves the legacy float property's start-time units for complete enabled observations. A shared query validates known item metadata and all three original-client cooldown fields plus client time. Numeric readers report controlled unavailable state instead of manufacturing zero; `TryGetCooldownObservation` distinguishes an observed disabled item from missing input, and `IsCooldownReady` defers without exposing an exception to boolean admission consumers. Positive durations smaller than one tick remain positive. There is no negative cache, so a later complete observation recovers immediately.
+
+Observation ownership includes actor reference/GUID/address/map, item GUID/address/entry/owner, memory, executor, bot and worker/run identity and monotonic time. A current reply is required before publication. Direct and reflection-wrapped cancellation and explicit worker Stop propagate. The shared bounded diagnostic reports unavailable boolean admission without creating another exception storm. Unrelated exceptions are not silently reclassified as missing optional metadata.
+
+The original build12340 client evidence is read-only and bound to SHA256 `bf644876709c591acc17c0da8cdf1814edcc9f1e6bc109a8c0d5c38c79dc953c`. `GetItemCooldown` is registered at0xAC8760 and implemented at0x510FC0 with three returned values. `GetItemInfo` is registered at0xAC8728 and implemented at0x516C60; absent cached metadata returns no values. Their source captures and hashes are retained in `client-evidence.json`. The code changes no native ABI, item identity mapping, gameplay threshold or server policy.
+
+## Deterministic coverage
+
+The complete actual item readers and generated requests execute with the existing managed Lua conversion and stock Lua5.1. Only item/world/clock/executor/API leaves are controlled. The clean initial replay `item-cooldown-red2-bc45d423` passed14/152 cases with138 expected assertions and zero unexpected errors. Adding known-metadata coverage produced `item-cooldown-metadata-red-bc45d423`:14/161 with147 expected assertions and zero unexpected errors. The first repaired run passed158/161 and retained three wrapped-cancellation errors; propagating that boundary made `item-cooldown-green2-bc45d423` pass all161 item cases and all four selected groups, including280 spell-cooldown,152 Lua transport and38 consumable-discovery cases.
+
+The earliest fixture run failed to compile because extracted region trivia was unbalanced. Extraction now omits leading/trailing trivia while retaining every property and method body. That setup failure is retained and is not behavioral-red evidence. Source snapshots remained stable for accepted runs. The current scope was reviewed inline; no independent reviewer is claimed. Full local, exact-SHA hosted, package and deployment gates remain separate requirements.
+
+## Limits and continuing work
+
+An observation is a snapshot from its current read, not an item-use acknowledgement. This host prerequisite does not yet introduce shared pending-heal/defensive/potion reservations or replace all legacy consumer predicates. The enabled DrinkPotions plugin, its independent health/mana branches and Singular's health consumables remain the next action-arbitration work. Any changed plugin must enter package/probe membership. The public observation allows boolean consumers to defer safely; legacy numeric callers receive controlled UNKNOWN instead of a false zero.
+
+No game was attached, no item was used, and no quest execution or live healing claim is promoted. Quest10161 per-action counts and travel, combat reacquisition, rest admission, death/resurrection and recovery quarantine remain live/replay acceptance work. PR92 was separately delivered from mergedbc45d423; this report does not claim this unmerged item repair is in production.

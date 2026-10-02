@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using GreenMagic;
 using Styx.Helpers;
+using Styx.Logic.BehaviorTree;
 using Styx.Logic.Combat;
 using Styx.Logic.Pathing;
 using Styx.Patchables;
@@ -950,7 +951,12 @@ namespace Styx.WoWInternals.WoWObjects
         {
             get
             {
-                return Lua.GetReturnVal<float>("return GetItemCooldown(" + Entry + ")", 0);
+                ItemCooldownObservation observation = RequireEnabledCooldown();
+                float start = (float)observation.StartTimeSeconds;
+                if (!float.IsFinite(start) || (observation.StartTimeSeconds > 0 && start <= 0)
+                    || (start == 0 && observation.TimeLeft > TimeSpan.Zero))
+                    throw new ObservationUnavailableException("item-cooldown", "The observed start time cannot be represented by the legacy float API.");
+                return start;
             }
         }
 
@@ -960,22 +966,109 @@ namespace Styx.WoWInternals.WoWObjects
         /// </summary>
         public TimeSpan CooldownTimeLeft
         {
-            get
+            get { return RequireEnabledCooldown().TimeLeft; }
+        }
+
+        /// <summary>Defers item admission when the current cooldown is unavailable.</summary>
+        public bool IsCooldownReady => TryGetCooldownObservation(out var observation)
+            && observation!.Enabled && observation.TimeLeft == TimeSpan.Zero;
+
+        /// <summary>A complete observation at one current item/actor boundary; no use acknowledgement.</summary>
+        public sealed class ItemCooldownObservation
+        {
+            internal ItemCooldownObservation(double start, bool enabled, TimeSpan remaining)
+            { StartTimeSeconds = start; Enabled = enabled; TimeLeft = remaining; }
+            public double StartTimeSeconds { get; }
+            public bool Enabled { get; }
+            public TimeSpan TimeLeft { get; }
+        }
+
+        public bool TryGetCooldownObservation(out ItemCooldownObservation? observation)
+        {
+            observation = null;
+            try
             {
-                try
-                {
-                    var results = Lua.GetReturnValues(
-                        $"local s,d,e = GetItemCooldown({Entry}); if s > 0 then return d - (GetTime() - s) else return 0 end");
-                    if (results != null && results.Count > 0)
-                    {
-                        float seconds = Lua.ParseLuaValue<float>(results[0]);
-                        if (seconds > 0)
-                            return TimeSpan.FromSeconds(seconds);
-                    }
-                }
-                catch { }
-                return TimeSpan.Zero;
+                observation = ReadCooldownObservation();
+                return true;
             }
+            catch (ObservationUnavailableException error)
+            {
+                ObservationFailureDiagnostics.Report(error, "WoWItem.TryGetCooldownObservation");
+                return false;
+            }
+        }
+
+        private ItemCooldownObservation RequireEnabledCooldown()
+        {
+            ItemCooldownObservation observation = ReadCooldownObservation();
+            if (!observation.Enabled)
+                throw new ObservationUnavailableException("item-cooldown", "The item cooldown is disabled; a numeric ready value is not available.");
+            return observation;
+        }
+
+        private ItemCooldownObservation ReadCooldownObservation()
+        {
+            var actor = StyxWoW.Me;
+            var memory = ObjectManager.Wow;
+            var executor = ObjectManager.Executor;
+            var bot = TreeRoot.Current;
+            var worker = TreeRoot.RunIdentity;
+            bool running = TreeRoot.IsRunning, onWorker = TreeRoot.CurrentThreadIsBotThread;
+            TreeRoot.VerifyPulseOwner(bot, onWorker);
+            if (actor == null || memory == null || executor == null || !actor.IsValid || !IsValid)
+                throw new ObservationUnavailableException("item-cooldown", "The item or current world is unavailable.");
+            ulong actorGuid = actor.Guid, itemGuid = Guid, itemOwner = OwnerGuid;
+            uint actorBase = actor.BaseAddress, map = actor.MapId, itemBase = BaseAddress, entry = Entry;
+            long started = Environment.TickCount64;
+            if (actorGuid == 0 || actorBase == 0 || itemGuid == 0 || itemBase == 0 || entry == 0)
+                throw new ObservationUnavailableException("item-cooldown", "The item or actor identity is incomplete.");
+            bool Current() => ReferenceEquals(StyxWoW.Me, actor) && actor.IsValid && actor.Guid == actorGuid
+                && actor.BaseAddress == actorBase && actor.MapId == map && ReferenceEquals(ObjectManager.Wow, memory)
+                && ReferenceEquals(ObjectManager.Executor, executor) && ReferenceEquals(TreeRoot.Current, bot)
+                && ReferenceEquals(TreeRoot.RunIdentity, worker) && TreeRoot.IsRunning == running
+                && IsValid && Guid == itemGuid && BaseAddress == itemBase && Entry == entry && OwnerGuid == itemOwner
+                && Environment.TickCount64 >= started;
+            if (!Current())
+                throw new ObservationUnavailableException("item-cooldown", "The cooldown observation owner changed before its query.");
+            List<string> values;
+            try { values = Lua.GetReturnValues(BuildItemCooldownQuery(entry)); }
+            catch (Exception error)
+            {
+                ObservationUnavailableException.RethrowCancellation(error);
+                throw;
+            }
+            TreeRoot.VerifyPulseOwner(bot, onWorker);
+            if (!Current())
+                throw new ObservationUnavailableException("item-cooldown", "The cooldown reply belongs to a replaced item, world or worker.");
+            if (!TryParseItemCooldown(values, out var observation))
+                throw new ObservationUnavailableException("item-cooldown", $"Complete cooldown metadata/timing is unavailable for item {entry}.");
+            return observation!;
+        }
+
+        private static string BuildItemCooldownQuery(uint entry)
+        {
+            return "local name=GetItemInfo(" + entry.ToString(System.Globalization.CultureInfo.InvariantCulture) + "); "
+                + "if type(name)~='string' or name=='' then return 'unknown' end; "
+                + "local s,d,e=GetItemCooldown(" + entry.ToString(System.Globalization.CultureInfo.InvariantCulture) + "); local n=GetTime(); "
+                + "local function finite(v) return type(v)=='number' and v==v and v>=0 and v<math.huge end; "
+                + "if not finite(s) or not finite(d) or not finite(n) or (e~=0 and e~=1) or s>n then return 'unknown' end; "
+                + "return 'item-cooldown',s,d,e,n";
+        }
+
+        private static bool TryParseItemCooldown(IReadOnlyList<string>? values, out ItemCooldownObservation? observation)
+        {
+            observation = null;
+            if (values == null || values.Count != 5 || values[0] != "item-cooldown"
+                || (values[3] != "0" && values[3] != "1")) return false;
+            bool Number(string text, out double value) => double.TryParse(text, System.Globalization.NumberStyles.Float,
+                System.Globalization.CultureInfo.InvariantCulture, out value) && double.IsFinite(value) && value >= 0;
+            if (!Number(values[1], out double start) || !Number(values[2], out double duration)
+                || !Number(values[4], out double now) || start > now) return false;
+            double remaining = Math.Max(0, duration - (now - start));
+            double ticks = Math.Ceiling(remaining * TimeSpan.TicksPerSecond);
+            if (!double.IsFinite(ticks) || ticks >= long.MaxValue) return false;
+            observation = new ItemCooldownObservation(start, values[3] == "1", TimeSpan.FromTicks((long)ticks));
+            return true;
         }
 
         public bool Usable
