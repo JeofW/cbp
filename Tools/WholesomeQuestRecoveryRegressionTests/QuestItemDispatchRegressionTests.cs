@@ -32,7 +32,6 @@ internal static class QuestItemDispatchRegressionTests
         Replace("public static void MoveStop(){}", "public static void MoveStop(){if(ObjectManager.Me!=null)ObjectManager.Me.IsMoving=false;QuestItemDispatchCases.Boundary(\"stop\");}");
         Replace("public static void Face(ulong id){}", "public static void Face(ulong id){QuestItemDispatchCases.Boundary(\"face\");}");
         Replace("public static string StatusText{get;set;}=\"\";", "private static string status=\"\";public static string StatusText{get=>status;set{status=value;if(value.StartsWith(\"Using item\"))QuestItemDispatchCases.Boundary(\"status\");}}");
-        Replace("public static List<WoWObject>? Objects{get;set;}=new();", "public static List<WoWObject>? Objects{get;set;}=new();public static T? GetObjectByGuid<T>(ulong id)where T:WoWObject=>Objects?.OfType<T>().FirstOrDefault(o=>o.Guid==id);");
         string temp = Path.Combine(Path.GetTempPath(), "cb-item-dispatch-" + Guid.NewGuid().ToString("N"));
         bool oldLogging = Styx.Helpers.Logging.FileLogging;
         Directory.CreateDirectory(temp);

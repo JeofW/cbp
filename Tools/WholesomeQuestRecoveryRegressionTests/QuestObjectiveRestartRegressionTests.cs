@@ -34,13 +34,8 @@ internal static class QuestObjectiveRestartRegressionTests
         Replace("public bool IsAlive{get;set;}=true;", "public bool CanSelect=>true;public bool TryInteract(){Interact();return true;}public void Interact(){ObjectiveRestartCases.Interactions++;}public bool IsAlive{get;set;}=true;");
         Replace("public Styx.Logic.Questing.PlayerQuest? GetQuestById(uint id)=>null;", "public Styx.Logic.Questing.PlayerQuest? GetQuestById(uint id)=>ObjectiveRestartCases.FindQuest(id);");
         Replace("public static void Face(ulong id){}", "public static void Face(ulong id){var f=ObjectiveRestartCases.OnFace;ObjectiveRestartCases.OnFace=null;f?.Invoke();}");
-        // Complete the controlled object identity boundary used by the actual
-        // GossipEvent caller; registry lookup returns the original wrapper,
-        // never an independently constructed same-GUID substitute.
-        Replace("public ulong Guid{get;set;} public uint Entry{get;set;}",
-            "public uint BaseAddress{get;set;}=4096;public ulong Guid{get;set;} public uint Entry{get;set;}");
-        Replace("public static List<WoWObject>? Objects{get;set;}=new();",
-            "public static List<WoWObject>? Objects{get;set;}=new();public static T? GetObjectByGuid<T>(ulong guid)where T:WoWObject=>Objects?.OfType<T>().FirstOrDefault(o=>o.Guid==guid);");
+        // Exact registry lookup and backing identity are supplied by the shared
+        // observation boundary for every current GossipEvent consumer.
 
         string temp = Path.Combine(Path.GetTempPath(), "cb-objective-restart-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(temp);

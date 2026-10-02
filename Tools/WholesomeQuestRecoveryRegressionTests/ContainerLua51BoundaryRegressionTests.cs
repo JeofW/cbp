@@ -30,7 +30,6 @@ internal static class ContainerLua51BoundaryRegressionTests
         }
         Replace("public bool TryUseContainerItem()=>true;", methods);
         Replace("public bool IsMoving{get;set;}", "public ContainerInventory Inventory=new();public WoWContainer GetBagAtIndex(uint index)=>null;public bool IsMoving{get;set;}");
-        Replace("public static List<WoWObject>? Objects{get;set;}=new();", "public static List<WoWObject>? Objects{get;set;}=new();public static T? GetObjectByGuid<T>(ulong id)where T:WoWObject=>Objects?.OfType<T>().FirstOrDefault(o=>o.Guid==id);");
         string guard = Methods(File.ReadAllText(Path.Combine(root, "runtime-snapshot/Plugins/MrItemRemover2/Methods.cs")), "IsQuestItem");
         string directory = Path.Combine(Path.GetTempPath(), "cb-container-lua-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(directory);

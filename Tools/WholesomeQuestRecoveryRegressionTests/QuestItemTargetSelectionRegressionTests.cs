@@ -172,6 +172,7 @@ public static class QuestItemSelectionCases
 {
     public class WoWObject
     {
+        public uint BaseAddress{get;set;}=4096;
         public ulong Guid{get;set;} public uint Entry{get;set;} public bool IsValid{get;set;}=true;
         public WoWPoint Location{get;set;}=new WoWPoint(10,10,10);public string Name=>"Controlled";
         public float Distance=>ObjectManager.Me==null?0:Location.Distance(ObjectManager.Me.Location);
@@ -201,6 +202,7 @@ public static class QuestItemSelectionCases
     {
         public static LocalPlayer? Me{get;set;}
         public static List<WoWObject>? Objects{get;set;}=new();
+        public static T? GetObjectByGuid<T>(ulong guid)where T:WoWObject=>Objects?.OfType<T>().FirstOrDefault(o=>o.Guid==guid);
         public static IEnumerable<T>? GetObjectsOfType<T>(bool a=false,bool b=false)where T:WoWObject=>Objects?.OfType<T>();
     }
     public static class WoWMovement { public static void MoveStop(){} public static void ClickToMove(WoWPoint p){}public static void Face(ulong id){} }

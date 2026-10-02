@@ -33,7 +33,6 @@ internal static class QuestItemMerchantContextRegressionTests
         Replace("public static void MoveStop(){}", "public static void MoveStop(){if(ObjectManager.Me!=null)ObjectManager.Me.IsMoving=false;QuestItemMerchantCases.Boundary(\"stop\");}");
         Replace("public static void Face(ulong id){}", "public static void Face(ulong id){QuestItemMerchantCases.Boundary(\"face\");}");
         Replace("public static string StatusText{get;set;}=\"\";", "private static string status=\"\";public static string StatusText{get=>status;set{status=value;if(value.StartsWith(\"Using item\"))QuestItemMerchantCases.Boundary(\"status\");}}");
-        Replace("public static List<WoWObject>? Objects{get;set;}=new();", "public static List<WoWObject>? Objects{get;set;}=new();public static T? GetObjectByGuid<T>(ulong id)where T:WoWObject=>Objects?.OfType<T>().FirstOrDefault(o=>o.Guid==id);");
         string temp = Path.Combine(Path.GetTempPath(), "cb-item-merchant-context-" + Guid.NewGuid().ToString("N"));
         bool oldLogging = Styx.Helpers.Logging.FileLogging;
         Directory.CreateDirectory(temp);
