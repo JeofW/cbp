@@ -31,6 +31,7 @@ internal static class HostMountAdmissionRegressionTests
             "private static void AutoDetectMount()=>World.AfterDetect?.Invoke();\n" +
             "private static bool CanMount()=>World.Ready&&World.Player!=null&&World.Player.IsAlive&&!World.Player.Combat&&!World.Player.IsSwimming&&World.Player.IsOutdoors;\n" +
             "private static bool AllowMountAttempt(bool flying,string name,WoWPoint destination){World.AfterAdmission?.Invoke();return World.AdmissionAllowed;}\n" +
+            "private static bool ShouldMount(WoWPoint destination)=>true; // Cost calculations have their own complete-source fixture.\n" +
             "private static void AddCantMountSpot(WoWPoint point)=>World.Record(\"cant-mount\");\n" +
             "private static void RemoveCantMountSpotsNear(WoWPoint point,float radius)=>World.Record(\"clear-spots\");\n" +
             "public static bool Invoke()=>MountUp(()=>{World.AfterExtra?.Invoke();return World.ExtraAllowed;});\n" +

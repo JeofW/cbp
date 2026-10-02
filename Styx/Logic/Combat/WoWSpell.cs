@@ -388,7 +388,7 @@ namespace Styx.Logic.Combat
                 _spellEntry.EffectTriggerSpell[index],
                 _spellEntry.EffectPointsPerComboPoint[index],
                 _spellEntry.EffectSpellClassMask[index]
-            );
+            ) { DieSides = _spellEntry.EffectDieSides[index] };
         }
 
         private SpellInfoCache GetCachedSpellInfo()

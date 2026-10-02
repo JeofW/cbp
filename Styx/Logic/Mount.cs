@@ -627,17 +627,33 @@ return '" + GroundDismountReceipt + "'";
 			MountUp(travelingTo);
 		}
 
-		public static void MountUp(LocationRetriever travelingTo)
-		{
-			_currentDestinationRetriever = travelingTo;
-			MountUp(() =>
+			public static void MountUp(LocationRetriever travelingTo)
 			{
-				WoWUnit? firstUnit = Targeting.Instance.FirstUnit;
-				if (firstUnit != null && firstUnit.Distance < MountDistance)
-					return false;
+				ArgumentNullException.ThrowIfNull(travelingTo);
+				_currentDestinationRetriever = travelingTo;
+				LocalPlayer? actor = Me;
+				ulong guid = actor?.Guid ?? 0;
+				WoWPoint destination = travelingTo();
+				bool OwnsDestination()
+				{
+					if (actor == null || guid == 0 || !ReferenceEquals(Me, actor) || actor.Guid != guid
+						|| !ReferenceEquals(_currentDestinationRetriever, travelingTo)) return false;
+					WoWPoint current = travelingTo();
+					return current.Equals(destination) && ReferenceEquals(Me, actor) && actor.Guid == guid
+						&& ReferenceEquals(_currentDestinationRetriever, travelingTo);
+				}
+				MountUp(() =>
+				{
+					if (!OwnsDestination()) return false;
+					WoWUnit? firstUnit = Targeting.Instance.FirstUnit;
+					if (firstUnit != null && firstUnit.Distance < MountDistance)
+						return false;
 
-				return true;
-			});
+					// Destination-free explicit mounting retains its legacy contract.
+					// Ordinary travel must still amortize the selected mount's setup.
+					bool worthwhile = destination.Equals(WoWPoint.Empty) || actor!.Mounted || ShouldMount(destination);
+					return worthwhile && OwnsDestination();
+				});
 		}
 
 		public static bool ShouldMount(WoWPoint travelingTo)
@@ -649,13 +665,7 @@ return '" + GroundDismountReceipt + "'";
 			if (me.Mounted)
 				return false;
 
-			if (Battlegrounds.IsInsideBattleground || me.IsInInstance)
-				return true;
-
-			float distanceSqr = me.Location.DistanceSqr(travelingTo);
-			float mountDistanceSqr = MountDistance * MountDistance;
-
-			return distanceSqr >= mountDistanceSqr;
+				return TravelTimeEstimator.ShouldMount(travelingTo, MountDistance);
 		}
 
 		/// <summary>

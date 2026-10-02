@@ -713,10 +713,20 @@ namespace Styx.Logic
                             num -= 50.0;
                         }
 
-                        float myAggroRange = unit.MyAggroRange;
-                        if (myAggroRange != 0f && distance < (double)(myAggroRange + 5f))
+                        try
                         {
-                            num += 100.0;
+                            float myAggroRange = unit.MyAggroRange;
+                            if (myAggroRange != 0f && distance < (double)(myAggroRange + 5f))
+                                num += 100.0;
+                        }
+                        catch (ObservationUnavailableException error)
+                        {
+                            // This is only an optional ranking bonus for an
+                            // already-admitted candidate, not a safety predicate.
+                            // An unknown aura modifier must not erase the whole
+                            // target publication or invent a zero aggro radius.
+                            RecoveryActions.RethrowControlFlow(error);
+                            ObservationFailureDiagnostics.Report(error, "Targeting.OptionalAggroPreference");
                         }
 
                         if (losResults != null && !losResults[j])
