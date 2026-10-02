@@ -1,0 +1,213 @@
+{
+  "receipts": [
+    {
+      "path": "D:\\Dev\\CopilotBuddy-Evidence\\recovery-actions-20261002\\item-cooldown-red-bc45d423",
+      "summary_sha256": "e4e6163e7dbb3284629f083c9d69ebc6dbb4fb40db1b48e5283194510ae022dc",
+      "stages": [
+        {
+          "stage": "build",
+          "exit": 0,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PostMergeAuditRegressionTests/PostMergeAuditRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "2b09a655d28dd29b9b1288d787cf944b5f7d9d6dde1e8e76088c8275fc5404d1",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "run",
+          "exit": 1,
+          "command": [
+            "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+            "D:\\Dev\\CB-RecoveryActions-20261002\\Tools\\PostMergeAuditRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\PostMergeAuditRegressionTests.dll",
+            "ItemCooldownObservationRegressionTests"
+          ],
+          "stdout_sha256": "49638c1e378c089deab8a36edf5de48ddc5d43c919cef2092b58f63ed9b0d983",
+          "stderr_sha256": "61a145a25b14e6f5dcb5aabdc401cabcb18def6aa80a61dc216a840ddfe7bcc2"
+        }
+      ],
+      "results": [
+        "Focused groups: 0/1; no game attached; full aggregate remains required."
+      ],
+      "source_before_sha256": "b6389fb87cf8d0961f5292caa85c1056f73a8295969795cefcaa1d726b2b4fb6"
+    },
+    {
+      "path": "D:\\Dev\\CopilotBuddy-Evidence\\recovery-actions-20261002\\item-cooldown-red2-bc45d423",
+      "summary_sha256": "ea920bf9631342b26e29a0986825651dbbda360fe6de394acfda3503992c1a40",
+      "stages": [
+        {
+          "stage": "build",
+          "exit": 0,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PostMergeAuditRegressionTests/PostMergeAuditRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "fa8186401c891d63eb8d76c45ede09f5406cd24f750863a536f4b6522a609984",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "run",
+          "exit": 1,
+          "command": [
+            "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+            "D:\\Dev\\CB-RecoveryActions-20261002\\Tools\\PostMergeAuditRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\PostMergeAuditRegressionTests.dll",
+            "ItemCooldownObservationRegressionTests"
+          ],
+          "stdout_sha256": "e5d969a522f6671d3620585eec19bfdb74e074421464ad2034ddb42561aa53c1",
+          "stderr_sha256": "5c72f5f31ac7a9b1951011e5167795f3184a400044294f9928252fce9d62e815"
+        }
+      ],
+      "results": [
+        "Item cooldown observation cases: 14/152; assertions=138; unexpected=0; actual item readers and generated Lua5.1; no item use or game.",
+        "Focused groups: 0/1; no game attached; full aggregate remains required."
+      ],
+      "source_before_sha256": "0b00ac6d72db34b9619e078fdd06b39e734dc7e09ac6e6ff376f3b7068985a8e"
+    },
+    {
+      "path": "D:\\Dev\\CopilotBuddy-Evidence\\recovery-actions-20261002\\item-cooldown-metadata-red-bc45d423",
+      "summary_sha256": "f459628ea572e47446b39a875cd3051f6cbc270d197f0f512a2c2958dc09bb6b",
+      "stages": [
+        {
+          "stage": "build",
+          "exit": 0,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PostMergeAuditRegressionTests/PostMergeAuditRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "e62a9e8db540c1f56cebf83709d78b3c76cc80e434e0c35c10d2e44ca3286831",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "run",
+          "exit": 1,
+          "command": [
+            "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+            "D:\\Dev\\CB-RecoveryActions-20261002\\Tools\\PostMergeAuditRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\PostMergeAuditRegressionTests.dll",
+            "ItemCooldownObservationRegressionTests"
+          ],
+          "stdout_sha256": "5e2f68a5c23255c2343fe0dc2f37e1a20ad0b080474b7a4e383fb6945b16d076",
+          "stderr_sha256": "8bf4679bba592c0a26c429b1fe85861a245fee53860f0a02a576ac712cbb0077"
+        }
+      ],
+      "results": [
+        "Item cooldown observation cases: 14/161; assertions=147; unexpected=0; actual item readers and generated Lua5.1; no item use or game.",
+        "Focused groups: 0/1; no game attached; full aggregate remains required."
+      ],
+      "source_before_sha256": "2cd2790e9926253d5b5d7d6e8ddc85cbf8a40f5cdabea31ae135f53184920664"
+    },
+    {
+      "path": "D:\\Dev\\CopilotBuddy-Evidence\\recovery-actions-20261002\\item-cooldown-green1-bc45d423",
+      "summary_sha256": "9cae00691816101532096fe32bc3e492586d3b15e55dbb0f289739e488889625",
+      "stages": [
+        {
+          "stage": "build",
+          "exit": 0,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PostMergeAuditRegressionTests/PostMergeAuditRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "f0b84a3a7d78d5d970d592e98e9d0f7c6b6a07d61f153aee00ecd14387ba5afa",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "run",
+          "exit": 1,
+          "command": [
+            "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+            "D:\\Dev\\CB-RecoveryActions-20261002\\Tools\\PostMergeAuditRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\PostMergeAuditRegressionTests.dll",
+            "ItemCooldownObservationRegressionTests"
+          ],
+          "stdout_sha256": "2e99ea86bfd9718283eb2738711641abf14e5d14f0c2ef943f272bfe2f3ccdda",
+          "stderr_sha256": "632d9c824d491483e38b6ce5fda7b6ea96abaccbb9f3d4aa05a72c3f2a316933"
+        }
+      ],
+      "results": [
+        "Item cooldown observation cases: 158/161; assertions=0; unexpected=3; actual item readers and generated Lua5.1; no item use or game.",
+        "Focused groups: 0/1; no game attached; full aggregate remains required."
+      ],
+      "source_before_sha256": "98a41ff3d2ea0fbee3c27c894c8120d00a233be64426ed4371dec9cc7cf1ed35"
+    },
+    {
+      "path": "D:\\Dev\\CopilotBuddy-Evidence\\recovery-actions-20261002\\item-cooldown-green2-bc45d423",
+      "summary_sha256": "8af45e7dace44f0aaa0a61e3f4c4accfc4425cb1c482fbcd5e0dae909a31f255",
+      "stages": [
+        {
+          "stage": "build",
+          "exit": 0,
+          "command": [
+            "dotnet",
+            "build",
+            "Tools/PostMergeAuditRegressionTests/PostMergeAuditRegressionTests.csproj",
+            "-c",
+            "Release",
+            "-p:Platform=x86",
+            "-p:PlatformTarget=x86",
+            "-v",
+            "quiet"
+          ],
+          "stdout_sha256": "380ffb67df31b893a2b0c08e189582b60663947fb94c02b6983ae415030acb0b",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "stage": "run",
+          "exit": 0,
+          "command": [
+            "D:\\World of Warcraft 3.3.5a\\CB\\.dotnet-sdk\\dotnet.exe",
+            "D:\\Dev\\CB-RecoveryActions-20261002\\Tools\\PostMergeAuditRegressionTests\\bin\\x86\\Release\\net10.0-windows7.0\\PostMergeAuditRegressionTests.dll",
+            "ItemCooldownObservationRegressionTests",
+            "SpellCooldownObservationRegressionTests",
+            "LuaObservationCancellationRegressionTests",
+            "ConsumableDiscoveryRegressionTests"
+          ],
+          "stdout_sha256": "d78292907a45d50aeb08cb49c281261bcc538ddedeaea284c30d4fcff044ed35",
+          "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "results": [
+        "Item cooldown observation cases: 161/161; assertions=0; unexpected=0; actual item readers and generated Lua5.1; no item use or game.",
+        "Spell cooldown observation cases: 280/280; assertions=0; unexpected=0; exact tracked readers/parser/admission and generated Lua5.1 plus production conversion; controlled APIs/native failures; no game attached.",
+        "Lua observation cancellation cases: 152/152; assertions=0; unexpected=0; complete transport and conversion owners; controlled allocation/memory/executor failures; no native/game execution.",
+        "Consumable discovery scenarios: 38/38; complete inventory classifier and sparse-effect enumeration; native use admission tested separately.",
+        "Focused groups: 4/4; no game attached; full aggregate remains required."
+      ],
+      "source_before_sha256": "5d20eeeac8da02c141cd513a40c4b227af9847d53f5f9af19301f233fbc4ce20"
+    }
+  ],
+  "new_cases": 161,
+  "final_focused_groups": 4,
+  "source_files": {
+    "Styx/WoWInternals/WoWObjects/WoWItem.cs": "11ff84a9e965c7bc732ac1b6fb15d6ebe57547124cc40069d1de6b88569f0d33",
+    "Tools/WholesomeQuestRecoveryRegressionTests/ItemCooldownObservationRegressionTests.cs": "9b72ae45db111552110884ef3cd827f9b1133f4ad07884a836446ff7e6cc31e8"
+  },
+  "review": "Self-review; no independent reviewer agent exposed",
+  "game_attached": false,
+  "created_utc": "2026-10-02T01:22:48.479132+00:00"
+}
